@@ -1,5 +1,4 @@
-MakaiLib.cpb
-MakaiLib.depend
-obj
-main.cpp
-bin/debug
+# MakaiLib.*
+# MakaiLib.cbp
+# obj
+# main.cpp

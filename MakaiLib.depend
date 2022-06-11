@@ -1,0 +1,39 @@
+# depslib dependency file v1.0
+1654979264 source:d:\c(++) projects\_c++\game engine\makailib\main.cpp
+	<collection/entity/entity.hpp>
+
+1654905695 d:\c(++) projects\_c++\libraries\collection\entity\entity.hpp
+	"core.hpp"
+	"2d3d.hpp"
+
+1654977382 d:\c(++) projects\_c++\libraries\collection\entity\core.hpp
+	<vector>
+	<memory>
+	<string>
+	<stdexcept>
+	<functional>
+	<cxxabi.h>
+	"../tasking.hpp"
+
+1654945489 d:\c(++) projects\_c++\libraries\collection\tasking.hpp
+	<vector>
+	<functional>
+	<type_traits>
+	"event.hpp"
+
+1654945367 d:\c(++) projects\_c++\libraries\collection\event.hpp
+	<functional>
+
+1652832242 d:\c(++) projects\_c++\libraries\collection\entity\2d3d.hpp
+	"core.hpp"
+	"../vectorn.hpp"
+
+1652664425 d:\c(++) projects\_c++\libraries\collection\vectorn.hpp
+	<cmath>
+	<vector>
+	"algebra.hpp"
+
+1654905597 d:\c(++) projects\_c++\libraries\collection\algebra.hpp
+	<string>
+	<cmath>
+
