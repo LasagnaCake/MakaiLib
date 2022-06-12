@@ -20,6 +20,16 @@ void Makai::Program::run() {
 	float delta = 0.0f;
 	// The last frame's time
 	float last = 0.0f;
+	// The physics process
+	auto physFunc = [&](float delta)-> void {
+
+	};
+	// The logical process
+	auto logicFunc = [&](float delta)->void {
+		Tween::yieldAllTweens();
+		Event::yieldAllTimers();
+		EntityClass::$_ROOT.yield(delta);
+	};
 	// While program is running...
 	while(running()) {
 		// Get current time
@@ -29,23 +39,13 @@ void Makai::Program::run() {
 		// Set last frame to current
 		last = current;
 		// Start threads
-		std::thread engine(
-			[&](float delta)-> void {
-				EntityClass::$_ROOT.yield(delta);
-			},
-			delta
-		);
-		std::thread counters(
-			[&]()->void {
-				Tween::yieldAllTweens();
-				Event::yieldAllTimers();
-			}
-		);
+		std::thread physics(physFunc, delta);
+		std::thread logic(logicFunc, delta);
 		// Do your own stuff
 		onFrame(delta);
 		// Wait for threads to be done processing
-		engine.join();
-		counters.join();
+		physics.join();
+		logic.join();
 	}
 	// Terminate program
 	terminate();
