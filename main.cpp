@@ -29,18 +29,22 @@ void Makai::Program::run() {
 		// Set last frame to current
 		last = current;
 		// Start threads
-		std::thread objects(EntityClass::$_ROOT.yield, EntityClass::$_ROOT, delta);
+		std::thread engine(
+			[&](float delta)-> void {
+				EntityClass::$_ROOT.yield(delta);
+			},
+			delta
+		);
 		std::thread counters(
 			[&]()->void {
-					Tween::yieldAllTweens();
-					Event::yieldAllTimers();
-
-				}
-			);
+				Tween::yieldAllTweens();
+				Event::yieldAllTimers();
+			}
+		);
 		// Do your own stuff
 		onFrame(delta);
 		// Wait for threads to be done processing
-		objects.join();
+		engine.join();
 		counters.join();
 	}
 	// Terminate program
