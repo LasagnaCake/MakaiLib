@@ -24,6 +24,8 @@
 ***************************
 */
 
+#include <algebra.hpp>
+
 #ifdef _$_FLOAT_AS_DOUBLE
 #define float double
 #endif // _$_FLOAT_AS_DOUBLE
@@ -31,7 +33,6 @@
 #include <entity/entity.hpp>
 #include <vectorn.hpp>
 #include <cyclical.hpp>
-#include <algebra.hpp>
 #include <matrices.hpp>
 #include <tween.hpp>
 #include <event.hpp>

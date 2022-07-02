@@ -35,9 +35,11 @@
 	<vector>
 	"algebra.hpp"
 
-1654905597 d:\c(++) projects\_c++\libraries\collection\algebra.hpp
+1656780589 d:\c(++) projects\_c++\libraries\collection\algebra.hpp
 	<string>
 	<cmath>
+	<random>
+	<limits>
 
 1656769640 d:\c(++) projects\_c++\game engine\makailib\makai.hpp
 	<string>
