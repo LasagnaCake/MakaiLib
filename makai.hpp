@@ -62,7 +62,7 @@
 #define EXECUTE	{
 //*/
 
-#define $main [&]() -> void
+#define $main [&](float delta) -> void
 
 namespace Makai {
 	namespace {
