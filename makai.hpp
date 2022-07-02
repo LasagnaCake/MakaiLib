@@ -94,5 +94,5 @@ namespace Makai {
 		string windowTitle;
 		GLFWwindow* window;
 		bool forceStop = false;
-	} $_PROGRAM;
+	} $_MAIN;
 }
