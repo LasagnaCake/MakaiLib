@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1656810332 source:d:\c(++) projects\_c++\game engine\makailib\main.cpp
+1656873345 source:d:\c(++) projects\_c++\game engine\makailib\main.cpp
 	"lib/makai.hpp"
 	<stdexcept>
 
@@ -1230,7 +1230,7 @@
 	<vector>
 	<functional>
 
-1656855279 d:\c(++) projects\_c++\game engine\makailib\lib\makai.hpp
+1656873312 d:\c(++) projects\_c++\game engine\makailib\lib\makai.hpp
 	<string>
 	<vector>
 	<functional>
@@ -1256,8 +1256,8 @@
 	"2d3d.hpp"
 	<map>
 
-1656853738 d:\c(++) projects\_c++\game engine\makailib\lib\graphical.hpp
-	<entity/entity.hpp>
+1656873174 d:\c(++) projects\_c++\game engine\makailib\lib\graphical.hpp
+	<collection/entity/entity.hpp>
 	<Ogre.h>
 	<GLFW/glfw3.h>
 

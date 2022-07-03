@@ -33,7 +33,7 @@ void Makai::Program::run() {
 	// While program is running...
 	while(running()) {
 		// Get desired framerate
-		float frameDelta = (1 / frameRateMinimum);
+		float minFrame = (1 / frameRateMinimum);
 		// Get current time
 		float current = glfwGetTime();
 		// Calculate delta
@@ -48,8 +48,8 @@ void Makai::Program::run() {
 		// Wait for threads to be done processing
 		physics.join();
 		logic.join();
-		// Wait for frame sync, if needed
-		while ((glfwGetTime() - last) < frameDelta) {
+		// Wait for frame sync
+		while ((glfwGetTime() - last) < minFrame) {
 		}
 	}
 	// Terminate program

@@ -68,7 +68,7 @@
 #define EQUAL	=
 #endif // _$_LUA_STYLE_PROGRAMMING
 
-#define $main [&](float delta) -> void
+#define $main	[&](float delta) -> void
 
 namespace Makai {
 	namespace {
@@ -89,6 +89,7 @@ namespace Makai {
 
 	struct Program {
 	public:
+		size_t frameRateMinimum = 120;
 		void init(unsigned int, unsigned int, string);
 		void run();
 		void close();
