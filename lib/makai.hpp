@@ -53,16 +53,20 @@
 #include <GLFW/glfw3.h>
 #include <graphical.hpp>
 
-/*
-#define IF		if (
+#ifdef _$_LUA_STYLE_PROGRAMMING
 #define END		}
-#define ELSE	} else
 #define AND		&&
 #define OR		||
 #define NOT		!
 #define THEN	)
 #define EXECUTE	{
-//*/
+#define TAKE	(
+#define NEXT	;
+#define LESS	<
+#define MORE	>
+#define IS		==
+#define EQUAL	=
+#endif // _$_LUA_STYLE_PROGRAMMING
 
 #define $main [&](float delta) -> void
 
