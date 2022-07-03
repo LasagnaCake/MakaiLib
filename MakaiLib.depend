@@ -1,19 +1,21 @@
 # depslib dependency file v1.0
-1656725549 source:d:\c(++) projects\_c++\game engine\makailib\main.cpp
-	"makai.hpp"
+1656810332 source:d:\c(++) projects\_c++\game engine\makailib\main.cpp
+	"lib/makai.hpp"
 	<stdexcept>
 
-1654905695 d:\c(++) projects\_c++\libraries\collection\entity\entity.hpp
+1656786483 d:\c(++) projects\_c++\libraries\collection\entity\entity.hpp
 	"core.hpp"
 	"2d3d.hpp"
+	"collision.hpp"
 
-1655035857 d:\c(++) projects\_c++\libraries\collection\entity\core.hpp
+1656800834 d:\c(++) projects\_c++\libraries\collection\entity\core.hpp
 	<vector>
 	<memory>
 	<string>
 	<stdexcept>
 	<functional>
 	<cxxabi.h>
+	<map>
 	"../tasking.hpp"
 
 1654945489 d:\c(++) projects\_c++\libraries\collection\tasking.hpp
@@ -30,12 +32,12 @@
 	"core.hpp"
 	"../vectorn.hpp"
 
-1652664425 d:\c(++) projects\_c++\libraries\collection\vectorn.hpp
+1656788865 d:\c(++) projects\_c++\libraries\collection\vectorn.hpp
 	<cmath>
 	<vector>
 	"algebra.hpp"
 
-1656780589 d:\c(++) projects\_c++\libraries\collection\algebra.hpp
+1656783661 d:\c(++) projects\_c++\libraries\collection\algebra.hpp
 	<string>
 	<cmath>
 	<random>
@@ -1227,4 +1229,32 @@
 	"event.hpp"
 	<vector>
 	<functional>
+
+1656810612 d:\c(++) projects\_c++\game engine\makailib\lib\makai.hpp
+	<string>
+	<vector>
+	<functional>
+	<cstring>
+	<iostream>
+	<stdexcept>
+	<cstdlib>
+	<math.h>
+	<thread>
+	<algebra.hpp>
+	<entity/entity.hpp>
+	<vectorn.hpp>
+	<cyclical.hpp>
+	<matrices.hpp>
+	<tween.hpp>
+	<event.hpp>
+	<Ogre.h>
+	<GLFW/glfw3.h>
+	"graphical.hpp"
+
+1656810234 d:\c(++) projects\_c++\libraries\collection\entity\collision.hpp
+	"core.hpp"
+	"2d3d.hpp"
+	<map>
+
+1656810505 d:\c(++) projects\_c++\game engine\makailib\lib\graphical.hpp
 

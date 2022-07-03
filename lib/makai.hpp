@@ -51,6 +51,9 @@
 
 #include <Ogre.h>
 #include <GLFW/glfw3.h>
+#ifndef GRAPHICAL_RENDERER_H
+#include "graphical.hpp"
+#endif // GRAPHICAL_RENDERER_H
 
 /*
 #define IF		if (

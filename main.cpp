@@ -1,4 +1,4 @@
-#include "makai.hpp"
+#include "lib/makai.hpp"
 #include <stdexcept>
 
 void Makai::Program::init(unsigned int width, unsigned int height, std::string windowTitle = "WINDOW"){
