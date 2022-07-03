@@ -24,18 +24,18 @@
 ***************************
 */
 
-#include <algebra.hpp>
+#include <collection/algebra.hpp>
 
 #ifdef _$_FLOAT_AS_DOUBLE
 #define float double
 #endif // _$_FLOAT_AS_DOUBLE
 
-#include <entity/entity.hpp>
-#include <vectorn.hpp>
-#include <cyclical.hpp>
-#include <matrices.hpp>
-#include <tween.hpp>
-#include <event.hpp>
+#include <collection/entity/entity.hpp>
+#include <collection/vectorn.hpp>
+#include <collection/cyclical.hpp>
+#include <collection/matrices.hpp>
+#include <collection/tween.hpp>
+#include <collection/event.hpp>
 
 #ifdef _$_FLOAT_AS_DOUBLE
 #undef float
@@ -52,7 +52,7 @@
 #include <Ogre.h>
 #include <GLFW/glfw3.h>
 #ifndef GRAPHICAL_RENDERER_H
-#include "graphical.hpp"
+#include <graphical.hpp>
 #endif // GRAPHICAL_RENDERER_H
 
 /*

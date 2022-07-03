@@ -1,0 +1,3 @@
+[submodule "lib/collection"]
+	path = lib/collection
+	url = https://gitlab.com/LasagnaCake/collection.git

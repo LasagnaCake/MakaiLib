@@ -1230,7 +1230,7 @@
 	<vector>
 	<functional>
 
-1656810612 d:\c(++) projects\_c++\game engine\makailib\lib\makai.hpp
+1656854180 d:\c(++) projects\_c++\game engine\makailib\lib\makai.hpp
 	<string>
 	<vector>
 	<functional>
@@ -1249,12 +1249,15 @@
 	<event.hpp>
 	<Ogre.h>
 	<GLFW/glfw3.h>
-	"graphical.hpp"
+	<graphical.hpp>
 
 1656810234 d:\c(++) projects\_c++\libraries\collection\entity\collision.hpp
 	"core.hpp"
 	"2d3d.hpp"
 	<map>
 
-1656810505 d:\c(++) projects\_c++\game engine\makailib\lib\graphical.hpp
+1656853738 d:\c(++) projects\_c++\game engine\makailib\lib\graphical.hpp
+	<entity/entity.hpp>
+	<Ogre.h>
+	<GLFW/glfw3.h>
 
