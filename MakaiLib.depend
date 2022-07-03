@@ -3,12 +3,12 @@
 	"lib/makai.hpp"
 	<stdexcept>
 
-1656786483 d:\c(++) projects\_c++\libraries\collection\entity\entity.hpp
+1656854523 d:\c(++) projects\_c++\libraries\collection\entity\entity.hpp
 	"core.hpp"
 	"2d3d.hpp"
 	"collision.hpp"
 
-1656800834 d:\c(++) projects\_c++\libraries\collection\entity\core.hpp
+1656854523 d:\c(++) projects\_c++\libraries\collection\entity\core.hpp
 	<vector>
 	<memory>
 	<string>
@@ -18,26 +18,26 @@
 	<map>
 	"../tasking.hpp"
 
-1654945489 d:\c(++) projects\_c++\libraries\collection\tasking.hpp
+1656854523 d:\c(++) projects\_c++\libraries\collection\tasking.hpp
 	<vector>
 	<functional>
 	<type_traits>
 	"event.hpp"
 
-1656776104 d:\c(++) projects\_c++\libraries\collection\event.hpp
+1656854523 d:\c(++) projects\_c++\libraries\collection\event.hpp
 	<functional>
 	<vector>
 
-1652832242 d:\c(++) projects\_c++\libraries\collection\entity\2d3d.hpp
+1656854523 d:\c(++) projects\_c++\libraries\collection\entity\2d3d.hpp
 	"core.hpp"
 	"../vectorn.hpp"
 
-1656788865 d:\c(++) projects\_c++\libraries\collection\vectorn.hpp
+1656854523 d:\c(++) projects\_c++\libraries\collection\vectorn.hpp
 	<cmath>
 	<vector>
 	"algebra.hpp"
 
-1656783661 d:\c(++) projects\_c++\libraries\collection\algebra.hpp
+1656855512 d:\c(++) projects\_c++\libraries\collection\algebra.hpp
 	<string>
 	<cmath>
 	<random>
@@ -1230,7 +1230,7 @@
 	<vector>
 	<functional>
 
-1656854180 d:\c(++) projects\_c++\game engine\makailib\lib\makai.hpp
+1656855279 d:\c(++) projects\_c++\game engine\makailib\lib\makai.hpp
 	<string>
 	<vector>
 	<functional>
@@ -1240,18 +1240,18 @@
 	<cstdlib>
 	<math.h>
 	<thread>
-	<algebra.hpp>
-	<entity/entity.hpp>
-	<vectorn.hpp>
-	<cyclical.hpp>
-	<matrices.hpp>
-	<tween.hpp>
-	<event.hpp>
+	<collection/algebra.hpp>
+	<collection/entity/entity.hpp>
+	<collection/vectorn.hpp>
+	<collection/cyclical.hpp>
+	<collection/matrices.hpp>
+	<collection/tween.hpp>
+	<collection/event.hpp>
 	<Ogre.h>
 	<GLFW/glfw3.h>
 	<graphical.hpp>
 
-1656810234 d:\c(++) projects\_c++\libraries\collection\entity\collision.hpp
+1656854523 d:\c(++) projects\_c++\libraries\collection\entity\collision.hpp
 	"core.hpp"
 	"2d3d.hpp"
 	<map>
@@ -1260,4 +1260,66 @@
 	<entity/entity.hpp>
 	<Ogre.h>
 	<GLFW/glfw3.h>
+
+1656856746 d:\c(++) projects\_c++\game engine\makailib\lib\collection\algebra.hpp
+	<string>
+	<cmath>
+	<random>
+	<limits>
+
+1656855023 d:\c(++) projects\_c++\game engine\makailib\lib\collection\entity\entity.hpp
+	"core.hpp"
+	"2d3d.hpp"
+	"collision.hpp"
+
+1656855023 d:\c(++) projects\_c++\game engine\makailib\lib\collection\entity\core.hpp
+	<vector>
+	<memory>
+	<string>
+	<stdexcept>
+	<functional>
+	<cxxabi.h>
+	<map>
+	"../tasking.hpp"
+
+1656855023 d:\c(++) projects\_c++\game engine\makailib\lib\collection\tasking.hpp
+	<vector>
+	<functional>
+	<type_traits>
+	"event.hpp"
+
+1656855023 d:\c(++) projects\_c++\game engine\makailib\lib\collection\event.hpp
+	<functional>
+	<vector>
+
+1656855023 d:\c(++) projects\_c++\game engine\makailib\lib\collection\entity\2d3d.hpp
+	"core.hpp"
+	"../vectorn.hpp"
+
+1656855023 d:\c(++) projects\_c++\game engine\makailib\lib\collection\vectorn.hpp
+	<cmath>
+	<vector>
+	"algebra.hpp"
+
+1656855023 d:\c(++) projects\_c++\game engine\makailib\lib\collection\entity\collision.hpp
+	"core.hpp"
+	"2d3d.hpp"
+	<map>
+
+1656855023 d:\c(++) projects\_c++\game engine\makailib\lib\collection\cyclical.hpp
+	<vector>
+	<list>
+	<functional>
+	<stdexcept>
+	<type_traits>
+
+1656855023 d:\c(++) projects\_c++\game engine\makailib\lib\collection\matrices.hpp
+	"algebra.hpp"
+	<vector>
+	<stdexcept>
+
+1656855023 d:\c(++) projects\_c++\game engine\makailib\lib\collection\tween.hpp
+	"event.hpp"
+	<vector>
+	<functional>
 
