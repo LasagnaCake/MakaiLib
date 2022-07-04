@@ -68,7 +68,7 @@
 #define LESS	<
 #define MORE	>
 #define IS		==
-#define EQUAL	=
+#define EQUALS	=
 #endif // _$_LUA_STYLE_PROGRAMMING
 
 #define $main	[&](float delta) -> void
