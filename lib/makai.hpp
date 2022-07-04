@@ -18,6 +18,22 @@
 #include <map>
 
 /*
+*********************
+*                   *
+*  Graphical stuff  *
+*                   *
+*********************
+*/
+
+#define OGRE_IGNORE_UNKNOWN_DEBUG
+
+// #include <OGRE/Ogre.h>
+
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+#include <graphical.hpp>
+
+/*
 ***************************
 *                         *
 *  Engine-specific stuff  *
@@ -43,18 +59,8 @@
 #endif // _$_FLOAT_AS_DOUBLE
 
 /*
-*********************
-*                   *
-*  Graphical stuff  *
-*                   *
-*********************
+*	[+]=[   [Headers END]   ]=[+]
 */
-
-#define OGRE_IGNORE_UNKNOWN_DEBUG
-
-#include <OGRE/Ogre.h>
-#include <GLFW/glfw3.h>
-#include <graphical.hpp>
 
 #ifdef _$_LUA_STYLE_PROGRAMMING
 #define END		}
