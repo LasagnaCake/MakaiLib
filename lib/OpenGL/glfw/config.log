@@ -1,0 +1,460 @@
+This file contains any messages produced by compilers while
+running D:\OpenGL SDK\glfw\compile.sh, to aid debugging if D:\OpenGL SDK\glfw\compile.sh makes a mistake.
+
+D:\OpenGL SDK\glfw\compile.sh: checking whether we are using GNU C
+D:OpenGL SDKglfwcompile.sh: cc -E conftest.c
+D:\OpenGL SDK\glfw\compile.sh: Checking for X11 RandR support
+D:OpenGL SDKglfwcompile.sh: cc -c  conftest.c 1>&5
+In file included from D:/MSYS2/mingw64/include/X11/Xlib.h:31,
+                 from conftest.c:1:
+D:/MSYS2/mingw64/include/X11/X.h:44:26: error: expected '=', ',', ';', 'asm' or '__attribute__' before 'XID'
+   44 | typedef unsigned __int64 XID;
+      |                          ^~~
+D:/MSYS2/mingw64/include/X11/X.h:49:9: error: unknown type name 'XID'
+   49 | typedef XID Window;
+      |         ^~~
+D:/MSYS2/mingw64/include/X11/X.h:50:9: error: unknown type name 'XID'
+   50 | typedef XID Drawable;
+      |         ^~~
+D:/MSYS2/mingw64/include/X11/X.h:51:9: error: unknown type name 'XID'
+   51 | typedef XID Font;
+      |         ^~~
+D:/MSYS2/mingw64/include/X11/X.h:52:9: error: unknown type name 'XID'
+   52 | typedef XID Pixmap;
+      |         ^~~
+D:/MSYS2/mingw64/include/X11/X.h:53:9: error: unknown type name 'XID'
+   53 | typedef XID Cursor;
+      |         ^~~
+D:/MSYS2/mingw64/include/X11/X.h:54:9: error: unknown type name 'XID'
+   54 | typedef XID Colormap;
+      |         ^~~
+D:/MSYS2/mingw64/include/X11/X.h:55:9: error: unknown type name 'XID'
+   55 | typedef XID GContext;
+      |         ^~~
+D:/MSYS2/mingw64/include/X11/X.h:56:9: error: unknown type name 'XID'
+   56 | typedef XID KeySym;
+      |         ^~~
+In file included from conftest.c:1:
+D:/MSYS2/mingw64/include/X11/Xlib.h:452:9: error: unknown type name 'XID'
+  452 |         XID resource_base; /* resource ID base */
+      |         ^~~
+D:/MSYS2/mingw64/include/X11/Xlib.h:453:2: error: unknown type name 'XID'
+  453 |  XID resource_mask; /* resource ID mask bits */
+      |  ^~~
+D:/MSYS2/mingw64/include/X11/Xlib.h:454:2: error: unknown type name 'XID'
+  454 |  XID resource_id; /* allocator current ID */
+      |  ^~~
+D:/MSYS2/mingw64/include/X11/Xlib.h:456:2: error: expected specifier-qualifier-list before 'XID'
+  456 |  XID (*resource_alloc)(); /* allocator function */
+      |  ^~~
+D:/MSYS2/mingw64/include/X11/Xlib.h:910:2: error: unknown type name 'XID'
+  910 |  XID resourceid;  /* resource id */
+      |  ^~~
+In file included from D:/MSYS2/mingw64/include/tkIntXlibDecls.h:30,
+                 from D:/MSYS2/mingw64/include/X11/Xlib.h:1199,
+                 from conftest.c:1:
+D:/MSYS2/mingw64/include/X11/Xutil.h:100:2: error: unknown type name 'XID'
+  100 |  XID window_group; /* id of related window group */
+      |  ^~~
+D:/MSYS2/mingw64/include/X11/Xutil.h:268:2: error: unknown type name 'XID'
+  268 |  XID killid;   /* added by ICCCM version 1 */
+      |  ^~~
+D:/MSYS2/mingw64/include/X11/Xutil.h:356:5: error: unknown type name 'XID'; did you mean 'XIC'?
+  356 |     XID   /* rid */,
+      |     ^~~
+      |     XIC
+D:/MSYS2/mingw64/include/X11/Xutil.h:383:5: error: unknown type name 'XID'; did you mean 'XIC'?
+  383 |     XID   /* rid */,
+      |     ^~~
+      |     XIC
+D:/MSYS2/mingw64/include/X11/Xutil.h:575:5: error: unknown type name 'XID'; did you mean 'XIC'?
+  575 |     XID   /* rid */,
+      |     ^~~
+      |     XIC
+conftest.c:2:10: fatal error: X11/extensions/Xrandr.h: No such file or directory
+    2 | #include <X11/extensions/Xrandr.h>
+      |          ^~~~~~~~~~~~~~~~~~~~~~~~~
+compilation terminated.
+D:\OpenGL SDK\glfw\compile.sh: failed program was:
+#include <X11/Xlib.h>
+#include <X11/extensions/Xrandr.h>
+
+int main() {; return 0;}
+D:\OpenGL SDK\glfw\compile.sh: Checking for X11 VidMode support
+D:OpenGL SDKglfwcompile.sh: cc -c  conftest.c 1>&5
+In file included from D:/MSYS2/mingw64/include/X11/Xlib.h:31,
+                 from conftest.c:1:
+D:/MSYS2/mingw64/include/X11/X.h:44:26: error: expected '=', ',', ';', 'asm' or '__attribute__' before 'XID'
+   44 | typedef unsigned __int64 XID;
+      |                          ^~~
+D:/MSYS2/mingw64/include/X11/X.h:49:9: error: unknown type name 'XID'
+   49 | typedef XID Window;
+      |         ^~~
+D:/MSYS2/mingw64/include/X11/X.h:50:9: error: unknown type name 'XID'
+   50 | typedef XID Drawable;
+      |         ^~~
+D:/MSYS2/mingw64/include/X11/X.h:51:9: error: unknown type name 'XID'
+   51 | typedef XID Font;
+      |         ^~~
+D:/MSYS2/mingw64/include/X11/X.h:52:9: error: unknown type name 'XID'
+   52 | typedef XID Pixmap;
+      |         ^~~
+D:/MSYS2/mingw64/include/X11/X.h:53:9: error: unknown type name 'XID'
+   53 | typedef XID Cursor;
+      |         ^~~
+D:/MSYS2/mingw64/include/X11/X.h:54:9: error: unknown type name 'XID'
+   54 | typedef XID Colormap;
+      |         ^~~
+D:/MSYS2/mingw64/include/X11/X.h:55:9: error: unknown type name 'XID'
+   55 | typedef XID GContext;
+      |         ^~~
+D:/MSYS2/mingw64/include/X11/X.h:56:9: error: unknown type name 'XID'
+   56 | typedef XID KeySym;
+      |         ^~~
+In file included from conftest.c:1:
+D:/MSYS2/mingw64/include/X11/Xlib.h:452:9: error: unknown type name 'XID'
+  452 |         XID resource_base; /* resource ID base */
+      |         ^~~
+D:/MSYS2/mingw64/include/X11/Xlib.h:453:2: error: unknown type name 'XID'
+  453 |  XID resource_mask; /* resource ID mask bits */
+      |  ^~~
+D:/MSYS2/mingw64/include/X11/Xlib.h:454:2: error: unknown type name 'XID'
+  454 |  XID resource_id; /* allocator current ID */
+      |  ^~~
+D:/MSYS2/mingw64/include/X11/Xlib.h:456:2: error: expected specifier-qualifier-list before 'XID'
+  456 |  XID (*resource_alloc)(); /* allocator function */
+      |  ^~~
+D:/MSYS2/mingw64/include/X11/Xlib.h:910:2: error: unknown type name 'XID'
+  910 |  XID resourceid;  /* resource id */
+      |  ^~~
+In file included from D:/MSYS2/mingw64/include/tkIntXlibDecls.h:30,
+                 from D:/MSYS2/mingw64/include/X11/Xlib.h:1199,
+                 from conftest.c:1:
+D:/MSYS2/mingw64/include/X11/Xutil.h:100:2: error: unknown type name 'XID'
+  100 |  XID window_group; /* id of related window group */
+      |  ^~~
+D:/MSYS2/mingw64/include/X11/Xutil.h:268:2: error: unknown type name 'XID'
+  268 |  XID killid;   /* added by ICCCM version 1 */
+      |  ^~~
+D:/MSYS2/mingw64/include/X11/Xutil.h:356:5: error: unknown type name 'XID'; did you mean 'XIC'?
+  356 |     XID   /* rid */,
+      |     ^~~
+      |     XIC
+D:/MSYS2/mingw64/include/X11/Xutil.h:383:5: error: unknown type name 'XID'; did you mean 'XIC'?
+  383 |     XID   /* rid */,
+      |     ^~~
+      |     XIC
+D:/MSYS2/mingw64/include/X11/Xutil.h:575:5: error: unknown type name 'XID'; did you mean 'XIC'?
+  575 |     XID   /* rid */,
+      |     ^~~
+      |     XIC
+conftest.c:2:10: fatal error: X11/extensions/xf86vmode.h: No such file or directory
+    2 | #include <X11/extensions/xf86vmode.h>
+      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+compilation terminated.
+D:\OpenGL SDK\glfw\compile.sh: failed program was:
+#include <X11/Xlib.h>
+#include <X11/extensions/xf86vmode.h>
+
+#if defined(__APPLE_CC__)
+#error Not supported under Mac OS X
+#endif
+
+int main() {; return 0;}
+D:\OpenGL SDK\glfw\compile.sh: Checking for pthread support
+D:OpenGL SDKglfwcompile.sh: cc -o conftest  -pthread conftest.c  -lGL -pthread 1>&5
+D:/MSYS2/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.2.0/../../../../x86_64-w64-mingw32/bin/ld.exe: cannot find -lGL
+collect2.exe: error: ld returned 1 exit status
+D:\OpenGL SDK\glfw\compile.sh: failed program was:
+#include <pthread.h>
+int main() {pthread_t posixID; posixID=pthread_self(); return 0;}
+D:OpenGL SDKglfwcompile.sh: cc -o conftest  -D_REENTRANT conftest.c  -lGL -lpthread 1>&5
+D:/MSYS2/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.2.0/../../../../x86_64-w64-mingw32/bin/ld.exe: cannot find -lGL
+collect2.exe: error: ld returned 1 exit status
+D:\OpenGL SDK\glfw\compile.sh: failed program was:
+#include <pthread.h>
+int main() {pthread_t posixID; posixID=pthread_self(); return 0;}
+D:OpenGL SDKglfwcompile.sh: cc -o conftest   conftest.c  -lGL -lsocket 1>&5
+D:/MSYS2/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.2.0/../../../../x86_64-w64-mingw32/bin/ld.exe: cannot find -lGL
+D:/MSYS2/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.2.0/../../../../x86_64-w64-mingw32/bin/ld.exe: cannot find -lsocket
+collect2.exe: error: ld returned 1 exit status
+D:\OpenGL SDK\glfw\compile.sh: failed program was:
+#include <pthread.h>
+int main() {pthread_t posixID; posixID=pthread_self(); return 0;}
+D:\OpenGL SDK\glfw\compile.sh: Checking for glXGetProcAddress variants
+D:OpenGL SDKglfwcompile.sh: cc -o conftest  conftest.c  -lGL 1>&5
+In file included from D:/MSYS2/mingw64/include/X11/Xlib.h:31,
+                 from conftest.c:1:
+D:/MSYS2/mingw64/include/X11/X.h:44:26: error: expected '=', ',', ';', 'asm' or '__attribute__' before 'XID'
+   44 | typedef unsigned __int64 XID;
+      |                          ^~~
+D:/MSYS2/mingw64/include/X11/X.h:49:9: error: unknown type name 'XID'
+   49 | typedef XID Window;
+      |         ^~~
+D:/MSYS2/mingw64/include/X11/X.h:50:9: error: unknown type name 'XID'
+   50 | typedef XID Drawable;
+      |         ^~~
+D:/MSYS2/mingw64/include/X11/X.h:51:9: error: unknown type name 'XID'
+   51 | typedef XID Font;
+      |         ^~~
+D:/MSYS2/mingw64/include/X11/X.h:52:9: error: unknown type name 'XID'
+   52 | typedef XID Pixmap;
+      |         ^~~
+D:/MSYS2/mingw64/include/X11/X.h:53:9: error: unknown type name 'XID'
+   53 | typedef XID Cursor;
+      |         ^~~
+D:/MSYS2/mingw64/include/X11/X.h:54:9: error: unknown type name 'XID'
+   54 | typedef XID Colormap;
+      |         ^~~
+D:/MSYS2/mingw64/include/X11/X.h:55:9: error: unknown type name 'XID'
+   55 | typedef XID GContext;
+      |         ^~~
+D:/MSYS2/mingw64/include/X11/X.h:56:9: error: unknown type name 'XID'
+   56 | typedef XID KeySym;
+      |         ^~~
+In file included from conftest.c:1:
+D:/MSYS2/mingw64/include/X11/Xlib.h:452:9: error: unknown type name 'XID'
+  452 |         XID resource_base; /* resource ID base */
+      |         ^~~
+D:/MSYS2/mingw64/include/X11/Xlib.h:453:2: error: unknown type name 'XID'
+  453 |  XID resource_mask; /* resource ID mask bits */
+      |  ^~~
+D:/MSYS2/mingw64/include/X11/Xlib.h:454:2: error: unknown type name 'XID'
+  454 |  XID resource_id; /* allocator current ID */
+      |  ^~~
+D:/MSYS2/mingw64/include/X11/Xlib.h:456:2: error: expected specifier-qualifier-list before 'XID'
+  456 |  XID (*resource_alloc)(); /* allocator function */
+      |  ^~~
+D:/MSYS2/mingw64/include/X11/Xlib.h:910:2: error: unknown type name 'XID'
+  910 |  XID resourceid;  /* resource id */
+      |  ^~~
+In file included from D:/MSYS2/mingw64/include/tkIntXlibDecls.h:30,
+                 from D:/MSYS2/mingw64/include/X11/Xlib.h:1199,
+                 from conftest.c:1:
+D:/MSYS2/mingw64/include/X11/Xutil.h:100:2: error: unknown type name 'XID'
+  100 |  XID window_group; /* id of related window group */
+      |  ^~~
+D:/MSYS2/mingw64/include/X11/Xutil.h:268:2: error: unknown type name 'XID'
+  268 |  XID killid;   /* added by ICCCM version 1 */
+      |  ^~~
+D:/MSYS2/mingw64/include/X11/Xutil.h:356:5: error: unknown type name 'XID'; did you mean 'XIC'?
+  356 |     XID   /* rid */,
+      |     ^~~
+      |     XIC
+D:/MSYS2/mingw64/include/X11/Xutil.h:383:5: error: unknown type name 'XID'; did you mean 'XIC'?
+  383 |     XID   /* rid */,
+      |     ^~~
+      |     XIC
+D:/MSYS2/mingw64/include/X11/Xutil.h:575:5: error: unknown type name 'XID'; did you mean 'XIC'?
+  575 |     XID   /* rid */,
+      |     ^~~
+      |     XIC
+conftest.c:2:10: fatal error: GL/glx.h: No such file or directory
+    2 | #include <GL/glx.h>
+      |          ^~~~~~~~~~
+compilation terminated.
+D:\OpenGL SDK\glfw\compile.sh: failed program was:
+#include <X11/Xlib.h>
+#include <GL/glx.h>
+#include <GL/gl.h>
+int main() {void *ptr=(void*)glXGetProcAddress("glFun"); return 0;}
+D:OpenGL SDKglfwcompile.sh: cc -o conftest  conftest.c  -lGL 1>&5
+In file included from D:/MSYS2/mingw64/include/X11/Xlib.h:31,
+                 from conftest.c:1:
+D:/MSYS2/mingw64/include/X11/X.h:44:26: error: expected '=', ',', ';', 'asm' or '__attribute__' before 'XID'
+   44 | typedef unsigned __int64 XID;
+      |                          ^~~
+D:/MSYS2/mingw64/include/X11/X.h:49:9: error: unknown type name 'XID'
+   49 | typedef XID Window;
+      |         ^~~
+D:/MSYS2/mingw64/include/X11/X.h:50:9: error: unknown type name 'XID'
+   50 | typedef XID Drawable;
+      |         ^~~
+D:/MSYS2/mingw64/include/X11/X.h:51:9: error: unknown type name 'XID'
+   51 | typedef XID Font;
+      |         ^~~
+D:/MSYS2/mingw64/include/X11/X.h:52:9: error: unknown type name 'XID'
+   52 | typedef XID Pixmap;
+      |         ^~~
+D:/MSYS2/mingw64/include/X11/X.h:53:9: error: unknown type name 'XID'
+   53 | typedef XID Cursor;
+      |         ^~~
+D:/MSYS2/mingw64/include/X11/X.h:54:9: error: unknown type name 'XID'
+   54 | typedef XID Colormap;
+      |         ^~~
+D:/MSYS2/mingw64/include/X11/X.h:55:9: error: unknown type name 'XID'
+   55 | typedef XID GContext;
+      |         ^~~
+D:/MSYS2/mingw64/include/X11/X.h:56:9: error: unknown type name 'XID'
+   56 | typedef XID KeySym;
+      |         ^~~
+In file included from conftest.c:1:
+D:/MSYS2/mingw64/include/X11/Xlib.h:452:9: error: unknown type name 'XID'
+  452 |         XID resource_base; /* resource ID base */
+      |         ^~~
+D:/MSYS2/mingw64/include/X11/Xlib.h:453:2: error: unknown type name 'XID'
+  453 |  XID resource_mask; /* resource ID mask bits */
+      |  ^~~
+D:/MSYS2/mingw64/include/X11/Xlib.h:454:2: error: unknown type name 'XID'
+  454 |  XID resource_id; /* allocator current ID */
+      |  ^~~
+D:/MSYS2/mingw64/include/X11/Xlib.h:456:2: error: expected specifier-qualifier-list before 'XID'
+  456 |  XID (*resource_alloc)(); /* allocator function */
+      |  ^~~
+D:/MSYS2/mingw64/include/X11/Xlib.h:910:2: error: unknown type name 'XID'
+  910 |  XID resourceid;  /* resource id */
+      |  ^~~
+In file included from D:/MSYS2/mingw64/include/tkIntXlibDecls.h:30,
+                 from D:/MSYS2/mingw64/include/X11/Xlib.h:1199,
+                 from conftest.c:1:
+D:/MSYS2/mingw64/include/X11/Xutil.h:100:2: error: unknown type name 'XID'
+  100 |  XID window_group; /* id of related window group */
+      |  ^~~
+D:/MSYS2/mingw64/include/X11/Xutil.h:268:2: error: unknown type name 'XID'
+  268 |  XID killid;   /* added by ICCCM version 1 */
+      |  ^~~
+D:/MSYS2/mingw64/include/X11/Xutil.h:356:5: error: unknown type name 'XID'; did you mean 'XIC'?
+  356 |     XID   /* rid */,
+      |     ^~~
+      |     XIC
+D:/MSYS2/mingw64/include/X11/Xutil.h:383:5: error: unknown type name 'XID'; did you mean 'XIC'?
+  383 |     XID   /* rid */,
+      |     ^~~
+      |     XIC
+D:/MSYS2/mingw64/include/X11/Xutil.h:575:5: error: unknown type name 'XID'; did you mean 'XIC'?
+  575 |     XID   /* rid */,
+      |     ^~~
+      |     XIC
+conftest.c:2:10: fatal error: GL/glx.h: No such file or directory
+    2 | #include <GL/glx.h>
+      |          ^~~~~~~~~~
+compilation terminated.
+D:\OpenGL SDK\glfw\compile.sh: failed program was:
+#include <X11/Xlib.h>
+#include <GL/glx.h>
+#include <GL/gl.h>
+int main() {void *ptr=(void*)glXGetProcAddressARB("glFun"); return 0;}
+D:OpenGL SDKglfwcompile.sh: cc -o conftest  conftest.c  -lGL 1>&5
+In file included from D:/MSYS2/mingw64/include/X11/Xlib.h:31,
+                 from conftest.c:1:
+D:/MSYS2/mingw64/include/X11/X.h:44:26: error: expected '=', ',', ';', 'asm' or '__attribute__' before 'XID'
+   44 | typedef unsigned __int64 XID;
+      |                          ^~~
+D:/MSYS2/mingw64/include/X11/X.h:49:9: error: unknown type name 'XID'
+   49 | typedef XID Window;
+      |         ^~~
+D:/MSYS2/mingw64/include/X11/X.h:50:9: error: unknown type name 'XID'
+   50 | typedef XID Drawable;
+      |         ^~~
+D:/MSYS2/mingw64/include/X11/X.h:51:9: error: unknown type name 'XID'
+   51 | typedef XID Font;
+      |         ^~~
+D:/MSYS2/mingw64/include/X11/X.h:52:9: error: unknown type name 'XID'
+   52 | typedef XID Pixmap;
+      |         ^~~
+D:/MSYS2/mingw64/include/X11/X.h:53:9: error: unknown type name 'XID'
+   53 | typedef XID Cursor;
+      |         ^~~
+D:/MSYS2/mingw64/include/X11/X.h:54:9: error: unknown type name 'XID'
+   54 | typedef XID Colormap;
+      |         ^~~
+D:/MSYS2/mingw64/include/X11/X.h:55:9: error: unknown type name 'XID'
+   55 | typedef XID GContext;
+      |         ^~~
+D:/MSYS2/mingw64/include/X11/X.h:56:9: error: unknown type name 'XID'
+   56 | typedef XID KeySym;
+      |         ^~~
+In file included from conftest.c:1:
+D:/MSYS2/mingw64/include/X11/Xlib.h:452:9: error: unknown type name 'XID'
+  452 |         XID resource_base; /* resource ID base */
+      |         ^~~
+D:/MSYS2/mingw64/include/X11/Xlib.h:453:2: error: unknown type name 'XID'
+  453 |  XID resource_mask; /* resource ID mask bits */
+      |  ^~~
+D:/MSYS2/mingw64/include/X11/Xlib.h:454:2: error: unknown type name 'XID'
+  454 |  XID resource_id; /* allocator current ID */
+      |  ^~~
+D:/MSYS2/mingw64/include/X11/Xlib.h:456:2: error: expected specifier-qualifier-list before 'XID'
+  456 |  XID (*resource_alloc)(); /* allocator function */
+      |  ^~~
+D:/MSYS2/mingw64/include/X11/Xlib.h:910:2: error: unknown type name 'XID'
+  910 |  XID resourceid;  /* resource id */
+      |  ^~~
+In file included from D:/MSYS2/mingw64/include/tkIntXlibDecls.h:30,
+                 from D:/MSYS2/mingw64/include/X11/Xlib.h:1199,
+                 from conftest.c:1:
+D:/MSYS2/mingw64/include/X11/Xutil.h:100:2: error: unknown type name 'XID'
+  100 |  XID window_group; /* id of related window group */
+      |  ^~~
+D:/MSYS2/mingw64/include/X11/Xutil.h:268:2: error: unknown type name 'XID'
+  268 |  XID killid;   /* added by ICCCM version 1 */
+      |  ^~~
+D:/MSYS2/mingw64/include/X11/Xutil.h:356:5: error: unknown type name 'XID'; did you mean 'XIC'?
+  356 |     XID   /* rid */,
+      |     ^~~
+      |     XIC
+D:/MSYS2/mingw64/include/X11/Xutil.h:383:5: error: unknown type name 'XID'; did you mean 'XIC'?
+  383 |     XID   /* rid */,
+      |     ^~~
+      |     XIC
+D:/MSYS2/mingw64/include/X11/Xutil.h:575:5: error: unknown type name 'XID'; did you mean 'XIC'?
+  575 |     XID   /* rid */,
+      |     ^~~
+      |     XIC
+conftest.c:2:10: fatal error: GL/glx.h: No such file or directory
+    2 | #include <GL/glx.h>
+      |          ^~~~~~~~~~
+compilation terminated.
+D:\OpenGL SDK\glfw\compile.sh: failed program was:
+#include <X11/Xlib.h>
+#include <GL/glx.h>
+#include <GL/gl.h>
+int main() {void *ptr=(void*)glXGetProcAddressEXT("glFun"); return 0;}
+D:\OpenGL SDK\glfw\compile.sh: Checking for dlopen
+D:OpenGL SDKglfwcompile.sh: cc -o conftest  conftest.c  -lGL 1>&5
+conftest.c:1:10: fatal error: dlfcn.h: No such file or directory
+    1 | #include <dlfcn.h>
+      |          ^~~~~~~~~
+compilation terminated.
+D:\OpenGL SDK\glfw\compile.sh: failed program was:
+#include <dlfcn.h>
+int main() {void *l=dlopen("libGL.so",RTLD_LAZY|RTLD_GLOBAL); return 0;}
+D:OpenGL SDKglfwcompile.sh: cc -o conftest  conftest.c  -lGL -ldl 1>&5
+conftest.c:1:10: fatal error: dlfcn.h: No such file or directory
+    1 | #include <dlfcn.h>
+      |          ^~~~~~~~~
+compilation terminated.
+D:\OpenGL SDK\glfw\compile.sh: failed program was:
+#include <dlfcn.h>
+int main() {void *l=dlopen("libGL.so",RTLD_LAZY|RTLD_GLOBAL); return 0;}
+D:\OpenGL SDK\glfw\compile.sh: Checking for sysconf
+D:OpenGL SDKglfwcompile.sh: cc -o conftest  conftest.c  -lGL 1>&5
+conftest.c:4:2: error: #error Neither _SC_NPROCESSORS_ONLN nor _SC_NPROC_ONLN available
+    4 | #error Neither _SC_NPROCESSORS_ONLN nor _SC_NPROC_ONLN available
+      |  ^~~~~
+conftest.c: In function 'main':
+conftest.c:7:20: warning: implicit declaration of function 'sysconf' [-Wimplicit-function-declaration]
+    7 | int main() {long x=sysconf(_SC_ARG_MAX); return 0; }
+      |                    ^~~~~~~
+conftest.c:7:28: error: '_SC_ARG_MAX' undeclared (first use in this function)
+    7 | int main() {long x=sysconf(_SC_ARG_MAX); return 0; }
+      |                            ^~~~~~~~~~~
+conftest.c:7:28: note: each undeclared identifier is reported only once for each function it appears in
+D:\OpenGL SDK\glfw\compile.sh: failed program was:
+#include <unistd.h>
+#ifndef _SC_NPROCESSORS_ONLN
+#ifndef _SC_NPROC_ONLN
+#error Neither _SC_NPROCESSORS_ONLN nor _SC_NPROC_ONLN available
+#endif
+#endif
+int main() {long x=sysconf(_SC_ARG_MAX); return 0; }
+D:\OpenGL SDK\glfw\compile.sh: Checking for sysctl support
+D:OpenGL SDKglfwcompile.sh: cc -E conftest.c
+conftest.c:2:10: fatal error: sys/sysctl.h: No such file or directory
+    2 | #include <sys/sysctl.h>
+      |          ^~~~~~~~~~~~~~
+compilation terminated.
+D:\OpenGL SDK\glfw\compile.sh: Creating ./lib/x11/Makefile.x11
+D:\OpenGL SDK\glfw\compile.sh: Creating ./examples/Makefile.x11
+D:\OpenGL SDK\glfw\compile.sh: Creating ./tests/Makefile.x11
+D:\OpenGL SDK\glfw\compile.sh: Creating ./lib/x11/libglfw.pc.in

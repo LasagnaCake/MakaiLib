@@ -1230,7 +1230,7 @@
 	<vector>
 	<functional>
 
-1656966200 d:\c(++) projects\_c++\game engine\makailib\lib\makai.hpp
+1656975586 d:\c(++) projects\_c++\game engine\makailib\lib\makai.hpp
 	<string>
 	<vector>
 	<functional>
@@ -1248,7 +1248,6 @@
 	<collection/matrices.hpp>
 	<collection/tween.hpp>
 	<collection/event.hpp>
-	<OGRE/Ogre.h>
 	<GLFW/glfw3.h>
 	<graphical.hpp>
 
@@ -1257,9 +1256,8 @@
 	"2d3d.hpp"
 	<map>
 
-1656966067 d:\c(++) projects\_c++\game engine\makailib\lib\graphical.hpp
+1656975577 d:\c(++) projects\_c++\game engine\makailib\lib\graphical.hpp
 	<collection/entity/entity.hpp>
-	<OGRE/Ogre.h>
 	<GLFW/glfw3.h>
 
 1656856746 d:\c(++) projects\_c++\game engine\makailib\lib\collection\algebra.hpp
@@ -2992,4 +2990,45 @@
 	"OgreAxisAlignedBox.h"
 	"OgreHeaderPrefix.h"
 	"OgreHeaderSuffix.h"
+
+1638991400 d:\c(++) projects\_c++\game engine\makailib\lib\glfw\include\glfw\glfw3.h
+	<stddef.h>
+	<stdint.h>
+	<vulkan/vulkan.h>
+	<GLES/gl.h>
+	<GLES/glext.h>
+	<GLES2/gl2.h>
+	<GLES2/gl2ext.h>
+	<GLES3/gl3.h>
+	<GLES2/gl2ext.h>
+	<GLES3/gl31.h>
+	<GLES2/gl2ext.h>
+	<GLES3/gl32.h>
+	<GLES2/gl2ext.h>
+	<OpenGL/gl3.h>
+	<OpenGL/gl3ext.h>
+	<GL/glcorearb.h>
+	<GL/glext.h>
+	<OpenGL/glu.h>
+	<GL/glu.h>
+	<OpenGL/gl.h>
+	<GL/gl.h>
+	<GL/glext.h>
+
+1643611812 source:d:\c(++) projects\_c++\game engine\makailib\lib\glfw\src\glad.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<glad/glad.h>
+	<windows.h>
+	<winapifamily.h>
+	<dlfcn.h>
+
+1643611812 d:\c(++) projects\_c++\game engine\makailib\lib\glfw\include\glad\glad.h
+	<KHR/khrplatform.h>
+
+1643611812 d:\c(++) projects\_c++\game engine\makailib\lib\glfw\include\khr\khrplatform.h
+	<stdint.h>
+	<inttypes.h>
+	<stdint.h>
 
