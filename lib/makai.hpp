@@ -15,6 +15,7 @@
 #include <cstdlib>
 #include <math.h>
 #include <thread>
+#include <map>
 
 /*
 ***************************
@@ -75,7 +76,8 @@ namespace Makai {
 		using
 		std::vector,
 		std::function,
-		std::string;
+		std::string,
+		std::map;
 	}
 	/**
 	***********************
@@ -87,19 +89,51 @@ namespace Makai {
 
 	typedef function<void(float)>	OnFrameFunc;
 
+	struct InputManager {
+		/// Sets the target window.
+		inline void setWindow(GLFWwindow* window);
+		/// Returns whether the button is pressed.
+		inline bool getButtonDown(int button);
+		/**
+		* Returns the button's state.
+		* 0 = Released;
+		* 1 = Pressed ("Tapped");
+		* 2 = Held;
+		* 3 = Repeating;
+		*/
+		int getButtonState(int button);
+	private:
+		/// The window to read inputs from.
+		GLFWwindow* window;
+		map<int, bool> isHeld;
+	};
+
 	struct Program {
 	public:
+		/// The minimum frame rate.
 		size_t frameRateMinimum = 120;
-		void init(unsigned int, unsigned int, string);
+		/// Initializes the program.
+		void init(unsigned int width, unsigned int height, std::string windowTitle = "WINDOW");
+		/// Runs the program.
 		void run();
+		/// Closes the program.
 		void close();
+		/// Gets called every frame, along all other logic.
 		OnFrameFunc		onFrame;
+		/// Gets called when the program is closing. Happens before GLFW is terminated.
 		Event::Signal	onClose;
-		inline bool running();
+		/// Returns whether the program should be running.
+		inline bool		running();
+		/// The program's input manager.
+		InputManager	input;
 	private:
+		/// Properly finishes program execution.
 		void terminate();
+		/// The program's title.
 		string windowTitle;
+		/// The program's window.
 		GLFWwindow* window;
+		/// Whether execution is to be halted.
 		bool forceStop = false;
 	} $_MAIN;
 }

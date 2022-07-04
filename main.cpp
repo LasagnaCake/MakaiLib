@@ -1,11 +1,15 @@
 #include "lib/makai.hpp"
 #include <stdexcept>
 
-void Makai::Program::init(unsigned int width, unsigned int height, std::string windowTitle = "WINDOW"){
+void Makai::Program::init(unsigned int width, unsigned int height, std::string windowTitle){
 	// Initialize GLFW
 	glfwInit();
 	// Set window title to given title
 	this->windowTitle = windowTitle;
+	// Set GLFW version
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+	glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 	// Try and create window
 	window = glfwCreateWindow(width, height, windowTitle.c_str(), NULL, NULL);
 	// If window couldn't be created, throw error
@@ -13,6 +17,8 @@ void Makai::Program::init(unsigned int width, unsigned int height, std::string w
 		throw std::runtime_error("Window could not be created.");
 	// Show window
 	glfwMakeContextCurrent(window);
+	// Set window to input manager
+	input.setWindow(window);
 }
 
 void Makai::Program::run() {
@@ -51,23 +57,58 @@ void Makai::Program::run() {
 		// Wait for frame sync, if needed
 		while ((glfwGetTime() - last) < frameDelta) {
 		}
+		// Swap color buffer
+		glfwSwapBuffers(window);
+		// Check events, update window state and call callbacks
+		glfwPollEvents();
 	}
 	// Terminate program
 	terminate();
 }
 
 void Makai::Program::close() {
+	// Set window to close
+	glfwSetWindowShouldClose(window, true);
 	// Set execution to end
 	forceStop = true;
 }
 
 void Makai::Program::terminate() {
+	// Call closing function
+	onClose();
+	// Set window to close
+	glfwSetWindowShouldClose(window, true);
 	// Force execution end
 	forceStop = true;
 	// End GLFW
 	glfwTerminate();
 	// Close program
 	exit(0);
+}
+
+inline bool Makai::InputManager::getButtonDown(int button) {
+	return glfwGetKey(window, button) == GLFW_PRESS;
+}
+
+int Makai::InputManager::getButtonState(int button) {
+	// check if button was previously checked
+	if (!isHeld[button]) isHeld[button] = false;
+	// Get current button state (released, pressed, held, repeating)
+	int state = 0;
+	if (glfwGetKey(window, button) == GLFW_PRESS)
+		state = (
+			(glfwGetKey(window, button) == GLFW_PRESS)
+		+	(isHeld[button])
+		+	(glfwGetKey(window, button) == GLFW_REPEAT)
+		);
+	// Set current button state (held / not held)
+	isHeld[button] = state;
+	// Return state
+	return state;
+}
+
+inline void Makai::InputManager::setWindow(GLFWwindow* window) {
+	this->window = window;
 }
 
 inline bool Makai::Program::running() {
