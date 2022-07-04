@@ -2,3 +2,5 @@
 # MakaiLib.cbp
 # obj
 # main.cpp
+OgreMain_d.pdb
+RenderSystem_Vulkan_d.pdb

@@ -50,7 +50,9 @@
 *********************
 */
 
-#include <Ogre.h>
+#define OGRE_IGNORE_UNKNOWN_DEBUG
+
+#include <OGRE/Ogre.h>
 #include <GLFW/glfw3.h>
 #include <graphical.hpp>
 
