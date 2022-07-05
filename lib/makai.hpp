@@ -90,9 +90,9 @@ namespace Makai {
 		std::vector,
 		std::function,
 		std::string,
-		std::map,
+		std::map/*,
 		Vector::Vector3,
-		Vector::Vector4;
+		Vector::Vector4*/;
 	}
 	/**
 	***********************
@@ -131,7 +131,7 @@ namespace Makai {
 		/// Closes the program.
 		void close();
 		/// Sets the window's background (clear) color.
-		void setClearColor(Vector4 color);
+		//void setClearColor(Vector4 color);
 		/// Returns whether the program should be running.
 		inline bool	running();
 		/// The minimum frame rate.
@@ -139,7 +139,7 @@ namespace Makai {
 		/// Gets called every frame, along all other logic.
 		OnFrameFunc		onFrame;
 		/// Gets called when the program is closing. Happens before GLFW is terminated.
-		Event::Signal	onClose;
+		//Event::Signal	onClose;
 		/// The program's input manager.
 		InputManager	input;
 	private:

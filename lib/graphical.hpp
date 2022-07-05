@@ -1,6 +1,8 @@
 #ifndef GRAPHICAL_RENDERER_H
 #define GRAPHICAL_RENDERER_H
 
+#ifdef $$$
+
 #include <map>
 #include <vector>
 #include <stdexcept>
@@ -79,5 +81,7 @@ namespace EntityClass {
 }
 
 #undef DERIVED_CLASS
+
+#endif
 
 #endif // GRAPHICAL_RENDERER_H

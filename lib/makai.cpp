@@ -1,7 +1,7 @@
 #include "makai.hpp"
 #include <stdexcept>
 
-using namespace Vector;
+//using namespace Vector;
 
 // Program
 
@@ -86,7 +86,7 @@ void Makai::Program::close() {
 
 void Makai::Program::terminate() {
 	// Call closing function
-	onClose();
+	//onClose();
 	// Set window to close
 	glfwSetWindowShouldClose(window, true);
 	// Force execution end
@@ -100,10 +100,10 @@ void Makai::Program::terminate() {
 inline bool Makai::Program::running() {
 	return (glfwWindowShouldClose(window) && !forceStop);
 }
-
+/*
 void Makai::Program::setClearColor(Vector4 color) {
 	glClearColor(color.x, color.y, color.z, color.w);
-}
+}*/
 
 // Input Manager
 

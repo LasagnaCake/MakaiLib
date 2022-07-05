@@ -36,32 +36,34 @@
 			<Add option="-std=c++20" />
 			<Add option="-m64" />
 			<Add option="-fexceptions" />
-			<Add directory="../MakaiLib/lib/GLFW/include" />
-			<Add directory="../MakaiLib/lib/GLFW/lib" />
-			<Add directory="../MakaiLib/lib/GLFW/include/GLFW" />
-			<Add directory="../MakaiLib/lib/stb_image" />
-			<Add directory="../MakaiLib/lib" />
+			<Add directory="lib/GLFW/include" />
+			<Add directory="lib/GLFW/lib" />
+			<Add directory="lib" />
 		</Compiler>
 		<ResourceCompiler>
-			<Add directory="../MakaiLib/lib/GLFW/include" />
-			<Add directory="../MakaiLib/lib/GLFW/lib" />
-			<Add directory="../MakaiLib/lib/GLFW/include/GLFW" />
-			<Add directory="../MakaiLib/lib/stb_image" />
-			<Add directory="../MakaiLib/lib" />
+			<Add directory="lib/GLFW/include" />
+			<Add directory="lib/GLFW/lib" />
+			<Add directory="lib" />
 		</ResourceCompiler>
 		<Linker>
 			<Add option="-O2" />
 			<Add option="-m64" />
-			<Add library="D:/C(++) Projects/_C++/Game Engine/MakaiLib/bin/Debug/libMakaiLib.a" />
-			<Add directory="../MakaiLib/lib/GLFW/include" />
-			<Add directory="../MakaiLib/lib/GLFW/lib" />
-			<Add directory="../MakaiLib/lib/GLFW/include/GLFW" />
-			<Add directory="../MakaiLib/lib/stb_image" />
-			<Add directory="../MakaiLib/lib" />
+			<Add library="lib/GLFW/lib/libglfw3.a" />
+			<Add library="lib/GLFW/lib/libglfw3dll.a" />
+			<Add directory="lib/GLFW/include" />
+			<Add directory="lib/GLFW/lib" />
+			<Add directory="lib" />
 		</Linker>
-		<Unit filename="../MakaiLib/lib/glhelper.hpp" />
-		<Unit filename="../MakaiLib/lib/graphical.hpp" />
-		<Unit filename="../MakaiLib/lib/makai.hpp" />
+		<Unit filename="lib/GLFW/include/glad/glad.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="lib/glhelper.cpp" />
+		<Unit filename="lib/glhelper.hpp" />
+		<Unit filename="lib/graphical.cpp" />
+		<Unit filename="lib/graphical.hpp" />
+		<Unit filename="lib/makai.cpp" />
+		<Unit filename="lib/makai.hpp" />
+		<Unit filename="lib/stb_image.cpp" />
 		<Unit filename="main.cpp" />
 		<Unit filename="test.cpp" />
 		<Extensions>

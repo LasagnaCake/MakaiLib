@@ -3,4 +3,4 @@
 #include <GLFW/glfw3.h>
 #include <stb_image.h>
 
-using namespace Vector;
+//using namespace Vector;
