@@ -1,9 +1,9 @@
+#include <glad/glad.h>
 #include "glhelper.hpp"
 
-#include <stdexcept>
-#include <stb_image.h>
-#include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <stb_image.h>
+#include <stdexcept>
 
 unsigned int GLHelper::loadTexture2D(std::string path, unsigned int channels) {
 	// Generate and bind OpenGL texture
@@ -32,7 +32,7 @@ unsigned int GLHelper::genBuffer() {
 	return id;
 }
 
-unsigned int GLHelper::genVertexAray() {
+unsigned int GLHelper::genVertexArray() {
 	unsigned int id;
 	glGenVertexArrays(1, &id);
 	return id;

@@ -1,3 +1,8 @@
+#ifndef MAKAILIB_MAKAI_LIBRARY_H
+#define MAKAILIB_MAKAI_LIBRARY_H
+
+#include <glad/glad.h>
+
 /*
 *******************
 *                 *
@@ -29,6 +34,8 @@
 #include <OGRE/Ogre.h>
 //*/
 
+#include <GLFW/glfw3.h>
+#include <stb_image.h>
 #include <graphical.hpp>
 
 /*
@@ -38,7 +45,7 @@
 *                         *
 ***************************
 */
-
+/*
 #include <collection/algebra.hpp>
 
 #ifdef _$_FLOAT_AS_DOUBLE
@@ -55,7 +62,7 @@
 #ifdef _$_FLOAT_AS_DOUBLE
 #undef float
 #endif // _$_FLOAT_AS_DOUBLE
-
+*/
 /*
 *	[+]=[   [Headers END]   ]=[+]
 */
@@ -97,9 +104,8 @@ namespace Makai {
 
 	typedef function<void(float)>	OnFrameFunc;
 
-	struct InputManager {
-		/// Sets the target window.
-		inline void setWindow(GLFWwindow* window);
+	class InputManager {
+	public:
 		/// Returns whether the button is pressed.
 		inline bool getButtonDown(int button);
 		/**
@@ -110,33 +116,32 @@ namespace Makai {
 		* 3 = Repeating;
 		*/
 		int getButtonState(int button);
-	private:
 		/// The window to read inputs from.
 		GLFWwindow* window;
+	private:
 		map<int, bool> isHeld;
 	};
 
 	struct Program {
 	public:
-		/// The minimum frame rate.
-		size_t frameRateMinimum = 120;
 		/// Initializes the program.
-		void init(unsigned int width, unsigned int height, string windowTitle = "WINDOW");
+		void init(unsigned int width, unsigned int height, std::string windowTitle);
 		/// Runs the program.
 		void run();
 		/// Closes the program.
 		void close();
+		/// Sets the window's background (clear) color.
+		void setClearColor(Vector4 color);
+		/// Returns whether the program should be running.
+		inline bool	running();
+		/// The minimum frame rate.
+		size_t frameRateMinimum = 120;
 		/// Gets called every frame, along all other logic.
 		OnFrameFunc		onFrame;
 		/// Gets called when the program is closing. Happens before GLFW is terminated.
 		Event::Signal	onClose;
-		/// Returns whether the program should be running.
-		inline bool		running();
 		/// The program's input manager.
 		InputManager	input;
-		/// Sets the window's background (clear) color.
-		void setClearColor(Vector3 color);
-		void setClearColor(Vector4 color);
 	private:
 		/// Properly finishes program execution.
 		void terminate();
@@ -146,5 +151,7 @@ namespace Makai {
 		GLFWwindow* window;
 		/// Whether execution is to be halted.
 		bool forceStop = false;
-	} $_MAIN;
+	} mainProgram;
 }
+
+#endif // MAKAILIB_MAKAI_H

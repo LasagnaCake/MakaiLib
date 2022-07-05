@@ -8,7 +8,6 @@
 
 // #include <OGRE/Ogre.h>
 
-#include <GLFW/glfw3.h>
 #include <collection/vectorn.hpp>
 #include <collection/entity/entity.hpp>
 

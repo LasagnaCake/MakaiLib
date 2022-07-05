@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="Makai" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/Debug/Makai" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/Release/Makai" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-O2" />
+			<Add option="-Wnon-virtual-dtor" />
+			<Add option="-Winline" />
+			<Add option="-Wall" />
+			<Add option="-std=c++20" />
+			<Add option="-m64" />
+			<Add option="-fexceptions" />
+			<Add directory="../MakaiLib/lib/GLFW/include" />
+			<Add directory="../MakaiLib/lib/GLFW/lib" />
+			<Add directory="../MakaiLib/lib/GLFW/include/GLFW" />
+			<Add directory="../MakaiLib/lib/stb_image" />
+			<Add directory="../MakaiLib/lib" />
+		</Compiler>
+		<ResourceCompiler>
+			<Add directory="../MakaiLib/lib/GLFW/include" />
+			<Add directory="../MakaiLib/lib/GLFW/lib" />
+			<Add directory="../MakaiLib/lib/GLFW/include/GLFW" />
+			<Add directory="../MakaiLib/lib/stb_image" />
+			<Add directory="../MakaiLib/lib" />
+		</ResourceCompiler>
+		<Linker>
+			<Add option="-O2" />
+			<Add option="-m64" />
+			<Add library="D:/C(++) Projects/_C++/Game Engine/MakaiLib/bin/Debug/libMakaiLib.a" />
+			<Add directory="../MakaiLib/lib/GLFW/include" />
+			<Add directory="../MakaiLib/lib/GLFW/lib" />
+			<Add directory="../MakaiLib/lib/GLFW/include/GLFW" />
+			<Add directory="../MakaiLib/lib/stb_image" />
+			<Add directory="../MakaiLib/lib" />
+		</Linker>
+		<Unit filename="../MakaiLib/lib/glhelper.hpp" />
+		<Unit filename="../MakaiLib/lib/graphical.hpp" />
+		<Unit filename="../MakaiLib/lib/makai.hpp" />
+		<Unit filename="main.cpp" />
+		<Unit filename="test.cpp" />
+		<Extensions>
+			<lib_finder disable_auto="1" />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
