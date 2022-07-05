@@ -1,7 +1,9 @@
 # depslib dependency file v1.0
-1656962902 source:d:\c(++) projects\_c++\game engine\makailib\main.cpp
+1657034810 source:d:\c(++) projects\_c++\game engine\makailib\main.cpp
+	<glad/glad.h>
 	"lib/makai.hpp"
 	<stdexcept>
+	<stb_image.h>
 
 1656854523 d:\c(++) projects\_c++\libraries\collection\entity\entity.hpp
 	"core.hpp"
@@ -1230,7 +1232,7 @@
 	<vector>
 	<functional>
 
-1656976479 d:\c(++) projects\_c++\game engine\makailib\lib\makai.hpp
+1657034748 d:\c(++) projects\_c++\game engine\makailib\lib\makai.hpp
 	<string>
 	<vector>
 	<functional>
@@ -1241,8 +1243,7 @@
 	<math.h>
 	<thread>
 	<map>
-	<glad/glad.h>
-	<GLFW/glfw3.h>
+	<OGRE/Ogre.h>
 	<graphical.hpp>
 	<collection/algebra.hpp>
 	<collection/entity/entity.hpp>
@@ -1257,10 +1258,11 @@
 	"2d3d.hpp"
 	<map>
 
-1656990671 d:\c(++) projects\_c++\game engine\makailib\lib\graphical.hpp
+1657034848 d:\c(++) projects\_c++\game engine\makailib\lib\graphical.hpp
 	<map>
 	<vector>
-	<glad/glad.h>
+	<stdexcept>
+	<string>
 	<GLFW/glfw3.h>
 	<collection/vectorn.hpp>
 	<collection/entity/entity.hpp>
@@ -3037,6 +3039,40 @@
 	<inttypes.h>
 	<stdint.h>
 
-1656989291 source:d:\c(++) projects\_c++\game engine\makailib\lib\graphical.cpp
+1657034853 source:d:\c(++) projects\_c++\game engine\makailib\lib\graphical.cpp
+	<glad/glad.h>
 	"graphical.hpp"
+
+1643657589 d:\c(++) projects\_c++\game engine\makailib\lib\stb_image.h
+	"stb_image.h"
+	<stdio.h>
+	<stdlib.h>
+	<stdarg.h>
+	<stddef.h>
+	<stdlib.h>
+	<string.h>
+	<limits.h>
+	<math.h>
+	<stdio.h>
+	<assert.h>
+	<stdint.h>
+	<emmintrin.h>
+	<intrin.h>
+	<arm_neon.h>
+
+1657034658 source:d:\c(++) projects\_c++\game engine\makailib\lib\glhelper.cpp
+	"glhelper.hpp"
+	<stdexcept>
+	<stb_image.h>
+	<glad/glad.h>
+	<GLFW/glfw3.h>
+
+1657034616 d:\c(++) projects\_c++\game engine\makailib\lib\glhelper.hpp
+	<string>
+
+1657034810 source:d:\c(++) projects\_c++\game engine\makailib\makai.cpp
+	<glad/glad.h>
+	"lib/makai.hpp"
+	<stdexcept>
+	<stb_image.h>
 

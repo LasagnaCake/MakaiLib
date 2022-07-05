@@ -1,5 +1,12 @@
+#include <glad/glad.h>
 #include "lib/makai.hpp"
 #include <stdexcept>
+
+using namespace Vector;
+
+#include <stb_image.h>
+
+// Program
 
 void Makai::Program::init(unsigned int width, unsigned int height, std::string windowTitle){
 	// Initialize GLFW
@@ -19,6 +26,13 @@ void Makai::Program::init(unsigned int width, unsigned int height, std::string w
 	glfwMakeContextCurrent(window);
 	// Set window to input manager
 	input.setWindow(window);
+	// If GLAD couldn't be initialized, throw error
+	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+		throw std::runtime_error("GLAD could not be initialized.");
+	// Set OpenGL viewport size to window size
+	glViewport(0, 0, width, height);
+	// Set STBI to flip images on load
+	stbi_set_flip_vertically_on_load(true);
 }
 
 void Makai::Program::run() {
@@ -86,6 +100,20 @@ void Makai::Program::terminate() {
 	exit(0);
 }
 
+inline bool Makai::Program::running() {
+	return (glfwWindowShouldClose(window) && !forceStop);
+}
+
+void Makai::Program::setClearColor(Vector4 color) {
+	glClearColor(color.x, color.y, color.z, color.w);
+}
+
+void Makai::Program::setClearColor(Vector3 color) {
+	glClearColor(color.x, color.y, color.z, 1.0);
+}
+
+// Input Manager
+
 inline bool Makai::InputManager::getButtonDown(int button) {
 	return glfwGetKey(window, button) == GLFW_PRESS;
 }
@@ -109,8 +137,4 @@ int Makai::InputManager::getButtonState(int button) {
 
 inline void Makai::InputManager::setWindow(GLFWwindow* window) {
 	this->window = window;
-}
-
-inline bool Makai::Program::running() {
-	return (glfwWindowShouldClose(window) && !forceStop);
 }

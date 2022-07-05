@@ -10,7 +10,6 @@
 #include <vector>
 #include <functional>
 #include <cstring>
-#include <iostream>
 #include <stdexcept>
 #include <cstdlib>
 #include <math.h>
@@ -25,12 +24,11 @@
 *********************
 */
 
+/*
 #define OGRE_IGNORE_UNKNOWN_DEBUG
+#include <OGRE/Ogre.h>
+//*/
 
-// #include <OGRE/Ogre.h>
-
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
 #include <graphical.hpp>
 
 /*
@@ -85,7 +83,9 @@ namespace Makai {
 		std::vector,
 		std::function,
 		std::string,
-		std::map;
+		std::map,
+		Vector::Vector3,
+		Vector::Vector4;
 	}
 	/**
 	***********************
@@ -121,7 +121,7 @@ namespace Makai {
 		/// The minimum frame rate.
 		size_t frameRateMinimum = 120;
 		/// Initializes the program.
-		void init(unsigned int width, unsigned int height, std::string windowTitle = "WINDOW");
+		void init(unsigned int width, unsigned int height, string windowTitle = "WINDOW");
 		/// Runs the program.
 		void run();
 		/// Closes the program.
@@ -134,6 +134,9 @@ namespace Makai {
 		inline bool		running();
 		/// The program's input manager.
 		InputManager	input;
+		/// Sets the window's background (clear) color.
+		void setClearColor(Vector3 color);
+		void setClearColor(Vector4 color);
 	private:
 		/// Properly finishes program execution.
 		void terminate();

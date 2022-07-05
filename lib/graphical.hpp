@@ -3,10 +3,11 @@
 
 #include <map>
 #include <vector>
+#include <stdexcept>
+#include <string>
 
 // #include <OGRE/Ogre.h>
 
-#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <collection/vectorn.hpp>
 #include <collection/entity/entity.hpp>
