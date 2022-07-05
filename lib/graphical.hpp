@@ -1,6 +1,9 @@
 #ifndef GRAPHICAL_RENDERER_H
 #define GRAPHICAL_RENDERER_H
 
+#include <map>
+#include <vector>
+
 // #include <OGRE/Ogre.h>
 
 #include <glad/glad.h>
@@ -14,20 +17,57 @@
 	inline	virtual string getBaseClass() {return #BASE;}\
 	inline	static string getCoreClass() {return #NAME;}
 
+namespace RenderData {
+	namespace {
+		using
+		Vector::Vector2,
+		Vector::Vector3,
+		std::vector;
+	}
+
+	/**
+	***********************************
+	*                                 *
+	*  Triangle Shape Data Structure  *
+	*                                 *
+	***********************************
+	*/
+	struct Triangle {
+		/// The triangle's vertices.
+		Vector3 verts[3] = {
+			Vector3(0),
+			Vector3(0),
+			Vector3(0)
+			};
+
+		/// The triangle's UV coordinates;
+		Vector3 uv[3] = {
+			Vector3(0),
+			Vector3(0),
+			Vector3(0)
+			};
+	};
+
+	/**
+	***************************************
+	*                                     *
+	*  Renderable Polygon Data Structure  *
+	*                                     *
+	***************************************
+	*/
+	struct RenderPolygon {
+		vector<Triangle> triangles;
+	};
+
+	std::map<size_t, vector<RenderPolygon*>> layers;
+}
+
 namespace EntityClass {
 	namespace {
 		using
 		Vector::Vector2,
 		Vector::Vector3;
 	}
-
-	struct Triangle {
-		Vector3 verts[4];
-	};
-
-	struct Plane {
-		Vector3 verts[4];
-	};
 
 	/**
 	*********************************
