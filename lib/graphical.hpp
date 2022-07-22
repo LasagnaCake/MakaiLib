@@ -1,14 +1,13 @@
 #ifndef GRAPHICAL_RENDERER_H
 #define GRAPHICAL_RENDERER_H
 
-#ifdef $$$
-
 #include <map>
 #include <vector>
 #include <stdexcept>
 #include <string>
 
 // #include <OGRE/Ogre.h>
+#include <irrlicht.h>
 
 #include <collection/vectorn.hpp>
 #include <collection/entity/entity.hpp>
@@ -81,7 +80,5 @@ namespace EntityClass {
 }
 
 #undef DERIVED_CLASS
-
-#endif
 
 #endif // GRAPHICAL_RENDERER_H

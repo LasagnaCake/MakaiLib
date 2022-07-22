@@ -30,8 +30,32 @@
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
+			<Add option="-std=c++20" />
+			<Add directory="lib" />
+			<Add directory="lib/irrlicht-1.8.5/include" />
 		</Compiler>
+		<ResourceCompiler>
+			<Add directory="lib" />
+			<Add directory="lib/irrlicht-1.8.5/include" />
+		</ResourceCompiler>
+		<Linker>
+			<Add option="-O2" />
+			<Add library="lib/irrlicht-1.8.5/lib/Win32-gcc/libIrrlicht.a" />
+			<Add directory="lib" />
+			<Add directory="lib/irrlicht-1.8.5/include" />
+		</Linker>
+		<Unit filename="lib/irrlicht-1.8.5/include/irrlicht.h" />
+		<Unit filename="makai.cpp" />
 		<Extensions>
+			<DoxyBlocks>
+				<comment_style block="0" line="2" />
+				<doxyfile_project />
+				<doxyfile_build />
+				<doxyfile_warnings />
+				<doxyfile_output />
+				<doxyfile_dot />
+				<general />
+			</DoxyBlocks>
 			<lib_finder disable_auto="1" />
 		</Extensions>
 	</Project>
