@@ -203,11 +203,11 @@ namespace Makai {
 		void run(){
 			auto fixedDelta = 1/60;
 			// The physics process
-			auto physFunc = [&](float delta)-> void {
+			auto physFunc	= [&](float delta)-> void {
 
 			};
 			// The logical process
-			auto logicFunc = [&](float delta)->void {
+			auto logicFunc	= [&](float delta)-> void {
 				Tween::yieldAllTweens();
 				Event::yieldAllTimers();
 				EntityClass::$_ROOT.yield(delta);

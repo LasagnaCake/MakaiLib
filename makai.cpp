@@ -29,7 +29,10 @@ int main() {
 	*                     *
 	***********************
 	*/
-	Makai::Program prog(640, 480, "OK");
+	//Makai::Program prog(640, 480, "OK");
+	//Makai::Program prog(720, 640, "OK");
+	Makai::Program prog(960, 720, "OK");
+	//Makai::Program prog(1280, 960, "OK");
 	prog.windowColor = Vector::Vector4(100,100,140,255) / 255;
 	prog.out.gui->addStaticText(L"Hello World! This is the Irrlicht Software renderer!", irr::core::rect<irr::s32>(10,10,300,300), true);
 	irr::scene::ISceneNode* n = prog.out.scene->addCubeSceneNode();
