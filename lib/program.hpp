@@ -167,8 +167,11 @@ namespace Makai {
 			// The available driver to be used
 			video::E_DRIVER_TYPE driver = video::EDT_SOFTWARE;
 			// Try and get a video driver
-			if ($supported(video::EDT_OPENGL)) driver = video::EDT_OPENGL;
-			else if($supported(video::EDT_BURNINGSVIDEO)) driver = video::EDT_BURNINGSVIDEO;
+			if ($supported(video::EDT_OPENGL))
+				driver = video::EDT_OPENGL;
+			else if($supported(video::EDT_BURNINGSVIDEO))
+				driver = video::EDT_BURNINGSVIDEO;
+			#undef $supported
 			// Try and create an irrlicht device (window)
 			window = createDevice(
 				driver,								// The selected video driver
