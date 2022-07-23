@@ -43,7 +43,7 @@ int main() {
 		irr::scene::ISceneNodeAnimator* anim = prog.out.scene->createFlyCircleAnimator(irr::core::vector3df(0,0,30), 20.0f);
 		if (anim)
 		{
-			n->addAnimator(anim);
+			cam->addAnimator(anim);
 			anim->drop();
 		}
 	}

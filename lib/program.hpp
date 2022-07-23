@@ -119,17 +119,21 @@ namespace Makai {
 		{
 			// If event is a keyboard event...
 			if (event.EventType == irr::EET_KEY_INPUT_EVENT) {
-				// Get key
-				auto inputKey = event.KeyInput.Key;
+				// Get key, state and current state
+				auto inputKey		= event.KeyInput.Key;
+				auto pressedDown	= event.KeyInput.PressedDown;
+				auto currentState	= keyState[inputKey];
 				// Get current key state (released, pressed, held)
-				unsigned char state = 0;
-				if (event.KeyInput.PressedDown)
-					state = (
-						(event.KeyInput.PressedDown)
-					+	(keyState[inputKey] != 0)
-					);
+				// If key is pressed...
+				if (pressedDown) {
+					// If state counter is not close to overflowing...
+					if (currentState < 255)
+						// Increment state counter
+						currentState++;
+				// Else, set counter to zero
+				} else currentState = 0;
 				// Set current key state
-				keyState[inputKey] = state;
+				keyState[inputKey] = currentState;
 			}
 			return false;
 		}
@@ -140,9 +144,9 @@ namespace Makai {
 
 		/**
 		* Returns the key's state.
-		* 0 = Released;
-		* 1 = Pressed ("Tapped");
-		* 2 = Held;
+		* 0		= Released;
+		* 1		= Pressed ("Tapped");
+		* 2+	= Held;
 		*/
 		inline unsigned char getKeyState(EKEY_CODE keyCode) {
 			return keyState[keyCode];
@@ -218,7 +222,7 @@ namespace Makai {
 			// While program is running...
 			while(window->run() && shouldRun) {
 				// Pause irrlicht execution
-				window->yield();
+				window->sleep(10);
 				// Start thread
 				std::thread physics(physFunc, fixedDelta);
 				// Do your own stuff
@@ -246,7 +250,7 @@ namespace Makai {
 
 		/// Returns whether the program is currently running.
 		inline bool	running(){
-			return (!shouldRun);
+			return (shouldRun);
 		}
 
 		/// Sets the program's window size.
