@@ -4,13 +4,20 @@
 #include <map>
 #include <vector>
 #include <stdexcept>
-#include <string>
+
+#ifdef _MAKAI_DEBUG_
+#include <iostream>
+#define $debug(TEXT) std::cout << TEXT << std::endl
+#else
+#define $debug(TEXT)
+#endif // _MAKAI_DEBUG_
 
 // #include <OGRE/Ogre.h>
-#include <irrlicht.h>
+// #include <irrlicht.h>
 
-#include <collection/vectorn.hpp>
-#include <collection/entity/entity.hpp>
+#include "collection/vectorn.hpp"
+#include "collection/entity/entity.hpp"
+#include "collection/event.hpp"
 
 #define DERIVED_CLASS(NAME, BASE)\
 	inline	virtual string getClass() {return #NAME;}\
@@ -22,12 +29,9 @@ namespace VecMath {
 		using
 		Vector::Vector2,
 		Vector::Vector3;
-
-		using namespace irr;
 	}
 
 	/// Base transformation data structure.
-
 	template <class T>
 	struct Transform {
 		Transform();
@@ -44,22 +48,20 @@ namespace VecMath {
 	typedef Transform<Vector2> Transform2D;
 	typedef Transform<Vector3> Transform3D;
 
-	/// Converts a Vector3 to an irrlicht 3D vector.
-	inline core::vector3df toIrrV3(Vector3 vec) {
-		return core::vector3df(vec.x, vec.y, vec.z);
-	}
-	/// Converts an irrlicht 3D vector to a Vector3.
-	inline Vector3 toVector3(core::vector3df vec) {
-		return Vector3(vec.X, vec.Y, vec.Z);
+	sf::Vector2f toSfVec2(Vector2 vec) {
+		return sf::Vector2f(vec.x, vec.y);
 	}
 
-	/// Converts a Vector2 to an irrlicht 2D vector.
-	inline core::vector2df toIrrV2(Vector2 vec) {
-		return core::vector2df(vec.x, vec.y);
+	sf::Vector3f toSfVec3(Vector3 vec) {
+		return sf::Vector3f(vec.x, vec.y, vec.z);
 	}
-	/// Converts an irrlicht 2D vector to a Vector2.
-	inline Vector2 toVector2(core::vector2df vec) {
-		return Vector2(vec.X, vec.Y);
+
+	Vector2 toVec2(sf::Vector2f vec) {
+		return Vector2(vec.x, vec.y);
+	}
+
+	Vector3 toVec3(sf::Vector3f vec) {
+		return Vector3(vec.x, vec.y, vec.z);
 	}
 }
 
@@ -68,76 +70,13 @@ namespace RenderData {
 		using
 		Vector::Vector2,
 		Vector::Vector3,
+		Vector::Vector4,
 		std::vector;
-
-		using namespace irr;
 	}
-
-	class RenderObject3D {
-	public:
-		RenderObject3D(EntityClass::Entity3D* parent, irr::scene::ISceneManager* scene) {
-			this->parent = parent;
-			render.node = scene->addMeshSceneNode(render.mesh);
-			this->scene = scene;
-			updateTransform();
-		}
-
-		void updateTransform() {
-			render.node->setPosition(VecMath::toIrrV3(parent->globalPosition()));
-			render.node->setRotation(VecMath::toIrrV3(parent->globalRotation()));
-			render.node->setScale(VecMath::toIrrV3(parent->globalScale()));
-		}
-
-		irr::scene::IMeshSceneNode* getSceneNode() {
-			return render.node;
-		}
-
-		irr::scene::SMesh* getMesh() {
-			return render.mesh;
-		}
-
-		irr::scene::ISceneManager* scene;
-	private:
-		struct {
-			irr::scene::IMeshSceneNode* node;
-			irr::scene::SMesh* mesh = new irr::scene::SMesh();
-		} render;
-		EntityClass::Entity3D* parent;
-	};
-
-	vector<RenderObject3D> renderList3D;
-	//vector<RenderObject2D> renderList2D;
-
-	irr::scene::ISceneManager* $_DEF_SCENE;
 }
 
 namespace EntityClass {
-	namespace {
-		using
-		Vector::Vector2,
-		Vector::Vector3;
-	}
 
-	/**
-	*******************************
-	*                             *
-	*  2D Graphical Object Class  *
-	*                             *
-	*******************************
-	*/
-	class RenderableEntity3D: public Entity3D {
-		DERIVED_CLASS(RenderableEntity3D, Entity3D)
-
-		RenderableEntity2D(, Entity* parent, string name = "Renderable", bool uniqueEntity = true)
-		: Entity3D(parent, name, uniqueEntity) {
-
-		}
-
-		virtual ~RenderableEntity2D() {
-		}
-	private:
-
-	};
 }
 
 #undef DERIVED_CLASS

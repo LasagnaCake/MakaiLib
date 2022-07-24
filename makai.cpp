@@ -1,13 +1,15 @@
-#include <irrlicht.h>
+// #include <irrlicht.h>
 #include <stdexcept>
 
-#define _BURNINGS_
-
-//#include <makai.hpp>
 #include "lib/program.hpp"
 #include <windows.h>
-
+#ifndef _MAKAI_DEBUG_
+#if (_WIN32 || _WIN64)
+int WINAPI WinMain(HINSTANCE hThisInstance, HINSTANCE hPrevInstance, LPSTR lpszArgument, int nCmdShow) {
+#endif // _WINDOWS
+#else
 int main() {
+#endif // _MAKAI_DEBUG_
 	/*
 	***************************
 	*                         *
@@ -33,21 +35,13 @@ int main() {
 	//Makai::Program prog(720, 640, "OK");
 	Makai::Program prog(960, 720, "OK");
 	//Makai::Program prog(1280, 960, "OK");
-	prog.windowColor = Vector::Vector4(100,100,140,255) / 255;
-	prog.out.gui->addStaticText(L"Hello World! This is the Irrlicht Software renderer!", irr::core::rect<irr::s32>(10,10,300,300), true);
-	irr::scene::ISceneNode* n = prog.out.scene->addCubeSceneNode();
-	irr::scene::ICameraSceneNode* cam = prog.out.scene->addCameraSceneNode(0, irr::core::vector3df(0,30,-40), irr::core::vector3df(0,5,0));
-	if (n)
-	{
-		n->setMaterialFlag(irr::video::EMF_LIGHTING, false);
-		irr::scene::ISceneNodeAnimator* anim = prog.out.scene->createFlyCircleAnimator(irr::core::vector3df(0,0,30), 20.0f);
-		if (anim)
-		{
-			cam->addAnimator(anim);
-			anim->drop();
-		}
-	}
-	prog.onFrame = $func {};
+	prog.windowColor = Vector::Vector4(Vector::Vector3(0),255) / 255;
+	sf::CircleShape shape(100.f);
+    shape.setFillColor(sf::Color::Green);
+    shape.setPosition(300, 300);
+	prog.onDraw = $func {
+		prog.getWindow()->draw(shape);
+	};
 	prog.run();
 	return 0;
 }

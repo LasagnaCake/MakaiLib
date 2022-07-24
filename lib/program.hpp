@@ -27,8 +27,9 @@
 *********************
 */
 
-#include <irrlicht.h>
-#include <graphical.hpp>
+// #include <irrlicht.h>
+#include <SFML/Graphics.hpp>
+#include "graphical.hpp"
 
 /*
 ***************************
@@ -38,18 +39,18 @@
 ***************************
 */
 
-#include <collection/algebra.hpp>
+#include "collection/algebra.hpp"
 
 #ifdef _$_FLOAT_AS_DOUBLE
 #define float double
 #endif // _$_FLOAT_AS_DOUBLE
 
-#include <collection/entity/entity.hpp>
-#include <collection/vectorn.hpp>
-#include <collection/cyclical.hpp>
-#include <collection/matrices.hpp>
-#include <collection/tween.hpp>
-#include <collection/event.hpp>
+#include "collection/entity/entity.hpp"
+#include "collection/vectorn.hpp"
+#include "collection/cyclical.hpp"
+#include "collection/matrices.hpp"
+#include "collection/tween.hpp"
+#include "collection/event.hpp"
 
 #ifdef _$_FLOAT_AS_DOUBLE
 #undef float
@@ -76,21 +77,8 @@
 
 #define $func	[&]() -> void
 
-#ifdef _IRR_WINDOWS_
-#pragma comment(lib, "Irrlicht.lib")
-#pragma comment(linker, "/subsystem:windows /ENTRY:mainCRTStartup")
-#endif
-
 namespace Makai {
 	namespace {
-		using namespace irr;
-
-		using namespace core;
-		using namespace scene;
-		using namespace video;
-		using namespace io;
-		using namespace gui;
-
 		using
 		std::vector,
 		std::function,
@@ -106,8 +94,8 @@ namespace Makai {
 	*                       *
 	*************************
 	*/
-
-	class EventManager : public IEventReceiver {
+	/*
+	class EventManager{
 	public:
 		EventManager() {
 			for (u32 i=0; i<KEY_KEY_CODES_COUNT; ++i)
@@ -147,14 +135,14 @@ namespace Makai {
 		* 0		= Released;
 		* 1		= Pressed ("Tapped");
 		* 2+	= Held;
-		*/
+		*//*
 		inline unsigned char getKeyState(EKEY_CODE keyCode) {
 			return keyState[keyCode];
 		}
 	private:
 		/// The current state of each key.
 		unsigned char keyState[KEY_KEY_CODES_COUNT];
-	};
+	};*/
 
 	/**
 	*******************
@@ -167,43 +155,11 @@ namespace Makai {
 	public:
 		/// Initializes the program.
 		Program(unsigned int width, unsigned int height, std::string windowTitle, bool fullscreen = false) {
-			#define $supported($DRIVER) irr::IrrlichtDevice::isDriverSupported($DRIVER)
-			// The available driver to be used
-			video::E_DRIVER_TYPE driver = video::EDT_SOFTWARE;
-			// Try and get a video driver
-			if ($supported(video::EDT_OPENGL))
-				driver = video::EDT_OPENGL;
-			else if($supported(video::EDT_BURNINGSVIDEO))
-				driver = video::EDT_BURNINGSVIDEO;
-			#undef $supported
-			// Try and create an irrlicht device (window)
-			window = createDevice(
-				driver,								// The selected video driver
-				dimension2d<u32>(width, height),	// Window dimensions
-				32,									// Color depth (32 bits)
-				fullscreen,							// Fullscreen or Windowed
-				false,								// Use stencil buffer (for shadows)
-				fullscreen,							// Enable VSync
-				&event								// Event manager
-			);
-			if (!window)
-				throw std::runtime_error("Window could not be created!");
-			// Set window title
-			setWindowTitle(windowTitle);
-			// Get device's implementations
-			out.gui		= window->getGUIEnvironment();
-			out.cursor	= window->getCursorControl();
-			out.scene	= window->getSceneManager();
-			out.driver	= window->getVideoDriver();
-			out.file	= window->getFileSystem();
-			out.logger	= window->getLogger();
+			window.create(sf::VideoMode(width, height), windowTitle);
 		}
 
 		/// Sets the window's title.
 		void setWindowTitle(std::string windowTitle) {
-			// Set window title
-			std::wstring winTitle = std::wstring(windowTitle.begin(), windowTitle.end());
-			window->setWindowCaption(winTitle.c_str());
 		}
 
 		/// Runs the program.
@@ -220,9 +176,13 @@ namespace Makai {
 				EntityClass::$_ROOT.yield(delta);
 			};
 			// While program is running...
-			while(window->run() && shouldRun) {
-				// Pause irrlicht execution
-				window->sleep(10);
+			while(window.isOpen() && shouldRun) {
+				// Process events
+				sf::Event event;
+				while (window.pollEvent(event)) {
+					// Close window : exit
+					shouldRun = !(event.type == sf::Event::Closed);
+				}
 				// Start thread
 				std::thread physics(physFunc, fixedDelta);
 				// Do your own stuff
@@ -232,10 +192,9 @@ namespace Makai {
 				physics.join();
 				// Draw screen
 				Vector4 color = windowColor.clamped(Vector4(0.0), Vector4(1.0)) * 255;
-				out.driver->beginScene(true, true, SColor(color.w,color.x,color.y,color.z));
-				out.scene->drawAll();
-				out.gui->drawAll();
-				out.driver->endScene();
+				window.clear(sf::Color(color.x, color.y, color.z, color.w));
+				onDraw();
+				window.display();
 			}
 			// Terminate program
 			terminate();
@@ -258,6 +217,9 @@ namespace Makai {
 
 		}
 
+		/// Gets called whenever the program is rendering to the screen. Happens after 3D render, but before GUI render.
+		Event::Signal	onDraw	= $func {};
+
 
 		/// Gets called every frame, along all other logic.
 		Event::Signal	onFrame = $func {};
@@ -266,34 +228,29 @@ namespace Makai {
 		/// Gets called when the program is closing. Happens before Window is terminated.
 		Event::Signal	onClose = $func {};
 
+		/// Gets the program window.
+		sf::RenderWindow* getWindow() {
+			return &window;
+		}
 
 		/// The program's window output.
 		struct {
-			IVideoDriver*		driver;
-			ISceneManager*		scene;
-			IGUIEnvironment*	gui;
-			IFileSystem*		file;
-			ICursorControl*		cursor;
-			ILogger*			logger;
 		} out;
 
-		/// The program's event manager.
-		EventManager event;
-
 		/// The window's color.
-		Vector4 windowColor = Vector4(Vector3(0.45), 1.0);
+		Vector4 windowColor = Vector4(Vector3(0.5), 1.0);
 	private:
 		/// Properly finishes program execution.
 		void terminate() {
 			// Call final function
 			onClose();
-			// End execution
-			window->drop();
+			// Close window if open
+			if (window.isOpen()) window.close();
 		}
 		/// Current execution state.
 		bool shouldRun = true;
 		/// The program window.
-		IrrlichtDevice* window;
+		sf::RenderWindow window;
 	};
 }
 
