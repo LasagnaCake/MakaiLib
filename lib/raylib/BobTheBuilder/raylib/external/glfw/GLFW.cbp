@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="GLFW"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="gcc"/>
+		<Option virtualFolders="CMake Files\;CMake Files\src\;CMake Files\src\external\;CMake Files\src\external\glfw\;CMake Files\src\external\glfw\CMake\;CMake Files\src\external\glfw\src\;CMake Files\examples\;CMake Files\cmake\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="D:/C(++) Projects/_C++/Game Engine/MakaiLib/lib/raylib/BobTheBuilder/raylib/external/glfw"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;D:/C(++) Projects/_C++/Game Engine/MakaiLib/lib/raylib/BobTheBuilder/raylib/external/glfw/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;D:/C(++) Projects/_C++/Game Engine/MakaiLib/lib/raylib/BobTheBuilder/raylib/external/glfw/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;D:/C(++) Projects/_C++/Game Engine/MakaiLib/lib/raylib/BobTheBuilder/raylib/external/glfw/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;D:/C(++) Projects/_C++/Game Engine/MakaiLib/lib/raylib/BobTheBuilder/raylib/external/glfw/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="glfw">
+				<Option output="D:/C(++) Projects/_C++/Game Engine/MakaiLib/lib/raylib/BobTheBuilder/raylib/external/glfw/src/libglfw3.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="D:/C(++) Projects/_C++/Game Engine/MakaiLib/lib/raylib/BobTheBuilder/raylib/external/glfw/src"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-D_GLFW_USE_CONFIG_H"/>
+					<Add option="-DUNICODE"/>
+					<Add option="-D_UNICODE"/>
+					<Add option="-DWINVER=0x0501"/>
+					<Add directory="D:/C(++) Projects/_C++/Game Engine/MakaiLib/lib/raylib/src/external/glfw/include"/>
+					<Add directory="D:/C(++) Projects/_C++/Game Engine/MakaiLib/lib/raylib/src/external/glfw/src"/>
+					<Add directory="D:/C(++) Projects/_C++/Game Engine/MakaiLib/lib/raylib/BobTheBuilder/raylib/external/glfw/src"/>
+					<Add directory="D:/MSYS2/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.2.0/../../../../include/c++/10.2.0"/>
+					<Add directory="D:/MSYS2/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.2.0/../../../../include/c++/10.2.0/x86_64-w64-mingw32"/>
+					<Add directory="D:/MSYS2/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.2.0/../../../../include/c++/10.2.0/backward"/>
+					<Add directory="D:/MSYS2/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.2.0/include"/>
+					<Add directory="D:/MSYS2/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.2.0/../../../../include"/>
+					<Add directory="D:/MSYS2/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.2.0/include-fixed"/>
+					<Add directory="D:/MSYS2/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.2.0/../../../../x86_64-w64-mingw32/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;D:/C(++) Projects/_C++/Game Engine/MakaiLib/lib/raylib/BobTheBuilder/raylib/external/glfw/src/Makefile&quot;  VERBOSE=1 glfw"/>
+					<CompileFile command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;D:/C(++) Projects/_C++/Game Engine/MakaiLib/lib/raylib/BobTheBuilder/raylib/external/glfw/src/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;D:/C(++) Projects/_C++/Game Engine/MakaiLib/lib/raylib/BobTheBuilder/raylib/external/glfw/src/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;D:/C(++) Projects/_C++/Game Engine/MakaiLib/lib/raylib/BobTheBuilder/raylib/external/glfw/src/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="glfw/fast">
+				<Option output="D:/C(++) Projects/_C++/Game Engine/MakaiLib/lib/raylib/BobTheBuilder/raylib/external/glfw/src/libglfw3.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="D:/C(++) Projects/_C++/Game Engine/MakaiLib/lib/raylib/BobTheBuilder/raylib/external/glfw/src"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-D_GLFW_USE_CONFIG_H"/>
+					<Add option="-DUNICODE"/>
+					<Add option="-D_UNICODE"/>
+					<Add option="-DWINVER=0x0501"/>
+					<Add directory="D:/C(++) Projects/_C++/Game Engine/MakaiLib/lib/raylib/src/external/glfw/include"/>
+					<Add directory="D:/C(++) Projects/_C++/Game Engine/MakaiLib/lib/raylib/src/external/glfw/src"/>
+					<Add directory="D:/C(++) Projects/_C++/Game Engine/MakaiLib/lib/raylib/BobTheBuilder/raylib/external/glfw/src"/>
+					<Add directory="D:/MSYS2/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.2.0/../../../../include/c++/10.2.0"/>
+					<Add directory="D:/MSYS2/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.2.0/../../../../include/c++/10.2.0/x86_64-w64-mingw32"/>
+					<Add directory="D:/MSYS2/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.2.0/../../../../include/c++/10.2.0/backward"/>
+					<Add directory="D:/MSYS2/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.2.0/include"/>
+					<Add directory="D:/MSYS2/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.2.0/../../../../include"/>
+					<Add directory="D:/MSYS2/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.2.0/include-fixed"/>
+					<Add directory="D:/MSYS2/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.2.0/../../../../x86_64-w64-mingw32/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;D:/C(++) Projects/_C++/Game Engine/MakaiLib/lib/raylib/BobTheBuilder/raylib/external/glfw/src/Makefile&quot;  VERBOSE=1 glfw/fast"/>
+					<CompileFile command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;D:/C(++) Projects/_C++/Game Engine/MakaiLib/lib/raylib/BobTheBuilder/raylib/external/glfw/src/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;D:/C(++) Projects/_C++/Game Engine/MakaiLib/lib/raylib/BobTheBuilder/raylib/external/glfw/src/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;D:/C(++) Projects/_C++/Game Engine/MakaiLib/lib/raylib/BobTheBuilder/raylib/external/glfw/src/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="D:/C(++) Projects/_C++/Game Engine/MakaiLib/lib/raylib/BobTheBuilder/raylib/external/glfw/src/glfw_config.h">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="D:/C(++) Projects/_C++/Game Engine/MakaiLib/lib/raylib/src/external/glfw/include/GLFW/glfw3.h">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="D:/C(++) Projects/_C++/Game Engine/MakaiLib/lib/raylib/src/external/glfw/include/GLFW/glfw3native.h">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="D:/C(++) Projects/_C++/Game Engine/MakaiLib/lib/raylib/src/external/glfw/src/context.c">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="D:/C(++) Projects/_C++/Game Engine/MakaiLib/lib/raylib/src/external/glfw/src/egl_context.c">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="D:/C(++) Projects/_C++/Game Engine/MakaiLib/lib/raylib/src/external/glfw/src/egl_context.h">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="D:/C(++) Projects/_C++/Game Engine/MakaiLib/lib/raylib/src/external/glfw/src/init.c">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="D:/C(++) Projects/_C++/Game Engine/MakaiLib/lib/raylib/src/external/glfw/src/input.c">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="D:/C(++) Projects/_C++/Game Engine/MakaiLib/lib/raylib/src/external/glfw/src/internal.h">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="D:/C(++) Projects/_C++/Game Engine/MakaiLib/lib/raylib/src/external/glfw/src/mappings.h">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="D:/C(++) Projects/_C++/Game Engine/MakaiLib/lib/raylib/src/external/glfw/src/monitor.c">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="D:/C(++) Projects/_C++/Game Engine/MakaiLib/lib/raylib/src/external/glfw/src/osmesa_context.c">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="D:/C(++) Projects/_C++/Game Engine/MakaiLib/lib/raylib/src/external/glfw/src/osmesa_context.h">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="D:/C(++) Projects/_C++/Game Engine/MakaiLib/lib/raylib/src/external/glfw/src/vulkan.c">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="D:/C(++) Projects/_C++/Game Engine/MakaiLib/lib/raylib/src/external/glfw/src/wgl_context.c">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="D:/C(++) Projects/_C++/Game Engine/MakaiLib/lib/raylib/src/external/glfw/src/wgl_context.h">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="D:/C(++) Projects/_C++/Game Engine/MakaiLib/lib/raylib/src/external/glfw/src/win32_init.c">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="D:/C(++) Projects/_C++/Game Engine/MakaiLib/lib/raylib/src/external/glfw/src/win32_joystick.c">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="D:/C(++) Projects/_C++/Game Engine/MakaiLib/lib/raylib/src/external/glfw/src/win32_joystick.h">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="D:/C(++) Projects/_C++/Game Engine/MakaiLib/lib/raylib/src/external/glfw/src/win32_monitor.c">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="D:/C(++) Projects/_C++/Game Engine/MakaiLib/lib/raylib/src/external/glfw/src/win32_platform.h">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="D:/C(++) Projects/_C++/Game Engine/MakaiLib/lib/raylib/src/external/glfw/src/win32_thread.c">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="D:/C(++) Projects/_C++/Game Engine/MakaiLib/lib/raylib/src/external/glfw/src/win32_time.c">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="D:/C(++) Projects/_C++/Game Engine/MakaiLib/lib/raylib/src/external/glfw/src/win32_window.c">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="D:/C(++) Projects/_C++/Game Engine/MakaiLib/lib/raylib/src/external/glfw/src/window.c">
+			<Option target="glfw"/>
+		</Unit>
+		<Unit filename="D:/C(++) Projects/_C++/Game Engine/MakaiLib/lib/raylib/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+		<Unit filename="D:/C(++) Projects/_C++/Game Engine/MakaiLib/lib/raylib/CMakeOptions.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+		<Unit filename="D:/C(++) Projects/_C++/Game Engine/MakaiLib/lib/raylib/raylib.pc.in">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+		<Unit filename="D:/C(++) Projects/_C++/Game Engine/MakaiLib/lib/raylib/src/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\"/>
+		</Unit>
+		<Unit filename="D:/C(++) Projects/_C++/Game Engine/MakaiLib/lib/raylib/src/external/glfw/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\external\glfw\"/>
+		</Unit>
+		<Unit filename="D:/C(++) Projects/_C++/Game Engine/MakaiLib/lib/raylib/src/external/glfw/CMake/glfw3.pc.in">
+			<Option virtualFolder="CMake Files\src\external\glfw\CMake\"/>
+		</Unit>
+		<Unit filename="D:/C(++) Projects/_C++/Game Engine/MakaiLib/lib/raylib/src/external/glfw/CMake/glfw3Config.cmake.in">
+			<Option virtualFolder="CMake Files\src\external\glfw\CMake\"/>
+		</Unit>
+		<Unit filename="D:/C(++) Projects/_C++/Game Engine/MakaiLib/lib/raylib/src/external/glfw/src/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\external\glfw\src\"/>
+		</Unit>
+		<Unit filename="D:/C(++) Projects/_C++/Game Engine/MakaiLib/lib/raylib/src/external/glfw/src/glfw_config.h.in">
+			<Option virtualFolder="CMake Files\src\external\glfw\src\"/>
+		</Unit>
+		<Unit filename="D:/C(++) Projects/_C++/Game Engine/MakaiLib/lib/raylib/examples/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\examples\"/>
+		</Unit>
+		<Unit filename="D:/C(++) Projects/_C++/Game Engine/MakaiLib/lib/raylib/cmake/AddIfFlagCompiles.cmake">
+			<Option virtualFolder="CMake Files\cmake\"/>
+		</Unit>
+		<Unit filename="D:/C(++) Projects/_C++/Game Engine/MakaiLib/lib/raylib/cmake/BuildOptions.cmake">
+			<Option virtualFolder="CMake Files\cmake\"/>
+		</Unit>
+		<Unit filename="D:/C(++) Projects/_C++/Game Engine/MakaiLib/lib/raylib/cmake/CompileDefinitions.cmake">
+			<Option virtualFolder="CMake Files\cmake\"/>
+		</Unit>
+		<Unit filename="D:/C(++) Projects/_C++/Game Engine/MakaiLib/lib/raylib/cmake/CompilerFlags.cmake">
+			<Option virtualFolder="CMake Files\cmake\"/>
+		</Unit>
+		<Unit filename="D:/C(++) Projects/_C++/Game Engine/MakaiLib/lib/raylib/cmake/EnumOption.cmake">
+			<Option virtualFolder="CMake Files\cmake\"/>
+		</Unit>
+		<Unit filename="D:/C(++) Projects/_C++/Game Engine/MakaiLib/lib/raylib/cmake/GlfwImport.cmake">
+			<Option virtualFolder="CMake Files\cmake\"/>
+		</Unit>
+		<Unit filename="D:/C(++) Projects/_C++/Game Engine/MakaiLib/lib/raylib/cmake/InstallConfigurations.cmake">
+			<Option virtualFolder="CMake Files\cmake\"/>
+		</Unit>
+		<Unit filename="D:/C(++) Projects/_C++/Game Engine/MakaiLib/lib/raylib/cmake/JoinPaths.cmake">
+			<Option virtualFolder="CMake Files\cmake\"/>
+		</Unit>
+		<Unit filename="D:/C(++) Projects/_C++/Game Engine/MakaiLib/lib/raylib/cmake/LibraryConfigurations.cmake">
+			<Option virtualFolder="CMake Files\cmake\"/>
+		</Unit>
+		<Unit filename="D:/C(++) Projects/_C++/Game Engine/MakaiLib/lib/raylib/cmake/LibraryPathToLinkerFlags.cmake">
+			<Option virtualFolder="CMake Files\cmake\"/>
+		</Unit>
+		<Unit filename="D:/C(++) Projects/_C++/Game Engine/MakaiLib/lib/raylib/cmake/PackConfigurations.cmake">
+			<Option virtualFolder="CMake Files\cmake\"/>
+		</Unit>
+		<Unit filename="D:/C(++) Projects/_C++/Game Engine/MakaiLib/lib/raylib/cmake/PopulateConfigVariablesLocally.cmake">
+			<Option virtualFolder="CMake Files\cmake\"/>
+		</Unit>
+		<Unit filename="D:/C(++) Projects/_C++/Game Engine/MakaiLib/lib/raylib/cmake/raylib-config-version.cmake">
+			<Option virtualFolder="CMake Files\cmake\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>

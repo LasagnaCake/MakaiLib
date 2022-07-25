@@ -2,7 +2,6 @@
 #include <stdexcept>
 
 #include "lib/program.hpp"
-#include <windows.h>
 #ifndef _MAKAI_DEBUG_
 #if (_WIN32 || _WIN64)
 int WINAPI WinMain(HINSTANCE hThisInstance, HINSTANCE hPrevInstance, LPSTR lpszArgument, int nCmdShow) {
@@ -11,26 +10,12 @@ int WINAPI WinMain(HINSTANCE hThisInstance, HINSTANCE hPrevInstance, LPSTR lpszA
 int main() {
 #endif // _MAKAI_DEBUG_
 	/*
-	***************************
-	*                         *
-	*  Console Disabler Code  *
-	*                         *
-	***************************
-	*/
-
-	#ifndef _MAKAI_DEBUG_
-	#if (_WIN32 || _WIN64)
-	ShowWindow(GetConsoleWindow(), SW_HIDE);
-	#endif // _WINDOWS
-	#endif // _MAKAI_DEBUG_
-
-	/*
 	***********************
 	*                     *
 	*  Main Program Code  *
 	*                     *
 	***********************
-	*/
+	*//*
 	//Makai::Program prog(640, 480, "OK");
 	//Makai::Program prog(720, 640, "OK");
 	Makai::Program prog(960, 720, "OK");
@@ -43,5 +28,5 @@ int main() {
 		prog.getWindow()->draw(shape);
 	};
 	prog.run();
-	return 0;
+	return 0;*/
 }

@@ -1,8 +1,7 @@
 # depslib dependency file v1.0
-1658621093 source:d:\c(++) projects\_c++\game engine\makailib\makai.cpp
+1658700036 source:d:\c(++) projects\_c++\game engine\makailib\makai.cpp
 	<stdexcept>
 	"lib/program.hpp"
-	<windows.h>
 
 1352124852 d:\c(++) projects\_c++\game engine\makailib\lib\irrlicht-1.8.5\include\irrlicht.h
 	"IrrCompileConfig.h"
@@ -996,14 +995,8 @@
 	"graphical.hpp"
 	"program.hpp"
 
-1658621499 d:\c(++) projects\_c++\game engine\makailib\lib\graphical.hpp
-	<map>
-	<vector>
-	<stdexcept>
-	<iostream>
-	"collection/vectorn.hpp"
-	"collection/entity/entity.hpp"
-	"collection/event.hpp"
+1658700453 d:\c(++) projects\_c++\game engine\makailib\lib\graphical.hpp
+	"anchors.hpp"
 
 1658522935 d:\c(++) projects\_c++\game engine\makailib\lib\collection\vectorn.hpp
 	<cmath>
@@ -1050,25 +1043,9 @@
 	"2d3d.hpp"
 	<map>
 
-1658621034 d:\c(++) projects\_c++\game engine\makailib\lib\program.hpp
-	<string>
-	<vector>
-	<functional>
-	<cstring>
-	<stdexcept>
-	<cstdlib>
-	<math.h>
-	<thread>
-	<map>
-	<SFML/Graphics.hpp>
+1658700436 d:\c(++) projects\_c++\game engine\makailib\lib\program.hpp
+	"anchors.hpp"
 	"graphical.hpp"
-	"collection/algebra.hpp"
-	"collection/entity/entity.hpp"
-	"collection/vectorn.hpp"
-	"collection/cyclical.hpp"
-	"collection/matrices.hpp"
-	"collection/tween.hpp"
-	"collection/event.hpp"
 
 1656855023 d:\c(++) projects\_c++\game engine\makailib\lib\collection\cyclical.hpp
 	<vector>
@@ -1495,4 +1472,28 @@
 	<SFML/Graphics/PrimitiveType.hpp>
 	<SFML/Graphics/Drawable.hpp>
 	<SFML/Window/GlResource.hpp>
+
+1635818772 d:\c(++) projects\_c++\game engine\makailib\lib\raylib\src\raylib.h
+	<stdarg.h>
+	<stdbool.h>
+
+1658700397 d:\c(++) projects\_c++\game engine\makailib\lib\anchors.hpp
+	<iostream>
+	<string>
+	<vector>
+	<functional>
+	<cstring>
+	<stdexcept>
+	<cstdlib>
+	<math.h>
+	<thread>
+	<map>
+	<SFML/Graphics.hpp>
+	<raylib.h>
+	"collection/algebra.hpp"
+	"collection/entity/entity.hpp"
+	"collection/vectorn.hpp"
+	"collection/cyclical.hpp"
+	"collection/tween.hpp"
+	"collection/event.hpp"
 

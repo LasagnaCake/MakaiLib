@@ -1,23 +1,7 @@
 #ifndef GRAPHICAL_RENDERER_H
 #define GRAPHICAL_RENDERER_H
 
-#include <map>
-#include <vector>
-#include <stdexcept>
-
-#ifdef _MAKAI_DEBUG_
-#include <iostream>
-#define $debug(TEXT) std::cout << TEXT << std::endl
-#else
-#define $debug(TEXT)
-#endif // _MAKAI_DEBUG_
-
-// #include <OGRE/Ogre.h>
-// #include <irrlicht.h>
-
-#include "collection/vectorn.hpp"
-#include "collection/entity/entity.hpp"
-#include "collection/event.hpp"
+#include "anchors.hpp"
 
 #define DERIVED_CLASS(NAME, BASE)\
 	inline	virtual string getClass() {return #NAME;}\
@@ -27,8 +11,8 @@
 namespace VecMath {
 	namespace {
 		using
-		Vector::Vector2,
-		Vector::Vector3;
+		Vector::VecV2,
+		Vector::VecV3;
 	}
 
 	/// Base transformation data structure.
@@ -45,32 +29,32 @@ namespace VecMath {
 		T scale;
 	};
 
-	typedef Transform<Vector2> Transform2D;
-	typedef Transform<Vector3> Transform3D;
+	typedef Transform<VecV2> Transform2D;
+	typedef Transform<VecV3> Transform3D;
 
-	sf::Vector2f toSfVec2(Vector2 vec) {
+	sf::Vector2f toSfVec2(VecV2 vec) {
 		return sf::Vector2f(vec.x, vec.y);
 	}
 
-	sf::Vector3f toSfVec3(Vector3 vec) {
+	sf::Vector3f toSfVec3(VecV3 vec) {
 		return sf::Vector3f(vec.x, vec.y, vec.z);
 	}
 
-	Vector2 toVec2(sf::Vector2f vec) {
-		return Vector2(vec.x, vec.y);
+	VecV2 toVec2(sf::Vector2f vec) {
+		return VecV2(vec.x, vec.y);
 	}
 
-	Vector3 toVec3(sf::Vector3f vec) {
-		return Vector3(vec.x, vec.y, vec.z);
+	VecV3 toVec3(sf::Vector3f vec) {
+		return VecV3(vec.x, vec.y, vec.z);
 	}
 }
 
 namespace RenderData {
 	namespace {
 		using
-		Vector::Vector2,
-		Vector::Vector3,
-		Vector::Vector4,
+		Vector::VecV2,
+		Vector::VecV3,
+		Vector::VecV4,
 		std::vector;
 	}
 }

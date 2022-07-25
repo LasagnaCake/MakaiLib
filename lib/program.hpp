@@ -1,81 +1,8 @@
 #ifndef MAKAILIB_MAKAI_LIBRARY_H
 #define MAKAILIB_MAKAI_LIBRARY_H
 
-/*
-*******************
-*                 *
-*  General stuff  *
-*                 *
-*******************
-*/
-
-#include <string>
-#include <vector>
-#include <functional>
-#include <cstring>
-#include <stdexcept>
-#include <cstdlib>
-#include <math.h>
-#include <thread>
-#include <map>
-
-/*
-*********************
-*                   *
-*  Graphical stuff  *
-*                   *
-*********************
-*/
-
-// #include <irrlicht.h>
-#include <SFML/Graphics.hpp>
+#include "anchors.hpp"
 #include "graphical.hpp"
-
-/*
-***************************
-*                         *
-*  Engine-specific stuff  *
-*                         *
-***************************
-*/
-
-#include "collection/algebra.hpp"
-
-#ifdef _$_FLOAT_AS_DOUBLE
-#define float double
-#endif // _$_FLOAT_AS_DOUBLE
-
-#include "collection/entity/entity.hpp"
-#include "collection/vectorn.hpp"
-#include "collection/cyclical.hpp"
-#include "collection/matrices.hpp"
-#include "collection/tween.hpp"
-#include "collection/event.hpp"
-
-#ifdef _$_FLOAT_AS_DOUBLE
-#undef float
-#endif // _$_FLOAT_AS_DOUBLE
-
-/*
-*	[+]=[   [Headers END]   ]=[+]
-*/
-
-#ifdef _$_LUA_STYLE_PROGRAMMING
-#define END		}
-#define AND		&&
-#define OR		||
-#define NOT		!
-#define THEN	)
-#define EXECUTE	{
-#define TAKE	(
-#define NEXT	;
-#define LESS	<
-#define MORE	>
-#define IS		==
-#define EQUALS	=
-#endif // _$_LUA_STYLE_PROGRAMMING
-
-#define $func	[&]() -> void
 
 namespace Makai {
 	namespace {
@@ -84,8 +11,8 @@ namespace Makai {
 		std::function,
 		std::string,
 		std::map,
-		Vector::Vector3,
-		Vector::Vector4;
+		Vector::VecV3,
+		Vector::VecV4;
 	}
 	/**
 	*************************
@@ -191,7 +118,7 @@ namespace Makai {
 				// Wait for thread to be done processing
 				physics.join();
 				// Draw screen
-				Vector4 color = windowColor.clamped(Vector4(0.0), Vector4(1.0)) * 255;
+				VecV4 color = windowColor.clamped(VecV4(0.0), VecV4(1.0)) * 255;
 				window.clear(sf::Color(color.x, color.y, color.z, color.w));
 				onDraw();
 				window.display();
@@ -238,7 +165,7 @@ namespace Makai {
 		} out;
 
 		/// The window's color.
-		Vector4 windowColor = Vector4(Vector3(0.5), 1.0);
+		VecV4 windowColor = VecV4(.5, .5, .5, 1.0);
 	private:
 		/// Properly finishes program execution.
 		void terminate() {
