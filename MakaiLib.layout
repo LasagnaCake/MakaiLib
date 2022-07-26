@@ -2,9 +2,34 @@
 <CodeBlocks_layout_file>
 	<FileVersion major="1" minor="0" />
 	<ActiveTarget name="Debug" />
-	<File name="makai.cpp" open="1" top="1" tabpos="1" split="0" active="1" splitpos="0" zoom_1="-2" zoom_2="0">
+	<File name="lib\SFML-2.5.1\include\SFML\Graphics\Vertex.hpp" open="1" top="0" tabpos="8" split="0" active="1" splitpos="0" zoom_1="-2" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="54" topLine="0" />
+			<Cursor1 position="1622" topLine="81" />
+		</Cursor>
+	</File>
+	<File name="lib\SFML-2.5.1\include\SFML\Window\Window.hpp" open="1" top="0" tabpos="12" split="0" active="1" splitpos="0" zoom_1="-2" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1999" topLine="520" />
+		</Cursor>
+	</File>
+	<File name="lib\SFML-2.5.1\include\SFML\Graphics\RenderWindow.hpp" open="1" top="0" tabpos="9" split="0" active="1" splitpos="0" zoom_1="-2" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1716" topLine="26" />
+		</Cursor>
+	</File>
+	<File name="lib\SFML-2.5.1\include\SFML\Graphics\CircleShape.hpp" open="1" top="0" tabpos="10" split="0" active="1" splitpos="0" zoom_1="-2" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1990" topLine="18" />
+		</Cursor>
+	</File>
+	<File name="makai.cpp" open="1" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="-2" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="868" topLine="1" />
+		</Cursor>
+	</File>
+	<File name="lib\makai.hpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="-2" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="8" topLine="0" />
 		</Cursor>
 	</File>
 </CodeBlocks_layout_file>
