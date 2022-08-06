@@ -1,9 +1,11 @@
 #ifndef ANCHORED_HEADERS_H
 #define ANCHORED_HEADERS_H
 
-#ifdef _MAKAI_DEBUG_
+#define $print(TEXT) std::cout << TEXT << std::endl
+
+#ifdef _DEBUG_OUTPUT_
 #include <iostream>
-#define $debug(TEXT) std::cout << TEXT << std::endl
+#define $debug(TEXT) $print(TEXT)
 #else
 #define $debug(TEXT)
 #endif // _MAKAI_DEBUG_
@@ -34,8 +36,13 @@
 *********************
 */
 
-#include <SFML/Graphics.hpp>
+//#include <SFML/Graphics.hpp>
 //#include <raylib.h>
+
+#include <allegro5/allegro5.h>
+#include <allegro5/allegro_font.h>
+#include <allegro5/allegro_image.h>
+#include <allegro5/allegro_primitives.h>
 
 /*
 ***************************
@@ -97,6 +104,6 @@
 #define EQUALS	=
 #endif // _$_LUA_STYLE_PROGRAMMING
 
-#define $func	[&]() -> void
+#define $func(...)	[&](...) -> void
 
 #endif // ANCHORED_HEADERS_H

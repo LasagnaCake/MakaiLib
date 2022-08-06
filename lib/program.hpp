@@ -4,6 +4,8 @@
 #include "anchors.hpp"
 #include "graphical.hpp"
 
+#define $enforce(WHAT, HOW) if(!(HOW)) throw std::runtime_error(std::string("ERROR: failed to initialize ") + WHAT)
+
 namespace Makai {
 	namespace {
 		using
@@ -20,8 +22,7 @@ namespace Makai {
 	*  Event Manager class  *
 	*                       *
 	*************************
-	*/
-	/*
+	*//*
 	class EventManager{
 	public:
 		EventManager() {
@@ -81,8 +82,40 @@ namespace Makai {
 	struct Program {
 	public:
 		/// Initializes the program.
-		Program(unsigned int width, unsigned int height, std::string windowTitle, bool fullscreen = false) {
-			window.create(sf::VideoMode(width, height), windowTitle);
+		Program(unsigned int width, unsigned int height, std::string windowTitle, unsigned int fps = 60, bool fullscreen = false) {
+			// Initialize alegro
+			$debug("Starting Allegro...");
+			$enforce("Allegro", al_init());
+			// Initialize primitives
+			$debug("Initializing primitives addon...");
+			$enforce("Primitives", al_init_primitives_addon());
+			// Enable keyboard
+			$debug("Installing keyboard...");
+			$enforce("Keyboard", al_install_keyboard());
+			// Create frame counter
+			$debug("Setting frame counter...");
+			sys.timer = al_create_timer(1.0 / fps);
+			// Create event queue
+			$debug("Creating event queue...");
+			sys.queue = al_create_event_queue();
+			// Create default font
+			$debug("Creating default font...");
+			defaultFont = al_create_builtin_font();
+			$debug("Setting display options...");
+			al_set_new_display_option(ALLEGRO_SAMPLE_BUFFERS, 1, ALLEGRO_SUGGEST);
+			al_set_new_display_option(ALLEGRO_SAMPLES, 8, ALLEGRO_SUGGEST);
+			al_set_new_bitmap_flags(ALLEGRO_MIN_LINEAR | ALLEGRO_MAG_LINEAR);
+			// Create window
+			$debug("Creating window...");
+			sys.window = al_create_display(width, height);
+			// Register events
+			$debug("Registering events:");
+			$debug("	keyboard...");
+			al_register_event_source(sys.queue, al_get_keyboard_event_source());
+			$debug("	display...");
+			al_register_event_source(sys.queue, al_get_display_event_source(sys.window));
+			$debug("	frame counter...");
+			al_register_event_source(sys.queue, al_get_timer_event_source(sys.timer));
 		}
 
 		/// Sets the window's title.
@@ -102,13 +135,24 @@ namespace Makai {
 				Event::yieldAllTimers();
 				EntityClass::$_ROOT.yield(delta);
 			};
+			// Start timer
+			$debug("Starting frame counter...");
+			al_start_timer(sys.timer);
+			// Whether to draw frame
+			bool redraw = true;
+			// Whether program was closed
+			bool shouldClose = false;
 			// While program is running...
-			while(window.isOpen() && shouldRun) {
-				// Process events
-				sf::Event event;
-				while (window.pollEvent(event)) {
-					// Close window : exit
-					shouldRun = !(event.type == sf::Event::Closed);
+			while(shouldRun && !shouldClose) {
+				// Wait for events
+				al_wait_for_event(sys.queue, &sys.event);
+				// Process events:
+				switch (sys.event.type) {
+				case ALLEGRO_EVENT_TIMER:
+					redraw = true;
+					break;
+				case ALLEGRO_EVENT_DISPLAY_CLOSE:
+					shouldClose = true;
 				}
 				// Start thread
 				std::thread physics(physFunc, fixedDelta);
@@ -117,11 +161,17 @@ namespace Makai {
 				onFrame();
 				// Wait for thread to be done processing
 				physics.join();
-				// Draw screen
-				VecV4 color = windowColor.clamped(VecV4(0.0), VecV4(1.0)) * 255;
-				window.clear(sf::Color(color.x, color.y, color.z, color.w));
-				onDraw();
-				window.display();
+				// If should draw screen...
+				if(redraw && al_is_event_queue_empty(sys.queue)) {
+					// Clear screen
+					al_clear_to_color(al_map_rgba_f(windowColor.x, windowColor.y, windowColor.z, windowColor.w));
+					// Draw internal frame
+					onDraw();
+					// Flip buffers
+					al_flip_display();
+					// Disable drawing until next frame
+					redraw = false;
+				}
 			}
 			// Terminate program
 			terminate();
@@ -145,24 +195,22 @@ namespace Makai {
 		}
 
 		/// Gets called whenever the program is rendering to the screen. Happens after 3D render, but before GUI render.
-		Event::Signal	onDraw	= $func {};
+		Event::Signal	onDraw	= $func() {};
 
 
 		/// Gets called every frame, along all other logic.
-		Event::Signal	onFrame = $func {};
+		Event::Signal	onFrame = $func() {};
 
 
 		/// Gets called when the program is closing. Happens before Window is terminated.
-		Event::Signal	onClose = $func {};
-
-		/// Gets the program window.
-		sf::RenderWindow* getWindow() {
-			return &window;
-		}
+		Event::Signal	onClose = $func() {};
 
 		/// The program's window output.
 		struct {
 		} out;
+
+		/// The window's default font.
+		ALLEGRO_FONT* defaultFont;
 
 		/// The window's color.
 		VecV4 windowColor = VecV4(.5, .5, .5, 1.0);
@@ -171,13 +219,21 @@ namespace Makai {
 		void terminate() {
 			// Call final function
 			onClose();
-			// Close window if open
-			if (window.isOpen()) window.close();
+			// Destroy allegro stuff
+			al_destroy_font(defaultFont);
+			al_destroy_display(sys.window);
+			al_destroy_timer(sys.timer);
+			al_destroy_event_queue(sys.queue);
 		}
+		struct {
+			/// The program's window.
+			ALLEGRO_DISPLAY* window;
+			ALLEGRO_TIMER* timer;
+			ALLEGRO_EVENT_QUEUE* queue;
+			ALLEGRO_EVENT event;
+		}sys;
 		/// Current execution state.
 		bool shouldRun = true;
-		/// The program window.
-		sf::RenderWindow window;
 	};
 }
 
