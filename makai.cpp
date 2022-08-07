@@ -7,7 +7,7 @@
 #ifdef _SIDE_A
 #include <windows.h>
 
-#ifndef _MAKAI_DEBUG_
+#ifndef _DEBUG_OUTPUT_
 #if (_WIN32 || _WIN64)
 int WINAPI WinMain(HINSTANCE hThisInstance, HINSTANCE hPrevInstance, LPSTR lpszArgument, int nCmdShow) {
 #endif // _WINDOWS
@@ -85,7 +85,7 @@ int main()
     must_init(font, "font");
 
     must_init(al_init_image_addon(), "image addon");
-    ALLEGRO_BITMAP* mysha = al_load_bitmap("amogus_sus.png");
+    ALLEGRO_BITMAP* mysha = al_load_bitmap("river.jpg");
     must_init(mysha, "mysha");
 
     must_init(al_init_primitives_addon(), "primitives");
