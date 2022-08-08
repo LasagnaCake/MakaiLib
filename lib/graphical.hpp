@@ -8,6 +8,9 @@
 	inline	virtual string getBaseClass() {return #BASE;}\
 	inline	static string getCoreClass() {return #NAME;}
 
+//#pragma GCC push_options
+//#pragma GCC optimize ("unroll-loops")
+
 namespace VecMath {
 	namespace {
 		using
@@ -82,6 +85,7 @@ namespace RenderData {
 			VecV2 uv[3] = nullptr,
 			VecV4 color[3] = nullptr
 		) {
+			#pragma GCC unroll 3
 			for (unsigned char i = 0; i < 3; i++) {
 				this->verts[i]	= verts[i];
 				this->uv[i]		= uv ? uv[i] : VecV2(1);
@@ -107,6 +111,7 @@ namespace RenderData {
 		) {
 			this->transform = transform;
 			this->texture	= texture;
+			#pragma GCC unroll 4
 			for (unsigned char i = 0; i < 4; i++) {
 				this->verts[i]	= verts[i];
 				this->uv[i]		= uv ? uv[i] : VecV2(1);
@@ -115,6 +120,7 @@ namespace RenderData {
 		};
 		Plane<T, ROT_T> globalized() {
 			Plane<T, ROT_T> res;
+			#pragma GCC unroll 4
 			for (unsigned char i = 0; i < 4; i++)
 				res.verts[i] = srpTransform(verts[i], transform);
 			return res;
@@ -135,6 +141,7 @@ namespace RenderData {
 	/// Returns a globalized triangle, based on the transforms of a given triangle
 	template <class TRI, class TRANS>
 	TRI transformed(TRI tri, TRANS transform) {
+		#pragma GCC unroll 3
 		for (unsigned char i = 0; i < 3; i++) {
 			tri.verts[i] = VecMath::srpTransform(
 				tri.verts[i],
@@ -151,20 +158,24 @@ namespace RenderData {
 		// Create vertexes
 		ALLEGRO_VERTEX* verts = new ALLEGRO_VERTEX[3];
 		// Assign vertex data
+		#pragma GCC unroll 3
 		for (unsigned char i = 0; i < 3; i++) {
 			verts[i].x = tri.verts[i].x;
 			verts[i].y = tri.verts[i].y;
 			verts[i].z = tri.verts[i].z;
-			if (useUV) {
-				verts[i].u = tri.uv[i].x;
-				verts[i].v = tri.uv[i].y;
-			}
 			verts[i].color = al_map_rgba_f(
 				tri.color[i].x,
 				tri.color[i].y,
 				tri.color[i].z,
 				tri.color[i].w
 			);
+		}
+		if (useUV) {
+			#pragma GCC unroll 3
+			for (unsigned char i = 0; i < 3; i++) {
+				verts[i].u = tri.uv[i].x;
+				verts[i].v = tri.uv[i].y;
+			}
 		}
 		// Return vertex array
 		return verts;
@@ -176,14 +187,11 @@ namespace RenderData {
 		// Create vertexes
 		ALLEGRO_VERTEX* verts = new ALLEGRO_VERTEX[4];
 		// Assign vertex data
+		#pragma GCC unroll 4
 		for (unsigned char i = 0; i < 4; i++) {
 			verts[i].x = pl.verts[i].x;
 			verts[i].y = pl.verts[i].y;
 			verts[i].z = pl.verts[i].z;
-			if (useUV) {
-				verts[i].u = pl.uv[i].x;
-				verts[i].v = pl.uv[i].y;
-			}
 			verts[i].color = al_map_rgba_f(
 				pl.color[i].x,
 				pl.color[i].y,
@@ -191,9 +199,18 @@ namespace RenderData {
 				pl.color[i].w
 			);
 		}
+		if (useUV) {
+			#pragma GCC unroll 4
+			for (unsigned char i = 0; i < 4; i++) {
+				verts[i].u = pl.uv[i].x;
+				verts[i].v = pl.uv[i].y;
+			}
+		}
 		// Return vertex array
 		return verts;
 	}
+
+//#pragma GCC pop_options
 
 	/// Renders a set of vertexes as a triangle strip to the screen.
 	void render3DStrip(ALLEGRO_VERTEX* verts, size_t vertCount, ALLEGRO_BITMAP* texture, bool autoDelete = true) {
@@ -204,7 +221,7 @@ namespace RenderData {
 			NULL,
 			texture,
 			0,
-			3,
+			vertCount,
 			ALLEGRO_PRIM_TRIANGLE_STRIP
 		);
 		// If should clear vertexes, delete them
@@ -216,6 +233,7 @@ namespace EntityClass {
 
 }
 
+#undef UNROLL_LOOPS
 #undef DERIVED_CLASS
 
 #endif // GRAPHICAL_RENDERER_H
