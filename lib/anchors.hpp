@@ -1,7 +1,9 @@
 #ifndef ANCHORED_HEADERS_H
 #define ANCHORED_HEADERS_H
 
-#define $print(TEXT) std::cout << TEXT << std::endl
+#define $enforce(WHAT, CHECK) if(!(CHECK)) throw std::runtime_error(std::string("ERROR: failed to initialize ") + WHAT)
+
+#define $print(TEXT) std::cout << (TEXT) << std::endl
 
 #ifdef _DEBUG_OUTPUT_
 #include <iostream>

@@ -4,8 +4,6 @@
 #include "anchors.hpp"
 #include "graphical.hpp"
 
-#define $enforce(WHAT, HOW) if(!(HOW)) throw std::runtime_error(std::string("ERROR: failed to initialize ") + WHAT)
-
 namespace Makai {
 	namespace {
 		using
