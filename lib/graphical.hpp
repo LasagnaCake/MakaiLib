@@ -11,47 +11,13 @@
 //#pragma GCC push_options
 //#pragma GCC optimize ("unroll-loops")
 
-namespace VecMath {
+namespace RenderHelper {
 	namespace {
 		using
 		Vector::VecV2,
 		Vector::VecV3,
+		Vector::VecV4,
 		std::vector;
-	}
-
-	/// Base transformation data structure.
-	template <class T, typename ROT_T>
-	struct Transform {
-		Transform() {}
-		Transform(T position, ROT_T rotation, T scale) {
-			this->position	= position;
-			this->rotation	= rotation;
-			this->scale		= scale;
-		}
-		T		position;
-		ROT_T	rotation;
-		T		scale;
-	};
-
-	typedef Transform<VecV2, float>	Transform2D;
-	typedef Transform<VecV3, VecV3>	Transform3D;
-
-	VecV2 srpTransform(VecV2 vec, Transform2D trans) {
-		return srpTransform(
-			vec,
-			trans.position,
-			trans.rotation,
-			trans.scale
-		);
-	}
-
-	VecV3 srpTransform(VecV3 vec, Transform3D trans) {
-		return srpTransform(
-			vec,
-			trans.position,
-			trans.rotation,
-			trans.scale
-		);
 	}
 
 	inline ALLEGRO_COLOR toAllegroColor(VecV4 color) {
@@ -73,7 +39,31 @@ namespace RenderData {
 		VecMath::Transform2D,
 		VecMath::Transform3D,
 		VecMath::srpTransform,
+		RenderHelper::toAllegroColor,
 		std::vector;
+	}
+
+	struct Vertex {
+		Vertex() {}
+		Vertex(VecV3 position, VecV4 color = VecV4(1), VecV2 uv = VecV2(0)) {
+			this-> position	= position;
+			this-> uv		= uv;
+			this->color		= color;
+		}
+		VecV3 position;
+		VecV2 uv;
+		VecV4 color;
+	};
+
+	ALLEGRO_VERTEX toAllegroVertex(Vertex v) {
+		ALLEGRO_VERTEX res;
+		res.x = v.position.x;
+		res.y = v.position.y;
+		res.z = v.position.z;
+		res.u = v.uv.x;
+		res.v = v.uv.y;
+		res.color = toAllegroColor(v.color);
+		return res;
 	}
 
 	/// Base triangle data structure.
@@ -163,12 +153,7 @@ namespace RenderData {
 			verts[i].x = tri.verts[i].x;
 			verts[i].y = tri.verts[i].y;
 			verts[i].z = tri.verts[i].z;
-			verts[i].color = al_map_rgba_f(
-				tri.color[i].x,
-				tri.color[i].y,
-				tri.color[i].z,
-				tri.color[i].w
-			);
+			verts[i].color = RenderHelper::toAllegroColor(tri.color[i]);
 		}
 		if (useUV) {
 			#pragma GCC unroll 3
