@@ -3,7 +3,7 @@
 
 #include "lib/program.hpp"
 
-#define _SIDE_A
+//#define _SIDE_A
 #ifdef _SIDE_A
 #include <windows.h>
 
@@ -123,10 +123,11 @@ int main()
 			al_clear_to_color(al_map_rgb(0, 0, 0));
 			al_draw_text(font, al_map_rgb(255, 255, 255), 0, 0, 0, "Hello world!");
 			$debug("Drawing mysha...");
-			al_draw_bitmap(mysha, 100, 100, 0);
+			//al_draw_bitmap(mysha, 100, 100, 0);
 			$debug("Mysha!");
 			// [==[ Any code before this point gets executed correctly ]==]
 			$debug("Drawing lines...");
+			$debug(al_get_bitmap_flags(nullptr));
 			al_draw_line(440, 110, 460, 210, al_map_rgb_f(1, 0, 0), 1);
 			al_draw_line(500, 220, 570, 200, al_map_rgb_f(1, 1, 0), 1);
 			$debug("Lines drawn!");
