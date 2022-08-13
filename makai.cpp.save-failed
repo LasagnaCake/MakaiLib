@@ -24,6 +24,11 @@ int main() {
 	prog.onFrame = $func() {
 		if (prog.input.getButtonDown(SDL_SCANCODE_ESCAPE))
 			prog.close();
+		$debug(prog.input.getButtonState(SDL_SCANCODE_W));
+		$debug("");
+		$debug(SDL_SCANCODE_ESCAPE);
+		$debug(SDL_SCANCODE_W);
+		$debug("");
 	};
 	GLfloat triVerts[] = {
 	    0.0,  0.8,

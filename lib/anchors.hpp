@@ -31,6 +31,11 @@
 #include <math.h>
 #include <thread>
 #include <map>
+#include <fstream>
+#include <sstream>
+#include <algorithm>
+
+#include "fileloader.hpp"
 
 /*
 *********************

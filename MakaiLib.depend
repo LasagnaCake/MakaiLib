@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1660418580 source:d:\c(++) projects\_c++\game engine\makailib\makai.cpp
+1660432811 source:d:\c(++) projects\_c++\game engine\makailib\makai.cpp
 	<stdexcept>
 	"lib/program.hpp"
 	<windows.h>
@@ -996,10 +996,11 @@
 	"graphical.hpp"
 	"program.hpp"
 
-1660396729 d:\c(++) projects\_c++\game engine\makailib\lib\graphical.hpp
+1660427417 d:\c(++) projects\_c++\game engine\makailib\lib\graphical.hpp
 	"anchors.hpp"
 	"graphical/al_graphical.hpp"
 	"graphical/gl_graphical.hpp"
+	"graphical/gl_shader.hpp"
 
 1660229013 d:\c(++) projects\_c++\game engine\makailib\lib\collection\vectorn.hpp
 	<cmath>
@@ -1482,7 +1483,7 @@
 	<stdarg.h>
 	<stdbool.h>
 
-1660416818 d:\c(++) projects\_c++\game engine\makailib\lib\anchors.hpp
+1660426359 d:\c(++) projects\_c++\game engine\makailib\lib\anchors.hpp
 	<iostream>
 	<string>
 	<vector>
@@ -1493,6 +1494,10 @@
 	<math.h>
 	<thread>
 	<map>
+	<fstream>
+	<sstream>
+	<algorithm>
+	"fileloader.hpp"
 	<allegro5/allegro5.h>
 	<allegro5/allegro_font.h>
 	<allegro5/allegro_image.h>
@@ -1822,14 +1827,14 @@
 1660231556 d:\c(++) projects\_c++\game engine\makailib\lib\graphical\al_graphical.hpp
 	"anchors.hpp"
 
-1660396496 d:\c(++) projects\_c++\game engine\makailib\lib\graphical\gl_graphical.hpp
+1660425324 d:\c(++) projects\_c++\game engine\makailib\lib\graphical\gl_graphical.hpp
 	"../anchors.hpp"
 
 1660008821 d:\c(++) projects\_c++\game engine\makailib\lib\program\al_program.hpp
 	"anchors.hpp"
 	"graphical.hpp"
 
-1660418655 d:\c(++) projects\_c++\game engine\makailib\lib\program\gl_program.hpp
+1660432910 d:\c(++) projects\_c++\game engine\makailib\lib\program\gl_program.hpp
 	"../anchors.hpp"
 	"../graphical.hpp"
 
@@ -2179,4 +2184,10 @@
 	"SDL_stdinc.h"
 	"begin_code.h"
 	"close_code.h"
+
+1660427073 d:\c(++) projects\_c++\game engine\makailib\lib\fileloader.hpp
+	"../anchors.hpp"
+
+1660428673 d:\c(++) projects\_c++\game engine\makailib\lib\graphical\gl_shader.hpp
+	"../anchors.hpp"
 
