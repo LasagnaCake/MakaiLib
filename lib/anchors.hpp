@@ -1,6 +1,8 @@
 #ifndef ANCHORED_HEADERS_H
 #define ANCHORED_HEADERS_H
 
+#define $errlog(TEXT) std::cerr << TEXT << std::endl
+
 #define $enforce(WHAT, CHECK) if(!(CHECK)) throw std::runtime_error(std::string("ERROR: failed to initialize ") + WHAT)
 
 #define $print(TEXT) std::cout << (TEXT) << std::endl
@@ -41,10 +43,21 @@
 //#include <SFML/Graphics.hpp>
 //#include <raylib.h>
 
+#ifdef MAKAI_ALLEGRO5
 #include <allegro5/allegro5.h>
 #include <allegro5/allegro_font.h>
 #include <allegro5/allegro_image.h>
 #include <allegro5/allegro_primitives.h>
+#else
+#include "stb_image.h"
+#include <GL/glew.h>
+#include <GL/gl.h>
+#include <GLFW/glfw3.h>
+#if (_WIN32 || _WIN64 || __WIN32__ || __WIN64__)
+#define SDL_MAIN_HANDLED
+#endif
+#include <SDL2/SDL.h>
+#endif
 
 /*
 ***************************
@@ -73,7 +86,6 @@
 #include "collection/entity/entity.hpp"
 #include "collection/vectorn.hpp"
 #include "collection/cyclical.hpp"
-//#include "collection/matrices.hpp"
 #include "collection/tween.hpp"
 #include "collection/event.hpp"
 
