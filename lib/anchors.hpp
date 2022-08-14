@@ -35,8 +35,6 @@
 #include <sstream>
 #include <algorithm>
 
-#include "fileloader.hpp"
-
 /*
 *********************
 *                   *
@@ -54,10 +52,12 @@
 #include <allegro5/allegro_image.h>
 #include <allegro5/allegro_primitives.h>
 #else
+#define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 #include <GL/glew.h>
 #include <GL/gl.h>
 #include <GLFW/glfw3.h>
+#include <GLM/glm.hpp>
 #if (_WIN32 || _WIN64 || __WIN32__ || __WIN64__)
 #define SDL_MAIN_HANDLED
 #endif
@@ -103,6 +103,8 @@
 #undef Vector3
 #undef Vector4
 #endif
+
+#include "fileloader.hpp"
 
 /*
 *	[+]=[   [Headers END]   ]=[+]

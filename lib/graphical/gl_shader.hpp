@@ -3,6 +3,8 @@
 
 #include "../anchors.hpp"
 
+#define GLSL_VERSION "#version 120\n"
+
 namespace Shader {
 	namespace {
 		using
@@ -12,7 +14,7 @@ namespace Shader {
 
 	/// Default Vertex Shader code.
 	const string DEFAULT_VERTEX_SHADER =
-		"#version 120\n"
+		GLSL_VERSION
 		"attribute vec2 coord2d;                  "
 		"void main(void) {                        "
 		"  gl_Position = vec4(coord2d, 0.0, 1.0); "
@@ -20,7 +22,7 @@ namespace Shader {
 
 	/// Default Fragment Shader code.
 	const string DEFAULT_FRAGMENT_SHADER =
-		"#version 120\n"  // OpenGL 2.1
+		GLSL_VERSION  // OpenGL 2.1
 		"void main(void) {        "
 		"  gl_FragColor[0] = 1.0; "
 		"  gl_FragColor[1] = 1.0; "
@@ -28,6 +30,7 @@ namespace Shader {
 		"}";
 
 	class Shader {
+	private:
 		GLuint id;
 		bool created = false;
 	public:
@@ -36,7 +39,22 @@ namespace Shader {
 		Shader(string vertexCode, string fragmentCode) {
 			create(vertexCode, fragmentCode);
 		}
-		/// Creates the shader. Returns false if already created.
+
+		~Shader() {
+			destroy();
+		}
+
+		/// Gets the attached shader program's ID.
+		inline GLuint getID() {
+			return id;
+		}
+
+		/// Returns whether this object has a shader associated with it (i.e. "is created").
+		inline bool isCreated() {
+			return created;
+		}
+
+		/// Creates a shader and associates it to the object. Returns false if already created.
 		bool create(string vertexCode = DEFAULT_VERTEX_SHADER, string fragmentCode = DEFAULT_FRAGMENT_SHADER) {
 			if (created) return false;
 			else created = true;
@@ -85,12 +103,60 @@ namespace Shader {
 			return true;
 		}
 
+		/// Destroys the shader associated with this object, if any. Does not delete object.
+		void destroy() {
+			if (created) {
+				glDeleteProgram(id);
+				created = false;
+			}
+		}
+
+		/// Enables this object as shader.
 		void operator()() {
 			glUseProgram(id);
 		}
+
+		void operator()(const std::string& name, bool value) const
+		{
+			glUniform1i(glGetUniformLocation(id, name.c_str()), (int)value);
+		}
+
+		void operator()(const std::string& name, int value) const
+		{
+			glUniform1i(glGetUniformLocation(id, name.c_str()), value);
+		}
+
+		void operator()(const std::string& name, unsigned int value) const
+		{
+			glUniform1ui(glGetUniformLocation(id, name.c_str()), value);
+		}
+
+		void operator()(const std::string& name, float value) const
+		{
+			glUniform1f(glGetUniformLocation(id, name.c_str()), value);
+		}
+
+		void operator()(const std::string& name, glm::vec2 value) const
+		{
+			glUniform2f(glGetUniformLocation(id, name.c_str()), value.x, value.y);
+		}
+
+		void operator()(const std::string& name, glm::vec3 value) const
+		{
+			glUniform3f(glGetUniformLocation(id, name.c_str()), value.x, value.y, value.z);
+		}
+
+		void operator()(const std::string& name, glm::vec4 value) const
+		{
+			glUniform4f(glGetUniformLocation(id, name.c_str()), value.x, value.y, value.z, value.w);
+		}
+		/*
+		void operator()(const std::string& name, glm::mat4 value) const
+		{
+			glUniformMatrix4fv(glGetUniformLocation(id, name.c_str()), 1, GL_FALSE, glm::value_ptr(value));
+		}*/
 	};
 
 	Shader defaultShader;
 }
-
 #endif // MAKAILIB_SHADER_HANDLER

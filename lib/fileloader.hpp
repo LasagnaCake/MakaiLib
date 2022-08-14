@@ -9,7 +9,27 @@ namespace FileLoader {
 		std::string,
 		std::runtime_error,
 		std::ifstream,
-		std::stringstream;
+		std::stringstream,
+		Vector::VecV2;
+	}
+
+	struct Image {
+		VecV2 size;
+		string data;
+		unsigned int channels;
+	};
+
+	Image loadImageFile(string path) {
+		int width, height, nrChannels;
+		unsigned char* data = stbi_load(path.c_str(), &width, &height, &nrChannels, 0);
+		Image res;
+		if (data) {
+			res.data = string((char*)data);
+			res.size = VecV2(width, height);
+			res.channels = nrChannels;
+			stbi_image_free(data);
+		}
+		return res;
 	}
 
 	/// Loads a text file as a string.
@@ -17,7 +37,7 @@ namespace FileLoader {
 		// The file and its contents
 		string content;
 		ifstream file;
-		// ensure ifstream object can throw exception:
+		// Ensure ifstream object can throw exception:
 		file.exceptions(ifstream::failbit | ifstream::badbit);
 		try {
 			// Open file
@@ -31,7 +51,7 @@ namespace FileLoader {
 			content = stream.str();
 		}
 		catch (ifstream::failure e) {
-			throw runtime_error(string("File could not be opened: ") + path);
+			return nullptr;
 		}
 		// Return contents
 		return content;

@@ -12,6 +12,7 @@ namespace Makai {
 		std::string,
 		std::map,
 		std::runtime_error,
+		Vector::VecV2,
 		Vector::VecV3,
 		Vector::VecV4;
 	}
@@ -50,7 +51,7 @@ namespace Makai {
 
 		/// Returns whether the button is pressed.
 		inline bool getButtonDown(SDL_Scancode button) {
-			return buffer[button] > deadzone;
+			return buffer[button] > 0;
 		}
 
 		/**
@@ -59,14 +60,12 @@ namespace Makai {
 		* 1+	= Pressed;
 		* Recommended if time pressed is required.
 		*/
-		unsigned int getButtonState(SDL_Scancode button) {
+		inline unsigned int getButtonState(SDL_Scancode button) {
 			return buffer[button];
 
 		}
 		/// Whether input is enabled.
 		bool enabled = true;
-		/// The button's "dead zone" ().
-		unsigned int deadzone = 5;
 	private:
 		/// The internal buffer state.
 		map<SDL_Scancode, unsigned int> buffer;
@@ -113,11 +112,6 @@ namespace Makai {
 				throw runtime_error(string("Error: glewInit"));
 			}
 			$debug("Started!");
-			$debug("Creating renderer...");
-			// Create window's renderer
-			renderer = SDL_CreateRenderer(window, -1, 0);
-			setWindowColor();
-			$debug("Created!");
 			// Create default shader
 			$debug("Creating default shader...");
 			Shader::defaultShader.create();
@@ -157,15 +151,13 @@ namespace Makai {
 				onFrame();
 				// Wait for thread to be done processing
 				physics.join();
-				// Render code BEGIN
-
-				onDraw();
-				// Render code END
+				// [[ Render code BEGIN ]]
+				render();
+				// [[ Render code END ]]
 			}
 			// Terminate program
 			terminate();
 		}
-
 
 		/// Closes the program.
 		void close(){
@@ -179,7 +171,7 @@ namespace Makai {
 		}
 
 		/// Sets the program's window size.
-		void setWindowSize(){
+		void setWindowSize(VecV2 size){
 
 		}
 
@@ -199,16 +191,7 @@ namespace Makai {
 		} out;
 
 		/// The window's clear color.
-		inline void setWindowColor(VecV4 color = VecV4(0,0,0,1)) {
-			// Convert color to 8-Bit color
-			color *= 255;
-			// Select the color for drawing
-			SDL_SetRenderDrawColor(renderer, color.x, color.y, color.z, color.w);
-			// Clear the entire screen to selected color
-			SDL_RenderClear(renderer);
-			// Set renderer to present
-			SDL_RenderPresent(renderer);
-		}
+		VecV4 color = VecV4(0, 0, 0, 1);
 
 		/// The program's input manager.
 		InputManager input;
@@ -217,17 +200,27 @@ namespace Makai {
 		void terminate() {
 			// Call final function
 			onClose();
+			//
 			// Quit SDL
 			SDL_Quit();
 		}
+
+		/// Draws the window.
+		void render() {
+			// Clear screen
+			glClearColor(color.x, color.y, color.z, color.w);
+			glClear(GL_COLOR_BUFFER_BIT);
+			// Execute own drawing function
+			onDraw();
+			// Display window
+			SDL_GL_SwapWindow(window);
+		}
+
 		/// Current execution state.
 		bool shouldRun = true;
 
 		/// The program's window.
 		SDL_Window* window;
-
-		/// The window's renderer.
-		SDL_Renderer* renderer;
 	};
 }
 
