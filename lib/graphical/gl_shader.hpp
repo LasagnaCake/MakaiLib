@@ -3,12 +3,21 @@
 
 #include "../anchors.hpp"
 
-#define GLSL_VERSION "#version 120\n"
+#ifdef GL_ES_VERSION_2_0
+#define GLSL_VERSION "#version 100\n\n"
+#else
+#define GLSL_VERSION "#version 120\n\n"
+#endif
 
 namespace Shader {
 	namespace {
 		using
 		std::string,
+		std::vector,
+		std::regex,
+		std::regex_replace,
+		std::to_string,
+		std::function,
 		std::runtime_error;
 	}
 
@@ -156,6 +165,48 @@ namespace Shader {
 			glUniformMatrix4fv(glGetUniformLocation(id, name.c_str()), 1, GL_FALSE, glm::value_ptr(value));
 		}*/
 	};
+
+	typedef vector<string> ShaderCodes;
+
+	/// Combines a set of fragment shaders into a single shader.
+	string composeShader(ShaderCodes fragShaders) {
+		string result = GLSL_VERSION;
+		string mainCode = "\n";
+		mainCode += "void main(void) {\n";
+		mainCode += "    vec4 SHADER_in, SHADER_out;\n";
+		mainCode += "    SHADER_in = vec4(1, 1, 1, 1);\n";
+		size_t shaderCount = 0;
+		for (string frag : fragShaders) {
+			string shaderID = "SHADER_fShader" + to_string(shaderCount++);
+			string fragCode = regex_replace(
+				frag,
+				regex("fragment"),
+				shaderID
+			);
+			result += fragCode + "\n";
+			mainCode += "    " + shaderID;
+			mainCode += "(SHADER_in, SHADER_out);\n";
+			mainCode += "    SHADER_in = SHADER_out;\n";
+		}
+		mainCode +=
+			"    gl_FragColor[0] = SHADER_out.x;\n"
+			"    gl_FragColor[1] = SHADER_out.y;\n"
+			"    gl_FragColor[2] = SHADER_out.z;\n"
+			"    gl_FragColor[3] = SHADER_out.w;\n"
+		;
+		mainCode += "}\n";
+		return result + mainCode;
+	}
+
+	typedef vector<Shader> ShaderList;
+
+	/// Does a render action with a set of shaders.
+	void multiShaderPass(function<void()> action, ShaderList shaders) {
+		for (Shader s : shaders) {
+			s();
+			action();
+		}
+	}
 
 	Shader defaultShader;
 }

@@ -111,15 +111,26 @@ namespace Makai {
 				$errlog("Error: glewInit: " << glewGetErrorString(glew_status));
 				throw runtime_error(string("Error: glewInit"));
 			}
+			if (!GLEW_VERSION_2_0) {
+				$errlog("Your computer does not support OpenGL 2+!");
+				throw runtime_error(string("Error: No OpenGL 2+"));
+			}
 			$debug("Started!");
 			// Create default shader
 			$debug("Creating default shader...");
 			Shader::defaultShader.create();
 			$debug("Created!");
+			SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 1);
+			glEnable(GL_BLEND);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		}
 
 		/// Sets the window's title.
 		void setWindowTitle(string windowTitle) {
+		}
+
+		void setAlphaBlendMode(GLEnum type) {
+			glBlendFunc(GL_SRC_ALPHA, type);
 		}
 
 		/// Runs the program.
