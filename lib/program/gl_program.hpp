@@ -129,7 +129,7 @@ namespace Makai {
 		void setWindowTitle(string windowTitle) {
 		}
 
-		void setAlphaBlendMode(GLEnum type) {
+		void setAlphaBlendMode(GLuint type) {
 			glBlendFunc(GL_SRC_ALPHA, type);
 		}
 
@@ -220,7 +220,7 @@ namespace Makai {
 		void render() {
 			// Clear screen
 			glClearColor(color.x, color.y, color.z, color.w);
-			glClear(GL_COLOR_BUFFER_BIT);
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			// Execute own drawing function
 			onDraw();
 			// Display window

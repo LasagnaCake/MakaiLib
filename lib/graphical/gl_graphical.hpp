@@ -37,9 +37,9 @@ namespace Drawer {
 			VecV4 color;
 		};
 
-		_Vtx _toVtx(VecV3* pos, VecV2 uv, VecV4 col, size_t numVerts) {
-			_VtxRaw* res = new _Vtx[numVerts];
-			for(auto i = 0; i < numVerts; i++) {
+		_Vtx* _toVtx(VecV3* pos, VecV2* uv, VecV4* col, size_t numVerts) {
+			_Vtx* res = new _Vtx[numVerts];
+			for(size_t i = 0; i < numVerts; i++) {
 				res[i].position	= pos[i];
 				if (uv) res[i].uv		= uv[i];
 				if (col) res[i].color	= col[i];
@@ -48,9 +48,9 @@ namespace Drawer {
 			return res;
 		}
 
-		_VtxRaw _toVtxRaw(_Vtx* verts, size_t numVerts) {
+		_VtxRaw* _toVtxRaw(_Vtx* verts, size_t numVerts) {
 			_VtxRaw* res = new _VtxRaw[numVerts];
-			for(auto i = 0; i < numVerts; i++) {
+			for(size_t i = 0; i < numVerts; i++) {
 				res[i].x = verts[i].position.x;
 				res[i].y = verts[i].position.y;
 				res[i].z = verts[i].position.z;
@@ -64,15 +64,24 @@ namespace Drawer {
 			return res;
 		}
 
-		typedef _GLTex GLuint;
-		typedef _GLBuf GLuint;
+		typedef GLuint _GLTex;
+		typedef GLuint _GLBuf;
 
 		void _renderRaw(
-			_GLBuf* buffer,
-			_GLTex* image
+			_GLBuf buffer,
+			_GLTex image,
+			_VtxRaw* verts,
+			size_t start,
+			size_t count,
+			int glType
 		) {
 			if(buffer)
 				glBindBuffer(GL_ARRAY_BUFFER, buffer);
+
+			glDrawArrays(glType, start, count);
+
+			if(buffer)
+				glBindBuffer(GL_ARRAY_BUFFER, 0);
 		}
 	}
 
