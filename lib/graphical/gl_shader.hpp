@@ -9,6 +9,8 @@
 #define GLSL_VERSION "#version 120\n\n"
 #endif
 
+#define SHADER_NULL ""
+
 namespace Shader {
 	namespace {
 		using
@@ -67,48 +69,51 @@ namespace Shader {
 		bool create(string vertexCode = DEFAULT_VERTEX_SHADER, string fragmentCode = DEFAULT_FRAGMENT_SHADER) {
 			if (created) return false;
 			else created = true;
-			const char* vShaderCode = vertexCode.c_str();
-			const char* fShaderCode = fragmentCode.c_str();
 			// Compile shaders
 			GLuint vertex, fragment;
 			int success;
 			char infoLog[512];
-			// Vertex Shader
-			vertex = glCreateShader(GL_VERTEX_SHADER);
-			glShaderSource(vertex, 1, &vShaderCode, NULL);
-			glCompileShader(vertex);
-			// Log compile errors if any
-			glGetShaderiv(vertex, GL_COMPILE_STATUS, &success);
-			if (!success) {
-				glGetShaderInfoLog(vertex, 512, NULL, infoLog);
-				throw runtime_error(string("Could not compile Vertex Shader!\n") + infoLog);
-			};
-
+			if (vertexCode != SHADER_NULL) {
+				const char* vShaderCode = vertexCode.c_str();
+				// Vertex Shader
+				vertex = glCreateShader(GL_VERTEX_SHADER);
+				glShaderSource(vertex, 1, &vShaderCode, NULL);
+				glCompileShader(vertex);
+				// Log compile errors if any
+				glGetShaderiv(vertex, GL_COMPILE_STATUS, &success);
+				if (!success) {
+					glGetShaderInfoLog(vertex, 512, NULL, infoLog);
+					throw runtime_error(string("Could not compile Vertex Shader!\n") + infoLog);
+				};
+			}
 			// similiar for Fragment Shader
-			fragment = glCreateShader(GL_FRAGMENT_SHADER);
-			glShaderSource(fragment, 1, &fShaderCode, NULL);
-			glCompileShader(fragment);
+			if (fragmentCode != SHADER_NULL) {
+				const char* fShaderCode = fragmentCode.c_str();
+				fragment = glCreateShader(GL_FRAGMENT_SHADER);
+				glShaderSource(fragment, 1, &fShaderCode, NULL);
+				glCompileShader(fragment);
 
-			// Log compile errors if any
-			glGetShaderiv(fragment, GL_COMPILE_STATUS, &success);
-			if (!success) {
-				glGetShaderInfoLog(vertex, 512, NULL, infoLog);
-				throw runtime_error(string("Could not compile Fragment Shader!\n") + infoLog);
+				// Log compile errors if any
+				glGetShaderiv(fragment, GL_COMPILE_STATUS, &success);
+				if (!success) {
+					glGetShaderInfoLog(vertex, 512, NULL, infoLog);
+					throw runtime_error(string("Could not compile Fragment Shader!\n") + infoLog);
+				}
 			}
 			// Shader Program
 			id = glCreateProgram();
-			glAttachShader(id, vertex);
-			glAttachShader(id, fragment);
+			if (vertex)		glAttachShader(id, vertex);
+			if (fragment)	glAttachShader(id, fragment);
 			glLinkProgram(id);
 			// Log linking errors if any
 			glGetProgramiv(id, GL_LINK_STATUS, &success);
 			if (!success) {
 				glGetProgramInfoLog(id, 512, NULL, infoLog);
-				throw runtime_error(string("Could not link shader programs!\n") + infoLog);
+				throw runtime_error(string("Could not link shader program(s)!\n") + infoLog);
 			}
 			// Delete shaders
-			glDeleteShader(vertex);
-			glDeleteShader(fragment);
+			if (vertex)		glDeleteShader(vertex);
+			if (fragment)	glDeleteShader(fragment);
 			return true;
 		}
 
@@ -200,12 +205,18 @@ namespace Shader {
 
 	typedef vector<Shader> ShaderList;
 
-	/// Does a render action with a set of shaders.
+	/// Does a render action with a set of shaders sequentially.
 	void multiShaderPass(function<void()> action, ShaderList shaders) {
 		for (Shader s : shaders) {
 			s();
 			action();
 		}
+	}
+
+	/// Executes a set of shaders sequentially.
+	void multiShaderPass(ShaderList shaders) {
+		for (Shader s : shaders)
+			s();
 	}
 
 	Shader defaultShader;

@@ -64,13 +64,29 @@ namespace Drawer {
 			return res;
 		}
 
+		_VtxRaw* _toVtxRaw(VecV3* pos, VecV2* uv, VecV4* col, size_t numVerts) {
+			_VtxRaw* res = new _VtxRaw[numVerts];
+			for(size_t i = 0; i < numVerts; i++) {
+				res[i].x = pos[i].x;
+				res[i].y = pos[i].y;
+				res[i].z = pos[i].z;
+				res[i].u = uv[i].x;
+				res[i].v = uv[i].y;
+				res[i].r = col[i].x;
+				res[i].g = col[i].y;
+				res[i].b = col[i].z;
+				res[i].a = col[i].w;
+			}
+			return res;
+		}
+
 		typedef GLuint _GLTex;
 		typedef GLuint _GLBuf;
 
 		void _renderRaw(
-			_GLBuf buffer,
-			_GLTex image,
 			_VtxRaw* verts,
+			_GLTex image,
+			_GLBuf buffer,
 			size_t start,
 			size_t count,
 			int glType
