@@ -30,6 +30,10 @@ int main() {
 	   -0.8, -0.8,
 	    0.8, -0.8,
 	};
+
+	FileLoader::CSVData data = FileLoader::loadSLFFile("shaders/postProcessing.slf");
+	Shader::Shader test(data);
+
 	GLint attribCoord2d;
 	const char* attribName = "coord2d";
 	GLuint program = Shader::defaultShader.getID();

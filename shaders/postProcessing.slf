@@ -12,6 +12,6 @@
 	location.
 >:
 
-fog.fs
-balance.fs
-compose.fs
+fog.frag
+balance.frag
+compose.frag

@@ -17,10 +17,13 @@ namespace Shader {
 		std::string,
 		std::vector,
 		std::regex,
+		std::map,
 		std::regex_replace,
 		std::to_string,
 		std::function,
 		std::runtime_error;
+
+		using namespace FileLoader;
 	}
 
 	/// Default Vertex Shader code.
@@ -49,6 +52,10 @@ namespace Shader {
 
 		Shader(string vertexCode, string fragmentCode) {
 			create(vertexCode, fragmentCode);
+		}
+
+		Shader(CSVData slfData) {
+			create(slfData);
 		}
 
 		~Shader() {
@@ -115,6 +122,21 @@ namespace Shader {
 			if (vertex)		glDeleteShader(vertex);
 			if (fragment)	glDeleteShader(fragment);
 			return true;
+		}
+
+		bool create(CSVData slfData) {
+			if (created) return false;
+			string dir = slfData[0];
+			for (size_t i = 1; i < slfData.size(); i += 2) {
+				created = false;
+				$debug(dir + slfData[i]);
+				string code = loadTextFile(dir + slfData[i]);
+				$debug(code);
+				if (slfData[i + 1] == "vert")
+					create(code, SHADER_NULL);
+				else if (slfData[i + 1] == "frag")
+					create(SHADER_NULL, code);
+			}
 		}
 
 		/// Destroys the shader associated with this object, if any. Does not delete object.
@@ -204,14 +226,6 @@ namespace Shader {
 	}
 
 	typedef vector<Shader> ShaderList;
-
-	/// Does a render action with a set of shaders sequentially.
-	void multiShaderPass(function<void()> action, ShaderList shaders) {
-		for (Shader s : shaders) {
-			s();
-			action();
-		}
-	}
 
 	/// Executes a set of shaders sequentially.
 	void multiShaderPass(ShaderList shaders) {

@@ -5,16 +5,8 @@
 
 namespace FileLoader {
 	namespace {
-		using
-		std::string,
-		std::vector,
-		std::regex,
-		std::getline,
-		std::runtime_error,
-		std::ifstream,
-		std::stringstream,
-		std::istringstream,
-		Vector::VecV2;
+		using namespace std;
+		using Vector::VecV2;
 	}
 
 	struct Image {
@@ -61,10 +53,12 @@ namespace FileLoader {
 		return content;
 	}
 
+	typedef vector<string> CSVData;
+
 	/**
 	* Loads a CSV file as a list of strings.
 	*/
-	vector<string> loadCSVFile(string path, char delimiter = ',') {
+	CSVData loadCSVFile(string path, char delimiter = ',') {
 		// The file and its contents
 		string content;
 		ifstream file;
@@ -86,9 +80,9 @@ namespace FileLoader {
 		}
 		// Get values
 		vector<string> csvs;
-		istringstream f(content);
+		istringstream cData(content);
 		string s;
-		while (getline(f, s, delimiter)) {
+		while (getline(cData, s, delimiter)) {
 			// Remove invalid lines
 			if(s.size() > 3)
 				csvs.push_back(s);
@@ -100,7 +94,7 @@ namespace FileLoader {
 	/**
 	* Loads a SLF (Shader Layout Format) file as a list of strings.
 	*/
-	vector<string> loadSLFFile(string path) {
+	CSVData loadSLFFile(string path) {
 		// The file and its contents
 		string content;
 		ifstream file;
@@ -128,17 +122,33 @@ namespace FileLoader {
 		);
 		content = regex_replace(
 			content,
-			regex("($(\\n|\\r|\\r\\n)+)|(\\|+)"),
-			"\""
+			regex("($|(\\n|\\r|\\r\\n)+)"),
+			"|"
+		);
+		// Get file location
+		smatch dir;
+		regex_search(
+			path,
+			dir,
+			regex("^(.*(\\/|\\\\))")
 		);
 		// Get values
 		vector<string> csvs;
-		istringstream f(content);
+		istringstream cData(content);
 		string s;
-		while (getline(f, s, '\"')) {
+		csvs.push_back(dir[1]);
+		while (getline(cData, s, '|')) {
 			// Remove invalid lines
-			if(s.size() > 3)
+			if(s.size() > 3) {
 				csvs.push_back(s);
+				// Get shader type
+				if (s.find("frag") != string::npos) {
+					csvs.push_back("frag");
+				}
+				else if (s.find("vert") != string::npos) {
+					csvs.push_back("vert");
+				}
+			}
 		}
 		// Return contents
 		return csvs;
