@@ -9,6 +9,9 @@ float lenV4(vec4 vec) {
 }
 
 void main() {
-	fragColor /= lenV4(fragColor);
+	fragColor.x = clamp(fragColor.x, 0, 1);
+	fragColor.x = clamp(fragColor.y, 0, 1);
+	fragColor.x = clamp(fragColor.z, 0, 1);
+	fragColor.x = clamp(fragColor.w, 0, 1);
 	gl_Color = fragColor;
 }

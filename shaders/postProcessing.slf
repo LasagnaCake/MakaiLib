@@ -1,0 +1,17 @@
+::	This is an exemple of a Shader Layout Format (SLF).
+
+::	Comment lines are defined like this.
+
+:<	Comment blocks are defined like this.	>:
+
+:<
+	Each shader file is defined in a new line,
+	or separated by a bar (|).
+
+	File locations are relative to this file's
+	location.
+>:
+
+fog.fs
+balance.fs
+compose.fs
