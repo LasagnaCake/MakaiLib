@@ -8,6 +8,8 @@ namespace FileLoader {
 		using
 		std::string,
 		std::vector,
+		std::regex,
+		std::getline,
 		std::runtime_error,
 		std::ifstream,
 		std::stringstream,
@@ -62,7 +64,7 @@ namespace FileLoader {
 	/**
 	* Loads a CSV file as a list of strings.
 	*/
-	vector<string> loadCSVFile(string path, delimiter = ',') {
+	vector<string> loadCSVFile(string path, char delimiter = ',') {
 		// The file and its contents
 		string content;
 		ifstream file;
@@ -80,7 +82,7 @@ namespace FileLoader {
 			content = stream.str();
 		}
 		catch (ifstream::failure e) {
-			return nullptr;
+			return vector<string>();
 		}
 		// Get values
 		vector<string> csvs;
@@ -89,7 +91,7 @@ namespace FileLoader {
 		while (getline(f, s, delimiter)) {
 			// Remove invalid lines
 			if(s.size() > 3)
-				strings.push_back(s);
+				csvs.push_back(s);
 		}
 		// Return contents
 		return csvs;
@@ -116,27 +118,27 @@ namespace FileLoader {
 			content = stream.str();
 		}
 		catch (ifstream::failure e) {
-			return nullptr;
+			return vector<string>();
 		}
 		// Remove comments and empty lines
 		content = regex_replace(
 			content,
-			regex("(:<([\s\S]*?)>:)|(::([\s\S]*?)(\n|\r|\r\n))"),
+			regex("(:<([\\s\\S]*?)>:)|(::([\\s\\S]*?)(\\n|\\r|\\r\\n))"),
 			""
 		);
 		content = regex_replace(
 			content,
-			regex("($(\n|\r|\r\n)+)|(\|+)"),
-			"||"
+			regex("($(\\n|\\r|\\r\\n)+)|(\\|+)"),
+			"\""
 		);
 		// Get values
 		vector<string> csvs;
 		istringstream f(content);
 		string s;
-		while (getline(f, s, '||')) {
+		while (getline(f, s, '\"')) {
 			// Remove invalid lines
 			if(s.size() > 3)
-				strings.push_back(s);
+				csvs.push_back(s);
 		}
 		// Return contents
 		return csvs;
