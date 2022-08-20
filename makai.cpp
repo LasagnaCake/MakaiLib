@@ -31,8 +31,14 @@ int main() {
 	    0.8, -0.8,
 	};
 
-	FileLoader::CSVData data = FileLoader::loadSLFFile("shaders/postProcessing.slf");
-	Shader::Shader test(data);
+	SLF::SLFData data = SLF::parseFile("shaders/postProcessing.slf");
+
+	for (auto d: data)
+		$debug(d);
+
+	Shader::ShaderList test = Shader::getShaderList(data);
+
+	//Shader::Shader test(data);
 
 	GLint attribCoord2d;
 	const char* attribName = "coord2d";

@@ -1,3 +1,5 @@
+<frag>
+
 ::	This is an exemple of a Shader Layout Format (SLF).
 
 ::	Comment lines are defined like this.
@@ -10,8 +12,13 @@
 
 	File locations are relative to this file's
 	location.
+
+	To lock this file into only a specific type
+	of shader, add a <SHADER_TYPE> at the
+	first line.
 >:
 
+capture.frag
 fog.frag
 balance.frag
 compose.frag

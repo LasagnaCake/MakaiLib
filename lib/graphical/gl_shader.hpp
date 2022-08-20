@@ -2,29 +2,26 @@
 #define MAKAILIB_SHADER_HANDLER
 
 #include "../anchors.hpp"
+#include "slf_fileloader.hpp"
 
 #ifdef GL_ES_VERSION_2_0
 #define GLSL_VERSION "#version 100\n\n"
 #else
-#define GLSL_VERSION "#version 120\n\n"
+#define GLSL_VERSION "#version 410\n\n"
 #endif
 
 #define SHADER_NULL ""
 
 namespace Shader {
 	namespace {
-		using
-		std::string,
-		std::vector,
-		std::regex,
-		std::map,
-		std::regex_replace,
-		std::to_string,
-		std::function,
-		std::runtime_error;
-
+		using namespace std;
 		using namespace FileLoader;
 	}
+
+	const map<string, GLuint> shaderTypes = {
+		{"frag", 0x8B30},
+		{"vert", 0x8B31}
+	};
 
 	/// Default Vertex Shader code.
 	const string DEFAULT_VERTEX_SHADER =
@@ -58,6 +55,10 @@ namespace Shader {
 			create(slfData);
 		}
 
+		Shader(string code, GLuint shaderType) {
+			create(code, shaderType);
+		}
+
 		~Shader() {
 			destroy();
 		}
@@ -79,7 +80,7 @@ namespace Shader {
 			// Compile shaders
 			GLuint vertex, fragment;
 			int success;
-			char infoLog[512];
+			char infoLog[2048];
 			if (vertexCode != SHADER_NULL) {
 				const char* vShaderCode = vertexCode.c_str();
 				// Vertex Shader
@@ -89,7 +90,7 @@ namespace Shader {
 				// Log compile errors if any
 				glGetShaderiv(vertex, GL_COMPILE_STATUS, &success);
 				if (!success) {
-					glGetShaderInfoLog(vertex, 512, NULL, infoLog);
+					glGetShaderInfoLog(vertex, 2048, NULL, infoLog);
 					throw runtime_error(string("Could not compile Vertex Shader!\n") + infoLog);
 				};
 			}
@@ -103,7 +104,7 @@ namespace Shader {
 				// Log compile errors if any
 				glGetShaderiv(fragment, GL_COMPILE_STATUS, &success);
 				if (!success) {
-					glGetShaderInfoLog(vertex, 512, NULL, infoLog);
+					glGetShaderInfoLog(fragment, 2048, NULL, infoLog);
 					throw runtime_error(string("Could not compile Fragment Shader!\n") + infoLog);
 				}
 			}
@@ -115,8 +116,8 @@ namespace Shader {
 			// Log linking errors if any
 			glGetProgramiv(id, GL_LINK_STATUS, &success);
 			if (!success) {
-				glGetProgramInfoLog(id, 512, NULL, infoLog);
-				throw runtime_error(string("Could not link shader program(s)!\n") + infoLog);
+				glGetProgramInfoLog(id, 2048, NULL, infoLog);
+				throw runtime_error(string("Could not link shader program!\n") + infoLog);
 			}
 			// Delete shaders
 			if (vertex)		glDeleteShader(vertex);
@@ -124,19 +125,77 @@ namespace Shader {
 			return true;
 		}
 
+		/// Creates a shader from an SLF file and associates it to the object. Returns false if already created.
 		bool create(CSVData slfData) {
 			if (created) return false;
 			string dir = slfData[0];
-			for (size_t i = 1; i < slfData.size(); i += 2) {
-				created = false;
-				$debug(dir + slfData[i]);
-				string code = loadTextFile(dir + slfData[i]);
-				$debug(code);
-				if (slfData[i + 1] == "vert")
-					create(code, SHADER_NULL);
-				else if (slfData[i + 1] == "frag")
-					create(SHADER_NULL, code);
+			string log = "";
+			if ((slfData[1] != "vert") && (slfData[1] != "frag"))
+				for (size_t i = 1; i < slfData.size(); i += 2) {
+					created = false;
+					string code = loadTextFile(dir + slfData[i]);
+					try {
+						if (slfData[i + 1] == "vert")
+							create(code, SHADER_NULL);
+						else if (slfData[i + 1] == "frag")
+							create(SHADER_NULL, code);
+					} catch (runtime_error err) {
+						log += string("\n[[ Error on shader '") + dir + slfData[i] + "' ]]:\n";
+						log += err.what();
+					}
+					if (log != "") {
+						throw runtime_error(log);
+					}
+				}
+			else
+				for (size_t i = 2; i < slfData.size(); i++) {
+					created = false;
+					string code = loadTextFile(dir + slfData[i]);
+					try {
+						if (slfData[1] == "vert")
+							create(code, SHADER_NULL);
+						else if (slfData[1] == "frag")
+							create(SHADER_NULL, code);
+					} catch (runtime_error err) {
+						log += string("\n[[ Error on shader '") + dir + slfData[i] + "' ]]:\n";
+						log += err.what();
+					}
+					if (log != "") {
+						throw runtime_error(log);
+					}
+				}
+		}
+
+		///
+		bool create(string code, GLuint shaderType) {
+			if (created) return false;
+			else created = true;
+			// Compile shaders
+			GLuint shader;
+			int success;
+			char infoLog[2048];
+			const char* shaderCode = code.c_str();
+			// Vertex Shader
+			shader = glCreateShader(shaderType);
+			glShaderSource(shader, 1, &shaderCode, NULL);
+			glCompileShader(shader);
+			// Log compile errors if any
+			glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
+			if (!success) {
+				glGetShaderInfoLog(shader, 2048, NULL, infoLog);
+				throw runtime_error(string("Could not compile Shader!\n") + infoLog);
+			};
+			// Shader Program
+			id = glCreateProgram();
+			glAttachShader(id, shader);
+			glLinkProgram(id);
+			// Log linking errors if any
+			glGetProgramiv(id, GL_LINK_STATUS, &success);
+			if (!success) {
+				glGetProgramInfoLog(id, 2048, NULL, infoLog);
+				throw runtime_error(string("Could not link shader program!\n") + infoLog);
 			}
+			glDeleteShader(shader);
 		}
 
 		/// Destroys the shader associated with this object, if any. Does not delete object.
@@ -226,6 +285,42 @@ namespace Shader {
 	}
 
 	typedef vector<Shader> ShaderList;
+
+	/// Converts an SLF file to a list of shader programs.
+	ShaderList getShaderList(SLF::SLFData slfData) {
+		ShaderList shaders;
+		string dir = slfData[0];
+		string log = "";
+		string code;
+		GLuint type;
+		if (shaderTypes.find(slfData[1]) == shaderTypes.end()) {
+			for (size_t i = 1; i < slfData.size(); i += 2) {
+				code = loadTextFile(dir + slfData[i]);
+				type = shaderTypes.find(slfData[i+1])->second;
+				try {
+					shaders.push_back(Shader(code, type));
+				} catch (runtime_error err) {
+					log += string("\n[[ Error on shader '") + dir + slfData[i] + "' ]]:\n";
+					log += err.what();
+				}
+			}
+		} else {
+			for (size_t i = 2; i < slfData.size(); i++) {
+				code = loadTextFile(dir + slfData[i]);
+				type = shaderTypes.find(slfData[1])->second;
+				try {
+					shaders.push_back(Shader(code, type));
+				} catch (runtime_error err) {
+					log += string("\n[[ Error on shader '") + dir + slfData[i] + "' ]]:\n";
+					log += err.what();
+				}
+			}
+		}
+		if (log != "") {
+			throw runtime_error(log);
+		}
+		return shaders;
+	}
 
 	/// Executes a set of shaders sequentially.
 	void multiShaderPass(ShaderList shaders) {

@@ -1,17 +1,7 @@
-#version 120
+#version 410
 
-in vec4 fragCoord3D;
-in vec4 fragColor;
-
-float lenV4(vec4 vec) {
-	vec *= vec;
-	return sqrt(vec.x + vec.y + vec.z + vec.w); 
-}
+in vec3 fragCoord3D;
 
 void main() {
-	fragColor.x = clamp(fragColor.x, 0, 1);
-	fragColor.x = clamp(fragColor.y, 0, 1);
-	fragColor.x = clamp(fragColor.z, 0, 1);
-	fragColor.x = clamp(fragColor.w, 0, 1);
-	gl_Color = fragColor;
+	gl_FragColor = clamp(gl_FragColor, 0, 1);
 }

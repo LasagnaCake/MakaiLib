@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1660998265 source:d:\c(++) projects\_c++\game engine\makailib\makai.cpp
+1661035474 source:d:\c(++) projects\_c++\game engine\makailib\makai.cpp
 	<stdexcept>
 	"lib/program.hpp"
 	<windows.h>
@@ -1483,7 +1483,7 @@
 	<stdarg.h>
 	<stdbool.h>
 
-1660493520 d:\c(++) projects\_c++\game engine\makailib\lib\anchors.hpp
+1661020964 d:\c(++) projects\_c++\game engine\makailib\lib\anchors.hpp
 	<iostream>
 	<string>
 	<vector>
@@ -2187,11 +2187,12 @@
 	"begin_code.h"
 	"close_code.h"
 
-1660999676 d:\c(++) projects\_c++\game engine\makailib\lib\fileloader.hpp
-	"../anchors.hpp"
+1661037554 d:\c(++) projects\_c++\game engine\makailib\lib\fileloader.hpp
+	"anchors.hpp"
 
-1660999792 d:\c(++) projects\_c++\game engine\makailib\lib\graphical\gl_shader.hpp
+1661037064 d:\c(++) projects\_c++\game engine\makailib\lib\graphical\gl_shader.hpp
 	"../anchors.hpp"
+	"slf_fileloader.hpp"
 
 1537176751 d:\c(++) projects\_c++\game engine\makailib\lib\opengl\glm\glm.hpp
 	"detail/_fixes.hpp"
@@ -2847,4 +2848,20 @@
 	"../simd/integer.h"
 
 1525695782 d:\c(++) projects\_c++\game engine\makailib\lib\opengl\glm\simd\integer.h
+
+1661037529 d:\c(++) projects\_c++\game engine\makailib\lib\graphical\slf_fileloader.hpp
+	<string>
+	<vector>
+	<array>
+	<functional>
+	<cstring>
+	<stdexcept>
+	<cstdlib>
+	<math.h>
+	<thread>
+	<map>
+	<fstream>
+	<sstream>
+	<algorithm>
+	<regex>
 

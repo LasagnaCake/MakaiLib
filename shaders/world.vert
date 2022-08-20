@@ -1,4 +1,4 @@
-#version 120
+#version 410
 
 // uniform mat4 transform;
 uniform mat4 world;
@@ -10,12 +10,6 @@ layout (location = 1) in vec3 vertColor;
 layout (location = 2) in vec2 vertUV;
 
 out vec3 fragCoord3D;
-
-float distanceTo(vec3 origin, vec3 target) {
-	vec3 dist = origin - target;
-	dist *= dist;
-	return sqrt(dist.x + dist.y + dist.z);
-}
 
 void main() {
 	vec3 camPos = vec3(

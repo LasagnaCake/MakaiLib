@@ -1,12 +1,9 @@
-#version 120
-
-inout vec4 fragColor;
-
-float lenV4(vec4 vec) {
-	vec *= vec;
-	return sqrt(vec.x + vec.y + vec.z + vec.w); 
-}
+#version 410
 
 void main() {
-	fragColor /= lenV4(fragColor);
+	float alpha = gl_FragColor[3];
+	vec4 vec = gl_FragColor * gl_FragColor;
+	float len = min(sqrt(vec.x + vec.y + vec.z + vec.w), 1);
+	gl_FragColor /= vec4(len);
+	gl_FragColor.w = alpha;
 }
