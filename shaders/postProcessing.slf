@@ -1,4 +1,4 @@
-<frag>
+::	<frag>
 
 ::	This is an exemple of a Shader Layout Format (SLF).
 
@@ -16,6 +16,14 @@
 	To lock this file into only a specific type
 	of shader, add a <SHADER_TYPE> at the
 	first line.
+
+	Valid types are:
+		<vert> -> Vertex Shader
+		<frag> -> Fragment Shader
+		<comp> -> Compute Shader
+		<geom> -> Geometry Shader
+		<tsct> -> Tesselation Control Shader
+		<tsev> -> Tesselation Evaluation Shader
 >:
 
 capture.frag

@@ -8,8 +8,6 @@
 #include <cstring>
 #include <stdexcept>
 #include <cstdlib>
-#include <math.h>
-#include <thread>
 #include <map>
 #include <fstream>
 #include <sstream>
@@ -24,9 +22,13 @@ namespace SLF {
 		using namespace std;
 	}
 
-	constexpr array<char[5], 2> validShaderTypes = {
+	constexpr array<char[5], 6> validShaders = {
 		"frag",
-		"vert"
+		"vert",
+		"comp",
+		"geom",
+		"tsct",
+		"tsev"
 	};
 
 	typedef vector<string> SLFData;
@@ -54,7 +56,7 @@ namespace SLF {
 		// Remove comments and empty lines
 		content = regex_replace(
 			content,
-			regex("(:<([\\s\\S]*?)>:)|(::([\\s\\S]*?)(\\n|\\r|\\r\\n))"),
+			regex("(:[<]([\\s\\S]*?)[>]:)|(::([\\s\\S]*?)(\\n|\\r|\\r\\n))"),
 			""
 		);
 		content = regex_replace(
@@ -77,11 +79,6 @@ namespace SLF {
 			type,
 			regex("^[<](.*)[>]")
 		);
-		content = regex_replace(
-			content,
-			regex("^[<](.*)[>]"),
-			""
-		);
 		listType = type[1];
 		if (listType != ""){
 			listType = regex_replace(
@@ -91,6 +88,12 @@ namespace SLF {
 			);
 		}
 		else listType = "";
+		// Remove specifier for processing
+		content = regex_replace(
+			content,
+			regex("^[<](.*)[>]"),
+			""
+		);
 		// Get values
 		SLFData values;
 		istringstream cData(content);
@@ -102,12 +105,18 @@ namespace SLF {
 			// Remove invalid lines
 			if(line.size() > 3) {
 				values.push_back(line);
-				// Get shader type
-				if (listType == "")
-				#pragma GCC unroll validShaderTypes.size()
-				for(auto vs : validShaderTypes)
-				if (line.find(vs) != string::npos) {
-					values.push_back(vs);
+				// Get shader type, if not specified
+				if (listType == "") {
+					bool valid = false;
+					#pragma GCC unroll validShaders.size()
+					for(auto vs : validShaders)
+						if (line.find(vs) != string::npos) {
+							values.push_back(vs);
+							valid = true;
+							break;
+						}
+					if (!valid)
+						throw runtime_error(string("Invalid shader type for shader'") + values[-1] + "'!");
 				}
 			}
 		}

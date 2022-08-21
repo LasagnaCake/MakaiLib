@@ -64,19 +64,28 @@
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
-			<Add option="-std=c++20" />
+			<Add option="-std=gnu++20" />
 			<Add option="-ftree-parallelize-loops=2" />
 			<Add directory="lib" />
 			<Add directory="lib/allegro/x86_64-w64-mingw32-gcc-static-5.2.8.0/allegro/include" />
+			<Add directory="lib/SDL2-2.0.10/x86_64-w64-mingw32/include" />
+			<Add directory="lib/OpenGL" />
 		</Compiler>
 		<ResourceCompiler>
 			<Add directory="lib" />
 			<Add directory="lib/allegro/x86_64-w64-mingw32-gcc-static-5.2.8.0/allegro/include" />
+			<Add directory="lib/SDL2-2.0.10/x86_64-w64-mingw32/include" />
+			<Add directory="lib/OpenGL" />
 		</ResourceCompiler>
 		<Linker>
-			<Add option="-O2" />
+			<Add option="-O3" />
+			<Add library="lib/SDL2-2.0.10/x86_64-w64-mingw32/lib/libSDL2.dll.a" />
+			<Add library="lib/SDL2-2.0.10/x86_64-w64-mingw32/lib/libSDL2main.a" />
+			<Add library="lib/OpenGL/GLEW/lib/libglew32.dll.a" />
 			<Add directory="lib" />
 			<Add directory="lib/allegro/x86_64-w64-mingw32-gcc-static-5.2.8.0/allegro/include" />
+			<Add directory="lib/SDL2-2.0.10/x86_64-w64-mingw32/include" />
+			<Add directory="lib/OpenGL" />
 		</Linker>
 		<Unit filename="lib/allegro/x86_64-w64-mingw32-gcc-static-5.2.8.0/allegro/include/allegro5/alcompat.h" />
 		<Unit filename="lib/allegro/x86_64-w64-mingw32-gcc-static-5.2.8.0/allegro/include/allegro5/allegro.h" />

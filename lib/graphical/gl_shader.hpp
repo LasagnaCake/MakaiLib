@@ -12,15 +12,72 @@
 
 #define SHADER_NULL ""
 
+#define shaderTypeId(SHADER_TYPE_NAME) shaderTypes.find(SHADER_TYPE_NAME)->second
+
 namespace Shader {
 	namespace {
 		using namespace std;
 		using namespace FileLoader;
+
+		struct _UniSet {
+			string name;
+			GLuint id;
+
+			_uniset(string name, GLuint id) {
+				this->name	= name;
+				this->id	= id;
+			}
+
+			void operator()(bool value) const
+			{
+				glUniform1i(glGetUniformLocation(id, name.c_str()), (int)value);
+			}
+
+			void operator()(int value) const
+			{
+				glUniform1i(glGetUniformLocation(id, name.c_str()), value);
+			}
+
+			void operator()(unsigned int value) const
+			{
+				glUniform1ui(glGetUniformLocation(id, name.c_str()), value);
+			}
+
+			void operator()(float value) const
+			{
+				glUniform1f(glGetUniformLocation(id, name.c_str()), value);
+			}
+
+			void operator()(glm::vec2 value) const
+			{
+				glUniform2f(glGetUniformLocation(id, name.c_str()), value.x, value.y);
+			}
+
+			void operator()(glm::vec3 value) const
+			{
+				glUniform3f(glGetUniformLocation(id, name.c_str()), value.x, value.y, value.z);
+			}
+
+			void operator()(glm::vec4 value) const
+			{
+				glUniform4f(glGetUniformLocation(id, name.c_str()), value.x, value.y, value.z, value.w);
+			}
+
+			/*
+			void operator()(glm::mat4 value) const
+			{
+				glUniformMatrix4fv(glGetUniformLocation(id, name.c_str()), 1, GL_FALSE, glm::value_ptr(value));
+			}*/
+		};
 	}
 
 	const map<string, GLuint> shaderTypes = {
-		{"frag", 0x8B30},
-		{"vert", 0x8B31}
+		{"frag", GL_FRAGMENT_SHADER},
+		{"vert", GL_VERTEX_SHADER},
+		{"comp", GL_COMPUTE_SHADER},
+		{"geom", GL_GEOMETRY_SHADER},
+		{"tsct", GL_TESS_CONTROL_SHADER},
+		{"tsev", GL_TESS_EVALUATION_SHADER}
 	};
 
 	/// Default Vertex Shader code.
@@ -127,46 +184,39 @@ namespace Shader {
 
 		/// Creates a shader from an SLF file and associates it to the object. Returns false if already created.
 		bool create(CSVData slfData) {
-			if (created) return false;
 			string dir = slfData[0];
 			string log = "";
-			if ((slfData[1] != "vert") && (slfData[1] != "frag"))
+			string code;
+			GLuint type;
+			if (shaderTypes.find(slfData[1]) == shaderTypes.end()) {
 				for (size_t i = 1; i < slfData.size(); i += 2) {
-					created = false;
-					string code = loadTextFile(dir + slfData[i]);
+					code = loadTextFile(dir + slfData[i]);
+					type = shaderTypeId(slfData[i+1]);
 					try {
-						if (slfData[i + 1] == "vert")
-							create(code, SHADER_NULL);
-						else if (slfData[i + 1] == "frag")
-							create(SHADER_NULL, code);
+						create(code, type);
 					} catch (runtime_error err) {
 						log += string("\n[[ Error on shader '") + dir + slfData[i] + "' ]]:\n";
 						log += err.what();
 					}
-					if (log != "") {
-						throw runtime_error(log);
-					}
 				}
-			else
+			} else {
 				for (size_t i = 2; i < slfData.size(); i++) {
-					created = false;
-					string code = loadTextFile(dir + slfData[i]);
+					code = loadTextFile(dir + slfData[i]);
+					type = shaderTypeId(slfData[1]);
 					try {
-						if (slfData[1] == "vert")
-							create(code, SHADER_NULL);
-						else if (slfData[1] == "frag")
-							create(SHADER_NULL, code);
+						create(code, type);
 					} catch (runtime_error err) {
 						log += string("\n[[ Error on shader '") + dir + slfData[i] + "' ]]:\n";
 						log += err.what();
 					}
-					if (log != "") {
-						throw runtime_error(log);
-					}
 				}
+			}
+			if (log != "") {
+				throw runtime_error(log);
+			}
 		}
 
-		///
+		/// Creates a shader from a given shader code, and a shader type  and associates it to the object. Returns false if already created.
 		bool create(string code, GLuint shaderType) {
 			if (created) return false;
 			else created = true;
@@ -211,45 +261,14 @@ namespace Shader {
 			glUseProgram(id);
 		}
 
-		void operator()(const std::string& name, bool value) const
-		{
-			glUniform1i(glGetUniformLocation(id, name.c_str()), (int)value);
+		/**
+		* The way to set uniforms.
+		* Done like this: SHADER[UNIFORM_NAME](UNIFORM_VALUE);
+		*/
+		_UniSet operator[](const string& name) {
+			_UniSet su(name, id);
+			return su;
 		}
-
-		void operator()(const std::string& name, int value) const
-		{
-			glUniform1i(glGetUniformLocation(id, name.c_str()), value);
-		}
-
-		void operator()(const std::string& name, unsigned int value) const
-		{
-			glUniform1ui(glGetUniformLocation(id, name.c_str()), value);
-		}
-
-		void operator()(const std::string& name, float value) const
-		{
-			glUniform1f(glGetUniformLocation(id, name.c_str()), value);
-		}
-
-		void operator()(const std::string& name, glm::vec2 value) const
-		{
-			glUniform2f(glGetUniformLocation(id, name.c_str()), value.x, value.y);
-		}
-
-		void operator()(const std::string& name, glm::vec3 value) const
-		{
-			glUniform3f(glGetUniformLocation(id, name.c_str()), value.x, value.y, value.z);
-		}
-
-		void operator()(const std::string& name, glm::vec4 value) const
-		{
-			glUniform4f(glGetUniformLocation(id, name.c_str()), value.x, value.y, value.z, value.w);
-		}
-		/*
-		void operator()(const std::string& name, glm::mat4 value) const
-		{
-			glUniformMatrix4fv(glGetUniformLocation(id, name.c_str()), 1, GL_FALSE, glm::value_ptr(value));
-		}*/
 	};
 
 	typedef vector<string> ShaderCodes;
@@ -296,7 +315,7 @@ namespace Shader {
 		if (shaderTypes.find(slfData[1]) == shaderTypes.end()) {
 			for (size_t i = 1; i < slfData.size(); i += 2) {
 				code = loadTextFile(dir + slfData[i]);
-				type = shaderTypes.find(slfData[i+1])->second;
+				type = shaderTypeId(slfData[i+1]);
 				try {
 					shaders.push_back(Shader(code, type));
 				} catch (runtime_error err) {
@@ -307,7 +326,7 @@ namespace Shader {
 		} else {
 			for (size_t i = 2; i < slfData.size(); i++) {
 				code = loadTextFile(dir + slfData[i]);
-				type = shaderTypes.find(slfData[1])->second;
+				type = shaderTypeId(slfData[1]);
 				try {
 					shaders.push_back(Shader(code, type));
 				} catch (runtime_error err) {
