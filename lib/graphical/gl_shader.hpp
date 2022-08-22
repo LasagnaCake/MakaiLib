@@ -214,6 +214,7 @@ namespace Shader {
 			if (log != "") {
 				throw runtime_error(log);
 			}
+			return true;
 		}
 
 		/// Creates a shader from a given shader code, and a shader type  and associates it to the object. Returns false if already created.
@@ -246,6 +247,7 @@ namespace Shader {
 				throw runtime_error(string("Could not link shader program!\n") + infoLog);
 			}
 			glDeleteShader(shader);
+			return true;
 		}
 
 		/// Destroys the shader associated with this object, if any. Does not delete object.
