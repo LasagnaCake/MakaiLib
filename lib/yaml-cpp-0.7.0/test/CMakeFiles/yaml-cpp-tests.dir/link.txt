@@ -1,0 +1,3 @@
+D:\CMake\bin\cmake.exe -E rm -f CMakeFiles\yaml-cpp-tests.dir/objects.a
+D:\MSYS2\mingw64\bin\ar.exe qc CMakeFiles\yaml-cpp-tests.dir/objects.a @CMakeFiles\yaml-cpp-tests.dir\objects1.rsp
+D:\MSYS2\mingw64\bin\g++.exe -Wl,--whole-archive CMakeFiles\yaml-cpp-tests.dir/objects.a -Wl,--no-whole-archive -o yaml-cpp-tests.exe -Wl,--out-implib,libyaml-cpp-tests.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\yaml-cpp-tests.dir\linklibs.rsp

@@ -1,0 +1,436 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="YAML_CPP"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="gcc"/>
+		<Option virtualFolders="CMake Files\;CMake Files\util\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="yaml-cpp">
+				<Option output="C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/libyaml-cpp.dll" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0"/>
+				<Option object_output="./"/>
+				<Option type="3"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-DYAML_CPP_DLL"/>
+					<Add directory="C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/include"/>
+					<Add directory="C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/src"/>
+					<Add directory="D:/MSYS2/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.2.0/../../../../include/c++/10.2.0"/>
+					<Add directory="D:/MSYS2/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.2.0/../../../../include/c++/10.2.0/x86_64-w64-mingw32"/>
+					<Add directory="D:/MSYS2/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.2.0/../../../../include/c++/10.2.0/backward"/>
+					<Add directory="D:/MSYS2/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.2.0/include"/>
+					<Add directory="D:/MSYS2/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.2.0/../../../../include"/>
+					<Add directory="D:/MSYS2/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.2.0/include-fixed"/>
+					<Add directory="D:/MSYS2/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.2.0/../../../../x86_64-w64-mingw32/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/Makefile&quot;  VERBOSE=1 yaml-cpp"/>
+					<CompileFile command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="yaml-cpp/fast">
+				<Option output="C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/libyaml-cpp.dll" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0"/>
+				<Option object_output="./"/>
+				<Option type="3"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-DYAML_CPP_DLL"/>
+					<Add directory="C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/include"/>
+					<Add directory="C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/src"/>
+					<Add directory="D:/MSYS2/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.2.0/../../../../include/c++/10.2.0"/>
+					<Add directory="D:/MSYS2/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.2.0/../../../../include/c++/10.2.0/x86_64-w64-mingw32"/>
+					<Add directory="D:/MSYS2/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.2.0/../../../../include/c++/10.2.0/backward"/>
+					<Add directory="D:/MSYS2/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.2.0/include"/>
+					<Add directory="D:/MSYS2/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.2.0/../../../../include"/>
+					<Add directory="D:/MSYS2/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.2.0/include-fixed"/>
+					<Add directory="D:/MSYS2/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.2.0/../../../../x86_64-w64-mingw32/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/Makefile&quot;  VERBOSE=1 yaml-cpp/fast"/>
+					<CompileFile command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="format">
+				<Option working_dir="C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/Makefile&quot;  VERBOSE=1 format"/>
+					<CompileFile command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="edit_cache">
+				<Option working_dir="C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="rebuild_cache">
+				<Option working_dir="C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="list_install_components">
+				<Option working_dir="C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/Makefile&quot;  VERBOSE=1 list_install_components"/>
+					<CompileFile command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="install">
+				<Option working_dir="C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/Makefile&quot;  VERBOSE=1 install"/>
+					<CompileFile command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="install/local">
+				<Option working_dir="C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/Makefile&quot;  VERBOSE=1 install/local"/>
+					<CompileFile command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="install/strip">
+				<Option working_dir="C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/Makefile&quot;  VERBOSE=1 install/strip"/>
+					<CompileFile command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="yaml-cpp-sandbox">
+				<Option output="C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/util/sandbox.exe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/util"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/include"/>
+					<Add directory="D:/MSYS2/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.2.0/../../../../include/c++/10.2.0"/>
+					<Add directory="D:/MSYS2/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.2.0/../../../../include/c++/10.2.0/x86_64-w64-mingw32"/>
+					<Add directory="D:/MSYS2/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.2.0/../../../../include/c++/10.2.0/backward"/>
+					<Add directory="D:/MSYS2/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.2.0/include"/>
+					<Add directory="D:/MSYS2/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.2.0/../../../../include"/>
+					<Add directory="D:/MSYS2/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.2.0/include-fixed"/>
+					<Add directory="D:/MSYS2/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.2.0/../../../../x86_64-w64-mingw32/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/util/Makefile&quot;  VERBOSE=1 yaml-cpp-sandbox"/>
+					<CompileFile command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/util/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/util/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/util/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="yaml-cpp-sandbox/fast">
+				<Option output="C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/util/sandbox.exe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/util"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/include"/>
+					<Add directory="D:/MSYS2/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.2.0/../../../../include/c++/10.2.0"/>
+					<Add directory="D:/MSYS2/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.2.0/../../../../include/c++/10.2.0/x86_64-w64-mingw32"/>
+					<Add directory="D:/MSYS2/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.2.0/../../../../include/c++/10.2.0/backward"/>
+					<Add directory="D:/MSYS2/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.2.0/include"/>
+					<Add directory="D:/MSYS2/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.2.0/../../../../include"/>
+					<Add directory="D:/MSYS2/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.2.0/include-fixed"/>
+					<Add directory="D:/MSYS2/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.2.0/../../../../x86_64-w64-mingw32/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/util/Makefile&quot;  VERBOSE=1 yaml-cpp-sandbox/fast"/>
+					<CompileFile command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/util/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/util/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/util/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="yaml-cpp-parse">
+				<Option output="C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/util/parse.exe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/util"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/include"/>
+					<Add directory="D:/MSYS2/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.2.0/../../../../include/c++/10.2.0"/>
+					<Add directory="D:/MSYS2/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.2.0/../../../../include/c++/10.2.0/x86_64-w64-mingw32"/>
+					<Add directory="D:/MSYS2/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.2.0/../../../../include/c++/10.2.0/backward"/>
+					<Add directory="D:/MSYS2/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.2.0/include"/>
+					<Add directory="D:/MSYS2/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.2.0/../../../../include"/>
+					<Add directory="D:/MSYS2/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.2.0/include-fixed"/>
+					<Add directory="D:/MSYS2/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.2.0/../../../../x86_64-w64-mingw32/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/util/Makefile&quot;  VERBOSE=1 yaml-cpp-parse"/>
+					<CompileFile command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/util/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/util/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/util/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="yaml-cpp-parse/fast">
+				<Option output="C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/util/parse.exe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/util"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/include"/>
+					<Add directory="D:/MSYS2/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.2.0/../../../../include/c++/10.2.0"/>
+					<Add directory="D:/MSYS2/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.2.0/../../../../include/c++/10.2.0/x86_64-w64-mingw32"/>
+					<Add directory="D:/MSYS2/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.2.0/../../../../include/c++/10.2.0/backward"/>
+					<Add directory="D:/MSYS2/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.2.0/include"/>
+					<Add directory="D:/MSYS2/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.2.0/../../../../include"/>
+					<Add directory="D:/MSYS2/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.2.0/include-fixed"/>
+					<Add directory="D:/MSYS2/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.2.0/../../../../x86_64-w64-mingw32/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/util/Makefile&quot;  VERBOSE=1 yaml-cpp-parse/fast"/>
+					<CompileFile command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/util/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/util/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/util/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="yaml-cpp-read">
+				<Option output="C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/util/read.exe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/util"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/include"/>
+					<Add directory="D:/MSYS2/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.2.0/../../../../include/c++/10.2.0"/>
+					<Add directory="D:/MSYS2/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.2.0/../../../../include/c++/10.2.0/x86_64-w64-mingw32"/>
+					<Add directory="D:/MSYS2/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.2.0/../../../../include/c++/10.2.0/backward"/>
+					<Add directory="D:/MSYS2/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.2.0/include"/>
+					<Add directory="D:/MSYS2/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.2.0/../../../../include"/>
+					<Add directory="D:/MSYS2/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.2.0/include-fixed"/>
+					<Add directory="D:/MSYS2/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.2.0/../../../../x86_64-w64-mingw32/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/util/Makefile&quot;  VERBOSE=1 yaml-cpp-read"/>
+					<CompileFile command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/util/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/util/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/util/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="yaml-cpp-read/fast">
+				<Option output="C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/util/read.exe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/util"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/include"/>
+					<Add directory="D:/MSYS2/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.2.0/../../../../include/c++/10.2.0"/>
+					<Add directory="D:/MSYS2/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.2.0/../../../../include/c++/10.2.0/x86_64-w64-mingw32"/>
+					<Add directory="D:/MSYS2/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.2.0/../../../../include/c++/10.2.0/backward"/>
+					<Add directory="D:/MSYS2/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.2.0/include"/>
+					<Add directory="D:/MSYS2/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.2.0/../../../../include"/>
+					<Add directory="D:/MSYS2/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.2.0/include-fixed"/>
+					<Add directory="D:/MSYS2/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/10.2.0/../../../../x86_64-w64-mingw32/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/util/Makefile&quot;  VERBOSE=1 yaml-cpp-read/fast"/>
+					<CompileFile command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/util/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/util/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/util/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/src/binary.cpp">
+			<Option target="yaml-cpp"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/src/contrib/graphbuilder.cpp">
+			<Option target="yaml-cpp"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/src/contrib/graphbuilderadapter.cpp">
+			<Option target="yaml-cpp"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/src/contrib/graphbuilderadapter.h">
+			<Option target="yaml-cpp"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/src/convert.cpp">
+			<Option target="yaml-cpp"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/src/depthguard.cpp">
+			<Option target="yaml-cpp"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/src/directives.cpp">
+			<Option target="yaml-cpp"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/src/directives.h">
+			<Option target="yaml-cpp"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/src/emit.cpp">
+			<Option target="yaml-cpp"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/src/emitfromevents.cpp">
+			<Option target="yaml-cpp"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/src/emitter.cpp">
+			<Option target="yaml-cpp"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/src/emitterstate.cpp">
+			<Option target="yaml-cpp"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/src/emitterstate.h">
+			<Option target="yaml-cpp"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/src/emitterutils.cpp">
+			<Option target="yaml-cpp"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/src/emitterutils.h">
+			<Option target="yaml-cpp"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/src/exceptions.cpp">
+			<Option target="yaml-cpp"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/src/exp.cpp">
+			<Option target="yaml-cpp"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/src/exp.h">
+			<Option target="yaml-cpp"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/src/memory.cpp">
+			<Option target="yaml-cpp"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/src/node.cpp">
+			<Option target="yaml-cpp"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/src/node_data.cpp">
+			<Option target="yaml-cpp"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/src/nodebuilder.cpp">
+			<Option target="yaml-cpp"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/src/nodebuilder.h">
+			<Option target="yaml-cpp"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/src/nodeevents.cpp">
+			<Option target="yaml-cpp"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/src/nodeevents.h">
+			<Option target="yaml-cpp"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/src/null.cpp">
+			<Option target="yaml-cpp"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/src/ostream_wrapper.cpp">
+			<Option target="yaml-cpp"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/src/parse.cpp">
+			<Option target="yaml-cpp"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/src/parser.cpp">
+			<Option target="yaml-cpp"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/src/regex_yaml.cpp">
+			<Option target="yaml-cpp"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/src/regex_yaml.h">
+			<Option target="yaml-cpp"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/src/scanner.cpp">
+			<Option target="yaml-cpp"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/src/scanner.h">
+			<Option target="yaml-cpp"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/src/scanscalar.cpp">
+			<Option target="yaml-cpp"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/src/scanscalar.h">
+			<Option target="yaml-cpp"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/src/scantag.cpp">
+			<Option target="yaml-cpp"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/src/scantag.h">
+			<Option target="yaml-cpp"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/src/scantoken.cpp">
+			<Option target="yaml-cpp"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/src/simplekey.cpp">
+			<Option target="yaml-cpp"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/src/singledocparser.cpp">
+			<Option target="yaml-cpp"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/src/singledocparser.h">
+			<Option target="yaml-cpp"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/src/stream.cpp">
+			<Option target="yaml-cpp"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/src/stream.h">
+			<Option target="yaml-cpp"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/src/tag.cpp">
+			<Option target="yaml-cpp"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/src/tag.h">
+			<Option target="yaml-cpp"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/util/parse.cpp">
+			<Option target="yaml-cpp-parse"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/util/read.cpp">
+			<Option target="yaml-cpp-read"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/util/sandbox.cpp">
+			<Option target="yaml-cpp-sandbox"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-config.cmake.in">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp.pc.in">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/yaml-cpp-yaml-cpp-0.7.0/yaml-cpp-yaml-cpp-0.7.0/util/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\util\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>

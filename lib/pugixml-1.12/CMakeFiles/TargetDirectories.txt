@@ -1,0 +1,8 @@
+C:/Users/patri/Downloads/pugixml-1.12.1/pugixml-1.12/CMakeFiles/pugixml-shared.dir
+C:/Users/patri/Downloads/pugixml-1.12.1/pugixml-1.12/CMakeFiles/pugixml-static.dir
+C:/Users/patri/Downloads/pugixml-1.12.1/pugixml-1.12/CMakeFiles/edit_cache.dir
+C:/Users/patri/Downloads/pugixml-1.12.1/pugixml-1.12/CMakeFiles/rebuild_cache.dir
+C:/Users/patri/Downloads/pugixml-1.12.1/pugixml-1.12/CMakeFiles/list_install_components.dir
+C:/Users/patri/Downloads/pugixml-1.12.1/pugixml-1.12/CMakeFiles/install.dir
+C:/Users/patri/Downloads/pugixml-1.12.1/pugixml-1.12/CMakeFiles/install/local.dir
+C:/Users/patri/Downloads/pugixml-1.12.1/pugixml-1.12/CMakeFiles/install/strip.dir

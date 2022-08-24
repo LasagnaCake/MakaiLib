@@ -1,0 +1,3 @@
+D:\CMake\bin\cmake.exe -E rm -f CMakeFiles\pugixml-shared.dir/objects.a
+D:\MSYS2\mingw64\bin\ar.exe qc CMakeFiles\pugixml-shared.dir/objects.a @CMakeFiles\pugixml-shared.dir\objects1.rsp
+D:\MSYS2\mingw64\bin\g++.exe -shared -o libpugixml.dll -Wl,--out-implib,libpugixml.dll.a -Wl,--major-image-version,1,--minor-image-version,12 -Wl,--whole-archive CMakeFiles\pugixml-shared.dir/objects.a -Wl,--no-whole-archive @CMakeFiles\pugixml-shared.dir\linklibs.rsp

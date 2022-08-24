@@ -1,0 +1,3 @@
+D:\CMake\bin\cmake.exe -E rm -f CMakeFiles\yaml-cpp.dir/objects.a
+D:\MSYS2\mingw64\bin\ar.exe qc CMakeFiles\yaml-cpp.dir/objects.a @CMakeFiles\yaml-cpp.dir\objects1.rsp
+D:\MSYS2\mingw64\bin\g++.exe -shared -o libyaml-cpp.dll -Wl,--out-implib,libyaml-cpp.dll.a -Wl,--major-image-version,0,--minor-image-version,7 -Wl,--whole-archive CMakeFiles\yaml-cpp.dir/objects.a -Wl,--no-whole-archive @CMakeFiles\yaml-cpp.dir\linklibs.rsp
