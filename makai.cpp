@@ -1,7 +1,7 @@
 // #include <irrlicht.h>
 #include <stdexcept>
 
-#include "lib/program.hpp"
+#include "src/program.hpp"
 
 #include <windows.h>
 
