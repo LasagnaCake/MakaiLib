@@ -136,6 +136,12 @@ namespace Drawer {
 			(*rFunc)();
 		}
 	}
+
+	void renderAllLayers() {
+		if (renderLayers.getAllGroups().size())
+			for (auto layer : renderLayers.getAllGroups())
+				renderLayer(layer);
+	}
 }
 
 namespace VecMath {
@@ -210,7 +216,6 @@ namespace RenderData {
 		Vertex verts[3];
 	};
 
-
 	class Renderable {
 	public:
 		Renderable(size_t layer = 0) {
@@ -226,12 +231,20 @@ namespace RenderData {
 			glDeleteVertexArrays(1, &vao);
 		}
 
+		/// Called on creation.
 		virtual void onCreate()	{}
+		/// Called before rendering to screen.
 		virtual void onRender()	{}
+		/// Called on deletion.
 		virtual void onDelete()	{}
 
 		Shader::ShaderList shaders;
 		vector<Triangle<Vector3>> triangles;
+
+		struct {
+			GLuint culling	= GL_FRONT_AND_BACK;
+			GLuint fill		= GL_FILL;
+		} params;
 
 		Transform3D transform;
 	private:
@@ -269,11 +282,9 @@ namespace RenderData {
 				verts,
 				GL_STATIC_DRAW
 			);
-			// Set VAO as active
-			glBindVertexArray(vao);
 			// Delete IVB, since it is no longer necessary
 			delete [] verts;
-			// Define vertex data to VBO
+			// Define vertex data in VBO
 			glEnableVertexAttribArray(0);
 			glVertexAttribPointer(
 				0,
@@ -301,13 +312,20 @@ namespace RenderData {
 				9 * sizeof(float),
 				(void*)(5 * sizeof(float))
 			);
-			// Render object
+			// Render object passes
 			for (auto s : shaders) {
+				// Enable shader
 				s();
+				// Set VAO as active
+				glBindVertexArray(vao);
+				// Set polygon mode
+				glPolygonMode(params.culling, params.fill);
+				// Set matrices
 				s["world"](Scene::world);
 				s["camera"](Scene::camera);
 				s["projection"](Scene::projection);
 				s["actor"](asGLMMatrix(transform));
+				// Draw object
 				draw();
 			}
 			// Unbind vertex Array

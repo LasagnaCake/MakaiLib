@@ -31,42 +31,25 @@ int main() {
 	    0.8, -0.8,
 	};
 
-	SLF::SLFData data = SLF::parseFile("shaders/postProcessing.slf");
+	SLF::SLFData data = SLF::parseFile("shaders/base/base.slf");
 
 	for (auto d: data)
 		$debug(d);
 
-	Shader::ShaderList test = Shader::getShaderList(data);
+	Shader::defaultShader.destroy();
+	Shader::defaultShader.create(data);
+	RenderData::Renderable testRenderable;
 
-	//Shader::Shader test(data);
+	Vector::Vector3 triPos[] = {
+		Vector::Vector3(1.0f, 1.0f, 1.0f),
+		Vector::Vector3(1.0f, -1.0f, 1.0f),
+		Vector::Vector3(-1.0f,1.0f, 1.0f)
+	};
 
-	GLint attribCoord2d;
-	const char* attribName = "coord2d";
-	GLuint program = Shader::defaultShader.getID();
-	attribCoord2d = glGetAttribLocation(program, attribName);
-	if (attribCoord2d == -1) {
-		$errlog(std::string("Could not bind attribute ") + attribName);
-		return -1;
-	}
+	testRenderable.triangles.push_back(RenderData::Triangle3D(triPos));
+
 	prog.onDraw = $func() {
-		triVerts[0] = sin(prog.input.getButtonState(SDL_SCANCODE_W)/60.0)/2.0;
-		Shader::defaultShader();
-		glEnableVertexAttribArray(attribCoord2d);
-		/* Describe our vertices array to OpenGL (it can't guess its format automatically) */
-		glVertexAttribPointer(
-			attribCoord2d,		// attribute
-			2,					// number of elements per vertex, here (x,y)
-			GL_FLOAT,			// the type of each element
-			GL_FALSE,			// take our values as-is
-			0,					// no extra data between each position
-			triVerts			// pointer to the C array
-		);
 
-		/* Push each element in buffer_vertices to the vertex shader */
-		glDrawArrays(GL_TRIANGLES, 0, 3);
-		triVerts[0] = -sin(prog.input.getButtonState(SDL_SCANCODE_W)/60.0)/2.0;
-		glDrawArrays(GL_TRIANGLES, 0, 3);
-		glDisableVertexAttribArray(attribCoord2d);
 	};
 	prog.run();
 	return 0;

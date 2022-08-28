@@ -11,10 +11,14 @@ namespace Group {
 	public:
 		/// Gets a group of a given name.
 		inline vector<T*>& getGroup(size_t group) {
+			if (&g[group] == nullptr)
+				g[group] = vector<T*>();
 			return g[group];
 		}
 
 		vector<T*>& operator[](size_t group) {
+			if (&g[group] == nullptr)
+				g[group] = vector<T*>();
 			return g[group];
 		}
 

@@ -129,12 +129,19 @@ namespace Drawer {
 
 	typedef const function<void()> DrawFunc;
 
-	Group::Group<DrawFunc> renderLayers;
+	Group::Group<DrawFunc> layers;
 
 	void renderLayer(size_t layerID) {
-		for (auto rFunc: renderLayers[layerID]) {
+		for (auto rFunc: layers[layerID]) {
 			(*rFunc)();
 		}
+	}
+
+	void renderAllLayers() {
+		vector<size_t> rLayers = layers.getAllGroups();
+		if (rLayers.size())
+			for (auto layer : rLayers)
+				renderLayer(layer);
 	}
 }
 
@@ -195,7 +202,7 @@ namespace RenderData {
 		) {
 			#pragma GCC unroll 3
 			for (unsigned char i = 0; i < 3; i++) {
-				this->verts[i].position		= verts[i];
+				this->verts[i].position		= T(verts[i]);
 				this->verts[i].uv			= uv ? uv[i] : VecV2(1);
 				this->verts[i].color		= color ? color[i] : VecV4(1);
 			}
@@ -210,13 +217,26 @@ namespace RenderData {
 		Vertex verts[3];
 	};
 
+	typedef Triangle<Vector2> Triangle2D;
+	typedef Triangle<Vector3> Triangle3D;
+
 	class Renderable {
 	public:
 		Renderable(size_t layer = 0) {
-			Drawer::renderLayers.addObject(&render, layer);
+			Drawer::layers.addObject(&render, layer);
 			glGenVertexArrays(1, &vao);
 			glGenBuffers(1, &vbo);
+			transform = Transform3D(
+				Vector3(0.0f),
+				Vector3(0.0f),
+				Vector3(1.0f)
+			);
 			onCreate();
+		}
+
+		Renderable(vector<Triangle3D> triangles, size_t layer = 0)
+		: Renderable(layer) {
+			this->triangles = triangles;
 		}
 
 		~Renderable() {
@@ -233,7 +253,8 @@ namespace RenderData {
 		virtual void onDelete()	{}
 
 		Shader::ShaderList shaders;
-		vector<Triangle<Vector3>> triangles;
+
+		vector<Triangle3D> triangles;
 
 		struct {
 			GLuint culling	= GL_FRONT_AND_BACK;
@@ -253,6 +274,8 @@ namespace RenderData {
 
 		/// Renders the object to the screen.
 		DrawFunc render = $func() {
+			// If no triangles exist, return
+			if (!triangles.size()) return;
 			// Call onRender function
 			onRender();
 			// Set VBO as active
@@ -306,8 +329,18 @@ namespace RenderData {
 				9 * sizeof(float),
 				(void*)(5 * sizeof(float))
 			);
+			// Render with basic shader
+			Shader::defaultShader();
+			glBindVertexArray(vao);
+			glPolygonMode(params.culling, params.fill);
+			Shader::defaultShader["world"](Scene::world);
+			Shader::defaultShader["camera"](Scene::camera);
+			Shader::defaultShader["projection"](Scene::projection);
+			Shader::defaultShader["actor"](asGLMMatrix(transform));
+			draw();
 			// Render object passes
-			for (auto s : shaders) {
+			if(shaders.size())
+			for (auto& s : shaders) {
 				// Enable shader
 				s();
 				// Set VAO as active

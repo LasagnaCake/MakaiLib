@@ -15,9 +15,18 @@
 #define shaderTypeId(SHADER_TYPE_NAME) shaderTypes.find(SHADER_TYPE_NAME)->second
 
 namespace Scene {
-	glm::mat4 world;
-	glm::mat4 camera;
-	glm::mat4 projection;
+	glm::mat4 world = glm::mat4(1.0f);
+	glm::mat4 camera = glm::lookAt(
+		glm::vec3(0.0f),
+		glm::vec3(0.0f, 0.0f, 1.0f),
+		glm::vec3(0.0f, 1.0f, 0.0f)
+	);
+	glm::mat4 projection = glm::perspective(
+		1.0f,
+		4.0f / 3.0f,
+		0.1f,
+		100.0f
+	);
 }
 
 namespace Shader {
@@ -95,7 +104,7 @@ namespace Shader {
 
 	/// Default Fragment Shader code.
 	const string DEFAULT_FRAGMENT_SHADER =
-		GLSL_VERSION  // OpenGL 2.1
+		GLSL_VERSION
 		"void main(void) {        "
 		"  gl_FragColor[0] = 1.0; "
 		"  gl_FragColor[1] = 1.0; "

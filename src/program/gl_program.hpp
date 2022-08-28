@@ -221,6 +221,8 @@ namespace Makai {
 			// Clear screen
 			glClearColor(color.x, color.y, color.z, color.w);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+			// Draw objects
+			Drawer::renderAllLayers();
 			// Execute own drawing function
 			onDraw();
 			// Display window
