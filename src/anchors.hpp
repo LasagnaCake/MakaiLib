@@ -59,6 +59,8 @@
 #include <GL/gl.h>
 #include <GLFW/glfw3.h>
 #include <GLM/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #if (_WIN32 || _WIN64 || __WIN32__ || __WIN64__)
 #define SDL_MAIN_HANDLED
 #endif
@@ -94,6 +96,7 @@
 #include "collection/cyclical.hpp"
 #include "collection/tween.hpp"
 #include "collection/event.hpp"
+#include "collection/grouping.hpp"
 
 #ifdef _$_FLOAT_AS_DOUBLE
 #undef float

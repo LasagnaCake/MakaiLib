@@ -86,8 +86,6 @@ namespace EntityClass {
 		virtual void	onCreate()	{}
 		/// Called when object is deleted.
 		virtual void	onDelete()	{}
-		/// Called when object enters root tree for the first time.
-		virtual void	onReady()	{}
 		/// Called every cycle (or frame).
 		virtual void	onFrame(float delta)	{}
 
@@ -228,8 +226,6 @@ namespace EntityClass {
 			child->setName(child->name, uniqueChild);
 			// Add child to children
 			children.push_back(child);
-			// If child hasn't entered main root tree, execute child's onReady function
-			if (root->getName() == $_ROOT_NAME && !rooted) child->onReady();
 		}
 
 		/// Re-parents children to new parent.

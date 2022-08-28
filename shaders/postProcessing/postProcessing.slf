@@ -1,0 +1,32 @@
+<frag>
+
+::	This is an exemple of a Shader Layout Format (SLF).
+
+::	Comment lines are defined like this.
+
+:<	Comment blocks are defined like this.	>:
+
+:<
+	Each shader file is defined in a new line,
+	or separated by a bar (|).
+
+	File locations are relative to this file's
+	location.
+
+	To lock this file into only a specific type
+	of shader, add a <SHADER_TYPE> at the
+	first line.
+
+	Valid types are:
+		<vert> -> Vertex Shader
+		<frag> -> Fragment Shader
+		<comp> -> Compute Shader
+		<geom> -> Geometry Shader
+		<tsct> -> Tesselation Control Shader
+		<tsev> -> Tesselation Evaluation Shader
+>:
+
+capture.frag
+fog.frag
+balance.frag
+compose.frag

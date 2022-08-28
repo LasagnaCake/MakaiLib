@@ -14,6 +14,12 @@
 
 #define shaderTypeId(SHADER_TYPE_NAME) shaderTypes.find(SHADER_TYPE_NAME)->second
 
+namespace Scene {
+	glm::mat4 world;
+	glm::mat4 camera;
+	glm::mat4 projection;
+}
+
 namespace Shader {
 	namespace {
 		using namespace std;
@@ -23,7 +29,7 @@ namespace Shader {
 			string name;
 			GLuint id;
 
-			_uniset(string name, GLuint id) {
+			_UniSet(string name, GLuint id) {
 				this->name	= name;
 				this->id	= id;
 			}
@@ -63,11 +69,10 @@ namespace Shader {
 				glUniform4f(glGetUniformLocation(id, name.c_str()), value.x, value.y, value.z, value.w);
 			}
 
-			/*
 			void operator()(glm::mat4 value) const
 			{
 				glUniformMatrix4fv(glGetUniformLocation(id, name.c_str()), 1, GL_FALSE, glm::value_ptr(value));
-			}*/
+			}
 		};
 	}
 
@@ -260,6 +265,11 @@ namespace Shader {
 
 		/// Enables this object as shader.
 		void operator()() {
+			for (unsigned char i = 0; i < 32; i++)
+			if (textures[i]) {
+				glActiveTexture(GL_TEXTURE0 + i);
+				glBindTexture(GL_TEXTURE_2D, textures[i]);
+			}
 			glUseProgram(id);
 		}
 
@@ -271,6 +281,8 @@ namespace Shader {
 			_UniSet su(name, id);
 			return su;
 		}
+
+		GLuint textures[32];
 	};
 
 	typedef vector<string> ShaderCodes;
@@ -344,9 +356,11 @@ namespace Shader {
 	}
 
 	/// Executes a set of shaders sequentially.
-	void multiShaderPass(ShaderList shaders) {
-		for (Shader s : shaders)
+	void multiShaderPass(ShaderList shaders, function<void()> action =[](){}) {
+		for (Shader s : shaders) {
 			s();
+			action();
+		}
 	}
 
 	Shader defaultShader;

@@ -2868,7 +2868,7 @@
 	"graphical.hpp"
 	"program/gl_program.hpp"
 
-1661613724 d:\c(++) projects\_c++\game engine\makailib\src\anchors.hpp
+1661629678 d:\c(++) projects\_c++\game engine\makailib\src\anchors.hpp
 	<iostream>
 	<string>
 	<vector>
@@ -2892,6 +2892,8 @@
 	<GL/gl.h>
 	<GLFW/glfw3.h>
 	<GLM/glm.hpp>
+	<glm/gtc/matrix_transform.hpp>
+	<glm/gtc/type_ptr.hpp>
 	<SDL2/SDL.h>
 	"collection/algebra.hpp"
 	"collection/entity/entity.hpp"
@@ -2899,6 +2901,7 @@
 	"collection/cyclical.hpp"
 	"collection/tween.hpp"
 	"collection/event.hpp"
+	"collection/grouping.hpp"
 	"fileloader.hpp"
 
 1661613724 d:\c(++) projects\_c++\game engine\makailib\src\stb_image.h
@@ -2929,7 +2932,7 @@
 	"2d3d.hpp"
 	"collision.hpp"
 
-1661613724 d:\c(++) projects\_c++\game engine\makailib\src\collection\entity\core.hpp
+1661637480 d:\c(++) projects\_c++\game engine\makailib\src\collection\entity\core.hpp
 	<vector>
 	<memory>
 	<string>
@@ -2983,10 +2986,11 @@
 	"graphical/gl_graphical.hpp"
 	"graphical/gl_shader.hpp"
 
-1661613724 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_graphical.hpp
+1661637150 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_graphical.hpp
 	"../anchors.hpp"
+	"gl_shader.hpp"
 
-1661613724 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_shader.hpp
+1661637137 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_shader.hpp
 	"../anchors.hpp"
 	"slf_fileloader.hpp"
 
@@ -3007,4 +3011,257 @@
 1661613724 d:\c(++) projects\_c++\game engine\makailib\src\program\gl_program.hpp
 	"../anchors.hpp"
 	"../graphical.hpp"
+
+1661629256 d:\c(++) projects\_c++\game engine\makailib\src\collection\grouping.hpp
+	<map>
+	<vector>
+
+1535531570 d:\c(++) projects\_c++\game engine\makailib\lib\opengl\glm\gtc\matrix_transform.hpp
+	"../mat4x4.hpp"
+	"../vec2.hpp"
+	"../vec3.hpp"
+	"../vec4.hpp"
+	"../ext/matrix_projection.hpp"
+	"../ext/matrix_clip_space.hpp"
+	"../ext/matrix_transform.hpp"
+	"matrix_transform.inl"
+
+1537176751 d:\c(++) projects\_c++\game engine\makailib\lib\opengl\glm\ext\matrix_projection.hpp
+	"../gtc/constants.hpp"
+	"../geometric.hpp"
+	"../trigonometric.hpp"
+	"../matrix.hpp"
+	"matrix_projection.inl"
+
+1535531570 d:\c(++) projects\_c++\game engine\makailib\lib\opengl\glm\gtc\constants.hpp
+	"../ext/scalar_constants.hpp"
+	"constants.inl"
+
+1574087505 d:\c(++) projects\_c++\game engine\makailib\lib\opengl\glm\ext\scalar_constants.hpp
+	"../detail/setup.hpp"
+	"scalar_constants.inl"
+
+1574087505 d:\c(++) projects\_c++\game engine\makailib\lib\opengl\glm\ext\scalar_constants.inl
+	<limits>
+
+1574087505 d:\c(++) projects\_c++\game engine\makailib\lib\opengl\glm\gtc\constants.inl
+
+1586699936 d:\c(++) projects\_c++\game engine\makailib\lib\opengl\glm\ext\matrix_projection.inl
+
+1537176751 d:\c(++) projects\_c++\game engine\makailib\lib\opengl\glm\ext\matrix_clip_space.hpp
+	"../ext/scalar_constants.hpp"
+	"../geometric.hpp"
+	"../trigonometric.hpp"
+	"matrix_clip_space.inl"
+
+1585558029 d:\c(++) projects\_c++\game engine\makailib\lib\opengl\glm\ext\matrix_clip_space.inl
+
+1537176751 d:\c(++) projects\_c++\game engine\makailib\lib\opengl\glm\ext\matrix_transform.hpp
+	"../gtc/constants.hpp"
+	"../geometric.hpp"
+	"../trigonometric.hpp"
+	"../matrix.hpp"
+	"matrix_transform.inl"
+
+1554373468 d:\c(++) projects\_c++\game engine\makailib\lib\opengl\glm\ext\matrix_transform.inl
+
+1535531570 d:\c(++) projects\_c++\game engine\makailib\lib\opengl\glm\gtc\matrix_transform.inl
+	"../geometric.hpp"
+	"../trigonometric.hpp"
+	"../matrix.hpp"
+
+1537176751 d:\c(++) projects\_c++\game engine\makailib\lib\opengl\glm\gtc\type_ptr.hpp
+	"../gtc/quaternion.hpp"
+	"../gtc/vec1.hpp"
+	"../vec2.hpp"
+	"../vec3.hpp"
+	"../vec4.hpp"
+	"../mat2x2.hpp"
+	"../mat2x3.hpp"
+	"../mat2x4.hpp"
+	"../mat3x2.hpp"
+	"../mat3x3.hpp"
+	"../mat3x4.hpp"
+	"../mat4x2.hpp"
+	"../mat4x3.hpp"
+	"../mat4x4.hpp"
+	<cstring>
+	"type_ptr.inl"
+
+1537176751 d:\c(++) projects\_c++\game engine\makailib\lib\opengl\glm\gtc\quaternion.hpp
+	"../gtc/constants.hpp"
+	"../gtc/matrix_transform.hpp"
+	"../ext/vector_relational.hpp"
+	"../ext/quaternion_common.hpp"
+	"../ext/quaternion_float.hpp"
+	"../ext/quaternion_float_precision.hpp"
+	"../ext/quaternion_double.hpp"
+	"../ext/quaternion_double_precision.hpp"
+	"../ext/quaternion_relational.hpp"
+	"../ext/quaternion_geometric.hpp"
+	"../ext/quaternion_trigonometric.hpp"
+	"../ext/quaternion_transform.hpp"
+	"../detail/type_mat3x3.hpp"
+	"../detail/type_mat4x4.hpp"
+	"../detail/type_vec3.hpp"
+	"../detail/type_vec4.hpp"
+	"quaternion.inl"
+
+1574087505 d:\c(++) projects\_c++\game engine\makailib\lib\opengl\glm\ext\vector_relational.hpp
+	"../detail/qualifier.hpp"
+	"vector_relational.inl"
+
+1540992241 d:\c(++) projects\_c++\game engine\makailib\lib\opengl\glm\ext\vector_relational.inl
+	"../vector_relational.hpp"
+	"../common.hpp"
+	"../detail/qualifier.hpp"
+	"../detail/type_float.hpp"
+
+1540992241 d:\c(++) projects\_c++\game engine\makailib\lib\opengl\glm\detail\type_float.hpp
+	"setup.hpp"
+
+1585558029 d:\c(++) projects\_c++\game engine\makailib\lib\opengl\glm\ext\quaternion_common.hpp
+	"../ext/scalar_constants.hpp"
+	"../ext/quaternion_geometric.hpp"
+	"../common.hpp"
+	"../trigonometric.hpp"
+	"../exponential.hpp"
+	<limits>
+	"quaternion_common.inl"
+
+1537176751 d:\c(++) projects\_c++\game engine\makailib\lib\opengl\glm\ext\quaternion_geometric.hpp
+	"../geometric.hpp"
+	"../exponential.hpp"
+	"../ext/vector_relational.hpp"
+	"quaternion_geometric.inl"
+
+1535531570 d:\c(++) projects\_c++\game engine\makailib\lib\opengl\glm\ext\quaternion_geometric.inl
+
+1585558029 d:\c(++) projects\_c++\game engine\makailib\lib\opengl\glm\ext\quaternion_common.inl
+	"quaternion_common_simd.inl"
+
+1535531570 d:\c(++) projects\_c++\game engine\makailib\lib\opengl\glm\ext\quaternion_common_simd.inl
+
+1537176751 d:\c(++) projects\_c++\game engine\makailib\lib\opengl\glm\ext\quaternion_float.hpp
+	"../detail/type_quat.hpp"
+
+1585558029 d:\c(++) projects\_c++\game engine\makailib\lib\opengl\glm\detail\type_quat.hpp
+	"../detail/type_mat3x3.hpp"
+	"../detail/type_mat4x4.hpp"
+	"../detail/type_vec3.hpp"
+	"../detail/type_vec4.hpp"
+	"../ext/vector_relational.hpp"
+	"../ext/quaternion_relational.hpp"
+	"../gtc/constants.hpp"
+	"../gtc/matrix_transform.hpp"
+	"type_quat.inl"
+
+1537176751 d:\c(++) projects\_c++\game engine\makailib\lib\opengl\glm\ext\quaternion_relational.hpp
+	"../vector_relational.hpp"
+	"quaternion_relational.inl"
+
+1535531570 d:\c(++) projects\_c++\game engine\makailib\lib\opengl\glm\ext\quaternion_relational.inl
+
+1585558029 d:\c(++) projects\_c++\game engine\makailib\lib\opengl\glm\detail\type_quat.inl
+	"../trigonometric.hpp"
+	"../exponential.hpp"
+	"../ext/quaternion_geometric.hpp"
+	<limits>
+	"type_quat_simd.inl"
+
+1533818822 d:\c(++) projects\_c++\game engine\makailib\lib\opengl\glm\detail\type_quat_simd.inl
+
+1537176751 d:\c(++) projects\_c++\game engine\makailib\lib\opengl\glm\ext\quaternion_float_precision.hpp
+	"../detail/type_quat.hpp"
+
+1537176751 d:\c(++) projects\_c++\game engine\makailib\lib\opengl\glm\ext\quaternion_double.hpp
+	"../detail/type_quat.hpp"
+
+1537176751 d:\c(++) projects\_c++\game engine\makailib\lib\opengl\glm\ext\quaternion_double_precision.hpp
+	"../detail/type_quat.hpp"
+
+1537176751 d:\c(++) projects\_c++\game engine\makailib\lib\opengl\glm\ext\quaternion_trigonometric.hpp
+	"../trigonometric.hpp"
+	"../exponential.hpp"
+	"scalar_constants.hpp"
+	"vector_relational.hpp"
+	<limits>
+	"quaternion_trigonometric.inl"
+
+1574087505 d:\c(++) projects\_c++\game engine\makailib\lib\opengl\glm\ext\quaternion_trigonometric.inl
+	"scalar_constants.hpp"
+
+1537176751 d:\c(++) projects\_c++\game engine\makailib\lib\opengl\glm\ext\quaternion_transform.hpp
+	"../common.hpp"
+	"../trigonometric.hpp"
+	"../geometric.hpp"
+	"quaternion_transform.inl"
+
+1535531570 d:\c(++) projects\_c++\game engine\makailib\lib\opengl\glm\ext\quaternion_transform.inl
+
+1586709095 d:\c(++) projects\_c++\game engine\makailib\lib\opengl\glm\gtc\quaternion.inl
+	"../trigonometric.hpp"
+	"../geometric.hpp"
+	"../exponential.hpp"
+	"epsilon.hpp"
+	<limits>
+	"quaternion_simd.inl"
+
+1531731968 d:\c(++) projects\_c++\game engine\makailib\lib\opengl\glm\gtc\epsilon.hpp
+	"../detail/setup.hpp"
+	"../detail/qualifier.hpp"
+	"epsilon.inl"
+
+1533818822 d:\c(++) projects\_c++\game engine\makailib\lib\opengl\glm\gtc\epsilon.inl
+	"../vector_relational.hpp"
+	"../common.hpp"
+
+1535531570 d:\c(++) projects\_c++\game engine\makailib\lib\opengl\glm\gtc\quaternion_simd.inl
+
+1586699936 d:\c(++) projects\_c++\game engine\makailib\lib\opengl\glm\gtc\vec1.hpp
+	"../ext/vector_bool1.hpp"
+	"../ext/vector_bool1_precision.hpp"
+	"../ext/vector_float1.hpp"
+	"../ext/vector_float1_precision.hpp"
+	"../ext/vector_double1.hpp"
+	"../ext/vector_double1_precision.hpp"
+	"../ext/vector_int1.hpp"
+	"../ext/vector_int1_sized.hpp"
+	"../ext/vector_uint1.hpp"
+	"../ext/vector_uint1_sized.hpp"
+
+1537176751 d:\c(++) projects\_c++\game engine\makailib\lib\opengl\glm\ext\vector_bool1.hpp
+	"../detail/type_vec1.hpp"
+
+1537176751 d:\c(++) projects\_c++\game engine\makailib\lib\opengl\glm\ext\vector_bool1_precision.hpp
+	"../detail/type_vec1.hpp"
+
+1537176751 d:\c(++) projects\_c++\game engine\makailib\lib\opengl\glm\ext\vector_float1.hpp
+	"../detail/type_vec1.hpp"
+
+1537176751 d:\c(++) projects\_c++\game engine\makailib\lib\opengl\glm\ext\vector_float1_precision.hpp
+	"../detail/type_vec1.hpp"
+
+1574087505 d:\c(++) projects\_c++\game engine\makailib\lib\opengl\glm\ext\vector_double1.hpp
+	"../detail/type_vec1.hpp"
+
+1537176751 d:\c(++) projects\_c++\game engine\makailib\lib\opengl\glm\ext\vector_double1_precision.hpp
+	"../detail/type_vec1.hpp"
+
+1537176751 d:\c(++) projects\_c++\game engine\makailib\lib\opengl\glm\ext\vector_int1.hpp
+	"../detail/type_vec1.hpp"
+
+1586699936 d:\c(++) projects\_c++\game engine\makailib\lib\opengl\glm\ext\vector_int1_sized.hpp
+	"../ext/vector_int1.hpp"
+	"../ext/scalar_int_sized.hpp"
+
+1537176751 d:\c(++) projects\_c++\game engine\makailib\lib\opengl\glm\ext\vector_uint1.hpp
+	"../detail/type_vec1.hpp"
+
+1586699936 d:\c(++) projects\_c++\game engine\makailib\lib\opengl\glm\ext\vector_uint1_sized.hpp
+	"../ext/vector_uint1.hpp"
+	"../ext/scalar_uint_sized.hpp"
+
+1533818822 d:\c(++) projects\_c++\game engine\makailib\lib\opengl\glm\gtc\type_ptr.inl
+	<cstring>
 
