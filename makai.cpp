@@ -24,6 +24,11 @@ int main() {
 	prog.onFrame = $func() {
 		if (prog.input.getButtonDown(SDL_SCANCODE_ESCAPE))
 			prog.close();
+		Scene::camera = glm::lookAt(
+			glm::vec3(0.0f, 0.0f, 0.0f),
+			glm::vec3(0.0f, sin(prog.input.getButtonDown(SDL_SCANCODE_W)), 1.0f),
+			glm::vec3(0.0f, 1.0f, 0.0f)
+		);
 	};
 	GLfloat triVerts[] = {
 	    0.0,  0.8,
@@ -40,10 +45,18 @@ int main() {
 	Shader::defaultShader.create(data);
 	RenderData::Renderable testRenderable;
 
+	$debug("Size of float:");
+	$debug(sizeof(float));
+	$debug("Size of raw vertex:");
+	$debug(sizeof(Drawer::RawVertex));
+	$debug("Ratio:");
+	$debug(sizeof(Drawer::RawVertex)/sizeof(float));
+	$debug(sizeof(triVerts));
+
 	Vector::Vector3 triPos[] = {
-		Vector::Vector3(1.0f, 1.0f, 1.0f),
-		Vector::Vector3(1.0f, -1.0f, 1.0f),
-		Vector::Vector3(-1.0f,1.0f, 1.0f)
+		Vector::Vector3(1.0f, 1.0f, 0.1f),
+		Vector::Vector3(1.0f, -1.0f, 0.1f),
+		Vector::Vector3(-1.0f,1.0f, 0.1f)
 	};
 
 	testRenderable.triangles.push_back(RenderData::Triangle3D(triPos));

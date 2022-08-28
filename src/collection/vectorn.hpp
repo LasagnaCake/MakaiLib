@@ -258,7 +258,7 @@ namespace Vector{
 				z = vec.z;
 			}
 
-			Vector3(Vector2 vec, float z) {
+			Vector3(Vector2 vec, float z = 0.0) {
 				x = vec.x;
 				y = vec.y;
 				this->z = z;

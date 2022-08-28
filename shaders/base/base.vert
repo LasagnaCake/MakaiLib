@@ -18,7 +18,7 @@ void main() {
     	camera[1][2],
     	camera[2][2]
     );
-    vec4 coord = projection * camera * world * actor * vec4(vertPos, 1.0);
+    vec4 coord = /*projection * camera * world * actor */ vec4(vertPos, 1.0);
 	gl_Position = coord;
 	fragCoord3D = vec3(coord.x, coord.y, coord.z);
 }

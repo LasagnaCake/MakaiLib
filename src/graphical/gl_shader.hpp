@@ -214,9 +214,9 @@ namespace Shader {
 					}
 				}
 			} else {
+				type = shaderTypeId(slfData[1]);
 				for (size_t i = 2; i < slfData.size(); i++) {
 					code = loadTextFile(dir + slfData[i]);
-					type = shaderTypeId(slfData[1]);
 					try {
 						create(code, type);
 					} catch (runtime_error err) {
@@ -326,7 +326,7 @@ namespace Shader {
 		return result + mainCode;
 	}
 
-	typedef vector<Shader> ShaderList;
+	typedef vector<Shader*> ShaderList;
 
 	/// Converts an SLF file to a list of shader programs.
 	ShaderList getShaderList(SLF::SLFData slfData) {
@@ -340,7 +340,7 @@ namespace Shader {
 				code = loadTextFile(dir + slfData[i]);
 				type = shaderTypeId(slfData[i+1]);
 				try {
-					shaders.push_back(Shader(code, type));
+					shaders.push_back(new Shader(code, type));
 				} catch (runtime_error err) {
 					log += string("\n[[ Error on shader '") + dir + slfData[i] + "' ]]:\n";
 					log += err.what();
@@ -351,7 +351,7 @@ namespace Shader {
 				code = loadTextFile(dir + slfData[i]);
 				type = shaderTypeId(slfData[1]);
 				try {
-					shaders.push_back(Shader(code, type));
+					shaders.push_back(new Shader(code, type));
 				} catch (runtime_error err) {
 					log += string("\n[[ Error on shader '") + dir + slfData[i] + "' ]]:\n";
 					log += err.what();
@@ -366,8 +366,8 @@ namespace Shader {
 
 	/// Executes a set of shaders sequentially.
 	void multiShaderPass(ShaderList shaders, function<void()> action =[](){}) {
-		for (Shader s : shaders) {
-			s();
+		for (Shader* s : shaders) {
+			(*s)();
 			action();
 		}
 	}
