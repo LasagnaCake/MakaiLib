@@ -189,12 +189,12 @@ namespace Makai {
 				// Wait for thread to be done processing
 				physics.join();
 				// [[ Render code BEGIN ]]
-				// Enable framebuffer
-				//framebuffer();
+				//Enable framebuffer
+				framebuffer();
 				// Render screen
 				render();
 				// Render framebuffer
-				//frameBuffer.renderToBuffer();
+				framebuffer.renderToBuffer();
 				// Display window
 				SDL_GL_SwapWindow(window);
 				// [[ Render code END ]]

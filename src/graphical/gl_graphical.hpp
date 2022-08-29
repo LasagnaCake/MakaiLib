@@ -423,12 +423,96 @@ namespace RenderData {
 			triangles.pop_back();
 		};
 
+		/// Forcefully renders object to screen without any shader passes.
+		void renderRaw() {
+			// If no triangles exist, return
+			if (!triangles.size()) return;
+			// Call onRender function
+			onRender();
+			// Pad array
+			Triangle padding;
+			triangles.push_back(&padding);
+			triangles.push_back(&padding);
+			// Get vertex count
+			vertexCount = triangles.size() * 3;
+			// Create Intermediary Vertex Buffer (IVB) to be displayed on screen
+			RawVertex* verts = new RawVertex[(vertexCount)];
+			// Copy data to IVB
+			size_t i = 0;
+			for (auto t: triangles) {
+				auto tri = (*t)
+					.transformed(transform.local)
+					.transformed(transform.global);
+				verts[i]	= toRawVertex(tri.verts[0]);
+				verts[i+1]	= toRawVertex(tri.verts[1]);
+				verts[i+2]	= toRawVertex(tri.verts[2]);
+				i += 3;
+			}
+			// Set VBO as active
+			glBindBuffer(GL_ARRAY_BUFFER, vbo);
+			// Copy IVB to VBO
+			glBufferData(
+				GL_ARRAY_BUFFER,
+				vertexCount * RAW_VERTEX_SIZE * 2,
+				verts,
+				GL_STATIC_DRAW
+			);
+			// Delete IVB, since it is no longer necessary
+			delete [] verts;
+			// Set VAO as active
+			glBindVertexArray(vao);
+			// Define vertex data in VBO
+			glVertexAttribPointer(
+				0,
+				3,
+				GL_FLOAT,
+				GL_FALSE,
+				RAW_VERTEX_SIZE * sizeof(float),
+				$abstride(0)
+			);
+			glVertexAttribPointer(
+				1,
+				2,
+				GL_FLOAT,
+				GL_FALSE,
+				RAW_VERTEX_SIZE * sizeof(float),
+				$abstride(3)
+			);
+			glVertexAttribPointer(
+				2,
+				4,
+				GL_FLOAT,
+				GL_FALSE,
+				RAW_VERTEX_SIZE * sizeof(float),
+				$abstride(5)
+			);
+			// Enable attribute pointers
+			glEnableVertexAttribArray(0);
+			glEnableVertexAttribArray(1);
+			glEnableVertexAttribArray(2);
+			// Set VAO as active
+			glBindVertexArray(vao);
+			// Set polygon rendering mode
+			glPolygonMode(params.culling, params.fill);
+			// Draw object to screen
+			glDrawArrays(GL_TRIANGLES, 0, vertexCount);
+			// Unbind vertex array
+			glBindVertexArray(0);
+			// Disable attributes
+			glDisableVertexAttribArray(2);
+			glDisableVertexAttribArray(1);
+			glDisableVertexAttribArray(0);
+			// Unpad array
+			triangles.pop_back();
+			triangles.pop_back();
+		}
+
 		Shader::ShaderList shaders;
 
 		vector<Triangle*> triangles;
 
 		struct {
-			bool active = true;
+			bool active		= true;
 			GLuint culling	= GL_FRONT_AND_BACK;
 			GLuint fill		= GL_FILL;
 		} params;
@@ -538,7 +622,7 @@ namespace Drawer {
 			glClear(GL_COLOR_BUFFER_BIT);
 			glBindTexture(GL_TEXTURE_2D, texture.color);
 			(*compose)();
-			target->render();
+			target->renderRaw();
 		}
 
 		unsigned int getID() {

@@ -1,8 +1,8 @@
 #version 410
 
-layout (location = 1) in vec2 vertUV;
+in vec2 fragUV;
 uniform sampler2D screen;
 
 void main() {
-	gl_FragColor = clamp(vec4(texture(screen, vertUV)), 0, 1);
+	gl_FragColor = clamp(vec4(texture(screen, fragUV)), 0, 1);
 }
