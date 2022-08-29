@@ -47,7 +47,6 @@ int main() {
 		FileLoader::loadTextFile("shaders/base/base.vert"),
 		FileLoader::loadTextFile("shaders/base/base.frag")
 	);*/
-	RenderData::Renderable testRenderable();
 
 	$debug("Size of float:");
 	$debug(sizeof(float));
@@ -61,6 +60,8 @@ int main() {
 		Vector::Vector3(1.0f, -1.0f, 0.0f),
 		Vector::Vector3(-1.0f,1.0f, 0.0f)
 	};
+
+	RenderData::Renderable testRenderable;
 
 	testRenderable.triangles.push_back(new RenderData::Triangle(triPos));
 	triPos[0].x = -1.0f;

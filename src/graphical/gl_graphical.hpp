@@ -307,14 +307,16 @@ namespace RenderData {
 			// Add triangles
 			triangles.push_back(new Triangle());
 			triangles.push_back(new Triangle());
+			// Get index of last plane
+			size_t last = triangles.size();
 			// Create reference
 			PlaneReference* plane = new PlaneReference(
-				&(triangles[-1]->verts[0]),
-				&(triangles[-1]->verts[1]),
-				&(triangles[-2]->verts[0]),
-				&(triangles[-1]->verts[2]),
-				&(triangles[-2]->verts[1]),
-				&(triangles[-2]->verts[2])
+				&(triangles[last-1]->verts[0]),
+				&(triangles[last-1]->verts[1]),
+				&(triangles[last-2]->verts[0]),
+				&(triangles[last-1]->verts[2]),
+				&(triangles[last-2]->verts[1]),
+				&(triangles[last-2]->verts[2])
 			);
 			// Setup plane
 			plane->setPosition(
@@ -487,7 +489,7 @@ namespace Drawer {
 		): FrameBuffer() {
 			glGenFramebuffers(1, &id);
 			target = new RenderData::Renderable(0, true);
-			target->createPlaneReference();
+			rect = target->createPlaneReference();
 			glGenTextures(1, &texture.color);
 			glBindTexture(GL_TEXTURE_2D, texture.color);
 			glTexImage2D(
@@ -544,6 +546,7 @@ namespace Drawer {
 		}
 
 		Shader::Shader* compose;
+		RenderData::PlaneReference* rect;
 
 	private:
 		unsigned int id;

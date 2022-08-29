@@ -126,6 +126,7 @@ namespace Makai {
 			glEnable(GL_BLEND);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 			// Setup camera
+			$debug("Setting starting camera...");
 			Scene::camera.aspect = Vector2(width, height);
 			Scene::camera.fov = glm::radians(45.0f);
 			// Define texture wrapping & mipmaps
@@ -133,10 +134,12 @@ namespace Makai {
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			$debug("creating default framebuffer...");
 			// Create framebuffer
 			framebuffer = Drawer::FrameBuffer(width, height);
 			// Create composition shader
-			compose.create(SLF::parseFile("shaders/compose/compose.slf"));
+			$debug("Creating composition shader...");
+			compose.create(SLF::parseFile("shaders/framebuffer/compose.slf"));
 			framebuffer.compose = &compose;
 		}
 
@@ -187,11 +190,11 @@ namespace Makai {
 				physics.join();
 				// [[ Render code BEGIN ]]
 				// Enable framebuffer
-				framebuffer();
+				//framebuffer();
 				// Render screen
 				render();
 				// Render framebuffer
-				frameBuffer.renderToBuffer();
+				//frameBuffer.renderToBuffer();
 				// Display window
 				SDL_GL_SwapWindow(window);
 				// [[ Render code END ]]
@@ -278,7 +281,7 @@ namespace Makai {
 			// Execute own drawing function
 			onDraw();
 			// Disable depth testing
-			glEnable(GL_DEPTH_TEST);
+			glDisable(GL_DEPTH_TEST);
 		}
 		/// Frame counter.
 		size_t frame = 0;
