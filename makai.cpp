@@ -56,9 +56,9 @@ int main() {
 	$debug(sizeof(Drawer::RawVertex)/sizeof(float));
 
 	Vector::Vector3 triPos[] = {
-		Vector::Vector3(1.0f, 1.0f, 5.0f),
-		Vector::Vector3(1.0f, -1.0f, 5.0f),
-		Vector::Vector3(-1.0f,1.0f, 5.0f)
+		Vector::Vector3(1.0f, 1.0f, 0.0f),
+		Vector::Vector3(1.0f, -1.0f, 0.0f),
+		Vector::Vector3(-1.0f,1.0f, 0.0f)
 	};
 
 	testRenderable.triangles.push_back(new RenderData::Triangle(triPos));
@@ -66,7 +66,7 @@ int main() {
 	triPos[0].y = -1.0f;
 	testRenderable.triangles.push_back(new RenderData::Triangle(triPos));
 	//testRenderable.triangles.push_back(new RenderData::Triangle());
-
+	testRenderable.transform.local.position.z = 5.0f;
 	prog.onDraw = $func() {
 		float sinC = (sin(frame/300.0f) + 1) / 4 + 0.25;
 		float cosC = (cos(frame/300.0f) + 1) / 4 + 0.25;
