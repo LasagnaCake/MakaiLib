@@ -122,12 +122,9 @@ namespace Makai {
 			SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 1);
 			glEnable(GL_BLEND);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-			Scene::projection = glm::perspective(
-				glm::radians(45.0f),
-				(float)width / (float)height,
-				0.1f,
-				100.0f
-			);
+			// Setup camera
+			Scene::camera.aspect = Vector2(width, height);
+			Scene::camera.fov = glm::radians(45.0f);
 		}
 
 		/// Sets the window's title.

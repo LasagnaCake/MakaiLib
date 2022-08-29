@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1661731029 source:d:\c(++) projects\_c++\game engine\makailib\makai.cpp
+1661733462 source:d:\c(++) projects\_c++\game engine\makailib\makai.cpp
 	<stdexcept>
 	"src/program.hpp"
 	<windows.h>
@@ -2932,7 +2932,7 @@
 	"2d3d.hpp"
 	"collision.hpp"
 
-1661637480 d:\c(++) projects\_c++\game engine\makailib\src\collection\entity\core.hpp
+1661733561 d:\c(++) projects\_c++\game engine\makailib\src\collection\entity\core.hpp
 	<vector>
 	<memory>
 	<string>
@@ -2986,12 +2986,13 @@
 	"graphical/gl_graphical.hpp"
 	"graphical/gl_shader.hpp"
 
-1661732317 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_graphical.hpp
+1661733927 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_graphical.hpp
 	"../anchors.hpp"
 	"gl_shader.hpp"
 
-1661724741 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_shader.hpp
+1661733141 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_shader.hpp
 	"../anchors.hpp"
+	"gl_camera.hpp"
 	"slf_fileloader.hpp"
 
 1661613724 d:\c(++) projects\_c++\game engine\makailib\src\graphical\slf_fileloader.hpp
@@ -3008,7 +3009,7 @@
 	<algorithm>
 	<regex>
 
-1661724899 d:\c(++) projects\_c++\game engine\makailib\src\program\gl_program.hpp
+1661733227 d:\c(++) projects\_c++\game engine\makailib\src\program\gl_program.hpp
 	"../anchors.hpp"
 	"../graphical.hpp"
 
@@ -3264,4 +3265,7 @@
 
 1533818822 d:\c(++) projects\_c++\game engine\makailib\lib\opengl\glm\gtc\type_ptr.inl
 	<cstring>
+
+1661733383 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_camera.hpp
+	"../anchors.hpp"
 

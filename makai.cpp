@@ -22,18 +22,17 @@ int main() {
 	//Makai::Program prog(1280, 960, "OK");
 	prog.color = Vector::Vector4(Vector::Vector3(.5), 1);
 	float frame = 0;
+	Scene::camera.eye = Vector::Vector3(0, 0, -1);
+	Scene::camera.up = Vector::Vector3(0, 1, 0);
 	prog.onFrame = $func() {
 		if (prog.input.getButtonDown(SDL_SCANCODE_ESCAPE))
 			prog.close();
-		Scene::camera = glm::lookAt(
-			glm::vec3(0.0f, 0.0f, -1.0f),
-			glm::vec3(
-				sin(frame/300.0f)/4.0,
-				sin(prog.input.getButtonState(SDL_SCANCODE_W)/120.0)/10.0,
-				cos(frame/300.0f)/4.0
-			),
-			glm::vec3(0.0f, 1.0f, 0.0f)
+		Scene::camera.at = Vector::Vector3(
+			sin(frame/300.0f)/4.0,
+			0.0,
+			cos(frame/300.0f)/4.0
 		);
+		Scene::camera.eye.y = sin(prog.input.getButtonState(SDL_SCANCODE_W)/120.0)/10.0;
 	};
 
 	SLF::SLFData data = SLF::parseFile("shaders/base/base.slf");

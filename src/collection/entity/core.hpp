@@ -213,10 +213,6 @@ namespace EntityClass {
 		* Useful if child will need to be searchable.
 		*/
 		void addChild(Entity* child, bool uniqueChild = true) {
-			// Check if child has entered root tree before
-			Entity* root = child->getRoot();
-			bool rooted = false;
-			if (root) rooted = root->getName() == $_ROOT_NAME;
 			// If parented, remove child from parent
 			Entity* oldParent = child->getParent();
 			if (oldParent) oldParent->removeChild(child);

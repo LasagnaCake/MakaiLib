@@ -2,6 +2,7 @@
 #define MAKAILIB_SHADER_HANDLER_H
 
 #include "../anchors.hpp"
+#include "gl_camera.hpp"
 #include "slf_fileloader.hpp"
 
 #ifdef GL_ES_VERSION_2_0
@@ -16,17 +17,7 @@
 
 namespace Scene {
 	glm::mat4 world = glm::mat4(1.0f);
-	glm::mat4 camera = glm::lookAt(
-		glm::vec3(0.0f),
-		glm::vec3(0.0f, 0.0f, 1.0f),
-		glm::vec3(0.0f, 1.0f, 0.0f)
-	);
-	glm::mat4 projection = glm::perspective(
-		2.0f,
-		4.0f / 3.0f,
-		0.1f,
-		100.0f
-	);
+	Camera::Camera3D camera;
 }
 
 namespace Shader {

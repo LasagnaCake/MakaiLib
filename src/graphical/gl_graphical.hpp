@@ -27,97 +27,50 @@ namespace Drawer {
 		std::vector;
 
 		using namespace std;
-
-		#define RAW_VERTEX_SIZE 9
-		#define RAW_VERTEX_BYTE_SIZE RAW_VERTEX_SIZE * sizeof(float)
-		struct _VtxRaw {
-			float x = 0;
-			float y = 0;
-			float z = 0;
-			float u = 0;
-			float v = 0;
-			float r = 1;
-			float g = 1;
-			float b = 1;
-			float a = 1;
-		};
-
-		struct _Vtx {
-			_Vtx() {}
-			_Vtx(Vector3 position, Vector4 color = Vector4(1), Vector2 uv = Vector2(0)) {
-				this-> position	= position;
-				this-> uv		= uv;
-				this->color		= color;
-			}
-
-			Vector3 position;
-			Vector2 uv;
-			Vector4 color;
-		};
-
-		_Vtx* _toVtx(Vector3* pos, Vector2* uv, Vector4* col, size_t numVerts) {
-			_Vtx* res = new _Vtx[numVerts];
-			for(size_t i = 0; i < numVerts; i++) {
-				res[i].position	= pos[i];
-				if (uv) res[i].uv		= uv[i];
-				if (col) res[i].color	= col[i];
-				else	res[i].color	= Vector4(1);
-			}
-			return res;
-		}
-
-		_VtxRaw* _toVtxRaw(_Vtx* verts, size_t numVerts) {
-			_VtxRaw* res = new _VtxRaw[numVerts];
-			for(size_t i = 0; i < numVerts; i++) {
-				res[i].x = verts[i].position.x;
-				res[i].y = verts[i].position.y;
-				res[i].z = verts[i].position.z;
-				res[i].u = verts[i].uv.x;
-				res[i].v = verts[i].uv.y;
-				res[i].r = verts[i].color.x;
-				res[i].g = verts[i].color.y;
-				res[i].b = verts[i].color.z;
-				res[i].a = verts[i].color.w;
-			}
-			return res;
-		}
-
-		_VtxRaw* _toVtxRaw(Vector3* pos, Vector2* uv, Vector4* col, size_t numVerts) {
-			_VtxRaw* res = new _VtxRaw[numVerts];
-			for(size_t i = 0; i < numVerts; i++) {
-				res[i].x = pos[i].x;
-				res[i].y = pos[i].y;
-				res[i].z = pos[i].z;
-				res[i].u = uv[i].x;
-				res[i].v = uv[i].y;
-				res[i].r = col[i].x;
-				res[i].g = col[i].y;
-				res[i].b = col[i].z;
-				res[i].a = col[i].w;
-			}
-			return res;
-		}
-
-		_VtxRaw _toVtxRaw(Vector3 pos, Vector2 uv, Vector4 col) {
-			_VtxRaw res;
-			res.x = pos.x;
-			res.y = pos.y;
-			res.z = pos.z;
-			res.u = uv.x;
-			res.v = uv.y;
-			res.r = col.x;
-			res.g = col.y;
-			res.b = col.z;
-			res.a = col.w;
-			return res;
-		}
 	}
 
-	typedef _Vtx	Vertex;
-	typedef _VtxRaw	RawVertex;
+	#define RAW_VERTEX_SIZE 9
+	struct RawVertex {
+		float x = 0;
+		float y = 0;
+		float z = 0;
+		float u = 0;
+		float v = 0;
+		float r = 1;
+		float g = 1;
+		float b = 1;
+		float a = 1;
+	};
+
+	struct Vertex {
+		Vertex() {}
+		Vertex(Vector3 position, Vector4 color = Vector4(1), Vector2 uv = Vector2(0)) {
+			this-> position	= position;
+			this-> uv		= uv;
+			this->color		= color;
+		}
+
+		Vector3 position;
+		Vector2 uv;
+		Vector4 color;
+	};
+
+	RawVertex toRawVertex(Vector3 pos, Vector2 uv, Vector4 col) {
+		RawVertex res;
+		res.x = pos.x;
+		res.y = pos.y;
+		res.z = pos.z;
+		res.u = uv.x;
+		res.v = uv.y;
+		res.r = col.x;
+		res.g = col.y;
+		res.b = col.z;
+		res.a = col.w;
+		return res;
+	}
 
 	inline RawVertex toRawVertex(Vertex vert) {
-		return _toVtxRaw(vert.position, vert.uv, vert.color);
+		return toRawVertex(vert.position, vert.uv, vert.color);
 	}
 
 	typedef const function<void()> DrawFunc;
@@ -360,8 +313,10 @@ namespace RenderData {
 			// Render with basic shader
 			Shader::defaultShader();
 			Shader::defaultShader["world"](Scene::world);
-			Shader::defaultShader["camera"](Scene::camera);
-			Shader::defaultShader["projection"](Scene::projection);
+			glm::mat4 camera = Scene::camera.matrix();
+			glm::mat4 projection = Scene::camera.perspective();
+			Shader::defaultShader["camera"](camera);
+			Shader::defaultShader["projection"](projection);
 			//Shader::defaultShader["actor"](asGLMMatrix(transform));
 			glDrawArrays(GL_TRIANGLES, 0, vertexCount);
 			// Render object passes, if any
@@ -372,8 +327,8 @@ namespace RenderData {
 				shader();
 				// Set matrices
 				shader["world"](Scene::world);
-				shader["camera"](Scene::camera);
-				shader["projection"](Scene::projection);
+				Shader::defaultShader["camera"](camera);
+				Shader::defaultShader["projection"](projection);
 				//shader["actor"](asGLMMatrix(transform));
 				// Draw object
 				glDrawArrays(GL_TRIANGLES, 0, vertexCount);
