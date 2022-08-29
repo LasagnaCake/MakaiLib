@@ -393,6 +393,11 @@ namespace Shader {
 		}
 	}
 
+	void setTexture2D(unsigned char index, GLuint texture) {
+		glActiveTexture(GL_TEXTURE0 + index);
+		glBindTexture(GL_TEXTURE_2D, texture);
+	}
+
 	Shader defaultShader;
 }
 #endif // MAKAILIB_SHADER_HANDLER

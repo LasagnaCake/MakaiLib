@@ -42,11 +42,12 @@ int main() {
 
 	Shader::defaultShader.destroy();
 	Shader::defaultShader.create(data);
+	Shader::Shader fog(FileLoader::loadTextFile("shaders/postProcessing/fog.frag"), GL_FRAGMENT_SHADER);
 	/*Shader::defaultShader.create(
 		FileLoader::loadTextFile("shaders/base/base.vert"),
 		FileLoader::loadTextFile("shaders/base/base.frag")
 	);*/
-	RenderData::Renderable testRenderable;
+	RenderData::Renderable testRenderable();
 
 	$debug("Size of float:");
 	$debug(sizeof(float));
@@ -67,6 +68,10 @@ int main() {
 	testRenderable.triangles.push_back(new RenderData::Triangle(triPos));
 	//testRenderable.triangles.push_back(new RenderData::Triangle());
 	testRenderable.transform.local.position.z = 5.0f;
+	fog["near"](4.0f);
+	fog["far"](6.0f);
+	fog["amplitude"](1.0f);
+	fog["color"](glm::vec4(0, 0, 0, 1));
 	prog.onDraw = $func() {
 		float sinC = (sin(frame/300.0f) + 1) / 4 + 0.25;
 		float cosC = (cos(frame/300.0f) + 1) / 4 + 0.25;

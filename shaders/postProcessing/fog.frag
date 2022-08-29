@@ -1,17 +1,13 @@
 #version 410
 
-struct Fog {
-    float   near;
-    float   far;
-    float   amplitude;
-    vec4    color;
-};
-
-uniform Fog fog;
+uniform float   near;
+uniform float   far;
+uniform float   amplitude;
+uniform vec4    color;
 
 void main() {
-    float fogValue  = clamp(gl_FragCoord.z, fog.near, fog.far);
-    fogValue        = (fogValue -fog.near) / fog.far;
-    fogValue        = fogValue / fog.amplitude;
-    gl_FragColor       = mix(gl_FragColor, fog.color, fogValue);
+    float fogValue  = clamp(gl_FragCoord.z, near, far);
+    fogValue        = (fogValue -near) / far;
+    fogValue        = fogValue / amplitude;
+    gl_FragColor    = mix(gl_FragColor, color, fogValue);
 }

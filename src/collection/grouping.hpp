@@ -67,7 +67,7 @@ namespace Group {
 		}
 
 		/// Removes an object from all groups it is in.
-		void removeFromAll(T* e, size_t group) {
+		void removeFromAll(T* e) {
 			vector<size_t> groups = getGroups(e);
 			for (auto grp: groups) {
 				removeFromGroup(e, grp);

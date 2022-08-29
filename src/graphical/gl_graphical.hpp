@@ -173,17 +173,114 @@ namespace RenderData {
 		Vertex verts[3];
 	};
 
+	class PlaneReference {
+	public:
+		PlaneReference(
+			Vertex* tl,
+			Vertex* tr1,
+			Vertex* tr2,
+			Vertex* bl1,
+			Vertex* bl2,
+			Vertex* br
+		) {
+			this->tl	= tl;
+			this->tr1	= tr1;
+			this->tr2	= tr2;
+			this->bl1	= bl1;
+			this->bl2	= bl2;
+			this->br	= br;
+		}
+
+		PlaneReference* setPosition(
+				Vector3 tlPos,
+				Vector3 trPos,
+				Vector3 blPos,
+				Vector3 brPos
+			) {
+			tl->position	= tlPos;
+			tr1->position	= trPos;
+			tr2->position	= trPos;
+			bl1->position	= blPos;
+			bl2->position	= blPos;
+			br->position	= brPos;
+			return this;
+		}
+
+		PlaneReference* setUV(
+				Vector2 tlUV,
+				Vector2 trUV,
+				Vector2 blUV,
+				Vector2 brUV
+			) {
+			tl->uv	= tlUV;
+			tr1->uv	= trUV;
+			tr2->uv	= trUV;
+			bl1->uv	= blUV;
+			bl2->uv	= blUV;
+			br->uv	= brUV;
+			return this;
+		}
+
+		PlaneReference* setColor(
+				Vector4 tlCol,
+				Vector4 trCol,
+				Vector4 blCol,
+				Vector4 brCol
+			) {
+			tl->color	= tlCol;
+			tr1->color	= trCol;
+			tr2->color	= trCol;
+			bl1->color	= blCol;
+			bl2->color	= blCol;
+			br->color	= brCol;
+			return this;
+		}
+
+		PlaneReference* setColor(
+				Vector4 col = Vector4(1.0)
+			) {
+			tl->color	= col;
+			tr1->color	= col;
+			tr2->color	= col;
+			bl1->color	= col;
+			bl2->color	= col;
+			br->color	= col;
+			return this;
+		}
+
+		PlaneReference* transform(Transform3D trans) {
+			tl->position	= srpTransform(tl->position, trans);
+			tr1->position	= srpTransform(tr1->position, trans);
+			tr2->position	= srpTransform(tr2->position, trans);
+			bl1->position	= srpTransform(bl1->position, trans);
+			bl2->position	= srpTransform(bl2->position, trans);
+			br->position	= srpTransform(br->position, trans);
+			return this;
+		}
+
+	private:
+
+		Vertex* tl;
+		Vertex* tr1;
+		Vertex* tr2;
+		Vertex* bl1;
+		Vertex* bl2;
+		Vertex* br;
+	};
+
 	class Renderable {
 	public:
-		Renderable(size_t layer = 0) {
-			Drawer::layers.addObject(&render, layer);
+		Renderable(size_t layer = 0, bool manual = false) {
+			if(!manual)
+				Drawer::layers.addObject(&render, layer);
 			glGenVertexArrays(1, &vao);
 			glGenBuffers(1, &vbo);
 			onCreate();
+			manualMode = manual;
 		}
 
-		Renderable(vector<Triangle*> triangles, size_t layer = 0)
-		: Renderable(layer) {
+		Renderable(vector<Triangle*> triangles, size_t layer = 0, bool manual = false)
+		: Renderable(layer, manual) {
 			this->triangles = triangles;
 		}
 
@@ -193,6 +290,10 @@ namespace RenderData {
 			glDeleteVertexArrays(1, &vao);
 			for (auto t: triangles)
 				delete t;
+			for (auto pr: references.plane)
+				delete pr;
+			if(!manualMode)
+				Drawer::layers.removeFromAll(&render);
 		}
 
 		/// Called on creation.
@@ -202,8 +303,42 @@ namespace RenderData {
 		/// Called on deletion.
 		virtual void onDelete()	{}
 
+		PlaneReference* createPlaneReference() {
+			// Add triangles
+			triangles.push_back(new Triangle());
+			triangles.push_back(new Triangle());
+			// Create reference
+			PlaneReference* plane = new PlaneReference(
+				&(triangles[-1]->verts[0]),
+				&(triangles[-1]->verts[1]),
+				&(triangles[-2]->verts[0]),
+				&(triangles[-1]->verts[2]),
+				&(triangles[-2]->verts[1]),
+				&(triangles[-2]->verts[2])
+			);
+			// Setup plane
+			plane->setPosition(
+				Vector3(-1.0, +1.0, 0.0),
+				Vector3(+1.0, +1.0, 0.0),
+				Vector3(-1.0, -1.0, 0.0),
+				Vector3(+1.0, -1.0, 0.0)
+			);
+			plane->setUV(
+				Vector2(-1.0, +1.0),
+				Vector2(+1.0, +1.0),
+				Vector2(-1.0, -1.0),
+				Vector2(+1.0, -1.0)
+			);
+			// Add to reference list
+			references.plane.push_back(plane);
+			// return plane
+			return plane;
+		}
+
 		/// Renders the object to the screen.
 		DrawFunc render = $func() {
+			// If not active, return
+			if (!params.active) return;
 			// If no triangles exist, return
 			if (!triangles.size()) return;
 			// Call onRender function
@@ -291,6 +426,7 @@ namespace RenderData {
 		vector<Triangle*> triangles;
 
 		struct {
+			bool active = true;
 			GLuint culling	= GL_FRONT_AND_BACK;
 			GLuint fill		= GL_FILL;
 		} params;
@@ -300,6 +436,14 @@ namespace RenderData {
 			Transform3D local;
 		} transform;
 	private:
+		/// List of references linked to this object.
+		struct {
+			vector<PlaneReference*> plane;
+		} references;
+
+		/// Whether manually rendering or not.
+		bool manualMode = false;
+
 		/// The object's Vertex Array Object (VAO).
 		GLuint vao;
 
@@ -312,9 +456,9 @@ namespace RenderData {
 		void draw() {
 			// Render with basic shader
 			Shader::defaultShader();
-			Shader::defaultShader["world"](Scene::world);
 			glm::mat4 camera = Scene::camera.matrix();
 			glm::mat4 projection = Scene::camera.perspective();
+			Shader::defaultShader["world"](Scene::world);
 			Shader::defaultShader["camera"](camera);
 			Shader::defaultShader["projection"](projection);
 			//Shader::defaultShader["actor"](asGLMMatrix(transform));
@@ -325,15 +469,89 @@ namespace RenderData {
 				auto shader = (*s);
 				// Enable shader
 				shader();
-				// Set matrices
-				shader["world"](Scene::world);
-				Shader::defaultShader["camera"](camera);
-				Shader::defaultShader["projection"](projection);
-				//shader["actor"](asGLMMatrix(transform));
 				// Draw object
 				glDrawArrays(GL_TRIANGLES, 0, vertexCount);
 			}
 		};
+	};
+}
+
+namespace Drawer {
+	class FrameBuffer {
+	public:
+		FrameBuffer() {}
+
+		FrameBuffer(
+			unsigned int width,
+			unsigned int height
+		): FrameBuffer() {
+			glGenFramebuffers(1, &id);
+			target = new RenderData::Renderable(0, true);
+			target->createPlaneReference();
+			glGenTextures(1, &texture.color);
+			glBindTexture(GL_TEXTURE_2D, texture.color);
+			glTexImage2D(
+				GL_TEXTURE_2D,
+				0,
+				GL_RGBA16F,
+				width,
+				height,
+				0,
+				GL_RGBA16F,
+				GL_FLOAT,
+				NULL
+			);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			glGenTextures(1, &texture.depth);
+			glBindTexture(GL_TEXTURE_2D, texture.depth);
+			glTexImage2D(
+				GL_TEXTURE_2D,
+				0,
+				GL_DEPTH24_STENCIL8,
+				width,
+				height,
+				0,
+				GL_UNSIGNED_INT_24_8,
+				GL_FLOAT,
+				NULL
+			);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture.color, 0);
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, texture.depth, 0);
+		}
+		~FrameBuffer() {
+			glDeleteFramebuffers(1, &id);
+			delete target;
+		}
+
+		void operator()() {
+			glBindFramebuffer(GL_FRAMEBUFFER, id);
+		}
+
+		void renderToBuffer(unsigned int buffer = 0) {
+			glBindFramebuffer(GL_FRAMEBUFFER, buffer); // back to default
+			glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+			glClear(GL_COLOR_BUFFER_BIT);
+			glBindTexture(GL_TEXTURE_2D, texture.color);
+			(*compose)();
+			target->render();
+		}
+
+		unsigned int getID() {
+			return id;
+		}
+
+		Shader::Shader* compose;
+
+	private:
+		unsigned int id;
+		RenderData::Renderable* target;
+		struct {
+			unsigned int color;
+			unsigned int depth;
+		} texture;
 	};
 }
 

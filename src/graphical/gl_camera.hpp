@@ -25,6 +25,7 @@ namespace Camera {
 		float fov = 2.0;
 		float zNear = 0.1;
 		float zFar = 100.0;
+		bool ortho = false;
 
 		glm::mat4 matrix() {
 			return glm::lookAt(
@@ -35,6 +36,8 @@ namespace Camera {
 		}
 
 		glm::mat4 perspective() {
+			if (ortho)
+				return glm::ortho(1, 1, 1, 1);
 			return glm::perspective(
 				fov,
 				aspect.x / aspect.y,

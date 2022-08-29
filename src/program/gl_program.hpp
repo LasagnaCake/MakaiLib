@@ -87,8 +87,11 @@ namespace Makai {
 			unsigned int fps = 60,
 			bool fullscreen = false
 		) {
-			$debug("Starting SDL...");
+			// Save window resolution
+			this->width = width;
+			this->height = height;
 			// Initialize SDL
+			$debug("Starting SDL...");
 			SDL_Init(SDL_INIT_VIDEO);
 			$debug("Started!");
 			$debug("Creating window...");
@@ -125,6 +128,16 @@ namespace Makai {
 			// Setup camera
 			Scene::camera.aspect = Vector2(width, height);
 			Scene::camera.fov = glm::radians(45.0f);
+			// Define texture wrapping & mipmaps
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			// Create framebuffer
+			framebuffer = Drawer::FrameBuffer(width, height);
+			// Create composition shader
+			compose.create(SLF::parseFile("shaders/compose/compose.slf"));
+			framebuffer.compose = &compose;
 		}
 
 		/// Sets the window's title.
@@ -173,7 +186,14 @@ namespace Makai {
 				// Wait for thread to be done processing
 				physics.join();
 				// [[ Render code BEGIN ]]
+				// Enable framebuffer
+				framebuffer();
+				// Render screen
 				render();
+				// Render framebuffer
+				frameBuffer.renderToBuffer();
+				// Display window
+				SDL_GL_SwapWindow(window);
 				// [[ Render code END ]]
 				lastTime = SDL_GetTicks();
 			}
@@ -197,6 +217,15 @@ namespace Makai {
 
 		}
 
+		/// Gets the current frame.
+		size_t getFrameCounter() {
+			return frame;
+		}
+
+		unsigned int getFrameBufferID() {
+			framebuffer.getID();
+		}
+
 		/// Gets called whenever the program is rendering to the screen. Happens last.
 		Event::Signal	onDraw	= $func() {};
 
@@ -217,7 +246,17 @@ namespace Makai {
 
 		/// The program's input manager.
 		InputManager input;
+
 	private:
+		/// The program's compose shader.
+		Shader::Shader compose;
+
+		/// The program's main framebuffer.
+		Drawer::FrameBuffer framebuffer;
+
+		/// The window's resolution.
+		unsigned int width, height;
+
 		/// Properly finishes program execution.
 		void terminate() {
 			// Call final function
@@ -232,12 +271,14 @@ namespace Makai {
 			// Clear screen
 			glClearColor(color.x, color.y, color.z, color.w);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+			// Enable depth testing
+			glEnable(GL_DEPTH_TEST);
 			// Draw objects
 			Drawer::renderAllLayers();
 			// Execute own drawing function
 			onDraw();
-			// Display window
-			SDL_GL_SwapWindow(window);
+			// Disable depth testing
+			glEnable(GL_DEPTH_TEST);
 		}
 		/// Frame counter.
 		size_t frame = 0;
