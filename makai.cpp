@@ -41,11 +41,11 @@ int main() {
 		$debug(d);
 
 	Shader::defaultShader.destroy();
-	// Shader::defaultShader.create(data);
-	Shader::defaultShader.create(
+	Shader::defaultShader.create(data);
+	/*Shader::defaultShader.create(
 		FileLoader::loadTextFile("shaders/base/base.vert"),
 		FileLoader::loadTextFile("shaders/base/base.frag")
-	);
+	);*/
 	RenderData::Renderable testRenderable;
 
 	$debug("Size of float:");

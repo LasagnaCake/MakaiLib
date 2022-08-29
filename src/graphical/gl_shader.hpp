@@ -106,6 +106,36 @@ namespace Shader {
 	private:
 		GLuint id;
 		bool created = false;
+		/// Similar to create, but internal.
+		void attach(string code, GLuint shaderType) {
+			// Compile shaders
+			GLuint shader;
+			int success;
+			char infoLog[2048];
+			const char* shaderCode = code.c_str();
+			// Vertex Shader
+			shader = glCreateShader(shaderType);
+			glShaderSource(shader, 1, &shaderCode, NULL);
+			glCompileShader(shader);
+			// Log compile errors if any
+			glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
+			if (!success) {
+				glGetShaderInfoLog(shader, 2048, NULL, infoLog);
+				throw runtime_error(string("Could not compile Shader!\n") + infoLog);
+			};
+			// Shader Program
+			if (!created) id = glCreateProgram();
+			glAttachShader(id, shader);
+			glLinkProgram(id);
+			// Log linking errors if any
+			glGetProgramiv(id, GL_LINK_STATUS, &success);
+			if (!success) {
+				glGetProgramInfoLog(id, 2048, NULL, infoLog);
+				throw runtime_error(string("Could not link shader program!\n") + infoLog);
+			}
+			glDeleteShader(shader);
+			created = true;
+		}
 	public:
 		Shader() {}
 
@@ -171,7 +201,7 @@ namespace Shader {
 				}
 			}
 			// Shader Program
-			id = glCreateProgram();
+			if (!created) id = glCreateProgram();
 			if (vertex)		glAttachShader(id, vertex);
 			if (fragment)	glAttachShader(id, fragment);
 			glLinkProgram(id);
@@ -198,7 +228,7 @@ namespace Shader {
 					code = loadTextFile(dir + slfData[i]);
 					type = shaderTypeId(slfData[i+1]);
 					try {
-						create(code, type);
+						attach(code, type);
 					} catch (runtime_error err) {
 						log += string("\n[[ Error on shader '") + dir + slfData[i] + "' ]]:\n";
 						log += err.what();
@@ -209,7 +239,7 @@ namespace Shader {
 				for (size_t i = 2; i < slfData.size(); i++) {
 					code = loadTextFile(dir + slfData[i]);
 					try {
-						create(code, type);
+						attach(code, type);
 					} catch (runtime_error err) {
 						log += string("\n[[ Error on shader '") + dir + slfData[i] + "' ]]:\n";
 						log += err.what();
@@ -242,7 +272,7 @@ namespace Shader {
 				throw runtime_error(string("Could not compile Shader!\n") + infoLog);
 			};
 			// Shader Program
-			id = glCreateProgram();
+			if (!created) id = glCreateProgram();
 			glAttachShader(id, shader);
 			glLinkProgram(id);
 			// Log linking errors if any
