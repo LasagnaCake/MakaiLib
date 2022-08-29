@@ -62,7 +62,6 @@ namespace Makai {
 		*/
 		inline unsigned int getButtonState(SDL_Scancode button) {
 			return buffer[button];
-
 		}
 		/// Whether input is enabled.
 		bool enabled = true;
@@ -123,6 +122,12 @@ namespace Makai {
 			SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 1);
 			glEnable(GL_BLEND);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			Scene::projection = glm::perspective(
+				glm::radians(45.0f),
+				(float)width / (float)height,
+				0.1f,
+				100.0f
+			);
 		}
 
 		/// Sets the window's title.

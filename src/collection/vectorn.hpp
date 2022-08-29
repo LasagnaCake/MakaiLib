@@ -1041,9 +1041,9 @@ namespace VecMath
 			this->rotation	= rotation;
 			this->scale		= scale;
 		}
-		T		position;
+		T		position = T(0.0);
 		ROT_T	rotation;
-		T		scale;
+		T		scale = T(1.0);
 	};
 
 	typedef Transform<VecV2, float>	Transform2D;

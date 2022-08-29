@@ -7,58 +7,69 @@
 #define $$FUNC function<void()>
 
 #define $stride(start, offset) (void*)((start) + (offset) * sizeof(float))
+#define $abstride(offset) (void*)((offset) * sizeof(float))
 
 #define DERIVED_CLASS(NAME, BASE)\
 	inline	virtual string getClass() {return #NAME;}\
 	inline	virtual string getBaseClass() {return #BASE;}\
 	inline	static string getCoreClass() {return #NAME;}
 
-//#pragma GCC push_options
-//#pragma GCC optimize ("unroll-loops")
-
 namespace Drawer {
 	namespace {
 		//GLuint defBackBuffer
 
 		using
-		Vector::VecV2,
-		Vector::VecV3,
-		Vector::VecV4,
+		Vector::Vector2,
+		Vector::Vector3,
+		Vector::Vector4,
+		VecMath::Transform3D,
+		VecMath::srpTransform,
 		std::vector;
 
 		using namespace std;
 
+		#define RAW_VERTEX_SIZE 9
+		#define RAW_VERTEX_BYTE_SIZE RAW_VERTEX_SIZE * sizeof(float)
 		struct _VtxRaw {
-			float x;
-			float y;
-			float z;
-			float u;
-			float v;
-			float r;
-			float g;
-			float b;
-			float a;
+			float x = 0;
+			float y = 0;
+			float z = 0;
+			float u = 0;
+			float v = 0;
+			float r = 1;
+			float g = 1;
+			float b = 1;
+			float a = 1;
 		};
 
 		struct _Vtx {
 			_Vtx() {}
-			_Vtx(VecV3 position, VecV4 color = VecV4(1), VecV2 uv = VecV2(0)) {
+			_Vtx(Vector3 position, Vector4 color = Vector4(1), Vector2 uv = Vector2(0)) {
 				this-> position	= position;
 				this-> uv		= uv;
 				this->color		= color;
 			}
-			VecV3 position;
-			VecV2 uv;
-			VecV4 color;
+
+			_Vtx transformed(Transform3D trans) {
+				return _Vtx(
+					srpTransform(position, trans),
+					uv,
+					color
+				);
+			}
+
+			Vector3 position;
+			Vector2 uv;
+			Vector4 color;
 		};
 
-		_Vtx* _toVtx(VecV3* pos, VecV2* uv, VecV4* col, size_t numVerts) {
+		_Vtx* _toVtx(Vector3* pos, Vector2* uv, Vector4* col, size_t numVerts) {
 			_Vtx* res = new _Vtx[numVerts];
 			for(size_t i = 0; i < numVerts; i++) {
 				res[i].position	= pos[i];
 				if (uv) res[i].uv		= uv[i];
 				if (col) res[i].color	= col[i];
-				else	res[i].color	= VecV4(1);
+				else	res[i].color	= Vector4(1);
 			}
 			return res;
 		}
@@ -79,7 +90,7 @@ namespace Drawer {
 			return res;
 		}
 
-		_VtxRaw* _toVtxRaw(VecV3* pos, VecV2* uv, VecV4* col, size_t numVerts) {
+		_VtxRaw* _toVtxRaw(Vector3* pos, Vector2* uv, Vector4* col, size_t numVerts) {
 			_VtxRaw* res = new _VtxRaw[numVerts];
 			for(size_t i = 0; i < numVerts; i++) {
 				res[i].x = pos[i].x;
@@ -95,7 +106,7 @@ namespace Drawer {
 			return res;
 		}
 
-		_VtxRaw _toVtxRaw(VecV3 pos, VecV2 uv, VecV4 col) {
+		_VtxRaw _toVtxRaw(Vector3 pos, Vector2 uv, Vector4 col) {
 			_VtxRaw res;
 			res.x = pos.x;
 			res.y = pos.y;
@@ -107,26 +118,6 @@ namespace Drawer {
 			res.b = col.z;
 			res.a = col.w;
 			return res;
-		}
-
-		typedef GLuint _GLTex;
-		typedef GLuint _GLBuf;
-
-		void _renderRaw(
-			_VtxRaw* verts,
-			_GLTex image,
-			_GLBuf buffer,
-			size_t start,
-			size_t count,
-			int glType
-		) {
-			if(buffer)
-				glBindBuffer(GL_ARRAY_BUFFER, buffer);
-
-			glDrawArrays(glType, start, count);
-
-			if(buffer)
-				glBindBuffer(GL_ARRAY_BUFFER, 0);
 		}
 	}
 
@@ -142,9 +133,11 @@ namespace Drawer {
 	Group::Group<DrawFunc> layers;
 
 	void renderLayer(size_t layerID) {
+		glEnable(GL_DEPTH_TEST);
 		for (auto rFunc: layers[layerID]) {
 			(*rFunc)();
 		}
+		glDisable(GL_DEPTH_TEST);
 	}
 
 	void renderAllLayers() {
@@ -185,15 +178,16 @@ namespace VecMath {
 namespace RenderData {
 	namespace {
 		using
-		Vector::VecV2,
-		Vector::VecV3,
-		Vector::VecV4,
+		Vector::Vector2,
+		Vector::Vector3,
+		Vector::Vector4,
 		VecMath::Transform,
 		VecMath::Transform2D,
 		VecMath::Transform3D,
 		VecMath::srpTransform,
 		VecMath::asGLMMatrix,
 		Drawer::Vertex,
+		Drawer::RawVertex,
 		Drawer::toRawVertex,
 		Drawer::DrawFunc,
 		std::function,
@@ -201,20 +195,19 @@ namespace RenderData {
 	}
 
 	/// Base triangle data structure.
-	template<class T>
 	struct Triangle {
 		Triangle() {}
 
 		Triangle(
-			T verts[3],
-			VecV2 uv[3] = nullptr,
-			VecV4 color[3] = nullptr
+			Vector3 verts[3],
+			Vector2 uv[3] = nullptr,
+			Vector4 color[3] = nullptr
 		) {
 			#pragma GCC unroll 3
 			for (unsigned char i = 0; i < 3; i++) {
-				this->verts[i].position		= T(verts[i]);
-				this->verts[i].uv			= uv ? uv[i] : VecV2(1);
-				this->verts[i].color		= color ? color[i] : VecV4(1);
+				this->verts[i].position		= verts	? verts[i]	: Vector2(0.0);
+				this->verts[i].uv			= uv	? uv[i]		: Vector2(0.0);
+				this->verts[i].color		= color	? color[i]	: Vector4(1.0);
 			}
 		}
 
@@ -226,9 +219,6 @@ namespace RenderData {
 
 		Vertex verts[3];
 	};
-
-	typedef Triangle<Vector2> Triangle2D;
-	typedef Triangle<Vector3> Triangle3D;
 
 	class Renderable {
 	public:
@@ -244,7 +234,7 @@ namespace RenderData {
 			onCreate();
 		}
 
-		Renderable(vector<Triangle3D> triangles, size_t layer = 0)
+		Renderable(vector<Triangle*> triangles, size_t layer = 0)
 		: Renderable(layer) {
 			this->triangles = triangles;
 		}
@@ -253,6 +243,8 @@ namespace RenderData {
 			onDelete();
 			glDeleteBuffers(1, &vbo);
 			glDeleteVertexArrays(1, &vao);
+			for (auto t: triangles)
+				delete t;
 		}
 
 		/// Called on creation.
@@ -262,9 +254,90 @@ namespace RenderData {
 		/// Called on deletion.
 		virtual void onDelete()	{}
 
+		/// Renders the object to the screen.
+		DrawFunc render = $func() {
+			// If no triangles exist, return
+			if (!triangles.size()) return;
+			// Call onRender function
+			onRender();
+			// Pad array
+			Triangle padding;
+			triangles.push_back(&padding);
+			triangles.push_back(&padding);
+			// Get vertex count
+			vertexCount = triangles.size() * 3;
+			// Create Intermediary Vertex Buffer (IVB) to be displayed on screen
+			RawVertex* verts = new RawVertex[(vertexCount)];
+			// Copy data to IVB
+			size_t i = 0;
+			for (auto t: triangles) {
+				verts[i]	= toRawVertex(t->verts[0]);
+				verts[i+1]	= toRawVertex(t->verts[1]);
+				verts[i+2]	= toRawVertex(t->verts[2]);
+				i += 3;
+			}
+			// Set VBO as active
+			glBindBuffer(GL_ARRAY_BUFFER, vbo);
+			// Copy IVB to VBO
+			glBufferData(
+				GL_ARRAY_BUFFER,
+				vertexCount * RAW_VERTEX_SIZE * 2,
+				verts,
+				GL_STATIC_DRAW
+			);
+			// Delete IVB, since it is no longer necessary
+			delete [] verts;
+			// Set VAO as active
+			glBindVertexArray(vao);
+			// Define vertex data in VBO
+			glVertexAttribPointer(
+				0,
+				3,
+				GL_FLOAT,
+				GL_FALSE,
+				RAW_VERTEX_SIZE * sizeof(float),
+				$abstride(0)
+			);
+			glVertexAttribPointer(
+				1,
+				2,
+				GL_FLOAT,
+				GL_FALSE,
+				RAW_VERTEX_SIZE * sizeof(float),
+				$abstride(3)
+			);
+			glVertexAttribPointer(
+				2,
+				4,
+				GL_FLOAT,
+				GL_FALSE,
+				RAW_VERTEX_SIZE * sizeof(float),
+				$abstride(5)
+			);
+			// Enable attribute pointers
+			glEnableVertexAttribArray(0);
+			glEnableVertexAttribArray(1);
+			glEnableVertexAttribArray(2);
+			// Set VAO as active
+			glBindVertexArray(vao);
+			// Set polygon rendering mode
+			glPolygonMode(params.culling, params.fill);
+			// Draw object to screen
+			draw();
+			// Unbind vertex array
+			glBindVertexArray(0);
+			// Disable attributes
+			glDisableVertexAttribArray(2);
+			glDisableVertexAttribArray(1);
+			glDisableVertexAttribArray(0);
+			// Unpad array
+			triangles.pop_back();
+			triangles.pop_back();
+		};
+
 		Shader::ShaderList shaders;
 
-		vector<Triangle3D> triangles;
+		vector<Triangle*> triangles;
 
 		struct {
 			GLuint culling	= GL_FRONT_AND_BACK;
@@ -282,127 +355,28 @@ namespace RenderData {
 		/// The amount of vertices this object has.
 		size_t vertexCount;
 
-		/// Renders the object to the screen.
-		DrawFunc render = $func() {
-			// If no triangles exist, return
-			if (!triangles.size()) return;
-			// Call onRender function
-			onRender();
-			// Set VBO as active
-			glBindBuffer(GL_ARRAY_BUFFER, vbo);
-			// Get vertex count
-			vertexCount = triangles.size() * 3;
-			// Create Intermediary Vertex Buffer (IVB) to be displayed on screen
-			Drawer::RawVertex* verts = new Drawer::RawVertex[vertexCount];
-			// Copy data to IVB
-			size_t i = 0;
-			for (auto t: triangles) {
-				verts[i]	= toRawVertex(t.verts[0]);
-				verts[i+1]	= toRawVertex(t.verts[1]);
-				verts[i+2]	= toRawVertex(t.verts[2]);
-				i += 3;
-			}
-			// Copy IVB to VBO
-			/*glBufferData(
-				GL_ARRAY_BUFFER,
-				vertexCount * 5,
-				verts,
-				GL_STATIC_DRAW
-			);*/
-			// Delete IVB, since it is no longer necessary
-			delete [] verts;
-			// Define vertex data in VBO
-			/*
-			glEnableVertexAttribArray(0);
-			glVertexAttribPointer(
-				0,
-				3,
-				GL_FLOAT,
-				GL_FALSE,
-				9 * sizeof(float),
-				(void*)(0)
-			);
-			glEnableVertexAttribArray(1);
-			glVertexAttribPointer(
-				1,
-				2,
-				GL_FLOAT,
-				GL_FALSE,
-				9 * sizeof(float),
-				(void*)(3 * sizeof(float))
-			);
-			glEnableVertexAttribArray(2);
-			glVertexAttribPointer(
-				2,
-				GL_RGBA16F,
-				GL_FLOAT,
-				GL_FALSE,
-				9 * sizeof(float),
-				(void*)(5 * sizeof(float))
-			);
-			*/
-			glEnableVertexAttribArray(0);
-			glVertexAttribPointer(
-				0,					// attribute
-				3,					// number of elements per vertex, here (x,y)
-				GL_FLOAT,			// the type of each element
-				GL_FALSE,			// take our values as-is
-				9 * sizeof(float),	// extra data between each position
-				$stride(verts, 0)	// pointer to the C array
-			);
-			glVertexAttribPointer(
-				1,					// attribute
-				2,					// number of elements per vertex, here (x,y)
-				GL_FLOAT,			// the type of each element
-				GL_FALSE,			// take our values as-is
-				9 * sizeof(float),	// extra data between each position
-				$stride(verts, 3)	// pointer to the C array
-			);
-			glEnableVertexAttribArray(2);
-			glVertexAttribPointer(
-				2,					// attribute
-				4,					// number of elements per vertex, here (x,y)
-				GL_FLOAT,			// the type of each element
-				GL_FALSE,			// take our values as-is
-				9 * sizeof(float),	// extra data between each position
-				$stride(verts, 5)	// pointer to the C array
-			);
+		void draw() {
 			// Render with basic shader
 			Shader::defaultShader();
-			glBindVertexArray(vao);
-			glPolygonMode(params.culling, params.fill);
 			Shader::defaultShader["world"](Scene::world);
 			Shader::defaultShader["camera"](Scene::camera);
 			Shader::defaultShader["projection"](Scene::projection);
 			Shader::defaultShader["actor"](asGLMMatrix(transform));
-			draw();
-			// Render object passes
-			if(shaders.size())
-			for (auto& s : shaders) {
-				// Enable shader
-				s();
-				// Set VAO as active
-				glBindVertexArray(vao);
-				// Set polygon mode
-				glPolygonMode(params.culling, params.fill);
-				// Set matrices
-				s["world"](Scene::world);
-				s["camera"](Scene::camera);
-				s["projection"](Scene::projection);
-				s["actor"](asGLMMatrix(transform));
-				// Draw object
-				draw();
-			}
-			// Unbind vertex array
-			glBindVertexArray(0);
-			// Disable attributes
-			glDisableVertexAttribArray(2);
-			glDisableVertexAttribArray(1);
-			glDisableVertexAttribArray(0);
-		};
-
-		void draw() {
 			glDrawArrays(GL_TRIANGLES, 0, vertexCount);
+			// Render object passes, if any
+			if(shaders.size())
+			for (auto s : shaders) {
+				auto shader = (*s);
+				// Enable shader
+				shader();
+				// Set matrices
+				shader["world"](Scene::world);
+				shader["camera"](Scene::camera);
+				shader["projection"](Scene::projection);
+				shader["actor"](asGLMMatrix(transform));
+				// Draw object
+				glDrawArrays(GL_TRIANGLES, 0, vertexCount);
+			}
 		};
 	};
 }
