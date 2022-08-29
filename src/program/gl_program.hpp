@@ -149,8 +149,16 @@ namespace Makai {
 			};
 			// SDL's events
 			SDL_Event event;
+			// Time recorded last frame
+			float lastTime = 0;
+			lastTime = (float)SDL_GetTicks() * 0.001;
 			// While program is running...
 			while(shouldRun) {
+				// Get delta
+				float curTime = (float)SDL_GetTicks() * 0.001;
+				float delta = curTime - lastTime;
+				// increment frame counter
+				frame += 1;
 				// Poll events and check if should close
 				while (SDL_PollEvent(&event))
 					if (event.type == SDL_QUIT)
@@ -158,15 +166,16 @@ namespace Makai {
 				// Update input manager
 				input.update();
 				// Start thread
-				std::thread physics(physFunc, 1);
+				std::thread physics(physFunc, delta);
 				// Do your own stuff
-				logicFunc(1);
+				logicFunc(delta);
 				onFrame();
 				// Wait for thread to be done processing
 				physics.join();
 				// [[ Render code BEGIN ]]
 				render();
 				// [[ Render code END ]]
+				lastTime = SDL_GetTicks();
 			}
 			// Terminate program
 			terminate();
@@ -230,6 +239,8 @@ namespace Makai {
 			// Display window
 			SDL_GL_SwapWindow(window);
 		}
+		/// Frame counter.
+		size_t frame = 0;
 
 		/// Current execution state.
 		bool shouldRun = true;
