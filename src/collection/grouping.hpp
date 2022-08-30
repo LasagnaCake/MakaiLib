@@ -10,20 +10,20 @@ namespace Group {
 	class Group {
 	public:
 		/// Gets a group of a given name.
-		inline vector<T*>& getGroup(size_t group) {
+		inline vector<T>& getGroup(size_t group) {
 			if (&g[group] == nullptr)
-				g[group] = vector<T*>();
+				g[group] = vector<T>();
 			return g[group];
 		}
 
-		vector<T*>& operator[](size_t group) {
+		vector<T>& operator[](size_t group) {
 			if (&g[group] == nullptr)
-				g[group] = vector<T*>();
+				g[group] = vector<T>();
 			return g[group];
 		}
 
 		/// Get the groups an object belongs to (if any).
-		vector<size_t> getGroups(T* e) {
+		vector<size_t> getGroups(T e) {
 			vector<size_t> res;
 			try {
 				for (auto const& group : g)
@@ -37,23 +37,23 @@ namespace Group {
 		}
 
 		/// Adds an object to a group. if nonexistent, create group.
-		inline void addObject(T* e, size_t group) {
+		inline void addObject(T e, size_t group) {
 			if (&g[group] == nullptr)
-				g[group] = vector<T*>();
+				g[group] = vector<T>();
 			g[group].push_back(e);
 		}
 
 		/// Empties/creates a given group.
 		inline void invokeGroup(size_t group) {
-			g[group] = vector<T*>();
+			g[group] = vector<T>();
 		}
 
 		/// Removes an object from a given group (if it is in said group).
-		void removeFromGroup(T* e, size_t group) {
+		void removeFromGroup(T e, size_t group) {
 			// If group does not exist, return
 			if (&g[group] == nullptr) return;
 			// Get group
-			vector<T*>& target = g[group];
+			vector<T>& target = g[group];
 			// If group is not empty...
 			if (target.size())
 				// Loop through group and...
@@ -67,7 +67,7 @@ namespace Group {
 		}
 
 		/// Removes an object from all groups it is in.
-		void removeFromAll(T* e) {
+		void removeFromAll(T e) {
 			vector<size_t> groups = getGroups(e);
 			for (auto grp: groups) {
 				removeFromGroup(e, grp);
@@ -91,6 +91,6 @@ namespace Group {
 			return false;
 		}
 	private:
-		map<size_t, vector<T*>> g;
+		map<size_t, vector<T>> g;
 	};
 }

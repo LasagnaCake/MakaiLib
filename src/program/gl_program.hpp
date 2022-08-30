@@ -136,7 +136,7 @@ namespace Makai {
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 			$debug("creating default framebuffer...");
 			// Create framebuffer
-			framebuffer = Drawer::FrameBuffer(width, height);
+			framebuffer.create(width, height);
 			// Create composition shader
 			$debug("Creating composition shader...");
 			compose.create(SLF::parseFile("shaders/framebuffer/compose.slf"));
@@ -193,6 +193,8 @@ namespace Makai {
 				framebuffer();
 				// Render screen
 				render();
+				// Set framebuffer's clear color
+				framebuffer.color = color;
 				// Render framebuffer
 				framebuffer.renderToBuffer();
 				// Display window
@@ -272,7 +274,7 @@ namespace Makai {
 		/// Draws the window.
 		void render() {
 			// Clear screen
-			glClearColor(color.x, color.y, color.z, color.w);
+			glClearColor(1, 1, 1, 1);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			// Enable depth testing
 			glEnable(GL_DEPTH_TEST);

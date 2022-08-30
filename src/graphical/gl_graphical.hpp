@@ -75,7 +75,7 @@ namespace Drawer {
 
 	typedef const function<void()> DrawFunc;
 
-	Group::Group<DrawFunc> layers;
+	Group::Group<DrawFunc*> layers;
 
 	void renderLayer(size_t layerID) {
 		glEnable(GL_DEPTH_TEST);
@@ -90,6 +90,11 @@ namespace Drawer {
 		if (rLayers.size())
 			for (auto layer : rLayers)
 				renderLayer(layer);
+	}
+
+	void setTexture2D(unsigned char index, GLuint texture) {
+		glActiveTexture(GL_TEXTURE0 + index);
+		glBindTexture(GL_TEXTURE_2D, texture);
 	}
 }
 
@@ -302,6 +307,18 @@ namespace RenderData {
 		virtual void onRender()	{}
 		/// Called on deletion.
 		virtual void onDelete()	{}
+
+		void setManual() {
+			if(!manualMode)
+				Drawer::layers.removeFromAll(&render);
+			manualMode = true;
+		}
+
+		void setAuto(size_t renderLayer) {
+			if(manualMode)
+				Drawer::layers.addObject(&render, renderLayer);
+			manualMode = false;
+		}
 
 		PlaneReference* createPlaneReference() {
 			// Add triangles
@@ -571,24 +588,46 @@ namespace Drawer {
 			unsigned int width,
 			unsigned int height
 		): FrameBuffer() {
+			create(width, height);
+		}
+
+		~FrameBuffer() {
+			glDeleteFramebuffers(1, &id);
+			glDeleteTextures(1, &texture.color);
+			glDeleteTextures(1, &texture.depth);
+			glDeleteBuffers(1, &vbo);
+			glDeleteVertexArrays(1, &vao);
+		}
+
+		void create(
+			unsigned int width,
+			unsigned int height
+		) {
+			if (created) return;
+			else created = true;
 			glGenFramebuffers(1, &id);
-			target = new RenderData::Renderable(0, true);
-			rect = target->createPlaneReference();
 			glGenTextures(1, &texture.color);
 			glBindTexture(GL_TEXTURE_2D, texture.color);
 			glTexImage2D(
 				GL_TEXTURE_2D,
 				0,
-				GL_RGBA16F,
+				GL_RGB,
 				width,
 				height,
 				0,
-				GL_RGBA16F,
-				GL_FLOAT,
+				GL_RGB,
+				GL_UNSIGNED_BYTE,
 				NULL
 			);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			glFramebufferTexture2D(
+				GL_FRAMEBUFFER,
+				GL_COLOR_ATTACHMENT0,
+				GL_TEXTURE_2D,
+				texture.color,
+				0
+			);
 			glGenTextures(1, &texture.depth);
 			glBindTexture(GL_TEXTURE_2D, texture.depth);
 			glTexImage2D(
@@ -598,18 +637,31 @@ namespace Drawer {
 				width,
 				height,
 				0,
+				GL_DEPTH_STENCIL,
 				GL_UNSIGNED_INT_24_8,
-				GL_FLOAT,
 				NULL
 			);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture.color, 0);
-			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, texture.depth, 0);
-		}
-		~FrameBuffer() {
-			glDeleteFramebuffers(1, &id);
-			delete target;
+			glFramebufferTexture2D(
+				GL_FRAMEBUFFER,
+				GL_DEPTH_STENCIL_ATTACHMENT,
+				GL_TEXTURE_2D,
+				texture.depth,
+				0
+			);
+			// Setup display rectangle
+			rect[0].position	= Vector3(-1, +1, 0);
+			rect[0].uv			= Vector2(-1, +1);
+			rect[1].position	= Vector3(+1, +1, 0);
+			rect[1].uv			= Vector2(+1, +1);
+			rect[2].position	= Vector3(-1, -1, 0);
+			rect[2].uv			= Vector2(-1, -1);
+			rect[3].position	= Vector3(+1, -1, 0);
+			rect[3].uv			= Vector2(+1, -1);
+			// Create buffers
+			glGenVertexArrays(1, &vao);
+			glGenBuffers(1, &vbo);
 		}
 
 		void operator()() {
@@ -617,28 +669,98 @@ namespace Drawer {
 		}
 
 		void renderToBuffer(unsigned int buffer = 0) {
-			glBindFramebuffer(GL_FRAMEBUFFER, buffer); // back to default
-			glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+			// Create Intermediary Vertex Buffer (IVB) to be displayed on screen
+			RawVertex verts[4];
+			verts[0] = toRawVertex(rect[0]);
+			verts[1] = toRawVertex(rect[1]);
+			verts[2] = toRawVertex(rect[2]);
+			verts[3] = toRawVertex(rect[3]);
+			// Set VBO as active
+			glBindBuffer(GL_ARRAY_BUFFER, vbo);
+			// Copy IVB to VBO
+			glBufferData(
+				GL_ARRAY_BUFFER,
+				RAW_VERTEX_SIZE * 4 * sizeof(float),
+				verts,
+				GL_STATIC_DRAW
+			);
+			// Set VAO as active
+			glBindVertexArray(vao);
+			// Define vertex data in VBO
+			glVertexAttribPointer(
+				0,
+				3,
+				GL_FLOAT,
+				GL_FALSE,
+				RAW_VERTEX_SIZE * sizeof(float),
+				$abstride(0)
+			);
+			glVertexAttribPointer(
+				1,
+				2,
+				GL_FLOAT,
+				GL_FALSE,
+				RAW_VERTEX_SIZE * sizeof(float),
+				$abstride(3)
+			);
+			glVertexAttribPointer(
+				2,
+				4,
+				GL_FLOAT,
+				GL_FALSE,
+				RAW_VERTEX_SIZE * sizeof(float),
+				$abstride(5)
+			);
+			// Get shader
+			auto& comp = (*compose);
+			// Bind target frame buffer
+			glBindFramebuffer(GL_FRAMEBUFFER, buffer);
+			// Clear target frame buffer
+			glClearColor(color.x, color.y, color.z, color.w);
 			glClear(GL_COLOR_BUFFER_BIT);
-			glBindTexture(GL_TEXTURE_2D, texture.color);
-			(*compose)();
-			target->renderRaw();
+			// Activate compose shader
+			comp();
+			glBindTexture(GL_TEXTURE_2D, texture.depth);
+			// Draw screen
+			draw();
 		}
 
 		unsigned int getID() {
 			return id;
 		}
 
+		Vector4 color = Vector4(0, 0, 0, 1);
+		Vertex rect[4];
 		Shader::Shader* compose;
-		RenderData::PlaneReference* rect;
 
 	private:
+		void draw() {
+			// Enable attribute pointers
+			glEnableVertexAttribArray(0);
+			glEnableVertexAttribArray(1);
+			glEnableVertexAttribArray(2);
+			// Set VAO as active
+			glBindVertexArray(vao);
+			// Set polygon rendering mode
+			glPolygonMode(GL_FRONT, GL_LINE);
+			// Draw object to screen
+			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+			// Unbind vertex array
+			glBindVertexArray(0);
+			// Disable attributes
+			glDisableVertexAttribArray(2);
+			glDisableVertexAttribArray(1);
+			glDisableVertexAttribArray(0);
+		}
+
+		bool created = false;
 		unsigned int id;
-		RenderData::Renderable* target;
 		struct {
 			unsigned int color;
 			unsigned int depth;
 		} texture;
+		unsigned int vao;
+		unsigned int vbo;
 	};
 }
 
