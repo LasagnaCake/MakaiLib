@@ -13,5 +13,5 @@ void main(void) {
 		color = texture(texture2D, fragUV) * fragColor;
 	else
 		color = fragColor;
-	gl_FragColor = vec4(fragUV.x, fragUV.y, 1, 1);
+	gl_FragColor = vec4(1);
 }

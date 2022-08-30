@@ -4,6 +4,7 @@ uniform mat4 world;
 uniform mat4 camera;
 uniform mat4 projection;
 
+// UV and color data not getting sent
 layout (location = 0) in vec3 vertPos;
 layout (location = 1) in vec2 vertUV;
 layout (location = 2) in vec4 vertColor;

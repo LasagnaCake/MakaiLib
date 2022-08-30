@@ -6,8 +6,8 @@
 
 #define $$FUNC function<void()>
 
-#define $stride(start, offset) (void*)((start) + (offset) * sizeof(float))
-#define $abstride(offset) (void*)((offset) * sizeof(float))
+#define $glpointer(start, offset) (void*)((start) + (offset) * sizeof(float))
+#define $gloffset(offset) (void*)((offset) * sizeof(float))
 
 #define DERIVED_CLASS(NAME, BASE)\
 	inline	virtual string getClass() {return #NAME;}\
@@ -114,7 +114,7 @@ namespace Drawer {
 			GL_FLOAT,
 			GL_FALSE,
 			RAW_VERTEX_SIZE * sizeof(float),
-			$abstride(0)
+			$gloffset(0)
 		);
 		glVertexAttribPointer(
 			1,
@@ -122,15 +122,15 @@ namespace Drawer {
 			GL_FLOAT,
 			GL_FALSE,
 			RAW_VERTEX_SIZE * sizeof(float),
-			$abstride(3)
+			$gloffset(3)
 		);
 		glVertexAttribPointer(
 			2,
-			GL_RGBA,
+			4,
 			GL_FLOAT,
 			GL_FALSE,
 			RAW_VERTEX_SIZE * sizeof(float),
-			$abstride(5)
+			$gloffset(5)
 		);
 	}
 }
@@ -138,27 +138,6 @@ namespace Drawer {
 namespace VecMath {
 	inline glm::vec3 asGLMVector(Vector3 vec) {
 		return glm::vec3(vec.x, vec.y, vec.z);
-	}
-
-	glm::mat4 asGLMMatrix(Transform3D transform) {
-		// Create base matrix
-		glm::mat4 matrix = glm::mat4(1.0f);
-		// SRP Transform it
-		matrix = glm::translate(
-			matrix,
-			asGLMVector(transform.position)
-		);
-		matrix = glm::rotate(
-			matrix,
-			1.0f,
-			asGLMVector(transform.rotation)
-		);
-		matrix = glm::scale(
-			matrix,
-			asGLMVector(transform.scale)
-		);
-		// Return result
-		return matrix;
 	}
 }
 
@@ -442,22 +421,22 @@ namespace RenderData {
 			glBindVertexArray(vao);
 			// Define vertex data in VBO
 			Drawer::setVertexAttributes();
+			// Set VAO as active
+			glBindVertexArray(vao);
 			// Enable attribute pointers
 			glEnableVertexAttribArray(0);
 			glEnableVertexAttribArray(1);
 			glEnableVertexAttribArray(2);
-			// Set VAO as active
-			glBindVertexArray(vao);
 			// Set polygon rendering mode
 			glPolygonMode(params.culling, params.fill);
 			// Draw object to screen
 			draw();
-			// Unbind vertex array
-			glBindVertexArray(0);
 			// Disable attributes
 			glDisableVertexAttribArray(2);
 			glDisableVertexAttribArray(1);
 			glDisableVertexAttribArray(0);
+			// Unbind vertex array
+			glBindVertexArray(0);
 			// Unpad array
 			triangles.pop_back();
 			triangles.pop_back();
