@@ -30,6 +30,7 @@ namespace Drawer {
 	}
 
 	#define RAW_VERTEX_SIZE 9
+	#define RAW_VERTEX_BYTE_SIZE RAW_VERTEX_SIZE * sizeof(float)
 	struct RawVertex {
 		float x = 0;
 		float y = 0;
@@ -113,7 +114,7 @@ namespace Drawer {
 			3,
 			GL_FLOAT,
 			GL_FALSE,
-			RAW_VERTEX_SIZE * sizeof(float),
+			RAW_VERTEX_BYTE_SIZE,
 			$gloffset(0)
 		);
 		glVertexAttribPointer(
@@ -121,7 +122,7 @@ namespace Drawer {
 			2,
 			GL_FLOAT,
 			GL_FALSE,
-			RAW_VERTEX_SIZE * sizeof(float),
+			RAW_VERTEX_BYTE_SIZE,
 			$gloffset(3)
 		);
 		glVertexAttribPointer(
@@ -129,7 +130,7 @@ namespace Drawer {
 			4,
 			GL_FLOAT,
 			GL_FALSE,
-			RAW_VERTEX_SIZE * sizeof(float),
+			RAW_VERTEX_BYTE_SIZE,
 			$gloffset(5)
 		);
 	}
@@ -151,7 +152,6 @@ namespace RenderData {
 		VecMath::Transform2D,
 		VecMath::Transform3D,
 		VecMath::srpTransform,
-		VecMath::asGLMMatrix,
 		Drawer::Vertex,
 		Drawer::RawVertex,
 		Drawer::toRawVertex,
@@ -387,10 +387,6 @@ namespace RenderData {
 			if (!triangles.size()) return;
 			// Call onRender function
 			onRender();
-			// Pad array
-			Triangle padding;
-			triangles.push_back(&padding);
-			triangles.push_back(&padding);
 			// Get vertex count
 			vertexCount = triangles.size() * 3;
 			// Create Intermediary Vertex Buffer (IVB) to be displayed on screen
@@ -411,7 +407,7 @@ namespace RenderData {
 			// Copy IVB to VBO
 			glBufferData(
 				GL_ARRAY_BUFFER,
-				vertexCount * RAW_VERTEX_SIZE * 2,
+				vertexCount * RAW_VERTEX_BYTE_SIZE,
 				verts,
 				GL_STATIC_DRAW
 			);
@@ -437,9 +433,6 @@ namespace RenderData {
 			glDisableVertexAttribArray(0);
 			// Unbind vertex array
 			glBindVertexArray(0);
-			// Unpad array
-			triangles.pop_back();
-			triangles.pop_back();
 		};
 
 		Shader::ShaderList shaders;

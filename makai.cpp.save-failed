@@ -1,7 +1,7 @@
 // #include <irrlicht.h>
 #include <stdexcept>
 
-#include "lib/program.hpp"
+#include "src/program.hpp"
 
 #include <windows.h>
 
@@ -20,82 +20,78 @@ int main() {
 	//Makai::Program prog(720, 640, "OK");
 	Makai::Program prog(960, 720, "OK");
 	//Makai::Program prog(1280, 960, "OK");
-	prog.setWindowColor(Vector::Vector4(Vector::Vector3(.5), 1));
+	prog.color = Vector::Vector4(Vector::Vector3(.5), 1);
+	float frame = 0;
+	Scene::camera.eye = Vector::Vector3(0, 0, -1);
+	Scene::camera.at = Vector::Vector3(0, 0, 10);
+	Scene::camera.up = Vector::Vector3(0, 1, 0);
 	prog.onFrame = $func() {
 		if (prog.input.getButtonDown(SDL_SCANCODE_ESCAPE))
 			prog.close();
-		$debug(prog.input.getButtonState(SDL_SCANCODE_W));
-		$debug("");
-		$debug(SDL_SCANCODE_ESCAPE);
-		$debug(SDL_SCANCODE_W);
-		$debug("");
+		Scene::camera.eye = Vector::Vector3(
+			sin(frame/300.0f) * 3,
+			2,
+			cos(frame/300.0f) - 2
+		);
 	};
-	GLfloat triVerts[] = {
-	    0.0,  0.8,
-	   -0.8, -0.8,
-	    0.8, -0.8,
-	};
-	prog.onDraw = $func() {
 
+	SLF::SLFData data = SLF::parseFile("shaders/base/base.slf");
+
+	for (auto d: data)
+		$debug(d);
+
+	Shader::defaultShader.destroy();
+	Shader::defaultShader.create(data);
+	Shader::Shader fog(FileLoader::loadTextFile("shaders/postProcessing/fog.frag"), GL_FRAGMENT_SHADER);
+	/*Shader::defaultShader.create(
+		FileLoader::loadTextFile("shaders/base/base.vert"),
+		FileLoader::loadTextFile("shaders/base/base.frag")
+	);*/
+
+	$debug("Size of float:");
+	$debug(sizeof(float));
+	$debug("Size of raw vertex:");
+	$debug(sizeof(Drawer::RawVertex));
+	$debug("Ratio:");
+	$debug(sizeof(Drawer::RawVertex)/sizeof(float));
+
+	RenderData::Renderable testRenderable;
+
+	RenderData::PlaneReference* p[10];
+	for (size_t i = 0; i < 10; i++) {
+		p[i] = testRenderable.createPlaneReference();
+		p[i]->transform(
+			VecMath::Transform3D(
+				Vector::Vector3(0, 0, 5*i),
+				Vector::Vector3(0, 0, 0),
+				Vector::Vector3(1, 1, 1)
+			)
+		);
+	}
+	/*p->transform(
+		VecMath::Transform3D(
+			Vector::Vector3(0, 0, 5),
+			Vector::Vector3(0, 0, 0),
+			Vector::Vector3(1, 1, 1)
+		)
+	);*/
+	p[0]->setColor(
+		Vector::Vector4(1,0,0,1),
+		Vector::Vector4(1,0,0,1),
+		Vector::Vector4(0),
+		Vector::Vector4(0)
+	);
+	//testRenderable.triangles.push_back(new RenderData::Triangle());
+	testRenderable.transform.local.position.z = 5.0f;
+	prog.onDraw = $func() {
+		float sinC = (sin(frame/300.0f) + 1) / 4 + 0.25;
+		float cosC = (cos(frame/300.0f) + 1) / 4 + 0.25;
+		//testRenderable.triangles[0]->verts[0].position.x = sinC;
+		//testRenderable.triangles[0]->verts[0].position.y = cosC;
+		frame++;
 	};
 	prog.run();
 	return 0;
 }
 #else
-using namespace std;
-/* ADD GLOBAL VARIABLES HERE LATER */
-
-bool init_resources(void) {
-  /* FILLED IN LATER */
-  return true;
-}
-
-void render(SDL_Window* window) {
-  /* FILLED IN LATER */
-}
-
-void free_resources() {
-  /* FILLED IN LATER */
-}
-
-void mainLoop(SDL_Window* window) {
-	while (true) {
-		SDL_Event ev;
-		while (SDL_PollEvent(&ev)) {
-			if (ev.type == SDL_QUIT)
-				return;
-		}
-		render(window);
-	}
-}
-
-int main() {
-/* SDL-related initialising functions */
-	SDL_Init(SDL_INIT_VIDEO);
-	SDL_Window* window = SDL_CreateWindow("My First Triangle",
-		SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-		640, 480,
-		SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL);
-	SDL_GL_CreateContext(window);
-
-	/* Extension wrangler initialising */
-	GLenum glew_status = glewInit();
-	if (glew_status != GLEW_OK) {
-		cerr << "Error: glewInit: " << glewGetErrorString(glew_status) << endl;
-		return EXIT_FAILURE;
-	}
-
-	/* When all init functions run without errors,
-	   the program can initialise the resources */
-	if (!init_resources())
-		return EXIT_FAILURE;
-
-	/* We can display something if everything goes OK */
-	mainLoop(window);
-
-	/* If the program exits in the usual way,
-	   free resources and exit with a success */
-	free_resources();
-	return EXIT_SUCCESS;
-}
 #endif

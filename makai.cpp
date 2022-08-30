@@ -23,17 +23,8 @@ int main() {
 	prog.color = Vector::Vector4(Vector::Vector3(.5), 1);
 	float frame = 0;
 	Scene::camera.eye = Vector::Vector3(0, 0, -1);
+	Scene::camera.at = Vector::Vector3(0, 0, 10);
 	Scene::camera.up = Vector::Vector3(0, 1, 0);
-	prog.onFrame = $func() {
-		if (prog.input.getButtonDown(SDL_SCANCODE_ESCAPE))
-			prog.close();
-		Scene::camera.at = Vector::Vector3(
-			sin(frame/300.0f)/4.0,
-			0.0,
-			cos(frame/300.0f)/4.0
-		);
-		Scene::camera.eye.y = sin(prog.input.getButtonState(SDL_SCANCODE_W)/120.0)/10.0;
-	};
 
 	SLF::SLFData data = SLF::parseFile("shaders/base/base.slf");
 
@@ -57,7 +48,18 @@ int main() {
 
 	RenderData::Renderable testRenderable;
 
-	RenderData::PlaneReference* p = testRenderable.createPlaneReference();
+	VecMath::Transform3D planeTransform = VecMath::Transform3D(
+		Vector::Vector3(0, 0, 5),
+		Vector::Vector3(0, 0, 0),
+		Vector::Vector3(1, 1, 1)
+	);
+
+	RenderData::PlaneReference* p[10];
+	for (size_t i = 0; i < 10; i++) {
+		p[i] = testRenderable.createPlaneReference();
+		planeTransform.position.z = 5*i;
+		p[i]->transform(planeTransform);
+	}
 	/*p->transform(
 		VecMath::Transform3D(
 			Vector::Vector3(0, 0, 5),
@@ -65,19 +67,37 @@ int main() {
 			Vector::Vector3(1, 1, 1)
 		)
 	);*/
-	p->setColor(
-		Vector::Vector4(1),
-		Vector::Vector4(1),
+	p[0]->setColor(
+		Vector::Vector4(1,0,0,1),
+		Vector::Vector4(1,0,0,1),
 		Vector::Vector4(0),
 		Vector::Vector4(0)
 	);
+	planeTransform.position.z = 0;
 	//testRenderable.triangles.push_back(new RenderData::Triangle());
 	testRenderable.transform.local.position.z = 5.0f;
-	$debug(testRenderable.triangles[0]->verts[0].color.x);
-	$debug(testRenderable.triangles[0]->verts[2].color.x);
+
+	prog.onFrame = $func() {
+		if (prog.input.getButtonDown(SDL_SCANCODE_ESCAPE))
+			prog.close();
+		Scene::camera.eye = Vector::Vector3(
+			sin(frame/300.0f) * 3,
+			2,
+			cos(frame/300.0f) - 2
+		);
+		for (size_t i = 0; i < 10; i++) {
+			float sinC = sin(frame/200.0f + i/2.0) * 2;
+			planeTransform.position.x = sinC;
+			p[i]->transform(planeTransform);
+		}
+	};
+
 	prog.onDraw = $func() {
-		float sinC = (sin(frame/300.0f) + 1) / 4 + 0.25;
-		float cosC = (cos(frame/300.0f) + 1) / 4 + 0.25;
+		for (size_t i = 0; i < 10; i++) {
+			float sinC = sin(frame/200.0f + i/2.0) * 2;
+			planeTransform.position.x = -sinC;
+			p[i]->transform(planeTransform);
+		}
 		//testRenderable.triangles[0]->verts[0].position.x = sinC;
 		//testRenderable.triangles[0]->verts[0].position.y = cosC;
 		frame++;
