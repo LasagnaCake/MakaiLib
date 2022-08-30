@@ -1,10 +1,17 @@
 #version 410 core
 
 in vec3 fragCoord3D;
+in vec2 fragUV;
+in vec4 fragColor;
+
+uniform bool textured;
+uniform sampler2D texture2D;
 
 void main(void) {
-	gl_FragColor[0] = (fragCoord3D.x + 1) / 2;
-	gl_FragColor[1] = (fragCoord3D.y + 1) / 2;
-	gl_FragColor[2] = (fragCoord3D.z + 1) / 2;
-	gl_FragColor[3] = 1.0;
+	vec4 color;
+	if (textured)
+		color = texture(texture2D, fragUV) * fragColor;
+	else
+		color = fragColor;
+	gl_FragColor = vec4(fragUV.x, fragUV.y, 1, 1);
 }

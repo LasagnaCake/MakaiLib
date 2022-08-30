@@ -69,8 +69,18 @@ namespace Drawer {
 		return res;
 	}
 
-	inline RawVertex toRawVertex(Vertex vert) {
-		return toRawVertex(vert.position, vert.uv, vert.color);
+	RawVertex toRawVertex(Vertex vert) {
+		RawVertex res;
+		res.x = vert.position.x;
+		res.y = vert.position.y;
+		res.z = vert.position.z;
+		res.u = vert.uv.x;
+		res.v = vert.uv.y;
+		res.r = vert.color.x;
+		res.g = vert.color.y;
+		res.b = vert.color.z;
+		res.a = vert.color.w;
+		return res;
 	}
 
 	typedef const function<void()> DrawFunc;
@@ -95,6 +105,33 @@ namespace Drawer {
 	void setTexture2D(unsigned char index, GLuint texture) {
 		glActiveTexture(GL_TEXTURE0 + index);
 		glBindTexture(GL_TEXTURE_2D, texture);
+	}
+
+	void setVertexAttributes() {
+		glVertexAttribPointer(
+			0,
+			3,
+			GL_FLOAT,
+			GL_FALSE,
+			RAW_VERTEX_SIZE * sizeof(float),
+			$abstride(0)
+		);
+		glVertexAttribPointer(
+			1,
+			2,
+			GL_FLOAT,
+			GL_FALSE,
+			RAW_VERTEX_SIZE * sizeof(float),
+			$abstride(3)
+		);
+		glVertexAttribPointer(
+			2,
+			GL_RGBA,
+			GL_FLOAT,
+			GL_FALSE,
+			RAW_VERTEX_SIZE * sizeof(float),
+			$abstride(5)
+		);
 	}
 }
 
@@ -146,7 +183,14 @@ namespace RenderData {
 
 	/// Base triangle data structure.
 	struct Triangle {
-		Triangle() {}
+		Triangle() {
+			#pragma GCC unroll 3
+			for (unsigned char i = 0; i < 3; i++) {
+				this->verts[i].position	= Vector3(0.0);
+				this->verts[i].uv		= Vector2(0.0);
+				this->verts[i].color	= Vector4(1.0);
+			}
+		}
 
 		Triangle(
 			Vector3 verts[3],
@@ -155,9 +199,9 @@ namespace RenderData {
 		) {
 			#pragma GCC unroll 3
 			for (unsigned char i = 0; i < 3; i++) {
-				this->verts[i].position		= verts	? verts[i]	: Vector2(0.0);
-				this->verts[i].uv			= uv	? uv[i]		: Vector2(0.0);
-				this->verts[i].color		= color	? color[i]	: Vector4(1.0);
+				this->verts[i].position	= verts	? verts[i]	: Vector3(0.0);
+				this->verts[i].uv		= uv	? uv[i]		: Vector2(0.0);
+				this->verts[i].color	= color	? color[i]	: Vector4(1.0);
 			}
 		}
 
@@ -321,19 +365,20 @@ namespace RenderData {
 		}
 
 		PlaneReference* createPlaneReference() {
+			Triangle* tris = new Triangle[2];
 			// Add triangles
-			triangles.push_back(new Triangle());
-			triangles.push_back(new Triangle());
+			triangles.push_back(&tris[0]);
+			triangles.push_back(&tris[1]);
 			// Get index of last plane
 			size_t last = triangles.size();
 			// Create reference
 			PlaneReference* plane = new PlaneReference(
-				&(triangles[last-1]->verts[0]),
-				&(triangles[last-1]->verts[1]),
-				&(triangles[last-2]->verts[0]),
-				&(triangles[last-1]->verts[2]),
-				&(triangles[last-2]->verts[1]),
-				&(triangles[last-2]->verts[2])
+				&(tris[0].verts[0]),
+				&(tris[0].verts[1]),
+				&(tris[1].verts[0]),
+				&(tris[0].verts[2]),
+				&(tris[1].verts[1]),
+				&(tris[1].verts[2])
 			);
 			// Setup plane
 			plane->setPosition(
@@ -348,6 +393,7 @@ namespace RenderData {
 				Vector2(-1.0, -1.0),
 				Vector2(+1.0, -1.0)
 			);
+			plane->setColor();
 			// Add to reference list
 			references.plane.push_back(plane);
 			// return plane
@@ -395,30 +441,7 @@ namespace RenderData {
 			// Set VAO as active
 			glBindVertexArray(vao);
 			// Define vertex data in VBO
-			glVertexAttribPointer(
-				0,
-				3,
-				GL_FLOAT,
-				GL_FALSE,
-				RAW_VERTEX_SIZE * sizeof(float),
-				$abstride(0)
-			);
-			glVertexAttribPointer(
-				1,
-				2,
-				GL_FLOAT,
-				GL_FALSE,
-				RAW_VERTEX_SIZE * sizeof(float),
-				$abstride(3)
-			);
-			glVertexAttribPointer(
-				2,
-				4,
-				GL_FLOAT,
-				GL_FALSE,
-				RAW_VERTEX_SIZE * sizeof(float),
-				$abstride(5)
-			);
+			Drawer::setVertexAttributes();
 			// Enable attribute pointers
 			glEnableVertexAttribArray(0);
 			glEnableVertexAttribArray(1);
@@ -582,13 +605,13 @@ namespace Drawer {
 			);*/
 			// Setup display rectangle
 			rect[0].position	= Vector3(-1, +1, 0);
-			rect[0].uv			= Vector2(-1, +1);
+			rect[0].uv			= Vector2(0, 0);
 			rect[1].position	= Vector3(+1, +1, 0);
-			rect[1].uv			= Vector2(+1, +1);
+			rect[1].uv			= Vector2(1, 0);
 			rect[2].position	= Vector3(-1, -1, 0);
-			rect[2].uv			= Vector2(-1, -1);
+			rect[2].uv			= Vector2(0, 1);
 			rect[3].position	= Vector3(+1, -1, 0);
-			rect[3].uv			= Vector2(+1, -1);
+			rect[3].uv			= Vector2(1, 1);
 			// Create buffers
 			glGenVertexArrays(1, &vao);
 			glGenBuffers(1, &vbo);
@@ -617,30 +640,7 @@ namespace Drawer {
 			// Set VAO as active
 			glBindVertexArray(vao);
 			// Define vertex data in VBO
-			glVertexAttribPointer(
-				0,
-				3,
-				GL_FLOAT,
-				GL_FALSE,
-				RAW_VERTEX_SIZE * sizeof(float),
-				$abstride(0)
-			);
-			glVertexAttribPointer(
-				1,
-				2,
-				GL_FLOAT,
-				GL_FALSE,
-				RAW_VERTEX_SIZE * sizeof(float),
-				$abstride(3)
-			);
-			glVertexAttribPointer(
-				2,
-				4,
-				GL_FLOAT,
-				GL_FALSE,
-				RAW_VERTEX_SIZE * sizeof(float),
-				$abstride(5)
-			);
+			Drawer::setVertexAttributes();
 			// Get shader
 			auto& comp = (*compose);
 			// Bind target frame buffer

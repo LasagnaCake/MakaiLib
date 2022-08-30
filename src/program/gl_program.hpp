@@ -141,6 +141,7 @@ namespace Makai {
 			$debug("Creating composition shader...");
 			compose.create(SLF::parseFile("shaders/framebuffer/compose.slf"));
 			framebuffer.compose = &compose;
+			Shader::defaultShader["textured"](false);
 		}
 
 		/// Sets the window's title.
@@ -192,13 +193,13 @@ namespace Makai {
 				// Clear screen
 				glClearColor(color.x, color.y, color.z, color.w);
 				//Enable framebuffer
-				framebuffer();
+				//framebuffer();
 				// Render screen
 				render();
 				// Set framebuffer's clear color
 				framebuffer.color = color;
 				// Render framebuffer
-				framebuffer.renderToBuffer();
+				//framebuffer.renderToBuffer();
 				// Display window
 				SDL_GL_SwapWindow(window);
 				// [[ Render code END ]]
@@ -276,7 +277,7 @@ namespace Makai {
 		/// Draws the window.
 		void render() {
 			// Clear screen
-			glClearColor(0, 0, 0, 0);
+			//glClearColor(0, 0, 0, 0);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			// Enable depth testing
 			glEnable(GL_DEPTH_TEST);

@@ -55,24 +55,26 @@ int main() {
 	$debug("Ratio:");
 	$debug(sizeof(Drawer::RawVertex)/sizeof(float));
 
-	Vector::Vector3 triPos[] = {
-		Vector::Vector3(1.0f, 1.0f, 0.0f),
-		Vector::Vector3(1.0f, -1.0f, 0.0f),
-		Vector::Vector3(-1.0f,1.0f, 0.0f)
-	};
-
 	RenderData::Renderable testRenderable;
 
-	testRenderable.triangles.push_back(new RenderData::Triangle(triPos));
-	triPos[0].x = -1.0f;
-	triPos[0].y = -1.0f;
-	testRenderable.triangles.push_back(new RenderData::Triangle(triPos));
+	RenderData::PlaneReference* p = testRenderable.createPlaneReference();
+	/*p->transform(
+		VecMath::Transform3D(
+			Vector::Vector3(0, 0, 5),
+			Vector::Vector3(0, 0, 0),
+			Vector::Vector3(1, 1, 1)
+		)
+	);*/
+	p->setColor(
+		Vector::Vector4(1),
+		Vector::Vector4(1),
+		Vector::Vector4(0),
+		Vector::Vector4(0)
+	);
 	//testRenderable.triangles.push_back(new RenderData::Triangle());
 	testRenderable.transform.local.position.z = 5.0f;
-	fog["near"](4.0f);
-	fog["far"](6.0f);
-	fog["amplitude"](1.0f);
-	fog["color"](glm::vec4(0, 0, 0, 1));
+	$debug(testRenderable.triangles[0]->verts[0].color.x);
+	$debug(testRenderable.triangles[0]->verts[2].color.x);
 	prog.onDraw = $func() {
 		float sinC = (sin(frame/300.0f) + 1) / 4 + 0.25;
 		float cosC = (cos(frame/300.0f) + 1) / 4 + 0.25;
