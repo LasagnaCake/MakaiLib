@@ -25,7 +25,13 @@ namespace Camera {
 		float fov = 2.0;
 		float zNear = 0.1;
 		float zFar = 100.0;
-		bool ortho = false;
+		struct {
+			bool enabled	= false;
+			float left		= 1;
+			float right		= 1;
+			float bottom	= 1;
+			float top		= 1;
+		} ortho;
 
 		glm::mat4 matrix() {
 			return glm::lookAt(
@@ -36,8 +42,15 @@ namespace Camera {
 		}
 
 		glm::mat4 perspective() {
-			if (ortho)
-				return glm::ortho(1, 1, 1, 1);
+			if (ortho.enabled)
+				return glm::ortho(
+					ortho.left,
+					ortho.right,
+					ortho.bottom,
+					ortho.top,
+					zNear,
+					zFar
+				);
 			return glm::perspective(
 				fov,
 				aspect.x / aspect.y,

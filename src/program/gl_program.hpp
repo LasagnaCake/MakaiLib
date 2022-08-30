@@ -189,6 +189,8 @@ namespace Makai {
 				// Wait for thread to be done processing
 				physics.join();
 				// [[ Render code BEGIN ]]
+				// Clear screen
+				glClearColor(color.x, color.y, color.z, color.w);
 				//Enable framebuffer
 				framebuffer();
 				// Render screen
@@ -274,7 +276,7 @@ namespace Makai {
 		/// Draws the window.
 		void render() {
 			// Clear screen
-			glClearColor(1, 1, 1, 1);
+			glClearColor(0, 0, 0, 0);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			// Enable depth testing
 			glEnable(GL_DEPTH_TEST);

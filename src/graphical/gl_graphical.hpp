@@ -440,90 +440,6 @@ namespace RenderData {
 			triangles.pop_back();
 		};
 
-		/// Forcefully renders object to screen without any shader passes.
-		void renderRaw() {
-			// If no triangles exist, return
-			if (!triangles.size()) return;
-			// Call onRender function
-			onRender();
-			// Pad array
-			Triangle padding;
-			triangles.push_back(&padding);
-			triangles.push_back(&padding);
-			// Get vertex count
-			vertexCount = triangles.size() * 3;
-			// Create Intermediary Vertex Buffer (IVB) to be displayed on screen
-			RawVertex* verts = new RawVertex[(vertexCount)];
-			// Copy data to IVB
-			size_t i = 0;
-			for (auto t: triangles) {
-				auto tri = (*t)
-					.transformed(transform.local)
-					.transformed(transform.global);
-				verts[i]	= toRawVertex(tri.verts[0]);
-				verts[i+1]	= toRawVertex(tri.verts[1]);
-				verts[i+2]	= toRawVertex(tri.verts[2]);
-				i += 3;
-			}
-			// Set VBO as active
-			glBindBuffer(GL_ARRAY_BUFFER, vbo);
-			// Copy IVB to VBO
-			glBufferData(
-				GL_ARRAY_BUFFER,
-				vertexCount * RAW_VERTEX_SIZE * 2,
-				verts,
-				GL_STATIC_DRAW
-			);
-			// Delete IVB, since it is no longer necessary
-			delete [] verts;
-			// Set VAO as active
-			glBindVertexArray(vao);
-			// Define vertex data in VBO
-			glVertexAttribPointer(
-				0,
-				3,
-				GL_FLOAT,
-				GL_FALSE,
-				RAW_VERTEX_SIZE * sizeof(float),
-				$abstride(0)
-			);
-			glVertexAttribPointer(
-				1,
-				2,
-				GL_FLOAT,
-				GL_FALSE,
-				RAW_VERTEX_SIZE * sizeof(float),
-				$abstride(3)
-			);
-			glVertexAttribPointer(
-				2,
-				4,
-				GL_FLOAT,
-				GL_FALSE,
-				RAW_VERTEX_SIZE * sizeof(float),
-				$abstride(5)
-			);
-			// Enable attribute pointers
-			glEnableVertexAttribArray(0);
-			glEnableVertexAttribArray(1);
-			glEnableVertexAttribArray(2);
-			// Set VAO as active
-			glBindVertexArray(vao);
-			// Set polygon rendering mode
-			glPolygonMode(params.culling, params.fill);
-			// Draw object to screen
-			glDrawArrays(GL_TRIANGLES, 0, vertexCount);
-			// Unbind vertex array
-			glBindVertexArray(0);
-			// Disable attributes
-			glDisableVertexAttribArray(2);
-			glDisableVertexAttribArray(1);
-			glDisableVertexAttribArray(0);
-			// Unpad array
-			triangles.pop_back();
-			triangles.pop_back();
-		}
-
 		Shader::ShaderList shaders;
 
 		vector<Triangle*> triangles;
@@ -593,8 +509,8 @@ namespace Drawer {
 
 		~FrameBuffer() {
 			glDeleteFramebuffers(1, &id);
-			glDeleteTextures(1, &texture.color);
-			glDeleteTextures(1, &texture.depth);
+			glDeleteTextures(1, &buffer.color);
+			glDeleteTextures(1, &buffer.depth);
 			glDeleteBuffers(1, &vbo);
 			glDeleteVertexArrays(1, &vao);
 		}
@@ -606,16 +522,16 @@ namespace Drawer {
 			if (created) return;
 			else created = true;
 			glGenFramebuffers(1, &id);
-			glGenTextures(1, &texture.color);
-			glBindTexture(GL_TEXTURE_2D, texture.color);
+			glGenTextures(1, &buffer.color);
+			glBindTexture(GL_TEXTURE_2D, buffer.color);
 			glTexImage2D(
 				GL_TEXTURE_2D,
 				0,
-				GL_RGB,
+				GL_RGBA,
 				width,
 				height,
 				0,
-				GL_RGB,
+				GL_RGBA,
 				GL_UNSIGNED_BYTE,
 				NULL
 			);
@@ -625,11 +541,27 @@ namespace Drawer {
 				GL_FRAMEBUFFER,
 				GL_COLOR_ATTACHMENT0,
 				GL_TEXTURE_2D,
-				texture.color,
+				buffer.color,
 				0
 			);
-			glGenTextures(1, &texture.depth);
-			glBindTexture(GL_TEXTURE_2D, texture.depth);
+			glGenRenderbuffers(1, &buffer.depth);
+			glBindRenderbuffer(GL_RENDERBUFFER, buffer.depth);
+			glRenderbufferStorage(
+				GL_RENDERBUFFER,
+				GL_DEPTH24_STENCIL8,
+				width,
+				height
+			);
+			glBindRenderbuffer(GL_RENDERBUFFER, 0);
+			glFramebufferRenderbuffer(
+				GL_FRAMEBUFFER,
+				GL_DEPTH_STENCIL_ATTACHMENT,
+				GL_RENDERBUFFER,
+				buffer.depth
+			);
+			/*
+			glGenTextures(1, &buffer.depth);
+			glBindTexture(GL_TEXTURE_2D, buffer.depth);
 			glTexImage2D(
 				GL_TEXTURE_2D,
 				0,
@@ -641,15 +573,13 @@ namespace Drawer {
 				GL_UNSIGNED_INT_24_8,
 				NULL
 			);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 			glFramebufferTexture2D(
 				GL_FRAMEBUFFER,
 				GL_DEPTH_STENCIL_ATTACHMENT,
 				GL_TEXTURE_2D,
-				texture.depth,
+				buffer.depth,
 				0
-			);
+			);*/
 			// Setup display rectangle
 			rect[0].position	= Vector3(-1, +1, 0);
 			rect[0].uv			= Vector2(-1, +1);
@@ -668,7 +598,7 @@ namespace Drawer {
 			glBindFramebuffer(GL_FRAMEBUFFER, id);
 		}
 
-		void renderToBuffer(unsigned int buffer = 0) {
+		void renderToBuffer(unsigned int targetBuffer = 0) {
 			// Create Intermediary Vertex Buffer (IVB) to be displayed on screen
 			RawVertex verts[4];
 			verts[0] = toRawVertex(rect[0]);
@@ -714,13 +644,14 @@ namespace Drawer {
 			// Get shader
 			auto& comp = (*compose);
 			// Bind target frame buffer
-			glBindFramebuffer(GL_FRAMEBUFFER, buffer);
+			glBindFramebuffer(GL_FRAMEBUFFER, targetBuffer);
 			// Clear target frame buffer
 			glClearColor(color.x, color.y, color.z, color.w);
 			glClear(GL_COLOR_BUFFER_BIT);
 			// Activate compose shader
 			comp();
-			glBindTexture(GL_TEXTURE_2D, texture.depth);
+			Drawer::setTexture2D(0, buffer.depth);
+			comp["screen"](0);
 			// Draw screen
 			draw();
 		}
@@ -758,7 +689,7 @@ namespace Drawer {
 		struct {
 			unsigned int color;
 			unsigned int depth;
-		} texture;
+		} buffer;
 		unsigned int vao;
 		unsigned int vbo;
 	};
