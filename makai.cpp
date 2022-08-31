@@ -10,8 +10,8 @@
 // TODO: Fix shitty vector rotation math (slow & only Y axis works)
 // TODO: Fix framebuffer
 // TODO: Fix UV & Color data not passing to shader
-// TODO: Automate plane transformation
 // TODO: Fix life
+// TODO: Automate plane transformation
 
 #ifndef SIDE_B
 int main() {
