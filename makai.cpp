@@ -7,6 +7,12 @@
 
 //#define SIDE_B
 
+// TODO: Fix shitty vector rotation math (slow & only Y axis works)
+// TODO: Fix framebuffer
+// TODO: Fix UV & Color data not passing to shader
+// TODO: Automate plane transformation
+// TODO: Fix life
+
 #ifndef SIDE_B
 int main() {
 	/*
@@ -57,8 +63,7 @@ int main() {
 	RenderData::PlaneReference* p[10];
 	for (size_t i = 0; i < 10; i++) {
 		p[i] = testRenderable.createPlaneReference();
-		planeTransform.position.z = 5*i;
-		p[i]->setOrigin(planeTransform);
+		p[i]->transform.position.z = 5*i;
 	}
 	/*p->transform(
 		VecMath::Transform3D(
@@ -75,7 +80,6 @@ int main() {
 	);
 	planeTransform.position.z = 0;
 	//testRenderable.triangles.push_back(new RenderData::Triangle());
-	testRenderable.transform.local.position.z = 5.0f;
 
 	prog.onFrame = $func() {
 		if (prog.input.getButtonDown(SDL_SCANCODE_ESCAPE))
@@ -87,8 +91,9 @@ int main() {
 		);
 		for (size_t i = 0; i < 10; i++) {
 			float sinC = sin(frame/200.0f + i/1.0) * 2;
-			planeTransform.position.x = sinC;
-			p[i]->transform(planeTransform);
+			p[i]->transform.position.x = sinC;
+			p[i]->transform.rotation = Vector::Vector3(0, 0, frame/45);
+			p[i]->transformed();
 		}
 	};
 

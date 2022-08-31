@@ -246,14 +246,14 @@ namespace RenderData {
 			return this;
 		}
 
-		/// Transforms the plane by a given transform, and sets it as its origin.
+		/// Transforms the plane's origin by a given transform.
 		PlaneReference* setOrigin(Transform3D trans) {
-			origin[0] = tl->position	= srpTransform(tl->position, trans);
-			origin[1] = tr1->position	= srpTransform(tr1->position, trans);
-			origin[2] = tr2->position	= srpTransform(tr2->position, trans);
-			origin[3] = bl1->position	= srpTransform(bl1->position, trans);
-			origin[4] = bl2->position	= srpTransform(bl2->position, trans);
-			origin[5] = br->position	= srpTransform(br->position, trans);
+			origin[0] = tl->position	= srpTransform(origin[0], trans);
+			origin[1] = tr1->position	= srpTransform(origin[1], trans);
+			origin[2] = tr2->position	= srpTransform(origin[2], trans);
+			origin[3] = bl1->position	= srpTransform(origin[3], trans);
+			origin[4] = bl2->position	= srpTransform(origin[4], trans);
+			origin[5] = br->position	= srpTransform(origin[5], trans);
 			return this;
 		}
 
@@ -299,17 +299,6 @@ namespace RenderData {
 			return this;
 		}
 
-		/// Transforms the plane by a given transform.
-		PlaneReference* transform(Transform3D trans) {
-			tl->position	= srpTransform(tl->position, trans);
-			tr1->position	= srpTransform(tr1->position, trans);
-			tr2->position	= srpTransform(tr2->position, trans);
-			bl1->position	= srpTransform(bl1->position, trans);
-			bl2->position	= srpTransform(bl2->position, trans);
-			br->position	= srpTransform(br->position, trans);
-			return this;
-		}
-
 		/// Sets the plane to its original state (last state set with setPosition).
 		PlaneReference* reset() {
 			tl->position	= origin[0];
@@ -321,7 +310,20 @@ namespace RenderData {
 			return this;
 		}
 
+		PlaneReference* transformed() {
+			tl->position	= srpTransform(tl->position, transform);
+			tr1->position	= srpTransform(tr1->position, transform);
+			tr2->position	= srpTransform(tr2->position, transform);
+			bl1->position	= srpTransform(bl1->position, transform);
+			bl2->position	= srpTransform(bl2->position, transform);
+			br->position	= srpTransform(br->position, transform);
+			return this;
+		}
+
+		Transform3D transform;
+
 	private:
+
 		Vector3 origin[6];
 
 		Vertex* tl;

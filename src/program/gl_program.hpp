@@ -231,7 +231,7 @@ namespace Makai {
 		}
 
 		unsigned int getFrameBufferID() {
-			framebuffer.getID();
+			return framebuffer.getID();
 		}
 
 		/// Gets called whenever the program is rendering to the screen. Happens last.
