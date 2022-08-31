@@ -58,7 +58,7 @@ int main() {
 	for (size_t i = 0; i < 10; i++) {
 		p[i] = testRenderable.createPlaneReference();
 		planeTransform.position.z = 5*i;
-		p[i]->transform(planeTransform);
+		p[i]->setOrigin(planeTransform);
 	}
 	/*p->transform(
 		VecMath::Transform3D(
@@ -86,7 +86,7 @@ int main() {
 			cos(frame/300.0f) - 2
 		);
 		for (size_t i = 0; i < 10; i++) {
-			float sinC = sin(frame/200.0f + i/2.0) * 2;
+			float sinC = sin(frame/200.0f + i/1.0) * 2;
 			planeTransform.position.x = sinC;
 			p[i]->transform(planeTransform);
 		}
@@ -94,9 +94,7 @@ int main() {
 
 	prog.onDraw = $func() {
 		for (size_t i = 0; i < 10; i++) {
-			float sinC = sin(frame/200.0f + i/2.0) * 2;
-			planeTransform.position.x = -sinC;
-			p[i]->transform(planeTransform);
+			p[i]->reset();
 		}
 		//testRenderable.triangles[0]->verts[0].position.x = sinC;
 		//testRenderable.triangles[0]->verts[0].position.y = cosC;

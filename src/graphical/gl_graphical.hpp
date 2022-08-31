@@ -204,6 +204,17 @@ namespace RenderData {
 	class PlaneReference {
 	public:
 		PlaneReference(
+			Triangle tris[2]
+		) {
+			this->tl	= &(tris[0].verts[0]);
+			this->tr1	= &(tris[0].verts[1]);
+			this->tr2	= &(tris[1].verts[0]);
+			this->bl1	= &(tris[0].verts[2]);
+			this->bl2	= &(tris[1].verts[1]);
+			this->br	= &(tris[1].verts[2]);
+		}
+
+		PlaneReference(
 			Vertex* tl,
 			Vertex* tr1,
 			Vertex* tr2,
@@ -219,18 +230,30 @@ namespace RenderData {
 			this->br	= br;
 		}
 
-		PlaneReference* setPosition(
+		/// Sets the plane's origin.
+		PlaneReference* setOrigin(
 				Vector3 tlPos,
 				Vector3 trPos,
 				Vector3 blPos,
 				Vector3 brPos
 			) {
-			tl->position	= tlPos;
-			tr1->position	= trPos;
-			tr2->position	= trPos;
-			bl1->position	= blPos;
-			bl2->position	= blPos;
-			br->position	= brPos;
+			origin[0] = tl->position	= tlPos;
+			origin[1] = tr1->position	= trPos;
+			origin[2] = tr2->position	= trPos;
+			origin[3] = bl1->position	= blPos;
+			origin[4] = bl2->position	= blPos;
+			origin[5] = br->position	= brPos;
+			return this;
+		}
+
+		/// Transforms the plane by a given transform, and sets it as its origin.
+		PlaneReference* setOrigin(Transform3D trans) {
+			origin[0] = tl->position	= srpTransform(tl->position, trans);
+			origin[1] = tr1->position	= srpTransform(tr1->position, trans);
+			origin[2] = tr2->position	= srpTransform(tr2->position, trans);
+			origin[3] = bl1->position	= srpTransform(bl1->position, trans);
+			origin[4] = bl2->position	= srpTransform(bl2->position, trans);
+			origin[5] = br->position	= srpTransform(br->position, trans);
 			return this;
 		}
 
@@ -276,6 +299,7 @@ namespace RenderData {
 			return this;
 		}
 
+		/// Transforms the plane by a given transform.
 		PlaneReference* transform(Transform3D trans) {
 			tl->position	= srpTransform(tl->position, trans);
 			tr1->position	= srpTransform(tr1->position, trans);
@@ -286,7 +310,19 @@ namespace RenderData {
 			return this;
 		}
 
+		/// Sets the plane to its original state (last state set with setPosition).
+		PlaneReference* reset() {
+			tl->position	= origin[0];
+			tr1->position	= origin[1];
+			tr2->position	= origin[2];
+			bl1->position	= origin[3];
+			bl2->position	= origin[4];
+			br->position	= origin[5];
+			return this;
+		}
+
 	private:
+		Vector3 origin[6];
 
 		Vertex* tl;
 		Vertex* tr1;
@@ -351,16 +387,9 @@ namespace RenderData {
 			// Get index of last plane
 			size_t last = triangles.size();
 			// Create reference
-			PlaneReference* plane = new PlaneReference(
-				&(tris[0].verts[0]),
-				&(tris[0].verts[1]),
-				&(tris[1].verts[0]),
-				&(tris[0].verts[2]),
-				&(tris[1].verts[1]),
-				&(tris[1].verts[2])
-			);
+			PlaneReference* plane = new PlaneReference(tris);
 			// Setup plane
-			plane->setPosition(
+			plane->setOrigin(
 				Vector3(-1.0, +1.0, 0.0),
 				Vector3(+1.0, +1.0, 0.0),
 				Vector3(-1.0, -1.0, 0.0),
