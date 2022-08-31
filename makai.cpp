@@ -85,7 +85,7 @@ int main() {
 		for (size_t i = 0; i < 10; i++) {
 			float sinC = sin(frame/200.0f + i/1.0) * 2;
 			//p[i]->local.position.x = sinC;
-			p[i]->local.rotation = Vector::Vector3(0, 0, frame/100.0);
+			p[i]->local.rotation = Vector::Vector3(frame/100.0, 0, 0);
 		}
 	};
 
