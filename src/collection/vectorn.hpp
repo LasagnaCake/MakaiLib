@@ -775,23 +775,17 @@ namespace VecMath
 			cosY = cos(angle.y),
 			cosZ = cos(angle.z);
 		// Calculate rotation around Z axis
-		vec.z = (
-			(((cosX * cosY)) * vz)
-		+	(((cosX * sinY * sinZ) - (cosX * sinZ)) * vy)
-		+	(((sinX * sinZ) + (cosX * sinY * cosZ)) * vx)
-		);
+		vec.x =	+ (vec.x*cosZ) - (vec.y*sinZ);
+		vec.y =	+ (vec.x*sinZ) + (vec.y*cosZ);
+		vec.z =	+ (vec.z);
 		// Calculate rotation around Y axis
-		vec.y = (
-			(((sinX * cosY)) * vz)
-		+	(((cosX * cosZ) + (sinX * sinY * sinZ)) * vy)
-		+	(((sinX * sinY * cosZ) + (cosX * sinZ)) * vx)
-		);
+		vec.x =	+ (vec.x*cosY) + (vec.z*sinY);
+		vec.y =	+ (vec.y);
+		vec.z =	- (vec.x*sinY) + (vec.z*cosY);
 		// Calculate rotation around X axis
-		vec.x = (
-		-	(sinY * vz)
-		+	((cosY * sinZ) * vy)
-		+	((cosY * cosZ) * vx)
-		);
+		vec.x =	+ (vec.x);
+		vec.y =	+ (vec.y*cosX) - (vec.z*sinX);
+		vec.z =	+ (vec.y*sinX) + (vec.z*cosX);
 		// Return rotated vector
 		return vec;
 	}

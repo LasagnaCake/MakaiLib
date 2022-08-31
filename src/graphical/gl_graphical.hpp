@@ -310,17 +310,21 @@ namespace RenderData {
 			return this;
 		}
 
-		PlaneReference* transformed() {
-			tl->position	= srpTransform(tl->position, transform);
-			tr1->position	= srpTransform(tr1->position, transform);
-			tr2->position	= srpTransform(tr2->position, transform);
-			bl1->position	= srpTransform(bl1->position, transform);
-			bl2->position	= srpTransform(bl2->position, transform);
-			br->position	= srpTransform(br->position, transform);
+		PlaneReference* transform() {
+			if (!transformable) return this;
+			// Apply transformation
+			tl->position	= srpTransform(tl->position, local);
+			tr1->position	= srpTransform(tr1->position, local);
+			tr2->position	= srpTransform(tr2->position, local);
+			bl1->position	= srpTransform(bl1->position, local);
+			bl2->position	= srpTransform(bl2->position, local);
+			br->position	= srpTransform(br->position, local);
 			return this;
 		}
 
-		Transform3D transform;
+		bool transformable = true;
+
+		Transform3D local;
 
 	private:
 
@@ -386,8 +390,6 @@ namespace RenderData {
 			// Add triangles
 			triangles.push_back(&tris[0]);
 			triangles.push_back(&tris[1]);
-			// Get index of last plane
-			size_t last = triangles.size();
 			// Create reference
 			PlaneReference* plane = new PlaneReference(tris);
 			// Setup plane
@@ -418,16 +420,23 @@ namespace RenderData {
 			if (!triangles.size()) return;
 			// Call onRender function
 			onRender();
+			// Transform references (if applicable)
+			for (auto plane: references.plane) plane->transform();
 			// Get vertex count
 			vertexCount = triangles.size() * 3;
 			// Create Intermediary Vertex Buffer (IVB) to be displayed on screen
 			RawVertex* verts = new RawVertex[(vertexCount)];
+			// Get transformation
+			Transform3D absolute(
+				srpTransform(transform.local.position, transform.global),
+				transform.local.rotation + transform.global.rotation,
+				transform.local.scale * transform.global.scale
+			);
 			// Copy data to IVB
 			size_t i = 0;
 			for (auto t: triangles) {
 				auto tri = (*t)
-					.transformed(transform.local)
-					.transformed(transform.global);
+					.transformed(absolute);
 				verts[i]	= toRawVertex(tri.verts[0]);
 				verts[i+1]	= toRawVertex(tri.verts[1]);
 				verts[i+2]	= toRawVertex(tri.verts[2]);
@@ -444,6 +453,8 @@ namespace RenderData {
 			);
 			// Delete IVB, since it is no longer necessary
 			delete [] verts;
+			// De-transform references (if applicable)
+			for (auto plane: references.plane) plane->reset();
 			// Set VAO as active
 			glBindVertexArray(vao);
 			// Define vertex data in VBO

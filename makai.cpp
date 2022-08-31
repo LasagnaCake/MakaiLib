@@ -7,7 +7,7 @@
 
 //#define SIDE_B
 
-// TODO: Fix shitty vector rotation math (slow & only Y axis works)
+// TODO: Fix shitty vector rotation math (It's worse)
 // TODO: Fix framebuffer
 // TODO: Fix UV & Color data not passing to shader
 // TODO: Fix life
@@ -28,7 +28,7 @@ int main() {
 	//Makai::Program prog(1280, 960, "OK");
 	prog.color = Vector::Vector4(Vector::Vector3(.5), 1);
 	float frame = 0;
-	Scene::camera.eye = Vector::Vector3(0, 0, -1);
+	Scene::camera.eye = Vector::Vector3(-5, 2, -1);
 	Scene::camera.at = Vector::Vector3(0, 0, 10);
 	Scene::camera.up = Vector::Vector3(0, 1, 0);
 
@@ -54,16 +54,10 @@ int main() {
 
 	RenderData::Renderable testRenderable;
 
-	VecMath::Transform3D planeTransform = VecMath::Transform3D(
-		Vector::Vector3(0, 0, 5),
-		Vector::Vector3(0, 0, 0),
-		Vector::Vector3(1, 1, 1)
-	);
-
 	RenderData::PlaneReference* p[10];
 	for (size_t i = 0; i < 10; i++) {
 		p[i] = testRenderable.createPlaneReference();
-		p[i]->transform.position.z = 5*i;
+		p[i]->local.position.z = 5*i + 5;
 	}
 	/*p->transform(
 		VecMath::Transform3D(
@@ -78,29 +72,24 @@ int main() {
 		Vector::Vector4(0),
 		Vector::Vector4(0)
 	);
-	planeTransform.position.z = 0;
 	//testRenderable.triangles.push_back(new RenderData::Triangle());
 
 	prog.onFrame = $func() {
 		if (prog.input.getButtonDown(SDL_SCANCODE_ESCAPE))
 			prog.close();
-		Scene::camera.eye = Vector::Vector3(
+		/*Scene::camera.eye = Vector::Vector3(
 			sin(frame/300.0f) * 3,
 			2,
 			cos(frame/300.0f) - 2
-		);
+		);*/
 		for (size_t i = 0; i < 10; i++) {
 			float sinC = sin(frame/200.0f + i/1.0) * 2;
-			p[i]->transform.position.x = sinC;
-			p[i]->transform.rotation = Vector::Vector3(0, 0, frame/45);
-			p[i]->transformed();
+			//p[i]->local.position.x = sinC;
+			p[i]->local.rotation = Vector::Vector3(0, 0, frame/100.0);
 		}
 	};
 
 	prog.onDraw = $func() {
-		for (size_t i = 0; i < 10; i++) {
-			p[i]->reset();
-		}
 		//testRenderable.triangles[0]->verts[0].position.x = sinC;
 		//testRenderable.triangles[0]->verts[0].position.y = cosC;
 		frame++;
