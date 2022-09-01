@@ -7,11 +7,11 @@
 
 //#define SIDE_B
 
-// TODO: Fix shitty vector rotation math (It's worse)
-// TODO: Fix framebuffer
-// TODO: Fix UV & Color data not passing to shader
-// TODO: Fix life
-// TODO: Automate plane transformation
+// [ ] TODO: Fix shitty plane rotation
+// [ ] TODO: Fix framebuffer
+// [ ] TODO: Fix UV & Color data not passing to shader
+// [ ] TODO: Fix life
+// [X] TODO: Automate plane transformation
 
 #ifndef SIDE_B
 int main() {
@@ -28,8 +28,8 @@ int main() {
 	//Makai::Program prog(1280, 960, "OK");
 	prog.color = Vector::Vector4(Vector::Vector3(.5), 1);
 	float frame = 0;
-	Scene::camera.eye = Vector::Vector3(-5, 2, -1);
-	Scene::camera.at = Vector::Vector3(0, 0, 10);
+	Scene::camera.eye = Vector::Vector3(0, 5, 0);
+	Scene::camera.at = Vector::Vector3(-5, 0, 10);
 	Scene::camera.up = Vector::Vector3(0, 1, 0);
 
 	SLF::SLFData data = SLF::parseFile("shaders/base/base.slf");
@@ -77,15 +77,39 @@ int main() {
 	prog.onFrame = $func() {
 		if (prog.input.getButtonDown(SDL_SCANCODE_ESCAPE))
 			prog.close();
+		Scene::camera.eye.z -= (
+			prog.input.getButtonDown(SDL_SCANCODE_S) -
+			prog.input.getButtonDown(SDL_SCANCODE_W)
+		)*(1.0/60.0);
+		Scene::camera.eye.x -= (
+			prog.input.getButtonDown(SDL_SCANCODE_D) -
+			prog.input.getButtonDown(SDL_SCANCODE_A)
+		)*(1.0/60.0);
+		Scene::camera.at.z -= (
+			prog.input.getButtonDown(SDL_SCANCODE_S) -
+			prog.input.getButtonDown(SDL_SCANCODE_W)
+		)*(1.0/60.0);
+		Scene::camera.at.x -= (
+			prog.input.getButtonDown(SDL_SCANCODE_D) -
+			prog.input.getButtonDown(SDL_SCANCODE_A)
+		)*(1.0/60.0);
+		Scene::camera.at.y -= (
+			prog.input.getButtonDown(SDL_SCANCODE_DOWN) -
+			prog.input.getButtonDown(SDL_SCANCODE_UP)
+		)*(1.0/60.0);
 		/*Scene::camera.eye = Vector::Vector3(
 			sin(frame/300.0f) * 3,
 			2,
 			cos(frame/300.0f) - 2
 		);*/
+		testRenderable.transform.local.position.z = 20;
 		for (size_t i = 0; i < 10; i++) {
 			float sinC = sin(frame/200.0f + i/1.0) * 2;
 			//p[i]->local.position.x = sinC;
-			p[i]->local.rotation = Vector::Vector3(frame/100.0, 0, 0);
+			//p[i]->local.rotation = Vector::Vector3(0, 0, 0);
+			//testRenderable.transform.local.rotation.x = frame/200.0f;
+			//testRenderable.transform.local.rotation.y = frame/200.0f;
+			testRenderable.transform.local.rotation.z = frame/600.0f;
 		}
 	};
 

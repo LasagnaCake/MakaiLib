@@ -99,8 +99,10 @@ namespace Drawer {
 	void renderAllLayers() {
 		vector<size_t> rLayers = layers.getAllGroups();
 		if (rLayers.size())
-			for (auto layer : rLayers)
+			for (auto layer : rLayers) {
+				glClear(GL_DEPTH_BUFFER_BIT);
 				renderLayer(layer);
+			}
 	}
 
 	void setTexture2D(unsigned char index, GLuint texture) {
