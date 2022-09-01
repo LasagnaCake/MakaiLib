@@ -7,7 +7,7 @@
 
 //#define SIDE_B
 
-// [ ] TODO: Fix shitty plane rotation
+// [ ] TODO: Fix rotation fuckery
 // [ ] TODO: Fix framebuffer
 // [ ] TODO: Fix UV & Color data not passing to shader
 // [ ] TODO: Fix life
