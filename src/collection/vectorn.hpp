@@ -723,10 +723,6 @@ namespace Vector{
 
 namespace VecMath
 {
-	namespace {
-		using std::vector;
-	}
-
 	using namespace Vector;
 
 	enum : unsigned char
@@ -735,6 +731,10 @@ namespace VecMath
 		AXIS_Y,
 		AXIS_Z
 	};
+
+	namespace {
+		using std::vector;
+	}
 
 	// Vector rotation
 
@@ -774,24 +774,35 @@ namespace VecMath
 			cosX = cos(angle.x),
 			cosY = cos(angle.y),
 			cosZ = cos(angle.z);
-		// Calculate rotation around Z axis
+		// Calculate Z axis
 		vec.z = (
 			(((cosX * cosY)) * vz)
 		+	(((cosX * sinY * sinZ) - (cosX * sinZ)) * vy)
 		+	(((sinX * sinZ) + (cosX * sinY * cosZ)) * vx)
 		);
-		// Calculate rotation around Y axis
-		vec.y = (
+		// Calculate Y axis
+		/*vec.y = (
 			(((sinX * cosY)) * vz)
 		+	(((cosX * cosZ) + (sinX * sinY * sinZ)) * vy)
 		+	(((sinX * sinY * cosZ) + (cosX * sinZ)) * vx)
-		);
-		// Calculate rotation around X axis
+		);*/
+		// Calculate X axis
 		vec.x = (
 		-	(sinY * vz)
 		+	((cosY * sinZ) * vy)
 		+	((cosY * cosZ) * vx)
 		);
+		/*
+		// Calculate Z axis rotation
+		vec.x = vec.x * cosZ - vec.y * sinZ;
+		vec.y = vec.x * sinZ + vec.y * cosZ;
+		// Calculate Y axis rotation
+		vec.x = vec.x * cosY - vec.z * sinY;
+		vec.z = vec.x * sinY + vec.z * cosY;
+		// Calculate X axis rotation
+		vec.y = vec.y * cosX - vec.z * sinX;
+		vec.z = vec.y * sinX + vec.z * cosX;
+		*/
 		// Return rotated vector
 		return vec;
 	}
