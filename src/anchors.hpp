@@ -59,6 +59,7 @@
 #include <GL/gl.h>
 #include <GLFW/glfw3.h>
 #include <GLM/glm.hpp>
+#include <glm/gtx/rotate_vector.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #if (_WIN32 || _WIN64 || __WIN32__ || __WIN64__)
@@ -90,6 +91,10 @@
 #ifdef _$_FLOAT_AS_DOUBLE
 #define float double
 #endif // _$_FLOAT_AS_DOUBLE
+
+#define sin glm::sin
+#define cos glm::cos
+#define tan glm::tan
 
 #include "collection/entity/entity.hpp"
 #include "collection/vectorn.hpp"

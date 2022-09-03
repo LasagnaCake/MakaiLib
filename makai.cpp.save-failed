@@ -7,7 +7,8 @@
 
 //#define SIDE_B
 
-// [ ] TODO: Fix shitty plane rotation
+// [x] TODO: Fix rotation fuckery
+//		^ Maybe try and cheat with glm::rotate or glm::rotate_vector
 // [ ] TODO: Fix framebuffer
 // [ ] TODO: Fix UV & Color data not passing to shader
 // [ ] TODO: Fix life
@@ -28,8 +29,8 @@ int main() {
 	//Makai::Program prog(1280, 960, "OK");
 	prog.color = Vector::Vector4(Vector::Vector3(.5), 1);
 	float frame = 0;
-	Scene::camera.eye = Vector::Vector3(0, 5, 0);
-	Scene::camera.at = Vector::Vector3(-5, 0, 10);
+	Scene::camera.eye = Vector::Vector3(0, 10, 0);
+	Scene::camera.at = Vector::Vector3(0, 0, 10);
 	Scene::camera.up = Vector::Vector3(0, 1, 0);
 
 	SLF::SLFData data = SLF::parseFile("shaders/base/base.slf");
@@ -93,9 +94,9 @@ int main() {
 			prog.input.getButtonDown(SDL_SCANCODE_D) -
 			prog.input.getButtonDown(SDL_SCANCODE_A)
 		)*(1.0/60.0);
-		Scene::camera.at.y += (
-			prog.input.getButtonDown(SDL_SCANCODE_UP) -
-			prog.input.getButtonDown(SDL_SCANCODE_DOWN)
+		Scene::camera.at.y -= (
+			prog.input.getButtonDown(SDL_SCANCODE_DOWN) -
+			prog.input.getButtonDown(SDL_SCANCODE_UP)
 		)*(1.0/60.0);
 		/*Scene::camera.eye = Vector::Vector3(
 			sin(frame/300.0f) * 3,
@@ -104,12 +105,14 @@ int main() {
 		);*/
 		testRenderable.transform.local.position.z = 20;
 		for (size_t i = 0; i < 10; i++) {
-			float sinC = sin(frame/200.0f + i/1.0) * 2;
+			float sinC = sin(frame/600.0f + i/1.0);
 			//p[i]->local.position.x = sinC;
-			//p[i]->local.rotation = Vector::Vector3(0, 0, 0);
-			//testRenderable.transform.local.rotation.x = frame/200.0f;
-			//testRenderable.transform.local.rotation.y = frame/200.0f;
-			testRenderable.transform.local.rotation.z = frame/600.0f;
+			p[i]->local.rotation.z = frame / 300.0f;
+			//p[i]->local.rotation.y = frame / 300.0f;
+			//Scene::camera.up.x =  sinC / 3;
+			//testRenderable.transform.local.rotation.x = frame / 200.0f;
+			//testRenderable.transform.local.rotation.y = frame / 200.0f;
+			//testRenderable.transform.local.rotation.z = frame / 600.0f;
 		}
 	};
 

@@ -32,15 +32,16 @@ namespace Drawer {
 	#define RAW_VERTEX_SIZE 9
 	#define RAW_VERTEX_BYTE_SIZE RAW_VERTEX_SIZE * sizeof(float)
 	struct RawVertex {
-		float x = 0;
-		float y = 0;
-		float z = 0;
-		float u = 0;
-		float v = 0;
-		float r = 1;
-		float g = 1;
-		float b = 1;
-		float a = 1;
+		float
+			x = 0,
+			y = 0,
+			z = 0,
+			u = 0,
+			v = 0,
+			r = 1,
+			g = 1,
+			b = 1,
+			a = 1;
 	};
 
 	struct Vertex {
@@ -142,7 +143,39 @@ namespace VecMath {
 	inline glm::vec3 asGLMVector(Vector3 vec) {
 		return glm::vec3(vec.x, vec.y, vec.z);
 	}
+
+	inline Vector3 asVector(glm::vec3 vec) {
+		return Vector3(vec.x, vec.y, vec.z);
+	}
+
+	inline Vector3 glmRotateV3(Vector3 vec, Vector3 angle) {
+		glm::vec3 res = asGLMVector(vec);
+		res = glm::rotateZ(res, angle.z);
+		res = glm::rotateY(res, angle.y);
+		res = glm::rotateX(res, angle.x);
+		return asVector(res);
+	}
+
+	// I fucking hate this, but it works, so fuckit.
+	inline Vector3 glmSrpTransform(Vector3 vec, Vector3 pos, Vector3 rot, Vector3 scale = Vector3(1.0)) {
+		vec *= scale;
+		vec = glmRotateV3(vec, rot);
+		vec += pos;
+		return vec;
+	}
+
+	inline Vector3 glmSrpTransform(Vector3 vec, Transform3D trans) {
+		return glmSrpTransform(
+			vec,
+			trans.position,
+			trans.rotation,
+			trans.scale
+		);
+	}
 }
+#ifndef SRP_TRANSFORM
+#define SRP_TRANSFORM glmSrpTransform
+#endif // SRP_TRANSFORM
 
 namespace RenderData {
 	namespace {
@@ -153,7 +186,7 @@ namespace RenderData {
 		VecMath::Transform,
 		VecMath::Transform2D,
 		VecMath::Transform3D,
-		VecMath::srpTransform,
+		VecMath::SRP_TRANSFORM,
 		Drawer::Vertex,
 		Drawer::RawVertex,
 		Drawer::toRawVertex,
@@ -196,7 +229,7 @@ namespace RenderData {
 			Vertex res[3];
 			#pragma GCC unroll 3
 			for (unsigned char i = 0; i < 3; i++)
-				res[i].position = srpTransform(verts[i].position, trans);
+				res[i].position = SRP_TRANSFORM(verts[i].position, trans);
 			return Triangle(res);
 		}
 
@@ -250,12 +283,12 @@ namespace RenderData {
 
 		/// Transforms the plane's origin by a given transform.
 		PlaneReference* setOrigin(Transform3D trans) {
-			origin[0] = tl->position	= srpTransform(origin[0], trans);
-			origin[1] = tr1->position	= srpTransform(origin[1], trans);
-			origin[2] = tr2->position	= srpTransform(origin[2], trans);
-			origin[3] = bl1->position	= srpTransform(origin[3], trans);
-			origin[4] = bl2->position	= srpTransform(origin[4], trans);
-			origin[5] = br->position	= srpTransform(origin[5], trans);
+			origin[0] = tl->position	= SRP_TRANSFORM(origin[0], trans);
+			origin[1] = tr1->position	= SRP_TRANSFORM(origin[1], trans);
+			origin[2] = tr2->position	= SRP_TRANSFORM(origin[2], trans);
+			origin[3] = bl1->position	= SRP_TRANSFORM(origin[3], trans);
+			origin[4] = bl2->position	= SRP_TRANSFORM(origin[4], trans);
+			origin[5] = br->position	= SRP_TRANSFORM(origin[5], trans);
 			return this;
 		}
 
@@ -315,12 +348,12 @@ namespace RenderData {
 		PlaneReference* transform() {
 			if (!transformable) return this;
 			// Apply transformation
-			tl->position	= srpTransform(tl->position, local);
-			tr1->position	= srpTransform(tr1->position, local);
-			tr2->position	= srpTransform(tr2->position, local);
-			bl1->position	= srpTransform(bl1->position, local);
-			bl2->position	= srpTransform(bl2->position, local);
-			br->position	= srpTransform(br->position, local);
+			tl->position	= SRP_TRANSFORM(tl->position, local);
+			tr1->position	= SRP_TRANSFORM(tr1->position, local);
+			tr2->position	= SRP_TRANSFORM(tr2->position, local);
+			bl1->position	= SRP_TRANSFORM(bl1->position, local);
+			bl2->position	= SRP_TRANSFORM(bl2->position, local);
+			br->position	= SRP_TRANSFORM(br->position, local);
 			return this;
 		}
 
@@ -430,7 +463,7 @@ namespace RenderData {
 			RawVertex* verts = new RawVertex[(vertexCount)];
 			// Get transformation
 			Transform3D absolute(
-				srpTransform(transform.local.position, transform.global),
+				SRP_TRANSFORM(transform.local.position, transform.global),
 				transform.local.rotation + transform.global.rotation,
 				transform.local.scale * transform.global.scale
 			);
@@ -523,13 +556,17 @@ namespace RenderData {
 			glDrawArrays(GL_TRIANGLES, 0, vertexCount);
 			// Render object passes, if any
 			if(shaders.size())
-			for (auto s : shaders) {
-				auto shader = (*s);
-				// Enable shader
-				shader();
-				// Draw object
-				glDrawArrays(GL_TRIANGLES, 0, vertexCount);
-			}
+				for (auto s : shaders) {
+					// Enable shader
+					auto shader = (*s);
+					shader();
+					// Set prerequisites
+					shader["world"](Scene::world);
+					shader["camera"](camera);
+					shader["projection"](projection);
+					// Draw object
+					glDrawArrays(GL_TRIANGLES, 0, vertexCount);
+				}
 		};
 	};
 }

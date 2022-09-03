@@ -741,9 +741,8 @@ namespace VecMath
 	/// Rotates a 2D Vector around the origin by a given angle.
 	Vector2 rotateV2(Vector2 vec, float angle) {
 		// Calculate the sine & cosine of the angle
-		float
-			sinA = sin(angle),
-			cosA = cos(angle);
+		float sinA = sin(angle);
+		float cosA = cos(angle);
 		// Calculate the rotation around the Z axis (i.e. 2D rotation)
 		vec.x = vec.x * cosA - vec.y * sinA;
 		vec.y = vec.x * sinA + vec.y * cosA;
@@ -759,21 +758,21 @@ namespace VecMath
 		* Most likely follows Tait-Bryan Angles:
 		* https://en.wikipedia.org/wiki/Euler_angles#Tait%E2%80%93Bryan_angles
 		*/
-		// Get the vector's positions
-		float
-			vx = vec.x,
-			vy = vec.y,
-			vz = vec.z;
+		// Get a copy of the vector
+		Vector3 res = vec;
 		// Calculate the sines
-		float
-			sinX = sin(angle.x),
-			sinY = sin(angle.y),
-			sinZ = sin(angle.z);
+		float sinX = sin(angle.x);
+		float sinY = sin(angle.y);
+		float sinZ = sin(angle.z);
 		// Calculate the cosines
-		float
-			cosX = cos(angle.x),
-			cosY = cos(angle.y),
-			cosZ = cos(angle.z);
+		float cosX = cos(angle.x);
+		float cosY = cos(angle.y);
+		float cosZ = cos(angle.z);
+		/*
+		// Get the vector's starting positions
+		float vx = vec.x;
+		float vy = vec.y;
+		float vz = vec.z;
 		// Calculate Z axis
 		vec.z = (
 			(((cosX * cosY)) * vz)
@@ -781,30 +780,30 @@ namespace VecMath
 		+	(((sinX * sinZ) + (cosX * sinY * cosZ)) * vx)
 		);
 		// Calculate Y axis
-		/*vec.y = (
+		vec.y = (
 			(((sinX * cosY)) * vz)
 		+	(((cosX * cosZ) + (sinX * sinY * sinZ)) * vy)
 		+	(((sinX * sinY * cosZ) + (cosX * sinZ)) * vx)
-		);*/
+		);
 		// Calculate X axis
 		vec.x = (
 		-	(sinY * vz)
 		+	((cosY * sinZ) * vy)
 		+	((cosY * cosZ) * vx)
-		);
-		/*
+		);*/
+		//*
 		// Calculate Z axis rotation
-		vec.x = vec.x * cosZ - vec.y * sinZ;
-		vec.y = vec.x * sinZ + vec.y * cosZ;
+		res.x = (+ res.x * cosZ - res.y * sinZ);
+		res.y = (+ res.x * sinZ + res.y * cosZ);
 		// Calculate Y axis rotation
-		vec.x = vec.x * cosY - vec.z * sinY;
-		vec.z = vec.x * sinY + vec.z * cosY;
+		res.x = (+ res.x * cosY + res.z * sinY);
+		res.z = (- res.x * sinY + res.z * cosY);
 		// Calculate X axis rotation
-		vec.y = vec.y * cosX - vec.z * sinX;
-		vec.z = vec.y * sinX + vec.z * cosX;
-		*/
+		res.y = (+ res.y * cosX - res.z * sinX);
+		res.z = (+ res.y * sinX + res.z * cosX);
+		//*/
 		// Return rotated vector
-		return vec;
+		return res;
 	}
 
 	/**
@@ -1057,10 +1056,10 @@ namespace VecMath
 		T		scale = T(1.0);
 	};
 
-	typedef Transform<VecV2, float>	Transform2D;
-	typedef Transform<VecV3, VecV3>	Transform3D;
+	typedef Transform<Vector2, float>	Transform2D;
+	typedef Transform<Vector3, Vector3>	Transform3D;
 
-	VecV2 srpTransform(VecV2 vec, Transform2D trans) {
+	inline Vector2 srpTransform(Vector2 vec, Transform2D trans) {
 		return srpTransform(
 			vec,
 			trans.position,
@@ -1069,7 +1068,7 @@ namespace VecMath
 		);
 	}
 
-	VecV3 srpTransform(VecV3 vec, Transform3D trans) {
+	inline Vector3 srpTransform(Vector3 vec, Transform3D trans) {
 		return srpTransform(
 			vec,
 			trans.position,

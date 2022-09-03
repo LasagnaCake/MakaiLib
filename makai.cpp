@@ -7,11 +7,10 @@
 
 //#define SIDE_B
 
-// [ ] TODO: Fix rotation fuckery
+// [x] TODO: Fix rotation fuckery
 //		^ Maybe try and cheat with glm::rotate or glm::rotate_vector
 // [ ] TODO: Fix framebuffer
 // [ ] TODO: Fix UV & Color data not passing to shader
-// [ ] TODO: Fix life
 // [X] TODO: Automate plane transformation
 
 #ifndef SIDE_B
@@ -105,13 +104,14 @@ int main() {
 		);*/
 		testRenderable.transform.local.position.z = 20;
 		for (size_t i = 0; i < 10; i++) {
-			float sinC = sin(frame/600.0f + i/1.0) * 2;
+			float sinC = sin(frame/600.0f + i/1.0);
 			//p[i]->local.position.x = sinC;
-			p[i]->local.rotation.y = frame/300.0f;
-			Scene::camera.up.x =  sinC / 2;
-			//testRenderable.transform.local.rotation.x = frame/200.0f;
-			//testRenderable.transform.local.rotation.y = frame/200.0f;
-			//testRenderable.transform.local.rotation.z = frame/600.0f;
+			p[i]->local.rotation.z = frame / 300.0f;
+			//p[i]->local.rotation.y = frame / 300.0f;
+			//Scene::camera.up.x =  sinC / 3;
+			//testRenderable.transform.local.rotation.x = frame / 200.0f;
+			//testRenderable.transform.local.rotation.y = frame / 200.0f;
+			//testRenderable.transform.local.rotation.z = frame / 600.0f;
 		}
 	};
 

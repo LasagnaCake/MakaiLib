@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1662073377 source:d:\c(++) projects\_c++\game engine\makailib\makai.cpp
+1662154876 source:d:\c(++) projects\_c++\game engine\makailib\makai.cpp
 	<stdexcept>
 	"src/program.hpp"
 	<windows.h>
@@ -2868,7 +2868,7 @@
 	"graphical.hpp"
 	"program/gl_program.hpp"
 
-1661629678 d:\c(++) projects\_c++\game engine\makailib\src\anchors.hpp
+1662138446 d:\c(++) projects\_c++\game engine\makailib\src\anchors.hpp
 	<iostream>
 	<string>
 	<vector>
@@ -2892,6 +2892,7 @@
 	<GL/gl.h>
 	<GLFW/glfw3.h>
 	<GLM/glm.hpp>
+	<glm/gtx/rotate_vector.hpp>
 	<glm/gtc/matrix_transform.hpp>
 	<glm/gtc/type_ptr.hpp>
 	<SDL2/SDL.h>
@@ -2956,7 +2957,7 @@
 	"core.hpp"
 	"../vectorn.hpp"
 
-1662073506 d:\c(++) projects\_c++\game engine\makailib\src\collection\vectorn.hpp
+1662138558 d:\c(++) projects\_c++\game engine\makailib\src\collection\vectorn.hpp
 	<cmath>
 	<vector>
 	"algebra.hpp"
@@ -2986,7 +2987,7 @@
 	"graphical/gl_graphical.hpp"
 	"graphical/gl_shader.hpp"
 
-1661991750 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_graphical.hpp
+1662155088 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_graphical.hpp
 	"../anchors.hpp"
 	"gl_shader.hpp"
 
@@ -3268,4 +3269,20 @@
 
 1661823537 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_camera.hpp
 	"../anchors.hpp"
+
+1554373468 d:\c(++) projects\_c++\game engine\makailib\lib\opengl\glm\gtx\rotate_vector.hpp
+	"../gtx/transform.hpp"
+	"../gtc/epsilon.hpp"
+	"../ext/vector_relational.hpp"
+	"../glm.hpp"
+	"rotate_vector.inl"
+
+1554373468 d:\c(++) projects\_c++\game engine\makailib\lib\opengl\glm\gtx\transform.hpp
+	"../glm.hpp"
+	"../gtc/matrix_transform.hpp"
+	"transform.inl"
+
+1533818822 d:\c(++) projects\_c++\game engine\makailib\lib\opengl\glm\gtx\transform.inl
+
+1533818822 d:\c(++) projects\_c++\game engine\makailib\lib\opengl\glm\gtx\rotate_vector.inl
 
