@@ -584,6 +584,12 @@ namespace Drawer {
 		}
 
 		~FrameBuffer() {
+			destroy();
+		}
+
+		void destroy() {
+			if (!created) return;
+			else created = false;
 			glDeleteFramebuffers(1, &id);
 			glDeleteTextures(1, &buffer.color);
 			glDeleteTextures(1, &buffer.depth);

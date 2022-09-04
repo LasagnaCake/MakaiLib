@@ -204,6 +204,8 @@ namespace Makai {
 				SDL_GL_SwapWindow(window);
 				// [[ Render code END ]]
 				lastTime = SDL_GetTicks();
+				// Destroy queued entities
+				EntityClass::destroyQueued();
 			}
 			// Terminate program
 			terminate();
@@ -269,7 +271,9 @@ namespace Makai {
 		void terminate() {
 			// Call final function
 			onClose();
-			//
+			// Destroy framebuffer
+			compose.destroy();
+			framebuffer.destroy();
 			// Quit SDL
 			SDL_Quit();
 		}

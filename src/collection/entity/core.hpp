@@ -10,6 +10,7 @@
 #include <map>
 
 #include "../tasking.hpp"
+#include "../event.hpp"
 
 #ifndef _$_ENTITY_ROOT_NAME
 /// Default entity root name (MUST NOT CONTAIN '/')
@@ -53,6 +54,16 @@ namespace EntityClass {
 				return false;
 			}
 			return true;
+		}
+
+		vector<Event::Signal*> destroyQueue;
+	}
+
+	/// Deletes all queued objects.
+	void destroyQueued() {
+		while (!destroyQueue.empty()) {
+			(*destroyQueue.back())();
+			destroyQueue.pop_back();
 		}
 	}
 
@@ -374,6 +385,15 @@ namespace EntityClass {
 		/// Subtraction Assignment operator overload (index).
 		void operator-=(size_t index) {
 			deleteChild(index);
+		}
+
+		/// Deletes self.
+		const Event::Signal destroy = $signal {
+			delete this;
+		}
+
+		void queueDestroy() {
+			destroyQueue.push_back(&destroy);
 		}
 
 	protected:

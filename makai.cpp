@@ -47,10 +47,12 @@ int main() {
 
 	$debug("Size of float:");
 	$debug(sizeof(float));
-	$debug("Size of raw vertex:");
+	$debug("Size of vertex classes:");
 	$debug(sizeof(Drawer::RawVertex));
+	$debug(sizeof(Drawer::Vertex));
 	$debug("Ratio:");
 	$debug(sizeof(Drawer::RawVertex)/sizeof(float));
+	$debug(sizeof(Drawer::Vertex)/sizeof(float));
 
 	RenderData::Renderable testRenderable;
 
