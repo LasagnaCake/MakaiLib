@@ -76,35 +76,49 @@ int main() {
 	);
 	//testRenderable.triangles.push_back(new RenderData::Triangle());
 
+	Tween::Tween t;
+
+	size_t elapsed = SDL_GetTicks();
+
+	prog.maxFrameRate = 60;
+
+	float moveSpeed = 10.0 / prog.maxFrameRate;
+
+	t.setInterpolation(0, -25, 180, Tween::ease.in.linear, &testRenderable.transform.local.position.z);
+
+	t.onCompleted = $signal {
+		$debug(SDL_GetTicks() - elapsed);
+	};
+
 	prog.onFrame = $func() {
 		if (prog.input.getButtonDown(SDL_SCANCODE_ESCAPE))
 			prog.close();
 		Scene::camera.eye.z -= (
 			prog.input.getButtonDown(SDL_SCANCODE_S) -
 			prog.input.getButtonDown(SDL_SCANCODE_W)
-		)*(1.0/60.0);
+		) * moveSpeed;
 		Scene::camera.eye.x -= (
 			prog.input.getButtonDown(SDL_SCANCODE_D) -
 			prog.input.getButtonDown(SDL_SCANCODE_A)
-		)*(1.0/60.0);
+		) * moveSpeed;
 		Scene::camera.at.z -= (
 			prog.input.getButtonDown(SDL_SCANCODE_S) -
 			prog.input.getButtonDown(SDL_SCANCODE_W)
-		)*(1.0/60.0);
+		) * moveSpeed;
 		Scene::camera.at.x -= (
 			prog.input.getButtonDown(SDL_SCANCODE_D) -
 			prog.input.getButtonDown(SDL_SCANCODE_A)
-		)*(1.0/60.0);
+		) * moveSpeed;
 		Scene::camera.at.y -= (
 			prog.input.getButtonDown(SDL_SCANCODE_DOWN) -
 			prog.input.getButtonDown(SDL_SCANCODE_UP)
-		)*(1.0/60.0);
+		) * moveSpeed;
 		/*Scene::camera.eye = Vector::Vector3(
 			sin(frame/300.0f) * 3,
 			2,
 			cos(frame/300.0f) - 2
 		);*/
-		testRenderable.transform.local.position.z = 20;
+		//testRenderable.transform.local.position.z = 20;
 		for (size_t i = 0; i < 10; i++) {
 			float sinC = sin(frame/600.0f + i/1.0);
 			//p[i]->local.position.x = sinC;

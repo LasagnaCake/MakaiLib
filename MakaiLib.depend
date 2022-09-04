@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1662203494 source:d:\c(++) projects\_c++\game engine\makailib\makai.cpp
+1662312859 source:d:\c(++) projects\_c++\game engine\makailib\makai.cpp
 	<stdexcept>
 	"src/program.hpp"
 	<windows.h>
@@ -2975,8 +2975,9 @@
 	<stdexcept>
 	<type_traits>
 
-1662300346 d:\c(++) projects\_c++\game engine\makailib\src\collection\tween.hpp
+1662311937 d:\c(++) projects\_c++\game engine\makailib\src\collection\tween.hpp
 	"event.hpp"
+	"algebra.hpp"
 	<vector>
 	<functional>
 	<string>
@@ -3012,7 +3013,7 @@
 	<algorithm>
 	<regex>
 
-1662297082 d:\c(++) projects\_c++\game engine\makailib\src\program\gl_program.hpp
+1662313746 d:\c(++) projects\_c++\game engine\makailib\src\program\gl_program.hpp
 	"../anchors.hpp"
 	"../graphical.hpp"
 

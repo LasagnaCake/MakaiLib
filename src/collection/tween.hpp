@@ -2,6 +2,7 @@
 #define TWEEN_TWEENABLE_H
 
 #include "event.hpp"
+#include "algebra.hpp"
 #include <vector>
 #include <functional>
 #include <string>
@@ -49,10 +50,15 @@ namespace Tween{
 				(*func)();
 	}
 
-	#define $easing					[&](float step, float from, float range, float stop) -> float
+	// Shut up for two seconds
+	#pragma GCC diagnostic push
+	#pragma GCC diagnostic ignored "-Wsequence-point"
+	#pragma GCC diagnostic ignored "-Wsubobject-linkage"
+
+	#define $easing					[&](float step, float from, float to, float stop) -> float
 	#define $$EFUNC					[&](float t, float b, float c, float d) -> float
-	#define PI Math::pi
-	#define EASE_F(TYPE, CODE) . TYPE = $$EFUNC CODE ,
+	#define PI_VALUE Math::pi
+	#define EASE_F(TYPE) .TYPE = $$EFUNC
 	/// Easing function template
 	typedef _EaseFunc EaseFunc;
 
@@ -67,122 +73,122 @@ namespace Tween{
 		/// Ease IN functions
 		EaseType in {
 			// Linear
-			EASE_F(linear, {return t * b/c + d;})
+			EASE_F(linear) {return c * t/d + b;},
 			// sine
-			EASE_F(sine, {return -c * cos(t/d * (PI/2)) + c + b;})
+			EASE_F(sine) {return -c * cos(t/d * (PI_VALUE/2)) + c + b;},
 			// quad
-			EASE_F(quad, {return c*(t/=d)*t + b;})
+			EASE_F(quad) {return c*(t/=d)*t + b;},
 			// Cubic
-			EASE_F(cubic, {return c*(t/=d)*t*t + b;})
+			EASE_F(cubic) {return c*(t/=d)*t*t + b;},
 			// Quart
-			EASE_F(quart, {return c*(t/=d)*t*t*t + b;})
+			EASE_F(quart) {return c*(t/=d)*t*t*t + b;},
 			// Quint
-			EASE_F(quint, {return c*((t=t/d-1)*t*t*t*t + 1) + b;})
+			EASE_F(quint) {return c*((t=t/d-1)*t*t*t*t + 1) + b;},
 			// Expo
-			EASE_F(expo, {return (t==0) ? b : c * pow(2, 10 * (t/d - 1)) + b;})
+			EASE_F(expo) {return (t==0) ? b : c * pow(2, 10 * (t/d - 1)) + b;},
 			// Elastic
-			EASE_F(elastic, {
+			EASE_F(elastic) {
 				if (t==0) return b;
 				if ((t/=d)==1) return b+c;
 				float p=d*.3f;
 				float a=c;
 				float s=p/4;
 				float postFix =a*pow(2,10*(t-=1));
-				return -(postFix * sin((t*d-s)*(2*PI)/p )) + b;
-			})
+				return -(postFix * sin((t*d-s)*(2*PI_VALUE)/p )) + b;
+			},
 			// circ
-			EASE_F(circ, {return -c * (sqrt(1 - (t/=d)*t) - 1) + b;})
+			EASE_F(circ) {return -c * (sqrt(1 - (t/=d)*t) - 1) + b;},
 			// bounce
-			EASE_F(bounce, {
+			EASE_F(bounce) {
 				float s = 1.70158f;
 				return c*((t=t/d-1)*t*((s+1)*t + s) + 1) + b;
-			})
+			},
 			// Back
-			EASE_F(back, {
+			EASE_F(back) {
 				float s = 1.70158f;
 				float postFix = t/=d;
 				return c*(postFix)*t*((s+1)*t - s) + b;
-			})
+			}
 		};
 		/// Ease OUT functions
 		EaseType out {
 			// Linear
-			EASE_F(linear, {return t * b/c + d;})
+			EASE_F(linear) {return c * t/d + b;},
 			// sine
-			EASE_F(sine, {return c * sin(t/d * (PI/2)) + b;})
+			EASE_F(sine) {return c * sin(t/d * (PI_VALUE/2)) + b;},
 			// quad
-			EASE_F(quad, {return -c *(t/=d)*(t-2) + b;})
+			EASE_F(quad) {return -c *(t/=d)*(t-2) + b;},
 			// Cubic
-			EASE_F(cubic, {return c*((t=t/d-1)*t*t + 1) + b;})
+			EASE_F(cubic) {return c*((t=t/d-1)*t*t + 1) + b;},
 			// Quart
-			EASE_F(quart, {return -c * ((t=t/d-1)*t*t*t - 1) + b;})
+			EASE_F(quart)  {return -c * ((t=t/d-1)*t*t*t - 1) + b;},
 			// Quint
-			EASE_F(quint, {return c*(t/=d)*t*t*t*t + b;})
+			EASE_F(quint) {return c*(t/=d)*t*t*t*t + b;},
 			// Expo
-			EASE_F(expo, {return (t==d) ? b+c : c * (-pow(2, -10 * t/d) + 1) + b;})
+			EASE_F(expo) {return (t==d) ? b+c : c * (-pow(2, -10 * t/d) + 1) + b;},
 			// Elastic
-			EASE_F(elastic, {
+			EASE_F(elastic) {
 				if (t==0) return b;
 				if ((t/=d)==1) return b+c;
 				float p=d*.3f;
 				float a=c;
 				float s=p/4;
-				return (a*pow(2,-10*t) * sin( (t*d-s)*(2*PI)/p ) + c + b);
-			})
+				return (a*pow(2,-10*t) * sin( (t*d-s)*(2*PI_VALUE)/p ) + c + b);
+			},
 			// circ
-			EASE_F(circ, {return c * sqrt(1 - (t=t/d-1)*t) + b;})
+			EASE_F(circ) {return c * sqrt(1 - (t=t/d-1)*t) + b;},
 			// bounce
-			EASE_F(bounce, {
+			EASE_F(bounce) {
 				float s = 1.70158f;
 				float postFix = t/=d;
 				return c*(postFix)*t*((s+1)*t - s) + b;
-			})
+			},
 			// Back
-			EASE_F(back, {
+			EASE_F(back) {
 				float s = 1.70158f;
 				return c*((t=t/d-1)*t*((s+1)*t + s) + 1) + b;
-			})
+			}
 		};
 		/// Ease IN-OUT functions
 		EaseType inOut {
 			// Linear
-			EASE_F(linear, {return t * b/c + d;})
+			EASE_F(linear) {return c * t/d + b;},
 			// sine
-			EASE_F(sine, {return -c/2 * (cos(PI*t/d) - 1) + b;})
+			EASE_F(sine) {return -c/2 * (cos(PI_VALUE*t/d) - 1) + b;},
 			// quad
-			EASE_F(quad, {
+			EASE_F(quad) {
 				if ((t/=d/2) < 1)
 					return ((c/2)*(t*t)) + b;
 				return -c/2 * (((t-2)*(--t)) - 1) + b;
-			})
+			},
 			// Cubic
-			EASE_F(cubic, {
+			EASE_F(cubic) {
 				if ((t/=d/2) < 1)
 					return c/2*t*t*t + b;
 				return c/2*((t-=2)*t*t + 2) + b;
-			})
+			},
 			// Quart
-			EASE_F(quart, {
+			EASE_F(quart) {
 				if ((t/=d/2) < 1)
 					return c/2*t*t*t*t + b;
 				return -c/2 * ((t-=2)*t*t*t - 2) + b;
-			})
+			},
 			// Quint
-			EASE_F(quint, {
+			EASE_F(quint) {
 				if ((t/=d/2) < 1)
 					return c/2*t*t*t*t*t + b;
 				return c/2*((t-=2)*t*t*t*t + 2) + b;
-			})
+			},
 			// Expo
-			EASE_F(expo, {
+			EASE_F(expo) {
 				if (t==0) return b;
 				if (t==d) return b+c;
 				if ((t/=d/2) < 1)
 					return c/2 * pow(2, 10 * (t - 1)) + b;
 				return c/2 * (-pow(2, -10 * --t) + 2) + b;
-			})
+			},
 			// Elastic
-			EASE_F(elastic, {
+			EASE_F(elastic) {
 				if (t==0) return b;
 				if ((t/=d/2)==2) return b+c;
 				float p=d*(.3f*1.5f);
@@ -190,38 +196,38 @@ namespace Tween{
 				float s=p/4;
 				if (t < 1) {
 					float postFix =a*pow(2,10*(t-=1));
-					return -.5f*(postFix* sin( (t*d-s)*(2*PI)/p )) + b;
+					return -.5f*(postFix* sin( (t*d-s)*(2*PI_VALUE)/p )) + b;
 				}
 				float postFix =  a*pow(2,-10*(t-=1));
-				return postFix * sin( (t*d-s)*(2*PI)/p )*.5f + c + b;
-			})
+				return postFix * sin( (t*d-s)*(2*PI_VALUE)/p )*.5f + c + b;
+			},
 			// circ
-			EASE_F(circ, {
+			EASE_F(circ) {
 				if ((t/=d/2) < 1)
 					return -c/2 * (sqrt(1 - t*t) - 1) + b;
 				return c/2 * (sqrt(1 - t*(t-=2)) + 1) + b;
-			})
+			},
 			// bounce
-			EASE_F(bounce, {
+			EASE_F(bounce) {
 				float s = 1.70158f;
 				if ((t/=d/2) < 1)
 					return c/2*(t*t*(((s*=(1.525f))+1)*t - s)) + b;
 				float postFix = t-=2;
 				return c/2*((postFix)*t*(((s*=(1.525f))+1)*t + s) + 2) + b;
-			})
+			},
 			// Back
-			EASE_F(back, {
+			EASE_F(back) {
 				float s = 1.70158f;
 				if ((t/=d/2) < 1)
 					return c/2*(t*t*(((s*=(1.525f))+1)*t - s)) + b;
 				float postFix = t-=2;
 				return c/2*((postFix)*t*(((s*=(1.525f))+1)*t + s) + 2) + b;
-			})
+			}
 		};
 		/// Ease OUT-IN functions
 		EaseType outIn {
 			// Linear
-			EASE_F(linear, {return t * b/c + d;})
+			EASE_F(linear) {return c * t/d + b;},
 		};
 		/// List accessing
 		EaseType& operator[](string type) {
@@ -233,7 +239,9 @@ namespace Tween{
 	} ease;
 	#undef $$EFUNC
 	#undef EASE_F
-	#undef PI
+	#undef PI_VALUE
+
+	#pragma GCC diagnostic pop
 
 	/**
 	*****************
@@ -296,7 +304,7 @@ namespace Tween{
 				// Check if finished, then increment step
 				isFinished = step++ >= stop;
 				// If begin != end, calculate step
-				if (from != to) *value = -tweenStep(step, from, range, stop);
+				if (from != to) *value = tweenStep(step, from, to, stop);
 				// Else, set value to end
 				else *value = to;
 				// Clamp step to prevent overflow
@@ -341,11 +349,18 @@ namespace Tween{
 		void reinterpolate(float to, unsigned int step) {
 			setInterpolation(*value, to, step, tweenStep);
 		}
+
 		/// Sets the interpolation to a new value, while maintaining the easing dunction.
 		void reinterpolate(float from, float to, unsigned int step) {
 			setInterpolation(from, to, step, tweenStep);
 		}
-		/// Removes the tween's target variable;
+
+		/// Sets the tween's target variable.
+		void setTarget(float* target) {
+			value = target;
+		}
+
+		/// Removes the tween's target variable.
 		void clearTarget() {
 			defaultVar = *value;
 			value = &defaultVar;
