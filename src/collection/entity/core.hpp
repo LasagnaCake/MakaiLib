@@ -56,7 +56,7 @@ namespace EntityClass {
 			return true;
 		}
 
-		vector<Event::Signal*> destroyQueue;
+		vector<const Event::Signal*> destroyQueue;
 	}
 
 	/// Deletes all queued objects.
@@ -390,7 +390,7 @@ namespace EntityClass {
 		/// Deletes self.
 		const Event::Signal destroy = $signal {
 			delete this;
-		}
+		};
 
 		void queueDestroy() {
 			destroyQueue.push_back(&destroy);

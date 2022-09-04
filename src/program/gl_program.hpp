@@ -203,6 +203,7 @@ namespace Makai {
 				// Display window
 				SDL_GL_SwapWindow(window);
 				// [[ Render code END ]]
+				// Get time
 				lastTime = SDL_GetTicks();
 				// Destroy queued entities
 				EntityClass::destroyQueued();
