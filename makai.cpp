@@ -84,7 +84,7 @@ int main() {
 
 	float moveSpeed = 10.0 / prog.maxFrameRate;
 
-	t.setInterpolation(0, -25, 180, Tween::ease.in.linear, &testRenderable.transform.local.position.z);
+	t.setInterpolation(0, -25, 180, Tween::ease.inOut.back, &testRenderable.transform.local.position.z);
 
 	t.onCompleted = $signal {
 		$debug(SDL_GetTicks() - elapsed);
