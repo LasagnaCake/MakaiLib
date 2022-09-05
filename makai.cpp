@@ -60,6 +60,12 @@ int main() {
 	for (size_t i = 0; i < 10; i++) {
 		p[i] = testRenderable.createPlaneReference();
 		p[i]->local.position.z = 5*i + 5;
+		p[i]->setColor(
+			Vector::Vector4(1,0,0,1),
+			Vector::Vector4(1,0,0,1),
+			Vector::Vector4(0),
+			Vector::Vector4(0)
+		);
 	}
 	/*p->transform(
 		VecMath::Transform3D(
@@ -68,12 +74,6 @@ int main() {
 			Vector::Vector3(1, 1, 1)
 		)
 	);*/
-	p[0]->setColor(
-		Vector::Vector4(1,0,0,1),
-		Vector::Vector4(1,0,0,1),
-		Vector::Vector4(0),
-		Vector::Vector4(0)
-	);
 	//testRenderable.triangles.push_back(new RenderData::Triangle());
 
 	Tween::Tween t;
@@ -84,11 +84,33 @@ int main() {
 
 	float moveSpeed = 10.0 / prog.maxFrameRate;
 
-	t.setInterpolation(0, -25, 180, Tween::ease.inOut.back, &testRenderable.transform.local.position.z);
+	t.setInterpolation(0, -25, 180, Tween::ease.inOut.elastic, &testRenderable.transform.local.position.z);
 
 	t.onCompleted = $signal {
 		$debug(SDL_GetTicks() - elapsed);
 	};
+
+	Vector::Vector3 vPos[3] = {
+		Vector::Vector3(0, 0, 20),
+		Vector::Vector3(10, 0, 10),
+		Vector::Vector3(10, 0, 20)
+	};
+
+	Vector::Vector4 vColor[3] = {
+		Vector::Vector4(1, 1, 0, 1),
+		Vector::Vector4(1, 0, 1, 1),
+		Vector::Vector4(0, 1, 1, 1)
+	};
+
+	testRenderable.triangles.push_back(new RenderData::Triangle(
+		vPos,
+		nullptr,
+		vColor
+	));
+
+	Shader::defaultShader();
+	Shader::defaultShader["albedo"](glm::vec4(1, 1, 1, 1));
+	Shader::defaultShader["textured"](false);
 
 	prog.onFrame = $func() {
 		if (prog.input.getButtonDown(SDL_SCANCODE_ESCAPE))

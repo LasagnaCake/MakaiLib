@@ -323,7 +323,7 @@ namespace RenderData {
 		}
 
 		PlaneReference* setColor(
-				Vector4 col = Vector4(1.0)
+				Vector4 col = Vector4(1.0, 1.0, 1.0, 1.0)
 			) {
 			tl->color	= col;
 			tr1->color	= col;
@@ -346,7 +346,7 @@ namespace RenderData {
 		}
 
 		PlaneReference* transform() {
-			if (!transformable) return this;
+			if (!fixed) return this;
 			// Apply transformation
 			tl->position	= SRP_TRANSFORM(tl->position, local);
 			tr1->position	= SRP_TRANSFORM(tr1->position, local);
@@ -357,7 +357,8 @@ namespace RenderData {
 			return this;
 		}
 
-		bool transformable = true;
+		/// Whether the plane will be transformed when transform() is called
+		bool fixed = true;
 
 		Transform3D local;
 
@@ -435,10 +436,10 @@ namespace RenderData {
 				Vector3(+1.0, -1.0, 0.0)
 			);
 			plane->setUV(
-				Vector2(-1.0, +1.0),
+				Vector2(+0.0, +1.0),
 				Vector2(+1.0, +1.0),
-				Vector2(-1.0, -1.0),
-				Vector2(+1.0, -1.0)
+				Vector2(+0.0, +0.0),
+				Vector2(+1.0, +0.0)
 			);
 			plane->setColor();
 			// Add to reference list
@@ -552,7 +553,6 @@ namespace RenderData {
 			Shader::defaultShader["world"](Scene::world);
 			Shader::defaultShader["camera"](camera);
 			Shader::defaultShader["projection"](projection);
-			//Shader::defaultShader["actor"](asGLMMatrix(transform));
 			glDrawArrays(GL_TRIANGLES, 0, vertexCount);
 			// Render object passes, if any
 			if(shaders.size())
