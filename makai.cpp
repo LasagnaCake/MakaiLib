@@ -7,10 +7,10 @@
 
 //#define SIDE_B
 
-// [x] TODO: Fix rotation fuckery
+// [X] TODO: Fix rotation fuckery
 //		^ Maybe try and cheat with glm::rotate or glm::rotate_vector
 // [ ] TODO: Fix framebuffer
-// [ ] TODO: Fix UV & Color data not passing to shader
+// [X] TODO: Fix UV & Color data not passing to shader
 // [X] TODO: Automate plane transformation
 
 #ifndef SIDE_B
@@ -110,7 +110,6 @@ int main() {
 
 	Shader::defaultShader();
 	Shader::defaultShader["albedo"](glm::vec4(1, 1, 1, 1));
-	Shader::defaultShader["textured"](false);
 
 	prog.onFrame = $func() {
 		if (prog.input.getButtonDown(SDL_SCANCODE_ESCAPE))

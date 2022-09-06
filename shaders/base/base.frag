@@ -6,9 +6,10 @@ in vec4 fragColor;
 
 in float fragDistance;
 
-uniform bool textured;
+uniform bool textured = false;
 uniform sampler2D texture2D;
-uniform vec4 albedo;
+
+uniform vec4 albedo = vec4(1);
 
 void main(void) {
 	vec4 color;
@@ -16,6 +17,6 @@ void main(void) {
 		color = texture(texture2D, fragUV) * fragColor;
 	else
 		color = fragColor;
-	gl_FragColor = fragColor * albedo + vec4(0, 0, 0, 1);
+	gl_FragColor = color * albedo;
 	//gl_FragColor = vec4(fragColor.x, 1, 1.1-(fragDistance/50.0), 1) * albedo;
 }

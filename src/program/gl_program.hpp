@@ -199,7 +199,7 @@ namespace Makai {
 				// Set framebuffer's clear color
 				framebuffer.color = color;
 				// Render framebuffer
-				//framebuffer.renderToBuffer();
+				//framebuffer.render();
 				// Display window
 				SDL_GL_SwapWindow(window);
 				// [[ Render code END ]]
