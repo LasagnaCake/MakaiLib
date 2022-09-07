@@ -35,7 +35,7 @@ namespace Drawer {
 			if (created) return;
 			else created = true;
 			glGenFramebuffers(1, &id);
-			buffer.color = Drawer::getTexture2D(width, height, GL_UNSIGNED_INT);
+			buffer.color = Drawer::createTexture2D(width, height, GL_UNSIGNED_INT);
 			glFramebufferTexture2D(
 				GL_FRAMEBUFFER,
 				GL_COLOR_ATTACHMENT0,
@@ -59,7 +59,7 @@ namespace Drawer {
 				buffer.depth
 			);
 			/*
-			buffer.depth = Drawer::getTexture2D(width, height, GL_UNSIGNED_INT_24_8, GL_DEPTH_STENCIL);
+			buffer.depth = Drawer::createTexture2D(width, height, GL_UNSIGNED_INT_24_8, GL_DEPTH_STENCIL);
 			glFramebufferTexture2D(
 				GL_FRAMEBUFFER,
 				GL_DEPTH_STENCIL_ATTACHMENT,

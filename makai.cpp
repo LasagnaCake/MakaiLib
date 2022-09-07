@@ -53,9 +53,9 @@ int main() {
 	RenderData::Renderable testRenderable;
 	RenderData::Renderable testRenderable2(0);
 
-	RenderData::PlaneReference* p[12];
+	RenderData::AnimatedPlaneReference* p[12];
 	for (size_t i = 0; i < 12; i++) {
-		p[i] = testRenderable.createPlaneReference();
+		p[i] = testRenderable.createAnimatedPlaneReference();
 		p[i]->local.position.z = 5*i + 5;
 		p[i]->setColor(
 			Color::WHITE,
