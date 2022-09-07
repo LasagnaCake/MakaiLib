@@ -123,6 +123,7 @@ namespace Makai {
 			Shader::defaultShader.create();
 			$debug("Created!");
 			SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 1);
+			SDL_GL_SetAttribute(SDL_GL_BUFFER_SIZE, 1);
 			glEnable(GL_BLEND);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 			// Setup camera
