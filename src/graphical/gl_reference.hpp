@@ -86,7 +86,7 @@ public:
 	}
 
 	PlaneReference* setColor(
-			Vector4 col = Vector4(1.0, 1.0, 1.0, 1.0)
+			Vector4 col = Color::WHITE
 		) {
 		tl->color	= col;
 		tr1->color	= col;

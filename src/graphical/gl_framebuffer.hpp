@@ -132,7 +132,7 @@ namespace Drawer {
 			return id;
 		}
 
-		Vector4 color = Vector4(0, 0, 0, 1);
+		Vector4 color = Color::BLACK;
 		Vertex rect[4];
 		Shader::Shader* compose;
 

@@ -118,8 +118,13 @@ int main() {
 		vColor
 	));
 
+	Drawer::Texture2D testTX("ring.png");
+	testTX(0);
+
+	testRenderable.params.textured = true;
+
 	Shader::defaultShader();
-	//Shader::defaultShader["texture2D"](0);
+	Shader::defaultShader["texture2D"](0);
 	Shader::defaultShader["albedo"](glm::vec4(1, 1, 1, 1));
 
 	prog.onFrame = $func() {

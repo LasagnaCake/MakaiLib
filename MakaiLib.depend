@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1662572384 source:d:\c(++) projects\_c++\game engine\makailib\makai.cpp
+1662577168 source:d:\c(++) projects\_c++\game engine\makailib\makai.cpp
 	<stdexcept>
 	"src/program.hpp"
 	<windows.h>
@@ -2982,7 +2982,7 @@
 	<functional>
 	<string>
 
-1661613724 d:\c(++) projects\_c++\game engine\makailib\src\fileloader.hpp
+1662576676 d:\c(++) projects\_c++\game engine\makailib\src\fileloader.hpp
 	"anchors.hpp"
 
 1661613724 d:\c(++) projects\_c++\game engine\makailib\src\graphical.hpp
@@ -2990,10 +2990,13 @@
 	"graphical/gl_graphical.hpp"
 	"graphical/gl_shader.hpp"
 
-1662574936 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_graphical.hpp
+1662576295 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_graphical.hpp
 	"../anchors.hpp"
 	"gl_shader.hpp"
+	"gl_color.hpp"
+	"gl_texture.hpp"
 	"gl_reference.hpp"
+	"gl_renderable.hpp"
 	"gl_framebuffer.hpp"
 
 1661818675 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_shader.hpp
@@ -3291,7 +3294,14 @@
 
 1533818822 d:\c(++) projects\_c++\game engine\makailib\lib\opengl\glm\gtx\rotate_vector.inl
 
-1662574209 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_framebuffer.hpp
+1662576326 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_framebuffer.hpp
 
-1662574911 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_reference.hpp
+1662576359 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_reference.hpp
+
+1662577407 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_texture.hpp
+
+1662575193 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_renderable.hpp
+
+1662576424 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_color.hpp
+	"../anchors.hpp"
 
