@@ -102,11 +102,9 @@ namespace Drawer {
 	Group::Group<DrawFunc*> layers;
 
 	void renderLayer(size_t layerID) {
-		glEnable(GL_DEPTH_TEST);
 		for (auto rFunc: layers[layerID]) {
 			(*rFunc)();
 		}
-		glDisable(GL_DEPTH_TEST);
 	}
 
 	void renderAllLayers() {

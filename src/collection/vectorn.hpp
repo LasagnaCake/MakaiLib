@@ -828,19 +828,19 @@ namespace VecMath
 
 	/// Gets a 2D Vector of size 1 at a given angle relative to the origin.
 	Vector2 angleV2(float angle) {
-		return Vector2(sin(angle), -cos(angle));
+		return Vector2(cos(angle), sin(angle));
 	}
 
 	/// Gets a 3D Vector of size 1 at a given angle around one of the origin's axis.
 	Vector3 angleV3(float angle, unsigned char axis) {
 		switch (axis) {
 		case AXIS_X:
-			return Vector3(0, sin(angle), -cos(angle));
+			return Vector3(0, cos(angle), sin(angle));
 		case AXIS_Y:
 		default:
-			return Vector3(sin(angle), 0, -cos(angle));
+			return Vector3(cos(angle), 0, sin(angle));
 		case AXIS_Z:
-			return Vector3(sin(angle), -cos(angle), 0);
+			return Vector3(cos(angle), sin(angle), 0);
 		}
 	}
 

@@ -7,11 +7,7 @@
 
 //#define SIDE_B
 
-// [X] TODO: Fix rotation fuckery
-//		^ Maybe try and cheat with glm::rotate or glm::rotate_vector
 // [ ] TODO: Fix framebuffer
-// [X] TODO: Fix UV & Color data not passing to shader
-// [X] TODO: Automate plane transformation
 
 #ifndef SIDE_B
 int main() {
@@ -55,6 +51,7 @@ int main() {
 	$debug(sizeof(Drawer::Vertex)/sizeof(float));
 
 	RenderData::Renderable testRenderable;
+	RenderData::Renderable testRenderable2(1);
 
 	RenderData::PlaneReference* p[10];
 	for (size_t i = 0; i < 10; i++) {
@@ -93,7 +90,7 @@ int main() {
 	Vector::Vector3 vPos[3] = {
 		Vector::Vector3(0, 0, 20),
 		Vector::Vector3(10, 0, 10),
-		Vector::Vector3(10, 0, 20)
+		Vector::Vector3(20, 0, 30)
 	};
 
 	Vector::Vector4 vColor[3] = {
@@ -102,7 +99,7 @@ int main() {
 		Vector::Vector4(0, 1, 1, 1)
 	};
 
-	testRenderable.triangles.push_back(new RenderData::Triangle(
+	testRenderable2.triangles.push_back(new RenderData::Triangle(
 		vPos,
 		nullptr,
 		vColor
@@ -141,10 +138,11 @@ int main() {
 		);*/
 		//testRenderable.transform.local.position.z = 20;
 		for (size_t i = 0; i < 10; i++) {
-			float sinC = sin(frame/600.0f + i/1.0);
-			//p[i]->local.position.x = sinC;
+			float sinC = sin(frame/50.0f + i/1.0);
+			float cosC = cos(frame/50.0f + i/1.0);
+			p[i]->local.position.x = cosC;
+			p[i]->local.position.y = sinC;
 			p[i]->local.rotation.z = frame / 300.0f;
-			//p[i]->local.rotation.y = frame / 300.0f;
 			//Scene::camera.up.x =  sinC / 3;
 			//testRenderable.transform.local.rotation.x = frame / 200.0f;
 			//testRenderable.transform.local.rotation.y = frame / 200.0f;

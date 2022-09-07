@@ -7,12 +7,7 @@
 
 //#define SIDE_B
 
-// [x] TODO: Fix rotation fuckery
-//		^ Maybe try and cheat with glm::rotate or glm::rotate_vector
 // [ ] TODO: Fix framebuffer
-// [ ] TODO: Fix UV & Color data not passing to shader
-// [ ] TODO: Fix life
-// [X] TODO: Automate plane transformation
 
 #ifndef SIDE_B
 int main() {
@@ -48,10 +43,12 @@ int main() {
 
 	$debug("Size of float:");
 	$debug(sizeof(float));
-	$debug("Size of raw vertex:");
+	$debug("Size of vertex classes:");
 	$debug(sizeof(Drawer::RawVertex));
+	$debug(sizeof(Drawer::Vertex));
 	$debug("Ratio:");
 	$debug(sizeof(Drawer::RawVertex)/sizeof(float));
+	$debug(sizeof(Drawer::Vertex)/sizeof(float));
 
 	RenderData::Renderable testRenderable;
 
@@ -59,6 +56,12 @@ int main() {
 	for (size_t i = 0; i < 10; i++) {
 		p[i] = testRenderable.createPlaneReference();
 		p[i]->local.position.z = 5*i + 5;
+		p[i]->setColor(
+			Vector::Vector4(1,0,0,1),
+			Vector::Vector4(1,0,0,1),
+			Vector::Vector4(0),
+			Vector::Vector4(0)
+		);
 	}
 	/*p->transform(
 		VecMath::Transform3D(
@@ -67,13 +70,42 @@ int main() {
 			Vector::Vector3(1, 1, 1)
 		)
 	);*/
-	p[0]->setColor(
-		Vector::Vector4(1,0,0,1),
-		Vector::Vector4(1,0,0,1),
-		Vector::Vector4(0),
-		Vector::Vector4(0)
-	);
 	//testRenderable.triangles.push_back(new RenderData::Triangle());
+
+	Tween::Tween t;
+
+	size_t elapsed = SDL_GetTicks();
+
+	prog.maxFrameRate = 60;
+
+	float moveSpeed = 10.0 / prog.maxFrameRate;
+
+	t.setInterpolation(0, -25, 180, Tween::ease.inOut.elastic, &testRenderable.transform.local.position.z);
+
+	t.onCompleted = $signal {
+		$debug(SDL_GetTicks() - elapsed);
+	};
+
+	Vector::Vector3 vPos[3] = {
+		Vector::Vector3(0, 0, 20),
+		Vector::Vector3(10, 0, 10),
+		Vector::Vector3(20, 0, 30)
+	};
+
+	Vector::Vector4 vColor[3] = {
+		Vector::Vector4(1, 1, 0, 1),
+		Vector::Vector4(1, 0, 1, 1),
+		Vector::Vector4(0, 1, 1, 1)
+	};
+
+	testRenderable.triangles.push_back(new RenderData::Triangle(
+		vPos,
+		nullptr,
+		vColor
+	));
+
+	Shader::defaultShader();
+	Shader::defaultShader["albedo"](glm::vec4(1, 1, 1, 1));
 
 	prog.onFrame = $func() {
 		if (prog.input.getButtonDown(SDL_SCANCODE_ESCAPE))
@@ -81,34 +113,35 @@ int main() {
 		Scene::camera.eye.z -= (
 			prog.input.getButtonDown(SDL_SCANCODE_S) -
 			prog.input.getButtonDown(SDL_SCANCODE_W)
-		)*(1.0/60.0);
+		) * moveSpeed;
 		Scene::camera.eye.x -= (
 			prog.input.getButtonDown(SDL_SCANCODE_D) -
 			prog.input.getButtonDown(SDL_SCANCODE_A)
-		)*(1.0/60.0);
+		) * moveSpeed;
 		Scene::camera.at.z -= (
 			prog.input.getButtonDown(SDL_SCANCODE_S) -
 			prog.input.getButtonDown(SDL_SCANCODE_W)
-		)*(1.0/60.0);
+		) * moveSpeed;
 		Scene::camera.at.x -= (
 			prog.input.getButtonDown(SDL_SCANCODE_D) -
 			prog.input.getButtonDown(SDL_SCANCODE_A)
-		)*(1.0/60.0);
+		) * moveSpeed;
 		Scene::camera.at.y -= (
 			prog.input.getButtonDown(SDL_SCANCODE_DOWN) -
 			prog.input.getButtonDown(SDL_SCANCODE_UP)
-		)*(1.0/60.0);
+		) * moveSpeed;
 		/*Scene::camera.eye = Vector::Vector3(
 			sin(frame/300.0f) * 3,
 			2,
 			cos(frame/300.0f) - 2
 		);*/
-		testRenderable.transform.local.position.z = 20;
+		//testRenderable.transform.local.position.z = 20;
 		for (size_t i = 0; i < 10; i++) {
-			float sinC = sin(frame/600.0f + i/1.0);
-			//p[i]->local.position.x = sinC;
+			float sinC = sin(frame/10.0f + i/1.0);
+			float cosC = cos(frame/10.0f + i/1.0);
+			p[i]->local.position.x = sinC;
+			p[i]->local.position.y = cosC;
 			p[i]->local.rotation.z = frame / 300.0f;
-			//p[i]->local.rotation.y = frame / 300.0f;
 			//Scene::camera.up.x =  sinC / 3;
 			//testRenderable.transform.local.rotation.x = frame / 200.0f;
 			//testRenderable.transform.local.rotation.y = frame / 200.0f;

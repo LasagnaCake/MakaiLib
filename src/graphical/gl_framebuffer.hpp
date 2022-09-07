@@ -2,6 +2,7 @@
 #define MAKAI_FRAME_BUFFERRING_H
 
 namespace Drawer {
+	// Todo: Fix this
 	class FrameBuffer {
 	public:
 		FrameBuffer() {}
