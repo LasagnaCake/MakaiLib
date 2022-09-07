@@ -63,6 +63,7 @@ int main() {
 			Color::NONE,
 			Color::NONE
 		);
+		p[i]->size = Vector::Vector2(1, 2);
 	}
 	/*p->transform(
 		VecMath::Transform3D(
@@ -125,6 +126,7 @@ int main() {
 
 	Shader::defaultShader();
 	Shader::defaultShader["texture2D"](0);
+	Shader::defaultShader["fog"](true);
 	Shader::defaultShader["albedo"](glm::vec4(1, 1, 1, 1));
 
 	prog.onFrame = $func() {

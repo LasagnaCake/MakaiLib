@@ -197,8 +197,6 @@ namespace Makai {
 				//framebuffer();
 				// Render screen
 				render();
-				// Set framebuffer's clear color
-				framebuffer.color = color;
 				// Render framebuffer
 				//framebuffer.render();
 				// Display window
@@ -261,7 +259,7 @@ namespace Makai {
 		} out;
 
 		/// The window's clear color.
-		VecV4 color = VecV4(0, 0, 0, 1);
+		VecV4 color = Color::BLACK;
 
 		/// The program's input manager.
 		InputManager input;

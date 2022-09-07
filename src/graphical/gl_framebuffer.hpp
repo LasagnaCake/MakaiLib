@@ -22,7 +22,7 @@ namespace Drawer {
 			if (!created) return;
 			else created = false;
 			glDeleteFramebuffers(1, &id);
-			glDeleteTextures(1, &buffer.color);
+			glDeleteTextures(1, &buffer.screen);
 			glDeleteTextures(1, &buffer.depth);
 			glDeleteBuffers(1, &vbo);
 			glDeleteVertexArrays(1, &vao);
@@ -35,38 +35,22 @@ namespace Drawer {
 			if (created) return;
 			else created = true;
 			glGenFramebuffers(1, &id);
-			buffer.color = Drawer::createTexture2D(width, height, GL_UNSIGNED_INT);
+			buffer.screen = Drawer::createTexture2D(width, height, GL_UNSIGNED_INT);
 			glFramebufferTexture2D(
 				GL_FRAMEBUFFER,
 				GL_COLOR_ATTACHMENT0,
 				GL_TEXTURE_2D,
-				buffer.color,
+				buffer.screen,
 				0
 			);
-			glGenRenderbuffers(1, &buffer.depth);
-			glBindRenderbuffer(GL_RENDERBUFFER, buffer.depth);
-			glRenderbufferStorage(
-				GL_RENDERBUFFER,
-				GL_DEPTH24_STENCIL8,
-				width,
-				height
-			);
-			glBindRenderbuffer(GL_RENDERBUFFER, 0);
-			glFramebufferRenderbuffer(
-				GL_FRAMEBUFFER,
-				GL_DEPTH_STENCIL_ATTACHMENT,
-				GL_RENDERBUFFER,
-				buffer.depth
-			);
-			/*
-			buffer.depth = Drawer::createTexture2D(width, height, GL_UNSIGNED_INT_24_8, GL_DEPTH_STENCIL);
+			buffer.depth = Drawer::createTexture2D(width, height, GL_UNSIGNED_INT, GL_DEPTH);
 			glFramebufferTexture2D(
 				GL_FRAMEBUFFER,
-				GL_DEPTH_STENCIL_ATTACHMENT,
+				GL_DEPTH_ATTACHMENT,
 				GL_TEXTURE_2D,
 				buffer.depth,
 				0
-			);*/
+			);
 			// Setup display rectangle
 			rect[0].position	= Vector3(-1, +1, 0);
 			rect[0].uv			= Vector2(0, 0);
@@ -122,7 +106,7 @@ namespace Drawer {
 			glClear(GL_COLOR_BUFFER_BIT);
 			// Activate compose shader
 			comp();
-			Drawer::setTexture2D(0, buffer.depth);
+			Drawer::setTexture2D(0, buffer.screen);
 			comp["screen"](0);
 			// Draw screen
 			draw();
@@ -132,7 +116,7 @@ namespace Drawer {
 			return id;
 		}
 
-		Vector4 color = Color::BLACK;
+		Vector4 color = Color::NONE;
 		Vertex rect[4];
 		Shader::Shader* compose;
 
@@ -159,7 +143,7 @@ namespace Drawer {
 		bool created = false;
 		unsigned int id;
 		struct {
-			unsigned int color;
+			unsigned int screen;
 			unsigned int depth;
 		} buffer;
 		unsigned int vao;
