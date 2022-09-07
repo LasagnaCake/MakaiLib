@@ -35,21 +35,7 @@ namespace Drawer {
 			if (created) return;
 			else created = true;
 			glGenFramebuffers(1, &id);
-			glGenTextures(1, &buffer.color);
-			glBindTexture(GL_TEXTURE_2D, buffer.color);
-			glTexImage2D(
-				GL_TEXTURE_2D,
-				0,
-				GL_RGBA,
-				width,
-				height,
-				0,
-				GL_RGBA,
-				GL_UNSIGNED_BYTE,
-				NULL
-			);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			buffer.color = Drawer::getTexture2D(width, height, GL_UNSIGNED_INT);
 			glFramebufferTexture2D(
 				GL_FRAMEBUFFER,
 				GL_COLOR_ATTACHMENT0,
@@ -73,19 +59,7 @@ namespace Drawer {
 				buffer.depth
 			);
 			/*
-			glGenTextures(1, &buffer.depth);
-			glBindTexture(GL_TEXTURE_2D, buffer.depth);
-			glTexImage2D(
-				GL_TEXTURE_2D,
-				0,
-				GL_DEPTH24_STENCIL8,
-				width,
-				height,
-				0,
-				GL_DEPTH_STENCIL,
-				GL_UNSIGNED_INT_24_8,
-				NULL
-			);
+			buffer.depth = Drawer::getTexture2D(width, height, GL_UNSIGNED_INT_24_8, GL_DEPTH_STENCIL);
 			glFramebufferTexture2D(
 				GL_FRAMEBUFFER,
 				GL_DEPTH_STENCIL_ATTACHMENT,

@@ -1,4 +1,4 @@
-#version 410 core
+#version 430 core
 
 uniform mat4 world;
 uniform mat4 camera;

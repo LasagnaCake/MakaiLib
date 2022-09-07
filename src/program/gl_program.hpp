@@ -241,6 +241,10 @@ namespace Makai {
 			return framebuffer.getID();
 		}
 
+		Vector2 getScreenSize() {
+			return Vector2(width, height);
+		}
+
 		/// Gets called whenever the program is rendering to the screen. Happens last.
 		Event::Signal	onDraw	= $func() {};
 

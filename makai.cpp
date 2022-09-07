@@ -51,17 +51,17 @@ int main() {
 	$debug(sizeof(Drawer::Vertex)/sizeof(float));
 
 	RenderData::Renderable testRenderable;
-	RenderData::Renderable testRenderable2(1);
+	RenderData::Renderable testRenderable2(0);
 
-	RenderData::PlaneReference* p[10];
-	for (size_t i = 0; i < 10; i++) {
+	RenderData::PlaneReference* p[12];
+	for (size_t i = 0; i < 12; i++) {
 		p[i] = testRenderable.createPlaneReference();
 		p[i]->local.position.z = 5*i + 5;
 		p[i]->setColor(
-			Vector::Vector4(1,0,0,1),
-			Vector::Vector4(1,0,0,1),
-			Vector::Vector4(0),
-			Vector::Vector4(0)
+			Color::WHITE,
+			Color::WHITE,
+			Color::NONE,
+			Color::NONE
 		);
 	}
 	/*p->transform(
@@ -93,10 +93,23 @@ int main() {
 		Vector::Vector3(20, 0, 30)
 	};
 
+	p[11]->setColor(Color::PURPLE);
+	p[10]->setColor(Color::MAGENTA);
+	p[9]->setColor(Color::PINK);
+	p[8]->setColor(Color::RED);
+	p[7]->setColor(Color::ORANGE);
+	p[6]->setColor(Color::YELLOW);
+	p[5]->setColor(Color::LIME);
+	p[4]->setColor(Color::GREEN);
+	p[3]->setColor(Color::TEAL);
+	p[2]->setColor(Color::CYAN);
+	p[1]->setColor(Color::AZURE);
+	p[0]->setColor(Color::BLUE);
+
 	Vector::Vector4 vColor[3] = {
-		Vector::Vector4(1, 1, 0, 1),
-		Vector::Vector4(1, 0, 1, 1),
-		Vector::Vector4(0, 1, 1, 1)
+		Color::PURPLE,
+		Color::ORANGE,
+		Color::TEAL
 	};
 
 	testRenderable2.triangles.push_back(new RenderData::Triangle(
@@ -106,6 +119,7 @@ int main() {
 	));
 
 	Shader::defaultShader();
+	//Shader::defaultShader["texture2D"](0);
 	Shader::defaultShader["albedo"](glm::vec4(1, 1, 1, 1));
 
 	prog.onFrame = $func() {
@@ -137,12 +151,12 @@ int main() {
 			cos(frame/300.0f) - 2
 		);*/
 		//testRenderable.transform.local.position.z = 20;
-		for (size_t i = 0; i < 10; i++) {
+		for (size_t i = 0; i < 12; i++) {
 			float sinC = sin(frame/50.0f + i/1.0);
 			float cosC = cos(frame/50.0f + i/1.0);
 			p[i]->local.position.x = cosC;
 			p[i]->local.position.y = sinC;
-			p[i]->local.rotation.z = frame / 300.0f;
+			p[i]->local.rotation.z = -frame / 20.0f;
 			//Scene::camera.up.x =  sinC / 3;
 			//testRenderable.transform.local.rotation.x = frame / 200.0f;
 			//testRenderable.transform.local.rotation.y = frame / 200.0f;
