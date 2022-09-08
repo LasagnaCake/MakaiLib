@@ -38,7 +38,7 @@ int main() {
 
 	Makai::Program prog(960, 720, "[TEST]");
 
-	// [[ Main Program Code END ]]
+	// [[ Main Program Code BEGIN ]]
 
 	prog.color = Color::GRAY;
 
