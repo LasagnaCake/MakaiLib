@@ -25,6 +25,7 @@ namespace Drawer {
 		Vector::Vector3,
 		Vector::Vector4,
 		VecMath::Transform3D,
+		VecMath::Transform2D,
 		VecMath::srpTransform,
 		std::vector;
 

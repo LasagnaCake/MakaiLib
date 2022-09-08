@@ -138,20 +138,21 @@ namespace Makai {
 			compose.create(SLF::parseFile("shaders/framebuffer/compose.slf"));
 			framebuffer.shader = &compose;
 			Shader::defaultShader["textured"](false);
-			// Call on creation function
-			onCreate();
 		}
 
 		/// Sets the window's title.
-		void setWindowTitle(string windowTitle) {
+		inline void setWindowTitle(string windowTitle) {
+			SDL_SetWindowTitle(window, windowTitle.c_str());
 		}
 
-		void setAlphaBlendMode(GLuint type) {
+		inline void setAlphaBlendMode(GLuint type) {
 			glBlendFunc(GL_SRC_ALPHA, type);
 		}
 
 		/// Runs the program.
 		void run(){
+			// Call on open function
+			onOpen();
 			// The physics process
 			auto physFunc	= [&](float delta)-> void {
 
@@ -194,8 +195,6 @@ namespace Makai {
 				framebuffer();
 				// Render screen
 				render();
-				// Set screen clear color
-				framebuffer.color = color;
 				// Render framebuffer
 				framebuffer.render();
 				// Display window
@@ -234,16 +233,16 @@ namespace Makai {
 			return frame;
 		}
 
-		Drawer::FrameBuffer& getFrameBuffer() {
+		inline Drawer::FrameBuffer& getFrameBuffer() {
 			return framebuffer;
 		}
 
-		Vector2 getScreenSize() {
+		inline Vector2 getScreenSize() {
 			return Vector2(width, height);
 		}
 
-		/// Gets called when the program is created.
-		virtual void onCreate() {};
+		/// Gets called when the program is opened.
+		virtual void onOpen() {};
 
 		/// Gets called whenever the program is rendering to the screen.
 		/// Happens before any object is rendered.

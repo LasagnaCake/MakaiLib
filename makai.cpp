@@ -10,10 +10,17 @@
 // [ ] TODO: Fix framebuffer
 
 class GameApp: public Makai::Program{
-	void onCreate() override {
+	using Makai::Program::Program;
+
+	void onOpen() override {
+		getFrameBuffer().color = Color::GREEN;
+		//getFrameBuffer().tint = Color::RED;
+		color = Color::BLUE;
 	}
 
 	void onLogicFrame() override {
+		getFrameBuffer().transform.rotation.z
+			= sin(getFrameCounter()/60.0);
 	}
 
 	void onDrawBegin() override {
@@ -36,11 +43,9 @@ int main() {
 	***********************
 	*/
 
-	Makai::Program prog(960, 720, "[TEST]");
+	GameApp prog(960, 720, "[TEST]");
 
 	// [[ Main Program Code BEGIN ]]
-
-	prog.color = Color::GRAY;
 
 	Scene::camera.eye = Vector::Vector3(0, 10, 0);
 	Scene::camera.at = Vector::Vector3(0, 0, 10);
@@ -49,6 +54,35 @@ int main() {
 	SLF::SLFData data = SLF::parseFile("shaders/base/base.slf");
 	Shader::defaultShader.destroy();
 	Shader::defaultShader.create(data);
+
+	RenderData::Renderable testRenderable;
+
+	RenderData::AnimatedPlaneReference* p[12];
+
+	for (size_t i = 0; i < 12; i++) {
+		p[i] = testRenderable.createAnimatedPlaneReference();
+		p[i]->local.position.z = 5*i + 5;
+		p[i]->setColor(
+			Color::WHITE,
+			Color::WHITE,
+			Color::NONE,
+			Color::NONE
+		);
+		p[i]->size = Vector::Vector2(1, 2);
+	}
+
+	p[11]->setColor(Color::PURPLE);
+	p[10]->setColor(Color::MAGENTA);
+	p[9]->setColor(Color::PINK);
+	p[8]->setColor(Color::RED);
+	p[7]->setColor(Color::ORANGE);
+	p[6]->setColor(Color::YELLOW);
+	p[5]->setColor(Color::LIME);
+	p[4]->setColor(Color::GREEN);
+	p[3]->setColor(Color::TEAL);
+	p[2]->setColor(Color::CYAN);
+	p[1]->setColor(Color::AZURE);
+	p[0]->setColor(Color::BLUE);
 
 	// [[ Main Program Code END ]]
 

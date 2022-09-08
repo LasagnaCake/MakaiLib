@@ -83,12 +83,18 @@ namespace Drawer {
 		void render(unsigned int targetBuffer = 0) {
 			// Set target buffer
 			glBindFramebuffer(GL_FRAMEBUFFER, targetBuffer);
+			// Clear target frame buffer
+			glClearColor(color.x, color.y, color.z, color.w);
+			glClear(GL_COLOR_BUFFER_BIT);
 			// Create Intermediary Vertex Buffer (IVB) to be displayed on screen
 			RawVertex verts[4];
-			verts[0] = toRawVertex(rect[0]);
-			verts[1] = toRawVertex(rect[1]);
-			verts[2] = toRawVertex(rect[2]);
-			verts[3] = toRawVertex(rect[3]);
+			for (unsigned char i = 0; i < 4; i++) {
+				Vertex v = rect[i];
+				v.position = SRP_TRANSFORM(v.position.xy(), transform);
+				v.uv += uvShift;
+				v.color *= tint;
+				verts[i] = toRawVertex(v);
+			}
 			// Set VBO as active
 			glBindBuffer(GL_ARRAY_BUFFER, vbo);
 			// Copy IVB to VBO
@@ -104,11 +110,6 @@ namespace Drawer {
 			Drawer::setVertexAttributes();
 			// Get shader
 			auto& comp = (*shader);
-			// Bind target frame buffer
-			glBindFramebuffer(GL_FRAMEBUFFER, targetBuffer);
-			// Clear target frame buffer
-			glClearColor(color.x, color.y, color.z, color.w);
-			glClear(GL_COLOR_BUFFER_BIT);
 			// Activate shader shader
 			comp();
 			Drawer::setTexture2D(30, buffer.depth);
@@ -125,8 +126,18 @@ namespace Drawer {
 			return id;
 		}
 
+		/// The framebuffer's transformation.
+		Transform3D transform;
+		/// The framebuffer's UV offset.
+		Vector2 uvShift;
+		/// The framebuffer's tint.
+		Vector4 tint = Color::WHITE;
+
+		/// The framebuffer's clear color.
 		Vector4 color = Color::NONE;
+		/// The framebuffer's shape.
 		Vertex rect[4];
+		/// The framebuffer's rendering shader.
 		Shader::Shader* shader;
 
 	private:

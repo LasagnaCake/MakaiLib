@@ -454,6 +454,18 @@ namespace Vector{
 					Math::clamp(z, min.z, max.z)
 				);
 			}
+
+			Vector2 xy() {
+				return Vector2(x, y);
+			}
+
+			Vector2 yz() {
+				return Vector2(x, y);
+			}
+
+			Vector2 xz() {
+				return Vector2(x, y);
+			}
 	};
 
 	/**
