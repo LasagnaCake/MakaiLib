@@ -22,7 +22,7 @@ int main() {
 	//Makai::Program prog(720, 640, "OK");
 	Makai::Program prog(960, 720, "OK");
 	//Makai::Program prog(1280, 960, "OK");
-	prog.color = Vector::Vector4(Vector::Vector3(.5), 1);
+	prog.color = Color::GRAY;
 	float frame = 0;
 	Scene::camera.eye = Vector::Vector3(0, 10, 0);
 	Scene::camera.at = Vector::Vector3(0, 0, 10);
@@ -170,6 +170,9 @@ int main() {
 			//testRenderable.transform.local.rotation.z = frame / 600.0f;
 		}
 	};
+
+	//Shader::Shader fogShader
+	//Drawer::FrameBuffer fogBuffer(960, 720);
 
 	prog.onDraw = $func() {
 		//testRenderable.triangles[0]->verts[0].position.x = sinC;

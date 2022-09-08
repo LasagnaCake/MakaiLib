@@ -9,15 +9,15 @@ in float fragDistance;
 uniform bool textured = false;
 uniform sampler2D texture2D;
 
-uniform float alphaClip = 0.1;
-
-uniform bool fog = false;
-uniform float fogNear = 20;
-uniform float fogFar = 50;
-uniform float fogStrength = 1;
-uniform vec4 fogColor = vec4(0);
+uniform float alphaClip = 0.5;
 
 uniform vec4 albedo = vec4(1);
+
+uniform bool	fog			= true;
+uniform float	fogNear		= 20;
+uniform float	fogFar		= 40;
+uniform float	fogStrength	= 1;
+uniform vec4	fogColor	= vec4(0);
 
 void main(void) {
 	vec4 color;
@@ -25,14 +25,14 @@ void main(void) {
 		color = texture(texture2D, fragUV) * fragColor;
 	else
 		color = fragColor;
-	
-	if (fog) {
-		float fogFactor = ((gl_FragCoord.z - fogNear) / fogFar) * fogStrength;
-		fogFactor = clamp(fogFactor, 0, 1);
-		color = mix(color, fogColor, fogFactor);
-	}
 
 	if (color.w < alphaClip) discard;
+
+	if (fog) {
+		float fogValue = (fragDistance - fogNear) / fogFar;
+		fogValue = clamp(fogValue, 0, 1) * fogStrength;
+		color = mix(color, fogColor * vec4(vec3(1), color.w), fogValue);
+	}
 
 	gl_FragColor = mix(vec4(0), color * albedo, color.w);
 

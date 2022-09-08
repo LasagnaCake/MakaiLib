@@ -130,18 +130,13 @@ namespace Makai {
 			$debug("Setting starting camera...");
 			Scene::camera.aspect = Vector2(width, height);
 			Scene::camera.fov = glm::radians(45.0f);
-			// Define texture wrapping & mipmaps
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 			$debug("creating default framebuffer...");
 			// Create framebuffer
 			framebuffer.create(width, height);
 			// Create composition shader
 			$debug("Creating composition shader...");
 			compose.create(SLF::parseFile("shaders/framebuffer/compose.slf"));
-			framebuffer.compose = &compose;
+			framebuffer.shader = &compose;
 			Shader::defaultShader["textured"](false);
 		}
 
@@ -194,11 +189,13 @@ namespace Makai {
 				// Clear screen
 				glClearColor(color.x, color.y, color.z, color.w);
 				//Enable framebuffer
-				//framebuffer();
+				framebuffer();
 				// Render screen
 				render();
+				// Set screen clear color
+				framebuffer.color = color;
 				// Render framebuffer
-				//framebuffer.render();
+				framebuffer.render();
 				// Display window
 				SDL_GL_SwapWindow(window);
 				// [[ Render code END ]]
@@ -281,7 +278,7 @@ namespace Makai {
 		void terminate() {
 			// Call final function
 			onClose();
-			// Destroy framebuffer
+			// Destroy framebuffers
 			compose.destroy();
 			framebuffer.destroy();
 			// Quit SDL

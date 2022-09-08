@@ -35,6 +35,7 @@ namespace Drawer {
 			if (created) return;
 			else created = true;
 			glGenFramebuffers(1, &id);
+			glBindFramebuffer(GL_FRAMEBUFFER, id);
 			buffer.screen = Drawer::createTexture2D(width, height, GL_UNSIGNED_INT);
 			glFramebufferTexture2D(
 				GL_FRAMEBUFFER,
@@ -43,7 +44,8 @@ namespace Drawer {
 				buffer.screen,
 				0
 			);
-			buffer.depth = Drawer::createTexture2D(width, height, GL_UNSIGNED_INT, GL_DEPTH);
+			buffer.depth = Drawer::createTexture2D(width, height, GL_UNSIGNED_INT, GL_DEPTH_COMPONENT);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LESS);
 			glFramebufferTexture2D(
 				GL_FRAMEBUFFER,
 				GL_DEPTH_ATTACHMENT,
@@ -53,20 +55,21 @@ namespace Drawer {
 			);
 			// Setup display rectangle
 			rect[0].position	= Vector3(-1, +1, 0);
-			rect[0].uv			= Vector2(0, 0);
+			rect[0].uv			= Vector2(0, 1);
 			rect[0].color		= Vector4(1);
 			rect[1].position	= Vector3(+1, +1, 0);
-			rect[1].uv			= Vector2(1, 0);
+			rect[1].uv			= Vector2(1, 1);
 			rect[0].color		= Vector4(1);
 			rect[2].position	= Vector3(-1, -1, 0);
-			rect[2].uv			= Vector2(0, 1);
+			rect[2].uv			= Vector2(0, 0);
 			rect[0].color		= Vector4(1);
 			rect[3].position	= Vector3(+1, -1, 0);
-			rect[3].uv			= Vector2(1, 1);
+			rect[3].uv			= Vector2(1, 0);
 			rect[0].color		= Vector4(1);
 			// Create buffers
 			glGenVertexArrays(1, &vao);
 			glGenBuffers(1, &vbo);
+			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		}
 
 		void operator()() {
@@ -78,6 +81,8 @@ namespace Drawer {
 		}
 
 		void render(unsigned int targetBuffer = 0) {
+			// Set target buffer
+			glBindFramebuffer(GL_FRAMEBUFFER, targetBuffer);
 			// Create Intermediary Vertex Buffer (IVB) to be displayed on screen
 			RawVertex verts[4];
 			verts[0] = toRawVertex(rect[0]);
@@ -89,7 +94,7 @@ namespace Drawer {
 			// Copy IVB to VBO
 			glBufferData(
 				GL_ARRAY_BUFFER,
-				RAW_VERTEX_SIZE * 4 * sizeof(float),
+				RAW_VERTEX_BYTE_SIZE * 4,
 				verts,
 				GL_STATIC_DRAW
 			);
@@ -98,16 +103,20 @@ namespace Drawer {
 			// Define vertex data in VBO
 			Drawer::setVertexAttributes();
 			// Get shader
-			auto& comp = (*compose);
+			auto& comp = (*shader);
 			// Bind target frame buffer
 			glBindFramebuffer(GL_FRAMEBUFFER, targetBuffer);
 			// Clear target frame buffer
 			glClearColor(color.x, color.y, color.z, color.w);
 			glClear(GL_COLOR_BUFFER_BIT);
-			// Activate compose shader
+			// Activate shader shader
 			comp();
-			Drawer::setTexture2D(0, buffer.screen);
-			comp["screen"](0);
+			Drawer::setTexture2D(30, buffer.depth);
+			Drawer::setTexture2D(31, buffer.screen);
+			comp["near"](Scene::camera.zNear);
+			comp["far"](Scene::camera.zFar);
+			comp["depth"](30);
+			comp["screen"](31);
 			// Draw screen
 			draw();
 		}
@@ -118,7 +127,7 @@ namespace Drawer {
 
 		Vector4 color = Color::NONE;
 		Vertex rect[4];
-		Shader::Shader* compose;
+		Shader::Shader* shader;
 
 	private:
 		void draw() {

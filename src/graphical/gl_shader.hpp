@@ -24,6 +24,7 @@ namespace Shader {
 	namespace {
 		using namespace std;
 		using namespace FileLoader;
+		using namespace Vector;
 
 		struct _UniSet {
 			string name;
@@ -55,6 +56,11 @@ namespace Shader {
 			}
 
 			void operator()(glm::vec2 value) const
+			{
+				glUniform2f(glGetUniformLocation(id, name.c_str()), value.x, value.y);
+			}
+
+			void operator()(Vector2 value) const
 			{
 				glUniform2f(glGetUniformLocation(id, name.c_str()), value.x, value.y);
 			}

@@ -12,8 +12,10 @@ unsigned int createTexture2D(
 	unsigned char* data = NULL
 ) {
 	GLuint texture;
+	// Create texture
 	glGenTextures(1, &texture);
 	glBindTexture(GL_TEXTURE_2D, texture);
+	// Bind image data
 	glTexImage2D(
 		GL_TEXTURE_2D,
 		0,
@@ -25,9 +27,14 @@ unsigned int createTexture2D(
 		type,
 		data
 	);
+	// Set texture wrapping & mipmaps
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glGenerateMipmap(GL_TEXTURE_2D);
+	// Set filtering
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filter);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filter);
+	// Return texture ID
 	return texture;
 }
 

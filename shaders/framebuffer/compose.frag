@@ -1,11 +1,11 @@
-#version 410
+#version 420
 
 in vec2 fragUV;
 in vec4 fragColor;
 
 uniform sampler2D screen;
+uniform sampler2D depth;
 
 void main() {
-//	gl_FragColor = clamp(vec4(fragUV.x + 1, fragUV.y + 1, 1, 1), 0, 1);
 	gl_FragColor = texture(screen, fragUV) * fragColor;
 }
