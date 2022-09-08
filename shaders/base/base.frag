@@ -13,7 +13,7 @@ uniform float alphaClip = 0.5;
 
 uniform vec4 albedo = vec4(1);
 
-uniform bool	fog			= true;
+uniform bool	fog			= false;
 uniform float	fogNear		= 20;
 uniform float	fogFar		= 40;
 uniform float	fogStrength	= 1;

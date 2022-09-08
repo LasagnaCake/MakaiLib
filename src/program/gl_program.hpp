@@ -138,6 +138,8 @@ namespace Makai {
 			compose.create(SLF::parseFile("shaders/framebuffer/compose.slf"));
 			framebuffer.shader = &compose;
 			Shader::defaultShader["textured"](false);
+			// Call on creation function
+			onCreate();
 		}
 
 		/// Sets the window's title.
@@ -182,7 +184,7 @@ namespace Makai {
 				std::thread physics(physFunc, deltaTime);
 				// Do your own stuff
 				logicFunc(deltaTime);
-				onFrame();
+				onLogicFrame();
 				// Wait for thread to be done processing
 				physics.join();
 				// [[ Render code BEGIN ]]
@@ -232,31 +234,35 @@ namespace Makai {
 			return frame;
 		}
 
-		unsigned int getFrameBufferID() {
-			return framebuffer.getID();
+		Drawer::FrameBuffer& getFrameBuffer() {
+			return framebuffer;
 		}
 
 		Vector2 getScreenSize() {
 			return Vector2(width, height);
 		}
 
-		/// Gets called whenever the program is rendering to the screen. Happens last.
-		Event::Signal	onDraw	= $func() {};
+		/// Gets called when the program is created.
+		virtual void onCreate() {};
 
+		/// Gets called whenever the program is rendering to the screen.
+		/// Happens before any object is rendered.
+		virtual void onDrawBegin()	{};
+		/// Happens after all objects are rendered.
+		virtual void onDrawEnd()	{};
 
 		/// Gets called every frame, along all other logic.
-		Event::Signal	onFrame = $func() {};
-
+		virtual void onLogicFrame()	{};
 
 		/// Gets called when the program is closing. Happens before Window is terminated.
-		Event::Signal	onClose = $func() {};
+		virtual void onClose()	{};
 
 		/// The program's window output.
 		struct {
 		} out;
 
 		/// The window's clear color.
-		VecV4 color = Color::BLACK;
+		Vector4 color = Color::BLACK;
 
 		/// The program's input manager.
 		InputManager input;
@@ -292,10 +298,12 @@ namespace Makai {
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			// Enable depth testing
 			glEnable(GL_DEPTH_TEST);
+			// Call rendering start function
+			onDrawBegin();
 			// Draw objects
 			Drawer::renderAllLayers();
-			// Execute own drawing function
-			onDraw();
+			// Call rendering end function
+			onDrawEnd();
 			// Disable depth testing
 			glDisable(GL_DEPTH_TEST);
 		}

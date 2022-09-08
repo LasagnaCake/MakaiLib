@@ -70,7 +70,17 @@ namespace Shader {
 				glUniform3f(glGetUniformLocation(id, name.c_str()), value.x, value.y, value.z);
 			}
 
+			void operator()(Vector3 value) const
+			{
+				glUniform3f(glGetUniformLocation(id, name.c_str()), value.x, value.y, value.z);
+			}
+
 			void operator()(glm::vec4 value) const
+			{
+				glUniform4f(glGetUniformLocation(id, name.c_str()), value.x, value.y, value.z, value.w);
+			}
+
+			void operator()(Vector4 value) const
 			{
 				glUniform4f(glGetUniformLocation(id, name.c_str()), value.x, value.y, value.z, value.w);
 			}

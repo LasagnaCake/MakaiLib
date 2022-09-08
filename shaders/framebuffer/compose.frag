@@ -3,9 +3,11 @@
 in vec2 fragUV;
 in vec4 fragColor;
 
+uniform vec4 albedo = vec4(1);
+
 uniform sampler2D screen;
 uniform sampler2D depth;
 
 void main() {
-	gl_FragColor = texture(screen, fragUV) * fragColor;
+	gl_FragColor = texture(screen, fragUV) * fragColor * albedo;
 }
