@@ -10,10 +10,30 @@
 // [ ] TODO: Fix framebuffer
 
 class GameApp: public Makai::Program{
-	using Makai::Program::Program;
+public:
+	GameApp(
+		unsigned int width,
+		unsigned int height,
+		std::string windowTitle,
+		unsigned int fps = 60,
+		bool fullscreen = false
+	) : Program (
+			width,
+			height,
+			windowTitle,
+			fps,
+			fullscreen,
+			"shaders/framebuffer/compose.slf"
+	) {};
+	RenderData::Renderable testRenderable;
+	Drawer::Texture2D ringu;
 
 	void onOpen() override {
+		ringu.create("ring.png");
 		getFrameBuffer().color = Color::GREEN;
+		ringu(0);
+		Shader::defaultShader["texture2D"](0);
+		testRenderable.params.textured = true;
 		//getFrameBuffer().tint = Color::RED;
 		color = Color::BLUE;
 	}
@@ -21,6 +41,9 @@ class GameApp: public Makai::Program{
 	void onLogicFrame() override {
 		getFrameBuffer().transform.rotation.z
 			= sin(getFrameCounter()/60.0);
+		testRenderable.transform.local.position.z -= 0.1;
+		if (testRenderable.transform.local.position.z < -25)
+			testRenderable.transform.local.position.z = -5;
 	}
 
 	void onDrawBegin() override {
@@ -55,12 +78,10 @@ int main() {
 	Shader::defaultShader.destroy();
 	Shader::defaultShader.create(data);
 
-	RenderData::Renderable testRenderable;
-
 	RenderData::AnimatedPlaneReference* p[12];
 
 	for (size_t i = 0; i < 12; i++) {
-		p[i] = testRenderable.createAnimatedPlaneReference();
+		p[i] = prog.testRenderable.createAnimatedPlaneReference();
 		p[i]->local.position.z = 5*i + 5;
 		p[i]->setColor(
 			Color::WHITE,

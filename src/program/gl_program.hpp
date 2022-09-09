@@ -85,7 +85,8 @@ namespace Makai {
 			unsigned int height,
 			string windowTitle,
 			unsigned int fps = 60,
-			bool fullscreen = false
+			bool fullscreen = false,
+			string composeShaderPath = "shaders/framebuffer/compose.slf"
 		) {
 			// Save window resolution
 			this->width = width;
@@ -135,7 +136,7 @@ namespace Makai {
 			framebuffer.create(width, height);
 			// Create composition shader
 			$debug("Creating composition shader...");
-			compose.create(SLF::parseFile("shaders/framebuffer/compose.slf"));
+			compose.create(SLF::parseFile(composeShaderPath));
 			framebuffer.shader = &compose;
 			Shader::defaultShader["textured"](false);
 		}

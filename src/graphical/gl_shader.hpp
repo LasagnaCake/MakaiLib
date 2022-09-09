@@ -324,6 +324,7 @@ namespace Shader {
 		* Done like this: SHADER[UNIFORM_NAME](UNIFORM_VALUE);
 		*/
 		_UniSet operator[](const string& name) {
+			glUseProgram(id);
 			_UniSet su(name, id);
 			return su;
 		}
