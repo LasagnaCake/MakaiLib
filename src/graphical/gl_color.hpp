@@ -18,13 +18,13 @@ namespace Color{
 	inline Vector4 ALPHA(float level) {
 		return Vector4(1,1,1,Math::clamp(level, -0.1f, 1.0f));
 	}
-	// Transparency Levels
+	// Transparency
 	const Vector4 NONE			= ALPHA(-.1);
 	const Vector4 MISTY			= ALPHA(.25);
 	const Vector4 TRANSLUCENT	= ALPHA(.50);
 	const Vector4 OPAQUE		= ALPHA(.75);
 	const Vector4 SOLID			= ALPHA(1);
-	// Grays
+	// Luminance
 	const Vector4 WHITE			= Color(1, 1);
 	const Vector4 LIGHTGRAY		= Color(.75, 1);
 	const Vector4 GRAY			= Color(.5, 1);

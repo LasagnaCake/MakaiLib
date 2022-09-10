@@ -85,7 +85,7 @@ namespace Makai {
 			unsigned int height,
 			string windowTitle,
 			bool fullscreen = false,
-			string composeShaderPath = "shaders/framebuffer/compose.slf"
+			string fbShaderShaderPath = "shaders/framebuffer/compose.slf"
 		) {
 			// Save window resolution
 			this->width = width;
@@ -126,6 +126,8 @@ namespace Makai {
 			SDL_GL_SetAttribute(SDL_GL_BUFFER_SIZE, 1);
 			glEnable(GL_BLEND);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			//glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+			//glBlendFunc(GL_ONE_MINUS_DST_ALPHA, GL_ONE);
 			// Setup camera
 			$debug("Setting starting camera...");
 			Scene::camera.aspect = Vector2(width, height);
@@ -136,9 +138,9 @@ namespace Makai {
 			layerbuffer.create(width, height);
 			// Create composition shader
 			$debug("Creating composition shader...");
-			compose.create(SLF::parseFile(composeShaderPath));
-			framebuffer.shader = &compose;
-			layerbuffer.shader = &compose;
+			fbShader.create(SLF::parseFile(fbShaderShaderPath));
+			framebuffer.shader = fbShader;
+			layerbuffer.shader = fbShader;
 			Shader::defaultShader["textured"](false);
 		}
 
@@ -274,13 +276,13 @@ namespace Makai {
 		float maxFrameRate = 60.0;
 
 	protected:
-		Drawer::FrameBufferData getFBData() {
-			return Drawer::FrameBufferData{0, color, width, height};
+		Drawer::FrameBufferData toFrameBufferData() {
+			return Drawer::FrameBufferData{0};
 		}
 
 	private:
-		/// The program's compose shader.
-		Shader::Shader compose;
+		/// The program's default framebuffer shader.
+		Shader::Shader fbShader;
 
 		/// The program's main framebuffer.
 		Drawer::FrameBuffer framebuffer;
@@ -294,7 +296,7 @@ namespace Makai {
 			// Call final function
 			onClose();
 			// Destroy framebuffers
-			compose.destroy();
+			fbShader.destroy();
 			framebuffer.destroy();
 			// Quit SDL
 			SDL_Quit();
@@ -310,14 +312,16 @@ namespace Makai {
 			// Call rendering start function
 			onDrawBegin();
 			// Enable & clear frame buffer
-			framebuffer()->clearBuffer();
+			framebuffer()->clearBuffers();
 			// Draw objects
 			vector<size_t> rLayers = Drawer::layers.getAllGroups();
 			for (auto layer : rLayers) {
 				// Call onLayerDrawBegin function
 				onLayerDrawBegin(layer);
+				// Clear target depth buffer
+				framebuffer();
 				// Enable layer buffer
-				layerbuffer()->clearBuffer();
+				layerbuffer()->clearBuffers();
 				// Render layer
 				Drawer::renderLayer(layer);
 				// Render layer buffer
@@ -326,7 +330,7 @@ namespace Makai {
 				onLayerDrawEnd(layer);
 			}
 			// Render frame buffer
-			framebuffer.render(getFBData());
+			framebuffer.render(toFrameBufferData());
 			// Call rendering end function
 			onDrawEnd();
 			// Disable depth testing

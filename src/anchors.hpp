@@ -115,8 +115,6 @@
 
 #include "fileloader.hpp"
 
-#define glSetClearColor(COLOR) glClearColor(COLOR.x, COLOR.y, COLOR.z, COLOR.w);
-
 /*
 *	[+]=[   [Headers END]   ]=[+]
 */

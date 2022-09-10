@@ -14,6 +14,8 @@
 	inline	virtual string getBaseClass() {return #BASE;}\
 	inline	static string getCoreClass() {return #NAME;}
 
+#define glSetClearColor(COLOR) glClearColor(COLOR.x, COLOR.y, COLOR.z, COLOR.w);
+
 #include "gl_color.hpp"
 
 namespace Drawer {
@@ -149,6 +151,10 @@ namespace Drawer {
 	void clearColorBuffer(Vector4 color) {
 		glSetClearColor(color);
 		glClear(GL_COLOR_BUFFER_BIT);
+	}
+
+	void clearDepthBuffer() {
+		glClear(GL_DEPTH_BUFFER_BIT);
 	}
 
 	#include "gl_texture.hpp"

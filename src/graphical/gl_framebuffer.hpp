@@ -4,8 +4,7 @@
 namespace Drawer {
 	struct FrameBufferData {
 		unsigned int id;
-		Vector4 color;
-		unsigned int width, height;
+		unsigned int screen;
 	};
 	// Todo: Fix this
 	class FrameBuffer {
@@ -76,6 +75,9 @@ namespace Drawer {
 			// Create buffers
 			glGenVertexArrays(1, &vao);
 			glGenBuffers(1, &vbo);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			//glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+			//glBlendFunc(GL_ONE_MINUS_DST_ALPHA, GL_ONE);
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 			this->width = width;
 			this->height = height;
@@ -84,16 +86,27 @@ namespace Drawer {
 
 		FrameBuffer* operator()() {
 			glBindFramebuffer(GL_FRAMEBUFFER, id);
+			glClear(GL_DEPTH_BUFFER_BIT);
 			return this;
 		}
 
-		FrameBufferData getFBData() {
-			return FrameBufferData{id, color};
+		FrameBufferData toFrameBufferData() {
+			return FrameBufferData{id, buffer.screen};
 		}
 
-		FrameBuffer* clearBuffer() {
+		FrameBuffer* clearBuffers() {
+			this->clearColorBuffer();
+			this->clearDepthBuffer();
+			return this;
+		}
+
+		FrameBuffer* clearColorBuffer() {
+			Drawer::clearColorBuffer(color);
+			return this;
+		}
+
+		FrameBuffer* clearDepthBuffer() {
 			glClear(GL_DEPTH_BUFFER_BIT);
-			clearColorBuffer(color);
 			return this;
 		}
 
@@ -107,8 +120,6 @@ namespace Drawer {
 			for (unsigned char i = 0; i < 4; i++) {
 				Vertex v = rect[i];
 				v.position = SRP_TRANSFORM(v.position, transform);
-				v.uv += uvShift;
-				v.color *= tint;
 				verts[i] = toRawVertex(v);
 			}
 			// Set VBO as active
@@ -125,16 +136,21 @@ namespace Drawer {
 			// Define vertex data in VBO
 			Drawer::setVertexAttributes();
 			// Get shader
-			auto& comp = (*shader);
-			// Activate shader shader
-			comp();
+			// Activate shader
+			shader();
+			// Set shader textures
 			Drawer::setTexture2D(30, buffer.depth);
 			Drawer::setTexture2D(31, buffer.screen);
-			comp["near"](Scene::camera.zNear);
-			comp["far"](Scene::camera.zFar);
-			comp["depth"](30);
-			comp["screen"](31);
-			comp["resolution"](glm::vec2(width, height));
+			// Set camera's near and far plane
+			shader["near"](Scene::camera.zNear);
+			shader["far"](Scene::camera.zFar);
+			// Set texture locations
+			shader["depth"](30);
+			shader["screen"](31);
+			// Set transformation data
+			shader["albedo"](tint);
+			shader["uvShift"](uvShift);
+			shader["resolution"](glm::vec2(width, height));
 			// Enable attribute pointers
 			glEnableVertexAttribArray(0);
 			glEnableVertexAttribArray(1);
@@ -155,7 +171,7 @@ namespace Drawer {
 		}
 
 		FrameBuffer* render(FrameBuffer& targetBuffer) {
-			return render(targetBuffer.getFBData());
+			return render(targetBuffer.toFrameBufferData());
 		}
 
 		/// The framebuffer's transformation.
@@ -170,7 +186,7 @@ namespace Drawer {
 		/// The framebuffer's shape.
 		Vertex rect[4];
 		/// The framebuffer's rendering shader.
-		Shader::Shader* shader;
+		Shader::Shader shader;
 
 	private:
 

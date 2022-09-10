@@ -8,10 +8,11 @@ out vec2 fragUV;
 out vec4 fragColor;
 
 uniform vec2 resolution;
+uniform vec2 uvShift = vec2(0);
 
 void main()
 {   
-    fragUV = vertUV / resolution;
+    fragUV = (vertUV + uvShift) / resolution;
     fragColor = vertColor;
     gl_Position = vec4(vertPos.x / resolution.x, vertPos.y / resolution.y, vertPos.z, 1.0); 
 } 

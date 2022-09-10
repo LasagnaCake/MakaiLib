@@ -23,6 +23,7 @@ public:
 	) {};
 	RenderData::Renderable testRenderable;
 	RenderData::Renderable testRenderable2;
+	RenderData::Renderable testRenderable3;
 	Drawer::Texture2D ringu;
 
 	void onOpen() override {
@@ -34,16 +35,24 @@ public:
 		testRenderable2.params.textured = true;
 		//getFrameBuffer().tint = Color::RED;
 		color = Color::BLUE;
-		//getFrameBuffer().transform.scale.x = 0.5;
-		//getFrameBuffer().transform.scale.y = 0.5;
+		getFrameBuffer().transform.scale.x = 0.8;
+		getFrameBuffer().transform.scale.y = 0.8;
+		//getFrameBuffer().tint = Color::RED;
+		testRenderable.setRenderLayer(2);
+		testRenderable2.setRenderLayer(1);
+		testRenderable3.setRenderLayer(0);
 	}
 
 	void onLogicFrame() override {
-		/*getFrameBuffer().transform.rotation.z
-			= sin(getFrameCounter()/60.0)/ 4;*/
-		testRenderable.transform.local.position.z -= 0.02;
+		getFrameBuffer().transform.rotation.z
+			= sin(getFrameCounter()/60.0)/ 4;
+		testRenderable.transform.local.position.z -= 0.1;
 		if (testRenderable.transform.local.position.z < -25)
 			testRenderable.transform.local.position.z = -5;
+	}
+
+	void onLayerDrawBegin(size_t layerID) override {
+		$debug(layerID);
 	}
 
 	void onDrawBegin() override {
@@ -80,8 +89,10 @@ int main() {
 
 	RenderData::AnimatedPlaneReference* p[12];
 	RenderData::AnimatedPlaneReference* p2[12];
+	RenderData::PlaneReference* p3[12];
 
 	for (size_t i = 0; i < 12; i++) {
+		// Test Planes 1
 		p[i] = prog.testRenderable.createAnimatedPlaneReference();
 		p[i]->local.position.z = 5*i + 5;
 		p[i]->setColor(
@@ -91,6 +102,7 @@ int main() {
 			Color::NONE
 		);
 		p[i]->size = Vector::Vector2(1, 2);
+		// Test Planes 2
 		p2[i] = prog.testRenderable2.createAnimatedPlaneReference();
 		p2[i]->local.position.z = 5*i + 5;
 		p2[i]->local.position.y = -5;
@@ -102,7 +114,16 @@ int main() {
 		);
 		p2[i]->size = Vector::Vector2(1, 2);
 		p2[i]->sprite = Vector::Vector2(0, 1);
-		//p2[i]->local.rotation.z = Math::pi;
+		// Test Planes 3
+		p3[i] = prog.testRenderable3.createPlaneReference();
+		p3[i]->local.position.z = 5*i + 4;
+		p3[i]->local.position.y = -5;
+		p3[i]->setColor(
+			Color::GRAY,
+			Color::GRAY,
+			Color::DARKGRAY,
+			Color::DARKGRAY
+		);
 	}
 
 	p[11]->setColor(Color::PURPLE);
