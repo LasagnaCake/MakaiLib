@@ -146,6 +146,11 @@ namespace Drawer {
 		);
 	}
 
+	void clearColorBuffer(Vector4 color) {
+		glSetClearColor(color);
+		glClear(GL_COLOR_BUFFER_BIT);
+	}
+
 	#include "gl_texture.hpp"
 }
 

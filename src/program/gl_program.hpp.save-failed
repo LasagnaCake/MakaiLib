@@ -85,7 +85,8 @@ namespace Makai {
 			unsigned int height,
 			string windowTitle,
 			unsigned int fps = 60,
-			bool fullscreen = false
+			bool fullscreen = false,
+			string composeShaderPath = "shaders/framebuffer/compose.slf"
 		) {
 			// Save window resolution
 			this->width = width;
@@ -123,37 +124,38 @@ namespace Makai {
 			Shader::defaultShader.create();
 			$debug("Created!");
 			SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 1);
+			SDL_GL_SetAttribute(SDL_GL_BUFFER_SIZE, 1);
 			glEnable(GL_BLEND);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 			// Setup camera
 			$debug("Setting starting camera...");
 			Scene::camera.aspect = Vector2(width, height);
 			Scene::camera.fov = glm::radians(45.0f);
-			// Define texture wrapping & mipmaps
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 			$debug("creating default framebuffer...");
 			// Create framebuffer
 			framebuffer.create(width, height);
+			layerbuffer.create(width, height);
 			// Create composition shader
 			$debug("Creating composition shader...");
-			compose.create(SLF::parseFile("shaders/framebuffer/compose.slf"));
-			framebuffer.compose = &compose;
+			compose.create(SLF::parseFile(composeShaderPath));
+			framebuffer.shader = &compose;
+			layerbuffer.shader = &compose;
 			Shader::defaultShader["textured"](false);
 		}
 
 		/// Sets the window's title.
-		void setWindowTitle(string windowTitle) {
+		inline void setWindowTitle(string windowTitle) {
+			SDL_SetWindowTitle(window, windowTitle.c_str());
 		}
 
-		void setAlphaBlendMode(GLuint type) {
+		inline void setAlphaBlendMode(GLuint type) {
 			glBlendFunc(GL_SRC_ALPHA, type);
 		}
 
 		/// Runs the program.
 		void run(){
+			// Call on open function
+			onOpen();
 			// The physics process
 			auto physFunc	= [&](float delta)-> void {
 
@@ -167,13 +169,13 @@ namespace Makai {
 			// SDL's events
 			SDL_Event event;
 			// Time recorded last frame
-			float lastTime = 0;
-			lastTime = (float)SDL_GetTicks();
+			float lastTime = (float)SDL_GetTicks();
 			// While program is running...
 			while(shouldRun) {
 				// Get delta
 				float curTime = (float)SDL_GetTicks();
 				float delta = curTime - lastTime;
+				float deltaTime = delta/maxFrameRate;
 				// increment frame counter
 				frame += 1;
 				// Poll events and check if should close
@@ -183,32 +185,27 @@ namespace Makai {
 				// Update input manager
 				input.update();
 				// Start thread
-				std::thread physics(physFunc, 60.0/delta);
+				std::thread physics(physFunc, deltaTime);
 				// Do your own stuff
-				logicFunc(60.0/delta);
-				onFrame();
+				logicFunc(deltaTime);
+				onLogicFrame();
 				// Wait for thread to be done processing
 				physics.join();
 				// [[ Render code BEGIN ]]
 				// Clear screen
 				glClearColor(color.x, color.y, color.z, color.w);
-				//Enable framebuffer
-				//framebuffer();
 				// Render screen
 				render();
-				// Set framebuffer's clear color
-				framebuffer.color = color;
-				// Render framebuffer
-				//framebuffer.renderToBuffer();
 				// Display window
 				SDL_GL_SwapWindow(window);
 				// [[ Render code END ]]
 				// Get time
-				lastTime = (float)SDL_GetTicks();
+				lastTime = (float)SDL_GetTicks() * 1.0;
 				// Destroy queued entities
 				EntityClass::destroyQueued();
-				$debug(delta);
-				if (delta < 60.0) SDL_Delay(1.0 - 1.0/delta);
+				// If running faster than expected, slow down
+				if (delta < maxFrameRate)
+					SDL_Delay((1.0 - deltaTime) * 1000.0 / maxFrameRate);
 			}
 			// Terminate program
 			terminate();
@@ -235,30 +232,48 @@ namespace Makai {
 			return frame;
 		}
 
-		unsigned int getFrameBufferID() {
-			return framebuffer.getID();
+		inline Drawer::FrameBuffer& getFrameBuffer() {
+			return framebuffer;
 		}
 
-		/// Gets called whenever the program is rendering to the screen. Happens last.
-		Event::Signal	onDraw	= $func() {};
+		inline Drawer::FrameBuffer& getLayerBuffer() {
+			return layerbuffer;
+		}
 
+		inline Vector2 getScreenSize() {
+			return Vector2(width, height);
+		}
+
+		/// Gets called when the program is opened.
+		virtual void onOpen() {};
+
+		/// Gets called whenever the program is rendering to the screen.
+		/// Happens before any object is rendered.
+		virtual void onDrawBegin()	{};
+		/// Happens after all objects are rendered.
+		virtual void onDrawEnd()	{};
 
 		/// Gets called every frame, along all other logic.
-		Event::Signal	onFrame = $func() {};
-
+		virtual void onLogicFrame()	{};
 
 		/// Gets called when the program is closing. Happens before Window is terminated.
-		Event::Signal	onClose = $func() {};
+		virtual void onClose()	{};
+
+		/// Gets called when the program starts rendering a layer.
+		virtual void onDrawLayer(size_t layerID) {};
 
 		/// The program's window output.
 		struct {
 		} out;
 
 		/// The window's clear color.
-		VecV4 color = VecV4(0, 0, 0, 1);
+		Vector4 color = Color::BLACK;
 
 		/// The program's input manager.
 		InputManager input;
+
+		/// The program's maximum framerate
+		float maxFrameRate = 60.0;
 
 	private:
 		/// The program's compose shader.
@@ -266,6 +281,7 @@ namespace Makai {
 
 		/// The program's main framebuffer.
 		Drawer::FrameBuffer framebuffer;
+		Drawer::FrameBuffer layerbuffer;
 
 		/// The window's resolution.
 		unsigned int width, height;
@@ -274,7 +290,7 @@ namespace Makai {
 		void terminate() {
 			// Call final function
 			onClose();
-			// Destroy framebuffer
+			// Destroy framebuffers
 			compose.destroy();
 			framebuffer.destroy();
 			// Quit SDL
@@ -288,10 +304,26 @@ namespace Makai {
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			// Enable depth testing
 			glEnable(GL_DEPTH_TEST);
+			// Call rendering start function
+			onDrawBegin();
 			// Draw objects
-			Drawer::renderAllLayers();
-			// Execute own drawing function
-			onDraw();
+			vector<size_t> rLayers = Drawer::layers.getAllGroups();
+			for (auto layer : rLayers) {
+				// Call on render layer function
+				onDrawLayer(layer);
+				// Enable layerbuffer
+				//layerbuffer();
+				// Clear depth buffer
+				glClear(GL_DEPTH_BUFFER_BIT);
+				// Render layer
+				Drawer::renderLayer(layer);
+				// Render layerbuffer
+				//layerbuffer.render(framebuffer);
+			}
+			// Render framebuffer
+			framebuffer.render();
+			// Call rendering end function
+			onDrawEnd();
 			// Disable depth testing
 			glDisable(GL_DEPTH_TEST);
 		}

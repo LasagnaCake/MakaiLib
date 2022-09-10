@@ -33,22 +33,25 @@ public:
 	/// Called on deletion.
 	virtual void onDelete()	{}
 
-	void setManual() {
+	Renderable* setManual() {
 		if(!manualMode)
 			Drawer::layers.removeFromAll(&render);
 		manualMode = true;
+		return this;
 	}
 
-	void setAuto(size_t renderLayer) {
+	Renderable* setAuto(size_t renderLayer) {
 		if(manualMode)
 			Drawer::layers.addObject(&render, renderLayer);
 		manualMode = false;
+		return this;
 	}
 
-	void setRenderLayer(size_t renderLayer) {
+	Renderable* setRenderLayer(size_t renderLayer) {
 		Drawer::layers.removeFromAll(&render);
 		Drawer::layers.addObject(&render, renderLayer);
 		manualMode = false;
+		return this;
 	}
 
 	PlaneReference* createPlaneReference() {

@@ -30,12 +30,14 @@ public:
 
 	void onOpen() override {
 		ringu.create("ring.png");
-		getFrameBuffer().color = Color::GREEN;
+		getFrameBuffer().color = Color::BLACK;
 		ringu(0);
 		Shader::defaultShader["texture2D"](0);
 		testRenderable.params.textured = true;
 		//getFrameBuffer().tint = Color::RED;
 		color = Color::BLUE;
+		getFrameBuffer().transform.scale.x = 0.5;
+		getFrameBuffer().transform.scale.y = 0.5;
 	}
 
 	void onLogicFrame() override {

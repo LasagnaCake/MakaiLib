@@ -2,6 +2,11 @@
 #define MAKAI_FRAME_BUFFERRING_H
 
 namespace Drawer {
+	struct FrameBufferData {
+		unsigned int id;
+		Vector4 color;
+		unsigned int width, height;
+	};
 	// Todo: Fix this
 	class FrameBuffer {
 	public:
@@ -28,11 +33,11 @@ namespace Drawer {
 			glDeleteVertexArrays(1, &vao);
 		}
 
-		void create(
+		FrameBuffer* create(
 			unsigned int width,
 			unsigned int height
 		) {
-			if (created) return;
+			if (created) return this;
 			else created = true;
 			glGenFramebuffers(1, &id);
 			glBindFramebuffer(GL_FRAMEBUFFER, id);
@@ -53,44 +58,55 @@ namespace Drawer {
 				buffer.depth,
 				0
 			);
+			// Resolution math
+			Vector3 screenRes(width, height, 1);
 			// Setup display rectangle
-			rect[0].position	= Vector3(-1, +1, 0);
-			rect[0].uv			= Vector2(0, 1);
+			rect[0].position	= Vector3(-1, +1, 0) * screenRes;
+			rect[0].uv			= Vector2(0, 1) * screenRes.xy();
 			rect[0].color		= Vector4(1);
-			rect[1].position	= Vector3(+1, +1, 0);
-			rect[1].uv			= Vector2(1, 1);
+			rect[1].position	= Vector3(+1, +1, 0) * screenRes;
+			rect[1].uv			= Vector2(1, 1) * screenRes.xy();
 			rect[0].color		= Vector4(1);
-			rect[2].position	= Vector3(-1, -1, 0);
-			rect[2].uv			= Vector2(0, 0);
+			rect[2].position	= Vector3(-1, -1, 0) * screenRes;
+			rect[2].uv			= Vector2(0, 0) * screenRes.xy();
 			rect[0].color		= Vector4(1);
-			rect[3].position	= Vector3(+1, -1, 0);
-			rect[3].uv			= Vector2(1, 0);
+			rect[3].position	= Vector3(+1, -1, 0) * screenRes;
+			rect[3].uv			= Vector2(1, 0) * screenRes.xy();
 			rect[0].color		= Vector4(1);
 			// Create buffers
 			glGenVertexArrays(1, &vao);
 			glGenBuffers(1, &vbo);
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+			this->width = width;
+			this->height = height;
+			return this;
 		}
 
-		void operator()() {
+		FrameBuffer* operator()() {
 			glBindFramebuffer(GL_FRAMEBUFFER, id);
+			return this;
 		}
 
-		void operator[](unsigned int targetBuffer) {
-			render(targetBuffer);
+		FrameBufferData getFBData() {
+			return FrameBufferData{id, color};
 		}
 
-		void render(unsigned int targetBuffer = 0) {
+		FrameBuffer* clearBuffer() {
+			glClear(GL_DEPTH_BUFFER_BIT);
+			clearColorBuffer(color);
+			return this;
+		}
+
+		FrameBuffer* render(FrameBufferData target) {
 			// Set target buffer
-			glBindFramebuffer(GL_FRAMEBUFFER, targetBuffer);
+			glBindFramebuffer(GL_FRAMEBUFFER, target.id);
 			// Clear target frame buffer
-			glClearColor(color.x, color.y, color.z, color.w);
-			glClear(GL_COLOR_BUFFER_BIT);
+			//clearColorBuffer(target.color);
 			// Create Intermediary Vertex Buffer (IVB) to be displayed on screen
 			RawVertex verts[4];
 			for (unsigned char i = 0; i < 4; i++) {
 				Vertex v = rect[i];
-				v.position = SRP_TRANSFORM(v.position.xy(), transform);
+				v.position = SRP_TRANSFORM(v.position, transform);
 				v.uv += uvShift;
 				v.color *= tint;
 				verts[i] = toRawVertex(v);
@@ -118,12 +134,28 @@ namespace Drawer {
 			comp["far"](Scene::camera.zFar);
 			comp["depth"](30);
 			comp["screen"](31);
-			// Draw screen
-			draw();
+			comp["resolution"](glm::vec2(width, height));
+			// Enable attribute pointers
+			glEnableVertexAttribArray(0);
+			glEnableVertexAttribArray(1);
+			glEnableVertexAttribArray(2);
+			// Set VAO as active
+			glBindVertexArray(vao);
+			// Set polygon rendering mode
+			glPolygonMode(GL_FRONT, GL_LINE);
+			// Draw object to screen
+			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+			// Unbind vertex array
+			glBindVertexArray(0);
+			// Disable attributes
+			glDisableVertexAttribArray(2);
+			glDisableVertexAttribArray(1);
+			glDisableVertexAttribArray(0);
+			return this;
 		}
 
-		unsigned int getID() {
-			return id;
+		FrameBuffer* render(FrameBuffer& targetBuffer) {
+			return render(targetBuffer.getFBData());
 		}
 
 		/// The framebuffer's transformation.
@@ -141,27 +173,10 @@ namespace Drawer {
 		Shader::Shader* shader;
 
 	private:
-		void draw() {
-			// Enable attribute pointers
-			glEnableVertexAttribArray(0);
-			glEnableVertexAttribArray(1);
-			glEnableVertexAttribArray(2);
-			// Set VAO as active
-			glBindVertexArray(vao);
-			// Set polygon rendering mode
-			glPolygonMode(GL_FRONT, GL_LINE);
-			// Draw object to screen
-			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-			// Unbind vertex array
-			glBindVertexArray(0);
-			// Disable attributes
-			glDisableVertexAttribArray(2);
-			glDisableVertexAttribArray(1);
-			glDisableVertexAttribArray(0);
-		}
 
 		bool created = false;
 		unsigned int id;
+		unsigned int width, height;
 		struct {
 			unsigned int screen;
 			unsigned int depth;

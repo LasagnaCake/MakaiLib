@@ -357,6 +357,7 @@ namespace Tween{
 
 		/// Sets the tween's target variable.
 		void setTarget(float* target) {
+			*target = *value;
 			value = target;
 		}
 

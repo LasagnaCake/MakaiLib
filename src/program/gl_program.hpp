@@ -134,10 +134,12 @@ namespace Makai {
 			$debug("creating default framebuffer...");
 			// Create framebuffer
 			framebuffer.create(width, height);
+			layerbuffer.create(width, height);
 			// Create composition shader
 			$debug("Creating composition shader...");
 			compose.create(SLF::parseFile(composeShaderPath));
 			framebuffer.shader = &compose;
+			layerbuffer.shader = &compose;
 			Shader::defaultShader["textured"](false);
 		}
 
@@ -190,14 +192,8 @@ namespace Makai {
 				// Wait for thread to be done processing
 				physics.join();
 				// [[ Render code BEGIN ]]
-				// Clear screen
-				glClearColor(color.x, color.y, color.z, color.w);
-				//Enable framebuffer
-				framebuffer();
 				// Render screen
 				render();
-				// Render framebuffer
-				framebuffer.render();
 				// Display window
 				SDL_GL_SwapWindow(window);
 				// [[ Render code END ]]
@@ -238,6 +234,10 @@ namespace Makai {
 			return framebuffer;
 		}
 
+		inline Drawer::FrameBuffer& getLayerBuffer() {
+			return layerbuffer;
+		}
+
 		inline Vector2 getScreenSize() {
 			return Vector2(width, height);
 		}
@@ -257,6 +257,10 @@ namespace Makai {
 		/// Gets called when the program is closing. Happens before Window is terminated.
 		virtual void onClose()	{};
 
+		/// Gets called when the program starts rendering a layer.
+		virtual void onLayerDrawBegin(size_t layerID) {};
+		virtual void onLayerDrawEnd(size_t layerID) {};
+
 		/// The program's window output.
 		struct {
 		} out;
@@ -270,12 +274,18 @@ namespace Makai {
 		/// The program's maximum framerate
 		float maxFrameRate = 60.0;
 
+	protected:
+		Drawer::FrameBufferData getFBData() {
+			return Drawer::FrameBufferData{0, color, width, height};
+		}
+
 	private:
 		/// The program's compose shader.
 		Shader::Shader compose;
 
 		/// The program's main framebuffer.
 		Drawer::FrameBuffer framebuffer;
+		Drawer::FrameBuffer layerbuffer;
 
 		/// The window's resolution.
 		unsigned int width, height;
@@ -294,14 +304,30 @@ namespace Makai {
 		/// Draws the window.
 		void render() {
 			// Clear screen
-			//glClearColor(0, 0, 0, 0);
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+			Drawer::clearColorBuffer(color);
+			glClear(GL_DEPTH_BUFFER_BIT);
 			// Enable depth testing
 			glEnable(GL_DEPTH_TEST);
 			// Call rendering start function
 			onDrawBegin();
+			// Enable & clear frame buffer
+			framebuffer()->clearBuffer();
 			// Draw objects
-			Drawer::renderAllLayers();
+			vector<size_t> rLayers = Drawer::layers.getAllGroups();
+			for (auto layer : rLayers) {
+				// Call onLayerDrawBegin function
+				onLayerDrawBegin(layer);
+				// Enable layer buffer
+				layerbuffer()->clearBuffer();
+				// Render layer
+				Drawer::renderLayer(layer);
+				// Render layer buffer
+				layerbuffer.render(framebuffer);
+				// Call onLayerDrawEnd function
+				onLayerDrawEnd(layer);
+			}
+			// Render frame buffer
+			framebuffer.render(getFBData());
 			// Call rendering end function
 			onDrawEnd();
 			// Disable depth testing
