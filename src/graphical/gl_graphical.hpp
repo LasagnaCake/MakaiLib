@@ -9,6 +9,10 @@
 #define $glpointer(start, offset) (void*)((start) + (offset) * sizeof(float))
 #define $gloffset(offset) (void*)((offset) * sizeof(float))
 
+#define DERIVED_CONSTRUCTOR(NAME, BASE, CODE)\
+	NAME(string name = #NAME ) : BASE(name) CODE\
+	NAME(Entity* parent, string name = #NAME , bool uniqueEntity = true) : BASE(parent, name, uniqueEntity) CODE
+
 #define DERIVED_CLASS(NAME, BASE)\
 	inline	virtual string getClass() {return #NAME;}\
 	inline	virtual string getBaseClass() {return #BASE;}\
@@ -268,7 +272,22 @@ namespace RenderData {
 #include "gl_framebuffer.hpp"
 
 namespace EntityClass {
+	class RenderableEntity2D: public Entity2D {
+	public:
 
+		DERIVED_CONSTRUCTOR(RenderableEntity2D, Entity2D, {})
+		DERIVED_CLASS(RenderableEntity2D, Entity2D)
+
+		virtual void onFrame(float delta) {
+			mesh.transform.global.position		= Vector3(globalPosition(), zIndex);
+			mesh.transform.global.rotation.z	= globalRotation();
+			mesh.transform.global.scale			= Vector3(globalScale(), 1);
+		}
+
+		float zIndex = 0;
+
+		RenderData::Renderable mesh;
+	};
 }
 
 #undef $$FUNC

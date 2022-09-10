@@ -43,6 +43,12 @@ namespace EntityClass {
 		Projection y;
 	};
 
+	struct AreaCollisionData {
+		Vector2 size = Vector2(1);
+		bool enabled = true;
+		bool isCircle = false;
+	};
+
 	/**
 	*****************************
 	*                           *
@@ -55,6 +61,8 @@ namespace EntityClass {
 		/// Constructor.
 		DERIVED_CLASS(BaseCollision2D, Entity2D)
 
+		AreaCollisionData collision;
+
 		/// Called when object is created.
 		virtual void onCreate() {
 			collisionLayers.addEntity(this, 0);
@@ -62,6 +70,9 @@ namespace EntityClass {
 
 		/// Called whenever a collision with another object happens.
 		virtual void onCollision(Entity* target) {}
+
+		virtual bool colliding(BaseCollision2D* target) {}
+		virtual void checkCollision(BaseCollision2D* target) {}
 
 		/// Adds the object to the given collision layer.
 		void addToCollisionLayer(size_t layer) {
@@ -109,16 +120,12 @@ namespace EntityClass {
 		/// Constructor.
 		DERIVED_CLASS(AreaCircle2D, BaseCollision2D)
 
-		struct {
-			/// The circle's diameter.
-			float diameter = 1;
-
-			/// Whether the circle can collide.
-			bool enabled = true;
-		} collision;
+		virtual void onCreate() {
+			collision.isCircle = true;
+		}
 
 		/// Returns whether it is colliding with a given area circle.
-		bool colliding(AreaCircle2D* target) {
+		bool colliding(BaseCollision2D* target) override {
 			// If either object cannot collide, return false
 			if (!(collision.enabled && target->collision.enabled)) return false;
 			// Get distance between objects
@@ -128,14 +135,14 @@ namespace EntityClass {
 				selfScale = globalScale(),
 				targetScale = target->globalScale();
 			// Calculate self's and target's true diameter
-			float selfDiameter		= collision.diameter * Math::min(selfScale.x, selfScale.y);
-			float targetDiameter	= target->collision.diameter * Math::min(targetScale.x, targetScale.y);
+			float selfDiameter		= collision.size.x * Math::min(selfScale.x, selfScale.y);
+			float targetDiameter	= target->collision.size.x * Math::min(targetScale.x, targetScale.y);
 			// Return if distance between circles is below zero (collision)
 			return (distance - selfDiameter - targetDiameter) < 0;
 		}
 
 		/// Checks and processes collision between this object and another objecr.
-		void checkCollision(AreaCircle2D* target) {
+		void checkCollision(BaseCollision2D* target) override {
 			// Get self's collision layers
 			vector<size_t> self = getCollisionLayers();
 			// If no layers, return
@@ -148,9 +155,13 @@ namespace EntityClass {
 					break;
 				}
 			// If can collide and colliding, trigger collision
-			if(collidable)
-				if (colliding(target))
+			if(collidable) {
+				if (collision.isCircle && !target->collision.isCircle)
+				if (collision.isCircle && !target->collision.isCircle)
+					target->checkCollision(this);
+				else if (colliding(target))
 					onCollision(target);
+			}
 		}
 
 	private:
@@ -168,22 +179,26 @@ namespace EntityClass {
 		/// Constructor.
 		DERIVED_CLASS(AreaBox2D, BaseCollision2D)
 
-		struct {
-			/// The box's size.
-			Vector2 size = Vector2(1);
-
-			/// Whether the box can collide.
-			bool enabled = false;
-		} collision;
-
 		/// Returns whether it is colliding with a given hitbox.
-		bool colliding(AreaBox2D* target) {
+		bool colliding(BaseCollision2D* target) override {
 			// If either object cannot collide, return false
 			if (!(collision.enabled && target->collision.enabled)) return false;
+			if (target->collision.isCircle) {
+				BoxBounds2D self = getBoxBounds();
+				float pointAngle = VecMath::angleTo(globalPosition(), target->globalPosition());
+				Vector2 other = VecMath::angleV2(pointAngle) * target->globalScale() * target->collision.size.x;
+				other = VecMath::rotateV2(other, target->globalRotation());
+				bool overlap = (
+					( self.x.min < other.x) && (other.x < self.x.max)
+				) && (
+					( self.y.min < other.y) && (other.y < self.y.max)
+				);
+				return overlap;
+			}
 			// Get projections on X and Y axis
 			BoxBounds2D
 				self = getBoxBounds(),
-				other = target->getBoxBounds();
+				other = ((AreaBox2D*)target)->getBoxBounds();
 			// Get overlap on X
 			bool overlapX = (
 				(other.x.min < self.x.min) && (self.x.min < other.x.max)
@@ -219,7 +234,7 @@ namespace EntityClass {
 		}
 
 		/// Checks and processes collision between this object and another objecr.
-		void checkCollision(AreaBox2D* target) {
+		void checkCollision(BaseCollision2D* target) override {
 			// Get self's collision layers
 			vector<size_t> self = getCollisionLayers();
 			// If no layers, return
@@ -253,7 +268,7 @@ namespace EntityClass {
 
 		/// Returns whether it is colliding with a given hitbox.
 		bool colliding(SimpleHitbox2D* target) {
-			// TODO: collision (Separating Axis Theorem)
+			// TODO: collision (Separating Axis Theorem or some shit)
 			return false;
 		}
 
