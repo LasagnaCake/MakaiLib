@@ -48,66 +48,66 @@ namespace Vector{
 			/// Vector operator overloading.
 			Vector2 operator+(Vector2 vec) {
 				return Vector2(
-					this->x + vec.x,
-					this->y + vec.y
+					x + vec.x,
+					y + vec.y
 					);
 			}
 
 			Vector2 operator-(Vector2 vec) {
 				return Vector2(
-					this->x - vec.x,
-					this->y - vec.y
+					x - vec.x,
+					y - vec.y
 					);
 			}
 
 			Vector2 operator*(Vector2 vec) {
 				return Vector2(
-					this->x * vec.x,
-					this->y * vec.y
+					x * vec.x,
+					y * vec.y
 					);
 			}
 
 			Vector2 operator/(Vector2 vec) {
 				return Vector2(
-					this->x / vec.x,
-					this->y / vec.y
+					x / vec.x,
+					y / vec.y
 					);
 			}
 
 			Vector2 operator%(Vector2 vec) {
 				return Vector2(
-					fmod(this->x, vec.x),
-					fmod(this->y, vec.y)
+					fmod(x, vec.x),
+					fmod(y, vec.y)
 					);
 			}
 
 			Vector2 operator+=(Vector2 vec) {
-				this->x += vec.x;
-				this->y += vec.y;
+				x += vec.x;
+				y += vec.y;
 				return *this;
 			}
 
 			Vector2 operator-=(Vector2 vec) {
-				this->x -= vec.x;
-				this->y -= vec.y;
+				x -= vec.x;
+				y -= vec.y;
 				return *this;
 			}
 
 			Vector2 operator*=(Vector2 vec) {
-				this->x *= vec.x;
-				this->y *= vec.y;
+				x *= vec.x;
+				y *= vec.y;
 				return *this;
 			}
 
 			Vector2 operator/=(Vector2 vec) {
-				this->x /= vec.x;
-				this->y /= vec.y;
+				x /= vec.x;
+				y /= vec.y;
 				return *this;
 			}
 
 			Vector2 operator%=(Vector2 vec) {
-				this->x = fmod(this->x, vec.x);
-				this->y = fmod(this->y, vec.y);
+				x = fmod(x, vec.x);
+				y = fmod(y, vec.y);
 				return *this;
 			}
 
@@ -274,76 +274,76 @@ namespace Vector{
 
 			Vector3 operator+(Vector3 vec) {
 				return Vector3(
-					this->x + vec.x,
-					this->y + vec.y,
-					this->z + vec.z
+					x + vec.x,
+					y + vec.y,
+					z + vec.z
 					);
 			}
 
 			Vector3 operator-(Vector3 vec) {
 				return Vector3(
-					this->x - vec.x,
-					this->y - vec.y,
-					this->z - vec.z
+					x - vec.x,
+					y - vec.y,
+					z - vec.z
 					);
 			}
 
 			Vector3 operator*(Vector3 vec) {
 				return Vector3(
-					this->x * vec.x,
-					this->y * vec.y,
-					this->z * vec.z
+					x * vec.x,
+					y * vec.y,
+					z * vec.z
 					);
 			}
 
 			Vector3 operator/(Vector3 vec) {
 				return Vector3(
-					this->x / vec.x,
-					this->y / vec.y,
-					this->z / vec.z
+					x / vec.x,
+					y / vec.y,
+					z / vec.z
 					);
 			}
 
 			Vector3 operator%(Vector3 vec) {
 				return Vector3(
-					fmod(this->x, vec.x),
-					fmod(this->y, vec.y),
-					fmod(this->z, vec.z)
+					fmod(x, vec.x),
+					fmod(y, vec.y),
+					fmod(z, vec.z)
 					);
 			}
 
 			Vector3 operator+=(Vector3 vec) {
-				this->x += vec.x;
-				this->y += vec.y;
-				this->z += vec.z;
+				x += vec.x;
+				y += vec.y;
+				z += vec.z;
 				return *this;
 			}
 
 			Vector3 operator-=(Vector3 vec) {
-				this->x -= vec.x;
-				this->y -= vec.y;
-				this->z -= vec.z;
+				x -= vec.x;
+				y -= vec.y;
+				z -= vec.z;
 				return *this;
 			}
 
 			Vector3 operator*=(Vector3 vec) {
-				this->x *= vec.x;
-				this->y *= vec.y;
-				this->z *= vec.z;
+				x *= vec.x;
+				y *= vec.y;
+				z *= vec.z;
 				return *this;
 			}
 
 			Vector3 operator/=(Vector3 vec) {
-				this->x /= vec.x;
-				this->y /= vec.y;
-				this->z /= vec.z;
+				x /= vec.x;
+				y /= vec.y;
+				z /= vec.z;
 				return *this;
 			}
 
 			Vector3 operator%=(Vector3 vec) {
-				this->x = fmod(this->x, vec.x);
-				this->y = fmod(this->y, vec.y);
-				this->z = fmod(this->z, vec.z);
+				x = fmod(x, vec.x);
+				y = fmod(y, vec.y);
+				z = fmod(z, vec.z);
 				return *this;
 			}
 
@@ -544,77 +544,77 @@ namespace Vector{
 
 			Vector4 operator-(Vector4 vec) {
 				return Vector4(
-					this->x - vec.x,
-					this->y - vec.y,
-					this->z - vec.z,
-					this->w - vec.w
+					x - vec.x,
+					y - vec.y,
+					z - vec.z,
+					w - vec.w
 					);
 			}
 
 			Vector4 operator*(Vector4 vec) {
 				return Vector4(
-					this->x * vec.x,
-					this->y * vec.y,
-					this->z * vec.z,
-					this->w * vec.w
+					x * vec.x,
+					y * vec.y,
+					z * vec.z,
+					w * vec.w
 					);
 			}
 
 			Vector4 operator/(Vector4 vec) {
 				return Vector4(
-					this->x / vec.x,
-					this->y / vec.y,
-					this->z / vec.z,
-					this->w / vec.w
+					x / vec.x,
+					y / vec.y,
+					z / vec.z,
+					w / vec.w
 					);
 			}
 
 			Vector4 operator%(Vector4 vec) {
 				return Vector4(
-					fmod(this->x, vec.x),
-					fmod(this->y, vec.y),
-					fmod(this->z, vec.z),
-					fmod(this->w, vec.w)
+					fmod(x, vec.x),
+					fmod(y, vec.y),
+					fmod(z, vec.z),
+					fmod(w, vec.w)
 					);
 			}
 
 			Vector4 operator+=(Vector4 vec) {
-				this->x += vec.x;
-				this->y += vec.y;
-				this->z += vec.z;
-				this->w += vec.w;
+				x += vec.x;
+				y += vec.y;
+				z += vec.z;
+				w += vec.w;
 				return *this;
 			}
 
 			Vector4 operator-=(Vector4 vec) {
-				this->x -= vec.x;
-				this->y -= vec.y;
-				this->z -= vec.z;
-				this->w -= vec.w;
+				x -= vec.x;
+				y -= vec.y;
+				z -= vec.z;
+				w -= vec.w;
 				return *this;
 			}
 
 			Vector4 operator*=(Vector4 vec) {
-				this->x *= vec.x;
-				this->y *= vec.y;
-				this->z *= vec.z;
-				this->w *= vec.w;
+				x *= vec.x;
+				y *= vec.y;
+				z *= vec.z;
+				w *= vec.w;
 				return *this;
 			}
 
 			Vector4 operator/=(Vector4 vec) {
-				this->x /= vec.x;
-				this->y /= vec.y;
-				this->z /= vec.z;
-				this->w /= vec.w;
+				x /= vec.x;
+				y /= vec.y;
+				z /= vec.z;
+				w /= vec.w;
 				return *this;
 			}
 
 			Vector4 operator%=(Vector4 vec) {
-				this->x = fmod(this->x, vec.x);
-				this->y = fmod(this->y, vec.y);
-				this->z = fmod(this->z, vec.z);
-				this->w = fmod(this->w, vec.w);
+				x = fmod(x, vec.x);
+				y = fmod(y, vec.y);
+				z = fmod(z, vec.z);
+				w = fmod(w, vec.w);
 				return *this;
 			}
 

@@ -19,7 +19,7 @@ namespace Color{
 		return Vector4(1,1,1,Math::clamp(level, -0.1f, 1.0f));
 	}
 	// Transparency
-	const Vector4 NONE			= ALPHA(-.1);
+	const Vector4 NONE			= ALPHA(-0.1);
 	const Vector4 MISTY			= ALPHA(.25);
 	const Vector4 TRANSLUCENT	= ALPHA(.50);
 	const Vector4 OPAQUE		= ALPHA(.75);

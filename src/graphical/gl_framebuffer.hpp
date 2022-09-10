@@ -152,6 +152,7 @@ namespace Drawer {
 			shader["screen"](31);
 			// Set transformation data
 			shader["albedo"](tint);
+			shader["accent"](tone);
 			shader["uvShift"](uvShift);
 			shader["resolution"](glm::vec2(width, height));
 			// Enable attribute pointers
@@ -183,6 +184,8 @@ namespace Drawer {
 		Vector2 uvShift;
 		/// The framebuffer's tint.
 		Vector4 tint = Color::WHITE;
+		/// The framebuffer's balance color.
+		Vector4 tone = Color::BLACK;
 
 		/// The framebuffer's clear color.
 		Vector4 color = Color::NONE;
