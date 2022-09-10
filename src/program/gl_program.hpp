@@ -85,7 +85,7 @@ namespace Makai {
 			unsigned int height,
 			string windowTitle,
 			bool fullscreen = false,
-			string fbShaderShaderPath = "shaders/framebuffer/compose.slf"
+			string bufferShaderPath = "shaders/framebuffer/compose.slf"
 		) {
 			// Save window resolution
 			this->width = width;
@@ -138,9 +138,9 @@ namespace Makai {
 			layerbuffer.create(width, height);
 			// Create composition shader
 			$debug("Creating composition shader...");
-			fbShader.create(SLF::parseFile(fbShaderShaderPath));
-			framebuffer.shader = fbShader;
-			layerbuffer.shader = fbShader;
+			bufferShader.create(SLF::parseFile(bufferShaderPath));
+			framebuffer.shader = bufferShader;
+			layerbuffer.shader = bufferShader;
 			Shader::defaultShader["textured"](false);
 		}
 
@@ -239,6 +239,10 @@ namespace Makai {
 			return layerbuffer;
 		}
 
+		inline Shader::Shader& getBufferShader() {
+			return bufferShader;
+		}
+
 		inline Vector2 getScreenSize() {
 			return Vector2(width, height);
 		}
@@ -281,8 +285,7 @@ namespace Makai {
 		}
 
 	private:
-		/// The program's default framebuffer shader.
-		Shader::Shader fbShader;
+		Shader::Shader bufferShader;
 
 		/// The program's main framebuffer.
 		Drawer::FrameBuffer framebuffer;
@@ -295,9 +298,9 @@ namespace Makai {
 		void terminate() {
 			// Call final function
 			onClose();
-			// Destroy framebuffers
-			fbShader.destroy();
+			// Destroy buffers
 			framebuffer.destroy();
+			layerbuffer.destroy();
 			// Quit SDL
 			SDL_Quit();
 		}

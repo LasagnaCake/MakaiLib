@@ -4,7 +4,6 @@
 namespace Drawer {
 	struct FrameBufferData {
 		unsigned int id;
-		unsigned int screen;
 	};
 	// Todo: Fix this
 	class FrameBuffer {
@@ -95,7 +94,7 @@ namespace Drawer {
 		}
 
 		FrameBufferData toFrameBufferData() {
-			return FrameBufferData{id, buffer.screen};
+			return FrameBufferData{id};
 		}
 
 		FrameBuffer* clearBuffers() {
