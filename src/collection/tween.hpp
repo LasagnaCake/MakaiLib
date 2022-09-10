@@ -261,6 +261,9 @@ namespace Tween{
 		/// The signal to be fired upon completion.
 		Event::Signal onCompleted = Event::DEF_SIGNAL;
 
+		/// Whether the tween is paused.
+		bool paused = false;
+
 		/// Empty Constructor.
 		Tween(bool manual = false) {
 			if (!manual)
@@ -298,6 +301,8 @@ namespace Tween{
 		const $$FUNC yield = [&]() {
 			// If value pointer is null, point to default var
 			if (!value) value = &defaultVar;
+			// If paused, return
+			if (paused) return *value;
 			// If not finished...
 			if (!isFinished)
 			{

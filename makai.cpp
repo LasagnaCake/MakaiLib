@@ -54,13 +54,25 @@ public:
 			testRenderable2.transform.local.position.z = -25;
 	}
 
-	void onLayerDrawBegin(size_t layerID) override {
-	}
-
 	void onDrawBegin() override {
 	}
 
+	void onLayerDrawBegin(size_t layerID) override {
+		switch (layerID) {
+		case 0:
+			getLayerBuffer().tint = Color::Color(2,1,1);
+			break;
+		case 1:
+			getLayerBuffer().tint = Color::GREEN;
+			break;
+		case 2:
+			getLayerBuffer().tint = Color::BLUE;
+			break;
+		}
+	}
+
 	void onDrawEnd() override {
+		getLayerBuffer().tint = Color::WHITE;
 	}
 
 	void onClose() override {
