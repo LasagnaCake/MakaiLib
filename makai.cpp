@@ -47,12 +47,14 @@ public:
 		getFrameBuffer().transform.rotation.z
 			= sin(getFrameCounter()/60.0)/ 4;
 		testRenderable.transform.local.position.z -= 0.1;
+		testRenderable2.transform.local.position.z += 0.1;
 		if (testRenderable.transform.local.position.z < -25)
 			testRenderable.transform.local.position.z = -5;
+		if (testRenderable2.transform.local.position.z > -5)
+			testRenderable2.transform.local.position.z = -25;
 	}
 
 	void onLayerDrawBegin(size_t layerID) override {
-		$debug(layerID);
 	}
 
 	void onDrawBegin() override {
@@ -116,7 +118,7 @@ int main() {
 		p2[i]->sprite = Vector::Vector2(0, 1);
 		// Test Planes 3
 		p3[i] = prog.testRenderable3.createPlaneReference();
-		p3[i]->local.position.z = 5*i + 4;
+		p3[i]->local.position.z = 5*i + 5;
 		p3[i]->local.position.y = -5;
 		p3[i]->setColor(
 			Color::GRAY,

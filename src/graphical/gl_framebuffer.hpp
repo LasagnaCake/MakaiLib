@@ -85,6 +85,10 @@ namespace Drawer {
 		}
 
 		FrameBuffer* operator()() {
+			return enable();
+		}
+
+		FrameBuffer* enable() {
 			glBindFramebuffer(GL_FRAMEBUFFER, id);
 			glClear(GL_DEPTH_BUFFER_BIT);
 			return this;

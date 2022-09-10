@@ -309,8 +309,18 @@ namespace Shader {
 			}
 		}
 
-		/// Enables this object as shader.
+		/// Operator overload.
 		void operator()() {
+			for (unsigned char i = 0; i < 32; i++)
+			if (textures[i]) {
+				glActiveTexture(GL_TEXTURE0 + i);
+				glBindTexture(GL_TEXTURE_2D, textures[i]);
+			}
+			glUseProgram(id);
+		}
+
+		/// Enables the shader object.
+		void enable() {
 			for (unsigned char i = 0; i < 32; i++)
 			if (textures[i]) {
 				glActiveTexture(GL_TEXTURE0 + i);
@@ -321,12 +331,20 @@ namespace Shader {
 
 		/**
 		* The way to set uniforms.
-		* Done like this: SHADER[UNIFORM_NAME](UNIFORM_VALUE);
+		* Done like this: SHADER.uniform(UNIFORM_NAME)(UNIFORM_VALUE);
 		*/
-		_UniSet operator[](const string& name) {
+		_UniSet uniform(const string& name) {
 			glUseProgram(id);
 			_UniSet su(name, id);
 			return su;
+		}
+
+		/**
+		* The way to set uniforms.
+		* Done like this: SHADER[UNIFORM_NAME](UNIFORM_VALUE);
+		*/
+		_UniSet operator[](const string& name) {
+			return uniform(name);
 		}
 
 		GLuint textures[32];
