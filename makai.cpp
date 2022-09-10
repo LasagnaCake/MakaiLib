@@ -13,17 +13,16 @@ public:
 		unsigned int width,
 		unsigned int height,
 		std::string windowTitle,
-		unsigned int fps = 60,
 		bool fullscreen = false
 	) : Program (
 			width,
 			height,
 			windowTitle,
-			fps,
 			fullscreen,
 			"shaders/framebuffer/compose.slf"
 	) {};
 	RenderData::Renderable testRenderable;
+	RenderData::Renderable testRenderable2;
 	Drawer::Texture2D ringu;
 
 	void onOpen() override {
@@ -32,16 +31,17 @@ public:
 		ringu(0);
 		Shader::defaultShader["texture2D"](0);
 		testRenderable.params.textured = true;
+		testRenderable2.params.textured = true;
 		//getFrameBuffer().tint = Color::RED;
 		color = Color::BLUE;
-		getFrameBuffer().transform.scale.x = 0.5;
-		getFrameBuffer().transform.scale.y = 0.5;
+		//getFrameBuffer().transform.scale.x = 0.5;
+		//getFrameBuffer().transform.scale.y = 0.5;
 	}
 
 	void onLogicFrame() override {
-		getFrameBuffer().transform.rotation.z
-			= sin(getFrameCounter()/60.0);
-		testRenderable.transform.local.position.z -= 0.1;
+		/*getFrameBuffer().transform.rotation.z
+			= sin(getFrameCounter()/60.0)/ 4;*/
+		testRenderable.transform.local.position.z -= 0.02;
 		if (testRenderable.transform.local.position.z < -25)
 			testRenderable.transform.local.position.z = -5;
 	}
@@ -79,6 +79,7 @@ int main() {
 	Shader::defaultShader.create(data);
 
 	RenderData::AnimatedPlaneReference* p[12];
+	RenderData::AnimatedPlaneReference* p2[12];
 
 	for (size_t i = 0; i < 12; i++) {
 		p[i] = prog.testRenderable.createAnimatedPlaneReference();
@@ -90,6 +91,18 @@ int main() {
 			Color::NONE
 		);
 		p[i]->size = Vector::Vector2(1, 2);
+		p2[i] = prog.testRenderable2.createAnimatedPlaneReference();
+		p2[i]->local.position.z = 5*i + 5;
+		p2[i]->local.position.y = -5;
+		p2[i]->setColor(
+			Color::WHITE,
+			Color::WHITE,
+			Color::NONE,
+			Color::NONE
+		);
+		p2[i]->size = Vector::Vector2(1, 2);
+		p2[i]->sprite = Vector::Vector2(0, 1);
+		//p2[i]->local.rotation.z = Math::pi;
 	}
 
 	p[11]->setColor(Color::PURPLE);

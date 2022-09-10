@@ -84,7 +84,6 @@ namespace Makai {
 			unsigned int width,
 			unsigned int height,
 			string windowTitle,
-			unsigned int fps = 60,
 			bool fullscreen = false,
 			string composeShaderPath = "shaders/framebuffer/compose.slf"
 		) {
