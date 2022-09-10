@@ -7,8 +7,6 @@
 
 //#define SIDE_B
 
-// [ ] TODO: Fix framebuffer
-
 class GameApp: public Makai::Program{
 public:
 	GameApp(
