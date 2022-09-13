@@ -38,8 +38,8 @@ public:
 		getFrameBuffer().transform.scale.x = 0.8;
 		getFrameBuffer().transform.scale.y = 0.8;
 		//getFrameBuffer().tint = Color::RED;
-		testRenderable.setRenderLayer(2);
-		testRenderable2.setRenderLayer(1);
+		testRenderable.setRenderLayer(0);
+		testRenderable2.setRenderLayer(0);
 		testRenderable3.setRenderLayer(0);
 	}
 
