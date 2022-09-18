@@ -1,3 +1,7 @@
+/*
+Do not touch this class.
+*/
+
 class Renderable {
 public:
 	Renderable(size_t layer = 0, bool manual = false) {
@@ -29,7 +33,9 @@ public:
 	/// Called on creation.
 	virtual void onCreate()	{}
 	/// Called before rendering to screen.
-	virtual void onRender()	{}
+	virtual void onDrawBegin()	{}
+	/// Called after rendering to screen.
+	virtual void onDrawEnd()	{}
 	/// Called on deletion.
 	virtual void onDelete()	{}
 
@@ -114,8 +120,8 @@ public:
 		if (!params.active) return;
 		// If no triangles exist, return
 		if (!triangles.size()) return;
-		// Call onRender function
-		onRender();
+		// Call onDrawBegin function
+		onDrawBegin();
 		// Transform references (if applicable)
 		for (auto plane: references.plane) plane->transform();
 		// Get vertex count
@@ -171,6 +177,8 @@ public:
 		glDisableVertexAttribArray(0);
 		// Unbind vertex array
 		glBindVertexArray(0);
+		// Call onDrawEnd function
+		onDrawEnd();
 	};
 
 	Shader::ShaderList shaders;

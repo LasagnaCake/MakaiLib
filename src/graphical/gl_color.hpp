@@ -18,6 +18,26 @@ namespace Color{
 	inline Vector4 ALPHA(float level) {
 		return Vector4(1,1,1,Math::clamp(level, -0.1f, 1.0f));
 	}
+
+	Vector4 hueToRGB(float hue) {
+		hue *= Math::tau;
+		hue /= 3;
+		return Vector4 (
+			cos(hue),
+			cos(hue + Math::radians(120)),
+			cos(hue + Math::radians(240)),
+			1
+		);
+	}
+
+	Vector4 toRGB(float h, float s, float v, float a) {
+		Vector4 res = hueToRGB(h);
+		Vector4 gray(Vector3((res.x + res.y + res.z) / 3), 1);
+		res = Math::lerp(gray, res, Vector4(s));
+		res *= (v * 2);
+		return res.clamped(0, 1);
+	}
+
 	// Transparency
 	const Vector4 NONE			= ALPHA(-0.1);
 	const Vector4 MISTY			= ALPHA(.25);
@@ -45,6 +65,33 @@ namespace Color{
 	const Vector4 LIME			= Color(.5,	1,	0,	1);
 	const Vector4 PURPLE		= Color(.5,	0,	1,	1);
 	const Vector4 PINK			= Color(1,	0,	.5,	1);
+
+	const Vector4 rainbow8[] = {
+		PURPLE,
+		MAGENTA,
+		RED,
+		ORANGE,
+		YELLOW,
+		LIME,
+		GREEN,
+		CYAN,
+		BLUE
+	};
+
+	const Vector4 rainbow[] = {
+		PURPLE,
+		MAGENTA,
+		PINK,
+		RED,
+		ORANGE,
+		YELLOW,
+		LIME,
+		GREEN,
+		TEAL,
+		CYAN,
+		AZURE,
+		BLUE
+	};
 }
 
 #endif

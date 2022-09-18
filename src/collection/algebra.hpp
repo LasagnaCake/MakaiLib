@@ -88,8 +88,7 @@ namespace Math {
 
 	/**
 	* Returns the polar radius of a point along the edges of a N-sided
-	* polygon of "radius" R (distance of a given vertex from its center
-	* at a given angle.
+	* polygon of "radius" R (the shape's circumradius) at a given angle.
 	*/
 	float polarPolyPoint(
 		float rotation,

@@ -38,14 +38,14 @@ public:
 		getFrameBuffer().transform.scale.x = 0.8;
 		getFrameBuffer().transform.scale.y = 0.8;
 		//getFrameBuffer().tint = Color::RED;
-		testRenderable.setRenderLayer(0);
-		testRenderable2.setRenderLayer(0);
+		testRenderable.setRenderLayer(2);
+		testRenderable2.setRenderLayer(1);
 		testRenderable3.setRenderLayer(0);
 	}
 
 	void onLogicFrame() override {
 		getFrameBuffer().transform.rotation.z
-			= sin(getFrameCounter()/60.0)/ 4;
+			= sin(getCurrentFrame()/60.0)/ 4;
 		testRenderable.transform.local.position.z -= 0.1;
 		testRenderable2.transform.local.position.z += 0.1;
 		if (testRenderable.transform.local.position.z < -25)
@@ -60,15 +60,25 @@ public:
 	void onLayerDrawBegin(size_t layerID) override {
 		switch (layerID) {
 		case 0:
-			getLayerBuffer().tint = Color::Color(2,1,1);
+			getLayerBuffer().tint = Color::BLUE;
+			getLayerBuffer().transform.position.x = sin(getCurrentFrame()/120.0) * 500;
 			break;
 		case 1:
 			getLayerBuffer().tint = Color::GREEN;
+			getLayerBuffer().transform.rotation.z = sin(getCurrentFrame()/90.0);
 			break;
 		case 2:
-			getLayerBuffer().tint = Color::BLUE;
+			//getLayerBuffer().tint = Color::Color(2,1,1);
+			getLayerBuffer().tint = Color::WHITE;
+			//getLayerBuffer().transform.rotation.z = sin(getCurrentFrame()/120.0);
 			break;
+		default: break;
 		}
+	}
+
+	void onLayerDrawEnd(size_t layerID) override {
+		getLayerBuffer().transform.rotation.z = 0;
+		getLayerBuffer().transform.position.x = 0;
 	}
 
 	void onDrawEnd() override {
@@ -92,6 +102,7 @@ int main() {
 	GameApp prog(960, 720, "[TEST]");
 
 	// [[ Main Program Code BEGIN ]]
+	prog.maxFrameRate = 60;
 
 	Scene::camera.eye = Vector::Vector3(0, 10, 0);
 	Scene::camera.at = Vector::Vector3(0, 0, 10);
@@ -138,20 +149,9 @@ int main() {
 			Color::DARKGRAY,
 			Color::DARKGRAY
 		);
+		// Colouring Planes 1
+		p[i]->setColor(Color::rainbow[i]);
 	}
-
-	p[11]->setColor(Color::PURPLE);
-	p[10]->setColor(Color::MAGENTA);
-	p[9]->setColor(Color::PINK);
-	p[8]->setColor(Color::RED);
-	p[7]->setColor(Color::ORANGE);
-	p[6]->setColor(Color::YELLOW);
-	p[5]->setColor(Color::LIME);
-	p[4]->setColor(Color::GREEN);
-	p[3]->setColor(Color::TEAL);
-	p[2]->setColor(Color::CYAN);
-	p[1]->setColor(Color::AZURE);
-	p[0]->setColor(Color::BLUE);
 
 	// [[ Main Program Code END ]]
 

@@ -1,9 +1,40 @@
 #ifndef MAKAI_FRAME_BUFFERRING_H
 #define MAKAI_FRAME_BUFFERRING_H
 
+/*
+STAY AWAY FROM THIS CLASS. THIS CLASS
+IS NOT A CLASS OF HONOR.
+
+TOO VOLATILE, AND TOO TRIGGER-HAPPY
+TO FAIL ON YOU.
+
+IT PLAYS BY ITS OWN RULES, IT WANTS
+YOU TO LOSE YOUR MIND, LIKE IT IS A
+SADISTIC GAME TO IT.
+
+IF YOU MUST, MAY YOU FIND A GOD THAT
+HAS MERCY ON YOU. BECAUSE THIS CLASS
+SURE AS HELL DOESN'T.
+
+IF ALL ELSE FAILS, CLEAR THE DEPTH
+BUFFER. IT APPEASES THE BEAST
+TEMPORARILY. I'M STILL NOT SURE ON
+HOW THIS MAKES SENSE, BUT I'M NOT
+GOING TO QUESTION IT.
+*/
+
 namespace Drawer {
+	namespace {
+		using
+		VecMath::SRP_TRANSFORM;
+	}
 	struct FrameBufferData {
-		unsigned int id;
+		unsigned int
+			id,
+			screen,
+			depth,
+			width,
+			height;
 	};
 	// Todo: Fix this
 	class FrameBuffer {
@@ -94,7 +125,13 @@ namespace Drawer {
 		}
 
 		FrameBufferData toFrameBufferData() {
-			return FrameBufferData{id};
+			return FrameBufferData{
+				id,
+				buffer.screen,
+				buffer.depth,
+				width,
+				height
+			};
 		}
 
 		FrameBuffer* clearBuffers() {
@@ -122,7 +159,12 @@ namespace Drawer {
 			RawVertex verts[4];
 			for (unsigned char i = 0; i < 4; i++) {
 				Vertex v = rect[i];
-				v.position = SRP_TRANSFORM(v.position, transform);
+				v.position = SRP_TRANSFORM(
+								v.position,
+								transform.position,
+								transform.rotation,
+								transform.scale
+							);
 				verts[i] = toRawVertex(v);
 			}
 			// Set VBO as active

@@ -56,10 +56,10 @@ namespace EntityClass {
 	*                           *
 	*****************************
 	*/
-	class BaseCollision2D : public Entity2D {
+	class AreaCollision2D : public Entity2D {
 	public:
 		/// Constructor.
-		DERIVED_CLASS(BaseCollision2D, Entity2D)
+		DERIVED_CLASS(AreaCollision2D, Entity2D)
 
 		AreaCollisionData collision;
 
@@ -71,8 +71,8 @@ namespace EntityClass {
 		/// Called whenever a collision with another object happens.
 		virtual void onCollision(Entity* target) {}
 
-		virtual bool colliding(BaseCollision2D* target) {}
-		virtual void checkCollision(BaseCollision2D* target) {}
+		virtual bool colliding(AreaCollision2D* target) {return false;}
+		virtual void checkCollision(AreaCollision2D* target) {}
 
 		/// Adds the object to the given collision layer.
 		void addToCollisionLayer(size_t layer) {
@@ -115,17 +115,17 @@ namespace EntityClass {
 	*                        *
 	**************************
 	*/
-	class AreaCircle2D : public BaseCollision2D {
+	class AreaCircle2D : public AreaCollision2D {
 	public:
 		/// Constructor.
-		DERIVED_CLASS(AreaCircle2D, BaseCollision2D)
+		DERIVED_CLASS(AreaCircle2D, AreaCollision2D)
 
 		virtual void onCreate() {
 			collision.isCircle = true;
 		}
 
 		/// Returns whether it is colliding with a given area circle.
-		bool colliding(BaseCollision2D* target) override {
+		bool colliding(AreaCollision2D* target) override {
 			// If either object cannot collide, return false
 			if (!(collision.enabled && target->collision.enabled)) return false;
 			// Get distance between objects
@@ -142,7 +142,7 @@ namespace EntityClass {
 		}
 
 		/// Checks and processes collision between this object and another objecr.
-		void checkCollision(BaseCollision2D* target) override {
+		void checkCollision(AreaCollision2D* target) override {
 			// Get self's collision layers
 			vector<size_t> self = getCollisionLayers();
 			// If no layers, return
@@ -174,13 +174,13 @@ namespace EntityClass {
 	*                        *
 	**************************
 	*/
-	class AreaBox2D : public BaseCollision2D {
+	class AreaBox2D : public AreaCollision2D {
 	public:
 		/// Constructor.
-		DERIVED_CLASS(AreaBox2D, BaseCollision2D)
+		DERIVED_CLASS(AreaBox2D, AreaCollision2D)
 
 		/// Returns whether it is colliding with a given hitbox.
-		bool colliding(BaseCollision2D* target) override {
+		bool colliding(AreaCollision2D* target) override {
 			// If either object cannot collide, return false
 			if (!(collision.enabled && target->collision.enabled)) return false;
 			if (target->collision.isCircle) {
@@ -234,7 +234,7 @@ namespace EntityClass {
 		}
 
 		/// Checks and processes collision between this object and another objecr.
-		void checkCollision(BaseCollision2D* target) override {
+		void checkCollision(AreaCollision2D* target) override {
 			// Get self's collision layers
 			vector<size_t> self = getCollisionLayers();
 			// If no layers, return

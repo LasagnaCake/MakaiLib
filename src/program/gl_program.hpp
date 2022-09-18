@@ -227,7 +227,7 @@ namespace Makai {
 		}
 
 		/// Gets the current frame.
-		size_t getFrameCounter() {
+		size_t getCurrentFrame() {
 			return frame;
 		}
 
