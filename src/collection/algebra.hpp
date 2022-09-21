@@ -20,6 +20,7 @@ namespace Math {
 	const auto hpi			= pi / 2;
 	const auto tau			= 6.2831853071795864769252867666;
 	const auto euler		= 2.7182818284590452353602874714;
+	const auto maribel		= euler - (sqrt2 - 1.0) * 1.2;
 	const size_t maxSizeT	= 0xffffffffffffffff;
 	const double infinity	= maxSizeT;
 	const double epsilon	= 1 / infinity;

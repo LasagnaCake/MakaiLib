@@ -92,9 +92,9 @@
 #define float double
 #endif // _$_FLOAT_AS_DOUBLE
 
-#define sin glm::sin
-#define cos glm::cos
-#define tan glm::tan
+//#define sin glm::sin
+//#define cos glm::cos
+//#define tan glm::tan
 
 #include "collection/entity/entity.hpp"
 #include "collection/vectorn.hpp"

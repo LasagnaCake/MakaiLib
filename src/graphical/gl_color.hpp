@@ -6,6 +6,15 @@
 namespace Color{
 	namespace {
 		using namespace Vector;
+
+		float _hueify(float t) {
+			if(t < 0) t++;
+            if(t > 1) t--;
+            if(t < 1.0/6.0) return 6.0 * t;
+            if(t < 1.0/2.0) return 1;
+            if(t < 2.0/3.0) return (2.0/3.0 - t) * 6.0;
+            return 0;
+		}
 	}
 	// Custom color
 	inline Vector4 Color(float r, float g, float b, float a = 1) {
@@ -16,25 +25,37 @@ namespace Color{
 	}
 	// Custom transparency level
 	inline Vector4 ALPHA(float level) {
-		return Vector4(1,1,1,Math::clamp(level, -0.1f, 1.0f));
+		return Vector4(1, 1, 1, Math::clamp(level, -0.1f, 1.0f));
 	}
 
-	Vector4 hueToRGB(float hue) {
+	// TODO: Optimize this
+	Vector4 hueToPastel(float hue) {
 		hue *= Math::tau;
-		hue /= 3;
-		return Vector4 (
+		Vector3 res(
 			cos(hue),
-			cos(hue + Math::radians(120)),
-			cos(hue + Math::radians(240)),
+			cos(hue + Math::tau * (1.0/3.0)),
+			cos(hue + Math::tau * (2.0/3.0))
+		);
+		res = (res^2.0).normalized() * Math::sqrt2;
+		return Vector4(res.clamped(0, 1), 1);
+	}
+
+	Vector4 hueToRGB(float h) {
+		h -= floor(h);
+        return Vector4(
+			_hueify(h + 1.0/3.0),
+			_hueify(h),
+			_hueify(h - 1.0/3.0),
 			1
 		);
 	}
 
 	Vector4 toRGB(float h, float s, float v, float a) {
 		Vector4 res = hueToRGB(h);
+		res *= (v * 2);
 		Vector4 gray(Vector3((res.x + res.y + res.z) / 3), 1);
 		res = Math::lerp(gray, res, Vector4(s));
-		res *= (v * 2);
+		res.w = a;
 		return res.clamped(0, 1);
 	}
 

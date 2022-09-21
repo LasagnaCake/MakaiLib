@@ -1,6 +1,6 @@
-class PlaneReference {
+class Plane {
 public:
-	PlaneReference(
+	Plane(
 		Triangle tris[2]
 	) {
 		this->tl	= &(tris[0].verts[0]);
@@ -10,7 +10,8 @@ public:
 		this->bl2	= &(tris[1].verts[1]);
 		this->br	= &(tris[1].verts[2]);
 	}
-		PlaneReference(
+
+	Plane(
 		Vertex* tl,
 		Vertex* tr1,
 		Vertex* tr2,
@@ -26,10 +27,10 @@ public:
 		this->br	= br;
 	}
 
-	virtual ~PlaneReference() {}
+	virtual ~Plane() {}
 
 	/// Sets the plane's origin.
-	PlaneReference* setOrigin(
+	Plane* setOrigin(
 			Vector3 tlPos,
 			Vector3 trPos,
 			Vector3 blPos,
@@ -45,7 +46,7 @@ public:
 	}
 
 	/// Transforms the plane's origin by a given transform.
-	PlaneReference* setOrigin(Transform3D trans) {
+	Plane* setOrigin(Transform3D trans) {
 		origin[0] = tl->position	= SRP_TRANSFORM(origin[0], trans);
 		origin[1] = tr1->position	= SRP_TRANSFORM(origin[1], trans);
 		origin[2] = tr2->position	= SRP_TRANSFORM(origin[2], trans);
@@ -55,7 +56,7 @@ public:
 		return this;
 	}
 
-	PlaneReference* setUV(
+	Plane* setUV(
 			Vector2 tlUV,
 			Vector2 trUV,
 			Vector2 blUV,
@@ -70,7 +71,7 @@ public:
 		return this;
 	}
 
-	PlaneReference* setColor(
+	Plane* setColor(
 			Vector4 tlCol,
 			Vector4 trCol,
 			Vector4 blCol,
@@ -85,7 +86,7 @@ public:
 		return this;
 	}
 
-	PlaneReference* setColor(
+	Plane* setColor(
 			Vector4 col = Color::WHITE
 		) {
 		tl->color	= col;
@@ -98,7 +99,7 @@ public:
 	}
 
 	/// Sets the plane to its original state (last state set with setPosition).
-	PlaneReference* reset() {
+	Plane* reset() {
 		tl->position	= origin[0];
 		tr1->position	= origin[1];
 		tr2->position	= origin[2];
@@ -110,7 +111,7 @@ public:
 
 	virtual void onTransform() { }
 
-	PlaneReference* transform() {
+	Plane* transform() {
 		onTransform();
 		if (!fixed) return this;
 		// Apply transformation
@@ -140,15 +141,15 @@ private:
 	Vertex* br;
 };
 
-class AnimatedPlaneReference: public PlaneReference {
+class AnimatedPlane: public Plane {
 public:
-	using PlaneReference::PlaneReference;
+	using Plane::Plane;
 	Vector2 sprite;
 	Vector2 size = Vector2(1);
 
 	void onTransform() override {
 		if (size.x == 0 || size.y == 0)
-			throw runtime_error("Sprite count must be bigger than zero!");
+			throw runtime_error("Sprite count (size) must be bigger than zero!");
 		setUV(
 			(sprite) / size,
 			(sprite + Vector2(1, 0)) / size,

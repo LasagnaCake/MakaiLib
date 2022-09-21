@@ -7,6 +7,8 @@
 
 //#define SIDE_B
 
+using namespace RenderData::Reference;
+
 class GameApp: public Makai::Program{
 public:
 	GameApp(
@@ -52,6 +54,8 @@ public:
 			testRenderable.transform.local.position.z = -5;
 		if (testRenderable2.transform.local.position.z > -5)
 			testRenderable2.transform.local.position.z = -25;
+		for(size_t i = 0; i < 12; i++)
+			testRenderable.getReference<Plane>(i)->setColor(Color::hueToPastel(getCurrentFrame() / 150.0));
 	}
 
 	void onDrawBegin() override {
@@ -112,13 +116,13 @@ int main() {
 	Shader::defaultShader.destroy();
 	Shader::defaultShader.create(data);
 
-	RenderData::AnimatedPlaneReference* p[12];
-	RenderData::AnimatedPlaneReference* p2[12];
-	RenderData::PlaneReference* p3[12];
+	AnimatedPlane* p[12];
+	AnimatedPlane* p2[12];
+	Plane* p3[12];
 
 	for (size_t i = 0; i < 12; i++) {
 		// Test Planes 1
-		p[i] = prog.testRenderable.createAnimatedPlaneReference();
+		p[i] = prog.testRenderable.createReference<AnimatedPlane>();
 		p[i]->local.position.z = 5*i + 5;
 		p[i]->setColor(
 			Color::WHITE,
@@ -128,7 +132,7 @@ int main() {
 		);
 		p[i]->size = Vector::Vector2(1, 2);
 		// Test Planes 2
-		p2[i] = prog.testRenderable2.createAnimatedPlaneReference();
+		p2[i] = prog.testRenderable2.createReference<AnimatedPlane>();
 		p2[i]->local.position.z = 5*i + 5;
 		p2[i]->local.position.y = -5;
 		p2[i]->setColor(
@@ -140,7 +144,7 @@ int main() {
 		p2[i]->size = Vector::Vector2(1, 2);
 		p2[i]->sprite = Vector::Vector2(0, 1);
 		// Test Planes 3
-		p3[i] = prog.testRenderable3.createPlaneReference();
+		p3[i] = prog.testRenderable3.createReference<Plane>();
 		p3[i]->local.position.z = 5*i + 5;
 		p3[i]->local.position.y = -5;
 		p3[i]->setColor(
@@ -150,7 +154,7 @@ int main() {
 			Color::DARKGRAY
 		);
 		// Colouring Planes 1
-		p[i]->setColor(Color::rainbow[i]);
+		p[i]->setColor(Color::hueToRGB(i/12.0));
 	}
 
 	// [[ Main Program Code END ]]

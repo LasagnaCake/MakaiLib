@@ -81,6 +81,13 @@ namespace Vector{
 					);
 			}
 
+			Vector2 operator^(Vector2 vec) {
+				return Vector2(
+					pow(x, vec.x),
+					pow(y, vec.y)
+					);
+			}
+
 			Vector2 operator+=(Vector2 vec) {
 				x += vec.x;
 				y += vec.y;
@@ -111,6 +118,12 @@ namespace Vector{
 				return *this;
 			}
 
+			Vector2 operator^=(Vector2 vec) {
+				x = fmod(x, vec.x);
+				y = fmod(y, vec.y);
+				return *this;
+			}
+
 			/// Float operator overloading.
 			Vector2 operator+(float val) {
 				return *this + Vector2(val);
@@ -132,6 +145,10 @@ namespace Vector{
 				return *this % Vector2(val);
 			}
 
+			Vector2 operator^(float val) {
+				return *this ^ Vector2(val);
+			}
+
 			Vector2 operator+=(float val) {
 				return *this += Vector2(val);
 			}
@@ -150,6 +167,10 @@ namespace Vector{
 
 			Vector2 operator%=(float val) {
 				return *this %= Vector2(val);
+			}
+
+			Vector2 operator^=(float val) {
+				return *this ^= Vector2(val);
 			}
 
 			// Other overloads
@@ -312,6 +333,14 @@ namespace Vector{
 					);
 			}
 
+			Vector3 operator^(Vector3 vec) {
+				return Vector3(
+					pow(x, vec.x),
+					pow(y, vec.y),
+					pow(z, vec.z)
+					);
+			}
+
 			Vector3 operator+=(Vector3 vec) {
 				x += vec.x;
 				y += vec.y;
@@ -347,6 +376,13 @@ namespace Vector{
 				return *this;
 			}
 
+			Vector3 operator^=(Vector3 vec) {
+				x = pow(x, vec.x);
+				y = pow(y, vec.y);
+				z = pow(z, vec.z);
+				return *this;
+			}
+
 			/// Float operator overloading.
 
 			Vector3 operator+(float val) {
@@ -369,6 +405,10 @@ namespace Vector{
 				return *this % Vector3(val);
 			}
 
+			Vector3 operator^(float val) {
+				return *this ^ Vector3(val);
+			}
+
 			Vector3 operator+=(float val) {
 				return *this += Vector3(val);
 			}
@@ -388,6 +428,10 @@ namespace Vector{
 
 			Vector3 operator%=(float val) {
 				return *this %= Vector3(val);
+			}
+
+			Vector3 operator^=(float val) {
+				return *this ^= Vector3(val);
 			}
 
 			// Other overloads
@@ -578,6 +622,15 @@ namespace Vector{
 					);
 			}
 
+			Vector4 operator^(Vector4 vec) {
+				return Vector4(
+					pow(x, vec.x),
+					pow(y, vec.y),
+					pow(z, vec.z),
+					pow(w, vec.w)
+					);
+			}
+
 			Vector4 operator+=(Vector4 vec) {
 				x += vec.x;
 				y += vec.y;
@@ -618,6 +671,14 @@ namespace Vector{
 				return *this;
 			}
 
+			Vector4 operator^=(Vector4 vec) {
+				x = pow(x, vec.x);
+				y = pow(y, vec.y);
+				z = pow(z, vec.z);
+				w = pow(w, vec.w);
+				return *this;
+			}
+
 			/// Float operator overloading.
 
 			Vector4 operator+(float val) {
@@ -640,6 +701,10 @@ namespace Vector{
 				return *this % Vector4(val);
 			}
 
+			Vector4 operator^(float val) {
+				return *this ^ Vector4(val);
+			}
+
 			Vector4 operator+=(float val) {
 				return *this += Vector4(val);
 			}
@@ -656,8 +721,8 @@ namespace Vector{
 				return *this /= Vector4(val);
 			}
 
-			Vector4 operator%=(float val) {
-				return *this %= Vector4(val);
+			Vector4 operator^=(float val) {
+				return *this ^= Vector4(val);
 			}
 
 			// Other overloads

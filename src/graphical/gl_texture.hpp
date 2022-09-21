@@ -106,6 +106,7 @@ public:
 		glDeleteTextures(1, &id);
 		created = false;
 	}
+
 	void operator()(unsigned char texture = 0) {
 		setTexture2D(texture, id);
 	}

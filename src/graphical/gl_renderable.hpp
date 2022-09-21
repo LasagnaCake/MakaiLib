@@ -60,13 +60,17 @@ public:
 		return this;
 	}
 
-	PlaneReference* createPlaneReference() {
+	template <
+		class T,
+		class = std::enable_if<std::is_base_of<Reference::Plane, T>::value>::type
+	>
+	T* createReference() {
 		Triangle* tris = new Triangle[2];
 		// Add triangles
 		triangles.push_back(&tris[0]);
 		triangles.push_back(&tris[1]);
 		// Create reference
-		PlaneReference* plane = new PlaneReference(tris);
+		T* plane = new T(tris);
 		// Setup plane
 		plane->setOrigin(
 			Vector3(-1.0, +1.0, 0.0),
@@ -87,31 +91,12 @@ public:
 		return plane;
 	}
 
-	AnimatedPlaneReference* createAnimatedPlaneReference() {
-		Triangle* tris = new Triangle[2];
-		// Add triangles
-		triangles.push_back(&tris[0]);
-		triangles.push_back(&tris[1]);
-		// Create reference
-		AnimatedPlaneReference* plane = new AnimatedPlaneReference(tris);
-		// Setup plane
-		plane->setOrigin(
-			Vector3(-1.0, +1.0, 0.0),
-			Vector3(+1.0, +1.0, 0.0),
-			Vector3(-1.0, -1.0, 0.0),
-			Vector3(+1.0, -1.0, 0.0)
-		);
-		plane->setUV(
-			Vector2(+0.0, +1.0),
-			Vector2(+1.0, +1.0),
-			Vector2(+0.0, +0.0),
-			Vector2(+1.0, +0.0)
-		);
-		plane->setColor();
-		// Add to reference list
-		references.plane.push_back(plane);
-		// return plane
-		return plane;
+	template <
+		class T,
+		class = std::enable_if<std::is_base_of<Reference::Plane, T>::value>::type
+	>
+	inline T* getReference(size_t index) {
+		return (T*)references.plane[index];
 	}
 
 	/// Renders the object to the screen.
@@ -199,7 +184,7 @@ public:
 private:
 	/// List of references linked to this object.
 	struct {
-		vector<PlaneReference*> plane;
+		vector<Reference::Plane*> plane;
 	} references;
 
 	/// Whether manually rendering or not.

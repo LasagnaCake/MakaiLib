@@ -265,7 +265,10 @@ namespace RenderData {
 		Vertex verts[3];
 	};
 
-	#include "gl_reference.hpp"
+	namespace Reference {
+		#include "gl_reference.hpp"
+	}
+
 	#include "gl_renderable.hpp"
 }
 
