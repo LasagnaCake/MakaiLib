@@ -9,7 +9,7 @@ in float fragDistance;
 uniform bool textured = false;
 uniform sampler2D texture2D;
 
-uniform float alphaClip = 0;
+uniform float alphaClip = 0.4;
 
 uniform vec4 albedo = vec4(1);
 

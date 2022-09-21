@@ -176,7 +176,7 @@ namespace Makai {
 				// Get delta
 				float curTime = (float)SDL_GetTicks();
 				float delta = curTime - lastTime;
-				float deltaTime = delta/maxFrameRate;
+				float deltaTime = 1.0/maxFrameRate;
 				// increment frame counter
 				frame += 1;
 				// Poll events and check if should close

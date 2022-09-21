@@ -10,7 +10,7 @@
 #define $gloffset(offset) (void*)((offset) * sizeof(float))
 
 #define DERIVED_CONSTRUCTOR(NAME, BASE, CODE)\
-	NAME(string name = #NAME ) : BASE(name) CODE\
+	NAME(string name = #NAME) : BASE(name) CODE\
 	NAME(Entity* parent, string name = #NAME , bool uniqueEntity = true) : BASE(parent, name, uniqueEntity) CODE
 
 #define DERIVED_CLASS(NAME, BASE)\
@@ -297,5 +297,6 @@ namespace EntityClass {
 
 #undef UNROLL_LOOPS
 #undef DERIVED_CLASS
+#undef DERIVED_CONSTRUCTOR
 
 #endif // GRAPHICAL_RENDERER_H

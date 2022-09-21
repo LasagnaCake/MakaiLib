@@ -28,7 +28,10 @@ public:
 	RenderData::Renderable testRenderable3;
 	Drawer::Texture2D ringu;
 
+	GameData::PlayerEntity2D player;
+
 	void onOpen() override {
+		EntityClass::$_ROOT.addChild(&player);
 		ringu.create("ring.png");
 		getFrameBuffer().color = Color::BLACK;
 		ringu(0);
@@ -108,7 +111,9 @@ int main() {
 	// [[ Main Program Code BEGIN ]]
 	prog.maxFrameRate = 60;
 
-	Scene::camera.eye = Vector::Vector3(0, 10, 0);
+	prog.player.zIndex = 10;
+
+	Scene::camera.eye = Vector::Vector3(0, 2.5, 0);
 	Scene::camera.at = Vector::Vector3(0, 0, 10);
 	Scene::camera.up = Vector::Vector3(0, 1, 0);
 

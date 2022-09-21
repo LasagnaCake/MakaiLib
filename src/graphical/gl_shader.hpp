@@ -311,21 +311,11 @@ namespace Shader {
 
 		/// Operator overload.
 		void operator()() {
-			for (unsigned char i = 0; i < 32; i++)
-			if (textures[i]) {
-				glActiveTexture(GL_TEXTURE0 + i);
-				glBindTexture(GL_TEXTURE_2D, textures[i]);
-			}
 			glUseProgram(id);
 		}
 
 		/// Enables the shader object.
 		void enable() {
-			for (unsigned char i = 0; i < 32; i++)
-			if (textures[i]) {
-				glActiveTexture(GL_TEXTURE0 + i);
-				glBindTexture(GL_TEXTURE_2D, textures[i]);
-			}
 			glUseProgram(id);
 		}
 
@@ -346,8 +336,6 @@ namespace Shader {
 		_UniSet operator[](const string& name) {
 			return uniform(name);
 		}
-
-		GLuint textures[32];
 	};
 
 	typedef vector<string> ShaderCodes;
