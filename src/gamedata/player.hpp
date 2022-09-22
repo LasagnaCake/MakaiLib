@@ -44,11 +44,11 @@ struct PlayerEntity2D: AreaCircle2D {
 		else
 			position -= direction * speed.unfocused * delta;
 		Transform2D transform = globalTransform();
-		sprite->local = Transform3D(
-			Vector3(transform.position, zIndex),
-			Vector3(0, 0, transform.rotation),
-			Vector3(transform.scale, 1)
-		);
+		sprite->local.position		= Vector3(transform.position, zIndex);
+		sprite->local.rotation.z	= transform.rotation;
+		sprite->local.scale			= Vector3(transform.scale, 0.00001);
+		if(++sprite->sprite.x >= sprite->size.x)
+			sprite->sprite.x = 0;
 	}
 };
 
