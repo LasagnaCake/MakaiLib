@@ -9,20 +9,6 @@
 
 using namespace RenderData::Reference;
 
-namespace RenderLayer {
-	enum RendeLayer: size_t {
-		LAYER_WORLD,
-		LAYER_PLAYER = 5,
-		LAYER_PLAYER_BULLET,
-		LAYER_ENEMY,
-		LAYER_ENEMY_BULLET,
-		LAYER_ITEM,
-		LAYER_PLAYER_HITBOX,
-		LAYER_UI,
-		LAYER_DIALOG
-	};
-}
-
 class GameApp: public Makai::Program{
 public:
 	GameApp(

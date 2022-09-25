@@ -61,6 +61,7 @@ namespace Color{
 
 	// Transparency
 	const Vector4 NONE			= ALPHA(-0.1);
+	const Vector4 TRANSPARENT	= ALPHA(.0);
 	const Vector4 MISTY			= ALPHA(.25);
 	const Vector4 TRANSLUCENT	= ALPHA(.50);
 	const Vector4 OPAQUE		= ALPHA(.75);

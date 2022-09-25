@@ -227,10 +227,10 @@ namespace Drawer {
 		/// The framebuffer's tint.
 		Vector4 tint = Color::WHITE;
 		/// The framebuffer's balance color.
-		Vector4 tone = Color::BLACK;
+		Vector4 tone = Color::TRANSPARENT;
 
 		/// The framebuffer's clear color.
-		Vector4 color = Color::NONE;
+		Vector4 color = Color::TRANSPARENT;
 		/// The framebuffer's shape.
 		Vertex rect[4];
 		/// The framebuffer's rendering shader.

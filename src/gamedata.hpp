@@ -12,6 +12,8 @@
 	inline	virtual string getBaseClass() {return #BASE;}\
 	inline	static string getCoreClass() {return #NAME;}
 
+#include "gamedata/danmaku/layout.hpp"
+
 namespace GameData {
 	namespace {
 		using

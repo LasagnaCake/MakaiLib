@@ -9,7 +9,11 @@ uniform vec4 accent = vec4(0);
 uniform sampler2D screen;
 uniform sampler2D depth;
 
+uniform bool useAlphaMask = false;
+uniform sampler2D alphaMask;
+
 void main() {
-	vec4 color = (texture(screen, fragUV) * fragColor * albedo) + vec4(accent.x, accent.y, accent.z, 0);
+	vec4 color = (texture(screen, fragUV) * fragColor * albedo) + vec4(accent.x, accent.y, accent.z, accent.w);
+	if (useAlphaMask) color.w *= texture(alphaMask, fragUV).a;
 	gl_FragColor = color;
 }

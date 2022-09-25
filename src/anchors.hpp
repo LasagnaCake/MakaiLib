@@ -136,4 +136,8 @@
 
 #define $func(...)	[&](...) -> void
 
+#define $addenum(NAME, STEP) \
+    NAME##_$_$, \
+    NAME = NAME##_$_$ + (STEP) - 1
+
 #endif // ANCHORED_HEADERS_H
