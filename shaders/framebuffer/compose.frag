@@ -1,6 +1,7 @@
 #version 420
 
 in vec2 fragUV;
+in vec2 maskUV;
 in vec4 fragColor;
 
 uniform vec4 albedo = vec4(1);
@@ -14,6 +15,6 @@ uniform sampler2D alphaMask;
 
 void main() {
 	vec4 color = (texture(screen, fragUV) * fragColor * albedo) + vec4(accent.x, accent.y, accent.z, accent.w);
-	if (useAlphaMask) color.w *= texture(alphaMask, fragUV).a;
+	if (useAlphaMask) color.w *= texture(alphaMask, maskUV).a;
 	gl_FragColor = color;
 }
