@@ -24,7 +24,7 @@ struct PlayerEntity2D: AreaCircle2D {
 
 	struct {
 		float focused = 3;
-		float unfocused = 5;
+		float unfocused = 6;
 	} speed;
 
 	virtual void onFrame(float delta) {

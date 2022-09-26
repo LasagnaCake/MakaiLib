@@ -60,6 +60,19 @@ public:
 		return this;
 	}
 
+	Renderable* addToRenderLayer(size_t renderLayer) {
+		Drawer::layers.addObject(&render, renderLayer);
+		manualMode = false;
+		return this;
+	}
+
+	Renderable* removeFromRenderLayer(size_t renderLayer) {
+		Drawer::layers.removeFromGroup(&render, renderLayer);
+		if (!Drawer::layers.getGroups(&render).size())
+			manualMode = true;
+		return this;
+	}
+
 	template <
 		class T,
 		class = std::enable_if<std::is_base_of<Reference::Plane, T>::value>::type
