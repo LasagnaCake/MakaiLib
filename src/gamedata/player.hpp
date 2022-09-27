@@ -12,6 +12,8 @@ struct PlayerEntity2D: AreaCircle2D {
 		actionKeys["shot"]	= SDL_SCANCODE_Z;
 		actionKeys["bomb"]	= SDL_SCANCODE_X;
 		actionKeys["item"]	= SDL_SCANCODE_C;
+		actionKeys["extra"]	= SDL_SCANCODE_SPACE;
+		actionKeys["skip"]	= SDL_SCANCODE_LCTRL;
 		sprite = mesh.createReference<Reference::AnimatedPlane>();
 	})
 	KeyBinds actionKeys;
@@ -27,6 +29,15 @@ struct PlayerEntity2D: AreaCircle2D {
 		float unfocused = 6;
 	} speed;
 
+	bool action(std::string what) {
+		return input.getButtonDown(actionKeys[what]);
+	}
+
+	virtual void onShot() {}
+	virtual void onBomb() {}
+	virtual void onItem() {}
+	virtual void onExtra() {}
+
 	virtual void onFrame(float delta) {
 		input.update();
 		AreaCircle2D::onFrame(delta);
@@ -39,7 +50,7 @@ struct PlayerEntity2D: AreaCircle2D {
 			input.getButtonDown(actionKeys["right"])
 			- input.getButtonDown(actionKeys["left"])
 		);
-		if (input.getButtonDown(actionKeys["focus"]))
+		if (action("focus"))
 			position -= direction * speed.focused * delta;
 		else
 			position -= direction * speed.unfocused * delta;
@@ -49,6 +60,11 @@ struct PlayerEntity2D: AreaCircle2D {
 		sprite->local.scale			= Vector3(transform.scale, 0.00001);
 		if(++sprite->sprite.x >= sprite->size.x)
 			sprite->sprite.x = 0;
+
+		if(action("shot"))	onShot();
+		if(action("bomb"))	onBomb();
+		if(action("item"))	onItem();
+		if(action("extra"))	onExtra();
 	}
 };
 
