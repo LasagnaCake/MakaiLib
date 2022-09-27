@@ -10,12 +10,12 @@ out vec4 fragColor;
 
 uniform vec2 resolution;
 uniform vec2 uvShift = vec2(0);
-uniform bool shiftAlphaMask = false;
+uniform bool relativeMask = false;
 
 void main()
 {
     maskUV = vertUV;
-    if (shiftAlphaMask) 
+    if (relativeMask) 
         maskUV += uvShift;
     fragUV = (vertUV + uvShift) / resolution;
     fragColor = vertColor;
