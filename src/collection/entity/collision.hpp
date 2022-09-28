@@ -6,7 +6,7 @@
 
 #include <map>
 
-namespace EntityClass {
+namespace CollisionData {
 	namespace {
 		using
 		VecMath::Points2D,
@@ -14,11 +14,8 @@ namespace EntityClass {
 		VecMath::angleTo,
 		VecMath::center,
 		std::map;
+		using namespace Vector;
 	}
-
-	/// Collision Layers (used for collision detection).
-	EntityGroup collisionLayers;
-
 	/**
 	*******************************
 	*                             *
@@ -43,11 +40,46 @@ namespace EntityClass {
 		Projection y;
 	};
 
+	/**
+	***************************************
+	*                                     *
+	*  2D Circle Boundary Data Structure  *
+	*                                     *
+	***************************************
+	*/
+	struct CircleBounds2D {
+		Vector2 position;
+		float radius;
+	};
+
 	struct AreaCollisionData {
 		Vector2 size = Vector2(1);
 		bool enabled = true;
 		bool isCircle = false;
 	};
+
+	inline bool withinBounds(Vector2 point, BoxBounds2D area) {
+		return (
+			( area.x.min < point.x) && (point.x < area.x.max)
+		) && (
+			( area.y.min < point.y) && (point.y < area.y.max)
+		);
+	}
+}
+
+namespace EntityClass {
+	namespace {
+		using
+		VecMath::Points2D,
+		VecMath::Points3D,
+		VecMath::angleTo,
+		VecMath::center,
+		std::map;
+		using namespace CollisionData;
+	}
+
+	/// Collision Layers (used for collision detection).
+	EntityGroup collisionLayers;
 
 	/**
 	*****************************
@@ -188,12 +220,7 @@ namespace EntityClass {
 				float pointAngle = VecMath::angleTo(globalPosition(), target->globalPosition());
 				Vector2 other = VecMath::angleV2(pointAngle) * target->globalScale() * target->collision.size.x;
 				other = VecMath::rotateV2(other, target->globalRotation());
-				bool overlap = (
-					( self.x.min < other.x) && (other.x < self.x.max)
-				) && (
-					( self.y.min < other.y) && (other.y < self.y.max)
-				);
-				return overlap;
+				return withinBounds(other, self);
 			}
 			// Get projections on X and Y axis
 			BoxBounds2D
