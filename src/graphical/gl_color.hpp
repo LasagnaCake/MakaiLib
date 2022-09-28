@@ -73,20 +73,20 @@ namespace Color{
 	const Vector4 DARKGRAY		= Color(.25, 1);
 	const Vector4 BLACK			= Color(0, 1);
 	// Primary Colors
-	const Vector4 RED			= Color(1,	0,	0,	1);
-	const Vector4 GREEN			= Color(0,	1,	0,	1);
-	const Vector4 BLUE			= Color(0,	0,	1,	1);
+	const Vector4 RED			= Color(1,	0,	0);
+	const Vector4 GREEN			= Color(0,	1,	0);
+	const Vector4 BLUE			= Color(0,	0,	1);
 	// Secondary Colors
-	const Vector4 YELLOW		= Color(1,	1,	0,	1);
-	const Vector4 MAGENTA		= Color(1,	0,	1,	1);
-	const Vector4 CYAN			= Color(0,	1,	1,	1);
+	const Vector4 YELLOW		= Color(1,	1,	0);
+	const Vector4 MAGENTA		= Color(1,	0,	1);
+	const Vector4 CYAN			= Color(0,	1,	1);
 	// Tertiary Colors
-	const Vector4 ORANGE		= Color(1,	.5,	0,	1);
-	const Vector4 AZURE			= Color(0,	.5,	1,	1);
-	const Vector4 TEAL			= Color(0,	1,	.5,	1);
-	const Vector4 LIME			= Color(.5,	1,	0,	1);
-	const Vector4 PURPLE		= Color(.5,	0,	1,	1);
-	const Vector4 PINK			= Color(1,	0,	.5,	1);
+	const Vector4 ORANGE		= Color(1,	.5,	0);
+	const Vector4 AZURE			= Color(0,	.5,	1);
+	const Vector4 TEAL			= Color(0,	1,	.5);
+	const Vector4 LIME			= Color(.5,	1,	0);
+	const Vector4 PURPLE		= Color(.5,	0,	1);
+	const Vector4 PINK			= Color(1,	0,	.5);
 
 	const Vector4 rainbow8[] = {
 		PURPLE,

@@ -8,6 +8,13 @@
 //#define SIDE_B
 
 using namespace RenderData::Reference;
+using namespace Vector;
+
+void setCamera2D() {
+	Scene::camera.eye	= Vector3(0,0,-10);
+	Scene::camera.at	= Vector3(0,0,0);
+	Scene::camera.up	= Vector3(0,1,0);
+}
 
 class GameApp: public Makai::Program{
 public:
@@ -26,12 +33,14 @@ public:
 		SLF::SLFData data = SLF::parseFile("shaders/base/base.slf");
 		Shader::defaultShader.destroy();
 		Shader::defaultShader.create(data);
+		EntityClass::$_ROOT.addChild(&player);
+		player.mesh.setRenderLayer($layer(PLAYER));
+		$debug(Drawer::layers.getGroups(&(player.mesh.render))[0]);
 	};
 
 	GameData::PlayerEntity2D player;
 
 	void onOpen() override {
-		EntityClass::$_ROOT.addChild(&player);
 	}
 
 	void onLogicFrame() override {
@@ -39,22 +48,30 @@ public:
 	}
 
 	void onDrawBegin() override {
+		getFrameBuffer().tint = Color::RED;
+		getLayerBuffer().tint = Color::BLUE;
 	}
 
+	#define $rlayer(LAYER) ($layer(LAYER) / 8)
 	void onLayerDrawBegin(size_t layerID) override {
-		switch (layerID) {
-		case 0:
+		switch (layerID / 8) {
+		case $rlayer(WORLD):
 			break;
-		case 1:
+		case $rlayer(PLAYER):
+			// It's getting here, but it's still white...
+			setCamera2D();
+			getLayerBuffer().tint = Color::RED;
 			break;
-		case 2:
+		case $rlayer(UI):
 			break;
 		default:
 			break;
 		}
 	}
+	#undef $rlayer
 
 	void onLayerDrawEnd(size_t layerID) override {
+		getLayerBuffer().tint = Color::WHITE;
 	}
 
 	void onDrawEnd() override {
@@ -65,8 +82,6 @@ public:
 };
 
 #ifndef SIDE_B
-
-using namespace Vector;
 
 int main() {
 	/*
@@ -81,10 +96,6 @@ int main() {
 
 	// [[ Main Program Code BEGIN ]]
 	prog.maxFrameRate = 60;
-
-	Scene::camera.eye	= Vector3(0,0,-10);
-	Scene::camera.at	= Vector3(0,0,0);
-	Scene::camera.up	= Vector3(0,1,0);
 
 	prog.player.zIndex = 10;
 	// [[ Main Program Code END ]]

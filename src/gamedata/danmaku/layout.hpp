@@ -9,7 +9,7 @@
 	NAME##_$_$, \
     NAME##_LAYER = (NAME##_$_$ + (SUBLAYER_COUNT - 1))
 
-#define SUBLAYER(INDEX) ((INDEX) - (SUBLAYER_COUNT - 1))
+#define $sublayer(INDEX) ((INDEX) - (SUBLAYER_COUNT - 1))
 
 namespace RenderLayer {
 	enum RenderLayer: size_t {
@@ -26,5 +26,6 @@ namespace RenderLayer {
 }
 
 #undef R_LAYER
+#define $layer(NAME) RenderLayer::NAME##_LAYER
 
 #endif // MAKAI_GAME_SYSTEM_LAYOUT
