@@ -16,6 +16,13 @@ namespace Makai {
 		Vector::VecV3,
 		Vector::VecV4;
 	}
+
+	SDL_Event pollEvents() {
+		SDL_Event ev;
+		SDL_PollEvent(&ev);
+		return ev;
+	}
+
 	/**
 	*************************
 	*                       *
@@ -157,12 +164,12 @@ namespace Makai {
 		void run(){
 			// The physics process
 			auto physFunc	= [&](float delta)-> void {
+				EntityClass::$_ROOT.yield(delta);
 			};
 			// The logical process
 			auto logicFunc	= [&](float delta)-> void {
 				Tween::yieldAllTweens();
 				Event::yieldAllTimers();
-				EntityClass::$_ROOT.yield(delta);
 			};
 			// Clear screen
 			Drawer::clearColorBuffer(color);
@@ -214,6 +221,7 @@ namespace Makai {
 					SDL_Delay((maxFrameRate - delta) * 1000);*/
 			}
 			// Terminate program
+			$debug("Closing incoherent program...");
 			terminate();
 		}
 
@@ -241,9 +249,9 @@ namespace Makai {
 		inline void renderReservedLayer() {
 			Drawer::clearColorBuffer(color);
 			glClear(GL_DEPTH_BUFFER_BIT);
-			framebuffer()->clearBuffers();
+			//framebuffer()->clearBuffers();
 			Drawer::renderLayer(Math::maxSizeT);
-			framebuffer.render(toFrameBufferData());
+			//framebuffer.render(toFrameBufferData());
 			SDL_GL_SwapWindow(window);
 		}
 
@@ -315,10 +323,14 @@ namespace Makai {
 			// Call final function
 			onClose();
 			// Destroy buffers
+			$debug("Destroying buffers...");
 			framebuffer.destroy();
 			layerbuffer.destroy();
+			$debug("Buffers destroyed!");
 			// Quit SDL
+			$debug("Ending SDL...");
 			SDL_Quit();
+			$debug("SDL ended!");
 		}
 
 		/// Draws the window.
@@ -335,6 +347,7 @@ namespace Makai {
 			// Draw objects
 			vector<size_t> rLayers = Drawer::layers.getAllGroups();
 			for (auto layer : rLayers) {
+				if (layer == Math::maxSizeT) continue;
 				// Call onLayerDrawBegin function
 				onLayerDrawBegin(layer);
 				// Clear target depth buffer

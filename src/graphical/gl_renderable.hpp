@@ -20,14 +20,21 @@ public:
 
 	~Renderable() {
 		onDelete();
-		glDeleteBuffers(1, &vbo);
-		glDeleteVertexArrays(1, &vao);
-		for (auto t: triangles)
-			delete t;
-		for (auto pr: references.plane)
-			delete pr;
+		$debug("Removing from render layers...");
 		if(!manualMode)
 			Drawer::layers.removeFromAll(&render);
+		$debug("Deleting buffers...");
+		glDeleteBuffers(1, &vbo);
+		glDeleteVertexArrays(1, &vao);
+		$debug("Deleting references...");
+		for (auto pr: references.plane)
+			delete pr;
+		// This causes an error for some reason
+		$debug("Deleting triangles...");
+		for (auto t: triangles) {
+			delete t;
+		}
+		$debug("Killing renderable object...");
 	}
 
 	/// Called on creation.
@@ -132,14 +139,14 @@ public:
 			transform.local.rotation + transform.global.rotation,
 			transform.local.scale * transform.global.scale
 		);
+		// Get transformation matrix
+		actorMatrix = VecMath::asGLMMatrix(absolute);
 		// Copy data to IVB
 		size_t i = 0;
 		for (auto t: triangles) {
-			auto tri = (*t)
-				.transformed(absolute);
-			verts[i]	= toRawVertex(tri.verts[0]);
-			verts[i+1]	= toRawVertex(tri.verts[1]);
-			verts[i+2]	= toRawVertex(tri.verts[2]);
+			verts[i]	= toRawVertex(t->verts[0]);
+			verts[i+1]	= toRawVertex(t->verts[1]);
+			verts[i+2]	= toRawVertex(t->verts[2]);
 			i += 3;
 		}
 		// Set VBO as active
@@ -200,6 +207,8 @@ private:
 		vector<Reference::Plane*> plane;
 	} references;
 
+	glm::mat4x4 actorMatrix;
+
 	/// Whether manually rendering or not.
 	bool manualMode = false;
 
@@ -221,6 +230,7 @@ private:
 		Shader::defaultShader["world"](Scene::world);
 		Shader::defaultShader["camera"](camera);
 		Shader::defaultShader["projection"](projection);
+		Shader::defaultShader["actor"](actorMatrix);
 		glDrawArrays(GL_TRIANGLES, 0, vertexCount);
 		// Render object passes, if any
 		if(shaders.size())
@@ -233,6 +243,7 @@ private:
 				shader["world"](Scene::world);
 				shader["camera"](camera);
 				shader["projection"](projection);
+				shader["actor"](actorMatrix);
 				// Draw object
 				glDrawArrays(GL_TRIANGLES, 0, vertexCount);
 			}

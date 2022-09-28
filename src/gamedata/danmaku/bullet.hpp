@@ -29,37 +29,35 @@ struct BulletData {
 	bool dope = true;
 };
 
-class Bullet: public Entity2D {
+class Bullet {
 public:
-	DERIVED_CONSTRUCTOR(Bullet, Entity2D, {
-		EntityClass::groups.addEntity(this, $layer(ENEMY_BULLET));
-	})
-	DERIVED_CLASS(Bullet, Entity2D)
+	Bullet() {
+	}
 
 	BulletData settings;
 
 	Reference::AnimatedPlane* sprite;
 
-	void onFrame(float delta) override {
+	Tasking::MultiTasker taskers;
+
+	void onFrame(float delta) {
+		taskers.yield();
 		if (sprite) {
 			// Set sprite position
-			sprite->local.position = Vector3(
-				globalPosition(),
-				zIndex
-			);
+			sprite->local.position = local.position;
 			// Set sprite rotation
-			sprite->local.rotation.z = globalRotation();
+			sprite->local.rotation.z = local.rotation;
 			if (settings.rotateSprite)
 				sprite->local.rotation.z += currentRotation;
 			// Set sprite scale
-			sprite->local.scale = Vector3(globalScale());
+			sprite->local.scale = Vector3(local.scale);
 		}
 	}
 
 	Bullet* reset() {
 		currentSpeed = settings.speed.start;
 		currentRotation = settings.rotation.start;
-		rotation = currentRotation;
+		local.rotation = currentRotation;
 		return this;
 	}
 
@@ -74,9 +72,10 @@ public:
 	Bullet* setFree(bool state = true) {
 		free = state;
 		if (sprite) sprite->visible = !state;
-		process = !state;
 		return this;
 	}
+
+	Transform2D local;
 
 	float currentSpeed		= 0;
 	float currentRotation	= 0;
@@ -86,39 +85,37 @@ private:
 };
 
 template <size_t BULLET_COUNT>
-class BulletManager: Entity2D {
+class BulletManager: Entity {
 public:
-	DERIVED_CONSTRUCTOR(BulletManager, Entity2D, {
+	DERIVED_CONSTRUCTOR(BulletManager, Entity, {
 		EntityClass::$_ROOT += this;
 		mesh.setRenderLayer($layer(ENEMY_BULLET));
 	})
 
-	virtual ~BulletManager() {
-		for (auto bullet: bullets)
-			delete bullet;
-	}
+	DERIVED_CLASS(BulletManager, Entity)
 
 	Renderable mesh;
+
+	void onFrame(float delta) override {
+		for $each(b, bullets) {
+			b.onFrame(delta);
+		}
+	}
 
 	void create() {
 		if (created) return;
 		for (size_t i = 0; i < BULLET_COUNT; i++) {
-			auto b = new Bullet("Danmaku");
-			bullets[i] = b;
-			addChild(b);
-			b->sprite = mesh.createReference<AnimatedPlane>();
-			b->setFree();
+			bullets[i].sprite = mesh.createReference<AnimatedPlane>();
+			bullets[i].setFree();
 			onBulletCreated();
 		}
 		created = true;
 	}
 
-	DERIVED_CLASS(BulletManager, Entity2D)
-
 	Bullet* createBullet() {
-		for (auto b: bullets)
-			if (b->isFree())
-				return b->enable()->reset();
+		for $each(b, bullets)
+			if (b.isFree())
+				return b.enable()->reset();
 		throw std::runtime_error(
 			getName()
 			+ ": Out of usable bullets ("
@@ -133,7 +130,7 @@ public:
 		return b->reset();
 	}
 
-	std::array<Bullet*, BULLET_COUNT> bullets;
+	Bullet bullets[BULLET_COUNT];
 
 	Event::Signal onBulletCreated;
 

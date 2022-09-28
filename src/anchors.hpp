@@ -101,6 +101,7 @@
 #include "collection/cyclical.hpp"
 #include "collection/tween.hpp"
 #include "collection/event.hpp"
+#include "collection/tasking.hpp"
 #include "collection/grouping.hpp"
 
 #ifdef _$_FLOAT_AS_DOUBLE
@@ -139,5 +140,7 @@
 #define $addenum(NAME, STEP) \
     NAME##_$_$, \
     NAME = NAME##_$_$ + (STEP) - 1
+
+#define $each(I, LIST) (auto& I: LIST)
 
 #endif // ANCHORED_HEADERS_H

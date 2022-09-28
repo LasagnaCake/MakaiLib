@@ -1,6 +1,8 @@
 // #include <irrlicht.h>
 #include <stdexcept>
 
+//#undef _DEBUG_OUTPUT_
+
 #include "src/program.hpp"
 
 #include <windows.h>
@@ -32,9 +34,7 @@ public:
 	};
 
 	GameData::PlayerEntity2D player;
-	GameData::BulletManager<1000> testM;
-
-	RenderData::Renderable progress;
+	GameData::BulletManager<4096> testM;
 
 	void setCamera2D(float scale = 64) {
 		Scene::camera.eye	= Vector3(0,0,-10);
@@ -51,14 +51,28 @@ public:
 		player.position.x = 32;
 		player.position.y = -32;
 		player.position *= screenSpace;
+		RenderData::Renderable progress;
+		progress.setRenderLayer(Math::maxSizeT);
 		Plane* bar = progress.createReference<Plane>();
-		testM.onBulletCreated = $signal {
-			$debug("Bullet Created!");
-			bar.local.scale.x += 1/1000;
+		setCamera2D();
+		float progTick = Scene::camera.ortho.size.x / 4096.0;
+		size_t progCount = 0;
+		bar->local.scale.x = 0;
+		auto bulletSignal = $signal {
+			$debug(++progCount);
+			bar->local.scale.x += progTick;
+			renderReservedLayer();
+			Makai::pollEvents();
 		};
+		testM.onBulletCreated = bulletSignal;
 		testM.create();
-		for (size_t i = 0; i < 100; i++)
+		bar->local.scale.x = 0;
+		for (size_t i = 0; i < 4096; i++){
 			testM.createBullet();
+			bar->local.scale.x += progTick;
+			renderReservedLayer();
+			Makai::pollEvents();
+		}
 	}
 
 	void onLogicFrame() override {
@@ -105,6 +119,9 @@ int main() {
 	*                     *
 	***********************
 	*/
+	#ifndef _DEBUG_OUTPUT_
+	ShowWindow(GetConsoleWindow(), SW_HIDE);
+	#endif // _DEBUG_OUTPUT_
 
 	GameApp prog(960, 720, "[TEST]");
 
@@ -112,7 +129,6 @@ int main() {
 	prog.maxFrameRate = 60;
 	// [[ Main Program Code END ]]
 	prog.run();
-
 	return 0;
 }
 #else

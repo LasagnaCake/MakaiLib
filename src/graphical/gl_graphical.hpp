@@ -55,15 +55,24 @@ namespace Drawer {
 
 	struct Vertex {
 		Vertex() {}
+
 		Vertex(Vector3 position, Vector4 color = Vector4(1), Vector2 uv = Vector2(0)) {
-			this-> position	= position;
-			this-> uv		= uv;
-			this->color		= color;
+			this-> position		= position;
+			this-> uv			= uv;
+			this-> color		= color;
 		}
+
+		Vertex(const Vertex& v) {
+			this-> position		= v.position;
+			this-> uv			= v.uv;
+			this-> color		= v.color;
+		}
+
+		~Vertex() {}
 
 		Vector3 position;
 		Vector2 uv;
-		Vector4 color = Color::WHITE;
+		Vector4 color = Vector4(1);
 	};
 
 	RawVertex toRawVertex(Vector3 pos, Vector2 uv, Vector4 col) {
@@ -197,6 +206,14 @@ namespace VecMath {
 			trans.scale
 		);
 	}
+
+	glm::mat4 asGLMMatrix(Transform3D trans) {
+		glm::mat4 res(1.0f);
+		res = glm::translate(res, asGLMVector(trans.position));
+		res = glm::rotate(res, 1.0f, asGLMVector(trans.rotation));
+		res = glm::scale(res, asGLMVector(trans.scale));
+		return res;
+	}
 }
 #ifndef SRP_TRANSFORM
 #define SRP_TRANSFORM glmSrpTransform
@@ -251,15 +268,14 @@ namespace RenderData {
 				this->verts[i] = verts[i];
 		}
 
-		Triangle transformed(Transform3D trans) {
-			Vertex res[3];
+		Triangle(const Triangle& t) {
 			#pragma GCC unroll 3
-			for (unsigned char i = 0; i < 3; i++) {
-				res[i].position = SRP_TRANSFORM(verts[i].position, trans);
-				res[i].uv		= verts[i].uv;
-				res[i].color	= verts[i].color;
-			}
-			return Triangle(res);
+			for (unsigned char i = 0; i < 3; i++)
+				this->verts[i] = t.verts[i];
+		}
+
+		~Triangle() {
+			$debug("Here!");
 		}
 
 		Vertex verts[3];
