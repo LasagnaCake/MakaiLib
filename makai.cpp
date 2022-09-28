@@ -52,7 +52,7 @@ public:
 	}
 
 	void onLogicFrame() override {
-		player.rotation += (2.0/maxFrameRate);
+		//player.rotation += (2.0/maxFrameRate);
 	}
 
 	void onDrawBegin() override {
