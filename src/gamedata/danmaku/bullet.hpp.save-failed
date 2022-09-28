@@ -1,0 +1,95 @@
+#ifndef MAKAI_BASE_BULLET_H
+#define MAKAI_BASE_BULLET_H
+
+namespace {
+	using namespace CollisionData;
+}
+
+struct BulletParam {
+	float start		= 0;
+	float end		= 0;
+	float omega		= 0;
+	bool constant	= false;
+};
+
+struct BulletData {
+	// Collision data
+	BoxBounds2D*	playfield;
+	CircleBounds2D	hitbox;
+	// Parameters
+	BulletParam	speed;
+	BulletParam	rotation;
+	// Flags
+	bool rotateSprite	= true;
+	bool shuttle		= true;
+	bool rebound		= true;
+	bool destroyable	= true;
+	// Destroy on Playfield Exit
+	bool dope = true;
+};
+
+class Bullet: public Entity2D {
+public:
+	DERIVED_CONSTRUCTOR(Bullet, Entity2D, {
+		EntityClass::groups.addEntity(this, $layer(ENEMY_BULLET));
+	})
+	DERIVED_CLASS(Bullet, Entity2D)
+
+	BulletData settings;
+
+	Reference::AnimatedPlane* sprite;
+
+	void onFrame(float delta) override {
+		if (sprite) {
+			// Set sprite position
+			sprite->local.position = Vector3(
+				globalPosition(),
+				zIndex
+			);
+			// Set sprite rotation
+			sprite->local.rotation.z = globalRotation();
+			if (settings.rotateSprite)
+				sprite->local.rotation.z += currentRotation;
+			// Set sprite scale
+			sprite->local.scale = Vector3(globalScale());
+		}
+	}
+
+	Bullet* reset() {
+		currentSpeed = settings.speed.start;
+		currentRotation = settings.rotation.start;
+		rotation = currentRotation;
+		return this;
+	}
+
+	Bullet* enable() {
+		free = false;
+		if (sprite) sprite->visible = true;
+		return this;
+	}
+
+	bool isFree() {
+		return free;
+	}
+
+	Bullet* setFree() {
+		free = true;
+		if (sprite) sprite->visible = false;
+		return this;
+	}
+
+	float currentSpeed		= 0;
+	float currentRotation	= 0;
+private:
+	bool free = false;
+};
+
+template <size_t COUNT>
+class BulletManager: Entity2D {
+	DERIVED_CONSTRUCTOR(BulletManager, Entity2D, {
+		EntityClass::$_ROOT += this;
+	})
+	DERIVED_CLASS(BulletManager, Entity2D)
+};
+
+#endif // MAKAI_BASE_BULLET_H

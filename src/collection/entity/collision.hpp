@@ -67,6 +67,43 @@ namespace CollisionData {
 			( area.y.min < point.y) && (point.y < area.y.max)
 		);
 	}
+
+	inline bool withinBounds(Vector2 point, CircleBounds2D area) {
+		return point.distanceTo(area.position) < area.radius;
+	}
+
+	inline bool withinBounds(CircleBounds2D a, CircleBounds2D b) {
+		return a.position.distanceTo(b.position) < (a.radius + b.radius);
+	}
+
+	bool withinBounds(BoxBounds2D a, BoxBounds2D b) {
+		// Get overlap on X
+		bool overlapX = (
+			(b.x.min < a.x.min) && (a.x.min < b.x.max)
+		) || (
+			(b.x.min < a.x.max) && (a.x.max < b.x.max)
+		);
+		// Get overlap on Y
+		bool overlapY = (
+			(b.y.min < a.y.min) && (a.y.min < b.y.max)
+		) || (
+			(b.y.min < a.y.max) && (a.y.max < b.y.max)
+		);
+		// Return if both axis overlap (i.e. collision)
+		return overlapX && overlapY;
+	}
+
+	bool withinBounds(CircleBounds2D a, BoxBounds2D b) {
+		float pointAngle = VecMath::angleTo(
+			a.position,
+			Vector2(
+				b.x.min + b.x.max,
+				b.y.min + b.y.max
+			) / 2
+		);
+		Vector2 point = VecMath::angleV2(pointAngle) * a.radius;
+		return withinBounds(point, b);
+	}
 }
 
 namespace EntityClass {
@@ -162,17 +199,19 @@ namespace EntityClass {
 		bool colliding(AreaCollision2D* target) override {
 			// If either object cannot collide, return false
 			if (!(collision.enabled && target->collision.enabled)) return false;
-			// Get distance between objects
-			float distance = globalPosition().distanceTo(target->globalPosition());
-			// Get self's and target's global scale
-			Vector2
-				selfScale = globalScale(),
-				targetScale = target->globalScale();
-			// Calculate self's and target's true diameter
-			float selfDiameter		= collision.size.x * Math::min(selfScale.x, selfScale.y);
-			float targetDiameter	= target->collision.size.x * Math::min(targetScale.x, targetScale.y);
-			// Return if distance between circles is below zero (collision)
-			return (distance - selfDiameter - targetDiameter) < 0;
+			// Check collision
+			return withinBounds(
+				getCircleBounds(),
+				((AreaCircle2D*)target)->getCircleBounds()
+			);
+		}
+
+		CircleBounds2D getCircleBounds() {
+			Vector2 absScale = globalScale();
+			return CircleBounds2D {
+				globalPosition(),
+				Math::min(absScale.x, absScale.y)
+			};
 		}
 
 		/// Checks and processes collision between this object and another objecr.
@@ -190,7 +229,6 @@ namespace EntityClass {
 				}
 			// If can collide and colliding, trigger collision
 			if(collidable) {
-				if (collision.isCircle && !target->collision.isCircle)
 				if (collision.isCircle && !target->collision.isCircle)
 					target->checkCollision(this);
 				else if (colliding(target))
@@ -218,30 +256,18 @@ namespace EntityClass {
 			// If either object cannot collide, return false
 			if (!(collision.enabled && target->collision.enabled)) return false;
 			if (target->collision.isCircle) {
-				BoxBounds2D self = getBoxBounds();
-				float pointAngle = VecMath::angleTo(globalPosition(), target->globalPosition());
-				Vector2 other = VecMath::angleV2(pointAngle) * target->globalScale() * target->collision.size.x;
-				other = VecMath::rotateV2(other, target->globalRotation());
-				return withinBounds(other, self);
+				// Check collision
+				return withinBounds(
+					((AreaCircle2D*)target)->getCircleBounds(),
+					getBoxBounds()
+				);
 			}
 			// Get projections on X and Y axis
 			BoxBounds2D
 				self = getBoxBounds(),
 				other = ((AreaBox2D*)target)->getBoxBounds();
 			// Get overlap on X
-			bool overlapX = (
-				(other.x.min < self.x.min) && (self.x.min < other.x.max)
-			) || (
-				(other.x.min < self.x.max) && (self.x.max < other.x.max)
-			);
-			// Get overlap on Y
-			bool overlapY = (
-				(other.y.min < self.y.min) && (self.y.min < other.y.max)
-			) || (
-				(other.y.min < self.y.max) && (self.y.max < other.y.max)
-			);
-			// Return if both axis overlap (i.e. collision)
-			return overlapX && overlapY;
+			return withinBounds(self, other);
 		}
 
 		/// Gets the boundaries of the box along the X and Y axis.

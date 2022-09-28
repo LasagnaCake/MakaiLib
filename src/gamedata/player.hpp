@@ -15,14 +15,13 @@ struct PlayerEntity2D: AreaCircle2D {
 		actionKeys["extra"]	= SDL_SCANCODE_SPACE;
 		actionKeys["skip"]	= SDL_SCANCODE_LCTRL;
 		sprite = mesh.createReference<Reference::AnimatedPlane>();
+		EntityClass::$_ROOT += this;
 	})
 	KeyBinds actionKeys;
 
 	Renderable mesh;
 	Reference::AnimatedPlane* sprite;
 	Makai::InputManager input;
-
-	float zIndex = 1;
 
 	struct {
 		float focused = 4;
@@ -70,6 +69,10 @@ struct PlayerEntity2D: AreaCircle2D {
 		if(action("bomb"))	onBomb();
 		if(action("item"))	onItem();
 		if(action("extra"))	onExtra();
+	}
+
+	void onCollision(Entity* target) {
+
 	}
 };
 

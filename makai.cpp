@@ -27,12 +27,14 @@ public:
 		SLF::SLFData data = SLF::parseFile("shaders/base/base.slf");
 		Shader::defaultShader.destroy();
 		Shader::defaultShader.create(data);
-		EntityClass::$_ROOT.addChild(&player);
 		player.mesh.setRenderLayer($layer(PLAYER));
 		$debug(Drawer::layers.getGroups(&(player.mesh.render))[0]);
 	};
 
 	GameData::PlayerEntity2D player;
+	GameData::BulletManager<1000> testM;
+
+	RenderData::Renderable progress;
 
 	void setCamera2D(float scale = 64) {
 		Scene::camera.eye	= Vector3(0,0,-10);
@@ -49,6 +51,14 @@ public:
 		player.position.x = 32;
 		player.position.y = -32;
 		player.position *= screenSpace;
+		Plane* bar = progress.createReference<Plane>();
+		testM.onBulletCreated = $signal {
+			$debug("Bullet Created!");
+			bar.local.scale.x += 1/1000;
+		};
+		testM.create();
+		for (size_t i = 0; i < 100; i++)
+			testM.createBullet();
 	}
 
 	void onLogicFrame() override {
@@ -100,8 +110,6 @@ int main() {
 
 	// [[ Main Program Code BEGIN ]]
 	prog.maxFrameRate = 60;
-
-	prog.player.zIndex = 10;
 	// [[ Main Program Code END ]]
 	prog.run();
 

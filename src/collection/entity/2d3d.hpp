@@ -33,6 +33,9 @@ namespace EntityClass {
 		/// The object's scale.
 		Vector2 scale = Vector2(1.0);
 
+		/// The object's Z Index.
+		float zIndex = 1;
+
 		/// Constructor.
 		ENTITY_CLASS(Entity2D, Entity)
 

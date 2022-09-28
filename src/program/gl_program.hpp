@@ -155,11 +155,8 @@ namespace Makai {
 
 		/// Runs the program.
 		void run(){
-			// Call on open function
-			onOpen();
 			// The physics process
 			auto physFunc	= [&](float delta)-> void {
-
 			};
 			// The logical process
 			auto logicFunc	= [&](float delta)-> void {
@@ -167,6 +164,15 @@ namespace Makai {
 				Event::yieldAllTimers();
 				EntityClass::$_ROOT.yield(delta);
 			};
+			// Clear screen
+			Drawer::clearColorBuffer(color);
+			glClear(GL_DEPTH_BUFFER_BIT);
+			// Render reserved layer
+			renderReservedLayer();
+			// Render simple frame
+			SDL_GL_SwapWindow(window);
+			// Call on open function
+			onOpen();
 			// SDL's events
 			SDL_Event event;
 			// Time recorded last frame
@@ -203,8 +209,9 @@ namespace Makai {
 				// Destroy queued entities
 				EntityClass::destroyQueued();
 				// If running faster than expected, slow down
-				if (delta < maxFrameRate)
-					SDL_Delay((1.0 - deltaTime) * 1000.0 / maxFrameRate);
+				// TODO: fix this
+				/*if (delta < maxFrameRate)
+					SDL_Delay((maxFrameRate - delta) * 1000);*/
 			}
 			// Terminate program
 			terminate();
@@ -229,6 +236,15 @@ namespace Makai {
 		/// Gets the current frame.
 		size_t getCurrentFrame() {
 			return frame;
+		}
+
+		inline void renderReservedLayer() {
+			Drawer::clearColorBuffer(color);
+			glClear(GL_DEPTH_BUFFER_BIT);
+			framebuffer()->clearBuffers();
+			Drawer::renderLayer(Math::maxSizeT);
+			framebuffer.render(toFrameBufferData());
+			SDL_GL_SwapWindow(window);
 		}
 
 		inline Drawer::FrameBuffer& getFrameBuffer() {

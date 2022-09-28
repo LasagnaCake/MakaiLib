@@ -115,17 +115,19 @@ public:
 		onTransform();
 		if (!fixed) return this;
 		// Apply transformation
-		tl->position	= SRP_TRANSFORM(tl->position, local);
-		tr1->position	= SRP_TRANSFORM(tr1->position, local);
-		tr2->position	= SRP_TRANSFORM(tr2->position, local);
-		bl1->position	= SRP_TRANSFORM(bl1->position, local);
-		bl2->position	= SRP_TRANSFORM(bl2->position, local);
-		br->position	= SRP_TRANSFORM(br->position, local);
+		tl->position	= SRP_TRANSFORM(tl->position, local)	* visible;
+		tr1->position	= SRP_TRANSFORM(tr1->position, local)	* visible;
+		tr2->position	= SRP_TRANSFORM(tr2->position, local)	* visible;
+		bl1->position	= SRP_TRANSFORM(bl1->position, local)	* visible;
+		bl2->position	= SRP_TRANSFORM(bl2->position, local)	* visible;
+		br->position	= SRP_TRANSFORM(br->position, local)	* visible;
 		return this;
 	}
 
 	/// Whether the plane will be transformed when transform() is called
 	bool fixed = true;
+
+	bool visible = true;
 
 	Transform3D local;
 
