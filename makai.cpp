@@ -10,12 +10,6 @@
 using namespace RenderData::Reference;
 using namespace Vector;
 
-void setCamera2D() {
-	Scene::camera.eye	= Vector3(0,0,-10);
-	Scene::camera.at	= Vector3(0,0,0);
-	Scene::camera.up	= Vector3(0,1,0);
-}
-
 class GameApp: public Makai::Program {
 public:
 	GameApp(
@@ -40,11 +34,25 @@ public:
 
 	GameData::PlayerEntity2D player;
 
+	void setCamera2D(float scale = 64) {
+		Scene::camera.eye	= Vector3(0,0,-10);
+		Scene::camera.at	= Vector3(0,0,0);
+		Scene::camera.up	= Vector3(0,1,0);
+		Scene::camera.ortho.enabled = true;
+		Vector2 screenSpace = getWindowSize().normalized();
+		Scene::camera.ortho.origin = 0;
+		Scene::camera.ortho.size = screenSpace * -scale;
+	}
+
 	void onOpen() override {
+		Vector2 screenSpace = getWindowSize().normalized();
+		player.position.x = 32;
+		player.position.y = -32;
+		player.position *= screenSpace;
 	}
 
 	void onLogicFrame() override {
-		player.rotation += 1.0/60.0;
+		player.rotation += (2.0/maxFrameRate);
 	}
 
 	void onDrawBegin() override {
@@ -56,8 +64,6 @@ public:
 		case $rlayer(WORLD):
 			break;
 		case $rlayer(PLAYER):
-			setCamera2D();
-			getLayerBuffer().tint = Color::RED;
 			break;
 		case $rlayer(UI):
 			break;
@@ -68,6 +74,7 @@ public:
 	#undef $rlayer
 
 	void onLayerDrawEnd(size_t layerID) override {
+		setCamera2D();
 		getLayerBuffer().tint = Color::WHITE;
 	}
 

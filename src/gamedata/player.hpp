@@ -25,8 +25,8 @@ struct PlayerEntity2D: AreaCircle2D {
 	float zIndex = 1;
 
 	struct {
-		float focused = 3;
-		float unfocused = 6;
+		float focused = 4;
+		float unfocused = 8;
 	} speed;
 
 	bool action(std::string what) {
@@ -38,18 +38,23 @@ struct PlayerEntity2D: AreaCircle2D {
 	virtual void onItem() {}
 	virtual void onExtra() {}
 
+	bool flipX = true;
+	bool flipY = true;
+
 	virtual void onFrame(float delta) {
 		input.update();
 		AreaCircle2D::onFrame(delta);
 		Vector2 direction(0);
 		direction.y =(
-			input.getButtonDown(actionKeys["down"])
-			- input.getButtonDown(actionKeys["up"])
+			input.getButtonDown(actionKeys["up"])
+			- input.getButtonDown(actionKeys["down"])
 		);
 		direction.x =(
 			input.getButtonDown(actionKeys["right"])
 			- input.getButtonDown(actionKeys["left"])
 		);
+		if (flipX) direction.x *= -1;
+		if (flipY) direction.y *= -1;
 		if (action("focus"))
 			position -= direction * speed.focused * delta;
 		else

@@ -23,12 +23,7 @@ uniform int maskChannel = 3;
 uniform sampler2D mask;
 
 uniform bool useChromatizer = false;
-uniform bool dualChroma = false;
-/**
-* If not dual chroma, this means the channel to use for chromatizing.
-* Else, this means the excluded channel.
-* MUST be between 0 and 2.
-*/
+uniform vec4 chromaColor = vec4(1);
 uniform uint chromaChannel = 0;
 
 void main() {
@@ -37,29 +32,9 @@ void main() {
 	if (negative) color = vec4(vec3(1) - vec3(color.x, color.y, color.z), color.w);
 	// Chromatizer (channel(s) as alpha)
 	if (useChromatizer) {
-		if (!dualChroma) {
-			color.w = color[chromaChannel];
-			switch (chromaChannel) {
-			case 0:
-				//color.w = (color.y + color.z) / 2;
-				color.y = 0;
-				color.z = 0;
-				break;
-			case 1:
-				//color.w = (color.x + color.z) / 2;
-				color.x = 0;
-				color.z = 0;
-				break;
-			case 2:
-				//color.w = (color.x + color.y) / 2;
-				color.x = 0;
-				color.y = 0;
-				break;
-			}
-		} else {
-			color.w = color[chromaChannel];
-			color[chromaChannel] = 0;
-		}
+		vec4 chromaValue = chromaColor;
+		chromaValue.w = clamp(color[chromaChannel], 0, 1);
+		color = chromaValue;
 	}
 	// Alpha mask
 	if (useMask) {

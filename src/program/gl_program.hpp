@@ -243,7 +243,7 @@ namespace Makai {
 			return bufferShader;
 		}
 
-		inline Vector2 getScreenSize() {
+		inline Vector2 getWindowSize() {
 			return Vector2(width, height);
 		}
 

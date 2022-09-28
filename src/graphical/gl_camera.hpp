@@ -27,10 +27,8 @@ namespace Camera {
 		float zFar = 100.0;
 		struct {
 			bool enabled	= false;
-			float left		= 1;
-			float right		= 1;
-			float bottom	= 1;
-			float top		= 1;
+			Vector2 origin	= Vector2(0);
+			Vector2 size	= Vector2(1);
 		} ortho;
 
 		glm::mat4 matrix() {
@@ -44,10 +42,10 @@ namespace Camera {
 		glm::mat4 perspective() {
 			if (ortho.enabled)
 				return glm::ortho(
-					ortho.left,
-					ortho.right,
-					ortho.bottom,
-					ortho.top,
+					ortho.origin.x,
+					ortho.size.x,
+					ortho.size.y,
+					ortho.origin.y,
 					zNear,
 					zFar
 				);
