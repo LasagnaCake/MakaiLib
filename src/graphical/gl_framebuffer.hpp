@@ -160,11 +160,11 @@ namespace Drawer {
 			for (unsigned char i = 0; i < 4; i++) {
 				Vertex v = rect[i];
 				v.position = SRP_TRANSFORM(
-								v.position,
-								transform.position,
-								transform.rotation,
-								transform.scale
-							);
+						v.position,
+						transform.position,
+						transform.rotation,
+						transform.scale
+					);
 				verts[i] = toRawVertex(v);
 			}
 			// Set VBO as active
@@ -227,10 +227,10 @@ namespace Drawer {
 		/// The framebuffer's tint.
 		Vector4 tint = Color::WHITE;
 		/// The framebuffer's balance color.
-		Vector4 tone = Color::TRANSPARENT;
-
+		Vector4 tone = Color::NONE;
+		// DO NOT SET TONE OR COLOR TO TRANSPARENT (1, 1, 1, 0) HERE.
 		/// The framebuffer's clear color.
-		Vector4 color = Color::TRANSPARENT;
+		Vector4 color = Color::NONE;
 		/// The framebuffer's shape.
 		Vertex rect[4];
 		/// The framebuffer's rendering shader.

@@ -48,8 +48,6 @@ public:
 	}
 
 	void onDrawBegin() override {
-		getFrameBuffer().tint = Color::RED;
-		getLayerBuffer().tint = Color::BLUE;
 	}
 
 	#define $rlayer(LAYER) ($layer(LAYER) / 8)
@@ -58,7 +56,6 @@ public:
 		case $rlayer(WORLD):
 			break;
 		case $rlayer(PLAYER):
-			// It's getting here, but it's still white...
 			setCamera2D();
 			getLayerBuffer().tint = Color::RED;
 			break;
