@@ -16,7 +16,7 @@ void setCamera2D() {
 	Scene::camera.up	= Vector3(0,1,0);
 }
 
-class GameApp: public Makai::Program{
+class GameApp: public Makai::Program {
 public:
 	GameApp(
 		unsigned int width,

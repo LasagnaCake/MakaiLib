@@ -6,6 +6,8 @@
 
 #include <map>
 
+// TODO: refactor collision checking code to utilize withinBounds() functions (1/2 to be made)
+
 namespace CollisionData {
 	namespace {
 		using
