@@ -46,15 +46,19 @@ public:
 		origin[5] = br->position	= brPos;
 		return this;
 	}
-
+	
+	#ifndef TRANSFORM_FUNC
+	#define TRANSFORM_FUNC(VEC, TRANS) asVector3(asGLMVector(Vector4((VEC) , 1)) * (TRANS))
+	#endif // TRANSFORM_FUNC
 	/// Transforms the plane's origin by a given transform.
 	Plane* setOrigin(Transform3D trans) {
-		origin[0] = tl->position	= SRP_TRANSFORM(origin[0], trans);
-		origin[1] = tr1->position	= SRP_TRANSFORM(origin[1], trans);
-		origin[2] = tr2->position	= SRP_TRANSFORM(origin[2], trans);
-		origin[3] = bl1->position	= SRP_TRANSFORM(origin[3], trans);
-		origin[4] = bl2->position	= SRP_TRANSFORM(origin[4], trans);
-		origin[5] = br->position	= SRP_TRANSFORM(origin[5], trans);
+		glm::mat4 glmtrans = asGLMMatrix(trans);
+		origin[0] = tl->position	= TRANSFORM_FUNC(origin[0], glmtrans);
+		origin[1] = tr1->position	= TRANSFORM_FUNC(origin[1], glmtrans);
+		origin[2] = tr2->position	= TRANSFORM_FUNC(origin[2], glmtrans);
+		origin[3] = bl1->position	= TRANSFORM_FUNC(origin[3], glmtrans);
+		origin[4] = bl2->position	= TRANSFORM_FUNC(origin[4], glmtrans);
+		origin[5] = br->position	= TRANSFORM_FUNC(origin[5], glmtrans);
 		return this;
 	}
 
@@ -112,17 +116,19 @@ public:
 	}
 
 	virtual void onTransform() { }
-
+	
 	Plane* transform() {
 		onTransform();
 		if (!fixed) return this;
+		// Get transformation
+		glm::mat4 trans = asGLMMatrix(local);
 		// Apply transformation
-		tl->position	= SRP_TRANSFORM(tl->position, local)	* visible;
-		tr1->position	= SRP_TRANSFORM(tr1->position, local)	* visible;
-		tr2->position	= SRP_TRANSFORM(tr2->position, local)	* visible;
-		bl1->position	= SRP_TRANSFORM(bl1->position, local)	* visible;
-		bl2->position	= SRP_TRANSFORM(bl2->position, local)	* visible;
-		br->position	= SRP_TRANSFORM(br->position, local)	* visible;
+		tl->position	= TRANSFORM_FUNC(tl->position, trans)	* visible;
+		tr1->position	= TRANSFORM_FUNC(tr1->position, trans)	* visible;
+		tr2->position	= TRANSFORM_FUNC(tr2->position, trans)	* visible;
+		bl1->position	= TRANSFORM_FUNC(bl1->position, trans)	* visible;
+		bl2->position	= TRANSFORM_FUNC(bl2->position, trans)	* visible;
+		br->position	= TRANSFORM_FUNC(br->position, trans)	* visible;
 		return this;
 	}
 
