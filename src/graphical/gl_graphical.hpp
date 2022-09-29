@@ -210,7 +210,9 @@ namespace VecMath {
 	glm::mat4 asGLMMatrix(Transform3D trans) {
 		glm::mat4 res(1.0f);
 		res = glm::translate(res, asGLMVector(trans.position));
-		res = glm::rotate(res, 1.0f, asGLMVector(trans.rotation));
+		res = glm::rotateZ(res, trans.rotation.z);
+		res = glm::rotateY(res, trans.rotation.y);
+		res = glm::rotateX(res, trans.rotation.x);
 		res = glm::scale(res, asGLMVector(trans.scale));
 		return res;
 	}
