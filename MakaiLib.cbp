@@ -17,20 +17,6 @@
 					<Add option="-D_DEBUG_OUTPUT_" />
 				</Compiler>
 				<Linker>
-					<Add library="lib/allegro/x86_64-w64-mingw32-gcc-dynamic-5.2.8.0/allegro/lib/liballegro-debug.dll.a" />
-					<Add library="lib/allegro/x86_64-w64-mingw32-gcc-dynamic-5.2.8.0/allegro/lib/liballegro_acodec-debug.dll.a" />
-					<Add library="lib/allegro/x86_64-w64-mingw32-gcc-dynamic-5.2.8.0/allegro/lib/liballegro_audio-debug.dll.a" />
-					<Add library="lib/allegro/x86_64-w64-mingw32-gcc-dynamic-5.2.8.0/allegro/lib/liballegro_color-debug.dll.a" />
-					<Add library="lib/allegro/x86_64-w64-mingw32-gcc-dynamic-5.2.8.0/allegro/lib/liballegro_dialog-debug.dll.a" />
-					<Add library="lib/allegro/x86_64-w64-mingw32-gcc-dynamic-5.2.8.0/allegro/lib/liballegro_font-debug.dll.a" />
-					<Add library="lib/allegro/x86_64-w64-mingw32-gcc-dynamic-5.2.8.0/allegro/lib/liballegro_image-debug.dll.a" />
-					<Add library="lib/allegro/x86_64-w64-mingw32-gcc-dynamic-5.2.8.0/allegro/lib/liballegro_main-debug.dll.a" />
-					<Add library="lib/allegro/x86_64-w64-mingw32-gcc-dynamic-5.2.8.0/allegro/lib/liballegro_memfile-debug.dll.a" />
-					<Add library="lib/allegro/x86_64-w64-mingw32-gcc-dynamic-5.2.8.0/allegro/lib/liballegro_monolith-debug.dll.a" />
-					<Add library="lib/allegro/x86_64-w64-mingw32-gcc-dynamic-5.2.8.0/allegro/lib/liballegro_physfs-debug.dll.a" />
-					<Add library="lib/allegro/x86_64-w64-mingw32-gcc-dynamic-5.2.8.0/allegro/lib/liballegro_primitives-debug.dll.a" />
-					<Add library="lib/allegro/x86_64-w64-mingw32-gcc-dynamic-5.2.8.0/allegro/lib/liballegro_ttf-debug.dll.a" />
-					<Add library="lib/allegro/x86_64-w64-mingw32-gcc-dynamic-5.2.8.0/allegro/lib/liballegro_video-debug.dll.a" />
 					<Add library="opengl32" />
 				</Linker>
 			</Target>
@@ -44,20 +30,6 @@
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
-					<Add library="lib/allegro/x86_64-w64-mingw32-gcc-dynamic-5.2.8.0/allegro/lib/liballegro.dll.a" />
-					<Add library="lib/allegro/x86_64-w64-mingw32-gcc-dynamic-5.2.8.0/allegro/lib/liballegro_acodec.dll.a" />
-					<Add library="lib/allegro/x86_64-w64-mingw32-gcc-dynamic-5.2.8.0/allegro/lib/liballegro_audio.dll.a" />
-					<Add library="lib/allegro/x86_64-w64-mingw32-gcc-dynamic-5.2.8.0/allegro/lib/liballegro_color.dll.a" />
-					<Add library="lib/allegro/x86_64-w64-mingw32-gcc-dynamic-5.2.8.0/allegro/lib/liballegro_dialog.dll.a" />
-					<Add library="lib/allegro/x86_64-w64-mingw32-gcc-dynamic-5.2.8.0/allegro/lib/liballegro_font.dll.a" />
-					<Add library="lib/allegro/x86_64-w64-mingw32-gcc-dynamic-5.2.8.0/allegro/lib/liballegro_image.dll.a" />
-					<Add library="lib/allegro/x86_64-w64-mingw32-gcc-dynamic-5.2.8.0/allegro/lib/liballegro_main.dll.a" />
-					<Add library="lib/allegro/x86_64-w64-mingw32-gcc-dynamic-5.2.8.0/allegro/lib/liballegro_memfile.dll.a" />
-					<Add library="lib/allegro/x86_64-w64-mingw32-gcc-dynamic-5.2.8.0/allegro/lib/liballegro_monolith.dll.a" />
-					<Add library="lib/allegro/x86_64-w64-mingw32-gcc-dynamic-5.2.8.0/allegro/lib/liballegro_physfs.dll.a" />
-					<Add library="lib/allegro/x86_64-w64-mingw32-gcc-dynamic-5.2.8.0/allegro/lib/liballegro_primitives.dll.a" />
-					<Add library="lib/allegro/x86_64-w64-mingw32-gcc-dynamic-5.2.8.0/allegro/lib/liballegro_ttf.dll.a" />
-					<Add library="lib/allegro/x86_64-w64-mingw32-gcc-dynamic-5.2.8.0/allegro/lib/liballegro_video.dll.a" />
 					<Add library="opengl32" />
 				</Linker>
 			</Target>

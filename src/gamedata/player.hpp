@@ -72,8 +72,7 @@ struct PlayerEntity2D: AreaCircle2D {
 		if(action("extra"))	onExtra();
 	}
 
-	void onCollision(Entity* target) {
-		$debug("Hit!");
+	virtual void onCollision(Entity* target) {
 	}
 };
 
