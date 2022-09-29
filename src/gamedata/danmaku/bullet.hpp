@@ -47,7 +47,7 @@ public:
 		taskers.yield();
 		if (sprite) {
 			// Set sprite position
-			sprite->local.position = local.position;
+			sprite->local.position = Vector3(local.position);
 			// Set sprite rotation
 			sprite->local.rotation.z = local.rotation;
 			if (settings.rotateSprite)

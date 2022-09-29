@@ -189,7 +189,7 @@ namespace VecMath {
 	inline Vector4 asVector(glm::vec4 vec) {
 		return Vector4(vec.x, vec.y, vec.z, vec.w);
 	}
-	
+
 	inline Vector3 asVector3(glm::vec4 vec) {
 		return Vector3(vec.x, vec.y, vec.z);
 	}
@@ -202,35 +202,34 @@ namespace VecMath {
 		return asVector(res);
 	}
 
-	// I fucking hate this, but it works, so fuckit.
-	inline Vector3 glmSrpTransform(Vector3 vec, Vector3 pos, Vector3 rot, Vector3 scale = Vector3(1.0)) {
-		vec *= scale;
-		vec = glmRotateV3(vec, rot);
-		vec += pos;
-		return vec;
-	}
-
-	inline Vector3 glmSrpTransform(Vector3 vec, Transform3D trans) {
-		return glmSrpTransform(
-			vec,
-			trans.position,
-			trans.rotation,
-			trans.scale
+	inline glm::mat4 rotationMatrix(Vector3 rotation) {
+		return glm::eulerAngleYXZ(
+			rotation.y,
+			rotation.x,
+			rotation.z
 		);
 	}
 
 	glm::mat4 asGLMMatrix(Transform3D trans) {
 		glm::mat4 res(1.0f);
 		res = glm::translate(res, asGLMVector(trans.position));
-		res = glm::rotateZ(res, trans.rotation.z);
-		res = glm::rotateY(res, trans.rotation.y);
-		res = glm::rotateX(res, trans.rotation.x);
 		res = glm::scale(res, asGLMVector(trans.scale));
+		res *= rotationMatrix(trans.rotation);
 		return res;
 	}
+
+	Vector3 srpTransform(Vector3 vec, glm::mat4 matrix) {
+		glm::vec4 res = glm::vec4(vec.x, vec.y, vec.z, 1.0f) * matrix;
+		res += glm::vec4(glm::vec3(matrix[3]), 0.0);
+		return Vector3(res.x, res.y, res.z);
+	}
+
+	inline Vector3 glmSrpTransform(Vector3 vec, Transform3D trans) {
+		return srpTransform(vec, asGLMMatrix(trans));
+	}
 }
-#ifndef SRP_TRANSFORM
-#define SRP_TRANSFORM glmSrpTransform
+#ifndef $srpTransform
+#define $srpTransform srpTransform
 #endif // SRP_TRANSFORM
 
 namespace RenderData {
@@ -242,7 +241,10 @@ namespace RenderData {
 		VecMath::Transform,
 		VecMath::Transform2D,
 		VecMath::Transform3D,
-		VecMath::SRP_TRANSFORM,
+		VecMath::$srpTransform,
+		VecMath::asGLMVector,
+		VecMath::asVector3,
+		VecMath::asGLMMatrix,
 		Drawer::Vertex,
 		Drawer::RawVertex,
 		Drawer::toRawVertex,

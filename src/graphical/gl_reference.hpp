@@ -46,19 +46,16 @@ public:
 		origin[5] = br->position	= brPos;
 		return this;
 	}
-	
-	#ifndef TRANSFORM_FUNC
-	#define TRANSFORM_FUNC(VEC, TRANS) asVector3(asGLMVector(Vector4((VEC) , 1)) * (TRANS))
-	#endif // TRANSFORM_FUNC
+
 	/// Transforms the plane's origin by a given transform.
 	Plane* setOrigin(Transform3D trans) {
 		glm::mat4 glmtrans = asGLMMatrix(trans);
-		origin[0] = tl->position	= TRANSFORM_FUNC(origin[0], glmtrans);
-		origin[1] = tr1->position	= TRANSFORM_FUNC(origin[1], glmtrans);
-		origin[2] = tr2->position	= TRANSFORM_FUNC(origin[2], glmtrans);
-		origin[3] = bl1->position	= TRANSFORM_FUNC(origin[3], glmtrans);
-		origin[4] = bl2->position	= TRANSFORM_FUNC(origin[4], glmtrans);
-		origin[5] = br->position	= TRANSFORM_FUNC(origin[5], glmtrans);
+		origin[0] = tl->position	= $srpTransform(origin[0], glmtrans);
+		origin[1] = tr1->position	= $srpTransform(origin[1], glmtrans);
+		origin[2] = tr2->position	= $srpTransform(origin[2], glmtrans);
+		origin[3] = bl1->position	= $srpTransform(origin[3], glmtrans);
+		origin[4] = bl2->position	= $srpTransform(origin[4], glmtrans);
+		origin[5] = br->position	= $srpTransform(origin[5], glmtrans);
 		return this;
 	}
 
@@ -116,19 +113,19 @@ public:
 	}
 
 	virtual void onTransform() { }
-	
+
 	Plane* transform() {
 		onTransform();
 		if (!fixed) return this;
 		// Get transformation
 		glm::mat4 trans = asGLMMatrix(local);
 		// Apply transformation
-		tl->position	= TRANSFORM_FUNC(tl->position, trans)	* visible;
-		tr1->position	= TRANSFORM_FUNC(tr1->position, trans)	* visible;
-		tr2->position	= TRANSFORM_FUNC(tr2->position, trans)	* visible;
-		bl1->position	= TRANSFORM_FUNC(bl1->position, trans)	* visible;
-		bl2->position	= TRANSFORM_FUNC(bl2->position, trans)	* visible;
-		br->position	= TRANSFORM_FUNC(br->position, trans)	* visible;
+		tl->position	= $srpTransform(tl->position, trans)	* visible;
+		tr1->position	= $srpTransform(tr1->position, trans)	* visible;
+		tr2->position	= $srpTransform(tr2->position, trans)	* visible;
+		bl1->position	= $srpTransform(bl1->position, trans)	* visible;
+		bl2->position	= $srpTransform(bl2->position, trans)	* visible;
+		br->position	= $srpTransform(br->position, trans)	* visible;
 		return this;
 	}
 

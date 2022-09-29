@@ -140,7 +140,7 @@ public:
 		RawVertex* verts = new RawVertex[(vertexCount)];
 		// Get transformation
 		Transform3D absolute(
-			SRP_TRANSFORM(transform.local.position, transform.global),
+			$srpTransform(transform.local.position, transform.global),
 			transform.local.rotation + transform.global.rotation,
 			transform.local.scale * transform.global.scale
 		);

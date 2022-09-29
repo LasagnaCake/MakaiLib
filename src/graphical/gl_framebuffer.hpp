@@ -26,7 +26,7 @@ GOING TO QUESTION IT.
 namespace Drawer {
 	namespace {
 		using
-		VecMath::SRP_TRANSFORM;
+		VecMath::$srpTransform;
 	}
 	struct FrameBufferData {
 		unsigned int
@@ -159,7 +159,7 @@ namespace Drawer {
 			RawVertex verts[4];
 			for (unsigned char i = 0; i < 4; i++) {
 				Vertex v = rect[i];
-				v.position = SRP_TRANSFORM(
+				v.position = $srpTransform(
 						v.position,
 						transform.position,
 						transform.rotation,
