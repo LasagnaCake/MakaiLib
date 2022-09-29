@@ -16,6 +16,7 @@ struct PlayerEntity2D: AreaCircle2D {
 		actionKeys["skip"]	= SDL_SCANCODE_LCTRL;
 		sprite = mesh.createReference<Reference::AnimatedPlane>();
 		EntityClass::$_ROOT += this;
+		EntityClass::groups.addEntity(this, $layer(PLAYER));
 	})
 	KeyBinds actionKeys;
 
@@ -72,7 +73,7 @@ struct PlayerEntity2D: AreaCircle2D {
 	}
 
 	void onCollision(Entity* target) {
-
+		$debug("Hit!");
 	}
 };
 

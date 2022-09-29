@@ -11,6 +11,8 @@
 
 #define $sublayer(INDEX) ((INDEX) - (SUBLAYER_COUNT - 1))
 
+#define BULLET_MANAGER_GROUP 1024
+
 namespace RenderLayer {
 	enum RenderLayer: size_t {
 		R_LAYER(WORLD),

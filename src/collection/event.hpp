@@ -4,10 +4,15 @@
 #include <functional>
 #include <vector>
 
-#define	$signal		[&]()-> void
-#define	$trigger	[&]()-> bool
-#define	$call		[&]()-> Trigger
-#define	$chain		[&]()-> Signal
+#define $_signal	()->void
+#define $_trigger	()->void
+#define $_call		()->void
+#define $_chain		()->void
+
+#define	$signal		[&] $_signal
+#define	$trigger	[&] $_trigger
+#define	$call		[&] $_call
+#define	$chain		[&] $_chain
 
 namespace Event{
 	namespace {

@@ -143,4 +143,7 @@
 
 #define $each(I, LIST) (auto& I: LIST)
 
+#define $range(I, BEGIN, END, STEP) (auto I = (BEGIN); I < (END); I += (STEP))
+#define $ssrange(I, BEGIN, END) $range(I, BEGIN, END, 1)
+
 #endif // ANCHORED_HEADERS_H

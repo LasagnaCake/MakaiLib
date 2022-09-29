@@ -59,7 +59,6 @@ public:
 		size_t progCount = 0;
 		bar->local.scale.x = 0;
 		auto bulletSignal = $signal {
-			$debug(++progCount);
 			bar->local.scale.x += progTick;
 			renderReservedLayer();
 			Makai::pollEvents();
@@ -67,9 +66,9 @@ public:
 		testM.onBulletCreated = bulletSignal;
 		testM.create();
 		bar->local.scale.x = 0;
-		for (size_t i = 0; i < 4096; i++){
+		for (size_t i = 0; i < 32; i++){
 			testM.createBullet();
-			bar->local.scale.x += progTick;
+			bar->local.scale.x += progTick * (4096/32);
 			renderReservedLayer();
 			Makai::pollEvents();
 		}

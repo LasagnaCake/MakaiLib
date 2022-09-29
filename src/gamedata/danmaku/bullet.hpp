@@ -40,7 +40,10 @@ public:
 
 	Tasking::MultiTasker taskers;
 
+	Event::Signal onFree = Event::DEF_SIGNAL;
+
 	void onFrame(float delta) {
+		if (free) return;
 		taskers.yield();
 		if (sprite) {
 			// Set sprite position
@@ -71,7 +74,8 @@ public:
 
 	Bullet* setFree(bool state = true) {
 		free = state;
-		if (sprite) sprite->visible = !state;
+		if (sprite) sprite->visible = !free;
+		if (free) onFree();
 		return this;
 	}
 
@@ -84,12 +88,18 @@ private:
 	bool free = false;
 };
 
+bool bulletCollision(BulletData bullet, CircleBounds2D target) {
+	if (!bullet.collidable) return false;
+	return CollisionData::withinBounds(bullet.hitbox, target);
+}
+
 template <size_t BULLET_COUNT>
 class BulletManager: Entity {
 public:
 	DERIVED_CONSTRUCTOR(BulletManager, Entity, {
 		EntityClass::$_ROOT += this;
 		mesh.setRenderLayer($layer(ENEMY_BULLET));
+		EntityClass::groups.addEntity(this, BULLET_MANAGER_GROUP);
 	})
 
 	DERIVED_CLASS(BulletManager, Entity)
@@ -99,6 +109,17 @@ public:
 	void onFrame(float delta) override {
 		for $each(b, bullets) {
 			b.onFrame(delta);
+			if (!b.isFree())
+			for $each(player, EntityClass::groups.getGroup($layer(PLAYER))) {
+				auto p = ((AreaCircle2D*)player);
+				if (
+					p->collision.enabled
+					&& bulletCollision(
+						b.settings,
+						p->getCircleBounds()
+					)
+				) p->onCollision(this);
+			}
 		}
 	}
 
@@ -112,10 +133,16 @@ public:
 		created = true;
 	}
 
+	Bullet* getLastBullet() {
+		return last;
+	}
+
 	Bullet* createBullet() {
 		for $each(b, bullets)
-			if (b.isFree())
-				return b.enable()->reset();
+			if (b.isFree()) {
+				last = b.enable()->reset();
+				return last;
+			}
 		throw std::runtime_error(
 			getName()
 			+ ": Out of usable bullets ("
@@ -132,10 +159,12 @@ public:
 
 	Bullet bullets[BULLET_COUNT];
 
-	Event::Signal onBulletCreated;
+	Event::Signal onBulletCreated = Event::DEF_SIGNAL;
 
 private:
 	bool created = false;
+
+	Bullet* last = nullptr;
 };
 
 #endif // MAKAI_BASE_BULLET_H
