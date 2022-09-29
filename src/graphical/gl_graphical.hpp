@@ -182,6 +182,14 @@ namespace VecMath {
 		return Vector3(vec.x, vec.y, vec.z);
 	}
 
+	inline glm::vec4 asGLMVector(Vector4 vec) {
+		return glm::vec4(vec.x, vec.y, vec.z, vec.w);
+	}
+
+	inline Vector4 asVector(glm::vec4 vec) {
+		return Vector4(vec.x, vec.y, vec.z, vec.w);
+	}
+
 	inline Vector3 glmRotateV3(Vector3 vec, Vector3 angle) {
 		glm::vec3 res = asGLMVector(vec);
 		res = glm::rotateZ(res, angle.z);
