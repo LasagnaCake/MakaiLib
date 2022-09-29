@@ -68,7 +68,7 @@ namespace Drawer {
 			this-> color		= v.color;
 		}
 
-		~Vertex() {}
+		virtual ~Vertex() {}
 
 		Vector3 position;
 		Vector2 uv;
@@ -240,13 +240,13 @@ namespace RenderData {
 
 	/// Base triangle data structure.
 	struct Triangle {
-		Triangle() {
+		Triangle() {/*
 			#pragma GCC unroll 3
 			for (unsigned char i = 0; i < 3; i++) {
 				this->verts[i].position	= Vector3(0.0);
 				this->verts[i].uv		= Vector2(0.0);
 				this->verts[i].color	= Vector4(1.0);
-			}
+			}*/
 		}
 
 		Triangle(
@@ -274,9 +274,7 @@ namespace RenderData {
 				this->verts[i] = t.verts[i];
 		}
 
-		~Triangle() {
-			$debug("Here!");
-		}
+		virtual ~Triangle() {}
 
 		Vertex verts[3];
 	};

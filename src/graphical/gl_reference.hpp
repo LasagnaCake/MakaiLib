@@ -1,14 +1,14 @@
 class Plane {
 public:
 	Plane(
-		Triangle tris[2]
+		Triangle* tris[2]
 	) {
-		this->tl	= &(tris[0].verts[0]);
-		this->tr1	= &(tris[0].verts[1]);
-		this->tr2	= &(tris[1].verts[0]);
-		this->bl1	= &(tris[0].verts[2]);
-		this->bl2	= &(tris[1].verts[1]);
-		this->br	= &(tris[1].verts[2]);
+		this->tl	= &(tris[0]->verts[0]);
+		this->tr1	= &(tris[0]->verts[1]);
+		this->tr2	= &(tris[1]->verts[0]);
+		this->bl1	= &(tris[0]->verts[2]);
+		this->bl2	= &(tris[1]->verts[1]);
+		this->br	= &(tris[1]->verts[2]);
 	}
 
 	Plane(
@@ -27,7 +27,9 @@ public:
 		this->br	= br;
 	}
 
-	virtual ~Plane() {}
+	virtual ~Plane() {
+		tl = tr1 = tr2 = bl1 = bl2 = br = nullptr;
+	}
 
 	/// Sets the plane's origin.
 	Plane* setOrigin(

@@ -29,11 +29,13 @@ public:
 		$debug("Deleting references...");
 		for (auto pr: references.plane)
 			delete pr;
-		// This causes an error for some reason
+		references.plane.clear();
 		$debug("Deleting triangles...");
 		for (auto t: triangles) {
+			// This causes an error for some reason
 			delete t;
 		}
+		triangles.clear();
 		$debug("Killing renderable object...");
 	}
 
@@ -85,10 +87,13 @@ public:
 		class = std::enable_if<std::is_base_of<Reference::Plane, T>::value>::type
 	>
 	T* createReference() {
-		Triangle* tris = new Triangle[2];
+		Triangle* tris[2] = {
+			new Triangle(),
+			new Triangle()
+		};
 		// Add triangles
-		triangles.push_back(&tris[0]);
-		triangles.push_back(&tris[1]);
+		triangles.push_back(tris[0]);
+		triangles.push_back(tris[1]);
 		// Create reference
 		T* plane = new T(tris);
 		// Setup plane
