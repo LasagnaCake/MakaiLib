@@ -21,7 +21,10 @@ struct PlayerEntity2D: AreaCircle2D {
 		moveTween.x.setTarget(&position.x);
 		moveTween.y.setTarget(&position.y);
 		invincibility.paused = true;
-		invincibility.onSignal = $signal{this->collision.enabled = true;};
+		invincibility.onSignal = $signal{
+			this->collision.enabled = true;
+			sprite->setColor(Color::WHITE);
+		};
 		invincibility.delay = 60;
 		moveTween.x.setStep(60);
 		moveTween.y.setStep(60);
@@ -55,6 +58,7 @@ struct PlayerEntity2D: AreaCircle2D {
 		if (!collision.enabled) return;
 		collision.enabled = false;
 		$debug("Hit!");
+		sprite->setColor(Color::GRAY);
 		moveTween.x.reinterpolate(spawnPoint.x - position.x, 60);
 		moveTween.y.reinterpolate(spawnPoint.y - position.y, 60);
 		invincibility.reset();
@@ -96,8 +100,10 @@ struct PlayerEntity2D: AreaCircle2D {
 	}
 
 	virtual void onCollision(Entity* target) {
-		if (EntityClass::groups.hasEntity(target, BULLET_MANAGER_GROUP))
+		if (EntityClass::groups.hasEntity(target, BULLET_MANAGER_GROUP)) {
+			onDeath();
 			pichun();
+		}
 	}
 
 private:
