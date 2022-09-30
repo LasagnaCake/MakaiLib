@@ -51,7 +51,7 @@ namespace CollisionData {
 	*/
 	struct CircleBounds2D {
 		Vector2 position;
-		float radius;
+		float radius = 1;
 	};
 
 	struct AreaCollisionData {

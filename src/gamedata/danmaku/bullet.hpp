@@ -48,6 +48,7 @@ public:
 		if (sprite) {
 			// Set sprite position
 			sprite->local.position = Vector3(local.position);
+			settings.hitbox.position = local.position;
 			// Set sprite rotation
 			sprite->local.rotation.z = local.rotation;
 			if (settings.rotateSprite)
@@ -88,11 +89,6 @@ private:
 	bool free = false;
 };
 
-bool bulletCollision(BulletData bullet, CircleBounds2D target) {
-	if (!bullet.collidable) return false;
-	return CollisionData::withinBounds(bullet.hitbox, target);
-}
-
 template <size_t BULLET_COUNT>
 class BulletManager: Entity {
 public:
@@ -109,13 +105,13 @@ public:
 	void onFrame(float delta) override {
 		for $each(b, bullets) {
 			b.onFrame(delta);
-			if (!b.isFree())
+			if (!b.isFree() && b.settings.collidable)
 			for $each(player, EntityClass::groups.getGroup($layer(PLAYER))) {
 				auto p = ((AreaCircle2D*)player);
 				if (
 					p->collision.enabled
-					&& bulletCollision(
-						b.settings,
+					&& CollisionData::withinBounds(
+						b.settings.hitbox,
 						p->getCircleBounds()
 					)
 				) p->onCollision(this);

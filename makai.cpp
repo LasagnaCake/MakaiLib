@@ -50,6 +50,7 @@ public:
 		Vector2 screenSpace = getWindowSize().normalized();
 		player.position.x = 32;
 		player.position.y = -32;
+		player.spawnPoint = Vector2(32, -32);
 		player.position *= screenSpace;
 		RenderData::Renderable progress;
 		progress.setRenderLayer(Math::maxSizeT);
@@ -67,10 +68,12 @@ public:
 		testM.create();
 		bar->local.scale.x = 0;
 		for (size_t i = 0; i < 32; i++){
-			testM.createBullet()->local.position = Vector2(
+			auto b = testM.createBullet();
+			b->local.position = Vector2(
 				Math::Random::real(0, 32),
 				Math::Random::real(-32, 0)
 			);
+			b->settings.hitbox.radius = 1;
 			bar->local.scale.x += progTick * (4096/32);
 			renderReservedLayer();
 			Makai::pollEvents();
@@ -78,7 +81,7 @@ public:
 	}
 
 	void onLogicFrame() override {
-		player.rotation += (2.0/maxFrameRate);
+		//player.rotation += (2.0/maxFrameRate);
 	}
 
 	void onDrawBegin() override {
