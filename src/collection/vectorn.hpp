@@ -124,6 +124,17 @@ namespace Vector{
 				return *this;
 			}
 
+			bool operator==(Vector2 vec) {
+				return (
+					x == vec.x &&
+					y == vec.y
+				);
+			}
+
+			bool operator!=(Vector2 vec) {
+				return !(*this == vec);
+			}
+
 			/// Float operator overloading.
 			Vector2 operator+(float val) {
 				return *this + Vector2(val);
@@ -381,6 +392,18 @@ namespace Vector{
 				y = pow(y, vec.y);
 				z = pow(z, vec.z);
 				return *this;
+			}
+
+			bool operator==(Vector3 vec) {
+				return (
+					x == vec.x &&
+					y == vec.y &&
+					y == vec.z
+				);
+			}
+
+			bool operator!=(Vector3 vec) {
+				return !(*this == vec);
 			}
 
 			/// Float operator overloading.
@@ -677,6 +700,19 @@ namespace Vector{
 				z = pow(z, vec.z);
 				w = pow(w, vec.w);
 				return *this;
+			}
+
+			bool operator==(Vector4 vec) {
+				return (
+					x == vec.x &&
+					y == vec.y &&
+					y == vec.z &&
+					y == vec.w
+				);
+			}
+
+			bool operator!=(Vector4 vec) {
+				return !(*this == vec);
 			}
 
 			/// Float operator overloading.

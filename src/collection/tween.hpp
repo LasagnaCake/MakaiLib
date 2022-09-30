@@ -3,6 +3,7 @@
 
 #include "event.hpp"
 #include "algebra.hpp"
+#include "vectorn.hpp"
 #include <vector>
 #include <functional>
 #include <string>
@@ -12,7 +13,7 @@
 namespace Tween{
 	namespace {
 		using std::function, std::vector, std::string;
-		vector<const function<float()>*> tweenList;
+		vector<const function<void()>*> tweenList;
 		typedef function<float(float, float, float, float)> _EaseFunc;
 		struct EaseType {
 			_EaseFunc linear;
@@ -41,7 +42,7 @@ namespace Tween{
 			}
 		};
 	}
-	#define $$FUNC function<float()>
+	#define $$FUNC function<void()>
 	/// Yields all available non-manual tweens.
 	void yieldAllTweens() {
 		// Loop through tweens and step them
@@ -250,10 +251,11 @@ namespace Tween{
 	*               *
 	*****************
 	*/
+	template <typename T = float>
 	class Tween {
 	public:
 		/// The tween's target variable.
-		float *value = &defaultVar;
+		T* value = &defaultVar;
 
 		/// The tween's easing function.
 		EaseFunc tweenStep;
@@ -271,14 +273,14 @@ namespace Tween{
 		}
 
 		/// Targetless Constructor.
-		Tween(float from, float to, unsigned int step, EaseFunc tweenStep, bool manual = false) {
+		Tween(T from, T to, unsigned int step, EaseFunc tweenStep, bool manual = false) {
 			setInterpolation(from, to, step, tweenStep);
 			if (!manual)
 				tweenList.push_back(&yield);
 		}
 
 		/// Targeted Constructor.
-		Tween(float from, float to, unsigned int step, EaseFunc tweenStep, float* targetVar, bool manual = false) {
+		Tween(T from, T to, unsigned int step, EaseFunc tweenStep, float* targetVar, bool manual = false) {
 			setInterpolation(from, to, step, tweenStep, targetVar);
 			if (!manual)
 				tweenList.push_back(&yield);
@@ -302,14 +304,17 @@ namespace Tween{
 			// If value pointer is null, point to default var
 			if (!value) value = &defaultVar;
 			// If paused, return
-			if (paused) return *value;
+			if (paused) return;
 			// If not finished...
 			if (!isFinished)
 			{
 				// Check if finished, then increment step
 				isFinished = step++ >= stop;
 				// If begin != end, calculate step
-				if (from != to) *value = tweenStep(step, from, to, stop);
+				if (from != to) {
+					factor = tweenStep(step, 0.0, 1.0, stop);
+					*value = Math::lerp(from, to, T(factor));
+				}
 				// Else, set value to end
 				else *value = to;
 				// Clamp step to prevent overflow
@@ -321,12 +326,10 @@ namespace Tween{
 			}
 			// // Else, clamp value to between required values
 			// else *value = (*value > to ? to : (*value < from ? from : *value))
-			// Return value
-			return *value;
 		};
 
 		/// Sets the interpolation.
-		void setInterpolation(float from, float to, unsigned int step, EaseFunc tweenStep) {
+		void setInterpolation(T from, T to, unsigned int step, EaseFunc tweenStep) {
 			isFinished = false;
 			this->step = 0;
 			this->from = from;
@@ -338,7 +341,7 @@ namespace Tween{
 		}
 
 		/// Sets the interpolation with a target.
-		void setInterpolation(float from, float to, unsigned int step, EaseFunc tweenStep, float* targetVar) {
+		void setInterpolation(T from, T to, unsigned int step, EaseFunc tweenStep, T* targetVar) {
 			value = targetVar;
 			isFinished = false;
 			this->step = 0;
@@ -351,17 +354,17 @@ namespace Tween{
 		}
 
 		/// Sets the interpolation to a new value, while maintaining the easing function.
-		void reinterpolate(float to, unsigned int step) {
+		void reinterpolate(T to, unsigned int step) {
 			setInterpolation(*value, to, step, tweenStep);
 		}
 
 		/// Sets the interpolation to a new value, while maintaining the easing dunction.
-		void reinterpolate(float from, float to, unsigned int step) {
+		void reinterpolate(T from, T to, unsigned int step) {
 			setInterpolation(from, to, step, tweenStep);
 		}
 
 		/// Sets the tween's target variable.
-		void setTarget(float* target) {
+		void setTarget(T* target) {
 			*target = *value;
 			value = target;
 		}
@@ -380,12 +383,12 @@ namespace Tween{
 		}
 
 		/// Gets the current tween step number.
-		float getStep() {
+		T getStep() {
 			return step;
 		}
 
 		/// Gets the current tween value.
-		float getValue() {
+		T getValue() {
 			return *value;
 		}
 
@@ -395,17 +398,19 @@ namespace Tween{
 		}
 
 	private:
+		float factor = 0.0f;
+
 		/// Whether the tween is finished.
 		bool isFinished;
 
 		/// The tween's starting value.
-		float from;
+		T from;
 
 		/// The tween's target value.
-		float to;
+		T to;
 
 		/// The difference between from and to (Required for calculations).
-		float range;
+		T range;
 
 		/// The current tween step.
 		unsigned int step;
@@ -414,7 +419,7 @@ namespace Tween{
 		unsigned int stop;
 
 		/// The tween's default target.
-		float defaultVar;
+		T defaultVar;
 	};
 	#undef $$FUNC
 }

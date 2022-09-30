@@ -17,17 +17,15 @@ struct PlayerEntity2D: AreaCircle2D {
 		sprite = mesh.createReference<Reference::AnimatedPlane>();
 		EntityClass::$_ROOT += this;
 		EntityClass::groups.addEntity(this, $layer(PLAYER));
-		moveTween.x.tweenStep = moveTween.y.tweenStep = Tween::ease.out.cubic;
-		moveTween.x.setTarget(&position.x);
-		moveTween.y.setTarget(&position.y);
+		moveTween.tweenStep = Tween::ease.out.back;
+		moveTween.setTarget(&position);
 		invincibility.paused = true;
 		invincibility.onSignal = $signal{
 			this->collision.enabled = true;
 			sprite->setColor(Color::WHITE);
 		};
 		invincibility.delay = 60;
-		moveTween.x.setStep(60);
-		moveTween.y.setStep(60);
+		moveTween.setStep(60);
 	})
 	KeyBinds actionKeys;
 
@@ -59,8 +57,7 @@ struct PlayerEntity2D: AreaCircle2D {
 		collision.enabled = false;
 		$debug("Hit!");
 		sprite->setColor(Color::GRAY);
-		moveTween.x.reinterpolate(spawnPoint.x - position.x, 60);
-		moveTween.y.reinterpolate(spawnPoint.y - position.y, 60);
+		moveTween.reinterpolate(spawnPoint, 60);
 		invincibility.reset();
 		invincibility.paused = false;
 	}
@@ -107,10 +104,7 @@ struct PlayerEntity2D: AreaCircle2D {
 	}
 
 private:
-	struct {
-		Tween::Tween x;
-		Tween::Tween y;
-	} moveTween;
+	Tween::Tween<Vector2> moveTween;
 };
 
 #endif // MAKAI_BASE_PLAYER_H
