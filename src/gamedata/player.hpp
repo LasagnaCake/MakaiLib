@@ -25,7 +25,7 @@ struct PlayerEntity2D: AreaCircle2D {
 			sprite->setColor(Color::WHITE);
 		};
 		invincibility.delay = 60;
-		moveTween.setStep(60);
+		moveTween.setStepCount(30);
 	})
 	KeyBinds actionKeys;
 
@@ -57,7 +57,7 @@ struct PlayerEntity2D: AreaCircle2D {
 		collision.enabled = false;
 		$debug("Hit!");
 		sprite->setColor(Color::GRAY);
-		moveTween.reinterpolate(spawnPoint, 60);
+		moveTween.reinterpolate(spawnPoint);
 		invincibility.reset();
 		invincibility.paused = false;
 	}

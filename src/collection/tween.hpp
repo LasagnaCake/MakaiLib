@@ -354,6 +354,16 @@ namespace Tween{
 		}
 
 		/// Sets the interpolation to a new value, while maintaining the easing function.
+		void reinterpolate(T to) {
+			setInterpolation(*value, to, step, tweenStep);
+		}
+
+		/// Sets the interpolation to a new value, while maintaining the easing dunction.
+		void reinterpolate(T from, T to) {
+			setInterpolation(from, to, step, tweenStep);
+		}
+
+		/// Sets the interpolation to a new value, while maintaining the easing function.
 		void reinterpolate(T to, unsigned int step) {
 			setInterpolation(*value, to, step, tweenStep);
 		}
@@ -380,6 +390,11 @@ namespace Tween{
 			step--;
 			this->step = step > stop ? stop : step;
 			yield();
+		}
+
+		/// Sets the current tween step count.
+		void setStepCount(unsigned int stop) {
+			this->stop = stop;
 		}
 
 		/// Gets the current tween step number.
