@@ -36,8 +36,8 @@ struct PlayerEntity2D: AreaCircle2D {
 	Vector2 spawnPoint = Vector2(0, 0);
 
 	struct {
-		float focused = 4;
-		float unfocused = 8;
+		float focused = 7;
+		float unfocused = 14;
 	} speed;
 
 	bool action(std::string what) {
