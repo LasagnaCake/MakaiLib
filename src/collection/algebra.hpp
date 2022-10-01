@@ -5,6 +5,7 @@
 #include <cmath>
 #include <random>
 #include <limits>
+#include <chrono>
 
 #define ANYTYPE		template<typename T> T
 #define ANYTYPE_I	template<typename T> inline T
@@ -111,9 +112,17 @@ namespace Math {
 		namespace {
 			typedef std::uniform_real_distribution<double> RandReal;
 			typedef std::uniform_int_distribution<size_t> RandLong;
+			size_t getSeed() {
+				auto time =
+					std::chrono::duration_cast<std::chrono::microseconds>(
+						std::chrono::system_clock::now()
+						.time_since_epoch()
+					);
+				return time.count();
+			}
 			// If device does not support true randomness, use fallback
 			std::random_device			active;
-			std::default_random_engine	fallback;
+			std::default_random_engine	fallback{getSeed()};
 			// Default distributions
 			RandReal	longDist(0, $maxof(size_t));
 			RandLong	realDist(0.0,1.0);
