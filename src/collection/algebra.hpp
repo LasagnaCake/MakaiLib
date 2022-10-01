@@ -112,6 +112,7 @@ namespace Math {
 		namespace {
 			typedef std::uniform_real_distribution<double> RandReal;
 			typedef std::uniform_int_distribution<size_t> RandLong;
+			// I think I just saw hell.
 			size_t getSeed() {
 				auto time =
 					std::chrono::duration_cast<std::chrono::microseconds>(
