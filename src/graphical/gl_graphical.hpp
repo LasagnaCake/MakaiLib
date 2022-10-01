@@ -249,6 +249,7 @@ namespace RenderData {
 		Drawer::RawVertex,
 		Drawer::toRawVertex,
 		Drawer::DrawFunc,
+		Drawer::Texture2D,
 		std::function,
 		std::vector,
 		std::runtime_error;

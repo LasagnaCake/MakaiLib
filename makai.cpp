@@ -49,10 +49,9 @@ public:
 
 	void onOpen() override {
 		Vector2 screenSpace = getWindowSize().normalized();
-		player.position.x = 32;
-		player.position.y = -32;
-		player.spawnPoint = Vector2(32, -32);
-		player.position *= screenSpace;
+		player.spawnPoint = Vector2(32, -16);
+		player.position = Vector2(32, -32);
+		//player.position *= screenSpace;
 		RenderData::Renderable progress;
 		progress.setRenderLayer(Math::maxSizeT);
 		Plane* bar = progress.createReference<Plane>();
@@ -71,14 +70,13 @@ public:
 		for (size_t i = 0; i < 32; i++){
 			auto b = testM.createBullet();
 			b->local.position = Vector2(
-				Math::Random::real(0, 32),
-				Math::Random::real(-32, 0)
+				16, -16
 			);
 			b->settings.hitbox.radius = 1;
 			b->settings.speed = BulletParam{0, 5, 0.05};
-			b->settings.rotation.start = Math::Random::real(0, 6.28);
+			b->settings.rotation.start = 6.28 * (i / 32.0);
 			b->reset();
-			bar->local.scale.x += progTick * (4096/32);
+			bar->local.scale.x += progTick * (4096/256);
 			renderReservedLayer();
 			Makai::pollEvents();
 		}

@@ -203,6 +203,7 @@ namespace Makai {
 				// Do your own stuff
 				logicFunc(deltaTime);
 				onLogicFrame();
+				taskers.yield();
 				// Wait for thread to be done processing
 				physics.join();
 				// [[ Render code BEGIN ]]
@@ -214,7 +215,7 @@ namespace Makai {
 				// Get time
 				lastTime = (float)SDL_GetTicks() * 1.0;
 				// Destroy queued entities
-				EntityClass::destroyQueued();
+				$ec destroyQueued();
 				// If running faster than expected, slow down
 				// TODO: fix this
 				/*if (delta < maxFrameRate)
@@ -302,6 +303,8 @@ namespace Makai {
 
 		/// The program's maximum framerate
 		float maxFrameRate = 60.0;
+
+		Tasking::MultiTasker taskers;
 
 	protected:
 		Drawer::FrameBufferData toFrameBufferData() {

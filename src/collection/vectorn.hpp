@@ -941,7 +941,7 @@ namespace VecMath
 
 	/// Gets a 2D Vector of size 1 at a given angle relative to the origin.
 	Vector2 angleV2(float angle) {
-		return Vector2(cos(angle), sin(angle));
+		return Vector2(cos(angle), -sin(angle));
 	}
 
 	/// Gets a 3D Vector of size 1 at a given angle around one of the origin's axis.

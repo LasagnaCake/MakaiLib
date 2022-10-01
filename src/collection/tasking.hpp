@@ -161,6 +161,10 @@ namespace Tasking {
 			loopCount	= 0;
 		}
 
+		void clearTasks() {
+			tasks.clear();
+		}
+
 	private:
 		/// The list of Tasks to be executed.
 		vector<Task> tasks;
@@ -237,6 +241,10 @@ namespace Tasking {
 			}
 			// If no completed Tasker is found or overwriting is forbidden, append to Taskers
 			taskers.push_back(t);
+		}
+
+		void clearTaskers() {
+			taskers.clear();
 		}
 
 		/// Processes one task cycle of all Taskers.

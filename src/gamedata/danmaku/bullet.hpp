@@ -106,23 +106,26 @@ private:
 };
 
 template <size_t BULLET_COUNT>
-class BulletManager: Entity {
-public:
+struct BulletManager: Entity {
 	DERIVED_CONSTRUCTOR(BulletManager, Entity, {
 		EntityClass::$_ROOT += this;
 		mesh.setRenderLayer($layer(ENEMY_BULLET));
-		EntityClass::groups.addEntity(this, BULLET_MANAGER_GROUP);
+		$ec groups.addEntity(this, $layer(ENEMY_BULLET));
 	})
 
 	DERIVED_CLASS(BulletManager, Entity)
 
 	Renderable mesh;
 
+	void onDelete() override {
+		$ec groups.removeFromAll(this);
+	}
+
 	void onFrame(float delta) override {
 		for $each(b, bullets) {
 			b.onFrame(delta);
 			if (!b.isFree() && b.settings.collidable)
-			for $each(player, EntityClass::groups.getGroup($layer(PLAYER))) {
+			for $each(player, $ec groups.getGroup($layer(PLAYER))) {
 				auto p = ((AreaCircle2D*)player);
 				if (
 					p->collision.enabled
@@ -153,6 +156,7 @@ public:
 		for $each(b, bullets)
 			if (b.isFree()) {
 				last = b.enable()->reset();
+				last->taskers.clearTaskers();
 				return last;
 			}
 		throw std::runtime_error(

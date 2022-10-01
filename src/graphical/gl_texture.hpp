@@ -108,8 +108,13 @@ public:
 	}
 
 	void operator()(unsigned char texture = 0) {
+		enable(texture);
+	}
+
+	void enable(unsigned char texture = 0) {
 		setTexture2D(texture, id);
 	}
+
 private:
 	bool created = false;
 	unsigned int id;

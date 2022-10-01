@@ -11,9 +11,7 @@
 
 #define $sublayer(INDEX) ((INDEX) - (SUBLAYER_COUNT - 1))
 
-#define BULLET_MANAGER_GROUP 1024
-
-namespace RenderLayer {
+namespace Layer {
 	enum RenderLayer: size_t {
 		R_LAYER(WORLD),
 		R_LAYER(PLAYER),
@@ -28,6 +26,6 @@ namespace RenderLayer {
 }
 
 #undef R_LAYER
-#define $layer(NAME) RenderLayer::NAME##_LAYER
+#define $layer(NAME) Layer::NAME##_LAYER
 
 #endif // MAKAI_GAME_SYSTEM_LAYOUT

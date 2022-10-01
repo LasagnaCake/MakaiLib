@@ -56,8 +56,8 @@ namespace Tween{
 	#pragma GCC diagnostic ignored "-Wsequence-point"
 	#pragma GCC diagnostic ignored "-Wsubobject-linkage"
 
-	#define $easing					[&](float step, float from, float to, float stop) -> float
-	#define $$EFUNC					[&](float t, float b, float c, float d) -> float
+	#define $easing					[](float step, float from, float to, float stop) -> float
+	#define $$EFUNC					[](float t, float b, float c, float d) -> float
 	#define PI_VALUE Math::pi
 	#define EASE_F(TYPE) .TYPE = $$EFUNC
 	/// Easing function template
@@ -258,7 +258,7 @@ namespace Tween{
 		T* value = &defaultVar;
 
 		/// The tween's easing function.
-		EaseFunc tweenStep;
+		EaseFunc tweenStep = ease.in.linear;
 
 		/// The signal to be fired upon completion.
 		Event::Signal onCompleted = Event::DEF_SIGNAL;
@@ -301,31 +301,7 @@ namespace Tween{
 
 		/// Calculates (and if targeted, applies) a step.
 		const $$FUNC yield = [&]() {
-			// If value pointer is null, point to default var
-			if (!value) value = &defaultVar;
-			// If paused, return
-			if (paused) return;
-			// If not finished...
-			if (!isFinished)
-			{
-				// Check if finished, then increment step
-				isFinished = step++ >= stop;
-				// If begin != end, calculate step
-				if (from != to) {
-					factor = tweenStep(step, 0.0, 1.0, stop);
-					*value = Math::lerp(from, to, T(factor));
-				}
-				// Else, set value to end
-				else *value = to;
-				// Clamp step to prevent overflow
-				step = (step > stop ? stop : step);
-				// If done, fire signal and clear it
-				if (isFinished) {
-					onCompleted();
-				}
-			}
-			// // Else, clamp value to between required values
-			// else *value = (*value > to ? to : (*value < from ? from : *value))
+			this->_yield();
 		};
 
 		/// Sets the interpolation.
@@ -338,6 +314,7 @@ namespace Tween{
 			range = from - to;
 			*value = from;
 			this->tweenStep = tweenStep;
+			factor = 0.0f;
 		}
 
 		/// Sets the interpolation with a target.
@@ -351,31 +328,35 @@ namespace Tween{
 			range = from - to;
 			*value = from;
 			this->tweenStep = tweenStep;
+			factor = 0.0f;
 		}
 
 		/// Sets the interpolation to a new value, while maintaining the easing function.
 		void reinterpolate(T to) {
+			paused = false;
 			setInterpolation(*value, to, step, tweenStep);
 		}
 
 		/// Sets the interpolation to a new value, while maintaining the easing dunction.
 		void reinterpolate(T from, T to) {
+			paused = false;
 			setInterpolation(from, to, step, tweenStep);
 		}
 
 		/// Sets the interpolation to a new value, while maintaining the easing function.
 		void reinterpolate(T to, unsigned int step) {
+			paused = false;
 			setInterpolation(*value, to, step, tweenStep);
 		}
 
 		/// Sets the interpolation to a new value, while maintaining the easing dunction.
 		void reinterpolate(T from, T to, unsigned int step) {
+			paused = false;
 			setInterpolation(from, to, step, tweenStep);
 		}
 
 		/// Sets the tween's target variable.
 		void setTarget(T* target) {
-			*target = *value;
 			value = target;
 		}
 
@@ -412,8 +393,49 @@ namespace Tween{
 			return isFinished;
 		}
 
+		void conclude() {
+			*value = to;
+			step = stop;
+			factor = 1.0f;
+			isFinished = true;
+		}
+
+		void halt() {
+			factor = 1.0f;
+			isFinished = true;
+		}
+
 	private:
 		float factor = 0.0f;
+
+		void _yield() {
+			// If value pointer is null, point to default var
+			if (!value) value = &defaultVar;
+			// If paused, return
+			if (paused) return;
+			// If not finished...
+			if (!isFinished)
+			{
+				// Check if finished, then increment step
+				isFinished = step++ >= stop;
+				// If begin != end, calculate step
+				if (from != to) {
+					// TODO: Find out why this returns infinity
+					factor = tweenStep(step, 0.0f, 1.0f, stop);
+					*value = Math::lerp(from, to, T(factor));
+				}
+				// Else, set value to end
+				else *value = to;
+				// Clamp step to prevent overflow
+				step = (step > stop ? stop : step);
+				// If done, fire signal and clear it
+				if (isFinished) {
+					onCompleted();
+				}
+			}
+			// // Else, clamp value to between required values
+			// else *value = (*value > to ? to : (*value < from ? from : *value))
+		}
 
 		/// Whether the tween is finished.
 		bool isFinished;

@@ -15,17 +15,23 @@ struct PlayerEntity2D: AreaCircle2D {
 		actionKeys["extra"]	= SDL_SCANCODE_SPACE;
 		actionKeys["skip"]	= SDL_SCANCODE_LCTRL;
 		sprite = mesh.createReference<Reference::AnimatedPlane>();
-		EntityClass::$_ROOT += this;
-		EntityClass::groups.addEntity(this, $layer(PLAYER));
-		moveTween.tweenStep = Tween::ease.out.back;
+		$ec $_ROOT += this;
+		$ec groups.addEntity(this, $layer(PLAYER));
+		moveTween.tweenStep = Tween::ease.out.cubic;
 		moveTween.setTarget(&position);
 		invincibility.paused = true;
 		invincibility.onSignal = $signal{
 			this->collision.enabled = true;
 			sprite->setColor(Color::WHITE);
 		};
+		animator.repeat = true;
+		animator.onSignal = $signal {
+			if(++sprite->sprite.x >= sprite->size.x)
+				sprite->sprite.x = 0;
+		};
 		invincibility.delay = 60;
 		moveTween.setStepCount(30);
+		moveTween.conclude();
 	})
 	KeyBinds actionKeys;
 
@@ -51,6 +57,7 @@ struct PlayerEntity2D: AreaCircle2D {
 	virtual void onExtra()	{}
 
 	Event::Timer invincibility;
+	Event::Timer animator;
 
 	void pichun() {
 		if (!collision.enabled) return;
@@ -60,6 +67,10 @@ struct PlayerEntity2D: AreaCircle2D {
 		moveTween.reinterpolate(spawnPoint);
 		invincibility.reset();
 		invincibility.paused = false;
+	}
+
+	void spawnPlayer(Vector2 from) {
+		moveTween.reinterpolate(from, spawnPoint);
 	}
 
 	bool flipX = true;
@@ -87,8 +98,6 @@ struct PlayerEntity2D: AreaCircle2D {
 		sprite->local.position		= Vector3(transform.position, zIndex);
 		sprite->local.rotation.z	= transform.rotation;
 		sprite->local.scale			= Vector3(transform.scale, 0.00001);
-		if(++sprite->sprite.x >= sprite->size.x)
-			sprite->sprite.x = 0;
 
 		if(action("shot"))	onShot();
 		if(action("bomb"))	onBomb();
@@ -97,7 +106,7 @@ struct PlayerEntity2D: AreaCircle2D {
 	}
 
 	virtual void onCollision(Entity* target) {
-		if (EntityClass::groups.hasEntity(target, BULLET_MANAGER_GROUP)) {
+		if ($ec groups.hasEntity(target, $layer(ENEMY_BULLET))) {
 			onDeath();
 			pichun();
 		}

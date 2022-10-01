@@ -11,6 +11,7 @@
 
 #include "../tasking.hpp"
 #include "../event.hpp"
+#include "../grouping.hpp"
 
 #ifndef _$_ENTITY_ROOT_NAME
 /// Default entity root name (MUST NOT CONTAIN '/')
@@ -516,9 +517,19 @@ namespace EntityClass {
 					return true;
 			return false;
 		}
+
+		/// Removes an object from all groups it is in.
+		void removeFromAll(Entity* e) {
+			vector<size_t> groups = getGroups(e);
+			for (auto grp: groups) {
+				removeEntity(e, grp);
+			}
+		}
 	private:
 		map<size_t, vector<Entity*>> g;
 	} groups;
 }
+
+#define $ec EntityClass::
 
 #endif // COREOBJECT_ROOT_OBJECT_H

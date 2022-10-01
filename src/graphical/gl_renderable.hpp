@@ -196,10 +196,12 @@ public:
 	vector<Triangle*> triangles;
 
 	struct {
-		bool active		= true;
-		bool textured	= false;
-		GLuint culling	= GL_FRONT_AND_BACK;
-		GLuint fill		= GL_FILL;
+		bool active			= true;
+		bool textured		= false;
+		GLubyte texture		= 0;
+		Texture2D* image	= nullptr;
+		GLuint culling		= GL_FRONT_AND_BACK;
+		GLuint fill			= GL_FILL;
 	} params;
 
 	struct {
@@ -231,11 +233,14 @@ private:
 		Shader::defaultShader();
 		glm::mat4 camera = Scene::camera.matrix();
 		glm::mat4 projection = Scene::camera.perspective();
-		Shader::defaultShader["textured"](params.textured);
-		Shader::defaultShader["world"](Scene::world);
-		Shader::defaultShader["camera"](camera);
-		Shader::defaultShader["projection"](projection);
-		Shader::defaultShader["actor"](actorMatrix);
+		$mainshader["textured"](params.textured);
+		$mainshader["texture2D"](params.texture);
+		if (params.image)
+			params.image->enable(params.texture);
+		$mainshader["world"](Scene::world);
+		$mainshader["camera"](camera);
+		$mainshader["projection"](projection);
+		$mainshader["actor"](actorMatrix);
 		glDrawArrays(GL_TRIANGLES, 0, vertexCount);
 		// Render object passes, if any
 		if(shaders.size())
@@ -245,6 +250,7 @@ private:
 				shader();
 				// Set prerequisites
 				shader["textured"](params.textured);
+				shader["texture2D"](params.texture);
 				shader["world"](Scene::world);
 				shader["camera"](camera);
 				shader["projection"](projection);
