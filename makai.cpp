@@ -11,6 +11,7 @@
 
 using namespace RenderData::Reference;
 using namespace Vector;
+using GameData::BulletParam;
 
 class GameApp: public Makai::Program {
 public:
@@ -74,6 +75,9 @@ public:
 				Math::Random::real(-32, 0)
 			);
 			b->settings.hitbox.radius = 1;
+			b->settings.speed = BulletParam{0, 5, 0.05};
+			b->settings.rotation.start = Math::Random::real(0, 6.28);
+			b->reset();
 			bar->local.scale.x += progTick * (4096/32);
 			renderReservedLayer();
 			Makai::pollEvents();

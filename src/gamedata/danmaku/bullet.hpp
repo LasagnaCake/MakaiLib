@@ -45,6 +45,20 @@ public:
 	void onFrame(float delta) {
 		if (free) return;
 		taskers.yield();
+		speedFactor = Math::clamp(speedFactor + settings.speed.omega, 0.0f, 1.0f);
+		rotationFactor = Math::clamp(rotationFactor + settings.rotation.omega, 0.0f, 1.0f);
+		currentSpeed = Math::lerp(
+			settings.speed.start,
+			settings.speed.end,
+			speedFactor
+		);
+		currentRotation = Math::angleLerp(
+			settings.rotation.start,
+			settings.rotation.end,
+			rotationFactor
+		);
+		if (currentSpeed)
+			local.position += VecMath::angleV2(currentRotation) * currentSpeed * delta;
 		if (sprite) {
 			// Set sprite position
 			sprite->local.position = Vector3(local.position);
@@ -60,8 +74,7 @@ public:
 
 	Bullet* reset() {
 		currentSpeed = settings.speed.start;
-		currentRotation = settings.rotation.start;
-		local.rotation = currentRotation;
+		local.rotation = currentRotation = settings.rotation.start;
 		return this;
 	}
 
@@ -84,9 +97,12 @@ public:
 
 	float currentSpeed		= 0;
 	float currentRotation	= 0;
-private:
 
-	bool free = false;
+private:
+	float speedFactor		= 0;
+	float rotationFactor	= 0;
+
+	bool free = true;
 };
 
 template <size_t BULLET_COUNT>

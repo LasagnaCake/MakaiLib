@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1664496314 source:d:\c(++) projects\_c++\game engine\makailib\makai.cpp
+1664580920 source:d:\c(++) projects\_c++\game engine\makailib\makai.cpp
 	<stdexcept>
 	"src/program.hpp"
 	<windows.h>
@@ -3317,7 +3317,7 @@
 	"gamedata/danmaku/bullet.hpp"
 	"gamedata/player.hpp"
 
-1664495697 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\bullet.hpp
+1664580780 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\bullet.hpp
 
 1663772586 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\laser.hpp
 

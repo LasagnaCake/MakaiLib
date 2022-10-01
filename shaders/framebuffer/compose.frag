@@ -10,7 +10,11 @@ uniform vec4 accent = vec4(0);
 uniform sampler2D screen;
 uniform sampler2D depth;
 
+// [ COLOR INVERSION ]
+
 uniform bool negative = false;
+
+// [ ALPHA MASK ]
 
 uniform bool useMask = false;
 uniform bool invertMask = false;
@@ -19,12 +23,19 @@ uniform bool invertMask = false;
 * Else, the specified channel is used.
 * MUST be between -1 and 3.
 */
-uniform int maskChannel = 3;
-uniform sampler2D mask;
+uniform int			maskChannel = 3;
+uniform sampler2D	mask;
 
-uniform bool useChromatizer = false;
-uniform vec4 chromaColor = vec4(1);
-uniform uint chromaChannel = 0;
+// [ CHROMATIZER ]
+
+uniform bool	useChromatizer = false;
+uniform vec4	chromaColor = vec4(1);
+/**
+* If -1, the average between the color channels is used.
+* Else, the specified channel is used.
+* MUST be between -1 and 3.
+*/
+uniform int		chromaChannel = 0;
 
 void main() {
 	vec4 color = (texture(screen, fragUV) * fragColor * albedo) + accent;
@@ -33,7 +44,10 @@ void main() {
 	// Chromatizer (channel(s) as alpha)
 	if (useChromatizer) {
 		vec4 chromaValue = chromaColor;
-		chromaValue.w = clamp(color[chromaChannel], 0, 1);
+		if (chromaChannel < 0)
+			chromaValue.w = clamp((color.x + color.y + color.z) / 3, 0, 1);
+		else
+			chromaValue.w = clamp(color[chromaChannel], 0, 1);
 		color = chromaValue;
 	}
 	// Alpha mask
