@@ -28,35 +28,35 @@ public:
 			"shaders/framebuffer/compose.slf"
 	) {
 		SLF::SLFData data = SLF::parseFile("shaders/base/base.slf");
-		Shader::defaultShader.destroy();
-		Shader::defaultShader.create(data);
+		$mainshader.destroy();
+		$mainshader.create(data);
 		player.mesh.setRenderLayer($layer(PLAYER));
 		$debug(Drawer::layers.getGroups(&(player.mesh.render))[0]);
 	};
 
-	GameData::PlayerEntity2D player;
-	GameData::BulletManager<4096> testM;
+	$gdt PlayerEntity2D player;
+	$gdt BulletManager<4096> testM;
 
 	void setCamera2D(float scale = 64) {
-		Scene::camera.eye	= Vector3(0,0,-10);
-		Scene::camera.at	= Vector3(0,0,0);
-		Scene::camera.up	= Vector3(0,1,0);
-		Scene::camera.ortho.enabled = true;
+		$scn camera.eye	= Vector3(0,0,-10);
+		$scn camera.at	= Vector3(0,0,0);
+		$scn camera.up	= Vector3(0,1,0);
+		$scn camera.ortho.enabled = true;
 		Vector2 screenSpace = getWindowSize().normalized();
-		Scene::camera.ortho.origin = 0;
-		Scene::camera.ortho.size = screenSpace * -scale;
+		$scn camera.ortho.origin = 0;
+		$scn camera.ortho.size = screenSpace * -scale;
 	}
 
 	void onOpen() override {
 		Vector2 screenSpace = getWindowSize().normalized();
-		player.spawnPoint = Vector2(32, -16);
-		player.position = Vector2(32, -32);
+		player.spawnPoint =	Vector2(32, -16);
+		player.position =	Vector2(32, -32);
 		//player.position *= screenSpace;
-		RenderData::Renderable progress;
+		$rdt Renderable progress;
 		progress.setRenderLayer(Math::maxSizeT);
 		Plane* bar = progress.createReference<Plane>();
 		setCamera2D();
-		float progTick = Scene::camera.ortho.size.x / 4096.0;
+		float progTick = $scn camera.ortho.size.x / 4096.0;
 		size_t progCount = 0;
 		bar->local.scale.x = 0;
 		auto bulletSignal = $signal {

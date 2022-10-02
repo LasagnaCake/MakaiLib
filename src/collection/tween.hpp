@@ -406,7 +406,7 @@ namespace Tween{
 		}
 
 	private:
-		float factor = 0.0f;
+		float factor = 1.0f;
 
 		void _yield() {
 			// If value pointer is null, point to default var
@@ -460,6 +460,8 @@ namespace Tween{
 	};
 	#undef $$FUNC
 }
+
+#define $twn Tween::
 
 #undef CASE_FUNC
 

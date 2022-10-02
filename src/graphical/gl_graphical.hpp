@@ -324,6 +324,9 @@ namespace EntityClass {
 	};
 }
 
+#define $ref	RenderData::Reference::
+#define $rdt	RenderData::
+
 #undef $$FUNC
 
 #undef UNROLL_LOOPS

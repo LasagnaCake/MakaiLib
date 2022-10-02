@@ -20,6 +20,8 @@ namespace Scene {
 	Camera::Camera3D camera;
 }
 
+#define $scn	Scene::
+
 namespace Shader {
 	namespace {
 		using namespace std;

@@ -834,6 +834,11 @@ namespace Vector{
 	};
 }
 
+#define $vec	Vector::
+#define $vec2	Vector::Vector2
+#define $vec3	Vector::Vector3
+#define $vec4	Vector::Vector4
+
 namespace VecMath
 {
 	using namespace Vector;
@@ -1190,5 +1195,7 @@ namespace VecMath
 		);
 	}
 }
+
+#define $vmt VecMath::
 
 #endif // VECTOR234_H

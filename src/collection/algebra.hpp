@@ -170,6 +170,8 @@ namespace Math {
 	}
 }
 
+#define $mth Math::
+
 #undef ANYTYPE_I
 #undef ANYTYPE
 

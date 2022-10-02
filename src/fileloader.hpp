@@ -72,4 +72,6 @@ namespace FileLoader {
 	}
 };
 
+#define $fld FileLoader::
+
 #endif // MAKAI_FILE_LOADER

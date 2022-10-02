@@ -98,4 +98,6 @@ namespace Group {
 	};
 }
 
+#define $grp Group::
+
 #endif // OBJECT_GROUPING_SYSTEM_H

@@ -15,8 +15,8 @@ struct PlayerEntity2D: AreaCircle2D {
 		actionKeys["extra"]	= SDL_SCANCODE_SPACE;
 		actionKeys["skip"]	= SDL_SCANCODE_LCTRL;
 		sprite = mesh.createReference<Reference::AnimatedPlane>();
-		$ec $_ROOT += this;
-		$ec groups.addEntity(this, $layer(PLAYER));
+		$ecl $_ROOT += this;
+		$ecl groups.addEntity(this, $layer(PLAYER));
 		moveTween.tweenStep = Tween::ease.out.cubic;
 		moveTween.setTarget(&position);
 		invincibility.paused = true;
@@ -36,7 +36,7 @@ struct PlayerEntity2D: AreaCircle2D {
 	KeyBinds actionKeys;
 
 	Renderable mesh;
-	Reference::AnimatedPlane* sprite;
+	$ref AnimatedPlane* sprite;
 	Makai::InputManager input;
 
 	Vector2 spawnPoint = Vector2(0, 0);
@@ -106,7 +106,7 @@ struct PlayerEntity2D: AreaCircle2D {
 	}
 
 	virtual void onCollision(Entity* target) {
-		if ($ec groups.hasEntity(target, $layer(ENEMY_BULLET))) {
+		if ($ecl groups.hasEntity(target, $layer(ENEMY_BULLET))) {
 			onDeath();
 			pichun();
 		}

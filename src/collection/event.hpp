@@ -146,4 +146,6 @@ namespace Event{
 	#undef $$FUNC
 }
 
+#define $evt Event::
+
 #endif // SIGNAL_TRIGGER_H

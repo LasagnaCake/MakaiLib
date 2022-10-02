@@ -530,6 +530,6 @@ namespace EntityClass {
 	} groups;
 }
 
-#define $ec EntityClass::
+#define $ecl EntityClass::
 
 #endif // COREOBJECT_ROOT_OBJECT_H

@@ -17,11 +17,11 @@
 namespace GameData {
 	namespace {
 		using
-		EntityClass::AreaCircle2D,
-		EntityClass::Entity2D,
-		EntityClass::Entity,
-		RenderData::Renderable,
-		RenderData::Reference::AnimatedPlane,
+		$ecl AreaCircle2D,
+		$ecl Entity2D,
+		$ecl Entity,
+		$rdt Renderable,
+		$ref AnimatedPlane,
 		Drawer::Texture2D,
 		VecMath::Transform2D,
 		VecMath::Transform3D,
@@ -39,6 +39,8 @@ namespace GameData {
 	#include "gamedata/danmaku/bullet.hpp"
 	#include "gamedata/player.hpp"
 }
+
+#define $gdt GameData::
 
 #undef DERIVED_CONSTRUCTOR
 #undef DERIVED_CLASS

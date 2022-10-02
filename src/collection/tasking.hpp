@@ -264,4 +264,6 @@ namespace Tasking {
 	typedef vector<MultiTasker> MultiTaskerList;
 }
 
+#define $tsk Tasking::
+
 #endif // TASKER_TASK_H

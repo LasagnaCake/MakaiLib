@@ -215,7 +215,7 @@ namespace Makai {
 				// Get time
 				lastTime = (float)SDL_GetTicks() * 1.0;
 				// Destroy queued entities
-				$ec destroyQueued();
+				$ecl destroyQueued();
 				// If running faster than expected, slow down
 				// TODO: fix this
 				/*if (delta < maxFrameRate)
@@ -381,5 +381,7 @@ namespace Makai {
 		SDL_Window* window;
 	};
 }
+
+#define $mki Makai::
 
 #endif // MAKAILIB_MAKAI_H
