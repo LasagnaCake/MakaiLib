@@ -49,9 +49,9 @@ public:
 
 	void onOpen() override {
 		Vector2 screenSpace = getWindowSize().normalized();
-		player.spawnPoint =	Vector2(32, -16);
-		player.position =	Vector2(32, -32);
-		//player.position *= screenSpace;
+		player.spawnPoint =
+		player.position =
+		Vector2(32, -48) * screenSpace;
 		$rdt Renderable progress;
 		progress.setRenderLayer(Math::maxSizeT);
 		Plane* bar = progress.createReference<Plane>();

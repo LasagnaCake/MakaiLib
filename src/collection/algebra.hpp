@@ -113,7 +113,7 @@ namespace Math {
 			typedef std::uniform_real_distribution<double> RandReal;
 			typedef std::uniform_int_distribution<size_t> RandLong;
 			// I think I just saw hell.
-			size_t getSeed() {
+			size_t _getSeed() {
 				auto time =
 					std::chrono::duration_cast<std::chrono::microseconds>(
 						std::chrono::system_clock::now()
@@ -121,56 +121,49 @@ namespace Math {
 					);
 				return time.count();
 			}
-			// If device does not support true randomness, use fallback
-			std::random_device			active;
-			std::default_random_engine	fallback{getSeed()};
+			// The random number generator engine used
+			std::default_random_engine	engine{_getSeed()};
 			// Default distributions
 			RandReal	longDist(0, $maxof(size_t));
 			RandLong	realDist(0.0,1.0);
 		}
 
-		/// Returns whether true randomness is available.
-		inline bool trueRandom() {
-			return active.entropy();
-		}
-
 		/// Returns a random double between 0 and 1.
 		double real() {
-			if (trueRandom())
-				return realDist(active);
-			else
-				return realDist(fallback);
+			return realDist(engine);
 		}
 
 		/// Returns a random double between the given values.
 		double real(double min, double max) {
 			RandReal dist(min, max);
-			if (trueRandom())
-				return dist(active);
-			else
-				return dist(fallback);
+			return dist(engine);
 		}
 
 		/// Returns a random integer between 0 and maximum size_t.
 		size_t integer() {
-			if (trueRandom())
-				return longDist(active);
-			else
-				return longDist(fallback);
+			return longDist(engine);
 		}
 
 		/// Returns a random integer between the given values.
 		ANYTYPE integer(T min, T max) {
 			RandLong dist(min, max);
-			if (trueRandom())
-				return (T)dist(active);
-			else
-				return (T)dist(fallback);
+			(T)dist(engine);
+		}
+
+		/// Sets the random number generator's seed.
+		inline void setSeed(size_t seed) {
+			engine = std::default_random_engine{seed};
+		}
+
+		/// Gets a seed based on the current clock's time, and a random number.
+		inline size_t getNewSeed() {
+			return _getSeed() ^ !(integer() << 32);
 		}
 	}
 }
 
 #define $mth Math::
+#define $rng Math::Random::
 
 #undef ANYTYPE_I
 #undef ANYTYPE
