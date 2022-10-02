@@ -9,11 +9,11 @@
 
 //#define SIDE_B
 
-using namespace RenderData::Reference;
+using namespace $rdt Reference;
 using namespace Vector;
-using GameData::BulletParam;
+using $gdt BulletParam;
 
-class GameApp: public Makai::Program {
+class GameApp: public $mki Program {
 public:
 	GameApp(
 		unsigned int width,
@@ -68,9 +68,9 @@ public:
 				testM.haltProcedure = true;
 			}
 		};
-		if (forceQuit) {close(); return;}
 		testM.onBulletCreated = bulletSignal;
 		testM.create();
+		if (forceQuit) {close(); return;}
 		bar->local.scale.x = 0;
 		for (size_t i = 0; i < 32; i++){
 			auto b = testM.createBullet();
@@ -83,9 +83,7 @@ public:
 			b->reset();
 			bar->local.scale.x += progTick * (4096/256);
 			renderReservedLayer();
-			if $event(SDL_QUIT) {close(); return;}
 		}
-		if (forceQuit) {close(); return;}
 	}
 
 	void onLogicFrame() override {

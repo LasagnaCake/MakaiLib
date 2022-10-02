@@ -36,11 +36,11 @@ public:
 
 	BulletData settings;
 
-	$ref AnimatedPlane* sprite;
+	$ref AnimatedPlane* sprite = nullptr;
 
-	Tasking::MultiTasker taskers;
+	$tsk MultiTasker taskers;
 
-	Event::Signal onFree = Event::DEF_SIGNAL;
+	$evt Signal onFree = Event::DEF_SIGNAL;
 
 	void onFrame(float delta) {
 		if (free) return;
@@ -140,15 +140,15 @@ struct BulletManager: Entity {
 
 	void create() {
 		if (created) return;
+		haltProcedure = false;
 		for (size_t i = 0; i < BULLET_COUNT; i++) {
 			if (!bullets[i].sprite)
 				bullets[i].sprite = mesh.createReference<AnimatedPlane>();
 			bullets[i].setFree();
 			onBulletCreated();
-			if (haltProcedure) break;
+			if (haltProcedure) return;
 		}
-		if (!haltProcedure) created = true;
-		haltProcedure = false;
+		created = true;
 	}
 
 	Bullet* getLastBullet() {
@@ -178,7 +178,7 @@ struct BulletManager: Entity {
 
 	Bullet bullets[BULLET_COUNT];
 
-	Event::Signal onBulletCreated = Event::DEF_SIGNAL;
+	$evt Signal onBulletCreated = $evt DEF_SIGNAL;
 
 	bool haltProcedure = false;
 

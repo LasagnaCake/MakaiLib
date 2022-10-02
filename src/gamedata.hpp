@@ -22,9 +22,9 @@ namespace GameData {
 		$ecl Entity,
 		$rdt Renderable,
 		$ref AnimatedPlane,
-		Drawer::Texture2D,
-		VecMath::Transform2D,
-		VecMath::Transform3D,
+		$drw Texture2D,
+		$vmt Transform2D,
+		$vmt Transform3D,
 		std::string;
 
 		using namespace Vector;
