@@ -141,11 +141,14 @@ struct BulletManager: Entity {
 	void create() {
 		if (created) return;
 		for (size_t i = 0; i < BULLET_COUNT; i++) {
-			bullets[i].sprite = mesh.createReference<AnimatedPlane>();
+			if (!bullets[i].sprite)
+				bullets[i].sprite = mesh.createReference<AnimatedPlane>();
 			bullets[i].setFree();
 			onBulletCreated();
+			if (haltProcedure) break;
 		}
-		created = true;
+		if (!haltProcedure) created = true;
+		haltProcedure = false;
 	}
 
 	Bullet* getLastBullet() {
@@ -176,6 +179,8 @@ struct BulletManager: Entity {
 	Bullet bullets[BULLET_COUNT];
 
 	Event::Signal onBulletCreated = Event::DEF_SIGNAL;
+
+	bool haltProcedure = false;
 
 private:
 	bool created = false;

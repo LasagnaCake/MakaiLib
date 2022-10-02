@@ -116,4 +116,6 @@ namespace Color{
 	};
 }
 
+#define $col Color::
+
 #endif

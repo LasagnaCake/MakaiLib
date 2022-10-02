@@ -31,7 +31,7 @@ public:
 		$mainshader.destroy();
 		$mainshader.create(data);
 		player.mesh.setRenderLayer($layer(PLAYER));
-		$debug(Drawer::layers.getGroups(&(player.mesh.render))[0]);
+		$debug($drw layers.getGroups(&(player.mesh.render))[0]);
 	};
 
 	$gdt PlayerEntity2D player;
@@ -59,11 +59,16 @@ public:
 		float progTick = $scn camera.ortho.size.x / 4096.0;
 		size_t progCount = 0;
 		bar->local.scale.x = 0;
+		bool forceQuit = false;
 		auto bulletSignal = $signal {
 			bar->local.scale.x += progTick;
 			renderReservedLayer();
-			Makai::pollEvents();
+			if $event(SDL_QUIT) {
+				forceQuit = true;
+				testM.haltProcedure = true;
+			}
 		};
+		if (forceQuit) {close(); return;}
 		testM.onBulletCreated = bulletSignal;
 		testM.create();
 		bar->local.scale.x = 0;
@@ -78,8 +83,9 @@ public:
 			b->reset();
 			bar->local.scale.x += progTick * (4096/256);
 			renderReservedLayer();
-			Makai::pollEvents();
+			if $event(SDL_QUIT) {close(); return;}
 		}
+		if (forceQuit) {close(); return;}
 	}
 
 	void onLogicFrame() override {

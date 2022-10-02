@@ -326,6 +326,7 @@ namespace EntityClass {
 
 #define $ref	RenderData::Reference::
 #define $rdt	RenderData::
+#define $drw	Drawer::
 
 #undef $$FUNC
 

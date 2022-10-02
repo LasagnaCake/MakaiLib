@@ -421,6 +421,8 @@ namespace Shader {
 	Shader defaultShader;
 }
 
+#define $shd Shader::
+
 #define $mainshader Shader::defaultShader
 
 #endif // MAKAILIB_SHADER_HANDLER

@@ -384,4 +384,6 @@ namespace Makai {
 
 #define $mki Makai::
 
+#define $event(EVENT) ($mki pollEvents().type == EVENT)
+
 #endif // MAKAILIB_MAKAI_H
