@@ -32,10 +32,17 @@ public:
 		$mainshader.create(data);
 		player.mesh.setRenderLayer($layer(PLAYER));
 		$debug($drw layers.getGroups(&(player.mesh.render))[0]);
+		maxFrameRate = 10.0;
 	};
 
+	$evt Timer bulletSpawner = $evt Timer(30, true);
+
+	float rotAngle = 5;
+
+	#define BULLET_COUNT (4096)
+
 	$gdt PlayerEntity2D player;
-	$gdt BulletManager<4096> testM;
+	$gdt BulletManager<BULLET_COUNT> testM;
 
 	void setCamera2D(float scale = 64) {
 		$scn camera.eye	= Vector3(0,0,-10);
@@ -56,7 +63,7 @@ public:
 		progress.setRenderLayer(Math::maxSizeT);
 		Plane* bar = progress.createReference<Plane>();
 		setCamera2D();
-		float progTick = $scn camera.ortho.size.x / 4096.0;
+		float progTick = $scn camera.ortho.size.x / BULLET_COUNT;
 		size_t progCount = 0;
 		bar->local.scale.x = 0;
 		bool forceQuit = false;
@@ -70,20 +77,36 @@ public:
 		};
 		testM.onBulletCreated = bulletSignal;
 		testM.create();
+		Vector2 screen = getWindowSize();
+		testM.playfield = $cdt BoxBounds2D{
+			$cdt Projection{0, screen.x},
+			$cdt Projection{0, screen.y}
+		};
 		if (forceQuit) {close(); return;}
 		bar->local.scale.x = 0;
-		for (size_t i = 0; i < 32; i++){
-			auto b = testM.createBullet();
-			b->local.position = Vector2(
-				16, -16
-			);
-			b->settings.hitbox.radius = 1;
-			b->settings.speed = BulletParam{0, 5, 0.05};
-			b->settings.rotation.start = 6.28 * (i / 32.0);
-			b->reset();
-			bar->local.scale.x += progTick * (4096/256);
-			renderReservedLayer();
-		}
+		bulletSpawner.onSignal = $signal {
+			float coefficient = 0;
+			for (size_t i = 0; i < 20; i++){
+				auto b = testM.createBullet();
+				b->local.position = Vector2(
+					16, -16
+				);
+				coefficient = (Math::tau) * ((i + 1) / 20.0) + rotAngle;
+				b->settings.hitbox.radius = 1;
+				b->settings.speed = BulletParam{
+					0,
+					20,
+					0.005
+				};
+				b->settings.rotation = BulletParam{
+					coefficient,
+					coefficient + (6.28/8.0),
+					0.01
+				};
+				rotAngle += (6.28/40.0);
+				b->reset();
+			}
+		};
 	}
 
 	void onLogicFrame() override {

@@ -104,7 +104,13 @@ namespace CollisionData {
 		Vector2 point = VecMath::angleV2(pointAngle) * a.radius;
 		return withinBounds(point, b);
 	}
+
+	inline bool withinBounds(BoxBounds2D a, CircleBounds2D b) {
+		return withinBounds(b, a);
+	}
 }
+
+#define $cdt CollisionData::
 
 namespace EntityClass {
 	namespace {

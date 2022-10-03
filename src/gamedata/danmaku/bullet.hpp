@@ -9,12 +9,10 @@ struct BulletParam {
 	float start		= 0;
 	float end		= 0;
 	float omega		= 0;
-	bool constant	= false;
 };
 
 struct BulletData {
 	// Collision data
-	BoxBounds2D*	playfield;
 	CircleBounds2D	hitbox;
 	// Parameters
 	BulletParam	speed;
@@ -52,7 +50,7 @@ public:
 			settings.speed.end,
 			speedFactor
 		);
-		currentRotation = Math::angleLerp(
+		currentRotation = Math::lerp(
 			settings.rotation.start,
 			settings.rotation.end,
 			rotationFactor
@@ -73,8 +71,19 @@ public:
 	}
 
 	Bullet* reset() {
+		setZero();
 		currentSpeed = settings.speed.start;
-		local.rotation = currentRotation = settings.rotation.start;
+		local.rotation = settings.rotation.start;
+		currentRotation = local.rotation;
+		return this;
+	}
+
+	Bullet* setZero() {
+		currentSpeed =
+		local.rotation =
+		currentRotation =
+		speedFactor =
+		rotationFactor = 0;
 		return this;
 	}
 
@@ -113,6 +122,8 @@ struct BulletManager: Entity {
 		$ecl groups.addEntity(this, $layer(ENEMY_BULLET));
 	})
 
+	$cdt BoxBounds2D playfield;
+
 	DERIVED_CLASS(BulletManager, Entity)
 
 	Renderable mesh;
@@ -129,12 +140,19 @@ struct BulletManager: Entity {
 				auto p = ((AreaCircle2D*)player);
 				if (
 					p->collision.enabled
-					&& CollisionData::withinBounds(
+					&& $cdt withinBounds(
 						b.settings.hitbox,
 						p->getCircleBounds()
 					)
 				) p->onCollision(this);
 			}
+			if (b.settings.dope)
+				if (
+					! $cdt withinBounds(
+						b.settings.hitbox,
+						playfield
+					)
+				) b.setFree();
 		}
 	}
 
@@ -158,7 +176,8 @@ struct BulletManager: Entity {
 	Bullet* createBullet() {
 		for $each(b, bullets)
 			if (b.isFree()) {
-				last = b.enable()->reset();
+				last = b.enable()->setZero();
+				last->settings = BulletData();
 				last->taskers.clearTaskers();
 				return last;
 			}
