@@ -1,15 +1,14 @@
 #ifndef ANCHORED_HEADERS_H
 #define ANCHORED_HEADERS_H
 
-#define $errlog(TEXT) std::cerr << TEXT << std::endl
-
 #define $enforce(WHAT, CHECK) if(!(CHECK)) throw std::runtime_error(std::string("ERROR: failed to initialize ") + WHAT)
 
-#define $print(TEXT) std::cout << (TEXT) << std::endl
-
 #ifdef _DEBUG_OUTPUT_
-#define $debug(TEXT) $print(TEXT)
+#include <iostream>
+#define $errlog(TEXT) std::cerr << TEXT << std::endl
+#define $debug(TEXT) std::cout << (TEXT) << std::endl
 #else
+#define $errlog(TEXT)
 #define $debug(TEXT)
 #endif // _MAKAI_DEBUG_
 
@@ -21,7 +20,6 @@
 *******************
 */
 
-#include <iostream>
 #include <string>
 #include <vector>
 #include <functional>
