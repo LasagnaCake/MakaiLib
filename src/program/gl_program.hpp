@@ -272,6 +272,10 @@ namespace Makai {
 			return Vector2(width, height);
 		}
 
+		inline Vector2 getWindowScale() {
+			return getWindowSize().normalized();
+		}
+
 		/// Gets called when the program is opened.
 		virtual void onOpen() {};
 

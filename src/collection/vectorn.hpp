@@ -248,6 +248,13 @@ namespace Vector{
 				Vector2 v = normalized();
 				return v.x / v.y;
 			}
+
+			Vector2 absolute() {
+				return Vector2(
+					abs(x),
+					abs(y)
+				);
+			}
 	};
 
 	/**
@@ -532,6 +539,14 @@ namespace Vector{
 
 			Vector2 xz() {
 				return Vector2(x, y);
+			}
+
+			Vector3 absolute() {
+				return Vector3(
+					abs(x),
+					abs(y),
+					abs(z)
+				);
 			}
 	};
 
@@ -829,6 +844,15 @@ namespace Vector{
 					Math::clamp(y, min.y, max.y),
 					Math::clamp(z, min.z, max.z),
 					Math::clamp(w, min.w, max.w)
+				);
+			}
+
+			Vector4 absolute() {
+				return Vector4(
+					abs(x),
+					abs(y),
+					abs(z),
+					abs(w)
 				);
 			}
 	};

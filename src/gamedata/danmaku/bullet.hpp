@@ -73,8 +73,9 @@ public:
 	Bullet* reset() {
 		setZero();
 		currentSpeed = settings.speed.start;
-		local.rotation = settings.rotation.start;
-		currentRotation = local.rotation;
+		local.rotation =
+		currentRotation = settings.rotation.start;
+		settings.hitbox.position = local.position;
 		return this;
 	}
 
@@ -114,7 +115,11 @@ private:
 	bool free = true;
 };
 
-template <size_t BULLET_COUNT>
+template <
+	size_t BULLET_COUNT,
+	class BULLET_TYPE,
+	class = std::enable_if<std::is_base_of<Bullet, BULLET_TYPE>::value>::type
+>
 struct BulletManager: Entity {
 	DERIVED_CONSTRUCTOR(BulletManager, Entity, {
 		$ecl $_ROOT += this;
@@ -152,28 +157,39 @@ struct BulletManager: Entity {
 						b.settings.hitbox,
 						playfield
 					)
-				) b.setFree();
+				) {
+					b.setFree(true);
+				}
 		}
 	}
 
-	void create() {
+	size_t getFreeCount() {
+		size_t count = 0;
+		for $each(b, bullets)
+			if (b.isFree())
+				count++;
+		return count;
+	}
+
+	void create($evt Signal onBulletCreated = $evt DEF_SIGNAL) {
 		if (created) return;
 		haltProcedure = false;
 		for (size_t i = 0; i < BULLET_COUNT; i++) {
 			if (!bullets[i].sprite)
-				bullets[i].sprite = mesh.createReference<AnimatedPlane>();
-			bullets[i].setFree();
+				bullets[i].sprite =
+					mesh.createReference<AnimatedPlane>();
+			bullets[i].setFree(true);
 			onBulletCreated();
 			if (haltProcedure) return;
 		}
 		created = true;
 	}
 
-	Bullet* getLastBullet() {
+	BULLET_TYPE* getLastBullet() {
 		return last;
 	}
 
-	Bullet* createBullet() {
+	BULLET_TYPE* createBullet() {
 		for $each(b, bullets)
 			if (b.isFree()) {
 				last = b.enable()->setZero();
@@ -189,22 +205,20 @@ struct BulletManager: Entity {
 		);
 	}
 
-	Bullet* createBullet(BulletData bullet) {
-		Bullet* b = createBullet();
+	BULLET_TYPE* createBullet(BulletData bullet) {
+		BULLET_TYPE* b = createBullet();
 		b->settings = bullet;
 		return b->reset();
 	}
 
-	Bullet bullets[BULLET_COUNT];
-
-	$evt Signal onBulletCreated = $evt DEF_SIGNAL;
+	BULLET_TYPE bullets[BULLET_COUNT];
 
 	bool haltProcedure = false;
 
 private:
 	bool created = false;
 
-	Bullet* last = nullptr;
+	BULLET_TYPE* last = nullptr;
 };
 
 #endif // MAKAI_BASE_BULLET_H

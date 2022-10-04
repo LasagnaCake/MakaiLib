@@ -35,14 +35,14 @@ public:
 		maxFrameRate = 10.0;
 	};
 
-	$evt Timer bulletSpawner = $evt Timer(30, true);
+	$evt Timer bulletSpawner = $evt Timer(22, true);
 
-	float rotAngle = 5;
+	float rotAngle = 0.0;
 
 	#define BULLET_COUNT (4096)
 
 	$gdt PlayerEntity2D player;
-	$gdt BulletManager<BULLET_COUNT> testM;
+	$gdt BulletManager<BULLET_COUNT, $gdt Bullet> testM;
 
 	void setCamera2D(float scale = 64) {
 		$scn camera.eye	= Vector3(0,0,-10);
@@ -67,20 +67,20 @@ public:
 		size_t progCount = 0;
 		bar->local.scale.x = 0;
 		bool forceQuit = false;
-		auto bulletSignal = $signal {
-			bar->local.scale.x += progTick;
-			renderReservedLayer();
-			if $event(SDL_QUIT) {
-				forceQuit = true;
-				testM.haltProcedure = true;
+		testM.create(
+			$signal {
+				bar->local.scale.x += progTick;
+				renderReservedLayer();
+				if $event(SDL_QUIT) {
+					forceQuit = true;
+					testM.haltProcedure = true;
+				}
 			}
-		};
-		testM.onBulletCreated = bulletSignal;
-		testM.create();
-		Vector2 screen = getWindowSize();
-		testM.playfield = $cdt BoxBounds2D{
+		);
+		Vector2 screen = $scn camera.ortho.size * Vector2(-1, 1);
+		$cdt BoxBounds2D area = testM.playfield = $cdt BoxBounds2D{
 			$cdt Projection{0, screen.x},
-			$cdt Projection{0, screen.y}
+			$cdt Projection{screen.y, 0}
 		};
 		if (forceQuit) {close(); return;}
 		bar->local.scale.x = 0;
@@ -88,24 +88,23 @@ public:
 			float coefficient = 0;
 			for (size_t i = 0; i < 20; i++){
 				auto b = testM.createBullet();
-				b->local.position = Vector2(
-					16, -16
-				);
-				coefficient = (Math::pi) * ((i + 1) / 20.0) + rotAngle;
+				b->local.position = Vector2(16, -16);
+				coefficient = (Math::tau * ((i + 1) / 20.0)) + rotAngle;
 				b->settings.hitbox.radius = 1;
 				b->settings.speed = BulletParam{
-					5,
 					-20,
+					20,
 					0.005
 				};
 				b->settings.rotation = BulletParam{
 					coefficient,
-					coefficient + (Math::pi),
-					0.01
+					coefficient + (Math::pi * 3.0),
+					0.01/3.0
 				};
-				rotAngle += (Math::pi/20.0);
 				b->reset();
 			}
+			$debug(testM.getFreeCount());
+			rotAngle += (Math::pi/20.0);
 		};
 	}
 

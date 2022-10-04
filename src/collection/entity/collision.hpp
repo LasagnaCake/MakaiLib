@@ -60,6 +60,27 @@ namespace CollisionData {
 		bool isCircle = false;
 	};
 
+	inline BoxBounds2D makeBoundsAB(Vector2 a, Vector2 b) {
+		return BoxBounds2D {
+			Projection {
+				Math::min(a.x, b.x),
+				Math::max(a.x, b.x)
+			},
+			Projection {
+				Math::min(a.y, b.y),
+				Math::max(a.y, b.y)
+			}
+		};
+	}
+
+	inline BoxBounds2D makeBounds(Vector2 position, Vector2 size) {
+		size /= 2;
+		return makeBoundsAB(
+			position - size,
+			position + size
+		);
+	}
+
 	inline bool withinBounds(Vector2 point, BoxBounds2D area) {
 		return (
 			( area.x.min < point.x) && (point.x < area.x.max)
@@ -97,11 +118,11 @@ namespace CollisionData {
 		float pointAngle = VecMath::angleTo(
 			a.position,
 			Vector2(
-				b.x.min + b.x.max,
-				b.y.min + b.y.max
-			) / 2
+				(b.x.min + b.x.max) / 2.0,
+				(b.y.min + b.y.max) / 2.0
+			)
 		);
-		Vector2 point = VecMath::angleV2(pointAngle) * a.radius;
+		Vector2 point = VecMath::angleV2(pointAngle) * a.radius + a.position;
 		return withinBounds(point, b);
 	}
 
