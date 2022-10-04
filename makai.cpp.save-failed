@@ -1,7 +1,7 @@
 // #include <irrlicht.h>
 #include <stdexcept>
 
-#undef _DEBUG_OUTPUT_
+//#undef _DEBUG_OUTPUT_
 
 #include "src/program.hpp"
 
@@ -9,10 +9,11 @@
 
 //#define SIDE_B
 
-using namespace RenderData::Reference;
+using namespace $rdt Reference;
 using namespace Vector;
+using $gdt BulletParam;
 
-class GameApp: public Makai::Program {
+class GameApp: public $mki Program {
 public:
 	GameApp(
 		unsigned int width,
@@ -27,47 +28,85 @@ public:
 			"shaders/framebuffer/compose.slf"
 	) {
 		SLF::SLFData data = SLF::parseFile("shaders/base/base.slf");
-		Shader::defaultShader.destroy();
-		Shader::defaultShader.create(data);
+		$mainshader.destroy();
+		$mainshader.create(data);
 		player.mesh.setRenderLayer($layer(PLAYER));
-		$debug(Drawer::layers.getGroups(&(player.mesh.render))[0]);
+		$debug($drw layers.getGroups(&(player.mesh.render))[0]);
+		maxFrameRate = 10.0;
 	};
 
-	GameData::PlayerEntity2D player;
-	GameData::BulletManager<4096> testM;
+	$evt Timer bulletSpawner = $evt Timer(30, true);
 
-	RenderData::Renderable progress;
+	float rotAngle = 5;
+
+	#define BULLET_COUNT (4096)
+
+	$gdt PlayerEntity2D player;
+	$gdt BulletManager<BULLET_COUNT> testM;
 
 	void setCamera2D(float scale = 64) {
-		Scene::camera.eye	= Vector3(0,0,-10);
-		Scene::camera.at	= Vector3(0,0,0);
-		Scene::camera.up	= Vector3(0,1,0);
-		Scene::camera.ortho.enabled = true;
+		$scn camera.eye	= Vector3(0,0,-10);
+		$scn camera.at	= Vector3(0,0,0);
+		$scn camera.up	= Vector3(0,1,0);
+		$scn camera.ortho.enabled = true;
 		Vector2 screenSpace = getWindowSize().normalized();
-		Scene::camera.ortho.origin = 0;
-		Scene::camera.ortho.size = screenSpace * -scale;
+		$scn camera.ortho.origin = 0;
+		$scn camera.ortho.size = screenSpace * -scale;
 	}
 
 	void onOpen() override {
 		Vector2 screenSpace = getWindowSize().normalized();
-		player.position.x = 32;
-		player.position.y = -32;
-		player.position *= screenSpace;
+		player.spawnPoint =
+		player.position =
+		Vector2(32, -48) * screenSpace;
+		$rdt Renderable progress;
 		progress.setRenderLayer(Math::maxSizeT);
 		Plane* bar = progress.createReference<Plane>();
 		setCamera2D();
-		float progTick = Scene::camera.ortho.size.x / 4096.0;
+		float progTick = $scn camera.ortho.size.x / BULLET_COUNT;
 		size_t progCount = 0;
 		bar->local.scale.x = 0;
+		bool forceQuit = false;
 		auto bulletSignal = $signal {
-			$debug(++progCount);
 			bar->local.scale.x += progTick;
 			renderReservedLayer();
+			if $event(SDL_QUIT) {
+				forceQuit = true;
+				testM.haltProcedure = true;
+			}
 		};
 		testM.onBulletCreated = bulletSignal;
 		testM.create();
-		for (size_t i = 0; i < 4096; i++)
-			testM.createBullet();
+		Vector2 screen = getWindowSize();
+		testM.playfield = $cdt BoxBounds2D{
+			$cdt Projection{0, screen.x},
+			$cdt Projection{0, screen.y}
+		};
+		if (forceQuit) {close(); return;}
+		bar->local.scale.x = 0;
+		bulletSpawner.onSignal = $signal {
+			float coefficient = 0;
+			for (size_t i = 0; i < 20; i++){
+				auto b = testM.createBullet();
+				b->local.position = Vector2(
+					16, -16
+				);
+				coefficient = (Math::pi) * ((i + 1) / 20.0) + rotAngle;
+				b->settings.hitbox.radius = 1;
+				b->settings.speed = BulletParam{
+					5,
+					-20,
+					0.005
+				};
+				b->settings.rotation = BulletParam{
+					coefficient,
+					coefficient + (Math::pi),
+					0.01
+				};
+				rotAngle += (Math::pi/20.0);
+				b->reset();
+			}
+		};
 	}
 
 	void onLogicFrame() override {
@@ -124,7 +163,6 @@ int main() {
 	prog.maxFrameRate = 60;
 	// [[ Main Program Code END ]]
 	prog.run();
-
 	return 0;
 }
 #else

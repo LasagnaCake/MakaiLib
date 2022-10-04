@@ -35,9 +35,9 @@ public:
 		maxFrameRate = 10.0;
 	};
 
-	$evt Timer bulletSpawner = $evt Timer(30, true);
+	$evt Timer bulletSpawner = $evt Timer(20, true);
 
-	float rotAngle = 5;
+	float rotAngle = 0.0;
 
 	#define BULLET_COUNT (4096)
 
@@ -91,21 +91,21 @@ public:
 				b->local.position = Vector2(
 					16, -16
 				);
-				coefficient = (Math::tau) * ((i + 1) / 20.0) + rotAngle;
+				coefficient = (Math::tau * ((i + 1) / 20.0)) + rotAngle;
 				b->settings.hitbox.radius = 1;
 				b->settings.speed = BulletParam{
-					0,
+					-20,
 					20,
 					0.005
 				};
 				b->settings.rotation = BulletParam{
 					coefficient,
-					coefficient + (6.28/8.0),
+					coefficient + (Math::pi),
 					0.01
 				};
-				rotAngle += (6.28/40.0);
 				b->reset();
 			}
+			rotAngle += (Math::pi/20.0);
 		};
 	}
 
