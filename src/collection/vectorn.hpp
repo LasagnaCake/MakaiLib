@@ -1059,7 +1059,7 @@ namespace VecMath
 
 	/// Gets the angle from Vector A to Vector B.
 	float angleTo(Vector2 a, Vector2 b) {
-		return atan2(b.y - a.y, b.x - a.x) - (Math::hpi);
+		return atan2(b.y - a.y, b.x - a.x) + Math::hpi;
 	}
 
 	/// Gets the angle from Vector A to Vector B.

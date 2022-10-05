@@ -129,6 +129,13 @@ namespace CollisionData {
 	inline bool withinBounds(BoxBounds2D a, CircleBounds2D b) {
 		return withinBounds(b, a);
 	}
+
+	inline Vector2 getBounded(Vector2 point, BoxBounds2D box) {
+		return point.clamped(
+			Vector2(box.x.min, box.y.min),
+			Vector2(box.x.max, box.y.max)
+		);
+	}
 }
 
 #define $cdt CollisionData::

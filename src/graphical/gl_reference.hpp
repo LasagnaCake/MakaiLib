@@ -1,4 +1,13 @@
-class Plane {
+struct Empty {
+	virtual void onTransform() {}
+	virtual Empty* reset() {}
+	virtual Empty* transform() {}
+	bool fixed = true;
+	bool visible = true;
+	Transform3D local;
+};
+
+class Plane: public Empty {
 public:
 	Plane(
 		Triangle* tris[2]
@@ -102,7 +111,7 @@ public:
 	}
 
 	/// Sets the plane to its original state (last state set with setPosition).
-	Plane* reset() {
+	Plane* reset() override {
 		tl->position	= origin[0];
 		tr1->position	= origin[1];
 		tr2->position	= origin[2];
@@ -112,9 +121,7 @@ public:
 		return this;
 	}
 
-	virtual void onTransform() { }
-
-	Plane* transform() {
+	Plane* transform() override {
 		onTransform();
 		if (!fixed) return this;
 		// Get transformation
@@ -129,23 +136,16 @@ public:
 		return this;
 	}
 
-	/// Whether the plane will be transformed when transform() is called
-	bool fixed = true;
-
-	bool visible = true;
-
-	Transform3D local;
-
 private:
 
 	Vector3 origin[6];
 
-	Vertex* tl;
-	Vertex* tr1;
-	Vertex* tr2;
-	Vertex* bl1;
-	Vertex* bl2;
-	Vertex* br;
+	Vertex* tl	= nullptr;
+	Vertex* tr1	= nullptr;
+	Vertex* tr2	= nullptr;
+	Vertex* bl1	= nullptr;
+	Vertex* bl2	= nullptr;
+	Vertex* br	= nullptr;
 };
 
 class AnimatedPlane: public Plane {

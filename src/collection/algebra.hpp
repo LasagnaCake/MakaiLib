@@ -21,6 +21,7 @@ namespace Math {
 	const auto hpi			= pi / 2;
 	const auto tau			= 6.2831853071795864769252867666;
 	const auto euler		= 2.7182818284590452353602874714;
+	const auto degrad		= 180.0 / pi;
 	const auto maribel		= euler - (sqrt2 - 1.0) * 1.2;
 	const size_t maxSizeT	= 0xffffffffffffffff;
 	const double infinity	= maxSizeT;
@@ -39,11 +40,11 @@ namespace Math {
 	}
 
 	ANYTYPE_I radians(T deg) {
-		return (T)(deg * pi / 180.0);
+		return (T)(deg / degrad);
 	}
 
 	ANYTYPE_I degrees(T rad) {
-		return (T)(rad * 180.0 / pi);
+		return (T)(rad * degrad);
 	}
 
 	ANYTYPE_I lerp(T from, T to, T by) {
@@ -106,6 +107,11 @@ namespace Math {
 			aCos = -abs(cos(sa2r)),
 			aSin = -abs(sin(sa2r));
 		return radius + s2rs * (aSin + aCos) / 2;
+	}
+
+	/// Reflects a given angle in relation to a surface.
+	float reflection(float pointAngle, float surfaceAngle) {
+		return pi + (2.0 * pointAngle) - surfaceAngle;
 	}
 
 	namespace Random {

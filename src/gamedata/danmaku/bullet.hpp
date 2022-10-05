@@ -18,11 +18,11 @@ struct BulletData {
 	BulletParam	speed;
 	BulletParam	rotation;
 	// Flags
-	bool rotateSprite	= true;
-	bool shuttle		= true;
-	bool rebound		= true;
+	bool shuttle		= false;
+	bool rebound		= false;
 	bool destroyable	= true;
 	bool collidable		= true;
+	bool rotateSprite	= true;
 	// Destroy on Playfield Exit
 	bool dope = true;
 };
@@ -128,6 +128,7 @@ struct BulletManager: Entity {
 	})
 
 	$cdt BoxBounds2D playfield;
+	$cdt BoxBounds2D board;
 
 	DERIVED_CLASS(BulletManager, Entity)
 
@@ -151,6 +152,54 @@ struct BulletManager: Entity {
 					)
 				) p->onCollision(this);
 			}
+			if (b.settings.rebound || b.settings.shuttle)
+				if (
+					! $cdt withinBounds(
+						b.local.position,
+						board
+					)
+				) {
+					// Rebounding (reflecting) takes precedence over shuttling (wrapping)
+					if (b.settings.rebound) {
+						#define $wreflect(AA) AA = Math::pi - AA
+						// Check X
+						if (
+							b.local.position.x < board.x.min ||
+							b.local.position.x > board.x.max
+						) {
+							$wreflect(b.currentRotation);
+							$wreflect(b.settings.rotation.start);
+							$wreflect(b.settings.rotation.end);
+						}
+						#define $wreflect(AA) AA = - AA
+						// Check Y
+						if (
+							b.local.position.y < board.y.min ||
+							b.local.position.y > board.y.max
+						) {
+							$wreflect(b.currentRotation);
+							$wreflect(b.settings.rotation.start);
+							$wreflect(b.settings.rotation.end);
+						}
+						// Disable rebounding
+						b.settings.rebound = false;
+						#undef $wreflect
+					}
+					else if (b.settings.shuttle) {
+						// Check X
+						if (b.local.position.x < board.x.min)
+							b.local.position.x = board.x.max;
+						if (b.local.position.x > board.x.max)
+							b.local.position.x = board.x.min;
+						// Check Y
+						if (b.local.position.y < board.y.min)
+							b.local.position.y = board.y.max;
+						if (b.local.position.y > board.y.max)
+							b.local.position.y = board.y.min;
+						// Disable shuttle
+						b.settings.shuttle = false;
+					}
+				}
 			if (b.settings.dope)
 				if (
 					! $cdt withinBounds(

@@ -35,7 +35,7 @@ public:
 		maxFrameRate = 10.0;
 	};
 
-	$evt Timer bulletSpawner = $evt Timer(22, true);
+	$evt Timer bulletSpawner = $evt Timer(60, true);
 
 	float rotAngle = 0.0;
 
@@ -77,18 +77,16 @@ public:
 				}
 			}
 		);
-		Vector2 screenSize = $scn camera.ortho.size.absolute() * Vector2(1.5, 2.0);
+		Vector2 screenSize = $scn camera.ortho.size.absolute();
 		Vector2 screenPosition = Vector2(32, -32) * screenSpace;
 		$debug(screenSize.x);
-		testM.playfield = $cdt makeBounds(screenPosition, screenSize);
+		testM.playfield = $cdt makeBounds(screenPosition, screenSize * Vector2(1.5, 2.0));
+		testM.board = $cdt makeBounds(screenPosition, screenSize);
 		if (forceQuit) {close(); return;}
 		bar->local.scale.x = 0;
 		bulletSpawner.onSignal = $signal {
 			float coefficient = 0;
-			Vector2 bPos = Vector2(
-				$rng real(16, 48),
-				-$rng real(8, 16)
-			) * getWindowScale();
+			Vector2 bPos = Vector2(32, -32) * getWindowScale();
 			for (size_t i = 0; i < 20; i++){
 				auto b = testM.createBullet();
 				b->local.position = bPos;
@@ -102,12 +100,13 @@ public:
 				b->settings.rotation = BulletParam{
 					coefficient,
 					coefficient + (Math::pi * 3.0),
-					0.01/3.0
+					0.0006/3.0
 				};
+				b->settings.shuttle = true;
 				b->reset();
 			}
 			$debug(testM.getFreeCount());
-			rotAngle += (Math::pi/20.0);
+			//rotAngle += (Math::pi/20.0);
 		};
 	}
 
@@ -118,9 +117,9 @@ public:
 	void onDrawBegin() override {
 	}
 
-	#define $rlayer(LAYER) ($layer(LAYER) / 8)
+	#define $rlayer(LAYER) ($layer(LAYER) / SUBLAYER_COUNT)
 	void onLayerDrawBegin(size_t layerID) override {
-		switch (layerID / 8) {
+		switch (layerID / SUBLAYER_COUNT) {
 		case $rlayer(WORLD):
 			break;
 		case $rlayer(PLAYER):
