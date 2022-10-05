@@ -970,7 +970,7 @@ namespace VecMath
 
 	/// Gets a 2D Vector of size 1 at a given angle relative to the origin.
 	Vector2 angleV2(float angle) {
-		return Vector2(cos(angle), -sin(angle));
+		return Vector2(cos(angle), sin(angle));
 	}
 
 	/// Gets a 3D Vector of size 1 at a given angle around one of the origin's axis.
@@ -1057,28 +1057,29 @@ namespace VecMath
 
 	// Angle between Vectors calculation
 
-	/// Gets the angle from Vector A to Vector B.
-	float angleTo(Vector2 a, Vector2 b) {
-		return atan2(b.y - a.y, b.x - a.x) + Math::hpi;
+	/// Gets the angle from the origin to a given Vector.
+	inline float angleTo(Vector2 vec) {
+		return - atan2(vec.x, vec.y) + Math::hpi;
 	}
 
 	/// Gets the angle from Vector A to Vector B.
-	Vector3 angleTo(Vector3 a, Vector3 b) {
-		// TODO: Test this
-		a.x = atan(b.x - a.x);
-		a.y = atan(b.y - a.y);
-		a.z = atan(b.z - a.z);
-		return a;
+	inline float angleTo(Vector2 a, Vector2 b) {
+		return angleTo(b - a);
 	}
 
 	/// Gets the angle from Vector A to Vector B.
-	Vector4 angleTo(Vector4 a, Vector4 b) {
+	Vector3 angleTo(Vector3 vec) {
 		// TODO: Test this
-		a.x = atan(b.x - a.x);
-		a.y = atan(b.y - a.y);
-		a.z = atan(b.z - a.z);
-		a.w = atan(b.w - a.w);
-		return a;
+		Vector3 res;
+		res.x = angleTo(vec.yz());
+		res.y = angleTo(vec.xz());
+		res.z = angleTo(vec.xy());
+		return res;
+	}
+
+	/// Gets the angle from Vector A to Vector B.
+	inline Vector3 angleTo(Vector3 a, Vector3 b) {
+		return angleTo(b - a);
 	}
 
 	// Distance between vectors calculation

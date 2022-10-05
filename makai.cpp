@@ -102,11 +102,12 @@ public:
 					coefficient + (Math::pi * 3.0),
 					0.0006/3.0
 				};
-				b->settings.shuttle = true;
+				b->settings.rebound = true;
 				b->reset();
 			}
 			$debug(testM.getFreeCount());
 			//rotAngle += (Math::pi/20.0);
+			$debug(Math::degrees($vmt angleTo(Vector2(0), Vector2(10))));
 		};
 	}
 

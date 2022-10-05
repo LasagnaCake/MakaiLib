@@ -171,6 +171,7 @@ struct BulletManager: Entity {
 							$wreflect(b.settings.rotation.start);
 							$wreflect(b.settings.rotation.end);
 						}
+						#undef $wreflect
 						#define $wreflect(AA) AA = - AA
 						// Check Y
 						if (
