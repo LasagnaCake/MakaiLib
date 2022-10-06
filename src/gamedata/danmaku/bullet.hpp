@@ -20,7 +20,7 @@ struct BulletData {
 	// Flags
 	bool shuttle		= false;
 	bool rebound		= false;
-	bool destroyable	= true;
+	bool discardable	= true;
 	bool collidable		= true;
 	bool rotateSprite	= true;
 	// Destroy on Playfield Exit
@@ -103,6 +103,11 @@ public:
 		return this;
 	}
 
+	void discard() {
+		if (settings.discardable)
+			setFree();
+	}
+
 	Transform2D local;
 
 	float currentSpeed		= 0;
@@ -150,7 +155,10 @@ struct BulletManager: Entity {
 						b.settings.hitbox,
 						p->getCircleBounds()
 					)
-				) p->onCollision(this);
+				) {
+					p->onCollision(this);
+					b.discard();
+				}
 			}
 			if (b.settings.rebound || b.settings.shuttle)
 				if (
@@ -213,6 +221,14 @@ struct BulletManager: Entity {
 		}
 	}
 
+	void freeAll() {
+		for $each(b, bullets) b.setFree();
+	}
+
+	void destoryAll() {
+		for $each(b, bullets) b.discard();
+	}
+
 	size_t getFreeCount() {
 		size_t count = 0;
 		for $each(b, bullets)
@@ -234,6 +250,34 @@ struct BulletManager: Entity {
 		}
 		created = true;
 	}
+
+	#define BULLET_LIST std::vector<BULLET_TYPE*>
+	BULLET_LIST getInArea($cdt CircleBounds2D target) {
+		BULLET_LIST res;
+		for $each(b, bullets) if (!b.isFree() && b.settings.collidable) {
+			if (
+				$cdt withinBounds(
+					b.settings.hitbox,
+					target
+				)
+			) res.push_back(&b);
+		}
+		return res;
+	}
+
+	BULLET_LIST getInArea($cdt BoxBounds2D target) {
+		BULLET_LIST res;
+		for $each(b, bullets) if (!b.isFree() && b.settings.collidable) {
+			if (
+				$cdt withinBounds(
+					b.settings.hitbox,
+					target
+				)
+			) res.push_back(&b);
+		}
+		return res;
+	}
+	#undef BULLET_LIST
 
 	BULLET_TYPE* getLastBullet() {
 		return last;

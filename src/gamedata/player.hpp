@@ -29,7 +29,7 @@ struct PlayerEntity2D: AreaCircle2D {
 			if(++sprite->sprite.x >= sprite->size.x)
 				sprite->sprite.x = 0;
 		};
-		invincibility.delay = 60;
+		invincibility.delay = 90;
 		moveTween.setStepCount(30);
 		moveTween.conclude();
 	})
