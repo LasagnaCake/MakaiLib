@@ -11,12 +11,18 @@ struct BulletParam {
 	float omega		= 0;
 };
 
+struct Pause {
+	bool enabled	= false;
+	long time		= -1;
+};
+
 struct BulletData {
 	// Collision data
 	CircleBounds2D	hitbox;
 	// Parameters
 	BulletParam	speed;
 	BulletParam	rotation;
+	Pause pause;
 	// Flags
 	bool shuttle		= false;
 	bool rebound		= false;
@@ -38,10 +44,17 @@ public:
 
 	$tsk MultiTasker taskers;
 
-	$evt Signal onFree = Event::DEF_SIGNAL;
+	$evt Signal onFree		= Event::DEF_SIGNAL;
+	$evt Signal onRebound	= Event::DEF_SIGNAL;
+	$evt Signal onShuttle	= Event::DEF_SIGNAL;
 
 	void onFrame(float delta) {
 		if (free) return;
+		if (settings.pause.enabled) {
+			if (settings.pause.time < 0) return;
+			if ((--settings.pause.time) > 0) return;
+			settings.pause.enabled = false;
+		}
 		taskers.yield();
 		speedFactor = Math::clamp(speedFactor + settings.speed.omega, 0.0f, 1.0f);
 		rotationFactor = Math::clamp(rotationFactor + settings.rotation.omega, 0.0f, 1.0f);
@@ -57,17 +70,8 @@ public:
 		);
 		if (currentSpeed)
 			local.position += VecMath::angleV2(currentRotation) * currentSpeed * delta;
-		if (sprite) {
-			// Set sprite position
-			sprite->local.position = Vector3(local.position);
-			settings.hitbox.position = local.position;
-			// Set sprite rotation
-			sprite->local.rotation.z = local.rotation;
-			if (settings.rotateSprite)
-				sprite->local.rotation.z += currentRotation;
-			// Set sprite scale
-			sprite->local.scale = Vector3(local.scale);
-		}
+		local.rotation = currentRotation;
+		updateSprite();
 	}
 
 	Bullet* reset() {
@@ -76,6 +80,8 @@ public:
 		local.rotation =
 		currentRotation = settings.rotation.start;
 		settings.hitbox.position = local.position;
+		updateSprite();
+		sprite->local.rotation.z = local.rotation;
 		return this;
 	}
 
@@ -114,6 +120,18 @@ public:
 	float currentRotation	= 0;
 
 private:
+	void updateSprite() {
+		if (!sprite) return;
+		// Set sprite position
+		sprite->local.position = Vector3(local.position);
+		settings.hitbox.position = local.position;
+		// Set sprite rotation
+		if (settings.rotateSprite)
+			sprite->local.rotation.z = local.rotation;
+		// Set sprite scale
+		sprite->local.scale = Vector3(local.scale);
+	}
+
 	float speedFactor		= 0;
 	float rotationFactor	= 0;
 
@@ -190,6 +208,7 @@ struct BulletManager: Entity {
 							$wreflect(b.settings.rotation.start);
 							$wreflect(b.settings.rotation.end);
 						}
+						b.onRebound();
 						// Disable rebounding
 						b.settings.rebound = false;
 						#undef $wreflect
@@ -205,6 +224,7 @@ struct BulletManager: Entity {
 							b.local.position.y = board.y.max;
 						if (b.local.position.y > board.y.max)
 							b.local.position.y = board.y.min;
+						b.onShuttle();
 						// Disable shuttle
 						b.settings.shuttle = false;
 					}
@@ -225,7 +245,7 @@ struct BulletManager: Entity {
 		for $each(b, bullets) b.setFree();
 	}
 
-	void destoryAll() {
+	void discardAll() {
 		for $each(b, bullets) b.discard();
 	}
 
@@ -254,7 +274,7 @@ struct BulletManager: Entity {
 	#define BULLET_LIST std::vector<BULLET_TYPE*>
 	BULLET_LIST getInArea($cdt CircleBounds2D target) {
 		BULLET_LIST res;
-		for $each(b, bullets) if (!b.isFree() && b.settings.collidable) {
+		for $eachif(b, bullets, !b.isFree() && b.settings.collidable) {
 			if (
 				$cdt withinBounds(
 					b.settings.hitbox,
@@ -267,7 +287,7 @@ struct BulletManager: Entity {
 
 	BULLET_LIST getInArea($cdt BoxBounds2D target) {
 		BULLET_LIST res;
-		for $each(b, bullets) if (!b.isFree() && b.settings.collidable) {
+		for $eachif(b, bullets, !b.isFree() && b.settings.collidable) {
 			if (
 				$cdt withinBounds(
 					b.settings.hitbox,
@@ -277,6 +297,12 @@ struct BulletManager: Entity {
 		}
 		return res;
 	}
+
+	BULLET_LIST getActive() {
+		BULLET_LIST res;
+		for $eachif(b, bullets, !b.isFree()) res.push_back(&b);
+		return res;
+	}
 	#undef BULLET_LIST
 
 	BULLET_TYPE* getLastBullet() {
@@ -284,13 +310,12 @@ struct BulletManager: Entity {
 	}
 
 	BULLET_TYPE* createBullet() {
-		for $each(b, bullets)
-			if (b.isFree()) {
-				last = b.enable()->setZero();
-				last->settings = BulletData();
-				last->taskers.clearTaskers();
-				return last;
-			}
+		for $eachif(b, bullets, b.isFree()) {
+			last = b.enable()->setZero();
+			last->settings = BulletData();
+			last->taskers.clearTaskers();
+			return last;
+		}
 		throw std::runtime_error(
 			getName()
 			+ ": Out of usable bullets ("

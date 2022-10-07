@@ -142,6 +142,7 @@
     NAME = NAME##_$_$ + (STEP) - 1
 
 #define $each(I, LIST) (auto& I: LIST)
+#define $eachif(I, LIST, CONDITION) $each(I, LIST) if(CONDITION)
 
 #define $range(I, BEGIN, END, STEP) (auto I = (BEGIN); I < (END); I += (STEP))
 #define $ssrange(I, BEGIN, END) $range(I, BEGIN, END, 1)

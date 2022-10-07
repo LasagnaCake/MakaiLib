@@ -103,6 +103,8 @@ public:
 					0.0006/3.0
 				};
 				b->settings.rebound = true;
+				b->settings.pause.time = 30;
+				b->settings.pause.enabled = true;
 				b->reset();
 			}
 			$debug(testM.getFreeCount());
