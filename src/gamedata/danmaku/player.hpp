@@ -1,15 +1,6 @@
 #ifndef MAKAI_BASE_PLAYER_H
 #define MAKAI_BASE_PLAYER_H
 
-template <
-	template <
-		size_t = 64,
-		size_t = $layer(PLAYER_BULLET),
-		size_t = $layer(ENEMY),
-		class = Bullet
-	>
-	class BM_TYPE = BulletManager
->
 struct Familiar2D: Entity2D {
 	DERIVED_CLASS(Familiar2D, Entity2D)
 	DERIVED_CONSTRUCTOR(Familiar2D, Entity2D, {
@@ -19,21 +10,23 @@ struct Familiar2D: Entity2D {
 	$ref AnimatedPlane* sprite;
 
 	virtual void onFrame(float delta) {
+		updateSprite();
+	}
 
+private:
+	void updateSprite() {
+		Transform2D self = globalTransform();
+		sprite->local.position		= Vector3(self.position, zIndex);
+		sprite->local.rotation.z	= self.rotation;
+		sprite->local.scale			= Vector3(self.scale, 0);
 	}
 };
 
 // Can this be classified as lunacy?
 template <
-	template <
-		size_t = 64,
-		size_t = $layer(PLAYER_BULLET),
-		size_t = $layer(ENEMY),
-		class = Bullet
-	>
-	class BM_TYPE = BulletManager,
-	class OPTION_TYPE = Familiar2D<BM_TYPE>,
-	class = $isderivedof(OPTION_TYPE, Familiar2D<BM_TYPE>)
+	size_t	BULLET_COUNT = 64,
+	class	BULLET_TYPE	= Bullet,
+	class = $isderivedof(BULLET_TYPE, Bullet)
 >
 struct PlayerEntity2D: AreaCircle2D {
 	DERIVED_CLASS(PlayerEntity2D, AreaCircle2D)
@@ -71,6 +64,7 @@ struct PlayerEntity2D: AreaCircle2D {
 		deathbomb.stop();
 		deathbomb.onSignal = $signal {
 			$debug("Hit!");
+			onDeath();
 			moveTween.reinterpolate(spawnPoint);
 			setInvincible(90);
 		};
@@ -84,12 +78,29 @@ struct PlayerEntity2D: AreaCircle2D {
 		moveTween.setTarget(&position);
 		moveTween.setStepCount(30);
 		moveTween.conclude();
+		// Main shot
+		mainShot.stop();
+		mainShot.repeat = true;
+		mainShot.onSignal	= $signal {$debug("Main Shot!"); onShot();};
+		mainShot.delay = 5;
+		// Option shot
+		optionShot.stop();
+		optionShot.repeat = true;
+		optionShot.onSignal	= $signal {$debug("Option Shot!"); onOptionShot();};
+		optionShot.delay = 20;
 	})
+
 	KeyBinds actionKeys;
 
 	Renderable mesh;
 	$ref AnimatedPlane* sprite;
-	Makai::InputManager input;
+	$mki InputManager input;
+	PlayerBulletManager<BULLET_COUNT, BULLET_TYPE> pbm;
+
+	struct {
+		float main;
+		float option;
+	} damage;
 
 	Vector2 spawnPoint = Vector2(0, 0);
 
@@ -108,19 +119,24 @@ struct PlayerEntity2D: AreaCircle2D {
 	bool isFocused	= false;
 	bool canBomb	= true;
 
-	virtual void onFocus()		{}
-	virtual void onShot()		{}
-	virtual void onBomb()		{}
-	virtual void onDeathBomb()	{}
-	virtual void onItem()		{}
-	virtual void onExtra()		{}
+	virtual void onFocus()	{}
 
+	virtual void onShot()		{}
+	virtual void onOptionShot()	{}
+
+	virtual void onBomb()	{}
+	virtual void onItem()	{}
+	virtual void onExtra()	{}
+
+	virtual void onDeathBomb()	{}
 	virtual void onDeath()		{}
 
 	$evt Timer invincibility;
 	$evt Timer animator;
 	$evt Timer deathbomb;
 	$evt Timer bombCooldown;
+	$evt Timer mainShot;
+	$evt Timer optionShot;
 
 	void pichun() {
 		if (!collision.enabled) return;
@@ -153,6 +169,8 @@ struct PlayerEntity2D: AreaCircle2D {
 			input.getButtonDown(actionKeys["right"])
 			- input.getButtonDown(actionKeys["left"])
 		);
+		// Normalize direction
+		direction = direction.normalized();
 		// Flip if necessary
 		if (flipX) direction.x *= -1;
 		if (flipY) direction.y *= -1;
@@ -165,22 +183,20 @@ struct PlayerEntity2D: AreaCircle2D {
 		updateSprite();
 		// Do extra actions
 		if(isFocused)		onFocus();
-		if(action("shot"))	onShot();
+		optionShot.paused =
+		mainShot.paused = !action("shot");
 		// If can bomb and bombing...
-		if(action("bomb") && canBomb) {
+		if(action("bomb", true) && canBomb) {
 			// Disable bombing
 			canBomb = false;
 			// Set off bomb timer
 			bombCooldown.start();
-			// Set off invincibility timer
-			setInvincible(bombCooldown.delay);
 			// Do normal bomb or deathbomb, acoordingly
 			if (deathbomb.paused) {
-				$debug("Normal Bomb!");
+				$debug("Normal bomb!");
 				onBomb();
 			} else {
-				$debug("Death Bomb!");
-				deathbomb.paused = true;
+				$debug("Deathbomb!");
 				onDeathBomb();
 			}
 		};
@@ -190,7 +206,6 @@ struct PlayerEntity2D: AreaCircle2D {
 
 	virtual void onCollision(Entity* target) {
 		if ($ecl groups.hasEntity(target, $layer(ENEMY_BULLET))) {
-			onDeath();
 			pichun();
 		}
 	}
@@ -203,10 +218,10 @@ struct PlayerEntity2D: AreaCircle2D {
 
 private:
 	void updateSprite() {
-		Transform2D transform = globalTransform();
-		sprite->local.position		= Vector3(transform.position, zIndex);
-		sprite->local.rotation.z	= transform.rotation;
-		sprite->local.scale			= Vector3(transform.scale, 0);
+		Transform2D self = globalTransform();
+		sprite->local.position		= Vector3(self.position, zIndex);
+		sprite->local.rotation.z	= self.rotation;
+		sprite->local.scale			= Vector3(self.scale, 0);
 	}
 
 	Tween::Tween<Vector2> moveTween;

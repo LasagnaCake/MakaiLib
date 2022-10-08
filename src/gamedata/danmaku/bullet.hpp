@@ -175,15 +175,15 @@ struct BulletManager: Entity {
 			b.onFrame(delta);
 			if (!b.isFree() && b.settings.collidable)
 			for $each(actor, $ecl groups.getGroup(ENEMY_LAYER)) {
-				auto p = ((AreaCircle2D*)actor);
+				auto a = ((AreaCircle2D*)actor);
 				if (
-					p->collision.enabled
+					a->collision.enabled
 					&& $cdt withinBounds(
 						b.settings.hitbox,
-						p->getCircleBounds()
+						a->getCircleBounds()
 					)
 				) {
-					p->onCollision(this);
+					a->onCollision(this);
 					b.discard();
 				}
 			}
@@ -348,5 +348,27 @@ private:
 
 	BULLET_TYPE* last = nullptr;
 };
+
+template <
+	size_t BULLET_COUNT,
+	class BULLET_TYPE = Bullet
+>
+using PlayerBulletManager = BulletManager<
+	BULLET_COUNT,
+	$layer(PLAYER_BULLET),
+	$layer(ENEMY),
+	BULLET_TYPE
+>;
+
+template <
+	size_t BULLET_COUNT,
+	class BULLET_TYPE = Bullet
+>
+using EnemyBulletManager = BulletManager<
+	BULLET_COUNT,
+	$layer(ENEMY_BULLET),
+	$layer(PLAYER),
+	BULLET_TYPE
+>;
 
 #endif // MAKAI_BASE_BULLET_H

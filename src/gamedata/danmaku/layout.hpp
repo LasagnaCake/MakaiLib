@@ -14,6 +14,7 @@
 namespace Layer {
 	enum Layer: size_t {
 		R_LAYER(WORLD),
+		R_LAYER(SPELL),
 		R_LAYER(PLAYER),
 		R_LAYER(PLAYER_BULLET),
 		R_LAYER(ENEMY),
