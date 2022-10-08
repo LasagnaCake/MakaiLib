@@ -214,7 +214,10 @@ namespace Vector{
 
 			/// Gets the normalized vector.
 			Vector2 normalized() {
-				return *this / length();
+				if (*this != 0)
+					return *this / length();
+				else
+					return *this;
 			}
 
 			/// Gets the distance to another vector.
@@ -498,7 +501,10 @@ namespace Vector{
 
 			/// Gets the normalized vector.
 			Vector3 normalized() {
-				return *this / length();
+				if (*this != 0)
+					return *this / length();
+				else
+					return *this;
 			}
 
 			/// Gets the distance to another vector.
@@ -814,7 +820,10 @@ namespace Vector{
 
 			/// Gets the normalized vector.
 			Vector4 normalized() {
-				return *this / length();
+				if (*this != 0)
+					return *this / length();
+				else
+					return *this;
 			}
 
 			/// Gets the distance to another vector.
