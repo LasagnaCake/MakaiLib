@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1665243916 source:d:\c(++) projects\_c++\game engine\makailib\makai.cpp
+1665256251 source:d:\c(++) projects\_c++\game engine\makailib\makai.cpp
 	<stdexcept>
 	"src/program.hpp"
 	<windows.h>
@@ -3312,15 +3312,17 @@
 1664718223 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_color.hpp
 	"../anchors.hpp"
 
-1665239419 d:\c(++) projects\_c++\game engine\makailib\src\gamedata.hpp
+1665256860 d:\c(++) projects\_c++\game engine\makailib\src\gamedata.hpp
 	"anchors.hpp"
+	"graphical.hpp"
+	"program/gl_program.hpp"
 	"gamedata/danmaku/layout.hpp"
 	"gamedata/danmaku/laser.hpp"
 	"gamedata/danmaku/spellcard.hpp"
 	"gamedata/danmaku/bullet.hpp"
 	"gamedata/danmaku/player.hpp"
 
-1665251602 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\bullet.hpp
+1665256384 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\bullet.hpp
 
 1663772586 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\laser.hpp
 
@@ -3347,5 +3349,5 @@
 1535531570 d:\c(++) projects\_c++\game engine\makailib\lib\opengl\glm\gtx\compatibility.inl
 	<limits>
 
-1665252924 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\player.hpp
+1665256450 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\player.hpp
 

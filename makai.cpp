@@ -3,7 +3,7 @@
 
 //#undef _DEBUG_OUTPUT_
 
-#include "src/program.hpp"
+#include "src/makai.hpp"
 
 #include <windows.h>
 

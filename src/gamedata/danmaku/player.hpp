@@ -1,6 +1,15 @@
 #ifndef MAKAI_BASE_PLAYER_H
 #define MAKAI_BASE_PLAYER_H
 
+template <
+	template <
+		size_t = 64,
+		size_t = $layer(PLAYER_BULLET),
+		size_t = $layer(ENEMY),
+		class = Bullet
+	>
+	class BM_TYPE = BulletManager
+>
 struct Familiar2D: Entity2D {
 	DERIVED_CLASS(Familiar2D, Entity2D)
 	DERIVED_CONSTRUCTOR(Familiar2D, Entity2D, {
@@ -18,13 +27,13 @@ struct Familiar2D: Entity2D {
 template <
 	template <
 		size_t = 64,
-		class = Bullet,
 		size_t = $layer(PLAYER_BULLET),
-		size_t = $layer(ENEMY)
+		size_t = $layer(ENEMY),
+		class = Bullet
 	>
 	class BM_TYPE = BulletManager,
-	class OPTION_TYPE = Familiar2D,
-	class = $isderivedof(OPTION_TYPE, Familiar2D)
+	class OPTION_TYPE = Familiar2D<BM_TYPE>,
+	class = $isderivedof(OPTION_TYPE, Familiar2D<BM_TYPE>)
 >
 struct PlayerEntity2D: AreaCircle2D {
 	DERIVED_CLASS(PlayerEntity2D, AreaCircle2D)
@@ -117,7 +126,7 @@ struct PlayerEntity2D: AreaCircle2D {
 		if (!collision.enabled) return;
 		collision.enabled = false;
 		sprite->setColor(Color::GRAY);
-		deathbomb.start(5);
+		deathbomb.start();
 	}
 
 	void spawnPlayer(Vector2 from) {

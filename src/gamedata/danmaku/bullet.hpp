@@ -147,9 +147,9 @@ private:
 
 template <
 	size_t BULLET_COUNT,
+	size_t ACTOR_LAYER = $layer(ENEMY_BULLET),
+	size_t ENEMY_LAYER = $layer(PLAYER),
 	class BULLET_TYPE = Bullet,
-	size_t ACTOR_LAYER = $layer(PLAYER_BULLET),
-	size_t ENEMY_LAYER = $layer(ENEMY),
 	class = $isderivedof(BULLET_TYPE, Bullet)
 >
 struct BulletManager: Entity {

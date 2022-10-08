@@ -128,7 +128,7 @@
 #define THEN	)
 #define EXECUTE	{
 #define TAKE	(
-#define NEXT	;
+#define DONE	;
 #define LESS	<
 #define MORE	>
 #define IS		==

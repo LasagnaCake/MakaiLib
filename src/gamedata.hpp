@@ -2,6 +2,8 @@
 #define MAKAI_GAME_SYSTEM_DATA
 
 #include "anchors.hpp"
+#include "graphical.hpp"
+#include "program.hpp"
 
 #define DERIVED_CONSTRUCTOR(NAME, BASE, CODE)\
 	NAME(string name = #NAME) : BASE(name) CODE\
