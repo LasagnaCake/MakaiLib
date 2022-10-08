@@ -147,4 +147,9 @@
 #define $range(I, BEGIN, END, STEP) (auto I = (BEGIN); I < (END); I += (STEP))
 #define $ssrange(I, BEGIN, END) $range(I, BEGIN, END, 1)
 
+#define $enableif(COND)			std::enable_if<COND>::type
+#define $derived(CLASS, BASE)	std::is_base_of<BASE, CLASS>::value
+
+#define $isderivedof(CLASS, BASE) $enableif($derived(CLASS, BASE))
+
 #endif // ANCHORED_HEADERS_H

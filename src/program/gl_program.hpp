@@ -58,6 +58,7 @@ namespace Makai {
 
 		/// Returns whether the button is pressed.
 		inline bool getButtonDown(SDL_Scancode button) {
+			if (!enabled) return false;
 			return buffer[button] > 0;
 		}
 
@@ -68,8 +69,16 @@ namespace Makai {
 		* Recommended if time pressed is required.
 		*/
 		inline unsigned int getButtonState(SDL_Scancode button) {
+			if (!enabled) return 0;
 			return buffer[button];
 		}
+
+		/// Returns if the button has just been pressed (state == 1).
+		inline bool ifButtonJustPressed(SDL_Scancode button) {
+			if (!enabled) return false;
+			return getButtonState(button) == 1;
+		}
+
 		/// Whether input is enabled.
 		bool enabled = true;
 	private:

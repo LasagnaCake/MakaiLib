@@ -4,15 +4,20 @@
 #include <functional>
 #include <vector>
 
-#define $_signal	()->void
-#define $_trigger	()->void
-#define $_call		()->void
-#define $_chain		()->void
+#define $_tsignal(...)	(...)->void
+#define $_ttrigger(...)	(...)->void
+#define $_tcall(...)	(...)->void
+#define $_tchain(...)	(...)->void
 
-#define	$signal		[&] $_signal
-#define	$trigger	[&] $_trigger
-#define	$call		[&] $_call
-#define	$chain		[&] $_chain
+#define	$tsignal(...)	[&] $_tsignal(...)
+#define	$ttrigger(...)	[&] $_ttrigger(...)
+#define	$tcall(...)		[&] $_tcall(...)
+#define	$tchain(...)	[&] $_tchain(...)
+
+#define $signal			$tsignal()
+#define $trigger		$ttrigger()
+#define $call			$tcall()
+#define $chain			$tchain()
 
 namespace Event{
 	namespace {
@@ -29,16 +34,16 @@ namespace Event{
 	}
 
 	/// A signal to be fired, whenever.
-	typedef function<void()>	Signal;
+	typedef function<void()>		Signal;
 
 	/// A trigger to wait for.
-	typedef function<bool()>	Trigger;
+	typedef function<bool()>		Trigger;
 
 	/// A call to be fired, which returns a Trigger to wait for.
-	typedef function<Trigger()>	Call;
+	typedef function<Trigger()>		Call;
 
 	/// A signal to be fired whenever, which returns a Signal.
-	typedef function<Signal()>	Chain;
+	typedef function<Signal()>		Chain;
 
 	const Signal	DEF_SIGNAL	=	[]()->void		{};
 	const Trigger	DEF_TRIGGER	=	[]()->bool		{return true;};
@@ -73,6 +78,9 @@ namespace Event{
 
 		/// The delay until firing. the internal counter gets incremented until reaching it.
 		unsigned int delay = 0;
+
+		/// The amount of times to repeat for. If < 0, loops indefinitely.
+		long loopCount = -1;
 
 		/// Empty constructor.
 		Timer(bool manual = false) {
@@ -117,12 +125,14 @@ namespace Event{
 			if (!paused) {
 				// If counter has reached target...
 				if(counter >= delay) {
-					// If repeating, set counter to 0
-					if (repeat) counter = 0;
+					// If repeating and not done looping, set counter to 0
+					if (repeat && loopCount != 0) counter = 0;
 					// Else, stop timer
 					else paused = true;
 					// Fire signal
 					onSignal();
+					// If loop count above zero, decrease it
+					if (loopCount > 0) loopCount--;
 				}
 				// Increment counter
 				counter++;
@@ -134,18 +144,73 @@ namespace Event{
 			counter = 0;
 		}
 
+		/// Starts the timer from the beginning.
+		void start(size_t time) {
+			counter = 0;
+			paused = false;
+			delay = time;
+		}
+
+		/// Starts the timer from the beginning.
+		void start() {
+			counter = 0;
+			paused = false;
+		}
+
+		/// Stops/pauses the timer.
+		void stop() {
+			paused = true;
+		}
+
+		/// Unpauses the timer.
+		void play() {
+			paused = false;
+		}
+
 		/// Gets the counter's current value.
-		unsigned int getCounter() {
+		size_t getCounter() {
 			return counter;
 		}
 
 	private:
 		/// The current yield cycle.
-		unsigned int counter = 0;
+		size_t counter = 0;
 	};
 	#undef $$FUNC
 }
 
+namespace TypedEvent {
+	namespace {
+		using std::function, std::vector;
+		vector<const function<void()>*> timerList;
+	}
+	#define $$FUNC function<void()>
+	/// Yields all available non-manual timers.
+	void yieldAllTimers() {
+		// Loop through timers and step them
+		if (timerList.size())
+			for(const $$FUNC* func : timerList)
+				(*func)();
+	}
+
+	/// A signal to be fired, whenever.
+	template <typename T = void>
+	using Signal = function<void(T)>;
+
+	/// A trigger to wait for.
+	template <typename T = void>
+	using Trigger = function<bool(T)>;
+
+	/// A call to be fired, which returns a Trigger to wait for.
+	template <typename T = void, typename T2 = void>
+	using Call = function<Trigger<T>(T2)>;
+
+	/// A call to be fired, which returns a Signal.
+	template <typename T = void, typename T2 = void>
+	using Chain = function<Signal<T>(T2)>;
+}
+
 #define $evt Event::
+#define $tev TypedEvent::
 
 #endif // SIGNAL_TRIGGER_H

@@ -51,7 +51,7 @@ namespace EntityClass {
 			if (!par) return position;
 			if (par->getName() == $_ROOT_NAME) return position;
 			// Try getting parent's global position
-			try {
+			if (par->getCoreClass() == "Entity2D") {
 				Entity2D* parent2D = (Entity2D*)par;
 				// Transform position based on parent's transforms
 				return srpTransform(
@@ -59,7 +59,7 @@ namespace EntityClass {
 					parent2D->globalTransform()
 				);
 			// On fail, return own position
-			} catch (char e) {
+			} else {
 				return position;
 			}
 		}
@@ -90,12 +90,12 @@ namespace EntityClass {
 			if (!par) return scale;
 			if (par->getName() == $_ROOT_NAME) return scale;
 			// Try getting parent's global scale
-			try {
+			if (par->getCoreClass() == "Entity2D") {
 				Entity2D* parent2D = (Entity2D*)par;
 				// Transform scale based on parent's scale
 				return scale + parent2D->globalScale();
 			// On fail, return own scale
-			} catch (char e) {
+			} else {
 				return scale;
 			}
 		}

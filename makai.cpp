@@ -11,7 +11,7 @@
 
 using namespace $rdt Reference;
 using namespace Vector;
-using $gdt BulletParam;
+using $dmk BulletParam;
 
 class GameApp: public $mki Program {
 public:
@@ -31,7 +31,6 @@ public:
 		$mainshader.destroy();
 		$mainshader.create(data);
 		player.mesh.setRenderLayer($layer(PLAYER));
-		$debug($drw layers.getGroups(&(player.mesh.render))[0]);
 		maxFrameRate = 10.0;
 	};
 
@@ -39,10 +38,11 @@ public:
 
 	float rotAngle = 0.0;
 
-	#define BULLET_COUNT (4096)
+	#define PLAYER_BULLET_COUNT	(64)
+	#define ENEMY_BULLET_COUNT	(4096 - PLAYER_BULLET_COUNT)
 
-	$gdt PlayerEntity2D player;
-	$gdt BulletManager<BULLET_COUNT, $gdt Bullet> testM;
+	$dmk PlayerEntity2D<> player;
+	$dmk BulletManager<ENEMY_BULLET_COUNT> testM;
 
 	void setCamera2D(float scale = 64) {
 		$scn camera.eye	= Vector3(0,0,-10);
@@ -63,7 +63,7 @@ public:
 		progress.setRenderLayer(Math::maxSizeT);
 		Plane* bar = progress.createReference<Plane>();
 		setCamera2D();
-		float progTick = $scn camera.ortho.size.x / BULLET_COUNT;
+		float progTick = $scn camera.ortho.size.x / ENEMY_BULLET_COUNT;
 		size_t progCount = 0;
 		bar->local.scale.x = 0;
 		bool forceQuit = false;

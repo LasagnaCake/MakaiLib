@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1665105073 source:d:\c(++) projects\_c++\game engine\makailib\makai.cpp
+1665243916 source:d:\c(++) projects\_c++\game engine\makailib\makai.cpp
 	<stdexcept>
 	"src/program.hpp"
 	<windows.h>
@@ -2869,7 +2869,7 @@
 	"program/gl_program.hpp"
 	"gamedata.hpp"
 
-1665094355 d:\c(++) projects\_c++\game engine\makailib\src\anchors.hpp
+1665243846 d:\c(++) projects\_c++\game engine\makailib\src\anchors.hpp
 	<iostream>
 	<string>
 	<vector>
@@ -2938,7 +2938,7 @@
 	"2d3d.hpp"
 	"collision.hpp"
 
-1664716965 d:\c(++) projects\_c++\game engine\makailib\src\collection\entity\core.hpp
+1665175582 d:\c(++) projects\_c++\game engine\makailib\src\collection\entity\core.hpp
 	<vector>
 	<memory>
 	<string>
@@ -2956,11 +2956,11 @@
 	<type_traits>
 	"event.hpp"
 
-1664717360 d:\c(++) projects\_c++\game engine\makailib\src\collection\event.hpp
+1665248369 d:\c(++) projects\_c++\game engine\makailib\src\collection\event.hpp
 	<functional>
 	<vector>
 
-1664366951 d:\c(++) projects\_c++\game engine\makailib\src\collection\entity\2d3d.hpp
+1665175333 d:\c(++) projects\_c++\game engine\makailib\src\collection\entity\2d3d.hpp
 	"core.hpp"
 	"../vectorn.hpp"
 
@@ -2969,7 +2969,7 @@
 	<vector>
 	"algebra.hpp"
 
-1664922476 d:\c(++) projects\_c++\game engine\makailib\src\collection\entity\collision.hpp
+1665175601 d:\c(++) projects\_c++\game engine\makailib\src\collection\entity\collision.hpp
 	"core.hpp"
 	"2d3d.hpp"
 	<map>
@@ -2981,7 +2981,7 @@
 	<stdexcept>
 	<type_traits>
 
-1664718127 d:\c(++) projects\_c++\game engine\makailib\src\collection\tween.hpp
+1665248661 d:\c(++) projects\_c++\game engine\makailib\src\collection\tween.hpp
 	"event.hpp"
 	"algebra.hpp"
 	"vectorn.hpp"
@@ -3025,7 +3025,7 @@
 	<algorithm>
 	<regex>
 
-1664883144 d:\c(++) projects\_c++\game engine\makailib\src\program\gl_program.hpp
+1665238950 d:\c(++) projects\_c++\game engine\makailib\src\program\gl_program.hpp
 	"../anchors.hpp"
 	"../graphical.hpp"
 
@@ -3303,7 +3303,7 @@
 
 1664484743 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_framebuffer.hpp
 
-1664920812 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_reference.hpp
+1665193913 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_reference.hpp
 
 1664664497 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_texture.hpp
 
@@ -3312,23 +3312,23 @@
 1664718223 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_color.hpp
 	"../anchors.hpp"
 
-1664726543 d:\c(++) projects\_c++\game engine\makailib\src\gamedata.hpp
+1665239419 d:\c(++) projects\_c++\game engine\makailib\src\gamedata.hpp
 	"anchors.hpp"
 	"gamedata/danmaku/layout.hpp"
 	"gamedata/danmaku/laser.hpp"
 	"gamedata/danmaku/spellcard.hpp"
 	"gamedata/danmaku/bullet.hpp"
-	"gamedata/player.hpp"
+	"gamedata/danmaku/player.hpp"
 
-1665105822 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\bullet.hpp
+1665251602 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\bullet.hpp
 
 1663772586 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\laser.hpp
 
 1663772564 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\spellcard.hpp
 
-1665088275 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\player.hpp
+1665238790 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\player.hpp
 
-1664646057 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\layout.hpp
+1665252596 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\layout.hpp
 
 1554373468 d:\c(++) projects\_c++\game engine\makailib\lib\opengl\glm\gtx\euler_angles.hpp
 	"../glm.hpp"
@@ -3346,4 +3346,6 @@
 
 1535531570 d:\c(++) projects\_c++\game engine\makailib\lib\opengl\glm\gtx\compatibility.inl
 	<limits>
+
+1665252924 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\player.hpp
 

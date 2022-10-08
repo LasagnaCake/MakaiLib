@@ -151,17 +151,17 @@ private:
 class AnimatedPlane: public Plane {
 public:
 	using Plane::Plane;
-	Vector2 sprite;
+	Vector2 frame;
 	Vector2 size = Vector2(1);
 
 	void onTransform() override {
 		if (size.x == 0 || size.y == 0)
 			throw runtime_error("Sprite count (size) must be bigger than zero!");
 		setUV(
-			(sprite) / size,
-			(sprite + Vector2(1, 0)) / size,
-			(sprite + Vector2(0, 1)) / size,
-			(sprite + Vector2(1)) / size
+			(frame) / size,
+			(frame + Vector2(1, 0)) / size,
+			(frame + Vector2(0, 1)) / size,
+			(frame + Vector2(1)) / size
 		);
 	}
 };

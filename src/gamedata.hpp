@@ -34,13 +34,25 @@ namespace GameData {
 
 	typedef std::map<string, SDL_Scancode> KeyBinds;
 
-	#include "gamedata/danmaku/laser.hpp"
-	#include "gamedata/danmaku/spellcard.hpp"
-	#include "gamedata/danmaku/bullet.hpp"
-	#include "gamedata/player.hpp"
+	void addToGame(Entity* e, std::string gameType) {
+		Entity* game = $ecl $_ROOT[gameType];
+		if (game == nullptr) {
+			game = new $ecl Entity(gameType);
+			$ecl $_ROOT.addChild(game);
+		}
+		game->addChild(e);
+	}
+
+	namespace Danmaku {
+		#include "gamedata/danmaku/laser.hpp"
+		#include "gamedata/danmaku/spellcard.hpp"
+		#include "gamedata/danmaku/bullet.hpp"
+		#include "gamedata/danmaku/player.hpp"
+	}
 }
 
 #define $gdt GameData::
+#define $dmk GameData::Danmaku::
 
 #undef DERIVED_CONSTRUCTOR
 #undef DERIVED_CLASS

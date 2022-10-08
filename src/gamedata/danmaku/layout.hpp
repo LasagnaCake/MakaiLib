@@ -12,7 +12,7 @@
 #define $sublayer(INDEX) ((INDEX) - (SUBLAYER_COUNT - 1))
 
 namespace Layer {
-	enum RenderLayer: size_t {
+	enum Layer: size_t {
 		R_LAYER(WORLD),
 		R_LAYER(PLAYER),
 		R_LAYER(PLAYER_BULLET),

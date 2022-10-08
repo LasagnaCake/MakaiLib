@@ -36,6 +36,10 @@ struct BulletData {
 class Bullet {
 public:
 	Bullet() {
+		onFree			= $tsignal(Bullet*) {};
+		onBulletFrame	= onFree;
+		onRebound		= onFree;
+		onShuttle		= onFree;
 	}
 
 	BulletData settings;
@@ -44,12 +48,14 @@ public:
 
 	$tsk MultiTasker taskers;
 
-	$evt Signal onFree		= Event::DEF_SIGNAL;
-	$evt Signal onRebound	= Event::DEF_SIGNAL;
-	$evt Signal onShuttle	= Event::DEF_SIGNAL;
+	$tev Signal<Bullet*> onFree;
+	$tev Signal<Bullet*> onBulletFrame;
+	$tev Signal<Bullet*> onRebound;
+	$tev Signal<Bullet*> onShuttle;
 
 	void onFrame(float delta) {
 		if (free) return;
+		onBulletFrame(this);
 		if (settings.pause.enabled) {
 			if (settings.pause.time < 0) return;
 			if ((--settings.pause.time) > 0) return;
@@ -105,13 +111,14 @@ public:
 	Bullet* setFree(bool state = true) {
 		free = state;
 		if (sprite) sprite->visible = !free;
-		if (free) onFree();
+		if (free) onFree(this);
 		return this;
 	}
 
-	void discard() {
+	Bullet* discard() {
 		if (settings.discardable)
 			setFree();
+		return this;
 	}
 
 	Transform2D local;
@@ -140,14 +147,16 @@ private:
 
 template <
 	size_t BULLET_COUNT,
-	class BULLET_TYPE,
-	class = std::enable_if<std::is_base_of<Bullet, BULLET_TYPE>::value>::type
+	class BULLET_TYPE = Bullet,
+	size_t ACTOR_LAYER = $layer(PLAYER_BULLET),
+	size_t ENEMY_LAYER = $layer(ENEMY),
+	class = $isderivedof(BULLET_TYPE, Bullet)
 >
 struct BulletManager: Entity {
 	DERIVED_CONSTRUCTOR(BulletManager, Entity, {
-		$ecl $_ROOT += this;
-		mesh.setRenderLayer($layer(ENEMY_BULLET));
-		$ecl groups.addEntity(this, $layer(ENEMY_BULLET));
+		addToGame(this, "DanmakuGame");
+		mesh.setRenderLayer(ACTOR_LAYER);
+		$ecl groups.addEntity(this, ACTOR_LAYER);
 	})
 
 	$cdt BoxBounds2D playfield;
@@ -165,8 +174,8 @@ struct BulletManager: Entity {
 		for $each(b, bullets) {
 			b.onFrame(delta);
 			if (!b.isFree() && b.settings.collidable)
-			for $each(player, $ecl groups.getGroup($layer(PLAYER))) {
-				auto p = ((AreaCircle2D*)player);
+			for $each(actor, $ecl groups.getGroup(ENEMY_LAYER)) {
+				auto p = ((AreaCircle2D*)actor);
 				if (
 					p->collision.enabled
 					&& $cdt withinBounds(
@@ -208,7 +217,7 @@ struct BulletManager: Entity {
 							$wreflect(b.settings.rotation.start);
 							$wreflect(b.settings.rotation.end);
 						}
-						b.onRebound();
+						b.onRebound(&b);
 						// Disable rebounding
 						b.settings.rebound = false;
 						#undef $wreflect
@@ -224,7 +233,7 @@ struct BulletManager: Entity {
 							b.local.position.y = board.y.max;
 						if (b.local.position.y > board.y.max)
 							b.local.position.y = board.y.min;
-						b.onShuttle();
+						b.onShuttle(&b);
 						// Disable shuttle
 						b.settings.shuttle = false;
 					}

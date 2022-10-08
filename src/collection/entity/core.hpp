@@ -33,7 +33,7 @@
 	using	BASE :: BASE ;\
 	inline	virtual string getClass() {return #NAME;}\
 	inline	virtual string getBaseClass() {return #BASE;}\
-	inline	static string getCoreClass() {return #NAME;}
+	inline	static string getCoreClass() {return BASE::getCoreClass();}
 
 namespace EntityClass {
 	// Conflict prevention

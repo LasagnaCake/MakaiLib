@@ -393,6 +393,7 @@ namespace Tween{
 			return isFinished;
 		}
 
+		/// Halts the tween's execution, and sets it to its end value.
 		void conclude() {
 			*value = to;
 			step = stop;
@@ -400,6 +401,13 @@ namespace Tween{
 			isFinished = true;
 		}
 
+		/// Starts the tween with its current state.
+		void play() {
+			factor = 1.0f;
+			isFinished = false;
+		}
+
+		/// Halts the tween's execution.
 		void halt() {
 			factor = 1.0f;
 			isFinished = true;
