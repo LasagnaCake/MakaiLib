@@ -23,8 +23,24 @@ private:
 };
 
 // Can this be classified as lunacy?
+/*
 template <
-	size_t	BULLET_COUNT = 64,
+	template <
+		size_t = 64,
+		size_t = $layer(PLAYER_BULLET),
+		size_t = $layer(ENEMY),
+		class = Bullet
+	>
+	class BM_TYPE = BulletManager,
+	class OPTION_TYPE = Familiar2D<BM_TYPE>,
+	class = $isderivedof(OPTION_TYPE, Familiar2D<BM_TYPE>)
+>
+*/
+/*
+	TODO: Figure out how to deal with bullet damage
+*/
+template <
+	size_t	BULLET_COUNT,
 	class	BULLET_TYPE	= Bullet,
 	class = $isderivedof(BULLET_TYPE, Bullet)
 >

@@ -41,7 +41,7 @@ public:
 	#define PLAYER_BULLET_COUNT	(64)
 	#define ENEMY_BULLET_COUNT	(4096 - PLAYER_BULLET_COUNT)
 
-	$dmk PlayerEntity2D<> player;
+	$dmk PlayerEntity2D<PLAYER_BULLET_COUNT> player;
 	$dmk EnemyBulletManager<ENEMY_BULLET_COUNT> testM;
 
 	void setCamera2D(float scale = 64) {

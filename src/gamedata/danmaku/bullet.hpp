@@ -12,8 +12,8 @@ struct BulletParam {
 };
 
 struct Pause {
-	bool enabled	= false;
 	long time		= -1;
+	bool enabled	= false;
 };
 
 struct BulletData {
