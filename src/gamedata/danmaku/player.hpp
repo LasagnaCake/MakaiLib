@@ -13,6 +13,13 @@ struct Familiar2D: Entity2D {
 		updateSprite();
 	}
 
+	virtual Bullet* onShotRequest(bool focused) {
+	}
+
+	Bullet* fireShot(bool focused) {
+		return onShotRequest(focused);
+	}
+
 private:
 	void updateSprite() {
 		Transform2D self = globalTransform();
@@ -76,12 +83,12 @@ struct PlayerEntity2D: AreaCircle2D {
 		// Main shot
 		mainShot.stop();
 		mainShot.repeat = true;
-		mainShot.onSignal	= $signal {$debug("Main Shot!"); onShot();};
+		mainShot.onSignal	= $signal {$debug("Main Shot!"); onShotRequest();};
 		mainShot.delay = 5;
 		// Option shot
 		optionShot.stop();
 		optionShot.repeat = true;
-		optionShot.onSignal	= $signal {$debug("Option Shot!"); onOptionShot();};
+		optionShot.onSignal	= $signal {$debug("Option Shot!"); onOptionShotRequest();};
 		optionShot.delay = 20;
 	})
 
@@ -115,8 +122,8 @@ struct PlayerEntity2D: AreaCircle2D {
 
 	virtual void onFocus()	{}
 
-	virtual void onShot()		{}
-	virtual void onOptionShot()	{}
+	virtual void onShotRequest()		{}
+	virtual void onOptionShotRequest()	{}
 
 	virtual void onBomb()	{}
 	virtual void onItem()	{}
