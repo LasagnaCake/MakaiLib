@@ -22,28 +22,6 @@ private:
 	}
 };
 
-// Can this be classified as lunacy?
-/*
-template <
-	template <
-		size_t = 64,
-		size_t = $layer(PLAYER_BULLET),
-		size_t = $layer(ENEMY),
-		class = Bullet
-	>
-	class BM_TYPE = BulletManager,
-	class OPTION_TYPE = Familiar2D<BM_TYPE>,
-	class = $isderivedof(OPTION_TYPE, Familiar2D<BM_TYPE>)
->
-*/
-/*
-	TODO: Figure out how to deal with bullet damage
-*/
-template <
-	size_t	BULLET_COUNT,
-	class	BULLET_TYPE	= Bullet,
-	class = $isderivedof(BULLET_TYPE, Bullet)
->
 struct PlayerEntity2D: AreaCircle2D {
 	DERIVED_CLASS(PlayerEntity2D, AreaCircle2D)
 	DERIVED_CONSTRUCTOR(PlayerEntity2D, AreaCircle2D, {
@@ -60,6 +38,7 @@ struct PlayerEntity2D: AreaCircle2D {
 		actionKeys["skip"]	= SDL_SCANCODE_LCTRL;
 		// Create sprite
 		sprite = mesh.createReference<Reference::AnimatedPlane>();
+		mesh.setRenderLayer($layer(PLAYER));
 		// Add to game
 		addToGame(this, "DanmakuGame");
 		$ecl groups.addEntity(this, $layer(PLAYER));
@@ -111,7 +90,6 @@ struct PlayerEntity2D: AreaCircle2D {
 	Renderable mesh;
 	$ref AnimatedPlane* sprite;
 	$mki InputManager input;
-	PlayerBulletManager<BULLET_COUNT, BULLET_TYPE> pbm;
 
 	struct {
 		float main;

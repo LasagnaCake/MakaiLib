@@ -46,6 +46,7 @@ namespace GameData {
 	}
 
 	namespace Danmaku {
+		#include "gamedata/danmaku/predefs.hpp"
 		#include "gamedata/danmaku/laser.hpp"
 		#include "gamedata/danmaku/spellcard.hpp"
 		#include "gamedata/danmaku/bullet.hpp"

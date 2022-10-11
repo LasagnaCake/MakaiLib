@@ -153,6 +153,8 @@ template <
 	class = $isderivedof(BULLET_TYPE, Bullet)
 >
 struct BulletManager: Entity {
+	DERIVED_CLASS(BulletManager, Entity)
+
 	DERIVED_CONSTRUCTOR(BulletManager, Entity, {
 		addToGame(this, "DanmakuGame");
 		mesh.setRenderLayer(ACTOR_LAYER);
@@ -161,8 +163,6 @@ struct BulletManager: Entity {
 
 	$cdt BoxBounds2D playfield;
 	$cdt BoxBounds2D board;
-
-	DERIVED_CLASS(BulletManager, Entity)
 
 	Renderable mesh;
 
@@ -349,26 +349,13 @@ private:
 	BULLET_TYPE* last = nullptr;
 };
 
-template <
-	size_t BULLET_COUNT,
-	class BULLET_TYPE = Bullet
->
-using PlayerBulletManager = BulletManager<
-	BULLET_COUNT,
-	$layer(PLAYER_BULLET),
-	$layer(ENEMY),
-	BULLET_TYPE
->;
+typedef BulletManager<PLAYER_BULLET_COUNT, $layer(PLAYER_BULLET), $layer(ENEMY), Bullet>	PlayerBulletManager;
+typedef BulletManager<ENEMY_BULLET_COUNT, $layer(ENEMY_BULLET), $layer(PLAYER), Bullet>		EnemyBulletManager;
 
-template <
-	size_t BULLET_COUNT,
-	class BULLET_TYPE = Bullet
->
-using EnemyBulletManager = BulletManager<
-	BULLET_COUNT,
-	$layer(ENEMY_BULLET),
-	$layer(PLAYER),
-	BULLET_TYPE
->;
+PlayerBulletManager*	playerBulletManager;
+EnemyBulletManager*		enemyBulletManager;
+
+#define $bullet(TYPE)	$getman( TYPE##Bullet )
+#define $setb(TYPE)		$setman( TYPE##Bullet )
 
 #endif // MAKAI_BASE_BULLET_H

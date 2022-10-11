@@ -30,7 +30,7 @@ public:
 		SLF::SLFData data = SLF::parseFile("shaders/base/base.slf");
 		$mainshader.destroy();
 		$mainshader.create(data);
-		player.mesh.setRenderLayer($layer(PLAYER));
+		$setb(enemy) ebm;
 		maxFrameRate = 10.0;
 	};
 
@@ -38,11 +38,9 @@ public:
 
 	float rotAngle = 0.0;
 
-	#define PLAYER_BULLET_COUNT	(64)
-	#define ENEMY_BULLET_COUNT	(4096 - PLAYER_BULLET_COUNT)
+	$dmk PlayerEntity2D player;
 
-	$dmk PlayerEntity2D<PLAYER_BULLET_COUNT> player;
-	$dmk EnemyBulletManager<ENEMY_BULLET_COUNT> testM;
+	$bullet(Enemy) ebm;
 
 	void setCamera2D(float scale = 64) {
 		$scn camera.eye	= Vector3(0,0,-10);
@@ -67,28 +65,28 @@ public:
 		size_t progCount = 0;
 		bar->local.scale.x = 0;
 		bool forceQuit = false;
-		testM.create(
+		ebm.create(
 			$signal {
 				bar->local.scale.x += progTick;
 				renderReservedLayer();
 				if $event(SDL_QUIT) {
 					forceQuit = true;
-					testM.haltProcedure = true;
+					ebm.haltProcedure = true;
 				}
 			}
 		);
 		Vector2 screenSize = $scn camera.ortho.size.absolute();
 		Vector2 screenPosition = Vector2(32, -32) * screenSpace;
 		$debug(screenSize.x);
-		testM.playfield = $cdt makeBounds(screenPosition, screenSize * Vector2(1.5, 2.0));
-		testM.board = $cdt makeBounds(screenPosition, screenSize);
+		ebm.playfield = $cdt makeBounds(screenPosition, screenSize * Vector2(1.5, 2.0));
+		ebm.board = $cdt makeBounds(screenPosition, screenSize);
 		if (forceQuit) {close(); return;}
 		bar->local.scale.x = 0;
 		bulletSpawner.onSignal = $signal {
 			float coefficient = 0;
 			Vector2 bPos = Vector2(32, -32) * getWindowScale();
 			for (size_t i = 0; i < 20; i++){
-				auto b = testM.createBullet();
+				auto b = ebm.createBullet();
 				b->local.position = bPos;
 				coefficient = (Math::tau * ((i + 1) / 20.0)) + rotAngle;
 				b->settings.hitbox.radius = 1;
@@ -107,7 +105,7 @@ public:
 				b->settings.pause.enabled = true;
 				b->reset();
 			}
-			$debug(testM.getFreeCount());
+			$debug(ebm.getFreeCount());
 			//rotAngle += (Math::pi/20.0);
 			$debug(Math::degrees($vmt angleTo(Vector2(0), Vector2(10))));
 		};

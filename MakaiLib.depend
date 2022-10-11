@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1665268627 source:d:\c(++) projects\_c++\game engine\makailib\makai.cpp
+1665454912 source:d:\c(++) projects\_c++\game engine\makailib\makai.cpp
 	<stdexcept>
 	"src/makai.hpp"
 	<windows.h>
@@ -3309,19 +3309,20 @@
 1664718223 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_color.hpp
 	"../anchors.hpp"
 
-1665256902 d:\c(++) projects\_c++\game engine\makailib\src\gamedata.hpp
+1665454573 d:\c(++) projects\_c++\game engine\makailib\src\gamedata.hpp
 	"anchors.hpp"
 	"graphical.hpp"
 	"program.hpp"
 	"gamedata/danmaku/layout.hpp"
+	"gamedata/danmaku/predefs.hpp"
 	"gamedata/danmaku/laser.hpp"
 	"gamedata/danmaku/spellcard.hpp"
 	"gamedata/danmaku/bullet.hpp"
 	"gamedata/danmaku/player.hpp"
 
-1665265621 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\bullet.hpp
+1665455894 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\bullet.hpp
 
-1663772586 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\laser.hpp
+1665455889 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\laser.hpp
 
 1663772564 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\spellcard.hpp
 
@@ -3346,11 +3347,13 @@
 1535531570 d:\c(++) projects\_c++\game engine\makailib\lib\opengl\glm\gtx\compatibility.inl
 	<limits>
 
-1665269507 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\player.hpp
+1665454682 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\player.hpp
 
 1665256935 d:\c(++) projects\_c++\game engine\makailib\src\makai.hpp
 	"anchors.hpp"
 	"program.hpp"
 	"graphical.hpp"
 	"gamedata.hpp"
+
+1665454884 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\predefs.hpp
 
