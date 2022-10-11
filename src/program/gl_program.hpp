@@ -74,7 +74,7 @@ namespace Makai {
 		}
 
 		/// Returns if the button has just been pressed (state == 1).
-		inline bool ifButtonJustPressed(SDL_Scancode button) {
+		inline bool isButtonJustPressed(SDL_Scancode button) {
 			if (!enabled) return false;
 			return getButtonState(button) == 1;
 		}

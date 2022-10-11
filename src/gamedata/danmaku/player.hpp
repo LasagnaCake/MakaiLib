@@ -112,7 +112,7 @@ struct PlayerEntity2D: AreaCircle2D {
 
 	bool action(std::string what, bool justPressed = false) {
 		if (justPressed)
-			return input.ifButtonJustPressed(actionKeys[what]);
+			return input.isButtonJustPressed(actionKeys[what]);
 		else
 			return input.getButtonDown(actionKeys[what]);
 	}
