@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1665454912 source:d:\c(++) projects\_c++\game engine\makailib\makai.cpp
+1665541860 source:d:\c(++) projects\_c++\game engine\makailib\makai.cpp
 	<stdexcept>
 	"src/makai.hpp"
 	<windows.h>
@@ -2866,7 +2866,7 @@
 1665256929 d:\c(++) projects\_c++\game engine\makailib\src\program.hpp
 	"program/gl_program.hpp"
 
-1665257002 d:\c(++) projects\_c++\game engine\makailib\src\anchors.hpp
+1665541655 d:\c(++) projects\_c++\game engine\makailib\src\anchors.hpp
 	<iostream>
 	<string>
 	<vector>
@@ -2923,7 +2923,7 @@
 	<intrin.h>
 	<arm_neon.h>
 
-1664924629 d:\c(++) projects\_c++\game engine\makailib\src\collection\algebra.hpp
+1665592917 d:\c(++) projects\_c++\game engine\makailib\src\collection\algebra.hpp
 	<string>
 	<cmath>
 	<random>
@@ -2994,13 +2994,14 @@
 	"graphical/gl_graphical.hpp"
 	"graphical/gl_shader.hpp"
 
-1664718278 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_graphical.hpp
+1665539492 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_graphical.hpp
 	"../anchors.hpp"
 	"gl_shader.hpp"
 	"gl_color.hpp"
 	"gl_texture.hpp"
 	"gl_reference.hpp"
 	"gl_renderable.hpp"
+	"gl_text.hpp"
 	"gl_framebuffer.hpp"
 
 1664718237 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_shader.hpp
@@ -3022,7 +3023,7 @@
 	<algorithm>
 	<regex>
 
-1665517554 d:\c(++) projects\_c++\game engine\makailib\src\program\gl_program.hpp
+1665541797 d:\c(++) projects\_c++\game engine\makailib\src\program\gl_program.hpp
 	"../anchors.hpp"
 	"../graphical.hpp"
 
@@ -3356,4 +3357,6 @@
 	"gamedata.hpp"
 
 1665454884 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\predefs.hpp
+
+1665597363 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_text.hpp
 

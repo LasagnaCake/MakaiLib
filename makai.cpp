@@ -61,7 +61,7 @@ public:
 		progress.setRenderLayer(Math::maxSizeT);
 		Plane* bar = progress.createReference<Plane>();
 		setCamera2D();
-		float progTick = $scn camera.ortho.size.x / ENEMY_BULLET_COUNT;
+		float progTick = $scn camera.ortho.size.x / (ENEMY_BULLET_COUNT * 1.0);
 		size_t progCount = 0;
 		bar->local.scale.x = 0;
 		bool forceQuit = false;

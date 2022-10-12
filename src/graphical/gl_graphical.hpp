@@ -301,6 +301,8 @@ namespace RenderData {
 	}
 
 	#include "gl_renderable.hpp"
+
+	#include "gl_text.hpp"
 }
 
 #include "gl_framebuffer.hpp"

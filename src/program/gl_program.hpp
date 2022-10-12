@@ -109,6 +109,7 @@ namespace Makai {
 			// Initialize SDL
 			$debug("Starting SDL...");
 			SDL_Init(SDL_INIT_VIDEO);
+			//TTF_Init();
 			$debug("Started!");
 			$debug("Creating window...");
 			// Create window and make active
@@ -120,6 +121,7 @@ namespace Makai {
 				height,
 				SDL_WINDOW_OPENGL | (fullscreen ? SDL_WINDOW_FULLSCREEN : 0)
 			);
+			renderer = SDL_CreateRenderer(window, 0, SDL_RENDERER_ACCELERATED);
 			SDL_GL_CreateContext(window);
 			$debug("Created!");
 			$debug("Starting GLEW...");
@@ -346,6 +348,7 @@ namespace Makai {
 			// Quit SDL
 			$debug("Ending SDL...");
 			SDL_Quit();
+			//TTF_Quit();
 			$debug("SDL ended!");
 		}
 
@@ -392,6 +395,9 @@ namespace Makai {
 
 		/// The program's window.
 		SDL_Window* window;
+
+		/// The Window's renderer.
+		SDL_Renderer* renderer;
 	};
 }
 

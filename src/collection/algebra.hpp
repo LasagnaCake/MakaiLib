@@ -89,6 +89,22 @@ namespace Math {
 		return (T)(::floor((val + 0.5) * zeros) / zeros);
 	}
 
+	ANYTYPE_I fmult(T val, T mult) {
+		return ::floor(val / (double)mult) * mult;
+	}
+
+	ANYTYPE_I cmult(T val, T mult) {
+		return ::ceil(val / (double)mult) * mult;
+	}
+
+	ANYTYPE_I wmax(T val, T max) {
+		return val - fmult(val, max);
+	}
+
+	ANYTYPE_I wmin(T val, T min) {
+		return val + cmult(val, min);
+	}
+
 	/**
 	* Returns the polar radius of a point along the edges of a N-sided
 	* polygon of "radius" R (the shape's circumradius) at a given angle.
