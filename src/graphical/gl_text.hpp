@@ -10,6 +10,15 @@ struct TextData {
 	size_t		columns;
 };
 
+typedef std::function<Vertex(Vertex,size_t,size_t,char)> TextEffectFunc;
+
+#define $teffect(aA,aB,aC,aD)	(Vertex aA, size_t aB, size_t aC, char aD) -> Vertex
+#define $texteff				$teffect(v, lidx, vidx, c)
+
+struct TextEffect {
+	TextEffectFunc effect = [&] $texteff {return v;};
+};
+
 class RenderableText {
 public:
 	RenderableText(size_t layer = 0, bool manual = false) {
@@ -99,6 +108,7 @@ public:
 			Vector2(1) / font.frame,
 		};
 		// Set text color
+//		#pragma GCC unroll 4
 		for $each(v, letter) {
 			v.color = text.color;
 		}
@@ -115,6 +125,7 @@ public:
 			// The UV index used
 			unsigned char uvi = 0;
 			// for each vertex...
+//			#pragma GCC unroll 4
 			for $each(v, letter) {
 				// If carriage return, newline and do next
 				if (c == '\n') {
@@ -137,12 +148,9 @@ public:
 				// Increment UV index
 				uvi++;
 			}
-			verts[i+0]	= toRawVertex(letter[0]);
-			verts[i+1]	= toRawVertex(letter[1]);
-			verts[i+2]	= toRawVertex(letter[2]);
-			verts[i+3]	= toRawVertex(letter[1]);
-			verts[i+4]	= toRawVertex(letter[2]);
-			verts[i+5]	= toRawVertex(letter[3]);
+//			#pragma GCC unroll 6
+			for $ssrange(vi, 0, 6)
+				verts[i+vi] = toRawVertex(teff.effect(letter[vi],i/6,vi,c));
 			i += 6;
 		}
 		// Set VBO as active
@@ -184,8 +192,9 @@ public:
 
 	bool active	= true;
 
-	FontData font;
-	TextData text;
+	FontData	font;
+	TextData	text;
+	TextEffect	teff;
 
 	Transform3D local;
 private:

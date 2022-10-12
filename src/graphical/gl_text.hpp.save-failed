@@ -1,5 +1,5 @@
 struct FontData {
-	Texture2D*	texture;
+	Texture2D*	texture = nullptr;
 	Vector2		frame;
 	Vector2		scale;
 };
@@ -8,6 +8,14 @@ struct TextData {
 	std::string	text;
 	Vector4		color;
 	size_t		columns;
+};
+
+typedef std::function<Vertex(Vertex,size_t,size_t,char)> TextEffectFunc;
+
+#define $teffect(aA,aB,aC,aD) (Vertex aA, size_t aB, size_t aC, char aD) -> Vertex
+
+struct TextEffect {
+	TextEffectFunc effect = [&] $teffect(v, lidx, vidx, c) {return v;};
 };
 
 class RenderableText {
@@ -71,11 +79,13 @@ public:
 			manualMode = true;
 		return this;
 	}
-
+	#define CHARACTER_START 0x20
+	#define CHARACTER_END	0x7F
+	#define CHARACTER_RANGE	CHARACTER_END - CHARACTER_START
 	/// Renders the object to the screen.
 	DrawFunc render = $func() {
-		// If not active, return
-		if (!active) return;
+		// If no font selected or not active, return
+		if (!(font.texture && active)) return;
 		// Call onDrawBegin function
 		onDrawBegin();
 		// Create Intermediary Vertex Buffer (IVB) to be displayed on screen
@@ -97,18 +107,24 @@ public:
 			Vector2(1) / font.frame,
 		};
 		// Set text color
+//		#pragma GCC unroll 4
 		for $each(v, letter) {
 			v.color = text.color;
 		}
 		// Copy data to IVB
 		size_t i = 0;
 		for (char c: text.text) {
+			// If text end, break
 			if (c == '\0') break;
 			// Get letter index
-			unsigned char lidx = (unsigned char)c - 0x20;
+			unsigned char lidx = (unsigned char)c - CHARACTER_START;
+			if (c > CHARACTER_RANGE) {
+				i += 6;continue;
+			}
 			// The UV index used
 			unsigned char uvi = 0;
 			// for each vertex...
+//			#pragma GCC unroll 4
 			for $each(v, letter) {
 				// If carriage return, newline and do next
 				if (c == '\n') {
@@ -131,12 +147,9 @@ public:
 				// Increment UV index
 				uvi++;
 			}
-			verts[i+0]	= toRawVertex(letter[0]);
-			verts[i+1]	= toRawVertex(letter[1]);
-			verts[i+2]	= toRawVertex(letter[2]);
-			verts[i+3]	= toRawVertex(letter[1]);
-			verts[i+4]	= toRawVertex(letter[2]);
-			verts[i+5]	= toRawVertex(letter[3]);
+//			#pragma GCC unroll 6
+			for $ssrange(vi, 0, 6)
+				verts[i+vi] = toRawVertex(teff.effect(letter[vi],i/6,vi,c));
 			i += 6;
 		}
 		// Set VBO as active
@@ -163,7 +176,7 @@ public:
 		glEnableVertexAttribArray(1);
 		glEnableVertexAttribArray(2);
 		// Set polygon rendering mode
-		glPolygonMode(params.culling, params.fill);
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		// Draw object to screen
 		draw();
 		// Disable attributes
@@ -178,8 +191,9 @@ public:
 
 	bool active	= true;
 
-	FontData font;
-	TextData text;
+	FontData	font;
+	TextData	text;
+	TextEffect	teff;
 
 	Transform3D local;
 private:
@@ -207,10 +221,9 @@ private:
 		Shader::defaultShader();
 		glm::mat4 camera = Scene::camera.matrix();
 		glm::mat4 projection = Scene::camera.perspective();
-		$mainshader["textured"](params.textured);
-		$mainshader["texture2D"](params.texture);
-		if (params.image)
-			params.image->enable(params.texture);
+		$mainshader["textured"](true);
+		$mainshader["texture2D"](30);
+		font.texture->enable(30);
 		$mainshader["world"](Scene::world);
 		$mainshader["camera"](camera);
 		$mainshader["projection"](projection);
