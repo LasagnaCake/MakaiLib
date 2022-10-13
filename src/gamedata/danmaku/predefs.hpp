@@ -20,3 +20,15 @@
 
 #define $getman(TYPE) $dmk TYPE##Manager
 #define $setman(TYPE) $dmk TYPE##Manager = &
+
+namespace ItemType {
+	enum ItemType: size_t {
+		POWER_ITEM,
+		POINT_ITEM,
+		EXTRA_ITEM,
+		BOMB_ITEM,
+		LIFE_ITEM
+	};
+};
+
+#define $item(NAME) ItemType::NAME##_ITEM

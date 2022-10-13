@@ -38,6 +38,7 @@ public:
 	Bullet() {
 		onFree			= $tsignal(Bullet*) {};
 		onBulletFrame	= onFree;
+		onUnpause		= onFree;
 		onRebound		= onFree;
 		onShuttle		= onFree;
 	}
@@ -51,6 +52,7 @@ public:
 	$tsk MultiTasker taskers;
 
 	$tev Signal<Bullet*> onFree;
+	$tev Signal<Bullet*> onUnpause;
 	$tev Signal<Bullet*> onBulletFrame;
 	$tev Signal<Bullet*> onRebound;
 	$tev Signal<Bullet*> onShuttle;
@@ -62,6 +64,7 @@ public:
 			if (settings.pause.time < 0) return;
 			if ((--settings.pause.time) > 0) return;
 			settings.pause.enabled = false;
+			onUnpause(this);
 		}
 		taskers.yield();
 		speedFactor = Math::clamp(speedFactor + settings.speed.omega, 0.0f, 1.0f);

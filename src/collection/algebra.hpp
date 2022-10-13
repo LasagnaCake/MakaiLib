@@ -105,6 +105,15 @@ namespace Math {
 		return val + cmult(val, min);
 	}
 
+	inline size_t digitCount(size_t number) {
+		return std::to_string(number).size();
+	}
+
+	inline size_t digit(size_t val, unsigned char digit) {
+		std::string vstr = std::to_string(val);
+		return vstr[(vstr.size()-1) - digit] - '0';
+	}
+
 	/**
 	* Returns the polar radius of a point along the edges of a N-sided
 	* polygon of "radius" R (the shape's circumradius) at a given angle.
@@ -179,7 +188,7 @@ namespace Math {
 
 		/// Gets a seed based on the current clock's time, and a random number.
 		inline size_t getNewSeed() {
-			return _getSeed() ^ !(integer() << 32);
+			return _getSeed() ^ !(integer() << 0x2F);
 		}
 	}
 }

@@ -191,8 +191,6 @@ public:
 		onDrawEnd();
 	};
 
-	Shader::ShaderList shaders;
-
 	vector<Triangle*> triangles;
 
 	struct {
@@ -242,21 +240,5 @@ private:
 		$mainshader["projection"](projection);
 		$mainshader["actor"](actorMatrix);
 		glDrawArrays(GL_TRIANGLES, 0, vertexCount);
-		// Render object passes, if any
-		if(shaders.size())
-			for (auto s : shaders) {
-				// Enable shader
-				auto shader = (*s);
-				shader();
-				// Set prerequisites
-				shader["textured"](params.textured);
-				shader["texture2D"](params.texture);
-				shader["world"](Scene::world);
-				shader["camera"](camera);
-				shader["projection"](projection);
-				shader["actor"](actorMatrix);
-				// Draw object
-				glDrawArrays(GL_TRIANGLES, 0, vertexCount);
-			}
 	};
 };

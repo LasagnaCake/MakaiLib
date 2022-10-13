@@ -42,6 +42,9 @@ public:
 
 	$dmk PlayerEntity2D player;
 
+	$txt NumberLabel	numb;
+	$rdt Texture2D		fontTX;
+
 	$bullet(Enemy) ebm;
 
 	void setCamera2D(float scale = 64) {
@@ -55,6 +58,14 @@ public:
 	}
 
 	void onOpen() override {
+		size_t gameSeed = $rng getNewSeed();
+		$debug(gameSeed);
+		$rng setSeed(gameSeed);
+		fontTX.create("FT_Set1-Lotuscoder.png");
+		numb.font.texture = &fontTX;
+		numb.font.frame = Vector2(8);
+		numb.local.position = Vector3(32, -32, 0);
+		numb.number = 1234567890;
 		Vector2 screenSpace = getWindowScale();
 		player.spawnPoint =
 		player.position =

@@ -1,6 +1,8 @@
 #ifndef MAKAI_BASE_PLAYER_H
 #define MAKAI_BASE_PLAYER_H
 
+AreaCircle2D* mainPlayer = nullptr;
+
 struct PlayerData {
 	size_t score	= 0;
 	size_t power	= 0;
@@ -50,7 +52,7 @@ struct PlayerEntity2D: AreaCircle2D {
 		actionKeys["focus"]	= SDL_SCANCODE_LSHIFT;
 		actionKeys["shot"]	= SDL_SCANCODE_Z;
 		actionKeys["bomb"]	= SDL_SCANCODE_X;
-		actionKeys["item"]	= SDL_SCANCODE_C;
+		actionKeys["sub"]	= SDL_SCANCODE_C;
 		actionKeys["extra"]	= SDL_SCANCODE_SPACE;
 		actionKeys["skip"]	= SDL_SCANCODE_LCTRL;
 		// Create sprite
@@ -74,12 +76,7 @@ struct PlayerEntity2D: AreaCircle2D {
 		};
 		// Death bomb timer
 		deathbomb.stop();
-		deathbomb.onSignal = $signal {
-			$debug("Hit!");
-			onDeath();
-			moveTween.reinterpolate(spawnPoint);
-			setInvincible(90);
-		};
+		deathbomb.onSignal = $signal {$debug("Hit!"); onDeath();};
 		deathbomb.delay = 5;
 		// Bomb cooldown timer
 		bombCooldown.stop();
@@ -100,28 +97,30 @@ struct PlayerEntity2D: AreaCircle2D {
 		optionShot.repeat = true;
 		optionShot.onSignal	= $signal {$debug("Option Shot!"); onOptionShotRequest();};
 		optionShot.delay = 20;
+		// Set self as main player
+		setAsMainPlayer();
 	})
 
 	KeyBinds actionKeys;
 
 	Renderable mesh;
-	$ref AnimatedPlane* sprite;
-	$mki InputManager input;
+	$ref AnimatedPlane*	sprite;
+	$mki InputManager	input;
 
 	struct {
-		float main;
-		float option;
+		float main		= 5;
+		float option	= 1;
 	} damage;
 
-	Vector2 spawnPoint = Vector2(0, 0);
+	Vector2 spawnPoint	= Vector2(0, 0);
 
 	struct {
-		float focused = 7;
-		float unfocused = 14;
+		float focused	= 8;
+		float unfocused	= 16;
 	} speed;
 
-	bool flipX = true;
-	bool flipY = true;
+	bool flipX	= true;
+	bool flipY	= true;
 
 	PlayerData data;
 
@@ -137,10 +136,8 @@ struct PlayerEntity2D: AreaCircle2D {
 	$evt Timer mainShot;
 	$evt Timer optionShot;
 
-	virtual void onFocus()	{}
-	virtual void onGraze(size_t count) {
-		data.graze += count;
-	}
+	virtual void onEnteringFocus()	{$debug("Focus Enter!");}
+	virtual void onExitingFocus()	{$debug("Focus Exit!");}
 
 	virtual void onShotRequest()		{}
 	virtual void onOptionShotRequest()	{}
@@ -149,20 +146,41 @@ struct PlayerEntity2D: AreaCircle2D {
 		setInvincible(bombCooldown.delay);
 		disableBomb();
 	}
-	virtual void onItem()	{}
-	virtual void onExtra()	{}
-
 	virtual void onDeathBomb()	{
-		setInvincible(bombCooldown.delay);
-		disableBomb();
+		deathbomb.stop();
+		onBomb();
 	}
-	virtual void onDeath()		{}
+
+	virtual void onSubAction()		{}
+	virtual void onExtraAction()	{}
+
+	virtual void onDeath()	{
+		moveTween.reinterpolate(spawnPoint);
+		setInvincible(90);
+	}
+
+	virtual void onGraze(size_t count, BulletList blist) {
+		data.graze += count;
+	}
+	virtual void onItemGet(size_t type, float quantity) {
+		switch (type) {
+			case $item(POWER): data.power	+= quantity; break;
+			case $item(POINT): data.point	+= quantity; break;
+			case $item(EXTRA): data.extra	+= quantity; break;
+			case $item(BOMB): data.bomb		+= quantity; break;
+			case $item(LIFE): data.life		+= quantity; break;
+		}
+	}
 
 	bool action(std::string what, bool justPressed = false) {
 		if (justPressed)
 			return input.isButtonJustPressed(actionKeys[what]);
 		else
 			return input.getButtonDown(actionKeys[what]);
+	}
+
+	size_t actionState(std::string what) {
+		return input.getButtonState(actionKeys[what]);
 	}
 
 	void pichun() {
@@ -205,8 +223,29 @@ struct PlayerEntity2D: AreaCircle2D {
 			position -= direction * speed.unfocused * delta;
 		// Update sprite
 		updateSprite();
-		// Do extra actions
-		if(isFocused)		onFocus();
+		// Do focus entering & exiting action, acoordingly
+		if(action("focus", true))
+			onEnteringFocus();
+		else if(!isFocused && lbs.focus) {
+			onExitingFocus();
+		}
+		lbs.focus = isFocused;
+		// Do graze action
+		if(enemyBulletManager) {
+			BulletList blist = enemyBulletManager->getInArea(getGrazeBounds());
+			if (blist.size()) {
+				size_t grazeCount = 0;
+				for $eachif(b, blist, !b->grazed) {
+					$debug(grazeCount);
+					b->grazed = true;
+					grazeCount++;
+				}
+				$debug(grazeCount);
+				if (grazeCount)
+					onGraze(grazeCount, blist);
+			}
+		}
+		// Do shot actions
 		optionShot.paused =
 		mainShot.paused = !action("shot");
 		// If can bomb and bombing...
@@ -220,28 +259,21 @@ struct PlayerEntity2D: AreaCircle2D {
 				onDeathBomb();
 			}
 		}
-		if(action("item"))	onItem();
-		if(action("extra"))	onExtra();
-		if(enemyBulletManager) {
-			BulletList blist = enemyBulletManager->getInArea(getGrazeBounds());
-			if (blist.size()) {
-				size_t grazeCount = 0;
-				for $eachif(b, blist, !b->grazed) {
-					$debug(grazeCount);
-					b->grazed = true;
-					grazeCount++;
-				}
-				$debug(grazeCount);
-				if (grazeCount)
-					onGraze(grazeCount);
-			}
-		}
+		// Do extra actions
+		if(action("sub"))	onSubAction();
+		if(action("extra"))	onExtraAction();
 	}
 
 	virtual void onCollision(Entity* target) {
 		if ($ecl groups.hasEntity(target, $layer(ENEMY_BULLET))) {
 			pichun();
 		}
+	}
+
+	void setInvincible() {
+		collision.enabled = false;
+		sprite->setColor(Color::GRAY);
+		invincibility.start();
 	}
 
 	void setInvincible(size_t time) {
@@ -267,7 +299,19 @@ struct PlayerEntity2D: AreaCircle2D {
 		};
 	}
 
+	inline void setAsMainPlayer() {
+		mainPlayer = this;
+	}
+
+	inline Tween::Tween<Vector2>& getPlayerTween() {
+		return moveTween;
+	}
 private:
+	// Last Button State
+	struct {
+		bool focus = false;
+	} lbs;
+
 	void updateSprite() {
 		Transform2D self = globalTransform();
 		sprite->local.position		= Vector3(self.position, zIndex);
@@ -277,5 +321,12 @@ private:
 
 	Tween::Tween<Vector2> moveTween;
 };
+
+PlayerEntity2D* getMainPlayer() {
+	if (mainPlayer)
+		return (PlayerEntity2D*)mainPlayer;
+	else
+		return nullptr;
+}
 
 #endif // MAKAI_BASE_PLAYER_H
