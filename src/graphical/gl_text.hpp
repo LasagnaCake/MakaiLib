@@ -1,27 +1,28 @@
 struct FontData {
 	Texture2D*	texture = nullptr;
-	Vector2		frame;
-	Vector2		scale;
+	Vector2		frame = Vector2(8);
+	Vector2		scale = Vector2(1);
 };
 
 struct TextData {
 	std::string	text;
-	Vector4		color;
-	size_t		columns;
+	Vector4		color = Color::WHITE;
+	size_t		columns = 40;
 };
 
 typedef std::function<Vertex(Vertex,size_t,size_t,char)> TextEffectFunc;
 
 #define $teffect(aA,aB,aC,aD)	(Vertex aA, size_t aB, size_t aC, char aD) -> Vertex
-#define $texteff				$teffect(v, lidx, vidx, c)
+#define $texteffect				$teffect(v, lidx, vidx, c)
 
 struct TextEffect {
-	TextEffectFunc effect = [&] $texteff {return v;};
+	TextEffectFunc effect = [] $texteffect {return v;};
+	bool enabled = false;
 };
 
-class RenderableText {
+class Label {
 public:
-	RenderableText(size_t layer = 0, bool manual = false) {
+	Label(size_t layer = 0, bool manual = false) {
 		if(!manual)
 			Drawer::layers.addObject(&render, layer);
 		glGenVertexArrays(1, &vao);
@@ -30,7 +31,7 @@ public:
 		manualMode = manual;
 	}
 
-	~RenderableText() {
+	~Label() {
 		onDelete();
 		if(!manualMode)
 			Drawer::layers.removeFromAll(&render);
@@ -47,41 +48,41 @@ public:
 	/// Called on deletion.
 	virtual void onDelete()	{}
 
-	RenderableText* setManual() {
+	Label* setManual() {
 		if(!manualMode)
 			Drawer::layers.removeFromAll(&render);
 		manualMode = true;
 		return this;
 	}
 
-	RenderableText* setAuto(size_t renderLayer) {
+	Label* setAuto(size_t renderLayer) {
 		if(manualMode)
 			Drawer::layers.addObject(&render, renderLayer);
 		manualMode = false;
 		return this;
 	}
 
-	RenderableText* setRenderLayer(size_t renderLayer) {
+	Label* setRenderLayer(size_t renderLayer) {
 		Drawer::layers.removeFromAll(&render);
 		Drawer::layers.addObject(&render, renderLayer);
 		manualMode = false;
 		return this;
 	}
 
-	RenderableText* addToRenderLayer(size_t renderLayer) {
+	Label* addToRenderLayer(size_t renderLayer) {
 		Drawer::layers.addObject(&render, renderLayer);
 		manualMode = false;
 		return this;
 	}
 
-	RenderableText* removeFromRenderLayer(size_t renderLayer) {
+	Label* removeFromRenderLayer(size_t renderLayer) {
 		Drawer::layers.removeFromGroup(&render, renderLayer);
 		if (!Drawer::layers.getGroups(&render).size())
 			manualMode = true;
 		return this;
 	}
 	#define CHARACTER_START 0x20
-	#define CHARACTER_END	0x7F
+	#define CHARACTER_END	0xFF
 	#define CHARACTER_RANGE	CHARACTER_END - CHARACTER_START
 	/// Renders the object to the screen.
 	DrawFunc render = $func() {
@@ -89,16 +90,18 @@ public:
 		if (!(font.texture && active)) return;
 		// Call onDrawBegin function
 		onDrawBegin();
+		// Get character count
+		size_t charCount = text.text.size();
 		// Create Intermediary Vertex Buffer (IVB) to be displayed on screen
-		RawVertex* verts = new RawVertex[text.text.size() * 6];
+		RawVertex* verts = new RawVertex[charCount * 6];
 		// Get transformation matrix
 		actorMatrix = VecMath::asGLMMatrix(local);
 		// Text Character Vertex
 		Vertex letter[4] = {
 			Vertex(Vector3(0)),
 			Vertex(Vector3(font.scale.x, 0)),
-			Vertex(Vector3(0, -font.scale.y)),
-			Vertex(Vector3(font.scale.x, -font.scale.y))
+			Vertex(Vector3(0, font.scale.y)),
+			Vertex(Vector3(font.scale.x, font.scale.y))
 		};
 		// Text Character UV
 		Vector2 luv[4] = {
@@ -118,14 +121,14 @@ public:
 			// If text end, break
 			if (c == '\0') break;
 			// Get letter index
-			unsigned char lidx = (unsigned char)c - CHARACTER_START;
-			if (c > CHARACTER_RANGE) {
-				i += 6;continue;
-			}
+			unsigned char lidx = (int)c;
+			// If past visible character range, skip letter;
+			if (c > CHARACTER_END)		{i += 6; continue;}
+			if (c < CHARACTER_START)	{i += 6; continue;}
+			lidx -= CHARACTER_START;
 			// The UV index used
 			unsigned char uvi = 0;
-			// for each vertex...
-//			#pragma GCC unroll 4
+			// Loop through each vertex and..
 			for $each(v, letter) {
 				// If carriage return, newline and do next
 				if (c == '\n') {
@@ -148,9 +151,21 @@ public:
 				// Increment UV index
 				uvi++;
 			}
-//			#pragma GCC unroll 6
-			for $ssrange(vi, 0, 6)
-				verts[i+vi] = toRawVertex(teff.effect(letter[vi],i/6,vi,c));
+			if (textEffect.enabled) {
+				verts[i+0] = toRawVertex(textEffect.effect(letter[0],i/6,0,c));
+				verts[i+1] = toRawVertex(textEffect.effect(letter[1],i/6,1,c));
+				verts[i+2] = toRawVertex(textEffect.effect(letter[2],i/6,2,c));
+				verts[i+3] = toRawVertex(textEffect.effect(letter[1],i/6,1,c));
+				verts[i+4] = toRawVertex(textEffect.effect(letter[2],i/6,2,c));
+				verts[i+5] = toRawVertex(textEffect.effect(letter[3],i/6,3,c));
+			} else {
+				verts[i+0] = toRawVertex(letter[0]);
+				verts[i+1] = toRawVertex(letter[1]);
+				verts[i+2] = toRawVertex(letter[2]);
+				verts[i+3] = toRawVertex(letter[1]);
+				verts[i+4] = toRawVertex(letter[2]);
+				verts[i+5] = toRawVertex(letter[3]);
+			}
 			i += 6;
 		}
 		// Set VBO as active
@@ -164,8 +179,6 @@ public:
 		);
 		// Delete IVB, since it is no longer necessary
 		delete [] verts;
-		// De-transform references (if applicable)
-		for (auto plane: references.plane) plane->reset();
 		// Set VAO as active
 		glBindVertexArray(vao);
 		// Define vertex data in VBO
@@ -194,15 +207,10 @@ public:
 
 	FontData	font;
 	TextData	text;
-	TextEffect	teff;
+	TextEffect	textEffect;
 
 	Transform3D local;
 private:
-	/// List of references linked to this object.
-	struct {
-		vector<Reference::Plane*> plane;
-	} references;
-
 	glm::mat4x4 actorMatrix;
 
 	/// Whether manually rendering or not.
@@ -232,3 +240,5 @@ private:
 		glDrawArrays(GL_TRIANGLES, 0, vertexCount);
 	};
 };
+
+#define $txt $rdt Text::

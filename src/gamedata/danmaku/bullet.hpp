@@ -46,6 +46,8 @@ public:
 
 	$ref AnimatedPlane* sprite = nullptr;
 
+	bool grazed = false;
+
 	$tsk MultiTasker taskers;
 
 	$tev Signal<Bullet*> onFree;
@@ -144,6 +146,8 @@ private:
 
 	bool free = true;
 };
+
+typedef std::vector<Bullet*> BulletList;
 
 template <
 	size_t BULLET_COUNT,
@@ -280,9 +284,23 @@ struct BulletManager: Entity {
 		created = true;
 	}
 
-	#define BULLET_LIST std::vector<BULLET_TYPE*>
-	BULLET_LIST getInArea($cdt CircleBounds2D target) {
-		BULLET_LIST res;
+	BulletList getInArea($cdt CircleBounds2D target) {
+		BulletList res;
+		for $eachif(b, bullets, !b.isFree() && b.settings.collidable) {
+			if (
+				$cdt withinBounds(
+					b.settings.hitbox,
+					target
+				)
+			) {
+				res.push_back(&b);
+			}
+		}
+		return res;
+	}
+
+	BulletList getInArea($cdt BoxBounds2D target) {
+		BulletList res;
 		for $eachif(b, bullets, !b.isFree() && b.settings.collidable) {
 			if (
 				$cdt withinBounds(
@@ -294,25 +312,11 @@ struct BulletManager: Entity {
 		return res;
 	}
 
-	BULLET_LIST getInArea($cdt BoxBounds2D target) {
-		BULLET_LIST res;
-		for $eachif(b, bullets, !b.isFree() && b.settings.collidable) {
-			if (
-				$cdt withinBounds(
-					b.settings.hitbox,
-					target
-				)
-			) res.push_back(&b);
-		}
-		return res;
-	}
-
-	BULLET_LIST getActive() {
-		BULLET_LIST res;
+	BulletList getActive() {
+		BulletList res;
 		for $eachif(b, bullets, !b.isFree()) res.push_back(&b);
 		return res;
 	}
-	#undef BULLET_LIST
 
 	BULLET_TYPE* getLastBullet() {
 		return last;
@@ -322,15 +326,28 @@ struct BulletManager: Entity {
 		for $eachif(b, bullets, b.isFree()) {
 			last = b.enable()->setZero();
 			last->settings = BulletData();
+			last->grazed = false;
 			last->taskers.clearTaskers();
+			#ifdef $_PREVENT_BULLET_OVERFLOW_BY_WRAP
+			pbobw = 0;
+			#endif
 			return last;
 		}
+		#ifndef $_PREVENT_BULLET_OVERFLOW_BY_WRAP
 		throw std::runtime_error(
 			getName()
 			+ ": Out of usable bullets ("
 			+ std::to_string(BULLET_COUNT)
 			+ ")!"
 		);
+		#else
+		last = bullets[pbobw++].enable()->setZero();
+		last->settings = BulletData();
+		last->grazed = false;
+		last->taskers.clearTaskers();
+		if (pbobw > BULLET_COUNT) pbobw = 0;
+		return last;
+		#endif
 	}
 
 	BULLET_TYPE* createBullet(BulletData bullet) {
@@ -345,15 +362,17 @@ struct BulletManager: Entity {
 
 private:
 	bool created = false;
-
+	#ifdef $_PREVENT_BULLET_OVERFLOW_BY_WRAP
+	size_t pbobw = 0;
+	#endif
 	BULLET_TYPE* last = nullptr;
 };
 
 typedef BulletManager<PLAYER_BULLET_COUNT, $layer(PLAYER_BULLET), $layer(ENEMY), Bullet>	PlayerBulletManager;
 typedef BulletManager<ENEMY_BULLET_COUNT, $layer(ENEMY_BULLET), $layer(PLAYER), Bullet>		EnemyBulletManager;
 
-PlayerBulletManager*	playerBulletManager;
-EnemyBulletManager*		enemyBulletManager;
+PlayerBulletManager*	playerBulletManager = nullptr;
+EnemyBulletManager*		enemyBulletManager = nullptr;
 
 #define $bullet(TYPE)	$getman( TYPE##Bullet )
 #define $setb(TYPE)		$setman( TYPE##Bullet )

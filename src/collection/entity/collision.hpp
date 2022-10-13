@@ -241,10 +241,10 @@ namespace EntityClass {
 		}
 
 		CircleBounds2D getCircleBounds() {
-			Vector2 absScale = globalScale();
+			Vector2 colsize = collision.size * globalScale();
 			return CircleBounds2D {
 				globalPosition(),
-				Math::min(absScale.x, absScale.y)
+				Math::min(colsize.x, colsize.y)
 			};
 		}
 

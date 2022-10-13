@@ -3,6 +3,8 @@
 
 //#undef _DEBUG_OUTPUT_
 
+#define $_PREVENT_BULLET_OVERFLOW_BY_WRAP
+
 #include "src/makai.hpp"
 
 #include <windows.h>
@@ -57,6 +59,7 @@ public:
 		player.spawnPoint =
 		player.position =
 		Vector2(32, -48) * screenSpace;
+		player.grazebox.radius = 2.5;
 		$rdt Renderable progress;
 		progress.setRenderLayer(Math::maxSizeT);
 		Plane* bar = progress.createReference<Plane>();
@@ -107,7 +110,6 @@ public:
 			}
 			$debug(ebm.getFreeCount());
 			//rotAngle += (Math::pi/20.0);
-			$debug(Math::degrees($vmt angleTo(Vector2(0), Vector2(10))));
 		};
 	}
 

@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1665541860 source:d:\c(++) projects\_c++\game engine\makailib\makai.cpp
+1665621663 source:d:\c(++) projects\_c++\game engine\makailib\makai.cpp
 	<stdexcept>
 	"src/makai.hpp"
 	<windows.h>
@@ -2966,7 +2966,7 @@
 	<vector>
 	"algebra.hpp"
 
-1665175601 d:\c(++) projects\_c++\game engine\makailib\src\collection\entity\collision.hpp
+1665613217 d:\c(++) projects\_c++\game engine\makailib\src\collection\entity\collision.hpp
 	"core.hpp"
 	"2d3d.hpp"
 	<map>
@@ -3321,7 +3321,7 @@
 	"gamedata/danmaku/bullet.hpp"
 	"gamedata/danmaku/player.hpp"
 
-1665455894 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\bullet.hpp
+1665617020 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\bullet.hpp
 
 1665455889 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\laser.hpp
 
@@ -3348,7 +3348,7 @@
 1535531570 d:\c(++) projects\_c++\game engine\makailib\lib\opengl\glm\gtx\compatibility.inl
 	<limits>
 
-1665517539 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\player.hpp
+1665621609 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\player.hpp
 
 1665256935 d:\c(++) projects\_c++\game engine\makailib\src\makai.hpp
 	"anchors.hpp"
@@ -3358,5 +3358,5 @@
 
 1665454884 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\predefs.hpp
 
-1665599443 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_text.hpp
+1665610547 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_text.hpp
 

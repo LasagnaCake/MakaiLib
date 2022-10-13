@@ -1,6 +1,16 @@
 #ifndef MAKAI_BASE_PLAYER_H
 #define MAKAI_BASE_PLAYER_H
 
+struct PlayerData {
+	size_t score	= 0;
+	size_t power	= 0;
+	size_t point	= 0;
+	size_t graze	= 0;
+	size_t extra	= 0;
+	float life		= 0;
+	float bomb		= 0;
+};
+
 struct Familiar2D: Entity2D {
 	DERIVED_CLASS(Familiar2D, Entity2D)
 	DERIVED_CONSTRUCTOR(Familiar2D, Entity2D, {
@@ -110,27 +120,15 @@ struct PlayerEntity2D: AreaCircle2D {
 		float unfocused = 14;
 	} speed;
 
-	bool action(std::string what, bool justPressed = false) {
-		if (justPressed)
-			return input.isButtonJustPressed(actionKeys[what]);
-		else
-			return input.getButtonDown(actionKeys[what]);
-	}
+	bool flipX = true;
+	bool flipY = true;
+
+	PlayerData data;
+
+	CircleBounds2D grazebox;
 
 	bool isFocused	= false;
 	bool canBomb	= true;
-
-	virtual void onFocus()	{}
-
-	virtual void onShotRequest()		{}
-	virtual void onOptionShotRequest()	{}
-
-	virtual void onBomb()	{}
-	virtual void onItem()	{}
-	virtual void onExtra()	{}
-
-	virtual void onDeathBomb()	{}
-	virtual void onDeath()		{}
 
 	$evt Timer invincibility;
 	$evt Timer animator;
@@ -138,6 +136,34 @@ struct PlayerEntity2D: AreaCircle2D {
 	$evt Timer bombCooldown;
 	$evt Timer mainShot;
 	$evt Timer optionShot;
+
+	virtual void onFocus()	{}
+	virtual void onGraze(size_t count) {
+		data.graze += count;
+	}
+
+	virtual void onShotRequest()		{}
+	virtual void onOptionShotRequest()	{}
+
+	virtual void onBomb()	{
+		setInvincible(bombCooldown.delay);
+		disableBomb();
+	}
+	virtual void onItem()	{}
+	virtual void onExtra()	{}
+
+	virtual void onDeathBomb()	{
+		setInvincible(bombCooldown.delay);
+		disableBomb();
+	}
+	virtual void onDeath()		{}
+
+	bool action(std::string what, bool justPressed = false) {
+		if (justPressed)
+			return input.isButtonJustPressed(actionKeys[what]);
+		else
+			return input.getButtonDown(actionKeys[what]);
+	}
 
 	void pichun() {
 		if (!collision.enabled) return;
@@ -149,9 +175,6 @@ struct PlayerEntity2D: AreaCircle2D {
 	void spawnPlayer(Vector2 from) {
 		moveTween.reinterpolate(from, spawnPoint);
 	}
-
-	bool flipX = true;
-	bool flipY = true;
 
 	virtual void onFrame(float delta) {
 		// Updat inputs
@@ -188,10 +211,6 @@ struct PlayerEntity2D: AreaCircle2D {
 		mainShot.paused = !action("shot");
 		// If can bomb and bombing...
 		if(action("bomb", true) && canBomb) {
-			// Disable bombing
-			canBomb = false;
-			// Set off bomb timer
-			bombCooldown.start();
 			// Do normal bomb or deathbomb, acoordingly
 			if (deathbomb.paused) {
 				$debug("Normal bomb!");
@@ -200,9 +219,23 @@ struct PlayerEntity2D: AreaCircle2D {
 				$debug("Deathbomb!");
 				onDeathBomb();
 			}
-		};
+		}
 		if(action("item"))	onItem();
 		if(action("extra"))	onExtra();
+		if(enemyBulletManager) {
+			BulletList blist = enemyBulletManager->getInArea(getGrazeBounds());
+			if (blist.size()) {
+				size_t grazeCount = 0;
+				for $eachif(b, blist, !b->grazed) {
+					$debug(grazeCount);
+					b->grazed = true;
+					grazeCount++;
+				}
+				$debug(grazeCount);
+				if (grazeCount)
+					onGraze(grazeCount);
+			}
+		}
 	}
 
 	virtual void onCollision(Entity* target) {
@@ -215,6 +248,23 @@ struct PlayerEntity2D: AreaCircle2D {
 		collision.enabled = false;
 		sprite->setColor(Color::GRAY);
 		invincibility.start(time);
+	}
+
+	void disableBomb() {
+		canBomb = false;
+		bombCooldown.start();
+	}
+
+	void disableBomb(size_t time) {
+		canBomb = false;
+		bombCooldown.start(time);
+	}
+
+	inline CircleBounds2D getGrazeBounds() {
+		return CircleBounds2D {
+			grazebox.position + globalPosition(),
+			grazebox.radius
+		};
 	}
 
 private:

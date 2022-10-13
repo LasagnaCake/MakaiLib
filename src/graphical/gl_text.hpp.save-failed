@@ -12,10 +12,11 @@ struct TextData {
 
 typedef std::function<Vertex(Vertex,size_t,size_t,char)> TextEffectFunc;
 
-#define $teffect(aA,aB,aC,aD) (Vertex aA, size_t aB, size_t aC, char aD) -> Vertex
+#define $teffect(aA,aB,aC,aD)	(Vertex aA, size_t aB, size_t aC, char aD) -> Vertex
+#define $texteff				$teffect(v, lidx, vidx, c)
 
 struct TextEffect {
-	TextEffectFunc effect = [&] $teffect(v, lidx, vidx, c) {return v;};
+	TextEffectFunc effect = [&] $texteff {return v;};
 };
 
 class RenderableText {
@@ -147,9 +148,12 @@ public:
 				// Increment UV index
 				uvi++;
 			}
-//			#pragma GCC unroll 6
-			for $ssrange(vi, 0, 6)
-				verts[i+vi] = toRawVertex(teff.effect(letter[vi],i/6,vi,c));
+			verts[i+0] = toRawVertex(teff.effect(letter[0],i/6,0,c));
+			verts[i+1] = toRawVertex(teff.effect(letter[1],i/6,1,c));
+			verts[i+2] = toRawVertex(teff.effect(letter[2],i/6,2,c));
+			verts[i+3] = toRawVertex(teff.effect(letter[1],i/6,1,c));
+			verts[i+4] = toRawVertex(teff.effect(letter[2],i/6,2,c));
+			verts[i+5] = toRawVertex(teff.effect(letter[3],i/6,3,c));
 			i += 6;
 		}
 		// Set VBO as active

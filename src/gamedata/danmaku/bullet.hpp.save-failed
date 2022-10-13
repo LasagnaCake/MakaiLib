@@ -11,12 +11,18 @@ struct BulletParam {
 	float omega		= 0;
 };
 
+struct Pause {
+	long time		= -1;
+	bool enabled	= false;
+};
+
 struct BulletData {
 	// Collision data
 	CircleBounds2D	hitbox;
 	// Parameters
 	BulletParam	speed;
 	BulletParam	rotation;
+	Pause pause;
 	// Flags
 	bool shuttle		= false;
 	bool rebound		= false;
@@ -30,18 +36,33 @@ struct BulletData {
 class Bullet {
 public:
 	Bullet() {
+		onFree			= $tsignal(Bullet*) {};
+		onBulletFrame	= onFree;
+		onRebound		= onFree;
+		onShuttle		= onFree;
 	}
 
 	BulletData settings;
 
 	$ref AnimatedPlane* sprite = nullptr;
 
+	bool grazed = false;
+
 	$tsk MultiTasker taskers;
 
-	$evt Signal onFree = Event::DEF_SIGNAL;
+	$tev Signal<Bullet*> onFree;
+	$tev Signal<Bullet*> onBulletFrame;
+	$tev Signal<Bullet*> onRebound;
+	$tev Signal<Bullet*> onShuttle;
 
 	void onFrame(float delta) {
 		if (free) return;
+		onBulletFrame(this);
+		if (settings.pause.enabled) {
+			if (settings.pause.time < 0) return;
+			if ((--settings.pause.time) > 0) return;
+			settings.pause.enabled = false;
+		}
 		taskers.yield();
 		speedFactor = Math::clamp(speedFactor + settings.speed.omega, 0.0f, 1.0f);
 		rotationFactor = Math::clamp(rotationFactor + settings.rotation.omega, 0.0f, 1.0f);
@@ -57,17 +78,8 @@ public:
 		);
 		if (currentSpeed)
 			local.position += VecMath::angleV2(currentRotation) * currentSpeed * delta;
-		if (sprite) {
-			// Set sprite position
-			sprite->local.position = Vector3(local.position);
-			settings.hitbox.position = local.position;
-			// Set sprite rotation
-			sprite->local.rotation.z = local.rotation;
-			if (settings.rotateSprite)
-				sprite->local.rotation.z += currentRotation;
-			// Set sprite scale
-			sprite->local.scale = Vector3(local.scale);
-		}
+		local.rotation = currentRotation;
+		updateSprite();
 	}
 
 	Bullet* reset() {
@@ -76,6 +88,8 @@ public:
 		local.rotation =
 		currentRotation = settings.rotation.start;
 		settings.hitbox.position = local.position;
+		updateSprite();
+		sprite->local.rotation.z = local.rotation;
 		return this;
 	}
 
@@ -99,13 +113,14 @@ public:
 	Bullet* setFree(bool state = true) {
 		free = state;
 		if (sprite) sprite->visible = !free;
-		if (free) onFree();
+		if (free) onFree(this);
 		return this;
 	}
 
-	void discard() {
+	Bullet* discard() {
 		if (settings.discardable)
 			setFree();
+		return this;
 	}
 
 	Transform2D local;
@@ -114,28 +129,44 @@ public:
 	float currentRotation	= 0;
 
 private:
+	void updateSprite() {
+		if (!sprite) return;
+		// Set sprite position
+		sprite->local.position = Vector3(local.position);
+		settings.hitbox.position = local.position;
+		// Set sprite rotation
+		if (settings.rotateSprite)
+			sprite->local.rotation.z = local.rotation;
+		// Set sprite scale
+		sprite->local.scale = Vector3(local.scale);
+	}
+
 	float speedFactor		= 0;
 	float rotationFactor	= 0;
 
 	bool free = true;
 };
 
+typedef std::vector<Bullet*> BulletList;
+
 template <
 	size_t BULLET_COUNT,
-	class BULLET_TYPE,
-	class = std::enable_if<std::is_base_of<Bullet, BULLET_TYPE>::value>::type
+	size_t ACTOR_LAYER = $layer(ENEMY_BULLET),
+	size_t ENEMY_LAYER = $layer(PLAYER),
+	class BULLET_TYPE = Bullet,
+	class = $isderivedof(BULLET_TYPE, Bullet)
 >
 struct BulletManager: Entity {
+	DERIVED_CLASS(BulletManager, Entity)
+
 	DERIVED_CONSTRUCTOR(BulletManager, Entity, {
-		$ecl $_ROOT += this;
-		mesh.setRenderLayer($layer(ENEMY_BULLET));
-		$ecl groups.addEntity(this, $layer(ENEMY_BULLET));
+		addToGame(this, "DanmakuGame");
+		mesh.setRenderLayer(ACTOR_LAYER);
+		$ecl groups.addEntity(this, ACTOR_LAYER);
 	})
 
 	$cdt BoxBounds2D playfield;
 	$cdt BoxBounds2D board;
-
-	DERIVED_CLASS(BulletManager, Entity)
 
 	Renderable mesh;
 
@@ -147,16 +178,16 @@ struct BulletManager: Entity {
 		for $each(b, bullets) {
 			b.onFrame(delta);
 			if (!b.isFree() && b.settings.collidable)
-			for $each(player, $ecl groups.getGroup($layer(PLAYER))) {
-				auto p = ((AreaCircle2D*)player);
+			for $each(actor, $ecl groups.getGroup(ENEMY_LAYER)) {
+				auto a = ((AreaCircle2D*)actor);
 				if (
-					p->collision.enabled
+					a->collision.enabled
 					&& $cdt withinBounds(
 						b.settings.hitbox,
-						p->getCircleBounds()
+						a->getCircleBounds()
 					)
 				) {
-					p->onCollision(this);
+					a->onCollision(this);
 					b.discard();
 				}
 			}
@@ -190,6 +221,7 @@ struct BulletManager: Entity {
 							$wreflect(b.settings.rotation.start);
 							$wreflect(b.settings.rotation.end);
 						}
+						b.onRebound(&b);
 						// Disable rebounding
 						b.settings.rebound = false;
 						#undef $wreflect
@@ -205,6 +237,7 @@ struct BulletManager: Entity {
 							b.local.position.y = board.y.max;
 						if (b.local.position.y > board.y.max)
 							b.local.position.y = board.y.min;
+						b.onShuttle(&b);
 						// Disable shuttle
 						b.settings.shuttle = false;
 					}
@@ -225,7 +258,7 @@ struct BulletManager: Entity {
 		for $each(b, bullets) b.setFree();
 	}
 
-	void destoryAll() {
+	void discardAll() {
 		for $each(b, bullets) b.discard();
 	}
 
@@ -251,10 +284,24 @@ struct BulletManager: Entity {
 		created = true;
 	}
 
-	#define BULLET_LIST std::vector<BULLET_TYPE*>
-	BULLET_LIST getInArea($cdt CircleBounds2D target) {
-		BULLET_LIST res;
-		for $each(b, bullets) if (!b.isFree() && b.settings.collidable) {
+	BulletList getInArea($cdt CircleBounds2D target) {
+		BulletList res;
+		for $eachif(b, bullets, !b.isFree() && b.settings.collidable) {
+			if (
+				$cdt withinBounds(
+					b.settings.hitbox,
+					target
+				)
+			) {
+				res.push_back(&b);
+			}
+		}
+		return res;
+	}
+
+	BulletList getInArea($cdt BoxBounds2D target) {
+		BulletList res;
+		for $eachif(b, bullets, !b.isFree() && b.settings.collidable) {
 			if (
 				$cdt withinBounds(
 					b.settings.hitbox,
@@ -265,38 +312,42 @@ struct BulletManager: Entity {
 		return res;
 	}
 
-	BULLET_LIST getInArea($cdt BoxBounds2D target) {
-		BULLET_LIST res;
-		for $each(b, bullets) if (!b.isFree() && b.settings.collidable) {
-			if (
-				$cdt withinBounds(
-					b.settings.hitbox,
-					target
-				)
-			) res.push_back(&b);
-		}
+	BulletList getActive() {
+		BulletList res;
+		for $eachif(b, bullets, !b.isFree()) res.push_back(&b);
 		return res;
 	}
-	#undef BULLET_LIST
 
 	BULLET_TYPE* getLastBullet() {
 		return last;
 	}
 
 	BULLET_TYPE* createBullet() {
-		for $each(b, bullets)
-			if (b.isFree()) {
-				last = b.enable()->setZero();
-				last->settings = BulletData();
-				last->taskers.clearTaskers();
-				return last;
-			}
+		for $eachif(b, bullets, b.isFree()) {
+			last = b.enable()->setZero();
+			last->settings = BulletData();
+			last->grazed = false;
+			last->taskers.clearTaskers();
+			#ifdef $_PREVENT_BULLET_OVERFLOW_BY_WRAP
+			pbobw = 0;
+			#endif
+			return last;
+		}
+		#ifndef $_PREVENT_BULLET_OVERFLOW_BY_WRAP
 		throw std::runtime_error(
 			getName()
 			+ ": Out of usable bullets ("
 			+ std::to_string(BULLET_COUNT)
 			+ ")!"
 		);
+		#else
+		last = bullets[pbobw++].enable()->setZero();
+		last->settings = BulletData();
+		last->grazed = false;
+		last->taskers.clearTaskers();
+		if (pbobw > BULLET_COUNT) pbobw = 0;
+		return last;
+		#endif
 	}
 
 	BULLET_TYPE* createBullet(BulletData bullet) {
@@ -311,8 +362,19 @@ struct BulletManager: Entity {
 
 private:
 	bool created = false;
-
+	#ifdef $_PREVENT_BULLET_OVERFLOW_BY_WRAP
+	size_t pbobw = 0;
+	#endif
 	BULLET_TYPE* last = nullptr;
 };
+
+typedef BulletManager<PLAYER_BULLET_COUNT, $layer(PLAYER_BULLET), $layer(ENEMY), Bullet>	PlayerBulletManager;
+typedef BulletManager<ENEMY_BULLET_COUNT, $layer(ENEMY_BULLET), $layer(PLAYER), Bullet>		EnemyBulletManager;
+
+PlayerBulletManager*	playerBulletManager = nullptr;
+EnemyBulletManager*		enemyBulletManager = nullptr;
+
+#define $bullet(TYPE)	$getman( TYPE##Bullet )
+#define $setb(TYPE)		$setman( TYPE##Bullet )
 
 #endif // MAKAI_BASE_BULLET_H
