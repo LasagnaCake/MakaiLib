@@ -63,8 +63,8 @@ public:
 		$rng setSeed(gameSeed);
 		fontTX.create("FT_Set1-Lotuscoder.png");
 		numb.font.texture = &fontTX;
-		numb.font.frame = Vector2(8);
-		numb.local.position = Vector3(32, -32, 0);
+		numb.font.frame = Vector2(16);
+		numb.local.position = Vector3(16, -16, 0);
 		numb.number = 1234567890;
 		Vector2 screenSpace = getWindowScale();
 		player.spawnPoint =

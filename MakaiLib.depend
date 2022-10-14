@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1665700647 source:d:\c(++) projects\_c++\game engine\makailib\makai.cpp
+1665712666 source:d:\c(++) projects\_c++\game engine\makailib\makai.cpp
 	<stdexcept>
 	"src/makai.hpp"
 	<windows.h>
@@ -3358,5 +3358,5 @@
 
 1665680873 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\predefs.hpp
 
-1665688641 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_text.hpp
+1665712712 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_text.hpp
 

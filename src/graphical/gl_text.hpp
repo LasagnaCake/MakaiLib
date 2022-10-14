@@ -1,7 +1,6 @@
 struct FontData {
 	Texture2D*	texture = nullptr;
 	Vector2		frame = Vector2(8);
-	Vector2		scale = Vector2(1);
 };
 
 struct TextData {
@@ -98,10 +97,10 @@ public:
 		actorMatrix = VecMath::asGLMMatrix(local);
 		// Text Character Vertex
 		Vertex letter[4] = {
-			Vertex(Vector3(0, 0)),
-			Vertex(Vector3(1, 0)),
-			Vertex(Vector3(0, 1)),
-			Vertex(Vector3(1, 1))
+			Vertex(Vector3(0, 0, 0)),
+			Vertex(Vector3(1, 0, 0)),
+			Vertex(Vector3(0, 1, 0)),
+			Vertex(Vector3(1, 1, 0))
 		};
 		// Text Character UV
 		Vector2 luv[4] = {
@@ -117,9 +116,9 @@ public:
 		}
 		// Copy data to IVB
 		size_t i = 0;
-		for (int n = charCount-1; n >= 0; n--) {
+		for $ssrange(n, 0, charCount) {
 			unsigned int uvi = 0;
-			unsigned int lidx = Math::digit(number, n);
+			unsigned int lidx = Math::digit(number, charCount-n);
 			// Loop through each vertex and..
 			for $each(v, letter) {
 				// Increment letter's position
@@ -186,7 +185,7 @@ public:
 	FontData	font;
 	TextEffect	textEffect;
 	size_t		number;
-	Vector4		color;
+	Vector4		color = Color::WHITE;
 
 	Transform3D local;
 private:
