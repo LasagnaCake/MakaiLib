@@ -18,7 +18,7 @@ struct TextEffect {
 	TextEffectFunc effect = [] $texteffect {return v;};
 	bool enabled = false;
 };
-
+// TODO: Make this work
 class NumberLabel {
 public:
 	NumberLabel(size_t layer = 0, bool manual = false) {

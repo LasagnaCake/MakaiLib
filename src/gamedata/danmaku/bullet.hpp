@@ -126,12 +126,6 @@ public:
 		return this;
 	}
 
-	Transform2D local;
-
-	float currentSpeed		= 0;
-	float currentRotation	= 0;
-
-private:
 	void updateSprite() {
 		if (!sprite) return;
 		// Set sprite position
@@ -143,6 +137,12 @@ private:
 		// Set sprite scale
 		sprite->local.scale = Vector3(local.scale);
 	}
+
+	Transform2D local;
+
+	float currentSpeed		= 0;
+	float currentRotation	= 0;
+private:
 
 	float speedFactor		= 0;
 	float rotationFactor	= 0;
@@ -331,6 +331,7 @@ struct BulletManager: Entity {
 			last->settings = BulletData();
 			last->grazed = false;
 			last->taskers.clearTaskers();
+			last->updateSprite();
 			#ifdef $_PREVENT_BULLET_OVERFLOW_BY_WRAP
 			pbobw = 0;
 			#endif
@@ -349,6 +350,7 @@ struct BulletManager: Entity {
 		last->grazed = false;
 		last->taskers.clearTaskers();
 		if (pbobw > BULLET_COUNT) pbobw = 0;
+		last->updateSprite();
 		return last;
 		#endif
 	}
