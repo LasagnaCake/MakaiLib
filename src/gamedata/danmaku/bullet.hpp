@@ -57,6 +57,14 @@ public:
 	$tev Signal<Bullet*> onRebound;
 	$tev Signal<Bullet*> onShuttle;
 
+	float zIndex = 0;
+	float zScale = 0;
+
+	Transform2D local;
+
+	float currentSpeed		= 0;
+	float currentRotation	= 0;
+
 	void onFrame(float delta) {
 		if (free) return;
 		onBulletFrame(this);
@@ -129,19 +137,14 @@ public:
 	void updateSprite() {
 		if (!sprite) return;
 		// Set sprite position
-		sprite->local.position = Vector3(local.position);
+		sprite->local.position = Vector3(local.position, zIndex);
 		settings.hitbox.position = local.position;
 		// Set sprite rotation
 		if (settings.rotateSprite)
 			sprite->local.rotation.z = local.rotation;
 		// Set sprite scale
-		sprite->local.scale = Vector3(local.scale);
+		sprite->local.scale = Vector3(local.scale, zScale);
 	}
-
-	Transform2D local;
-
-	float currentSpeed		= 0;
-	float currentRotation	= 0;
 private:
 
 	float speedFactor		= 0;
