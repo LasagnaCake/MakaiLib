@@ -1,6 +1,6 @@
 struct FontData {
 	Texture2D*	texture = nullptr;
-	Vector2		frame = Vector2(8);
+	Vector2		frame = Vector2(16);
 };
 
 struct TextData {
