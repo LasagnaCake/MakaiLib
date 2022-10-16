@@ -12,6 +12,10 @@
 
 #define $maxof(TYPE) (std::numeric_limits<TYPE>::max())
 
+#ifndef nroot
+#define nroot(val, root) pow(val, 1.0/root)
+#endif // nroot
+
 namespace Math {
 	/// Math Constants.
 	const auto sqrt2		= 1.4142135623730950488016887242;
@@ -23,9 +27,45 @@ namespace Math {
 	const auto euler		= 2.7182818284590452353602874714;
 	const auto degrad		= 180.0 / pi;
 	const auto maribel		= euler - (sqrt2 - 1.0) * 1.2;
-	const size_t maxSizeT	= 0xffffffffffffffff;
+	const size_t maxSizeT	= $maxof(size_t);
 	const double infinity	= maxSizeT;
-	const double epsilon	= 1 / infinity;
+	const double epsilon	= 1.0 / infinity;
+
+	#ifndef SQRT2
+	#define SQRT2 $mth sqrt2
+	#endif // SQRT2
+
+	#ifndef HSQRT2
+	#define HSQRT2 $mth hsqrt2
+	#endif // HSQRT2
+
+	#ifndef LN2
+	#define LN2 $mth ln2
+	#endif // LN2
+
+	#ifndef PI
+	#define PI $mth pi
+	#endif // PI
+
+	#ifndef HPI
+	#define HPI $mth hpi
+	#endif // HPI
+
+	#ifndef TAU
+	#define TAU $mthtau
+	#endif // TAU
+
+	#ifndef EULER
+	#define EULER $mth euler
+	#endif // EULER
+
+	#ifndef DEGRAD
+	#define DEGRAD $mth degrad
+	#endif // DEGRAD
+
+	#ifndef MARIBEL
+	#define MARIBEL $mth maribel
+	#endif // DEGRAD
 
 	ANYTYPE_I min(T a, T b) {
 		return ((a < b) ? a : b);
@@ -103,6 +143,10 @@ namespace Math {
 
 	ANYTYPE_I wmin(T val, T min) {
 		return val + cmult(val, min);
+	}
+
+	ANYTYPE_I nrtn(T val) {
+		return (T)nroot(val, fabs(val));
 	}
 
 	inline size_t digitCount(size_t number) {
@@ -192,6 +236,10 @@ namespace Math {
 		}
 	}
 }
+
+#ifndef nrtn
+#define nrtn(val) $mth nrtn(val);
+#endif // nrtn
 
 #define $mth Math::
 #define $rng Math::Random::

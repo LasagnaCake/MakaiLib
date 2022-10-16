@@ -64,7 +64,7 @@ public:
 		fontTX.create("FT_Set1-Lotuscoder.png");
 		numb.font.texture = &fontTX;
 		numb.font.frame = Vector2(16);
-		numb.local.position = Vector3(16, -16, 0);
+		numb.local.position = Vector3(16, -16, 0) * getWindowScale();
 		numb.number = 1234567890;
 		Vector2 screenSpace = getWindowScale();
 		player.spawnPoint =
@@ -111,7 +111,7 @@ public:
 				};
 				b->settings.rotation = BulletParam{
 					coefficient,
-					coefficient + (Math::pi * 3.0),
+					coefficient + (PI * 3.0),
 					0.0006/3.0
 				};
 				b->settings.rebound = true;
@@ -120,7 +120,7 @@ public:
 				b->reset();
 			}
 			$debug(ebm.getFreeCount());
-			//rotAngle += (Math::pi/20.0);
+			//rotAngle += (PI/20.0);
 		};
 	}
 

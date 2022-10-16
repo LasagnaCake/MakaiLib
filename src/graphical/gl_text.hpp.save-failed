@@ -1,7 +1,6 @@
 struct FontData {
 	Texture2D*	texture = nullptr;
-	Vector2		frame = Vector2(8);
-	Vector2		scale = Vector2(1);
+	Vector2		frame = Vector2(16);
 };
 
 struct TextData {
@@ -19,7 +18,7 @@ struct TextEffect {
 	TextEffectFunc effect = [] $texteffect {return v;};
 	bool enabled = false;
 };
-
+// TODO: Make this work
 class NumberLabel {
 public:
 	NumberLabel(size_t layer = 0, bool manual = false) {
@@ -91,24 +90,24 @@ public:
 		// Call onDrawBegin function
 		onDrawBegin();
 		// Get character count
-		size_t charCount = std::to_string(number).size();
+		size_t charCount = Math::digitCount(number);
 		// Create Intermediary Vertex Buffer (IVB) to be displayed on screen
 		RawVertex* verts = new RawVertex[charCount * 6];
 		// Get transformation matrix
 		actorMatrix = VecMath::asGLMMatrix(local);
 		// Text Character Vertex
 		Vertex letter[4] = {
-			Vertex(Vector3(0)),
-			Vertex(Vector3(-font.scale.x, 0)),
-			Vertex(Vector3(0, font.scale.y)),
-			Vertex(Vector3(-font.scale.x, font.scale.y))
+			Vertex(Vector3(0, 0, 0)),
+			Vertex(Vector3(1, 0, 0)),
+			Vertex(Vector3(0, 1, 0)),
+			Vertex(Vector3(1, 1, 0))
 		};
 		// Text Character UV
 		Vector2 luv[4] = {
-			Vector2(1,1) / font.frame,
 			Vector2(0,1) / font.frame,
-			Vector2(1,2) / font.frame,
+			Vector2(1,1) / font.frame,
 			Vector2(0,2) / font.frame,
+			Vector2(1,2) / font.frame,
 		};
 		// Set text color
 //		#pragma GCC unroll 4
@@ -118,12 +117,12 @@ public:
 		// Copy data to IVB
 		size_t i = 0;
 		for $ssrange(n, 0, charCount) {
-			unsigned char uvi = 0;
-			unsigned char lidx = Math::digit(number, i);
+			unsigned int uvi = 0;
+			unsigned int lidx = Math::digit(number, charCount-n);
 			// Loop through each vertex and..
 			for $each(v, letter) {
 				// Increment letter's position
-				v.position.x -= font.scale.x;
+				v.position.x += 1;
 				// Decipher which digit to use
 				v.uv = luv[uvi] + Vector2(lidx / font.frame.x, 0);
 				// Increment UV index
@@ -186,7 +185,7 @@ public:
 	FontData	font;
 	TextEffect	textEffect;
 	size_t		number;
-	Vector4		color;
+	Vector4		color = Color::WHITE;
 
 	Transform3D local;
 private:
@@ -210,8 +209,8 @@ private:
 		glm::mat4 camera = Scene::camera.matrix();
 		glm::mat4 projection = Scene::camera.perspective();
 		$mainshader["textured"](true);
-		$mainshader["texture2D"](30);
-		font.texture->enable(30);
+		//$mainshader["texture2D"](29);
+		//font.texture->enable(29);
 		$mainshader["world"](Scene::world);
 		$mainshader["camera"](camera);
 		$mainshader["projection"](projection);

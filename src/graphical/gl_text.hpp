@@ -99,8 +99,8 @@ public:
 		Vertex letter[4] = {
 			Vertex(Vector3(0, 0, 0)),
 			Vertex(Vector3(1, 0, 0)),
-			Vertex(Vector3(0, 1, 0)),
-			Vertex(Vector3(1, 1, 0))
+			Vertex(Vector3(0, -1, 0)),
+			Vertex(Vector3(1, -1, 0))
 		};
 		// Text Character UV
 		Vector2 luv[4] = {
@@ -113,7 +113,7 @@ public:
 //		#pragma GCC unroll 4
 		for $each(v, letter) {
 			v.color = color;
-		}
+		}/*
 		// Copy data to IVB
 		size_t i = 0;
 		for $ssrange(n, 0, charCount) {
@@ -144,7 +144,13 @@ public:
 				verts[i+5] = toRawVertex(letter[3]);
 			}
 			i += 6;
-		}
+		}*/
+		verts[0] = toRawVertex(letter[0]);
+		verts[1] = toRawVertex(letter[1]);
+		verts[2] = toRawVertex(letter[2]);
+		verts[3] = toRawVertex(letter[1]);
+		verts[4] = toRawVertex(letter[2]);
+		verts[5] = toRawVertex(letter[3]);
 		// Set VBO as active
 		glBindBuffer(GL_ARRAY_BUFFER, vbo);
 		// Copy IVB to VBO
@@ -209,8 +215,8 @@ private:
 		glm::mat4 camera = Scene::camera.matrix();
 		glm::mat4 projection = Scene::camera.perspective();
 		$mainshader["textured"](true);
-		$mainshader["texture2D"](29);
-		font.texture->enable(29);
+		//$mainshader["texture2D"](29);
+		//font.texture->enable(29);
 		$mainshader["world"](Scene::world);
 		$mainshader["camera"](camera);
 		$mainshader["projection"](projection);
