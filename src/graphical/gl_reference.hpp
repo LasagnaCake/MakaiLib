@@ -1,7 +1,7 @@
 struct Empty {
 	virtual void onTransform() {}
-	virtual Empty* reset() {}
-	virtual Empty* transform() {}
+	virtual Empty* reset() {return this;}
+	virtual Empty* transform() {return this;}
 	bool fixed = true;
 	bool visible = true;
 	Transform3D local;

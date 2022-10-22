@@ -1,0 +1,4 @@
+#ifndef ANY_TYPE_VARIABLE_H
+#define ANY_TYPE_VARIABLE_H
+
+#endif // ANY_TYPE_VARIABLE_H

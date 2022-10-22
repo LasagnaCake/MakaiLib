@@ -9,6 +9,8 @@ struct BulletParam {
 	float start		= 0;
 	float end		= 0;
 	float omega		= 0;
+	float factor	= 0;
+	float current	= 0;
 };
 
 struct Pause {
@@ -20,8 +22,8 @@ struct BulletData {
 	// Collision data
 	CircleBounds2D	hitbox;
 	// Parameters
-	BulletParam	speed;
-	BulletParam	rotation;
+	BulletParam	vel;
+	BulletParam	rot;
 	Pause pause;
 	// Flags
 	bool shuttle		= false;
@@ -43,13 +45,13 @@ public:
 		onShuttle		= onFree;
 	}
 
-	BulletData settings;
+	BulletData params;
 
 	$ref AnimatedPlane* sprite = nullptr;
 
 	bool grazed = false;
 
-	$tsk MultiTasker taskers;
+	$tts MultiTasker<Bullet> taskers;
 
 	$tev Signal<Bullet*> onFree;
 	$tev Signal<Bullet*> onUnpause;
@@ -62,54 +64,51 @@ public:
 
 	Transform2D local;
 
-	float currentSpeed		= 0;
-	float currentRotation	= 0;
-
 	void onFrame(float delta) {
 		if (free) return;
 		onBulletFrame(this);
-		if (settings.pause.enabled) {
-			if (settings.pause.time < 0) return;
-			if ((--settings.pause.time) > 0) return;
-			settings.pause.enabled = false;
+		if (params.pause.enabled) {
+			if (params.pause.time < 0) return;
+			if ((--params.pause.time) > 0) return;
+			params.pause.enabled = false;
 			onUnpause(this);
 		}
-		taskers.yield();
-		speedFactor = Math::clamp(speedFactor + settings.speed.omega, 0.0f, 1.0f);
-		rotationFactor = Math::clamp(rotationFactor + settings.rotation.omega, 0.0f, 1.0f);
-		currentSpeed = Math::lerp(
-			settings.speed.start,
-			settings.speed.end,
-			speedFactor
+		taskers.yield(this);
+		params.vel.factor = Math::clamp(params.vel.factor + params.vel.omega, 0.0f, 1.0f);
+		params.rot.factor = Math::clamp(params.rot.factor + params.rot.omega, 0.0f, 1.0f);
+		params.vel.current = Math::lerp(
+			params.vel.start,
+			params.vel.end,
+			params.vel.factor
 		);
-		currentRotation = Math::lerp(
-			settings.rotation.start,
-			settings.rotation.end,
-			rotationFactor
+		params.rot.current = Math::lerp(
+			params.rot.start,
+			params.rot.end,
+			params.rot.factor
 		);
-		if (currentSpeed)
-			local.position += VecMath::angleV2(currentRotation) * currentSpeed * delta;
-		local.rotation = currentRotation;
+		if (params.vel.current)
+			local.position += VecMath::angleV2(params.rot.current) * params.vel.current * delta;
+		local.rotation = params.rot.current;
 		updateSprite();
 	}
 
 	Bullet* reset() {
 		setZero();
-		currentSpeed = settings.speed.start;
+		params.vel.current = params.vel.start;
 		local.rotation =
-		currentRotation = settings.rotation.start;
-		settings.hitbox.position = local.position;
+		params.rot.current = params.rot.start;
+		params.hitbox.position = local.position;
 		updateSprite();
 		sprite->local.rotation.z = local.rotation;
 		return this;
 	}
 
 	Bullet* setZero() {
-		currentSpeed =
+		params.vel.current =
 		local.rotation =
-		currentRotation =
-		speedFactor =
-		rotationFactor = 0;
+		params.rot.current =
+		params.vel.factor =
+		params.rot.factor = 0;
 		return this;
 	}
 
@@ -129,7 +128,7 @@ public:
 	}
 
 	Bullet* discard() {
-		if (settings.discardable)
+		if (params.discardable)
 			setFree();
 		return this;
 	}
@@ -138,17 +137,14 @@ public:
 		if (!sprite) return;
 		// Set sprite position
 		sprite->local.position = Vector3(local.position, zIndex);
-		settings.hitbox.position = local.position;
+		params.hitbox.position = local.position;
 		// Set sprite rotation
-		if (settings.rotateSprite)
+		if (params.rotateSprite)
 			sprite->local.rotation.z = local.rotation;
 		// Set sprite scale
 		sprite->local.scale = Vector3(local.scale, zScale);
 	}
 private:
-
-	float speedFactor		= 0;
-	float rotationFactor	= 0;
 
 	bool free = true;
 };
@@ -183,13 +179,13 @@ struct BulletManager: Entity {
 	void onFrame(float delta) override {
 		for $each(b, bullets) {
 			b.onFrame(delta);
-			if (!b.isFree() && b.settings.collidable)
+			if (!b.isFree() && b.params.collidable)
 			for $each(actor, $ecl groups.getGroup(ENEMY_LAYER)) {
 				auto a = ((AreaCircle2D*)actor);
 				if (
 					a->collision.enabled
 					&& $cdt withinBounds(
-						b.settings.hitbox,
+						b.params.hitbox,
 						a->getCircleBounds()
 					)
 				) {
@@ -197,7 +193,7 @@ struct BulletManager: Entity {
 					b.discard();
 				}
 			}
-			if (b.settings.rebound || b.settings.shuttle)
+			if (b.params.rebound || b.params.shuttle)
 				if (
 					! $cdt withinBounds(
 						b.local.position,
@@ -205,16 +201,16 @@ struct BulletManager: Entity {
 					)
 				) {
 					// Rebounding (reflecting) takes precedence over shuttling (wrapping)
-					if (b.settings.rebound) {
+					if (b.params.rebound) {
 						#define $wreflect(AA) AA = Math::pi - AA
 						// Check X
 						if (
 							b.local.position.x < board.x.min ||
 							b.local.position.x > board.x.max
 						) {
-							$wreflect(b.currentRotation);
-							$wreflect(b.settings.rotation.start);
-							$wreflect(b.settings.rotation.end);
+							$wreflect(b.params.rot.current);
+							$wreflect(b.params.rot.start);
+							$wreflect(b.params.rot.end);
 						}
 						#undef $wreflect
 						#define $wreflect(AA) AA = - AA
@@ -223,16 +219,16 @@ struct BulletManager: Entity {
 							b.local.position.y < board.y.min ||
 							b.local.position.y > board.y.max
 						) {
-							$wreflect(b.currentRotation);
-							$wreflect(b.settings.rotation.start);
-							$wreflect(b.settings.rotation.end);
+							$wreflect(b.params.rot.current);
+							$wreflect(b.params.rot.start);
+							$wreflect(b.params.rot.end);
 						}
 						b.onRebound(&b);
 						// Disable rebounding
-						b.settings.rebound = false;
+						b.params.rebound = false;
 						#undef $wreflect
 					}
-					else if (b.settings.shuttle) {
+					else if (b.params.shuttle) {
 						// Check X
 						if (b.local.position.x < board.x.min)
 							b.local.position.x = board.x.max;
@@ -245,13 +241,13 @@ struct BulletManager: Entity {
 							b.local.position.y = board.y.min;
 						b.onShuttle(&b);
 						// Disable shuttle
-						b.settings.shuttle = false;
+						b.params.shuttle = false;
 					}
 				}
-			if (b.settings.dope)
+			if (b.params.dope)
 				if (
 					! $cdt withinBounds(
-						b.settings.hitbox,
+						b.params.hitbox,
 						playfield
 					)
 				) {
@@ -292,10 +288,10 @@ struct BulletManager: Entity {
 
 	BulletList getInArea($cdt CircleBounds2D target) {
 		BulletList res;
-		for $eachif(b, bullets, !b.isFree() && b.settings.collidable) {
+		for $eachif(b, bullets, !b.isFree() && b.params.collidable) {
 			if (
 				$cdt withinBounds(
-					b.settings.hitbox,
+					b.params.hitbox,
 					target
 				)
 			) {
@@ -307,10 +303,10 @@ struct BulletManager: Entity {
 
 	BulletList getInArea($cdt BoxBounds2D target) {
 		BulletList res;
-		for $eachif(b, bullets, !b.isFree() && b.settings.collidable) {
+		for $eachif(b, bullets, !b.isFree() && b.params.collidable) {
 			if (
 				$cdt withinBounds(
-					b.settings.hitbox,
+					b.params.hitbox,
 					target
 				)
 			) res.push_back(&b);
@@ -331,7 +327,7 @@ struct BulletManager: Entity {
 	BULLET_TYPE* createBullet() {
 		for $eachif(b, bullets, b.isFree()) {
 			last = b.enable()->setZero();
-			last->settings = BulletData();
+			last->params = BulletData();
 			last->grazed = false;
 			last->taskers.clearTaskers();
 			last->updateSprite();
@@ -349,7 +345,7 @@ struct BulletManager: Entity {
 		);
 		#else
 		last = bullets[pbobw++].enable()->setZero();
-		last->settings = BulletData();
+		last->params = BulletData();
 		last->grazed = false;
 		last->taskers.clearTaskers();
 		if (pbobw > BULLET_COUNT) pbobw = 0;
@@ -360,7 +356,7 @@ struct BulletManager: Entity {
 
 	BULLET_TYPE* createBullet(BulletData bullet) {
 		BULLET_TYPE* b = createBullet();
-		b->settings = bullet;
+		b->params = bullet;
 		return b->reset();
 	}
 

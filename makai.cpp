@@ -103,20 +103,20 @@ public:
 				auto b = ebm.createBullet();
 				b->local.position = bPos;
 				coefficient = (Math::tau * ((i + 1) / 20.0)) + rotAngle;
-				b->settings.hitbox.radius = 1;
-				b->settings.speed = BulletParam{
+				b->params.hitbox.radius = 1;
+				b->params.vel = BulletParam{
 					-20,
 					20,
 					0.005
 				};
-				b->settings.rotation = BulletParam{
+				b->params.rot = BulletParam{
 					coefficient,
 					coefficient + (PI * 3.0),
 					0.0006/3.0
 				};
-				b->settings.rebound = true;
-				b->settings.pause.time = 30;
-				b->settings.pause.enabled = true;
+				b->params.rebound = true;
+				b->params.pause.time = 30;
+				b->params.pause.enabled = true;
 				b->reset();
 			}
 			$debug(ebm.getFreeCount());
