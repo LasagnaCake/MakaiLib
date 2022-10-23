@@ -42,7 +42,6 @@ public:
 
 	$dmk PlayerEntity2D player;
 
-	$txt NumberLabel	numb;
 	$rdt Texture2D		fontTX;
 
 	$bullet(Enemy) ebm;
@@ -62,10 +61,6 @@ public:
 		$debug(gameSeed);
 		$rng setSeed(gameSeed);
 		fontTX.create("FT_Set1-Lotuscoder.png");
-		numb.font.texture = &fontTX;
-		numb.font.frame = Vector2(16);
-		numb.local.position = Vector3(16, -16, 0) * getWindowScale();
-		numb.number = 1234567890;
 		Vector2 screenSpace = getWindowScale();
 		player.spawnPoint =
 		player.position =
@@ -115,8 +110,8 @@ public:
 					0.0006/3.0
 				};
 				b->params.rebound = true;
-				b->params.pause.time = 30;
-				b->params.pause.enabled = true;
+				b->pause.time = 30;
+				b->pause.enabled = true;
 				b->reset();
 			}
 			$debug(ebm.getFreeCount());

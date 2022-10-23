@@ -1,79 +1,31 @@
 #ifndef MAKAI_BASE_BULLET_H
 #define MAKAI_BASE_BULLET_H
 
-namespace {
-	using namespace CollisionData;
-}
+typedef ObjectParam	BulletParam;
 
-struct BulletParam {
-	float start		= 0;
-	float end		= 0;
-	float omega		= 0;
-	float factor	= 0;
-	float current	= 0;
-};
-
-struct Pause {
-	long time		= -1;
-	bool enabled	= false;
-};
-
-struct BulletData {
-	// Collision data
-	CircleBounds2D	hitbox;
-	// Parameters
-	BulletParam	vel;
-	BulletParam	rot;
-	Pause pause;
-	// Flags
+struct BulletData: ObjectData {
 	bool shuttle		= false;
 	bool rebound		= false;
-	bool discardable	= true;
-	bool collidable		= true;
 	bool rotateSprite	= true;
-	// Destroy on Playfield Exit
-	bool dope = true;
 };
 
-class Bullet {
+class Bullet: public DanmakuObject {
 public:
-	Bullet() {
-		onFree			= $tsignal(Bullet*) {};
-		onBulletFrame	= onFree;
-		onUnpause		= onFree;
-		onRebound		= onFree;
-		onShuttle		= onFree;
+	Bullet(): DanmakuObject() {
+		auto pass = $tsignal(Bullet*) {};
+		onRebound		= pass;
+		onShuttle		= pass;
 	}
 
-	BulletData params;
-
-	$ref AnimatedPlane* sprite = nullptr;
-
-	bool grazed = false;
-
-	$tts MultiTasker<Bullet> taskers;
-
-	$tev Signal<Bullet*> onFree;
-	$tev Signal<Bullet*> onUnpause;
-	$tev Signal<Bullet*> onBulletFrame;
 	$tev Signal<Bullet*> onRebound;
 	$tev Signal<Bullet*> onShuttle;
 
-	float zIndex = 0;
-	float zScale = 0;
+	BulletData params;
 
-	Transform2D local;
+	bool grazed = false;
 
-	void onFrame(float delta) {
-		if (free) return;
-		onBulletFrame(this);
-		if (params.pause.enabled) {
-			if (params.pause.time < 0) return;
-			if ((--params.pause.time) > 0) return;
-			params.pause.enabled = false;
-			onUnpause(this);
-		}
-		taskers.yield(this);
+	void onFrame(float delta) override {
+		DanmakuObject::onFrame(delta);
 		params.vel.factor = Math::clamp(params.vel.factor + params.vel.omega, 0.0f, 1.0f);
 		params.rot.factor = Math::clamp(params.rot.factor + params.rot.omega, 0.0f, 1.0f);
 		params.vel.current = Math::lerp(
@@ -92,7 +44,7 @@ public:
 		updateSprite();
 	}
 
-	Bullet* reset() {
+	Bullet* reset() override {
 		setZero();
 		params.vel.current = params.vel.start;
 		local.rotation =
@@ -103,37 +55,34 @@ public:
 		return this;
 	}
 
-	Bullet* setZero() {
+	Bullet* setZero() override {
 		params.vel.current =
 		local.rotation =
 		params.rot.current =
 		params.vel.factor =
+		pause.time =
 		params.rot.factor = 0;
+		pause.enabled = 0;
 		return this;
 	}
 
-	Bullet* enable() {
-		return setFree(false);
+	Bullet* enable() override {
+		return (Bullet*)setFree(false);
 	}
 
-	bool isFree() {
-		return free;
-	}
-
-	Bullet* setFree(bool state = true) {
-		free = state;
+	Bullet* setFree(bool state = true) override {
+		DanmakuObject::setFree(state);
 		if (sprite) sprite->visible = !free;
-		if (free) onFree(this);
 		return this;
 	}
 
-	Bullet* discard() {
+	Bullet* discard() override {
 		if (params.discardable)
 			setFree();
 		return this;
 	}
 
-	void updateSprite() {
+	void updateSprite() override {
 		if (!sprite) return;
 		// Set sprite position
 		sprite->local.position = Vector3(local.position, zIndex);
@@ -144,19 +93,17 @@ public:
 		// Set sprite scale
 		sprite->local.scale = Vector3(local.scale, zScale);
 	}
-private:
-
-	bool free = true;
 };
+
+#define $_b(VAR) ((Bullet*)(VAR))
+#define $b(VAR) (($dmk Bullet*)(VAR))
 
 typedef std::vector<Bullet*> BulletList;
 
 template <
 	size_t BULLET_COUNT,
 	size_t ACTOR_LAYER = $layer(ENEMY_BULLET),
-	size_t ENEMY_LAYER = $layer(PLAYER),
-	class BULLET_TYPE = Bullet,
-	class = $isderivedof(BULLET_TYPE, Bullet)
+	size_t ENEMY_LAYER = $layer(PLAYER)
 >
 struct BulletManager: Entity {
 	DERIVED_CLASS(BulletManager, Entity)
@@ -320,11 +267,11 @@ struct BulletManager: Entity {
 		return res;
 	}
 
-	BULLET_TYPE* getLastBullet() {
+	Bullet* getLastBullet() {
 		return last;
 	}
 
-	BULLET_TYPE* createBullet() {
+	Bullet* createBullet() {
 		for $eachif(b, bullets, b.isFree()) {
 			last = b.enable()->setZero();
 			last->params = BulletData();
@@ -354,13 +301,13 @@ struct BulletManager: Entity {
 		#endif
 	}
 
-	BULLET_TYPE* createBullet(BulletData bullet) {
-		BULLET_TYPE* b = createBullet();
+	Bullet* createBullet(BulletData bullet) {
+		Bullet* b = createBullet();
 		b->params = bullet;
 		return b->reset();
 	}
 
-	BULLET_TYPE bullets[BULLET_COUNT];
+	Bullet bullets[BULLET_COUNT];
 
 	bool haltProcedure = false;
 
@@ -369,11 +316,11 @@ private:
 	#ifdef $_PREVENT_BULLET_OVERFLOW_BY_WRAP
 	size_t pbobw = 0;
 	#endif
-	BULLET_TYPE* last = nullptr;
+	Bullet* last = nullptr;
 };
 
-typedef BulletManager<PLAYER_BULLET_COUNT, $layer(PLAYER_BULLET), $layer(ENEMY), Bullet>	PlayerBulletManager;
-typedef BulletManager<ENEMY_BULLET_COUNT, $layer(ENEMY_BULLET), $layer(PLAYER), Bullet>		EnemyBulletManager;
+typedef BulletManager<PLAYER_BULLET_COUNT, $layer(PLAYER_BULLET), $layer(ENEMY)>	PlayerBulletManager;
+typedef BulletManager<ENEMY_BULLET_COUNT, $layer(ENEMY_BULLET), $layer(PLAYER)>		EnemyBulletManager;
 
 PlayerBulletManager*	playerBulletManager = nullptr;
 EnemyBulletManager*		enemyBulletManager = nullptr;

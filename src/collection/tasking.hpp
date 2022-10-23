@@ -9,8 +9,8 @@
 /// Task parameter definition macro (AVOID USING).
 #define $T_CATCHR			[&]
 #define $T_CCATCH(cap...)	[&, cap]
-#define $T_PARAMS			(Tasking::Tasker* tasker) -> size_t
-#define $T_TPARAM(args...)	(Tasking::Tasker* tasker, args) -> size_t
+#define $T_PARAMS			($tsk Tasker* _tasker) -> size_t
+#define $T_TPARAM(T)		($tts Tasker<T>* _tasker, T* _self) -> size_t
 
 /// Task parameter definition macro.
 #define	$task			$T_CATCHR $T_PARAMS
