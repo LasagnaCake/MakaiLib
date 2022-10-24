@@ -49,11 +49,31 @@ public:
 	$cam Camera3D cam2D;
 	$cam Camera3D cam3D{$vec3(0, 5, 0), $vec3(0, 0, 10)};
 
+	$rdt Renderable tubeRend;
+
 	void setCamera2D() {
 		$scn camera = cam2D;
 	}
 
 	void onOpen() override {
+		const size_t sideCount = 8;
+		for $ssrange(i, 0, sideCount) {
+			$ref Plane* pl = tubeRend.createReference<$ref Plane>();
+			$vec2
+			p1 = $vmt angleV2((TAU / (float)sideCount) * (float)i),
+			p2 = $vmt angleV2((TAU / (float)sideCount) * (float)(i + 1));
+			$debug((TAU / (float)sideCount) * (float)i);
+			$vec3
+			tl = $vec3(p1, -5),
+			tr = $vec3(p1, 10),
+			bl = $vec3(p2, -5),
+			br = $vec3(p2, 10);
+			pl->setOrigin(tl, tr, bl, br);
+			pl->setColor(Color::hueToRGB(i/(float)sideCount));
+			tubeRend.unbindReference<$ref Plane>(pl);
+		}
+		tubeRend.trans.scale = 10;
+		tubeRend.trans.position.y = 5;
 		size_t gameSeed = $rng getNewSeed();
 		$debug(gameSeed);
 		$rng setSeed(gameSeed);
@@ -122,12 +142,16 @@ public:
 	}
 
 	void onDrawBegin() override {
+		cam3D.eye.x	= sin(getCurrentFrame() / 60.0) * 3.0;
+		cam3D.at.y	= cos(getCurrentFrame() / 60.0) * 3.0;
 	}
 
 	#define $rlayer(LAYER) ($layer(LAYER) / SUBLAYER_COUNT)
 	void onLayerDrawBegin(size_t layerID) override {
 		switch (layerID / SUBLAYER_COUNT) {
 		case $rlayer(WORLD):
+			$scn camera = cam3D;
+			getLayerBuffer().tint = Color::hueToRGB(getCurrentFrame() / 120.0);
 			break;
 		case $rlayer(PLAYER):
 			break;

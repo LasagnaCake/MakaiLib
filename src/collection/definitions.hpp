@@ -10,7 +10,7 @@
 #define $each(I, LIST) (auto& I: LIST)
 #define $eachif(I, LIST, CONDITION) $each(I, LIST) if(CONDITION)
 
-#define $iltf(A, B, C) (((A) > (B)) ? +(C) : -(C))
+#define $iltf(A, B, C) (((A) > (B)) ? -(C) : +(C))
 
 #define $range(I, BEGIN, END, STEP) (auto I = (BEGIN); I < (END); I += (STEP))
 #define $ssrange(I, BEGIN, END) $range(I, BEGIN, END, $iltf(BEGIN, END, 1))

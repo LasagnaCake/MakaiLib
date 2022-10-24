@@ -52,7 +52,7 @@ namespace Math {
 	#endif // HPI
 
 	#ifndef TAU
-	#define TAU $mthtau
+	#define TAU $mth tau
 	#endif // TAU
 
 	#ifndef EULER
