@@ -25,7 +25,9 @@ public:
 	bool grazed = false;
 
 	void onFrame(float delta) override {
+		if (free) return;
 		DanmakuObject::onFrame(delta);
+		if (pause.enabled) return;
 		params.vel.factor = Math::clamp(params.vel.factor + params.vel.omega, 0.0f, 1.0f);
 		params.rot.factor = Math::clamp(params.rot.factor + params.rot.omega, 0.0f, 1.0f);
 		params.vel.current = Math::lerp(
@@ -60,9 +62,7 @@ public:
 		local.rotation =
 		params.rot.current =
 		params.vel.factor =
-		pause.time =
 		params.rot.factor = 0;
-		pause.enabled = 0;
 		return this;
 	}
 
@@ -274,6 +274,7 @@ struct BulletManager: Entity {
 	Bullet* createBullet() {
 		for $eachif(b, bullets, b.isFree()) {
 			last = b.enable()->setZero();
+			last->pause = Pause();
 			last->params = BulletData();
 			last->grazed = false;
 			last->taskers.clearTaskers();
