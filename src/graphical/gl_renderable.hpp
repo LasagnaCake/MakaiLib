@@ -84,7 +84,7 @@ public:
 
 	template <
 		class T,
-		class = std::enable_if<std::is_base_of<Reference::Plane, T>::value>::type
+		class = $isderivedof(T, Reference::Plane)
 	>
 	T* createReference() {
 		Triangle* tris[2] = {
@@ -118,10 +118,36 @@ public:
 
 	template <
 		class T,
-		class = std::enable_if<std::is_base_of<Reference::Plane, T>::value>::type
+		class = $isderivedof(T, Reference::Plane)
 	>
 	inline T* getReference(size_t index) {
 		return (T*)references.plane[index];
+	}
+
+	template <
+		class T,
+		class = $isderivedof(T, Reference::Plane)
+	>
+	void deleteReference(T* refer, bool deleteTris = true) {
+		auto& rp = references.plane;
+		rp.erase(
+			std::remove_if(
+				rp.begin(),
+				rp.end(),
+				[&](T* e){return e == refer;}
+			),
+			rp.end()
+		);
+		auto& tris = refer->getTriangles();
+		if (deleteTris)
+			triangles.erase(
+				std::remove_if(
+					triangles.begin(),
+					triangles.end(),
+					[&](T* e){return (e == tris[0]) || (e == tris[1]);}
+				),
+				triangles.end()
+			);
 	}
 
 	/// Renders the object to the screen.
