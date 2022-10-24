@@ -248,8 +248,7 @@ namespace Vector{
 
 			/// Gets the tangent of the vector.
 			float tangent() {
-				Vector2 v = normalized();
-				return v.x / v.y;
+				return x / y;
 			}
 
 			Vector2 absolute() {

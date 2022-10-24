@@ -2,7 +2,7 @@ struct Empty {
 	virtual void onTransform() {}
 	virtual Empty* reset() {return this;}
 	virtual Empty* transform() {return this;}
-	virtual Triangle** getTriangles() {return nullptr;}
+	virtual Triangle** getBoundTriangles() {return nullptr;}
 	bool fixed = true;
 	bool visible = true;
 	Transform3D local;
@@ -41,6 +41,7 @@ public:
 
 	virtual ~Plane() {
 		tl = tr1 = tr2 = bl1 = bl2 = br = nullptr;
+		tris[0] = tris[1] = nullptr;
 	}
 
 	/// Sets the plane's origin.
@@ -139,7 +140,7 @@ public:
 		return this;
 	}
 
-	Triangle** getTriangles() override {
+	Triangle** getBoundTriangles() override {
 		return tris;
 	}
 

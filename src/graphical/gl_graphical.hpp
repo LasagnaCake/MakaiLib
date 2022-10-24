@@ -317,9 +317,9 @@ namespace EntityClass {
 		DERIVED_CLASS(RenderableEntity2D, Entity2D)
 
 		virtual void onFrame(float delta) {
-			mesh.transform.global.position		= Vector3(globalPosition(), zIndex);
-			mesh.transform.global.rotation.z	= globalRotation();
-			mesh.transform.global.scale			= Vector3(globalScale(), 1);
+			mesh.trans.position		= Vector3(globalPosition(), zIndex);
+			mesh.trans.rotation.z	= globalRotation();
+			mesh.trans.scale		= Vector3(globalScale(), 1);
 		}
 
 		float zIndex = 0;

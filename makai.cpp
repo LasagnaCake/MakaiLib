@@ -46,14 +46,11 @@ public:
 
 	$bullet(Enemy) ebm;
 
-	void setCamera2D(float scale = 64) {
-		$scn camera.eye	= Vector3(0,0,-10);
-		$scn camera.at	= Vector3(0,0,0);
-		$scn camera.up	= Vector3(0,1,0);
-		$scn camera.ortho.enabled = true;
-		Vector2 screenSpace = getWindowScale();
-		$scn camera.ortho.origin = 0;
-		$scn camera.ortho.size = screenSpace * -scale;
+	$cam Camera3D cam2D;
+	$cam Camera3D cam3D{$vec3(0, 5, 0), $vec3(0, 0, 10)};
+
+	void setCamera2D() {
+		$scn camera = cam2D;
 	}
 
 	void onOpen() override {
@@ -65,6 +62,7 @@ public:
 		player.spawnPoint =
 		player.position =
 		Vector2(32, -48) * screenSpace;
+		cam2D = $cam getCamera2D(64, screenSpace);
 		player.grazebox.radius = 2.5;
 		$rdt Renderable progress;
 		progress.setRenderLayer(Math::maxSizeT);

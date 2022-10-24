@@ -58,12 +58,36 @@ namespace Camera {
 				);
 			return glm::perspective(
 				fov,
-				aspect.x / aspect.y,
+				aspect.tangent(),
 				zNear,
 				zFar
 			);
 		}
 	};
+
+	Camera3D getCamera2D(Vector2 size) {
+		Camera3D camera;
+		camera.eye	= Vector3(0,0,-10);
+		camera.at	= Vector3(0,0,0);
+		camera.up	= Vector3(0,1,0);
+		camera.ortho.enabled = true;
+		camera.ortho.origin = 0;
+		camera.ortho.size = size * -1;
+		return camera;
+	}
+
+	Camera3D getCamera2D(float scale, Vector2 ratio) {
+		Camera3D camera;
+		camera.eye	= Vector3(0,0,-10);
+		camera.at	= Vector3(0,0,0);
+		camera.up	= Vector3(0,1,0);
+		camera.ortho.enabled	= true;
+		camera.ortho.origin		= 0;
+		camera.ortho.size		= ratio * -scale;
+		return camera;
+	}
 }
+
+#define $cam Camera::
 
 #endif // MAKAI_VIEWPERSPECTIVE_CAMERA

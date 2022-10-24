@@ -26,6 +26,7 @@ struct Familiar2D: Entity2D {
 	}
 
 	virtual Bullet* onShotRequest(bool focused) {
+		return nullptr;
 	}
 
 	Bullet* fireShot(bool focused) {

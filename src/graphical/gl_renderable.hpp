@@ -82,6 +82,7 @@ public:
 		return this;
 	}
 
+	/// Creates a reference and binds it to this object.
 	template <
 		class T,
 		class = $isderivedof(T, Reference::Plane)
@@ -116,6 +117,7 @@ public:
 		return plane;
 	}
 
+	/// Gets a reference bound to this object by index.
 	template <
 		class T,
 		class = $isderivedof(T, Reference::Plane)
@@ -124,30 +126,52 @@ public:
 		return (T*)references.plane[index];
 	}
 
+	/**
+	* Deletes a reference bound to this object.
+	*
+	* More specifically, it removes the reference
+	* and the triangles associated to it.
+	* It also deletes the reference.
+	*/
 	template <
 		class T,
 		class = $isderivedof(T, Reference::Plane)
 	>
-	void deleteReference(T* refer, bool deleteTris = true) {
+	void removeReference(T* ref) {
+		auto tris = ref->getBoundTriangles();
+		triangles.erase(
+			std::remove_if(
+				triangles.begin(),
+				triangles.end(),
+				[&](T* e){return (e == tris[0]) || (e == tris[1]);}
+			),
+			triangles.end()
+		);
+		dereference(ref);
+	}
+
+	/**
+	* Unbinds a reference bound to this object.
+	*
+	* More specifically, it removes the reference,
+	* but keeps the triangles associated to it.
+	* It also deletes the reference.
+	*/
+	template <
+		class T,
+		class = $isderivedof(T, Reference::Plane)
+	>
+	void unbindReference(T* ref) {
 		auto& rp = references.plane;
 		rp.erase(
 			std::remove_if(
 				rp.begin(),
 				rp.end(),
-				[&](T* e){return e == refer;}
+				[&](T* e){return e == ref;}
 			),
 			rp.end()
 		);
-		auto& tris = refer->getTriangles();
-		if (deleteTris)
-			triangles.erase(
-				std::remove_if(
-					triangles.begin(),
-					triangles.end(),
-					[&](T* e){return (e == tris[0]) || (e == tris[1]);}
-				),
-				triangles.end()
-			);
+		delete ref;
 	}
 
 	/// Renders the object to the screen.
@@ -164,14 +188,8 @@ public:
 		vertexCount = triangles.size() * 3;
 		// Create Intermediary Vertex Buffer (IVB) to be displayed on screen
 		RawVertex* verts = new RawVertex[(vertexCount)];
-		// Get transformation
-		Transform3D absolute(
-			$srpTransform(transform.local.position, transform.global),
-			transform.local.rotation + transform.global.rotation,
-			transform.local.scale * transform.global.scale
-		);
 		// Get transformation matrix
-		actorMatrix = VecMath::asGLMMatrix(absolute);
+		actorMatrix = VecMath::asGLMMatrix(trans);
 		// Copy data to IVB
 		size_t i = 0;
 		for (auto t: triangles) {
@@ -228,10 +246,7 @@ public:
 		GLuint fill			= GL_FILL;
 	} params;
 
-	struct {
-		Transform3D global;
-		Transform3D local;
-	} transform;
+	Transform3D trans;
 private:
 	/// List of references linked to this object.
 	struct {
