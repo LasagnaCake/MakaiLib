@@ -69,9 +69,20 @@ public:
 			bl = $vec3(p2, -3),
 			br = $vec3(p2, 12);
 			pl->setOrigin(tl, tr, bl, br);
-			pl->setColor(Color::hueToRGB(i/(float)sideCount));
+			$vec4
+			c1 = Color::hueToRGB(i/(float)sideCount),
+			c2 = Color::hueToPastel(i/(float)sideCount);
+			pl->setColor(c1, c2, c1, c2);
 			tubeRend.unbindReference<$ref Plane>(pl);
 		}
+		$ref Plane* pl = tubeRend.createReference<$ref Plane>();
+		pl->setOrigin(
+			$vec3(-2, 2, 9.5),
+			$vec3(2, 2, 9.5),
+			$vec3(-2, -2, 9.5),
+			$vec3(2, -2, 9.5)
+		);
+		tubeRend.unbindReference<$ref Plane>(pl);
 		tubeRend.trans.scale = $vec3($vec2(10), 2);
 		tubeRend.trans.position.y = 5;
 		size_t gameSeed = $rng getNewSeed();
@@ -154,7 +165,8 @@ public:
 		switch (layerID / SUBLAYER_COUNT) {
 		case $rlayer(WORLD):
 			$scn camera = cam3D;
-			getLayerBuffer().tint = Color::hueToRGB(getCurrentFrame() / 120.0);
+			//getLayerBuffer().tint = Color::hueToPastel(getCurrentFrame() / 240.0);
+			//getLayerBuffer().tint = Color::hueToRGB(getCurrentFrame() / 120.0);
 			break;
 		case $rlayer(PLAYER):
 			break;

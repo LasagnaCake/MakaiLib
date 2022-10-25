@@ -30,13 +30,13 @@ namespace Color {
 
 	// TODO: Optimize this
 	Vector4 hueToPastel(float hue) {
-		hue *= Math::tau;
+		hue *= PI;
 		Vector3 res(
 			cos(hue),
-			cos(hue + Math::tau * (1.0/3.0)),
-			cos(hue + Math::tau * (2.0/3.0))
+			cos(hue + TAU * (1.0/3.0)),
+			cos(hue + TAU * (2.0/3.0))
 		);
-		res = (res^2.0).normalized() * Math::sqrt2;
+		res = (res^2.0).normalized() * SQRT2;
 		return Vector4(res.clamped(0, 1), 1);
 	}
 
