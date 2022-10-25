@@ -98,6 +98,8 @@ struct PlayerEntity2D: AreaCircle2D {
 		optionShot.repeat = true;
 		optionShot.onSignal	= $signal {$debug("Option Shot!"); onOptionShotRequest();};
 		optionShot.delay = 20;
+		// Hitbox size
+		collision.size = 0.1;
 		// Set self as main player
 		setAsMainPlayer();
 	})

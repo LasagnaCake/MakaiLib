@@ -22,28 +22,30 @@ public:
 
 	BulletData params;
 
-	$twn EaseFunc interpolate = $twn ease.out.linear;
-
 	bool grazed = false;
 
 	void onFrame(float delta) override {
 		if (free) return;
 		DanmakuObject::onFrame(delta);
 		if (pause.enabled) return;
-		params.vel.factor = Math::clamp(params.vel.factor + params.vel.omega, 0.0f, 1.0f);
-		params.rot.factor = Math::clamp(params.rot.factor + params.rot.omega, 0.0f, 1.0f);
-		params.vel.current = interpolate(
-			params.vel.factor,
-			params.vel.start,
-			params.vel.end,
-			1.0f
-		);
-		params.rot.current = interpolate(
-			params.rot.factor,
-			params.rot.start,
-			params.rot.end,
-			1.0f
-		);
+		if (params.vel.omega) {
+			params.vel.factor = Math::clamp(params.vel.factor + params.vel.omega, 0.0f, 1.0f);
+			float vf = params.vel.easing(params.vel.factor, 0.0, 1.0, 1.0f);
+			params.vel.current = $mth lerp(
+				params.vel.start,
+				params.vel.end,
+				vf
+			);
+		}
+		if (params.rot.omega) {
+			params.rot.factor = Math::clamp(params.rot.factor + params.rot.omega, 0.0f, 1.0f);
+			float rf = params.rot.easing(params.rot.factor, 0.0, 1.0, 1.0f);
+			params.rot.current = $mth lerp(
+				params.rot.start,
+				params.rot.end,
+				rf
+			);
+		}
 		if (params.vel.current)
 			local.position += VecMath::angleV2(params.rot.current) * params.vel.current * delta;
 		local.rotation = params.rot.current;
@@ -284,7 +286,6 @@ struct BulletManager: Entity {
 			last->grazed = false;
 			last->taskers.clearTaskers();
 			last->updateSprite();
-			last->interpolate = $twn ease.out.linear;
 			#ifdef $_PREVENT_BULLET_OVERFLOW_BY_WRAP
 			pbobw = 0;
 			#endif
@@ -304,7 +305,6 @@ struct BulletManager: Entity {
 		last->taskers.clearTaskers();
 		if (pbobw > BULLET_COUNT) pbobw = 0;
 		last->updateSprite();
-		last->interpolate = $twn ease.out.linear;
 		return last;
 		#endif
 	}

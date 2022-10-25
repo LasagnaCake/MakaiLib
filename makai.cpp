@@ -56,7 +56,7 @@ public:
 	}
 
 	void onOpen() override {
-		const size_t sideCount = 8;
+		const size_t sideCount = 16;
 		for $ssrange(i, 0, sideCount) {
 			$ref Plane* pl = tubeRend.createReference<$ref Plane>();
 			$vec2
@@ -118,14 +118,16 @@ public:
 				coefficient = (Math::tau * ((i + 1) / 20.0)) + rotAngle;
 				b->params.hitbox.radius = 1;
 				b->params.vel = BulletParam{
+					$twn ease.out.linear,
 					-20,
 					20,
-					0.005
+					0//.01
 				};
 				b->params.rot = BulletParam{
+					$twn ease.out.elastic,
 					coefficient,
 					coefficient + (PI * 3.0),
-					0.0006/3.0
+					0.005/3.0
 				};
 				b->params.rebound = true;
 				b->pause.time = 30;

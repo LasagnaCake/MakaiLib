@@ -3,7 +3,7 @@
 
 #include "../anchors.hpp"
 
-namespace Color{
+namespace Color {
 	namespace {
 		using namespace Vector;
 

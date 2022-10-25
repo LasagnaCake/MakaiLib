@@ -31,13 +31,13 @@ public:
 		DanmakuObject::onFrame(delta);
 		params.vel.factor = Math::clamp(params.vel.factor + params.vel.omega, 0.0f, 1.0f);
 		params.rot.factor = Math::clamp(params.rot.factor + params.rot.omega, 0.0f, 1.0f);
-		params.vel.current = interpolate(
+		params.vel.current = params.vel.easing(
 			params.vel.factor,
 			params.vel.start,
 			params.vel.end,
 			1.0f
 		);
-		params.rot.current = interpolate(
+		params.rot.current = params.rot.easing(
 			params.rot.factor,
 			params.rot.start,
 			params.rot.end,
@@ -94,10 +94,10 @@ public:
 		p1 = $vec2(0, hWidth),
 		p2 = $vec2(params.length, -hWidth);
 		sprite->setOrigin(
-			$vec3(p1, zIndex),
-			$vec3(p2.x, p1.y, zIndex),
-			$vec3(p1.x, p2.y, zIndex),
-			$vec3(p2, zIndex)
+			$vec3(p1),
+			$vec3(p2.x, p1.y),
+			$vec3(p1.x, p2.y),
+			$vec3(p2)
 		);
 		if (head) {
 			head->setOrigin(

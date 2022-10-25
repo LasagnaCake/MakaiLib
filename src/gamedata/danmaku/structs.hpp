@@ -3,6 +3,7 @@ namespace {
 }
 
 struct ObjectParam {
+	$twn EaseFunc easing = $twn ease.out.linear;
 	float start		= 0;
 	float end		= 0;
 	float omega		= 0;
