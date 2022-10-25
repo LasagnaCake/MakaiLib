@@ -66,13 +66,13 @@ public:
 			$vec3
 			tl = $vec3(p1, -5),
 			tr = $vec3(p1, 10),
-			bl = $vec3(p2, -5),
-			br = $vec3(p2, 10);
+			bl = $vec3(p2, -3),
+			br = $vec3(p2, 12);
 			pl->setOrigin(tl, tr, bl, br);
 			pl->setColor(Color::hueToRGB(i/(float)sideCount));
 			tubeRend.unbindReference<$ref Plane>(pl);
 		}
-		tubeRend.trans.scale = 10;
+		tubeRend.trans.scale = $vec3($vec2(10), 2);
 		tubeRend.trans.position.y = 5;
 		size_t gameSeed = $rng getNewSeed();
 		$debug(gameSeed);

@@ -318,7 +318,8 @@ private:
 	void updateSprite() {
 		Transform2D self = globalTransform();
 		sprite->local.position		= Vector3(self.position, zIndex);
-		sprite->local.rotation.z	= self.rotation;
+		// For some reason the sprite is at a fucking angle sometimes
+		sprite->local.rotation.z	= self.rotation + 1;
 		sprite->local.scale			= Vector3(self.scale, 0);
 	}
 

@@ -4,8 +4,8 @@
 typedef ObjectParam	LaserParam;
 
 struct LaserData: ObjectData {
-	float length	= 1.0;
-	float width		= 1.0;
+	ObjectParam length;
+	ObjectParam width;
 	bool enabled	= false;
 };
 
@@ -46,6 +46,7 @@ public:
 		if (params.vel.current)
 			local.position += VecMath::angleV2(params.rot.current) * params.vel.current * delta;
 		local.rotation = params.rot.current;
+		setLaserShape();
 		updateSprite();
 	}
 
@@ -65,8 +66,10 @@ public:
 		local.rotation =
 		params.rot.current =
 		params.vel.factor =
-		params.width =
-		params.length =
+		params.width.current =
+		params.width.factor =
+		params.length.current =
+		params.length.factor =
 		params.rot.factor = 0;
 		return this;
 	}
@@ -89,10 +92,10 @@ public:
 
 	void setLaserShape() {
 		if (!sprite) return;
-		float hWidth = params.width / 2;
+		float hWidth = params.width.current / 2;
 		$vec2
 		p1 = $vec2(0, hWidth),
-		p2 = $vec2(params.length, -hWidth);
+		p2 = $vec2(params.length.current, -hWidth);
 		sprite->setOrigin(
 			$vec3(p1),
 			$vec3(p2.x, p1.y),
@@ -109,10 +112,10 @@ public:
 		}
 		if (tail) {
 			tail->setOrigin(
-				$vec3(-hWidth + params.length, hWidth),
-				$vec3(hWidth + params.length, hWidth),
-				$vec3(hWidth + params.length, -hWidth),
-				$vec3(-hWidth + params.length, -hWidth)
+				$vec3(-hWidth + params.length.current, hWidth),
+				$vec3(hWidth + params.length.current, hWidth),
+				$vec3(hWidth + params.length.current, -hWidth),
+				$vec3(-hWidth + params.length.current, -hWidth)
 			);
 		}
 	}
