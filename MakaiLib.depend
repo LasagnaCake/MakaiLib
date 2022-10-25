@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1666643210 source:d:\c(++) projects\_c++\game engine\makailib\makai.cpp
+1666655279 source:d:\c(++) projects\_c++\game engine\makailib\makai.cpp
 	<stdexcept>
 	"src/makai.hpp"
 	<windows.h>
@@ -2925,7 +2925,7 @@
 	<intrin.h>
 	<arm_neon.h>
 
-1665867335 d:\c(++) projects\_c++\game engine\makailib\src\collection\algebra.hpp
+1666645093 d:\c(++) projects\_c++\game engine\makailib\src\collection\algebra.hpp
 	<string>
 	<cmath>
 	<random>
@@ -2959,7 +2959,7 @@
 	<functional>
 	<vector>
 
-1665175333 d:\c(++) projects\_c++\game engine\makailib\src\collection\entity\2d3d.hpp
+1666649774 d:\c(++) projects\_c++\game engine\makailib\src\collection\entity\2d3d.hpp
 	"core.hpp"
 	"../vectorn.hpp"
 
@@ -3282,7 +3282,7 @@
 1533818822 d:\c(++) projects\_c++\game engine\makailib\lib\opengl\glm\gtc\type_ptr.inl
 	<cstring>
 
-1666642496 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_camera.hpp
+1666645909 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_camera.hpp
 	"../anchors.hpp"
 
 1554373468 d:\c(++) projects\_c++\game engine\makailib\lib\opengl\glm\gtx\rotate_vector.hpp
@@ -3324,9 +3324,9 @@
 	"gamedata/danmaku/spellcard.hpp"
 	"gamedata/danmaku/player.hpp"
 
-1666577299 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\bullet.hpp
+1666660016 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\bullet.hpp
 
-1666546570 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\laser.hpp
+1666660198 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\laser.hpp
 
 1663772564 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\spellcard.hpp
 
@@ -3351,7 +3351,7 @@
 1535531570 d:\c(++) projects\_c++\game engine\makailib\lib\opengl\glm\gtx\compatibility.inl
 	<limits>
 
-1666625168 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\player.hpp
+1666649795 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\player.hpp
 
 1665256935 d:\c(++) projects\_c++\game engine\makailib\src\makai.hpp
 	"anchors.hpp"
@@ -3363,7 +3363,7 @@
 
 1665851484 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_text.hpp
 
-1666541750 d:\c(++) projects\_c++\game engine\makailib\src\collection\definitions.hpp
+1666645382 d:\c(++) projects\_c++\game engine\makailib\src\collection\definitions.hpp
 
 1666577313 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\structs.hpp
 

@@ -144,6 +144,7 @@ public:
 	void onDrawBegin() override {
 		cam3D.eye.x	= sin(getCurrentFrame() / 60.0) * 3.0;
 		cam3D.at.y	= cos(getCurrentFrame() / 60.0) * 3.0;
+		tubeRend.trans.rotation.z = getCurrentFrame() / 180.0;
 	}
 
 	#define $rlayer(LAYER) ($layer(LAYER) / SUBLAYER_COUNT)
