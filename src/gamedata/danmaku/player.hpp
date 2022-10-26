@@ -189,7 +189,7 @@ struct PlayerEntity2D: AreaCircle2D {
 	void pichun() {
 		if (!collision.enabled) return;
 		collision.enabled = false;
-		sprite->setColor(Color::OPAQUE);
+		sprite->setColor(Color::SEMISOLID);
 		deathbomb.start();
 	}
 
@@ -275,13 +275,13 @@ struct PlayerEntity2D: AreaCircle2D {
 
 	void setInvincible() {
 		collision.enabled = false;
-		sprite->setColor(Color::OPAQUE);
+		sprite->setColor(Color::SEMISOLID);
 		invincibility.start();
 	}
 
 	void setInvincible(size_t time) {
 		collision.enabled = false;
-		sprite->setColor(Color::OPAQUE);
+		sprite->setColor(Color::SEMISOLID);
 		invincibility.start(time);
 	}
 
