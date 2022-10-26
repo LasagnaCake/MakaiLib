@@ -170,7 +170,6 @@ public:
 			//getLayerBuffer().tint = Color::hueToRGB(getCurrentFrame() / 120.0);
 			break;
 		case $rlayer(PLAYER):
-			getLayerBuffer().tint = Color::ALPHA((0.5 + sin(getCurrentFrame() / 12.0) / 2.2));
 			break;
 		case $rlayer(UI):
 			break;
