@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1666752577 source:d:\c(++) projects\_c++\game engine\makailib\makai.cpp
+1666823615 source:d:\c(++) projects\_c++\game engine\makailib\makai.cpp
 	<stdexcept>
 	"src/makai.hpp"
 	<windows.h>
@@ -2866,7 +2866,7 @@
 1665256929 d:\c(++) projects\_c++\game engine\makailib\src\program.hpp
 	"program/gl_program.hpp"
 
-1666566147 d:\c(++) projects\_c++\game engine\makailib\src\anchors.hpp
+1666819280 d:\c(++) projects\_c++\game engine\makailib\src\anchors.hpp
 	<iostream>
 	<string>
 	<vector>
@@ -2896,6 +2896,8 @@
 	<glm/gtc/matrix_transform.hpp>
 	<glm/gtc/type_ptr.hpp>
 	<SDL2/SDL.h>
+	<SDL2/SDL_ttf.h>
+	<SDL2/SDL_FontCache.h>
 	"collection/algebra.hpp"
 	"collection/definitions.hpp"
 	"collection/helper.hpp"
@@ -2996,7 +2998,7 @@
 	"graphical/gl_shader.hpp"
 	"graphical/gl_graphical.hpp"
 
-1666624998 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_graphical.hpp
+1666820690 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_graphical.hpp
 	"../anchors.hpp"
 	"gl_shader.hpp"
 	"gl_color.hpp"
@@ -3025,7 +3027,7 @@
 	<algorithm>
 	<regex>
 
-1666748960 d:\c(++) projects\_c++\game engine\makailib\src\program\gl_program.hpp
+1666823292 d:\c(++) projects\_c++\game engine\makailib\src\program\gl_program.hpp
 	"../anchors.hpp"
 	"../graphical.hpp"
 
@@ -3301,15 +3303,15 @@
 
 1533818822 d:\c(++) projects\_c++\game engine\makailib\lib\opengl\glm\gtx\rotate_vector.inl
 
-1666748930 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_framebuffer.hpp
+1666823748 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_framebuffer.hpp
 
 1666624911 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_reference.hpp
 
 1664664497 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_texture.hpp
 
-1666624806 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_renderable.hpp
+1666822051 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_renderable.hpp
 
-1666752758 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_color.hpp
+1666753251 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_color.hpp
 	"../anchors.hpp"
 
 1666544155 d:\c(++) projects\_c++\game engine\makailib\src\gamedata.hpp
@@ -3351,7 +3353,7 @@
 1535531570 d:\c(++) projects\_c++\game engine\makailib\lib\opengl\glm\gtx\compatibility.inl
 	<limits>
 
-1666752061 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\player.hpp
+1666823680 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\player.hpp
 
 1665256935 d:\c(++) projects\_c++\game engine\makailib\src\makai.hpp
 	"anchors.hpp"
@@ -3370,4 +3372,20 @@
 1666566429 d:\c(++) projects\_c++\game engine\makailib\src\collection\helper.hpp
 	<vector>
 	"definitions.hpp"
+
+1660931061 d:\c(++) projects\_c++\game engine\makailib\lib\sdl2_ttf-2.20.1\x86_64-w64-mingw32\include\sdl2\sdl_ttf.h
+	"SDL.h"
+	"begin_code.h"
+	"close_code.h"
+
+1660931061 d:\c(++) projects\_c++\game engine\makailib\lib\sdl2-2.0.10\x86_64-w64-mingw32\include\sdl2\sdl_ttf.h
+	"SDL.h"
+	"begin_code.h"
+	"close_code.h"
+
+1587999164 d:\c(++) projects\_c++\game engine\makailib\lib\sdl2-2.0.10\x86_64-w64-mingw32\include\sdl2\sdl_fontcache.h
+	"SDL.h"
+	"SDL_ttf.h"
+	"SDL_gpu.h"
+	<stdarg.h>
 

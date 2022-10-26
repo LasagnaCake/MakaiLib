@@ -174,6 +174,50 @@ public:
 		delete ref;
 	}
 
+	void sortTriangles() {
+		// Just give up at this point
+		return;
+		auto sortFunc = [](Triangle* a, Triangle* b) -> bool {
+			float
+				da = a->getCenter().z,
+				db = b->getCenter().z;
+			/*if (da == db)
+				return a->getCenter().y > b->getCenter().y;*/
+			return da < db;
+		};
+		if (!params.textured) {
+			vector<Triangle*> tris;
+			vector<Triangle*> solid;
+			vector<Triangle*> translucent;
+			// Separate solids from translucents
+			for $eachif(t, triangles, t->isSolid())
+				solid.push_back(t);
+			else
+				translucent.push_back(t);
+			// Sort each translucent
+			for $ssrange(i, 0, 10) {
+				std::sort(
+					translucent.begin(),
+					translucent.end(),
+					sortFunc
+				);
+			}
+			//std::reverse(translucent.begin(), translucent.end());
+			std::reverse(solid.begin(), solid.end());
+			// Join back together
+			tris = translucent;
+			for $each(t, solid)
+				tris.push_back(t);
+			triangles = tris;
+		} else {
+			std::sort(
+				triangles.begin(),
+				triangles.end(),
+				sortFunc
+			);
+		}
+	}
+
 	/// Renders the object to the screen.
 	DrawFunc render = $func() {
 		// If not active, return
@@ -182,6 +226,10 @@ public:
 		if (!triangles.size()) return;
 		// Call onDrawBegin function
 		onDrawBegin();
+		// If auto sort triangles, then do so
+		if (params.autoSort)
+			if ((vertexCount != (triangles.size() * 3)) || !vertexCount)
+				sortTriangles();
 		// Transform references (if applicable)
 		for (auto plane: references.plane) plane->transform();
 		// Get vertex count
@@ -240,6 +288,7 @@ public:
 	struct {
 		bool active			= true;
 		bool textured		= false;
+		bool autoSort		= false;
 		GLubyte texture		= 0;
 		Texture2D* image	= nullptr;
 		GLuint culling		= GL_FRONT_AND_BACK;
@@ -265,7 +314,7 @@ private:
 	GLuint vbo;
 
 	/// The amount of vertices this object has.
-	size_t vertexCount;
+	size_t vertexCount = 0;
 
 	void draw() {
 		// Render with basic shader

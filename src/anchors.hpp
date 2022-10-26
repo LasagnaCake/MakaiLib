@@ -6,7 +6,8 @@
 #ifdef _DEBUG_OUTPUT_
 #include <iostream>
 #define $errlog(TEXT) std::cerr << TEXT << std::endl
-#define $debug(TEXT) std::cout << (TEXT) << std::endl
+#define $debug(TEXT) std::cout << (TEXT); std::cout << "\n"
+#define $flush() std::cout << std::endl;
 #else
 #define $errlog(TEXT)
 #define $debug(TEXT)
@@ -66,7 +67,8 @@
 #define SDL_MAIN_HANDLED
 #endif
 #include <SDL2/SDL.h>
-//#include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL_FontCache.h>
 #endif
 
 /*

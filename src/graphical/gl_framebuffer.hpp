@@ -108,6 +108,7 @@ namespace Drawer {
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 			// This keeps the alpha from shitting itself
 			glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+			glDepthFunc(GL_LESS);
 			//glBlendFunc(GL_DST_ALPHA, GL_ONE_MINUS_DST_ALPHA);
 			//glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 			//glBlendFunc(GL_ONE_MINUS_DST_ALPHA, GL_ONE);
@@ -164,9 +165,9 @@ namespace Drawer {
 				Vertex v = rect[i];
 				v.position = $srpTransform(
 						v.position,
-						transform.position,
-						transform.rotation,
-						transform.scale
+						trans.position,
+						trans.rotation,
+						trans.scale
 					);
 				verts[i] = toRawVertex(v);
 			}
@@ -224,7 +225,7 @@ namespace Drawer {
 		}
 
 		/// The framebuffer's transformation.
-		Transform3D transform;
+		Transform3D trans;
 		/// The framebuffer's UV offset.
 		Vector2 uvShift;
 		/// The framebuffer's tint.

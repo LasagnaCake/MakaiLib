@@ -109,7 +109,7 @@ namespace Makai {
 			// Initialize SDL
 			$debug("Starting SDL...");
 			SDL_Init(SDL_INIT_VIDEO);
-			//TTF_Init();
+			TTF_Init();
 			$debug("Started!");
 			$debug("Creating window...");
 			// Create window and make active
@@ -293,9 +293,10 @@ namespace Makai {
 
 		/// Gets called whenever the program is rendering to the screen.
 		/// Happens before any object is rendered.
-		virtual void onDrawBegin()	{};
+		virtual void onDrawBegin()		{};
+		virtual void onPreFrameDraw()	{};
 		/// Happens after all objects are rendered.
-		virtual void onDrawEnd()	{};
+		virtual void onDrawEnd()		{};
 
 		/// Gets called every frame, along all other logic.
 		virtual void onLogicFrame()	{};
@@ -349,7 +350,7 @@ namespace Makai {
 			// Quit SDL
 			$debug("Ending SDL...");
 			SDL_Quit();
-			//TTF_Quit();
+			TTF_Quit();
 			$debug("SDL ended!");
 		}
 
@@ -381,6 +382,8 @@ namespace Makai {
 				// Call onLayerDrawEnd function
 				onLayerDrawEnd(layer);
 			}
+			// ?????
+			onPreFrameDraw();
 			// Render frame buffer
 			framebuffer.render(toFrameBufferData());
 			// Call rendering end function

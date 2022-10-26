@@ -1,0 +1,4 @@
+C:/Users/patri/Downloads/SDL_FontCache-master/SDL_FontCache-master/build/CMakeFiles/FontCache.dir
+C:/Users/patri/Downloads/SDL_FontCache-master/SDL_FontCache-master/build/CMakeFiles/FontCache-tests.dir
+C:/Users/patri/Downloads/SDL_FontCache-master/SDL_FontCache-master/build/CMakeFiles/edit_cache.dir
+C:/Users/patri/Downloads/SDL_FontCache-master/SDL_FontCache-master/build/CMakeFiles/rebuild_cache.dir

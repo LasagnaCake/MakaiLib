@@ -291,6 +291,17 @@ namespace RenderData {
 				this->verts[i] = t.verts[i];
 		}
 
+		Vector3 getCenter() {
+			Vector3 center = (verts[0].position + verts[1].position + verts[2].position);
+			center /= 3;
+			return center;
+		}
+
+		inline bool isSolid() {
+			#define _SOLID(VIDX) (verts[VIDX].color.w >= 1.0)
+			return _SOLID(0) && _SOLID(1) && _SOLID(2) && _SOLID(3);
+		}
+
 		virtual ~Triangle() {}
 
 		Vertex verts[3];
