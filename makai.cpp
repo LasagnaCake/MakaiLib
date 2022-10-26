@@ -47,7 +47,7 @@ public:
 	$bullet(Enemy) ebm;
 
 	$cam Camera3D cam2D;
-	$cam Camera3D cam3D{$vec3(0, 5, 0), $vec3(0, 0, 10)};
+	$cam Camera3D cam3D{$vec3(0, 5, -10), $vec3(0, 0, 0)};
 
 	$rdt Renderable tubeRend;
 
@@ -70,19 +70,19 @@ public:
 			br = $vec3(p2, 12);
 			pl->setOrigin(tl, tr, bl, br);
 			$vec4
-			c1 = Color::hueToRGB(i/(float)sideCount),
-			c2 = Color::hueToPastel(i/(float)sideCount);
+			c1 = Color::hueToRGB(i/(float)sideCount) ,
+			c2 = Color::hueToPastel(i/(float)sideCount)+ $vec4(.2,.2,.2,0);
 			pl->setColor(c1, c2, c1, c2);
 			tubeRend.unbindReference<$ref Plane>(pl);
 		}
-		$ref Plane* pl = tubeRend.createReference<$ref Plane>();
+		/*$ref Plane* pl = tubeRend.createReference<$ref Plane>();
 		pl->setOrigin(
 			$vec3(-2, 2, 9.5),
 			$vec3(2, 2, 9.5),
 			$vec3(-2, -2, 9.5),
 			$vec3(2, -2, 9.5)
 		);
-		tubeRend.unbindReference<$ref Plane>(pl);
+		tubeRend.unbindReference<$ref Plane>(pl);*/
 		tubeRend.trans.scale = $vec3($vec2(10), 2);
 		tubeRend.trans.position.y = 5;
 		size_t gameSeed = $rng getNewSeed();
@@ -148,6 +148,7 @@ public:
 			$debug(ebm.getFreeCount());
 			//rotAngle += (PI/20.0);
 		};
+		bulletSpawner.stop();
 	}
 
 	void onLogicFrame() override {
@@ -169,6 +170,7 @@ public:
 			//getLayerBuffer().tint = Color::hueToRGB(getCurrentFrame() / 120.0);
 			break;
 		case $rlayer(PLAYER):
+			getLayerBuffer().tint = Color::ALPHA((0.5 + sin(getCurrentFrame() / 12.0) / 2.2));
 			break;
 		case $rlayer(UI):
 			break;

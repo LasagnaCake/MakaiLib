@@ -140,11 +140,12 @@ namespace Makai {
 			$debug("Creating default shader...");
 			Shader::defaultShader.create();
 			$debug("Created!");
-			SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 1);
-			SDL_GL_SetAttribute(SDL_GL_BUFFER_SIZE, 1);
+			SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
+			SDL_GL_SetAttribute(SDL_GL_BUFFER_SIZE, 8);
 			glEnable(GL_BLEND);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-			//glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+			// This keeps the alpha from shitting itself
+			glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 			//glBlendFunc(GL_ONE_MINUS_DST_ALPHA, GL_ONE);
 			// Setup camera
 			$debug("Setting starting camera...");

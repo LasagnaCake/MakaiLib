@@ -3,7 +3,9 @@
 
 //#undef _DEBUG_OUTPUT_
 
-#include "src/program.hpp"
+#define $_PREVENT_BULLET_OVERFLOW_BY_WRAP
+
+#include "src/makai.hpp"
 
 #include <windows.h>
 
@@ -11,7 +13,7 @@
 
 using namespace $rdt Reference;
 using namespace Vector;
-using $gdt BulletParam;
+using $dmk BulletParam;
 
 class GameApp: public $mki Program {
 public:
@@ -30,82 +32,123 @@ public:
 		SLF::SLFData data = SLF::parseFile("shaders/base/base.slf");
 		$mainshader.destroy();
 		$mainshader.create(data);
-		player.mesh.setRenderLayer($layer(PLAYER));
-		$debug($drw layers.getGroups(&(player.mesh.render))[0]);
+		$setb(enemy) ebm;
 		maxFrameRate = 10.0;
 	};
 
-	$evt Timer bulletSpawner = $evt Timer(22, true);
+	$evt Timer bulletSpawner = $evt Timer(60, true);
 
 	float rotAngle = 0.0;
 
-	#define BULLET_COUNT (4096)
+	$dmk PlayerEntity2D player;
 
-	$gdt PlayerEntity2D player;
-	$gdt BulletManager<BULLET_COUNT, $gdt Bullet> testM;
+	$rdt Texture2D		fontTX;
 
-	void setCamera2D(float scale = 64) {
-		$scn camera.eye	= Vector3(0,0,-10);
-		$scn camera.at	= Vector3(0,0,0);
-		$scn camera.up	= Vector3(0,1,0);
-		$scn camera.ortho.enabled = true;
-		Vector2 screenSpace = getWindowSize().normalized();
-		$scn camera.ortho.origin = 0;
-		$scn camera.ortho.size = screenSpace * -scale;
+	$bullet(Enemy) ebm;
+
+	$cam Camera3D cam2D;
+	$cam Camera3D cam3D{$vec3(0, 5, -10), $vec3(0, 0, 0)};
+
+	$rdt Renderable tubeRend;
+
+	void setCamera2D() {
+		$scn camera = cam2D;
 	}
 
 	void onOpen() override {
-		Vector2 screenSpace = getWindowSize().normalized();
+		const size_t sideCount = 16;
+		for $ssrange(i, 0, sideCount) {
+			$ref Plane* pl = tubeRend.createReference<$ref Plane>();
+			$vec2
+			p1 = $vmt angleV2((TAU / (float)sideCount) * (float)i),
+			p2 = $vmt angleV2((TAU / (float)sideCount) * (float)(i + 1));
+			$debug((TAU / (float)sideCount) * (float)i);
+			$vec3
+			tl = $vec3(p1, -5),
+			tr = $vec3(p1, 10),
+			bl = $vec3(p2, -3),
+			br = $vec3(p2, 12);
+			pl->setOrigin(tl, tr, bl, br);
+			$vec4
+			c1 = Color::hueToRGB(i/(float)sideCount) ,
+			c2 = Color::hueToPastel(i/(float)sideCount)+ $vec4(.2,.2,.2,0);
+			pl->setColor(c1, c2, c1, c2);
+			tubeRend.unbindReference<$ref Plane>(pl);
+		}
+		/*$ref Plane* pl = tubeRend.createReference<$ref Plane>();
+		pl->setOrigin(
+			$vec3(-2, 2, 9.5),
+			$vec3(2, 2, 9.5),
+			$vec3(-2, -2, 9.5),
+			$vec3(2, -2, 9.5)
+		);
+		tubeRend.unbindReference<$ref Plane>(pl);*/
+		tubeRend.trans.scale = $vec3($vec2(10), 2);
+		tubeRend.trans.position.y = 5;
+		size_t gameSeed = $rng getNewSeed();
+		$debug(gameSeed);
+		$rng setSeed(gameSeed);
+		fontTX.create("FT_Set1-Lotuscoder.png");
+		Vector2 screenSpace = getWindowScale();
 		player.spawnPoint =
 		player.position =
 		Vector2(32, -48) * screenSpace;
+		cam2D = $cam getCamera2D(64, screenSpace);
+		player.grazebox.radius = 2.5;
 		$rdt Renderable progress;
 		progress.setRenderLayer(Math::maxSizeT);
 		Plane* bar = progress.createReference<Plane>();
 		setCamera2D();
-		float progTick = $scn camera.ortho.size.x / BULLET_COUNT;
+		float progTick = $scn camera.ortho.size.x / (ENEMY_BULLET_COUNT * 1.0);
 		size_t progCount = 0;
 		bar->local.scale.x = 0;
 		bool forceQuit = false;
-		testM.create(
+		ebm.create(
 			$signal {
 				bar->local.scale.x += progTick;
 				renderReservedLayer();
 				if $event(SDL_QUIT) {
 					forceQuit = true;
-					testM.haltProcedure = true;
+					ebm.haltProcedure = true;
 				}
 			}
 		);
-		Vector2 screen = $scn camera.ortho.size * Vector2(-1, 1);
-		$cdt BoxBounds2D area = testM.playfield = $cdt BoxBounds2D{
-			$cdt Projection{0, screen.x},
-			$cdt Projection{screen.y, 0}
-		};
+		Vector2 screenSize = $scn camera.ortho.size.absolute();
+		Vector2 screenPosition = Vector2(32, -32) * screenSpace;
+		$debug(screenSize.x);
+		ebm.playfield = $cdt makeBounds(screenPosition, screenSize * Vector2(1.5, 2.0));
+		ebm.board = $cdt makeBounds(screenPosition, screenSize);
 		if (forceQuit) {close(); return;}
 		bar->local.scale.x = 0;
 		bulletSpawner.onSignal = $signal {
 			float coefficient = 0;
+			Vector2 bPos = Vector2(32, -32) * getWindowScale();
 			for (size_t i = 0; i < 20; i++){
-				auto b = testM.createBullet();
-				b->local.position = Vector2(16, -16);
+				auto b = ebm.createBullet();
+				b->local.position = bPos;
 				coefficient = (Math::tau * ((i + 1) / 20.0)) + rotAngle;
-				b->settings.hitbox.radius = 1;
-				b->settings.speed = BulletParam{
+				b->params.hitbox.radius = 1;
+				b->params.vel = BulletParam{
+					$twn ease.out.linear,
 					-20,
 					20,
-					0.005
+					0//.01
 				};
-				b->settings.rotation = BulletParam{
+				b->params.rot = BulletParam{
+					$twn ease.out.elastic,
 					coefficient,
-					coefficient + (Math::pi * 3.0),
-					0.01/3.0
+					coefficient + (PI * 3.0),
+					0.005/3.0
 				};
+				b->params.rebound = true;
+				b->pause.time = 30;
+				b->pause.enabled = true;
 				b->reset();
 			}
-			$debug(testM.getFreeCount());
-			rotAngle += (Math::pi/20.0);
+			$debug(ebm.getFreeCount());
+			//rotAngle += (PI/20.0);
 		};
+		bulletSpawner.stop();
 	}
 
 	void onLogicFrame() override {
@@ -113,12 +156,19 @@ public:
 	}
 
 	void onDrawBegin() override {
+		cam3D.eye.x	= sin(getCurrentFrame() / 60.0) * 3.0;
+		cam3D.at.y	= cos(getCurrentFrame() / 60.0) * 3.0;
+		tubeRend.trans.rotation.z = getCurrentFrame() / 180.0;
 	}
 
-	#define $rlayer(LAYER) ($layer(LAYER) / 8)
+	#define $rlayer(LAYER) ($layer(LAYER) / SUBLAYER_COUNT)
 	void onLayerDrawBegin(size_t layerID) override {
-		switch (layerID / 8) {
+		switch (layerID / SUBLAYER_COUNT) {
 		case $rlayer(WORLD):
+			$scn camera = cam3D;
+			//getLayerBuffer().tint = Color::hueToPastel(getCurrentFrame() / 240.0);
+			//getLayerBuffer().tint = Color::hueToRGB(getCurrentFrame() / 120.0);
+			getLayerBuffer().tint = Color::ALPHA((0.5 + sin(getCurrentFrame() / 12.0) / 2.2));
 			break;
 		case $rlayer(PLAYER):
 			break;

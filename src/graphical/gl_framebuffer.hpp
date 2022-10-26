@@ -106,6 +106,9 @@ namespace Drawer {
 			glGenVertexArrays(1, &vao);
 			glGenBuffers(1, &vbo);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			// This keeps the alpha from shitting itself
+			glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+			//glBlendFunc(GL_DST_ALPHA, GL_ONE_MINUS_DST_ALPHA);
 			//glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 			//glBlendFunc(GL_ONE_MINUS_DST_ALPHA, GL_ONE);
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -226,11 +229,11 @@ namespace Drawer {
 		Vector2 uvShift;
 		/// The framebuffer's tint.
 		Vector4 tint = Color::WHITE;
+		// DO NOT SET TONE TO TRANSPARENT (1, 1, 1, 0) HERE.
 		/// The framebuffer's balance color.
 		Vector4 tone = Color::NONE;
-		// DO NOT SET TONE OR COLOR TO TRANSPARENT (1, 1, 1, 0) HERE.
 		/// The framebuffer's clear color.
-		Vector4 color = Color::NONE;
+		Vector4 color = Color::TRANSPARENT;
 		/// The framebuffer's shape.
 		Vertex rect[4];
 		/// The framebuffer's rendering shader.
