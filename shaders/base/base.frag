@@ -11,7 +11,7 @@ uniform bool alphaTest = false;
 uniform bool textured = false;
 uniform sampler2D texture2D;
 
-uniform float alphaClip = 0.245;
+uniform float alphaClip = 0.2;
 
 uniform vec4 albedo = vec4(1);
 
@@ -28,7 +28,9 @@ void main(void) {
 	else
 		color = fragColor;
 
-	if (color.w <= (fragColor.w * alphaClip)) discard;
+	if (textured)
+		if (color.w <= (fragColor.w * alphaClip))
+			discard;
 
 	if (fog) {
 		float fogValue = (fragDistance - fogNear) / fogFar;

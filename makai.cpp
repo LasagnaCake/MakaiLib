@@ -58,6 +58,24 @@ public:
 	void onOpen() override {
 		const size_t sideCount = 16;
 		tubeRend.params.autoSort = true;
+		for $ssrange(i, 0, sideCount) {
+			$ref Plane* pl = tubeRend.createReference<$ref Plane>();
+			$vec2
+			p1 = $vmt angleV2((TAU / (float)sideCount) * (float)i),
+			p2 = $vmt angleV2((TAU / (float)sideCount) * (float)(i + 1));
+			$debug((TAU / (float)sideCount) * (float)i);
+			$vec3
+			tl = $vec3(p1, -5),
+			tr = $vec3(p1, 10),
+			bl = $vec3(p2, -3),
+			br = $vec3(p2, 12);
+			pl->setOrigin(tl, tr, bl, br);
+			$vec4
+			c1 = Color::hueToRGB(i/(float)sideCount) ,
+			c2 = Color::hueToPastel(i/(float)sideCount)+ $vec4(.2,.2,.2,0);
+			pl->setColor(c1, c2, c1, c2);
+			tubeRend.unbindReference<$ref Plane>(pl);
+		}
 		for $ssrange(i, 0, 10) {
 			$ref Plane* pl = tubeRend.createReference<$ref Plane>();
 			pl->setOrigin(
@@ -76,24 +94,6 @@ public:
 			if (i == 10)
 				pl->setColor(Color::WHITE);
 			tubeRend.unbindReference<$ref Plane>(pl);//*/
-		}
-		for $ssrange(i, 0, sideCount) {
-			$ref Plane* pl = tubeRend.createReference<$ref Plane>();
-			$vec2
-			p1 = $vmt angleV2((TAU / (float)sideCount) * (float)i),
-			p2 = $vmt angleV2((TAU / (float)sideCount) * (float)(i + 1));
-			$debug((TAU / (float)sideCount) * (float)i);
-			$vec3
-			tl = $vec3(p1, -5),
-			tr = $vec3(p1, 10),
-			bl = $vec3(p2, -3),
-			br = $vec3(p2, 12);
-			pl->setOrigin(tl, tr, bl, br);
-			$vec4
-			c1 = Color::hueToRGB(i/(float)sideCount) ,
-			c2 = Color::hueToPastel(i/(float)sideCount)+ $vec4(.2,.2,.2,0);
-			pl->setColor(c1, c2, c1, c2);
-			tubeRend.unbindReference<$ref Plane>(pl);
 		}
 		tubeRend.trans.scale = $vec3($vec2(10), 2);
 		tubeRend.trans.position.y = 5;
