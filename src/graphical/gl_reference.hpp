@@ -144,7 +144,7 @@ public:
 		return tris;
 	}
 
-private:
+protected:
 
 	Triangle* tris[2] = {nullptr, nullptr};
 
