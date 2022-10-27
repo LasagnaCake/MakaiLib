@@ -58,8 +58,17 @@ public:
 	void onOpen() override {
 		const size_t sideCount = 16;
 		tubeRend.params.autoSort = true;
+		$ref Plane* pl = tubeRend.createReference<$ref Plane>();
+		pl->setOrigin(
+			$vec3(-2, 2, 12.5),
+			$vec3(2, 2, 12.5),
+			$vec3(-2, -2, 12.5),
+			$vec3(2, -2, 12.5)
+		);
+		pl->setColor(Color::WHITE);
+		tubeRend.unbindReference<$ref Plane>(pl);//*/
 		for $ssrange(i, 0, sideCount) {
-			$ref Plane* pl = tubeRend.createReference<$ref Plane>();
+			pl = tubeRend.createReference<$ref Plane>();
 			$vec2
 			p1 = $vmt angleV2((TAU / (float)sideCount) * (float)i),
 			p2 = $vmt angleV2((TAU / (float)sideCount) * (float)(i + 1));
@@ -77,22 +86,14 @@ public:
 			tubeRend.unbindReference<$ref Plane>(pl);
 		}
 		for $ssrange(i, 0, 10) {
-			$ref Plane* pl = tubeRend.createReference<$ref Plane>();
+			pl = tubeRend.createReference<$ref Plane>();
 			pl->setOrigin(
 				$vec3(-2, 2, 9.0 - i * 1.25),
 				$vec3(2, 2, 9.0 - i * 1.25),
 				$vec3(-2, -2, 9.0 - i * 1.25),
 				$vec3(2, -2, 9.0 - i * 1.25)
 			);
-			/*pl->setOrigin(
-				$vec3(-2, 2, i * 0.9),
-				$vec3(2, 2, i * 0.9),
-				$vec3(-2, -2, i * 0.9),
-				$vec3(2, -2, i * 0.9)
-			);*/
 			pl->setColor($vec4(Color::SEMILUCENT).compensated());
-			if (i == 10)
-				pl->setColor(Color::WHITE);
 			tubeRend.unbindReference<$ref Plane>(pl);//*/
 		}
 		tubeRend.trans.scale = $vec3($vec2(10), 2);
@@ -168,10 +169,11 @@ public:
 	}
 
 	void onDrawBegin() override {
+		float fac = (0.5 + (cos(getCurrentFrame() / 120.0) / 2.0));
 		cam3D.eye.x	= sin(getCurrentFrame() / 60.0) * 3.0;
 		cam3D.at.y	= cos(getCurrentFrame() / 60.0) * 3.0;
 		tubeRend.trans.rotation.z = getCurrentFrame() / 180.0;
-		tubeRend.trans.position.z = cos(getCurrentFrame() / 120.0) * 10;
+		tubeRend.trans.position.z = Math::lerp(-20.0f, 10.0f, fac);
 	}
 
 	#define $rlayer(LAYER) ($layer(LAYER) / SUBLAYER_COUNT)
