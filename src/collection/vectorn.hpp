@@ -863,6 +863,14 @@ namespace Vector{
 					abs(w)
 				);
 			}
+
+			Vector3 xyz() {
+				return Vector3(x, y, z);
+			}
+
+			Vector4 compensated() {
+				return Vector4(xyz() / w, w);
+			}
 	};
 }
 

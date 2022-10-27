@@ -29,7 +29,9 @@ namespace Math {
 	const auto maribel		= euler - (sqrt2 - 1.0) * 1.2;
 	const size_t maxSizeT	= $maxof(size_t);
 	const double infinity	= maxSizeT;
+	const float infinityF	= $maxof(unsigned long);
 	const double epsilon	= 1.0 / infinity;
+	const float epsilonF	= 1.0 / infinity;
 
 	#ifndef SQRT2
 	#define SQRT2 $mth sqrt2

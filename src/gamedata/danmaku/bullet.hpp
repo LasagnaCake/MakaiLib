@@ -92,7 +92,7 @@ public:
 	void updateSprite() override {
 		if (!sprite) return;
 		// Set sprite position
-		sprite->local.position = Vector3(local.position, zIndex);
+		sprite->local.position = Vector3(local.position, zIndex + _zOffset);
 		params.hitbox.position = local.position;
 		// Set sprite rotation
 		if (params.rotateSprite)
@@ -234,6 +234,7 @@ struct BulletManager: Entity {
 				bullets[i].sprite =
 					mesh.createReference<AnimatedPlane>();
 			bullets[i].setFree(true);
+			bullets[i]._setZOffset(Math::epsilonF / ((float)i));
 			onBulletCreated();
 			if (haltProcedure) return;
 		}

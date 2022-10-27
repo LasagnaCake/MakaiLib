@@ -1,5 +1,9 @@
 /*
 Do not touch this class.
+
+If your triangles are not rendering properly, restart your program.
+1: If it changes, that's normal. It just does that from time to time.
+2: If it stays the same, probably a transparency issue.
 */
 
 class Renderable {
@@ -174,19 +178,10 @@ public:
 		delete ref;
 	}
 
-	void sortTriangles() {
-		// Just give up at this point
-		return;
-		auto sortFunc = [](Triangle* a, Triangle* b) -> bool {
-			float
-				da = a->getCenter().z,
-				db = b->getCenter().z;
-			/*if (da == db)
-				return a->getCenter().y > b->getCenter().y;*/
-			return da < db;
-		};
+	vector<Triangle*> getSortedTriangles() {
+		vector<Triangle*> tris = triangles;
 		if (!params.textured) {
-			vector<Triangle*> tris;
+			tris.clear();
 			vector<Triangle*> solid;
 			vector<Triangle*> translucent;
 			// Separate solids from translucents
@@ -194,28 +189,15 @@ public:
 				solid.push_back(t);
 			else
 				translucent.push_back(t);
-			// Sort each translucent
-			for $ssrange(i, 0, 10) {
-				std::sort(
-					translucent.begin(),
-					translucent.end(),
-					sortFunc
-				);
-			}
+			//
 			//std::reverse(translucent.begin(), translucent.end());
-			std::reverse(solid.begin(), solid.end());
-			// Join back together
-			tris = translucent;
-			for $each(t, solid)
+			//std::reverse(solid.begin(), solid.end());
+			// Join back together, with translucents last
+			tris = solid;
+			for $each(t, translucent)
 				tris.push_back(t);
-			triangles = tris;
-		} else {
-			std::sort(
-				triangles.begin(),
-				triangles.end(),
-				sortFunc
-			);
 		}
+		return tris;
 	}
 
 	/// Renders the object to the screen.
@@ -226,21 +208,24 @@ public:
 		if (!triangles.size()) return;
 		// Call onDrawBegin function
 		onDrawBegin();
+		vector<Triangle*> tris = triangles;
 		// If auto sort triangles, then do so
-		if (params.autoSort)
+		if (params.autoSort) {
 			if ((vertexCount != (triangles.size() * 3)) || !vertexCount)
-				sortTriangles();
+				sortedTriangles = getSortedTriangles();
+			tris = sortedTriangles;
+		}
 		// Transform references (if applicable)
 		for (auto plane: references.plane) plane->transform();
 		// Get vertex count
-		vertexCount = triangles.size() * 3;
+		vertexCount = tris.size() * 3;
 		// Create Intermediary Vertex Buffer (IVB) to be displayed on screen
 		RawVertex* verts = new RawVertex[(vertexCount)];
 		// Get transformation matrix
 		actorMatrix = VecMath::asGLMMatrix(trans);
 		// Copy data to IVB
 		size_t i = 0;
-		for (auto t: triangles) {
+		for (auto t: tris) {
 			verts[i]	= toRawVertex(t->verts[0]);
 			verts[i+1]	= toRawVertex(t->verts[1]);
 			verts[i+2]	= toRawVertex(t->verts[2]);
@@ -301,6 +286,8 @@ private:
 	struct {
 		vector<Reference::Plane*> plane;
 	} references;
+
+	vector<Triangle*> sortedTriangles;
 
 	glm::mat4x4 actorMatrix;
 

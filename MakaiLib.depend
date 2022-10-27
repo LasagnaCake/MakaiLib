@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1666823615 source:d:\c(++) projects\_c++\game engine\makailib\makai.cpp
+1666832046 source:d:\c(++) projects\_c++\game engine\makailib\makai.cpp
 	<stdexcept>
 	"src/makai.hpp"
 	<windows.h>
@@ -2927,7 +2927,7 @@
 	<intrin.h>
 	<arm_neon.h>
 
-1666645093 d:\c(++) projects\_c++\game engine\makailib\src\collection\algebra.hpp
+1666828845 d:\c(++) projects\_c++\game engine\makailib\src\collection\algebra.hpp
 	<string>
 	<cmath>
 	<random>
@@ -2965,7 +2965,7 @@
 	"core.hpp"
 	"../vectorn.hpp"
 
-1666642544 d:\c(++) projects\_c++\game engine\makailib\src\collection\vectorn.hpp
+1666830733 d:\c(++) projects\_c++\game engine\makailib\src\collection\vectorn.hpp
 	<cmath>
 	<vector>
 	"algebra.hpp"
@@ -3027,7 +3027,7 @@
 	<algorithm>
 	<regex>
 
-1666823292 d:\c(++) projects\_c++\game engine\makailib\src\program\gl_program.hpp
+1666831696 d:\c(++) projects\_c++\game engine\makailib\src\program\gl_program.hpp
 	"../anchors.hpp"
 	"../graphical.hpp"
 
@@ -3309,9 +3309,9 @@
 
 1664664497 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_texture.hpp
 
-1666822051 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_renderable.hpp
+1666833057 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_renderable.hpp
 
-1666753251 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_color.hpp
+1666830516 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_color.hpp
 	"../anchors.hpp"
 
 1666544155 d:\c(++) projects\_c++\game engine\makailib\src\gamedata.hpp
@@ -3326,7 +3326,7 @@
 	"gamedata/danmaku/spellcard.hpp"
 	"gamedata/danmaku/player.hpp"
 
-1666662477 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\bullet.hpp
+1666829218 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\bullet.hpp
 
 1666723104 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\laser.hpp
 
@@ -3367,7 +3367,7 @@
 
 1666645382 d:\c(++) projects\_c++\game engine\makailib\src\collection\definitions.hpp
 
-1666660837 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\structs.hpp
+1666829209 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\structs.hpp
 
 1666566429 d:\c(++) projects\_c++\game engine\makailib\src\collection\helper.hpp
 	<vector>

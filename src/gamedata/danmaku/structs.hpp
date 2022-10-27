@@ -82,12 +82,18 @@ struct DanmakuObject {
 
 	virtual void updateSprite() {}
 
+	void _setZOffset(float offset) {
+		_zOffset = offset;
+	}
+
 	bool isFree() {
 		return free;
 	}
 
 protected:
 	bool free;
+
+	float _zOffset = 0;
 };
 
 typedef std::vector<DanmakuObject*> ObjectList;
