@@ -129,6 +129,8 @@ struct PlayerEntity2D: AreaCircle2D {
 
 	CircleBounds2D grazebox;
 
+	BoxBounds2D board;
+
 	bool isFocused	= false;
 	bool canBomb	= true;
 
@@ -227,6 +229,8 @@ struct PlayerEntity2D: AreaCircle2D {
 			position -= direction * speed.focused * delta;
 		else
 			position -= direction * speed.unfocused * delta;
+		// Clamp position
+		position = $cdt getBounded(position, board);
 		// Update sprite
 		updateSprite();
 		// Do focus entering & exiting action, acoordingly
@@ -327,7 +331,7 @@ private:
 		Transform2D self = globalTransform();
 		sprite->local.position		= Vector3(self.position, zIndex);
 		// For some reason the sprite is at a fucking angle sometimes
-		// sprite->local.rotation.z	= self.rotation + 1;
+		sprite->local.rotation.z	= self.rotation;
 		sprite->local.scale			= Vector3(self.scale, 0);
 	}
 

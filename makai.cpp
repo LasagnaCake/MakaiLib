@@ -150,6 +150,7 @@ public:
 		l->params.discardable = false;
 		l->reset();
 		//bulletSpawner.stop();
+		player.board = managers.bullet.enemy.board;
 	}
 
 	void onLogicFrame() override {
