@@ -37,6 +37,10 @@
 	DanmakuObject::onFrame(delta); \
 	if (pause.enabled) return
 
+#ifndef INVINCIBLE_COLOR
+#define INVINCIBLE_COLOR $vec4(Color::SEMISOLID).compensated()
+#endif // INVINCIBLE_COLOR
+
 namespace ItemType {
 	enum ItemType: size_t {
 		POWER_ITEM,

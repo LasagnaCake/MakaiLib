@@ -42,10 +42,6 @@ private:
 	}
 };
 
-#ifndef INVINCIBLE_COLOR
-#define INVINCIBLE_COLOR $vec4(Color::SEMISOLID).compensated()
-#endif // INVINCIBLE_COLOR
-
 struct PlayerEntity2D: AreaCircle2D {
 	DERIVED_CLASS(PlayerEntity2D, AreaCircle2D)
 	DERIVED_CONSTRUCTOR(PlayerEntity2D, AreaCircle2D, {
