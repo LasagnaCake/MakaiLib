@@ -98,7 +98,7 @@ public:
 
 	void setLaserShape() {
 		if (!sprite) return;
-		float hWidth = (params.width.current / (2 + !params.active));
+		float hWidth = (params.width.current / (2.0 + !params.active * 2.0));
 		float curLen = params.length.current;
 		sprite->setOrigin(
 			$vec3(0, hWidth),

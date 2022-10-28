@@ -146,7 +146,7 @@ public:
 		};
 		l->params.length.start = 30;
 		l->params.width.start = 2;
-		l->params.active = true;
+		//l->params.active = true;
 		l->params.discardable = false;
 		l->reset();
 		//bulletSpawner.stop();
