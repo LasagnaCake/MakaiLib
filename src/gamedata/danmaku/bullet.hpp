@@ -25,27 +25,9 @@ public:
 	bool grazed = false;
 
 	void onFrame(float delta) override {
-		if (free) return;
-		DanmakuObject::onFrame(delta);
-		if (pause.enabled) return;
-		if (params.vel.omega) {
-			params.vel.factor = Math::clamp(params.vel.factor + params.vel.omega, 0.0f, 1.0f);
-			float vf = params.vel.easing(params.vel.factor, 0.0, 1.0, 1.0f);
-			params.vel.current = $mth lerp(
-				params.vel.start,
-				params.vel.end,
-				vf
-			);
-		}
-		if (params.rot.omega) {
-			params.rot.factor = Math::clamp(params.rot.factor + params.rot.omega, 0.0f, 1.0f);
-			float rf = params.rot.easing(params.rot.factor, 0.0, 1.0, 1.0f);
-			params.rot.current = $mth lerp(
-				params.rot.start,
-				params.rot.end,
-				rf
-			);
-		}
+		DANMAKU_FRAME_BEGIN;
+		UPDATE_PARAM(vel)
+		UPDATE_PARAM(rot)
 		if (params.vel.current)
 			local.position += VecMath::angleV2(params.rot.current) * params.vel.current * delta;
 		local.rotation = params.rot.current;
@@ -234,7 +216,7 @@ struct BulletManager: Entity {
 				bullets[i].sprite =
 					mesh.createReference<AnimatedPlane>();
 			bullets[i].setFree(true);
-			bullets[i]._setZOffset(Math::epsilonF / ((float)i));
+			bullets[i]._setZOffset(Math::epsilonF * ((float)i));
 			onBulletCreated();
 			if (haltProcedure) return;
 		}

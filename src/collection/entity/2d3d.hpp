@@ -5,7 +5,6 @@
 #include "../vectorn.hpp"
 
 namespace EntityClass {
-
 	namespace {
 		using
 		Vector::Vector2,

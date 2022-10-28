@@ -37,10 +37,14 @@ private:
 	void updateSprite() {
 		Transform2D self = globalTransform();
 		sprite->local.position		= Vector3(self.position, zIndex);
-		sprite->local.rotation.z	= 0;
+		sprite->local.rotation.z	= self.rotation;
 		sprite->local.scale			= Vector3(self.scale, zScale);
 	}
 };
+
+#ifndef INVINCIBLE_COLOR
+#define INVINCIBLE_COLOR $vec4(Color::SEMISOLID).compensated()
+#endif // INVINCIBLE_COLOR
 
 struct PlayerEntity2D: AreaCircle2D {
 	DERIVED_CLASS(PlayerEntity2D, AreaCircle2D)
@@ -162,7 +166,10 @@ struct PlayerEntity2D: AreaCircle2D {
 		setInvincible(90);
 	}
 
-	virtual void onGraze(size_t count, BulletList blist) {
+	virtual void onGraze(size_t count, BulletList list) {
+		data.graze += count;
+	}
+	virtual void onGraze(size_t count, LineLaserList list) {
 		data.graze += count;
 	}
 	virtual void onItemGet(size_t type, float quantity) {
@@ -189,7 +196,7 @@ struct PlayerEntity2D: AreaCircle2D {
 	void pichun() {
 		if (!collision.enabled) return;
 		collision.enabled = false;
-		sprite->setColor(Color::SEMISOLID);
+		sprite->setColor(INVINCIBLE_COLOR);
 		deathbomb.start();
 	}
 
@@ -234,8 +241,9 @@ struct PlayerEntity2D: AreaCircle2D {
 		}
 		lbs.focus = isFocused;
 		// Do graze action
+		CircleBounds2D grazeShape = getGrazeBounds();
 		if(enemyBulletManager) {
-			BulletList blist = enemyBulletManager->getInArea(getGrazeBounds());
+			BulletList blist = enemyBulletManager->getInArea(grazeShape);
 			if (blist.size()) {
 				size_t grazeCount = 0;
 				for $eachif(b, blist, !b->grazed) {
@@ -246,6 +254,12 @@ struct PlayerEntity2D: AreaCircle2D {
 				$debug(grazeCount);
 				if (grazeCount)
 					onGraze(grazeCount, blist);
+			}
+		}
+		if(enemyLineLaserManager) {
+			LineLaserList lllist = enemyLineLaserManager->getInArea(grazeShape);
+			if (lllist.size()) {
+				onGraze(lllist.size(), lllist);
 			}
 		}
 		// Do shot actions
@@ -275,13 +289,13 @@ struct PlayerEntity2D: AreaCircle2D {
 
 	void setInvincible() {
 		collision.enabled = false;
-		sprite->setColor(Color::SEMISOLID);
+		sprite->setColor(INVINCIBLE_COLOR);
 		invincibility.start();
 	}
 
 	void setInvincible(size_t time) {
 		collision.enabled = false;
-		sprite->setColor(Color::SEMISOLID);
+		sprite->setColor(INVINCIBLE_COLOR);
 		invincibility.start(time);
 	}
 

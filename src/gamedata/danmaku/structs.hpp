@@ -29,6 +29,8 @@ struct ObjectData {
 	bool dope = true;
 };
 
+typedef std::vector<unsigned char> ObjectFlags;
+
 struct DanmakuObject {
 	DanmakuObject() {
 		auto pass = $tsignal(Object*) {};
@@ -44,6 +46,8 @@ struct DanmakuObject {
 	$tev Signal<DanmakuObject*> onFree;
 	$tev Signal<DanmakuObject*> onUnpause;
 	$tev Signal<DanmakuObject*> onObjectFrame;
+
+	ObjectFlags flags;
 
 	float zIndex = 0;
 	float zScale = 0;
@@ -74,7 +78,10 @@ struct DanmakuObject {
 
 	virtual DanmakuObject* setFree(bool state = true) {
 		free = state;
-		if (free) onFree(this);
+		if (free) {
+			onFree(this);
+			flags.clear();
+		}
 		return this;
 	}
 

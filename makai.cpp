@@ -32,8 +32,8 @@ public:
 		SLF::SLFData data = SLF::parseFile("shaders/base/base.slf");
 		$mainshader.destroy();
 		$mainshader.create(data);
-		$setb(enemy) ebm;
-		maxFrameRate = 10.0;
+		$setb(enemy)	ebm;
+		$setll(enemy)	ellm;
 	};
 
 	$evt Timer bulletSpawner = $evt Timer(60, true);
@@ -44,7 +44,8 @@ public:
 
 	$rdt Texture2D		fontTX;
 
-	$bullet(Enemy) ebm;
+	$bullet(Enemy)		ebm;
+	$linelaser(Enemy)	ellm;
 
 	$cam Camera3D cam2D;
 	$cam Camera3D cam3D{$vec3(0, 5, -10), $vec3(0, 0, 0)};
@@ -57,7 +58,8 @@ public:
 
 	void onOpen() override {
 		const size_t sideCount = 16;
-		tubeRend.params.autoSort = true;
+		//tubeRend.params.sorting.automatic = true;
+		//tubeRend.params.sorting.threshold = 0.99;
 		$ref Plane* pl = tubeRend.createReference<$ref Plane>();
 		pl->setOrigin(
 			$vec3(-2, 2, 12.5),
@@ -65,7 +67,7 @@ public:
 			$vec3(-2, -2, 12.5),
 			$vec3(2, -2, 12.5)
 		);
-		pl->setColor(Color::WHITE);
+		pl->setColor($vec4(0,0,0.5,1));
 		tubeRend.unbindReference<$ref Plane>(pl);//*/
 		for $ssrange(i, 0, sideCount) {
 			pl = tubeRend.createReference<$ref Plane>();
@@ -98,6 +100,7 @@ public:
 		}
 		tubeRend.trans.scale = $vec3($vec2(10), 2);
 		tubeRend.trans.position.y = 5;
+		//tubeRend.triangles = tubeRend.getSortedTriangles();
 		size_t gameSeed = $rng getNewSeed();
 		$debug(gameSeed);
 		$rng setSeed(gameSeed);
@@ -113,7 +116,6 @@ public:
 		Plane* bar = progress.createReference<Plane>();
 		setCamera2D();
 		float progTick = $scn camera.ortho.size.x / (ENEMY_BULLET_COUNT * 1.0);
-		size_t progCount = 0;
 		bar->local.scale.x = 0;
 		bool forceQuit = false;
 		ebm.create(
@@ -123,6 +125,18 @@ public:
 				if $event(SDL_QUIT) {
 					forceQuit = true;
 					ebm.haltProcedure = true;
+				}
+			}
+		);
+		progTick = $scn camera.ortho.size.x / (ENEMY_LASER_COUNT * 1.0);
+		bar->local.scale.x = 0;
+		ellm.create(
+			$signal {
+				bar->local.scale.x += progTick;
+				renderReservedLayer();
+				if $event(SDL_QUIT) {
+					forceQuit = true;
+					ellm.haltProcedure = true;
 				}
 			}
 		);
@@ -161,6 +175,18 @@ public:
 			$debug(ebm.getFreeCount());
 			//rotAngle += (PI/20.0);
 		};
+		Vector2 lPos = Vector2(32, -16) * getWindowScale();
+		auto l = ellm.createLineLaser();
+		l->local.position = lPos;
+		l->params.rot.easing = $twn ease.inOut.back;
+		l->params.rot.start = -PI;
+		l->params.rot.end = 0;
+		l->params.rot.omega = 0.005;
+		l->params.length.start = 20;
+		l->params.width.start = 2;
+		l->params.active = true;
+		l->params.discardable = false;
+		l->reset();
 		bulletSpawner.stop();
 	}
 
@@ -219,9 +245,7 @@ int main() {
 	#ifndef _DEBUG_OUTPUT_
 	ShowWindow(GetConsoleWindow(), SW_HIDE);
 	#endif // _DEBUG_OUTPUT_
-
 	GameApp prog(960, 720, "[TEST]");
-
 	// [[ Main Program Code BEGIN ]]
 	prog.maxFrameRate = 60;
 	// [[ Main Program Code END ]]

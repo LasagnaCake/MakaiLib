@@ -44,7 +44,8 @@ public:
 
 	$rdt Texture2D		fontTX;
 
-	$bullet(Enemy) ebm;
+	$bullet(Enemy)		ebm;
+	$linelaser(Enemy)	ellm;
 
 	$cam Camera3D cam2D;
 	$cam Camera3D cam3D{$vec3(0, 5, -10), $vec3(0, 0, 0)};
@@ -57,8 +58,19 @@ public:
 
 	void onOpen() override {
 		const size_t sideCount = 16;
+		//tubeRend.params.sorting.automatic = true;
+		//tubeRend.params.sorting.threshold = 0.99;
+		$ref Plane* pl = tubeRend.createReference<$ref Plane>();
+		pl->setOrigin(
+			$vec3(-2, 2, 12.5),
+			$vec3(2, 2, 12.5),
+			$vec3(-2, -2, 12.5),
+			$vec3(2, -2, 12.5)
+		);
+		pl->setColor(Color::WHITE);
+		tubeRend.unbindReference<$ref Plane>(pl);//*/
 		for $ssrange(i, 0, sideCount) {
-			$ref Plane* pl = tubeRend.createReference<$ref Plane>();
+			pl = tubeRend.createReference<$ref Plane>();
 			$vec2
 			p1 = $vmt angleV2((TAU / (float)sideCount) * (float)i),
 			p2 = $vmt angleV2((TAU / (float)sideCount) * (float)(i + 1));
@@ -76,24 +88,19 @@ public:
 			tubeRend.unbindReference<$ref Plane>(pl);
 		}
 		for $ssrange(i, 0, 10) {
-			$ref Plane* pl = tubeRend.createReference<$ref Plane>();
+			pl = tubeRend.createReference<$ref Plane>();
 			pl->setOrigin(
-				$vec3(-2, 2, 9.0 - i * 0.9),
-				$vec3(2, 2, 9.0 - i * 0.9),
-				$vec3(-2, -2, 9.0 - i * 0.9),
-				$vec3(2, -2, 9.0 - i * 0.9)
+				$vec3(-2, 2, 9.0 - i * 1.25),
+				$vec3(2, 2, 9.0 - i * 1.25),
+				$vec3(-2, -2, 9.0 - i * 1.25),
+				$vec3(2, -2, 9.0 - i * 1.25)
 			);
-			/*pl->setOrigin(
-				$vec3(-2, 2, i * 0.9),
-				$vec3(2, 2, i * 0.9),
-				$vec3(-2, -2, i * 0.9),
-				$vec3(2, -2, i * 0.9)
-			);*/
-			pl->setColor(Color::SEMILUCENT);
+			pl->setColor($vec4(Color::SEMILUCENT).compensated());
 			tubeRend.unbindReference<$ref Plane>(pl);//*/
 		}
 		tubeRend.trans.scale = $vec3($vec2(10), 2);
 		tubeRend.trans.position.y = 5;
+		//tubeRend.triangles = tubeRend.getSortedTriangles();
 		size_t gameSeed = $rng getNewSeed();
 		$debug(gameSeed);
 		$rng setSeed(gameSeed);
@@ -109,7 +116,6 @@ public:
 		Plane* bar = progress.createReference<Plane>();
 		setCamera2D();
 		float progTick = $scn camera.ortho.size.x / (ENEMY_BULLET_COUNT * 1.0);
-		size_t progCount = 0;
 		bar->local.scale.x = 0;
 		bool forceQuit = false;
 		ebm.create(
@@ -119,6 +125,18 @@ public:
 				if $event(SDL_QUIT) {
 					forceQuit = true;
 					ebm.haltProcedure = true;
+				}
+			}
+		);
+		progTick = $scn camera.ortho.size.x / (ENEMY_LASER_COUNT * 1.0);
+		bar->local.scale.x = 0;
+		ellm.create(
+			$signal {
+				bar->local.scale.x += progTick;
+				renderReservedLayer();
+				if $event(SDL_QUIT) {
+					forceQuit = true;
+					ellm.haltProcedure = true;
 				}
 			}
 		);
@@ -165,9 +183,11 @@ public:
 	}
 
 	void onDrawBegin() override {
+		float fac = (0.5 + (cos(getCurrentFrame() / 120.0) / 2.0));
 		cam3D.eye.x	= sin(getCurrentFrame() / 60.0) * 3.0;
 		cam3D.at.y	= cos(getCurrentFrame() / 60.0) * 3.0;
 		tubeRend.trans.rotation.z = getCurrentFrame() / 180.0;
+		tubeRend.trans.position.z = Math::lerp(-20.0f, 10.0f, fac);
 	}
 
 	#define $rlayer(LAYER) ($layer(LAYER) / SUBLAYER_COUNT)
@@ -217,7 +237,7 @@ int main() {
 	GameApp prog(960, 720, "[TEST]");
 
 	// [[ Main Program Code BEGIN ]]
-	prog.maxFrameRate = 60;
+	prog.maxFrameRate = 50;
 	// [[ Main Program Code END ]]
 	prog.run();
 	return 0;

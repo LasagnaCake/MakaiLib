@@ -54,11 +54,34 @@ namespace CollisionData {
 		float radius = 1;
 	};
 
+	/**
+	****************************************
+	*                                      *
+	*  Simple 2D Collision Data Structure  *
+	*                                      *
+	****************************************
+	*/
 	struct AreaCollisionData {
 		Vector2 size = Vector2(1);
 		bool enabled = true;
 		bool isCircle = false;
 	};
+
+	struct RayCast2D {
+		Vector2 position;
+		float length = 1;
+		float width	= 1;
+		float angle = 0;
+	};
+
+	inline RayCast2D makeRayCast(Vector2 from, Vector2 to, float width = 1) {
+		return RayCast2D {
+			from,
+			from.distanceTo(to),
+			width,
+			$vmt angleTo(from, to)
+		};
+	}
 
 	inline BoxBounds2D makeBoundsAB(Vector2 a, Vector2 b) {
 		return BoxBounds2D {
@@ -135,6 +158,40 @@ namespace CollisionData {
 			Vector2(box.x.min, box.y.min),
 			Vector2(box.x.max, box.y.max)
 		);
+	}
+
+	inline bool withinBounds(CircleBounds2D a, RayCast2D b) {
+		// Get distance between targets
+		float distance = a.position.distanceTo(b.position);
+		// If too distant, return
+		if (distance - b.length > a.radius + b.width)
+			return false;
+		// Get ray position to check
+		Vector2 rayPosition = VecMath::angleV2(b.angle) * distance + b.position;
+		// Check collision
+		return withinBounds(a, CircleBounds2D{rayPosition, b.width}) || withinBounds(a, CircleBounds2D{b.position, b.width});
+	}
+
+	// This is wrong.
+	inline bool withinBounds(BoxBounds2D a, RayCast2D b) {
+		// Get ray bounding box
+		BoxBounds2D boxB = makeBoundsAB(
+			b.position - VecMath::angleV2(b.angle + PI) * (b.width),
+			b.position + VecMath::angleV2(b.angle) * (b.length + b.width)
+		);
+		// Check collision
+		return withinBounds(a, boxB);
+	}
+
+	inline bool withinBounds(Vector2 a, RayCast2D b) {
+		// Get distance between targets
+		float distance = a.distanceTo(b.position);
+		// If too distant, return
+		if (distance > b.length + b.width) return false;
+		// Get ray position to check
+		Vector2 rayPosition = VecMath::angleV2(b.angle) * distance + b.position;
+		// Check collision
+		return withinBounds(a, CircleBounds2D{rayPosition, b.width});
 	}
 }
 

@@ -297,8 +297,8 @@ namespace RenderData {
 			return center;
 		}
 
-		inline bool isSolid() {
-			#define _SOLID(VIDX) (verts[VIDX].color.w >= 1.0)
+		inline bool isSolid(float clip = 1.0) {
+			#define _SOLID(VIDX) (verts[VIDX].color.w - clip >= 0.0)
 			return _SOLID(0) && _SOLID(1) && _SOLID(2) && _SOLID(3);
 		}
 

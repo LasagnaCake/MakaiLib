@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1666839057 source:d:\c(++) projects\_c++\game engine\makailib\makai.cpp
+1666914910 source:d:\c(++) projects\_c++\game engine\makailib\makai.cpp
 	<stdexcept>
 	"src/makai.hpp"
 	<windows.h>
@@ -2957,20 +2957,20 @@
 	<type_traits>
 	"event.hpp"
 
-1665248369 d:\c(++) projects\_c++\game engine\makailib\src\collection\event.hpp
+1666899080 d:\c(++) projects\_c++\game engine\makailib\src\collection\event.hpp
 	<functional>
 	<vector>
 
-1666649774 d:\c(++) projects\_c++\game engine\makailib\src\collection\entity\2d3d.hpp
+1666891448 d:\c(++) projects\_c++\game engine\makailib\src\collection\entity\2d3d.hpp
 	"core.hpp"
 	"../vectorn.hpp"
 
-1666830733 d:\c(++) projects\_c++\game engine\makailib\src\collection\vectorn.hpp
+1666902078 d:\c(++) projects\_c++\game engine\makailib\src\collection\vectorn.hpp
 	<cmath>
 	<vector>
 	"algebra.hpp"
 
-1665613217 d:\c(++) projects\_c++\game engine\makailib\src\collection\entity\collision.hpp
+1666916582 d:\c(++) projects\_c++\game engine\makailib\src\collection\entity\collision.hpp
 	"core.hpp"
 	"2d3d.hpp"
 	<map>
@@ -2998,7 +2998,7 @@
 	"graphical/gl_shader.hpp"
 	"graphical/gl_graphical.hpp"
 
-1666820690 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_graphical.hpp
+1666886726 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_graphical.hpp
 	"../anchors.hpp"
 	"gl_shader.hpp"
 	"gl_color.hpp"
@@ -3309,12 +3309,12 @@
 
 1664664497 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_texture.hpp
 
-1666833332 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_renderable.hpp
+1666895589 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_renderable.hpp
 
 1666830516 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_color.hpp
 	"../anchors.hpp"
 
-1666544155 d:\c(++) projects\_c++\game engine\makailib\src\gamedata.hpp
+1666895075 d:\c(++) projects\_c++\game engine\makailib\src\gamedata.hpp
 	"anchors.hpp"
 	"graphical.hpp"
 	"program.hpp"
@@ -3326,9 +3326,9 @@
 	"gamedata/danmaku/spellcard.hpp"
 	"gamedata/danmaku/player.hpp"
 
-1666829218 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\bullet.hpp
+1666899237 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\bullet.hpp
 
-1666723104 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\laser.hpp
+1666916272 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\laser.hpp
 
 1663772564 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\spellcard.hpp
 
@@ -3353,7 +3353,7 @@
 1535531570 d:\c(++) projects\_c++\game engine\makailib\lib\opengl\glm\gtx\compatibility.inl
 	<limits>
 
-1666823680 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\player.hpp
+1666917022 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\player.hpp
 
 1665256935 d:\c(++) projects\_c++\game engine\makailib\src\makai.hpp
 	"anchors.hpp"
@@ -3361,13 +3361,13 @@
 	"graphical.hpp"
 	"gamedata.hpp"
 
-1665680873 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\predefs.hpp
+1666899888 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\predefs.hpp
 
 1665851484 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_text.hpp
 
 1666645382 d:\c(++) projects\_c++\game engine\makailib\src\collection\definitions.hpp
 
-1666829209 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\structs.hpp
+1666910487 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\structs.hpp
 
 1666566429 d:\c(++) projects\_c++\game engine\makailib\src\collection\helper.hpp
 	<vector>

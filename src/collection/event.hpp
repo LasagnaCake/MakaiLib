@@ -5,9 +5,9 @@
 #include <vector>
 
 #define $_tsignal(...)	(...)->void
-#define $_ttrigger(...)	(...)->void
-#define $_tcall(...)	(...)->void
-#define $_tchain(...)	(...)->void
+#define $_ttrigger(...)	(...)->bool
+#define $_tcall(...)	(...)->Trigger
+#define $_tchain(...)	(...)->Signal
 
 #define	$tsignal(...)	[&] $_tsignal(...)
 #define	$ttrigger(...)	[&] $_ttrigger(...)

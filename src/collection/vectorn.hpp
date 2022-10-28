@@ -287,7 +287,7 @@ namespace Vector{
 				z = v;
 			}
 
-			Vector3(float x, float y, float z) {
+			Vector3(float x, float y, float z = 0.0) {
 				this->x = x;
 				this->y = y;
 				this->z = z;
@@ -584,7 +584,7 @@ namespace Vector{
 				w = v;
 			}
 
-			Vector4(float x, float y, float z, float w) {
+			Vector4(float x, float y, float z, float w = 0.0) {
 				this->x = x;
 				this->y = y;
 				this->z = z;

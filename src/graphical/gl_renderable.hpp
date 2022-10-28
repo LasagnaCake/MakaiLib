@@ -179,24 +179,22 @@ public:
 	}
 
 	vector<Triangle*> getSortedTriangles() {
-		vector<Triangle*> tris = triangles;
-		if (!params.textured) {
-			tris.clear();
-			vector<Triangle*> solid;
-			vector<Triangle*> translucent;
-			// Separate solids from translucents
-			for $eachif(t, triangles, t->isSolid())
-				solid.push_back(t);
-			else
-				translucent.push_back(t);
-			//
-			//std::reverse(translucent.begin(), translucent.end());
-			//std::reverse(solid.begin(), solid.end());
-			// Join back together, with translucents last
-			tris = solid;
-			for $each(t, translucent)
-				tris.push_back(t);
-		}
+		// I Give Up.
+		//return triangles;
+		vector<Triangle*> tris;
+		vector<Triangle*> solid;
+		vector<Triangle*> translucent;
+		// Separate solids from translucents
+		for $eachif(t, triangles, t->isSolid(params.sorting.threshold))
+			solid.push_back(t);
+		else
+			translucent.push_back(t);
+		//std::reverse(translucent.begin(), translucent.end());
+		//std::reverse(solid.begin(), solid.end());
+		// Join back together, with translucents last
+		tris = solid;
+		for $each(t, translucent)
+			tris.push_back(t);
 		return tris;
 	}
 
@@ -210,7 +208,7 @@ public:
 		onDrawBegin();
 		vector<Triangle*> tris = triangles;
 		// If auto sort triangles, then do so
-		if (params.autoSort) {
+		if (params.sorting.automatic) {
 			if ((vertexCount != (triangles.size() * 3)) || !vertexCount)
 				sortedTriangles = getSortedTriangles();
 			tris = sortedTriangles;
@@ -271,11 +269,16 @@ public:
 	vector<Triangle*> triangles;
 
 	struct {
+		struct {
+			bool automatic	= false;
+			float threshold	= 0.999f;
+		} sorting;
+		struct {
+			bool enabled		= false;
+			Texture2D* image	= nullptr;
+			GLubyte id			= 0;
+		} texture;
 		bool active			= true;
-		bool textured		= false;
-		bool autoSort		= false;
-		GLubyte texture		= 0;
-		Texture2D* image	= nullptr;
 		GLuint culling		= GL_FRONT_AND_BACK;
 		GLuint fill			= GL_FILL;
 	} params;
@@ -308,10 +311,10 @@ private:
 		Shader::defaultShader();
 		glm::mat4 camera = Scene::camera.matrix();
 		glm::mat4 projection = Scene::camera.perspective();
-		$mainshader["textured"](params.textured);
-		$mainshader["texture2D"](params.texture);
-		if (params.image)
-			params.image->enable(params.texture);
+		$mainshader["textured"](params.texture.enabled);
+		$mainshader["texture2D"](params.texture.id);
+		if (params.texture.image)
+			params.texture.image->enable(params.texture.id);
 		$mainshader["world"](Scene::world);
 		$mainshader["camera"](camera);
 		$mainshader["projection"](projection);
