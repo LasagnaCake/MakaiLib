@@ -257,7 +257,7 @@ struct BulletManager: Entity {
 	}
 
 	Bullet* getLastBullet() {
-		return last;
+		return (Bullet*)last;
 	}
 
 	Bullet* createBullet() {

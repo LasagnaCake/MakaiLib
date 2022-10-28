@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1666940215 source:d:\c(++) projects\_c++\game engine\makailib\makai.cpp
+1666953318 source:d:\c(++) projects\_c++\game engine\makailib\makai.cpp
 	<stdexcept>
 	"src/makai.hpp"
 	<windows.h>
@@ -3331,9 +3331,9 @@
 	"gamedata/danmaku/boss.hpp"
 	"gamedata/danmaku/stage.hpp"
 
-1666923636 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\bullet.hpp
+1666950458 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\bullet.hpp
 
-1666940149 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\laser.hpp
+1666950437 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\laser.hpp
 
 1663772564 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\spellcard.hpp
 
@@ -3372,7 +3372,7 @@
 
 1666645382 d:\c(++) projects\_c++\game engine\makailib\src\collection\definitions.hpp
 
-1666942704 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\structs.hpp
+1666949928 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\structs.hpp
 
 1666566429 d:\c(++) projects\_c++\game engine\makailib\src\collection\helper.hpp
 	<vector>
@@ -3394,7 +3394,7 @@
 	"SDL_gpu.h"
 	<stdarg.h>
 
-1666948405 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\program.hpp
+1666951725 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\program.hpp
 
 1666946750 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\enemy.hpp
 
@@ -3402,5 +3402,5 @@
 
 1666942540 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\stage.hpp
 
-1666948384 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\item.hpp
+1666953133 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\item.hpp
 

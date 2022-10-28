@@ -14,6 +14,7 @@
 using namespace $rdt Reference;
 using namespace Vector;
 using $dmk ObjectParam;
+using $dmk CollectibleData;
 
 class GameApp: public $dmk DanmakuApp {
 public:
@@ -149,8 +150,9 @@ public:
 		//l->params.active = true;
 		l->params.discardable = false;
 		l->reset();
-		//bulletSpawner.stop();
+		bulletSpawner.stop();
 		player.board = managers.bullet.enemy.board;
+		managers.item.createCollectible(CollectibleData(), 5, lPos, 3, $vec2(0.5));
 	}
 
 	void onLogicFrame() override {

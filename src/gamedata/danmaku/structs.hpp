@@ -35,7 +35,7 @@ typedef std::vector<unsigned char> ObjectFlags;
 
 struct DanmakuObject {
 	DanmakuObject() {
-		auto pass = $tsignal(Object*) {};
+		auto pass = $tsignal(DanmakuObject*) {};
 		onFree			= pass;
 		onObjectFrame	= pass;
 		onUnpause		= pass;

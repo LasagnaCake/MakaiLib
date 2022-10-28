@@ -1,13 +1,13 @@
 struct CollectibleData: GenericObjectData {
 	size_t type = $item(POWER);
-	size_t value = 1;
-	float gravity = 0.1;
+	float value = 1;
+	float gravity = 0.015;
 	bool spin = false;
 };
 
 struct Collectible: DanmakuObject {
 	Collectible() : DanmakuObject() {
-		auto pass = $tsignal(Object*) {};
+		auto pass = $tsignal(DanmakuObject*) {};
 	}
 
 	CollectibleData params;
@@ -15,18 +15,21 @@ struct Collectible: DanmakuObject {
 	void onFrame(float delta) override {
 		DANMAKU_FRAME_BEGIN;
 		if (params.spin) local.rotation += 1.0/60.0;
-		gravity = Math::clamp(gravity + params.gravity, -params.gravity * 10.0, params.gravity);
+		gravity = Math::clamp(gravity + params.gravity, -params.gravity * 10.0f, params.gravity * 10.0f);
 		local.position.y -= gravity;
+		updateSprite();
 	}
 
 	Collectible* reset() override {
 		setZero();
 		gravity = -params.gravity * 10.0;
+		return this;
 	}
 
 	Collectible* setZero() override {
 		sprite->local.rotation.z =
 		gravity = 0;
+		return this;
 	}
 
 	Collectible* setFree(bool state = true) override {
@@ -39,6 +42,10 @@ struct Collectible: DanmakuObject {
 		if (params.discardable)
 			setFree();
 		return this;
+	}
+
+	Collectible* enable() override {
+		return (Collectible*)setFree(false);
 	}
 
 	void updateSprite() override {
@@ -86,10 +93,10 @@ struct CollectibleManager: Entity {
 						a->collision.enabled
 						&& $cdt withinBounds(
 							item.params.hitbox,
-							a->getCircleBounds()
+							a->getGrazeBounds()
 						)
 					) {
-						a->on;
+						a->onItemGet(item.params.type, item.params.value);
 						item.discard();
 					}
 			}
@@ -170,7 +177,7 @@ struct CollectibleManager: Entity {
 	}
 
 	Collectible* getLastCollectible() {
-		return last;
+		return (Collectible*)last;
 	}
 
 	Collectible* createCollectible() {
@@ -206,6 +213,17 @@ struct CollectibleManager: Entity {
 		Collectible* c = createCollectible();
 		c->params = item;
 		return c->reset();
+	}
+
+	CollectibleList createCollectible(CollectibleData item, size_t count, Vector2 at, float radius = 1, Vector2 scale = Vector2(1), float angleOffset = 0) {
+		CollectibleList res;
+		for $ssrange(i, 0, count) {
+			res.push_back(createCollectible(item));
+			last->local.position = at + ($vmt angleV2(TAU * ((float)i / (float)count) + angleOffset) * radius);
+			last->local.scale = scale;
+			last->reset();
+		}
+		return res;
 	}
 
 	Collectible items[ITEM_COUNT];

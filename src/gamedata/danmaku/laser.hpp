@@ -272,7 +272,7 @@ struct LineLaserManager: Entity {
 	}
 
 	LineLaser* getLastLineLaser() {
-		return last;
+		return (LineLaser*)last;
 	}
 
 	LineLaser* createLineLaser() {
