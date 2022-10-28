@@ -46,13 +46,18 @@ namespace GameData {
 	}
 
 	namespace Danmaku {
+		AreaCircle2D* mainPlayer;
 		#include "gamedata/danmaku/predefs.hpp"
 		#include "gamedata/danmaku/structs.hpp"
 		#include "gamedata/danmaku/bullet.hpp"
 		#include "gamedata/danmaku/laser.hpp"
+		#include "gamedata/danmaku/player.hpp"
+		#include "gamedata/danmaku/item.hpp"
 		#include "gamedata/danmaku/program.hpp"
 		#include "gamedata/danmaku/spellcard.hpp"
-		#include "gamedata/danmaku/player.hpp"
+		#include "gamedata/danmaku/enemy.hpp"
+		#include "gamedata/danmaku/boss.hpp"
+		#include "gamedata/danmaku/stage.hpp"
 	}
 }
 

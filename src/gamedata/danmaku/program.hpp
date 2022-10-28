@@ -18,12 +18,14 @@ public:
 		SLF::SLFData data = SLF::parseFile(mainShaderPath);
 		$mainshader.destroy();
 		$mainshader.create(data);
-		// Set bullet managers (Enemy)
+		// Set managers (Enemy)
 		enemyBulletManager		= &managers.bullet.enemy;
 		enemyLineLaserManager	= &managers.lineLaser.enemy;
-		// Set bullet managers (Player)
+		// Set managers (Player)
 		playerBulletManager		= &managers.bullet.player;
 		playerLineLaserManager	= &managers.lineLaser.player;
+		// Set item manager
+		itemManager				= &managers.item;
 	};
 
 	struct {
@@ -36,6 +38,8 @@ public:
 			EnemyLineLaserManager	enemy;
 			PlayerLineLaserManager	player;
 		} lineLaser;
+
+		ItemManager item;
 	} managers;
 
 	$cam Camera3D cam2D;
@@ -51,6 +55,8 @@ public:
 		$scn camera = cam3D;
 	}
 
+	virtual void onLoading() {}
+
 	void onOpen() override {
 		// Set RNG Seed
 		gameSeed = $rng getNewSeed();
@@ -65,12 +71,14 @@ public:
 		bool doneCreating = false;
 		auto subTask = [&](){
 			while (!doneCreating) {
+				onLoading();
 				renderReservedLayer();
 				if $event(SDL_QUIT) {
 					managers.bullet.enemy.haltProcedure =
 					managers.lineLaser.enemy.haltProcedure =
 					managers.bullet.player.haltProcedure =
-					managers.lineLaser.player.haltProcedure = true;
+					managers.lineLaser.player.haltProcedure =
+					managers.item.haltProcedure = true;
 					close();
 				}
 			}
@@ -81,6 +89,7 @@ public:
 		managers.lineLaser.enemy.create();
 		managers.bullet.player.create();
 		managers.lineLaser.player.create();
+		managers.item.create();
 		doneCreating = true;
 		secondary.join();
 		// Set playfield

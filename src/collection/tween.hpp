@@ -428,7 +428,6 @@ namespace Tween{
 				isFinished = step++ >= stop;
 				// If begin != end, calculate step
 				if (from != to) {
-					// TODO: Find out why this returns infinity
 					factor = tweenStep(step, 0.0f, 1.0f, stop);
 					*value = Math::lerp(from, to, T(factor));
 				}

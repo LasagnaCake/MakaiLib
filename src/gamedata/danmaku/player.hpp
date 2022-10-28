@@ -1,8 +1,6 @@
 #ifndef MAKAI_BASE_PLAYER_H
 #define MAKAI_BASE_PLAYER_H
 
-AreaCircle2D* mainPlayer = nullptr;
-
 struct PlayerData {
 	size_t score	= 0;
 	size_t power	= 0;
@@ -110,10 +108,7 @@ struct PlayerEntity2D: AreaCircle2D {
 	$ref AnimatedPlane*	sprite;
 	$mki InputManager	input;
 
-	struct {
-		float main		= 5;
-		float option	= 1;
-	} damage;
+	float damage = 3;
 
 	Vector2 spawnPoint	= Vector2(0, 0);
 

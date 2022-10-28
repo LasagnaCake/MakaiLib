@@ -16,17 +16,19 @@ struct Pause {
 	bool enabled	= false;
 };
 
-struct ObjectData {
+struct GenericObjectData {
 	// Collision data
 	CircleBounds2D	hitbox;
-	// Parameters
-	ObjectParam	vel;
-	ObjectParam	rot;
 	// Flags
 	bool discardable	= true;
 	bool collidable		= true;
 	// Destroy on Playfield Exit
 	bool dope = true;
+};
+
+struct ObjectData: GenericObjectData {
+	ObjectParam	vel;
+	ObjectParam	rot;
 };
 
 typedef std::vector<unsigned char> ObjectFlags;
