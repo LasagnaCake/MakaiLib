@@ -15,104 +15,7 @@ using namespace $rdt Reference;
 using namespace Vector;
 using $dmk ObjectParam;
 
-class DanmakuApp: public $mki Program {
-public:
-	DanmakuApp(
-		unsigned int width,
-		unsigned int height,
-		std::string windowTitle,
-		bool fullscreen = false,
-		std::string bufferShaderPath = "shaders/framebuffer/compose.slf",
-		std::string mainShaderPath = "shaders/base/base.slf"
-	) : Program (
-			width,
-			height,
-			windowTitle,
-			fullscreen,
-			bufferShaderPath
-	) {
-		// Create main shader
-		SLF::SLFData data = SLF::parseFile(mainShaderPath);
-		$mainshader.destroy();
-		$mainshader.create(data);
-		// Set bullet managers
-		$setb(enemy)	ebm;
-		$setll(enemy)	ellm;
-	};
-
-	$bullet(Enemy)		ebm;
-	$linelaser(Enemy)	ellm;
-
-	$cam Camera3D cam2D;
-	$cam Camera3D cam3D{$vec3(0, 5, -10), $vec3(0, 0, 0)};
-
-	size_t gameSeed = 0;
-
-	void setCamera2D() {
-		$scn camera = cam2D;
-	}
-
-	void setCamera3D() {
-		$scn camera = cam3D;
-	}
-
-	void onOpen() override {
-		// Set RNG Seed
-		gameSeed = $rng getNewSeed();
-		$debug(gameSeed);
-		$rng setSeed(gameSeed);
-		// Create 2D Camera
-		Vector2 screenSpace = getWindowScale();
-		cam2D = $cam getCamera2D(64, screenSpace);
-		// Set 2D Camera
-		setCamera2D();
-		// Create thread for processing input
-		bool doneCreating = false;
-		auto subTask = [&](){
-			while (!doneCreating) {
-				if $event(SDL_QUIT) {
-					ebm.haltProcedure	= true;
-					ellm.haltProcedure	= true;
-					close();
-				}
-			}
-		};
-		std::thread secondary(subTask);
-		// Create things
-		ebm.create();
-		ellm.create();
-		doneCreating = true;
-		secondary.join();
-		// Set playfield
-		Vector2 screenSize = $scn camera.ortho.size.absolute();
-		Vector2 screenPosition = Vector2(32, -32) * screenSpace;
-		ebm.playfield = $cdt makeBounds(screenPosition, screenSize * Vector2(1.5, 2.0));
-		ebm.board = $cdt makeBounds(screenPosition, screenSize);
-	}
-
-	#define $rlayer(LAYER) ($layer(LAYER) / SUBLAYER_COUNT)
-	void onLayerDrawBegin(size_t layerID) override {
-		switch (layerID / SUBLAYER_COUNT) {
-		case $rlayer(WORLD):
-			setCamera3D();
-			break;
-		case $rlayer(PLAYER):
-			break;
-		case $rlayer(UI):
-			break;
-		default:
-			break;
-		}
-	}
-	#undef $rlayer
-
-	void onLayerDrawEnd(size_t layerID) override {
-		setCamera2D();
-		getLayerBuffer().tint = Color::WHITE;
-	}
-};
-
-class GameApp: public DanmakuApp {
+class GameApp: public $dmk DanmakuApp {
 public:
 	GameApp(
 		unsigned int width,
@@ -194,7 +97,7 @@ public:
 			float coefficient = 0;
 			Vector2 bPos = Vector2(32, -32) * getWindowScale();
 			for (size_t i = 0; i < 20; i++){
-				auto b = ebm.createBullet();
+				auto b = managers.bullet.enemy.createBullet();
 				b->local.position = bPos;
 				coefficient = (Math::tau * ((i + 1) / 20.0)) + rotAngle;
 				b->params.hitbox.radius = 1;
@@ -219,7 +122,7 @@ public:
 		};
 		// Create test laser A
 		Vector2 lPos = Vector2(32, -16) * getWindowScale();
-		auto l = ellm.createLineLaser();
+		auto l = managers.lineLaser.enemy.createLineLaser();
 		l->local.position = lPos;
 		l->params.rot = ObjectParam {
 			$twn ease.inOut.back,
@@ -233,7 +136,7 @@ public:
 		l->params.discardable = false;
 		l->reset();
 		// Test laser B
-		l = ellm.createLineLaser();
+		l = managers.lineLaser.enemy.createLineLaser();
 		l->local.position = lPos;
 		l->params.rot = ObjectParam {
 			$twn ease.inOut.back,
@@ -263,9 +166,9 @@ public:
 
 	#define $rlayer(LAYER) ($layer(LAYER) / SUBLAYER_COUNT)
 	void onLayerDrawBegin(size_t layerID) override {
-		DanmakuApp::onLayerDrawBegin(layerID);
 		switch (layerID / SUBLAYER_COUNT) {
 		case $rlayer(WORLD):
+			setCamera3D();
 			break;
 		case $rlayer(PLAYER):
 			break;
@@ -278,7 +181,8 @@ public:
 	#undef $rlayer
 
 	void onLayerDrawEnd(size_t layerID) override {
-		DanmakuApp::onLayerDrawEnd(layerID);
+		setCamera2D();
+		getLayerBuffer().tint = Color::WHITE;
 	}
 
 	void onDrawEnd() override {

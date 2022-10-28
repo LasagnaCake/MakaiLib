@@ -50,6 +50,7 @@ namespace GameData {
 		#include "gamedata/danmaku/structs.hpp"
 		#include "gamedata/danmaku/bullet.hpp"
 		#include "gamedata/danmaku/laser.hpp"
+		#include "gamedata/danmaku/program.hpp"
 		#include "gamedata/danmaku/spellcard.hpp"
 		#include "gamedata/danmaku/player.hpp"
 	}

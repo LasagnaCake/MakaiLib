@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1666924103 source:d:\c(++) projects\_c++\game engine\makailib\makai.cpp
+1666929256 source:d:\c(++) projects\_c++\game engine\makailib\makai.cpp
 	<stdexcept>
 	"src/makai.hpp"
 	<windows.h>
@@ -3314,7 +3314,7 @@
 1666830516 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_color.hpp
 	"../anchors.hpp"
 
-1666895075 d:\c(++) projects\_c++\game engine\makailib\src\gamedata.hpp
+1666928304 d:\c(++) projects\_c++\game engine\makailib\src\gamedata.hpp
 	"anchors.hpp"
 	"graphical.hpp"
 	"program.hpp"
@@ -3323,12 +3323,13 @@
 	"gamedata/danmaku/structs.hpp"
 	"gamedata/danmaku/bullet.hpp"
 	"gamedata/danmaku/laser.hpp"
+	"gamedata/danmaku/program.hpp"
 	"gamedata/danmaku/spellcard.hpp"
 	"gamedata/danmaku/player.hpp"
 
 1666923636 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\bullet.hpp
 
-1666923646 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\laser.hpp
+1666930932 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\laser.hpp
 
 1663772564 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\spellcard.hpp
 
@@ -3388,4 +3389,6 @@
 	"SDL_ttf.h"
 	"SDL_gpu.h"
 	<stdarg.h>
+
+1666929243 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\program.hpp
 
