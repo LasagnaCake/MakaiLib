@@ -79,8 +79,17 @@ namespace Makai {
 			return getButtonState(button) == 1;
 		}
 
+		/// Returns if the button is held (state > threshold).
+		inline bool isButtonHeld(SDL_Scancode button) {
+			if (!enabled) return false;
+			return getButtonState(button) > threshold;
+		}
+
 		/// Whether input is enabled.
 		bool enabled = true;
+
+		/// How long before the input is considered "held".
+		unsigned int threshold = 2048;
 	private:
 		/// The internal buffer state.
 		map<SDL_Scancode, unsigned int> buffer;

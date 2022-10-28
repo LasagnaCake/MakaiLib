@@ -227,7 +227,7 @@ struct LineLaserManager: Entity {
 		return count;
 	}
 
-	void create($evt Signal onLineLaserCreated = $evt DEF_SIGNAL) {
+	void create() {
 		if (created) return;
 		haltProcedure = false;
 		for (size_t i = 0; i < LASER_COUNT; i++) {
@@ -242,7 +242,6 @@ struct LineLaserManager: Entity {
 					mesh.createReference<AnimatedPlane>();
 			lasers[i].setFree(true);
 			lasers[i]._setZOffset(Math::epsilonF * ((float)i));
-			onLineLaserCreated();
 			if (haltProcedure) return;
 		}
 		created = true;

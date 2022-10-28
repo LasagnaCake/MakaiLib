@@ -208,7 +208,7 @@ struct BulletManager: Entity {
 		return count;
 	}
 
-	void create($evt Signal onBulletCreated = $evt DEF_SIGNAL) {
+	void create() {
 		if (created) return;
 		haltProcedure = false;
 		for (size_t i = 0; i < BULLET_COUNT; i++) {
@@ -217,7 +217,6 @@ struct BulletManager: Entity {
 					mesh.createReference<AnimatedPlane>();
 			bullets[i].setFree(true);
 			bullets[i]._setZOffset(Math::epsilonF * ((float)i));
-			onBulletCreated();
 			if (haltProcedure) return;
 		}
 		created = true;

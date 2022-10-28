@@ -243,11 +243,9 @@ struct PlayerEntity2D: AreaCircle2D {
 			if (blist.size()) {
 				size_t grazeCount = 0;
 				for $eachif(b, blist, !b->grazed) {
-					$debug(grazeCount);
 					b->grazed = true;
 					grazeCount++;
 				}
-				$debug(grazeCount);
 				if (grazeCount)
 					onGraze(grazeCount, blist);
 			}

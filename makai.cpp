@@ -13,36 +13,32 @@
 
 using namespace $rdt Reference;
 using namespace Vector;
-using $dmk BulletParam;
+using $dmk ObjectParam;
 
-class GameApp: public $mki Program {
+class DanmakuApp: public $mki Program {
 public:
-	GameApp(
+	DanmakuApp(
 		unsigned int width,
 		unsigned int height,
 		std::string windowTitle,
-		bool fullscreen = false
+		bool fullscreen = false,
+		std::string bufferShaderPath = "shaders/framebuffer/compose.slf",
+		std::string mainShaderPath = "shaders/base/base.slf"
 	) : Program (
 			width,
 			height,
 			windowTitle,
 			fullscreen,
-			"shaders/framebuffer/compose.slf"
+			bufferShaderPath
 	) {
-		SLF::SLFData data = SLF::parseFile("shaders/base/base.slf");
+		// Create main shader
+		SLF::SLFData data = SLF::parseFile(mainShaderPath);
 		$mainshader.destroy();
 		$mainshader.create(data);
+		// Set bullet managers
 		$setb(enemy)	ebm;
 		$setll(enemy)	ellm;
 	};
-
-	$evt Timer bulletSpawner = $evt Timer(60, true);
-
-	float rotAngle = 0.0;
-
-	$dmk PlayerEntity2D player;
-
-	$rdt Texture2D		fontTX;
 
 	$bullet(Enemy)		ebm;
 	$linelaser(Enemy)	ellm;
@@ -50,16 +46,103 @@ public:
 	$cam Camera3D cam2D;
 	$cam Camera3D cam3D{$vec3(0, 5, -10), $vec3(0, 0, 0)};
 
-	$rdt Renderable tubeRend;
+	size_t gameSeed = 0;
 
 	void setCamera2D() {
 		$scn camera = cam2D;
 	}
 
+	void setCamera3D() {
+		$scn camera = cam3D;
+	}
+
 	void onOpen() override {
+		// Set RNG Seed
+		gameSeed = $rng getNewSeed();
+		$debug(gameSeed);
+		$rng setSeed(gameSeed);
+		// Create 2D Camera
+		Vector2 screenSpace = getWindowScale();
+		cam2D = $cam getCamera2D(64, screenSpace);
+		// Set 2D Camera
+		setCamera2D();
+		// Create thread for processing input
+		bool doneCreating = false;
+		auto subTask = [&](){
+			while (!doneCreating) {
+				if $event(SDL_QUIT) {
+					ebm.haltProcedure	= true;
+					ellm.haltProcedure	= true;
+					close();
+				}
+			}
+		};
+		std::thread secondary(subTask);
+		// Create things
+		ebm.create();
+		ellm.create();
+		doneCreating = true;
+		secondary.join();
+		// Set playfield
+		Vector2 screenSize = $scn camera.ortho.size.absolute();
+		Vector2 screenPosition = Vector2(32, -32) * screenSpace;
+		ebm.playfield = $cdt makeBounds(screenPosition, screenSize * Vector2(1.5, 2.0));
+		ebm.board = $cdt makeBounds(screenPosition, screenSize);
+	}
+
+	#define $rlayer(LAYER) ($layer(LAYER) / SUBLAYER_COUNT)
+	void onLayerDrawBegin(size_t layerID) override {
+		switch (layerID / SUBLAYER_COUNT) {
+		case $rlayer(WORLD):
+			setCamera3D();
+			break;
+		case $rlayer(PLAYER):
+			break;
+		case $rlayer(UI):
+			break;
+		default:
+			break;
+		}
+	}
+	#undef $rlayer
+
+	void onLayerDrawEnd(size_t layerID) override {
+		setCamera2D();
+		getLayerBuffer().tint = Color::WHITE;
+	}
+};
+
+class GameApp: public DanmakuApp {
+public:
+	GameApp(
+		unsigned int width,
+		unsigned int height,
+		std::string windowTitle,
+		bool fullscreen = false
+	) : DanmakuApp (
+			width,
+			height,
+			windowTitle,
+			fullscreen,
+			"shaders/framebuffer/compose.slf",
+			"shaders/base/base.slf"
+	) {
+
+	}
+
+	$evt Timer bulletSpawner = $evt Timer(60, true);
+
+	float rotAngle = 0.0;
+
+	$dmk PlayerEntity2D	player;
+
+	$rdt Renderable		tubeRend;
+
+	void onOpen() override {
+		// Do parent task
+		DanmakuApp::onOpen();
+		// Create background
 		const size_t sideCount = 16;
-		//tubeRend.params.sorting.automatic = true;
-		//tubeRend.params.sorting.threshold = 0.99;
 		$ref Plane* pl = tubeRend.createReference<$ref Plane>();
 		pl->setOrigin(
 			$vec3(-2, 2, 12.5),
@@ -100,53 +183,13 @@ public:
 		}
 		tubeRend.trans.scale = $vec3($vec2(10), 2);
 		tubeRend.trans.position.y = 5;
-		//tubeRend.triangles = tubeRend.getSortedTriangles();
-		size_t gameSeed = $rng getNewSeed();
-		$debug(gameSeed);
-		$rng setSeed(gameSeed);
-		fontTX.create("FT_Set1-Lotuscoder.png");
+		// Set player stuff
 		Vector2 screenSpace = getWindowScale();
 		player.spawnPoint =
 		player.position =
 		Vector2(32, -48) * screenSpace;
-		cam2D = $cam getCamera2D(64, screenSpace);
 		player.grazebox.radius = 2.5;
-		$rdt Renderable progress;
-		progress.setRenderLayer(Math::maxSizeT);
-		Plane* bar = progress.createReference<Plane>();
-		setCamera2D();
-		float progTick = $scn camera.ortho.size.x / (ENEMY_BULLET_COUNT * 1.0);
-		bar->local.scale.x = 0;
-		bool forceQuit = false;
-		ebm.create(
-			$signal {
-				bar->local.scale.x += progTick;
-				renderReservedLayer();
-				if $event(SDL_QUIT) {
-					forceQuit = true;
-					ebm.haltProcedure = true;
-				}
-			}
-		);
-		progTick = $scn camera.ortho.size.x / (ENEMY_LASER_COUNT * 1.0);
-		bar->local.scale.x = 0;
-		ellm.create(
-			$signal {
-				bar->local.scale.x += progTick;
-				renderReservedLayer();
-				if $event(SDL_QUIT) {
-					forceQuit = true;
-					ellm.haltProcedure = true;
-				}
-			}
-		);
-		Vector2 screenSize = $scn camera.ortho.size.absolute();
-		Vector2 screenPosition = Vector2(32, -32) * screenSpace;
-		$debug(screenSize.x);
-		ebm.playfield = $cdt makeBounds(screenPosition, screenSize * Vector2(1.5, 2.0));
-		ebm.board = $cdt makeBounds(screenPosition, screenSize);
-		if (forceQuit) {close(); return;}
-		bar->local.scale.x = 0;
+		// Create test bullet spawner
 		bulletSpawner.onSignal = $signal {
 			float coefficient = 0;
 			Vector2 bPos = Vector2(32, -32) * getWindowScale();
@@ -155,13 +198,13 @@ public:
 				b->local.position = bPos;
 				coefficient = (Math::tau * ((i + 1) / 20.0)) + rotAngle;
 				b->params.hitbox.radius = 1;
-				b->params.vel = BulletParam{
+				b->params.vel = ObjectParam{
 					$twn ease.out.linear,
 					-20,
 					20,
 					0//.01
 				};
-				b->params.rot = BulletParam{
+				b->params.rot = ObjectParam{
 					$twn ease.out.elastic,
 					coefficient,
 					coefficient + (PI * 3.0),
@@ -172,22 +215,38 @@ public:
 				b->pause.enabled = true;
 				b->reset();
 			}
-			$debug(ebm.getFreeCount());
 			//rotAngle += (PI/20.0);
 		};
+		// Create test laser A
 		Vector2 lPos = Vector2(32, -16) * getWindowScale();
 		auto l = ellm.createLineLaser();
 		l->local.position = lPos;
-		l->params.rot.easing = $twn ease.inOut.back;
-		l->params.rot.start = -PI;
-		l->params.rot.end = 0;
-		l->params.rot.omega = 0.005;
-		l->params.length.start = 20;
+		l->params.rot = ObjectParam {
+			$twn ease.inOut.back,
+			-PI,
+			0,
+			0.005
+		};
+		l->params.length.start = 30;
 		l->params.width.start = 2;
 		l->params.active = true;
 		l->params.discardable = false;
 		l->reset();
-		bulletSpawner.stop();
+		// Test laser B
+		l = ellm.createLineLaser();
+		l->local.position = lPos;
+		l->params.rot = ObjectParam {
+			$twn ease.inOut.back,
+			0,
+			-PI,
+			0.005
+		};
+		l->params.length.start = 30;
+		l->params.width.start = 2;
+		l->params.active = true;
+		l->params.discardable = false;
+		l->reset();
+		//bulletSpawner.stop();
 	}
 
 	void onLogicFrame() override {
@@ -204,11 +263,9 @@ public:
 
 	#define $rlayer(LAYER) ($layer(LAYER) / SUBLAYER_COUNT)
 	void onLayerDrawBegin(size_t layerID) override {
+		DanmakuApp::onLayerDrawBegin(layerID);
 		switch (layerID / SUBLAYER_COUNT) {
 		case $rlayer(WORLD):
-			$scn camera = cam3D;
-			//getLayerBuffer().tint = Color::hueToPastel(getCurrentFrame() / 240.0);
-			//getLayerBuffer().tint = Color::hueToRGB(getCurrentFrame() / 120.0);
 			break;
 		case $rlayer(PLAYER):
 			break;
@@ -221,8 +278,7 @@ public:
 	#undef $rlayer
 
 	void onLayerDrawEnd(size_t layerID) override {
-		setCamera2D();
-		getLayerBuffer().tint = Color::WHITE;
+		DanmakuApp::onLayerDrawEnd(layerID);
 	}
 
 	void onDrawEnd() override {
