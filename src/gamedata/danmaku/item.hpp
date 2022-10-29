@@ -1,9 +1,19 @@
 struct CollectibleData: GenericObjectData {
-	size_t type = $item(POWER);
-	float value = 1;
-	float gravity = 0.015;
-	bool spin = false;
+	size_t type		= $item(POWER);
+	float value		= 1;
+	float gravity	= 0.015;
+	float bounce	= 0.4;
+	bool spin		= false;
+	bool pocable	= true;
 };
+
+CollectibleData getItemData(size_t type, float value = 1, bool autoCollect = true) {
+	CollectibleData item;
+	item.type		= type;
+	item.value		= value;
+	item.pocable	= autoCollect;
+	return item;
+}
 
 struct Collectible: DanmakuObject {
 	Collectible() : DanmakuObject() {
@@ -15,14 +25,16 @@ struct Collectible: DanmakuObject {
 	void onFrame(float delta) override {
 		DANMAKU_FRAME_BEGIN;
 		if (params.spin) local.rotation += 1.0/60.0;
-		gravity = Math::clamp(gravity + params.gravity, -params.gravity * 10.0f, params.gravity * 10.0f);
+		gravity = Math::clamp(gravity + params.gravity, -params.bounce, params.gravity * 10.0f);
 		local.position.y -= gravity;
+		if (pocing && target)
+			local.position = Math::lerp(local.position, *target, Vector2(0.1f));
 		updateSprite();
 	}
 
 	Collectible* reset() override {
 		setZero();
-		gravity = -params.gravity * 10.0;
+		gravity = -params.bounce;
 		return this;
 	}
 
@@ -35,6 +47,8 @@ struct Collectible: DanmakuObject {
 	Collectible* setFree(bool state = true) override {
 		DanmakuObject::setFree(state);
 		if (sprite) sprite->visible = !free;
+		pocing = false;
+		target = nullptr;
 		return this;
 	}
 
@@ -59,6 +73,16 @@ struct Collectible: DanmakuObject {
 		sprite->local.scale = Vector3(local.scale, zScale);
 	}
 
+	Collectible* setAutoCollect(Vector2* target = nullptr) {
+		if (!params.pocable) return this;
+		pocing = true;
+		this->target = target;
+		return this;
+	}
+
+	Vector2* target = nullptr;
+	bool pocing = false;
+
 private:
 	float gravity = 0;
 };
@@ -66,7 +90,8 @@ private:
 typedef std::vector<Collectible*> CollectibleList;
 
 template <size_t ITEM_COUNT>
-struct CollectibleManager: Entity {
+class CollectibleManager: Entity {
+public:
 	DERIVED_CLASS(CollectibleManager, Entity)
 
 	DERIVED_CONSTRUCTOR(CollectibleManager, Entity, {
@@ -77,27 +102,34 @@ struct CollectibleManager: Entity {
 
 	$cdt BoxBounds2D playfield;
 
+	float poc = 0;
+
 	Renderable mesh;
 
 	void onDelete() override {
 		$ecl groups.removeFromAll(this);
+		delete[] items;
 	}
 
 	void onFrame(float delta) override {
-		for $each(item, items) {
+		for $seach(item, items, ITEM_COUNT)
 			item.onFrame(delta);
 			if (!item.isFree() && item.params.collidable) {
 				auto a = getMainPlayer();
 				if (a)
 					if (
-						a->collision.enabled
-						&& $cdt withinBounds(
+						$cdt withinBounds(
 							item.params.hitbox,
 							a->getGrazeBounds()
 						)
 					) {
 						a->onItemGet(item.params.type, item.params.value);
 						item.discard();
+					} else if (
+						(a->position.y > poc)
+						&& item.params.pocable
+					) {
+						item.setAutoCollect(&a->position);
 					}
 			}
 			if (item.params.dope)
@@ -109,22 +141,41 @@ struct CollectibleManager: Entity {
 				) {
 					item.setFree(true);
 				}
-		}
+		$endseach
+	}
+
+	void collectAll(bool forceCollect = false, bool forceDiscard = false) {
+		auto mp = getMainPlayer();
+		for $seachif(item, items, ITEM_COUNT, !item.isFree()) {
+			if (forceCollect) {
+				mp->onItemGet(
+					item.params.type,
+					item.params.value
+				);
+				if (forceDiscard)
+					item.setFree();
+				else
+					item.discard();
+			} else {
+				item.setAutoCollect(&mp->position);
+			}
+		} $endseach
 	}
 
 	void freeAll() {
-		for $each(item, items) item.setFree();
+		for $seach(item, items, ITEM_COUNT) item.setFree(); $endseach
 	}
 
 	void discardAll() {
-		for $each(item, items) item.discard();
+		for $seach(item, items, ITEM_COUNT) item.discard(); $endseach
 	}
 
 	size_t getFreeCount() {
 		size_t count = 0;
-		for $each(item, items)
+		for $seach(item, items, ITEM_COUNT)
 			if (item.isFree())
 				count++;
+		$endseach
 		return count;
 	}
 
@@ -144,7 +195,7 @@ struct CollectibleManager: Entity {
 
 	CollectibleList getInArea($cdt CircleBounds2D target) {
 		CollectibleList res;
-		for $eachif(item, items, !item.isFree() && item.params.collidable) {
+		for $seachif(item, items, ITEM_COUNT, !item.isFree() && item.params.collidable) {
 			if (
 				$cdt withinBounds(
 					item.params.hitbox,
@@ -153,26 +204,26 @@ struct CollectibleManager: Entity {
 			) {
 				res.push_back(&item);
 			}
-		}
+		} $endseach
 		return res;
 	}
 
 	CollectibleList getInArea($cdt BoxBounds2D target) {
 		CollectibleList res;
-		for $eachif(item, items, !item.isFree() && item.params.collidable) {
+		for $seachif(item, items, ITEM_COUNT, !item.isFree() && item.params.collidable) {
 			if (
 				$cdt withinBounds(
 					item.params.hitbox,
 					target
 				)
 			) res.push_back(&item);
-		}
+		} $endseach
 		return res;
 	}
 
 	CollectibleList getActive() {
 		CollectibleList res;
-		for $eachif(item, items, !item.isFree()) res.push_back(&item);
+		for $seachif(item, items, ITEM_COUNT, !item.isFree()) res.push_back(&item); $endseach
 		return res;
 	}
 
@@ -181,17 +232,19 @@ struct CollectibleManager: Entity {
 	}
 
 	Collectible* createCollectible() {
-		for $eachif(item, items, item.isFree()) {
+		for $seachif(item, items, ITEM_COUNT, item.isFree()) {
 			last = item.enable()->setZero();
 			last->pause = Pause();
 			last->params = CollectibleData();
 			last->taskers.clearTaskers();
+			last->flags.clear();
+			last->clearSignals();
 			last->updateSprite();
 			#ifdef $_PREVENT_BULLET_OVERFLOW_BY_WRAP
 			pbobw = 0;
 			#endif
 			return last;
-		}
+		} $endseach
 		#ifndef $_PREVENT_BULLET_OVERFLOW_BY_WRAP
 		throw std::runtime_error(
 			getName()
@@ -203,6 +256,8 @@ struct CollectibleManager: Entity {
 		last = items[pbobw++].enable()->setZero();
 		last->params = CollectibleData();
 		last->taskers.clearTaskers();
+		last->flags.clear();
+		last->clearSignals();
 		if (pbobw > ITEM_COUNT) pbobw = 0;
 		last->updateSprite();
 		return last;
@@ -226,7 +281,7 @@ struct CollectibleManager: Entity {
 		return res;
 	}
 
-	Collectible items[ITEM_COUNT];
+	Collectible* items = new Collectible[ITEM_COUNT];
 
 	bool haltProcedure = false;
 

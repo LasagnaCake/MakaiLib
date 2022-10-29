@@ -117,7 +117,10 @@ namespace Makai {
 			this->height = height;
 			// Initialize SDL
 			$debug("Starting SDL...");
-			SDL_Init(SDL_INIT_VIDEO);
+			if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_AUDIO) != 0) {
+				$errlog(string("Unable to start SDL! (") + SDL_GetError() + ")");
+				throw runtime_error(string("Error: SDL (") + SDL_GetError() + ")");
+			}
 			TTF_Init();
 			$debug("Started!");
 			$debug("Creating window...");

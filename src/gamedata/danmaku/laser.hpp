@@ -179,7 +179,8 @@ template <
 	size_t ACTOR_LAYER = $layer(ENEMY_BULLET),
 	size_t ENEMY_LAYER = $layer(PLAYER)
 >
-struct LineLaserManager: Entity {
+class LineLaserManager: Entity {
+public:
 	DERIVED_CLASS(LineLaserManager, Entity)
 
 	DERIVED_CONSTRUCTOR(LineLaserManager, Entity, {
@@ -192,10 +193,11 @@ struct LineLaserManager: Entity {
 
 	void onDelete() override {
 		$ecl groups.removeFromAll(this);
+		delete[] lasers;
 	}
 
 	void onFrame(float delta) override {
-		for $each(l, lasers) {
+		for $seach(l, lasers, LASER_COUNT)
 			l.onFrame(delta);
 			if (!l.isFree() && l.params.collidable)
 			for $each(actor, $ecl groups.getGroup(ENEMY_LAYER)) {
@@ -208,22 +210,23 @@ struct LineLaserManager: Entity {
 					l.discard();
 				}
 			}
-		}
+		$endseach
 	}
 
 	void freeAll() {
-		for $each(l, lasers) l.setFree();
+		for $seach(l, lasers, LASER_COUNT) l.setFree(); $endseach
 	}
 
 	void discardAll() {
-		for $each(l, lasers) l.discard();
+		for $seach(l, lasers, LASER_COUNT) l.discard(); $endseach
 	}
 
 	size_t getFreeCount() {
 		size_t count = 0;
-		for $each(l, lasers)
+		for $seach(l, lasers, LASER_COUNT)
 			if (l.isFree())
 				count++;
+		$endseach
 		return count;
 	}
 
@@ -249,25 +252,25 @@ struct LineLaserManager: Entity {
 
 	LineLaserList getInArea($cdt CircleBounds2D target) {
 		LineLaserList res;
-		for $eachif(l, lasers, !l.isFree() && l.params.collidable) {
+		for $seachif(l, lasers, LASER_COUNT, !l.isFree() && l.params.collidable) {
 			if (l.colliding(target))
 				res.push_back(&l);
-		}
+		} $endseach
 		return res;
 	}
 
 	LineLaserList getInArea($cdt BoxBounds2D target) {
 		LineLaserList res;
-		for $eachif(l, lasers, !l.isFree() && l.params.collidable) {
+		for $seachif(l, lasers, LASER_COUNT, !l.isFree() && l.params.collidable) {
 			if (l.colliding(target))
 			res.push_back(&l);
-		}
+		} $endseach
 		return res;
 	}
 
 	LineLaserList getActive() {
 		LineLaserList res;
-		for $eachif(l, lasers, !l.isFree()) res.push_back(&l);
+		for $seachif(l, lasers, LASER_COUNT, !l.isFree()) res.push_back(&l); $endseach
 		return res;
 	}
 
@@ -276,18 +279,20 @@ struct LineLaserManager: Entity {
 	}
 
 	LineLaser* createLineLaser() {
-		for $eachif(l, lasers, l.isFree()) {
+		for $seachif(l, lasers, LASER_COUNT, l.isFree()) {
 			last = l.enable()->setZero();
 			last->pause = Pause();
 			last->params = LineLaserData();
 			last->taskers.clearTaskers();
+			last->flags.clear();
+			last->clearSignals();
 			last->setLaserShape();
 			last->updateSprite();
 			#ifdef $_PREVENT_BULLET_OVERFLOW_BY_WRAP
 			pbobw = 0;
 			#endif
 			return last;
-		}
+		} $endseach
 		#ifndef $_PREVENT_BULLET_OVERFLOW_BY_WRAP
 		throw std::runtime_error(
 			getName()
@@ -299,6 +304,8 @@ struct LineLaserManager: Entity {
 		last = lasers[pbobw++].enable()->setZero();
 		last->params = LineLaserData();
 		last->taskers.clearTaskers();
+		last->flags.clear();
+		last->clearSignals();
 		if (pbobw > LASER_COUNT) pbobw = 0;
 		last->setLaserShape();
 		last->updateSprite();
@@ -312,7 +319,7 @@ struct LineLaserManager: Entity {
 		return l->reset();
 	}
 
-	LineLaser lasers[LASER_COUNT];
+	LineLaser* lasers = new LineLaser[LASER_COUNT];
 
 	bool haltProcedure = false;
 

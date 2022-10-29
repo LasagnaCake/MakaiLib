@@ -32,6 +32,9 @@ void main(void) {
 		if (color.w <= (fragColor.w * alphaClip))
 			discard;
 
+	if (color.w > 0)
+		color = color / vec4(vec3(color.w), 1.0);
+
 	if (fog) {
 		float fogValue = (fragDistance - fogNear) / fogFar;
 		fogValue = clamp(fogValue, 0, 1) * fogStrength;

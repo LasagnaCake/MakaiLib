@@ -98,6 +98,7 @@ public:
 		BoxBounds2D
 			playfield = $cdt makeBounds(screenPosition, screenSize * Vector2(1.5, 2.0)),
 			board = $cdt makeBounds(screenPosition, screenSize);
+		managers.item.poc = -screenSize.y / 3.0;
 		managers.item.playfield =
 		managers.bullet.enemy.playfield =
 		managers.bullet.player.playfield = playfield;

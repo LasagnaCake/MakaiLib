@@ -156,7 +156,9 @@ public:
 	}
 
 	void onLogicFrame() override {
-		//player.rotation += (2.0/maxFrameRate);
+		if (input.getButtonDown(SDL_SCANCODE_ESCAPE)) {
+			close();
+		}
 	}
 
 	void onDrawBegin() override {
@@ -205,10 +207,18 @@ int main() {
 	*                     *
 	***********************
 	*/
+	StringList resList = Helper::getKeys($res set4x3);
+	int winSize = Makai::queryInputFromUser("WINDOW SIZE", "Please select a window size:", resList);
+	int fullscreen = Makai::queryInputFromUser("FULLSCREEN", "Would you like to run this application in fullscreen?", StringList{"no", "yes"});
+	if (winSize < 0 || fullscreen < 0)
+		return 0;
+	Vector2 window = $res set4x3.at(resList[winSize]);
+	$debug(window.x);
+	$debug(window.y);
 	#ifndef _DEBUG_OUTPUT_
 	ShowWindow(GetConsoleWindow(), SW_HIDE);
 	#endif // _DEBUG_OUTPUT_
-	GameApp prog(960, 720, "[TEST]");
+	GameApp prog(window.x, window.y, "[TEST]", fullscreen);
 	// [[ Main Program Code BEGIN ]]
 	prog.maxFrameRate = 60;
 	// [[ Main Program Code END ]]

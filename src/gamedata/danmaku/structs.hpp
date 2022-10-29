@@ -87,6 +87,12 @@ struct DanmakuObject {
 		return this;
 	}
 
+	virtual DanmakuObject* clearSignals() {
+		auto pass = $tsignal(DanmakuObject*) {};
+		onObjectFrame = onFree = onUnpause = pass;
+		return this;
+	}
+
 	virtual DanmakuObject* discard() {return this;}
 
 	virtual void updateSprite() {}

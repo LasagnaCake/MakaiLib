@@ -10,6 +10,10 @@
 #define $each(I, LIST) (auto& I: LIST)
 #define $eachif(I, LIST, CONDITION) $each(I, LIST) if(CONDITION)
 
+#define $seach(I, LIST, SIZE) $ssrange(_##I, 0, SIZE) { auto& I = LIST[_##I];
+#define $seachif(I, LIST, SIZE, CONDITION) $seach(I, LIST, SIZE) if(CONDITION)
+#define $endseach }
+
 #define $iltf(A, B, C) (((A) > (B)) ? -(C) : +(C))
 
 #define $range(I, BEGIN, END, STEP) (auto I = (BEGIN); I < (END); I += (STEP))

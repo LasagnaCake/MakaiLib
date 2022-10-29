@@ -64,5 +64,9 @@ void main() {
 		else
 			color.w *= maskValue[maskChannel];
 	}
+
+	if (color.w > 0)
+		color = color / vec4(vec3(color.w), 1.0);
+
 	gl_FragColor = color;
 }

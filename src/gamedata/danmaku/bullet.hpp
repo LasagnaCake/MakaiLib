@@ -82,6 +82,12 @@ public:
 		// Set sprite scale
 		sprite->local.scale = Vector3(local.scale, zScale);
 	}
+
+	Bullet* clearSignals() override {
+		DanmakuObject::clearSignals();
+		auto pass = $tsignal(DanmakuObject*) {};
+		onRebound = onShuttle = pass;
+	}
 };
 
 #define $_b(VAR) ((Bullet*)(VAR))
@@ -94,7 +100,8 @@ template <
 	size_t ACTOR_LAYER = $layer(ENEMY_BULLET),
 	size_t ENEMY_LAYER = $layer(PLAYER)
 >
-struct BulletManager: Entity {
+class BulletManager: Entity {
+public:
 	DERIVED_CLASS(BulletManager, Entity)
 
 	DERIVED_CONSTRUCTOR(BulletManager, Entity, {
@@ -110,10 +117,11 @@ struct BulletManager: Entity {
 
 	void onDelete() override {
 		$ecl groups.removeFromAll(this);
+		delete[] bullets;
 	}
 
 	void onFrame(float delta) override {
-		for $each(b, bullets) {
+		for $seach(b, bullets, BULLET_COUNT)
 			b.onFrame(delta);
 			if (!b.isFree() && b.params.collidable)
 			for $each(actor, $ecl groups.getGroup(ENEMY_LAYER)) {
@@ -189,22 +197,23 @@ struct BulletManager: Entity {
 				) {
 					b.setFree(true);
 				}
-		}
+		$endseach
 	}
 
 	void freeAll() {
-		for $each(b, bullets) b.setFree();
+		for $seach(b, bullets, BULLET_COUNT) b.setFree(); $endseach
 	}
 
 	void discardAll() {
-		for $each(b, bullets) b.discard();
+		for $seach(b, bullets, BULLET_COUNT) b.discard(); $endseach
 	}
 
 	size_t getFreeCount() {
 		size_t count = 0;
-		for $each(b, bullets)
+		for $seach(b, bullets, BULLET_COUNT)
 			if (b.isFree())
 				count++;
+		$endseach
 		return count;
 	}
 
@@ -224,7 +233,7 @@ struct BulletManager: Entity {
 
 	BulletList getInArea($cdt CircleBounds2D target) {
 		BulletList res;
-		for $eachif(b, bullets, !b.isFree() && b.params.collidable) {
+		for $seachif(b, bullets, BULLET_COUNT, !b.isFree() && b.params.collidable) {
 			if (
 				$cdt withinBounds(
 					b.params.hitbox,
@@ -233,26 +242,26 @@ struct BulletManager: Entity {
 			) {
 				res.push_back(&b);
 			}
-		}
+		} $endseach
 		return res;
 	}
 
 	BulletList getInArea($cdt BoxBounds2D target) {
 		BulletList res;
-		for $eachif(b, bullets, !b.isFree() && b.params.collidable) {
+		for $seachif(b, bullets, BULLET_COUNT, !b.isFree() && b.params.collidable) {
 			if (
 				$cdt withinBounds(
 					b.params.hitbox,
 					target
 				)
 			) res.push_back(&b);
-		}
+		} $endseach
 		return res;
 	}
 
 	BulletList getActive() {
 		BulletList res;
-		for $eachif(b, bullets, !b.isFree()) res.push_back(&b);
+		for $seachif(b, bullets, BULLET_COUNT, !b.isFree()) res.push_back(&b); $endseach
 		return res;
 	}
 
@@ -261,18 +270,20 @@ struct BulletManager: Entity {
 	}
 
 	Bullet* createBullet() {
-		for $eachif(b, bullets, b.isFree()) {
+		for $seachif(b, bullets, BULLET_COUNT, b.isFree()) {
 			last = b.enable()->setZero();
 			last->pause = Pause();
 			last->params = BulletData();
 			last->grazed = false;
 			last->taskers.clearTaskers();
+			last->flags.clear();
+			last->clearSignals();
 			last->updateSprite();
 			#ifdef $_PREVENT_BULLET_OVERFLOW_BY_WRAP
 			pbobw = 0;
 			#endif
 			return last;
-		}
+		} $endseach
 		#ifndef $_PREVENT_BULLET_OVERFLOW_BY_WRAP
 		throw std::runtime_error(
 			getName()
@@ -285,6 +296,8 @@ struct BulletManager: Entity {
 		last->params = BulletData();
 		last->grazed = false;
 		last->taskers.clearTaskers();
+		last->flags.clear();
+		last->clearSignals();
 		if (pbobw > BULLET_COUNT) pbobw = 0;
 		last->updateSprite();
 		return last;
@@ -297,7 +310,7 @@ struct BulletManager: Entity {
 		return b->reset();
 	}
 
-	Bullet bullets[BULLET_COUNT];
+	Bullet* bullets = new Bullet[BULLET_COUNT];
 
 	bool haltProcedure = false;
 
