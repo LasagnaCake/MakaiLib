@@ -11,6 +11,7 @@
 #else
 #define $errlog(TEXT)
 #define $debug(TEXT)
+#define $flush()
 #endif // _MAKAI_DEBUG_
 
 /*

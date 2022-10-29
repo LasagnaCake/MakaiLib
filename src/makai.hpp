@@ -12,9 +12,9 @@ namespace Makai {
 		const map<string, Vector2> set4x3 = {
 			RESOLUTION(480, 320),
 			RESOLUTION(640, 480),
+			RESOLUTION(860, 640),
 			RESOLUTION(960, 720),
-			RESOLUTION(800, 600),
-			RESOLUTION(1200, 900),
+			RESOLUTION(1280, 960),
 			RESOLUTION(1600, 1200)
 		};
 		#undef RESOLUTION

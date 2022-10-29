@@ -208,19 +208,26 @@ int main() {
 	*                     *
 	***********************
 	*/
+	#ifndef _DEBUG_OUTPUT_
+	ShowWindow(GetConsoleWindow(), SW_HIDE);
+	#endif // _DEBUG_OUTPUT_
 	StringList resList = Helper::getKeys($res set4x3);
 	resList.push_back("Detect");
 	$debug(Makai::getDeviceSize().x);
 	$debug(Makai::getDeviceSize().y);
 	if (Popup::dialogBox(
 		"Warning!",
-		"Pressing escape on any of the next set of dialog boxes,\nincluding this one, will close the application.\nDo you understand?",
+		"Pressing escape on any of the next set of dialog boxes,\n"
+		"including this one, will close the application.\n"
+		"Do you understand?",
 		Popup::Option::YES,
 		SDL_MESSAGEBOX_WARNING
 	) < 0) return 0;
 	int winSize = Popup::dialogBox(
 		"App Configuration (1/2)",
-		"Please select a window size.\n\n WARNING: Selecting \"Detect\" will set the application to fullscreen!",
+		"Please select a window size.\n"
+		"Selecting \"Detect\" will set to your screen's size.\n\n"
+		"WARNING: Selecting \"Detect\" will set the application to fullscreen!\n",
 		resList
 	);
 	if (winSize < 0)
@@ -241,14 +248,21 @@ int main() {
 		//window.x = window.y * (4.0/3.0);
 	} else
 		window = $res set4x3.at(resList[winSize]);
-	#ifndef _DEBUG_OUTPUT_
-	ShowWindow(GetConsoleWindow(), SW_HIDE);
-	#endif // _DEBUG_OUTPUT_
-	GameApp prog(window.x, window.y, "[TEST]", !fullscreen);
-	// [[ Main Program Code BEGIN ]]
-	prog.maxFrameRate = 60;
-	// [[ Main Program Code END ]]
-	prog.run();
+	try {
+		// If sizze = screen size, automatic fullscreen for some reason (Why, SDL?)
+		GameApp prog(window.x, window.y, "[TEST]", !fullscreen);
+		// [[ Main Program Code BEGIN ]]
+		prog.maxFrameRate = 60;
+		// [[ Main Program Code END ]]
+		prog.run();
+	} catch (String e) {
+		Popup::dialogBox(
+			"Error!",
+			e,
+			Popup::Option::OK,
+			SDL_MESSAGEBOX_ERROR
+		);
+	}
 	return 0;
 }
 #else
