@@ -209,7 +209,7 @@ int main() {
 	***********************
 	*/
 	#ifndef _DEBUG_OUTPUT_
-	ShowWindow(GetConsoleWindow(), SW_HIDE);
+	//ShowWindow(GetConsoleWindow(), SW_HIDE);
 	#endif // _DEBUG_OUTPUT_
 	StringList resList = Helper::getKeys($res set4x3);
 	resList.push_back("Detect");
