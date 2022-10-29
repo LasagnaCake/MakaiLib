@@ -4,6 +4,8 @@
 #include "../anchors.hpp"
 #include "../graphical.hpp"
 
+#include <wtypes.h>
+
 namespace Makai {
 	namespace {
 		using
@@ -155,6 +157,7 @@ namespace Makai {
 			SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
 			SDL_GL_SetAttribute(SDL_GL_BUFFER_SIZE, 8);
 			glEnable(GL_BLEND);
+			//glViewport(0, 0, width, height);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 			// This keeps the alpha from shitting itself
 			glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
@@ -415,6 +418,84 @@ namespace Makai {
 		/// The Window's renderer.
 		SDL_Renderer* renderer;
 	};
+
+	Vector2 getDeviceSize() {
+		RECT desktop;
+		// Get a handle to the desktop window
+		const HWND hDesktop = GetDesktopWindow();
+		// Get the size of screen to the variable desktop
+		GetWindowRect(hDesktop, &desktop);
+		// The top left corner will have coordinates (0,0)
+		// and the bottom right corner will have coordinates
+		// (horizontal, vertical)
+		return Vector2(desktop.right, desktop.bottom);
+	}
+}
+
+namespace Popup {
+	namespace {
+		const SDL_MessageBoxColorScheme defaultMessageBoxColorScheme = {
+			{ /* .colors (.r, .g, .b) */
+				/* [SDL_MESSAGEBOX_COLOR_BACKGROUND] */
+				{ 255,   0,   0 },
+				/* [SDL_MESSAGEBOX_COLOR_TEXT] */
+				{   0, 255,   0 },
+				/* [SDL_MESSAGEBOX_COLOR_BUTTON_BORDER] */
+				{ 255, 255,   0 },
+				/* [SDL_MESSAGEBOX_COLOR_BUTTON_BACKGROUND] */
+				{   0,   0, 255 },
+				/* [SDL_MESSAGEBOX_COLOR_BUTTON_SELECTED] */
+				{ 255,   0, 255 }
+			}
+		};
+	}
+
+	namespace Option {
+		const StringList OK				= {"Ok"};
+		const StringList YES			= {"Yes"};
+		const StringList YES_NO			= {"Yes", "No"};
+		const StringList YES_NO_CANCEL	= {"Yes", "No", "Cancel"};
+	}
+
+	/**
+	* Invokes a dialog box with a given number of buttons.
+	* Returns the selected button (by index);
+	*/
+	int dialogBox(
+		String title,
+		String text,
+		StringList options,
+		Uint32 type = SDL_MESSAGEBOX_INFORMATION,
+		SDL_Window* window = NULL,
+		SDL_MessageBoxColorScheme colorScheme = defaultMessageBoxColorScheme
+	) {
+		size_t buttonCount = options.size();
+		SDL_MessageBoxButtonData buttons[options.size()];
+		size_t idx = buttonCount - 1;
+		for $each(b, buttons) {
+			b = SDL_MessageBoxButtonData {
+				0,
+				idx,
+				options[idx].c_str()
+			};
+			idx--;
+		}
+		const SDL_MessageBoxData messageboxdata = {
+			type, /* .flags */
+			window, /* .window */
+			title.c_str(), /* .title */
+			text.c_str(), /* .message */
+			SDL_arraysize(buttons), /* .numbuttons */
+			buttons, /* .buttons */
+			&colorScheme /* .colorScheme */
+		};
+		int buttonid;
+		if (SDL_ShowMessageBox(&messageboxdata, &buttonid) < 0) {
+			$errlog("Could not show messagebox!");
+			throw std::runtime_error("Error: SDL MessageBox");
+		}
+		return buttonid;
+	}
 }
 
 #define $mki Makai::

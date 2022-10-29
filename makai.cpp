@@ -7,6 +7,7 @@
 
 #include "src/makai.hpp"
 
+#include <wtypes.h>
 #include <windows.h>
 
 //#define SIDE_B
@@ -27,7 +28,7 @@ public:
 			width,
 			height,
 			windowTitle,
-			fullscreen,
+			false,
 			"shaders/framebuffer/compose.slf",
 			"shaders/base/base.slf"
 	) {
@@ -208,17 +209,37 @@ int main() {
 	***********************
 	*/
 	StringList resList = Helper::getKeys($res set4x3);
-	int winSize = Makai::queryInputFromUser("WINDOW SIZE", "Please select a window size:", resList);
-	int fullscreen = Makai::queryInputFromUser("FULLSCREEN", "Would you like to run this application in fullscreen?", StringList{"no", "yes"});
-	if (winSize < 0 || fullscreen < 0)
+	resList.push_back("Detect");
+	if (Popup::dialogBox(
+		"WARNING",
+		"Pressing escape on any of the next set of dialog boxes,\nincluding this one, will close the game. Do you understand?",
+		Popup::Option::YES
+	) < 0) return 0;
+	int winSize = Popup::dialogBox(
+		"Pre-game Configuration (1/2)",
+		"Please select a window size:",
+		resList
+	);
+	if (winSize < 0)
 		return 0;
-	Vector2 window = $res set4x3.at(resList[winSize]);
-	$debug(window.x);
-	$debug(window.y);
+	int fullscreen = Popup::dialogBox(
+		"Pre-game Configuration (2/2)",
+		"Would you like to run this application in fullscreen or windowed mode?",
+		StringList{"Fullscreen", "Windowed"}
+	);
+	$debug(fullscreen);
+	if (fullscreen < 0)
+		return 0;
+	Vector2 window;
+	if (winSize == resList.size() - 1) {
+		window = Makai::getDeviceSize();
+		//window.x = window.y * (4.0/3.0);
+	} else
+		window = $res set4x3.at(resList[winSize]);
 	#ifndef _DEBUG_OUTPUT_
 	ShowWindow(GetConsoleWindow(), SW_HIDE);
 	#endif // _DEBUG_OUTPUT_
-	GameApp prog(window.x, window.y, "[TEST]", fullscreen);
+	GameApp prog(window.x, window.y, "[TEST]", !fullscreen);
 	// [[ Main Program Code BEGIN ]]
 	prog.maxFrameRate = 60;
 	// [[ Main Program Code END ]]

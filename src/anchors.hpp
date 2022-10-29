@@ -36,6 +36,9 @@
 #include <regex>
 #include <chrono>
 
+typedef std::string			String;
+typedef	std::vector<String>	StringList;
+
 /*
 *********************
 *                   *

@@ -1,7 +1,8 @@
 # depslib dependency file v1.0
-1667004233 source:d:\c(++) projects\_c++\game engine\makailib\makai.cpp
+1667018453 source:d:\c(++) projects\_c++\game engine\makailib\makai.cpp
 	<stdexcept>
 	"src/makai.hpp"
+	<wtypes.h>
 	<windows.h>
 
 1352124852 d:\c(++) projects\_c++\game engine\makailib\lib\irrlicht-1.8.5\include\irrlicht.h
@@ -2866,7 +2867,7 @@
 1665256929 d:\c(++) projects\_c++\game engine\makailib\src\program.hpp
 	"program/gl_program.hpp"
 
-1666819280 d:\c(++) projects\_c++\game engine\makailib\src\anchors.hpp
+1667013423 d:\c(++) projects\_c++\game engine\makailib\src\anchors.hpp
 	<iostream>
 	<string>
 	<vector>
@@ -3027,9 +3028,10 @@
 	<algorithm>
 	<regex>
 
-1666999734 d:\c(++) projects\_c++\game engine\makailib\src\program\gl_program.hpp
+1667018567 d:\c(++) projects\_c++\game engine\makailib\src\program\gl_program.hpp
 	"../anchors.hpp"
 	"../graphical.hpp"
+	<wtypes.h>
 
 1664717371 d:\c(++) projects\_c++\game engine\makailib\src\collection\grouping.hpp
 	<map>
@@ -3360,7 +3362,7 @@
 
 1667004489 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\player.hpp
 
-1667005159 d:\c(++) projects\_c++\game engine\makailib\src\makai.hpp
+1667017999 d:\c(++) projects\_c++\game engine\makailib\src\makai.hpp
 	"anchors.hpp"
 	"program.hpp"
 	"graphical.hpp"
