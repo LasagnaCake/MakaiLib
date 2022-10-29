@@ -87,6 +87,7 @@ public:
 		DanmakuObject::clearSignals();
 		auto pass = $tsignal(DanmakuObject*) {};
 		onRebound = onShuttle = pass;
+		return this;
 	}
 };
 

@@ -28,7 +28,7 @@ public:
 			width,
 			height,
 			windowTitle,
-			false,
+			fullscreen,
 			"shaders/framebuffer/compose.slf",
 			"shaders/base/base.slf"
 	) {
@@ -210,24 +210,29 @@ int main() {
 	*/
 	StringList resList = Helper::getKeys($res set4x3);
 	resList.push_back("Detect");
+	$debug(Makai::getDeviceSize().x);
+	$debug(Makai::getDeviceSize().y);
 	if (Popup::dialogBox(
-		"WARNING",
-		"Pressing escape on any of the next set of dialog boxes,\nincluding this one, will close the game. Do you understand?",
-		Popup::Option::YES
+		"Warning!",
+		"Pressing escape on any of the next set of dialog boxes,\nincluding this one, will close the application.\nDo you understand?",
+		Popup::Option::YES,
+		SDL_MESSAGEBOX_WARNING
 	) < 0) return 0;
 	int winSize = Popup::dialogBox(
-		"Pre-game Configuration (1/2)",
-		"Please select a window size:",
+		"App Configuration (1/2)",
+		"Please select a window size.\n\n WARNING: Selecting \"Detect\" will set the application to fullscreen!",
 		resList
 	);
 	if (winSize < 0)
 		return 0;
-	int fullscreen = Popup::dialogBox(
-		"Pre-game Configuration (2/2)",
-		"Would you like to run this application in fullscreen or windowed mode?",
-		StringList{"Fullscreen", "Windowed"}
-	);
-	$debug(fullscreen);
+	int fullscreen = 0;
+	if (winSize != resList.size() - 1) {
+		fullscreen = Popup::dialogBox(
+			"App Configuration (2/2)",
+			"Would you like to run this application in fullscreen or windowed mode?",
+			StringList{"Fullscreen", "Windowed"}
+		);
+	}
 	if (fullscreen < 0)
 		return 0;
 	Vector2 window;

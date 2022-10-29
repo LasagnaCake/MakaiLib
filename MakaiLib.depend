@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1667018453 source:d:\c(++) projects\_c++\game engine\makailib\makai.cpp
+1667019930 source:d:\c(++) projects\_c++\game engine\makailib\makai.cpp
 	<stdexcept>
 	"src/makai.hpp"
 	<wtypes.h>
@@ -3028,7 +3028,7 @@
 	<algorithm>
 	<regex>
 
-1667018567 d:\c(++) projects\_c++\game engine\makailib\src\program\gl_program.hpp
+1667019372 d:\c(++) projects\_c++\game engine\makailib\src\program\gl_program.hpp
 	"../anchors.hpp"
 	"../graphical.hpp"
 	<wtypes.h>
@@ -3333,9 +3333,9 @@
 	"gamedata/danmaku/boss.hpp"
 	"gamedata/danmaku/stage.hpp"
 
-1666977441 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\bullet.hpp
+1667018943 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\bullet.hpp
 
-1666979102 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\laser.hpp
+1667018965 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\laser.hpp
 
 1663772564 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\spellcard.hpp
 
@@ -3362,7 +3362,7 @@
 
 1667004489 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\player.hpp
 
-1667017999 d:\c(++) projects\_c++\game engine\makailib\src\makai.hpp
+1667019491 d:\c(++) projects\_c++\game engine\makailib\src\makai.hpp
 	"anchors.hpp"
 	"program.hpp"
 	"graphical.hpp"
@@ -3404,5 +3404,5 @@
 
 1666942540 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\stage.hpp
 
-1666980442 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\item.hpp
+1667018985 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\item.hpp
 

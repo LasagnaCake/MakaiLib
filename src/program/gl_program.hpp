@@ -133,8 +133,10 @@ namespace Makai {
 				SDL_WINDOWPOS_CENTERED,
 				width,
 				height,
-				SDL_WINDOW_OPENGL | (fullscreen ? SDL_WINDOW_FULLSCREEN : 0)
+				SDL_WINDOW_OPENGL
 			);
+			if (fullscreen)
+				SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
 			renderer = SDL_CreateRenderer(window, 0, SDL_RENDERER_ACCELERATED);
 			SDL_GL_CreateContext(window);
 			$debug("Created!");
@@ -251,6 +253,10 @@ namespace Makai {
 			// Terminate program
 			$debug("Closing incoherent program...");
 			terminate();
+		}
+
+		void setFullscreen(bool state = false) {
+			SDL_SetWindowFullscreen(window, state);
 		}
 
 		/// Closes the program.

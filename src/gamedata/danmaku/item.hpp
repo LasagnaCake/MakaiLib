@@ -116,7 +116,7 @@ public:
 			item.onFrame(delta);
 			if (!item.isFree() && item.params.collidable) {
 				auto a = getMainPlayer();
-				if (a)
+				if (a) {
 					if (
 						$cdt withinBounds(
 							item.params.hitbox,
@@ -131,6 +131,7 @@ public:
 					) {
 						item.setAutoCollect(&a->position);
 					}
+				}
 			}
 			if (item.params.dope)
 				if (

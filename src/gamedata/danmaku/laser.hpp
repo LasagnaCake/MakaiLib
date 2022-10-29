@@ -82,18 +82,21 @@ public:
 		sprite->setColor(color);
 		head->setColor(color);
 		tail->setColor(color);
+		return this;
 	}
 
 	LineLaser* setLaserUVSize(Vector2 size) {
 		sprite->size = size;
 		head->size = size;
 		tail->size = size;
+		return this;
 	}
 
 	LineLaser* setLaserUVFrame(Vector2 frame = Vector2(0)) {
 		sprite->frame = frame;
 		head->frame = frame;
 		tail->frame = frame;
+		return this;
 	}
 
 	void setLaserShape() {
