@@ -213,7 +213,7 @@ int main() {
 	#endif // _DEBUG_OUTPUT_
 	StringList resList = Helper::getKeys($res set4x3);
 	resList.push_back("Detect");
-	$debug(Makai::getDeviceSize().x);
+	$debug(Makai::getDeviceSize().y * (4.0 / 3.0));
 	$debug(Makai::getDeviceSize().y);
 	if (Popup::dialogBox(
 		"Warning!",
@@ -245,7 +245,7 @@ int main() {
 	Vector2 window;
 	if (winSize == resList.size() - 1) {
 		window = Makai::getDeviceSize();
-		//window.x = window.y * (4.0/3.0);
+		window.x = window.y * (4.0/3.0);
 	} else
 		window = $res set4x3.at(resList[winSize]);
 	try {

@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1667068631 source:d:\c(++) projects\_c++\game engine\makailib\makai.cpp
+1667099929 source:d:\c(++) projects\_c++\game engine\makailib\makai.cpp
 	<stdexcept>
 	"src/makai.hpp"
 	<wtypes.h>
@@ -3014,7 +3014,7 @@
 	"gl_camera.hpp"
 	"slf_fileloader.hpp"
 
-1661613724 d:\c(++) projects\_c++\game engine\makailib\src\graphical\slf_fileloader.hpp
+1667071819 d:\c(++) projects\_c++\game engine\makailib\src\graphical\slf_fileloader.hpp
 	<string>
 	<vector>
 	<array>
@@ -3404,5 +3404,5 @@
 
 1666942540 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\stage.hpp
 
-1667018985 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\item.hpp
+1667075317 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\item.hpp
 

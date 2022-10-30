@@ -51,7 +51,7 @@ namespace SLF {
 			content = stream.str();
 		}
 		catch (ifstream::failure e) {
-			return SLFData();
+			throw runtime_error(string("Could not load file '") + path + "'!\n\n" + e.what());
 		}
 		// Remove comments and empty lines
 		content = regex_replace(

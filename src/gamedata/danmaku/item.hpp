@@ -28,7 +28,7 @@ struct Collectible: DanmakuObject {
 		gravity = Math::clamp(gravity + params.gravity, -params.bounce, params.gravity * 10.0f);
 		local.position.y -= gravity;
 		if (pocing && target)
-			local.position = Math::lerp(local.position, *target, Vector2(0.1f));
+			local.position = Math::lerp(local.position, *target, Vector2(15 * delta));
 		updateSprite();
 	}
 
