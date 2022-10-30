@@ -55,7 +55,7 @@ public:
 			$vec3(-2, -2, 12.5),
 			$vec3(2, -2, 12.5)
 		);
-		pl->setColor($vec4(0,0,0.5,1));
+		//pl->setColor($vec4(0,0,0.5,1));
 		tubeRend.unbindReference<$ref Plane>(pl);//*/
 		for $ssrange(i, 0, sideCount) {
 			pl = tubeRend.createReference<$ref Plane>();
@@ -84,7 +84,7 @@ public:
 				$vec3(2, -2, 9.0 - i * 1.25)
 			);
 			pl->setColor($vec4(Color::SEMILUCENT).compensated());
-			tubeRend.unbindReference<$ref Plane>(pl);//*/
+			tubeRend.unbindReference<$ref Plane>(pl);
 		}
 		tubeRend.trans.scale = $vec3($vec2(10), 2);
 		tubeRend.trans.position.y = 5;
@@ -175,6 +175,7 @@ public:
 		switch (layerID / SUBLAYER_COUNT) {
 		case $rlayer(WORLD):
 			setCamera3D();
+			$mainshader["fog"](true);
 			break;
 		case $rlayer(PLAYER):
 			break;
@@ -189,6 +190,7 @@ public:
 	void onLayerDrawEnd(size_t layerID) override {
 		setCamera2D();
 		getLayerBuffer().tint = Color::WHITE;
+		$mainshader["fog"](false);
 	}
 
 	void onDrawEnd() override {

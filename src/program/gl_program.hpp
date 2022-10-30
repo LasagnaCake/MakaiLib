@@ -123,7 +123,14 @@ namespace Makai {
 				$errlog(string("Unable to start SDL! (") + SDL_GetError() + ")");
 				throw runtime_error(string("Error: SDL (") + SDL_GetError() + ")");
 			}
-			TTF_Init();
+			if (TTF_Init() != 0) {
+				$errlog(string("Unable to start TTF! (") + TTF_GetError() + ")");
+				throw runtime_error(string("Error: TTF (") + TTF_GetError() + ")");
+			};
+			if (!Mix_Init(MIX_INIT_OGG)) {
+				$errlog(string("Unable to start Mixer! (") + TTF_GetError() + ")");
+				throw runtime_error(string("Error: Mixer (") + TTF_GetError() + ")");
+			}
 			$debug("Started!");
 			$debug("Creating window...");
 			// Create window and make active
@@ -192,13 +199,13 @@ namespace Makai {
 		/// Runs the program.
 		void run(){
 			// The physics process
-			auto physFunc	= [&](float delta)-> void {
-				EntityClass::$_ROOT.yield(delta);
+			auto timerFunc	= [&](float delta)-> void {
+				Tween::yieldAllTweens();
+				Event::yieldAllTimers();
 			};
 			// The logical process
 			auto logicFunc	= [&](float delta)-> void {
-				Tween::yieldAllTweens();
-				Event::yieldAllTimers();
+				EntityClass::$_ROOT.yield(delta);
 			};
 			// Clear screen
 			Drawer::clearColorBuffer(color);
@@ -228,7 +235,7 @@ namespace Makai {
 				// Update input manager
 				input.update();
 				// Start thread
-				std::thread physics(physFunc, deltaTime);
+				std::thread physics(timerFunc, deltaTime);
 				// Do your own stuff
 				logicFunc(deltaTime);
 				onLogicFrame();
@@ -372,6 +379,7 @@ namespace Makai {
 			$debug("Ending SDL...");
 			SDL_Quit();
 			TTF_Quit();
+			Mix_Quit();
 			$debug("SDL ended!");
 		}
 

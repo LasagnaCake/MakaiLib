@@ -6,20 +6,19 @@ in vec4 fragColor;
 
 in float fragDistance;
 
-uniform bool alphaTest = false;
-
 uniform bool textured = false;
 uniform sampler2D texture2D;
-
 uniform float alphaClip = 0.2;
 
 uniform vec4 albedo = vec4(1);
 
+uniform bool alphaAdjust = true;
+
 uniform bool	fog			= false;
-uniform float	fogNear		= 20;
-uniform float	fogFar		= 40;
+uniform float	fogNear		= 15;
+uniform float	fogFar		= 20;
 uniform float	fogStrength	= 1;
-uniform vec4	fogColor	= vec4(0);
+uniform vec4	fogColor	= vec4(1);
 
 void main(void) {
 	vec4 color;
@@ -32,7 +31,7 @@ void main(void) {
 		if (color.w <= (fragColor.w * alphaClip))
 			discard;
 
-	if (color.w > 0)
+	if (alphaAdjust && color.w > 0)
 		color = color / vec4(vec3(color.w), 1.0);
 
 	if (fog) {

@@ -38,6 +38,7 @@ uniform vec4	chromaColor = vec4(1,0,0,1);
 uniform int		chromaChannel = 0;
 
 // [ HSL ADJUSTMENTS ]
+
 uniform float saturation = 1;
 
 void main() {

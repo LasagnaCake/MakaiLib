@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1667099929 source:d:\c(++) projects\_c++\game engine\makailib\makai.cpp
+1667160722 source:d:\c(++) projects\_c++\game engine\makailib\makai.cpp
 	<stdexcept>
 	"src/makai.hpp"
 	<wtypes.h>
@@ -2867,7 +2867,7 @@
 1665256929 d:\c(++) projects\_c++\game engine\makailib\src\program.hpp
 	"program/gl_program.hpp"
 
-1667062950 d:\c(++) projects\_c++\game engine\makailib\src\anchors.hpp
+1667145717 d:\c(++) projects\_c++\game engine\makailib\src\anchors.hpp
 	<iostream>
 	<string>
 	<vector>
@@ -2899,6 +2899,7 @@
 	<SDL2/SDL.h>
 	<SDL2/SDL_ttf.h>
 	<SDL2/SDL_FontCache.h>
+	<SDL2/SDL_mixer.h>
 	"collection/algebra.hpp"
 	"collection/definitions.hpp"
 	"collection/helper.hpp"
@@ -3028,7 +3029,7 @@
 	<algorithm>
 	<regex>
 
-1667019372 d:\c(++) projects\_c++\game engine\makailib\src\program\gl_program.hpp
+1667157515 d:\c(++) projects\_c++\game engine\makailib\src\program\gl_program.hpp
 	"../anchors.hpp"
 	"../graphical.hpp"
 	<wtypes.h>
@@ -3405,4 +3406,13 @@
 1666942540 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\stage.hpp
 
 1667075317 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\item.hpp
+
+1660930201 d:\c(++) projects\_c++\game engine\makailib\lib\sdl2-2.0.10\x86_64-w64-mingw32\include\sdl2\sdl_mixer.h
+	"SDL_stdinc.h"
+	"SDL_rwops.h"
+	"SDL_audio.h"
+	"SDL_endian.h"
+	"SDL_version.h"
+	"begin_code.h"
+	"close_code.h"
 
