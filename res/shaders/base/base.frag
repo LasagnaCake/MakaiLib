@@ -15,7 +15,7 @@ uniform vec4 albedo = vec4(1);
 uniform bool alphaAdjust = true;
 
 uniform bool	fog			= false;
-uniform float	fogFar		= 10;
+uniform float	fogFar		= 12;
 uniform float	fogNear		= 8;
 uniform float	fogStrength	= 1;
 uniform vec4	fogColor	= vec4(1);

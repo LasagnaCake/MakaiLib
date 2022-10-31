@@ -62,13 +62,15 @@ public:
 			pl = tubeRend.createReference<$ref Plane>();
 			$vec2
 			p1 = $vmt angleV2((TAU / (float)sideCount) * (float)i),
-			p2 = $vmt angleV2((TAU / (float)sideCount) * (float)(i + 1));
+			p2 = $vmt angleV2((TAU / (float)sideCount) * (float)(i + 1)),
+			p3 = $vmt angleV2((TAU / (float)sideCount) * (float)(i + 2)),
+			p4 = $vmt angleV2((TAU / (float)sideCount) * (float)(i + 3));
 			$debug((TAU / (float)sideCount) * (float)i);
 			$vec3
 			tl = $vec3(p1, -5),
-			tr = $vec3(p1, 2.5),
+			tr = $vec3(p2, 2.5),
 			bl = $vec3(p2, -3),
-			br = $vec3(p2, 4.5);
+			br = $vec3(p3, 4.5);
 			pl->setOrigin(tl, tr, bl, br);
 			$vec4
 			c1 = Color::hueToRGB(i/(float)sideCount) ,
@@ -77,13 +79,11 @@ public:
 			tubeRend.unbindReference<$ref Plane>(pl);
 			// Set 2
 			pl = tubeRend.createReference<$ref Plane>();
-			p1 = $vmt angleV2((TAU / (float)sideCount) * (float)i),
-			p2 = $vmt angleV2((TAU / (float)sideCount) * (float)(i + 1));
 			$debug((TAU / (float)sideCount) * (float)i);
-			tl = $vec3(p1, 2.5),
-			tr = $vec3(p1, 10),
-			bl = $vec3(p2, 4.5),
-			br = $vec3(p2, 12);
+			tl = $vec3(p2, 2.5),
+			tr = $vec3(p3, 10),
+			bl = $vec3(p3, 4.5),
+			br = $vec3(p4, 12);
 			pl->setOrigin(tl, tr, bl, br);
 			c1 = Color::hueToRGB(i/(float)sideCount) ,
 			c2 = Color::hueToPastel(i/(float)sideCount)+ $vec4(.2,.2,.2,0);
