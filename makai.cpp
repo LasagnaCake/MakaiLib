@@ -58,6 +58,7 @@ public:
 		//pl->setColor($vec4(0,0,0.5,1));
 		tubeRend.unbindReference<$ref Plane>(pl);//*/
 		for $ssrange(i, 0, sideCount) {
+			// Set 1
 			pl = tubeRend.createReference<$ref Plane>();
 			$vec2
 			p1 = $vmt angleV2((TAU / (float)sideCount) * (float)i),
@@ -65,11 +66,25 @@ public:
 			$debug((TAU / (float)sideCount) * (float)i);
 			$vec3
 			tl = $vec3(p1, -5),
-			tr = $vec3(p1, 10),
+			tr = $vec3(p1, 2.5),
 			bl = $vec3(p2, -3),
-			br = $vec3(p2, 12);
+			br = $vec3(p2, 4.5);
 			pl->setOrigin(tl, tr, bl, br);
 			$vec4
+			c1 = Color::hueToRGB(i/(float)sideCount) ,
+			c2 = Color::hueToPastel(i/(float)sideCount)+ $vec4(.2,.2,.2,0);
+			pl->setColor(c1, c2, c1, c2);
+			tubeRend.unbindReference<$ref Plane>(pl);
+			// Set 2
+			pl = tubeRend.createReference<$ref Plane>();
+			p1 = $vmt angleV2((TAU / (float)sideCount) * (float)i),
+			p2 = $vmt angleV2((TAU / (float)sideCount) * (float)(i + 1));
+			$debug((TAU / (float)sideCount) * (float)i);
+			tl = $vec3(p1, 2.5),
+			tr = $vec3(p1, 10),
+			bl = $vec3(p2, 4.5),
+			br = $vec3(p2, 12);
+			pl->setOrigin(tl, tr, bl, br);
 			c1 = Color::hueToRGB(i/(float)sideCount) ,
 			c2 = Color::hueToPastel(i/(float)sideCount)+ $vec4(.2,.2,.2,0);
 			pl->setColor(c1, c2, c1, c2);
@@ -151,7 +166,7 @@ public:
 		//l->params.active = true;
 		l->params.discardable = false;
 		l->reset();
-		bulletSpawner.stop();
+		//bulletSpawner.stop();
 		player.board = managers.bullet.enemy.board;
 		managers.item.createCollectible(CollectibleData(), 5, lPos, 3, $vec2(0.5));
 	}
