@@ -96,7 +96,7 @@ public:
 		Vector2 screenSize = $scn camera.ortho.size.absolute();
 		Vector2 screenPosition = Vector2(32, -32) * screenSpace;
 		BoxBounds2D
-			playfield = $cdt makeBounds(screenPosition, screenSize * Vector2(1.5, 2.0)),
+			playfield = $cdt makeBounds(screenPosition, screenSize * Vector2(1.1, 1.1)),
 			board = $cdt makeBounds(screenPosition, screenSize);
 		managers.item.poc = -screenSize.y / 3.0;
 		managers.item.playfield =

@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1667175993 source:d:\c(++) projects\_c++\game engine\makailib\makai.cpp
+1667184447 source:d:\c(++) projects\_c++\game engine\makailib\makai.cpp
 	<stdexcept>
 	"src/makai.hpp"
 	<wtypes.h>
@@ -3397,7 +3397,7 @@
 	"SDL_gpu.h"
 	<stdarg.h>
 
-1666980549 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\program.hpp
+1667187318 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\program.hpp
 
 1666946750 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\enemy.hpp
 
