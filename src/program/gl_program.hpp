@@ -390,26 +390,26 @@ namespace Makai {
 			glClear(GL_DEPTH_BUFFER_BIT);
 			// Enable depth testing
 			glEnable(GL_DEPTH_TEST);
-			// Call rendering start function
-			onDrawBegin();
 			// Enable & clear frame buffer
 			framebuffer()->clearBuffers();
+			// Call rendering start function
+			onDrawBegin();
 			// Draw objects
 			vector<size_t> rLayers = Drawer::layers.getAllGroups();
 			for (auto layer : rLayers) {
 				if (layer == Math::maxSizeT) continue;
-				// Call onLayerDrawBegin function
-				onLayerDrawBegin(layer);
 				// Clear target depth buffer
 				framebuffer();
 				// Enable layer buffer
 				layerbuffer()->clearBuffers();
+				// Call onLayerDrawBegin function
+				onLayerDrawBegin(layer);
 				// Render layer
 				Drawer::renderLayer(layer);
-				// Render layer buffer
-				layerbuffer.render(framebuffer);
 				// Call onLayerDrawEnd function
 				onLayerDrawEnd(layer);
+				// Render layer buffer
+				layerbuffer.render(framebuffer);
 			}
 			// ?????
 			onPreFrameDraw();
