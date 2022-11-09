@@ -60,6 +60,8 @@ struct PlayerEntity2D: AreaCircle2D {
 		// Add to game
 		addToGame(this, "DanmakuGame");
 		$ecl groups.addEntity(this, $layer(PLAYER));
+		removeFromCollisionLayer(0);
+		addToCollisionLayer($layer(PLAYER));
 		// Invincibility timer
 		invincibility.stop();
 		invincibility.onSignal = $signal{
@@ -275,7 +277,9 @@ struct PlayerEntity2D: AreaCircle2D {
 	}
 
 	virtual void onCollision(Entity* target) {
-		if ($ecl groups.hasEntity(target, $layer(ENEMY_BULLET))) {
+		if (
+			$ecl collisionLayers.hasEntity(target, $layer(ENEMY))
+		) {
 			pichun();
 		}
 	}

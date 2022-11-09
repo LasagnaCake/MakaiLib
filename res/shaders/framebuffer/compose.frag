@@ -41,7 +41,23 @@ uniform int		chromaChannel = 0;
 
 uniform float saturation = 1;
 
+// [ SCREEN WAVE ]
+uniform bool useWave		= false;
+uniform vec2 waveAmplitude	= vec2(1);
+uniform vec2 waveFrequency	= vec2(1);
+uniform vec2 waveShift		= vec2(1);
+
+#ifndef PI
+#define PI 3.1415926535
+#endif
+
 void main() {
+	// Screen wave	
+	vec2 wave = vec2(0);
+	if (useWave) {
+		wave = ((fragUV + waveShift) * waveFrequency) * (2.0 * PI);
+		wave = vec2(sin(wave.x), sin(wave.y)) * waveAmplitude;
+	}
 	vec4 color = (texture(screen, fragUV) * fragColor * albedo) + accent;
 	// HSL adjuster
 	color = mix(vec4(vec3(color.x, color.y, color.z), color.w), color, saturation);

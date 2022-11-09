@@ -266,6 +266,12 @@ namespace Tween{
 		/// Whether the tween is paused.
 		bool paused = false;
 
+		/// The tween's starting value.
+		T from;
+
+		/// The tween's target value.
+		T to;
+
 		/// Empty Constructor.
 		Tween(bool manual = false) {
 			if (!manual)
@@ -311,7 +317,6 @@ namespace Tween{
 			this->from = from;
 			this->to = to;
 			stop = step;
-			range = from - to;
 			*value = from;
 			this->tweenStep = tweenStep;
 			factor = 0.0f;
@@ -325,7 +330,6 @@ namespace Tween{
 			this->from = from;
 			this->to = to;
 			stop = step;
-			range = from - to;
 			*value = from;
 			this->tweenStep = tweenStep;
 			factor = 0.0f;
@@ -446,15 +450,6 @@ namespace Tween{
 
 		/// Whether the tween is finished.
 		bool isFinished;
-
-		/// The tween's starting value.
-		T from;
-
-		/// The tween's target value.
-		T to;
-
-		/// The difference between from and to (Required for calculations).
-		T range;
 
 		/// The current tween step.
 		unsigned int step;
