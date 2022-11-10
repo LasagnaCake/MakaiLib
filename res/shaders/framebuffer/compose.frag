@@ -1,8 +1,10 @@
-#version 420
+#version 420 core
 
 in vec2 fragUV;
 in vec2 maskUV;
 in vec4 fragColor;
+
+layout (location = 0) out vec4 FragColor;
 
 uniform vec4 albedo = vec4(1);
 uniform vec4 accent = vec4(0);
@@ -84,5 +86,5 @@ void main() {
 
 	if (color.w > 0)
 		color = color / vec4(vec3(color.w), 1.0);
-	gl_FragColor = color;
+	FragColor = color;
 }

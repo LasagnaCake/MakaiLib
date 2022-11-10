@@ -112,15 +112,15 @@ namespace CollisionData {
 		);
 	}
 
-	inline bool withinBounds(Vector2 point, CircleBounds2D area) {
+	inline bool withinBounds(Vector2& point, CircleBounds2D& area) {
 		return point.distanceTo(area.position) < area.radius;
 	}
 
-	inline bool withinBounds(CircleBounds2D a, CircleBounds2D b) {
+	inline bool withinBounds(CircleBounds2D& a, CircleBounds2D& b) {
 		return a.position.distanceTo(b.position) < (a.radius + b.radius);
 	}
 
-	bool withinBounds(BoxBounds2D a, BoxBounds2D b) {
+	bool withinBounds(BoxBounds2D& a, BoxBounds2D& b) {
 		// Get overlap on X
 		bool overlapX = (
 			(b.x.min < a.x.min) && (a.x.min < b.x.max)
@@ -137,7 +137,7 @@ namespace CollisionData {
 		return overlapX && overlapY;
 	}
 
-	bool withinBounds(CircleBounds2D a, BoxBounds2D b) {
+	bool withinBounds(CircleBounds2D& a, BoxBounds2D& b) {
 		float pointAngle = VecMath::angleTo(
 			a.position,
 			Vector2(
@@ -149,18 +149,18 @@ namespace CollisionData {
 		return withinBounds(point, b);
 	}
 
-	inline bool withinBounds(BoxBounds2D a, CircleBounds2D b) {
+	inline bool withinBounds(BoxBounds2D& a, CircleBounds2D& b) {
 		return withinBounds(b, a);
 	}
 
-	inline Vector2 getBounded(Vector2 point, BoxBounds2D box) {
+	inline Vector2 getBounded(Vector2& point, BoxBounds2D& box) {
 		return point.clamped(
 			Vector2(box.x.min, box.y.min),
 			Vector2(box.x.max, box.y.max)
 		);
 	}
 
-	inline bool withinBounds(CircleBounds2D a, RayCast2D b) {
+	inline bool withinBounds(CircleBounds2D& a, RayCast2D& b) {
 		// Get distance between targets
 		float distance = a.position.distanceTo(b.position);
 		// If too distant, return
@@ -169,11 +169,12 @@ namespace CollisionData {
 		// Get ray position to check
 		Vector2 rayPosition = VecMath::angleV2(b.angle) * distance + b.position;
 		// Check collision
-		return withinBounds(a, CircleBounds2D{rayPosition, b.width}) || withinBounds(a, CircleBounds2D{b.position, b.width});
+		CircleBounds2D targetA{rayPosition, b.width}, targetB{b.position, b.width};
+		return withinBounds(a, targetA) || withinBounds(a, targetB);
 	}
 
 	// This is wrong.
-	inline bool withinBounds(BoxBounds2D a, RayCast2D b) {
+	inline bool withinBounds(BoxBounds2D& a, RayCast2D& b) {
 		// Get ray bounding box
 		BoxBounds2D boxB = makeBoundsAB(
 			b.position - VecMath::angleV2(b.angle + PI) * (b.width),
@@ -183,7 +184,7 @@ namespace CollisionData {
 		return withinBounds(a, boxB);
 	}
 
-	inline bool withinBounds(Vector2 a, RayCast2D b) {
+	inline bool withinBounds(Vector2& a, RayCast2D& b) {
 		// Get distance between targets
 		float distance = a.distanceTo(b.position);
 		// If too distant, return
@@ -191,7 +192,8 @@ namespace CollisionData {
 		// Get ray position to check
 		Vector2 rayPosition = VecMath::angleV2(b.angle) * distance + b.position;
 		// Check collision
-		return withinBounds(a, CircleBounds2D{rayPosition, b.width});
+		CircleBounds2D target{rayPosition, b.width};
+		return withinBounds(a, target);
 	}
 }
 
@@ -291,9 +293,12 @@ namespace EntityClass {
 			// If either object cannot collide, return false
 			if (!(collision.enabled && target->collision.enabled)) return false;
 			// Check collision
+			CircleBounds2D
+				selfBounds = getCircleBounds(),
+				targetBounds = ((AreaCircle2D*)target)->getCircleBounds();
 			return withinBounds(
-				getCircleBounds(),
-				((AreaCircle2D*)target)->getCircleBounds()
+				selfBounds,
+				targetBounds
 			);
 		}
 
@@ -348,9 +353,11 @@ namespace EntityClass {
 			if (!(collision.enabled && target->collision.enabled)) return false;
 			if (target->collision.isCircle) {
 				// Check collision
+				BoxBounds2D		self = getBoxBounds();
+				CircleBounds2D	other = ((AreaCircle2D*)target)->getCircleBounds();
 				return withinBounds(
-					((AreaCircle2D*)target)->getCircleBounds(),
-					getBoxBounds()
+					other,
+					self
 				);
 			}
 			// Get projections on X and Y axis

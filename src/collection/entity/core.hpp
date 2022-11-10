@@ -149,6 +149,7 @@ namespace EntityClass {
 		* Also searches the child for an object following a slash "/", as in:
 		* child/grandChild/greatGrandChild/object
 		* Returns null if child does not exist.
+		* TODO: Refactor this code, to be less of a mess.
 		*/
 		Entity* getChild(string path) {
 			// The object's child to look for

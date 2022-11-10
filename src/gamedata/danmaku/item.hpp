@@ -117,10 +117,11 @@ public:
 			if (!item.isFree() && item.params.collidable) {
 				auto a = getMainPlayer();
 				if (a) {
+					auto targetBounds = a->getGrazeBounds();
 					if (
 						$cdt withinBounds(
 							item.params.hitbox,
-							a->getGrazeBounds()
+							targetBounds
 						)
 					) {
 						a->onItemGet(item.params.type, item.params.value);

@@ -184,7 +184,7 @@ namespace Shader {
 		}
 
 		/// Creates a shader and associates it to the object. Returns false if already created.
-		bool create(string vertexCode = DEFAULT_VERTEX_SHADER, string fragmentCode = DEFAULT_FRAGMENT_SHADER) {
+		bool create(string vertexCode, string fragmentCode) {
 			if (created) return false;
 			else created = true;
 			// Compile shaders
@@ -227,7 +227,7 @@ namespace Shader {
 			glGetProgramiv(id, GL_LINK_STATUS, &success);
 			if (!success) {
 				glGetProgramInfoLog(id, 2048, NULL, infoLog);
-				throw runtime_error(string("Could not link shader program!\n") + infoLog);
+				throw runtime_error(string("Could not link shader program!\n") + infoLog + "\n\n\n Program:" + vertexCode + "\n\n\n" + fragmentCode);
 			}
 			// Delete shaders
 			if (vertex)		glDeleteShader(vertex);
@@ -297,7 +297,7 @@ namespace Shader {
 			glGetProgramiv(id, GL_LINK_STATUS, &success);
 			if (!success) {
 				glGetProgramInfoLog(id, 2048, NULL, infoLog);
-				throw runtime_error(string("Could not link shader program!\n") + infoLog);
+				throw runtime_error(string("Could not link shader program!\n") + infoLog  + infoLog + "\n\n\n Program:" + code);
 			}
 			glDeleteShader(shader);
 			return true;

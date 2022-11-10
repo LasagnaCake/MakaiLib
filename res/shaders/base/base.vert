@@ -1,4 +1,4 @@
-#version 430 core
+#version 420 core
 
 uniform mat4 actor = mat4(1);
 uniform mat4 world;

@@ -1,10 +1,12 @@
-#version 410 core
+#version 420 core
 
 in vec3 fragCoord3D;
 in vec2 fragUV;
 in vec4 fragColor;
 
 in vec2 warpUV;
+
+layout (location = 0) out vec4 FragColor;
 
 uniform bool		textured = false;
 uniform sampler2D	texture2D;
@@ -55,6 +57,6 @@ void main(void) {
 		fogValue = clamp(fogValue * exp(-fogStrength), 0, 1);
 		color = mix(color, fogAlbedo, fogValue);
 	}
-	gl_FragColor = color * albedo;
-	//gl_FragColor = vec4(fragColor.x, 1, 1.1-(fragDistance/50.0), 1) * albedo;
+	FragColor = color * albedo;
+	//FragColor = vec4(fragColor.x, 1, 1.1-(fragDistance/50.0), 1) * albedo;
 }

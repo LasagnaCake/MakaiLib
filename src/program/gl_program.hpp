@@ -154,15 +154,15 @@ namespace Makai {
 				$errlog("Error: glewInit: " << glewGetErrorString(glew_status));
 				throw runtime_error(string("Error: glewInit"));
 			}
-			if (!GLEW_VERSION_2_0) {
-				$errlog("Your computer does not support OpenGL 2+!");
-				throw runtime_error(string("Error: No OpenGL 2+"));
+			if (!GLEW_VERSION_4_2) {
+				$errlog("Your computer does not support OpenGL 4.2+!");
+				throw runtime_error(string("Error: No OpenGL 4.2+"));
 			}
 			$debug("Started!");
 			// Create default shader
-			$debug("Creating default shader...");
+			/*$debug("Creating default shader...");
 			Shader::defaultShader.create();
-			$debug("Created!");
+			$debug("Created!");*/
 			SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
 			SDL_GL_SetAttribute(SDL_GL_BUFFER_SIZE, 8);
 			glEnable(GL_BLEND);
@@ -198,7 +198,7 @@ namespace Makai {
 
 		/// Runs the program.
 		void run(){
-			// The physics process
+			// The timer process
 			auto timerFunc	= [&](float delta)-> void {
 				Tween::yieldAllTweens();
 				Event::yieldAllTimers();
@@ -235,13 +235,14 @@ namespace Makai {
 				// Update input manager
 				input.update();
 				// Start thread
-				std::thread physics(timerFunc, deltaTime);
+				//std::thread timerThread(logicFunc, deltaTime);
 				// Do your own stuff
+				timerFunc(deltaTime);
 				logicFunc(deltaTime);
 				onLogicFrame();
 				taskers.yield();
 				// Wait for thread to be done processing
-				physics.join();
+				//timerThread.join();
 				// [[ Render code BEGIN ]]
 				// Render screen
 				render();

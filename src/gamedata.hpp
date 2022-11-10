@@ -45,6 +45,8 @@ namespace GameData {
 		game->addChild(e);
 	}
 
+	#include "gamedata/dialogue.hpp"
+
 	namespace Danmaku {
 		AreaCircle2D* mainPlayer;
 		#include "gamedata/danmaku/predefs.hpp"

@@ -266,20 +266,23 @@ int main() {
 	} else
 		window = $res set4x3.at(resList[winSize]);
 	try {
-		// If sizze = screen size, automatic fullscreen for some reason (Why, SDL?)
+		// If size = screen size, automatic fullscreen for some reason (Why, SDL?)
 		GameApp prog(window.x, window.y, "[TEST]", !fullscreen);
 		// [[ Main Program Code BEGIN ]]
 		prog.maxFrameRate = 60;
 		// [[ Main Program Code END ]]
 		prog.run();
-	} catch (String e) {
+	} catch (std::runtime_error e) {
 		Popup::dialogBox(
 			"Error!",
-			e,
+			e.what(),
 			Popup::Option::OK,
 			SDL_MESSAGEBOX_ERROR
 		);
 	}
+	#ifdef _DEBUG_OUTPUT_
+	getchar();
+	#endif // _DEBUG_OUTPUT_
 	return 0;
 }
 #else

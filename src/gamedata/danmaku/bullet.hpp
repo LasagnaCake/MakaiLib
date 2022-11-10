@@ -124,18 +124,19 @@ public:
 	}
 
 	void onFrame(float delta) override {
-		auto half = [&]() {
+		/*auto half = [&]() {
 			for (auto i = 0; i < BULLET_COUNT / 2; i++) {
 				auto* b = &bullets[i];
 				b->onFrame(delta);
 				if (!b->isFree() && b->params.collidable)
 				for $each(actor, $ecl groups.getGroup(ENEMY_LAYER)) {
 					auto a = ((AreaCircle2D*)actor);
+					auto targetBounds = a->getCircleBounds();
 					if (
 						a->collision.enabled
 						&& $cdt withinBounds(
 							b->params.hitbox,
-							a->getCircleBounds()
+							targetBounds
 						)
 					) {
 						a->onCollision(this);
@@ -204,18 +205,19 @@ public:
 					}
 			}
 		};
-		std::thread firstHalf(half);
-		for (auto i = BULLET_COUNT / 2; i < BULLET_COUNT; i++) {
+		std::thread firstHalf(half);*/
+		for (auto i = 0; i < BULLET_COUNT; i++) {
 			auto* b = &bullets[i];
 			b->onFrame(delta);
 			if (!b->isFree() && b->params.collidable)
 			for $each(actor, $ecl groups.getGroup(ENEMY_LAYER)) {
 				auto a = ((AreaCircle2D*)actor);
+				auto targetBounds = a->getCircleBounds();
 				if (
 					a->collision.enabled
 					&& $cdt withinBounds(
 						b->params.hitbox,
-						a->getCircleBounds()
+						targetBounds
 					)
 				) {
 					a->onCollision(this);
@@ -283,7 +285,7 @@ public:
 					b->setFree(true);
 				}
 		}
-		firstHalf.join();
+		//firstHalf.join();
 	}
 
 	void freeAll() {
