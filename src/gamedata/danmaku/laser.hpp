@@ -224,8 +224,8 @@ public:
 			auto* l = &lasers[i];
 			l->onFrame(delta);
 			if (!l->isFree() && l->params.collidable)
-			for $each(actor, $ecl groups.getGroup(ENEMY_LAYER)) {
-				auto a = ((AreaCircle2D*)actor);
+			if (mainPlayer) {
+				auto& a = (mainPlayer);
 				if (
 					a->collision.enabled
 					&& l->colliding(a->getCircleBounds())

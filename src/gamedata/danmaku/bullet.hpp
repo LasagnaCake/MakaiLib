@@ -210,8 +210,8 @@ public:
 			auto* b = &bullets[i];
 			b->onFrame(delta);
 			if (!b->isFree() && b->params.collidable)
-			for $each(actor, $ecl groups.getGroup(ENEMY_LAYER)) {
-				auto a = ((AreaCircle2D*)actor);
+			if (mainPlayer) {
+				auto& a = (mainPlayer);
 				auto targetBounds = a->getCircleBounds();
 				if (
 					a->collision.enabled
