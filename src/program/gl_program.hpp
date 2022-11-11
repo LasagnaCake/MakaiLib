@@ -17,12 +17,6 @@ namespace Makai {
 		Vector::VecV2,
 		Vector::VecV3,
 		Vector::VecV4;
-
-		$evt Signal _cFunc = [](){};
-		Uint32 _cHandler(Uint32 interval, void* param) {
-			(*($evt Signal*)param)();
-			return interval;
-		}
 	}
 
 	SDL_Event pollEvents() {
@@ -224,18 +218,11 @@ namespace Makai {
 			onOpen();
 			// SDL's events
 			SDL_Event event;
-			// Add render timer
-			/*timers.render = SDL_AddTimer(1.0/maxFrameRate * 1000, &_cHandler, (void*)&queueRender);
-			if (!timers.render)
-				throw std::runtime_error("Could not create render timer!");*/
-			// Get fixed delta time
+			// Fixed delta time
 			float fixedDelta = 1.0/maxFrameRate;
-			// Get current time
-			size_t lastTime = Helper::currentTime();
-			size_t delta = fixedDelta;
 			// While program is running...
 			while(shouldRun) {
-				// Get delta
+				// Get fixed delta
 				fixedDelta = 1.0/maxFrameRate;
 				// increment frame counter
 				frame += 1;
@@ -246,26 +233,16 @@ namespace Makai {
 				// Update input manager
 				input.update();
 				// Start thread
-				//std::thread timerThread(logicFunc, fixedDelta);
 				// Do your own stuff
 				timerFunc(fixedDelta);
 				logicFunc(fixedDelta);
 				onLogicFrame();
 				taskers.yield();
 				// Wait for thread to be done processing
-				//timerThread.join();
 				// Render screen
-				/*if (shouldRender)*/ render();
+				render();
 				// Destroy queued entities
 				$ecl destroyQueued();
-				// Get current delta time
-				size_t currentTime = Helper::currentTime();
-				delta = currentTime - lastTime;
-				// If running faster than expected, slow down
-				// TODO: fix this
-				//if (delta < fixedDelta * 1000)
-				//SDL_Delay((fixedDelta * 360));
-				//lastTime = Helper::currentTime();
 			}
 			// Terminate program
 			$debug("Closing incoherent program...");
@@ -380,8 +357,6 @@ namespace Makai {
 		void terminate() {
 			// Call final function
 			onClose();
-			// Destroy timers
-			//SDL_RemoveTimer(timers.render);
 			// Destroy buffers
 			$debug("Destroying buffers...");
 			framebuffer.destroy();
@@ -394,11 +369,6 @@ namespace Makai {
 			Mix_Quit();
 			$debug("SDL ended!");
 		}
-
-		/// Enables drawing.
-		$evt Signal queueRender = [&](){
-			shouldRender = true;
-		};
 
 		/// Draws the window.
 		void render() {
@@ -438,12 +408,7 @@ namespace Makai {
 			glDisable(GL_DEPTH_TEST);
 			// Display window
 			SDL_GL_SwapWindow(window);
-			// disable rendering
-			shouldRender = false;
 		}
-
-		///
-		bool shouldRender = true;
 
 		/// Frame counter.
 		size_t frame = 0;
@@ -456,11 +421,6 @@ namespace Makai {
 
 		/// The Window's renderer.
 		SDL_Renderer* renderer;
-
-		/// The window's SDL timers.
-		struct {
-			SDL_TimerID render = 0;
-		} timers;
 	};
 
 	Vector2 getDeviceSize() {
