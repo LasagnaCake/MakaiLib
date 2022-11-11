@@ -200,6 +200,18 @@ namespace Drawer {
 		return Vector2(v.u, v.v);
 	}
 
+	inline void vertexCopy(RawVertex& a, RawVertex& b) {
+		a.x = b.x;
+		a.y = b.y;
+		a.z = b.z;
+		a.u = b.u;
+		a.v = b.v;
+		a.r = b.r;
+		a.g = b.g;
+		a.b = b.b;
+		a.a = b.a;
+	}
+
 	#include "gl_texture.hpp"
 }
 
@@ -266,18 +278,12 @@ namespace VecMath {
 		res += glm::vec4(glm::vec3(matrix[3]), 0.0);
 		return RawVertex{res.x, res.y, res.z, vtx.u, vtx.v, vtx.r, vtx.g, vtx.b, vtx.a};
 	}
-
-	inline RawVertex glmSrpTransform(RawVertex& vtx, Transform3D& trans) {
-		auto tmat = asGLMMatrix(trans);
-		return srpTransform(vtx, tmat);
-	}*/
+	*/
 
 	void srpTransform(RawVertex& vtx, glm::mat4& matrix) {
 		glm::vec4 res = glm::vec4(vtx.x, vtx.y, vtx.z, 1.0f) * matrix;
 		res += glm::vec4(glm::vec3(matrix[3]), 0.0);
-		vtx.x = res.x;
-		vtx.y = res.y;
-		vtx.z = res.z;
+		Drawer::vertexSetPosition(vtx, Vector3(res.x, res.y, res.z));
 	}
 
 	inline void glmSrpTransform(RawVertex& vtx, Transform3D& trans) {

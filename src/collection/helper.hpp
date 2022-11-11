@@ -36,6 +36,10 @@ namespace Helper {
 		}
 		return values;
 	}
+
+	size_t currentTime() {
+		return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+	}
 }
 
 #endif // HELPING_HAND_H

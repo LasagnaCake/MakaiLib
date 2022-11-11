@@ -47,10 +47,10 @@ public:
 	#define VERTEX_SET_POS(VERT, VAL) Drawer::vertexSetPosition(VERT, VAL);
 	/// Sets the plane's origin.
 	Plane* setOrigin(
-			Vector3 tlPos,
-			Vector3 trPos,
-			Vector3 blPos,
-			Vector3 brPos
+			Vector3 tlPos = Vector3(-1, 1),
+			Vector3 trPos = Vector3(1, 1),
+			Vector3 blPos = Vector3(-1, -1),
+			Vector3 brPos = Vector3(1, -1)
 		) {
 		VERTEX_SET_POS(*tl,		tlPos);
 		VERTEX_SET_POS(*tr1,	trPos);
@@ -119,12 +119,12 @@ public:
 
 	/// Sets the plane to its original state (last state set with setPosition).
 	Plane* reset() override {
-		VERTEX_SET_POS(*tl,	origin[0]);
+		VERTEX_SET_POS(*tl,		origin[0]);
 		VERTEX_SET_POS(*tr1,	origin[1]);
-		VERTEX_SET_POS(*tr2,	origin[2]);
-		VERTEX_SET_POS(*bl1,	origin[1]);
+		VERTEX_SET_POS(*tr2,	origin[1]);
+		VERTEX_SET_POS(*bl1,	origin[2]);
 		VERTEX_SET_POS(*bl2,	origin[2]);
-		VERTEX_SET_POS(*br,	origin[3]);
+		VERTEX_SET_POS(*br,		origin[3]);
 		return this;
 	}
 
@@ -133,7 +133,7 @@ public:
 		if (!fixed) return this;
 		// Get transformation
 		Transform3D self = local;
-		//self.scale *= (float)visible;
+		self.scale *= (float)visible;
 		glm::mat4 trans = asGLMMatrix(self);
 		// Apply transformation
 		$srpTransform(*tl, trans);

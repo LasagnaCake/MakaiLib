@@ -7,6 +7,7 @@
 #include <iostream>
 #define $errlog(TEXT) std::cerr << TEXT << std::endl
 #define $debug(TEXT) std::cout << (TEXT); std::cout << "\n"
+#define $debugp(TEXT) std::cout << (TEXT)
 #define $flush() std::cout << std::endl;
 #else
 #define $errlog(TEXT)

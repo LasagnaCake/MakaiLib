@@ -27,7 +27,7 @@
 
 #define UPDATE_PARAM(PNAME) \
 	if (params.PNAME.omega) { \
-		params.PNAME.factor = Math::clamp(params.PNAME.factor + params.PNAME.omega, 0.0f, 1.0f); \
+		params.PNAME.factor = Math::clamp(params.PNAME.factor + params.PNAME.omega * (delta * 100.0f), 0.0f, 1.0f); \
 		float vf = params.PNAME.easing(params.PNAME.factor, 0.0, 1.0, 1.0f); \
 		params.PNAME.current = $mth lerp( \
 			params.PNAME.start, \

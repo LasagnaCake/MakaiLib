@@ -197,7 +197,6 @@ public:
 		// Copy data to IVB
 		size_t i = 0;
 		for (auto& t: triangles) {
-			// FIXME: Not working, for some reason.
 			verts[i]	= t->verts[0];
 			verts[i+1]	= t->verts[1];
 			verts[i+2]	= t->verts[2];
