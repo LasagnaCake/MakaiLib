@@ -196,8 +196,8 @@ public:
 		actorMatrix = VecMath::asGLMMatrix(trans);
 		// Copy data to IVB
 		size_t i = 0;
-		// FIXME: Not working anymore, for some reason.
 		for (auto& t: triangles) {
+			// FIXME: Not working, for some reason.
 			verts[i]	= t->verts[0];
 			verts[i+1]	= t->verts[1];
 			verts[i+2]	= t->verts[2];
