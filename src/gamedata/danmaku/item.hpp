@@ -115,7 +115,7 @@ public:
 		for $seach(item, items, ITEM_COUNT)
 			item.onFrame(delta);
 			if (!item.isFree() && item.params.collidable) {
-				auto a = getMainPlayer();
+				auto a = (PlayerEntity2D*)mainPlayer;
 				if (a) {
 					auto targetBounds = a->getGrazeBounds();
 					if (

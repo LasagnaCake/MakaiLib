@@ -24,12 +24,12 @@ public:
 	}
 
 	Plane(
-		Vertex* tl,
-		Vertex* tr1,
-		Vertex* tr2,
-		Vertex* bl1,
-		Vertex* bl2,
-		Vertex* br
+		RawVertex* tl,
+		RawVertex* tr1,
+		RawVertex* tr2,
+		RawVertex* bl1,
+		RawVertex* bl2,
+		RawVertex* br
 	) {
 		this->tl	= tl;
 		this->tr1	= tr1;
@@ -44,6 +44,7 @@ public:
 		tris[0] = tris[1] = nullptr;
 	}
 
+	#define VERTEX_SET_POS(VERT, VAL) Drawer::vertexSetPosition(VERT, VAL);
 	/// Sets the plane's origin.
 	Plane* setOrigin(
 			Vector3 tlPos,
@@ -51,25 +52,27 @@ public:
 			Vector3 blPos,
 			Vector3 brPos
 		) {
-		origin[0] = tl->position	= tlPos;
-		origin[1] = tr1->position	= trPos;
-		origin[2] = tr2->position	= trPos;
-		origin[3] = bl1->position	= blPos;
-		origin[4] = bl2->position	= blPos;
-		origin[5] = br->position	= brPos;
+		VERTEX_SET_POS(*tl,		tlPos);
+		VERTEX_SET_POS(*tr1,	trPos);
+		VERTEX_SET_POS(*tr2,	trPos);
+		VERTEX_SET_POS(*bl1,	blPos);
+		VERTEX_SET_POS(*bl2,	blPos);
+		VERTEX_SET_POS(*br,		brPos);
+		origin[0] = tlPos;
+		origin[1] = trPos;
+		origin[2] = blPos;
+		origin[3] = brPos;
 		return this;
 	}
 
 	/// Transforms the plane's origin by a given transform.
 	Plane* setOrigin(Transform3D trans) {
 		glm::mat4 glmtrans = asGLMMatrix(trans);
-		origin[0] = tl->position	= $srpTransform(origin[0], glmtrans);
-		origin[1] = tr1->position	= $srpTransform(origin[1], glmtrans);
-		origin[2] = tr2->position	= $srpTransform(origin[2], glmtrans);
-		origin[3] = bl1->position	= $srpTransform(origin[3], glmtrans);
-		origin[4] = bl2->position	= $srpTransform(origin[4], glmtrans);
-		origin[5] = br->position	= $srpTransform(origin[5], glmtrans);
-		return this;
+		origin[0] = $srpTransform(origin[0], glmtrans);
+		origin[1] = $srpTransform(origin[1], glmtrans);
+		origin[2] = $srpTransform(origin[2], glmtrans);
+		origin[3] = $srpTransform(origin[3], glmtrans);
+		return reset();
 	}
 
 	Plane* setUV(
@@ -78,12 +81,12 @@ public:
 			Vector2 blUV,
 			Vector2 brUV
 		) {
-		tl->uv	= tlUV;
-		tr1->uv	= trUV;
-		tr2->uv	= trUV;
-		bl1->uv	= blUV;
-		bl2->uv	= blUV;
-		br->uv	= brUV;
+		Drawer::vertexSetUV(*tl,	tlUV);
+		Drawer::vertexSetUV(*tr1,	trUV);
+		Drawer::vertexSetUV(*tr2,	trUV);
+		Drawer::vertexSetUV(*bl1,	blUV);
+		Drawer::vertexSetUV(*bl2,	blUV);
+		Drawer::vertexSetUV(*br,	brUV);
 		return this;
 	}
 
@@ -93,35 +96,35 @@ public:
 			Vector4 blCol,
 			Vector4 brCol
 		) {
-		tl->color	= tlCol;
-		tr1->color	= trCol;
-		tr2->color	= trCol;
-		bl1->color	= blCol;
-		bl2->color	= blCol;
-		br->color	= brCol;
+		Drawer::vertexSetColor(*tl,		tlCol);
+		Drawer::vertexSetColor(*tr1,	trCol);
+		Drawer::vertexSetColor(*tr2,	trCol);
+		Drawer::vertexSetColor(*bl1,	blCol);
+		Drawer::vertexSetColor(*bl2,	blCol);
+		Drawer::vertexSetColor(*br,		brCol);
 		return this;
 	}
 
 	Plane* setColor(
 			Vector4 col = Color::WHITE
 		) {
-		tl->color	= col;
-		tr1->color	= col;
-		tr2->color	= col;
-		bl1->color	= col;
-		bl2->color	= col;
-		br->color	= col;
+		Drawer::vertexSetColor(*tl,		col);
+		Drawer::vertexSetColor(*tr1,	col);
+		Drawer::vertexSetColor(*tr2,	col);
+		Drawer::vertexSetColor(*bl1,	col);
+		Drawer::vertexSetColor(*bl2,	col);
+		Drawer::vertexSetColor(*br,		col);
 		return this;
 	}
 
 	/// Sets the plane to its original state (last state set with setPosition).
 	Plane* reset() override {
-		tl->position	= origin[0];
-		tr1->position	= origin[1];
-		tr2->position	= origin[2];
-		bl1->position	= origin[3];
-		bl2->position	= origin[4];
-		br->position	= origin[5];
+		VERTEX_SET_POS(*tl,	origin[0]);
+		VERTEX_SET_POS(*tr1,	origin[1]);
+		VERTEX_SET_POS(*tr2,	origin[2]);
+		VERTEX_SET_POS(*bl1,	origin[1]);
+		VERTEX_SET_POS(*bl2,	origin[2]);
+		VERTEX_SET_POS(*br,	origin[3]);
 		return this;
 	}
 
@@ -129,14 +132,16 @@ public:
 		onTransform();
 		if (!fixed) return this;
 		// Get transformation
-		glm::mat4 trans = asGLMMatrix(local);
+		Transform3D self = local;
+		//self.scale *= (float)visible;
+		glm::mat4 trans = asGLMMatrix(self);
 		// Apply transformation
-		tl->position	= $srpTransform(tl->position, trans)	* visible;
-		tr1->position	= $srpTransform(tr1->position, trans)	* visible;
-		tr2->position	= $srpTransform(tr2->position, trans)	* visible;
-		bl1->position	= $srpTransform(bl1->position, trans)	* visible;
-		bl2->position	= $srpTransform(bl2->position, trans)	* visible;
-		br->position	= $srpTransform(br->position, trans)	* visible;
+		$srpTransform(*tl, trans);
+		$srpTransform(*tr1, trans);
+		$srpTransform(*tr2, trans);
+		$srpTransform(*bl1, trans);
+		$srpTransform(*bl2, trans);
+		$srpTransform(*br, trans);
 		return this;
 	}
 
@@ -148,14 +153,14 @@ protected:
 
 	Triangle* tris[2] = {nullptr, nullptr};
 
-	Vector3 origin[6];
+	Vector3 origin[4];
 
-	Vertex* tl	= nullptr;
-	Vertex* tr1	= nullptr;
-	Vertex* tr2	= nullptr;
-	Vertex* bl1	= nullptr;
-	Vertex* bl2	= nullptr;
-	Vertex* br	= nullptr;
+	RawVertex* tl	= nullptr;
+	RawVertex* tr1	= nullptr;
+	RawVertex* tr2	= nullptr;
+	RawVertex* bl1	= nullptr;
+	RawVertex* bl2	= nullptr;
+	RawVertex* br	= nullptr;
 };
 
 class AnimatedPlane: public Plane {
@@ -175,3 +180,5 @@ public:
 		);
 	}
 };
+
+#undef VERTEX_SET_POS

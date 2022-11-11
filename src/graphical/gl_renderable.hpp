@@ -178,26 +178,6 @@ public:
 		delete ref;
 	}
 
-	vector<Triangle*> getSortedTriangles() {
-		// I Give Up.
-		//return triangles;
-		vector<Triangle*> tris;
-		vector<Triangle*> solid;
-		vector<Triangle*> translucent;
-		// Separate solids from translucents
-		for $eachif(t, triangles, t->isSolid(params.sorting.threshold))
-			solid.push_back(t);
-		else
-			translucent.push_back(t);
-		//std::reverse(translucent.begin(), translucent.end());
-		//std::reverse(solid.begin(), solid.end());
-		// Join back together, with translucents last
-		tris = solid;
-		for $each(t, translucent)
-			tris.push_back(t);
-		return tris;
-	}
-
 	/// Renders the object to the screen.
 	DrawFunc render = $func() {
 		// If not active, return
@@ -206,27 +186,21 @@ public:
 		if (!triangles.size()) return;
 		// Call onDrawBegin function
 		onDrawBegin();
-		vector<Triangle*> tris = triangles;
-		// If auto sort triangles, then do so
-		if (params.sorting.automatic) {
-			if ((vertexCount != (triangles.size() * 3)) || !vertexCount)
-				sortedTriangles = getSortedTriangles();
-			tris = sortedTriangles;
-		}
 		// Transform references (if applicable)
-		for (auto plane: references.plane) plane->transform();
+		for (auto& plane: references.plane) plane->transform();
 		// Get vertex count
-		vertexCount = tris.size() * 3;
+		vertexCount = triangles.size() * 3;
 		// Create Intermediary Vertex Buffer (IVB) to be displayed on screen
 		RawVertex* verts = new RawVertex[(vertexCount)];
 		// Get transformation matrix
 		actorMatrix = VecMath::asGLMMatrix(trans);
 		// Copy data to IVB
 		size_t i = 0;
-		for (auto t: tris) {
-			verts[i]	= toRawVertex(t->verts[0]);
-			verts[i+1]	= toRawVertex(t->verts[1]);
-			verts[i+2]	= toRawVertex(t->verts[2]);
+		// FIXME: Not working anymore, for some reason.
+		for (auto& t: triangles) {
+			verts[i]	= t->verts[0];
+			verts[i+1]	= t->verts[1];
+			verts[i+2]	= t->verts[2];
 			i += 3;
 		}
 		// Set VBO as active
@@ -241,7 +215,7 @@ public:
 		// Delete IVB, since it is no longer necessary
 		delete [] verts;
 		// De-transform references (if applicable)
-		for (auto plane: references.plane) plane->reset();
+		for (auto& plane: references.plane) plane->reset();
 		// Set VAO as active
 		glBindVertexArray(vao);
 		// Define vertex data in VBO

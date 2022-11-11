@@ -48,7 +48,7 @@ namespace GameData {
 	#include "gamedata/dialogue.hpp"
 
 	namespace Danmaku {
-		AreaCircle2D* mainPlayer;
+		AreaCircle2D* mainPlayer = nullptr;
 		#include "gamedata/danmaku/predefs.hpp"
 		#include "gamedata/danmaku/structs.hpp"
 		#include "gamedata/danmaku/bullet.hpp"

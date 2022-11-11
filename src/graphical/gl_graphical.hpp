@@ -89,7 +89,7 @@ namespace Drawer {
 		return res;
 	}
 
-	RawVertex toRawVertex(Vertex vert) {
+	RawVertex toRawVertex(Vertex& vert) {
 		RawVertex res;
 		res.x = vert.position.x;
 		res.y = vert.position.y;
@@ -161,40 +161,72 @@ namespace Drawer {
 		);
 	}
 
-	void clearColorBuffer(Vector4 color) {
+	inline void clearColorBuffer(Vector4 color) {
 		glSetClearColor(color);
 		glClear(GL_COLOR_BUFFER_BIT);
 	}
 
-	void clearDepthBuffer() {
+	inline void clearDepthBuffer() {
 		glClear(GL_DEPTH_BUFFER_BIT);
+	}
+
+	inline void vertexSetColor(RawVertex& v, Vector4 color) {
+		v.r = color.x;
+		v.g = color.y;
+		v.b = color.z;
+		v.a = color.w;
+	}
+
+	inline void vertexSetPosition(RawVertex& v, Vector3 pos) {
+		v.x = pos.x;
+		v.y = pos.y;
+		v.z = pos.z;
+	}
+
+	inline void vertexSetUV(RawVertex& v, Vector2 uv) {
+		v.u = uv.x;
+		v.v = uv.y;
+	}
+
+	inline Vector4 vertexGetColor(RawVertex& v) {
+		return Vector4(v.r, v.g, v.b, v.a);
+	}
+
+	inline Vector3 vertexGetPosition(RawVertex& v) {
+		return Vector3(v.x, v.y, v.z);
+	}
+
+	inline Vector2 vertexGetUV(RawVertex& v) {
+		return Vector2(v.u, v.v);
 	}
 
 	#include "gl_texture.hpp"
 }
 
 namespace VecMath {
-	inline glm::vec3 asGLMVector(Vector3 vec) {
+	using Drawer::RawVertex;
+
+	inline glm::vec3 asGLMVector(Vector3& vec) {
 		return glm::vec3(vec.x, vec.y, vec.z);
 	}
 
-	inline Vector3 asVector(glm::vec3 vec) {
+	inline Vector3 asVector(glm::vec3& vec) {
 		return Vector3(vec.x, vec.y, vec.z);
 	}
 
-	inline glm::vec4 asGLMVector(Vector4 vec) {
+	inline glm::vec4 asGLMVector(Vector4& vec) {
 		return glm::vec4(vec.x, vec.y, vec.z, vec.w);
 	}
 
-	inline Vector4 asVector(glm::vec4 vec) {
+	inline Vector4 asVector(glm::vec4& vec) {
 		return Vector4(vec.x, vec.y, vec.z, vec.w);
 	}
 
-	inline Vector3 asVector3(glm::vec4 vec) {
+	inline Vector3 asVector3(glm::vec4& vec) {
 		return Vector3(vec.x, vec.y, vec.z);
 	}
 
-	inline Vector3 glmRotateV3(Vector3 vec, Vector3 angle) {
+	inline Vector3 glmRotateV3(Vector3& vec, Vector3 angle) {
 		glm::vec3 res = asGLMVector(vec);
 		res = glm::rotateZ(res, angle.z);
 		res = glm::rotateY(res, angle.y);
@@ -202,7 +234,7 @@ namespace VecMath {
 		return asVector(res);
 	}
 
-	inline glm::mat4 rotationMatrix(Vector3 rotation) {
+	inline glm::mat4 rotationMatrix(Vector3& rotation) {
 		return glm::eulerAngleYXZ(
 			rotation.y,
 			rotation.x,
@@ -210,7 +242,7 @@ namespace VecMath {
 		);
 	}
 
-	glm::mat4 asGLMMatrix(Transform3D trans) {
+	glm::mat4 asGLMMatrix(Transform3D& trans) {
 		glm::mat4 res(1.0f);
 		res = glm::translate(res, asGLMVector(trans.position));
 		res = glm::scale(res, asGLMVector(trans.scale));
@@ -218,14 +250,39 @@ namespace VecMath {
 		return res;
 	}
 
-	Vector3 srpTransform(Vector3 vec, glm::mat4 matrix) {
+	Vector3 srpTransform(Vector3& vec, glm::mat4& matrix) {
 		glm::vec4 res = glm::vec4(vec.x, vec.y, vec.z, 1.0f) * matrix;
 		res += glm::vec4(glm::vec3(matrix[3]), 0.0);
 		return Vector3(res.x, res.y, res.z);
 	}
 
-	inline Vector3 glmSrpTransform(Vector3 vec, Transform3D trans) {
-		return srpTransform(vec, asGLMMatrix(trans));
+	inline Vector3 glmSrpTransform(Vector3& vec, Transform3D& trans) {
+		auto tmat = asGLMMatrix(trans);
+		return srpTransform(vec, tmat);
+	}
+
+	/*RawVertex srpTransform(RawVertex& vtx, glm::mat4& matrix) {
+		glm::vec4 res = glm::vec4(vtx.x, vtx.y, vtx.z, 1.0f) * matrix;
+		res += glm::vec4(glm::vec3(matrix[3]), 0.0);
+		return RawVertex{res.x, res.y, res.z, vtx.u, vtx.v, vtx.r, vtx.g, vtx.b, vtx.a};
+	}
+
+	inline RawVertex glmSrpTransform(RawVertex& vtx, Transform3D& trans) {
+		auto tmat = asGLMMatrix(trans);
+		return srpTransform(vtx, tmat);
+	}*/
+
+	void srpTransform(RawVertex& vtx, glm::mat4& matrix) {
+		glm::vec4 res = glm::vec4(vtx.x, vtx.y, vtx.z, 1.0f) * matrix;
+		res += glm::vec4(glm::vec3(matrix[3]), 0.0);
+		vtx.x = res.x;
+		vtx.y = res.y;
+		vtx.z = res.z;
+	}
+
+	inline void glmSrpTransform(RawVertex& vtx, Transform3D& trans) {
+		auto tmat = asGLMMatrix(trans);
+		srpTransform(vtx, tmat);
 	}
 }
 #ifndef $srpTransform
@@ -250,6 +307,7 @@ namespace RenderData {
 		Drawer::toRawVertex,
 		Drawer::DrawFunc,
 		Drawer::Texture2D,
+		Drawer::vertexGetPosition,
 		std::function,
 		std::vector,
 		std::runtime_error;
@@ -273,13 +331,19 @@ namespace RenderData {
 		) {
 			#pragma GCC unroll 3
 			for (unsigned char i = 0; i < 3; i++) {
-				this->verts[i].position	= verts[i];
-				this->verts[i].uv		= uv != nullptr		? uv[i]		: Vector2(0.0);
-				this->verts[i].color	= color != nullptr	? color[i]	: Color::WHITE;
+				this->verts[i].x	= verts[i].x;
+				this->verts[i].y	= verts[i].y;
+				this->verts[i].z	= verts[i].z;
+				this->verts[i].u	= uv	!= nullptr	? uv[i].x		: 0;
+				this->verts[i].v	= uv	!= nullptr	? uv[i].y		: 0;
+				this->verts[i].r	= color != nullptr	? color[i].x	: 1;
+				this->verts[i].g	= color != nullptr	? color[i].y	: 1;
+				this->verts[i].b	= color != nullptr	? color[i].z	: 1;
+				this->verts[i].a	= color != nullptr	? color[i].w	: 1;
 			}
 		}
 
-		Triangle(Vertex verts[3]) {
+		Triangle(RawVertex verts[3]) {
 			#pragma GCC unroll 3
 			for (unsigned char i = 0; i < 3; i++)
 				this->verts[i] = verts[i];
@@ -292,19 +356,23 @@ namespace RenderData {
 		}
 
 		Vector3 getCenter() {
-			Vector3 center = (verts[0].position + verts[1].position + verts[2].position);
+			Vector3 center = (
+				vertexGetPosition(verts[0]) +
+				vertexGetPosition(verts[1]) +
+				vertexGetPosition(verts[2])
+			);
 			center /= 3;
 			return center;
 		}
 
 		inline bool isSolid(float clip = 1.0) {
-			#define _SOLID(VIDX) (verts[VIDX].color.w - clip >= 0.0)
+			#define _SOLID(VIDX) (verts[VIDX].a - clip >= 0.0)
 			return _SOLID(0) && _SOLID(1) && _SOLID(2) && _SOLID(3);
 		}
 
 		virtual ~Triangle() {}
 
-		Vertex verts[3];
+		RawVertex verts[3];
 	};
 
 	namespace Reference {
