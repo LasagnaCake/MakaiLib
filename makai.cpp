@@ -45,8 +45,9 @@ public:
 
 	void onOpen() override {
 		// British? 😩
-		// prog.maxFrameRate = 50;
-		// prog.maxFrameRate = 60;
+		// maxFrameRate = 50;
+		// maxFrameRate = 60;
+		// maxFrameRate = 20;
 		// Do parent task
 		DanmakuApp::onOpen();
 		// Create background
@@ -76,7 +77,7 @@ public:
 			br = $vec3(p3, 4.5);
 			pl->setOrigin(tl, tr, bl, br);
 			$vec4
-			c1 = Color::hueToRGB(i/(float)sideCount) ,
+			c1 = Color::hueToRGB(i/(float)sideCount),
 			c2 = Color::hueToPastel(i/(float)sideCount)+ $vec4(.2,.2,.2,0);
 			pl->setColor(c1, c2, c1, c2);
 			tubeRend.unbindReference<$ref Plane>(pl);
@@ -88,11 +89,11 @@ public:
 			bl = $vec3(p3, 4.5),
 			br = $vec3(p4, 12);
 			pl->setOrigin(tl, tr, bl, br);
-			c1 = Color::hueToRGB(i/(float)sideCount) ,
+			c1 = Color::hueToRGB(i/(float)sideCount),
 			c2 = Color::hueToPastel(i/(float)sideCount)+ $vec4(.2,.2,.2,0);
 			pl->setColor(c1, c2, c1, c2);
 			tubeRend.unbindReference<$ref Plane>(pl);
-		}
+		}/*
 		for $ssrange(i, 0, 10) {
 			pl = tubeRend.createReference<$ref Plane>();
 			pl->setOrigin(
@@ -103,7 +104,7 @@ public:
 			);
 			pl->setColor($vec4(Color::SEMILUCENT).compensated());
 			tubeRend.unbindReference<$ref Plane>(pl);
-		}
+		}*/
 		tubeRend.trans.scale = $vec3($vec2(10), 2);
 		tubeRend.trans.position.y = 5;
 		// Set player stuff
@@ -174,17 +175,17 @@ public:
 		managers.item.createCollectible(CollectibleData(), 5, lPos, 3, $vec2(0.5));
 	}
 
-	void onLogicFrame() override {
+	void onLogicFrame(float delta) override {
 		if (input.getButtonDown(SDL_SCANCODE_ESCAPE)) {
 			close();
 		}
 	}
 
 	void onDrawBegin() override {
-		float fac = (0.5 + (cos(getCurrentFrame() / 120.0) / 2.0));
-		cam3D.eye.x	= sin(getCurrentFrame() / 60.0) * 3.0;
-		cam3D.at.y	= cos(getCurrentFrame() / 60.0) * 3.0;
-		tubeRend.trans.rotation.z = getCurrentFrame() / 180.0;
+		float fac = (0.5 + (cos(getCurrentFrame() / (maxFrameRate * 2.0)) / 2.0));
+		cam3D.eye.x	= sin(getCurrentFrame() / maxFrameRate) * 3.0;
+		cam3D.at.y	= cos(getCurrentFrame() / maxFrameRate) * 3.0;
+		tubeRend.trans.rotation.z = getCurrentFrame() / (maxFrameRate * 3.0);
 		tubeRend.trans.position.z = Math::lerp(-20.0f, 10.0f, fac);
 	}
 
@@ -244,7 +245,7 @@ int main() {
 		SDL_MESSAGEBOX_WARNING
 	) < 0) return 0;
 	int winSize = Popup::dialogBox(
-		"App Configuration (1/2)",
+		"App Configuration (1/3)",
 		"Please select a window size.\n"
 		"Selecting \"Detect\" will set to your screen's size.\n\n"
 		"WARNING: Selecting \"Detect\" will set the application to fullscreen!\n",
@@ -255,12 +256,19 @@ int main() {
 	int fullscreen = 0;
 	if (winSize != resList.size() - 1) {
 		fullscreen = Popup::dialogBox(
-			"App Configuration (2/2)",
+			"App Configuration (2/3)",
 			"Would you like to run this application in fullscreen or windowed mode?",
 			StringList{"Fullscreen", "Windowed"}
 		);
 	}
-	if (fullscreen < 0)
+	int framerate = Popup::dialogBox(
+		"App Configuration (3/3)",
+		"Please select the maximum framerate (frames per second).\n"
+		"Higher framerates require more powerful computers.\n"
+		"If the program is running slow, try changing the framerate.",
+		StringList{"10", "20", "30", "40", "50", "60"}
+	);
+	if (fullscreen < 0 || framerate < 0)
 		return 0;
 	Vector2 window;
 	if (winSize == resList.size() - 1) {
@@ -271,6 +279,7 @@ int main() {
 	try {
 		// If size = screen size, automatic fullscreen for some reason (Why, SDL?)
 		GameApp prog(window.x, window.y, "[TEST]", !fullscreen);
+		prog.maxFrameRate = 10 + (framerate * 10);
 		prog.run();
 	} catch (std::runtime_error e) {
 		Popup::dialogBox(

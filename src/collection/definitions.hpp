@@ -24,4 +24,6 @@
 
 #define $isderivedof(CLASS, BASE) $enableif($derived(CLASS, BASE))
 
+#define $getspace(SOURCE, NAME) namespace NAME { using namespace SOURCE :: NAME; }
+
 #endif // EXTRA_DEFINITION_MACROS_H

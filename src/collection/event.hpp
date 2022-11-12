@@ -22,15 +22,15 @@
 namespace Event{
 	namespace {
 		using std::function, std::vector;
-		vector<const function<void()>*> timerList;
+		vector<const function<void(float)>*> timerList;
 	}
-	#define $$FUNC function<void()>
+	#define $$FUNC function<void(float)>
 	/// Yields all available non-manual timers.
-	void yieldAllTimers() {
+	void yieldAllTimers(float delta = 1) {
 		// Loop through timers and step them
 		if (timerList.size())
 			for(const $$FUNC* func : timerList)
-				(*func)();
+				(*func)(delta);
 	}
 
 	/// A signal to be fired, whenever.
@@ -77,7 +77,7 @@ namespace Event{
 		bool repeat = false;
 
 		/// The delay until firing. the internal counter gets incremented until reaching it.
-		unsigned int delay = 0;
+		float delay = 0;
 
 		/// The amount of times to repeat for. If < 0, loops indefinitely.
 		long loopCount = -1;
@@ -89,7 +89,7 @@ namespace Event{
 		}
 
 		/// Signal + delay + repeat constructor.
-		Timer(Signal onSignal, unsigned int delay = 1, bool repeat = false, bool manual = false) {
+		Timer(Signal onSignal, float delay = 1, bool repeat = false, bool manual = false) {
 			this->onSignal	= onSignal;
 			this->delay		= delay;
 			this->repeat	= repeat;
@@ -98,7 +98,7 @@ namespace Event{
 		}
 
 		/// Delay + repeat constructor.
-		Timer(unsigned int delay, bool repeat = false, bool manual = false) {
+		Timer(float delay, bool repeat = false, bool manual = false) {
 			this->delay		= delay;
 			this->repeat	= repeat;
 			if (!manual)
@@ -120,7 +120,7 @@ namespace Event{
 		/**
 		* Yields a cycle.
 		*/
-		const $$FUNC yield = [&]() {
+		const $$FUNC yield = [&](float delta = 1) {
 			// If not paused...
 			if (!paused) {
 				// If counter has reached target...
@@ -135,7 +135,7 @@ namespace Event{
 					if (loopCount > 0) loopCount--;
 				}
 				// Increment counter
-				counter++;
+				counter += delta;
 			}
 		};
 

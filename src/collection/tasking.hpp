@@ -82,7 +82,7 @@ namespace Tasking {
 		* If returned delay is 0, process next Task,
 		* until reaching the end of the list, or until returned delay is not 0.
 		*/
-		void yield() {
+		void yield(float delta = 1) {
 			// If loop count is zero...
 			if (loopCount == 0) {
 				// Set finished flag to true
@@ -104,13 +104,13 @@ namespace Tasking {
 				// Set trigger to default
 				trigger = Event::DEF_TRIGGER;
 				// Decrease delay if not already zero
-				if (delay > 0) delay--;
+				if (delay > 0) delay -= delta;
 				// If delay is 0 ("done waiting")
 				if (delay < 1) {
 					// Execute Task
 					delay = tasks[curTask++](this);
 					// If delay given is zero, yield next cycle
-					if (delay < 1) yield();
+					if (delay < 0) yield();
 				}
 				// If not on last task...
 				if (!(curTask < maxTask)) {
@@ -136,7 +136,7 @@ namespace Tasking {
 		}
 
 		/// Sets the delay until next Task execution.
-		void setDelay(size_t n) {
+		void setDelay(float n) {
 			delay = n;
 		}
 
@@ -172,7 +172,7 @@ namespace Tasking {
 		vector<Task> tasks;
 
 		/// The delay until next Task. gets decremented when yield() is called, until 0.
-		size_t delay = 0;
+		float delay = 0;
 
 		/// The number of Tasks in the list.
 		size_t maxTask = 0;
@@ -184,7 +184,7 @@ namespace Tasking {
 	#undef Task
 
 	/// A Task. Essentally a function, that takes in its parent Tasker, and returns a delay.
-	typedef function<size_t(Tasker*)> Task;
+	typedef function<float(Tasker*)> Task;
 
 	/// A list of Tasks.
 	typedef vector<Task> TaskList;
@@ -250,10 +250,10 @@ namespace Tasking {
 		}
 
 		/// Processes one task cycle of all Taskers.
-		void yield() {
+		void yield(float delta = 1) {
 			// If there are taskers, loop through them and process cycle
 			if (taskers.size() && processing)
-				for (Tasker* t: taskers) t->yield();
+				for (Tasker* t: taskers) t->yield(delta);
 		}
 
 	private:
@@ -329,7 +329,7 @@ namespace TypedTasking {
 		* If returned delay is 0, process next Task,
 		* until reaching the end of the list, or until returned delay is not 0.
 		*/
-		void yield(T* target = nullptr) {
+		void yield(float delta = 1, T* target = nullptr) {
 			if (!target) target = this->target;
 			// If loop count is zero...
 			if (loopCount == 0) {
@@ -352,13 +352,13 @@ namespace TypedTasking {
 				// Set trigger to default
 				trigger = Event::DEF_TRIGGER;
 				// Decrease delay if not already zero
-				if (delay > 0) delay--;
+				if (delay > 0) delay -= delta;
 				// If delay is 0 ("done waiting")
-				if (delay < 1) {
+				if (delay < 0) {
 					// Execute Task
 					delay = tasks[curTask++](this, target);
 					// If delay given is zero, yield next cycle
-					if (delay < 1) yield(target);
+					if (delay < 1) yield(delta, target);
 				}
 				// If not on last task...
 				if (!(curTask < maxTask)) {
@@ -384,7 +384,7 @@ namespace TypedTasking {
 		}
 
 		/// Sets the delay until next Task execution.
-		void setDelay(size_t n) {
+		void setDelay(float n) {
 			delay = n;
 		}
 
@@ -420,7 +420,7 @@ namespace TypedTasking {
 		vector<Task(T*)> tasks;
 
 		/// The delay until next Task. gets decremented when yield() is called, until 0.
-		size_t delay = 0;
+		float delay = 0;
 
 		/// The number of Tasks in the list.
 		size_t maxTask = 0;
@@ -433,7 +433,7 @@ namespace TypedTasking {
 
 	/// A Task. Essentally a function, that takes in its parent Tasker, and returns a delay.
 	template <typename T>
-	using Task = function<size_t(Tasker<T>*, T*)>;
+	using Task = function<float(Tasker<T>*, T*)>;
 
 	/// A list of Tasks.
 	template <typename T>
@@ -505,11 +505,11 @@ namespace TypedTasking {
 		}
 
 		/// Processes one task cycle of all Taskers.
-		void yield(T* target = nullptr) {
+		void yield(float delta = 1, T* target = nullptr) {
 			if (!target) target = this->target;
 			// If there are taskers, loop through them and process cycle
 			if (taskers.size() && processing)
-				for (Tasker<T>* t: taskers) t->yield(target);
+				for (Tasker<T>* t: taskers) t->yield(delta, target);
 		}
 
 	private:

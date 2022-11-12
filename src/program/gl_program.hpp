@@ -200,8 +200,8 @@ namespace Makai {
 		void run(){
 			// The timer process
 			auto timerFunc	= [&](float delta)-> void {
-				Tween::yieldAllTweens();
-				Event::yieldAllTimers();
+				Tween::yieldAllTweens(delta * 60.0f);
+				Event::yieldAllTimers(delta * 60.0f);
 			};
 			// The logical process
 			auto logicFunc	= [&](float delta)-> void {
@@ -219,19 +219,19 @@ namespace Makai {
 			// SDL's events
 			SDL_Event event;
 			// Fixed delta time
-			float fixedDelta;
-			// Current time
-			size_t ticks = SDL_GetTicks();
+			float fixedDelta = 1.0/maxFrameRate;
+			// Last time of execution
+			size_t ticks = SDL_GetTicks() + (fixedDelta * 1000);
 			// While program is running...
 			while(shouldRun) {
 				// Poll events and check if should close
-					while (SDL_PollEvent(&event))
-						if (event.type == SDL_QUIT)
-							shouldRun = false;
+				while (SDL_PollEvent(&event))
+					if (event.type == SDL_QUIT)
+						shouldRun = false;
 				// Get fixed delta
 				//if (/*is in performance mode*/)
 					fixedDelta = 1.0/maxFrameRate;
-				//else fixedDelta = 2.0/maxFrameRate;
+				//else fixedDelta = 3.0/maxFrameRate;
 				// If should process, then do so
 				if (SDL_GetTicks() - ticks > fixedDelta * 1000) {
 					// Get current time
@@ -244,8 +244,8 @@ namespace Makai {
 					// Do your own stuff
 					timerFunc(fixedDelta);
 					logicFunc(fixedDelta);
-					onLogicFrame();
-					taskers.yield();
+					onLogicFrame(fixedDelta);
+					taskers.yield(fixedDelta * 60.0f);
 					// Wait for thread to be done processing
 					// Render screen
 					render();
@@ -318,19 +318,20 @@ namespace Makai {
 		/// Gets called whenever the program is rendering to the screen.
 		/// Happens before any object is rendered.
 		virtual void onDrawBegin()		{};
+		/// Gets called when the program starts rendering a layer.
+		virtual void onLayerDrawBegin(size_t layerID) {};
+		/// Gets called when the program ends rendering a layer.
+		virtual void onLayerDrawEnd(size_t layerID) {};
+		/// Happens before the screen is rendered.
 		virtual void onPreFrameDraw()	{};
 		/// Happens after all objects are rendered.
 		virtual void onDrawEnd()		{};
 
 		/// Gets called every frame, along all other logic.
-		virtual void onLogicFrame()	{};
+		virtual void onLogicFrame(float delta)	{};
 
 		/// Gets called when the program is closing. Happens before Window is terminated.
 		virtual void onClose()	{};
-
-		/// Gets called when the program starts rendering a layer.
-		virtual void onLayerDrawBegin(size_t layerID) {};
-		virtual void onLayerDrawEnd(size_t layerID) {};
 
 		/// The program's window output.
 		struct {

@@ -1,8 +1,8 @@
 struct CollectibleData: GenericObjectData {
 	size_t type		= $item(POWER);
 	float value		= 1;
-	float gravity	= 0.015;
-	float bounce	= 0.4;
+	float gravity	= 1;
+	float bounce	= 10;
 	bool spin		= false;
 	bool pocable	= true;
 };
@@ -24,8 +24,8 @@ struct Collectible: DanmakuObject {
 
 	void onFrame(float delta) override {
 		DANMAKU_FRAME_BEGIN;
-		if (params.spin) local.rotation += 1.0/60.0;
-		gravity = Math::clamp(gravity + params.gravity, -params.bounce, params.gravity * 10.0f);
+		if (params.spin) local.rotation += delta;
+		gravity = Math::clamp(gravity + params.gravity * delta, -params.bounce * delta, params.gravity * delta * 10.0f);
 		local.position.y -= gravity;
 		if (pocing && target)
 			local.position = Math::lerp(local.position, *target, Vector2(15 * delta));

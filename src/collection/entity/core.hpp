@@ -277,11 +277,11 @@ namespace EntityClass {
 			if (process) {
 				if (active) {
 					#ifdef _$_TASKERS_BEFORE_MAIN
-					taskers.yield();
+					taskers.yield(delta * 60.0f);
 					onFrame(delta);
 					#else
 					onFrame(delta);
-					taskers.yield();
+					taskers.yield(delta * 60.0f);
 					#endif // _$_TASKERS_BEFORE_MAIN
 				}
 				if (children.size())

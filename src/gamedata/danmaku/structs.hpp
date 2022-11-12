@@ -63,11 +63,12 @@ struct DanmakuObject {
 		onObjectFrame(this);
 		if (pause.enabled) {
 			if (pause.time < 0) return;
-			if ((--pause.time) > 0) return;
+			pause.time = Math::clamp(pause.time - delta, 0.0f, 1.0f);
+			if ((pause.time) > 0) return;
 			pause.enabled = false;
 			onUnpause(this);
 		}
-		taskers.yield(this);
+		taskers.yield(delta, this);
 	}
 
 	virtual DanmakuObject* reset() {return this;}
