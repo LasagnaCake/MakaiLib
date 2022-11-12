@@ -219,30 +219,39 @@ namespace Makai {
 			// SDL's events
 			SDL_Event event;
 			// Fixed delta time
-			float fixedDelta = 1.0/maxFrameRate;
+			float fixedDelta;
+			// Current time
+			size_t ticks = SDL_GetTicks();
 			// While program is running...
 			while(shouldRun) {
-				// Get fixed delta
-				fixedDelta = 1.0/maxFrameRate;
-				// increment frame counter
-				frame += 1;
 				// Poll events and check if should close
-				while (SDL_PollEvent(&event))
-					if (event.type == SDL_QUIT)
-						shouldRun = false;
-				// Update input manager
-				input.update();
-				// Start thread
-				// Do your own stuff
-				timerFunc(fixedDelta);
-				logicFunc(fixedDelta);
-				onLogicFrame();
-				taskers.yield();
-				// Wait for thread to be done processing
-				// Render screen
-				render();
-				// Destroy queued entities
-				$ecl destroyQueued();
+					while (SDL_PollEvent(&event))
+						if (event.type == SDL_QUIT)
+							shouldRun = false;
+				// Get fixed delta
+				//if (/*is in performance mode*/)
+					fixedDelta = 1.0/maxFrameRate;
+				//else fixedDelta = 2.0/maxFrameRate;
+				// If should process, then do so
+				if (SDL_GetTicks() - ticks > fixedDelta * 1000) {
+					// Get current time
+					ticks = SDL_GetTicks();
+					// increment frame counter
+					frame += 1;
+					// Update input manager
+					input.update();
+					// Start thread
+					// Do your own stuff
+					timerFunc(fixedDelta);
+					logicFunc(fixedDelta);
+					onLogicFrame();
+					taskers.yield();
+					// Wait for thread to be done processing
+					// Render screen
+					render();
+					// Destroy queued entities
+					$ecl destroyQueued();
+				}
 			}
 			// Terminate program
 			$debug("Closing incoherent program...");
@@ -334,7 +343,7 @@ namespace Makai {
 		InputManager input;
 
 		/// The program's maximum framerate
-		float maxFrameRate = 60.0;
+		float maxFrameRate = 30.0;
 
 		Tasking::MultiTasker taskers;
 

@@ -44,6 +44,9 @@ public:
 	$rdt Renderable		tubeRend;
 
 	void onOpen() override {
+		// British? 😩
+		// prog.maxFrameRate = 50;
+		// prog.maxFrameRate = 60;
 		// Do parent task
 		DanmakuApp::onOpen();
 		// Create background
@@ -268,9 +271,6 @@ int main() {
 	try {
 		// If size = screen size, automatic fullscreen for some reason (Why, SDL?)
 		GameApp prog(window.x, window.y, "[TEST]", !fullscreen);
-		// [[ Main Program Code BEGIN ]]
-		prog.maxFrameRate = 60;
-		// [[ Main Program Code END ]]
 		prog.run();
 	} catch (std::runtime_error e) {
 		Popup::dialogBox(
