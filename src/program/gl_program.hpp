@@ -200,8 +200,8 @@ namespace Makai {
 		void run(){
 			// The timer process
 			auto timerFunc	= [&](float delta)-> void {
-				Tween::yieldAllTweens(delta * 60.0f);
-				Event::yieldAllTimers(delta * 60.0f);
+				Tween::yieldAllTweens(delta * maxCycleRate);
+				Event::yieldAllTimers(delta * maxCycleRate);
 			};
 			// The logical process
 			auto logicFunc	= [&](float delta)-> void {
@@ -245,7 +245,7 @@ namespace Makai {
 					timerFunc(fixedDelta);
 					logicFunc(fixedDelta);
 					onLogicFrame(fixedDelta);
-					taskers.yield(fixedDelta * 60.0f);
+					taskers.yield(fixedDelta * maxCycleRate);
 					// Wait for thread to be done processing
 					// Render screen
 					render();
@@ -343,9 +343,14 @@ namespace Makai {
 		/// The program's input manager.
 		InputManager input;
 
-		/// The program's maximum framerate
+		/// The program's maximum framerate.
 		float maxFrameRate = 30.0;
 
+		/// The program's maximum "cycles per second" count.
+		float maxCycleRate = 60;
+
+
+		/// The program's taskers.
 		Tasking::MultiTasker taskers;
 
 	protected:
