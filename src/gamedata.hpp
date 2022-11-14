@@ -12,7 +12,9 @@
 #define DERIVED_CLASS(NAME, BASE)\
 	inline	virtual string getClass() {return #NAME;}\
 	inline	virtual string getBaseClass() {return #BASE;}\
-	inline	static string getCoreClass() {return BASE::getCoreClass();}
+	inline	static string getCoreClass() {return BASE::getCoreClass();}\
+	~NAME() {BASE::~BASE();}
+	// ^ HACK: I hate that this is the only way this obstinate fuck of a language allows the destructor to work.
 
 #include "gamedata/danmaku/layout.hpp"
 

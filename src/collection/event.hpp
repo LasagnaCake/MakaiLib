@@ -145,7 +145,7 @@ namespace Event{
 		}
 
 		/// Starts the timer from the beginning.
-		void start(size_t time) {
+		void start(float time) {
 			counter = 0;
 			paused = false;
 			delay = time;
@@ -168,13 +168,13 @@ namespace Event{
 		}
 
 		/// Gets the counter's current value.
-		size_t getCounter() {
+		float getCounter() {
 			return counter;
 		}
 
 	private:
 		/// The current yield cycle.
-		size_t counter = 0;
+		float counter = 0;
 	};
 	#undef $$FUNC
 }

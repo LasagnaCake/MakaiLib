@@ -107,6 +107,8 @@ public:
 	Renderable mesh;
 
 	void onDelete() override {
+		delete &mesh;
+		$debug("Deleting item manager...");
 		$ecl groups.removeFromAll(this);
 		delete[] items;
 	}
@@ -239,7 +241,7 @@ public:
 			last->pause = Pause();
 			last->params = CollectibleData();
 			last->taskers.clearTaskers();
-			last->flags.clear();
+			last->flags.fill(0);
 			last->clearSignals();
 			last->updateSprite();
 			#ifdef $_PREVENT_BULLET_OVERFLOW_BY_WRAP
@@ -258,7 +260,7 @@ public:
 		last = items[pbobw++].enable()->setZero();
 		last->params = CollectibleData();
 		last->taskers.clearTaskers();
-		last->flags.clear();
+		last->flags.fill(0);
 		last->clearSignals();
 		if (pbobw > ITEM_COUNT) pbobw = 0;
 		last->updateSprite();

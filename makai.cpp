@@ -233,6 +233,7 @@ int main() {
 	//ShowWindow(GetConsoleWindow(), SW_HIDE);
 	#endif // _DEBUG_OUTPUT_
 	StringList resList = Helper::getKeys($res set4x3);
+	$debug(ENEMY_BULLET_COUNT);
 	resList.push_back("Detect");
 	$debug(Makai::getDeviceSize().y * (4.0 / 3.0));
 	$debug(Makai::getDeviceSize().y);
@@ -290,6 +291,7 @@ int main() {
 		);
 	}
 	#ifdef _DEBUG_OUTPUT_
+	$debug("All done! Please press enter to close program!");
 	getchar();
 	#endif // _DEBUG_OUTPUT_
 	return 0;

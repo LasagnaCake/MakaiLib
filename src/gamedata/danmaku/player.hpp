@@ -42,6 +42,7 @@ private:
 
 struct PlayerEntity2D: AreaCircle2D {
 	DERIVED_CLASS(PlayerEntity2D, AreaCircle2D)
+
 	DERIVED_CONSTRUCTOR(PlayerEntity2D, AreaCircle2D, {
 		// Set acton keys
 		actionKeys["up"]	= SDL_SCANCODE_UP;
@@ -274,6 +275,10 @@ struct PlayerEntity2D: AreaCircle2D {
 		// Do extra actions
 		if(action("sub"))	onSubAction();
 		if(action("extra"))	onExtraAction();
+	}
+
+	virtual void onDelete() {
+		$debug("Deleting player...");
 	}
 
 	virtual void onCollision(Entity* target) {

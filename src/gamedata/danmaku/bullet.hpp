@@ -119,6 +119,8 @@ public:
 	Renderable mesh;
 
 	void onDelete() override {
+		delete &mesh;
+		$debug("Deleting bullet manager...");
 		$ecl groups.removeFromAll(this);
 		delete[] bullets;
 	}
@@ -365,7 +367,7 @@ public:
 			last->params = BulletData();
 			last->grazed = false;
 			last->taskers.clearTaskers();
-			last->flags.clear();
+			last->flags.fill(0);
 			last->clearSignals();
 			last->updateSprite();
 			#ifdef $_PREVENT_BULLET_OVERFLOW_BY_WRAP
@@ -385,7 +387,7 @@ public:
 		last->params = BulletData();
 		last->grazed = false;
 		last->taskers.clearTaskers();
-		last->flags.clear();
+		last->flags.fill(0);
 		last->clearSignals();
 		if (pbobw > BULLET_COUNT) pbobw = 0;
 		last->updateSprite();

@@ -1,6 +1,6 @@
 namespace Dialog {
 	struct ActorPosition {
-		Vector2	talk;
+		Vector2	talking;
 		Vector2	rest;
 		Vector2	out;
 	};
@@ -10,27 +10,38 @@ namespace Dialog {
 		ActorPosition		position;
 	};
 
+	struct ActorData {
+		String		name;
+		Vector2		frame;
+		bool		leaving = false;
+		$evt Signal	action = $evt DEF_SIGNAL;
+	};
+
+	typedef std::vector<ActorData>	ActorDataList;
+
 	struct Message {
-		StringList		actors;
+		ActorDataList	actors;
 		String			title;
 		String			text;
 		$twn EaseFunc	easing		= $twn ease.out.cubic;
 		size_t			duration	= 600;
 		bool			autoplay	= false;
-		bool			leaving		= false;
 	};
 
-	typedef std::vector<Message>	MessageList;
-	typedef std::map<String, Actor>	ActorList;
+	typedef std::vector<Message>		MessageList;
+	typedef std::map<String, Actor>		ActorList;
 
 	struct Dialog: public Entity {
 		DERIVED_CLASS(Dialog, Entity)
+
 		DERIVED_CONSTRUCTOR(Dialog, Entity, {
 			addToGame(this, "Dialog");
 			autotimer.onSignal = $signal {
 				nextMessage();
 			};
 			isFinished = true;
+			autotimer.repeat = true;
+			autotimer.stop();
 		})
 
 		MessageList	messages;
@@ -84,12 +95,18 @@ namespace Dialog {
 				return;
 			}
 			Message& msg = messages[current];
-			String title = "";
-			for (auto& actor: msg.actors) {
-				auto& anim = animator[actor];
-				auto& a = actors[actor];
+			for (auto& actor: actors) {
+				auto& anim = animator[actor.first];
+				auto& a = actors[actor.first];
 				anim.tweenStep = msg.easing;
-				anim.reinterpolate(msg.leaving ? a.position.out : a.position.rest, time);
+				anim.reinterpolate(a.position.rest, time);
+			}
+			for (auto& actor: msg.actors) {
+				auto& anim = animator[actor.name];
+				auto& a = actors[actor.name];
+				a.sprite->frame = actor.frame;
+				anim.reinterpolate(actor.leaving ? a.position.out : a.position.talking, time);
+				actor.action();
 			}
 			autoplay = msg.autoplay;
 			autotimer.delay = msg.duration;

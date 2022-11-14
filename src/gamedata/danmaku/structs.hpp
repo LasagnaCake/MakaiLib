@@ -31,7 +31,7 @@ struct ObjectData: GenericObjectData {
 	ObjectParam	rot;
 };
 
-typedef std::vector<unsigned char> ObjectFlags;
+typedef std::array<unsigned char, DANMAKU_PARAMS_COUNT> ObjectFlags;
 
 struct DanmakuObject {
 	DanmakuObject() {
@@ -83,7 +83,7 @@ struct DanmakuObject {
 		free = state;
 		if (free) {
 			onFree(this);
-			flags.clear();
+			flags.fill(0);
 		}
 		return this;
 	}

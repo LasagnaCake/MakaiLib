@@ -23,6 +23,10 @@
 #define COLLECTIBLE_ITEM_COUNT 256
 #endif // COLLECTIBLE_ITEM_COUNT
 
+#ifndef DANMAKU_PARAMS_COUNT
+#define DANMAKU_PARAMS_COUNT 8
+#endif // DANMAKU_PARAMS_COUNT
+
 #define $getman(TYPE) $dmk TYPE##Manager
 #define $setman(TYPE) $dmk TYPE##Manager = &
 

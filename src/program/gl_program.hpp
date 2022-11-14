@@ -383,6 +383,7 @@ namespace Makai {
 			TTF_Quit();
 			Mix_Quit();
 			$debug("SDL ended!");
+			//exit(0);
 		}
 
 		/// Draws the window.

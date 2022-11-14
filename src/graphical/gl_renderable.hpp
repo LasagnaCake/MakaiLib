@@ -1,9 +1,5 @@
 /*
-Do not touch this class.
-
-If your triangles are not rendering properly, restart your program.
-1: If it changes, that's normal. It just does that from time to time.
-2: If it stays the same, probably a transparency issue.
+Do not touch this class. Please.
 */
 
 class Renderable {
@@ -24,6 +20,7 @@ public:
 
 	~Renderable() {
 		onDelete();
+		$debug(references.plane.size());
 		$debug("Removing from render layers...");
 		if(!manualMode)
 			Drawer::layers.removeFromAll(&render);
@@ -151,7 +148,7 @@ public:
 			),
 			triangles.end()
 		);
-		dereference(ref);
+		unbindReference(ref);
 	}
 
 	/**
