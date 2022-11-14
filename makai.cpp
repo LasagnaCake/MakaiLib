@@ -291,7 +291,7 @@ int main() {
 		);
 	}
 	#ifdef _DEBUG_OUTPUT_
-	$debug("All done! Please press enter to close program!");
+	$debug("\nAll done! Please press enter to close program!");
 	getchar();
 	#endif // _DEBUG_OUTPUT_
 	return 0;
