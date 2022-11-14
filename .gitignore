@@ -5,7 +5,9 @@
 OgreMain_d.pdb
 RenderSystem_Vulkan_d.pdb
 *.save-failed
-bin/*
-obj/*
+bin/Release/*
+bin/Debug/*
+obj/Release/*
+obj/Debug/*
 MakaiLib.exe
 *.o
