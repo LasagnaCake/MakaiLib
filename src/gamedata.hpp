@@ -13,8 +13,8 @@
 	inline	virtual string getClass() {return #NAME;}\
 	inline	virtual string getBaseClass() {return #BASE;}\
 	inline	static string getCoreClass() {return BASE::getCoreClass();}\
-	~NAME() {BASE::~BASE();}
-	// ^ HACK: I hate that this is the only way this obstinate fuck of a language allows the destructor to work.
+	virtual	~NAME() {onDelete(); removeFromTree();};
+	// NOTE: This is the WORST way this could have been done. But this obstinate fuck of a language is an obstinate fuck, so be it.
 
 #include "gamedata/danmaku/layout.hpp"
 

@@ -168,6 +168,7 @@ struct PlayerEntity2D: AreaCircle2D {
 	virtual void onGraze(size_t count, LineLaserList list) {
 		data.graze += count;
 	}
+
 	virtual void onItemGet(size_t type, float quantity) {
 		switch (type) {
 			case $item(POWER): data.power	+= quantity; break;

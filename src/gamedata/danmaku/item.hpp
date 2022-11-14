@@ -107,8 +107,8 @@ public:
 	Renderable mesh;
 
 	void onDelete() override {
-		delete &mesh;
-		$debug("Deleting item manager...");
+		//delete &mesh;
+		$debug("\nDeleting item manager...");
 		$ecl groups.removeFromAll(this);
 		delete[] items;
 	}

@@ -112,14 +112,8 @@ namespace EntityClass {
 		virtual ~Entity() {
 			// Call function to be executed at deletion
 			onDelete();
-			// If parented, remove self from parent's children
-			if (parent) parent->removeChild(this);
-			// If there are children...
-			if (children.size())
-				// Delete them
-				deleteChildren();
-			// Clear children list
-			children.clear();
+			// Remove self from the equation
+			removeFromTree();
 		}
 
 		/// Parent-less constructor.
@@ -427,6 +421,17 @@ namespace EntityClass {
 						children.erase(children.begin() + i);
 						break;
 				}
+		}
+
+		void removeFromTree() {
+			// If parented, remove self from parent's children
+			if (parent) parent->removeChild(this);
+			// If there are children...
+			if (children.size())
+				// Delete them
+				deleteChildren();
+			// Clear children list
+			children.clear();
 		}
 
 	private:

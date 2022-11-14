@@ -1,12 +1,25 @@
+typedef std::function<void(RawVertex&)> VertexFunc;
+
 struct Empty {
 	virtual void onTransform() {}
 	virtual Empty* reset() {return this;}
 	virtual Empty* transform() {return this;}
 	virtual Triangle** getBoundTriangles() {return nullptr;}
+	virtual void forEachVertex(VertexFunc f) {};
+	void destroy()	{onDestroy();}
+	void unbind()	{onUnbind();}
 	bool fixed = true;
 	bool visible = true;
 	Transform3D local;
+	virtual ~Empty() {onDestroy = onUnbind = [](){};};
+	// Since it's not working, everything's public now.
+	// friend class Renderable;
+	// DO NOT TOUCH THESE.
+	$evt Signal onDestroy;
+	$evt Signal onUnbind;
 };
+
+// [[ PLANES ]]
 
 class Plane: public Empty {
 public:
@@ -40,6 +53,7 @@ public:
 	}
 
 	virtual ~Plane() {
+		Empty::~Empty();
 		tl = tr1 = tr2 = bl1 = bl2 = br = nullptr;
 		tris[0] = tris[1] = nullptr;
 	}
@@ -149,11 +163,14 @@ public:
 		return tris;
 	}
 
-protected:
-
-	Triangle* tris[2] = {nullptr, nullptr};
-
-	Vector3 origin[4];
+	void forEachVertex(VertexFunc f) override {
+		f(*tl);
+		f(*tr1);
+		f(*tr2);
+		f(*bl1);
+		f(*bl2);
+		f(*br);
+	}
 
 	RawVertex* tl	= nullptr;
 	RawVertex* tr1	= nullptr;
@@ -161,6 +178,13 @@ protected:
 	RawVertex* bl1	= nullptr;
 	RawVertex* bl2	= nullptr;
 	RawVertex* br	= nullptr;
+
+protected:
+
+	Triangle* tris[2] = {nullptr, nullptr};
+
+	Vector3 origin[4];
+
 };
 
 class AnimatedPlane: public Plane {
@@ -179,6 +203,135 @@ public:
 			(frame + Vector2(1)) / size
 		);
 	}
+};
+
+// [[ TRIANGLES ]]
+
+class Trigon: public Empty {
+public:
+	Trigon(
+		Triangle* tris[1]
+	) {
+		this->tris[0]	= tris[0];
+		this->a	= &(tris[0]->verts[0]);
+		this->b	= &(tris[0]->verts[1]);
+		this->c	= &(tris[0]->verts[2]);
+	}
+
+	Trigon(
+		RawVertex* a,
+		RawVertex* b,
+		RawVertex* c
+	) {
+		this->a	= a;
+		this->b	= b;
+		this->c	= c;
+	}
+
+	virtual ~Trigon() {
+		Empty::~Empty();
+		a = b = c = nullptr;
+		tris[0] = nullptr;
+	}
+
+	#define VERTEX_SET_POS(VERT, VAL) Drawer::vertexSetPosition(VERT, VAL);
+	/// Sets the triangle's origin.
+	Trigon* setOrigin(
+			Vector3 aPos = Vector3(+0, 1),
+			Vector3 bPos = Vector3(-1, -1),
+			Vector3 cPos = Vector3(+1, -1)
+		) {
+		VERTEX_SET_POS(*a,	aPos);
+		VERTEX_SET_POS(*b,	bPos);
+		VERTEX_SET_POS(*c,	cPos);
+		origin[0] = aPos;
+		origin[1] = bPos;
+		origin[2] = cPos;
+		return this;
+	}
+
+	/// Transforms the plane's origin by a given transform.
+	Trigon* setOrigin(Transform3D trans) {
+		glm::mat4 glmtrans = asGLMMatrix(trans);
+		origin[0] = $srpTransform(origin[0], glmtrans);
+		origin[1] = $srpTransform(origin[1], glmtrans);
+		origin[2] = $srpTransform(origin[2], glmtrans);
+		return reset();
+	}
+
+	Trigon* setUV(
+			Vector2 aUV,
+			Vector2 bUV,
+			Vector2 cUV
+		) {
+		Drawer::vertexSetUV(*a,	aUV);
+		Drawer::vertexSetUV(*b,	bUV);
+		Drawer::vertexSetUV(*c,	cUV);
+		return this;
+	}
+
+	Trigon* setColor(
+			Vector4 aCol,
+			Vector4 bCol,
+			Vector4 cCol
+		) {
+		Drawer::vertexSetColor(*a,	aCol);
+		Drawer::vertexSetColor(*b,	bCol);
+		Drawer::vertexSetColor(*c,	cCol);
+		return this;
+	}
+
+	Trigon* setColor(
+			Vector4 col = Color::WHITE
+		) {
+		Drawer::vertexSetColor(*a,	col);
+		Drawer::vertexSetColor(*b,	col);
+		Drawer::vertexSetColor(*c,	col);
+		return this;
+	}
+
+	/// Sets the triangle to its original state (last state set with setPosition).
+	Trigon* reset() override {
+		VERTEX_SET_POS(*a,	origin[0]);
+		VERTEX_SET_POS(*b,	origin[1]);
+		VERTEX_SET_POS(*c,	origin[2]);
+		return this;
+	}
+
+	Trigon* transform() override {
+		onTransform();
+		if (!fixed) return this;
+		// Get transformation
+		Transform3D self = local;
+		self.scale *= (float)visible;
+		glm::mat4 trans = asGLMMatrix(self);
+		// Apply transformation
+		$srpTransform(*a,	trans);
+		$srpTransform(*b,	trans);
+		$srpTransform(*c,	trans);
+		return this;
+	}
+
+	Triangle** getBoundTriangles() override {
+		return tris;
+	}
+
+	void forEachVertex(VertexFunc f) override {
+		f(*a);
+		f(*b);
+		f(*c);
+	}
+
+	RawVertex* a	= nullptr;
+	RawVertex* b	= nullptr;
+	RawVertex* c	= nullptr;
+
+protected:
+
+	Triangle* tris[1] = {nullptr};
+
+	Vector3 origin[3];
+
 };
 
 #undef VERTEX_SET_POS

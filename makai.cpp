@@ -60,7 +60,7 @@ public:
 			$vec3(2, -2, 12.5)
 		);
 		//pl->setColor($vec4(0,0,0.5,1));
-		tubeRend.unbindReference<$ref Plane>(pl);//*/
+		pl->unbind();//*/
 		for $ssrange(i, 0, sideCount) {
 			// Set 1
 			pl = tubeRend.createReference<$ref Plane>();
@@ -80,7 +80,7 @@ public:
 			c1 = Color::hueToRGB(i/(float)sideCount),
 			c2 = Color::hueToPastel(i/(float)sideCount)+ $vec4(.2,.2,.2,0);
 			pl->setColor(c1, c2, c1, c2);
-			tubeRend.unbindReference<$ref Plane>(pl);
+			pl->unbind();
 			// Set 2
 			pl = tubeRend.createReference<$ref Plane>();
 			$debug((TAU / (float)sideCount) * (float)i);
@@ -92,7 +92,7 @@ public:
 			c1 = Color::hueToRGB(i/(float)sideCount),
 			c2 = Color::hueToPastel(i/(float)sideCount)+ $vec4(.2,.2,.2,0);
 			pl->setColor(c1, c2, c1, c2);
-			tubeRend.unbindReference<$ref Plane>(pl);
+			pl->unbind();
 		}/*
 		for $ssrange(i, 0, 10) {
 			pl = tubeRend.createReference<$ref Plane>();
@@ -103,7 +103,7 @@ public:
 				$vec3(2, -2, 9.0 - i * 1.25)
 			);
 			pl->setColor($vec4(Color::SEMILUCENT).compensated());
-			tubeRend.unbindReference<$ref Plane>(pl);
+			pl->unbind();
 		}*/
 		tubeRend.trans.scale = $vec3($vec2(10), 2);
 		tubeRend.trans.position.y = 5;

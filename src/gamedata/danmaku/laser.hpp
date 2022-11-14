@@ -197,8 +197,8 @@ public:
 	Renderable mesh;
 
 	void onDelete() override {
-		delete &mesh;
-		$debug("Deleting laser manager...");
+		//delete &mesh;
+		$debug("\nDeleting laser manager...");
 		$ecl groups.removeFromAll(this);
 		delete[] lasers;
 	}

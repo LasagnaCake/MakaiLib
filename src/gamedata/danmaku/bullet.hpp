@@ -119,8 +119,8 @@ public:
 	Renderable mesh;
 
 	void onDelete() override {
-		delete &mesh;
-		$debug("Deleting bullet manager...");
+		//delete &mesh;
+		$debug("\nDeleting bullet manager...");
 		$ecl groups.removeFromAll(this);
 		delete[] bullets;
 	}
