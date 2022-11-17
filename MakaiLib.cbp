@@ -50,6 +50,9 @@
 		</ResourceCompiler>
 		<Linker>
 			<Add option="-O1" />
+			<Add option="-static-libstdc++" />
+			<Add option="-static-libgcc" />
+			<Add option="-static" />
 			<Add library="lib/SDL2-2.0.10/x86_64-w64-mingw32/lib/libSDL2.dll.a" />
 			<Add library="lib/SDL2-2.0.10/x86_64-w64-mingw32/lib/libSDL2main.a" />
 			<Add library="lib/SDL2-2.0.10/x86_64-w64-mingw32/lib/libSDL2_ttf.dll.a" />
