@@ -118,7 +118,7 @@ public:
 			float coefficient = 0;
 			Vector2 bPos = Vector2(32, -32) * getWindowScale();
 			for (size_t i = 0; i < 20; i++){
-				auto b = managers.bullet.enemy.createBullet();
+				auto b = DANMAKU_EBM -> createBullet();
 				b->local.position = bPos;
 				coefficient = (Math::tau * ((i + 1) / 20.0)) + rotAngle;
 				b->params.hitbox.radius = 1;
@@ -143,7 +143,7 @@ public:
 		};
 		// Create test laser A
 		Vector2 lPos = Vector2(32, -16) * getWindowScale();
-		auto l = managers.lineLaser.enemy.createLineLaser();
+		auto l = DANMAKU_ELLM -> createLineLaser();
 		l->local.position = lPos;
 		l->params.rot = ObjectParam {
 			$twn ease.inOut.back,
@@ -157,7 +157,7 @@ public:
 		l->params.discardable = false;
 		l->reset();
 		// Test laser B
-		l = managers.lineLaser.enemy.createLineLaser();
+		l = DANMAKU_ELLM -> createLineLaser();
 		l->local.position = lPos;
 		l->params.rot = ObjectParam {
 			$twn ease.inOut.back,
@@ -171,8 +171,8 @@ public:
 		l->params.discardable = false;
 		l->reset();
 		//bulletSpawner.stop();
-		player.board = managers.bullet.enemy.board;
-		managers.item.createCollectible(CollectibleData(), 5, lPos, 3, $vec2(0.5));
+		player.board = DANMAKU_EBM -> board;
+		DANMAKU_IM -> createCollectible(CollectibleData(), 5, lPos, 3, $vec2(0.5));
 	}
 
 	void onLogicFrame(float delta) override {

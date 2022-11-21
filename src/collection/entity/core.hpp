@@ -44,7 +44,7 @@ namespace EntityClass {
 		std::string,
 		std::invalid_argument,
 		std::function,
-		std::map,
+		std::unordered_map,
 		Tasking::MultiTasker;
 
 		// Duplicate root prevention system
@@ -532,7 +532,7 @@ namespace EntityClass {
 			}
 		}
 	private:
-		map<size_t, vector<Entity*>> g;
+		unordered_map<size_t, vector<Entity*>> g;
 	} groups;
 }
 

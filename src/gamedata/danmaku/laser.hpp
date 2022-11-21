@@ -364,5 +364,8 @@ typedef LineLaserManager<ENEMY_LASER_COUNT, $layer(ENEMY_LASER), $layer(PLAYER),
 PlayerLineLaserManager*	playerLineLaserManager = nullptr;
 EnemyLineLaserManager*	enemyLineLaserManager = nullptr;
 
+#define DANMAKU_PLLM $dmk playerLineLaserMananger
+#define DANMAKU_ELLM $dmk enemyLineLaserManager
+
 #define $linelaser(TYPE)	$getman( TYPE##LineLaser )
 #define $setll(TYPE)		$setman( TYPE##LineLaser )

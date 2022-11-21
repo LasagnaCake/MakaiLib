@@ -31,15 +31,15 @@
 #include <cstdlib>
 #include <math.h>
 #include <thread>
-#include <map>
+#include <unordered_map>
 #include <fstream>
 #include <sstream>
 #include <algorithm>
 #include <regex>
 #include <chrono>
+#include <coroutine>
 
-typedef std::string			String;
-typedef	std::vector<String>	StringList;
+#include "redefines.hpp"
 
 /*
 *********************

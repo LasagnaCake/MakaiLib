@@ -37,6 +37,7 @@
 			<Add option="-std=gnu++20" />
 			<Add option="-ftree-parallelize-loops=2" />
 			<Add option="-fopenmp" />
+			<Add option="-fcoroutines" />
 			<Add directory="lib" />
 			<Add directory="lib/SDL2-2.0.10/x86_64-w64-mingw32/include" />
 			<Add directory="lib/OpenGL" />

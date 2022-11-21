@@ -28,8 +28,8 @@ namespace Dialog {
 		bool			autoplay	= false;
 	};
 
-	typedef std::vector<Message>		MessageList;
-	typedef std::map<String, Actor>		ActorList;
+	typedef std::vector<Message>				MessageList;
+	typedef std::unordered_map<String, Actor>	ActorList;
 
 	struct Dialog: public Entity {
 		DERIVED_CLASS(Dialog, Entity)
@@ -53,17 +53,17 @@ namespace Dialog {
 		}
 
 		void begin() {
-			for (auto& a: actors) {
-				a.second.sprite->local.position = a.second.position.out;
-				animator[a.first].value = &a.second.sprite->local.position;
+			for (auto& [aName, actor]: actors) {
+				actor.sprite->local.position = actor.position.out;
+				animator[aName].value = &actor.sprite->local.position;
 			}
 			isFinished = false;
 		}
 
 		void end() {
-			for (auto& a: actors) {
-				auto& anim = animator[a.first];
-				anim.reinterpolate(a.second.position.rest);
+			for (auto& [aName, actor]: actors) {
+				auto& anim = animator[aName];
+				anim.reinterpolate(actor.position.rest);
 			}
 			autotimer.stop();
 			isFinished = true;
@@ -95,9 +95,9 @@ namespace Dialog {
 				return;
 			}
 			Message& msg = messages[current];
-			for (auto& actor: actors) {
-				auto& anim = animator[actor.first];
-				auto& a = actors[actor.first];
+			for (auto& [actor, _]: actors) {
+				auto& anim = animator[actor];
+				auto& a = actors[actor];
 				anim.tweenStep = msg.easing;
 				anim.reinterpolate(a.position.rest, time);
 			}
@@ -119,7 +119,7 @@ namespace Dialog {
 			//TODO: this
 		}
 		$evt Timer autotimer;
-		std::map<String, $twn Tween<Vector3>> animator;
+		std::unordered_map<String, $twn Tween<Vector3>> animator;
 		size_t current	= 0;
 		bool autoplay	= false;
 		bool isFinished	= false;

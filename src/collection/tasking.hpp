@@ -22,7 +22,21 @@
 /// Single-cycle delay task conclusion macro.
 #define	$end	return 1
 
-// TODO: "C++ 20 coroutine"-ify it
+// TODO: Add "C++ 20 coroutine" functionality to tasks.
+/* NOTE: It would be impossible to do such thing.
+* The way this tasking system behaves literally makes it so.
+* It is self-modifiable. A task can change what happens next.
+* Not just that, it can change what it IS. And WAS.
+* It can change the past and the future.
+* It can change the future to be the past.
+* It can change what it WILL BE, based on what it WAS.
+* It can change what it WAS, based on what it WILL BE.
+* All of that, and vice-versa.
+* What happens next is up to the current task.
+* Who knows what the future is? I certainly don't.
+* Who knows what the past was? For all I know, it possibly was not.
+* All I know, is that it's unpredictable.
+*/
 namespace Tasking {
 	namespace {
 		using std::vector, std::function;
@@ -52,7 +66,7 @@ namespace Tasking {
 		$evt Signal onCompleted = Event::DEF_SIGNAL;
 
 		/// Current task being executed.
-		size_t curTask = 0;
+		size_t current = 0;
 
 		/**
 		* Amount of times the Tasker will loop.
@@ -83,6 +97,8 @@ namespace Tasking {
 		* until reaching the end of the list, or until returned delay is not 0.
 		*/
 		void yield(float delta = 1) {
+			// If empty, exit
+			if (maxTask < 1) return;
 			// If loop count is zero...
 			if (loopCount == 0) {
 				// Set finished flag to true
@@ -108,16 +124,16 @@ namespace Tasking {
 				// If delay is 0 ("done waiting")
 				if (delay < 1) {
 					// Execute Task
-					delay = tasks[curTask++](this);
+					delay = tasks[current++](this);
 					// If delay given is zero, yield next cycle
 					if (delay < 0) yield();
 				}
 				// If not on last task...
-				if (!(curTask < maxTask)) {
+				if (!(current < maxTask)) {
 					// If loop...
 					if (loop) {
 						// set current task to first task
-						curTask = 0;
+						current = 0;
 						// decrease loop counter
 						loopCount--;
 					}
@@ -146,25 +162,42 @@ namespace Tasking {
 			maxTask = tasks.size();
 		}
 
+		/// Inserts a Task at a given index.
+		void insertTask(size_t idx, Task t) {
+			tasks.insert(tasks.begin() + idx, t);
+		}
+
+		/// Removes a Task at a given index.
+		void removeTask(size_t idx) {
+			tasks.erase(tasks.begin() + idx);
+		}
+
 		/**
 		* Resets the Tasker and sets it to the beginning of the TaskList.
 		* Also sets loop count to infinite.
 		*/
 		void reset() {
 			isFinished	= false;
-			curTask		= 0;
+			current		= 0;
 			loopCount	= -1;
 		}
 
 		/// Ends Tasker execution, sets loop count to 0, and sets Tasker to completed.
 		void stop() {
 			isFinished	= true;
-			curTask		= tasks.size() - 1;
+			current		= tasks.size() - 1;
 			loopCount	= 0;
 		}
 
+		/// Clears all of the Tasker's tasks.
 		void clearTasks() {
 			tasks.clear();
+			maxTask =  tasks.size();
+		}
+
+		/// Gets a Task at a given index.
+		Task& operator[](size_t index) {
+			return tasks[index];
 		}
 
 	private:
@@ -256,6 +289,10 @@ namespace Tasking {
 				for (Tasker* t: taskers) t->yield(delta);
 		}
 
+		Tasker* operator[](size_t index) {
+			return taskers[index];
+		}
+
 	private:
 
 		/// The list of Taskers handled by the MultiTasker.
@@ -299,7 +336,7 @@ namespace TypedTasking {
 		T* target = nullptr;
 
 		/// Current task being executed.
-		size_t curTask = 0;
+		size_t current = 0;
 
 		/**
 		* Amount of times the Tasker will loop.
@@ -330,6 +367,9 @@ namespace TypedTasking {
 		* until reaching the end of the list, or until returned delay is not 0.
 		*/
 		void yield(float delta = 1, T* target = nullptr) {
+			// If empty, exit
+			if (maxTask < 1) return;
+			// Get target
 			if (!target) target = this->target;
 			// If loop count is zero...
 			if (loopCount == 0) {
@@ -356,16 +396,16 @@ namespace TypedTasking {
 				// If delay is 0 ("done waiting")
 				if (delay < 0) {
 					// Execute Task
-					delay = tasks[curTask++](this, target);
+					delay = tasks[current++](this, target);
 					// If delay given is zero, yield next cycle
 					if (delay < 1) yield(delta, target);
 				}
 				// If not on last task...
-				if (!(curTask < maxTask)) {
+				if (!(current < maxTask)) {
 					// If loop...
 					if (loop) {
 						// set current task to first task
-						curTask = 0;
+						current = 0;
 						// decrease loop counter
 						loopCount--;
 					}
@@ -400,19 +440,24 @@ namespace TypedTasking {
 		*/
 		void reset() {
 			isFinished	= false;
-			curTask		= 0;
+			current		= 0;
 			loopCount	= -1;
 		}
 
 		/// Ends Tasker execution, sets loop count to 0, and sets Tasker to completed.
 		void stop() {
 			isFinished	= true;
-			curTask		= tasks.size() - 1;
+			current		= tasks.size() - 1;
 			loopCount	= 0;
 		}
 
 		void clearTasks() {
 			tasks.clear();
+			maxTask = tasks.size();
+		}
+
+		Task(T*)& operator[](size_t index) {
+			return tasks[index];
 		}
 
 	private:
@@ -510,6 +555,10 @@ namespace TypedTasking {
 			// If there are taskers, loop through them and process cycle
 			if (taskers.size() && processing)
 				for (Tasker<T>* t: taskers) t->yield(delta, target);
+		}
+
+		Tasker<T*>* operator[](size_t index) {
+			return taskers[index];
 		}
 
 	private:

@@ -19,6 +19,7 @@
 #include "gamedata/danmaku/layout.hpp"
 
 namespace GameData {
+	#define $gdt GameData::
 	namespace {
 		using
 		$ecl AreaCircle2D,
@@ -36,7 +37,7 @@ namespace GameData {
 		namespace Reference {using namespace RenderData::Reference;};
 	}
 
-	typedef std::map<string, SDL_Scancode> KeyBinds;
+	typedef std::unordered_map<string, SDL_Scancode> KeyBinds;
 
 	void addToGame(Entity* e, std::string gameType) {
 		Entity* game = $ecl $_ROOT[gameType];
@@ -50,6 +51,7 @@ namespace GameData {
 	#include "gamedata/dialogue.hpp"
 
 	namespace Danmaku {
+		#define $dmk GameData::Danmaku::
 		AreaCircle2D* mainPlayer = nullptr;
 		#include "gamedata/danmaku/predefs.hpp"
 		#include "gamedata/danmaku/structs.hpp"
@@ -57,16 +59,13 @@ namespace GameData {
 		#include "gamedata/danmaku/laser.hpp"
 		#include "gamedata/danmaku/player.hpp"
 		#include "gamedata/danmaku/item.hpp"
-		#include "gamedata/danmaku/program.hpp"
 		#include "gamedata/danmaku/spellcard.hpp"
 		#include "gamedata/danmaku/enemy.hpp"
 		#include "gamedata/danmaku/boss.hpp"
 		#include "gamedata/danmaku/stage.hpp"
+		#include "gamedata/danmaku/program.hpp"
 	}
 }
-
-#define $gdt GameData::
-#define $dmk GameData::Danmaku::
 
 #undef DERIVED_CONSTRUCTOR
 #undef DERIVED_CLASS

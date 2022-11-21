@@ -1,6 +1,7 @@
 #ifndef OBJECT_GROUPING_SYSTEM_H
 #define OBJECT_GROUPING_SYSTEM_H
 
+#include <unordered_map>
 #include <map>
 #include <vector>
 

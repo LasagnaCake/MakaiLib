@@ -12,7 +12,7 @@ namespace Makai {
 		std::vector,
 		std::function,
 		std::string,
-		std::map,
+		std::unordered_map,
 		std::runtime_error,
 		Vector::VecV2,
 		Vector::VecV3,
@@ -94,7 +94,7 @@ namespace Makai {
 		unsigned int threshold = 2048;
 	private:
 		/// The internal buffer state.
-		map<SDL_Scancode, unsigned int> buffer;
+		unordered_map<SDL_Scancode, unsigned int> buffer;
 	};
 
 	/**

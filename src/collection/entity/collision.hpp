@@ -4,7 +4,7 @@
 #include "core.hpp"
 #include "2d3d.hpp"
 
-#include <map>
+#include <unordered_map>
 
 // TODO: refactor collision checking code to utilize withinBounds() functions (1/2 to be made)
 
@@ -15,7 +15,7 @@ namespace CollisionData {
 		VecMath::Points3D,
 		VecMath::angleTo,
 		VecMath::center,
-		std::map;
+		std::unordered_map;
 		using namespace Vector;
 	}
 	/**
@@ -206,7 +206,7 @@ namespace EntityClass {
 		VecMath::Points3D,
 		VecMath::angleTo,
 		VecMath::center,
-		std::map;
+		std::unordered_map;
 		using namespace CollisionData;
 	}
 

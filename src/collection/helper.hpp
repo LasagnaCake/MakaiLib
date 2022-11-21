@@ -8,7 +8,8 @@ namespace Helper {
 	namespace {
 		using
 			std::vector,
-			std::map;
+			std::map,
+			std::unordered_map;
 	}
 
 	template<typename T, typename T2>
@@ -30,6 +31,24 @@ namespace Helper {
 
 	template<typename T, typename T2>
 	vector<T2> getValues(map<T, T2> lst) {
+		vector<T2> values;
+		for (auto i = lst.begin(); i != lst.end(); i++) {
+			values.push_back(i->second);
+		}
+		return values;
+	}
+
+	template<typename T, typename T2>
+	vector<T> getKeys(unordered_map<T, T2> lst) {
+		vector<T> keys;
+		for (auto i = lst.begin(); i != lst.end(); i++) {
+			keys.push_back(i->first);
+		}
+		return keys;
+	}
+
+	template<typename T, typename T2>
+	vector<T2> getValues(unordered_map<T, T2> lst) {
 		vector<T2> values;
 		for (auto i = lst.begin(); i != lst.end(); i++) {
 			values.push_back(i->second);

@@ -98,6 +98,7 @@ struct DanmakuObject {
 
 	virtual void updateSprite() {}
 
+	// INTERNAL USE ONLY DO NOT TOUCH
 	void _setZOffset(float offset) {
 		_zOffset = offset;
 	}

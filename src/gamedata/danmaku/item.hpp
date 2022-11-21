@@ -300,3 +300,5 @@ private:
 typedef CollectibleManager<COLLECTIBLE_ITEM_COUNT> ItemManager;
 
 ItemManager* itemManager = nullptr;
+
+#define DANMAKU_IM $dmk itemManager

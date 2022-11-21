@@ -419,6 +419,9 @@ typedef BulletManager<ENEMY_BULLET_COUNT, $layer(ENEMY_BULLET), $layer(PLAYER), 
 PlayerBulletManager*	playerBulletManager = nullptr;
 EnemyBulletManager*		enemyBulletManager = nullptr;
 
+#define DANMAKU_PBM $dmk playerBulletMananger
+#define DANMAKU_EBM $dmk enemyBulletManager
+
 #define $bullet(TYPE)	$getman( TYPE##Bullet )
 #define $setb(TYPE)		$setman( TYPE##Bullet )
 
