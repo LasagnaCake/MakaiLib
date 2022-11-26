@@ -1,16 +1,12 @@
-// #include <irrlicht.h>
-#include <stdexcept>
-
 //#undef _DEBUG_OUTPUT_
 
 #define $_PREVENT_BULLET_OVERFLOW_BY_WRAP
+#define $_DANMAKU_GAME
 
 #include "src/makai.hpp"
 
 #include <wtypes.h>
 #include <windows.h>
-
-//#define SIDE_B
 
 using namespace $rdt Reference;
 using namespace Vector;
@@ -219,8 +215,6 @@ public:
 	}
 };
 
-#ifndef SIDE_B
-
 int main() {
 	/*
 	***********************
@@ -232,7 +226,12 @@ int main() {
 	#ifndef _DEBUG_OUTPUT_
 	//ShowWindow(GetConsoleWindow(), SW_HIDE);
 	#endif // _DEBUG_OUTPUT_
-	StringList resList = Helper::getKeys($res set4x3);
+	StringList resList;
+	std::vector<Vector2> resValue;
+	for $each(res, $res set4x3) {
+		resList.push_back(res.key);
+		resValue.push_back(res.value);
+	}
 	$debug(ENEMY_BULLET_COUNT);
 	resList.push_back("Detect");
 	$debug(Makai::getDeviceSize().y * (4.0 / 3.0));
@@ -276,7 +275,7 @@ int main() {
 		window = Makai::getDeviceSize();
 		window.x = window.y * (4.0/3.0);
 	} else
-		window = $res set4x3.at(resList[winSize]);
+		window = resValue[winSize];
 	try {
 		// If size = screen size, automatic fullscreen for some reason (Why, SDL?)
 		GameApp prog(window.x, window.y, "[TEST]", !fullscreen);
@@ -296,5 +295,3 @@ int main() {
 	#endif // _DEBUG_OUTPUT_
 	return 0;
 }
-#else
-#endif

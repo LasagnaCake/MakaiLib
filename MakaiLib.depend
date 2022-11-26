@@ -1,6 +1,5 @@
 # depslib dependency file v1.0
-1668888718 source:d:\c(++) projects\_c++\game engine\makailib\makai.cpp
-	<stdexcept>
+1669463808 source:d:\c(++) projects\_c++\game engine\makailib\makai.cpp
 	"src/makai.hpp"
 	<wtypes.h>
 	<windows.h>
@@ -2867,7 +2866,7 @@
 1665256929 d:\c(++) projects\_c++\game engine\makailib\src\program.hpp
 	"program/gl_program.hpp"
 
-1668985823 d:\c(++) projects\_c++\game engine\makailib\src\anchors.hpp
+1669463798 d:\c(++) projects\_c++\game engine\makailib\src\anchors.hpp
 	<iostream>
 	<string>
 	<vector>
@@ -2885,14 +2884,9 @@
 	<chrono>
 	<coroutine>
 	"redefines.hpp"
-	<allegro5/allegro5.h>
-	<allegro5/allegro_font.h>
-	<allegro5/allegro_image.h>
-	<allegro5/allegro_primitives.h>
 	"stb_image.h"
-	<GL/glew.h>
+	<GLEW/include/GL/glew.h>
 	<GL/gl.h>
-	<GLFW/glfw3.h>
 	<GLM/glm.hpp>
 	<glm/gtx/rotate_vector.hpp>
 	<glm/gtx/euler_angles.hpp>
@@ -2912,6 +2906,7 @@
 	"collection/event.hpp"
 	"collection/tasking.hpp"
 	"collection/grouping.hpp"
+	"collection/dictionary.hpp"
 	"fileloader.hpp"
 
 1661613724 d:\c(++) projects\_c++\game engine\makailib\src\stb_image.h
@@ -3317,10 +3312,10 @@
 
 1668450431 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_renderable.hpp
 
-1666830516 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_color.hpp
+1669463786 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_color.hpp
 	"../anchors.hpp"
 
-1668986079 d:\c(++) projects\_c++\game engine\makailib\src\gamedata.hpp
+1669462081 d:\c(++) projects\_c++\game engine\makailib\src\gamedata.hpp
 	"anchors.hpp"
 	"graphical.hpp"
 	"program.hpp"
@@ -3367,7 +3362,7 @@
 
 1668434397 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\player.hpp
 
-1668986111 d:\c(++) projects\_c++\game engine\makailib\src\makai.hpp
+1669129246 d:\c(++) projects\_c++\game engine\makailib\src\makai.hpp
 	"anchors.hpp"
 	"program.hpp"
 	"graphical.hpp"
@@ -3423,4 +3418,20 @@
 1668985955 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\dialogue.hpp
 
 1668985846 d:\c(++) projects\_c++\game engine\makailib\src\redefines.hpp
+
+1669129184 d:\c(++) projects\_c++\game engine\makailib\src\collection\dictionary.hpp
+	<unordered_map>
+
+1584273239 d:\c(++) projects\_c++\game engine\makailib\lib\opengl\glew\include\gl\glew.h
+	<cstddef>
+	<cstdint>
+	<stddef.h>
+	<stdint.h>
+	<stddef.h>
+	<inttypes.h>
+	<stdint.h>
+	<inttypes.h>
+	<Availability.h>
+	<OpenGL/glu.h>
+	<GL/glu.h>
 

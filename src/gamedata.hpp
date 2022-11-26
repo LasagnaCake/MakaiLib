@@ -50,6 +50,8 @@ namespace GameData {
 
 	#include "gamedata/dialogue.hpp"
 
+	#ifdef $_DANMAKU_GAME
+
 	namespace Danmaku {
 		#define $dmk GameData::Danmaku::
 		AreaCircle2D* mainPlayer = nullptr;
@@ -65,6 +67,8 @@ namespace GameData {
 		#include "gamedata/danmaku/stage.hpp"
 		#include "gamedata/danmaku/program.hpp"
 	}
+
+	#endif
 }
 
 #undef DERIVED_CONSTRUCTOR

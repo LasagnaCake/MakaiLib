@@ -7,9 +7,10 @@
 #include "gamedata.hpp"
 
 namespace Makai {
+	using Dictionary::Entry;
 	namespace Resolution {
-		#define RESOLUTION(W, H) {#W" × "#H , Vector2(W, H)}
-		const unordered_map<string, Vector2> set4x3 = {
+		#define RESOLUTION(W, H) Entry<string, Vector2>{#W" × "#H , Vector2(W, H)}
+		const vector<Entry<string, Vector2>> set4x3 = {
 			RESOLUTION(480, 320),
 			RESOLUTION(640, 480),
 			RESOLUTION(860, 640),

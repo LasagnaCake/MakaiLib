@@ -49,20 +49,11 @@
 *********************
 */
 
-//#include <SFML/Graphics.hpp>
-//#include <raylib.h>
-
-#ifdef MAKAI_ALLEGRO5
-#include <allegro5/allegro5.h>
-#include <allegro5/allegro_font.h>
-#include <allegro5/allegro_image.h>
-#include <allegro5/allegro_primitives.h>
-#else
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
-#include <GL/glew.h>
+#include <GLEW/include/GL/glew.h>
 #include <GL/gl.h>
-#include <GLFW/glfw3.h>
+//#include <GLFW/include/GLFW/glfw3.h>
 #include <GLM/glm.hpp>
 #include <glm/gtx/rotate_vector.hpp>
 #include <glm/gtx/euler_angles.hpp>
@@ -75,7 +66,6 @@
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_FontCache.h>
 #include <SDL2/SDL_mixer.h>
-#endif
 
 /*
 ***************************
@@ -114,6 +104,7 @@
 #include "collection/event.hpp"
 #include "collection/tasking.hpp"
 #include "collection/grouping.hpp"
+#include "collection/dictionary.hpp"
 
 #ifdef _$_FLOAT_AS_DOUBLE
 #undef float

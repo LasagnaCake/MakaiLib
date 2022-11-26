@@ -5,7 +5,9 @@
 
 namespace Dictionary {
 	namespace {
-		using std::unordered_map;
+		using
+		std::unordered_map,
+		std::vector;
 	}
 
 	template <typename K, typename V>
@@ -18,7 +20,7 @@ namespace Dictionary {
 	class Dictionary {
 	public:
 		V& operator[](K& at) {
-			return entries[K];
+			return entries[at];
 		}
 		vector<K> getKeys() {
 			vector<K> res;
