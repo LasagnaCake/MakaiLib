@@ -1,6 +1,4 @@
 struct Font {
-	Texture2D*	texture = nullptr;
-	Vector2		frame = Vector2(16);
 };
 
 struct TextData {
@@ -17,6 +15,9 @@ struct TextData {
 */
 class Label: Base::Drawable {
 public:
+	Label(size_t layer = 0, bool manual = false)
+	: Drawable(layer, manual) {
+	}
 
 	Font		font;
 	TextData	text;
