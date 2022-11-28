@@ -7,6 +7,7 @@
 
 #include <wtypes.h>
 #include <windows.h>
+#include <mmsystem.h>
 
 using namespace $rdt Reference;
 using namespace Vector;
@@ -226,68 +227,14 @@ int main() {
 	#ifndef _DEBUG_OUTPUT_
 	//ShowWindow(GetConsoleWindow(), SW_HIDE);
 	#endif // _DEBUG_OUTPUT_
-	StringList resList;
-	std::vector<Vector2> resValue;
-	for $each(res, $res set4x3) {
-		resList.push_back(res.key);
-		resValue.push_back(res.value);
-	}
-	$debug(ENEMY_BULLET_COUNT);
-	resList.push_back("Detect");
-	$debug(Makai::getDeviceSize().y * (4.0 / 3.0));
-	$debug(Makai::getDeviceSize().y);
-	if (Popup::dialogBox(
-		"Warning!",
-		"Pressing escape on any of the next set of dialog boxes,\n"
-		"including this one, will close the application.\n"
-		"Do you understand?",
-		Popup::Option::YES,
-		SDL_MESSAGEBOX_WARNING
-	) < 0) return 0;
-	int winSize = Popup::dialogBox(
-		"App Configuration (1/3)",
-		"Please select a window size.\n"
-		"Selecting \"Detect\" will set to your screen's size.\n\n"
-		"WARNING: Selecting \"Detect\" will set the application to fullscreen!\n",
-		resList
-	);
-	if (winSize < 0)
-		return 0;
-	int fullscreen = 0;
-	if (winSize != resList.size() - 1) {
-		fullscreen = Popup::dialogBox(
-			"App Configuration (2/3)",
-			"Would you like to run this application in fullscreen or windowed mode?",
-			StringList{"Fullscreen", "Windowed"}
-		);
-	}
-	int framerate = Popup::dialogBox(
-		"App Configuration (3/3)",
-		"Please select the maximum framerate (frames per second).\n"
-		"Higher framerates require more powerful computers.\n"
-		"If the program is running slow, try changing the framerate.",
-		StringList{"10", "20", "30", "40", "50", "60"}
-	);
-	if (fullscreen < 0 || framerate < 0)
-		return 0;
-	Vector2 window;
-	if (winSize == resList.size() - 1) {
-		window = Makai::getDeviceSize();
-		window.x = window.y * (4.0/3.0);
-	} else
-		window = resValue[winSize];
 	try {
+		auto prefs = $dmk queryProgramSettingsFromUser();
 		// If size = screen size, automatic fullscreen for some reason (Why, SDL?)
-		GameApp prog(window.x, window.y, "[TEST]", !fullscreen);
-		prog.maxFrameRate = 10 + (framerate * 10);
+		GameApp prog(prefs.resolution.x, prefs.resolution.y, "[TEST]", prefs.fullscreen);
+		prog.maxFrameRate = prefs.framerate;
 		prog.run();
 	} catch (std::runtime_error e) {
-		Popup::dialogBox(
-			"Error!",
-			e.what(),
-			Popup::Option::OK,
-			SDL_MESSAGEBOX_ERROR
-		);
+		Popup::errorDialog(e.what());
 	}
 	#ifdef _DEBUG_OUTPUT_
 	$debug("\nAll done! Please press enter to close program!");

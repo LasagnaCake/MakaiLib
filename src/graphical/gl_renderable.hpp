@@ -2,15 +2,11 @@
 Do not touch this class. Please.
 */
 
-class Renderable {
+class Renderable: public Base::Drawable {
 public:
-	Renderable(size_t layer = 0, bool manual = false) {
-		if(!manual)
-			Drawer::layers.addObject(&render, layer);
+	Renderable(size_t layer = 0, bool manual = false): Drawable(layer, manual){
 		glGenVertexArrays(1, &vao);
 		glGenBuffers(1, &vbo);
-		onCreate();
-		manualMode = manual;
 	}
 
 	Renderable(vector<Triangle*> triangles, size_t layer = 0, bool manual = false)
@@ -18,12 +14,8 @@ public:
 		this->triangles = triangles;
 	}
 
-	~Renderable() {
-		onDelete();
+	void onDelete() override {
 		$debug(references.plane.size());
-		$debug("Removing from render layers...");
-		if(!manualMode)
-			Drawer::layers.removeFromAll(&render);
 		$debug("Deleting buffers...");
 		glDeleteBuffers(1, &vbo);
 		glDeleteVertexArrays(1, &vao);
@@ -40,49 +32,6 @@ public:
 		for (auto t: triangles) delete t;
 		triangles.clear();
 		$debug("Killing renderable object...");
-	}
-
-	/// Called on creation.
-	virtual void onCreate()	{}
-	/// Called before rendering to screen.
-	virtual void onDrawBegin()	{}
-	/// Called after rendering to screen.
-	virtual void onDrawEnd()	{}
-	/// Called on deletion.
-	virtual void onDelete()	{}
-
-	Renderable* setManual() {
-		if(!manualMode)
-			Drawer::layers.removeFromAll(&render);
-		manualMode = true;
-		return this;
-	}
-
-	Renderable* setAuto(size_t renderLayer) {
-		if(manualMode)
-			Drawer::layers.addObject(&render, renderLayer);
-		manualMode = false;
-		return this;
-	}
-
-	Renderable* setRenderLayer(size_t renderLayer) {
-		Drawer::layers.removeFromAll(&render);
-		Drawer::layers.addObject(&render, renderLayer);
-		manualMode = false;
-		return this;
-	}
-
-	Renderable* addToRenderLayer(size_t renderLayer) {
-		Drawer::layers.addObject(&render, renderLayer);
-		manualMode = false;
-		return this;
-	}
-
-	Renderable* removeFromRenderLayer(size_t renderLayer) {
-		Drawer::layers.removeFromGroup(&render, renderLayer);
-		if (!Drawer::layers.getGroups(&render).size())
-			manualMode = true;
-		return this;
 	}
 
 	/// Creates a reference and binds it to this object.
@@ -228,10 +177,27 @@ public:
 		delete ref;
 	}
 
-	/// Renders the object to the screen.
-	DrawFunc render = $func() {
-		// If not active, return
-		if (!params.active) return;
+	vector<Triangle*> triangles;
+
+	struct {
+		struct {
+			bool automatic	= false;
+			float threshold	= 0.999f;
+		} sorting;
+		struct {
+			bool enabled		= false;
+			Texture2D* image	= nullptr;
+			GLubyte id			= 0;
+		} texture;
+		GLuint culling		= GL_FRONT_AND_BACK;
+		GLuint fill			= GL_FILL;
+	} params;
+
+	Transform3D trans;
+
+protected:
+
+	void draw() override {
 		// If no triangles exist, return
 		if (!triangles.size()) return;
 		// Call onDrawBegin function
@@ -280,7 +246,7 @@ public:
 		// Set polygon rendering mode
 		glPolygonMode(params.culling, params.fill);
 		// Draw object to screen
-		draw();
+		display();
 		// Disable attributes
 		glDisableVertexAttribArray(2);
 		glDisableVertexAttribArray(1);
@@ -289,26 +255,7 @@ public:
 		glBindVertexArray(0);
 		// Call onDrawEnd function
 		onDrawEnd();
-	};
-
-	vector<Triangle*> triangles;
-
-	struct {
-		struct {
-			bool automatic	= false;
-			float threshold	= 0.999f;
-		} sorting;
-		struct {
-			bool enabled		= false;
-			Texture2D* image	= nullptr;
-			GLubyte id			= 0;
-		} texture;
-		bool active			= true;
-		GLuint culling		= GL_FRONT_AND_BACK;
-		GLuint fill			= GL_FILL;
-	} params;
-
-	Transform3D trans;
+	}
 private:
 	/// List of references linked to this object.
 	struct {
@@ -320,9 +267,6 @@ private:
 
 	glm::mat4x4 actorMatrix;
 
-	/// Whether manually rendering or not.
-	bool manualMode = false;
-
 	/// The object's Vertex Array Object (VAO).
 	GLuint vao;
 
@@ -332,7 +276,7 @@ private:
 	/// The amount of vertices this object has.
 	size_t vertexCount = 0;
 
-	void draw() {
+	void display() {
 		// Render with basic shader
 		Shader::defaultShader();
 		glm::mat4 camera = Scene::camera.matrix();

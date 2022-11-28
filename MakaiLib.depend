@@ -1,8 +1,9 @@
 # depslib dependency file v1.0
-1669463808 source:d:\c(++) projects\_c++\game engine\makailib\makai.cpp
+1669667054 source:d:\c(++) projects\_c++\game engine\makailib\makai.cpp
 	"src/makai.hpp"
 	<wtypes.h>
 	<windows.h>
+	<mmsystem.h>
 
 1352124852 d:\c(++) projects\_c++\game engine\makailib\lib\irrlicht-1.8.5\include\irrlicht.h
 	"IrrCompileConfig.h"
@@ -2997,11 +2998,12 @@
 	"graphical/gl_shader.hpp"
 	"graphical/gl_graphical.hpp"
 
-1668191039 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_graphical.hpp
+1669659474 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_graphical.hpp
 	"../anchors.hpp"
 	"gl_shader.hpp"
 	"gl_color.hpp"
 	"gl_texture.hpp"
+	"gl_drawable.hpp"
 	"gl_reference.hpp"
 	"gl_renderable.hpp"
 	"gl_text.hpp"
@@ -3026,7 +3028,7 @@
 	<algorithm>
 	<regex>
 
-1668986246 d:\c(++) projects\_c++\game engine\makailib\src\program\gl_program.hpp
+1669667050 d:\c(++) projects\_c++\game engine\makailib\src\program\gl_program.hpp
 	"../anchors.hpp"
 	"../graphical.hpp"
 	<wtypes.h>
@@ -3310,7 +3312,7 @@
 
 1664664497 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_texture.hpp
 
-1668450431 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_renderable.hpp
+1669660030 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_renderable.hpp
 
 1669463786 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_color.hpp
 	"../anchors.hpp"
@@ -3362,7 +3364,7 @@
 
 1668434397 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\player.hpp
 
-1669129246 d:\c(++) projects\_c++\game engine\makailib\src\makai.hpp
+1669661143 d:\c(++) projects\_c++\game engine\makailib\src\makai.hpp
 	"anchors.hpp"
 	"program.hpp"
 	"graphical.hpp"
@@ -3370,7 +3372,7 @@
 
 1668385504 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\predefs.hpp
 
-1665851484 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_text.hpp
+1669660011 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_text.hpp
 
 1668439694 d:\c(++) projects\_c++\game engine\makailib\src\collection\definitions.hpp
 
@@ -3396,7 +3398,7 @@
 	"SDL_gpu.h"
 	<stdarg.h>
 
-1667187318 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\program.hpp
+1669661276 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\program.hpp
 
 1666946750 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\enemy.hpp
 
@@ -3434,4 +3436,6 @@
 	<Availability.h>
 	<OpenGL/glu.h>
 	<GL/glu.h>
+
+1669660050 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_drawable.hpp
 

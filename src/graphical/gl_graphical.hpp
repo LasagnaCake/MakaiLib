@@ -381,6 +381,10 @@ namespace RenderData {
 		RawVertex verts[3];
 	};
 
+	namespace Base {
+		#include "gl_drawable.hpp"
+	}
+
 	namespace Reference {
 		#include "gl_reference.hpp"
 	}

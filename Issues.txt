@@ -1,0 +1,2 @@
+> Player ocasionally starts at an angle (Angle is framerate and resolution dependent)
+> Pixel resolution changes after going fullscreen (PPI increases, irreversible)

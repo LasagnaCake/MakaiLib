@@ -112,7 +112,8 @@ namespace Makai {
 			unsigned int height,
 			string windowTitle,
 			bool fullscreen = false,
-			string bufferShaderPath = "shaders/framebuffer/compose.slf"
+			string bufferShaderPath = "shaders/framebuffer/compose.slf",
+			bool useMIDI = false
 		) {
 			// Save window resolution
 			this->width = width;
@@ -127,9 +128,9 @@ namespace Makai {
 				$errlog(string("Unable to start TTF! (") + TTF_GetError() + ")");
 				throw runtime_error(string("Error: TTF (") + TTF_GetError() + ")");
 			};
-			if (!Mix_Init(MIX_INIT_OGG)) {
-				$errlog(string("Unable to start Mixer! (") + TTF_GetError() + ")");
-				throw runtime_error(string("Error: Mixer (") + TTF_GetError() + ")");
+			if (!Mix_Init(MIX_INIT_OGG | (useMIDI ? MIX_INIT_MID : 0))) {
+				$errlog(string("Unable to start Mixer! (") + Mix_GetError() + ")");
+				throw runtime_error(string("Error: Mixer (") + Mix_GetError() + ")");
 			}
 			$debug("Started!");
 			$debug("Creating window...");
@@ -450,6 +451,25 @@ namespace Makai {
 		// (horizontal, vertical)
 		return Vector2(desktop.right, desktop.bottom);
 	}
+
+	namespace {
+		using Dictionary::Entry;
+	}
+
+	namespace Resolution {
+		#define RESOLUTION(W, H) Entry<string, Vector2>{#W" × "#H , Vector2(W, H)}
+		const vector<Entry<string, Vector2>> set4x3 = {
+			RESOLUTION(480, 320),
+			RESOLUTION(640, 480),
+			RESOLUTION(860, 640),
+			RESOLUTION(960, 720),
+			RESOLUTION(1280, 960),
+			RESOLUTION(1600, 1200)
+		};
+		#undef RESOLUTION
+	}
+	#define $mki Makai::
+	#define $res $mki Resolution::
 }
 
 namespace Popup {
@@ -516,9 +536,17 @@ namespace Popup {
 		}
 		return buttonid;
 	}
-}
 
-#define $mki Makai::
+	void errorDialog(std::string what) {
+		PlaySound("SystemExclamation", NULL, SND_ASYNC);
+		Popup::dialogBox(
+			"Error!",
+			what,
+			Popup::Option::OK,
+			SDL_MESSAGEBOX_ERROR
+		);
+	}
+}
 
 #define $event(EVENT) ($mki pollEvents().type == EVENT)
 
