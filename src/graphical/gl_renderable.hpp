@@ -14,7 +14,8 @@ public:
 		this->triangles = triangles;
 	}
 
-	void onDelete() override {
+	virtual ~Renderable() {
+		Drawable::~Drawable();
 		$debug(references.plane.size());
 		$debug("Deleting buffers...");
 		glDeleteBuffers(1, &vbo);
@@ -195,13 +196,10 @@ public:
 
 	Transform3D trans;
 
-protected:
-
+private:
 	void draw() override {
 		// If no triangles exist, return
 		if (!triangles.size()) return;
-		// Call onDrawBegin function
-		onDrawBegin();
 		// Transform references (if applicable)
 		for (auto& plane: references.plane)	plane->transform();
 		for (auto& tg: references.trigon)	tg->transform();
@@ -253,10 +251,8 @@ protected:
 		glDisableVertexAttribArray(0);
 		// Unbind vertex array
 		glBindVertexArray(0);
-		// Call onDrawEnd function
-		onDrawEnd();
 	}
-private:
+
 	/// List of references linked to this object.
 	struct {
 		vector<Reference::Plane*>	plane;

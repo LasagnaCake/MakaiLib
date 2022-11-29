@@ -6,19 +6,14 @@ public:
 	}
 
 	virtual ~Drawable() {
-		onDelete();
 		if(!manualMode)
 			Drawer::layers.removeFromAll(&render);
 	}
 
-	/// Called on creation.
-	virtual void onCreate()	{}
 	/// Called before rendering to screen.
 	virtual void onDrawBegin()	{}
 	/// Called after rendering to screen.
 	virtual void onDrawEnd()	{}
-	/// Called on deletion.
-	virtual void onDelete()	{}
 
 	Drawable* setManual() {
 		if(!manualMode)
@@ -58,8 +53,12 @@ public:
 	DrawFunc render = $func() {
 		// If not active, return
 		if (!active) return;
+		// Call onDrawBegin function
+		onDrawBegin();
 		// Draw object
 		draw();
+		// Call onDrawEnd function
+		onDrawEnd();
 	};
 
 	bool active	= true;

@@ -19,12 +19,16 @@ public:
 	: Drawable(layer, manual) {
 	}
 
+	virtual ~Label() {
+		Drawable::~Drawable();
+	}
+
 	Font		font;
 	TextData	text;
 
 	Transform2D trans;
-protected:
 
+private:
 	void draw() override {
 	};
 };
