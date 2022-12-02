@@ -367,7 +367,7 @@ public:
 			last->params = BulletData();
 			last->grazed = false;
 			last->taskers.clearTaskers();
-			last->flags.fill(0);
+			last->flags.clear();
 			last->clearSignals();
 			last->updateSprite();
 			#ifdef $_PREVENT_BULLET_OVERFLOW_BY_WRAP
@@ -387,7 +387,7 @@ public:
 		last->params = BulletData();
 		last->grazed = false;
 		last->taskers.clearTaskers();
-		last->flags.fill(0);
+		last->flags.clear();
 		last->clearSignals();
 		if (pbobw > BULLET_COUNT) pbobw = 0;
 		last->updateSprite();

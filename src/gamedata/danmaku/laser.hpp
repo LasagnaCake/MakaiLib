@@ -311,7 +311,7 @@ public:
 			last->pause = Pause();
 			last->params = LineLaserData();
 			last->taskers.clearTaskers();
-			last->flags.fill(0);
+			last->flags.clear();
 			last->clearSignals();
 			last->setLaserShape();
 			last->updateSprite();
@@ -331,7 +331,7 @@ public:
 		last = lasers[pbobw++].enable()->setZero();
 		last->params = LineLaserData();
 		last->taskers.clearTaskers();
-		last->flags.fill(0);
+		last->flags.clear();
 		last->clearSignals();
 		if (pbobw > LASER_COUNT) pbobw = 0;
 		last->setLaserShape();

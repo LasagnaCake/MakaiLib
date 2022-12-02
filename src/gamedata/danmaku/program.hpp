@@ -115,7 +115,7 @@ struct ProgramSetting {
 
 #define USER_QUIT throw std::runtime_error("User quit the setup process!")
 
-ProgramSetting queryProgramSettingsFromUser() {
+ProgramSetting queryProgramSettingsFromUser(bool extendedFramerate = false) {
 	StringList resList;
 	std::vector<Vector2> resValue;
 	for $each(res, $res set4x3) {
@@ -156,7 +156,9 @@ ProgramSetting queryProgramSettingsFromUser() {
 		"Please select the maximum framerate (frames per second).\n"
 		"Higher framerates require more powerful computers.\n"
 		"If the program is running slow, try changing the framerate.",
-		StringList{"10", "20", "30", "40", "50", "60"}
+		extendedFramerate
+		? StringList{"10", "20", "30", "40", "50", "60"}
+		: StringList{"20", "30", "60"}
 	);
 	if (framerate < 0) USER_QUIT;
 	Vector2 window;
@@ -165,7 +167,19 @@ ProgramSetting queryProgramSettingsFromUser() {
 		window.x = window.y * (4.0/3.0);
 	} else
 		window = resValue[winSize];
-	return ProgramSetting{window, 10 + (framerate * 10), !fullscreen};
+	float frate = 0;
+	if (extendedFramerate)
+		frate =  10 + (framerate * 10);
+	else switch (framerate) {
+		case 0: frate = 20; break;
+		case 1: frate = 30; break;
+		case 2: frate = 60; break;
+	}
+	return ProgramSetting{
+		window,
+		frate,
+		!fullscreen
+	};
 }
 
 #undef USER_QUIT

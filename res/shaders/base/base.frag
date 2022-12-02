@@ -65,6 +65,7 @@ void main(void) {
 		color = color / vec4(vec3(color.w), 1.0);
 
 	if (fog) {
+		// The vector's length needs to be calculated here, otherwise it breaks
 		float fogValue = (length(fragCoord3D) - fogNear) / (fogFar - fogNear);
 		//float fogValue = 1.0 - exp(-fragDistance * fogStrength);
 		vec4 fogAlbedo = vec4(fogColor.x, fogColor.y, fogColor.z, color.w);

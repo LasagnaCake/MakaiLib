@@ -259,8 +259,6 @@ private:
 		vector<Reference::Trigon*>	trigon;
 	} references;
 
-	vector<Triangle*> sortedTriangles;
-
 	glm::mat4x4 actorMatrix;
 
 	/// The object's Vertex Array Object (VAO).
@@ -277,10 +275,11 @@ private:
 		Shader::defaultShader();
 		glm::mat4 camera = Scene::camera.matrix();
 		glm::mat4 projection = Scene::camera.perspective();
-		$mainshader["textured"](params.texture.enabled);
-		$mainshader["texture2D"](params.texture.id);
-		if (params.texture.image)
+		if (params.texture.image && params.texture.enabled) {
+			$mainshader["textured"](params.texture.enabled);
+			$mainshader["texture2D"](params.texture.id);
 			params.texture.image->enable(params.texture.id);
+		}
 		$mainshader["world"](Scene::world);
 		$mainshader["camera"](camera);
 		$mainshader["projection"](projection);

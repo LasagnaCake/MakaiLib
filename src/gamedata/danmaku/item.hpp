@@ -241,7 +241,7 @@ public:
 			last->pause = Pause();
 			last->params = CollectibleData();
 			last->taskers.clearTaskers();
-			last->flags.fill(0);
+			last->flags.clear();
 			last->clearSignals();
 			last->updateSprite();
 			#ifdef $_PREVENT_BULLET_OVERFLOW_BY_WRAP
@@ -260,7 +260,7 @@ public:
 		last = items[pbobw++].enable()->setZero();
 		last->params = CollectibleData();
 		last->taskers.clearTaskers();
-		last->flags.fill(0);
+		last->flags.clear();
 		last->clearSignals();
 		if (pbobw > ITEM_COUNT) pbobw = 0;
 		last->updateSprite();

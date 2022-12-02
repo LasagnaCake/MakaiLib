@@ -2867,7 +2867,7 @@
 1665256929 d:\c(++) projects\_c++\game engine\makailib\src\program.hpp
 	"program/gl_program.hpp"
 
-1669463798 d:\c(++) projects\_c++\game engine\makailib\src\anchors.hpp
+1669734319 d:\c(++) projects\_c++\game engine\makailib\src\anchors.hpp
 	<iostream>
 	<string>
 	<vector>
@@ -3312,7 +3312,7 @@
 
 1664664497 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_texture.hpp
 
-1669732899 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_renderable.hpp
+1669752918 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_renderable.hpp
 
 1669463786 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_color.hpp
 	"../anchors.hpp"
@@ -3335,9 +3335,9 @@
 	"gamedata/danmaku/stage.hpp"
 	"gamedata/danmaku/program.hpp"
 
-1668888628 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\bullet.hpp
+1670009835 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\bullet.hpp
 
-1668888678 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\laser.hpp
+1670009845 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\laser.hpp
 
 1663772564 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\spellcard.hpp
 
@@ -3372,11 +3372,11 @@
 
 1668385504 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\predefs.hpp
 
-1669732791 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_text.hpp
+1669816033 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_text.hpp
 
 1668439694 d:\c(++) projects\_c++\game engine\makailib\src\collection\definitions.hpp
 
-1668888125 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\structs.hpp
+1670007726 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\structs.hpp
 
 1668986334 d:\c(++) projects\_c++\game engine\makailib\src\collection\helper.hpp
 	<vector>
@@ -3398,7 +3398,7 @@
 	"SDL_gpu.h"
 	<stdarg.h>
 
-1669661276 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\program.hpp
+1669842033 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\program.hpp
 
 1666946750 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\enemy.hpp
 
@@ -3406,7 +3406,7 @@
 
 1666942540 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\stage.hpp
 
-1668888646 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\item.hpp
+1670009854 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\item.hpp
 
 1660930201 d:\c(++) projects\_c++\game engine\makailib\lib\sdl2-2.0.10\x86_64-w64-mingw32\include\sdl2\sdl_mixer.h
 	"SDL_stdinc.h"
@@ -3437,5 +3437,5 @@
 	<OpenGL/glu.h>
 	<GL/glu.h>
 
-1669732851 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_drawable.hpp
+1669817827 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_drawable.hpp
 
