@@ -185,6 +185,14 @@ namespace Math {
 		return pi + (2.0 * pointAngle) - surfaceAngle;
 	}
 
+	ANYTYPE_I farenheitToCelcius(T temperature) {
+		return (temperature - 32.0) * (5.0/9.0);
+	}
+
+	ANYTYPE_I celciusToFarenheit(T temperature) {
+		return (temperature / (5.0/9.0)) + 32.0;
+	}
+
 	namespace Random {
 		namespace {
 			typedef std::uniform_real_distribution<double> RandReal;

@@ -115,17 +115,20 @@ struct ProgramSetting {
 
 #define USER_QUIT throw std::runtime_error("User quit the setup process!")
 
-ProgramSetting queryProgramSettingsFromUser(bool extendedFramerate = false) {
+ProgramSetting queryProgramSettingsFromUser(bool use16by9 = false, bool extendedFramerate = false) {
 	StringList resList;
 	std::vector<Vector2> resValue;
-	for $each(res, $res set4x3) {
+	for $each(res, (use16by9 ? $res set16x9 : $res set4x3)) {
 		resList.push_back(res.key);
 		resValue.push_back(res.value);
 	}
 	$debug(ENEMY_BULLET_COUNT);
 	resList.push_back("Detect");
-	$debug(Makai::getDeviceSize().y * (4.0 / 3.0));
-	$debug(Makai::getDeviceSize().y);
+	Vector2 devSize = Makai::getDeviceSize();
+	$debug(devSize.y * (4.0 / 3.0));
+	$debug(devSize.y);
+	$debug(devSize.y * (16.0 / 9.0));
+	$debug(devSize.y);
 	if (Popup::dialogBox(
 		"Warning!",
 		"Pressing escape on any of the next set of dialog boxes,\n"
@@ -163,8 +166,8 @@ ProgramSetting queryProgramSettingsFromUser(bool extendedFramerate = false) {
 	if (framerate < 0) USER_QUIT;
 	Vector2 window;
 	if (winSize == resList.size() - 1) {
-		window = Makai::getDeviceSize();
-		window.x = window.y * (4.0/3.0);
+		window = devSize;
+		window.x = window.y * (use16by9 ? 16.0/9.0 : 4.0/3.0);
 	} else
 		window = resValue[winSize];
 	float frate = 0;

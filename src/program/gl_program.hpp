@@ -143,8 +143,7 @@ namespace Makai {
 				height,
 				SDL_WINDOW_OPENGL
 			);
-			if (fullscreen)
-				SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
+			SDL_SetWindowFullscreen(window, fullscreen ? SDL_WINDOW_FULLSCREEN : 0);
 			renderer = SDL_CreateRenderer(window, 0, SDL_RENDERER_ACCELERATED);
 			SDL_GL_CreateContext(window);
 			$debug("Created!");
@@ -201,8 +200,8 @@ namespace Makai {
 		void run(){
 			// The timer process
 			auto timerFunc	= [&](float delta)-> void {
-				Tween::yieldAllTweens(delta * maxCycleRate);
-				Event::yieldAllTimers(delta * maxCycleRate);
+				Tween::yieldAllTweens(1.0);
+				Event::yieldAllTimers(1.0);
 			};
 			// The logical process
 			auto logicFunc	= [&](float delta)-> void {
@@ -219,35 +218,39 @@ namespace Makai {
 			onOpen();
 			// SDL's events
 			SDL_Event event;
-			// Fixed delta time
-			float fixedDelta = 1.0/maxFrameRate;
+			// Delta time
+			float frameDelta = 1.0/maxFrameRate;
+			float cycleDelta = 1.0/maxCycleRate;
 			// Last time of execution
-			size_t ticks = SDL_GetTicks() + (fixedDelta * 1000);
+			size_t frameTicks = SDL_GetTicks() + frameDelta * 1000;
+			size_t cycleTicks = SDL_GetTicks() + cycleDelta * 1000;
 			// While program is running...
 			while(shouldRun) {
 				// Poll events and check if should close
 				while (SDL_PollEvent(&event))
 					if (event.type == SDL_QUIT)
 						shouldRun = false;
-				// Get fixed delta
-				//if (/*is in performance mode*/)
-					fixedDelta = 1.0/maxFrameRate;
-				//else fixedDelta = 3.0/maxFrameRate;
+				// Get deltas
+				frameDelta = 1.0/maxFrameRate;
+				cycleDelta = 1.0/maxCycleRate;
 				// If should process, then do so
-				if (SDL_GetTicks() - ticks > fixedDelta * 1000) {
+				if (SDL_GetTicks() - cycleTicks > cycleDelta * 1000) {
 					// Get current time
-					ticks = SDL_GetTicks();
+					cycleTicks = SDL_GetTicks();
+					// Do timer-related stuff
+					timerFunc(cycleDelta);
+					taskers.yield(cycleDelta);
+				}
+				if (SDL_GetTicks() - frameTicks > frameDelta * 1000) {
+					// Get current time
+					frameTicks = SDL_GetTicks();
 					// increment frame counter
 					frame += 1;
 					// Update input manager
 					input.update();
-					// Start thread
-					// Do your own stuff
-					timerFunc(fixedDelta);
-					logicFunc(fixedDelta);
-					onLogicFrame(fixedDelta);
-					taskers.yield(fixedDelta * maxCycleRate);
-					// Wait for thread to be done processing
+					// Do normal logic-related stuff
+					logicFunc(frameDelta);
+					onLogicFrame(frameDelta);
 					// Render screen
 					render();
 					// Destroy queued entities
@@ -440,16 +443,17 @@ namespace Makai {
 		SDL_Renderer* renderer;
 	};
 
-	Vector2 getDeviceSize() {
-		RECT desktop;
-		// Get a handle to the desktop window
-		const HWND hDesktop = GetDesktopWindow();
-		// Get the size of screen to the variable desktop
-		GetWindowRect(hDesktop, &desktop);
-		// The top left corner will have coordinates (0,0)
-		// and the bottom right corner will have coordinates
-		// (horizontal, vertical)
-		return Vector2(desktop.right, desktop.bottom);
+	Vector2 getDeviceSize(unsigned int display = 0) {
+		SDL_Rect bounds;
+		$debug("Starting SDL...");
+		if (!SDL_WasInit(SDL_INIT_VIDEO))
+			if (SDL_Init(SDL_INIT_VIDEO) != 0) {
+				$errlog(string("Unable to start SDL! (") + SDL_GetError() + ")");
+				throw runtime_error(string("Error: SDL (") + SDL_GetError() + ")");
+			}
+		if (SDL_GetDisplayBounds(display, &bounds))
+			throw std::runtime_error("Couldn't get display bounds!\n\n" + String(SDL_GetError()));
+		return Vector2(bounds.h - bounds.x, bounds.w - bounds.y);
 	}
 
 	namespace {
@@ -465,6 +469,15 @@ namespace Makai {
 			RESOLUTION(960, 720),
 			RESOLUTION(1280, 960),
 			RESOLUTION(1600, 1200)
+		};
+
+		const vector<Entry<string, Vector2>> set16x9 = {
+			RESOLUTION(640, 360),
+			RESOLUTION(854, 480),
+			RESOLUTION(1280, 720),
+			RESOLUTION(1600, 900),
+			RESOLUTION(1920, 1080),
+			RESOLUTION(2560, 1440)
 		};
 		#undef RESOLUTION
 	}

@@ -191,7 +191,7 @@ public:
 		switch (layerID / SUBLAYER_COUNT) {
 		case $rlayer(WORLD):
 			setCamera3D();
-			$mainshader["fog"](true);
+			$mainshader["useFog"](true);
 			break;
 		case $rlayer(PLAYER):
 			break;
@@ -228,8 +228,8 @@ int main() {
 	//ShowWindow(GetConsoleWindow(), SW_HIDE);
 	#endif // _DEBUG_OUTPUT_
 	try {
-		auto prefs = $dmk queryProgramSettingsFromUser();
-		// If size = screen size, automatic fullscreen for some reason (Why, SDL?)
+		auto prefs = $dmk queryProgramSettingsFromUser(true);
+		// If size >= screen size, automatic fullscreen for some reason (Why, SDL?)
 		GameApp prog(prefs.resolution.x, prefs.resolution.y, "[TEST]", prefs.fullscreen);
 		prog.maxFrameRate = prefs.framerate;
 		prog.run();
