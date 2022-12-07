@@ -22,6 +22,7 @@
 #define $enableif(COND)			std::enable_if<COND>::type
 
 #define $derived(BASE) std::derived_from<BASE>
+#define $numeric(TYPE) std::enable_if<std::is_arithmetic<TYPE>::value, TYPE>::type
 
 #define $getspace(SOURCE, NAME) namespace NAME { using namespace SOURCE :: NAME; }
 

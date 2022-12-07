@@ -32,7 +32,7 @@ public:
 
 	}
 
-	$evt Timer bulletSpawner = $evt Timer(60, true);
+	$evt Timer bulletSpawner = $evt Timer(5, true);
 
 	float rotAngle = 0.0;
 
@@ -114,10 +114,10 @@ public:
 		bulletSpawner.onSignal = $signal {
 			float coefficient = 0;
 			Vector2 bPos = Vector2(32, -32) * getWindowScale();
-			for (size_t i = 0; i < 20; i++){
+			for (size_t i = 0; i < 5; i++){
 				auto b = DANMAKU_EBM -> createBullet();
 				b->local.position = bPos;
-				coefficient = (Math::tau * ((i + 1) / 20.0)) + rotAngle;
+				coefficient = (Math::tau * ((i + 1) / 5.0)) + rotAngle;
 				b->params.hitbox.radius = 1;
 				b->params.vel = ObjectParam{
 					$twn ease.out.linear,
@@ -136,7 +136,7 @@ public:
 				b->pause.enabled = true;
 				b->reset();
 			}
-			//rotAngle += (PI/20.0);
+			//rotAngle += (PI/5.0);
 		};
 		// Create test laser A
 		Vector2 lPos = Vector2(32, -16) * getWindowScale();
@@ -206,7 +206,7 @@ public:
 	void onLayerDrawEnd(size_t layerID) override {
 		setCamera2D();
 		getLayerBuffer().tint = Color::WHITE;
-		$mainshader["fog"](false);
+		$mainshader["useFog"](false);
 	}
 
 	void onDrawEnd() override {

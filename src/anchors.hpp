@@ -53,6 +53,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 #include <GLEW/include/GL/glew.h>
+#include <GLEW/include/GL/wglew.h>
 #include <GL/gl.h>
 //#include <GLFW/include/GLFW/glfw3.h>
 #include <GLM/glm.hpp>
@@ -67,6 +68,7 @@
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_FontCache.h>
 #include <SDL2/SDL_mixer.h>
+#include <freetype-gl.h>
 
 /*
 ***************************

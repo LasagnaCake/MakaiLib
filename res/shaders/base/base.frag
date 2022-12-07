@@ -8,6 +8,8 @@ in vec2 warpUV;
 
 layout (location = 0) out vec4 FragColor;
 
+uniform uint		material = 0x00;
+
 uniform bool		textured = false;
 uniform sampler2D	texture2D;
 uniform float		alphaClip = 0.2;
@@ -16,6 +18,7 @@ uniform vec4 albedo = vec4(1);
 
 uniform bool alphaAdjust = true;
 
+// [ DISTANCE-BASED FOG ]
 uniform bool	useFog		= false;
 uniform float	fogFar		= 12;
 uniform float	fogNear		= 8;
@@ -99,7 +102,7 @@ void main(void) {
 		// The vector's length needs to be calculated here, otherwise it breaks
 		float fogValue = (length(fragCoord3D) - fogNear) / (fogFar - fogNear);
 		//float fogValue = 1.0 - exp(-fragDistance * fogStrength);
-		fogValue = clamp(fogValue * exp(-fogStrength), 0, 1);
+		fogValue = clamp(fogValue * exp(-(1/fogStrength)), 0, 1);
 		vec4 fogAlbedo = mix(color, fogColor, color.w * fogColor.w);
 		fogAlbedo.w = color.w * fogColor.w;
 		color = mix(color, fogAlbedo, fogValue);

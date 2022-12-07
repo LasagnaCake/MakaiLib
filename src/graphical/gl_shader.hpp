@@ -39,57 +39,123 @@ namespace Shader {
 
 			void operator()(bool value) const
 			{
-				glUniform1i(glGetUniformLocation(id, name.c_str()), (int)value);
+				glUniform1i(getUniform(), (int)value);
 			}
 
 			void operator()(int value) const
 			{
-				glUniform1i(glGetUniformLocation(id, name.c_str()), value);
+				glUniform1i(getUniform(), value);
 			}
 
 			void operator()(unsigned int value) const
 			{
-				glUniform1ui(glGetUniformLocation(id, name.c_str()), value);
+				glUniform1ui(getUniform(), value);
 			}
 
 			void operator()(float value) const
 			{
-				glUniform1f(glGetUniformLocation(id, name.c_str()), value);
+				glUniform1f(getUniform(), value);
 			}
 
 			void operator()(glm::vec2 value) const
 			{
-				glUniform2f(glGetUniformLocation(id, name.c_str()), value.x, value.y);
+				glUniform2f(getUniform(), value.x, value.y);
 			}
 
 			void operator()(Vector2 value) const
 			{
-				glUniform2f(glGetUniformLocation(id, name.c_str()), value.x, value.y);
+				glUniform2f(getUniform(), value.x, value.y);
 			}
 
 			void operator()(glm::vec3 value) const
 			{
-				glUniform3f(glGetUniformLocation(id, name.c_str()), value.x, value.y, value.z);
+				glUniform3f(getUniform(), value.x, value.y, value.z);
 			}
 
 			void operator()(Vector3 value) const
 			{
-				glUniform3f(glGetUniformLocation(id, name.c_str()), value.x, value.y, value.z);
+				glUniform3f(getUniform(), value.x, value.y, value.z);
 			}
 
 			void operator()(glm::vec4 value) const
 			{
-				glUniform4f(glGetUniformLocation(id, name.c_str()), value.x, value.y, value.z, value.w);
+				glUniform4f(getUniform(), value.x, value.y, value.z, value.w);
 			}
 
 			void operator()(Vector4 value) const
 			{
-				glUniform4f(glGetUniformLocation(id, name.c_str()), value.x, value.y, value.z, value.w);
+				glUniform4f(getUniform(), value.x, value.y, value.z, value.w);
 			}
 
 			void operator()(glm::mat4 value) const
 			{
-				glUniformMatrix4fv(glGetUniformLocation(id, name.c_str()), 1, GL_FALSE, glm::value_ptr(value));
+				glUniformMatrix4fv(getUniform(), 1, GL_FALSE, glm::value_ptr(value));
+			}
+
+			void operator()(int* values, size_t count) {
+				glUniform1iv(getUniform(), count, values);
+				glUniform1ui(getUniform("Count"), count);
+			}
+
+			void operator()(unsigned int* values, size_t count) {
+				glUniform1uiv(getUniform(), count, values);
+				glUniform1ui(getUniform("Count"), count);
+			}
+
+			void operator()(float* values, size_t count) {
+				glUniform1fv(getUniform(), count, values);
+				glUniform1ui(getUniform("Count"), count);
+			}
+
+			void operator()(Vector2* values, size_t count) {
+				for $ssrange(i, 0, count)
+					glUniform2f(getUniformArray(i), values[i].x, values[i].y);
+				glUniform1ui(getUniform("Count"), count);
+			}
+
+			void operator()(glm::vec2* values, size_t count) {
+				for $ssrange(i, 0, count)
+					glUniform2f(getUniformArray(i), values[i].x, values[i].y);
+				glUniform1ui(getUniform("Count"), count);
+			}
+
+			void operator()(Vector3* values, size_t count) {
+				for $ssrange(i, 0, count)
+					glUniform3f(getUniformArray(i), values[i].x, values[i].y, values[i].z);
+				glUniform1ui(getUniform("Count"), count);
+			}
+
+			void operator()(glm::vec3* values, size_t count) {
+				for $ssrange(i, 0, count)
+					glUniform3f(getUniformArray(i), values[i].x, values[i].y, values[i].z);
+				glUniform1ui(getUniform("Count"), count);
+			}
+
+			void operator()(Vector4* values, size_t count) {
+				for $ssrange(i, 0, count)
+					glUniform4f(getUniformArray(i), values[i].x, values[i].y, values[i].z, values[i].w);
+				glUniform1ui(getUniform("Count"), count);
+			}
+
+			void operator()(glm::vec4* values, size_t count) {
+				for $ssrange(i, 0, count)
+					glUniform4f(getUniformArray(i), values[i].x, values[i].y, values[i].z, values[i].w);
+				glUniform1ui(getUniform("Count"), count);
+			}
+
+			template <typename T>
+			void operator()(vector<T>& values) {
+				(*this)(values.data(), values.size());
+			}
+
+		private:
+			GLuint getUniformArray(size_t index) {
+				auto cname = (name + "[" + std::to_string(index) + "]").c_str();
+				return glGetUniformLocation(id, cname);
+			}
+
+			inline GLuint getUniform(string append = "") const {
+				return glGetUniformLocation(id, (name + append).c_str());
 			}
 		};
 	}

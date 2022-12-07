@@ -230,11 +230,11 @@ namespace Drawer {
 		Vector2 uvShift;
 		/// The framebuffer's tint.
 		Vector4 tint = Color::WHITE;
-		// DO NOT SET TONE TO TRANSPARENT (1, 1, 1, 0) HERE.
+		// DO NOT SET TONE TO CLEAR (1, 1, 1, 0) HERE.
 		/// The framebuffer's balance color.
 		Vector4 tone = Color::NONE;
 		/// The framebuffer's clear color.
-		Vector4 color = Color::TRANSPARENT;
+		Vector4 color = Color::CLEAR;
 		/// The framebuffer's shape.
 		Vertex rect[4];
 		/// The framebuffer's rendering shader.

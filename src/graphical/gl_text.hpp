@@ -41,8 +41,7 @@ struct TextData {
 };
 
 // TODO: Make this work
-/* NOTE: It'll probably be done using SDL_FontCache.
-* Seriously, I NEED to do this. How else would the player know its score?
+/* NOTE: It'll probably be done using SDL_FontCache + OpenGL. Scratch that. Freetype GL.
 */
 class Label: Base::Drawable {
 public:

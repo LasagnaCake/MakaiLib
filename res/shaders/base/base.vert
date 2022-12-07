@@ -8,6 +8,7 @@ uniform mat4 projection;
 layout (location = 0) in vec3 vertPos;
 layout (location = 1) in vec2 vertUV;
 layout (location = 2) in vec4 vertColor;
+//layout (location = 3) in uint vertFlags;
 
 out vec3 fragCoord3D;
 out vec2 fragUV;

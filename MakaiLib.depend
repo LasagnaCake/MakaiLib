@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1670159807 source:d:\c(++) projects\_c++\game engine\makailib\makai.cpp
+1670357030 source:d:\c(++) projects\_c++\game engine\makailib\makai.cpp
 	"src/makai.hpp"
 	<wtypes.h>
 	<windows.h>
@@ -2867,7 +2867,7 @@
 1665256929 d:\c(++) projects\_c++\game engine\makailib\src\program.hpp
 	"program/gl_program.hpp"
 
-1669734319 d:\c(++) projects\_c++\game engine\makailib\src\anchors.hpp
+1670437222 d:\c(++) projects\_c++\game engine\makailib\src\anchors.hpp
 	<iostream>
 	<string>
 	<vector>
@@ -2887,6 +2887,7 @@
 	"redefines.hpp"
 	"stb_image.h"
 	<GLEW/include/GL/glew.h>
+	<GLEW/include/GL/wglew.h>
 	<GL/gl.h>
 	<GLM/glm.hpp>
 	<glm/gtx/rotate_vector.hpp>
@@ -2897,6 +2898,7 @@
 	<SDL2/SDL_ttf.h>
 	<SDL2/SDL_FontCache.h>
 	<SDL2/SDL_mixer.h>
+	<freetype-gl.h>
 	"collection/algebra.hpp"
 	"collection/definitions.hpp"
 	"collection/helper.hpp"
@@ -3009,7 +3011,7 @@
 	"gl_text.hpp"
 	"gl_framebuffer.hpp"
 
-1668085457 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_shader.hpp
+1670356582 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_shader.hpp
 	"../anchors.hpp"
 	"gl_camera.hpp"
 	"slf_fileloader.hpp"
@@ -3028,7 +3030,7 @@
 	<algorithm>
 	<regex>
 
-1670164321 d:\c(++) projects\_c++\game engine\makailib\src\program\gl_program.hpp
+1670437430 d:\c(++) projects\_c++\game engine\makailib\src\program\gl_program.hpp
 	"../anchors.hpp"
 	"../graphical.hpp"
 	<wtypes.h>
@@ -3306,7 +3308,7 @@
 
 1533818822 d:\c(++) projects\_c++\game engine\makailib\lib\opengl\glm\gtx\rotate_vector.inl
 
-1667184233 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_framebuffer.hpp
+1670437403 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_framebuffer.hpp
 
 1668445143 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_reference.hpp
 
@@ -3314,7 +3316,7 @@
 
 1669752918 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_renderable.hpp
 
-1669463786 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_color.hpp
+1670437380 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_color.hpp
 	"../anchors.hpp"
 
 1669462081 d:\c(++) projects\_c++\game engine\makailib\src\gamedata.hpp
@@ -3372,9 +3374,9 @@
 
 1668385504 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\predefs.hpp
 
-1669816033 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_text.hpp
+1670238848 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_text.hpp
 
-1668439694 d:\c(++) projects\_c++\game engine\makailib\src\collection\definitions.hpp
+1670329633 d:\c(++) projects\_c++\game engine\makailib\src\collection\definitions.hpp
 
 1670007726 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\structs.hpp
 
@@ -3438,4 +3440,67 @@
 	<GL/glu.h>
 
 1669817827 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_drawable.hpp
+
+1663831178 d:\c(++) projects\_c++\game engine\makailib\lib\freetype-gl\include\freetype-gl.h
+	"platform.h"
+	"opengl.h"
+	"vec234.h"
+	"vector.h"
+	"texture-atlas.h"
+	"texture-font.h"
+	"ftgl-utils.h"
+	"platform.c"
+	"texture-atlas.c"
+	"texture-font.c"
+	"vector.c"
+	"utf8-utils.c"
+	"distance-field.c"
+	"edtaa3func.c"
+	"ftgl-utils.c"
+
+1663831178 d:\c(++) projects\_c++\game engine\makailib\lib\freetype-gl\include\platform.h
+	<stdlib.h>
+
+1663831178 d:\c(++) projects\_c++\game engine\makailib\lib\freetype-gl\include\opengl.h
+	"config.h"
+	<glad/glad.h>
+	"TargetConditionals.h"
+	<OpenGLES/ES3/gl.h>
+	<OpenGLES/ES2/gl.h>
+	<OpenGL/gl.h>
+	<GL/glew.h>
+	<GL/wglew.h>
+	<GLES3/gl3.h>
+	<GLES2/gl2.h>
+	<GL/glew.h>
+	<GL/gl.h>
+
+1663831178 d:\c(++) projects\_c++\game engine\makailib\lib\freetype-gl\include\vec234.h
+
+1663831178 d:\c(++) projects\_c++\game engine\makailib\lib\freetype-gl\include\vector.h
+	<stdlib.h>
+	<stddef.h>
+
+1663831178 d:\c(++) projects\_c++\game engine\makailib\lib\freetype-gl\include\texture-atlas.h
+	<stdlib.h>
+	"vector.h"
+	"vec234.h"
+
+1663831178 d:\c(++) projects\_c++\game engine\makailib\lib\freetype-gl\include\texture-font.h
+	<stdlib.h>
+	<stdint.h>
+	"vector.h"
+	"texture-atlas.h"
+
+1663831178 d:\c(++) projects\_c++\game engine\makailib\lib\freetype-gl\include\ftgl-utils.h
+	<stdio.h>
+	<stdarg.h>
+	"freetype-gl-errdef.h"
+
+1663831178 d:\c(++) projects\_c++\game engine\makailib\lib\freetype-gl\include\freetype-gl-errdef.h
+
+1669814448 d:\c(++) projects\_c++\game engine\makailib\lib\freetype-gl\include\config.h
+
+1584273239 d:\c(++) projects\_c++\game engine\makailib\lib\opengl\glew\include\gl\wglew.h
+	<windows.h>
 

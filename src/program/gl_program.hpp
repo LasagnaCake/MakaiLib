@@ -144,7 +144,7 @@ namespace Makai {
 				SDL_WINDOW_OPENGL
 			);
 			SDL_SetWindowFullscreen(window, fullscreen ? SDL_WINDOW_FULLSCREEN : 0);
-			renderer = SDL_CreateRenderer(window, 0, SDL_RENDERER_ACCELERATED);
+			renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 			SDL_GL_CreateContext(window);
 			$debug("Created!");
 			$debug("Starting GLEW...");
@@ -357,6 +357,11 @@ namespace Makai {
 		/// The program's taskers.
 		Tasking::MultiTasker taskers;
 
+		/// Gets the window's renderer.
+		inline SDL_Renderer* getRenderer() {
+			return renderer;
+		}
+
 	protected:
 		Drawer::FrameBufferData toFrameBufferData() {
 			return Drawer::FrameBufferData{0};
@@ -551,7 +556,7 @@ namespace Popup {
 	}
 
 	void errorDialog(std::string what) {
-		PlaySound("SystemExclamation", NULL, SND_ASYNC);
+		//PlaySound("SystemExclamation", NULL, SND_ASYNC);
 		Popup::dialogBox(
 			"Error!",
 			what,

@@ -1,0 +1,18 @@
+\hypertarget{text-rendering_simple}{}\doxysection{Simple text rendering}\label{text-rendering_simple}
+The following complete example creates a window that displays \char`\"{}\+Hello, World\char`\"{} centered vertically and horizontally\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{...}
+\DoxyCodeLine{}
+\DoxyCodeLine{label\_t * label = label\_new( \textcolor{stringliteral}{"{}Hello, world"{}}, \textcolor{stringliteral}{"{}Times New Roman"{}}, 36,}
+\DoxyCodeLine{                             window\_width/2, window\_height/2,}
+\DoxyCodeLine{                             \textcolor{stringliteral}{"{}center"{}}, \textcolor{stringliteral}{"{}center"{}} )}
+\DoxyCodeLine{...}
+\DoxyCodeLine{}
+\DoxyCodeLine{label\_render( label );}
+\DoxyCodeLine{}
+\DoxyCodeLine{...}
+
+\end{DoxyCode}
+ 

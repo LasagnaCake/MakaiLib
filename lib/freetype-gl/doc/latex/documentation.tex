@@ -1,0 +1,68 @@
+\hypertarget{documentation_introduction}{}\doxysection{Introduction}\label{documentation_introduction}
+Freetype GL is a small library for displaying unicode text using a (single) vertex buffer and a single texture where necessary glyphs are tighly packed.
+
+{\bfseries{Example Usage}}\+: 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{preprocessor}{\#include "{}freetype-\/gl.h"{}}}
+\DoxyCodeLine{}
+\DoxyCodeLine{...}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Text to be printed}}
+\DoxyCodeLine{char *text = \textcolor{stringliteral}{"{}A Quick Brown Fox Jumps Over The Lazy Dog 0123456789"{}};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Texture atlas to store individual glyphs}}
+\DoxyCodeLine{texture\_atlas\_t *atlas = texture\_atlas\_new( 512, 512, 1 );}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Build a new texture font from its description and size}}
+\DoxyCodeLine{texture\_font\_t *font = texture\_font\_new( atlas, \textcolor{stringliteral}{"{}./Vera.ttf"{}}, 16 );}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Build a new vertex buffer (position, texture \& color)}}
+\DoxyCodeLine{vertex\_buffer\_t *buffer= vertex\_buffer\_new( \textcolor{stringliteral}{"{}v3i:t2f:c4f"{}} );}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Where to start printing on screen}}
+\DoxyCodeLine{vec2 pen = \{0,0\};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Text color}}
+\DoxyCodeLine{vec4 black = \{0,0,0,1\};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Add text to the buffer}}
+\DoxyCodeLine{add\_text( buffer, font, \textcolor{stringliteral}{"{}Hello World !"{}}, text, \&black, \&pen );}
+\DoxyCodeLine{}
+\DoxyCodeLine{...}
+\DoxyCodeLine{}
+\DoxyCodeLine{vertex\_buffer\_render( buffer, GL\_TRIANGLES, \textcolor{stringliteral}{"{}vtc"{}});}
+\DoxyCodeLine{}
+\DoxyCodeLine{...}
+
+\end{DoxyCode}
+
+
+\DoxyHorRuler{0}
+ \hypertarget{documentation_API}{}\doxysection{Application Programming Interface}\label{documentation_API}
+The code is fairly simple and organized as follow\+:\hypertarget{documentation_mandatory}{}\doxysubsection{Mandatory}\label{documentation_mandatory}
+These are the minimum set of structures and files that are required to load a font and pack glyphs into a texture.
+
+
+\begin{DoxyItemize}
+\item vector~\newline
+ This structure loosely mimics the std\+::vector class from c++.
+\item texture-\/atlas~\newline
+ Texture atlas is used to pack several small regions into a single texture.
+\item texture-\/font~\newline
+ The texture-\/font structure is in charge of creating bitmap glyphs and to upload them to a texture atlas.
+\end{DoxyItemize}\hypertarget{documentation_optional}{}\doxysubsection{Optional}\label{documentation_optional}
+These are convenient stuctures and files that facilitate text rendering.
+
+
+\begin{DoxyItemize}
+\item shader~\newline
+ Shader loading/compiling/linking.
+\item vertex-\/buffer~\newline
+ Generic vertex buffer structure inspired by pyglet (python).
+\item markup~\newline
+ Simple structure that describes text properties.
+\item font-\/manager~\newline
+ Structure in charge of caching fonts.
+\item text-\/buffer~\newline
+ Convenient structure for manipulating and rendering text. 
+\end{DoxyItemize}
