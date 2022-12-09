@@ -263,33 +263,8 @@ private:
 		Shader::defaultShader();
 		glm::mat4 camera = Scene::camera.matrix();
 		glm::mat4 projection = Scene::camera.perspective();
-		// Texture
-		if (material.texture.image && material.texture.enabled) {
-			$mainshader["textured"](true);
-			$mainshader["texture2D"](0);
-			material.texture.image->enable(0);
-		} else $mainshader["textured"](false);
-		// Texture warping
-		if (material.warp.image && material.warp.enabled) {
-			$mainshader["useWarp"](true);
-			$mainshader["warpTexture"](8);
-			material.warp.image->enable(8);
-			$mainshader["warpChannelX"](material.warp.channelX);
-			$mainshader["warpChannelY"](material.warp.channelY);
-		} else $mainshader["useWarp"](false);
-		// Color inversion
-		$mainshader["useNegative"](material.negative.enabled);
-		// Color to gradient
-		$mainshader["useGradient"](material.gradient.enabled);
-		$mainshader["gradientChannel"](material.gradient.channel);
-		$mainshader["gradientStart"](material.gradient.begin);
-		$mainshader["gradientEnd"](material.gradient.end);
-		$mainshader["gradientInvert"](material.gradient.invert);
-		// Alpha adjust
-		$mainshader["alphaAdjust"](material.adjustAlpha);
-		$mainshader["useLights"](material.shaded);
-		// Albedo
-		$mainshader["albedo"](material.color);
+		// Set shader data
+		$mat setMaterial($mainshader, material);
 		// Matrices
 		$mainshader["world"](Scene::world);
 		$mainshader["camera"](camera);

@@ -9,8 +9,6 @@ in vec2 warpUV;
 layout (location = 0) out vec4 FragColor;
 layout (location = 1) out float	DepthValue;
 
-uniform uint		material = 0x00;
-
 uniform bool		textured = false;
 uniform sampler2D	texture2D;
 uniform float		alphaClip = 0.2;

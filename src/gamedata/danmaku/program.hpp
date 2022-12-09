@@ -59,11 +59,11 @@ public:
 	}
 
 	inline void setWorldMaterial2D() {
-		$rdt setWorldMaterial(world2D);
+		$mat setMaterial($mainshader, world2D);
 	}
 
 	inline void setWorldMaterial3D() {
-		$rdt setWorldMaterial(world3D);
+		$mat setMaterial($mainshader, world3D);
 	}
 
 	virtual void onLoading() {}
