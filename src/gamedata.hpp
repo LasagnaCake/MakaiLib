@@ -30,11 +30,14 @@ namespace GameData {
 		$drw Texture2D,
 		$vmt Transform2D,
 		$vmt Transform3D,
+		$mat WorldMaterial,
 		std::string;
 
 		using namespace Vector;
 
-		namespace Reference {using namespace RenderData::Reference;};
+		namespace Reference {using namespace RenderData::Reference;}
+
+		namespace Material {using namespace RenderData::Material;}
 	}
 
 	typedef std::unordered_map<string, SDL_Scancode> KeyBinds;

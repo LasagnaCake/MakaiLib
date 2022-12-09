@@ -4,7 +4,7 @@ in vec2 fragUV;
 in vec2 maskUV;
 in vec4 fragColor;
 
-layout (location = 0) out vec4 FragColor;
+layout (location = 0) out vec4	FragColor;
 
 uniform vec4 albedo = vec4(1);
 uniform vec4 accent = vec4(0);
@@ -13,11 +13,9 @@ uniform sampler2D screen;
 uniform sampler2D depth;
 
 // [ COLOR INVERSION ]
-
 uniform bool negative = false;
 
 // [ ALPHA MASK ]
-
 uniform bool useMask = false;
 uniform bool invertMask = false;
 /**
@@ -41,7 +39,6 @@ uniform vec4	gradientEnd		= vec4(1);
 uniform bool	gradientInvert	= false;
 
 // [ HSL ADJUSTMENTS ]
-
 uniform float saturation = 1;
 
 // [ SCREEN WAVE ]

@@ -1211,7 +1211,7 @@ namespace VecMath
 			this->scale		= scale;
 		}
 		T		position = T(0.0);
-		ROT_T	rotation;
+		ROT_T	rotation = ROT_T(0.0);
 		T		scale = T(1.0);
 	};
 

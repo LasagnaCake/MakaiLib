@@ -7,6 +7,7 @@ in vec4 fragColor;
 in vec2 warpUV;
 
 layout (location = 0) out vec4 FragColor;
+layout (location = 1) out float	DepthValue;
 
 uniform uint		material = 0x00;
 
@@ -156,5 +157,8 @@ void main(void) {
 	if (useFog) color = applyFog(color);
 
 	FragColor = color * albedo;
+
+	DepthValue = length(fragCoord3D);
+
 	//FragColor = vec4(fragColor.x, 1, 1.1-(fragDistance/50.0), 1) * albedo;
 }

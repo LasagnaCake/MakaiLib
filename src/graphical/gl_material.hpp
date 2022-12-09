@@ -17,20 +17,27 @@ namespace Module {
 		Vector4	color = Color::WHITE;
 	};
 
-	struct Imageable {
-		Texture2D* image;
+	struct Imageable2D {
+		Texture2D* image = nullptr;
 	};
 
 	struct Channelable {
 		int channel = -1;
 	};
 
-	struct Transformable {
+	struct Transformable2D {
 		Transform2D trans;
 	};
 
 	struct Invertible {
 		bool invert = false;
+	};
+
+	struct Tuneable2D {
+		Vector2
+			amplitude	= Vector2(0),
+			frequency	= Vector2(0),
+			shift		= Vector2(0);
 	};
 }
 
@@ -38,13 +45,13 @@ namespace {
 	using namespace Module;
 }
 
-struct FogEffect: Effect, Limitable, Variable, Colorable {};
+struct FogEffect: Effect, Limitable, Colorable, Variable {};
 
-struct TextureEffect: Effect, Imageable {
+struct TextureEffect: Effect, Imageable2D {
 	float alphaClip = 0.1;
 };
 
-struct WarpEffect: Effect, Imageable, Transformable {
+struct WarpEffect: Effect, Imageable2D, Transformable2D {
 	unsigned int
 		channelX = 0,
 		channelY = 1;
@@ -70,18 +77,17 @@ struct ObjectMaterial {
 	GLuint fill			= GL_FILL;
 };
 
-struct MaskEffect: Effect, Imageable, Transformable, Channelable, Invertible {
+struct MaskEffect: Effect, Imageable2D, Transformable2D, Channelable, Invertible {
 	bool relative = false;
 };
 
-struct WaveEffect: Effect {
-	Vector2
-		amplitude	= Vector2(0),
-		frequency	= Vector2(0),
-		shift		= Vector2(0);
-};
+struct WaveEffect: Effect, Tuneable2D {};
 
 struct BufferMaterial {
+	Vector4
+		color	= Color::WHITE,
+		accent	= Color::NONE;
+	Vector2			uvShift;
 	MaskEffect		mask;
 	WaveEffect		wave;
 	GradientEffect	gradient;
@@ -90,9 +96,9 @@ struct BufferMaterial {
 struct AmbientEffect: Colorable, Variable {};
 
 struct WorldMaterial {
-	FogEffect		fog;
-	FogEffect		mist;
+	FogEffect		nearFog;
+	FogEffect		farFog;
 	AmbientEffect	ambient;
 };
 
-#define $dat RenderData::Data
+#define $mat RenderData::Material::

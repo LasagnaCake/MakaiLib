@@ -180,7 +180,7 @@ public:
 
 	vector<Triangle*> triangles;
 
-	Data::ObjectMaterial material;
+	Material::ObjectMaterial material;
 
 	Transform3D trans;
 

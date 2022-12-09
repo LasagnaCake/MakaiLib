@@ -381,8 +381,26 @@ namespace RenderData {
 		RawVertex verts[3];
 	};
 
-	namespace Data {
+	namespace Material {
 		#include "gl_material.hpp"
+	}
+
+	void setWorldMaterial(Material::WorldMaterial mat) {
+		// Fog
+		$mainshader["useFog"](mat.farFog.enabled);
+		$mainshader["fogNear"](mat.farFog.stop);
+		$mainshader["fogFar"](mat.farFog.start);
+		$mainshader["fogColor"](mat.farFog.color);
+		$mainshader["fogStrength"](mat.farFog.strength);
+		// Void
+		$mainshader["useVoid"](mat.nearFog.enabled);
+		$mainshader["voidNear"](mat.nearFog.stop);
+		$mainshader["voidFar"](mat.nearFog.start);
+		$mainshader["voidColor"](mat.nearFog.color);
+		$mainshader["voidStrength"](mat.nearFog.strength);
+		// Ambient light
+		$mainshader["ambientColor"](mat.ambient.color.xyz());
+		$mainshader["ambientStrength"](mat.ambient.strength);
 	}
 
 	namespace Base {

@@ -197,10 +197,34 @@ namespace Drawer {
 			shader["depth"](30);
 			shader["screen"](31);
 			// Set transformation data
-			shader["albedo"](tint);
-			shader["accent"](tone);
-			shader["uvShift"](uvShift);
+			shader["uvShift"](material.uvShift);
 			shader["resolution"](glm::vec2(width, height));
+			// Set color data
+			shader["albedo"](material.color);
+			shader["accent"](material.accent);
+			// Set mask data
+			if (material.mask.enabled && material.mask.image) {
+				shader["useMask"](true);
+				shader["mask"](0);
+				material.mask.image->enable(0);
+				shader["invertMask"](material.mask.invert);
+				shader["maskChannel"](material.mask.channel);
+				shader["relativeMask"](material.mask.relative);
+				shader["maskShift"](material.mask.trans.position);
+				shader["maskRotate"](material.mask.trans.rotation);
+				shader["maskScale"](material.mask.trans.scale);
+			} else shader["useMask"](false);
+			// Set color to gradient data
+			shader["useGradient"](material.gradient.enabled);
+			shader["gradientChannel"](material.gradient.channel);
+			shader["gradientStart"](material.gradient.begin);
+			shader["gradientEnd"](material.gradient.end);
+			shader["gradientInvert"](material.gradient.invert);
+			// set screen wave data
+			shader["useWave"](material.wave.enabled);
+			shader["waveAmplitude"](material.wave.amplitude);
+			shader["waveFrequency"](material.wave.frequency);
+			shader["waveShift"](material.wave.shift);
 			// Enable attribute pointers
 			glEnableVertexAttribArray(0);
 			glEnableVertexAttribArray(1);
@@ -226,13 +250,8 @@ namespace Drawer {
 
 		/// The framebuffer's transformation.
 		Transform3D trans;
-		/// The framebuffer's UV offset.
-		Vector2 uvShift;
-		/// The framebuffer's tint.
-		Vector4 tint = Color::WHITE;
-		// DO NOT SET TONE TO CLEAR (1, 1, 1, 0) HERE.
-		/// The framebuffer's balance color.
-		Vector4 tone = Color::NONE;
+		/// The framebuffer's material.
+		$mat BufferMaterial material;
 		/// The framebuffer's clear color.
 		Vector4 color = Color::CLEAR;
 		/// The framebuffer's shape.

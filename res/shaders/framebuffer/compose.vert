@@ -12,7 +12,6 @@ uniform vec2 resolution;
 uniform vec2 uvShift = vec2(0);
 
 // [ ALPHA MASK ]
-
 uniform bool    relativeMask = false;
 uniform vec2    maskShift = vec2(0);
 uniform vec2    maskScale = vec2(1);

@@ -242,15 +242,22 @@ namespace Makai {
 					// Do timer-related stuff
 					timerFunc(cycleDelta);
 					taskers.yield(cycleDelta);
+					#ifndef $_FRAME_DEPENDENT_PROCESS
 					// Do normal logic-related stuff
 					logicFunc(cycleDelta);
 					onLogicFrame(cycleDelta);
+					#endif // FRAME_DEPENDENT_PROCESS
 				}
 				if (SDL_GetTicks() - frameTicks > frameDelta * 1000) {
 					// Get current time
 					frameTicks = SDL_GetTicks();
 					// increment frame counter
 					frame += 1;
+					#ifdef $_FRAME_DEPENDENT_PROCESS
+					// Do normal logic-related stuff
+					logicFunc(frameDelta);
+					onLogicFrame(frameDelta);
+					#endif // FRAME_DEPENDENT_PROCESS
 					// Render screen
 					render();
 					// Destroy queued entities

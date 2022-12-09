@@ -45,14 +45,25 @@ public:
 	$cam Camera3D cam2D;
 	$cam Camera3D cam3D{$vec3(0, 5, -10), $vec3(0, 0, 0)};
 
+	$mat WorldMaterial world2D;
+	$mat WorldMaterial world3D;
+
 	size_t gameSeed = 0;
 
-	void setCamera2D() {
+	inline void setCamera2D() {
 		$scn camera = cam2D;
 	}
 
-	void setCamera3D() {
+	inline void setCamera3D() {
 		$scn camera = cam3D;
+	}
+
+	inline void setWorldMaterial2D() {
+		$rdt setWorldMaterial(world2D);
+	}
+
+	inline void setWorldMaterial3D() {
+		$rdt setWorldMaterial(world3D);
 	}
 
 	virtual void onLoading() {}

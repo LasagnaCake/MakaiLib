@@ -170,6 +170,7 @@ public:
 		//bulletSpawner.stop();
 		player.board = DANMAKU_EBM -> board;
 		DANMAKU_IM -> createCollectible(CollectibleData(), 5, lPos, 3, $vec2(0.5));
+		world3D.farFog = $mat FogEffect {true, 16, 12};
 	}
 
 	void onLogicFrame(float delta) override {
@@ -191,7 +192,7 @@ public:
 		switch (layerID / SUBLAYER_COUNT) {
 		case $rlayer(WORLD):
 			setCamera3D();
-			$mainshader["useFog"](true);
+			setWorldMaterial3D();
 			break;
 		case $rlayer(PLAYER):
 			break;
@@ -205,8 +206,8 @@ public:
 
 	void onLayerDrawEnd(size_t layerID) override {
 		setCamera2D();
-		getLayerBuffer().tint = Color::WHITE;
-		$mainshader["useFog"](false);
+		setWorldMaterial2D();
+		getLayerBuffer().material.color = Color::WHITE;
 	}
 
 	void onDrawEnd() override {
