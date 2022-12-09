@@ -55,11 +55,11 @@ uniform bool	gradientInvert	= false;
 
 // [ POINT LIGHTING ]
 uniform bool		useLights		= false;
-uniform vec4		ambientColor	= vec4(1);
+uniform vec3		ambientColor	= vec3(1);
 uniform float		ambientStrength	= 1;
 uniform uint 		lightsCount		= 0;
 uniform vec3[255] 	lights;
-uniform vec4[255] 	lightColor;
+uniform vec3[255] 	lightColor;
 uniform float[255] 	lightStrength;
 
 float distanceTo(vec3 a, vec3 b) {
@@ -72,21 +72,23 @@ float length(vec3 vec) {
 }
 
 vec4 normalize(vec4 vec) {
-	return vec * length(vec);
+	return vec4(vec.xyz * length(vec), vec.w);
 }
 
-vec4 applyLights(vec4 color) {
+vec4 applyLights(vec4 color, vec4 ambient) {
 	vec4 result = vec4(1);
+	if (lightsCount == 0) return color * ambient;
 	for (uint i = 0; i < (lightsCount < 255 ? lightsCount : 255); i++) {
 		float intensity = 1 - (distanceTo(fragCoord3D, lights[i]) / lightStrength[i]);
 		intensity = clamp(intensity, 0, 1);
-		vec4 albedo = mix(lightColor[i], ambientColor * ambientStrength, intensity);
-		result *= albedo;
+		vec3 albedo = mix(vec3(0,0,0), lightColor[i], intensity);
+		result += vec4(albedo, 0);
 	}
-	return color * result;
+	if (length(result) > 1.0) result = normalize(result);
+	return color * mix(ambient, result, length(result));
 }
 
-vec4 applyDistanceGradient(vec4 start, vec4 end, float near, float far, float strength) {
+vec4 distanceGradient(vec4 start, vec4 end, float near, float far, float strength) {
 	// The vector's length needs to be calculated here, otherwise it breaks
 	float value = (length(fragCoord3D) - near) / (far - near);
 	//float fogValue = 1.0 - exp(-fragDistance * fogStrength);
@@ -97,11 +99,11 @@ vec4 applyDistanceGradient(vec4 start, vec4 end, float near, float far, float st
 }
 
 vec4 applyFog(vec4 color) {
-	return applyDistanceGradient(color, fogColor, fogNear, fogFar, fogStrength);
+	return distanceGradient(color, fogColor, fogNear, fogFar, fogStrength);
 }
 
 vec4 applyVoid(vec4 color) {
-	return applyDistanceGradient(voidColor, color, voidNear, voidFar, voidStrength);
+	return distanceGradient(voidColor, color, voidNear, voidFar, voidStrength);
 }
 
 vec4 applyGradient(vec4 color) {
@@ -147,7 +149,7 @@ void main(void) {
 
 	if (alphaAdjust && color.w > 0) color = color / vec4(vec3(color.w), 1.0);
 
-	if (useLights) color = applyLights(color);
+	if (useLights) color = applyLights(color, vec4(ambientColor.xyz * ambientStrength, ambientColor.w));
 
 	if (useVoid) color = applyVoid(color);
 
