@@ -182,10 +182,6 @@ public:
 
 	struct {
 		struct {
-			bool automatic	= false;
-			float threshold	= 0.999f;
-		} sorting;
-		struct {
 			bool enabled		= false;
 			Texture2D* image	= nullptr;
 			GLubyte id			= 0;

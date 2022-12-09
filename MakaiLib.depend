@@ -3011,7 +3011,7 @@
 	"gl_text.hpp"
 	"gl_framebuffer.hpp"
 
-1670356582 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_shader.hpp
+1670588015 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_shader.hpp
 	"../anchors.hpp"
 	"gl_camera.hpp"
 	"slf_fileloader.hpp"
@@ -3314,7 +3314,7 @@
 
 1664664497 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_texture.hpp
 
-1669752918 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_renderable.hpp
+1670587753 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_renderable.hpp
 
 1670437380 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_color.hpp
 	"../anchors.hpp"
@@ -3364,7 +3364,7 @@
 1535531570 d:\c(++) projects\_c++\game engine\makailib\lib\opengl\glm\gtx\compatibility.inl
 	<limits>
 
-1668434397 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\player.hpp
+1670451868 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\player.hpp
 
 1669661143 d:\c(++) projects\_c++\game engine\makailib\src\makai.hpp
 	"anchors.hpp"
@@ -3374,7 +3374,7 @@
 
 1668385504 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\predefs.hpp
 
-1670238848 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_text.hpp
+1670437661 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_text.hpp
 
 1670329633 d:\c(++) projects\_c++\game engine\makailib\src\collection\definitions.hpp
 

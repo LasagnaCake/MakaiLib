@@ -42,12 +42,16 @@
 			<Add directory="lib/SDL2-2.0.10/x86_64-w64-mingw32/include" />
 			<Add directory="lib/OpenGL" />
 			<Add directory="lib/SDL_FontCache" />
+			<Add directory="lib/freetype-gl/include" />
+			<Add directory="lib/OpenGL/GLEW/include" />
 		</Compiler>
 		<ResourceCompiler>
 			<Add directory="lib" />
 			<Add directory="lib/SDL2-2.0.10/x86_64-w64-mingw32/include" />
 			<Add directory="lib/OpenGL" />
 			<Add directory="lib/SDL_FontCache" />
+			<Add directory="lib/freetype-gl/include" />
+			<Add directory="lib/OpenGL/GLEW/include" />
 		</ResourceCompiler>
 		<Linker>
 			<Add option="-O1" />
@@ -61,10 +65,14 @@
 			<Add library="lib/SDL_FontCache/build/libFontCache.a" />
 			<Add library="lib/OpenGL/GLEW/lib/libglew32.dll.a" />
 			<Add library="opengl32" />
+			<Add library="winmm" />
+			<Add library="lib/freetype-gl/lib/libfreetype-gl.a" />
 			<Add directory="lib" />
 			<Add directory="lib/SDL2-2.0.10/x86_64-w64-mingw32/include" />
 			<Add directory="lib/OpenGL" />
 			<Add directory="lib/SDL_FontCache" />
+			<Add directory="lib/freetype-gl/include" />
+			<Add directory="lib/OpenGL/GLEW/include" />
 		</Linker>
 		<Unit filename="makai.cpp" />
 		<Extensions>

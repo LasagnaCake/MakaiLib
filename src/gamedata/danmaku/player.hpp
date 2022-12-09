@@ -139,6 +139,8 @@ struct PlayerEntity2D: AreaCircle2D {
 	$evt Timer mainShot;
 	$evt Timer optionShot;
 
+	Vector2 movement = Vector2(0);
+
 	virtual void onEnteringFocus()	{$debug("Focus Enter!");}
 	virtual void onExitingFocus()	{$debug("Focus Exit!");}
 
@@ -223,6 +225,8 @@ struct PlayerEntity2D: AreaCircle2D {
 		// Flip if necessary
 		if (flipX) direction.x *= -1;
 		if (flipY) direction.y *= -1;
+		// Save direction
+		movement = direction;
 		// Move acoording to focus state
 		if (isFocused)
 			position -= direction * speed.focused * delta;
