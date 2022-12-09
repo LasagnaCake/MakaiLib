@@ -20,8 +20,8 @@ uniform bool alphaAdjust = true;
 
 // [ DISTANCE-BASED FOG ]
 uniform bool	useFog		= false;
-uniform float	fogFar		= 12;
-uniform float	fogNear		= 8;
+uniform float	fogFar		= 16;
+uniform float	fogNear		= 12;
 uniform float	fogStrength	= 1;
 uniform vec4	fogColor	= vec4(1);
 
@@ -39,7 +39,7 @@ uniform uint		warpChannelX	=	0;
 uniform uint		warpChannelY	=	1;
 
 // [ COLOR INVERSION ]
-uniform bool	useNegative = false;
+uniform bool	useNegative	= false;
 
 // [ COLOR TO GRADIENT ]
 uniform bool	useGradient		= false;
@@ -75,9 +75,9 @@ vec4 normalize(vec4 vec) {
 	return vec4(vec.xyz * length(vec), vec.w);
 }
 
-vec4 applyLights(vec4 color, vec4 ambient) {
+vec4 applyLights(vec4 color) {
 	vec4 result = vec4(1);
-	if (lightsCount == 0) return color * ambient;
+	if (lightsCount == 0) return color * vec4(ambientColor, 1);
 	for (uint i = 0; i < (lightsCount < 255 ? lightsCount : 255); i++) {
 		float intensity = 1 - (distanceTo(fragCoord3D, lights[i]) / lightStrength[i]);
 		intensity = clamp(intensity, 0, 1);
@@ -85,7 +85,7 @@ vec4 applyLights(vec4 color, vec4 ambient) {
 		result += vec4(albedo, 0);
 	}
 	if (length(result) > 1.0) result = normalize(result);
-	return color * mix(ambient, result, length(result));
+	return color * mix(vec4(ambientColor, 1), result, length(result));
 }
 
 vec4 distanceGradient(vec4 start, vec4 end, float near, float far, float strength) {
@@ -149,7 +149,7 @@ void main(void) {
 
 	if (alphaAdjust && color.w > 0) color = color / vec4(vec3(color.w), 1.0);
 
-	if (useLights) color = applyLights(color, vec4(ambientColor.xyz * ambientStrength, ambientColor.w));
+	if (useLights) color = applyLights(color);
 
 	if (useVoid) color = applyVoid(color);
 

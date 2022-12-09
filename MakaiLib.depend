@@ -3000,11 +3000,12 @@
 	"graphical/gl_shader.hpp"
 	"graphical/gl_graphical.hpp"
 
-1669659474 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_graphical.hpp
+1670606523 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_graphical.hpp
 	"../anchors.hpp"
 	"gl_shader.hpp"
 	"gl_color.hpp"
 	"gl_texture.hpp"
+	"gl_material.hpp"
 	"gl_drawable.hpp"
 	"gl_reference.hpp"
 	"gl_renderable.hpp"
@@ -3030,7 +3031,7 @@
 	<algorithm>
 	<regex>
 
-1670437430 d:\c(++) projects\_c++\game engine\makailib\src\program\gl_program.hpp
+1670604667 d:\c(++) projects\_c++\game engine\makailib\src\program\gl_program.hpp
 	"../anchors.hpp"
 	"../graphical.hpp"
 	<wtypes.h>
@@ -3314,7 +3315,7 @@
 
 1664664497 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_texture.hpp
 
-1670587753 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_renderable.hpp
+1670610235 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_renderable.hpp
 
 1670437380 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_color.hpp
 	"../anchors.hpp"
@@ -3439,7 +3440,7 @@
 	<OpenGL/glu.h>
 	<GL/glu.h>
 
-1669817827 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_drawable.hpp
+1670606397 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_drawable.hpp
 
 1663831178 d:\c(++) projects\_c++\game engine\makailib\lib\freetype-gl\include\freetype-gl.h
 	"platform.h"
@@ -3499,8 +3500,10 @@
 
 1663831178 d:\c(++) projects\_c++\game engine\makailib\lib\freetype-gl\include\freetype-gl-errdef.h
 
-1669814448 d:\c(++) projects\_c++\game engine\makailib\lib\freetype-gl\include\config.h
+1670605396 d:\c(++) projects\_c++\game engine\makailib\lib\freetype-gl\include\config.h
 
 1584273239 d:\c(++) projects\_c++\game engine\makailib\lib\opengl\glew\include\gl\wglew.h
 	<windows.h>
+
+1670610528 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_material.hpp
 

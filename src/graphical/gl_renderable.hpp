@@ -180,15 +180,7 @@ public:
 
 	vector<Triangle*> triangles;
 
-	struct {
-		struct {
-			bool enabled		= false;
-			Texture2D* image	= nullptr;
-			GLubyte id			= 0;
-		} texture;
-		GLuint culling		= GL_FRONT_AND_BACK;
-		GLuint fill			= GL_FILL;
-	} params;
+	Data::ObjectMaterial material;
 
 	Transform3D trans;
 
@@ -238,7 +230,7 @@ private:
 		glEnableVertexAttribArray(1);
 		glEnableVertexAttribArray(2);
 		// Set polygon rendering mode
-		glPolygonMode(params.culling, params.fill);
+		glPolygonMode(material.culling, material.fill);
 		// Draw object to screen
 		display();
 		// Disable attributes
@@ -271,15 +263,39 @@ private:
 		Shader::defaultShader();
 		glm::mat4 camera = Scene::camera.matrix();
 		glm::mat4 projection = Scene::camera.perspective();
-		if (params.texture.image && params.texture.enabled) {
-			$mainshader["textured"](params.texture.enabled);
-			$mainshader["texture2D"](params.texture.id);
-			params.texture.image->enable(params.texture.id);
-		}
+		// Texture
+		if (material.texture.image && material.texture.enabled) {
+			$mainshader["textured"](true);
+			$mainshader["texture2D"](0);
+			material.texture.image->enable(0);
+		} else $mainshader["textured"](false);
+		// Texture warping
+		if (material.warp.image && material.warp.enabled) {
+			$mainshader["useWarp"](true);
+			$mainshader["warpTexture"](8);
+			material.warp.image->enable(8);
+			$mainshader["warpChannelX"](material.warp.channelX);
+			$mainshader["warpChannelY"](material.warp.channelY);
+		} else $mainshader["useWarp"](false);
+		// Color inversion
+		$mainshader["useNegative"](material.negative.enabled);
+		// Color to gradient
+		$mainshader["useGradient"](material.gradient.enabled);
+		$mainshader["gradientChannel"](material.gradient.channel);
+		$mainshader["gradientStart"](material.gradient.begin);
+		$mainshader["gradientEnd"](material.gradient.end);
+		$mainshader["gradientInvert"](material.gradient.invert);
+		// Alpha adjust
+		$mainshader["alphaAdjust"](material.adjustAlpha);
+		$mainshader["useLights"](material.shaded);
+		// Albedo
+		$mainshader["albedo"](material.color);
+		// Matrices
 		$mainshader["world"](Scene::world);
 		$mainshader["camera"](camera);
 		$mainshader["projection"](projection);
 		$mainshader["actor"](actorMatrix);
+		// Rendering
 		glDrawArrays(GL_TRIANGLES, 0, vertexCount);
 	};
 };

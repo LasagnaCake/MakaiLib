@@ -28,16 +28,17 @@ uniform bool invertMask = false;
 uniform int			maskChannel = 3;
 uniform sampler2D	mask;
 
-// [ CHROMATIZER ]
-
-uniform bool	useChromatizer = false;
-uniform vec4	chromaColor = vec4(1,0,0,1);
+// [ COLOR TO GRADIENT ]
+uniform bool	useGradient		= false;
 /**
 * If -1, the average between the color channels is used.
 * Else, the specified channel is used.
 * MUST be between -1 and 3.
 */
-uniform int		chromaChannel = 0;
+uniform int		gradientChannel	= -1;
+uniform vec4	gradientStart	= vec4(0);
+uniform vec4	gradientEnd		= vec4(1);
+uniform bool	gradientInvert	= false;
 
 // [ HSL ADJUSTMENTS ]
 
@@ -53,6 +54,19 @@ uniform vec2 waveShift		= vec2(1);
 #define PI 3.1415926535
 #endif
 
+vec4 applyGradient(vec4 color) {
+	float gradientValue;
+	if (gradientChannel < 0)
+		gradientValue = (color.x + color.y + color.z) / 3.0;
+	else
+		gradientValue = color[gradientChannel];
+	gradientValue = clamp(gradientValue, 0, 1);
+	if (gradientInvert)
+		return mix(gradientEnd, gradientStart, gradientValue);
+	else
+		return mix(gradientStart, gradientEnd, gradientValue);
+}
+
 void main() {
 	// Screen wave	
 	vec2 wave = vec2(0);
@@ -65,15 +79,8 @@ void main() {
 	color = mix(vec4(vec3(color.x, color.y, color.z), color.w), color, saturation);
 	// Color inverter
 	if (negative) color = vec4(vec3(1) - vec3(color.x, color.y, color.z), color.w);
-	// Chromatizer (channel(s) as alpha)
-	if (useChromatizer) {
-		vec4 chromaValue = chromaColor;
-		if (chromaChannel < 0)
-			chromaValue.w = clamp((color.x + color.y + color.z) / 3, 0, 1);
-		else
-			chromaValue.w = clamp(color[chromaChannel], 0, 1);
-		color = chromaValue;
-	}
+	// Color to gradient
+	if (useGradient) color = applyGradient(color);
 	// Alpha mask
 	if (useMask) {
 		vec4 maskValue = texture(mask, maskUV);

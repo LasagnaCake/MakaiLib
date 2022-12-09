@@ -235,22 +235,22 @@ namespace Makai {
 				cycleDelta = 1.0/maxCycleRate;
 				// If should process, then do so
 				if (SDL_GetTicks() - cycleTicks > cycleDelta * 1000) {
+					// Update input manager
+					input.update();
 					// Get current time
 					cycleTicks = SDL_GetTicks();
 					// Do timer-related stuff
 					timerFunc(cycleDelta);
 					taskers.yield(cycleDelta);
+					// Do normal logic-related stuff
+					logicFunc(cycleDelta);
+					onLogicFrame(cycleDelta);
 				}
 				if (SDL_GetTicks() - frameTicks > frameDelta * 1000) {
 					// Get current time
 					frameTicks = SDL_GetTicks();
 					// increment frame counter
 					frame += 1;
-					// Update input manager
-					input.update();
-					// Do normal logic-related stuff
-					logicFunc(frameDelta);
-					onLogicFrame(frameDelta);
 					// Render screen
 					render();
 					// Destroy queued entities
