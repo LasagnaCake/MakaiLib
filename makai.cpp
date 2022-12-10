@@ -119,13 +119,13 @@ public:
 				b->local.position = bPos;
 				coefficient = (Math::tau * ((i + 1) / 5.0)) + rotAngle;
 				b->params.hitbox.radius = 1;
-				b->params.vel = ObjectParam {
+				b->params.vel = {
 					$twn ease.out.linear,
 					-20,
 					20,
 					0//.01
 				};
-				b->params.rot = ObjectParam {
+				b->params.rot = {
 					$twn ease.out.elastic,
 					coefficient,
 					coefficient + (PI * 3.0),
@@ -142,7 +142,7 @@ public:
 		Vector2 lPos = Vector2(32, -16) * getWindowScale();
 		auto l = DANMAKU_ELLM -> createLineLaser();
 		l->local.position = lPos;
-		l->params.rot = ObjectParam {
+		l->params.rot = {
 			$twn ease.inOut.back,
 			-PI,
 			0,
@@ -156,7 +156,7 @@ public:
 		// Test laser B
 		l = DANMAKU_ELLM -> createLineLaser();
 		l->local.position = lPos;
-		l->params.rot = ObjectParam {
+		l->params.rot = {
 			$twn ease.inOut.back,
 			0,
 			-PI,
