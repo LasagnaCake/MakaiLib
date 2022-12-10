@@ -39,12 +39,13 @@ namespace Drawer {
 	// Todo: Fix this
 	class FrameBuffer {
 	public:
-		FrameBuffer() {}
+		FrameBuffer() {
+		}
 
 		FrameBuffer(
 			unsigned int width,
 			unsigned int height
-		): FrameBuffer() {
+		) {
 			create(width, height);
 		}
 
@@ -87,20 +88,18 @@ namespace Drawer {
 				buffer.depth,
 				0
 			);
-			// Resolution math
-			Vector3 screenRes(width, height, 1);
 			// Setup display rectangle
-			rect[0].position	= Vector3(-1, +1, 0) * screenRes;
-			rect[0].uv			= Vector2(0, 1) * screenRes.xy();
+			rect[0].position	= Vector3(-1, +1, 0);
+			rect[0].uv			= Vector2(0, 1);
 			rect[0].color		= Vector4(1);
-			rect[1].position	= Vector3(+1, +1, 0) * screenRes;
-			rect[1].uv			= Vector2(1, 1) * screenRes.xy();
+			rect[1].position	= Vector3(+1, +1, 0);
+			rect[1].uv			= Vector2(1, 1);
 			rect[0].color		= Vector4(1);
-			rect[2].position	= Vector3(-1, -1, 0) * screenRes;
-			rect[2].uv			= Vector2(0, 0) * screenRes.xy();
+			rect[2].position	= Vector3(-1, -1, 0);
+			rect[2].uv			= Vector2(0, 0);
 			rect[0].color		= Vector4(1);
-			rect[3].position	= Vector3(+1, -1, 0) * screenRes;
-			rect[3].uv			= Vector2(1, 0) * screenRes.xy();
+			rect[3].position	= Vector3(+1, -1, 0);
+			rect[3].uv			= Vector2(1, 0);
 			rect[0].color		= Vector4(1);
 			// Create buffers
 			glGenVertexArrays(1, &vao);
@@ -162,14 +161,7 @@ namespace Drawer {
 			// Create Intermediary Vertex Buffer (IVB) to be displayed on screen
 			RawVertex verts[4];
 			for (unsigned char i = 0; i < 4; i++) {
-				Vertex v = rect[i];
-				v.position = $srpTransform(
-						v.position,
-						trans.position,
-						trans.rotation,
-						trans.scale
-					);
-				verts[i] = toRawVertex(v);
+				verts[i] = toRawVertex(rect[i]);
 			}
 			// Set VBO as active
 			glBindBuffer(GL_ARRAY_BUFFER, vbo);
@@ -196,8 +188,9 @@ namespace Drawer {
 			// Set texture locations
 			shader["depth"](30);
 			shader["screen"](31);
-			// Set resolution data
-			shader["resolution"](glm::vec2(width, height));
+			// Set transformation matrix
+			shader["posMatrix"](asGLMMatrix(trans));
+			shader["uvMatrix"](asGLMMatrix(uv));
 			// Set material data
 			$mat setMaterial(shader, material);
 			// Enable attribute pointers
@@ -223,8 +216,10 @@ namespace Drawer {
 			return render(targetBuffer.toFrameBufferData());
 		}
 
-		/// The framebuffer's transformation.
+		/// The framebuffer's vertex transformation.
 		Transform3D trans;
+		/// The framebuffer's UV transformation.
+		Transform3D uv;
 		/// The framebuffer's material.
 		$mat BufferMaterial material;
 		/// The framebuffer's shape.

@@ -37,10 +37,17 @@ namespace Module {
 		bool invert = false;
 	};
 
+	struct Tuneable {
+		float
+			amplitude	= 0,
+			frequency	= 0,
+			shift		= 0;
+	};
+
 	struct Tuneable2D {
 		Vector2
-			amplitude	= Vector2(0),
 			frequency	= Vector2(0),
+			amplitude	= Vector2(0),
 			shift		= Vector2(0);
 	};
 }
@@ -50,7 +57,17 @@ namespace {
 	using Shader::Shader;
 }
 
-struct FogEffect: Effect, Limitable, ColorableRGB, Variable {};
+// Generic Material Effects
+
+struct GradientEffect: Effect, Channelable, Invertible {
+	Vector4
+		begin	= Color::BLACK,
+		end		= Color::WHITE;
+};
+
+struct NegativeEffect: Effect {};
+
+// Object Material Effects
 
 struct TextureEffect: Effect, Imageable2D {
 	float alphaClip = 0.1;
@@ -62,19 +79,21 @@ struct WarpEffect: Effect, Imageable2D, Transformable2D {
 		channelY = 1;
 };
 
-struct NegativeEffect: Effect {};
-
-struct GradientEffect: Effect, Channelable, Invertible {
-	Vector4
-		begin	= Color::BLACK,
-		end		= Color::WHITE;
-};
+// Buffer Material Effects
 
 struct MaskEffect: Effect, Imageable2D, Transformable2D, Channelable, Invertible {
 	bool relative = false;
 };
 
 struct WaveEffect: Effect, Tuneable2D {};
+
+struct RainbowEffect: Effect, Tuneable, Variable {
+	bool absoluteColor = false;
+};
+
+// World Material Effects
+
+struct FogEffect: Effect, Limitable, ColorableRGB, Variable {};
 
 struct AmbientEffect: ColorableRGB, Variable {};
 
@@ -97,8 +116,10 @@ struct BufferMaterial {
 		accent	= Color::NONE;
 	Vector2			uvShift;
 	MaskEffect		mask;
+	NegativeEffect	negative;
 	WaveEffect		wave;
 	GradientEffect	gradient;
+	RainbowEffect	rainbow;
 };
 
 struct WorldMaterial {
@@ -137,24 +158,6 @@ void setMaterial(Shader& shader, ObjectMaterial& material) {
 	shader["albedo"](material.color);
 }
 
-void setMaterial(Shader& shader, WorldMaterial& material) {
-	// Fog
-	shader["useFog"](material.farFog.enabled);
-	shader["fogNear"](material.farFog.stop);
-	shader["fogFar"](material.farFog.start);
-	shader["fogColor"](material.farFog.color);
-	shader["fogStrength"](material.farFog.strength);
-	// Void
-	shader["useVoid"](material.nearFog.enabled);
-	shader["voidNear"](material.nearFog.stop);
-	shader["voidFar"](material.nearFog.start);
-	shader["voidColor"](material.nearFog.color);
-	shader["voidStrength"](material.nearFog.strength);
-	// Ambient light
-	shader["ambientColor"](material.ambient.color);
-	shader["ambientStrength"](material.ambient.strength);
-}
-
 void setMaterial(Shader& shader, BufferMaterial& material) {
 	// Set UV data
 	shader["uvShift"](material.uvShift);
@@ -184,6 +187,33 @@ void setMaterial(Shader& shader, BufferMaterial& material) {
 	shader["waveAmplitude"](material.wave.amplitude);
 	shader["waveFrequency"](material.wave.frequency);
 	shader["waveShift"](material.wave.shift);
+	// Set color inversion
+	shader["negative"](material.negative.enabled);
+	// Set rainbow data
+	shader["useRainbow"](material.rainbow.enabled);
+	shader["rainbowAmp"](material.rainbow.amplitude);
+	shader["rainbowFreq"](material.rainbow.frequency);
+	shader["rainbowShift"](material.rainbow.shift);
+	shader["rainbowStrength"](material.rainbow.strength);
+	shader["rainbowAbsolute"](material.rainbow.absoluteColor);
+}
+
+void setMaterial(Shader& shader, WorldMaterial& material) {
+	// Fog
+	shader["useFog"](material.farFog.enabled);
+	shader["fogNear"](material.farFog.stop);
+	shader["fogFar"](material.farFog.start);
+	shader["fogColor"](material.farFog.color);
+	shader["fogStrength"](material.farFog.strength);
+	// Void
+	shader["useVoid"](material.nearFog.enabled);
+	shader["voidNear"](material.nearFog.stop);
+	shader["voidFar"](material.nearFog.start);
+	shader["voidColor"](material.nearFog.color);
+	shader["voidStrength"](material.nearFog.strength);
+	// Ambient light
+	shader["ambientColor"](material.ambient.color);
+	shader["ambientStrength"](material.ambient.strength);
 }
 
 #define $mat RenderData::Material::

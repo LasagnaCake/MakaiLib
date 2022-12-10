@@ -167,7 +167,7 @@ public:
 		//l->params.active = true;
 		l->params.discardable = false;
 		l->reset();
-		//bulletSpawner.stop();
+		bulletSpawner.stop();
 		player.board = DANMAKU_EBM -> board;
 		DANMAKU_IM -> createCollectible(CollectibleData(), 5, lPos, 3, $vec2(0.5));
 		world3D.farFog = {true, 20, 10, $vec3(0, 0, 0.2)};
@@ -207,9 +207,16 @@ public:
 	#undef $rlayer
 
 	void onWorldSublayer(size_t sublayerID) {
+		auto& layerMaterial = getLayerBuffer().material;
 		switch(sublayerID) {
 		case 0:
-			getLayerBuffer().material.background = Vector4(0, 0, 0.2, 1);
+			layerMaterial.background = Vector4(0, 0, 0.2, 1);
+			layerMaterial.wave = {
+				true,
+				$vec2(3, 0),
+				$vec2(0.5, 0),
+				$vec2(getCurrentFrame()/60.0)
+			};
 		default:
 			break;
 		}
@@ -220,6 +227,7 @@ public:
 		setWorldMaterial2D();
 		auto& layerMaterial = getLayerBuffer().material;
 		layerMaterial.background = Color::CLEAR;
+		layerMaterial.wave = {};
 		layerMaterial.color = Color::WHITE;
 	}
 

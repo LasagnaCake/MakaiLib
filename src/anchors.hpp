@@ -43,6 +43,17 @@
 #include "redefines.hpp"
 
 /*
+***************************
+*                         *
+*  File management stuff  *
+*                         *
+***************************
+*/
+
+#include <zlib.h>
+#include <bzlib.h>
+
+/*
 *********************
 *                   *
 *  Graphical stuff  *
@@ -65,10 +76,12 @@
 #define SDL_MAIN_HANDLED
 #endif
 #include <SDL2/SDL.h>
-#include <SDL2/SDL_ttf.h>
-#include <SDL2/SDL_FontCache.h>
+//#include <SDL2/SDL_ttf.h>
+//#include <SDL2/SDL_FontCache.h>
 #include <SDL2/SDL_mixer.h>
-#include <freetype-gl.h>
+//#include <freetype-gl.h>
+/*#include <ft2build.h>
+#include FT_FREETYPE_H*/
 
 /*
 ***************************

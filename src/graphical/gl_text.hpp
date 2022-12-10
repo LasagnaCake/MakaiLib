@@ -1,47 +1,26 @@
 class Font {
 	Font() {}
 
-	Font(SDL_Renderer* renderer) {
-		this->renderer = renderer;
-	}
-
-	Font(SDL_Renderer* renderer, String path) {
-		this->renderer = renderer;
+	Font(String path) {
 	}
 
 	void create(String path) {
 		if (created) return;
 		created = true;
-		resource = FC_CreateFont();
 	}
 
 	void destroy() {
 		if (!created) return;
 		created = false;
-		FC_FreeFont(resource);
-	}
-
-	FC_Font* getResource() {
-		return resource;
 	}
 
 private:
 	bool created = false;
-
-	FC_Font*		resource;
-	SDL_Renderer*	renderer;
-};
-
-struct TextData {
-	String			content;
-	FC_AlignEnum	align;
-	Vector2			scale = Vector2(1);
-	Vector4			color = Color::WHITE;
-	size_t			columns = 40;
 };
 
 // TODO: Make this work
 /* NOTE: It'll probably be done using SDL_FontCache + OpenGL. Scratch that. Freetype GL.
+*	Y'know what? Fuck This. I'm making it by myself.
 */
 class Label: Base::Drawable {
 public:
@@ -54,7 +33,6 @@ public:
 	}
 
 	Font*		font;
-	TextData	text;
 
 	Transform2D trans;
 

@@ -36,27 +36,25 @@ uniform float[256] 	lightStrength;
 *	This will be the first an last time I use it.
 */
 vec3 calculateLights(vec3 vertexPos, vec3 ambientColor, float ambientStrength) {
-  // Calculate the ambient color contribution
-  vec3 color = ambientColor * ambientStrength;
-  // If no lights, return
-  if (lightsCount == 0) return color;
-  // Loop over all point lights and calculate their contribution
-  for (int i = 0; i < (lightsCount < 256 ? 255 : lightsCount); i++) {
-    vec3 lightPos = lights[i];
-    vec3 lightColor = lightColor[i];
-    float lightStrength = lightStrength[i];
-    float lightRadius = lightRadius[i];
-    // Calculate the distance between the vertex and the point light
-    float dist = distance(vertexPos, lightPos);
-    // Calculate the attenuation factor based on the light's radius and distance from the vertex
-    float attenuation = 1.0 / (1.0 + dist * dist) / (lightRadius * lightRadius);
-    // Calculate the color contribution from the current point light
-    vec3 lightContribution = lightColor * lightStrength * attenuation;
-    // Add the contribution to the total color
-    color += lightContribution;
-  }
-  // Return the final calculated color
-  return color;
+	// Calculate the ambient color contribution
+	vec3 color = ambientColor * ambientStrength;
+	// Loop over all point lights and calculate their contribution
+	if (lightsCount > 0) for (uint i = 0; i < min(lightsCount, uint(lights.length()-1)); i++) {
+		vec3 lightPos = lights[i];
+		vec3 lightColor = lightColor[i];
+		float lightStrength = lightStrength[i];
+		float lightRadius = lightRadius[i];
+		// Calculate the distance between the vertex and the point light
+		float dist = distance(vertexPos, lightPos);
+		// Calculate the attenuation factor based on the light's radius and distance from the vertex
+		float attenuation = 1.0 / (1.0 + dist * dist) / (lightRadius * lightRadius);
+		// Calculate the color contribution from the current point light
+		vec3 lightContribution = lightColor * lightStrength * attenuation;
+		// Add the contribution to the total color
+		color += lightContribution;
+	}
+	// Return the final calculated color
+	return color;
 }
 
 float length(in vec3 vec) {
@@ -64,16 +62,16 @@ float length(in vec3 vec) {
 }
 
 void main() {
-    fragColor = vertColor;
-    fragUV = vertUV;
-    // Warping
-    vec2 warp = vertUV;
-    warp.x = warp.x * cos(warpRotate) - warp.y * sin(warpRotate);
-    warp.y = warp.x * sin(warpRotate) + warp.y * cos(warpRotate);
-    warpUV = (warp * warpScale) + warpOffset;
-    vec4 coord = projection * camera * world * actor * vec4(vertPos, 1.0);
+	fragColor = vertColor;
+	fragUV = vertUV;
+	// Warping
+	vec2 warp = vertUV;
+	warp.x = warp.x * cos(warpRotate) - warp.y * sin(warpRotate);
+	warp.y = warp.x * sin(warpRotate) + warp.y * cos(warpRotate);
+	warpUV = (warp * warpScale) + warpOffset;
+	vec4 coord = projection * camera * world * actor * vec4(vertPos, 1.0);
 	fragLightColor = calculateLights(coord.xyz, ambientColor, ambientStrength);
-    // Coordinates
+	// Coordinates
 	gl_Position = coord;
 	vec3 coord3D = vec3(coord.x, coord.y, coord.z);
 	fragCoord3D = coord3D;

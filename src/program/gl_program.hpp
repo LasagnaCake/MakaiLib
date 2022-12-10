@@ -124,17 +124,21 @@ namespace Makai {
 				$errlog(string("Unable to start SDL! (") + SDL_GetError() + ")");
 				throw runtime_error(string("Error: SDL (") + SDL_GetError() + ")");
 			}
-			if (TTF_Init() != 0) {
-				$errlog(string("Unable to start TTF! (") + TTF_GetError() + ")");
-				throw runtime_error(string("Error: TTF (") + TTF_GetError() + ")");
-			};
 			if (!Mix_Init(MIX_INIT_OGG | (useMIDI ? MIX_INIT_MID : 0))) {
 				$errlog(string("Unable to start Mixer! (") + Mix_GetError() + ")");
 				throw runtime_error(string("Error: Mixer (") + Mix_GetError() + ")");
 			}
 			$debug("Started!");
-			$debug("Creating window...");
+			// Initialize Freetype
+			$debug("Starting FreeType...");/*
+			FT_Library libft;
+			if (FT_Init_FreeType(&libft)) {
+				$errlog(string("Unable to start FreeType!"));
+				throw runtime_error(string("Unable to start FreeType!"));
+			}*/
+			$debug("Started!");
 			// Create window and make active
+			$debug("Creating window...");
 			window = SDL_CreateWindow(
 				windowTitle.c_str(),
 				SDL_WINDOWPOS_CENTERED,
@@ -327,16 +331,22 @@ namespace Makai {
 		virtual void onOpen() {};
 
 		/// Gets called whenever the program is rendering to the screen.
-		/// Happens before any object is rendered.
+
+		/// Happens before the screen is rendered, before the frame buffer is cleared.
 		virtual void onDrawBegin()		{};
-		/// Gets called when the program starts rendering a layer.
-		/// Happens before the layer is cleared.
-		virtual void onLayerDrawBegin(size_t layerID) {};
-		/// Gets called when the program ends rendering a layer.
-		virtual void onLayerDrawEnd(size_t layerID) {};
-		/// Happens before the screen is rendered.
+		/// Happens before the screen is rendered, after the frame buffer is cleared.
+		virtual void onPostFrameClear()	{};
+		/// Gets called when the program begins rendering a layer, before the the layer buffer is cleared.
+		virtual void onLayerDrawBegin(size_t layerID)	{};
+		/// Gets called when the program begins rendering a layer, after the the layer buffer is cleared.
+		virtual void onPostLayerClear(size_t layerID)	{};
+		/// Gets called when the program ends rendering a layer, before the layer buffer is drawn to the screen.
+		virtual void onPreLayerDraw(size_t layerID)		{};
+		/// Gets called when the program ends rendering a layer, after the layer buffer is drawn to the screen.
+		virtual void onLayerDrawEnd(size_t layerID)		{};
+		/// Happens after the screen is rendered, before the frame buffer is drawn to the screen.
 		virtual void onPreFrameDraw()	{};
-		/// Happens after all objects are rendered.
+		/// Happens after the screen is rendered, after the frame buffer is drawn to the screen.
 		virtual void onDrawEnd()		{};
 
 		/// Gets called every frame, along all other logic.
@@ -397,7 +407,6 @@ namespace Makai {
 			// Quit SDL
 			$debug("Ending SDL...");
 			SDL_Quit();
-			TTF_Quit();
 			Mix_Quit();
 			$debug("SDL ended!");
 			//exit(0);
@@ -410,28 +419,38 @@ namespace Makai {
 			glClear(GL_DEPTH_BUFFER_BIT);
 			// Enable depth testing
 			glEnable(GL_DEPTH_TEST);
-			// Enable & clear frame buffer
-			framebuffer()->clearBuffers();
+			// Enable frame buffer
+			framebuffer();
 			// Call rendering start function
 			onDrawBegin();
+			// Clear frame buffer
+			framebuffer.clearBuffers();
+			// Call post frame clearing function
+			onPostFrameClear();
 			// Draw objects
 			vector<size_t> rLayers = Drawer::layers.getAllGroups();
 			for (auto layer : rLayers) {
 				if (layer == Math::maxSizeT) continue;
 				// Clear target depth buffer
 				framebuffer();
+				// Enable layer buffer
+				layerbuffer();
 				// Call onLayerDrawBegin function
 				onLayerDrawBegin(layer);
-				// Enable layer buffer
-				layerbuffer()->clearBuffers();
+				// Clear buffers
+				layerbuffer.clearBuffers();
+				// Call onLayerDrawBegin function
+				onPostLayerClear(layer);
 				// Render layer
 				Drawer::renderLayer(layer);
+				// Call onPreLayerDraw function
+				onPreLayerDraw(layer);
 				// Render layer buffer
 				layerbuffer.render(framebuffer);
 				// Call onLayerDrawEnd function
 				onLayerDrawEnd(layer);
 			}
-			// ?????
+			// Call pre frame drawing function
 			onPreFrameDraw();
 			// Render frame buffer
 			framebuffer.render(toFrameBufferData());

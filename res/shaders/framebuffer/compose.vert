@@ -8,8 +8,10 @@ out vec2 fragUV;
 out vec2 maskUV;
 out vec4 fragColor;
 
-uniform vec2 resolution;
 uniform vec2 uvShift = vec2(0);
+
+uniform mat4 posMatrix;
+uniform mat4 uvMatrix;
 
 // [ ALPHA MASK ]
 uniform bool    relativeMask = false;
@@ -19,12 +21,13 @@ uniform float   maskRotate = 0;
 
 void main()
 {
+    vec4 vertex = vec4(vertPos.x, vertPos.y, vertPos.z, 1.0)  * posMatrix;
     maskUV = (vertUV + maskShift) * maskScale;
     maskUV.x = maskUV.x * cos(maskRotate) - maskUV.y * sin(maskRotate);
     maskUV.y = maskUV.x * sin(maskRotate) + maskUV.y * cos(maskRotate);
     if (relativeMask) 
         maskUV += uvShift;
-    fragUV = (vertUV + uvShift) / resolution;
+    fragUV = ((vec4(vertUV, 1, 0) * uvMatrix).xy + uvShift);
     fragColor = vertColor;
-    gl_Position = vec4(vertPos.x / resolution.x, vertPos.y / resolution.y, vertPos.z, 1.0); 
+    gl_Position = vertex;
 } 

@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1670679800 source:d:\c(++) projects\_c++\game engine\makailib\makai.cpp
+1670713698 source:d:\c(++) projects\_c++\game engine\makailib\makai.cpp
 	"src/makai.hpp"
 	<wtypes.h>
 	<windows.h>
@@ -2867,7 +2867,7 @@
 1665256929 d:\c(++) projects\_c++\game engine\makailib\src\program.hpp
 	"program/gl_program.hpp"
 
-1670437222 d:\c(++) projects\_c++\game engine\makailib\src\anchors.hpp
+1670694305 d:\c(++) projects\_c++\game engine\makailib\src\anchors.hpp
 	<iostream>
 	<string>
 	<vector>
@@ -2885,6 +2885,8 @@
 	<chrono>
 	<coroutine>
 	"redefines.hpp"
+	<zlib.h>
+	<bzlib.h>
 	"stb_image.h"
 	<GLEW/include/GL/glew.h>
 	<GLEW/include/GL/wglew.h>
@@ -2895,10 +2897,7 @@
 	<glm/gtc/matrix_transform.hpp>
 	<glm/gtc/type_ptr.hpp>
 	<SDL2/SDL.h>
-	<SDL2/SDL_ttf.h>
-	<SDL2/SDL_FontCache.h>
 	<SDL2/SDL_mixer.h>
-	<freetype-gl.h>
 	"collection/algebra.hpp"
 	"collection/definitions.hpp"
 	"collection/helper.hpp"
@@ -3031,7 +3030,7 @@
 	<algorithm>
 	<regex>
 
-1670679771 d:\c(++) projects\_c++\game engine\makailib\src\program\gl_program.hpp
+1670714013 d:\c(++) projects\_c++\game engine\makailib\src\program\gl_program.hpp
 	"../anchors.hpp"
 	"../graphical.hpp"
 	<wtypes.h>
@@ -3309,7 +3308,7 @@
 
 1533818822 d:\c(++) projects\_c++\game engine\makailib\lib\opengl\glm\gtx\rotate_vector.inl
 
-1670678158 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_framebuffer.hpp
+1670714081 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_framebuffer.hpp
 
 1668445143 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_reference.hpp
 
@@ -3375,7 +3374,7 @@
 
 1668385504 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\predefs.hpp
 
-1670437661 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_text.hpp
+1670692271 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_text.hpp
 
 1670329633 d:\c(++) projects\_c++\game engine\makailib\src\collection\definitions.hpp
 
@@ -3505,5 +3504,25 @@
 1584273239 d:\c(++) projects\_c++\game engine\makailib\lib\opengl\glew\include\gl\wglew.h
 	<windows.h>
 
-1670678123 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_material.hpp
+1670711214 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_material.hpp
+
+1143199506 d:\c(++) projects\_c++\game engine\makailib\lib\freetype\include\ft2build.h
+	<freetype/config/ftheader.h>
+
+1665637615 d:\c(++) projects\_c++\game engine\makailib\lib\zlib-1.2.13\zlib.h
+	"zconf.h"
+
+1670692859 d:\c(++) projects\_c++\game engine\makailib\lib\zlib-1.2.13\zconf.h
+	<stddef.h>
+	<windows.h>
+	<limits.h>
+	<sys/types.h>
+	<stdarg.h>
+	<stddef.h>
+	<unistd.h>
+	<unixio.h>
+
+1563040205 d:\c(++) projects\_c++\game engine\makailib\lib\bzip2-1.0.8\bzlib.h
+	<stdio.h>
+	<windows.h>
 
