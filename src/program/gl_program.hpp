@@ -242,7 +242,7 @@ namespace Makai {
 					// Do timer-related stuff
 					timerFunc(cycleDelta);
 					taskers.yield(cycleDelta);
-					#ifndef $_FRAME_DEPENDENT_PROCESS
+					#ifdef $_FRAME_INDEPENDENT_PROCESS
 					// Do normal logic-related stuff
 					logicFunc(cycleDelta);
 					onLogicFrame(cycleDelta);
@@ -253,7 +253,7 @@ namespace Makai {
 					frameTicks = SDL_GetTicks();
 					// increment frame counter
 					frame += 1;
-					#ifdef $_FRAME_DEPENDENT_PROCESS
+					#ifndef $_FRAME_INDEPENDENT_PROCESS
 					// Do normal logic-related stuff
 					logicFunc(frameDelta);
 					onLogicFrame(frameDelta);

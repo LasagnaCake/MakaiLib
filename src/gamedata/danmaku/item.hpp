@@ -98,6 +98,7 @@ public:
 		addToGame(this, "DanmakuGame");
 		mesh.setRenderLayer($layer(ITEM));
 		$ecl groups.addEntity(this, $layer(ITEM));
+		mesh.material.shaded = false;
 	})
 
 	$cdt BoxBounds2D playfield;

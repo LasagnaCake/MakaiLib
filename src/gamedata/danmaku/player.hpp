@@ -103,6 +103,8 @@ struct PlayerEntity2D: AreaCircle2D {
 		collision.size = 0.1;
 		// Set self as main player
 		setAsMainPlayer();
+		// Set unshaded
+		mesh.material.shaded = false;
 	})
 
 	KeyBinds actionKeys;

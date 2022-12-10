@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1670615993 source:d:\c(++) projects\_c++\game engine\makailib\makai.cpp
+1670624748 source:d:\c(++) projects\_c++\game engine\makailib\makai.cpp
 	"src/makai.hpp"
 	<wtypes.h>
 	<windows.h>
@@ -3031,7 +3031,7 @@
 	<algorithm>
 	<regex>
 
-1670613558 d:\c(++) projects\_c++\game engine\makailib\src\program\gl_program.hpp
+1670624549 d:\c(++) projects\_c++\game engine\makailib\src\program\gl_program.hpp
 	"../anchors.hpp"
 	"../graphical.hpp"
 	<wtypes.h>
@@ -3338,9 +3338,9 @@
 	"gamedata/danmaku/stage.hpp"
 	"gamedata/danmaku/program.hpp"
 
-1670009835 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\bullet.hpp
+1670622582 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\bullet.hpp
 
-1670009845 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\laser.hpp
+1670622613 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\laser.hpp
 
 1663772564 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\spellcard.hpp
 
@@ -3365,7 +3365,7 @@
 1535531570 d:\c(++) projects\_c++\game engine\makailib\lib\opengl\glm\gtx\compatibility.inl
 	<limits>
 
-1670451868 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\player.hpp
+1670622636 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\player.hpp
 
 1669661143 d:\c(++) projects\_c++\game engine\makailib\src\makai.hpp
 	"anchors.hpp"
@@ -3409,7 +3409,7 @@
 
 1666942540 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\stage.hpp
 
-1670009854 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\item.hpp
+1670622620 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\item.hpp
 
 1660930201 d:\c(++) projects\_c++\game engine\makailib\lib\sdl2-2.0.10\x86_64-w64-mingw32\include\sdl2\sdl_mixer.h
 	"SDL_stdinc.h"
@@ -3505,5 +3505,5 @@
 1584273239 d:\c(++) projects\_c++\game engine\makailib\lib\opengl\glew\include\gl\wglew.h
 	<windows.h>
 
-1670618819 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_material.hpp
+1670623498 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_material.hpp
 

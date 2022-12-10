@@ -16,9 +16,48 @@ out vec4 fragColor;
 
 out vec2 warpUV;
 
+out vec3 fragLightColor;
+
 uniform float warpRotate	= 0;
 uniform vec2 warpScale		= vec2(1);
 uniform vec2 warpOffset		= vec2(0);
+
+// [ POINT LIGHTING ]
+uniform bool		useLights		= false;
+uniform vec3		ambientColor	= vec3(1);
+uniform float		ambientStrength	= 1;
+uniform uint 		lightsCount		= 0;
+uniform vec3[256] 	lights;
+uniform vec3[256] 	lightColor;
+uniform float[256] 	lightRadius;
+uniform float[256] 	lightStrength;
+
+/*	TODO: Test this. This was made with ChatGPT.
+*	This will be the first an last time I use it.
+*/
+vec3 calculateLights(vec3 vertexPos, vec3 ambientColor, float ambientStrength) {
+  // Calculate the ambient color contribution
+  vec3 color = ambientColor * ambientStrength;
+  // If no lights, return
+  if (lightsCount == 0) return color;
+  // Loop over all point lights and calculate their contribution
+  for (int i = 0; i < (lightsCount < 256 ? 255 : lightsCount); i++) {
+    vec3 lightPos = lights[i];
+    vec3 lightColor = lightColor[i];
+    float lightStrength = lightStrength[i];
+    float lightRadius = lightRadius[i];
+    // Calculate the distance between the pixel and the point light
+    float dist = distance(vertexPos, lightPos);
+    // Calculate the attenuation factor based on the light's radius and distance from the pixel
+    float attenuation = 1.0 / (1.0 + dist * dist) / (lightRadius * lightRadius);
+    // Calculate the color contribution from the current point light
+    vec3 lightContribution = lightColor * lightStrength * attenuation;
+    // Add the contribution to the total color
+    color += lightContribution;
+  }
+  // Return the final calculated color
+  return color;
+}
 
 float length(in vec3 vec) {
 	return sqrt(vec.x * vec.x + vec.y * vec.y + vec.z * vec.z);
@@ -33,6 +72,7 @@ void main() {
     warp.y = warp.x * sin(warpRotate) + warp.y * cos(warpRotate);
     warpUV = (warp * warpScale) + warpOffset;
     vec4 coord = projection * camera * world * actor * vec4(vertPos, 1.0);
+	fragLightColor = calculateLights(coord.xyz, ambientColor, ambientStrength);
     // Coordinates
 	gl_Position = coord;
 	vec3 coord3D = vec3(coord.x, coord.y, coord.z);

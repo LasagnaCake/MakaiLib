@@ -13,8 +13,12 @@ namespace Module {
 		float	strength = 1;
 	};
 
-	struct Colorable {
+	struct ColorableRGBA {
 		Vector4	color = Color::WHITE;
+	};
+
+	struct ColorableRGB {
+		Vector3	color = Vector3(1);
 	};
 
 	struct Imageable2D {
@@ -46,7 +50,7 @@ namespace {
 	using Shader::Shader;
 }
 
-struct FogEffect: Effect, Limitable, Colorable, Variable {};
+struct FogEffect: Effect, Limitable, ColorableRGB, Variable {};
 
 struct TextureEffect: Effect, Imageable2D {
 	float alphaClip = 0.1;
@@ -72,7 +76,7 @@ struct MaskEffect: Effect, Imageable2D, Transformable2D, Channelable, Invertible
 
 struct WaveEffect: Effect, Tuneable2D {};
 
-struct AmbientEffect: Colorable, Variable {};
+struct AmbientEffect: ColorableRGB, Variable {};
 
 struct ObjectMaterial {
 	Vector4				color = Color::WHITE;
@@ -146,7 +150,7 @@ void setMaterial(Shader& shader, WorldMaterial& material) {
 	shader["voidColor"](material.nearFog.color);
 	shader["voidStrength"](material.nearFog.strength);
 	// Ambient light
-	shader["ambientColor"](material.ambient.color.xyz());
+	shader["ambientColor"](material.ambient.color);
 	shader["ambientStrength"](material.ambient.strength);
 }
 

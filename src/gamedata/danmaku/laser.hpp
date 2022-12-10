@@ -192,6 +192,7 @@ public:
 		mesh.setRenderLayer(ACTOR_LAYER);
 		$ecl groups.addEntity(this, ACTOR_LAYER);
 		$ecl collisionLayers.addEntity(this, COLLI_LAYER);
+		mesh.material.shaded = false;
 	})
 
 	Renderable mesh;

@@ -6,6 +6,8 @@ in vec4 fragColor;
 
 in vec2 warpUV;
 
+in vec3 fragLightColor;
+
 layout (location = 0) out vec4 FragColor;
 layout (location = 1) out float	DepthValue;
 
@@ -22,14 +24,14 @@ uniform bool	useFog		= false;
 uniform float	fogFar		= 16;
 uniform float	fogNear		= 12;
 uniform float	fogStrength	= 1;
-uniform vec4	fogColor	= vec4(1);
+uniform vec3	fogColor	= vec3(1);
 
 // [ VOID (NEAR FOG) ]
 uniform bool	useVoid			= false;
 uniform float	voidFar			= 6;
 uniform float	voidNear		= 4;
 uniform float	voidStrength	= 1;
-uniform vec4	voidColor		= vec4(vec3(0), 1);
+uniform vec3	voidColor		= vec3(0);
 
 // [ TEXTURE WARPING ]
 uniform bool		useWarp			= false;
@@ -53,38 +55,19 @@ uniform vec4	gradientEnd		= vec4(1);
 uniform bool	gradientInvert	= false;
 
 // [ POINT LIGHTING ]
-uniform bool		useLights		= false;
-uniform vec3		ambientColor	= vec3(1);
-uniform float		ambientStrength	= 1;
-uniform uint 		lightsCount		= 0;
-uniform vec3[255] 	lights;
-uniform vec3[255] 	lightColor;
-uniform float[255] 	lightStrength;
-
-float distanceTo(vec3 a, vec3 b) {
-	vec3 vec = a - b;
-	return sqrt(vec.x * vec.x + vec.y * vec.y + vec.z * vec.z);
-}
+uniform bool	useLights	= false;
 
 float length(vec3 vec) {
 	return sqrt(vec.x * vec.x + vec.y * vec.y + vec.z * vec.z);
 }
 
-vec4 normalize(vec4 vec) {
-	return vec4(vec.xyz * length(vec), vec.w);
+vec4 pinLight(vec3 position, vec3 color, float radius) {
+
+	return vec4(1);
 }
 
 vec4 applyLights(vec4 color) {
-	vec4 result = vec4(1);
-	if (lightsCount == 0) return color * vec4(ambientColor, 1);
-	for (uint i = 0; i < (lightsCount < 255 ? lightsCount : 255); i++) {
-		float intensity = 1 - (distanceTo(fragCoord3D, lights[i]) / lightStrength[i]);
-		intensity = clamp(intensity, 0, 1);
-		vec3 albedo = mix(vec3(0,0,0), lightColor[i], intensity);
-		result += vec4(albedo, 0);
-	}
-	if (length(result) > 1.0) result = normalize(result);
-	return color * mix(vec4(ambientColor, 1), result, length(result));
+	return vec4(color.xyz * fragLightColor, color.w);
 }
 
 vec4 distanceGradient(vec4 start, vec4 end, float near, float far, float strength) {
@@ -92,17 +75,15 @@ vec4 distanceGradient(vec4 start, vec4 end, float near, float far, float strengt
 	float value = (length(fragCoord3D) - near) / (far - near);
 	//float fogValue = 1.0 - exp(-fragDistance * fogStrength);
 	value = clamp(value * strength, 0, 1);
-	vec4 albedo = mix(start, end, start.w * end.w);
-	albedo.w = start.w * end.w;
-	return mix(start, albedo, value);
+	return mix(start, end, value);
 }
 
 vec4 applyFog(vec4 color) {
-	return distanceGradient(color, fogColor, fogNear, fogFar, fogStrength);
+	return distanceGradient(color, vec4(fogColor, color.w), fogNear, fogFar, fogStrength);
 }
 
 vec4 applyVoid(vec4 color) {
-	return distanceGradient(voidColor, color, voidNear, voidFar, voidStrength);
+	return distanceGradient(vec4(voidColor, color.w), color, voidNear, voidFar, voidStrength);
 }
 
 vec4 applyGradient(vec4 color) {
@@ -142,6 +123,8 @@ void main(void) {
 		if (color.w <= (fragColor.w * alphaClip))
 			discard;
 
+	color *= albedo;
+
 	if (useNegative) color = vec4(vec3(1) - color.xyz, color.w);
 
 	if (useGradient) color = applyGradient(color);
@@ -154,7 +137,7 @@ void main(void) {
 
 	if (useFog) color = applyFog(color);
 
-	FragColor = color * albedo;
+	FragColor = color;
 
 	DepthValue = length(fragCoord3D);
 

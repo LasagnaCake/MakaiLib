@@ -119,13 +119,13 @@ public:
 				b->local.position = bPos;
 				coefficient = (Math::tau * ((i + 1) / 5.0)) + rotAngle;
 				b->params.hitbox.radius = 1;
-				b->params.vel = ObjectParam{
+				b->params.vel = ObjectParam {
 					$twn ease.out.linear,
 					-20,
 					20,
 					0//.01
 				};
-				b->params.rot = ObjectParam{
+				b->params.rot = ObjectParam {
 					$twn ease.out.elastic,
 					coefficient,
 					coefficient + (PI * 3.0),
@@ -136,7 +136,7 @@ public:
 				b->pause.enabled = true;
 				b->reset();
 			}
-			//rotAngle += (PI/5.0);
+			rotAngle += (PI/5.0);
 		};
 		// Create test laser A
 		Vector2 lPos = Vector2(32, -16) * getWindowScale();
@@ -170,7 +170,8 @@ public:
 		//bulletSpawner.stop();
 		player.board = DANMAKU_EBM -> board;
 		DANMAKU_IM -> createCollectible(CollectibleData(), 5, lPos, 3, $vec2(0.5));
-		world3D.farFog = $mat FogEffect {true, 16, 12};
+		world3D.farFog = {true, 15, 5, $vec3(0, 0, 0.2)};
+		world3D.ambient.color = Vector3(1,1,0.5);
 	}
 
 	void onLogicFrame(float delta) override {
