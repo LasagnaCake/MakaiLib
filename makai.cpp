@@ -170,8 +170,8 @@ public:
 		//bulletSpawner.stop();
 		player.board = DANMAKU_EBM -> board;
 		DANMAKU_IM -> createCollectible(CollectibleData(), 5, lPos, 3, $vec2(0.5));
-		world3D.farFog = {true, 15, 5, $vec3(0, 0, 0.2)};
-		world3D.ambient.color = Vector3(1,1,0.5);
+		world3D.farFog = {true, 20, 10, $vec3(0, 0, 0.2)};
+		world3D.ambient.color = Vector3(1,1,1);
 	}
 
 	void onLogicFrame(float delta) override {
@@ -194,6 +194,7 @@ public:
 		case $rlayer(WORLD):
 			setCamera3D();
 			setWorldMaterial3D();
+			onWorldSublayer(Math::wmax(layerID, (size_t)8));
 			break;
 		case $rlayer(PLAYER):
 			break;
@@ -204,6 +205,13 @@ public:
 		}
 	}
 	#undef $rlayer
+
+	void onWorldSublayer(size_t sublayerID) {
+		switch(sublayerID) {
+		default:
+			break;
+		}
+	}
 
 	void onLayerDrawEnd(size_t layerID) override {
 		setCamera2D();

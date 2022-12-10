@@ -46,9 +46,9 @@ vec3 calculateLights(vec3 vertexPos, vec3 ambientColor, float ambientStrength) {
     vec3 lightColor = lightColor[i];
     float lightStrength = lightStrength[i];
     float lightRadius = lightRadius[i];
-    // Calculate the distance between the pixel and the point light
+    // Calculate the distance between the vertex and the point light
     float dist = distance(vertexPos, lightPos);
-    // Calculate the attenuation factor based on the light's radius and distance from the pixel
+    // Calculate the attenuation factor based on the light's radius and distance from the vertex
     float attenuation = 1.0 / (1.0 + dist * dist) / (lightRadius * lightRadius);
     // Calculate the color contribution from the current point light
     vec3 lightContribution = lightColor * lightStrength * attenuation;

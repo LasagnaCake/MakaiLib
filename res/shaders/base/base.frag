@@ -57,15 +57,6 @@ uniform bool	gradientInvert	= false;
 // [ POINT LIGHTING ]
 uniform bool	useLights	= false;
 
-float length(vec3 vec) {
-	return sqrt(vec.x * vec.x + vec.y * vec.y + vec.z * vec.z);
-}
-
-vec4 pinLight(vec3 position, vec3 color, float radius) {
-
-	return vec4(1);
-}
-
 vec4 applyLights(vec4 color) {
 	return vec4(color.xyz * fragLightColor, color.w);
 }
