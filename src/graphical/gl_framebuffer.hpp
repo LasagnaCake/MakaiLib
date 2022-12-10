@@ -145,7 +145,7 @@ namespace Drawer {
 		}
 
 		FrameBuffer* clearColorBuffer() {
-			Drawer::clearColorBuffer(color);
+			Drawer::clearColorBuffer(material.background);
 			return this;
 		}
 
@@ -227,8 +227,6 @@ namespace Drawer {
 		Transform3D trans;
 		/// The framebuffer's material.
 		$mat BufferMaterial material;
-		/// The framebuffer's clear color.
-		Vector4 color = Color::CLEAR;
 		/// The framebuffer's shape.
 		Vertex rect[4];
 		/// The framebuffer's rendering shader.

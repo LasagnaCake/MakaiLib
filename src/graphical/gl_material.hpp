@@ -91,6 +91,7 @@ struct ObjectMaterial {
 };
 
 struct BufferMaterial {
+	Vector4 background = Color::CLEAR;
 	Vector4
 		color	= Color::WHITE,
 		accent	= Color::NONE;

@@ -208,6 +208,8 @@ public:
 
 	void onWorldSublayer(size_t sublayerID) {
 		switch(sublayerID) {
+		case 0:
+			getLayerBuffer().material.background = Vector4(0, 0, 0.2, 1);
 		default:
 			break;
 		}
@@ -216,7 +218,9 @@ public:
 	void onLayerDrawEnd(size_t layerID) override {
 		setCamera2D();
 		setWorldMaterial2D();
-		getLayerBuffer().material.color = Color::WHITE;
+		auto& layerMaterial = getLayerBuffer().material;
+		layerMaterial.background = Color::CLEAR;
+		layerMaterial.color = Color::WHITE;
 	}
 
 	void onDrawEnd() override {

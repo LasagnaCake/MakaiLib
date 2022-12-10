@@ -330,6 +330,7 @@ namespace Makai {
 		/// Happens before any object is rendered.
 		virtual void onDrawBegin()		{};
 		/// Gets called when the program starts rendering a layer.
+		/// Happens before the layer is cleared.
 		virtual void onLayerDrawBegin(size_t layerID) {};
 		/// Gets called when the program ends rendering a layer.
 		virtual void onLayerDrawEnd(size_t layerID) {};
@@ -419,16 +420,16 @@ namespace Makai {
 				if (layer == Math::maxSizeT) continue;
 				// Clear target depth buffer
 				framebuffer();
-				// Enable layer buffer
-				layerbuffer()->clearBuffers();
 				// Call onLayerDrawBegin function
 				onLayerDrawBegin(layer);
+				// Enable layer buffer
+				layerbuffer()->clearBuffers();
 				// Render layer
 				Drawer::renderLayer(layer);
-				// Call onLayerDrawEnd function
-				onLayerDrawEnd(layer);
 				// Render layer buffer
 				layerbuffer.render(framebuffer);
+				// Call onLayerDrawEnd function
+				onLayerDrawEnd(layer);
 			}
 			// ?????
 			onPreFrameDraw();
