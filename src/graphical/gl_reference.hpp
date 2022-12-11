@@ -4,7 +4,7 @@ struct Empty {
 	virtual void onTransform() {}
 	virtual Empty* reset() {return this;}
 	virtual Empty* transform() {return this;}
-	virtual RawVertex** getBoundVertices() {return nullptr;}
+	virtual Triangle** getBoundTriangles() {return nullptr;}
 	virtual void forEachVertex(VertexFunc f) {};
 	void destroy()	{onDestroy();}
 	void unbind()	{onUnbind();}
@@ -21,17 +21,41 @@ struct Empty {
 
 // [[ PLANES ]]
 
-#define GET_VERTEX(IDX) (*source)[offset+(IDX)]
-
 class Plane: public Empty {
 public:
-	Plane(vector<RawVertex>& source, size_t offset) {
-		this->source	= &source;
-		this->offset	= offset;
+	Plane(
+		Triangle* tris[2]
+	) {
+		this->tris[0]	= tris[0];
+		this->tris[1]	= tris[1];
+		this->tl	= &(tris[0]->verts[0]);
+		this->tr1	= &(tris[0]->verts[1]);
+		this->tr2	= &(tris[1]->verts[0]);
+		this->bl1	= &(tris[0]->verts[2]);
+		this->bl2	= &(tris[1]->verts[1]);
+		this->br	= &(tris[1]->verts[2]);
+	}
+
+	Plane(
+		RawVertex* tl,
+		RawVertex* tr1,
+		RawVertex* tr2,
+		RawVertex* bl1,
+		RawVertex* bl2,
+		RawVertex* br
+	) {
+		this->tl	= tl;
+		this->tr1	= tr1;
+		this->tr2	= tr2;
+		this->bl1	= bl1;
+		this->bl2	= bl2;
+		this->br	= br;
 	}
 
 	virtual ~Plane() {
 		Empty::~Empty();
+		tl = tr1 = tr2 = bl1 = bl2 = br = nullptr;
+		tris[0] = tris[1] = nullptr;
 	}
 
 	#define VERTEX_SET_POS(VERT, VAL) Drawer::vertexSetPosition(VERT, VAL);
@@ -42,12 +66,12 @@ public:
 			Vector3 blPos = Vector3(-1, -1),
 			Vector3 brPos = Vector3(1, -1)
 		) {
-		VERTEX_SET_POS(GET_VERTEX(0),	tlPos);
-		VERTEX_SET_POS(GET_VERTEX(1),	trPos);
-		VERTEX_SET_POS(GET_VERTEX(3),	trPos);
-		VERTEX_SET_POS(GET_VERTEX(2),	blPos);
-		VERTEX_SET_POS(GET_VERTEX(4),	blPos);
-		VERTEX_SET_POS(GET_VERTEX(5),	brPos);
+		VERTEX_SET_POS(*tl,		tlPos);
+		VERTEX_SET_POS(*tr1,	trPos);
+		VERTEX_SET_POS(*tr2,	trPos);
+		VERTEX_SET_POS(*bl1,	blPos);
+		VERTEX_SET_POS(*bl2,	blPos);
+		VERTEX_SET_POS(*br,		brPos);
 		origin[0] = tlPos;
 		origin[1] = trPos;
 		origin[2] = blPos;
@@ -71,12 +95,12 @@ public:
 			Vector2 blUV,
 			Vector2 brUV
 		) {
-		Drawer::vertexSetUV(GET_VERTEX(0),	tlUV);
-		Drawer::vertexSetUV(GET_VERTEX(1),	trUV);
-		Drawer::vertexSetUV(GET_VERTEX(3),	trUV);
-		Drawer::vertexSetUV(GET_VERTEX(2),	blUV);
-		Drawer::vertexSetUV(GET_VERTEX(4),	blUV);
-		Drawer::vertexSetUV(GET_VERTEX(5),	brUV);
+		Drawer::vertexSetUV(*tl,	tlUV);
+		Drawer::vertexSetUV(*tr1,	trUV);
+		Drawer::vertexSetUV(*tr2,	trUV);
+		Drawer::vertexSetUV(*bl1,	blUV);
+		Drawer::vertexSetUV(*bl2,	blUV);
+		Drawer::vertexSetUV(*br,	brUV);
 		return this;
 	}
 
@@ -86,35 +110,35 @@ public:
 			Vector4 blCol,
 			Vector4 brCol
 		) {
-		Drawer::vertexSetColor(GET_VERTEX(0),	tlCol);
-		Drawer::vertexSetColor(GET_VERTEX(1),	trCol);
-		Drawer::vertexSetColor(GET_VERTEX(3),	trCol);
-		Drawer::vertexSetColor(GET_VERTEX(2),	blCol);
-		Drawer::vertexSetColor(GET_VERTEX(4),	blCol);
-		Drawer::vertexSetColor(GET_VERTEX(5),	brCol);
+		Drawer::vertexSetColor(*tl,		tlCol);
+		Drawer::vertexSetColor(*tr1,	trCol);
+		Drawer::vertexSetColor(*tr2,	trCol);
+		Drawer::vertexSetColor(*bl1,	blCol);
+		Drawer::vertexSetColor(*bl2,	blCol);
+		Drawer::vertexSetColor(*br,		brCol);
 		return this;
 	}
 
 	Plane* setColor(
 			Vector4 col = Color::WHITE
 		) {
-		Drawer::vertexSetColor(GET_VERTEX(0),	col);
-		Drawer::vertexSetColor(GET_VERTEX(1),	col);
-		Drawer::vertexSetColor(GET_VERTEX(3),	col);
-		Drawer::vertexSetColor(GET_VERTEX(2),	col);
-		Drawer::vertexSetColor(GET_VERTEX(4),	col);
-		Drawer::vertexSetColor(GET_VERTEX(5),	col);
+		Drawer::vertexSetColor(*tl,		col);
+		Drawer::vertexSetColor(*tr1,	col);
+		Drawer::vertexSetColor(*tr2,	col);
+		Drawer::vertexSetColor(*bl1,	col);
+		Drawer::vertexSetColor(*bl2,	col);
+		Drawer::vertexSetColor(*br,		col);
 		return this;
 	}
 
 	/// Sets the plane to its original state (last state set with setPosition).
 	Plane* reset() override {
-		VERTEX_SET_POS(GET_VERTEX(0),	origin[0]);
-		VERTEX_SET_POS(GET_VERTEX(1),	origin[1]);
-		VERTEX_SET_POS(GET_VERTEX(3),	origin[1]);
-		VERTEX_SET_POS(GET_VERTEX(2),	origin[2]);
-		VERTEX_SET_POS(GET_VERTEX(4),	origin[2]);
-		VERTEX_SET_POS(GET_VERTEX(5),	origin[3]);
+		VERTEX_SET_POS(*tl,		origin[0]);
+		VERTEX_SET_POS(*tr1,	origin[1]);
+		VERTEX_SET_POS(*tr2,	origin[1]);
+		VERTEX_SET_POS(*bl1,	origin[2]);
+		VERTEX_SET_POS(*bl2,	origin[2]);
+		VERTEX_SET_POS(*br,		origin[3]);
 		return this;
 	}
 
@@ -126,32 +150,40 @@ public:
 		self.scale *= (float)visible;
 		glm::mat4 trans = asGLMMatrix(self);
 		// Apply transformation
-		$srpTransform(GET_VERTEX(0),	trans);
-		$srpTransform(GET_VERTEX(1),	trans);
-		$srpTransform(GET_VERTEX(2),	trans);
-		$srpTransform(GET_VERTEX(3),	trans);
-		$srpTransform(GET_VERTEX(4),	trans);
-		$srpTransform(GET_VERTEX(5),	trans);
-		//$debug(GET_VERTEX(0).x);
+		$srpTransform(*tl, trans);
+		$srpTransform(*tr1, trans);
+		$srpTransform(*tr2, trans);
+		$srpTransform(*bl1, trans);
+		$srpTransform(*bl2, trans);
+		$srpTransform(*br, trans);
 		return this;
 	}
 
-	RawVertex** getBoundVertices() override {
-		for $ssrange(i, 0, 6) verts[i] = &GET_VERTEX(i);
-		return verts;
+	Triangle** getBoundTriangles() override {
+		return tris;
 	}
 
 	void forEachVertex(VertexFunc f) override {
-		for $ssrange(i, 0, 6) f(GET_VERTEX(i));
+		f(*tl);
+		f(*tr1);
+		f(*tr2);
+		f(*bl1);
+		f(*bl2);
+		f(*br);
 	}
 
+	RawVertex* tl	= nullptr;
+	RawVertex* tr1	= nullptr;
+	RawVertex* tr2	= nullptr;
+	RawVertex* bl1	= nullptr;
+	RawVertex* bl2	= nullptr;
+	RawVertex* br	= nullptr;
+
 protected:
-	vector<RawVertex>*	source;
-	size_t				offset;
 
-	RawVertex*	verts[6]	= {nullptr, nullptr, nullptr, nullptr, nullptr, nullptr};
+	Triangle* tris[2] = {nullptr, nullptr};
 
-	Vector3	origin[4];
+	Vector3 origin[4];
 
 };
 
@@ -175,27 +207,43 @@ public:
 
 // [[ TRIANGLES ]]
 
-class Triangle: public Empty {
+class Trigon: public Empty {
 public:
-	Triangle(vector<RawVertex>& source, size_t offset) {
-		this->source = &source;
-		this->offset = offset;
+	Trigon(
+		Triangle* tris[1]
+	) {
+		this->tris[0]	= tris[0];
+		this->a	= &(tris[0]->verts[0]);
+		this->b	= &(tris[0]->verts[1]);
+		this->c	= &(tris[0]->verts[2]);
 	}
 
-	virtual ~Triangle() {
+	Trigon(
+		RawVertex* a,
+		RawVertex* b,
+		RawVertex* c
+	) {
+		this->a	= a;
+		this->b	= b;
+		this->c	= c;
+	}
+
+	virtual ~Trigon() {
 		Empty::~Empty();
+		a = b = c = nullptr;
+		tris[0] = nullptr;
 	}
 
 	#define VERTEX_SET_POS(VERT, VAL) Drawer::vertexSetPosition(VERT, VAL);
 	/// Sets the triangle's origin.
-	Triangle* setOrigin(
+	Trigon* setOrigin(
 			Vector3 aPos = Vector3(+0, 1),
 			Vector3 bPos = Vector3(-1, -1),
 			Vector3 cPos = Vector3(+1, -1)
 		) {
-		VERTEX_SET_POS(GET_VERTEX(0),	aPos);
-		VERTEX_SET_POS(GET_VERTEX(1),	bPos);
-		VERTEX_SET_POS(GET_VERTEX(2),	cPos);
+		VERTEX_SET_POS(*a,	aPos);
+		VERTEX_SET_POS(*b,	bPos);
+		VERTEX_SET_POS(*c,	cPos);
 		origin[0] = aPos;
 		origin[1] = bPos;
 		origin[2] = cPos;
@@ -203,7 +251,7 @@ public:
 	}
 
 	/// Transforms the plane's origin by a given transform.
-	Triangle* setOrigin(Transform3D trans) {
+	Trigon* setOrigin(Transform3D trans) {
 		glm::mat4 glmtrans = asGLMMatrix(trans);
 		origin[0] = $srpTransform(origin[0], glmtrans);
 		origin[1] = $srpTransform(origin[1], glmtrans);
@@ -211,46 +259,46 @@ public:
 		return reset();
 	}
 
-	Triangle* setUV(
+	Trigon* setUV(
 			Vector2 aUV,
 			Vector2 bUV,
 			Vector2 cUV
 		) {
-		Drawer::vertexSetUV(GET_VERTEX(0),	aUV);
-		Drawer::vertexSetUV(GET_VERTEX(1),	bUV);
-		Drawer::vertexSetUV(GET_VERTEX(2),	cUV);
+		Drawer::vertexSetUV(*a,	aUV);
+		Drawer::vertexSetUV(*b,	bUV);
+		Drawer::vertexSetUV(*c,	cUV);
 		return this;
 	}
 
-	Triangle* setColor(
+	Trigon* setColor(
 			Vector4 aCol,
 			Vector4 bCol,
 			Vector4 cCol
 		) {
-		Drawer::vertexSetColor(GET_VERTEX(0),	aCol);
-		Drawer::vertexSetColor(GET_VERTEX(1),	bCol);
-		Drawer::vertexSetColor(GET_VERTEX(2),	cCol);
+		Drawer::vertexSetColor(*a,	aCol);
+		Drawer::vertexSetColor(*b,	bCol);
+		Drawer::vertexSetColor(*c,	cCol);
 		return this;
 	}
 
-	Triangle* setColor(
+	Trigon* setColor(
 			Vector4 col = Color::WHITE
 		) {
-		Drawer::vertexSetColor(GET_VERTEX(0),	col);
-		Drawer::vertexSetColor(GET_VERTEX(1),	col);
-		Drawer::vertexSetColor(GET_VERTEX(2),	col);
+		Drawer::vertexSetColor(*a,	col);
+		Drawer::vertexSetColor(*b,	col);
+		Drawer::vertexSetColor(*c,	col);
 		return this;
 	}
 
 	/// Sets the triangle to its original state (last state set with setPosition).
-	Triangle* reset() override {
-		VERTEX_SET_POS(GET_VERTEX(0),	origin[0]);
-		VERTEX_SET_POS(GET_VERTEX(1),	origin[1]);
-		VERTEX_SET_POS(GET_VERTEX(2),	origin[2]);
+	Trigon* reset() override {
+		VERTEX_SET_POS(*a,	origin[0]);
+		VERTEX_SET_POS(*b,	origin[1]);
+		VERTEX_SET_POS(*c,	origin[2]);
 		return this;
 	}
 
-	Triangle* transform() override {
+	Trigon* transform() override {
 		onTransform();
 		if (!fixed) return this;
 		// Get transformation
@@ -258,31 +306,32 @@ public:
 		self.scale *= (float)visible;
 		glm::mat4 trans = asGLMMatrix(self);
 		// Apply transformation
-		$srpTransform(GET_VERTEX(0),	trans);
-		$srpTransform(GET_VERTEX(1),	trans);
-		$srpTransform(GET_VERTEX(2),	trans);
+		$srpTransform(*a,	trans);
+		$srpTransform(*b,	trans);
+		$srpTransform(*c,	trans);
 		return this;
 	}
 
-	RawVertex** getBoundVertices() override {
-		for $ssrange(i, 0, 3) verts[i] = &GET_VERTEX(i);
-		return verts;
+	Triangle** getBoundTriangles() override {
+		return tris;
 	}
 
 	void forEachVertex(VertexFunc f) override {
-		for $ssrange(i, 0, 3) f(GET_VERTEX(i));
+		f(*a);
+		f(*b);
+		f(*c);
 	}
 
+	RawVertex* a	= nullptr;
+	RawVertex* b	= nullptr;
+	RawVertex* c	= nullptr;
+
 protected:
-	vector<RawVertex>*	source;
-	size_t				offset;
 
-	RawVertex*	verts[3]	= {nullptr, nullptr, nullptr};
+	Triangle* tris[1] = {nullptr};
 
-	Vector3	origin[3];
+	Vector3 origin[3];
 
 };
-
-#undef GET_VERTEX
 
 #undef VERTEX_SET_POS

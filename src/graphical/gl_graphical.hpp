@@ -319,6 +319,68 @@ namespace RenderData {
 		std::runtime_error;
 	}
 
+	/// Base triangle data structure.
+	struct Triangle {
+		Triangle() {/*
+			#pragma GCC unroll 3
+			for (unsigned char i = 0; i < 3; i++) {
+				this->verts[i].position	= Vector3(0.0);
+				this->verts[i].uv		= Vector2(0.0);
+				this->verts[i].color	= Vector4(1.0);
+			}*/
+		}
+
+		Triangle(
+			Vector3 verts[3],
+			Vector2 uv[3] = nullptr,
+			Vector4 color[3] = nullptr
+		) {
+			#pragma GCC unroll 3
+			for (unsigned char i = 0; i < 3; i++) {
+				this->verts[i].x	= verts[i].x;
+				this->verts[i].y	= verts[i].y;
+				this->verts[i].z	= verts[i].z;
+				this->verts[i].u	= uv	!= nullptr	? uv[i].x		: 0;
+				this->verts[i].v	= uv	!= nullptr	? uv[i].y		: 0;
+				this->verts[i].r	= color != nullptr	? color[i].x	: 1;
+				this->verts[i].g	= color != nullptr	? color[i].y	: 1;
+				this->verts[i].b	= color != nullptr	? color[i].z	: 1;
+				this->verts[i].a	= color != nullptr	? color[i].w	: 1;
+			}
+		}
+
+		Triangle(RawVertex verts[3]) {
+			#pragma GCC unroll 3
+			for (unsigned char i = 0; i < 3; i++)
+				this->verts[i] = verts[i];
+		}
+
+		Triangle(const Triangle& t) {
+			#pragma GCC unroll 3
+			for (unsigned char i = 0; i < 3; i++)
+				this->verts[i] = t.verts[i];
+		}
+
+		Vector3 getCenter() {
+			Vector3 center = (
+				vertexGetPosition(verts[0]) +
+				vertexGetPosition(verts[1]) +
+				vertexGetPosition(verts[2])
+			);
+			center /= 3;
+			return center;
+		}
+
+		inline bool isSolid(float clip = 1.0) {
+			#define _SOLID(VIDX) (verts[VIDX].a - clip >= 0.0)
+			return _SOLID(0) && _SOLID(1) && _SOLID(2) && _SOLID(3);
+		}
+
+		virtual ~Triangle() {}
+
+		RawVertex verts[3];
+	};
+
 	namespace Material {
 		#include "gl_material.hpp"
 	}
