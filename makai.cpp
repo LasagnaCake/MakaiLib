@@ -40,6 +40,8 @@ public:
 
 	$rdt Renderable		tubeRend;
 
+	$rdt Text::Label	testLabel;
+
 	void onOpen() override {
 		// British? 😩
 		// maxFrameRate = 50;
@@ -57,6 +59,8 @@ public:
 			$vec3(-2, -2, 12.5),
 			$vec3(2, -2, 12.5)
 		);
+		testLabel.setRenderLayer(Layer::UI_LAYER);
+		testLabel.font.face = new Drawer::Texture2D("img/fonts/FT_Set1-Lotuscoder.png");
 		//pl->setColor($vec4(0,0,0.5,1));
 		pl->unbind();//*/
 		for $ssrange(i, 0, sideCount) {
@@ -218,10 +222,14 @@ public:
 			layerMaterial.background = Vector4(0, 0, 0.2, 1);
 			layerMaterial.wave = {
 				true,
-				$vec2(3, 0),
-				$vec2(0.5, 0),
+				$vec2(5, -5),
+				$vec2(
+					Math::min(sin(getCurrentFrame()/40.0) * 0.5, 0.0),
+					Math::min(sin(getCurrentFrame()/40.0) * -0.5, 0.0)
+				),
 				$vec2(getCurrentFrame()/60.0)
 			};
+			break;
 		default:
 			break;
 		}

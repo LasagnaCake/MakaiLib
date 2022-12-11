@@ -39,8 +39,8 @@ namespace Module {
 
 	struct Tuneable {
 		float
-			amplitude	= 0,
 			frequency	= 0,
+			amplitude	= 0,
 			shift		= 0;
 	};
 

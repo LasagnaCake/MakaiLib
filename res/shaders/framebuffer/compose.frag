@@ -69,7 +69,7 @@ void main() {
 	vec2 wave = vec2(0);
 	if (useWave) {
 		wave = (fragUV.yx * waveFrequency) * (2.0 * PI) + waveShift;
-		wave = vec2(sin(wave.x), sin(wave.y)) * (waveAmplitude / 10);
+		wave = vec2(sin(wave.x), sin(wave.y)) * (waveAmplitude / 10.0);
 	}
 	vec4 color = (texture(screen, fragUV + wave) * fragColor * albedo) + accent;
 	// HSL adjuster
