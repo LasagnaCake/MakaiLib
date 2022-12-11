@@ -31,6 +31,7 @@ struct TextRect {
 struct FontData {
 	Texture2D*	face		= nullptr;
 	Vector2		size		= Vector2(16);
+	Vector2		kerning		= Vector2(1);
 };
 
 struct TextData {
@@ -45,6 +46,8 @@ public:
 	: Drawable(layer, manual) {
 		glGenVertexArrays(1, &vao);
 		glGenBuffers(1, &vbo);
+		//material.adjustAlpha = false;
+		material.texture.alphaClip = 0.25;
 	}
 
 	virtual ~Label() {
@@ -149,12 +152,12 @@ private:
 			// If cursor has reached the rect's horizontal limit, move to new line
 			if(cursor.x > text.rect.h) {
 				cursor.x = 0;
-				cursor.y--;
+				cursor.y -= font.kerning.y;
 			}
 			// If newline, then reset cursor and continue to next character
 			if (c == '\n') {
 				cursor.x = 0;
-				cursor.y--;
+				cursor.y -= font.kerning.y;
 				continue;
 			}
 			// If cursor has reach the rect's vertical limit, break
@@ -189,7 +192,7 @@ private:
 			vertices.push_back(CHAR_VERTEX(pos[2], uvs[2]));
 			vertices.push_back(CHAR_VERTEX(pos[3], uvs[3]));
 			// Increment cursor
-			cursor.x++;
+			cursor.x += font.kerning.x;
 		}
 	}
 	#undef CHAR_VERTEX

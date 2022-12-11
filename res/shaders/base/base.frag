@@ -120,7 +120,7 @@ void main(void) {
 
 	if (useGradient) color = applyGradient(color);
 
-	if (alphaAdjust && color.w > 0) color = color / vec4(vec3(color.w), 1.0);
+	if (alphaAdjust && color.w > 0) color /= vec4(vec3(fragColor.w), 1.0);
 
 	if (useLights) color = applyLights(color);
 
