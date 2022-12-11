@@ -4,7 +4,9 @@
 #include "../anchors.hpp"
 #include "../graphical.hpp"
 
+#if (_WIN32 || _WIN64 || __WIN32__ || __WIN64__)
 #include <wtypes.h>
+#endif
 
 namespace Makai {
 	namespace {
@@ -115,6 +117,9 @@ namespace Makai {
 			string bufferShaderPath = "shaders/framebuffer/compose.slf",
 			bool useMIDI = false
 		) {
+			#if (_WIN32 || _WIN64 || __WIN32__ || __WIN64__)
+			SetProcessDPIAware();
+			#endif
 			// Save window resolution
 			this->width = width;
 			this->height = height;
@@ -554,6 +559,9 @@ namespace Popup {
 		SDL_Window* window = NULL,
 		SDL_MessageBoxColorScheme colorScheme = defaultMessageBoxColorScheme
 	) {
+		#if (_WIN32 || _WIN64 || __WIN32__ || __WIN64__)
+		SetProcessDPIAware();
+		#endif
 		size_t buttonCount = options.size();
 		SDL_MessageBoxButtonData buttons[options.size()];
 		size_t idx = buttonCount - 1;

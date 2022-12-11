@@ -5,9 +5,11 @@
 
 #include "src/makai.hpp"
 
+#if (_WIN32 || _WIN64 || __WIN32__ || __WIN64__)
 #include <wtypes.h>
 #include <windows.h>
 #include <mmsystem.h>
+#endif
 
 using namespace $rdt Reference;
 using namespace Vector;
@@ -60,7 +62,8 @@ public:
 			$vec3(2, -2, 12.5)
 		);
 		testLabel.setRenderLayer(Layer::UI_LAYER);
-		testLabel.font.face = new Drawer::Texture2D("img/fonts/FT_Set1-Lotuscoder.png");
+		testLabel.font.face = new Drawer::Texture2D("img/fonts/font.png");
+		testLabel.trans.scale = 2.5;
 		//pl->setColor($vec4(0,0,0.5,1));
 		pl->unbind();//*/
 		for $ssrange(i, 0, sideCount) {
@@ -263,6 +266,10 @@ int main() {
 	//ShowWindow(GetConsoleWindow(), SW_HIDE);
 	#endif // _DEBUG_OUTPUT_
 	try {
+		// This is required, else the resolution gets messed up by window's scaling
+		#if (_WIN32 || _WIN64 || __WIN32__ || __WIN64__)
+		SetProcessDPIAware();
+		#endif
 		auto prefs = $dmk queryProgramSettingsFromUser(true);
 		// If size >= screen size, automatic fullscreen for some reason (Why, SDL?)
 		GameApp prog(prefs.resolution.x, prefs.resolution.y, "[TEST]", prefs.fullscreen);

@@ -39,10 +39,6 @@ struct TextData {
 	TextAlign	alignment	= ALIGN_LEFT;
 };
 
-// TODO: Make this work
-/* NOTE: It'll probably be done using SDL_FontCache + OpenGL. Scratch that. Freetype GL.
-*	Y'know what? Fuck This. I'm making it by myself.
-*/
 class Label: public Base::Drawable {
 public:
 	Label(size_t layer = 0, bool manual = false)
@@ -129,7 +125,7 @@ private:
 		glm::mat4 camera = Scene::camera.matrix();
 		glm::mat4 projection = Scene::camera.perspective();
 		// Set shader data
-		material.texture = {true, font.face};
+		material.texture = {true, font.face, material.texture.alphaClip};
 		$mat setMaterial($mainshader, material);
 		// Matrices
 		$mainshader["world"](Scene::world);
@@ -165,7 +161,7 @@ private:
 			if(cursor.y > text.rect.v)
 				break;
 			// Get character index
-			index = (int)c - 0x20;
+			index = Math::max((int)c - 0x20, 0);
 			// Get character's top left UV index in the font texture
 			uv = Vector2(
 				(int)Math::wmax((float)index, font.size.x),
