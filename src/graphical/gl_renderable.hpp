@@ -41,19 +41,20 @@ public:
 		for (auto i = 0; i < 6; i++)
 			vertices.push_back(RawVertex{});
 		// Create reference
-		T* plane = new T(
-			&vertices[vertices.size()-6],
-			&vertices[vertices.size()-5],
-			&vertices[vertices.size()-4],
-			&vertices[vertices.size()-3],
-			&vertices[vertices.size()-2],
-			&vertices[vertices.size()-1]
+		T* plane = new T(vertices, vertices.size()-6);
+		/*T* plane = new T(
+			new RawVertex{},
+			new RawVertex{},
+			new RawVertex{},
+			new RawVertex{},
+			new RawVertex{},
+			new RawVertex{}
 		);
 		$debugp("Planes: ");
 		$debug(references.plane.size());
 		$debugp("Vertices: ");
 		$debug(vertices.size());
-		$debug("");
+		$debug("");*/
 		// Setup plane
 		plane->setOrigin(
 			Vector3(-1.0, +1.0, 0.0),
@@ -81,11 +82,7 @@ public:
 		for (auto i = 0; i < 3; i++)
 			vertices.push_back(RawVertex{});
 		// Create reference
-		T* tg = new T(
-			&vertices[vertices.size()-3],
-			&vertices[vertices.size()-2],
-			&vertices[vertices.size()-1]
-		);
+		T* tg = new T(vertices, vertices.size()-3);
 		// Setup plane
 		tg->setOrigin(
 			Vector3(-0.0, +1.0, 0.0),
@@ -214,7 +211,7 @@ private:
 		// Transform references (if applicable)
 		for (auto& plane: references.plane)	plane->transform();
 		for (auto& tg: references.triangle)	tg->transform();
-		$debug("Transformed!");
+		//$debug("Transformed!");
 		// Get transformation matrix
 		actorMatrix = VecMath::asGLMMatrix(trans);
 		// Set VBO as active
@@ -222,7 +219,7 @@ private:
 		// Copy vertices to VBO
 		glBufferData(
 			GL_ARRAY_BUFFER,
-			vertices.size() * sizeof(RawVertex),
+			vertices.size() * RAW_VERTEX_BYTE_SIZE,
 			vertices.data(),
 			GL_STATIC_DRAW
 		);
