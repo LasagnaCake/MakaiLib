@@ -146,23 +146,24 @@ namespace EntityClass {
 		* TODO: Refactor this code, to be less of a mess.
 		*/
 		Entity* getChild(string path) {
+			// The current level of the path
+			string level;
 			// The object's child to look for
-			string root;
+			string root = "";
 			// The object to look for in the child, if applicable
-			string next;
+			string next = "";
 			// Whether it is the last object to search
 			bool isLast = true;
-			// Loop through path string and...
-			for(char c : path) {
-				// If last object to search...
-				if (isLast)
-					// If no deeper path yet, append character to root
-					if (c != '/') root += c;
-					// Else, this is not last object
-					else isLast = false;
-				// Else, append character to next path
-				else next += c;
+			// Create stream and get root
+			std::istringstream objPath(path);
+			std::getline(objPath, root, '/');
+			// Loop through path string and get the rest
+			while (getline(objPath, level, '/')) {
+				isLast = false;
+				next += level + '/';
 			}
+			// If next isn't empty, remove last character
+			if (next != "") next.pop_back();
 			// If root requested...
 			if (root == $_ROOT_NAME) {
 				// If not last object to search, search root

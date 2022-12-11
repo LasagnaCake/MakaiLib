@@ -4,7 +4,7 @@ struct Empty {
 	virtual void onTransform() {}
 	virtual Empty* reset() {return this;}
 	virtual Empty* transform() {return this;}
-	virtual Triangle** getBoundTriangles() {return nullptr;}
+	virtual RawVertex** getBoundVertices() {return nullptr;}
 	virtual void forEachVertex(VertexFunc f) {};
 	void destroy()	{onDestroy();}
 	void unbind()	{onUnbind();}
@@ -24,19 +24,6 @@ struct Empty {
 class Plane: public Empty {
 public:
 	Plane(
-		Triangle* tris[2]
-	) {
-		this->tris[0]	= tris[0];
-		this->tris[1]	= tris[1];
-		this->tl	= &(tris[0]->verts[0]);
-		this->tr1	= &(tris[0]->verts[1]);
-		this->tr2	= &(tris[1]->verts[0]);
-		this->bl1	= &(tris[0]->verts[2]);
-		this->bl2	= &(tris[1]->verts[1]);
-		this->br	= &(tris[1]->verts[2]);
-	}
-
-	Plane(
 		RawVertex* tl,
 		RawVertex* tr1,
 		RawVertex* tr2,
@@ -44,18 +31,18 @@ public:
 		RawVertex* bl2,
 		RawVertex* br
 	) {
-		this->tl	= tl;
-		this->tr1	= tr1;
-		this->tr2	= tr2;
-		this->bl1	= bl1;
-		this->bl2	= bl2;
-		this->br	= br;
+		verts[0]	= this->tl	= tl;
+		verts[1]	= this->tr1	= tr1;
+		verts[2]	= this->tr2	= tr2;
+		verts[3]	= this->bl1	= bl1;
+		verts[4]	= this->bl2	= bl2;
+		verts[5]	= this->br	= br;
 	}
 
 	virtual ~Plane() {
 		Empty::~Empty();
 		tl = tr1 = tr2 = bl1 = bl2 = br = nullptr;
-		tris[0] = tris[1] = nullptr;
+		verts[0] = verts[1] = verts[2] = verts[3] = verts[4] = verts[5] = nullptr;
 	}
 
 	#define VERTEX_SET_POS(VERT, VAL) Drawer::vertexSetPosition(VERT, VAL);
@@ -159,8 +146,8 @@ public:
 		return this;
 	}
 
-	Triangle** getBoundTriangles() override {
-		return tris;
+	RawVertex** getBoundVertices() override {
+		return verts;
 	}
 
 	void forEachVertex(VertexFunc f) override {
@@ -181,7 +168,7 @@ public:
 
 protected:
 
-	Triangle* tris[2] = {nullptr, nullptr};
+	RawVertex* verts[6]	= {nullptr, nullptr, nullptr, nullptr, nullptr, nullptr};
 
 	Vector3 origin[4];
 
@@ -207,36 +194,27 @@ public:
 
 // [[ TRIANGLES ]]
 
-class Trigon: public Empty {
+class Triangle: public Empty {
 public:
-	Trigon(
-		Triangle* tris[1]
-	) {
-		this->tris[0]	= tris[0];
-		this->a	= &(tris[0]->verts[0]);
-		this->b	= &(tris[0]->verts[1]);
-		this->c	= &(tris[0]->verts[2]);
-	}
-
-	Trigon(
+	Triangle(
 		RawVertex* a,
 		RawVertex* b,
 		RawVertex* c
 	) {
-		this->a	= a;
-		this->b	= b;
-		this->c	= c;
+		verts[0]	= this->a	= a;
+		verts[1]	= this->b	= b;
+		verts[2]	= this->c	= c;
 	}
 
-	virtual ~Trigon() {
+	virtual ~Triangle() {
 		Empty::~Empty();
 		a = b = c = nullptr;
-		tris[0] = nullptr;
+		verts[0] = verts[1] = verts[2] = nullptr;
 	}
 
 	#define VERTEX_SET_POS(VERT, VAL) Drawer::vertexSetPosition(VERT, VAL);
 	/// Sets the triangle's origin.
-	Trigon* setOrigin(
+	Triangle* setOrigin(
 			Vector3 aPos = Vector3(+0, 1),
 			Vector3 bPos = Vector3(-1, -1),
 			Vector3 cPos = Vector3(+1, -1)
@@ -251,7 +229,7 @@ public:
 	}
 
 	/// Transforms the plane's origin by a given transform.
-	Trigon* setOrigin(Transform3D trans) {
+	Triangle* setOrigin(Transform3D trans) {
 		glm::mat4 glmtrans = asGLMMatrix(trans);
 		origin[0] = $srpTransform(origin[0], glmtrans);
 		origin[1] = $srpTransform(origin[1], glmtrans);
@@ -259,7 +237,7 @@ public:
 		return reset();
 	}
 
-	Trigon* setUV(
+	Triangle* setUV(
 			Vector2 aUV,
 			Vector2 bUV,
 			Vector2 cUV
@@ -270,7 +248,7 @@ public:
 		return this;
 	}
 
-	Trigon* setColor(
+	Triangle* setColor(
 			Vector4 aCol,
 			Vector4 bCol,
 			Vector4 cCol
@@ -281,7 +259,7 @@ public:
 		return this;
 	}
 
-	Trigon* setColor(
+	Triangle* setColor(
 			Vector4 col = Color::WHITE
 		) {
 		Drawer::vertexSetColor(*a,	col);
@@ -291,14 +269,14 @@ public:
 	}
 
 	/// Sets the triangle to its original state (last state set with setPosition).
-	Trigon* reset() override {
+	Triangle* reset() override {
 		VERTEX_SET_POS(*a,	origin[0]);
 		VERTEX_SET_POS(*b,	origin[1]);
 		VERTEX_SET_POS(*c,	origin[2]);
 		return this;
 	}
 
-	Trigon* transform() override {
+	Triangle* transform() override {
 		onTransform();
 		if (!fixed) return this;
 		// Get transformation
@@ -312,8 +290,8 @@ public:
 		return this;
 	}
 
-	Triangle** getBoundTriangles() override {
-		return tris;
+	RawVertex** getBoundVertices() override {
+		return verts;
 	}
 
 	void forEachVertex(VertexFunc f) override {
@@ -328,7 +306,7 @@ public:
 
 protected:
 
-	Triangle* tris[1] = {nullptr};
+	RawVertex* verts[3]	= {nullptr, nullptr, nullptr};
 
 	Vector3 origin[3];
 

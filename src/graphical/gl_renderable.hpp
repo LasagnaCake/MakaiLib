@@ -5,13 +5,14 @@ Do not touch this class. Please.
 class Renderable: public Base::Drawable {
 public:
 	Renderable(size_t layer = 0, bool manual = false): Drawable(layer, manual){
+		$debug("\nNew Renderable!");
 		glGenVertexArrays(1, &vao);
 		glGenBuffers(1, &vbo);
 	}
 
-	Renderable(vector<Triangle*> triangles, size_t layer = 0, bool manual = false)
+	Renderable(vector<RawVertex> vertices, size_t layer = 0, bool manual = false)
 	: Renderable(layer, manual) {
-		this->triangles = triangles;
+		this->vertices = vertices;
 	}
 
 	virtual ~Renderable() {
@@ -24,29 +25,35 @@ public:
 		if (!references.plane.empty())
 			for (auto pr: references.plane)
 				delete pr;
-		if (!references.trigon.empty())
-			for (auto pr: references.trigon)
+		if (!references.triangle.empty())
+			for (auto pr: references.triangle)
 				delete pr;
 		references.plane.clear();
-		references.trigon.clear();
-		$debug("Deleting triangles...");
-		for (auto t: triangles) delete t;
-		triangles.clear();
+		references.triangle.clear();
+		$debug("Deleting vertices...");
+		vertices.clear();
 		$debug("Killing renderable object...");
 	}
 
 	/// Creates a reference and binds it to this object.
 	template <$derived(Reference::Plane) T>
 	T* createReference() {
-		Triangle* tris[2] = {
-			new Triangle(),
-			new Triangle()
-		};
-		// Add triangles
-		triangles.push_back(tris[0]);
-		triangles.push_back(tris[1]);
+		for (auto i = 0; i < 6; i++)
+			vertices.push_back(RawVertex{});
 		// Create reference
-		T* plane = new T(tris);
+		T* plane = new T(
+			&vertices[vertices.size()-6],
+			&vertices[vertices.size()-5],
+			&vertices[vertices.size()-4],
+			&vertices[vertices.size()-3],
+			&vertices[vertices.size()-2],
+			&vertices[vertices.size()-1]
+		);
+		$debugp("Planes: ");
+		$debug(references.plane.size());
+		$debugp("Vertices: ");
+		$debug(vertices.size());
+		$debug("");
 		// Setup plane
 		plane->setOrigin(
 			Vector3(-1.0, +1.0, 0.0),
@@ -64,18 +71,21 @@ public:
 		// Add to reference list
 		references.plane.push_back(plane);
 		// Set destructor function
-		plane->onDestroy =	[this, plane](){this->removeReference<T>(plane);};
-		plane->onUnbind =	[this, plane](){this->unbindReference<T>(plane);};
+		plane->onDestroy	= [this, plane](){this->removeReference<T>(plane);};
+		plane->onUnbind		= [this, plane](){this->unbindReference<T>(plane);};
 		// return plane
 		return plane;
 	}
-	template <$derived(Reference::Trigon) T>
+	template <$derived(Reference::Triangle) T>
 	T* createReference() {
-		Triangle* tris[1] = {new Triangle()};
-		// Add triangles
-		triangles.push_back(tris[0]);
+		for (auto i = 0; i < 3; i++)
+			vertices.push_back(RawVertex{});
 		// Create reference
-		T* tg = new T(tris);
+		T* tg = new T(
+			&vertices[vertices.size()-3],
+			&vertices[vertices.size()-2],
+			&vertices[vertices.size()-1]
+		);
 		// Setup plane
 		tg->setOrigin(
 			Vector3(-0.0, +1.0, 0.0),
@@ -89,11 +99,11 @@ public:
 		);
 		tg->setColor();
 		// Add to reference list
-		references.trigon.push_back(tg);
+		references.triangle.push_back(tg);
 		// Set destructor function
-		tg->onDestroy =	[this, tg](){this->removeReference<T>(tg);};
-		tg->onUnbind =	[this, tg](){this->unbindReference<T>(tg);};
-		// return trigon
+		tg->onDestroy	= [this, tg](){this->removeReference<T>(tg);};
+		tg->onUnbind	= [this, tg](){this->unbindReference<T>(tg);};
+		// return triangle
 		return tg;
 	}
 
@@ -103,9 +113,9 @@ public:
 		return (T*)references.plane[index];
 	}
 
-	template <$derived(Reference::Trigon) T>
+	template <$derived(Reference::Triangle) T>
 	inline T* getReference(size_t index) {
-		return (T*)references.trigon[index];
+		return (T*)references.triangle[index];
 	}
 
 	/**
@@ -117,28 +127,41 @@ public:
 	*/
 	template <$derived(Reference::Plane) T>
 	void removeReference(T* ref) {
-		auto tris = ref->getBoundTriangles();
-		triangles.erase(
+		auto verts = ref->getBoundVertices();
+		vertices.erase(
 			std::remove_if(
-				triangles.begin(),
-				triangles.end(),
-				[=](Triangle* e){return (e == tris[0]) || (e == tris[1]);}
+				vertices.begin(),
+				vertices.end(),
+				[=](RawVertex& e){
+					return
+						(&e == verts[0])
+					||	(&e == verts[1])
+					||	(&e == verts[2])
+					||	(&e == verts[3])
+					||	(&e == verts[4])
+					||	(&e == verts[5]);
+				}
 			),
-			triangles.end()
+			vertices.end()
 		);
 		unbindReference<T>(ref);
 	}
 
-	template <$derived(Reference::Trigon) T>
+	template <$derived(Reference::Triangle) T>
 	void removeReference(T* ref) {
-		auto tris = ref->getBoundTriangles();
-		triangles.erase(
+		auto verts = ref->getBoundVertices();
+		vertices.erase(
 			std::remove_if(
-				triangles.begin(),
-				triangles.end(),
-				[=](Triangle* e){return (e == tris[0]);}
+				vertices.begin(),
+				vertices.end(),
+				[=](RawVertex& e){
+					return
+						(&e == verts[0])
+					||	(&e == verts[1])
+					||	(&e == verts[2]);
+				}
 			),
-			triangles.end()
+			vertices.end()
 		);
 		unbindReference<T>(ref);
 	}
@@ -164,21 +187,21 @@ public:
 		delete ref;
 	}
 
-	template <$derived(Reference::Trigon) T>
+	template <$derived(Reference::Triangle) T>
 	void unbindReference(T* ref) {
-		auto& rp = references.trigon;
-		rp.erase(
+		auto& rt = references.triangle;
+		rt.erase(
 			std::remove_if(
-				rp.begin(),
-				rp.end(),
-				[&](Reference::Trigon* e){return e == ref;}
+				rt.begin(),
+				rt.end(),
+				[&](Reference::Triangle* e){return e == ref;}
 			),
-			rp.end()
+			rt.end()
 		);
 		delete ref;
 	}
 
-	vector<Triangle*> triangles;
+	vector<RawVertex> vertices;
 
 	Material::ObjectMaterial material;
 
@@ -186,39 +209,26 @@ public:
 
 private:
 	void draw() override {
-		// If no triangles exist, return
-		if (!triangles.size()) return;
+		// If no vertices exist, return
+		if (!vertices.size()) return;
 		// Transform references (if applicable)
 		for (auto& plane: references.plane)	plane->transform();
-		for (auto& tg: references.trigon)	tg->transform();
-		// Get vertex count
-		vertexCount = triangles.size() * 3;
-		// Create Intermediary Vertex Buffer (IVB) to be displayed on screen
-		RawVertex* verts = new RawVertex[(vertexCount)];
+		for (auto& tg: references.triangle)	tg->transform();
+		$debug("Transformed!");
 		// Get transformation matrix
 		actorMatrix = VecMath::asGLMMatrix(trans);
-		// Copy data to IVB
-		size_t i = 0;
-		for (auto& t: triangles) {
-			verts[i]	= t->verts[0];
-			verts[i+1]	= t->verts[1];
-			verts[i+2]	= t->verts[2];
-			i += 3;
-		}
 		// Set VBO as active
 		glBindBuffer(GL_ARRAY_BUFFER, vbo);
-		// Copy IVB to VBO
+		// Copy vertices to VBO
 		glBufferData(
 			GL_ARRAY_BUFFER,
-			vertexCount * RAW_VERTEX_BYTE_SIZE,
-			verts,
+			vertices.size() * sizeof(RawVertex),
+			vertices.data(),
 			GL_STATIC_DRAW
 		);
-		// Delete IVB, since it is no longer necessary
-		delete [] verts;
 		// De-transform references (if applicable)
 		for (auto& plane: references.plane)	plane->reset();
-		for (auto& tg: references.trigon)	tg->reset();
+		for (auto& tg: references.triangle)	tg->reset();
 		// Set VAO as active
 		glBindVertexArray(vao);
 		// Define vertex data in VBO
@@ -243,8 +253,8 @@ private:
 
 	/// List of references linked to this object.
 	struct {
-		vector<Reference::Plane*>	plane;
-		vector<Reference::Trigon*>	trigon;
+		vector<Reference::Plane*>		plane;
+		vector<Reference::Triangle*>	triangle;
 	} references;
 
 	glm::mat4x4 actorMatrix;

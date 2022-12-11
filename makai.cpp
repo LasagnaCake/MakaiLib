@@ -50,6 +50,7 @@ public:
 		// Create background
 		const size_t sideCount = 16;
 		$ref Plane* pl = tubeRend.createReference<$ref Plane>();
+		$debug("Backplane Created!");
 		pl->setOrigin(
 			$vec3(-2, 2, 12.5),
 			$vec3(2, 2, 12.5),
@@ -59,6 +60,8 @@ public:
 		//pl->setColor($vec4(0,0,0.5,1));
 		pl->unbind();//*/
 		for $ssrange(i, 0, sideCount) {
+			$debugp(sideCount);
+			$debug(" Strip created!");
 			// Set 1
 			pl = tubeRend.createReference<$ref Plane>();
 			$vec2
@@ -90,7 +93,9 @@ public:
 			c2 = Color::hueToPastel(i/(float)sideCount)+ $vec4(.2,.2,.2,0);
 			pl->setColor(c1, c2, c1, c2);
 			pl->unbind();
-		}/*
+		}
+		$debug("\n [ BACKGROUND DONE ] \n");
+		/*
 		for $ssrange(i, 0, 10) {
 			pl = tubeRend.createReference<$ref Plane>();
 			pl->setOrigin(
