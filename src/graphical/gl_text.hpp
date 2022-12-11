@@ -34,7 +34,7 @@ struct FontData {
 };
 
 struct TextData {
-	String		content		= "Hello World!";
+	String		content		= "Hello\nWorld!";
 	TextRect	rect		= {20, 100};
 	TextAlign	alignment	= ALIGN_LEFT;
 };
@@ -75,7 +75,7 @@ private:
 	/// The object's Vertex Buffer Object (VBO).
 	GLuint vbo;
 
-	TextData last = {""};
+	TextData last = {"",{0,0}};
 
 	void draw() override {
 		// If text changed, update label
@@ -153,12 +153,12 @@ private:
 			// If cursor has reached the rect's horizontal limit, move to new line
 			if(cursor.x > text.rect.h) {
 				cursor.x = 0;
-				cursor.y++;
+				cursor.y--;
 			}
 			// If newline, then reset cursor and continue to next character
 			if (c == '\n') {
 				cursor.x = 0;
-				cursor.y++;
+				cursor.y--;
 				continue;
 			}
 			// If cursor has reach the rect's vertical limit, break
