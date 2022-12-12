@@ -145,24 +145,29 @@ private:
 		// Clear previous characters
 		vertices.clear();
 		// The current character's position
-		Vector2 cursor;
+		Vector2		cursor;
+		TextRect	chrRect = {0,0};
 		// The current character's top left UV index
 		Vector2 uv;
 		unsigned char index;
 		for (char c: text.content) {
 			// If cursor has reached the rect's horizontal limit, move to new line
-			if(cursor.x > text.rect.h) {
+			if(chrRect.h > text.rect.h) {
 				cursor.x = 0;
 				cursor.y -= text.kerning.y;
+				chrRect.h = 0;
+				chrRect.v++;
 			}
 			// If newline, then reset cursor and continue to next character
 			if (c == '\n') {
 				cursor.x = 0;
 				cursor.y -= text.kerning.y;
+				chrRect.h = 0;
+				chrRect.v++;
 				continue;
 			}
 			// If cursor has reach the rect's vertical limit, break
-			if(cursor.y > text.rect.v)
+			if(chrRect.v > text.rect.v)
 				break;
 			// Get character index
 			index = Math::max((int)c - 0x20, 0);
@@ -194,6 +199,7 @@ private:
 			vertices.push_back(CHAR_VERTEX(pos[3], uvs[3]));
 			// Increment cursor
 			cursor.x += text.kerning.x;
+			chrRect.h++;
 		}
 	}
 	#undef CHAR_VERTEX

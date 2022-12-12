@@ -198,10 +198,10 @@ public:
 	}
 
 	void onDrawBegin() override {
-		float fac = (0.5 + (cos(getCurrentFrame() / (maxFrameRate * 2.0)) / 2.0));
-		cam3D.eye.x	= sin(getCurrentFrame() / maxFrameRate) * 3.0;
-		cam3D.at.y	= cos(getCurrentFrame() / maxFrameRate) * 3.0;
-		tubeRend.trans.rotation.z = getCurrentFrame() / (maxFrameRate * 3.0);
+		float fac = (0.5 + (cos(getCurrentCycle() / (maxCycleRate * 2.0)) / 2.0));
+		cam3D.eye.x	= sin(getCurrentCycle() / maxCycleRate) * 3.0;
+		cam3D.at.y	= cos(getCurrentCycle() / maxCycleRate) * 3.0;
+		tubeRend.trans.rotation.z = getCurrentCycle() / (maxCycleRate * 3.0);
 		tubeRend.trans.position.z = Math::lerp(-20.0f, 10.0f, fac);
 	}
 
@@ -232,10 +232,10 @@ public:
 				true,
 				$vec2(5, -5),
 				$vec2(
-					Math::min(sin(getCurrentFrame()/40.0) * 0.5, 0.0),
-					Math::min(sin(getCurrentFrame()/40.0) * -0.5, 0.0)
+					Math::min(sin(getCurrentCycle()/40.0) * 0.5, 0.0),
+					Math::min(sin(getCurrentCycle()/40.0) * -0.5, 0.0)
 				),
-				$vec2(getCurrentFrame()/60.0)
+				$vec2(getCurrentCycle()/60.0)
 			};
 			break;
 		default:

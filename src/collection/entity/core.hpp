@@ -111,7 +111,7 @@ namespace EntityClass {
 		/// Destructor.
 		virtual ~Entity() {
 			// Call function to be executed at deletion
-			onDelete();
+			callOnDelete();
 			// Remove self from the equation
 			removeFromTree();
 		}
@@ -444,6 +444,11 @@ namespace EntityClass {
 
 		/// The object's children.
 		vector<Entity*> children;
+
+		/// Calls the onDelete function.
+		void callOnDelete() {
+			onDelete();
+		}
 	};
 
 	/// The root object.
