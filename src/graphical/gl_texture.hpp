@@ -8,7 +8,8 @@ unsigned int createTexture2D(
 	unsigned int height,
 	unsigned int type = GL_UNSIGNED_BYTE,
 	unsigned int format = GL_RGBA,
-	unsigned int filter = GL_LINEAR,
+	unsigned int minFilter = GL_LINEAR,
+	unsigned int magFilter = GL_LINEAR,
 	unsigned char* data = NULL
 ) {
 	GLuint texture;
@@ -32,8 +33,8 @@ unsigned int createTexture2D(
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glGenerateMipmap(GL_TEXTURE_2D);
 	// Set filtering
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filter);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filter);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minFilter);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magFilter);
 	// Return texture ID
 	return texture;
 }
@@ -41,12 +42,14 @@ unsigned int createTexture2D(
 class Texture2D {
 public:
 	Texture2D() {}
+
 	Texture2D(
 		unsigned int width,
 		unsigned int height,
 		unsigned int type = GL_UNSIGNED_BYTE,
 		unsigned int format = GL_RGBA,
-		unsigned int filter = GL_LINEAR,
+		unsigned int minFilter = GL_LINEAR,
+		unsigned int magFilter = GL_LINEAR,
 		unsigned char* data = NULL
 	) {
 		create(
@@ -54,13 +57,14 @@ public:
 			height,
 			type,
 			format,
-			filter,
+			minFilter,
+			magFilter,
 			data
 		);
 	}
 
-	Texture2D(std::string path) {
-		create(path);
+	Texture2D(std::string path, unsigned int minFilter = GL_LINEAR, unsigned int magFilter = GL_LINEAR) {
+		create(path, minFilter, magFilter);
 	}
 
 	void create(
@@ -68,7 +72,8 @@ public:
 		unsigned int height,
 		unsigned int type = GL_UNSIGNED_BYTE,
 		unsigned int format = GL_RGBA,
-		unsigned int filter = GL_LINEAR,
+		unsigned int minFilter = GL_LINEAR,
+		unsigned int magFilter = GL_LINEAR,
 		unsigned char* data = NULL
 	) {
 		if (created) return;
@@ -78,12 +83,13 @@ public:
 			height,
 			type,
 			format,
-			filter,
+			minFilter,
+			magFilter,
 			data
 		);
 	}
 
-	void create(std::string path) {
+	void create(std::string path, unsigned int minFilter = GL_LINEAR, unsigned int magFilter = GL_LINEAR) {
 		int width, height, nrChannels;
 		unsigned char* data = stbi_load(path.c_str(), &width, &height, &nrChannels, 0);
 		if (data) {
@@ -92,7 +98,8 @@ public:
 				height,
 				GL_UNSIGNED_BYTE,
 				GL_RGBA,
-				GL_LINEAR,
+				minFilter,
+				magFilter,
 				data
 			);
 			stbi_image_free(data);

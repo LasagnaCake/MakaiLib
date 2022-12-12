@@ -70,11 +70,11 @@ vec4 distanceGradient(vec4 start, vec4 end, float near, float far, float strengt
 }
 
 vec4 applyFog(vec4 color) {
-	return distanceGradient(color, vec4(fogColor, color.w), fogNear, fogFar, fogStrength);
+	return distanceGradient(color, vec4(fogColor.xyz, color.w), fogNear, fogFar, fogStrength);
 }
 
 vec4 applyVoid(vec4 color) {
-	return distanceGradient(vec4(voidColor, color.w), color, voidNear, voidFar, voidStrength);
+	return distanceGradient(vec4(voidColor.xyz, color.w), color, voidNear, voidFar, voidStrength);
 }
 
 vec4 applyGradient(vec4 color) {

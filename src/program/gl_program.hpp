@@ -248,6 +248,8 @@ namespace Makai {
 					input.update();
 					// Get current time
 					cycleTicks = SDL_GetTicks();
+					// Increment cycle counter
+					cycle++;
 					// Do timer-related stuff
 					timerFunc(cycleDelta);
 					taskers.yield(cycleDelta);
@@ -261,7 +263,7 @@ namespace Makai {
 					// Get current time
 					frameTicks = SDL_GetTicks();
 					// increment frame counter
-					frame += 1;
+					frame++;
 					#ifndef $_FRAME_INDEPENDENT_PROCESS
 					// Do normal logic-related stuff
 					logicFunc(frameDelta);
@@ -301,6 +303,11 @@ namespace Makai {
 		/// Gets the current frame.
 		size_t getCurrentFrame() {
 			return frame;
+		}
+
+		/// Gets the current cycle.
+		size_t getCurrentCycle() {
+			return cycle;
 		}
 
 		inline void renderReservedLayer() {
@@ -469,6 +476,9 @@ namespace Makai {
 
 		/// Frame counter.
 		size_t frame = 0;
+
+		/// Cycle counter.
+		size_t cycle = 0;
 
 		/// Current execution state.
 		bool shouldRun = true;

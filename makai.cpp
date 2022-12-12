@@ -62,14 +62,13 @@ public:
 			$vec3(2, -2, 12.5)
 		);
 		testLabel.setRenderLayer($layer(WORLD));
-		testLabel.font.face = new Drawer::Texture2D("img/fonts/font.png");
+		testLabel.font.face = new Drawer::Texture2D("img/fonts/fontGRID.png");
 		testLabel.trans.scale = 2.5;
 		testLabel.trans.scale.x *= 0.8;
 		testLabel.text.content = "   Spell shattered!\n(Get spell card bonus)";
-		testLabel.text.rect = {30};
-		testLabel.trans.position = $vec3(-5, 5, 6);
+		testLabel.trans.position = $vec3(10, 10, 2.5);
 		testLabel.trans.rotation.y = PI;
-		testLabel.text.kerning.x = 0.7;
+		testLabel.text.kerning.x = 0.55;
 		//pl->setColor($vec4(0,0,0.5,1));
 		pl->unbind();//*/
 		for $ssrange(i, 0, sideCount) {

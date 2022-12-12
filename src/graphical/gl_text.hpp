@@ -35,7 +35,7 @@ struct FontData {
 
 struct TextData {
 	String		content		= "Hello\nWorld!";
-	TextRect	rect		= {20, 100};
+	TextRect	rect		= {40, 100};
 	TextAlign	alignment	= ALIGN_LEFT;
 	Vector2		kerning		= Vector2(1);
 };

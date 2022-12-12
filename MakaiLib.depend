@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1670803893 source:d:\c(++) projects\_c++\game engine\makailib\makai.cpp
+1670848926 source:d:\c(++) projects\_c++\game engine\makailib\makai.cpp
 	"src/makai.hpp"
 	<wtypes.h>
 	<windows.h>
@@ -3030,7 +3030,7 @@
 	<algorithm>
 	<regex>
 
-1670791464 d:\c(++) projects\_c++\game engine\makailib\src\program\gl_program.hpp
+1670842092 d:\c(++) projects\_c++\game engine\makailib\src\program\gl_program.hpp
 	"../anchors.hpp"
 	"../graphical.hpp"
 	<wtypes.h>
@@ -3312,7 +3312,7 @@
 
 1670762478 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_reference.hpp
 
-1664664497 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_texture.hpp
+1670849271 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_texture.hpp
 
 1670762493 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_renderable.hpp
 
@@ -3374,7 +3374,7 @@
 
 1668385504 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\predefs.hpp
 
-1670801663 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_text.hpp
+1670845893 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_text.hpp
 
 1670329633 d:\c(++) projects\_c++\game engine\makailib\src\collection\definitions.hpp
 
