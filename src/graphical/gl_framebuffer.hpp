@@ -106,10 +106,13 @@ namespace Drawer {
 			glGenBuffers(1, &vbo);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 			// This keeps the alpha from shitting itself
-			glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+			glEnable(GL_BLEND);
+			glEnable(GL_ALPHA_TEST);
+			//glEnable(GL_CULL_FACE);
+			glBlendFuncSeparate(DEFAULT_BLEND_FUNC);
+			//glBlendEquationSeparate(DEFAULT_BLEND_EQUATION);
 			glDepthFunc(GL_LESS);
 			//glBlendFunc(GL_DST_ALPHA, GL_ONE_MINUS_DST_ALPHA);
-			//glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 			//glBlendFunc(GL_ONE_MINUS_DST_ALPHA, GL_ONE);
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 			this->width = width;

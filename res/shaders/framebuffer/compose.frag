@@ -38,9 +38,6 @@ uniform vec4	gradientStart	= vec4(0);
 uniform vec4	gradientEnd		= vec4(1);
 uniform bool	gradientInvert	= false;
 
-// [ HSL ADJUSTMENTS ]
-uniform float saturation = 1;
-
 // [ SCREEN WAVE ]
 uniform bool useWave		= false;
 uniform vec2 waveAmplitude	= vec2(1);
@@ -72,8 +69,7 @@ void main() {
 		wave = vec2(sin(wave.x), sin(wave.y)) * (waveAmplitude / 10.0);
 	}
 	vec4 color = (texture(screen, fragUV + wave) * fragColor * albedo) + accent;
-	// HSL adjuster
-	color = mix(vec4(vec3(color.x, color.y, color.z), color.w), color, saturation);
+	if (color.w <= 0) discard;
 	// Color inverter
 	if (negative) color = vec4(vec3(1) - vec3(color.x, color.y, color.z), color.w);
 	// Color to gradient
@@ -87,8 +83,5 @@ void main() {
 		else
 			color.w *= maskValue[maskChannel];
 	}
-
-	if (color.w > 0)
-		color = color / vec4(vec3(color.w), 1.0);
 	FragColor = color;
 }

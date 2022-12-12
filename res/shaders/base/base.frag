@@ -17,21 +17,19 @@ uniform float		alphaClip = 0.2;
 
 uniform vec4 albedo = vec4(1);
 
-uniform bool alphaAdjust = true;
-
 // [ DISTANCE-BASED FOG ]
 uniform bool	useFog		= false;
 uniform float	fogFar		= 16;
 uniform float	fogNear		= 12;
 uniform float	fogStrength	= 1;
-uniform vec3	fogColor	= vec3(1);
+uniform vec4	fogColor	= vec4(1);
 
 // [ VOID (NEAR FOG) ]
 uniform bool	useVoid			= false;
 uniform float	voidFar			= 6;
 uniform float	voidNear		= 4;
 uniform float	voidStrength	= 1;
-uniform vec3	voidColor		= vec3(0);
+uniform vec4	voidColor		= vec4(0);
 
 // [ TEXTURE WARPING ]
 uniform bool		useWarp			= false;
@@ -70,11 +68,11 @@ vec4 distanceGradient(vec4 start, vec4 end, float near, float far, float strengt
 }
 
 vec4 applyFog(vec4 color) {
-	return distanceGradient(color, vec4(fogColor.xyz, color.w), fogNear, fogFar, fogStrength);
+	return distanceGradient(color, vec4(fogColor.xyz, fogColor.w * color.w), fogNear, fogFar, fogStrength);
 }
 
 vec4 applyVoid(vec4 color) {
-	return distanceGradient(vec4(voidColor.xyz, color.w), color, voidNear, voidFar, voidStrength);
+	return distanceGradient(vec4(voidColor.xyz, fogColor.w * color.w), color, voidNear, voidFar, voidStrength);
 }
 
 vec4 applyGradient(vec4 color) {
@@ -90,37 +88,28 @@ vec4 applyGradient(vec4 color) {
 		return mix(gradientStart, gradientEnd, gradientValue);
 }
 
-vec4 calcFragColor(vec4 color) {
-	if (fragColor.w >= 0)
-		return color * fragColor;
-	else {
-		return vec4(vec3(1) - (color.xyz * fragColor.xyz), color.a * (-fragColor.a)); 
-	} 
-}
-
 void main(void) {
 	vec4 color;
 	if (textured) {
 		if (useWarp) {
 			vec4 warpFac = texture(warpTexture, warpUV);
 			vec2 warpCoord = vec2(warpFac[warpChannelX], warpFac[warpChannelY]);
-			color = calcFragColor(texture(texture2D, fragUV + warpCoord));
+			color = texture(texture2D, fragUV + warpCoord) * fragColor;
 		}
-		else color = calcFragColor(texture(texture2D, fragUV));
+		else color = texture(texture2D, fragUV) * fragColor;
 	}
-	else color = calcFragColor(vec4(1));
+	else color = fragColor;
 
 	if (textured)
 		if (color.w <= (fragColor.w * alphaClip))
 			discard;
 
 	color *= albedo;
+	//color = vec4(color.xyz * albedo.xyz, 0.2);
 
 	if (useNegative) color = vec4(vec3(1) - color.xyz, color.w);
 
 	if (useGradient) color = applyGradient(color);
-
-	if (alphaAdjust && color.w > 0) color /= vec4(vec3(fragColor.w), 1.0);
 
 	if (useLights) color = applyLights(color);
 

@@ -93,7 +93,7 @@ struct RainbowEffect: Effect, Tuneable, Variable {
 
 // World Material Effects
 
-struct FogEffect: Effect, Limitable, ColorableRGB, Variable {};
+struct FogEffect: Effect, Limitable, ColorableRGBA, Variable {};
 
 struct AmbientEffect: ColorableRGB, Variable {};
 
@@ -104,7 +104,6 @@ struct ObjectMaterial {
 	WarpEffect		warp;
 	NegativeEffect	negative;
 	GradientEffect	gradient;
-	bool adjustAlpha	= true;
 	GLuint culling		= GL_FRONT_AND_BACK;
 	GLuint fill			= GL_FILL;
 };
@@ -151,8 +150,7 @@ void setMaterial(Shader& shader, ObjectMaterial& material) {
 	shader["gradientStart"](material.gradient.begin);
 	shader["gradientEnd"](material.gradient.end);
 	shader["gradientInvert"](material.gradient.invert);
-	// Alpha adjust
-	shader["alphaAdjust"](material.adjustAlpha);
+	// Lighted
 	shader["useLights"](material.shaded);
 	// Albedo
 	shader["albedo"](material.color);

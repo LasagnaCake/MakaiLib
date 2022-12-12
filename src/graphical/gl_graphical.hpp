@@ -22,6 +22,9 @@
 
 #include "gl_color.hpp"
 
+#define DEFAULT_BLEND_FUNC GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA
+#define DEFAULT_BLEND_EQUATION GL_FUNC_ADD, GL_FUNC_ADD
+
 namespace Drawer {
 	namespace {
 		//GLuint defBackBuffer

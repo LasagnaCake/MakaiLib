@@ -46,8 +46,7 @@ public:
 	: Drawable(layer, manual) {
 		glGenVertexArrays(1, &vao);
 		glGenBuffers(1, &vbo);
-		//material.adjustAlpha = false;
-		material.texture.alphaClip = 0.25;
+		material.texture.alphaClip = 0.1;
 	}
 
 	virtual ~Label() {

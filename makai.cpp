@@ -72,9 +72,10 @@ public:
 		//pl->setColor($vec4(0,0,0.5,1));
 		pl->unbind();//*/
 		for $ssrange(i, 0, sideCount) {
-			$debugp(sideCount);
-			$debug(" Strip created!");
 			// Set 1
+			$vec4
+			c1 = Color::hueToRGB(i/(float)sideCount),
+			c2 = Color::hueToPastel(i/(float)sideCount)*$vec4(1,1,1,0)+ $vec4(.2,.2,.2,0);
 			pl = tubeRend.createReference<$ref Plane>();
 			$vec2
 			p1 = $vmt angleV2((TAU / (float)sideCount) * (float)i),
@@ -88,9 +89,6 @@ public:
 			bl = $vec3(p2, -3),
 			br = $vec3(p3, 4.5);
 			pl->setOrigin(tl, tr, bl, br);
-			$vec4
-			c1 = Color::hueToRGB(i/(float)sideCount),
-			c2 = Color::hueToPastel(i/(float)sideCount)+ $vec4(.2,.2,.2,0);
 			pl->setColor(c1, c2, c1, c2);
 			pl->unbind();
 			// Set 2
@@ -101,8 +99,6 @@ public:
 			bl = $vec3(p3, 4.5),
 			br = $vec3(p4, 12);
 			pl->setOrigin(tl, tr, bl, br);
-			c1 = Color::hueToRGB(i/(float)sideCount),
-			c2 = Color::hueToPastel(i/(float)sideCount)+ $vec4(.2,.2,.2,0);
 			pl->setColor(c1, c2, c1, c2);
 			pl->unbind();
 		}
@@ -187,7 +183,7 @@ public:
 		bulletSpawner.stop();
 		player.board = DANMAKU_EBM -> board;
 		DANMAKU_IM -> createCollectible(CollectibleData(), 5, lPos, 3, $vec2(0.5));
-		world3D.farFog = {true, 20, 10, $vec3(0, 0, 0.2)};
+		world3D.farFog = {true, 20, 10, $vec4(0, 0, 0.2, 1)};
 		world3D.ambient.color = Vector3(1,1,1);
 	}
 
@@ -230,7 +226,7 @@ public:
 			layerMaterial.background = Vector4(0, 0, 0.2, 1);
 			layerMaterial.wave = {
 				true,
-				$vec2(5, -5),
+				$vec2(3, -5),
 				$vec2(
 					Math::min(sin(getCurrentCycle()/40.0) * 0.5, 0.0),
 					Math::min(sin(getCurrentCycle()/40.0) * -0.5, 0.0)

@@ -174,11 +174,14 @@ namespace Makai {
 			$debug("Created!");*/
 			SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
 			SDL_GL_SetAttribute(SDL_GL_BUFFER_SIZE, 8);
-			glEnable(GL_BLEND);
 			//glViewport(0, 0, width, height);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 			// This keeps the alpha from shitting itself
-			glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+			glEnable(GL_BLEND);
+			glEnable(GL_ALPHA_TEST);
+			//glEnable(GL_CULL_FACE);
+			//glBlendFuncSeparate(DEFAULT_BLEND_FUNC);
+			//glBlendEquationSeparate(DEFAULT_BLEND_EQUATION);
 			//glBlendFunc(GL_ONE_MINUS_DST_ALPHA, GL_ONE);
 			// Setup camera
 			$debug("Setting starting camera...");
@@ -188,6 +191,11 @@ namespace Makai {
 			// Create framebuffer
 			framebuffer.create(width, height);
 			layerbuffer.create(width, height);
+			framebuffer();
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			glBlendEquationSeparate(GL_FUNC_ADD, GL_FUNC_ADD);
+			// TODO: Figure out alpha fuckery
+			glBindBuffer(GL_FRAMEBUFFER, 0);
 			// Create composition shader
 			$debug("Creating composition shader...");
 			bufferShader.create(SLF::parseFile(bufferShaderPath));
