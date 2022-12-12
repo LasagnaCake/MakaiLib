@@ -31,13 +31,13 @@ struct TextRect {
 struct FontData {
 	Texture2D*	face		= nullptr;
 	Vector2		size		= Vector2(16);
-	Vector2		kerning		= Vector2(1);
 };
 
 struct TextData {
 	String		content		= "Hello\nWorld!";
 	TextRect	rect		= {20, 100};
 	TextAlign	alignment	= ALIGN_LEFT;
+	Vector2		kerning		= Vector2(1);
 };
 
 class Label: public Base::Drawable {
@@ -83,6 +83,7 @@ private:
 			||	text.rect.h		!= last.rect.h
 			||	text.rect.v		!= last.rect.v
 			||	text.alignment	!= last.alignment
+			||	text.kerning	!= last.kerning
 		) {
 			last = text;
 			update();
@@ -152,12 +153,12 @@ private:
 			// If cursor has reached the rect's horizontal limit, move to new line
 			if(cursor.x > text.rect.h) {
 				cursor.x = 0;
-				cursor.y -= font.kerning.y;
+				cursor.y -= text.kerning.y;
 			}
 			// If newline, then reset cursor and continue to next character
 			if (c == '\n') {
 				cursor.x = 0;
-				cursor.y -= font.kerning.y;
+				cursor.y -= text.kerning.y;
 				continue;
 			}
 			// If cursor has reach the rect's vertical limit, break
@@ -192,7 +193,7 @@ private:
 			vertices.push_back(CHAR_VERTEX(pos[2], uvs[2]));
 			vertices.push_back(CHAR_VERTEX(pos[3], uvs[3]));
 			// Increment cursor
-			cursor.x += font.kerning.x;
+			cursor.x += text.kerning.x;
 		}
 	}
 	#undef CHAR_VERTEX

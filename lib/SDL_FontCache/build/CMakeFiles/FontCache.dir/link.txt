@@ -1,2 +1,0 @@
-D:\MSYS2\mingw64\bin\ar.exe qc libFontCache.a CMakeFiles/FontCache.dir/SDL_FontCache.c.obj
-D:\MSYS2\mingw64\bin\ranlib.exe libFontCache.a

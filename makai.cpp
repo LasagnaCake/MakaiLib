@@ -67,9 +67,9 @@ public:
 		testLabel.trans.scale.x *= 0.8;
 		testLabel.text.content = "   Spell shattered!\n(Get spell card bonus)";
 		testLabel.text.rect = {30};
-		testLabel.trans.position = $vec3(0, 5, 8);
+		testLabel.trans.position = $vec3(-5, 5, 6);
 		testLabel.trans.rotation.y = PI;
-		testLabel.font.kerning.x = 0.5;
+		testLabel.text.kerning.x = 0.7;
 		//pl->setColor($vec4(0,0,0.5,1));
 		pl->unbind();//*/
 		for $ssrange(i, 0, sideCount) {

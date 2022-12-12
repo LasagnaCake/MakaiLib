@@ -1,1 +1,0 @@
- libFontCache.a "D:/C(++) Projects/_C++/libraries/SDL2-2.0.10/x86_64-w64-mingw32/lib/libSDL2.dll.a" "D:/C(++) Projects/_C++/libraries/SDL2-2.0.10/x86_64-w64-mingw32/lib/libSDL2main.a" "D:/C(++) Projects/_C++/libraries/SDL2_ttf-2.20.1/x86_64-w64-mingw32/lib/libSDL2_ttf.dll.a" -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 
