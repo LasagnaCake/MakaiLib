@@ -40,6 +40,16 @@ struct TextData {
 	Vector2		kerning		= Vector2(1);
 };
 
+namespace {
+	bool isTextDataEqual(TextData& a, TextData& b) {
+		return	a.content	== b.content
+			&&	a.rect.h	== b.rect.h
+			&&	a.rect.v	== b.rect.v
+			&&	a.alignment	== b.alignment
+			&&	a.kerning	== b.kerning;
+	}
+}
+
 class Label: public Base::Drawable {
 public:
 	Label(size_t layer = 0, bool manual = false)
@@ -77,13 +87,7 @@ private:
 
 	void draw() override {
 		// If text changed, update label
-		if (
-				text.content	!= last.content
-			||	text.rect.h		!= last.rect.h
-			||	text.rect.v		!= last.rect.v
-			||	text.alignment	!= last.alignment
-			||	text.kerning	!= last.kerning
-		) {
+		if (!isTextDataEqual(text, last)) {
 			last = text;
 			update();
 		}
