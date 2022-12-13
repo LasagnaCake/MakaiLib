@@ -161,7 +161,8 @@ struct PlayerEntity2D: AreaCircle2D {
 	virtual void onSubAction()		{}
 	virtual void onExtraAction()	{}
 
-	virtual void onDeath()	{
+	virtual void onPreDeath()	{}
+	virtual void onDeath()		{
 		moveTween.reinterpolate(spawnPoint);
 		setInvincible(90);
 	}
@@ -199,6 +200,7 @@ struct PlayerEntity2D: AreaCircle2D {
 		collision.enabled = false;
 		sprite->setColor(INVINCIBLE_COLOR);
 		deathbomb.start();
+		onPreDeath();
 	}
 
 	void spawnPlayer(Vector2 from) {
@@ -264,6 +266,11 @@ struct PlayerEntity2D: AreaCircle2D {
 			if (lllist.size()) {
 				onGraze(lllist.size(), lllist);
 			}
+		}
+		auto elist = $ecl groups.getGroup($layer(ENEMY));
+		if (elist.size()) {
+			for $eachif(enemy, elist, ((AreaCollision2D*)enemy)->colliding(this))
+				((AreaCollision2D*)enemy)->onCollision(this);
 		}
 		// Do shot actions
 		optionShot.paused =

@@ -1,7 +1,7 @@
 struct Enemy2D: AreaCircle2D {
 	DERIVED_CLASS(Enemy2D, AreaCircle2D)
 
-	float health = 0;
+	float health = 100.0;
 
 	$rdt Renderable mesh;
 
@@ -24,15 +24,19 @@ struct Enemy2D: AreaCircle2D {
 	}
 
 	void onCollision(Entity* e) override {
+		auto obj = (PlayerEntity2D*)e;
 		if ($ecl groups.hasEntity(e, $layer(PLAYER_BULLET)) && mainPlayer) {
 			health -= getMainPlayer()->damage;
+		}
+		if (obj == mainPlayer) {
+			obj->pichun();
 		}
 	}
 
 	void updateSprite() {
 		Transform2D self = globalTransform();
-		sprite->local.position = $vec3(self.position, zIndex);
-		sprite->local.rotation.z = self.rotation;
+		sprite->local.position		= $vec3(self.position, zIndex);
+		sprite->local.rotation.z	= self.rotation;
 		sprite->local.scale = $vec3(self.scale, zScale);
 	}
 };
