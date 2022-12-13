@@ -25,10 +25,13 @@ struct Enemy2D: AreaCircle2D {
 
 	void onCollision(Entity* e) override {
 		auto obj = (PlayerEntity2D*)e;
-		if ($ecl groups.hasEntity(e, $layer(PLAYER_BULLET)) && mainPlayer) {
-			health -= getMainPlayer()->damage;
+		if ($ecl groups.hasEntity(e, $layer(PLAYER_BULLET))) {
+			if (getMainPlayer())
+				health -= getMainPlayer()->damage;
+			else
+				health -= defaults.playerDamage;
 		}
-		if (obj == mainPlayer) {
+		if (obj == getMainPlayer()) {
 			obj->pichun();
 		}
 	}

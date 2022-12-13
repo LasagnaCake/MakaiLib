@@ -114,3 +114,7 @@ protected:
 };
 
 typedef std::vector<DanmakuObject*> ObjectList;
+
+struct {
+	float playerDamage = 1.0;
+} defaults;

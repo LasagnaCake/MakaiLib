@@ -47,7 +47,7 @@
 	if (pause.enabled) return
 
 #ifndef INVINCIBLE_COLOR
-#define INVINCIBLE_COLOR $vec4(Color::SEMISOLID).compensated()
+#define INVINCIBLE_COLOR Color::SEMISOLID
 #endif // INVINCIBLE_COLOR
 
 namespace ItemType {
