@@ -191,10 +191,10 @@ namespace Makai {
 			// Create framebuffer
 			framebuffer.create(width, height);
 			layerbuffer.create(width, height);
+			// Fix alpha being a bitch
 			framebuffer();
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 			glBlendEquationSeparate(GL_FUNC_ADD, GL_FUNC_ADD);
-			// TODO: Figure out alpha fuckery
 			glBindBuffer(GL_FRAMEBUFFER, 0);
 			// Create composition shader
 			$debug("Creating composition shader...");

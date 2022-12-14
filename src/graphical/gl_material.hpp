@@ -87,7 +87,9 @@ struct MaskEffect: Effect, Imageable2D, Transformable2D, Channelable, Invertible
 
 struct WaveEffect: Effect, Tuneable2D {};
 
-struct RainbowEffect: Effect, Tuneable, Variable {
+struct RainbowEffect: Effect, Variable {
+	float frequency	= 0.0;
+	float shift		= 0.0;
 	bool absoluteColor = false;
 };
 
@@ -189,8 +191,7 @@ void setMaterial(Shader& shader, BufferMaterial& material) {
 	shader["negative"](material.negative.enabled);
 	// Set rainbow data
 	shader["useRainbow"](material.rainbow.enabled);
-	shader["rainbowAmp"](material.rainbow.amplitude);
-	shader["rainbowFreq"](material.rainbow.frequency);
+	shader["rainbowFrequency"](material.rainbow.frequency);
 	shader["rainbowShift"](material.rainbow.shift);
 	shader["rainbowStrength"](material.rainbow.strength);
 	shader["rainbowAbsolute"](material.rainbow.absoluteColor);

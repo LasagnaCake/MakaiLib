@@ -44,9 +44,31 @@ uniform vec2 waveAmplitude	= vec2(1);
 uniform vec2 waveFrequency	= vec2(1);
 uniform vec2 waveShift		= vec2(1);
 
+// [ SCREEN RAINBOW EFFECT ]
+uniform bool	useRainbow			= false;
+uniform float	rainbowFrequency	= 0;
+uniform float	rainbowShift		= 0;
+uniform float	rainbowStrength		= 0;
+uniform bool	rainbowAbsolute		= false;
+
 #ifndef PI
 #define PI 3.1415926535
 #endif
+
+#ifndef TAU
+#define TAU (PI * 2.0)
+#endif
+
+vec4 hueToPastel(float hue) {
+	hue *= PI;
+	vec3 res = vec3(
+		cos(hue),
+		cos(hue + TAU * (1.0/3.0)),
+		cos(hue + TAU * (2.0/3.0))
+	);
+	res = normalize(res * res) * sqrt(2);
+	return vec4(clamp(res, vec3(0), vec3(1)), 1);
+}
 
 vec4 applyGradient(vec4 color) {
 	float gradientValue;
@@ -59,6 +81,15 @@ vec4 applyGradient(vec4 color) {
 		return mix(gradientEnd, gradientStart, gradientValue);
 	else
 		return mix(gradientStart, gradientEnd, gradientValue);
+}
+
+vec4 applyRainbow(vec4 color, vec2 coords) {
+	vec4 rainbow = hueToPastel((coords.x + coords.y) * rainbowFrequency + rainbowShift);
+	rainbow = mix(rainbow, vec4(1), rainbowStrength);
+	if (rainbowAbsolute)
+		return rainbow;
+	else
+		return color * rainbow;
 }
 
 void main() {
@@ -74,6 +105,8 @@ void main() {
 	if (negative) color = vec4(vec3(1) - vec3(color.x, color.y, color.z), color.w);
 	// Color to gradient
 	if (useGradient) color = applyGradient(color);
+	// Reinbow effect
+	if (useRainbow) color = applyRainbow(color, fragUV + wave);
 	// Alpha mask
 	if (useMask) {
 		vec4 maskValue = texture(mask, maskUV);
