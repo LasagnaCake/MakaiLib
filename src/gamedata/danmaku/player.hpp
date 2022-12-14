@@ -93,7 +93,7 @@ struct PlayerEntity2D: AreaCircle2D {
 		mainShot.stop();
 		mainShot.repeat = true;
 		mainShot.onSignal	= $signal {$debug("Main Shot!"); onShotRequest();};
-		mainShot.delay = 5;
+		mainShot.delay = 1;
 		// Option shot
 		optionShot.stop();
 		optionShot.repeat = true;
@@ -146,7 +146,16 @@ struct PlayerEntity2D: AreaCircle2D {
 	virtual void onEnteringFocus()	{$debug("Focus Enter!");}
 	virtual void onExitingFocus()	{$debug("Focus Exit!");}
 
-	virtual void onShotRequest()		{}
+	virtual void onShotRequest()		{
+		if (playerBulletManager) {
+			auto b = playerBulletManager->createBullet();
+			b->local.position = globalPosition() + Vector2(0, 1);
+			b->params.hitbox.radius = 1;
+			b->params.vel.start = 128;
+			b->params.rot.start = -HPI;
+			b->reset();
+		}
+	}
 	virtual void onOptionShotRequest()	{}
 
 	virtual void onBomb()	{
@@ -349,7 +358,7 @@ private:
 		Transform2D self = globalTransform();
 		sprite->local.position		= Vector3(self.position, zIndex);
 		// For some reason the sprite is at a fucking angle sometimes
-		sprite->local.rotation.z	= self.rotation;
+		//sprite->local.rotation.z	= self.rotation;
 		sprite->local.scale			= Vector3(self.scale, 0);
 	}
 

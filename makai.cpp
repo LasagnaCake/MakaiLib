@@ -2,6 +2,7 @@
 
 #define $_PREVENT_BULLET_OVERFLOW_BY_WRAP
 #define $_DANMAKU_GAME
+#define $_FRAME_INDEPENDENT_PROCESS
 
 #include "src/makai.hpp"
 

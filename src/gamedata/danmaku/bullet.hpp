@@ -417,8 +417,8 @@ private:
 typedef BulletManager<PLAYER_BULLET_COUNT, $layer(PLAYER_BULLET), $layer(ENEMY), $layer(PLAYER)>	PlayerBulletManager;
 typedef BulletManager<ENEMY_BULLET_COUNT, $layer(ENEMY_BULLET), $layer(PLAYER), $layer(ENEMY)>		EnemyBulletManager;
 
-PlayerBulletManager*	playerBulletManager = nullptr;
-EnemyBulletManager*		enemyBulletManager = nullptr;
+PlayerBulletManager*	playerBulletManager	= nullptr;
+EnemyBulletManager*		enemyBulletManager	= nullptr;
 
 #define DANMAKU_PBM $dmk playerBulletMananger
 #define DANMAKU_EBM $dmk enemyBulletManager
