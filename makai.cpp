@@ -41,6 +41,8 @@ public:
 
 	$dmk PlayerEntity2D	player;
 
+	$dmk EnemyEntity2D*	enemy;
+
 	$rdt Renderable		tubeRend;
 
 	$rdt Text::Label	testLabel;
@@ -123,6 +125,9 @@ public:
 		player.spawnPoint =
 		player.position =
 		Vector2(32, -48) * screenSpace;
+		enemy = new $dmk EnemyEntity2D("Test");
+		enemy->position = Vector2(32, -24) * screenSpace;
+		enemy->sprite->setColor(Color::RED);
 		player.grazebox.radius = 2.5;
 		// Create test bullet spawner
 		bulletSpawner.onSignal = $signal {
@@ -186,6 +191,7 @@ public:
 		DANMAKU_IM -> createCollectible(CollectibleData(), 5, lPos, 3, $vec2(0.5));
 		world3D.farFog = {true, 20, 10, $vec4(0, 0, 0.2, 1)};
 		world3D.ambient.color = Vector3(1,1,1);
+		player.mesh.material.color = Color::GREEN;
 	}
 
 	void onLogicFrame(float delta) override {

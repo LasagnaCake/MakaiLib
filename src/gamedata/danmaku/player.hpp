@@ -302,6 +302,7 @@ struct PlayerEntity2D: AreaCircle2D {
 
 	virtual void onDelete() {
 		$debug("Deleting player...");
+		$ecl groups.removeFromAll(this);
 	}
 
 	virtual void onCollision(Entity* target) {

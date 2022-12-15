@@ -386,6 +386,7 @@ namespace EntityClass {
 
 		/// Deletes self.
 		const Event::Signal destroy = $signal {
+			removeFromTree();
 			delete this;
 		};
 

@@ -104,10 +104,10 @@ public:
 		float hWidth = (params.width.current / (2.0 + !params.active * 2.0));
 		float curLen = params.length.current;
 		sprite->setOrigin(
-			$vec3(0, hWidth),
-			$vec3(curLen, hWidth),
-			$vec3(0, -hWidth),
-			$vec3(curLen, -hWidth)
+			$vec3(hWidth, hWidth),
+			$vec3(curLen - hWidth, hWidth),
+			$vec3(hWidth, -hWidth),
+			$vec3(curLen - hWidth, -hWidth)
 		);
 		if (head) {
 			head->setOrigin(
@@ -205,13 +205,12 @@ public:
 	}
 
 	void onFrame(float delta) override {
-		/*auto half = [&]() {
-			for (auto i = 0; i < LASER_COUNT / 2; i++) {
-				auto* l = &lasers[i];
-				l->onFrame(delta);
-				if (!l->isFree() && l->params.collidable)
+		for (auto i = 0; i < LASER_COUNT; i++) {
+			auto* l = &lasers[i];
+			l->onFrame(delta);
+			if (!l->isFree() && l->params.collidable) {
 				for $each(actor, $ecl groups.getGroup(ENEMY_LAYER)) {
-					auto a = ((AreaCircle2D*)actor);
+					auto a = (AreaCircle2D*)actor;
 					if (
 						a->collision.enabled
 						&& l->colliding(a->getCircleBounds())
@@ -219,22 +218,6 @@ public:
 						a->onCollision(this);
 						l->discard();
 					}
-				}
-			}
-		};
-		std::thread firstHalf(half);*/
-		for (auto i = 0; i < LASER_COUNT; i++) {
-			auto* l = &lasers[i];
-			l->onFrame(delta);
-			if (!l->isFree() && l->params.collidable)
-			if (mainPlayer) {
-				auto& a = (mainPlayer);
-				if (
-					a->collision.enabled
-					&& l->colliding(a->getCircleBounds())
-				) {
-					a->onCollision(this);
-					l->discard();
 				}
 			}
 		}

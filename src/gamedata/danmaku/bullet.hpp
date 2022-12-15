@@ -127,13 +127,12 @@ public:
 	}
 
 	void onFrame(float delta) override {
-		/*auto half = [&]() {
-			for (auto i = 0; i < BULLET_COUNT / 2; i++) {
-				auto* b = &bullets[i];
-				b->onFrame(delta);
-				if (!b->isFree() && b->params.collidable)
+		for (auto i = 0; i < BULLET_COUNT; i++) {
+			auto* b = &bullets[i];
+			b->onFrame(delta);
+			if (!b->isFree() && b->params.collidable) {
 				for $each(actor, $ecl groups.getGroup(ENEMY_LAYER)) {
-					auto a = ((AreaCircle2D*)actor);
+					auto a = (AreaCircle2D*)actor;
 					auto targetBounds = a->getCircleBounds();
 					if (
 						a->collision.enabled
@@ -145,86 +144,6 @@ public:
 						a->onCollision(this);
 						b->discard();
 					}
-				}
-				if (b->params.rebound || b->params.shuttle)
-					if (
-						! $cdt withinBounds(
-							b->local.position,
-							board
-						)
-					) {
-						// Rebounding (reflecting) takes precedence over shuttling (wrapping)
-						if (b->params.rebound) {
-							#define $wreflect(AA) AA = Math::pi - AA
-							// Check X
-							if (
-								b->local.position.x < board.x.min ||
-								b->local.position.x > board.x.max
-							) {
-								$wreflect(b->params.rot.current);
-								$wreflect(b->params.rot.start);
-								$wreflect(b->params.rot.end);
-							}
-							#undef $wreflect
-							#define $wreflect(AA) AA = - AA
-							// Check Y
-							if (
-								b->local.position.y < board.y.min ||
-								b->local.position.y > board.y.max
-							) {
-								$wreflect(b->params.rot.current);
-								$wreflect(b->params.rot.start);
-								$wreflect(b->params.rot.end);
-							}
-							b->onRebound(b);
-							// Disable rebounding
-							b->params.rebound = false;
-							#undef $wreflect
-						}
-						else if (b->params.shuttle) {
-							// Check X
-							if (b->local.position.x < board.x.min)
-								b->local.position.x = board.x.max;
-							if (b->local.position.x > board.x.max)
-								b->local.position.x = board.x.min;
-							// Check Y
-							if (b->local.position.y < board.y.min)
-								b->local.position.y = board.y.max;
-							if (b->local.position.y > board.y.max)
-								b->local.position.y = board.y.min;
-							b->onShuttle(b);
-							// Disable shuttle
-							b->params.shuttle = false;
-						}
-					}
-				if (b->params.dope)
-					if (
-						! $cdt withinBounds(
-							b->params.hitbox,
-							playfield
-						)
-					) {
-						b->setFree(true);
-					}
-			}
-		};
-		std::thread firstHalf(half);*/
-		for (auto i = 0; i < BULLET_COUNT; i++) {
-			auto* b = &bullets[i];
-			b->onFrame(delta);
-			if (!b->isFree() && b->params.collidable)
-			if (mainPlayer) {
-				auto& a = (mainPlayer);
-				auto targetBounds = a->getCircleBounds();
-				if (
-					a->collision.enabled
-					&& $cdt withinBounds(
-						b->params.hitbox,
-						targetBounds
-					)
-				) {
-					a->onCollision(this);
-					b->discard();
 				}
 			}
 			if (b->params.rebound || b->params.shuttle)

@@ -265,6 +265,8 @@ namespace Makai {
 					// Do normal logic-related stuff
 					logicFunc(cycleDelta);
 					onLogicFrame(cycleDelta);
+					// Destroy queued entities
+					$ecl destroyQueued();
 					#endif // FRAME_DEPENDENT_PROCESS
 				}
 				if (SDL_GetTicks() - frameTicks > frameDelta * 1000) {
@@ -276,11 +278,11 @@ namespace Makai {
 					// Do normal logic-related stuff
 					logicFunc(frameDelta);
 					onLogicFrame(frameDelta);
+					// Destroy queued entities
+					$ecl destroyQueued();
 					#endif // FRAME_DEPENDENT_PROCESS
 					// Render screen
 					render();
-					// Destroy queued entities
-					$ecl destroyQueued();
 				}
 			}
 			// Terminate program
