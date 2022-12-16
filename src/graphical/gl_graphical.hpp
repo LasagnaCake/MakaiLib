@@ -348,25 +348,6 @@ namespace RenderData {
 
 #include "gl_framebuffer.hpp"
 
-namespace EntityClass {
-	class RenderableEntity2D: public Entity2D {
-	public:
-
-		DERIVED_CONSTRUCTOR(RenderableEntity2D, Entity2D, {})
-		DERIVED_CLASS(RenderableEntity2D, Entity2D)
-
-		virtual void onFrame(float delta) {
-			mesh.trans.position		= Vector3(globalPosition(), zIndex);
-			mesh.trans.rotation.z	= globalRotation();
-			mesh.trans.scale		= Vector3(globalScale(), 1);
-		}
-
-		float zIndex = 0;
-
-		RenderData::Renderable mesh;
-	};
-}
-
 #define $ref	RenderData::Reference::
 #define $rdt	RenderData::
 #define $drw	Drawer::
