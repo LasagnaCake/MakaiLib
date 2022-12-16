@@ -200,9 +200,8 @@ private:
 		// Copy data to IVB
 		size_t i = 0;
 		for (auto& t: triangles) {
-			verts[i]	= t->verts[0];
-			verts[i+1]	= t->verts[1];
-			verts[i+2]	= t->verts[2];
+			// Oh, hey, C! haven't seen you in a while!
+			*(Triangle*)&verts[i]	= (*t);
 			i += 3;
 		}
 		// Set VBO as active
