@@ -2952,7 +2952,7 @@
 	"../event.hpp"
 	"../grouping.hpp"
 
-1668902199 d:\c(++) projects\_c++\game engine\makailib\src\collection\tasking.hpp
+1671214139 d:\c(++) projects\_c++\game engine\makailib\src\collection\tasking.hpp
 	<vector>
 	<functional>
 	<type_traits>
@@ -3339,7 +3339,7 @@
 
 1671112880 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\bullet.hpp
 
-1671140570 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\laser.hpp
+1671209112 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\laser.hpp
 
 1663772564 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\spellcard.hpp
 
@@ -3525,4 +3525,7 @@
 1563040205 d:\c(++) projects\_c++\game engine\makailib\lib\bzip2-1.0.8\bzlib.h
 	<stdio.h>
 	<windows.h>
+
+1671214010 d:\c(++) projects\_c++\game engine\makailib\src\collection\asynchronous.hpp
+	<coroutine>
 
