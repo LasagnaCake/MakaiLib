@@ -59,6 +59,8 @@ uniform bool	rainbowAbsolute		= false;
 #define TAU (PI * 2.0)
 #endif
 
+// TODO?: www.youtube.com/watch?v=5EuYKEvugLU
+
 vec4 hueToPastel(float hue) {
 	hue *= PI;
 	vec3 res = vec3(

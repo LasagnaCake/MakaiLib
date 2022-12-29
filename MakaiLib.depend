@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1671140842 source:d:\c(++) projects\_c++\game engine\makailib\makai.cpp
+1672258278 source:d:\c(++) projects\_c++\game engine\makailib\makai.cpp
 	"src/makai.hpp"
 	<wtypes.h>
 	<windows.h>
@@ -2867,7 +2867,7 @@
 1665256929 d:\c(++) projects\_c++\game engine\makailib\src\program.hpp
 	"program/gl_program.hpp"
 
-1670694305 d:\c(++) projects\_c++\game engine\makailib\src\anchors.hpp
+1672183018 d:\c(++) projects\_c++\game engine\makailib\src\anchors.hpp
 	<iostream>
 	<string>
 	<vector>
@@ -2887,6 +2887,7 @@
 	"redefines.hpp"
 	<zlib.h>
 	<bzlib.h>
+	<mINI-0.9.14/ini.h>
 	"stb_image.h"
 	<GLEW/include/GL/glew.h>
 	<GLEW/include/GL/wglew.h>
@@ -3308,7 +3309,7 @@
 
 1533818822 d:\c(++) projects\_c++\game engine\makailib\lib\opengl\glm\gtx\rotate_vector.inl
 
-1670879602 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_framebuffer.hpp
+1672258116 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_framebuffer.hpp
 
 1670980095 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_reference.hpp
 
@@ -3319,12 +3320,13 @@
 1670437380 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_color.hpp
 	"../anchors.hpp"
 
-1670853931 d:\c(++) projects\_c++\game engine\makailib\src\gamedata.hpp
+1672183268 d:\c(++) projects\_c++\game engine\makailib\src\gamedata.hpp
 	"anchors.hpp"
 	"graphical.hpp"
 	"program.hpp"
 	"gamedata/danmaku/layout.hpp"
 	"gamedata/dialogue.hpp"
+	"gamedata/saving.hpp"
 	"gamedata/danmaku/predefs.hpp"
 	"gamedata/danmaku/structs.hpp"
 	"gamedata/danmaku/bullet.hpp"
@@ -3345,7 +3347,7 @@
 
 1665238790 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\player.hpp
 
-1665772172 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\layout.hpp
+1672245261 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\layout.hpp
 
 1554373468 d:\c(++) projects\_c++\game engine\makailib\lib\opengl\glm\gtx\euler_angles.hpp
 	"../glm.hpp"
@@ -3364,7 +3366,7 @@
 1535531570 d:\c(++) projects\_c++\game engine\makailib\lib\opengl\glm\gtx\compatibility.inl
 	<limits>
 
-1671140849 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\player.hpp
+1672243908 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\player.hpp
 
 1669661143 d:\c(++) projects\_c++\game engine\makailib\src\makai.hpp
 	"anchors.hpp"
@@ -3378,7 +3380,7 @@
 
 1670329633 d:\c(++) projects\_c++\game engine\makailib\src\collection\definitions.hpp
 
-1670932585 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\structs.hpp
+1672243878 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\structs.hpp
 
 1668986334 d:\c(++) projects\_c++\game engine\makailib\src\collection\helper.hpp
 	<vector>
@@ -3402,9 +3404,9 @@
 
 1670618620 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\program.hpp
 
-1671111261 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\enemy.hpp
+1672245332 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\enemy.hpp
 
-1666942375 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\boss.hpp
+1672253419 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\boss.hpp
 
 1666942540 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\stage.hpp
 
@@ -3504,7 +3506,7 @@
 1584273239 d:\c(++) projects\_c++\game engine\makailib\lib\opengl\glew\include\gl\wglew.h
 	<windows.h>
 
-1671031152 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_material.hpp
+1672258109 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_material.hpp
 
 1143199506 d:\c(++) projects\_c++\game engine\makailib\lib\freetype\include\ft2build.h
 	<freetype/config/ftheader.h>
@@ -3528,4 +3530,18 @@
 
 1671214010 d:\c(++) projects\_c++\game engine\makailib\src\collection\asynchronous.hpp
 	<coroutine>
+
+1653677432 d:\c(++) projects\_c++\game engine\makailib\lib\mini-0.9.14\ini.h
+	<string>
+	<sstream>
+	<algorithm>
+	<utility>
+	<unordered_map>
+	<vector>
+	<memory>
+	<fstream>
+	<sys/stat.h>
+	<cctype>
+
+1672240918 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\saving.hpp
 

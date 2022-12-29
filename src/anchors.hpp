@@ -52,6 +52,8 @@
 
 #include <zlib.h>
 #include <bzlib.h>
+#define MINI_CASE_SENSITIVE
+#include <mINI-0.9.14/ini.h>
 
 /*
 *********************

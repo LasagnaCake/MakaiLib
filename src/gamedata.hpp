@@ -52,6 +52,7 @@ namespace GameData {
 	}
 
 	#include "gamedata/dialogue.hpp"
+	#include "gamedata/saving.hpp"
 
 	#ifdef $_DANMAKU_GAME
 

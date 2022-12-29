@@ -3,6 +3,10 @@ struct EnemyEntity2D: AreaCircle2D {
 
 	float health = 100.0;
 
+	bool invincible = false;
+
+	bool collideWithPlayer = false;
+
 	$rdt Renderable mesh;
 
 	$ref AnimatedPlane* sprite;
@@ -13,6 +17,13 @@ struct EnemyEntity2D: AreaCircle2D {
 		sprite = mesh.createReference<AnimatedPlane>();
 		collision.size = 1;
 		addToGame(this, "DanmakuGame");
+		sprite->setColor(Color::WHITE);
+		// Invincibility timer
+		invincibility.stop();
+		invincibility.onSignal = $signal{
+			invincible = false;
+		};
+		invincibility.delay = 60;
 	})
 
 	virtual void onDelete() {
@@ -30,16 +41,34 @@ struct EnemyEntity2D: AreaCircle2D {
 	}
 
 	void onCollision(Entity* e) override {
-		auto obj = (PlayerEntity2D*)e;
-		if ($ecl groups.hasEntity(e, $layer(PLAYER_BULLET))) {
-			if (getMainPlayer())
-				health -= getMainPlayer()->damage;
-			else
-				health -= defaults.playerDamage;
+		if (!invincible) {
+			if ($ecl groups.hasEntity(e, $layer(PLAYER_BULLET))) {
+				if (getMainPlayer())
+					health -= getMainPlayer()->damage.main;
+				else
+					health -= defaults.playerDamage.main;
+			}
+			if ($ecl groups.hasEntity(e, $layer(PLAYER_BOMB))) {
+				if (getMainPlayer())
+					health -= getMainPlayer()->damage.bomb;
+				else
+					health -= defaults.playerDamage.bomb;
+			}
 		}
-		if (obj == getMainPlayer()) {
+		auto obj = (PlayerEntity2D*)e;
+		if (collideWithPlayer && obj == getMainPlayer()) {
 			obj->pichun();
 		}
+	}
+
+	void setInvincible() {
+		invincible = true;
+		invincibility.start();
+	}
+
+	void setInvincible(size_t time) {
+		invincible = true;
+		invincibility.start(time);
 	}
 
 	void updateSprite() {
@@ -48,4 +77,8 @@ struct EnemyEntity2D: AreaCircle2D {
 		//sprite->local.rotation.z	= self.rotation;
 		sprite->local.scale			= $vec3(self.scale, zScale);
 	}
+
+private:
+
+	$evt Timer invincibility;
 };

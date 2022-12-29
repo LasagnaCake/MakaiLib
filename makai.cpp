@@ -231,7 +231,7 @@ public:
 		switch(sublayerID) {
 		case 0:
 			layerMaterial.background = Vector4(0, 0, 0.2, 1);
-			layerMaterial.wave = {
+			/*layerMaterial.wave = {
 				true,
 				$vec2(3, -5),
 				$vec2(
@@ -239,7 +239,7 @@ public:
 					Math::min(sin(getCurrentCycle()/40.0) * -0.5, 0.0)
 				),
 				$vec2(getCurrentCycle()/60.0)
-			};
+			};*/
 			break;
 		default:
 			break;
@@ -251,7 +251,7 @@ public:
 		setWorldMaterial2D();
 		auto& layerMaterial = getLayerBuffer().material;
 		layerMaterial.background = Color::CLEAR;
-		layerMaterial.wave = {};
+		//layerMaterial.wave = {};
 		layerMaterial.color = Color::WHITE;
 	}
 

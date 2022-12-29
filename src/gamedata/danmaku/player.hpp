@@ -113,7 +113,10 @@ struct PlayerEntity2D: AreaCircle2D {
 	$ref AnimatedPlane*	sprite;
 	$mki InputManager	input;
 
-	float damage = 3;
+	struct {
+		float main = 3.0;
+		float bomb = 10.0;
+	} damage;
 
 	Vector2 spawnPoint	= Vector2(0, 0);
 
