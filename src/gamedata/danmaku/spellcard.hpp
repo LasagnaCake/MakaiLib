@@ -1,0 +1,3 @@
+class SpellCard: Entity {
+
+}

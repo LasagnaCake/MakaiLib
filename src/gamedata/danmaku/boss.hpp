@@ -18,7 +18,8 @@ struct BossEntity2D: EnemyEntity2D {
 	std::vector<BossPhaseData> phases;
 
 	virtual void onDeath() {
-		if (!phases.size()) queueDestroy();
+		if (!battling) return;
+		if (!phases.size()) endBattle();
 		else {
 			onPhaseEnd(phases.size());
 			auto phase = phases.end();
@@ -32,11 +33,16 @@ struct BossEntity2D: EnemyEntity2D {
 		}
 	}
 
+	virtual void onBattleBegin() {}
+
 	virtual void onPhaseBegin(size_t phase)	{}
 	virtual void onPhaseEnd(size_t phase)	{}
 
+	virtual void onBattleEnd() {}
+
 	void beginNextPhase() {
-		if(!phases.size()) return;
+		if(!battling) return;
+		if(!phases.size()) endBattle();
 		auto phase = phases.end();
 		phases.pop_back();
 		health = phase->health;
@@ -44,7 +50,22 @@ struct BossEntity2D: EnemyEntity2D {
 		onPhaseBegin(phases.size());
 	}
 
+	void startBattle() {
+		if(battling) return;
+		battling =
+		collision.enabled = true;
+		onBattleBegin();
+	}
+
+	void endBattle() {
+		if(!battling) return;
+		battling =
+		collision.enabled = false;
+		onBattleEnd();
+	}
+
 private:
+	bool battling = false;
 
 	$evt Timer phaseTimer;
 };

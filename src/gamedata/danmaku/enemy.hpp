@@ -22,6 +22,7 @@ struct EnemyEntity2D: AreaCircle2D {
 		invincibility.stop();
 		invincibility.onSignal = $signal{
 			invincible = false;
+			sprite->setColor(Color::WHITE);
 		};
 		invincibility.delay = 60;
 	})
@@ -41,22 +42,22 @@ struct EnemyEntity2D: AreaCircle2D {
 	}
 
 	void onCollision(Entity* e) override {
+		auto player = getMainPlayer();
 		if (!invincible) {
-			if ($ecl groups.hasEntity(e, $layer(PLAYER_BULLET))) {
-				if (getMainPlayer())
-					health -= getMainPlayer()->damage.main;
-				else
-					health -= defaults.playerDamage.main;
+			if (
+					$ecl groups.hasEntity(e, $layer(PLAYER_BULLET))
+				||	$ecl groups.hasEntity(e, $layer(PLAYER_LASER))
+			) {
+				if (player) health -= player->damage.main;
+				else health -= defaults.playerDamage.main;
 			}
 			if ($ecl groups.hasEntity(e, $layer(PLAYER_BOMB))) {
-				if (getMainPlayer())
-					health -= getMainPlayer()->damage.bomb;
-				else
-					health -= defaults.playerDamage.bomb;
+				if (player) health -= player->damage.bomb;
+				else health -= defaults.playerDamage.bomb;
 			}
 		}
 		auto obj = (PlayerEntity2D*)e;
-		if (collideWithPlayer && obj == getMainPlayer()) {
+		if (collideWithPlayer && obj == player) {
 			obj->pichun();
 		}
 	}
@@ -68,6 +69,7 @@ struct EnemyEntity2D: AreaCircle2D {
 
 	void setInvincible(size_t time) {
 		invincible = true;
+		sprite->setColor(INVINCIBLE_COLOR);
 		invincibility.start(time);
 	}
 

@@ -192,6 +192,7 @@ public:
 		world3D.farFog = {true, 20, 10, $vec4(0, 0, 0.2, 1)};
 		world3D.ambient.color = Vector3(1,1,1);
 		player.mesh.material.color = Color::GREEN;
+		enemy->setInvincible(120);
 	}
 
 	void onLogicFrame(float delta) override {
