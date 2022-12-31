@@ -11,9 +11,9 @@ public:
 	}
 
 	/// Called before rendering to screen.
-	$tev Signal<Drawable*> onDrawBegin	= [](Drawable* target){};
+	virtual void onDrawBegin() {}
 	/// Called after rendering to screen.
-	$tev Signal<Drawable*> onDrawEnd	= [](Drawable* target){};
+	virtual void onDrawEnd() {};
 
 	Drawable* setManual() {
 		if(!manualMode)
@@ -54,11 +54,11 @@ public:
 		// If not active, return
 		if (!active) return;
 		// Call onDrawBegin function
-		onDrawBegin(this);
+		onDrawBegin();
 		// Draw object
 		draw();
 		// Call onDrawEnd function
-		onDrawEnd(this);
+		onDrawEnd();
 	};
 
 	bool active	= true;

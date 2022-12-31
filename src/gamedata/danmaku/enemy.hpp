@@ -22,7 +22,6 @@ struct EnemyEntity2D: AreaCircle2D {
 		invincibility.stop();
 		invincibility.onSignal = $signal{
 			invincible = false;
-			sprite->setColor(Color::WHITE);
 		};
 		invincibility.delay = 60;
 	})
@@ -69,7 +68,6 @@ struct EnemyEntity2D: AreaCircle2D {
 
 	void setInvincible(size_t time) {
 		invincible = true;
-		sprite->setColor(INVINCIBLE_COLOR);
 		invincibility.start(time);
 	}
 

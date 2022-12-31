@@ -43,7 +43,7 @@ public:
 
 	$dmk EnemyEntity2D*	enemy;
 
-	$rdt Renderable		tubeRend;
+	$rdt Renderable*	tubeRend;
 
 	$rdt Text::Label	testLabel;
 
@@ -55,71 +55,9 @@ public:
 		// Do parent task
 		DanmakuApp::onOpen();
 		// Create background
-		const size_t sideCount = 16;
-		$ref Plane* pl = tubeRend.createReference<$ref Plane>();
-		$debug("Backplane Created!");
-		pl->setOrigin(
-			$vec3(-2, 2, 12.5),
-			$vec3(2, 2, 12.5),
-			$vec3(-2, -2, 12.5),
-			$vec3(2, -2, 12.5)
-		);
-		testLabel.setRenderLayer($layer(WORLD));
-		testLabel.font.face = new Drawer::Texture2D("img/fonts/fontGRID.png");
-		testLabel.trans.scale = 2.5;
-		testLabel.trans.scale.x *= 0.8;
-		testLabel.text.content = "   Spell shattered!\n(Get spell card bonus)";
-		testLabel.trans.position = $vec3(10, 10, 2.5);
-		testLabel.trans.rotation.y = PI;
-		testLabel.text.kerning.x = 0.55;
-		//pl->setColor($vec4(0,0,0.5,1));
-		pl->unbind();//*/
-		for $ssrange(i, 0, sideCount) {
-			// Set 1
-			$vec4
-			c1 = Color::hueToRGB(i/(float)sideCount),
-			c2 = Color::hueToPastel(i/(float)sideCount)*$vec4(1,1,1,0)+ $vec4(.2,.2,.2,0);
-			pl = tubeRend.createReference<$ref Plane>();
-			$vec2
-			p1 = $vmt angleV2((TAU / (float)sideCount) * (float)i),
-			p2 = $vmt angleV2((TAU / (float)sideCount) * (float)(i + 1)),
-			p3 = $vmt angleV2((TAU / (float)sideCount) * (float)(i + 2)),
-			p4 = $vmt angleV2((TAU / (float)sideCount) * (float)(i + 3));
-			$debug((TAU / (float)sideCount) * (float)i);
-			$vec3
-			tl = $vec3(p1, -5),
-			tr = $vec3(p2, 2.5),
-			bl = $vec3(p2, -3),
-			br = $vec3(p3, 4.5);
-			pl->setOrigin(tl, tr, bl, br);
-			pl->setColor(c1, c2, c1, c2);
-			pl->unbind();
-			// Set 2
-			pl = tubeRend.createReference<$ref Plane>();
-			$debug((TAU / (float)sideCount) * (float)i);
-			tl = $vec3(p2, 2.5),
-			tr = $vec3(p3, 10),
-			bl = $vec3(p3, 4.5),
-			br = $vec3(p4, 12);
-			pl->setOrigin(tl, tr, bl, br);
-			pl->setColor(c1, c2, c1, c2);
-			pl->unbind();
-		}
-		$debug("\n [ BACKGROUND DONE ] \n");
-		/*
-		for $ssrange(i, 0, 10) {
-			pl = tubeRend.createReference<$ref Plane>();
-			pl->setOrigin(
-				$vec3(-2, 2, 9.0 - i * 1.25),
-				$vec3(2, 2, 9.0 - i * 1.25),
-				$vec3(-2, -2, 9.0 - i * 1.25),
-				$vec3(2, -2, 9.0 - i * 1.25)
-			);
-			pl->setColor($vec4(Color::SEMILUCENT).compensated());
-			pl->unbind();
-		}*/
-		tubeRend.trans.scale = $vec3($vec2(10), 2);
-		tubeRend.trans.position.y = 5;
+		tubeRend = $rdt loadObjectFromFile("stages/test.bin");
+		tubeRend->trans.scale = $vec3($vec2(10), 2);
+		tubeRend->trans.position.y = 5;
 		// Set player stuff
 		Vector2 screenSpace = getWindowScale();
 		player.spawnPoint =
@@ -157,6 +95,14 @@ public:
 			}
 			rotAngle += (PI/5.0);
 		};
+		testLabel.setRenderLayer($layer(WORLD));
+		testLabel.font.face = new Drawer::Texture2D("img/fonts/fontGRID.png");
+		testLabel.trans.scale = 2.5;
+		testLabel.trans.scale.x *= 0.8;
+		testLabel.text.content = "   Spell shattered!\n(Get spell card bonus)";
+		testLabel.trans.position = $vec3(10, 10, 2.5);
+		testLabel.trans.rotation.y = PI;
+		testLabel.text.kerning.x = 0.55;
 		// Create test laser A
 		Vector2 lPos = Vector2(32, -16) * getWindowScale();
 		auto l = DANMAKU_ELLM -> createLineLaser();
@@ -205,8 +151,8 @@ public:
 		float fac = (0.5 + (cos(getCurrentCycle() / (maxCycleRate * 2.0)) / 2.0));
 		cam3D.eye.x	= sin(getCurrentCycle() / maxCycleRate) * 3.0;
 		cam3D.at.y	= cos(getCurrentCycle() / maxCycleRate) * 3.0;
-		tubeRend.trans.rotation.z = getCurrentCycle() / (maxCycleRate * 3.0);
-		tubeRend.trans.position.z = Math::lerp(-20.0f, 10.0f, fac);
+		tubeRend->trans.rotation.z = getCurrentCycle() / (maxCycleRate * 3.0);
+		tubeRend->trans.position.z = Math::lerp(-20.0f, 10.0f, fac);
 	}
 
 	#define $rlayer(LAYER) ($layer(LAYER) / SUBLAYER_COUNT)

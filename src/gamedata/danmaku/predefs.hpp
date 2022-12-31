@@ -55,8 +55,10 @@ namespace ItemType {
 		POWER_ITEM,
 		POINT_ITEM,
 		EXTRA_ITEM,
+		LIFE_ITEM,
+		LIFE_BIT_ITEM,
 		BOMB_ITEM,
-		LIFE_ITEM
+		BOMB_BIT_ITEM
 	};
 };
 

@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1672351756 source:d:\c(++) projects\_c++\game engine\makailib\makai.cpp
+1672447542 source:d:\c(++) projects\_c++\game engine\makailib\makai.cpp
 	"src/makai.hpp"
 	<wtypes.h>
 	<windows.h>
@@ -2867,7 +2867,7 @@
 1665256929 d:\c(++) projects\_c++\game engine\makailib\src\program.hpp
 	"program/gl_program.hpp"
 
-1672183018 d:\c(++) projects\_c++\game engine\makailib\src\anchors.hpp
+1672446421 d:\c(++) projects\_c++\game engine\makailib\src\anchors.hpp
 	<iostream>
 	<string>
 	<vector>
@@ -2883,7 +2883,7 @@
 	<algorithm>
 	<regex>
 	<chrono>
-	<coroutine>
+	<filesystem>
 	"redefines.hpp"
 	<zlib.h>
 	<bzlib.h>
@@ -2992,7 +2992,7 @@
 	<functional>
 	<string>
 
-1664717387 d:\c(++) projects\_c++\game engine\makailib\src\fileloader.hpp
+1672447616 d:\c(++) projects\_c++\game engine\makailib\src\fileloader.hpp
 	"anchors.hpp"
 
 1666553667 d:\c(++) projects\_c++\game engine\makailib\src\graphical.hpp
@@ -3315,7 +3315,7 @@
 
 1670849271 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_texture.hpp
 
-1671199715 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_renderable.hpp
+1672448489 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_renderable.hpp
 
 1670437380 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_color.hpp
 	"../anchors.hpp"
@@ -3343,7 +3343,7 @@
 
 1671209112 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\laser.hpp
 
-1663772564 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\spellcard.hpp
+1672416127 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\spellcard.hpp
 
 1665238790 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\player.hpp
 
@@ -3366,7 +3366,7 @@
 1535531570 d:\c(++) projects\_c++\game engine\makailib\lib\opengl\glm\gtx\compatibility.inl
 	<limits>
 
-1672243908 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\player.hpp
+1672420246 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\player.hpp
 
 1669661143 d:\c(++) projects\_c++\game engine\makailib\src\makai.hpp
 	"anchors.hpp"
@@ -3374,7 +3374,7 @@
 	"graphical.hpp"
 	"gamedata.hpp"
 
-1671041780 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\predefs.hpp
+1672420211 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\predefs.hpp
 
 1670955172 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_text.hpp
 
@@ -3404,9 +3404,9 @@
 
 1670618620 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\program.hpp
 
-1672352063 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\enemy.hpp
+1672443222 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\enemy.hpp
 
-1672351720 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\boss.hpp
+1672352496 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\boss.hpp
 
 1666942540 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\stage.hpp
 
@@ -3441,7 +3441,7 @@
 	<OpenGL/glu.h>
 	<GL/glu.h>
 
-1670606397 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_drawable.hpp
+1672428482 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_drawable.hpp
 
 1663831178 d:\c(++) projects\_c++\game engine\makailib\lib\freetype-gl\include\freetype-gl.h
 	"platform.h"

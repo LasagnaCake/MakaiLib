@@ -15,29 +15,21 @@ public:
 	}
 
 	virtual ~Renderable() {
+		locked = false;
 		Drawable::~Drawable();
 		$debug(references.plane.size());
 		$debug("Deleting buffers...");
 		glDeleteBuffers(1, &vbo);
 		glDeleteVertexArrays(1, &vao);
 		$debug("Deleting references...");
-		if (!references.plane.empty())
-			for (auto pr: references.plane)
-				delete pr;
-		if (!references.trigon.empty())
-			for (auto pr: references.trigon)
-				delete pr;
-		references.plane.clear();
-		references.trigon.clear();
-		$debug("Deleting triangles...");
-		for (auto t: triangles) delete t;
-		triangles.clear();
+		clearData();
 		$debug("Killing renderable object...");
 	}
 
 	/// Creates a reference and binds it to this object.
 	template <$derived(Reference::Plane) T>
 	T* createReference() {
+		if (locked) throw std::runtime_error("Renderable object is locked!");
 		Triangle* tris[2] = {
 			new Triangle(),
 			new Triangle()
@@ -71,6 +63,7 @@ public:
 	}
 	template <$derived(Reference::Trigon) T>
 	T* createReference() {
+		if (locked) throw std::runtime_error("Renderable object is locked!");
 		Triangle* tris[1] = {new Triangle()};
 		// Add triangles
 		triangles.push_back(tris[0]);
@@ -100,11 +93,13 @@ public:
 	/// Gets a reference bound to this object by index.
 	template <$derived(Reference::Plane) T>
 	inline T* getReference(size_t index) {
+		if (locked) throw std::runtime_error("Renderable object is locked!");
 		return (T*)references.plane[index];
 	}
 
 	template <$derived(Reference::Trigon) T>
 	inline T* getReference(size_t index) {
+		if (locked) throw std::runtime_error("Renderable object is locked!");
 		return (T*)references.trigon[index];
 	}
 
@@ -117,6 +112,7 @@ public:
 	*/
 	template <$derived(Reference::Plane) T>
 	void removeReference(T* ref) {
+		if (locked) return;
 		auto tris = ref->getBoundTriangles();
 		triangles.erase(
 			std::remove_if(
@@ -131,6 +127,7 @@ public:
 
 	template <$derived(Reference::Trigon) T>
 	void removeReference(T* ref) {
+		if (locked) return;
 		auto tris = ref->getBoundTriangles();
 		triangles.erase(
 			std::remove_if(
@@ -152,6 +149,7 @@ public:
 	*/
 	template <$derived(Reference::Plane) T>
 	void unbindReference(T* ref) {
+		if (locked) return;
 		auto& rp = references.plane;
 		rp.erase(
 			std::remove_if(
@@ -166,6 +164,7 @@ public:
 
 	template <$derived(Reference::Trigon) T>
 	void unbindReference(T* ref) {
+		if (locked) return;
 		auto& rp = references.trigon;
 		rp.erase(
 			std::remove_if(
@@ -178,6 +177,65 @@ public:
 		delete ref;
 	}
 
+	/// IRREVERSIBLE.
+	void bakeAndLock() {
+		if (locked) return;
+		bake();
+		locked = true;
+		clearData();
+	}
+
+	void bakeAndLock(RawVertex* vertices, size_t size) {
+		if (locked) return;
+		locked	= true;
+		baked	= true;
+		if (vertices == nullptr || size == 0)
+			throw std::runtime_error("No vertices were provided!");
+		if (this->vertices)
+			delete[] this->vertices;
+		this->vertices = new RawVertex[size];
+		for $ssrange(i, 0, size) {
+			this->vertices[i] = vertices[i];
+		}
+		vertexCount = size;
+		clearData();
+	}
+
+	void bake() {
+		if (baked || locked) return;
+		baked = true;
+		//Bake vertices
+		copyVertices();
+	}
+
+	void unbake() {
+		if (!baked || locked) return;
+		baked = false;
+		// Clear vertex buffer
+		delete [] vertices;
+		vertices = nullptr;
+	}
+
+	void clearData() {
+		if (vertices && !locked)
+			delete [] vertices;
+		if (!references.plane.empty())
+			for (auto pr: references.plane)
+				delete pr;
+		if (!references.trigon.empty())
+			for (auto pr: references.trigon)
+				delete pr;
+		references.plane.clear();
+		references.trigon.clear();
+		for (auto t: triangles) delete t;
+		triangles.clear();
+	}
+
+	void saveToFile(std::string path) {
+		bakeAndLock();
+		$fld saveBinaryFile(path, vertices, vertexCount);
+	}
+
 	vector<Triangle*> triangles;
 
 	Material::ObjectMaterial material;
@@ -185,39 +243,52 @@ public:
 	Transform3D trans;
 
 private:
-	void draw() override {
+	RawVertex* vertices = nullptr;
+
+	bool
+		baked	= false,
+		locked	= false;
+
+	void copyVertices() {
 		// If no triangles exist, return
 		if (!triangles.size()) return;
 		// Transform references (if applicable)
 		for (auto& plane: references.plane)	plane->transform();
 		for (auto& tg: references.trigon)	tg->transform();
+		// Copy data to vertex buffer
 		// Get vertex count
 		vertexCount = triangles.size() * 3;
-		// Create Intermediary Vertex Buffer (IVB) to be displayed on screen
-		RawVertex* verts = new RawVertex[(vertexCount)];
-		// Get transformation matrix
-		actorMatrix = VecMath::asGLMMatrix(trans);
+		// Copy data to vertex buffer
+		if (vertices) delete[] vertices;
+		vertices = new RawVertex[(vertexCount)];
 		// Copy data to IVB
 		size_t i = 0;
 		for (auto& t: triangles) {
 			// Oh, hey, C! haven't seen you in a while!
-			*(Triangle*)&verts[i]	= (*t);
+			*(Triangle*)&vertices[i]	= (*t);
 			i += 3;
 		}
+		// De-transform references (if applicable)
+		for (auto& plane: references.plane)	plane->reset();
+		for (auto& tg: references.trigon)	tg->reset();
+	}
+
+	void draw() override {
+		// Get transformation matrix
+		actorMatrix = VecMath::asGLMMatrix(trans);
+		// If object's vertices are not "baked" (i.e. finalized), copy them
+		if (!baked && !locked) copyVertices();
+		// If no vertices, return
+		if (!vertices) return;
 		// Set VBO as active
 		glBindBuffer(GL_ARRAY_BUFFER, vbo);
 		// Copy IVB to VBO
 		glBufferData(
 			GL_ARRAY_BUFFER,
 			vertexCount * RAW_VERTEX_BYTE_SIZE,
-			verts,
+			vertices,
 			GL_STATIC_DRAW
 		);
-		// Delete IVB, since it is no longer necessary
-		delete [] verts;
-		// De-transform references (if applicable)
-		for (auto& plane: references.plane)	plane->reset();
-		for (auto& tg: references.trigon)	tg->reset();
 		// Set VAO as active
 		glBindVertexArray(vao);
 		// Define vertex data in VBO
@@ -273,3 +344,11 @@ private:
 		glDrawArrays(GL_TRIANGLES, 0, vertexCount);
 	};
 };
+
+Renderable* loadObjectFromFile(std::string path) {
+	auto* object = new Renderable();
+	auto data = $fld loadBinaryFile(path);
+	if (!data.size()) throw std::runtime_error("File does not exist!");
+	object->bakeAndLock((RawVertex*)&data[0], data.size() / sizeof(RawVertex));
+	return object;
+}

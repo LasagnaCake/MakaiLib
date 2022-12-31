@@ -8,12 +8,33 @@ namespace FileLoader {
 		using namespace std;
 	}
 
+	/// Loads a binary file as an array;
+	vector<unsigned char> loadBinaryFile(string path) {
+		ifstream file;
+		// Ensure ifstream object can throw exceptions
+		file.exceptions(ifstream::failbit | ifstream::badbit);
+		// Preallocate data
+		size_t fileSize = filesystem::file_size(path);
+		vector<unsigned char> data(fileSize * 4);
+		// Try and load binary
+		try {
+			// Open and read file
+			file.open(path, ios::binary);
+			file.read((char*)&data[0], fileSize);
+			file.close();
+			return data;
+		}
+		catch (ifstream::failure e) {
+			return {};
+		}
+	}
+
 	/// Loads a text file as a string.
 	string loadTextFile(string path) {
 		// The file and its contents
 		string content;
 		ifstream file;
-		// Ensure ifstream object can throw exception:
+		// Ensure ifstream object can throw exceptions
 		file.exceptions(ifstream::failbit | ifstream::badbit);
 		try {
 			// Open file
@@ -42,7 +63,7 @@ namespace FileLoader {
 		// The file and its contents
 		string content;
 		ifstream file;
-		// Ensure ifstream object can throw exception:
+		// Ensure ifstream object can throw exceptions
 		file.exceptions(ifstream::failbit | ifstream::badbit);
 		try {
 			// Open file
@@ -69,6 +90,18 @@ namespace FileLoader {
 		}
 		// Return contents
 		return csvs;
+	}
+
+	/// Saves an array of data as a binary file (Non-destructive).
+	template <typename T>
+	void saveBinaryFile(string path, T* data, size_t size) {
+		ofstream file(path.c_str() , ios::binary);
+		// Ensure ifstream object can throw exceptions
+		file.exceptions(ofstream::failbit | ofstream::badbit);
+		// Try and save data
+		file.write((char*)data, size * sizeof(T));
+		file.flush();
+		file.close();
 	}
 };
 
