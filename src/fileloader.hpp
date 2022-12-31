@@ -1,11 +1,19 @@
 #ifndef MAKAI_FILE_LOADER
 #define MAKAI_FILE_LOADER
 
-#include "anchors.hpp"
+#include <string>
+#include <fstream>
+#include <sstream>
+#include <filesystem>
+#include <stdexcept>
 
 namespace FileLoader {
 	namespace {
 		using namespace std;
+	}
+
+	inline void fileLoadError(string path, string reason) {
+		throw runtime_error("Could not load file '" + path + "'!\n\n[ERROR MESSAGE]\n" + reason);
 	}
 
 	/// Loads a binary file as an array;
@@ -13,19 +21,19 @@ namespace FileLoader {
 		ifstream file;
 		// Ensure ifstream object can throw exceptions
 		file.exceptions(ifstream::failbit | ifstream::badbit);
-		// Preallocate data
-		size_t fileSize = filesystem::file_size(path);
-		vector<unsigned char> data(fileSize * 4);
 		// Try and load binary
 		try {
+			// Preallocate data
+			size_t fileSize = filesystem::file_size(path);
+			vector<unsigned char> data(fileSize * 4);
 			// Open and read file
 			file.open(path, ios::binary);
 			file.read((char*)&data[0], fileSize);
 			file.close();
 			return data;
 		}
-		catch (ifstream::failure e) {
-			return {};
+		catch (runtime_error e) {
+			fileLoadError(path, e.what());
 		}
 	}
 
@@ -48,7 +56,7 @@ namespace FileLoader {
 			content = stream.str();
 		}
 		catch (ifstream::failure e) {
-			return nullptr;
+			fileLoadError(path, e.what());
 		}
 		// Return contents
 		return content;
@@ -77,7 +85,7 @@ namespace FileLoader {
 			content = stream.str();
 		}
 		catch (ifstream::failure e) {
-			return CSVData();
+			fileLoadError(path, e.what());
 		}
 		// Get values
 		CSVData csvs;

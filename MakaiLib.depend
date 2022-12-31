@@ -2992,8 +2992,12 @@
 	<functional>
 	<string>
 
-1672447616 d:\c(++) projects\_c++\game engine\makailib\src\fileloader.hpp
-	"anchors.hpp"
+1672463689 d:\c(++) projects\_c++\game engine\makailib\src\fileloader.hpp
+	<string>
+	<fstream>
+	<sstream>
+	<filesystem>
+	<stdexcept>
 
 1666553667 d:\c(++) projects\_c++\game engine\makailib\src\graphical.hpp
 	"anchors.hpp"
@@ -3315,7 +3319,7 @@
 
 1670849271 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_texture.hpp
 
-1672448489 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_renderable.hpp
+1672463025 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_renderable.hpp
 
 1670437380 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_color.hpp
 	"../anchors.hpp"
