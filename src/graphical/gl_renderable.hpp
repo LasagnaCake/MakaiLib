@@ -348,7 +348,7 @@ private:
 Renderable* loadObjectFromFile(std::string path) {
 	auto* object = new Renderable();
 	auto data = $fld loadBinaryFile(path);
-	if (!data.size()) throw std::runtime_error("File does not exist!");
+	if (!data.size()) throw std::runtime_error("File does not exist (" + path + ")!");
 	object->bakeAndLock((RawVertex*)&data[0], data.size() / sizeof(RawVertex));
 	return object;
 }
