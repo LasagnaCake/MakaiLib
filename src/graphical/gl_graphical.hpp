@@ -203,18 +203,6 @@ namespace Drawer {
 		return Vector2(v.u, v.v);
 	}
 
-	inline void vertexCopy(RawVertex& a, RawVertex& b) {
-		a.x = b.x;
-		a.y = b.y;
-		a.z = b.z;
-		a.u = b.u;
-		a.v = b.v;
-		a.r = b.r;
-		a.g = b.g;
-		a.b = b.b;
-		a.a = b.a;
-	}
-
 	#include "gl_texture.hpp"
 }
 
