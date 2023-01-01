@@ -16,7 +16,9 @@
 	virtual	~NAME() {onDelete(); removeFromTree();};
 	// NOTE: This is the WORST way this could have been done. But this obstinate fuck of a language is an obstinate fuck, so be it.
 
+#ifdef $_DANMAKU_GAME
 #include "gamedata/danmaku/layout.hpp"
+#endif
 
 namespace GameData {
 	#define $gdt GameData::
@@ -53,6 +55,7 @@ namespace GameData {
 
 	#include "gamedata/dialogue.hpp"
 	#include "gamedata/saving.hpp"
+	#include "gamedata/animation.hpp"
 
 	#ifdef $_DANMAKU_GAME
 

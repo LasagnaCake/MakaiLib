@@ -3035,7 +3035,7 @@
 	<algorithm>
 	<regex>
 
-1671111899 d:\c(++) projects\_c++\game engine\makailib\src\program\gl_program.hpp
+1672509264 d:\c(++) projects\_c++\game engine\makailib\src\program\gl_program.hpp
 	"../anchors.hpp"
 	"../graphical.hpp"
 	<wtypes.h>
@@ -3324,13 +3324,14 @@
 1670437380 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_color.hpp
 	"../anchors.hpp"
 
-1672183268 d:\c(++) projects\_c++\game engine\makailib\src\gamedata.hpp
+1672521592 d:\c(++) projects\_c++\game engine\makailib\src\gamedata.hpp
 	"anchors.hpp"
 	"graphical.hpp"
 	"program.hpp"
 	"gamedata/danmaku/layout.hpp"
 	"gamedata/dialogue.hpp"
 	"gamedata/saving.hpp"
+	"gamedata/animation.hpp"
 	"gamedata/danmaku/predefs.hpp"
 	"gamedata/danmaku/structs.hpp"
 	"gamedata/danmaku/bullet.hpp"
@@ -3406,13 +3407,13 @@
 	"SDL_gpu.h"
 	<stdarg.h>
 
-1670618620 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\program.hpp
+1672504821 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\program.hpp
 
 1672443222 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\enemy.hpp
 
 1672352496 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\boss.hpp
 
-1666942540 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\stage.hpp
+1672521486 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\stage.hpp
 
 1670622620 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\item.hpp
 
@@ -3548,4 +3549,6 @@
 	<cctype>
 
 1672240918 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\saving.hpp
+
+1672544423 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\animation.hpp
 

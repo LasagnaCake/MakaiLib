@@ -1,3 +1,7 @@
+namespace {
+	$mki Program* mainProgram = nullptr;
+}
+
 class DanmakuApp: public $mki Program {
 public:
 	DanmakuApp(
@@ -14,6 +18,9 @@ public:
 			fullscreen,
 			bufferShaderPath
 	) {
+		if (mainProgram)
+			throw std::runtime_error("Only one program can exist at a time!");
+		mainProgram = this;
 		// Create main shader
 		SLF::SLFData data = SLF::parseFile(mainShaderPath);
 		$mainshader.destroy();
@@ -67,6 +74,11 @@ public:
 	}
 
 	virtual void onLoading() {}
+
+	virtual ~DanmakuApp() {
+		Program::~Program();
+		mainProgram = nullptr;
+	}
 
 	void onOpen() override {
 		// Set RNG Seed
@@ -194,6 +206,11 @@ ProgramSetting queryProgramSettingsFromUser(bool use16by9 = false, bool extended
 		frate,
 		!fullscreen
 	};
+}
+
+
+DanmakuApp* getMainProgram() {
+	return (DanmakuApp*)mainProgram;
 }
 
 #undef USER_QUIT

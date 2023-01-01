@@ -204,6 +204,8 @@ namespace Makai {
 			Shader::defaultShader["textured"](false);
 		}
 
+		virtual ~Program() {}
+
 		/// Sets the window's title.
 		inline void setWindowTitle(string windowTitle) {
 			SDL_SetWindowTitle(window, windowTitle.c_str());

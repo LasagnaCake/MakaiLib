@@ -1,4 +1,4 @@
 > Player ocasionally starts at an angle
 
-> [SOLVED] Pixel resolution changes after going fullscreen (PPI increases, irreversible)
+> [SOLVED] Pixel resolution changes after going fullscreen (DPI increases, irreversible)
 	> It is now aware of DPI. At least on windows.
