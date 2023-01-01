@@ -28,7 +28,9 @@ namespace Animation {
 
 	template <typename T>
 	struct AnimationPlayer: Entity {
-		bool	loop;
+		bool	loop = false;
+		float	speed = 1.0;
+
 		Animation<T> animation;
 
 		void onFrame(float delta) override {
@@ -62,7 +64,7 @@ namespace Animation {
 			// Get start of animation
 			T from = animation[index][track.index-1].to;
 			// Increment step
-			track.step += delta;
+			track.step += speed * delta * 10.0;
 			// If begin != end, calculate step
 			if (anim.from != anim.to) {
 				track.factor = anim.easing(track.step, 0.0f, 1.0f, track.stop);
