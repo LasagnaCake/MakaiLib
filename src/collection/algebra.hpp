@@ -147,6 +147,10 @@ namespace Math {
 		return val + cmult(val, min);
 	}
 
+	ANYTYPE_I wrap(T val, T min, T max) {
+		return wmax(wmin(val, max), min);
+	}
+
 	ANYTYPE_I nrtn(T val) {
 		return (T)nroot(val, fabs(val));
 	}

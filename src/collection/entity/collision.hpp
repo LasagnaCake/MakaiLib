@@ -51,7 +51,9 @@ namespace CollisionData {
 	*/
 	struct CircleBounds2D {
 		Vector2 position;
-		float radius = 1;
+		float radius	= 1;
+		float angle		= 0;
+		float aperture	= Math::pi;
 	};
 
 	/**
@@ -113,6 +115,14 @@ namespace CollisionData {
 	}
 
 	inline bool withinBounds(Vector2& point, CircleBounds2D& area) {
+		if (area.aperture < Math::pi) {
+			float angle		= VecMath::angleTo(area.position, point);
+			float target	= Math::wrap(area.angle, 0.0f, (float)Math::tau);
+			if (
+					angle < target - area.aperture
+				||	angle > target + area.aperture
+			) return false;
+		}
 		return point.distanceTo(area.position) < area.radius;
 	}
 

@@ -9,15 +9,6 @@
 #define $glpointer(start, offset) (void*)((start) + (offset) * sizeof(float))
 #define $gloffset(offset) (void*)((offset) * sizeof(float))
 
-#define DERIVED_CONSTRUCTOR(NAME, BASE, CODE)\
-	NAME(string name = #NAME) : BASE(name) CODE\
-	NAME(Entity* parent, string name = #NAME , bool uniqueEntity = true) : BASE(parent, name, uniqueEntity) CODE
-
-#define DERIVED_CLASS(NAME, BASE)\
-	inline	virtual string getClass() {return #NAME;}\
-	inline	virtual string getBaseClass() {return #BASE;}\
-	inline	static string getCoreClass() {return #NAME;}
-
 #define glSetClearColor(COLOR) glClearColor(COLOR.x, COLOR.y, COLOR.z, COLOR.w);
 
 #include "gl_color.hpp"
@@ -41,7 +32,7 @@ namespace Drawer {
 		using namespace std;
 	}
 
-	#define RAW_VERTEX_SIZE 9
+	#define RAW_VERTEX_SIZE (sizeof(RawVertex) / sizeof(float))
 	#define RAW_VERTEX_BYTE_SIZE sizeof(RawVertex)
 	struct RawVertex {
 		float
@@ -307,6 +298,7 @@ namespace RenderData {
 		Drawer::vertexGetPosition,
 		std::function,
 		std::vector,
+		std::string,
 		std::runtime_error;
 	}
 
@@ -341,9 +333,5 @@ namespace RenderData {
 #define $drw	Drawer::
 
 #undef $$FUNC
-
-#undef UNROLL_LOOPS
-#undef DERIVED_CLASS
-#undef DERIVED_CONSTRUCTOR
 
 #endif // GRAPHICAL_RENDERER_H

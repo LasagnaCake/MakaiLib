@@ -8,5 +8,4 @@ struct SpellCard: Entity {
 	void onFrame(float delta) override {
 
 	}
-
 };

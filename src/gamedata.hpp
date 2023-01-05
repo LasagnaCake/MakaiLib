@@ -14,7 +14,7 @@
 	inline	virtual string getBaseClass() {return #BASE;}\
 	inline	static string getCoreClass() {return BASE::getCoreClass();}\
 	virtual	~NAME() {onDelete(); removeFromTree();};
-	// NOTE: This is the WORST way this could have been done. But this obstinate fuck of a language is an obstinate fuck, so be it.
+	// NOTE: This is the WORST way this could have been done, but it works I guess
 
 #ifdef $_DANMAKU_GAME
 #include "gamedata/danmaku/layout.hpp"

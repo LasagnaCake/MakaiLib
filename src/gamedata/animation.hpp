@@ -9,7 +9,7 @@ namespace Animation {
 	};
 
 	template <typename T>
-	struct MetaData {
+	struct Metadata {
 		size_t	index	= 1;
 		float	factor	= 0;
 		float	step	= 0;
@@ -24,10 +24,16 @@ namespace Animation {
 	using	Animation	= std::map<size_t, Track<T>>;
 
 	template <typename T>
-	using	TrackData	= std::map<size_t, MetaData<T>>;
+	using	TrackData	= std::map<size_t, Metadata<T>>;
 
 	template <typename T>
 	struct AnimationPlayer: Entity {
+		DERIVED_CLASS(AnimationPlayer, Entity)
+
+		DERIVED_CONSTRUCTOR(AnimationPlayer, Entity, {
+
+		})
+
 		bool	loop = false;
 		float	speed = 1.0;
 
@@ -35,8 +41,14 @@ namespace Animation {
 
 		void onFrame(float delta) override {
 			if (!playing) return;
+			bool allDone = true;
 			for $each(track, animation) {
+				allDone &= metadata[track->first].done;
 				processAnimation(track->first, track->second, metadata[track->first], delta);
+			}
+			if (allDone) {
+				if (loop)	start();
+				else		stop();
 			}
 		}
 
@@ -58,7 +70,7 @@ namespace Animation {
 
 		TrackData<T> metadata;
 
-		void processAnimation(size_t index, Keyframe<T>& anim, MetaData<T>& track, float delta) {
+		void processAnimation(size_t index, Keyframe<T>& anim, Metadata<T>& track, float delta) {
 			// If animation is completed, return
 			if (!track.done) return;
 			// Get start of animation
