@@ -324,6 +324,10 @@ namespace RenderData {
 	namespace Text {
 		#include "gl_text.hpp"
 	}
+
+	namespace Bar {
+		#include "gl_progressbar.hpp"
+	}
 }
 
 #include "gl_framebuffer.hpp"

@@ -1,23 +1,3 @@
-/*class Font {
-	Font() {}
-
-	Font(String path) {
-	}
-
-	void create(String path) {
-		if (created) return;
-		created = true;
-	}
-
-	void destroy() {
-		if (!created) return;
-		created = false;
-	}
-
-private:
-	bool created = false;
-};*/
-
 enum TextAlign {
 	ALIGN_LEFT,
 	ALIGN_RIGHT,
@@ -31,13 +11,14 @@ struct TextRect {
 struct FontData {
 	Texture2D*	face		= nullptr;
 	Vector2		size		= Vector2(16);
+	Vector2		kerning		= Vector2(1);
 };
 
 struct TextData {
 	String		content		= "Hello\nWorld!";
 	TextRect	rect		= {40, 100};
 	TextAlign	alignment	= ALIGN_LEFT;
-	Vector2		kerning		= Vector2(1);
+	Vector2		kerning		= Vector2(0);
 };
 
 namespace {
@@ -50,38 +31,19 @@ namespace {
 	}
 }
 
-class Label: public Base::Drawable {
+class Label: public Base::DrawableObject {
 public:
-	Label(size_t layer = 0, bool manual = false)
-	: Drawable(layer, manual) {
-		glGenVertexArrays(1, &vao);
-		glGenBuffers(1, &vbo);
-		material.texture.alphaClip = 0.1;
-	}
+	Label(size_t layer = 0, bool manual = false): DrawableObject(layer, manual) {}
 
 	virtual ~Label() {
-		Drawable::~Drawable();
-		glDeleteBuffers(1, &vbo);
-		glDeleteVertexArrays(1, &vao);
+		$debug("Text!");
 	}
 
-	FontData		font;
+	FontData*		font = nullptr;
 	TextData		text;
-
-	Material::ObjectMaterial	material;
-
-	Transform3D trans;
 
 private:
 	vector<RawVertex> vertices;
-
-	glm::mat4x4 actorMatrix;
-
-	/// The object's Vertex Array Object (VAO).
-	GLuint vao;
-
-	/// The object's Vertex Buffer Object (VBO).
-	GLuint vbo;
 
 	TextData last = {"",{0,0}};
 
@@ -92,56 +54,13 @@ private:
 			update();
 		}
 		// If no vertices or no font face exists, return
-		if (!(vertices.size() && font.face)) return;
-		// Get transformation matrix
-		actorMatrix = VecMath::asGLMMatrix(trans);
-		// Set VBO as active
-		glBindBuffer(GL_ARRAY_BUFFER, vbo);
-		// Copy vertices to VBO
-		glBufferData(
-			GL_ARRAY_BUFFER,
-			vertices.size() * RAW_VERTEX_BYTE_SIZE,
-			vertices.data(),
-			GL_STATIC_DRAW
-		);
-		// Set VAO as active
-		glBindVertexArray(vao);
-		// Define vertex data in VBO
-		Drawer::setVertexAttributes();
-		// Set VAO as active
-		glBindVertexArray(vao);
-		// Enable attribute pointers
-		glEnableVertexAttribArray(0);
-		glEnableVertexAttribArray(1);
-		glEnableVertexAttribArray(2);
-		// Set polygon rendering mode
-		glPolygonMode(material.culling, material.fill);
-		// Draw object to screen
-		display();
-		// Disable attributes
-		glDisableVertexAttribArray(2);
-		glDisableVertexAttribArray(1);
-		glDisableVertexAttribArray(0);
-		// Unbind vertex array
-		glBindVertexArray(0);
-	}
-
-	void display() {
-		// Render with basic shader
-		Shader::defaultShader();
-		glm::mat4 camera = Scene::camera.matrix();
-		glm::mat4 projection = Scene::camera.perspective();
+		if (!(vertices.size() && (font || font->face))) return;
 		// Set shader data
-		material.texture = {true, font.face, material.texture.alphaClip};
-		$mat setMaterial($mainshader, material);
-		// Matrices
-		$mainshader["world"](Scene::world);
-		$mainshader["camera"](camera);
-		$mainshader["projection"](projection);
-		$mainshader["actor"](actorMatrix);
-		// Rendering
-		glDrawArrays(GL_TRIANGLES, 0, vertices.size());
-	};
+		material.texture = {true, font->face, material.texture.alphaClip};
+		setDefaultShader();
+		// Display to screen
+		display(vertices.data(), vertices.size());
+	}
 
 	#define CHAR_VERTEX(POS, UV) {(POS).x,(POS).y,0,(UV).x,(UV).y,1,1,1,1}
 	void update() {
@@ -157,14 +76,14 @@ private:
 			// If cursor has reached the rect's horizontal limit, move to new line
 			if(chrRect.h > text.rect.h) {
 				cursor.x = 0;
-				cursor.y -= text.kerning.y;
+				cursor.y -= text.kerning.y + font->kerning.y;
 				chrRect.h = 0;
 				chrRect.v++;
 			}
 			// If newline, then reset cursor and continue to next character
 			if (c == '\n') {
 				cursor.x = 0;
-				cursor.y -= text.kerning.y;
+				cursor.y -= text.kerning.y + font->kerning.y;
 				chrRect.h = 0;
 				chrRect.v++;
 				continue;
@@ -176,8 +95,8 @@ private:
 			index = Math::max((int)c - 0x20, 0);
 			// Get character's top left UV index in the font texture
 			uv = Vector2(
-				(int)Math::wmax((float)index, font.size.x),
-				(int)(index / font.size.x)
+				(int)Math::wmax((float)index, font->size.x),
+				(int)(index / font->size.x)
 			);
 			// Get vertex positions
 			Vector2 pos[4] = {
@@ -188,10 +107,10 @@ private:
 			};
 			// Get UV positions
 			Vector2 uvs[4] = {
-				uv / font.size,
-				(uv + Vector2(1,0)) / font.size,
-				(uv + Vector2(0,1))  / font.size,
-				(uv + Vector2(1,1)) / font.size,
+				uv / font->size,
+				(uv + Vector2(1,0)) / font->size,
+				(uv + Vector2(0,1))  / font->size,
+				(uv + Vector2(1,1)) / font->size,
 			};
 			// Nightmare
 			vertices.push_back(CHAR_VERTEX(pos[0], uvs[0]));
@@ -201,7 +120,7 @@ private:
 			vertices.push_back(CHAR_VERTEX(pos[2], uvs[2]));
 			vertices.push_back(CHAR_VERTEX(pos[3], uvs[3]));
 			// Increment cursor
-			cursor.x += text.kerning.x;
+			cursor.x += text.kerning.x + font->kerning.x;
 			chrRect.h++;
 		}
 	}

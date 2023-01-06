@@ -16,9 +16,7 @@
 	virtual	~NAME() {onDelete(); removeFromTree();};
 	// NOTE: This is the WORST way this could have been done, but it works I guess
 
-#ifdef $_DANMAKU_GAME
-#include "gamedata/danmaku/layout.hpp"
-#endif
+#include "gamedata/layout.hpp"
 
 namespace GameData {
 	#define $gdt GameData::
@@ -60,6 +58,11 @@ namespace GameData {
 	#ifdef $_DANMAKU_GAME
 
 	namespace Danmaku {
+		class BossEntity2D;
+		class EnemyEntity2D;
+		class PlayerEntity2D;
+		class Stage;
+		class DanmakuApp;
 		#define $dmk GameData::Danmaku::
 		AreaCircle2D* mainPlayer = nullptr;
 		#include "gamedata/danmaku/predefs.hpp"

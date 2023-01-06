@@ -2,25 +2,19 @@
 Do not touch this class. Please.
 */
 
-class Renderable: public Base::Drawable {
+class Renderable: public Base::DrawableObject {
 public:
-	Renderable(size_t layer = 0, bool manual = false): Drawable(layer, manual){
-		glGenVertexArrays(1, &vao);
-		glGenBuffers(1, &vbo);
-	}
+	Renderable(size_t layer = 0, bool manual = false): DrawableObject(layer, manual){}
 
 	Renderable(vector<Triangle*> triangles, size_t layer = 0, bool manual = false)
-	: Renderable(layer, manual) {
+	: DrawableObject(layer, manual) {
 		this->triangles = triangles;
 	}
 
 	virtual ~Renderable() {
 		locked = false;
-		Drawable::~Drawable();
+		$debug("Renderable!");
 		$debug(references.plane.size());
-		$debug("Deleting buffers...");
-		glDeleteBuffers(1, &vbo);
-		glDeleteVertexArrays(1, &vao);
 		$debug("Deleting references...");
 		clearData();
 		$debug("Killing renderable object...");
@@ -238,10 +232,6 @@ public:
 
 	vector<Triangle*> triangles;
 
-	Material::ObjectMaterial material;
-
-	Transform3D trans;
-
 private:
 	RawVertex* vertices = nullptr;
 
@@ -274,41 +264,14 @@ private:
 	}
 
 	void draw() override {
-		// Get transformation matrix
-		actorMatrix = VecMath::asGLMMatrix(trans);
 		// If object's vertices are not "baked" (i.e. finalized), copy them
 		if (!baked && !locked) copyVertices();
 		// If no vertices, return
 		if (!vertices) return;
-		// Set VBO as active
-		glBindBuffer(GL_ARRAY_BUFFER, vbo);
-		// Copy IVB to VBO
-		glBufferData(
-			GL_ARRAY_BUFFER,
-			vertexCount * RAW_VERTEX_BYTE_SIZE,
-			vertices,
-			GL_STATIC_DRAW
-		);
-		// Set VAO as active
-		glBindVertexArray(vao);
-		// Define vertex data in VBO
-		Drawer::setVertexAttributes();
-		// Set VAO as active
-		glBindVertexArray(vao);
-		// Enable attribute pointers
-		glEnableVertexAttribArray(0);
-		glEnableVertexAttribArray(1);
-		glEnableVertexAttribArray(2);
-		// Set polygon rendering mode
-		glPolygonMode(material.culling, material.fill);
-		// Draw object to screen
-		display();
-		// Disable attributes
-		glDisableVertexAttribArray(2);
-		glDisableVertexAttribArray(1);
-		glDisableVertexAttribArray(0);
-		// Unbind vertex array
-		glBindVertexArray(0);
+		// Set shader data
+		setDefaultShader();
+		// Present to screen
+		display(vertices, vertexCount);
 	}
 
 	/// List of references linked to this object.
@@ -317,32 +280,8 @@ private:
 		vector<Reference::Trigon*>	trigon;
 	} references;
 
-	glm::mat4x4 actorMatrix;
-
-	/// The object's Vertex Array Object (VAO).
-	GLuint vao;
-
-	/// The object's Vertex Buffer Object (VBO).
-	GLuint vbo;
-
 	/// The amount of vertices this object has.
 	size_t vertexCount = 0;
-
-	void display() {
-		// Render with basic shader
-		Shader::defaultShader();
-		glm::mat4 camera = Scene::camera.matrix();
-		glm::mat4 projection = Scene::camera.perspective();
-		// Set shader data
-		$mat setMaterial($mainshader, material);
-		// Matrices
-		$mainshader["world"](Scene::world);
-		$mainshader["camera"](camera);
-		$mainshader["projection"](projection);
-		$mainshader["actor"](actorMatrix);
-		// Rendering
-		glDrawArrays(GL_TRIANGLES, 0, vertexCount);
-	};
 };
 
 Renderable* loadObjectFromFile(string path) {

@@ -45,7 +45,9 @@ public:
 
 	$rdt Renderable*	tubeRend;
 
-	$rdt Text::Label	testLabel;
+	$txt Label			testLabel;
+
+	$txt FontData		font{new Drawer::Texture2D("img/fonts/fontGRID.png"), $vec2(16), $vec2(0.55, 1.0)};
 
 	void onOpen() override {
 		// British? 😩
@@ -96,13 +98,12 @@ public:
 			rotAngle += (PI/5.0);
 		};
 		testLabel.setRenderLayer($layer(WORLD));
-		testLabel.font.face = new Drawer::Texture2D("img/fonts/fontGRID.png");
+		testLabel.font = &font;
 		testLabel.trans.scale = 2.5;
 		testLabel.trans.scale.x *= 0.8;
 		testLabel.text.content = "   Spell shattered!\n(Get spell card bonus)";
 		testLabel.trans.position = $vec3(10, 10, 2.5);
 		testLabel.trans.rotation.y = PI;
-		testLabel.text.kerning.x = 0.55;
 		// Create test laser A
 		Vector2 lPos = Vector2(32, -16) * getWindowScale();
 		auto l = DANMAKU_ELLM -> createLineLaser();
@@ -196,16 +197,20 @@ public:
 	void onLayerDrawEnd(size_t layerID) override {
 		setCamera2D();
 		setWorldMaterial2D();
-		auto& layerMaterial = getLayerBuffer().material;
+		getLayerBuffer().material = $mat BufferMaterial{};
+		/*auto& layerMaterial = getLayerBuffer().material;
 		layerMaterial.background = Color::CLEAR;
 		//layerMaterial.wave = {};
-		layerMaterial.color = Color::WHITE;
+		layerMaterial.color = Color::WHITE;*/
 	}
 
 	void onDrawEnd() override {
 	}
 
 	void onClose() override {
+		$debug("[ Executing Closing Procedure NOW ]\n");
+		delete tubeRend;
+		delete font.face;
 	}
 };
 
@@ -230,6 +235,7 @@ int main() {
 		GameApp prog(prefs.resolution.x, prefs.resolution.y, "[TEST]", prefs.fullscreen);
 		prog.maxFrameRate = prefs.framerate;
 		prog.run();
+		$debug("Program done running!\n");
 	} catch (std::runtime_error e) {
 		Popup::errorDialog(e.what());
 	}

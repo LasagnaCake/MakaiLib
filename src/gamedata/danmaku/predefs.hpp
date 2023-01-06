@@ -28,6 +28,10 @@
 #define DANMAKU_PARAMS_COUNT 8
 #endif // DANMAKU_PARAMS_COUNT
 
+#if ((MAX_INSTANCE_COUNT) < ((PLAYER_BULLET_COUNT) + (ENEMY_BULLET_COUNT) + ((PLAYER_LASER_COUNT) + (ENEMY_LASER_COUNT)) * 4))
+#error "Too many instances!"
+#endif
+
 #define $getman(TYPE) $dmk TYPE##Manager
 #define $setman(TYPE) $dmk TYPE##Manager = &
 

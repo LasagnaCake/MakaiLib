@@ -424,10 +424,10 @@ namespace Makai {
 			// Call final function
 			onClose();
 			// Destroy buffers
-			$debug("Destroying buffers...");
+			$debug("Destroying frame buffers...");
 			framebuffer.destroy();
 			layerbuffer.destroy();
-			$debug("Buffers destroyed!");
+			$debug("Frame buffers destroyed!");
 			// Quit SDL
 			$debug("Ending SDL...");
 			SDL_Quit();

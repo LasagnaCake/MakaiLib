@@ -42,6 +42,9 @@ namespace Dialog {
 			isFinished = true;
 			autotimer.repeat = true;
 			autotimer.stop();
+			box.shape.setRenderLayer($layer(DIALOG) - 1);
+			box.title.setRenderLayer($layer(DIALOG));
+			box.message.setRenderLayer($layer(DIALOG));
 		})
 
 		MessageList	messages;
@@ -86,6 +89,12 @@ namespace Dialog {
 
 		$mki InputManager input;
 
+		struct {
+			$rdt Renderable	shape;
+			$txt Label		title;
+			$txt Label		message;
+		} box;
+
 		void nextMessage() {
 			autotimer.reset();
 			input.update();
@@ -116,7 +125,8 @@ namespace Dialog {
 		size_t time = 100;
 	private:
 		void showText(String title, String text) {
-			//TODO: this
+			box.title.text.content		= title;
+			box.message.text.content	= text;
 		}
 		$evt Timer autotimer;
 		std::unordered_map<String, $twn Tween<Vector3>> animator;

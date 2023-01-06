@@ -5,8 +5,10 @@ struct BossPhaseData {
 	$evt Signal	action			= $evt DEF_SIGNAL;
 };
 
-struct BossEntity2D: EnemyEntity2D {
+class BossEntity2D: public EnemyEntity2D {
+public:
 	DERIVED_CLASS(BossEntity2D, EnemyEntity2D)
+
 	DERIVED_CONSTRUCTOR(BossEntity2D, EnemyEntity2D, {
 		// Boss phase timer
 		phaseTimer.stop();
