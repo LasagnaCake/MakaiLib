@@ -74,10 +74,10 @@ private:
 	bool manualMode = false;
 };
 
-// TODO: Somewhere this class is used causes 'Exit Status 0xC0000005'. Potentially related to 'Renderable' class
 class DrawableObject: public Drawable {
 public:
 	DrawableObject(size_t layer = 0, bool manual = false): Drawable(layer, manual){
+		$debug("Drawable object created!");
 		glGenVertexArrays(1, &vao);
 		glGenBuffers(1, &vbo);
 	}
@@ -127,21 +127,20 @@ protected:
 	}
 
 	void setDefaultShader() {
-		// Get transformation matrix
-		actorMatrix = VecMath::asGLMMatrix(trans);
 		// Render with basic shader
-		Shader::defaultShader();
-		glm::mat4 camera = Scene::camera.matrix();
-		glm::mat4 projection = Scene::camera.perspective();
+		$mainshader();
+		// Get transformation matrices
+		glm::mat4 actor			= VecMath::asGLMMatrix(trans);
+		glm::mat4 camera		= Scene::camera.matrix();
+		glm::mat4 projection	= Scene::camera.perspective();
 		// Set shader data
 		$mat setMaterial($mainshader, material);
-		// Matrices
+		// Set transformation matrices
 		$mainshader["world"](Scene::world);
 		$mainshader["camera"](camera);
 		$mainshader["projection"](projection);
-		$mainshader["actor"](actorMatrix);
+		$mainshader["actor"](actor);
 	}
 
-	glm::mat4x4	actorMatrix;
-	GLuint		vao, vbo;
+	GLuint vao, vbo;
 };

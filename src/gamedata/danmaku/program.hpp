@@ -76,7 +76,6 @@ public:
 	virtual void onLoading() {}
 
 	virtual ~DanmakuApp() {
-		Program::~Program();
 		mainProgram = nullptr;
 	}
 

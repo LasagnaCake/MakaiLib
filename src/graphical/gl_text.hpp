@@ -59,10 +59,10 @@ private:
 		material.texture = {true, font->face, material.texture.alphaClip};
 		setDefaultShader();
 		// Display to screen
-		display(vertices.data(), vertices.size());
+		display(&vertices[0], vertices.size());
 	}
 
-	#define CHAR_VERTEX(POS, UV) {(POS).x,(POS).y,0,(UV).x,(UV).y,1,1,1,1}
+	#define CHAR_VERTEX(POS, UV) RawVertex{(POS).x,(POS).y,0,(UV).x,(UV).y}
 	void update() {
 		// Clear previous characters
 		vertices.clear();

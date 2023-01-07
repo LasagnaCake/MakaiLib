@@ -16,6 +16,8 @@
 				<Compiler>
 					<Add option="-pg" />
 					<Add option="-g" />
+					<Add option="-fsanitize=leak" />
+					<Add option="-fno-omit-frame-pointer" />
 					<Add option="-D_DEBUG_OUTPUT_" />
 				</Compiler>
 				<Linker>

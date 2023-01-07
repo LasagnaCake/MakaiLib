@@ -49,6 +49,8 @@ public:
 
 	$txt FontData		font{new Drawer::Texture2D("img/fonts/fontGRID.png"), $vec2(16), $vec2(0.55, 1.0)};
 
+	$drw Texture2D*		testImage = new Drawer::Texture2D("img/ring.png");
+
 	void onOpen() override {
 		// British? 😩
 		// maxFrameRate = 50;
@@ -68,6 +70,9 @@ public:
 		enemy = new $dmk EnemyEntity2D("Test");
 		enemy->position = Vector2(32, -24) * screenSpace;
 		enemy->sprite->setColor(Color::RED);
+		enemy->healthBar.material.texture.enabled	= true;
+		//enemy->healthBar.centered = true;
+		enemy->healthBar.material.texture.image		= testImage;
 		player.grazebox.radius = 2.5;
 		// Create test bullet spawner
 		bulletSpawner.onSignal = $signal {

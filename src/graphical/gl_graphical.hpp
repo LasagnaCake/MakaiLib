@@ -69,7 +69,7 @@ namespace Drawer {
 		Vector4 color = Vector4(1);
 	};
 
-	RawVertex toRawVertex(Vector3 pos, Vector2 uv, Vector4 col) {
+	RawVertex toRawVertex(Vector3 pos, Vector2 uv, Vector4 col = Vector4(1)) {
 		RawVertex res;
 		res.x = pos.x;
 		res.y = pos.y;
@@ -306,6 +306,8 @@ namespace RenderData {
 	struct Triangle {
 		RawVertex verts[3];
 	};
+
+	class Renderable;
 
 	namespace Material {
 		#include "gl_material.hpp"

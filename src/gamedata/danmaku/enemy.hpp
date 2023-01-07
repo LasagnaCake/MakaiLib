@@ -1,17 +1,8 @@
 struct EnemyEntity2D: AreaCircle2D {
 	DERIVED_CLASS(EnemyEntity2D, AreaCircle2D)
 
-	float health = 100.0;
-
-	bool invincible = false;
-
-	bool collideWithPlayer = false;
-
-	$rdt Renderable mesh;
-
-	$ref AnimatedPlane* sprite;
-
 	DERIVED_CONSTRUCTOR(EnemyEntity2D, AreaCircle2D, {
+		health = 100.0;
 		mesh.setRenderLayer($layer(ENEMY));
 		$ecl groups.addEntity(this, $layer(ENEMY));
 		sprite = mesh.createReference<AnimatedPlane>();
@@ -24,7 +15,24 @@ struct EnemyEntity2D: AreaCircle2D {
 			invincible = false;
 		};
 		invincibility.delay = 60;
-	})
+		healthBar.setRenderLayer($layer(OVERLAY));
+		healthBar.material.color.w = 0.8;
+		healthBar.trans.rotation.z = HPI;
+		healthBar.size = 2;
+	});
+
+	float& health		= healthBar.value;
+	float& maxHealth	= healthBar.max;
+
+	bool invincible = false;
+
+	bool collideWithPlayer = false;
+
+	$rdt Renderable mesh;
+
+	$ref AnimatedPlane* sprite;
+
+	$bar RadialBar healthBar;
 
 	virtual void onDelete() {
 		$ecl groups.removeFromAll(this);
@@ -36,6 +44,7 @@ struct EnemyEntity2D: AreaCircle2D {
 
 	void onFrame(float delta) override {
 		updateSprite();
+		health = Math::min(health, maxHealth);
 		if (health <= 0.0)
 			onDeath();
 	}
@@ -74,11 +83,11 @@ struct EnemyEntity2D: AreaCircle2D {
 	void updateSprite() {
 		Transform2D self = globalTransform();
 		sprite->local.position		= $vec3(self.position, zIndex);
-		//sprite->local.rotation.z	= self.rotation;
 		sprite->local.scale			= $vec3(self.scale, zScale);
+		healthBar.trans.position	= $vec3(self.position, zIndex);
+		healthBar.trans.scale		= $vec3(self.scale, zScale);
 	}
 
 private:
-
 	$evt Timer invincibility;
 };

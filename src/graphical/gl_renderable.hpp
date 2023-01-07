@@ -221,7 +221,9 @@ public:
 				delete pr;
 		references.plane.clear();
 		references.trigon.clear();
-		for (auto t: triangles) delete t;
+		if (!triangles.empty())
+			for (auto t: triangles)
+				delete t;
 		triangles.clear();
 	}
 

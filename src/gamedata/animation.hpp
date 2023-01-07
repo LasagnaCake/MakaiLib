@@ -1,7 +1,6 @@
 namespace Animation {
 	template <typename T>
 	struct Keyframe {
-		T*		value;
 		T		to;
 		size_t	delay;
 		size_t	duration;
@@ -18,7 +17,14 @@ namespace Animation {
 	};
 
 	template <typename T>
-	using	Track		= std::vector<Keyframe<T>>;
+	using KeyFrameList	= std::vector<Keyframe<T>>;
+
+	template <typename T>
+	struct Track {
+		T*				target = nullptr;
+		KeyFrameList<T>	keyframes;
+		bool			enabled = true;
+	};
 
 	template <typename T>
 	using	Animation	= std::map<size_t, Track<T>>;
@@ -34,19 +40,40 @@ namespace Animation {
 
 		})
 
+		bool	paused = false;
 		bool	loop = false;
 		float	speed = 1.0;
 
 		Animation<T> animation;
 
+		$tev Signal<AnimationPlayer<T>> onAllAnimationsDone = $tsignal(auto& target) {};
+
 		void onFrame(float delta) override {
-			if (!playing) return;
+			if (!playing)	return;
+			if (paused)		return;
 			bool allDone = true;
-			for $each(track, animation) {
-				allDone &= metadata[track->first].done;
-				processAnimation(track->first, track->second, metadata[track->first], delta);
+			for $each(anim, animation) {
+				// Get track & metadata
+				auto& tdata = metadata[anim->first];
+				auto& track = anim->second;
+				// If no target or disable, skip
+				if (!(track.target && track.enabled))
+					continue;
+				// Check if done processing all tracks
+				allDone &= tdata.done;
+				// Process animation
+				processAnimation(
+					anim->first,
+					track.keyframes[tdata.index],
+					tdata,
+					track.target,
+					delta
+				);
 			}
+			// If done processing all tracks...
 			if (allDone) {
+				onAllAnimationsDone(this);
+				// Loop if required
 				if (loop)	start();
 				else		stop();
 			}
@@ -54,9 +81,9 @@ namespace Animation {
 
 		void start() {
 			if (playing) return;
-			playing = true;
+			paused = playing = true;
 			for $each(track, metadata) {
-				track->second = {};
+				track->second = TrackData<T>{};
 			}
 		}
 
@@ -70,20 +97,20 @@ namespace Animation {
 
 		TrackData<T> metadata;
 
-		void processAnimation(size_t index, Keyframe<T>& anim, Metadata<T>& track, float delta) {
-			// If animation is completed, return
-			if (!track.done) return;
+		void processAnimation(size_t index, Keyframe<T>& anim, Metadata<T>& track, T* target, float delta) {
+			// If animation is completed or no target specified, return
+			if (!(track.done && target)) return;
 			// Get start of animation
 			T from = animation[index][track.index-1].to;
 			// Increment step
 			track.step += speed * delta * 10.0;
 			// If begin != end, calculate step
 			if (anim.from != anim.to) {
-				track.factor = anim.easing(track.step, 0.0f, 1.0f, track.stop);
-				*anim.value = Math::lerp(from, anim.to, T(track.factor));
+				track.factor	= anim.easing(track.step, 0.0f, 1.0f, track.stop);
+				*target			= Math::lerp(from, anim.to, T(track.factor));
 			}
 			// Else, set value to end
-			else *anim.value = anim.to;
+			else *target = anim.to;
 			// Clamp step to prevent overflow
 			track.step = Math::clamp(track.step > track.stop ? track.stop : track.step);
 			// If reached the end of a keyframe...

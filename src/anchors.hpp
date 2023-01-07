@@ -76,6 +76,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #if (_WIN32 || _WIN64 || __WIN32__ || __WIN64__)
+#include <winuser.h>
 #define SDL_MAIN_HANDLED
 #endif
 #include <SDL2/SDL.h>

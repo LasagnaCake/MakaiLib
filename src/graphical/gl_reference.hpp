@@ -12,9 +12,8 @@ struct Empty {
 	bool visible = true;
 	Transform3D local;
 	virtual ~Empty() {onDestroy = onUnbind = [](){};};
-	// Since it's not working, everything's public now.
-	// friend class Renderable;
-	// DO NOT TOUCH THESE.
+	friend class RenderData::Renderable;
+private:
 	$evt Signal onDestroy;
 	$evt Signal onUnbind;
 };
