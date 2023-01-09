@@ -243,11 +243,19 @@ public:
 	}
 
 	void freeAll() {
+		#ifdef $_PARALLEL_MANAGERS
 		$speach(l, lasers, LASER_COUNT) {l.setFree();} $endspeach
+		#else
+		for $seach(l, lasers, LASER_COUNT) l.setFree(); $endseach
+		#endif
 	}
 
 	void discardAll() {
+		#ifdef $_PARALLEL_MANAGERS
 		$speach(l, lasers, LASER_COUNT) {l.discard();} $endspeach
+		#else
+		for $seach(l, lasers, LASER_COUNT) l.discard(); $endseach
+		#endif
 	}
 
 	size_t getFreeCount() {

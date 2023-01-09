@@ -130,9 +130,10 @@ protected:
 		// Render with basic shader
 		$mainshader();
 		// Get transformation matrices
-		glm::mat4 actor			= VecMath::asGLMMatrix(trans);
-		glm::mat4 camera		= Scene::camera.matrix();
-		glm::mat4 projection	= Scene::camera.perspective();
+		glm::mat4
+			actor		= VecMath::asGLMMatrix(trans),
+			camera		= Scene::camera.matrix(),
+			projection	= Scene::camera.perspective();
 		// Set shader data
 		$mat setMaterial($mainshader, material);
 		// Set transformation matrices

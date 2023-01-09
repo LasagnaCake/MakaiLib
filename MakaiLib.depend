@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1673297034 source:d:\c(++) projects\_c++\game engine\makailib\makai.cpp
+1673304420 source:d:\c(++) projects\_c++\game engine\makailib\makai.cpp
 	"src/makai.hpp"
 	<wtypes.h>
 	<windows.h>
@@ -2946,13 +2946,14 @@
 	"2d3d.hpp"
 	"collision.hpp"
 
-1673297246 d:\c(++) projects\_c++\game engine\makailib\src\collection\entity\core.hpp
+1673302048 d:\c(++) projects\_c++\game engine\makailib\src\collection\entity\core.hpp
 	<vector>
 	<memory>
 	<string>
 	<stdexcept>
 	<functional>
 	<cxxabi.h>
+	<execution>
 	<map>
 	"../tasking.hpp"
 	"../event.hpp"
@@ -3326,7 +3327,7 @@
 
 1670849271 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_texture.hpp
 
-1673295040 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_renderable.hpp
+1673304984 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_renderable.hpp
 
 1670437380 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_color.hpp
 	"../anchors.hpp"
@@ -3351,9 +3352,9 @@
 	"gamedata/danmaku/stage.hpp"
 	"gamedata/danmaku/program.hpp"
 
-1673293163 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\bullet.hpp
+1673301706 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\bullet.hpp
 
-1673293152 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\laser.hpp
+1673301753 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\laser.hpp
 
 1672952429 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\spellcard.hpp
 
@@ -3422,7 +3423,7 @@
 
 1672521486 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\stage.hpp
 
-1673293146 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\item.hpp
+1673301869 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\item.hpp
 
 1660930201 d:\c(++) projects\_c++\game engine\makailib\lib\sdl2-2.0.10\x86_64-w64-mingw32\include\sdl2\sdl_mixer.h
 	"SDL_stdinc.h"
@@ -3453,7 +3454,7 @@
 	<OpenGL/glu.h>
 	<GL/glu.h>
 
-1673295029 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_drawable.hpp
+1673300969 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_drawable.hpp
 
 1663831178 d:\c(++) projects\_c++\game engine\makailib\lib\freetype-gl\include\freetype-gl.h
 	"platform.h"

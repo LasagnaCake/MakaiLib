@@ -204,11 +204,20 @@ public:
 	}
 
 	void freeAll() {
+		#ifdef $_PARALLEL_MANAGERS
 		$speach(item, items, ITEM_COUNT) {item.setFree();} $endspeach
+		#else
+		for $seach(item, items, ITEM_COUNT) item.setFree(); $endseach
+		#endif
 	}
 
 	void discardAll() {
+
+		#ifdef $_PARALLEL_MANAGERS
 		$speach(item, items, ITEM_COUNT) {item.discard();} $endspeach
+		#else
+		for $seach(item, items, ITEM_COUNT) item.discard(); $endseach
+		#endif
 	}
 
 	size_t getFreeCount() {

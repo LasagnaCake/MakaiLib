@@ -245,8 +245,17 @@ private:
 		// If no triangles exist, return
 		if (!triangles.size()) return;
 		// Transform references (if applicable)
+		#ifdef $_PARALLEL_RENDERING
+		if (!references.plane.empty())
+			$peach(plane, references.plane, references.plane.size(), {plane->transform();});
+		if (!references.trigon.empty())
+			$peach(tg, references.trigon, references.trigon.size(), {tg->transform();});
+		if(references.plane.size() == 1) references.plane[0] -> transform();
+		if(references.trigon.size() == 1) references.trigon[0] -> transform();
+		#else
 		for (auto& plane: references.plane)	plane->transform();
 		for (auto& tg: references.trigon)	tg->transform();
+		#endif
 		// Copy data to vertex buffer
 		// Get vertex count
 		vertexCount = triangles.size() * 3;
@@ -261,8 +270,17 @@ private:
 			i += 3;
 		}
 		// De-transform references (if applicable)
+		#ifdef $_PARALLEL_RENDERING
+		if (!references.plane.empty())
+			$peach(plane, references.plane, references.plane.size(), {plane->reset();});
+		if (!references.trigon.empty())
+			$peach(tg, references.trigon, references.trigon.size(), {tg->reset();});
+		if(references.plane.size() == 1) references.plane[0] -> reset();
+		if(references.trigon.size() == 1) references.trigon[0] -> reset();
+		#else
 		for (auto& plane: references.plane)	plane->reset();
 		for (auto& tg: references.trigon)	tg->reset();
+		#endif
 	}
 
 	void draw() override {

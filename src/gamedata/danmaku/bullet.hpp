@@ -297,11 +297,19 @@ public:
 	}
 
 	void freeAll() {
+		#ifdef $_PARALLEL_MANAGERS
 		$speach(b, bullets, BULLET_COUNT) {b.setFree();} $endspeach
+		#else
+		for $seach(b, bullets, BULLET_COUNT) b.setFree(); $endseach
+		#endif
 	}
 
 	void discardAll() {
+		#ifdef $_PARALLEL_MANAGERS
 		$speach(b, bullets, BULLET_COUNT) {b.discard();} $endspeach
+		#else
+		for $seach(b, bullets, BULLET_COUNT) b.discard(); $endseach
+		#endif
 	}
 
 	size_t getFreeCount() {

@@ -7,6 +7,7 @@
 #include <stdexcept>
 #include <functional>
 #include <cxxabi.h>
+#include <execution>
 #include <map>
 
 #include "../tasking.hpp"
@@ -279,8 +280,14 @@ namespace EntityClass {
 					#endif // _$_TASKERS_BEFORE_MAIN
 				}
 				if (children.size())
-					for (Entity* child : children)
-						child->yield(delta);
+					std::for_each(
+						std::execution::par,
+						children.begin(),
+						children.end(),
+						[&](auto&& child){
+							child->yield(delta);
+						}
+					);
 			}
 		}
 
