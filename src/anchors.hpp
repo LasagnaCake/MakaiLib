@@ -66,7 +66,6 @@
 
 #include <Stk.h>
 #include <clunk/clunk.h>
-#include <AL/al.h>
 
 /*
 *********************
