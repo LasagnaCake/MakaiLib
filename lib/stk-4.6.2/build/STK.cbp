@@ -1,0 +1,1717 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="STK"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="gcc"/>
+		<Option virtualFolders="CMake Files\;CMake Files\projects\;CMake Files\projects\examples\;CMake Files\projects\eguitar\;CMake Files\projects\demo\;CMake Files\projects\effects\;CMake Files\projects\ragamatic\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="stk">
+				<Option output="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/libstk.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-D__WINDOWS_MM__"/>
+					<Add option="-D__WINDOWS_DS__"/>
+					<Add option="-D__LITTLE_ENDIAN__"/>
+					<Add directory="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/./include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/x86_64-w64-mingw32"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/backward"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include-fixed"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../x86_64-w64-mingw32/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/Makefile&quot;  VERBOSE=1 stk"/>
+					<CompileFile command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="stk/fast">
+				<Option output="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/libstk.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-D__WINDOWS_MM__"/>
+					<Add option="-D__WINDOWS_DS__"/>
+					<Add option="-D__LITTLE_ENDIAN__"/>
+					<Add directory="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/./include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/x86_64-w64-mingw32"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/backward"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include-fixed"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../x86_64-w64-mingw32/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/Makefile&quot;  VERBOSE=1 stk/fast"/>
+					<CompileFile command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="stk_SHARED">
+				<Option output="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/libstk.dll" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build"/>
+				<Option object_output="./"/>
+				<Option type="3"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-D__WINDOWS_MM__"/>
+					<Add option="-D__WINDOWS_DS__"/>
+					<Add option="-D__LITTLE_ENDIAN__"/>
+					<Add directory="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/./include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/x86_64-w64-mingw32"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/backward"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include-fixed"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../x86_64-w64-mingw32/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/Makefile&quot;  VERBOSE=1 stk_SHARED"/>
+					<CompileFile command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="stk_SHARED/fast">
+				<Option output="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/libstk.dll" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build"/>
+				<Option object_output="./"/>
+				<Option type="3"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-D__WINDOWS_MM__"/>
+					<Add option="-D__WINDOWS_DS__"/>
+					<Add option="-D__LITTLE_ENDIAN__"/>
+					<Add directory="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/./include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/x86_64-w64-mingw32"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/backward"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include-fixed"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../x86_64-w64-mingw32/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/Makefile&quot;  VERBOSE=1 stk_SHARED/fast"/>
+					<CompileFile command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="edit_cache">
+				<Option working_dir="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="rebuild_cache">
+				<Option working_dir="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="audioprobe">
+				<Option output="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/examples/audioprobe.exe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/examples"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-D__WINDOWS_MM__"/>
+					<Add option="-D__WINDOWS_DS__"/>
+					<Add option="-D__LITTLE_ENDIAN__"/>
+					<Add directory="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/./include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/x86_64-w64-mingw32"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/backward"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include-fixed"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../x86_64-w64-mingw32/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 audioprobe"/>
+					<CompileFile command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="audioprobe/fast">
+				<Option output="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/examples/audioprobe.exe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/examples"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-D__WINDOWS_MM__"/>
+					<Add option="-D__WINDOWS_DS__"/>
+					<Add option="-D__LITTLE_ENDIAN__"/>
+					<Add directory="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/./include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/x86_64-w64-mingw32"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/backward"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include-fixed"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../x86_64-w64-mingw32/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 audioprobe/fast"/>
+					<CompileFile command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="bethree">
+				<Option output="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/examples/bethree.exe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/examples"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-D__WINDOWS_MM__"/>
+					<Add option="-D__WINDOWS_DS__"/>
+					<Add option="-D__LITTLE_ENDIAN__"/>
+					<Add directory="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/./include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/x86_64-w64-mingw32"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/backward"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include-fixed"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../x86_64-w64-mingw32/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 bethree"/>
+					<CompileFile command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="bethree/fast">
+				<Option output="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/examples/bethree.exe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/examples"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-D__WINDOWS_MM__"/>
+					<Add option="-D__WINDOWS_DS__"/>
+					<Add option="-D__LITTLE_ENDIAN__"/>
+					<Add directory="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/./include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/x86_64-w64-mingw32"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/backward"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include-fixed"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../x86_64-w64-mingw32/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 bethree/fast"/>
+					<CompileFile command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="controlbee">
+				<Option output="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/examples/controlbee.exe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/examples"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-D__WINDOWS_MM__"/>
+					<Add option="-D__WINDOWS_DS__"/>
+					<Add option="-D__LITTLE_ENDIAN__"/>
+					<Add directory="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/./include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/x86_64-w64-mingw32"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/backward"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include-fixed"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../x86_64-w64-mingw32/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 controlbee"/>
+					<CompileFile command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="controlbee/fast">
+				<Option output="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/examples/controlbee.exe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/examples"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-D__WINDOWS_MM__"/>
+					<Add option="-D__WINDOWS_DS__"/>
+					<Add option="-D__LITTLE_ENDIAN__"/>
+					<Add directory="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/./include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/x86_64-w64-mingw32"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/backward"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include-fixed"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../x86_64-w64-mingw32/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 controlbee/fast"/>
+					<CompileFile command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="crtsine">
+				<Option output="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/examples/crtsine.exe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/examples"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-D__WINDOWS_MM__"/>
+					<Add option="-D__WINDOWS_DS__"/>
+					<Add option="-D__LITTLE_ENDIAN__"/>
+					<Add directory="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/./include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/x86_64-w64-mingw32"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/backward"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include-fixed"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../x86_64-w64-mingw32/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 crtsine"/>
+					<CompileFile command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="crtsine/fast">
+				<Option output="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/examples/crtsine.exe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/examples"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-D__WINDOWS_MM__"/>
+					<Add option="-D__WINDOWS_DS__"/>
+					<Add option="-D__LITTLE_ENDIAN__"/>
+					<Add directory="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/./include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/x86_64-w64-mingw32"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/backward"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include-fixed"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../x86_64-w64-mingw32/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 crtsine/fast"/>
+					<CompileFile command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="duplex">
+				<Option output="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/examples/duplex.exe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/examples"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-D__WINDOWS_MM__"/>
+					<Add option="-D__WINDOWS_DS__"/>
+					<Add option="-D__LITTLE_ENDIAN__"/>
+					<Add directory="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/./include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/x86_64-w64-mingw32"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/backward"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include-fixed"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../x86_64-w64-mingw32/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 duplex"/>
+					<CompileFile command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="duplex/fast">
+				<Option output="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/examples/duplex.exe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/examples"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-D__WINDOWS_MM__"/>
+					<Add option="-D__WINDOWS_DS__"/>
+					<Add option="-D__LITTLE_ENDIAN__"/>
+					<Add directory="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/./include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/x86_64-w64-mingw32"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/backward"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include-fixed"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../x86_64-w64-mingw32/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 duplex/fast"/>
+					<CompileFile command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="foursine">
+				<Option output="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/examples/foursine.exe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/examples"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-D__WINDOWS_MM__"/>
+					<Add option="-D__WINDOWS_DS__"/>
+					<Add option="-D__LITTLE_ENDIAN__"/>
+					<Add directory="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/./include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/x86_64-w64-mingw32"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/backward"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include-fixed"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../x86_64-w64-mingw32/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 foursine"/>
+					<CompileFile command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="foursine/fast">
+				<Option output="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/examples/foursine.exe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/examples"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-D__WINDOWS_MM__"/>
+					<Add option="-D__WINDOWS_DS__"/>
+					<Add option="-D__LITTLE_ENDIAN__"/>
+					<Add directory="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/./include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/x86_64-w64-mingw32"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/backward"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include-fixed"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../x86_64-w64-mingw32/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 foursine/fast"/>
+					<CompileFile command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="grains">
+				<Option output="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/examples/grains.exe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/examples"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-D__WINDOWS_MM__"/>
+					<Add option="-D__WINDOWS_DS__"/>
+					<Add option="-D__LITTLE_ENDIAN__"/>
+					<Add directory="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/./include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/x86_64-w64-mingw32"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/backward"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include-fixed"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../x86_64-w64-mingw32/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 grains"/>
+					<CompileFile command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="grains/fast">
+				<Option output="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/examples/grains.exe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/examples"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-D__WINDOWS_MM__"/>
+					<Add option="-D__WINDOWS_DS__"/>
+					<Add option="-D__LITTLE_ENDIAN__"/>
+					<Add directory="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/./include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/x86_64-w64-mingw32"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/backward"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include-fixed"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../x86_64-w64-mingw32/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 grains/fast"/>
+					<CompileFile command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="inetIn">
+				<Option output="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/examples/inetIn.exe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/examples"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-D__WINDOWS_MM__"/>
+					<Add option="-D__WINDOWS_DS__"/>
+					<Add option="-D__LITTLE_ENDIAN__"/>
+					<Add directory="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/./include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/x86_64-w64-mingw32"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/backward"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include-fixed"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../x86_64-w64-mingw32/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 inetIn"/>
+					<CompileFile command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="inetIn/fast">
+				<Option output="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/examples/inetIn.exe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/examples"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-D__WINDOWS_MM__"/>
+					<Add option="-D__WINDOWS_DS__"/>
+					<Add option="-D__LITTLE_ENDIAN__"/>
+					<Add directory="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/./include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/x86_64-w64-mingw32"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/backward"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include-fixed"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../x86_64-w64-mingw32/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 inetIn/fast"/>
+					<CompileFile command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="inetOut">
+				<Option output="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/examples/inetOut.exe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/examples"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-D__WINDOWS_MM__"/>
+					<Add option="-D__WINDOWS_DS__"/>
+					<Add option="-D__LITTLE_ENDIAN__"/>
+					<Add directory="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/./include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/x86_64-w64-mingw32"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/backward"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include-fixed"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../x86_64-w64-mingw32/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 inetOut"/>
+					<CompileFile command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="inetOut/fast">
+				<Option output="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/examples/inetOut.exe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/examples"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-D__WINDOWS_MM__"/>
+					<Add option="-D__WINDOWS_DS__"/>
+					<Add option="-D__LITTLE_ENDIAN__"/>
+					<Add directory="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/./include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/x86_64-w64-mingw32"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/backward"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include-fixed"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../x86_64-w64-mingw32/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 inetOut/fast"/>
+					<CompileFile command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="midiprobe">
+				<Option output="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/examples/midiprobe.exe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/examples"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-D__WINDOWS_MM__"/>
+					<Add option="-D__WINDOWS_DS__"/>
+					<Add option="-D__LITTLE_ENDIAN__"/>
+					<Add directory="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/./include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/x86_64-w64-mingw32"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/backward"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include-fixed"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../x86_64-w64-mingw32/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 midiprobe"/>
+					<CompileFile command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="midiprobe/fast">
+				<Option output="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/examples/midiprobe.exe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/examples"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-D__WINDOWS_MM__"/>
+					<Add option="-D__WINDOWS_DS__"/>
+					<Add option="-D__LITTLE_ENDIAN__"/>
+					<Add directory="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/./include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/x86_64-w64-mingw32"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/backward"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include-fixed"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../x86_64-w64-mingw32/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 midiprobe/fast"/>
+					<CompileFile command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="play">
+				<Option output="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/examples/play.exe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/examples"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-D__WINDOWS_MM__"/>
+					<Add option="-D__WINDOWS_DS__"/>
+					<Add option="-D__LITTLE_ENDIAN__"/>
+					<Add directory="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/./include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/x86_64-w64-mingw32"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/backward"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include-fixed"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../x86_64-w64-mingw32/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 play"/>
+					<CompileFile command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="play/fast">
+				<Option output="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/examples/play.exe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/examples"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-D__WINDOWS_MM__"/>
+					<Add option="-D__WINDOWS_DS__"/>
+					<Add option="-D__LITTLE_ENDIAN__"/>
+					<Add directory="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/./include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/x86_64-w64-mingw32"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/backward"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include-fixed"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../x86_64-w64-mingw32/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 play/fast"/>
+					<CompileFile command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="playsmf">
+				<Option output="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/examples/playsmf.exe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/examples"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-D__WINDOWS_MM__"/>
+					<Add option="-D__WINDOWS_DS__"/>
+					<Add option="-D__LITTLE_ENDIAN__"/>
+					<Add directory="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/./include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/x86_64-w64-mingw32"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/backward"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include-fixed"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../x86_64-w64-mingw32/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 playsmf"/>
+					<CompileFile command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="playsmf/fast">
+				<Option output="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/examples/playsmf.exe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/examples"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-D__WINDOWS_MM__"/>
+					<Add option="-D__WINDOWS_DS__"/>
+					<Add option="-D__LITTLE_ENDIAN__"/>
+					<Add directory="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/./include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/x86_64-w64-mingw32"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/backward"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include-fixed"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../x86_64-w64-mingw32/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 playsmf/fast"/>
+					<CompileFile command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="record">
+				<Option output="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/examples/record.exe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/examples"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-D__WINDOWS_MM__"/>
+					<Add option="-D__WINDOWS_DS__"/>
+					<Add option="-D__LITTLE_ENDIAN__"/>
+					<Add directory="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/./include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/x86_64-w64-mingw32"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/backward"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include-fixed"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../x86_64-w64-mingw32/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 record"/>
+					<CompileFile command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="record/fast">
+				<Option output="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/examples/record.exe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/examples"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-D__WINDOWS_MM__"/>
+					<Add option="-D__WINDOWS_DS__"/>
+					<Add option="-D__LITTLE_ENDIAN__"/>
+					<Add directory="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/./include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/x86_64-w64-mingw32"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/backward"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include-fixed"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../x86_64-w64-mingw32/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 record/fast"/>
+					<CompileFile command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="rtsine">
+				<Option output="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/examples/rtsine.exe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/examples"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-D__WINDOWS_MM__"/>
+					<Add option="-D__WINDOWS_DS__"/>
+					<Add option="-D__LITTLE_ENDIAN__"/>
+					<Add directory="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/./include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/x86_64-w64-mingw32"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/backward"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include-fixed"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../x86_64-w64-mingw32/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 rtsine"/>
+					<CompileFile command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="rtsine/fast">
+				<Option output="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/examples/rtsine.exe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/examples"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-D__WINDOWS_MM__"/>
+					<Add option="-D__WINDOWS_DS__"/>
+					<Add option="-D__LITTLE_ENDIAN__"/>
+					<Add directory="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/./include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/x86_64-w64-mingw32"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/backward"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include-fixed"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../x86_64-w64-mingw32/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 rtsine/fast"/>
+					<CompileFile command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="sine">
+				<Option output="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/examples/sine.exe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/examples"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-D__WINDOWS_MM__"/>
+					<Add option="-D__WINDOWS_DS__"/>
+					<Add option="-D__LITTLE_ENDIAN__"/>
+					<Add directory="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/./include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/x86_64-w64-mingw32"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/backward"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include-fixed"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../x86_64-w64-mingw32/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 sine"/>
+					<CompileFile command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="sine/fast">
+				<Option output="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/examples/sine.exe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/examples"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-D__WINDOWS_MM__"/>
+					<Add option="-D__WINDOWS_DS__"/>
+					<Add option="-D__LITTLE_ENDIAN__"/>
+					<Add directory="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/./include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/x86_64-w64-mingw32"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/backward"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include-fixed"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../x86_64-w64-mingw32/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 sine/fast"/>
+					<CompileFile command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="sineosc">
+				<Option output="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/examples/sineosc.exe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/examples"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-D__WINDOWS_MM__"/>
+					<Add option="-D__WINDOWS_DS__"/>
+					<Add option="-D__LITTLE_ENDIAN__"/>
+					<Add directory="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/./include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/x86_64-w64-mingw32"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/backward"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include-fixed"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../x86_64-w64-mingw32/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 sineosc"/>
+					<CompileFile command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="sineosc/fast">
+				<Option output="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/examples/sineosc.exe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/examples"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-D__WINDOWS_MM__"/>
+					<Add option="-D__WINDOWS_DS__"/>
+					<Add option="-D__LITTLE_ENDIAN__"/>
+					<Add directory="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/./include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/x86_64-w64-mingw32"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/backward"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include-fixed"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../x86_64-w64-mingw32/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 sineosc/fast"/>
+					<CompileFile command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="threebees">
+				<Option output="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/examples/threebees.exe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/examples"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-D__WINDOWS_MM__"/>
+					<Add option="-D__WINDOWS_DS__"/>
+					<Add option="-D__LITTLE_ENDIAN__"/>
+					<Add directory="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/./include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/x86_64-w64-mingw32"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/backward"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include-fixed"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../x86_64-w64-mingw32/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 threebees"/>
+					<CompileFile command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="threebees/fast">
+				<Option output="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/examples/threebees.exe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/examples"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-D__WINDOWS_MM__"/>
+					<Add option="-D__WINDOWS_DS__"/>
+					<Add option="-D__LITTLE_ENDIAN__"/>
+					<Add directory="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/./include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/x86_64-w64-mingw32"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/backward"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include-fixed"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../x86_64-w64-mingw32/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 threebees/fast"/>
+					<CompileFile command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/examples/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="eguitar">
+				<Option output="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/eguitar/eguitar.exe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/eguitar"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-D__WINDOWS_MM__"/>
+					<Add option="-D__WINDOWS_DS__"/>
+					<Add option="-D__LITTLE_ENDIAN__"/>
+					<Add directory="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/./include"/>
+					<Add directory="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/eguitar/."/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/x86_64-w64-mingw32"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/backward"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include-fixed"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../x86_64-w64-mingw32/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/eguitar/Makefile&quot;  VERBOSE=1 eguitar"/>
+					<CompileFile command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/eguitar/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/eguitar/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/eguitar/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="eguitar/fast">
+				<Option output="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/eguitar/eguitar.exe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/eguitar"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-D__WINDOWS_MM__"/>
+					<Add option="-D__WINDOWS_DS__"/>
+					<Add option="-D__LITTLE_ENDIAN__"/>
+					<Add directory="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/./include"/>
+					<Add directory="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/eguitar/."/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/x86_64-w64-mingw32"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/backward"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include-fixed"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../x86_64-w64-mingw32/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/eguitar/Makefile&quot;  VERBOSE=1 eguitar/fast"/>
+					<CompileFile command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/eguitar/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/eguitar/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/eguitar/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="stk-demo">
+				<Option output="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/demo/stk-demo.exe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/demo"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-D__WINDOWS_MM__"/>
+					<Add option="-D__WINDOWS_DS__"/>
+					<Add option="-D__LITTLE_ENDIAN__"/>
+					<Add directory="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/./include"/>
+					<Add directory="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/demo/."/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/x86_64-w64-mingw32"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/backward"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include-fixed"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../x86_64-w64-mingw32/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/demo/Makefile&quot;  VERBOSE=1 stk-demo"/>
+					<CompileFile command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/demo/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/demo/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/demo/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="stk-demo/fast">
+				<Option output="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/demo/stk-demo.exe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/demo"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-D__WINDOWS_MM__"/>
+					<Add option="-D__WINDOWS_DS__"/>
+					<Add option="-D__LITTLE_ENDIAN__"/>
+					<Add directory="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/./include"/>
+					<Add directory="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/demo/."/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/x86_64-w64-mingw32"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/backward"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include-fixed"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../x86_64-w64-mingw32/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/demo/Makefile&quot;  VERBOSE=1 stk-demo/fast"/>
+					<CompileFile command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/demo/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/demo/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/demo/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="effects">
+				<Option output="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/effects/effects.exe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/effects"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-D__WINDOWS_MM__"/>
+					<Add option="-D__WINDOWS_DS__"/>
+					<Add option="-D__LITTLE_ENDIAN__"/>
+					<Add directory="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/./include"/>
+					<Add directory="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/effects/."/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/x86_64-w64-mingw32"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/backward"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include-fixed"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../x86_64-w64-mingw32/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/effects/Makefile&quot;  VERBOSE=1 effects"/>
+					<CompileFile command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/effects/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/effects/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/effects/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="effects/fast">
+				<Option output="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/effects/effects.exe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/effects"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-D__WINDOWS_MM__"/>
+					<Add option="-D__WINDOWS_DS__"/>
+					<Add option="-D__LITTLE_ENDIAN__"/>
+					<Add directory="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/./include"/>
+					<Add directory="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/effects/."/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/x86_64-w64-mingw32"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/backward"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include-fixed"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../x86_64-w64-mingw32/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/effects/Makefile&quot;  VERBOSE=1 effects/fast"/>
+					<CompileFile command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/effects/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/effects/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/effects/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="ragamat">
+				<Option output="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/ragamatic/ragamat.exe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/ragamatic"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-D__WINDOWS_MM__"/>
+					<Add option="-D__WINDOWS_DS__"/>
+					<Add option="-D__LITTLE_ENDIAN__"/>
+					<Add directory="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/./include"/>
+					<Add directory="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/ragamatic/."/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/x86_64-w64-mingw32"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/backward"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include-fixed"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../x86_64-w64-mingw32/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/ragamatic/Makefile&quot;  VERBOSE=1 ragamat"/>
+					<CompileFile command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/ragamatic/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/ragamatic/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/ragamatic/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="ragamat/fast">
+				<Option output="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/ragamatic/ragamat.exe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/ragamatic"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-D__WINDOWS_MM__"/>
+					<Add option="-D__WINDOWS_DS__"/>
+					<Add option="-D__LITTLE_ENDIAN__"/>
+					<Add directory="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/./include"/>
+					<Add directory="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/ragamatic/."/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/x86_64-w64-mingw32"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/backward"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include-fixed"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../x86_64-w64-mingw32/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/ragamatic/Makefile&quot;  VERBOSE=1 ragamat/fast"/>
+					<CompileFile command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/ragamatic/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/ragamatic/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/build/projects/ragamatic/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/demo/demo.cpp">
+			<Option target="stk-demo"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/demo/utilities.cpp">
+			<Option target="stk-demo"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/demo/utilities.h">
+			<Option target="stk-demo"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/effects/effects.cpp">
+			<Option target="effects"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/eguitar/eguitar.cpp">
+			<Option target="eguitar"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/eguitar/utilities.cpp">
+			<Option target="eguitar"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/eguitar/utilities.h">
+			<Option target="eguitar"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/examples/audioprobe.cpp">
+			<Option target="audioprobe"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/examples/bethree.cpp">
+			<Option target="bethree"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/examples/controlbee.cpp">
+			<Option target="controlbee"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/examples/crtsine.cpp">
+			<Option target="crtsine"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/examples/duplex.cpp">
+			<Option target="duplex"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/examples/foursine.cpp">
+			<Option target="foursine"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/examples/grains.cpp">
+			<Option target="grains"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/examples/inetIn.cpp">
+			<Option target="inetIn"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/examples/inetOut.cpp">
+			<Option target="inetOut"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/examples/midiprobe.cpp">
+			<Option target="midiprobe"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/examples/play.cpp">
+			<Option target="play"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/examples/playsmf.cpp">
+			<Option target="playsmf"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/examples/record.cpp">
+			<Option target="record"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/examples/rtsine.cpp">
+			<Option target="rtsine"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/examples/sine.cpp">
+			<Option target="sine"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/examples/sineosc.cpp">
+			<Option target="sineosc"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/examples/threebees.cpp">
+			<Option target="threebees"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/ragamatic/Drone.cpp">
+			<Option target="ragamat"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/ragamatic/Drone.h">
+			<Option target="ragamat"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/ragamatic/Tabla.cpp">
+			<Option target="ragamat"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/ragamatic/Tabla.h">
+			<Option target="ragamat"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/ragamatic/VoicDrum.cpp">
+			<Option target="ragamat"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/ragamatic/VoicDrum.h">
+			<Option target="ragamat"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/ragamatic/ragamat.cpp">
+			<Option target="ragamat"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/src/ADSR.cpp">
+			<Option target="stk"/>
+			<Option target="stk_SHARED"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/src/Asymp.cpp">
+			<Option target="stk"/>
+			<Option target="stk_SHARED"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/src/BandedWG.cpp">
+			<Option target="stk"/>
+			<Option target="stk_SHARED"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/src/BeeThree.cpp">
+			<Option target="stk"/>
+			<Option target="stk_SHARED"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/src/BiQuad.cpp">
+			<Option target="stk"/>
+			<Option target="stk_SHARED"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/src/Blit.cpp">
+			<Option target="stk"/>
+			<Option target="stk_SHARED"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/src/BlitSaw.cpp">
+			<Option target="stk"/>
+			<Option target="stk_SHARED"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/src/BlitSquare.cpp">
+			<Option target="stk"/>
+			<Option target="stk_SHARED"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/src/BlowBotl.cpp">
+			<Option target="stk"/>
+			<Option target="stk_SHARED"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/src/BlowHole.cpp">
+			<Option target="stk"/>
+			<Option target="stk_SHARED"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/src/Bowed.cpp">
+			<Option target="stk"/>
+			<Option target="stk_SHARED"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/src/Brass.cpp">
+			<Option target="stk"/>
+			<Option target="stk_SHARED"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/src/Chorus.cpp">
+			<Option target="stk"/>
+			<Option target="stk_SHARED"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/src/Clarinet.cpp">
+			<Option target="stk"/>
+			<Option target="stk_SHARED"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/src/Delay.cpp">
+			<Option target="stk"/>
+			<Option target="stk_SHARED"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/src/DelayA.cpp">
+			<Option target="stk"/>
+			<Option target="stk_SHARED"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/src/DelayL.cpp">
+			<Option target="stk"/>
+			<Option target="stk_SHARED"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/src/Drummer.cpp">
+			<Option target="stk"/>
+			<Option target="stk_SHARED"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/src/Echo.cpp">
+			<Option target="stk"/>
+			<Option target="stk_SHARED"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/src/Envelope.cpp">
+			<Option target="stk"/>
+			<Option target="stk_SHARED"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/src/FM.cpp">
+			<Option target="stk"/>
+			<Option target="stk_SHARED"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/src/FMVoices.cpp">
+			<Option target="stk"/>
+			<Option target="stk_SHARED"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/src/FileLoop.cpp">
+			<Option target="stk"/>
+			<Option target="stk_SHARED"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/src/FileRead.cpp">
+			<Option target="stk"/>
+			<Option target="stk_SHARED"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/src/FileWrite.cpp">
+			<Option target="stk"/>
+			<Option target="stk_SHARED"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/src/FileWvIn.cpp">
+			<Option target="stk"/>
+			<Option target="stk_SHARED"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/src/FileWvOut.cpp">
+			<Option target="stk"/>
+			<Option target="stk_SHARED"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/src/Fir.cpp">
+			<Option target="stk"/>
+			<Option target="stk_SHARED"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/src/Flute.cpp">
+			<Option target="stk"/>
+			<Option target="stk_SHARED"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/src/FormSwep.cpp">
+			<Option target="stk"/>
+			<Option target="stk_SHARED"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/src/FreeVerb.cpp">
+			<Option target="stk"/>
+			<Option target="stk_SHARED"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/src/Granulate.cpp">
+			<Option target="stk"/>
+			<Option target="stk_SHARED"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/src/Guitar.cpp">
+			<Option target="stk"/>
+			<Option target="stk_SHARED"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/src/HevyMetl.cpp">
+			<Option target="stk"/>
+			<Option target="stk_SHARED"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/src/Iir.cpp">
+			<Option target="stk"/>
+			<Option target="stk_SHARED"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/src/InetWvIn.cpp">
+			<Option target="stk"/>
+			<Option target="stk_SHARED"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/src/InetWvOut.cpp">
+			<Option target="stk"/>
+			<Option target="stk_SHARED"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/src/JCRev.cpp">
+			<Option target="stk"/>
+			<Option target="stk_SHARED"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/src/LentPitShift.cpp">
+			<Option target="stk"/>
+			<Option target="stk_SHARED"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/src/Mandolin.cpp">
+			<Option target="stk"/>
+			<Option target="stk_SHARED"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/src/Mesh2D.cpp">
+			<Option target="stk"/>
+			<Option target="stk_SHARED"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/src/Messager.cpp">
+			<Option target="stk"/>
+			<Option target="stk_SHARED"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/src/MidiFileIn.cpp">
+			<Option target="stk"/>
+			<Option target="stk_SHARED"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/src/Modal.cpp">
+			<Option target="stk"/>
+			<Option target="stk_SHARED"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/src/ModalBar.cpp">
+			<Option target="stk"/>
+			<Option target="stk_SHARED"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/src/Modulate.cpp">
+			<Option target="stk"/>
+			<Option target="stk_SHARED"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/src/Moog.cpp">
+			<Option target="stk"/>
+			<Option target="stk_SHARED"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/src/Mutex.cpp">
+			<Option target="stk"/>
+			<Option target="stk_SHARED"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/src/NRev.cpp">
+			<Option target="stk"/>
+			<Option target="stk_SHARED"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/src/Noise.cpp">
+			<Option target="stk"/>
+			<Option target="stk_SHARED"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/src/OnePole.cpp">
+			<Option target="stk"/>
+			<Option target="stk_SHARED"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/src/OneZero.cpp">
+			<Option target="stk"/>
+			<Option target="stk_SHARED"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/src/PRCRev.cpp">
+			<Option target="stk"/>
+			<Option target="stk_SHARED"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/src/PercFlut.cpp">
+			<Option target="stk"/>
+			<Option target="stk_SHARED"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/src/Phonemes.cpp">
+			<Option target="stk"/>
+			<Option target="stk_SHARED"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/src/PitShift.cpp">
+			<Option target="stk"/>
+			<Option target="stk_SHARED"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/src/Plucked.cpp">
+			<Option target="stk"/>
+			<Option target="stk_SHARED"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/src/PoleZero.cpp">
+			<Option target="stk"/>
+			<Option target="stk_SHARED"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/src/Recorder.cpp">
+			<Option target="stk"/>
+			<Option target="stk_SHARED"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/src/Resonate.cpp">
+			<Option target="stk"/>
+			<Option target="stk_SHARED"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/src/Rhodey.cpp">
+			<Option target="stk"/>
+			<Option target="stk_SHARED"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/src/RtAudio.cpp">
+			<Option target="stk"/>
+			<Option target="stk_SHARED"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/src/RtMidi.cpp">
+			<Option target="stk"/>
+			<Option target="stk_SHARED"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/src/RtWvIn.cpp">
+			<Option target="stk"/>
+			<Option target="stk_SHARED"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/src/RtWvOut.cpp">
+			<Option target="stk"/>
+			<Option target="stk_SHARED"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/src/Sampler.cpp">
+			<Option target="stk"/>
+			<Option target="stk_SHARED"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/src/Saxofony.cpp">
+			<Option target="stk"/>
+			<Option target="stk_SHARED"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/src/Shakers.cpp">
+			<Option target="stk"/>
+			<Option target="stk_SHARED"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/src/Simple.cpp">
+			<Option target="stk"/>
+			<Option target="stk_SHARED"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/src/SineWave.cpp">
+			<Option target="stk"/>
+			<Option target="stk_SHARED"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/src/SingWave.cpp">
+			<Option target="stk"/>
+			<Option target="stk_SHARED"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/src/Sitar.cpp">
+			<Option target="stk"/>
+			<Option target="stk_SHARED"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/src/Skini.cpp">
+			<Option target="stk"/>
+			<Option target="stk_SHARED"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/src/Socket.cpp">
+			<Option target="stk"/>
+			<Option target="stk_SHARED"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/src/Sphere.cpp">
+			<Option target="stk"/>
+			<Option target="stk_SHARED"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/src/StifKarp.cpp">
+			<Option target="stk"/>
+			<Option target="stk_SHARED"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/src/Stk.cpp">
+			<Option target="stk"/>
+			<Option target="stk_SHARED"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/src/TapDelay.cpp">
+			<Option target="stk"/>
+			<Option target="stk_SHARED"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/src/TcpClient.cpp">
+			<Option target="stk"/>
+			<Option target="stk_SHARED"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/src/TcpServer.cpp">
+			<Option target="stk"/>
+			<Option target="stk_SHARED"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/src/Thread.cpp">
+			<Option target="stk"/>
+			<Option target="stk_SHARED"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/src/TubeBell.cpp">
+			<Option target="stk"/>
+			<Option target="stk_SHARED"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/src/Twang.cpp">
+			<Option target="stk"/>
+			<Option target="stk_SHARED"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/src/TwoPole.cpp">
+			<Option target="stk"/>
+			<Option target="stk_SHARED"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/src/TwoZero.cpp">
+			<Option target="stk"/>
+			<Option target="stk_SHARED"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/src/UdpSocket.cpp">
+			<Option target="stk"/>
+			<Option target="stk_SHARED"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/src/VoicForm.cpp">
+			<Option target="stk"/>
+			<Option target="stk_SHARED"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/src/Voicer.cpp">
+			<Option target="stk"/>
+			<Option target="stk_SHARED"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/src/Whistle.cpp">
+			<Option target="stk"/>
+			<Option target="stk_SHARED"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/src/Wurley.cpp">
+			<Option target="stk"/>
+			<Option target="stk_SHARED"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/examples/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\projects\examples\"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/eguitar/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\projects\eguitar\"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/demo/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\projects\demo\"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/effects/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\projects\effects\"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/stk-4.6.2/stk-4.6.2/projects/ragamatic/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\projects\ragamatic\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>

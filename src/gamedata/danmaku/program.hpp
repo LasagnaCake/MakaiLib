@@ -10,13 +10,15 @@ public:
 		std::string windowTitle,
 		bool fullscreen = false,
 		std::string bufferShaderPath = "shaders/framebuffer/compose.slf",
-		std::string mainShaderPath = "shaders/base/base.slf"
+		std::string mainShaderPath = "shaders/base/base.slf",
+		bool useMIDI = false
 	) : Program (
 			width,
 			height,
 			windowTitle,
 			fullscreen,
-			bufferShaderPath
+			bufferShaderPath,
+			false
 	) {
 		if (mainProgram)
 			throw std::runtime_error("Only one program can exist at a time!");

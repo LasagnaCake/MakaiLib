@@ -8,6 +8,10 @@
 #include <wtypes.h>
 #endif
 
+#ifndef AUDIO_SAMPLE_FRAMES
+#define AUDIO_SAMPLE_FRAMES 2048
+#endif // AUDIO_SAMPLE_FRAMES
+
 namespace Makai {
 	namespace {
 		using
@@ -133,6 +137,8 @@ namespace Makai {
 				$errlog(string("Unable to start Mixer! (") + Mix_GetError() + ")");
 				throw runtime_error(string("Error: Mixer (") + Mix_GetError() + ")");
 			}
+			// Open audio
+			Mix_OpenAudio(42000, AUDIO_S16SYS, 2, AUDIO_SAMPLE_FRAMES);
 			$debug("Started!");
 			// Initialize Freetype
 			$debug("Starting FreeType...");/*
@@ -253,6 +259,7 @@ namespace Makai {
 				frameDelta = 1.0/maxFrameRate;
 				cycleDelta = 1.0/maxCycleRate;
 				// If should process, then do so
+				#ifndef $_PROCESS_RENDER_BEFORE_LOGIC
 				if (SDL_GetTicks() - cycleTicks > cycleDelta * 1000) {
 					// Update input manager
 					input.update();
@@ -271,6 +278,7 @@ namespace Makai {
 					$ecl destroyQueued();
 					#endif // FRAME_DEPENDENT_PROCESS
 				}
+				#endif
 				if (SDL_GetTicks() - frameTicks > frameDelta * 1000) {
 					// Get current time
 					frameTicks = SDL_GetTicks();
@@ -286,6 +294,26 @@ namespace Makai {
 					// Render screen
 					render();
 				}
+				#ifdef $_PROCESS_RENDER_BEFORE_LOGIC
+				if (SDL_GetTicks() - cycleTicks > cycleDelta * 1000) {
+					// Update input manager
+					input.update();
+					// Get current time
+					cycleTicks = SDL_GetTicks();
+					// Increment cycle counter
+					cycle++;
+					// Do timer-related stuff
+					timerFunc(cycleDelta);
+					taskers.yield(cycleDelta);
+					#ifdef $_FRAME_INDEPENDENT_PROCESS
+					// Do normal logic-related stuff
+					logicFunc(cycleDelta);
+					onLogicFrame(cycleDelta);
+					// Destroy queued entities
+					$ecl destroyQueued();
+					#endif // FRAME_DEPENDENT_PROCESS
+				}
+				#endif
 			}
 			// Terminate program
 			$debug("Closing incoherent program...");
@@ -423,6 +451,8 @@ namespace Makai {
 		void terminate() {
 			// Call final function
 			onClose();
+			// Close audio
+			Mix_CloseAudio();
 			// Destroy buffers
 			$debug("Destroying frame buffers...");
 			framebuffer.destroy();

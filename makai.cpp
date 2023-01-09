@@ -3,6 +3,7 @@
 #define $_PREVENT_BULLET_OVERFLOW_BY_WRAP
 #define $_DANMAKU_GAME
 #define $_FRAME_INDEPENDENT_PROCESS
+//#define $_PROCESS_RENDER_BEFORE_LOGIC
 
 #include "src/makai.hpp"
 
@@ -49,7 +50,7 @@ public:
 
 	$txt FontData		font{new Drawer::Texture2D("img/fonts/fontGRID.png"), $vec2(16), $vec2(0.55, 1.0)};
 
-	$drw Texture2D*		testImage = new Drawer::Texture2D("img/ring.png");
+	$drw Texture2D*		ringbar = new Drawer::Texture2D("img/ring.png");
 
 	void onOpen() override {
 		// British? 😩
@@ -72,7 +73,7 @@ public:
 		enemy->sprite->setColor(Color::RED);
 		enemy->healthBar.material.texture.enabled	= true;
 		//enemy->healthBar.centered = true;
-		enemy->healthBar.material.texture.image		= testImage;
+		//enemy->healthBar.material.texture.image		= ringbar;
 		player.grazebox.radius = 2.5;
 		// Create test bullet spawner
 		bulletSpawner.onSignal = $signal {

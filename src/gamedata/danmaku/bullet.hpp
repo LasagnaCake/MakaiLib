@@ -30,6 +30,7 @@ public:
 		UPDATE_PARAM(rot)
 		if (params.vel.current)
 			local.position += VecMath::angleV2(params.rot.current) * params.vel.current * delta;
+		params.hitbox.angle =
 		local.rotation = params.rot.current;
 		updateSprite();
 	}
@@ -37,6 +38,7 @@ public:
 	Bullet* reset() override {
 		setZero();
 		params.vel.current = params.vel.start;
+		params.hitbox.angle =
 		local.rotation =
 		params.rot.current = params.rot.start;
 		params.hitbox.position = local.position;
@@ -47,11 +49,13 @@ public:
 	}
 
 	Bullet* setZero() override {
+		params.hitbox.angle =
 		params.vel.current =
 		local.rotation =
 		params.rot.current =
 		params.vel.factor =
 		params.rot.factor = 0;
+		params.hitbox.aperture = PI;
 		return this;
 	}
 

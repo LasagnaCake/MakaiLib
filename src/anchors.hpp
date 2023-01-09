@@ -57,6 +57,16 @@
 #include <mINI-0.9.14/ini.h>
 
 /*
+*****************
+*               *
+*  Audio stuff  *
+*               *
+*****************
+*/
+
+#include <Stk.h>
+
+/*
 *********************
 *                   *
 *  Graphical stuff  *

@@ -51,6 +51,7 @@
 			<Add directory="lib/OpenGL/GLEW/include" />
 			<Add directory="lib/bzip2-1.0.8" />
 			<Add directory="lib/zlib-1.2.13" />
+			<Add directory="lib/stk-4.6.2/include" />
 		</Compiler>
 		<ResourceCompiler>
 			<Add directory="lib" />
@@ -59,6 +60,7 @@
 			<Add directory="lib/OpenGL/GLEW/include" />
 			<Add directory="lib/bzip2-1.0.8" />
 			<Add directory="lib/zlib-1.2.13" />
+			<Add directory="lib/stk-4.6.2/include" />
 		</ResourceCompiler>
 		<Linker>
 			<Add option="-O1" />
@@ -73,6 +75,7 @@
 			<Add library="lib/SDL2-2.0.10/x86_64-w64-mingw32/lib/libSDL2main.a" />
 			<Add library="lib/SDL2-2.0.10/x86_64-w64-mingw32/lib/libSDL2_mixer.dll.a" />
 			<Add library="lib/OpenGL/GLEW/lib/libglew32.dll.a" />
+			<Add library="lib/stk-4.6.2/lib/libstk.dll.a" />
 			<Add library="opengl32" />
 			<Add library="winmm" />
 			<Add directory="lib" />
@@ -81,6 +84,7 @@
 			<Add directory="lib/OpenGL/GLEW/include" />
 			<Add directory="lib/bzip2-1.0.8" />
 			<Add directory="lib/zlib-1.2.13" />
+			<Add directory="lib/stk-4.6.2/include" />
 		</Linker>
 		<Unit filename="makai.cpp" />
 		<Extensions>
