@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="clunk"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="gcc"/>
+		<Option virtualFolders="CMake Files\;CMake Files\clunk\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="C:/Users/patri/Downloads/clunk-1.3.261/clunk-1.3.261/build"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/clunk-1.3.261/clunk-1.3.261/build/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/clunk-1.3.261/clunk-1.3.261/build/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/clunk-1.3.261/clunk-1.3.261/build/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/clunk-1.3.261/clunk-1.3.261/build/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="clunk">
+				<Option output="C:/Users/patri/Downloads/clunk-1.3.261/clunk-1.3.261/build/libclunk.dll" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/patri/Downloads/clunk-1.3.261/clunk-1.3.261/build"/>
+				<Option object_output="./"/>
+				<Option type="3"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-D_CRT_SECURE_NO_WARNINGS"/>
+					<Add option="-D_WINDOWS"/>
+					<Add option="-DCLUNKAPI=DLLEXPORT"/>
+					<Add directory="C:/Users/patri/Downloads/clunk-1.3.261/clunk-1.3.261/build"/>
+					<Add directory="C:/Users/patri/Downloads/clunk-1.3.261/clunk-1.3.261"/>
+					<Add directory="D:/C(++) Projects/_C++/libraries/SDL2-2.0.10/x86_64-w64-mingw32/include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/x86_64-w64-mingw32"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/backward"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include-fixed"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../x86_64-w64-mingw32/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/clunk-1.3.261/clunk-1.3.261/build/Makefile&quot;  VERBOSE=1 clunk"/>
+					<CompileFile command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/clunk-1.3.261/clunk-1.3.261/build/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/clunk-1.3.261/clunk-1.3.261/build/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/clunk-1.3.261/clunk-1.3.261/build/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="clunk/fast">
+				<Option output="C:/Users/patri/Downloads/clunk-1.3.261/clunk-1.3.261/build/libclunk.dll" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/patri/Downloads/clunk-1.3.261/clunk-1.3.261/build"/>
+				<Option object_output="./"/>
+				<Option type="3"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-D_CRT_SECURE_NO_WARNINGS"/>
+					<Add option="-D_WINDOWS"/>
+					<Add option="-DCLUNKAPI=DLLEXPORT"/>
+					<Add directory="C:/Users/patri/Downloads/clunk-1.3.261/clunk-1.3.261/build"/>
+					<Add directory="C:/Users/patri/Downloads/clunk-1.3.261/clunk-1.3.261"/>
+					<Add directory="D:/C(++) Projects/_C++/libraries/SDL2-2.0.10/x86_64-w64-mingw32/include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/x86_64-w64-mingw32"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include/c++/backward"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../include"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/include-fixed"/>
+					<Add directory="D:/TDM-GCC-64/bin/../lib/gcc/x86_64-w64-mingw32/10.3.0/../../../../x86_64-w64-mingw32/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/clunk-1.3.261/clunk-1.3.261/build/Makefile&quot;  VERBOSE=1 clunk/fast"/>
+					<CompileFile command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/clunk-1.3.261/clunk-1.3.261/build/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/clunk-1.3.261/clunk-1.3.261/build/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/clunk-1.3.261/clunk-1.3.261/build/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="edit_cache">
+				<Option working_dir="C:/Users/patri/Downloads/clunk-1.3.261/clunk-1.3.261/build"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/clunk-1.3.261/clunk-1.3.261/build/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/clunk-1.3.261/clunk-1.3.261/build/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/clunk-1.3.261/clunk-1.3.261/build/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/clunk-1.3.261/clunk-1.3.261/build/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="rebuild_cache">
+				<Option working_dir="C:/Users/patri/Downloads/clunk-1.3.261/clunk-1.3.261/build"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/clunk-1.3.261/clunk-1.3.261/build/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/clunk-1.3.261/clunk-1.3.261/build/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/clunk-1.3.261/clunk-1.3.261/build/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/clunk-1.3.261/clunk-1.3.261/build/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="list_install_components">
+				<Option working_dir="C:/Users/patri/Downloads/clunk-1.3.261/clunk-1.3.261/build"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/clunk-1.3.261/clunk-1.3.261/build/Makefile&quot;  VERBOSE=1 list_install_components"/>
+					<CompileFile command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/clunk-1.3.261/clunk-1.3.261/build/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/clunk-1.3.261/clunk-1.3.261/build/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/clunk-1.3.261/clunk-1.3.261/build/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="install">
+				<Option working_dir="C:/Users/patri/Downloads/clunk-1.3.261/clunk-1.3.261/build"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/clunk-1.3.261/clunk-1.3.261/build/Makefile&quot;  VERBOSE=1 install"/>
+					<CompileFile command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/clunk-1.3.261/clunk-1.3.261/build/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/clunk-1.3.261/clunk-1.3.261/build/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/clunk-1.3.261/clunk-1.3.261/build/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="install/local">
+				<Option working_dir="C:/Users/patri/Downloads/clunk-1.3.261/clunk-1.3.261/build"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/clunk-1.3.261/clunk-1.3.261/build/Makefile&quot;  VERBOSE=1 install/local"/>
+					<CompileFile command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/clunk-1.3.261/clunk-1.3.261/build/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/clunk-1.3.261/clunk-1.3.261/build/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/clunk-1.3.261/clunk-1.3.261/build/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="install/strip">
+				<Option working_dir="C:/Users/patri/Downloads/clunk-1.3.261/clunk-1.3.261/build"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/clunk-1.3.261/clunk-1.3.261/build/Makefile&quot;  VERBOSE=1 install/strip"/>
+					<CompileFile command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/clunk-1.3.261/clunk-1.3.261/build/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/clunk-1.3.261/clunk-1.3.261/build/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="D:/MSYS2/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/patri/Downloads/clunk-1.3.261/clunk-1.3.261/build/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="C:/Users/patri/Downloads/clunk-1.3.261/clunk-1.3.261/clunk/buffer.cpp">
+			<Option target="clunk"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/clunk-1.3.261/clunk-1.3.261/clunk/buffer.h">
+			<Option target="clunk"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/clunk-1.3.261/clunk-1.3.261/clunk/clunk_ex.cpp">
+			<Option target="clunk"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/clunk-1.3.261/clunk-1.3.261/clunk/clunk_ex.h">
+			<Option target="clunk"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/clunk-1.3.261/clunk-1.3.261/clunk/context.cpp">
+			<Option target="clunk"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/clunk-1.3.261/clunk-1.3.261/clunk/context.h">
+			<Option target="clunk"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/clunk-1.3.261/clunk-1.3.261/clunk/distance_model.cpp">
+			<Option target="clunk"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/clunk-1.3.261/clunk-1.3.261/clunk/distance_model.h">
+			<Option target="clunk"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/clunk-1.3.261/clunk-1.3.261/clunk/hrtf.cpp">
+			<Option target="clunk"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/clunk-1.3.261/clunk-1.3.261/clunk/hrtf.h">
+			<Option target="clunk"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/clunk-1.3.261/clunk-1.3.261/clunk/kemar.c">
+			<Option target="clunk"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/clunk-1.3.261/clunk-1.3.261/clunk/kemar.h">
+			<Option target="clunk"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/clunk-1.3.261/clunk-1.3.261/clunk/logger.cpp">
+			<Option target="clunk"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/clunk-1.3.261/clunk-1.3.261/clunk/logger.h">
+			<Option target="clunk"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/clunk-1.3.261/clunk-1.3.261/clunk/object.cpp">
+			<Option target="clunk"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/clunk-1.3.261/clunk-1.3.261/clunk/object.h">
+			<Option target="clunk"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/clunk-1.3.261/clunk-1.3.261/clunk/sample.cpp">
+			<Option target="clunk"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/clunk-1.3.261/clunk-1.3.261/clunk/sample.h">
+			<Option target="clunk"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/clunk-1.3.261/clunk-1.3.261/clunk/source.cpp">
+			<Option target="clunk"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/clunk-1.3.261/clunk-1.3.261/clunk/source.h">
+			<Option target="clunk"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/clunk-1.3.261/clunk-1.3.261/clunk/stream.cpp">
+			<Option target="clunk"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/clunk-1.3.261/clunk-1.3.261/clunk/stream.h">
+			<Option target="clunk"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/clunk-1.3.261/clunk-1.3.261/clunk/wav_file.cpp">
+			<Option target="clunk"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/clunk-1.3.261/clunk-1.3.261/clunk/wav_file.h">
+			<Option target="clunk"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/clunk-1.3.261/clunk-1.3.261/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+		<Unit filename="C:/Users/patri/Downloads/clunk-1.3.261/clunk-1.3.261/clunk/config.h.in">
+			<Option virtualFolder="CMake Files\clunk\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>

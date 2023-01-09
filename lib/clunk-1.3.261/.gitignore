@@ -1,0 +1,8 @@
+CMake*
+Makefile
+cmake_*.cmake
+*.so
+*ninja*
+clunk-test
+nbproject
+clunk/config.h

@@ -20,8 +20,10 @@
 namespace Layer {
 	enum Layer: size_t {
 		R_LAYER(WORLD),
+		R_LAYER(WORLD_OVERLAY),
 		#ifdef $_DANMAKU_GAME
 		R_LAYER(SPELL),
+		R_LAYER(SPELL_OVERLAY),
 		R_LAYER(PLAYER),
 		R_LAYER(PLAYER_BULLET),
 		R_LAYER(PLAYER_LASER),

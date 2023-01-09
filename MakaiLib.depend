@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1673199118 source:d:\c(++) projects\_c++\game engine\makailib\makai.cpp
+1673222869 source:d:\c(++) projects\_c++\game engine\makailib\makai.cpp
 	"src/makai.hpp"
 	<wtypes.h>
 	<windows.h>
@@ -2867,7 +2867,7 @@
 1665256929 d:\c(++) projects\_c++\game engine\makailib\src\program.hpp
 	"program/gl_program.hpp"
 
-1673033014 d:\c(++) projects\_c++\game engine\makailib\src\anchors.hpp
+1673233819 d:\c(++) projects\_c++\game engine\makailib\src\anchors.hpp
 	<iostream>
 	<string>
 	<vector>
@@ -2888,6 +2888,9 @@
 	<zlib.h>
 	<bzlib.h>
 	<mINI-0.9.14/ini.h>
+	<Stk.h>
+	<clunk/clunk.h>
+	<AL/al.h>
 	"stb_image.h"
 	<GLEW/include/GL/glew.h>
 	<GLEW/include/GL/wglew.h>
@@ -3037,7 +3040,7 @@
 	<algorithm>
 	<regex>
 
-1672950944 d:\c(++) projects\_c++\game engine\makailib\src\program\gl_program.hpp
+1673222801 d:\c(++) projects\_c++\game engine\makailib\src\program\gl_program.hpp
 	"../anchors.hpp"
 	"../graphical.hpp"
 	<wtypes.h>
@@ -3409,7 +3412,7 @@
 	"SDL_gpu.h"
 	<stdarg.h>
 
-1673033455 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\program.hpp
+1673222850 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\program.hpp
 
 1673054677 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\enemy.hpp
 
@@ -3556,5 +3559,110 @@
 
 1673050081 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_progressbar.hpp
 
-1673048635 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\layout.hpp
+1673235379 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\layout.hpp
+
+1637201319 d:\c(++) projects\_c++\game engine\makailib\lib\stk-4.6.2\include\stk.h
+	<string>
+	<cstring>
+	<iostream>
+	<sstream>
+	<vector>
+	<stdexcept>
+
+1411973328 d:\c(++) projects\_c++\game engine\makailib\lib\clunk-1.3.261\clunk\clunk.h
+	<clunk/types.h>
+	<clunk/v3.h>
+	<clunk/context.h>
+	<clunk/object.h>
+	<clunk/sample.h>
+	<clunk/source.h>
+
+1411973328 d:\c(++) projects\_c++\game engine\makailib\lib\clunk-1.3.261\clunk\types.h
+	<stdint.h>
+	<math.h>
+	<clunk/config.h>
+
+1411973328 d:\c(++) projects\_c++\game engine\makailib\lib\clunk-1.3.261\clunk\v3.h
+	<clunk/types.h>
+	<limits>
+	<xmmintrin.h>
+
+1411973328 d:\c(++) projects\_c++\game engine\makailib\lib\clunk-1.3.261\clunk\context.h
+	<map>
+	<deque>
+	<vector>
+	<stdio.h>
+	<clunk/export_clunk.h>
+	<clunk/object.h>
+	<clunk/sample.h>
+	<clunk/buffer.h>
+	<clunk/distance_model.h>
+
+1411973328 d:\c(++) projects\_c++\game engine\makailib\lib\clunk-1.3.261\clunk\export_clunk.h
+	<clunk/config.h>
+
+1411973328 d:\c(++) projects\_c++\game engine\makailib\lib\clunk-1.3.261\clunk\object.h
+	<string>
+	<map>
+	<clunk/export_clunk.h>
+	<clunk/v3.h>
+
+1411973328 d:\c(++) projects\_c++\game engine\makailib\lib\clunk-1.3.261\clunk\sample.h
+	<clunk/export_clunk.h>
+	<clunk/buffer.h>
+	<clunk/audio_spec.h>
+
+1411973328 d:\c(++) projects\_c++\game engine\makailib\lib\clunk-1.3.261\clunk\buffer.h
+	<clunk/types.h>
+	<clunk/export_clunk.h>
+	<string>
+
+1411973328 d:\c(++) projects\_c++\game engine\makailib\lib\clunk-1.3.261\clunk\audio_spec.h
+	<clunk/types.h>
+	<clunk/export_clunk.h>
+	<stdexcept>
+
+1411973328 d:\c(++) projects\_c++\game engine\makailib\lib\clunk-1.3.261\clunk\distance_model.h
+	<clunk/export_clunk.h>
+	<clunk/v3.h>
+
+1411973328 d:\c(++) projects\_c++\game engine\makailib\lib\clunk-1.3.261\clunk\source.h
+	<clunk/export_clunk.h>
+	<clunk/v3.h>
+	<clunk/buffer.h>
+	<clunk/hrtf.h>
+
+1411973328 d:\c(++) projects\_c++\game engine\makailib\lib\clunk-1.3.261\clunk\hrtf.h
+	<clunk/buffer.h>
+	<clunk/export_clunk.h>
+	<clunk/mdct_context.h>
+	<clunk/types.h>
+	<clunk/v3.h>
+	<clunk/window_function.h>
+
+1411973328 d:\c(++) projects\_c++\game engine\makailib\lib\clunk-1.3.261\clunk\mdct_context.h
+	<clunk/fft_context.h>
+	<clunk/clunk_assert.h>
+	<string.h>
+
+1411973328 d:\c(++) projects\_c++\game engine\makailib\lib\clunk-1.3.261\clunk\fft_context.h
+	<complex>
+	<assert.h>
+	"sse_fft_context.h"
+
+1411973328 d:\c(++) projects\_c++\game engine\makailib\lib\clunk-1.3.261\clunk\sse_fft_context.h
+	<clunk/types.h>
+	<clunk/clunk_assert.h>
+	<clunk/export_clunk.h>
+	<xmmintrin.h>
+	<complex>
+
+1411973328 d:\c(++) projects\_c++\game engine\makailib\lib\clunk-1.3.261\clunk\clunk_assert.h
+
+1411973328 d:\c(++) projects\_c++\game engine\makailib\lib\clunk-1.3.261\clunk\window_function.h
+	<clunk/types.h>
+
+1673228831 d:\c(++) projects\_c++\game engine\makailib\lib\clunk-1.3.261\clunk\config.h
+
+1656319967 d:\c(++) projects\_c++\game engine\makailib\lib\openal-soft-1.22.2\include\al\al.h
 
