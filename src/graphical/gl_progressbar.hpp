@@ -63,20 +63,17 @@ private:
 			float uvfrac, posfrac;
 			// Get current vertex's fraction
 			uvfrac = posfrac = ((float)(i-1))/(RADIAL_BAR_RESOLUTION);
+			uvfrac *= TAU;
 			// Multiply by progress' percentage angle
 			posfrac *= fraction;
 			// Center if aplicable
-			if (centered)	{
-				posfrac	-= fraction/2.0 * PI;
-				uvfrac	-= fraction/2.0 * PI;
-			}
+			if (centered) posfrac -= fraction/2.0 + PI;
 			// Dynamicise UV if aplicable
 			if (dynamicUV) uvfrac = posfrac;
 			// Add angle offset to UV fraction
 			uvfrac += uvAngle;
 			// Set vertex position
-			Vector2 pos = VecMath::angleV2(posfrac);
-			Drawer::vertexSetPosition(vertices[i], pos * size);
+			Drawer::vertexSetPosition(vertices[i], VecMath::angleV2(posfrac) * size);
 			// Set vertex UV
 			Drawer::vertexSetUV(vertices[i], (((VecMath::angleV2(uvfrac + uvAngle) / 2.0) + 0.5)));
 		}

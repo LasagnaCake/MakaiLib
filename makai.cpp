@@ -75,8 +75,9 @@ public:
 		enemy->sprite->setColor(Color::RED);
 		enemy->healthBar.material.texture.enabled	= true;
 		enemy->healthBar.offset.x = 0.5;
-		//enemy->healthBar.centered = true;
-		//enemy->healthBar.material.texture.image		= ringbar;
+		enemy->healthBar.centered = true;
+		enemy->healthBar.material.texture.image		= ringbar;
+		enemy->healthBar.dynamicUV = false;
 		player.grazebox.radius = 2.5;
 		// Create test bullet spawner
 		bulletSpawner.onSignal = $signal {
