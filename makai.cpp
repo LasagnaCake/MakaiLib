@@ -1,6 +1,7 @@
 //#undef _DEBUG_OUTPUT_
 
 #define $_PREVENT_BULLET_OVERFLOW_BY_WRAP
+#define $_PARALLEL_MANAGERS
 #define $_DANMAKU_GAME
 #define $_FRAME_INDEPENDENT_PROCESS
 //#define $_PROCESS_RENDER_BEFORE_LOGIC
@@ -72,6 +73,7 @@ public:
 		enemy->position = Vector2(32, -24) * screenSpace;
 		enemy->sprite->setColor(Color::RED);
 		enemy->healthBar.material.texture.enabled	= true;
+		enemy->healthBar.offset.x = 0.5;
 		//enemy->healthBar.centered = true;
 		//enemy->healthBar.material.texture.image		= ringbar;
 		player.grazebox.radius = 2.5;
@@ -214,6 +216,7 @@ public:
 	}
 
 	void onClose() override {
+		DanmakuApp::onClose();
 		$debug("[ Executing Closing Procedure NOW ]\n");
 		delete tubeRend;
 		delete font.face;

@@ -205,6 +205,24 @@ public:
 	}
 
 	void onFrame(float delta) override {
+		#ifdef $_PARALLEL_MANAGERS
+		$speach(l, lasers, LASER_COUNT) {
+				l.onFrame(delta);
+				if (!l.isFree() && l.params.collidable) {
+					for $each(actor, $ecl groups.getGroup(ENEMY_LAYER)) {
+						auto a = (AreaCircle2D*)actor;
+						if (
+							a->collision.enabled
+							&& l.colliding(a->getCircleBounds())
+						) {
+							a->onCollision(this);
+							l.discard();
+						}
+					}
+				}
+			}
+		$endspeach
+		#else
 		for (auto i = 0; i < LASER_COUNT; i++) {
 			auto* l = &lasers[i];
 			l->onFrame(delta);
@@ -221,15 +239,15 @@ public:
 				}
 			}
 		}
-		//firstHalf.join();
+		#endif
 	}
 
 	void freeAll() {
-		for $seach(l, lasers, LASER_COUNT) l.setFree(); $endseach
+		$speach(l, lasers, LASER_COUNT) {l.setFree();} $endspeach
 	}
 
 	void discardAll() {
-		for $seach(l, lasers, LASER_COUNT) l.discard(); $endseach
+		$speach(l, lasers, LASER_COUNT) {l.discard();} $endspeach
 	}
 
 	size_t getFreeCount() {

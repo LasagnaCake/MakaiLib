@@ -3,6 +3,7 @@
 
 #include "../anchors.hpp"
 #include "../graphical.hpp"
+#include "../audio.hpp"
 
 #if (_WIN32 || _WIN64 || __WIN32__ || __WIN64__)
 #include <wtypes.h>
@@ -141,7 +142,7 @@ namespace Makai {
 			Mix_OpenAudio(42000, AUDIO_S16SYS, 2, AUDIO_SAMPLE_FRAMES);
 			$debug("Started!");
 			// Initialize Freetype
-			$debug("Starting FreeType...");/*
+			/*$debug("Starting FreeType...");
 			FT_Library libft;
 			if (FT_Init_FreeType(&libft)) {
 				$errlog(string("Unable to start FreeType!"));
@@ -606,7 +607,7 @@ namespace Popup {
 	int dialogBox(
 		String title,
 		String text,
-		StringList options,
+		StringList options = Option::OK,
 		Uint32 type = SDL_MESSAGEBOX_INFORMATION,
 		SDL_Window* window = NULL,
 		SDL_MessageBoxColorScheme colorScheme = defaultMessageBoxColorScheme

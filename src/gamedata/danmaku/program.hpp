@@ -79,6 +79,11 @@ public:
 
 	virtual ~DanmakuApp() {
 		mainProgram = nullptr;
+		enemyBulletManager		= nullptr;
+		enemyLineLaserManager	= nullptr;
+		playerBulletManager		= nullptr;
+		playerLineLaserManager	= nullptr;
+		itemManager				= nullptr;
 	}
 
 	void onOpen() override {
@@ -128,6 +133,14 @@ public:
 		managers.bullet.player.playfield = playfield;
 		managers.bullet.enemy.board =
 		managers.bullet.player.board = board;
+	}
+
+	void onClose() override {
+		enemyBulletManager		= nullptr;
+		enemyLineLaserManager	= nullptr;
+		playerBulletManager		= nullptr;
+		playerLineLaserManager	= nullptr;
+		itemManager				= nullptr;
 	}
 };
 
@@ -185,7 +198,7 @@ ProgramSetting queryProgramSettingsFromUser(bool use16by9 = false, bool extended
 		"If the program is running slow, try changing the framerate.",
 		extendedFramerate
 		? StringList{"10", "20", "30", "40", "50", "60"}
-		: StringList{"20", "30", "60"}
+		: StringList{"30", "60"}
 	);
 	if (framerate < 0) USER_QUIT;
 	Vector2 window;
@@ -197,11 +210,7 @@ ProgramSetting queryProgramSettingsFromUser(bool use16by9 = false, bool extended
 	float frate = 0;
 	if (extendedFramerate)
 		frate =  10 + (framerate * 10);
-	else switch (framerate) {
-		case 0: frate = 20; break;
-		case 1: frate = 30; break;
-		case 2: frate = 60; break;
-	}
+	else frate = 30 + (framerate * 30);
 	return ProgramSetting{
 		window,
 		frate,

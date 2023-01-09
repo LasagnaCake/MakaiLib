@@ -40,6 +40,7 @@
 #include <chrono>
 //#include <coroutine>
 #include <filesystem>
+#include <execution>
 
 #include "redefines.hpp"
 
@@ -66,6 +67,7 @@
 
 #include <Stk.h>
 #include <clunk/clunk.h>
+#include <portaudio.h>
 
 /*
 *********************
@@ -152,7 +154,7 @@
 /*
 *	[+]=[   [Headers END]   ]=[+]
 */
-
+/*
 #ifdef _$_LUA_STYLE_PROGRAMMING
 #define END		}
 #define AND		&&
@@ -167,5 +169,5 @@
 #define IS		==
 #define EQUALS	=
 #endif // _$_LUA_STYLE_PROGRAMMING
-
+*/
 #endif // ANCHORED_HEADERS_H

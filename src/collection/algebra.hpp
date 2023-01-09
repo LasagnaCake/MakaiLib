@@ -197,6 +197,14 @@ namespace Math {
 		return (temperature / (5.0/9.0)) + 32.0;
 	}
 
+	float dbToVolume(float db) {
+		return powf(10.0f, 0.5f * db);
+	}
+
+	float volumeToDb(float volume) {
+		return 20.0f * log10f(volume);
+	}
+
 	namespace Random {
 		namespace {
 			typedef std::uniform_real_distribution<double> RandReal;

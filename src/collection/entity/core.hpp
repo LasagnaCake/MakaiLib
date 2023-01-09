@@ -40,7 +40,6 @@ namespace EntityClass {
 	namespace {
 		using
 		std::vector,
-		std::shared_ptr,
 		std::string,
 		std::invalid_argument,
 		std::function,

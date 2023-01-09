@@ -116,7 +116,7 @@ void main() {
 		if (maskChannel < 0)
 			color.w *= (maskValue.x + maskValue.y + maskValue.z) / 3;
 		else
-			color.w *= maskValue[maskChannel];
+			color *= maskValue;
 	}
 	FragColor = color;
 }

@@ -35,8 +35,10 @@ private:
 
 class RadialBar: public DrawableObject, public BaseBar {
 public:
-	float uvAngle	= 0;
-	bool centered	= false;
+	float	uvAngle		= 0;
+	bool	centered	= false;
+	bool 	dynamicUV	= true;
+	Vector2 offset;
 
 	RadialBar(size_t layer = 0, bool manual = false): DrawableObject(layer, manual) {
 		vertices[0].u = vertices[0].v = 0.5;
@@ -51,12 +53,32 @@ private:
 	}
 
 	void update() {
+		// Progress bar percentage angle (in radians)
 		float fraction = TAU * Math::clamp(value/max, 0.0f, 1.0f);
+		// Set center to offset
+		Drawer::vertexSetPosition(vertices[0], offset * size);
+		// For each surrounding vertex...
 		for $ssrange(i, 1, RADIAL_BAR_RESOLUTION + 2) {
-			float ifrac = ((float)(i-1))/(RADIAL_BAR_RESOLUTION) * fraction - (centered ? (fraction/2 + PI) : 0);
-			Vector2 pos = VecMath::angleV2(ifrac);
+			// UV fraction, Positional fraction
+			float uvfrac, posfrac;
+			// Get current vertex's fraction
+			uvfrac = posfrac = ((float)(i-1))/(RADIAL_BAR_RESOLUTION);
+			// Multiply by progress' percentage angle
+			posfrac *= fraction;
+			// Center if aplicable
+			if (centered)	{
+				posfrac	-= fraction/2.0 * PI;
+				uvfrac	-= fraction/2.0 * PI;
+			}
+			// Dynamicise UV if aplicable
+			if (dynamicUV) uvfrac = posfrac;
+			// Add angle offset to UV fraction
+			uvfrac += uvAngle;
+			// Set vertex position
+			Vector2 pos = VecMath::angleV2(posfrac);
 			Drawer::vertexSetPosition(vertices[i], pos * size);
-			Drawer::vertexSetUV(vertices[i], (((VecMath::angleV2(ifrac + uvAngle) / 2.0) + 0.5)));
+			// Set vertex UV
+			Drawer::vertexSetUV(vertices[i], (((VecMath::angleV2(uvfrac + uvAngle) / 2.0) + 0.5)));
 		}
 	}
 };
