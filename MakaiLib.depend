@@ -2867,7 +2867,7 @@
 1665256929 d:\c(++) projects\_c++\game engine\makailib\src\program.hpp
 	"program/gl_program.hpp"
 
-1673233819 d:\c(++) projects\_c++\game engine\makailib\src\anchors.hpp
+1673238081 d:\c(++) projects\_c++\game engine\makailib\src\anchors.hpp
 	<iostream>
 	<string>
 	<vector>
@@ -2890,7 +2890,6 @@
 	<mINI-0.9.14/ini.h>
 	<Stk.h>
 	<clunk/clunk.h>
-	<AL/al.h>
 	"stb_image.h"
 	<GLEW/include/GL/glew.h>
 	<GLEW/include/GL/wglew.h>
