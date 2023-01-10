@@ -1,5 +1,7 @@
 #version 420 core
 
+#define MAX_LIGHTS 16
+
 uniform mat4 actor = mat4(1);
 uniform mat4 world;
 uniform mat4 camera;
@@ -23,14 +25,14 @@ uniform vec2 warpScale		= vec2(1);
 uniform vec2 warpOffset		= vec2(0);
 
 // [ POINT LIGHTING ]
-uniform bool		useLights		= false;
-uniform vec3		ambientColor	= vec3(1);
-uniform float		ambientStrength	= 1;
-uniform uint 		lightsCount		= 0;
-uniform vec3[256] 	lights;
-uniform vec3[256] 	lightColor;
-uniform float[256] 	lightRadius;
-uniform float[256] 	lightStrength;
+uniform bool				useLights		= false;
+uniform vec3				ambientColor	= vec3(1);
+uniform float				ambientStrength	= 1;
+uniform uint 				lightsCount		= 0;
+uniform vec3[MAX_LIGHTS] 	lights;
+uniform vec3[MAX_LIGHTS] 	lightColor;
+uniform float[MAX_LIGHTS] 	lightRadius;
+uniform float[MAX_LIGHTS] 	lightStrength;
 
 /*	TODO: Test this. This was made with ChatGPT.
 *	This will be the first an last time I use it.

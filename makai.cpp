@@ -7,6 +7,8 @@
 #define $_FRAME_INDEPENDENT_PROCESS
 //#define $_PROCESS_RENDER_BEFORE_LOGIC
 
+#define RADIAL_BAR_RESOLUTION 12
+
 #include "src/makai.hpp"
 
 #if (_WIN32 || _WIN64 || __WIN32__ || __WIN64__)
