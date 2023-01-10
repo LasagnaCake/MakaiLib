@@ -134,12 +134,12 @@ namespace Makai {
 				$errlog(string("Unable to start SDL! (") + SDL_GetError() + ")");
 				throw runtime_error(string("Error: SDL (") + SDL_GetError() + ")");
 			}
-			if (!Mix_Init(MIX_INIT_OGG | (useMIDI ? MIX_INIT_MID : 0))) {
+			/*if (!Mix_Init(MIX_INIT_OGG | (useMIDI ? MIX_INIT_MID : 0))) {
 				$errlog(string("Unable to start Mixer! (") + Mix_GetError() + ")");
 				throw runtime_error(string("Error: Mixer (") + Mix_GetError() + ")");
 			}
 			// Open audio
-			Mix_OpenAudio(42000, AUDIO_S16SYS, 2, AUDIO_SAMPLE_FRAMES);
+			Mix_OpenAudio(42000, AUDIO_S16SYS, 2, AUDIO_SAMPLE_FRAMES);*/
 			$debug("Started!");
 			// Initialize Freetype
 			/*$debug("Starting FreeType...");
@@ -160,7 +160,6 @@ namespace Makai {
 				SDL_WINDOW_OPENGL
 			);
 			SDL_SetWindowFullscreen(window, fullscreen ? SDL_WINDOW_FULLSCREEN : 0);
-			renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 			SDL_GL_CreateContext(window);
 			$debug("Created!");
 			$debug("Starting GLEW...");
@@ -424,15 +423,8 @@ namespace Makai {
 		/// The program's maximum "cycles per second" count.
 		float maxCycleRate = 60;
 
-
 		/// The program's taskers.
 		Tasking::MultiTasker taskers;
-
-		/// Gets the window's renderer.
-		inline SDL_Renderer* getRenderer() {
-			return renderer;
-		}
-
 	protected:
 		Drawer::FrameBufferData toFrameBufferData() {
 			return Drawer::FrameBufferData{0};
@@ -528,9 +520,6 @@ namespace Makai {
 
 		/// The program's window.
 		SDL_Window* window;
-
-		/// The Window's renderer.
-		SDL_Renderer* renderer;
 	};
 
 	Vector2 getDeviceSize(unsigned int display = 0) {
@@ -551,7 +540,7 @@ namespace Makai {
 	}
 
 	namespace Resolution {
-		#define RESOLUTION(W, H) Entry<string, Vector2>{#W" × "#H , Vector2(W, H)}
+		#define RESOLUTION(W, H) Entry<string, Vector2>{#W" x "#H , Vector2(W, H)}
 		const vector<Entry<string, Vector2>> set4x3 = {
 			RESOLUTION(480, 320),
 			RESOLUTION(640, 480),
