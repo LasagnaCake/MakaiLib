@@ -6,8 +6,11 @@ class Renderable: public Base::DrawableObject {
 public:
 	Renderable(size_t layer = 0, bool manual = false): DrawableObject(layer, manual){}
 
-	Renderable(vector<Triangle*> triangles, size_t layer = 0, bool manual = false)
-	: DrawableObject(layer, manual) {
+	Renderable(
+		vector<Triangle*> triangles,
+		size_t layer = 0,
+		bool manual = false
+	): DrawableObject(layer, manual) {
 		this->triangles = triangles;
 	}
 

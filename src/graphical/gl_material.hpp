@@ -81,7 +81,7 @@ struct WarpEffect: Effect, Imageable2D, Transformable2D {
 
 // Buffer Material Effects
 
-struct MaskEffect: Effect, Imageable2D, Transformable2D, Channelable, Invertible {
+struct MaskEffect: Effect, Imageable2D, Transformable2D, Invertible {
 	bool relative = false;
 };
 
@@ -170,7 +170,6 @@ void setMaterial(Shader& shader, BufferMaterial& material) {
 		shader["mask"](0);
 		material.mask.image->enable(0);
 		shader["invertMask"](material.mask.invert);
-		shader["maskChannel"](material.mask.channel);
 		shader["relativeMask"](material.mask.relative);
 		shader["maskShift"](material.mask.trans.position);
 		shader["maskRotate"](material.mask.trans.rotation);

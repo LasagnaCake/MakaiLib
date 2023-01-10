@@ -27,14 +27,14 @@ public:
 		unsigned int height,
 		std::string windowTitle,
 		bool fullscreen = false
-	) : DanmakuApp (
+	): DanmakuApp (
 			width,
 			height,
 			windowTitle,
 			fullscreen,
 			"shaders/framebuffer/compose.slf",
 			"shaders/base/base.slf"
-	) {
+		) {
 
 	}
 
@@ -74,7 +74,7 @@ public:
 		enemy->position = Vector2(32, -24) * screenSpace;
 		enemy->sprite->setColor(Color::RED);
 		enemy->healthBar.material.texture.enabled	= true;
-		enemy->healthBar.offset.x = 0.5;
+		//enemy->healthBar.offset.x = 0.5;
 		enemy->healthBar.centered = true;
 		enemy->healthBar.material.texture.image		= ringbar;
 		enemy->healthBar.dynamicUV = false;
