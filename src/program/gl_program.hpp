@@ -181,10 +181,12 @@ namespace Makai {
 			SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 16);
 			SDL_GL_SetAttribute(SDL_GL_BUFFER_SIZE, 16);
 			//glViewport(0, 0, width, height);
-			glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 			// This keeps the alpha from shitting itself
 			glEnable(GL_BLEND);
 			glEnable(GL_ALPHA_TEST);
+			glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			// This keeps the alpha from shitting itself
+			glBlendEquationSeparate(GL_FUNC_ADD, GL_MAX);
 			//glEnable(GL_CULL_FACE);
 			//glBlendFuncSeparate(DEFAULT_BLEND_FUNC);
 			//glBlendEquationSeparate(DEFAULT_BLEND_EQUATION);
