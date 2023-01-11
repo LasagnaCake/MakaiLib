@@ -51,6 +51,10 @@ uniform float	rainbowShift		= 0;
 uniform float	rainbowStrength		= 0;
 uniform bool	rainbowAbsolute		= false;
 
+// [ BLURRING EFFECT ]
+uniform bool	useBlur			= false;
+uniform vec2	blurStrength	= vec2(0.0005);
+
 #ifndef PI
 #define PI 3.1415926535
 #endif
@@ -89,9 +93,20 @@ vec4 applyRainbow(vec4 color, vec2 coords) {
 	vec4 rainbow = hueToPastel((coords.x + coords.y) * rainbowFrequency + rainbowShift);
 	rainbow = mix(rainbow, vec4(1), rainbowStrength);
 	if (rainbowAbsolute)
-		return rainbow;
+		return rainbow * vec4(vec3(1), color.w);
 	else
 		return color * rainbow;
+}
+
+vec4 getPixelColor(vec2 uv) {
+	if (!useBlur) return texture(screen, uv);
+	return (
+		texture(screen, uv) +
+		texture(screen, uv + vec2(blurStrength.x, 0)) +
+		texture(screen, uv - vec2(blurStrength.x, 0)) +
+		texture(screen, uv + vec2(0, blurStrength.y)) +
+		texture(screen, uv - vec2(0, blurStrength.y))
+	) / vec4(5.0);
 }
 
 void main() {
@@ -101,7 +116,7 @@ void main() {
 		wave = (fragUV.yx * waveFrequency) * (2.0 * PI) + waveShift;
 		wave = vec2(sin(wave.x), sin(wave.y)) * (waveAmplitude / 10.0);
 	}
-	vec4 color = (texture(screen, fragUV + wave) * fragColor * albedo) + accent;
+	vec4 color = (getPixelColor(fragUV + wave) * fragColor * albedo) + accent;
 	if (color.w <= 0) discard;
 	// Color inverter
 	if (negative) color = vec4(vec3(1) - vec3(color.x, color.y, color.z), color.w);

@@ -148,7 +148,7 @@ public:
 		bulletSpawner.stop();
 		player.board = DANMAKU_EBM -> board;
 		DANMAKU_IM -> createCollectible(CollectibleData(), 5, lPos, 3, $vec2(0.5));
-		world3D.farFog = {true, 20, 10, $vec4(0, 0, 0.2, 1)};
+		world3D.farFog = {true, 20, 10, $vec4(1, 1, 1, 1)};
 		world3D.ambient.color = Vector3(1,1,1);
 		player.mesh.material.color = Color::GREEN;
 		enemy->setInvincible(120);
@@ -190,7 +190,7 @@ public:
 		auto& layerMaterial = getLayerBuffer().material;
 		switch(sublayerID) {
 		case 0:
-			layerMaterial.background = Vector4(0, 0, 0.2, 1);
+			layerMaterial.background = Vector4(1, 1, 1, 1);
 			/*layerMaterial.wave = {
 				true,
 				$vec2(3, -5),

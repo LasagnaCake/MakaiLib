@@ -71,7 +71,7 @@ namespace Drawer {
 			else created = true;
 			glGenFramebuffers(1, &id);
 			glBindFramebuffer(GL_FRAMEBUFFER, id);
-			buffer.screen = Drawer::createTexture2D(width, height, GL_UNSIGNED_INT);
+			buffer.screen = Drawer::createTexture2D(width, height, GL_FLOAT);
 			glFramebufferTexture2D(
 				GL_FRAMEBUFFER,
 				GL_COLOR_ATTACHMENT0,

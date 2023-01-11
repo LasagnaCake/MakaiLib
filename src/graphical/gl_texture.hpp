@@ -3,6 +3,44 @@ void setTexture2D(unsigned char index, GLuint texture) {
 	glBindTexture(GL_TEXTURE_2D, texture);
 }
 
+unsigned int createTexture2D_AB(
+	unsigned int width,
+	unsigned int height,
+	unsigned int type = GL_UNSIGNED_BYTE,
+	unsigned int format = GL_RGBA,
+	unsigned int internalFormat = GL_RGBA32F,
+	unsigned int minFilter = GL_LINEAR,
+	unsigned int magFilter = GL_LINEAR,
+	unsigned char* data = NULL,
+	unsigned int target = GL_TEXTURE_2D
+) {
+	GLuint texture;
+	// Create texture
+	glGenTextures(1, &texture);
+	glBindTexture(target, texture);
+	// Bind image data
+	glTexImage2D(
+		target,
+		0,
+		internalFormat,
+		width,
+		height,
+		0,
+		format,
+		type,
+		data
+	);
+	// Set texture wrapping & mipmaps
+	glTexParameteri(target, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(target, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glGenerateMipmap(target);
+	// Set filtering
+	glTexParameteri(target, GL_TEXTURE_MIN_FILTER, minFilter);
+	glTexParameteri(target, GL_TEXTURE_MAG_FILTER, magFilter);
+	// Return texture ID
+	return texture;
+}
+
 unsigned int createTexture2D(
 	unsigned int width,
 	unsigned int height,
@@ -12,31 +50,7 @@ unsigned int createTexture2D(
 	unsigned int magFilter = GL_LINEAR,
 	unsigned char* data = NULL
 ) {
-	GLuint texture;
-	// Create texture
-	glGenTextures(1, &texture);
-	glBindTexture(GL_TEXTURE_2D, texture);
-	// Bind image data
-	glTexImage2D(
-		GL_TEXTURE_2D,
-		0,
-		format,
-		width,
-		height,
-		0,
-		format,
-		type,
-		data
-	);
-	// Set texture wrapping & mipmaps
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glGenerateMipmap(GL_TEXTURE_2D);
-	// Set filtering
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minFilter);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magFilter);
-	// Return texture ID
-	return texture;
+	return createTexture2D_AB(width, height, type, format, format, minFilter, magFilter, data);
 }
 
 class Texture2D {
