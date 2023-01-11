@@ -108,6 +108,7 @@ namespace Drawer {
 			// This keeps the alpha from shitting itself
 			glEnable(GL_BLEND);
 			glEnable(GL_ALPHA_TEST);
+			//glDisable(GL_BLEND);
 			//glEnable(GL_CULL_FACE);
 			glBlendFuncSeparate(DEFAULT_BLEND_FUNC);
 			//glBlendEquationSeparate(DEFAULT_BLEND_EQUATION);

@@ -178,10 +178,10 @@ namespace Makai {
 			/*$debug("Creating default shader...");
 			Shader::defaultShader.create();
 			$debug("Created!");*/
-			SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
-			SDL_GL_SetAttribute(SDL_GL_BUFFER_SIZE, 8);
+			SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 16);
+			SDL_GL_SetAttribute(SDL_GL_BUFFER_SIZE, 16);
 			//glViewport(0, 0, width, height);
-			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 			// This keeps the alpha from shitting itself
 			glEnable(GL_BLEND);
 			glEnable(GL_ALPHA_TEST);
@@ -199,8 +199,10 @@ namespace Makai {
 			layerbuffer.create(width, height);
 			// Fix alpha being a bitch
 			framebuffer();
+			//glDisable(GL_BLEND);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-			glBlendEquationSeparate(GL_FUNC_ADD, GL_FUNC_ADD);
+			//glBlendFuncSeparate(GL_SRC, GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			//glBlendEquationSeparate(GL_FUNC_ADD, GL_FUNC_REVERSE_SUBTRACT);
 			glBindBuffer(GL_FRAMEBUFFER, 0);
 			// Create composition shader
 			$debug("Creating composition shader...");

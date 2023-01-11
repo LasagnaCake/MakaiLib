@@ -133,5 +133,5 @@ void main() {
 		else
 			color *= maskValue;
 	}
-	FragColor = color;
+	FragColor = color/* * vec4(vec3(max(1/color.w, 1)), 1)*/;
 }
