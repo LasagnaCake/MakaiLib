@@ -13,6 +13,18 @@ namespace Module {
 		float	strength = 1;
 	};
 
+	struct Variable2D {
+		Vector2	strength = 1;
+	};
+
+	struct Variable3D {
+		Vector3	strength = 1;
+	};
+
+	struct Variable4D {
+		Vector4	strength = 1;
+	};
+
 	struct ColorableRGBA {
 		Vector4	color = Color::WHITE;
 	};
@@ -93,6 +105,8 @@ struct RainbowEffect: Effect, Variable {
 	bool absoluteColor = false;
 };
 
+struct BlurEffect: Effect, Variable2D {};
+
 // World Material Effects
 
 struct FogEffect: Effect, Limitable, ColorableRGBA, Variable {};
@@ -118,6 +132,7 @@ struct BufferMaterial {
 	Vector2			uvShift;
 	MaskEffect		mask;
 	NegativeEffect	negative;
+	BlurEffect		blur;
 	WaveEffect		wave;
 	GradientEffect	gradient;
 	RainbowEffect	rainbow;

@@ -202,7 +202,7 @@ namespace Makai {
 			// Fix alpha being a bitch
 			framebuffer();
 			//glDisable(GL_BLEND);
-			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 			//glBlendFuncSeparate(GL_SRC, GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 			//glBlendEquationSeparate(GL_FUNC_ADD, GL_FUNC_REVERSE_SUBTRACT);
 			glBindBuffer(GL_FRAMEBUFFER, 0);
