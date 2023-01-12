@@ -57,28 +57,6 @@ namespace Drawer {
 			a = 1;
 	};
 
-	struct Vertex {
-		Vertex() {}
-
-		Vertex(Vector3 position, Vector4 color = Vector4(1), Vector2 uv = Vector2(0)) {
-			this-> position		= position;
-			this-> uv			= uv;
-			this-> color		= color;
-		}
-
-		Vertex(const Vertex& v) {
-			this-> position		= v.position;
-			this-> uv			= v.uv;
-			this-> color		= v.color;
-		}
-
-		virtual ~Vertex() {}
-
-		Vector3 position;
-		Vector2 uv;
-		Vector4 color = Vector4(1);
-	};
-
 	RawVertex toRawVertex(Vector3 pos, Vector2 uv, Vector4 col = Vector4(1)) {
 		RawVertex res;
 		res.x = pos.x;
@@ -91,32 +69,6 @@ namespace Drawer {
 		res.b = col.z;
 		res.a = col.w;
 		return res;
-	}
-
-	RawVertex toRawVertex(Vertex& vert) {
-		RawVertex res;
-		res.x = vert.position.x;
-		res.y = vert.position.y;
-		res.z = vert.position.z;
-		res.u = vert.uv.x;
-		res.v = vert.uv.y;
-		res.r = vert.color.x;
-		res.g = vert.color.y;
-		res.b = vert.color.z;
-		res.a = vert.color.w;
-		return res;
-	}
-
-	void copyToRawVertex(RawVertex* target, Vertex vert) {
-		target->x = vert.position.x;
-		target->y = vert.position.y;
-		target->z = vert.position.z;
-		target->u = vert.uv.x;
-		target->v = vert.uv.y;
-		target->r = vert.color.x;
-		target->g = vert.color.y;
-		target->b = vert.color.z;
-		target->a = vert.color.w;
 	}
 
 	typedef const function<void()> DrawFunc;
@@ -163,6 +115,18 @@ namespace Drawer {
 			RAW_VERTEX_BYTE_SIZE,
 			$gloffset(5)
 		);
+	}
+
+	inline void enableVertexAttributes() {
+		glEnableVertexAttribArray(0);
+		glEnableVertexAttribArray(1);
+		glEnableVertexAttribArray(2);
+	}
+
+	inline void disableVertexAttributes() {
+		glDisableVertexAttribArray(2);
+		glDisableVertexAttribArray(1);
+		glDisableVertexAttribArray(0);
 	}
 
 	inline void clearColorBuffer(Vector4 color) {
@@ -300,7 +264,7 @@ namespace RenderData {
 		VecMath::asGLMVector,
 		VecMath::asVector3,
 		VecMath::asGLMMatrix,
-		Drawer::Vertex,
+//		Drawer::Vertex,
 		Drawer::RawVertex,
 		Drawer::toRawVertex,
 		Drawer::DrawFunc,

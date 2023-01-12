@@ -89,29 +89,20 @@ namespace Drawer {
 				0
 			);
 			// Setup display rectangle
-			rect[0].position	= Vector3(-1, +1, 0);
-			rect[0].uv			= Vector2(0, 1);
-			rect[0].color		= Vector4(1);
-			rect[1].position	= Vector3(+1, +1, 0);
-			rect[1].uv			= Vector2(1, 1);
-			rect[0].color		= Vector4(1);
-			rect[2].position	= Vector3(-1, -1, 0);
-			rect[2].uv			= Vector2(0, 0);
-			rect[0].color		= Vector4(1);
-			rect[3].position	= Vector3(+1, -1, 0);
-			rect[3].uv			= Vector2(1, 0);
-			rect[0].color		= Vector4(1);
+			rect[0] = {-1, +1, 0, 0, 1};
+			rect[1] = {+1, +1, 0, 1, 1};
+			rect[2] = {-1, -1, 0, 0, 0};
+			rect[3] = {+1, -1, 0, 1, 0};
 			// Create buffers
 			glGenVertexArrays(1, &vao);
 			glGenBuffers(1, &vbo);
-			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 			// This keeps the alpha from shitting itself
 			glEnable(GL_BLEND);
 			glEnable(GL_ALPHA_TEST);
 			//glDisable(GL_BLEND);
 			//glEnable(GL_CULL_FACE);
 			glBlendFuncSeparate(DEFAULT_BLEND_FUNC);
-			//glBlendEquationSeparate(DEFAULT_BLEND_EQUATION);
+			glBlendEquationSeparate(DEFAULT_BLEND_EQUATION);
 			glDepthFunc(GL_LESS);
 			//glBlendFunc(GL_DST_ALPHA, GL_ONE_MINUS_DST_ALPHA);
 			//glBlendFunc(GL_ONE_MINUS_DST_ALPHA, GL_ONE);
@@ -160,20 +151,13 @@ namespace Drawer {
 		FrameBuffer* render(FrameBufferData target) {
 			// Set target buffer
 			glBindFramebuffer(GL_FRAMEBUFFER, target.id);
-			// Clear target frame buffer
-			//clearColorBuffer(target.color);
-			// Create Intermediary Vertex Buffer (IVB) to be displayed on screen
-			RawVertex verts[4];
-			for (unsigned char i = 0; i < 4; i++) {
-				verts[i] = toRawVertex(rect[i]);
-			}
 			// Set VBO as active
 			glBindBuffer(GL_ARRAY_BUFFER, vbo);
-			// Copy IVB to VBO
+			// Copy vertices to VBO
 			glBufferData(
 				GL_ARRAY_BUFFER,
 				RAW_VERTEX_BYTE_SIZE * 4,
-				verts,
+				rect,
 				GL_STATIC_DRAW
 			);
 			// Set VAO as active
@@ -198,9 +182,7 @@ namespace Drawer {
 			// Set material data
 			$mat setMaterial(shader, material);
 			// Enable attribute pointers
-			glEnableVertexAttribArray(0);
-			glEnableVertexAttribArray(1);
-			glEnableVertexAttribArray(2);
+			Drawer::enableVertexAttributes();
 			// Set VAO as active
 			glBindVertexArray(vao);
 			// Set polygon rendering mode
@@ -210,9 +192,7 @@ namespace Drawer {
 			// Unbind vertex array
 			glBindVertexArray(0);
 			// Disable attributes
-			glDisableVertexAttribArray(2);
-			glDisableVertexAttribArray(1);
-			glDisableVertexAttribArray(0);
+			Drawer::disableVertexAttributes();
 			return this;
 		}
 
@@ -227,7 +207,7 @@ namespace Drawer {
 		/// The framebuffer's material.
 		$mat BufferMaterial material;
 		/// The framebuffer's shape.
-		Vertex rect[4];
+		RawVertex rect[4];
 		/// The framebuffer's rendering shader.
 		Shader::Shader shader;
 

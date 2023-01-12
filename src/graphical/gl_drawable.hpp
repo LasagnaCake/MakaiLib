@@ -111,17 +111,13 @@ protected:
 		// Set VAO as active
 		glBindVertexArray(vao);
 		// Enable attribute pointers
-		glEnableVertexAttribArray(0);
-		glEnableVertexAttribArray(1);
-		glEnableVertexAttribArray(2);
+		Drawer::enableVertexAttributes();
 		// Set polygon rendering mode
 		glPolygonMode(material.culling, material.fill);
 		// Draw object to screen
 		glDrawArrays(mode, 0, count);
 		// Disable attributes
-		glDisableVertexAttribArray(2);
-		glDisableVertexAttribArray(1);
-		glDisableVertexAttribArray(0);
+		Drawer::disableVertexAttributes();
 		// Unbind vertex array
 		glBindVertexArray(0);
 	}
