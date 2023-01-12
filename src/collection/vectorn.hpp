@@ -257,6 +257,10 @@ namespace Vector{
 					abs(y)
 				);
 			}
+
+			Vector2 yx() {
+				return Vector2(y, x);
+			}
 	};
 
 	/**
@@ -544,6 +548,10 @@ namespace Vector{
 
 			Vector2 xz() {
 				return Vector2(x, y);
+			}
+
+			Vector3 zyx() {
+				return Vector3(z, y, x);
 			}
 
 			Vector3 absolute() {
@@ -866,6 +874,10 @@ namespace Vector{
 
 			Vector3 xyz() {
 				return Vector3(x, y, z);
+			}
+
+			Vector4 wzyx() {
+				return Vector4(w, z, y, x);
 			}
 
 			Vector4 compensated() {

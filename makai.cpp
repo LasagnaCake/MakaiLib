@@ -190,7 +190,7 @@ public:
 		auto& layerMaterial = getLayerBuffer().material;
 		switch(sublayerID) {
 		case 0:
-			layerMaterial.background = Vector4(0, 0, .2, 1);
+			layerMaterial.background = $vec4(0, 0, .2, 1);
 			/*layerMaterial.wave = {
 				true,
 				$vec2(3, -5),
