@@ -209,6 +209,9 @@ void setMaterial(Shader& shader, BufferMaterial& material) {
 	shader["rainbowShift"](material.rainbow.shift);
 	shader["rainbowStrength"](material.rainbow.strength);
 	shader["rainbowAbsolute"](material.rainbow.absoluteColor);
+	// Set blur data
+	shader["useBlur"](material.blur.enabled);
+	shader["blurStrength"](material.blur.strength);
 }
 
 void setMaterial(Shader& shader, WorldMaterial& material) {

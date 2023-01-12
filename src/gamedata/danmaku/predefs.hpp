@@ -52,7 +52,7 @@
 	if (pause.enabled) return
 
 #ifndef INVINCIBLE_COLOR
-#define INVINCIBLE_COLOR Color::SEMISOLID
+#define INVINCIBLE_COLOR Color::LUCENT
 #endif // INVINCIBLE_COLOR
 
 namespace ItemType {
