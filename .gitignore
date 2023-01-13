@@ -11,3 +11,4 @@ obj/Release/*
 obj/Debug/*
 MakaiLib.exe
 *.o
+gmon.out
