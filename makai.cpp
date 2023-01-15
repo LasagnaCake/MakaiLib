@@ -76,7 +76,7 @@ public:
 		enemy->position = Vector2(32, -24) * screenSpace;
 		enemy->sprite->setColor(Color::RED);
 		//enemy->healthBar.offset.x = 0.5;
-		//enemy->healthBar.material.texture.enabled	= true;
+		enemy->healthBar.material.texture.enabled	= true;
 		enemy->healthBar.centered = true;
 		enemy->healthBar.material.texture.image		= ringbar;
 		//enemy->healthBar.dynamicUV = false;

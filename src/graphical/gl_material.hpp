@@ -62,6 +62,14 @@ namespace Module {
 			amplitude	= Vector2(0),
 			shift		= Vector2(0);
 	};
+
+	struct Sizeable {
+		float size = 0;
+	};
+
+	struct Sizeable2D {
+		Vector2 size = 0;
+	};
 }
 
 namespace {
@@ -107,6 +115,8 @@ struct RainbowEffect: Effect, Variable {
 
 struct BlurEffect: Effect, Variable2D {};
 
+struct OutlineEffect: Effect, Sizeable2D, ColorableRGBA {};
+
 // World Material Effects
 
 struct FogEffect: Effect, Limitable, ColorableRGBA, Variable {};
@@ -133,6 +143,7 @@ struct BufferMaterial {
 	MaskEffect		mask;
 	NegativeEffect	negative;
 	BlurEffect		blur;
+	OutlineEffect	outline;
 	WaveEffect		wave;
 	GradientEffect	gradient;
 	RainbowEffect	rainbow;
@@ -212,6 +223,10 @@ void setMaterial(Shader& shader, BufferMaterial& material) {
 	// Set blur data
 	shader["useBlur"](material.blur.enabled);
 	shader["blurStrength"](material.blur.strength);
+	// Set outline data
+	shader["useOutline"](material.outline.enabled);
+	shader["outlineSize"](material.outline.size);
+	shader["outlineColor"](material.outline.color);
 }
 
 void setMaterial(Shader& shader, WorldMaterial& material) {

@@ -13,7 +13,7 @@
 #define $maxof(TYPE) (std::numeric_limits<TYPE>::max())
 
 #ifndef nroot
-#define nroot(val, root) pow(val, 1.0/root)
+#define nroot(val, root) powf(val, 1.0/root)
 #endif // nroot
 
 namespace Math {
@@ -89,6 +89,22 @@ namespace Math {
 		return (T)(rad * degrad);
 	}
 
+	ANYTYPE_I linearToRadian(T val) {
+		return (T)(val * tau);
+	}
+
+	ANYTYPE_I radianToLinear(T val) {
+		return (T)(val / tau);
+	}
+
+	ANYTYPE_I linearToDegree(T val) {
+		return (T)(val * 360.0);
+	}
+
+	ANYTYPE_I degreeToLinear(T val) {
+		return (T)(val / 360.0);
+	}
+
 	ANYTYPE_I lerp(T from, T to, T by) {
 		return (T)(from + by * (to - from));
 	}
@@ -159,7 +175,7 @@ namespace Math {
 		return std::to_string(number).size();
 	}
 
-	inline size_t digit(size_t val, unsigned char digit) {
+	inline unsigned char digit(size_t val, unsigned char digit) {
 		std::string vstr = std::to_string(val);
 		return vstr[(vstr.size()-1) - digit] - '0';
 	}
@@ -221,7 +237,7 @@ namespace Math {
 			// The random number generator engine used
 			std::default_random_engine	engine{_getSeed()};
 			// Default distributions
-			RandReal	longDist(0, $maxof(size_t));
+			RandReal	longDist(0, maxSizeT);
 			RandLong	realDist(0.0,1.0);
 		}
 
@@ -244,7 +260,7 @@ namespace Math {
 		/// Returns a random integer between the given values.
 		ANYTYPE integer(T min, T max) {
 			RandLong dist(min, max);
-			(T)dist(engine);
+			return (T)dist(engine);
 		}
 
 		/// Sets the random number generator's seed.

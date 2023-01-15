@@ -23,7 +23,6 @@ uniform bool invertMask = false;
 * Else, the specified channel is used.
 * MUST be between -1 and 3.
 */
-uniform int			maskChannel = 3;
 uniform sampler2D	mask;
 
 // [ COLOR TO GRADIENT ]
@@ -54,6 +53,12 @@ uniform bool	rainbowAbsolute		= false;
 // [ BLURRING EFFECT ]
 uniform bool	useBlur			= false;
 uniform vec2	blurStrength	= vec2(0.0005);
+
+// [ OUTLINE EFFECT ]
+
+uniform bool	useOutline		= false;
+uniform vec2	outlineSize		= vec2(0.005);
+uniform vec4	outlineColor	= vec4(1);
 
 #ifndef PI
 #define PI 3.1415926535
@@ -106,7 +111,24 @@ vec4 getPixelColor(vec2 uv) {
 		texture(screen, uv - vec2(blurStrength.x, 0)) +
 		texture(screen, uv + vec2(0, blurStrength.y)) +
 		texture(screen, uv - vec2(0, blurStrength.y))
-	) / vec4(5.0);
+	) / 5.0;
+}
+
+float getOutlineValue(vec2 uv, vec2 size) {
+	float outline =
+		texture(screen, uv + vec2(-size.x, 0)).a
+	+	texture(screen, uv + vec2(0, size.y)).a
+	+	texture(screen, uv + vec2(size.x, 0)).a
+	+	texture(screen, uv + vec2(0, -size.y)).a
+	+	texture(screen, uv + vec2(-size.x, size.y)).a
+	+	texture(screen, uv + vec2(size.x, size.y)).a
+	+	texture(screen, uv + vec2(-size.x, -size.y)).a
+	+	texture(screen, uv + vec2(size.x, -size.y)).a;
+	return min(outline, 1.0);
+}
+
+vec4 applyOutline(vec4 color, vec2 uv) {
+	return mix(color, outlineColor, getOutlineValue(uv, outlineSize) - color.a);
 }
 
 void main() {
@@ -116,22 +138,22 @@ void main() {
 		wave = (fragUV.yx * waveFrequency) * (2.0 * PI) + waveShift;
 		wave = vec2(sin(wave.x), sin(wave.y)) * (waveAmplitude / 10.0);
 	}
-	vec4 color = (getPixelColor(fragUV + wave) * fragColor * albedo) + accent;
+	vec2 screenUV = fragUV + wave;
+	vec4 color = (getPixelColor(screenUV) * fragColor * albedo) + accent;
 	if (color.w <= 0) discard;
 	// Color inverter
 	if (negative) color = vec4(vec3(1) - vec3(color.x, color.y, color.z), color.w);
 	// Color to gradient
 	if (useGradient) color = applyGradient(color);
-	// Reinbow effect
-	if (useRainbow) color = applyRainbow(color, fragUV + wave);
+	// Rainbow effect
+	if (useRainbow) color = applyRainbow(color, screenUV);
+	// Outline effect
+	if (useOutline) color = applyOutline(color, screenUV);
 	// Alpha mask
 	if (useMask) {
 		vec4 maskValue = texture(mask, maskUV);
 		if (invertMask) maskValue = vec4(1) - maskValue;
-		if (maskChannel < 0)
-			color.w *= (maskValue.x + maskValue.y + maskValue.z) / 3;
-		else
-			color *= maskValue;
+		color *= maskValue;
 	}
-	FragColor = color/* * vec4(vec3(max(1/color.w, 1)), 1)*/;
+	FragColor = color;
 }
