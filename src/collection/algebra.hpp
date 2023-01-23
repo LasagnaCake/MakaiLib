@@ -213,6 +213,11 @@ namespace Math {
 		return (temperature / (5.0/9.0)) + 32.0;
 	}
 
+	template<typename T>
+	inline std::function<T(T)> getInterpolationFunction(T from, T to) {
+		return [=](T by) -> T {return (T)lerp(from, to, by);};
+	}
+
 	float dbToVolume(float db) {
 		return powf(10.0f, 0.5f * db);
 	}
