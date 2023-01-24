@@ -44,6 +44,12 @@ uniform vec2 waveAmplitude	= vec2(1);
 uniform vec2 waveFrequency	= vec2(1);
 uniform vec2 waveShift		= vec2(1);
 
+// [ SCREEN WAVE ]
+uniform bool usePlasma			= false;
+uniform vec2 plasmaAmplitude	= vec2(1);
+uniform vec2 plasmaFrequency	= vec2(1);
+uniform vec2 plasmaShift		= vec2(1);
+
 // [ SCREEN RAINBOW EFFECT ]
 uniform bool	useRainbow			= false;
 uniform float	rainbowFrequency	= 0;
@@ -57,9 +63,10 @@ uniform vec2	blurStrength	= vec2(0.0005);
 
 // [ OUTLINE EFFECT ]
 
-uniform bool	useOutline		= false;
-uniform vec2	outlineSize		= vec2(0.01);
-uniform vec4	outlineColor	= vec4(1);
+uniform bool	useOutline			= false;
+uniform vec2	outlineSize			= vec2(0.01);
+uniform vec4	outlineColor		= vec4(1);
+uniform bool	outlineMatchAlpha	= true;
 
 #ifndef PI
 #define PI 3.1415926535
@@ -130,7 +137,8 @@ float getOutlineValue(vec2 uv, vec2 oSize) {
 	+	texture(screen, uv + vec2(size.x, size.y)).a
 	+	texture(screen, uv + vec2(-size.x, -size.y)).a
 	+	texture(screen, uv + vec2(size.x, -size.y)).a;
-	return min(outline, 1.0);
+	if (outlineMatchAlpha) return min(outline, 1.0);
+	else return (outline > 0.0) ? 1.0 : 0.0;
 }
 
 vec4 applyOutline(vec4 color, vec2 uv) {
@@ -144,7 +152,13 @@ void main() {
 		wave = (fragUV.yx * waveFrequency) * (2.0 * PI) + waveShift;
 		wave = vec2(sin(wave.x), sin(wave.y)) * (waveAmplitude / 10.0);
 	}
-	vec2 screenUV = fragUV + wave;
+	// Screen plasmicity
+	vec2 plasma = vec2(0);
+	if (usePlasma) {
+		plasma = (fragUV * plasmaFrequency) * (2.0 * PI) + plasmaShift;
+		plasma = vec2(sin(plasma.x), sin(plasma.y)) * (plasmaAmplitude / 10.0);
+	}
+	vec2 screenUV = fragUV + wave + plasma;
 	vec4 color = (getPixelColor(screenUV) * fragColor * albedo) + accent;
 	// Color inverter
 	if (negative) color = vec4(vec3(1) - vec3(color.x, color.y, color.z), color.w);

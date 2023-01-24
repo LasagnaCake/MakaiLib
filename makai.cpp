@@ -179,10 +179,10 @@ public:
 		case $rlayer(PLAYER):
 			break;
 		case $rlayer(ENEMY):
-			getLayerBuffer().material.outline.enabled = true;
-			getLayerBuffer().material.outline.size = 0.005;
 			break;
 		case $rlayer(OVERLAY):
+			getLayerBuffer().material.outline.enabled = true;
+			getLayerBuffer().material.outline.size = 0.005;
 			break;
 		case $rlayer(UI):
 			break;

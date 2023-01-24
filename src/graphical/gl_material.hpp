@@ -115,7 +115,9 @@ struct RainbowEffect: Effect, Variable {
 
 struct BlurEffect: Effect, Variable2D {};
 
-struct OutlineEffect: Effect, Sizeable2D, ColorableRGBA {};
+struct OutlineEffect: Effect, Sizeable2D, ColorableRGBA {
+	bool matchAlpha = true;
+};
 
 // World Material Effects
 
@@ -227,6 +229,7 @@ void setMaterial(Shader& shader, BufferMaterial& material) {
 	shader["useOutline"](material.outline.enabled);
 	shader["outlineSize"](material.outline.size);
 	shader["outlineColor"](material.outline.color);
+	shader["outlineMatchAlpha"](material.outline.matchAlpha);
 }
 
 void setMaterial(Shader& shader, WorldMaterial& material) {

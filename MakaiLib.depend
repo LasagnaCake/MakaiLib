@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1674518684 source:d:\c(++) projects\_c++\game engine\makailib\makai.cpp
+1674572432 source:d:\c(++) projects\_c++\game engine\makailib\makai.cpp
 	"src/makai.hpp"
 	<wtypes.h>
 	<windows.h>
@@ -3519,7 +3519,7 @@
 1584273239 d:\c(++) projects\_c++\game engine\makailib\lib\opengl\glew\include\gl\wglew.h
 	<windows.h>
 
-1673658053 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_material.hpp
+1674572741 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_material.hpp
 
 1143199506 d:\c(++) projects\_c++\game engine\makailib\lib\freetype\include\ft2build.h
 	<freetype/config/ftheader.h>
