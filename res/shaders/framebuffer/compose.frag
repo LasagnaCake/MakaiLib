@@ -63,10 +63,10 @@ uniform vec2	blurStrength	= vec2(0.0005);
 
 // [ OUTLINE EFFECT ]
 
-uniform bool	useOutline			= false;
-uniform vec2	outlineSize			= vec2(0.01);
-uniform vec4	outlineColor		= vec4(1);
-uniform bool	outlineMatchAlpha	= true;
+uniform bool	useOutline				= false;
+uniform vec2	outlineSize				= vec2(0.01);
+uniform vec4	outlineColor			= vec4(1);
+uniform bool	outlineRelativeAlpha	= true;
 
 #ifndef PI
 #define PI 3.1415926535
@@ -137,7 +137,7 @@ float getOutlineValue(vec2 uv, vec2 oSize) {
 	+	texture(screen, uv + vec2(size.x, size.y)).a
 	+	texture(screen, uv + vec2(-size.x, -size.y)).a
 	+	texture(screen, uv + vec2(size.x, -size.y)).a;
-	if (outlineMatchAlpha) return min(outline, 1.0);
+	if (outlineRelativeAlpha) return min(outline, 1.0);
 	else return (outline > 0.0) ? 1.0 : 0.0;
 }
 

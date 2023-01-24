@@ -116,7 +116,7 @@ struct RainbowEffect: Effect, Variable {
 struct BlurEffect: Effect, Variable2D {};
 
 struct OutlineEffect: Effect, Sizeable2D, ColorableRGBA {
-	bool matchAlpha = true;
+	bool relativeAlpha = true;
 };
 
 // World Material Effects
@@ -147,6 +147,7 @@ struct BufferMaterial {
 	BlurEffect		blur;
 	OutlineEffect	outline;
 	WaveEffect		wave;
+	WaveEffect		plasma;
 	GradientEffect	gradient;
 	RainbowEffect	rainbow;
 };
@@ -214,6 +215,11 @@ void setMaterial(Shader& shader, BufferMaterial& material) {
 	shader["waveAmplitude"](material.wave.amplitude);
 	shader["waveFrequency"](material.wave.frequency);
 	shader["waveShift"](material.wave.shift);
+	// set screen plasma data
+	shader["usePlasma"](material.plasma.enabled);
+	shader["plasmaAmplitude"](material.plasma.amplitude);
+	shader["plasmaFrequency"](material.plasma.frequency);
+	shader["plasmaShift"](material.plasma.shift);
 	// Set color inversion
 	shader["negative"](material.negative.enabled);
 	// Set rainbow data
@@ -229,7 +235,7 @@ void setMaterial(Shader& shader, BufferMaterial& material) {
 	shader["useOutline"](material.outline.enabled);
 	shader["outlineSize"](material.outline.size);
 	shader["outlineColor"](material.outline.color);
-	shader["outlineMatchAlpha"](material.outline.matchAlpha);
+	shader["outlineMatchAlpha"](material.outline.relativeAlpha);
 }
 
 void setMaterial(Shader& shader, WorldMaterial& material) {

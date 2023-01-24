@@ -181,8 +181,9 @@ public:
 		case $rlayer(ENEMY):
 			break;
 		case $rlayer(OVERLAY):
-			getLayerBuffer().material.outline.enabled = true;
+			/*getLayerBuffer().material.outline.enabled = true;
 			getLayerBuffer().material.outline.size = 0.005;
+			getLayerBuffer().material.outline.relativeAlpha = false;*/
 			break;
 		case $rlayer(UI):
 			break;
@@ -197,7 +198,7 @@ public:
 		switch(sublayerID) {
 		case 0:
 			layerMaterial.background = $vec4(0, 0, .2, 1);
-			/*layerMaterial.wave = {
+			layerMaterial.plasma = {
 				true,
 				$vec2(3, -5),
 				$vec2(
@@ -205,7 +206,7 @@ public:
 					Math::min(sin(getCurrentCycle()/40.0) * -0.5, 0.0)
 				),
 				$vec2(getCurrentCycle()/60.0)
-			};*/
+			};
 			break;
 		default:
 			break;
@@ -218,7 +219,7 @@ public:
 		getLayerBuffer().material = $mat BufferMaterial{};
 		/*auto& layerMaterial = getLayerBuffer().material;
 		layerMaterial.background = Color::CLEAR;
-		//layerMaterial.wave = {};
+		layerMaterial.plasma = {};
 		layerMaterial.color = Color::WHITE;*/
 	}
 
