@@ -3,6 +3,7 @@
 in vec2 fragUV;
 in vec2 maskUV;
 in vec4 fragColor;
+in vec2 screenScale;
 
 layout (location = 0) out vec4	FragColor;
 
@@ -57,7 +58,7 @@ uniform vec2	blurStrength	= vec2(0.0005);
 // [ OUTLINE EFFECT ]
 
 uniform bool	useOutline		= false;
-uniform vec2	outlineSize		= vec2(0.005);
+uniform vec2	outlineSize		= vec2(0.01);
 uniform vec4	outlineColor	= vec4(1);
 
 #ifndef PI
@@ -66,6 +67,10 @@ uniform vec4	outlineColor	= vec4(1);
 
 #ifndef TAU
 #define TAU (PI * 2.0)
+#endif
+
+#ifndef SQRT2
+#define SQRT2 1.4142135623
 #endif
 
 // TODO?: www.youtube.com/watch?v=5EuYKEvugLU
@@ -77,7 +82,7 @@ vec4 hueToPastel(float hue) {
 		cos(hue + TAU * (1.0/3.0)),
 		cos(hue + TAU * (2.0/3.0))
 	);
-	res = normalize(res * res) * sqrt(2);
+	res = normalize(res * res) * SQRT2;
 	return vec4(clamp(res, vec3(0), vec3(1)), 1);
 }
 
@@ -114,7 +119,8 @@ vec4 getPixelColor(vec2 uv) {
 	) / 5.0;
 }
 
-float getOutlineValue(vec2 uv, vec2 size) {
+float getOutlineValue(vec2 uv, vec2 oSize) {
+	vec2 size = oSize / screenScale;
 	float outline =
 		texture(screen, uv + vec2(-size.x, 0)).a
 	+	texture(screen, uv + vec2(0, size.y)).a
@@ -140,7 +146,6 @@ void main() {
 	}
 	vec2 screenUV = fragUV + wave;
 	vec4 color = (getPixelColor(screenUV) * fragColor * albedo) + accent;
-	if (color.w <= 0) discard;
 	// Color inverter
 	if (negative) color = vec4(vec3(1) - vec3(color.x, color.y, color.z), color.w);
 	// Color to gradient
@@ -155,5 +160,6 @@ void main() {
 		if (invertMask) maskValue = vec4(1) - maskValue;
 		color *= maskValue;
 	}
+	if (color.w <= 0) discard;
 	FragColor = color;
 }

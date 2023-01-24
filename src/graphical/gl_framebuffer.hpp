@@ -179,6 +179,7 @@ namespace Drawer {
 			// Set transformation matrix
 			shader["posMatrix"](asGLMMatrix(trans));
 			shader["uvMatrix"](asGLMMatrix(uv));
+			shader["resolution"](Vector2(width, height));
 			// Set material data
 			$mat setMaterial(shader, material);
 			// Enable attribute pointers

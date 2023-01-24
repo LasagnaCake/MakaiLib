@@ -7,8 +7,11 @@ layout (location = 2) in vec4 vertColor;
 out vec2 fragUV;
 out vec2 maskUV;
 out vec4 fragColor;
+out vec2 screenScale;
 
 uniform vec2 uvShift = vec2(0);
+
+uniform vec2 resolution = vec2(0);
 
 uniform mat4 posMatrix;
 uniform mat4 uvMatrix;
@@ -30,4 +33,5 @@ void main()
     fragUV = ((vec4(vertUV, 1, 0) * uvMatrix).xy + uvShift);
     fragColor = vertColor;
     gl_Position = vertex;
+    screenScale = vec2(resolution.x/resolution.y, 1);
 } 
