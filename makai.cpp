@@ -67,7 +67,7 @@ public:
 		tubeRend = $rdt loadObjectFromFile("stages/test.bin");
 		tubeRend->trans.scale = $vec3($vec2(10), 2);
 		tubeRend->trans.position.y = 5;
-		//tubeRend->material.fill = GL_FILL;
+		tubeRend->material.fill = GL_LINE;
 		// Set player stuff
 		Vector2 screenSpace = getWindowScale();
 		player.spawnPoint =
