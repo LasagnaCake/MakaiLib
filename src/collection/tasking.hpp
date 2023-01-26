@@ -43,7 +43,16 @@ namespace Tasking {
 		using std::vector, std::function;
 	}
 
-	#define Task function<size_t(Tasker*)>
+	class Tasker;
+
+	/// A Task. Essentally a function, that takes in its parent Tasker, and returns a delay.
+	typedef function<float(Tasker*)> Task;
+
+	/// A list of Tasks.
+	typedef vector<Task> TaskList;
+
+	/// A list of Taskers.
+	typedef vector<Tasker*> TaskerList;
 
 	/**
 	******************
@@ -80,13 +89,13 @@ namespace Tasking {
 		Tasker() {}
 
 		/// Vector constructor.
-		Tasker(vector<Task> tList) {
+		Tasker(TaskList tList) {
 			tasks	= tList;
 			maxTask	= tasks.size();
 		}
 
 		/// Set's the Tasker's tasks.
-		void setTasks(vector<Task> tList) {
+		void setTasks(TaskList tList) {
 			tasks.clear();
 			tasks	= tList;
 			maxTask	= tasks.size();
@@ -203,7 +212,7 @@ namespace Tasking {
 
 	private:
 		/// The list of Tasks to be executed.
-		vector<Task> tasks;
+		TaskList tasks;
 
 		/// The delay until next Task. gets decremented when yield() is called, until 0.
 		float delay = 0;
@@ -214,17 +223,6 @@ namespace Tasking {
 		/// Whether the Tasker is finished.
 		bool isFinished	= false;
 	};
-
-	#undef Task
-
-	/// A Task. Essentally a function, that takes in its parent Tasker, and returns a delay.
-	typedef function<float(Tasker*)> Task;
-
-	/// A list of Tasks.
-	typedef vector<Task> TaskList;
-
-	/// A list of Taskers.
-	typedef vector<Tasker*> TaskerList;
 
 	/**
 	***********************
@@ -243,25 +241,29 @@ namespace Tasking {
 
 		/// Vector constructor.
 		MultiTasker(TaskerList tList) {
-			taskers.clear();
+			clearTaskers();
 			taskers = tList;
 		}
 
 		/// Array pointer constructor (UNTESTED).
 		MultiTasker(size_t lSize, Tasker** tList) {
-			taskers.clear();
+			clearTaskers();
 			for (size_t i = 0; i < lSize; i++) taskers.push_back(tList[i]);
+		}
+
+		~MultiTasker() {
+			clearTaskers();
 		}
 
 		/// Sets the MultiTasker's Taskers.
 		void setTaskers(TaskerList tList) {
-			taskers.clear();
+			clearTaskers();
 			taskers = tList;
 		}
 
 		/// Sets the MultiTasker's Taskers (UNTESTED).
 		void setTaskers(size_t lSize, Tasker** tList) {
-			taskers.clear();
+			clearTaskers();
 			for (size_t i = 0; i < lSize; i++) taskers.push_back(tList[i]);
 		}
 
@@ -271,6 +273,7 @@ namespace Tasking {
 			if (overwrite) for (size_t i = 0; i < taskers.size(); i++) {
 				// If a finished Tasker is found, replace it with given Tasker, and end function
 				if (taskers[i]->finished()) {
+					delete taskers[i];
 					taskers[i] = t;
 					return;
 				}
@@ -280,6 +283,7 @@ namespace Tasking {
 		}
 
 		void clearTaskers() {
+			for (auto tasker: taskers) delete tasker;
 			taskers.clear();
 		}
 
@@ -309,7 +313,20 @@ namespace TypedTasking {
 		using std::vector, std::function;
 	}
 
-	#define Task(args) function<size_t(Tasker*, args)>
+	template<typename T>
+	class Tasker;
+
+	/// A Task. Essentally a function, that takes in its parent Tasker, and returns a delay.
+	template <typename T>
+	using Task = function<float(Tasker<T>*, T*)>;
+
+	/// A list of Tasks.
+	template <typename T>
+	using TaskList = vector<Task<T>>;
+
+	/// A list of Taskers.
+	template <typename T>
+	using TaskerList = vector<Tasker<T>*>;
 
 	/**
 	******************
@@ -350,13 +367,13 @@ namespace TypedTasking {
 		Tasker() {}
 
 		/// Vector constructor.
-		Tasker(vector<Task(T*)> tList) {
+		Tasker(TaskList<T> tList) {
 			tasks	= tList;
 			maxTask	= tasks.size();
 		}
 
 		/// Set's the Tasker's tasks.
-		void setTasks(vector<Task(T*)> tList) {
+		void setTasks(TaskList<T> tList) {
 			tasks.clear();
 			tasks	= tList;
 			maxTask	= tasks.size();
@@ -430,7 +447,7 @@ namespace TypedTasking {
 		}
 
 		/// Adds a Task to the end of the list of Tasks.
-		void addTask(Task(T*) t) {
+		void addTask(Task<T> t) {
 			tasks.push_back(t);
 			maxTask = tasks.size();
 		}
@@ -457,13 +474,13 @@ namespace TypedTasking {
 			maxTask = tasks.size();
 		}
 
-		Task(T*)& operator[](size_t index) {
+		Task<T>& operator[](size_t index) {
 			return tasks[index];
 		}
 
 	private:
 		/// The list of Tasks to be executed.
-		vector<Task(T*)> tasks;
+		TaskList<T> tasks;
 
 		/// The delay until next Task. gets decremented when yield() is called, until 0.
 		float delay = 0;
@@ -474,20 +491,6 @@ namespace TypedTasking {
 		/// Whether the Tasker is finished.
 		bool isFinished	= false;
 	};
-
-	#undef Task
-
-	/// A Task. Essentally a function, that takes in its parent Tasker, and returns a delay.
-	template <typename T>
-	using Task = function<float(Tasker<T>*, T*)>;
-
-	/// A list of Tasks.
-	template <typename T>
-	using TaskList = vector<Task<T>>;
-
-	/// A list of Taskers.
-	template <typename T>
-	using TaskerList = vector<Tasker<T>*>;
 
 	/**
 	***********************
@@ -510,25 +513,29 @@ namespace TypedTasking {
 
 		/// Vector constructor.
 		MultiTasker(TaskerList<T> tList) {
-			taskers.clear();
+			clearTaskers();
 			taskers = tList;
 		}
 
 		/// Array pointer constructor (UNTESTED).
 		MultiTasker(size_t lSize, Tasker<T>** tList) {
-			taskers.clear();
+			clearTaskers();
 			for (size_t i = 0; i < lSize; i++) taskers.push_back(tList[i]);
+		}
+
+		~MultiTasker() {
+			clearTaskers();
 		}
 
 		/// Sets the MultiTasker's Taskers.
 		void setTaskers(TaskerList<T> tList) {
-			taskers.clear();
+			clearTaskers();
 			taskers = tList;
 		}
 
 		/// Sets the MultiTasker's Taskers (UNTESTED).
 		void setTaskers(size_t lSize, Tasker<T>** tList) {
-			taskers.clear();
+			clearTaskers();
 			for (size_t i = 0; i < lSize; i++) taskers.push_back(tList[i]);
 		}
 
@@ -538,6 +545,7 @@ namespace TypedTasking {
 			if (overwrite) for (size_t i = 0; i < taskers.size(); i++) {
 				// If a finished Tasker is found, replace it with given Tasker, and end function
 				if (taskers[i]->finished()) {
+					delete taskers[i];
 					taskers[i] = t;
 					return;
 				}
@@ -547,6 +555,8 @@ namespace TypedTasking {
 		}
 
 		void clearTaskers() {
+			for (auto tasker: taskers)
+				delete tasker;
 			taskers.clear();
 		}
 

@@ -153,6 +153,16 @@ public:
 		world3D.ambient.color = Vector3(1,1,1);
 		player.mesh.material.color = Color::GREEN;
 		enemy->setInvincible(120);
+		$tsk Tasker* et = new $tsk Tasker(
+			$tsk TaskList{
+				$task {
+					enemy->healthBar.uvAngle += 1.0/120.0;
+					$end;
+				}
+			}
+		);
+		et->loop = true;
+		enemy->taskers.addTasker(et);
 	}
 
 	size_t currentWave = 0;

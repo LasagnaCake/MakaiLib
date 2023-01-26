@@ -176,8 +176,8 @@ void main() {
 	// Screen plasmicity
 	vec2 prism = vec2(0);
 	if (usePrism) {
-		prism = (fragUV * prismFrequency) * (2.0 * PI) + prismShift;
-		prism = patternV2(prism, prismShape) * (prismAmplitude / 10.0);
+		prism = (fragUV * prismFrequency.yx) * (2.0 * PI) + prismShift.yx;
+		prism = patternV2(prism, prismShape) * (prismAmplitude.yx / 10.0);
 	}
 	vec2 screenUV = fragUV + wave + prism;
 	vec4 color = (getPixelColor(screenUV) * fragColor * albedo) + accent;
