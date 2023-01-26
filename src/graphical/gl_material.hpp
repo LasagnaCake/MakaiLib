@@ -105,7 +105,9 @@ struct MaskEffect: Effect, Imageable2D, Transformable2D, Invertible {
 	bool relative = false;
 };
 
-struct WaveEffect: Effect, Tuneable2D {};
+struct WaveEffect: Effect, Tuneable2D {
+	unsigned int shape = 0;
+};
 
 struct RainbowEffect: Effect, Variable {
 	float frequency	= 0.0;
@@ -147,7 +149,7 @@ struct BufferMaterial {
 	BlurEffect		blur;
 	OutlineEffect	outline;
 	WaveEffect		wave;
-	WaveEffect		plasma;
+	WaveEffect		prism;
 	GradientEffect	gradient;
 	RainbowEffect	rainbow;
 };
@@ -215,11 +217,13 @@ void setMaterial(Shader& shader, BufferMaterial& material) {
 	shader["waveAmplitude"](material.wave.amplitude);
 	shader["waveFrequency"](material.wave.frequency);
 	shader["waveShift"](material.wave.shift);
-	// set screen plasma data
-	shader["usePlasma"](material.plasma.enabled);
-	shader["plasmaAmplitude"](material.plasma.amplitude);
-	shader["plasmaFrequency"](material.plasma.frequency);
-	shader["plasmaShift"](material.plasma.shift);
+	shader["waveShape"](material.wave.shape);
+	// set screen prism data
+	shader["usePrism"](material.prism.enabled);
+	shader["prismAmplitude"](material.prism.amplitude);
+	shader["prismFrequency"](material.prism.frequency);
+	shader["prismShift"](material.prism.shift);
+	shader["prismShape"](material.prism.shape);
 	// Set color inversion
 	shader["negative"](material.negative.enabled);
 	// Set rainbow data

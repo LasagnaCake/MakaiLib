@@ -43,12 +43,14 @@ uniform bool useWave		= false;
 uniform vec2 waveAmplitude	= vec2(1);
 uniform vec2 waveFrequency	= vec2(1);
 uniform vec2 waveShift		= vec2(1);
+uniform uint waveShape		= 0;
 
 // [ SCREEN WAVE ]
-uniform bool usePlasma			= false;
-uniform vec2 plasmaAmplitude	= vec2(1);
-uniform vec2 plasmaFrequency	= vec2(1);
-uniform vec2 plasmaShift		= vec2(1);
+uniform bool usePrism		= false;
+uniform vec2 prismAmplitude	= vec2(1);
+uniform vec2 prismFrequency	= vec2(1);
+uniform vec2 prismShift		= vec2(1);
+uniform uint prismShape		= 0;
 
 // [ SCREEN RAINBOW EFFECT ]
 uniform bool	useRainbow			= false;
@@ -141,6 +143,25 @@ float getOutlineValue(vec2 uv, vec2 oSize) {
 	else return (outline > 0.0) ? 1.0 : 0.0;
 }
 
+float round(float v) {
+	return floor(v + 0.5);
+}
+
+float pattern(float t, uint shape) {
+	switch (shape) {
+		default:
+		case 0:	return sin(t);
+		case 1:	return sign(sin(t));
+		case 2: return (abs(sin(t))-abs(cos(t))) / 2;
+		case 3: return round(sin(t) * 4.0) / 4.0;
+		case 4: return t - ceil(t);
+	}
+}
+
+vec2 patternV2(vec2 t, uint shape) {
+	return vec2(pattern(t.x, shape), pattern(t.y, shape));
+}
+
 vec4 applyOutline(vec4 color, vec2 uv) {
 	return mix(color, outlineColor, getOutlineValue(uv, outlineSize) - color.a);
 }
@@ -150,15 +171,15 @@ void main() {
 	vec2 wave = vec2(0);
 	if (useWave) {
 		wave = (fragUV.yx * waveFrequency) * (2.0 * PI) + waveShift;
-		wave = vec2(sin(wave.x), sin(wave.y)) * (waveAmplitude / 10.0);
+		wave = patternV2(wave, waveShape) * (waveAmplitude / 10.0);
 	}
 	// Screen plasmicity
-	vec2 plasma = vec2(0);
-	if (usePlasma) {
-		plasma = (fragUV * plasmaFrequency) * (2.0 * PI) + plasmaShift;
-		plasma = vec2(sin(plasma.x), sin(plasma.y)) * (plasmaAmplitude / 10.0);
+	vec2 prism = vec2(0);
+	if (usePrism) {
+		prism = (fragUV * prismFrequency) * (2.0 * PI) + prismShift;
+		prism = patternV2(prism, prismShape) * (prismAmplitude / 10.0);
 	}
-	vec2 screenUV = fragUV + wave + plasma;
+	vec2 screenUV = fragUV + wave + prism;
 	vec4 color = (getPixelColor(screenUV) * fragColor * albedo) + accent;
 	// Color inverter
 	if (negative) color = vec4(vec3(1) - vec3(color.x, color.y, color.z), color.w);

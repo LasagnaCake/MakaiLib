@@ -64,10 +64,10 @@ public:
 		// Do parent task
 		DanmakuApp::onOpen();
 		// Create background
-		tubeRend = $rdt loadObjectFromFile("stages/test.bin");
+		tubeRend = $rdt loadObjectFromBinaryFile("stages/test.bin");
 		tubeRend->trans.scale = $vec3($vec2(10), 2);
 		tubeRend->trans.position.y = 5;
-		tubeRend->material.fill = GL_LINE;
+		//tubeRend->material.fill = GL_LINE;
 		// Set player stuff
 		Vector2 screenSpace = getWindowScale();
 		player.spawnPoint =
@@ -155,10 +155,20 @@ public:
 		enemy->setInvincible(120);
 	}
 
+	size_t currentWave = 0;
+
+	bool useWave = true;
+
 	void onLogicFrame(float delta) override {
 		if (input.getButtonDown(SDL_SCANCODE_ESCAPE)) {
 			close();
 		}
+		for $ssrange(i, 0, 5) {
+			if (input.isButtonJustPressed((SDL_Scancode)(SDL_SCANCODE_1 + i)))
+				currentWave = i;
+		}
+		if (input.isButtonJustPressed(SDL_SCANCODE_0))
+			useWave = !useWave;
 	}
 
 	void onDrawBegin() override {
@@ -197,18 +207,21 @@ public:
 	void onWorldSublayer(size_t sublayerID) {
 		auto& layerMaterial = getLayerBuffer().material;
 		switch(sublayerID) {
-		case 0:
-			layerMaterial.background = $vec4(0, 0, .2, 1);
-			layerMaterial.plasma = {
-				true,
-				$vec2(3, -5),
-				$vec2(
-					Math::min(sin(getCurrentCycle()/40.0) * 0.5, 0.0),
-					Math::min(sin(getCurrentCycle()/40.0) * -0.5, 0.0)
-				),
-				$vec2(getCurrentCycle()/60.0)
-			};
-			break;
+		case 0: {
+				layerMaterial.background = $vec4(0, 0, .2, 1);
+				$mat WaveEffect wfx = {
+					true,
+					$vec2(3, -5),
+					$vec2(
+						Math::min(sin(getCurrentCycle()/40.0) * 0.5, 0.0),
+						Math::min(sin(getCurrentCycle()/40.0) * -0.5, 0.0)
+					),
+					$vec2(getCurrentCycle()/60.0),
+					currentWave
+				};
+				if (useWave)	layerMaterial.wave	= wfx;
+				else			layerMaterial.prism	= wfx;
+			} break;
 		default:
 			break;
 		}

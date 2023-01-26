@@ -307,10 +307,14 @@ private:
 	size_t vertexCount = 0;
 };
 
-Renderable* loadObjectFromFile(string path) {
+Renderable* loadObjectFromBinaryFile(string path) {
 	auto* object = new Renderable();
 	auto data = $fld loadBinaryFile(path);
-	if (!data.size()) throw runtime_error("File does not exist (" + path + ")!");
+	if (!data.size()) throw runtime_error("File does not exist or is empty! (" + path + ")!");
 	object->bakeAndLock((RawVertex*)&data[0], data.size() / sizeof(RawVertex));
 	return object;
+}
+
+Renderable* loadObjectFromGLTFFile(string path) {
+	throw runtime_error("Unimplemented function 'loadObjectFromGLTFFile' !");
 }
