@@ -86,10 +86,12 @@ namespace Tasking {
 		int loopCount = -1;
 
 		/// Empty constructor.
-		Tasker() {}
+		Tasker(bool loop = false) {
+			this->loop = loop;
+		}
 
 		/// Vector constructor.
-		Tasker(TaskList tList) {
+		Tasker(TaskList tList, bool loop = false): Tasker(loop) {
 			tasks	= tList;
 			maxTask	= tasks.size();
 		}
@@ -364,10 +366,12 @@ namespace TypedTasking {
 		int loopCount = -1;
 
 		/// Empty constructor.
-		Tasker() {}
+		Tasker(bool loop = false) {
+			this->loop = loop;
+		}
 
 		/// Vector constructor.
-		Tasker(TaskList<T> tList) {
+		Tasker(TaskList<T> tList, bool loop = false): Tasker(loop) {
 			tasks	= tList;
 			maxTask	= tasks.size();
 		}

@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1674761612 source:d:\c(++) projects\_c++\game engine\makailib\makai.cpp
+1674777889 source:d:\c(++) projects\_c++\game engine\makailib\makai.cpp
 	"src/makai.hpp"
 	<wtypes.h>
 	<windows.h>
@@ -2867,7 +2867,7 @@
 1665256929 d:\c(++) projects\_c++\game engine\makailib\src\program.hpp
 	"program/gl_program.hpp"
 
-1673369982 d:\c(++) projects\_c++\game engine\makailib\src\anchors.hpp
+1674815167 d:\c(++) projects\_c++\game engine\makailib\src\anchors.hpp
 	<iostream>
 	<string>
 	<vector>
@@ -2892,6 +2892,7 @@
 	<Stk.h>
 	<clunk/clunk.h>
 	<portaudio.h>
+	<yse.hpp>
 	"stb_image.h"
 	<GLEW/include/GL/glew.h>
 	<GLEW/include/GL/wglew.h>
@@ -2959,7 +2960,7 @@
 	"../event.hpp"
 	"../grouping.hpp"
 
-1674761503 d:\c(++) projects\_c++\game engine\makailib\src\collection\tasking.hpp
+1674777879 d:\c(++) projects\_c++\game engine\makailib\src\collection\tasking.hpp
 	<vector>
 	<functional>
 	<type_traits>
@@ -3675,4 +3676,354 @@
 1673229429 d:\c(++) projects\_c++\game engine\makailib\src\audio\gl_audio.hpp
 
 1617237342 d:\c(++) projects\_c++\game engine\makailib\lib\portaudio\include\portaudio.h
+
+1443819984 d:\c(++) projects\_c++\game engine\makailib\lib\libyse-1.0_windows\include\yse.hpp
+	<atomic>
+	"headers/types.hpp"
+	"headers/defines.hpp"
+	"headers/enums.hpp"
+	"headers/constants.hpp"
+	"dsp/buffer.hpp"
+	"dsp/drawableBuffer.hpp"
+	"dsp/fileBuffer.hpp"
+	"dsp/wavetable.hpp"
+	"dsp/sample_functions.hpp"
+	"dsp/delay.hpp"
+	"dsp/dspObject.hpp"
+	"dsp/filters.hpp"
+	"dsp/math.hpp"
+	"dsp/oscillators.hpp"
+	"dsp/ramp.hpp"
+	"dsp/envelope.hpp"
+	"dsp/ADSRenvelope.hpp"
+	"dsp/lfo.hpp"
+	"dsp/modules/hilbert.hpp"
+	"dsp/modules/ringModulator.hpp"
+	"dsp/modules/sineWave.hpp"
+	"dsp/modules/granulator.hpp"
+	"dsp/modules/phaser.hpp"
+	"dsp/modules/delay/basicDelay.hpp"
+	"dsp/modules/delay/highpassDelay.hpp"
+	"dsp/modules/delay/lowpassDelay.hpp"
+	"dsp/modules/filters/highpass.hpp"
+	"dsp/modules/filters/lowpass.hpp"
+	"dsp/modules/filters/bandpass.hpp"
+	"dsp/modules/fm/difference.hpp"
+	"dsp/modules/filters/sweep.hpp"
+	"utils/misc.hpp"
+	"utils/vector.hpp"
+	"system.hpp"
+	"log.hpp"
+	"channel/channel.hpp"
+	"channel/channelInterface.hpp"
+	"sound/sound.hpp"
+	"sound/soundInterface.hpp"
+	"synth/synth.hpp"
+	"synth/synthInterface.hpp"
+	"synth/dspVoice.hpp"
+	"midi/midifile.hpp"
+	"player/player.hpp"
+	"player/playerInterface.hpp"
+	"music/note.hpp"
+	"music/pNote.hpp"
+	"music/scale/scale.hpp"
+	"music/scale/scaleInterface.hpp"
+	"music/motif/motif.hpp"
+	"music/motif/motifInterface.hpp"
+	"reverb/reverb.hpp"
+	"reverb/reverbInterface.hpp"
+	"device/device.hpp"
+	"device/deviceInterface.hpp"
+	"device/deviceSetup.hpp"
+	"listener.hpp"
+	"io.hpp"
+
+1438020264 d:\c(++) projects\_c++\game engine\makailib\lib\libyse-1.0_windows\include\headers\types.hpp
+	"defines.hpp"
+	<atomic>
+
+1441377886 d:\c(++) projects\_c++\game engine\makailib\lib\libyse-1.0_windows\include\headers\defines.hpp
+	<CoreFoundation/CoreFoundation.h>
+	<TargetConditionals.h>
+
+1438020264 d:\c(++) projects\_c++\game engine\makailib\lib\libyse-1.0_windows\include\headers\enums.hpp
+
+1412180022 d:\c(++) projects\_c++\game engine\makailib\lib\libyse-1.0_windows\include\headers\constants.hpp
+	"types.hpp"
+
+1447525626 d:\c(++) projects\_c++\game engine\makailib\lib\libyse-1.0_windows\include\dsp\buffer.hpp
+	<vector>
+	"../headers/constants.hpp"
+
+1447525702 d:\c(++) projects\_c++\game engine\makailib\lib\libyse-1.0_windows\include\dsp\drawablebuffer.hpp
+	"buffer.hpp"
+
+1447526026 d:\c(++) projects\_c++\game engine\makailib\lib\libyse-1.0_windows\include\dsp\filebuffer.hpp
+	"drawableBuffer.hpp"
+
+1442190198 d:\c(++) projects\_c++\game engine\makailib\lib\libyse-1.0_windows\include\dsp\wavetable.hpp
+	"fileBuffer.hpp"
+
+1438976826 d:\c(++) projects\_c++\game engine\makailib\lib\libyse-1.0_windows\include\dsp\sample_functions.hpp
+	"buffer.hpp"
+
+1438020264 d:\c(++) projects\_c++\game engine\makailib\lib\libyse-1.0_windows\include\dsp\delay.hpp
+	<vector>
+	"../headers/defines.hpp"
+	"../headers/types.hpp"
+	"buffer.hpp"
+
+1442708648 d:\c(++) projects\_c++\game engine\makailib\lib\libyse-1.0_windows\include\dsp\dspobject.hpp
+	<vector>
+	<memory>
+	"buffer.hpp"
+	"../headers/enums.hpp"
+	"lfo.hpp"
+	"math.hpp"
+
+1443645772 d:\c(++) projects\_c++\game engine\makailib\lib\libyse-1.0_windows\include\dsp\lfo.hpp
+	"drawableBuffer.hpp"
+
+1442708648 d:\c(++) projects\_c++\game engine\makailib\lib\libyse-1.0_windows\include\dsp\math.hpp
+	"../headers/types.hpp"
+	"buffer.hpp"
+
+1443645772 d:\c(++) projects\_c++\game engine\makailib\lib\libyse-1.0_windows\include\dsp\filters.hpp
+	"buffer.hpp"
+	"../headers/enums.hpp"
+
+1437870472 d:\c(++) projects\_c++\game engine\makailib\lib\libyse-1.0_windows\include\dsp\oscillators.hpp
+	"../headers/defines.hpp"
+	"../headers/types.hpp"
+	"../headers/constants.hpp"
+	"buffer.hpp"
+	"wavetable.hpp"
+
+1437530778 d:\c(++) projects\_c++\game engine\makailib\lib\libyse-1.0_windows\include\dsp\ramp.hpp
+	"../headers/defines.hpp"
+	"buffer.hpp"
+
+1438020264 d:\c(++) projects\_c++\game engine\makailib\lib\libyse-1.0_windows\include\dsp\envelope.hpp
+	"../classes.hpp"
+	"../headers/defines.hpp"
+	<vector>
+
+1437944586 d:\c(++) projects\_c++\game engine\makailib\lib\libyse-1.0_windows\include\classes.hpp
+	"utils/vector.hpp"
+	"channel/channel.hpp"
+	"sound/sound.hpp"
+	"reverb/reverb.hpp"
+	"device/device.hpp"
+	"synth/synth.hpp"
+	"player/player.hpp"
+	"music/scale/scale.hpp"
+
+1438020264 d:\c(++) projects\_c++\game engine\makailib\lib\libyse-1.0_windows\include\utils\vector.hpp
+	<string>
+	<sstream>
+	<atomic>
+	<cmath>
+	"../headers/types.hpp"
+
+1428601628 d:\c(++) projects\_c++\game engine\makailib\lib\libyse-1.0_windows\include\channel\channel.hpp
+
+1438020264 d:\c(++) projects\_c++\game engine\makailib\lib\libyse-1.0_windows\include\sound\sound.hpp
+
+1397261390 d:\c(++) projects\_c++\game engine\makailib\lib\libyse-1.0_windows\include\reverb\reverb.hpp
+
+1412180022 d:\c(++) projects\_c++\game engine\makailib\lib\libyse-1.0_windows\include\device\device.hpp
+
+1438020264 d:\c(++) projects\_c++\game engine\makailib\lib\libyse-1.0_windows\include\synth\synth.hpp
+
+1438020264 d:\c(++) projects\_c++\game engine\makailib\lib\libyse-1.0_windows\include\player\player.hpp
+
+1429055436 d:\c(++) projects\_c++\game engine\makailib\lib\libyse-1.0_windows\include\music\scale\scale.hpp
+
+1438020264 d:\c(++) projects\_c++\game engine\makailib\lib\libyse-1.0_windows\include\dsp\adsrenvelope.hpp
+	"../classes.hpp"
+	"../headers/defines.hpp"
+	"buffer.hpp"
+
+1437531490 d:\c(++) projects\_c++\game engine\makailib\lib\libyse-1.0_windows\include\dsp\modules\hilbert.hpp
+	"../../headers/defines.hpp"
+	"../filters.hpp"
+
+1443565018 d:\c(++) projects\_c++\game engine\makailib\lib\libyse-1.0_windows\include\dsp\modules\ringmodulator.hpp
+	"../../headers/defines.hpp"
+	"../dspObject.hpp"
+	"../oscillators.hpp"
+	<memory>
+
+1437531864 d:\c(++) projects\_c++\game engine\makailib\lib\libyse-1.0_windows\include\dsp\modules\sinewave.hpp
+	"../dspObject.hpp"
+	"../oscillators.hpp"
+	"../drawableBuffer.hpp"
+
+1443833674 d:\c(++) projects\_c++\game engine\makailib\lib\libyse-1.0_windows\include\dsp\modules\granulator.hpp
+	"../../headers/defines.hpp"
+	"../dspObject.hpp"
+	"../math.hpp"
+	"../fileBuffer.hpp"
+	<memory>
+
+1443645772 d:\c(++) projects\_c++\game engine\makailib\lib\libyse-1.0_windows\include\dsp\modules\phaser.hpp
+	"../dspObject.hpp"
+	"../lfo.hpp"
+	"../rawFilters.hpp"
+	<memory>
+	"../math.hpp"
+	"../filters.hpp"
+
+1443645772 d:\c(++) projects\_c++\game engine\makailib\lib\libyse-1.0_windows\include\dsp\rawfilters.hpp
+	"buffer.hpp"
+
+1443889734 d:\c(++) projects\_c++\game engine\makailib\lib\libyse-1.0_windows\include\dsp\modules\delay\basicdelay.hpp
+	"../../../headers/defines.hpp"
+	"../../dspObject.hpp"
+	"../../delay.hpp"
+	<memory>
+
+1443889734 d:\c(++) projects\_c++\game engine\makailib\lib\libyse-1.0_windows\include\dsp\modules\delay\highpassdelay.hpp
+	"basicDelay.hpp"
+	"../../filters.hpp"
+
+1443889734 d:\c(++) projects\_c++\game engine\makailib\lib\libyse-1.0_windows\include\dsp\modules\delay\lowpassdelay.hpp
+	"basicDelay.hpp"
+	"../../filters.hpp"
+
+1442945338 d:\c(++) projects\_c++\game engine\makailib\lib\libyse-1.0_windows\include\dsp\modules\filters\highpass.hpp
+	"../../../headers/defines.hpp"
+	"../../dspObject.hpp"
+	"../../filters.hpp"
+	<memory>
+
+1442596012 d:\c(++) projects\_c++\game engine\makailib\lib\libyse-1.0_windows\include\dsp\modules\filters\lowpass.hpp
+	"../../../headers/defines.hpp"
+	"../../dspObject.hpp"
+	"../../filters.hpp"
+	<memory>
+
+1442945338 d:\c(++) projects\_c++\game engine\makailib\lib\libyse-1.0_windows\include\dsp\modules\filters\bandpass.hpp
+	"../../../headers/defines.hpp"
+	"../../dspObject.hpp"
+	"../../filters.hpp"
+	<memory>
+
+1443565020 d:\c(++) projects\_c++\game engine\makailib\lib\libyse-1.0_windows\include\dsp\modules\fm\difference.hpp
+	"../../../headers/defines.hpp"
+	"../../dspObject.hpp"
+	"../../filters.hpp"
+	"../../oscillators.hpp"
+	"../../math.hpp"
+	<memory>
+
+1443830142 d:\c(++) projects\_c++\game engine\makailib\lib\libyse-1.0_windows\include\dsp\modules\filters\sweep.hpp
+	"../../../headers/defines.hpp"
+	"../../dspObject.hpp"
+	"../../filters.hpp"
+	"../../oscillators.hpp"
+	"../../interpolate4.hpp"
+	<memory>
+
+1443645772 d:\c(++) projects\_c++\game engine\makailib\lib\libyse-1.0_windows\include\dsp\interpolate4.hpp
+	"buffer.hpp"
+
+1447526214 d:\c(++) projects\_c++\game engine\makailib\lib\libyse-1.0_windows\include\utils\misc.hpp
+	<cstdlib>
+	<time.h>
+	<cmath>
+	"../headers/types.hpp"
+
+1438020264 d:\c(++) projects\_c++\game engine\makailib\lib\libyse-1.0_windows\include\system.hpp
+	"headers/types.hpp"
+	"headers/enums.hpp"
+	"utils/vector.hpp"
+	"classes.hpp"
+
+1438020264 d:\c(++) projects\_c++\game engine\makailib\lib\libyse-1.0_windows\include\log.hpp
+	<string>
+	"headers/defines.hpp"
+	"headers/enums.hpp"
+
+1438980100 d:\c(++) projects\_c++\game engine\makailib\lib\libyse-1.0_windows\include\channel\channelinterface.hpp
+	<string>
+	"../headers/defines.hpp"
+	"../headers/types.hpp"
+	"channel.hpp"
+
+1438020264 d:\c(++) projects\_c++\game engine\makailib\lib\libyse-1.0_windows\include\sound\soundinterface.hpp
+	"../classes.hpp"
+	"../headers/defines.hpp"
+	"JuceHeader.h"
+
+1438020264 d:\c(++) projects\_c++\game engine\makailib\lib\libyse-1.0_windows\include\synth\synthinterface.hpp
+	"../classes.hpp"
+	"../headers/defines.hpp"
+	"dspVoice.hpp"
+	"../music/note.hpp"
+	<string>
+
+1438020264 d:\c(++) projects\_c++\game engine\makailib\lib\libyse-1.0_windows\include\synth\dspvoice.hpp
+	"../classes.hpp"
+	"../headers/defines.hpp"
+	"../dsp/dspObject.hpp"
+	"../dsp/math.hpp"
+
+1429141532 d:\c(++) projects\_c++\game engine\makailib\lib\libyse-1.0_windows\include\music\note.hpp
+	"../classes.hpp"
+	"../headers/defines.hpp"
+
+1438020264 d:\c(++) projects\_c++\game engine\makailib\lib\libyse-1.0_windows\include\midi\midifile.hpp
+	<string>
+	"../synth/synth.hpp"
+	"../headers/defines.hpp"
+
+1438020264 d:\c(++) projects\_c++\game engine\makailib\lib\libyse-1.0_windows\include\player\playerinterface.hpp
+	"../headers/defines.hpp"
+	"../headers/types.hpp"
+	"player.hpp"
+	"../synth/synth.hpp"
+	"../music/motif/motif.hpp"
+
+1438020264 d:\c(++) projects\_c++\game engine\makailib\lib\libyse-1.0_windows\include\music\motif\motif.hpp
+
+1438020264 d:\c(++) projects\_c++\game engine\makailib\lib\libyse-1.0_windows\include\music\pnote.hpp
+	"../classes.hpp"
+	"../headers/defines.hpp"
+	"note.hpp"
+
+1439902884 d:\c(++) projects\_c++\game engine\makailib\lib\libyse-1.0_windows\include\music\scale\scaleinterface.hpp
+	"../../headers/defines.hpp"
+	"../../headers/types.hpp"
+	"scale.hpp"
+	"../motif/motif.hpp"
+	<vector>
+
+1439902884 d:\c(++) projects\_c++\game engine\makailib\lib\libyse-1.0_windows\include\music\motif\motifinterface.hpp
+	"../../headers/defines.hpp"
+	"../../headers/types.hpp"
+	"../../classes.hpp"
+	"motif.hpp"
+	<vector>
+
+1438020264 d:\c(++) projects\_c++\game engine\makailib\lib\libyse-1.0_windows\include\reverb\reverbinterface.hpp
+	"../headers/defines.hpp"
+	"../headers/enums.hpp"
+	"../utils/vector.hpp"
+
+1438982356 d:\c(++) projects\_c++\game engine\makailib\lib\libyse-1.0_windows\include\device\deviceinterface.hpp
+	<string>
+	<vector>
+	"../classes.hpp"
+	"../yse.hpp"
+
+1412180022 d:\c(++) projects\_c++\game engine\makailib\lib\libyse-1.0_windows\include\device\devicesetup.hpp
+	"../classes.hpp"
+
+1438020264 d:\c(++) projects\_c++\game engine\makailib\lib\libyse-1.0_windows\include\listener.hpp
+	"headers/defines.hpp"
+	"utils/vector.hpp"
+
+1438020264 d:\c(++) projects\_c++\game engine\makailib\lib\libyse-1.0_windows\include\io.hpp
+	"headers/types.hpp"
 

@@ -2,6 +2,7 @@
 #define MAKAILIB_LIBRARY_HEADER_H
 
 #include "anchors.hpp"
+#include "audio.hpp"
 #include "program.hpp"
 #include "graphical.hpp"
 #include "gamedata.hpp"

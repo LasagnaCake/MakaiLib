@@ -53,8 +53,8 @@
 			<Add directory="lib/zlib-1.2.13" />
 			<Add directory="lib/stk-4.6.2/include" />
 			<Add directory="lib/clunk-1.3.261" />
-			<Add directory="lib/portaudio/include" />
 			<Add directory="lib/openal-soft-1.22.2/include" />
+			<Add directory="lib/libYSE-1.0_windows/include" />
 		</Compiler>
 		<ResourceCompiler>
 			<Add directory="lib" />
@@ -65,8 +65,8 @@
 			<Add directory="lib/zlib-1.2.13" />
 			<Add directory="lib/stk-4.6.2/include" />
 			<Add directory="lib/clunk-1.3.261" />
-			<Add directory="lib/portaudio/include" />
 			<Add directory="lib/openal-soft-1.22.2/include" />
+			<Add directory="lib/libYSE-1.0_windows/include" />
 		</ResourceCompiler>
 		<Linker>
 			<Add option="-O1" />
@@ -83,10 +83,10 @@
 			<Add library="lib/OpenGL/GLEW/lib/libglew32.dll.a" />
 			<Add library="lib/stk-4.6.2/lib/libstk.dll.a" />
 			<Add library="lib/clunk-1.3.261/build/libclunk.dll.a" />
-			<Add library="lib/portaudio/lib/libportaudio.dll.a" />
 			<Add library="lib/openal-soft-1.22.2/libs/Win64/libOpenAL32.dll.a" />
 			<Add library="opengl32" />
 			<Add library="winmm" />
+			<Add library="lib/libYSE-1.0_windows/lib/dll/libyse64.lib" />
 			<Add directory="lib" />
 			<Add directory="lib/SDL2-2.0.10/x86_64-w64-mingw32/include" />
 			<Add directory="lib/OpenGL" />
@@ -95,8 +95,8 @@
 			<Add directory="lib/zlib-1.2.13" />
 			<Add directory="lib/stk-4.6.2/include" />
 			<Add directory="lib/clunk-1.3.261" />
-			<Add directory="lib/portaudio/include" />
 			<Add directory="lib/openal-soft-1.22.2/include" />
+			<Add directory="lib/libYSE-1.0_windows/include" />
 		</Linker>
 		<Unit filename="makai.cpp" />
 		<Extensions>

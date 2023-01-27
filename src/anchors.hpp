@@ -45,6 +45,20 @@
 #include "redefines.hpp"
 
 /*
+*****************
+*               *
+*  Audio stuff  *
+*               *
+*****************
+*/
+/*
+#include <Stk.h>
+#include <clunk/clunk.h>
+#include <portaudio.h>
+*/
+#include <yse.hpp>
+
+/*
 ***************************
 *                         *
 *  File management stuff  *
@@ -56,18 +70,6 @@
 #include <bzlib.h>
 #define MINI_CASE_SENSITIVE
 #include <mINI-0.9.14/ini.h>
-
-/*
-*****************
-*               *
-*  Audio stuff  *
-*               *
-*****************
-*/
-
-#include <Stk.h>
-#include <clunk/clunk.h>
-#include <portaudio.h>
 
 /*
 *********************
