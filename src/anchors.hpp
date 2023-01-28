@@ -52,11 +52,9 @@
 *****************
 */
 /*
-#include <Stk.h>
-#include <clunk/clunk.h>
 #include <portaudio.h>
 */
-#include <yse.hpp>
+#include <AL/al.h>
 
 /*
 ***************************
@@ -96,12 +94,6 @@
 #define SDL_MAIN_HANDLED
 #endif
 #include <SDL2/SDL.h>
-//#include <SDL2/SDL_ttf.h>
-//#include <SDL2/SDL_FontCache.h>
-#include <SDL2/SDL_mixer.h>
-//#include <freetype-gl.h>
-/*#include <ft2build.h>
-#include FT_FREETYPE_H*/
 
 /*
 ***************************

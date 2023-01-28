@@ -134,12 +134,6 @@ namespace Makai {
 				$errlog(string("Unable to start SDL! (") + SDL_GetError() + ")");
 				throw runtime_error(string("Error: SDL (") + SDL_GetError() + ")");
 			}
-			/*if (!Mix_Init(MIX_INIT_OGG | (useMIDI ? MIX_INIT_MID : 0))) {
-				$errlog(string("Unable to start Mixer! (") + Mix_GetError() + ")");
-				throw runtime_error(string("Error: Mixer (") + Mix_GetError() + ")");
-			}
-			// Open audio
-			Mix_OpenAudio(42000, AUDIO_S16SYS, 2, AUDIO_SAMPLE_FRAMES);*/
 			$debug("Started!");
 			// Initialize Freetype
 			/*$debug("Starting FreeType...");
@@ -147,7 +141,11 @@ namespace Makai {
 			if (FT_Init_FreeType(&libft)) {
 				$errlog(string("Unable to start FreeType!"));
 				throw runtime_error(string("Unable to start FreeType!"));
-			}*/
+			}
+			$debug("Started!");*/
+			// Initialize YSE
+			$debug("Starting Audio System...");
+			// TODO: Audio System
 			$debug("Started!");
 			// Create window and make active
 			$debug("Creating window...");
@@ -288,6 +286,8 @@ namespace Makai {
 					frameTicks = SDL_GetTicks();
 					// increment frame counter
 					frame++;
+					// Update audio system
+					// TODO: Audio System
 					#ifndef $_FRAME_INDEPENDENT_PROCESS
 					// Do normal logic-related stuff
 					logicFunc(frameDelta);
@@ -448,8 +448,10 @@ namespace Makai {
 		void terminate() {
 			// Call final function
 			onClose();
-			// Close audio
-			Mix_CloseAudio();
+			// Close YSE
+			$debug("Closing sound system...");
+			// TODO: Audio System
+			$debug("Sound system closed!");
 			// Destroy buffers
 			$debug("Destroying frame buffers...");
 			framebuffer.destroy();
@@ -458,7 +460,6 @@ namespace Makai {
 			// Quit SDL
 			$debug("Ending SDL...");
 			SDL_Quit();
-			Mix_Quit();
 			$debug("SDL ended!");
 			//exit(0);
 		}

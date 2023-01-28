@@ -1,9 +1,7 @@
 # depslib dependency file v1.0
-1674777889 source:d:\c(++) projects\_c++\game engine\makailib\makai.cpp
+1674815476 source:d:\c(++) projects\_c++\game engine\makailib\makai.cpp
 	"src/makai.hpp"
-	<wtypes.h>
-	<windows.h>
-	<mmsystem.h>
+	<winuser.h>
 
 1352124852 d:\c(++) projects\_c++\game engine\makailib\lib\irrlicht-1.8.5\include\irrlicht.h
 	"IrrCompileConfig.h"
@@ -2867,7 +2865,7 @@
 1665256929 d:\c(++) projects\_c++\game engine\makailib\src\program.hpp
 	"program/gl_program.hpp"
 
-1674815167 d:\c(++) projects\_c++\game engine\makailib\src\anchors.hpp
+1674831362 d:\c(++) projects\_c++\game engine\makailib\src\anchors.hpp
 	<iostream>
 	<string>
 	<vector>
@@ -2886,13 +2884,11 @@
 	<filesystem>
 	<execution>
 	"redefines.hpp"
+	<portaudio.h>
+	<AL/al.h>
 	<zlib.h>
 	<bzlib.h>
 	<mINI-0.9.14/ini.h>
-	<Stk.h>
-	<clunk/clunk.h>
-	<portaudio.h>
-	<yse.hpp>
 	"stb_image.h"
 	<GLEW/include/GL/glew.h>
 	<GLEW/include/GL/wglew.h>
@@ -2904,7 +2900,6 @@
 	<glm/gtc/type_ptr.hpp>
 	<winuser.h>
 	<SDL2/SDL.h>
-	<SDL2/SDL_mixer.h>
 	"collection/algebra.hpp"
 	"collection/definitions.hpp"
 	"collection/helper.hpp"
@@ -3043,11 +3038,11 @@
 	<algorithm>
 	<regex>
 
-1673474480 d:\c(++) projects\_c++\game engine\makailib\src\program\gl_program.hpp
+1674831323 d:\c(++) projects\_c++\game engine\makailib\src\program\gl_program.hpp
 	"../anchors.hpp"
 	"../graphical.hpp"
 	"../audio.hpp"
-	<wtypes.h>
+	<winuser.h>
 
 1668986448 d:\c(++) projects\_c++\game engine\makailib\src\collection\grouping.hpp
 	<unordered_map>
@@ -3382,8 +3377,9 @@
 
 1672420246 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\player.hpp
 
-1669661143 d:\c(++) projects\_c++\game engine\makailib\src\makai.hpp
+1674818365 d:\c(++) projects\_c++\game engine\makailib\src\makai.hpp
 	"anchors.hpp"
+	"audio.hpp"
 	"program.hpp"
 	"graphical.hpp"
 	"gamedata.hpp"
@@ -3420,7 +3416,7 @@
 
 1674752292 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\enemy.hpp
 
-1672951580 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\boss.hpp
+1674818316 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\boss.hpp
 
 1672521486 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\stage.hpp
 
@@ -3673,7 +3669,8 @@
 1673139627 d:\c(++) projects\_c++\game engine\makailib\src\audio.hpp
 	"audio/gl_audio.hpp"
 
-1673229429 d:\c(++) projects\_c++\game engine\makailib\src\audio\gl_audio.hpp
+1674831340 d:\c(++) projects\_c++\game engine\makailib\src\audio\gl_audio.hpp
+	"../anchors.hpp"
 
 1617237342 d:\c(++) projects\_c++\game engine\makailib\lib\portaudio\include\portaudio.h
 
@@ -4026,4 +4023,364 @@
 
 1438020264 d:\c(++) projects\_c++\game engine\makailib\lib\libyse-1.0_windows\include\io.hpp
 	"headers/types.hpp"
+
+1612805702 d:\c(++) projects\_c++\game engine\makailib\lib\maximilian-2.4\include\maximilian.h
+	<iostream>
+	<fstream>
+	<string.h>
+	<cstdlib>
+	"math.h"
+	<cmath>
+	<vector>
+	<cfloat>
+	<algorithm>
+	<numeric>
+	<cheerp/clientlib.h>
+
+1564029384 d:\c(++) projects\_c++\game engine\makailib\lib\sdl2-2.0.10\include\sdl2\sdl.h
+	"SDL_main.h"
+	"SDL_stdinc.h"
+	"SDL_assert.h"
+	"SDL_atomic.h"
+	"SDL_audio.h"
+	"SDL_clipboard.h"
+	"SDL_cpuinfo.h"
+	"SDL_endian.h"
+	"SDL_error.h"
+	"SDL_events.h"
+	"SDL_filesystem.h"
+	"SDL_gamecontroller.h"
+	"SDL_haptic.h"
+	"SDL_hints.h"
+	"SDL_joystick.h"
+	"SDL_loadso.h"
+	"SDL_log.h"
+	"SDL_messagebox.h"
+	"SDL_mutex.h"
+	"SDL_power.h"
+	"SDL_render.h"
+	"SDL_rwops.h"
+	"SDL_sensor.h"
+	"SDL_shape.h"
+	"SDL_system.h"
+	"SDL_thread.h"
+	"SDL_timer.h"
+	"SDL_version.h"
+	"SDL_video.h"
+	"begin_code.h"
+	"close_code.h"
+
+1564029384 d:\c(++) projects\_c++\game engine\makailib\lib\sdl2-2.0.10\include\sdl2\sdl_main.h
+	"SDL_stdinc.h"
+	"begin_code.h"
+	"close_code.h"
+
+1564029384 d:\c(++) projects\_c++\game engine\makailib\lib\sdl2-2.0.10\include\sdl2\sdl_stdinc.h
+	"SDL_config.h"
+	<sys/types.h>
+	<stdio.h>
+	<stdlib.h>
+	<stddef.h>
+	<stdarg.h>
+	<stdlib.h>
+	<malloc.h>
+	<stddef.h>
+	<stdarg.h>
+	<memory.h>
+	<string.h>
+	<strings.h>
+	<wchar.h>
+	<inttypes.h>
+	<stdint.h>
+	<ctype.h>
+	<math.h>
+	<float.h>
+	<alloca.h>
+	<malloc.h>
+	<malloc.h>
+	<malloc.h>
+	<stdlib.h>
+	<sal.h>
+	"begin_code.h"
+	"close_code.h"
+
+1564029384 d:\c(++) projects\_c++\game engine\makailib\lib\sdl2-2.0.10\include\sdl2\sdl_config.h
+	"SDL_platform.h"
+
+1564029384 d:\c(++) projects\_c++\game engine\makailib\lib\sdl2-2.0.10\include\sdl2\sdl_platform.h
+	"AvailabilityMacros.h"
+	"TargetConditionals.h"
+	<winapifamily.h>
+	"begin_code.h"
+	"close_code.h"
+
+1564029384 d:\c(++) projects\_c++\game engine\makailib\lib\sdl2-2.0.10\include\sdl2\begin_code.h
+
+1564029384 d:\c(++) projects\_c++\game engine\makailib\lib\sdl2-2.0.10\include\sdl2\close_code.h
+
+1564029384 d:\c(++) projects\_c++\game engine\makailib\lib\sdl2-2.0.10\include\sdl2\sdl_assert.h
+	"SDL_config.h"
+	"begin_code.h"
+	<signal.h>
+	"close_code.h"
+
+1564029384 d:\c(++) projects\_c++\game engine\makailib\lib\sdl2-2.0.10\include\sdl2\sdl_atomic.h
+	"SDL_stdinc.h"
+	"SDL_platform.h"
+	"begin_code.h"
+	<sys/cpuinline.h>
+	<mbarrier.h>
+	"close_code.h"
+
+1564029384 d:\c(++) projects\_c++\game engine\makailib\lib\sdl2-2.0.10\include\sdl2\sdl_audio.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_endian.h"
+	"SDL_mutex.h"
+	"SDL_thread.h"
+	"SDL_rwops.h"
+	"begin_code.h"
+	"close_code.h"
+
+1564029384 d:\c(++) projects\_c++\game engine\makailib\lib\sdl2-2.0.10\include\sdl2\sdl_error.h
+	"SDL_stdinc.h"
+	"begin_code.h"
+	"close_code.h"
+
+1564029384 d:\c(++) projects\_c++\game engine\makailib\lib\sdl2-2.0.10\include\sdl2\sdl_endian.h
+	"SDL_stdinc.h"
+	<endian.h>
+	"begin_code.h"
+	"close_code.h"
+
+1564029384 d:\c(++) projects\_c++\game engine\makailib\lib\sdl2-2.0.10\include\sdl2\sdl_mutex.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"begin_code.h"
+	"close_code.h"
+
+1564029384 d:\c(++) projects\_c++\game engine\makailib\lib\sdl2-2.0.10\include\sdl2\sdl_thread.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_atomic.h"
+	"SDL_mutex.h"
+	"begin_code.h"
+	<process.h>
+	<process.h>
+	<stdlib.h>
+	"close_code.h"
+
+1564029384 d:\c(++) projects\_c++\game engine\makailib\lib\sdl2-2.0.10\include\sdl2\sdl_rwops.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"begin_code.h"
+	"close_code.h"
+
+1564029384 d:\c(++) projects\_c++\game engine\makailib\lib\sdl2-2.0.10\include\sdl2\sdl_clipboard.h
+	"SDL_stdinc.h"
+	"begin_code.h"
+	"close_code.h"
+
+1564029384 d:\c(++) projects\_c++\game engine\makailib\lib\sdl2-2.0.10\include\sdl2\sdl_cpuinfo.h
+	"SDL_stdinc.h"
+	<intrin.h>
+	<intrin.h>
+	<altivec.h>
+	<arm_neon.h>
+	<armintr.h>
+	<arm_neon.h>
+	<armintr.h>
+	<arm_neon.h>
+	<mm3dnow.h>
+	<immintrin.h>
+	<mmintrin.h>
+	<xmmintrin.h>
+	<emmintrin.h>
+	<pmmintrin.h>
+	"begin_code.h"
+	"close_code.h"
+
+1564029384 d:\c(++) projects\_c++\game engine\makailib\lib\sdl2-2.0.10\include\sdl2\sdl_events.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_video.h"
+	"SDL_keyboard.h"
+	"SDL_mouse.h"
+	"SDL_joystick.h"
+	"SDL_gamecontroller.h"
+	"SDL_quit.h"
+	"SDL_gesture.h"
+	"SDL_touch.h"
+	"begin_code.h"
+	"close_code.h"
+
+1564029384 d:\c(++) projects\_c++\game engine\makailib\lib\sdl2-2.0.10\include\sdl2\sdl_video.h
+	"SDL_stdinc.h"
+	"SDL_pixels.h"
+	"SDL_rect.h"
+	"SDL_surface.h"
+	"begin_code.h"
+	"close_code.h"
+
+1564029384 d:\c(++) projects\_c++\game engine\makailib\lib\sdl2-2.0.10\include\sdl2\sdl_pixels.h
+	"SDL_stdinc.h"
+	"SDL_endian.h"
+	"begin_code.h"
+	"close_code.h"
+
+1564029384 d:\c(++) projects\_c++\game engine\makailib\lib\sdl2-2.0.10\include\sdl2\sdl_rect.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_pixels.h"
+	"SDL_rwops.h"
+	"begin_code.h"
+	"close_code.h"
+
+1564029384 d:\c(++) projects\_c++\game engine\makailib\lib\sdl2-2.0.10\include\sdl2\sdl_surface.h
+	"SDL_stdinc.h"
+	"SDL_pixels.h"
+	"SDL_rect.h"
+	"SDL_blendmode.h"
+	"SDL_rwops.h"
+	"begin_code.h"
+	"close_code.h"
+
+1564029384 d:\c(++) projects\_c++\game engine\makailib\lib\sdl2-2.0.10\include\sdl2\sdl_blendmode.h
+	"begin_code.h"
+	"close_code.h"
+
+1564029384 d:\c(++) projects\_c++\game engine\makailib\lib\sdl2-2.0.10\include\sdl2\sdl_keyboard.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_keycode.h"
+	"SDL_video.h"
+	"begin_code.h"
+	"close_code.h"
+
+1564029384 d:\c(++) projects\_c++\game engine\makailib\lib\sdl2-2.0.10\include\sdl2\sdl_keycode.h
+	"SDL_stdinc.h"
+	"SDL_scancode.h"
+
+1564029384 d:\c(++) projects\_c++\game engine\makailib\lib\sdl2-2.0.10\include\sdl2\sdl_scancode.h
+	"SDL_stdinc.h"
+
+1564029384 d:\c(++) projects\_c++\game engine\makailib\lib\sdl2-2.0.10\include\sdl2\sdl_mouse.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_video.h"
+	"begin_code.h"
+	"close_code.h"
+
+1564029384 d:\c(++) projects\_c++\game engine\makailib\lib\sdl2-2.0.10\include\sdl2\sdl_joystick.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"begin_code.h"
+	"close_code.h"
+
+1564029384 d:\c(++) projects\_c++\game engine\makailib\lib\sdl2-2.0.10\include\sdl2\sdl_gamecontroller.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_rwops.h"
+	"SDL_joystick.h"
+	"begin_code.h"
+	"close_code.h"
+
+1564029384 d:\c(++) projects\_c++\game engine\makailib\lib\sdl2-2.0.10\include\sdl2\sdl_quit.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+
+1564029384 d:\c(++) projects\_c++\game engine\makailib\lib\sdl2-2.0.10\include\sdl2\sdl_gesture.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_video.h"
+	"SDL_touch.h"
+	"begin_code.h"
+	"close_code.h"
+
+1564029384 d:\c(++) projects\_c++\game engine\makailib\lib\sdl2-2.0.10\include\sdl2\sdl_touch.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_video.h"
+	"begin_code.h"
+	"close_code.h"
+
+1564029384 d:\c(++) projects\_c++\game engine\makailib\lib\sdl2-2.0.10\include\sdl2\sdl_filesystem.h
+	"SDL_stdinc.h"
+	"begin_code.h"
+	"close_code.h"
+
+1564029384 d:\c(++) projects\_c++\game engine\makailib\lib\sdl2-2.0.10\include\sdl2\sdl_haptic.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_joystick.h"
+	"begin_code.h"
+	"close_code.h"
+
+1564029384 d:\c(++) projects\_c++\game engine\makailib\lib\sdl2-2.0.10\include\sdl2\sdl_hints.h
+	"SDL_stdinc.h"
+	"begin_code.h"
+	"close_code.h"
+
+1564029384 d:\c(++) projects\_c++\game engine\makailib\lib\sdl2-2.0.10\include\sdl2\sdl_loadso.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"begin_code.h"
+	"close_code.h"
+
+1564029384 d:\c(++) projects\_c++\game engine\makailib\lib\sdl2-2.0.10\include\sdl2\sdl_log.h
+	"SDL_stdinc.h"
+	"begin_code.h"
+	"close_code.h"
+
+1564029384 d:\c(++) projects\_c++\game engine\makailib\lib\sdl2-2.0.10\include\sdl2\sdl_messagebox.h
+	"SDL_stdinc.h"
+	"SDL_video.h"
+	"begin_code.h"
+	"close_code.h"
+
+1564029384 d:\c(++) projects\_c++\game engine\makailib\lib\sdl2-2.0.10\include\sdl2\sdl_power.h
+	"SDL_stdinc.h"
+	"begin_code.h"
+	"close_code.h"
+
+1564029384 d:\c(++) projects\_c++\game engine\makailib\lib\sdl2-2.0.10\include\sdl2\sdl_render.h
+	"SDL_stdinc.h"
+	"SDL_rect.h"
+	"SDL_video.h"
+	"begin_code.h"
+	"close_code.h"
+
+1564029384 d:\c(++) projects\_c++\game engine\makailib\lib\sdl2-2.0.10\include\sdl2\sdl_sensor.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"begin_code.h"
+	"close_code.h"
+
+1564029384 d:\c(++) projects\_c++\game engine\makailib\lib\sdl2-2.0.10\include\sdl2\sdl_shape.h
+	"SDL_stdinc.h"
+	"SDL_pixels.h"
+	"SDL_rect.h"
+	"SDL_surface.h"
+	"SDL_video.h"
+	"begin_code.h"
+	"close_code.h"
+
+1564029384 d:\c(++) projects\_c++\game engine\makailib\lib\sdl2-2.0.10\include\sdl2\sdl_system.h
+	"SDL_stdinc.h"
+	"SDL_keyboard.h"
+	"SDL_render.h"
+	"SDL_video.h"
+	"begin_code.h"
+	"close_code.h"
+
+1564029384 d:\c(++) projects\_c++\game engine\makailib\lib\sdl2-2.0.10\include\sdl2\sdl_timer.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"begin_code.h"
+	"close_code.h"
+
+1564029384 d:\c(++) projects\_c++\game engine\makailib\lib\sdl2-2.0.10\include\sdl2\sdl_version.h
+	"SDL_stdinc.h"
+	"begin_code.h"
+	"close_code.h"
 
