@@ -182,15 +182,6 @@ namespace Event{
 namespace TypedEvent {
 	namespace {
 		using std::function, std::vector;
-		vector<const function<void()>*> timerList;
-	}
-	#define $$FUNC function<void()>
-	/// Yields all available non-manual timers.
-	void yieldAllTimers() {
-		// Loop through timers and step them
-		if (timerList.size())
-			for(const $$FUNC* func : timerList)
-				(*func)();
 	}
 
 	/// A signal to be fired, whenever.

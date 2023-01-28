@@ -12,7 +12,7 @@
 
 namespace Tween{
 	namespace {
-		using std::function, std::vector, std::string;
+		using std::function, std::vector, std::string, TypedEvent::Signal;
 		vector<const function<void(float)>*> tweenList;
 		typedef function<float(float, float, float, float)> _EaseFunc;
 		struct EaseType {
@@ -42,12 +42,11 @@ namespace Tween{
 			}
 		};
 	}
-	#define $$FUNC function<void(float)>
 	/// Yields all available non-manual tweens.
 	void yieldAllTweens(float delta = 1) {
 		// Loop through tweens and step them
 		if (tweenList.size())
-			for(const $$FUNC* func : tweenList)
+			for(const Signal<float>* func : tweenList)
 				(*func)(delta);
 	}
 
@@ -306,7 +305,7 @@ namespace Tween{
 		}
 
 		/// Calculates (and if targeted, applies) a step.
-		const $$FUNC yield = [&](float delta = 1) {
+		const Signal<float> yield = [&](float delta = 1) {
 			this->_yield(delta);
 		};
 
@@ -461,7 +460,6 @@ namespace Tween{
 		/// The tween's default target.
 		T defaultVar;
 	};
-	#undef $$FUNC
 }
 
 #define $twn Tween::

@@ -49,11 +49,11 @@ namespace CollisionData {
 	};
 
 	/**
-	************************************
-	*                                  *
-	*  2D Ray Boundary Data Structure  *
-	*                                  *
-	************************************
+	**********************************************
+	*                                            *
+	*  2D Ray (Capsule) Boundary Data Structure  *
+	*                                            *
+	**********************************************
 	*/
 	struct Ray {
 		Vector2 position;
@@ -62,12 +62,27 @@ namespace CollisionData {
 		float angle = 0;
 	};
 
+	/**
+	***********************************************
+	*                                             *
+	*  2D Line (Raycast) Boundary Data Structure  *
+	*                                             *
+	***********************************************
+	*/
+	struct Line {
+		Vector2 position;
+		float width = 1;
+		float angle = 0;
+	};
+
+
 	#define $_BOUNDS(CLASS) struct CLASS##Bounds2D: CLASS, Bounds2D {}
 	$_BOUNDS(Circle);
 	$_BOUNDS(Box);
 	$_BOUNDS(Ray);
+	$_BOUNDS(Line);
 
-	inline RayBounds2D makeRayCast(Vector2 from, Vector2 to, float width = 1) {
+	inline RayBounds2D makeRayBounds(Vector2 from, Vector2 to, float width = 1) {
 		return RayBounds2D {
 			from,
 			from.distanceTo(to),
@@ -144,9 +159,13 @@ namespace CollisionData {
 
 	// Shape to Shape collision detection code
 
+	// Circle
+
 	inline bool withinBounds(CircleBounds2D& a, CircleBounds2D& b) {
 		return a.position.distanceTo(b.position) < (a.radius + b.radius);
 	}
+
+	// Box
 
 	bool withinBounds(BoxBounds2D& a, BoxBounds2D& b) {
 		// Get overlap on X
@@ -169,9 +188,7 @@ namespace CollisionData {
 		return c2CircletoAABB(cuteify(a), cuteify(b));
 	}
 
-	inline bool withinBounds(BoxBounds2D& a, CircleBounds2D& b) {
-		return withinBounds(b, a);
-	}
+	// Ray
 
 	inline bool withinBounds(CircleBounds2D& a, RayBounds2D& b) {
 		return c2CircletoCapsule(cuteify(a), cuteify(b));
@@ -180,6 +197,42 @@ namespace CollisionData {
 	inline bool withinBounds(BoxBounds2D& a, RayBounds2D& b) {
 		return c2AABBtoCapsule(cuteify(a), cuteify(b));
 	}
+
+	inline bool withinBounds(RayBounds2D& a, RayBounds2D& b) {
+		return c2CapsuletoCapsule(cuteify(a), cuteify(b));
+	}
+
+	// Line
+
+	#warning Unimplemented Function: 'withinBounds' for type 'LineBounds2D'
+	template<COLLISION_TYPE T>
+	inline bool withinBounds(T& a, LineBounds2D& b) {
+		throw std::runtime_error("Unimplemented function 'withinBounds' for type 'LineBounds2D'!");
+	}
+
+	// Flipped Functions
+
+	template<COLLISION_TYPE T>
+	inline bool withinBounds(CircleBounds2D& a, T& b) {
+		return withinBounds(b, a);
+	}
+
+	template<COLLISION_TYPE T>
+	inline bool withinBounds(BoxBounds2D& a, T& b) {
+		return withinBounds(b, a);
+	}
+
+	template<COLLISION_TYPE T>
+	inline bool withinBounds(RayBounds2D& a, T& b) {
+		return withinBounds(b, a);
+	}
+
+	template<COLLISION_TYPE T>
+	inline bool withinBounds(LineBounds2D& a, T& b) {
+		return withinBounds(b, a);
+	}
+
+	// Clamping functions
 
 	inline Vector2 getBounded(Vector2& point, BoxBounds2D& box) {
 		return point.clamped(
