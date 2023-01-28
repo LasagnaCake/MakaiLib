@@ -1,4 +1,4 @@
-struct EnemyEntity2D: AreaCircle2D {
+struct EnemyEntity2D: public AreaCircle2D {
 	DERIVED_CLASS(EnemyEntity2D, AreaCircle2D)
 
 	DERIVED_CONSTRUCTOR(EnemyEntity2D, AreaCircle2D, {
@@ -6,7 +6,7 @@ struct EnemyEntity2D: AreaCircle2D {
 		mesh.setRenderLayer($layer(ENEMY));
 		$ecl groups.addEntity(this, $layer(ENEMY));
 		sprite = mesh.createReference<AnimatedPlane>();
-		collision.size = 1;
+		collision.shape.radius = 1;
 		addToGame(this, "DanmakuGame");
 		sprite->setColor(Color::WHITE);
 		// Invincibility timer
@@ -44,6 +44,7 @@ struct EnemyEntity2D: AreaCircle2D {
 
 	void onFrame(float delta) override {
 		updateSprite();
+		collision.shape.position = globalPosition();
 		health = Math::min(health, maxHealth);
 		if (health <= 0.0)
 			onDeath();

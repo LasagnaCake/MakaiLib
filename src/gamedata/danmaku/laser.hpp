@@ -150,7 +150,7 @@ public:
 	template <class T>
 	bool colliding(T target) {
 		if (!params.active) return false;
-		RayCast2D self = RayCast2D {
+		RayBounds2D self = RayBounds2D {
 			local.position,
 			params.length.current,
 			params.width.current / SQRT2,
@@ -213,7 +213,7 @@ public:
 						auto a = (AreaCircle2D*)actor;
 						if (
 							a->collision.enabled
-							&& l.colliding(a->getCircleBounds())
+							&& l.colliding(a->collision.shape)
 						) {
 							a->onCollision(this);
 							l.discard();

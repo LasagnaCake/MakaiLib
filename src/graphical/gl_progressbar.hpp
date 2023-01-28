@@ -56,7 +56,7 @@ private:
 		// Progress bar percentage angle (in radians)
 		float fraction = TAU * Math::clamp(value/max, 0.0f, 1.0f);
 		// Set center to offset
-		Drawer::vertexSetPosition(vertices[0], offset * size);
+		Drawer::vertexSetPosition(vertices[0], offset.yx() * size);
 		// For each surrounding vertex...
 		for $ssrange(i, 1, RADIAL_BAR_RESOLUTION + 2) {
 			// UV fraction, Positional fraction

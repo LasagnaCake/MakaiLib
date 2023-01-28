@@ -30,7 +30,6 @@ public:
 		UPDATE_PARAM(rot)
 		if (params.vel.current)
 			local.position += VecMath::angleV2(params.rot.current) * params.vel.current * delta;
-		params.hitbox.angle =
 		local.rotation = params.rot.current;
 		updateSprite();
 	}
@@ -38,7 +37,6 @@ public:
 	Bullet* reset() override {
 		setZero();
 		params.vel.current = params.vel.start;
-		params.hitbox.angle =
 		local.rotation =
 		params.rot.current = params.rot.start;
 		params.hitbox.position = local.position;
@@ -49,13 +47,11 @@ public:
 	}
 
 	Bullet* setZero() override {
-		params.hitbox.angle =
 		params.vel.current =
 		local.rotation =
 		params.rot.current =
 		params.vel.factor =
 		params.rot.factor = 0;
-		params.hitbox.aperture = PI;
 		return this;
 	}
 
@@ -137,7 +133,7 @@ public:
 				if (!b.isFree() && b.params.collidable) {
 					for $each(actor, $ecl groups.getGroup(ENEMY_LAYER)) {
 						auto a = (AreaCircle2D*)actor;
-						auto targetBounds = a->getCircleBounds();
+						auto targetBounds = a->collision.shape;
 						if (
 							a->collision.enabled
 							&& $cdt withinBounds(
@@ -162,8 +158,8 @@ public:
 							#define $wreflect(AA) AA = Math::pi - AA
 							// Check X
 							if (
-								b.local.position.x < board.x.min ||
-								b.local.position.x > board.x.max
+								b.local.position.x < board.min.x||
+								b.local.position.x > board.max.x
 							) {
 								$wreflect(b.params.rot.current);
 								$wreflect(b.params.rot.start);
@@ -173,8 +169,8 @@ public:
 							#define $wreflect(AA) AA = - AA
 							// Check Y
 							if (
-								b.local.position.y < board.y.min ||
-								b.local.position.y > board.y.max
+								b.local.position.y < board.min.y ||
+								b.local.position.y > board.max.y
 							) {
 								$wreflect(b.params.rot.current);
 								$wreflect(b.params.rot.start);
@@ -187,15 +183,15 @@ public:
 						}
 						else if (b.params.shuttle) {
 							// Check X
-							if (b.local.position.x < board.x.min)
-								b.local.position.x = board.x.max;
-							if (b.local.position.x > board.x.max)
-								b.local.position.x = board.x.min;
+							if (b.local.position.x < board.min.x)
+								b.local.position.x = board.max.x;
+							if (b.local.position.x > board.max.x)
+								b.local.position.x = board.min.x;
 							// Check Y
-							if (b.local.position.y < board.y.min)
-								b.local.position.y = board.y.max;
-							if (b.local.position.y > board.y.max)
-								b.local.position.y = board.y.min;
+							if (b.local.position.y < board.min.y)
+								b.local.position.y = board.max.y;
+							if (b.local.position.y > board.max.y)
+								b.local.position.y = board.min.y;
 							b.onShuttle(&b);
 							// Disable shuttle
 							b.params.shuttle = false;
@@ -244,8 +240,8 @@ public:
 						#define $wreflect(AA) AA = Math::pi - AA
 						// Check X
 						if (
-							b->local.position.x < board.x.min ||
-							b->local.position.x > board.x.max
+							b->local.position.x < board.min.x ||
+							b->local.position.x > board.max.x
 						) {
 							$wreflect(b->params.rot.current);
 							$wreflect(b->params.rot.start);
@@ -255,8 +251,8 @@ public:
 						#define $wreflect(AA) AA = - AA
 						// Check Y
 						if (
-							b->local.position.y < board.y.min ||
-							b->local.position.y > board.y.max
+							b->local.position.y < board.min.y ||
+							b->local.position.y > board.max.y
 						) {
 							$wreflect(b->params.rot.current);
 							$wreflect(b->params.rot.start);
@@ -269,15 +265,15 @@ public:
 					}
 					else if (b->params.shuttle) {
 						// Check X
-						if (b->local.position.x < board.x.min)
-							b->local.position.x = board.x.max;
-						if (b->local.position.x > board.x.max)
-							b->local.position.x = board.x.min;
+						if (b->local.position.x < board.min.x)
+							b->local.position.x = board.max.x;
+						if (b->local.position.x > board.max.x)
+							b->local.position.x = board.min.x;
 						// Check Y
-						if (b->local.position.y < board.y.min)
-							b->local.position.y = board.y.max;
-						if (b->local.position.y > board.y.max)
-							b->local.position.y = board.y.min;
+						if (b->local.position.y < board.min.y)
+							b->local.position.y = board.max.y;
+						if (b->local.position.y > board.max.y)
+							b->local.position.y = board.min.y;
 						b->onShuttle(b);
 						// Disable shuttle
 						b->params.shuttle = false;

@@ -31,58 +31,47 @@ namespace Shader {
 				this->id	= id;
 			}
 
-			void operator()(bool value) const
-			{
+			void operator()(bool value) const {
 				glUniform1i(getUniform(), (int)value);
 			}
 
-			void operator()(int value) const
-			{
+			void operator()(int value) const {
 				glUniform1i(getUniform(), value);
 			}
 
-			void operator()(unsigned int value) const
-			{
+			void operator()(unsigned int value) const {
 				glUniform1ui(getUniform(), value);
 			}
 
-			void operator()(float value) const
-			{
+			void operator()(float value) const {
 				glUniform1f(getUniform(), value);
 			}
 
-			void operator()(glm::vec2 value) const
-			{
+			void operator()(glm::vec2 value) const {
 				glUniform2f(getUniform(), value.x, value.y);
 			}
 
-			void operator()(Vector2 value) const
-			{
+			void operator()(Vector2 value) const {
 				glUniform2f(getUniform(), value.x, value.y);
 			}
 
-			void operator()(glm::vec3 value) const
-			{
+			void operator()(glm::vec3 value) const {
 				glUniform3f(getUniform(), value.x, value.y, value.z);
 			}
 
-			void operator()(Vector3 value) const
-			{
+			void operator()(Vector3 value) const {
 				glUniform3f(getUniform(), value.x, value.y, value.z);
 			}
 
-			void operator()(glm::vec4 value) const
-			{
+			void operator()(glm::vec4 value) const {
 				glUniform4f(getUniform(), value.x, value.y, value.z, value.w);
 			}
 
-			void operator()(Vector4 value) const
-			{
+			void operator()(Vector4 value) const {
 				glUniform4f(getUniform(), value.x, value.y, value.z, value.w);
 			}
 
-			void operator()(glm::mat4 value) const
-			{
+			void operator()(glm::mat4 value) const {
 				glUniformMatrix4fv(getUniform(), 1, GL_FALSE, glm::value_ptr(value));
 			}
 

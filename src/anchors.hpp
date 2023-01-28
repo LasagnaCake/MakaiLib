@@ -45,18 +45,6 @@
 #include "redefines.hpp"
 
 /*
-*****************
-*               *
-*  Audio stuff  *
-*               *
-*****************
-*/
-/*
-#include <portaudio.h>
-*/
-#include <AL/al.h>
-
-/*
 ***************************
 *                         *
 *  File management stuff  *
@@ -78,7 +66,7 @@
 */
 
 #define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
+#include <stb_image.h>
 #define GLEW_STATIC
 #include <GLEW/include/GL/glew.h>
 #include <GLEW/include/GL/wglew.h>
@@ -89,11 +77,36 @@
 #include <glm/gtx/euler_angles.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+
+/*
+***************
+*             *
+*  SDL stuff  *
+*             *
+***************
+*/
 #if (_WIN32 || _WIN64 || __WIN32__ || __WIN64__)
 #include <winuser.h>
 #define SDL_MAIN_HANDLED
 #endif
 #include <SDL2/SDL.h>
+
+/*
+*****************
+*               *
+*  Audio stuff  *
+*               *
+*****************
+*/
+/*
+#include <portaudio.h>
+#include <AL/al.h>
+//*//*
+#define STB_VORBIS_IMPLEMENTATION
+#include <stb_vorbis.c>*/
+#define CUTE_SOUND_FORCE_SDL
+#define CUTE_SOUND_IMPLEMENTATION
+#include <cute_sound.h>
 
 /*
 ***************************
@@ -102,16 +115,6 @@
 *                         *
 ***************************
 */
-
-#ifdef RAYLIB_H
-#define Vector2 VecV2
-#define Vector3 VecV3
-#define Vector4 VecV4
-#else
-#define VecV2 Vector2
-#define VecV3 Vector3
-#define VecV4 Vector4
-#endif
 
 #include "collection/algebra.hpp"
 #include "collection/definitions.hpp"
@@ -137,12 +140,6 @@
 #ifdef _$_FLOAT_AS_DOUBLE
 #undef float
 #endif // _$_FLOAT_AS_DOUBLE
-
-#ifdef RAYLIB_H
-#undef Vector2
-#undef Vector3
-#undef Vector4
-#endif
 
 #include "fileloader.hpp"
 

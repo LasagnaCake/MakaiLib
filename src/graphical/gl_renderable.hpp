@@ -315,6 +315,7 @@ Renderable* loadObjectFromBinaryFile(string path) {
 	return object;
 }
 
+#warning Unimplemented Function: 'loadObjectFromGLTFFile'
 Renderable* loadObjectFromGLTFFile(string path) {
 	throw runtime_error("Unimplemented function 'loadObjectFromGLTFFile' !");
 }

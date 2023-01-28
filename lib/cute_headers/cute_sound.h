@@ -101,7 +101,7 @@
 		Matt Rosen        1.10 - Initial experiments with cute_dsp to figure out plugin
 		                         interface needs and use-cases
 		fluffrabbit       1.11 - scalar SIMD mode and various compiler warning/error fixes
-		Daniel Guzman     2.01 - compilation fixes for clang/llvm on MAC. 
+		Daniel Guzman     2.01 - compilation fixes for clang/llvm on MAC.
 
 
 	DOCUMENTATION (very quick intro)
@@ -122,7 +122,7 @@
 			#define CUTE_SOUND_IMPLEMENTATION
 			#define CUTE_SOUND_SCALAR_MODE
 			#include <cute_sound.h>
-	
+
 	CUSTOMIZATION
 
 		A few different macros can be overriden to provide custom functionality. Simply define any of these
@@ -512,9 +512,9 @@ void cs_stop_all_playing_sounds();
 	#include <mach/mach_time.h>
 
 #elif CUTE_SOUND_PLATFORM == CUTE_SOUND_SDL
-	
+
 	#ifndef SDL_h_
-		#include <SDL.h>
+		#include <SDL2/SDL.h>
 	#endif
 	#ifndef _WIN32
 		#include <alloca.h>
@@ -784,12 +784,12 @@ struct hashtable_t
 #ifndef HASHTABLE_MEMSET
     #include <string.h>
     #define HASHTABLE_MEMSET( ptr, val, cnt ) ( memset( ptr, val, cnt ) )
-#endif 
+#endif
 
 #ifndef HASHTABLE_MEMCPY
     #include <string.h>
     #define HASHTABLE_MEMCPY( dst, src, cnt ) ( memcpy( dst, src, cnt ) )
-#endif 
+#endif
 
 #ifndef HASHTABLE_MALLOC
     #include <stdlib.h>
@@ -829,7 +829,7 @@ void hashtable_init( hashtable_t* table, int item_size, int initial_capacity, vo
     HASHTABLE_ASSERT( table->items_key );
     table->items_slot = (int*)( table->items_key + table->item_capacity );
     table->items_data = (void*)( table->items_slot + table->item_capacity );
-    table->swap_temp = (void*)( ( (uintptr_t) table->items_data ) + table->item_size * table->item_capacity ); 
+    table->swap_temp = (void*)( ( (uintptr_t) table->items_data ) + table->item_size * table->item_capacity );
     }
 
 
@@ -848,7 +848,7 @@ static HASHTABLE_U32 hashtable_internal_calculate_hash( HASHTABLE_U64 key )
     key = key * 21;
     key = key ^ ( key >> 11 );
     key = key + ( key << 6 );
-    key = key ^ ( key >> 22 );  
+    key = key ^ ( key >> 22 );
     HASHTABLE_ASSERT( key );
     return (HASHTABLE_U32) key;
     }
@@ -869,7 +869,7 @@ static int hashtable_internal_find_slot( hashtable_t const* table, HASHTABLE_U64
         if( slot_hash )
             {
             int slot_base = (int)( slot_hash & (HASHTABLE_U32)slot_mask );
-            if( slot_base == base_slot ) 
+            if( slot_base == base_slot )
                 {
                 HASHTABLE_ASSERT( base_count > 0 );
                 --base_count;
@@ -878,7 +878,7 @@ static int hashtable_internal_find_slot( hashtable_t const* table, HASHTABLE_U64
                 }
             }
         slot = ( slot + 1 ) & slot_mask;
-        }   
+        }
 
     return -1;
     }
@@ -909,9 +909,9 @@ static void hashtable_internal_expand_slots( hashtable_t* table )
             table->slots[ slot ].key_hash = hash;
             int item_index = old_slots[ i ].item_index;
             table->slots[ slot ].item_index = item_index;
-            table->items_slot[ item_index ] = slot; 
+            table->items_slot[ item_index ] = slot;
             ++table->slots[ base_slot ].base_count;
-            }               
+            }
         }
 
     HASHTABLE_FREE( table->memctx, old_slots );
@@ -921,18 +921,18 @@ static void hashtable_internal_expand_slots( hashtable_t* table )
 static void hashtable_internal_expand_items( hashtable_t* table )
     {
     table->item_capacity *= 2;
-     HASHTABLE_U64* const new_items_key = (HASHTABLE_U64*) HASHTABLE_MALLOC( table->memctx, 
+     HASHTABLE_U64* const new_items_key = (HASHTABLE_U64*) HASHTABLE_MALLOC( table->memctx,
          table->item_capacity * ( sizeof( *table->items_key ) + sizeof( *table->items_slot ) + table->item_size ) + table->item_size);
     HASHTABLE_ASSERT( new_items_key );
 
     int* const new_items_slot = (int*)( new_items_key + table->item_capacity );
     void* const new_items_data = (void*)( new_items_slot + table->item_capacity );
-    void* const new_swap_temp = (void*)( ( (uintptr_t) new_items_data ) + table->item_size * table->item_capacity ); 
+    void* const new_swap_temp = (void*)( ( (uintptr_t) new_items_data ) + table->item_size * table->item_capacity );
 
     HASHTABLE_MEMCPY( new_items_key, table->items_key, table->count * sizeof( *table->items_key ) );
     HASHTABLE_MEMCPY( new_items_slot, table->items_slot, table->count * sizeof( *table->items_key ) );
     HASHTABLE_MEMCPY( new_items_data, table->items_data, (HASHTABLE_SIZE_T) table->count * table->item_size );
-    
+
     HASHTABLE_FREE( table->memctx, table->items_key );
 
     table->items_key = new_items_key;
@@ -948,7 +948,7 @@ void* hashtable_insert( hashtable_t* table, HASHTABLE_U64 key, void const* item 
 
     if( table->count >= ( table->slot_capacity - table->slot_capacity / 3 ) )
         hashtable_internal_expand_slots( table );
-        
+
     int const slot_mask = table->slot_capacity - 1;
     HASHTABLE_U32 const hash = hashtable_internal_calculate_hash( key );
 
@@ -961,10 +961,10 @@ void* hashtable_insert( hashtable_t* table, HASHTABLE_U64 key, void const* item 
         HASHTABLE_U32 const slot_hash = table->slots[ slot ].key_hash;
         if( slot_hash == 0 && table->slots[ first_free ].key_hash != 0 ) first_free = slot;
         int slot_base = (int)( slot_hash & (HASHTABLE_U32)slot_mask );
-        if( slot_base == base_slot ) 
+        if( slot_base == base_slot )
             --base_count;
         slot = ( slot + 1 ) & slot_mask;
-        }       
+        }
 
     slot = first_free;
     while( table->slots[ slot ].key_hash )
@@ -986,7 +986,7 @@ void* hashtable_insert( hashtable_t* table, HASHTABLE_U64 key, void const* item 
     table->items_slot[ table->count ] = slot;
     ++table->count;
     return dest_item;
-    } 
+    }
 
 
 void hashtable_remove( hashtable_t* table, HASHTABLE_U64 key )
@@ -1013,7 +1013,7 @@ void hashtable_remove( hashtable_t* table, HASHTABLE_U64 key )
         table->slots[ table->items_slot[ last_index ] ].item_index = index;
         }
     --table->count;
-    } 
+    }
 
 
 void hashtable_clear( hashtable_t* table )
@@ -1085,7 +1085,7 @@ contributors:
     Randy Gaul (hashtable_clear, hashtable_swap )
 revision history:
     1.1     added hashtable_clear, hashtable_swap
-    1.0     first released version  
+    1.0     first released version
 */
 
 /*
@@ -1094,38 +1094,38 @@ This software is available under 2 licenses - you may choose the one you like.
 ------------------------------------------------------------------------------
 ALTERNATIVE A - MIT License
 Copyright (c) 2015 Mattias Gustavsson
-Permission is hereby granted, free of charge, to any person obtaining a copy of 
-this software and associated documentation files (the "Software"), to deal in 
-the Software without restriction, including without limitation the rights to 
-use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies 
-of the Software, and to permit persons to whom the Software is furnished to do 
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+of the Software, and to permit persons to whom the Software is furnished to do
 so, subject to the following conditions:
-The above copyright notice and this permission notice shall be included in all 
+The above copyright notice and this permission notice shall be included in all
 copies or substantial portions of the Software.
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, 
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE 
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ------------------------------------------------------------------------------
 ALTERNATIVE B - Public Domain (www.unlicense.org)
 This is free and unencumbered software released into the public domain.
-Anyone is free to copy, modify, publish, use, compile, sell, or distribute this 
-software, either in source code form or as a compiled binary, for any purpose, 
+Anyone is free to copy, modify, publish, use, compile, sell, or distribute this
+software, either in source code form or as a compiled binary, for any purpose,
 commercial or non-commercial, and by any means.
-In jurisdictions that recognize copyright laws, the author or authors of this 
-software dedicate any and all copyright interest in the software to the public 
-domain. We make this dedication for the benefit of the public at large and to 
-the detriment of our heirs and successors. We intend this dedication to be an 
-overt act of relinquishment in perpetuity of all present and future rights to 
+In jurisdictions that recognize copyright laws, the author or authors of this
+software dedicate any and all copyright interest in the software to the public
+domain. We make this dedication for the benefit of the public at large and to
+the detriment of our heirs and successors. We intend this dedication to be an
+overt act of relinquishment in perpetuity of all present and future rights to
 this software under copyright law.
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
-AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN 
-ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION 
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ------------------------------------------------------------------------------
 */

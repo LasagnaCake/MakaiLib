@@ -102,7 +102,7 @@ struct PlayerEntity2D: AreaCircle2D {
 		optionShot.onSignal	= $signal {$debug("Option Shot!"); onOptionShotRequest();};
 		optionShot.delay = 20;
 		// Hitbox size
-		collision.size = 0.1;
+		collision.shape.radius = 0.1;
 		// Set self as main player
 		setAsMainPlayer();
 		// Set unshaded
@@ -254,6 +254,8 @@ struct PlayerEntity2D: AreaCircle2D {
 			position -= direction * speed.unfocused * delta;
 		// Clamp position
 		position = $cdt getBounded(position, board);
+		// Set collision's position
+		collision.shape.position = globalPosition();
 		// Update sprite
 		updateSprite();
 		// Do focus entering & exiting action, acoordingly
@@ -285,8 +287,15 @@ struct PlayerEntity2D: AreaCircle2D {
 		}
 		auto elist = $ecl groups.getGroup($layer(ENEMY));
 		if (elist.size()) {
-			for $eachif(enemy, elist, ((AreaCollision2D*)enemy)->colliding(this))
-				((AreaCollision2D*)enemy)->onCollision(this);
+			for $eachif(
+				enemy,
+				elist,
+				$cdt isColliding(
+					((AreaCircle2D*)enemy)->collision,
+					collision
+				)
+			)
+				((AreaCircle2D*)enemy)->onCollision(this);
 		}
 		// Do shot actions
 		optionShot.paused =

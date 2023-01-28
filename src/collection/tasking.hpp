@@ -134,11 +134,12 @@ namespace Tasking {
 				// Decrease delay if not already zero
 				if (delay > 0) delay -= delta;
 				// If delay is 0 ("done waiting")
-				if (delay < 1) {
+				if (delay <= 0) {
 					// Execute Task
 					delay = tasks[current++](this);
-					// If delay given is zero, yield next cycle
-					if (delay < 0) yield();
+					// If delay given is zero and not on last task, yield next cycle
+					if (delay <= 0 && current < maxTask)
+						yield(delta);
 				}
 				// If not on last task...
 				if (!(current < maxTask)) {
@@ -416,11 +417,12 @@ namespace TypedTasking {
 				// Decrease delay if not already zero
 				if (delay > 0) delay -= delta;
 				// If delay is 0 ("done waiting")
-				if (delay < 0) {
+				if (delay <= 0) {
 					// Execute Task
 					delay = tasks[current++](this, target);
-					// If delay given is zero, yield next cycle
-					if (delay < 1) yield(delta, target);
+					// If delay given is zero and not on last task, yield next cycle
+					if (delay <= 0 && current < maxTask)
+						yield(delta, target);
 				}
 				// If not on last task...
 				if (!(current < maxTask)) {

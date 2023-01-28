@@ -71,15 +71,28 @@ public:
 		player.spawnPoint =
 		player.position =
 		Vector2(32, -48) * screenSpace;
+		player.grazebox.radius = 2.5;
+		player.board = DANMAKU_EBM -> board;
+		player.mesh.material.color = Color::GREEN;
 		enemy = new $dmk EnemyEntity2D("Test");
 		enemy->position = Vector2(32, -24) * screenSpace;
 		enemy->sprite->setColor(Color::RED);
-		//enemy->healthBar.offset.x = 0.5;
+		enemy->healthBar.offset.y = 0.5;
 		enemy->healthBar.material.texture.enabled	= true;
 		enemy->healthBar.centered = true;
 		enemy->healthBar.material.texture.image		= ringbar;
 		//enemy->healthBar.dynamicUV = false;
-		player.grazebox.radius = 2.5;
+		$tsk Tasker* et = new $tsk Tasker(
+			$tsk TaskList{
+				$task {
+					//enemy->healthBar.uvAngle += 1.0/(120.0 * (enemy->health / enemy->maxHealth));
+					enemy->healthBar.uvAngle += 1.0/(120.0);
+					enemy->healthBar.offset = $vmt angleV2($vmt angleTo(enemy->position, player.position)) / 2.0;
+					$end;
+				}
+			}, true
+		);
+		enemy->taskers.addTasker(et);
 		// Create test bullet spawner
 		bulletSpawner.onSignal = $signal {
 			float coefficient = 0;
@@ -145,21 +158,10 @@ public:
 		l->params.discardable = false;
 		l->reset();
 		bulletSpawner.stop();
-		player.board = DANMAKU_EBM -> board;
 		DANMAKU_IM -> createCollectible(CollectibleData(), 5, lPos, 3, $vec2(0.5));
 		world3D.farFog = {true, 20, 10, $vec4(0, 0, .2, 1)};
 		world3D.ambient.color = Vector3(1,1,1);
-		player.mesh.material.color = Color::GREEN;
 		enemy->setInvincible(120);
-		$tsk Tasker* et = new $tsk Tasker(
-			$tsk TaskList{
-				$task {
-					enemy->healthBar.uvAngle += 1.0/120.0;
-					$end;
-				}
-			}, true
-		);
-		enemy->taskers.addTasker(et);
 	}
 
 	size_t currentWave = 0;

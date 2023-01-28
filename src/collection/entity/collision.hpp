@@ -3,6 +3,10 @@
 
 #include "core.hpp"
 #include "2d3d.hpp"
+//*
+// TODO: Refactor using cute_c2
+#define CUTE_C2_IMPLEMENTATION
+#include "../libs/cute_c2.h"//*/
 
 #include <unordered_map>
 
@@ -18,18 +22,8 @@ namespace CollisionData {
 		std::unordered_map;
 		using namespace Vector;
 	}
-	/**
-	*******************************
-	*                             *
-	*  Projection Data Structure  *
-	*                             *
-	*******************************
-	*/
-	struct Projection {
-		float min;
-		float max;
-	};
-
+	struct Bounds2D {};
+	#define COLLISION_TYPE std::derived_from<Bounds2D>
 	/**
 	************************************
 	*                                  *
@@ -37,9 +31,9 @@ namespace CollisionData {
 	*                                  *
 	************************************
 	*/
-	struct BoxBounds2D {
-		Projection x;
-		Projection y;
+	struct Box {
+		Vector2 min;
+		Vector2 max;
 	};
 
 	/**
@@ -49,35 +43,32 @@ namespace CollisionData {
 	*                                     *
 	***************************************
 	*/
-	struct CircleBounds2D {
+	struct Circle {
 		Vector2 position;
 		float radius	= 1;
-		float angle		= 0;
-		float aperture	= Math::pi;
 	};
 
 	/**
-	****************************************
-	*                                      *
-	*  Simple 2D Collision Data Structure  *
-	*                                      *
-	****************************************
+	************************************
+	*                                  *
+	*  2D Ray Boundary Data Structure  *
+	*                                  *
+	************************************
 	*/
-	struct AreaCollisionData {
-		Vector2 size = Vector2(1);
-		bool enabled = true;
-		bool isCircle = false;
-	};
-
-	struct RayCast2D {
+	struct Ray {
 		Vector2 position;
 		float length = 1;
 		float width	= 1;
 		float angle = 0;
 	};
 
-	inline RayCast2D makeRayCast(Vector2 from, Vector2 to, float width = 1) {
-		return RayCast2D {
+	#define $_BOUNDS(CLASS) struct CLASS##Bounds2D: CLASS, Bounds2D {}
+	$_BOUNDS(Circle);
+	$_BOUNDS(Box);
+	$_BOUNDS(Ray);
+
+	inline RayBounds2D makeRayCast(Vector2 from, Vector2 to, float width = 1) {
+		return RayBounds2D {
 			from,
 			from.distanceTo(to),
 			width,
@@ -87,14 +78,14 @@ namespace CollisionData {
 
 	inline BoxBounds2D makeBoundsAB(Vector2 a, Vector2 b) {
 		return BoxBounds2D {
-			Projection {
+			Vector2(
 				Math::min(a.x, b.x),
-				Math::max(a.x, b.x)
-			},
-			Projection {
-				Math::min(a.y, b.y),
+				Math::min(a.y, b.y)
+			),
+			Vector2(
+				Math::max(a.x, b.x),
 				Math::max(a.y, b.y)
-			}
+			)
 		};
 	}
 
@@ -106,95 +97,40 @@ namespace CollisionData {
 		);
 	}
 
+	// CUTE conversions
+
+	inline c2AABB cuteify(BoxBounds2D& b) {
+		return c2AABB{c2v{b.min.x, b.min.y}, c2v{b.max.x, b.max.y}};
+	}
+
+	inline c2Circle cuteify(CircleBounds2D& b) {
+		return c2Circle{c2v{b.position.x, b.position.y}, b.radius};
+	}
+
+	inline c2Capsule cuteify(RayBounds2D& b) {
+		Vector2 end = VecMath::angleV2(b.angle) * b.length + b.position;
+		return c2Capsule{
+			c2v{b.position.x, b.position.y},
+			c2v{end.x, end.y},
+			b.width
+		};
+	}
+
+	// Shape to Point collision detection code
+
 	inline bool withinBounds(Vector2 point, BoxBounds2D area) {
 		return (
-			( area.x.min < point.x) && (point.x < area.x.max)
+			( area.min.x < point.x) && (point.x < area.max.x)
 		) && (
-			( area.y.min < point.y) && (point.y < area.y.max)
+			( area.min.y < point.y) && (point.y < area.max.y)
 		);
 	}
 
 	inline bool withinBounds(Vector2& point, CircleBounds2D& area) {
-		if (area.aperture < Math::pi) {
-			float angle		= VecMath::angleTo(area.position, point);
-			float target	= Math::wrap(area.angle, 0.0f, (float)Math::tau);
-			if (
-					angle < target - area.aperture
-				||	angle > target + area.aperture
-			) return false;
-		}
 		return point.distanceTo(area.position) < area.radius;
 	}
 
-	inline bool withinBounds(CircleBounds2D& a, CircleBounds2D& b) {
-		return a.position.distanceTo(b.position) < (a.radius + b.radius);
-	}
-
-	bool withinBounds(BoxBounds2D& a, BoxBounds2D& b) {
-		// Get overlap on X
-		bool overlapX = (
-			(b.x.min < a.x.min) && (a.x.min < b.x.max)
-		) || (
-			(b.x.min < a.x.max) && (a.x.max < b.x.max)
-		);
-		// Get overlap on Y
-		bool overlapY = (
-			(b.y.min < a.y.min) && (a.y.min < b.y.max)
-		) || (
-			(b.y.min < a.y.max) && (a.y.max < b.y.max)
-		);
-		// Return if both axis overlap (i.e. collision)
-		return overlapX && overlapY;
-	}
-
-	bool withinBounds(CircleBounds2D& a, BoxBounds2D& b) {
-		float pointAngle = VecMath::angleTo(
-			a.position,
-			Vector2(
-				(b.x.min + b.x.max) / 2.0,
-				(b.y.min + b.y.max) / 2.0
-			)
-		);
-		Vector2 point = VecMath::angleV2(pointAngle) * a.radius + a.position;
-		return withinBounds(point, b);
-	}
-
-	inline bool withinBounds(BoxBounds2D& a, CircleBounds2D& b) {
-		return withinBounds(b, a);
-	}
-
-	inline Vector2 getBounded(Vector2& point, BoxBounds2D& box) {
-		return point.clamped(
-			Vector2(box.x.min, box.y.min),
-			Vector2(box.x.max, box.y.max)
-		);
-	}
-
-	inline bool withinBounds(CircleBounds2D& a, RayCast2D& b) {
-		// Get distance between targets
-		float distance = a.position.distanceTo(b.position);
-		// If too distant, return
-		if (distance - b.length > a.radius + b.width)
-			return false;
-		// Get ray position to check
-		Vector2 rayPosition = VecMath::angleV2(b.angle) * distance + b.position;
-		// Check collision
-		CircleBounds2D targetA{rayPosition, b.width}, targetB{b.position, b.width};
-		return withinBounds(a, targetA) || withinBounds(a, targetB);
-	}
-
-	// This is wrong.
-	inline bool withinBounds(BoxBounds2D& a, RayCast2D& b) {
-		// Get ray bounding box
-		BoxBounds2D boxB = makeBoundsAB(
-			b.position - VecMath::angleV2(b.angle + PI) * (b.width),
-			b.position + VecMath::angleV2(b.angle) * (b.length + b.width)
-		);
-		// Check collision
-		return withinBounds(a, boxB);
-	}
-
-	inline bool withinBounds(Vector2& a, RayCast2D& b) {
+	inline bool withinBounds(Vector2& a, RayBounds2D& b) {
 		// Get distance between targets
 		float distance = a.distanceTo(b.position);
 		// If too distant, return
@@ -204,6 +140,76 @@ namespace CollisionData {
 		// Check collision
 		CircleBounds2D target{rayPosition, b.width};
 		return withinBounds(a, target);
+	}
+
+	// Shape to Shape collision detection code
+
+	inline bool withinBounds(CircleBounds2D& a, CircleBounds2D& b) {
+		return a.position.distanceTo(b.position) < (a.radius + b.radius);
+	}
+
+	bool withinBounds(BoxBounds2D& a, BoxBounds2D& b) {
+		// Get overlap on X
+		bool overlapX = (
+			(b.min.x < a.min.x) && (a.min.x < b.max.x)
+		) || (
+			(b.min.x < a.max.x) && (a.max.x < b.max.x)
+		);
+		// Get overlap on Y
+		bool overlapY = (
+			(b.min.y < a.min.y) && (a.min.y < b.max.y)
+		) || (
+			(b.min.y < a.max.y) && (a.max.y < b.max.y)
+		);
+		// Return if both axis overlap (i.e. collision)
+		return overlapX && overlapY;
+	}
+
+	bool withinBounds(CircleBounds2D& a, BoxBounds2D& b) {
+		return c2CircletoAABB(cuteify(a), cuteify(b));
+	}
+
+	inline bool withinBounds(BoxBounds2D& a, CircleBounds2D& b) {
+		return withinBounds(b, a);
+	}
+
+	inline bool withinBounds(CircleBounds2D& a, RayBounds2D& b) {
+		return c2CircletoCapsule(cuteify(a), cuteify(b));
+	}
+
+	inline bool withinBounds(BoxBounds2D& a, RayBounds2D& b) {
+		return c2AABBtoCapsule(cuteify(a), cuteify(b));
+	}
+
+	inline Vector2 getBounded(Vector2& point, BoxBounds2D& box) {
+		return point.clamped(
+			Vector2(box.min.x, box.min.y),
+			Vector2(box.max.x, box.max.y)
+		);
+	}
+
+	/**
+	****************************************
+	*                                      *
+	*  Simple 2D Collision Data Structure  *
+	*                                      *
+	****************************************
+	*/
+	template<COLLISION_TYPE T>
+	struct AreaCollisionData {
+		T shape			= T{};
+		bool enabled	= true;
+	};
+
+	typedef AreaCollisionData<CircleBounds2D>	AreaCircleData;
+	typedef AreaCollisionData<BoxBounds2D>		AreaBoxData;
+	typedef AreaCollisionData<RayBounds2D>		AreaRayData;
+
+	template <COLLISION_TYPE A, COLLISION_TYPE B>
+	bool isColliding(AreaCollisionData<A>& a, AreaCollisionData<B>& b) {
+		if (!(a.enabled && b.enabled))
+			return false;
+		return withinBounds(a.shape, b.shape);
 	}
 }
 
@@ -230,12 +236,13 @@ namespace EntityClass {
 	*                           *
 	*****************************
 	*/
+	template<COLLISION_TYPE T>
 	class AreaCollision2D : public Entity2D {
 	public:
 		/// Constructor.
 		DERIVED_CLASS(AreaCollision2D, Entity2D)
 
-		AreaCollisionData collision;
+		AreaCollisionData<T> collision;
 
 		/// Called when object is created.
 		virtual void onCreate() {
@@ -245,8 +252,18 @@ namespace EntityClass {
 		/// Called whenever a collision with another object happens.
 		virtual void onCollision(Entity* target) {}
 
-		virtual bool colliding(AreaCollision2D* target) {return false;}
-		virtual void checkCollision(AreaCollision2D* target) {}
+		template <COLLISION_TYPE C>
+		bool colliding(AreaCollision2D<C>* target) {
+			return isColliding(collision, target->collision);
+		}
+
+		template <COLLISION_TYPE C>
+		void checkCollision(AreaCollision2D<C>* target) {
+			if (colliding(target->collision)) {
+				onCollision(target);
+				target->onCollision(this);
+			}
+		}
 
 		/// Adds the object to the given collision layer.
 		void addToCollisionLayer(size_t layer) {
@@ -282,161 +299,9 @@ namespace EntityClass {
 		}
 	};
 
-	/**
-	**************************
-	*                        *
-	*  2D Area Circle Class  *
-	*                        *
-	**************************
-	*/
-	class AreaCircle2D : public AreaCollision2D {
-	public:
-		/// Constructor.
-		DERIVED_CLASS(AreaCircle2D, AreaCollision2D)
-
-		virtual void onCreate() {
-			collision.isCircle = true;
-		}
-
-		/// Returns whether it is colliding with a given area circle.
-		bool colliding(AreaCollision2D* target) override {
-			// If either object cannot collide, return false
-			if (!(collision.enabled && target->collision.enabled)) return false;
-			// Check collision
-			CircleBounds2D
-				selfBounds = getCircleBounds(),
-				targetBounds = ((AreaCircle2D*)target)->getCircleBounds();
-			return withinBounds(
-				selfBounds,
-				targetBounds
-			);
-		}
-
-		CircleBounds2D getCircleBounds() {
-			Vector2 colsize = collision.size * globalScale();
-			return CircleBounds2D {
-				globalPosition(),
-				Math::min(colsize.x, colsize.y)
-			};
-		}
-
-		/// Checks and processes collision between this object and another objecr.
-		void checkCollision(AreaCollision2D* target) override {
-			// Get self's collision layers
-			vector<size_t> self = getCollisionLayers();
-			// If no layers, return
-			if (!self.size()) return;
-			// Check if can collide with object
-			bool collidable = false;
-			for (size_t layer: self)
-				if (target->isInCollisionLayer(layer)) {
-					collidable = true;
-					break;
-				}
-			// If can collide and colliding, trigger collision
-			if(collidable) {
-				if (collision.isCircle && !target->collision.isCircle)
-					target->checkCollision(this);
-				else if (colliding(target))
-					onCollision(target);
-			}
-		}
-
-	private:
-	};
-
-	/**
-	**************************
-	*                        *
-	*  2D Area Square Class  *
-	*                        *
-	**************************
-	*/
-	class AreaBox2D : public AreaCollision2D {
-	public:
-		/// Constructor.
-		DERIVED_CLASS(AreaBox2D, AreaCollision2D)
-
-		/// Returns whether it is colliding with a given hitbox.
-		bool colliding(AreaCollision2D* target) override {
-			// If either object cannot collide, return false
-			if (!(collision.enabled && target->collision.enabled)) return false;
-			if (target->collision.isCircle) {
-				// Check collision
-				BoxBounds2D		self = getBoxBounds();
-				CircleBounds2D	other = ((AreaCircle2D*)target)->getCircleBounds();
-				return withinBounds(
-					other,
-					self
-				);
-			}
-			// Get projections on X and Y axis
-			BoxBounds2D
-				self = getBoxBounds(),
-				other = ((AreaBox2D*)target)->getBoxBounds();
-			// Get overlap on X
-			return withinBounds(self, other);
-		}
-
-		/// Gets the boundaries of the box along the X and Y axis.
-		BoxBounds2D getBoxBounds() {
-			// Projection data
-			BoxBounds2D bound;
-			// Get global position
-			Vector2 global = globalPosition();
-			// Get global collision size
-			Vector2 boxSize = collision.size * VecMath::rotateV2(globalScale(), globalRotation());
-			// Get Projected X
-			bound.x.min = global.x - (boxSize.x / 2);
-			bound.x.max = global.x + (boxSize.x / 2);
-			// Get Projected Y
-			bound.y.min = global.y - (boxSize.y / 2);
-			bound.y.max = global.y + (boxSize.y / 2);
-			// Return projection
-			return bound;
-		}
-
-		/// Checks and processes collision between this object and another objecr.
-		void checkCollision(AreaCollision2D* target) override {
-			// Get self's collision layers
-			vector<size_t> self = getCollisionLayers();
-			// If no layers, return
-			if (!self.size()) return;
-			// Check if can collide with object
-			bool collidable = false;
-			for (size_t layer: self)
-				if (target->isInCollisionLayer(layer)) {
-					collidable = true;
-					break;
-				}
-			// If can collide and colliding, trigger collision
-			if(collidable)
-				if (colliding(target))
-					onCollision(target);
-		}
-	private:
-	};
-
-	/**
-	****************************
-	*                          *
-	*  2D Simple Hitbox Class  *
-	*                          *
-	****************************
-	*/
-	class SimpleHitbox2D : public Entity2D {
-	public:
-		/// Constructor.
-		DERIVED_CLASS(SimpleHitbox2D, Entity2D)
-
-		/// Returns whether it is colliding with a given hitbox.
-		bool colliding(SimpleHitbox2D* target) {
-			// TODO: collision (Separating Axis Theorem or some shit)
-			return false;
-		}
-
-	private:
-	};
+	typedef AreaCollision2D<CircleBounds2D>	AreaCircle2D;
+	typedef AreaCollision2D<BoxBounds2D>	AreaBox2D;
+	typedef AreaCollision2D<RayBounds2D>	AreaRay2D;
 };
 
 #endif // COLLISION_2D_3D_OBJECT_H

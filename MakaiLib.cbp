@@ -46,23 +46,25 @@
 			<Add option="-fopenmp" />
 			<Add option="-fcoroutines" />
 			<Add directory="lib" />
-			<Add directory="lib/SDL2-2.0.10/x86_64-w64-mingw32/include" />
+			<Add directory="lib/SDL2-2.0.10/include" />
 			<Add directory="lib/OpenGL" />
 			<Add directory="lib/OpenGL/GLEW/include" />
 			<Add directory="lib/bzip2-1.0.8" />
 			<Add directory="lib/zlib-1.2.13" />
 			<Add directory="lib/openal-soft-1.22.2/include" />
 			<Add directory="lib/cute_headers" />
+			<Add directory="lib/stb" />
 		</Compiler>
 		<ResourceCompiler>
 			<Add directory="lib" />
-			<Add directory="lib/SDL2-2.0.10/x86_64-w64-mingw32/include" />
+			<Add directory="lib/SDL2-2.0.10/include" />
 			<Add directory="lib/OpenGL" />
 			<Add directory="lib/OpenGL/GLEW/include" />
 			<Add directory="lib/bzip2-1.0.8" />
 			<Add directory="lib/zlib-1.2.13" />
 			<Add directory="lib/openal-soft-1.22.2/include" />
 			<Add directory="lib/cute_headers" />
+			<Add directory="lib/stb" />
 		</ResourceCompiler>
 		<Linker>
 			<Add option="-O1" />
@@ -73,20 +75,21 @@
 			<Add option="-m64" />
 			<Add library="lib/bzip2-1.0.8/libbz2.a" />
 			<Add library="lib/zlib-1.2.13/libz.a" />
-			<Add library="lib/SDL2-2.0.10/x86_64-w64-mingw32/lib/libSDL2.dll.a" />
-			<Add library="lib/SDL2-2.0.10/x86_64-w64-mingw32/lib/libSDL2main.a" />
+			<Add library="lib/SDL2-2.0.10/lib/libSDL2.dll.a" />
+			<Add library="lib/SDL2-2.0.10/lib/libSDL2main.a" />
 			<Add library="lib/OpenGL/GLEW/lib/libglew32.dll.a" />
 			<Add library="lib/openal-soft-1.22.2/libs/Win64/libOpenAL32.dll.a" />
 			<Add library="opengl32" />
 			<Add library="winmm" />
 			<Add directory="lib" />
-			<Add directory="lib/SDL2-2.0.10/x86_64-w64-mingw32/include" />
+			<Add directory="lib/SDL2-2.0.10/include" />
 			<Add directory="lib/OpenGL" />
 			<Add directory="lib/OpenGL/GLEW/include" />
 			<Add directory="lib/bzip2-1.0.8" />
 			<Add directory="lib/zlib-1.2.13" />
 			<Add directory="lib/openal-soft-1.22.2/include" />
 			<Add directory="lib/cute_headers" />
+			<Add directory="lib/stb" />
 		</Linker>
 		<Unit filename="makai.cpp" />
 		<Extensions>

@@ -21,9 +21,9 @@ namespace Makai {
 		std::string,
 		std::unordered_map,
 		std::runtime_error,
-		Vector::VecV2,
-		Vector::VecV3,
-		Vector::VecV4;
+		Vector::Vector2,
+		Vector::Vector3,
+		Vector::Vector4;
 	}
 
 	SDL_Event pollEvents() {
@@ -340,7 +340,7 @@ namespace Makai {
 		}
 
 		/// Sets the program's window size.
-		void setWindowSize(VecV2 size){
+		void setWindowSize(Vector2 size){
 
 		}
 

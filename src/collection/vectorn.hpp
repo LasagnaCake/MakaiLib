@@ -891,6 +891,10 @@ namespace Vector{
 #define $vec3	Vector::Vector3
 #define $vec4	Vector::Vector4
 
+#define Vec2 Vector::Vector2
+#define Vec3 Vector::Vector3
+#define Vec4 Vector::Vector4
+
 namespace VecMath
 {
 	using namespace Vector;
@@ -1092,10 +1096,10 @@ namespace VecMath
 
 	/// Gets the angle from Vector A to Vector B.
 	inline float angleTo(Vector2 a, Vector2 b) {
-		return angleTo(b - a);
+		return angleTo(a - b);
 	}
 
-	/// Gets the angle from Vector A to Vector B.
+	/// Gets the angle from the origin to a given Vector.
 	Vector3 angleTo(Vector3 vec) {
 		// TODO: Test this
 		Vector3 res;
@@ -1107,7 +1111,7 @@ namespace VecMath
 
 	/// Gets the angle from Vector A to Vector B.
 	inline Vector3 angleTo(Vector3 a, Vector3 b) {
-		return angleTo(b - a);
+		return angleTo(a - b);
 	}
 
 	// Distance between vectors calculation
