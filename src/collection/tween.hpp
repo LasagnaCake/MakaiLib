@@ -62,6 +62,7 @@ namespace Tween{
 	/// Easing function template
 	typedef _EaseFunc EaseFunc;
 
+	// These are a port of https://github.com/jesusgollonet/ofpennereasing.
 	/**
 	******************
 	*                *

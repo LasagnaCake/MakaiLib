@@ -3,14 +3,10 @@
 
 #include "core.hpp"
 #include "2d3d.hpp"
-//*
-// TODO: Refactor using cute_c2
 #define CUTE_C2_IMPLEMENTATION
-#include "../libs/cute_c2.h"//*/
+#include "../libs/cute_c2.h"
 
 #include <unordered_map>
-
-// TODO: refactor collision checking code to utilize withinBounds() functions (1/2 to be made)
 
 namespace CollisionData {
 	namespace {
@@ -22,8 +18,12 @@ namespace CollisionData {
 		std::unordered_map;
 		using namespace Vector;
 	}
+
+	// Concepts, here I go!
 	struct Bounds2D {};
-	#define COLLISION_TYPE std::derived_from<Bounds2D>
+	template<typename T>
+	concept CollisionType = std::derived_from<T, Bounds2D> && !std::same_as<T, Bounds2D>;
+
 	/**
 	************************************
 	*                                  *
@@ -205,29 +205,29 @@ namespace CollisionData {
 	// Line
 
 	#warning Unimplemented Function: 'withinBounds' for type 'LineBounds2D'
-	template<COLLISION_TYPE T>
+	template<CollisionType T>
 	inline bool withinBounds(T& a, LineBounds2D& b) {
 		throw std::runtime_error("Unimplemented function 'withinBounds' for type 'LineBounds2D'!");
 	}
 
 	// Flipped Functions
 
-	template<COLLISION_TYPE T>
+	template<CollisionType T>
 	inline bool withinBounds(CircleBounds2D& a, T& b) {
 		return withinBounds(b, a);
 	}
 
-	template<COLLISION_TYPE T>
+	template<CollisionType T>
 	inline bool withinBounds(BoxBounds2D& a, T& b) {
 		return withinBounds(b, a);
 	}
 
-	template<COLLISION_TYPE T>
+	template<CollisionType T>
 	inline bool withinBounds(RayBounds2D& a, T& b) {
 		return withinBounds(b, a);
 	}
 
-	template<COLLISION_TYPE T>
+	template<CollisionType T>
 	inline bool withinBounds(LineBounds2D& a, T& b) {
 		return withinBounds(b, a);
 	}
@@ -248,7 +248,7 @@ namespace CollisionData {
 	*                                      *
 	****************************************
 	*/
-	template<COLLISION_TYPE T>
+	template<CollisionType T>
 	struct AreaCollisionData {
 		T shape			= T{};
 		bool enabled	= true;
@@ -258,7 +258,7 @@ namespace CollisionData {
 	typedef AreaCollisionData<BoxBounds2D>		AreaBoxData;
 	typedef AreaCollisionData<RayBounds2D>		AreaRayData;
 
-	template <COLLISION_TYPE A, COLLISION_TYPE B>
+	template <CollisionType A, CollisionType B>
 	bool isColliding(AreaCollisionData<A>& a, AreaCollisionData<B>& b) {
 		if (!(a.enabled && b.enabled))
 			return false;
@@ -289,7 +289,7 @@ namespace EntityClass {
 	*                           *
 	*****************************
 	*/
-	template<COLLISION_TYPE T>
+	template<CollisionType T>
 	class AreaCollision2D : public Entity2D {
 	public:
 		/// Constructor.
@@ -305,12 +305,12 @@ namespace EntityClass {
 		/// Called whenever a collision with another object happens.
 		virtual void onCollision(Entity* target) {}
 
-		template <COLLISION_TYPE C>
+		template <CollisionType C>
 		bool colliding(AreaCollision2D<C>* target) {
 			return isColliding(collision, target->collision);
 		}
 
-		template <COLLISION_TYPE C>
+		template <CollisionType C>
 		void checkCollision(AreaCollision2D<C>* target) {
 			if (colliding(target->collision)) {
 				onCollision(target);
