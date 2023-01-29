@@ -3,8 +3,11 @@
 
 #include "core.hpp"
 #include "2d3d.hpp"
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wall"
 #define CUTE_C2_IMPLEMENTATION
 #include "../libs/cute_c2.h"
+#pragma GCC diagnostic pop
 
 #include <unordered_map>
 
@@ -15,7 +18,10 @@ namespace CollisionData {
 		VecMath::Points3D,
 		VecMath::angleTo,
 		VecMath::center,
-		std::unordered_map;
+		std::unordered_map,
+		std::string,
+		std::runtime_error;
+
 		using namespace Vector;
 	}
 
@@ -71,16 +77,17 @@ namespace CollisionData {
 	*/
 	struct Line {
 		Vector2 position;
-		float width = 1;
+		float length = 1;
 		float angle = 0;
 	};
 
 
-	#define $_BOUNDS(CLASS) struct CLASS##Bounds2D: CLASS, Bounds2D {}
-	$_BOUNDS(Circle);
-	$_BOUNDS(Box);
-	$_BOUNDS(Ray);
-	$_BOUNDS(Line);
+	#define	CDT_BOUNDS(CLASS) struct CLASS##Bounds2D: CLASS, Bounds2D {}
+	CDT_BOUNDS(Circle);
+	CDT_BOUNDS(Box);
+	CDT_BOUNDS(Ray);
+	CDT_BOUNDS(Line);
+	#undef	CDT_BOUNDS
 
 	inline RayBounds2D makeRayBounds(Vector2 from, Vector2 to, float width = 1) {
 		return RayBounds2D {
@@ -128,6 +135,15 @@ namespace CollisionData {
 			c2v{b.position.x, b.position.y},
 			c2v{end.x, end.y},
 			b.width
+		};
+	}
+
+	inline c2Ray cuteify(LineBounds2D& b) {
+		Vector2 normal = VecMath::angleV2(b.angle);
+		return c2Ray{
+			c2v{b.position.x, b.position.y},
+			c2v{normal.x, normal.y},
+			b.length
 		};
 	}
 
@@ -204,10 +220,25 @@ namespace CollisionData {
 
 	// Line
 
-	#warning Unimplemented Function: 'withinBounds' for type 'LineBounds2D'
-	template<CollisionType T>
-	inline bool withinBounds(T& a, LineBounds2D& b) {
-		throw std::runtime_error("Unimplemented function 'withinBounds' for type 'LineBounds2D'!");
+	inline bool withinBounds(BoxBounds2D& a, LineBounds2D& b, c2Raycast* result = nullptr) {
+		c2Raycast r;
+		return c2RaytoAABB(cuteify(b), cuteify(a), result ? result : &r);
+	}
+
+	inline bool withinBounds(CircleBounds2D& a, LineBounds2D& b, c2Raycast* result = nullptr) {
+		c2Raycast r;
+		return c2RaytoCircle(cuteify(b), cuteify(a), result ? result : &r);
+	}
+
+	inline bool withinBounds(RayBounds2D& a, LineBounds2D& b, c2Raycast* result = nullptr) {
+		c2Raycast r;
+		return c2RaytoCapsule(cuteify(b), cuteify(a), result ? result : &r);
+	}
+
+	inline bool withinBounds(LineBounds2D& a, LineBounds2D& b, c2Raycast* result = nullptr) {
+		c2Raycast r;
+		RayBounds2D ray = {b.position, b.length, 0, b.angle};
+		return c2RaytoCapsule(cuteify(b), cuteify(ray), result ? result : &r);
 	}
 
 	// Flipped Functions
