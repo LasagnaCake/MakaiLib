@@ -13,6 +13,7 @@ namespace Dialog {
 	struct ActorData {
 		String		name;
 		Vector2		frame;
+		Vector4		tint = Color::WHITE;
 		bool		leaving = false;
 		$evt Signal	action = $evt DEF_SIGNAL;
 	};
@@ -109,6 +110,7 @@ namespace Dialog {
 				auto& a = actors[actor];
 				anim.tweenStep = msg.easing;
 				anim.reinterpolate(a.position.rest, time);
+				a.sprite->setColor(Color::GRAY);
 			}
 			for (auto& actor: msg.actors) {
 				auto& anim = animator[actor.name];
@@ -116,6 +118,7 @@ namespace Dialog {
 				a.sprite->frame = actor.frame;
 				anim.reinterpolate(actor.leaving ? a.position.out : a.position.talking, time);
 				actor.action();
+				a.sprite->setColor(actor.tint);
 			}
 			autoplay = msg.autoplay;
 			autotimer.delay = msg.duration;
