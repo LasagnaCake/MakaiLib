@@ -154,12 +154,7 @@ namespace Drawer {
 		glClear(GL_DEPTH_BUFFER_BIT);
 	}
 
-	inline void vertexSetColor(RawVertex& v, Vector4 color) {
-		v.r = color.x;
-		v.g = color.y;
-		v.b = color.z;
-		v.a = color.w;
-	}
+	// Vertex Setters
 
 	inline void vertexSetPosition(RawVertex& v, Vector3 pos) {
 		v.x = pos.x;
@@ -172,15 +167,20 @@ namespace Drawer {
 		v.v = uv.y;
 	}
 
+	inline void vertexSetColor(RawVertex& v, Vector4 color) {
+		v.r = color.x;
+		v.g = color.y;
+		v.b = color.z;
+		v.a = color.w;
+	}
+
 	inline void vertexSetNormal(RawVertex& v, Vector3 n) {
 		v.nx = n.x;
 		v.ny = n.y;
 		v.nz = n.z;
 	}
 
-	inline Vector4 vertexGetColor(RawVertex& v) {
-		return Vector4(v.r, v.g, v.b, v.a);
-	}
+	// Vertex Getters
 
 	inline Vector3 vertexGetPosition(RawVertex& v) {
 		return Vector3(v.x, v.y, v.z);
@@ -188,6 +188,10 @@ namespace Drawer {
 
 	inline Vector2 vertexGetUV(RawVertex& v) {
 		return Vector2(v.u, v.v);
+	}
+
+	inline Vector4 vertexGetColor(RawVertex& v) {
+		return Vector4(v.r, v.g, v.b, v.a);
 	}
 
 	inline Vector3 vertexGetNormal(RawVertex& v) {
