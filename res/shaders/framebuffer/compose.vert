@@ -25,9 +25,10 @@ uniform float   maskRotate = 0;
 void main()
 {
     vec4 vertex = vec4(vertPos.x, vertPos.y, vertPos.z, 1.0)  * posMatrix;
-    maskUV = (vertUV + maskShift) * maskScale;
+    maskUV = vertUV * maskScale;
     maskUV.x = maskUV.x * cos(maskRotate) - maskUV.y * sin(maskRotate);
     maskUV.y = maskUV.x * sin(maskRotate) + maskUV.y * cos(maskRotate);
+    maskUV += maskShift;
     if (relativeMask) 
         maskUV += uvShift;
     fragUV = ((vec4(vertUV, 1, 0) * uvMatrix).xy + uvShift);

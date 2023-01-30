@@ -21,13 +21,17 @@ public:
 		delete source;
 	}
 
+	void close() {save(); unload();}
+
 	void save() {
 		if (!loaded) return;
 		source->write(data, true);
 	}
 
-	auto get(string key) {
-		return structure().get(key);
+	auto& get(string section, string variable, string defaultValue = "null") {
+		auto& v = structure()[section][variable];
+		if (v == "") v = defaultValue;
+		return v;
 	}
 
 	void remove(string section) {

@@ -50,6 +50,9 @@ public:
 			Vector2(+1.0, +0.0)
 		);
 		plane->setColor();
+		plane->setNormal(
+			Vector3(+0.0, +0.0, +1.0)
+		);
 		// Add to reference list
 		references.plane.push_back(plane);
 		// Set destructor function
@@ -66,7 +69,7 @@ public:
 		triangles.push_back(tris[0]);
 		// Create reference
 		T* tg = new T(tris);
-		// Setup plane
+		// Setup trigon
 		tg->setOrigin(
 			Vector3(-0.0, +1.0, 0.0),
 			Vector3(-1.0, -1.0, 0.0),
@@ -78,6 +81,9 @@ public:
 			Vector2(+1.0, +0.0)
 		);
 		tg->setColor();
+		tg->setNormal(
+			Vector3(+0.0, +0.0, +1.0)
+		);
 		// Add to reference list
 		references.trigon.push_back(tg);
 		// Set destructor function

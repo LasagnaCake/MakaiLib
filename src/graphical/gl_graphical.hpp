@@ -46,18 +46,21 @@ namespace Drawer {
 	#define RAW_VERTEX_BYTE_SIZE sizeof(RawVertex)
 	struct RawVertex {
 		float
-			x = 0,
-			y = 0,
-			z = 0,
-			u = 0,
-			v = 0,
-			r = 1,
-			g = 1,
-			b = 1,
-			a = 1;
+			x	= 0,
+			y	= 0,
+			z	= 0,
+			u	= 0,
+			v	= 0,
+			r	= 1,
+			g	= 1,
+			b	= 1,
+			a	= 1,
+			nx	= 0,
+			ny	= 0,
+			nz	= 0;
 	};
 
-	RawVertex toRawVertex(Vector3 pos, Vector2 uv, Vector4 col = Vector4(1)) {
+	RawVertex toRawVertex(Vector3 pos, Vector2 uv, Vector4 col = Vector4(1), Vector3 norm = Vector3(0)) {
 		RawVertex res;
 		res.x = pos.x;
 		res.y = pos.y;
@@ -68,6 +71,9 @@ namespace Drawer {
 		res.g = col.y;
 		res.b = col.z;
 		res.a = col.w;
+		res.nx = norm.x;
+		res.ny = norm.y;
+		res.nz = norm.z;
 		return res;
 	}
 
@@ -115,15 +121,25 @@ namespace Drawer {
 			RAW_VERTEX_BYTE_SIZE,
 			$gloffset(5)
 		);
+		glVertexAttribPointer(
+			3,
+			2,
+			GL_FLOAT,
+			GL_FALSE,
+			RAW_VERTEX_BYTE_SIZE,
+			$gloffset(8)
+		);
 	}
 
 	inline void enableVertexAttributes() {
 		glEnableVertexAttribArray(0);
 		glEnableVertexAttribArray(1);
 		glEnableVertexAttribArray(2);
+		glEnableVertexAttribArray(3);
 	}
 
 	inline void disableVertexAttributes() {
+		glDisableVertexAttribArray(3);
 		glDisableVertexAttribArray(2);
 		glDisableVertexAttribArray(1);
 		glDisableVertexAttribArray(0);
@@ -156,6 +172,12 @@ namespace Drawer {
 		v.v = uv.y;
 	}
 
+	inline void vertexSetNormal(RawVertex& v, Vector3 n) {
+		v.nx = n.x;
+		v.ny = n.y;
+		v.nz = n.z;
+	}
+
 	inline Vector4 vertexGetColor(RawVertex& v) {
 		return Vector4(v.r, v.g, v.b, v.a);
 	}
@@ -166,6 +188,10 @@ namespace Drawer {
 
 	inline Vector2 vertexGetUV(RawVertex& v) {
 		return Vector2(v.u, v.v);
+	}
+
+	inline Vector3 vertexGetNormal(RawVertex& v) {
+		return Vector3(v.nx, v.ny, v.nz);
 	}
 
 	#include "gl_texture.hpp"

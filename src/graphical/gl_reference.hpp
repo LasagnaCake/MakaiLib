@@ -130,6 +130,33 @@ public:
 		return this;
 	}
 
+	Plane* setNormal(
+			Vector3 tln,
+			Vector3 trn,
+			Vector3 bln,
+			Vector3 brn
+		) {
+		Drawer::vertexSetNormal(*tl,	tln);
+		Drawer::vertexSetNormal(*tr1,	trn);
+		Drawer::vertexSetNormal(*tr2,	trn);
+		Drawer::vertexSetNormal(*bl1,	bln);
+		Drawer::vertexSetNormal(*bl2,	bln);
+		Drawer::vertexSetNormal(*br,	brn);
+		return this;
+	}
+
+	Plane* setNormal(
+			Vector3 n
+		) {
+		Drawer::vertexSetNormal(*tl,	n);
+		Drawer::vertexSetNormal(*tr1,	n);
+		Drawer::vertexSetNormal(*tr2,	n);
+		Drawer::vertexSetNormal(*bl1,	n);
+		Drawer::vertexSetNormal(*bl2,	n);
+		Drawer::vertexSetNormal(*br,	n);
+		return this;
+	}
+
 	/// Sets the plane to its original state (last state set with setPosition).
 	Plane* reset() override {
 		VERTEX_SET_POS(*tl,		origin[0]);
@@ -183,7 +210,6 @@ protected:
 	Triangle* tris[2] = {nullptr, nullptr};
 
 	Vector3 origin[4];
-
 };
 
 class AnimatedPlane: public Plane {
@@ -286,6 +312,26 @@ public:
 		Drawer::vertexSetColor(*a,	col);
 		Drawer::vertexSetColor(*b,	col);
 		Drawer::vertexSetColor(*c,	col);
+		return this;
+	}
+
+	Trigon* setNormal(
+			Vector3 an,
+			Vector3 bn,
+			Vector3 cn
+		) {
+		Drawer::vertexSetNormal(*a,	an);
+		Drawer::vertexSetNormal(*b,	bn);
+		Drawer::vertexSetNormal(*c,	cn);
+		return this;
+	}
+
+	Trigon* setNormal(
+			Vector3 n
+		) {
+		Drawer::vertexSetNormal(*a,	n);
+		Drawer::vertexSetNormal(*b,	n);
+		Drawer::vertexSetNormal(*c,	n);
 		return this;
 	}
 

@@ -44,6 +44,7 @@ uniform vec2 waveAmplitude	= vec2(1);
 uniform vec2 waveFrequency	= vec2(1);
 uniform vec2 waveShift		= vec2(1);
 uniform uint waveShape		= 0;
+uniform float waveLOD		= 4;
 
 // [ SCREEN WAVE ]
 uniform bool usePrism		= false;
@@ -51,6 +52,7 @@ uniform vec2 prismAmplitude	= vec2(1);
 uniform vec2 prismFrequency	= vec2(1);
 uniform vec2 prismShift		= vec2(1);
 uniform uint prismShape		= 0;
+uniform float prismLOD		= 4;
 
 // [ SCREEN RAINBOW EFFECT ]
 uniform bool	useRainbow			= false;
@@ -72,6 +74,10 @@ uniform bool	outlineRelativeAlpha	= true;
 
 #ifndef PI
 #define PI 3.1415926535
+#endif
+
+#ifndef HPI
+#define HPI (PI / 2.0)
 #endif
 
 #ifndef TAU
@@ -147,19 +153,48 @@ float round(float v) {
 	return floor(v + 0.5);
 }
 
-float pattern(float t, uint shape) {
+float ramp(float v) {
+	return v - round(v);
+}
+
+float tri(float v) {
+	return (abs(sin(v/2 + (HPI/2)))-abs(cos(v/2 + (HPI/2))));
+}
+
+float htri(float v) {
+	return ramp(v/PI  + 2.5) * 2.0;
+}
+
+float hsin(float v) {
+	return sin(ramp(v/PI  + 2.5) * PI);
+}
+
+float bin(float v, float lod) {
+	return round(v * lod) / lod;
+}
+
+float pattern(float t, uint shape, float lod) {
 	switch (shape) {
+		// Square wave
 		default:
-		case 0:	return sin(t);
-		case 1:	return sign(sin(t));
-		case 2: return (abs(sin(t))-abs(cos(t))) / 2;
-		case 3: return round(sin(t) * 4.0) / 4.0;
-		case 4: return t - ceil(t);
+		case 0:	return sign(sin(t));
+		// Sine wave
+		case 1:	return sin(t);
+		case 2: return bin(sin(t), lod);
+		// Triangle wave
+		case 3: return tri(t);
+		case 4: return bin(tri(t), lod);
+		// Half-sine wave
+		case 7: return hsin(t);
+		case 8: return bin(hsin(t), lod);
+		// Half-triangle wave
+		case 5: return htri(t);
+		case 6: return bin(htri(t), lod);
 	}
 }
 
-vec2 patternV2(vec2 t, uint shape) {
-	return vec2(pattern(t.x, shape), pattern(t.y, shape));
+vec2 patternV2(vec2 t, uint shape, float lod) {
+	return vec2(pattern(t.x, shape, lod), pattern(t.y, shape, lod));
 }
 
 vec4 applyOutline(vec4 color, vec2 uv) {
@@ -171,15 +206,15 @@ void main() {
 	vec2 wave = vec2(0);
 	if (useWave) {
 		wave = (fragUV.yx * waveFrequency) * (2.0 * PI) + waveShift;
-		wave = patternV2(wave, waveShape) * (waveAmplitude / 10.0);
+		wave = patternV2(wave, waveShape, waveLOD) * (waveAmplitude / 10.0);
 	}
 	// Screen plasmicity
 	vec2 prism = vec2(0);
 	if (usePrism) {
 		prism = (fragUV * prismFrequency.yx) * (2.0 * PI) + prismShift.yx;
-		prism = patternV2(prism, prismShape) * (prismAmplitude.yx / 10.0);
+		prism = patternV2(prism, prismShape, prismLOD) * (prismAmplitude.yx / 10.0);
 	}
-	vec2 screenUV = fragUV + wave + prism;
+	vec2 screenUV = fragUV + prism + wave;
 	vec4 color = (getPixelColor(screenUV) * fragColor * albedo) + accent;
 	// Color inverter
 	if (negative) color = vec4(vec3(1) - vec3(color.x, color.y, color.z), color.w);

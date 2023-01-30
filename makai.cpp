@@ -172,7 +172,7 @@ public:
 		if (input.getButtonDown(SDL_SCANCODE_ESCAPE)) {
 			close();
 		}
-		for $ssrange(i, 0, 5) {
+		for $ssrange(i, 0, 9) {
 			if (input.isButtonJustPressed((SDL_Scancode)(SDL_SCANCODE_1 + i)))
 				currentWave = i;
 		}
@@ -222,8 +222,8 @@ public:
 					true,
 					$vec2(3, -5),
 					$vec2(
-						Math::min(sin(getCurrentCycle()/40.0) * 0.5, 0.0),
-						Math::min(sin(getCurrentCycle()/40.0) * -0.5, 0.0)
+						sin(getCurrentCycle()/40.0) * 0.5,
+						cos(getCurrentCycle()/40.0) * 0.5
 					),
 					$vec2(getCurrentCycle()/60.0),
 					currentWave
