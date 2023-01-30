@@ -24,7 +24,7 @@ uniform float   maskRotate = 0;
 
 void main()
 {
-    vec4 vertex = vec4(vertPos.x, vertPos.y, vertPos.z, 1.0)  * posMatrix;
+    vec4 vertex = vec4(vertPos.xyz, 1.0)  * posMatrix;
     maskUV = vertUV * maskScale;
     maskUV.x = maskUV.x * cos(maskRotate) - maskUV.y * sin(maskRotate);
     maskUV.y = maskUV.x * sin(maskRotate) + maskUV.y * cos(maskRotate);

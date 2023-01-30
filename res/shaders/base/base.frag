@@ -3,12 +3,13 @@
 in vec3 fragCoord3D;
 in vec2 fragUV;
 in vec4 fragColor;
+in vec3 fragNormal;
 
 in vec2 warpUV;
 
 in vec3 fragLightColor;
 
-layout (location = 0) out vec4 FragColor;
+layout (location = 0) out vec4	FragColor;
 layout (location = 1) out float	DepthValue;
 
 uniform bool		textured = false;
