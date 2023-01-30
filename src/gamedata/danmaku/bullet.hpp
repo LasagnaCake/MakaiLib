@@ -210,83 +210,83 @@ public:
 		$endspeach
 		#else
 		for (auto i = 0; i < BULLET_COUNT; i++) {
-			auto* b = &bullets[i];
-			b->onFrame(delta);
-			if (!b->isFree() && b->params.collidable) {
+			auto& b = bullets[i];
+			b.onFrame(delta);
+			if (!b.isFree() && b.params.collidable) {
 				for $each(actor, $ecl groups.getGroup(ENEMY_LAYER)) {
 					auto a = (AreaCircle2D*)actor;
-					auto targetBounds = a->getCircleBounds();
+					auto targetBounds = a->collision.shape;
 					if (
 						a->collision.enabled
 						&& $cdt withinBounds(
-							b->params.hitbox,
+							b.params.hitbox,
 							targetBounds
 						)
 					) {
 						a->onCollision(this);
-						b->discard();
+						b.discard();
 					}
 				}
 			}
-			if (b->params.rebound || b->params.shuttle)
+			if (b.params.rebound || b.params.shuttle)
 				if (
 					! $cdt withinBounds(
-						b->local.position,
+						b.local.position,
 						board
 					)
 				) {
 					// Rebounding (reflecting) takes precedence over shuttling (wrapping)
-					if (b->params.rebound) {
+					if (b.params.rebound) {
 						#define $wreflect(AA) AA = Math::pi - AA
 						// Check X
 						if (
-							b->local.position.x < board.min.x ||
-							b->local.position.x > board.max.x
+							b.local.position.x < board.min.x||
+							b.local.position.x > board.max.x
 						) {
-							$wreflect(b->params.rot.current);
-							$wreflect(b->params.rot.start);
-							$wreflect(b->params.rot.end);
+							$wreflect(b.params.rot.current);
+							$wreflect(b.params.rot.start);
+							$wreflect(b.params.rot.end);
 						}
 						#undef $wreflect
 						#define $wreflect(AA) AA = - AA
 						// Check Y
 						if (
-							b->local.position.y < board.min.y ||
-							b->local.position.y > board.max.y
+							b.local.position.y < board.min.y ||
+							b.local.position.y > board.max.y
 						) {
-							$wreflect(b->params.rot.current);
-							$wreflect(b->params.rot.start);
-							$wreflect(b->params.rot.end);
+							$wreflect(b.params.rot.current);
+							$wreflect(b.params.rot.start);
+							$wreflect(b.params.rot.end);
 						}
-						b->onRebound(b);
+						b.onRebound(&b);
 						// Disable rebounding
-						b->params.rebound = false;
+						b.params.rebound = false;
 						#undef $wreflect
 					}
-					else if (b->params.shuttle) {
+					else if (b.params.shuttle) {
 						// Check X
-						if (b->local.position.x < board.min.x)
-							b->local.position.x = board.max.x;
-						if (b->local.position.x > board.max.x)
-							b->local.position.x = board.min.x;
+						if (b.local.position.x < board.min.x)
+							b.local.position.x = board.max.x;
+						if (b.local.position.x > board.max.x)
+							b.local.position.x = board.min.x;
 						// Check Y
-						if (b->local.position.y < board.min.y)
-							b->local.position.y = board.max.y;
-						if (b->local.position.y > board.max.y)
-							b->local.position.y = board.min.y;
-						b->onShuttle(b);
+						if (b.local.position.y < board.min.y)
+							b.local.position.y = board.max.y;
+						if (b.local.position.y > board.max.y)
+							b.local.position.y = board.min.y;
+						b.onShuttle(&b);
 						// Disable shuttle
-						b->params.shuttle = false;
+						b.params.shuttle = false;
 					}
 				}
-			if (b->params.dope)
+			if (b.params.dope)
 				if (
 					! $cdt withinBounds(
-						b->params.hitbox,
+						b.params.hitbox,
 						playfield
 					)
 				) {
-					b->setFree(true);
+					b.setFree(true);
 				}
 		}
 		#endif

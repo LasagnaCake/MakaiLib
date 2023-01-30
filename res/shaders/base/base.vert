@@ -30,11 +30,11 @@ uniform vec2 warpOffset		= vec2(0);
 uniform bool				useLights		= false;
 uniform vec3				ambientColor	= vec3(1);
 uniform float				ambientStrength	= 1;
-uniform uint 				lightsCount		= 0;
-uniform vec3[MAX_LIGHTS] 	lights;
-uniform vec3[MAX_LIGHTS] 	lightColor;
-uniform float[MAX_LIGHTS] 	lightRadius;
-uniform float[MAX_LIGHTS] 	lightStrength;
+uniform uint				lightsCount		= 0;
+uniform vec3[MAX_LIGHTS]	lights;
+uniform vec3[MAX_LIGHTS]	lightColor;
+uniform float[MAX_LIGHTS]	lightRadius;
+uniform float[MAX_LIGHTS]	lightStrength;
 
 vec3 calculateLights(vec3 position, vec3 normal) {
 	return vec3(1);

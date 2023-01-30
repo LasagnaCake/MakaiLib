@@ -267,9 +267,14 @@ namespace VecMath {
 	*/
 
 	void srpTransform(RawVertex& vtx, glm::mat4& matrix) {
+		// Position
 		glm::vec4 res = glm::vec4(vtx.x, vtx.y, vtx.z, 1.0f) * matrix;
 		res += glm::vec4(glm::vec3(matrix[3]), 0.0);
 		Drawer::vertexSetPosition(vtx, Vector3(res.x, res.y, res.z));
+		// Normal
+		res = glm::vec4(vtx.nx, vtx.ny, vtx.nz, 1.0f) * matrix;
+		res += glm::vec4(glm::vec3(matrix[3]), 0.0);
+		Drawer::vertexSetNormal(vtx, Vector3(res.x, res.y, res.z));
 	}
 
 	inline void glmSrpTransform(RawVertex& vtx, Transform3D& trans) {
@@ -277,9 +282,6 @@ namespace VecMath {
 		srpTransform(vtx, tmat);
 	}
 }
-#ifndef $srpTransform
-#define $srpTransform srpTransform
-#endif // SRP_TRANSFORM
 
 namespace RenderData {
 	namespace {
@@ -290,7 +292,7 @@ namespace RenderData {
 		VecMath::Transform,
 		VecMath::Transform2D,
 		VecMath::Transform3D,
-		VecMath::$srpTransform,
+		VecMath::srpTransform,
 		VecMath::asGLMVector,
 		VecMath::asVector3,
 		VecMath::asGLMMatrix,

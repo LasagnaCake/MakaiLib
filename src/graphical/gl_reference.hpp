@@ -1,5 +1,8 @@
 typedef std::function<void(RawVertex&)> VertexFunc;
 
+#define VERTEX_SET_POS(VERT, VAL)	Drawer::vertexSetPosition(VERT, VAL);
+#define VERTEX_SET_NORM(VERT, VAL)	Drawer::vertexSetNormal(VERT, VAL);
+
 struct Empty {
 	virtual void onTransform() {}
 	virtual Empty* reset() {return this;}
@@ -57,8 +60,7 @@ public:
 		tris[0] = tris[1] = nullptr;
 	}
 
-	#define VERTEX_SET_POS(VERT, VAL) Drawer::vertexSetPosition(VERT, VAL);
-	/// Sets the plane's origin.
+	/// Sets the plane's posOrigin.
 	Plane* setOrigin(
 			Vector3 tlPos = Vector3(-1, 1),
 			Vector3 trPos = Vector3(1, 1),
@@ -71,20 +73,24 @@ public:
 		VERTEX_SET_POS(*bl1,	blPos);
 		VERTEX_SET_POS(*bl2,	blPos);
 		VERTEX_SET_POS(*br,		brPos);
-		origin[0] = tlPos;
-		origin[1] = trPos;
-		origin[2] = blPos;
-		origin[3] = brPos;
+		posOrigin[0] = tlPos;
+		posOrigin[1] = trPos;
+		posOrigin[2] = blPos;
+		posOrigin[3] = brPos;
 		return this;
 	}
 
-	/// Transforms the plane's origin by a given transform.
+	/// Transforms the plane's origin and normals by a given transform.
 	Plane* setOrigin(Transform3D trans) {
 		glm::mat4 glmtrans = asGLMMatrix(trans);
-		origin[0] = $srpTransform(origin[0], glmtrans);
-		origin[1] = $srpTransform(origin[1], glmtrans);
-		origin[2] = $srpTransform(origin[2], glmtrans);
-		origin[3] = $srpTransform(origin[3], glmtrans);
+		posOrigin[0]	= srpTransform(posOrigin[0],	glmtrans);
+		posOrigin[1]	= srpTransform(posOrigin[1],	glmtrans);
+		posOrigin[2]	= srpTransform(posOrigin[2],	glmtrans);
+		posOrigin[3]	= srpTransform(posOrigin[3],	glmtrans);
+		normOrigin[0]	= srpTransform(normOrigin[0],	glmtrans);
+		normOrigin[1]	= srpTransform(normOrigin[1],	glmtrans);
+		normOrigin[2]	= srpTransform(normOrigin[2],	glmtrans);
+		normOrigin[3]	= srpTransform(normOrigin[3],	glmtrans);
 		return reset();
 	}
 
@@ -136,35 +142,51 @@ public:
 			Vector3 bln,
 			Vector3 brn
 		) {
-		Drawer::vertexSetNormal(*tl,	tln);
-		Drawer::vertexSetNormal(*tr1,	trn);
-		Drawer::vertexSetNormal(*tr2,	trn);
-		Drawer::vertexSetNormal(*bl1,	bln);
-		Drawer::vertexSetNormal(*bl2,	bln);
-		Drawer::vertexSetNormal(*br,	brn);
+		VERTEX_SET_NORM(*tl,	tln);
+		VERTEX_SET_NORM(*tr1,	trn);
+		VERTEX_SET_NORM(*tr2,	trn);
+		VERTEX_SET_NORM(*bl1,	bln);
+		VERTEX_SET_NORM(*bl2,	bln);
+		VERTEX_SET_NORM(*br,	brn);
+		normOrigin[0] = tln;
+		normOrigin[1] = trn;
+		normOrigin[2] = bln;
+		normOrigin[3] = brn;
 		return this;
 	}
 
 	Plane* setNormal(
 			Vector3 n
 		) {
-		Drawer::vertexSetNormal(*tl,	n);
-		Drawer::vertexSetNormal(*tr1,	n);
-		Drawer::vertexSetNormal(*tr2,	n);
-		Drawer::vertexSetNormal(*bl1,	n);
-		Drawer::vertexSetNormal(*bl2,	n);
-		Drawer::vertexSetNormal(*br,	n);
+		VERTEX_SET_NORM(*tl,	n);
+		VERTEX_SET_NORM(*tr1,	n);
+		VERTEX_SET_NORM(*tr2,	n);
+		VERTEX_SET_NORM(*bl1,	n);
+		VERTEX_SET_NORM(*bl2,	n);
+		VERTEX_SET_NORM(*br,	n);
+		normOrigin[0] = n;
+		normOrigin[1] = n;
+		normOrigin[2] = n;
+		normOrigin[3] = n;
 		return this;
 	}
 
 	/// Sets the plane to its original state (last state set with setPosition).
 	Plane* reset() override {
-		VERTEX_SET_POS(*tl,		origin[0]);
-		VERTEX_SET_POS(*tr1,	origin[1]);
-		VERTEX_SET_POS(*tr2,	origin[1]);
-		VERTEX_SET_POS(*bl1,	origin[2]);
-		VERTEX_SET_POS(*bl2,	origin[2]);
-		VERTEX_SET_POS(*br,		origin[3]);
+		// Set origin
+		VERTEX_SET_POS(*tl,		posOrigin[0]);
+		VERTEX_SET_POS(*tr1,	posOrigin[1]);
+		VERTEX_SET_POS(*tr2,	posOrigin[1]);
+		VERTEX_SET_POS(*bl1,	posOrigin[2]);
+		VERTEX_SET_POS(*bl2,	posOrigin[2]);
+		VERTEX_SET_POS(*br,		posOrigin[3]);
+		// Set normals
+		VERTEX_SET_NORM(*tl,	normOrigin[0]);
+		VERTEX_SET_NORM(*tr1,	normOrigin[1]);
+		VERTEX_SET_NORM(*tr2,	normOrigin[1]);
+		VERTEX_SET_NORM(*bl1,	normOrigin[2]);
+		VERTEX_SET_NORM(*bl2,	normOrigin[2]);
+		VERTEX_SET_NORM(*br,	normOrigin[3]);
 		return this;
 	}
 
@@ -176,12 +198,12 @@ public:
 		self.scale *= (float)visible;
 		glm::mat4 trans = asGLMMatrix(self);
 		// Apply transformation
-		$srpTransform(*tl, trans);
-		$srpTransform(*tr1, trans);
-		$srpTransform(*tr2, trans);
-		$srpTransform(*bl1, trans);
-		$srpTransform(*bl2, trans);
-		$srpTransform(*br, trans);
+		srpTransform(*tl, trans);
+		srpTransform(*tr1, trans);
+		srpTransform(*tr2, trans);
+		srpTransform(*bl1, trans);
+		srpTransform(*bl2, trans);
+		srpTransform(*br, trans);
 		return this;
 	}
 
@@ -209,7 +231,8 @@ protected:
 
 	Triangle* tris[2] = {nullptr, nullptr};
 
-	Vector3 origin[4];
+	Vector3 posOrigin[4];
+	Vector3 normOrigin[4];
 };
 
 class AnimatedPlane: public Plane {
@@ -259,7 +282,6 @@ public:
 		tris[0] = nullptr;
 	}
 
-	#define VERTEX_SET_POS(VERT, VAL) Drawer::vertexSetPosition(VERT, VAL);
 	/// Sets the triangle's origin.
 	Trigon* setOrigin(
 			Vector3 aPos = Vector3(+0, 1),
@@ -269,18 +291,21 @@ public:
 		VERTEX_SET_POS(*a,	aPos);
 		VERTEX_SET_POS(*b,	bPos);
 		VERTEX_SET_POS(*c,	cPos);
-		origin[0] = aPos;
-		origin[1] = bPos;
-		origin[2] = cPos;
+		posOrigin[0] = aPos;
+		posOrigin[1] = bPos;
+		posOrigin[2] = cPos;
 		return this;
 	}
 
-	/// Transforms the plane's origin by a given transform.
+	/// Transforms the triangle's origin and normals by a given transform.
 	Trigon* setOrigin(Transform3D trans) {
 		glm::mat4 glmtrans = asGLMMatrix(trans);
-		origin[0] = $srpTransform(origin[0], glmtrans);
-		origin[1] = $srpTransform(origin[1], glmtrans);
-		origin[2] = $srpTransform(origin[2], glmtrans);
+		posOrigin[0]	= srpTransform(posOrigin[0],	glmtrans);
+		posOrigin[1]	= srpTransform(posOrigin[1],	glmtrans);
+		posOrigin[2]	= srpTransform(posOrigin[2],	glmtrans);
+		normOrigin[0]	= srpTransform(normOrigin[0],	glmtrans);
+		normOrigin[1]	= srpTransform(normOrigin[1],	glmtrans);
+		normOrigin[2]	= srpTransform(normOrigin[2],	glmtrans);
 		return reset();
 	}
 
@@ -320,26 +345,26 @@ public:
 			Vector3 bn,
 			Vector3 cn
 		) {
-		Drawer::vertexSetNormal(*a,	an);
-		Drawer::vertexSetNormal(*b,	bn);
-		Drawer::vertexSetNormal(*c,	cn);
+		VERTEX_SET_NORM(*a,	an);
+		VERTEX_SET_NORM(*b,	bn);
+		VERTEX_SET_NORM(*c,	cn);
 		return this;
 	}
 
 	Trigon* setNormal(
 			Vector3 n
 		) {
-		Drawer::vertexSetNormal(*a,	n);
-		Drawer::vertexSetNormal(*b,	n);
-		Drawer::vertexSetNormal(*c,	n);
+		VERTEX_SET_NORM(*a,	n);
+		VERTEX_SET_NORM(*b,	n);
+		VERTEX_SET_NORM(*c,	n);
 		return this;
 	}
 
 	/// Sets the triangle to its original state (last state set with setPosition).
 	Trigon* reset() override {
-		VERTEX_SET_POS(*a,	origin[0]);
-		VERTEX_SET_POS(*b,	origin[1]);
-		VERTEX_SET_POS(*c,	origin[2]);
+		VERTEX_SET_POS(*a,	posOrigin[0]);
+		VERTEX_SET_POS(*b,	posOrigin[1]);
+		VERTEX_SET_POS(*c,	posOrigin[2]);
 		return this;
 	}
 
@@ -351,9 +376,9 @@ public:
 		self.scale *= (float)visible;
 		glm::mat4 trans = asGLMMatrix(self);
 		// Apply transformation
-		$srpTransform(*a,	trans);
-		$srpTransform(*b,	trans);
-		$srpTransform(*c,	trans);
+		srpTransform(*a,	trans);
+		srpTransform(*b,	trans);
+		srpTransform(*c,	trans);
 		return this;
 	}
 
@@ -375,8 +400,9 @@ protected:
 
 	Triangle* tris[1] = {nullptr};
 
-	Vector3 origin[3];
-
+	Vector3 posOrigin[3];
+	Vector3 normOrigin[3];
 };
 
 #undef VERTEX_SET_POS
+#undef VERTEX_SET_NORM

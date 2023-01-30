@@ -185,11 +185,11 @@ float pattern(float t, uint shape, float lod) {
 		case 3: return tri(t);
 		case 4: return bin(tri(t), lod);
 		// Half-sine wave
-		case 7: return hsin(t);
-		case 8: return bin(hsin(t), lod);
+		case 5: return hsin(t);
+		case 6: return bin(hsin(t), lod);
 		// Half-triangle wave
-		case 5: return htri(t);
-		case 6: return bin(htri(t), lod);
+		case 7: return htri(t);
+		case 8: return bin(htri(t), lod);
 	}
 }
 

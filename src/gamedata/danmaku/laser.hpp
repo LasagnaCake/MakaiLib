@@ -231,7 +231,7 @@ public:
 					auto a = (AreaCircle2D*)actor;
 					if (
 						a->collision.enabled
-						&& l->colliding(a->getCircleBounds())
+						&& l->colliding(a->collision.shape)
 					) {
 						a->onCollision(this);
 						l->discard();

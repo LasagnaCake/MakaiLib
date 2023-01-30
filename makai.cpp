@@ -1,13 +1,14 @@
 //#undef _DEBUG_OUTPUT_
 
 #define $_PREVENT_BULLET_OVERFLOW_BY_WRAP
-#define $_PARALLEL_MANAGERS
+//#define $_PARALLEL_MANAGERS
 //#define $_PARALLEL_RENDERING
 #define $_DANMAKU_GAME
 #define $_FRAME_INDEPENDENT_PROCESS
 //#define $_PROCESS_RENDER_BEFORE_LOGIC
 
-#define RADIAL_BAR_RESOLUTION 12
+#define RADIAL_BAR_RESOLUTION	12
+//#define ENEMY_BULLET_COUNT		512
 
 #include "src/makai.hpp"
 
@@ -126,7 +127,7 @@ public:
 		testLabel.trans.scale = 2.5;
 		testLabel.trans.scale.x *= 0.8;
 		testLabel.text.content = "   Spell shattered!\n(Get spell card bonus)";
-		testLabel.trans.position = $vec3(10, 10, 2.5);
+		testLabel.trans.position = $vec3(4, 10, 2.5);
 		testLabel.trans.rotation.y = PI;
 		// Create test laser A
 		Vector2 lPos = Vector2(32, -16) * getWindowScale();
@@ -186,6 +187,8 @@ public:
 		cam3D.at.y	= cos(getCurrentCycle() / maxCycleRate) * 3.0;
 		tubeRend->trans.rotation.z = getCurrentCycle() / (maxCycleRate * 3.0);
 		tubeRend->trans.position.z = Math::lerp(-20.0f, 10.0f, fac);
+		if (!(getCurrentCycle() % 2))
+			testLabel.text.content = std::to_string(tubeRend->trans.position.z);
 	}
 
 	#define $rlayer(LAYER) ($layer(LAYER) / SUBLAYER_COUNT)

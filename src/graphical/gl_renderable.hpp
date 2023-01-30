@@ -51,7 +51,7 @@ public:
 		);
 		plane->setColor();
 		plane->setNormal(
-			Vector3(+0.0, +0.0, +1.0)
+			Vector3(+0.0, +0.0, -1.0)
 		);
 		// Add to reference list
 		references.plane.push_back(plane);
@@ -82,7 +82,7 @@ public:
 		);
 		tg->setColor();
 		tg->setNormal(
-			Vector3(+0.0, +0.0, +1.0)
+			Vector3(+0.0, +0.0, -1.0)
 		);
 		// Add to reference list
 		references.trigon.push_back(tg);

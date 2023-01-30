@@ -26,7 +26,7 @@ GOING TO QUESTION IT.
 namespace Drawer {
 	namespace {
 		using
-		VecMath::$srpTransform;
+		VecMath::srpTransform;
 	}
 	struct FrameBufferData {
 		unsigned int
