@@ -8,12 +8,20 @@
 //#define $_PROCESS_RENDER_BEFORE_LOGIC
 
 #define RADIAL_BAR_RESOLUTION	12
+//#define ENEMY_BULLET_COUNT		256
 //#define ENEMY_BULLET_COUNT		512
 
 #include "src/makai.hpp"
 
 #if (_WIN32 || _WIN64 || __WIN32__ || __WIN64__)
+#include <winnt.h>
 #include <winuser.h>
+#include <powrprof.h>
+constexpr struct {
+	const size_t performance	= 0xA1841308;
+	const size_t balanced		= 0x381B4222;
+	const size_t saver			= 0x8C5E7FDA;
+} powerScheme;
 #endif
 
 using namespace $rdt Reference;
@@ -268,13 +276,34 @@ int main() {
 	*                     *
 	***********************
 	*/
-	#ifndef _DEBUG_OUTPUT_
-	//ShowWindow(GetConsoleWindow(), SW_HIDE);
-	#endif // _DEBUG_OUTPUT_
 	try {
-		// This is required, else the resolution gets messed up by window's scaling
 		#if (_WIN32 || _WIN64 || __WIN32__ || __WIN64__)
+		// This is required, else the resolution gets messed up by window's scaling
+		GUID* scheme;
 		SetProcessDPIAware();
+		PowerGetActiveScheme(0, &scheme);
+		switch(scheme->Data1) {
+		case powerScheme.saver:
+			throw std::runtime_error(
+				"This application was not designed"
+				"\nfor use with power saving enabled!"
+				"\n\nPlease set profile to 'performance'."
+			);
+			break;
+		case powerScheme.balanced:
+			Popup::dialogBox(
+				"Warning!",
+				"This application was not designed"
+				"\nfor use with power saving enabled!"
+				"\n\nPlease ensure your power profile is"
+				"\nset to 'performance'."
+				"\n\n(This can be done via the battery icon.)",
+				Popup::Option::OK,
+				SDL_MESSAGEBOX_WARNING
+			);
+		default:
+			break;
+		}
 		#endif
 		auto prefs = $dmk queryProgramSettingsFromUser(true);
 		// If size >= screen size, automatic fullscreen for some reason (Why, SDL?)
