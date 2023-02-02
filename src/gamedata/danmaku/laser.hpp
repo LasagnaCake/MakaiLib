@@ -18,8 +18,6 @@ public:
 		auto pass = $tsignal(LineLaser*) {};
 	}
 
-	$ref AnimatedPlane* head = nullptr;
-	$ref AnimatedPlane* tail = nullptr;
 	LineLaserData params;
 
 	void onFrame(float delta) override {
@@ -67,8 +65,6 @@ public:
 	LineLaser* setFree(bool state = true) override {
 		DanmakuObject::setFree(state);
 		if (sprite)	sprite->visible	= !free;
-		if (head)	head->visible	= !free;
-		if (tail)	tail->visible	= !free;
 		return this;
 	}
 
@@ -78,53 +74,16 @@ public:
 		return this;
 	}
 
-	LineLaser* setLaserColor(Vector4 color) {
-		sprite->setColor(color);
-		head->setColor(color);
-		tail->setColor(color);
-		return this;
-	}
-
-	LineLaser* setLaserUVSize(Vector2 size) {
-		sprite->size = size;
-		head->size = size;
-		tail->size = size;
-		return this;
-	}
-
-	LineLaser* setLaserUVFrame(Vector2 frame = Vector2(0)) {
-		sprite->frame = frame;
-		head->frame = frame;
-		tail->frame = frame;
-		return this;
-	}
-
 	void setLaserShape() {
 		if (!sprite) return;
 		float hWidth = (params.width.current / (2.0 + !params.active * 2.0));
 		float curLen = params.length.current;
 		sprite->setOrigin(
-			$vec3(hWidth, hWidth),
-			$vec3(curLen - hWidth, hWidth),
-			$vec3(hWidth, -hWidth),
-			$vec3(curLen - hWidth, -hWidth)
+			$vec3(-hWidth, hWidth),
+			$vec3(curLen + hWidth, hWidth),
+			$vec3(-hWidth, -hWidth),
+			$vec3(curLen + hWidth, -hWidth)
 		);
-		if (head) {
-			head->setOrigin(
-				$vec3(-hWidth, hWidth),
-				$vec3(hWidth, hWidth),
-				$vec3(-hWidth, -hWidth),
-				$vec3(hWidth, -hWidth)
-			);
-		}
-		if (tail) {
-			tail->setOrigin(
-				$vec3(-hWidth + curLen, hWidth),
-				$vec3(hWidth + curLen, hWidth),
-				$vec3(-hWidth + curLen, -hWidth),
-				$vec3(hWidth + curLen, -hWidth)
-			);
-		}
 	}
 
 	void updateSprite() override {
@@ -133,18 +92,6 @@ public:
 		sprite->local.position		= $vec3(local.position, zIndex + _zOffset);
 		sprite->local.rotation.z	= local.rotation;
 		sprite->local.scale			= Vector3(local.scale, zScale);
-		// Ditto for head
-		if (head) {
-			head->local.position	= $vec3(local.position, zIndex + _zOffset);
-			head->local.rotation.z	= local.rotation;
-			head->local.scale		= Vector3(local.scale, zScale);
-		}
-		// Ditto for tail
-		if (tail) {
-			tail->local.position	= $vec3(local.position, zIndex + _zOffset);
-			tail->local.rotation.z	= local.rotation;
-			tail->local.scale		= Vector3(local.scale, zScale);
-		}
 	}
 
 	template <class T>
@@ -273,12 +220,6 @@ public:
 		for (size_t i = 0; i < LASER_COUNT; i++) {
 			if (!lasers[i].sprite)
 				lasers[i].sprite =
-					mesh.createReference<AnimatedPlane>();
-			if (!lasers[i].head)
-				lasers[i].head =
-					mesh.createReference<AnimatedPlane>();
-			if (!lasers[i].tail)
-				lasers[i].tail =
 					mesh.createReference<AnimatedPlane>();
 			lasers[i].setFree(true);
 			lasers[i]._setZOffset(Math::epsilonF * ((float)i));

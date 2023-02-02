@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1675265010 source:d:\c(++) projects\_c++\game engine\makailib\makai.cpp
+1675362539 source:d:\c(++) projects\_c++\game engine\makailib\makai.cpp
 	"src/makai.hpp"
 	<winnt.h>
 	<winuser.h>
@@ -3324,7 +3324,7 @@
 
 1675077406 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_framebuffer.hpp
 
-1675078602 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_reference.hpp
+1675374041 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_reference.hpp
 
 1673412616 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_texture.hpp
 
@@ -3355,7 +3355,7 @@
 
 1675165807 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\bullet.hpp
 
-1675165803 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\laser.hpp
+1675349907 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\laser.hpp
 
 1672952429 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\spellcard.hpp
 
@@ -3521,7 +3521,7 @@
 1584273239 d:\c(++) projects\_c++\game engine\makailib\lib\opengl\glew\include\gl\wglew.h
 	<windows.h>
 
-1674749606 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_material.hpp
+1675293922 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_material.hpp
 
 1143199506 d:\c(++) projects\_c++\game engine\makailib\lib\freetype\include\ft2build.h
 	<freetype/config/ftheader.h>
