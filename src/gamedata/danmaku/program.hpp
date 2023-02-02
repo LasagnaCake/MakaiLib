@@ -152,7 +152,7 @@ struct ProgramSetting {
 
 #define USER_QUIT throw std::runtime_error("User quit the setup process!")
 
-ProgramSetting queryProgramSettingsFromUser(bool use16by9 = false, bool extendedFramerate = false) {
+ProgramSetting queryProgramSettingsFromUser(bool use16by9 = false, bool letUserChooseFramerate = true, bool extendedFramerate = false) {
 	StringList resList;
 	std::vector<Vector2> resValue;
 	for $each(res, (use16by9 ? $res set16x9 : $res set4x3)) {
@@ -175,7 +175,7 @@ ProgramSetting queryProgramSettingsFromUser(bool use16by9 = false, bool extended
 		SDL_MESSAGEBOX_WARNING
 	) < 0) USER_QUIT;
 	int winSize = Popup::dialogBox(
-		"App Configuration (1/3)",
+		std::string("App Configuration (1/") + (letUserChooseFramerate ? "3)" : "2)"),
 		"Please select a window size.\n"
 		"Selecting \"Detect\" will set to your screen's size.\n\n"
 		"WARNING: Selecting \"Detect\" will set the application to fullscreen!\n",
@@ -185,22 +185,25 @@ ProgramSetting queryProgramSettingsFromUser(bool use16by9 = false, bool extended
 	int fullscreen = 0;
 	if (winSize != resList.size() - 1) {
 		fullscreen = Popup::dialogBox(
-			"App Configuration (2/3)",
+			std::string("App Configuration (2/") + (letUserChooseFramerate ? "3)" : "2)"),
 			"Would you like to run this application in fullscreen or windowed mode?",
 			StringList{"Fullscreen", "Windowed"}
 		);
 	}
 	if (fullscreen < 0) USER_QUIT;
-	int framerate = Popup::dialogBox(
-		"App Configuration (3/3)",
-		"Please select the maximum framerate (frames per second).\n"
-		"Higher framerates require more powerful computers.\n"
-		"If the program is running slow, try changing the framerate.",
-		extendedFramerate
-		? StringList{"10", "20", "30", "40", "50", "60"}
-		: StringList{"30", "60"}
-	);
-	if (framerate < 0) USER_QUIT;
+	int framerate = 1;
+	if (letUserChooseFramerate) {
+		framerate = Popup::dialogBox(
+			"App Configuration (3/3)",
+			"Please select the maximum framerate (frames per second).\n"
+			"Higher framerates require more powerful computers.\n"
+			"If the program is running slow, try changing the framerate.",
+			extendedFramerate
+			? StringList{"10", "20", "30", "40", "50", "60"}
+			: StringList{"30", "60"}
+		);
+		if (framerate < 0) USER_QUIT;
+	}
 	Vector2 window;
 	if (winSize == resList.size() - 1) {
 		window = devSize;

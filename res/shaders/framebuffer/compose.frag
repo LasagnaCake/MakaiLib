@@ -66,11 +66,14 @@ uniform bool	useBlur			= false;
 uniform vec2	blurStrength	= vec2(0.0005);
 
 // [ OUTLINE EFFECT ]
-
 uniform bool	useOutline				= false;
 uniform vec2	outlineSize				= vec2(0.01);
 uniform vec4	outlineColor			= vec4(1);
 uniform bool	outlineRelativeAlpha	= true;
+
+// [ DEBUG SETTINGS ]
+uniform bool	useDebug	= false;
+uniform uint	debugView	= 0;
 
 #ifndef PI
 #define PI 3.1415926535
@@ -232,4 +235,10 @@ void main() {
 	}
 	if (color.w <= 0) discard;
 	FragColor = color;
+	if (useDebug) {
+		switch(debugView) {
+			case 1: FragColor = texture(depth, fragUV); break;
+			default: break;
+		}
+	}
 }

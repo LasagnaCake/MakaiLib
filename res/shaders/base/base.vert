@@ -37,7 +37,7 @@ uniform float[MAX_LIGHTS]	lightRadius;
 uniform float[MAX_LIGHTS]	lightStrength;
 
 vec3 calculateLights(vec3 position, vec3 normal) {
-	return vec3(1);
+	return ambientColor * ambientStrength;
 }
 
 float length(in vec3 vec) {

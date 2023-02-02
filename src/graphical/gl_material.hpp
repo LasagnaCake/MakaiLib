@@ -127,6 +127,19 @@ struct FogEffect: Effect, Limitable, ColorableRGBA, Variable {};
 
 struct AmbientEffect: ColorableRGB, Variable {};
 
+// Extra Data
+
+enum BufferDebugView: unsigned int {
+	DEBUG_VIEW_NORMAL,
+	DEBUG_VIEW_DEPTH
+};
+
+struct BufferDebugData: Effect {
+	BufferDebugView view;
+};
+
+// Materials
+
 struct ObjectMaterial {
 	Vector4				color = Color::WHITE;
 	bool shaded			= true;
@@ -152,6 +165,7 @@ struct BufferMaterial {
 	WaveEffect		prism;
 	GradientEffect	gradient;
 	RainbowEffect	rainbow;
+	BufferDebugData	debug;
 };
 
 struct WorldMaterial {
@@ -240,6 +254,9 @@ void setMaterial(Shader& shader, BufferMaterial& material) {
 	shader["outlineSize"](material.outline.size);
 	shader["outlineColor"](material.outline.color);
 	shader["outlineMatchAlpha"](material.outline.relativeAlpha);
+	// Set debug data
+	shader["useDebug"](material.debug.enabled);
+	shader["debugView"](material.debug.view);
 }
 
 void setMaterial(Shader& shader, WorldMaterial& material) {

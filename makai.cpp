@@ -6,10 +6,14 @@
 #define $_DANMAKU_GAME
 #define $_FRAME_INDEPENDENT_PROCESS
 //#define $_PROCESS_RENDER_BEFORE_LOGIC
+//#define $_REDUCED_GAME_INSTANCE_COUNT
 
 #define RADIAL_BAR_RESOLUTION	12
 //#define ENEMY_BULLET_COUNT		256
-//#define ENEMY_BULLET_COUNT		512
+//*
+#define ENEMY_BULLET_COUNT		1024
+#define ENEMY_LASER_COUNT		32
+//*/
 
 #include "src/makai.hpp"
 
@@ -227,7 +231,11 @@ public:
 	void onWorldSublayer(size_t sublayerID) {
 		auto& layerMaterial = getLayerBuffer().material;
 		switch(sublayerID) {
-		case 0: {
+		case 0: {/*
+				layerMaterial.debug = {
+					true,
+					$mat DEBUG_VIEW_NORMAL
+				};*/
 				layerMaterial.background = $vec4(0, 0, .2, 1);
 				$mat WaveEffect wfx = {
 					true,
@@ -304,8 +312,15 @@ int main() {
 		default:
 			break;
 		}
-		#endif
-		auto prefs = $dmk queryProgramSettingsFromUser(true);
+		#endif/*
+		Popup::dialogBox(
+			"30FPS is not runing as intended.",
+			"The 30FPS option is not running correctly."
+			"\nPlease avoid using it.",
+			Popup::Option::OK,
+			SDL_MESSAGEBOX_INFORMATION
+		);*/
+		auto prefs = $dmk queryProgramSettingsFromUser(true/*, false*/);
 		// If size >= screen size, automatic fullscreen for some reason (Why, SDL?)
 		GameApp prog(prefs.resolution.x, prefs.resolution.y, "[TEST]", prefs.fullscreen);
 		prog.maxFrameRate = prefs.framerate;
