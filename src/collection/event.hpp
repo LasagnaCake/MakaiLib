@@ -3,6 +3,7 @@
 
 #include <functional>
 #include <vector>
+#include "conceptual.hpp"
 
 #define $_tsignal(...)	(...)->void
 #define $_ttrigger(...)	(...)->bool
