@@ -6,6 +6,7 @@ class BaseBar {
 public:
 	float value = 0, max = 100;
 	Vector2 size = 1;
+	bool 	dynamicUV	= true;
 };
 
 #ifndef RADIAL_BAR_RESOLUTION
@@ -21,13 +22,14 @@ public:
 private:
 	RawVertex vertices[4];
 	void draw() override {
+		float percent = Math::clamp((value / max), 0.0f, 1.0f);
 		float
-			length	= Math::clamp((value / max), 0.0f, 1.0f) * size.x,
+			length	= percent * size.x,
 			width	= size.y / 2;
 		vertices[0]	= toRawVertex(Vector2(0, -width),		Vector2(0,0));
 		vertices[1]	= toRawVertex(Vector2(0, +width),		Vector2(0,1));
-		vertices[2]	= toRawVertex(Vector2(length, -width),	Vector2(1,0));
-		vertices[3]	= toRawVertex(Vector2(length, +width),	Vector2(1,1));
+		vertices[2]	= toRawVertex(Vector2(length, -width),	Vector2((dynamicUV ? percent : 1),0));
+		vertices[3]	= toRawVertex(Vector2(length, +width),	Vector2((dynamicUV ? percent : 1),1));
 		setDefaultShader();
 		display(vertices, 4, GL_TRIANGLE_STRIP);
 	}
@@ -37,7 +39,6 @@ class RadialBar: public DrawableObject, public BaseBar {
 public:
 	float	uvAngle		= 0;
 	bool	centered	= false;
-	bool 	dynamicUV	= true;
 	Vector2 offset;
 
 	RadialBar(size_t layer = 0, bool manual = false): DrawableObject(layer, manual) {

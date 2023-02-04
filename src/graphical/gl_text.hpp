@@ -1,11 +1,22 @@
-enum TextAlign {
-	TEXT_ALIGN_LEFT,
-	TEXT_ALIGN_RIGHT,
-	TEXT_ALIGN_CENTER
+enum class HAlign {
+	LEFT,
+	RIGHT,
+	CENTER
+};
+
+enum class VAlign {
+	TOP,
+	BOTTOM,
+	CENTER
 };
 
 struct TextRect {
 	size_t h = 0, v = 0;
+};
+
+struct AlignRect {
+	HAlign h = HAlign::LEFT;
+	VAlign v = VAlign::TOP;
 };
 
 struct FontData {
@@ -15,10 +26,10 @@ struct FontData {
 };
 
 struct TextData {
-	String		content		= "Hello\nWorld!";
-	TextRect	rect		= {40, 100};
-	TextAlign	alignment	= TEXT_ALIGN_LEFT;
-	Vector2		spacing		= Vector2(0);
+	String		content	= "Hello\nWorld!";
+	TextRect	rect	= {40, 100};
+	AlignRect	align	= {};
+	Vector2		spacing	= Vector2(0);
 };
 
 namespace {
@@ -26,7 +37,8 @@ namespace {
 		return	a.content	== b.content
 			&&	a.rect.h	== b.rect.h
 			&&	a.rect.v	== b.rect.v
-			&&	a.alignment	== b.alignment
+			&&	a.align.h	== b.align.h
+			&&	a.align.v	== b.align.v
 			&&	a.spacing	== b.spacing;
 	}
 }
