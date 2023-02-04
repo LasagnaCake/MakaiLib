@@ -216,7 +216,6 @@ public:
 };
 
 // [[ TRIANGLES ]]
-// TODO: Refactor this mess, to be like Plane;
 class Trigon: public Empty {
 public:
 	Trigon(

@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1675362539 source:d:\c(++) projects\_c++\game engine\makailib\makai.cpp
+1675378318 source:d:\c(++) projects\_c++\game engine\makailib\makai.cpp
 	"src/makai.hpp"
 	<winnt.h>
 	<winuser.h>
@@ -3324,7 +3324,7 @@
 
 1675077406 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_framebuffer.hpp
 
-1675374041 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_reference.hpp
+1675374301 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_reference.hpp
 
 1673412616 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_texture.hpp
 
@@ -3391,7 +3391,7 @@
 
 1675264666 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\predefs.hpp
 
-1673295042 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_text.hpp
+1675457466 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_text.hpp
 
 1673291933 d:\c(++) projects\_c++\game engine\makailib\src\collection\definitions.hpp
 

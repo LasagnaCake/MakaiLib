@@ -63,7 +63,7 @@ public:
 
 	$txt Label			testLabel;
 
-	$txt FontData		font{new Drawer::Texture2D("img/fonts/fontGRID.png"), $vec2(16), $vec2(0.55, 1.0)};
+	$txt FontData		font{new Drawer::Texture2D("img/fonts/fontGRID.png"), $vec2(16), $vec2(0.55, 0.9)};
 
 	$drw Texture2D*		ringbar = new Drawer::Texture2D("img/ring.png");
 

@@ -1,7 +1,7 @@
 enum TextAlign {
-	ALIGN_LEFT,
-	ALIGN_RIGHT,
-	ALIGN_CENTER
+	TEXT_ALIGN_LEFT,
+	TEXT_ALIGN_RIGHT,
+	TEXT_ALIGN_CENTER
 };
 
 struct TextRect {
@@ -11,14 +11,14 @@ struct TextRect {
 struct FontData {
 	Texture2D*	face		= nullptr;
 	Vector2		size		= Vector2(16);
-	Vector2		kerning		= Vector2(1);
+	Vector2		spacing		= Vector2(1);
 };
 
 struct TextData {
 	String		content		= "Hello\nWorld!";
 	TextRect	rect		= {40, 100};
-	TextAlign	alignment	= ALIGN_LEFT;
-	Vector2		kerning		= Vector2(0);
+	TextAlign	alignment	= TEXT_ALIGN_LEFT;
+	Vector2		spacing		= Vector2(0);
 };
 
 namespace {
@@ -27,7 +27,7 @@ namespace {
 			&&	a.rect.h	== b.rect.h
 			&&	a.rect.v	== b.rect.v
 			&&	a.alignment	== b.alignment
-			&&	a.kerning	== b.kerning;
+			&&	a.spacing	== b.spacing;
 	}
 }
 
@@ -76,14 +76,14 @@ private:
 			// If cursor has reached the rect's horizontal limit, move to new line
 			if(chrRect.h > text.rect.h) {
 				cursor.x = 0;
-				cursor.y -= text.kerning.y + font->kerning.y;
+				cursor.y -= text.spacing.y + font->spacing.y;
 				chrRect.h = 0;
 				chrRect.v++;
 			}
 			// If newline, then reset cursor and continue to next character
 			if (c == '\n') {
 				cursor.x = 0;
-				cursor.y -= text.kerning.y + font->kerning.y;
+				cursor.y -= text.spacing.y + font->spacing.y;
 				chrRect.h = 0;
 				chrRect.v++;
 				continue;
@@ -120,7 +120,7 @@ private:
 			vertices.push_back(CHAR_VERTEX(pos[2], uvs[2]));
 			vertices.push_back(CHAR_VERTEX(pos[3], uvs[3]));
 			// Increment cursor
-			cursor.x += text.kerning.x + font->kerning.x;
+			cursor.x += text.spacing.x + font->spacing.x;
 			chrRect.h++;
 		}
 	}
