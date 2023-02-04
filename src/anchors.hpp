@@ -122,6 +122,7 @@
 #include "collection/algebra.hpp"
 #include "collection/definitions.hpp"
 #include "collection/helper.hpp"
+#include "collection/conceptual.hpp"
 
 #ifdef _$_FLOAT_AS_DOUBLE
 #define float double

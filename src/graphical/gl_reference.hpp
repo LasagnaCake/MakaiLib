@@ -361,5 +361,14 @@ protected:
 	RawVertex origin[3];
 };
 
+template<class T>
+concept NotEmpty = Type::Different<T, Empty>;
+
+template<class T>
+concept PlaneType = Type::Derived<T, Plane> && NotEmpty<T>;
+
+template<class T>
+concept TrigonType = Type::Derived<T, Trigon> && NotEmpty<T>;
+
 #undef VERTEX_SET_POS
 #undef VERTEX_SET_NORM

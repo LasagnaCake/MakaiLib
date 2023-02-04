@@ -6,9 +6,10 @@
 #include <random>
 #include <limits>
 #include <chrono>
+#include "conceptual.hpp"
 
-#define ANYTYPE		template<typename T> T
-#define ANYTYPE_I	template<typename T> inline T
+#define ANYTYPE		template<Operatable T> T
+#define ANYTYPE_I	template<Operatable T> inline T
 
 #define $maxof(TYPE) (std::numeric_limits<TYPE>::max())
 
@@ -17,6 +18,14 @@
 #endif // nroot
 
 namespace Math {
+	/**
+	* An 'Operatable' type is defined as:
+	*	a)	A 'Mutable' type that can be operated on, with basic arithmetic
+			expressions (+, -, *, /), with another value of the same type.
+	*/
+	template <typename T>
+	concept Operatable = Type::Mutable<T> && Type::Arithmetic<T, T>;
+
 	/// Math Constants.
 	const auto sqrt2		= 1.4142135623730950488016887242;
 	const auto hsqrt2		= sqrt2 / 2;
@@ -252,9 +261,10 @@ namespace Math {
 		}
 
 		/// Returns a random double between the given values.
-		double real(double min, double max) {
+		template<Type::Real T>
+		T real(T min, T max) {
 			RandReal dist(min, max);
-			return dist(engine);
+			return (T)dist(engine);
 		}
 
 		/// Returns a random integer between 0 and maximum size_t.
@@ -263,7 +273,8 @@ namespace Math {
 		}
 
 		/// Returns a random integer between the given values.
-		ANYTYPE integer(T min, T max) {
+		template<Type::Integer T>
+		T integer(T min, T max) {
 			RandLong dist(min, max);
 			return (T)dist(engine);
 		}

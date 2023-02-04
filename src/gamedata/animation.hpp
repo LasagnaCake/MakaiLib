@@ -1,13 +1,17 @@
 namespace Animation {
-	template <typename T>
+	namespace {
+		using Tween::Tweenable, Tween::EaseFunc, Tween::ease, Tween::Tween;
+	}
+
+	template <Tweenable T>
 	struct Keyframe {
-		T		to;
-		size_t	delay;
-		size_t	duration;
-		$twn	EaseFunc easing = $twn ease.in.linear;
+		T			to;
+		size_t		delay;
+		size_t		duration;
+		EaseFunc	easing = ease.in.linear;
 	};
 
-	template <typename T>
+	template <Tweenable T>
 	struct Metadata {
 		size_t	index	= 1;
 		float	factor	= 0;
@@ -16,23 +20,23 @@ namespace Animation {
 		bool	done	= false;
 	};
 
-	template <typename T>
+	template <Tweenable T>
 	using KeyFrameList	= std::vector<Keyframe<T>>;
 
-	template <typename T>
+	template <Tweenable T>
 	struct Track {
 		T*				target = nullptr;
 		KeyFrameList<T>	keyframes;
 		bool			enabled = true;
 	};
 
-	template <typename T>
+	template <Tweenable T>
 	using	Animation	= std::map<size_t, Track<T>>;
 
-	template <typename T>
+	template <Tweenable T>
 	using	TrackData	= std::map<size_t, Metadata<T>>;
 
-	template <typename T>
+	template <Tweenable T>
 	struct AnimationPlayer: Entity {
 		DERIVED_CLASS(AnimationPlayer, Entity)
 

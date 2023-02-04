@@ -10,7 +10,7 @@ in vec2 warpUV;
 in vec3 fragLightColor;
 
 layout (location = 0) out vec4	FragColor;
-layout (location = 1) out float	DepthValue;
+//layout (location = 1) out float	DepthValue;
 
 uniform bool		textured = false;
 uniform sampler2D	texture2D;
@@ -120,7 +120,7 @@ void main(void) {
 
 	FragColor = color;
 
-	DepthValue = length(fragCoord3D);
+	//DepthValue = length(fragCoord3D);
 
 	//FragColor = vec4(fragColor.x, 1, 1.1-(fragDistance/50.0), 1) * albedo;
 }

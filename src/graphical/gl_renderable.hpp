@@ -24,7 +24,7 @@ public:
 	}
 
 	/// Creates a reference and binds it to this object.
-	template <$derived(Reference::Plane) T>
+	template <Reference::PlaneType T>
 	T* createReference() {
 		if (locked) throw std::runtime_error("Renderable object is locked!");
 		Triangle* tris[2] = {
@@ -61,7 +61,7 @@ public:
 		// return plane
 		return plane;
 	}
-	template <$derived(Reference::Trigon) T>
+	template <Reference::TrigonType T>
 	T* createReference() {
 		if (locked) throw std::runtime_error("Renderable object is locked!");
 		Triangle* tris[1] = {new Triangle()};
@@ -94,13 +94,13 @@ public:
 	}
 
 	/// Gets a reference bound to this object by index.
-	template <$derived(Reference::Plane) T>
+	template <Reference::PlaneType T>
 	inline T* getReference(size_t index) {
 		if (locked) throw std::runtime_error("Renderable object is locked!");
 		return (T*)references.plane[index];
 	}
 
-	template <$derived(Reference::Trigon) T>
+	template <Reference::TrigonType T>
 	inline T* getReference(size_t index) {
 		if (locked) throw std::runtime_error("Renderable object is locked!");
 		return (T*)references.trigon[index];
@@ -113,7 +113,7 @@ public:
 	* and the triangles associated to it.
 	* It also deletes the reference.
 	*/
-	template <$derived(Reference::Plane) T>
+	template <Reference::PlaneType T>
 	void removeReference(T* ref) {
 		if (locked) return;
 		auto tris = ref->getBoundTriangles();
@@ -128,7 +128,7 @@ public:
 		unbindReference<T>(ref);
 	}
 
-	template <$derived(Reference::Trigon) T>
+	template <Reference::TrigonType T>
 	void removeReference(T* ref) {
 		if (locked) return;
 		auto tris = ref->getBoundTriangles();
@@ -150,7 +150,7 @@ public:
 	* but keeps the triangles associated to it.
 	* It also deletes the reference.
 	*/
-	template <$derived(Reference::Plane) T>
+	template <Reference::PlaneType T>
 	void unbindReference(T* ref) {
 		if (locked) return;
 		auto& rp = references.plane;
@@ -165,7 +165,7 @@ public:
 		delete ref;
 	}
 
-	template <$derived(Reference::Trigon) T>
+	template <Reference::TrigonType T>
 	void unbindReference(T* ref) {
 		if (locked) return;
 		auto& rp = references.trigon;

@@ -4,6 +4,7 @@
 #include "event.hpp"
 #include "algebra.hpp"
 #include "vectorn.hpp"
+#include "conceptual.hpp"
 #include <vector>
 #include <functional>
 #include <string>
@@ -42,6 +43,15 @@ namespace Tween{
 			}
 		};
 	}
+
+	/**
+	* A 'Tweenable' type is defined as:
+	*	a)	An 'Operatable' type that can be constructed
+			from a single floating-point value.
+	*/
+	template <typename T>
+	concept Tweenable = Math::Operatable<T> && Type::Constructible<T, float>;
+
 	/// Yields all available non-manual tweens.
 	void yieldAllTweens(float delta = 1) {
 		// Loop through tweens and step them
@@ -251,7 +261,7 @@ namespace Tween{
 	*               *
 	*****************
 	*/
-	template <typename T = float>
+	template <Tweenable T = float>
 	class Tween {
 	public:
 		/// The tween's target variable.

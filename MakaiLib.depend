@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1675378318 source:d:\c(++) projects\_c++\game engine\makailib\makai.cpp
+1675457663 source:d:\c(++) projects\_c++\game engine\makailib\makai.cpp
 	"src/makai.hpp"
 	<winnt.h>
 	<winuser.h>
@@ -2867,7 +2867,7 @@
 1665256929 d:\c(++) projects\_c++\game engine\makailib\src\program.hpp
 	"program/gl_program.hpp"
 
-1674951777 d:\c(++) projects\_c++\game engine\makailib\src\anchors.hpp
+1675518903 d:\c(++) projects\_c++\game engine\makailib\src\anchors.hpp
 	<iostream>
 	<string>
 	<vector>
@@ -2907,6 +2907,7 @@
 	"collection/algebra.hpp"
 	"collection/definitions.hpp"
 	"collection/helper.hpp"
+	"collection/conceptual.hpp"
 	"collection/entity/entity.hpp"
 	"collection/vectorn.hpp"
 	"collection/cyclical.hpp"
@@ -2934,12 +2935,13 @@
 	<intrin.h>
 	<arm_neon.h>
 
-1674333486 d:\c(++) projects\_c++\game engine\makailib\src\collection\algebra.hpp
+1675529887 d:\c(++) projects\_c++\game engine\makailib\src\collection\algebra.hpp
 	<string>
 	<cmath>
 	<random>
 	<limits>
 	<chrono>
+	"conceptual.hpp"
 
 1661613724 d:\c(++) projects\_c++\game engine\makailib\src\collection\entity\entity.hpp
 	"core.hpp"
@@ -2978,7 +2980,7 @@
 	<vector>
 	"algebra.hpp"
 
-1674994920 d:\c(++) projects\_c++\game engine\makailib\src\collection\entity\collision.hpp
+1675515363 d:\c(++) projects\_c++\game engine\makailib\src\collection\entity\collision.hpp
 	"core.hpp"
 	"2d3d.hpp"
 	"../libs/cute_c2.h"
@@ -2991,10 +2993,11 @@
 	<stdexcept>
 	<type_traits>
 
-1674951692 d:\c(++) projects\_c++\game engine\makailib\src\collection\tween.hpp
+1675529969 d:\c(++) projects\_c++\game engine\makailib\src\collection\tween.hpp
 	"event.hpp"
 	"algebra.hpp"
 	"vectorn.hpp"
+	"conceptual.hpp"
 	<vector>
 	<functional>
 	<string>
@@ -3324,11 +3327,11 @@
 
 1675077406 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_framebuffer.hpp
 
-1675374301 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_reference.hpp
+1675517221 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_reference.hpp
 
 1673412616 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_texture.hpp
 
-1675083536 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_renderable.hpp
+1675515862 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_renderable.hpp
 
 1673500990 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_color.hpp
 	"../anchors.hpp"
@@ -3397,7 +3400,7 @@
 
 1675102098 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\structs.hpp
 
-1668986334 d:\c(++) projects\_c++\game engine\makailib\src\collection\helper.hpp
+1675518840 d:\c(++) projects\_c++\game engine\makailib\src\collection\helper.hpp
 	<vector>
 	"definitions.hpp"
 
@@ -3560,7 +3563,7 @@
 
 1675000600 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\saving.hpp
 
-1673626734 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\animation.hpp
+1675526152 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\animation.hpp
 
 1674909778 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_progressbar.hpp
 
@@ -4466,4 +4469,8 @@
 	<string.h>
 	<math.h>
 	<float.h>
+
+1675529620 d:\c(++) projects\_c++\game engine\makailib\src\collection\conceptual.hpp
+	<type_traits>
+	<concepts>
 

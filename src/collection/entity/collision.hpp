@@ -28,7 +28,7 @@ namespace CollisionData {
 	// Concepts, here I go!
 	struct Bounds2D {};
 	template<typename T>
-	concept CollisionType = std::derived_from<T, Bounds2D> && !std::same_as<T, Bounds2D>;
+	concept CollisionType = Type::Subclass<T, Bounds2D>;
 
 	/**
 	************************************
