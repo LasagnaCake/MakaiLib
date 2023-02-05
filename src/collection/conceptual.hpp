@@ -53,6 +53,9 @@ namespace Type {
 	template <typename T>
 	concept Null = std::is_null_pointer<T>::value;
 
+	template <typename T>
+	concept NonNull = !Null<T>;
+
 	template <typename A, typename B>
 	concept Equal = std::same_as<A, B>;
 
