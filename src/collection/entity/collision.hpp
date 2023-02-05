@@ -288,6 +288,7 @@ namespace CollisionData {
 	typedef AreaCollisionData<CircleBounds2D>	AreaCircleData;
 	typedef AreaCollisionData<BoxBounds2D>		AreaBoxData;
 	typedef AreaCollisionData<RayBounds2D>		AreaRayData;
+	typedef AreaCollisionData<LineBounds2D>		AreaLineData;
 
 	template <CollisionType A, CollisionType B>
 	bool isColliding(AreaCollisionData<A>& a, AreaCollisionData<B>& b) {
@@ -386,6 +387,7 @@ namespace EntityClass {
 	typedef AreaCollision2D<CircleBounds2D>	AreaCircle2D;
 	typedef AreaCollision2D<BoxBounds2D>	AreaBox2D;
 	typedef AreaCollision2D<RayBounds2D>	AreaRay2D;
+	typedef AreaCollision2D<LineBounds2D>	AreaLine2D;
 };
 
 #endif // COLLISION_2D_3D_OBJECT_H
