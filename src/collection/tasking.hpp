@@ -5,6 +5,7 @@
 #include <functional>
 #include <type_traits>
 #include "event.hpp"
+#include "conceptual.hpp"
 //#include "asynchronous.hpp"
 
 /// Task parameter definition macro (AVOID USING).
