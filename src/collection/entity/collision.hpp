@@ -259,8 +259,8 @@ namespace CollisionData {
 	}
 
 	template<CollisionType T>
-	inline bool withinBounds(LineBounds2D& a, T& b) {
-		return withinBounds(b, a);
+	inline bool withinBounds(LineBounds2D& a, T& b, c2Raycast* result = nullptr) {
+		return withinBounds(b, a, result);
 	}
 
 	// Clamping functions
