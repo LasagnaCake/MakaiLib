@@ -120,10 +120,10 @@ namespace Type {
 
 	/**
 	* A 'Mutable' type must not be:
-	*	1)	A reference,
-	*	2)	A pointer,
+	*	1)	A pointer (null or non-null),
+	*	2)	A reference,
 	*	3)	A constant,
-	*	4)	An array, or
+	*	4)	A primitive array, or
 	*	5)	Void
 	*/
 	template <typename T>
