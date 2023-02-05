@@ -119,9 +119,12 @@ namespace Type {
 	;
 
 	/**
-	* A 'Mutable' type is not:
-	*	1)	A form of reference, constant or array
-	*	2)	A null pointer, or void
+	* A 'Mutable' type must not be:
+	*	1)	A reference,
+	*	2)	A pointer,
+	*	3)	A constant,
+	*	4)	An array, or
+	*	5)	Void
 	*/
 	template <typename T>
 	concept Mutable = !(
