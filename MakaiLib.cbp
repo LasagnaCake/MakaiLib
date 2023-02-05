@@ -10,9 +10,9 @@
 		<Build>
 			<Target title="Debug Windows">
 				<Option platforms="Windows;" />
-				<Option output="bin/Release/Windows/program" prefix_auto="1" extension_auto="1" />
+				<Option output="bin/Debug/Windows/program" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="res" />
-				<Option object_output="bin/Release/Windows" />
+				<Option object_output="obj/Debug/Windows" />
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
@@ -25,6 +25,8 @@
 				<Linker>
 					<Add option="-pg -lgmon" />
 					<Add library="opengl32" />
+					<Add library="powrprof" />
+					<Add library="winmm" />
 				</Linker>
 			</Target>
 			<Target title="Release Windows">
@@ -35,12 +37,19 @@
 				<Option type="0" />
 				<Option compiler="gcc" />
 				<Compiler>
+					<Add option="-lwinpthreads" />
 					<Add option="-ftree-parallelize-loops=4" />
 					<Add option="-fopenmp" />
+					<Add option="-funswitch-loops" />
+					<Add option="-fpredictive-commoning" />
+					<Add option="-fgcse-after-reload" />
+					<Add option="-ftree-vectorize" />
 				</Compiler>
 				<Linker>
 					<Add option="-O1" />
 					<Add library="opengl32" />
+					<Add library="powrprof" />
+					<Add library="winmm" />
 				</Linker>
 			</Target>
 			<Target title="Debug Linux">
@@ -51,20 +60,17 @@
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
-					<Add option="-pg" />
-					<Add option="-g" />
-					<Add option="-fsanitize=leak" />
-					<Add option="-fno-omit-frame-pointer" />
-					<Add option="-D_DEBUG_OUTPUT_" />
+					<Add option="-ftree-parallelize-loops=4" />
+					<Add option="-fopenmp" />
 				</Compiler>
 				<Linker>
-					<Add option="-pg -lgmon" />
+					<Add option="-O1" />
 					<Add library="opengl32" />
 				</Linker>
 			</Target>
 			<Target title="Release Linux">
 				<Option platforms="Unix;" />
-				<Option output="bin/Debug/Linux/program" prefix_auto="1" extension_auto="1" />
+				<Option output="bin/Release/Linux/program" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="res" />
 				<Option object_output="obj/Release/Linux" />
 				<Option type="0" />
@@ -85,10 +91,6 @@
 			<Add option="-Wall" />
 			<Add option="-std=gnu++20" />
 			<Add option="-m64" />
-			<Add option="-funswitch-loops" />
-			<Add option="-fpredictive-commoning" />
-			<Add option="-fgcse-after-reload" />
-			<Add option="-ftree-vectorize" />
 			<Add option="-fcoroutines" />
 			<Add directory="lib" />
 			<Add directory="lib/SDL2-2.0.10/include" />
@@ -124,7 +126,6 @@
 			<Add library="lib/OpenGL/GLEW/lib/libglew32.dll.a" />
 			<Add library="lib/openal-soft-1.22.2/libs/Win64/libOpenAL32.dll.a" />
 			<Add library="opengl32" />
-			<Add library="winmm" />
 			<Add directory="lib" />
 			<Add directory="lib/SDL2-2.0.10/include" />
 			<Add directory="lib/OpenGL" />

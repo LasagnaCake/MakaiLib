@@ -28,7 +28,7 @@ namespace Tween{
 			_EaseFunc circ;
 			_EaseFunc bounce;
 			_EaseFunc back;
-			_EaseFunc operator[](string type) {
+			_EaseFunc& operator[](string type) {
 				CASE_FUNC(linear);
 				CASE_FUNC(sine);
 				CASE_FUNC(quad);
@@ -82,7 +82,7 @@ namespace Tween{
 	*/
 	struct Easing {
 		/// Ease IN functions
-		EaseType in {
+		const EaseType in {
 			// Linear
 			EASE_F(linear) {return c * t/d + b;},
 			// sine
@@ -122,7 +122,7 @@ namespace Tween{
 			}
 		};
 		/// Ease OUT functions
-		EaseType out {
+		const EaseType out {
 			// Linear
 			EASE_F(linear) {return c * t/d + b;},
 			// sine
@@ -161,7 +161,7 @@ namespace Tween{
 			}
 		};
 		/// Ease IN-OUT functions
-		EaseType inOut {
+		const EaseType inOut {
 			// Linear
 			EASE_F(linear) {return c * t/d + b;},
 			// sine
@@ -236,18 +236,21 @@ namespace Tween{
 			}
 		};
 		/// Ease OUT-IN functions
-		EaseType outIn {
+		const EaseType outIn {
 			// Linear
 			EASE_F(linear) {return c * t/d + b;},
 		};
 		/// List accessing
-		EaseType& operator[](string type) {
+		const EaseType& operator[](string type) {
 			CASE_FUNC(in);
 			CASE_FUNC(out);
 			CASE_FUNC(inOut);
 			CASE_FUNC(outIn);
 		}
-	} ease;
+	};
+
+	const Easing ease;
+
 	#undef $$EFUNC
 	#undef EASE_F
 	#undef PI_VALUE
