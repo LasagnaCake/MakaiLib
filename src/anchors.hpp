@@ -124,10 +124,6 @@
 #include "collection/helper.hpp"
 #include "collection/conceptual.hpp"
 
-#ifdef _$_FLOAT_AS_DOUBLE
-#define float double
-#endif // _$_FLOAT_AS_DOUBLE
-
 //#define sin glm::sin
 //#define cos glm::cos
 //#define tan glm::tan
@@ -140,10 +136,6 @@
 #include "collection/tasking.hpp"
 #include "collection/grouping.hpp"
 #include "collection/dictionary.hpp"
-
-#ifdef _$_FLOAT_AS_DOUBLE
-#undef float
-#endif // _$_FLOAT_AS_DOUBLE
 
 #include "fileloader.hpp"
 

@@ -39,6 +39,9 @@ namespace Type {
 	concept Pointer = std::is_pointer<T>::value;
 
 	template <typename T>
+	concept Function = std::is_function<T>::value;
+
+	template <typename T>
 	concept Constant = std::is_const<T>::value;
 
 	template <typename T>
@@ -122,22 +125,31 @@ namespace Type {
 	;
 
 	/**
-	* A 'Mutable' type must not be:
+	* A 'Safe' type must not be:
 	*	1)	A pointer (null or non-null),
 	*	2)	A reference,
-	*	3)	A constant,
-	*	4)	A primitive array, or
-	*	5)	Void
+	*	3)	A function, or
+	*	4)	Void
+	* Ergo, a 'raw value' type.
 	*/
 	template <typename T>
-	concept Mutable = !(
+	concept Safe = !(
 			Pointer<T>
 		||	Reference<T>
-		||	Constant<T>
-		||	Array<T>
+		||  Function<T>
 		||	Void<T>
 		||	Null<T>
 	);
+
+	template <typename T>
+	concept SafeArray = Array<T> && Safe<T>;
+
+	/**
+	* A 'Mutable' is a 'Safe' type that isn't an array
+	* or constant.
+	*/
+	template <typename T>
+	concept Mutable = Safe<T> && !(Array<T> || Constant<T>);
 }
 
 #endif // CONCEPTUAL_TYPES_H
