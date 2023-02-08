@@ -268,22 +268,23 @@ struct PlayerEntity2D: AreaCircle2D {
 		// Do graze action
 		CircleBounds2D grazeShape = getGrazeBounds();
 		if(enemyBulletManager) {
-			BulletList blist = enemyBulletManager->getInArea(grazeShape);
-			if (blist.size()) {
-				size_t grazeCount = 0;
-				for $eachif(b, blist, !b->grazed) {
-					b->grazed = true;
-					grazeCount++;
+			BulletList blist;
+			enemyBulletManager->forEachInArea(
+				grazeShape,
+				[&] (Bullet& b) {
+					if(!b.grazed) {
+						b.grazed = true;
+						blist.push_back(&b);
+					}
 				}
-				if (grazeCount)
-					onGraze(grazeCount, blist);
-			}
+			);
+			if (!blist.empty())
+				onGraze(blist.size(), blist);
 		}
 		if(enemyLineLaserManager) {
 			LineLaserList lllist = enemyLineLaserManager->getInArea(grazeShape);
-			if (lllist.size()) {
+			if (!lllist.empty())
 				onGraze(lllist.size(), lllist);
-			}
 		}
 		auto elist = $ecl groups.getGroup($layer(ENEMY));
 		if (elist.size()) {

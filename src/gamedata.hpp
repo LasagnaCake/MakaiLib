@@ -31,6 +31,8 @@ namespace GameData {
 		$vmt Transform2D,
 		$vmt Transform3D,
 		$mat WorldMaterial,
+		$cdt AreaCollisionData,
+		$cdt CollisionType,
 		std::string;
 
 		using namespace Vector;
@@ -50,6 +52,8 @@ namespace GameData {
 		}
 		game->addChild(e);
 	}
+
+	template <typename T> using Callback = std::function<void(T&)>;
 
 	#include "gamedata/dialogue.hpp"
 	#include "gamedata/saving.hpp"

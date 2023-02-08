@@ -243,22 +243,8 @@ public:
 		created = true;
 	}
 
-	CollectibleList getInArea($cdt CircleBounds2D target) {
-		CollectibleList res;
-		for $seachif(item, items, ITEM_COUNT, !item.isFree() && item.params.collidable) {
-			if (
-				$cdt withinBounds(
-					item.params.hitbox,
-					target
-				)
-			) {
-				res.push_back(&item);
-			}
-		} $endseach
-		return res;
-	}
-
-	CollectibleList getInArea($cdt BoxBounds2D target) {
+	template <CollisionType T = CircleBounds2D>
+	CollectibleList getInArea(T target) {
 		CollectibleList res;
 		for $seachif(item, items, ITEM_COUNT, !item.isFree() && item.params.collidable) {
 			if (
@@ -275,6 +261,27 @@ public:
 		CollectibleList res;
 		for $seachif(item, items, ITEM_COUNT, !item.isFree()) res.push_back(&item); $endseach
 		return res;
+	}
+
+	void forEach(Callback<Collectible> func) {
+		for $ssrange(i, 0, ITEM_COUNT)
+			func(items[i]);
+	}
+
+	void forEachFree(Callback<Collectible> func) {
+		for $ssrange(i, 0, ITEM_COUNT)
+			if (items[i].isFree())
+				func(items[i]);
+	}
+
+	template <CollisionType T>
+	void forEachInArea(T area, Callback<Collectible> func) {
+		for $ssrange(i, 0, ITEM_COUNT)
+			if (
+				items[i].isFree()
+			&&	items[i].params.collidable
+			&&	$cdt withinBounds(items[i].params.hitbox, area)
+			) func(items[i]);
 	}
 
 	Collectible* getLastCollectible() {

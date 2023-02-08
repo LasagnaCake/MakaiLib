@@ -332,7 +332,8 @@ public:
 		created = true;
 	}
 
-	BulletList getInArea($cdt CircleBounds2D target) {
+	template <CollisionType T = CircleBounds2D>
+	BulletList getInArea(T target) {
 		BulletList res;
 		for $seachif(b, bullets, BULLET_COUNT, !b.isFree() && b.params.collidable) {
 			if (
@@ -347,23 +348,31 @@ public:
 		return res;
 	}
 
-	BulletList getInArea($cdt BoxBounds2D target) {
-		BulletList res;
-		for $seachif(b, bullets, BULLET_COUNT, !b.isFree() && b.params.collidable) {
-			if (
-				$cdt withinBounds(
-					b.params.hitbox,
-					target
-				)
-			) res.push_back(&b);
-		} $endseach
-		return res;
-	}
-
 	BulletList getActive() {
 		BulletList res;
 		for $seachif(b, bullets, BULLET_COUNT, !b.isFree()) res.push_back(&b); $endseach
 		return res;
+	}
+
+	void forEach(Callback<Bullet> func) {
+		for $ssrange(i, 0, BULLET_COUNT)
+			func(bullets[i]);
+	}
+
+	void forEachFree(Callback<Bullet> func) {
+		for $ssrange(i, 0, BULLET_COUNT)
+			if (bullets[i].isFree())
+				func(bullets[i]);
+	}
+
+	template <CollisionType T>
+	void forEachInArea(T area, Callback<Bullet> func) {
+		for $ssrange(i, 0, BULLET_COUNT)
+			if (
+				bullets[i].isFree()
+			&&	bullets[i].params.collidable
+			&&	$cdt withinBounds(bullets[i].params.hitbox, area)
+			) func(bullets[i]);
 	}
 
 	Bullet* getLastBullet() {

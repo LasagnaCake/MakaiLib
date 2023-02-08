@@ -228,16 +228,8 @@ public:
 		created = true;
 	}
 
-	LineLaserList getInArea($cdt CircleBounds2D target) {
-		LineLaserList res;
-		for $seachif(l, lasers, LASER_COUNT, !l.isFree() && l.params.collidable) {
-			if (l.colliding(target))
-				res.push_back(&l);
-		} $endseach
-		return res;
-	}
-
-	LineLaserList getInArea($cdt BoxBounds2D target) {
+	template <CollisionType T = CircleBounds2D>
+	LineLaserList getInArea(T target) {
 		LineLaserList res;
 		for $seachif(l, lasers, LASER_COUNT, !l.isFree() && l.params.collidable) {
 			if (l.colliding(target))
@@ -250,6 +242,27 @@ public:
 		LineLaserList res;
 		for $seachif(l, lasers, LASER_COUNT, !l.isFree()) res.push_back(&l); $endseach
 		return res;
+	}
+
+	void forEach(Callback<LineLaser> func) {
+		for $ssrange(i, 0, LASER_COUNT)
+			func(lasers[i]);
+	}
+
+	void forEachFree(Callback<LineLaser> func) {
+		for $ssrange(i, 0, LASER_COUNT)
+			if (lasers[i].isFree())
+				func(lasers[i]);
+	}
+
+	template <CollisionType T>
+	void forEachInArea(T area, Callback<LineLaser> func) {
+		for $ssrange(i, 0, LASER_COUNT)
+			if (
+				lasers[i].isFree()
+			&&	lasers[i].params.collidable
+			&&	$cdt withinBounds(lasers[i].params.hitbox, area)
+			) func(lasers[i]);
 	}
 
 	LineLaser* getLastLineLaser() {
