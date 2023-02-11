@@ -11,8 +11,8 @@
 #define RADIAL_BAR_RESOLUTION	12
 //#define ENEMY_BULLET_COUNT		256
 //*
-#define ENEMY_BULLET_COUNT		1024
-#define ENEMY_LASER_COUNT		32
+//#define ENEMY_BULLET_COUNT		1024
+//#define ENEMY_LASER_COUNT		32
 //*/
 
 #include "src/makai.hpp"
