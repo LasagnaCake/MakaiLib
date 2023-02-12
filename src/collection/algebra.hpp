@@ -27,20 +27,20 @@ namespace Math {
 	concept Operatable = Type::Mutable<T> && Type::Arithmetic<T, T>;
 
 	/// Math Constants.
-	constexpr const double sqrt2		= 1.4142135623730950488016887242;
-	constexpr const double hsqrt2		= sqrt2 / 2;
-	constexpr const double ln2			= 0.6931471805599453094172321215;
-	constexpr const double pi			= 3.1415926535897932384626433833;
-	constexpr const double hpi			= pi / 2;
-	constexpr const double tau			= 6.2831853071795864769252867666;
-	constexpr const double euler		= 2.7182818284590452353602874714;
-	constexpr const double degrad		= 180.0 / pi;
-	constexpr const double maribel		= euler - (sqrt2 - 1.0) * 1.2;
-	constexpr const size_t maxSizeT		= $maxof(size_t);
-	constexpr const double infinity		= std::numeric_limits<double>::infinity();
-	constexpr const float infinityF		= std::numeric_limits<float>::infinity();
-	constexpr const double epsilon		= 1.0 / infinity;
-	constexpr const float epsilonF		= 1.0 / infinityF;
+	constexpr const double	sqrt2		= 1.4142135623730950488016887242;
+	constexpr const double	hsqrt2		= sqrt2 / 2;
+	constexpr const double	ln2			= 0.6931471805599453094172321215;
+	constexpr const double	pi			= 3.1415926535897932384626433833;
+	constexpr const double	hpi			= pi / 2;
+	constexpr const double	tau			= 6.2831853071795864769252867666;
+	constexpr const double	euler		= 2.7182818284590452353602874714;
+	constexpr const double	degrad		= 180.0 / pi;
+	constexpr const double	maribel		= euler - (sqrt2 - 1.0) * 1.2;
+	constexpr const size_t	maxSizeT	= $maxof(size_t);
+	constexpr const double	infinity	= std::numeric_limits<double>::infinity();
+	constexpr const float	infinityF	= std::numeric_limits<float>::infinity();
+	constexpr const double	epsilon		= 1.0 / infinity;
+	constexpr const float	epsilonF	= 1.0 / infinityF;
 
 	#ifndef SQRT2
 	#define SQRT2 $mth sqrt2
