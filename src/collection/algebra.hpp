@@ -8,8 +8,8 @@
 #include <chrono>
 #include "conceptual.hpp"
 
-#define ANYTYPE		template<Operatable T> T
-#define ANYTYPE_I	template<Operatable T> inline T
+#define ANYTYPE		template<Operatable T> constexpr T
+#define ANYTYPE_I	template<Operatable T> constexpr inline T
 
 #define $maxof(TYPE) (std::numeric_limits<TYPE>::max())
 
@@ -27,20 +27,20 @@ namespace Math {
 	concept Operatable = Type::Mutable<T> && Type::Arithmetic<T, T>;
 
 	/// Math Constants.
-	const auto sqrt2		= 1.4142135623730950488016887242;
-	const auto hsqrt2		= sqrt2 / 2;
-	const auto ln2			= 0.6931471805599453094172321215;
-	const auto pi			= 3.1415926535897932384626433833;
-	const auto hpi			= pi / 2;
-	const auto tau			= 6.2831853071795864769252867666;
-	const auto euler		= 2.7182818284590452353602874714;
-	const auto degrad		= 180.0 / pi;
-	const auto maribel		= euler - (sqrt2 - 1.0) * 1.2;
-	const size_t maxSizeT	= $maxof(size_t);
-	const double infinity	= maxSizeT;
-	const float infinityF	= $maxof(unsigned long);
-	const double epsilon	= 1.0 / infinity;
-	const float epsilonF	= 1.0 / infinity;
+	constexpr const double sqrt2		= 1.4142135623730950488016887242;
+	constexpr const double hsqrt2		= sqrt2 / 2;
+	constexpr const double ln2			= 0.6931471805599453094172321215;
+	constexpr const double pi			= 3.1415926535897932384626433833;
+	constexpr const double hpi			= pi / 2;
+	constexpr const double tau			= 6.2831853071795864769252867666;
+	constexpr const double euler		= 2.7182818284590452353602874714;
+	constexpr const double degrad		= 180.0 / pi;
+	constexpr const double maribel		= euler - (sqrt2 - 1.0) * 1.2;
+	constexpr const size_t maxSizeT		= $maxof(size_t);
+	constexpr const double infinity		= std::numeric_limits<double>::infinity();
+	constexpr const float infinityF		= std::numeric_limits<float>::infinity();
+	constexpr const double epsilon		= 1.0 / infinity;
+	constexpr const float epsilonF		= 1.0 / infinityF;
 
 	#ifndef SQRT2
 	#define SQRT2 $mth sqrt2
@@ -180,6 +180,10 @@ namespace Math {
 		return (T)nroot(val, fabs(val));
 	}
 
+	ANYTYPE_I sign(T val) {
+		return (val < 0 ? -1 : (val > 0 ? +1 : 0));
+	}
+
 	inline size_t digitCount(size_t number) {
 		return std::to_string(number).size();
 	}
@@ -193,7 +197,7 @@ namespace Math {
 	* Returns the polar radius of a point along the edges of a N-sided
 	* polygon of "radius" R (the shape's circumradius) at a given angle.
 	*/
-	float polarPolyPoint(
+	constexpr float polarPolyPoint(
 		float rotation,
 		float angle,
 		float sides,
@@ -210,7 +214,7 @@ namespace Math {
 	}
 
 	/// Reflects a given angle in relation to a surface.
-	float reflection(float pointAngle, float surfaceAngle) {
+	constexpr float reflection(float pointAngle, float surfaceAngle) {
 		return pi + (2.0 * pointAngle) - surfaceAngle;
 	}
 
@@ -222,17 +226,32 @@ namespace Math {
 		return (temperature / (5.0/9.0)) + 32.0;
 	}
 
-	template<typename T>
-	inline std::function<T(T)> getInterpolationFunction(T from, T to) {
+	template<Operatable T>
+	constexpr inline std::function<T(T)> getInterpolationFunction(T from, T to) {
 		return [=](T by) -> T {return (T)lerp(from, to, by);};
 	}
 
-	float dbToVolume(float db) {
+	constexpr float dbToVolume(float db) {
 		return powf(10.0f, 0.5f * db);
 	}
 
-	float volumeToDb(float volume) {
+	constexpr float volumeToDb(float volume) {
 		return 20.0f * log10f(volume);
+	}
+
+	constexpr inline size_t uipow2(size_t power) {
+		return 0x1 << power;
+	}
+
+	template <Operatable T>
+	constexpr std::pair<int, T> frexp(T val) {
+		int pow2 = 0;
+		T rem = std::frexp((float)val, &pow2);
+		return std::pair<int, T>{pow2, rem};
+	}
+
+	ANYTYPE_I ldexp(T val, int exp) {
+		return (T)::ldexp((double)val, exp);
 	}
 
 	namespace Random {

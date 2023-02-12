@@ -123,11 +123,6 @@
 #include "collection/definitions.hpp"
 #include "collection/helper.hpp"
 #include "collection/conceptual.hpp"
-
-//#define sin glm::sin
-//#define cos glm::cos
-//#define tan glm::tan
-
 #include "collection/entity/entity.hpp"
 #include "collection/vectorn.hpp"
 #include "collection/cyclical.hpp"
