@@ -8,8 +8,10 @@
 #include <chrono>
 #include "conceptual.hpp"
 
-#define ANYTYPE		template<Operatable T> constexpr T
-#define ANYTYPE_I	template<Operatable T> constexpr inline T
+#define ANYTYPE			template<Operatable T> T
+#define ANYTYPE_I		template<Operatable T> inline T
+#define CONST_ANYTYPE	template<Operatable T> constexpr T
+#define CONST_ANYTYPE_I	template<Operatable T> constexpr inline T
 
 #define $maxof(TYPE) (std::numeric_limits<TYPE>::max())
 
@@ -78,109 +80,109 @@ namespace Math {
 	#define MARIBEL $mth maribel
 	#endif // DEGRAD
 
-	ANYTYPE_I min(T a, T b) {
+	CONST_ANYTYPE_I min(T a, T b) {
 		return ((a < b) ? a : b);
 	}
 
-	ANYTYPE_I max(T a, T b) {
+	CONST_ANYTYPE_I max(T a, T b) {
 		return ((a > b) ? a : b);
 	}
 
-	ANYTYPE_I clamp(T a, T min, T max) {
+	CONST_ANYTYPE_I clamp(T a, T min, T max) {
 		return ((a < min) ? min : ((a > max) ? max : a));
 	}
 
-	ANYTYPE_I radians(T deg) {
+	CONST_ANYTYPE_I radians(T deg) {
 		return (T)(deg / degrad);
 	}
 
-	ANYTYPE_I degrees(T rad) {
+	CONST_ANYTYPE_I degrees(T rad) {
 		return (T)(rad * degrad);
 	}
 
-	ANYTYPE_I linearToRadian(T val) {
+	CONST_ANYTYPE_I linearToRadian(T val) {
 		return (T)(val * tau);
 	}
 
-	ANYTYPE_I radianToLinear(T val) {
+	CONST_ANYTYPE_I radianToLinear(T val) {
 		return (T)(val / tau);
 	}
 
-	ANYTYPE_I linearToDegree(T val) {
+	CONST_ANYTYPE_I linearToDegree(T val) {
 		return (T)(val * 360.0);
 	}
 
-	ANYTYPE_I degreeToLinear(T val) {
+	CONST_ANYTYPE_I degreeToLinear(T val) {
 		return (T)(val / 360.0);
 	}
 
-	ANYTYPE_I lerp(T from, T to, T by) {
+	CONST_ANYTYPE_I lerp(T from, T to, T by) {
 		return (T)(from + by * (to - from));
 	}
 
-	ANYTYPE angleLerp(T from, T to, T by) {
+	CONST_ANYTYPE angleLerp(T from, T to, T by) {
 		T dist	= fmod(to - from, tau);
 		dist	= fmod(2.0 * dist, tau) - dist;
 		return (T)(from + dist * by);
 	}
 
-	ANYTYPE_I step(T val, T step) {
+	CONST_ANYTYPE_I step(T val, T step) {
 		if (step != 0)
 			return (T)(floor(val / step + 0.5) * step);
 		return val;
 	}
 
-	ANYTYPE floor(T val, int decimals = 0) {
+	CONST_ANYTYPE floor(T val, int decimals = 0) {
 		// Get rounding factor
 		T zeros = pow(10, decimals);
 		// Floor it
 		return (T)(::floor(val * zeros) / zeros);
 	}
 
-	ANYTYPE ceil(T val, int decimals = 0) {
+	CONST_ANYTYPE ceil(T val, int decimals = 0) {
 		// Get rounding factor
 		T zeros = pow(10, decimals);
 		// Ceil it
 		return (T)(::ceil(val * zeros) / zeros);
 	}
 
-	ANYTYPE_I round(T val) {
+	CONST_ANYTYPE_I round(T val) {
 		// Add 1/2 & floor it
 		return (T)(::floor(val + 0.5));
 	}
 
-	ANYTYPE round(T val, int decimals = 0) {
+	CONST_ANYTYPE round(T val, int decimals = 0) {
 		// Get rounding factor
 		T zeros = pow(10, decimals);
 		// Add 1/2 & floor it
 		return (T)(::floor((val + 0.5) * zeros) / zeros);
 	}
 
-	ANYTYPE_I fmult(T val, T mult) {
+	CONST_ANYTYPE_I fmult(T val, T mult) {
 		return ::floor(val / (double)mult) * mult;
 	}
 
-	ANYTYPE_I cmult(T val, T mult) {
+	CONST_ANYTYPE_I cmult(T val, T mult) {
 		return ::ceil(val / (double)mult) * mult;
 	}
 
-	ANYTYPE_I wmax(T val, T max) {
+	CONST_ANYTYPE_I wmax(T val, T max) {
 		return val - fmult(val, max);
 	}
 
-	ANYTYPE_I wmin(T val, T min) {
+	CONST_ANYTYPE_I wmin(T val, T min) {
 		return val + cmult(val, min);
 	}
 
-	ANYTYPE_I wrap(T val, T min, T max) {
+	CONST_ANYTYPE_I wrap(T val, T min, T max) {
 		return wmax(wmin(val, max), min);
 	}
 
-	ANYTYPE_I nrtn(T val) {
+	CONST_ANYTYPE_I nrtn(T val) {
 		return (T)nroot(val, fabs(val));
 	}
 
-	ANYTYPE_I sign(T val) {
+	CONST_ANYTYPE_I sign(T val) {
 		return (val < 0 ? -1 : (val > 0 ? +1 : 0));
 	}
 
@@ -218,11 +220,11 @@ namespace Math {
 		return pi + (2.0 * pointAngle) - surfaceAngle;
 	}
 
-	ANYTYPE_I farenheitToCelcius(T temperature) {
+	CONST_ANYTYPE_I farenheitToCelcius(T temperature) {
 		return (temperature - 32.0) * (5.0/9.0);
 	}
 
-	ANYTYPE_I celciusToFarenheit(T temperature) {
+	CONST_ANYTYPE_I celciusToFarenheit(T temperature) {
 		return (temperature / (5.0/9.0)) + 32.0;
 	}
 
@@ -250,7 +252,7 @@ namespace Math {
 		return std::pair<int, T>{pow2, rem};
 	}
 
-	ANYTYPE_I ldexp(T val, int exp) {
+	CONST_ANYTYPE_I ldexp(T val, int exp) {
 		return (T)::ldexp((double)val, exp);
 	}
 
@@ -317,6 +319,8 @@ namespace Math {
 #define $mth Math::
 #define $rng Math::Random::
 
+#undef CONST_ANYTYPE_I
+#undef CONST_ANYTYPE
 #undef ANYTYPE_I
 #undef ANYTYPE
 
