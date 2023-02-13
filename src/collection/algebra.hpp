@@ -241,8 +241,14 @@ namespace Math {
 		return 20.0f * log10f(volume);
 	}
 
-	constexpr inline size_t uipow2(size_t power) {
-		return 0x1 << power;
+	template<Type::Integer T = int>
+	constexpr inline size_t uipow2(T val, size_t power) {
+		return val << power;
+	}
+
+	template<Type::Integer T = int>
+	constexpr inline bool bit(T val, size_t bit) {
+		return (val & (0x1 << bit));
 	}
 
 	template <Operatable T>
