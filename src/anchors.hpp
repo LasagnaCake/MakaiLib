@@ -44,6 +44,8 @@
 
 #include "redefines.hpp"
 
+#include <cstdint>
+
 /*
 ***************************
 *                         *
@@ -119,6 +121,15 @@
 ***************************
 */
 
+#if INTPTR_MAX == INT64_MAX
+#define size_t uint64_t
+#elif INTPTR_MAX == INT32_MAX
+#define size_t uint32_t
+#else
+#error "This engine was designed for at least 32 bit processors."
+#endif
+
+#include "collection/types.hpp"
 #include "collection/algebra.hpp"
 #include "collection/definitions.hpp"
 #include "collection/helper.hpp"
