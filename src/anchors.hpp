@@ -130,10 +130,10 @@
 #endif
 
 #include "collection/types.hpp"
+#include "collection/conceptual.hpp"
 #include "collection/algebra.hpp"
 #include "collection/definitions.hpp"
 #include "collection/helper.hpp"
-#include "collection/conceptual.hpp"
 #include "collection/entity/entity.hpp"
 #include "collection/vectorn.hpp"
 #include "collection/cyclical.hpp"
