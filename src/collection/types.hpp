@@ -49,6 +49,9 @@ typedef uint16	uint;
 typedef uint32	ulong;
 typedef uint64	ullong;
 
+typedef int8	schar;
 typedef int64	llong;
+
+typedef wchar_t	wchar;
 
 #endif // EXTENDED_TYPES_H
