@@ -119,7 +119,7 @@ public:
 					$twn ease.out.linear,
 					-20,
 					20,
-					0//.01
+					0.01
 				};
 				b->params.rot = {
 					$twn ease.out.elastic,
@@ -170,7 +170,7 @@ public:
 		//l->params.active = true;
 		l->params.discardable = false;
 		l->reset();
-		bulletSpawner.stop();
+		//bulletSpawner.stop();
 		DANMAKU_IM -> createCollectible(CollectibleData(), 5, lPos, 3, $vec2(0.5));
 		world3D.farFog = {true, 20, 10, $vec4(0, 0, .2, 1)};
 		world3D.ambient.color = Vector3(1,1,1);
