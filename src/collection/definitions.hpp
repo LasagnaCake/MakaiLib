@@ -1,6 +1,8 @@
 #ifndef EXTRA_DEFINITION_MACROS_H
 #define EXTRA_DEFINITION_MACROS_H
 
+#include "conceptual.hpp"
+
 #define $func(args...)	[&](args) -> void
 
 #define $addenum(NAME, STEP) \
@@ -24,11 +26,6 @@
 
 #define $range(I, BEGIN, END, STEP) (auto I = (BEGIN); I < (END); I += (STEP))
 #define $ssrange(I, BEGIN, END) $range(I, BEGIN, END, $iltf(BEGIN, END, 1))
-
-#define $enableif(COND)			std::enable_if<COND>::type
-
-#define $derived(BASE) std::derived_from<BASE>
-#define $numeric(TYPE) std::enable_if<std::is_arithmetic<TYPE>::value, TYPE>::type
 
 #define $getspace(SOURCE, NAME) namespace NAME { using namespace SOURCE :: NAME; }
 
