@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1676467311 source:d:\c(++) projects\_c++\game engine\makailib\makai.cpp
+1676476904 source:d:\c(++) projects\_c++\game engine\makailib\makai.cpp
 	"src/makai.hpp"
 	<winnt.h>
 	<winuser.h>
@@ -2950,7 +2950,7 @@
 	"2d3d.hpp"
 	"collision.hpp"
 
-1676473348 d:\c(++) projects\_c++\game engine\makailib\src\collection\entity\core.hpp
+1676477228 d:\c(++) projects\_c++\game engine\makailib\src\collection\entity\core.hpp
 	<vector>
 	<memory>
 	<string>

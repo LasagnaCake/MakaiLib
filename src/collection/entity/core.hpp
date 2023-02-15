@@ -79,7 +79,7 @@ namespace EntityClass {
 	concept EntityType = Type::Derived<T, Entity>;
 
 	/// The root object.
-	Entity* $_ROOT;
+	Entity* $_ROOT = nullptr;
 
 	template <EntityType T>
 	T* create(string name = "Entity", bool uniqueEntity = true) {
