@@ -109,8 +109,8 @@ public:
 	DERIVED_CONSTRUCTOR(BulletManager, Entity, {
 		addToGame(this, "DanmakuGame");
 		mesh.setRenderLayer(ACTOR_LAYER);
-		$ecl groups.addEntity(this, ACTOR_LAYER);
-		$ecl collisionLayers.addEntity(this, COLLI_LAYER);
+		addToGroup(ACTOR_LAYER);
+		$ecl collisionLayers.addObject(this, COLLI_LAYER);
 		mesh.material.shaded = false;
 	})
 
@@ -122,7 +122,6 @@ public:
 	void onDelete() override {
 		//delete &mesh;
 		$debug("\nDeleting bullet manager...");
-		$ecl groups.removeFromAll(this);
 		delete[] bullets;
 	}
 

@@ -137,8 +137,8 @@ public:
 	DERIVED_CONSTRUCTOR(LineLaserManager, Entity, {
 		addToGame(this, "DanmakuGame");
 		mesh.setRenderLayer(ACTOR_LAYER);
-		$ecl groups.addEntity(this, ACTOR_LAYER);
-		$ecl collisionLayers.addEntity(this, COLLI_LAYER);
+		addToGroup(ACTOR_LAYER);
+		$ecl collisionLayers.addObject(this, COLLI_LAYER);
 		mesh.material.shaded = false;
 	})
 
@@ -147,7 +147,6 @@ public:
 	void onDelete() override {
 		//delete &mesh;
 		$debug("\nDeleting laser manager...");
-		$ecl groups.removeFromAll(this);
 		delete[] lasers;
 	}
 

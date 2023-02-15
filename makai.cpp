@@ -11,7 +11,7 @@
 #define RADIAL_BAR_RESOLUTION	12
 //#define ENEMY_BULLET_COUNT		256
 //*
-//#define ENEMY_BULLET_COUNT		1024
+#define ENEMY_BULLET_COUNT		1024
 //#define ENEMY_LASER_COUNT		32
 //*/
 
@@ -48,7 +48,7 @@ public:
 			"shaders/framebuffer/compose.slf",
 			"shaders/base/base.slf"
 		) {
-
+		$debug(EntityClass::$_ROOT != nullptr);
 	}
 
 	$evt Timer bulletSpawner = $evt Timer(5, true);
@@ -73,6 +73,7 @@ public:
 		// maxFrameRate = 60;
 		// maxFrameRate = 20;
 		// Do parent task
+		$debug(EntityClass::$_ROOT != nullptr);
 		DanmakuApp::onOpen();
 		// Create background
 		tubeRend = $rdt loadObjectFromBinaryFile("stages/test.bin");

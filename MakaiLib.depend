@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1676392324 source:d:\c(++) projects\_c++\game engine\makailib\makai.cpp
+1676467311 source:d:\c(++) projects\_c++\game engine\makailib\makai.cpp
 	"src/makai.hpp"
 	<winnt.h>
 	<winuser.h>
@@ -2950,7 +2950,7 @@
 	"2d3d.hpp"
 	"collision.hpp"
 
-1673302048 d:\c(++) projects\_c++\game engine\makailib\src\collection\entity\core.hpp
+1676473348 d:\c(++) projects\_c++\game engine\makailib\src\collection\entity\core.hpp
 	<vector>
 	<memory>
 	<string>
@@ -2961,6 +2961,8 @@
 	<map>
 	"../tasking.hpp"
 	"../event.hpp"
+	"../grouping.hpp"
+	"../conceptual.hpp"
 	"../grouping.hpp"
 
 1675567345 d:\c(++) projects\_c++\game engine\makailib\src\collection\tasking.hpp
@@ -2984,7 +2986,7 @@
 	<vector>
 	"algebra.hpp"
 
-1675567192 d:\c(++) projects\_c++\game engine\makailib\src\collection\entity\collision.hpp
+1676466302 d:\c(++) projects\_c++\game engine\makailib\src\collection\entity\collision.hpp
 	"core.hpp"
 	"2d3d.hpp"
 	"../libs/cute_c2.h"
@@ -3050,13 +3052,13 @@
 	<algorithm>
 	<regex>
 
-1676225195 d:\c(++) projects\_c++\game engine\makailib\src\program\gl_program.hpp
+1676468337 d:\c(++) projects\_c++\game engine\makailib\src\program\gl_program.hpp
 	"../anchors.hpp"
 	"../graphical.hpp"
 	"../audio.hpp"
 	<winuser.h>
 
-1668986448 d:\c(++) projects\_c++\game engine\makailib\src\collection\grouping.hpp
+1676465773 d:\c(++) projects\_c++\game engine\makailib\src\collection\grouping.hpp
 	<unordered_map>
 	<map>
 	<vector>
@@ -3340,7 +3342,7 @@
 1673500990 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_color.hpp
 	"../anchors.hpp"
 
-1675877377 d:\c(++) projects\_c++\game engine\makailib\src\gamedata.hpp
+1676467210 d:\c(++) projects\_c++\game engine\makailib\src\gamedata.hpp
 	"anchors.hpp"
 	"graphical.hpp"
 	"program.hpp"
@@ -3360,9 +3362,9 @@
 	"gamedata/danmaku/stage.hpp"
 	"gamedata/danmaku/program.hpp"
 
-1675877456 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\bullet.hpp
+1676466487 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\bullet.hpp
 
-1675877488 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\laser.hpp
+1676466476 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\laser.hpp
 
 1672952429 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\spellcard.hpp
 
@@ -3387,7 +3389,7 @@
 1535531570 d:\c(++) projects\_c++\game engine\makailib\lib\opengl\glm\gtx\compatibility.inl
 	<limits>
 
-1675877576 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\player.hpp
+1676466377 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\player.hpp
 
 1674818365 d:\c(++) projects\_c++\game engine\makailib\src\makai.hpp
 	"anchors.hpp"
@@ -3427,13 +3429,13 @@
 
 1675262772 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\program.hpp
 
-1674929877 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\enemy.hpp
+1676466666 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\enemy.hpp
 
 1674818316 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\boss.hpp
 
 1672521486 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\stage.hpp
 
-1675877501 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\item.hpp
+1676466502 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\item.hpp
 
 1660930201 d:\c(++) projects\_c++\game engine\makailib\lib\sdl2-2.0.10\x86_64-w64-mingw32\include\sdl2\sdl_mixer.h
 	"SDL_stdinc.h"
@@ -3446,7 +3448,7 @@
 
 1675104425 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\dialogue.hpp
 
-1668985846 d:\c(++) projects\_c++\game engine\makailib\src\redefines.hpp
+1676408672 d:\c(++) projects\_c++\game engine\makailib\src\redefines.hpp
 
 1669129184 d:\c(++) projects\_c++\game engine\makailib\src\collection\dictionary.hpp
 	<unordered_map>

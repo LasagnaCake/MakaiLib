@@ -13,6 +13,8 @@
 #include "../tasking.hpp"
 #include "../event.hpp"
 #include "../grouping.hpp"
+#include "../conceptual.hpp"
+#include "../grouping.hpp"
 
 #ifndef _$_ENTITY_ROOT_NAME
 /// Default entity root name (MUST NOT CONTAIN '/')
@@ -62,14 +64,37 @@ namespace EntityClass {
 
 	/// Deletes all queued objects.
 	void destroyQueued() {
-		while (!destroyQueue.empty()) {
-			(*destroyQueue.back())();
-			destroyQueue.pop_back();
+		for (auto queued : destroyQueue) {
+			(*queued)();
 		}
+		destroyQueue.clear();
 	}
 
 	/// The root object's name.
 	const string $_ROOT_NAME = _$_ENTITY_ROOT_NAME;
+
+	class Entity;
+
+	template <typename T>
+	concept EntityType = Type::Derived<T, Entity>;
+
+	/// The root object.
+	Entity* $_ROOT;
+
+	template <EntityType T>
+	T* create(string name = "Entity", bool uniqueEntity = true) {
+		return new T(name);
+	}
+
+	template <EntityType T>
+	T* create(Entity* parent, string name = "Entity", bool uniqueEntity = true) {
+		return new T(parent, name, uniqueEntity);
+	}
+
+	typedef Group::Group<Entity*> EntityGroup;
+	EntityGroup groups;
+
+	void init();
 
 	/**
 	***********************
@@ -80,6 +105,8 @@ namespace EntityClass {
 	*/
 	class Entity {
 	public:
+		template <EntityType T> friend T* create() {};
+
 		/// Whether the object and children should be processing or not.
 		bool process = true;
 
@@ -114,28 +141,49 @@ namespace EntityClass {
 			callOnDelete();
 			// Remove self from the equation
 			removeFromTree();
+			removeFromAllGroups();
 		}
 
 		/// Parent-less constructor.
-		Entity(string name = "Entity") {
+		Entity(string name = "Entity", bool uniqueEntity = true) {
+			// If root doesn't exist, create it
+			if (name != $_ROOT_NAME)
+				init();
 			// Set object's name
 			if (name.length()) setName(name);
 			else
 				throw invalid_argument("Name cannot be null or empty.");
-			//	Call function to be executed at creation
+			// Call function to be executed at creation
 			onCreate();
+			// Add to root tree
+			if (name != $_ROOT_NAME)
+				$_ROOT->addChild(this, uniqueEntity);
 		}
 
 		/// Parented constructor.
-		Entity(Entity* parent, string name = "Entity", bool uniqueEntity = true) {
-			// Set object's name
-			if (name.length()) setName(name);
-			else
-				throw invalid_argument("Name cannot be null or empty.");
-			// Parents object
+		Entity(Entity* parent, string name = "Entity", bool uniqueEntity = true): Entity(name) {
+			// Parent object
 			parent->addChild(this, uniqueEntity);
-			// Call function to be executed at creation
-			onCreate();
+		}
+
+		void addToGroup(size_t group) {
+			groups.addObject(this, group);
+		}
+
+		vector<size_t> getGroups(size_t group) {
+			return groups.getGroups(this);
+		}
+
+		bool isInGroup(size_t group) {
+			return groups.isInGroup(this, group);
+		}
+
+		void removeFromAllGroups() {
+			groups.removeFromAll(this);
+		}
+
+		void removeFromGroup(size_t group) {
+			groups.removeFromGroup(this, group);
 		}
 
 		/**
@@ -458,95 +506,29 @@ namespace EntityClass {
 		}
 	};
 
-	/// The root object.
-	Entity $_ROOT($_ROOT_NAME);
+	/**
+	* Initializes the root tree.
+	* Gets called upon the first entity's creation, so it
+	* is not necessary to call again.
+	*/
+	void init() {
+		if (EntityClass::$_ROOT == nullptr) {
+			$debug("Creating root tree...");
+			$_ROOT = new Entity($_ROOT_NAME);
+			$debug("Root tree created!");
+		}
+	}
 
 	/// Gets a specific object in the root tree, and casts it appropriately.
-	template <class T>
+	template <EntityType T>
 	T* getEntity(string path) {
 		// Try and get object
-		Entity* res = $_ROOT[path];
+		Entity* res = $_ROOT->getChild(path);
 		// If it exists, return object (casted)
 		if (res) return (T*)res;
 		// Else, return null
 		return nullptr;
 	}
-
-	struct EntityGroup {
-		/// Gets a group of a given name.
-		vector<Entity*>& getGroup(size_t group) {
-			return g[group];
-		}
-
-		/// Get the groups an entity belongs to (if any).
-		vector<size_t> getGroups(Entity* e) {
-			vector<size_t> res;
-			try {
-				for (auto const& group : g)
-					for (auto i : g[group.first])
-						if (e == i)
-							res.push_back(group.first);
-			} catch(char e) {}
-			return res;
-		}
-
-		/// Adds an entity to a group. if nonexistent, create group.
-		void addEntity(Entity* e, size_t group) {
-			if (&g[group] == nullptr)
-				g[group] = vector<Entity*>();
-			g[group].push_back(e);
-		}
-
-		/// Empties/creates a given group.
-		void invokeGroup(size_t group) {
-			g[group] = vector<Entity*>();
-		}
-
-		/// Removes an entity from a given group (if it is in said group).
-		void removeEntity(Entity* e, size_t group) {
-			// If group does not exist, return
-			if (&g[group] == nullptr) return;
-			// Get group
-			vector<Entity*>& target = g[group];
-			// If group is not empty...
-			if (target.size())
-				// Loop through group and...
-				for (size_t i = 0; i < target.size(); i++)
-					// If entity matches...
-					if (target[i] == e) {
-						// Remove entity from group and end loop
-						target.erase(target.begin() + i);
-						break;
-				}
-		}
-
-		/// Returns all of the group's IDs.
-		vector<size_t> getAllGroups() {
-			vector<size_t> res;
-			if (g.size() > 0)
-				for (auto const& group : g)
-					res.push_back(group.first);
-			return res;
-		}
-
-		/// Checks if a group has a given entity.
-		bool hasEntity(Entity* e, size_t group) {
-			for (auto i : g[group])
-				if (e == i)
-					return true;
-			return false;
-		}
-
-		/// Removes an object from all groups it is in.
-		void removeFromAll(Entity* e) {
-			vector<size_t> groups = getGroups(e);
-			for (auto grp: groups) {
-				removeEntity(e, grp);
-			}
-		}
-	private:
-		unordered_map<size_t, vector<Entity*>> g;
-	} groups;
 }
 
 #define $ecl EntityClass::

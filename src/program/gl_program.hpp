@@ -125,6 +125,7 @@ namespace Makai {
 			#if (_WIN32 || _WIN64 || __WIN32__ || __WIN64__)
 			SetProcessDPIAware();
 			#endif
+			$debug(EntityClass::$_ROOT == nullptr);
 			// Save window resolution
 			this->width = width;
 			this->height = height;
@@ -210,6 +211,8 @@ namespace Makai {
 			framebuffer.shader = bufferShader;
 			layerbuffer.shader = bufferShader;
 			Shader::defaultShader["textured"](false);
+			$debug(EntityClass::$_ROOT == nullptr);
+			//EntityClass::init();
 		}
 
 		virtual ~Program() {}
@@ -232,7 +235,8 @@ namespace Makai {
 			};
 			// The logical process
 			auto logicFunc	= [&](float delta)-> void {
-				EntityClass::$_ROOT.yield(delta);
+				if (EntityClass::$_ROOT)
+					EntityClass::$_ROOT->yield(delta);
 			};
 			// Clear screen
 			Drawer::clearColorBuffer(color);

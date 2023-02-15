@@ -13,7 +13,7 @@ namespace Group {
 	template <class T>
 	class Group {
 	public:
-		/// Gets a group of a given name.
+		/// Gets a group of a given ID.
 		inline vector<T>& getGroup(size_t group) {
 			if (&g[group] == nullptr)
 				g[group] = vector<T>();
@@ -88,7 +88,7 @@ namespace Group {
 		}
 
 		/// Checks if a group has a given entity.
-		bool isInGroup(T* e, size_t group) {
+		bool isInGroup(T e, size_t group) {
 			for (auto i : g[group])
 				if (e == i)
 					return true;

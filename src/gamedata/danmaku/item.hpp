@@ -97,7 +97,8 @@ public:
 	DERIVED_CONSTRUCTOR(CollectibleManager, Entity, {
 		addToGame(this, "DanmakuGame");
 		mesh.setRenderLayer($layer(ITEM));
-		$ecl groups.addEntity(this, $layer(ITEM));
+		addToGroup($layer(ITEM));
+		$ecl collisionLayers.addObject(this, $layer(ITEM));
 		mesh.material.shaded = false;
 	})
 
@@ -110,7 +111,6 @@ public:
 	void onDelete() override {
 		//delete &mesh;
 		$debug("\nDeleting item manager...");
-		$ecl groups.removeFromAll(this);
 		delete[] items;
 	}
 

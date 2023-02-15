@@ -44,7 +44,6 @@ private:
 
 struct PlayerEntity2D: AreaCircle2D {
 	DERIVED_CLASS(PlayerEntity2D, AreaCircle2D)
-
 	DERIVED_CONSTRUCTOR(PlayerEntity2D, AreaCircle2D, {
 		// Set acton keys
 		actionKeys["up"]	= SDL_SCANCODE_UP;
@@ -62,7 +61,7 @@ struct PlayerEntity2D: AreaCircle2D {
 		mesh.setRenderLayer($layer(PLAYER));
 		// Add to game
 		addToGame(this, "DanmakuGame");
-		$ecl groups.addEntity(this, $layer(PLAYER));
+		$ecl groups.addObject(this, $layer(PLAYER));
 		removeFromCollisionLayer(0);
 		addToCollisionLayer($layer(PLAYER));
 		// Invincibility timer
@@ -319,12 +318,11 @@ struct PlayerEntity2D: AreaCircle2D {
 
 	virtual void onDelete() {
 		$debug("Deleting player...");
-		$ecl groups.removeFromAll(this);
 	}
 
 	virtual void onCollision(Entity* target) {
 		if (
-			$ecl collisionLayers.hasEntity(target, $layer(ENEMY))
+			$ecl collisionLayers.isInGroup(target, $layer(ENEMY))
 		) {
 			pichun();
 		}

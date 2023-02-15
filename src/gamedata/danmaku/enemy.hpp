@@ -4,7 +4,7 @@ struct EnemyEntity2D: public AreaCircle2D {
 	DERIVED_CONSTRUCTOR(EnemyEntity2D, AreaCircle2D, {
 		health = 100.0;
 		mesh.setRenderLayer($layer(ENEMY));
-		$ecl groups.addEntity(this, $layer(ENEMY));
+		addToGroup($layer(ENEMY));
 		sprite = mesh.createReference<AnimatedPlane>();
 		collision.shape.radius = 1;
 		addToGame(this, "DanmakuGame");
@@ -35,7 +35,6 @@ struct EnemyEntity2D: public AreaCircle2D {
 	$bar RadialBar healthBar;
 
 	virtual void onDelete() {
-		$ecl groups.removeFromAll(this);
 	}
 
 	virtual void onDeath() {
@@ -54,13 +53,18 @@ struct EnemyEntity2D: public AreaCircle2D {
 		auto player = getMainPlayer();
 		if (!invincible) {
 			if (
-					$ecl groups.hasEntity(e, $layer(PLAYER_BULLET))
-				||	$ecl groups.hasEntity(e, $layer(PLAYER_LASER))
+					$ecl groups.isInGroup(e, $layer(PLAYER_BULLET))
 			) {
 				if (player) health -= player->damage.main;
 				else health -= defaults.playerDamage.main;
 			}
-			if ($ecl groups.hasEntity(e, $layer(PLAYER_BOMB))) {
+			if (
+					$ecl groups.isInGroup(e, $layer(PLAYER_LASER))
+			) {
+				if (player) health -= player->damage.main;
+				else health -= defaults.playerDamage.main;
+			}
+			if ($ecl groups.isInGroup(e, $layer(PLAYER_BOMB))) {
 				if (player) health -= player->damage.bomb;
 				else health -= defaults.playerDamage.bomb;
 			}

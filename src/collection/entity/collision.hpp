@@ -331,7 +331,7 @@ namespace EntityClass {
 
 		/// Called when object is created.
 		virtual void onCreate() {
-			collisionLayers.addEntity(this, 0);
+			collisionLayers.addObject(this, 0);
 		}
 
 		/// Called whenever a collision with another object happens.
@@ -352,12 +352,12 @@ namespace EntityClass {
 
 		/// Adds the object to the given collision layer.
 		void addToCollisionLayer(size_t layer) {
-			collisionLayers.addEntity(this, layer);
+			collisionLayers.addObject(this, layer);
 		}
 
 		/// Removes the object from a given collision layer.
 		void removeFromCollisionLayer(size_t layer) {
-			collisionLayers.removeEntity(this, layer);
+			collisionLayers.removeFromGroup(this, layer);
 		}
 
 		/// Sets the object's collision layers.
@@ -368,10 +368,10 @@ namespace EntityClass {
 			if (active.size() > 0)
 				// Loop through them and remove object
 				for (size_t layer : active)
-					collisionLayers.removeEntity(this, layer);
+					collisionLayers.removeFromGroup(this, layer);
 			// Loop through new layers and add object to them
 			for (size_t layer : layers)
-				collisionLayers.addEntity(this, layer);
+				collisionLayers.addObject(this, layer);
 		}
 
 		/// Returns the collision layers this object is in.
@@ -380,7 +380,7 @@ namespace EntityClass {
 		}
 
 		bool isInCollisionLayer(size_t layer) {
-			return collisionLayers.hasEntity(this, layer);
+			return collisionLayers.isInGroup(this, layer);
 		}
 	};
 

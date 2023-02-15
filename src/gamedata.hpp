@@ -6,14 +6,18 @@
 #include "program.hpp"
 
 #define DERIVED_CONSTRUCTOR(NAME, BASE, CODE)\
-	NAME(string name = #NAME) : BASE(name) CODE\
-	NAME(Entity* parent, string name = #NAME , bool uniqueEntity = true) : BASE(parent, name, uniqueEntity) CODE
+	/*protected:*/\
+	NAME(string name = #NAME, bool uniqueEntity = true) : BASE(name, uniqueEntity) CODE\
+	NAME(Entity* parent, string name = #NAME , bool uniqueEntity = true) : BASE(parent, name, uniqueEntity) CODE\
+	/*private:*/
 
 #define DERIVED_CLASS(NAME, BASE)\
+	/*public:*/\
 	inline	virtual string getClass() {return #NAME;}\
 	inline	virtual string getBaseClass() {return #BASE;}\
 	inline	static string getCoreClass() {return BASE::getCoreClass();}\
-	virtual	~NAME() {onDelete(); removeFromTree();};
+	virtual	~NAME() {onDelete(); removeFromTree(); removeFromAllGroups();};\
+	/*private:*/
 	// NOTE: This is the WORST way this could have been done, but it works I guess
 
 #include "gamedata/layout.hpp"
@@ -45,10 +49,12 @@ namespace GameData {
 	typedef std::unordered_map<string, SDL_Scancode> KeyBinds;
 
 	void addToGame(Entity* e, std::string gameType) {
-		Entity* game = $ecl $_ROOT[gameType];
+		if (!EntityClass::$_ROOT)
+			throw std::runtime_error("Root wasn't created!");
+		Entity* game = $ecl $_ROOT->getChild(gameType);
 		if (game == nullptr) {
 			game = new $ecl Entity(gameType);
-			$ecl $_ROOT.addChild(game);
+			$ecl $_ROOT->addChild(game);
 		}
 		game->addChild(e);
 	}
