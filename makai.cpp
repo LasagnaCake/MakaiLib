@@ -11,7 +11,8 @@
 #define RADIAL_BAR_RESOLUTION	12
 //#define ENEMY_BULLET_COUNT		256
 //*
-#define ENEMY_BULLET_COUNT		1024
+//#define ENEMY_BULLET_COUNT		1024
+#define ENEMY_BULLET_COUNT		1536
 //#define ENEMY_LASER_COUNT		32
 //*/
 
@@ -62,10 +63,13 @@ public:
 	$rdt Renderable*	tubeRend;
 
 	$txt Label			testLabel;
+	$txt Label			frameLabel;
 
 	$txt FontData		font{new Drawer::Texture2D("img/fonts/fontGRID.png"), $vec2(16), $vec2(0.55, 0.9)};
 
 	$drw Texture2D*		ringbar = new Drawer::Texture2D("img/ring.png");
+
+	uint64 ticks = 0;
 
 	void onOpen() override {
 		// British? 😩
@@ -118,22 +122,22 @@ public:
 				b->params.hitbox.radius = 1;
 				b->params.vel = {
 					$twn ease.out.linear,
-					-20,
+					-25,
 					20,
-					0.01
+					0.005/5.0
 				};
 				b->params.rot = {
 					$twn ease.out.elastic,
 					coefficient,
-					coefficient + (PI * 3.0),
-					0.005/3.0
+					coefficient + (PI * 6.0),
+					0.005/6.0
 				};
 				b->params.rebound = true;
 				b->pause.time = 30;
 				b->pause.enabled = true;
 				b->reset();
 			}
-			rotAngle += (PI/5.0);
+			rotAngle += (PI/30.0);
 		};
 		testLabel.setRenderLayer($layer(WORLD));
 		testLabel.font = &font;
@@ -142,6 +146,9 @@ public:
 		testLabel.text.content = "   Spell shattered!\n(Get spell card bonus)";
 		testLabel.trans.position = $vec3(4, 10, 2.5);
 		testLabel.trans.rotation.y = PI;
+		// Frame Label
+		frameLabel.setRenderLayer($layer(UI));
+		frameLabel.font = &font;
 		// Create test laser A
 		Vector2 lPos = Vector2(32, -16) * getWindowScale();
 		auto l = DANMAKU_ELLM -> createLineLaser();
@@ -183,6 +190,8 @@ public:
 	bool useWave = true;
 
 	void onLogicFrame(float delta) override {
+		frameLabel.text.content = std::to_string(SDL_GetTicks() - ticks);
+		ticks = SDL_GetTicks();
 		if (input.getButtonDown(SDL_SCANCODE_ESCAPE)) {
 			close();
 		}

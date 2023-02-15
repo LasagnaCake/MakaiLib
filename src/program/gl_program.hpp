@@ -274,13 +274,18 @@ namespace Makai {
 					// Increment cycle counter
 					cycle++;
 					// Do timer-related stuff
+					#ifndef $_FRAME_INDEPENDENT_PROCESS
 					timerFunc(cycleDelta);
 					taskers.yield(cycleDelta);
-					#ifdef $_FRAME_INDEPENDENT_PROCESS
+					#else
 					// Do normal logic-related stuff
-					logicFunc(cycleDelta);
+					//logicFunc(cycleDelta);
+					std::thread logics(logicFunc, cycleDelta);
+					timerFunc(cycleDelta);
+					taskers.yield(cycleDelta);
 					onLogicFrame(cycleDelta);
 					// Destroy queued entities
+					logics.join();
 					$ecl destroyQueued();
 					#endif // FRAME_DEPENDENT_PROCESS
 				}
