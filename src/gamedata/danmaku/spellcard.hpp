@@ -5,11 +5,15 @@ struct SpellCard: Entity {
 		background.setRenderLayer($layer(SPELL));
 		effect.setRenderLayer($layer(ENEMY));
 		boss = (BossEntity2D*)getParent();
+		time.setRenderLayer($layer(UI));
+		spellName.setRenderLayer($layer(UI));
 	})
 
-	$rdt Renderable background;
-	$rdt Renderable effect;
-	$txt Label timer;
+	$rdt Renderable	background;
+	$rdt Renderable	effect;
+
+	$txt Label	time;
+	$txt Label	spellName;
 
 	BossEntity2D* boss;
 

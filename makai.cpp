@@ -143,7 +143,9 @@ public:
 		testLabel.font = &font;
 		testLabel.trans.scale = 2.5;
 		testLabel.trans.scale.x *= 0.8;
-		testLabel.text.content = "   Spell shattered!\n(Get spell card bonus)";
+		testLabel.text.rect.h = 10;
+		testLabel.text.content = "Spell\nCard shattered!\n(Get spell card bonus)";
+		testLabel.text.align.h = $txt HAlign::CENTER;
 		testLabel.trans.position = $vec3(4, 10, 2.5);
 		testLabel.trans.rotation.y = PI;
 		// Frame Label
@@ -178,7 +180,7 @@ public:
 		//l->params.active = true;
 		l->params.discardable = false;
 		l->reset();
-		//bulletSpawner.stop();
+		bulletSpawner.stop();
 		DANMAKU_IM -> createCollectible(CollectibleData(), 5, lPos, 3, $vec2(0.5));
 		world3D.farFog = {true, 20, 10, $vec4(0, 0, .2, 1)};
 		world3D.ambient.color = Vector3(1,1,1);
@@ -209,8 +211,6 @@ public:
 		cam3D.at.y	= cos(getCurrentCycle() / maxCycleRate) * 3.0;
 		tubeRend->trans.rotation.z = getCurrentCycle() / (maxCycleRate * 3.0);
 		tubeRend->trans.position.z = Math::lerp(-20.0f, 10.0f, fac);
-		if (!(getCurrentCycle() % 2))
-			testLabel.text.content = std::to_string(tubeRend->trans.position.z);
 	}
 
 	#define $rlayer(LAYER) ($layer(LAYER) / SUBLAYER_COUNT)

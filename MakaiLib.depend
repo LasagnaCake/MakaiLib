@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1676502538 source:d:\c(++) projects\_c++\game engine\makailib\makai.cpp
+1676557269 source:d:\c(++) projects\_c++\game engine\makailib\makai.cpp
 	"src/makai.hpp"
 	<winnt.h>
 	<winuser.h>
@@ -2982,7 +2982,7 @@
 	"core.hpp"
 	"../vectorn.hpp"
 
-1674910178 d:\c(++) projects\_c++\game engine\makailib\src\collection\vectorn.hpp
+1676512963 d:\c(++) projects\_c++\game engine\makailib\src\collection\vectorn.hpp
 	<cmath>
 	<vector>
 	"algebra.hpp"
@@ -3343,7 +3343,7 @@
 1673500990 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_color.hpp
 	"../anchors.hpp"
 
-1676505813 d:\c(++) projects\_c++\game engine\makailib\src\gamedata.hpp
+1676553638 d:\c(++) projects\_c++\game engine\makailib\src\gamedata.hpp
 	"anchors.hpp"
 	"graphical.hpp"
 	"program.hpp"
@@ -3367,7 +3367,7 @@
 
 1676503955 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\laser.hpp
 
-1672952429 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\spellcard.hpp
+1676548499 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\spellcard.hpp
 
 1665238790 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\player.hpp
 
@@ -3401,7 +3401,7 @@
 
 1675264666 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\predefs.hpp
 
-1675531274 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_text.hpp
+1676557361 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_text.hpp
 
 1676398761 d:\c(++) projects\_c++\game engine\makailib\src\collection\definitions.hpp
 	"conceptual.hpp"

@@ -43,6 +43,31 @@ namespace {
 	}
 }
 
+vector<float> getTextLineStarts(TextData& text, FontData& font) {
+	vector<float> result;
+	StringList	lines;
+	String		line;
+	// Separate text by newline characters
+	std::istringstream content(text.content);
+	while (std::getline(content, line, '\n'))
+		lines.push_back(line);
+	// Calculate starting points
+	for (String& l : lines) {
+		size_t lineSize		= l.size();
+		size_t lastLineSize	= Math::wmax(lineSize, text.rect.h);
+		if (lineSize > text.rect.h) {
+			for (size_t i = 0; i < (lineSize - lastLineSize) / text.rect.h; i++)
+				result.push_back(0);
+		}
+		result.push_back(
+			(text.rect.h - lastLineSize)
+		*	(text.spacing.x + font.spacing.x)
+		);
+	}
+	// Return result
+	return result;
+}
+
 class Label: public Base::DrawableObject {
 public:
 	Label(size_t layer = 0, bool manual = false): DrawableObject(layer, manual) {}
@@ -74,6 +99,8 @@ private:
 		display(&vertices[0], vertices.size());
 	}
 
+
+	// TODO: Proper text alignment
 	#define CHAR_VERTEX(POS, UV) RawVertex{(POS).x,(POS).y,0,(UV).x,(UV).y}
 	void update() {
 		// Clear previous characters
@@ -84,24 +111,41 @@ private:
 		// The current character's top left UV index
 		Vector2 uv;
 		unsigned char index;
+		// Horizontal alignment flags
+		bool
+			alignLeft	= text.align.h == HAlign::LEFT,
+			alignTop	= text.align.v == VAlign::TOP;
+		bool
+			hCenter		= text.align.h == HAlign::CENTER,
+			vCenter		= text.align.v == VAlign::CENTER;
+		// The lines' starting positions (if applicable)
+		vector<float> lineStart;
+		if (!alignLeft || hCenter) {
+			lineStart	= getTextLineStarts(text, *font);
+			cursor.x	= lineStart[0];
+		}
+		if (!alignTop || vCenter)
+			cursor.y = text.rect.v * (text.spacing.y + font->spacing.y);
+		if (hCenter) cursor.x /= 2;
+		if (vCenter) cursor.y /= 2;
+		size_t curLine = 0;
+		// Loop through each character and...
 		for (char c: text.content) {
-			// If cursor has reached the rect's horizontal limit, move to new line
-			if(chrRect.h > text.rect.h) {
-				cursor.x = 0;
-				cursor.y -= text.spacing.y + font->spacing.y;
+			// Check if character is newline
+			bool newline = c == '\n';
+			// If cursor has reached the rect's horizontal limit or newline, move to new line
+			if((chrRect.h >= text.rect.h) || newline) {
+				cursor.x = (alignLeft && !hCenter) ? 0 : lineStart[++curLine];
+				if (hCenter)
+					cursor.x /= 2.0;
+				cursor.y -= (text.spacing.y + font->spacing.y) * (alignTop ? +1 : -1);
 				chrRect.h = 0;
 				chrRect.v++;
-			}
-			// If newline, then reset cursor and continue to next character
-			if (c == '\n') {
-				cursor.x = 0;
-				cursor.y -= text.spacing.y + font->spacing.y;
-				chrRect.h = 0;
-				chrRect.v++;
-				continue;
+				// If newline, move on to next character
+				if (newline) continue;
 			}
 			// If cursor has reach the rect's vertical limit, break
-			if(chrRect.v > text.rect.v)
+			if(chrRect.v >= text.rect.v)
 				break;
 			// Get character index
 			index = Math::max((int)c - 0x20, 0);
