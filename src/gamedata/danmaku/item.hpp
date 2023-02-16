@@ -150,6 +150,7 @@ public:
 			}
 		$endspeach
 		#else
+		GAME_PARALLEL_FOR
 		for $seach(item, items, ITEM_COUNT)
 			item.onFrame(delta);
 			if (!item.isFree() && item.params.collidable) {
@@ -187,6 +188,7 @@ public:
 
 	void collectAll(bool forceCollect = false, bool forceDiscard = false) {
 		auto mp = getMainPlayer();
+		GAME_PARALLEL_FOR
 		for $seachif(item, items, ITEM_COUNT, !item.isFree()) {
 			if (forceCollect) {
 				mp->onItemGet(
@@ -207,21 +209,23 @@ public:
 		#ifdef $_PARALLEL_MANAGERS
 		$speach(item, items, ITEM_COUNT) {item.setFree();} $endspeach
 		#else
+		GAME_PARALLEL_FOR
 		for $seach(item, items, ITEM_COUNT) item.setFree(); $endseach
 		#endif
 	}
 
 	void discardAll() {
-
 		#ifdef $_PARALLEL_MANAGERS
 		$speach(item, items, ITEM_COUNT) {item.discard();} $endspeach
 		#else
+		GAME_PARALLEL_FOR
 		for $seach(item, items, ITEM_COUNT) item.discard(); $endseach
 		#endif
 	}
 
 	size_t getFreeCount() {
 		size_t count = 0;
+		GAME_PARALLEL_FOR
 		for $seach(item, items, ITEM_COUNT)
 			if (item.isFree())
 				count++;
@@ -246,6 +250,7 @@ public:
 	template <CollisionType T = CircleBounds2D>
 	CollectibleList getInArea(T target) {
 		CollectibleList res;
+		GAME_PARALLEL_FOR
 		for $seachif(item, items, ITEM_COUNT, !item.isFree() && item.params.collidable) {
 			if (
 				$cdt withinBounds(
@@ -259,16 +264,19 @@ public:
 
 	CollectibleList getActive() {
 		CollectibleList res;
+		GAME_PARALLEL_FOR
 		for $seachif(item, items, ITEM_COUNT, !item.isFree()) res.push_back(&item); $endseach
 		return res;
 	}
 
 	void forEach(Callback<Collectible> func) {
+		GAME_PARALLEL_FOR
 		for $ssrange(i, 0, ITEM_COUNT)
 			func(items[i]);
 	}
 
 	void forEachFree(Callback<Collectible> func) {
+		GAME_PARALLEL_FOR
 		for $ssrange(i, 0, ITEM_COUNT)
 			if (items[i].isFree())
 				func(items[i]);
@@ -276,6 +284,7 @@ public:
 
 	template <CollisionType T>
 	void forEachInArea(T area, Callback<Collectible> func) {
+		GAME_PARALLEL_FOR
 		for $ssrange(i, 0, ITEM_COUNT)
 			if (
 				items[i].isFree()
@@ -289,6 +298,7 @@ public:
 	}
 
 	Collectible* createCollectible() {
+		//GAME_PARALLEL_FOR
 		for $seachif(item, items, ITEM_COUNT, item.isFree()) {
 			last = item.enable()->setZero();
 			last->pause = Pause();
@@ -329,6 +339,7 @@ public:
 
 	CollectibleList createCollectible(CollectibleData item, size_t count, Vector2 at, float radius = 1, Vector2 scale = Vector2(1), float angleOffset = 0) {
 		CollectibleList res;
+		GAME_PARALLEL_FOR
 		for $ssrange(i, 0, count) {
 			res.push_back(createCollectible(item));
 			last->local.position = at + ($vmt angleV2(TAU * ((float)i / (float)count) + angleOffset) * radius);

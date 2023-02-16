@@ -145,6 +145,8 @@
 
 #include "fileloader.hpp"
 
+#include <omp.h>
+
 /*
 *	[+]=[   [Headers END]   ]=[+]
 */

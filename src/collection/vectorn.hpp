@@ -934,49 +934,23 @@ namespace VecMath
 		*/
 		// Get a copy of the vector
 		Vector3 res = vec;
-		// Calculate the sines
+		// Get sines and cosines
 		float sinX = sin(angle.x);
-		float sinY = sin(angle.y);
-		float sinZ = sin(angle.z);
-		// Calculate the cosines
 		float cosX = cos(angle.x);
+		float sinY = sin(angle.y);
 		float cosY = cos(angle.y);
+		float sinZ = sin(angle.z);
 		float cosZ = cos(angle.z);
-		/*
-		// Get the vector's starting positions
-		float vx = vec.x;
-		float vy = vec.y;
-		float vz = vec.z;
 		// Calculate Z axis
-		vec.z = (
-			(((cosX * cosY)) * vz)
-		+	(((cosX * sinY * sinZ) - (cosX * sinZ)) * vy)
-		+	(((sinX * sinZ) + (cosX * sinY * cosZ)) * vx)
-		);
+		res.x = (cosZ * res.x) - (sinZ * res.y);
+		res.y = (sinZ * res.x) + (cosZ * res.y);
 		// Calculate Y axis
-		vec.y = (
-			(((sinX * cosY)) * vz)
-		+	(((cosX * cosZ) + (sinX * sinY * sinZ)) * vy)
-		+	(((sinX * sinY * cosZ) + (cosX * sinZ)) * vx)
-		);
+		res.x = (cosY * res.x) + (sinY * sinZ * res.y) + (sinY * cosZ * res.z);
+		res.z = (-sinY * cosX * res.x) + (cosX * cosY * res.y) + (sinX * cosY * res.z);
 		// Calculate X axis
-		vec.x = (
-		-	(sinY * vz)
-		+	((cosY * sinZ) * vy)
-		+	((cosY * cosZ) * vx)
-		);*/
-		//*
-		// Calculate Z axis rotation
-		res.x = (+ res.x * cosZ - res.y * sinZ);
-		res.y = (+ res.x * sinZ + res.y * cosZ);
-		// Calculate Y axis rotation
-		res.x = (+ res.x * cosY + res.z * sinY);
-		res.z = (- res.x * sinY + res.z * cosY);
-		// Calculate X axis rotation
-		res.y = (+ res.y * cosX - res.z * sinX);
-		res.z = (+ res.y * sinX + res.z * cosX);
-		//*/
-		// Return rotated vector
+		res.y = (cosX * res.y) - (sinX * res.z);
+		res.z = (sinX * res.y) + (cosX * res.z);
+		// Return result
 		return res;
 	}
 

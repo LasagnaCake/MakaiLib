@@ -169,6 +169,7 @@ public:
 			}
 		$endspeach
 		#else
+		GAME_PARALLEL_FOR
 		for (auto i = 0; i < LASER_COUNT; i++) {
 			auto* l = &lasers[i];
 			l->onFrame(delta);
@@ -230,6 +231,7 @@ public:
 	template <CollisionType T = CircleBounds2D>
 	LineLaserList getInArea(T target) {
 		LineLaserList res;
+		GAME_PARALLEL_FOR
 		for $seachif(l, lasers, LASER_COUNT, !l.isFree() && l.params.collidable) {
 			if (l.colliding(target))
 			res.push_back(&l);
@@ -239,16 +241,19 @@ public:
 
 	LineLaserList getActive() {
 		LineLaserList res;
+		GAME_PARALLEL_FOR
 		for $seachif(l, lasers, LASER_COUNT, !l.isFree()) res.push_back(&l); $endseach
 		return res;
 	}
 
 	void forEach(Callback<LineLaser> func) {
+		GAME_PARALLEL_FOR
 		for $ssrange(i, 0, LASER_COUNT)
 			func(lasers[i]);
 	}
 
 	void forEachFree(Callback<LineLaser> func) {
+		GAME_PARALLEL_FOR
 		for $ssrange(i, 0, LASER_COUNT)
 			if (lasers[i].isFree())
 				func(lasers[i]);
@@ -256,6 +261,7 @@ public:
 
 	template <CollisionType T>
 	void forEachInArea(T area, Callback<LineLaser> func) {
+		GAME_PARALLEL_FOR
 		for $ssrange(i, 0, LASER_COUNT)
 			if (
 				lasers[i].isFree()
@@ -269,6 +275,7 @@ public:
 	}
 
 	LineLaser* createLineLaser() {
+		//GAME_PARALLEL_FOR
 		for $seachif(l, lasers, LASER_COUNT, l.isFree()) {
 			last = l.enable()->setZero();
 			last->pause = Pause();

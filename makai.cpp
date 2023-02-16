@@ -12,7 +12,7 @@
 //#define ENEMY_BULLET_COUNT		256
 //*
 //#define ENEMY_BULLET_COUNT		1024
-#define ENEMY_BULLET_COUNT		1536
+//#define ENEMY_BULLET_COUNT		1536
 //#define ENEMY_LASER_COUNT		32
 //*/
 

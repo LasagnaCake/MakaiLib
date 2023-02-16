@@ -208,6 +208,7 @@ public:
 			}
 		$endspeach
 		#else
+		GAME_PARALLEL_FOR
 		for (auto i = 0; i < BULLET_COUNT; i++) {
 			auto& b = bullets[i];
 			b.onFrame(delta);
@@ -295,6 +296,7 @@ public:
 		#ifdef $_PARALLEL_MANAGERS
 		$speach(b, bullets, BULLET_COUNT) {b.setFree();} $endspeach
 		#else
+		GAME_PARALLEL_FOR
 		for $seach(b, bullets, BULLET_COUNT) b.setFree(); $endseach
 		#endif
 	}
@@ -303,12 +305,14 @@ public:
 		#ifdef $_PARALLEL_MANAGERS
 		$speach(b, bullets, BULLET_COUNT) {b.discard();} $endspeach
 		#else
+		GAME_PARALLEL_FOR
 		for $seach(b, bullets, BULLET_COUNT) b.discard(); $endseach
 		#endif
 	}
 
 	size_t getFreeCount() {
 		size_t count = 0;
+		GAME_PARALLEL_FOR
 		for $seach(b, bullets, BULLET_COUNT)
 			if (b.isFree())
 				count++;
@@ -334,6 +338,7 @@ public:
 	template <CollisionType T = CircleBounds2D>
 	BulletList getInArea(T target) {
 		BulletList res;
+		GAME_PARALLEL_FOR
 		for $seachif(b, bullets, BULLET_COUNT, !b.isFree() && b.params.collidable) {
 			if (
 				$cdt withinBounds(
@@ -349,16 +354,19 @@ public:
 
 	BulletList getActive() {
 		BulletList res;
+		GAME_PARALLEL_FOR
 		for $seachif(b, bullets, BULLET_COUNT, !b.isFree()) res.push_back(&b); $endseach
 		return res;
 	}
 
 	void forEach(Callback<Bullet> func) {
+		GAME_PARALLEL_FOR
 		for $ssrange(i, 0, BULLET_COUNT)
 			func(bullets[i]);
 	}
 
 	void forEachFree(Callback<Bullet> func) {
+		GAME_PARALLEL_FOR
 		for $ssrange(i, 0, BULLET_COUNT)
 			if (bullets[i].isFree())
 				func(bullets[i]);
@@ -366,6 +374,7 @@ public:
 
 	template <CollisionType T>
 	void forEachInArea(T area, Callback<Bullet> func) {
+		GAME_PARALLEL_FOR
 		for $ssrange(i, 0, BULLET_COUNT)
 			if (
 				bullets[i].isFree()
@@ -379,6 +388,7 @@ public:
 	}
 
 	Bullet* createBullet() {
+		//GAME_PARALLEL_FOR
 		for $seachif(b, bullets, BULLET_COUNT, b.isFree()) {
 			last = b.enable()->setZero();
 			last->pause = Pause();

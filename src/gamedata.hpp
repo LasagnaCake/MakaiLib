@@ -22,6 +22,18 @@
 
 #include "gamedata/layout.hpp"
 
+#ifndef PARALLEL_THREAD_COUNT
+#define PARALLEL_THREAD_COUNT 32
+#endif // PARALLEL_THREAD_COUNT
+
+#ifndef GAME_PARALLEL_FOR
+#ifndef _DEBUG_OUTPUT_
+#define GAME_PARALLEL_FOR _Pragma("omp parallel for num_threads(PARALLEL_THREAD_COUNT)")
+#else
+#define GAME_PARALLEL_FOR
+#endif
+#endif // GAME_PARALLEL_FOR
+
 namespace GameData {
 	#define $gdt GameData::
 	namespace {

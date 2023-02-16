@@ -29,29 +29,6 @@
 					<Add library="winmm" />
 				</Linker>
 			</Target>
-			<Target title="Release Windows">
-				<Option platforms="Windows;" />
-				<Option output="bin/Release/Windows/program" prefix_auto="1" extension_auto="1" />
-				<Option working_dir="res" />
-				<Option object_output="obj/Release/Windows" />
-				<Option type="0" />
-				<Option compiler="gcc" />
-				<Compiler>
-					<Add option="-lwinpthreads" />
-					<Add option="-ftree-parallelize-loops=4" />
-					<Add option="-fopenmp" />
-					<Add option="-funswitch-loops" />
-					<Add option="-fpredictive-commoning" />
-					<Add option="-fgcse-after-reload" />
-					<Add option="-ftree-vectorize" />
-				</Compiler>
-				<Linker>
-					<Add option="-O1" />
-					<Add library="opengl32" />
-					<Add library="powrprof" />
-					<Add library="winmm" />
-				</Linker>
-			</Target>
 			<Target title="Debug Linux">
 				<Option platforms="Unix;" />
 				<Option output="bin/Debug/Linux/program" prefix_auto="1" extension_auto="1" />
@@ -66,6 +43,28 @@
 				<Linker>
 					<Add option="-O1" />
 					<Add library="opengl32" />
+				</Linker>
+			</Target>
+			<Target title="Release Windows">
+				<Option platforms="Windows;" />
+				<Option output="bin/Release/Windows/program" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="res" />
+				<Option object_output="obj/Release/Windows" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-lwinpthreads" />
+					<Add option="-ftree-parallelize-loops=128" />
+					<Add option="-funswitch-loops" />
+					<Add option="-fpredictive-commoning" />
+					<Add option="-fgcse-after-reload" />
+					<Add option="-ftree-vectorize" />
+				</Compiler>
+				<Linker>
+					<Add option="-O1" />
+					<Add library="opengl32" />
+					<Add library="powrprof" />
+					<Add library="winmm" />
 				</Linker>
 			</Target>
 			<Target title="Release Linux">
@@ -89,9 +88,11 @@
 			<Add option="-fexpensive-optimizations" />
 			<Add option="-flto" />
 			<Add option="-Wall" />
-			<Add option="-std=gnu++20" />
 			<Add option="-m64" />
+			<Add option="-std=gnu++20" />
 			<Add option="-fcoroutines" />
+			<Add option="-fopenmp" />
+			<Add option="-openmp" />
 			<Add directory="lib" />
 			<Add directory="lib/SDL2-2.0.10/include" />
 			<Add directory="lib/OpenGL" />
@@ -126,6 +127,7 @@
 			<Add library="lib/OpenGL/GLEW/lib/libglew32.dll.a" />
 			<Add library="lib/openal-soft-1.22.2/libs/Win64/libOpenAL32.dll.a" />
 			<Add library="opengl32" />
+			<Add library="gomp" />
 			<Add directory="lib" />
 			<Add directory="lib/SDL2-2.0.10/include" />
 			<Add directory="lib/OpenGL" />

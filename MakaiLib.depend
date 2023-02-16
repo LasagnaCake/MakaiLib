@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1676493662 source:d:\c(++) projects\_c++\game engine\makailib\makai.cpp
+1676502538 source:d:\c(++) projects\_c++\game engine\makailib\makai.cpp
 	"src/makai.hpp"
 	<winnt.h>
 	<winuser.h>
@@ -2867,7 +2867,7 @@
 1665256929 d:\c(++) projects\_c++\game engine\makailib\src\program.hpp
 	"program/gl_program.hpp"
 
-1676321518 d:\c(++) projects\_c++\game engine\makailib\src\anchors.hpp
+1676505027 d:\c(++) projects\_c++\game engine\makailib\src\anchors.hpp
 	<iostream>
 	<string>
 	<vector>
@@ -2919,6 +2919,7 @@
 	"collection/grouping.hpp"
 	"collection/dictionary.hpp"
 	"fileloader.hpp"
+	<omp.h>
 
 1661613724 d:\c(++) projects\_c++\game engine\makailib\src\stb_image.h
 	"stb_image.h"
@@ -3052,7 +3053,7 @@
 	<algorithm>
 	<regex>
 
-1676493749 d:\c(++) projects\_c++\game engine\makailib\src\program\gl_program.hpp
+1676503147 d:\c(++) projects\_c++\game engine\makailib\src\program\gl_program.hpp
 	"../anchors.hpp"
 	"../graphical.hpp"
 	"../audio.hpp"
@@ -3342,7 +3343,7 @@
 1673500990 d:\c(++) projects\_c++\game engine\makailib\src\graphical\gl_color.hpp
 	"../anchors.hpp"
 
-1676467210 d:\c(++) projects\_c++\game engine\makailib\src\gamedata.hpp
+1676505813 d:\c(++) projects\_c++\game engine\makailib\src\gamedata.hpp
 	"anchors.hpp"
 	"graphical.hpp"
 	"program.hpp"
@@ -3362,9 +3363,9 @@
 	"gamedata/danmaku/stage.hpp"
 	"gamedata/danmaku/program.hpp"
 
-1676466487 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\bullet.hpp
+1676505804 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\bullet.hpp
 
-1676466476 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\laser.hpp
+1676503955 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\laser.hpp
 
 1672952429 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\spellcard.hpp
 
@@ -3435,7 +3436,7 @@
 
 1672521486 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\stage.hpp
 
-1676466502 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\item.hpp
+1676503976 d:\c(++) projects\_c++\game engine\makailib\src\gamedata\danmaku\item.hpp
 
 1660930201 d:\c(++) projects\_c++\game engine\makailib\lib\sdl2-2.0.10\x86_64-w64-mingw32\include\sdl2\sdl_mixer.h
 	"SDL_stdinc.h"
