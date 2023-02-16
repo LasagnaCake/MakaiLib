@@ -52,7 +52,8 @@ public:
 		$debug(EntityClass::$_ROOT != nullptr);
 	}
 
-	$evt Timer bulletSpawner = $evt Timer(5, true);
+	$evt Timer bulletSpawner	= $evt Timer(5, true);
+	$evt Timer itemSpawner		= $evt Timer(60, true);
 
 	float rotAngle = 0.0;
 
@@ -181,7 +182,15 @@ public:
 		l->params.discardable = false;
 		l->reset();
 		bulletSpawner.stop();
-		DANMAKU_IM -> createCollectible(CollectibleData(), 5, lPos, 3, $vec2(0.5));
+		itemSpawner.onSignal = $signal {
+			DANMAKU_IM -> createCollectible(
+				CollectibleData{},
+				5,
+				$vec2(32, -16) * this->getWindowScale(),
+				3,
+				$vec2(0.5)
+			);
+		};
 		world3D.farFog = {true, 20, 10, $vec4(0, 0, .2, 1)};
 		world3D.ambient.color = Vector3(1,1,1);
 		enemy->setInvincible(120);

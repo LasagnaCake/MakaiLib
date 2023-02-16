@@ -23,7 +23,7 @@
 #include "gamedata/layout.hpp"
 
 #ifndef PARALLEL_THREAD_COUNT
-#define PARALLEL_THREAD_COUNT 16
+#define PARALLEL_THREAD_COUNT 1
 #endif // PARALLEL_THREAD_COUNT
 
 #ifndef GAME_PARALLEL_FOR

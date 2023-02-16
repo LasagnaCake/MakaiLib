@@ -175,7 +175,7 @@ namespace Math {
 	}
 
 	CONST_ANYTYPE_I wrap(T val, T min, T max) {
-		return wmax(wmin(val, max), min);
+		return wmax(val + min, max) - min;
 	}
 
 	CONST_ANYTYPE_I nrtn(T val) {

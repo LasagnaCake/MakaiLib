@@ -62,6 +62,7 @@ vector<float> getTextLineStarts(TextData& text, FontData& font) {
 		result.push_back(
 			(text.rect.h - lastLineSize)
 		*	(text.spacing.x + font.spacing.x)
+		/	(text.align.h == HAlign::CENTER ? 2.0 : 1.0)
 		);
 	}
 	// Return result
@@ -126,8 +127,7 @@ private:
 		}
 		if (!alignTop || vCenter)
 			cursor.y = text.rect.v * (text.spacing.y + font->spacing.y);
-		if (hCenter) cursor.x /= 2;
-		if (vCenter) cursor.y /= 2;
+		if (vCenter) cursor.y /= 2.0;
 		size_t curLine = 0;
 		// Loop through each character and...
 		for (char c: text.content) {
@@ -136,8 +136,6 @@ private:
 			// If cursor has reached the rect's horizontal limit or newline, move to new line
 			if((chrRect.h >= text.rect.h) || newline) {
 				cursor.x = (alignLeft && !hCenter) ? 0 : lineStart[++curLine];
-				if (hCenter)
-					cursor.x /= 2.0;
 				cursor.y -= (text.spacing.y + font->spacing.y) * (alignTop ? +1 : -1);
 				chrRect.h = 0;
 				chrRect.v++;

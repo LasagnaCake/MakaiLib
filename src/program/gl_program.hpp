@@ -146,7 +146,11 @@ namespace Makai {
 			$debug("Started!");*/
 			// Initialize YSE
 			$debug("Starting Audio System...");
-			// TODO: Audio System
+			if (!Mix_Init(MIX_INIT_MP3 | MIX_INIT_OGG | (useMIDI ? MIX_INIT_MID : 0))) {
+				$errlog(string("Unable to start Mixer! (") + Mix_GetError() + ")");
+				throw runtime_error(string("Error: Mixer (") + Mix_GetError() + ")");
+			}
+			Mix_OpenAudio(48000, AUDIO_F32SYS, 2, 1024);
 			$debug("Started!");
 			// Create window and make active
 			$debug("Creating window...");
@@ -212,7 +216,7 @@ namespace Makai {
 			layerbuffer.shader = bufferShader;
 			Shader::defaultShader["textured"](false);
 			$debug(EntityClass::$_ROOT == nullptr);
-			//EntityClass::init();
+			// Initialize sound system
 		}
 
 		virtual ~Program() {}
@@ -262,8 +266,8 @@ namespace Makai {
 					if (event.type == SDL_QUIT)
 						shouldRun = false;
 				// Get deltas
-				frameDelta = 1.0/maxFrameRate;
-				cycleDelta = 1.0/maxCycleRate;
+				frameDelta	= 1.0/maxFrameRate;
+				cycleDelta	= 1.0/maxCycleRate;
 				// If should process, then do so
 				#ifndef $_PROCESS_RENDER_BEFORE_LOGIC
 				if (SDL_GetTicks() - cycleTicks > cycleDelta * 1000) {
@@ -454,7 +458,8 @@ namespace Makai {
 			onClose();
 			// Close YSE
 			$debug("Closing sound system...");
-			// TODO: Audio System
+			Mix_CloseAudio();
+			Mix_Quit();
 			$debug("Sound system closed!");
 			// Destroy buffers
 			$debug("Destroying frame buffers...");
