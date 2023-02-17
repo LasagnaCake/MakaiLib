@@ -66,6 +66,8 @@ public:
 	$txt Label			testLabel;
 	$txt Label			frameLabel;
 
+	$mus Music			testMusic;
+
 	$txt FontData		font{new Drawer::Texture2D("img/fonts/fontGRID.png"), $vec2(16), $vec2(0.55, 0.9)};
 
 	$drw Texture2D*		ringbar = new Drawer::Texture2D("img/ring.png");
@@ -85,6 +87,9 @@ public:
 		tubeRend->trans.scale = $vec3($vec2(10), 2);
 		tubeRend->trans.position.y = 5;
 		//tubeRend->material.fill = GL_LINE;
+		// Music stuff
+		testMusic.create("ost/test.ogg");
+		testMusic.play();
 		// Set player stuff
 		Vector2 screenSpace = getWindowScale();
 		player.spawnPoint =

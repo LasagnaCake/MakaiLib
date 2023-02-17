@@ -12,3 +12,4 @@ obj/Debug/*
 MakaiLib.exe
 *.o
 gmon.out
+res/ost/*

@@ -1,4 +1,1 @@
-> Player ocasionally starts at an angle
-
-> [SOLVED] Pixel resolution changes after going fullscreen (DPI increases, irreversible)
-	> It is now aware of DPI. At least on windows.
+> SDL_Mixer cannot load MP3 files

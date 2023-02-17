@@ -290,6 +290,8 @@ namespace Makai {
 				}
 				#endif
 				if (SDL_GetTicks() - frameTicks > frameDelta * 1000) {
+					// Update audio system
+					Audio::updateAudioSystem();
 					// Get current time
 					frameTicks = SDL_GetTicks();
 					// increment frame counter
