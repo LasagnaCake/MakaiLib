@@ -337,14 +337,15 @@ public:
 		return c->reset();
 	}
 
-	CollectibleList createCollectible(CollectibleData item, size_t count, Vector2 at, float radius = 1, Vector2 scale = Vector2(1), float angleOffset = 0) {
+	CollectibleList createCollectible(CollectibleData item, size_t count, Vector2 at, float radius = 1, Vector2 scale = Vector2(1), float angleOffset = 0, float spread = TAU) {
 		CollectibleList res;
 		GAME_PARALLEL_FOR
 		for $ssrange(i, 0, count) {
 			res.push_back(createCollectible(item));
-			last->local.position = at + ($vmt angleV2(TAU * ((float)i / (float)count) + angleOffset) * radius);
+			last->local.position = at + ($vmt angleV2(spread * ((float)i / (float)count) + angleOffset) * radius);
 			last->local.scale = scale;
 			last->reset();
+			last->updateSprite();
 		}
 		return res;
 	}

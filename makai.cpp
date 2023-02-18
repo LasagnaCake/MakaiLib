@@ -18,6 +18,17 @@
 
 #include "src/makai.hpp"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+__declspec(dllexport)	uint32	NvOptimusEnablement = 1;
+__declspec(dllexport)	int		AmdPowerXpressRequestHighPerformance = 1;
+
+#ifdef __cplusplus
+}
+#endif
+
 #if (_WIN32 || _WIN64 || __WIN32__ || __WIN64__)
 #include <winnt.h>
 #include <winuser.h>
@@ -117,6 +128,22 @@ public:
 			}, true
 		);
 		enemy->taskers.addTasker(et);
+		et = new $tsk Tasker(
+			$tsk TaskList{
+				$task {
+					DANMAKU_IM -> createCollectible(
+						CollectibleData{},
+						5,
+						$vec2(32, -16) * this->getWindowScale(),
+						3,
+						$vec2(0.5),
+						Math::Random::real(0.0, TAU)
+					);
+					return 60;
+				}
+			}, true
+		);
+		enemy->taskers.addTasker(et);
 		// Create test bullet spawner
 		bulletSpawner.onSignal = $signal {
 			float coefficient = 0;
@@ -193,9 +220,11 @@ public:
 				5,
 				$vec2(32, -16) * this->getWindowScale(),
 				3,
-				$vec2(0.5)
+				$vec2(0.5),
+				Math::Random::real(0.0, TAU)
 			);
 		};
+		itemSpawner.stop();
 		world3D.farFog = {true, 20, 10, $vec4(0, 0, .2, 1)};
 		world3D.ambient.color = Vector3(1,1,1);
 		enemy->setInvincible(120);
