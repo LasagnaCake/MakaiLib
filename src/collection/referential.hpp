@@ -23,21 +23,16 @@ namespace Reference {
 		return db;
 	}
 
-	template <Pointable T, bool unbindOnDelete = false, bool dilmsState = true>
+	template <Pointable T, bool deleteOnLast = true>
 	class Pointer {
 	public:
 		Pointer() {}
 
-		Pointer(const Pointer<T>& other) {bind(other.ref);}
+		Pointer(const Pointer<T, deleteOnLast>& other) {bind(other.ref);}
 
 		Pointer(T* obj) {bind(obj);}
 
-		~Pointer() {
-			if constexpr(unbindOnDelete)
-				unbind();
-			else
-				destroy();
-		}
+		~Pointer() {unbind();}
 
 		void bind(T* obj) {
 			static_assert(obj != nullptr, "Value must not be null!");
@@ -46,11 +41,11 @@ namespace Reference {
 			getPointerDB<T>()[obj]++;
 		}
 
-		// Destroy if Last Man Standing.
-		// I.E. Delete reference if last Pointer to exist with it.
-		void unbind(bool dilms = dilmsState) {
+		// Destroy if Last Pointer.
+		// I.E. Delete object if last Pointer to exist with it.
+		void unbind(bool dilp = deleteOnLast) {
 			if (exists()) return;
-			if (getPointerDB<T>()[ref]-1 == 0 && dilms)
+			if (getPointerDB<T>()[ref]-1 == 0 && dilp)
 				destroy();
 			else
 				getPointerDB<T>()[ref]--;
@@ -77,7 +72,7 @@ namespace Reference {
 		const T& operator*() const	{return getValue();}
 
 	private:
-		friend class Pointer<T, unbindOnDelete, dilmsState>;
+		friend class Pointer<T, deleteOnLast>;
 
 		T* ref = nullptr;
 
@@ -111,13 +106,10 @@ namespace Reference {
 	};
 
 	template <Pointable T>
-	using SharedPointer = Pointer<T,	true,	true>;
+	using SharedPointer = Pointer<T,	true>;
 
 	template <Pointable T>
-	using StrongPointer = Pointer<T,	false,	true>;
-
-	template <Pointable T>
-	using WeakPointer	= Pointer<T,	false,	false>;
+	using WeakPointer	= Pointer<T,	false>;
 }
 
 #define $ref Reference::
