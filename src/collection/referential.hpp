@@ -23,7 +23,7 @@ namespace Reference {
 		return db;
 	}
 
-	template <Pointable T, bool unbindOnDelete = false>
+	template <Pointable T, bool unbindOnDelete = false, bool dilmsState = true>
 	class Pointer {
 	public:
 		Pointer() {}
@@ -46,9 +46,11 @@ namespace Reference {
 			getPointerDB<T>()[obj]++;
 		}
 
-		void unbind() {
+		// Destroy if Last Man Standing.
+		// I.E. Delete reference if last Pointer to exist with it.
+		void unbind(bool dilms = dilmsState) {
 			if (exists()) return;
-			if (getPointerDB<T>()[ref]-1 == 0)
+			if (getPointerDB<T>()[ref]-1 == 0 && dilms)
 				destroy();
 			else
 				getPointerDB<T>()[ref]--;
@@ -69,12 +71,31 @@ namespace Reference {
 			);
 		}
 
-		T* getPointer()				{return exists() ? ref : nullptr;}
-		const T* getPointer() const	{return exists() ? ref : nullptr;}
+		T* getPointer()	{
+			static_assert(ref != nullptr, "Pointer reference does not exist!");
+			if (!exists())
+				throw runtime_error("Pointer reference does not exist!");
+			return (ref);
+		}
+
+		const T* getPointer() const	{
+			static_assert(ref != nullptr, "Pointer reference does not exist!");
+			if (!exists())
+				throw runtime_error("Pointer reference does not exist!");
+			return (ref);
+		}
 
 		T& getValue() {
+			static_assert(ref != nullptr, "Pointer reference does not exist!");
 			if (!exists())
-				throw runtime_error("Value for pointer does not exist!");
+				throw runtime_error("Pointer reference does not exist!");
+			return (*ref);
+		}
+
+		const T& getValue() const {
+			static_assert(ref != nullptr, "Pointer reference does not exist!");
+			if (!exists())
+				throw runtime_error("Pointer reference does not exist!");
 			return (*ref);
 		}
 
@@ -88,10 +109,13 @@ namespace Reference {
 	};
 
 	template <Pointable T>
-	using SharedPointer = Pointer<T, true>;
+	using SharedPointer = Pointer<T,	true,	true>;
 
 	template <Pointable T>
-	using StrongPointer = Pointer<T, false>;
+	using StrongPointer = Pointer<T,	false,	true>;
+
+	template <Pointable T>
+	using WeakPointer	= Pointer<T,	false,	false>;
 }
 
 #define $ref Reference::
