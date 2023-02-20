@@ -79,28 +79,28 @@ namespace Reference {
 
 		T* ref = nullptr;
 
-		T* getPointer()	{
+		inline T* getPointer()	{
 			static_assert(ref != nullptr, "Pointer reference does not exist!");
 			if (!exists())
 				throw runtime_error("Pointer reference does not exist!");
 			return (ref);
 		}
 
-		const T* getPointer() const	{
+		inline const T* getPointer() const	{
 			static_assert(ref != nullptr, "Pointer reference does not exist!");
 			if (!exists())
 				throw runtime_error("Pointer reference does not exist!");
 			return (ref);
 		}
 
-		T& getValue() {
+		inline T& getValue() {
 			static_assert(ref != nullptr, "Pointer reference does not exist!");
 			if (!exists())
 				throw runtime_error("Pointer reference does not exist!");
 			return (*ref);
 		}
 
-		const T& getValue() const {
+		inline const T& getValue() const {
 			static_assert(ref != nullptr, "Pointer reference does not exist!");
 			if (!exists())
 				throw runtime_error("Pointer reference does not exist!");
