@@ -71,6 +71,24 @@ namespace Reference {
 			);
 		}
 
+		bool operator()() {
+			return exists();
+		}
+
+		inline bool operator==(T* obj)	{return	ref == obj;			}
+		inline bool operator!=(T* obj)	{return	!operator==(obj);	}
+		inline bool operator<(T* obj)	{return	ref < obj;			}
+		inline bool operator>(T* obj)	{return	operator<(obj);		}
+		inline bool operator<=(T* obj)	{return	!operator>(obj);	}
+		inline bool operator>=(T* obj)	{return	!operator<(obj);	}
+
+		inline bool operator==(const SameType& other)	{return operator==(other.ref);	}
+		inline bool operator!=(const SameType& other)	{return operator!=(other.ref);	}
+		inline bool operator<(const SameType& other)	{return operator<(other.ref);	}
+		inline bool operator>(const SameType& other)	{return operator>(other.ref);	}
+		inline bool operator<=(const SameType& other)	{return operator<=(other.ref);	}
+		inline bool operator>=(const SameType& other)	{return operator>=(other.ref);	}
+
 		SameType& operator=(T* obj)								{bind(obj); return (*this);}
 		const SameType& operator=(T* obj) const					{bind(obj); return (*this);}
 		SameType& operator=(SameType other)						{bind(other.ref); return (*this);}
