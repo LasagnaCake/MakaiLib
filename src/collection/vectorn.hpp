@@ -880,6 +880,10 @@ namespace Vector{
 				return Vector4(w, z, y, x);
 			}
 
+			Vector4 wxyz() {
+				return Vector4(w, x, y, z);
+			}
+
 			Vector4 compensated() {
 				return Vector4(xyz() / w, w);
 			}
@@ -891,9 +895,9 @@ namespace Vector{
 #define $vec3	Vector::Vector3
 #define $vec4	Vector::Vector4
 
-#define Vec2 Vector::Vector2
-#define Vec3 Vector::Vector3
-#define Vec4 Vector::Vector4
+#define Vec2	Vector::Vector2
+#define Vec3	Vector::Vector3
+#define Vec4	Vector::Vector4
 
 namespace VecMath
 {

@@ -1,2 +1,0 @@
-D:\MSYS2\mingw64\bin\ar.exe qc libpugixml.a CMakeFiles/pugixml-static.dir/src/pugixml.cpp.obj
-D:\MSYS2\mingw64\bin\ranlib.exe libpugixml.a

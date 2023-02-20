@@ -1,3 +1,0 @@
-D:\CMake\bin\cmake.exe -E rm -f CMakeFiles\grains.dir/objects.a
-D:\TDM-GCC-64\bin\ar.exe qc CMakeFiles\grains.dir/objects.a @CMakeFiles\grains.dir\objects1.rsp
-D:\TDM-GCC-64\bin\g++.exe -Wall -O3 -DNDEBUG -O3 -DNDEBUG -Wl,--whole-archive CMakeFiles\grains.dir/objects.a -Wl,--no-whole-archive -o ..\..\..\projects\examples\grains.exe -Wl,--out-implib,libgrains.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\grains.dir\linklibs.rsp

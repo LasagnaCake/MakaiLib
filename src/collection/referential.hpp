@@ -28,9 +28,11 @@ namespace Reference {
 	private:
 		typedef Pointer<T, deleteOnLast> SameType;
 	public:
-		Pointer() {}
+		Pointer()						{}
 
-		Pointer(Pointer<T, deleteOnLast>&& other) {bind(other.ref);}
+		Pointer(SameType&& other)		{bind(other.ref);}
+
+		Pointer(const SameType& other)	{bind(other.ref);}
 
 		Pointer(T* obj) {bind(obj);}
 

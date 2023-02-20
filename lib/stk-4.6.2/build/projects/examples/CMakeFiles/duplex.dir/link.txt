@@ -1,3 +1,0 @@
-D:\CMake\bin\cmake.exe -E rm -f CMakeFiles\duplex.dir/objects.a
-D:\TDM-GCC-64\bin\ar.exe qc CMakeFiles\duplex.dir/objects.a @CMakeFiles\duplex.dir\objects1.rsp
-D:\TDM-GCC-64\bin\g++.exe -Wall -O3 -DNDEBUG -O3 -DNDEBUG -Wl,--whole-archive CMakeFiles\duplex.dir/objects.a -Wl,--no-whole-archive -o ..\..\..\projects\examples\duplex.exe -Wl,--out-implib,libduplex.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\duplex.dir\linklibs.rsp

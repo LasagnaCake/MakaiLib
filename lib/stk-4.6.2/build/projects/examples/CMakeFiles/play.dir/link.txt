@@ -1,3 +1,0 @@
-D:\CMake\bin\cmake.exe -E rm -f CMakeFiles\play.dir/objects.a
-D:\TDM-GCC-64\bin\ar.exe qc CMakeFiles\play.dir/objects.a @CMakeFiles\play.dir\objects1.rsp
-D:\TDM-GCC-64\bin\g++.exe -Wall -O3 -DNDEBUG -O3 -DNDEBUG -Wl,--whole-archive CMakeFiles\play.dir/objects.a -Wl,--no-whole-archive -o ..\..\..\projects\examples\play.exe -Wl,--out-implib,libplay.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\play.dir\linklibs.rsp

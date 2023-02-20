@@ -1,3 +1,0 @@
-D:\CMake\bin\cmake.exe -E rm -f CMakeFiles\controlbee.dir/objects.a
-D:\TDM-GCC-64\bin\ar.exe qc CMakeFiles\controlbee.dir/objects.a @CMakeFiles\controlbee.dir\objects1.rsp
-D:\TDM-GCC-64\bin\g++.exe -Wall -O3 -DNDEBUG -O3 -DNDEBUG -Wl,--whole-archive CMakeFiles\controlbee.dir/objects.a -Wl,--no-whole-archive -o ..\..\..\projects\examples\controlbee.exe -Wl,--out-implib,libcontrolbee.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\controlbee.dir\linklibs.rsp
