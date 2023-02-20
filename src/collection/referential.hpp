@@ -25,16 +25,18 @@ namespace Reference {
 
 	template <Pointable T, bool deleteOnLast = true>
 	class Pointer {
+	private:
+		typedef Pointer<T, deleteOnLast> SameType;
 	public:
 		Pointer() {}
 
-		Pointer(const Pointer<T, deleteOnLast>& other) {bind(other.ref);}
+		Pointer(Pointer<T, deleteOnLast>&& other) {bind(other.ref);}
 
 		Pointer(T* obj) {bind(obj);}
 
 		~Pointer() {unbind();}
 
-		Pointer<T, deleteOnLast>& bind(T* obj) {
+		SameType& bind(T* obj) {
 			static_assert(obj != nullptr, "Value must not be null!");
 			unbind();
 			ref = obj;
@@ -44,7 +46,7 @@ namespace Reference {
 
 		// Destroy if Last Pointer.
 		// I.E. Delete object if last Pointer to exist with it.
-		Pointer<T, deleteOnLast>& unbind(bool dilp = deleteOnLast) {
+		SameType& unbind(bool dilp = deleteOnLast) {
 			if (exists()) return (*this);
 			if (getPointerDB<T>()[ref]-1 == 0 && dilp)
 				destroy();
@@ -54,7 +56,7 @@ namespace Reference {
 			return (*this);
 		}
 
-		Pointer<T, deleteOnLast>& destroy() {
+		SameType& destroy() {
 			if (exists()) return (*this);
 			getPointerDB<T>()[ref] = 0;
 			delete ref;
@@ -68,6 +70,13 @@ namespace Reference {
 			&&	getPointerDB<T>()[ref] != 0
 			);
 		}
+
+		SameType& operator=(T* obj)								{bind(obj); return (*this);}
+		const SameType& operator=(T* obj) const					{bind(obj); return (*this);}
+		SameType& operator=(SameType other)						{bind(other.ref); return (*this);}
+		const SameType& operator=(SameType other) const			{bind(other.ref); return (*this);}
+		SameType& operator=(const SameType& other)				{bind(other.ref); return (*this);}
+		const SameType& operator=(const SameType& other) const	{bind(other.ref); return (*this);}
 
 		T* operator->()				{return getPointer();}
 		const T* operator->() const	{return getPointer();}
@@ -112,6 +121,6 @@ namespace Reference {
 	using WeakPointer	= Pointer<T,	false>;
 }
 
-#define $ref Reference::
+#define $ptr Reference::
 
 #endif // REFERENCE_HANDLER_H
