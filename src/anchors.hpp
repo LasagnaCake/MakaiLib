@@ -134,6 +134,7 @@
 
 #include "collection/types.hpp"
 #include "collection/conceptual.hpp"
+#include "collection/referential.hpp"
 #include "collection/algebra.hpp"
 #include "collection/definitions.hpp"
 #include "collection/helper.hpp"
