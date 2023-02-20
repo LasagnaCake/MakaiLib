@@ -34,29 +34,32 @@ namespace Reference {
 
 		~Pointer() {unbind();}
 
-		void bind(T* obj) {
+		Pointer<T, deleteOnLast>& bind(T* obj) {
 			static_assert(obj != nullptr, "Value must not be null!");
 			unbind();
 			ref = obj;
 			getPointerDB<T>()[obj]++;
+			return (*this);
 		}
 
 		// Destroy if Last Pointer.
 		// I.E. Delete object if last Pointer to exist with it.
-		void unbind(bool dilp = deleteOnLast) {
-			if (exists()) return;
+		Pointer<T, deleteOnLast>& unbind(bool dilp = deleteOnLast) {
+			if (exists()) return (*this);
 			if (getPointerDB<T>()[ref]-1 == 0 && dilp)
 				destroy();
 			else
 				getPointerDB<T>()[ref]--;
 			ref = nullptr;
+			return (*this);
 		}
 
-		void destroy() {
-			if (exists()) return;
+		Pointer<T, deleteOnLast>& destroy() {
+			if (exists()) return (*this);
 			getPointerDB<T>()[ref] = 0;
 			delete ref;
 			ref = nullptr;
+			return (*this);
 		}
 
 		bool exists() {
@@ -104,9 +107,6 @@ namespace Reference {
 			return (*ref);
 		}
 	};
-
-	template <Pointable T>
-	using SharedPointer = Pointer<T,	true>;
 
 	template <Pointable T>
 	using WeakPointer	= Pointer<T,	false>;
