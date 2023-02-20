@@ -122,9 +122,9 @@
 			<Add option="-m64" />
 			<Add library="lib/bzip2-1.0.8/libbz2.a" />
 			<Add library="lib/zlib-1.2.13/libz.a" />
-			<Add library="lib/SDL2-2.0.10/lib/libSDL2.a" />
+			<Add library="lib/SDL2-2.0.10/lib/libSDL2.dll.a" />
 			<Add library="lib/SDL2-2.0.10/lib/libSDL2main.a" />
-			<Add library="lib/SDL2-2.0.10/lib/libSDL2_mixer.a" />
+			<Add library="lib/SDL2-2.0.10/lib/libSDL2_mixer.dll.a" />
 			<Add library="lib/OpenGL/GLEW/lib/libglew32.dll.a" />
 			<Add library="opengl32" />
 			<Add library="gomp" />

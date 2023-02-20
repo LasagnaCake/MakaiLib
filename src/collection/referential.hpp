@@ -71,6 +71,16 @@ namespace Reference {
 			);
 		}
 
+		T* operator->()				{return getPointer();}
+		const T* operator->() const	{return getPointer();}
+		T& operator*()				{return getValue();}
+		const T& operator*() const	{return getValue();}
+
+	private:
+		friend class Pointer<T, unbindOnDelete, dilmsState>;
+
+		T* ref = nullptr;
+
 		T* getPointer()	{
 			static_assert(ref != nullptr, "Pointer reference does not exist!");
 			if (!exists())
@@ -98,14 +108,6 @@ namespace Reference {
 				throw runtime_error("Pointer reference does not exist!");
 			return (*ref);
 		}
-
-		T* operator->()				{return getPointer();}
-		const T* operator->() const	{return getPointer();}
-		T& operator*()				{return getValue();}
-		const T& operator*() const	{return getValue();}
-	private:
-		T* ref = nullptr;
-		friend class Pointer<T>;
 	};
 
 	template <Pointable T>
