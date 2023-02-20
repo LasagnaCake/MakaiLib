@@ -97,9 +97,6 @@
 			<Add directory="lib/SDL2-2.0.10/include" />
 			<Add directory="lib/OpenGL" />
 			<Add directory="lib/OpenGL/GLEW/include" />
-			<Add directory="lib/bzip2-1.0.8" />
-			<Add directory="lib/zlib-1.2.13" />
-			<Add directory="lib/openal-soft-1.22.2/include" />
 			<Add directory="lib/cute_headers" />
 			<Add directory="lib/stb" />
 		</Compiler>
@@ -108,9 +105,6 @@
 			<Add directory="lib/SDL2-2.0.10/include" />
 			<Add directory="lib/OpenGL" />
 			<Add directory="lib/OpenGL/GLEW/include" />
-			<Add directory="lib/bzip2-1.0.8" />
-			<Add directory="lib/zlib-1.2.13" />
-			<Add directory="lib/openal-soft-1.22.2/include" />
 			<Add directory="lib/cute_headers" />
 			<Add directory="lib/stb" />
 		</ResourceCompiler>
@@ -120,8 +114,6 @@
 			<Add option="-static-libgcc" />
 			<Add option="-static" />
 			<Add option="-m64" />
-			<Add library="lib/bzip2-1.0.8/libbz2.a" />
-			<Add library="lib/zlib-1.2.13/libz.a" />
 			<Add library="lib/SDL2-2.0.10/lib/libSDL2.dll.a" />
 			<Add library="lib/SDL2-2.0.10/lib/libSDL2main.a" />
 			<Add library="lib/SDL2-2.0.10/lib/libSDL2_mixer.dll.a" />
@@ -132,9 +124,6 @@
 			<Add directory="lib/SDL2-2.0.10/include" />
 			<Add directory="lib/OpenGL" />
 			<Add directory="lib/OpenGL/GLEW/include" />
-			<Add directory="lib/bzip2-1.0.8" />
-			<Add directory="lib/zlib-1.2.13" />
-			<Add directory="lib/openal-soft-1.22.2/include" />
 			<Add directory="lib/cute_headers" />
 			<Add directory="lib/stb" />
 		</Linker>
