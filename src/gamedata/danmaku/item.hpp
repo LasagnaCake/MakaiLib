@@ -26,38 +26,38 @@ struct Collectible: DanmakuObject {
 		if (params.spin) local.rotation += delta;
 		gravity = Math::clamp(gravity + params.gravity * delta, -params.bounce * delta, params.gravity * delta * 10.0f);
 		local.position.y -= gravity;
-		if (pocing && target)
+		if (pocing && target.exists())
 			local.position = Math::lerp(local.position, *target, Vector2(10 * delta));
 		updateSprite();
 	}
 
-	WeakPointer<Collectible> reset() override {
+	WeakPointer<DanmakuObject> reset() override {
 		setZero();
 		gravity = -params.bounce;
 		return this;
 	}
 
-	WeakPointer<Collectible> setZero() override {
+	WeakPointer<DanmakuObject> setZero() override {
 		sprite->local.rotation.z =
 		gravity = 0;
 		return this;
 	}
 
-	WeakPointer<Collectible> setFree(bool state = true) override {
+	WeakPointer<DanmakuObject> setFree(bool state = true) override {
 		DanmakuObject::setFree(state);
 		if (sprite) sprite->visible = !free;
 		pocing = false;
-		target = nullptr;
+		target.unbind();
 		return this;
 	}
 
-	WeakPointer<Collectible> discard() override {
+	WeakPointer<DanmakuObject> discard() override {
 		if (params.discardable)
 			setFree();
 		return this;
 	}
 
-	WeakPointer<Collectible> enable() override {
+	WeakPointer<DanmakuObject> enable() override {
 		return setFree(false);
 	}
 
@@ -72,14 +72,14 @@ struct Collectible: DanmakuObject {
 		sprite->local.scale = Vector3(local.scale, zScale);
 	}
 
-	WeakPointer<Collectible> setAutoCollect(Vector2* target = nullptr) {
+	WeakPointer<Collectible> setAutoCollect(WeakPointer<Vector2> target = nullptr) {
 		if (!params.pocable) return this;
 		pocing = true;
 		this->target = target;
 		return this;
 	}
 
-	Vector2* target = nullptr;
+	WeakPointer<Vector2> target;
 	bool pocing = false;
 
 private:
@@ -299,7 +299,7 @@ public:
 	WeakPointer<Collectible> createCollectible() {
 		//GAME_PARALLEL_FOR
 		for $seachif(item, items, ITEM_COUNT, item.isFree()) {
-			last = item.enable()->setZero();
+			last = item.enable()->setZero().castedTo<Collectible>();
 			last->pause = Pause();
 			last->params = CollectibleData();
 			last->taskers.clearTaskers();
@@ -319,7 +319,7 @@ public:
 			+ ")!"
 		);
 		#else
-		last = items[pbobw++].enable()->setZero();
+		last = items[pbobw++].enable()->setZero().castedTo<Collectible>();
 		last->params = CollectibleData();
 		last->taskers.clearTaskers();
 		last->flags.clear();
@@ -333,7 +333,7 @@ public:
 	WeakPointer<Collectible> createCollectible(CollectibleData item) {
 		WeakPointer<Collectible> c = createCollectible();
 		c->params = item;
-		return c->reset();
+		return c->reset().castedTo<Collectible>();
 	}
 
 	CollectibleList createCollectible(CollectibleData item, size_t count, Vector2 at, float radius = 1, Vector2 scale = Vector2(1), float angleOffset = 0, float spread = TAU) {

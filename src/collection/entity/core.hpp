@@ -152,7 +152,7 @@ namespace EntityClass {
 		/// Parent-less constructor.
 		Entity(string name = "Entity", bool uniqueEntity = true) {
 			// If root doesn't exist, create it
-			if (name != $_ROOT_NAME)
+			if (name != $_ROOT_NAME && !$_ROOT.exists())
 				init();
 			// Set object's name
 			if (name.length()) setName(name);
@@ -276,7 +276,7 @@ namespace EntityClass {
 		void addChild(EntityRef child, bool uniqueChild = true) {
 			// If parented, remove child from parent
 			EntityRef oldParent = child->getParent();
-			if (oldParent.exists()) oldParent->removeChild(child);
+			if (oldParent.exists()) oldParent->removeChild(&(*child));
 			// Set new child's parent
 			child->setParent(this);
 			// Check if child has same name as other child
@@ -446,7 +446,7 @@ namespace EntityClass {
 		/// Deletes self.
 		const Event::Signal destroy = $signal {
 			removeFromTree();
-			delete this;
+			EntityRef(this).destroy();
 		};
 
 		void queueDestroy() {
@@ -471,17 +471,20 @@ namespace EntityClass {
 		}
 
 		/// Removes a child from the object's children. Does not delete child.
-		void removeChild(EntityRef child) {
+		void removeChild(WeakPointer<Entity> child) {
+			$debug("Removing child '" + child->getName() + "'...");
 			// If there are children
 			if (children.size())
 				// Loop through children and...
 				for (size_t i = 0; i < children.size(); i++)
 					// If child matches...
 					if (children[i] == child) {
+						$debug("Child found!");
+						children[i].unbind(false);
 						// Remove child from children and end loop
 						children.erase(children.begin() + i);
 						break;
-				}
+					}
 		}
 
 		void removeFromTree() {
@@ -517,10 +520,11 @@ namespace EntityClass {
 	* is not necessary to call again.
 	*/
 	void init() {
-		if (EntityClass::$_ROOT.exists()) {
+		if (!EntityClass::$_ROOT.exists()) {
 			$debug("Creating root tree...");
-			$_ROOT = new Entity($_ROOT_NAME);
-			$debug("Root tree created!");
+			$_ROOT.bind(new Entity($_ROOT_NAME));
+			$debugp("Root tree created: ");
+			$debug(EntityClass::$_ROOT.exists() ? "True" : "False");
 		}
 	}
 

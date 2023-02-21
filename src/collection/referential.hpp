@@ -22,36 +22,51 @@ namespace SmartPointer {
 		return db;
 	}
 
+	#define ASSERT_STRONG static_assert(!weak, "It is forbidden to convert a strong pointer to a weak pointer!")
 	#define SameType Pointer<T, weak, deleteIfLast>
 	template <Pointable T, bool weak = false, bool deleteIfLast = true>
 	class Pointer {
 	public:
-		Pointer()						{}
+		Pointer()										{}
 
-		Pointer(SameType&& other)		{bind(other.ref);}
+		Pointer(Pointer<T, false, false>&& other)		{ASSERT_STRONG; bind(other.ref);}
+		Pointer(Pointer<T, false, true>&& other)		{ASSERT_STRONG; bind(other.ref);}
+		Pointer(Pointer<T, true, false>&& other)		{bind(other.ref);}
+		Pointer(Pointer<T, true, true>&& other)			{bind(other.ref);}
 
-		Pointer(const SameType& other)	{bind(other.ref);}
+		Pointer(const Pointer<T, false, false>& other)	{ASSERT_STRONG; bind(other.ref);}
+		Pointer(const Pointer<T, false, true>& other)	{ASSERT_STRONG; bind(other.ref);}
+		Pointer(const Pointer<T, true, false>& other)	{bind(other.ref);}
+		Pointer(const Pointer<T, true, true>& other)	{bind(other.ref);}
+
+		Pointer(const T*& obj) {bind(obj);}
 
 		Pointer(T* obj) {bind(obj);}
 
 		~Pointer() {unbind();}
 
 		SameType& bind(T* obj) {
-			if (obj != nullptr) throw std::runtime_error("Value must not be null!");
+			/*if (obj == nullptr)
+				throw std::runtime_error("Value must not be null!");*/
 			unbind();
+			if (obj == nullptr) return (*this);
 			ref = obj;
-			getPointerDB()[obj]++;
+			getPointerDB()[(void*)obj]++;
 			return (*this);
 		}
 
 		// Destroy if Last Pointer.
 		// I.E. Delete object if last Pointer to exist with it.
 		SameType& unbind(bool dilp = deleteIfLast) {
-			if (exists()) return (*this);
-			if (getPointerDB()[ref]-1 == 0 && dilp)
-				destroy();
-			else
-				getPointerDB()[ref]--;
+			if (!exists()) return (*this);
+			if (getPointerDB()[(void*)ref]-1 == 0 && dilp) {
+				$debug("Deleting reference...");
+				return destroy();
+			}
+			$debug("Updating reference counter...");
+			getPointerDB()[(void*)ref]--;
+			$debugp("References: ");
+			$debug(getPointerDB()[(void*)ref]);
 			ref = nullptr;
 			return (*this);
 		}
@@ -61,28 +76,32 @@ namespace SmartPointer {
 				return (*this);
 			} else {
 				if (!exists()) return (*this);
-				getPointerDB()[ref] = 0;
+				getPointerDB()[(void*)ref] = 0;
 				delete ref;
 				ref = nullptr;
 				return (*this);
 			}
 		}
 
-		inline bool exists() {
-			return (
-				ref != nullptr
-			&&	getPointerDB()[ref] != 0
-			);
+		bool exists() {/*
+			$debugp("(");
+			$debugp(ref);
+			$debugp(")");*/
+			if (ref == nullptr) return false;
+			return (getPointerDB()[(void*)ref] != 0);
 		}
 
 		inline bool operator()() {
 			return exists();
 		}
 
+		template<Pointable NEW_T>
+		inline Pointer<NEW_T, weak, deleteIfLast> castedTo() {
+			return (NEW_T*)ref;
+		}
+
 		//operator T*() const				{return ref;			};
 		explicit operator T*() const		{return ref;			};
-		template <NewPointer<T> NEWTYPE>
-		explicit operator NEWTYPE() const	{return (NEWTYPE)ref;	};
 
 		inline bool operator!()			{return	!exists();			}
 
@@ -111,7 +130,10 @@ namespace SmartPointer {
 		const T& operator*() const	{return getValue();		}
 
 	private:
-		friend class SameType;
+		friend class Pointer<T,	false,	false>;
+		friend class Pointer<T,	false,	true>;
+		friend class Pointer<T,	true,	false>;
+		friend class Pointer<T,	true,	true>;
 
 		T* ref = nullptr;
 
@@ -140,6 +162,7 @@ namespace SmartPointer {
 		}
 	};
 	#undef SameType
+	#undef ASSERT_STRONG
 
 	template <Pointable T>
 	using WeakPointer	= Pointer<T,	true,	false	>;

@@ -32,7 +32,7 @@ public:
 		updateSprite();
 	}
 
-	WeakPointer<LineLaser> reset() override {
+	WeakPointer<DanmakuObject> reset() override {
 		setZero();
 		params.vel.current = params.vel.start;
 		local.rotation =
@@ -44,7 +44,7 @@ public:
 		return this;
 	}
 
-	WeakPointer<LineLaser> setZero() override {
+	WeakPointer<DanmakuObject> setZero() override {
 		local.rotation =
 		params.vel.current =
 		params.vel.factor =
@@ -57,17 +57,17 @@ public:
 		return this;
 	}
 
-	WeakPointer<LineLaser> enable() override {
+	WeakPointer<DanmakuObject> enable() override {
 		return setFree(false);
 	}
 
-	WeakPointer<LineLaser> setFree(bool state = true) override {
+	WeakPointer<DanmakuObject> setFree(bool state = true) override {
 		DanmakuObject::setFree(state);
 		if (sprite)	sprite->visible	= !free;
 		return this;
 	}
 
-	WeakPointer<LineLaser> discard() override {
+	WeakPointer<DanmakuObject> discard() override {
 		if (params.discardable)
 			setFree();
 		return this;
@@ -276,7 +276,7 @@ public:
 	WeakPointer<LineLaser> createLineLaser() {
 		//GAME_PARALLEL_FOR
 		for $seachif(l, lasers, LASER_COUNT, l.isFree()) {
-			last = l.enable()->setZero();
+			last = l.enable()->setZero().castedTo<LineLaser>();
 			last->pause = Pause();
 			last->params = LineLaserData();
 			last->taskers.clearTaskers();
@@ -297,7 +297,7 @@ public:
 			+ ")!"
 		);
 		#else
-		last = lasers[pbobw++].enable()->setZero();
+		last = lasers[pbobw++].enable()->setZero().castedTo<LineLaser>();
 		last->params = LineLaserData();
 		last->taskers.clearTaskers();
 		last->flags.clear();
@@ -312,7 +312,7 @@ public:
 	WeakPointer<LineLaser> createLineLaser(LineLaserData laser) {
 		WeakPointer<LineLaser> l = createLineLaser();
 		l->params = laser;
-		return l->reset();
+		return l->reset().castedTo<LineLaser>();
 	}
 
 	LineLaser* lasers = new LineLaser[LASER_COUNT];

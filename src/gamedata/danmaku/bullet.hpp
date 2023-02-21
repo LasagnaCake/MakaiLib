@@ -34,7 +34,7 @@ public:
 		updateSprite();
 	}
 
-	WeakPointer<Bullet> reset() override {
+	WeakPointer<DanmakuObject> reset() override {
 		setZero();
 		params.vel.current = params.vel.start;
 		local.rotation =
@@ -46,7 +46,7 @@ public:
 		return this;
 	}
 
-	WeakPointer<Bullet> setZero() override {
+	WeakPointer<DanmakuObject> setZero() override {
 		params.vel.current =
 		local.rotation =
 		params.rot.current =
@@ -55,17 +55,17 @@ public:
 		return this;
 	}
 
-	WeakPointer<Bullet> enable() override {
+	WeakPointer<DanmakuObject> enable() override {
 		return setFree(false);
 	}
 
-	WeakPointer<Bullet> setFree(bool state = true) override {
+	WeakPointer<DanmakuObject> setFree(bool state = true) override {
 		DanmakuObject::setFree(state);
 		if (sprite) sprite->visible = !free;
 		return this;
 	}
 
-	WeakPointer<Bullet> discard() override {
+	WeakPointer<DanmakuObject> discard() override {
 		if (params.discardable)
 			setFree();
 		return this;
@@ -83,7 +83,7 @@ public:
 		sprite->local.scale = Vector3(local.scale, zScale);
 	}
 
-	WeakPointer<Bullet> clearSignals() override {
+	WeakPointer<DanmakuObject> clearSignals() override {
 		DanmakuObject::clearSignals();
 		auto pass = $tsignal(DanmakuObject*) {};
 		onRebound = onShuttle = pass;
@@ -390,7 +390,7 @@ public:
 	WeakPointer<Bullet> createBullet() {
 		//GAME_PARALLEL_FOR
 		for $seachif(b, bullets, BULLET_COUNT, b.isFree()) {
-			last = b.enable()->setZero();
+			last = b.enable()->setZero().castedTo<Bullet>();
 			last->pause = Pause();
 			last->params = BulletData();
 			last->grazed = false;
@@ -411,7 +411,7 @@ public:
 			+ ")!"
 		);
 		#else
-		last = bullets[pbobw++].enable()->setZero();
+		last = bullets[pbobw++].enable()->setZero().castedTo<Bullet>();
 		last->params = BulletData();
 		last->grazed = false;
 		last->taskers.clearTaskers();
@@ -426,7 +426,7 @@ public:
 	WeakPointer<Bullet> createBullet(BulletData bullet) {
 		WeakPointer<Bullet> b = createBullet();
 		b->params = bullet;
-		return b->reset();
+		return b->reset().castedTo<Bullet>();
 	}
 
 	Bullet* bullets = new Bullet[BULLET_COUNT];

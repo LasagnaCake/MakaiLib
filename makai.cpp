@@ -61,7 +61,7 @@ public:
 			"shaders/framebuffer/compose.slf",
 			"shaders/base/base.slf"
 		) {
-		$debug(EntityClass::$_ROOT != nullptr);
+		$debug(EntityClass::$_ROOT.exists());
 	}
 
 	$evt Timer bulletSpawner	= $evt Timer(5, true);
@@ -73,12 +73,12 @@ public:
 	Pointer<EnemyEntity2D>	enemy;
 	Pointer<Renderable>		tubeRend;
 
-	$txt Label			testLabel;
-	$txt Label			frameLabel;
+	$txt Label				testLabel;
+	$txt Label				frameLabel;
 
-	$mus Music			testMusic;
+	$mus Music				testMusic;
 
-	$txt FontData		font{new Drawer::Texture2D("img/fonts/fontGRID.png"), $vec2(16), $vec2(0.55, 0.9)};
+	$txt FontData			font{new Drawer::Texture2D("img/fonts/fontGRID.png"), $vec2(16), $vec2(0.55, 0.9)};
 
 	Pointer<Texture2D>		ringbar = new Drawer::Texture2D("img/ring.png");
 
@@ -90,7 +90,7 @@ public:
 		// maxFrameRate = 60;
 		// maxFrameRate = 20;
 		// Do parent task
-		$debug(EntityClass::$_ROOT != nullptr);
+		$debug(EntityClass::$_ROOT.exists());
 		DanmakuApp::onOpen();
 		player = new PlayerEntity2D("MainPlayer");
 		// Create background
@@ -323,8 +323,11 @@ public:
 
 	void onClose() override {
 		DanmakuApp::onClose();
-		$debug("[ Executing Closing Procedure NOW ]\n");
+		$debug("\n[ Executing Closing Procedure NOW ]\n");
 		tubeRend.destroy();
+		ringbar.destroy();
+		player.destroy();
+		enemy.destroy();
 		delete font.face;
 	}
 };

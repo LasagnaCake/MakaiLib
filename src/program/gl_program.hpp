@@ -215,8 +215,12 @@ namespace Makai {
 			framebuffer.shader = bufferShader;
 			layerbuffer.shader = bufferShader;
 			Shader::defaultShader["textured"](false);
-			$debug(EntityClass::$_ROOT == nullptr);
-			// Initialize sound system
+			$debug(EntityClass::$_ROOT.exists() ? "Root Exists!" : "Root does not exist!");
+			if (!EntityClass::$_ROOT.exists()) {
+				$debug("Initializing root tree...");
+				EntityClass::init();
+			}
+			$debug("All core systems initialized!");
 		}
 
 		virtual ~Program() {}
@@ -330,7 +334,7 @@ namespace Makai {
 				#endif
 			}
 			// Terminate program
-			$debug("Closing incoherent program...");
+			$debug("\nClosing incoherent program...");
 			terminate();
 		}
 

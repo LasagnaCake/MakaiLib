@@ -61,6 +61,7 @@ namespace GameData {
 	typedef std::unordered_map<string, SDL_Scancode> KeyBinds;
 
 	void addToGame(WeakPointer<Entity> e, std::string gameType) {
+		$debug("Adding '" + e->getName() + "' to '" + gameType + "'...");
 		if (!EntityClass::$_ROOT)
 			throw std::runtime_error("Root wasn't created!");
 		Pointer<Entity> game = $ecl $_ROOT->getChild(gameType);
@@ -68,7 +69,7 @@ namespace GameData {
 			game = new $ecl Entity(gameType);
 			$ecl $_ROOT->addChild(game);
 		}
-		game->addChild(&(*e));
+		game->addChild(e);
 	}
 
 	template <typename T> using Callback = std::function<void(T&)>;

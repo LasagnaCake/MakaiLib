@@ -1,5 +1,6 @@
 namespace {
-	$mki Program* mainProgram = nullptr;
+	using Makai::Program;
+	WeakPointer<Program> mainProgram;
 }
 
 class DanmakuApp: public $mki Program {
@@ -20,7 +21,8 @@ public:
 			bufferShaderPath,
 			false
 	) {
-		if (mainProgram)
+		$debug("Creating Danmaku systems...");
+		if (mainProgram.exists())
 			throw std::runtime_error("Only one program can exist at a time!");
 		mainProgram = this;
 		// Create main shader
@@ -28,27 +30,28 @@ public:
 		$mainshader.destroy();
 		$mainshader.create(data);
 		// Set managers (Enemy)
-		enemyBulletManager		= &managers.bullet.enemy;
-		enemyLineLaserManager	= &managers.lineLaser.enemy;
+		managers.bullet.enemy		= enemyBulletManager		= new EnemyBulletManager();
+		managers.lineLaser.enemy	= enemyLineLaserManager		= new EnemyLineLaserManager();
 		// Set managers (Player)
-		playerBulletManager		= &managers.bullet.player;
-		playerLineLaserManager	= &managers.lineLaser.player;
+		managers.bullet.player		= playerBulletManager		= new PlayerBulletManager();
+		managers.lineLaser.player	= playerLineLaserManager	= new PlayerLineLaserManager();
 		// Set item manager
-		itemManager				= &managers.item;
+		managers.item				= itemManager				= new ItemManager();
+		$debug("Danmaku systems created!");
 	};
 
 	struct {
 		struct {
-			EnemyBulletManager		enemy;
-			PlayerBulletManager		player;
+			Pointer<EnemyBulletManager>		enemy;
+			Pointer<PlayerBulletManager>	player;
 		} bullet;
 
 		struct {
-			EnemyLineLaserManager	enemy;
-			PlayerLineLaserManager	player;
+			Pointer<EnemyLineLaserManager>	enemy;
+			Pointer<PlayerLineLaserManager>	player;
 		} lineLaser;
 
-		ItemManager item;
+		Pointer<ItemManager> item;
 	} managers;
 
 	$cam Camera3D cam2D;
@@ -78,12 +81,14 @@ public:
 	virtual void onLoading() {}
 
 	virtual ~DanmakuApp() {
-		mainProgram = nullptr;
-		enemyBulletManager		= nullptr;
-		enemyLineLaserManager	= nullptr;
-		playerBulletManager		= nullptr;
-		playerLineLaserManager	= nullptr;
-		itemManager				= nullptr;
+		$debug("Deleting managers...");
+		mainProgram.unbind();
+		enemyBulletManager.unbind();
+		enemyLineLaserManager.unbind();
+		playerBulletManager.unbind();
+		playerLineLaserManager.unbind();
+		itemManager.unbind();
+		$debug("Deleted!");
 	}
 
 	void onOpen() override {
@@ -103,22 +108,22 @@ public:
 				onLoading();
 				renderReservedLayer();
 				if $event(SDL_QUIT) {
-					managers.bullet.enemy.haltProcedure =
-					managers.lineLaser.enemy.haltProcedure =
-					managers.bullet.player.haltProcedure =
-					managers.lineLaser.player.haltProcedure =
-					managers.item.haltProcedure = true;
+					managers.bullet.enemy->haltProcedure =
+					managers.lineLaser.enemy->haltProcedure =
+					managers.bullet.player->haltProcedure =
+					managers.lineLaser.player->haltProcedure =
+					managers.item->haltProcedure = true;
 					close();
 				}
 			}
 		};
 		std::thread secondary(subTask);
 		// Create things
-		managers.bullet.enemy.create();
-		managers.lineLaser.enemy.create();
-		managers.bullet.player.create();
-		managers.lineLaser.player.create();
-		managers.item.create();
+		managers.bullet.enemy->create();
+		managers.lineLaser.enemy->create();
+		managers.bullet.player->create();
+		managers.lineLaser.player->create();
+		managers.item->create();
 		doneCreating = true;
 		secondary.join();
 		// Set playfield
@@ -127,12 +132,12 @@ public:
 		BoxBounds2D
 			playfield = $cdt makeBounds(screenPosition, screenSize * Vector2(1.1, 1.1)),
 			board = $cdt makeBounds(screenPosition, screenSize);
-		managers.item.poc = -screenSize.y / 3.0;
-		managers.item.playfield =
-		managers.bullet.enemy.playfield =
-		managers.bullet.player.playfield = playfield;
-		managers.bullet.enemy.board =
-		managers.bullet.player.board = board;
+		managers.item->poc = -screenSize.y / 3.0;
+		managers.item->playfield =
+		managers.bullet.enemy->playfield =
+		managers.bullet.player->playfield = playfield;
+		managers.bullet.enemy->board =
+		managers.bullet.player->board = board;
 	}
 
 	void onClose() override {
@@ -222,8 +227,8 @@ ProgramSetting queryProgramSettingsFromUser(bool use16by9 = false, bool letUserC
 }
 
 
-DanmakuApp* getMainProgram() {
-	return (DanmakuApp*)mainProgram;
+WeakPointer<DanmakuApp> getMainProgram() {
+	return mainProgram.castedTo<DanmakuApp>();
 }
 
 #undef USER_QUIT
