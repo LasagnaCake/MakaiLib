@@ -233,11 +233,11 @@ namespace Math {
 		return [=](T by) -> T {return (T)lerp(from, to, by);};
 	}
 
-	constexpr float dbToVolume(float db) {
+	inline float dbToVolume(float db) {
 		return powf(10.0f, 0.5f * db);
 	}
 
-	constexpr float volumeToDb(float volume) {
+	constexpr inline float volumeToDb(float volume) {
 		return 20.0f * log10f(volume);
 	}
 
