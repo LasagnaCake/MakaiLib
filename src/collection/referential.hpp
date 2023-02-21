@@ -49,7 +49,7 @@ namespace SmartPointer {
 			unbind();
 			if (obj == nullptr) return (*this);
 			ref = obj;
-			IF_STRONG _pointerDB[(void*)obj]++;
+			_pointerDB[(void*)obj]++;
 			return (*this);
 		}
 
@@ -57,28 +57,28 @@ namespace SmartPointer {
 		// I.E. Delete object if last Pointer to exist with it.
 		SameType& unbind(bool dilp = deleteIfLast) {
 			if (!exists()) return (*this);
-			IF_STRONG {
-				if (_pointerDB[(void*)ref]-1 == 0 && dilp) {
-					$debug("Deleting reference...");
-					return destroy();
-				}
-				$debug("Updating reference counter...");
-				_pointerDB[(void*)ref]--;
-				$debugp("References: ");
-				$debug(_pointerDB[(void*)ref]);
+			if (_pointerDB[(void*)ref]-1 == 0 && dilp) {
+				$debug("Deleting reference...");
+				return destroy();
 			}
+			$debug("Updating reference counter...");
+			_pointerDB[(void*)ref]--;
+			$debugp("References: ");
+			$debug(_pointerDB[(void*)ref]);
 			ref = nullptr;
 			return (*this);
 		}
 
 		SameType& destroy() {
-			IF_STRONG {
+			if constexpr(weak) {
+				return (*this);
+			} else {
 				if (!exists()) return (*this);
 				_pointerDB[(void*)ref] = 0;
 				delete ref;
 				ref = nullptr;
+				return (*this);
 			}
-			return (*this);
 		}
 
 		bool exists() {
@@ -94,10 +94,8 @@ namespace SmartPointer {
 		inline Pointer<NEW_T, weak, deleteIfLast>	castedTo()	{return (NEW_T*)getPointer();	}
 		inline Pointer<T, true, deleteIfLast>		toWeak()	{return getPointer();			}
 		inline T*									raw()		{return getPointer();			}
-		//inline Pointer<T, false, deleteIfLast>		toStrong()	{return ref;					}
 
-		//operator T*() const				{return ref;			};
-		explicit operator T*() const		{return ref;			};
+		explicit operator T*() const	{return ref;				};
 
 		inline bool operator!()			{return	!exists();			}
 

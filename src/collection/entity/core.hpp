@@ -166,7 +166,7 @@ namespace EntityClass {
 		}
 
 		/// Parented constructor.
-		Entity(WeakPointer<Entity> parent, string name = "Entity", bool uniqueEntity = true): Entity(name) {
+		Entity(Pointer<Entity> parent, string name = "Entity", bool uniqueEntity = true): Entity(name) {
 			// Parent object
 			parent->addChild(this, uniqueEntity);
 		}
@@ -292,7 +292,7 @@ namespace EntityClass {
 		}
 
 		/// Sets the object's parent, while also avoiding cyclical parenting.
-		void setParent(WeakPointer<Entity> parent) {
+		void setParent(Pointer<Entity> parent) {
 			// Check if object is root object
 			if (name == $_ROOT_NAME)
 				throw invalid_argument("Root cannot be parented.");
@@ -305,7 +305,7 @@ namespace EntityClass {
 
 		/// Returns the object's parent.
 		inline Pointer<Entity> getParent() {
-			return &(*parent);
+			return parent.raw();
 		}
 
 		/// Gets object's "root" parent.
@@ -426,7 +426,7 @@ namespace EntityClass {
 
 		/// Addition Assignment operator overload.
 		void operator+=(Pointer<Entity> child) {
-			addChild(&(*child));
+			addChild(child.raw());
 		}
 
 		/// Subtraction Assignment operator overload (name).
@@ -451,13 +451,13 @@ namespace EntityClass {
 
 	protected:
 		/// Returns whether a given object would be a valid parent object.
-		bool isValidParent(WeakPointer<Entity> obj) {
+		bool isValidParent(Pointer<Entity> obj) {
 			if (obj == this || obj->isDistantParent(this)) return false;
 			return true;
 		}
 
 		/// Returns whether the object (self) has a given object as a distant parent.
-		bool isDistantParent(WeakPointer<Entity> obj) {
+		bool isDistantParent(Pointer<Entity> obj) {
 			// If match, return true
 			if (this == obj) return true;
 			// If parented, return parent's result
@@ -496,7 +496,7 @@ namespace EntityClass {
 
 	private:
 		/// The object's parent.
-		WeakPointer<Entity> parent;
+		Pointer<Entity> parent;
 
 		/// The object's name.
 		string name;

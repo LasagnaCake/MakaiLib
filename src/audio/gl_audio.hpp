@@ -104,7 +104,7 @@ namespace Audio {
 		struct Music: public Base::Playable {
 			using Playable::Playable;
 
-			virtual ~Music() {}
+			virtual ~Music() {destroy();}
 
 			void onCreate(String path) override {
 				source = Mix_LoadMUS(path.c_str());
