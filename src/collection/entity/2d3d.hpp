@@ -48,13 +48,13 @@ namespace EntityClass {
 		/// Calculates the object's global position.
 		Vector2 globalPosition() {
 			// Try and get parent
-			Entity* par = getParent();
+			EntityRef par = getParent();
 			// If unparented, or parent is root, return own position
 			if (!par) return position;
 			if (par->getName() == $_ROOT_NAME) return position;
 			// Try getting parent's global position
 			if (par->getCoreClass() == "Entity2D") {
-				Entity2D* parent2D = (Entity2D*)par;
+				Entity2D* parent2D = (Entity2D*)&(*par);
 				// Transform position based on parent's transforms
 				return srpTransform(
 					position,
@@ -69,13 +69,13 @@ namespace EntityClass {
 		/// Calculates the object's global rotation.
 		float globalRotation() {
 			// Try and get parent
-			Entity* par = getParent();
+			EntityRef par = getParent();
 			// If unparented, or parent is root, return own rotation
 			if (!par) return rotation;
 			if (par->getName() == $_ROOT_NAME) return rotation;
 			// Try getting parent's global rotation
 			try {
-				Entity2D* parent2D = (Entity2D*)par;
+				Entity2D* parent2D = (Entity2D*)&(*par);
 				// Transform rotation based on parent's rotation
 				return rotation + parent2D->globalRotation();
 			// On fail, return own rotation
@@ -87,13 +87,13 @@ namespace EntityClass {
 		/// Calculates the object's global scale.
 		Vector2 globalScale() {
 			// Try and get parent
-			Entity* par = getParent();
+			EntityRef par = getParent();
 			// If unparented, or parent is root, return own scale
 			if (!par) return scale;
 			if (par->getName() == $_ROOT_NAME) return scale;
 			// Try getting parent's global scale
 			if (par->getCoreClass() == "Entity2D") {
-				Entity2D* parent2D = (Entity2D*)par;
+				Entity2D* parent2D = (Entity2D*)&(*par);
 				// Transform scale based on parent's scale
 				return scale + parent2D->globalScale();
 			// On fail, return own scale
@@ -148,13 +148,13 @@ namespace EntityClass {
 		/// Calculates the object's global position.
 		Vector3 globalPosition() {
 			// Try and get parent
-			Entity* par = getParent();
+			EntityRef par = getParent();
 			// If unparented, or parent is root, return own position
 			if (!par) return position;
 			if (par->getName() == $_ROOT_NAME) return position;
 			// Try getting parent's global position
 			try {
-				Entity3D* parent3D = (Entity3D*)par;
+				Entity3D* parent3D = (Entity3D*)&(*par);
 				// Transform position based on parent's transforms
 				return srpTransform(
 					position,
@@ -169,13 +169,13 @@ namespace EntityClass {
 		/// Calculate's the object's global rotation.
 		Vector3 globalRotation() {
 			// Try and get parent
-			Entity* par = getParent();
+			EntityRef par = getParent();
 			// If unparented, or parent is root, return own rotation
 			if (!par) return rotation;
 			if (par->getName() == $_ROOT_NAME) return rotation;
 			// Try getting parent's global rotation
 			try {
-				Entity3D* parent3D = (Entity3D*)par;
+				Entity3D* parent3D = (Entity3D*)&(*par);
 				// Transform rotation based on parent's rotation
 				return rotation + parent3D->globalRotation();
 			// On fail, return own rotation
@@ -187,13 +187,13 @@ namespace EntityClass {
 		/// Calculates the object's global scale.
 		Vector3 globalScale() {
 			// Try and get parent
-			Entity* par = getParent();
+			EntityRef par = getParent();
 			// If unparented, or parent is root, return own scale
 			if (!par) return scale;
 			if (par->getName() == $_ROOT_NAME) return scale;
 			// Try getting parent's global scale
 			try {
-				Entity3D* parent3D = (Entity3D*)par;
+				Entity3D* parent3D = (Entity3D*)&(*par);
 				// Transform scale based on parent's scale
 				return scale + parent3D->globalScale();
 			// On fail, return own scale

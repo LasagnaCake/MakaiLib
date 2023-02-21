@@ -40,10 +40,11 @@ constexpr struct {
 } powerScheme;
 #endif
 
-using namespace $rdt Reference;
+using namespace RenderData;
+using namespace RenderData::Reference;
 using namespace Vector;
-using $dmk ObjectParam;
-using $dmk CollectibleData;
+using namespace GameData::Danmaku;
+using namespace SmartPointer;
 
 class GameApp: public $dmk DanmakuApp {
 public:
@@ -68,11 +69,9 @@ public:
 
 	float rotAngle = 0.0;
 
-	$dmk PlayerEntity2D	player;
-
-	$dmk EnemyEntity2D*	enemy;
-
-	$rdt Renderable*	tubeRend;
+	Pointer<PlayerEntity2D>	player;
+	Pointer<EnemyEntity2D>	enemy;
+	Pointer<Renderable>		tubeRend;
 
 	$txt Label			testLabel;
 	$txt Label			frameLabel;
@@ -81,7 +80,7 @@ public:
 
 	$txt FontData		font{new Drawer::Texture2D("img/fonts/fontGRID.png"), $vec2(16), $vec2(0.55, 0.9)};
 
-	$drw Texture2D*		ringbar = new Drawer::Texture2D("img/ring.png");
+	Pointer<Texture2D>		ringbar = new Drawer::Texture2D("img/ring.png");
 
 	uint64 ticks = 0;
 
@@ -93,6 +92,7 @@ public:
 		// Do parent task
 		$debug(EntityClass::$_ROOT != nullptr);
 		DanmakuApp::onOpen();
+		player = new PlayerEntity2D("MainPlayer");
 		// Create background
 		tubeRend = $rdt loadObjectFromBinaryFile("stages/test.bin");
 		tubeRend->trans.scale = $vec3($vec2(10), 2);
@@ -100,29 +100,29 @@ public:
 		//tubeRend->material.fill = GL_LINE;
 		// Music stuff
 		testMusic.create("ost/test.ogg");
-		testMusic.play();
+		testMusic.play(-1, 1000);
 		// Set player stuff
 		Vector2 screenSpace = getWindowScale();
-		player.spawnPoint =
-		player.position =
+		player->spawnPoint =
+		player->position =
 		Vector2(32, -48) * screenSpace;
-		player.grazebox.radius = 2.5;
-		player.board = DANMAKU_EBM -> board;
-		player.mesh.material.color = Color::GREEN;
+		player->grazebox.radius = 2.5;
+		player->board = DANMAKU_EBM -> board;
+		player->mesh.material.color = Color::GREEN;
 		enemy = new $dmk EnemyEntity2D("Test");
 		enemy->position = Vector2(32, -24) * screenSpace;
 		enemy->sprite->setColor(Color::RED);
 		enemy->healthBar.offset.y = 0.5;
 		enemy->healthBar.material.texture.enabled	= true;
 		enemy->healthBar.centered = true;
-		enemy->healthBar.material.texture.image		= ringbar;
+		enemy->healthBar.material.texture.image		= (Texture2D*)ringbar;
 		//enemy->healthBar.dynamicUV = false;
 		$tsk Tasker* et = new $tsk Tasker(
 			$tsk TaskList{
 				$task {
 					//enemy->healthBar.uvAngle += 1.0/(120.0 * (enemy->health / enemy->maxHealth));
 					enemy->healthBar.uvAngle += 1.0/(120.0);
-					enemy->healthBar.offset = $vmt angleV2($vmt angleTo(enemy->position, player.position)) / 2.0;
+					enemy->healthBar.offset = $vmt angleV2($vmt angleTo(enemy->position, player->position)) / 2.0;
 					$end;
 				}
 			}, true
@@ -324,7 +324,7 @@ public:
 	void onClose() override {
 		DanmakuApp::onClose();
 		$debug("[ Executing Closing Procedure NOW ]\n");
-		delete tubeRend;
+		tubeRend.destroy();
 		delete font.face;
 	}
 };

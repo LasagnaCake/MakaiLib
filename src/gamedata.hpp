@@ -52,23 +52,23 @@ namespace GameData {
 		std::string;
 
 		using namespace Vector;
-
-		namespace Reference {using namespace RenderData::Reference;}
+		using namespace RenderData::Reference;
+		using namespace SmartPointer;
 
 		namespace Material {using namespace RenderData::Material;}
 	}
 
 	typedef std::unordered_map<string, SDL_Scancode> KeyBinds;
 
-	void addToGame(Entity* e, std::string gameType) {
+	void addToGame(WeakPointer<Entity> e, std::string gameType) {
 		if (!EntityClass::$_ROOT)
 			throw std::runtime_error("Root wasn't created!");
-		Entity* game = $ecl $_ROOT->getChild(gameType);
-		if (game == nullptr) {
+		Pointer<Entity> game = $ecl $_ROOT->getChild(gameType);
+		if (!game) {
 			game = new $ecl Entity(gameType);
 			$ecl $_ROOT->addChild(game);
 		}
-		game->addChild(e);
+		game->addChild(&(*e));
 	}
 
 	template <typename T> using Callback = std::function<void(T&)>;
@@ -86,7 +86,7 @@ namespace GameData {
 		class Stage;
 		class DanmakuApp;
 		#define $dmk GameData::Danmaku::
-		AreaCircle2D* mainPlayer = nullptr;
+		Pointer<AreaCircle2D> mainPlayer;
 		#include "gamedata/danmaku/predefs.hpp"
 		#include "gamedata/danmaku/structs.hpp"
 		#include "gamedata/danmaku/bullet.hpp"

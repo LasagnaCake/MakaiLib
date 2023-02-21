@@ -239,7 +239,7 @@ namespace Makai {
 			};
 			// The logical process
 			auto logicFunc	= [&](float delta)-> void {
-				if (EntityClass::$_ROOT)
+				if (EntityClass::$_ROOT.exists())
 					EntityClass::$_ROOT->yield(delta);
 			};
 			// Clear screen

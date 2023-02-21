@@ -49,27 +49,27 @@ struct EnemyEntity2D: public AreaCircle2D {
 			onDeath();
 	}
 
-	void onCollision(Entity* e) override {
+	void onCollision(WeakPointer<Entity> e) override {
 		auto player = getMainPlayer();
 		if (!invincible) {
 			if (
-					$ecl groups.isInGroup(e, $layer(PLAYER_BULLET))
+					$ecl groups.isInGroup(&(*e), $layer(PLAYER_BULLET))
 			) {
-				if (player) health -= player->damage.main;
+				if (player.exists()) health -= player->damage.main;
 				else health -= defaults.playerDamage.main;
 			}
 			if (
-					$ecl groups.isInGroup(e, $layer(PLAYER_LASER))
+					$ecl groups.isInGroup(&(*e), $layer(PLAYER_LASER))
 			) {
-				if (player) health -= player->damage.main;
+				if (player.exists()) health -= player->damage.main;
 				else health -= defaults.playerDamage.main;
 			}
-			if ($ecl groups.isInGroup(e, $layer(PLAYER_BOMB))) {
-				if (player) health -= player->damage.bomb;
+			if ($ecl groups.isInGroup(&(*e), $layer(PLAYER_BOMB))) {
+				if (player.exists()) health -= player->damage.bomb;
 				else health -= defaults.playerDamage.bomb;
 			}
 		}
-		auto obj = (PlayerEntity2D*)e;
+		auto obj = (PlayerEntity2D*)&(*e);
 		if (collideWithPlayer && obj == player) {
 			obj->pichun();
 		}

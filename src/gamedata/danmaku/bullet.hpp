@@ -12,13 +12,13 @@ struct BulletData: ObjectData {
 class Bullet: public DanmakuObject {
 public:
 	Bullet(): DanmakuObject() {
-		auto pass = $tsignal(Bullet*) {};
+		auto pass = $tsignal(WeakPointer<Bullet>) {};
 		onRebound		= pass;
 		onShuttle		= pass;
 	}
 
-	$tev Signal<Bullet*> onRebound;
-	$tev Signal<Bullet*> onShuttle;
+	$tev Signal<WeakPointer<Bullet>> onRebound;
+	$tev Signal<WeakPointer<Bullet>> onShuttle;
 
 	BulletData params;
 
@@ -34,7 +34,7 @@ public:
 		updateSprite();
 	}
 
-	Bullet* reset() override {
+	WeakPointer<Bullet> reset() override {
 		setZero();
 		params.vel.current = params.vel.start;
 		local.rotation =
@@ -46,7 +46,7 @@ public:
 		return this;
 	}
 
-	Bullet* setZero() override {
+	WeakPointer<Bullet> setZero() override {
 		params.vel.current =
 		local.rotation =
 		params.rot.current =
@@ -55,17 +55,17 @@ public:
 		return this;
 	}
 
-	Bullet* enable() override {
-		return (Bullet*)setFree(false);
+	WeakPointer<Bullet> enable() override {
+		return setFree(false);
 	}
 
-	Bullet* setFree(bool state = true) override {
+	WeakPointer<Bullet> setFree(bool state = true) override {
 		DanmakuObject::setFree(state);
 		if (sprite) sprite->visible = !free;
 		return this;
 	}
 
-	Bullet* discard() override {
+	WeakPointer<Bullet> discard() override {
 		if (params.discardable)
 			setFree();
 		return this;
@@ -83,7 +83,7 @@ public:
 		sprite->local.scale = Vector3(local.scale, zScale);
 	}
 
-	Bullet* clearSignals() override {
+	WeakPointer<Bullet> clearSignals() override {
 		DanmakuObject::clearSignals();
 		auto pass = $tsignal(DanmakuObject*) {};
 		onRebound = onShuttle = pass;
@@ -94,7 +94,7 @@ public:
 #define $_b(VAR) ((Bullet*)(VAR))
 #define $b(VAR) (($dmk Bullet*)(VAR))
 
-typedef std::vector<Bullet*> BulletList;
+typedef std::vector<WeakPointer<Bullet>> BulletList;
 
 template <
 	size_t BULLET_COUNT,
@@ -383,11 +383,11 @@ public:
 			) func(bullets[i]);
 	}
 
-	Bullet* getLastBullet() {
-		return (Bullet*)last;
+	WeakPointer<Bullet> getLastBullet() {
+		return last;
 	}
 
-	Bullet* createBullet() {
+	WeakPointer<Bullet> createBullet() {
 		//GAME_PARALLEL_FOR
 		for $seachif(b, bullets, BULLET_COUNT, b.isFree()) {
 			last = b.enable()->setZero();
@@ -423,8 +423,8 @@ public:
 		#endif
 	}
 
-	Bullet* createBullet(BulletData bullet) {
-		Bullet* b = createBullet();
+	WeakPointer<Bullet> createBullet(BulletData bullet) {
+		WeakPointer<Bullet> b = createBullet();
 		b->params = bullet;
 		return b->reset();
 	}
@@ -438,14 +438,14 @@ private:
 	#ifdef $_PREVENT_BULLET_OVERFLOW_BY_WRAP
 	size_t pbobw = 0;
 	#endif
-	Bullet* last = nullptr;
+	WeakPointer<Bullet> last;
 };
 
 typedef BulletManager<PLAYER_BULLET_COUNT, $layer(PLAYER_BULLET), $layer(ENEMY), $layer(PLAYER)>	PlayerBulletManager;
 typedef BulletManager<ENEMY_BULLET_COUNT, $layer(ENEMY_BULLET), $layer(PLAYER), $layer(ENEMY)>		EnemyBulletManager;
 
-PlayerBulletManager*	playerBulletManager	= nullptr;
-EnemyBulletManager*		enemyBulletManager	= nullptr;
+Pointer<PlayerBulletManager>	playerBulletManager;
+Pointer<EnemyBulletManager>		enemyBulletManager;
 
 #define DANMAKU_PBM $dmk playerBulletMananger
 #define DANMAKU_EBM $dmk enemyBulletManager

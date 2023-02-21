@@ -4,7 +4,7 @@ struct SpellCard: Entity {
 	DERIVED_CONSTRUCTOR(SpellCard, Entity, {
 		background.setRenderLayer($layer(SPELL));
 		effect.setRenderLayer($layer(ENEMY));
-		boss = (BossEntity2D*)getParent();
+		boss = (BossEntity2D*)&(*getParent());
 		time.setRenderLayer($layer(UI));
 		spellName.setRenderLayer($layer(UI));
 	})
@@ -15,7 +15,7 @@ struct SpellCard: Entity {
 	$txt Label	time;
 	$txt Label	spellName;
 
-	BossEntity2D* boss;
+	Pointer<BossEntity2D> boss;
 
 	virtual void onFrame(float delta) {
 

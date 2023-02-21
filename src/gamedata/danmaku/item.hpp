@@ -17,7 +17,6 @@ CollectibleData getItemData(size_t type, float value = 1, bool autoCollect = tru
 
 struct Collectible: DanmakuObject {
 	Collectible() : DanmakuObject() {
-		auto pass = $tsignal(DanmakuObject*) {};
 	}
 
 	CollectibleData params;
@@ -32,19 +31,19 @@ struct Collectible: DanmakuObject {
 		updateSprite();
 	}
 
-	Collectible* reset() override {
+	WeakPointer<Collectible> reset() override {
 		setZero();
 		gravity = -params.bounce;
 		return this;
 	}
 
-	Collectible* setZero() override {
+	WeakPointer<Collectible> setZero() override {
 		sprite->local.rotation.z =
 		gravity = 0;
 		return this;
 	}
 
-	Collectible* setFree(bool state = true) override {
+	WeakPointer<Collectible> setFree(bool state = true) override {
 		DanmakuObject::setFree(state);
 		if (sprite) sprite->visible = !free;
 		pocing = false;
@@ -52,14 +51,14 @@ struct Collectible: DanmakuObject {
 		return this;
 	}
 
-	Collectible* discard() override {
+	WeakPointer<Collectible> discard() override {
 		if (params.discardable)
 			setFree();
 		return this;
 	}
 
-	Collectible* enable() override {
-		return (Collectible*)setFree(false);
+	WeakPointer<Collectible> enable() override {
+		return setFree(false);
 	}
 
 	void updateSprite() override {
@@ -73,7 +72,7 @@ struct Collectible: DanmakuObject {
 		sprite->local.scale = Vector3(local.scale, zScale);
 	}
 
-	Collectible* setAutoCollect(Vector2* target = nullptr) {
+	WeakPointer<Collectible> setAutoCollect(Vector2* target = nullptr) {
 		if (!params.pocable) return this;
 		pocing = true;
 		this->target = target;
@@ -87,7 +86,7 @@ private:
 	float gravity = 0;
 };
 
-typedef std::vector<Collectible*> CollectibleList;
+typedef std::vector<WeakPointer<Collectible>> CollectibleList;
 
 template <size_t ITEM_COUNT>
 class CollectibleManager: Entity {
@@ -154,7 +153,7 @@ public:
 		for $seach(item, items, ITEM_COUNT)
 			item.onFrame(delta);
 			if (!item.isFree() && item.params.collidable) {
-				auto a = (PlayerEntity2D*)mainPlayer;
+				auto a = (PlayerEntity2D*)&(*mainPlayer);
 				if (a) {
 					auto targetBounds = a->getGrazeBounds();
 					if (
@@ -293,11 +292,11 @@ public:
 			) func(items[i]);
 	}
 
-	Collectible* getLastCollectible() {
-		return (Collectible*)last;
+	WeakPointer<Collectible> getLastCollectible() {
+		return last;
 	}
 
-	Collectible* createCollectible() {
+	WeakPointer<Collectible> createCollectible() {
 		//GAME_PARALLEL_FOR
 		for $seachif(item, items, ITEM_COUNT, item.isFree()) {
 			last = item.enable()->setZero();
@@ -331,8 +330,8 @@ public:
 		#endif
 	}
 
-	Collectible* createCollectible(CollectibleData item) {
-		Collectible* c = createCollectible();
+	WeakPointer<Collectible> createCollectible(CollectibleData item) {
+		WeakPointer<Collectible> c = createCollectible();
 		c->params = item;
 		return c->reset();
 	}
@@ -359,11 +358,11 @@ private:
 	#ifdef $_PREVENT_BULLET_OVERFLOW_BY_WRAP
 	size_t pbobw = 0;
 	#endif
-	Collectible* last = nullptr;
+	WeakPointer<Collectible> last;
 };
 
 typedef CollectibleManager<COLLECTIBLE_ITEM_COUNT> ItemManager;
 
-ItemManager* itemManager = nullptr;
+Pointer<ItemManager> itemManager;
 
 #define DANMAKU_IM $dmk itemManager
