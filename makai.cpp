@@ -64,6 +64,8 @@ public:
 		$debug(EntityClass::$_ROOT.exists());
 	}
 
+	virtual ~GameApp() {}
+
 	$evt Timer bulletSpawner	= $evt Timer(5, true);
 	$evt Timer itemSpawner		= $evt Timer(60, true);
 
@@ -109,7 +111,7 @@ public:
 		player->grazebox.radius = 2.5;
 		player->board = DANMAKU_EBM -> board;
 		player->mesh.material.color = Color::GREEN;
-		enemy = new $dmk EnemyEntity2D("Test");
+		enemy = new $dmk EnemyEntity2D("TestEnemy");
 		enemy->position = Vector2(32, -24) * screenSpace;
 		enemy->sprite->setColor(Color::RED);
 		enemy->healthBar.offset.y = 0.5;
@@ -322,12 +324,17 @@ public:
 	}
 
 	void onClose() override {
-		DanmakuApp::onClose();
 		$debug("\n[ Executing Closing Procedure NOW ]\n");
+		DanmakuApp::onClose();
+		$debug("[Stage]");
 		tubeRend.destroy();
+		$debug("[Sprite]");
 		ringbar.destroy();
+		$debug("[Player]");
 		player.destroy();
+		$debug("[Enemy]");
 		enemy.destroy();
+		$debug("[Font Face]");
 		delete font.face;
 	}
 };

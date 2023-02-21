@@ -80,16 +80,7 @@ public:
 
 	virtual void onLoading() {}
 
-	virtual ~DanmakuApp() {
-		$debug("Deleting managers...");
-		mainProgram.unbind();
-		enemyBulletManager.unbind();
-		enemyLineLaserManager.unbind();
-		playerBulletManager.unbind();
-		playerLineLaserManager.unbind();
-		itemManager.unbind();
-		$debug("Deleted!");
-	}
+	virtual ~DanmakuApp() {}
 
 	void onOpen() override {
 		// Set RNG Seed
@@ -141,11 +132,14 @@ public:
 	}
 
 	void onClose() override {
-		enemyBulletManager		= nullptr;
-		enemyLineLaserManager	= nullptr;
-		playerBulletManager		= nullptr;
-		playerLineLaserManager	= nullptr;
-		itemManager				= nullptr;
+		$debug("Deleting managers...");
+		mainProgram.unbind();
+		enemyBulletManager.destroy();
+		enemyLineLaserManager.destroy();
+		playerBulletManager.destroy();
+		playerLineLaserManager.destroy();
+		itemManager.destroy();
+		$debug("Managers Deleted!");
 	}
 };
 

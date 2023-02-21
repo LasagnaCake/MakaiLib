@@ -83,10 +83,7 @@ namespace SmartPointer {
 			}
 		}
 
-		bool exists() {/*
-			$debugp("(");
-			$debugp(ref);
-			$debugp(")");*/
+		bool exists() {
 			if (ref == nullptr) return false;
 			return (getPointerDB()[(void*)ref] != 0);
 		}

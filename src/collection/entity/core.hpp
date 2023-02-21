@@ -535,7 +535,7 @@ namespace EntityClass {
 		EntityRef res = $_ROOT->getChild(path);
 		// If it exists, return object (casted)
 		//if (res) return (T*)&(*res);
-		if (res.exists()) return (T*)(res);
+		if (res.exists()) return res.castedTo<T>();
 		// Else, return null
 		return EntityRef();
 	}
