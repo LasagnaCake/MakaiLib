@@ -5,77 +5,100 @@
 #include <map>
 #include <stdexcept>
 
-namespace Reference {
+namespace SmartPointer {
 	template <typename T> concept Pointable = Type::Safe<T>;
 
 	namespace {
 		using
 			std::map,
-			std::runtime_error;
+			std::runtime_error
+		;
+
+		map<void*, size_t> _pointerDB;
 	}
 
-	template <Pointable T>
-	using PointerDB = map<T*, size_t>;
-
-	template<Pointable T>
-	PointerDB<T>& getPointerDB() {
-		static PointerDB<T> db;
-		return db;
-	}
-
-	template <Pointable T, bool deleteOnLast = true>
+	#define ASSERT_STRONG	static_assert(!weak,	"It is forbidden to implicitly convert a strong pointer to a weak pointer!")
+	#define ASSERT_WEAK		static_assert(weak,		"It is forbidden to implicitly convert a weak pointer to a strong pointer!")
+	#define IF_STRONG if constexpr(!weak)
+	#define SameType Pointer<T, weak, deleteIfLast>
+	template <Pointable T, bool weak = false, bool deleteIfLast = true>
 	class Pointer {
-	private:
-		typedef Pointer<T, deleteOnLast> SameType;
 	public:
-		Pointer()						{}
+		Pointer()										{}
 
-		Pointer(SameType&& other)		{bind(other.ref);}
+		Pointer(Pointer<T, false, false>&& other)		{ASSERT_STRONG;	bind(other.ref);}
+		Pointer(Pointer<T, false, true>&& other)		{ASSERT_STRONG;	bind(other.ref);}
+		Pointer(Pointer<T, true, false>&& other)		{ASSERT_WEAK;	bind(other.ref);}
+		Pointer(Pointer<T, true, true>&& other)			{ASSERT_WEAK;	bind(other.ref);}
 
-		Pointer(const SameType& other)	{bind(other.ref);}
+		Pointer(const Pointer<T, false, false>& other)	{ASSERT_STRONG; bind(other.ref);}
+		Pointer(const Pointer<T, false, true>& other)	{ASSERT_STRONG; bind(other.ref);}
+		Pointer(const Pointer<T, true, false>& other)	{ASSERT_WEAK;	bind(other.ref);}
+		Pointer(const Pointer<T, true, true>& other)	{ASSERT_WEAK;	bind(other.ref);}
+
+		Pointer(const T*& obj) {bind(obj);}
 
 		Pointer(T* obj) {bind(obj);}
 
 		~Pointer() {unbind();}
 
 		SameType& bind(T* obj) {
-			static_assert(obj != nullptr, "Value must not be null!");
+			/*if (obj == nullptr)
+				throw std::runtime_error("Value must not be null!");*/
 			unbind();
+			if (obj == nullptr) return (*this);
 			ref = obj;
-			getPointerDB<T>()[obj]++;
+			IF_STRONG _pointerDB[(void*)obj]++;
 			return (*this);
 		}
 
 		// Destroy if Last Pointer.
 		// I.E. Delete object if last Pointer to exist with it.
-		SameType& unbind(bool dilp = deleteOnLast) {
-			if (exists()) return (*this);
-			if (getPointerDB<T>()[ref]-1 == 0 && dilp)
-				destroy();
-			else
-				getPointerDB<T>()[ref]--;
+		SameType& unbind(bool dilp = deleteIfLast) {
+			if (!exists()) return (*this);
+			IF_STRONG {
+				if (_pointerDB[(void*)ref]-1 == 0 && dilp) {
+					$debug("Deleting reference...");
+					return destroy();
+				}
+				$debug("Updating reference counter...");
+				_pointerDB[(void*)ref]--;
+				$debugp("References: ");
+				$debug(_pointerDB[(void*)ref]);
+			}
 			ref = nullptr;
 			return (*this);
 		}
 
 		SameType& destroy() {
-			if (exists()) return (*this);
-			getPointerDB<T>()[ref] = 0;
-			delete ref;
-			ref = nullptr;
+			IF_STRONG {
+				if (!exists()) return (*this);
+				_pointerDB[(void*)ref] = 0;
+				delete ref;
+				ref = nullptr;
+			}
 			return (*this);
 		}
 
 		bool exists() {
-			return (
-				ref != nullptr
-			&&	getPointerDB<T>()[ref] != 0
-			);
+			if (ref == nullptr) return false;
+			return (_pointerDB[(void*)ref] != 0);
 		}
 
-		bool operator()() {
+		inline bool operator()() {
 			return exists();
 		}
+
+		template<Pointable NEW_T>
+		inline Pointer<NEW_T, weak, deleteIfLast>	castedTo()	{return (NEW_T*)getPointer();	}
+		inline Pointer<T, true, deleteIfLast>		toWeak()	{return getPointer();			}
+		inline T*									raw()		{return getPointer();			}
+		//inline Pointer<T, false, deleteIfLast>		toStrong()	{return ref;					}
+
+		//operator T*() const				{return ref;			};
+		explicit operator T*() const		{return ref;			};
+
+		inline bool operator!()			{return	!exists();			}
 
 		inline bool operator==(T* obj)	{return	ref == obj;			}
 		inline bool operator!=(T* obj)	{return	!operator==(obj);	}
@@ -91,56 +114,59 @@ namespace Reference {
 		inline bool operator<=(const SameType& other)	{return operator<=(other.ref);	}
 		inline bool operator>=(const SameType& other)	{return operator>=(other.ref);	}
 
-		SameType& operator=(T* obj)								{bind(obj); return (*this);}
-		const SameType& operator=(T* obj) const					{bind(obj); return (*this);}
-		SameType& operator=(SameType other)						{bind(other.ref); return (*this);}
-		const SameType& operator=(SameType other) const			{bind(other.ref); return (*this);}
-		SameType& operator=(const SameType& other)				{bind(other.ref); return (*this);}
-		const SameType& operator=(const SameType& other) const	{bind(other.ref); return (*this);}
+		SameType& operator=(T* obj)								{bind(obj); return (*this);			}
+		const SameType& operator=(T* obj) const					{bind(obj); return (*this);			}
+		SameType& operator=(const SameType& other)				{bind(other.ref); return (*this);	}
+		const SameType& operator=(const SameType& other) const	{bind(other.ref); return (*this);	}
 
-		T* operator->()				{return getPointer();}
-		const T* operator->() const	{return getPointer();}
-		T& operator*()				{return getValue();}
-		const T& operator*() const	{return getValue();}
+		T* operator->()				{return getPointer();	}
+		const T* operator->() const	{return getPointer();	}
+		T& operator*()				{return getValue();		}
+		const T& operator*() const	{return getValue();		}
 
 	private:
-		friend class Pointer<T, deleteOnLast>;
+		friend class Pointer<T,	false,	false>;
+		friend class Pointer<T,	false,	true>;
+		friend class Pointer<T,	true,	false>;
+		friend class Pointer<T,	true,	true>;
 
 		T* ref = nullptr;
 
 		inline T* getPointer()	{
-			static_assert(ref != nullptr, "Pointer reference does not exist!");
 			if (!exists())
 				throw runtime_error("Pointer reference does not exist!");
 			return (ref);
 		}
 
 		inline const T* getPointer() const	{
-			static_assert(ref != nullptr, "Pointer reference does not exist!");
 			if (!exists())
 				throw runtime_error("Pointer reference does not exist!");
 			return (ref);
 		}
 
 		inline T& getValue() {
-			static_assert(ref != nullptr, "Pointer reference does not exist!");
 			if (!exists())
 				throw runtime_error("Pointer reference does not exist!");
 			return (*ref);
 		}
 
 		inline const T& getValue() const {
-			static_assert(ref != nullptr, "Pointer reference does not exist!");
 			if (!exists())
 				throw runtime_error("Pointer reference does not exist!");
 			return (*ref);
 		}
 	};
+	#undef SameType
+	#undef ASSERT_STRONG
+	#undef ASSERT_WEAK
 
 	template <Pointable T>
-	using WeakPointer	= Pointer<T,	false>;
+	using WeakPointer	= Pointer<T,	true,	false	>;
+
+	template <Pointable T>
+	using SafePointer	= Pointer<T,	false,	true	>;
 }
 
-#define $ptr Reference::
+#define $ptr SmartPointer::
 
 #endif // REFERENCE_HANDLER_H
