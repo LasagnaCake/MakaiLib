@@ -84,15 +84,15 @@ namespace EntityClass {
 	concept EntityType = Type::Derived<T, Entity>;
 
 	/// The root object.
-	EntityRef $_ROOT;
+	Pointer<Entity> $_ROOT;
 
 	template <EntityType T>
-	EntityRef create(string name = "Entity", bool uniqueEntity = true) {
+	Pointer<Entity> create(string name = "Entity", bool uniqueEntity = true) {
 		return new T(name);
 	}
 
 	template <EntityType T>
-	EntityRef create(Entity* parent, string name = "Entity", bool uniqueEntity = true) {
+	Pointer<Entity> create(Entity* parent, string name = "Entity", bool uniqueEntity = true) {
 		return new T(parent, name, uniqueEntity);
 	}
 
@@ -166,7 +166,7 @@ namespace EntityClass {
 		}
 
 		/// Parented constructor.
-		Entity(EntityRef parent, string name = "Entity", bool uniqueEntity = true): Entity(name) {
+		Entity(WeakPointer<Entity> parent, string name = "Entity", bool uniqueEntity = true): Entity(name) {
 			// Parent object
 			parent->addChild(this, uniqueEntity);
 		}
@@ -198,7 +198,7 @@ namespace EntityClass {
 		* Returns null if child does not exist.
 		* TODO: Refactor this code, to be less of a mess.
 		*/
-		EntityRef getChild(string path) {
+		Pointer<Entity> getChild(string path) {
 			// The current level of the path
 			string level;
 			// The object's child to look for
@@ -229,36 +229,32 @@ namespace EntityClass {
 				// If not last object to search...
 				if (!isLast)
 					// Loop through children and...
-					for(EntityRef child : children){
+					for(Pointer<Entity> child : children){
 						// If child is root, search through child
 						if (child->name == root)
 							return child->getChild(next);
 					}
 				// else, loop through children (but different!) and...
-				else for(EntityRef child : children)
+				else for(Pointer<Entity> child : children)
 					// If child's name matches, return child
 					if(child->name == path) return child;
 			}
 			// If it got to this point, child does not exist
 			// throw invalid_argument(string("Child does not exist: ") + path);
-			return EntityRef();
+			return Pointer<Entity>();
 		}
 
 		/// Gets one of the object's child, and casts it.
 		template <class T>
-		EntityRef getChild(string path) {
+		Pointer<T> getChild(string path) {
 			// Try and get object
-			EntityRef child = getChild(path);
-			// If it exists, return object (casted)
-			if (child.exists()) return (T*)child;
-			// Else, return null
-			return EntityRef();
+			return getChild(path).castedTo<T>();
 		}
 
 		/**
 		* Gets the object's Nth child.
 		*/
-		inline EntityRef getChild(size_t index) {
+		inline Pointer<Entity> getChild(size_t index) {
 			return children[index];
 		}
 
@@ -273,10 +269,10 @@ namespace EntityClass {
 		* (i.e. must have unique name).
 		* Useful if child will need to be searchable.
 		*/
-		void addChild(EntityRef child, bool uniqueChild = true) {
+		void addChild(Pointer<Entity> child, bool uniqueChild = true) {
 			// If parented, remove child from parent
-			EntityRef oldParent = child->getParent();
-			if (oldParent.exists()) oldParent->removeChild(&(*child));
+			Pointer<Entity> oldParent = child->getParent();
+			if (oldParent.exists()) oldParent->removeChild(child);
 			// Set new child's parent
 			child->setParent(this);
 			// Check if child has same name as other child
@@ -286,17 +282,17 @@ namespace EntityClass {
 		}
 
 		/// Re-parents children to new parent.
-		void reparentChildren(EntityRef newParent) {
+		void reparentChildren(Pointer<Entity> newParent) {
 			// If there are children...
 			if (children.size())
 				// Loop through children and re-parent them
-				for (EntityRef child : children) newParent->addChild(child);
+				for (Pointer<Entity> child : children) newParent->addChild(child);
 			// Clear vector
 			children.clear();
 		}
 
 		/// Sets the object's parent, while also avoiding cyclical parenting.
-		void setParent(EntityRef parent) {
+		void setParent(WeakPointer<Entity> parent) {
 			// Check if object is root object
 			if (name == $_ROOT_NAME)
 				throw invalid_argument("Root cannot be parented.");
@@ -308,12 +304,12 @@ namespace EntityClass {
 		}
 
 		/// Returns the object's parent.
-		inline EntityRef getParent() {
-			return parent;
+		inline Pointer<Entity> getParent() {
+			return &(*parent);
 		}
 
 		/// Gets object's "root" parent.
-		EntityRef getRoot() {
+		Pointer<Entity> getRoot() {
 			// If has parent, return parent's result
 			if (parent.exists()) return parent->getRoot();
 			// Else, return self
@@ -378,7 +374,7 @@ namespace EntityClass {
 		}
 
 		/// Compares self with another object, and returns whether they are the same.
-		bool compare(EntityRef other) {
+		bool compare(Pointer<Entity> other) {
 			return this == other;
 		}
 
@@ -394,7 +390,7 @@ namespace EntityClass {
 
 		/// Deletes all children.
 		void deleteChildren() {
-			for (EntityRef child : children)
+			for (Pointer<Entity> child : children)
 				child.destroy();
 		}
 
@@ -404,7 +400,7 @@ namespace EntityClass {
 		}
 
 		/// Equality operator overload (reference).
-		bool operator==(EntityRef other) {
+		bool operator==(Pointer<Entity> other) {
 			return (other == this);
 		}
 
@@ -414,23 +410,23 @@ namespace EntityClass {
 		}
 
 		/// Inequality operator overload (reference).
-		bool operator!=(EntityRef other) {
+		bool operator!=(Pointer<Entity> other) {
 			return !(other == this);
 		}
 
 		/// Bracket operator overload (name).
-		EntityRef operator[](string name) {
+		Pointer<Entity> operator[](string name) {
 			return getChild(name);
 		}
 
 		/// Bracket operator overload (index).
-		EntityRef operator[](size_t idx) {
+		Pointer<Entity> operator[](size_t idx) {
 			return getChild(idx);
 		}
 
 		/// Addition Assignment operator overload.
-		void operator+=(EntityRef child) {
-			addChild(child);
+		void operator+=(Pointer<Entity> child) {
+			addChild(&(*child));
 		}
 
 		/// Subtraction Assignment operator overload (name).
@@ -446,7 +442,7 @@ namespace EntityClass {
 		/// Deletes self.
 		const Event::Signal destroy = $signal {
 			removeFromTree();
-			EntityRef(this).destroy();
+			Pointer<Entity>(this).destroy();
 		};
 
 		void queueDestroy() {
@@ -455,13 +451,13 @@ namespace EntityClass {
 
 	protected:
 		/// Returns whether a given object would be a valid parent object.
-		bool isValidParent(EntityRef obj) {
+		bool isValidParent(WeakPointer<Entity> obj) {
 			if (obj == this || obj->isDistantParent(this)) return false;
 			return true;
 		}
 
 		/// Returns whether the object (self) has a given object as a distant parent.
-		bool isDistantParent(EntityRef obj) {
+		bool isDistantParent(WeakPointer<Entity> obj) {
 			// If match, return true
 			if (this == obj) return true;
 			// If parented, return parent's result
@@ -471,7 +467,7 @@ namespace EntityClass {
 		}
 
 		/// Removes a child from the object's children. Does not delete child.
-		void removeChild(WeakPointer<Entity> child) {
+		void removeChild(Pointer<Entity> child) {
 			$debug("Removing child '" + child->getName() + "'...");
 			// If there are children
 			if (children.size())
@@ -500,13 +496,13 @@ namespace EntityClass {
 
 	private:
 		/// The object's parent.
-		EntityRef parent;
+		WeakPointer<Entity> parent;
 
 		/// The object's name.
 		string name;
 
 		/// The object's children.
-		vector<EntityRef> children;
+		vector<Pointer<Entity>> children;
 
 		/// Calls the onDelete function.
 		void callOnDelete() {
@@ -532,12 +528,12 @@ namespace EntityClass {
 	template <EntityType T>
 	Pointer<T> getEntity(string path) {
 		// Try and get object
-		EntityRef res = $_ROOT->getChild(path);
+		Pointer<Entity> res = $_ROOT->getChild(path);
 		// If it exists, return object (casted)
 		//if (res) return (T*)&(*res);
 		if (res.exists()) return res.castedTo<T>();
 		// Else, return null
-		return EntityRef();
+		return Pointer<Entity>();
 	}
 }
 

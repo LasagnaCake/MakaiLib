@@ -60,7 +60,7 @@ namespace GameData {
 
 	typedef std::unordered_map<string, SDL_Scancode> KeyBinds;
 
-	void addToGame(WeakPointer<Entity> e, std::string gameType) {
+	void addToGame(Pointer<Entity> e, std::string gameType) {
 		$debug("Adding '" + e->getName() + "' to '" + gameType + "'...");
 		if (!EntityClass::$_ROOT)
 			throw std::runtime_error("Root wasn't created!");
