@@ -1,13 +1,8 @@
-# MakaiLib.*
-# MakaiLib.cbp
-# obj
-main.cpp
 *.save-failed
-bin/*
-obj/*
+bin
+obj
 *.exe
 *.o
 gmon.out
-res/ost
-res/img
-res/stages
+res/data/*
+build/*
