@@ -3055,7 +3055,7 @@
 	<algorithm>
 	<regex>
 
-1677012855 d:\c(++) projects\_c++\game engine\makailib\src\program\gl_program.hpp
+1677093862 d:\c(++) projects\_c++\game engine\makailib\src\program\gl_program.hpp
 	"../anchors.hpp"
 	"../graphical.hpp"
 	"../audio.hpp"
@@ -3687,8 +3687,10 @@
 1673139627 d:\c(++) projects\_c++\game engine\makailib\src\audio.hpp
 	"audio/gl_audio.hpp"
 
-1677011380 d:\c(++) projects\_c++\game engine\makailib\src\audio\gl_audio.hpp
+1677101704 d:\c(++) projects\_c++\game engine\makailib\src\audio\gl_audio.hpp
 	"../anchors.hpp"
+	"gl_music.hpp"
+	"gl_sound.hpp"
 
 1617237342 d:\c(++) projects\_c++\game engine\makailib\lib\portaudio\include\portaudio.h
 
@@ -4484,7 +4486,7 @@
 	<type_traits>
 	<concepts>
 
-1676391467 d:\c(++) projects\_c++\game engine\makailib\src\collection\types.hpp
+1677094568 d:\c(++) projects\_c++\game engine\makailib\src\collection\types.hpp
 	<cstdint>
 
 1660930201 d:\c(++) projects\_c++\game engine\makailib\lib\sdl2-2.0.10\include\sdl2\sdl_mixer.h
@@ -4496,8 +4498,12 @@
 	"begin_code.h"
 	"close_code.h"
 
-1677020072 d:\c(++) projects\_c++\game engine\makailib\src\collection\referential.hpp
+1677081157 d:\c(++) projects\_c++\game engine\makailib\src\collection\referential.hpp
 	"conceptual.hpp"
 	<map>
 	<stdexcept>
+
+1677105923 d:\c(++) projects\_c++\game engine\makailib\src\audio\gl_music.hpp
+
+1677105962 d:\c(++) projects\_c++\game engine\makailib\src\audio\gl_sound.hpp
 

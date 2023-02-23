@@ -25,21 +25,17 @@ namespace SmartPointer {
 	#define ASSERT_STRONG	static_assert(!weak,	"It is forbidden to implicitly convert a strong pointer to a weak pointer!")
 	#define ASSERT_WEAK		static_assert(weak,		"It is forbidden to implicitly convert a weak pointer to a strong pointer!")
 	#define IF_STRONG	if constexpr(!weak)
-	#define SameType	Pointer<T, weak, deleteIfLast>
-	template <Pointable T, bool weak = false, bool deleteIfLast = true>
+	#define SameType	Pointer<T, weak>
+	template <Pointable T, bool weak = false>
 	class Pointer {
 	public:
 		Pointer() {}
 
-		Pointer(Pointer<T, false,	false	>&& other)		{ASSERT_STRONG;	bind(other.ref);}
-		Pointer(Pointer<T, false,	true	>&& other)		{ASSERT_STRONG;	bind(other.ref);}
-		Pointer(Pointer<T, true,	false	>&& other)		{ASSERT_WEAK;	bind(other.ref);}
-		Pointer(Pointer<T, true,	true	>&& other)		{ASSERT_WEAK;	bind(other.ref);}
+		Pointer(Pointer<T, false>&& other)		{ASSERT_STRONG;	bind(other.ref);}
+		Pointer(Pointer<T, true>&& other)		{ASSERT_WEAK;	bind(other.ref);}
 
-		Pointer(const Pointer<T, false,	false	>& other)	{ASSERT_STRONG; bind(other.ref);}
-		Pointer(const Pointer<T, false,	true	>& other)	{ASSERT_STRONG; bind(other.ref);}
-		Pointer(const Pointer<T, true,	false	>& other)	{ASSERT_WEAK;	bind(other.ref);}
-		Pointer(const Pointer<T, true,	true	>& other)	{ASSERT_WEAK;	bind(other.ref);}
+		Pointer(const Pointer<T, false>& other)	{ASSERT_STRONG; bind(other.ref);}
+		Pointer(const Pointer<T, true>& other)	{ASSERT_WEAK;	bind(other.ref);}
 
 		Pointer(const T*& obj) {bind(obj);}
 
@@ -60,7 +56,7 @@ namespace SmartPointer {
 
 		// Destroy if Last Pointer.
 		// I.E. Delete object if last Pointer to exist with it.
-		SameType& unbind(bool dilp = deleteIfLast) {
+		SameType& unbind(bool dilp = true) {
 			if (!exists()) return (*this);
 			IF_STRONG {
 				if ((_pointerDB[(void*)ref].count-1 < 1) && dilp) {
@@ -97,9 +93,9 @@ namespace SmartPointer {
 		}
 
 		template<Pointable NEW_T>
-		inline Pointer<NEW_T, weak, deleteIfLast>	castedTo()	{return	(NEW_T*)getPointer();	}
-		inline Pointer<T, true, deleteIfLast>		toWeak()	{return	getPointer();			}
-		inline T*									raw()		{return	getPointer();			}
+		inline Pointer<NEW_T, weak>	castedTo()	{return	(NEW_T*)getPointer();	}
+		inline Pointer<T, true>		toWeak()	{return	getPointer();			}
+		inline T*					raw()		{return	getPointer();			}
 
 		explicit operator T*() const	{return ref;				};
 
@@ -130,10 +126,8 @@ namespace SmartPointer {
 		const T& operator*() const	{return getValue();		}
 
 	private:
-		friend class Pointer<T,	false,	false	>;
-		friend class Pointer<T,	false,	true	>;
-		friend class Pointer<T,	true,	false	>;
-		friend class Pointer<T,	true,	true	>;
+		friend class Pointer<T,	false	>;
+		friend class Pointer<T,	true	>;
 
 		T* ref = nullptr;
 
@@ -166,10 +160,10 @@ namespace SmartPointer {
 	#undef ASSERT_WEAK
 
 	template <Pointable T>
-	using WeakPointer	= Pointer<T,	true,	false	>;
+	using WeakPointer	= Pointer<T,	true>;
 
 	template <Pointable T>
-	using SafePointer	= Pointer<T,	false,	true	>;
+	using StrongPointer	= Pointer<T,	false>;
 }
 
 #define $ptr SmartPointer::
