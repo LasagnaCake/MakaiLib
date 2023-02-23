@@ -16,8 +16,10 @@ namespace FileLoader {
 		throw runtime_error("Could not load file '" + path + "'!\n\n[ERROR MESSAGE]\n" + reason);
 	}
 
+	typedef vector<unsigned char> BinaryData;
+
 	/// Loads a binary file as an array;
-	vector<unsigned char> loadBinaryFile(string path) {
+	BinaryData loadBinaryFile(string path) {
 		ifstream file;
 		// Ensure ifstream object can throw exceptions
 		file.exceptions(ifstream::failbit | ifstream::badbit);
@@ -25,7 +27,7 @@ namespace FileLoader {
 		try {
 			// Preallocate data
 			size_t fileSize = filesystem::file_size(path);
-			vector<unsigned char> data(fileSize * 4);
+			BinaryData data(fileSize * 4);
 			// Open and read file
 			file.open(path, ios::binary);
 			file.read((char*)&data[0], fileSize);
@@ -35,6 +37,7 @@ namespace FileLoader {
 		catch (runtime_error e) {
 			fileLoadError(path, e.what());
 		}
+		return BinaryData();
 	}
 
 	/// Loads a text file as a string.
