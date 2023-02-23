@@ -19,7 +19,7 @@ None. All necessary components are (presumably) already within the ```lib/``` fo
 5) Compile with ```make (debug|release) [target=PATH_TO_YOUR_FILE.cpp [name=YOUR_PROGRAM_NAME]]```;
 6) Done! Your compiled program should be within the ```res/``` directory.
 
-Note: the ```target``` only needs to be set if your file is not named ```main.cpp```.
+Note: the ```target``` only needs to be set if your file is not at the top of the ```build/``` folder, and named ```main.cpp```.
 
 ## Documentation
 
