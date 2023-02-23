@@ -5,4 +5,5 @@ obj
 *.o
 gmon.out
 res/data/*
+res/*.exe
 build/*
