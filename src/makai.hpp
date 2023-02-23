@@ -7,6 +7,7 @@
 #pragma GCC diagnostic ignored "-Wnarrowing"
 #pragma GCC diagnostic ignored "-Wcatch-value="
 #pragma GCC diagnostic ignored "-Wunused-but-set-variable"
+#pragma GCC diagnostic ignored "-Wvolatile"
 #pragma GCC diagnostic ignored "-Wall"
 
 #include "anchors.hpp"

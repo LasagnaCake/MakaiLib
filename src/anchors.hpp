@@ -100,21 +100,6 @@
 *               *
 *****************
 */
-/*
-#include <portaudio.h>
-#include <AL/al.h>
-//*/
-// Shut up
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wall"
-/*
-#define STB_VORBIS_IMPLEMENTATION
-#include <stb_vorbis.c>
-#define CUTE_SOUND_FORCE_SDL
-#define CUTE_SOUND_IMPLEMENTATION
-#include <cute_sound.h>
-*/
-#pragma GCC diagnostic pop
 #include <SDL2/SDL_mixer.h>
 /*
 ***************************

@@ -5,6 +5,7 @@
 #include "2d3d.hpp"
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wall"
+#pragma GCC diagnostic ignored "-Wunused-function"
 #define CUTE_C2_IMPLEMENTATION
 #include "../libs/cute_c2.h"
 #pragma GCC diagnostic pop
