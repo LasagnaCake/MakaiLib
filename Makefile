@@ -1,6 +1,6 @@
 define HELP_MESSAGE
-Supported srcs:
->    all     : Builds all available srcs
+Supported targets:
+>    all     : Builds all available targets
 >    debug   : Builds enabling debug (console) output, and without optimizations
 >    release : Builds enabling optimizations
 
