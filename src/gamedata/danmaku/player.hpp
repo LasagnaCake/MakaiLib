@@ -19,17 +19,17 @@ struct Familiar2D: Entity2D {
 
 	})
 
-	Pointer<AnimatedPlane> sprite;
+	$ref AnimatedPlane* sprite;
 
 	virtual void onFrame(float delta) {
 		updateSprite();
 	}
 
-	virtual WeakPointer<Bullet> onShotRequest(bool focused) {
+	virtual Bullet* onShotRequest(bool focused) {
 		return nullptr;
 	}
 
-	WeakPointer<Bullet> fireShot(bool focused) {
+	Bullet* fireShot(bool focused) {
 		return onShotRequest(focused);
 	}
 
@@ -57,7 +57,7 @@ struct PlayerEntity2D: AreaCircle2D {
 		actionKeys["extra"]	= SDL_SCANCODE_SPACE;
 		actionKeys["skip"]	= SDL_SCANCODE_LCTRL;
 		// Create sprite
-		sprite = mesh.createReference<AnimatedPlane>();
+		sprite = mesh.createReference<Reference::AnimatedPlane>();
 		mesh.setRenderLayer($layer(PLAYER));
 		// Add to game
 		addToGame(this, "DanmakuGame");
@@ -151,7 +151,7 @@ struct PlayerEntity2D: AreaCircle2D {
 	virtual void onExitingFocus()	{$debug("Focus Exit!");}
 
 	virtual void onShotRequest()		{
-		if (playerBulletManager.exists()) {
+		if (playerBulletManager) {
 			auto b = playerBulletManager->createBullet();
 			b->local.position = globalPosition() + Vector2(0, 1);
 			b->params.hitbox.radius = 1;
@@ -266,7 +266,7 @@ struct PlayerEntity2D: AreaCircle2D {
 		lbs.focus = isFocused;
 		// Do graze action
 		CircleBounds2D grazeShape = getGrazeBounds();
-		if(enemyBulletManager.exists()) {
+		if(enemyBulletManager) {
 			BulletList blist;
 			enemyBulletManager->forEachInArea(
 				grazeShape,
@@ -280,7 +280,7 @@ struct PlayerEntity2D: AreaCircle2D {
 			if (!blist.empty())
 				onGraze(blist.size(), blist);
 		}
-		if(enemyLineLaserManager.exists()) {
+		if(enemyLineLaserManager) {
 			LineLaserList lllist = enemyLineLaserManager->getInArea(grazeShape);
 			if (!lllist.empty())
 				onGraze(lllist.size(), lllist);
@@ -320,9 +320,9 @@ struct PlayerEntity2D: AreaCircle2D {
 		$debug("Deleting player...");
 	}
 
-	virtual void onCollision(WeakPointer<Entity> target) {
+	virtual void onCollision(Entity* target) {
 		if (
-			$ecl collisionLayers.isInGroup(&(*target), $layer(ENEMY))
+			$ecl collisionLayers.isInGroup(target, $layer(ENEMY))
 		) {
 			pichun();
 		}
@@ -381,11 +381,11 @@ private:
 	Tween::Tween<Vector2> moveTween;
 };
 
-Pointer<PlayerEntity2D> getMainPlayer() {
-	if (mainPlayer.exists())
-		return (PlayerEntity2D*)&(*mainPlayer);
+PlayerEntity2D* getMainPlayer() {
+	if (mainPlayer)
+		return (PlayerEntity2D*)mainPlayer;
 	else
-		return Pointer<PlayerEntity2D>();
+		return nullptr;
 }
 
 #endif // MAKAI_BASE_PLAYER_H

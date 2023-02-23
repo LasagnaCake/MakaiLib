@@ -15,6 +15,7 @@ struct BentLaserData: LaserData {
 class LineLaser: public DanmakuObject {
 public:
 	LineLaser(): DanmakuObject() {
+		auto pass = $tsignal(LineLaser*) {};
 	}
 
 	LineLaserData params;
@@ -32,7 +33,7 @@ public:
 		updateSprite();
 	}
 
-	WeakPointer<DanmakuObject> reset() override {
+	LineLaser* reset() override {
 		setZero();
 		params.vel.current = params.vel.start;
 		local.rotation =
@@ -44,7 +45,7 @@ public:
 		return this;
 	}
 
-	WeakPointer<DanmakuObject> setZero() override {
+	LineLaser* setZero() override {
 		local.rotation =
 		params.vel.current =
 		params.vel.factor =
@@ -57,17 +58,17 @@ public:
 		return this;
 	}
 
-	WeakPointer<DanmakuObject> enable() override {
+	LineLaser* enable() override {
 		return setFree(false);
 	}
 
-	WeakPointer<DanmakuObject> setFree(bool state = true) override {
+	LineLaser* setFree(bool state = true) override {
 		DanmakuObject::setFree(state);
 		if (sprite)	sprite->visible	= !free;
 		return this;
 	}
 
-	WeakPointer<DanmakuObject> discard() override {
+	LineLaser* discard() override {
 		if (params.discardable)
 			setFree();
 		return this;
@@ -121,7 +122,7 @@ public:
 	}
 };
 
-typedef std::vector<WeakPointer<LineLaser>> LineLaserList;
+typedef std::vector<LineLaser*> LineLaserList;
 
 template <
 	size_t LASER_COUNT,
@@ -269,14 +270,14 @@ public:
 			) func(lasers[i]);
 	}
 
-	WeakPointer<LineLaser> getLastLineLaser() {
-		return last;
+	LineLaser* getLastLineLaser() {
+		return (LineLaser*)last;
 	}
 
-	WeakPointer<LineLaser> createLineLaser() {
+	LineLaser* createLineLaser() {
 		//GAME_PARALLEL_FOR
 		for $seachif(l, lasers, LASER_COUNT, l.isFree()) {
-			last = l.enable()->setZero().castedTo<LineLaser>();
+			last = l.enable()->setZero();
 			last->pause = Pause();
 			last->params = LineLaserData();
 			last->taskers.clearTaskers();
@@ -297,7 +298,7 @@ public:
 			+ ")!"
 		);
 		#else
-		last = lasers[pbobw++].enable()->setZero().castedTo<LineLaser>();
+		last = lasers[pbobw++].enable()->setZero();
 		last->params = LineLaserData();
 		last->taskers.clearTaskers();
 		last->flags.clear();
@@ -309,10 +310,10 @@ public:
 		#endif
 	}
 
-	WeakPointer<LineLaser> createLineLaser(LineLaserData laser) {
-		WeakPointer<LineLaser> l = createLineLaser();
+	LineLaser* createLineLaser(LineLaserData laser) {
+		LineLaser* l = createLineLaser();
 		l->params = laser;
-		return l->reset().castedTo<LineLaser>();
+		return l->reset();
 	}
 
 	LineLaser* lasers = new LineLaser[LASER_COUNT];
@@ -324,14 +325,14 @@ private:
 	#ifdef $_PREVENT_BULLET_OVERFLOW_BY_WRAP
 	size_t pbobw = 0;
 	#endif
-	WeakPointer<LineLaser> last;
+	LineLaser* last = nullptr;
 };
 
 typedef LineLaserManager<PLAYER_LASER_COUNT, $layer(PLAYER_LASER), $layer(ENEMY), $layer(PLAYER)>	PlayerLineLaserManager;
 typedef LineLaserManager<ENEMY_LASER_COUNT, $layer(ENEMY_LASER), $layer(PLAYER), $layer(ENEMY)>		EnemyLineLaserManager;
 
-Pointer<PlayerLineLaserManager>	playerLineLaserManager;
-Pointer<EnemyLineLaserManager>	enemyLineLaserManager;
+PlayerLineLaserManager*	playerLineLaserManager = nullptr;
+EnemyLineLaserManager*	enemyLineLaserManager = nullptr;
 
 #define DANMAKU_PLLM $dmk playerLineLaserMananger
 #define DANMAKU_ELLM $dmk enemyLineLaserManager

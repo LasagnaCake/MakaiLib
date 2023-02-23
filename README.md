@@ -13,7 +13,7 @@ None. All necessary components are (presumably) already within the ```lib/``` fo
 ## How To Use
 
 1) Create a C++ source file within the ```build/``` directory;
-2) Add ```#include "res/makai.hpp"``` in your source file;
+2) Add ```#include <makai.hpp>``` in your source file;
 3) Program your game <mark>(TODO: Tutorial and Documentation)</mark>;
 4) Open root directory on command line (Or MSYS, if you're using it);
 5) Compile with ```make [debug|release] target=PATH_TO_YOUR_FILE.cpp name=YOUR_PROGRAM_NAME```;

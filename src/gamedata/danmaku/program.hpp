@@ -1,6 +1,5 @@
 namespace {
-	using Makai::Program;
-	WeakPointer<Program> mainProgram;
+	$mki Program* mainProgram = nullptr;
 }
 
 class DanmakuApp: public $mki Program {
@@ -21,8 +20,7 @@ public:
 			bufferShaderPath,
 			false
 	) {
-		$debug("Creating Danmaku systems...");
-		if (mainProgram.exists())
+		if (mainProgram)
 			throw std::runtime_error("Only one program can exist at a time!");
 		mainProgram = this;
 		// Create main shader
@@ -30,28 +28,27 @@ public:
 		$mainshader.destroy();
 		$mainshader.create(data);
 		// Set managers (Enemy)
-		managers.bullet.enemy		= enemyBulletManager		= new EnemyBulletManager();
-		managers.lineLaser.enemy	= enemyLineLaserManager		= new EnemyLineLaserManager();
+		enemyBulletManager		= &managers.bullet.enemy;
+		enemyLineLaserManager	= &managers.lineLaser.enemy;
 		// Set managers (Player)
-		managers.bullet.player		= playerBulletManager		= new PlayerBulletManager();
-		managers.lineLaser.player	= playerLineLaserManager	= new PlayerLineLaserManager();
+		playerBulletManager		= &managers.bullet.player;
+		playerLineLaserManager	= &managers.lineLaser.player;
 		// Set item manager
-		managers.item				= itemManager				= new ItemManager();
-		$debug("Danmaku systems created!");
+		itemManager				= &managers.item;
 	};
 
 	struct {
 		struct {
-			Pointer<EnemyBulletManager>		enemy;
-			Pointer<PlayerBulletManager>	player;
+			EnemyBulletManager		enemy;
+			PlayerBulletManager		player;
 		} bullet;
 
 		struct {
-			Pointer<EnemyLineLaserManager>	enemy;
-			Pointer<PlayerLineLaserManager>	player;
+			EnemyLineLaserManager	enemy;
+			PlayerLineLaserManager	player;
 		} lineLaser;
 
-		Pointer<ItemManager> item;
+		ItemManager item;
 	} managers;
 
 	$cam Camera3D cam2D;
@@ -80,7 +77,14 @@ public:
 
 	virtual void onLoading() {}
 
-	virtual ~DanmakuApp() {}
+	virtual ~DanmakuApp() {
+		mainProgram = nullptr;
+		enemyBulletManager		= nullptr;
+		enemyLineLaserManager	= nullptr;
+		playerBulletManager		= nullptr;
+		playerLineLaserManager	= nullptr;
+		itemManager				= nullptr;
+	}
 
 	void onOpen() override {
 		// Set RNG Seed
@@ -99,22 +103,22 @@ public:
 				onLoading();
 				renderReservedLayer();
 				if $event(SDL_QUIT) {
-					managers.bullet.enemy->haltProcedure =
-					managers.lineLaser.enemy->haltProcedure =
-					managers.bullet.player->haltProcedure =
-					managers.lineLaser.player->haltProcedure =
-					managers.item->haltProcedure = true;
+					managers.bullet.enemy.haltProcedure =
+					managers.lineLaser.enemy.haltProcedure =
+					managers.bullet.player.haltProcedure =
+					managers.lineLaser.player.haltProcedure =
+					managers.item.haltProcedure = true;
 					close();
 				}
 			}
 		};
 		std::thread secondary(subTask);
 		// Create things
-		managers.bullet.enemy->create();
-		managers.lineLaser.enemy->create();
-		managers.bullet.player->create();
-		managers.lineLaser.player->create();
-		managers.item->create();
+		managers.bullet.enemy.create();
+		managers.lineLaser.enemy.create();
+		managers.bullet.player.create();
+		managers.lineLaser.player.create();
+		managers.item.create();
 		doneCreating = true;
 		secondary.join();
 		// Set playfield
@@ -123,23 +127,20 @@ public:
 		BoxBounds2D
 			playfield = $cdt makeBounds(screenPosition, screenSize * Vector2(1.1, 1.1)),
 			board = $cdt makeBounds(screenPosition, screenSize);
-		managers.item->poc = -screenSize.y / 3.0;
-		managers.item->playfield =
-		managers.bullet.enemy->playfield =
-		managers.bullet.player->playfield = playfield;
-		managers.bullet.enemy->board =
-		managers.bullet.player->board = board;
+		managers.item.poc = -screenSize.y / 3.0;
+		managers.item.playfield =
+		managers.bullet.enemy.playfield =
+		managers.bullet.player.playfield = playfield;
+		managers.bullet.enemy.board =
+		managers.bullet.player.board = board;
 	}
 
 	void onClose() override {
-		$debug("Deleting managers...");
-		mainProgram.unbind();
-		enemyBulletManager.destroy();
-		enemyLineLaserManager.destroy();
-		playerBulletManager.destroy();
-		playerLineLaserManager.destroy();
-		itemManager.destroy();
-		$debug("Managers Deleted!");
+		enemyBulletManager		= nullptr;
+		enemyLineLaserManager	= nullptr;
+		playerBulletManager		= nullptr;
+		playerLineLaserManager	= nullptr;
+		itemManager				= nullptr;
 	}
 };
 
@@ -221,8 +222,8 @@ ProgramSetting queryProgramSettingsFromUser(bool use16by9 = false, bool letUserC
 }
 
 
-WeakPointer<DanmakuApp> getMainProgram() {
-	return mainProgram.castedTo<DanmakuApp>();
+DanmakuApp* getMainProgram() {
+	return (DanmakuApp*)mainProgram;
 }
 
 #undef USER_QUIT

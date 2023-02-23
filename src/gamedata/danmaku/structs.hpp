@@ -71,15 +71,15 @@ struct DanmakuObject {
 		taskers.yield(delta, this);
 	}
 
-	virtual WeakPointer<DanmakuObject> reset() {return this;}
+	virtual DanmakuObject* reset() {return this;}
 
-	virtual WeakPointer<DanmakuObject> setZero() {return this;}
+	virtual DanmakuObject* setZero() {return this;}
 
-	virtual WeakPointer<DanmakuObject> enable() {
+	virtual DanmakuObject* enable() {
 		return setFree(false);
 	}
 
-	virtual WeakPointer<DanmakuObject> setFree(bool state = true) {
+	virtual DanmakuObject* setFree(bool state = true) {
 		free = state;
 		if (free) {
 			onFree(this);
@@ -88,13 +88,13 @@ struct DanmakuObject {
 		return this;
 	}
 
-	virtual WeakPointer<DanmakuObject> clearSignals() {
+	virtual DanmakuObject* clearSignals() {
 		auto pass = $tsignal(DanmakuObject*) {};
 		onObjectFrame = onFree = onUnpause = pass;
 		return this;
 	}
 
-	virtual WeakPointer<DanmakuObject> discard() {return this;}
+	virtual DanmakuObject* discard() {return this;}
 
 	virtual void updateSprite() {}
 
@@ -113,7 +113,7 @@ protected:
 	float _zOffset = 0;
 };
 
-typedef std::vector<WeakPointer<DanmakuObject>> ObjectList;
+typedef std::vector<DanmakuObject*> ObjectList;
 
 struct {
 	struct {

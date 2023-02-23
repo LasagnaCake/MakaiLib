@@ -335,22 +335,15 @@ namespace EntityClass {
 		}
 
 		/// Called whenever a collision with another object happens.
-		virtual void onCollision(WeakPointer<Entity> target) {}
+		virtual void onCollision(Entity* target) {}
 
 		template <CollisionType C>
-		bool colliding(AreaCollisionData<C> target) {
-			return isColliding(collision, target);
-		}
-
-		template <CollisionType C>
-		bool colliding(WeakPointer<AreaCollision2D<C>> target) {
+		bool colliding(AreaCollision2D<C>* target) {
 			return isColliding(collision, target->collision);
 		}
 
 		template <CollisionType C>
-		void checkCollision(WeakPointer<AreaCollision2D<C>> target) {
-			if (!target)
-				return;
+		void checkCollision(AreaCollision2D<C>* target) {
 			if (colliding(target->collision)) {
 				onCollision(target);
 				target->onCollision(this);
