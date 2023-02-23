@@ -216,8 +216,8 @@ namespace Makai {
 			framebuffer.shader = bufferShader;
 			layerbuffer.shader = bufferShader;
 			Shader::defaultShader["textured"](false);
-			$debug(EntityClass::$_ROOT.exists() ? "Root Exists!" : "Root does not exist!");
-			if (!EntityClass::$_ROOT.exists()) {
+			$debug(EntityClass::$_ROOT ? "Root Exists!" : "Root does not exist!");
+			if (!EntityClass::$_ROOT) {
 				$debug("Initializing root tree...");
 				EntityClass::init();
 			}
@@ -244,7 +244,7 @@ namespace Makai {
 			};
 			// The logical process
 			auto logicFunc	= [&](float delta)-> void {
-				if (EntityClass::$_ROOT.exists())
+				if (EntityClass::$_ROOT)
 					EntityClass::$_ROOT->yield(delta);
 			};
 			// Clear screen
