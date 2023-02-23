@@ -64,7 +64,7 @@ public:
 
 	void play(int loops = 0, size_t fadeInTime = 0) {
 		if (!created) return;
-		this->loops		= loops;
+		this->loops = loops;
 		current	= source;
 		if (fadeInTime)
 			Mix_FadeInMusic(source, loops, fadeInTime);
