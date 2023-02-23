@@ -50,7 +50,7 @@ public:
 
 	void onDestroy() final override {
 		$debug("Deleting source...");
-		if (queued = &onQueue)
+		if (queued == &onQueue)
 			queued = nullptr;
 		if (Mix_PlayingMusic() && current == source)
 			Mix_HaltMusic();
