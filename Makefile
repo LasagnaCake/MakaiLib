@@ -3,6 +3,8 @@ name	?= program
 
 # TODO: Clean up this mess
 
+all: debug release
+
 debug: build\$(target)
 	mkdir -p obj\debug
 
