@@ -15,25 +15,24 @@ LIBRARIES	:= lib\SDL2-2.0.10\lib\libSDL2.dll.a lib\SDL2-2.0.10\lib\libSDL2main.a
 all: debug release
 
 debug: build\$(target)
-	mkdir -p obj\debug
+	@mkdir -p obj\debug
 
-	g++.exe -fexpensive-optimizations -Wall $(COMPILE_REQ) -pg -Og -g -fsanitize=leak -fno-omit-frame-pointer -D_DEBUG_OUTPUT_ $(INCLUDES) -c build\$(target) -o $(name).o
+	@g++.exe -fexpensive-optimizations -Wall $(COMPILE_REQ) -pg -Og -g -fsanitize=leak -fno-omit-frame-pointer -D_DEBUG_OUTPUT_ $(INCLUDES) -c build\$(target) -o $(name).o
 	
-	g++.exe -o res/$(name)DEBUG.exe $(name).o  $(CONFIG_REQ) -pg -lgmon $(LIBRARIES)
+	@g++.exe -o res/$(name)DEBUG.exe $(name).o  $(CONFIG_REQ) -pg -lgmon $(LIBRARIES)
 	
-	rm obj/debug/$(name).o
+	@make clean
 
 
 release: build\$(target)
-	mkdir -p obj\release
+	@mkdir -p obj\release
 
-	g++.exe -fexpensive-optimizations $(COMPILE_REQ) -lwinpthreads -ftree-parallelize-loops=128 -funswitch-loops -fpredictive-commoning -fgcse-after-reload -ftree-vectorize $(INCLUDES) -c build\$(target) -o $(name).o
+	@g++.exe -fexpensive-optimizations $(COMPILE_REQ) -w -lwinpthreads -ftree-parallelize-loops=128 -funswitch-loops -fpredictive-commoning -fgcse-after-reload -ftree-vectorize $(INCLUDES) -c build\$(target) -o $(name).o
 	
-	g++.exe -o res/$(name).exe $(name).o  $(CONFIG_REQ) -O1  $(LIBRARIES) -mwindows
+	@g++.exe -o res/$(name).exe $(name).o  $(CONFIG_REQ) -O1  $(LIBRARIES) -mwindows
 	
-	rm obj/release/$(name).o
+	@make clean
 
-	make clean
-
+	
 clean:
-	rm -rf *.o
+	@rm -rf obj
