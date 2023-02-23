@@ -45,6 +45,7 @@ typedef	float32				floatmax;
 #endif
 
 typedef uint8	uchar;
+typedef uint16	ushort;
 typedef uint16	uint;
 typedef uint32	ulong;
 typedef uint64	ullong;

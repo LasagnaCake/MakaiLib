@@ -1,15 +1,13 @@
 # MakaiLib.*
 # MakaiLib.cbp
 # obj
-# main.cpp
-OgreMain_d.pdb
-RenderSystem_Vulkan_d.pdb
+main.cpp
 *.save-failed
-bin/Release/*
-bin/Debug/*
-obj/Release/*
-obj/Debug/*
-MakaiLib.exe
+bin/*
+obj/*
+*.exe
 *.o
 gmon.out
-res/ost/*
+res/ost
+res/img
+res/stages
