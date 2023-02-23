@@ -1,6 +1,20 @@
-target	?= main.cpp
+define HELP_MESSAGE
+Supported srcs:
+>    all     : Builds all available srcs
+>    debug   : Builds enabling debug (console) output, and without optimizations
+>    release : Builds enabling optimizations
+
+Supported options:
+>    src           = [ value ]        : Specifies the source file             ( DEFAULT: main.cpp )
+>    name          = [ value ]        : Specifies the name of the output file ( DEFAULT: program  )
+>    warn          = [ value | none ] : Specifies the warning to enable       ( DEFAULT: none     )
+>    debug-profile = [ yes | no ]     : Specifies whether to enable gmon      ( DEFAULT: no       )
+>    keep-o-files  = [ yes | no ]     : Specifies if .o files should be kept  ( DEFAULT: no       )
+endef
+
+src		?= main.cpp
 name	?= program
-warn	?= no
+warn	?= none
 
 COMPILER_CONFIG	:= -fexpensive-optimizations -flto -m64 -std=gnu++20 -fcoroutines -fopenmp -openmp
 LINKER_CONFIG	:= -flto -static-libstdc++ -static-libgcc -static -m64
@@ -13,45 +27,52 @@ LIBRARIES	:= lib\SDL2-2.0.10\lib\libSDL2.dll.a lib\SDL2-2.0.10\lib\libSDL2main.a
 
 # TODO: Clean up this mess
 
-ifeq ($(debug-gmon-profile), yes)
+ifeq ($(debug-profile), yes)
 GMON_OUT := -lgmon
 endif
 
-ifneq ($(keep-object-files), yes)
+ifneq ($(keep-o-files), yes)
 MAKE_CLEAN := @make clean
 endif
 
-ifeq ($(warn), no)
+ifdef warn
+ifeq ($(warn), none)
 WARNINGS := -w
 else
 WARNINGS := -W$(warn)
 endif
+endif
 
 .PHONY: clean debug release all
 
+export HELP_MESSAGE
+
+help:
+	@echo "$$HELP_MESSAGE"
+
 all: debug release
 
-debug: build\$(target)
+debug: build\$(src)
 	@mkdir -p obj\debug
 	
 	@echo "[0/2] compiling [DEBUG]..."
-	@g++.exe $(COMPILER_CONFIG) $(WARNINGS) -pg -Og -g -fsanitize=leak -fno-omit-frame-pointer -D_DEBUG_OUTPUT_ $(INCLUDES) -c build\$(target) -o $(name).o
+	@g++.exe $(COMPILER_CONFIG) $(WARNINGS) -pg -Og -g -fsanitize=leak -fno-omit-frame-pointer -D_DEBUG_OUTPUT_ $(INCLUDES) -c build\$(src) -o obj/debug/$(name).o
 	
 	@echo "[1/2] linking libraries..."
-	@g++.exe -o res/$(name)DEBUG.exe $(name).o  $(LINKER_CONFIG) -pg $(GMON_OUT) $(LIBRARIES)
+	@g++.exe -o res/$(name)DEBUG.exe obj/debug/$(name).o  $(LINKER_CONFIG) -pg $(GMON_OUT) $(LIBRARIES)
 	
 	@echo "[2/2] Done!"
 	$(MAKE_CLEAN)
 
 
-release: build\$(target)
+release: build\$(src)
 	@mkdir -p obj\release
 	
 	@echo "[0/2] compiling [RELEASE]..."
-	@g++.exe $(COMPILER_CONFIG) $(WARNINGS) -lwinpthreads $(OPTIMIZATIONS) $(INCLUDES) -c build\$(target) -o $(name).o
+	@g++.exe $(COMPILER_CONFIG) $(WARNINGS) -lwinpthreads $(OPTIMIZATIONS) $(INCLUDES) -c build\$(src) -o obj/release/$(name).o
 	
 	@echo "[1/2] linking libraries..."
-	@g++.exe -o res/$(name).exe $(name).o  $(LINKER_CONFIG) -O1  $(LIBRARIES) -mwindows
+	@g++.exe -o res/$(name).exe obj/release/$(name).o  $(LINKER_CONFIG) -O1  $(LIBRARIES) -mwindows
 	
 	@echo "[2/2] Done!"
 	$(MAKE_CLEAN)
