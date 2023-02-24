@@ -1,6 +1,5 @@
 define HELP_MESSAGE
 Supported targets:
->    all     : Builds all available targets
 >    debug   : Builds enabling debug (console) output, and without optimizations
 >    release : Builds enabling optimizations
 
@@ -49,8 +48,6 @@ export HELP_MESSAGE
 
 help:
 	@echo "$$HELP_MESSAGE"
-
-all: debug release
 
 debug: build\$(src)
 	@mkdir -p obj\debug
