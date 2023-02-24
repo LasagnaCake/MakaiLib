@@ -15,7 +15,6 @@ struct BentLaserData: LaserData {
 class LineLaser: public DanmakuObject {
 public:
 	LineLaser(): DanmakuObject() {
-		auto pass = $tsignal(LineLaser*) {};
 	}
 
 	LineLaserData params;

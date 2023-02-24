@@ -17,7 +17,6 @@ CollectibleData getItemData(size_t type, float value = 1, bool autoCollect = tru
 
 struct Collectible: DanmakuObject {
 	Collectible() : DanmakuObject() {
-		auto pass = $tsignal(DanmakuObject*) {};
 	}
 
 	CollectibleData params;

@@ -49,6 +49,7 @@ namespace GameData {
 		$mat WorldMaterial,
 		$cdt AreaCollisionData,
 		$cdt CollisionType,
+		$evt Signal,
 		std::string;
 
 		using namespace Vector;
@@ -59,6 +60,9 @@ namespace GameData {
 	}
 
 	typedef std::unordered_map<string, SDL_Scancode> KeyBinds;
+
+	template <typename T>
+	using TypedSignal = $tev Signal<T>;
 
 	void addToGame(Entity* e, std::string gameType) {
 		if (!EntityClass::$_ROOT)

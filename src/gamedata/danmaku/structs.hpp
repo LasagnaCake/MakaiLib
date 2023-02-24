@@ -33,9 +33,18 @@ struct ObjectData: GenericObjectData {
 
 typedef std::vector<float> ObjectFlags;
 
+struct DanmakuObject;
+
+typedef TypedSignal<DanmakuObject*> ObjectSignal;
+
+typedef $tts Task<DanmakuObject> ObjectTask;
+
+#define $objtask	$ttask(DanmakuObject)
+#define $objsignal	$tsignal(DanmakuObject)
+
 struct DanmakuObject {
 	DanmakuObject() {
-		auto pass = $tsignal(DanmakuObject*) {};
+		auto pass = $objsignal {};
 		onFree			= pass;
 		onObjectFrame	= pass;
 		onUnpause		= pass;
@@ -45,9 +54,9 @@ struct DanmakuObject {
 
 	$tts MultiTasker<DanmakuObject> taskers;
 
-	$tev Signal<DanmakuObject*> onFree;
-	$tev Signal<DanmakuObject*> onUnpause;
-	$tev Signal<DanmakuObject*> onObjectFrame;
+	ObjectSignal onFree;
+	ObjectSignal onUnpause;
+	ObjectSignal onObjectFrame;
 
 	ObjectFlags flags;
 

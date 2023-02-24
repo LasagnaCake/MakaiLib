@@ -12,13 +12,13 @@ struct BulletData: ObjectData {
 class Bullet: public DanmakuObject {
 public:
 	Bullet(): DanmakuObject() {
-		auto pass = $tsignal(Bullet*) {};
+		auto pass = $objsignal {};
 		onRebound		= pass;
 		onShuttle		= pass;
 	}
 
-	$tev Signal<Bullet*> onRebound;
-	$tev Signal<Bullet*> onShuttle;
+	ObjectSignal onRebound;
+	ObjectSignal onShuttle;
 
 	BulletData params;
 
