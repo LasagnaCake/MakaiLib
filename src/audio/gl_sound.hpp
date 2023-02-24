@@ -13,6 +13,14 @@ void resumeAllChannels() {
 	Mix_Resume(-1);
 }
 
+void setMasterVolume(uchar volume) {
+	Mix_Volume(-1, volume);
+}
+
+schar getMasterVolume() {
+	return Mix_Volume(-1, -1);
+}
+
 class Sound: public Base::Playable {
 public:
 	using Playable::Playable;
@@ -26,10 +34,13 @@ public:
 	}
 
 	void onDestroy() final override {
-		if (channel != -1 && Mix_Playing(channel))
-			Mix_HaltChannel(channel);
+		$debug("Destroying sound source...");
+		if (!isAudioSystemClosing) {
+			if (active())
+				Mix_HaltChannel(channel);
+		}
 		Mix_FreeChunk(source);
-		$debug("Source deleted!");
+		$debug("Sound source deleted!");
 	}
 
 	void onUpdate() override {
@@ -37,10 +48,10 @@ public:
 			channel = -1;
 			return;
 		}
-		Mix_Volume(channel, volume);
 	}
 
 	void play(int loops = 0, size_t fadeInTime = 0, bool force = false) {
+		if (!created) return;
 		if (active() && !force) return;
 		if (fadeInTime)
 			channel = Mix_FadeInChannel(-1, source, loops, fadeInTime);
@@ -49,6 +60,7 @@ public:
 	}
 
 	void stop(size_t fadeOutTime = 0) {
+		if (!created) return;
 		if (!active()) return;
 		if (fadeOutTime)
 			Mix_FadeOutChannel(channel, fadeOutTime);
@@ -57,23 +69,34 @@ public:
 	}
 
 	void pause() {
+		if (!created) return;
 		if (!active()) return;
 		Mix_Pause(channel);
 	}
 
 	void resume() {
+		if (!created) return;
 		if (!active()) return;
 		Mix_Resume(channel);
 	}
 
-	uint volume = 128;
+	void setVolume(uchar volume) {
+		if (!created) return;
+		Mix_VolumeChunk(source, volume);
+	}
+
+	int getVolume() {
+		if (!created) return -1;
+		return Mix_VolumeChunk(source, -1);
+	}
 
 private:
 	bool active() {
-		if (channel == -1) return false;
+		if (!created)		return false;
+		if (channel == -1)	return false;
 		return (
-			Mix_GetChunk(channel) == source
-		&&	Mix_Playing(channel)
+			Mix_Playing(channel)
+		&&	Mix_GetChunk(channel) == source
 		);
 	}
 

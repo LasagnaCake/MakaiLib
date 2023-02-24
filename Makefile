@@ -17,8 +17,8 @@ name			?= program
 debug-profile	?= 0
 keep-o-files	?= 0
 
-CC 	?= @gcc
-CXX ?= @g++
+CC 	?= gcc
+CXX ?= g++
 
 COMPILER_CONFIG	:= -fexpensive-optimizations -flto -m64 -std=gnu++20 -fcoroutines -fopenmp -openmp
 LINKER_CONFIG	:= -flto -static-libstdc++ -static-libgcc -static -m64
@@ -35,7 +35,7 @@ ifneq ($(debug-profile), 0)
 GMON_OUT := -lgmon
 endif
 
-ifneq ($(keep-o-files), 0)
+ifeq ($(keep-o-files), 0)
 MAKE_CLEAN := @make clean CLEAN_TARGET=obj/$@
 endif
 
@@ -56,39 +56,39 @@ help:
 
 
 debug: build\$(src)
-	@mkdir -p obj\debug
+	@mkdir -p obj\$@
 	
-	@echo "[0/2] compiling [DEBUG]..."
-	$(CXX) $(COMPILER_CONFIG) -Wall -Wpedantic -pg -Og -g -fsanitize=leak -fno-omit-frame-pointer -D_DEBUG_OUTPUT_ $(INCLUDES) -c build\$(src) -o obj/debug/$(name).o
+	@echo "[0/2] compiling [$@]..."
+	@$(CXX) $(COMPILER_CONFIG) -Wall -Wpedantic -pg -Og -g -fsanitize=leak -fno-omit-frame-pointer -D_DEBUG_OUTPUT_ $(INCLUDES) -c build\$(src) -o obj/$@/$(name).o
 	
 	@echo "[1/2] linking libraries..."
-	$(CXX) -o res/$(name)DEBUG.exe obj/debug/$(name).o  $(LINKER_CONFIG) -pg $(LIBRARIES)
+	@$(CXX) -o res/$(name)_$@.exe obj/$@/$(name).o  $(LINKER_CONFIG) -pg $(LIBRARIES)
 	
 	@echo "[2/2] Done!"
 	$(MAKE_CLEAN)
 
 
 test: build\$(src)
-	@mkdir -p obj\test
+	@mkdir -p obj\$@
 	
-	@echo "[0/2] compiling [TEST]..."
-	$(CXX) $(COMPILER_CONFIG) $(WARNINGS) -pg -Og -g -fsanitize=leak -fno-omit-frame-pointer -D_DEBUG_OUTPUT_ $(INCLUDES) -c build\$(src) -o obj/test/$(name).o
+	@echo "[0/2] compiling [$@]..."
+	@$(CXX) $(COMPILER_CONFIG) $(WARNINGS) -pg -Og -g -fsanitize=leak -fno-omit-frame-pointer -D_DEBUG_OUTPUT_ $(INCLUDES) -c build\$(src) -o obj/$@/$(name).o
 	
 	@echo "[1/2] linking libraries..."
-	$(CXX) -o res/$(name)TEST.exe obj/test/$(name).o  $(LINKER_CONFIG) -pg $(GMON_OUT) $(LIBRARIES)
+	@$(CXX) -o res/$(name)_$@.exe obj/$@/$(name).o  $(LINKER_CONFIG) -pg $(GMON_OUT) $(LIBRARIES)
 	
 	@echo "[2/2] Done!"
 	$(MAKE_CLEAN)
 
 
 release: build\$(src)
-	@mkdir -p obj\release
+	@mkdir -p obj\$@
 	
-	@echo "[0/2] compiling [RELEASE]..."
-	$(CXX) $(COMPILER_CONFIG) $(WARNINGS) -lwinpthreads $(OPTIMIZATIONS) $(INCLUDES) -c build\$(src) -o obj/release/$(name).o
+	@echo "[0/2] compiling [$@]..."
+	@$(CXX) $(COMPILER_CONFIG) $(WARNINGS) -lwinpthreads $(OPTIMIZATIONS) $(INCLUDES) -c build\$(src) -o obj/$@/$(name).o
 	
 	@echo "[1/2] linking libraries..."
-	$(CXX) -o res/$(name).exe obj/release/$(name).o  $(LINKER_CONFIG) -O1  $(LIBRARIES) -mwindows
+	@$(CXX) -o res/$(name).exe obj/$@/$(name).o  $(LINKER_CONFIG) -O1  $(LIBRARIES) -mwindows
 	
 	@echo "[2/2] Done!"
 	$(MAKE_CLEAN)

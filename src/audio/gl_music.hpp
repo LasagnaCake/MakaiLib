@@ -49,13 +49,15 @@ public:
 	}
 
 	void onDestroy() final override {
-		$debug("Deleting source...");
-		if (queued == &onQueue)
-			queued = nullptr;
-		if (Mix_PlayingMusic() && current == source)
-			Mix_HaltMusic();
+		$debug("Deleting music source...");
+		if (!isAudioSystemClosing) {
+			if (queued == &onQueue)
+				queued = nullptr;
+			if (Mix_PlayingMusic() && current == source)
+				Mix_HaltMusic();
+		}
 		Mix_FreeMusic(source);
-		$debug("Source deleted!");
+		$debug("Music source deleted!");
 	}
 
 	void onUpdate() override {

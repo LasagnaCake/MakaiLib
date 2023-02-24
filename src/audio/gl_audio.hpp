@@ -14,6 +14,8 @@ namespace Audio {
 		std::vector;
 
 		vector<const Signal*> soundList;
+
+		bool isAudioSystemClosing = false;
 	}
 
 	namespace Base {
@@ -73,6 +75,16 @@ namespace Audio {
 
 	void stopAll() {
 		Mix_HaltMusic();
+		Mix_HaltChannel(-1);
+	}
+
+	void openSystem() {
+		isAudioSystemClosing = false;
+	}
+
+	void closeSystem() {
+		stopAll();
+		isAudioSystemClosing = true;
 	}
 
 	void updateAudioSystem() {

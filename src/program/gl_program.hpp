@@ -152,6 +152,7 @@ namespace Makai {
 			}
 			Mix_OpenAudio(48000, AUDIO_F32SYS, 2, 1024);
 			Mix_AllocateChannels(16);
+			Audio::openSystem();
 			$debug("Started!");
 			// Create window and make active
 			$debug("Creating window...");
@@ -428,10 +429,6 @@ namespace Makai {
 		/// Gets called when the program is closing. Happens before Window is terminated.
 		virtual void onClose()	{};
 
-		/// The program's window output.
-		struct {
-		} out;
-
 		/// The window's clear color.
 		Vector4 color = Color::BLACK;
 
@@ -467,7 +464,7 @@ namespace Makai {
 			onClose();
 			// Close YSE
 			$debug("Closing sound system...");
-			Audio::stopAll();
+			Audio::closeSystem();
 			Mix_CloseAudio();
 			Mix_Quit();
 			$debug("Sound system closed!");
