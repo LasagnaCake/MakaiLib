@@ -56,26 +56,26 @@ help:
 
 
 debug: build\$(src)
-	@mkdir -p obj\test
+	@mkdir -p obj\debug
 	
-	@echo "[0/2] compiling [TEST]..."
-	$(CXX) $(COMPILER_CONFIG) -Wall -Wpedantic -pg -Og -g -fsanitize=leak -fno-omit-frame-pointer -D_DEBUG_OUTPUT_ $(INCLUDES) -c build\$(src) -o obj/test/$(name).o
+	@echo "[0/2] compiling [DEBUG]..."
+	$(CXX) $(COMPILER_CONFIG) -Wall -Wpedantic -pg -Og -g -fsanitize=leak -fno-omit-frame-pointer -D_DEBUG_OUTPUT_ $(INCLUDES) -c build\$(src) -o obj/debug/$(name).o
 	
 	@echo "[1/2] linking libraries..."
-	$(CXX) -o res/$(name)TEST.exe obj/test/$(name).o  $(LINKER_CONFIG) -pg $(LIBRARIES)
+	$(CXX) -o res/$(name)DEBUG.exe obj/debug/$(name).o  $(LINKER_CONFIG) -pg $(LIBRARIES)
 	
 	@echo "[2/2] Done!"
 	$(MAKE_CLEAN)
 
 
 test: build\$(src)
-	@mkdir -p obj\debug
+	@mkdir -p obj\test
 	
-	@echo "[0/2] compiling [DEBUG]..."
-	$(CXX) $(COMPILER_CONFIG) $(WARNINGS) -pg -Og -g -fsanitize=leak -fno-omit-frame-pointer -D_DEBUG_OUTPUT_ $(INCLUDES) -c build\$(src) -o obj/debug/$(name).o
+	@echo "[0/2] compiling [TEST]..."
+	$(CXX) $(COMPILER_CONFIG) $(WARNINGS) -pg -Og -g -fsanitize=leak -fno-omit-frame-pointer -D_DEBUG_OUTPUT_ $(INCLUDES) -c build\$(src) -o obj/test/$(name).o
 	
 	@echo "[1/2] linking libraries..."
-	$(CXX) -o res/$(name)DEBUG.exe obj/debug/$(name).o  $(LINKER_CONFIG) -pg $(GMON_OUT) $(LIBRARIES)
+	$(CXX) -o res/$(name)TEST.exe obj/test/$(name).o  $(LINKER_CONFIG) -pg $(GMON_OUT) $(LIBRARIES)
 	
 	@echo "[2/2] Done!"
 	$(MAKE_CLEAN)
