@@ -150,8 +150,6 @@ namespace Makai {
 				$errlog(string("Unable to start Mixer! (") + Mix_GetError() + ")");
 				throw runtime_error(string("Error: Mixer (") + Mix_GetError() + ")");
 			}
-			Mix_OpenAudio(48000, AUDIO_F32SYS, 2, 1024);
-			Mix_AllocateChannels(16);
 			Audio::openSystem();
 			$debug("Started!");
 			// Create window and make active
@@ -465,7 +463,6 @@ namespace Makai {
 			// Close YSE
 			$debug("Closing sound system...");
 			Audio::closeSystem();
-			Mix_CloseAudio();
 			Mix_Quit();
 			$debug("Sound system closed!");
 			// Destroy buffers

@@ -79,12 +79,15 @@ namespace Audio {
 	}
 
 	void openSystem() {
+		Mix_OpenAudio(48000, AUDIO_F32SYS, 2, 1024);
+		Mix_AllocateChannels(16);
 		isAudioSystemClosing = false;
 	}
 
 	void closeSystem() {
 		stopAll();
 		isAudioSystemClosing = true;
+		Mix_CloseAudio();
 	}
 
 	void updateAudioSystem() {
