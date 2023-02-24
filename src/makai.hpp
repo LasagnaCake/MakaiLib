@@ -3,12 +3,15 @@
 
 #pragma GCC diagnostic push
 
+#pragma GCC diagnostic ignored "-Wall"
+#pragma GCC diagnostic ignored "-Wpedantic"
 #pragma GCC diagnostic ignored "-Wsign-compare"
 #pragma GCC diagnostic ignored "-Wnarrowing"
 #pragma GCC diagnostic ignored "-Wcatch-value="
 #pragma GCC diagnostic ignored "-Wunused-but-set-variable"
 #pragma GCC diagnostic ignored "-Wvolatile"
-#pragma GCC diagnostic ignored "-Wall"
+#pragma GCC diagnostic ignored "-Wvla"
+#pragma GCC diagnostic ignored "-Wvariadic-macros"
 
 #include "anchors.hpp"
 #include "audio.hpp"

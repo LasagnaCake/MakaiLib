@@ -1,7 +1,7 @@
 define HELP_MESSAGE
 Supported targets:
->    test    : Builds enabling most debug features, and with all warnings enabled
->    debug   : Builds enabling debug (console) output, and without optimizations
+>    debug   : Builds enabling debug options, and with all warnings enabled (+ pedantic)
+>    test    : Builds enabling debug options, and without optimizations
 >    release : Builds enabling optimizations
 
 Supported options:
@@ -15,7 +15,8 @@ endef
 src		?= main.cpp
 name	?= program
 
-C++ 			:= @g++
+CC 	?= @gcc
+CXX ?= @g++
 
 COMPILER_CONFIG	:= -fexpensive-optimizations -flto -m64 -std=gnu++20 -fcoroutines -fopenmp -openmp
 LINKER_CONFIG	:= -flto -static-libstdc++ -static-libgcc -static -m64
@@ -52,27 +53,27 @@ help:
 	@echo "$$HELP_MESSAGE"
 
 
-test: build\$(src)
+debug: build\$(src)
 	@mkdir -p obj\test
 	
 	@echo "[0/2] compiling [TEST]..."
-	$(C++) $(COMPILER_CONFIG) -Wall -pg -Og -g -fsanitize=leak -fno-omit-frame-pointer -D_DEBUG_OUTPUT_ $(INCLUDES) -c build\$(src) -o obj/test/$(name).o
+	$(CXX) $(COMPILER_CONFIG) -Wall -Wpedantic -pg -Og -g -fsanitize=leak -fno-omit-frame-pointer -D_DEBUG_OUTPUT_ $(INCLUDES) -c build\$(src) -o obj/test/$(name).o
 	
 	@echo "[1/2] linking libraries..."
-	$(C++) -o res/$(name)TEST.exe obj/test/$(name).o  $(LINKER_CONFIG) -pg $(LIBRARIES)
+	$(CXX) -o res/$(name)TEST.exe obj/test/$(name).o  $(LINKER_CONFIG) -pg $(LIBRARIES)
 	
 	@echo "[2/2] Done!"
 	$(MAKE_CLEAN)
 
 
-debug: build\$(src)
+test: build\$(src)
 	@mkdir -p obj\debug
 	
 	@echo "[0/2] compiling [DEBUG]..."
-	$(C++) $(COMPILER_CONFIG) $(WARNINGS) -pg -Og -g -fsanitize=leak -fno-omit-frame-pointer -D_DEBUG_OUTPUT_ $(INCLUDES) -c build\$(src) -o obj/debug/$(name).o
+	$(CXX) $(COMPILER_CONFIG) $(WARNINGS) -pg -Og -g -fsanitize=leak -fno-omit-frame-pointer -D_DEBUG_OUTPUT_ $(INCLUDES) -c build\$(src) -o obj/debug/$(name).o
 	
 	@echo "[1/2] linking libraries..."
-	$(C++) -o res/$(name)DEBUG.exe obj/debug/$(name).o  $(LINKER_CONFIG) -pg $(GMON_OUT) $(LIBRARIES)
+	$(CXX) -o res/$(name)DEBUG.exe obj/debug/$(name).o  $(LINKER_CONFIG) -pg $(GMON_OUT) $(LIBRARIES)
 	
 	@echo "[2/2] Done!"
 	$(MAKE_CLEAN)
@@ -82,10 +83,10 @@ release: build\$(src)
 	@mkdir -p obj\release
 	
 	@echo "[0/2] compiling [RELEASE]..."
-	$(C++) $(COMPILER_CONFIG) $(WARNINGS) -lwinpthreads $(OPTIMIZATIONS) $(INCLUDES) -c build\$(src) -o obj/release/$(name).o
+	$(CXX) $(COMPILER_CONFIG) $(WARNINGS) -lwinpthreads $(OPTIMIZATIONS) $(INCLUDES) -c build\$(src) -o obj/release/$(name).o
 	
 	@echo "[1/2] linking libraries..."
-	$(C++) -o res/$(name).exe obj/release/$(name).o  $(LINKER_CONFIG) -O1  $(LIBRARIES) -mwindows
+	$(CXX) -o res/$(name).exe obj/release/$(name).o  $(LINKER_CONFIG) -O1  $(LIBRARIES) -mwindows
 	
 	@echo "[2/2] Done!"
 	$(MAKE_CLEAN)
