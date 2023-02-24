@@ -5,15 +5,17 @@ Supported targets:
 >    release : Builds enabling optimizations
 
 Supported options:
->    src           = [ value ]        : Specifies the source file             ( DEFAULT: main.cpp  )
->    name          = [ value ]        : Specifies the name of the output file ( DEFAULT: program   )
->    warn          = [ value | none ] : Specifies the warning to enable       ( DEFAULT: none      )
->    debug-profile = [ define ]       : Specifies whether to enable gmon      ( DEFAULT: undefined )
->    keep-o-files  = [ define ]       : Specifies if .o files should be kept  ( DEFAULT: undefined )
+>    src           = [ value ]        : Specifies the source file             ( DEFAULT: main.cpp )
+>    name          = [ value ]        : Specifies the name of the output file ( DEFAULT: program  )
+>    warn          = [ value | none ] : Specifies the warning to enable       ( DEFAULT: none     )
+>    debug-profile = [ 1 | 0 ]        : Specifies whether to enable gmon      ( DEFAULT: 0        )
+>    keep-o-files  = [ 1 | 0 ]        : Specifies if .o files should be kept  ( DEFAULT: 0        )
 endef
 
-src		?= main.cpp
-name	?= program
+src				?= main.cpp
+name			?= program
+debug-profile	?= 0
+keep-o-files	?= 0
 
 CC 	?= @gcc
 CXX ?= @g++
@@ -29,11 +31,11 @@ LIBRARIES		:= lib\SDL2-2.0.10\lib\libSDL2.dll.a lib\SDL2-2.0.10\lib\libSDL2main.
 
 # TODO: Clean up this mess
 
-ifdef debug-profile
+ifneq ($(debug-profile), 0)
 GMON_OUT := -lgmon
 endif
 
-ifndef keep-o-files
+ifneq ($(keep-o-files), 0)
 MAKE_CLEAN := @make clean CLEAN_TARGET=obj/$@
 endif
 
