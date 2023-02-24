@@ -276,6 +276,8 @@ namespace Makai {
 				// If should process, then do so
 				#ifndef $_PROCESS_RENDER_BEFORE_LOGIC
 				if (SDL_GetTicks() - cycleTicks > cycleDelta * 1000) {
+					// Update audio system
+					Audio::updateAudioSystem();
 					// Update input manager
 					input.update();
 					// Get current time
@@ -295,8 +297,6 @@ namespace Makai {
 				}
 				#endif
 				if (SDL_GetTicks() - frameTicks > frameDelta * 1000) {
-					// Update audio system
-					Audio::updateAudioSystem();
 					// Get current time
 					frameTicks = SDL_GetTicks();
 					// increment frame counter
@@ -315,6 +315,8 @@ namespace Makai {
 				}
 				#ifdef $_PROCESS_RENDER_BEFORE_LOGIC
 				if (SDL_GetTicks() - cycleTicks > cycleDelta * 1000) {
+					// Update audio system
+					Audio::updateAudioSystem();
 					// Update input manager
 					input.update();
 					// Get current time
