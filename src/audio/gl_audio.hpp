@@ -83,5 +83,6 @@ namespace Audio {
 
 #define $aud Audio::
 #define $mus $aud Music::
+#define $snd $aud Sound::
 
 #endif // AUDIO_PLAYER_SYSTEM_H
