@@ -19,6 +19,16 @@ None. All necessary components are (presumably) already within the ```lib/``` fo
 5) Compile with ```make (TARGET) [src=PATH_TO_YOUR_FILE.cpp [name=YOUR_PROGRAM_NAME]]``` (See [notes](#Note) for more detail);
 6) Done! Your compiled program should be within the ```res/``` directory.
 
+### Libraries used
+
+| Name | Purpose |
+|:--:|:---|
+| SDL2 | Graphical rendering |
+| SDL2_Mixer | Audio backend |
+| stb_image | Image loading |
+| cute_c2 | Collision |
+| mINI | Savefile handling |
+
 ### Note
 
 For more information, type ```make help```.
