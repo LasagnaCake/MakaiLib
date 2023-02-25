@@ -46,7 +46,7 @@ uniform vec2 waveShift		= vec2(1);
 uniform uint waveShape		= 0;
 uniform float waveLOD		= 4;
 
-// [ SCREEN WAVE ]
+// [ SCREEN PRISM ]
 uniform bool usePrism		= false;
 uniform vec2 prismAmplitude	= vec2(1);
 uniform vec2 prismFrequency	= vec2(1);
@@ -70,6 +70,11 @@ uniform bool	useOutline				= false;
 uniform vec2	outlineSize				= vec2(0.01);
 uniform vec4	outlineColor			= vec4(1);
 uniform bool	outlineRelativeAlpha	= true;
+
+// [ HSL MODIFIERS ]
+uniform float	hue			= 0;
+uniform float	saturation	= 1;
+uniform float	luminosity	= 1;
 
 // [ DEBUG SETTINGS ]
 uniform bool	useDebug	= false;
@@ -204,6 +209,13 @@ vec4 applyOutline(vec4 color, vec2 uv) {
 	return mix(color, outlineColor, getOutlineValue(uv, outlineSize) - color.a);
 }
 
+vec4 applyHSL(vec4 color) {
+	vec3 result = color.rgb;
+	vec3 gray = vec3(result.x + result.y + result.z) / 3;
+	result = mix(result, gray, 1-saturation);
+	return vec4(result * luminosity, color.a);
+}
+
 void main() {
 	// Screen wave	
 	vec2 wave = vec2(0);
@@ -234,7 +246,7 @@ void main() {
 		color *= maskValue;
 	}
 	if (color.w <= 0) discard;
-	FragColor = color;
+	FragColor = applyHSL(color);
 	if (useDebug) {
 		switch(debugView) {
 			case 1: FragColor = texture(depth, fragUV); break;

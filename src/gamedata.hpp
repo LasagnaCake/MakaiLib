@@ -47,6 +47,9 @@ namespace GameData {
 		$vmt Transform2D,
 		$vmt Transform3D,
 		$mat WorldMaterial,
+		$mat BufferMaterial,
+		$mat ObjectMaterial,
+		$mat setMaterial,
 		$cdt AreaCollisionData,
 		$cdt CollisionType,
 		$evt Signal,
@@ -73,6 +76,10 @@ namespace GameData {
 			$ecl $_ROOT->addChild(game);
 		}
 		game->addChild(e);
+	}
+
+	void setWorldMaterial(WorldMaterial& mat) {
+		setMaterial($mainshader, mat);
 	}
 
 	template <typename T> using Callback = std::function<void(T&)>;

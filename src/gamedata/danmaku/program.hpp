@@ -1,5 +1,7 @@
+class DanmakuApp;
+
 namespace {
-	$mki Program* mainProgram = nullptr;
+	DanmakuApp* mainProgram = nullptr;
 }
 
 class DanmakuApp: public $mki Program {
@@ -51,6 +53,8 @@ public:
 		ItemManager item;
 	} managers;
 
+	std::map<size_t, BufferMaterial> materials;
+
 	$cam Camera3D cam2D;
 	$cam Camera3D cam3D{$vec3(0, 5, -10), $vec3(0, 0, 0)};
 
@@ -68,11 +72,15 @@ public:
 	}
 
 	inline void setWorldMaterial2D() {
-		$mat setMaterial($mainshader, world2D);
+		setWorldMaterial(world2D);
 	}
 
 	inline void setWorldMaterial3D() {
-		$mat setMaterial($mainshader, world3D);
+		setWorldMaterial(world3D);
+	}
+
+	void setLayerMaterial(size_t layerID) {
+		getLayerBuffer().material = materials[layerID];
 	}
 
 	virtual void onLoading() {}

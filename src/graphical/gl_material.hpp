@@ -156,6 +156,9 @@ struct BufferMaterial {
 	Vector4
 		color	= Color::WHITE,
 		accent	= Color::NONE;
+	float			hue			= 0;
+	float			saturation	= 1;
+	float			luminosity	= 1;
 	Vector2			uvShift;
 	MaskEffect		mask;
 	NegativeEffect	negative;
@@ -257,6 +260,10 @@ void setMaterial(Shader& shader, BufferMaterial& material) {
 	// Set debug data
 	shader["useDebug"](material.debug.enabled);
 	shader["debugView"](material.debug.view);
+	// Set HSL data
+	shader["hue"](material.hue);
+	shader["saturation"](material.saturation);
+	shader["luminosity"](material.luminosity);
 }
 
 void setMaterial(Shader& shader, WorldMaterial& material) {
