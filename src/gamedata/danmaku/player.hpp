@@ -115,8 +115,9 @@ struct PlayerEntity2D: AreaCircle2D {
 	$mki InputManager	input;
 
 	struct {
-		float main = 3.0;
-		float bomb = 10.0;
+		float bullet	= 3.0;
+		float laser		= 1.0;
+		float bomb		= 10.0;
 	} damage;
 
 	Vector2 spawnPoint	= Vector2(0, 0);

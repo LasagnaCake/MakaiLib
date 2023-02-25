@@ -1,6 +1,7 @@
 #version 420 core
 
 in vec2 fragUV;
+in vec2 warpUV;
 in vec2 maskUV;
 in vec4 fragColor;
 in vec2 screenScale;
@@ -53,6 +54,12 @@ uniform vec2 prismFrequency	= vec2(1);
 uniform vec2 prismShift		= vec2(1);
 uniform uint prismShape		= 0;
 uniform float prismLOD		= 4;
+
+// [ TEXTURE WARPING ]
+uniform bool		useWarp			= false;
+uniform sampler2D	warpTexture;
+uniform uint		warpChannelX	=	0;
+uniform uint		warpChannelY	=	1;
 
 // [ SCREEN RAINBOW EFFECT ]
 uniform bool	useRainbow			= false;
@@ -223,13 +230,20 @@ void main() {
 		wave = (fragUV.yx * waveFrequency) * (2.0 * PI) + waveShift;
 		wave = patternV2(wave, waveShape, waveLOD) * (waveAmplitude / 10.0);
 	}
-	// Screen plasmicity
+	// Screen prismatic effect
 	vec2 prism = vec2(0);
 	if (usePrism) {
 		prism = (fragUV * prismFrequency.yx) * (2.0 * PI) + prismShift.yx;
 		prism = patternV2(prism, prismShape, prismLOD) * (prismAmplitude.yx / 10.0);
 	}
-	vec2 screenUV = fragUV + prism + wave;
+	// Screen texture warping
+	vec2 warp = vec2(0);
+	if (useWarp) {
+		vec4 warpFac = texture(warpTexture, warpUV);
+		warp = vec2(warpFac[warpChannelX], warpFac[warpChannelY]) * 2 - 1;
+	}
+	// Get pixel color
+	vec2 screenUV = fragUV + prism + wave + warp;
 	vec4 color = (getPixelColor(screenUV) * fragColor * albedo) + accent;
 	// Color inverter
 	if (negative) color = vec4(vec3(1) - vec3(color.x, color.y, color.z), color.w);

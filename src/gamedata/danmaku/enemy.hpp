@@ -52,19 +52,15 @@ struct EnemyEntity2D: public AreaCircle2D {
 	void onCollision(Entity* e) override {
 		auto player = getMainPlayer();
 		if (!invincible) {
-			if (
-					$ecl groups.isInGroup(e, $layer(PLAYER_BULLET))
-			) {
-				if (player) health -= player->damage.main;
-				else health -= defaults.playerDamage.main;
+			if (e->isInGroup($layer(PLAYER_BULLET))) {
+				if (player) health -= player->damage.bullet;
+				else health -= defaults.playerDamage.bullet;
 			}
-			if (
-					$ecl groups.isInGroup(e, $layer(PLAYER_LASER))
-			) {
-				if (player) health -= player->damage.main;
-				else health -= defaults.playerDamage.main;
+			if (e->isInGroup($layer(PLAYER_LASER))) {
+				if (player) health -= player->damage.laser;
+				else health -= defaults.playerDamage.laser;
 			}
-			if ($ecl groups.isInGroup(e, $layer(PLAYER_BOMB))) {
+			if (e->isInGroup($layer(PLAYER_BOMB))) {
 				if (player) health -= player->damage.bomb;
 				else health -= defaults.playerDamage.bomb;
 			}

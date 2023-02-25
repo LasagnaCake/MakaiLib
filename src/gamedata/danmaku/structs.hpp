@@ -126,7 +126,8 @@ typedef std::vector<DanmakuObject*> ObjectList;
 
 struct {
 	struct {
-		float main = 1.0;
-		float bomb = 5.0;
+		float bullet	= 2.0;
+		float laser		= 1.0;
+		float bomb		= 5.0;
 	} playerDamage;
 } defaults;

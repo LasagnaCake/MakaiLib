@@ -16,6 +16,12 @@ uniform vec2 resolution = vec2(0);
 uniform mat4 posMatrix;
 uniform mat4 uvMatrix;
 
+out vec2 warpUV;
+
+uniform float warpRotate    = 0;
+uniform vec2 warpScale      = vec2(1);
+uniform vec2 warpOffset     = vec2(0);
+
 // [ ALPHA MASK ]
 uniform bool    relativeMask = false;
 uniform vec2    maskShift = vec2(0);
@@ -35,4 +41,8 @@ void main()
     fragColor = vertColor;
     gl_Position = vertex;
     screenScale = vec2(resolution.x/resolution.y, 1);
+    vec2 warp = vertUV;
+    warp.x = warp.x * cos(warpRotate) - warp.y * sin(warpRotate);
+    warp.y = warp.x * sin(warpRotate) + warp.y * cos(warpRotate);
+    warpUV = (warp * warpScale) + warpOffset;
 } 

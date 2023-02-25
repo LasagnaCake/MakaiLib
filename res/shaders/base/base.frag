@@ -94,7 +94,7 @@ void main(void) {
 	if (textured) {
 		if (useWarp) {
 			vec4 warpFac = texture(warpTexture, warpUV);
-			vec2 warpCoord = vec2(warpFac[warpChannelX], warpFac[warpChannelY]);
+			vec2 warpCoord = vec2(warpFac[warpChannelX], warpFac[warpChannelY]) * 2 - 1;
 			color = texture(texture2D, fragUV + warpCoord) * fragColor;
 		}
 		else color = texture(texture2D, fragUV) * fragColor;
@@ -120,6 +120,7 @@ void main(void) {
 
 	FragColor = color;
 
+	//gl_FragDepth = length(fragCoord3D);
 	//DepthValue = length(fragCoord3D);
 
 	//FragColor = vec4(fragColor.x, 1, 1.1-(fragDistance/50.0), 1) * albedo;

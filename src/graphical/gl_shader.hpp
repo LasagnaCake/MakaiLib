@@ -269,6 +269,7 @@ namespace Shader {
 
 		/// Creates a shader from an SLF file and associates it to the object. Returns false if already created.
 		bool create(CSVData slfData) {
+			if (created) return false;
 			string dir = slfData[0];
 			string log = "";
 			string code;
@@ -299,6 +300,7 @@ namespace Shader {
 			if (log != "") {
 				throw runtime_error(log);
 			}
+			created = true;
 			return true;
 		}
 
@@ -417,6 +419,8 @@ namespace Shader {
 			action();
 		}
 	}
+
+	// TODO: Pipeline stuff
 
 	Shader defaultShader;
 }

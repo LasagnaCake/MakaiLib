@@ -55,4 +55,12 @@ typedef int64	llong;
 
 typedef wchar_t	wchar;
 
+typedef int8	sbyte;
+typedef uint8	ubyte;
+typedef int16	sword;
+typedef uint16	uword;
+
+typedef ubyte	byte;
+typedef uword	word;
+
 #endif // EXTENDED_TYPES_H

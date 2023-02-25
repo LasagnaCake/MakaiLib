@@ -93,13 +93,13 @@ struct TextureEffect: Effect, Imageable2D {
 	float alphaClip = 0.1;
 };
 
+// Buffer Material Effects
+
 struct WarpEffect: Effect, Imageable2D, Transformable2D {
 	unsigned int
 		channelX = 0,
 		channelY = 1;
 };
-
-// Buffer Material Effects
 
 struct MaskEffect: Effect, Imageable2D, Transformable2D, Invertible {
 	bool relative = false;
@@ -161,6 +161,7 @@ struct BufferMaterial {
 	float			luminosity	= 1;
 	Vector2			uvShift;
 	MaskEffect		mask;
+	WarpEffect		warp;
 	NegativeEffect	negative;
 	BlurEffect		blur;
 	OutlineEffect	outline;
@@ -223,6 +224,14 @@ void setMaterial(Shader& shader, BufferMaterial& material) {
 		shader["maskRotate"](material.mask.trans.rotation);
 		shader["maskScale"](material.mask.trans.scale);
 	} else shader["useMask"](false);
+	// Set texture warping data
+	if (material.warp.image && material.warp.enabled) {
+		shader["useWarp"](true);
+		shader["warpTexture"](8);
+		material.warp.image->enable(8);
+		shader["warpChannelX"](material.warp.channelX);
+		shader["warpChannelY"](material.warp.channelY);
+	} else shader["useWarp"](false);
 	// Set color to gradient data
 	shader["useGradient"](material.gradient.enabled);
 	shader["gradientChannel"](material.gradient.channel);
