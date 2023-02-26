@@ -379,15 +379,15 @@ namespace Makai {
 			SDL_GL_SwapWindow(window);
 		}
 
-		inline Drawer::FrameBuffer& getFrameBuffer() {
+		constexpr inline Drawer::FrameBuffer& getFrameBuffer() {
 			return framebuffer;
 		}
 
-		inline Drawer::FrameBuffer& getLayerBuffer() {
+		constexpr inline Drawer::FrameBuffer& getLayerBuffer() {
 			return layerbuffer;
 		}
 
-		inline Shader::Shader& getBufferShader() {
+		constexpr inline Shader::Shader& getBufferShader() {
 			return bufferShader;
 		}
 

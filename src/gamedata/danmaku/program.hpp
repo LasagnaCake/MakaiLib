@@ -53,13 +53,13 @@ public:
 		ItemManager item;
 	} managers;
 
-	std::map<size_t, BufferMaterial> materials;
+	BufferMaterial&	frame = getFrameBuffer().material;
+	std::map<size_t, BufferMaterial> layers;
+	WorldMaterial world2D;
+	WorldMaterial world3D;
 
 	$cam Camera3D cam2D;
 	$cam Camera3D cam3D{$vec3(0, 5, -10), $vec3(0, 0, 0)};
-
-	$mat WorldMaterial world2D;
-	$mat WorldMaterial world3D;
 
 	size_t gameSeed = 0;
 
@@ -80,7 +80,7 @@ public:
 	}
 
 	void setLayerMaterial(size_t layerID) {
-		getLayerBuffer().material = materials[layerID];
+		getLayerBuffer().material = layers[layerID];
 	}
 
 	virtual void onLoading() {}
