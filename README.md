@@ -1,5 +1,15 @@
 # Makai Game Engine
 
+## Table of Contents
+
+[Overview](#Overview)
+[Required Libraries](#Required-Libraries)
+[How to Use](#How-to-Use)
+	[Note](#Note)
+[Libraries Used](#Libraries-Used)
+[Documentation](#Documentation)
+[TODO](#TODO)
+
 ## Overview
 
 This is (currently) a header-only C++20 bullet hell engine, that utilizes SDL as a rendering and audio backend.
@@ -19,6 +29,12 @@ None. All necessary components are (presumably) already within the ```lib/``` fo
 5) Compile with ```make (TARGET) [src=PATH_TO_YOUR_FILE.cpp [name=YOUR_PROGRAM_NAME]]``` (See [notes](#Note) for more detail);
 6) Done! Your compiled program should be within the ```res/``` directory.
 
+### Note
+
+For more information, type ```make help```.
+
+The ```src``` only needs to be set if your file is not at the top of the ```build/``` folder or not named ```main.cpp```.
+
 ### Libraries used
 
 | Name | Purpose |
@@ -29,12 +45,11 @@ None. All necessary components are (presumably) already within the ```lib/``` fo
 | cute_c2 | Collision |
 | mINI | Savefile handling |
 
-### Note
-
-For more information, type ```make help```.
-
-The ```src``` only needs to be set if your file is not at the top of the ```build/``` folder or not named ```main.cpp```.
-
 ## Documentation
 
 Currently nonexistent. Some of the code is commented.
+
+## TODO
+
+GUI system
+Spellcard system
