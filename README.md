@@ -63,6 +63,8 @@ Currently nonexistent. Some of the code is commented.
 
 ## TODO
 
+### Current
+
 - GUI system
 - Spellcard system
 
