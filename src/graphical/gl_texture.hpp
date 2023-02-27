@@ -3,7 +3,7 @@ void setTexture2D(unsigned char index, GLuint texture) {
 	glBindTexture(GL_TEXTURE_2D, texture);
 }
 
-unsigned int createTexture2D_AB(
+unsigned int createTexture(
 	unsigned int width,
 	unsigned int height,
 	unsigned int type = GL_UNSIGNED_BYTE,
@@ -50,7 +50,7 @@ unsigned int createTexture2D(
 	unsigned int magFilter = GL_LINEAR,
 	unsigned char* data = NULL
 ) {
-	return createTexture2D_AB(width, height, type, format, format, minFilter, magFilter, data);
+	return createTexture(width, height, type, format, format, minFilter, magFilter, data);
 }
 
 class Texture2D {
@@ -134,6 +134,10 @@ public:
 
 	void enable(unsigned char texture = 0) {
 		setTexture2D(texture, id);
+	}
+
+	inline unsigned int getID() {
+		return id;
 	}
 
 private:

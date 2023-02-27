@@ -42,6 +42,7 @@ namespace GameData {
 		$ecl Entity2D,
 		$ecl Entity,
 		$rdt Renderable,
+		$txt Label,
 		$ref AnimatedPlane,
 		$drw Texture2D,
 		$vmt Transform2D,
@@ -53,9 +54,11 @@ namespace GameData {
 		$cdt AreaCollisionData,
 		$cdt CollisionType,
 		$evt Signal,
+		$mki InputManager,
 		std::string;
 
 		using namespace Vector;
+		using namespace RenderData::Bar;
 
 		namespace Reference {using namespace RenderData::Reference;}
 

@@ -6,8 +6,8 @@ namespace Dialog {
 	};
 
 	struct Actor {
-		$ref AnimatedPlane*	sprite;
-		ActorPosition		position;
+		ActorPosition	position;
+		AnimatedPlane*	sprite = nullptr;
 	};
 
 	struct ActorData {
@@ -58,6 +58,7 @@ namespace Dialog {
 
 		void begin() {
 			for (auto& [aName, actor]: actors) {
+				if (!actor.sprite) continue;
 				actor.sprite->local.position = actor.position.out;
 				animator[aName].value = &actor.sprite->local.position;
 			}
@@ -66,6 +67,7 @@ namespace Dialog {
 
 		void end() {
 			for (auto& [aName, actor]: actors) {
+				if (!actor.sprite) continue;
 				auto& anim = animator[aName];
 				anim.reinterpolate(actor.position.rest);
 			}
@@ -83,17 +85,17 @@ namespace Dialog {
 			}
 		}
 
-		$tev Signal<size_t>	onMessage	= $tsignal(size_t index) {};
-		$evt Signal			onDialogEnd	= $signal {queueDestroy();};
+		TypedSignal<size_t>	onMessage	= $tsignal(size_t index) {};
+		Signal				onDialogEnd	= $signal {queueDestroy();};
 
 		KeyBinds keys;
 
-		$mki InputManager input;
+		InputManager input;
 
 		struct {
-			$rdt Renderable	shape;
-			$txt Label		title;
-			$txt Label		message;
+			Renderable	shape;
+			Label		title;
+			Label		message;
 		} box;
 
 		void nextMessage() {
@@ -108,6 +110,7 @@ namespace Dialog {
 			for (auto& [actor, _]: actors) {
 				auto& anim = animator[actor];
 				auto& a = actors[actor];
+				if (!a.sprite) continue;
 				anim.tweenStep = msg.easing;
 				anim.reinterpolate(a.position.rest, time);
 				a.sprite->setColor(Color::GRAY);
@@ -115,9 +118,10 @@ namespace Dialog {
 			for (auto& actor: msg.actors) {
 				auto& anim = animator[actor.name];
 				auto& a = actors[actor.name];
+				actor.action();
+				if (!a.sprite) continue;
 				a.sprite->frame = actor.frame;
 				anim.reinterpolate(actor.leaving ? a.position.out : a.position.talking, time);
-				actor.action();
 				a.sprite->setColor(actor.tint);
 			}
 			autoplay = msg.autoplay;

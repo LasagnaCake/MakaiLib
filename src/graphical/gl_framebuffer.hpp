@@ -30,11 +30,14 @@ namespace Drawer {
 	}
 	struct FrameBufferData {
 		unsigned int
-			id,
-			screen,
-			depth,
-			width,
-			height;
+			id		= 0,
+			width	= 0,
+			height	= 0
+		;
+		Texture2D
+			*screen	= nullptr,
+			*depth	= nullptr
+		;
 	};
 	// Todo: Fix this
 	class FrameBuffer {
@@ -57,8 +60,8 @@ namespace Drawer {
 			if (!created) return;
 			else created = false;
 			glDeleteFramebuffers(1, &id);
-			glDeleteTextures(1, &buffer.screen);
-			glDeleteTextures(1, &buffer.depth);
+			buffer.screen.destroy();
+			buffer.depth.destroy();
 			glDeleteBuffers(1, &vbo);
 			glDeleteVertexArrays(1, &vao);
 		}
@@ -71,21 +74,21 @@ namespace Drawer {
 			else created = true;
 			glGenFramebuffers(1, &id);
 			glBindFramebuffer(GL_FRAMEBUFFER, id);
-			buffer.screen = Drawer::createTexture2D(width, height, GL_FLOAT);
+			buffer.screen.create(width, height, GL_FLOAT);
 			glFramebufferTexture2D(
 				GL_FRAMEBUFFER,
 				GL_COLOR_ATTACHMENT0,
 				GL_TEXTURE_2D,
-				buffer.screen,
+				buffer.screen.getID(),
 				0
 			);
-			buffer.depth = Drawer::createTexture2D(width, height, GL_UNSIGNED_INT, GL_DEPTH_COMPONENT);
+			buffer.depth.create(width, height, GL_UNSIGNED_INT, GL_DEPTH_COMPONENT);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LESS);
 			glFramebufferTexture2D(
 				GL_FRAMEBUFFER,
 				GL_DEPTH_ATTACHMENT,
 				GL_TEXTURE_2D,
-				buffer.depth,
+				buffer.depth.getID(),
 				0
 			);
 			// Setup display rectangle
@@ -125,10 +128,10 @@ namespace Drawer {
 		FrameBufferData toFrameBufferData() {
 			return FrameBufferData{
 				id,
-				buffer.screen,
-				buffer.depth,
 				width,
-				height
+				height,
+				&buffer.screen,
+				&buffer.depth
 			};
 		}
 
@@ -168,8 +171,8 @@ namespace Drawer {
 			// Activate shader
 			shader();
 			// Set shader textures
-			Drawer::setTexture2D(30, buffer.depth);
-			Drawer::setTexture2D(31, buffer.screen);
+			buffer.depth(30);
+			buffer.screen(31);
 			// Set camera's near and far plane
 			shader["near"](Scene::camera.zNear);
 			shader["far"](Scene::camera.zFar);
@@ -218,8 +221,8 @@ namespace Drawer {
 		unsigned int id;
 		unsigned int width, height;
 		struct {
-			unsigned int screen;
-			unsigned int depth;
+			Texture2D screen;
+			Texture2D depth;
 		} buffer;
 		unsigned int vao;
 		unsigned int vbo;
