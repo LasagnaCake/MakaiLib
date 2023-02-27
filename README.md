@@ -2,21 +2,14 @@
 
 ## Table of Contents
 
-[Overview](#Overview)
-
-[Supported Operating Systems](#Supported-Operating-Systems)
-
-[Requirements](#Requirements)
-
-[How to Use](#How-to-Use)
-
-    [Note](#Note)
-
-[Libraries Used](#Libraries-Used)
-
-[Documentation](#Documentation)
-
-[TODO](#TODO)
+- [Overview](#Overview)
+- [Supported Operating Systems](#Supported-Operating-Systems)
+- [Requirements](#Requirements)
+- [How to Use](#How-to-Use)
+-	[Note](#Note)
+- [Libraries Used](#Libraries-Used)
+- [Documentation](#Documentation)
+- [TODO](#TODO)
 
 ## Overview
 
