@@ -6,7 +6,7 @@
 - [Supported Operating Systems](#Supported-Operating-Systems)
 - [Requirements](#Requirements)
 - [How to Use](#How-to-Use)
--	[Note](#Note)
+-     [Note](#Note)
 - [Libraries Used](#Libraries-Used)
 - [Documentation](#Documentation)
 - [TODO](#TODO)
