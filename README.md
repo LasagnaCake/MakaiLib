@@ -5,8 +5,9 @@
 - [Overview](#Overview)
 - [Supported Operating Systems](#Supported-Operating-Systems)
 - [Requirements](#Requirements)
+- - [Windows](#Windows)
 - [How to Use](#How-to-Use)
-\	- [Note](#Note)
+- - [Note](#Note)
 - [Libraries Used](#Libraries-Used)
 - [Documentation](#Documentation)
 - [TODO](#TODO)
@@ -25,7 +26,8 @@ No plans to support 32-bit systems.
 
 ## Requirements
 
-- GCC: MinGW (MSYS (Recommended), Cygwin, TDM-GCC)
+### Windows
+- GCC via MinGW (MSYS (Recommended), Cygwin, TDM-GCC)
 
 ## How To Use
 
