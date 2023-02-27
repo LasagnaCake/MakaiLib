@@ -45,7 +45,7 @@ For more information, type ```make help```.
 
 The ```src``` only needs to be set if your file is not at the top of the ```build/``` folder or not named ```main.cpp```.
 
-### Libraries used
+## Libraries used
 
 These are already included in the ```lib/``` folder.
 
