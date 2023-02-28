@@ -166,12 +166,20 @@ namespace Math {
 		return ::ceil(val / (double)mult) * mult;
 	}
 
+	CONST_ANYTYPE_I mod(T a, T b) {
+		return b * ::floor(a/b);
+	}
+
+	CONST_ANYTYPE_I rmod(T a, T b) {
+		return b * ::ceil(a/b);
+	}
+
 	CONST_ANYTYPE_I wmax(T val, T max) {
-		return val - fmult(val, max);
+		return val - mod(val, max);
 	}
 
 	CONST_ANYTYPE_I wmin(T val, T min) {
-		return val + cmult(val, min);
+		return val + rmod(val, min);
 	}
 
 	CONST_ANYTYPE_I wrap(T val, T min, T max) {

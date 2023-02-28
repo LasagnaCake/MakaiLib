@@ -94,67 +94,29 @@ vec4 applyGradient(vec4 color) {
 		return mix(gradientStart, gradientEnd, gradientValue);
 }
 
-vec3 rgb2hsl(vec3 color) {
-  float cmax = max(max(color.r, color.g), color.b);
-  float cmin = min(min(color.r, color.g), color.b);
-  float delta = cmax - cmin;
-  
-  float hue = 0.0;
-  if (delta == 0.0) {
-    hue = 0.0;
-  } else if (cmax == color.r) {
-    hue = mod((color.g - color.b) / delta, 6.0);
-  } else if (cmax == color.g) {
-    hue = (color.b - color.r) / delta + 2.0;
-  } else {
-    hue = (color.r - color.g) / delta + 4.0;
-  }
-  hue *= 60.0;
-  if (hue < 0.0) {
-    hue += 360.0;
-  }
-  
-  float lightness = (cmax + cmin) / 2.0;
-  
-  float saturation = 0.0;
-  if (delta == 0.0) {
-    saturation = 0.0;
-  } else {
-    saturation = delta / (1.0 - abs(2.0 * lightness - 1.0));
-  }
-  
-  return vec3(hue, saturation, lightness);
+vec3 rgb2hsl(vec3 c)
+{
+    vec4 K = vec4(0.0, -1.0 / 3.0, 2.0 / 3.0, -1.0);
+    vec4 p = mix(vec4(c.bg, K.wz), vec4(c.gb, K.xy), step(c.b, c.g));
+    vec4 q = mix(vec4(p.xyw, c.r), vec4(c.r, p.yzx), step(p.x, c.r));
+
+    float d = q.x - min(q.w, q.y);
+    float e = 1.0e-10;
+    return vec3(abs(q.z + (q.w - q.y) / (6.0 * d + e)), d / (q.x + e), q.x);
 }
 
-vec3 hsl2rgb(vec3 hsl) {
-  float hue = hsl.x;
-  float saturation = hsl.y;
-  float lightness = hsl.z;
-  
-  float chroma = (1.0 - abs(2.0 * lightness - 1.0)) * saturation;
-  float x = chroma * (1.0 - abs(mod(hue / 60.0, 2.0) - 1.0));
-  float m = lightness - chroma / 2.0;
-  
-  vec3 color = vec3(0.0);
-  if (hue < 60.0) {
-    color = vec3(chroma, x, 0.0);
-  } else if (hue < 120.0) {
-    color = vec3(x, chroma, 0.0);
-  } else if (hue < 180.0) {
-    color = vec3(0.0, chroma, x);
-  } else if (hue < 240.0) {
-    color = vec3(0.0, x, chroma);
-  } else if (hue < 300.0) {
-    color = vec3(x, 0.0, chroma);
-  } else {
-    color = vec3(chroma, 0.0, x);
-  }
-  
-  return color + vec3(m);
+vec3 hsl2rgb(vec3 c)
+{
+    vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
+    vec3 p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www);
+    return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);
 }
 
 vec4 applyHSL(vec4 color) {
-	return vec4(hsl2rgb(rgb2hsl(color.xyz) * vec3(1, saturation, luminosity)) + vec3(hue,0,0), color.a);
+	vec3 hsl = rgb2hsl(color.xyz);
+	hsl.x += mod(hue, 1);
+    hsl.yz *= vec2(saturation, luminosity);
+	return vec4(hsl2rgb(hsl), color.a);
 }
 
 void main(void) {
@@ -182,11 +144,13 @@ void main(void) {
 
 	if (useLights) color = applyLights(color);
 
+	color = applyHSL(color);
+
 	if (useVoid) color = applyVoid(color);
 
 	if (useFog) color = applyFog(color);
 
-	FragColor = applyHSL(color);
+	FragColor = color;
 
 	//gl_FragDepth = length(fragCoord3D);
 	//DepthValue = length(fragCoord3D);
