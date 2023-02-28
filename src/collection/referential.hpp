@@ -97,7 +97,8 @@ namespace SmartPointer {
 		inline Pointer<T, true>		toWeak()	{return	getPointer();			}
 		inline T*					raw()		{return	getPointer();			}
 
-		explicit operator T*() const	{return ref;				};
+		explicit operator T*() const	{return ref;				}
+		operator bool() const			{return exists();			}
 
 		inline bool operator!()			{return	!exists();			}
 
