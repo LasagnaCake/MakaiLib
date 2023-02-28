@@ -143,6 +143,9 @@ struct BufferDebugData: Effect {
 struct ObjectMaterial {
 	Vector4				color = Color::WHITE;
 	bool shaded			= true;
+	float			hue			= 0;
+	float			saturation	= 1;
+	float			luminosity	= 1;
 	TextureEffect	texture;
 	WarpEffect		warp;
 	NegativeEffect	negative;
@@ -205,6 +208,10 @@ void setMaterial(Shader& shader, ObjectMaterial& material) {
 	shader["useLights"](material.shaded);
 	// Albedo
 	shader["albedo"](material.color);
+	// HSL data
+	shader["hue"](material.hue);
+	shader["saturation"](material.saturation);
+	shader["luminosity"](material.luminosity);
 }
 
 void setMaterial(Shader& shader, BufferMaterial& material) {

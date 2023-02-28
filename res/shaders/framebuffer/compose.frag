@@ -216,11 +216,67 @@ vec4 applyOutline(vec4 color, vec2 uv) {
 	return mix(color, outlineColor, getOutlineValue(uv, outlineSize) - color.a);
 }
 
+vec3 rgb2hsl(vec3 color) {
+  float cmax = max(max(color.r, color.g), color.b);
+  float cmin = min(min(color.r, color.g), color.b);
+  float delta = cmax - cmin;
+  
+  float hue = 0.0;
+  if (delta == 0.0) {
+    hue = 0.0;
+  } else if (cmax == color.r) {
+    hue = mod((color.g - color.b) / delta, 6.0);
+  } else if (cmax == color.g) {
+    hue = (color.b - color.r) / delta + 2.0;
+  } else {
+    hue = (color.r - color.g) / delta + 4.0;
+  }
+  hue *= 60.0;
+  if (hue < 0.0) {
+    hue += 360.0;
+  }
+  
+  float lightness = (cmax + cmin) / 2.0;
+  
+  float saturation = 0.0;
+  if (delta == 0.0) {
+    saturation = 0.0;
+  } else {
+    saturation = delta / (1.0 - abs(2.0 * lightness - 1.0));
+  }
+  
+  return vec3(hue, saturation, lightness);
+}
+
+vec3 hsl2rgb(vec3 hsl) {
+  float hue = hsl.x;
+  float saturation = hsl.y;
+  float lightness = hsl.z;
+  
+  float chroma = (1.0 - abs(2.0 * lightness - 1.0)) * saturation;
+  float x = chroma * (1.0 - abs(mod(hue / 60.0, 2.0) - 1.0));
+  float m = lightness - chroma / 2.0;
+  
+  vec3 color = vec3(0.0);
+  if (hue < 60.0) {
+    color = vec3(chroma, x, 0.0);
+  } else if (hue < 120.0) {
+    color = vec3(x, chroma, 0.0);
+  } else if (hue < 180.0) {
+    color = vec3(0.0, chroma, x);
+  } else if (hue < 240.0) {
+    color = vec3(0.0, x, chroma);
+  } else if (hue < 300.0) {
+    color = vec3(x, 0.0, chroma);
+  } else {
+    color = vec3(chroma, 0.0, x);
+  }
+  
+  return color + vec3(m);
+}
+
 vec4 applyHSL(vec4 color) {
-	vec3 result = color.rgb;
-	vec3 gray = vec3(result.x + result.y + result.z) / 3;
-	result = mix(result, gray, 1-saturation);
-	return vec4(result * luminosity, color.a);
+	return vec4(hsl2rgb(rgb2hsl(color.xyz) * vec3(1, saturation, luminosity)) + vec3(hue,0,0), color.a);
 }
 
 void main() {

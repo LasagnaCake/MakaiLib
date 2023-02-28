@@ -276,10 +276,6 @@ namespace Vector{
 		public:
 			/// The vector's position.
 			float x, y, z;
-			float&
-				r = x,
-				g = y,
-				b = z;
 
 			/// Constructors.
 
@@ -579,11 +575,6 @@ namespace Vector{
 		public:
 			/// The vector's position.
 			float  x, y, z, w;
-			float&
-				r = x,
-				g = y,
-				b = z,
-				a = w;
 
 			/// Constructors.
 
@@ -893,14 +884,6 @@ namespace Vector{
 				return Vector4(w, x, y, z);
 			}
 
-			Vector4 abgr() {
-				return Vector4(a, b, g, r);
-			}
-
-			Vector4 argb() {
-				return Vector4(a, r, g, b);
-			}
-
 			Vector4 compensated() {
 				return Vector4(xyz() / w, w);
 			}
@@ -920,7 +903,7 @@ namespace VecMath
 {
 	using namespace Vector;
 
-	enum class Axis: unsigned char
+	enum class Axis: size_t
 	{
 		POS_X,
 		POS_Y,
@@ -982,7 +965,7 @@ namespace VecMath
 	* Rotates a given 3D Vector around two of the origin's axis by two respective angles.
 	* The given axis is the axis to be excluded.
 	*/
-	Vector3 rotateV3(Vector3 vec, Vector2 angle, unsigned char exclude = POS_X) {
+	Vector3 rotateV3(Vector3 vec, Vector2 angle, Axis exclude = Axis::POS_X) {
 		switch (exclude) {
 		case Axis::POS_X:
 		case Axis::NEG_X:
@@ -997,7 +980,7 @@ namespace VecMath
 		}
 	}
 
-	// No fourth-dimensional rotation.
+	// No fourth-dimensional rotation. I'd rather die.
 
 	// Angle-to-vector conversion
 
@@ -1007,7 +990,7 @@ namespace VecMath
 	}
 
 	/// Gets a 3D Vector of size 1 at a given angle around one of the origin's axis.
-	Vector3 angleV3(float angle, unsigned char axis = Axis::NEG_Z) {
+	Vector3 angleV3(float angle, Axis axis = Axis::NEG_Z) {
 		switch (axis) {
 		case Axis::POS_X:
 		case Axis::NEG_X:
@@ -1023,18 +1006,18 @@ namespace VecMath
 	}
 
 	/// Gets a 3D Vector of size 1 at a given angle.
-	Vector3 angleV3(Vec3 angle, unsigned char axis = Axis::NEG_Z) {
+	Vector3 angleV3(Vec3 angle, Axis axis = Axis::NEG_Z) {
 		switch (axis) {
 		case Axis::POS_X:
-			return rotateV3(Vector3(1,0,0), angle);
+			return rotateV3(Vector3(+1,0,0), angle);
 		case Axis::NEG_X:
 			return rotateV3(Vector3(-1,0,0), angle);
 		case Axis::POS_Y:
-			return rotateV3(Vector3(0,1,0), angle);
+			return rotateV3(Vector3(0,+1,0), angle);
 		case Axis::NEG_Y:
-			return rotateV3(Vector3(,-1,0), angle);
+			return rotateV3(Vector3(0,-1,0), angle);
 		case Axis::POS_Z:
-			return rotateV3(Vector3(0,0,1), angle);
+			return rotateV3(Vector3(0,0,+1), angle);
 		default:
 		case Axis::NEG_Z:
 			return rotateV3(Vector3(0,0,-1), angle);
