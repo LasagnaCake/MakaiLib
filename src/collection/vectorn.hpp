@@ -276,6 +276,10 @@ namespace Vector{
 		public:
 			/// The vector's position.
 			float x, y, z;
+			float&
+				r = x,
+				g = y,
+				b = z;
 
 			/// Constructors.
 
@@ -575,6 +579,11 @@ namespace Vector{
 		public:
 			/// The vector's position.
 			float  x, y, z, w;
+			float&
+				r = x,
+				g = y,
+				b = z,
+				a = w;
 
 			/// Constructors.
 
@@ -884,6 +893,14 @@ namespace Vector{
 				return Vector4(w, x, y, z);
 			}
 
+			Vector4 abgr() {
+				return Vector4(a, b, g, r);
+			}
+
+			Vector4 argb() {
+				return Vector4(a, r, g, b);
+			}
+
 			Vector4 compensated() {
 				return Vector4(xyz() / w, w);
 			}
@@ -903,11 +920,14 @@ namespace VecMath
 {
 	using namespace Vector;
 
-	enum : unsigned char
+	enum class Axis: unsigned char
 	{
-		AXIS_X,
-		AXIS_Y,
-		AXIS_Z
+		POS_X,
+		POS_Y,
+		POS_Z,
+		NEG_X,
+		NEG_Y,
+		NEG_Z
 	};
 
 	namespace {
@@ -962,14 +982,17 @@ namespace VecMath
 	* Rotates a given 3D Vector around two of the origin's axis by two respective angles.
 	* The given axis is the axis to be excluded.
 	*/
-	Vector3 rotateV3(Vector3 vec, Vector2 angle, unsigned char exclude = AXIS_X) {
+	Vector3 rotateV3(Vector3 vec, Vector2 angle, unsigned char exclude = POS_X) {
 		switch (exclude) {
-		case AXIS_X:
+		case Axis::POS_X:
+		case Axis::NEG_X:
 			return rotateV3(vec, Vector3(0, angle.x, angle.y));
-		case AXIS_Y:
+		case Axis::POS_Y:
+		case Axis::NEG_Y:
 		default:
 			return rotateV3(vec, Vector3(angle.x, 0, angle.y));
-		case AXIS_Z:
+		case Axis::POS_Z:
+		case Axis::NEG_Z:
 			return rotateV3(vec, Vector3(angle.x, angle.y, 0));
 		}
 	}
@@ -984,15 +1007,37 @@ namespace VecMath
 	}
 
 	/// Gets a 3D Vector of size 1 at a given angle around one of the origin's axis.
-	Vector3 angleV3(float angle, unsigned char axis) {
+	Vector3 angleV3(float angle, unsigned char axis = Axis::NEG_Z) {
 		switch (axis) {
-		case AXIS_X:
+		case Axis::POS_X:
+		case Axis::NEG_X:
 			return Vector3(0, cos(angle), sin(angle));
-		case AXIS_Y:
-		default:
+		case Axis::POS_Y:
+		case Axis::NEG_Y:
 			return Vector3(cos(angle), 0, sin(angle));
-		case AXIS_Z:
+		default:
+		case Axis::POS_Z:
+		case Axis::NEG_Z:
 			return Vector3(cos(angle), sin(angle), 0);
+		}
+	}
+
+	/// Gets a 3D Vector of size 1 at a given angle.
+	Vector3 angleV3(Vec3 angle, unsigned char axis = Axis::NEG_Z) {
+		switch (axis) {
+		case Axis::POS_X:
+			return rotateV3(Vector3(1,0,0), angle);
+		case Axis::NEG_X:
+			return rotateV3(Vector3(-1,0,0), angle);
+		case Axis::POS_Y:
+			return rotateV3(Vector3(0,1,0), angle);
+		case Axis::NEG_Y:
+			return rotateV3(Vector3(,-1,0), angle);
+		case Axis::POS_Z:
+			return rotateV3(Vector3(0,0,1), angle);
+		default:
+		case Axis::NEG_Z:
+			return rotateV3(Vector3(0,0,-1), angle);
 		}
 	}
 
@@ -1081,9 +1126,10 @@ namespace VecMath
 	Vector3 angleTo(Vector3 vec) {
 		// TODO: Test this
 		Vector3 res;
-		res.x = angleTo(vec.yz());
-		res.y = angleTo(vec.xz());
-		res.z = angleTo(vec.xy());
+		float mag = vec.length();
+		res.x = acos(vec.x/mag);
+		res.y = acos(vec.y/mag);
+		res.z = acos(vec.z/mag);
 		return res;
 	}
 
