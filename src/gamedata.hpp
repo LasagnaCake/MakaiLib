@@ -22,13 +22,13 @@
 
 #include "gamedata/layout.hpp"
 
-#ifndef PARALLEL_THREAD_COUNT
-#define PARALLEL_THREAD_COUNT 1
-#endif // PARALLEL_THREAD_COUNT
+#ifndef GAME_PARALLEL_THREAD_COUNT
+#define GAME_PARALLEL_THREAD_COUNT PARALLEL_THREAD_COUNT
+#endif // GAME_PARALLEL_THREAD_COUNT
 
 #ifndef GAME_PARALLEL_FOR
 #ifndef _DEBUG_OUTPUT_
-#define GAME_PARALLEL_FOR _Pragma("omp parallel for num_threads(PARALLEL_THREAD_COUNT)")
+#define GAME_PARALLEL_FOR _Pragma("omp parallel for num_threads(GAME_PARALLEL_THREAD_COUNT)")
 #else
 #define GAME_PARALLEL_FOR
 #endif

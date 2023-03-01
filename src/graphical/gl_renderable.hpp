@@ -14,6 +14,23 @@ public:
 		this->triangles = triangles;
 	}
 
+	Renderable(
+		RawVertex* vertices,
+		size_t count,
+		size_t layer = 0,
+		bool manual = false
+	): DrawableObject(layer, manual) {
+		extend(vertices, count);
+	}
+
+	Renderable(
+		Renderable* other,
+		size_t layer = 0,
+		bool manual = false
+	): DrawableObject(layer, manual) {
+		extend(other);
+	}
+
 	virtual ~Renderable() {
 		locked = false;
 		$debug("Renderable!");
@@ -188,20 +205,35 @@ public:
 		clearData();
 	}
 
-	void bakeAndLock(RawVertex* vertices, size_t size) {
+	void extend(RawVertex* vertices, size_t size) {
 		if (locked) return;
-		locked	= true;
-		baked	= true;
 		if (vertices == nullptr || size == 0)
 			throw std::runtime_error("No vertices were provided!");
 		if (this->vertices)
 			delete[] this->vertices;
-		this->vertices = new RawVertex[size];
-		for $ssrange(i, 0, size) {
-			this->vertices[i] = vertices[i];
+		for $range(i, 0, size, 3) {
+			triangles.push_back(
+				new Triangle{
+					vertices[i],
+					vertices[i+1],
+					vertices[i+2]
+				}
+			);
 		}
-		vertexCount = size;
-		clearData();
+	}
+
+	void extend(Renderable* other) {
+		if (locked) return;
+		if (!other->baked) {
+			other->bake();
+			extend(other->vertices, other->vertexCount);
+			other->unbake();
+		} else extend(other->vertices, other->vertexCount);
+	}
+
+	void extend(vector<Renderable*> parts) {
+		for $each(p, parts)
+			extend(p);
 	}
 
 	void bake() {
@@ -244,6 +276,8 @@ public:
 	vector<Triangle*> triangles;
 
 private:
+	friend class Renderable;
+
 	RawVertex* vertices = nullptr;
 
 	bool
@@ -254,17 +288,10 @@ private:
 		// If no triangles exist, return
 		if (!triangles.size()) return;
 		// Transform references (if applicable)
-		#ifdef $_PARALLEL_RENDERING
-		if (!references.plane.empty())
-			$peach(plane, references.plane, references.plane.size(), {plane->transform();});
-		if (!references.trigon.empty())
-			$peach(tg, references.trigon, references.trigon.size(), {tg->transform();});
-		if(references.plane.size() == 1) references.plane[0] -> transform();
-		if(references.trigon.size() == 1) references.trigon[0] -> transform();
-		#else
+		GRAPHICAL_PARALLEL_FOR
 		for (auto& plane: references.plane)	plane->transform();
+		GRAPHICAL_PARALLEL_FOR
 		for (auto& tg: references.trigon)	tg->transform();
-		#endif
 		// Copy data to vertex buffer
 		// Get vertex count
 		vertexCount = triangles.size() * 3;
@@ -279,17 +306,10 @@ private:
 			i += 3;
 		}
 		// De-transform references (if applicable)
-		#ifdef $_PARALLEL_RENDERING
-		if (!references.plane.empty())
-			$peach(plane, references.plane, references.plane.size(), {plane->reset();});
-		if (!references.trigon.empty())
-			$peach(tg, references.trigon, references.trigon.size(), {tg->reset();});
-		if(references.plane.size() == 1) references.plane[0] -> reset();
-		if(references.trigon.size() == 1) references.trigon[0] -> reset();
-		#else
+		GRAPHICAL_PARALLEL_FOR
 		for (auto& plane: references.plane)	plane->reset();
+		GRAPHICAL_PARALLEL_FOR
 		for (auto& tg: references.trigon)	tg->reset();
-		#endif
 	}
 
 	void draw() override {
@@ -314,11 +334,9 @@ private:
 };
 
 Renderable* loadObjectFromBinaryFile(string path) {
-	auto* object = new Renderable();
 	auto data = $fld loadBinaryFile(path);
 	if (!data.size()) throw runtime_error("File does not exist or is empty! (" + path + ")!");
-	object->bakeAndLock((RawVertex*)&data[0], data.size() / sizeof(RawVertex));
-	return object;
+	return new Renderable((RawVertex*)&data[0], data.size() / sizeof(RawVertex));
 }
 
 #warning Unimplemented Function: 'loadObjectFromGLTFFile'

@@ -136,6 +136,10 @@
 
 #include <omp.h>
 
+#ifndef PARALLEL_THREAD_COUNT
+#define PARALLEL_THREAD_COUNT 1
+#endif // PARALLEL_THREAD_COUNT
+
 /*
 *	[+]=[   [Headers END]   ]=[+]
 */

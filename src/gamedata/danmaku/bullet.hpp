@@ -126,88 +126,6 @@ public:
 	}
 
 	void onFrame(float delta) override {
-		#ifdef $_PARALLEL_MANAGERS
-		$speach(b, bullets, BULLET_COUNT) {
-				b.onFrame(delta);
-				if (!b.isFree() && b.params.collidable) {
-					for $each(actor, $ecl groups.getGroup(ENEMY_LAYER)) {
-						auto a = (AreaCircle2D*)actor;
-						auto targetBounds = a->collision.shape;
-						if (
-							a->collision.enabled
-							&& $cdt withinBounds(
-								b.params.hitbox,
-								targetBounds
-							)
-						) {
-							a->onCollision(this);
-							b.discard();
-						}
-					}
-				}
-				if (b.params.rebound || b.params.shuttle)
-					if (
-						! $cdt withinBounds(
-							b.local.position,
-							board
-						)
-					) {
-						// Rebounding (reflecting) takes precedence over shuttling (wrapping)
-						if (b.params.rebound) {
-							#define $wreflect(AA) AA = Math::pi - AA
-							// Check X
-							if (
-								b.local.position.x < board.min.x||
-								b.local.position.x > board.max.x
-							) {
-								$wreflect(b.params.rot.current);
-								$wreflect(b.params.rot.start);
-								$wreflect(b.params.rot.end);
-							}
-							#undef $wreflect
-							#define $wreflect(AA) AA = - AA
-							// Check Y
-							if (
-								b.local.position.y < board.min.y ||
-								b.local.position.y > board.max.y
-							) {
-								$wreflect(b.params.rot.current);
-								$wreflect(b.params.rot.start);
-								$wreflect(b.params.rot.end);
-							}
-							b.onRebound(&b);
-							// Disable rebounding
-							b.params.rebound = false;
-							#undef $wreflect
-						}
-						else if (b.params.shuttle) {
-							// Check X
-							if (b.local.position.x < board.min.x)
-								b.local.position.x = board.max.x;
-							if (b.local.position.x > board.max.x)
-								b.local.position.x = board.min.x;
-							// Check Y
-							if (b.local.position.y < board.min.y)
-								b.local.position.y = board.max.y;
-							if (b.local.position.y > board.max.y)
-								b.local.position.y = board.min.y;
-							b.onShuttle(&b);
-							// Disable shuttle
-							b.params.shuttle = false;
-						}
-					}
-				if (b.params.dope)
-					if (
-						! $cdt withinBounds(
-							b.params.hitbox,
-							playfield
-						)
-					) {
-						b.setFree(true);
-					}
-			}
-		$endspeach
-		#else
 		GAME_PARALLEL_FOR
 		for (auto i = 0; i < BULLET_COUNT; i++) {
 			auto& b = bullets[i];
@@ -289,25 +207,16 @@ public:
 					b.setFree(true);
 				}
 		}
-		#endif
 	}
 
 	void freeAll() {
-		#ifdef $_PARALLEL_MANAGERS
-		$speach(b, bullets, BULLET_COUNT) {b.setFree();} $endspeach
-		#else
 		GAME_PARALLEL_FOR
 		for $seach(b, bullets, BULLET_COUNT) b.setFree(); $endseach
-		#endif
 	}
 
 	void discardAll() {
-		#ifdef $_PARALLEL_MANAGERS
-		$speach(b, bullets, BULLET_COUNT) {b.discard();} $endspeach
-		#else
 		GAME_PARALLEL_FOR
 		for $seach(b, bullets, BULLET_COUNT) b.discard(); $endseach
-		#endif
 	}
 
 	size_t getFreeCount() {

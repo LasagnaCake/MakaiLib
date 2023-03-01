@@ -114,41 +114,6 @@ public:
 	}
 
 	void onFrame(float delta) override {
-		#ifdef $_PARALLEL_MANAGERS
-		$speach(item, items, ITEM_COUNT) {
-				item.onFrame(delta);
-				if (!item.isFree() && item.params.collidable) {
-					auto a = (PlayerEntity2D*)mainPlayer;
-					if (a) {
-						auto targetBounds = a->getGrazeBounds();
-						if (
-							$cdt withinBounds(
-								item.params.hitbox,
-								targetBounds
-							)
-						) {
-							a->onItemGet(item.params.type, item.params.value);
-							item.discard();
-						} else if (
-							(a->position.y > poc)
-							&& item.params.pocable
-						) {
-							item.setAutoCollect(&a->position);
-						}
-					}
-				}
-				if (item.params.dope)
-					if (
-						! $cdt withinBounds(
-							item.params.hitbox,
-							playfield
-						)
-					) {
-						item.setFree(true);
-					}
-			}
-		$endspeach
-		#else
 		GAME_PARALLEL_FOR
 		for $seach(item, items, ITEM_COUNT)
 			item.onFrame(delta);
@@ -182,7 +147,6 @@ public:
 					item.setFree(true);
 				}
 		$endseach
-		#endif
 	}
 
 	void collectAll(bool forceCollect = false, bool forceDiscard = false) {
@@ -205,21 +169,13 @@ public:
 	}
 
 	void freeAll() {
-		#ifdef $_PARALLEL_MANAGERS
-		$speach(item, items, ITEM_COUNT) {item.setFree();} $endspeach
-		#else
 		GAME_PARALLEL_FOR
 		for $seach(item, items, ITEM_COUNT) item.setFree(); $endseach
-		#endif
 	}
 
 	void discardAll() {
-		#ifdef $_PARALLEL_MANAGERS
-		$speach(item, items, ITEM_COUNT) {item.discard();} $endspeach
-		#else
 		GAME_PARALLEL_FOR
 		for $seach(item, items, ITEM_COUNT) item.discard(); $endseach
-		#endif
 	}
 
 	size_t getFreeCount() {

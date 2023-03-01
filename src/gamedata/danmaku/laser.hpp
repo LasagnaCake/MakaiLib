@@ -150,24 +150,6 @@ public:
 	}
 
 	void onFrame(float delta) override {
-		#ifdef $_PARALLEL_MANAGERS
-		$speach(l, lasers, LASER_COUNT) {
-				l.onFrame(delta);
-				if (!l.isFree() && l.params.collidable) {
-					for $each(actor, $ecl groups.getGroup(ENEMY_LAYER)) {
-						auto a = (AreaCircle2D*)actor;
-						if (
-							a->collision.enabled
-							&& l.colliding(a->collision.shape)
-						) {
-							a->onCollision(this);
-							l.discard();
-						}
-					}
-				}
-			}
-		$endspeach
-		#else
 		GAME_PARALLEL_FOR
 		for (auto i = 0; i < LASER_COUNT; i++) {
 			auto* l = &lasers[i];
@@ -185,23 +167,16 @@ public:
 				}
 			}
 		}
-		#endif
 	}
 
 	void freeAll() {
-		#ifdef $_PARALLEL_MANAGERS
-		$speach(l, lasers, LASER_COUNT) {l.setFree();} $endspeach
-		#else
+		GAME_PARALLEL_FOR
 		for $seach(l, lasers, LASER_COUNT) l.setFree(); $endseach
-		#endif
 	}
 
 	void discardAll() {
-		#ifdef $_PARALLEL_MANAGERS
-		$speach(l, lasers, LASER_COUNT) {l.discard();} $endspeach
-		#else
+		GAME_PARALLEL_FOR
 		for $seach(l, lasers, LASER_COUNT) l.discard(); $endseach
-		#endif
 	}
 
 	size_t getFreeCount() {
