@@ -85,7 +85,13 @@ struct GradientEffect: Effect, Channelable, Invertible {
 		end		= Color::WHITE;
 };
 
-struct NegativeEffect: Effect {};
+struct NegativeEffect: Effect, Variable {};
+
+struct WarpEffect: Effect, Imageable2D, Transformable2D {
+	unsigned int
+		channelX = 0,
+		channelY = 1;
+};
 
 // Object Material Effects
 
@@ -94,12 +100,6 @@ struct TextureEffect: Effect, Imageable2D {
 };
 
 // Buffer Material Effects
-
-struct WarpEffect: Effect, Imageable2D, Transformable2D {
-	unsigned int
-		channelX = 0,
-		channelY = 1;
-};
 
 struct MaskEffect: Effect, Imageable2D, Transformable2D, Invertible {
 	bool relative = false;
@@ -198,6 +198,7 @@ void setMaterial(Shader& shader, ObjectMaterial& material) {
 	} else shader["useWarp"](false);
 	// Color inversion
 	shader["useNegative"](material.negative.enabled);
+	shader["negativeStrength"](material.negative.strength);
 	// Color to gradient
 	shader["useGradient"](material.gradient.enabled);
 	shader["gradientChannel"](material.gradient.channel);
@@ -258,7 +259,8 @@ void setMaterial(Shader& shader, BufferMaterial& material) {
 	shader["prismShift"](material.prism.shift);
 	shader["prismShape"](material.prism.shape);
 	// Set color inversion
-	shader["negative"](material.negative.enabled);
+	shader["useNegative"](material.negative.enabled);
+	shader["negativeStrength"](material.negative.strength);
 	// Set rainbow data
 	shader["useRainbow"](material.rainbow.enabled);
 	shader["rainbowFrequency"](material.rainbow.frequency);

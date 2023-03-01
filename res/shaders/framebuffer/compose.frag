@@ -15,7 +15,8 @@ uniform sampler2D screen;
 uniform sampler2D depth;
 
 // [ COLOR INVERSION ]
-uniform bool negative = false;
+uniform bool	useNegative			= false;
+uniform float	negativeStrength	= 1;
 
 // [ ALPHA MASK ]
 uniform bool useMask = false;
@@ -268,7 +269,10 @@ void main() {
 	vec4 color = (getPixelColor(screenUV) * fragColor * albedo) + accent;
 
 	// Color inverter
-	if (negative) color = vec4(vec3(1) - vec3(color.x, color.y, color.z), color.w);
+	if (useNegative) {
+		vec4 nc = vec4(vec3(1) - color.xyz, color.w);
+		color = mix(color, nc, negativeStrength);
+	}
 
 	// Color to gradient
 	if (useGradient) color = applyGradient(color);

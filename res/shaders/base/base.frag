@@ -39,7 +39,8 @@ uniform uint		warpChannelX	=	0;
 uniform uint		warpChannelY	=	1;
 
 // [ COLOR INVERSION ]
-uniform bool	useNegative	= false;
+uniform bool	useNegative			= false;
+uniform float	negativeStrength	= 1;
 
 // [ COLOR TO GRADIENT ]
 uniform bool	useGradient		= false;
@@ -140,7 +141,10 @@ void main(void) {
 
 	color = applyHSL(color);
 
-	if (useNegative) color = vec4(vec3(1) - color.xyz, color.w);
+	if (useNegative) {
+		vec4 nc = vec4(vec3(1) - color.xyz, color.w);
+		color = mix(color, nc, negativeStrength);
+	}
 
 	if (useGradient) color = applyGradient(color);
 
