@@ -5,7 +5,7 @@ namespace Module {
 
 	struct Limitable {
 		float
-			start	= 20.0,
+			start	= 0.0,
 			stop	= 10.0;
 	};
 
@@ -143,6 +143,7 @@ struct BufferDebugData: Effect {
 struct ObjectMaterial {
 	Vector4				color = Color::WHITE;
 	bool shaded			= true;
+	bool unlit			= true;
 	float			hue			= 0;
 	float			saturation	= 1;
 	float			luminosity	= 1;
@@ -206,7 +207,8 @@ void setMaterial(Shader& shader, ObjectMaterial& material) {
 	shader["gradientEnd"](material.gradient.end);
 	shader["gradientInvert"](material.gradient.invert);
 	// Lighted
-	shader["useLights"](material.shaded);
+	shader["shaded"](material.shaded);
+	shader["useLights"](!material.unlit);
 	// Albedo
 	shader["albedo"](material.color);
 	// HSL data
@@ -287,14 +289,14 @@ void setMaterial(Shader& shader, BufferMaterial& material) {
 void setMaterial(Shader& shader, WorldMaterial& material) {
 	// Fog
 	shader["useFog"](material.farFog.enabled);
-	shader["fogNear"](material.farFog.stop);
-	shader["fogFar"](material.farFog.start);
+	shader["fogNear"](material.farFog.start);
+	shader["fogFar"](material.farFog.stop);
 	shader["fogColor"](material.farFog.color);
 	shader["fogStrength"](material.farFog.strength);
 	// Void
 	shader["useVoid"](material.nearFog.enabled);
-	shader["voidNear"](material.nearFog.stop);
-	shader["voidFar"](material.nearFog.start);
+	shader["voidNear"](material.nearFog.start);
+	shader["voidFar"](material.nearFog.stop);
 	shader["voidColor"](material.nearFog.color);
 	shader["voidStrength"](material.nearFog.strength);
 	// Ambient light

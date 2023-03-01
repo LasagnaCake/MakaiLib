@@ -4,33 +4,67 @@ from bpy.types import Operator
 from bpy_extras.io_utils import ExportHelper
 
 class ExportBinaryOperator(Operator, ExportHelper):
-    bl_idname = "export_object.binary"
+    bl_idname = "export_object.msbo"
     bl_label = "Export as MSBO"
     filename_ext = ".msbo"
 
+    apply_transforms: bpy.props.BoolProperty(
+        name="Apply Transforms",
+        description="Apply object transforms to mesh data",
+        default=True,
+    )
+
+    apply_modifiers: bpy.props.BoolProperty(
+        name="Apply Modifiers",
+        description="Apply modifiers to mesh data",
+        default=True,
+    )
+
     def execute(self, context):
-        "Export Object as Makai Simple Binary Object"
         filepath = self.filepath
-        obj = bpy.context.active_object
-        
-        with open(filepath, "wb") as f:
-            # iterate through the object's loop triangles to collect the vertex data
-            vertex_data = []
-            for loop_tri in obj.data.loop_triangles:
-                for loop_index in loop_tri.loops:
-                    vertex = obj.data.vertices[obj.data.loops[loop_index].vertex_index]
-                    normal = vertex.normal
-                    uv = obj.data.uv_layers.active.data[loop_index].uv if obj.data.uv_layers.active else (0, 0)
-                    color = obj.data.vertex_colors.active.data[loop_index].color if obj.data.vertex_colors.active else (1, 1, 1, 1)
-                    vertex_data.extend([vertex.co.x, vertex.co.y, vertex.co.z, uv[0], uv[1], color[0], color[1], color[2], color[3], normal.x, normal.y, normal.z])
+        objects = [obj for obj in bpy.data.objects if obj.type == "MESH"]
 
-            # pack the vertex data into a binary string
-            vertex_binary = struct.pack("<" + "f"*len(vertex_data), *vertex_data)
+        for obj in objects:
+            filename = obj.name + self.filename_ext
+            with open(f"{filepath.replace('.msbo','')}/{filename}", "wb") as f:
+                dg = context.evaluated_depsgraph_get()
+                mesh = None
+                #TODO: fix this
+                if self.apply_transforms:
+                    mesh = obj.to_mesh(preserve_all_data_layers=True, depsgraph=dg)
+                else:
+                    mesh = obj.to_mesh(preserve_all_data_layers=False, depsgraph=dg)
+                verts = mesh.vertices
+                # iterate through the mesh's loop triangles to collect the vertex data
+                vertex_data = []
+                for loop_tri in mesh.loop_triangles:
+                    for loop_index in loop_tri.loops:
+                        vertex = mesh.vertices[mesh.loops[loop_index].vertex_index]
+                        normal = vertex.normal
+                        uv = mesh.uv_layers.active.data[loop_index].uv if mesh.uv_layers.active else (0, 0)
+                        color = mesh.vertex_colors.active.data[loop_index].color if mesh.vertex_colors.active else (1, 1, 1, 1)
 
-            # write the binary data to the file
-            f.write(vertex_binary)
+                        # apply object transforms to vertex position and normal
+                        if self.apply_transforms:
+                            vertex_pos = obj.matrix_world @ vertex.co
+                            normal = (obj.matrix_world @ normal.to_4d()).to_3d()
+                        else:
+                            vertex_pos = vertex.co
+
+                        vertex_data.extend([vertex_pos.x, vertex_pos.z, vertex_pos.y, uv[0], uv[1], color[0], color[1], color[2], color[3], normal.x, normal.z, normal.y])
+
+                # pack the vertex data into a binary string
+                vertex_binary = struct.pack("<" + "f"*len(vertex_data), *vertex_data)
+
+                # write the binary data to the file
+                f.write(vertex_binary)
 
         return {'FINISHED'}
+
+    def draw(self, context):
+        layout = self.layout
+        layout.prop(self, "apply_transforms")
+        layout.prop(self, "apply_modifiers")
 
 
 # Only needed if you want to add into a dynamic menu

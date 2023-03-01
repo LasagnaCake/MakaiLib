@@ -30,7 +30,7 @@ namespace Camera {
 			Vector2 origin	= Vector2(0);
 			Vector2 size	= Vector2(1);
 		} ortho;
-		/// Whether most points given (3D Perspective) are relative to the eye's position;
+		/// Whether most points given (3D Perspective) are relative to the eye's position.
 		bool relativeToEye = false;
 
 		glm::mat4 matrix() {
