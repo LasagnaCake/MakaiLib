@@ -110,9 +110,9 @@ struct WaveEffect: Effect, Tuneable2D {
 };
 
 struct RainbowEffect: Effect, Variable {
-	float frequency	= 0.0;
-	float shift		= 0.0;
-	bool absoluteColor = false;
+	Vector2 frequency	= 0.0;
+	Vector2 shift		= 0.0;
+	bool absoluteColor	= false;
 };
 
 struct BlurEffect: Effect, Variable2D {};

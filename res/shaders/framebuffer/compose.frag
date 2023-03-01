@@ -63,8 +63,8 @@ uniform uint		warpChannelY	=	1;
 
 // [ SCREEN RAINBOW EFFECT ]
 uniform bool	useRainbow			= false;
-uniform float	rainbowFrequency	= 0;
-uniform float	rainbowShift		= 0;
+uniform vec2	rainbowFrequency	= vec2(0);
+uniform vec2	rainbowShift		= vec2(0);
 uniform float	rainbowStrength		= 0;
 uniform bool	rainbowAbsolute		= false;
 
@@ -116,6 +116,24 @@ vec4 hueToPastel(float hue) {
 	return vec4(clamp(res, vec3(0), vec3(1)), 1);
 }
 
+vec3 rgb2hsl(vec3 c)
+{
+    vec4 K = vec4(0.0, -1.0 / 3.0, 2.0 / 3.0, -1.0);
+    vec4 p = mix(vec4(c.bg, K.wz), vec4(c.gb, K.xy), step(c.b, c.g));
+    vec4 q = mix(vec4(p.xyw, c.r), vec4(c.r, p.yzx), step(p.x, c.r));
+
+    float d = q.x - min(q.w, q.y);
+    float e = 1.0e-10;
+    return vec3(abs(q.z + (q.w - q.y) / (6.0 * d + e)), d / (q.x + e), q.x);
+}
+
+vec3 hsl2rgb(vec3 c)
+{
+    vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
+    vec3 p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www);
+    return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);
+}
+
 vec4 applyGradient(vec4 color) {
 	float gradientValue;
 	if (gradientChannel < 0)
@@ -130,12 +148,12 @@ vec4 applyGradient(vec4 color) {
 }
 
 vec4 applyRainbow(vec4 color, vec2 coords) {
-	vec4 rainbow = hueToPastel((coords.x + coords.y) * rainbowFrequency + rainbowShift);
-	rainbow = mix(rainbow, vec4(1), rainbowStrength);
+	vec2 rv = coords * rainbowFrequency + rainbowShift;
+	vec4 rainbow = vec4(hsl2rgb(vec3(rv.x + rv.y, 1, 1)), 1);
+	rainbow = mix(vec4(1), rainbow, rainbowStrength);
 	if (rainbowAbsolute)
-		return rainbow * vec4(vec3(1), color.w);
-	else
-		return color * rainbow;
+		rainbow.xyz *= color.xyz;
+	return vec4(rainbow.xyz, color.w);
 }
 
 vec4 getPixelColor(vec2 uv) {
@@ -216,24 +234,6 @@ vec4 applyOutline(vec4 color, vec2 uv) {
 	return mix(color, outlineColor, getOutlineValue(uv, outlineSize) - color.a);
 }
 
-vec3 rgb2hsl(vec3 c)
-{
-    vec4 K = vec4(0.0, -1.0 / 3.0, 2.0 / 3.0, -1.0);
-    vec4 p = mix(vec4(c.bg, K.wz), vec4(c.gb, K.xy), step(c.b, c.g));
-    vec4 q = mix(vec4(p.xyw, c.r), vec4(c.r, p.yzx), step(p.x, c.r));
-
-    float d = q.x - min(q.w, q.y);
-    float e = 1.0e-10;
-    return vec3(abs(q.z + (q.w - q.y) / (6.0 * d + e)), d / (q.x + e), q.x);
-}
-
-vec3 hsl2rgb(vec3 c)
-{
-    vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
-    vec3 p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www);
-    return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);
-}
-
 vec4 applyHSL(vec4 color) {
 	vec3 hsl = rgb2hsl(color.xyz);
 	hsl.x += mod(hue, 1);
@@ -248,37 +248,48 @@ void main() {
 		wave = (fragUV.yx * waveFrequency) * (2.0 * PI) + waveShift;
 		wave = patternV2(wave, waveShape, waveLOD) * (waveAmplitude / 10.0);
 	}
+
 	// Screen prismatic effect
 	vec2 prism = vec2(0);
 	if (usePrism) {
 		prism = (fragUV * prismFrequency.yx) * (2.0 * PI) + prismShift.yx;
 		prism = patternV2(prism, prismShape, prismLOD) * (prismAmplitude.yx / 10.0);
 	}
+
 	// Screen texture warping
 	vec2 warp = vec2(0);
 	if (useWarp) {
 		vec4 warpFac = texture(warpTexture, warpUV);
 		warp = vec2(warpFac[warpChannelX], warpFac[warpChannelY]) * 2 - 1;
 	}
+
 	// Get pixel color
 	vec2 screenUV = fragUV + prism + wave + warp;
 	vec4 color = (getPixelColor(screenUV) * fragColor * albedo) + accent;
+
 	// Color inverter
 	if (negative) color = vec4(vec3(1) - vec3(color.x, color.y, color.z), color.w);
+
 	// Color to gradient
 	if (useGradient) color = applyGradient(color);
+
 	// Rainbow effect
 	if (useRainbow) color = applyRainbow(color, screenUV);
+
 	// Outline effect
 	if (useOutline) color = applyOutline(color, screenUV);
+
 	// Alpha mask
 	if (useMask) {
 		vec4 maskValue = texture(mask, maskUV);
 		if (invertMask) maskValue = vec4(1) - maskValue;
 		color *= maskValue;
 	}
+
 	if (color.w <= 0) discard;
+
 	FragColor = applyHSL(color);
+
 	if (useDebug) {
 		switch(debugView) {
 			case 1: FragColor = texture(depth, fragUV); break;

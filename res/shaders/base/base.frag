@@ -138,13 +138,13 @@ void main(void) {
 	color *= albedo;
 	//color = vec4(color.xyz * albedo.xyz, 0.2);
 
+	color = applyHSL(color);
+
 	if (useNegative) color = vec4(vec3(1) - color.xyz, color.w);
 
 	if (useGradient) color = applyGradient(color);
 
 	if (useLights) color = applyLights(color);
-
-	color = applyHSL(color);
 
 	if (useVoid) color = applyVoid(color);
 
