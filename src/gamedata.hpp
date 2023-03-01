@@ -6,18 +6,14 @@
 #include "program.hpp"
 
 #define DERIVED_CONSTRUCTOR(NAME, BASE, CODE)\
-	/*protected:*/\
 	NAME(string name = #NAME, bool uniqueEntity = true) : BASE(name, uniqueEntity) CODE\
-	NAME(Entity* parent, string name = #NAME , bool uniqueEntity = true) : BASE(parent, name, uniqueEntity) CODE\
-	/*private:*/
+	NAME(Entity* parent, string name = #NAME , bool uniqueEntity = true) : BASE(parent, name, uniqueEntity) CODE
 
 #define DERIVED_CLASS(NAME, BASE)\
-	/*public:*/\
 	inline	virtual string getClass() {return #NAME;}\
 	inline	virtual string getBaseClass() {return #BASE;}\
 	inline	static string getCoreClass() {return BASE::getCoreClass();}\
-	virtual	~NAME() {onDelete(); removeFromTree(); removeFromAllGroups();};\
-	/*private:*/
+	virtual	~NAME() {onDelete(); removeFromTree(); removeFromAllGroups();}
 	// NOTE: This is the WORST way this could have been done, but it works I guess
 
 #include "gamedata/layout.hpp"
@@ -119,5 +115,12 @@ namespace GameData {
 
 #undef DERIVED_CONSTRUCTOR
 #undef DERIVED_CLASS
+
+#define GAME_CLASS(NAME, BASE)\
+	inline	virtual String getClass() {return #NAME;}\
+	inline	virtual String getBaseClass() {return #BASE;}\
+	inline	static String getCoreClass() {return BASE::getCoreClass();}\
+	virtual	~NAME() {onDelete(); removeFromTree(); removeFromAllGroups();}\
+	using	BASE::BASE;
 
 #endif // MAKAI_GAME_SYSTEM_DATA

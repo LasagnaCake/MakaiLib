@@ -236,6 +236,12 @@ public:
 			extend(p);
 	}
 
+	void extendFromBinaryFile(string path) {
+		auto data = $fld loadBinaryFile(path);
+		if (!data.size()) throw runtime_error("File does not exist or is empty! (" + path + ")!");
+		extend((RawVertex*)&data[0], data.size() / sizeof(RawVertex));
+	}
+
 	void bake() {
 		if (baked || locked) return;
 		baked = true;

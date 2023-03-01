@@ -12,9 +12,9 @@
 #define ENTITY_CLASS(NAME, BASE) \
 	using EntityClass:: BASE :: BASE ;\
 	using EntityClass:: BASE ::~ BASE ;\
-	inline virtual string getClass() {return #NAME;}\
-	inline virtual string getBaseClass() {return #BASE;}\
-	inline static string getCoreClass() {return BASE::getCoreClass();}
+	inline virtual std::string getClass() {return #NAME;}\
+	inline virtual std::string getBaseClass() {return #BASE;}\
+	inline static std::string getCoreClass() {return BASE::getCoreClass();}
 
 namespace EntityClass {
 }
