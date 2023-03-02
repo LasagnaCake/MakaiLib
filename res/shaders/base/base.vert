@@ -28,7 +28,7 @@ uniform vec2 warpScale		= vec2(1);
 uniform vec2 warpOffset		= vec2(0);
 
 uniform bool	shaded			= true;
-uniform float	shadeIntensity	= 0.25;
+uniform float	shadeIntensity	= 0.5;
 uniform vec3	shadeDirection	= vec3(0, -1, 0);
 
 // [ POINT LIGHTING ]

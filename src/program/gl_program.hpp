@@ -506,8 +506,13 @@ namespace Makai {
 				layerbuffer.clearBuffers();
 				// Call onLayerDrawBegin function
 				onPostLayerClear(layer);
+				// Enable culling
+				glEnable(GL_CULL_FACE);
+				glCullFace(GL_FRONT);
 				// Render layer
 				Drawer::renderLayer(layer);
+				// Disable culling
+				glDisable(GL_CULL_FACE);
 				// Call onPreLayerDraw function
 				onPreLayerDraw(layer);
 				// Render layer buffer
