@@ -29,7 +29,7 @@ uniform vec2 warpOffset		= vec2(0);
 
 uniform bool	shaded			= true;
 uniform float	shadeIntensity	= 0.5;
-uniform vec3	shadeDirection	= vec3(0, -1, 0);
+uniform vec3	shadeDirection	= vec3(0, 1, 0);
 
 // [ POINT LIGHTING ]
 uniform bool				useLights		= false;
@@ -65,7 +65,8 @@ vec4 transformed(vec3 vec) {
 
 vec3 getShadingColor(vec3 position, vec3 normal) {
 	if (!shaded) return vec3(1);
-	vec3 direction = normalize(normalize(shadeDirection) - position);
+	//vec3 direction = normalize(normalize(shadeDirection) - position);
+	vec3 direction = normalize(shadeDirection);
 	float factor = max(0, 1-dot(shadeDirection, normal));
 	return vec3(1) - shadeIntensity * factor;
 }
