@@ -129,13 +129,14 @@ struct AmbientEffect: ColorableRGB, Variable {};
 
 // Extra Data
 
-enum BufferDebugView: unsigned int {
-	DEBUG_VIEW_NORMAL,
-	DEBUG_VIEW_DEPTH
+enum class BufferDebugView: unsigned int {
+	NONE = 0,
+	DEPTH
 };
 
-struct BufferDebugData: Effect {
-	BufferDebugView view;
+enum class ObjectDebugView: unsigned int {
+	NONE = 0,
+	NORMAL
 };
 
 // Materials
@@ -153,6 +154,7 @@ struct ObjectMaterial {
 	GradientEffect	gradient;
 	GLuint culling		= GL_FRONT_AND_BACK;
 	GLuint fill			= GL_FILL;
+	ObjectDebugView	debug = ObjectDebugView::NONE;
 };
 
 struct BufferMaterial {
@@ -173,7 +175,7 @@ struct BufferMaterial {
 	WaveEffect		prism;
 	GradientEffect	gradient;
 	RainbowEffect	rainbow;
-	BufferDebugData	debug;
+	BufferDebugView	debug = BufferDebugView::NONE;
 };
 
 struct WorldMaterial {
@@ -215,6 +217,8 @@ void setMaterial(Shader& shader, ObjectMaterial& material) {
 	shader["hue"](material.hue);
 	shader["saturation"](material.saturation);
 	shader["luminosity"](material.luminosity);
+	// Debug data
+	shader["debugView"]((unsigned int)material.debug);
 }
 
 void setMaterial(Shader& shader, BufferMaterial& material) {
@@ -278,8 +282,7 @@ void setMaterial(Shader& shader, BufferMaterial& material) {
 	shader["outlineColor"](material.outline.color);
 	shader["outlineMatchAlpha"](material.outline.relativeAlpha);
 	// Set debug data
-	shader["useDebug"](material.debug.enabled);
-	shader["debugView"](material.debug.view);
+	shader["debugView"]((unsigned int)material.debug);
 	// Set HSL data
 	shader["hue"](material.hue);
 	shader["saturation"](material.saturation);

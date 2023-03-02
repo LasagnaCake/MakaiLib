@@ -132,7 +132,7 @@ namespace Drawer {
 		);
 		glVertexAttribPointer(
 			3,
-			2,
+			3,
 			GL_FLOAT,
 			GL_FALSE,
 			RAW_VERTEX_BYTE_SIZE,

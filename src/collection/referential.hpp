@@ -4,15 +4,16 @@
 #include "conceptual.hpp"
 #include <map>
 #include <stdexcept>
+#include <functional>
 
 namespace SmartPointer {
 	template <typename T> concept Pointable = Type::Safe<T>;
-	template <typename NEW, typename T> concept NewPointer = Type::Pointer<NEW> && Type::Convertible<T*, NEW>;
 
 	namespace {
 		using
 			std::map,
-			std::runtime_error
+			std::runtime_error,
+			std::function
 		;
 
 		struct _pData{
@@ -21,6 +22,9 @@ namespace SmartPointer {
 		};
 		map<void*, _pData> _pointerDB;
 	}
+
+	template <Pointable T>
+	using Operation = function<void(T&)>;
 
 	#define ASSERT_STRONG	static_assert(!weak,	"It is forbidden to implicitly convert a strong pointer to a weak pointer!")
 	#define ASSERT_WEAK		static_assert(weak,		"It is forbidden to implicitly convert a weak pointer to a strong pointer!")
@@ -82,6 +86,18 @@ namespace SmartPointer {
 			return (*this);
 		}
 
+		SameType& modify(Operation<T> op) {
+			if(exists())
+				op(*ref);
+			return *this;
+		}
+
+		SameType& modify(void (*op)(T&)) {
+			if(exists())
+				(*op)(*ref);
+			return *this;
+		}
+
 		bool exists() {
 			if (ref == nullptr) return false;
 			IF_STRONG	return (_pointerDB[(void*)ref].count != 0);
@@ -90,6 +106,14 @@ namespace SmartPointer {
 
 		inline bool operator()() {
 			return exists();
+		}
+
+		inline SameType& operator()(Operation<T> op) {
+			return modify(op);
+		}
+
+		inline SameType& operator()(void (*op)(T&)) {
+			return modify(op);
 		}
 
 		template<Pointable NEW_T>

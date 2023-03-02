@@ -65,7 +65,7 @@ vec4 transformed(vec3 vec) {
 
 vec3 getShadingColor(vec3 position, vec3 normal) {
 	if (!shaded) return vec3(1);
-	vec3 direction = normalize(shadeDirection - position);
+	vec3 direction = normalize(normalize(shadeDirection) - position);
 	float factor = max(0, 1-dot(shadeDirection, normal));
 	return vec3(1) - shadeIntensity * factor;
 }

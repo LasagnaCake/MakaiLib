@@ -63,6 +63,9 @@ uniform float	hue			= 0;
 uniform float	saturation	= 1;
 uniform float	luminosity	= 1;
 
+// [ DEBUG MODE ]
+uniform uint	debugView	= 0;
+
 vec4 distanceGradient(vec4 start, vec4 end, float near, float far, float strength) {
 	// The vector's length needs to be calculated here, otherwise it breaks
 	float value = (length(fragCoord3D) - near) / (far - near);
@@ -149,6 +152,13 @@ void main(void) {
 	if (useFog) color = applyFog(color);
 
 	FragColor = color;
+
+	if (debugView > 0) {
+		switch(debugView) {
+			case 1: FragColor = vec4(fragNormal / 2 + 0.5, 1); break;
+			default: break;
+		}
+	}
 
 	//gl_FragDepth = length(fragCoord3D);
 	//DepthValue = length(fragCoord3D);

@@ -85,7 +85,6 @@ uniform float	saturation	= 1;
 uniform float	luminosity	= 1;
 
 // [ DEBUG SETTINGS ]
-uniform bool	useDebug	= false;
 uniform uint	debugView	= 0;
 
 #ifndef PI
@@ -292,7 +291,7 @@ void main() {
 
 	FragColor = applyHSL(color);
 
-	if (useDebug) {
+	if (debugView > 0) {
 		switch(debugView) {
 			case 1: FragColor = texture(depth, fragUV); break;
 			default: break;
