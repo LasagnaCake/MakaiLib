@@ -51,7 +51,7 @@ class ExportBinaryOperator(Operator, ExportHelper):
                         else:
                             vertex_pos = vertex.co
 
-                        vertex_data.extend([vertex_pos.x, vertex_pos.z, vertex_pos.y, uv[0], 1-uv[1], color[0], color[1], color[2], color[3], normal.x, normal.z, normal.y])
+                        vertex_data.extend([-vertex_pos.x, vertex_pos.z, vertex_pos.y, uv[0], 1-uv[1], color[0], color[1], color[2], color[3], -normal.x, normal.z, normal.y])
 
                 # pack the vertex data into a binary string
                 vertex_binary = struct.pack("<" + "f"*len(vertex_data), *vertex_data)

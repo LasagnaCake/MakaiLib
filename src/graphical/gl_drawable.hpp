@@ -113,9 +113,17 @@ protected:
 		// Enable attribute pointers
 		Drawer::enableVertexAttributes();
 		// Set polygon rendering mode
-		glPolygonMode(material.culling, material.fill);
+		glPolygonMode(GL_FRONT_AND_BACK, material.fill);
+		// If face culling is enabled...
+		if (material.culling != GL_FRONT_AND_BACK) {
+			// Set culling face
+			glEnable(GL_CULL_FACE);
+			glCullFace(material.culling);
+		}
 		// Draw object to screen
 		glDrawArrays(mode, 0, count);
+		// Disable culling
+		glDisable(GL_CULL_FACE);
 		// Disable attributes
 		Drawer::disableVertexAttributes();
 		// Unbind vertex array
