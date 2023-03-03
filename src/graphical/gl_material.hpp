@@ -143,8 +143,8 @@ enum class ObjectDebugView: unsigned int {
 
 struct ObjectMaterial {
 	Vector4				color = Color::WHITE;
-	bool shaded			= true;
-	bool unlit			= true;
+	bool shaded			= false;
+	bool illuminated	= false;
 	float			hue			= 0;
 	float			saturation	= 1;
 	float			luminosity	= 1;
@@ -210,7 +210,7 @@ void setMaterial(Shader& shader, ObjectMaterial& material) {
 	shader["gradientInvert"](material.gradient.invert);
 	// Lighted
 	shader["shaded"](material.shaded);
-	shader["useLights"](!material.unlit);
+	shader["useLights"](material.illuminated);
 	// Albedo
 	shader["albedo"](material.color);
 	// HSL data
