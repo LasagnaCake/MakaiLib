@@ -134,11 +134,21 @@
 
 #include "fileloader.hpp"
 
+#if (_USE_OPENMP_ && !_DEBUG_OUTPUT_)
 #include <omp.h>
+#endif // _USE_OPENMP_
 
+#ifdef _OMP_H
 #ifndef PARALLEL_THREAD_COUNT
 #define PARALLEL_THREAD_COUNT 1
 #endif // PARALLEL_THREAD_COUNT
+#define PRAGMA_PARALLEL_FOR(THREADS) _Pragma("omp parallel for num_threads(" #THREADS ")")
+#else
+#define PARALLEL_THREAD_COUNT 0
+#define PRAGMA_PARALLEL_FOR(THREADS)
+#endif // PARALLEL_THREAD_COUNT
+
+#define PARALLEL_FOR PRAGMA_PARALLEL_FOR(PARALLEL_THREAD_COUNT)
 
 /*
 *	[+]=[   [Headers END]   ]=[+]

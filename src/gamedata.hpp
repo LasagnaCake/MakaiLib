@@ -23,11 +23,7 @@
 #endif // GAME_PARALLEL_THREAD_COUNT
 
 #ifndef GAME_PARALLEL_FOR
-#ifndef _DEBUG_OUTPUT_
-#define GAME_PARALLEL_FOR _Pragma("omp parallel for num_threads(GAME_PARALLEL_THREAD_COUNT)")
-#else
-#define GAME_PARALLEL_FOR
-#endif
+#define GAME_PARALLEL_FOR PRAGMA_PARALLEL_FOR(GAME_PARALLEL_THREAD_COUNT)
 #endif // GAME_PARALLEL_FOR
 
 namespace GameData {

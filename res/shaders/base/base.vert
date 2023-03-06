@@ -78,7 +78,7 @@ void main() {
 	warp.y = warp.x * sin(warpRotate) + warp.y * cos(warpRotate);
 	warpUV = (warp * warpScale) + warpOffset;
 	vec4 vertex	= transformed(vertPos);
-	vec3 normal	= normalize(mat3(camera * world * actor) * vertNormal);
+	vec3 normal	= normalize(mat3(projection * camera * world * actor) * vertNormal);
 	// Coordinates
 	gl_Position	= vertex;
 	// TODO: Proper shading
