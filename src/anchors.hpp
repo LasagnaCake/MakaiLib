@@ -134,8 +134,10 @@
 
 #include "fileloader.hpp"
 
-#if (_USE_OPENMP_ && !_DEBUG_OUTPUT_)
+#ifdef _USE_OPENMP_
+#ifndef _DEBUG_OUTPUT_
 #include <omp.h>
+#endif // _DEBUG_OUTPUT_
 #endif // _USE_OPENMP_
 
 #ifdef _OMP_H

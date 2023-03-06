@@ -47,6 +47,7 @@ namespace GameData {
 		$cdt CollisionType,
 		$evt Signal,
 		$mki InputManager,
+		$mki Program,
 		std::string;
 
 		using namespace Vector;
@@ -79,6 +80,7 @@ namespace GameData {
 
 	template <typename T> using Callback = std::function<void(T&)>;
 
+	#include "gamedata/program.hpp"
 	#include "gamedata/dialogue.hpp"
 	#include "gamedata/saving.hpp"
 	#include "gamedata/animation.hpp"

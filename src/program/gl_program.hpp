@@ -119,8 +119,9 @@ namespace Makai {
 			unsigned int height,
 			string windowTitle,
 			bool fullscreen = false,
+			bool useMIDI = false,
 			string bufferShaderPath = "shaders/framebuffer/compose.slf",
-			bool useMIDI = false
+			string mainShaderPath = "shaders/base/base.slf"
 		) {
 			#if (_WIN32 || _WIN64 || __WIN32__ || __WIN64__)
 			SetProcessDPIAware();
@@ -210,11 +211,14 @@ namespace Makai {
 			//glBlendEquationSeparate(GL_FUNC_ADD, GL_FUNC_REVERSE_SUBTRACT);
 			glBindBuffer(GL_FRAMEBUFFER, 0);
 			// Create composition shader
-			$debug("Creating composition shader...");
+			$debug("Creating shaders...");
 			bufferShader.create(SLF::parseFile(bufferShaderPath));
 			framebuffer.shader = bufferShader;
 			layerbuffer.shader = bufferShader;
-			Shader::defaultShader["textured"](false);
+			// Create main shader
+			SLF::SLFData data = SLF::parseFile(mainShaderPath);
+			$mainshader.destroy();
+			$mainshader.create(data);
 			$debug(EntityClass::$_ROOT ? "Root Exists!" : "Root does not exist!");
 			if (!EntityClass::$_ROOT) {
 				$debug("Initializing root tree...");
