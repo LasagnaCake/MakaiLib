@@ -151,7 +151,7 @@ namespace EntityClass {
 			else
 				throw invalid_argument("Name cannot be null or empty.");
 			// Call function to be executed at creation
-			onCreate();
+			callOnCreate();
 			// Add to root tree
 			if (name != $_ROOT_NAME)
 				$_ROOT->addChild(this, uniqueEntity);
@@ -509,6 +509,11 @@ namespace EntityClass {
 		/// Calls the onDelete function.
 		void callOnDelete() {
 			onDelete();
+		}
+
+		/// Calls the onCreate function
+		void callOnCreate() {
+			onCreate();
 		}
 	};
 

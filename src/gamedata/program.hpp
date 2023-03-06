@@ -74,8 +74,7 @@ public:
 		setCamera2D();
 	}
 
-	void onClose() override {
-	}
+	void onClose() override {}
 };
 
 struct ProgramSetting {

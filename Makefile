@@ -3,6 +3,7 @@ Supported targets:
 >    debug   : Builds enabling debug options, and with all warnings enabled (+ pedantic)
 >    test    : Builds enabling debug options, and without optimizations
 >    release : Builds enabling optimizations
+>    both    : Builds both debug and release
 
 Supported options:
 >    src           = [ value ]        : Specifies the source file             ( DEFAULT: main.cpp )
@@ -104,6 +105,7 @@ release: build\$(src)
 	@echo "[2/2] Done!"
 	$(MAKE_CLEAN)
 
+both: debug release
 	
 clean:
 	@echo "Cleaning up..."
