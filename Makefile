@@ -56,6 +56,8 @@ else
 WARNINGS := -W$(warn)
 endif
 
+GUI_MODE ?= -mwindows
+
 .PHONY: clean debug release all
 
 export HELP_MESSAGE
@@ -71,7 +73,7 @@ debug: build\$(src)
 	@$(CXX) $(COMPILER_CONFIG) -Wall -Wpedantic -pg -Og -g -fsanitize=leak -fno-omit-frame-pointer -D_DEBUG_OUTPUT_ $(INCLUDES) -c build\$(src) -o obj/$@/$(name).o
 	
 	@echo "[1/2] linking libraries..."
-	@$(CXX) -o res/$(name)_$@.exe obj/$@/$(name).o  $(LINKER_CONFIG) -pg $(LIBRARIES)
+	@$(CXX) -o res/$(name)_$@.exe obj/$@/$(name).o  $(LINKER_CONFIG) -pg -Og $(LIBRARIES)
 	
 	@echo "[2/2] Done!"
 	$(MAKE_CLEAN)
@@ -84,7 +86,7 @@ test: build\$(src)
 	@$(CXX) $(COMPILER_CONFIG) $(WARNINGS) -pg -Og -g -fsanitize=leak -fno-omit-frame-pointer -D_DEBUG_OUTPUT_ $(INCLUDES) -c build\$(src) -o obj/$@/$(name).o
 	
 	@echo "[1/2] linking libraries..."
-	@$(CXX) -o res/$(name)_$@.exe obj/$@/$(name).o  $(LINKER_CONFIG) -pg $(GMON_OUT) $(LIBRARIES)
+	@$(CXX) -o res/$(name)_$@.exe obj/$@/$(name).o  $(LINKER_CONFIG) -pg -Og $(GMON_OUT) $(LIBRARIES)
 	
 	@echo "[2/2] Done!"
 	$(MAKE_CLEAN)
@@ -97,7 +99,7 @@ release: build\$(src)
 	@$(CXX) $(COMPILER_CONFIG) $(WARNINGS) -lwinpthreads $(OPTIMIZATIONS) $(OPENMP_ENABLED) $(INCLUDES) -c build\$(src) -o obj/$@/$(name).o
 	
 	@echo "[1/2] linking libraries..."
-	@$(CXX) -o res/$(name).exe obj/$@/$(name).o  $(LINKER_CONFIG) -O$(optimize-level)  $(LIBRARIES) -mwindows
+	@$(CXX) -o res/$(name).exe obj/$@/$(name).o  $(LINKER_CONFIG) -O$(optimize-level)  $(LIBRARIES) $(GUI_MODE)
 	
 	@echo "[2/2] Done!"
 	$(MAKE_CLEAN)

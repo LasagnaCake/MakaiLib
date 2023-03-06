@@ -122,9 +122,9 @@ namespace EntityClass {
 		// onAction functions
 
 		/// Called when object is created.
-		virtual void	onCreate()	{}
+		virtual void	onCreate()	{$debug("Hello!");}
 		/// Called when object is deleted.
-		virtual void	onDelete()	{}
+		virtual void	onDelete()	{$debug("Bye!");}
 		/// Called every cycle (or frame).
 		virtual void	onFrame(float delta)	{}
 
@@ -137,11 +137,8 @@ namespace EntityClass {
 
 		/// Destructor.
 		virtual ~Entity() {
-			// Call function to be executed at deletion
-			callOnDelete();
-			// Remove self from the equation
-			removeFromTree();
-			removeFromAllGroups();
+			// Do deletion procedures
+			condemn();
 		}
 
 		/// Parent-less constructor.
@@ -449,6 +446,15 @@ namespace EntityClass {
 		}
 
 	protected:
+		/// Called on object deletion.
+		void condemn() {
+			// Call function to be executed at deletion
+			callOnDelete();
+			// Remove self from the equation
+			removeFromTree();
+			removeFromAllGroups();
+		}
+
 		/// Returns whether a given object would be a valid parent object.
 		bool isValidParent(Entity* obj) {
 			if (obj == this || obj->isDistantParent(this)) return false;

@@ -13,7 +13,7 @@
 	inline	virtual string getClass() {return #NAME;}\
 	inline	virtual string getBaseClass() {return #BASE;}\
 	inline	static string getCoreClass() {return BASE::getCoreClass();}\
-	virtual	~NAME() {onDelete(); removeFromTree(); removeFromAllGroups();}
+	// virtual	~NAME() {condemn();}
 	// NOTE: This is the WORST way this could have been done, but it works I guess
 
 #include "gamedata/layout.hpp"
@@ -118,7 +118,7 @@ namespace GameData {
 	inline	virtual String getClass() {return #NAME;}\
 	inline	virtual String getBaseClass() {return #BASE;}\
 	inline	static String getCoreClass() {return BASE::getCoreClass();}\
-	virtual	~NAME() {onDelete(); removeFromTree(); removeFromAllGroups();}\
+	//virtual	~NAME() {condemn();}\
 	using	BASE::BASE;
 
 #endif // MAKAI_GAME_SYSTEM_DATA
