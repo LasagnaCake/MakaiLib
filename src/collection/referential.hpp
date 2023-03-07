@@ -122,7 +122,7 @@ namespace SmartPointer {
 
 		template<Pointable NEW_T>
 		inline Pointer<NEW_T, weak>	castedTo()	{return	(NEW_T*)getPointer();	}
-		inline Pointer<T, true>		toWeak()	{return	getPointer();			}
+		inline Pointer<T, true>		weak()		{return	getPointer();			}
 		inline T*					raw()		{return	getPointer();			}
 
 		explicit operator T*() const	{return ref;				}
