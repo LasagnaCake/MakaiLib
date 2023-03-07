@@ -116,6 +116,10 @@ namespace SmartPointer {
 			return modify(op);
 		}
 
+		inline T& operator[](size_t index) {
+			return getPointer()[index];
+		}
+
 		template<Pointable NEW_T>
 		inline Pointer<NEW_T, weak>	castedTo()	{return	(NEW_T*)getPointer();	}
 		inline Pointer<T, true>		toWeak()	{return	getPointer();			}
