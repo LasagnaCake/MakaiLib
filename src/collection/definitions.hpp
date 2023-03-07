@@ -16,12 +16,6 @@
 #define $seachif(I, LIST, SIZE, CONDITION) $seach(I, LIST, SIZE) if(CONDITION)
 #define $endseach }
 
-#define $pareach(I, LIST, BEGIN, END, CODE) std::for_each(std::execution::par, &LIST[BEGIN], &LIST[END], [&](auto&& I) CODE)
-#define $peach(I, LIST, SIZE, CODE) $pareach(I, LIST, 0, (SIZE - 1), CODE)
-
-#define $speach(I, LIST, SIZE) std::for_each(std::execution::par, &LIST[0], &LIST[(SIZE - 1)], [&](auto&& I)
-#define $endspeach );
-
 #define $iltf(A, B, C) (((A) > (B)) ? -(C) : +(C))
 
 #define $range(I, BEGIN, END, STEP) (auto I = (BEGIN); I < (END); I += (STEP))
