@@ -187,6 +187,7 @@ namespace SmartPointer {
 	#undef SameType
 	#undef ASSERT_STRONG
 	#undef ASSERT_WEAK
+	#undef IF_STRONG
 
 	template <Pointable T>
 	using WeakPointer	= Pointer<T,	true>;
