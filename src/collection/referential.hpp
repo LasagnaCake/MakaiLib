@@ -129,7 +129,6 @@ namespace SmartPointer {
 		operator bool() const			{return exists();			}
 
 		inline bool operator!()			{return	!exists();			}
-
 		inline bool operator==(T* obj)	{return	ref == obj;			}
 		inline bool operator!=(T* obj)	{return	!operator==(obj);	}
 		inline bool operator<(T* obj)	{return	ref < obj;			}
