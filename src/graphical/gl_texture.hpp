@@ -103,7 +103,11 @@ public:
 		);
 	}
 
-	void create(std::string path, unsigned int minFilter = GL_LINEAR, unsigned int magFilter = GL_LINEAR) {
+	void create(
+		std::string path,
+		unsigned int minFilter = GL_LINEAR,
+		unsigned int magFilter = GL_LINEAR
+	) {
 		int width, height, nrChannels;
 		unsigned char* data = stbi_load(path.c_str(), &width, &height, &nrChannels, 0);
 		if (data) {

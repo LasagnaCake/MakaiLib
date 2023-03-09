@@ -4,7 +4,7 @@ Do not touch this class. Please.
 
 class Renderable: public Base::DrawableObject {
 public:
-	Renderable(size_t layer = 0, bool manual = false): DrawableObject(layer, manual){}
+	Renderable(size_t layer = 0, bool manual = false): DrawableObject(layer, manual) {}
 
 	Renderable(
 		vector<Triangle*> triangles,

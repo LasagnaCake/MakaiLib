@@ -97,6 +97,7 @@ namespace Drawer {
 	}
 
 	void setVertexAttributes() {
+		// Position
 		glVertexAttribPointer(
 			0,
 			3,
@@ -105,6 +106,7 @@ namespace Drawer {
 			RAW_VERTEX_BYTE_SIZE,
 			$gloffset(0)
 		);
+		// UV
 		glVertexAttribPointer(
 			1,
 			2,
@@ -113,6 +115,7 @@ namespace Drawer {
 			RAW_VERTEX_BYTE_SIZE,
 			$gloffset(3)
 		);
+		// Color
 		glVertexAttribPointer(
 			2,
 			4,
@@ -121,6 +124,7 @@ namespace Drawer {
 			RAW_VERTEX_BYTE_SIZE,
 			$gloffset(5)
 		);
+		// Normal
 		glVertexAttribPointer(
 			3,
 			3,
@@ -296,7 +300,6 @@ namespace RenderData {
 		VecMath::asGLMVector,
 		VecMath::asVector3,
 		VecMath::asGLMMatrix,
-//		Drawer::Vertex,
 		Drawer::RawVertex,
 		Drawer::toRawVertex,
 		Drawer::DrawFunc,

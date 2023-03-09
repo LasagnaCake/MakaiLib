@@ -185,12 +185,13 @@ public:
 		f(origin[3]);
 	}
 
-	RawVertex* tl	= nullptr;
-	RawVertex* tr1	= nullptr;
-	RawVertex* tr2	= nullptr;
-	RawVertex* bl1	= nullptr;
-	RawVertex* bl2	= nullptr;
-	RawVertex* br	= nullptr;
+	RawVertex
+		*tl		= nullptr,
+		*tr1	= nullptr,
+		*tr2	= nullptr,
+		*bl1	= nullptr,
+		*bl2	= nullptr,
+		*br		= nullptr;
 
 protected:
 	Triangle* tris[2] = {nullptr, nullptr};
@@ -352,9 +353,10 @@ public:
 		f(origin[2]);
 	}
 
-	RawVertex* a	= nullptr;
-	RawVertex* b	= nullptr;
-	RawVertex* c	= nullptr;
+	RawVertex
+		*a	= nullptr,
+		*b	= nullptr,
+		*c	= nullptr;
 
 protected:
 	Triangle* tris[1] = {nullptr};
@@ -362,13 +364,13 @@ protected:
 };
 
 template<class T>
-concept NotEmpty = Type::Different<T, Empty>;
+concept NotEmpty	= Type::Different<T, Empty>;
 
 template<class T>
-concept PlaneType = Type::Derived<T, Plane> && NotEmpty<T>;
+concept PlaneType	= Type::Derived<T, Plane> && NotEmpty<T>;
 
 template<class T>
-concept TrigonType = Type::Derived<T, Trigon> && NotEmpty<T>;
+concept TrigonType	= Type::Derived<T, Trigon> && NotEmpty<T>;
 
 #undef VERTEX_SET_POS
 #undef VERTEX_SET_NORM
