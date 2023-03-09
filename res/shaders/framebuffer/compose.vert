@@ -37,7 +37,7 @@ void main()
     maskUV += maskShift;
     if (relativeMask) 
         maskUV += uvShift;
-    fragUV = ((vec4(vertUV, 1, 0) * uvMatrix).xy + uvShift);
+    fragUV = ((vec4(vertUV, 0, 0) * uvMatrix).xy + uvShift);
     fragColor = vertColor;
     gl_Position = vertex;
     screenScale = vec2(resolution.x/resolution.y, 1);

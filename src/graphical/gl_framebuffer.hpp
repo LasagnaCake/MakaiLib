@@ -191,6 +191,7 @@ namespace Drawer {
 			glBindVertexArray(vao);
 			// Set polygon rendering mode
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+			glDisable(GL_CULL_FACE);
 			// Draw object to screen
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 			// Unbind vertex array
