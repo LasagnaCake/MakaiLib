@@ -468,6 +468,7 @@ namespace Makai {
 			$debug("Closing sound system...");
 			Audio::closeSystem();
 			Mix_Quit();
+			EntityClass::$_ROOT->deleteChildren();
 			$debug("Sound system closed!");
 			// Destroy buffers
 			$debug("Destroying frame buffers...");
