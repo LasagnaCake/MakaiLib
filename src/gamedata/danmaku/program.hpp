@@ -18,27 +18,27 @@ public:
 			mainShaderPath
 	) {
 		// Set managers (Enemy)
-		enemyBulletManager		= &managers.bullet.enemy;
-		enemyLineLaserManager	= &managers.lineLaser.enemy;
+		enemyBulletManager		= managers.bullet.enemy		= new EnemyBulletManager();
+		enemyLineLaserManager	= managers.lineLaser.enemy	= new EnemyLineLaserManager();
 		// Set managers (Player)
-		playerBulletManager		= &managers.bullet.player;
-		playerLineLaserManager	= &managers.lineLaser.player;
+		playerBulletManager		= managers.bullet.player	= new PlayerBulletManager();
+		playerLineLaserManager	= managers.lineLaser.player	= new PlayerLineLaserManager();
 		// Set item manager
-		itemManager				= &managers.item;
+		itemManager				= managers.item				= new ItemManager();
 	};
 
 	struct {
 		struct {
-			EnemyBulletManager		enemy;
-			PlayerBulletManager		player;
+			EnemyBulletManager*		enemy;
+			PlayerBulletManager*	player;
 		} bullet;
 
 		struct {
-			EnemyLineLaserManager	enemy;
-			PlayerLineLaserManager	player;
+			EnemyLineLaserManager*	enemy;
+			PlayerLineLaserManager*	player;
 		} lineLaser;
 
-		ItemManager item;
+		ItemManager*	item;
 	} managers;
 
 	virtual void onLoading() {}
@@ -60,22 +60,22 @@ public:
 				onLoading();
 				renderReservedLayer();
 				if $event(SDL_QUIT) {
-					managers.bullet.enemy.haltProcedure =
-					managers.lineLaser.enemy.haltProcedure =
-					managers.bullet.player.haltProcedure =
-					managers.lineLaser.player.haltProcedure =
-					managers.item.haltProcedure = true;
+					managers.bullet.enemy->haltProcedure =
+					managers.lineLaser.enemy->haltProcedure =
+					managers.bullet.player->haltProcedure =
+					managers.lineLaser.player->haltProcedure =
+					managers.item->haltProcedure = true;
 					close();
 				}
 			}
 		};
 		std::thread secondary(subTask);
 		// Create things
-		managers.bullet.enemy.create();
-		managers.lineLaser.enemy.create();
-		managers.bullet.player.create();
-		managers.lineLaser.player.create();
-		managers.item.create();
+		managers.bullet.enemy->create();
+		managers.lineLaser.enemy->create();
+		managers.bullet.player->create();
+		managers.lineLaser.player->create();
+		managers.item->create();
 		doneCreating = true;
 		secondary.join();
 		// Set playfield
@@ -85,12 +85,12 @@ public:
 		BoxBounds2D
 			playfield = $cdt makeBounds(screenPosition, screenSize * Vector2(1.1, 1.1)),
 			board = $cdt makeBounds(screenPosition, screenSize);
-		managers.item.poc = -screenSize.y / 3.0;
-		managers.item.playfield =
-		managers.bullet.enemy.playfield =
-		managers.bullet.player.playfield = playfield;
-		managers.bullet.enemy.board =
-		managers.bullet.player.board = board;
+		managers.item->poc = -screenSize.y / 3.0;
+		managers.item->playfield =
+		managers.bullet.enemy->playfield =
+		managers.bullet.player->playfield = playfield;
+		managers.bullet.enemy->board =
+		managers.bullet.player->board = board;
 	}
 
 	void onClose() override {
