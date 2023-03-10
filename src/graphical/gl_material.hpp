@@ -70,6 +70,10 @@ namespace Module {
 	struct Sizeable2D {
 		Vector2 size = 0;
 	};
+
+	struct Countable {
+		size_t count = 1;
+	};
 }
 
 namespace {
@@ -152,6 +156,7 @@ struct ObjectMaterial {
 	WarpEffect		warp;
 	NegativeEffect	negative;
 	GradientEffect	gradient;
+	vector<Vector3>	instances = {Vec3(0, 0, 0)};
 	GLuint culling		= GL_FRONT_AND_BACK;
 	GLuint fill			= GL_FILL;
 	ObjectDebugView	debug = ObjectDebugView::NONE;
@@ -217,6 +222,8 @@ void setMaterial(Shader& shader, ObjectMaterial& material) {
 	shader["hue"](material.hue);
 	shader["saturation"](material.saturation);
 	shader["luminosity"](material.luminosity);
+	// Instance data
+	shader["instances"](material.instances);
 	// Debug data
 	shader["debugView"]((unsigned int)material.debug);
 }
