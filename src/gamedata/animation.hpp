@@ -56,10 +56,9 @@ namespace Animation {
 			if (!playing)	return;
 			if (paused)		return;
 			bool allDone = true;
-			for $each(anim, animation) {
+			for (auto& [id, track]: animation) {
 				// Get track & metadata
-				auto& tdata = metadata[anim->first];
-				auto& track = anim->second;
+				auto& tdata = metadata[id];
 				// If no target or disable, skip
 				if (!(track.target && track.enabled))
 					continue;
@@ -67,7 +66,7 @@ namespace Animation {
 				allDone &= tdata.done;
 				// Process animation
 				processAnimation(
-					anim->first,
+					id,
 					track.keyframes[tdata.index],
 					tdata,
 					track.target,
@@ -86,8 +85,8 @@ namespace Animation {
 		void start() {
 			if (playing) return;
 			paused = playing = true;
-			for $each(track, metadata) {
-				track->second = TrackData<T>{};
+			for (auto& [_, md]: metadata) {
+				md = Metadata<T>{};
 			}
 		}
 
@@ -105,28 +104,30 @@ namespace Animation {
 			// If animation is completed or no target specified, return
 			if (!(track.done && target)) return;
 			// Get start of animation
-			T from = animation[index][track.index-1].to;
+			T from = animation[index].keyframes[track.index-1].to;
 			// Increment step
 			track.step += speed * delta * 10.0;
 			// If begin != end, calculate step
-			if (anim.from != anim.to) {
+			if (track.step < track.stop) {
 				track.factor	= anim.easing(track.step, 0.0f, 1.0f, track.stop);
 				*target			= Math::lerp(from, anim.to, T(track.factor));
 			}
 			// Else, set value to end
 			else *target = anim.to;
 			// Clamp step to prevent overflow
-			track.step = Math::clamp(track.step > track.stop ? track.stop : track.step);
+			track.step = track.step > track.stop ? track.stop : track.step;
 			// If reached the end of a keyframe...
 			if (track.step >= track.stop) {
 				// If track has reached the end, end animation
-				if (!(track.index++ < animation[index].size())) {
+				if (!(track.index++ < animation[index].keyframes.size())) {
 					track.done = true;
 					return;
 				}
 				// Set next track data
-				track = {track.index, 0, 0, animation[index][track.index].duration};
+				track = {track.index, 0, 0, animation[index].keyframes[track.index].duration};
 			}
 		}
 	};
 }
+
+#define $anm GameData::Animation::
