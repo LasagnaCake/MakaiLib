@@ -90,11 +90,18 @@ public:
 
 	virtual void draw() {}
 
+	struct {
+		size_t		count	= 1;
+		Transform3D	offset;
+	} instance;
+
 	$mat ObjectMaterial	material;
 	Transform3D			trans;
 
 protected:
 	void display(RawVertex* vertices, size_t count, GLuint mode = GL_TRIANGLES) {
+		// If no instances, return
+		if (!instance.count) return;
 		// Set VBO as active
 		glBindBuffer(GL_ARRAY_BUFFER, vbo);
 		// Copy IVB to VBO
@@ -121,7 +128,7 @@ protected:
 			glCullFace(material.culling);
 		}
 		// Draw object to screen
-		glDrawArrays(mode, 0, count);
+		glDrawArraysInstanced(mode, 0, count, instance.count);
 		// Disable culling
 		glDisable(GL_CULL_FACE);
 		// Disable attributes
@@ -137,7 +144,8 @@ protected:
 		glm::mat4
 			actor		= VecMath::asGLMMatrix(trans),
 			camera		= Scene::camera.matrix(),
-			projection	= Scene::camera.perspective();
+			projection	= Scene::camera.perspective(),
+			instance	= VecMath::asGLMMatrix(this->instance.offset);
 		// Set shader data
 		$mat setMaterial($mainshader, material);
 		// Set transformation matrices
@@ -145,6 +153,7 @@ protected:
 		$mainshader["camera"](camera);
 		$mainshader["projection"](projection);
 		$mainshader["actor"](actor);
+		$mainshader["instance"](instance);
 	}
 
 	GLuint vao, vbo;

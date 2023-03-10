@@ -6,6 +6,7 @@ uniform mat4 actor = mat4(1);
 uniform mat4 world;
 uniform mat4 camera;
 uniform mat4 projection;
+uniform mat4 instance;
 
 layout (location = 0) in vec3 vertPos;
 layout (location = 1) in vec2 vertUV;
@@ -55,12 +56,17 @@ vec3 calculateLights(vec3 position, vec3 normal) {
 	return finalColor;
 }
 
+mat4 getInstance() {
+	if(gl_InstanceID == 0) return mat4(1);
+	return (instance * mat4(gl_InstanceID + 1));
+}
+
 float length(in vec3 vec) {
 	return sqrt(vec.x * vec.x + vec.y * vec.y + vec.z * vec.z);
 }
 
 vec4 transformed(vec3 vec) {
-	return projection * camera * world * actor * vec4(vec, 1.0);
+	return projection * camera * world * getInstance() * actor * vec4(vec, 1.0);
 }
 
 vec3 getShadingColor(vec3 position, vec3 normal) {
@@ -78,7 +84,7 @@ void main() {
 	warp.y = warp.x * sin(warpRotate) + warp.y * cos(warpRotate);
 	warpUV = (warp * warpScale) + warpOffset;
 	vec4 vertex	= transformed(vertPos);
-	vec3 normal	= normalize(mat3(projection * camera * world * actor) * vertNormal);
+	vec3 normal	= normalize(mat3(projection * camera * world * getInstance() * actor)* vertNormal);
 	// Coordinates
 	gl_Position	= vertex;
 	// TODO: Proper shading
