@@ -185,13 +185,12 @@ public:
 		f(origin[3]);
 	}
 
-	RawVertex
-		*tl		= nullptr,
-		*tr1	= nullptr,
-		*tr2	= nullptr,
-		*bl1	= nullptr,
-		*bl2	= nullptr,
-		*br		= nullptr;
+	RawVertex* tl	= nullptr;
+	RawVertex* tr1	= nullptr;
+	RawVertex* tr2	= nullptr;
+	RawVertex* bl1	= nullptr;
+	RawVertex* bl2	= nullptr;
+	RawVertex* br	= nullptr;
 
 protected:
 	Triangle* tris[2] = {nullptr, nullptr};
@@ -353,10 +352,9 @@ public:
 		f(origin[2]);
 	}
 
-	RawVertex
-		*a	= nullptr,
-		*b	= nullptr,
-		*c	= nullptr;
+	RawVertex* a	= nullptr;
+	RawVertex* b	= nullptr;
+	RawVertex* c	= nullptr;
 
 protected:
 	Triangle* tris[1] = {nullptr};
