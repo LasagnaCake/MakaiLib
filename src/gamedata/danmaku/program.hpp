@@ -44,11 +44,7 @@ public:
 	virtual void onLoading() {}
 
 	virtual ~DanmakuApp() {
-		enemyBulletManager		= nullptr;
-		enemyLineLaserManager	= nullptr;
-		playerBulletManager		= nullptr;
-		playerLineLaserManager	= nullptr;
-		itemManager				= nullptr;
+		destroyManagers();
 	}
 
 	void onOpen() override {
@@ -94,6 +90,17 @@ public:
 	}
 
 	void onClose() override {
+		GameApp::onClose();
+		destroyManagers();
+	}
+
+private:
+	void destroyManagers() {
+		delete managers.bullet.enemy;
+		delete managers.lineLaser.enemy;
+		delete managers.bullet.player;
+		delete managers.lineLaser.player;
+		delete managers.item;
 		enemyBulletManager		= nullptr;
 		enemyLineLaserManager	= nullptr;
 		playerBulletManager		= nullptr;

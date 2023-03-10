@@ -156,6 +156,7 @@ ProgramSetting queryProgramSettingsFromUser(bool use16by9 = false, bool letUserC
 
 
 GameApp* getMainProgram() {
+	if (!mainProgram) return nullptr;
 	return mainProgram;
 }
 

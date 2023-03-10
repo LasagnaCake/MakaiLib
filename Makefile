@@ -15,6 +15,12 @@ Supported options:
 >    keep-o-files  = [ 1 | 0 ]        : Specifies if .o files should be kept  ( DEFAULT: 0        )
 endef
 
+define GET_TIME
+@printf "\nTime: "
+@date +”%H:%M:%S”
+@echo ""
+endef
+
 src				?= main.cpp
 name			?= program
 debug-profile	?= 0
@@ -66,8 +72,9 @@ export HELP_MESSAGE
 help:
 	@echo "$$HELP_MESSAGE"
 
-
 debug: build\$(src)
+	$(GET_TIME)
+	
 	@mkdir -p obj\$@
 	
 	@echo "[0/2] compiling [$@]..."
@@ -78,9 +85,13 @@ debug: build\$(src)
 	
 	@echo "[2/2] Done!"
 	$(MAKE_CLEAN)
+	
+	$(GET_TIME)
 
 
 test: build\$(src)
+	$(GET_TIME)
+	
 	@mkdir -p obj\$@
 	
 	@echo "[0/2] compiling [$@]..."
@@ -91,9 +102,13 @@ test: build\$(src)
 	
 	@echo "[2/2] Done!"
 	$(MAKE_CLEAN)
+	
+	$(GET_TIME)
 
 
 release: build\$(src)
+	$(GET_TIME)
+	
 	@mkdir -p obj\$@
 	
 	@echo "[0/2] compiling [$@]..."
@@ -104,6 +119,8 @@ release: build\$(src)
 	
 	@echo "[2/2] Done!"
 	$(MAKE_CLEAN)
+	
+	$(GET_TIME)
 
 both: debug release
 	
