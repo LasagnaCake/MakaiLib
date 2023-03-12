@@ -184,6 +184,8 @@ namespace Makai {
 			$debug("Created!");*/
 			SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 16);
 			SDL_GL_SetAttribute(SDL_GL_BUFFER_SIZE, 16);
+			SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
+			SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
 			//glViewport(0, 0, width, height);
 			// This keeps the alpha from shitting itself
 			glEnable(GL_BLEND);

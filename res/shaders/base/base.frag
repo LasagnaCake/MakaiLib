@@ -1,5 +1,7 @@
 #version 420 core
 
+precision mediump float;
+
 in vec3 fragCoord3D;
 in vec2 fragUV;
 in vec4 fragColor;

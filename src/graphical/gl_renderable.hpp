@@ -282,8 +282,6 @@ public:
 	vector<Triangle*> triangles;
 
 private:
-	friend class Renderable;
-
 	RawVertex* vertices = nullptr;
 
 	bool
@@ -337,6 +335,76 @@ private:
 
 	/// The amount of vertices this object has.
 	size_t vertexCount = 0;
+};
+
+class LineRenderable: public Base::DrawableObject {
+public:
+	LineRenderable(size_t layer = 0, bool manual = false): DrawableObject(layer, manual) {}
+
+	LineRenderable(
+		RawVertex* points,
+		size_t count,
+		size_t layer = 0,
+		bool manual = false
+	): DrawableObject(layer, manual) {
+		extend(points, count);
+	}
+
+	LineRenderable(
+		LineRenderable* other,
+		size_t layer = 0,
+		bool manual = false
+	): DrawableObject(layer, manual) {
+		extend(other);
+	}
+
+	virtual ~LineRenderable() {
+		$debug("LineRenderable!");
+		$debug("Killing LineRenderable object...");
+	}
+
+	void extend(RawVertex* points, size_t size) {
+		if (points == nullptr || size == 0)
+			throw std::runtime_error("No vertices were provided!");
+		for $ssrange(i, 0, size) {
+			this->points.push_back(points[i]);
+		}
+	}
+
+	void extend(vector<RawVertex> points) {
+		extend(points.data(), points.size());
+	}
+
+	void extend(LineRenderable* other) {
+		extend(other->points);
+	}
+
+	void extend(vector<LineRenderable*> parts) {
+		for $each(p, parts)
+			extend(p);
+	}
+
+	void extendFromBinaryFile(string path) {
+		auto data = $fld loadBinaryFile(path);
+		if (!data.size()) throw runtime_error("File does not exist or is empty! (" + path + ")!");
+		extend((RawVertex*)&data[0], data.size() / sizeof(RawVertex));
+	}
+
+	void saveToFile(std::string path) {
+		$fld saveBinaryFile(path, points.data(), points.size());
+	}
+
+	vector<RawVertex> points;
+
+private:
+	void draw() override {
+		// If no points, return
+		if (points.empty()) return;
+		// Set shader data
+		setDefaultShader();
+		// Present to screen
+		display(points.data(), points.size(), GL_LINES);
+	}
 };
 
 Renderable* loadObjectFromBinaryFile(string path) {

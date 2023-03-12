@@ -100,8 +100,9 @@ public:
 
 protected:
 	void display(RawVertex* vertices, size_t count, GLuint mode = GL_TRIANGLES) {
-		// If no instances, return
-		if (material.instances.empty()) return;
+		// If no instances, add one
+		if (material.instances.empty())
+			material.instances.push_back(Vector3(0, 0, 0));
 		// Set VBO as active
 		glBindBuffer(GL_ARRAY_BUFFER, vbo);
 		// Copy IVB to VBO
@@ -119,8 +120,6 @@ protected:
 		glBindVertexArray(vao);
 		// Enable attribute pointers
 		Drawer::enableVertexAttributes();
-		// Set polygon rendering mode
-		glPolygonMode(GL_FRONT_AND_BACK, material.fill);
 		// If face culling is enabled...
 		if (material.culling != GL_FRONT_AND_BACK) {
 			// Set culling face
@@ -128,6 +127,7 @@ protected:
 			glCullFace(material.culling);
 		}
 		// Draw object to screen
+		glPolygonMode(GL_FRONT_AND_BACK, material.fill);
 		glDrawArraysInstanced(mode, 0, count, material.instances.size());
 		// Disable culling
 		glDisable(GL_CULL_FACE);

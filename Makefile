@@ -52,7 +52,7 @@ GMON_OUT := -lgmon
 endif
 
 ifeq ($(keep-o-files), 0)
-MAKE_CLEAN := @make clean CLEAN_TARGET=obj/$@
+MAKE_CLEAN := @make clean CLEAN_TARGET=obj/$@ --no-print-directory
 endif
 
 CLEAN_TARGET ?= obj
@@ -73,6 +73,9 @@ help:
 	@echo "$$HELP_MESSAGE"
 
 debug: build\$(src)
+	@echo ""
+	@echo "[--- START ---]"
+	
 	$(GET_TIME)
 	
 	@mkdir -p obj\$@
@@ -87,9 +90,14 @@ debug: build\$(src)
 	$(MAKE_CLEAN)
 	
 	$(GET_TIME)
+	
+	@echo "[--- END ---]"
 
 
 test: build\$(src)
+	@echo ""
+	@echo "[--- START ---]"
+	
 	$(GET_TIME)
 	
 	@mkdir -p obj\$@
@@ -104,9 +112,14 @@ test: build\$(src)
 	$(MAKE_CLEAN)
 	
 	$(GET_TIME)
+	
+	@echo "[--- END ---]"
 
 
 release: build\$(src)
+	@echo ""
+	@echo "[--- START ---]"
+
 	$(GET_TIME)
 	
 	@mkdir -p obj\$@
@@ -121,6 +134,8 @@ release: build\$(src)
 	$(MAKE_CLEAN)
 	
 	$(GET_TIME)
+	
+	@echo "[--- END ---]"
 
 both: debug release
 	

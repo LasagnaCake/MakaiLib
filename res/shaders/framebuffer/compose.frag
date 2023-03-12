@@ -1,5 +1,7 @@
 #version 420 core
 
+precision mediump float;
+
 in vec2 fragUV;
 in vec2 warpUV;
 in vec2 maskUV;

@@ -39,6 +39,7 @@ namespace Drawer {
 			*depth	= nullptr
 		;
 	};
+
 	// Todo: Fix this
 	class FrameBuffer {
 	public:

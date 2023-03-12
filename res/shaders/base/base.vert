@@ -3,6 +3,8 @@
 #define MAX_LIGHTS 16
 #define MAX_INSTANCES 64
 
+precision mediump float;
+
 uniform mat4 actor = mat4(1);
 uniform mat4 world;
 uniform mat4 camera;

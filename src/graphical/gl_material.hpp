@@ -30,7 +30,7 @@ namespace Module {
 	};
 
 	struct ColorableRGB {
-		Vector3	color = Vector3(1);
+		Vector3	color = 1;
 	};
 
 	struct Imageable2D {

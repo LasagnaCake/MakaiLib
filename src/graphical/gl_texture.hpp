@@ -37,6 +37,44 @@ unsigned int createTexture(
 	// Set filtering
 	glTexParameteri(target, GL_TEXTURE_MIN_FILTER, minFilter);
 	glTexParameteri(target, GL_TEXTURE_MAG_FILTER, magFilter);
+	// Unbind texture
+	glBindTexture(target, 0);
+	// Return texture ID
+	return texture;
+}
+
+unsigned int createMultisampleTexture(
+	unsigned int width,
+	unsigned int height,
+	unsigned int samples,
+	unsigned int internalFormat = GL_RGBA32F,
+	unsigned int minFilter = GL_LINEAR,
+	unsigned int magFilter = GL_LINEAR,
+	unsigned int target = GL_TEXTURE_2D_MULTISAMPLE
+) {
+	GLuint texture;
+	// Create texture
+	glGenTextures(1, &texture);
+	glBindTexture(target, texture);
+	// Bind image data
+	glTexImage2DMultisample(
+		target,
+		samples,
+		internalFormat,
+		width,
+		height,
+		GL_TRUE
+	);
+
+	// Set texture wrapping & mipmaps
+	glTexParameteri(target, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(target, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glGenerateMipmap(target);
+	// Set filtering
+	glTexParameteri(target, GL_TEXTURE_MIN_FILTER, minFilter);
+	glTexParameteri(target, GL_TEXTURE_MAG_FILTER, magFilter);
+	// Unbind texture
+	glBindTexture(target, 0);
 	// Return texture ID
 	return texture;
 }
@@ -138,6 +176,63 @@ public:
 
 	void enable(unsigned char texture = 0) {
 		setTexture2D(texture, id);
+	}
+
+	inline unsigned int getID() {
+		return id;
+	}
+
+private:
+	bool created = false;
+	unsigned int id;
+};
+
+class MultisampleTexture2D {
+public:
+	MultisampleTexture2D() {}
+
+	MultisampleTexture2D(
+		unsigned int width,
+		unsigned int height,
+		unsigned int samples = 4,
+		unsigned int format = GL_RGBA,
+		unsigned int minFilter = GL_LINEAR,
+		unsigned int magFilter = GL_LINEAR
+	) {
+		create(
+			width,
+			height,
+			samples,
+			format,
+			minFilter,
+			magFilter
+		);
+	}
+
+	void create(
+		unsigned int width,
+		unsigned int height,
+		unsigned int samples = 4,
+		unsigned int format = GL_RGBA,
+		unsigned int minFilter = GL_LINEAR,
+		unsigned int magFilter = GL_LINEAR
+	) {
+		if (created) return;
+		created = true;
+		id = createMultisampleTexture(
+			width,
+			height,
+			samples,
+			format,
+			minFilter,
+			magFilter
+		);
+	}
+
+	void destroy() {
+		if (!created) return;
+		glDeleteTextures(1, &id);
+		created = false;
 	}
 
 	inline unsigned int getID() {
