@@ -1121,6 +1121,16 @@ namespace VecMath
 		return angleTo(a - b);
 	}
 
+	/// Gets the normal pointing from the origin towards a given Vector.
+	inline Vector2 normalTo(Vector2 vec) {
+		return angleV2(angleTo(vec));
+	}
+
+	/// Gets the normal pointing from Vector A to Vector B.
+	inline Vector2 normalTo(Vector2 a, Vector2 b) {
+		return normalTo(a - b);
+	}
+
 	// Distance between vectors calculation
 
 	/// Gets the distance from Vector A to Vector B.

@@ -10,6 +10,8 @@ in vec2 screenScale;
 
 layout (location = 0) out vec4	FragColor;
 
+uniform vec2 resolution = vec2(0);
+
 uniform vec4 albedo = vec4(1);
 uniform vec4 accent = vec4(0);
 
@@ -57,6 +59,15 @@ uniform vec2 prismFrequency	= vec2(1);
 uniform vec2 prismShift		= vec2(1);
 uniform uint prismShape		= 0;
 uniform float prismLOD		= 4;
+
+// [ SCREEN POLAR DISTORTION ]
+uniform bool	usePolarWarp			= true;
+uniform vec2	polarWarpPosition		= vec2(800, 450);
+uniform vec2	polarWarpStrength		= vec2(1);
+uniform float	polarWarpSize			= 200;
+uniform vec4	polarWarpColor			= vec4(0,0,0.25,1);
+uniform float	polarWarpTintStrength	= 1;
+uniform bool	polarWarpFishEye		= true;
 
 // [ TEXTURE WARPING ]
 uniform bool		useWarp			= false;
@@ -182,6 +193,29 @@ float getOutlineValue(vec2 uv, vec2 oSize) {
 	else return (outline > 0.0) ? 1.0 : 0.0;
 }
 
+float angleTo(vec2 vec) {
+	return - atan(vec.y, vec.x) + HPI;
+}
+
+vec2 angleV2(float angle) {
+	return vec2(sin(angle), cos(angle));
+}
+
+vec2 normalTo(vec2 vec) {
+	return angleV2(angleTo(vec));
+}
+
+vec2 polarWarp(out float pfac) {
+	vec2 target = (polarWarpPosition - gl_FragCoord.xy);
+	float distance =  1 - length(target) / polarWarpSize;
+	distance = clamp(distance, 0, 1);
+	if (polarWarpFishEye)
+		distance = sin(distance * PI);
+	pfac = distance;
+	vec2 offset = normalTo(target);
+	return (offset * distance) * (polarWarpStrength / 100);
+}
+
 float round(float v) {
 	return floor(v + 0.5);
 }
@@ -256,6 +290,13 @@ void main() {
 		prism = patternV2(prism, prismShape, prismLOD) * (prismAmplitude.yx / 10.0);
 	}
 
+	// Screen polar distortion
+	vec2 pwarp = vec2(0);
+	float pfac = 0;
+	if (usePolarWarp) {
+		pwarp = polarWarp(pfac);
+	}
+
 	// Screen texture warping
 	vec2 warp = vec2(0);
 	if (useWarp) {
@@ -264,7 +305,7 @@ void main() {
 	}
 
 	// Get pixel color
-	vec2 screenUV = fragUV + prism + wave + warp;
+	vec2 screenUV = fragUV + prism + wave + warp + pwarp;
 	vec4 color = (getPixelColor(screenUV) * fragColor * albedo) + accent;
 
 	// Color inverter
@@ -291,7 +332,9 @@ void main() {
 
 	if (color.w <= 0) discard;
 
-	FragColor = applyHSL(color);
+	color = applyHSL(color);
+
+	FragColor = mix(color, color * polarWarpColor, pfac * polarWarpTintStrength);
 
 	if (debugView > 0) {
 		switch(debugView) {

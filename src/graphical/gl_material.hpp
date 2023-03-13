@@ -45,6 +45,10 @@ namespace Module {
 		Transform2D trans;
 	};
 
+	struct Positionable2D {
+		Vector2 position;
+	};
+
 	struct Invertible {
 		bool invert = false;
 	};
@@ -125,6 +129,11 @@ struct OutlineEffect: Effect, Sizeable2D, ColorableRGBA {
 	bool relativeAlpha = true;
 };
 
+struct PolarWarpEffect: Effect, Sizeable, Positionable2D, Variable2D, ColorableRGBA {
+	float	tintStrength	= 1;
+	bool	fishEye			= true;
+};
+
 // World Material Effects
 
 struct FogEffect: Effect, Limitable, ColorableRGBA, Variable {};
@@ -178,6 +187,7 @@ struct BufferMaterial {
 	OutlineEffect	outline;
 	WaveEffect		wave;
 	WaveEffect		prism;
+	PolarWarpEffect	polarWarp;
 	GradientEffect	gradient;
 	RainbowEffect	rainbow;
 	BufferDebugView	debug = BufferDebugView::NONE;
@@ -283,6 +293,14 @@ void setMaterial(Shader& shader, BufferMaterial& material) {
 	// Set blur data
 	shader["useBlur"](material.blur.enabled);
 	shader["blurStrength"](material.blur.strength);
+	// Set polar warp data
+	shader["usePolarWarp"](material.polarWarp.enabled);
+	shader["polarWarpStrength"](material.polarWarp.strength);
+	shader["polarWarpSize"](material.polarWarp.size);
+	shader["polarWarpPosition"](material.polarWarp.position);
+	shader["polarWarpColor"](material.polarWarp.color);
+	shader["polarWarpTintStrength"](material.polarWarp.tintStrength);
+	shader["polarWarpFishEye"](material.polarWarp.fishEye);
 	// Set outline data
 	shader["useOutline"](material.outline.enabled);
 	shader["outlineSize"](material.outline.size);
