@@ -118,7 +118,7 @@ namespace GameData {
 	inline	virtual String getClass() {return #NAME;}\
 	inline	virtual String getBaseClass() {return #BASE;}\
 	inline	static String getCoreClass() {return BASE::getCoreClass();}\
-	//virtual	~NAME() {condemn();}\
-	using	BASE::BASE;
+	NAME(String name = #NAME, bool uniqueEntity = true) : BASE(name, uniqueEntity) {onCreate();}\
+	NAME(EntityClass::Entity* parent, String name = #NAME , bool uniqueEntity = true) : BASE(parent, name, uniqueEntity) {onCreate();}
 
 #endif // MAKAI_GAME_SYSTEM_DATA
