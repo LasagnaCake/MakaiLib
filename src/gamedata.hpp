@@ -88,6 +88,11 @@ namespace GameData {
 	#ifdef $_DANMAKU_GAME
 
 	namespace Danmaku {
+		namespace {
+			using
+				$mat PolarWarpEffect
+			;
+		}
 		class BossEntity2D;
 		class EnemyEntity2D;
 		class PlayerEntity2D;

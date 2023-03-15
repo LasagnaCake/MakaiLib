@@ -333,7 +333,7 @@ void main() {
 
 	color = applyHSL(color);
 
-	FragColor = mix(color, color * polarWarpColor, pfac * polarWarpTintStrength);
+	FragColor = mix(color, polarWarpColor, pfac * polarWarpTintStrength);
 
 	if (debugView > 0) {
 		switch(debugView) {

@@ -337,6 +337,12 @@ private:
 	size_t vertexCount = 0;
 };
 
+enum class LineType: unsigned int {
+	SEGMENTS,
+	LOOPED,
+	LINKED
+};
+
 class LineRenderable: public Base::DrawableObject {
 public:
 	LineRenderable(size_t layer = 0, bool manual = false): DrawableObject(layer, manual) {}
@@ -396,6 +402,8 @@ public:
 
 	vector<RawVertex> points;
 
+	LineType type = LineType::SEGMENTS;
+
 private:
 	void draw() override {
 		// If no points, return
@@ -403,7 +411,7 @@ private:
 		// Set shader data
 		setDefaultShader();
 		// Present to screen
-		display(points.data(), points.size(), GL_LINES);
+		display(points.data(), points.size(), GL_LINES + (unsigned int)type);
 	}
 };
 

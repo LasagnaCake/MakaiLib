@@ -41,6 +41,11 @@ public:
 		ItemManager*	item;
 	} managers;
 
+	struct {
+		PolarWarpEffect effect;
+		bool enabled = false;
+	} bossAura;
+
 	virtual void onLoading() {}
 
 	virtual ~DanmakuApp() {
@@ -92,6 +97,18 @@ public:
 	void onClose() override {
 		GameApp::onClose();
 		destroyManagers();
+	}
+
+	void onLayerDrawBegin(size_t layerID) override {
+		GameApp::onLayerDrawBegin(layerID);
+		switch (layerID / SUBLAYER_COUNT) {
+		case ($layer(WORLD) / SUBLAYER_COUNT):
+			if (bossAura.enabled)
+				getLayerBuffer().material.polarWarp = bossAura.effect;
+			break;
+		default:
+			break;
+		}
 	}
 
 private:

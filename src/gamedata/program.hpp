@@ -74,6 +74,10 @@ public:
 		setCamera2D();
 	}
 
+	void onLayerDrawBegin(size_t layerID) override {
+		setLayerMaterial(layerID);
+	}
+
 	void onClose() override {}
 };
 
