@@ -337,7 +337,7 @@ private:
 	size_t vertexCount = 0;
 };
 
-enum class LineType: unsigned int {
+enum class LineType {
 	SEGMENTS,
 	LOOPED,
 	LINKED
@@ -412,6 +412,76 @@ private:
 		setDefaultShader();
 		// Present to screen
 		display(points.data(), points.size(), GL_LINES + (unsigned int)type);
+	}
+};
+
+class PointRenderable: public Base::DrawableObject {
+public:
+	PointRenderable(size_t layer = 0, bool manual = false): DrawableObject(layer, manual) {}
+
+	PointRenderable(
+		RawVertex* points,
+		size_t count,
+		size_t layer = 0,
+		bool manual = false
+	): DrawableObject(layer, manual) {
+		extend(points, count);
+	}
+
+	PointRenderable(
+		PointRenderable* other,
+		size_t layer = 0,
+		bool manual = false
+	): DrawableObject(layer, manual) {
+		extend(other);
+	}
+
+	virtual ~PointRenderable() {
+		$debug("PointRenderable!");
+		$debug("Killing PointRenderable object...");
+	}
+
+	void extend(RawVertex* points, size_t size) {
+		if (points == nullptr || size == 0)
+			throw std::runtime_error("No vertices were provided!");
+		for $ssrange(i, 0, size) {
+			this->points.push_back(points[i]);
+		}
+	}
+
+	void extend(vector<RawVertex> points) {
+		extend(points.data(), points.size());
+	}
+
+	void extend(PointRenderable* other) {
+		extend(other->points);
+	}
+
+	void extend(vector<PointRenderable*> parts) {
+		for $each(p, parts)
+			extend(p);
+	}
+
+	void extendFromBinaryFile(string path) {
+		auto data = $fld loadBinaryFile(path);
+		if (!data.size()) throw runtime_error("File does not exist or is empty! (" + path + ")!");
+		extend((RawVertex*)&data[0], data.size() / sizeof(RawVertex));
+	}
+
+	void saveToFile(std::string path) {
+		$fld saveBinaryFile(path, points.data(), points.size());
+	}
+
+	vector<RawVertex> points;
+
+private:
+	void draw() override {
+		// If no points, return
+		if (points.empty()) return;
+		// Set shader data
+		setDefaultShader();
+		// Present to screen
+		display(points.data(), points.size(), GL_POINT);
 	}
 };
 
