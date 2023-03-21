@@ -486,8 +486,13 @@ private:
 };
 
 Renderable* loadObjectFromBinaryFile(string path) {
-	auto data = $fld loadBinaryFile(path);
-	if (!data.size()) throw runtime_error("File does not exist or is empty! (" + path + ")!");
+	auto data = FileLoader::loadBinaryFile(path);/*
+	if (data.empty()) {
+		data = FileLoader::loadBinaryFile("sys/models/error.msbo");
+		if(data.empty())
+			throw runtime_error("File does not exist or is empty! (" + path + ")!");
+	}*/
+	if (data.empty()) throw runtime_error("File does not exist or is empty! (" + path + ")!");
 	return new Renderable((RawVertex*)&data[0], data.size() / sizeof(RawVertex));
 }
 

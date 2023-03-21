@@ -66,7 +66,7 @@ namespace Drawer {
 			a	= 1,
 			nx	= 0,
 			ny	= 0,
-			nz	= 0;
+			nz	= 1;
 	};
 
 	RawVertex toRawVertex(Vector3 pos, Vector2 uv, Vector4 col = Vector4(1), Vector3 norm = Vector3(0)) {

@@ -89,6 +89,9 @@ void main() {
 	warpUV = (warp * warpScale) + warpOffset;
 	vec4 vertex	= transformed(vertPos);
 	vec3 normal	= normalize(mat3(projection * camera * world * actor) * vertNormal);
+	// Point Size
+	//gl_PointSize = min(0.00001, 1 - vertex.z);
+	//gl_PointSize = 5.0;
 	// Coordinates
 	gl_Position	= vertex;
 	// TODO: Proper shading
