@@ -143,7 +143,7 @@ ProgramSetting queryProgramSettingsFromUser(bool use16by9 = false, bool letUserC
 	Vector2 window;
 	if (winSize == resList.size() - 1) {
 		window = devSize;
-		window.x = window.y * (use16by9 ? 16.0/9.0 : 4.0/3.0);
+		window.x = Math::round(window.y * (use16by9 ? 16.0/9.0 : 4.0/3.0));
 	} else
 		window = resValue[winSize];
 	float frate = 0;

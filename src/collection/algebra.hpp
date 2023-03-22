@@ -15,10 +15,6 @@
 
 #define $maxof(TYPE) (std::numeric_limits<TYPE>::max())
 
-#ifndef nroot
-#define nroot(val, root) powf(val, 1.0/root)
-#endif // nroot
-
 namespace Math {
 	/**
 	* An 'Operatable' type is defined as:
@@ -30,10 +26,12 @@ namespace Math {
 
 	/// Math Constants.
 	constexpr const double	sqrt2		= 1.4142135623730950488016887242;
-	constexpr const double	hsqrt2		= sqrt2 / 2;
+	constexpr const double	hsqrt2		= sqrt2 / 2.0;
+	constexpr const double	qsqrt2		= sqrt2 / 4.0;
 	constexpr const double	ln2			= 0.6931471805599453094172321215;
 	constexpr const double	pi			= 3.1415926535897932384626433833;
-	constexpr const double	hpi			= pi / 2;
+	constexpr const double	hpi			= pi / 2.0;
+	constexpr const double	qpi			= pi / 4.0;
 	constexpr const double	tau			= 6.2831853071795864769252867666;
 	constexpr const double	euler		= 2.7182818284590452353602874714;
 	constexpr const double	degrad		= 180.0 / pi;
@@ -62,6 +60,10 @@ namespace Math {
 
 	#ifndef HPI
 	#define HPI $mth hpi
+	#endif // HPI
+
+	#ifndef QPI
+	#define QPI $mth qpi
 	#endif // HPI
 
 	#ifndef TAU
@@ -132,14 +134,22 @@ namespace Math {
 		return val;
 	}
 
-	CONST_ANYTYPE floor(T val, int decimals = 0) {
+	CONST_ANYTYPE floor(T val) {
+		return (T)(::floor(val));
+	}
+
+	CONST_ANYTYPE floor(T val, int decimals) {
 		// Get rounding factor
 		T zeros = pow(10, decimals);
 		// Floor it
 		return (T)(::floor(val * zeros) / zeros);
 	}
 
-	CONST_ANYTYPE ceil(T val, int decimals = 0) {
+	CONST_ANYTYPE ceil(T val) {
+		return (T)(::ceil(val));
+	}
+
+	CONST_ANYTYPE ceil(T val, int decimals) {
 		// Get rounding factor
 		T zeros = pow(10, decimals);
 		// Ceil it
@@ -151,7 +161,7 @@ namespace Math {
 		return (T)(::floor(val + 0.5));
 	}
 
-	CONST_ANYTYPE round(T val, int decimals = 0) {
+	CONST_ANYTYPE round(T val, int decimals) {
 		// Get rounding factor
 		T zeros = pow(10, decimals);
 		// Add 1/2 & floor it
@@ -186,8 +196,16 @@ namespace Math {
 		return wmax(val + min, max) - min;
 	}
 
+	CONST_ANYTYPE_I nroot(T val, T root) {
+		return exp(log(root) / val);
+	}
+
+	CONST_ANYTYPE_I sqrt(T val) {
+		return exp(ln2 / val);
+	}
+
 	CONST_ANYTYPE_I nrtn(T val) {
-		return (T)nroot(val, fabs(val));
+		return nroot(val, val);
 	}
 
 	CONST_ANYTYPE_I sign(T val) {
@@ -216,7 +234,13 @@ namespace Math {
 		sides /= 2;
 		float
 			sa2r = (angle * sides) / 2 + rotation,
-			s2rs = (radius * sqrt2) / sides;
+			s2rs = (radius *
+				#ifdef $_PRECISE_CALCULATIONS
+				nrtn(abs(sides))
+				#else
+				sqrt2
+				#endif
+				) / sides;
 		float
 			aCos = -abs(cos(sa2r)),
 			aSin = -abs(sin(sa2r));
@@ -329,6 +353,10 @@ namespace Math {
 #ifndef nrtn
 #define nrtn(val) $mth nrtn(val);
 #endif // nrtn
+
+#ifndef nroot
+#define nroot(val, root) $mth nroot(val, root)
+#endif // nroot
 
 #define $mth Math::
 #define $rng Math::Random::
