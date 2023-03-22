@@ -96,7 +96,6 @@ ProgramSetting queryProgramSettingsFromUser(bool use16by9 = false, bool letUserC
 		resList.push_back(res.key);
 		resValue.push_back(res.value);
 	}
-	$debug(ENEMY_BULLET_COUNT);
 	resList.push_back("Detect");
 	Vector2 devSize = Makai::getDeviceSize();
 	$debug(devSize.y * (4.0 / 3.0));

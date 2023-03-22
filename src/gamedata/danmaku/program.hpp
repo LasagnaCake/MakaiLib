@@ -18,33 +18,35 @@ public:
 			mainShaderPath
 	) {
 		// Set managers (Enemy)
-		enemyBulletManager		= managers.bullet.enemy		= new EnemyBulletManager();
-		enemyLineLaserManager	= managers.lineLaser.enemy	= new EnemyLineLaserManager();
+		enemyBulletManager		= managers.bullet.enemy;
+		enemyLineLaserManager	= managers.lineLaser.enemy;
 		// Set managers (Player)
-		playerBulletManager		= managers.bullet.player	= new PlayerBulletManager();
-		playerLineLaserManager	= managers.lineLaser.player	= new PlayerLineLaserManager();
+		playerBulletManager		= managers.bullet.player;
+		playerLineLaserManager	= managers.lineLaser.player;
 		// Set item manager
-		itemManager				= managers.item				= new ItemManager();
+		itemManager				= managers.item;
 	};
 
 	struct {
 		struct {
-			EnemyBulletManager*		enemy;
-			PlayerBulletManager*	player;
+			EnemyBulletManager*		enemy	= new EnemyBulletManager();
+			PlayerBulletManager*	player	= new PlayerBulletManager();
 		} bullet;
 
 		struct {
-			EnemyLineLaserManager*	enemy;
-			PlayerLineLaserManager*	player;
+			EnemyLineLaserManager*	enemy	= new EnemyLineLaserManager();
+			PlayerLineLaserManager*	player	= new PlayerLineLaserManager();
 		} lineLaser;
 
-		ItemManager*	item;
+		ItemManager*	item	= new ItemManager();
 	} managers;
 
 	struct {
 		PolarWarpEffect effect;
 		bool enabled = false;
 	} bossAura;
+
+	float& pointOfCollection = managers.item->poc;
 
 	virtual void onLoading() {}
 
@@ -94,6 +96,20 @@ public:
 		managers.bullet.player->board = board;
 	}
 
+	void setScreenBounds(Vector2 position, Vector2 size) {
+		Vector2	screenSize	= Scene::camera.ortho.size.absolute();
+		Vector2	at			= (screenSize / 2.0) + position;
+		BoxBounds2D
+			playfield	= $cdt makeBounds(at, size * Vector2(1.1, 1.1)),
+			board		= $cdt makeBounds(at, size);
+		managers.item->poc = -screenSize.y / 3.0;
+		managers.item->playfield =
+		managers.bullet.enemy->playfield =
+		managers.bullet.player->playfield = playfield;
+		managers.bullet.enemy->board =
+		managers.bullet.player->board = board;
+	}
+
 	void onClose() override {
 		GameApp::onClose();
 		destroyManagers();
@@ -106,7 +122,11 @@ public:
 			if (bossAura.enabled)
 				getLayerBuffer().material.polarWarp = bossAura.effect;
 			break;
+			setWorldMaterial3D();
+			setCamera3D();
 		default:
+			setWorldMaterial2D();
+			setCamera2D();
 			break;
 		}
 	}
