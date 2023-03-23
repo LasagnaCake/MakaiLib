@@ -402,7 +402,8 @@ namespace Makai {
 		}
 
 		inline Vector2 getWindowScale() {
-			return getWindowSize().normalized();
+			Vector2 ws = getWindowSize();
+			return Vector2(ws.x / ws.y, 1);
 		}
 
 		/// Gets called when the program is opened.

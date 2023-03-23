@@ -237,7 +237,7 @@ public:
 				bullets[i].sprite =
 					mesh.createReference<AnimatedPlane>();
 			bullets[i].setFree(true);
-			bullets[i]._setZOffset(Math::epsilonF * ((float)i));
+			bullets[i]._setZOffset(-0.0001 * ((float)i));
 			bullets[i].sprite->size = Vector2(16, 16);
 			if (haltProcedure) return;
 		}
@@ -356,7 +356,7 @@ typedef BulletManager<ENEMY_BULLET_COUNT, $layer(ENEMY_BULLET), $layer(PLAYER), 
 PlayerBulletManager*	playerBulletManager	= nullptr;
 EnemyBulletManager*		enemyBulletManager	= nullptr;
 
-#define DANMAKU_PBM $dmk playerBulletMananger
+#define DANMAKU_PBM $dmk playerBulletManager
 #define DANMAKU_EBM $dmk enemyBulletManager
 
 #define $bullet(TYPE)	$getman( TYPE##Bullet )

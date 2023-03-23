@@ -2,15 +2,15 @@
 #define MAKAI_BASE_PLAYER_H
 
 struct PlayerData {
-	size_t score	= 0;
-	size_t power	= 0;
-	size_t point	= 0;
-	size_t graze	= 0;
-	size_t life		= 0;
-	size_t bomb		= 0;
-	size_t extra	= 0;
-	float lifeBit	= 0;
-	float bombBit	= 0;
+	size_t	score	= 0;
+	size_t	power	= 0;
+	size_t	point	= 0;
+	size_t	graze	= 0;
+	size_t	life	= 0;
+	size_t	bomb	= 0;
+	size_t	extra	= 0;
+	float	lifeBit	= 0;
+	float	bombBit	= 0;
 };
 
 struct Familiar2D: Entity2D {
@@ -60,6 +60,7 @@ struct PlayerEntity2D: AreaCircle2D {
 		sprite = mesh.createReference<Reference::AnimatedPlane>();
 		mesh.setRenderLayer($layer(PLAYER));
 		// Add to game
+		$debug("< FINGERS IN HIS ASS SUNDAY >");
 		addToGame(this, "DanmakuGame");
 		$ecl groups.addObject(this, $layer(PLAYER));
 		removeFromCollisionLayer(0);
@@ -147,6 +148,8 @@ struct PlayerEntity2D: AreaCircle2D {
 	$evt Timer optionShot;
 
 	Vector2 movement = Vector2(0);
+
+	virtual void onCreate() override {}
 
 	virtual void onEnteringFocus()	{$debug("Focus Enter!");}
 	virtual void onExitingFocus()	{$debug("Focus Exit!");}

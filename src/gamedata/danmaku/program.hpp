@@ -84,20 +84,14 @@ public:
 		// Set playfield
 		Vector2 screenSpace = getWindowScale();
 		Vector2 screenSize = $scn camera.ortho.size.absolute();
-		Vector2 screenPosition = Vector2(32, -32) * screenSpace;
-		BoxBounds2D
-			playfield = $cdt makeBounds(screenPosition, screenSize * Vector2(1.1, 1.1)),
-			board = $cdt makeBounds(screenPosition, screenSize);
-		managers.item->poc = -screenSize.y / 3.0;
-		managers.item->playfield =
-		managers.bullet.enemy->playfield =
-		managers.bullet.player->playfield = playfield;
-		managers.bullet.enemy->board =
-		managers.bullet.player->board = board;
+		setGameBounds(screenSize);
 	}
 
-	void setScreenBounds(Vector2 position, Vector2 size) {
-		Vector2	screenSize	= Scene::camera.ortho.size.absolute();
+	void setGameBounds(Vector2 size, Vector2 position = Vector2(0)) {
+		Vector2	screenSize	=
+			Scene::camera.ortho.size.absolute()
+		*	Vector2(1, -1)
+		;
 		Vector2	at			= (screenSize / 2.0) + position;
 		BoxBounds2D
 			playfield	= $cdt makeBounds(at, size * Vector2(1.1, 1.1)),
@@ -121,14 +115,18 @@ public:
 		case ($layer(WORLD) / SUBLAYER_COUNT):
 			if (bossAura.enabled)
 				getLayerBuffer().material.polarWarp = bossAura.effect;
-			break;
 			setWorldMaterial3D();
 			setCamera3D();
+			break;
 		default:
-			setWorldMaterial2D();
-			setCamera2D();
 			break;
 		}
+	}
+
+	void onLayerDrawEnd(size_t layerID) override {
+		GameApp::onLayerDrawEnd(layerID);
+		setWorldMaterial2D();
+		setCamera2D();
 	}
 
 private:
