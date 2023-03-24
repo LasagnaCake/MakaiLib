@@ -60,7 +60,7 @@ struct EnemyEntity2D: public AreaCircle2D {
 				if (player) health -= player->damage.laser;
 				else health -= defaults.playerDamage.laser;
 			}
-			if (e->isInGroup($layer(PLAYER_BOMB))) {
+			if (e->isInGroup($layer(SPELL))) {
 				if (player) health -= player->damage.bomb;
 				else health -= defaults.playerDamage.bomb;
 			}

@@ -59,6 +59,9 @@ struct PlayerEntity2D: AreaCircle2D {
 		// Create sprite
 		sprite = mesh.createReference<Reference::AnimatedPlane>();
 		mesh.setRenderLayer($layer(PLAYER));
+		// Create hitbox sprite
+		hitboxSprite = hitboxMesh.createReference<Reference::AnimatedPlane>();
+		hitboxMesh.setRenderLayer($layer(PLAYER_HITBOX));
 		// Add to game
 		$debug("< FINGERS IN HIS ASS SUNDAY >");
 		addToGame(this, "DanmakuGame");
@@ -113,6 +116,10 @@ struct PlayerEntity2D: AreaCircle2D {
 
 	Renderable mesh;
 	$ref AnimatedPlane*	sprite;
+
+	Renderable hitboxMesh;
+	$ref AnimatedPlane* hitboxSprite;
+
 	$mki InputManager	input;
 
 	struct {
@@ -261,6 +268,7 @@ struct PlayerEntity2D: AreaCircle2D {
 		collision.shape.position = globalPosition();
 		// Update sprite
 		updateSprite();
+		hitboxMesh.trans.position = Vec3(position, zIndex);
 		// Do focus entering & exiting action, acoordingly
 		if(action("focus", true))
 			onEnteringFocus();
@@ -268,6 +276,13 @@ struct PlayerEntity2D: AreaCircle2D {
 			onExitingFocus();
 		}
 		lbs.focus = isFocused;
+		// Set hitbox visibility
+		hitboxMesh.trans.scale = Math::lerp(
+			hitboxMesh.trans.scale,
+			Vec3(isFocused * grazebox.radius),
+			Vec3(0.25f)
+		);
+		hitboxSprite->local.rotation.z += 0.01;
 		// Do graze action
 		CircleBounds2D grazeShape = getGrazeBounds();
 		if(enemyBulletManager) {
