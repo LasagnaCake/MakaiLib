@@ -282,7 +282,7 @@ struct PlayerEntity2D: AreaCircle2D {
 			Vec3(isFocused * grazebox.radius),
 			Vec3(0.25f)
 		);
-		hitboxSprite->local.rotation.z += 0.01;
+		hitboxSprite->local.rotation.z += 0.025;
 		// Do graze action
 		CircleBounds2D grazeShape = getGrazeBounds();
 		if(enemyBulletManager) {
