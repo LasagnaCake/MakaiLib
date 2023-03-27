@@ -941,6 +941,7 @@ namespace VecMath
 		*/
 		// Get a copy of the vector
 		Vector3 res = vec;
+		#ifndef $_SIMPLIFIED_ROTATION_MATH
 		// Get sines and cosines
 		float sinX = sin(angle.x);
 		float cosX = cos(angle.x);
@@ -957,6 +958,19 @@ namespace VecMath
 		// Calculate X axis
 		res.y = (cosX * res.y) - (sinX * res.z);
 		res.z = (sinX * res.y) + (cosX * res.z);
+		#else
+		// Rotation buffer
+		Vector2 buf;
+		// Rotate around Z axis
+		buf = rotateV2(res.xy(), angle.z);
+		res = Vector3(buf.x, buf.y, res.z);
+		// Rotate around Y axis
+		buf = rotateV2(res.xz(), angle.y);
+		res = Vector3(buf.x, res.y, buf.y);
+		// Rotate around X axis
+		buf = rotateV2(res.yz(), angle.z);
+		res = Vector3(res.x, buf.x, buf.y);
+		#endif
 		// Return result
 		return res;
 	}
