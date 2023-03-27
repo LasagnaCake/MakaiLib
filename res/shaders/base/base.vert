@@ -1,7 +1,7 @@
 #version 420 core
 
 #define MAX_LIGHTS 16
-#define MAX_INSTANCES 64
+#define MAX_INSTANCES 32
 
 precision mediump float;
 

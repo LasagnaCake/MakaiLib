@@ -12,10 +12,17 @@ Supported options:
 >    name          = [ value ]        : Specifies the name of the output file ( DEFAULT: program  )
 >    warn          = [ value | none ] : Specifies the warning to enable       ( DEFAULT: none     )
 >    use-openmp    = [ 1 | 0 ]        : Specifies whether ro enable OpenMP    ( DEFAULT: none     )
->    use-openmp    = [ 0 - 3 ]        : Specifies the optimization level      ( DEFAULT: 3        )
+>    optimize-lvl  = [ 0 - 3 ]        : Specifies the optimization level      ( DEFAULT: 3        )
 >    debug-profile = [ 1 | 0 ]        : Specifies whether to enable gmon      ( DEFAULT: 0        )
 >    keep-o-files  = [ 1 | 0 ]        : Specifies if .o files should be kept  ( DEFAULT: 0        )
 >    macro         = [ value | none ] : Specifies a macro to be defined       ( DEFAULT: none     )
+>    meth          = [ 1 : 0 ]        : Specifies whether to enable fast math ( DEFAULT: 0        )
+>    sath          = [ 1 : 0 ]        : Specifies whether to enable safe math ( DEFAULT: 0        )
+
+NOTES:
+(Safe, in this case, means 'IEEE compliant'.)
+>    meth : Enables FAST, but IMPRECISE and UNSAFE floating point operations.
+>    sath : Enables SAFE math. If this one is enabled, METH is disabled.
 endef
 
 define GET_TIME
@@ -29,6 +36,7 @@ name			?= program
 debug-profile	?= 0
 keep-o-files	?= 0
 use-openmp		?= 0
+meth			?= 0
 
 CC 	?= gcc
 CXX ?= g++
@@ -36,12 +44,21 @@ CXX ?= g++
 COMPILER_CONFIG	:= -fexpensive-optimizations -flto -m64 -std=gnu++20 -fcoroutines
 LINKER_CONFIG	:= -flto -static-libstdc++ -static-libgcc -static -m64
 
+ifeq ($(seth), 1)
+meth 				:= 0
+SAFE_MATH			:= -frounding-math -fsignaling-nans
+endif
+
+ifeq ($(meth), 1)
+MATH_OPTIMIZATIONS	:= -ffast-math -fsingle-precision-constant
+endif
+
 ifeq ($(use-openmp), 1)
-OPTIMIZATIONS	:= -fopenmp -openmp -ftree-parallelize-loops=128 -funswitch-loops -fpredictive-commoning -fgcse-after-reload -ftree-vectorize
+OPTIMIZATIONS	:= -fopenmp -openmp -ftree-parallelize-loops=128 -funswitch-loops -fpredictive-commoning -fgcse-after-reload -ftree-vectorize $(MATH_OPTIMIZATIONS)
 OPENMP_ENABLED	:= -D_USE_OPENMP_
-optimize-level	?= 1
+optimize-lvl	?= 1
 else
-optimize-level	?= 3
+optimize-lvl	?= 3
 endif
 
 INCLUDES		:= -Ilib -Isrc -Ilib\SDL2-2.0.10\include -Ilib\OpenGL -Ilib\OpenGL\GLEW\include -Ilib\cute_headers -Ilib\stb -Ilib\libzipp-v6.0-1.9.2\include
@@ -88,7 +105,7 @@ debug: build\$(src)
 	@mkdir -p obj\$@
 	
 	@echo "[0/2] compiling [$@]..."
-	@$(CXX) $(COMPILER_CONFIG) -Wall -Wpedantic -pg -Og -g -fsanitize=leak -fno-omit-frame-pointer -D_DEBUG_OUTPUT_ $(macro) $(INCLUDES) -c build\$(src) -o obj/$@/$(name).o
+	@$(CXX) $(COMPILER_CONFIG) -Wall -Wpedantic $(SAFE_MATH) -pg -Og -g -fsanitize=leak -fno-omit-frame-pointer -D_DEBUG_OUTPUT_ $(macro) $(INCLUDES) -c build\$(src) -o obj/$@/$(name).o
 	
 	@echo "[1/2] linking libraries..."
 	@$(CXX) -o res/$(name)_$@.exe obj/$@/$(name).o  $(LINKER_CONFIG) -pg -Og $(LIBRARIES)
@@ -110,10 +127,10 @@ demo: build\$(src)
 	@mkdir -p obj\$@
 	
 	@echo "[0/2] compiling [$@]..."
-	@$(CXX) $(COMPILER_CONFIG) $(WARNINGS) -lwinpthreads $(OPTIMIZATIONS) $(OPENMP_ENABLED) $(INCLUDES) -D_DEMO_BUILD_ $(macro) -c build\$(src) -o obj/$@/$(name).o
+	@$(CXX) $(COMPILER_CONFIG) $(WARNINGS) -lwinpthreads $(OPTIMIZATIONS) $(SAFE_MATH) $(OPENMP_ENABLED) $(INCLUDES) -D_DEMO_BUILD_ $(macro) -c build\$(src) -o obj/$@/$(name).o
 	
 	@echo "[1/2] linking libraries..."
-	@$(CXX) -o res/$(name)_$@.exe obj/$@/$(name).o  $(LINKER_CONFIG) -O$(optimize-level)  $(LIBRARIES) $(GUI_MODE)
+	@$(CXX) -o res/$(name)_$@.exe obj/$@/$(name).o  $(LINKER_CONFIG) -O$(optimize-lvl)  $(LIBRARIES) $(GUI_MODE)
 	
 	@echo "[2/2] Done!"
 	$(MAKE_CLEAN)
@@ -132,10 +149,10 @@ release: build\$(src)
 	@mkdir -p obj\$@
 	
 	@echo "[0/2] compiling [$@]..."
-	@$(CXX) $(COMPILER_CONFIG) $(WARNINGS) -lwinpthreads $(OPTIMIZATIONS) $(OPENMP_ENABLED) $(INCLUDES) $(macro) -c build\$(src) -o obj/$@/$(name).o
+	@$(CXX) $(COMPILER_CONFIG) $(WARNINGS) -lwinpthreads $(OPTIMIZATIONS) $(SAFE_MATH) $(OPENMP_ENABLED) $(INCLUDES) $(macro) -c build\$(src) -o obj/$@/$(name).o
 	
 	@echo "[1/2] linking libraries..."
-	@$(CXX) -o res/$(name)_$@.exe obj/$@/$(name).o  $(LINKER_CONFIG) -O$(optimize-level)  $(LIBRARIES) $(GUI_MODE)
+	@$(CXX) -o res/$(name)_$@.exe obj/$@/$(name).o  $(LINKER_CONFIG) -O$(optimize-lvl)  $(LIBRARIES) $(GUI_MODE)
 	
 	@echo "[2/2] Done!"
 	$(MAKE_CLEAN)
@@ -147,9 +164,9 @@ release: build\$(src)
 
 test: debug release
 
-both: release demo
+both: demo release
 	
-all: debug release demo
+all: debug demo release
 	
 clean:
 	@echo "Cleaning up..."
