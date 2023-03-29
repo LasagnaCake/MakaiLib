@@ -917,6 +917,12 @@ namespace VecMath
 		using std::vector;
 	}
 
+	template<typename T>
+	concept VectorType = Type::Equal<T, Vector2> || Type::Equal<T, Vector3> || Type::Equal<T, Vector4>;
+
+	template<typename T>
+	concept Vectorable = Type::Equal<T, float> || VectorType<T>;
+
 	// Vector rotation
 
 	/// Rotates a 2D Vector around the origin by a given angle.
@@ -1008,18 +1014,18 @@ namespace VecMath
 		switch (axis) {
 		case Axis::POS_X:
 		case Axis::NEG_X:
-			return Vector3(0, cos(angle), sin(angle));
+			return Vector3(0, cos(angle), -sin(angle));
 		case Axis::POS_Y:
 		case Axis::NEG_Y:
-			return Vector3(cos(angle), 0, sin(angle));
+			return Vector3(cos(angle), 0, -sin(angle));
 		default:
 		case Axis::POS_Z:
 		case Axis::NEG_Z:
-			return Vector3(cos(angle), sin(angle), 0);
+			return Vector3(cos(angle), -sin(angle), 0);
 		}
 	}
 
-	/// Gets a 3D Vector of size 1 at a given angle.
+	/// Gets a 3D Vector of size 1, pointing towards a given axis, rotated at a given angle.
 	Vector3 angleV3(Vec3 angle, Axis axis = Axis::NEG_Z) {
 		switch (axis) {
 		case Axis::POS_X:
@@ -1249,7 +1255,7 @@ namespace VecMath
 	typedef vector<Vector4> Points4D;
 
 	/// Base transformation data structure.
-	template <class T, typename ROT_T>
+	template <VectorType T, Vectorable ROT_T>
 	struct Transform {
 		Transform() {}
 		Transform(T position, ROT_T rotation, T scale) {

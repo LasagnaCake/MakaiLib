@@ -248,8 +248,9 @@ namespace Math {
 	}
 
 	/// Reflects a given angle in relation to a surface.
-	constexpr float reflection(float pointAngle, float surfaceAngle) {
-		return pi + (2.0 * pointAngle) - surfaceAngle;
+	constexpr float reflect(float angle, float surface) {
+		//return pi + (2.0 * angle) - surface;
+		return angle - surface;
 	}
 
 	CONST_ANYTYPE_I farenheitToCelcius(T temperature) {

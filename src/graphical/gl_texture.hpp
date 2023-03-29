@@ -9,7 +9,7 @@ unsigned int createTexture(
 	unsigned int type = GL_UNSIGNED_BYTE,
 	unsigned int format = GL_RGBA,
 	unsigned int internalFormat = GL_RGBA32F,
-	unsigned int minFilter = GL_LINEAR,
+	unsigned int minFilter = GL_LINEAR_MIPMAP_LINEAR,
 	unsigned int magFilter = GL_LINEAR,
 	unsigned char* data = NULL,
 	unsigned int target = GL_TEXTURE_2D
@@ -84,7 +84,7 @@ unsigned int createTexture2D(
 	unsigned int height,
 	unsigned int type = GL_UNSIGNED_BYTE,
 	unsigned int format = GL_RGBA,
-	unsigned int minFilter = GL_LINEAR,
+	unsigned int minFilter = GL_LINEAR_MIPMAP_LINEAR,
 	unsigned int magFilter = GL_LINEAR,
 	unsigned char* data = NULL
 ) {
@@ -100,7 +100,7 @@ public:
 		unsigned int height,
 		unsigned int type = GL_UNSIGNED_BYTE,
 		unsigned int format = GL_RGBA,
-		unsigned int minFilter = GL_LINEAR,
+		unsigned int minFilter = GL_LINEAR_MIPMAP_LINEAR,
 		unsigned int magFilter = GL_LINEAR,
 		unsigned char* data = NULL
 	) {
@@ -115,7 +115,11 @@ public:
 		);
 	}
 
-	Texture2D(std::string path, unsigned int minFilter = GL_LINEAR, unsigned int magFilter = GL_LINEAR) {
+	Texture2D(
+		std::string path,
+		unsigned int minFilter = GL_LINEAR_MIPMAP_LINEAR,
+		unsigned int magFilter = GL_LINEAR
+	) {
 		create(path, minFilter, magFilter);
 	}
 
@@ -124,7 +128,7 @@ public:
 		unsigned int height,
 		unsigned int type = GL_UNSIGNED_BYTE,
 		unsigned int format = GL_RGBA,
-		unsigned int minFilter = GL_LINEAR,
+		unsigned int minFilter = GL_LINEAR_MIPMAP_LINEAR,
 		unsigned int magFilter = GL_LINEAR,
 		unsigned char* data = NULL
 	) {
@@ -143,7 +147,7 @@ public:
 
 	void create(
 		std::string path,
-		unsigned int minFilter = GL_LINEAR,
+		unsigned int minFilter = GL_LINEAR_MIPMAP_LINEAR,
 		unsigned int magFilter = GL_LINEAR
 	) {
 		int width, height, nrChannels;
