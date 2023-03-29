@@ -100,8 +100,8 @@ public:
 		unsigned int height,
 		unsigned int type = GL_UNSIGNED_BYTE,
 		unsigned int format = GL_RGBA,
-		unsigned int minFilter = GL_LINEAR_MIPMAP_LINEAR,
 		unsigned int magFilter = GL_LINEAR,
+		unsigned int minFilter = GL_LINEAR_MIPMAP_LINEAR,
 		unsigned char* data = NULL
 	) {
 		create(
@@ -117,8 +117,8 @@ public:
 
 	Texture2D(
 		std::string path,
-		unsigned int minFilter = GL_LINEAR_MIPMAP_LINEAR,
-		unsigned int magFilter = GL_LINEAR
+		unsigned int magFilter = GL_LINEAR,
+		unsigned int minFilter = GL_LINEAR_MIPMAP_LINEAR
 	) {
 		create(path, minFilter, magFilter);
 	}
@@ -128,8 +128,8 @@ public:
 		unsigned int height,
 		unsigned int type = GL_UNSIGNED_BYTE,
 		unsigned int format = GL_RGBA,
-		unsigned int minFilter = GL_LINEAR_MIPMAP_LINEAR,
 		unsigned int magFilter = GL_LINEAR,
+		unsigned int minFilter = GL_LINEAR_MIPMAP_LINEAR,
 		unsigned char* data = NULL
 	) {
 		if (created) return;
@@ -147,8 +147,8 @@ public:
 
 	void create(
 		std::string path,
-		unsigned int minFilter = GL_LINEAR_MIPMAP_LINEAR,
-		unsigned int magFilter = GL_LINEAR
+		unsigned int magFilter = GL_LINEAR,
+		unsigned int minFilter = GL_LINEAR_MIPMAP_LINEAR
 	) {
 		int width, height, nrChannels;
 		unsigned char* data = stbi_load(path.c_str(), &width, &height, &nrChannels, 0);
@@ -200,8 +200,8 @@ public:
 		unsigned int height,
 		unsigned int samples = 4,
 		unsigned int format = GL_RGBA,
-		unsigned int minFilter = GL_LINEAR,
-		unsigned int magFilter = GL_LINEAR
+		unsigned int magFilter = GL_LINEAR,
+		unsigned int minFilter = GL_LINEAR
 	) {
 		create(
 			width,
@@ -218,8 +218,8 @@ public:
 		unsigned int height,
 		unsigned int samples = 4,
 		unsigned int format = GL_RGBA,
-		unsigned int minFilter = GL_LINEAR,
-		unsigned int magFilter = GL_LINEAR
+		unsigned int magFilter = GL_LINEAR,
+		unsigned int minFilter = GL_LINEAR
 	) {
 		if (created) return;
 		created = true;
