@@ -115,7 +115,11 @@ namespace SmartPointer {
 		inline SameType& operator()(void (*op)(T&)) {
 			return modify(op);
 		}
-
+		/*
+		inline SameType& operator()(T* obj)						{	return operator=(obj);		}
+		inline SameType& operator()(T& obj)						{	return operator=(obj);		}
+		inline SameType& operator()(const SameType& other)		{	return operator=(other);	}
+		*/
 		inline T& operator[](size_t index) {
 			return getPointer()[index];
 		}
@@ -145,6 +149,8 @@ namespace SmartPointer {
 
 		SameType& operator=(T* obj)								{bind(obj); return (*this);			}
 		const SameType& operator=(T* obj) const					{bind(obj); return (*this);			}
+		SameType& operator=(T& obj)								{bind(&obj); return (*this);		}
+		const SameType& operator=(T& obj) const					{bind(&obj); return (*this);		}
 		SameType& operator=(const SameType& other)				{bind(other.ref); return (*this);	}
 		const SameType& operator=(const SameType& other) const	{bind(other.ref); return (*this);	}
 
