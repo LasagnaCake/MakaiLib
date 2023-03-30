@@ -29,16 +29,16 @@ public:
 
 	struct {
 		struct {
-			EnemyBulletManager* const		enemy	= new EnemyBulletManager();
-			PlayerBulletManager* const		player	= new PlayerBulletManager();
+			EnemyBulletManager*		enemy	= new EnemyBulletManager();
+			PlayerBulletManager*	player	= new PlayerBulletManager();
 		} bullet;
 
 		struct {
-			EnemyLineLaserManager* const	enemy	= new EnemyLineLaserManager();
-			PlayerLineLaserManager* const	player	= new PlayerLineLaserManager();
+			EnemyLineLaserManager*	enemy	= new EnemyLineLaserManager();
+			PlayerLineLaserManager*	player	= new PlayerLineLaserManager();
 		} lineLaser;
 
-		ItemManager* const	item	= new ItemManager();
+		ItemManager*	item	= new ItemManager();
 	} managers;
 
 	struct {
