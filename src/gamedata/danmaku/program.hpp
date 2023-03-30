@@ -29,16 +29,16 @@ public:
 
 	struct {
 		struct {
-			EnemyBulletManager*		enemy	= new EnemyBulletManager();
-			PlayerBulletManager*	player	= new PlayerBulletManager();
+			EnemyBulletManager* const		enemy	= new EnemyBulletManager();
+			PlayerBulletManager* const		player	= new PlayerBulletManager();
 		} bullet;
 
 		struct {
-			EnemyLineLaserManager*	enemy	= new EnemyLineLaserManager();
-			PlayerLineLaserManager*	player	= new PlayerLineLaserManager();
+			EnemyLineLaserManager* const	enemy	= new EnemyLineLaserManager();
+			PlayerLineLaserManager* const	player	= new PlayerLineLaserManager();
 		} lineLaser;
 
-		ItemManager*	item	= new ItemManager();
+		ItemManager* const	item	= new ItemManager();
 	} managers;
 
 	struct {
@@ -115,6 +115,8 @@ public:
 		case ($layer(WORLD) / SUBLAYER_COUNT):
 			if (bossAura.enabled)
 				getLayerBuffer().material.polarWarp = bossAura.effect;
+			else
+				getLayerBuffer().material.polarWarp.enabled = false;
 			setWorldMaterial3D();
 			setCamera3D();
 			break;

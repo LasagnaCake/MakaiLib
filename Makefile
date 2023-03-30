@@ -37,6 +37,7 @@ debug-profile	?= 0
 keep-o-files	?= 0
 use-openmp		?= 0
 meth			?= 0
+sath			?= 0
 
 CC 	?= gcc
 CXX ?= g++
@@ -44,7 +45,7 @@ CXX ?= g++
 COMPILER_CONFIG	:= -fexpensive-optimizations -flto -m64 -std=gnu++20 -fcoroutines
 LINKER_CONFIG	:= -flto -static-libstdc++ -static-libgcc -static -m64
 
-ifeq ($(seth), 1)
+ifeq ($(sath), 1)
 meth 				:= 0
 SAFE_MATH			:= -frounding-math -fsignaling-nans
 endif
