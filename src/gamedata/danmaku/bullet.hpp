@@ -307,6 +307,7 @@ public:
 			last->flags.clear();
 			last->clearSignals();
 			last->updateSprite();
+			last->sprite->setColor();
 			#ifdef $_PREVENT_BULLET_OVERFLOW_BY_WRAP
 			pbobw = 0;
 			#endif
@@ -326,6 +327,8 @@ public:
 		last->taskers.clearTaskers();
 		last->flags.clear();
 		last->clearSignals();
+		last->updateSprite();
+		last->sprite->setColor();
 		if (pbobw > BULLET_COUNT) pbobw = 0;
 		last->updateSprite();
 		return last;

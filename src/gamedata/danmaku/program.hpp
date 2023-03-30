@@ -131,11 +131,6 @@ public:
 
 private:
 	void destroyManagers() {
-		delete managers.bullet.enemy;
-		delete managers.lineLaser.enemy;
-		delete managers.bullet.player;
-		delete managers.lineLaser.player;
-		delete managers.item;
 		enemyBulletManager		= nullptr;
 		enemyLineLaserManager	= nullptr;
 		playerBulletManager		= nullptr;
