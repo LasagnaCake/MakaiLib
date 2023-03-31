@@ -194,7 +194,7 @@ public:
 				lasers[i].sprite =
 					mesh.createReference<AnimatedPlane>();
 			lasers[i].setFree(true);
-			lasers[i]._setZOffset(-0.0001 * ((float)i));
+			lasers[i]._setZOffset(-0.000001 * ((float)i));
 			if (haltProcedure) return;
 		}
 		created = true;

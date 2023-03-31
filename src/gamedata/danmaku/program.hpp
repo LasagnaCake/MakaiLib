@@ -95,7 +95,7 @@ public:
 		Vector2	at			= (screenSize / 2.0) + position;
 		BoxBounds2D
 			ePlayfield	= $cdt makeBounds(at, size * Vector2(1.1, 1.1)),
-			pPlayfield	= $cdt makeBounds(at, size * Vector2(1.5, 1.5)),
+			pPlayfield	= $cdt makeBounds(at, size * Vector2(1.2, 1.2)),
 			board		= $cdt makeBounds(at, size);
 		managers.item->poc = -screenSize.y / 3.0;
 		managers.bullet.player->playfield = pPlayfield;

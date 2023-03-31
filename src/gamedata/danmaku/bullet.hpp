@@ -235,7 +235,7 @@ public:
 				bullets[i].sprite =
 					mesh.createReference<AnimatedPlane>();
 			bullets[i].setFree(true);
-			bullets[i]._setZOffset(-0.0001 * ((float)i));
+			bullets[i]._setZOffset(-0.000001 * ((float)i));
 			bullets[i].sprite->size = Vector2(16, 16);
 			if (haltProcedure) return;
 		}

@@ -195,7 +195,7 @@ public:
 				items[i].sprite =
 					mesh.createReference<AnimatedPlane>();
 			items[i].setFree(true);
-			items[i]._setZOffset(-0.0001 * ((float)i));
+			items[i]._setZOffset(-0.000001 * ((float)i));
 			if (haltProcedure) return;
 		}
 		created = true;
