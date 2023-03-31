@@ -186,9 +186,13 @@ public:
 		return id;
 	}
 
+	bool exists() {
+		return created;
+	}
+
 private:
 	bool created = false;
-	unsigned int id;
+	unsigned int id = 0;
 };
 
 class MultisampleTexture2D {
@@ -243,7 +247,11 @@ public:
 		return id;
 	}
 
+	bool exists() {
+		return created;
+	}
+
 private:
 	bool created = false;
-	unsigned int id;
+	unsigned int id = 0;
 };

@@ -341,7 +341,12 @@ struct PlayerEntity2D: AreaCircle2D {
 
 	virtual void onCollision(Entity* target) {
 		if (
-			$ecl collisionLayers.isInGroup(target, $layer(ENEMY))
+			target->isInGroup($layer(ENEMY)) ||
+			target->isInGroup($layer(ENEMY_BULLET)) ||
+			target->isInGroup($layer(ENEMY_LASER)) ||
+			$ecl collisionLayers.isInGroup(target, $layer(ENEMY)) ||
+			$ecl collisionLayers.isInGroup(target, $layer(ENEMY_BULLET)) ||
+			$ecl collisionLayers.isInGroup(target, $layer(ENEMY_LASER))
 		) {
 			pichun();
 		}

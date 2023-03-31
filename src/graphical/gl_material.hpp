@@ -201,13 +201,13 @@ struct WorldMaterial {
 
 void setMaterial(Shader& shader, ObjectMaterial& material) {
 	// Texture
-	if (material.texture.image && material.texture.enabled) {
+	if (material.texture.image && material.texture.enabled && material.texture.image->exists()) {
 		shader["textured"](true);
 		shader["texture2D"](0);
 		material.texture.image->enable(0);
 	} else shader["textured"](false);
 	// Texture warping
-	if (material.warp.image && material.warp.enabled) {
+	if (material.warp.image && material.warp.enabled && material.warp.image->exists()) {
 		shader["useWarp"](true);
 		shader["warpTexture"](8);
 		material.warp.image->enable(8);
@@ -245,7 +245,7 @@ void setMaterial(Shader& shader, BufferMaterial& material) {
 	shader["albedo"](material.color);
 	shader["accent"](material.accent);
 	// Set mask data
-	if (material.mask.enabled && material.mask.image) {
+	if (material.mask.enabled && material.mask.image && material.mask.image->exists()) {
 		shader["useMask"](true);
 		shader["mask"](0);
 		material.mask.image->enable(0);
@@ -256,7 +256,7 @@ void setMaterial(Shader& shader, BufferMaterial& material) {
 		shader["maskScale"](material.mask.trans.scale);
 	} else shader["useMask"](false);
 	// Set texture warping data
-	if (material.warp.image && material.warp.enabled) {
+	if (material.warp.image && material.warp.enabled && material.warp.image->exists()) {
 		shader["useWarp"](true);
 		shader["warpTexture"](8);
 		material.warp.image->enable(8);

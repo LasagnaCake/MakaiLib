@@ -97,7 +97,6 @@ public:
 		addToGame(this, "DanmakuGame");
 		mesh.setRenderLayer($layer(ITEM));
 		addToGroup($layer(ITEM));
-		$ecl collisionLayers.addObject(this, $layer(ITEM));
 		mesh.material.shaded = false;
 	})
 

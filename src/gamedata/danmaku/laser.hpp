@@ -126,8 +126,7 @@ typedef std::vector<LineLaser*> LineLaserList;
 template <
 	size_t LASER_COUNT,
 	size_t ACTOR_LAYER = $layer(ENEMY_BULLET),
-	size_t ENEMY_LAYER = $layer(PLAYER),
-	size_t COLLI_LAYER = ACTOR_LAYER
+	size_t ENEMY_LAYER = $layer(PLAYER)
 >
 class LineLaserManager: Entity {
 public:
@@ -137,7 +136,6 @@ public:
 		addToGame(this, "DanmakuGame");
 		mesh.setRenderLayer(ACTOR_LAYER);
 		addToGroup(ACTOR_LAYER);
-		$ecl collisionLayers.addObject(this, COLLI_LAYER);
 		mesh.material.shaded = false;
 	})
 
@@ -302,8 +300,8 @@ private:
 	LineLaser* last = nullptr;
 };
 
-typedef LineLaserManager<PLAYER_LASER_COUNT, $layer(PLAYER_LASER), $layer(ENEMY), $layer(PLAYER)>	PlayerLineLaserManager;
-typedef LineLaserManager<ENEMY_LASER_COUNT, $layer(ENEMY_LASER), $layer(PLAYER), $layer(ENEMY)>		EnemyLineLaserManager;
+typedef LineLaserManager<PLAYER_LASER_COUNT, $layer(PLAYER_LASER), $layer(ENEMY)>	PlayerLineLaserManager;
+typedef LineLaserManager<ENEMY_LASER_COUNT, $layer(ENEMY_LASER), $layer(PLAYER)>	EnemyLineLaserManager;
 
 PlayerLineLaserManager*	playerLineLaserManager = nullptr;
 EnemyLineLaserManager*	enemyLineLaserManager = nullptr;

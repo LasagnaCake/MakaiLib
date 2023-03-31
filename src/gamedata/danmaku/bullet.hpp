@@ -99,8 +99,7 @@ typedef std::vector<Bullet*> BulletList;
 template <
 	size_t BULLET_COUNT,
 	size_t ACTOR_LAYER = $layer(ENEMY_BULLET),
-	size_t ENEMY_LAYER = $layer(PLAYER),
-	size_t COLLI_LAYER = ACTOR_LAYER
+	size_t ENEMY_LAYER = $layer(PLAYER)
 >
 class BulletManager: Entity {
 public:
@@ -110,7 +109,6 @@ public:
 		addToGame(this, "DanmakuGame");
 		mesh.setRenderLayer(ACTOR_LAYER);
 		addToGroup(ACTOR_LAYER);
-		$ecl collisionLayers.addObject(this, COLLI_LAYER);
 		mesh.material.shaded = false;
 	})
 
@@ -353,8 +351,8 @@ private:
 	Bullet* last = nullptr;
 };
 
-typedef BulletManager<PLAYER_BULLET_COUNT, $layer(PLAYER_BULLET), $layer(ENEMY), $layer(PLAYER)>	PlayerBulletManager;
-typedef BulletManager<ENEMY_BULLET_COUNT, $layer(ENEMY_BULLET), $layer(PLAYER), $layer(ENEMY)>		EnemyBulletManager;
+typedef BulletManager<PLAYER_BULLET_COUNT, $layer(PLAYER_BULLET), $layer(ENEMY)>	PlayerBulletManager;
+typedef BulletManager<ENEMY_BULLET_COUNT, $layer(ENEMY_BULLET), $layer(PLAYER)>		EnemyBulletManager;
 
 PlayerBulletManager*	playerBulletManager	= nullptr;
 EnemyBulletManager*		enemyBulletManager	= nullptr;
