@@ -34,12 +34,11 @@ struct EnemyEntity2D: public AreaCircle2D {
 
 	$bar RadialBar healthBar;
 
-	virtual void onDelete() {
-	}
+	virtual void onDelete() {}
 
-	virtual void onDeath() {
-		queueDestroy();
-	}
+	virtual void onDeath() {queueDestroy();}
+
+	virtual void onDamage() {}
 
 	void onFrame(float delta) override {
 		updateSprite();
@@ -55,14 +54,17 @@ struct EnemyEntity2D: public AreaCircle2D {
 			if (e->isInGroup($layer(PLAYER_BULLET))) {
 				if (player) health -= player->damage.bullet;
 				else health -= defaults.playerDamage.bullet;
+				onDamage();
 			}
 			if (e->isInGroup($layer(PLAYER_LASER))) {
 				if (player) health -= player->damage.laser;
 				else health -= defaults.playerDamage.laser;
+				onDamage();
 			}
 			if (e->isInGroup($layer(PLAYER_BOMB))) {
 				if (player) health -= player->damage.bomb;
 				else health -= defaults.playerDamage.bomb;
+				onDamage();
 			}
 		}
 		auto obj = (PlayerEntity2D*)e;
