@@ -66,6 +66,9 @@ INCLUDES		:= -Ilib -Isrc -Ilib\SDL2-2.0.10\include -Ilib\OpenGL -Ilib\OpenGL\GLE
 
 LIBRARIES		:= lib\SDL2-2.0.10\lib\libSDL2.dll.a lib\SDL2-2.0.10\lib\libSDL2main.a lib\SDL2-2.0.10\lib\libSDL2_mixer.dll.a lib\OpenGL\GLEW\lib\libglew32.dll.a -lopengl32 -lgomp -lpowrprof -lwinmm lib\libzipp-v6.0-1.9.2\lib\libzippp.a
 
+# This doesn't work. Oh well.
+# SANITIZER_OPTIONS := -fsanitize=leak -fsanitize=memory
+
 # TODO: Clean up this mess
 
 ifneq ($(debug-profile), 0)
@@ -106,10 +109,10 @@ debug: build\$(src)
 	@mkdir -p obj\$@
 	
 	@echo "[0/2] compiling [$@]..."
-	@$(CXX) $(COMPILER_CONFIG) -Wall -Wpedantic $(SAFE_MATH) -pg -Og -g -fsanitize=leak -fno-omit-frame-pointer -D_DEBUG_OUTPUT_ $(macro) $(INCLUDES) -c build\$(src) -o obj/$@/$(name).o
+	@$(CXX) $(COMPILER_CONFIG) -Wall -Wpedantic $(SAFE_MATH) -pg -Og -g $(SANITIZER_OPTIONS) -fno-omit-frame-pointer -D_DEBUG_OUTPUT_ $(macro) $(INCLUDES) -c build\$(src) -o obj/$@/$(name).o
 	
 	@echo "[1/2] linking libraries..."
-	@$(CXX) -o res/$(name)_$@.exe obj/$@/$(name).o  $(LINKER_CONFIG) -pg -Og $(LIBRARIES)
+	@$(CXX) -o res/$(name)_$@.exe obj/$@/$(name).o  $(LINKER_CONFIG) -pg -Og $(LIBRARIES) $(SANITIZER_OPTIONS)
 	
 	@echo "[2/2] Done!"
 	$(MAKE_CLEAN)
