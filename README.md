@@ -32,7 +32,7 @@ No plans to support 32-bit systems.
 
 ## How To Use
 
-1) Create a C++ source file within the ```build/``` directory (create if nonexistent);
+1) Create a C++ source file within the ```build/``` directory (create directory if nonexistent);
 2) Add ```#include <makai.hpp>``` in your source file;
 3) Program your game <mark>(TODO: Tutorial and Documentation)</mark>;
 4) Open root directory on command line (MSYS MinGW64 or Cygwin, if you're using it);
@@ -53,6 +53,7 @@ These are already included in the ```lib/``` folder.
 |:--:|:---|
 | SDL2 | Graphical rendering |
 | SDL2_Mixer | Audio backend |
+| GLM | (some) 3D Math |
 | stb_image | Image loading |
 | cute_c2 | Collision |
 | mINI | Savefile handling |
