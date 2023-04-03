@@ -83,12 +83,12 @@ struct GameUI {
 	}
 };
 
-/// "Single Bar Type" Game UI alias
+/// "Single Bar Type" Game UI alias.
 template<BarType T = LinearBar>
 using SimpleGameUI = GameUI<T, T, T, T, T>;
 
 
-/// "Power, Resources, Bits" Game UI alias
+/// "Power, Resources, Bits" Game UI alias.
 template<
 	BarType POWER		= LinearBar,
 	BarType RESOURCES	= LinearBar,
@@ -96,7 +96,7 @@ template<
 >
 using PRBGameUI = GameUI<POWER, RESOURCES, RESOURCES, BITS, BITS>;
 
-/// "Power, Life, Bomb" Game UI alias
+/// "Power, Life, Bomb" Game UI alias.
 template<
 	BarType POWER	= LinearBar,
 	BarType LIFE	= LinearBar,
