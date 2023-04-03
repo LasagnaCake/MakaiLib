@@ -39,7 +39,7 @@ namespace UI {
 			prevOptTimer.paused		= true;
 		})
 
-		~BaseMenu() {
+		virtual ~BaseMenu() {
 			clearOptions();
 		}
 
@@ -145,6 +145,7 @@ namespace UI {
 		void setTopLevelOption() {do returnOption(); while (current->previous);}
 
 		void selectOption() {
+			if (!current) return;
 			current->onSelected(current);
 			if (current->next.empty()) {
 				onFinalOption(current);
@@ -172,12 +173,12 @@ namespace UI {
 
 		KeyBinds keys;
 
-		virtual void onReturn()														{}
-		virtual void onExit()														{}
-		virtual void onFinalOption(Option* opt)										{}
-		virtual void onOptionSelected(Option* opt)									{}
-		virtual void onOptionChanged(Option* prev, Option* next)					{}
-		virtual void onOptionSetChanged(OptionSet const& prev, OptionSet const& next)	{}
+		virtual void onReturn()															{$debug("Return!");}
+		virtual void onExit()															{$debugp("Menu Exited!");}
+		virtual void onFinalOption(Option* opt)											{$debugp("Final Option Selected: "); $debug(opt->id);}
+		virtual void onOptionSelected(Option* opt)										{$debugp("Option Selected: "); $debug(opt->id);}
+		virtual void onOptionChanged(Option* prev, Option* next)						{$debugp("Option Changed: "); $debugp(prev->id); $debugp(" -> "); $debug(next->id);}
+		virtual void onOptionSetChanged(OptionSet const& prev, OptionSet const& next)	{$debug("Option Set Changed!");}
 
 		bool action(std::string what, bool justPressed = false) {
 			if (keys[what] == SDL_SCANCODE_UNKNOWN)
