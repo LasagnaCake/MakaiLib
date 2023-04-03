@@ -16,6 +16,23 @@ struct GameUI {
 	Texture2D		fontTX;
 	FontData		font{&fontTX};
 
+	void show()	{	setVisible(true);	}
+
+	void hide()	{	setVisible(false);	}
+
+	void setVisible(bool visibility = true) {
+		power.bar.active	=
+		power.label.active	=
+		life.active			=
+		bomb.active			=
+		lifeBit.active		=
+		bombBit.active		=
+		score.active		=
+		hiScore.active		=
+		point.active		=
+		graze.active		= visibility;
+	}
+
 	GameUI() {
 		power.bar.setRenderLayer($layer(UI));
 		life.setRenderLayer($layer(UI));

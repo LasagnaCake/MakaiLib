@@ -9,8 +9,8 @@ struct PlayerData {
 	size_t	life	= 0;
 	size_t	bomb	= 0;
 	size_t	extra	= 0;
-	float	lifeBit	= 0;
-	float	bombBit	= 0;
+	size_t	lifeBit	= 0;
+	size_t	bombBit	= 0;
 };
 
 struct Familiar2D: Entity2D {
@@ -198,7 +198,7 @@ struct PlayerEntity2D: AreaCircle2D {
 		data.graze += count;
 	}
 
-	virtual void onItemGet(size_t type, float quantity) {
+	virtual void onItemGet(size_t type, size_t quantity) {
 		switch (type) {
 			case $item(POWER):		data.power		+= quantity; break;
 			case $item(POINT):		data.point		+= quantity; break;
