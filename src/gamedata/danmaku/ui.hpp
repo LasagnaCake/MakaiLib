@@ -82,3 +82,24 @@ struct GameUI {
 		hiScore.text.content		= std::to_string(score);
 	}
 };
+
+/// "Single Bar Type" Game UI alias
+template<BarType T = LinearBar>
+using SimpleGameUI = GameUI<T, T, T, T, T>;
+
+
+/// "Power, Resources, Bits" Game UI alias
+template<
+	BarType POWER		= LinearBar,
+	BarType RESOURCES	= LinearBar,
+	BarType BITS		= LinearBar
+>
+using PRBGameUI = GameUI<POWER, RESOURCES, RESOURCES, BITS, BITS>;
+
+/// "Power, Life, Bomb" Game UI alias
+template<
+	BarType POWER	= LinearBar,
+	BarType LIFE	= LinearBar,
+	BarType BOMB	= LinearBar
+>
+using PLBGameUI = GameUI<POWER, LIFE, BOMB, LIFE, BOMB>;
