@@ -76,7 +76,7 @@ GMON_OUT := -lgmon
 endif
 
 ifeq ($(keep-o-files), 0)
-MAKE_CLEAN := @make clean CLEAN_TARGET=obj/$@ --no-print-directory
+MAKE_CLEAN := @make clean CLEAN_TARGET=obj/$@ --no-print-directory -j1
 endif
 
 CLEAN_TARGET ?= obj

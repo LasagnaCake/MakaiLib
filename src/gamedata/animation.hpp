@@ -50,7 +50,7 @@ namespace Animation {
 
 		Animation<T> animation;
 
-		$tev Signal<AnimationPlayer<T>> onAllAnimationsDone = $tsignal(auto& target) {};
+		$tev Signal<AnimationPlayer<T>*> onAllAnimationsDone = $tsignal(auto& target) {};
 
 		void onFrame(float delta) override {
 			if (!playing)	return;

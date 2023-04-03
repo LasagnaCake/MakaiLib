@@ -13,6 +13,9 @@ public:
 #define RADIAL_BAR_RESOLUTION 12
 #endif // RADIAL_BAR_RESOLUTION
 
+template<class T>
+concept BarType = Type::Subclass<T, BaseBar>;
+
 class LinearBar: public DrawableObject, public BaseBar {
 public:
 
@@ -79,6 +82,12 @@ private:
 			Drawer::vertexSetUV(vertices[i], (((VecMath::angleV2(uvfrac + uvAngle) / 2.0) + 0.5)));
 		}
 	}
+};
+
+template<BarType T = RadialBar>
+struct LabeledBar {
+	T			bar;
+	Text::Label	label;
 };
 
 #define $bar RenderData::Bar::

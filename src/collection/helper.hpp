@@ -2,6 +2,10 @@
 #define HELPING_HAND_H
 
 #include <vector>
+#ifdef _USE_CPP20_FORMAT_
+#include <format>
+#endif // _USE_CPP20_FORMAT_
+#include "conceptual.hpp"
 #include "definitions.hpp"
 
 namespace Helper {
@@ -9,7 +13,8 @@ namespace Helper {
 		using
 			std::vector,
 			std::map,
-			std::unordered_map;
+			std::unordered_map,
+			std::string;
 	}
 
 	template<typename T, typename T2>
@@ -55,6 +60,21 @@ namespace Helper {
 		}
 		return values;
 	}
+	// If you're using a compiler that supports it, please enable it.
+	// God fucking dammit, MSYS2.
+	#ifdef _USE_CPP20_FORMAT_
+	template<Type::Number T>
+	string floatString(T val, size_t precision = 2) {
+		return std::format(std::format("{{:.{}f}}", precision), val);
+	}
+	#else
+	template<Type::Number T>
+	string floatString(T val, size_t precision = 1) {
+		std::stringstream ss;
+		ss << std::fixed << std::setprecision(precision) << val;
+		return ss.str();
+	}
+	#endif // _USE_CPP20_FORMAT_
 }
 
 namespace Time {

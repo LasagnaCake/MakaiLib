@@ -34,7 +34,6 @@ namespace GameData {
 		$ecl Entity2D,
 		$ecl Entity,
 		$rdt Renderable,
-		$txt Label,
 		$ref AnimatedPlane,
 		$drw Texture2D,
 		$vmt Transform2D,
@@ -52,6 +51,7 @@ namespace GameData {
 
 		using namespace Vector;
 		using namespace RenderData::Bar;
+		using namespace RenderData::Text;
 
 		namespace Reference {using namespace RenderData::Reference;}
 
@@ -84,6 +84,7 @@ namespace GameData {
 	#include "gamedata/dialogue.hpp"
 	#include "gamedata/saving.hpp"
 	#include "gamedata/animation.hpp"
+	#include "gamedata/ui.hpp"
 
 	#ifdef $_DANMAKU_GAME
 
@@ -111,6 +112,7 @@ namespace GameData {
 		#include "gamedata/danmaku/boss.hpp"
 		#include "gamedata/danmaku/stage.hpp"
 		#include "gamedata/danmaku/program.hpp"
+		#include "gamedata/danmaku/ui.hpp"
 	}
 
 	#endif

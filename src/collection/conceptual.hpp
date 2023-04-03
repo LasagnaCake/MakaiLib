@@ -12,6 +12,9 @@ namespace Type {
 	concept Real = std::floating_point<T>;
 
 	template <typename T>
+	concept Number = Integer<T> || Real<T>;
+
+	template <typename T>
 	concept Unsigned = std::unsigned_integral<T>;
 
 	template <typename T>
