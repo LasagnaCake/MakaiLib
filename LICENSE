@@ -1,6 +1,6 @@
 Modified MIT License
 
-Copyright (c) 2022 LasagnaCake
+Copyright (c) 2023 LasagnaCake
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -10,13 +10,18 @@ copies of the Software, and to permit persons to whom the Software is
 furnished to do so, subject to the following conditions:
 
 1) This software (and its derivatives, if derivatives are allowed) must not
-be used for works, projects, and etcetera relating to or containing non-
--fungible tokens (so-called "NFT") or blockchain (related) projects;
-
-2) This software (and its derivatives, if derivatives are allowed) must not
-be used for works, projects, and etcetera relating to or containing any form
-of espionage, datamining, telemetry, stalking and/or collecting personal data
-for the purposes of marketing, advertisement, and/or selling said data;
+be used for works, projects, and etcetera relating to or containing:
+    1.1) Non-fungible tokens (so-called "NFT") or blockchain (related)
+    projects;
+    1.2) Any form of espionage, datamining, telemetry, stalking and/or
+    collecting personal data for the purposes of marketing, advertisement,
+    policing, and/or selling said data;
+	1.3) Any concept of bigotry, racism, classism, ableism, queerphoba,
+    xenophobia, eugenicism, fascism (and etcetera) that:
+        1.3.1) Acts on it;
+        1.3.2) Encourages and/or enforces it;
+        1.3.4) Encourages turning a blind eye to it;
+        1.3.3) Portrays it in a positive light;
 
 3) The above copyright notice and this permission notice shall be included
 in all copies or substantial portions of the Software.
