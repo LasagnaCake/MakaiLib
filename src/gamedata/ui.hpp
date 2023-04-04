@@ -54,7 +54,7 @@ namespace UI {
 			if (action("previous", true))	nextOption();
 			nextOptTimer.paused = !(actionHeld("next") && !action("previous"));
 			prevOptTimer.paused = !(actionHeld("previous") && !action("next"));
-			for(auto& o : all)
+			for(auto& o : currentSet)
 				o->onFrame(o);
 		}
 
