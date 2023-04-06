@@ -1,3 +1,5 @@
+typedef Helper::FloatFormat<float> PowerFormat;
+
 template<
 	BarType POWER_T		= LinearBar,
 	BarType LIFE_T		= LinearBar,
@@ -84,8 +86,9 @@ struct GameUI {
 	}
 
 	void setUIValues(PlayerData const& data) {
+		auto pv	= onPowerRequest(data.power);
 		power.bar.value				= data.power;
-		power.label.text.content	= Helper::floatString(data.power, 2);
+		power.label.text.content	= Helper::floatString(pv);
 		point.text.content			= std::to_string(data.point);
 		graze.text.content			= std::to_string(data.graze);
 		score.text.content			= std::to_string(data.score);
@@ -98,6 +101,8 @@ struct GameUI {
 	void setHighScore(size_t score) {
 		hiScore.text.content		= std::to_string(score);
 	}
+
+	std::function<PowerFormat(size_t)> onPowerRequest = [](size_t power){return PowerFormat(power, 0);};
 };
 
 /// "Single Bar Type" Game UI alias.
