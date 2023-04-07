@@ -86,9 +86,8 @@ struct GameUI {
 	}
 
 	void setUIValues(PlayerData const& data) {
-		auto pv	= onPowerRequest(data.power);
 		power.bar.value				= data.power;
-		power.label.text.content	= Helper::floatString(pv);
+		power.label.text.content	= onPowerStringRequest(power);
 		point.text.content			= std::to_string(data.point);
 		graze.text.content			= std::to_string(data.graze);
 		score.text.content			= std::to_string(data.score);
@@ -102,7 +101,7 @@ struct GameUI {
 		hiScore.text.content		= std::to_string(score);
 	}
 
-	std::function<PowerFormat(size_t)> onPowerRequest = [](size_t power){return PowerFormat(power, 0);};
+	std::function<std::string(size_t)> onPowerStringRequest = [](size_t power){return std::string(power);};
 };
 
 /// "Single Bar Type" Game UI alias.
