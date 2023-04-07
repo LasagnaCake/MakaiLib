@@ -181,8 +181,6 @@ namespace UI {
 		virtual void onOptionSetChanged(OptionSet const& prev, OptionSet const& next)	{$debug("Option Set Changed!");}
 
 		bool action(std::string what, bool justPressed = false) {
-			if (keys[what] == SDL_SCANCODE_UNKNOWN)
-				return false;
 			if (justPressed)
 				return input.isButtonJustPressed(keys[what]);
 			else
@@ -190,14 +188,10 @@ namespace UI {
 		}
 
 		bool actionHeld(std::string what) {
-			if (keys[what] == SDL_SCANCODE_UNKNOWN)
-				return false;
 			return input.isButtonHeld(keys[what]);
 		}
 
 		size_t actionState(std::string what) {
-			if (keys[what] == SDL_SCANCODE_UNKNOWN)
-				return false;
 			return input.getButtonState(keys[what]);
 		}
 
