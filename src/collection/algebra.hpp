@@ -5,8 +5,8 @@
 #include <cmath>
 #include <random>
 #include <limits>
-#include <chrono>
 #include "conceptual.hpp"
+#include "helper.hpp"
 
 #define ANYTYPE			template<Operatable T> T
 #define ANYTYPE_I		template<Operatable T> inline T
@@ -35,7 +35,9 @@ namespace Math {
 	constexpr const double	tau			= 6.2831853071795864769252867666;
 	constexpr const double	euler		= 2.7182818284590452353602874714;
 	constexpr const double	degrad		= 180.0 / pi;
-	constexpr const double	maribel		= euler - (sqrt2 - 1.0) * 1.2;
+	constexpr const double	maribel		= euler - (sqrt2 - 1.0) * (sqrt2 - 0.2);
+	constexpr const double	phi			= 1.6180339887498948482045868343;
+	constexpr const double	tauphi		= tau / phi;
 	constexpr const size_t	maxSizeT	= $maxof(size_t);
 	constexpr const double	infinity	= std::numeric_limits<double>::infinity();
 	constexpr const float	infinityF	= std::numeric_limits<float>::infinity();
@@ -43,44 +45,52 @@ namespace Math {
 	constexpr const float	epsilonF	= 1.0 / infinityF;
 
 	#ifndef SQRT2
-	#define SQRT2 $mth sqrt2
+	#define SQRT2 Math::sqrt2
 	#endif // SQRT2
 
 	#ifndef HSQRT2
-	#define HSQRT2 $mth hsqrt2
+	#define HSQRT2 Math::hsqrt2
 	#endif // HSQRT2
 
 	#ifndef LN2
-	#define LN2 $mth ln2
+	#define LN2 Math::ln2
 	#endif // LN2
 
 	#ifndef PI
-	#define PI $mth pi
+	#define PI Math::pi
 	#endif // PI
 
 	#ifndef HPI
-	#define HPI $mth hpi
+	#define HPI Math::hpi
 	#endif // HPI
 
 	#ifndef QPI
-	#define QPI $mth qpi
+	#define QPI Math::qpi
 	#endif // HPI
 
 	#ifndef TAU
-	#define TAU $mth tau
+	#define TAU Math::tau
 	#endif // TAU
 
 	#ifndef EULER
-	#define EULER $mth euler
+	#define EULER Math::euler
 	#endif // EULER
 
+	#ifndef PHI
+	#define PHI Math::phi
+	#endif // PHI
+
 	#ifndef DEGRAD
-	#define DEGRAD $mth degrad
+	#define DEGRAD Math::degrad
 	#endif // DEGRAD
 
 	#ifndef MARIBEL
-	#define MARIBEL $mth maribel
+	#define MARIBEL Math::maribel
 	#endif // DEGRAD
+
+	CONST_ANYTYPE_I sign(T val) {
+		return (val < 0 ? -1 : (val > 0 ? +1 : 0));
+	}
 
 	CONST_ANYTYPE_I min(T a, T b) {
 		return ((a < b) ? a : b);
@@ -208,10 +218,6 @@ namespace Math {
 		return nroot(val, val);
 	}
 
-	CONST_ANYTYPE_I sign(T val) {
-		return (val < 0 ? -1 : (val > 0 ? +1 : 0));
-	}
-
 	inline size_t digitCount(size_t number) {
 		return std::to_string(number).size();
 	}
@@ -299,17 +305,8 @@ namespace Math {
 		namespace {
 			typedef std::uniform_real_distribution<double> RandReal;
 			typedef std::uniform_int_distribution<size_t> RandLong;
-			// I think I just saw hell.
-			size_t _getSeed() {
-				auto time =
-					std::chrono::duration_cast<std::chrono::microseconds>(
-						std::chrono::system_clock::now()
-						.time_since_epoch()
-					);
-				return time.count();
-			}
 			// The random number generator engine used
-			std::default_random_engine	engine{_getSeed()};
+			std::default_random_engine	engine{Time::sinceEpoch<Time::Millis>()};
 			// Default distributions
 			RandReal	longDist(0, maxSizeT);
 			RandLong	realDist(0.0,1.0);
@@ -346,21 +343,23 @@ namespace Math {
 
 		/// Gets a seed based on the current clock's time, and a random number.
 		inline size_t getNewSeed() {
-			return _getSeed() ^ !(integer() << 0x2F);
+			return Time::sinceEpoch<Time::Millis>() ^ !(integer() << 0x2F);
 		}
 	}
 }
 
 #ifndef nrtn
-#define nrtn(val) $mth nrtn(val);
+#define nrtn(val) Math::nrtn(val);
 #endif // nrtn
 
 #ifndef nroot
-#define nroot(val, root) $mth nroot(val, root)
+#define nroot(val, root) Math::nroot(val, root)
 #endif // nroot
 
 #define $mth Math::
 #define $rng Math::Random::
+
+#define RNG	Math::Random
 
 #undef CONST_ANYTYPE_I
 #undef CONST_ANYTYPE

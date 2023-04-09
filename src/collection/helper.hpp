@@ -89,13 +89,11 @@ namespace Helper {
 }
 
 namespace Time {
-	namespace {
-		$getspace(std, chrono)
-		typedef chrono::system_clock _clock;
-		auto start = _clock::now();
-	}
+	namespace {namespace chrono {using namespace std::chrono;}}
 
-	typedef _clock	Clock;
+	typedef chrono::system_clock	Clock;
+
+	namespace {auto start = Clock::now();}
 
 	typedef chrono::years			Years;
 	typedef chrono::months			Months;
@@ -110,13 +108,13 @@ namespace Time {
 
 	/// Gets the current time, since the epoch (Jan 1st, 1970).
 	template <class T = Micros>
-	size_t sinceEpoch() {
+	constexpr inline size_t sinceEpoch() {
 		return chrono::duration_cast<T>(Clock::now().time_since_epoch()).count();
 	}
 
 	/// Gets the current time, since program start.
 	template <class T = Micros>
-	size_t sinceStart() {
+	constexpr inline size_t sinceStart() {
 		return chrono::duration_cast<T>(Clock::now() - start).count();
 	}
 }
