@@ -28,7 +28,8 @@ No plans to support 32-bit systems.
 ## Requirements
 
 ### Windows
-- GCC via MinGW (MSYS (Recommended), Cygwin, TDM-GCC)
+
+- GCC via MinGW (MSYS (Recommended), Cygwin, TDM-GCC) (DOES NOT SUPPORT CLANG)
 
 ## How To Use
 
@@ -67,7 +68,9 @@ Currently nonexistent. Some of the code is commented.
 ### Current
 
 - GUI system
+- Menu system
 - Spellcard system
+- Bugs & Errors (see [issues.txt](issues.txt))
 
 ### Future
 
