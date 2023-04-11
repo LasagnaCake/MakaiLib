@@ -70,7 +70,7 @@ Currently nonexistent. Some of the code is commented.
 - GUI system
 - Menu system
 - Spellcard system
-- Bugs & Errors (see [issues.txt](issues.txt))
+- Bugs & Errors (see [Issues.txt](Issues.txt))
 
 ### Future
 
