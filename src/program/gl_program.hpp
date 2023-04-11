@@ -280,7 +280,7 @@ namespace Makai {
 				cycleDelta	= 1.0/maxCycleRate;
 				// If should process, then do so
 				#ifndef $_PROCESS_RENDER_BEFORE_LOGIC
-				if (SDL_GetTicks() - cycleTicks > cycleDelta * 1000) {
+				if (SDL_GetTicks() - cycleTicks > (cycleDelta * 1000) / speed) {
 					// Update audio system
 					Audio::updateAudioSystem();
 					// Update input manager
@@ -292,7 +292,7 @@ namespace Makai {
 					// Do timer-related stuff
 					timerFunc(cycleDelta);
 					taskers.yield(cycleDelta);
-					#ifdef $_FRAME_INDEPENDENT_PROCESS
+					#ifndef $_FRAME_DEPENDENT_PROCESS
 					// Do normal logic-related stuff
 					logicFunc(cycleDelta);
 					onLogicFrame(cycleDelta);
@@ -301,14 +301,14 @@ namespace Makai {
 					#endif // FRAME_DEPENDENT_PROCESS
 				}
 				#endif
-				if (SDL_GetTicks() - frameTicks > frameDelta * 1000) {
+				if (SDL_GetTicks() - frameTicks > (frameDelta * 1000)) {
 					// Get current time
 					frameTicks = SDL_GetTicks();
 					// increment frame counter
 					frame++;
 					// Update audio system
 					// TODO: Audio System
-					#ifndef $_FRAME_INDEPENDENT_PROCESS
+					#ifdef $_FRAME_DEPENDENT_PROCESS
 					// Do normal logic-related stuff
 					logicFunc(frameDelta);
 					onLogicFrame(frameDelta);
@@ -319,7 +319,7 @@ namespace Makai {
 					render();
 				}
 				#ifdef $_PROCESS_RENDER_BEFORE_LOGIC
-				if (SDL_GetTicks() - cycleTicks > cycleDelta * 1000) {
+				if (SDL_GetTicks() - cycleTicks > (cycleDelta * 1000) / speed) {
 					// Update audio system
 					Audio::updateAudioSystem();
 					// Update input manager
@@ -331,7 +331,7 @@ namespace Makai {
 					// Do timer-related stuff
 					timerFunc(cycleDelta);
 					taskers.yield(cycleDelta);
-					#ifdef $_FRAME_INDEPENDENT_PROCESS
+					#ifndef $_FRAME_DEPENDENT_PROCESS
 					// Do normal logic-related stuff
 					logicFunc(cycleDelta);
 					onLogicFrame(cycleDelta);
@@ -444,7 +444,10 @@ namespace Makai {
 		float maxFrameRate = 30.0;
 
 		/// The program's maximum "cycles per second" count.
-		float maxCycleRate = 60;
+		float maxCycleRate = 60.0;
+
+		/// The program's speed scale.
+		float speed = 1;
 
 		/// The program's taskers.
 		Tasking::MultiTasker taskers;
