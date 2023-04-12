@@ -625,12 +625,12 @@ namespace Popup {
 	* Returns the selected button (by index);
 	*/
 	int dialogBox(
-		String title,
-		String text,
-		StringList options = Option::OK,
+		String const& title,
+		String const& text,
+		StringList const& options = Option::OK,
 		Uint32 type = SDL_MESSAGEBOX_INFORMATION,
 		SDL_Window* window = NULL,
-		SDL_MessageBoxColorScheme colorScheme = defaultMessageBoxColorScheme
+		SDL_MessageBoxColorScheme const& colorScheme = defaultMessageBoxColorScheme
 	) {
 		#if (_WIN32 || _WIN64 || __WIN32__ || __WIN64__)
 		SetProcessDPIAware();
