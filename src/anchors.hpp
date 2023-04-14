@@ -133,6 +133,7 @@
 #include "collection/dictionary.hpp"
 
 #include "fileloader.hpp"
+#include "predefs.hpp"
 
 #ifdef _USE_OPENMP_
 #ifndef _DEBUG_OUTPUT_

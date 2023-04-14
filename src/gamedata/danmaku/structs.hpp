@@ -16,7 +16,7 @@ struct Pause {
 	bool enabled	= false;
 };
 
-struct GenericObjectData {
+struct MODULAR GenericObjectData {
 	// Collision data
 	CircleBounds2D	hitbox;
 	// Flags

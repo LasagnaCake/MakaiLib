@@ -74,5 +74,6 @@ Currently nonexistent. Some of the code is commented.
 
 ### Future
 
+- "De-headerify" library
 - Replace raw pointers with smart pointers (see [referential.hpp](src/collection/referential.hpp))
 - "C++20 coroutine"-ify [tasking system](src/collection/tasking.hpp)

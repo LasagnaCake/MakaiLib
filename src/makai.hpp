@@ -12,6 +12,7 @@
 #pragma GCC diagnostic ignored "-Wvolatile"
 #pragma GCC diagnostic ignored "-Wvla"
 #pragma GCC diagnostic ignored "-Wvariadic-macros"
+#pragma GCC diagnostic ignored "-Wattributes"
 
 #include "anchors.hpp"
 #include "audio.hpp"
@@ -22,8 +23,8 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-__declspec(dllexport)	uint32	NvOptimusEnablement = 1;
-__declspec(dllexport)	int		AmdPowerXpressRequestHighPerformance = 1;
+DLL_EXPORT	uint32	NvOptimusEnablement = 1;
+DLL_EXPORT	int		AmdPowerXpressRequestHighPerformance = 1;
 #ifdef __cplusplus
 }
 #endif

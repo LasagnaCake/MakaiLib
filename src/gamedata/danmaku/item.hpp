@@ -3,7 +3,7 @@ struct CollectibleData: GenericObjectData {
 	float value		= 1;
 	float gravity	= 1;
 	float bounce	= 10;
-	bool spin		= false;
+	float spin		= 0;
 	bool pocable	= true;
 };
 
@@ -23,7 +23,7 @@ struct Collectible: DanmakuObject {
 
 	void onFrame(float delta) override {
 		DANMAKU_FRAME_BEGIN;
-		if (params.spin) local.rotation += delta;
+		local.rotation += params.spin;
 		gravity = Math::clamp(gravity + params.gravity * delta, -params.bounce * delta, params.gravity * delta * 10.0f);
 		local.position.y -= gravity;
 		if (pocing && target)
