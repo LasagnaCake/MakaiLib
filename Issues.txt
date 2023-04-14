@@ -1,2 +1,2 @@
 > SDL_Mixer cannot load MP3 files
-[FIXED?] > Buffer Overflow on program exit (~95% of the time)
+> Buffer Overflow on program exit (When not running debug)
