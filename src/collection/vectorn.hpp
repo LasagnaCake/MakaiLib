@@ -917,9 +917,6 @@ namespace Vector{
 		Vector2Type<T>
 	||	Vector3Type<T>
 	||	Vector4Type<T>
-	||	Type::Equal<T, Vector2>
-	||	Type::Equal<T, Vector3>
-	||	Type::Equal<T, Vector4>
 	;
 
 	template<typename T>

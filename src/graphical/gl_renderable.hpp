@@ -498,4 +498,4 @@ Renderable* loadObjectFromBinaryFile(string path) {
 
 #warning Unimplemented Function: 'loadObjectFromGLTFFile'
 [[unavailable("Unimplemented!")]]
-Renderable* loadObjectFromGLTFFile(string path) {}
+Renderable* loadObjectFromGLTFFile(string path) {return nullptr;}
