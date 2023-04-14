@@ -517,16 +517,29 @@ namespace EntityClass {
 		}
 	};
 
+	// I do not know why, but attributing these fixed a Buffer Overflow. WHAT THE FUCK?
+
 	/**
 	* Initializes the root tree.
-	* Gets called upon the first entity's creation, so it
-	* is not necessary to call again.
+	* Gets called upon program start.
 	*/
-	void init() {
+	[[gnu::constructor]] void init() {
 		if (EntityClass::$_ROOT == nullptr) {
 			$debug("Creating root tree...");
 			$_ROOT = new Entity($_ROOT_NAME);
 			$debug("Root tree created!");
+		}
+	}
+
+	/**
+	* Denitializes the root tree.
+	* Gets called upon program end.
+	*/
+	[[gnu::destructor]] void close() {
+		if (EntityClass::$_ROOT != nullptr) {
+			$debug("Destroying root tree...");
+			delete $_ROOT;
+			$debug("Root tree destroyed!");
 		}
 	}
 

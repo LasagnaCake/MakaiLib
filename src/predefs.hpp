@@ -4,15 +4,17 @@
 #ifdef MSVCPP
 #define THREADLOCAL			__declspec(thread)
 #define ALIGN(V)			__declspec(align(V))
-#define NOINLINE			__declspec(noinline)
-#define MODULAR				__declspec(novtable)
 #else
 #define THREADLOCAL			__thread
 #define ALIGN(V)            __attribute__((aligned(V)))
-#define NOINLINE			__attribute__((noinline))
-#define MODULAR				__attribute__((novtable))
 #endif
-// declspecs
+// GCC Attributes
+#define METACTOR			[[gnu::constructor]]
+#define METADTOR			[[gnu::destructor]]
+#define SECTION(NAME)		[[gnu::section(NAME)]]
+// Declspecs
+#define NOINLINE			__declspec(noinline)
+#define MODULAR				__declspec(novtable)
 #define ALLOCATOR			__declspec(allocator)
 #define SETONLY(SETFUNC)	__declspec(property(put=SETFUNC))
 #define GETONLY(GETFUNC)	__declspec(property(get=GETFUNC))
@@ -24,9 +26,14 @@
 #define DEPENDANT			[[carries_dependency]]
 #define ASSUME(EXPR)		[[assume(EXPR)]]
 #define DEPRECATED			[[deprecated]]
+#define UNAVAILABLE			[[unavailable]]
 #define DEADEND				[[noreturn]]
-#define FORCEKEEP			[[nodiscard]]
+#define KEEPRESULT			[[nodiscard]]
 #define UNUSED				[[unused]]
+#define MAYBEUNUSED			[[maybe_unused]]
+#define FALLTHROUGH			[[fallthrough]]
+#define LIKELY				[[likely]]
+#define UNLIKELY			[[unlikely]]
 // Pragmas
 //#define DERIVEONLY		_Pragma("interface")
 // Types
