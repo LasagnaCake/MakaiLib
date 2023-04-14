@@ -888,6 +888,42 @@ namespace Vector{
 				return Vector4(xyz() / w, w);
 			}
 	};
+
+	template<typename T>
+	concept Vector2Type = requires {
+		requires Type::Arithmetic<T, T>;
+		requires Type::Arithmetic<T, float>;
+		requires Type::Constructible<T, float, float>;
+		T::x;
+		T::y;
+	};
+
+	template<typename T>
+	concept Vector3Type = requires {
+		requires Vector2Type<T>;
+		requires Type::Constructible<T, float, float, float>;
+		T::z;
+	};
+
+	template<typename T>
+	concept Vector4Type = requires {
+		requires Vector3Type<T>;
+		requires Type::Constructible<T, float, float, float, float>;
+		T::w;
+	};
+
+	template<typename T>
+	concept VectorType =
+		Vector2Type<T>
+	||	Vector3Type<T>
+	||	Vector4Type<T>
+	||	Type::Equal<T, Vector2>
+	||	Type::Equal<T, Vector3>
+	||	Type::Equal<T, Vector4>
+	;
+
+	template<typename T>
+	concept Vectorable = Type::Equal<T, float> || VectorType<T>;
 }
 
 #define $vec	Vector::
@@ -916,12 +952,6 @@ namespace VecMath
 	namespace {
 		using std::vector;
 	}
-
-	template<typename T>
-	concept VectorType = Type::Equal<T, Vector2> || Type::Equal<T, Vector3> || Type::Equal<T, Vector4>;
-
-	template<typename T>
-	concept Vectorable = Type::Equal<T, float> || VectorType<T>;
 
 	// Vector rotation
 
@@ -1263,9 +1293,9 @@ namespace VecMath
 			this->rotation	= rotation;
 			this->scale		= scale;
 		}
-		T		position = T(0.0);
-		ROT_T	rotation = ROT_T(0.0);
-		T		scale = T(1.0);
+		T		position	= T(0.0);
+		ROT_T	rotation	= ROT_T(0.0);
+		T		scale		= T(1.0);
 	};
 
 	typedef Transform<Vector2, float>	Transform2D;

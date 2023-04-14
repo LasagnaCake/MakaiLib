@@ -539,6 +539,7 @@ namespace EntityClass {
 		if (EntityClass::$_ROOT != nullptr) {
 			$debug("Destroying root tree...");
 			delete $_ROOT;
+			$_ROOT = nullptr;
 			$debug("Root tree destroyed!");
 		}
 	}
