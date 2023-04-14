@@ -42,8 +42,8 @@ sath			?= 0
 CC 	?= gcc
 CXX ?= g++
 
-COMPILER_CONFIG	:= -fexpensive-optimizations -flto -m64 -std=gnu++20 -fcoroutines
-LINKER_CONFIG	:= -flto -static-libstdc++ -static-libgcc -static -m64
+COMPILER_CONFIG	:= -fexpensive-optimizations -flto -m64 -std=gnu++20 -fcoroutines -fms-extensions
+LINKER_CONFIG	:= -flto -static-libstdc++ -static-libgcc -static -m64 -fms-extensions
 
 ifeq ($(sath), 1)
 meth 				:= 0
