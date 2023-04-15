@@ -54,8 +54,10 @@ ifeq ($(meth), 1)
 MATH_OPTIMIZATIONS	:= -ffast-math -fsingle-precision-constant
 endif
 
+OPTIMIZATIONS	:= $(MATH_OPTIMIZATIONS)
+
 ifeq ($(use-openmp), 1)
-OPTIMIZATIONS	:= -fopenmp -openmp -ftree-parallelize-loops=128 -funswitch-loops -fpredictive-commoning -fgcse-after-reload -ftree-vectorize
+OPTIMIZATIONS	+= -fopenmp -openmp -ftree-parallelize-loops=128 -funswitch-loops -fpredictive-commoning -fgcse-after-reload -ftree-vectorize
 OPENMP_ENABLED	:= -D_USE_OPENMP_
 optimize-lvl	?= 1
 else
@@ -131,7 +133,7 @@ demo: build\$(src)
 	@mkdir -p obj\$@
 	
 	@echo "[0/2] compiling [$@]..."
-	@$(CXX) $(COMPILER_CONFIG) $(WARNINGS) -lwinpthreads $(OPTIMIZATIONS) -O$(optimize-lvl) $(SAFE_MATH) $(OPENMP_ENABLED) $(INCLUDES) -D_DEMO_BUILD_ $(macro) -c build\$(src) -o obj/$@/$(name).o
+	@$(CXX) $(COMPILER_CONFIG) $(WARNINGS) $(OPTIMIZATIONS) -O$(optimize-lvl) $(SAFE_MATH) $(OPENMP_ENABLED) $(INCLUDES) -D_DEMO_BUILD_ $(macro) -c build\$(src) -o obj/$@/$(name).o
 	
 	@echo "[1/2] linking libraries..."
 	@$(CXX) -o res/$(name)_$@.exe obj/$@/$(name).o  $(LINKER_CONFIG) -O$(optimize-lvl)  $(LIBRARIES) $(GUI_MODE)
@@ -153,7 +155,7 @@ release: build\$(src)
 	@mkdir -p obj\$@
 	
 	@echo "[0/2] compiling [$@]..."
-	@$(CXX) $(COMPILER_CONFIG) $(WARNINGS) -lwinpthreads $(OPTIMIZATIONS) -O$(optimize-lvl) $(SAFE_MATH) $(OPENMP_ENABLED) $(INCLUDES) $(macro) -c build\$(src) -o obj/$@/$(name).o
+	@$(CXX) $(COMPILER_CONFIG) $(WARNINGS) $(OPTIMIZATIONS) -O$(optimize-lvl) $(SAFE_MATH) $(OPENMP_ENABLED) $(INCLUDES) $(macro) -c build\$(src) -o obj/$@/$(name).o
 	
 	@echo "[1/2] linking libraries..."
 	@$(CXX) -o res/$(name)_$@.exe obj/$@/$(name).o  $(LINKER_CONFIG) -O$(optimize-lvl)  $(LIBRARIES) $(GUI_MODE)
