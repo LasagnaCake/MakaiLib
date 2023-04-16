@@ -41,9 +41,8 @@ namespace SmartPointer {
 		Pointer(const Pointer<T, false>& other)	{ASSERT_STRONG; bind(other.ref);}
 		Pointer(const Pointer<T, true>& other)	{ASSERT_WEAK;	bind(other.ref);}
 
-		Pointer(const T*& obj) {bind(obj);}
-
-		Pointer(T* obj) {bind(obj);}
+		Pointer(const T* const& obj)	{bind(obj);}
+		Pointer(T* const& obj)			{bind(obj);}
 
 		~Pointer() {unbind();}
 
