@@ -38,6 +38,7 @@ keep-o-files	?= 0
 use-openmp		?= 0
 meth			?= 0
 sath			?= 0
+debug-release	?= 0
 
 CC 	?= gcc
 CXX ?= g++
@@ -81,6 +82,10 @@ ifeq ($(keep-o-files), 0)
 MAKE_CLEAN := @make clean CLEAN_TARGET=obj/$@ --no-print-directory -j1
 endif
 
+ifneq ($(debug-release), 0)
+DEBUG_SYMBOL := -ggdb
+endif
+
 CLEAN_TARGET ?= obj
 
 ifndef warn
@@ -111,7 +116,7 @@ debug: build\$(src)
 	@mkdir -p obj\$@
 	
 	@echo "[0/2] compiling [$@]..."
-	@$(CXX) $(COMPILER_CONFIG) -Wall -Wpedantic $(SAFE_MATH) -pg -Og -g $(SANITIZER_OPTIONS) -fno-omit-frame-pointer -D_DEBUG_OUTPUT_ $(macro) $(INCLUDES) -c build\$(src) -o obj/$@/$(name).o
+	@$(CXX) $(COMPILER_CONFIG) -Wall -Wpedantic $(SAFE_MATH) -pg -Og -ggdb $(SANITIZER_OPTIONS) -fno-omit-frame-pointer -D_DEBUG_OUTPUT_ $(macro) $(INCLUDES) -c build\$(src) -o obj/$@/$(name).o
 	
 	@echo "[1/2] linking libraries..."
 	@$(CXX) -o res/$(name)_$@.exe obj/$@/$(name).o  $(LINKER_CONFIG) -pg -Og $(LIBRARIES) $(SANITIZER_OPTIONS)
@@ -133,7 +138,7 @@ demo: build\$(src)
 	@mkdir -p obj\$@
 	
 	@echo "[0/2] compiling [$@]..."
-	@$(CXX) $(COMPILER_CONFIG) $(WARNINGS) $(OPTIMIZATIONS) -O$(optimize-lvl) $(SAFE_MATH) $(OPENMP_ENABLED) $(INCLUDES) -D_DEMO_BUILD_ $(macro) -c build\$(src) -o obj/$@/$(name).o
+	@$(CXX) $(COMPILER_CONFIG) $(WARNINGS) $(OPTIMIZATIONS) -O$(optimize-lvl) $(DEBUG_SYMBOL) $(SAFE_MATH) $(OPENMP_ENABLED) $(INCLUDES) -D_DEMO_BUILD_ $(macro) -c build\$(src) -o obj/$@/$(name).o
 	
 	@echo "[1/2] linking libraries..."
 	@$(CXX) -o res/$(name)_$@.exe obj/$@/$(name).o  $(LINKER_CONFIG) -O$(optimize-lvl)  $(LIBRARIES) $(GUI_MODE)
@@ -155,7 +160,7 @@ release: build\$(src)
 	@mkdir -p obj\$@
 	
 	@echo "[0/2] compiling [$@]..."
-	@$(CXX) $(COMPILER_CONFIG) $(WARNINGS) $(OPTIMIZATIONS) -O$(optimize-lvl) $(SAFE_MATH) $(OPENMP_ENABLED) $(INCLUDES) $(macro) -c build\$(src) -o obj/$@/$(name).o
+	@$(CXX) $(COMPILER_CONFIG) $(WARNINGS) $(OPTIMIZATIONS) -O$(optimize-lvl) $(DEBUG_SYMBOL) $(SAFE_MATH) $(OPENMP_ENABLED) $(INCLUDES) $(macro) -c build\$(src) -o obj/$@/$(name).o
 	
 	@echo "[1/2] linking libraries..."
 	@$(CXX) -o res/$(name)_$@.exe obj/$@/$(name).o  $(LINKER_CONFIG) -O$(optimize-lvl)  $(LIBRARIES) $(GUI_MODE)
