@@ -65,7 +65,12 @@ namespace GameData {
 
 	void addToGame(Entity* e, std::string gameType) {
 		if (!EntityClass::$_ROOT)
-			throw std::runtime_error("Root wasn't created!");
+			throw Error::NonexistentValue(
+				"Root wasn't created!",
+				"gamedata.hpp",
+				"66",
+				"GameData::addToGame()"
+			);
 		Entity* game = $ecl $_ROOT->getChild(gameType);
 		if (game == nullptr) {
 			game = new $ecl Entity(gameType);

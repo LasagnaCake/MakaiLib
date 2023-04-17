@@ -206,7 +206,7 @@ public:
 
 	void onTransform() override {
 		if (size.x == 0 || size.y == 0)
-			throw runtime_error("Sprite count (size) must be bigger than zero!");
+			throw Error::InvalidValue("Sprite count (size) must be bigger than zero!");
 		setUV(
 			(frame) / size,
 			(frame + Vector2(1, 0)) / size,

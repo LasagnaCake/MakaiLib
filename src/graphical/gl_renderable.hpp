@@ -43,7 +43,7 @@ public:
 	/// Creates a reference and binds it to this object.
 	template <Reference::PlaneType T>
 	T* createReference() {
-		if (locked) throw std::runtime_error("Renderable object is locked!");
+		if (locked) throw Error::InvalidAction("Renderable object is locked!");
 		Triangle* tris[2] = {
 			new Triangle(),
 			new Triangle()
@@ -80,7 +80,7 @@ public:
 	}
 	template <Reference::TrigonType T>
 	T* createReference() {
-		if (locked) throw std::runtime_error("Renderable object is locked!");
+		if (locked) throw Error::InvalidAction("Renderable object is locked!");
 		Triangle* tris[1] = {new Triangle()};
 		// Add triangles
 		triangles.push_back(tris[0]);
@@ -113,13 +113,13 @@ public:
 	/// Gets a reference bound to this object by index.
 	template <Reference::PlaneType T>
 	inline T* getReference(size_t index) {
-		if (locked) throw std::runtime_error("Renderable object is locked!");
+		if (locked) throw Error::InvalidAction("Renderable object is locked!");
 		return (T*)references.plane[index];
 	}
 
 	template <Reference::TrigonType T>
 	inline T* getReference(size_t index) {
-		if (locked) throw std::runtime_error("Renderable object is locked!");
+		if (locked) throw Error::InvalidAction("Renderable object is locked!");
 		return (T*)references.trigon[index];
 	}
 
@@ -208,7 +208,7 @@ public:
 	void extend(RawVertex* vertices, size_t size) {
 		if (locked) return;
 		if (vertices == nullptr || size == 0)
-			throw std::runtime_error("No vertices were provided!");
+			throw Error::InvalidValue("No vertices were provided!");
 		if (this->vertices)
 			delete[] this->vertices;
 		for $range(i, 0, size, 3) {
@@ -238,7 +238,7 @@ public:
 
 	void extendFromBinaryFile(string path) {
 		auto data = $fld loadBinaryFile(path);
-		if (!data.size()) throw runtime_error("File does not exist or is empty! (" + path + ")!");
+		if (!data.size()) throw Error::FailedAction("File does not exist or is empty! (" + path + ")!");
 		extend((RawVertex*)&data[0], data.size() / sizeof(RawVertex));
 	}
 
@@ -371,7 +371,7 @@ public:
 
 	void extend(RawVertex* points, size_t size) {
 		if (points == nullptr || size == 0)
-			throw std::runtime_error("No vertices were provided!");
+			throw Error::InvalidValue("No vertices were provided!");
 		for $ssrange(i, 0, size) {
 			this->points.push_back(points[i]);
 		}
@@ -392,7 +392,7 @@ public:
 
 	void extendFromBinaryFile(string path) {
 		auto data = $fld loadBinaryFile(path);
-		if (!data.size()) throw runtime_error("File does not exist or is empty! (" + path + ")!");
+		if (!data.size()) throw Error::FailedAction("File does not exist or is empty! (" + path + ")!");
 		extend((RawVertex*)&data[0], data.size() / sizeof(RawVertex));
 	}
 
@@ -443,7 +443,7 @@ public:
 
 	void extend(RawVertex* points, size_t size) {
 		if (points == nullptr || size == 0)
-			throw std::runtime_error("No vertices were provided!");
+			throw Error::InvalidAction("No vertices were provided!");
 		for $ssrange(i, 0, size) {
 			this->points.push_back(points[i]);
 		}
@@ -464,7 +464,7 @@ public:
 
 	void extendFromBinaryFile(string path) {
 		auto data = $fld loadBinaryFile(path);
-		if (!data.size()) throw runtime_error("File does not exist or is empty! (" + path + ")!");
+		if (!data.size()) throw Error::FailedAction("File does not exist or is empty! (" + path + ")!");
 		extend((RawVertex*)&data[0], data.size() / sizeof(RawVertex));
 	}
 
@@ -490,9 +490,9 @@ Renderable* loadObjectFromBinaryFile(string path) {
 	if (data.empty()) {
 		data = FileLoader::loadBinaryFile("sys/models/error.msbo");
 		if(data.empty())
-			throw runtime_error("File does not exist or is empty! (" + path + ")!");
+			throw Error::FailedAction("File does not exist or is empty! (" + path + ")!");
 	}*/
-	if (data.empty()) throw runtime_error("File does not exist or is empty! (" + path + ")!");
+	if (data.empty()) throw Error::FailedAction("File does not exist or is empty! (" + path + ")!");
 	return new Renderable((RawVertex*)&data[0], data.size() / sizeof(RawVertex));
 }
 

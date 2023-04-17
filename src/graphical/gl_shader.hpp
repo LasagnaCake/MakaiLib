@@ -171,7 +171,7 @@ namespace Shader {
 			glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
 			if (!success) {
 				glGetShaderInfoLog(shader, 2048, NULL, infoLog);
-				throw runtime_error(string("Could not compile Shader!\n") + infoLog);
+				throw Error::FailedAction(string("Could not compile Shader!\n") + infoLog);
 			};
 			// Shader Program
 			if (!created) id = glCreateProgram();
@@ -181,7 +181,7 @@ namespace Shader {
 			glGetProgramiv(id, GL_LINK_STATUS, &success);
 			if (!success) {
 				glGetProgramInfoLog(id, 2048, NULL, infoLog);
-				throw runtime_error(string("Could not link shader program!\n") + infoLog);
+				throw Error::FailedAction(string("Could not link shader program!\n") + infoLog);
 			}
 			glDeleteShader(shader);
 			created = true;
@@ -233,7 +233,7 @@ namespace Shader {
 				glGetShaderiv(vertex, GL_COMPILE_STATUS, &success);
 				if (!success) {
 					glGetShaderInfoLog(vertex, 2048, NULL, infoLog);
-					throw runtime_error(string("Could not compile Vertex Shader!\n") + infoLog);
+					throw Error::FailedAction(string("Could not compile Vertex Shader!\n") + infoLog);
 				};
 			}
 			// similiar for Fragment Shader
@@ -247,7 +247,7 @@ namespace Shader {
 				glGetShaderiv(fragment, GL_COMPILE_STATUS, &success);
 				if (!success) {
 					glGetShaderInfoLog(fragment, 2048, NULL, infoLog);
-					throw runtime_error(string("Could not compile Fragment Shader!\n") + infoLog);
+					throw Error::FailedAction(string("Could not compile Fragment Shader!\n") + infoLog);
 				}
 			}
 			// Shader Program
@@ -259,7 +259,7 @@ namespace Shader {
 			glGetProgramiv(id, GL_LINK_STATUS, &success);
 			if (!success) {
 				glGetProgramInfoLog(id, 2048, NULL, infoLog);
-				throw runtime_error(string("Could not link shader program!\n") + infoLog + "\n\n\n Program:" + vertexCode + "\n\n\n" + fragmentCode);
+				throw Error::FailedAction(string("Could not link shader program!\n") + infoLog + "\n\n\n Program:" + vertexCode + "\n\n\n" + fragmentCode);
 			}
 			// Delete shaders
 			if (vertex)		glDeleteShader(vertex);
@@ -280,7 +280,7 @@ namespace Shader {
 					type = shaderTypeId(slfData[i+1]);
 					try {
 						attach(code, type);
-					} catch (runtime_error err) {
+					} catch (Error::Error err) {
 						log += string("\n[[ Error on shader '") + dir + slfData[i] + "' ]]:\n";
 						log += err.what();
 					}
@@ -291,14 +291,14 @@ namespace Shader {
 					code = loadTextFile(dir + slfData[i]);
 					try {
 						attach(code, type);
-					} catch (runtime_error err) {
+					} catch (Error::Error err) {
 						log += string("\n[[ Error on shader '") + dir + slfData[i] + "' ]]:\n";
 						log += err.what();
 					}
 				}
 			}
 			if (log != "") {
-				throw runtime_error(log);
+				throw Error::FailedAction(log);
 			}
 			created = true;
 			return true;
@@ -321,7 +321,7 @@ namespace Shader {
 			glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
 			if (!success) {
 				glGetShaderInfoLog(shader, 2048, NULL, infoLog);
-				throw runtime_error(string("Could not compile Shader!\n") + infoLog);
+				throw Error::FailedAction(string("Could not compile Shader!\n") + infoLog);
 			};
 			// Shader Program
 			if (!created) id = glCreateProgram();
@@ -331,7 +331,7 @@ namespace Shader {
 			glGetProgramiv(id, GL_LINK_STATUS, &success);
 			if (!success) {
 				glGetProgramInfoLog(id, 2048, NULL, infoLog);
-				throw runtime_error(string("Could not link shader program!\n") + infoLog  + infoLog + "\n\n\n Program:" + code);
+				throw Error::FailedAction(string("Could not link shader program!\n") + infoLog  + infoLog + "\n\n\n Program:" + code);
 			}
 			glDeleteShader(shader);
 			return true;
@@ -373,52 +373,6 @@ namespace Shader {
 			return uniform(name);
 		}
 	};
-
-	typedef vector<Shader*> ShaderList;
-
-	/// Converts an SLF file to a list of shader programs.
-	ShaderList getShaderList(SLF::SLFData slfData) {
-		ShaderList shaders;
-		string dir = slfData[0];
-		string log = "";
-		string code;
-		GLuint type;
-		if (shaderTypes.find(slfData[1]) == shaderTypes.end()) {
-			for (size_t i = 1; i < slfData.size(); i += 2) {
-				code = loadTextFile(dir + slfData[i]);
-				type = shaderTypeId(slfData[i+1]);
-				try {
-					shaders.push_back(new Shader(code, type));
-				} catch (runtime_error err) {
-					log += string("\n[[ Error on shader '") + dir + slfData[i] + "' ]]:\n";
-					log += err.what();
-				}
-			}
-		} else {
-			for (size_t i = 2; i < slfData.size(); i++) {
-				code = loadTextFile(dir + slfData[i]);
-				type = shaderTypeId(slfData[1]);
-				try {
-					shaders.push_back(new Shader(code, type));
-				} catch (runtime_error err) {
-					log += string("\n[[ Error on shader '") + dir + slfData[i] + "' ]]:\n";
-					log += err.what();
-				}
-			}
-		}
-		if (log != "") {
-			throw runtime_error(log);
-		}
-		return shaders;
-	}
-
-	/// Executes a set of shaders sequentially.
-	void multiShaderPass(ShaderList shaders, function<void()> action =[](){}) {
-		for (Shader* s : shaders) {
-			(*s)();
-			action();
-		}
-	}
 
 	// TODO: Pipeline stuff
 

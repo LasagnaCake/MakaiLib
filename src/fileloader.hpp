@@ -1,6 +1,7 @@
 #ifndef MAKAI_FILE_LOADER
 #define MAKAI_FILE_LOADER
 
+#include "collection/errors.hpp"
 #include <string>
 #include <fstream>
 #include <sstream>
@@ -13,7 +14,13 @@ namespace FileLoader {
 	}
 
 	inline void fileLoadError(string path, string reason) {
-		throw runtime_error("Could not load file '" + path + "'!\n\n[ERROR MESSAGE]\n" + reason);
+		throw Error::FailedAction(
+			"Could not load file '" + path + "'!",
+			"fileloader.hpp",
+			"unspecified",
+			"unspecified",
+			reason
+		);
 	}
 
 	typedef vector<unsigned char> BinaryData;

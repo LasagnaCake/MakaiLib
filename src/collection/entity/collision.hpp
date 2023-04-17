@@ -12,6 +12,7 @@
 
 #include <unordered_map>
 #include <vector>
+#include "../errors.hpp"
 
 namespace CollisionData {
 	namespace {
@@ -23,8 +24,7 @@ namespace CollisionData {
 		VecMath::Transform2D,
 		std::unordered_map,
 		std::string,
-		std::vector,
-		std::runtime_error;
+		std::vector;
 
 		using namespace Vector;
 	}

@@ -24,7 +24,7 @@ public:
 			mainShaderPath
 	) {
 		if (mainProgram)
-			throw std::runtime_error("Only one program can exist at a time!");
+			throw Error::DuplicateValue("Only one program can exist at a time!");
 		mainProgram = this;
 	};
 
@@ -87,7 +87,7 @@ struct ProgramSetting {
 	bool	fullscreen;
 };
 
-#define USER_QUIT throw std::runtime_error("User quit the setup process!")
+#define USER_QUIT throw Error::FailedAction("User quit the setup process!")
 
 ProgramSetting queryProgramSettingsFromUser(bool use16by9 = false, bool letUserChooseFramerate = true, bool extendedFramerate = false) {
 	StringList resList;

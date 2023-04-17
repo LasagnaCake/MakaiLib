@@ -52,7 +52,7 @@ public:
 
 private:
 	mINI::INIStructure& structure() {
-		if (!source) throw std::runtime_error("Save file wasn't loaded!");
+		if (!source) throw Error::NonexistentValue("Save file wasn't loaded!");
 		return data;
 	}
 

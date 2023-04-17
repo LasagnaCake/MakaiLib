@@ -51,7 +51,7 @@ namespace SLF {
 			content = stream.str();
 		}
 		catch (ifstream::failure e) {
-			throw runtime_error(string("Could not load file '") + path + "'!\n\n" + e.what());
+			throw Error::FailedAction(string("Could not load file '") + path + "'!\n\n" + e.what());
 		}
 		// Remove comments and empty lines
 		content = regex_replace(
@@ -116,7 +116,7 @@ namespace SLF {
 							break;
 						}
 					if (!valid)
-						throw runtime_error(string("Invalid shader type for shader'") + values[-1] + "'!");
+						throw Error::InvalidValue(string("Invalid shader type for shader'") + values[-1] + "'!");
 				}
 			}
 		}

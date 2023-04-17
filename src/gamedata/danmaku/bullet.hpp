@@ -312,7 +312,7 @@ public:
 			return last;
 		} $endseach
 		#ifndef $_PREVENT_BULLET_OVERFLOW_BY_WRAP
-		throw std::runtime_error(
+		throw Error::OutOfBounds(
 			getName()
 			+ ": Out of usable bullets ("
 			+ std::to_string(BULLET_COUNT)

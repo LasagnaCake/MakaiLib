@@ -307,8 +307,7 @@ namespace RenderData {
 		Drawer::vertexGetPosition,
 		std::function,
 		std::vector,
-		std::string,
-		std::runtime_error;
+		std::string;
 	}
 
 	/// Base triangle data structure.

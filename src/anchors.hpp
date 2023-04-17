@@ -1,7 +1,7 @@
 #ifndef ANCHORED_HEADERS_H
 #define ANCHORED_HEADERS_H
 
-#define $enforce(WHAT, CHECK) if(!(CHECK)) throw std::runtime_error(std::string("ERROR: failed to initialize ") + WHAT)
+#define $enforce(WHAT, CHECK) if(!(CHECK)) throw Error::FailedAction(std::string("Failed to initialize ") + WHAT)
 
 #ifdef _DEBUG_OUTPUT_
 #include <iostream>
@@ -123,6 +123,7 @@
 #include "collection/algebra.hpp"
 #include "collection/definitions.hpp"
 #include "collection/helper.hpp"
+#include "collection/errors.hpp"
 #include "collection/entity/entity.hpp"
 #include "collection/vectorn.hpp"
 #include "collection/cyclical.hpp"

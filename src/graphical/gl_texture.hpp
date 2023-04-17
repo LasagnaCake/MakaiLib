@@ -164,7 +164,7 @@ public:
 			);
 			stbi_image_free(data);
 		} else {
-			throw runtime_error(string("Could not load image file '") + path + "'!");
+			throw Error::FailedAction(string("Could not load image file '") + path + "'!");
 		}
 	}
 

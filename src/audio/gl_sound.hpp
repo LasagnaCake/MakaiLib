@@ -30,7 +30,13 @@ public:
 	void onCreate(String path) final override {
 		source = Mix_LoadWAV(path.c_str());
 		if (!source)
-			throw std::runtime_error("Could not load file '" + path + "'!\n\n REASON: " + String(Mix_GetError()));
+			throw Error::FailedAction(
+				"Could not load file '" + path + "'!",
+				"gl_sound.hpp",
+				"31",
+				"Sound::onCreate",
+				String(Mix_GetError())
+			);
 	}
 
 	void onDestroy() final override {

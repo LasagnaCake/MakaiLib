@@ -2,6 +2,7 @@
 #define REFERENCE_HANDLER_H
 
 #include "conceptual.hpp"
+#include "errors.hpp"
 #include <map>
 #include <stdexcept>
 #include <functional>
@@ -12,7 +13,6 @@ namespace SmartPointer {
 	namespace {
 		using
 			std::map,
-			std::runtime_error,
 			std::function
 		;
 
@@ -47,8 +47,6 @@ namespace SmartPointer {
 		~Pointer() {unbind();}
 
 		SameType& bind(T* obj) {
-			/*if (obj == nullptr)
-				throw std::runtime_error("Value must not be null!");*/
 			unbind();
 			if (obj == nullptr) return (*this);
 			ref = obj;
@@ -166,25 +164,49 @@ namespace SmartPointer {
 
 		inline T* getPointer()	{
 			if (!exists())
-				throw runtime_error("Pointer reference does not exist!");
+				throw Error::NullPointer(
+					"Pointer reference does not exist!",
+					"referential.hpp",
+					"165",
+					"SmartPointer",
+					"Pointer might be null or nonexistent"
+				);
 			return (ref);
 		}
 
 		inline const T* getPointer() const	{
 			if (!exists())
-				throw runtime_error("Pointer reference does not exist!");
+				throw Error::NullPointer(
+					"Pointer reference does not exist!",
+					"referential.hpp",
+					"165",
+					"SmartPointer",
+					"Pointer might be null or nonexistent"
+				);
 			return (ref);
 		}
 
 		inline T& getValue() {
 			if (!exists())
-				throw runtime_error("Pointer reference does not exist!");
+				throw Error::NullPointer(
+					"Pointer reference does not exist!",
+					"referential.hpp",
+					"165",
+					"SmartPointer",
+					"Pointer might be null or nonexistent"
+				);
 			return (*ref);
 		}
 
 		inline const T& getValue() const {
 			if (!exists())
-				throw runtime_error("Pointer reference does not exist!");
+				throw Error::NullPointer(
+					"Pointer reference does not exist!",
+					"referential.hpp",
+					"165",
+					"SmartPointer",
+					"Pointer might be null or nonexistent"
+				);
 			return (*ref);
 		}
 	};

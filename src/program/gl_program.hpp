@@ -20,7 +20,6 @@ namespace Makai {
 		std::function,
 		std::string,
 		std::unordered_map,
-		std::runtime_error,
 		Vector::Vector2,
 		Vector::Vector3,
 		Vector::Vector4;
@@ -134,22 +133,14 @@ namespace Makai {
 			$debug("Starting SDL...");
 			if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_AUDIO) != 0) {
 				$errlog(string("Unable to start SDL! (") + SDL_GetError() + ")");
-				throw runtime_error(string("Error: SDL (") + SDL_GetError() + ")");
+				throw Error::FailedAction(string("SDL (") + SDL_GetError() + ")");
 			}
 			$debug("Started!");
-			// Initialize Freetype
-			/*$debug("Starting FreeType...");
-			FT_Library libft;
-			if (FT_Init_FreeType(&libft)) {
-				$errlog(string("Unable to start FreeType!"));
-				throw runtime_error(string("Unable to start FreeType!"));
-			}
-			$debug("Started!");*/
 			// Initialize YSE
 			$debug("Starting Audio System...");
 			if (!Mix_Init(MIX_INIT_MP3 | MIX_INIT_OGG | (useMIDI ? MIX_INIT_MID : 0))) {
 				$errlog(string("Unable to start Mixer! (") + Mix_GetError() + ")");
-				throw runtime_error(string("Error: Mixer (") + Mix_GetError() + ")");
+				throw Error::FailedAction(string("Mixer (") + Mix_GetError() + ")");
 			}
 			Audio::openSystem();
 			$debug("Started!");
@@ -171,11 +162,11 @@ namespace Makai {
 			GLenum glew_status = glewInit();
 			if (glew_status != GLEW_OK) {
 				$errlog("Error: glewInit: " << glewGetErrorString(glew_status));
-				throw runtime_error(string("Error: glewInit"));
+				throw Error::FailedAction(string("glewInit"));
 			}
 			if (!GLEW_VERSION_4_2) {
 				$errlog("Your computer does not support OpenGL 4.2+!");
-				throw runtime_error(string("Error: No OpenGL 4.2+"));
+				throw Error::InvalidValue(string("No OpenGL 4.2+"));
 			}
 			$debug("Started!");
 			// Create default shader
@@ -559,10 +550,10 @@ namespace Makai {
 		if (!SDL_WasInit(SDL_INIT_VIDEO))
 			if (SDL_Init(SDL_INIT_VIDEO) != 0) {
 				$errlog(string("Unable to start SDL! (") + SDL_GetError() + ")");
-				throw runtime_error(string("Error: SDL (") + SDL_GetError() + ")");
+				throw Error::FailedAction(string("SDL (") + SDL_GetError() + ")");
 			}
 		if (SDL_GetDisplayBounds(display, &bounds))
-			throw std::runtime_error("Couldn't get display bounds!\n\n" + String(SDL_GetError()));
+			throw Error::FailedAction("Couldn't get display bounds!\n\n" + String(SDL_GetError()));
 		return Vector2(bounds.h - bounds.x, bounds.w - bounds.y);
 	}
 
@@ -658,7 +649,7 @@ namespace Popup {
 		int buttonid;
 		if (SDL_ShowMessageBox(&messageboxdata, &buttonid) < 0) {
 			$errlog("Could not show messagebox!");
-			throw std::runtime_error("Error: SDL MessageBox");
+			throw Error::FailedAction("SDL MessageBox");
 		}
 		return buttonid;
 	}
