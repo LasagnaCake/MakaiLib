@@ -26,6 +26,13 @@
 #define GAME_PARALLEL_FOR PRAGMA_PARALLEL_FOR(GAME_PARALLEL_THREAD_COUNT)
 #endif // GAME_PARALLEL_FOR
 
+#define GAME_CLASS(NAME, BASE)\
+	inline	virtual String getClass() {return #NAME;}\
+	inline	virtual String getBaseClass() {return #BASE;}\
+	inline	static String getCoreClass() {return BASE::getCoreClass();}\
+	NAME(String name = #NAME, bool uniqueEntity = true) : BASE(name, uniqueEntity) {onCreate();}\
+	NAME(EntityClass::Entity* parent, String name = #NAME , bool uniqueEntity = true) : BASE(parent, name, uniqueEntity) {onCreate();}
+
 namespace GameData {
 	#define $gdt GameData::
 	namespace {
@@ -125,12 +132,5 @@ namespace GameData {
 
 #undef DERIVED_CONSTRUCTOR
 #undef DERIVED_CLASS
-
-#define GAME_CLASS(NAME, BASE)\
-	inline	virtual String getClass() {return #NAME;}\
-	inline	virtual String getBaseClass() {return #BASE;}\
-	inline	static String getCoreClass() {return BASE::getCoreClass();}\
-	NAME(String name = #NAME, bool uniqueEntity = true) : BASE(name, uniqueEntity) {onCreate();}\
-	NAME(EntityClass::Entity* parent, String name = #NAME , bool uniqueEntity = true) : BASE(parent, name, uniqueEntity) {onCreate();}
 
 #endif // MAKAI_GAME_SYSTEM_DATA

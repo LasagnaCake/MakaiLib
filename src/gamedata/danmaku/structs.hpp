@@ -131,3 +131,5 @@ struct {
 		float bomb		= 5.0;
 	} playerDamage;
 } defaults;
+
+ErrorType(OutOfObjects);

@@ -553,7 +553,13 @@ namespace Makai {
 				throw Error::FailedAction(string("SDL (") + SDL_GetError() + ")");
 			}
 		if (SDL_GetDisplayBounds(display, &bounds))
-			throw Error::FailedAction("Couldn't get display bounds!\n\n" + String(SDL_GetError()));
+			throw Error::FailedAction(
+				"Couldn't get display bounds!\n\n",
+				"gl_program.hpp",
+				"555",
+				"Makai::Program::getDeviceSize",
+				String(SDL_GetError())
+			);
 		return Vector2(bounds.h - bounds.x, bounds.w - bounds.y);
 	}
 

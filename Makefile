@@ -8,16 +8,17 @@ Supported targets:
 >    all     : Builds all options (debug, demo and release)
 
 Supported options:
->    src           = [ value ]        : Specifies the source file             ( DEFAULT: main.cpp )
->    name          = [ value ]        : Specifies the name of the output file ( DEFAULT: program  )
->    warn          = [ value | none ] : Specifies the warning to enable       ( DEFAULT: none     )
->    use-openmp    = [ 1 | 0 ]        : Specifies whether ro enable OpenMP    ( DEFAULT: 0        )
->    optimize-lvl  = [ 0 - 3 ]        : Specifies the optimization level      ( DEFAULT: 3        )
->    debug-profile = [ 1 | 0 ]        : Specifies whether to enable gmon      ( DEFAULT: 0        )
->    keep-o-files  = [ 1 | 0 ]        : Specifies if .o files should be kept  ( DEFAULT: 0        )
->    macro         = [ value | none ] : Specifies a macro to be defined       ( DEFAULT: none     )
->    meth          = [ 1 : 0 ]        : Specifies whether to enable fast math ( DEFAULT: 0        )
->    sath          = [ 1 : 0 ]        : Specifies whether to enable safe math ( DEFAULT: 0        )
+>    src           = [ value ]        : Spec. the source file                 ( DEFAULT: main.cpp )
+>    name          = [ value ]        : Spec. the name of the output file     ( DEFAULT: program  )
+>    warn          = [ value | none ] : Spec. the warning to enable           ( DEFAULT: none     )
+>    use-openmp    = [ 1 | 0 ]        : Spec. whether ro enable OpenMP        ( DEFAULT: 0        )
+>    optimize-lvl  = [ 0 - 3 ]        : Spec. the optimization level          ( DEFAULT: 3        )
+>    debug-profile = [ 1 | 0 ]        : Spec. whether to enable gmon          ( DEFAULT: 0        )
+>    keep-o-files  = [ 1 | 0 ]        : Spec. if .o files should be kept      ( DEFAULT: 0        )
+>    macro         = [ value | none ] : Spec. a macro to be defined           ( DEFAULT: none     )
+>    meth          = [ 1 : 0 ]        : Spec. whether to enable fast math     ( DEFAULT: 0        )
+>    sath          = [ 1 : 0 ]        : Spec. whether to enable safe math     ( DEFAULT: 0        )
+>    debug-release = [ 1 : 0 ]        : Spec. whether to enable -g on release ( DEFAULT: 0        )
 
 NOTES:
 (Safe, in this case, means 'IEEE compliant'.)

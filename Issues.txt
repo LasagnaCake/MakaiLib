@@ -1,2 +1,4 @@
 > SDL_Mixer cannot load MP3 files
-> Buffer Overflow on program exit
+> "Buffer Overflow" or "Failed Stack Switch" on program exit 
+	> Compilation-dependant, sometimes it gets compiled in such a way that it does not crash.
+	> Tends to compile correctly more often on debug

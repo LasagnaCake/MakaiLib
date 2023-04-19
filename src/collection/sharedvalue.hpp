@@ -31,7 +31,15 @@ namespace Manager {
 		ValueManager<T>& bind(RefList<T> const& list)		{for (auto obj: list) refs.push_back(obj); return (*this);			}
 		ValueManager<T>& bind(ValueManager<T> const& other)	{for (auto obj: other.refs) refs.push_back(obj); return (*this);	}
 
-		ValueManager<T>& unbind(T* const& obj)	{}
+		ValueManager<T>& unbind(T* const& obj)	{
+			size_t i = 0;
+			for(auto o: refs) {
+				if (o == obj) break;
+				i++;
+			}
+			if (i < refs.size())
+				refs.remove(i + refs.begin());
+		}
 		ValueManager<T>& unbind()				{refs.clear();}
 
 		ValueManager<T>& modify(Operation<T> op)	{for (auto obj: refs) op(*obj)		}
@@ -47,12 +55,12 @@ namespace Manager {
 		operator bool() const			{return exists();		}
 		inline bool operator!()			{return	!exists();		}
 
-		ValueManager<T>& operator=(T* obj)										{bind(obj); return (*this);			}
-		const ValueManager<T>& operator=(T* obj) const							{bind(obj); return (*this);			}
-		ValueManager<T>& operator=(const ValueManager<T>& other)				{bind(other.refs); return (*this);	}
-		const ValueManager<T>& operator=(const ValueManager<T>& other) const	{bind(other.refs); return (*this);	}
-		ValueManager<T>& operator=(const RefList<T>& other)						{bind(other.refs); return (*this);	}
-		const ValueManager<T>& operator=(const RefList<T>& other) const			{bind(other.refs); return (*this);	}
+		ValueManager<T>& operator=(T* obj)										{bind(obj); return (*this);						}
+		const ValueManager<T>& operator=(T* obj) const							{bind(obj); return (*this);						}
+		ValueManager<T>& operator=(const ValueManager<T>& other)				{unbind(); bind(other.refs); return (*this);	}
+		const ValueManager<T>& operator=(const ValueManager<T>& other) const	{unbind(); bind(other.refs); return (*this);	}
+		ValueManager<T>& operator=(const RefList<T>& other)						{unbind(); bind(other.refs); return (*this);	}
+		const ValueManager<T>& operator=(const RefList<T>& other) const			{unbind(); bind(other.refs); return (*this);	}
 
 		ValueManager<T>& operator=(T const& v)					{for(auto obj: refs) (*obj) = v; return (*this);	}
 		const ValueManager<T>& operator=(T const& v) const		{for(auto obj: refs) (*obj) = v; return (*this);	}

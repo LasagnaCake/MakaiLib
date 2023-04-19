@@ -443,7 +443,7 @@ public:
 
 	void extend(RawVertex* points, size_t size) {
 		if (points == nullptr || size == 0)
-			throw Error::InvalidAction("No vertices were provided!");
+			throw Error::InvalidValue("No vertices were provided!");
 		for $ssrange(i, 0, size) {
 			this->points.push_back(points[i]);
 		}

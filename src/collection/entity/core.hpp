@@ -15,6 +15,7 @@
 #include "../grouping.hpp"
 #include "../conceptual.hpp"
 #include "../grouping.hpp"
+#include "../errors.hpp"
 
 #ifndef _$_ENTITY_ROOT_NAME
 /// Default entity root name (MUST NOT CONTAIN '/')
@@ -131,7 +132,7 @@ namespace EntityClass {
 		/// Gets the object's class.
 		inline virtual string getClass() {return "Entity";}
 		/// Gets the object's base class.
-		inline virtual string getBaseClass() {return nullptr;}
+		inline virtual string getBaseClass() {return "Entity";}
 		/// Gets the object's "core" (EClass::) class
 		inline static string getCoreClass() {return "Entity";}
 
@@ -149,7 +150,7 @@ namespace EntityClass {
 			// Set object's name
 			if (name.length()) setName(name);
 			else
-				throw invalid_argument("Name cannot be null or empty.");
+				Error::InvalidValue("Name cannot be null or empty.");
 			// Call function to be executed at creation
 			callOnCreate();
 			// Add to root tree
@@ -291,10 +292,10 @@ namespace EntityClass {
 		void setParent(Entity* parent) {
 			// Check if object is root object
 			if (name == $_ROOT_NAME)
-				throw invalid_argument("Root cannot be parented.");
+				throw Error::InvalidValue("Root cannot be parented.");
 			// Check if new parent is valid parent
 			if (!isValidParent(parent))
-				throw invalid_argument("Cyclical parenting prohibited.");
+				throw Error::InvalidValue("Cyclical parenting prohibited.");
 			// If it got to this point, parent is valid
 			this->parent = parent;
 		}
@@ -340,7 +341,7 @@ namespace EntityClass {
 		void setName(string newName, bool mustHaveUniqueName = true) {
 			// if root, or trying to rename to root, error
 			if ((name == $_ROOT_NAME || newName == $_ROOT_NAME) && $_ROOT_CREATED())
-				throw invalid_argument(
+				throw Error::InvalidValue(
 					string("Cannot rename root object, or name object '")
 					+ $_ROOT_NAME
 					+ string("'.")
@@ -348,7 +349,7 @@ namespace EntityClass {
 			// Check if name does not contain invalid characters
 			for (char c : newName)
 				if (c == '/')
-					throw invalid_argument(
+					throw Error::InvalidValue(
 						string("Name cannot contain '/': ")
 						+ newName
 					);
@@ -449,8 +450,10 @@ namespace EntityClass {
 		/// Called on object deletion.
 		void condemn() {
 			// Call function to be executed at deletion
+			$debug("Calling onDelete()...");
 			callOnDelete();
 			// Remove self from the equation
+			$debug("Removing self from equation...");
 			removeFromTree();
 			removeFromAllGroups();
 		}

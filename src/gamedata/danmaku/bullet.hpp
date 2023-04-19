@@ -117,7 +117,7 @@ public:
 
 	Renderable mesh;
 
-	void onDelete() override {
+	virtual ~BulletManager() {
 		//delete &mesh;
 		$debug("\nDeleting bullet manager...");
 		delete[] bullets;
@@ -312,7 +312,7 @@ public:
 			return last;
 		} $endseach
 		#ifndef $_PREVENT_BULLET_OVERFLOW_BY_WRAP
-		throw Error::OutOfBounds(
+		throw OutOfObjects(
 			getName()
 			+ ": Out of usable bullets ("
 			+ std::to_string(BULLET_COUNT)

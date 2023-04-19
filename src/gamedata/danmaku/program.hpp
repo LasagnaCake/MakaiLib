@@ -1,3 +1,15 @@
+template<class P, class E>
+struct ManagerSet {
+	P* const player	= new P();
+	E* const enemy	= new E();
+	void destroy() {
+		$debug(("Deleting enemy manager..."));
+		delete enemy;
+		$debug(("Deleting player manager..."));
+		delete player;
+	}
+};
+
 class DanmakuApp: public GameApp {
 public:
 	DanmakuApp(
@@ -28,17 +40,17 @@ public:
 	};
 
 	struct {
-		struct {
-			EnemyBulletManager*		enemy	= new EnemyBulletManager();
-			PlayerBulletManager*	player	= new PlayerBulletManager();
-		} bullet;
-
-		struct {
-			EnemyLineLaserManager*	enemy	= new EnemyLineLaserManager();
-			PlayerLineLaserManager*	player	= new PlayerLineLaserManager();
-		} lineLaser;
-
+		ManagerSet<PlayerBulletManager, EnemyBulletManager>			bullet;
+		ManagerSet<PlayerLineLaserManager, EnemyLineLaserManager>	lineLaser;
 		ItemManager*	item	= new ItemManager();
+		void destroy() {
+			$debug("Deleting bullet managers...");
+			bullet.destroy();
+			$debug("Deleting line laser managers...");
+			lineLaser.destroy();
+			$debug("Deleting item manager...");
+			delete item;
+		}
 	} managers;
 
 	struct {
@@ -134,10 +146,21 @@ public:
 
 private:
 	void destroyManagers() {
-		enemyBulletManager		= nullptr;
-		enemyLineLaserManager	= nullptr;
-		playerBulletManager		= nullptr;
-		playerLineLaserManager	= nullptr;
-		itemManager				= nullptr;
+		$debug("_( - v -)_");
+		$debug("Clearing References...");
+		if (managers.bullet.enemy		== enemyBulletManager)
+			enemyBulletManager		= nullptr;
+		if (managers.lineLaser.enemy	== enemyLineLaserManager)
+			enemyLineLaserManager	= nullptr;
+		if (managers.bullet.player		== playerBulletManager)
+			playerBulletManager		= nullptr;
+		if (managers.lineLaser.player	== playerLineLaserManager)
+			playerLineLaserManager	= nullptr;
+		if (managers.item				== itemManager)
+			itemManager				= nullptr;
+		$debug("Deleting Danmaku Managers ...");
+		managers.destroy();
+		$debug("Managers Deleted!");
+		$debug("\\( > w <)/");
 	}
 };

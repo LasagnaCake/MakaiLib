@@ -141,7 +141,7 @@ public:
 
 	Renderable mesh;
 
-	void onDelete() override {
+	virtual ~LineLaserManager() {
 		//delete &mesh;
 		$debug("\nDeleting laser manager...");
 		delete[] lasers;
@@ -263,7 +263,7 @@ public:
 			return last;
 		} $endseach
 		#ifndef $_PREVENT_BULLET_OVERFLOW_BY_WRAP
-		throw Error::OutOfBounds(
+		throw OutOfObjects(
 			getName()
 			+ ": Out of usable lasers ("
 			+ std::to_string(LASER_COUNT)

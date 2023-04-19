@@ -106,7 +106,7 @@ public:
 
 	Renderable mesh;
 
-	void onDelete() override {
+	virtual ~CollectibleManager() {
 		//delete &mesh;
 		$debug("\nDeleting item manager...");
 		delete[] items;
@@ -267,7 +267,7 @@ public:
 			return last;
 		} $endseach
 		#ifndef $_PREVENT_BULLET_OVERFLOW_BY_WRAP
-		throw Error::OutOfBounds(
+		throw OutOfObjects(
 			getName()
 			+ ": Out of usable items ("
 			+ std::to_string(ITEM_COUNT)

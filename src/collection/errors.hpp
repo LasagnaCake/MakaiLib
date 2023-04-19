@@ -61,16 +61,16 @@ namespace Error {
 	};
 
 	#define DEFINE_ERROR_TYPE(NAME)\
-	struct NAME: public Error {\
-		NAME (\
-			string const& message		= "none",\
-			string const& file			= "unspecified",\
-			string const& line			= "unspecified",\
-			string const& caller		= "unspecified",\
-			string const& info			= "none",\
-			string const& callerInfo	= "none"\
-		): Error (#NAME, message, file, line, caller, info, callerInfo) {}\
-	}
+		struct NAME: public Error {\
+			NAME (\
+				string const& message		= "none",\
+				string const& file			= "unspecified",\
+				string const& line			= "unspecified",\
+				string const& caller		= "unspecified",\
+				string const& info			= "none",\
+				string const& callerInfo	= "none"\
+			): Error (#NAME, message, file, line, caller, info, callerInfo) {}\
+		}
 
 	DEFINE_ERROR_TYPE(UserIsAnIdiot);
 	DEFINE_ERROR_TYPE(Unimplemented);
@@ -85,6 +85,18 @@ namespace Error {
 
 	#undef DEFINE_ERROR_TYPE
 }
+
+#define ErrorType(NAME)\
+	struct NAME: public Error::Error {\
+		NAME (\
+			string const& message		= "none",\
+			string const& file			= "unspecified",\
+			string const& line			= "unspecified",\
+			string const& caller		= "unspecified",\
+			string const& info			= "none",\
+			string const& callerInfo	= "none"\
+		): Error (#NAME, message, file, line, caller, info, callerInfo) {}\
+	}
 
 #define $err Error::
 
