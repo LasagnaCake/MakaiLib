@@ -106,7 +106,7 @@ namespace Type {
 
 	template <class A, class B>
 	concept Unrelated = !std::common_with<A, B>;
-
+	
 	template <typename A, typename B>
 	concept Addable = requires (A a, B b) {a + b;};
 
@@ -120,12 +120,35 @@ namespace Type {
 	concept Dividable = requires (A a, B b) {a / b;};
 
 	template <typename A, typename B>
-	concept Arithmetic =
+	concept AddAssignable = requires (A a, B b) {a += b;};
+
+	template <typename A, typename B>
+	concept SubAssignable = requires (A a, B b) {a -= b;};
+
+	template <typename A, typename B>
+	concept MulAssignable = requires (A a, B b) {a *= b;};
+
+	template <typename A, typename B>
+	concept DivAssignable = requires (A a, B b) {a /= b;};
+
+	template <typename A, typename B>
+	concept Calculable =
 			Addable<A, B>
 		&&	Subtractable<A, B>
 		&&	Multipliable<A, B>
 		&&	Dividable<A, B>
 	;
+	
+	template <typename A, typename B>
+	concept CalcAssignable =
+			AddAssignable<A, B>
+		&&	SubAssignable<A, B>
+		&&	MulAssignable<A, B>
+		&&	DivAssignable<A, B>
+	;
+
+	template <typename A, typename B>
+	concept Arithmetic = Calculable<A, B> && CalcAssignable<A, B>;
 
 	/**
 	* A 'Safe' type must not be:
@@ -148,8 +171,7 @@ namespace Type {
 	concept SafeArray = Array<T> && Safe<T>;
 
 	/**
-	* A 'Mutable' is a 'Safe' type that isn't an array
-	* or constant.
+	* A 'Mutable' is a 'Safe' type that isn't an array or constant.
 	*/
 	template <typename T>
 	concept Mutable = Safe<T> && !(Array<T> || Constant<T>);
