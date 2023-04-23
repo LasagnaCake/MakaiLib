@@ -48,7 +48,7 @@ COMPILER_CONFIG	:= -fexpensive-optimizations -flto -m64 -std=gnu++20 -fcoroutine
 LINKER_CONFIG	:= -flto -static-libstdc++ -static-libgcc -static -m64 -fms-extensions
 
 ifeq ($(sath), 1)
-meth 				:= 0
+meth				:= 0
 SAFE_MATH			:= -frounding-math -fsignaling-nans
 endif
 
