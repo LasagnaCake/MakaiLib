@@ -320,14 +320,14 @@ void main() {
 	// Screen wave	
 	vec2 wave = vec2(0);
 	if (useWave) {
-		wave = (fragUV.yx * waveFrequency) * (2.0 * PI) + waveShift;
+		wave = (fragUV.yx * waveFrequency) * TAU + waveShift;
 		wave = patternV2(wave, waveShape, waveLOD) * (waveAmplitude / 10.0);
 	}
 
 	// Screen prismatic effect
 	vec2 prism = vec2(0);
 	if (usePrism) {
-		prism = (fragUV * prismFrequency.yx) * (2.0 * PI) + prismShift.yx;
+		prism = (fragUV * prismFrequency.yx) * TAU + prismShift.yx;
 		prism = patternV2(prism, prismShape, prismLOD) * (prismAmplitude.yx / 10.0);
 	}
 
