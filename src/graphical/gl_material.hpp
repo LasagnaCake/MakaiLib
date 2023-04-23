@@ -135,7 +135,9 @@ struct PolarWarpEffect: Effect, Sizeable, Positionable2D, Variable2D, ColorableR
 };
 
 struct NoiseEffect: Effect, Variable {
-	bool absolute	= true;
+	float			seed		= 1;
+	unsigned int	type		= 1;
+	bool			absolute	= true;
 };
 
 // World Material Effects
@@ -320,6 +322,8 @@ void setMaterial(Shader& shader, BufferMaterial& material) {
 	// Set noise data
 	shader["useNoise"](material.noise.enabled);
 	shader["noiseStrength"](material.noise.strength);
+	shader["noiseSeed"](material.noise.seed);
+	shader["noiseType"](material.noise.type);
 	shader["noiseAbsolute"](material.noise.absolute);
 }
 

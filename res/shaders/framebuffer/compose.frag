@@ -96,6 +96,7 @@ uniform bool	outlineRelativeAlpha	= true;
 uniform bool	useNoise				= false;
 uniform float	noiseStrength			= 1;
 uniform float	noiseSeed				= 1;
+uniform uint	noiseType				= 0;
 uniform bool	noiseAbsolute			= true;
 
 // [ HSL MODIFIERS ]
@@ -287,7 +288,7 @@ vec4 applyHSL(vec4 color) {
 	return vec4(hsl2rgb(hsl), color.a);
 }
 
-float stdnoise(vec2 xy) {
+float simplenoise(vec2 xy) {
 	return fract(sin(dot(xy, vec2(12.9898, 78.233))) * 43758.5453);
 }
 
@@ -296,21 +297,21 @@ float goldnoise(vec2 xy, float seed) {
 }
 
 float supernoise(vec2 xy, float seed) {
-	return goldnoise(vec2(stdnoise(xy), stdnoise(xy.yx)), seed);
+	return goldnoise(vec2(simplenoise(xy), simplenoise(xy.yx)), seed);
 }
 
 float rand(vec2 xy, uint type, float seed){
     switch (type) {
     	default:
-    	case 0x00:	return stdnoise(xy);
-    	case 0x01:	return goldnoise(xy, seed);
-    	case 0x02:	return supernoise(xy, seed);
+    	case 0x00:	return supernoise(xy, seed);
+    	case 0x01:	return simplenoise(xy);
+    	case 0x02:	return goldnoise(xy, seed);
     }
 }
 
 vec4 applyNoise(vec4 color, vec2 uv) {
 	vec2 nc = uv + color.xy + color.zw;
-	float nv = rand(nc, 2, noiseSeed);
+	float nv = rand(nc, noiseType, noiseSeed);
 	vec4 res = noiseAbsolute ? vec4(nv, nv, nv, 1) : vec4(color.xyz, nv);
 	return mix(color, res, noiseStrength);
 }
