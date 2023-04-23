@@ -95,6 +95,7 @@ uniform bool	outlineRelativeAlpha	= true;
 // [ NOISE EFFECT ]
 uniform bool	useNoise				= false;
 uniform float	noiseStrength			= 1;
+uniform float	noiseSeed				= 1;
 uniform bool	noiseAbsolute			= true;
 
 // [ HSL MODIFIERS ]
@@ -111,6 +112,10 @@ uniform uint	debugView	= 0;
 
 #ifndef HPI
 #define HPI (PI / 2.0)
+#endif
+
+#ifndef PHI
+#define PHI 1.61803398874989484820459
 #endif
 
 #ifndef TAU
@@ -282,8 +287,30 @@ vec4 applyHSL(vec4 color) {
 	return vec4(hsl2rgb(hsl), color.a);
 }
 
-vec4 applyNoise(vec4 color) {
-	float nv = (noise1(length(color)) + 1) / 2;
+float stdnoise(vec2 xy) {
+	return fract(sin(dot(xy, vec2(12.9898, 78.233))) * 43758.5453);
+}
+
+float goldnoise(vec2 xy, float seed) {
+	return fract(tan(distance(xy*PHI, xy)*seed));
+}
+
+float supernoise(vec2 xy, float seed) {
+	return goldnoise(vec2(stdnoise(xy), stdnoise(xy.yx)), seed);
+}
+
+float rand(vec2 xy, uint type, float seed){
+    switch (type) {
+    	default:
+    	case 0x00:	return stdnoise(xy);
+    	case 0x01:	return goldnoise(xy, seed);
+    	case 0x02:	return supernoise(xy, seed);
+    }
+}
+
+vec4 applyNoise(vec4 color, vec2 uv) {
+	vec2 nc = uv + color.xy + color.zw;
+	float nv = rand(nc, 2, noiseSeed);
 	vec4 res = noiseAbsolute ? vec4(nv, nv, nv, 1) : vec4(color.xyz, nv);
 	return mix(color, res, noiseStrength);
 }
@@ -337,7 +364,7 @@ void main() {
 	if (useOutline) color = applyOutline(color, screenUV);
 
 	// Noise effect
-	if (useNoise) color = applyNoise(color);
+	if (useNoise) color = applyNoise(color, screenUV);
 
 	// Alpha mask
 	if (useMask) {
