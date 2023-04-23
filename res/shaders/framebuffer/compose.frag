@@ -93,11 +93,12 @@ uniform vec4	outlineColor			= vec4(1);
 uniform bool	outlineRelativeAlpha	= true;
 
 // [ NOISE EFFECT ]
-uniform bool	useNoise				= false;
-uniform float	noiseStrength			= 1;
-uniform float	noiseSeed				= 1;
-uniform uint	noiseType				= 0;
-uniform bool	noiseAbsolute			= true;
+uniform bool	useNoise			= false;
+uniform float	noiseStrength		= 1;
+uniform float	noiseSeed			= 1;
+uniform uint	noiseType			= 0;
+uniform uint	noiseBlendColorMode	= 1;
+uniform uint	noiseBlendAlphaMode	= 1;
 
 // [ HSL MODIFIERS ]
 uniform float	hue			= 0;
@@ -250,6 +251,18 @@ float bin(float v, float lod) {
 	return round(v * lod) / lod;
 }
 
+float simplenoise(vec2 xy) {
+	return fract(sin(dot(xy, vec2(12.9898, 78.233))) * 43758.5453);
+}
+
+float goldnoise(vec2 xy, float seed) {
+	return fract(tan(distance(xy*PHI, xy)*seed));
+}
+
+float supernoise(vec2 xy, float seed) {
+	return goldnoise(vec2(simplenoise(xy), simplenoise(xy.yx)), seed);
+}
+
 float pattern(float t, uint shape, float lod) {
 	switch (shape) {
 		// Square wave
@@ -268,8 +281,8 @@ float pattern(float t, uint shape, float lod) {
 		case 0x07:	return htri(t);
 		case 0x08:	return bin(htri(t), lod);
 		// Noise
-		case 0x09:	return noise1(t);
-		case 0x0A:	return bin(noise1(t), lod);
+		case 0x09:	return simplenoise(vec2(t, 1-t)) * 2.0 - 1.0;
+		case 0x0A:	return bin(simplenoise(vec2(t, 1-t)), lod) * 2.0 - 1.0;
 	}
 }
 
@@ -288,31 +301,51 @@ vec4 applyHSL(vec4 color) {
 	return vec4(hsl2rgb(hsl), color.a);
 }
 
-float simplenoise(vec2 xy) {
-	return fract(sin(dot(xy, vec2(12.9898, 78.233))) * 43758.5453);
-}
-
-float goldnoise(vec2 xy, float seed) {
-	return fract(tan(distance(xy*PHI, xy)*seed));
-}
-
-float supernoise(vec2 xy, float seed) {
-	return goldnoise(vec2(simplenoise(xy), simplenoise(xy.yx)), seed);
-}
-
 float rand(vec2 xy, uint type, float seed){
     switch (type) {
     	default:
-    	case 0x00:	return supernoise(xy, seed);
-    	case 0x01:	return simplenoise(xy);
-    	case 0x02:	return goldnoise(xy, seed);
+    	// Simple Noise
+    	case 0x00:	return simplenoise(xy);
+    	// Gold Noise
+    	case 0x01:	return goldnoise(xy, seed);
+    	// Super Noise
+    	case 0x02:	return supernoise(xy, seed);
     }
+}
+
+#define VBLEND_DEFINE(T)						\
+T vblend(T src, T dst, uint func) {				\
+	switch (func) {								\
+		default:								\
+		case 0x00: return T(0);					\
+		case 0x01: return T(1);					\
+		case 0x02: return src;					\
+		case 0x03: return T(1) - src;			\
+		case 0x04: return dst;					\
+		case 0x05: return T(1) - dst;			\
+		case 0x06: return src * dst;			\
+		case 0x07: return src / dst;			\
+		case 0x08: return (T(1) - src) * dst;	\
+		case 0x09: return (T(1) - src) / dst;	\
+	}											\
+}
+
+VBLEND_DEFINE(float)
+VBLEND_DEFINE(vec2)
+VBLEND_DEFINE(vec3)
+VBLEND_DEFINE(vec4)
+
+vec4 blendNoise(vec4 color, float noise, uint colorMode, uint alphaMode) {
+	return vec4(
+		vblend(color.rgb, noise.xxx, colorMode),
+		vblend(color.a, noise.x, alphaMode)
+	);
 }
 
 vec4 applyNoise(vec4 color, vec2 uv) {
 	vec2 nc = uv + color.xy + color.zw;
 	float nv = rand(nc, noiseType, noiseSeed);
-	vec4 res = noiseAbsolute ? vec4(nv, nv, nv, 1) : vec4(color.xyz, nv);
+	vec4 res = blendNoise(color, nv, noiseBlendColorMode, noiseBlendAlphaMode);
 	return mix(color, res, noiseStrength);
 }
 

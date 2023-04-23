@@ -113,8 +113,22 @@ struct MaskEffect: Effect, Imageable2D, Transformable2D, Invertible {
 	bool relative = false;
 };
 
+enum WaveShape: unsigned int {
+	WS_SQUARE = 0,
+	WS_SINE,
+	WS_BIN_SINE,
+	WS_TRIANGLE,
+	WS_BIN_TRIANGLE,
+	WS_HALF_SINE,
+	WS_BIN_HALF_SINE,
+	WS_HALF_TRIANGLE,
+	WS_BIN_HALF_TRIANGLE,
+	WS_SIMPLE_NOISE,
+	WS_BIN_SIMPLE_NOISE,
+};
+
 struct WaveEffect: Effect, Tuneable2D {
-	unsigned int shape = 0;
+	WaveShape	shape	= WS_SQUARE;
 };
 
 struct RainbowEffect: Effect, Variable {
@@ -134,10 +148,34 @@ struct PolarWarpEffect: Effect, Sizeable, Positionable2D, Variable2D, ColorableR
 	bool	fishEye			= true;
 };
 
+enum NoiseBlendMode: unsigned int {
+	NBM_ZERO = 0,
+	NBM_ONE,
+	NBM_SRC,
+	NBM_ONE_MINUS_SRC,
+	NBM_NOISE,
+	NBM_ONE_MINUS_NOISE,
+	NBM_SRC_MULTIPLY_BY_NOISE,
+	NBM_SRC_DIVIDE_BY_NOISE,
+	NBM_ONE_MINUS_SRC_MULTIPLY_BY_NOISE,
+	NBM_ONE_MINUS_SRC_DIVIDE_BY_NOISE,
+};
+
+struct NoiseBlendFunc {
+	NoiseBlendMode	color	= NBM_SRC;
+	NoiseBlendMode	alpha	= NBM_SRC;
+};
+
+enum NoiseType: unsigned int {
+	NT_NOISE_SIMPLE = 0,
+	NT_NOISE_GOLD,
+	NT_NOISE_SUPER
+};
+
 struct NoiseEffect: Effect, Variable {
-	float			seed		= 1;
-	unsigned int	type		= 1;
-	bool			absolute	= true;
+	float			seed	= 1;
+	NoiseType		type	= NT_NOISE_SUPER;
+	NoiseBlendFunc	blend	= {NBM_NOISE, NBM_ONE};
 };
 
 // World Material Effects
@@ -149,13 +187,13 @@ struct AmbientEffect: ColorableRGB, Variable {};
 // Extra Data
 
 enum class BufferDebugView: unsigned int {
-	NONE = 0,
-	DEPTH
+	BDV_NONE = 0,
+	BDV_DEPTH,
 };
 
 enum class ObjectDebugView: unsigned int {
-	NONE = 0,
-	NORMAL
+	ODV_NONE = 0,
+	ODV_NORMAL,
 };
 
 // Materials
@@ -174,7 +212,7 @@ struct ObjectMaterial {
 	vector<Vector3>	instances = {Vec3(0, 0, 0)};
 	GLuint culling		= GL_FRONT_AND_BACK;
 	GLuint fill			= GL_FILL;
-	ObjectDebugView	debug	= ObjectDebugView::NONE;
+	ObjectDebugView	debug	= ObjectDebugView::ODV_NONE;
 };
 
 struct BufferMaterial {
@@ -197,7 +235,7 @@ struct BufferMaterial {
 	GradientEffect	gradient;
 	RainbowEffect	rainbow;
 	NoiseEffect		noise;
-	BufferDebugView	debug	= BufferDebugView::NONE;
+	BufferDebugView	debug	= BufferDebugView::BDV_NONE;
 };
 
 struct WorldMaterial {
@@ -324,7 +362,8 @@ void setMaterial(Shader& shader, BufferMaterial& material) {
 	shader["noiseStrength"](material.noise.strength);
 	shader["noiseSeed"](material.noise.seed);
 	shader["noiseType"](material.noise.type);
-	shader["noiseAbsolute"](material.noise.absolute);
+	shader["noiseBlendColorMode"](material.noise.blend.color);
+	shader["noiseBlendAlphaMode"](material.noise.blend.alpha);
 }
 
 void setMaterial(Shader& shader, WorldMaterial& material) {
