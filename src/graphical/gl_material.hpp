@@ -134,6 +134,10 @@ struct PolarWarpEffect: Effect, Sizeable, Positionable2D, Variable2D, ColorableR
 	bool	fishEye			= true;
 };
 
+struct NoiseEffect: Effect, Variable {
+	bool absolute	= true;
+};
+
 // World Material Effects
 
 struct FogEffect: Effect, Limitable, ColorableRGBA, Variable {};
@@ -168,7 +172,7 @@ struct ObjectMaterial {
 	vector<Vector3>	instances = {Vec3(0, 0, 0)};
 	GLuint culling		= GL_FRONT_AND_BACK;
 	GLuint fill			= GL_FILL;
-	ObjectDebugView	debug = ObjectDebugView::NONE;
+	ObjectDebugView	debug	= ObjectDebugView::NONE;
 };
 
 struct BufferMaterial {
@@ -190,7 +194,8 @@ struct BufferMaterial {
 	PolarWarpEffect	polarWarp;
 	GradientEffect	gradient;
 	RainbowEffect	rainbow;
-	BufferDebugView	debug = BufferDebugView::NONE;
+	NoiseEffect		noise;
+	BufferDebugView	debug	= BufferDebugView::NONE;
 };
 
 struct WorldMaterial {
@@ -312,6 +317,10 @@ void setMaterial(Shader& shader, BufferMaterial& material) {
 	shader["hue"](material.hue);
 	shader["saturation"](material.saturation);
 	shader["luminosity"](material.luminosity);
+	// Set noise data
+	shader["useNoise"](material.noise.enabled);
+	shader["noiseStrength"](material.noise.strength);
+	shader["noiseAbsolute"](material.noise.absolute);
 }
 
 void setMaterial(Shader& shader, WorldMaterial& material) {

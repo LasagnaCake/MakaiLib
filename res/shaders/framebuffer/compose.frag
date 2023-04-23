@@ -92,6 +92,11 @@ uniform vec2	outlineSize				= vec2(0.01);
 uniform vec4	outlineColor			= vec4(1);
 uniform bool	outlineRelativeAlpha	= true;
 
+// [ NOISE EFFECT ]
+uniform bool	useNoise				= false;
+uniform float	noiseStrength			= 1;
+uniform bool	noiseAbsolute			= true;
+
 // [ HSL MODIFIERS ]
 uniform float	hue			= 0;
 uniform float	saturation	= 1;
@@ -243,19 +248,22 @@ float pattern(float t, uint shape, float lod) {
 	switch (shape) {
 		// Square wave
 		default:
-		case 0:	return sign(sin(t));
+		case 0x00:	return sign(sin(t));
 		// Sine wave
-		case 1:	return sin(t);
-		case 2: return bin(sin(t), lod);
+		case 0x01:	return sin(t);
+		case 0x02:	return bin(sin(t), lod);
 		// Triangle wave
-		case 3: return tri(t);
-		case 4: return bin(tri(t), lod);
+		case 0x03:	return tri(t);
+		case 0x04:	return bin(tri(t), lod);
 		// Half-sine wave
-		case 5: return hsin(t);
-		case 6: return bin(hsin(t), lod);
+		case 0x05:	return hsin(t);
+		case 0x06:	return bin(hsin(t), lod);
 		// Half-triangle wave
-		case 7: return htri(t);
-		case 8: return bin(htri(t), lod);
+		case 0x07:	return htri(t);
+		case 0x08:	return bin(htri(t), lod);
+		// Noise
+		case 0x09:	return noise1(t);
+		case 0x0A:	return bin(noise1(t), lod);
 	}
 }
 
@@ -272,6 +280,12 @@ vec4 applyHSL(vec4 color) {
 	hsl.x += mod(hue, 1);
     hsl.yz *= vec2(saturation, luminosity);
 	return vec4(hsl2rgb(hsl), color.a);
+}
+
+vec4 applyNoise(vec4 color) {
+	float nv = (noise1(length(color)) + 1) / 2;
+	vec4 res = noiseAbsolute ? vec4(nv, nv, nv, 1) : vec4(color.xyz, nv);
+	return mix(color, res, noiseStrength);
 }
 
 void main() {
@@ -321,6 +335,9 @@ void main() {
 
 	// Outline effect
 	if (useOutline) color = applyOutline(color, screenUV);
+
+	// Noise effect
+	if (useNoise) color = applyNoise(color);
 
 	// Alpha mask
 	if (useMask) {
