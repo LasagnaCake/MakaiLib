@@ -1,17 +1,11 @@
 #ifndef HEADER_PREDEFINITIONS_H
 #define HEADER_PREDEFINITIONS_H
 
-#ifdef MSVCPP
-#define THREADLOCAL			__declspec(thread)
-#define ALIGN(V)			__declspec(align(V))
-#else
-#define THREADLOCAL			__thread
-#define ALIGN(V)            __attribute__((aligned(V)))
-#endif
 // GCC Attributes
-#define METACTOR			[[gnu::constructor]]
-#define METADTOR			[[gnu::destructor]]
-#define SECTION(NAME)		[[gnu::section(NAME)]]
+#define METACTOR		[[gnu::constructor]]
+#define METADTOR		[[gnu::destructor]]
+#define SECTION(NAME)	[[gnu::section(NAME)]]
+#define ALIGNED(V)		[[gnu::aligned(V)]]
 // Declspecs
 #define NOINLINE			__declspec(noinline)
 #define MODULAR				__declspec(novtable)
@@ -34,12 +28,14 @@
 #define FALLTHROUGH			[[fallthrough]]
 #define LIKELY				[[likely]]
 #define UNLIKELY			[[unlikely]]
-// Pragmas
-//#define DERIVEONLY		_Pragma("interface")
 // Types
 #ifndef restrict
 #define restrict __restrict__
 #endif // restrict
+
+#ifndef threadlocal
+#define threadlocal thread_local
+#endif // threadlocal
 
 #ifdef SHARED_LIBRARY
 #ifdef COMPILING_DLL
