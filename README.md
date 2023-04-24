@@ -74,6 +74,25 @@ Currently nonexistent. Some of the code is commented.
 
 ### Future
 
+- Other game types
+- More "multi-purpose" game classes
+
+#### Major Refactor
+
 - "De-headerify" library
+- Cleanup & polish [vectorn.hpp](src/collection/vectorn.hpp) (Potentially turn it into an "universal vector")
+- Cleanup & polish [graphical](src/graphical) system
 - Replace raw pointers with smart pointers (see [referential.hpp](src/collection/referential.hpp))
+- Remove or replace `$` macros
+- Reorganize and remove haphazardness/mess
+- Shorten namespace names or unify them under the `Makai` namespace
 - "C++20 coroutine"-ify [tasking system](src/collection/tasking.hpp)
+
+#### Under Consideration
+
+- Replace or refactor [entity](src/collection/entity) system
+- Rename stuff
+
+### Very Far Future
+
+- Vulkanize graphical system

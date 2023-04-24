@@ -599,6 +599,13 @@ namespace Vector{
 				this->w = w;
 			}
 
+			Vector4(Vector2 const& v1, Vector2 const& v2) {
+				this->x = v1.x;
+				this->y = v1.y;
+				this->z = v2.x;
+				this->w = v2.y;
+			}
+
 			Vector4(const Vector4& vec) {
 				x = vec.x;
 				y = vec.y;
@@ -606,14 +613,14 @@ namespace Vector{
 				w = vec.w;
 			}
 
-			Vector4(Vector3 vec, float w = 0) {
+			Vector4(Vector3 const& vec, float w = 0) {
 				x = vec.x;
 				y = vec.y;
 				z = vec.z;
 				this->w = w;
 			}
 
-			Vector4(Vector2 vec, float z = 0, float w = 0) {
+			Vector4(Vector2 const& vec, float z = 0, float w = 0) {
 				x = vec.x;
 				y = vec.y;
 				this->z = z;
@@ -890,26 +897,40 @@ namespace Vector{
 	};
 
 	template<typename T>
-	concept Vector2Type = requires {
-		requires Type::Arithmetic<T, T>;
-		requires Type::Arithmetic<T, float>;
-		requires Type::Constructible<T, float, float>;
-		T::x;
-		T::y;
+	concept BaseVectorType = requires {
+		requires	Type::Arithmetic<T, T>;
+		requires	Type::Arithmetic<T, float>;
+		requires	Type::Constructible<T, float>;
 	};
 
 	template<typename T>
-	concept Vector3Type = requires {
-		requires Vector2Type<T>;
-		requires Type::Constructible<T, float, float, float>;
-		T::z;
+	concept Vector2Type = requires (T vec) {
+		requires	BaseVectorType<T>;
+		requires	Type::Constructible<T, float, float>;
+		{vec.x} ->	Type::Convertible<float>;
+		{vec.y} ->	Type::Convertible<float>;
 	};
 
 	template<typename T>
-	concept Vector4Type = requires {
-		requires Vector3Type<T>;
-		requires Type::Constructible<T, float, float, float, float>;
-		T::w;
+	concept Vector3Type = requires (T vec) {
+		requires	BaseVectorType<T>;
+		requires	Type::Constructible<T, float, float>;
+		requires	Type::Constructible<T, float, float, float>;
+		{vec.x} ->	Type::Convertible<float>;
+		{vec.y} ->	Type::Convertible<float>;
+		{vec.z} ->	Type::Convertible<float>;
+	};
+
+	template<typename T>
+	concept Vector4Type = requires (T vec) {
+		requires	BaseVectorType<T>;
+		requires	Type::Constructible<T, float, float>;
+		requires	Type::Constructible<T, float, float, float>;
+		requires	Type::Constructible<T, float, float, float, float>;
+		{vec.x} ->	Type::Convertible<float>;
+		{vec.y} ->	Type::Convertible<float>;
+		{vec.z} ->	Type::Convertible<float>;
+		{vec.w} ->	Type::Convertible<float>;
 	};
 
 	template<typename T>
