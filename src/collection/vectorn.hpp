@@ -6,6 +6,53 @@
 #include "algebra.hpp"
 
 namespace Vector{
+	template<typename T>
+	concept BaseVectorType = requires {
+		requires	Type::Arithmetic<T, T>;
+		requires	Type::Arithmetic<T, float>;
+		requires	Type::Constructible<T, float>;
+	};
+
+	template<typename T>
+	concept Vector2Type = requires (T vec) {
+		requires	BaseVectorType<T>;
+		requires	Type::Constructible<T, float, float>;
+		{vec.x} ->	Type::Convertible<float>;
+		{vec.y} ->	Type::Convertible<float>;
+	};
+
+	template<typename T>
+	concept Vector3Type = requires (T vec) {
+		requires	BaseVectorType<T>;
+		requires	Type::Constructible<T, float, float>;
+		requires	Type::Constructible<T, float, float, float>;
+		{vec.x} ->	Type::Convertible<float>;
+		{vec.y} ->	Type::Convertible<float>;
+		{vec.z} ->	Type::Convertible<float>;
+	};
+
+	template<typename T>
+	concept Vector4Type = requires (T vec) {
+		requires	BaseVectorType<T>;
+		requires	Type::Constructible<T, float, float>;
+		requires	Type::Constructible<T, float, float, float>;
+		requires	Type::Constructible<T, float, float, float, float>;
+		{vec.x} ->	Type::Convertible<float>;
+		{vec.y} ->	Type::Convertible<float>;
+		{vec.z} ->	Type::Convertible<float>;
+		{vec.w} ->	Type::Convertible<float>;
+	};
+
+	template<typename T>
+	concept VectorType =
+		Vector2Type<T>
+	||	Vector3Type<T>
+	||	Vector4Type<T>
+	;
+
+	template<typename T>
+	concept Vectorable = Type::Equal<T, float> || VectorType<T>;
+
 	/**
 	* [-----------------]
 	* [                 ]
@@ -35,7 +82,7 @@ namespace Vector{
 				this->y = y;
 			}
 
-			Vector2(const Vector2& vec) {
+			Vector2(Vector2 const& vec) {
 				x = vec.x;
 				y = vec.y;
 			}
@@ -46,92 +93,92 @@ namespace Vector{
 			}
 
 			/// Vector operator overloading.
-			Vector2 operator+(Vector2 vec) {
+			Vector2 operator+(Vector2 const& vec) {
 				return Vector2(
 					x + vec.x,
 					y + vec.y
-					);
+				);
 			}
 
-			Vector2 operator-(Vector2 vec) {
+			Vector2 operator-(Vector2 const& vec) {
 				return Vector2(
 					x - vec.x,
 					y - vec.y
-					);
+				);
 			}
 
-			Vector2 operator*(Vector2 vec) {
+			Vector2 operator*(Vector2 const& vec) {
 				return Vector2(
 					x * vec.x,
 					y * vec.y
-					);
+				);
 			}
 
-			Vector2 operator/(Vector2 vec) {
+			Vector2 operator/(Vector2 const& vec) {
 				return Vector2(
 					x / vec.x,
 					y / vec.y
-					);
+				);
 			}
 
-			Vector2 operator%(Vector2 vec) {
+			Vector2 operator%(Vector2 const& vec) {
 				return Vector2(
 					fmod(x, vec.x),
 					fmod(y, vec.y)
-					);
+				);
 			}
 
-			Vector2 operator^(Vector2 vec) {
+			Vector2 operator^(Vector2 const& vec) {
 				return Vector2(
 					pow(x, vec.x),
 					pow(y, vec.y)
-					);
+				);
 			}
 
-			Vector2 operator+=(Vector2 vec) {
+			Vector2& operator+=(Vector2 const& vec) {
 				x += vec.x;
 				y += vec.y;
 				return *this;
 			}
 
-			Vector2 operator-=(Vector2 vec) {
+			Vector2& operator-=(Vector2 const& vec) {
 				x -= vec.x;
 				y -= vec.y;
 				return *this;
 			}
 
-			Vector2 operator*=(Vector2 vec) {
+			Vector2& operator*=(Vector2 const& vec) {
 				x *= vec.x;
 				y *= vec.y;
 				return *this;
 			}
 
-			Vector2 operator/=(Vector2 vec) {
+			Vector2& operator/=(Vector2 const& vec) {
 				x /= vec.x;
 				y /= vec.y;
 				return *this;
 			}
 
-			Vector2 operator%=(Vector2 vec) {
+			Vector2& operator%=(Vector2 const& vec) {
 				x = fmod(x, vec.x);
 				y = fmod(y, vec.y);
 				return *this;
 			}
 
-			Vector2 operator^=(Vector2 vec) {
+			Vector2& operator^=(Vector2 const& vec) {
 				x = fmod(x, vec.x);
 				y = fmod(y, vec.y);
 				return *this;
 			}
 
-			bool operator==(Vector2 vec) {
+			bool operator==(Vector2 const& vec) {
 				return (
 					x == vec.x &&
 					y == vec.y
 				);
 			}
 
-			bool operator!=(Vector2 vec) {
+			bool operator!=(Vector2 const& vec) {
 				return !(*this == vec);
 			}
 
@@ -160,28 +207,34 @@ namespace Vector{
 				return *this ^ Vector2(val);
 			}
 
-			Vector2 operator+=(float val) {
-				return *this += Vector2(val);
+			Vector2& operator+=(float val) {
+				*this += Vector2(val);
+				return *this;
 			}
 
-			Vector2 operator-=(float val) {
-				return *this -= Vector2(val);
+			Vector2& operator-=(float val) {
+				*this -= Vector2(val);
+				return *this;
 			}
 
-			Vector2 operator*=(float val) {
-				return *this *= Vector2(val);
+			Vector2& operator*=(float val) {
+				*this *= Vector2(val);
+				return *this;
 			}
 
-			Vector2 operator/=(float val) {
-				return *this /= Vector2(val);
+			Vector2& operator/=(float val) {
+				*this /= Vector2(val);
+				return *this;
 			}
 
-			Vector2 operator%=(float val) {
-				return *this %= Vector2(val);
+			Vector2& operator%=(float val) {
+				*this %= Vector2(val);
+				return *this;
 			}
 
-			Vector2 operator^=(float val) {
-				return *this ^= Vector2(val);
+			Vector2& operator^=(float val) {
+				*this ^= Vector2(val);
+				return *this;
 			}
 
 			// Other overloads
@@ -232,14 +285,25 @@ namespace Vector{
 				return diff.lengthSquared();
 			}
 
+			/// Gets the vector's angle.
+			float angle() {
+				return - atan2(x, y) + Math::hpi;
+			}
+
+			/// Gets the vector's angle to another vector.
+			float angleTo(Vector2 vec) {
+				Vector2 diff = vec - *this;
+				return diff.angle();
+			}
+
 			/// Clamps the vector between two values.
-			void clamp(Vector2 min, Vector2 max) {
+			void clamp(Vector2 const& min, Vector2 const& max) {
 				x = Math::clamp(x, min.x, max.x);
 				y = Math::clamp(y, min.y, max.y);
 			}
 
 			/// Returns the vector clamped between two values.
-			Vector2 clamped(Vector2 min, Vector2 max) {
+			Vector2 clamped(Vector2 const& min, Vector2 const& max) {
 				return Vector2(
 					Math::clamp(x, min.x, max.x),
 					Math::clamp(y, min.y, max.y)
@@ -297,13 +361,13 @@ namespace Vector{
 				this->z = z;
 			}
 
-			Vector3(const Vector3& vec) {
+			Vector3(Vector3 const& vec) {
 				x = vec.x;
 				y = vec.y;
 				z = vec.z;
 			}
 
-			Vector3(Vector2 vec, float z = 0.0) {
+			Vector3(Vector2 const& vec, float z = 0.0) {
 				x = vec.x;
 				y = vec.y;
 				this->z = z;
@@ -317,97 +381,97 @@ namespace Vector{
 
 			/// Vector operator overloading.
 
-			Vector3 operator+(Vector3 vec) {
+			Vector3 operator+(Vector3 const& vec) {
 				return Vector3(
 					x + vec.x,
 					y + vec.y,
 					z + vec.z
-					);
+				);
 			}
 
-			Vector3 operator-(Vector3 vec) {
+			Vector3 operator-(Vector3 const& vec) {
 				return Vector3(
 					x - vec.x,
 					y - vec.y,
 					z - vec.z
-					);
+				);
 			}
 
-			Vector3 operator*(Vector3 vec) {
+			Vector3 operator*(Vector3 const& vec) {
 				return Vector3(
 					x * vec.x,
 					y * vec.y,
 					z * vec.z
-					);
+				);
 			}
 
-			Vector3 operator/(Vector3 vec) {
+			Vector3 operator/(Vector3 const& vec) {
 				return Vector3(
 					x / vec.x,
 					y / vec.y,
 					z / vec.z
-					);
+				);
 			}
 
-			Vector3 operator%(Vector3 vec) {
+			Vector3 operator%(Vector3 const& vec) {
 				return Vector3(
 					fmod(x, vec.x),
 					fmod(y, vec.y),
 					fmod(z, vec.z)
-					);
+				);
 			}
 
-			Vector3 operator^(Vector3 vec) {
+			Vector3 operator^(Vector3 const& vec) {
 				return Vector3(
 					pow(x, vec.x),
 					pow(y, vec.y),
 					pow(z, vec.z)
-					);
+				);
 			}
 
-			Vector3 operator+=(Vector3 vec) {
+			Vector3& operator+=(Vector3 const& vec) {
 				x += vec.x;
 				y += vec.y;
 				z += vec.z;
 				return *this;
 			}
 
-			Vector3 operator-=(Vector3 vec) {
+			Vector3& operator-=(Vector3 const& vec) {
 				x -= vec.x;
 				y -= vec.y;
 				z -= vec.z;
 				return *this;
 			}
 
-			Vector3 operator*=(Vector3 vec) {
+			Vector3& operator*=(Vector3 const& vec) {
 				x *= vec.x;
 				y *= vec.y;
 				z *= vec.z;
 				return *this;
 			}
 
-			Vector3 operator/=(Vector3 vec) {
+			Vector3& operator/=(Vector3 const& vec) {
 				x /= vec.x;
 				y /= vec.y;
 				z /= vec.z;
 				return *this;
 			}
 
-			Vector3 operator%=(Vector3 vec) {
+			Vector3& operator%=(Vector3 const& vec) {
 				x = fmod(x, vec.x);
 				y = fmod(y, vec.y);
 				z = fmod(z, vec.z);
 				return *this;
 			}
 
-			Vector3 operator^=(Vector3 vec) {
+			Vector3& operator^=(Vector3 const& vec) {
 				x = pow(x, vec.x);
 				y = pow(y, vec.y);
 				z = pow(z, vec.z);
 				return *this;
 			}
 
-			bool operator==(Vector3 vec) {
+			bool operator==(Vector3 const& vec) {
 				return (
 					x == vec.x &&
 					y == vec.y &&
@@ -445,29 +509,34 @@ namespace Vector{
 				return *this ^ Vector3(val);
 			}
 
-			Vector3 operator+=(float val) {
-				return *this += Vector3(val);
+			Vector3& operator+=(float val) {
+				*this += Vector3(val);
+				return *this;
 			}
 
-			Vector3 operator-=(float val) {
-				return *this -= Vector3(val);
+			Vector3& operator-=(float val) {
+				*this -= Vector3(val);
+				return *this;
 			}
 
-			Vector3 operator*=(float val) {
-				return *this *= Vector3(val);
+			Vector3& operator*=(float val) {
+				*this *= Vector3(val);
+				return *this;
 			}
 
-			Vector3 operator/=(float val) {
-				return *this /= Vector3(val);
+			Vector3& operator/=(float val) {
+				*this /= Vector3(val);
+				return *this;
 			}
 
-
-			Vector3 operator%=(float val) {
-				return *this %= Vector3(val);
+			Vector3& operator%=(float val) {
+				*this %= Vector3(val);
+				return *this;
 			}
 
-			Vector3 operator^=(float val) {
-				return *this ^= Vector3(val);
+			Vector3& operator^=(float val) {
+				*this ^= Vector3(val);
+				return *this;
 			}
 
 			// Other overloads
@@ -502,6 +571,22 @@ namespace Vector{
 				return ((x * x) + (y * y) + (z * z));
 			}
 
+			/// Gets the vector's angle.
+			Vector3 angle() {
+				Vector3 res;
+				float mag = length();
+				res.x = acos(x/mag);
+				res.y = acos(y/mag);
+				res.z = acos(z/mag);
+				return res;
+			}
+
+			/// Gets the vector's angle to another vector.
+			Vector3 angleTo(Vector3 vec) {
+				Vector3 diff = vec - *this;
+				return diff.angle();
+			}
+
 			/// Gets the normalized vector.
 			Vector3 normalized() {
 				if (*this != 0)
@@ -523,14 +608,14 @@ namespace Vector{
 			}
 
 			/// Clamps the vector between two values.
-			void clamp(Vector3 min, Vector3 max) {
+			void clamp(Vector3 const& min, Vector3 const& max) {
 				x = Math::clamp(x, min.x, max.x);
 				y = Math::clamp(y, min.y, max.y);
 				z = Math::clamp(z, min.z, max.z);
 			}
 
 			/// Returns the vector clamped between two values.
-			Vector3 clamped(Vector3 min, Vector3 max) {
+			Vector3 clamped(Vector3 const& min, Vector3 const& max) {
 				return Vector3(
 					Math::clamp(x, min.x, max.x),
 					Math::clamp(y, min.y, max.y),
@@ -606,7 +691,7 @@ namespace Vector{
 				this->w = v2.y;
 			}
 
-			Vector4(const Vector4& vec) {
+			Vector4(Vector4 const& vec) {
 				x = vec.x;
 				y = vec.y;
 				z = vec.z;
@@ -635,61 +720,61 @@ namespace Vector{
 
 			/// Vector operator overloading.
 
-			Vector4 operator+(Vector4 vec) {
+			Vector4 operator+(Vector4 const& vec) {
 				return Vector4(
 					x + vec.x,
 					y + vec.y,
 					z + vec.z,
 					w + vec.w
-					);
+				);
 			}
 
-			Vector4 operator-(Vector4 vec) {
+			Vector4 operator-(Vector4 const& vec) {
 				return Vector4(
 					x - vec.x,
 					y - vec.y,
 					z - vec.z,
 					w - vec.w
-					);
+				);
 			}
 
-			Vector4 operator*(Vector4 vec) {
+			Vector4 operator*(Vector4 const& vec) {
 				return Vector4(
 					x * vec.x,
 					y * vec.y,
 					z * vec.z,
 					w * vec.w
-					);
+				);
 			}
 
-			Vector4 operator/(Vector4 vec) {
+			Vector4 operator/(Vector4 const& vec) {
 				return Vector4(
 					x / vec.x,
 					y / vec.y,
 					z / vec.z,
 					w / vec.w
-					);
+				);
 			}
 
-			Vector4 operator%(Vector4 vec) {
+			Vector4 operator%(Vector4 const& vec) {
 				return Vector4(
 					fmod(x, vec.x),
 					fmod(y, vec.y),
 					fmod(z, vec.z),
 					fmod(w, vec.w)
-					);
+				);
 			}
 
-			Vector4 operator^(Vector4 vec) {
+			Vector4 operator^(Vector4 const& vec) {
 				return Vector4(
 					pow(x, vec.x),
 					pow(y, vec.y),
 					pow(z, vec.z),
 					pow(w, vec.w)
-					);
+				);
 			}
 
-			Vector4 operator+=(Vector4 vec) {
+			Vector4& operator+=(Vector4 const& vec) {
 				x += vec.x;
 				y += vec.y;
 				z += vec.z;
@@ -697,7 +782,7 @@ namespace Vector{
 				return *this;
 			}
 
-			Vector4 operator-=(Vector4 vec) {
+			Vector4& operator-=(Vector4 const& vec) {
 				x -= vec.x;
 				y -= vec.y;
 				z -= vec.z;
@@ -705,7 +790,7 @@ namespace Vector{
 				return *this;
 			}
 
-			Vector4 operator*=(Vector4 vec) {
+			Vector4& operator*=(Vector4 const& vec) {
 				x *= vec.x;
 				y *= vec.y;
 				z *= vec.z;
@@ -713,7 +798,7 @@ namespace Vector{
 				return *this;
 			}
 
-			Vector4 operator/=(Vector4 vec) {
+			Vector4& operator/=(Vector4 const& vec) {
 				x /= vec.x;
 				y /= vec.y;
 				z /= vec.z;
@@ -721,7 +806,7 @@ namespace Vector{
 				return *this;
 			}
 
-			Vector4 operator%=(Vector4 vec) {
+			Vector4& operator%=(Vector4 const& vec) {
 				x = fmod(x, vec.x);
 				y = fmod(y, vec.y);
 				z = fmod(z, vec.z);
@@ -729,7 +814,7 @@ namespace Vector{
 				return *this;
 			}
 
-			Vector4 operator^=(Vector4 vec) {
+			Vector4& operator^=(Vector4 const& vec) {
 				x = pow(x, vec.x);
 				y = pow(y, vec.y);
 				z = pow(z, vec.z);
@@ -737,7 +822,7 @@ namespace Vector{
 				return *this;
 			}
 
-			bool operator==(Vector4 vec) {
+			bool operator==(Vector4 const& vec) {
 				return (
 					x == vec.x &&
 					y == vec.y &&
@@ -746,7 +831,7 @@ namespace Vector{
 				);
 			}
 
-			bool operator!=(Vector4 vec) {
+			bool operator!=(Vector4 const& vec) {
 				return !(*this == vec);
 			}
 
@@ -776,24 +861,34 @@ namespace Vector{
 				return *this ^ Vector4(val);
 			}
 
-			Vector4 operator+=(float val) {
-				return *this += Vector4(val);
+			Vector4& operator+=(float val) {
+				*this += Vector4(val);
+				return *this;
 			}
 
-			Vector4 operator-=(float val) {
-				return *this -= Vector4(val);
+			Vector4& operator-=(float val) {
+				*this -= Vector4(val);
+				return *this;
 			}
 
-			Vector4 operator*=(float val) {
-				return *this *= Vector4(val);
+			Vector4& operator*=(float val) {
+				*this *= Vector4(val);
+				return *this;
 			}
 
-			Vector4 operator/=(float val) {
-				return *this /= Vector4(val);
+			Vector4& operator/=(float val) {
+				*this /= Vector4(val);
+				return *this;
 			}
 
-			Vector4 operator^=(float val) {
-				return *this ^= Vector4(val);
+			Vector4& operator^=(float val) {
+				*this ^= Vector4(val);
+				return *this;
+			}
+
+			Vector4& operator%=(float val) {
+				*this %= Vector4(val);
+				return *this;
 			}
 
 			// Other overloads
@@ -853,7 +948,7 @@ namespace Vector{
 			}
 
 			/// Clamps the vector between two values.
-			void clamp(Vector4 min, Vector4 max) {
+			void clamp(Vector4 const& min, Vector4 const& max) {
 				x = Math::clamp(x, min.x, max.x);
 				y = Math::clamp(y, min.y, max.y);
 				z = Math::clamp(z, min.z, max.z);
@@ -861,7 +956,7 @@ namespace Vector{
 			}
 
 			/// Returns the vector clamped between two values.
-			Vector4 clamped(Vector4 min, Vector4 max) {
+			Vector4 clamped(Vector4 const& min, Vector4 const& max) {
 				return Vector4(
 					Math::clamp(x, min.x, max.x),
 					Math::clamp(y, min.y, max.y),
@@ -895,53 +990,6 @@ namespace Vector{
 				return Vector4(xyz() / w, w);
 			}
 	};
-
-	template<typename T>
-	concept BaseVectorType = requires {
-		requires	Type::Arithmetic<T, T>;
-		requires	Type::Arithmetic<T, float>;
-		requires	Type::Constructible<T, float>;
-	};
-
-	template<typename T>
-	concept Vector2Type = requires (T vec) {
-		requires	BaseVectorType<T>;
-		requires	Type::Constructible<T, float, float>;
-		{vec.x} ->	Type::Convertible<float>;
-		{vec.y} ->	Type::Convertible<float>;
-	};
-
-	template<typename T>
-	concept Vector3Type = requires (T vec) {
-		requires	BaseVectorType<T>;
-		requires	Type::Constructible<T, float, float>;
-		requires	Type::Constructible<T, float, float, float>;
-		{vec.x} ->	Type::Convertible<float>;
-		{vec.y} ->	Type::Convertible<float>;
-		{vec.z} ->	Type::Convertible<float>;
-	};
-
-	template<typename T>
-	concept Vector4Type = requires (T vec) {
-		requires	BaseVectorType<T>;
-		requires	Type::Constructible<T, float, float>;
-		requires	Type::Constructible<T, float, float, float>;
-		requires	Type::Constructible<T, float, float, float, float>;
-		{vec.x} ->	Type::Convertible<float>;
-		{vec.y} ->	Type::Convertible<float>;
-		{vec.z} ->	Type::Convertible<float>;
-		{vec.w} ->	Type::Convertible<float>;
-	};
-
-	template<typename T>
-	concept VectorType =
-		Vector2Type<T>
-	||	Vector3Type<T>
-	||	Vector4Type<T>
-	;
-
-	template<typename T>
-	concept Vectorable = Type::Equal<T, float> || VectorType<T>;
 }
 
 #define $vec	Vector::
@@ -1165,37 +1213,43 @@ namespace VecMath
 
 	/// Gets the angle from the origin to a given Vector.
 	inline float angleTo(Vector2 vec) {
-		return - atan2(vec.x, vec.y) + Math::hpi;
+		return vec.angle();
 	}
 
 	/// Gets the angle from Vector A to Vector B.
 	inline float angleTo(Vector2 a, Vector2 b) {
-		return angleTo(a - b);
+		return a.angleTo(b);
 	}
 
 	/// Gets the angle from the origin to a given Vector.
-	Vector3 angleTo(Vector3 vec) {
-		// TODO: Test this
-		Vector3 res;
-		float mag = vec.length();
-		res.x = acos(vec.x/mag);
-		res.y = acos(vec.y/mag);
-		res.z = acos(vec.z/mag);
-		return res;
+	inline Vector3 angleTo(Vector3 vec) {
+		return vec.angle();
 	}
 
 	/// Gets the angle from Vector A to Vector B.
 	inline Vector3 angleTo(Vector3 a, Vector3 b) {
-		return angleTo(a - b);
+		return a.angleTo(b);
 	}
 
 	/// Gets the normal pointing from the origin towards a given Vector.
 	inline Vector2 normalTo(Vector2 vec) {
-		return angleV2(angleTo(vec));
+		//return angleV2(vec.angle());
+		return vec.normalized();
 	}
 
 	/// Gets the normal pointing from Vector A to Vector B.
 	inline Vector2 normalTo(Vector2 a, Vector2 b) {
+		return normalTo(a - b);
+	}
+
+	/// Gets the normal pointing from the origin towards a given Vector.
+	inline Vector3 normalTo(Vector3 vec) {
+		//return angleV3(vec.angle());
+		return vec.normalized();
+	}
+
+	/// Gets the normal pointing from Vector A to Vector B.
+	inline Vector3 normalTo(Vector3 a, Vector3 b) {
 		return normalTo(a - b);
 	}
 
