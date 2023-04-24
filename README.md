@@ -1,6 +1,6 @@
 # Makai Game Engine
 
-## Table of Contents
+## Table of contents
 
 - [Overview](#Overview)
 - [Supported Operating Systems](#Supported-Operating-Systems)
@@ -19,7 +19,7 @@ This is (currently) a header-only C++20 bullet hell engine, that utilizes SDL as
 
 Currently in active development.
 
-## Supported Operating Systems
+## Supported operating systems
 
 - 64-bit Windows
 
@@ -31,7 +31,7 @@ No plans to support 32-bit systems.
 
 - GCC via MinGW (MSYS (Recommended), Cygwin, TDM-GCC) (DOES NOT SUPPORT CLANG)
 
-## How To Use
+## How To use
 
 1) Create a C++ source file within the ```build/``` directory (create directory if nonexistent);
 2) Add ```#include <makai.hpp>``` in your source file;
@@ -77,7 +77,7 @@ Currently nonexistent. Some of the code is commented.
 - Other game types
 - More "multi-purpose" game classes
 
-#### Major Refactor
+#### Major refactor
 
 - "De-headerify" library
 - Cleanup & polish [vectorn.hpp](src/collection/vectorn.hpp) (Potentially turn it into an "universal vector")
@@ -88,11 +88,11 @@ Currently nonexistent. Some of the code is commented.
 - Shorten namespace names or unify them under the `Makai` namespace
 - "C++20 coroutine"-ify [tasking system](src/collection/tasking.hpp)
 
-#### Under Consideration
+#### Under consideration
 
 - Replace or refactor [entity](src/collection/entity) system
 - Rename stuff
 
-### Very Far Future
+### Very far future
 
 - Vulkanize graphical system
