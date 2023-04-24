@@ -162,7 +162,7 @@ enum NoiseBlendMode: unsigned int {
 };
 
 struct NoiseBlendFunc {
-	NoiseBlendMode	color	= NBM_SRC;
+	NoiseBlendMode	color	= NBM_NOISE;
 	NoiseBlendMode	alpha	= NBM_SRC;
 };
 
@@ -175,7 +175,7 @@ enum NoiseType: unsigned int {
 struct NoiseEffect: Effect, Variable {
 	float			seed	= 1;
 	NoiseType		type	= NT_NOISE_SUPER;
-	NoiseBlendFunc	blend	= {NBM_NOISE, NBM_ONE};
+	NoiseBlendFunc	blend;
 };
 
 // World Material Effects
