@@ -67,33 +67,37 @@ Currently nonexistent. Some of the code is commented.
 
 ### Current
 
-- GUI system
-- Menu system
-- Spellcard system
-- Bugs & Errors (see [Issues.txt](Issues.txt))
+- [ ] GUI system
+- [ ] Menu system
+- [ ] Spellcard system
+- [ ] Bugs & Errors (see [Issues.txt](Issues.txt))
 
 ### Future
 
-- Other game types
-- More "multi-purpose" game classes
+- [ ] Other game types
+- [ ] More "multi-purpose" game classes
+- [ ] Multi-platform support:
+- - [ ] Linux
+- - [ ] Mac
 
 #### Major refactor
 
-- "De-headerify" library
-- Cleanup & polish [vectorn.hpp](src/collection/vectorn.hpp) (Potentially turn it into an "universal vector")
-- Cleanup & polish [graphical](src/graphical) system
-- Cleanup & polish [audio](src/audio) system
-- Replace raw pointers with smart pointers (see [referential.hpp](src/collection/referential.hpp))
-- Remove or replace `$` macros
-- Reorganize and remove haphazardness/mess
-- Shorten namespace names or unify them under the `Makai` namespace
-- "C++20 coroutine"-ify [tasking system](src/collection/tasking.hpp)
+- [ ] "De-headerify" library
+- [ ] Cleanup & polish [vectorn.hpp](src/collection/vectorn.hpp) (Potentially turn it into an "universal vector")
+- [ ] Cleanup & polish [graphical](src/graphical) system
+- [ ] Cleanup & polish [audio](src/audio) system
+- [ ] Replace raw pointers with smart pointers (see [referential.hpp](src/collection/referential.hpp))
+- [ ] Remove or replace `$` macros
+- [ ] Reorganize and remove haphazardness/mess
+- [ ] Shorten namespace names or unify them under the `Makai` namespace
+- [ ] "C++20 coroutine"-ify [tasking system](src/collection/tasking.hpp)
 
 #### Under consideration
 
+- C++20 modules?
 - Replace or refactor [entity](src/collection/entity) system
 - Rename stuff
 
 ### Very far future
 
-- Vulkanize graphical system
+- Vulkanize graphical system (VERY DIFFICULT)
