@@ -96,7 +96,7 @@ namespace GameData {
 	#include "gamedata/dialogue.hpp"
 	#include "gamedata/saving.hpp"
 	#include "gamedata/animation.hpp"
-	#include "gamedata/ui.hpp"
+	#include "gamedata/menu.hpp"
 
 	#ifdef $_DANMAKU_GAME
 

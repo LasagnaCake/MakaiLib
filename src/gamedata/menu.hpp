@@ -1,4 +1,4 @@
-namespace UI {
+namespace Menu {
 	struct Option;
 	struct BaseMenu;
 
@@ -208,4 +208,4 @@ namespace UI {
 	};
 }
 
-#define $gui GameData::UI::
+#define $menu GameData::Menu::
