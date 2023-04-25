@@ -296,6 +296,13 @@ namespace Vector{
 				return diff.angle();
 			}
 
+			/// Gets a normalized vector pointing towards another vector.
+			Vector2 normalTo(Vector2 vec) {
+				Vector2 diff = vec - *this;
+				return diff.normalized();
+			}
+
+
 			/// Clamps the vector between two values.
 			void clamp(Vector2 const& min, Vector2 const& max) {
 				x = Math::clamp(x, min.x, max.x);
@@ -593,6 +600,12 @@ namespace Vector{
 					return *this / length();
 				else
 					return *this;
+			}
+
+			/// Gets a normalized vector pointing towards another vector.
+			Vector3 normalTo(Vector3 vec) {
+				Vector3 diff = vec - *this;
+				return diff.normalized();
 			}
 
 			/// Gets the distance to another vector.
@@ -947,6 +960,12 @@ namespace Vector{
 				return diff.lengthSquared();
 			}
 
+			/// Gets a normalized vector pointing towards another vector.
+			Vector4 normalTo(Vector4 vec) {
+				Vector4 diff = vec - *this;
+				return diff.normalized();
+			}
+
 			/// Clamps the vector between two values.
 			void clamp(Vector4 const& min, Vector4 const& max) {
 				x = Math::clamp(x, min.x, max.x);
@@ -1233,24 +1252,22 @@ namespace VecMath
 
 	/// Gets the normal pointing from the origin towards a given Vector.
 	inline Vector2 normalTo(Vector2 vec) {
-		//return angleV2(vec.angle());
 		return vec.normalized();
 	}
 
 	/// Gets the normal pointing from Vector A to Vector B.
 	inline Vector2 normalTo(Vector2 a, Vector2 b) {
-		return normalTo(a - b);
+		return a.normalTo(b);
 	}
 
 	/// Gets the normal pointing from the origin towards a given Vector.
 	inline Vector3 normalTo(Vector3 vec) {
-		//return angleV3(vec.angle());
 		return vec.normalized();
 	}
 
 	/// Gets the normal pointing from Vector A to Vector B.
 	inline Vector3 normalTo(Vector3 a, Vector3 b) {
-		return normalTo(a - b);
+		return a.normalTo(b);
 	}
 
 	// Distance between vectors calculation
