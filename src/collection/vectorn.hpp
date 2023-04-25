@@ -10,6 +10,8 @@ namespace Vector{
 	concept BaseVectorType = requires {
 		requires	Type::Arithmetic<T, T>;
 		requires	Type::Arithmetic<T, float>;
+		requires	Type::HasModulo<T, T>;
+		requires	Type::HasModulo<T, float>;
 		requires	Type::Constructible<T, float>;
 	};
 

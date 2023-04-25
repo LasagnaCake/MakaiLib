@@ -106,7 +106,7 @@ namespace Type {
 
 	template <class A, class B>
 	concept Unrelated = !std::common_with<A, B>;
-	
+
 	template <typename A, typename B>
 	concept Addable = requires (A a, B b) {a + b;};
 
@@ -118,6 +118,9 @@ namespace Type {
 
 	template <typename A, typename B>
 	concept Dividable = requires (A a, B b) {a / b;};
+
+	template <typename A, typename B>
+	concept Modulable = requires (A a, B b) {a % b;};
 
 	template <typename A, typename B>
 	concept AddAssignable = requires (A a, B b) {a += b;};
@@ -132,13 +135,16 @@ namespace Type {
 	concept DivAssignable = requires (A a, B b) {a /= b;};
 
 	template <typename A, typename B>
+	concept ModAssignable = requires (A a, B b) {a %= b;};
+
+	template <typename A, typename B>
 	concept Calculable =
 			Addable<A, B>
 		&&	Subtractable<A, B>
 		&&	Multipliable<A, B>
 		&&	Dividable<A, B>
 	;
-	
+
 	template <typename A, typename B>
 	concept CalcAssignable =
 			AddAssignable<A, B>
@@ -148,7 +154,20 @@ namespace Type {
 	;
 
 	template <typename A, typename B>
+	concept Comparable = requires (A a, B b) {
+		a == b;
+		a != b;
+		a >= b;
+		a <= b;
+		a > b;
+		a < b;
+	};
+
+	template <typename A, typename B>
 	concept Arithmetic = Calculable<A, B> && CalcAssignable<A, B>;
+
+	template <typename A, typename B>
+	concept HasModulo = Modulable<A, B> && ModAssignable<A, B>;
 
 	/**
 	* A 'Safe' type must not be:

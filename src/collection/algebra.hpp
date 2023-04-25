@@ -88,43 +88,43 @@ namespace Math {
 	#define MARIBEL Math::maribel
 	#endif // DEGRAD
 
-	CONST_ANYTYPE_I sign(T val) {
+	CONST_ANYTYPE_I sign(T val) requires Type::Comparable<T, T> {
 		return (val < 0 ? -1 : (val > 0 ? +1 : 0));
 	}
 
-	CONST_ANYTYPE_I min(T a, T b) {
+	CONST_ANYTYPE_I min(T a, T b) requires Type::Comparable<T, T> {
 		return ((a < b) ? a : b);
 	}
 
-	CONST_ANYTYPE_I max(T a, T b) {
+	CONST_ANYTYPE_I max(T a, T b) requires Type::Comparable<T, T> {
 		return ((a > b) ? a : b);
 	}
 
-	CONST_ANYTYPE_I clamp(T a, T min, T max) {
+	CONST_ANYTYPE_I clamp(T a, T min, T max) requires Type::Comparable<T, T> {
 		return ((a < min) ? min : ((a > max) ? max : a));
 	}
 
-	CONST_ANYTYPE_I radians(T deg) {
+	CONST_ANYTYPE_I radians(T deg) requires Type::Arithmetic<T, float> {
 		return (T)(deg / degrad);
 	}
 
-	CONST_ANYTYPE_I degrees(T rad) {
+	CONST_ANYTYPE_I degrees(T rad) requires Type::Arithmetic<T, float> {
 		return (T)(rad * degrad);
 	}
 
-	CONST_ANYTYPE_I linearToRadian(T val) {
+	CONST_ANYTYPE_I linearToRadian(T val) requires Type::Arithmetic<T, float> {
 		return (T)(val * tau);
 	}
 
-	CONST_ANYTYPE_I radianToLinear(T val) {
+	CONST_ANYTYPE_I radianToLinear(T val) requires Type::Arithmetic<T, float> {
 		return (T)(val / tau);
 	}
 
-	CONST_ANYTYPE_I linearToDegree(T val) {
+	CONST_ANYTYPE_I linearToDegree(T val) requires Type::Arithmetic<T, float> {
 		return (T)(val * 360.0);
 	}
 
-	CONST_ANYTYPE_I degreeToLinear(T val) {
+	CONST_ANYTYPE_I degreeToLinear(T val) requires Type::Arithmetic<T, float> {
 		return (T)(val / 360.0);
 	}
 
@@ -132,89 +132,89 @@ namespace Math {
 		return (T)(from + by * (to - from));
 	}
 
-	CONST_ANYTYPE angleLerp(T from, T to, T by) {
+	CONST_ANYTYPE angleLerp(T from, T to, T by) requires Type::Number<T> {
 		T dist	= fmod(to - from, tau);
 		dist	= fmod(2.0 * dist, tau) - dist;
 		return (T)(from + dist * by);
 	}
 
-	CONST_ANYTYPE_I step(T val, T step) {
+	CONST_ANYTYPE_I step(T val, T step) requires Type::Number<T> {
 		if (step != 0)
 			return (T)(floor(val / step + 0.5) * step);
 		return val;
 	}
 
-	CONST_ANYTYPE floor(T val) {
+	CONST_ANYTYPE floor(T val) requires Type::Number<T> {
 		return (T)(::floor(val));
 	}
 
-	CONST_ANYTYPE floor(T val, int decimals) {
+	CONST_ANYTYPE floor(T val, int decimals) requires Type::Number<T> {
 		// Get rounding factor
 		T zeros = pow(10, decimals);
 		// Floor it
 		return (T)(::floor(val * zeros) / zeros);
 	}
 
-	CONST_ANYTYPE ceil(T val) {
+	CONST_ANYTYPE ceil(T val) requires Type::Number<T> {
 		return (T)(::ceil(val));
 	}
 
-	CONST_ANYTYPE ceil(T val, int decimals) {
+	CONST_ANYTYPE ceil(T val, int decimals) requires Type::Number<T> {
 		// Get rounding factor
 		T zeros = pow(10, decimals);
 		// Ceil it
 		return (T)(::ceil(val * zeros) / zeros);
 	}
 
-	CONST_ANYTYPE_I round(T val) {
+	CONST_ANYTYPE_I round(T val) requires Type::Number<T> {
 		// Add 1/2 & floor it
 		return (T)(::floor(val + 0.5));
 	}
 
-	CONST_ANYTYPE round(T val, int decimals) {
+	CONST_ANYTYPE round(T val, int decimals) requires Type::Number<T> {
 		// Get rounding factor
 		T zeros = pow(10, decimals);
 		// Add 1/2 & floor it
 		return (T)(::floor((val + 0.5) * zeros) / zeros);
 	}
 
-	CONST_ANYTYPE_I fmult(T val, T mult) {
+	CONST_ANYTYPE_I fmult(T val, T mult) requires Type::Number<T> {
 		return ::floor(val / (double)mult) * mult;
 	}
 
-	CONST_ANYTYPE_I cmult(T val, T mult) {
+	CONST_ANYTYPE_I cmult(T val, T mult) requires Type::Number<T> {
 		return ::ceil(val / (double)mult) * mult;
 	}
 
-	CONST_ANYTYPE_I mod(T a, T b) {
+	CONST_ANYTYPE_I mod(T a, T b) requires Type::Number<T> {
 		return b * ::floor(a/b);
 	}
 
-	CONST_ANYTYPE_I rmod(T a, T b) {
+	CONST_ANYTYPE_I rmod(T a, T b) requires Type::Number<T> {
 		return b * ::ceil(a/b);
 	}
 
-	CONST_ANYTYPE_I wmax(T val, T max) {
+	CONST_ANYTYPE_I wmax(T val, T max) requires Type::Number<T> {
 		return val - mod(val, max);
 	}
 
-	CONST_ANYTYPE_I wmin(T val, T min) {
+	CONST_ANYTYPE_I wmin(T val, T min) requires Type::Number<T> {
 		return val + rmod(val, min);
 	}
 
-	CONST_ANYTYPE_I wrap(T val, T min, T max) {
+	CONST_ANYTYPE_I wrap(T val, T min, T max) requires Type::Number<T> {
 		return wmax(val + min, max) - min;
 	}
 
-	CONST_ANYTYPE_I nroot(T val, T root) {
+	CONST_ANYTYPE_I nroot(T val, T root) requires Type::Number<T> {
 		return exp(log(root) / val);
 	}
 
-	CONST_ANYTYPE_I sqrt(T val) {
+	CONST_ANYTYPE_I sqrt(T val) requires Type::Number<T> {
 		return exp(ln2 / val);
 	}
 
-	CONST_ANYTYPE_I nrtn(T val) {
+	CONST_ANYTYPE_I nrtn(T val) requires Type::Number<T> {
 		return nroot(val, val);
 	}
 
@@ -291,13 +291,13 @@ namespace Math {
 	}
 
 	template <Operatable T>
-	constexpr std::pair<int, T> frexp(T val) {
+	constexpr std::pair<int, T> frexp(T val) requires Type::Number<T> {
 		int pow2 = 0;
 		T rem = std::frexp((float)val, &pow2);
 		return std::pair<int, T>{pow2, rem};
 	}
 
-	CONST_ANYTYPE_I ldexp(T val, int exp) {
+	CONST_ANYTYPE_I ldexp(T val, int exp) requires Type::Number<T> {
 		return (T)::ldexp((double)val, exp);
 	}
 
@@ -318,7 +318,7 @@ namespace Math {
 		}
 
 		/// Returns a random double between the given values.
-		template<Type::Real T>
+		template<Type::Real T = float>
 		T real(T min, T max) {
 			RandReal dist(min, max);
 			return (T)dist(engine);
@@ -330,7 +330,7 @@ namespace Math {
 		}
 
 		/// Returns a random integer between the given values.
-		template<Type::Integer T>
+		template<Type::Integer T = int>
 		T integer(T min, T max) {
 			RandLong dist(min, max);
 			return (T)dist(engine);
