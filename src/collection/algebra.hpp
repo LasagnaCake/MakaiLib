@@ -237,9 +237,9 @@ namespace Math {
 	*/
 	constexpr float polarPolyPoint(
 		float theta,
-		float angle,
 		float sides,
-		float size
+		float size	= 1,
+		float angle	= 0
 	) {
 		float constant	= (size * sqrt3) / (sides * sqrt(sides));
 		float shape		= (theta * sides + angle - hpi) / 2.0;
@@ -248,19 +248,19 @@ namespace Math {
 
 	constexpr float fastPolarPolyPoint(
 		float theta,
-		float angle,
 		float sides,
-		float size
+		float size	= 1,
+		float angle	= 0
 	) {
 		float constant	= (size * sqrt2) / (sides * 2.0);
 		float shape		= (theta * sides + angle - hpi) / 2.0;
 		return size - constant * abs(cos(shape));
 	}
 
-	/// Reflects a given angle in relation to a surface.
-	constexpr float reflect(float angle, float surface) {
-		//return pi + (2.0 * angle) - surface;
-		return angle - surface;
+	/// Reflects a given angle A in relation to another angle B.
+	constexpr float reflect(float a, float b) {
+		//return pi + (2.0 * a) - b;
+		return a - b;
 	}
 
 	CONST_ANYTYPE_I farenheitToCelcius(T temperature) {
