@@ -1,4 +1,5 @@
 > SDL_Mixer cannot load MP3 files
-> "Buffer Overflow" or "Failed Stack Switch" on program exit 
-	> Compilation-dependant, sometimes it gets compiled in such a way that it does not crash.
-	> Tends to compile correctly more often on debug
+	> WAV and OGG seems to work fine
+	> Don't know about MIDI though
+> "Buffer Overflow" (most likely) or "Failed Stack Switch" (least likely) on program exit 
+	> Happens when trying to delete any DanmakuObjectManager (BulletManager, LineLaserManager, ItemManager)

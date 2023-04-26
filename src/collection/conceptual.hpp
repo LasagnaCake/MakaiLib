@@ -154,6 +154,12 @@ namespace Type {
 	;
 
 	template <typename A, typename B>
+	concept Arithmetic = Calculable<A, B> && CalcAssignable<A, B>;
+
+	template <typename A, typename B>
+	concept HasModulo = Modulable<A, B> && ModAssignable<A, B>;
+
+	template <typename A, typename B>
 	concept Comparable = requires (A a, B b) {
 		a == b;
 		a != b;
@@ -162,12 +168,6 @@ namespace Type {
 		a > b;
 		a < b;
 	};
-
-	template <typename A, typename B>
-	concept Arithmetic = Calculable<A, B> && CalcAssignable<A, B>;
-
-	template <typename A, typename B>
-	concept HasModulo = Modulable<A, B> && ModAssignable<A, B>;
 
 	/**
 	* A 'Safe' type must not be:

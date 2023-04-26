@@ -16,33 +16,33 @@ namespace Vector{
 	};
 
 	template<typename T>
-	concept Vector2Type = requires (T vec) {
+	concept Vector2Type = requires {
 		requires	BaseVectorType<T>;
 		requires	Type::Constructible<T, float, float>;
-		{vec.x} ->	Type::Convertible<float>;
-		{vec.y} ->	Type::Convertible<float>;
+		T::x;
+		T::y;
 	};
 
 	template<typename T>
-	concept Vector3Type = requires (T vec) {
+	concept Vector3Type = requires {
 		requires	BaseVectorType<T>;
 		requires	Type::Constructible<T, float, float>;
 		requires	Type::Constructible<T, float, float, float>;
-		{vec.x} ->	Type::Convertible<float>;
-		{vec.y} ->	Type::Convertible<float>;
-		{vec.z} ->	Type::Convertible<float>;
+		T::x;
+		T::y;
+		T::z;
 	};
 
 	template<typename T>
-	concept Vector4Type = requires (T vec) {
+	concept Vector4Type = requires {
 		requires	BaseVectorType<T>;
 		requires	Type::Constructible<T, float, float>;
 		requires	Type::Constructible<T, float, float, float>;
 		requires	Type::Constructible<T, float, float, float, float>;
-		{vec.x} ->	Type::Convertible<float>;
-		{vec.y} ->	Type::Convertible<float>;
-		{vec.z} ->	Type::Convertible<float>;
-		{vec.w} ->	Type::Convertible<float>;
+		T::x;
+		T::y;
+		T::z;
+		T::w;
 	};
 
 	template<typename T>

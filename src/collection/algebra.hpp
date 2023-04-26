@@ -28,6 +28,9 @@ namespace Math {
 	constexpr const double	sqrt2		= 1.4142135623730950488016887242;
 	constexpr const double	hsqrt2		= sqrt2 / 2.0;
 	constexpr const double	qsqrt2		= sqrt2 / 4.0;
+	constexpr const double	sqrt3		= 1.7320508075688772935274463415;
+	constexpr const double	hsqrt3		= sqrt2 / 2.0;
+	constexpr const double	qsqrt3		= sqrt2 / 4.0;
 	constexpr const double	ln2			= 0.6931471805599453094172321215;
 	constexpr const double	pi			= 3.1415926535897932384626433833;
 	constexpr const double	hpi			= pi / 2.0;
@@ -229,28 +232,29 @@ namespace Math {
 
 	/**
 	* Returns the polar radius of a point along the edges of a N-sided
-	* polygon of "radius" R (the shape's circumradius) at a given angle.
+	* polygon of "size" S (the shape's circumradius) at a given angle THETA,
+	* rotated by angle A.
 	*/
 	constexpr float polarPolyPoint(
-		float rotation,
+		float theta,
 		float angle,
 		float sides,
-		float radius
-		) {
-		sides /= 2;
-		float
-			sa2r = (angle * sides) / 2 + rotation,
-			s2rs = (radius *
-				#ifdef $_PRECISE_CALCULATIONS
-				nrtn(abs(sides))
-				#else
-				sqrt2
-				#endif
-				) / sides;
-		float
-			aCos = -abs(cos(sa2r)),
-			aSin = -abs(sin(sa2r));
-		return radius + s2rs * (aSin + aCos) / 2;
+		float size
+	) {
+		float constant	= (size * sqrt3) / (sides * sqrt(sides));
+		float shape		= (theta * sides + angle - hpi) / 2.0;
+		return size - constant * abs(cos(shape));
+	}
+
+	constexpr float fastPolarPolyPoint(
+		float theta,
+		float angle,
+		float sides,
+		float size
+	) {
+		float constant	= (size * sqrt2) / (sides * 2.0);
+		float shape		= (theta * sides + angle - hpi) / 2.0;
+		return size - constant * abs(cos(shape));
 	}
 
 	/// Reflects a given angle in relation to a surface.
