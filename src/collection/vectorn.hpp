@@ -275,6 +275,14 @@ namespace Vector{
 					return *this;
 			}
 
+			/// Normalizes the vector.
+			Vector2& normalize() {
+				if (*this != 0)
+					return *this /= length();
+				else
+					return *this;
+			}
+
 			/// Gets the distance to another vector.
 			float distanceTo(Vector2 vec) {
 				Vector2 diff = vec - *this;
@@ -600,6 +608,14 @@ namespace Vector{
 			Vector3 normalized() {
 				if (*this != 0)
 					return *this / length();
+				else
+					return *this;
+			}
+
+			/// Normalizes the vector.
+			Vector3& normalize() {
+				if (*this != 0)
+					return *this /= length();
 				else
 					return *this;
 			}
@@ -950,6 +966,14 @@ namespace Vector{
 					return *this;
 			}
 
+			/// Normalizes the vector.
+			Vector4& normalize() {
+				if (*this != 0)
+					return *this /= length();
+				else
+					return *this;
+			}
+
 			/// Gets the distance to another vector.
 			float distanceTo(Vector4 vec) {
 				Vector4 diff = vec - *this;
@@ -1270,6 +1294,13 @@ namespace VecMath
 	/// Gets the normal pointing from Vector A to Vector B.
 	inline Vector3 normalTo(Vector3 a, Vector3 b) {
 		return a.normalTo(b);
+	}
+
+	// Normal reflection
+
+	/// Reflects a given normal in accordance to a surface normal.
+	inline Vector2 reflect(Vector2 normal, Vector2 surface) {
+		return normal - 2 * dotProd(normal, surface) * surface;
 	}
 
 	// Distance between vectors calculation

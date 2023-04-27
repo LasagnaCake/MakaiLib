@@ -257,10 +257,9 @@ namespace Math {
 		return size - constant * abs(cos(shape));
 	}
 
-	/// Reflects a given angle A in relation to another angle B.
-	constexpr float reflect(float a, float b) {
-		//return pi + (2.0 * a) - b;
-		return a - b;
+	/// Reflects a given angle A in relation to a surface along angle S.
+	constexpr float reflect(float a, float s) {
+		return (2.0 * s) - a;
 	}
 
 	CONST_ANYTYPE_I farenheitToCelcius(T temperature) {
