@@ -174,6 +174,50 @@ public:
 		created = false;
 	}
 
+	/*
+	GL_CLAMP_TO_EDGE
+	GL_REPEAT
+	GL_MIRRORED_REPEAT
+	GL_MIRROR_CLAMP_TO_EDGE
+	*/
+	void setTextureWrapMode(
+		unsigned int horizontal,
+		unsigned int vertical
+	) {
+		glTexParameteri(target, GL_TEXTURE_WRAP_S, horizontal);
+		glTexParameteri(target, GL_TEXTURE_WRAP_T, vertical);
+	}
+
+	/*
+	GL_CLAMP_TO_EDGE
+	GL_REPEAT
+	GL_MIRRORED_REPEAT
+	GL_MIRROR_CLAMP_TO_EDGE
+	*/
+	void setTextureWrapMode(unsigned int mode = GL_REPEAT) {
+		setTextureRepeatMode(mode, mode);
+	}
+
+	/*
+	MagFilter:
+		GL_NEAREST
+		GL_LINEAR
+	MinFilter:
+		GL_NEAREST
+		GL_LINEAR
+		GL_NEAREST_MIPMAP_NEAREST
+		GL_LINEAR_MIPMAP_NEAREST
+		GL_NEAREST_MIPMAP_LINEAR
+		GL_LINEAR_MIPMAP_LINEAR
+	*/
+	void setTextureFilterMode(
+		unsigned int magFilter = GL_LINEAR,
+		unsigned int minFilter = GL_LINEAR_MIPMAP_LINEAR
+	) {
+		glTexParameteri(target, GL_TEXTURE_MIN_FILTER, minFilter);
+		glTexParameteri(target, GL_TEXTURE_MAG_FILTER, magFilter);
+	}
+
 	void operator()(unsigned char texture = 0) {
 		enable(texture);
 	}
@@ -241,6 +285,50 @@ public:
 		if (!created) return;
 		glDeleteTextures(1, &id);
 		created = false;
+	}
+
+	/*
+	GL_CLAMP_TO_EDGE
+	GL_REPEAT
+	GL_MIRRORED_REPEAT
+	GL_MIRROR_CLAMP_TO_EDGE
+	*/
+	void setTextureWrapMode(
+		unsigned int horizontal,
+		unsigned int vertical
+	) {
+		glTexParameteri(target, GL_TEXTURE_WRAP_S, horizontal);
+		glTexParameteri(target, GL_TEXTURE_WRAP_T, vertical);
+	}
+
+	/*
+	GL_CLAMP_TO_EDGE
+	GL_REPEAT
+	GL_MIRRORED_REPEAT
+	GL_MIRROR_CLAMP_TO_EDGE
+	*/
+	void setTextureWrapMode(unsigned int mode = GL_REPEAT) {
+		setTextureRepeatMode(mode, mode);
+	}
+
+	/*
+	MagFilter:
+		GL_NEAREST
+		GL_LINEAR
+	MinFilter:
+		GL_NEAREST
+		GL_LINEAR
+		GL_NEAREST_MIPMAP_NEAREST
+		GL_LINEAR_MIPMAP_NEAREST
+		GL_NEAREST_MIPMAP_LINEAR
+		GL_LINEAR_MIPMAP_LINEAR
+	*/
+	void setTextureFilterMode(
+		unsigned int magFilter = GL_LINEAR,
+		unsigned int minFilter = GL_LINEAR_MIPMAP_LINEAR
+	) {
+		glTexParameteri(target, GL_TEXTURE_MIN_FILTER, minFilter);
+		glTexParameteri(target, GL_TEXTURE_MAG_FILTER, magFilter);
 	}
 
 	inline unsigned int getID() {
