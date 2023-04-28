@@ -3,6 +3,9 @@ import struct
 from bpy.types import Operator
 from bpy_extras.io_utils import ExportHelper
 
+# Exports every mesh into separate files, into a folder of the name given to the file
+# e.g. "You name a file and that file's name gets used as the name of the folder"
+# Currently does not apply modifiers
 class ExportBinaryOperator(Operator, ExportHelper):
     bl_idname = "export_object.msbo"
     bl_label = "Export as MSBO"
@@ -21,12 +24,12 @@ class ExportBinaryOperator(Operator, ExportHelper):
     )
 
     def execute(self, context):
-        filepath = self.filepath
+        filepath = self.filepath.replace('.msbo','')
         objects = [obj for obj in bpy.data.objects if obj.type == "MESH"]
 
         for obj in objects:
             filename = obj.name + self.filename_ext
-            with open(f"{filepath.replace('.msbo','')}/{filename}", "wb") as f:
+            with open(f"{filepath}/{filename}", "wb") as f:
                 dg = context.evaluated_depsgraph_get()
                 mesh = None
                 #TODO: fix this
