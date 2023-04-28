@@ -184,8 +184,10 @@ public:
 		unsigned int horizontal,
 		unsigned int vertical
 	) {
-		glTexParameteri(target, GL_TEXTURE_WRAP_S, horizontal);
-		glTexParameteri(target, GL_TEXTURE_WRAP_T, vertical);
+		glBindTexture(GL_TEXTURE_2D, id);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, horizontal);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, vertical);
+		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
 	/*
@@ -195,13 +197,14 @@ public:
 	GL_MIRROR_CLAMP_TO_EDGE
 	*/
 	void setTextureWrapMode(unsigned int mode = GL_REPEAT) {
-		setTextureRepeatMode(mode, mode);
+		setTextureWrapMode(mode, mode);
 	}
 
 	/*
 	MagFilter:
 		GL_NEAREST
 		GL_LINEAR
+
 	MinFilter:
 		GL_NEAREST
 		GL_LINEAR
@@ -214,8 +217,10 @@ public:
 		unsigned int magFilter = GL_LINEAR,
 		unsigned int minFilter = GL_LINEAR_MIPMAP_LINEAR
 	) {
-		glTexParameteri(target, GL_TEXTURE_MIN_FILTER, minFilter);
-		glTexParameteri(target, GL_TEXTURE_MAG_FILTER, magFilter);
+		glBindTexture(GL_TEXTURE_2D, id);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minFilter);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magFilter);
+		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
 	void operator()(unsigned char texture = 0) {
@@ -297,8 +302,10 @@ public:
 		unsigned int horizontal,
 		unsigned int vertical
 	) {
-		glTexParameteri(target, GL_TEXTURE_WRAP_S, horizontal);
-		glTexParameteri(target, GL_TEXTURE_WRAP_T, vertical);
+		glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, id);
+		glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_WRAP_S, horizontal);
+		glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_WRAP_T, vertical);
+		glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, 0);
 	}
 
 	/*
@@ -308,13 +315,14 @@ public:
 	GL_MIRROR_CLAMP_TO_EDGE
 	*/
 	void setTextureWrapMode(unsigned int mode = GL_REPEAT) {
-		setTextureRepeatMode(mode, mode);
+		setTextureWrapMode(mode, mode);
 	}
 
 	/*
 	MagFilter:
 		GL_NEAREST
 		GL_LINEAR
+
 	MinFilter:
 		GL_NEAREST
 		GL_LINEAR
@@ -327,9 +335,12 @@ public:
 		unsigned int magFilter = GL_LINEAR,
 		unsigned int minFilter = GL_LINEAR_MIPMAP_LINEAR
 	) {
-		glTexParameteri(target, GL_TEXTURE_MIN_FILTER, minFilter);
-		glTexParameteri(target, GL_TEXTURE_MAG_FILTER, magFilter);
+		glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, id);
+		glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MIN_FILTER, minFilter);
+		glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MAG_FILTER, magFilter);
+		glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, 0);
 	}
+
 
 	inline unsigned int getID() {
 		return id;

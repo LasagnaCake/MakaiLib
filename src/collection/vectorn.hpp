@@ -1300,7 +1300,7 @@ namespace VecMath
 
 	/// Reflects a given normal in accordance to a surface normal.
 	inline Vector2 reflect(Vector2 normal, Vector2 surface) {
-		return normal - 2.0 * dotProd(normal, surface) * surface;
+		return surface * (normal - 2.0 * dotProd(normal, surface));
 	}
 
 	// Distance between vectors calculation
