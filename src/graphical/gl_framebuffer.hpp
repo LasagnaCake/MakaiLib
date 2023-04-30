@@ -105,8 +105,8 @@ namespace Drawer {
 			glEnable(GL_ALPHA_TEST);
 			//glDisable(GL_BLEND);
 			//glEnable(GL_CULL_FACE);
-			glBlendFuncSeparate(DEFAULT_BLEND_FUNC);
-			glBlendEquationSeparate(DEFAULT_BLEND_EQUATION);
+			glBlendFuncSeparatei(id, DEFAULT_BLEND_FUNC);
+			glBlendEquationSeparatei(id, DEFAULT_BLEND_EQUATION);
 			glDepthFunc(GL_LESS);
 			//glBlendFunc(GL_DST_ALPHA, GL_ONE_MINUS_DST_ALPHA);
 			//glBlendFunc(GL_ONE_MINUS_DST_ALPHA, GL_ONE);

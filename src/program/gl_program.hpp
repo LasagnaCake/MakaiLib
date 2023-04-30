@@ -181,12 +181,12 @@ namespace Makai {
 			// This keeps the alpha from shitting itself
 			glEnable(GL_BLEND);
 			glEnable(GL_ALPHA_TEST);
-			glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			glBlendFuncSeparatei(0, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 			// This keeps the alpha from shitting itself
-			glBlendEquationSeparate(GL_FUNC_ADD, GL_MAX);
+			glBlendEquationSeparatei(0, GL_FUNC_ADD, GL_MAX);
 			//glEnable(GL_CULL_FACE);
-			//glBlendFuncSeparate(DEFAULT_BLEND_FUNC);
-			//glBlendEquationSeparate(DEFAULT_BLEND_EQUATION);
+			//glBlendFuncSeparatei(0, DEFAULT_BLEND_FUNC);
+			//glBlendEquationSeparatei(0, DEFAULT_BLEND_EQUATION);
 			//glBlendFunc(GL_ONE_MINUS_DST_ALPHA, GL_ONE);
 			// Setup camera
 			$debug("Setting starting camera...");
@@ -199,9 +199,8 @@ namespace Makai {
 			// Fix alpha being a bitch
 			framebuffer();
 			//glDisable(GL_BLEND);
-			//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-			//glBlendFuncSeparate(GL_SRC, GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-			//glBlendEquationSeparate(GL_FUNC_ADD, GL_FUNC_REVERSE_SUBTRACT);
+			unsigned int fid = framebuffer.toFrameBufferData().id;
+			glBlendEquationSeparatei(fid, GL_FUNC_ADD, GL_MAX);
 			glBindBuffer(GL_FRAMEBUFFER, 0);
 			// Create composition shader
 			$debug("Creating shaders...");
@@ -225,10 +224,6 @@ namespace Makai {
 		/// Sets the window's title.
 		inline void setWindowTitle(string windowTitle) {
 			SDL_SetWindowTitle(window, windowTitle.c_str());
-		}
-
-		inline void setAlphaBlendMode(GLuint type) {
-			glBlendFunc(GL_SRC_ALPHA, type);
 		}
 
 		/// Runs the program.
