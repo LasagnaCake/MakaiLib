@@ -19,6 +19,8 @@ This is (currently) a header-only C++20 bullet hell engine, that utilizes SDL as
 
 Currently in active development.
 
+Enough spaghetti (code) to put an italian restaurant out of business.
+
 ## Supported operating systems
 
 - 64-bit Windows
