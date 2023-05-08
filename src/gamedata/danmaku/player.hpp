@@ -69,8 +69,7 @@ struct PlayerEntity2D: AreaCircle2D {
 		removeFromCollisionLayer(0);
 		addToCollisionLayer($layer(PLAYER));
 		// Invincibility timer
-		invincibility.stop();
-		invincibility.onSignal = $signal{
+		invincibility.stop().onSignal = $signal{
 			this->collision.enabled = true;
 			sprite->setColor(Color::WHITE);
 		};
@@ -82,26 +81,23 @@ struct PlayerEntity2D: AreaCircle2D {
 				sprite->frame.x = 0;
 		};
 		// Death bomb timer
-		deathbomb.stop();
-		deathbomb.onSignal = $signal {$debug("Hit!"); onDeath();};
+		deathbomb.stop().onSignal = $signal {$debug("Hit!"); onDeath();};
 		deathbomb.delay = 5;
 		// Bomb cooldown timer
-		bombCooldown.stop();
-		bombCooldown.onSignal = $signal {canBomb = true;};
+		bombCooldown.stop().onSignal = $signal {canBomb = true;};
 		bombCooldown.delay = 300;
+		// Shot cooldown timer
+		shotCooldown.stop().onSignal = $signal {canShoot = true;};
+		shotCooldown.delay = 300;
 		// Movement tween
 		moveTween.tweenStep = Tween::ease.out.cubic;
-		moveTween.setTarget(&position);
-		moveTween.setStepCount(30);
-		moveTween.conclude();
+		moveTween.setTarget(&position).setStepCount(30).conclude();
 		// Main shot
-		mainShot.stop();
-		mainShot.repeat = true;
+		mainShot.stop().repeat = true;
 		mainShot.onSignal	= $signal {$debug("Main Shot!"); onShotRequest();};
 		mainShot.delay = 1;
 		// Option shot
-		optionShot.stop();
-		optionShot.repeat = true;
+		optionShot.stop().repeat = true;
 		optionShot.onSignal	= $signal {$debug("Option Shot!"); onOptionShotRequest();};
 		optionShot.delay = 20;
 		// Hitbox size
@@ -142,15 +138,19 @@ struct PlayerEntity2D: AreaCircle2D {
 
 	CircleBounds2D grazebox;
 
+	Vector4 invincibleColor = INVINCIBLE_COLOR;
+
 	BoxBounds2D board;
 
 	bool isFocused	= false;
 	bool canBomb	= true;
+	bool canShoot	= true;
 
 	$evt Timer invincibility;
 	$evt Timer animator;
 	$evt Timer deathbomb;
 	$evt Timer bombCooldown;
+	$evt Timer shotCooldown;
 	$evt Timer mainShot;
 	$evt Timer optionShot;
 
@@ -176,6 +176,7 @@ struct PlayerEntity2D: AreaCircle2D {
 	virtual void onBomb()	{
 		setInvincible(bombCooldown.delay);
 		disableBomb();
+		disableShot();
 	}
 	virtual void onDeathBomb()	{
 		deathbomb.stop();
@@ -243,12 +244,12 @@ struct PlayerEntity2D: AreaCircle2D {
 		// Get direction
 		Vector2 direction(0);
 		direction.y = (
-			input.getButtonDown(actionKeys["up"])
-			- input.getButtonDown(actionKeys["down"])
+			action("up")
+			- action("down")
 		);
 		direction.x = (
-			input.getButtonDown(actionKeys["right"])
-			- input.getButtonDown(actionKeys["left"])
+			action("right")
+			- action("left")
 		);
 		// Normalize direction
 		direction = direction.normalized();
@@ -318,7 +319,7 @@ struct PlayerEntity2D: AreaCircle2D {
 		}
 		// Do shot actions
 		optionShot.paused =
-		mainShot.paused = !action("shot");
+		mainShot.paused = !(action("shot") && canShoot);
 		// If can bomb and bombing...
 		if(action("bomb", true) && canBomb) {
 			// Do normal bomb or deathbomb, acoordingly
@@ -354,13 +355,13 @@ struct PlayerEntity2D: AreaCircle2D {
 
 	void setInvincible() {
 		collision.enabled = false;
-		sprite->setColor(INVINCIBLE_COLOR);
+		sprite->setColor(invincibleColor);
 		invincibility.start();
 	}
 
 	void setInvincible(size_t time) {
 		collision.enabled = false;
-		sprite->setColor(INVINCIBLE_COLOR);
+		sprite->setColor(invincibleColor);
 		invincibility.start(time);
 	}
 
@@ -372,6 +373,26 @@ struct PlayerEntity2D: AreaCircle2D {
 	void disableBomb(size_t time) {
 		canBomb = false;
 		bombCooldown.start(time);
+	}
+
+	void disableShot() {
+		canShoot = false;
+		shotCooldown.start();
+	}
+
+	void disableShot(size_t time) {
+		canShoot = false;
+		shotCooldown.start(time);
+	}
+
+	void enableBomb() {
+		canBomb = true;
+		bombCooldown.stop().reset();
+	}
+
+	void enableShot() {
+		canShoot = true;
+		shotCooldown.stop().reset();
 	}
 
 	inline CircleBounds2D getGrazeBounds() {

@@ -324,7 +324,7 @@ namespace Tween{
 		};
 
 		/// Sets the interpolation.
-		void setInterpolation(T from, T to, float step, EaseFunc tweenStep) {
+		Tween<T>& setInterpolation(T from, T to, float step, EaseFunc tweenStep) {
 			isFinished = false;
 			this->step = 0;
 			this->from = from;
@@ -333,10 +333,11 @@ namespace Tween{
 			*value = from;
 			this->tweenStep = tweenStep;
 			factor = 0.0f;
+			return *this;
 		}
 
 		/// Sets the interpolation with a target.
-		void setInterpolation(T from, T to, float step, EaseFunc tweenStep, T* targetVar) {
+		Tween<T>& setInterpolation(T from, T to, float step, EaseFunc tweenStep, T* targetVar) {
 			value = targetVar;
 			isFinished = false;
 			this->step = 0;
@@ -346,53 +347,62 @@ namespace Tween{
 			*value = from;
 			this->tweenStep = tweenStep;
 			factor = 0.0f;
+			return *this;
 		}
 
 		/// Sets the interpolation to a new value, while maintaining the easing function.
-		void reinterpolate(T to) {
+		Tween<T>& reinterpolate(T to) {
 			paused = false;
 			setInterpolation(*value, to, step, tweenStep);
+			return *this;
 		}
 
 		/// Sets the interpolation to a new value, while maintaining the easing dunction.
-		void reinterpolate(T from, T to) {
+		Tween<T>& reinterpolate(T from, T to) {
 			paused = false;
 			setInterpolation(from, to, step, tweenStep);
+			return *this;
 		}
 
 		/// Sets the interpolation to a new value, while maintaining the easing function.
-		void reinterpolate(T to, float step) {
+		Tween<T>& reinterpolate(T to, float step) {
 			paused = false;
 			setInterpolation(*value, to, step, tweenStep);
+			return *this;
 		}
 
 		/// Sets the interpolation to a new value, while maintaining the easing dunction.
-		void reinterpolate(T from, T to, float step) {
+		Tween<T>& reinterpolate(T from, T to, float step) {
 			paused = false;
 			setInterpolation(from, to, step, tweenStep);
+			return *this;
 		}
 
 		/// Sets the tween's target variable.
-		void setTarget(T* target) {
+		Tween<T>& setTarget(T* target) {
 			value = target;
+			return *this;
 		}
 
 		/// Removes the tween's target variable.
-		void clearTarget() {
+		Tween<T>& clearTarget() {
 			defaultVar = *value;
 			value = &defaultVar;
+			return *this;
 		}
 
 		/// Sets the current tween step.
-		void setStep(float step) {
+		Tween<T>& setStep(float step) {
 			step--;
 			this->step = step > stop ? stop : step;
 			yield(1);
+			return *this;
 		}
 
 		/// Sets the current tween step count.
-		void setStepCount(float stop) {
+		Tween<T>& setStepCount(float stop) {
 			this->stop = stop;
+			return *this;
 		}
 
 		/// Gets the current tween step number.
@@ -411,23 +421,26 @@ namespace Tween{
 		}
 
 		/// Halts the tween's execution, and sets it to its end value.
-		void conclude() {
+		Tween<T>& conclude() {
 			*value = to;
 			step = stop;
 			factor = 1.0f;
 			isFinished = true;
+			return *this;
 		}
 
 		/// Starts the tween with its current state.
-		void play() {
+		Tween<T>& play() {
 			factor = 1.0f;
 			isFinished = false;
+			return *this;
 		}
 
 		/// Halts the tween's execution.
-		void halt() {
+		Tween<T>& halt() {
 			factor = 1.0f;
 			isFinished = true;
+			return *this;
 		}
 
 	private:

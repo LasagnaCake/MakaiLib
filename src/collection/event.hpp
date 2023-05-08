@@ -141,31 +141,36 @@ namespace Event{
 		};
 
 		/// Resets the Timer's counter to 0.
-		void reset() {
+		Timer& reset() {
 			counter = 0;
+			return (*this);
 		}
 
 		/// Starts the timer from the beginning.
-		void start(float time) {
+		Timer& start(float time) {
 			counter = 0;
 			paused = false;
 			delay = time;
+			return (*this);
 		}
 
 		/// Starts the timer from the beginning.
-		void start() {
+		Timer& start() {
 			counter = 0;
 			paused = false;
+			return (*this);
 		}
 
 		/// Stops/pauses the timer.
-		void stop() {
+		Timer& stop() {
 			paused = true;
+			return (*this);
 		}
 
 		/// Unpauses the timer.
-		void play() {
+		Timer& play() {
 			paused = false;
+			return (*this);
 		}
 
 		/// Gets the counter's current value.
