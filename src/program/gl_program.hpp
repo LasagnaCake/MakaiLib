@@ -588,23 +588,6 @@ namespace Makai {
 }
 
 namespace Popup {
-	namespace {
-		const SDL_MessageBoxColorScheme defaultMessageBoxColorScheme = {
-			{ /* .colors (.r, .g, .b) */
-				/* [SDL_MESSAGEBOX_COLOR_BACKGROUND] */
-				{ 255,   0,   0 },
-				/* [SDL_MESSAGEBOX_COLOR_TEXT] */
-				{   0, 255,   0 },
-				/* [SDL_MESSAGEBOX_COLOR_BUTTON_BORDER] */
-				{ 255, 255,   0 },
-				/* [SDL_MESSAGEBOX_COLOR_BUTTON_BACKGROUND] */
-				{   0,   0, 255 },
-				/* [SDL_MESSAGEBOX_COLOR_BUTTON_SELECTED] */
-				{ 255,   0, 255 }
-			}
-		};
-	}
-
 	namespace Option {
 		const StringList OK				= {"Ok"};
 		const StringList YES			= {"Yes"};
@@ -612,9 +595,41 @@ namespace Popup {
 		const StringList YES_NO_CANCEL	= {"Yes", "No", "Cancel"};
 	}
 
+	namespace DialogBoxColorScheme {
+		constexpr const SDL_MessageBoxColorScheme LIGHT = {
+			{ /* .colors (.r, .g, .b) */
+				/* [SDL_MESSAGEBOX_COLOR_BACKGROUND] */
+				{ 255, 255, 255 },
+				/* [SDL_MESSAGEBOX_COLOR_TEXT] */
+				{   0,   0,   0 },
+				/* [SDL_MESSAGEBOX_COLOR_BUTTON_BORDER] */
+				{ 127, 127, 127 },
+				/* [SDL_MESSAGEBOX_COLOR_BUTTON_BACKGROUND] */
+				{ 255, 255, 255 },
+				/* [SDL_MESSAGEBOX_COLOR_BUTTON_SELECTED] */
+				{ 127, 127, 127 }
+			}
+		};
+		constexpr const SDL_MessageBoxColorScheme DARK = {
+			{ /* .colors (.r, .g, .b) */
+				/* [SDL_MESSAGEBOX_COLOR_BACKGROUND] */
+				{  32,  32,  32 },
+				/* [SDL_MESSAGEBOX_COLOR_TEXT] */
+				{ 255, 255, 255 },
+				/* [SDL_MESSAGEBOX_COLOR_BUTTON_BORDER] */
+				{  64,  64,  64 },
+				/* [SDL_MESSAGEBOX_COLOR_BUTTON_BACKGROUND] */
+				{  32,  32,  32 },
+				/* [SDL_MESSAGEBOX_COLOR_BUTTON_SELECTED] */
+				{  64,  64,  64 }
+			}
+		};
+	}
+
 	/**
 	* Invokes a dialog box with a given number of buttons.
-	* Returns the selected button (by index);
+	* Returns the selected button (by index).
+	* Returns -1 if no button was selected.
 	*/
 	int dialogBox(
 		String const& title,
@@ -622,7 +637,7 @@ namespace Popup {
 		StringList const& options = Option::OK,
 		Uint32 type = SDL_MESSAGEBOX_INFORMATION,
 		SDL_Window* window = NULL,
-		SDL_MessageBoxColorScheme const& colorScheme = defaultMessageBoxColorScheme
+		SDL_MessageBoxColorScheme const& colorScheme = DialogBoxColorScheme::LIGHT
 	) {
 		#if (_WIN32 || _WIN64 || __WIN32__ || __WIN64__)
 		SetProcessDPIAware();
@@ -638,7 +653,7 @@ namespace Popup {
 			};
 			idx--;
 		}
-		const SDL_MessageBoxData messageboxdata = {
+		const SDL_MessageBoxData messageBoxData = {
 			type, /* .flags */
 			window, /* .window */
 			title.c_str(), /* .title */
@@ -648,7 +663,7 @@ namespace Popup {
 			&colorScheme /* .colorScheme */
 		};
 		int buttonid;
-		if (SDL_ShowMessageBox(&messageboxdata, &buttonid) < 0) {
+		if (SDL_ShowMessageBox(&messageBoxData, &buttonid) < 0) {
 			$errlog("Could not show messagebox!");
 			throw Error::FailedAction("SDL MessageBox");
 		}
