@@ -1,3 +1,0 @@
-D:\CMake\bin\cmake.exe -E rm -f CMakeFiles\yaml-cpp-read.dir/objects.a
-D:\MSYS2\mingw64\bin\ar.exe qc CMakeFiles\yaml-cpp-read.dir/objects.a @CMakeFiles\yaml-cpp-read.dir\objects1.rsp
-D:\MSYS2\mingw64\bin\g++.exe -Wl,--whole-archive CMakeFiles\yaml-cpp-read.dir/objects.a -Wl,--no-whole-archive -o read.exe -Wl,--out-implib,libread.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\yaml-cpp-read.dir\linklibs.rsp

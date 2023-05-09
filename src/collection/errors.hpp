@@ -72,15 +72,19 @@ namespace Error {
 			): Error (#NAME, message, file, line, caller, info, callerInfo) {}\
 		}
 
-	DEFINE_ERROR_TYPE(UserIsAnIdiot);
-	DEFINE_ERROR_TYPE(Unimplemented);
-	DEFINE_ERROR_TYPE(FailedAction);
+	// "Invalid X" errors
 	DEFINE_ERROR_TYPE(InvalidAction);
-	DEFINE_ERROR_TYPE(DuplicateValue);
-	DEFINE_ERROR_TYPE(NullPointer);
+	DEFINE_ERROR_TYPE(InvalidValue);
+	DEFINE_ERROR_TYPE(InvalidType);
+	// Value errors
 	DEFINE_ERROR_TYPE(OutOfBounds);
 	DEFINE_ERROR_TYPE(NonexistentValue);
-	DEFINE_ERROR_TYPE(InvalidValue);
+	DEFINE_ERROR_TYPE(DuplicateValue);
+	DEFINE_ERROR_TYPE(NullPointer);
+	// Other errors
+	DEFINE_ERROR_TYPE(FailedAction);
+	DEFINE_ERROR_TYPE(Unimplemented);
+	DEFINE_ERROR_TYPE(UserIsAnIdiot);
 	DEFINE_ERROR_TYPE(Other);
 
 	#undef DEFINE_ERROR_TYPE
