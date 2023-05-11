@@ -313,21 +313,41 @@ float rand(vec2 xy, uint type, float seed){
     }
 }
 
-#define VBLEND_DEFINE(T)						\
-T vblend(T src, T dst, uint func) {				\
-	switch (func) {								\
-		default:								\
-		case 0x00: return T(0);					\
-		case 0x01: return T(1);					\
-		case 0x02: return src;					\
-		case 0x03: return T(1) - src;			\
-		case 0x04: return dst;					\
-		case 0x05: return T(1) - dst;			\
-		case 0x06: return src * dst;			\
-		case 0x07: return src / dst;			\
-		case 0x08: return (T(1) - src) * dst;	\
-		case 0x09: return (T(1) - src) / dst;	\
-	}											\
+#define VBLEND_DEFINE(T)								\
+T vblend(T src, T dst, uint func) {						\
+	switch (func) {										\
+		default:										\
+		case 0x00: return T(0);							\
+		case 0x01: return T(1);							\
+		case 0x02: return src;							\
+		case 0x03: return T(1) - src;					\
+		case 0x04: return dst;							\
+		case 0x05: return T(1) - dst;					\
+		case 0x06: return src * dst;					\
+		case 0x07: return src / dst;					\
+		case 0x08: return (T(1) - src) * dst;			\
+		case 0x09: return (T(1) - src) / dst;			\
+		case 0x0A: return src * (T(1) - dst);			\
+		case 0x0B: return src / (T(1) - dst);			\
+		case 0x0C: return (T(1) - src) * (T(1) - dst);	\
+		case 0x0D: return (T(1) - src) / (T(1) - dst);	\
+		case 0x0E: return src + dst;					\
+		case 0x0F: return src - dst;					\
+		case 0x10: return (T(1) - src) + dst;			\
+		case 0x11: return (T(1) - src) - dst;			\
+		case 0x12: return src + (T(1) - dst);			\
+		case 0x13: return src - (T(1) - dst);			\
+		case 0x14: return (T(1) - src) + (T(1) - dst);	\
+		case 0x15: return (T(1) - src) - (T(1) - dst);	\
+		case 0x16: return dst / src;					\
+		case 0x17: return dst - src;					\
+		case 0x18: return (T(1) - dst) / src;			\
+		case 0x19: return (T(1) - dst) - src;			\
+		case 0x1A: return dst / (T(1) - src);			\
+		case 0x1B: return dst - (T(1) - src);			\
+		case 0x1C: return (T(1) - dst) / (T(1) - src);	\
+		case 0x1D: return (T(1) - dst) - (T(1) - src);	\
+	}													\
 }
 
 VBLEND_DEFINE(float)

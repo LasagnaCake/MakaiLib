@@ -81,6 +81,7 @@ namespace Error {
 	DEFINE_ERROR_TYPE(NonexistentValue);
 	DEFINE_ERROR_TYPE(DuplicateValue);
 	DEFINE_ERROR_TYPE(NullPointer);
+	DEFINE_ERROR_TYPE(NotFound);
 	// Other errors
 	DEFINE_ERROR_TYPE(FailedAction);
 	DEFINE_ERROR_TYPE(Unimplemented);

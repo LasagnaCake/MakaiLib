@@ -233,7 +233,6 @@ namespace EntityClass {
 					if(child->name == path) return child;
 			}
 			// If it got to this point, child does not exist
-			// throw invalid_argument(string("Child does not exist: ") + path);
 			return nullptr;
 		}
 

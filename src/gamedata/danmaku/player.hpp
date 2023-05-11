@@ -225,13 +225,17 @@ struct PlayerEntity2D: AreaCircle2D {
 	void pichun() {
 		if (!collision.enabled) return;
 		collision.enabled = false;
-		sprite->setColor(INVINCIBLE_COLOR);
+		sprite->setColor(invincibleColor);
 		deathbomb.start();
 		onPreDeath();
 	}
 
 	void spawnPlayer(Vector2 from) {
 		moveTween.reinterpolate(from, spawnPoint);
+	}
+
+	void spawnPlayer(Vector2 from, Vector2 to) {
+		moveTween.reinterpolate(from, to);
 	}
 
 	virtual void onFrame(float delta) {

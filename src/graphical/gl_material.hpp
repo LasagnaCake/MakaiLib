@@ -87,6 +87,44 @@ namespace {
 
 // Generic Material Effects
 
+enum class BlendMode: unsigned int {
+	BM_ZERO = 0,
+	BM_ONE,
+	BM_SRC,
+	BM_ONE_MINUS_SRC,
+	BM_DST,
+	BM_ONE_MINUS_DST,
+	BM_SRC_MULTIPLY_BY_DST,
+	BM_SRC_DIVIDE_BY_DST,
+	BM_ONE_MINUS_SRC_MULTIPLY_BY_DST,
+	BM_ONE_MINUS_SRC_DIVIDE_BY_DST,
+	BM_SRC_MULTIPLY_BY_ONE_MINUS_DST,
+	BM_SRC_DIVIDE_BY_ONE_MINUS_DST,
+	BM_ONE_MINUS_SRC_MULTIPLY_BY_ONE_MINUS_DST,
+	BM_ONE_MINUS_SRC_DIVIDE_BY_ONE_MINUS_DST,
+	BM_SRC_ADD_TO_DST,
+	BM_SRC_SUBTRACT_TO_DST,
+	BM_ONE_MINUS_SRC_ADD_TO_DST,
+	BM_ONE_MINUS_SRC_SUBTRACT_TO_DST,
+	BM_SRC_ADD_TO_ONE_MINUS_DST,
+	BM_SRC_SUBTRACT_TO_ONE_MINUS_DST,
+	BM_ONE_MINUS_SRC_ADD_TO_ONE_MINUS_DST,
+	BM_ONE_MINUS_SRC_SUBTRACT_TO_ONE_MINUS_DST,
+	BM_SRC_DIVIDE_FROM_DST,
+	BM_SRC_SUBTRACT_FROM_DST,
+	BM_ONE_MINUS_SRC_DIVIDE_FROM_DST,
+	BM_ONE_MINUS_SRC_SUBTRACT_FROM_DST,
+	BM_SRC_DIVIDE_FROM_ONE_MINUS_DST,
+	BM_SRC_SUBTRACT_FROM_ONE_MINUS_DST,
+	BM_ONE_MINUS_SRC_DIVIDE_FROM_ONE_MINUS_DST,
+	BM_ONE_MINUS_SRC_SUBTRACT_FROM_ONE_MINUS_DST,
+};
+
+struct BlendFunc {
+	BlendMode	color	= BlendMode::BM_DST;
+	BlendMode	alpha	= BlendMode::BM_SRC;
+};
+
 struct GradientEffect: Effect, Channelable, Invertible {
 	Vector4
 		begin	= Color::BLACK,
@@ -148,33 +186,18 @@ struct PolarWarpEffect: Effect, Sizeable, Positionable2D, Variable2D, ColorableR
 	bool	fishEye			= true;
 };
 
-enum NoiseBlendMode: unsigned int {
-	NBM_ZERO = 0,
-	NBM_ONE,
-	NBM_SRC,
-	NBM_ONE_MINUS_SRC,
-	NBM_NOISE,
-	NBM_ONE_MINUS_NOISE,
-	NBM_SRC_MULTIPLY_BY_NOISE,
-	NBM_SRC_DIVIDE_BY_NOISE,
-	NBM_ONE_MINUS_SRC_MULTIPLY_BY_NOISE,
-	NBM_ONE_MINUS_SRC_DIVIDE_BY_NOISE,
-};
-
-struct NoiseBlendFunc {
-	NoiseBlendMode	color	= NBM_NOISE;
-	NoiseBlendMode	alpha	= NBM_SRC;
-};
-
-enum NoiseType: unsigned int {
+enum class NoiseType: unsigned int {
 	NT_NOISE_SIMPLE = 0,
 	NT_NOISE_GOLD,
 	NT_NOISE_SUPER
 };
 
+/// SRC = Pixel Color, DST = Noise
+struct NoiseBlendFunc: BlendFunc {};
+
 struct NoiseEffect: Effect, Variable {
 	float			seed	= 1;
-	NoiseType		type	= NT_NOISE_SUPER;
+	NoiseType		type	= NoiseType::NT_NOISE_SUPER;
 	NoiseBlendFunc	blend;
 };
 
@@ -361,9 +384,9 @@ void setMaterial(Shader& shader, BufferMaterial& material) {
 	shader["useNoise"](material.noise.enabled);
 	shader["noiseStrength"](material.noise.strength);
 	shader["noiseSeed"](material.noise.seed);
-	shader["noiseType"](material.noise.type);
-	shader["noiseBlendColorMode"](material.noise.blend.color);
-	shader["noiseBlendAlphaMode"](material.noise.blend.alpha);
+	shader["noiseType"]((unsigned int)material.noise.type);
+	shader["noiseBlendColorMode"]((unsigned int)material.noise.blend.color);
+	shader["noiseBlendAlphaMode"]((unsigned int)material.noise.blend.alpha);
 }
 
 void setMaterial(Shader& shader, WorldMaterial& material) {
