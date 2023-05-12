@@ -3,6 +3,11 @@ void setTexture2D(unsigned char index, GLuint texture) {
 	glBindTexture(GL_TEXTURE_2D, texture);
 }
 
+struct TextureData2D {
+	unsigned int	width, height, type, format;
+	vector<char>	data;
+};
+
 unsigned int createTexture(
 	unsigned int width,
 	unsigned int height,
@@ -132,6 +137,10 @@ public:
 		unsigned int minFilter = GL_LINEAR_MIPMAP_LINEAR,
 		unsigned char* data = NULL
 	) {
+		this->width		= width;
+		this->height	= height;
+		this->format	= format;
+		this->type		= type;
 		if (created) return;
 		created = true;
 		id = createTexture2D(
@@ -150,12 +159,13 @@ public:
 		unsigned int magFilter = GL_LINEAR,
 		unsigned int minFilter = GL_LINEAR_MIPMAP_LINEAR
 	) {
-		int width, height, nrChannels;
-		unsigned char* data = stbi_load(path.c_str(), &width, &height, &nrChannels, 0);
+		int imgWidth, imgHeight;
+		int nrChannels;
+		unsigned char* data = stbi_load(path.c_str(), &imgWidth, &imgHeight, &nrChannels, 4);
 		if (data) {
 			create(
-				width,
-				height,
+				imgWidth,
+				imgHeight,
 				GL_UNSIGNED_BYTE,
 				GL_RGBA,
 				minFilter,
@@ -164,7 +174,7 @@ public:
 			);
 			stbi_image_free(data);
 		} else {
-			throw Error::FailedAction(string("Could not load image file '") + path + "'!");
+			throw Error::FailedAction(string("Could not load image file '") + path + "'!\n\n" + stbi_failure_reason());
 		}
 	}
 
@@ -235,6 +245,38 @@ public:
 		return id;
 	}
 
+	TextureData2D getData() {
+		if (!created) return TextureData2D{0,0,0,0};
+		size_t size = 0;
+		switch (type) {
+			default:
+			case GL_UNSIGNED_BYTE:
+			case GL_BYTE:			size = 1;	break;
+			case GL_UNSIGNED_SHORT:
+			case GL_SHORT:
+			case GL_HALF_FLOAT:		size = 2;	break;
+			case GL_UNSIGNED_INT:
+			case GL_INT:
+			case GL_FLOAT:			size = 4;	break;
+		}
+		switch (format) {
+			case GL_DEPTH_COMPONENT:
+			case GL_RED:							break;
+			case GL_DEPTH_STENCIL:
+			case GL_RG:					size *= 2;	break;
+			case GL_RGB:				size *= 3;	break;
+			default:
+			case GL_RGBA:				size *= 4;	break;
+		}
+		TextureData2D imgdat = {width, height, type, format};
+		imgdat.data.reserve(width * height * size);
+		enable();
+		glBindTexture(GL_TEXTURE_2D, id);
+		glGetTexImage(GL_TEXTURE_2D, 0, format, type, imgdat.data.data());
+		glBindTexture(GL_TEXTURE_2D, 0);
+		return imgdat;
+	}
+
 	bool exists() {
 		return created;
 	}
@@ -242,6 +284,7 @@ public:
 private:
 	bool created = false;
 	unsigned int id = 0;
+	unsigned int width, height, format, type;
 };
 
 class MultisampleTexture2D {

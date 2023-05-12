@@ -73,6 +73,15 @@ Currently nonexistent. Some of the code is commented.
 - [ ] Menu system
 - [ ] Spellcard system
 - [ ] Bugs & Errors (see [Issues.txt](Issues.txt))
+- [ ] File format implementation (These need better names):
+- - [ ] Renderable object definition
+- - - Will probably be done via JSON, YAML, TOML, or XML
+- - [ ] Animation keyframes definition
+- - [ ] Danmaku stage layout definition
+- - - Possibly via combining ROF & ADF
+- [ ] Custom language (compiled/interpreted)
+- - Currently have an idea, don't know if it would be feasible
+- - Could also implement support for Squirrel/LUA
 
 ### Future
 
