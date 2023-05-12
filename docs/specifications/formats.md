@@ -2,12 +2,13 @@
 
 ## Layout
 ```JavaScript
-"image": {			
-	"data": "", // Image data as binary string (maybe in base64?)
+"image": {
+	"encoding": "base64", // Image data encoding
 	"width": 255, // Image width
 	"height": 255, // Image height
 	"channels": "rgba", // Image pixel channels (Accepted: "d", "ds", "r", "rg", "rgb", "rgba")
 	"type": "ubyte", // Image pixel channel type
+	"data": "", // Image data as string
 }
 ```
 
@@ -20,10 +21,10 @@
 ```JavaScript
 "object": {
 	"mesh": {
-		"data": "", // Vertex data as binary string
 		"layout": ['x', 'y', 'z', 'u', 'v', 'r', 'g', 'b', 'a', 'nx', 'ny', 'nz'], // Vector components in order they appear
 		"format": "float", // Vector components' type
 		"encoding": "base64", // Vertex data encoding
+		"data": "", // Vertex data as string
 	},
 	"texture": {
 		"image": {/* See ImageData2D:Layout */},
