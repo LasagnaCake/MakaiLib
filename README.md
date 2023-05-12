@@ -78,7 +78,7 @@ Currently nonexistent. Some of the code is commented.
 - - - Will probably be done via JSON, YAML, TOML, or XML
 - - [ ] Animation keyframes definition
 - - [ ] Danmaku stage layout definition
-- - - Possibly via combining ROF & ADF
+- - - Possibly via combining 1st & 2nd implementations
 - [ ] Custom language (compiled/interpreted)
 - - Currently have an idea, don't know if it would be feasible
 - - Could also implement support for Squirrel/LUA
