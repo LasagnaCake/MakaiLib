@@ -16,7 +16,7 @@
 			height: 255, // Image height
 			type: "float", // Image data type
 			channels: "rgba", // Image channels
-		}
+		},
 		clip: 0.1, // Texture alpha clipping
 	},
 	warp: {/* Same data as in texture */},
