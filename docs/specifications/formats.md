@@ -1,7 +1,7 @@
 # ImageData2D
 
 ## Layout
-```
+```JavaScript
 "image": {			
 	"data": "", // Image data as binary string (maybe in base64?)
 	"width": 255, // Image width
