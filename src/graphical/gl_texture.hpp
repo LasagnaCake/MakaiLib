@@ -3,7 +3,7 @@ void setTexture2D(unsigned char index, GLuint texture) {
 	glBindTexture(GL_TEXTURE_2D, texture);
 }
 
-struct TextureData2D {
+struct ImageData2D {
 	unsigned int	width, height, type, format;
 	vector<char>	data;
 };
@@ -128,6 +128,14 @@ public:
 		create(path, minFilter, magFilter);
 	}
 
+	Texture2D(
+		ImageData2D image,
+		unsigned int magFilter = GL_LINEAR,
+		unsigned int minFilter = GL_LINEAR_MIPMAP_LINEAR
+	) {
+		create(image, minFilter, magFilter);
+	}
+
 	void create(
 		unsigned int width,
 		unsigned int height,
@@ -176,6 +184,23 @@ public:
 		} else {
 			throw Error::FailedAction(string("Could not load image file '") + path + "'!\n\n" + stbi_failure_reason());
 		}
+	}
+
+	void create(
+		ImageData2D image,
+		unsigned int magFilter = GL_LINEAR,
+		unsigned int minFilter = GL_LINEAR_MIPMAP_LINEAR
+	) {
+		if (image.data.empty()) return;
+		create(
+			image.width,
+			image.height,
+			image.type,
+			image.format,
+			minFilter,
+			magFilter,
+			image.data.data()
+		)
 	}
 
 	void destroy() {
@@ -245,8 +270,8 @@ public:
 		return id;
 	}
 
-	TextureData2D getData() {
-		if (!created) return TextureData2D{0,0,0,0};
+	ImageData2D getData() {
+		if (!created) return ImageData2D{0,0,0,0};
 		size_t size = 0;
 		switch (type) {
 			default:
@@ -268,7 +293,7 @@ public:
 			default:
 			case GL_RGBA:				size *= 4;	break;
 		}
-		TextureData2D imgdat = {width, height, type, format};
+		ImageData2D imgdat = {width, height, type, format};
 		imgdat.data.reserve(width * height * size);
 		enable();
 		glBindTexture(GL_TEXTURE_2D, id);
