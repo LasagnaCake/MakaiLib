@@ -1,7 +1,7 @@
 # Renderable Object
 
 ## Layout
-```JavaScript
+```LUA
 {
 	mesh: {
 		data: "", // Vertex data as binary string
