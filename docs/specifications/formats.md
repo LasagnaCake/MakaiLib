@@ -11,9 +11,12 @@
 }
 ```
 
+---
+
 # Renderable Object
 
 ## Layout
+
 ```JavaScript
 "object": {
 	"mesh": {
@@ -28,8 +31,10 @@
 	},
 	// Optional
 	"warp": {/* Same data as in texture */},
-	"material": {/* Options found in ObjectMaterial, except those that involve a texture */},
+	"material": {/* Options found in ObjectMaterial, except those that involve a texture (does not have to be all of them) */},
 }
 ```
 
 Undefined values are assumed to be their default setting.
+
+---
