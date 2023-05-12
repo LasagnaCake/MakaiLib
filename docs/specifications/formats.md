@@ -1,7 +1,7 @@
 # Renderable Object
 
 ## Layout
-```LUA
+```TypeScript
 {
 	mesh: {
 		data: "", // Vertex data as binary string
