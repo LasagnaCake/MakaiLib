@@ -6,8 +6,8 @@
 	"data": "", // Image data as binary string (maybe in base64?)
 	"width": 255, // Image width
 	"height": 255, // Image height
-	"type": "float", // Image data type
-	"channels": "rgba", // Image channels
+	"channels": "rgba", // Image pixel channels (Accepted: "d", "ds", "r", "rg", "rgb", "rgba")
+	"type": "ubyte", // Image pixel channel type
 }
 ```
 
