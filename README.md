@@ -74,7 +74,7 @@ Currently nonexistent. Some of the code is commented.
 - [ ] Spellcard system
 - [ ] Bugs & Errors (see [Issues.txt](Issues.txt))
 - [ ] File format implementation (These need better names):
-- - For more info, see the [docs/specifications](specifications) folder
+- - For more info, see the [specifications](docs/specifications) folder
 - - [ ] Renderable object definition
 - - - Will probably be done via JSON, YAML, TOML, or XML
 - - [ ] Material configuration definitions
