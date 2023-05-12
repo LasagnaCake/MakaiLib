@@ -76,7 +76,7 @@ Currently nonexistent. Some of the code is commented.
 - [ ] File format implementation (These need better names):
 - - For more info, see the [specifications](docs/specifications) folder
 - - [ ] Renderable object definition
-- - - Will probably be done via JSON, YAML, TOML, or XML
+- - - Will probably be done via JSON
 - - [ ] Material configuration definitions
 - - - [ ] ObjectMaterial
 - - - [ ] WorldMaterial
