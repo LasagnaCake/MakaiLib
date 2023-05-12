@@ -1,7 +1,7 @@
 # Renderable Object
 
 ## Layout
-```JSON
+```JavaScript
 {
 	"mesh": {
 		"data": "", // Vertex data as binary string
