@@ -21,9 +21,9 @@
 ```JavaScript
 "object": {
 	"mesh": {
-		"layout": ['x', 'y', 'z', 'u', 'v', 'r', 'g', 'b', 'a', 'nx', 'ny', 'nz'], // Vector components in order they appear
-		"format": "float", // Vector components' type
 		"encoding": "base64", // Vertex data encoding
+		"format": "float", // Vector components' type
+		"layout": ['x', 'y', 'z', 'u', 'v', 'r', 'g', 'b', 'a', 'nx', 'ny', 'nz'], // Vector components in order they appear
 		"data": "", // Vertex data as string
 	},
 	"texture": {
