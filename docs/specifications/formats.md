@@ -1,8 +1,21 @@
+# ImageData2D
+
+## Layout
+```
+"image": {			
+	"data": "", // Image data as binary string (maybe in base64?)
+	"width": 255, // Image width
+	"height": 255, // Image height
+	"type": "float", // Image data type
+	"channels": "rgba", // Image channels
+}
+```
+
 # Renderable Object
 
 ## Layout
 ```JavaScript
-{
+"object": {
 	"mesh": {
 		"data": "", // Vertex data as binary string
 		"layout": ['x', 'y', 'z', 'u', 'v', 'r', 'g', 'b', 'a', 'nx', 'ny', 'nz'], // Vector components in order they appear
@@ -10,15 +23,10 @@
 		"encoding": "base64", // Vertex data encoding
 	},
 	"texture": {
-		"image": {			
-			"data": "", // Image data as binary string (maybe in base64?)
-			"width": 255, // Image width
-			"height": 255, // Image height
-			"type": "float", // Image data type
-			"channels": "rgba", // Image channels
-		},
+		"image": {/* See ImageData2D:Layout */},
 		"clip": 0.1, // Texture alpha clipping
 	},
+	// Optional
 	"warp": {/* Same data as in texture */},
 	"material": {/* Options found in ObjectMaterial, except those that involve a texture */},
 }
