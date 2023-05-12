@@ -295,7 +295,6 @@ public:
 		}
 		ImageData2D imgdat = {width, height, type, format};
 		imgdat.data.reserve(width * height * size);
-		enable();
 		glBindTexture(GL_TEXTURE_2D, id);
 		glGetTexImage(GL_TEXTURE_2D, 0, format, type, imgdat.data.data());
 		glBindTexture(GL_TEXTURE_2D, 0);
