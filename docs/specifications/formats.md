@@ -4,7 +4,7 @@
 ```JavaScript
 {
 	mesh: {
-		data: "",W // Vertex data as binary string
+		data: "", // Vertex data as binary string
 		layout: ['x', 'y', 'z', 'u', 'v', 'r', 'g', 'b', 'a', 'nx', 'ny', 'nz'], // Vector components in order they appear
 		format: "float", // Vector components' type
 		encoding: "base64", // Vertex data encoding
