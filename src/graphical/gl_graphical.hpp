@@ -69,6 +69,40 @@ namespace Drawer {
 			nz	= 1;
 	};
 
+	typedef std::map<string, float> VertexMap;
+
+	const VertexMap baseVertexMap = {
+		{"x",0},
+		{"y",0},
+		{"z",0},
+		{"u",0},
+		{"v",0},
+		{"r",1},
+		{"g",1},
+		{"b",1},
+		{"a",1},
+		{"nx",0},
+		{"ny",0},
+		{"nz",1}
+	};
+
+	RawVertex toRawVertex(VertexMap vm = baseVertexMap) {
+		return RawVertex {
+			vm["x"],
+			vm["y"],
+			vm["z"],
+			vm["u"],
+			vm["v"],
+			vm["r"],
+			vm["g"],
+			vm["b"],
+			vm["a"],
+			vm["nx"],
+			vm["ny"],
+			vm["nz"]
+		};
+	}
+
 	RawVertex toRawVertex(Vector3 pos, Vector2 uv, Vector4 col = Vector4(1), Vector3 norm = Vector3(0)) {
 		RawVertex res;
 		res.x = pos.x;

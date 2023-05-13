@@ -86,6 +86,15 @@ namespace Helper {
 		return floatString(fmt->first, fmt->second);
 	}
 	#endif // _USE_CPP20_FORMAT_
+
+	vector<string> splitString(string const& str, const char sep) {
+		vector<string> res;
+		std::istringstream stream(str);
+		string current;
+		while (std::getline(stream, current, sep))
+			res.push_back(current);
+		return res;
+	}
 }
 
 namespace Time {

@@ -103,7 +103,6 @@ Undefined effects are assumed to be disabled.
 	// Required
 	"mesh": {
 		"encoding": "base64", // Vertex data encoding
-		"format": "float", // Vector components' type
 		"layout": "x,y,z,u,v,r,g,b,a,nx,ny,nz", // Vector components in order they appear, separated by commas
 		"data": "", // Vertex data as string
 	},

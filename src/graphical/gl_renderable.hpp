@@ -237,7 +237,7 @@ public:
 			extend(p);
 	}
 
-	void extendFromBinaryFile(string path) {
+	void extendFromBinaryFile(string const& path) {
 		auto data = $fld loadBinaryFile(path);
 		if (!data.size()) throw Error::FailedAction("File does not exist or is empty! (" + path + ")!");
 		extend((RawVertex*)&data[0], data.size() / sizeof(RawVertex));
@@ -275,7 +275,7 @@ public:
 		triangles.clear();
 	}
 
-	void saveToFile(std::string path) {
+	void saveToFile(std::string const& path) {
 		bakeAndLock();
 		$fld saveBinaryFile(path, vertices, vertexCount);
 	}
@@ -391,13 +391,13 @@ public:
 			extend(p);
 	}
 
-	void extendFromBinaryFile(string path) {
+	void extendFromBinaryFile(string const& path) {
 		auto data = $fld loadBinaryFile(path);
 		if (!data.size()) throw Error::FailedAction("File does not exist or is empty! (" + path + ")!");
 		extend((RawVertex*)&data[0], data.size() / sizeof(RawVertex));
 	}
 
-	void saveToFile(std::string path) {
+	void saveToFile(std::string const& path) {
 		$fld saveBinaryFile(path, points.data(), points.size());
 	}
 
@@ -463,13 +463,13 @@ public:
 			extend(p);
 	}
 
-	void extendFromBinaryFile(string path) {
+	void extendFromBinaryFile(string const& path) {
 		auto data = $fld loadBinaryFile(path);
 		if (!data.size()) throw Error::FailedAction("File does not exist or is empty! (" + path + ")!");
 		extend((RawVertex*)&data[0], data.size() / sizeof(RawVertex));
 	}
 
-	void saveToFile(std::string path) {
+	void saveToFile(std::string const& path) {
 		$fld saveBinaryFile(path, points.data(), points.size());
 	}
 
@@ -486,7 +486,7 @@ private:
 	}
 };
 
-Renderable* loadObjectFromBinaryFile(string path) {
+Renderable* loadObjectFromBinaryFile(string const& path) {
 	auto data = FileLoader::loadBinaryFile(path);/*
 	if (data.empty()) {
 		data = FileLoader::loadBinaryFile("sys/models/error.msbo");
@@ -499,4 +499,39 @@ Renderable* loadObjectFromBinaryFile(string path) {
 
 #warning Unimplemented Function: 'loadObjectFromGLTFFile'
 [[unavailable("Unimplemented!")]]
-Renderable* loadObjectFromGLTFFile(string path) {return nullptr;}
+Renderable* loadObjectFromGLTFFile(string const& path) {return nullptr;}
+
+#warning Unfinished Function: 'loadObjectFromDefinitionFile'
+[[unavailable("Unfinished!")]]
+Renderable* loadObjectDefinitionFile(string const& path) {
+	// Vertex & Component data strings
+	String vertString, compString;
+	// Do file processing here...
+	// Check if important data is not empty
+	if (vertString.empty()) throw Error::InvalidValue("Missing vertex data!");
+	if (compString.empty()) throw Error::InvalidValue("Missing component data!");
+	// Vertex map
+	Drawer::VertexMap vm;
+	// Component list in order they appear
+	vector<String> components = Helper::splitString(compString, ',');
+	// Decoded vertex data
+	String vdata = Decoder::fromBase64(vertString);
+	// Check if there are no missing vertices
+	if ((vdata.size() / (sizeof(float) * components.size())) % 3 != 0)
+		throw Error::InvalidValue("Improper/incomplete vertex data!");
+	// Get pointer to data
+	float* rawdata = (float*)vdata.data();
+	// Current vertex and component being accessed
+	size_t vertex = 0, component = 0;
+	// Resulting vertices
+	vector<RawVertex> vertices;
+	// Loop time
+	while (component < vertices.size() / sizeof(float)) {
+		vm = Drawer::baseVertexMap;
+		for (auto& c : components)
+			vm[c] = rawdata[component++];
+		vertices.push_back(Drawer::toRawVertex(vm));
+	}
+	// Return new renderable object
+	return new Renderable(vertices.data(), vertices.size());
+}

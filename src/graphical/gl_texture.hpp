@@ -199,8 +199,8 @@ public:
 			image.format,
 			minFilter,
 			magFilter,
-			image.data.data()
-		)
+			(unsigned char*)image.data.data()
+		);
 	}
 
 	void destroy() {
