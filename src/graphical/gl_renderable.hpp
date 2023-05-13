@@ -78,6 +78,7 @@ public:
 		// return plane
 		return plane;
 	}
+
 	template <Reference::TrigonType T>
 	T* createReference() {
 		if (locked) throw Error::InvalidAction("Renderable object is locked!");
