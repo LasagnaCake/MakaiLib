@@ -124,8 +124,10 @@ void main(void) {
 	vec4 color;
 	if (textured) {
 		if (useWarp) {
+			uint wcx = clamp(warpChannelX, 0u, 3u);
+			uint wcy = clamp(warpChannelY, 0u, 3u);
 			vec4 warpFac = texture(warpTexture, warpUV);
-			vec2 warpCoord = vec2(warpFac[warpChannelX], warpFac[warpChannelY]) * 2 - 1;
+			vec2 warpCoord = vec2(warpFac[wcx], warpFac[wcy]) * 2 - 1;
 			color = texture(texture2D, fragUV + warpCoord) * fragColor;
 		}
 		else color = texture(texture2D, fragUV) * fragColor;
