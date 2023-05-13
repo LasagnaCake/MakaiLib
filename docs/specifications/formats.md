@@ -68,7 +68,7 @@ Undefined optional values are set to their defaults.
 	},
 	"warp": {
 		"image": {/* See ImageData2D:Layout */},
-		"trans": {/* See Transform3D:Layout */},
+		"trans": {/* See Transform2D:Layout */},
 		"channelX": 0, // Index of the pixel's channel to be used for horizontal transformation
 		"channelY": 1, // Index of the pixel's channel to be used for vertical transformation
 	},
@@ -107,7 +107,9 @@ Undefined optional effects are assumed to be disabled.
 		"data": "", // Vertex data as string
 	},
 	// Optional
-	"material": {/* See ObjectMaterial */},
+	"trans": {/* See Transform3D:Layout */},
+	"material": {/* See ObjectMaterial:Layout */},
+	"active": true,
 }
 ```
 
