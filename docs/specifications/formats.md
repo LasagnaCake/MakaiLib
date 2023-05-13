@@ -35,6 +35,7 @@ Undefined optional values are set to their defaults.
 # ImageData2D
 
 ## Layout
+
 ```JavaScript
 "image": {
 	// Required
