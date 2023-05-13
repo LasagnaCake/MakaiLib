@@ -1,8 +1,41 @@
+Undefined optional values are set to their defaults.
+
+# Transform2D
+
+## Layout
+
+```JavaScript
+"trans": {
+	// Optional
+	"position": [0.0, 0.0] // 2D vector representing position
+	"rotation": 0.0
+	"scale": [1.0, 1.0] // 2D vector representing position
+}
+```
+
+---
+
+# Transform3D
+
+## Layout
+
+```JavaScript
+"trans": {
+	// Optional
+	"position": [0.0, 0.0, 0.0] // 3D vector representing position
+	"rotation": [0.0, 0.0, 0.0] // 3D vector representing position
+	"scale": [1.0, 1.0, 1.0] // 3D vector representing position
+}
+```
+
+---
+
 # ImageData2D
 
 ## Layout
 ```JavaScript
 "image": {
+	// Required
 	"encoding": "base64", // Image data encoding
 	"width": 255, // Image width
 	"height": 255, // Image height
@@ -14,28 +47,66 @@
 
 ---
 
+# ObjectMaterial
+
+##Layout
+
+```JavaScript
+"material": {
+	// Optional
+	"color": [1.0, 1.0, 1.0, 1.0], // 4D vector representing the object's color
+	"shaded": false,
+	"illuminated": false,
+	"hue": 0.0,
+	"saturation": 1.0, // Ranges from -1.0 to 1.0
+	"luminosity": 1.0, // Ranges from -1.0 to 1.0
+	"texture": {
+		"image": {/* See ImageData2D:Layout */},
+		"clip": 0.1, // Texture alpha clipping
+	},
+	"warp": {
+		"image": {/* See ImageData2D:Layout */},
+		"trans": {/* See Transform3D:Layout */},
+		"channelX": 0, // Index of the pixel's channel to be used for horizontal transformation
+		"channelY": 1, // Index of the pixel's channel to be used for vertical transformation
+	},
+	"negative": {
+		"strength": 1.0
+	},
+	"gradient": {
+		"channel": 0, // Index of the pixel's channel to be used for gradient transformation. If -1, an average of the RGB is used
+		"invert": false
+		"begin": [0.0, 0.0, 0.0, 1.0], // 4D vector representing the start color
+		"end": [1.0, 1.0, 1.0, 1.0], // 4D vector representing the end color
+	},
+	"instances": [
+		[0.0, 0.0, 0.0],
+	], // A list of 3D vectors of instances of the object (the first one is mandatory)
+	"culling": 0, // Culling mode (0: none, 1: front, 2: back)
+	"fill": 0, // Fill mode (0: fill, 1: line, 2: point)
+}
+```
+
+Undefined optional effects are assumed to be disabled.
+
+---
+
 # Renderable Object
 
 ## Layout
 
 ```JavaScript
 "object": {
+	// Required
 	"mesh": {
 		"encoding": "base64", // Vertex data encoding
 		"format": "float", // Vector components' type
 		"layout": "x,y,z,u,v,r,g,b,a,nx,ny,nz", // Vector components in order they appear, separated by commas
 		"data": "", // Vertex data as string
 	},
-	"texture": {
-		"image": {/* See ImageData2D:Layout */},
-		"clip": 0.1, // Texture alpha clipping
-	},
 	// Optional
-	"warp": {/* Same data as in texture */},
-	"material": {/* Options found in ObjectMaterial, except those that involve a texture (does not have to be all of them) */},
+	"material": {/* See ObjectMaterial */},
 }
 ```
-
-Undefined values are assumed to be their default setting.
 
 ---
