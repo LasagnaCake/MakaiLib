@@ -9,9 +9,9 @@ Undefined optional values are set to their defaults.
 ```JavaScript
 "trans": {
 	// Optional
-	"position": [0.0, 0.0] // 2D vector representing position
-	"rotation": 0.0
-	"scale": [1.0, 1.0] // 2D vector representing scale
+	"position": [0.0, 0.0], // 2D vector representing position
+	"rotation": 0.0,
+	"scale": [1.0, 1.0], // 2D vector representing scale
 }
 ```
 
@@ -24,9 +24,9 @@ Undefined optional values are set to their defaults.
 ```JavaScript
 "trans": {
 	// Optional
-	"position": [0.0, 0.0, 0.0] // 3D vector representing position
-	"rotation": [0.0, 0.0, 0.0] // 3D vector representing rotation
-	"scale": [1.0, 1.0, 1.0] // 3D vector representing scale
+	"position": [0.0, 0.0, 0.0], // 3D vector representing position
+	"rotation": [0.0, 0.0, 0.0], // 3D vector representing rotation
+	"scale": [1.0, 1.0, 1.0], // 3D vector representing scale
 }
 ```
 
@@ -73,11 +73,11 @@ Undefined optional values are set to their defaults.
 		"channelY": 1, // Index of the pixel's channel to be used for vertical transformation
 	},
 	"negative": {
-		"strength": 1.0
+		"strength": 1.0,
 	},
 	"gradient": {
 		"channel": 0, // Index of the pixel's channel to be used for gradient transformation. If -1, an average of the RGB is used
-		"invert": false
+		"invert": false,
 		"begin": [0.0, 0.0, 0.0, 1.0], // 4D vector representing the start color
 		"end": [1.0, 1.0, 1.0, 1.0], // 4D vector representing the end color
 	},
