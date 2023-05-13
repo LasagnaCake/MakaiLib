@@ -52,7 +52,7 @@ Undefined optional values are set to their defaults.
 
 # ObjectMaterial
 
-##Layout
+## Layout
 
 ```JavaScript
 "material": {
