@@ -11,7 +11,7 @@ Undefined optional values are set to their defaults.
 	// Optional
 	"position": [0.0, 0.0] // 2D vector representing position
 	"rotation": 0.0
-	"scale": [1.0, 1.0] // 2D vector representing position
+	"scale": [1.0, 1.0] // 2D vector representing scale
 }
 ```
 
@@ -25,8 +25,8 @@ Undefined optional values are set to their defaults.
 "trans": {
 	// Optional
 	"position": [0.0, 0.0, 0.0] // 3D vector representing position
-	"rotation": [0.0, 0.0, 0.0] // 3D vector representing position
-	"scale": [1.0, 1.0, 1.0] // 3D vector representing position
+	"rotation": [0.0, 0.0, 0.0] // 3D vector representing rotation
+	"scale": [1.0, 1.0, 1.0] // 3D vector representing scale
 }
 ```
 
@@ -82,8 +82,8 @@ Undefined optional values are set to their defaults.
 		"end": [1.0, 1.0, 1.0, 1.0], // 4D vector representing the end color
 	},
 	"instances": [
-		[0.0, 0.0, 0.0],
-	], // A list of 3D vectors of instances of the object (the first one is mandatory)
+		[0.0, 0.0, 0.0], // 3D vector representing the instance's position
+	], // A list of instances of the object (including itself)
 	"culling": 0, // Culling mode (0: none, 1: front, 2: back)
 	"fill": 0, // Fill mode (0: fill, 1: line, 2: point)
 }
