@@ -1,5 +1,7 @@
 Undefined optional values are set to their defaults.
 
+---
+
 # Transform2D
 
 ## Layout
