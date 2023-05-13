@@ -90,7 +90,7 @@ Undefined optional values are set to their defaults.
 }
 ```
 
-Undefined optional effects are assumed to be disabled.
+Undefined effects are assumed to be disabled.
 
 ---
 
