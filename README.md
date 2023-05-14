@@ -59,7 +59,9 @@ These are already included in the ```lib/``` folder.
 | GLM | (some) 3D Math |
 | stb_image | Image loading |
 | cute_c2 | Collision |
-| mINI | Savefile handling |
+| mINI (TO BE REPLACED) | Savefile handling |
+| jsoncpp | Multiple things |
+| cppcodec | Multiple things |
 
 ## Documentation
 
@@ -69,6 +71,8 @@ Currently nonexistent. Some of the code is commented.
 
 ### Current
 
+- [ ] Replace `.ini`-based savefile system with a different format
+- - Either TOML, JSON or YAML
 - [ ] GUI system
 - [ ] Menu system
 - [ ] Spellcard system

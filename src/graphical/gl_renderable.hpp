@@ -504,44 +504,93 @@ Renderable* loadObjectFromBinaryFile(string const& path) {
 [[unavailable("Unimplemented!")]]
 Renderable* loadObjectFromGLTFFile(string const& path) {return nullptr;}
 
-#define ENCODING_CASE(T, F) if (format == T) return F(data)
-string decodeData(string const& data, string const& format) {
-	ENCODING_CASE("none",	string);
-	ENCODING_CASE("base64",	Decoder::fromBase64);
-	//ENCODING_CASE("base64",	Decoder::fromBase64);
+#define ENCODING_CASE(T, F) if (encoding == T) return F(data)
+vector<ubyte> decodeData(string const& data, string const& encoding) {
+	if (encoding == "none") return vector<ubyte>(data.begin(), data.end());
+	ENCODING_CASE	("base32",	cppcodec::base32_rfc4648::decode);
+	ENCODING_CASE	("base64",	cppcodec::base64_rfc4648::decode);
 }
 
 // TODO: Test this
 Renderable* loadObjectFromDefinition(nlohmann::json def) {
 	// Vertex & Component data strings
 	string vertexData, componentData, encoding;
-	// Assert data is valid
-	#define ASSERT_VALID(COMPONENT, CHECK, TYPE)\
-		if (def["mesh"][COMPONENT].CHECK())\
-			throw Error::InvalidValue(\
-				string("Invalid mesh '" COMPONENT "'!\n\nValue is not '" TYPE "'! Value is: ") + def["mesh"][COMPONENT].type_name()\
-			);
-	ASSERT_VALID("data",		is_string,	"string");
-	ASSERT_VALID("layout",		is_string,	"string");
-	ASSERT_VALID("encoding",	is_string,	"string");
-	#undef ASSERT_VALID
 	// Get mesh data
-	vertexData		= def["mesh"]["data"].get<string>();
-	componentData	= def["mesh"]["layout"].get<string>();
-	encoding		= def["mesh"]["encoding"].get<string>();
+	try {
+		vertexData		= def["mesh"]["data"].get<string>();
+		componentData	= def["mesh"]["layout"].get<string>();
+		encoding		= def["mesh"]["encoding"].get<string>();
+	} catch (std::runtime_error e) {
+		throw Error::FailedAction(
+			"Failed at getting mesh values!",
+			"gl_renderable",
+			"524",
+			"loadObjectFromDefinition",
+			e.what(),
+			"Please check to see if values are correct!"
+		);
+	}
 	// Check if important data is not empty
-	if (vertexData.empty())		throw Error::InvalidValue("Missing vertex data!");
-	if (componentData.empty())	throw Error::InvalidValue("Missing component data!");
-	if (encoding.empty())		throw Error::InvalidValue("Missing encoding!");
+	{
+		string error = "";
+		if (vertexData.empty())		error += ("Missing mesh's vertex data!\n");
+		if (componentData.empty())	error += ("Missing mesh's component data!\n");
+		if (encoding.empty())		error += ("Missing mesh's encoding!\n");
+		if (!error.empty()) throw Error::InvalidValue(
+			"Missing mesh data!\n\n" + error,
+			"gl_renderable",
+			"524",
+			"loadObjectFromDefinition"
+		);
+	}
 	// Vertex map
 	Drawer::VertexMap vm;
 	// Component list in order they appear
 	vector<string> components = Helper::splitString(componentData, ',');
+	// Check if valid component data
+	{
+		string indexes = "";
+		size_t i = 0;
+		for (auto& c: components) {
+			if(c.empty()) indexes += std::to_string(i) + " ";
+			i++;
+		}
+		if (!indexes.empty()) {
+			throw Error::InvalidValue(
+				"Malformed component data!\n\nIndex(es): [ " + indexes + "]",
+				"gl_renderable",
+				"524",
+				"loadObjectFromDefinition"
+			);
+		}
+	}
 	// Decoded vertex data
-	string vdata = decodeData(vertexData, encoding);
+	vector<ubyte> vdata = decodeData(vertexData, encoding);
 	// Check if there are no missing vertices
-	if ((vdata.size() / (sizeof(float) * components.size())) % 3 != 0)
-		throw Error::InvalidValue("Improper/incomplete vertex data!");
+	{
+		const size_t vsize = (sizeof(float) * components.size());
+		const size_t vds = (vdata.size() / vsize);
+		const size_t expected = Math::ceil(vds / 3.0) * 3.0;
+		if (vds % 3 != 0)
+			throw Error::InvalidValue(
+				"Improper/incomplete vertex data!",
+				"gl_renderable",
+				"524",
+				"loadObjectFromDefinition",
+				(
+					"Vertex data size is "
+				+	std::to_string(vds)
+				+	" ("
+				+	std::to_string(vdata.size())
+				+	" bytes).\nExpected size is "
+				+	std::to_string(expected)
+				+	" ("
+				+	std::to_string(expected * vsize)
+				+	" bytes)."
+				),
+				"You either have extra data, or missing data."
+			);
+	}
 	// Get pointer to data
 	float* rawdata = (float*)vdata.data();
 	// Current vertex component being accessed
@@ -572,7 +621,14 @@ Renderable* loadObjectFromDefinition(nlohmann::json def) {
 			SET_PARAM(rotation);
 			SET_PARAM(scale);
 		} catch (std::runtime_error e) {
-			throw Error::InvalidValue(e.what());
+			throw Error::FailedAction(
+				"Failed at getting transformation values!",
+				"gl_renderable",
+				"576",
+				"loadObjectFromDefinition",
+				e.what(),
+				"Please check to see if values are correct!"
+			);
 		}
 	}
 	// Set material data

@@ -61,6 +61,17 @@
 #include <nlohmann/json.hpp>
 
 /*
+********************
+*                  *
+*  Encoding stuff  *
+*                  *
+********************
+*/
+
+#include <cppcodec/base64_rfc4648.hpp>
+#include <cppcodec/base32_rfc4648.hpp>
+
+/*
 *********************
 *                   *
 *  Graphical stuff  *
@@ -118,7 +129,6 @@
 #error "This engine was designed for at least 32 bit processors."
 #endif
 
-#include "collection/encdec.hpp"
 #include "collection/types.hpp"
 #include "collection/conceptual.hpp"
 #include "collection/referential.hpp"
