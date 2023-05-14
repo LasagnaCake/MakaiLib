@@ -460,7 +460,8 @@ public:
 		if (vertices == nullptr || vertexCount == 0)
 			throw Error::InvalidValue("Renderable object is empty!");
 		// Allocate data buffer
-		vector<ubyte> data((ubyte*)vertices, (ubyte*)(&vertices[vertexCount-1] + RAW_VERTEX_BYTE_SIZE + 1));
+		ubyte* vertEnd = (ubyte*)(&vertices[vertexCount-1]);
+		vector<ubyte> data((ubyte*)vertices, (ubyte*)(vertEnd + RAW_VERTEX_BYTE_SIZE));
 		// Create definition
 		nlohmann::json def;
 		// Save mesh data
