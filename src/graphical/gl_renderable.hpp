@@ -446,6 +446,9 @@ public:
 	nlohmann::json getObjectDefinition(string const& encoding = "base64") {
 		// Bake object
 		bake();
+		// check if there is any data
+		if (vertices == nullptr || vertexCount == 0)
+			throw Error::InvalidValue("Renderable object is empty!");
 		// Allocate data buffer
 		vector<ubyte> data((ubyte*)vertices, (ubyte*)(&vertices[vertexCount-1] + RAW_VERTEX_BYTE_SIZE + 1));
 		// Create definition
