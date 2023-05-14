@@ -8,15 +8,25 @@ namespace {
 
 #define ENCDEC_CASE(T, F) if (encoding == T) return F(data)
 vector<ubyte> decodeData(string const& data, string const& encoding) {
-	if (encoding == "none") return vector<ubyte>(data.begin(), data.end());
 	ENCDEC_CASE	("base32",	cppcodec::base32_rfc4648::decode);
 	ENCDEC_CASE	("base64",	cppcodec::base64_rfc4648::decode);
+	throw Error::InvalidValue(
+		"Invalid encoding: " + encoding,
+		"gl_renderable",
+		"unspecified",
+		"decodeData"
+	);
 }
 
 string encodeData(vector<ubyte> const& data, string const& encoding) {
-	if (encoding == "none") return string(data.begin(), data.end());
 	ENCDEC_CASE	("base32",	cppcodec::base32_rfc4648::encode);
 	ENCDEC_CASE	("base64",	cppcodec::base64_rfc4648::encode);
+	throw Error::InvalidValue(
+		"Invalid encoding: " + encoding,
+		"gl_renderable",
+		"unspecified",
+		"decodeData"
+	);
 }
 #undef ENCDEC_CASE
 
