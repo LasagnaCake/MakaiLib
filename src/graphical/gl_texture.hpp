@@ -5,7 +5,7 @@ void setTexture2D(unsigned char index, GLuint texture) {
 
 struct ImageData2D {
 	unsigned int	width, height, type, format;
-	vector<char>	data;
+	vector<ubyte>	data;
 };
 
 unsigned int createTexture(
