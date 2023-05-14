@@ -447,7 +447,7 @@ public:
 		// Bake object
 		bake();
 		// Allocate data buffer
-		vector<ubyte> data((ubyte*)vertices, (ubyte*)(&vertices[vertexCount-1] + RAW_VERTEX_BYTE_SIZE));
+		vector<ubyte> data((ubyte*)vertices, (ubyte*)(&vertices[vertexCount-1] + RAW_VERTEX_BYTE_SIZE + 1));
 		// Create definition
 		nlohmann::json def;
 		// Save mesh data
