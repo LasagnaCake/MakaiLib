@@ -518,7 +518,7 @@ Renderable* loadObjectFromDefinition(nlohmann::json def) {
 	// Get mesh data
 	try {
 		vertexData		= def["mesh"]["data"].get<string>();
-		componentData	= def["mesh"]["layout"].get<string>();
+		componentData	= def["mesh"]["components"].get<string>();
 		encoding		= def["mesh"]["encoding"].get<string>();
 	} catch (std::runtime_error e) {
 		throw Error::FailedAction(
