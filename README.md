@@ -108,7 +108,7 @@ Currently nonexistent. Some of the code is commented.
 - [ ] "De-headerify" library
 - [ ] Cleanup & polish [vectorn.hpp](src/collection/vectorn.hpp) (Potentially turn it into an "universal vector" module)
 - [ ] Cleanup & polish [algebra.hpp](src/collection/algebra.hpp)
-- - [ ] "Template"-ify functions where applicable
+- - [ ] Genericalize functions where applicable
 - [ ] Cleanup & polish [graphical](src/graphical) system
 - [ ] Cleanup & polish [audio](src/audio) system
 - [ ] Replace raw pointers with smart pointers (see [referential.hpp](src/collection/referential.hpp))
