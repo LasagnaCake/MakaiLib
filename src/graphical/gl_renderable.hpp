@@ -563,14 +563,14 @@ Renderable* loadObjectFromDefinition(nlohmann::json def) {
 				trans[#PARAM][0].get<float>(),\
 				trans[#PARAM][1].get<float>(),\
 				trans[#PARAM][2].get<float>()\
-			);
+			)
 	// check for optional transform
 	if (def["trans"].is_object()) {
 		auto& trans = def["trans"];
 		try {
-			SET_PARAM(position)
-			SET_PARAM(rotation)
-			SET_PARAM(scale)
+			SET_PARAM(position);
+			SET_PARAM(rotation);
+			SET_PARAM(scale);
 		} catch (std::runtime_error e) {
 			throw Error::InvalidValue(e.what());
 		}
