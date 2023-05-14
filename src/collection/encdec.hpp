@@ -6,8 +6,8 @@ namespace Encoder {
 		using std::string;
 	}
 
-	string toBase64(string str) {
-	}
+	[[unavailable("Unimplemented!")]]
+	string toBase64(string str) {return "";}
 }
 
 namespace Decoder {
@@ -15,8 +15,8 @@ namespace Decoder {
 		using std::string;
 	}
 
-	string fromBase64(string str) {
-	}
+	[[unavailable("Unimplemented!")]]
+	string fromBase64(string str) {return "";}
 }
 
 #endif // STRING_ENCODER_DECODER_H

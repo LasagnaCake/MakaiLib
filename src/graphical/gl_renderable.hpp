@@ -2,6 +2,10 @@
 Do not touch this class. Please.
 */
 
+namespace {
+	using std::string;
+}
+
 class Renderable: public Base::DrawableObject {
 public:
 	Renderable(size_t layer = 0, bool manual = false): DrawableObject(layer, manual) {}
@@ -469,7 +473,7 @@ public:
 		extend((RawVertex*)&data[0], data.size() / sizeof(RawVertex));
 	}
 
-	void saveToFile(std::string const& path) {
+	void saveToFile(string const& path) {
 		$fld saveBinaryFile(path, points.data(), points.size());
 	}
 
@@ -497,32 +501,51 @@ Renderable* loadObjectFromBinaryFile(string const& path) {
 	return new Renderable((RawVertex*)&data[0], data.size() / sizeof(RawVertex));
 }
 
-#warning Unimplemented Function: 'loadObjectFromGLTFFile'
 [[unavailable("Unimplemented!")]]
 Renderable* loadObjectFromGLTFFile(string const& path) {return nullptr;}
 
-#warning Unfinished Function: 'loadObjectFromDefinitionFile'
-[[unavailable("Unfinished!")]]
-Renderable* loadObjectDefinitionFile(string const& path) {
+#define ENCODING_CASE(T, F) if (format == T) return F(data)
+string decodeData(string const& data, string const& format) {
+	ENCODING_CASE("none",	string);
+	ENCODING_CASE("base64",	Decoder::fromBase64);
+	//ENCODING_CASE("base64",	Decoder::fromBase64);
+}
+
+// TODO: Test this
+Renderable* loadObjectFromDefinition(nlohmann::json def) {
 	// Vertex & Component data strings
-	String vertString, compString;
-	// Do file processing here...
+	string vertexData, componentData, encoding;
+	// Assert data is valid
+	#define ASSERT_VALID(COMPONENT, CHECK, TYPE)\
+		if (def["mesh"][COMPONENT].CHECK())\
+			throw Error::InvalidValue(\
+				string("Invalid mesh '" COMPONENT "'!\n\nValue is not '" TYPE "'! Value is: ") + def["mesh"][COMPONENT].type_name()\
+			);
+	ASSERT_VALID("data",		is_string,	"string");
+	ASSERT_VALID("layout",		is_string,	"string");
+	ASSERT_VALID("encoding",	is_string,	"string");
+	#undef ASSERT_VALID
+	// Get mesh data
+	vertexData		= def["mesh"]["data"].get<string>();
+	componentData	= def["mesh"]["layout"].get<string>();
+	encoding		= def["mesh"]["encoding"].get<string>();
 	// Check if important data is not empty
-	if (vertString.empty()) throw Error::InvalidValue("Missing vertex data!");
-	if (compString.empty()) throw Error::InvalidValue("Missing component data!");
+	if (vertexData.empty())		throw Error::InvalidValue("Missing vertex data!");
+	if (componentData.empty())	throw Error::InvalidValue("Missing component data!");
+	if (encoding.empty())		throw Error::InvalidValue("Missing encoding!");
 	// Vertex map
 	Drawer::VertexMap vm;
 	// Component list in order they appear
-	vector<String> components = Helper::splitString(compString, ',');
+	vector<string> components = Helper::splitString(componentData, ',');
 	// Decoded vertex data
-	String vdata = Decoder::fromBase64(vertString);
+	string vdata = decodeData(vertexData, encoding);
 	// Check if there are no missing vertices
 	if ((vdata.size() / (sizeof(float) * components.size())) % 3 != 0)
 		throw Error::InvalidValue("Improper/incomplete vertex data!");
 	// Get pointer to data
 	float* rawdata = (float*)vdata.data();
-	// Current vertex and component being accessed
-	size_t vertex = 0, component = 0;
+	// Current vertex component being accessed
+	size_t component = 0;
 	// Resulting vertices
 	vector<RawVertex> vertices;
 	// Loop time
@@ -532,6 +555,38 @@ Renderable* loadObjectDefinitionFile(string const& path) {
 			vm[c] = rawdata[component++];
 		vertices.push_back(Drawer::toRawVertex(vm));
 	}
+	// Create renderable object
+	Renderable* r = new Renderable(vertices.data(), vertices.size());
+	#define SET_PARAM(PARAM)\
+		if (trans[#PARAM].is_array())\
+			r->trans.PARAM = Vector3(\
+				trans[#PARAM][0].get<float>(),\
+				trans[#PARAM][1].get<float>(),\
+				trans[#PARAM][2].get<float>()\
+			);
+	// check for optional transform
+	if (def["trans"].is_object()) {
+		auto& trans = def["trans"];
+		try {
+			SET_PARAM(position)
+			SET_PARAM(rotation)
+			SET_PARAM(scale)
+		} catch (std::runtime_error e) {
+			throw Error::InvalidValue(e.what());
+		}
+	}
+	// Set material data
+	// TODO: Add support for materials
+	#undef SET_PARAM
 	// Return new renderable object
-	return new Renderable(vertices.data(), vertices.size());
+	return r;
+}
+
+Renderable* loadObjectFromDefinitionFile(string const& path) {
+	// Vertex & Component data strings
+	string vertexData, componentData, encoding;
+	// Load object file
+	nlohmann::json file = nlohmann::json::parse(FileLoader::loadTextFile(path));
+	// Return new renderable object
+	return loadObjectFromDefinition(file);
 }
