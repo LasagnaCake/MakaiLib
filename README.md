@@ -79,12 +79,15 @@ Currently nonexistent. Some of the code is commented.
 - [ ] Bugs & Errors (see [Issues.txt](Issues.txt))
 - [ ] File format implementation (These need better names):
 - - For more info, see the [specifications](docs/specifications) folder
-- - [ ] Renderable object definition
-- - - Will probably be done via JSON or JSON5
 - - [ ] Material configuration definitions
 - - - [ ] ObjectMaterial
 - - - [ ] WorldMaterial
 - - - [ ] BufferMaterial
+- - [ ] Renderable object definition
+- - - [x] Mesh Parser
+- - - [x] Transform Parser
+- - - [ ] Material Parser
+- - - - Requires ObjectMaterial definition
 - - [ ] Animation keyframes definition
 - - [ ] Danmaku stage layout definition
 - - - Possibly via combining 1st & 2nd implementations
