@@ -68,7 +68,6 @@ namespace Helper {
 		return std::format(std::format("{{:.{}f}}", precision), val);
 	}
 	#else
-
 	template<Type::Number T>
 	string floatString(T val, size_t precision = 1) {
 		if (!precision)
@@ -77,6 +76,7 @@ namespace Helper {
 		ss << std::fixed << std::setprecision(precision) << val;
 		return ss.str();
 	}
+	#endif // _USE_CPP20_FORMAT_
 
 	template<Type::Number T>
 	using FloatFormat = std::pair<T, size_t>;
@@ -85,7 +85,6 @@ namespace Helper {
 	string floatString(FloatFormat<T> fmt) {
 		return floatString(fmt->first, fmt->second);
 	}
-	#endif // _USE_CPP20_FORMAT_
 
 	vector<string> splitString(string const& str, const char sep) {
 		vector<string> res;
