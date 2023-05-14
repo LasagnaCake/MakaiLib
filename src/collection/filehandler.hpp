@@ -13,7 +13,7 @@ namespace FileLoader {
 		using namespace std;
 	}
 
-	[[noreturn]] inline void fileLoadError(string path, string reason) {
+	[[noreturn]] inline void fileLoadError(string const& path, string const& reason) {
 		throw Error::FailedAction(
 			"Could not load file '" + path + "'!",
 			"fileloader.hpp",
@@ -26,7 +26,7 @@ namespace FileLoader {
 	typedef vector<unsigned char> BinaryData;
 
 	/// Loads a binary file as an array;
-	BinaryData loadBinaryFile(string path) {
+	BinaryData loadBinaryFile(string const& path) {
 		ifstream file;
 		// Ensure ifstream object can throw exceptions
 		file.exceptions(ifstream::failbit | ifstream::badbit);
@@ -34,7 +34,7 @@ namespace FileLoader {
 		try {
 			// Preallocate data
 			size_t fileSize = filesystem::file_size(path);
-			BinaryData data(fileSize * 4);
+			BinaryData data(fileSize);
 			// Open and read file
 			file.open(path, ios::binary);
 			file.read((char*)&data[0], fileSize);
@@ -48,7 +48,7 @@ namespace FileLoader {
 	}
 
 	/// Loads a text file as a string.
-	string loadTextFile(string path) {
+	string loadTextFile(string const& path) {
 		// The file and its contents
 		string content;
 		ifstream file;
@@ -77,7 +77,7 @@ namespace FileLoader {
 	/**
 	* Loads a CSV file as a list of strings.
 	*/
-	CSVData loadCSVFile(string path, char delimiter = ',') {
+	CSVData loadCSVFile(string const& path, char delimiter = ',') {
 		// The file and its contents
 		string content;
 		ifstream file;
@@ -112,12 +112,23 @@ namespace FileLoader {
 
 	/// Saves an array of data as a binary file (Non-destructive).
 	template <typename T>
-	void saveBinaryFile(string path, T* data, size_t size) {
+	void saveBinaryFile(string const& path, T* data, size_t size) {
 		ofstream file(path.c_str() , ios::binary);
 		// Ensure ifstream object can throw exceptions
 		file.exceptions(ofstream::failbit | ofstream::badbit);
 		// Try and save data
 		file.write((char*)data, size * sizeof(T));
+		file.flush();
+		file.close();
+	}
+
+	/// Saves an string as a text file (Non-destructive).
+	void saveTextFile(string const& path, string const& text) {
+		ofstream file(path.c_str() , ios::trunc);
+		// Ensure ifstream object can throw exceptions
+		file.exceptions(ofstream::failbit | ofstream::badbit);
+		// Try and save data
+		file.write(text.data(), text.size());
 		file.flush();
 		file.close();
 	}

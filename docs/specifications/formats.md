@@ -98,13 +98,15 @@ Undefined effects are assumed to be disabled.
 
 ## Layout
 
+This can be saved as either a `JSON` or a `BSON` file. If saved as `JSON`, the data gets encoded.
+
 ```JavaScript
 "object": {
 	// Required
 	"mesh": {
-		"encoding": "base64", // Vertex data encoding
 		"components": "x,y,z,u,v,r,g,b,a,nx,ny,nz", // Vector components in order they appear, separated by commas
-		"data": "", // Vertex data as string
+		"encoding": "base64", // Vertex data's encoding (JSON ONLY)
+		"data": "", // Vertex data as binary
 	},
 	// Optional
 	"trans": {/* See Transform3D:Layout */},

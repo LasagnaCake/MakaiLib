@@ -53,6 +53,7 @@ namespace Drawer {
 
 	#define RAW_VERTEX_SIZE (sizeof(RawVertex) / sizeof(float))
 	#define RAW_VERTEX_BYTE_SIZE sizeof(RawVertex)
+	#define RAW_VERTEX_COMPONENTS "x,y,z,u,v,r,g,b,a,nx,ny,nz"
 	struct RawVertex {
 		float
 			x	= 0,
