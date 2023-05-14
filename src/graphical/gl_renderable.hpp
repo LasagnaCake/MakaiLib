@@ -631,9 +631,9 @@ Renderable* loadObjectFromDefinition(nlohmann::json def) {
 			);
 		}
 	}
+	#undef SET_PARAM
 	// Set material data
 	// TODO: Add support for materials
-	#undef SET_PARAM
 	// Return new renderable object
 	return r;
 }
