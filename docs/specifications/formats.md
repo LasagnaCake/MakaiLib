@@ -99,7 +99,7 @@ Undefined effects are assumed to be disabled.
 
 ## Layout
 
-This can be saved as either a `JSON` or a `BSON` file.
+This can be saved as either a `JSON` file.
 
 If data gets saved in the same file:
 ```JavaScript
@@ -107,7 +107,7 @@ If data gets saved in the same file:
 	// Required
 	"mesh": {
 		"components": "x,y,z,u,v,r,g,b,a,nx,ny,nz", // Vector components in order they appear, separated by commas
-		"encoding": "base64", // Vertex data's encoding (JSON ONLY)
+		"encoding": "base64", // Vertex data's encoding
 		"data": "", // Vertex data as string
 	},
 	// Optional
