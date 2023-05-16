@@ -444,34 +444,46 @@ public:
 		FileLoader::saveBinaryFile(path, vertices, vertexCount);
 	}
 
-	void saveToDefinitionFile(string const& path, string const& encoding = "base64", bool pretty = false) {
+	void saveToDefinitionFile(string const& path, string const& encoding = "base64", bool pretty = false, string const& binpath = "") {
 		// Get object definition
-		nlohmann::json file = getObjectDefinition(encoding);
+		nlohmann::json file = getObjectDefinition(encoding, binpath.empty());
 		// convert to text
 		auto contents = file.dump(pretty ? 1 : -1, '\t', false, nlohmann::json::error_handler_t::replace);
-		// Save file
+		// If binary is in a different location, save there
+		if (!binpath.empty()) {
+			FileLoader::saveBinaryFile(binpath, vertices, vertexCount);
+			file["mesh"]["path"] = binpath;
+		}
+		// Save definition file
 		FileLoader::saveTextFile(path, contents);
 	};
 
-	nlohmann::json getObjectDefinition(string const& encoding = "base64") {
+	nlohmann::json getObjectDefinition(string const& encoding = "base64", bool integratedBinary = true) {
 		// Bake object
-		bake();
+		bool wasBaked = baked;
+		if (!wasBaked) bake();
 		// check if there is any data
 		if (vertices == nullptr || vertexCount == 0)
 			throw Error::InvalidValue("Renderable object is empty!");
-		// Allocate data buffer
-		ubyte* vertEnd = (ubyte*)(&vertices[vertexCount-1]);
-		vector<ubyte> data((ubyte*)vertices, (ubyte*)(vertEnd + RAW_VERTEX_BYTE_SIZE));
 		// Create definition
 		nlohmann::json def;
-		// Save mesh data
+		// Save mesh components
 		def["mesh"] = {
-			{"encoding",	encoding					},
-			{"components",	RAW_VERTEX_COMPONENTS		},
-			{"data",		encodeData(data, encoding)	}
+			{"components", RAW_VERTEX_COMPONENTS}
 		};
-		// Clear data buffer
-		data.clear();
+		// If data is to be integrated into the JSON object, do so
+		if (integratedBinary) {
+			// Allocate data buffer
+			ubyte* vertEnd = (ubyte*)(&vertices[vertexCount-1]);
+			vector<ubyte> data((ubyte*)vertices, (ubyte*)(vertEnd + RAW_VERTEX_BYTE_SIZE));
+			// Save mesh data
+			def["mesh"] = {
+				{"data",		encodeData(data, encoding)	},
+				{"encoding",	encoding					},
+			};
+			// Clear data buffer
+			data.clear();
+		}
 		// Save transform data
 		def["trans"] = {
 			{"position",	{trans.position.x,	trans.position.y,	trans.position.z}	},
@@ -482,6 +494,8 @@ public:
 		def["active"] = active;
 		// Save material data
 		// TODO: material data
+		// Unbake object if applicable
+		if (!wasBaked) unbake();
 		// Return definition
 		return def;
 	}

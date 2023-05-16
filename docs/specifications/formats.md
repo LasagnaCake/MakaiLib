@@ -36,6 +36,7 @@ Undefined optional values are set to their defaults.
 
 ## Layout
 
+If image data is to be integrated in the file:
 ```JavaScript
 "image": {
 	// Required
@@ -46,6 +47,14 @@ Undefined optional values are set to their defaults.
 	"channels": "rgba", // Image pixel channels (Accepted: "d", "ds", "r", "rg", "rgb", "rgba")
 	"type": "ubyte", // Image pixel channel type
 	"data": "", // Image data as string
+}
+```
+
+If image data is saved in a different file:
+```JavaScript
+"image": {
+	// Required
+	"path": "", // Path to image file
 }
 ```
 
@@ -101,7 +110,7 @@ Undefined effects are assumed to be disabled.
 
 This can be saved as either a `JSON` file.
 
-If data gets saved in the same file:
+If data is to be integrated in the file:
 ```JavaScript
 "object": {
 	// Required
@@ -124,7 +133,7 @@ If data gets saved in a different file:
 	"mesh": {
 		"components": "x,y,z,u,v,r,g,b,a,nx,ny,nz", // Vector components in order they appear, separated by commas
 		"data": {
-			"path": "" // Path to .msbo file containing binary data
+			"path": "" // Path to ".mesh" file containing binary data
 		},
 	},
 	// Optional
