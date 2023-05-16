@@ -40,6 +40,7 @@ Undefined optional values are set to their defaults.
 "image": {
 	// Required
 	"encoding": "base64", // Image data encoding
+	"format": "png", // Image data format
 	"width": 255, // Image width
 	"height": 255, // Image height
 	"channels": "rgba", // Image pixel channels (Accepted: "d", "ds", "r", "rg", "rgb", "rgba")
@@ -98,15 +99,33 @@ Undefined effects are assumed to be disabled.
 
 ## Layout
 
-This can be saved as either a `JSON` or a `BSON` file. If saved as `JSON`, the data gets encoded.
+This can be saved as either a `JSON` or a `BSON` file.
 
+If data gets saved in the same file:
 ```JavaScript
 "object": {
 	// Required
 	"mesh": {
 		"components": "x,y,z,u,v,r,g,b,a,nx,ny,nz", // Vector components in order they appear, separated by commas
 		"encoding": "base64", // Vertex data's encoding (JSON ONLY)
-		"data": "", // Vertex data as binary
+		"data": "", // Vertex data as string
+	},
+	// Optional
+	"trans": {/* See Transform3D:Layout */},
+	"material": {/* See ObjectMaterial:Layout */},
+	"active": true,
+}
+```
+
+If data gets saved in a different file:
+```JavaScript
+"object": {
+	// Required
+	"mesh": {
+		"components": "x,y,z,u,v,r,g,b,a,nx,ny,nz", // Vector components in order they appear, separated by commas
+		"data": {
+			"path": "" // Path to .msbo file containing binary data
+		},
 	},
 	// Optional
 	"trans": {/* See Transform3D:Layout */},
