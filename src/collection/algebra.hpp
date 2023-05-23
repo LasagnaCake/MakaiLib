@@ -13,9 +13,71 @@
 #define CONST_ANYTYPE	template<Operatable T> constexpr T
 #define CONST_ANYTYPE_I	template<Operatable T> constexpr inline T
 
-#define $maxof(TYPE) (std::numeric_limits<TYPE>::max())
-
 namespace Math {
+	namespace Max {
+		constexpr auto BYTE_V		= std::numeric_limits<signed char>::max();
+		constexpr auto UBYTE_V		= std::numeric_limits<unsigned char>::max();
+		constexpr auto SHORT_V		= std::numeric_limits<short>::max();
+		constexpr auto USHORT_V		= std::numeric_limits<unsigned short>::max();
+		constexpr auto INT_V		= std::numeric_limits<long>::max();
+		constexpr auto UINT_V		= std::numeric_limits<unsigned long>::max();
+		constexpr auto LONG_V		= std::numeric_limits<long long>::max();
+		constexpr auto ULONG_V		= std::numeric_limits<unsigned long long>::max();
+		constexpr auto SIZET_V		= std::numeric_limits<size_t>::max();
+		constexpr auto FLOAT_V		= std::numeric_limits<float>::max();
+		constexpr auto DOUBLE_V		= std::numeric_limits<double>::max();
+		constexpr auto LDOUBLE_V	= std::numeric_limits<long double>::max();
+
+		constexpr auto INT8_V		= BYTE_V;
+		constexpr auto UINT8_V		= UBYTE_V;
+		constexpr auto INT16_V		= SHORT_V;
+		constexpr auto UINT16_V		= USHORT_V;
+		constexpr auto INT32_V		= INT_V;
+		constexpr auto UINT32_V		= UINT_V;
+		constexpr auto INT64_V		= LONG_V;
+		constexpr auto UINT64_V		= ULONG_V;
+		constexpr auto FLOAT32_V	= FLOAT_V;
+		constexpr auto FLOAT64_V	= DOUBLE_V;
+		constexpr auto FLOAT128_V	= LDOUBLE_V;
+	}
+
+	namespace Min {
+		constexpr auto BYTE_V		= std::numeric_limits<signed char>::lowest();
+		constexpr auto UBYTE_V		= std::numeric_limits<unsigned char>::lowest();
+		constexpr auto SHORT_V		= std::numeric_limits<short>::lowest();
+		constexpr auto USHORT_V		= std::numeric_limits<unsigned short>::lowest();
+		constexpr auto INT_V		= std::numeric_limits<long>::lowest();
+		constexpr auto UINT_V		= std::numeric_limits<unsigned long>::lowest();
+		constexpr auto LONG_V		= std::numeric_limits<long long>::lowest();
+		constexpr auto ULONG_V		= std::numeric_limits<unsigned long long>::lowest();
+		constexpr auto SIZET_V		= std::numeric_limits<size_t>::lowest();
+		constexpr auto FLOAT_V		= std::numeric_limits<float>::lowest();
+		constexpr auto DOUBLE_V		= std::numeric_limits<double>::lowest();
+		constexpr auto LDOUBLE_V	= std::numeric_limits<long double>::lowest();
+
+		constexpr auto INT8_V		= BYTE_V;
+		constexpr auto UINT8_V		= UBYTE_V;
+		constexpr auto INT16_V		= SHORT_V;
+		constexpr auto UINT16_V		= USHORT_V;
+		constexpr auto INT32_V		= INT_V;
+		constexpr auto UINT32_V		= UINT_V;
+		constexpr auto INT64_V		= LONG_V;
+		constexpr auto UINT64_V		= ULONG_V;
+		constexpr auto FLOAT32_V	= FLOAT_V;
+		constexpr auto FLOAT64_V	= DOUBLE_V;
+		constexpr auto FLOAT128_V	= LDOUBLE_V;
+	}
+
+	namespace Smallest {
+		constexpr auto FLOAT_V		= std::numeric_limits<float>::min();
+		constexpr auto DOUBLE_V		= std::numeric_limits<double>::min();
+		constexpr auto LDOUBLE_V	= std::numeric_limits<long double>::min();
+
+		constexpr auto FLOAT32_V	= FLOAT_V;
+		constexpr auto FLOAT64_V	= DOUBLE_V;
+		constexpr auto FLOAT128_V	= LDOUBLE_V;
+	}
+
 	/**
 	* An 'Operatable' type is defined as:
 	*	a)	A 'Mutable' type that can be operated on, with basic arithmetic
@@ -41,11 +103,10 @@ namespace Math {
 	constexpr const double	maribel		= euler - (sqrt2 - 1.0) * (sqrt2 - 0.2);
 	constexpr const double	phi			= 1.6180339887498948482045868343;
 	constexpr const double	tauphi		= tau / phi;
-	constexpr const size_t	maxSizeT	= $maxof(size_t);
 	constexpr const double	infinity	= std::numeric_limits<double>::infinity();
 	constexpr const float	infinityF	= std::numeric_limits<float>::infinity();
-	constexpr const double	epsilon		= 1.0 / infinity;
-	constexpr const float	epsilonF	= 1.0 / infinityF;
+	constexpr const double	epsilon		= std::numeric_limits<double>::epsilon() * 2;
+	constexpr const float	epsilonF	= std::numeric_limits<float>::epsilon() * 2;
 
 	#ifndef SQRT2
 	#define SQRT2 Math::sqrt2
@@ -311,7 +372,7 @@ namespace Math {
 			// The random number generator engine used
 			std::default_random_engine	engine{Time::sinceEpoch<Time::Millis>()};
 			// Default distributions
-			RandReal	longDist(0, maxSizeT);
+			RandReal	longDist(0, Math::Max::SIZET_V);
 			RandLong	realDist(0.0,1.0);
 		}
 

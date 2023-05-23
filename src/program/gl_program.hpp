@@ -366,7 +366,7 @@ namespace Makai {
 			Drawer::clearColorBuffer(color);
 			glClear(GL_DEPTH_BUFFER_BIT);
 			//framebuffer()->clearBuffers();
-			Drawer::renderLayer(Math::maxSizeT);
+			Drawer::renderLayer(Math::Max::SIZET_V);
 			//framebuffer.render(toFrameBufferData());
 			SDL_GL_SwapWindow(window);
 		}
@@ -494,7 +494,7 @@ namespace Makai {
 			// Draw objects
 			vector<size_t> rLayers = Drawer::layers.getAllGroups();
 			for (auto layer : rLayers) {
-				if (layer == Math::maxSizeT) continue;
+				if (layer == Math::Max::SIZET_V) continue;
 				// Clear target depth buffer
 				framebuffer();
 				// Enable layer buffer

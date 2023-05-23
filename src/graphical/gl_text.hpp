@@ -184,7 +184,7 @@ private:
 #define $txt $rdt Text::
 
 #if defined(_GRAPHICAL_TEXT_DEBUG_) && !defined(_DEBUG_OUTPUT_)
-Label $_DEBUG(Math::maxSizeT);
+Label $_DEBUG(Math::Max::SIZET_V);
 #define $debug(TEXT)	$txt $_DEBUG.text.content = (TEXT) + "\n"
 #define $debugp(TEXT)	$txt $_DEBUG.text.content += (TEXT)
 #define $flush()		$txt $_DEBUG.text.content = ""
