@@ -65,32 +65,32 @@ namespace Shared {
 		SharedValue<T>& operator=(const RefList<T>& other)					{unbind(); bind(other.refs); return (*this);	}
 		const SharedValue<T>& operator=(const RefList<T>& other) const		{unbind(); bind(other.refs); return (*this);	}
 
-		SharedValue<T>& operator=(T const& v)				{for(auto obj: refs) (*obj) = v; return (*this);	}
-		const SharedValue<T>& operator=(T const& v) const	{for(auto obj: refs) (*obj) = v; return (*this);	}
-		SharedValue<T>& operator++()						{for(auto obj: refs) (*obj)++; return (*this);	}
-		const SharedValue<T>& operator++() const			{for(auto obj: refs) (*obj)++; return (*this);	}
-		SharedValue<T>& operator--()						{for(auto obj: refs) (*obj)--; return (*this);	}
-		const SharedValue<T>& operator--() const			{for(auto obj: refs) (*obj)--; return (*this);	}
-		SharedValue<T>& operator+=(T const& v)				{for(auto obj: refs) (*obj) += v; return (*this);	}
-		const SharedValue<T>& operator+=(T const& v) const	{for(auto obj: refs) (*obj) += v; return (*this);	}
-		SharedValue<T>& operator-=(T const& v)				{for(auto obj: refs) (*obj) -= v; return (*this);	}
-		const SharedValue<T>& operator-=(T const& v) const	{for(auto obj: refs) (*obj) -= v; return (*this);	}
-		SharedValue<T>& operator*=(T const& v)				{for(auto obj: refs) (*obj) *= v; return (*this);	}
-		const SharedValue<T>& operator*=(T const& v) const	{for(auto obj: refs) (*obj) *= v; return (*this);	}
-		SharedValue<T>& operator/=(T const& v)				{for(auto obj: refs) (*obj) /= v; return (*this);	}
-		const SharedValue<T>& operator/=(T const& v) const	{for(auto obj: refs) (*obj) /= v; return (*this);	}
-		SharedValue<T>& operator^=(T const& v)				{for(auto obj: refs) (*obj) ^= v; return (*this);	}
-		const SharedValue<T>& operator^=(T const& v) const	{for(auto obj: refs) (*obj) ^= v; return (*this);	}
-		SharedValue<T>& operator&=(T const& v)				{for(auto obj: refs) (*obj) &= v; return (*this);	}
-		const SharedValue<T>& operator&=(T const& v) const	{for(auto obj: refs) (*obj) &= v; return (*this);	}
-		SharedValue<T>& operator|=(T const& v)				{for(auto obj: refs) (*obj) |= v; return (*this);	}
-		const SharedValue<T>& operator|=(T const& v) const	{for(auto obj: refs) (*obj) |= v; return (*this);	}
-		SharedValue<T>& operator%=(T const& v)				{for(auto obj: refs) (*obj) %= v; return (*this);	}
-		const SharedValue<T>& operator%=(T const& v) const	{for(auto obj: refs) (*obj) %= v; return (*this);	}
-		SharedValue<T>& operator<<=(T const& v)				{for(auto obj: refs) (*obj) <<= v; return (*this);	}
-		const SharedValue<T>& operator<<=(T const& v) const	{for(auto obj: refs) (*obj) <<= v; return (*this);	}
-		SharedValue<T>& operator>>=(T const& v)				{for(auto obj: refs) (*obj) >>= v; return (*this);	}
-		const SharedValue<T>& operator>>=(T const& v) const	{for(auto obj: refs) (*obj) >>= v; return (*this);	}
+		SharedValue<T>& operator=(T const& v)															{for(auto obj: refs) (*obj) = v; return (*this);	}
+		const SharedValue<T>& operator=(T const& v) const												{for(auto obj: refs) (*obj) = v; return (*this);	}
+		SharedValue<T>& operator++() requires Type::PostIncrementable<T>								{for(auto obj: refs) (*obj)++; return (*this);		}
+		const SharedValue<T>& operator++() const requires Type::PostIncrementable<T>					{for(auto obj: refs) (*obj)++; return (*this);		}
+		SharedValue<T>& operator--() requires Type::PostDecrementable<T>								{for(auto obj: refs) (*obj)--; return (*this);		}
+		const SharedValue<T>& operator--() const requires Type::PostDecrementable<T>					{for(auto obj: refs) (*obj)--; return (*this);		}
+		SharedValue<T>& operator+=(T const& v) requires Type::AddAssignable<T, T>						{for(auto obj: refs) (*obj) += v; return (*this);	}
+		const SharedValue<T>& operator+=(T const& v) const requires Type::AddAssignable<T, T>			{for(auto obj: refs) (*obj) += v; return (*this);	}
+		SharedValue<T>& operator-=(T const& v) requires Type::SubAssignable<T, T>						{for(auto obj: refs) (*obj) -= v; return (*this);	}
+		const SharedValue<T>& operator-=(T const& v) const requires Type::SubAssignable<T, T>			{for(auto obj: refs) (*obj) -= v; return (*this);	}
+		SharedValue<T>& operator*=(T const& v) requires Type::MulAssignable<T, T>						{for(auto obj: refs) (*obj) *= v; return (*this);	}
+		const SharedValue<T>& operator*=(T const& v) const requires Type::MulAssignable<T, T>			{for(auto obj: refs) (*obj) *= v; return (*this);	}
+		SharedValue<T>& operator/=(T const& v) requires Type::DivAssignable<T, T>						{for(auto obj: refs) (*obj) /= v; return (*this);	}
+		const SharedValue<T>& operator/=(T const& v) const requires Type::DivAssignable<T, T>			{for(auto obj: refs) (*obj) /= v; return (*this);	}
+		SharedValue<T>& operator^=(T const& v) requires Type::Bitwise::XorAssignable<T, T>				{for(auto obj: refs) (*obj) ^= v; return (*this);	}
+		const SharedValue<T>& operator^=(T const& v) const requires Type::Bitwise::XorAssignable<T, T>	{for(auto obj: refs) (*obj) ^= v; return (*this);	}
+		SharedValue<T>& operator&=(T const& v) requires Type::Bitwise::AndAssignable<T, T>				{for(auto obj: refs) (*obj) &= v; return (*this);	}
+		const SharedValue<T>& operator&=(T const& v) const requires Type::Bitwise::AndAssignable<T, T>	{for(auto obj: refs) (*obj) &= v; return (*this);	}
+		SharedValue<T>& operator|=(T const& v) requires Type::Bitwise::OrAssignable<T, T>				{for(auto obj: refs) (*obj) |= v; return (*this);	}
+		const SharedValue<T>& operator|=(T const& v) const requires Type::Bitwise::OrAssignable<T, T>	{for(auto obj: refs) (*obj) |= v; return (*this);	}
+		SharedValue<T>& operator%=(T const& v) requires Type::ModAssignable<T, T>						{for(auto obj: refs) (*obj) %= v; return (*this);	}
+		const SharedValue<T>& operator%=(T const& v) const requires Type::ModAssignable<T, T>			{for(auto obj: refs) (*obj) %= v; return (*this);	}
+		SharedValue<T>& operator<<=(T const& v) requires requires (T a, T b) {a <<= b}					{for(auto obj: refs) (*obj) <<= v; return (*this);	}
+		const SharedValue<T>& operator<<=(T const& v) const requires requires (T a, T b) {a <<= b}		{for(auto obj: refs) (*obj) <<= v; return (*this);	}
+		SharedValue<T>& operator>>=(T const& v) requires requires (T a, T b) {a >>= b}					{for(auto obj: refs) (*obj) >>= v; return (*this);	}
+		const SharedValue<T>& operator>>=(T const& v) const requires requires (T a, T b) {a >>= b}		{for(auto obj: refs) (*obj) >>= v; return (*this);	}
 
 	private:
 

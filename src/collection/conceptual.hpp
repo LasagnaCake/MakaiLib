@@ -137,6 +137,131 @@ namespace Type {
 	template <typename A, typename B>
 	concept ModAssignable = requires (A a, B b) {a %= b;};
 
+	template <typename T>
+	concept PostIncrementable = requires (T t) {t++;};
+
+	template <typename T>
+	concept PostDecrementable = requires (T t) {t--;};
+
+	template <typename T>
+	concept PreIncrementable = requires (T t) {++t;};
+
+	template <typename T>
+	concept PreDecrementable = requires (T t) {--t;};
+
+	namespace Bitwise {
+		template <typename A, typename B>
+		concept And = requires (A a, B b) {a & b;};
+
+		template <typename A, typename B>
+		concept Or = requires (A a, B b) {a | b;};
+
+		template <typename A, typename B>
+		concept Xor = requires (A a, B b) {a ^ b;};
+
+		template <typename A, typename B>
+		concept Expressionable =
+			And<A, B>
+		&&	Or<A, B>
+		&&	Xor<A, B>
+		;
+
+		template <typename A, typename B>
+		concept AndAssignable = requires (A a, B b) {a &= b;};
+
+		template <typename A, typename B>
+		concept OrAssignable = requires (A a, B b) {a |= b;};
+
+		template <typename A, typename B>
+		concept XorAssignable = requires (A a, B b) {a ^= b;};
+
+		template <typename A, typename B>
+		concept LeftShiftAssignable = requires (A a, B b) {a <<= b;};
+
+		template <typename A, typename B>
+		concept RightShiftAssignable = requires (A a, B b) {a >>= b;};
+
+		template <typename A, typename B>
+		concept Assignable =
+			AndAssignable<A, B>
+		&&	OrAssignable<A, B>
+		&&	XorAssignable<A, B>
+		&&	LeftShiftAssignable<A, B>
+		&&	RightShiftAssignable<A, B>
+		;
+
+		template <typename T>
+		concept Not = requires (T t) {~t;};
+
+		template<typename A, typename B>
+		concept All =
+			Expressionable<A, B>
+		&&	Assignable<A, B>
+		&&	Not<A>
+		&&	Not<B>
+		;
+	}
+
+	namespace Logical {
+		template <typename A, typename B>
+		concept And = requires (A a, B b) {a && b;};
+
+		template <typename A, typename B>
+		concept Or = requires (A a, B b) {a || b;};
+
+		template <typename T>
+		concept Not = requires (T t) {!t;};
+
+		template <typename A, typename B>
+		concept All =
+			And<A, B>
+		&&	Or<A, B>
+		&&	Not<A>
+		&&	Not<B>
+		;
+	}
+
+	namespace Comparable {
+		template <typename A, typename B>
+		concept Equals = requires (A a, B b) {a == b;};
+
+		template <typename A, typename B>
+		concept NotEquals = requires (A a, B b) {a != b;};
+
+		template <typename A, typename B>
+		concept Lesser = requires (A a, B b) {a < b;};
+
+		template <typename A, typename B>
+		concept Greater = requires (A a, B b) {a > b;};
+
+		template <typename A, typename B>
+		concept LesserEquals = requires (A a, B b) {a <= b;};
+
+		template <typename A, typename B>
+		concept GreaterEquals = requires (A a, B b) {a >= b;};
+
+		template <typename A, typename B>
+		concept All =
+			Equals<A, B>
+		&&	NotEquals<A, B>
+		&&	Lesser<A, B>
+		&&	Greater<A, B>
+		&&	LesserEquals<A, B>
+		&&	GreaterEquals<A, B>
+		;
+	}
+
+	namespace Stream {
+		template <typename A, typename B>
+		concept Insertible = requires (A a, B b) {a << b;};
+
+		template <typename A, typename B>
+		concept Extractible = requires (A a, B b) {a >> b;};
+
+		template <typename A, typename B>
+		concept All = Insertible<A, B> && Extractible<A, B>;
+	}
+
 	template <typename A, typename B>
 	concept Calculable =
 			Addable<A, B>
@@ -158,16 +283,6 @@ namespace Type {
 
 	template <typename A, typename B>
 	concept HasModulo = Modulable<A, B> && ModAssignable<A, B>;
-
-	template <typename A, typename B>
-	concept Comparable = requires (A a, B b) {
-		a == b;
-		a != b;
-		a >= b;
-		a <= b;
-		a > b;
-		a < b;
-	};
 
 	/**
 	* A 'Safe' type must not be:

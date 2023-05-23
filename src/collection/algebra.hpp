@@ -91,19 +91,19 @@ namespace Math {
 	#define MARIBEL Math::maribel
 	#endif // DEGRAD
 
-	CONST_ANYTYPE_I sign(T val) requires Type::Comparable<T, T> {
+	CONST_ANYTYPE_I sign(T val) requires Type::Comparable::All<T, T> {
 		return (val < 0 ? -1 : (val > 0 ? +1 : 0));
 	}
 
-	CONST_ANYTYPE_I min(T a, T b) requires Type::Comparable<T, T> {
+	CONST_ANYTYPE_I min(T a, T b) requires Type::Comparable::Lesser<T, T> {
 		return ((a < b) ? a : b);
 	}
 
-	CONST_ANYTYPE_I max(T a, T b) requires Type::Comparable<T, T> {
+	CONST_ANYTYPE_I max(T a, T b) requires Type::Comparable::Greater<T, T> {
 		return ((a > b) ? a : b);
 	}
 
-	CONST_ANYTYPE_I clamp(T a, T min, T max) requires Type::Comparable<T, T> {
+	CONST_ANYTYPE_I clamp(T a, T min, T max) requires Type::Comparable::All<T, T> {
 		return ((a < min) ? min : ((a > max) ? max : a));
 	}
 

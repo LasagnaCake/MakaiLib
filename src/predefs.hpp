@@ -22,7 +22,7 @@
 #define DEPRECATED			[[deprecated]]
 #define UNAVAILABLE			[[unavailable]]
 #define DEADEND				[[noreturn]]
-#define KEEPRESULT			[[nodiscard]]
+#define NODISCARD			[[nodiscard]]
 #define UNUSED				[[unused]]
 #define MAYBEUNUSED			[[maybe_unused]]
 #define FALLTHROUGH			[[fallthrough]]
