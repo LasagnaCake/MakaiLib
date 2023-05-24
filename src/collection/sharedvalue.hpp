@@ -86,10 +86,10 @@ namespace Shared {
 		const SharedValue<T>& operator|=(T const& v) const requires Type::Bitwise::OrAssignable<T, T>	{for(auto obj: refs) (*obj) |= v; return (*this);	}
 		SharedValue<T>& operator%=(T const& v) requires Type::ModAssignable<T, T>						{for(auto obj: refs) (*obj) %= v; return (*this);	}
 		const SharedValue<T>& operator%=(T const& v) const requires Type::ModAssignable<T, T>			{for(auto obj: refs) (*obj) %= v; return (*this);	}
-		SharedValue<T>& operator<<=(T const& v) requires requires (T a, T b) {a <<= b;}					{for(auto obj: refs) (*obj) <<= v; return (*this);	}
-		const SharedValue<T>& operator<<=(T const& v) const requires requires (T a, T b) {a <<= b;}		{for(auto obj: refs) (*obj) <<= v; return (*this);	}
-		SharedValue<T>& operator>>=(T const& v) requires requires (T a, T b) {a >>= b;}					{for(auto obj: refs) (*obj) >>= v; return (*this);	}
-		const SharedValue<T>& operator>>=(T const& v) const requires requires (T a, T b) {a >>= b;}		{for(auto obj: refs) (*obj) >>= v; return (*this);	}
+		SharedValue<T>& operator<<=(T const& v) requires Type::Stream::InsAssignable<T, T>				{for(auto obj: refs) (*obj) <<= v; return (*this);	}
+		const SharedValue<T>& operator<<=(T const& v) const requires Type::Stream::InsAssignable<T, T>	{for(auto obj: refs) (*obj) <<= v; return (*this);	}
+		SharedValue<T>& operator>>=(T const& v) requires Type::Stream::ExtAssignable<T, T>				{for(auto obj: refs) (*obj) >>= v; return (*this);	}
+		const SharedValue<T>& operator>>=(T const& v) const requires Type::Stream::ExtAssignable<T, T>	{for(auto obj: refs) (*obj) >>= v; return (*this);	}
 
 	private:
 

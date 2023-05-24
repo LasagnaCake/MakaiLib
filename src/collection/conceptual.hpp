@@ -151,19 +151,19 @@ namespace Type {
 
 	namespace Bitwise {
 		template <typename A, typename B>
-		concept And = requires (A a, B b) {a & b;};
+		concept Andable = requires (A a, B b) {a & b;};
 
 		template <typename A, typename B>
-		concept Or = requires (A a, B b) {a | b;};
+		concept Orable = requires (A a, B b) {a | b;};
 
 		template <typename A, typename B>
-		concept Xor = requires (A a, B b) {a ^ b;};
+		concept Xorable = requires (A a, B b) {a ^ b;};
 
 		template <typename A, typename B>
 		concept Expressionable =
-			And<A, B>
-		&&	Or<A, B>
-		&&	Xor<A, B>
+			Andable<A, B>
+		&&	Orable<A, B>
+		&&	Xorable<A, B>
 		;
 
 		template <typename A, typename B>
@@ -176,48 +176,40 @@ namespace Type {
 		concept XorAssignable = requires (A a, B b) {a ^= b;};
 
 		template <typename A, typename B>
-		concept LeftShiftAssignable = requires (A a, B b) {a <<= b;};
-
-		template <typename A, typename B>
-		concept RightShiftAssignable = requires (A a, B b) {a >>= b;};
-
-		template <typename A, typename B>
 		concept Assignable =
 			AndAssignable<A, B>
 		&&	OrAssignable<A, B>
 		&&	XorAssignable<A, B>
-		&&	LeftShiftAssignable<A, B>
-		&&	RightShiftAssignable<A, B>
 		;
 
 		template <typename T>
-		concept Not = requires (T t) {~t;};
+		concept Negatable = requires (T t) {~t;};
 
 		template<typename A, typename B>
 		concept All =
 			Expressionable<A, B>
 		&&	Assignable<A, B>
-		&&	Not<A>
-		&&	Not<B>
+		&&	Negatable<A>
+		&&	Negatable<B>
 		;
 	}
 
 	namespace Logical {
 		template <typename A, typename B>
-		concept And = requires (A a, B b) {a && b;};
+		concept Andable = requires (A a, B b) {a && b;};
 
 		template <typename A, typename B>
-		concept Or = requires (A a, B b) {a || b;};
+		concept Orable = requires (A a, B b) {a || b;};
 
 		template <typename T>
-		concept Not = requires (T t) {!t;};
+		concept Negatable = requires (T t) {!t;};
 
 		template <typename A, typename B>
 		concept All =
-			And<A, B>
-		&&	Or<A, B>
-		&&	Not<A>
-		&&	Not<B>
+			Andable<A, B>
+		&&	Orable<A, B>
+		&&	Negatable<A>
+		&&	Negatable<B>
 		;
 	}
 
@@ -259,7 +251,19 @@ namespace Type {
 		concept Extractible = requires (A a, B b) {a >> b;};
 
 		template <typename A, typename B>
-		concept All = Insertible<A, B> && Extractible<A, B>;
+		concept Expressionable = Insertible<A, B> && Extractible<A, B>;
+
+		template <typename A, typename B>
+		concept InsAssignable = requires (A a, B b) {a <<= b;};
+
+		template <typename A, typename B>
+		concept ExtAssignable = requires (A a, B b) {a >>= b;};
+
+		template <typename A, typename B>
+		concept Assignable = InsAssignable<A, B> && ExtAssignable<A, B>;
+
+		template <typename A, typename B>
+		concept All = Expressionable<A, B> && Assignable<A, B>;
 	}
 
 	template <typename A, typename B>

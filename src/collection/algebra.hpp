@@ -68,11 +68,28 @@ namespace Math {
 		constexpr auto FLOAT128_V	= LDOUBLE_V;
 	}
 
-	namespace Smallest {
+	namespace Period {
+		constexpr auto BYTE_V		= 1;
+		constexpr auto UBYTE_V		= 1;
+		constexpr auto SHORT_V		= 1;
+		constexpr auto USHORT_V		= 1;
+		constexpr auto INT_V		= 1;
+		constexpr auto UINT_V		= 1;
+		constexpr auto LONG_V		= 1;
+		constexpr auto ULONG_V		= 1;
+		constexpr auto SIZET_V		= 1;
 		constexpr auto FLOAT_V		= std::numeric_limits<float>::min();
 		constexpr auto DOUBLE_V		= std::numeric_limits<double>::min();
 		constexpr auto LDOUBLE_V	= std::numeric_limits<long double>::min();
 
+		constexpr auto INT8_V		= BYTE_V;
+		constexpr auto UINT8_V		= UBYTE_V;
+		constexpr auto INT16_V		= SHORT_V;
+		constexpr auto UINT16_V		= USHORT_V;
+		constexpr auto INT32_V		= INT_V;
+		constexpr auto UINT32_V		= UINT_V;
+		constexpr auto INT64_V		= LONG_V;
+		constexpr auto UINT64_V		= ULONG_V;
 		constexpr auto FLOAT32_V	= FLOAT_V;
 		constexpr auto FLOAT64_V	= DOUBLE_V;
 		constexpr auto FLOAT128_V	= LDOUBLE_V;
@@ -105,8 +122,8 @@ namespace Math {
 	constexpr const double	tauphi		= tau / phi;
 	constexpr const double	infinity	= std::numeric_limits<double>::infinity();
 	constexpr const float	infinityF	= std::numeric_limits<float>::infinity();
-	constexpr const double	epsilon		= std::numeric_limits<double>::epsilon() * 2;
-	constexpr const float	epsilonF	= std::numeric_limits<float>::epsilon() * 2;
+	constexpr const double	epsilon		= std::numeric_limits<double>::epsilon() * 10.0;
+	constexpr const float	epsilonF	= std::numeric_limits<float>::epsilon() * 10.0;
 
 	#ifndef SQRT2
 	#define SQRT2 Math::sqrt2
