@@ -3,11 +3,33 @@ struct ManagerSet {
 	P* const player	= new P();
 	E* const enemy	= new E();
 	void destroy() {
+		if (destroyed) return;
+		destroyed = true;
 		$debug(("Deleting enemy manager..."));
 		delete enemy;
 		$debug(("Deleting player manager..."));
 		delete player;
 	}
+private:
+	bool destroyed = false;
+};
+
+struct DanmakuManagerSet {
+	ManagerSet<PlayerBulletManager, EnemyBulletManager>			bullet;
+	ManagerSet<PlayerLineLaserManager, EnemyLineLaserManager>	lineLaser;
+	ItemManager* const											item	= new ItemManager();
+	void destroy() {
+		if (destroyed) return;
+		destroyed = true;
+		$debug("Deleting bullet managers...");
+		bullet.destroy();
+		$debug("Deleting line laser managers...");
+		lineLaser.destroy();
+		$debug("Deleting item manager...");
+		delete item;
+	}
+private:
+	bool destroyed = false;
 };
 
 class DanmakuApp: public GameApp {
@@ -39,19 +61,7 @@ public:
 		itemManager				= managers.item;
 	};
 
-	struct {
-		ManagerSet<PlayerBulletManager, EnemyBulletManager>			bullet;
-		ManagerSet<PlayerLineLaserManager, EnemyLineLaserManager>	lineLaser;
-		ItemManager*	item	= new ItemManager();
-		void destroy() {
-			$debug("Deleting bullet managers...");
-			bullet.destroy();
-			$debug("Deleting line laser managers...");
-			lineLaser.destroy();
-			$debug("Deleting item manager...");
-			delete item;
-		}
-	} managers;
+	DanmakuManagerSet managers;
 
 	struct {
 		PolarWarpEffect effect;
