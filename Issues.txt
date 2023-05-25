@@ -1,8 +1,4 @@
 > SDL_Mixer cannot load MP3 files
 	> WAV and OGG seems to work fine
 	> Don't know about MIDI though
-[FIXED] > "Buffer Overflow" (most likely) or "Failed Stack Switch" (least likely) on program exit 
-	> Happens when trying to delete any DanmakuObjectManager 
-	FIX: They were getting deleted twice
-(BulletManager, LineLaserManager, ItemManager)
 > Fullscreen does not work properly
