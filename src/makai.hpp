@@ -20,14 +20,10 @@
 #include "graphical.hpp"
 #include "gamedata.hpp"
 
-#ifdef __cplusplus
 extern "C" {
-#endif
 DLL_EXPORT	uint32	NvOptimusEnablement = 1;
 DLL_EXPORT	int		AmdPowerXpressRequestHighPerformance = 1;
-#ifdef __cplusplus
 }
-#endif
 
 namespace Makai {
 }
