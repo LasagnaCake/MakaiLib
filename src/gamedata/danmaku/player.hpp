@@ -413,7 +413,52 @@ struct PlayerEntity2D: AreaCircle2D {
 	inline Tween::Tween<Vector2>& getPlayerTween() {
 		return moveTween;
 	}
+
+	void captureAndPauseAllTimers() {
+		if (!snapshot) {
+			prevTimerState[0] = invincibility.paused;
+			prevTimerState[1] = animator.paused;
+			prevTimerState[2] = deathbomb.paused;
+			prevTimerState[3] = bombCooldown.paused;
+			prevTimerState[4] = shotCooldown.paused;
+			prevTimerState[5] = mainShot.paused;
+			prevTimerState[6] = optionShot.paused;
+			prevTimerState[7] = moveTween.paused;
+			snapshot = true;
+		}
+		invincibility.paused	= true;
+		animator.paused			= true;
+		deathbomb.paused		= true;
+		bombCooldown.paused		= true;
+		shotCooldown.paused		= true;
+		mainShot.paused			= true;
+		optionShot.paused		= true;
+		moveTween.paused		= true;
+	}
+
+	void rollbackAllTimers() {
+		if (!snapshot) return;
+		snapshot = false;
+		invincibility.paused	= prevTimerState[0];
+		animator.paused			= prevTimerState[1];
+		deathbomb.paused		= prevTimerState[2];
+		bombCooldown.paused		= prevTimerState[3];
+		shotCooldown.paused		= prevTimerState[4];
+		mainShot.paused			= prevTimerState[5];
+		optionShot.paused		= prevTimerState[6];
+		moveTween.paused		= prevTimerState[7];
+	}
 private:
+	bool snapshot = false;
+	bool prevTimerState[8] = {
+		false,
+		false,
+		false,
+		false,
+		false,
+		false,
+		false
+	};
 	// Last Button State
 	struct {
 		bool focus = false;

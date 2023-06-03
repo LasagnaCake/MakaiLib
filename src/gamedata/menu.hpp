@@ -25,17 +25,18 @@ namespace Menu {
 		DERIVED_CLASS(BaseMenu, Entity)
 
 		DERIVED_CONSTRUCTOR(BaseMenu, Entity, {
+			input.update();
 			keys["select"]		= SDL_SCANCODE_Z;
 			keys["return"]		= SDL_SCANCODE_X;
-			keys["next"]		= SDL_SCANCODE_UP;
-			keys["previous"]	= SDL_SCANCODE_DOWN;
+			keys["next"]		= SDL_SCANCODE_DOWN;
+			keys["previous"]	= SDL_SCANCODE_UP;
 			keys["exit"]		= SDL_SCANCODE_ESCAPE;
-			input.threshold		= 300;
+			input.threshold		= 30;
 			nextOptTimer.onSignal	= $signal {this->nextOption();};
-			nextOptTimer.delay		= 4;
+			nextOptTimer.delay		= 15;
 			nextOptTimer.paused		= true;
 			prevOptTimer.onSignal	= $signal {this->previousOption();};
-			prevOptTimer.delay		= 4;
+			prevOptTimer.delay		= 15;
 			prevOptTimer.paused		= true;
 		})
 
@@ -47,18 +48,18 @@ namespace Menu {
 
 		void onFrame(float delta) override {
 			input.update();
-			if (action("select", true))		selectOption();
-			if (action("return", true))		returnOption();
-			if (action("exit", true))		setTopLevelOption();
+			if (action("exit", true))		{setTopLevelOption(); return;}
+			if (action("select", true))		{selectOption(); return;}
+			if (action("return", true))		{returnOption(); return;}
 			if (action("next", true))		nextOption();
-			if (action("previous", true))	nextOption();
+			if (action("previous", true))	previousOption();
 			nextOptTimer.paused = !(actionHeld("next") && !action("previous"));
 			prevOptTimer.paused = !(actionHeld("previous") && !action("next"));
 			for(auto& o : currentSet)
 				o->onFrame(o);
 		}
 
-		Option* createOption(void* data = nullptr, Option* prev = nullptr) {
+		Option* createOption(Option* prev = nullptr) {
 			Option* o = new Option{id++, this, prev};
 			all.push_back(o);
 			return o;
@@ -99,7 +100,7 @@ namespace Menu {
 			this->option = option;
 			last	= current;
 			current	= currentSet[option];
-			last->onFocusLost(last);
+			if (last) last->onFocusLost(last);
 			current->onFocusGained(current);
 			onOptionChanged(last, current);
 			return true;
@@ -175,10 +176,17 @@ namespace Menu {
 
 		virtual void onReturn()															{$debug("Return!");}
 		virtual void onExit()															{$debugp("Menu Exited!");}
-		virtual void onFinalOption(Option* opt)											{$debugp("Final Option Selected: "); $debug(opt->id);}
-		virtual void onOptionSelected(Option* opt)										{$debugp("Option Selected: "); $debug(opt->id);}
-		virtual void onOptionChanged(Option* prev, Option* next)						{$debugp("Option Changed: "); $debugp(prev->id); $debugp(" -> "); $debug(next->id);}
+		virtual void onFinalOption(Option* opt)											{$debugp("Final Option Selected: "); if (opt) {$debug(opt->id);} else {$debug("NULL");}}
+		virtual void onOptionSelected(Option* opt)										{$debugp("Option Selected: "); if (opt) {$debug(opt->id);} else {$debug("NULL");}}
 		virtual void onOptionSetChanged(OptionSet const& prev, OptionSet const& next)	{$debug("Option Set Changed!");}
+		virtual void onOptionChanged(Option* prev, Option* next) {
+			$debugp("Option Changed: ");
+			if (prev) {$debugp(prev->id);}
+			else {$debugp("NULL");}
+			$debugp(" -> ");
+			if (next) {$debug(next->id);}
+			else {$debug("NULL");}
+		}
 
 		bool action(std::string what, bool justPressed = false) {
 			if (justPressed)
