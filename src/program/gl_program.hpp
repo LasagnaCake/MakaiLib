@@ -195,13 +195,14 @@ namespace Makai {
 			$debug("creating default framebuffer...");
 			// Create framebuffer
 			framebuffer.create(width, height);
-			layerbuffer.create(width, height);
 			// Fix alpha being a bitch
 			framebuffer();
 			//glDisable(GL_BLEND);
 			unsigned int fid = framebuffer.toFrameBufferData().id;
 			glBlendEquationSeparatei(fid, GL_FUNC_ADD, GL_MAX);
 			glBindBuffer(GL_FRAMEBUFFER, 0);
+			// Create layer buffer
+			layerbuffer.create(width, height);
 			// Create composition shader
 			$debug("Creating shaders...");
 			bufferShader.create(SLF::parseFile(bufferShaderPath));
