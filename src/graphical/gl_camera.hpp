@@ -19,12 +19,12 @@ namespace Camera {
 
 	struct Camera3D {
 		Vector3 eye;
-		Vector3 at;
-		Vector3 up = Vector3(0, 1, 0);
-		Vector2 aspect = Vector2(4.0, 3.0);
-		float fov = 2.0;
-		float zNear = 0.01;
-		float zFar = 100.0;
+		Vector3 at		= Vector3(0, 0, -1);
+		Vector3 up		= Vector3(0, 1, 0);
+		Vector2 aspect	= Vector2(4.0, 3.0);
+		float fov	= 2.0;
+		float zNear	= 0.01;
+		float zFar	= 100.0;
 		struct {
 			bool enabled	= false;
 			Vector2 origin	= Vector2(0);

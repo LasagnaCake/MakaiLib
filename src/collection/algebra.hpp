@@ -169,6 +169,10 @@ namespace Math {
 	#define MARIBEL Math::maribel
 	#endif // DEGRAD
 
+	#ifndef TAUPHI
+	#define TAUPHI Math::tauphi
+	#endif // TAUPHI
+
 	CONST_ANYTYPE_I sign(T val) requires Type::Comparable::All<T, T> {
 		return (val < 0 ? -1 : (val > 0 ? +1 : 0));
 	}
