@@ -8,21 +8,15 @@ Vertex Unit (VU) is the 2D & 3D coordinate unit the engine uses. This unit of me
 
 ## 2D
 
-When using the default 2D camera[^1], the screen has the size of:
+When using the default 2D camera[^1], the view space has the size of:
 
 $$
-\begin{bmatrix}
-w \\
-h
-\end{bmatrix}
-=
-\begin{bmatrix}
-( 64 \times \frac{A_{width}}{A_{height}} ) \\
-64
-\end{bmatrix}
+V_{width} = ( scale \times \frac{R_{width}}{R_{height}} )
+\ ,\ 
+V_{height} = scale
 $$
 
-With $A_{width}$ and $A_{height}$ being the aspect ratio's width and height, respectively[^2][^3].
+With $A_{width}$ and $A_{height}$ being the aspect ratio's width and height, respectively[^2]<sup></sup>[^3].
 
 For the default 2D camera[^1], its origin is at coordinates `[0, 0]` (top-left), and follows the right-handed coordinate system: `+X` goes right and `+Y` goes up.
 
