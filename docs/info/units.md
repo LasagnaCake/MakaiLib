@@ -22,7 +22,7 @@ For the default 2D camera[^1], its origin is at coordinates `[0, 0]` (top-left),
 
 ## 3D
 
-In 3D, much like in 2D,is also a right-handed system: `+X` goes right, `+Y` goes up, and `+Z` goes "forward" (towards the screen).
+In 3D, much like in 2D, is also a right-handed system: `+X` goes right, `+Y` goes up, and `+Z` goes "forward" (towards the screen).
 
 The default 3D camera[^1] starts at position `[0, 5, -10]` and points towards the world's origin `[0, 0, 0]`. That means that any object that is moving towards the positive X would appear to move towards the left, and any object that is moving towards the positive Z would appear to move backwards.
 
