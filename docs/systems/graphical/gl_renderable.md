@@ -204,7 +204,7 @@ Extends the `Renderable` object's triangle buffer with the data located in a `.m
 
 **Full:** `void extendFromBinaryFile(string const& path)`.
 
-`path`: The path to the file.
+- `path`: The *relative* path to the file.
 
 #### `extendFromDefinition()`
 
@@ -212,7 +212,7 @@ Extends the `Renderable` object with the data located in an *Object Definition*[
 
 **Full:** `void extendFromDefinition(nlohmann::json def)`.
 
-`def`: The *Object Definition*[^4].
+- `def`: The *Object Definition*[^4].
 
 #### `extendFromDefinitionFile()`
 
@@ -220,7 +220,7 @@ Extends the `Renderable` object with the data located in an `.mrod` (Makai Rende
 
 **Full:** `inline void extendFromDefinitionFile(string const& path)`.
 
-`path`: The path to the file.
+- `path`: The *relative* path to the file.
 
 #### `bake()`
 
@@ -248,17 +248,27 @@ Saves the data located in its *triangle buffer* into a binary file.
 
 **Full:** `void saveToBinaryFile(string const& path)`.
 
+- `path`: The *relative* path to the file.
+
 #### `saveToDefinitionFile()`
 
 Saves the `Renderable` object into an *Object Definition*[^4] file.
 
 **Full:** `void saveToDefinitionFile(string const& path, string const& encoding = "base64", bool pretty = false, string const& binpath = "")`.
 
+- `path`: The path to the file.
+- `encoding`: The encoding used to save the mesh data, if it is to be saved embedded in the file.
+- `pretty`: Self-explanatory.
+- `binpath`: If it is to have a separate file for the mesh data, then this is set to that file's *relative* path. Else, it is to leave as is.
+
 #### `getObjectDefinition()`
 
 Converts the `Renderable` object into an *Object Definition*[^4].
 
-**Full:** `nlohmann::json getObjectDefinition( string const& encoding = "base64", bool integratedBinary = true)`.
+**Full:** `nlohmann::json getObjectDefinition(string const& encoding = "base64", bool integratedBinary = true)`.
+
+- `encoding`: The encoding used to save the mesh data, if it is to be saved embedded in the file.
+- `integratedBinary`: Whether to include the mesh data in the *Object Definition*[^4].
 
 ## `LineRenderable`
 
@@ -273,6 +283,22 @@ Converts the `Renderable` object into an *Object Definition*[^4].
 ### Functions
 
 # Functions
+
+## `loadObjectFromBinaryFile()`
+
+**Full:**
+
+## `loadObjectFromGLTFFile()`
+
+**Full:**
+
+## `loadObjectFromDefinition()`
+
+**Full:**
+
+## `loadObjectFromDefinitionFile()`
+
+**Full:**
 
 # Footnotes
 
