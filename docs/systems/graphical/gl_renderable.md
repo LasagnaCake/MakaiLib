@@ -208,7 +208,7 @@ Extends the `Renderable` object's triangle buffer with the data located in a `.m
 
 #### `extendFromDefinition()`
 
-Extends the `Renderable` object's triangle buffer with the data located in an *Object Definition*[^4].
+Extends the `Renderable` object with the data located in an *Object Definition*[^4].
 
 **Full:** `void extendFromDefinition(nlohmann::json def)`.
 
@@ -216,7 +216,7 @@ Extends the `Renderable` object's triangle buffer with the data located in an *O
 
 #### `extendFromDefinitionFile()`
 
-Extends the `Renderable` object's triangle buffer with the data located in an `.mrod` (Makai Renderable Object Definition) file, or a `JSON`-formatted file containing an *Object Definition*[^4].
+Extends the `Renderable` object with the data located in an `.mrod` (Makai Renderable Object Definition) file, or a `JSON`-formatted file containing an *Object Definition*[^4].
 
 **Full:** `inline void extendFromDefinitionFile(string const& path)`.
 
@@ -250,11 +250,13 @@ Saves the data located in its *triangle buffer* into a binary file.
 
 #### `saveToDefinitionFile()`
 
-Saves the data located in its *triangle buffer* into an *Object Definition*[^4] file.
+Saves the `Renderable` object into an *Object Definition*[^4] file.
 
 **Full:** `void saveToDefinitionFile(string const& path, string const& encoding = "base64", bool pretty = false, string const& binpath = "")`.
 
 #### `getObjectDefinition()`
+
+Converts the `Renderable` object into an *Object Definition*[^4].
 
 **Full:** `nlohmann::json getObjectDefinition( string const& encoding = "base64", bool integratedBinary = true)`.
 
