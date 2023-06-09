@@ -1,7 +1,5 @@
 Undefined optional values are set to their defaults.
 
----
-
 # Transform2D
 
 ## Layout
@@ -14,8 +12,6 @@ Undefined optional values are set to their defaults.
 	"scale": [1.0, 1.0], // 2D vector representing scale
 }
 ```
-
----
 
 # Transform3D
 
@@ -57,8 +53,6 @@ If image data is saved in a different file:
 	"path": "", // Path to image file
 }
 ```
-
----
 
 # ObjectMaterial
 
@@ -102,8 +96,6 @@ If image data is saved in a different file:
 
 Undefined effects are assumed to be disabled.
 
----
-
 # Renderable Object
 
 ## Layout
@@ -142,5 +134,3 @@ If data gets saved in a different file:
 	"active": true,
 }
 ```
-
----
