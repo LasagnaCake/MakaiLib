@@ -75,60 +75,60 @@ namespace Shader {
 				glUniformMatrix4fv(getUniform(), 1, GL_FALSE, glm::value_ptr(value));
 			}
 
-			void operator()(int* values, size_t count) {
+			void operator()(int* const values, size_t count) {
 				glUniform1iv(getUniform(), count, values);
 				glUniform1ui(getUniform("Count"), count);
 			}
 
-			void operator()(unsigned int* values, size_t count) {
+			void operator()(unsigned int* const values, size_t count) {
 				glUniform1uiv(getUniform(), count, values);
 				glUniform1ui(getUniform("Count"), count);
 			}
 
-			void operator()(float* values, size_t count) {
+			void operator()(float* const values, size_t count) {
 				glUniform1fv(getUniform(), count, values);
 				glUniform1ui(getUniform("Count"), count);
 			}
 
-			void operator()(Vector2* values, size_t count) {
+			void operator()(Vector2* const values, size_t count) {
 				for $ssrange(i, 0, count)
 					glUniform2f(getUniformArray(i), values[i].x, values[i].y);
 				glUniform1ui(getUniform("Count"), count);
 			}
 
-			void operator()(glm::vec2* values, size_t count) {
+			void operator()(glm::vec2* const values, size_t count) {
 				for $ssrange(i, 0, count)
 					glUniform2f(getUniformArray(i), values[i].x, values[i].y);
 				glUniform1ui(getUniform("Count"), count);
 			}
 
-			void operator()(Vector3* values, size_t count) {
+			void operator()(Vector3* const values, size_t count) {
 				for $ssrange(i, 0, count)
 					glUniform3f(getUniformArray(i), values[i].x, values[i].y, values[i].z);
 				glUniform1ui(getUniform("Count"), count);
 			}
 
-			void operator()(glm::vec3* values, size_t count) {
+			void operator()(glm::vec3* const values, size_t count) {
 				for $ssrange(i, 0, count)
 					glUniform3f(getUniformArray(i), values[i].x, values[i].y, values[i].z);
 				glUniform1ui(getUniform("Count"), count);
 			}
 
-			void operator()(Vector4* values, size_t count) {
+			void operator()(Vector4* const values, size_t count) {
 				for $ssrange(i, 0, count)
 					glUniform4f(getUniformArray(i), values[i].x, values[i].y, values[i].z, values[i].w);
 				glUniform1ui(getUniform("Count"), count);
 			}
 
-			void operator()(glm::vec4* values, size_t count) {
+			void operator()(glm::vec4* const values, size_t count) {
 				for $ssrange(i, 0, count)
 					glUniform4f(getUniformArray(i), values[i].x, values[i].y, values[i].z, values[i].w);
 				glUniform1ui(getUniform("Count"), count);
 			}
 
 			template <typename T>
-			void operator()(vector<T>& values) {
-				(*this)(values.data(), values.size());
+			void operator()(vector<T> const& values) {
+				(*this)((T*)values.data(), values.size());
 			}
 
 		private:

@@ -3,6 +3,7 @@ bin
 obj
 *.exe
 *.o
+*.backup
 gmon.out
 res/data/*
 res/*.exe

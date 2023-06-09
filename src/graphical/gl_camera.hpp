@@ -19,7 +19,7 @@ namespace Camera {
 
 	struct Camera3D {
 		Vector3 eye;
-		Vector3 at		= Vector3(0, 0, -1);
+		Vector3 at		= Vector3(0, 0, 1);
 		Vector3 up		= Vector3(0, 1, 0);
 		Vector2 aspect	= Vector2(4.0, 3.0);
 		float fov	= 2.0;
@@ -67,9 +67,6 @@ namespace Camera {
 
 	Camera3D getCamera2D(Vector2 size) {
 		Camera3D camera;
-		camera.eye	= Vector3(0,0,-10);
-		camera.at	= Vector3(0,0,0);
-		camera.up	= Vector3(0,1,0);
 		camera.ortho.enabled = true;
 		camera.ortho.origin = 0;
 		camera.ortho.size = size * -1;
@@ -78,9 +75,6 @@ namespace Camera {
 
 	Camera3D getCamera2D(float scale, Vector2 ratio) {
 		Camera3D camera;
-		camera.eye	= Vector3(0,0,-10);
-		camera.at	= Vector3(0,0,0);
-		camera.up	= Vector3(0,1,0);
 		camera.ortho.enabled	= true;
 		camera.ortho.origin		= 0;
 		camera.ortho.size		= ratio * -scale;

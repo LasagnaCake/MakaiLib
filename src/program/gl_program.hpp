@@ -265,6 +265,8 @@ namespace Makai {
 				// Get deltas
 				frameDelta	= 1.0/maxFrameRate;
 				cycleDelta	= 1.0/maxCycleRate;
+				// Clamp speed
+				speed = Math::clamp(speed, 0.0f, 1.0f);
 				// If should process, then do so
 				#ifndef $_PROCESS_RENDER_BEFORE_LOGIC
 				if (SDL_GetTicks() - cycleTicks > (cycleDelta * 1000) / speed) {
