@@ -10,17 +10,17 @@ Vertex Unit (VU) is the 2D & 3D coordinate unit the engine uses. This unit of me
 
 When using the default 2D camera[^1], the screen has the size of:
 
-```math
+$$
 \begin{bmatrix}
-w\newline
+w \\
 h
 \end{bmatrix}
 =
 \begin{bmatrix}
-(64 \times \frac{A_{width}}{A_{height}})\newline
+( 64 \times \frac{A_{width}}{A_{height}} ) \\
 64
 \end{bmatrix}
-```
+$$
 
 With $A_{width}$ and $A_{height}$ being the aspect ratio's width and height, respectively[^2][^3].
 
