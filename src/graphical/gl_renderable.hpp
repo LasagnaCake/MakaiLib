@@ -167,7 +167,11 @@ public:
 			std::remove_if(
 				triangles.begin(),
 				triangles.end(),
-				[=](Triangle* e){return (e == tris[0]) || (e == tris[1]);}
+				[=](Triangle* e){
+					if (e == tris[0]) {delete tris[0]; return true;}
+					if (e == tris[1]) {delete tris[1]; return true;}
+					return false;
+				}
 			),
 			triangles.end()
 		);
@@ -182,7 +186,10 @@ public:
 			std::remove_if(
 				triangles.begin(),
 				triangles.end(),
-				[=](Triangle* e){return (e == tris[0]);}
+				[=](Triangle* e){
+					if (e == tris[0]) {delete tris[0]; return true;}
+					return false;
+				}
 			),
 			triangles.end()
 		);
@@ -204,11 +211,13 @@ public:
 			std::remove_if(
 				rp.begin(),
 				rp.end(),
-				[&](Reference::Plane* e){return e == ref;}
+				[&](Reference::Plane* e){
+					if (e == ref) {delete ref; return true;}
+					return false;
+				}
 			),
 			rp.end()
 		);
-		delete ref;
 	}
 
 	template <Reference::TrigonType T>
@@ -219,7 +228,10 @@ public:
 			std::remove_if(
 				rp.begin(),
 				rp.end(),
-				[&](Reference::Trigon* e){return e == ref;}
+				[&](Reference::Plane* e){
+					if (e == ref) {delete ref; return true;}
+					return false;
+				}
 			),
 			rp.end()
 		);
@@ -238,6 +250,8 @@ public:
 		if (locked) return;
 		if (vertices == nullptr || size == 0)
 			throw Error::InvalidValue("No vertices were provided!");
+		if (vertices % 3 != 0)
+			throw Error::InvalidValue("Vertex amount is not a multiple of 3!");
 		if (this->vertices)
 			delete[] this->vertices;
 		for $range(i, 0, size, 3) {

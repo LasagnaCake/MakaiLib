@@ -49,13 +49,13 @@ Time is divided in two separate categories: *render time* and *logic time*. Of n
 
 When everything gets processed. It happens independently of *render time*, and is counted in *cycles*.
 
-By default, it processes at *60 cycles per second*. The `speed` variable, defined in the `Makai::Program` class, affects it. This variable is automatically clamped to a value between 0 and 1.
+By default, it processes at a static *60 cycles per second*. The `speed` variable, defined in the `Makai::Program` class, affects it. This variable is automatically clamped to a value between 0 and 1.
 
 ## Render Time
 
 When everything gets rendered. It happens independently of *logic time*, and is counted in *frames*.
 
-By default, it processes at *60 frames per second*.
+By default, it processes at a static *60 frames per second*.
 
 # Footnotes
 

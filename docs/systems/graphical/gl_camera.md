@@ -1,6 +1,10 @@
 # Overview
 
-The `Camera` namespace is defined as the such:
+This file contains the `Camera` namespace.
+
+# `Camera`
+
+The `Camera` namespace is defined as such:
 
 ```cpp
 namespace Camera {
@@ -53,11 +57,18 @@ The base camera the engine uses. Contains the following member variables:
 
 ## Functions
 
-### `getCamera2D(Vector2 size)`
+### `getCamera2D()`
+
+Creates a 2D camera.
+
+1. `getCamera2D(Vector2 size)`
+2. `getCamera2D(float scale, Vector2 ratio)`.
+
+#### 1
 
 Creates a 2D camera of a given size in Vertex Units[^3].
 
-### `getCamera2D(float scale, Vector2 ratio)`
+#### 2
 
 Creates a 2D camera of a given aspect ratio, at a specific scale in Vertex Units[^3].
 

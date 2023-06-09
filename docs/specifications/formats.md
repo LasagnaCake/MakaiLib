@@ -68,19 +68,23 @@ If image data is saved in a different file:
 	"saturation": 1.0, // Ranges from -1.0 to 1.0
 	"luminosity": 1.0, // Ranges from -1.0 to 1.0
 	"texture": {
+		"enabled": true,
 		"image": {/* See ImageData2D:Layout */},
 		"clip": 0.1, // Texture alpha clipping
 	},
 	"warp": {
+		"enabled": true,
 		"image": {/* See ImageData2D:Layout */},
 		"trans": {/* See Transform2D:Layout */},
 		"channelX": 0, // Index of the pixel's channel to be used for horizontal transformation
 		"channelY": 1, // Index of the pixel's channel to be used for vertical transformation
 	},
 	"negative": {
+		"enabled": true,
 		"strength": 1.0,
 	},
 	"gradient": {
+		"enabled": true,
 		"channel": 0, // Index of the pixel's channel to be used for gradient transformation. If -1, an average of the RGB is used
 		"invert": false,
 		"begin": [0.0, 0.0, 0.0, 1.0], // 4D vector representing the start color
@@ -94,13 +98,11 @@ If image data is saved in a different file:
 }
 ```
 
-Undefined effects are assumed to be disabled.
-
 # Renderable Object
 
 ## Layout
 
-This can be saved as either a `JSON` file.
+This can be saved as a `JSON` file, or a file of name `.mrod` (Makai Renderable Object).
 
 If data is to be integrated in the file:
 ```JavaScript

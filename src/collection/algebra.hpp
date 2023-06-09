@@ -117,7 +117,7 @@ namespace Math {
 	constexpr const double	tau			= 6.2831853071795864769252867666;
 	constexpr const double	euler		= 2.7182818284590452353602874714;
 	constexpr const double	degrad		= 180.0 / pi;
-	constexpr const double	maribel		= euler - (sqrt2 - 1.0) * (sqrt2 - 0.2);
+	constexpr const double	maribel		= euler - (11.0 - 6.0 * sqrt2) / 5.0;
 	constexpr const double	phi			= 1.6180339887498948482045868343;
 	constexpr const double	tauphi		= tau / phi;
 	constexpr const double	infinity	= std::numeric_limits<double>::infinity();
