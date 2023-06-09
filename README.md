@@ -65,7 +65,7 @@ These are already included in the ```lib/``` folder.
 
 ## Documentation
 
-Currently nonexistent. Some of the code is commented.
+Currently VERY scarce. Some of the code is commented.
 
 ## TODO
 
