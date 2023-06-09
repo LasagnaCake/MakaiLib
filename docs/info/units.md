@@ -11,7 +11,7 @@ Vertex Unit (VU) is the 2D & 3D coordinate unit the engine uses. This unit of me
 When using the default 2D camera[^1], the view space has the size of:
 
 $$
-V_{width} = ( scale \times \frac{R_{width}}{R_{height}} )
+V_{width} = ( scale \times \frac{A_{width}}{A_{height}} )
 \ ,\ 
 V_{height} = scale
 $$
