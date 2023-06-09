@@ -62,7 +62,8 @@ Creates a 2D camera of a given size in Vertex Units[^3].
 Creates a 2D camera of a given aspect ratio, at a specific scale in Vertex Units[^3].
 
 The size of the view space is determined by the formula:
-$$
+
+```math
 \begin{bmatrix}
 V_{width}\\
 V_{height}
@@ -72,7 +73,8 @@ V_{height}
 (scale \times \frac{R_{width}}{R_{height}})\\
 scale
 \end{bmatrix}
-$$
+```
+
 Where $R_{width}$ is `ratio.x` and $R_{height}$ is `ratio.y`[^1].
 
 # Footnotes
