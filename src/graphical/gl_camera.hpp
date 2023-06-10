@@ -67,6 +67,8 @@ namespace Camera {
 
 	Camera3D getCamera2D(Vector2 size) {
 		Camera3D camera;
+		camera.eye = Vec3(0, 0, -1);
+		camera.at = Vec3(0, 0, 0);
 		camera.ortho.enabled = true;
 		camera.ortho.origin = 0;
 		camera.ortho.size = size * -1;
@@ -75,6 +77,8 @@ namespace Camera {
 
 	Camera3D getCamera2D(float scale, Vector2 ratio) {
 		Camera3D camera;
+		camera.eye = Vec3(0, 0, -1);
+		camera.at = Vec3(0, 0, 0);
 		camera.ortho.enabled	= true;
 		camera.ortho.origin		= 0;
 		camera.ortho.size		= ratio * -scale;

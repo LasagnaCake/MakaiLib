@@ -11,9 +11,9 @@ Vertex Unit (VU) is the 2D & 3D coordinate unit the engine uses. This unit of me
 When using the default 2D camera[^1], the view space has the size of:
 
 $$
-V_{width} = ( scale \times \frac{A_{width}}{A_{height}} )
+V_{width} = ( 64 \times \frac{A_{width}}{A_{height}} )
 \ ,\ 
-V_{height} = scale
+V_{height} = 64
 $$
 
 With $A_{width}$ and $A_{height}$ being the aspect ratio's width and height, respectively[^2]<sup></sup>[^3].
@@ -36,7 +36,11 @@ The `Math` namespace provides functions to convert to and from *degrees* to *rad
 
 ## 3D
 
-No god can save you.
+Same as 2D, angles are determined in radians.
+
+Looking from the positive axis towards the negative axis, they start pointing to the "right" and move counterclockwise.
+
+It follows the order of $Yaw → Pitch → Roll$ (Z → X → Y, since rotations are calculated backwards) for rotation.
 
 # Time
 
@@ -63,4 +67,6 @@ By default, it processes at a static *60 frames per second*.
 
 [^2]: If the aspect ratio is unknown, the values can be substituted for the resolution's pixel width and pixel height, which will give the same result as the aspect ratio.
 
-[^3]: For more information, see [[gl_camera]] \([gl_camera.md](../systems/graphical/gl_camera.md)\).
+[^3]: For more information, see [[gl_camera]] → [gl_camera.md](../systems/graphical/gl_camera.md).
+
+[^4]: For more information, see [[gl_graphical]] → [gl_graphical.md]().

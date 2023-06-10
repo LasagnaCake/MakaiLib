@@ -211,10 +211,7 @@ public:
 			std::remove_if(
 				rp.begin(),
 				rp.end(),
-				[&](Reference::Plane* e){
-					if (e == ref) {delete ref; return true;}
-					return false;
-				}
+				[&](Reference::Plane* e){return e == ref;}
 			),
 			rp.end()
 		);
@@ -228,10 +225,7 @@ public:
 			std::remove_if(
 				rp.begin(),
 				rp.end(),
-				[&](Reference::Plane* e){
-					if (e == ref) {delete ref; return true;}
-					return false;
-				}
+				[&](Reference::Plane* e){return e == ref;}
 			),
 			rp.end()
 		);
@@ -250,7 +244,7 @@ public:
 		if (locked) return;
 		if (vertices == nullptr || size == 0)
 			throw Error::InvalidValue("No vertices were provided!");
-		if (vertices % 3 != 0)
+		if (size % 3 != 0)
 			throw Error::InvalidValue("Vertex amount is not a multiple of 3!");
 		if (this->vertices)
 			delete[] this->vertices;
