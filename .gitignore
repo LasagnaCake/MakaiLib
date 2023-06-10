@@ -8,3 +8,4 @@ gmon.out
 res/data/*
 res/*.exe
 build/*
+docs/notes.sqlite

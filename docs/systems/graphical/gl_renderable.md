@@ -310,10 +310,10 @@ Converts the `Renderable` object into an *Object Definition*[^4].
 
 # Footnotes
 
-[^1]: For more information, see [[gl_drawable]] \([gl_drawable.md](gl_drawable.md)\)
+[^1]: For more information, see [[gl_drawable]] → [gl_drawable.md](gl_drawable.md).
 
-[^2]: For more information, see [[units]] \([units.md](../../info/units.md)\)
+[^2]: For more information, see [[units]] → [units.md](../../info/units.md).
 
-[^3]: For more information, see [[gl_reference]] \([gl_reference.md](gl_reference.md)\)
+[^3]: For more information, see [[gl_reference]] → [gl_reference.md](gl_reference.md).
 
-[^4]: For more information, see [[formats]] \([formats.md](../../specifications/formats.md)\)
+[^4]: For more information, see [[formats]] → [formats.md](../../specifications/formats.md).
