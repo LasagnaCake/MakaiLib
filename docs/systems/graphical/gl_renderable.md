@@ -150,35 +150,43 @@ Destructor.
 
 #### `createReference()`
 
-Creates a renderable reference bound to the `Renderable` object. One is ran for `Reference::Plane` objects and its derivatives, and the other is ran for `Reference::Trigon` objects and its derivatives[^3].
+Creates a renderable reference bound to the `Renderable` object. The first is ran for `Reference::Plane` objects and its derivatives, and the second is ran for `Reference::Trigon` objects and its derivatives[^3].
 
 1. `template <Reference::PlaneType T> T* createReference()`.
 2. `template <Reference::TrigonType T> T* createReference()`.
 
 #### `getReference()`
 
-Gets a reference bound to the `Renderable` object by its index. One is ran for `Reference::Plane` objects and its derivatives, and the other is ran for `Reference::Trigon` objects and its derivatives[^3].
+Gets a reference bound to the `Renderable` object by its index. The first is ran for `Reference::Plane` objects and its derivatives, and the second is ran for `Reference::Trigon` objects and its derivatives[^3].
 
 1. `template <Reference::PlaneType T> inline T* getReference(size_t index)`.
 2. `template <Reference::TrigonType T> inline T* getReference(size_t index)`.
 
 #### `removeReference()`
 
-Deletes a reference bound to the `Renderable` object, including the triangle(s) associated with it. One is ran for `Reference::Plane` objects and its derivatives, and the other is ran for `Reference::Trigon` objects and its derivatives[^3].
+Deletes a reference bound to the `Renderable` object, including the triangle(s) associated with it. The first is ran for `Reference::Plane` objects and its derivatives, and the second is ran for `Reference::Trigon` objects and its derivatives[^3].
 
 1. `template <Reference::PlaneType T> void removeReference(T* ref)`.
 2. `template <Reference::TrigonType T> void removeReference(T* ref)`.
 
 #### `unbindReference()`
 
-Deletes a reference bound to the `Renderable` object, but keeps the triangle(s) associated to it. One is ran for `Reference::Plane` objects and its derivatives, and the other is ran for `Reference::Trigon` objects and its derivatives[^3].
+Deletes a reference bound to the `Renderable` object, but keeps the triangle(s) associated to it. The first is ran for `Reference::Plane` objects and its derivatives, and the second is ran for `Reference::Trigon` objects and its derivatives[^3].
 
 1. `template <Reference::PlaneType T> void unbindReference(T* ref)`.
 2. `template <Reference::TrigonType T> void unbindReference(T* ref)`.
 
 #### `bakeAndLock()`
 
-[Bake](####`bake()`)s and locks the object.
+Bakes and locks the object.
+
+This does a few things:
+
+1. Performs a `bake()` operation.
+2. Deletes all references & triangles associated with the object.
+3. Locks it, preventing any further mesh manipulation and reference creation.
+
+**Warning:** This action is irreversible, so make sure any edits to the *triangle buffer* is made before this step.
 
 #### `extend()`
 
@@ -226,11 +234,11 @@ Extends the `Renderable` object with the data located in an `.mrod` (Makai Rende
 
 Bakes the object.
 
-Applies the transformations to all references attached, then copies the vertices of the triangles located in its *trangle buffer* into an internal vertex buffer. Also sets it into *baked* mode.
+Applies the transformations to all references attached, then copies the vertices of the triangles located in its *triangle buffer* into an internal vertex buffer. Also sets it into *baked* mode.
 
 By default, every frame, the object does something similar to the process of "baking" and "unbaking", so that it can send its vertex data to the GPU for drawing. This procedure is necessary due to how the references and *triangle buffer* function.
 
-This function "preloads" that step, which can speed up rendering time. But as a drawback, while in *baked* mode, any modification to the references bound to this object are ignored.
+This function "pre-loads" that step, which can speed up rendering time. But as a drawback, while in *baked* mode, any modification to the references bound to this object are ignored.
 
 #### `unbake()`
 
@@ -286,19 +294,19 @@ Converts the `Renderable` object into an *Object Definition*[^4].
 
 ## `loadObjectFromBinaryFile()`
 
-**Full:**
+**Full:** `Renderable* loadObjectFromBinaryFile(string const& path)`.
 
 ## `loadObjectFromGLTFFile()`
 
-**Full:**
+**Full:** `Renderable* loadObjectFromGLTFFile(string const& path)`.
 
 ## `loadObjectFromDefinition()`
 
-**Full:**
+**Full:** `Renderable* loadObjectFromDefinition(nlohmann::json def)`.
 
 ## `loadObjectFromDefinitionFile()`
 
-**Full:**
+**Full:** `Renderable* loadObjectFromDefinitionFile(string const& path)`.
 
 # Footnotes
 

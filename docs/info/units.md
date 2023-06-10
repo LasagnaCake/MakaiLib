@@ -1,6 +1,6 @@
 # Overview
 
-This file contains all information on the engine's units of measurments.
+This file contains all information on the engine's units of measurements.
 
 # Position & Size
 
@@ -42,7 +42,7 @@ No god can save you.
 
 Time is divided in two separate categories: *render time* and *logic time*. Of note:
 
-- If `$_FRAME_DEPENDENT_PROCESS` has not been `#define`d, then the program and all entities gets processed during *logic time*. All timers & tweens are processed during *logic time*.
+- If `$_FRAME_DEPENDENT_PROCESS` has not been `#define`d, then the program and all entities gets processed during *logic time*. All `Timer`s & `Tween`s are processed during *logic time*.
 - If `$_PROCESS_RENDER_BEFORE_LOGIC` has not been `#define`d, then *logic time* happens before *render time*.
 
 ## Logic Time

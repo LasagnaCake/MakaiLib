@@ -33,6 +33,7 @@ Undefined optional values are set to their defaults.
 ## Layout
 
 If image data is to be integrated in the file:
+
 ```JavaScript
 "image": {
 	// Required
@@ -47,6 +48,7 @@ If image data is to be integrated in the file:
 ```
 
 If image data is saved in a different file:
+
 ```JavaScript
 "image": {
 	// Required
@@ -105,6 +107,7 @@ If image data is saved in a different file:
 This can be saved as a `JSON` file, or a file of extention `.mrod` (Makai Renderable Object).
 
 If data is to be integrated in the file:
+
 ```JavaScript
 "object": {
 	// Required
@@ -121,6 +124,7 @@ If data is to be integrated in the file:
 ```
 
 If data gets saved in a different file:
+
 ```JavaScript
 "object": {
 	// Required
