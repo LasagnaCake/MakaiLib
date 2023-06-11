@@ -3,14 +3,21 @@ import struct
 from bpy.types import Operator
 from bpy_extras.io_utils import ExportHelper
 
+bl_info = {
+    "name": "MSBO (Makai Simple Binary Object) Exporter",
+    "blender": (3, 4, 0),
+    "category": "Import-Export",
+}
+
 # Exports every mesh into separate files, into a folder of the name given to the file
 # e.g. "You name a file and that file's name gets used as the name of the folder"
 # Currently does not apply modifiers
-class ExportBinaryOperator(Operator, ExportHelper):
+class ExportMSBOOperator(Operator, ExportHelper):
     bl_idname = "export_object.msbo"
     bl_label = "Export as MSBO"
-    filename_ext = ".msbo"
-
+    filename_ext = ""
+    filetype = ".msbo"
+    
     apply_transforms: bpy.props.BoolProperty(
         name="Apply Transforms",
         description="Apply object transforms to mesh data",
@@ -25,18 +32,18 @@ class ExportBinaryOperator(Operator, ExportHelper):
 
     def execute(self, context):
         filepath = self.filepath.replace('.msbo','')
-        objects = [obj for obj in bpy.data.objects if obj.type == "MESH"]
+        objects = [obj for obj in bpy.data.objects if obj.type == "OBJECT"]
 
         for obj in objects:
-            filename = obj.name + self.filename_ext
+            filename = obj.name + self.filetype
             with open(f"{filepath}/{filename}", "wb") as f:
                 dg = context.evaluated_depsgraph_get()
                 mesh = None
                 #TODO: fix this
                 if self.apply_transforms:
-                    mesh = obj.to_mesh(preserve_all_data_layers=True, depsgraph=dg)
+                    mesh = obj.to_mesh(context.scene, True, "PREVIEW")
                 else:
-                    mesh = obj.to_mesh(preserve_all_data_layers=False, depsgraph=dg)
+                    mesh = obj.to_mesh(context.scene, False, "PREVIEW")
                 verts = mesh.vertices
                 # iterate through the mesh's loop triangles to collect the vertex data
                 vertex_data = []
@@ -72,17 +79,17 @@ class ExportBinaryOperator(Operator, ExportHelper):
 
 # Only needed if you want to add into a dynamic menu
 def menu_func_export(self, context):
-    self.layout.operator(ExportBinaryOperator.bl_idname, text="Makai Simple Binary Object (.msbo)")
+    self.layout.operator(ExportMSBOOperator.bl_idname, text="Makai Simple Binary Object (.msbo)")
 
 
 # Register and add to the "file selector" menu (required to use F3 search "Text Export Operator" for quick access).
 def register():
-    bpy.utils.register_class(ExportBinaryOperator)
+    bpy.utils.register_class(ExportMSBOOperator)
     bpy.types.TOPBAR_MT_file_export.append(menu_func_export)
 
 
 def unregister():
-    bpy.utils.unregister_class(ExportBinaryOperator)
+    bpy.utils.unregister_class(ExportMSBOOperator)
     bpy.types.TOPBAR_MT_file_export.remove(menu_func_export)
 
 
