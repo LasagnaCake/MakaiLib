@@ -1,5 +1,6 @@
 import bpy
 import struct
+import os
 from bpy.types import Operator
 from bpy_extras.io_utils import ExportHelper
 
@@ -31,19 +32,21 @@ class ExportMSBOOperator(Operator, ExportHelper):
     )
 
     def execute(self, context):
-        filepath = self.filepath.replace('.msbo','')
-        objects = [obj for obj in bpy.data.objects if obj.type == "OBJECT"]
-
+        filepath = self.filepath
+        objects = [obj for obj in bpy.data.objects if obj.type == "MESH"]
+        print(f"Objects: {len(objects)}")
+        if not os.path.isdir(filepath):
+            os.makedirs(filepath)
         for obj in objects:
             filename = obj.name + self.filetype
-            with open(f"{filepath}/{filename}", "wb") as f:
+            with open(f"{filepath}\\{filename}", "wb") as f:
                 dg = context.evaluated_depsgraph_get()
                 mesh = None
                 #TODO: fix this
                 if self.apply_transforms:
-                    mesh = obj.to_mesh(context.scene, True, "PREVIEW")
+                    mesh = obj.to_mesh(False, dg)
                 else:
-                    mesh = obj.to_mesh(context.scene, False, "PREVIEW")
+                    mesh = obj.to_mesh(True, dg)
                 verts = mesh.vertices
                 # iterate through the mesh's loop triangles to collect the vertex data
                 vertex_data = []

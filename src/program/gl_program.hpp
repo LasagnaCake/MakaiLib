@@ -267,9 +267,12 @@ namespace Makai {
 				cycleDelta	= 1.0/maxCycleRate;
 				// Clamp speed
 				speed = Math::clamp(speed, 0.0f, 1.0f);
+				// Get rates
+				cycleRate = SDL_GetTicks() - cycleTicks;
+				frameRate = SDL_GetTicks() - frameTicks;
 				// If should process, then do so
 				#ifndef $_PROCESS_RENDER_BEFORE_LOGIC
-				if (SDL_GetTicks() - cycleTicks > (cycleDelta * 1000) / speed) {
+				if (cycleRate > (cycleDelta * 1000) / speed) {
 					// Update audio system
 					Audio::updateAudioSystem();
 					// Update input manager
@@ -290,7 +293,7 @@ namespace Makai {
 					#endif // FRAME_DEPENDENT_PROCESS
 				}
 				#endif
-				if (SDL_GetTicks() - frameTicks > (frameDelta * 1000)) {
+				if (frameRate > (frameDelta * 1000)) {
 					// Get current time
 					frameTicks = SDL_GetTicks();
 					// increment frame counter
@@ -363,6 +366,14 @@ namespace Makai {
 		/// Gets the current cycle.
 		size_t getCurrentCycle() {
 			return cycle;
+		}
+
+		size_t getCycleRate() {
+			return cycleRate;
+		}
+
+		size_t getFrameRate() {
+			return frameRate;
 		}
 
 		inline void renderReservedLayer() {
@@ -446,6 +457,8 @@ namespace Makai {
 		}
 
 	private:
+		size_t cycleRate = 0, frameRate = 0;
+
 		Shader::Shader bufferShader;
 
 		/// The program's main framebuffer.

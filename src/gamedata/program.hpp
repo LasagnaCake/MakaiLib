@@ -29,7 +29,9 @@ public:
 	};
 
 	BufferMaterial&	frame = getFrameBuffer().material;
+
 	std::map<size_t, BufferMaterial> layers;
+
 	WorldMaterial world2D;
 	WorldMaterial world3D;
 

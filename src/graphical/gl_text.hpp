@@ -86,13 +86,15 @@ private:
 	TextData last = {"",{0,0}};
 
 	void draw() override {
+		// If no font face exists return
+		if (!(font && font->face)) return;
 		// If text changed, update label
 		if (!isTextDataEqual(text, last)) {
 			last = text;
 			update();
 		}
-		// If no vertices or no font face exists, return
-		if (!(vertices.size() && (font || font->face))) return;
+		// If no vertices, return
+		if (!vertices.size()) return;
 		// Set shader data
 		material.texture = {true, font->face, material.texture.alphaClip};
 		setDefaultShader();
@@ -104,6 +106,7 @@ private:
 	// TODO: Proper text alignment
 	#define CHAR_VERTEX(POS, UV) RawVertex{(POS).x,(POS).y,0,(UV).x,(UV).y}
 	void update() {
+		// If font doesn't exist, return
 		// Clear previous characters
 		vertices.clear();
 		// The current character's position
