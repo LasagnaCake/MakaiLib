@@ -315,8 +315,8 @@ void setMaterial(Shader& shader, BufferMaterial& material) {
 	// Set mask data
 	if (material.mask.enabled && material.mask.image && material.mask.image->exists()) {
 		shader["useMask"](true);
-		shader["mask"](0);
-		material.mask.image->enable(0);
+		shader["mask"](9);
+		material.mask.image->enable(9);
 		shader["invertMask"](material.mask.invert);
 		shader["relativeMask"](material.mask.relative);
 		shader["maskShift"](material.mask.trans.position);
