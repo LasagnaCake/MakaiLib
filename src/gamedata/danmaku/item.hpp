@@ -190,12 +190,14 @@ public:
 	void create() {
 		if (created) return;
 		haltProcedure = false;
-		for (size_t i = 0; i < ITEM_COUNT; i++) {
-			if (!items[i].sprite)
-				items[i].sprite =
-					mesh.createReference<AnimatedPlane>();
-			items[i].setFree(true);
-			items[i]._setZOffset(-0.000001 * ((float)i));
+		for (size_t i = ITEM_COUNT; i > 0; i--) {
+			auto& c = items[i-1];
+			if (!c.sprite) c.sprite = mesh.createReference<AnimatedPlane>();
+			c.setFree(true);
+			c._setZOffset(
+				(1 - ((((float)ITEM_COUNT)-((float)i)) / ((float)ITEM_COUNT)))
+			/	10000.0
+			);
 			if (haltProcedure) return;
 		}
 		created = true;

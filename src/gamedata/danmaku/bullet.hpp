@@ -230,13 +230,15 @@ public:
 	void create() {
 		if (created) return;
 		haltProcedure = false;
-		for (size_t i = 0; i < BULLET_COUNT; i++) {
-			if (!bullets[i].sprite)
-				bullets[i].sprite =
-					mesh.createReference<AnimatedPlane>();
-			bullets[i].setFree(true);
-			bullets[i]._setZOffset(-0.000001 * ((float)i));
-			bullets[i].sprite->size = Vector2(16, 16);
+		for (size_t i = BULLET_COUNT; i > 0; i--) {
+			auto& b = bullets[i-1];
+			if (!b.sprite) b.sprite = mesh.createReference<AnimatedPlane>();
+			b.setFree(true);
+			b._setZOffset(
+				(1 - ((((float)BULLET_COUNT)-((float)i)) / ((float)BULLET_COUNT)))
+			/	10000.0
+			);
+			b.sprite->size = Vector2(16, 16);
 			if (haltProcedure) return;
 		}
 		created = true;

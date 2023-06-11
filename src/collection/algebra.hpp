@@ -288,7 +288,7 @@ namespace Math {
 	}
 
 	CONST_ANYTYPE_I wrap(T val, T min, T max) requires Type::Number<T> {
-		return wmax(val + min, max) - min;
+		return wmax(val - min, max) + min;
 	}
 
 	CONST_ANYTYPE_I nroot(T val, T root) requires Type::Number<T> {

@@ -189,12 +189,14 @@ public:
 	void create() {
 		if (created) return;
 		haltProcedure = false;
-		for (size_t i = 0; i < LASER_COUNT; i++) {
-			if (!lasers[i].sprite)
-				lasers[i].sprite =
-					mesh.createReference<AnimatedPlane>();
-			lasers[i].setFree(true);
-			lasers[i]._setZOffset(-0.000001 * ((float)i));
+		for (size_t i = LASER_COUNT; i > 0; i--) {
+			auto& l = lasers[i-1];
+			if (!l.sprite) l.sprite = mesh.createReference<AnimatedPlane>();
+			l.setFree(true);
+			l._setZOffset(
+				(1 - ((((float)LASER_COUNT)-((float)i)) / ((float)LASER_COUNT)))
+			/	10000.0
+			);
 			if (haltProcedure) return;
 		}
 		created = true;
