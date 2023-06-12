@@ -292,14 +292,14 @@ namespace Tween{
 		}
 
 		/// Targetless Constructor.
-		Tween(T from, T to, float step, EaseFunc tweenStep, bool manual = false) {
+		Tween(T from, T to, unsigned long step, EaseFunc tweenStep, bool manual = false) {
 			setInterpolation(from, to, step, tweenStep);
 			if (!manual)
 				tweenList.push_back(&yield);
 		}
 
 		/// Targeted Constructor.
-		Tween(T from, T to, float step, EaseFunc tweenStep, float* targetVar, bool manual = false) {
+		Tween(T from, T to, unsigned long step, EaseFunc tweenStep, T* targetVar, bool manual = false) {
 			setInterpolation(from, to, step, tweenStep, targetVar);
 			if (!manual)
 				tweenList.push_back(&yield);
@@ -324,7 +324,7 @@ namespace Tween{
 		};
 
 		/// Sets the interpolation.
-		Tween<T>& setInterpolation(T from, T to, float step, EaseFunc tweenStep) {
+		Tween<T>& setInterpolation(T from, T to, unsigned long step, EaseFunc tweenStep) {
 			isFinished = false;
 			this->step = 0;
 			this->from = from;
@@ -337,7 +337,7 @@ namespace Tween{
 		}
 
 		/// Sets the interpolation with a target.
-		Tween<T>& setInterpolation(T from, T to, float step, EaseFunc tweenStep, T* targetVar) {
+		Tween<T>& setInterpolation(T from, T to, unsigned long step, EaseFunc tweenStep, T* targetVar) {
 			value = targetVar;
 			isFinished = false;
 			this->step = 0;
@@ -351,7 +351,7 @@ namespace Tween{
 		}
 
 		/// Sets the interpolation to a new value, while maintaining the easing function.
-		Tween<T>& reinterpolate(T to) {
+		Tween<T>& reinterpolateTo(T to) {
 			paused = false;
 			setInterpolation(*value, to, step, tweenStep);
 			return *this;
@@ -365,14 +365,14 @@ namespace Tween{
 		}
 
 		/// Sets the interpolation to a new value, while maintaining the easing function.
-		Tween<T>& reinterpolate(T to, float step) {
+		Tween<T>& reinterpolateTo(T to, unsigned long step) {
 			paused = false;
 			setInterpolation(*value, to, step, tweenStep);
 			return *this;
 		}
 
 		/// Sets the interpolation to a new value, while maintaining the easing dunction.
-		Tween<T>& reinterpolate(T from, T to, float step) {
+		Tween<T>& reinterpolate(T from, T to, unsigned long step) {
 			paused = false;
 			setInterpolation(from, to, step, tweenStep);
 			return *this;
@@ -392,7 +392,7 @@ namespace Tween{
 		}
 
 		/// Sets the current tween step.
-		Tween<T>& setStep(float step) {
+		Tween<T>& setStep(unsigned long step) {
 			step--;
 			this->step = step > stop ? stop : step;
 			yield(1);
@@ -400,7 +400,7 @@ namespace Tween{
 		}
 
 		/// Sets the current tween step count.
-		Tween<T>& setStepCount(float stop) {
+		Tween<T>& setStepCount(unsigned long stop) {
 			this->stop = stop;
 			return *this;
 		}
@@ -479,10 +479,10 @@ namespace Tween{
 		bool isFinished;
 
 		/// The current tween step.
-		float step;
+		unsigned long step;
 
 		/// The amount of steps to be executed.
-		float stop;
+		unsigned long stop;
 
 		/// The tween's default target.
 		T defaultVar;

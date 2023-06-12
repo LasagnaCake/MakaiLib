@@ -188,7 +188,7 @@ struct PlayerEntity2D: AreaCircle2D {
 
 	virtual void onPreDeath()	{}
 	virtual void onDeath()		{
-		moveTween.reinterpolate(spawnPoint);
+		moveTween.reinterpolateTo(spawnPoint);
 		setInvincible(90);
 	}
 

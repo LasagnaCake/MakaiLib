@@ -69,7 +69,7 @@ namespace Dialog {
 			for (auto& [aName, actor]: actors) {
 				if (!actor.sprite) continue;
 				auto& anim = animator[aName];
-				anim.reinterpolate(actor.position.rest);
+				anim.reinterpolateTo(actor.position.rest);
 			}
 			autotimer.stop();
 			isFinished = true;
@@ -112,7 +112,7 @@ namespace Dialog {
 				auto& a = actors[actor];
 				if (!a.sprite) continue;
 				anim.tweenStep = msg.easing;
-				anim.reinterpolate(a.position.rest, time);
+				anim.reinterpolateTo(a.position.rest, time);
 				a.sprite->setColor(Color::GRAY);
 			}
 			for (auto& actor: msg.actors) {
@@ -121,7 +121,7 @@ namespace Dialog {
 				actor.action();
 				if (!a.sprite) continue;
 				a.sprite->frame = actor.frame;
-				anim.reinterpolate(actor.leaving ? a.position.out : a.position.talking, time);
+				anim.reinterpolateTo(actor.leaving ? a.position.out : a.position.talking, time);
 				a.sprite->setColor(actor.tint);
 			}
 			autoplay = msg.autoplay;
