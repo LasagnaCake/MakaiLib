@@ -26,9 +26,11 @@ out vec2 warpUV;
 out vec3 fragLightColor;
 out vec3 fragShadeColor;
 
-uniform float warpRotate	= 0;
-uniform vec2 warpScale		= vec2(1);
-uniform vec2 warpOffset		= vec2(0);
+uniform vec2	uvShift	= vec2(0);
+
+uniform float	warpRotate	= 0;
+uniform vec2	warpScale	= vec2(1);
+uniform vec2	warpOffset	= vec2(0);
 
 uniform bool	shaded			= true;
 uniform float	shadeIntensity	= 0.5;
@@ -98,7 +100,7 @@ void main() {
 	fragShadeColor = getShadingColor(vertex.xyz, normal);
 	fragColor = vertColor;
 	fragLightColor = calculateLights(vertex.xyz, normal);
-	fragUV = vertUV;
+	fragUV = vertUV + uvShift;
 	fragCoord3D	= vertex.xyz;
 	fragNormal	= normal;
 }

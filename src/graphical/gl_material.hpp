@@ -228,6 +228,7 @@ struct ObjectMaterial {
 	float			hue			= 0;
 	float			saturation	= 1;
 	float			luminosity	= 1;
+	Vector2			uvShift;
 	TextureEffect	texture;
 	WarpEffect		warp;
 	NegativeEffect	negative;
@@ -268,6 +269,8 @@ struct WorldMaterial {
 };
 
 void setMaterial(Shader& shader, ObjectMaterial& material) {
+	// UV Data
+	shader["uvShift"](material.uvShift);
 	// Texture
 	if (material.texture.image && material.texture.enabled && material.texture.image->exists()) {
 		shader["textured"](true);
@@ -281,6 +284,9 @@ void setMaterial(Shader& shader, ObjectMaterial& material) {
 		material.warp.image->enable(8);
 		shader["warpChannelX"](material.warp.channelX);
 		shader["warpChannelY"](material.warp.channelY);
+		shader["warpOffset"](material.warp.trans.position);
+		shader["warpScale"](material.warp.trans.scale);
+		shader["warpRotate"](material.warp.trans.rotation);
 	} else shader["useWarp"](false);
 	// Color inversion
 	shader["useNegative"](material.negative.enabled);

@@ -36,6 +36,13 @@ signed char getVolume() {
 	return Mix_VolumeMusic(-1);
 }
 
+struct SongMetaData {
+	string	title;
+	string	artist;
+	string	album;
+	string	copyright;
+};
+
 class Music: public Base::Playable {
 public:
 	using Playable::Playable;
@@ -78,6 +85,20 @@ public:
 			Mix_FadeInMusic(source, loops, fadeInTime);
 		else
 			Mix_PlayMusic(source, loops);
+	}
+
+	string getTitle() {
+		return string(Mix_GetMusicTitle(source));
+	}
+
+	SongMetaData getMetaData() {
+		const char* data;
+		return SongMetaData {
+			(data = Mix_GetMusicTitleTag(source)) ? data : "",
+			(data = Mix_GetMusicArtistTag(source)) ? data : "",
+			(data = Mix_GetMusicAlbumTag(source)) ? data : "",
+			(data = Mix_GetMusicCopyrightTag(source)) ? data : ""
+		};
 	}
 
 	void switchTo(size_t fadeOutTime, size_t fadeInTime) {
