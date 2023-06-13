@@ -69,7 +69,7 @@ struct PlayerEntity2D: AreaCircle2D {
 		removeFromCollisionLayer(0);
 		addToCollisionLayer($layer(PLAYER));
 		// Invincibility timer
-		invincibility.stop().onSignal = $signal{
+		invincibility.pause().onSignal = $signal{
 			this->collision.enabled = true;
 			sprite->setColor(Color::WHITE);
 		};
@@ -93,11 +93,11 @@ struct PlayerEntity2D: AreaCircle2D {
 		moveTween.tweenStep = Tween::ease.out.cubic;
 		moveTween.setTarget(&position).setStepCount(30).conclude();
 		// Main shot
-		mainShot.stop().repeat = true;
+		mainShot.pause().repeat = true;
 		mainShot.onSignal	= $signal {$debug("Main Shot!"); onShotRequest();};
 		mainShot.delay = 1;
 		// Option shot
-		optionShot.stop().repeat = true;
+		optionShot.pause().repeat = true;
 		optionShot.onSignal	= $signal {$debug("Option Shot!"); onOptionShotRequest();};
 		optionShot.delay = 20;
 		// Hitbox size

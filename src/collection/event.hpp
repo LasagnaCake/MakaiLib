@@ -122,14 +122,14 @@ namespace Event{
 		* Yields a cycle.
 		*/
 		const $$FUNC yield = [&](float delta = 1) {
-			// If not paused...
-			if (!paused) {
+			// If not paused or not finished...
+			if (!isFinished && !paused) {
 				// If counter has reached target...
 				if(counter >= delay) {
 					// If repeating and not done looping, set counter to 0
 					if (repeat && loopCount != 0) counter = 0;
 					// Else, stop timer
-					else paused = true;
+					else isFinished = true;
 					// Fire signal
 					onSignal();
 					// If loop count above zero, decrease it
@@ -149,26 +149,32 @@ namespace Event{
 		/// Starts the timer from the beginning.
 		Timer& start(float time) {
 			counter = 0;
-			paused = false;
 			delay = time;
+			isFinished = false;
 			return (*this);
 		}
 
 		/// Starts the timer from the beginning.
 		Timer& start() {
 			counter = 0;
-			paused = false;
+			isFinished = false;
 			return (*this);
 		}
 
-		/// Stops/pauses the timer.
+		/// Stops the timer.
 		Timer& stop() {
-			paused = true;
+			isFinished = true;
 			return (*this);
 		}
 
 		/// Unpauses the timer.
 		Timer& play() {
+			paused = true;
+			return (*this);
+		}
+
+		/// Pauses the timer.
+		Timer& pause() {
 			paused = false;
 			return (*this);
 		}
@@ -178,7 +184,15 @@ namespace Event{
 			return counter;
 		}
 
+		/// Gets whether the timer is done executing.
+		bool finished() {
+			return isFinished;
+		}
+
 	private:
+		/// Whether the timer is finished.
+		bool isFinished = false;
+
 		/// The current yield cycle.
 		float counter = 0;
 	};
