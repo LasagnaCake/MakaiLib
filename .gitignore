@@ -9,3 +9,5 @@ res/data/*
 res/*.exe
 build/*
 docs/notes.sqlite
+res/_config/*
+res/_saves/*
