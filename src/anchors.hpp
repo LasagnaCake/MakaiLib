@@ -186,4 +186,5 @@
 #define EQUALS	=
 #endif // _$_LUA_STYLE_PROGRAMMING
 */
+
 #endif // ANCHORED_HEADERS_H
