@@ -104,7 +104,7 @@ If image data is saved in a different file:
 
 ## Layout
 
-This can be saved as a `JSON` file, or a file of extention `.mrod` (Makai Renderable Object Definition).
+This can be saved as a `JSON` file, or a file of extension `.mrod` (Makai Renderable Object Definition).
 
 If data is to be integrated in the file:
 
