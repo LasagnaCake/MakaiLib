@@ -34,11 +34,11 @@ namespace Menu {
 			keys["exit"]		= SDL_SCANCODE_ESCAPE;
 			input.threshold		= 30;
 			nextOptTimer.onSignal	= $signal {this->nextOption();};
-			nextOptTimer.delay		= 15;
+			nextOptTimer.delay		= 5;
 			nextOptTimer.paused		= true;
 			nextOptTimer.repeat		= true;
 			prevOptTimer.onSignal	= $signal {this->previousOption();};
-			prevOptTimer.delay		= 15;
+			prevOptTimer.delay		= 5;
 			prevOptTimer.paused		= true;
 			prevOptTimer.repeat		= true;
 		})
