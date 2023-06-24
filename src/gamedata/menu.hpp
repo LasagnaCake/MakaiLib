@@ -36,9 +36,11 @@ namespace Menu {
 			nextOptTimer.onSignal	= $signal {this->nextOption();};
 			nextOptTimer.delay		= 15;
 			nextOptTimer.paused		= true;
+			nextOptTimer.repeat		= true;
 			prevOptTimer.onSignal	= $signal {this->previousOption();};
 			prevOptTimer.delay		= 15;
 			prevOptTimer.paused		= true;
+			prevOptTimer.repeat		= true;
 		})
 
 		virtual ~BaseMenu() {
