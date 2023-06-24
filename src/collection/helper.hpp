@@ -210,7 +210,7 @@ namespace Helper {
 }
 
 namespace Time {
-	namespace {namespace chrono = namespace std::chrono;}
+	namespace {namespace chrono = std::chrono;}
 
 	typedef chrono::system_clock	Clock;
 
