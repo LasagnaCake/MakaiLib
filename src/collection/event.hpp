@@ -51,14 +51,6 @@ namespace Event{
 	const Call		DEF_CALL	=	[]()->Trigger	{return DEF_TRIGGER;};
 	const Chain		DEF_CHAIN	=	[]()->Signal	{return DEF_SIGNAL;};
 
-	/*
-	Remember children! If you're going to test your code,
-	make sure the testing function returns a value of its type
-	(when non-void)! You don't want to spend hours on trying to
-	figure out why your code behaves oddly to then find out it is
-	because you HAD SET THE FUNCTION TYPE TO NON-VOID ACCIDENTALLY,
-	AND IT WAS CAUSING THE PROGRAM TO MISBEHAVE AND BREAK DOWN!
-	*/
 	/**
 	*****************
 	*               *
@@ -87,6 +79,7 @@ namespace Event{
 		Timer(bool manual = false) {
 			if (!manual)
 				timerList.push_back(&yield);
+			this->manual = manual;
 		}
 
 		/// Signal + delay + repeat constructor.
@@ -96,6 +89,7 @@ namespace Event{
 			this->repeat	= repeat;
 			if (!manual)
 				timerList.push_back(&yield);
+			this->manual = manual;
 		}
 
 		/// Delay + repeat constructor.
@@ -104,6 +98,7 @@ namespace Event{
 			this->repeat	= repeat;
 			if (!manual)
 				timerList.push_back(&yield);
+			this->manual = manual;
 		}
 
 		/// Destructor.
@@ -116,6 +111,24 @@ namespace Event{
 					timerList.erase(timerList.begin() + i);
 					break;
 			}
+		}
+
+		void setManual() {
+			if (manual) return;
+			// Loop through tweens and...
+			for (size_t i = 0; i < timerList.size(); i++)
+				// If tween matches...
+				if (timerList[i] == &yield) {
+					// Remove tween from list and end loop
+					timerList.erase(timerList.begin() + i);
+					break;
+			}
+			manual = true;
+		}
+
+		void setAutomatic() {
+			if (!manual) return;
+			timerList.push_back(&yield);
 		}
 
 		/**
@@ -190,6 +203,8 @@ namespace Event{
 		}
 
 	private:
+		bool manual = false;
+
 		/// Whether the timer is finished.
 		bool isFinished = false;
 
