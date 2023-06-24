@@ -143,7 +143,6 @@
 #include "collection/event.hpp"
 #include "collection/tasking.hpp"
 #include "collection/grouping.hpp"
-#include "collection/dictionary.hpp"
 #include "collection/sharedvalue.hpp"
 
 #include "fileloader.hpp"

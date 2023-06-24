@@ -2,6 +2,7 @@
 #define HELPING_HAND_H
 
 #include <vector>
+#include <filesystem>
 #ifdef _USE_CPP20_FORMAT_
 #include <format>
 #endif // _USE_CPP20_FORMAT_
@@ -14,20 +15,52 @@ namespace Helper {
 			std::vector,
 			std::map,
 			std::unordered_map,
-			std::string;
+			std::string,
+			std::initializer_list,
+			std::pair
+		;
 	}
 
+	typedef string String;
+
+	template<typename T>
+	using Arguments = initializer_list<T>;
+
+	template<typename T>
+	using List = vector<T>;
+
+	template<typename K, typename V>
+	using HashMap = map<K, V>;
+
+	template<typename K, typename V>
+	using FuzzyHashMap = unordered_map<K, V>;
+
+	template<typename A, typename B>
+	using Pair = pair<A, B>;
+
+	template<typename T>
+	using Dictionary = map<String, T>;
+
+	template<typename T>
+	using FuzzyDictionary = unordered_map<String, T>;
+
+	template<typename T>
+	using Entry = Pair<String, T>;
+
+	typedef List<String>		StringList;
+	typedef Arguments<String>	StringArguments;
+
 	template<typename T, typename T2>
-	vector<T> convertList(vector<T2> source) {
-		vector<T> res;
+	List<T> convertList(List<T2> const& source) {
+		List<T> res;
 		for $each(i, source)
 			res.push_back((T)i);
 		return res;
 	}
 
 	template<typename T, typename T2>
-	vector<T> getKeys(map<T, T2> lst) {
-		vector<T> keys;
+	List<T> getKeys(HashMap<T, T2> const& lst) {
+		List<T> keys;
 		for (auto i = lst.begin(); i != lst.end(); i++) {
 			keys.push_back(i->first);
 		}
@@ -35,8 +68,8 @@ namespace Helper {
 	}
 
 	template<typename T, typename T2>
-	vector<T2> getValues(map<T, T2> lst) {
-		vector<T2> values;
+	List<T2> getValues(HashMap<T, T2> const& lst) {
+		List<T2> values;
 		for (auto i = lst.begin(); i != lst.end(); i++) {
 			values.push_back(i->second);
 		}
@@ -44,8 +77,8 @@ namespace Helper {
 	}
 
 	template<typename T, typename T2>
-	vector<T> getKeys(unordered_map<T, T2> lst) {
-		vector<T> keys;
+	List<T> getKeys(FuzzyHashMap<T, T2> const& lst) {
+		List<T> keys;
 		for (auto i = lst.begin(); i != lst.end(); i++) {
 			keys.push_back(i->first);
 		}
@@ -53,8 +86,8 @@ namespace Helper {
 	}
 
 	template<typename T, typename T2>
-	vector<T2> getValues(unordered_map<T, T2> lst) {
-		vector<T2> values;
+	List<T2> getValues(FuzzyHashMap<T, T2> const& lst) {
+		List<T2> values;
 		for (auto i = lst.begin(); i != lst.end(); i++) {
 			values.push_back(i->second);
 		}
@@ -64,12 +97,12 @@ namespace Helper {
 	// God fucking dammit, MSYS2.
 	#ifdef _USE_CPP20_FORMAT_
 	template<Type::Number T>
-	string floatString(T val, size_t precision = 2) {
+	String floatString(T val, size_t precision = 2) {
 		return std::format(std::format("{{:.{}f}}", precision), val);
 	}
 	#else
 	template<Type::Number T>
-	string floatString(T val, size_t precision = 1) {
+	String floatString(T const& val, size_t const& precision = 1) {
 		if (!precision)
 			return std::to_string((long long)val);
 		std::stringstream ss;
@@ -79,20 +112,100 @@ namespace Helper {
 	#endif // _USE_CPP20_FORMAT_
 
 	template<Type::Number T>
-	using FloatFormat = std::pair<T, size_t>;
+	using FloatFormat = Pair<T, size_t>;
 
 	template<Type::Number T>
-	string floatString(FloatFormat<T> fmt) {
+	String floatString(FloatFormat<T> const& fmt) {
 		return floatString(fmt->first, fmt->second);
 	}
 
-	vector<string> splitString(string const& str, const char sep) {
-		vector<string> res;
+	StringList splitString(String const& str, char const& sep) {
+		StringList res;
 		std::istringstream stream(str);
-		string current;
+		String current;
 		while (std::getline(stream, current, sep))
 			res.push_back(current);
 		return res;
+	}
+}
+
+using Helper::String;
+using Helper::List;
+using Helper::HashMap;
+using Helper::FuzzyHashMap;
+using Helper::StringList;
+using Helper::Arguments;
+using Helper::Dictionary;
+using Helper::FuzzyDictionary;
+using Helper::Pair;
+using Helper::Entry;
+
+namespace FileSystem {
+	namespace {
+		namespace fs = std::filesystem;
+		using namespace Helper;
+	}
+
+	bool isDirectory(String const& dir) {
+		return fs::is_directory(dir);
+	}
+
+	bool exists(String const& path) {
+		return fs::exists(path);
+	}
+
+	void makeDirectory(String const& dir) {
+		if (!isDirectory(dir) || !exists(dir)) {
+			fs::create_directories(dir);
+		}
+	}
+
+	void makeDirectory(StringList const& dirs) {
+		for (auto& d: dirs)
+			makeDirectory(d);
+	}
+
+	void makeDirectory(StringArguments const& dirs) {
+		for (auto& d: dirs)
+			makeDirectory(d);
+	}
+}
+
+#if (_WIN32 || _WIN64 || __WIN32__ || __WIN64__)
+#include <winapifamily.h>
+#endif
+
+namespace Helper {
+	int launchApp(String const& path, String const& directory = "") {
+		// This is a nightmare, but the other option pops up a command prompt.
+		#if (_WIN32 || _WIN64 || __WIN32__ || __WIN64__)
+		STARTUPINFO sInfo;
+		PROCESS_INFORMATION pInfo;
+		ZeroMemory(&sInfo, sizeof(sInfo));
+		sInfo.cb = sizeof(sInfo);
+		ZeroMemory(&pInfo, sizeof(pInfo));
+		auto proc = CreateProcess(
+			path.c_str(),
+			NULL,
+			NULL,
+			NULL,
+			FALSE,
+			0,
+			NULL,
+			directory.empty() ? NULL : directory.c_str(),
+			&sInfo,
+			&pInfo
+		);
+		if (!proc) throw Error::FailedAction("could not find 'data/subsys/winres.exe'!");
+		proc = WaitForSingleObject(pInfo.hProcess, INFINITE);
+		DWORD res;
+		GetExitCodeProcess(pInfo.hProcess, &res);
+		return (int)res;
+		CloseHandle(pInfo.hProcess);
+		CloseHandle(pInfo.hThread);
+		#else
+		return system("data\\subsys\\winres.exe");
+		#endif
 	}
 }
 

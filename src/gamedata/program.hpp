@@ -95,8 +95,8 @@ ProgramSetting queryProgramSettingsFromUser(bool use16by9 = false, bool letUserC
 	StringList resList;
 	std::vector<Vector2> resValue;
 	for $each(res, (use16by9 ? $res set16x9 : $res set4x3)) {
-		resList.push_back(res.key);
-		resValue.push_back(res.value);
+		resList.push_back(res.first);
+		resValue.push_back(res.second);
 	}
 	resList.push_back("Detect");
 	Vector2 devSize = Makai::getDeviceSize();

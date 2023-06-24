@@ -574,13 +574,9 @@ namespace Makai {
 		return Vector2(bounds.h - bounds.x, bounds.w - bounds.y);
 	}
 
-	namespace {
-		using Dictionary::Entry;
-	}
-
 	namespace Resolution {
-		#define RESOLUTION(W, H) Entry<string, Vector2>{#W" x "#H , Vector2(W, H)}
-		const vector<Entry<string, Vector2>> set4x3 = {
+		#define RESOLUTION(W, H) Entry<Vector2>{#W" x "#H , Vector2(W, H)}
+		const vector<Pair<string, Vector2>> set4x3 = {
 			RESOLUTION(480, 320),
 			RESOLUTION(640, 480),
 			RESOLUTION(860, 640),
@@ -589,7 +585,7 @@ namespace Makai {
 			RESOLUTION(1600, 1200)
 		};
 
-		const vector<Entry<string, Vector2>> set16x9 = {
+		const vector<Pair<string, Vector2>> set16x9 = {
 			RESOLUTION(640, 360),
 			RESOLUTION(854, 480),
 			RESOLUTION(1280, 720),

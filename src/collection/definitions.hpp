@@ -3,7 +3,7 @@
 
 #include "conceptual.hpp"
 
-#define $func(args...)	[&](args) -> void
+#define $func(...)	[&](__VA_ARGS__) -> void
 
 #define $addenum(NAME, STEP) \
     NAME##_$_$, \

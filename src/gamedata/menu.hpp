@@ -12,6 +12,7 @@ namespace Menu {
 		BaseMenu* const		menu;
 		Option* const 		previous;
 		OptionSet			next;
+		size_t				nextID = 0;
 		void*				data			= nullptr;
 		bool 				enabled			= true;
 		OptionAction		onFrame			= OPTION_DEF_ACTION;
@@ -153,7 +154,7 @@ namespace Menu {
 				return;
 			}
 			setCurrentOptionSet(current->next);
-			if (!setOption()) {
+			if (!setOption(current->nextID)) {
 				option = 0;
 				nextOption();
 			}
