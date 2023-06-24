@@ -289,6 +289,7 @@ namespace Tween{
 		Tween(bool manual = false) {
 			if (!manual)
 				tweenList.push_back(&yield);
+			this->manual = manual;
 		}
 
 		/// Targetless Constructor.
@@ -296,6 +297,7 @@ namespace Tween{
 			setInterpolation(from, to, step, tweenStep);
 			if (!manual)
 				tweenList.push_back(&yield);
+			this->manual = manual;
 		}
 
 		/// Targeted Constructor.
@@ -303,10 +305,24 @@ namespace Tween{
 			setInterpolation(from, to, step, tweenStep, targetVar);
 			if (!manual)
 				tweenList.push_back(&yield);
+			this->manual = manual;
 		}
 
 		/// Destructor.
 		~Tween() {
+			// Loop through tweens and...
+			if(!manual) for (size_t i = 0; i < tweenList.size(); i++)
+				// If tween matches...
+				if (tweenList[i] == &yield) {
+					// Remove tween from list and end loop
+					tweenList.erase(tweenList.begin() + i);
+					break;
+			}
+			value = &defaultVar;
+		}
+
+		void setManual() {
+			if (manual) return;
 			// Loop through tweens and...
 			for (size_t i = 0; i < tweenList.size(); i++)
 				// If tween matches...
@@ -315,7 +331,12 @@ namespace Tween{
 					tweenList.erase(tweenList.begin() + i);
 					break;
 			}
-			value = &defaultVar;
+			manual = true;
+		}
+
+		void setAutomatic() {
+			if (!manual) return;
+			tweenList.push_back(&yield);
 		}
 
 		/// Calculates (and if targeted, applies) a step.
@@ -444,6 +465,8 @@ namespace Tween{
 		}
 
 	private:
+		bool manual = false;
+
 		float factor = 1.0f;
 
 		void _yield(float delta = 1.0f) {
