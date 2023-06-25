@@ -437,7 +437,7 @@ namespace EntityClass {
 
 		/// Deletes self.
 		const Event::Signal destroy = $signal {
-			removeFromTree();
+			condemn();
 			delete this;
 		};
 
@@ -448,6 +448,9 @@ namespace EntityClass {
 	protected:
 		/// Called on object deletion.
 		void condemn() {
+			$debugp("\n{ ");
+			$debugp(name);
+			$debug(" }\n");
 			// Clear taskers
 			taskers.clearTaskers();
 			// Call function to be executed at deletion
