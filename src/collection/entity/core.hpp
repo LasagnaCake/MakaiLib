@@ -448,10 +448,11 @@ namespace EntityClass {
 	protected:
 		/// Called on object deletion.
 		void condemn() {
-			$debugp("\n{ ");
+			$debugp("\n<");
 			$debugp(name);
-			$debug(" }\n");
+			$debug(">\n");
 			// Clear taskers
+			$debug("Clearing taskers...");
 			taskers.clearTaskers();
 			// Call function to be executed at deletion
 			$debug("Calling onDelete()...");
@@ -460,6 +461,10 @@ namespace EntityClass {
 			$debug("Removing self from equation...");
 			removeFromTree();
 			removeFromAllGroups();
+			$debug("Adieu!");
+			$debugp("\n</");
+			$debugp(name);
+			$debug(">\n");
 		}
 
 		/// Returns whether a given object would be a valid parent object.
