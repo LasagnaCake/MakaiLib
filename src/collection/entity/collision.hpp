@@ -645,6 +645,10 @@ namespace EntityClass {
 			collisionLayers.addObject(this, 0);
 		}
 
+		virtual ~AreaCollision2D() {
+			collisionLayers.removeFromAll(this);
+		}
+
 		/// Called whenever a collision with another object happens.
 		virtual void onCollision(Entity* target) {}
 

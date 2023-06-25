@@ -359,7 +359,7 @@ namespace EntityClass {
 			// If parented and must have unique name, check for duplicate names
 			if (parent && mustHaveUniqueName)
 				while (parent->getChild(uniqueName))
-					uniqueName = newName + std::to_string(copies++);
+					uniqueName = newName + "_" + std::to_string(copies++);
 			// Set unique name
 			name = uniqueName;
 		}
@@ -376,18 +376,20 @@ namespace EntityClass {
 
 		/// Deletes a child of a given name.
 		void deleteChild(string name) {
-			delete getChild(name);
+			getChild(name)->destroy();
 		}
 
 		/// Deletes a child at a given index.
 		void deleteChild(size_t index) {
-			delete children[index];
+			children[index]->destroy();
 		}
 
 		/// Deletes all children.
 		void deleteChildren() {
-			for (Entity* child : children)
-				delete child;
+			auto chvec = children;
+			for (Entity* child : chvec)
+				child->destroy();
+			children.clear();
 		}
 
 		/// Equality operator overload.
