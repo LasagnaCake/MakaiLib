@@ -3,8 +3,8 @@ struct EnemyEntity2D: public AreaCircle2D {
 
 	DERIVED_CONSTRUCTOR(EnemyEntity2D, AreaCircle2D, {
 		health = 100.0;
-		mesh.setRenderLayer($layer(ENEMY));
-		addToGroup($layer(ENEMY));
+		mesh.setRenderLayer(ENEMY_LAYER);
+		addToGroup(ENEMY_LAYER);
 		sprite = mesh.createReference<AnimatedPlane>();
 		collision.shape.radius = 1;
 		addToGame(this, "DanmakuGame");

@@ -448,6 +448,8 @@ namespace EntityClass {
 	protected:
 		/// Called on object deletion.
 		void condemn() {
+			// Clear taskers
+			taskers.clearTaskers();
 			// Call function to be executed at deletion
 			$debug("Calling onDelete()...");
 			callOnDelete();
