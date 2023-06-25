@@ -161,6 +161,7 @@ public:
 	*/
 	template <Reference::PlaneType T>
 	void removeReference(T* ref) {
+		if (!ref) return;
 		if (locked) return;
 		auto tris = ref->getBoundTriangles();
 		triangles.erase(
@@ -180,6 +181,7 @@ public:
 
 	template <Reference::TrigonType T>
 	void removeReference(T* ref) {
+		if (!ref) return;
 		if (locked) return;
 		auto tris = ref->getBoundTriangles();
 		triangles.erase(
@@ -205,6 +207,7 @@ public:
 	*/
 	template <Reference::PlaneType T>
 	void unbindReference(T* ref) {
+		if (!ref) return;
 		if (locked) return;
 		auto& rp = references.plane;
 		rp.erase(
@@ -219,6 +222,7 @@ public:
 
 	template <Reference::TrigonType T>
 	void unbindReference(T* ref) {
+		if (!ref) return;
 		if (locked) return;
 		auto& rp = references.trigon;
 		rp.erase(

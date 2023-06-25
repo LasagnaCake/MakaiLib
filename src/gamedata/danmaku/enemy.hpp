@@ -28,11 +28,13 @@ struct EnemyEntity2D: public AreaCircle2D {
 
 	bool collideWithPlayer = false;
 
-	$rdt Renderable mesh;
+	RenderData::Renderable					mesh;
+	RenderData::Reference::AnimatedPlane*	sprite = nullptr;
+	RenderData::Bar::RadialBar				healthBar;
 
-	$ref AnimatedPlane* sprite;
-
-	$bar RadialBar healthBar;
+	virtual ~EnemyEntity2D() {
+		mesh.removeReference(sprite);
+	}
 
 	virtual void onDelete() {}
 
