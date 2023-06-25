@@ -6,6 +6,7 @@
 #include <type_traits>
 #include "event.hpp"
 #include "conceptual.hpp"
+#include "helper.hpp"
 //#include "asynchronous.hpp"
 
 /// Task parameter definition macro (AVOID USING).
@@ -97,10 +98,23 @@ namespace Tasking {
 			maxTask	= tasks.size();
 		}
 
+		/// Init list constructor.
+		Tasker(Arguments<Task> tList, bool loop = false): Tasker(loop) {
+			for (auto& t: tList) tasks.push_back(t);
+			maxTask	= tasks.size();
+		}
+
 		/// Set's the Tasker's tasks.
 		void setTasks(TaskList tList) {
 			tasks.clear();
 			tasks	= tList;
+			maxTask	= tasks.size();
+		}
+
+		/// Set's the Tasker's tasks.
+		void setTasks(Arguments<Task> tList) {
+			tasks.clear();
+			for (auto& t: tList) tasks.push_back(t);
 			maxTask	= tasks.size();
 		}
 
