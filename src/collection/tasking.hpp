@@ -19,6 +19,8 @@
 #define	$task			$T_CATCHR $T_PARAMS
 #define	$ttask(TYPE)	$T_CATCHR $T_TPARAM(TYPE)
 
+#define $waittask(TIME)	[](auto){return (TIME);}
+
 /// Zero-cycle delay task conclusion macro.
 #define	$next	return 0
 
