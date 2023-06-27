@@ -220,25 +220,25 @@ public:
 		return res;
 	}
 
-	void forEach(Callback<LineLaser&> func) {
+	void forEach(Callback<LineLaser> func) {
 		GAME_PARALLEL_FOR
 		for $ssrange(i, 0, LASER_COUNT)
 			func(lasers[i]);
 	}
 
-	void forEachFree(Callback<LineLaser&> func) {
+	void forEachActive(Callback<LineLaser> func) {
 		GAME_PARALLEL_FOR
 		for $ssrange(i, 0, LASER_COUNT)
-			if (lasers[i].isFree())
+			if (!lasers[i].isFree())
 				func(lasers[i]);
 	}
 
 	template <CollisionType T>
-	void forEachInArea(T area, Callback<LineLaser&> func) {
+	void forEachInArea(T area, Callback<LineLaser> func) {
 		GAME_PARALLEL_FOR
 		for $ssrange(i, 0, LASER_COUNT)
 			if (
-				lasers[i].isFree()
+				!lasers[i].isFree()
 			&&	lasers[i].params.collidable
 			&&	$cdt withinBounds(lasers[i].params.hitbox, area)
 			) func(lasers[i]);

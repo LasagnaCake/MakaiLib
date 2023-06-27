@@ -225,25 +225,25 @@ public:
 		return res;
 	}
 
-	void forEach(Callback<Collectible&> func) {
+	void forEach(Callback<Collectible> func) {
 		GAME_PARALLEL_FOR
 		for $ssrange(i, 0, ITEM_COUNT)
 			func(items[i]);
 	}
 
-	void forEachFree(Callback<Collectible&> func) {
+	void forEachActive(Callback<Collectible> func) {
 		GAME_PARALLEL_FOR
 		for $ssrange(i, 0, ITEM_COUNT)
-			if (items[i].isFree())
+			if (!items[i].isFree())
 				func(items[i]);
 	}
 
 	template <CollisionType T>
-	void forEachInArea(T area, Callback<Collectible&> func) {
+	void forEachInArea(T area, Callback<Collectible> func) {
 		GAME_PARALLEL_FOR
 		for $ssrange(i, 0, ITEM_COUNT)
 			if (
-				items[i].isFree()
+				!items[i].isFree()
 			&&	items[i].params.collidable
 			&&	$cdt withinBounds(items[i].params.hitbox, area)
 			) func(items[i]);

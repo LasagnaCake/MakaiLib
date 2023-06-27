@@ -75,7 +75,7 @@
 
 namespace ItemType {
 	enum ItemType: size_t {
-		POWER_ITEM,
+		POWER_ITEM = 0,
 		FULL_POWER_ITEM,
 		POINT_ITEM,
 		EXTRA_ITEM,

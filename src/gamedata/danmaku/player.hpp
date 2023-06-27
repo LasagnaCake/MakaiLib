@@ -193,13 +193,20 @@ struct PlayerEntity2D: AreaCircle2D {
 	}
 
 	virtual void onGraze(size_t count, BulletList list) {
+		$debug("Bullet Graze!");
 		data.graze += count;
 	}
 	virtual void onGraze(size_t count, LineLaserList list) {
+		$debug("Laser Graze!");
 		data.graze += count;
 	}
 
 	virtual void onItemGet(size_t type, size_t quantity) {
+		$debugp("{ Item Type: ");
+		$debugp(type);
+		$debugp(" (");
+		$debugp(quantity);
+		$debug(") }");
 		switch (type) {
 			case $item(POWER):		data.power		+= quantity; break;
 			case $item(POINT):		data.point		+= quantity; break;

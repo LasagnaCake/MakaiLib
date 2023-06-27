@@ -61,6 +61,7 @@ public:
 
 	Bullet* setFree(bool state = true) override {
 		DanmakuObject::setFree(state);
+		if (state) grazed = false;
 		if (sprite) sprite->visible = !free;
 		return this;
 	}
@@ -268,25 +269,25 @@ public:
 		return res;
 	}
 
-	void forEach(Callback<Bullet&> func) {
+	void forEach(Callback<Bullet> func) {
 		GAME_PARALLEL_FOR
 		for $ssrange(i, 0, BULLET_COUNT)
 			func(bullets[i]);
 	}
 
-	void forEachFree(Callback<Bullet&> func) {
+	void forEachActive(Callback<Bullet> func) {
 		GAME_PARALLEL_FOR
 		for $ssrange(i, 0, BULLET_COUNT)
-			if (bullets[i].isFree())
+			if (!bullets[i].isFree())
 				func(bullets[i]);
 	}
 
 	template <CollisionType T>
-	void forEachInArea(T area, Callback<Bullet&> func) {
+	void forEachInArea(T area, Callback<Bullet> func) {
 		GAME_PARALLEL_FOR
 		for $ssrange(i, 0, BULLET_COUNT)
 			if (
-				bullets[i].isFree()
+				!bullets[i].isFree()
 			&&	bullets[i].params.collidable
 			&&	$cdt withinBounds(bullets[i].params.hitbox, area)
 			) func(bullets[i]);
