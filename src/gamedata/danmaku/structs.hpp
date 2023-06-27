@@ -94,6 +94,7 @@ struct DanmakuObject {
 			onFree(this);
 			flags.clear();
 		}
+		local.position = 0;
 		return this;
 	}
 

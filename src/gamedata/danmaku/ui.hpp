@@ -1,5 +1,7 @@
 typedef Helper::FloatFormat<float> PowerFormat;
 
+typedef std::function<std::string(size_t)> PowerStringFunc;
+
 template<
 	BarType POWER_T		= LinearBar,
 	BarType LIFE_T		= LinearBar,
@@ -18,6 +20,38 @@ struct GameUI {
 	Texture2D		fontTX;
 	FontData		font{&fontTX};
 
+	GameUI() {
+		power.bar.trans.position.z = 0.1;
+		power.bar.setRenderLayer($layer(UI));
+		power.label.setRenderLayer($layer(UI));
+		life.setRenderLayer(UI_LAYER);
+		bomb.setRenderLayer(UI_LAYER);
+		lifeBit.setRenderLayer(UI_LAYER);
+		bombBit.setRenderLayer(UI_LAYER);
+		score.setRenderLayer(UI_LAYER);
+		hiScore.setRenderLayer(UI_LAYER);
+		point.setRenderLayer(UI_LAYER);
+		graze.setRenderLayer(UI_LAYER);
+		power.label.font	=
+		score.font			=
+		hiScore.font		=
+		point.font			=
+		graze.font			= &font;
+		power.label.text	= TextData{
+			"0.00",
+			TextRect{4,1},
+			AlignRect{HAlign::CENTER, VAlign::CENTER}
+		};
+		score.text		=
+		hiScore.text	=
+		point.text		=
+		graze.text		= TextData{
+			"0",
+			TextRect{10, 1},
+			AlignRect{HAlign::RIGHT, VAlign::CENTER}
+		};
+	}
+
 	void show()	{	setVisible(true);	}
 
 	void hide()	{	setVisible(false);	}
@@ -35,59 +69,23 @@ struct GameUI {
 		graze.active		= visibility;
 	}
 
-	GameUI() {
-		power.bar.setRenderLayer($layer(UI));
-		life.setRenderLayer($layer(UI));
-		bomb.setRenderLayer($layer(UI));
-		lifeBit.setRenderLayer($layer(UI));
-		bombBit.setRenderLayer($layer(UI));
-		score.setRenderLayer($layer(UI));
-		hiScore.setRenderLayer($layer(UI));
-		point.setRenderLayer($layer(UI));
-		graze.setRenderLayer($layer(UI));
-		power.label.font	=
-		score.font			=
-		hiScore.font		=
-		point.font			=
-		graze.font			= &font;
-		power.label.text	= TextData{
-			"0.00",
-			TextRect{4,1},
-			AlignRect{HAlign::CENTER}
-		};
-		score.text		=
-		hiScore.text	=
-		point.text		=
-		graze.text		= TextData{
-			"0",
-			TextRect{10, 1},
-			AlignRect{HAlign::RIGHT}
-		};
-	}
-
 	void setUIMaximums(
-		PlayerData const& max = {
-			MAXSIZE_T,
-			400,
-			MAXSIZE_T,
-			MAXSIZE_T,
-			9,
-			9,
-			MAXSIZE_T,
-			1,
-			1
-		}
+		size_t maxPower		= 400,
+		size_t maxLife		= 9,
+		size_t maxBomb		= 9,
+		size_t maxLifeBit	= 5,
+		size_t maxBombBit	= 5
 	) {
-		power.bar.max	= max.power;
-		life.max		= max.life;
-		bomb.max		= max.bomb;
-		lifeBit.max		= max.lifeBit;
-		bombBit.max		= max.bombBit;
+		power.bar.max	= maxPower;
+		life.max		= maxLife;
+		bomb.max		= maxBomb;
+		lifeBit.max		= maxLifeBit;
+		bombBit.max		= maxBombBit;
 	}
 
 	void setUIValues(PlayerData const& data) {
 		power.bar.value				= data.power;
-		power.label.text.content	= onPowerStringRequest(power);
+		power.label.text.content	= onPowerStringRequest(data.power);
 		point.text.content			= std::to_string(data.point);
 		graze.text.content			= std::to_string(data.graze);
 		score.text.content			= std::to_string(data.score);
@@ -101,7 +99,7 @@ struct GameUI {
 		hiScore.text.content		= std::to_string(score);
 	}
 
-	std::function<std::string(size_t)> onPowerStringRequest = [](size_t power){return std::string(power);};
+	PowerStringFunc onPowerStringRequest = [](size_t p){return std::to_string(p);};
 };
 
 /// "Single Bar Type" Game UI alias.
