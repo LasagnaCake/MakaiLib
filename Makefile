@@ -12,7 +12,7 @@ Supported options:
 >    name          = [ value ]        : Spec. the name of the output file     ( DEFAULT: program  )
 >    warn          = [ value | none ] : Spec. the warning to enable           ( DEFAULT: none     )
 >    use-openmp    = [ 1 | 0 ]        : Spec. whether ro enable OpenMP        ( DEFAULT: 0        )
->    optimize-lvl  = [ 0 - 3 ]        : Spec. the optimization level          ( DEFAULT: 3        )
+>    optimize-lvl  = [ 0 - 3 ]        : Spec. the optimization level          ( DEFAULT: 2        )
 >    debug-profile = [ 1 | 0 ]        : Spec. whether to enable gmon          ( DEFAULT: 0        )
 >    keep-o-files  = [ 1 | 0 ]        : Spec. if .o files should be kept      ( DEFAULT: 0        )
 >    macro         = [ value | none ] : Spec. a macro to be defined           ( DEFAULT: none     )
@@ -63,7 +63,7 @@ OPTIMIZATIONS	+= -fopenmp -openmp -ftree-parallelize-loops=128 -funswitch-loops 
 OPENMP_ENABLED	:= -D_USE_OPENMP_
 optimize-lvl	?= 1
 else
-optimize-lvl	?= 3
+optimize-lvl	?= 2
 endif
 
 INCLUDES		:= -Ilib -Isrc -Ilib\SDL2-2.0.10\include -Ilib\OpenGL -Ilib\OpenGL\GLEW\include -Ilib\cute_headers -Ilib\stb -Ilib\toml11-3.7.1 -Ilib\pugixml-1.12\include -Ilib\yaml-cpp-0.7.0\include -Ilib\jsoncpp-3.11.2\include -Ilib\cppcodec-0.2
