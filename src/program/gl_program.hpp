@@ -199,7 +199,8 @@ namespace Makai {
 			framebuffer();
 			//glDisable(GL_BLEND);
 			unsigned int fid = framebuffer.toFrameBufferData().id;
-			glBlendEquationSeparatei(fid, GL_FUNC_ADD, GL_MAX);
+			//glBlendEquationSeparatei(fid, GL_FUNC_ADD, GL_MAX);
+			glBlendEquationSeparatei(fid, GL_FUNC_ADD, GL_FUNC_ADD);
 			glBindBuffer(GL_FRAMEBUFFER, 0);
 			// Create layer buffer
 			layerbuffer.create(width, height);
