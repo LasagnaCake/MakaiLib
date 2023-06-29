@@ -32,7 +32,7 @@
 	inline	static String getCoreClass() {return BASE::getCoreClass();}\
 	NAME(String name = #NAME, bool uniqueEntity = true) : BASE(name, uniqueEntity) {onCreate();}\
 	NAME(EntityClass::Entity* parent, String name = #NAME , bool uniqueEntity = true) : BASE(parent, name, uniqueEntity) {onCreate();}\
-	~NAME() {onDelete();}
+	virtual ~NAME() {onDelete();}
 
 namespace GameData {
 	#define $gdt GameData::

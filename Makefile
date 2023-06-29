@@ -164,7 +164,7 @@ release: build\$(src)
 	@$(CXX) $(COMPILER_CONFIG) $(WARNINGS) $(OPTIMIZATIONS) -O$(optimize-lvl) $(DEBUG_SYMBOL) $(SAFE_MATH) $(OPENMP_ENABLED) $(INCLUDES) $(macro) -c build\$(src) -o obj/$@/$(name).o
 	
 	@echo "[1/2] linking libraries..."
-	@$(CXX) -o res/$(name)_$@.exe obj/$@/$(name).o  $(LINKER_CONFIG) -O$(optimize-lvl)  $(LIBRARIES) $(GUI_MODE)
+	@$(CXX) -o res/$(name).exe obj/$@/$(name).o  $(LINKER_CONFIG) -O$(optimize-lvl)  $(LIBRARIES) $(GUI_MODE)
 	
 	@echo "[2/2] Done!"
 	$(MAKE_CLEAN)
