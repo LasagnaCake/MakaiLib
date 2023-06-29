@@ -14,6 +14,8 @@
 #pragma GCC diagnostic ignored "-Wvariadic-macros"
 #pragma GCC diagnostic ignored "-Wattributes"
 
+#include "memoverride.hpp"
+
 #include "anchors.hpp"
 #include "audio.hpp"
 #include "program.hpp"

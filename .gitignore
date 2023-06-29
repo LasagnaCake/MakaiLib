@@ -4,6 +4,7 @@ obj
 *.exe
 *.o
 *.backup
+*.ps1
 gmon.out
 res/data/*
 res/*.exe
