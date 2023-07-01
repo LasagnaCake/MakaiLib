@@ -436,7 +436,7 @@ namespace EntityClass {
 		}
 
 		/// Deletes self.
-		const Event::Signal destroy = $signal {
+		Event::Signal const destroy = $signal {
 			condemn();
 			delete this;
 		};
@@ -446,8 +446,12 @@ namespace EntityClass {
 		}
 
 	protected:
+		bool condemned = false;
+
 		/// Called on object deletion.
 		void condemn() {
+			if (condemned) return;
+			condemned = true;
 			$debugp("\n<");
 			$debugp(name);
 			$debug(">\n");
