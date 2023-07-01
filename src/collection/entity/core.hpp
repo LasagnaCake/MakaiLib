@@ -65,7 +65,8 @@ namespace EntityClass {
 
 	/// Deletes all queued objects.
 	void destroyQueued() {
-		for (auto queued : destroyQueue) {
+		auto queue = destroyQueue;
+		for (auto queued : queue) {
 			(*queued)();
 		}
 		destroyQueue.clear();
@@ -463,6 +464,13 @@ namespace EntityClass {
 			$debug("Removing self from equation...");
 			removeFromTree();
 			removeFromAllGroups();
+			std::remove_if(
+				destroyQueue.begin(),
+				destroyQueue.end(),
+				[&](auto* e) {
+					return e == &destroy;
+				}
+			);
 			$debug("Adieu!");
 			$debugp("\n</");
 			$debugp(name);

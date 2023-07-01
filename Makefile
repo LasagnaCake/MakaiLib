@@ -117,7 +117,7 @@ debug: build\$(src)
 	@mkdir -p obj\$@
 	
 	@echo "[0/2] compiling [$@]..."
-	@$(CXX) $(COMPILER_CONFIG) -Wall -Wpedantic $(SAFE_MATH) -pg -Og -ggdb $(SANITIZER_OPTIONS) -fno-omit-frame-pointer -D_DEBUG_OUTPUT_ $(macro) $(INCLUDES) -c build\$(src) -o obj/$@/$(name).o
+	@$(CXX) $(COMPILER_CONFIG) -Wall -Wpedantic $(SAFE_MATH) -pg -Og -ggdb3 $(SANITIZER_OPTIONS) -fno-omit-frame-pointer -D_DEBUG_OUTPUT_ $(macro) $(INCLUDES) -c build\$(src) -o obj/$@/$(name).o
 	
 	@echo "[1/2] linking libraries..."
 	@$(CXX) -o res/$(name)_$@.exe obj/$@/$(name).o  $(LINKER_CONFIG) -pg -Og $(LIBRARIES) $(SANITIZER_OPTIONS)
