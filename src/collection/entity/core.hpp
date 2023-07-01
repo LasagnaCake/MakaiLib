@@ -283,7 +283,8 @@ namespace EntityClass {
 			// If there are children...
 			if (children.size())
 				// Loop through children and re-parent them
-				for (Entity* child : children) newParent->addChild(child);
+				for (Entity* child : children)
+					newParent->addChild(child);
 			// Clear vector
 			children.clear();
 		}
@@ -325,15 +326,11 @@ namespace EntityClass {
 					taskers.yield(delta * 60.0f);
 					#endif // _$_TASKERS_BEFORE_MAIN
 				}
-				if (children.size())
-					std::for_each(
-						std::execution::par,
-						children.begin(),
-						children.end(),
-						[&](auto&& child){
-							child->yield(delta);
-						}
-					);
+				if (children.size()) {
+					auto clist = children;
+					for (Entity* child : clist)
+						child->yield(delta);
+				}
 			}
 		}
 
@@ -495,7 +492,19 @@ namespace EntityClass {
 
 		/// Removes a child from the object's children. Does not delete child.
 		void removeChild(Entity* child) {
-			// If there are children
+			// Using std::remove_if causes the program to run absurdly fast and then segfaults.
+			/*
+			// If there are children, remove selected
+			if (children.size())
+				std::remove_if(
+					children.begin(),
+					children.end(),
+					[&](auto* c) {
+						return c == child;
+					}
+				);
+			*/
+			// If there are children...
 			if (children.size())
 				// Loop through children and...
 				for (size_t i = 0; i < children.size(); i++)
