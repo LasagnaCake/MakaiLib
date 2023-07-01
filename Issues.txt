@@ -3,4 +3,5 @@
 	> Don't know about MIDI though
 > Fullscreen does not work properly
 > Random crashes
-	> Disappears when compiling with -Og
+	> Greatly reduces when compiling with -Og
+	> Undetectable when debugging
