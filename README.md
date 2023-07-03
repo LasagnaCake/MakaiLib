@@ -126,4 +126,4 @@ Currently VERY scarce. Some of the code is commented.
 
 ### Very far future
 
-- Vulkanize graphical system (VERY DIFFICULT)
+- Vulkanize graphical system (VERY DIFFICULT, might not be done)
