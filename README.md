@@ -72,7 +72,7 @@ Currently VERY scarce. Some of the code is commented.
 ### Current
 
 - [ ] Replace `.ini`-based savefile system with a different format
-- - Either TOML, JSON or YAML
+- - Using JSON
 - [ ] GUI system
 - [ ] Menu system
 - [ ] Spellcard system
@@ -99,6 +99,7 @@ Currently VERY scarce. Some of the code is commented.
 
 - [ ] Other game types
 - [ ] More "multi-purpose" game classes
+- [ ] Cleanup & polish [entity](src/collection/entity/entity.hpp) system
 - [ ] Multi-platform support:
 - - [ ] Linux
 - - [ ] Mac
