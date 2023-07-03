@@ -33,7 +33,6 @@ struct EnemyEntity2D: public AreaCircle2D {
 	RenderData::Bar::RadialBar				healthBar;
 
 	virtual ~EnemyEntity2D() {
-		mesh.removeReference(sprite);
 	}
 
 	virtual void onDelete() {}

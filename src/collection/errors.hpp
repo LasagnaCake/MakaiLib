@@ -87,6 +87,7 @@ namespace Error {
 	DEFINE_ERROR_TYPE(Unimplemented);
 	DEFINE_ERROR_TYPE(UserIsAnIdiot);
 	DEFINE_ERROR_TYPE(Other);
+	DEFINE_ERROR_TYPE(NotAnError);
 
 	#undef DEFINE_ERROR_TYPE
 }

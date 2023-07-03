@@ -33,7 +33,7 @@ namespace EntityClass {
 		Vector2 scale = Vector2(1.0);
 
 		/// The object's Z Index.
-		float zIndex = 1;
+		float zIndex = 0;
 
 		/// The object's Z Scale.
 		float zScale = 1;
@@ -74,12 +74,12 @@ namespace EntityClass {
 			if (!par) return rotation;
 			if (par->getName() == $_ROOT_NAME) return rotation;
 			// Try getting parent's global rotation
-			try {
+			if (par->getCoreClass() == "Entity2D") {
 				Entity2D* parent2D = (Entity2D*)par;
 				// Transform rotation based on parent's rotation
 				return rotation + parent2D->globalRotation();
 			// On fail, return own rotation
-			} catch (char e) {
+			} else {
 				return rotation;
 			}
 		}
@@ -153,7 +153,7 @@ namespace EntityClass {
 			if (!par) return position;
 			if (par->getName() == $_ROOT_NAME) return position;
 			// Try getting parent's global position
-			try {
+			if (par->getCoreClass() == "Entity3D") {
 				Entity3D* parent3D = (Entity3D*)par;
 				// Transform position based on parent's transforms
 				return srpTransform(
@@ -161,7 +161,7 @@ namespace EntityClass {
 					parent3D->globalTransform()
 				);
 			// On fail, return own position
-			} catch (char e) {
+			} else {
 				return position;
 			}
 		}
@@ -174,12 +174,12 @@ namespace EntityClass {
 			if (!par) return rotation;
 			if (par->getName() == $_ROOT_NAME) return rotation;
 			// Try getting parent's global rotation
-			try {
+			if (par->getCoreClass() == "Entity3D") {
 				Entity3D* parent3D = (Entity3D*)par;
 				// Transform rotation based on parent's rotation
 				return rotation + parent3D->globalRotation();
 			// On fail, return own rotation
-			} catch (char e) {
+			} else {
 				return rotation;
 			}
 		}
@@ -192,12 +192,12 @@ namespace EntityClass {
 			if (!par) return scale;
 			if (par->getName() == $_ROOT_NAME) return scale;
 			// Try getting parent's global scale
-			try {
+			if (par->getCoreClass() == "Entity3D") {
 				Entity3D* parent3D = (Entity3D*)par;
 				// Transform scale based on parent's scale
 				return scale + parent3D->globalScale();
 			// On fail, return own scale
-			} catch (char e) {
+			} else {
 				return scale;
 			}
 		}
