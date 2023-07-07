@@ -310,27 +310,15 @@ namespace Tween{
 
 		/// Destructor.
 		~Tween() {
-			// Loop through tweens and...
-			if(!manual) for (size_t i = 0; i < tweenList.size(); i++)
-				// If tween matches...
-				if (tweenList[i] == &yield) {
-					// Remove tween from list and end loop
-					tweenList.erase(tweenList.begin() + i);
-					break;
-			}
+			// Loop through tween calls and delete if matches
+			if (!tweenList.empty()) std::erase_if(tweenList, [&](auto& e){return e == &yield;});
 			value = &defaultVar;
 		}
 
 		void setManual() {
 			if (manual) return;
-			// Loop through tweens and...
-			for (size_t i = 0; i < tweenList.size(); i++)
-				// If tween matches...
-				if (tweenList[i] == &yield) {
-					// Remove tween from list and end loop
-					tweenList.erase(tweenList.begin() + i);
-					break;
-			}
+			// Loop through tween calls and delete if matches
+			if (!tweenList.empty()) std::erase_if(tweenList, [&](auto& e){return e == &yield;});
 			manual = true;
 		}
 

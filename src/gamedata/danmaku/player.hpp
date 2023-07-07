@@ -108,6 +108,11 @@ struct PlayerEntity2D: AreaCircle2D {
 		mesh.material.shaded = false;
 	})
 
+	virtual ~PlayerEntity2D() {
+		$debug("Deleting player...");
+		captureAndPauseAllTimers();
+	}
+
 	KeyBinds actionKeys;
 
 	Renderable mesh;
@@ -345,10 +350,6 @@ struct PlayerEntity2D: AreaCircle2D {
 		// Do extra actions
 		if(action("sub"))	onSubAction();
 		if(action("extra"))	onExtraAction();
-	}
-
-	virtual void onDelete() {
-		$debug("Deleting player...");
 	}
 
 	virtual void onCollision(Entity* target) {

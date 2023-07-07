@@ -199,7 +199,7 @@ namespace Tasking {
 
 		/// Removes a Task at a given index.
 		void removeTask(size_t idx) {
-			tasks.erase(tasks.begin() + idx);
+			if (!tasks.empty()) tasks.erase(tasks.begin() + idx);
 		}
 
 		/**

@@ -103,26 +103,14 @@ namespace Event{
 
 		/// Destructor.
 		~Timer() {
-			// Loop through timers and...
-			for (size_t i = 0; i < timerList.size(); i++)
-				// If timer matches...
-				if (timerList[i] == &yield) {
-					// Remove timer from list and end loop
-					timerList.erase(timerList.begin() + i);
-					break;
-			}
+			// Loop through timer calls and delete if matches
+			if (!timerList.empty()) std::erase_if(timerList, [&](auto& e){return e == &yield;});
 		}
 
 		void setManual() {
 			if (manual) return;
-			// Loop through tweens and...
-			for (size_t i = 0; i < timerList.size(); i++)
-				// If tween matches...
-				if (timerList[i] == &yield) {
-					// Remove tween from list and end loop
-					timerList.erase(timerList.begin() + i);
-					break;
-			}
+			// Loop through timer calls and delete if matches
+			if (!timerList.empty()) std::erase_if(timerList, [&](auto& e){return e == &yield;});
 			manual = true;
 		}
 
