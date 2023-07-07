@@ -28,6 +28,7 @@ public:
 	virtual ~Sound() final {destroy();}
 
 	void onCreate(String path) final override {
+		if (isAudioSystemClosed) throw Error::FailedAction("Failed to load file: Audio system is closed!");
 		source = Mix_LoadWAV(path.c_str());
 		if (!source)
 			throw Error::FailedAction(
@@ -41,7 +42,7 @@ public:
 
 	void onDestroy() final override {
 		$debug("Destroying sound source...");
-		if (!isAudioSystemClosing) {
+		if (!isAudioSystemClosed) {
 			if (active())
 				Mix_HaltChannel(channel);
 		}

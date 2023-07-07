@@ -1,8 +1,8 @@
 class Drawable {
 public:
 	Drawable(size_t layer = 0, bool manual = false) {
-		if(!manual)
-			Drawer::layers.addObject(&render, layer);
+		if(!manual) setAuto(layer);
+		manualMode = manual;
 	}
 
 	virtual ~Drawable() {

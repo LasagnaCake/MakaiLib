@@ -465,13 +465,7 @@ namespace EntityClass {
 			$debug("Removing self from equation...");
 			removeFromTree();
 			removeFromAllGroups();
-			std::remove_if(
-				destroyQueue.begin(),
-				destroyQueue.end(),
-				[&](auto* e) {
-					return e == &destroy;
-				}
-			);
+			$eraseif(destroyQueue, elem == &destroy);
 			$debug("Adieu!");
 			$debugp("\n</");
 			$debugp(name);
@@ -497,27 +491,7 @@ namespace EntityClass {
 		/// Removes a child from the object's children. Does not delete child.
 		void removeChild(Entity* child) {
 			// Using std::remove_if causes the program to run absurdly fast and then segfaults.
-			/*
-			// If there are children, remove selected
-			if (children.size())
-				std::remove_if(
-					children.begin(),
-					children.end(),
-					[&](auto* c) {
-						return c == child;
-					}
-				);
-			*/
-			// If there are children...
-			if (children.size())
-				// Loop through children and...
-				for (size_t i = 0; i < children.size(); i++)
-					// If child matches...
-					if (children[i] == child) {
-						// Remove child from children and end loop
-						children.erase(children.begin() + i);
-						break;
-				}
+			$eraseif(children, elem == child);
 		}
 
 		void removeFromTree() {

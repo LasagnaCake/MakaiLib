@@ -1,6 +1,6 @@
 namespace {
-	Mix_Music*		current	= nullptr;
-	const Signal*	queued	= nullptr;
+	Mix_Music*	current	= nullptr;
+	AudioFunc*	queued	= nullptr;
 }
 
 void update() {
@@ -50,6 +50,7 @@ public:
 	virtual ~Music() final {destroy();}
 
 	void onCreate(String path) final override {
+		if (isAudioSystemClosed) throw Error::FailedAction("Failed to load file: Audio system is closed!");
 		source = Mix_LoadMUS(path.c_str());
 		if (!source)
 			throw Error::FailedAction(
@@ -63,7 +64,7 @@ public:
 
 	void onDestroy() final override {
 		$debug("Deleting music source...");
-		if (!isAudioSystemClosing) {
+		if (!isAudioSystemClosed) {
 			if (queued == &onQueue)
 				queued = nullptr;
 			if (Mix_PlayingMusic() && current == source)
@@ -128,7 +129,7 @@ private:
 	size_t	fadeInTime	= 0;
 	int		loops		= 0;
 
-	const Signal onQueue = $signal {
+	AudioFunc onQueue = $signal {
 		play(loops, fadeInTime);
 	};
 

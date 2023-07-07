@@ -164,17 +164,13 @@ public:
 		if (!ref) return;
 		if (locked) return;
 		auto tris = ref->getBoundTriangles();
-		triangles.erase(
-			std::remove_if(
-				triangles.begin(),
-				triangles.end(),
-				[=](Triangle* e){
-					if (e == tris[0]) {delete tris[0]; return true;}
-					if (e == tris[1]) {delete tris[1]; return true;}
-					return false;
-				}
-			),
-			triangles.end()
+		std::erase_if(
+			triangles,
+			[=](Triangle* e){
+				if (e == tris[0]) {delete tris[0]; return true;}
+				if (e == tris[1]) {delete tris[1]; return true;}
+				return false;
+			}
 		);
 		unbindReference<T>(ref);
 	}
@@ -184,16 +180,12 @@ public:
 		if (!ref) return;
 		if (locked) return;
 		auto tris = ref->getBoundTriangles();
-		triangles.erase(
-			std::remove_if(
-				triangles.begin(),
-				triangles.end(),
-				[=](Triangle* e){
-					if (e == tris[0]) {delete tris[0]; return true;}
-					return false;
-				}
-			),
-			triangles.end()
+		std::erase_if(
+			triangles,
+			[=](Triangle* e){
+				if (e == tris[0]) {delete tris[0]; return true;}
+				return false;
+			}
 		);
 		unbindReference<T>(ref);
 	}

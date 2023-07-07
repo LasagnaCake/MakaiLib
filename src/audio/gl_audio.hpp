@@ -13,16 +13,18 @@ namespace Audio {
 		std::string,
 		std::vector;
 
-		vector<const Signal*> soundList;
+		typedef const Signal AudioFunc;
 
-		bool isAudioSystemClosing = false;
+		vector<AudioFunc*> audioList;
+
+		bool isAudioSystemClosed = true;
 	}
 
 	namespace Base {
 		class Playable {
 		public:
 			Playable() {
-				soundList.push_back(&update);
+				audioList.push_back(&update);
 			}
 
 			Playable(const String& path): Playable() {
@@ -31,11 +33,7 @@ namespace Audio {
 
 			virtual ~Playable() {
 				$debug("Deleting playable object...");
-				for $ssrange(i, 0, soundList.size())
-					if (soundList[i] == &update) {
-						soundList.erase(soundList.begin() + i);
-						break;
-				}
+				$eraseif(audioList, elem == &update);
 				$debug("Object deleted!");
 			}
 
@@ -57,7 +55,7 @@ namespace Audio {
 			virtual void onPlaybackStart()	{}
 			virtual void onUpdate()			{}
 
-			const Signal update = $signal {
+			AudioFunc update = $signal {
 				this->onUpdate();
 			};
 		protected:
@@ -81,18 +79,24 @@ namespace Audio {
 	void openSystem() {
 		Mix_OpenAudio(48000, AUDIO_F32SYS, 2, 1024);
 		Mix_AllocateChannels(16);
-		isAudioSystemClosing = false;
+		isAudioSystemClosed = false;
 	}
 
 	void closeSystem() {
 		stopAll();
-		isAudioSystemClosing = true;
+		isAudioSystemClosed = true;
 		Mix_CloseAudio();
 	}
 
 	void updateAudioSystem() {
+		//$debug("Updating music queue...");
 		Music::update();
-		for(const Signal* func : soundList) (*func)();
+		//$debug("Updating audio systems...");
+		for(AudioFunc*& func : audioList) (*func)();
+	}
+
+	bool isSystemOpen() {
+		return !isAudioSystemClosed;
 	}
 }
 

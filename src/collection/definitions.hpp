@@ -21,7 +21,8 @@
 #define $range(I, BEGIN, END, STEP) (auto I = (BEGIN); I < (END); I += (STEP))
 #define $ssrange(I, BEGIN, END) $range(I, BEGIN, END, $iltf(BEGIN, END, 1))
 
-#define $getspace(SOURCE, NAME) namespace NAME { using namespace SOURCE :: NAME; }
+#define $eraseif(VEC, COND) std::erase_if(VEC, [&](auto& elem){return (COND);});
+
 /*
 #define DLL_EXPORT	__declspec(dllexport)
 #define DLL_IMPORT	__declspec(dllimport)

@@ -121,7 +121,7 @@ namespace Drawer {
 		return res;
 	}
 
-	typedef const function<void()> DrawFunc;
+	typedef function<void()> const DrawFunc;
 
 	Group::Group<DrawFunc*> layers;
 
