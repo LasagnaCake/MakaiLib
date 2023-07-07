@@ -3,5 +3,4 @@
 	> Don't know about MIDI though
 > Fullscreen does not work properly
 > Random crashes
-	> Greatly reduces when compiling with -Og
-	> Undetectable when debugging
+	> Very rare & unpredictable
