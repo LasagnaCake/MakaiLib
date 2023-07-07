@@ -385,8 +385,10 @@ namespace EntityClass {
 		/// Deletes all children.
 		void deleteChildren() {
 			auto chvec = children;
-			for (Entity* child : chvec)
+			for (Entity* child : chvec) {
+				removeChild(child);
 				child->destroy();
+			}
 			children.clear();
 		}
 
@@ -491,15 +493,16 @@ namespace EntityClass {
 		/// Removes a child from the object's children. Does not delete child.
 		void removeChild(Entity* child) {
 			$eraseif(children, elem == child);
+			child->parent = nullptr;
 		}
 
 		void removeFromTree() {
-			// If parented, remove self from parent's children
-			if (parent) parent->removeChild(this);
 			// If there are children...
 			if (children.size())
 				// Delete them
 				deleteChildren();
+			// If parented, remove self from parent's children
+			if (parent) parent->removeChild(this);
 			// Clear children list
 			children.clear();
 		}

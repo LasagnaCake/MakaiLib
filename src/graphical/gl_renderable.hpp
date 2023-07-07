@@ -164,7 +164,7 @@ public:
 		if (!ref) return;
 		if (locked) return;
 		auto tris = ref->getBoundTriangles();
-		std::erase_if(
+		if (!triangles.empty()) std::erase_if(
 			triangles,
 			[=](Triangle* e){
 				if (e == tris[0]) {delete tris[0]; return true;}
@@ -180,7 +180,7 @@ public:
 		if (!ref) return;
 		if (locked) return;
 		auto tris = ref->getBoundTriangles();
-		std::erase_if(
+		if (!triangles.empty())std::erase_if(
 			triangles,
 			[=](Triangle* e){
 				if (e == tris[0]) {delete tris[0]; return true;}

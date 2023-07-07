@@ -59,7 +59,7 @@ namespace Group {
 			// Get group
 			vector<T>& target = g[group];
 			// If group is not empty, remove value if exists in it
-			std::erase_if(target, [&](T& t){return t == e;});
+			if (!target.empty()) std::erase_if(target, [&](T& t){return t == e;});
 		}
 
 		/// Removes an object from all groups it is in.
