@@ -70,15 +70,7 @@ namespace Menu {
 
 		void removeOption(Option* o) {
 			o->onDelete(o);
-			all.erase(
-				std::find_if(
-					all.begin(),
-					all.end(),
-					[&](auto& e){
-						return e->id == o->id;
-					}
-				)
-			);
+			$eraseif(all, elem->id == o->id);
 			delete o;
 		}
 

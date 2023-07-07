@@ -202,14 +202,8 @@ public:
 		if (!ref) return;
 		if (locked) return;
 		auto& rp = references.plane;
-		rp.erase(
-			std::remove_if(
-				rp.begin(),
-				rp.end(),
-				[&](Reference::Plane* e){return e == ref;}
-			),
-			rp.end()
-		);
+		$eraseif(rp, elem == ref);
+		delete ref;
 	}
 
 	template <Reference::TrigonType T>
@@ -217,14 +211,7 @@ public:
 		if (!ref) return;
 		if (locked) return;
 		auto& rp = references.trigon;
-		rp.erase(
-			std::remove_if(
-				rp.begin(),
-				rp.end(),
-				[&](Reference::Plane* e){return e == ref;}
-			),
-			rp.end()
-		);
+		$eraseif(rp, elem == ref);
 		delete ref;
 	}
 
@@ -530,8 +517,10 @@ private:
 		// Copy data to IVB
 		size_t i = 0;
 		for (auto& t: triangles) {
+			// Check if not null
+			if (!t) continue;
 			// Oh, hey, C! haven't seen you in a while!
-			*(Triangle*)&vertices[i]	= (*t);
+			*(Triangle*)&vertices[i] = (*t);
 			i += 3;
 		}
 		// De-transform references (if applicable)

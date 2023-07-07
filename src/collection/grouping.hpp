@@ -58,16 +58,8 @@ namespace Group {
 			if (&g[group] == nullptr) return;
 			// Get group
 			vector<T>& target = g[group];
-			// If group is not empty...
-			if (target.size())
-				// Loop through group and...
-				for (size_t i = 0; i < target.size(); i++)
-					// If entity matches...
-					if (target[i] == e) {
-						// Remove entity from group and end loop
-						target.erase(target.begin() + i);
-						break;
-				}
+			// If group is not empty, remove value if exists in it
+			std::erase_if(target, [&](T& t){return t == e;});
 		}
 
 		/// Removes an object from all groups it is in.
