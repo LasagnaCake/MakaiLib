@@ -490,7 +490,6 @@ namespace EntityClass {
 
 		/// Removes a child from the object's children. Does not delete child.
 		void removeChild(Entity* child) {
-			// Using std::remove_if causes the program to run absurdly fast and then segfaults.
 			$eraseif(children, elem == child);
 		}
 
