@@ -2,5 +2,3 @@
 	> WAV and OGG seems to work fine
 	> Don't know about MIDI though
 > Fullscreen does not work properly
-> Random crashes
-	> Very rare & unpredictable

@@ -6,6 +6,7 @@ class BaseBar {
 public:
 	float value = 0, max = 100;
 	Vector2 size = 1;
+	Vector2 uvScale = Vector2(1);
 	bool 	dynamicUV	= true;
 };
 
@@ -29,10 +30,10 @@ private:
 		float
 			length	= percent * size.x,
 			width	= size.y / 2;
-		vertices[0]	= toRawVertex(Vector2(0, -width),		Vector2(0,0));
-		vertices[1]	= toRawVertex(Vector2(0, +width),		Vector2(0,1));
-		vertices[2]	= toRawVertex(Vector2(length, -width),	Vector2((dynamicUV ? percent : 1),0));
-		vertices[3]	= toRawVertex(Vector2(length, +width),	Vector2((dynamicUV ? percent : 1),1));
+		vertices[0]	= toRawVertex(Vector2(0, -width),		Vector2(0,1) * uvScale);
+		vertices[1]	= toRawVertex(Vector2(0, +width),		Vector2(0,0) * uvScale);
+		vertices[2]	= toRawVertex(Vector2(length, -width),	Vector2((dynamicUV ? percent : 1),1) * uvScale);
+		vertices[3]	= toRawVertex(Vector2(length, +width),	Vector2((dynamicUV ? percent : 1),0) * uvScale);
 		setDefaultShader();
 		display(vertices, 4, GL_TRIANGLE_STRIP);
 	}
@@ -79,7 +80,7 @@ private:
 			// Set vertex position
 			Drawer::vertexSetPosition(vertices[i], VecMath::angleV2(posfrac) * size);
 			// Set vertex UV
-			Drawer::vertexSetUV(vertices[i], (((VecMath::angleV2(uvfrac + uvAngle) / 2.0) + 0.5)));
+			Drawer::vertexSetUV(vertices[i], (((VecMath::angleV2(uvfrac + uvAngle) / 2.0) + 0.5)) * uvScale);
 		}
 	}
 };
