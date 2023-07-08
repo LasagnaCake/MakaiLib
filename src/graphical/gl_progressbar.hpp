@@ -80,7 +80,9 @@ private:
 			// Set vertex position
 			Drawer::vertexSetPosition(vertices[i], VecMath::angleV2(posfrac) * size);
 			// Set vertex UV
-			Drawer::vertexSetUV(vertices[i], (((VecMath::angleV2(uvfrac + uvAngle) / 2.0) + 0.5)) * uvScale);
+			Vector2 uv = (((VecMath::angleV2(uvfrac + uvAngle) / 2.0) + 0.5)) * uvScale;
+			uv.y = 1 - uv.y;
+			Drawer::vertexSetUV(vertices[i], uv);
 		}
 	}
 };
