@@ -16,6 +16,7 @@ struct GameUI {
 	LIFE_BIT_T			lifeBit;
 	BOMB_BIT_T			bombBit;
 	Label				score, hiScore, point, graze;
+	Label				grazeTitle, pointTitle, scoreTitle, hiScoreTitle;
 
 	Texture2D		fontTX;
 	FontData		font{&fontTX};
@@ -32,6 +33,14 @@ struct GameUI {
 		hiScore.setRenderLayer(UI_LAYER);
 		point.setRenderLayer(UI_LAYER);
 		graze.setRenderLayer(UI_LAYER);
+		grazeTitle.setRenderLayer(UI_LAYER);
+		pointTitle.setRenderLayer(UI_LAYER);
+		scoreTitle.setRenderLayer(UI_LAYER);
+		hiScoreTitle.setRenderLayer(UI_LAYER);
+		hiScoreTitle.font	=
+		scoreTitle.font		=
+		grazeTitle.font		=
+		pointTitle.font		=
 		power.label.font	=
 		score.font			=
 		hiScore.font		=
@@ -50,6 +59,18 @@ struct GameUI {
 			TextRect{10, 1},
 			AlignRect{HAlign::RIGHT, VAlign::CENTER}
 		};
+		scoreTitle.text		=
+		hiScoreTitle.text	=
+		grazeTitle.text		=
+		pointTitle.text		= TextData{
+			"0",
+			TextRect{10, 1},
+			AlignRect{HAlign::LEFT, VAlign::CENTER}
+		};
+		pointTitle.text.content		= "Point";
+		grazeTitle.text.content		= "Graze";
+		scoreTitle.text.content		= "Score";
+		hiScoreTitle.text.content	= "HiScore";
 	}
 
 	void show()	{	setVisible(true);	}
@@ -60,6 +81,11 @@ struct GameUI {
 		power.bar.active	=
 		power.label.active	=
 		life.active			=
+		bomb.active			=
+		scoreTitle.active	=
+		hiScoreTitle.active	=
+		grazeTitle.active	=
+		pointTitle.active	=
 		bomb.active			=
 		lifeBit.active		=
 		bombBit.active		=
@@ -93,6 +119,18 @@ struct GameUI {
 		bomb.value					= data.bomb;
 		lifeBit.value				= data.lifeBit;
 		bombBit.value				= data.bombBit;
+	}
+
+	void setCharacterSpacing(Vec2 kerning) {
+		grazeTitle.text.spacing		=
+		pointTitle.text.spacing		=
+		scoreTitle.text.spacing		=
+		hiScoreTitle.text.spacing	=
+		score.text.spacing			=
+		point.text.spacing			=
+		hiScore.text.spacing		=
+		power.label.text.spacing	=
+		graze.text.spacing			= kerning;
 	}
 
 	void setHighScore(size_t score) {
