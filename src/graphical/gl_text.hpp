@@ -75,8 +75,8 @@ vector<float> getTextLineStarts(TextData& text, FontData& font) {
 Vector2 getTextRectStart(TextData& text, FontData& font) {
 	Vector2 rectPos =
 		Vector2(
-			text.rectAlign.h != HAlign::LEFT	? text.rect.h : 0,
-			text.rectAlign.v != VAlign::TOP		? text.rect.v : 0
+			(text.rectAlign.h != HAlign::LEFT)	? text.rect.h : 0,
+			(text.rectAlign.v != VAlign::TOP)	? text.rect.v : 0
 		)
 	*	(text.spacing.x + font.spacing.x)
 	;
