@@ -60,10 +60,12 @@ uniform bool	gradientInvert	= false;
 // [ POINT LIGHTING ]
 uniform bool	useLights	= false;
 
-// [ HSL MODIFIERS ]
+// [ HSLBC MODIFIERS ]
 uniform float	hue			= 0;
 uniform float	saturation	= 1;
 uniform float	luminosity	= 1;
+uniform float	brightness	= 0;
+uniform float	contrast	= 1;
 
 // [ DEBUG MODE ]
 uniform uint	debugView	= 0;
@@ -120,6 +122,11 @@ vec4 applyHSL(vec4 color) {
 	return vec4(hsl2rgb(hsl), color.a);
 }
 
+vec4 applyBrightnessAndContrast(vec4 color) {
+	vec3 res = color.rgb + brightness.xxx;
+	return vec4(((res - 0.5f) * max(contrast, 0)) + 0.5f, color.a);
+}
+
 void main(void) {
 	vec4 color;
 	if (textured) {
@@ -143,6 +150,8 @@ void main(void) {
 	color *= albedo;
 
 	color = applyHSL(color);
+
+	color = applyBrightnessAndContrast(color);
 
 	if (useNegative) {
 		vec4 nc = vec4(vec3(1) - color.xyz, color.w);

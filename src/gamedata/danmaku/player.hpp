@@ -162,6 +162,7 @@ struct PlayerEntity2D: AreaCircle2D {
 	Vector2 movement = Vector2(0);
 
 	virtual void onCreate() override {}
+	virtual void onDelete() override {}
 
 	virtual void onEnteringFocus()	{$debug("Focus Enter!");}
 	virtual void onExitingFocus()	{$debug("Focus Exit!");}

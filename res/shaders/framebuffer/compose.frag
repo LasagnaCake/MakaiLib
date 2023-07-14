@@ -100,10 +100,12 @@ uniform uint	noiseType			= 0;
 uniform uint	noiseBlendColorMode	= 1;
 uniform uint	noiseBlendAlphaMode	= 1;
 
-// [ HSL MODIFIERS ]
+// [ HSLBC MODIFIERS ]
 uniform float	hue			= 0;
 uniform float	saturation	= 1;
 uniform float	luminosity	= 1;
+uniform float	brightness	= 0;
+uniform float	contrast	= 1;
 
 // [ DEBUG SETTINGS ]
 uniform uint	debugView	= 0;
@@ -301,6 +303,11 @@ vec4 applyHSL(vec4 color) {
 	return vec4(hsl2rgb(hsl), color.a);
 }
 
+vec4 applyBrightnessAndContrast(vec4 color) {
+	vec3 res = color.rgb + brightness.xxx;
+	return vec4(((res - 0.5f) * max(contrast, 0)) + 0.5f, color.a);
+}
+
 float rand(vec2 xy, uint type, float seed){
     switch (type) {
     	default:
@@ -430,6 +437,8 @@ void main() {
 	if (color.w <= 0) discard;
 
 	color = applyHSL(color);
+	
+	color = applyBrightnessAndContrast(color);
 
 	FragColor = mix(color, polarWarpColor, pfac * polarWarpTintStrength);
 

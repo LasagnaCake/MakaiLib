@@ -228,6 +228,8 @@ struct ObjectMaterial {
 	float			hue			= 0;
 	float			saturation	= 1;
 	float			luminosity	= 1;
+	float			brightness	= 0;
+	float			contrast	= 1;
 	Vector2			uvShift;
 	TextureEffect	texture;
 	WarpEffect		warp;
@@ -247,6 +249,8 @@ struct BufferMaterial {
 	float			hue			= 0;
 	float			saturation	= 1;
 	float			luminosity	= 1;
+	float			brightness	= 0;
+	float			contrast	= 1;
 	Vector2			uvShift;
 	MaskEffect		mask;
 	WarpEffect		warp;
@@ -302,10 +306,12 @@ void setMaterial(Shader& shader, ObjectMaterial& material) {
 	shader["useLights"](material.illuminated);
 	// Albedo
 	shader["albedo"](material.color);
-	// HSL data
+	// HSLBC data
 	shader["hue"](material.hue);
 	shader["saturation"](material.saturation);
 	shader["luminosity"](material.luminosity);
+	shader["brightness"](material.brightness);
+	shader["contrast"](material.contrast);
 	// Instance data
 	shader["instances"](material.instances);
 	// Debug data
@@ -382,10 +388,12 @@ void setMaterial(Shader& shader, BufferMaterial& material) {
 	shader["outlineMatchAlpha"](material.outline.relativeAlpha);
 	// Set debug data
 	shader["debugView"]((unsigned int)material.debug);
-	// Set HSL data
+	// Set HSLBC data
 	shader["hue"](material.hue);
 	shader["saturation"](material.saturation);
 	shader["luminosity"](material.luminosity);
+	shader["brightness"](material.brightness);
+	shader["contrast"](material.contrast);
 	// Set noise data
 	shader["useNoise"](material.noise.enabled);
 	shader["noiseStrength"](material.noise.strength);
