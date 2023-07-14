@@ -83,6 +83,7 @@ Vector2 getTextRectStart(TextData& text, FontData& font) {
 		(text.rectAlign.h == HAlign::CENTER) ? 0.5 : 1.0,
 		(text.rectAlign.v == VAlign::CENTER) ? 0.5 : 1.0
 	);
+	rectPos += Vector2(0.5, -0.5);
 	rectPos *= (text.spacing + font.spacing);
 	return rectPos;
 }
@@ -150,7 +151,7 @@ private:
 		if (!alignTop || vCenter)
 			cursor.y = text.rect.v * (text.spacing.y + font->spacing.y);
 		if (vCenter) cursor.y /= 2.0;
-		cursor.y += rectStart.y;
+		cursor -= rectStart * Vector2(1,-1);
 		size_t curLine = 0;
 		// Loop through each character and...
 		for (char c: text.content) {
