@@ -83,7 +83,15 @@ Vector2 getTextRectStart(TextData& text, FontData& font) {
 		(text.rectAlign.h == HAlign::CENTER) ? 0.5 : 1.0,
 		(text.rectAlign.v == VAlign::CENTER) ? 0.5 : 1.0
 	);
-	rectPos += (text.spacing + font.spacing) / Vector2(2.0, -2.0);
+	Vector2 offset = Vector2(text.spacing + font.spacing);
+	offset *= Vector2(
+		(text.rectAlign.h == HAlign::CENTER) ? 0.5 : 1.0,
+		(text.rectAlign.v == VAlign::CENTER) ? 0.5 : 1.0
+	);
+	rectPos += Vector2(
+		(text.rectAlign.h != HAlign::LEFT)	? +offset.x : 0.0,
+		(text.rectAlign.v != VAlign::TOP)	? -offset.y : 0.0
+	);
 	rectPos *= (text.spacing + font.spacing);
 	return rectPos;
 }
