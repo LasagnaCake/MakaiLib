@@ -19,6 +19,10 @@ uniform bool		textured = false;
 uniform sampler2D	texture2D;
 uniform float		alphaClip = 0.2;
 
+uniform bool		useEmission = false;
+uniform sampler2D	emissionTexture;
+uniform float		emissionAlphaClip = 0.2;
+
 uniform vec4 albedo = vec4(1);
 
 // [ DISTANCE-BASED FOG ]
@@ -79,17 +83,17 @@ vec4 distanceGradient(vec4 start, vec4 end, float near, float far, float strengt
 }
 
 vec4 applyFog(vec4 color) {
-	return distanceGradient(color, vec4(fogColor.xyz, fogColor.w * color.w), fogNear, fogFar, fogStrength);
+	return distanceGradient(color, vec4(fogColor.rgb, fogColor.a * color.a), fogNear, fogFar, fogStrength);
 }
 
 vec4 applyVoid(vec4 color) {
-	return distanceGradient(vec4(voidColor.xyz, fogColor.w * color.w), color, voidNear, voidFar, voidStrength);
+	return distanceGradient(vec4(voidColor.rgb, fogColor.a * color.a), color, voidNear, voidFar, voidStrength);
 }
 
 vec4 applyGradient(vec4 color) {
 	float gradientValue;
 	if (gradientChannel < 0)
-		gradientValue = (color.x + color.y + color.z) / 3.0;
+		gradientValue = (color.r + color.g + color.b) / 3.0;
 	else
 		gradientValue = color[gradientChannel];
 	gradientValue = clamp(gradientValue, 0, 1);
@@ -129,20 +133,22 @@ vec4 applyBrightnessAndContrast(vec4 color) {
 
 void main(void) {
 	vec4 color;
+	vec2 calculatedFragUV = fragUV;
 	if (textured) {
 		if (useWarp) {
 			uint wcx = clamp(warpChannelX, 0u, 3u);
 			uint wcy = clamp(warpChannelY, 0u, 3u);
 			vec4 warpFac = texture(warpTexture, warpUV);
 			vec2 warpCoord = vec2(warpFac[wcx], warpFac[wcy]) * 2 - 1;
-			color = texture(texture2D, fragUV + warpCoord) * fragColor;
+			calculatedFragUV = fragUV + warpCoord;
+			color = texture(texture2D, calculatedFragUV) * fragColor;
 		}
 		else color = texture(texture2D, fragUV) * fragColor;
 	}
 	else color = fragColor;
 
 	if (textured)
-		if (color.w <= (fragColor.w * alphaClip))
+		if (color.a <= (fragColor.a * alphaClip))
 			discard;
 
 	color.xyz *= fragLightColor * fragShadeColor;
@@ -154,7 +160,7 @@ void main(void) {
 	color = applyBrightnessAndContrast(color);
 
 	if (useNegative) {
-		vec4 nc = vec4(vec3(1) - color.xyz, color.w);
+		vec4 nc = vec4(vec3(1) - color.rgb, color.a);
 		color = mix(color, nc, negativeStrength);
 	}
 
@@ -163,6 +169,13 @@ void main(void) {
 	if (useVoid) color = applyVoid(color);
 
 	if (useFog) color = applyFog(color);
+
+	if (useEmission) {
+		vec4	emitColor	= texture(emissionTexture, calculatedFragUV) * fragColor;
+		float	emitFactor	= rgb2hsl(emitColor.rgb).y;
+		if (emitColor.a > fragColor.a * emissionAlphaClip)
+			color = mix(color, emitColor, emitFactor);
+	}
 
 	FragColor = color;
 

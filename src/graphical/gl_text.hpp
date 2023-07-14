@@ -26,10 +26,11 @@ struct FontData {
 };
 
 struct TextData {
-	String		content	= "Hello\nWorld!";
-	TextRect	rect	= {40, 100};
-	AlignRect	align	= {};
-	Vector2		spacing	= Vector2(0);
+	String		content		= "Hello\nWorld!";
+	TextRect	rect		= {40, 100};
+	AlignRect	textAlign	= {};
+	AlignRect	rectAlign	= {HAlign::RIGHT, VAlign::BOTTOM};
+	Vector2		spacing		= Vector2(0);
 };
 
 namespace {
@@ -37,8 +38,10 @@ namespace {
 		return	a.content	== b.content
 			&&	a.rect.h	== b.rect.h
 			&&	a.rect.v	== b.rect.v
-			&&	a.align.h	== b.align.h
-			&&	a.align.v	== b.align.v
+			&&	a.textAlign.h	== b.textAlign.h
+			&&	a.textAlign.v	== b.textAlign.v
+			&&	a.rectAlign.h	== b.rectAlign.h
+			&&	a.rectAlign.v	== b.rectAlign.v
 			&&	a.spacing	== b.spacing;
 	}
 }
@@ -62,11 +65,26 @@ vector<float> getTextLineStarts(TextData& text, FontData& font) {
 		result.push_back(
 			(text.rect.h - lastLineSize)
 		*	(text.spacing.x + font.spacing.x)
-		/	(text.align.h == HAlign::CENTER ? 2.0 : 1.0)
+		/	(text.textAlign.h == HAlign::CENTER ? 2.0 : 1.0)
 		);
 	}
 	// Return result
 	return result;
+}
+
+Vector2 getTextRectStart(TextData& text, FontData& font) {
+	Vector2 rectPos =
+		Vector2(
+			text.rectAlign.h != HAlign::RIGHT	? text.rect.h : 0,
+			text.rectAlign.v != VAlign::BOTTOM	? text.rect.v : 0
+		)
+	*	(text.spacing.x + font.spacing.x)
+	;
+	rectPos /= Vector2(
+		(text.rectAlign.h == HAlign::CENTER) ? 2.0 : 1.0,
+		(text.rectAlign.v == VAlign::CENTER) ? 2.0 : 1.0
+	);
+	return rectPos;
 }
 
 class Label: public Base::DrawableObject {
@@ -112,16 +130,17 @@ private:
 		// The current character's position
 		Vector2		cursor;
 		TextRect	chrRect = {0,0};
+		Vector2		rectStart = getTextRectStart(text, *font);
 		// The current character's top left UV index
 		Vector2 uv;
 		unsigned char index;
 		// Horizontal alignment flags
 		bool
-			alignLeft	= text.align.h == HAlign::LEFT,
-			alignTop	= text.align.v == VAlign::TOP;
+			alignLeft	= text.textAlign.h == HAlign::LEFT,
+			alignTop	= text.textAlign.v == VAlign::TOP;
 		bool
-			hCenter		= text.align.h == HAlign::CENTER,
-			vCenter		= text.align.v == VAlign::CENTER;
+			hCenter		= text.textAlign.h == HAlign::CENTER,
+			vCenter		= text.textAlign.v == VAlign::CENTER;
 		// The lines' starting positions (if applicable)
 		vector<float> lineStart;
 		if (!alignLeft || hCenter) {
@@ -131,6 +150,7 @@ private:
 		if (!alignTop || vCenter)
 			cursor.y = text.rect.v * (text.spacing.y + font->spacing.y);
 		if (vCenter) cursor.y /= 2.0;
+		cursor.y -= rectStart.y;
 		size_t curLine = 0;
 		// Loop through each character and...
 		for (char c: text.content) {
@@ -138,7 +158,7 @@ private:
 			bool newline = c == '\n';
 			// If cursor has reached the rect's horizontal limit or newline, move to new line
 			if((chrRect.h >= text.rect.h) || newline) {
-				cursor.x = (alignLeft && !hCenter) ? 0 : lineStart[++curLine];
+				cursor.x = ((alignLeft && !hCenter) ? 0 : lineStart[++curLine]) - rectStart.x;
 				cursor.y -= (text.spacing.y + font->spacing.y) * (alignTop ? +1 : -1);
 				chrRect.h = 0;
 				chrRect.v++;

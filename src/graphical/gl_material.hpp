@@ -232,6 +232,7 @@ struct ObjectMaterial {
 	float			contrast	= 1;
 	Vector2			uvShift;
 	TextureEffect	texture;
+	TextureEffect	emission;
 	WarpEffect		warp;
 	NegativeEffect	negative;
 	GradientEffect	gradient;
@@ -278,9 +279,17 @@ void setMaterial(Shader& shader, ObjectMaterial& material) {
 	// Texture
 	if (material.texture.image && material.texture.enabled && material.texture.image->exists()) {
 		shader["textured"](true);
+		shader["alphaClip"](material.texture.alphaClip);
 		shader["texture2D"](0);
 		material.texture.image->enable(0);
 	} else shader["textured"](false);
+	// Emission Texture
+	if (material.emission.image && material.emission.enabled && material.emission.image->exists()) {
+		shader["useEmission"](true);
+		shader["emissionAlphaClip"](material.emission.alphaClip);
+		shader["emissionTexture"](1);
+		material.emission.image->enable(1);
+	} else shader["useEmission"](false);
 	// Texture warping
 	if (material.warp.image && material.warp.enabled && material.warp.image->exists()) {
 		shader["useWarp"](true);

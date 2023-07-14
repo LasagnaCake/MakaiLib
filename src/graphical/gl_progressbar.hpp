@@ -43,14 +43,14 @@ class RadialBar: public DrawableObject, public BaseBar {
 public:
 	float	uvAngle		= 0;
 	bool	centered	= false;
-	Vector2 offset;
+	Vector2 offset		= Vector2(0);
 
 	RadialBar(size_t layer = 0, bool manual = false): DrawableObject(layer, manual) {
 		vertices[0].u = vertices[0].v = 0.5;
 	}
 
 private:
-	RawVertex vertices[RADIAL_BAR_RESOLUTION + 3];
+	RawVertex vertices[RADIAL_BAR_RESOLUTION + 3] = {RawVertex{}};
 	void draw() override {
 		update();
 		setDefaultShader();
