@@ -25,6 +25,8 @@ struct FontData {
 	Vector2		spacing		= Vector2(1);
 };
 
+// TODO: Replace AlignRect with Vector2
+
 struct TextData {
 	String		content		= "Hello\nWorld!";
 	TextRect	rect		= {40, 100};
@@ -65,7 +67,7 @@ vector<float> getTextLineStarts(TextData& text, FontData& font) {
 		result.push_back(
 			(text.rect.h - lastLineSize)
 		*	(text.spacing.x + font.spacing.x)
-		/	(text.textAlign.h == HAlign::CENTER ? 2.0 : 1.0)
+		*	(text.textAlign.h == HAlign::CENTER ? 0.5 : 1.0)
 		);
 	}
 	// Return result
