@@ -63,6 +63,12 @@ vector<float> getTextLineStarts(TextData& text, FontData& font) {
 			((float)text.rect.h - (float)lastLineSize)
 		*	(text.spacing.x + font.spacing.x)
 		*	text.textAlign.x
+		+	(
+				(text.spacing.x + font.spacing.x)
+			*	text.textAlign.x
+			*	text.textAlign.x
+			*	text.textAlign.x
+			)
 		);
 	}
 	// Return result
