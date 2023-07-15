@@ -54,7 +54,7 @@ vector<float> getTextLineStarts(TextData& text, FontData& font) {
 	// Calculate starting points
 	for (String& l : lines) {
 		size_t lineSize		= l.size();
-		size_t lastLineSize	= Math::wmax(lineSize, text.rect.h);
+		size_t lastLineSize	= Math::wmax(lineSize, text.rect.h+1);
 		if (lineSize > text.rect.h) {
 			for (size_t i = 0; i < (lineSize - lastLineSize) / text.rect.h; i++)
 				result.push_back(0);
