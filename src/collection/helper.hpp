@@ -200,9 +200,9 @@ namespace Helper {
 		proc = WaitForSingleObject(pInfo.hProcess, INFINITE);
 		DWORD res;
 		GetExitCodeProcess(pInfo.hProcess, &res);
-		return (int)res;
 		CloseHandle(pInfo.hProcess);
 		CloseHandle(pInfo.hThread);
+		return (int)res;
 		#else
 		return system("data\\subsys\\winres.exe");
 		#endif
