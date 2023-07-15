@@ -14,11 +14,6 @@ struct TextRect {
 	size_t h = 0, v = 0;
 };
 
-struct AlignRect {
-	HAlign h = HAlign::LEFT;
-	VAlign v = VAlign::TOP;
-};
-
 struct FontData {
 	Texture2D*	face		= nullptr;
 	Vector2		size		= Vector2(16);
@@ -30,9 +25,9 @@ struct FontData {
 struct TextData {
 	String		content		= "Hello\nWorld!";
 	TextRect	rect		= {40, 100};
-	AlignRect	textAlign	= {};
-	AlignRect	rectAlign	= {};
-	Vector2		spacing		= Vector2(0);
+	Vector2		textAlign	= 0;
+	Vector2		rectAlign	= 0;
+	Vector2		spacing		= 0;
 };
 
 namespace {
@@ -40,10 +35,10 @@ namespace {
 		return	a.content	== b.content
 			&&	a.rect.h	== b.rect.h
 			&&	a.rect.v	== b.rect.v
-			&&	a.textAlign.h	== b.textAlign.h
-			&&	a.textAlign.v	== b.textAlign.v
-			&&	a.rectAlign.h	== b.rectAlign.h
-			&&	a.rectAlign.v	== b.rectAlign.v
+			&&	a.textAlign.x	== b.textAlign.x
+			&&	a.textAlign.y	== b.textAlign.y
+			&&	a.rectAlign.x	== b.rectAlign.x
+			&&	a.rectAlign.y	== b.rectAlign.y
 			&&	a.spacing	== b.spacing;
 	}
 }
@@ -65,9 +60,9 @@ vector<float> getTextLineStarts(TextData& text, FontData& font) {
 				result.push_back(0);
 		}
 		result.push_back(
-			(text.rect.h - lastLineSize)
+			((float)text.rect.h - (float)lastLineSize)
 		*	(text.spacing.x + font.spacing.x)
-		*	(text.textAlign.h == HAlign::CENTER ? 0.5 : 1.0)
+		*	text.textAlign.x
 		);
 	}
 	// Return result
@@ -75,25 +70,8 @@ vector<float> getTextLineStarts(TextData& text, FontData& font) {
 }
 
 Vector2 getTextRectStart(TextData& text, FontData& font) {
-	Vector2 rectPos =
-		Vector2(
-			(text.rectAlign.h != HAlign::LEFT)	? text.rect.h : 0,
-			(text.rectAlign.v != VAlign::TOP)	? text.rect.v : 0
-		)
-	;
-	rectPos *= Vector2(
-		(text.rectAlign.h == HAlign::CENTER) ? 0.5 : 1.0,
-		(text.rectAlign.v == VAlign::CENTER) ? 0.5 : 1.0
-	);
-	Vector2 offset = Vector2(text.spacing + font.spacing);
-	offset *= Vector2(
-		(text.rectAlign.h == HAlign::CENTER) ? 0.5 : 1.0,
-		(text.rectAlign.v == VAlign::CENTER) ? 0.5 : 1.0
-	);
-	rectPos += Vector2(
-		(text.rectAlign.h != HAlign::LEFT)	? +offset.x : 0.0,
-		(text.rectAlign.v != VAlign::TOP)	? -offset.y : 0.0
-	);
+	Vector2 rectPos = Vector2(text.rect.h, text.rect.v) * text.rectAlign;
+	rectPos += (text.spacing + font.spacing) * text.rectAlign * Vector2(1, -1);
 	rectPos *= (text.spacing + font.spacing);
 	return rectPos;
 }
@@ -145,22 +123,11 @@ private:
 		// The current character's top left UV index
 		Vector2 uv;
 		unsigned char index;
-		// Horizontal alignment flags
-		bool
-			alignLeft	= text.textAlign.h == HAlign::LEFT,
-			alignTop	= text.textAlign.v == VAlign::TOP;
-		bool
-			hCenter		= text.textAlign.h == HAlign::CENTER,
-			vCenter		= text.textAlign.v == VAlign::CENTER;
 		// The lines' starting positions (if applicable)
 		vector<float> lineStart;
-		if (!alignLeft || hCenter) {
-			lineStart	= getTextLineStarts(text, *font);
-			cursor.x	= lineStart[0];
-		}
-		if (!alignTop || vCenter)
-			cursor.y = text.rect.v * (text.spacing.y + font->spacing.y);
-		if (vCenter) cursor.y /= 2.0;
+		lineStart	= getTextLineStarts(text, *font);
+		cursor.x	= lineStart[0];
+		cursor.y 	= text.rect.v * (text.spacing.y + font->spacing.y) * text.textAlign.y;
 		cursor -= rectStart * Vector2(1,-1);
 		size_t curLine = 0;
 		// Loop through each character and...
@@ -169,16 +136,17 @@ private:
 			bool newline = c == '\n';
 			// If cursor has reached the rect's horizontal limit or newline, move to new line
 			if((chrRect.h >= text.rect.h) || newline) {
-				cursor.x = ((alignLeft && !hCenter) ? 0 : lineStart[++curLine]) - rectStart.x;
-				cursor.y -= (text.spacing.y + font->spacing.y) * (alignTop ? +1 : -1);
+				// If cursor has reach the rect's vertical limit, break
+				if(chrRect.v >= text.rect.v) break;
+				cursor.x = (lineStart[++curLine]) - rectStart.x;
+				cursor.y -= (text.spacing.y + font->spacing.y) * 1.0;
 				chrRect.h = 0;
 				chrRect.v++;
 				// If newline, move on to next character
 				if (newline) continue;
 			}
 			// If cursor has reach the rect's vertical limit, break
-			if(chrRect.v >= text.rect.v)
-				break;
+			if(chrRect.v >= text.rect.v) break;
 			// Get character index
 			index = Math::max((int)c - 0x20, 0);
 			// Get character's top left UV index in the font texture

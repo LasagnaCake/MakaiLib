@@ -49,7 +49,7 @@ struct GameUI {
 		power.label.text	= TextData{
 			"0.00",
 			TextRect{4,1},
-			AlignRect{HAlign::CENTER, VAlign::CENTER}
+			Vector2(0.5, 0.5)
 		};
 		score.text		=
 		hiScore.text	=
@@ -57,7 +57,7 @@ struct GameUI {
 		graze.text		= TextData{
 			"0",
 			TextRect{10, 1},
-			AlignRect{HAlign::RIGHT, VAlign::CENTER}
+			Vec2(1.0, 0.5)
 		};
 		scoreTitle.text		=
 		hiScoreTitle.text	=
@@ -65,7 +65,7 @@ struct GameUI {
 		pointTitle.text		= TextData{
 			"0",
 			TextRect{10, 1},
-			AlignRect{HAlign::LEFT, VAlign::CENTER}
+			Vector2(0, 0.5)
 		};
 		pointTitle.text.content		= "Point";
 		grazeTitle.text.content		= "Graze";
