@@ -288,7 +288,7 @@ namespace Tween{
 		/// Empty Constructor.
 		Tween(bool manual = false) {
 			if (!manual)
-				tweenList.push_back(&yield);
+				tweenList.push_back(&_yield);
 			this->manual = manual;
 		}
 
@@ -296,7 +296,7 @@ namespace Tween{
 		Tween(T from, T to, unsigned long step, EaseFunc tweenStep, bool manual = false) {
 			setInterpolation(from, to, step, tweenStep);
 			if (!manual)
-				tweenList.push_back(&yield);
+				tweenList.push_back(&_yield);
 			this->manual = manual;
 		}
 
@@ -304,33 +304,58 @@ namespace Tween{
 		Tween(T from, T to, unsigned long step, EaseFunc tweenStep, T* targetVar, bool manual = false) {
 			setInterpolation(from, to, step, tweenStep, targetVar);
 			if (!manual)
-				tweenList.push_back(&yield);
+				tweenList.push_back(&_yield);
 			this->manual = manual;
 		}
 
 		/// Destructor.
 		~Tween() {
 			// Loop through tween calls and delete if matches
-			if (!tweenList.empty()) std::erase_if(tweenList, [&](auto& e){return e == &yield;});
+			if (!tweenList.empty()) std::erase_if(tweenList, [&](auto& e){return e == &_yield;});
 			value = &defaultVar;
 		}
 
 		void setManual() {
 			if (manual) return;
 			// Loop through tween calls and delete if matches
-			if (!tweenList.empty()) std::erase_if(tweenList, [&](auto& e){return e == &yield;});
+			if (!tweenList.empty()) std::erase_if(tweenList, [&](auto& e){return e == &_yield;});
 			manual = true;
 		}
 
 		void setAutomatic() {
 			if (!manual) return;
-			tweenList.push_back(&yield);
+			tweenList.push_back(&_yield);
 		}
 
 		/// Calculates (and if targeted, applies) a step.
-		const Signal<float> yield = [&](float delta = 1) {
-			this->_yield(delta);
-		};
+		void yield(float delta = 1) {
+			// If value pointer is null, point to default var
+			if (!value) value = &defaultVar;
+			// If paused, return
+			if (paused) return;
+			// If not finished...
+			if (!isFinished)
+			{
+				// Check if finished, then increment step
+				isFinished = step >= stop;
+				step += delta;
+				// If begin != end, calculate step
+				if (from != to) {
+					factor = tweenStep(step, 0.0f, 1.0f, stop);
+					*value = Math::lerp(from, to, T(factor));
+				}
+				// Else, set value to end
+				else *value = to;
+				// Clamp step to prevent overflow
+				step = (step > stop ? stop : step);
+				// If done, fire signal and clear it
+				if (isFinished) {
+					onCompleted();
+				}
+			}
+			// // Else, clamp value to between required values
+			// else *value = (*value > to ? to : (*value < from ? from : *value))
+		}
 
 		/// Sets the interpolation.
 		Tween<T>& setInterpolation(T from, T to, unsigned long step, EaseFunc tweenStep) {
@@ -404,7 +429,7 @@ namespace Tween{
 		Tween<T>& setStep(unsigned long step) {
 			step--;
 			this->step = step > stop ? stop : step;
-			yield(1);
+			yield();
 			return *this;
 		}
 
@@ -453,38 +478,14 @@ namespace Tween{
 		}
 
 	private:
+		/// Internal signal used for automatic processing.
+		const Signal<float> _yield = [&](float delta = 1) {
+			this->yield(delta);
+		};
+
 		bool manual = false;
 
 		float factor = 1.0f;
-
-		void _yield(float delta = 1.0f) {
-			// If value pointer is null, point to default var
-			if (!value) value = &defaultVar;
-			// If paused, return
-			if (paused) return;
-			// If not finished...
-			if (!isFinished)
-			{
-				// Check if finished, then increment step
-				isFinished = step >= stop;
-				step += delta;
-				// If begin != end, calculate step
-				if (from != to) {
-					factor = tweenStep(step, 0.0f, 1.0f, stop);
-					*value = Math::lerp(from, to, T(factor));
-				}
-				// Else, set value to end
-				else *value = to;
-				// Clamp step to prevent overflow
-				step = (step > stop ? stop : step);
-				// If done, fire signal and clear it
-				if (isFinished) {
-					onCompleted();
-				}
-			}
-			// // Else, clamp value to between required values
-			// else *value = (*value > to ? to : (*value < from ? from : *value))
-		}
 
 		/// Whether the tween is finished.
 		bool isFinished;

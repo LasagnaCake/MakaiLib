@@ -106,11 +106,19 @@ struct PlayerEntity2D: AreaCircle2D {
 		setAsMainPlayer();
 		// Set unshaded
 		mesh.material.shaded = false;
+		// Set timers & tweens manual
+		invincibility.setManual();
+		animator.setManual();
+		deathbomb.setManual();
+		bombCooldown.setManual();
+		shotCooldown.setManual();
+		mainShot.setManual();
+		optionShot.setManual();
+		moveTween.setManual();
 	})
 
 	virtual ~PlayerEntity2D() {
 		$debug("Deleting player...");
-		captureAndPauseAllTimers();
 	}
 
 	KeyBinds actionKeys;
@@ -252,6 +260,15 @@ struct PlayerEntity2D: AreaCircle2D {
 	}
 
 	virtual void onFrame(float delta) {
+		// Process timers & tweens
+		invincibility.yield();
+		animator.yield();
+		deathbomb.yield();
+		bombCooldown.yield();
+		shotCooldown.yield();
+		mainShot.yield();
+		optionShot.yield();
+		moveTween.yield();
 		// Updat inputs
 		input.update();
 		// Get focus state
@@ -423,51 +440,7 @@ struct PlayerEntity2D: AreaCircle2D {
 		return moveTween;
 	}
 
-	void captureAndPauseAllTimers() {
-		if (!snapshot) {
-			prevTimerState[0] = invincibility.paused;
-			prevTimerState[1] = animator.paused;
-			prevTimerState[2] = deathbomb.paused;
-			prevTimerState[3] = bombCooldown.paused;
-			prevTimerState[4] = shotCooldown.paused;
-			prevTimerState[5] = mainShot.paused;
-			prevTimerState[6] = optionShot.paused;
-			prevTimerState[7] = moveTween.paused;
-			snapshot = true;
-		}
-		invincibility.paused	= true;
-		animator.paused			= true;
-		deathbomb.paused		= true;
-		bombCooldown.paused		= true;
-		shotCooldown.paused		= true;
-		mainShot.paused			= true;
-		optionShot.paused		= true;
-		moveTween.paused		= true;
-	}
-
-	void rollbackAllTimers() {
-		if (!snapshot) return;
-		snapshot = false;
-		invincibility.paused	= prevTimerState[0];
-		animator.paused			= prevTimerState[1];
-		deathbomb.paused		= prevTimerState[2];
-		bombCooldown.paused		= prevTimerState[3];
-		shotCooldown.paused		= prevTimerState[4];
-		mainShot.paused			= prevTimerState[5];
-		optionShot.paused		= prevTimerState[6];
-		moveTween.paused		= prevTimerState[7];
-	}
 private:
-	bool snapshot = false;
-	bool prevTimerState[8] = {
-		false,
-		false,
-		false,
-		false,
-		false,
-		false,
-		false
-	};
 	// Last Button State
 	struct {
 		bool focus = false;

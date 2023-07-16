@@ -78,7 +78,7 @@ namespace Event{
 		/// Empty constructor.
 		Timer(bool manual = false) {
 			if (!manual)
-				timerList.push_back(&yield);
+				timerList.push_back(&_yield);
 			this->manual = manual;
 		}
 
@@ -88,7 +88,7 @@ namespace Event{
 			this->delay		= delay;
 			this->repeat	= repeat;
 			if (!manual)
-				timerList.push_back(&yield);
+				timerList.push_back(&_yield);
 			this->manual = manual;
 		}
 
@@ -97,32 +97,32 @@ namespace Event{
 			this->delay		= delay;
 			this->repeat	= repeat;
 			if (!manual)
-				timerList.push_back(&yield);
+				timerList.push_back(&_yield);
 			this->manual = manual;
 		}
 
 		/// Destructor.
 		~Timer() {
 			// Loop through timer calls and delete if matches
-			if (!timerList.empty()) std::erase_if(timerList, [&](auto& e){return e == &yield;});
+			if (!timerList.empty()) std::erase_if(timerList, [&](auto& e){return e == &_yield;});
 		}
 
 		void setManual() {
 			if (manual) return;
 			// Loop through timer calls and delete if matches
-			if (!timerList.empty()) std::erase_if(timerList, [&](auto& e){return e == &yield;});
+			if (!timerList.empty()) std::erase_if(timerList, [&](auto& e){return e == &_yield;});
 			manual = true;
 		}
 
 		void setAutomatic() {
 			if (!manual) return;
-			timerList.push_back(&yield);
+			timerList.push_back(&_yield);
 		}
 
 		/**
 		* Yields a cycle.
 		*/
-		const $$FUNC yield = [&](float delta = 1) {
+		void yield(float delta = 1) {
 			// If not paused or not finished...
 			if (!isFinished && !paused) {
 				// If counter has reached target...
@@ -139,7 +139,7 @@ namespace Event{
 				// Increment counter
 				counter += delta;
 			}
-		};
+		}
 
 		/// Resets the Timer's counter to 0.
 		Timer& reset() {
@@ -191,6 +191,11 @@ namespace Event{
 		}
 
 	private:
+		/// Internal signal used for automatic processing.
+		const $$FUNC _yield = [&](float delta = 1) {
+			this->yield(delta);
+		};
+
 		bool manual = false;
 
 		/// Whether the timer is finished.
