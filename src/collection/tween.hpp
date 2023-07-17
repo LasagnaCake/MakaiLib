@@ -326,6 +326,9 @@ namespace Tween{
 			other.setManual();
 		}
 
+		/// Copy constructor
+		Tween(Tween&& other): Tween(other) {}
+
 		/// Destructor.
 		~Tween() {
 			// Loop through tween calls and delete if matches

@@ -115,6 +115,8 @@ namespace Event{
 			other.setManual();
 		}
 
+		Timer(Timer&& other): Timer(other) {}
+
 		/// Destructor.
 		~Timer() {
 			// Loop through timer calls and delete if matches
