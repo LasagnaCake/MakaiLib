@@ -46,6 +46,7 @@ namespace Dialog {
 			box.shape.setRenderLayer($layer(DIALOG) - 1);
 			box.title.setRenderLayer($layer(DIALOG));
 			box.message.setRenderLayer($layer(DIALOG));
+			autotimer.setManual();
 		})
 
 		MessageList	messages;
@@ -76,6 +77,7 @@ namespace Dialog {
 		}
 
 		void onFrame(float delta) override {
+			autotimer.yield();
 			if (isFinished) return;
 			if (!autoplay) {
 				if (
@@ -135,8 +137,8 @@ namespace Dialog {
 			box.title.text.content		= title;
 			box.message.text.content	= text;
 		}
-		$evt Timer autotimer;
-		std::unordered_map<String, $twn Tween<Vector3>> animator;
+		Event::Timer autotimer;
+		std::unordered_map<String, Tween::Tween<Vector3>> animator;
 		size_t current	= 0;
 		bool autoplay	= false;
 		bool isFinished	= false;

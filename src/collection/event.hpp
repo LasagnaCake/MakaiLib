@@ -101,6 +101,20 @@ namespace Event{
 			this->manual = manual;
 		}
 
+		Timer(Timer& other)
+		: Timer(
+			other.onSignal,
+			other.delay,
+			other.repeat,
+			other.manual
+		) {
+			paused = other.paused;
+			loopCount = other.loopCount;
+			isFinished = other.isFinished;
+			counter = other.counter;
+			other.setManual();
+		}
+
 		/// Destructor.
 		~Timer() {
 			// Loop through timer calls and delete if matches

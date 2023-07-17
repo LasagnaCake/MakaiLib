@@ -308,6 +308,24 @@ namespace Tween{
 			this->manual = manual;
 		}
 
+		/// Copy constructor
+		Tween(Tween& other)
+		: Tween(
+			other.from,
+			other.to,
+			other.step,
+			other.tweenStep,
+			other.manual
+		) {
+			if (other.value != &other.defaultVar)
+				value = other.value;
+			paused = other.paused;
+			onCompleted = other.onCompleted;
+			isFinished = other.isFinished;
+			factor = other.factor;
+			other.setManual();
+		}
+
 		/// Destructor.
 		~Tween() {
 			// Loop through tween calls and delete if matches
