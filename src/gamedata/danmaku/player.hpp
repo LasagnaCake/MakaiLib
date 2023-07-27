@@ -62,6 +62,9 @@ struct PlayerEntity2D: AreaCircle2D {
 		// Create hitbox sprite
 		hitboxSprite = hitboxMesh.createReference<Reference::AnimatedPlane>();
 		hitboxMesh.setRenderLayer($layer(PLAYER_HITBOX));
+		// Create grazebox sprite
+		grazeboxSprite = grazeboxMesh.createReference<Reference::AnimatedPlane>();
+		grazeboxMesh.setRenderLayer($layer(PLAYER_HITBOX));
 		// Add to game
 		$debug("< FINGERS IN HIS ASS SUNDAY >");
 		addToGame(this, "DanmakuGame");
@@ -129,6 +132,9 @@ struct PlayerEntity2D: AreaCircle2D {
 	Renderable hitboxMesh;
 	$ref AnimatedPlane* hitboxSprite;
 
+	Renderable grazeboxMesh;
+	$ref AnimatedPlane* grazeboxSprite;
+
 	$mki InputManager	input;
 
 	struct {
@@ -144,8 +150,8 @@ struct PlayerEntity2D: AreaCircle2D {
 		float unfocused	= 16;
 	} speed;
 
-	bool flipX	= true;
-	bool flipY	= true;
+	bool flipX	= false;
+	bool flipY	= false;
 
 	PlayerData data;
 
@@ -288,8 +294,8 @@ struct PlayerEntity2D: AreaCircle2D {
 		// Normalize direction
 		direction = direction.normalized();
 		// Flip if necessary
-		if (flipX) direction.x *= -1;
-		if (flipY) direction.y *= -1;
+		if (!flipX) direction.x *= -1;
+		if (!flipY) direction.y *= -1;
 		// Save direction
 		movement = direction;
 		// Move acoording to focus state
@@ -303,7 +309,8 @@ struct PlayerEntity2D: AreaCircle2D {
 		collision.shape.position = globalPosition();
 		// Update sprite
 		updateSprite();
-		hitboxMesh.trans.position = Vec3(position, zIndex);
+		grazeboxMesh.trans.position	=
+		hitboxMesh.trans.position	= Vec3(position, zIndex);
 		// Do focus entering & exiting action, acoordingly
 		if(action("focus", true))
 			onEnteringFocus();
@@ -311,13 +318,16 @@ struct PlayerEntity2D: AreaCircle2D {
 			onExitingFocus();
 		}
 		lbs.focus = isFocused;
-		// Set hitbox visibility
-		hitboxMesh.trans.scale = Math::lerp(
-			hitboxMesh.trans.scale,
+		// Set grazebox visibility
+		grazeboxMesh.trans.scale = Math::lerp(
+			grazeboxMesh.trans.scale,
 			Vec3(isFocused * grazebox.radius),
 			Vec3(0.25f)
 		);
-		hitboxSprite->local.rotation.z += 0.025;
+		grazeboxSprite->local.rotation.z += 0.025;
+		// Set hitbox visibility
+		hitboxMesh.trans.scale = Math::max(0.4f, float(collision.shape.radius * SQRT2 * 2.0));
+		hitboxMesh.active = isFocused;
 		// Do graze action
 		CircleBounds2D grazeShape = getGrazeBounds();
 		if(enemyBulletManager) {
@@ -450,7 +460,7 @@ private:
 		Transform2D self = globalTransform();
 		sprite->local.position		= Vector3(self.position, zIndex);
 		// For some reason the sprite is at a fucking angle sometimes
-		//sprite->local.rotation.z	= self.rotation;
+		sprite->local.rotation.z	= self.rotation;
 		sprite->local.scale			= Vector3(self.scale, 0);
 	}
 
