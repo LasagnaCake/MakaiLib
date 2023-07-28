@@ -427,14 +427,16 @@ public:
 					auto fx = loadImageEffect(dmat["texture"], sourcepath, texture);
 					material.texture.enabled	= fx.enabled;
 					material.texture.image		= fx.image;
-					material.texture.alphaClip	= dmat["texture"]["alphaClip"].get<float>();
+					if (dmat["texture"]["alphaClip"].is_boolean())
+						material.texture.alphaClip	= dmat["texture"]["alphaClip"].get<float>();
 				}
 				// Set emission texture
 				if (dmat["emission"].is_object()) {
 					auto fx = loadImageEffect(dmat["emission"], sourcepath, emission);
 					material.emission.enabled	= fx.enabled;
 					material.emission.image		= fx.image;
-					material.emission.alphaClip	= dmat["emission"]["alphaClip"].get<float>();
+					if (dmat["emission"]["alphaClip"].is_boolean())
+						material.emission.alphaClip	= dmat["emission"]["alphaClip"].get<float>();
 				}
 				// Set warp texture
 				if (dmat["warp"].is_object()) {
@@ -447,7 +449,7 @@ public:
 							mwtrans["position"][0].get<float>(),
 							mwtrans["position"][1].get<float>()
 						);
-						material.warp.trans.rotation = mwtrans["rotation"];
+						material.warp.trans.rotation = mwtrans["rotation"].get<float>();
 						material.warp.trans.scale = Vector2(
 							mwtrans["scale"][0].get<float>(),
 							mwtrans["scale"][1].get<float>()
@@ -573,11 +575,11 @@ public:
 		$debug(folder + "/" + name + ".json");
 		FileSystem::makeDirectory(FileSystem::concatenatePath(folder, texturesFolder));
 		// Get object definition
-		nlohmann::json file = getObjectDefinition();
+		nlohmann::json file = getObjectDefinition("base64", integratedBinary);
 		// If binary is in a different location, save there
 		if (!integratedBinary) {
 			FileLoader::saveBinaryFile(binpath, vertices, vertexCount);
-			file["mesh"] = {"data", {"path", name + ".mesh"}};
+			file["mesh"]["data"] = {{"path", name + ".mesh"}};
 		}
 		Material::ObjectMaterial& mat = material;
 		auto& mdef = file["material"];
@@ -621,10 +623,8 @@ public:
 			ubyte* vertEnd = (ubyte*)(&vertices[vertexCount-1]);
 			vector<ubyte> data((ubyte*)vertices, (ubyte*)(vertEnd + RAW_VERTEX_BYTE_SIZE));
 			// Save mesh data
-			def["mesh"] = {
-				{"data",		encodeData(data, encoding)	},
-				{"encoding",	encoding					},
-			};
+			def["mesh"]["data"]		= encodeData(data, encoding);
+			def["mesh"]["encoding"]	= encoding;
 			// Clear data buffer
 			data.clear();
 		}
@@ -702,19 +702,31 @@ private:
 	}
 
 	Material::ImageEffect loadImageEffect(nlohmann::json& effect, string const& sourcepath, Texture2D* texture = nullptr) {
-		Material::ImageEffect fx;
-		fx.enabled = effect["enabled"].get<bool>();
-		if (effect["image"]["path"].is_string() && !effect["image"]["path"].get<string>().empty()) {
-			if (!texture)
-				texture = new Texture2D();
-			fx.image = texture;
-			texture->create(FileSystem::concatenatePath(sourcepath, effect["path"].get<string>()));
-			texture->setTextureFilterMode(
-				effect["image"]["minFilter"].get<unsigned int>(),
-				effect["image"]["magFilter"].get<unsigned int>()
+		try {
+			Material::ImageEffect fx;
+			fx.enabled = effect["enabled"].get<bool>();
+			auto& img = effect["image"];
+			if (img.is_object() && img["path"].is_string() && !img["path"].get<string>().empty()) {
+				if (!texture)
+					texture = new Texture2D();
+				fx.image = texture;
+				texture->create(FileSystem::concatenatePath(sourcepath, img["path"].get<string>()));
+				texture->setTextureFilterMode(
+					img["minFilter"].get<unsigned int>(),
+					img["magFilter"].get<unsigned int>()
+				);
+			} else fx.enabled = false;
+			return fx;
+		} catch (nlohmann::json::exception e) {
+			throw Error::FailedAction(
+				"Failed at getting image effect!",
+				__FILE__,
+				toString(__LINE__),
+				"extendFromDefinition",
+				e.what(),
+				"Please check to see if values are correct!"
 			);
-		} else fx.enabled = false;
-		return fx;
+		}
 	}
 
 	RawVertex* vertices = nullptr;
