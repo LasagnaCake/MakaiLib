@@ -567,8 +567,8 @@ namespace Makai {
 		if (SDL_GetDisplayBounds(display, &bounds))
 			throw Error::FailedAction(
 				"Couldn't get display bounds!\n\n",
-				"gl_program.hpp",
-				"555",
+				__FILE__,
+				toString(__LINE__),
 				"Makai::Program::getDeviceSize",
 				String(SDL_GetError())
 			);

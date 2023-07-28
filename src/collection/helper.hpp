@@ -1,6 +1,7 @@
 #ifndef HELPING_HAND_H
 #define HELPING_HAND_H
 
+#include <string>
 #include <vector>
 #include <filesystem>
 #ifdef _USE_CPP20_FORMAT_
@@ -140,6 +141,11 @@ using Helper::FuzzyDictionary;
 using Helper::Pair;
 using Helper::Entry;
 
+template<typename T>
+constexpr inline String toString(const T& val) {
+	return std::to_string(val);
+}
+
 namespace FileSystem {
 	namespace {
 		namespace fs = std::filesystem;
@@ -168,6 +174,28 @@ namespace FileSystem {
 	void makeDirectory(StringArguments const& dirs) {
 		for (auto& d: dirs)
 			makeDirectory(d);
+	}
+
+	String concatenatePath(String const& root, String const& path) {
+		String res = root;
+		if (!path.empty()) res += "/" + path;
+		return res;
+	}
+
+	String concatenatePath(String const& root, StringList const& paths) {
+		String res = root;
+		for(auto& path: paths) {
+			if (!path.empty()) res += "/" + path;
+		}
+		return res;
+	}
+
+	String concatenatePath(String const& root, StringArguments const& paths) {
+		String res = root;
+		for(auto& path: paths) {
+			if (!path.empty()) res += "/" + path;
+		}
+		return res;
 	}
 }
 

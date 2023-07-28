@@ -166,8 +166,8 @@ namespace SmartPointer {
 			if (!exists())
 				throw Error::NullPointer(
 					"Pointer reference does not exist!",
-					"referential.hpp",
-					"165",
+					__FILE__,
+					"",
 					"SmartPointer",
 					"Pointer might be null or nonexistent"
 				);
@@ -178,8 +178,8 @@ namespace SmartPointer {
 			if (!exists())
 				throw Error::NullPointer(
 					"Pointer reference does not exist!",
-					"referential.hpp",
-					"165",
+					__FILE__,
+					"",
 					"SmartPointer",
 					"Pointer might be null or nonexistent"
 				);
@@ -190,8 +190,8 @@ namespace SmartPointer {
 			if (!exists())
 				throw Error::NullPointer(
 					"Pointer reference does not exist!",
-					"referential.hpp",
-					"165",
+					__FILE__,
+					"",
 					"SmartPointer",
 					"Pointer might be null or nonexistent"
 				);
@@ -202,8 +202,8 @@ namespace SmartPointer {
 			if (!exists())
 				throw Error::NullPointer(
 					"Pointer reference does not exist!",
-					"referential.hpp",
-					"165",
+					__FILE__,
+					"",
 					"SmartPointer",
 					"Pointer might be null or nonexistent"
 				);

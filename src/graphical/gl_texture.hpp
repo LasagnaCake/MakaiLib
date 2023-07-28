@@ -4,7 +4,14 @@ void setTexture2D(unsigned char index, GLuint texture) {
 }
 
 struct ImageData2D {
-	unsigned int	width, height, type, format;
+	unsigned int
+		width,
+		height,
+		type,
+		format,
+		minFilter,
+		magFilter
+	;
 	vector<ubyte>	data;
 };
 
@@ -149,6 +156,8 @@ public:
 		this->height	= height;
 		this->format	= format;
 		this->type		= type;
+		this->minFilter = minFilter;
+		this->magFilter = magFilter;
 		if (created) return;
 		created = true;
 		id = createTexture2D(
@@ -256,6 +265,16 @@ public:
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minFilter);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magFilter);
 		glBindTexture(GL_TEXTURE_2D, 0);
+		this->minFilter = minFilter;
+		this->magFilter = magFilter;
+	}
+
+	inline unsigned int getTextureMinFilter() {
+		return minFilter;
+	}
+
+	inline unsigned int getTextureMagFilter() {
+		return magFilter;
 	}
 
 	void operator()(unsigned char texture = 0) {
@@ -293,12 +312,42 @@ public:
 			default:
 			case GL_RGBA:				size *= 4;	break;
 		}
-		ImageData2D imgdat = {width, height, type, format};
+		ImageData2D imgdat = {width, height, type, format, minFilter, magFilter};
 		imgdat.data.reserve(width * height * size);
 		glBindTexture(GL_TEXTURE_2D, id);
 		glGetTexImage(GL_TEXTURE_2D, 0, format, type, imgdat.data.data());
 		glBindTexture(GL_TEXTURE_2D, 0);
 		return imgdat;
+	}
+
+	void saveToFile(string const& path) {
+		if (!created) return;
+		ImageData2D imgdat = getData();
+		uchar channels = 0;
+		switch (imgdat.format) {
+			case GL_DEPTH_COMPONENT:
+			case GL_RED:				channels = 1;	break;
+			case GL_DEPTH_STENCIL:
+			case GL_RG:					channels = 2;	break;
+			case GL_RGB:				channels = 3;	break;
+			default:
+			case GL_RGBA:				channels = 4;	break;
+		}
+		int result = stbi_write_tga(
+			path.c_str(),
+			imgdat.width,
+			imgdat.height,
+			channels,
+			imgdat.data.data()
+		);
+		if (!result) {
+			throw Error::FailedAction(
+				"Could not save image file!",
+				__FILE__,
+				toString(__LINE__),
+				"Texture2D::saveToFile"
+			);
+		}
 	}
 
 	bool exists() {
@@ -308,7 +357,7 @@ public:
 private:
 	bool created = false;
 	unsigned int id = 0;
-	unsigned int width, height, format, type;
+	unsigned int width, height, format, type, minFilter, magFilter;
 };
 
 class MultisampleTexture2D {

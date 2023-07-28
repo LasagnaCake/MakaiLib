@@ -172,9 +172,9 @@ void main(void) {
 
 	if (useEmission) {
 		vec4	emitColor	= texture(emissionTexture, calculatedFragUV) * fragColor;
-		float	emitFactor	= rgb2hsl(emitColor.rgb).y;
+		float	emitFactor	= rgb2hsl(emitColor.rgb).y * emitColor.a;
 		if (emitColor.a > fragColor.a * emissionAlphaClip)
-			color = mix(color, emitColor, emitFactor);
+			color.rgb = mix(color.rgb, emitColor.rgb, emitFactor);
 	}
 
 	FragColor = color;

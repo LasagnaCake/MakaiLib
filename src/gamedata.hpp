@@ -75,8 +75,8 @@ namespace GameData {
 		if (!EntityClass::$_ROOT)
 			throw Error::NonexistentValue(
 				"Root wasn't created!",
-				"gamedata.hpp",
-				"66",
+				__FILE__,
+				toString(__LINE__),
 				"GameData::addToGame()"
 			);
 		Entity* game = $ecl $_ROOT->getChild(gameType);

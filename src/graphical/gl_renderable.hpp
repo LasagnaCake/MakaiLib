@@ -12,8 +12,8 @@ vector<ubyte> decodeData(string const& data, string const& encoding) {
 	ENCDEC_CASE	("base64",	cppcodec::base64_rfc4648::decode);
 	throw Error::InvalidValue(
 		"Invalid encoding: " + encoding,
-		"gl_renderable",
-		"unspecified",
+		__FILE__,
+		toString(__LINE__),
 		"decodeData"
 	);
 }
@@ -23,8 +23,8 @@ string encodeData(vector<ubyte> const& data, string const& encoding) {
 	ENCDEC_CASE	("base64",	cppcodec::base64_rfc4648::encode);
 	throw Error::InvalidValue(
 		"Invalid encoding: " + encoding,
-		"gl_renderable",
-		"unspecified",
+		__FILE__,
+		toString(__LINE__),
 		"decodeData"
 	);
 }
@@ -264,7 +264,12 @@ public:
 		$debug(data.size() / RAW_VERTEX_BYTE_SIZE);
 	}
 
-	void extendFromDefinition(nlohmann::json def) {
+	void extendFromDefinition(
+		nlohmann::json def,
+		Texture2D* texture	= nullptr,
+		Texture2D* emission	= nullptr,
+		Texture2D* warp		= nullptr
+	) {
 		// Component data
 		string componentData;
 		// Vertex data
@@ -283,8 +288,8 @@ public:
 		} catch (nlohmann::json::exception e) {
 			throw Error::FailedAction(
 				"Failed at getting mesh values!",
-				"gl_renderable",
-				"unspecified",
+				__FILE__,
+				toString(__LINE__),
 				"extendFromDefinition",
 				e.what(),
 				"Please check to see if values are correct!"
@@ -297,8 +302,8 @@ public:
 			if (componentData.empty())	error += ("Missing mesh's component data!\n");
 			if (!error.empty()) throw Error::InvalidValue(
 				"Missing mesh data!\n\n" + error,
-				"gl_renderable",
-				"unspecified",
+				__FILE__,
+				toString(__LINE__),
 				"extendFromDefinition"
 			);
 		}
@@ -317,8 +322,8 @@ public:
 			if (!indexes.empty()) {
 				throw Error::InvalidValue(
 					"Malformed component data!\n\nIndex(es): [ " + indexes + "]",
-					"gl_renderable",
-					"unspecified",
+					__FILE__,
+					toString(__LINE__),
 					"extendFromDefinition"
 				);
 			}
@@ -331,8 +336,8 @@ public:
 			if (vds % 3 != 0)
 				throw Error::InvalidValue(
 					"Improper/incomplete vertex data!",
-					"gl_renderable",
-					"unspecified",
+					__FILE__,
+					toString(__LINE__),
 					"extendFromDefinition",
 					(
 						"Vertex data size is "
@@ -380,8 +385,8 @@ public:
 			} catch (nlohmann::json::exception e) {
 				throw Error::FailedAction(
 					"Failed at getting transformation values!",
-					"gl_renderable",
-					"unspecified",
+					__FILE__,
+					toString(__LINE__),
 					"extendFromDefinition",
 					e.what(),
 					"Please check to see if values are correct!"
@@ -390,12 +395,91 @@ public:
 		}
 		#undef SET_PARAM
 		// Set material data
-		// TODO: Add support for materials
+		if (def["material"].is_object()) {
+			try {
+				auto& dmat = def["material"];
+				// Set color
+				if(dmat["color"].is_array()) {
+					material.color.x = dmat["color"][0].get<float>();
+					material.color.y = dmat["color"][1].get<float>();
+					material.color.z = dmat["color"][2].get<float>();
+					material.color.w = dmat["color"][3].get<float>();
+				}
+				// Set color params
+				#define SET_FLOAT_PARAM(PARAM) if(dmat[#PARAM].is_number()) material.PARAM = dmat[#PARAM].get<float>()
+				SET_FLOAT_PARAM(hue);
+				SET_FLOAT_PARAM(saturation);
+				SET_FLOAT_PARAM(luminosity);
+				SET_FLOAT_PARAM(brightness);
+				SET_FLOAT_PARAM(contrast);
+				#undef SET_FLOAT_PARAM
+				#define SET_BOOL_PARAM(PARAM) if(dmat[#PARAM].is_boolean()) material.PARAM = dmat[#PARAM].get<bool>()
+				SET_BOOL_PARAM(shaded);
+				SET_BOOL_PARAM(illuminated);
+				#undef SET_BOOL_PARAM
+				// Set UV shift
+				if(dmat["uvShift"].is_array()) {
+					material.uvShift.x = dmat["uvShift"][0].get<float>();
+					material.uvShift.y = dmat["uvShift"][1].get<float>();
+				}
+				// Set texture
+				if (dmat["texture"].is_object()) {
+					material.texture	= loadImageEffect(dmat["texture"], material.texture);
+					if(dmat["texture"]["alphaClip"].is_number())
+						material.texture.alphaClip = dmat["texture"]["alphaClip"].get<float>();
+				}
+				// Set emission texture
+				if (dmat["texture"].is_object()) {
+					material.emission	= loadImageEffect(dmat["emission"], material.emission);
+					if(dmat["emission"]["alphaClip"].is_number())
+						material.emission.alphaClip = dmat["emission"]["alphaClip"].get<float>();
+				}
+				// Set warp texture
+				if (dmat["warp"].is_object()) {
+					material.warp		= loadImageEffect(dmat["warp"], material.warp);
+					{
+						auto& mwtrans = dmat["warp"]["trans"];
+						#define SET_PARAM(PARAM)\
+						if (mwtrans[#PARAM].is_array())\
+							material.warp.trans.PARAM = Vector2(\
+								mwtrans[#PARAM][0].get<float>(),\
+								mwtrans[#PARAM][1].get<float>()\
+							)
+						SET_PARAM(position);
+						if (mwtrans["rotation"].is_number())
+							material.warp.trans.rotation = mwtrans["rotation"];
+						SET_PARAM(scale);
+						#undef SET_PARAM
+					}
+					if (dmat["warp"]["channelX"].is_number())
+						material.warp.channelX = dmat["warp"]["channelX"];
+					if (dmat["warp"]["channelY"].is_number())
+						material.warp.channelY = dmat["warp"]["channelY"];
+				}
+				// Set negative
+				if (dmat["negative"]["enabled"].is_boolean())
+					material.negative.enabled = dmat["negative"]["enabled"];
+			} catch (nlohmann::json::exception e) {
+				throw Error::FailedAction(
+					"Failed at getting material values!",
+					__FILE__,
+					toString(__LINE__),
+					"extendFromDefinition",
+					e.what(),
+					"Please check to see if values are correct!"
+				);
+			}
+		}
 		// Return new renderable object
 	}
 
-	inline void extendFromDefinitionFile(string const& path) {
-		extendFromDefinition(FileLoader::loadJSON(path));
+	inline void extendFromDefinitionFile(
+		string const& path,
+		Texture2D* texture	= nullptr,
+		Texture2D* emission	= nullptr,
+		Texture2D* warp		= nullptr
+	) {
+		extendFromDefinition(FileLoader::loadJSON(path), texture, emission, warp);
 	}
 
 	void bake() {
@@ -435,18 +519,50 @@ public:
 		FileLoader::saveBinaryFile(path, vertices, vertexCount);
 	}
 
-	void saveToDefinitionFile(string const& path, string const& encoding = "base64", bool pretty = false, string const& binpath = "") {
+	void saveToDefinitionFile(
+		string folder,
+		string name = "object",
+		string texturesFolder = "tx",
+		bool integratedBinary = false,
+		bool pretty = false
+	) {
+		$debug("Saving object '" + name + "'...");
+		// Get paths
+		string txfolder		= FileSystem::concatenatePath(folder, texturesFolder);
+		string binpath		= folder + "/" + name + ".mesh";
+		$debug(binpath);
+		$debug(txfolder);
+		$debug(txfolder + "/texture.tga");
+		$debug(folder + "/" + name + ".json");
+		FileSystem::makeDirectory(txfolder);
 		// Get object definition
-		nlohmann::json file = getObjectDefinition(encoding, binpath.empty());
+		nlohmann::json file = getObjectDefinition();
+		// If binary is in a different location, save there
+		if (!integratedBinary) {
+			FileLoader::saveBinaryFile(binpath, vertices, vertexCount);
+			file["mesh"] = {{"path", name + ".mesh"}};
+		}
+		Material::ObjectMaterial& mat = material;
+		auto& mdef = file["material"];
+		// Save image texture
+		mdef["texture"] = saveImageEffect(mat.texture, txfolder, "texture.tga");
+		mdef["texture"]["alphaClip"] = mat.texture.alphaClip;
+		// Save emission texture
+		mdef["emission"] = saveImageEffect(mat.emission, txfolder, "emission.tga");
+		mdef["texture"]["alphaClip"] = mat.emission.alphaClip;
+		// Save warp texture
+		mdef["warp"] = saveImageEffect(mat.warp, txfolder, "warp.tga");
+		mdef["warp"]["channelX"] = mat.warp.channelX;
+		mdef["warp"]["channelY"] = mat.warp.channelY;
+		mdef["warp"]["trans"] = {
+			{"position",	{mat.warp.trans.position.x,	trans.position.y	}	},
+			{"rotation",	mat.warp.trans.rotation								},
+			{"scale",		{mat.warp.trans.scale.x,	trans.scale.y		}	}
+		};
 		// convert to text
 		auto contents = file.dump(pretty ? 1 : -1, '\t', false, nlohmann::json::error_handler_t::replace);
-		// If binary is in a different location, save there
-		if (!binpath.empty()) {
-			FileLoader::saveBinaryFile(binpath, vertices, vertexCount);
-			file["mesh"]["path"] = binpath;
-		}
 		// Save definition file
-		FileLoader::saveTextFile(path, contents);
+		FileLoader::saveTextFile(folder + "/" + name + ".json", contents);
 	};
 
 	nlohmann::json getObjectDefinition(string const& encoding = "base64", bool integratedBinary = true) {
@@ -483,8 +599,40 @@ public:
 		};
 		// Set active data
 		def["active"] = active;
+		// Get material
+		Material::ObjectMaterial& mat = material;
+		// Copy instances
+		vector<nlohmann::json> instanceData;
+		for (Vector3& inst: mat.instances) {
+			instanceData.push_back({inst.x, inst.y, inst.z});
+		}
 		// Save material data
-		// TODO: material data
+		def["material"] = {
+			{"color", {mat.color.x, mat.color.y, mat.color.z, mat.color.w}},
+			{"shaded", mat.shaded},
+			{"illuminated", mat.illuminated},
+			{"hue", mat.hue},
+			{"saturation", mat.saturation},
+			{"luminosity", mat.luminosity},
+			{"brightness", mat.brightness},
+			{"contrast", mat.contrast},
+			{"uvShift", {mat.uvShift.x, mat.uvShift.y}},
+			{"negative", {
+				{"enabled", mat.negative.enabled},
+				{"strength", mat.negative.strength}
+			}},
+			{"gradient", {
+				{"enabled", mat.gradient.enabled},
+				{"channel", mat.gradient.channel},
+				{"begin", {mat.gradient.begin.x, mat.gradient.begin.y, mat.gradient.begin.z, mat.gradient.begin.w}},
+				{"end", {mat.gradient.end.x, mat.gradient.end.y, mat.gradient.end.z, mat.gradient.end.w}},
+				{"invert", mat.gradient.invert}
+			}},
+			{"instances", instanceData},
+			{"culling", mat.culling},
+			{"fill", mat.fill},
+			{"debugView", (unsigned int)mat.debug}
+		};
 		// Unbake object if applicable
 		if (!wasBaked) unbake();
 		// Return definition
@@ -494,6 +642,35 @@ public:
 	vector<Triangle*> triangles;
 
 private:
+	nlohmann::json saveImageEffect(Material::ImageEffect& effect, string const& folder, string const& path) {
+		nlohmann::json def;
+		def["enabled"] = effect.enabled;
+		if (effect.image && effect.image->exists()) {
+			effect.image->saveToFile(folder + "/" path);
+			def["image"] = {
+				{"path", path},
+				{"minFilter", effect.image->getTextureMinFilter()},
+				{"magFilter", effect.image->getTextureMagFilter()}
+			};
+		} else def["enabled"] = false;
+		return def;
+	}
+
+	Material::ImageEffect loadImageEffect(nlohmann::json& effect, Texture2D* texture = nullptr) {
+		Material::ImageEffect fx;
+		fx.enabled = effect["enabled"].get<bool>();
+		if (effect["image"]["path"].is_string() && !effect["image"]["path"].get<string>().empty()) {
+			if (!texture)
+				texture = new Texture2D();
+			fx.image = texture;
+			texture->create(effect["path"].get<string>());
+			texture->setTextureFilterMode(
+				effect["image"]["minFilter"].get<unsigned int>(),
+				effect["image"]["magFilter"].get<unsigned int>()
+			);
+		} else fx.enabled = false;
+	}
+
 	RawVertex* vertices = nullptr;
 
 	bool

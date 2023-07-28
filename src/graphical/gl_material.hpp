@@ -133,7 +133,9 @@ struct GradientEffect: Effect, Channelable, Invertible {
 
 struct NegativeEffect: Effect, Variable {};
 
-struct WarpEffect: Effect, Imageable2D, Transformable2D {
+struct ImageEffect: Effect, Imageable2D {};
+
+struct WarpEffect: ImageEffect, Transformable2D {
 	unsigned int
 		channelX = 0,
 		channelY = 1;
@@ -141,7 +143,7 @@ struct WarpEffect: Effect, Imageable2D, Transformable2D {
 
 // Object Material Effects
 
-struct TextureEffect: Effect, Imageable2D {
+struct TextureEffect: ImageEffect {
 	float alphaClip = 0.1;
 };
 

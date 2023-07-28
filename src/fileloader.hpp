@@ -11,8 +11,8 @@ namespace FileLoader {
 		} catch (nlohmann::json::exception e) {
 				throw Error::FailedAction(
 					"Failed at loading JSON file!",
-					"fileloader.hpp",
-					"10",
+					__FILE__,
+					toString(__LINE__),
 					"loadJSON",
 					e.what(),
 					"Please check to see if values are correct!"

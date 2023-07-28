@@ -31,24 +31,6 @@ Undefined optional values are set to their defaults.
 # ImageData2D
 
 ## Layout
-
-If image data is to be integrated in the file:
-
-```JavaScript
-"image": {
-	// Required
-	"encoding": "base64", // Image data encoding
-	"format": "png", // Image data format
-	"width": 255, // Image width
-	"height": 255, // Image height
-	"channels": "rgba", // Image pixel channels (Accepted: "d", "ds", "r", "rg", "rgb", "rgba")
-	"type": "ubyte", // Image pixel channel type
-	"data": "", // Image data as string
-}
-```
-
-If image data is saved in a different file:
-
 ```JavaScript
 "image": {
 	// Required
