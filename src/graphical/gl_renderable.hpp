@@ -468,8 +468,20 @@ public:
 					material.gradient.enabled	= dmat["gradient"]["enabled"].get<bool>();
 					material.gradient.channel	= dmat["gradient"]["channel"].get<unsigned int>();
 					// FIXME: it's a color, not a float
-					material.gradient.begin		= dmat["gradient"]["begin"].get<float>();
-					material.gradient.end		= dmat["gradient"]["end"].get<float>();
+					auto& dgbegin	= dmat["gradient"]["begin"];
+					auto& dgend		= dmat["gradient"]["end"];
+					material.gradient.begin		= Vector4(
+						dgbegin[0].get<float>(),
+						dgbegin[1].get<float>(),
+						dgbegin[2].get<float>(),
+						dgbegin[3].get<float>()
+					);
+					material.gradient.end		= Vector4(
+						dgend[0].get<float>(),
+						dgend[1].get<float>(),
+						dgend[2].get<float>(),
+						dgend[3].get<float>()
+					);
 					material.gradient.invert	= dmat["gradient"]["invert"].get<bool>();
 				}
 				// Set instances
