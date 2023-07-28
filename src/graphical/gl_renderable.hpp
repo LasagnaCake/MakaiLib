@@ -467,6 +467,7 @@ public:
 				if (dmat["gradient"].is_object()) {
 					material.gradient.enabled	= dmat["gradient"]["enabled"].get<bool>();
 					material.gradient.channel	= dmat["gradient"]["channel"].get<unsigned int>();
+					// FIXME: it's a color, not a float
 					material.gradient.begin		= dmat["gradient"]["begin"].get<float>();
 					material.gradient.end		= dmat["gradient"]["end"].get<float>();
 					material.gradient.invert	= dmat["gradient"]["invert"].get<bool>();
