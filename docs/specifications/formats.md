@@ -34,7 +34,7 @@ Undefined optional values are set to their defaults.
 ```JavaScript
 "image": {
 	// Required
-	"path": "", // Path to image file
+	"path": "", // Path to image file, relative to object definition file
 	// Optional
 	"minFilter": 0, // See GL's GL_TEXTURE_MIN_FILTER
 	"magFilter": 0  // See GL's GL_TEXTURE_MAG_FILTER
@@ -116,7 +116,7 @@ If data gets saved in a different file:
 	"mesh": {
 		"components": "x,y,z,u,v,r,g,b,a,nx,ny,nz", // Vector components in order they appear, separated by commas
 		"data": {
-			"path": "" // Path to ".mesh" file containing binary data
+			"path": "" // Path to ".mesh" file containing binary data, relative to object definition file
 		},
 	},
 	// Optional
