@@ -266,9 +266,10 @@ public:
 
 	void extendFromDefinition(
 		nlohmann::json def,
-		Texture2D* texture	= nullptr,
-		Texture2D* emission	= nullptr,
-		Texture2D* warp		= nullptr
+		string const& sourcepath,
+		Texture2D* const& texture	= nullptr,
+		Texture2D* const& emission	= nullptr,
+		Texture2D* const& warp		= nullptr
 	) {
 		// Component data
 		string componentData;
@@ -282,7 +283,7 @@ public:
 				string encoding	= mesh["encoding"].get<string>();
 				vdata			= decodeData(data.get<string>(), encoding);
 			} else if (data.is_object()) {
-				vdata			= FileLoader::loadBinaryFile(data["path"].get<string>());
+				vdata			= FileLoader::loadBinaryFile(FileSystem::concatenatePath(sourcepath, data["path"].get<string>()));
 			}
 			componentData		= mesh["components"].get<string>();
 		} catch (nlohmann::json::exception e) {
@@ -369,12 +370,11 @@ public:
 		// Create renderable object
 		extend(vertices.data(), vertices.size());
 		#define SET_PARAM(PARAM)\
-			if (dtrans[#PARAM].is_array())\
-				trans.PARAM = Vector3(\
-					dtrans[#PARAM][0].get<float>(),\
-					dtrans[#PARAM][1].get<float>(),\
-					dtrans[#PARAM][2].get<float>()\
-				)
+			trans.PARAM = Vector3(\
+				dtrans[#PARAM][0].get<float>(),\
+				dtrans[#PARAM][1].get<float>(),\
+				dtrans[#PARAM][2].get<float>()\
+			)
 		// check for optional transform
 		if (def["trans"].is_object()) {
 			auto& dtrans = def["trans"];
@@ -405,7 +405,11 @@ public:
 					material.color.z = dmat["color"][2].get<float>();
 					material.color.w = dmat["color"][3].get<float>();
 				}
-				// Set color params
+				// Set color & shading params
+				#define SET_BOOL_PARAM(PARAM) if(dmat[#PARAM].is_boolean()) material.PARAM = dmat[#PARAM].get<bool>()
+				SET_BOOL_PARAM(shaded);
+				SET_BOOL_PARAM(illuminated);
+				#undef SET_BOOL_PARAM
 				#define SET_FLOAT_PARAM(PARAM) if(dmat[#PARAM].is_number()) material.PARAM = dmat[#PARAM].get<float>()
 				SET_FLOAT_PARAM(hue);
 				SET_FLOAT_PARAM(saturation);
@@ -413,10 +417,6 @@ public:
 				SET_FLOAT_PARAM(brightness);
 				SET_FLOAT_PARAM(contrast);
 				#undef SET_FLOAT_PARAM
-				#define SET_BOOL_PARAM(PARAM) if(dmat[#PARAM].is_boolean()) material.PARAM = dmat[#PARAM].get<bool>()
-				SET_BOOL_PARAM(shaded);
-				SET_BOOL_PARAM(illuminated);
-				#undef SET_BOOL_PARAM
 				// Set UV shift
 				if(dmat["uvShift"].is_array()) {
 					material.uvShift.x = dmat["uvShift"][0].get<float>();
@@ -424,41 +424,82 @@ public:
 				}
 				// Set texture
 				if (dmat["texture"].is_object()) {
-					material.texture	= loadImageEffect(dmat["texture"], material.texture);
-					if(dmat["texture"]["alphaClip"].is_number())
-						material.texture.alphaClip = dmat["texture"]["alphaClip"].get<float>();
+					auto fx = loadImageEffect(dmat["texture"], sourcepath, texture);
+					material.texture.enabled	= fx.enabled;
+					material.texture.image		= fx.image;
+					material.texture.alphaClip	= dmat["texture"]["alphaClip"].get<float>();
 				}
 				// Set emission texture
-				if (dmat["texture"].is_object()) {
-					material.emission	= loadImageEffect(dmat["emission"], material.emission);
-					if(dmat["emission"]["alphaClip"].is_number())
-						material.emission.alphaClip = dmat["emission"]["alphaClip"].get<float>();
+				if (dmat["emission"].is_object()) {
+					auto fx = loadImageEffect(dmat["emission"], sourcepath, emission);
+					material.emission.enabled	= fx.enabled;
+					material.emission.image		= fx.image;
+					material.emission.alphaClip	= dmat["emission"]["alphaClip"].get<float>();
 				}
 				// Set warp texture
 				if (dmat["warp"].is_object()) {
-					material.warp		= loadImageEffect(dmat["warp"], material.warp);
+					auto fx = loadImageEffect(dmat["warp"], sourcepath, warp);
+					material.warp.enabled	= fx.enabled;
+					material.warp.image		= fx.image;
 					{
 						auto& mwtrans = dmat["warp"]["trans"];
-						#define SET_PARAM(PARAM)\
-						if (mwtrans[#PARAM].is_array())\
-							material.warp.trans.PARAM = Vector2(\
-								mwtrans[#PARAM][0].get<float>(),\
-								mwtrans[#PARAM][1].get<float>()\
-							)
-						SET_PARAM(position);
-						if (mwtrans["rotation"].is_number())
-							material.warp.trans.rotation = mwtrans["rotation"];
-						SET_PARAM(scale);
-						#undef SET_PARAM
+						material.warp.trans.position = Vector2(
+							mwtrans["position"][0].get<float>(),
+							mwtrans["position"][1].get<float>()
+						);
+						material.warp.trans.rotation = mwtrans["rotation"];
+						material.warp.trans.scale = Vector2(
+							mwtrans["scale"][0].get<float>(),
+							mwtrans["scale"][1].get<float>()
+						);
 					}
-					if (dmat["warp"]["channelX"].is_number())
-						material.warp.channelX = dmat["warp"]["channelX"];
-					if (dmat["warp"]["channelY"].is_number())
-						material.warp.channelY = dmat["warp"]["channelY"];
+					material.warp.channelX = dmat["warp"]["channelX"];
+					material.warp.channelY = dmat["warp"]["channelY"];
 				}
 				// Set negative
-				if (dmat["negative"]["enabled"].is_boolean())
-					material.negative.enabled = dmat["negative"]["enabled"];
+				if (dmat["negative"].is_object()) {
+					material.negative.enabled	= dmat["negative"]["enabled"].get<bool>();
+					material.negative.strength	= dmat["negative"]["strength"].get<float>();
+				}
+				// Set gradient
+				if (dmat["gradient"].is_object()) {
+					material.gradient.enabled	= dmat["gradient"]["enabled"].get<bool>();
+					material.gradient.channel	= dmat["gradient"]["channel"].get<unsigned int>();
+					material.gradient.begin		= dmat["gradient"]["begin"].get<float>();
+					material.gradient.end		= dmat["gradient"]["end"].get<float>();
+					material.gradient.invert	= dmat["gradient"]["invert"].get<bool>();
+				}
+				// Set instances
+				if (dmat["instances"].is_array()) {
+					material.instances.clear();
+					for(auto& inst: dmat["instances"])
+						material.instances.push_back(
+							Vector3(
+								inst[0].get<float>(),
+								inst[1].get<float>(),
+								inst[2].get<float>()
+							)
+						);
+				}
+				// Set culling, fill & view
+				if (dmat["culling"].is_number()) {
+					switch (dmat["culling"].get<unsigned int>()) {
+						default:
+						case 0: material.culling = GL_FRONT_AND_BACK;	break;
+						case 1: material.culling = GL_FRONT;			break;
+						case 2: material.culling = GL_BACK;				break;
+					}
+				}
+				if (dmat["fill"].is_number()) {
+					switch (dmat["fill"].get<unsigned int>()) {
+						default:
+						case 0: material.fill = GL_FILL;	break;
+						case 1: material.fill = GL_LINE;	break;
+						case 2: material.fill = GL_POINT;	break;
+					}
+				}
+				if (dmat["debug"].is_number())
+					material.debug = (Material::ObjectDebugView)dmat["debug"].get<unsigned int>();
 			} catch (nlohmann::json::exception e) {
 				throw Error::FailedAction(
 					"Failed at getting material values!",
@@ -470,7 +511,6 @@ public:
 				);
 			}
 		}
-		// Return new renderable object
 	}
 
 	inline void extendFromDefinitionFile(
@@ -479,7 +519,7 @@ public:
 		Texture2D* emission	= nullptr,
 		Texture2D* warp		= nullptr
 	) {
-		extendFromDefinition(FileLoader::loadJSON(path), texture, emission, warp);
+		extendFromDefinition(FileLoader::loadJSON(path), FileSystem::getDirectoryFromPath(path), texture, emission, warp);
 	}
 
 	void bake() {
@@ -528,30 +568,27 @@ public:
 	) {
 		$debug("Saving object '" + name + "'...");
 		// Get paths
-		string txfolder		= FileSystem::concatenatePath(folder, texturesFolder);
 		string binpath		= folder + "/" + name + ".mesh";
 		$debug(binpath);
-		$debug(txfolder);
-		$debug(txfolder + "/texture.tga");
 		$debug(folder + "/" + name + ".json");
-		FileSystem::makeDirectory(txfolder);
+		FileSystem::makeDirectory(FileSystem::concatenatePath(folder, texturesFolder));
 		// Get object definition
 		nlohmann::json file = getObjectDefinition();
 		// If binary is in a different location, save there
 		if (!integratedBinary) {
 			FileLoader::saveBinaryFile(binpath, vertices, vertexCount);
-			file["mesh"] = {{"path", name + ".mesh"}};
+			file["mesh"] = {"data", {"path", name + ".mesh"}};
 		}
 		Material::ObjectMaterial& mat = material;
 		auto& mdef = file["material"];
 		// Save image texture
-		mdef["texture"] = saveImageEffect(mat.texture, txfolder, "texture.tga");
+		mdef["texture"] = saveImageEffect(mat.texture, folder, texturesFolder + "/texture.tga");
 		mdef["texture"]["alphaClip"] = mat.texture.alphaClip;
 		// Save emission texture
-		mdef["emission"] = saveImageEffect(mat.emission, txfolder, "emission.tga");
+		mdef["emission"] = saveImageEffect(mat.emission, folder, texturesFolder + "/emission.tga");
 		mdef["texture"]["alphaClip"] = mat.emission.alphaClip;
 		// Save warp texture
-		mdef["warp"] = saveImageEffect(mat.warp, txfolder, "warp.tga");
+		mdef["warp"] = saveImageEffect(mat.warp, folder, texturesFolder + "warp.tga");
 		mdef["warp"]["channelX"] = mat.warp.channelX;
 		mdef["warp"]["channelY"] = mat.warp.channelY;
 		mdef["warp"]["trans"] = {
@@ -629,10 +666,18 @@ public:
 				{"invert", mat.gradient.invert}
 			}},
 			{"instances", instanceData},
-			{"culling", mat.culling},
-			{"fill", mat.fill},
 			{"debugView", (unsigned int)mat.debug}
 		};
+		switch (mat.fill) {
+			case GL_FILL:	def["material"]["fill"] = 0; break;
+			case GL_LINE:	def["material"]["fill"] = 1; break;
+			case GL_POINT:	def["material"]["fill"] = 2; break;
+		}
+		switch (mat.culling) {
+			case GL_FRONT_AND_BACK:	def["material"]["culling"] = 0; break;
+			case GL_FRONT:			def["material"]["culling"] = 1; break;
+			case GL_BACK:			def["material"]["culling"] = 2; break;
+		}
 		// Unbake object if applicable
 		if (!wasBaked) unbake();
 		// Return definition
@@ -646,7 +691,7 @@ private:
 		nlohmann::json def;
 		def["enabled"] = effect.enabled;
 		if (effect.image && effect.image->exists()) {
-			effect.image->saveToFile(folder + "/" path);
+			effect.image->saveToFile(folder + "/" + path);
 			def["image"] = {
 				{"path", path},
 				{"minFilter", effect.image->getTextureMinFilter()},
@@ -656,19 +701,20 @@ private:
 		return def;
 	}
 
-	Material::ImageEffect loadImageEffect(nlohmann::json& effect, Texture2D* texture = nullptr) {
+	Material::ImageEffect loadImageEffect(nlohmann::json& effect, string const& sourcepath, Texture2D* texture = nullptr) {
 		Material::ImageEffect fx;
 		fx.enabled = effect["enabled"].get<bool>();
 		if (effect["image"]["path"].is_string() && !effect["image"]["path"].get<string>().empty()) {
 			if (!texture)
 				texture = new Texture2D();
 			fx.image = texture;
-			texture->create(effect["path"].get<string>());
+			texture->create(FileSystem::concatenatePath(sourcepath, effect["path"].get<string>()));
 			texture->setTextureFilterMode(
 				effect["image"]["minFilter"].get<unsigned int>(),
 				effect["image"]["magFilter"].get<unsigned int>()
 			);
 		} else fx.enabled = false;
+		return fx;
 	}
 
 	RawVertex* vertices = nullptr;
@@ -886,18 +932,20 @@ Renderable* loadObjectFromBinaryFile(string const& path) {
 Renderable* loadObjectFromGLTFFile(string const& path) {return nullptr;}
 
 // TODO: Test this
-Renderable* loadObjectFromDefinition(nlohmann::json def) {
+Renderable* loadObjectFromDefinition(nlohmann::json def, string const& sourcepath) {
 	// Create object
 	Renderable* r = new Renderable();
 	// Load data
-	r->extendFromDefinition(def);
+	r->extendFromDefinition(def, sourcepath);
 	// Return object
 	return r;
 }
 
 Renderable* loadObjectFromDefinitionFile(string const& path) {
-	// Load object file
-	nlohmann::json file = FileLoader::loadJSON(path);
-	// Return new renderable object
-	return loadObjectFromDefinition(file);
+	// Create object
+	Renderable* r = new Renderable();
+	// Load data
+	r->extendFromDefinitionFile(path);
+	// Return object
+	return r;
 }

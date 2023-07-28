@@ -197,6 +197,14 @@ namespace FileSystem {
 		}
 		return res;
 	}
+
+	String getDirectoryFromPath(String const& path) {
+		return std::regex_replace(
+			path,
+			std::regex("(?!([A-z].*)[/])([A-z].*\\.[A-z].*)"),
+			""
+		);
+	}
 }
 
 #if (_WIN32 || _WIN64 || __WIN32__ || __WIN64__)

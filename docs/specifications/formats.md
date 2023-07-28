@@ -6,7 +6,7 @@ Undefined optional values are set to their defaults.
 
 ```JavaScript
 "trans": {
-	// Optional
+	// Required
 	"position": [0.0, 0.0], // 2D vector representing position
 	"rotation": 0.0,
 	"scale": [1.0, 1.0], // 2D vector representing scale
@@ -19,7 +19,7 @@ Undefined optional values are set to their defaults.
 
 ```JavaScript
 "trans": {
-	// Optional
+	// Required
 	"position": [0.0, 0.0, 0.0], // 3D vector representing position
 	"rotation": [0.0, 0.0, 0.0], // 3D vector representing rotation
 	"scale": [1.0, 1.0, 1.0], // 3D vector representing scale
@@ -35,6 +35,9 @@ Undefined optional values are set to their defaults.
 "image": {
 	// Required
 	"path": "", // Path to image file
+	// Optional
+	"minFilter": 0, // See GL's GL_TEXTURE_MIN_FILTER
+	"magFilter": 0  // See GL's GL_TEXTURE_MAG_FILTER
 }
 ```
 
