@@ -59,13 +59,15 @@ namespace Makai {
 				}
 				// Else, zero state
 				else buttonState = 0;
+				// Copy previous state to secondary buffer
+				last[button]	= buffer[button];
 				// Set buffer to button state
-				buffer[button] = buttonState;
+				buffer[button]	= buttonState;
 			}
 		}
 
 		/// Returns whether the button is pressed.
-		inline bool getButtonDown(SDL_Scancode button) {
+		inline bool isButtonDown(SDL_Scancode button) {
 			if (!enabled || button == SDL_SCANCODE_UNKNOWN) return false;
 			return buffer[button] > 0;
 		}
@@ -87,10 +89,70 @@ namespace Makai {
 			return getButtonState(button) == 1;
 		}
 
+		/// Returns if the button has just been released.
+		inline bool isButtonJustReleased(SDL_Scancode button) {
+			if (!enabled || button == SDL_SCANCODE_UNKNOWN) return false;
+			return (isButtonChanged(button) && (getButtonState(button) == 0));
+		}
+
 		/// Returns if the button is held (state > threshold).
 		inline bool isButtonHeld(SDL_Scancode button) {
 			if (!enabled || button == SDL_SCANCODE_UNKNOWN) return false;
 			return getButtonState(button) > threshold;
+		}
+
+		/// Returns if the button's state has changed.
+		inline bool isButtonChanged(SDL_Scancode button) {
+			if (!enabled || button == SDL_SCANCODE_UNKNOWN) return false;
+			return last[button]	== buffer[button];
+		}
+
+		/// Returns the button that was most recently pressed.
+		inline SDL_Scancode mostRecentButtonPressed() {
+			SDL_Scancode button		= SDL_SCANCODE_UNKNOWN;
+			unsigned int duration	= Math::Max::UINT_V;
+			for (auto [b, d] : buffer)
+				if ((d) && d < duration) {
+					button		= b;
+					duration	= d;
+				}
+			return button;
+		}
+
+		/// Returns the button that was most recently just pressed.
+		inline SDL_Scancode mostRecentButtonJustPressed() {
+			for (auto [b, d] : buffer)
+				if (d == 1)
+					return b;
+			return SDL_SCANCODE_UNKNOWN;
+		}
+
+		/// Returns the button that was most recently held.
+		inline SDL_Scancode mostRecentButtonHeld() {
+			SDL_Scancode button		= SDL_SCANCODE_UNKNOWN;
+			unsigned int duration	= Math::Max::UINT_V;
+			for (auto [b, d] : buffer)
+				if (d > threshold && d < duration) {
+					button		= b;
+					duration	= d;
+				}
+			return button;
+		}
+
+		/// Returns the button that was most recently changed.
+		inline SDL_Scancode mostRecentButtonChanged() {
+			for (auto [b, d] : buffer)
+				if (d != last[b])
+					return b;
+			return SDL_SCANCODE_UNKNOWN;
+		}
+
+		/// Returns the button that was most recently just released.
+		inline SDL_Scancode mostRecentButtonJustReleased() {
+			for (auto [b, d] : buffer)
+				if (d != last[b] && d == 0)
+					return b;
+			return SDL_SCANCODE_UNKNOWN;
 		}
 
 		/// Whether input is enabled.
@@ -101,6 +163,7 @@ namespace Makai {
 	private:
 		/// The internal buffer state.
 		unordered_map<SDL_Scancode, unsigned int> buffer;
+		unordered_map<SDL_Scancode, unsigned int> last;
 	};
 
 	/**

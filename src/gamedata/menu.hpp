@@ -187,7 +187,7 @@ namespace Menu {
 			if (justPressed)
 				return input.isButtonJustPressed(keys[what]);
 			else
-				return input.getButtonDown(keys[what]);
+				return input.isButtonDown(keys[what]);
 		}
 
 		bool actionHeld(std::string what) {
