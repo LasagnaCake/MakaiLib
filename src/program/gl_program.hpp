@@ -37,6 +37,12 @@ namespace Makai {
 	*  Event Manager class  *
 	*                       *
 	*************************
+
+	* A button has three states: "Unpressed", "Pressed" and "Held".
+	*	- "Unpressed" is the default state of the button.
+	*	- "Pressed" is when the button is (and/or continues to be) pressed.
+	*	- "Held" is when the button has been kept pressed for a certain
+	*	  amount of time, as set via the "threshold" variable.
 	*/
 	struct InputManager {
 		/// Empty Constructor.
@@ -66,21 +72,21 @@ namespace Makai {
 			}
 		}
 
-		/// Returns whether the button is pressed.
-		inline bool isButtonDown(SDL_Scancode button) {
-			if (!enabled || button == SDL_SCANCODE_UNKNOWN) return false;
-			return buffer[button] > 0;
-		}
-
 		/**
 		* Returns the button's state.
-		* 0		= Released;
+		* 0		= Unpressed;
 		* 1+	= Pressed;
 		* Recommended if time pressed is required.
 		*/
 		inline unsigned int getButtonState(SDL_Scancode button) {
 			if (!enabled || button == SDL_SCANCODE_UNKNOWN) return 0;
 			return buffer[button];
+		}
+
+		/// Returns whether the button is pressed.
+		inline bool isButtonDown(SDL_Scancode button) {
+			if (!enabled || button == SDL_SCANCODE_UNKNOWN) return false;
+			return buffer[button] > 0;
 		}
 
 		/// Returns if the button has just been pressed (state == 1).
@@ -108,7 +114,7 @@ namespace Makai {
 		}
 
 		/// Returns the button that was most recently pressed.
-		inline SDL_Scancode mostRecentButtonPressed() {
+		inline SDL_Scancode mostRecentButtonDown() {
 			SDL_Scancode button		= SDL_SCANCODE_UNKNOWN;
 			unsigned int duration	= Math::Max::UINT_V;
 			for (auto [b, d] : buffer)
@@ -153,6 +159,51 @@ namespace Makai {
 				if (d != last[b] && d == 0)
 					return b;
 			return SDL_SCANCODE_UNKNOWN;
+		}
+
+		/// Returns all buttons currently pressed.
+		inline vector<SDL_Scancode> getButtonsDown() {
+			vector<SDL_Scancode> buttons;
+			for (auto [b, d] : buffer)
+				if (isButtonDown(b))
+					buttons.push_back(b);
+			return buttons;
+		}
+
+		/// Returns all buttons currently just pressed.
+		inline vector<SDL_Scancode> getButtonsJustPressed() {
+			vector<SDL_Scancode> buttons;
+			for (auto [b, d] : buffer)
+				if (isButtonJustPressed(b))
+					buttons.push_back(b);
+			return buttons;
+		}
+
+		/// Returns all buttons currently just released.
+		inline vector<SDL_Scancode> getButtonsJustReleased() {
+			vector<SDL_Scancode> buttons;
+			for (auto [b, d] : buffer)
+				if (isButtonJustReleased(b))
+					buttons.push_back(b);
+			return buttons;
+		}
+
+		/// Returns all buttons whose state changed.
+		inline vector<SDL_Scancode> getButtonsChanged() {
+			vector<SDL_Scancode> buttons;
+			for (auto [b, d] : buffer)
+				if (isButtonChanged(b))
+					buttons.push_back(b);
+			return buttons;
+		}
+
+		/// Returns all buttons currently held.
+		inline vector<SDL_Scancode> getButtonsHeld() {
+			vector<SDL_Scancode> buttons;
+			for (auto [b, d] : buffer)
+				if (isButtonHeld(b))
+					buttons.push_back(b);
+			return buttons;
 		}
 
 		/// Whether input is enabled.
