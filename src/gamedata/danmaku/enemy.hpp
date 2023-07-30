@@ -86,10 +86,10 @@ struct EnemyEntity2D: public AreaCircle2D {
 
 	void updateSprite() {
 		Transform2D self = globalTransform();
-		sprite->local.position		= $vec3(self.position, zIndex);
-		sprite->local.scale			= $vec3(self.scale, zScale);
-		healthBar.trans.position	= $vec3(self.position, zIndex);
-		healthBar.trans.scale		= $vec3(self.scale, zScale);
+		mesh.trans.position			= Vector3(self.position, zIndex);
+		mesh.trans.scale			= Vector3(self.scale, zScale);
+		healthBar.trans.position	= Vector3(self.position, zIndex);
+		healthBar.trans.scale		= Vector3(self.scale, zScale);
 	}
 
 private:
