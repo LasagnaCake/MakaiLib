@@ -57,7 +57,12 @@ Undefined optional values are set to their defaults.
 	"texture": {
 		"enabled": true,
 		"image": {/* See ImageData2D:Layout */},
-		"clip": 0.1, // Texture alpha clipping
+		"alphaClip": 0.1, // Texture alpha clipping
+	},
+	"emission": {
+		"enabled": true,
+		"image": {/* See ImageData2D:Layout */},
+		"alphaClip": 0.1, // Texture alpha clipping
 	},
 	"warp": {
 		"enabled": true,
