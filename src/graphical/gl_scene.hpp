@@ -17,10 +17,12 @@ public:
 	Camera::Camera3D		camera;
 	Material::WorldMaterial	world;
 
+	[[unavailable("Unimplemented!")]]
 	void extendFromSceneFile(string path) {
 		// TODO: this
 	}
 
+	[[unavailable("Unimplemented!")]]
 	void extendFromDefinition(nlohmann::json def) {
 		// TODO: this
 	}

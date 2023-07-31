@@ -1008,9 +1008,6 @@ Renderable* loadObjectFromBinaryFile(string const& path) {
 	return new Renderable((RawVertex*)&data[0], data.size() / sizeof(RawVertex));
 }
 
-[[unavailable("Unimplemented!")]]
-Renderable* loadObjectFromGLTFFile(string const& path) {return nullptr;}
-
 // TODO: Test this
 Renderable* loadObjectFromDefinition(nlohmann::json def, string const& sourcepath) {
 	// Create object
