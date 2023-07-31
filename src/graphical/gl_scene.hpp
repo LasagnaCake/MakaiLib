@@ -18,10 +18,11 @@ public:
 	Material::WorldMaterial	world;
 
 	void extendFromSceneFile(string path) {
+		// TODO: this
 	}
 
 	void extendFromDefinition(nlohmann::json def) {
-
+		// TODO: this
 	}
 
 	void extend(Scene3D* other) {
