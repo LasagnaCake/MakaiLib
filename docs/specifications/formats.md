@@ -220,6 +220,7 @@ If data gets saved in a separate file:
 ```javascript
 "scene": {
 	"camera": {/* See Camera3D:Layout */},
+	"world": {/* See WorldMaterial:Layout */},
 	"data": {
 		"path": [{
 			"source": "", // Object file source relative to file
