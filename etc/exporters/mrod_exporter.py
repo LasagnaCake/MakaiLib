@@ -147,7 +147,7 @@ class ExportMRODOperator(Operator, ExportHelper):
 			component_data = "x,y,z"
 			if mesh.uv_layers.active: component_data += ",u,v"
 			if mesh.vertex_colors.active: component_data += ",r,g,b,a"
-			component_data += "nx,ny,nz"
+			component_data += ",nx,ny,nz"
 			for loop_tri in mesh.loop_triangles:
 				for loop_index in loop_tri.loops:
 					vertex = mesh.vertices[mesh.loops[loop_index].vertex_index]
@@ -159,11 +159,11 @@ class ExportMRODOperator(Operator, ExportHelper):
 					vtxdat = [-vertex_pos.x, vertex_pos.z, vertex_pos.y]
 					# Get UV & color data, if applicable
 					if mesh.uv_layers.active:
-						vtxdat.extend(uv)
+						vtxdat.extend([uv[0], 1-uv[1]])
 					if mesh.vertex_colors.active:
-						vtxdat.extend(color)
+						vtxdat.extend([color[0], color[1], color[2], color[3]])
 					# Append normal data
-					vtxdat.extend(normal)
+					vtxdat.extend([-normal.x, normal.z, normal.y])
 					# Append to array
 					vertex_data.extend(vtxdat)
 			# Pack binary
@@ -205,7 +205,7 @@ class ExportMRODOperator(Operator, ExportHelper):
 					"culling": 0,
 					"fill": 0
 				}
-				strfil["active"] = True
+				strfile["active"] = True
 				if len(obj.material_slots) > 0:
 					mat = obj.material_slots[0].material
 					result = save_texture_to_image(mat, "Base Color", f"{txpath}\\texture.png")
