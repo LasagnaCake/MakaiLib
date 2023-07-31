@@ -28,7 +28,7 @@ class ExportMRODOperator(Operator, ExportHelper):
 	embed_texture: bpy.props.BoolProperty(
 		name="Embed Image Texture(s)",
 		description="Embed image data into file",
-		default=False,
+		default=True,
 	)
 	
 	tx_folder: bpy.props.StringProperty(
@@ -40,7 +40,7 @@ class ExportMRODOperator(Operator, ExportHelper):
 	embed_mesh: bpy.props.BoolProperty(
 		name="Embed Mesh(es)",
 		description="Embed mesh data into file",
-		default=False,
+		default=True,
 	)
 
 	mesh_folder: bpy.props.StringProperty(
