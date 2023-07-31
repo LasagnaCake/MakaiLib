@@ -46,6 +46,7 @@ def save_texture_to_image(material, node_type, file_path):
 					# Save the image to a file (adjust the path as needed)
 					image_path = file_path
 					try:
+						image_texture.file_format = "PNG"
 						image_texture.save_render(image_path, None, 75)
 					except:
 						return "ERR_IMAGE_SAVE_FAILED"
@@ -56,6 +57,13 @@ def save_texture_to_image(material, node_type, file_path):
 			return "ERR_COLOR_NOT_CONNECTED"
 		return "ERR_NODE_NOT_FOUND"
 	return "ERR_MATERIAL_NONEXISTENT"
+
+def image_to_base64(path):
+	try:
+		with open(render_path, "rb") as image_file:
+			return base64.b64encode(image_file.read())
+	except:
+		return None
 
 def get_color(material, node_type):
 	# Get the material by name
@@ -123,6 +131,35 @@ class ExportMRODOperator(Operator, ExportHelper):
 		default="",
 	)
 
+	def process_image_file(self, material, node_type, path, temp_path):
+		if not self.embed_texture:
+			result = save_texture_to_image(material, node_type, path)
+			print(f"Texture: {result}")
+			if result == "OK":
+				return {
+					"enabled": True,
+					"image": {"path": path},
+					"alphaClip": 0.1
+				}
+		else:
+			result = save_texture_to_image(material, node_type, temp_path)
+			print(f"{node_type}: {result}")
+			if result == "OK":
+				imgstr = image_to_base64(path)
+				try:
+					os.remove(temp_path)
+				except:
+					return None
+				if imgstr is None:
+					return None
+				return {
+					"enabled": True,
+					"image": imgstr,
+					"encoding": base64,
+					"alphaClip": 0.1
+				}
+		return None
+
 	def execute(self, context):
 		filepath = self.filepath
 		objects = [obj for obj in bpy.data.objects if obj.type == "MESH"]
@@ -132,8 +169,10 @@ class ExportMRODOperator(Operator, ExportHelper):
 			mrodpath = self.filepath + "\\" + obj.name
 			txpath = mrodpath + "\\" + self.tx_folder
 			meshpath = mrodpath + "\\" + self.mesh_folder
-			make_if_not_exists(txpath)
-			make_if_not_exists(meshpath)
+			if not self.embed_texture:
+				make_if_not_exists(txpath)
+			if not self.embed_mesh:
+				make_if_not_exists(meshpath)
 			dg = context.evaluated_depsgraph_get()
 			mesh = None
 			#TODO: fix this
@@ -208,33 +247,23 @@ class ExportMRODOperator(Operator, ExportHelper):
 				strfile["active"] = True
 				if len(obj.material_slots) > 0:
 					mat = obj.material_slots[0].material
-					result = save_texture_to_image(mat, "Base Color", f"{txpath}\\texture.png")
-					print(f"Texture: {result}")
-					if result == "OK":
-						strfile["texture"] = {
-							"enabled": True,
-							"image": {"path": f"{self.tx_folder}\\texture.png"},
-							"alphaClip": 0.1
-						}
-					else:
-						color_v = get_color(mat, "Base Color")
-						if color_v is not None:
-							strfile["material"]["color"] = [color_v[0], color_v[1], color_v[2], color_v[3]]
-							result = save_texture_to_image(mat, "Emission", f"{txpath}\\emission.png")
-					print(f"Emission: {result}")
-					if result == "OK":
-						strfile["emission"] = {
-							"enabled": True,
-							"image": {"path": f"{self.tx_folder}\\texture.png"},
-							"alphaClip": 0.1
-						}
+					# Process emission txture
+					imgsave = self.process_image_file(mat, "Base Color", f"{txpath}\\texture.png", f"{mrodpath}\\_tx_TMP.png")
+					if imgsave is not None:
+						strfile["texture"] = imgsave
+					# Process image texture
+					imgsave = self.process_image_file(mat, "Emission", f"{txpath}\\emission.png", f"{mrodpath}\\_em_TMP.png")
+					if imgsave is not None:
+						strfile["emission"] = imgsave
 				f.write(json.dumps(strfile, indent="	"))
 			
 		return {'FINISHED'}
 
 	def draw(self, context):
 		layout = self.layout
-		layout.prop(self, "tx_folder")
+		layout.prop(self, "embed_texture")
+		if not self.embed_texture:
+			layout.prop(self, "tx_folder")
 		layout.prop(self, "embed_mesh")
 		if not self.embed_mesh:
 			layout.prop(self, "mesh_folder")
