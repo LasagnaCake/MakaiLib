@@ -390,8 +390,9 @@ namespace Math {
 		namespace {
 			typedef std::uniform_real_distribution<double> RandReal;
 			typedef std::uniform_int_distribution<size_t> RandLong;
+			typedef std::mt19937_64 RendomEngine;
 			// The random number generator engine used
-			std::default_random_engine	engine{Time::sinceEpoch<Time::Millis>()};
+			RandomEngine	engine{Time::sinceEpoch<Time::Millis>()};
 			// Default distributions
 			RandReal	longDist(0, Math::Max::SIZET_V);
 			RandLong	realDist(0.0,1.0);
@@ -423,7 +424,7 @@ namespace Math {
 
 		/// Sets the random number generator's seed.
 		inline void setSeed(size_t seed) {
-			engine = std::default_random_engine{seed};
+			engine = RandomEngine{seed};
 		}
 
 		/// Gets a seed based on the current clock's time, and a random number.
