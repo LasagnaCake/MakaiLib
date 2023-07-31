@@ -39,11 +39,8 @@ def save_texture_to_image(material, node_type, file_path):
 							return "ERR_IMAGE_UNPACKING_FAILED"
 					# Save the image to a file (adjust the path as needed)
 					image_path = file_path
-					try:
-						image_texture.file_format = "PNG"
-						image_texture.save_render(image_path, None, 75)
-					except:
-						return "ERR_IMAGE_SAVE_FAILED"
+					image_texture.file_format = "PNG"
+					image_texture.save_render(image_path, scene=None, quality=75)
 					if image_packed:
 						image_texture.pack()
 					return "OK"
@@ -53,11 +50,8 @@ def save_texture_to_image(material, node_type, file_path):
 	return "ERR_MATERIAL_NONEXISTENT"
 
 def image_to_base64(path):
-	try:
-		with open(render_path, "rb") as image_file:
-			return base64.b64encode(image_file.read())
-	except:
-		return None
+	with open(path, "rb") as image_file:
+		return str(base64.b64encode(image_file.read()))
 
 def get_color(material, node_type):
 	# Get the material by name
@@ -86,31 +80,28 @@ def get_color(material, node_type):
 		return None
 	return None
 
-def process_image_file(embed_texture, material, node_type, path, temp_path):
+def process_image_file(embed_texture, material, node_type, path, temp_path, relative_path = ""):
 	if not embed_texture:
 		result = save_texture_to_image(material, node_type, path)
 		print(f"Texture: {result}")
 		if result == "OK":
 			return {
 				"enabled": True,
-				"image": {"path": path},
+				"image": {"path": relative_path},
 				"alphaClip": 0.1
 			}
 	else:
 		result = save_texture_to_image(material, node_type, temp_path)
 		print(f"{node_type}: {result}")
 		if result == "OK":
-			imgstr = image_to_base64(path)
-			try:
-				os.remove(temp_path)
-			except:
-				return None
+			imgstr = str(image_to_base64(temp_path))
+			os.remove(temp_path)
 			if imgstr is None:
 				return None
 			return {
 				"enabled": True,
 				"image": imgstr,
-				"encoding": base64,
+				"encoding": "base64",
 				"alphaClip": 0.1
 			}
 	return None
@@ -196,7 +187,14 @@ def create_render_definition(context, obj, filepath, tx_folder, mesh_folder, emb
 	if len(obj.material_slots) > 0:
 		mat = obj.material_slots[0].material
 		# Process emission txture
-		imgsave = process_image_file(embed_texture, mat, "Base Color", f"{txpath}\\texture.png", f"{mrodpath}\\_tx_TMP.png")
+		imgsave = process_image_file(
+			embed_texture,
+			mat,
+			"Base Color",
+			f"{txpath}\\texture.png",
+			f"{mrodpath}\\_tx_TMP.png",
+			f"{tx_folder}\\texture.png"
+		)
 		if imgsave is not None:
 			strfile["texture"] = imgsave
 		else:
@@ -204,7 +202,14 @@ def create_render_definition(context, obj, filepath, tx_folder, mesh_folder, emb
 			if cdat is not None:
 				strfile["material"]["color"] = [cdat[0], cdat[1], cdat[2], cdat[3]]
 		# Process image texture
-		imgsave = process_image_file(embed_texture, mat, "Emission", f"{txpath}\\emission.png", f"{mrodpath}\\_em_TMP.png")
+		imgsave = process_image_file(
+			embed_texture,
+			mat,
+			"Emission",
+			f"{txpath}\\emission.png",
+			f"{mrodpath}\\_em_TMP.png",
+			f"{tx_folder}\\texture.png"
+		)
 		if imgsave is not None:
 			strfile["emission"] = imgsave
 	return strfile;

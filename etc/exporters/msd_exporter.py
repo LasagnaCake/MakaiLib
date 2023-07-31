@@ -71,9 +71,9 @@ class ExportMSDOperator(Operator, ExportHelper):
 		cup = crot @ mathutils.Vector((0, 0, 1))
 		scenedef = {
 			"camera": {
-				"eye": [cpos.x, cpos.y, cpos.z],
-				"at": [cat.x, cat.y, cat.z],
-				"up": [0.0, 1.0, 0.0] if self.camera_up_pos_y else [cup.x, cup.y, cup.z],
+				"eye": [-cpos.x, cpos.y, cpos.z],
+				"at": [-cat.x, cat.y, cat.z],
+				"up": [0.0, 1.0, 0.0] if self.camera_up_pos_y else [-cup.x, cup.y, cup.z],
 				"fov": camera.data.angle,
 				"zNear": camera.data.clip_start,
 				"zFar": camera.data.clip_end,
@@ -115,10 +115,11 @@ class ExportMSDOperator(Operator, ExportHelper):
 				with open(defpath, "wt") as f:
 					f.write(json.dumps(rendef, indent="	"))
 				scenedef["data"]["path"].append({
-					"source": f"{obj.name}.mrod",
+					"source": f"{obj.name}\\{obj.name}.mrod",
 					"type": "MROD"
 				})
 			with open(f"{self.filepath}\\scene.msd", "wt") as f:
+				print(scenedef)
 				f.write(json.dumps(scenedef, indent="	"))
 		return {'FINISHED'}
 
