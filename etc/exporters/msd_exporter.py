@@ -85,20 +85,19 @@ class ExportMSDOperator(Operator, ExportHelper):
 				"relativeToEye": True
 			}
 		}
-		if camera.data.show_mist:
-			mist = context.scene.world.mist_settings
-			scenedef["farFog"] = {
-				"start": mist.start,
-				"stop": mist.start + mist.depth,
-				"strength": mist.intensity,
-				"color": [
-					mist.color[0],
-					mist.color[1],
-					mist.color[2],
-					mist.color[3]
-				],
-				"enabled": True
-			}
+		mist = context.scene.world.mist_settings
+		scenedef["farFog"] = {
+			"start": mist.start,
+			"stop": mist.start + mist.depth,
+			"strength": mist.intensity,
+			"color": [
+				mist.color[0],
+				mist.color[1],
+				mist.color[2],
+				mist.color[3]
+			],
+			"enabled": camera.data.show_mist
+		}
 		if self.embed_objects:
 			scenedef["data"] = []
 		else:
