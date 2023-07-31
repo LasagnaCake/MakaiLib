@@ -20,6 +20,10 @@ public:
 	void extendFromSceneFile(string path) {
 	}
 
+	void extendFromDefinition(nlohmann::json def) {
+
+	}
+
 	void extend(Scene3D* other) {
 		for(Renderable* obj: other->objects) {
 			Renderable* nobj = createObject();
@@ -141,6 +145,48 @@ public:
 			for (Renderable* obj: objects)
 				objdefs.push_back(obj->getObjectDefinition("base64", integratedObjectBinaries, integratedObjectTextures));
 			def["data"] = objdefs;
+		}
+		file["camera"] = {
+			{"eye",		{camera.eye.x, camera.eye.y, camera.eye.z}	},
+			{"at",		{camera.at.x, camera.at.y, camera.at.z}		},
+			{"up",		{camera.up.x, camera.up.y, camera.up.z}		},
+			{"aspect",	{camera.aspect.x, camera.aspect.y,}			},
+			{"fov",		camera.fov		},
+			{"zNear",	camera.zNear	},
+			{"zFar",	camera.zFar		},
+			{"ortho", {
+				{"enabled",	camera.otho.enabled								},
+				{"origin",	{camera.ortho.origin.x, camera.ortho.origin.y}	},
+				{"size",	{camera.ortho.size.x, camera.ortho.size.y}		}
+			}},
+			{"relativeToEye", camera.relativeToEye}
+		};
+		#define FOG_JSON_VALUE(FOG_TYPE)\
+			{#FOG_TYPE, {\
+				{"enabled", world.FOG_TYPE.enabled},\
+				{"color", {\
+					world.FOG_TYPE.color.x,\
+					world.FOG_TYPE.color.y,\
+					world.FOG_TYPE.color.z,\
+					world.FOG_TYPE.color.w\
+				}},\
+				{"start", world.FOG_TYPE.start},\
+				{"stop", world.FOG_TYPE.stop},\
+				{"strength", world.FOG_TYPE.strength}\
+			}}
+		file["world"] = {
+			FOG_JSON_VALUE(nearFog),
+			FOG_JSON_VALUE(farFog),
+			{"ambient", {
+				{"enabled", world.ambient.enabled},
+				{"color", {
+					world.ambient.color.x,
+					world.ambient.color.y,
+					world.ambient.color.z,
+					world.ambient.color.w
+				}},
+				{"strength", world.ambient.strength}
+			}}
 		}
 		return def;
 	}
