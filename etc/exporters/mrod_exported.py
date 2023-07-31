@@ -4,6 +4,7 @@ import os
 from bpy.types import Operator
 from bpy_extras.io_utils import ExportHelper
 import json
+import base64
 
 bl_info = {
 	"name": "MROD (Makai Renderable Object Definition) Exporter",
@@ -98,10 +99,22 @@ class ExportMRODOperator(Operator, ExportHelper):
 		default=True,
 	)
 
+	embed_texture: bpy.props.BoolProperty(
+		name="Embed Image Texture(s)",
+		description="Embed image data into file",
+		default=False,
+	)
+	
 	tx_folder: bpy.props.StringProperty(
 		name="Texture(s) Folder",
 		description="Where to save the texure(s)",
 		default="tx",
+	)
+
+	embed_mesh: bpy.props.BoolProperty(
+		name="Embed Mesh(es)",
+		description="Embed mesh data into file",
+		default=False,
 	)
 
 	mesh_folder: bpy.props.StringProperty(
@@ -122,71 +135,77 @@ class ExportMRODOperator(Operator, ExportHelper):
 			make_if_not_exists(txpath)
 			make_if_not_exists(meshpath)
 			component_data = "x,y,z"
-			with open(f"{meshpath}\\{obj.name}.mesh", "wb") as f:
-				dg = context.evaluated_depsgraph_get()
-				mesh = None
-				#TODO: fix this
-				if self.apply_modifiers:
-					mesh = obj.to_mesh(preserve_all_data_layers=False, depsgraph=dg)
-				else:
-					mesh = obj.to_mesh(preserve_all_data_layers=True, depsgraph=dg)
-				verts = mesh.vertices
-				# iterate through the mesh's loop triangles to collect the vertex data
-				vertex_data = []
-				if mesh.uv_layers.active: component_data += ",u,v"
-				if mesh.vertex_colors.active: component_data += ",r,g,b,a"
-				for loop_tri in mesh.loop_triangles:
-					for loop_index in loop_tri.loops:
-						vertex = mesh.vertices[mesh.loops[loop_index].vertex_index]
-						normal = vertex.normal
-						uv = mesh.uv_layers.active.data[loop_index].uv if mesh.uv_layers.active else None
-						color = mesh.vertex_colors.active.data[loop_index].color if mesh.vertex_colors.active else None
-						vertex_pos = vertex.co
+			dg = context.evaluated_depsgraph_get()
+			mesh = None
+			#TODO: fix this
+			if self.apply_modifiers:
+				mesh = obj.to_mesh(preserve_all_data_layers=False, depsgraph=dg)
+			else:
+				mesh = obj.to_mesh(preserve_all_data_layers=True, depsgraph=dg)
+			verts = mesh.vertices
+			# iterate through the mesh's loop triangles to collect the vertex data
+			vertex_data = []
+			if mesh.uv_layers.active: component_data += ",u,v"
+			if mesh.vertex_colors.active: component_data += ",r,g,b,a"
+			component_data += "nx,ny,nz"
+			for loop_tri in mesh.loop_triangles:
+				for loop_index in loop_tri.loops:
+					vertex = mesh.vertices[mesh.loops[loop_index].vertex_index]
+					normal = vertex.normal
+					uv = mesh.uv_layers.active.data[loop_index].uv if mesh.uv_layers.active else None
+					color = mesh.vertex_colors.active.data[loop_index].color if mesh.vertex_colors.active else None
+					vertex_pos = vertex.co
+					# Copy position data
+					vtxdat = [-vertex_pos.x, vertex_pos.z, vertex_pos.y]
+					# Get UV & color data, if applicable
+					if mesh.uv_layers.active:
+						vtxdat.extend(uv)
+					if mesh.vertex_colors.active:
+						vtxdat.extend(color)
+					# Append normal data
+					vtxdat.extend(normal)
+					# Append to array
+					vertex_data.extend(vtxdat)
+			# Pack binary
+			vertex_binary = struct.pack("<" + "f"*len(vertex_data), *vertex_data)
+			# Do appropriate procedure
+			strfile = {
+				"mesh": {
+					"data": None,
+					"components": component_data
+				}
+			}
+			if self.embed_mesh:
+				strfile["mesh"]["data"] = base64.b64encode(str(vertex_binary))
+				strfile["mesh"]["encoding"] = "base64"
+			else:
+				with open(f"{meshpath}\\{obj.name}.mesh", "wb") as f:
+					# write the binary data to the file
+					f.write(vertex_binary)
+				strfile["mesh"]["data"] = {"path": f"{self.mesh_folder}\\{obj.name}.mesh"}
 
-						vtxdat = [-vertex_pos.x, vertex_pos.z, vertex_pos.y]
-						
-						if mesh.uv_layers.active:
-							vtxdat.extend(uv)
-						if mesh.vertex_colors.active:
-							vtxdat.extend(color)
-						
-						vtxdat.extend(normal)
-
-						vertex_data.extend(vtxdat)
-
-				# pack the vertex data into a binary string
-				vertex_binary = struct.pack("<" + "f"*len(vertex_data), *vertex_data)
-
-				# write the binary data to the file
-				f.write(vertex_binary)
 			with open(f"{meshpath}\\{obj.name}.mrod", "wt") as f:
 				pos, rot, scale = obj.matrix_world.decompose()
 				rot = rot.to_euler('YXZ')
-				strfile = {
-					"mesh": {
-						"data": {"path": f"{self.mesh_folder}\\{obj.name}.mesh"},
-						"components": component_data
-					},
-					"trans": {
-						"position": [pos.x, pos.y, pos.z],
-						"rotation": [rot.x, rot.y, rot.z],
-						"scale": [scale.x, scale.y, scale.z]
-					},
-					"material": {
-						"color": [1.0, 1.0, 1.0, 1.0],
-						"shaded": True,
-						"illuminated": False,
-						"hue": 0.0,
-						"saturation": 1.0,
-						"luminosity": 1.0,
-						"instances": [
-							[0.0, 0.0, 0.0],
-						],
-						"culling": 0,
-						"fill": 0
-					},
-					"active": True
+				strfile["trans"] = {
+					"position": [pos.x, pos.y, pos.z],
+					"rotation": [rot.x, rot.y, rot.z],
+					"scale": [scale.x, scale.y, scale.z]
 				}
+				strfile["material"] = {
+					"color": [1.0, 1.0, 1.0, 1.0],
+					"shaded": True,
+					"illuminated": False,
+					"hue": 0.0,
+					"saturation": 1.0,
+					"luminosity": 1.0,
+					"instances": [
+						[0.0, 0.0, 0.0],
+					],
+					"culling": 0,
+					"fill": 0
+				}
+				strfil["active"] = True
 				if len(obj.material_slots) > 0:
 					mat = obj.material_slots[0].material
 					result = save_texture_to_image(mat, "Base Color", f"{txpath}\\texture.png")
@@ -216,8 +235,10 @@ class ExportMRODOperator(Operator, ExportHelper):
 	def draw(self, context):
 		layout = self.layout
 		layout.prop(self, "tx_folder")
-		layout.prop(self, "mesh_folder")
-		layout.prop(self, "apply_modifiers")
+		layout.prop(self, "embed_mesh")
+		if not self.embed_mesh:
+			layout.prop(self, "mesh_folder")
+		#layout.prop(self, "apply_modifiers")
 
 
 # Only needed if you want to add into a dynamic menu

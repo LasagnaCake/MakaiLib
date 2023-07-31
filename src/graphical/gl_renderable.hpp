@@ -363,10 +363,26 @@ public:
 		// Loop time
 		while (component < vdata.size() / sizeof(float)) {
 			vm = Drawer::baseVertexMap;
-			for (auto& c : components)
+			for (auto& c: components)
 				vm[c] = rawdata[component++];
 			vertices.push_back(Drawer::toRawVertex(vm));
 		}
+		// Check if data is OK
+		if (vertices.size() % 3 != 0)
+			throw Error::InvalidValue(
+				"Improper/incomplete vertex data!",
+				__FILE__,
+				toString(__LINE__),
+				"extendFromDefinition",
+				(
+					"Total vertex count is "
+				+	std::to_string(vertices.size())
+				+	" .\nExpected size is "
+				+	std::to_string(size_t(Math::ceil(vertices.size() / 3.0) * 3.0))
+				+	"."
+				),
+				"You either have extra data, or missing data."
+			);
 		// Create renderable object
 		extend(vertices.data(), vertices.size());
 		#define SET_PARAM(PARAM)\
@@ -719,15 +735,45 @@ private:
 			Material::ImageEffect fx;
 			fx.enabled = effect["enabled"].get<bool>();
 			auto& img = effect["image"];
-			if (img.is_object() && img["path"].is_string() && !img["path"].get<string>().empty()) {
-				if (!texture)
-					texture = new Texture2D();
-				fx.image = texture;
+			if (!texture)
+				texture = new Texture2D();
+			fx.image = texture;
+			if (img["data"].is_object() && img["data"]["path"].is_string() && !img["data"]["path"].get<string>().empty()) {
 				texture->create(FileSystem::concatenatePath(sourcepath, img["path"].get<string>()));
 				texture->setTextureFilterMode(
 					img["minFilter"].get<unsigned int>(),
 					img["magFilter"].get<unsigned int>()
 				);
+			} else if (img["data"].is_string() && !img["data"].get<string>().empty()) {
+				vector<ubyte> data = decodeData(img["data"].get<string>(), img["encoding"]);
+				int w, h, nc;
+				uchar* imgdat = stbi_load_from_memory(
+					data.data(),
+					data.size(),
+					&w,
+					&h,
+					&nc,
+					4
+				);
+				if (imgdat) {
+					texture->create(
+						w,
+						h,
+						GL_UNSIGNED_BYTE,
+						GL_RGBA,
+						img["magFilter"].get<unsigned int>(),
+						img["minFilter"].get<unsigned int>(),
+						imgdat
+					);
+					stbi_image_free(imgdat);
+				} else throw Error::FailedAction(
+						"Failed at getting image effect!",
+						__FILE__,
+						toString(__LINE__),
+						"extendFromDefinition",
+						"Could not decode embedded image data!",
+						"Please check to see if values are correct!"
+					);
 			} else fx.enabled = false;
 			return fx;
 		} catch (nlohmann::json::exception e) {

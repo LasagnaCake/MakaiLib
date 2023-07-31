@@ -31,15 +31,33 @@ Undefined optional values are set to their defaults.
 # ImageData2D
 
 ## Layout
+If image is to be embedded in the file:
+
 ```JavaScript
 "image": {
 	// Required
-	"path": "", // Path to image file, relative to object definition file
+	"data": "", // Image file data, encoded as string
+	"encoding": "" // Image file data's encoding
 	// Optional
 	"minFilter": 0, // See GL's GL_TEXTURE_MIN_FILTER
 	"magFilter": 0  // See GL's GL_TEXTURE_MAG_FILTER
 }
 ```
+
+If image is to be saved in a separate file:
+
+```JavaScript
+"image": {
+	// Required
+	data: {
+		"path": "" // Path to image file, relative to object definition file
+	},
+	// Optional
+	"minFilter": 0, // See GL's GL_TEXTURE_MIN_FILTER
+	"magFilter": 0  // See GL's GL_TEXTURE_MAG_FILTER
+}
+```
+
 
 # ObjectMaterial
 
