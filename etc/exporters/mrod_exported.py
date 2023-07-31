@@ -134,7 +134,6 @@ class ExportMRODOperator(Operator, ExportHelper):
 			meshpath = mrodpath + "\\" + self.mesh_folder
 			make_if_not_exists(txpath)
 			make_if_not_exists(meshpath)
-			component_data = "x,y,z"
 			dg = context.evaluated_depsgraph_get()
 			mesh = None
 			#TODO: fix this
@@ -145,6 +144,7 @@ class ExportMRODOperator(Operator, ExportHelper):
 			verts = mesh.vertices
 			# iterate through the mesh's loop triangles to collect the vertex data
 			vertex_data = []
+			component_data = "x,y,z"
 			if mesh.uv_layers.active: component_data += ",u,v"
 			if mesh.vertex_colors.active: component_data += ",r,g,b,a"
 			component_data += "nx,ny,nz"
