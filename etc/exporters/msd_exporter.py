@@ -90,12 +90,7 @@ class ExportMSDOperator(Operator, ExportHelper):
 			"start": mist.start,
 			"stop": mist.start + mist.depth,
 			"strength": mist.intensity,
-			"color": [
-				mist.color[0],
-				mist.color[1],
-				mist.color[2],
-				mist.color[3]
-			],
+			"color": [1.0, 1.0, 1.0, 1.0],
 			"enabled": camera.data.show_mist
 		}
 		if self.embed_objects:

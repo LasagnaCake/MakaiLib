@@ -199,6 +199,10 @@ def create_render_definition(context, obj, filepath, tx_folder, mesh_folder, emb
 		imgsave = process_image_file(embed_texture, mat, "Base Color", f"{txpath}\\texture.png", f"{mrodpath}\\_tx_TMP.png")
 		if imgsave is not None:
 			strfile["texture"] = imgsave
+		else:
+			cdat = get_color(mat, "Base Color")
+			if cdat is not None:
+				strfile["material"]["color"] = [cdat[0], cdat[1], cdat[2], cdat[3]]
 		# Process image texture
 		imgsave = process_image_file(embed_texture, mat, "Emission", f"{txpath}\\emission.png", f"{mrodpath}\\_em_TMP.png")
 		if imgsave is not None:
