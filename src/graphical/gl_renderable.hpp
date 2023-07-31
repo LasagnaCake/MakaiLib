@@ -296,6 +296,7 @@ public:
 				"Please check to see if values are correct!"
 			);
 		}
+		$debug(componentData);
 		// Check if important data is not empty
 		{
 			string error = "";
@@ -483,7 +484,6 @@ public:
 				if (dmat["gradient"].is_object()) {
 					material.gradient.enabled	= dmat["gradient"]["enabled"].get<bool>();
 					material.gradient.channel	= dmat["gradient"]["channel"].get<unsigned int>();
-					// FIXME: it's a color, not a float
 					auto& dgbegin	= dmat["gradient"]["begin"];
 					auto& dgend		= dmat["gradient"]["end"];
 					material.gradient.begin		= Vector4(
