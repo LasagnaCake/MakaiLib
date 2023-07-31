@@ -594,17 +594,18 @@ public:
 		string folder,
 		string name = "object",
 		string texturesFolder = "tx",
-		bool integratedBinary = false,
+		bool integratedBinary	= false,
+		bool integratedTextures	= false,
 		bool pretty = false
 	) {
 		$debug("Saving object '" + name + "'...");
 		// Get paths
 		string binpath		= folder + "/" + name + ".mesh";
 		$debug(binpath);
-		$debug(folder + "/" + name + ".json");
+		$debug(folder + "/" + name + ".mrod");
 		FileSystem::makeDirectory(FileSystem::concatenatePath(folder, texturesFolder));
 		// Get object definition
-		nlohmann::json file = getObjectDefinition("base64", integratedBinary);
+		nlohmann::json file = getObjectDefinition("base64", integratedBinary, integratedTextures);
 		// If binary is in a different location, save there
 		if (!integratedBinary) {
 			FileLoader::saveBinaryFile(binpath, vertices, vertexCount);
@@ -613,27 +614,30 @@ public:
 		Material::ObjectMaterial& mat = material;
 		auto& mdef = file["material"];
 		// Save image texture
-		mdef["texture"] = saveImageEffect(mat.texture, folder, texturesFolder + "/texture.tga");
+		if (!integratedTextures)
+			mdef["texture"] = saveImageEffect(mat.texture, folder, texturesFolder + "/texture.tga");
 		mdef["texture"]["alphaClip"] = mat.texture.alphaClip;
 		// Save emission texture
-		mdef["emission"] = saveImageEffect(mat.emission, folder, texturesFolder + "/emission.tga");
+		if (!integratedTextures)
+			mdef["emission"] = saveImageEffect(mat.emission, folder, texturesFolder + "/emission.tga");
 		mdef["texture"]["alphaClip"] = mat.emission.alphaClip;
 		// Save warp texture
-		mdef["warp"] = saveImageEffect(mat.warp, folder, texturesFolder + "warp.tga");
+		if (!integratedTextures)
+			mdef["warp"] = saveImageEffect(mat.warp, folder, texturesFolder + "/warp.tga");
 		mdef["warp"]["channelX"] = mat.warp.channelX;
 		mdef["warp"]["channelY"] = mat.warp.channelY;
 		mdef["warp"]["trans"] = {
-			{"position",	{mat.warp.trans.position.x,	trans.position.y	}	},
-			{"rotation",	mat.warp.trans.rotation								},
-			{"scale",		{mat.warp.trans.scale.x,	trans.scale.y		}	}
+			{"position",	{mat.warp.trans.position.x,	mat.warp.trans.position.y	}	},
+			{"rotation",	mat.warp.trans.rotation										},
+			{"scale",		{mat.warp.trans.scale.x,	mat.warp.trans.scale.y		}	}
 		};
 		// convert to text
 		auto contents = file.dump(pretty ? 1 : -1, '\t', false, nlohmann::json::error_handler_t::replace);
 		// Save definition file
-		FileLoader::saveTextFile(folder + "/" + name + ".json", contents);
-	};
+		FileLoader::saveTextFile(folder + "/" + name + ".mrod", contents);
+	}
 
-	nlohmann::json getObjectDefinition(string const& encoding = "base64", bool integratedBinary = true) {
+	nlohmann::json getObjectDefinition(string const& encoding = "base64", bool integratedBinary = true, bool integratedTextures = true) {
 		// Bake object
 		bool wasBaked = baked;
 		if (!wasBaked) bake();
@@ -707,6 +711,9 @@ public:
 			case GL_FRONT:			def["material"]["culling"] = 1; break;
 			case GL_BACK:			def["material"]["culling"] = 2; break;
 		}
+		if (integratedTextures) {
+			// TODO: Do integrated textures
+		}
 		// Unbake object if applicable
 		if (!wasBaked) unbake();
 		// Return definition
@@ -716,6 +723,8 @@ public:
 	vector<Triangle*> triangles;
 
 private:
+	friend class Scene3D;
+
 	nlohmann::json saveImageEffect(Material::ImageEffect& effect, string const& folder, string const& path) {
 		nlohmann::json def;
 		def["enabled"] = effect.enabled;
@@ -1020,3 +1029,5 @@ Renderable* loadObjectFromDefinitionFile(string const& path) {
 	// Return object
 	return r;
 }
+
+typedef vector<Renderable*> RenderableList;

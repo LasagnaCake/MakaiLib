@@ -4,7 +4,7 @@ Undefined optional values are set to their defaults.
 
 ## Layout
 
-```JavaScript
+```javascript
 "trans": {
 	// Required
 	"position": [0.0, 0.0], // 2D vector representing position
@@ -17,7 +17,7 @@ Undefined optional values are set to their defaults.
 
 ## Layout
 
-```JavaScript
+```javascript
 "trans": {
 	// Required
 	"position": [0.0, 0.0, 0.0], // 3D vector representing position
@@ -33,7 +33,7 @@ Undefined optional values are set to their defaults.
 ## Layout
 If image is to be embedded in the file:
 
-```JavaScript
+```javascript
 "image": {
 	// Required
 	"data": "", // Image file data, encoded as string
@@ -46,7 +46,7 @@ If image is to be embedded in the file:
 
 If image is to be saved in a separate file:
 
-```JavaScript
+```javascript
 "image": {
 	// Required
 	data: {
@@ -63,7 +63,7 @@ If image is to be saved in a separate file:
 
 ## Layout
 
-```JavaScript
+```javascript
 "material": {
 	// Optional
 	"color": [1.0, 1.0, 1.0, 1.0], // 4D vector representing the object's color
@@ -73,16 +73,19 @@ If image is to be saved in a separate file:
 	"saturation": 1.0, // Ranges from -1.0 to 1.0
 	"luminosity": 1.0, // Ranges from -1.0 to 1.0
 	"texture": {
+		// Required
 		"enabled": true,
 		"image": {/* See ImageData2D:Layout */},
 		"alphaClip": 0.1, // Texture alpha clipping
 	},
 	"emission": {
+		// Required
 		"enabled": true,
 		"image": {/* See ImageData2D:Layout */},
 		"alphaClip": 0.1, // Texture alpha clipping
 	},
 	"warp": {
+		// Required
 		"enabled": true,
 		"image": {/* See ImageData2D:Layout */},
 		"trans": {/* See Transform2D:Layout */},
@@ -90,10 +93,12 @@ If image is to be saved in a separate file:
 		"channelY": 1, // Index of the pixel's channel to be used for vertical transformation
 	},
 	"negative": {
+		// Required
 		"enabled": true,
 		"strength": 1.0,
 	},
 	"gradient": {
+		// Required
 		"enabled": true,
 		"channel": 0, // Index of the pixel's channel to be used for gradient transformation. If -1, an average of the RGB is used
 		"invert": false,
@@ -101,6 +106,7 @@ If image is to be saved in a separate file:
 		"end": [1.0, 1.0, 1.0, 1.0], // 4D vector representing the end color
 	},
 	"instances": [
+		// Required
 		[0.0, 0.0, 0.0], // 3D vector representing the instance's position
 	], // A list of instances of the object (including itself)
 	"culling": 0, // Culling mode (0: none, 1: front, 2: back)
@@ -108,15 +114,48 @@ If image is to be saved in a separate file:
 }
 ```
 
+# WorldMaterial
+
+## FogEffect
+
+### Layout
+	
+```javascript
+"fog": {
+	// Required
+	"enabled": true,
+	"start": 0.0, // The fog's start position (distance from camera)
+	"stop": 10.0, // The fog's end position (distance from camera)
+	"color": [0.0, 0.0, 0.0, 0.0], // 4D vector representing the fog's color
+	"strength": 0.0 // The fog's strength
+}
+```
+
+## Layout
+
+```javascript
+"material": {
+	// Optional
+	"nearFog": {/* See WorldMaterial:FogEffect:Layout */},
+	"farFog": {/* See WorldMaterial:FogEffect:Layout */},
+	"ambient": {
+		// Required
+		"enabled": true,
+		"color": [1.0, 1.0, 1.0, 1.0], // 4D vector representing the ambient light's color
+		"strength": 1.0 // How bright the ambient light is
+	}
+}
+```
+
 # Renderable Object
 
 ## Layout
 
-This can be saved as a `JSON` file, or a file of extension `.mrod` (Makai Renderable Object Definition).
+This can be saved as a `JSON` file of extension `.mrod` (Makai Renderable Object Definition).
 
 If data is to be integrated in the file:
 
-```JavaScript
+```javascript
 "object": {
 	// Required
 	"mesh": {
@@ -133,7 +172,7 @@ If data is to be integrated in the file:
 
 If data gets saved in a different file:
 
-```JavaScript
+```javascript
 "object": {
 	// Required
 	"mesh": {
@@ -146,5 +185,55 @@ If data gets saved in a different file:
 	"trans": {/* See Transform3D:Layout */},
 	"material": {/* See ObjectMaterial:Layout */},
 	"active": true,
+}
+```
+# Camera3D
+
+## Layout
+
+```javascript
+"camera": {
+	// Required
+	"eye": [0.0, 0.0, 0.0],
+	"at": [0.0, 0.0, -1.0],
+	"up": [0.0, 1.0, 0.0],
+	"aspect": [4.0, 3.0],
+	"fov": 2.0,
+	"zNear": 0.01,
+	"zFar": 100.0,
+	// Optional
+	"ortho": {
+		// Required
+		"origin": [0, 0],
+		"size": [1, 1],
+		"enabled": false
+	},
+	"relativeToEye": false
+}
+```
+
+# 3D Scene
+This can be saved as a `JSON` file of extension `.msd` (Makai Scene Definition).
+
+If data gets saved in a separate file:
+
+```javascript
+"scene": {
+	"camera": {/* See Camera3D:Layout */},
+	"data": {
+		"path": [{
+			"source": "", // Object file source relative to file
+			"type": "MROD" // Object file type
+		}] // Paths to objects
+	} 
+}
+```
+
+If data is to be integrated in the file:
+
+```javascript
+"scene": {
+	"camera": {/*See Camera3D:Layout */}, // Scene camera
+	"data": [{/* See Renderable Object:Layout */}] // List of object definitions
 }
 ```

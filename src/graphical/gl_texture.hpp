@@ -136,11 +136,9 @@ public:
 	}
 
 	Texture2D(
-		ImageData2D image,
-		unsigned int magFilter = GL_LINEAR,
-		unsigned int minFilter = GL_LINEAR_MIPMAP_LINEAR
+		ImageData2D image
 	) {
-		create(image, minFilter, magFilter);
+		create(image);
 	}
 
 	void create(
@@ -196,9 +194,7 @@ public:
 	}
 
 	void create(
-		ImageData2D image,
-		unsigned int magFilter = GL_LINEAR,
-		unsigned int minFilter = GL_LINEAR_MIPMAP_LINEAR
+		ImageData2D image
 	) {
 		if (image.data.empty()) return;
 		create(
@@ -206,8 +202,8 @@ public:
 			image.height,
 			image.type,
 			image.format,
-			minFilter,
-			magFilter,
+			image.minFilter,
+			image.magFilter,
 			(unsigned char*)image.data.data()
 		);
 	}
@@ -290,7 +286,7 @@ public:
 	}
 
 	ImageData2D getData() {
-		if (!created) return ImageData2D{0,0,0,0};
+		if (!created) return ImageData2D{0,0,0,0,0,0};
 		size_t size = 0;
 		switch (type) {
 			default:

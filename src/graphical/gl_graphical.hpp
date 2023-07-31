@@ -373,6 +373,8 @@ namespace RenderData {
 	namespace Bar {
 		#include "gl_progressbar.hpp"
 	}
+
+	#include "gl_scene.hpp"
 }
 
 #include "gl_framebuffer.hpp"

@@ -128,6 +128,18 @@ namespace Helper {
 			res.push_back(current);
 		return res;
 	}
+
+	template<typename T>
+	using Enumerated = HashMap<size_t, T>;
+
+	template<typename T>
+	Enumerated<T> enumerate(List<T> lst) {
+		Enumerated<T> res;
+		size_t i = 0;
+		for(auto& elem: lst)
+			res[i++] = elem;
+		return res;
+	}
 }
 
 using Helper::String;
