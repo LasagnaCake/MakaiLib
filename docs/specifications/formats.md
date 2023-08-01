@@ -140,8 +140,7 @@ If image is to be saved in a separate file:
 	"farFog": {/* See WorldMaterial:FogEffect:Layout */},
 	"ambient": {
 		// Required
-		"enabled": true,
-		"color": [1.0, 1.0, 1.0, 1.0], // 4D vector representing the ambient light's color
+		"color": [1.0, 1.0, 1.0], // eD vector representing the ambient light's color
 		"strength": 1.0 // How bright the ambient light is
 	}
 }

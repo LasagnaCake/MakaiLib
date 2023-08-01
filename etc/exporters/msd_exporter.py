@@ -86,12 +86,18 @@ class ExportMSDOperator(Operator, ExportHelper):
 			}
 		}
 		mist = context.scene.world.mist_settings
-		scenedef["farFog"] = {
-			"start": mist.start,
-			"stop": mist.start + mist.depth,
-			"strength": mist.intensity,
-			"color": [1.0, 1.0, 1.0, 1.0],
-			"enabled": camera.data.show_mist
+		scenedef["world"] = {
+			"farFog": {
+				"start": mist.start,
+				"stop": mist.start + mist.depth,
+				"strength": mist.intensity,
+				"color": [1.0, 1.0, 1.0, 1.0],
+				"enabled": camera.data.show_mist
+			},
+			"ambient": {
+				"color": [1.0, 1.0, 1.0],
+				"strength": 1.0
+			}
 		}
 		if self.embed_objects:
 			scenedef["data"] = []

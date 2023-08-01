@@ -149,7 +149,7 @@ public:
 				objdefs.push_back(obj->getObjectDefinition("base64", integratedObjectBinaries, integratedObjectTextures));
 			def["data"] = objdefs;
 		}
-		file["camera"] = {
+		def["camera"] = {
 			{"eye",		{camera.eye.x, camera.eye.y, camera.eye.z}	},
 			{"at",		{camera.at.x, camera.at.y, camera.at.z}		},
 			{"up",		{camera.up.x, camera.up.y, camera.up.z}		},
@@ -158,7 +158,7 @@ public:
 			{"zNear",	camera.zNear	},
 			{"zFar",	camera.zFar		},
 			{"ortho", {
-				{"enabled",	camera.otho.enabled								},
+				{"enabled",	camera.ortho.enabled							},
 				{"origin",	{camera.ortho.origin.x, camera.ortho.origin.y}	},
 				{"size",	{camera.ortho.size.x, camera.ortho.size.y}		}
 			}},
@@ -177,20 +177,18 @@ public:
 				{"stop", world.FOG_TYPE.stop},\
 				{"strength", world.FOG_TYPE.strength}\
 			}}
-		file["world"] = {
+		def["world"] = {
 			FOG_JSON_VALUE(nearFog),
 			FOG_JSON_VALUE(farFog),
 			{"ambient", {
-				{"enabled", world.ambient.enabled},
 				{"color", {
 					world.ambient.color.x,
 					world.ambient.color.y,
-					world.ambient.color.z,
-					world.ambient.color.w
+					world.ambient.color.z
 				}},
 				{"strength", world.ambient.strength}
 			}}
-		}
+		};
 		return def;
 	}
 

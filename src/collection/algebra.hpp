@@ -390,7 +390,7 @@ namespace Math {
 		namespace {
 			typedef std::uniform_real_distribution<double> RandReal;
 			typedef std::uniform_int_distribution<size_t> RandLong;
-			typedef std::mt19937_64 RendomEngine;
+			typedef std::mt19937_64 RandomEngine;
 			// The random number generator engine used
 			RandomEngine	engine{Time::sinceEpoch<Time::Millis>()};
 			// Default distributions
