@@ -218,8 +218,9 @@ If data gets saved in a separate file:
 
 ```javascript
 "scene": {
-	"camera": {/* See Camera3D:Layout */},
-	"world": {/* See WorldMaterial:Layout */},
+	// Required
+	"camera": {/* See Camera3D:Layout */}, // Scene's camera
+	"world": {/* See WorldMaterial:Layout */}, // Scene's WorldMaterial
 	"data": {
 		"path": [{
 			"source": "", // Object file source relative to file
@@ -233,7 +234,9 @@ If data is to be integrated in the file:
 
 ```javascript
 "scene": {
-	"camera": {/*See Camera3D:Layout */}, // Scene camera
+	// Required
+	"camera": {/*See Camera3D:Layout */}, // Scene's camera
+	"world": {/* See WorldMaterial:Layout */}, // Scene's WorldMaterial
 	"data": [{/* See Renderable Object:Layout */}] // List of object definitions
 }
 ```

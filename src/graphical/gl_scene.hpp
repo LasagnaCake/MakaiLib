@@ -14,17 +14,11 @@ public:
 		destroy();
 	}
 
-	Camera::Camera3D		camera;
+	Camera::GimbalCamera3D	camera;
 	Material::WorldMaterial	world;
 
-	[[unavailable("Unimplemented!")]]
 	void extendFromSceneFile(string path) {
-		// TODO: this
-	}
-
-	[[unavailable("Unimplemented!")]]
-	void extendFromDefinition(nlohmann::json def) {
-		// TODO: this
+		extendFromDefinition(FileLoader::loadJSON(path), FileSystem::getDirectoryFromPath(path));
 	}
 
 	void extend(Scene3D* other) {
@@ -181,6 +175,89 @@ private:
 	RenderableList		objects;
 	vector<Texture2D*>	textures;
 
+	void extendFromDefinition(
+		nlohmann::json def,
+		string const& sourcepath
+	) {
+		try {
+			Camera::Camera3D		cam;
+			Material::WorldMaterial	mat;
+			// Get camera data
+			{
+				auto& dcam = def["camera"];
+				cam.eye		= Vector3(dcam["eye"][0].get<float>(), dcam["eye"][1].get<float>(), dcam["eye"][2].get<float>());
+				cam.at		= Vector3(dcam["at"][0].get<float>(), dcam["at"][1].get<float>(), dcam["at"][2].get<float>());
+				cam.up		= Vector3(dcam["up"][0].get<float>(), dcam["up"][1].get<float>(), dcam["up"][2].get<float>());
+				cam.aspect	= Vector2(dcam["aspect"][0].get<float>(), dcam["aspect"][1].get<float>());
+				cam.fov		= dcam["fov"].get<float>();
+				cam.zNear	= dcam["zNear"].get<float>();
+				cam.zFar	= dcam["zFar"].get<float>();
+				if (dcam["ortho"].is_object()) {
+					cam.ortho.enabled	= dcam["ortho"]["enabled"].get<bool>();
+					cam.ortho.origin	= Vector2(dcam["ortho"]["origin"][0].get<float>(), dcam["ortho"]["origin"][1].get<float>());
+					cam.ortho.size		= Vector2(dcam["ortho"]["size"][0].get<float>(), dcam["ortho"]["size"][1].get<float>());
+				}
+				if (dcam["relativeToEye"].is_boolean())
+					cam.relativeToEye	= dcam["relativeToEye"].get<bool>();
+			}
+			camera.fromCamera3D(cam);
+			// Get world data
+			{
+				auto& dmat = def["world"];
+				#define _SET_FOG_PROPERTY(FOG_TYPE)\
+					if (dmat[#FOG_TYPE].is_object()) {\
+						mat.FOG_TYPE.enabled	= dmat[#FOG_TYPE]["enabled"].get<bool>();\
+						mat.FOG_TYPE.start		= dmat[#FOG_TYPE]["start"].get<float>();\
+						mat.FOG_TYPE.stop		= dmat[#FOG_TYPE]["stop"].get<float>();\
+						mat.FOG_TYPE.color		= Vector4(\
+							dmat[#FOG_TYPE]["color"][0].get<float>(),\
+							dmat[#FOG_TYPE]["color"][1].get<float>(),\
+							dmat[#FOG_TYPE]["color"][2].get<float>(),\
+							dmat[#FOG_TYPE]["color"][3].get<float>()\
+						);\
+						mat.FOG_TYPE.strength	= dmat[#FOG_TYPE]["strength"].get<float>();\
+					}
+				_SET_FOG_PROPERTY(nearFog)
+				_SET_FOG_PROPERTY(farFog)
+				#undef _SET_FOG_PROPERTY
+				if (dmat["ambient"].is_object()) {
+					mat.ambient.color = Vector3(
+						dmat["ambient"]["color"][0].get<float>(),
+						dmat["ambient"]["color"][1].get<float>(),
+						dmat["ambient"]["color"][2].get<float>()
+					);
+					mat.ambient.strength = dmat["ambient"]["strength"].get<float>();
+				}
+			}
+			// Get objects data
+			{
+				if (def["data"].is_object()) {
+					for(auto& obj: def["data"]["path"].get<vector<nlohmann::json>>()) {
+						Renderable* r = createObject();
+						if (obj["type"].get<string>() == "MROD")
+							r->extendFromDefinitionFile(obj["source"].get<string>());
+						if (obj["type"].get<string>() == "MESH" || obj["type"].get<string>() == "MSBO") {
+							r->extendFromBinaryFile(obj["source"].get<string>());
+						}
+					}
+				} else {
+					for(auto& obj: def["data"].get<vector<nlohmann::json>>()) {
+						createObject()->extendFromDefinition(sourcepath + obj, sourcepath + FileSystem::getDirectoryFromPath(obj));
+					}
+				}
+			}
+		} catch (nlohmann::json::exception e) {
+			throw Error::FailedAction(
+				"Failed at getting image effect!",
+				__FILE__,
+				toString(__LINE__),
+				"extendFromDefinition",
+				e.what(),
+				"Please check to see if values are correct!"
+			);
+		}
+	}
+
 	nlohmann::json getSceneDefinition(
 		bool integratedObjects			= true,
 		bool integratedObjectBinaries	= true,
@@ -193,22 +270,23 @@ private:
 				objdefs.push_back(obj->getObjectDefinition("base64", integratedObjectBinaries, integratedObjectTextures));
 			def["data"] = objdefs;
 		}
+		Camera::Camera3D cam = camera;
 		def["camera"] = {
-			{"eye",		{camera.eye.x, camera.eye.y, camera.eye.z}	},
-			{"at",		{camera.at.x, camera.at.y, camera.at.z}		},
-			{"up",		{camera.up.x, camera.up.y, camera.up.z}		},
-			{"aspect",	{camera.aspect.x, camera.aspect.y,}			},
-			{"fov",		camera.fov		},
-			{"zNear",	camera.zNear	},
-			{"zFar",	camera.zFar		},
+			{"eye",		{cam.eye.x, cam.eye.y, cam.eye.z}	},
+			{"at",		{cam.at.x, cam.at.y, cam.at.z}		},
+			{"up",		{cam.up.x, cam.up.y, cam.up.z}		},
+			{"aspect",	{cam.aspect.x, cam.aspect.y,}		},
+			{"fov",		cam.fov		},
+			{"zNear",	cam.zNear	},
+			{"zFar",	cam.zFar	},
 			{"ortho", {
-				{"enabled",	camera.ortho.enabled							},
-				{"origin",	{camera.ortho.origin.x, camera.ortho.origin.y}	},
-				{"size",	{camera.ortho.size.x, camera.ortho.size.y}		}
+				{"enabled",	cam.ortho.enabled							},
+				{"origin",	{cam.ortho.origin.x, cam.ortho.origin.y}	},
+				{"size",	{cam.ortho.size.x, cam.ortho.size.y}		}
 			}},
-			{"relativeToEye", camera.relativeToEye}
+			{"relativeToEye", cam.relativeToEye}
 		};
-		#define FOG_JSON_VALUE(FOG_TYPE)\
+		#define _FOG_JSON_VALUE(FOG_TYPE)\
 			{#FOG_TYPE, {\
 				{"enabled", world.FOG_TYPE.enabled},\
 				{"color", {\
@@ -222,8 +300,8 @@ private:
 				{"strength", world.FOG_TYPE.strength}\
 			}}
 		def["world"] = {
-			FOG_JSON_VALUE(nearFog),
-			FOG_JSON_VALUE(farFog),
+			_FOG_JSON_VALUE(nearFog),
+			_FOG_JSON_VALUE(farFog),
 			{"ambient", {
 				{"color", {
 					world.ambient.color.x,

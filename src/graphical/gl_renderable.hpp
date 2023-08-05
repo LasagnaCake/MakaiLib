@@ -6,10 +6,10 @@ namespace {
 	using std::string;
 }
 
-#define ENCDEC_CASE(T, F) if (encoding == T) return F(data)
+#define _ENCDEC_CASE(T, F) if (encoding == T) return F(data)
 vector<ubyte> decodeData(string const& data, string const& encoding) {
-	ENCDEC_CASE	("base32",	cppcodec::base32_rfc4648::decode);
-	ENCDEC_CASE	("base64",	cppcodec::base64_rfc4648::decode);
+	_ENCDEC_CASE	("base32",	cppcodec::base32_rfc4648::decode);
+	_ENCDEC_CASE	("base64",	cppcodec::base64_rfc4648::decode);
 	throw Error::InvalidValue(
 		"Invalid encoding: " + encoding,
 		__FILE__,
@@ -19,8 +19,8 @@ vector<ubyte> decodeData(string const& data, string const& encoding) {
 }
 
 string encodeData(vector<ubyte> const& data, string const& encoding) {
-	ENCDEC_CASE	("base32",	cppcodec::base32_rfc4648::encode);
-	ENCDEC_CASE	("base64",	cppcodec::base64_rfc4648::encode);
+	_ENCDEC_CASE	("base32",	cppcodec::base32_rfc4648::encode);
+	_ENCDEC_CASE	("base64",	cppcodec::base64_rfc4648::encode);
 	throw Error::InvalidValue(
 		"Invalid encoding: " + encoding,
 		__FILE__,
@@ -28,7 +28,7 @@ string encodeData(vector<ubyte> const& data, string const& encoding) {
 		"decodeData"
 	);
 }
-#undef ENCDEC_CASE
+#undef _ENCDEC_CASE
 
 class Renderable: public Base::DrawableObject {
 public:
@@ -612,7 +612,7 @@ private:
 			);
 		// Create renderable object
 		extend(vertices.data(), vertices.size());
-		#define SET_PARAM(PARAM)\
+		#define _SET_PARAM(PARAM)\
 			trans.PARAM = Vector3(\
 				dtrans[#PARAM][0].get<float>(),\
 				dtrans[#PARAM][1].get<float>(),\
@@ -622,9 +622,9 @@ private:
 		if (def["trans"].is_object()) {
 			auto& dtrans = def["trans"];
 			try {
-				SET_PARAM(position);
-				SET_PARAM(rotation);
-				SET_PARAM(scale);
+				_SET_PARAM(position);
+				_SET_PARAM(rotation);
+				_SET_PARAM(scale);
 			} catch (nlohmann::json::exception e) {
 				throw Error::FailedAction(
 					"Failed at getting transformation values!",
@@ -636,7 +636,7 @@ private:
 				);
 			}
 		}
-		#undef SET_PARAM
+		#undef _SET_PARAM
 		// Set material data
 		if (def["material"].is_object()) {
 			try {
@@ -649,17 +649,17 @@ private:
 					material.color.w = dmat["color"][3].get<float>();
 				}
 				// Set color & shading params
-				#define SET_BOOL_PARAM(PARAM) if(dmat[#PARAM].is_boolean()) material.PARAM = dmat[#PARAM].get<bool>()
-				SET_BOOL_PARAM(shaded);
-				SET_BOOL_PARAM(illuminated);
-				#undef SET_BOOL_PARAM
-				#define SET_FLOAT_PARAM(PARAM) if(dmat[#PARAM].is_number()) material.PARAM = dmat[#PARAM].get<float>()
-				SET_FLOAT_PARAM(hue);
-				SET_FLOAT_PARAM(saturation);
-				SET_FLOAT_PARAM(luminosity);
-				SET_FLOAT_PARAM(brightness);
-				SET_FLOAT_PARAM(contrast);
-				#undef SET_FLOAT_PARAM
+				#define _SET_BOOL_PARAM(PARAM) if(dmat[#PARAM].is_boolean()) material.PARAM = dmat[#PARAM].get<bool>()
+				_SET_BOOL_PARAM(shaded);
+				_SET_BOOL_PARAM(illuminated);
+				#undef _SET_BOOL_PARAM
+				#define _SET_FLOAT_PARAM(PARAM) if(dmat[#PARAM].is_number()) material.PARAM = dmat[#PARAM].get<float>()
+				_SET_FLOAT_PARAM(hue);
+				_SET_FLOAT_PARAM(saturation);
+				_SET_FLOAT_PARAM(luminosity);
+				_SET_FLOAT_PARAM(brightness);
+				_SET_FLOAT_PARAM(contrast);
+				#undef _SET_FLOAT_PARAM
 				// Set UV shift
 				if(dmat["uvShift"].is_array()) {
 					material.uvShift.x = dmat["uvShift"][0].get<float>();

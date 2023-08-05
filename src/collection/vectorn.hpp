@@ -243,14 +243,22 @@ namespace Vector{
 
 			float& operator[](char pos) {
 				switch (pos) {
-				case 0:
 				case 'x':
 				case 'X':
 				default:
 					return x;
-				case 1:
 				case 'y':
 				case 'Y':
+					return y;
+				}
+			}
+
+			float& operator[](unsigned char pos) {
+				switch (pos) {
+				case 0:
+				default:
+					return x;
+				case 1:
 					return y;
 				}
 			}
@@ -560,18 +568,27 @@ namespace Vector{
 
 			float& operator[](char pos) {
 				switch (pos) {
-				case 0:
 				case 'x':
 				case 'X':
 				default:
 					return x;
-				case 1:
 				case 'y':
 				case 'Y':
 					return y;
-				case 2:
 				case 'z':
 				case 'Z':
+					return z;
+				}
+			}
+
+			float& operator[](unsigned char pos) {
+				switch (pos) {
+				case 0:
+				default:
+					return x;
+				case 1:
+					return y;
+				case 2:
 					return z;
 				}
 			}
@@ -926,22 +943,32 @@ namespace Vector{
 
 			float& operator[](char pos) {
 				switch (pos) {
-				case 0:
 				case 'x':
 				case 'X':
 				default:
 					return x;
-				case 1:
 				case 'y':
 				case 'Y':
 					return y;
-				case 2:
 				case 'z':
 				case 'Z':
 					return z;
-				case 3:
 				case 'w':
 				case 'W':
+					return w;
+				}
+			}
+
+			float& operator[](unsigned char pos) {
+				switch (pos) {
+				case 0:
+				default:
+					return x;
+				case 1:
+					return y;
+				case 2:
+					return z;
+				case 3:
 					return w;
 				}
 			}
