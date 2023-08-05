@@ -242,7 +242,7 @@ private:
 					}
 				} else {
 					for(auto& obj: def["data"].get<vector<nlohmann::json>>()) {
-						createObject()->extendFromDefinition(sourcepath + obj, sourcepath + FileSystem::getDirectoryFromPath(obj));
+						createObject()->extendFromDefinition(obj, sourcepath + FileSystem::getDirectoryFromPath(obj));
 					}
 				}
 			}
