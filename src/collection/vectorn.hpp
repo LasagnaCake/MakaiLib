@@ -95,42 +95,42 @@ namespace Vector{
 			}
 
 			/// Vector operator overloading.
-			Vector2 operator+(Vector2 const& vec) {
+			Vector2 operator+(Vector2 const& vec) const {
 				return Vector2(
 					x + vec.x,
 					y + vec.y
 				);
 			}
 
-			Vector2 operator-(Vector2 const& vec) {
+			Vector2 operator-(Vector2 const& vec) const {
 				return Vector2(
 					x - vec.x,
 					y - vec.y
 				);
 			}
 
-			Vector2 operator*(Vector2 const& vec) {
+			Vector2 operator*(Vector2 const& vec) const {
 				return Vector2(
 					x * vec.x,
 					y * vec.y
 				);
 			}
 
-			Vector2 operator/(Vector2 const& vec) {
+			Vector2 operator/(Vector2 const& vec) const {
 				return Vector2(
 					x / vec.x,
 					y / vec.y
 				);
 			}
 
-			Vector2 operator%(Vector2 const& vec) {
+			Vector2 operator%(Vector2 const& vec) const {
 				return Vector2(
 					fmod(x, vec.x),
 					fmod(y, vec.y)
 				);
 			}
 
-			Vector2 operator^(Vector2 const& vec) {
+			Vector2 operator^(Vector2 const& vec) const {
 				return Vector2(
 					pow(x, vec.x),
 					pow(y, vec.y)
@@ -173,39 +173,39 @@ namespace Vector{
 				return *this;
 			}
 
-			bool operator==(Vector2 const& vec) {
+			bool operator==(Vector2 const& vec) const {
 				return (
 					x == vec.x &&
 					y == vec.y
 				);
 			}
 
-			bool operator!=(Vector2 const& vec) {
+			bool operator!=(Vector2 const& vec) const {
 				return !(*this == vec);
 			}
 
 			/// Float operator overloading.
-			Vector2 operator+(float val) {
+			Vector2 operator+(float val) const {
 				return *this + Vector2(val);
 			}
 
-			Vector2 operator-(float val) {
+			Vector2 operator-(float val) const {
 				return *this - Vector2(val);
 			}
 
-			Vector2 operator*(float val) {
+			Vector2 operator*(float val) const {
 				return *this * Vector2(val);
 			}
 
-			Vector2 operator/(float val) {
+			Vector2 operator/(float val) const {
 				return *this / Vector2(val);
 			}
 
-			Vector2 operator%(float val) {
+			Vector2 operator%(float val) const {
 				return *this % Vector2(val);
 			}
 
-			Vector2 operator^(float val) {
+			Vector2 operator^(float val) const {
 				return *this ^ Vector2(val);
 			}
 
@@ -258,17 +258,17 @@ namespace Vector{
 			// Extra functions
 
 			/// Gets the vector's length (distance to origin).
-			float length() {
+			float length() const {
 				return sqrt((x * x) + (y * y));
 			}
 
 			/// Gets the vector's length (distance to origin).
-			float lengthSquared() {
+			float lengthSquared() const {
 				return ((x * x) + (y * y));
 			}
 
 			/// Gets the normalized vector.
-			Vector2 normalized() {
+			Vector2 normalized() const {
 				if (*this != 0)
 					return *this / length();
 				else
@@ -284,30 +284,30 @@ namespace Vector{
 			}
 
 			/// Gets the distance to another vector.
-			float distanceTo(Vector2 vec) {
+			float distanceTo(Vector2 vec) const {
 				Vector2 diff = vec - *this;
 				return diff.length();
 			}
 
 			/// Gets the distance to another vector.
-			float squaredDistanceTo(Vector2 vec) {
+			float squaredDistanceTo(Vector2 vec) const {
 				Vector2 diff = vec - *this;
 				return diff.lengthSquared();
 			}
 
 			/// Gets the vector's angle.
-			float angle() {
+			float angle() const {
 				return - atan2(x, y) + Math::hpi;
 			}
 
 			/// Gets the vector's angle to another vector.
-			float angleTo(Vector2 vec) {
+			float angleTo(Vector2 vec) const {
 				Vector2 diff = vec - *this;
 				return diff.angle();
 			}
 
 			/// Gets a normalized vector pointing towards another vector.
-			Vector2 normalTo(Vector2 vec) {
+			Vector2 normalTo(Vector2 vec) const {
 				Vector2 diff = vec - *this;
 				return diff.normalized();
 			}
@@ -320,7 +320,7 @@ namespace Vector{
 			}
 
 			/// Returns the vector clamped between two values.
-			Vector2 clamped(Vector2 const& min, Vector2 const& max) {
+			Vector2 clamped(Vector2 const& min, Vector2 const& max) const {
 				return Vector2(
 					Math::clamp(x, min.x, max.x),
 					Math::clamp(y, min.y, max.y)
@@ -328,18 +328,18 @@ namespace Vector{
 			}
 
 			/// Gets the tangent of the vector.
-			float tangent() {
+			float tangent() const {
 				return x / y;
 			}
 
-			Vector2 absolute() {
+			Vector2 absolute() const {
 				return Vector2(
 					abs(x),
 					abs(y)
 				);
 			}
 
-			Vector2 yx() {
+			Vector2 yx() const {
 				return Vector2(y, x);
 			}
 	};
@@ -398,7 +398,7 @@ namespace Vector{
 
 			/// Vector operator overloading.
 
-			Vector3 operator+(Vector3 const& vec) {
+			Vector3 operator+(Vector3 const& vec) const {
 				return Vector3(
 					x + vec.x,
 					y + vec.y,
@@ -406,7 +406,7 @@ namespace Vector{
 				);
 			}
 
-			Vector3 operator-(Vector3 const& vec) {
+			Vector3 operator-(Vector3 const& vec) const {
 				return Vector3(
 					x - vec.x,
 					y - vec.y,
@@ -414,7 +414,7 @@ namespace Vector{
 				);
 			}
 
-			Vector3 operator*(Vector3 const& vec) {
+			Vector3 operator*(Vector3 const& vec) const {
 				return Vector3(
 					x * vec.x,
 					y * vec.y,
@@ -422,7 +422,7 @@ namespace Vector{
 				);
 			}
 
-			Vector3 operator/(Vector3 const& vec) {
+			Vector3 operator/(Vector3 const& vec) const {
 				return Vector3(
 					x / vec.x,
 					y / vec.y,
@@ -430,7 +430,7 @@ namespace Vector{
 				);
 			}
 
-			Vector3 operator%(Vector3 const& vec) {
+			Vector3 operator%(Vector3 const& vec) const {
 				return Vector3(
 					fmod(x, vec.x),
 					fmod(y, vec.y),
@@ -438,7 +438,7 @@ namespace Vector{
 				);
 			}
 
-			Vector3 operator^(Vector3 const& vec) {
+			Vector3 operator^(Vector3 const& vec) const {
 				return Vector3(
 					pow(x, vec.x),
 					pow(y, vec.y),
@@ -488,7 +488,7 @@ namespace Vector{
 				return *this;
 			}
 
-			bool operator==(Vector3 const& vec) {
+			bool operator==(Vector3 const& vec) const {
 				return (
 					x == vec.x &&
 					y == vec.y &&
@@ -496,33 +496,33 @@ namespace Vector{
 				);
 			}
 
-			bool operator!=(Vector3 vec) {
+			bool operator!=(Vector3 vec) const {
 				return !(*this == vec);
 			}
 
 			/// Float operator overloading.
 
-			Vector3 operator+(float val) {
+			Vector3 operator+(float val) const {
 				return *this + Vector3(val);
 			}
 
-			Vector3 operator-(float val) {
+			Vector3 operator-(float val) const {
 				return *this - Vector3(val);
 			}
 
-			Vector3 operator*(float val) {
+			Vector3 operator*(float val) const {
 				return *this * Vector3(val);
 			}
 
-			Vector3 operator/(float val) {
+			Vector3 operator/(float val) const {
 				return *this / Vector3(val);
 			}
 
-			Vector3 operator%(float val) {
+			Vector3 operator%(float val) const {
 				return *this % Vector3(val);
 			}
 
-			Vector3 operator^(float val) {
+			Vector3 operator^(float val) const {
 				return *this ^ Vector3(val);
 			}
 
@@ -579,17 +579,17 @@ namespace Vector{
 			// Extra functions
 
 			/// Gets the vector's length (distance to origin).
-			float length() {
+			float length() const {
 				return sqrt((x * x) + (y * y) + (z * z));
 			}
 
 			/// Gets the vector's length (distance to origin).
-			float lengthSquared() {
+			float lengthSquared() const {
 				return ((x * x) + (y * y) + (z * z));
 			}
 
 			/// Gets the vector's angle.
-			Vector3 angle() {
+			Vector3 angle() const {
 				Vector3 res;
 				float mag = length();
 				res.x = acos(x/mag);
@@ -599,13 +599,13 @@ namespace Vector{
 			}
 
 			/// Gets the vector's angle to another vector.
-			Vector3 angleTo(Vector3 vec) {
+			Vector3 angleTo(Vector3 vec) const {
 				Vector3 diff = vec - *this;
 				return diff.angle();
 			}
 
 			/// Gets the normalized vector.
-			Vector3 normalized() {
+			Vector3 normalized() const {
 				if (*this != 0)
 					return *this / length();
 				else
@@ -621,19 +621,19 @@ namespace Vector{
 			}
 
 			/// Gets a normalized vector pointing towards another vector.
-			Vector3 normalTo(Vector3 vec) {
+			Vector3 normalTo(Vector3 vec) const {
 				Vector3 diff = vec - *this;
 				return diff.normalized();
 			}
 
 			/// Gets the distance to another vector.
-			float distanceTo(Vector3 vec) {
+			float distanceTo(Vector3 vec) const {
 				Vector3 diff = vec - *this;
 				return diff.length();
 			}
 
 			/// Gets the distance to another vector.
-			float squaredDistanceTo(Vector3 vec) {
+			float squaredDistanceTo(Vector3 vec) const {
 				Vector3 diff = vec - *this;
 				return diff.lengthSquared();
 			}
@@ -646,7 +646,7 @@ namespace Vector{
 			}
 
 			/// Returns the vector clamped between two values.
-			Vector3 clamped(Vector3 const& min, Vector3 const& max) {
+			Vector3 clamped(Vector3 const& min, Vector3 const& max) const {
 				return Vector3(
 					Math::clamp(x, min.x, max.x),
 					Math::clamp(y, min.y, max.y),
@@ -654,23 +654,23 @@ namespace Vector{
 				);
 			}
 
-			Vector2 xy() {
+			Vector2 xy() const {
 				return Vector2(x, y);
 			}
 
-			Vector2 yz() {
+			Vector2 yz() const {
 				return Vector2(x, y);
 			}
 
-			Vector2 xz() {
+			Vector2 xz() const {
 				return Vector2(x, y);
 			}
 
-			Vector3 zyx() {
+			Vector3 zyx() const {
 				return Vector3(z, y, x);
 			}
 
-			Vector3 absolute() {
+			Vector3 absolute() const {
 				return Vector3(
 					abs(x),
 					abs(y),
@@ -751,7 +751,7 @@ namespace Vector{
 
 			/// Vector operator overloading.
 
-			Vector4 operator+(Vector4 const& vec) {
+			Vector4 operator+(Vector4 const& vec) const {
 				return Vector4(
 					x + vec.x,
 					y + vec.y,
@@ -760,7 +760,7 @@ namespace Vector{
 				);
 			}
 
-			Vector4 operator-(Vector4 const& vec) {
+			Vector4 operator-(Vector4 const& vec) const {
 				return Vector4(
 					x - vec.x,
 					y - vec.y,
@@ -769,7 +769,7 @@ namespace Vector{
 				);
 			}
 
-			Vector4 operator*(Vector4 const& vec) {
+			Vector4 operator*(Vector4 const& vec) const {
 				return Vector4(
 					x * vec.x,
 					y * vec.y,
@@ -778,7 +778,7 @@ namespace Vector{
 				);
 			}
 
-			Vector4 operator/(Vector4 const& vec) {
+			Vector4 operator/(Vector4 const& vec) const {
 				return Vector4(
 					x / vec.x,
 					y / vec.y,
@@ -787,7 +787,7 @@ namespace Vector{
 				);
 			}
 
-			Vector4 operator%(Vector4 const& vec) {
+			Vector4 operator%(Vector4 const& vec) const {
 				return Vector4(
 					fmod(x, vec.x),
 					fmod(y, vec.y),
@@ -796,7 +796,7 @@ namespace Vector{
 				);
 			}
 
-			Vector4 operator^(Vector4 const& vec) {
+			Vector4 operator^(Vector4 const& vec) const {
 				return Vector4(
 					pow(x, vec.x),
 					pow(y, vec.y),
@@ -853,7 +853,7 @@ namespace Vector{
 				return *this;
 			}
 
-			bool operator==(Vector4 const& vec) {
+			bool operator==(Vector4 const& vec) const {
 				return (
 					x == vec.x &&
 					y == vec.y &&
@@ -862,33 +862,33 @@ namespace Vector{
 				);
 			}
 
-			bool operator!=(Vector4 const& vec) {
+			bool operator!=(Vector4 const& vec) const {
 				return !(*this == vec);
 			}
 
 			/// Float operator overloading.
 
-			Vector4 operator+(float val) {
+			Vector4 operator+(float val) const {
 				return *this + Vector4(val);
 			}
 
-			Vector4 operator-(float val) {
+			Vector4 operator-(float val) const {
 				return *this - Vector4(val);
 			}
 
-			Vector4 operator*(float val) {
+			Vector4 operator*(float val) const {
 				return *this * Vector4(val);
 			}
 
-			Vector4 operator/(float val) {
+			Vector4 operator/(float val) const {
 				return *this / Vector4(val);
 			}
 
-			Vector4 operator%(float val) {
+			Vector4 operator%(float val) const {
 				return *this % Vector4(val);
 			}
 
-			Vector4 operator^(float val) {
+			Vector4 operator^(float val) const {
 				return *this ^ Vector4(val);
 			}
 
@@ -949,17 +949,17 @@ namespace Vector{
 			// Extra functions
 
 			/// Gets the vector's length (distance to origin).
-			float length() {
+			float length() const {
 				return sqrt((x * x) + (y * y) + (z * z) + (w * w));
 			}
 
 			/// Gets the vector's length (distance to origin).
-			float lengthSquared() {
+			float lengthSquared() const {
 				return ((x * x) + (y * y) + (z * z) + (w * w));
 			}
 
 			/// Gets the normalized vector.
-			Vector4 normalized() {
+			Vector4 normalized() const {
 				if (*this != 0)
 					return *this / length();
 				else
@@ -975,19 +975,19 @@ namespace Vector{
 			}
 
 			/// Gets the distance to another vector.
-			float distanceTo(Vector4 vec) {
+			float distanceTo(Vector4 vec) const {
 				Vector4 diff = vec - *this;
 				return diff.length();
 			}
 
 			/// Gets the distance to another vector.
-			float squaredDistanceTo(Vector4 vec) {
+			float squaredDistanceTo(Vector4 vec) const {
 				Vector4 diff = vec - *this;
 				return diff.lengthSquared();
 			}
 
 			/// Gets a normalized vector pointing towards another vector.
-			Vector4 normalTo(Vector4 vec) {
+			Vector4 normalTo(Vector4 vec) const {
 				Vector4 diff = vec - *this;
 				return diff.normalized();
 			}
@@ -1001,7 +1001,7 @@ namespace Vector{
 			}
 
 			/// Returns the vector clamped between two values.
-			Vector4 clamped(Vector4 const& min, Vector4 const& max) {
+			Vector4 clamped(Vector4 const& min, Vector4 const& max) const {
 				return Vector4(
 					Math::clamp(x, min.x, max.x),
 					Math::clamp(y, min.y, max.y),
@@ -1010,7 +1010,7 @@ namespace Vector{
 				);
 			}
 
-			Vector4 absolute() {
+			Vector4 absolute() const {
 				return Vector4(
 					abs(x),
 					abs(y),
@@ -1019,19 +1019,19 @@ namespace Vector{
 				);
 			}
 
-			Vector3 xyz() {
+			Vector3 xyz() const {
 				return Vector3(x, y, z);
 			}
 
-			Vector4 wzyx() {
+			Vector4 wzyx() const {
 				return Vector4(w, z, y, x);
 			}
 
-			Vector4 wxyz() {
+			Vector4 wxyz() const {
 				return Vector4(w, x, y, z);
 			}
 
-			Vector4 compensated() {
+			Vector4 compensated() const {
 				return Vector4(xyz() / w, w);
 			}
 	};

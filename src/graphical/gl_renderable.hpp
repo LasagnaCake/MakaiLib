@@ -264,6 +264,232 @@ public:
 		$debug(data.size() / RAW_VERTEX_BYTE_SIZE);
 	}
 
+	inline void extendFromDefinitionFile(
+		string const& path,
+		Texture2D* texture	= nullptr,
+		Texture2D* emission	= nullptr,
+		Texture2D* warp		= nullptr
+	) {
+		extendFromDefinition(FileLoader::loadJSON(path), FileSystem::getDirectoryFromPath(path), texture, emission, warp);
+	}
+
+	void bake() {
+		if (baked || locked) return;
+		baked = true;
+		//Bake vertices
+		copyVertices();
+	}
+
+	void unbake() {
+		if (!baked || locked) return;
+		baked = false;
+		// Clear vertex buffer
+		delete [] vertices;
+		vertices = nullptr;
+	}
+
+	void clearData() {
+		if (vertices && !locked)
+			delete [] vertices;
+		if (!references.plane.empty())
+			for (auto pr: references.plane)
+				delete pr;
+		if (!references.trigon.empty())
+			for (auto pr: references.trigon)
+				delete pr;
+		references.plane.clear();
+		references.trigon.clear();
+		if (!triangles.empty())
+			for (auto t: triangles)
+				delete t;
+		triangles.clear();
+	}
+
+	void saveToBinaryFile(string const& path) {
+		bake();
+		FileLoader::saveBinaryFile(path, vertices, vertexCount);
+	}
+
+	void saveToDefinitionFile(
+		string folder,
+		string name = "object",
+		string texturesFolder = "tx",
+		bool integratedBinary	= false,
+		bool integratedTextures	= false,
+		bool pretty = false
+	) {
+		$debug("Saving object '" + name + "'...");
+		// Get paths
+		string binpath		= folder + "/" + name + ".mesh";
+		$debug(binpath);
+		$debug(folder + "/" + name + ".mrod");
+		FileSystem::makeDirectory(FileSystem::concatenatePath(folder, texturesFolder));
+		// Get object definition
+		nlohmann::json file = getObjectDefinition("base64", integratedBinary, integratedTextures);
+		// If binary is in a different location, save there
+		if (!integratedBinary) {
+			FileLoader::saveBinaryFile(binpath, vertices, vertexCount);
+			file["mesh"]["data"] = {{"path", name + ".mesh"}};
+		}
+		Material::ObjectMaterial& mat = material;
+		auto& mdef = file["material"];
+		// Save image texture
+		if (!integratedTextures)
+			mdef["texture"] = saveImageEffect(mat.texture, folder, texturesFolder + "/texture.tga");
+		mdef["texture"]["alphaClip"] = mat.texture.alphaClip;
+		// Save emission texture
+		if (!integratedTextures)
+			mdef["emission"] = saveImageEffect(mat.emission, folder, texturesFolder + "/emission.tga");
+		mdef["texture"]["alphaClip"] = mat.emission.alphaClip;
+		// Save warp texture
+		if (!integratedTextures)
+			mdef["warp"] = saveImageEffect(mat.warp, folder, texturesFolder + "/warp.tga");
+		mdef["warp"]["channelX"] = mat.warp.channelX;
+		mdef["warp"]["channelY"] = mat.warp.channelY;
+		mdef["warp"]["trans"] = {
+			{"position",	{mat.warp.trans.position.x,	mat.warp.trans.position.y	}	},
+			{"rotation",	mat.warp.trans.rotation										},
+			{"scale",		{mat.warp.trans.scale.x,	mat.warp.trans.scale.y		}	}
+		};
+		// convert to text
+		auto contents = file.dump(pretty ? 1 : -1, '\t', false, nlohmann::json::error_handler_t::replace);
+		// Save definition file
+		FileLoader::saveTextFile(folder + "/" + name + ".mrod", contents);
+	}
+
+	vector<Triangle*> triangles;
+
+private:
+	friend class Scene3D;
+
+	nlohmann::json saveImageEffect(Material::ImageEffect& effect, string const& folder, string const& path) {
+		nlohmann::json def;
+		def["enabled"] = effect.enabled;
+		if (effect.image && effect.image->exists()) {
+			effect.image->saveToFile(folder + "/" + path);
+			def["image"] = {
+				{"path", path},
+				{"minFilter", effect.image->getTextureMinFilter()},
+				{"magFilter", effect.image->getTextureMagFilter()}
+			};
+		} else def["enabled"] = false;
+		return def;
+	}
+
+	Material::ImageEffect loadImageEffect(nlohmann::json& effect, string const& sourcepath, Texture2D* texture = nullptr) {
+		try {
+			Material::ImageEffect fx;
+			fx.enabled = effect["enabled"].get<bool>();
+			auto& img = effect["image"];
+			if (!texture)
+				texture = new Texture2D();
+			fx.image = texture;
+			if (img["data"].is_object() && img["data"]["path"].is_string() && !img["data"]["path"].get<string>().empty()) {
+				texture->create(FileSystem::concatenatePath(sourcepath, img["path"].get<string>()));
+				texture->setTextureFilterMode(
+					img["minFilter"].get<unsigned int>(),
+					img["magFilter"].get<unsigned int>()
+				);
+			} else if (img["data"].is_string() && !img["data"].get<string>().empty()) {
+				vector<ubyte> data = decodeData(img["data"].get<string>(), img["encoding"]);
+				int w, h, nc;
+				uchar* imgdat = stbi_load_from_memory(
+					data.data(),
+					data.size(),
+					&w,
+					&h,
+					&nc,
+					4
+				);
+				if (imgdat) {
+					texture->create(
+						w,
+						h,
+						GL_UNSIGNED_BYTE,
+						GL_RGBA,
+						img["magFilter"].get<unsigned int>(),
+						img["minFilter"].get<unsigned int>(),
+						imgdat
+					);
+					stbi_image_free(imgdat);
+				} else throw Error::FailedAction(
+						"Failed at getting image effect!",
+						__FILE__,
+						toString(__LINE__),
+						"extendFromDefinition",
+						"Could not decode embedded image data!",
+						"Please check to see if values are correct!"
+					);
+			} else fx.enabled = false;
+			return fx;
+		} catch (nlohmann::json::exception e) {
+			throw Error::FailedAction(
+				"Failed at getting image effect!",
+				__FILE__,
+				toString(__LINE__),
+				"extendFromDefinition",
+				e.what(),
+				"Please check to see if values are correct!"
+			);
+		}
+	}
+
+	RawVertex* vertices = nullptr;
+
+	bool
+		baked	= false,
+		locked	= false;
+
+	void copyVertices() {
+		// If no triangles exist, return
+		if (!triangles.size()) return;
+		// Transform references (if applicable)
+		GRAPHICAL_PARALLEL_FOR
+		for (auto& plane: references.plane)	plane->transform();
+		GRAPHICAL_PARALLEL_FOR
+		for (auto& tg: references.trigon)	tg->transform();
+		// Copy data to vertex buffer
+		// Get vertex count
+		vertexCount = triangles.size() * 3;
+		// Copy data to vertex buffer
+		if (vertices) delete[] vertices;
+		vertices = new RawVertex[(vertexCount)];
+		// Copy data to IVB
+		size_t i = 0;
+		for (auto& t: triangles) {
+			// Check if not null
+			if (!t) continue;
+			// Oh, hey, C! haven't seen you in a while!
+			*(Triangle*)&vertices[i] = (*t);
+			i += 3;
+		}
+		// De-transform references (if applicable)
+		GRAPHICAL_PARALLEL_FOR
+		for (auto& plane: references.plane)	plane->reset();
+		GRAPHICAL_PARALLEL_FOR
+		for (auto& tg: references.trigon)	tg->reset();
+	}
+
+	void draw() override {
+		// If object's vertices are not "baked" (i.e. finalized), copy them
+		if (!baked && !locked) copyVertices();
+		// If no vertices, return
+		if (!vertices) return;
+		// Set shader data
+		setDefaultShader();
+		// Present to screen
+		display(vertices, vertexCount);
+	}
+
+	/// List of references linked to this object.
+	struct {
+		vector<Reference::Plane*>	plane;
+		vector<Reference::Trigon*>	trigon;
+	} references;
+
+	/// The amount of vertices this object has.
+	size_t vertexCount = 0;
+
 	void extendFromDefinition(
 		nlohmann::json def,
 		string const& sourcepath,
@@ -544,99 +770,6 @@ public:
 		}
 	}
 
-	inline void extendFromDefinitionFile(
-		string const& path,
-		Texture2D* texture	= nullptr,
-		Texture2D* emission	= nullptr,
-		Texture2D* warp		= nullptr
-	) {
-		extendFromDefinition(FileLoader::loadJSON(path), FileSystem::getDirectoryFromPath(path), texture, emission, warp);
-	}
-
-	void bake() {
-		if (baked || locked) return;
-		baked = true;
-		//Bake vertices
-		copyVertices();
-	}
-
-	void unbake() {
-		if (!baked || locked) return;
-		baked = false;
-		// Clear vertex buffer
-		delete [] vertices;
-		vertices = nullptr;
-	}
-
-	void clearData() {
-		if (vertices && !locked)
-			delete [] vertices;
-		if (!references.plane.empty())
-			for (auto pr: references.plane)
-				delete pr;
-		if (!references.trigon.empty())
-			for (auto pr: references.trigon)
-				delete pr;
-		references.plane.clear();
-		references.trigon.clear();
-		if (!triangles.empty())
-			for (auto t: triangles)
-				delete t;
-		triangles.clear();
-	}
-
-	void saveToBinaryFile(string const& path) {
-		bake();
-		FileLoader::saveBinaryFile(path, vertices, vertexCount);
-	}
-
-	void saveToDefinitionFile(
-		string folder,
-		string name = "object",
-		string texturesFolder = "tx",
-		bool integratedBinary	= false,
-		bool integratedTextures	= false,
-		bool pretty = false
-	) {
-		$debug("Saving object '" + name + "'...");
-		// Get paths
-		string binpath		= folder + "/" + name + ".mesh";
-		$debug(binpath);
-		$debug(folder + "/" + name + ".mrod");
-		FileSystem::makeDirectory(FileSystem::concatenatePath(folder, texturesFolder));
-		// Get object definition
-		nlohmann::json file = getObjectDefinition("base64", integratedBinary, integratedTextures);
-		// If binary is in a different location, save there
-		if (!integratedBinary) {
-			FileLoader::saveBinaryFile(binpath, vertices, vertexCount);
-			file["mesh"]["data"] = {{"path", name + ".mesh"}};
-		}
-		Material::ObjectMaterial& mat = material;
-		auto& mdef = file["material"];
-		// Save image texture
-		if (!integratedTextures)
-			mdef["texture"] = saveImageEffect(mat.texture, folder, texturesFolder + "/texture.tga");
-		mdef["texture"]["alphaClip"] = mat.texture.alphaClip;
-		// Save emission texture
-		if (!integratedTextures)
-			mdef["emission"] = saveImageEffect(mat.emission, folder, texturesFolder + "/emission.tga");
-		mdef["texture"]["alphaClip"] = mat.emission.alphaClip;
-		// Save warp texture
-		if (!integratedTextures)
-			mdef["warp"] = saveImageEffect(mat.warp, folder, texturesFolder + "/warp.tga");
-		mdef["warp"]["channelX"] = mat.warp.channelX;
-		mdef["warp"]["channelY"] = mat.warp.channelY;
-		mdef["warp"]["trans"] = {
-			{"position",	{mat.warp.trans.position.x,	mat.warp.trans.position.y	}	},
-			{"rotation",	mat.warp.trans.rotation										},
-			{"scale",		{mat.warp.trans.scale.x,	mat.warp.trans.scale.y		}	}
-		};
-		// convert to text
-		auto contents = file.dump(pretty ? 1 : -1, '\t', false, nlohmann::json::error_handler_t::replace);
-		// Save definition file
-		FileLoader::saveTextFile(folder + "/" + name + ".mrod", contents);
-	}
-
 	nlohmann::json getObjectDefinition(string const& encoding = "base64", bool integratedBinary = true, bool integratedTextures = true) {
 		// Bake object
 		bool wasBaked = baked;
@@ -719,139 +852,6 @@ public:
 		// Return definition
 		return def;
 	}
-
-	vector<Triangle*> triangles;
-
-private:
-	friend class Scene3D;
-
-	nlohmann::json saveImageEffect(Material::ImageEffect& effect, string const& folder, string const& path) {
-		nlohmann::json def;
-		def["enabled"] = effect.enabled;
-		if (effect.image && effect.image->exists()) {
-			effect.image->saveToFile(folder + "/" + path);
-			def["image"] = {
-				{"path", path},
-				{"minFilter", effect.image->getTextureMinFilter()},
-				{"magFilter", effect.image->getTextureMagFilter()}
-			};
-		} else def["enabled"] = false;
-		return def;
-	}
-
-	Material::ImageEffect loadImageEffect(nlohmann::json& effect, string const& sourcepath, Texture2D* texture = nullptr) {
-		try {
-			Material::ImageEffect fx;
-			fx.enabled = effect["enabled"].get<bool>();
-			auto& img = effect["image"];
-			if (!texture)
-				texture = new Texture2D();
-			fx.image = texture;
-			if (img["data"].is_object() && img["data"]["path"].is_string() && !img["data"]["path"].get<string>().empty()) {
-				texture->create(FileSystem::concatenatePath(sourcepath, img["path"].get<string>()));
-				texture->setTextureFilterMode(
-					img["minFilter"].get<unsigned int>(),
-					img["magFilter"].get<unsigned int>()
-				);
-			} else if (img["data"].is_string() && !img["data"].get<string>().empty()) {
-				vector<ubyte> data = decodeData(img["data"].get<string>(), img["encoding"]);
-				int w, h, nc;
-				uchar* imgdat = stbi_load_from_memory(
-					data.data(),
-					data.size(),
-					&w,
-					&h,
-					&nc,
-					4
-				);
-				if (imgdat) {
-					texture->create(
-						w,
-						h,
-						GL_UNSIGNED_BYTE,
-						GL_RGBA,
-						img["magFilter"].get<unsigned int>(),
-						img["minFilter"].get<unsigned int>(),
-						imgdat
-					);
-					stbi_image_free(imgdat);
-				} else throw Error::FailedAction(
-						"Failed at getting image effect!",
-						__FILE__,
-						toString(__LINE__),
-						"extendFromDefinition",
-						"Could not decode embedded image data!",
-						"Please check to see if values are correct!"
-					);
-			} else fx.enabled = false;
-			return fx;
-		} catch (nlohmann::json::exception e) {
-			throw Error::FailedAction(
-				"Failed at getting image effect!",
-				__FILE__,
-				toString(__LINE__),
-				"extendFromDefinition",
-				e.what(),
-				"Please check to see if values are correct!"
-			);
-		}
-	}
-
-	RawVertex* vertices = nullptr;
-
-	bool
-		baked	= false,
-		locked	= false;
-
-	void copyVertices() {
-		// If no triangles exist, return
-		if (!triangles.size()) return;
-		// Transform references (if applicable)
-		GRAPHICAL_PARALLEL_FOR
-		for (auto& plane: references.plane)	plane->transform();
-		GRAPHICAL_PARALLEL_FOR
-		for (auto& tg: references.trigon)	tg->transform();
-		// Copy data to vertex buffer
-		// Get vertex count
-		vertexCount = triangles.size() * 3;
-		// Copy data to vertex buffer
-		if (vertices) delete[] vertices;
-		vertices = new RawVertex[(vertexCount)];
-		// Copy data to IVB
-		size_t i = 0;
-		for (auto& t: triangles) {
-			// Check if not null
-			if (!t) continue;
-			// Oh, hey, C! haven't seen you in a while!
-			*(Triangle*)&vertices[i] = (*t);
-			i += 3;
-		}
-		// De-transform references (if applicable)
-		GRAPHICAL_PARALLEL_FOR
-		for (auto& plane: references.plane)	plane->reset();
-		GRAPHICAL_PARALLEL_FOR
-		for (auto& tg: references.trigon)	tg->reset();
-	}
-
-	void draw() override {
-		// If object's vertices are not "baked" (i.e. finalized), copy them
-		if (!baked && !locked) copyVertices();
-		// If no vertices, return
-		if (!vertices) return;
-		// Set shader data
-		setDefaultShader();
-		// Present to screen
-		display(vertices, vertexCount);
-	}
-
-	/// List of references linked to this object.
-	struct {
-		vector<Reference::Plane*>	plane;
-		vector<Reference::Trigon*>	trigon;
-	} references;
-
-	/// The amount of vertices this object has.
-	size_t vertexCount = 0;
 };
 
 enum class LineType {
@@ -1006,16 +1006,6 @@ Renderable* loadObjectFromBinaryFile(string const& path) {
 	auto data = FileLoader::loadBinaryFile(path);
 	if (data.empty()) throw Error::FailedAction("File does not exist or is empty! (" + path + ")!");
 	return new Renderable((RawVertex*)&data[0], data.size() / sizeof(RawVertex));
-}
-
-// TODO: Test this
-Renderable* loadObjectFromDefinition(nlohmann::json def, string const& sourcepath) {
-	// Create object
-	Renderable* r = new Renderable();
-	// Load data
-	r->extendFromDefinition(def, sourcepath);
-	// Return object
-	return r;
 }
 
 Renderable* loadObjectFromDefinitionFile(string const& path) {

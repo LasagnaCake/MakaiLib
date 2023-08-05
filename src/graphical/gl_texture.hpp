@@ -128,7 +128,7 @@ public:
 	}
 
 	Texture2D(
-		std::string path,
+		std::string  const& path,
 		unsigned int magFilter = GL_LINEAR,
 		unsigned int minFilter = GL_LINEAR_MIPMAP_LINEAR
 	) {
@@ -136,9 +136,15 @@ public:
 	}
 
 	Texture2D(
-		ImageData2D image
+		ImageData2D const& image
 	) {
 		create(image);
+	}
+
+	Texture2D(
+		Texture2D const& other
+	) {
+		create(other);
 	}
 
 	void create(
@@ -206,6 +212,12 @@ public:
 			image.magFilter,
 			(unsigned char*)image.data.data()
 		);
+	}
+
+	void create(
+		Texture2D const& other
+	) {
+		create(other.getData());
 	}
 
 	void destroy() {
@@ -285,7 +297,7 @@ public:
 		return id;
 	}
 
-	ImageData2D getData() {
+	ImageData2D getData() const {
 		if (!created) return ImageData2D{0,0,0,0,0,0};
 		size_t size = 0;
 		switch (type) {

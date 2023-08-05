@@ -137,6 +137,50 @@ public:
 		FileLoader::saveTextFile(FileSystem::concatenatePath(folder, name) + ".msd", contents);
 	}
 
+	Renderable* createObject() {
+		Renderable* r = new Renderable();
+		textures.push_back(r->material.texture.image	= new Drawer::Texture2D());
+		textures.push_back(r->material.emission.image	= new Drawer::Texture2D());
+		textures.push_back(r->material.warp.image		= new Drawer::Texture2D());
+		return r;
+	}
+
+	void deleteObject(Renderable* obj) {
+		if (obj) {
+			$eraseif(objects, elem == obj);
+			std::erase_if(
+				textures,
+				[=](Texture2D* tx){
+					if (tx == obj->material.texture.image) {delete tx; return true;}
+					return false;
+				}
+			);
+			std::erase_if(
+				textures,
+				[=](Texture2D* tx){
+					if (tx == obj->material.emission.image) {delete tx; return true;}
+					return false;
+				}
+			);
+			std::erase_if(
+				textures,
+				[=](Texture2D* tx){
+					if (tx == obj->material.warp.image) {delete tx; return true;}
+					return false;
+				}
+			);
+		}
+		delete obj;
+	}
+
+	inline RenderableList getObjects() {
+		return objects;
+	}
+
+private:
+	RenderableList		objects;
+	vector<Texture2D*>	textures;
+
 	nlohmann::json getSceneDefinition(
 		bool integratedObjects			= true,
 		bool integratedObjectBinaries	= true,
@@ -191,50 +235,6 @@ public:
 		};
 		return def;
 	}
-
-	Renderable* createObject() {
-		Renderable* r = new Renderable();
-		textures.push_back(r->material.texture.image	= new Drawer::Texture2D());
-		textures.push_back(r->material.emission.image	= new Drawer::Texture2D());
-		textures.push_back(r->material.warp.image		= new Drawer::Texture2D());
-		return r;
-	}
-
-	void deleteObject(Renderable* obj) {
-		if (obj) {
-			$eraseif(objects, elem == obj);
-			std::erase_if(
-				textures,
-				[=](Texture2D* tx){
-					if (tx == obj->material.texture.image) {delete tx; return true;}
-					return false;
-				}
-			);
-			std::erase_if(
-				textures,
-				[=](Texture2D* tx){
-					if (tx == obj->material.emission.image) {delete tx; return true;}
-					return false;
-				}
-			);
-			std::erase_if(
-				textures,
-				[=](Texture2D* tx){
-					if (tx == obj->material.warp.image) {delete tx; return true;}
-					return false;
-				}
-			);
-		}
-		delete obj;
-	}
-
-	inline RenderableList getObjects() {
-		return objects;
-	}
-
-private:
-	RenderableList		objects;
-	vector<Texture2D*>	textures;
 
 	void draw() override {
 		auto lastcam = Scene::camera;
