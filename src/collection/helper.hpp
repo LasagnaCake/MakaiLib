@@ -247,7 +247,7 @@ namespace FileSystem {
 #include <commdlg.h>
 #endif
 
-namespace Helper {
+namespace System {
 	int launchApp(String const& path, String const& directory = "") {
 		// This is a nightmare, but the other option pops up a command prompt.
 		#if (_WIN32 || _WIN64 || __WIN32__ || __WIN64__)
@@ -280,7 +280,7 @@ namespace Helper {
 		#endif
 	}
 
-	String openFileDialog(String filter) {
+	String openFileDialog(String filter = "All\0*.*\0") {
 		#if (_WIN32 || _WIN64 || __WIN32__ || __WIN64__)
 		OPENFILENAME ofn;
 		char szFile[260]	= {0};
@@ -294,8 +294,41 @@ namespace Helper {
 		ofn.lpstrFileTitle = NULL;
 		ofn.nMaxFileTitle = 0;
 		ofn.lpstrInitialDir = NULL;
-		ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR;
+		ofn.Flags =
+			OFN_PATHMUSTEXIST
+		|	OFN_FILEMUSTEXIST
+		|	OFN_NONETWORKBUTTON
+		|	OFN_NOCHANGEDIR
+		|	OFN_EXPLORER
+		;
 		if (GetOpenFileName(&ofn))
+			return String(ofn.lpstrFile);
+		#endif
+		return "";
+	}
+
+	String saveFileDialog(String filter = "All\0*.*\0") {
+		#if (_WIN32 || _WIN64 || __WIN32__ || __WIN64__)
+		OPENFILENAME ofn;
+		char szFile[260]	= {0};
+		ZeroMemory(&ofn, sizeof(ofn));
+		ofn.lStructSize = sizeof(ofn);
+		ofn.hwndOwner = NULL;
+		ofn.lpstrFile = szFile;
+		ofn.nMaxFile = sizeof(szFile);
+		ofn.lpstrFilter = filter.c_str();
+		ofn.nFilterIndex = 1;
+		ofn.lpstrFileTitle = NULL;
+		ofn.nMaxFileTitle = 0;
+		ofn.lpstrInitialDir = NULL;
+		ofn.Flags =
+			OFN_PATHMUSTEXIST
+		|	OFN_OVERWRITEPROMPT
+		|	OFN_NONETWORKBUTTON
+		|	OFN_NOCHANGEDIR
+		|	OFN_EXPLORER
+		;
+		if (GetSaveFileName(&ofn))
 			return String(ofn.lpstrFile);
 		#endif
 		return "";

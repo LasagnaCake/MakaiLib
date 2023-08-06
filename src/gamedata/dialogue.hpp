@@ -58,10 +58,12 @@ namespace Dialog {
 		}
 
 		void begin() {
+			animator.clear();
 			for (auto& [aName, actor]: actors) {
 				if (!actor.sprite) continue;
 				actor.sprite->local.position = actor.position.out;
 				animator[aName].value = &actor.sprite->local.position;
+				animator[aName].setManual();
 			}
 			isFinished = false;
 		}
@@ -78,6 +80,9 @@ namespace Dialog {
 
 		void onFrame(float delta) override {
 			autotimer.yield();
+			for (auto& [aName, aTween]: animator) {
+				aTween.yield();
+			}
 			if (isFinished) return;
 			if (!autoplay) {
 				if (
