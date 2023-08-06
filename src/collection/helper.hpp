@@ -4,6 +4,8 @@
 #include <string>
 #include <vector>
 #include <filesystem>
+#include <locale>
+#include <codecvt>
 #ifdef _USE_CPP20_FORMAT_
 #include <format>
 #endif // _USE_CPP20_FORMAT_
@@ -17,12 +19,15 @@ namespace Helper {
 			std::map,
 			std::unordered_map,
 			std::string,
+			std::wstring,
 			std::initializer_list,
 			std::pair
 		;
 	}
 
 	typedef string String;
+
+	typedef wstring WideString;
 
 	template<typename T>
 	using Arguments = initializer_list<T>;
@@ -143,6 +148,7 @@ namespace Helper {
 }
 
 using Helper::String;
+using Helper::WideString;
 using Helper::List;
 using Helper::HashMap;
 using Helper::FuzzyHashMap;
@@ -153,9 +159,26 @@ using Helper::FuzzyDictionary;
 using Helper::Pair;
 using Helper::Entry;
 
+WideString toWideString(String const& str){
+	using convert_typeX = std::codecvt_utf8_utf16<wchar_t>;
+	std::wstring_convert<convert_typeX, wchar_t> converterX;
+	return converterX.from_bytes(str);
+}
+
+String toString(WideString const& wstr){
+	using convert_typeX = std::codecvt_utf8_utf16<wchar_t>;
+	std::wstring_convert<convert_typeX, wchar_t> converterX;
+	return converterX.to_bytes(wstr);
+}
+
 template<typename T>
 constexpr inline String toString(const T& val) {
 	return std::to_string(val);
+}
+
+template<typename T>
+constexpr inline String toWideString(const T& val) {
+	return std::to_wstring(val);
 }
 
 namespace FileSystem {
@@ -221,6 +244,7 @@ namespace FileSystem {
 
 #if (_WIN32 || _WIN64 || __WIN32__ || __WIN64__)
 #include <winapifamily.h>
+#include <commdlg.h>
 #endif
 
 namespace Helper {
@@ -254,6 +278,27 @@ namespace Helper {
 		#else
 		return system("data\\subsys\\winres.exe");
 		#endif
+	}
+
+	String openFileDialog(String filter) {
+		#if (_WIN32 || _WIN64 || __WIN32__ || __WIN64__)
+		OPENFILENAME ofn;
+		char szFile[260]	= {0};
+		ZeroMemory(&ofn, sizeof(ofn));
+		ofn.lStructSize = sizeof(ofn);
+		ofn.hwndOwner = NULL;
+		ofn.lpstrFile = szFile;
+		ofn.nMaxFile = sizeof(szFile);
+		ofn.lpstrFilter = filter.c_str();
+		ofn.nFilterIndex = 1;
+		ofn.lpstrFileTitle = NULL;
+		ofn.nMaxFileTitle = 0;
+		ofn.lpstrInitialDir = NULL;
+		ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR;
+		if (GetOpenFileName(&ofn))
+			return String(ofn.lpstrFile);
+		#endif
+		return "";
 	}
 }
 
