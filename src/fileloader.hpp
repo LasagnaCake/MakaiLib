@@ -5,9 +5,9 @@
 #include <nlohmann/json.hpp>
 
 namespace FileLoader {
-	inline nlohmann::json loadJSON(string const& path) {
+	inline nlohmann::ordered_json loadJSON(string const& path) {
 		try {
-			return nlohmann::json::parse(loadTextFile(path));
+			return nlohmann::ordered_json::parse(loadTextFile(path));
 		} catch (nlohmann::json::exception e) {
 				throw Error::FailedAction(
 					"Failed at loading JSON file!",
