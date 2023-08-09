@@ -272,23 +272,20 @@ namespace Math {
 	}
 
 	CONST_ANYTYPE_I mod(T a, T b) requires Type::Number<T> {
-		return b * ::floor(a/b);
-	}
-
-	CONST_ANYTYPE_I rmod(T a, T b) requires Type::Number<T> {
-		return b * ::ceil(a/b);
+		return fmod(a, b);
 	}
 
 	CONST_ANYTYPE_I wmax(T val, T max) requires Type::Number<T> {
-		return val - mod(val, max);
-	}
-
-	CONST_ANYTYPE_I wmin(T val, T min) requires Type::Number<T> {
-		return val + rmod(val, min);
+		T result = mod(val, max);
+		if (result < 0) result += max;
+		return result;
 	}
 
 	CONST_ANYTYPE_I wrap(T val, T min, T max) requires Type::Number<T> {
-		return wmax(val - min, max) + min;
+		T range = max - min;
+		T result = mod(val - min, range);
+		if (result < 0) result += range;
+		return result + min;
 	}
 
 	CONST_ANYTYPE_I nroot(T val, T root) requires Type::Number<T> {
