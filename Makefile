@@ -63,7 +63,7 @@ OPTIMIZATIONS	+= -fopenmp -openmp -ftree-parallelize-loops=128 -funswitch-loops 
 OPENMP_ENABLED	:= -D_USE_OPENMP_
 optimize-lvl	:= g
 else
-optimize-lvl	?= g
+optimize-lvl	?= 2
 endif
 
 INCLUDES		:= -Ilib -Isrc -Ilib\SDL2-2.0.10\include -Ilib\OpenGL -Ilib\OpenGL\GLEW\include -Ilib\cute_headers -Ilib\stb -Ilib\toml11-3.7.1 -Ilib\pugixml-1.12\include -Ilib\yaml-cpp-0.7.0\include -Ilib\jsoncpp-3.11.2\include -Ilib\cppcodec-0.2
