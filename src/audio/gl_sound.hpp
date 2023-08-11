@@ -51,6 +51,7 @@ public:
 	}
 
 	void onUpdate() override {
+		canPlayThisFrame = true;
 		if (!active()) {
 			channel = -1;
 			return;
@@ -60,6 +61,17 @@ public:
 	void play(int loops = 0, size_t fadeInTime = 0, bool force = false) {
 		if (!created) return;
 		if (active() && !force) return;
+		if (fadeInTime)
+			channel = Mix_FadeInChannel(-1, source, loops, fadeInTime);
+		else
+			channel = Mix_PlayChannel(-1, source, loops);
+	}
+
+	void playOnceThisFrame(int loops = 0, size_t fadeInTime = 0, bool force = false) {
+		if (!created) return;
+		if (active() && !force) return;
+		if (!canPlayThisFrame) return;
+		canPlayThisFrame = false;
 		if (fadeInTime)
 			channel = Mix_FadeInChannel(-1, source, loops, fadeInTime);
 		else
@@ -98,6 +110,8 @@ public:
 	}
 
 private:
+	bool canPlayThisFrame = true;
+
 	bool active() {
 		if (!created)		return false;
 		if (channel == -1)	return false;
