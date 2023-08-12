@@ -45,8 +45,8 @@ public:
 		if (!isAudioSystemClosed) {
 			if (active())
 				Mix_HaltChannel(channel);
+			Mix_FreeChunk(source);
 		}
-		Mix_FreeChunk(source);
 		$debug("Sound source deleted!");
 	}
 

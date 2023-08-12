@@ -69,8 +69,8 @@ public:
 				queued = nullptr;
 			if (Mix_PlayingMusic() && current == source)
 				Mix_HaltMusic();
+			Mix_FreeMusic(source);
 		}
-		Mix_FreeMusic(source);
 		$debug("Music source deleted!");
 	}
 
