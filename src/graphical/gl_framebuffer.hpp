@@ -83,11 +83,11 @@ namespace Drawer {
 				buffer.screen.getID(),
 				0
 			);
-			buffer.depth.create(width, height, GL_UNSIGNED_INT, GL_DEPTH_COMPONENT, GL_LINEAR, GL_LINEAR);
+			buffer.depth.create(width, height, GL_UNSIGNED_INT_24_8, GL_DEPTH_STENCIL, GL_LINEAR, GL_LINEAR, NULL, GL_DEPTH24_STENCIL8);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LESS);
 			glFramebufferTexture2D(
 				GL_FRAMEBUFFER,
-				GL_DEPTH_ATTACHMENT,
+				GL_DEPTH_STENCIL_ATTACHMENT,
 				GL_TEXTURE_2D,
 				buffer.depth.getID(),
 				0

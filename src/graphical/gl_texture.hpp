@@ -9,6 +9,7 @@ struct ImageData2D {
 		height,
 		type,
 		format,
+		internalFormat,
 		minFilter,
 		magFilter
 	;
@@ -96,6 +97,7 @@ unsigned int createTexture2D(
 	unsigned int height,
 	unsigned int type = GL_UNSIGNED_BYTE,
 	unsigned int format = GL_RGBA,
+	unsigned int internalFormat = GL_RGBA,
 	unsigned int minFilter = GL_LINEAR_MIPMAP_LINEAR,
 	unsigned int magFilter = GL_LINEAR,
 	unsigned char* data = NULL
@@ -114,7 +116,8 @@ public:
 		unsigned int format = GL_RGBA,
 		unsigned int magFilter = GL_LINEAR,
 		unsigned int minFilter = GL_LINEAR_MIPMAP_LINEAR,
-		unsigned char* data = NULL
+		unsigned char* data = NULL,
+		unsigned int internalFormat = 0
 	) {
 		create(
 			width,
@@ -123,7 +126,8 @@ public:
 			format,
 			minFilter,
 			magFilter,
-			data
+			data,
+			internalFormat
 		);
 	}
 
@@ -154,14 +158,16 @@ public:
 		unsigned int format = GL_RGBA,
 		unsigned int magFilter = GL_LINEAR,
 		unsigned int minFilter = GL_LINEAR_MIPMAP_LINEAR,
-		unsigned char* data = NULL
+		unsigned char* data = NULL,
+		unsigned int internalFormat = 0
 	) {
-		this->width		= width;
-		this->height	= height;
-		this->format	= format;
-		this->type		= type;
-		this->minFilter = minFilter;
-		this->magFilter = magFilter;
+		this->width				= width;
+		this->height			= height;
+		this->format			= format;
+		this->type				= type;
+		this->minFilter			= minFilter;
+		this->magFilter			= magFilter;
+		this->internalFormat	= internalFormat ? internalFormat : format;
 		if (created) return;
 		created = true;
 		id = createTexture2D(
@@ -169,6 +175,7 @@ public:
 			height,
 			type,
 			format,
+			this->internalFormat,
 			minFilter,
 			magFilter,
 			data
@@ -210,7 +217,8 @@ public:
 			image.format,
 			image.minFilter,
 			image.magFilter,
-			(unsigned char*)image.data.data()
+			(unsigned char*)image.data.data(),
+			image.internalFormat
 		);
 	}
 
@@ -320,7 +328,7 @@ public:
 			default:
 			case GL_RGBA:				size *= 4;	break;
 		}
-		ImageData2D imgdat = {width, height, type, format, minFilter, magFilter};
+		ImageData2D imgdat = {width, height, type, format, internalFormat, minFilter, magFilter};
 		imgdat.data.reserve(width * height * size);
 		glBindTexture(GL_TEXTURE_2D, id);
 		glGetTexImage(GL_TEXTURE_2D, 0, format, type, imgdat.data.data());
@@ -365,7 +373,7 @@ public:
 private:
 	bool created = false;
 	unsigned int id = 0;
-	unsigned int width, height, format, type, minFilter, magFilter;
+	unsigned int width, height, format, internalFormat, type, minFilter, magFilter;
 };
 
 class MultisampleTexture2D {
