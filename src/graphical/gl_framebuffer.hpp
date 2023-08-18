@@ -153,6 +153,7 @@ namespace Drawer {
 		}
 
 		FrameBuffer* render(FrameBufferData target) {
+			if (!created) return;
 			// Set target buffer
 			glBindFramebuffer(GL_FRAMEBUFFER, target.id);
 			// Set VBO as active
@@ -203,7 +204,12 @@ namespace Drawer {
 		}
 
 		FrameBuffer* render(FrameBuffer& targetBuffer) {
+			if (!targetBuffer.exists()) return;
 			return render(targetBuffer.toFrameBufferData());
+		}
+
+		bool exists() {
+			return created;
 		}
 
 		/// The framebuffer's vertex transformation.

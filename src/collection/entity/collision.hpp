@@ -596,10 +596,10 @@ namespace CollisionData {
 	typedef AreaCollisionData<BoxBounds2D>		AreaBoxData;
 	typedef AreaCollisionData<RayBounds2D>		AreaRayData;
 	typedef AreaCollisionData<LineBounds2D>		AreaLineData;
-	typedef AreaCollisionData<LineBounds2D>		AreaTriangleData;
-	typedef AreaCollisionData<LineBounds2D>		AreaQuadData;
-	typedef AreaCollisionData<LineBounds2D>		AreaShapeData;
-	typedef AreaCollisionData<LineBounds2D>		AreaPolygonData;
+	typedef AreaCollisionData<TriangleBounds2D>	AreaTriangleData;
+	typedef AreaCollisionData<QuadBounds2D>		AreaQuadData;
+	typedef AreaCollisionData<ShapeBounds2D>	AreaShapeData;
+	typedef AreaCollisionData<PolygonBounds2D>	AreaPolygonData;
 
 	template <CollisionType A, CollisionType B>
 	bool isColliding(AreaCollisionData<A>& a, AreaCollisionData<B>& b) {
