@@ -1,4 +1,4 @@
-#version 420 core
+#version 150 core
 
 vec4 hueToPastel(float hue) {
 	hue *= PI;
