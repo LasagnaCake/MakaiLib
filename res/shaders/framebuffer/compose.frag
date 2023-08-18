@@ -304,7 +304,7 @@ vec4 applyHSL(vec4 color) {
 }
 
 vec4 applyBrightnessAndContrast(vec4 color) {
-	vec3 res = color.rgb + vec3(brightness);
+	vec3 res = color.rgb + brightness.xxx;
 	return vec4(((res - 0.5f) * max(contrast, 0)) + 0.5f, color.a);
 }
 
@@ -364,8 +364,8 @@ VBLEND_DEFINE(vec4)
 
 vec4 blendNoise(vec4 color, float noise, uint colorMode, uint alphaMode) {
 	return vec4(
-		vblend(color.rgb, vec3(noise), colorMode),
-		vblend(color.a, noise, alphaMode)
+		vblend(color.rgb, noise.xxx, colorMode),
+		vblend(color.a, noise.x, alphaMode)
 	);
 }
 
