@@ -13,6 +13,12 @@
 #define AUDIO_SAMPLE_FRAMES 2048
 #endif // AUDIO_SAMPLE_FRAMES
 
+#define OPENGL_VERSION(VERSION) GLEW_VERSION_#VERSION
+
+#ifndef MINIMUM_OPENGL_VERSION
+#define MINIMUM_OPENGL_VERSION OPENGL_VERSION(3_2)
+#endif // MINIMUM_OPENGL_VERSION
+
 namespace Makai {
 	namespace {
 		using
@@ -278,9 +284,9 @@ namespace Makai {
 				$errlog("Error: glewInit: " << glewGetErrorString(glew_status));
 				throw Error::FailedAction(string("glewInit"));
 			}
-			if (!GLEW_VERSION_4_2) {
-				$errlog("Your computer does not support OpenGL 4.2+!");
-				throw Error::InvalidValue(string("No OpenGL 4.2+"));
+			if (!MINIMUM_OPENGL_VERSION) {
+				$errlog("Your computer does not support the minimum required OpenGL version!");
+				throw Error::InvalidValue(string("Minimum required OpenGL version not met!"));
 			}
 			$debug("Started!");
 			// Create default shader
