@@ -22,10 +22,12 @@
 #include "graphical.hpp"
 #include "gamedata.hpp"
 
+#ifndef $_FORCE_INTEGRATED_GRAPHICS
 extern "C" {
 DLL_EXPORT	uint32	NvOptimusEnablement = 1;
 DLL_EXPORT	int		AmdPowerXpressRequestHighPerformance = 1;
 }
+#endif // $_FORCE_INTEGRATED_GRAPHICS
 
 namespace Makai {
 }
