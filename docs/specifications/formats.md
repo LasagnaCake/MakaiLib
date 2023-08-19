@@ -212,6 +212,9 @@ If data gets saved in a different file:
 ```
 
 # 3D Scene
+
+## Layout
+
 This can be saved as a `JSON` file of extension `.msd` (Makai Scene Definition).
 
 If data gets saved in a separate file:
@@ -240,3 +243,40 @@ If data is to be integrated in the file:
 	"data": [{/* See Renderable Object:Layout */}] // List of object definitions
 }
 ```
+
+# Dialogue
+
+## ActorData
+
+### Layout
+
+```javascript
+"actor": {
+	// Required
+	"name": "",
+	"frame": [0.0, 0.0],
+	"tint": [1.0, 1.0, 1.0, 1.0],
+	"leaving": false
+}
+```
+
+## Layout
+
+This can be saved as a `JSON` file of extension `.mdd` (Makai Dialogue Definition). This does not include actor sprite data, purely only message text data.
+
+```javascript
+"dialogue": {
+	// Required
+	"messages": [
+		{
+			// Required
+			"actors": [{/* See Dialogue:ActorData:Layout */}],
+			"title": "",
+			"text": "",
+			"easing": "out.cubic",
+			"duration": 600,
+			"autoplay": false
+		}
+	]
+}
+``````
