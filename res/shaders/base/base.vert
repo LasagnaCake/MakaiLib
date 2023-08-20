@@ -1,5 +1,7 @@
 #version 420 core
 
+#pragma optimize(on)
+
 #define MAX_LIGHTS 16
 #define MAX_INSTANCES 32
 

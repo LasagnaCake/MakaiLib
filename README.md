@@ -71,10 +71,12 @@ Currently VERY scarce. Some of the code is commented.
 
 ### Current
 
+- [ ] Optimize Shaders
+- - Will potentially require splitting shaders into several smaller ones (See [https://stackoverflow.com/a/7248447](https://stackoverflow.com/a/7248447) and [https://www.khronos.org/opengl/wiki/GLSL_Object](https://www.khronos.org/opengl/wiki/GLSL_Object))
 - [ ] Replace `.ini`-based savefile system with a different format
 - - Using JSON
 - [ ] GUI system
-- [ ] Menu system
+- [x] Menu system
 - [ ] Spellcard system
 - [ ] Curvy/Bent lasers
 - [ ] Bugs & Errors (see [Issues.txt](Issues.txt))

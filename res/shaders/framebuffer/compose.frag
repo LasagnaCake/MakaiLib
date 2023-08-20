@@ -1,5 +1,7 @@
 #version 420 core
 
+#pragma optimize(on)
+
 precision mediump float;
 
 in vec2 fragUV;
@@ -189,7 +191,7 @@ vec4 getPixelColor(vec2 uv) {
 		texture(screen, uv - vec2(blurStrength.x, 0)) +
 		texture(screen, uv + vec2(0, blurStrength.y)) +
 		texture(screen, uv - vec2(0, blurStrength.y))
-	) / 5.0;
+	) * 0.2;
 }
 
 float getOutlineValue(vec2 uv, vec2 oSize) {
@@ -226,7 +228,7 @@ vec2 polarWarp(out float pfac) {
 	if (polarWarpFishEye)
 		distance = sin(distance * PI);
 	vec2 offset = normalTo(target);
-	return (offset * distance) * (polarWarpStrength / 100);
+	return (offset * distance) * (polarWarpStrength * 0.01);
 }
 
 float round(float v) {
@@ -238,7 +240,7 @@ float ramp(float v) {
 }
 
 float tri(float v) {
-	return (abs(sin(v/2 + (HPI/2)))-abs(cos(v/2 + (HPI/2))));
+	return (abs(sin(v*0.5 + (HPI*0.5)))-abs(cos(v*0.5 + (HPI*0.5))));
 }
 
 float htri(float v) {
@@ -381,14 +383,14 @@ void main() {
 	vec2 wave = vec2(0);
 	if (useWave) {
 		wave = (fragUV.yx * waveFrequency) * TAU + waveShift;
-		wave = patternV2(wave, waveShape, waveLOD) * (waveAmplitude / 10.0);
+		wave = patternV2(wave, waveShape, waveLOD) * (waveAmplitude * 0.1);
 	}
 
 	// Screen prismatic effect
 	vec2 prism = vec2(0);
 	if (usePrism) {
 		prism = (fragUV * prismFrequency.yx) * TAU + prismShift.yx;
-		prism = patternV2(prism, prismShape, prismLOD) * (prismAmplitude.yx / 10.0);
+		prism = patternV2(prism, prismShape, prismLOD) * (prismAmplitude.yx * 0.1);
 	}
 
 	// Screen polar distortion

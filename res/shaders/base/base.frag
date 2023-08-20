@@ -1,5 +1,7 @@
 #version 420 core
 
+#pragma optimize(on)
+
 precision mediump float;
 
 in vec3 fragCoord3D;

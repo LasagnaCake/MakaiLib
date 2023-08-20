@@ -1,5 +1,7 @@
 #version 150 core
 
+#pragma optimize(on)
+
 vec4 hueToPastel(float hue) {
 	hue *= PI;
 	vec3 res = vec3(

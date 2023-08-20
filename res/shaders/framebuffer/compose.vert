@@ -1,5 +1,7 @@
 #version 420 core
 
+#pragma optimize(on)
+
 precision mediump float;
 
 layout (location = 0) in vec3 vertPos;
