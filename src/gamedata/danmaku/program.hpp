@@ -134,12 +134,14 @@ public:
 
 	void onLayerDrawBegin(size_t layerID) override {
 		GameApp::onLayerDrawBegin(layerID);
-		switch (layerID / TRUE_SUBLAYER_COUNT) {
-		case ($layer(WORLD_BOTTOM) / TRUE_SUBLAYER_COUNT):
+		if (layerID <= BOSS_SPELL_OVERLAY_TOP_LAYER) {
 			if (bossAura.enabled)
 				getLayerBuffer().material.polarWarp = bossAura.effect;
 			else
 				getLayerBuffer().material.polarWarp.enabled = false;
+		}
+		switch (layerID / TRUE_SUBLAYER_COUNT) {
+		case (WORLD_BOTTOM_LAYER / TRUE_SUBLAYER_COUNT):
 			setWorldMaterial3D();
 			setCamera3D();
 			break;
