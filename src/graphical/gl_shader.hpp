@@ -167,8 +167,6 @@ namespace Shader {
 		void create(string const& code, GLuint shaderType) {
 			if (created) return;
 			created = true;
-			int success;
-			char infoLog[2048];
 			// Get shader code
 			const char* shaderCode = code.c_str();
 			// Create & compile shader
@@ -176,10 +174,18 @@ namespace Shader {
 			glShaderSource(id, 1, &shaderCode, NULL);
 			glCompileShader(id);
 			// Log compile errors if any
+			int success;
+			char infoLog[2048];
 			glGetShaderiv(id, GL_COMPILE_STATUS, &success);
 			if (!success) {
 				glGetShaderInfoLog(id, sizeof(infoLog), NULL, infoLog);
-				throw Error::FailedAction(string("Could not compile Shader!\n") + infoLog);
+				throw Error::FailedAction(
+					string("Could not compile shader!\n"),
+					__FILE__,
+					toString(__LINE__),
+					"ShaderModule::create()",
+					string(infoLog)
+				);;
 			};
 		}
 
@@ -226,8 +232,12 @@ namespace Shader {
 	private:
 		bool created = false;
 
+		GLuint links = 0;
+
 		//List<GLuint> programs;
 		GLuint id = 0;
+
+		friend class Shader;
 	};
 
 	typedef List<ShaderModule*> ModuleList;
@@ -237,7 +247,7 @@ namespace Shader {
 		GLuint id;
 		bool created = false;
 
-		HashMap<string, ShaderModule*> modules;
+		FuzzyHashMap<string, ShaderModule*> modules;
 	public:
 		Shader() {
 		}
@@ -255,7 +265,7 @@ namespace Shader {
 			return id;
 		}
 
-		inline HashMap<string, ShaderModule*> getModules() {
+		inline FuzzyHashMap<string, ShaderModule*> getModules() {
 			return modules;
 		}
 
@@ -274,10 +284,11 @@ namespace Shader {
 			ModuleList newModules;
 			if (shaderTypes.find(moduleData[1]) == shaderTypes.end()) {
 				for (size_t i = 1; i < moduleData.size(); i += 2) {
+					$debug(moduleData[i]);
 					code = loadTextFile(dir + moduleData[i]);
 					type = shaderTypeId(moduleData[i+1]);
 					try {
-						newModules.push_back(addModule(FileSystem::getFileName(moduleData[i]), code, type));
+						newModules.push_back(addModule(moduleData[i], code, type));
 					} catch (Error::Error err) {
 						log += string("\n[[ Error on shader '") + dir + moduleData[i] + "' ]]:\n";
 						log += err.what();
@@ -286,9 +297,10 @@ namespace Shader {
 			} else {
 				type = shaderTypeId(moduleData[1]);
 				for (size_t i = 2; i < moduleData.size(); i++) {
+					$debug(moduleData[i]);
 					code = loadTextFile(dir + moduleData[i]);
 					try {
-						newModules.push_back(addModule(FileSystem::getFileName(moduleData[i]), code, type));
+						newModules.push_back(addModule(moduleData[i], code, type));
 					} catch (Error::Error err) {
 						log += string("\n[[ Error on shader '") + dir + moduleData[i] + "' ]]:\n";
 						log += err.what();
@@ -306,34 +318,55 @@ namespace Shader {
 			if (!created) return nullptr;
 			ShaderModule* newModule = new ShaderModule(code, shaderType);
 			modules[moduleName] = newModule;
+			newModule->links++;
 			return newModule;
 		}
 
 		/// Associates an existing shader module to this object.
 		void addModule(string const& moduleName, ShaderModule* const& module) {
 			modules[moduleName] = module;
+			module->links++;
 		}
 
 		/// Removes a given shader module by its pointer value.
 		void removeModule(ShaderModule* const& module) {
-			std::erase_if(modules, [&](auto& e){return e.second == module;});
+			std::erase_if(modules, [&](auto& e) {
+				auto& [mName, mPtr] = e;
+				if (mPtr == module) {
+					mPtr->links--;
+					if (!mPtr->links)
+						delete mPtr;
+					return true;
+				}
+				return false;
+			});
 		}
 
 		/// Removes a given shader module by its name.
 		void removeModule(string const& module) {
-			std::erase_if(modules, [&](auto& e){return e.first == module;});
+			std::erase_if(modules, [&](auto& e) {
+				auto& [mName, mPtr] = e;
+				if (mName == module) {
+					mPtr->links--;
+					if (!mPtr->links)
+						delete mPtr;
+					return true;
+				}
+				return false;
+			});
 		}
 
 		void create() {
-			if (!created) return;
+			if (created) return;
 			created = true;
 			id = glCreateProgram();
 		}
 
 		ModuleList create(CSVData const& moduleData) {
-			if (!created) return ModuleList();
+			if (created) return ModuleList();
 			created = true;
-			create();
+			$debug("\n\n<Creating Shader...>\n");
+			id = glCreateProgram();
 			return addModules(moduleData);
 		}
 
@@ -341,6 +374,12 @@ namespace Shader {
 			if (!created) return;
 			created = true;
 			glDeleteProgram(id);
+			for(auto [_, m]: modules) {
+				m->links--;
+				if (!m->links)
+					delete m;
+			}
+			modules.clear();
 		}
 
 		/// Operator overload.
@@ -350,15 +389,31 @@ namespace Shader {
 
 		/// Enables the shader object.
 		void enable() {
+			if (!created) return;
 			for(auto [_, m]: modules) {
 				m->attachTo(id);
 			}
+			// Check if linking was a success
+			int success;
+			char infoLog[2048];
 			glLinkProgram(id);
+			glGetProgramiv(id, GL_LINK_STATUS, &success);
+			if (!success) {
+				glGetProgramInfoLog(id, sizeof(infoLog), NULL, infoLog);
+				throw Error::FailedAction(
+					string("Could not link shader program!\n"),
+					__FILE__,
+					toString(__LINE__),
+					"Shader::enable()",
+					string(infoLog)
+				);
+			}
 			glUseProgram(id);
 		}
 
 		/// Disables the shader object.
 		void disable() {
+			if (!created) return;
 			for(auto [_, m]: modules)
 				m->detachFrom(id);
 			glUseProgram(0);
