@@ -171,7 +171,7 @@ namespace Drawer {
 			Drawer::setVertexAttributes();
 			// Get shader
 			// Activate shader
-			shader.enable();
+			shader();
 			// Set shader textures
 			buffer.depth(30);
 			buffer.screen(31);
@@ -200,7 +200,6 @@ namespace Drawer {
 			glBindVertexArray(0);
 			// Disable attributes
 			Drawer::disableVertexAttributes();
-			shader.disable();
 			return this;
 		}
 

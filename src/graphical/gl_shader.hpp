@@ -152,6 +152,7 @@ namespace Shader {
 		{"tsev", GL_TESS_EVALUATION_SHADER}
 	};
 
+<<<<<<< HEAD
 	class ShaderModule {
 	public:
 		ShaderModule() {}
@@ -242,18 +243,60 @@ namespace Shader {
 
 	typedef List<ShaderModule*> ModuleList;
 
+=======
+>>>>>>> parent of e42a948d (Shader System Change BEGIN)
 	class Shader {
 	private:
 		GLuint id;
 		bool created = false;
+<<<<<<< HEAD
 
 		FuzzyHashMap<string, ShaderModule*> modules;
+=======
+		/// Similar to create, but internal.
+		void attach(string code, GLuint shaderType) {
+			// Compile shaders
+			GLuint shader;
+			int success;
+			char infoLog[2048];
+			const char* shaderCode = code.c_str();
+			// Vertex Shader
+			shader = glCreateShader(shaderType);
+			glShaderSource(shader, 1, &shaderCode, NULL);
+			glCompileShader(shader);
+			// Log compile errors if any
+			glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
+			if (!success) {
+				glGetShaderInfoLog(shader, 2048, NULL, infoLog);
+				throw Error::FailedAction(string("Could not compile Shader!\n") + infoLog);
+			};
+			// Shader Program
+			if (!created) id = glCreateProgram();
+			glAttachShader(id, shader);
+			glLinkProgram(id);
+			// Log linking errors if any
+			glGetProgramiv(id, GL_LINK_STATUS, &success);
+			if (!success) {
+				glGetProgramInfoLog(id, 2048, NULL, infoLog);
+				throw Error::FailedAction(string("Could not link shader program!\n") + infoLog);
+			}
+			glDeleteShader(shader);
+			created = true;
+		}
+>>>>>>> parent of e42a948d (Shader System Change BEGIN)
 	public:
-		Shader() {
+		Shader() {}
+
+		Shader(string vertexCode, string fragmentCode) {
+			create(vertexCode, fragmentCode);
 		}
 
-		Shader(CSVData moduleData) {
-			create(moduleData);
+		Shader(CSVData slfData) {
+			create(slfData);
+		}
+
+		Shader(string code, GLuint shaderType) {
+			create(code, shaderType);
 		}
 
 		~Shader() {
@@ -265,22 +308,78 @@ namespace Shader {
 			return id;
 		}
 
+<<<<<<< HEAD
 		inline FuzzyHashMap<string, ShaderModule*> getModules() {
 			return modules;
 		}
 
+=======
+>>>>>>> parent of e42a948d (Shader System Change BEGIN)
 		/// Returns whether this object has a shader associated with it (i.e. "is created").
 		inline bool isCreated() {
 			return created;
 		}
 
-		/// Creates a list of shader modules from an SLF file and associates it to the object.
-		ModuleList addModules(CSVData const& moduleData) {
-			if (!created) return ModuleList();
-			string dir = moduleData[0];
+		/// Creates a shader and associates it to the object. Returns false if already created.
+		bool create(string vertexCode, string fragmentCode) {
+			if (created) return false;
+			else created = true;
+			// Compile shaders
+			GLuint vertex, fragment;
+			int success;
+			char infoLog[2048];
+			if (vertexCode != SHADER_NULL) {
+				const char* vShaderCode = vertexCode.c_str();
+				// Vertex Shader
+				vertex = glCreateShader(GL_VERTEX_SHADER);
+				glShaderSource(vertex, 1, &vShaderCode, NULL);
+				glCompileShader(vertex);
+				// Log compile errors if any
+				glGetShaderiv(vertex, GL_COMPILE_STATUS, &success);
+				if (!success) {
+					glGetShaderInfoLog(vertex, 2048, NULL, infoLog);
+					throw Error::FailedAction(string("Could not compile Vertex Shader!\n") + infoLog);
+				};
+			}
+			// similiar for Fragment Shader
+			if (fragmentCode != SHADER_NULL) {
+				const char* fShaderCode = fragmentCode.c_str();
+				fragment = glCreateShader(GL_FRAGMENT_SHADER);
+				glShaderSource(fragment, 1, &fShaderCode, NULL);
+				glCompileShader(fragment);
+
+				// Log compile errors if any
+				glGetShaderiv(fragment, GL_COMPILE_STATUS, &success);
+				if (!success) {
+					glGetShaderInfoLog(fragment, 2048, NULL, infoLog);
+					throw Error::FailedAction(string("Could not compile Fragment Shader!\n") + infoLog);
+				}
+			}
+			// Shader Program
+			if (!created) id = glCreateProgram();
+			if (vertex)		glAttachShader(id, vertex);
+			if (fragment)	glAttachShader(id, fragment);
+			glLinkProgram(id);
+			// Log linking errors if any
+			glGetProgramiv(id, GL_LINK_STATUS, &success);
+			if (!success) {
+				glGetProgramInfoLog(id, 2048, NULL, infoLog);
+				throw Error::FailedAction(string("Could not link shader program!\n") + infoLog + "\n\n\n Program:" + vertexCode + "\n\n\n" + fragmentCode);
+			}
+			// Delete shaders
+			if (vertex)		glDeleteShader(vertex);
+			if (fragment)	glDeleteShader(fragment);
+			return true;
+		}
+
+		/// Creates a shader from an SLF file and associates it to the object. Returns false if already created.
+		bool create(CSVData slfData) {
+			if (created) return false;
+			string dir = slfData[0];
 			string log = "";
 			string code;
 			GLuint type;
+<<<<<<< HEAD
 			ModuleList newModules;
 			if (shaderTypes.find(moduleData[1]) == shaderTypes.end()) {
 				for (size_t i = 1; i < moduleData.size(); i += 2) {
@@ -289,20 +388,36 @@ namespace Shader {
 					type = shaderTypeId(moduleData[i+1]);
 					try {
 						newModules.push_back(addModule(moduleData[i], code, type));
+=======
+			if (shaderTypes.find(slfData[1]) == shaderTypes.end()) {
+				for (size_t i = 1; i < slfData.size(); i += 2) {
+					code = loadTextFile(dir + slfData[i]);
+					type = shaderTypeId(slfData[i+1]);
+					try {
+						attach(code, type);
+>>>>>>> parent of e42a948d (Shader System Change BEGIN)
 					} catch (Error::Error err) {
-						log += string("\n[[ Error on shader '") + dir + moduleData[i] + "' ]]:\n";
+						log += string("\n[[ Error on shader '") + dir + slfData[i] + "' ]]:\n";
 						log += err.what();
 					}
 				}
 			} else {
+<<<<<<< HEAD
 				type = shaderTypeId(moduleData[1]);
 				for (size_t i = 2; i < moduleData.size(); i++) {
 					$debug(moduleData[i]);
 					code = loadTextFile(dir + moduleData[i]);
 					try {
 						newModules.push_back(addModule(moduleData[i], code, type));
+=======
+				type = shaderTypeId(slfData[1]);
+				for (size_t i = 2; i < slfData.size(); i++) {
+					code = loadTextFile(dir + slfData[i]);
+					try {
+						attach(code, type);
+>>>>>>> parent of e42a948d (Shader System Change BEGIN)
 					} catch (Error::Error err) {
-						log += string("\n[[ Error on shader '") + dir + moduleData[i] + "' ]]:\n";
+						log += string("\n[[ Error on shader '") + dir + slfData[i] + "' ]]:\n";
 						log += err.what();
 					}
 				}
@@ -310,6 +425,7 @@ namespace Shader {
 			if (log != "") {
 				throw Error::FailedAction(log);
 			}
+<<<<<<< HEAD
 			return newModules;
 		}
 
@@ -358,19 +474,57 @@ namespace Shader {
 
 		void create() {
 			if (created) return;
+=======
+>>>>>>> parent of e42a948d (Shader System Change BEGIN)
 			created = true;
-			id = glCreateProgram();
+			return true;
 		}
 
+<<<<<<< HEAD
 		ModuleList create(CSVData const& moduleData) {
 			if (created) return ModuleList();
 			created = true;
 			$debug("\n\n<Creating Shader...>\n");
 			id = glCreateProgram();
 			return addModules(moduleData);
+=======
+		/// Creates a shader from a given shader code, and a shader type  and associates it to the object. Returns false if already created.
+		bool create(string code, GLuint shaderType) {
+			if (created) return false;
+			else created = true;
+			// Compile shaders
+			GLuint shader;
+			int success;
+			char infoLog[2048];
+			const char* shaderCode = code.c_str();
+			// Vertex Shader
+			shader = glCreateShader(shaderType);
+			glShaderSource(shader, 1, &shaderCode, NULL);
+			glCompileShader(shader);
+			// Log compile errors if any
+			glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
+			if (!success) {
+				glGetShaderInfoLog(shader, 2048, NULL, infoLog);
+				throw Error::FailedAction(string("Could not compile Shader!\n") + infoLog);
+			};
+			// Shader Program
+			if (!created) id = glCreateProgram();
+			glAttachShader(id, shader);
+			glLinkProgram(id);
+			// Log linking errors if any
+			glGetProgramiv(id, GL_LINK_STATUS, &success);
+			if (!success) {
+				glGetProgramInfoLog(id, 2048, NULL, infoLog);
+				throw Error::FailedAction(string("Could not link shader program!\n") + infoLog  + infoLog + "\n\n\n Program:" + code);
+			}
+			glDeleteShader(shader);
+			return true;
+>>>>>>> parent of e42a948d (Shader System Change BEGIN)
 		}
 
+		/// Destroys the shader associated with this object, if any. Does not delete object.
 		void destroy() {
+<<<<<<< HEAD
 			if (!created) return;
 			created = true;
 			glDeleteProgram(id);
@@ -380,15 +534,22 @@ namespace Shader {
 					delete m;
 			}
 			modules.clear();
+=======
+			if (created) {
+				glDeleteProgram(id);
+				created = false;
+			}
+>>>>>>> parent of e42a948d (Shader System Change BEGIN)
 		}
 
 		/// Operator overload.
 		void operator()() {
-			enable();
+			glUseProgram(id);
 		}
 
 		/// Enables the shader object.
 		void enable() {
+<<<<<<< HEAD
 			if (!created) return;
 			for(auto [_, m]: modules) {
 				m->attachTo(id);
@@ -419,6 +580,11 @@ namespace Shader {
 			glUseProgram(0);
 		}
 
+=======
+			glUseProgram(id);
+		}
+
+>>>>>>> parent of e42a948d (Shader System Change BEGIN)
 		/**
 		* The way to set uniforms.
 		* Done like this: SHADER.uniform(UNIFORM_NAME)(UNIFORM_VALUE);
