@@ -21,7 +21,7 @@
 #define $range(I, BEGIN, END, STEP) (auto I = (BEGIN); I < (END); I += (STEP))
 #define $ssrange(I, BEGIN, END) $range(I, BEGIN, END, $iltf(BEGIN, END, 1))
 
-#define $eraseif(VEC, COND) if (!VEC.empty()) std::erase_if(VEC, [&](auto& elem){return (COND);});
+#define $eraseif(VEC, COND) if (!VEC.empty()) std::erase_if(VEC, [&](auto& elem){return (COND);})
 
 /*
 #define DLL_EXPORT	__declspec(dllexport)

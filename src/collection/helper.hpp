@@ -233,6 +233,10 @@ namespace FileSystem {
 		return res;
 	}
 
+	inline String getFileName(string path) {
+		return toString(WideString(fs::path(path).stem().c_str()));
+	}
+
 	String getDirectoryFromPath(String const& path) {
 		return std::regex_replace(
 			path,
