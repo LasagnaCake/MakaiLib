@@ -152,107 +152,10 @@ namespace Shader {
 		{"tsev", GL_TESS_EVALUATION_SHADER}
 	};
 
-<<<<<<< HEAD
-	class ShaderModule {
-	public:
-		ShaderModule() {}
-
-		ShaderModule(string const& code, GLuint shaderType) {
-			create(code,shaderType);
-		}
-
-		~ShaderModule() {
-			destroy();
-		}
-
-		void create(string const& code, GLuint shaderType) {
-			if (created) return;
-			created = true;
-			// Get shader code
-			const char* shaderCode = code.c_str();
-			// Create & compile shader
-			id = glCreateShader(shaderType);
-			glShaderSource(id, 1, &shaderCode, NULL);
-			glCompileShader(id);
-			// Log compile errors if any
-			int success;
-			char infoLog[2048];
-			glGetShaderiv(id, GL_COMPILE_STATUS, &success);
-			if (!success) {
-				glGetShaderInfoLog(id, sizeof(infoLog), NULL, infoLog);
-				throw Error::FailedAction(
-					string("Could not compile shader!\n"),
-					__FILE__,
-					toString(__LINE__),
-					"ShaderModule::create()",
-					string(infoLog)
-				);;
-			};
-		}
-
-		void destroy() {
-			if (!created) return;
-			created = false;
-			glDeleteShader(id);
-			//detachFromAll();
-			id = 0;
-		}
-
-		inline size_t getID() const {
-			return id;
-		}
-
-		void operator()(GLuint program) {
-			attachTo(program);
-		}
-
-		void attachTo(GLuint program) {
-			if (!created) return;
-			if ((!enabled) && fallback) fallback->attachTo(program);
-			glAttachShader(program, id);
-			//programs.push_back(program);
-		}
-
-		void detachFrom(GLuint program) {
-			if (!created) return;
-			glDetachShader(program, id);
-			//std::erase_if(programs, [&](auto& e){return e == program;});
-		}
-
-		/*
-		void detachFromAll() {
-			for (auto& p: programs)
-				glDetachShader(p, id);
-			programs.clear();
-		}
-		*/
-
-		ShaderModule* fallback = nullptr;
-
-		bool enabled = true;
-	private:
-		bool created = false;
-
-		GLuint links = 0;
-
-		//List<GLuint> programs;
-		GLuint id = 0;
-
-		friend class Shader;
-	};
-
-	typedef List<ShaderModule*> ModuleList;
-
-=======
->>>>>>> parent of e42a948d (Shader System Change BEGIN)
 	class Shader {
 	private:
 		GLuint id;
 		bool created = false;
-<<<<<<< HEAD
-
-		FuzzyHashMap<string, ShaderModule*> modules;
-=======
 		/// Similar to create, but internal.
 		void attach(string code, GLuint shaderType) {
 			// Compile shaders
@@ -283,7 +186,6 @@ namespace Shader {
 			glDeleteShader(shader);
 			created = true;
 		}
->>>>>>> parent of e42a948d (Shader System Change BEGIN)
 	public:
 		Shader() {}
 
@@ -308,13 +210,6 @@ namespace Shader {
 			return id;
 		}
 
-<<<<<<< HEAD
-		inline FuzzyHashMap<string, ShaderModule*> getModules() {
-			return modules;
-		}
-
-=======
->>>>>>> parent of e42a948d (Shader System Change BEGIN)
 		/// Returns whether this object has a shader associated with it (i.e. "is created").
 		inline bool isCreated() {
 			return created;
@@ -379,43 +274,23 @@ namespace Shader {
 			string log = "";
 			string code;
 			GLuint type;
-<<<<<<< HEAD
-			ModuleList newModules;
-			if (shaderTypes.find(moduleData[1]) == shaderTypes.end()) {
-				for (size_t i = 1; i < moduleData.size(); i += 2) {
-					$debug(moduleData[i]);
-					code = loadTextFile(dir + moduleData[i]);
-					type = shaderTypeId(moduleData[i+1]);
-					try {
-						newModules.push_back(addModule(moduleData[i], code, type));
-=======
 			if (shaderTypes.find(slfData[1]) == shaderTypes.end()) {
 				for (size_t i = 1; i < slfData.size(); i += 2) {
 					code = loadTextFile(dir + slfData[i]);
 					type = shaderTypeId(slfData[i+1]);
 					try {
 						attach(code, type);
->>>>>>> parent of e42a948d (Shader System Change BEGIN)
 					} catch (Error::Error err) {
 						log += string("\n[[ Error on shader '") + dir + slfData[i] + "' ]]:\n";
 						log += err.what();
 					}
 				}
 			} else {
-<<<<<<< HEAD
-				type = shaderTypeId(moduleData[1]);
-				for (size_t i = 2; i < moduleData.size(); i++) {
-					$debug(moduleData[i]);
-					code = loadTextFile(dir + moduleData[i]);
-					try {
-						newModules.push_back(addModule(moduleData[i], code, type));
-=======
 				type = shaderTypeId(slfData[1]);
 				for (size_t i = 2; i < slfData.size(); i++) {
 					code = loadTextFile(dir + slfData[i]);
 					try {
 						attach(code, type);
->>>>>>> parent of e42a948d (Shader System Change BEGIN)
 					} catch (Error::Error err) {
 						log += string("\n[[ Error on shader '") + dir + slfData[i] + "' ]]:\n";
 						log += err.what();
@@ -425,69 +300,10 @@ namespace Shader {
 			if (log != "") {
 				throw Error::FailedAction(log);
 			}
-<<<<<<< HEAD
-			return newModules;
-		}
-
-		/// Creates a shader module from a given shader code, and a shader type and associates it to the object.
-		ShaderModule* addModule(string const& moduleName, string const& code, GLuint const& shaderType) {
-			if (!created) return nullptr;
-			ShaderModule* newModule = new ShaderModule(code, shaderType);
-			modules[moduleName] = newModule;
-			newModule->links++;
-			return newModule;
-		}
-
-		/// Associates an existing shader module to this object.
-		void addModule(string const& moduleName, ShaderModule* const& module) {
-			modules[moduleName] = module;
-			module->links++;
-		}
-
-		/// Removes a given shader module by its pointer value.
-		void removeModule(ShaderModule* const& module) {
-			std::erase_if(modules, [&](auto& e) {
-				auto& [mName, mPtr] = e;
-				if (mPtr == module) {
-					mPtr->links--;
-					if (!mPtr->links)
-						delete mPtr;
-					return true;
-				}
-				return false;
-			});
-		}
-
-		/// Removes a given shader module by its name.
-		void removeModule(string const& module) {
-			std::erase_if(modules, [&](auto& e) {
-				auto& [mName, mPtr] = e;
-				if (mName == module) {
-					mPtr->links--;
-					if (!mPtr->links)
-						delete mPtr;
-					return true;
-				}
-				return false;
-			});
-		}
-
-		void create() {
-			if (created) return;
-=======
->>>>>>> parent of e42a948d (Shader System Change BEGIN)
 			created = true;
 			return true;
 		}
 
-<<<<<<< HEAD
-		ModuleList create(CSVData const& moduleData) {
-			if (created) return ModuleList();
-			created = true;
-			$debug("\n\n<Creating Shader...>\n");
-			id = glCreateProgram();
-			return addModules(moduleData);
-=======
 		/// Creates a shader from a given shader code, and a shader type  and associates it to the object. Returns false if already created.
 		bool create(string code, GLuint shaderType) {
 			if (created) return false;
@@ -519,27 +335,14 @@ namespace Shader {
 			}
 			glDeleteShader(shader);
 			return true;
->>>>>>> parent of e42a948d (Shader System Change BEGIN)
 		}
 
 		/// Destroys the shader associated with this object, if any. Does not delete object.
 		void destroy() {
-<<<<<<< HEAD
-			if (!created) return;
-			created = true;
-			glDeleteProgram(id);
-			for(auto [_, m]: modules) {
-				m->links--;
-				if (!m->links)
-					delete m;
-			}
-			modules.clear();
-=======
 			if (created) {
 				glDeleteProgram(id);
 				created = false;
 			}
->>>>>>> parent of e42a948d (Shader System Change BEGIN)
 		}
 
 		/// Operator overload.
@@ -549,42 +352,9 @@ namespace Shader {
 
 		/// Enables the shader object.
 		void enable() {
-<<<<<<< HEAD
-			if (!created) return;
-			for(auto [_, m]: modules) {
-				m->attachTo(id);
-			}
-			// Check if linking was a success
-			int success;
-			char infoLog[2048];
-			glLinkProgram(id);
-			glGetProgramiv(id, GL_LINK_STATUS, &success);
-			if (!success) {
-				glGetProgramInfoLog(id, sizeof(infoLog), NULL, infoLog);
-				throw Error::FailedAction(
-					string("Could not link shader program!\n"),
-					__FILE__,
-					toString(__LINE__),
-					"Shader::enable()",
-					string(infoLog)
-				);
-			}
 			glUseProgram(id);
 		}
 
-		/// Disables the shader object.
-		void disable() {
-			if (!created) return;
-			for(auto [_, m]: modules)
-				m->detachFrom(id);
-			glUseProgram(0);
-		}
-
-=======
-			glUseProgram(id);
-		}
-
->>>>>>> parent of e42a948d (Shader System Change BEGIN)
 		/**
 		* The way to set uniforms.
 		* Done like this: SHADER.uniform(UNIFORM_NAME)(UNIFORM_VALUE);
