@@ -135,11 +135,12 @@ protected:
 		Drawer::disableVertexAttributes();
 		// Unbind vertex array
 		glBindVertexArray(0);
+		$mainshader.disable();
 	}
 
 	void setDefaultShader() {
 		// Render with basic shader
-		$mainshader();
+		$mainshader.enable();
 		// Get transformation matrices
 		glm::mat4
 			actor		= VecMath::asGLMMatrix(trans),
