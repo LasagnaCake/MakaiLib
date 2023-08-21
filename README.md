@@ -71,7 +71,7 @@ Currently VERY scarce. Some of the code is commented.
 
 ### Current
 
-- [ ] Optimize Shaders
+- [ ] Optimize GPU usage
 - [ ] Replace `.ini`-based savefile system with a different format
 - - Using JSON
 - [ ] GUI system
