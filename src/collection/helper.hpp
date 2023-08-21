@@ -233,8 +233,8 @@ namespace FileSystem {
 		return res;
 	}
 
-	inline String getFileName(string path) {
-		return toString(WideString(fs::path(path).stem().c_str()));
+	inline String getFileName(string path, bool removeExtension = false) {
+		return toString(WideString((removeExtension ? fs::path(path).stem() : fs::path(path).filename()).c_str()));
 	}
 
 	String getDirectoryFromPath(String const& path) {
