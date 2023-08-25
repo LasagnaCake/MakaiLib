@@ -68,6 +68,8 @@ public:
 		bool enabled = false;
 	} bossAura;
 
+	float screenShake = 0;
+
 	float& pointOfCollection = managers.item->poc;
 
 	virtual void onLoading() {}
@@ -139,6 +141,8 @@ public:
 				getLayerBuffer().material.polarWarp = bossAura.effect;
 			else
 				getLayerBuffer().material.polarWarp.enabled = false;
+			if (screenShake)
+				getLayerBuffer().trans.position += Vector3(Math::Random::real(-screenShake, screenShake), Math::Random::real(-screenShake, screenShake));
 		}
 		switch (layerID / TRUE_SUBLAYER_COUNT) {
 		case (WORLD_BOTTOM_LAYER / TRUE_SUBLAYER_COUNT):

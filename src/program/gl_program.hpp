@@ -630,6 +630,9 @@ namespace Makai {
 				framebuffer();
 				// Enable layer buffer
 				layerbuffer();
+				// Reset layerbuffer's positions
+				layerbuffer.trans	= VecMath::Transform3D();
+				layerbuffer.uv		= VecMath::Transform3D();
 				// Call onLayerDrawBegin function
 				onLayerDrawBegin(layer);
 				// Clear buffers
