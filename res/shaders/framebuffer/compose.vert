@@ -34,14 +34,14 @@ uniform float   maskRotate = 0;
 
 void main()
 {
-    vec4 vertex = vec4(vertPos.xyz, 1.0)  * posMatrix;
+    vec4 vertex = posMatrix * vec4(vertPos, 1.0);
     maskUV = vertUV * maskScale;
     maskUV.x = maskUV.x * cos(maskRotate) - maskUV.y * sin(maskRotate);
     maskUV.y = maskUV.x * sin(maskRotate) + maskUV.y * cos(maskRotate);
     maskUV += maskShift;
     if (relativeMask) 
         maskUV += uvShift;
-    fragUV = ((vec4(vertUV, 0, 0) * uvMatrix).xy + uvShift);
+    fragUV = ((uvMatrix * vec4(vertUV, 0, 1.0)).xy + uvShift);
     fragColor = vertColor;
     gl_Position = vertex;
     screenScale = vec2(resolution.x/resolution.y, 1);
