@@ -295,7 +295,7 @@ namespace Makai {
 			// This keeps the alpha from shitting itself
 			glEnable(GL_BLEND);
 			glEnable(GL_ALPHA_TEST);
-			glBlendFuncSeparatei(0, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			glBlendFuncSeparatei(0, DEFAULT_BLEND_FUNC);
 			// This keeps the alpha from shitting itself
 			glBlendEquationSeparatei(0, GL_FUNC_ADD, GL_MAX);
 			//glEnable(GL_CULL_FACE);
@@ -314,7 +314,7 @@ namespace Makai {
 			//glDisable(GL_BLEND);
 			unsigned int fid = framebuffer.toFrameBufferData().id;
 			//glBlendEquationSeparatei(fid, GL_FUNC_ADD, GL_MAX);
-			glBlendEquationSeparatei(fid, GL_FUNC_ADD, GL_FUNC_ADD);
+			glBlendEquationSeparatei(fid, DEFAULT_BLEND_EQUATION);
 			glBindBuffer(GL_FRAMEBUFFER, 0);
 			// Create layer buffer
 			layerbuffer.create(width, height);
