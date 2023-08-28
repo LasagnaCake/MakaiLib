@@ -236,8 +236,7 @@ public:
 			if (!b.sprite) b.sprite = mesh.createReference<AnimatedPlane>();
 			b.setFree(true);
 			b._setZOffset(
-				(1 - ((((float)BULLET_COUNT)-((float)i)) / ((float)BULLET_COUNT)))
-			/	10000.0
+				(1.0 - ((((float)BULLET_COUNT)-((float)i)) / ((float)BULLET_COUNT)))
 			);
 			b.sprite->size = Vector2(16, 16);
 			if (haltProcedure) return;

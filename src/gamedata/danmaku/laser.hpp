@@ -195,7 +195,6 @@ public:
 			l.setFree(true);
 			l._setZOffset(
 				(1 - ((((float)LASER_COUNT)-((float)i)) / ((float)LASER_COUNT)))
-			/	10000.0
 			);
 			if (haltProcedure) return;
 		}

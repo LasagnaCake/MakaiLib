@@ -196,7 +196,6 @@ public:
 			c.setFree(true);
 			c._setZOffset(
 				(1 - ((((float)ITEM_COUNT)-((float)i)) / ((float)ITEM_COUNT)))
-			/	10000.0
 			);
 			if (haltProcedure) return;
 		}
