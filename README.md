@@ -76,26 +76,27 @@ Currently VERY scarce. Some of the code is commented.
 - - Using JSON
 - [ ] GUI system
 - [x] Menu system
+- [ ] Dialogue system
 - [ ] Spellcard system
 - [ ] Curvy/Bent lasers
 - [ ] Bugs & Errors (see [Issues.txt](Issues.txt))
 - [ ] File format implementation (These need better names):
 - - For more info, see the [specifications](docs/specifications) folder
 - - [ ] Material configuration definitions
-- - - [ ] ObjectMaterial
+- - - [x] ObjectMaterial
 - - - [ ] WorldMaterial
 - - - [ ] BufferMaterial
-- - [ ] Renderable object definition
+- - [x] Renderable object definition
 - - - [x] Mesh Parser
 - - - [x] Transform Parser
-- - - [ ] Material Parser
+- - - [x] Material Parser
 - - - - Requires ObjectMaterial definition
 - - [ ] Animation keyframes definition
 - - [ ] Danmaku stage layout definition
 - - - Possibly via combining 2nd & 3rd implementations
 - [ ] Custom language (compiled (preferable) or interpreted)
 - - Currently have an idea, don't know if it would be feasible
-- - Could also implement support for Squirrel/LUA
+- - Could also implement support for Squirrel/LUA/AngelScript
 
 ### Future
 
