@@ -229,10 +229,12 @@ public:
 			throw Error::InvalidValue("No vertices were provided!");
 		if (size % 3 != 0)
 			throw Error::InvalidValue("Vertex amount is not a multiple of 3!");
+		const size_t arrEnd = triangles.size();
+		triangles.resize(triangles.size() + (size / 3));
 		if (this->vertices)
 			delete[] this->vertices;
 		for $range(i, 0, size, 3) {
-			triangles.push_back(
+			triangles[arrEnd + (i / 3)] = (
 				new Triangle{
 					vertices[i],
 					vertices[i+1],

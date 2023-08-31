@@ -59,6 +59,7 @@ namespace Helper {
 	template<typename T, typename T2>
 	List<T> convertList(List<T2> const& source) {
 		List<T> res;
+		res.reserve(source.size());
 		for $each(i, source)
 			res.push_back((T)i);
 		return res;
@@ -67,6 +68,7 @@ namespace Helper {
 	template<typename T, typename T2>
 	List<T> getKeys(HashMap<T, T2> const& lst) {
 		List<T> keys;
+		keys.reserve(lst.size());
 		for (auto i = lst.begin(); i != lst.end(); i++) {
 			keys.push_back(i->first);
 		}
@@ -76,6 +78,7 @@ namespace Helper {
 	template<typename T, typename T2>
 	List<T2> getValues(HashMap<T, T2> const& lst) {
 		List<T2> values;
+		values.reserve(lst.size());
 		for (auto i = lst.begin(); i != lst.end(); i++) {
 			values.push_back(i->second);
 		}
@@ -85,6 +88,7 @@ namespace Helper {
 	template<typename T, typename T2>
 	List<T> getKeys(FuzzyHashMap<T, T2> const& lst) {
 		List<T> keys;
+		keys.reserve(lst.size());
 		for (auto i = lst.begin(); i != lst.end(); i++) {
 			keys.push_back(i->first);
 		}
@@ -94,6 +98,7 @@ namespace Helper {
 	template<typename T, typename T2>
 	List<T2> getValues(FuzzyHashMap<T, T2> const& lst) {
 		List<T2> values;
+		values.reserve(lst.size());
 		for (auto i = lst.begin(); i != lst.end(); i++) {
 			values.push_back(i->second);
 		}
