@@ -239,7 +239,7 @@ namespace Makai {
 			#if (_WIN32 || _WIN64 || __WIN32__ || __WIN64__)
 			SetProcessDPIAware();
 			#endif
-			$debug(EntityClass::$_ROOT == nullptr);
+			$debug(EntityClass::_ROOT == nullptr);
 			// Save window resolution
 			this->width = width;
 			this->height = height;
@@ -328,8 +328,8 @@ namespace Makai {
 			SLF::SLFData data = SLF::parseFile(mainShaderPath);
 			$mainshader.destroy();
 			$mainshader.create(data);
-			$debug(EntityClass::$_ROOT ? "Root Exists!" : "Root does not exist!");
-			if (!EntityClass::$_ROOT) {
+			$debug(EntityClass::_ROOT ? "Root Exists!" : "Root does not exist!");
+			if (!EntityClass::_ROOT) {
 				$debug("Initializing root tree...");
 				EntityClass::init();
 			}
@@ -352,8 +352,8 @@ namespace Makai {
 			};
 			// The logical process
 			auto logicFunc	= [&](float delta)-> void {
-				if (EntityClass::$_ROOT)
-					EntityClass::$_ROOT->yield(delta);
+				if (EntityClass::_ROOT)
+					EntityClass::_ROOT->yield(delta);
 			};
 			// Clear screen
 			Drawer::clearColorBuffer(color);
@@ -592,7 +592,7 @@ namespace Makai {
 			$debug("Closing sound system...");
 			Audio::closeSystem();
 			Mix_Quit();
-			EntityClass::$_ROOT->deleteChildren();
+			EntityClass::_ROOT->deleteChildren();
 			$debug("Sound system closed!");
 			// Destroy buffers
 			$debug("Destroying frame buffers...");

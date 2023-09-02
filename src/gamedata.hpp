@@ -72,17 +72,22 @@ namespace GameData {
 	using TypedSignal = $tev Signal<T>;
 
 	void addToGame(Entity* e, std::string gameType) {
-		if (!EntityClass::$_ROOT)
+		if (!EntityClass::_ROOT)
 			throw Error::NonexistentValue(
 				"Root wasn't created!",
 				__FILE__,
 				toString(__LINE__),
 				"GameData::addToGame()"
 			);
-		Entity* game = $ecl $_ROOT->getChild(gameType);
+		Entity* gameRoot = EntityClass::_ROOT->getChild("Game");
+		if (gameRoot == nullptr) {
+			gameRoot = new EntityClass::Entity("Game");
+			EntityClass::_ROOT->addChild(gameRoot);
+		}
+		Entity* game = EntityClass::_ROOT->getChild(gameType);
 		if (game == nullptr) {
-			game = new $ecl Entity(gameType);
-			$ecl $_ROOT->addChild(game);
+			game = new EntityClass::Entity(gameType);
+			gameRoot->addChild(game);
 		}
 		game->addChild(e);
 	}

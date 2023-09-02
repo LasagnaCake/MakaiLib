@@ -81,7 +81,7 @@ namespace EntityClass {
 	concept EntityType = Type::Derived<T, Entity>;
 
 	/// The root object.
-	Entity* $_ROOT = nullptr;
+	Entity* _ROOT = nullptr;
 
 	template <EntityType T>
 	T* create(string name = "Entity", bool uniqueEntity = true) {
@@ -156,7 +156,7 @@ namespace EntityClass {
 			callOnCreate();
 			// Add to root tree
 			if (name != $_ROOT_NAME)
-				$_ROOT->addChild(this, uniqueEntity);
+				_ROOT->addChild(this, uniqueEntity);
 		}
 
 		/// Parented constructor.
@@ -535,9 +535,9 @@ namespace EntityClass {
 	* Gets called upon program start.
 	*/
 	[[gnu::constructor]] void init() {
-		if (EntityClass::$_ROOT == nullptr) {
+		if (EntityClass::_ROOT == nullptr) {
 			$debug("Creating root tree...");
-			$_ROOT = new Entity($_ROOT_NAME);
+			_ROOT = new Entity($_ROOT_NAME);
 			$debug("Root tree created!");
 		}
 	}
@@ -547,10 +547,10 @@ namespace EntityClass {
 	* Gets called upon program end.
 	*/
 	[[gnu::destructor]] void close() {
-		if (EntityClass::$_ROOT != nullptr) {
+		if (EntityClass::_ROOT != nullptr) {
 			$debug("Destroying root tree...");
-			delete $_ROOT;
-			$_ROOT = nullptr;
+			delete _ROOT;
+			_ROOT = nullptr;
 			$debug("Root tree destroyed!");
 		}
 	}
@@ -559,7 +559,7 @@ namespace EntityClass {
 	template <EntityType T>
 	T* getEntity(string path) {
 		// Try and get object
-		Entity* res = $_ROOT->getChild(path);
+		Entity* res = _ROOT->getChild(path);
 		// If it exists, return object (casted)
 		if (res) return (T*)res;
 		// Else, return null
