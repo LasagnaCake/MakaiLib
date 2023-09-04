@@ -25,14 +25,16 @@ uniform bool	useNegative			= false;
 uniform float	negativeStrength	= 1;
 
 // [ ALPHA MASK ]
-uniform bool useMask = false;
-uniform bool invertMask = false;
+uniform bool useMask	= false;
+uniform bool invertMask	= false;
 /**
 * If -1, the average between the color channels is used.
 * Else, the specified channel is used.
 * MUST be between -1 and 3.
 */
 uniform sampler2D	mask;
+uniform vec4 maskAccent	= vec4(0);
+uniform vec4 maskAlbedo	= vec4(1);
 
 // [ COLOR TO GRADIENT ]
 uniform bool	useGradient		= false;
@@ -460,7 +462,7 @@ void main() {
 
 	// Alpha mask
 	if (useMask) {
-		vec4 maskValue = texture(mask, maskUV);
+		vec4 maskValue = clamp(texture(mask, maskUV) * maskAlbedo + maskAccent, 0, 1);
 		if (invertMask) maskValue = vec4(1) - maskValue;
 		color *= maskValue;
 	}

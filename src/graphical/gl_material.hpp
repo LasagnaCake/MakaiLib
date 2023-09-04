@@ -144,7 +144,9 @@ struct EmissionEffect: TextureEffect, Variable {
 // Buffer Material Effects
 
 struct MaskEffect: Effect, Imageable2D, Transformable2D, Invertible {
-	bool relative = false;
+	Vector4	albedo		= 1;
+	Vector4	accent		= 0;
+	bool	relative	= false;
 };
 
 enum WaveShape: unsigned int {
@@ -342,6 +344,8 @@ void setMaterial(Shader& shader, BufferMaterial& material) {
 		shader["maskShift"](material.mask.trans.position);
 		shader["maskRotate"](material.mask.trans.rotation);
 		shader["maskScale"](material.mask.trans.scale);
+		shader["maskAlbedo"](material.mask.albedo);
+		shader["maskAccent"](material.mask.accent);
 	} else shader["useMask"](false);
 	// Set texture warping data
 	if (material.warp.image && material.warp.enabled && material.warp.image->exists()) {
