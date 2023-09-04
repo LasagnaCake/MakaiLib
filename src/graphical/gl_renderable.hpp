@@ -342,7 +342,8 @@ public:
 		// Save emission texture
 		if (!integratedTextures)
 			mdef["emission"] = saveImageEffect(mat.emission, folder, texturesFolder + "/emission.tga");
-		mdef["texture"]["alphaClip"] = mat.emission.alphaClip;
+		mdef["emission"]["alphaClip"] = mat.emission.alphaClip;
+		mdef["emission"]["strength"] = mat.emission.strength;
 		// Save warp texture
 		if (!integratedTextures)
 			mdef["warp"] = saveImageEffect(mat.warp, folder, texturesFolder + "/warp.tga");
@@ -672,7 +673,7 @@ private:
 					auto fx = loadImageEffect(dmat["texture"], sourcepath, texture);
 					material.texture.enabled	= fx.enabled;
 					material.texture.image		= fx.image;
-					if (dmat["texture"]["alphaClip"].is_boolean())
+					if (dmat["texture"]["alphaClip"].is_number())
 						material.texture.alphaClip	= dmat["texture"]["alphaClip"].get<float>();
 				}
 				// Set emission texture
@@ -680,8 +681,10 @@ private:
 					auto fx = loadImageEffect(dmat["emission"], sourcepath, emission);
 					material.emission.enabled	= fx.enabled;
 					material.emission.image		= fx.image;
-					if (dmat["emission"]["alphaClip"].is_boolean())
+					if (dmat["emission"]["alphaClip"].is_number())
 						material.emission.alphaClip	= dmat["emission"]["alphaClip"].get<float>();
+					if (dmat["emission"]["strength"].is_number())
+						material.emission.alphaClip	= dmat["emission"]["strength"].get<float>();
 				}
 				// Set warp texture
 				if (dmat["warp"].is_object()) {

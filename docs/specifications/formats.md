@@ -82,13 +82,16 @@ If image is to be saved in a separate file:
 		// Required
 		"enabled": true,
 		"image": {/* See ImageData2D:Layout */},
+		// Optional
 		"alphaClip": 0.1, // Texture alpha clipping
+		"strength": 1.0, // Emission strength
 	},
 	"warp": {
 		// Required
 		"enabled": true,
 		"image": {/* See ImageData2D:Layout */},
 		"trans": {/* See Transform2D:Layout */},
+		// Optional
 		"channelX": 0, // Index of the pixel's channel to be used for horizontal transformation
 		"channelY": 1, // Index of the pixel's channel to be used for vertical transformation
 	},

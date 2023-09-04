@@ -162,8 +162,10 @@ struct PlayerEntity2D: AreaCircle2D {
 	BoxBounds2D board;
 
 	bool isFocused	= false;
-	bool canBomb	= true;
-	bool canShoot	= true;
+
+	bool canBomb		= true;
+	bool canShoot		= true;
+	bool focusShooting	= false;
 
 	$evt Timer invincibility;
 	$evt Timer animator;
@@ -278,7 +280,7 @@ struct PlayerEntity2D: AreaCircle2D {
 		// Updat inputs
 		input.update();
 		// Get focus state
-		isFocused = action("focus");
+		isFocused = action("focus") || (focusShooting && action("shot"));
 		// Do parent class frame
 		AreaCircle2D::onFrame(delta);
 		// Get direction

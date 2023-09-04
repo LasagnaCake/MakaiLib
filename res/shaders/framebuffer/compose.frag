@@ -83,6 +83,8 @@ uniform vec2	rainbowFrequency	= vec2(0);
 uniform vec2	rainbowShift		= vec2(0);
 uniform float	rainbowStrength		= 0;
 uniform bool	rainbowAbsolute		= false;
+uniform bool	rainbowPolar		= false;
+uniform float	rainbowPolarShift	= 0;
 
 // [ BLURRING EFFECT ]
 uniform bool	useBlur			= false;
@@ -95,12 +97,16 @@ uniform vec4	outlineColor			= vec4(1);
 uniform bool	outlineRelativeAlpha	= true;
 
 // [ NOISE EFFECT ]
-uniform bool	useNoise			= false;
-uniform float	noiseStrength		= 1;
-uniform float	noiseSeed			= 1;
-uniform uint	noiseType			= 0;
-uniform uint	noiseBlendColorMode	= 1;
-uniform uint	noiseBlendAlphaMode	= 1;
+uniform bool	useNoise				= false;
+uniform float	noiseStrength			= 1;
+uniform float	noiseSeed				= 1;
+uniform uint	noiseType				= 0;
+uniform uint	noiseBlendSrcColorFunc	= 1;
+uniform uint	noiseBlendDstColorFunc	= 1;
+uniform uint	noiseBlendColorEq		= 1;
+uniform uint	noiseBlendSrcAlphaFunc	= 1;
+uniform uint	noiseBlendDstAlphaFunc	= 1;
+uniform uint	noiseBlendAlphaEq		= 1;
 
 // [ HSLBC MODIFIERS ]
 uniform float	hue			= 0;
@@ -175,8 +181,15 @@ vec4 applyGradient(vec4 color) {
 }
 
 vec4 applyRainbow(vec4 color, vec2 coords) {
-	vec2 rv = coords * rainbowFrequency + rainbowShift;
-	vec4 rainbow = vec4(hsl2rgb(vec3(rv.x + rv.y, 1, 1)), 1);
+	float fac = 0;
+	if (rainbowPolar)  {
+		vec2 target = (rainbowShift - gl_FragCoord.xy);
+		fac = length(target / rainbowFrequency) + rainbowPolarShift;
+	} else {
+		vec2 rv = coords * rainbowFrequency + rainbowShift;
+		fac = rv.x + rv.y;
+	}
+	vec4 rainbow = vec4(hsl2rgb(vec3(fac, 1, 1)), 1);
 	rainbow = mix(vec4(1), rainbow, rainbowStrength);
 	if (rainbowAbsolute)
 		rainbow.xyz *= color.xyz;
@@ -322,59 +335,75 @@ float rand(vec2 xy, uint type, float seed){
     }
 }
 
-#define VBLEND_DEFINE(T)								\
-T vblend(T src, T dst, uint func) {						\
-	switch (func) {										\
-		default:										\
-		case 0x00: return T(0);							\
-		case 0x01: return T(1);							\
-		case 0x02: return src;							\
-		case 0x03: return T(1) - src;					\
-		case 0x04: return dst;							\
-		case 0x05: return T(1) - dst;					\
-		case 0x06: return src * dst;					\
-		case 0x07: return src / dst;					\
-		case 0x08: return (T(1) - src) * dst;			\
-		case 0x09: return (T(1) - src) / dst;			\
-		case 0x0A: return src * (T(1) - dst);			\
-		case 0x0B: return src / (T(1) - dst);			\
-		case 0x0C: return (T(1) - src) * (T(1) - dst);	\
-		case 0x0D: return (T(1) - src) / (T(1) - dst);	\
-		case 0x0E: return src + dst;					\
-		case 0x0F: return src - dst;					\
-		case 0x10: return (T(1) - src) + dst;			\
-		case 0x11: return (T(1) - src) - dst;			\
-		case 0x12: return src + (T(1) - dst);			\
-		case 0x13: return src - (T(1) - dst);			\
-		case 0x14: return (T(1) - src) + (T(1) - dst);	\
-		case 0x15: return (T(1) - src) - (T(1) - dst);	\
-		case 0x16: return dst / src;					\
-		case 0x17: return dst - src;					\
-		case 0x18: return (T(1) - dst) / src;			\
-		case 0x19: return (T(1) - dst) - src;			\
-		case 0x1A: return dst / (T(1) - src);			\
-		case 0x1B: return dst - (T(1) - src);			\
-		case 0x1C: return (T(1) - dst) / (T(1) - src);	\
-		case 0x1D: return (T(1) - dst) - (T(1) - src);	\
-	}													\
+
+#define VBLEND_FUNC_DEFINE(T)			\
+T vblendfunc(T src, T dst, uint func) {	\
+	switch (func) {						\
+		default:						\
+		case 0x00: return T(0);			\
+		case 0x01: return T(1);			\
+		case 0x02: return src;			\
+		case 0x03: return T(1) - src;	\
+		case 0x04: return dst;			\
+		case 0x05: return T(1) - dst;	\
+	}									\
 }
+
+#define VBLEND_EQ_DEFINE(T)			\
+T vblendeq(T a, T b, uint eq) {		\
+	switch (eq) {					\
+		default:					\
+		case 0x00: return a + b;	\
+		case 0x01: return a - b;	\
+		case 0x02: return a * b;	\
+		case 0x03: return a / b;	\
+		case 0x04: return b - a;	\
+		case 0x05: return b / a;	\
+	}								\
+}
+
+#define VBLEND_DEFINE(T)															\
+T vblend(T src, T dst, uint srcf, uint dstf, uint eq) {								\
+	return vblendeq(vblendfunc(src, dst, srcf), vblendfunc(src, dst, dstf), eq);	\
+}
+
+
+VBLEND_FUNC_DEFINE(float)
+VBLEND_FUNC_DEFINE(vec2)
+VBLEND_FUNC_DEFINE(vec3)
+VBLEND_FUNC_DEFINE(vec4)
+
+VBLEND_EQ_DEFINE(float)
+VBLEND_EQ_DEFINE(vec2)
+VBLEND_EQ_DEFINE(vec3)
+VBLEND_EQ_DEFINE(vec4)
 
 VBLEND_DEFINE(float)
 VBLEND_DEFINE(vec2)
 VBLEND_DEFINE(vec3)
 VBLEND_DEFINE(vec4)
 
-vec4 blendNoise(vec4 color, float noise, uint colorMode, uint alphaMode) {
+
+vec4 blendNoise(vec4 color, float noise, uint srcColorFunc, uint dstColorFunc, uint colorEq, uint srcAlphaFunc, uint dstAlphaFunc, uint alphaEq) {
 	return vec4(
-		vblend(color.rgb, noise.xxx, colorMode),
-		vblend(color.a, noise.x, alphaMode)
+		vblend(color.rgb, noise.xxx, srcColorFunc, dstColorFunc, colorEq),
+		vblend(color.a, noise.x, srcAlphaFunc, dstAlphaFunc, alphaEq)
 	);
 }
 
 vec4 applyNoise(vec4 color, vec2 uv) {
 	vec2 nc = uv + color.xy + color.zw;
 	float nv = rand(nc, noiseType, noiseSeed);
-	vec4 res = blendNoise(color, nv, noiseBlendColorMode, noiseBlendAlphaMode);
+	vec4 res = blendNoise(
+		color,
+		nv,
+		noiseBlendSrcColorFunc,
+		noiseBlendDstColorFunc,
+		noiseBlendColorEq,
+		noiseBlendSrcAlphaFunc,
+		noiseBlendDstAlphaFunc,
+		noiseBlendAlphaEq
+	);
 	return mix(color, res, noiseStrength);
 }
 

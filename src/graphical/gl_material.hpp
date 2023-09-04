@@ -87,42 +87,33 @@ namespace {
 
 // Generic Material Effects
 
-enum class BlendMode: unsigned int {
+enum class BlendFunction: unsigned int {
 	BM_ZERO = 0,
 	BM_ONE,
 	BM_SRC,
 	BM_ONE_MINUS_SRC,
 	BM_DST,
 	BM_ONE_MINUS_DST,
-	BM_SRC_MULTIPLY_BY_DST,
-	BM_SRC_DIVIDE_BY_DST,
-	BM_ONE_MINUS_SRC_MULTIPLY_BY_DST,
-	BM_ONE_MINUS_SRC_DIVIDE_BY_DST,
-	BM_SRC_MULTIPLY_BY_ONE_MINUS_DST,
-	BM_SRC_DIVIDE_BY_ONE_MINUS_DST,
-	BM_ONE_MINUS_SRC_MULTIPLY_BY_ONE_MINUS_DST,
-	BM_ONE_MINUS_SRC_DIVIDE_BY_ONE_MINUS_DST,
-	BM_SRC_ADD_TO_DST,
-	BM_SRC_SUBTRACT_TO_DST,
-	BM_ONE_MINUS_SRC_ADD_TO_DST,
-	BM_ONE_MINUS_SRC_SUBTRACT_TO_DST,
-	BM_SRC_ADD_TO_ONE_MINUS_DST,
-	BM_SRC_SUBTRACT_TO_ONE_MINUS_DST,
-	BM_ONE_MINUS_SRC_ADD_TO_ONE_MINUS_DST,
-	BM_ONE_MINUS_SRC_SUBTRACT_TO_ONE_MINUS_DST,
-	BM_SRC_DIVIDE_FROM_DST,
-	BM_SRC_SUBTRACT_FROM_DST,
-	BM_ONE_MINUS_SRC_DIVIDE_FROM_DST,
-	BM_ONE_MINUS_SRC_SUBTRACT_FROM_DST,
-	BM_SRC_DIVIDE_FROM_ONE_MINUS_DST,
-	BM_SRC_SUBTRACT_FROM_ONE_MINUS_DST,
-	BM_ONE_MINUS_SRC_DIVIDE_FROM_ONE_MINUS_DST,
-	BM_ONE_MINUS_SRC_SUBTRACT_FROM_ONE_MINUS_DST,
 };
 
-struct BlendFunc {
-	BlendMode	color	= BlendMode::BM_DST;
-	BlendMode	alpha	= BlendMode::BM_SRC;
+enum class BlendEquation {
+	BE_ADD,
+	BE_SUBTRACT,
+	BE_MULTIPLY,
+	BE_DIVIDE,
+	BE_REVERSE_SUBTRACT,
+	BE_REVERSE_DIVIDE,
+};
+
+struct BlendMode {
+	BlendFunction source		= BlendFunction::BM_SRC;
+	BlendFunction destination	= BlendFunction::BM_DST;
+	BlendEquation equation		= BlendEquation::BE_MULTIPLY;
+};
+
+struct BlendSetting {
+	BlendMode	color	= {BlendFunction::BM_ONE, BlendFunction::BM_DST, BlendEquation::BE_MULTIPLY};
+	BlendMode	alpha	= {BlendFunction::BM_SRC, BlendFunction::BM_ONE, BlendEquation::BE_MULTIPLY};
 };
 
 struct GradientEffect: Effect, Channelable, Invertible {
@@ -145,6 +136,9 @@ struct WarpEffect: ImageEffect, Transformable2D {
 
 struct TextureEffect: ImageEffect {
 	float alphaClip = 0.1;
+};
+
+struct EmissionEffect: TextureEffect, Variable {
 };
 
 // Buffer Material Effects
@@ -172,9 +166,11 @@ struct WaveEffect: Effect, Tuneable2D {
 };
 
 struct RainbowEffect: Effect, Variable {
-	Vector2 frequency	= 0.0;
-	Vector2 shift		= 0.0;
-	bool absoluteColor	= false;
+	Vector2 frequency		= 0.0;
+	Vector2 shift			= 0.0;
+	bool	absoluteColor	= false;
+	bool	polar			= false;
+	float	polarShift		= 0.0;
 };
 
 struct BlurEffect: Effect, Variable2D {};
@@ -195,12 +191,12 @@ enum class NoiseType: unsigned int {
 };
 
 /// SRC = Pixel Color, DST = Noise
-struct NoiseBlendFunc: BlendFunc {};
+struct NoiseBlendMode: BlendSetting {};
 
 struct NoiseEffect: Effect, Variable {
 	float			seed	= 1;
 	NoiseType		type	= NoiseType::NT_NOISE_SUPER;
-	NoiseBlendFunc	blend;
+	NoiseBlendMode	blend;
 };
 
 // World Material Effects
@@ -234,7 +230,7 @@ struct ObjectMaterial {
 	float			contrast	= 1;
 	Vector2			uvShift;
 	TextureEffect	texture;
-	TextureEffect	emission;
+	EmissionEffect	emission;
 	WarpEffect		warp;
 	NegativeEffect	negative;
 	GradientEffect	gradient;
@@ -290,6 +286,7 @@ void setMaterial(Shader& shader, ObjectMaterial& material) {
 		shader["useEmission"](true);
 		shader["emissionAlphaClip"](material.emission.alphaClip);
 		shader["emissionTexture"](1);
+		shader["emissionStrength"](material.emission.strength);
 		material.emission.image->enable(1);
 	} else shader["useEmission"](false);
 	// Texture warping
@@ -381,6 +378,8 @@ void setMaterial(Shader& shader, BufferMaterial& material) {
 	shader["rainbowShift"](material.rainbow.shift);
 	shader["rainbowStrength"](material.rainbow.strength);
 	shader["rainbowAbsolute"](material.rainbow.absoluteColor);
+	shader["rainbowPolar"](material.rainbow.polar);
+	shader["rainbowPolarShift"](material.rainbow.polarShift);
 	// Set blur data
 	shader["useBlur"](material.blur.enabled);
 	shader["blurStrength"](material.blur.strength);
@@ -410,8 +409,12 @@ void setMaterial(Shader& shader, BufferMaterial& material) {
 	shader["noiseStrength"](material.noise.strength);
 	shader["noiseSeed"](material.noise.seed);
 	shader["noiseType"]((unsigned int)material.noise.type);
-	shader["noiseBlendColorMode"]((unsigned int)material.noise.blend.color);
-	shader["noiseBlendAlphaMode"]((unsigned int)material.noise.blend.alpha);
+	shader["noiseBlendSrcColorFunc"]((unsigned int)material.noise.blend.color.source);
+	shader["noiseBlendDstColorFunc"]((unsigned int)material.noise.blend.color.destination);
+	shader["noiseBlendColorEq"]((unsigned int)material.noise.blend.color.equation);
+	shader["noiseBlendSrcAlphaFunc"]((unsigned int)material.noise.blend.alpha.source);
+	shader["noiseBlendDstAlphaFunc"]((unsigned int)material.noise.blend.alpha.destination);
+	shader["noiseBlendAlphaEq"]((unsigned int)material.noise.blend.alpha.equation);
 }
 
 void setMaterial(Shader& shader, WorldMaterial& material) {
