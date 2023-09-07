@@ -327,7 +327,7 @@ public:
 		$debug(folder + "/" + name + ".mrod");
 		FileSystem::makeDirectory(FileSystem::concatenatePath(folder, texturesFolder));
 		// Get object definition
-		nlohmann::json file = getObjectDefinition("base64", integratedBinary, integratedTextures);
+		JSONData file = getObjectDefinition("base64", integratedBinary, integratedTextures);
 		// If binary is in a different location, save there
 		if (!integratedBinary) {
 			FileLoader::saveBinaryFile(binpath, vertices, vertexCount);
@@ -355,7 +355,7 @@ public:
 			{"scale",		{mat.warp.trans.scale.x,	mat.warp.trans.scale.y		}	}
 		};
 		// convert to text
-		auto contents = file.dump(pretty ? 1 : -1, '\t', false, nlohmann::json::error_handler_t::replace);
+		auto contents = file.dump(pretty ? 1 : -1, '\t', false, JSON::error_handler_t::replace);
 		// Save definition file
 		FileLoader::saveTextFile(folder + "/" + name + ".mrod", contents);
 	}
@@ -365,8 +365,8 @@ public:
 private:
 	friend class Scene3D;
 
-	nlohmann::json saveImageEffect(Material::ImageEffect& effect, string const& folder, string const& path) {
-		nlohmann::json def;
+	JSONData saveImageEffect(Material::ImageEffect& effect, string const& folder, string const& path) {
+		JSONData def;
 		def["enabled"] = effect.enabled;
 		if (effect.image && effect.image->exists()) {
 			effect.image->saveToFile(folder + "/" + path);
@@ -379,7 +379,7 @@ private:
 		return def;
 	}
 
-	Material::ImageEffect loadImageEffect(nlohmann::json& effect, string const& sourcepath, Texture2D* texture = nullptr) {
+	Material::ImageEffect loadImageEffect(JSONData& effect, string const& sourcepath, Texture2D* texture = nullptr) {
 		try {
 			Material::ImageEffect fx;
 			fx.enabled = effect["enabled"].get<bool>();
@@ -425,7 +425,7 @@ private:
 					);
 			} else fx.enabled = false;
 			return fx;
-		} catch (nlohmann::json::exception e) {
+		} catch (JSON::exception e) {
 			throw Error::FailedAction(
 				"Failed at getting image effect!",
 				__FILE__,
@@ -494,7 +494,7 @@ private:
 	size_t vertexCount = 0;
 
 	void extendFromDefinition(
-		nlohmann::json def,
+		JSONData def,
 		string const& sourcepath,
 		Texture2D* const& texture	= nullptr,
 		Texture2D* const& emission	= nullptr,
@@ -515,7 +515,7 @@ private:
 				vdata			= FileLoader::loadBinaryFile(FileSystem::concatenatePath(sourcepath, data["path"].get<string>()));
 			}
 			componentData		= mesh["components"].get<string>();
-		} catch (nlohmann::json::exception e) {
+		} catch (JSON::exception e) {
 			throw Error::FailedAction(
 				"Failed at getting mesh values!",
 				__FILE__,
@@ -628,7 +628,7 @@ private:
 				_SET_PARAM(position);
 				_SET_PARAM(rotation);
 				_SET_PARAM(scale);
-			} catch (nlohmann::json::exception e) {
+			} catch (JSON::exception e) {
 				throw Error::FailedAction(
 					"Failed at getting transformation values!",
 					__FILE__,
@@ -762,7 +762,7 @@ private:
 				}
 				if (dmat["debug"].is_number())
 					material.debug = (Material::ObjectDebugView)dmat["debug"].get<unsigned int>();
-			} catch (nlohmann::json::exception e) {
+			} catch (JSON::exception e) {
 				throw Error::FailedAction(
 					"Failed at getting material values!",
 					__FILE__,
@@ -775,7 +775,7 @@ private:
 		}
 	}
 
-	nlohmann::json getObjectDefinition(string const& encoding = "base64", bool integratedBinary = true, bool integratedTextures = true) {
+	JSONData getObjectDefinition(string const& encoding = "base64", bool integratedBinary = true, bool integratedTextures = true) {
 		// Bake object
 		bool wasBaked = baked;
 		if (!wasBaked) bake();
@@ -783,7 +783,7 @@ private:
 		if (vertices == nullptr || vertexCount == 0)
 			throw Error::InvalidValue("Renderable object is empty!");
 		// Create definition
-		nlohmann::json def;
+		JSONData def;
 		// Save mesh components
 		def["mesh"] = {
 			{"components", RAW_VERTEX_COMPONENTS}
@@ -810,7 +810,7 @@ private:
 		// Get material
 		Material::ObjectMaterial& mat = material;
 		// Copy instances
-		vector<nlohmann::json> instanceData;
+		vector<JSONData> instanceData;
 		for (Vector3& inst: mat.instances) {
 			instanceData.push_back({inst.x, inst.y, inst.z});
 		}

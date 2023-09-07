@@ -9,41 +9,24 @@ public:
 	void load(string path) {
 		if (loaded) return;
 		loaded = true;
-		source = new mINI::INIFile(path);
-		if (!source->read(data)) {
-			source->generate(data, true);
-		}
+		data = FileLoader::loadJSON(path);
+		this->path = path;
 	}
 
-	void unload() {
-		if (!loaded) return;
-		loaded = false;
-		delete source;
-	}
-
-	void close() {save(); unload();}
+	void close() {save();}
 
 	void save() {
 		if (!loaded) return;
-		source->write(data, true);
+		FileLoader::saveTextFile(path, data.dump(1, '\t', false, JSON::error_handler_t::replace));
 	}
 
-	auto& get(string section, string variable, string defaultValue = "null") {
-		auto& v = structure()[section][variable];
-		if (v == "") v = defaultValue;
-		return v;
-	}
-
-	void remove(string section) {
-		structure().remove(section);
-	}
-
-	size_t size() {
-		return structure().size();
+	template<typename T>
+	T& get(string key) {
+		return file().get<T>(key);
 	}
 
 	auto& operator[](string key) {
-		return structure()[key];
+		return file()[key];
 	}
 
 	void operator()() {
@@ -51,12 +34,12 @@ public:
 	}
 
 private:
-	mINI::INIStructure& structure() {
-		if (!source) throw Error::NonexistentValue("Save file wasn't loaded!");
+	JSONData& file() {
+		if (!loaded) throw Error::NonexistentValue("Save file wasn't loaded!");
 		return data;
 	}
 
-	bool loaded			= false;
-	mINI::INIFile*		source = nullptr;
-	mINI::INIStructure	data;
+	string		path	= "";
+	bool		loaded	= false;
+	JSONData	data;
 };

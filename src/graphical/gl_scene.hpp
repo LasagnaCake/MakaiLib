@@ -71,8 +71,8 @@ public:
 		bool pretty = false
 
 	) {
-		nlohmann::json file = getSceneDefinition(integratedObjects, integratedObjectBinaries, integratedObjectTextures);
-		vector<nlohmann::json> objpaths;
+		JSONData file = getSceneDefinition(integratedObjects, integratedObjectBinaries, integratedObjectTextures);
+		vector<JSONData> objpaths;
 		FileSystem::makeDirectory(folder);
 		for (auto [i, obj]: Helper::enumerate(objects)) {
 			string objname		= "obj_" + toString(i);
@@ -126,7 +126,7 @@ public:
 		if (!objpaths.empty())
 			file["data"] = {{"path", objpaths}};
 		// convert to text
-		auto contents = file.dump(pretty ? 1 : -1, '\t', false, nlohmann::json::error_handler_t::replace);
+		auto contents = file.dump(pretty ? 1 : -1, '\t', false, JSON::error_handler_t::replace);
 		// Save definition file
 		FileLoader::saveTextFile(FileSystem::concatenatePath(folder, name) + ".msd", contents);
 	}
@@ -176,7 +176,7 @@ private:
 	vector<Texture2D*>	textures;
 
 	void extendFromDefinition(
-		nlohmann::json def,
+		JSONData def,
 		string const& sourcepath
 	) {
 		try {
@@ -232,7 +232,7 @@ private:
 			// Get objects data
 			{
 				if (def["data"].is_object()) {
-					for(auto& obj: def["data"]["path"].get<vector<nlohmann::json>>()) {
+					for(auto& obj: def["data"]["path"].get<vector<JSONData>>()) {
 						Renderable* r = createObject();
 						if (obj["type"].get<string>() == "MROD")
 							r->extendFromDefinitionFile(obj["source"].get<string>());
@@ -241,12 +241,12 @@ private:
 						}
 					}
 				} else {
-					for(auto& obj: def["data"].get<vector<nlohmann::json>>()) {
+					for(auto& obj: def["data"].get<vector<JSONData>>()) {
 						createObject()->extendFromDefinition(obj, sourcepath + FileSystem::getDirectoryFromPath(obj));
 					}
 				}
 			}
-		} catch (nlohmann::json::exception e) {
+		} catch (JSON::exception e) {
 			throw Error::FailedAction(
 				"Failed at getting image effect!",
 				__FILE__,
@@ -258,14 +258,14 @@ private:
 		}
 	}
 
-	nlohmann::json getSceneDefinition(
+	JSONData getSceneDefinition(
 		bool integratedObjects			= true,
 		bool integratedObjectBinaries	= true,
 		bool integratedObjectTextures	= true
 	) {
-		nlohmann::json def;
+		JSONData def;
 		if (integratedObjects) {
-			vector<nlohmann::json> objdefs;
+			vector<JSONData> objdefs;
 			for (Renderable* obj: objects)
 				objdefs.push_back(obj->getObjectDefinition("base64", integratedObjectBinaries, integratedObjectTextures));
 			def["data"] = objdefs;

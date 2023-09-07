@@ -56,8 +56,6 @@
 
 #include <zlib.h>
 #include <bzlib.h>
-#define MINI_CASE_SENSITIVE
-#include <mINI-0.9.14/ini.h>
 #include <nlohmann/json.hpp>
 
 /*
@@ -151,6 +149,9 @@
 
 #include "fileloader.hpp"
 #include "predefs.hpp"
+
+using JSON = nlohmann::json;
+typedef nlohmann::ordered_json JSONData;
 
 #ifdef _USE_OPENMP_
 #ifndef _DEBUG_OUTPUT_
