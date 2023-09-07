@@ -19,11 +19,13 @@ Supported options:
 >    meth          = [ 1 : 0 ]        : Spec. whether to enable fast math     ( DEFAULT: 0        )
 >    sath          = [ 1 : 0 ]        : Spec. whether to enable safe math     ( DEFAULT: 0        )
 >    debug-release = [ 1 : 0 ]        : Spec. whether to enable -g on release ( DEFAULT: 0        )
+>    rcscript      = [ value | none ] : Spec. the location of a .rc file      ( DEFAULT: 0        )
 
 NOTES:
 (Safe, in this case, means 'IEEE compliant'.)
->    meth : Enables FAST, but IMPRECISE and UNSAFE floating point operations.
->    sath : Enables SAFE math. If this one is enabled, METH is disabled.
+>    meth   : Enables FAST, but IMPRECISE and UNSAFE floating point operations.
+>    sath   : Enables SAFE math. If this one is enabled, METH is disabled.
+>    rcfile : Must be located within the 'build/' folder.
 endef
 
 define GET_TIME
@@ -95,6 +97,12 @@ else
 WARNINGS := -W$(warn)
 endif
 
+ifdef rcscript
+PROCESS_RC_FILE		:= @windres build/$(rcscript) -o obj/rc/cfg.o
+CREATE_RC_FOLDER	:= @mkdir -p obj\rc
+INCLUDE_RC_FILE		:= obj/rc/cfg.o
+endif
+
 ifdef macro
 macro = -D$(macro)
 endif
@@ -116,13 +124,17 @@ debug: build\$(src)
 	
 	@mkdir -p obj\$@
 	
-	@echo "[0/2] compiling [$@]..."
+	@echo "[0/2] processing resources [$@]..."
+	$(CREATE_RC_FOLDER)
+	$(PROCESS_RC_FILE)
+	
+	@echo "[1/2] compiling [$@]..."
 	@$(CXX) $(COMPILER_CONFIG) -Wall -Wpedantic $(SAFE_MATH) -pg -Og -ggdb3 $(SANITIZER_OPTIONS) -fno-omit-frame-pointer -D_DEBUG_OUTPUT_ -D$(macro) $(INCLUDES) -c build\$(src) -o obj/$@/$(name).o
 	
-	@echo "[1/2] linking libraries..."
-	@$(CXX) -o res/$(name)_$@.exe obj/$@/$(name).o  $(LINKER_CONFIG) -pg -Og $(LIBRARIES) $(SANITIZER_OPTIONS)
+	@echo "[2/2] linking libraries..."
+	@$(CXX) -o res/$(name)_$@.exe obj/$@/$(name).o $(INCLUDE_RC_FILE) $(LINKER_CONFIG) -pg -Og $(LIBRARIES) $(SANITIZER_OPTIONS)
 	
-	@echo "[2/2] Done!"
+	@echo "Done!"
 	$(MAKE_CLEAN)
 	
 	$(GET_TIME)
@@ -138,13 +150,17 @@ demo: build\$(src)
 	
 	@mkdir -p obj\$@
 	
-	@echo "[0/2] compiling [$@]..."
+	@echo "[0/2] processing resources [$@]..."
+	$(CREATE_RC_FOLDER)
+	$(PROCESS_RC_FILE)
+	
+	@echo "[1/2] compiling [$@]..."
 	@$(CXX) $(COMPILER_CONFIG) $(WARNINGS) $(OPTIMIZATIONS) -O$(optimize-lvl) $(DEBUG_SYMBOL) $(SAFE_MATH) $(OPENMP_ENABLED) $(INCLUDES) -D_DEMO_BUILD_ -D$(macro) -c build\$(src) -o obj/$@/$(name).o
 	
-	@echo "[1/2] linking libraries..."
-	@$(CXX) -o res/$(name)_$@.exe obj/$@/$(name).o  $(LINKER_CONFIG) -O$(optimize-lvl)  $(LIBRARIES) $(GUI_MODE)
+	@echo "[2/2] linking libraries..."
+	@$(CXX) -o res/$(name)_$@.exe obj/$@/$(name).o $(INCLUDE_RC_FILE) $(LINKER_CONFIG) -O$(optimize-lvl)  $(LIBRARIES) $(GUI_MODE)
 	
-	@echo "[2/2] Done!"
+	@echo "Done!"
 	$(MAKE_CLEAN)
 	
 	$(GET_TIME)
@@ -160,13 +176,17 @@ release: build\$(src)
 	
 	@mkdir -p obj\$@
 	
-	@echo "[0/2] compiling [$@]..."
+	@echo "[0/2] processing resources [$@]..."
+	$(CREATE_RC_FOLDER)
+	$(PROCESS_RC_FILE)
+	
+	@echo "[1/2] compiling [$@]..."
 	@$(CXX) $(COMPILER_CONFIG) $(WARNINGS) $(OPTIMIZATIONS) -O$(optimize-lvl) $(DEBUG_SYMBOL) $(SAFE_MATH) $(OPENMP_ENABLED) $(INCLUDES) -D$(macro) -c build\$(src) -o obj/$@/$(name).o
 	
-	@echo "[1/2] linking libraries..."
-	@$(CXX) -o res/$(name).exe obj/$@/$(name).o  $(LINKER_CONFIG) -O$(optimize-lvl)  $(LIBRARIES) $(GUI_MODE)
+	@echo "[2/2] linking libraries..."
+	@$(CXX) -o res/$(name).exe obj/$@/$(name).o $(INCLUDE_RC_FILE) $(LINKER_CONFIG) -O$(optimize-lvl)  $(LIBRARIES) $(GUI_MODE)
 	
-	@echo "[2/2] Done!"
+	@echo "Done!"
 	$(MAKE_CLEAN)
 	
 	$(GET_TIME)
