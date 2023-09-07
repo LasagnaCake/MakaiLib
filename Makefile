@@ -12,7 +12,7 @@ Supported options:
 >    name          = [ value ]        : Spec. the name of the output file     ( DEFAULT: program  )
 >    warn          = [ value | none ] : Spec. the warning to enable           ( DEFAULT: none     )
 >    use-openmp    = [ 1 | 0 ]        : Spec. whether ro enable OpenMP        ( DEFAULT: 0        )
->    optimize-lvl  = [ 0 - 3 | g ]    : Spec. the optimization level          ( DEFAULT: g        )
+>    optimize-lvl  = [ 0 - 3 | g ]    : Spec. the optimization level          ( DEFAULT: 2        )
 >    debug-profile = [ 1 | 0 ]        : Spec. whether to enable gmon          ( DEFAULT: 0        )
 >    keep-o-files  = [ 1 | 0 ]        : Spec. if .o files should be kept      ( DEFAULT: 0        )
 >    macro         = [ value | none ] : Spec. a macro to be defined           ( DEFAULT: none     )
