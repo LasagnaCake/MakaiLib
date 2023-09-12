@@ -626,28 +626,29 @@ namespace Makai {
 			// Draw objects
 			vector<size_t> rLayers = Drawer::layers.getAllGroups();
 			for (auto layer : rLayers) {
-				if (layer == Math::Max::SIZET_V) continue;
-				// Clear target depth buffer
-				framebuffer();
-				// Enable layer buffer
-				layerbuffer();
-				// Reset layerbuffer's positions
-				layerbuffer.trans	= VecMath::Transform3D();
-				layerbuffer.uv		= VecMath::Transform3D();
-				// Call onLayerDrawBegin function
-				onLayerDrawBegin(layer);
-				// Clear buffers
-				layerbuffer.clearBuffers();
-				// Call onLayerDrawBegin function
-				onPostLayerClear(layer);
-				// Render layer
-				Drawer::renderLayer(layer);
-				// Call onPreLayerDraw function
-				onPreLayerDraw(layer);
-				// Render layer buffer
-				layerbuffer.render(framebuffer);
-				// Call onLayerDrawEnd function
-				onLayerDrawEnd(layer);
+				if (layer != Math::Max::SIZET_V && !Drawer::layers[layer].empty()) {
+					// Clear target depth buffer
+					framebuffer();
+					// Enable layer buffer
+					layerbuffer();
+					// Reset layerbuffer's positions
+					layerbuffer.trans	= VecMath::Transform3D();
+					layerbuffer.uv		= VecMath::Transform3D();
+					// Call onLayerDrawBegin function
+					onLayerDrawBegin(layer);
+					// Clear buffers
+					layerbuffer.clearBuffers();
+					// Call onLayerDrawBegin function
+					onPostLayerClear(layer);
+					// Render layer
+					Drawer::renderLayer(layer);
+					// Call onPreLayerDraw function
+					onPreLayerDraw(layer);
+					// Render layer buffer
+					layerbuffer.render(framebuffer);
+					// Call onLayerDrawEnd function
+					onLayerDrawEnd(layer);
+				}
 			}
 			// Call pre frame drawing function
 			onPreFrameDraw();
