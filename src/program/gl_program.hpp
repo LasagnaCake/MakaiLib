@@ -32,7 +32,7 @@ namespace Makai {
 	}
 
 	struct MouseState {
-		unordered_map<InputMouseButton, size_t> buttons;
+		unordered_map<InputMouseButton, unsigned int> buttons;
 		int x, y;
 	};
 
@@ -105,16 +105,14 @@ namespace Makai {
 				unsigned int buttonState = 0;
 				if (gm.buttons[button]) buttonState = gm.buttons[button];
 				// If button is pressed.
-				if(gm.buttons[button]) {
+				if(btn & SDL_BUTTON(i)) {
 					// If buffer not overflowing, increment buffer
 					if(buttonState < 0xffff) buttonState++;
 				}
 				// Else, zero state
 				else buttonState = 0;
-				// Copy previous state to secondary buffer
-				last[button]	= buffer[button];
 				// Set buffer to button state
-				buffer[button]	= buttonState;
+				gm.buttons[button]	= buttonState;
 			}
 			// Update
 			lm.state.buttons = gm.state.buttons;
