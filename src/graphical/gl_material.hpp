@@ -88,12 +88,12 @@ namespace {
 // Generic Material Effects
 
 enum class BlendFunction: unsigned int {
-	BM_ZERO = 0,
-	BM_ONE,
-	BM_SRC,
-	BM_ONE_MINUS_SRC,
-	BM_DST,
-	BM_ONE_MINUS_DST,
+	BF_ZERO = 0,
+	BF_ONE,
+	BF_SRC,
+	BF_ONE_MINUS_SRC,
+	BF_DST,
+	BF_ONE_MINUS_DST,
 };
 
 enum class BlendEquation {
@@ -106,14 +106,14 @@ enum class BlendEquation {
 };
 
 struct BlendMode {
-	BlendFunction source		= BlendFunction::BM_SRC;
-	BlendFunction destination	= BlendFunction::BM_DST;
+	BlendFunction source		= BlendFunction::BF_SRC;
+	BlendFunction destination	= BlendFunction::BF_DST;
 	BlendEquation equation		= BlendEquation::BE_MULTIPLY;
 };
 
 struct BlendSetting {
-	BlendMode	color	= {BlendFunction::BM_ONE, BlendFunction::BM_DST, BlendEquation::BE_MULTIPLY};
-	BlendMode	alpha	= {BlendFunction::BM_SRC, BlendFunction::BM_ONE, BlendEquation::BE_MULTIPLY};
+	BlendMode	color	= {BlendFunction::BF_ONE, BlendFunction::BF_DST, BlendEquation::BE_MULTIPLY};
+	BlendMode	alpha	= {BlendFunction::BF_SRC, BlendFunction::BF_ONE, BlendEquation::BE_MULTIPLY};
 };
 
 struct GradientEffect: Effect, Channelable, Invertible {
@@ -195,7 +195,7 @@ enum class NoiseType: unsigned int {
 /// SRC = Pixel Color, DST = Noise
 struct NoiseBlendMode: BlendSetting {};
 
-struct NoiseEffect: Effect, Variable {
+struct NoiseEffect: Effect, Variable, Transformable2D {
 	float			seed	= 1;
 	NoiseType		type	= NoiseType::NT_NOISE_SUPER;
 	NoiseBlendMode	blend;
@@ -410,7 +410,10 @@ void setMaterial(Shader& shader, BufferMaterial& material) {
 	shader["contrast"](material.contrast);
 	// Set noise data
 	shader["useNoise"](material.noise.enabled);
-	shader["noiseStrength"](material.noise.strength);
+	shader["noiseOffset"](material.noise.trans.position);
+	//shader["noiseRotation"](material.noise.trans.rotation);
+	shader["noiseStrength"](material.noise.trans.scale);
+	shader["noiseScale"](material.noise.strength);
 	shader["noiseSeed"](material.noise.seed);
 	shader["noiseType"]((unsigned int)material.noise.type);
 	shader["noiseBlendSrcColorFunc"]((unsigned int)material.noise.blend.color.source);

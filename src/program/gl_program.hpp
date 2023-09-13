@@ -31,6 +31,22 @@ namespace Makai {
 		return ev;
 	}
 
+	struct MouseState {
+		unordered_map<InputMouseButton, size_t> buttons;
+		int x, y;
+	};
+
+	struct MouseData {
+		MouseState state;
+		MouseState last;
+	};
+
+	enum class InputMouseButton {
+		IMB_LEFT,
+		IMB_MIDDLE,
+		IMB_RIGHT,
+	};
+
 	/**
 	*************************
 	*                       *
@@ -70,6 +86,38 @@ namespace Makai {
 				// Set buffer to button state
 				buffer[button]	= buttonState;
 			}
+			// Get mouse structures
+			MouseData&
+				lm = mouse.local,
+				gm = mouse.global
+			;
+			// Update local data
+			lm.last = lm.state;
+			// Update global data
+			gm.last = gm.state;
+			// Get button data
+			uint32 btn = SDL_GetMouseState(&lm.state.x, &lm.state.y);
+			// Update button data
+			for (auto i = 0; i < 3; i++) {
+				// Jankify
+				InputMouseButton button = (InputMouseButton)i;
+				// Get previous button state
+				unsigned int buttonState = 0;
+				if (gm.buttons[button]) buttonState = gm.buttons[button];
+				// If button is pressed.
+				if(gm.buttons[button]) {
+					// If buffer not overflowing, increment buffer
+					if(buttonState < 0xffff) buttonState++;
+				}
+				// Else, zero state
+				else buttonState = 0;
+				// Copy previous state to secondary buffer
+				last[button]	= buffer[button];
+				// Set buffer to button state
+				buffer[button]	= buttonState;
+			}
+			// Update
+			lm.state.buttons = gm.state.buttons;
 		}
 
 		/**
@@ -206,6 +254,26 @@ namespace Makai {
 			return buttons;
 		}
 
+		/// Returns the mouse position relative to the window.
+		inline Vector2 getWindowMousePosition() {
+			return Vector2(mouse.local.state.x, mouse.local.state.y);
+		}
+
+		/// Returns the mouse position relative to the desktop.
+		inline Vector2 getDesktopMousePosition() {
+			return Vector2(mouse.global.state.x, mouse.global.state.y);
+		}
+
+		/// Returns which direction the mouse is moving towards.
+		inline Vector2 getMouseDirection() {
+			return getDesktopMousePosition() - Vector2(mouse.global.last.x, mouse.global.last.y);
+		}
+
+		/// Enables/Disables mouse capture.
+		inline void setMouseCapture(bool enabled = false) {
+			SDL_CaptureMouse(enabled ? SDL_TRUE : SDL_FALSE);
+		}
+
 		/// Whether input is enabled.
 		bool enabled = true;
 
@@ -215,6 +283,10 @@ namespace Makai {
 		/// The internal buffer state.
 		unordered_map<SDL_Scancode, unsigned int> buffer;
 		unordered_map<SDL_Scancode, unsigned int> last;
+		namespace {
+			MouseData global;
+			MouseData local;
+		} mouse;
 	};
 
 	/**

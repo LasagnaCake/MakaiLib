@@ -100,6 +100,8 @@ uniform bool	outlineRelativeAlpha	= true;
 
 // [ NOISE EFFECT ]
 uniform bool	useNoise				= false;
+uniform vec2	noiseScale				= vec2(1);
+uniform vec2	noiseOffset				= vec2(0);
 uniform float	noiseStrength			= 1;
 uniform float	noiseSeed				= 1;
 uniform uint	noiseType				= 0;
@@ -395,7 +397,7 @@ vec4 blendNoise(vec4 color, float noise, uint srcColorFunc, uint dstColorFunc, u
 
 vec4 applyNoise(vec4 color, vec2 uv) {
 	vec2 nc = uv + color.xy + color.zw;
-	float nv = rand(nc, noiseType, noiseSeed);
+	float nv = rand(nc / noiseScale + noiseOffset, noiseType, noiseSeed);
 	vec4 res = blendNoise(
 		color,
 		nv,
