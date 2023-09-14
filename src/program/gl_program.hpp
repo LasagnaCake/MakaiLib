@@ -93,13 +93,12 @@ namespace Makai {
 				lm = mouse.local,
 				gm = mouse.global
 			;
-			// Update local data
-			lm.last = lm.state;
-			// Update global data
-			gm.last = gm.state;
+			// Save last positional data
+			lm.last = lm.pos;
+			gm.last = gm.pos;
 			// Get position & button data
-			uint32 btn = SDL_GetMouseState(&lm.state.x, &lm.state.y);
-			SDL_GetGlobalMouseState(&gm.state.x, &gm.state.y);
+			uint32 btn = SDL_GetMouseState(&lm.pos.x, &lm.pos.y);
+			SDL_GetGlobalMouseState(&gm.pos.x, &gm.pos.y);
 			// Update button data
 			for (auto i = 0; i < (((int)MS_UNKNOWN)-1); i++) {
 				// Jankify
@@ -257,12 +256,12 @@ namespace Makai {
 
 		/// Returns the mouse position relative to the window.
 		inline Vector2 getWindowMousePosition() {
-			return Vector2(mouse.local.state.x, mouse.local.state.y);
+			return Vector2(mouse.local.pos.x, mouse.local.pos.y);
 		}
 
 		/// Returns the mouse position relative to the desktop.
 		inline Vector2 getDesktopMousePosition() {
-			return Vector2(mouse.global.state.x, mouse.global.state.y);
+			return Vector2(mouse.global.pos.x, mouse.global.pos.y);
 		}
 
 		/// Returns which direction the mouse is moving towards.
@@ -283,7 +282,7 @@ namespace Makai {
 		*/
 		inline unsigned int getButtonState(MouseScancode button) {
 			if (!enabled || button == MS_UNKNOWN) return 0;
-			return buffer[button];
+			return mouse.buffer[button];
 		}
 
 		/// Returns whether the mouse button is pressed.
@@ -351,7 +350,7 @@ namespace Makai {
 		/// Returns the mouse button that was most recently changed.
 		inline MouseScancode mostRecentMouseButtonChanged() {
 			for (auto [b, d] : mouse.buffer)
-				if (d != last[b])
+				if (d != mouse.last[b])
 					return b;
 			return MS_UNKNOWN;
 		}
@@ -359,7 +358,7 @@ namespace Makai {
 		/// Returns the mouse button that was most recently just released.
 		inline MouseScancode mostRecentMouseButtonJustReleased() {
 			for (auto [b, d] : mouse.buffer)
-				if (d != last[b] && d == 0)
+				if (d != mouse.last[b] && d == 0)
 					return b;
 			return MS_UNKNOWN;
 		}

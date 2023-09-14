@@ -55,7 +55,9 @@ namespace CollisionData {
 	*/
 	struct Circle {
 		Vector2 position;
-		float radius	= 1;
+		float radius = 1;
+		float angle = 0;
+		float stretch = 0;
 	};
 
 	/**
@@ -248,7 +250,12 @@ namespace CollisionData {
 	}
 
 	inline bool withinBounds(Vector2& point, CircleBounds2D& area) {
-		return point.distanceTo(area.position) < area.radius;
+		// Calculate circle stretch
+		float angle		= point.angleTo(area.position);
+		float stretch	= sin(angle + area.angle) * .5 + .5;
+		stretch *= area.stretch;
+		// Check collision
+		return point.distanceTo(area.position) < (area.radius + stretch);
 	}
 
 	inline bool withinBounds(Vector2& a, RayBounds2D& b) {
@@ -268,7 +275,14 @@ namespace CollisionData {
 	// Circle
 
 	inline bool withinBounds(CircleBounds2D& a, CircleBounds2D& b) {
-		return a.position.distanceTo(b.position) < (a.radius + b.radius);
+		// Calculate circle stretches
+		float angle		= a.position.angleTo(b.position);
+		float stretchA	= sin(angle + a.angle) * .5 + .5;
+		float stretchB	= sin(angle + b.angle) * .5 + .5;
+		stretchA *= a.stretch;
+		stretchB *= b.stretch;
+		// Check collision
+		return a.position.distanceTo(b.position) < (a.radius + stretchA + b.radius + stretchB);
 	}
 
 	// Box
@@ -297,7 +311,15 @@ namespace CollisionData {
 	// Ray
 
 	inline bool withinBounds(CircleBounds2D& a, RayBounds2D& b) {
-		return c2CircletoCapsule(cuteify(a), cuteify(b));
+		// Get distance between targets
+		float distance = a.position.distanceTo(b.position);
+		// If too distant, return
+		if (distance > b.length + b.width + a.stretch + a.radius) return false;
+		// Get ray position to check
+		Vector2 rayPosition = VecMath::angleV2(b.angle) * distance + b.position;
+		// Check collision
+		CircleBounds2D target{rayPosition, b.width};
+		return withinBounds(a, target);
 	}
 
 	inline bool withinBounds(BoxBounds2D& a, RayBounds2D& b) {
