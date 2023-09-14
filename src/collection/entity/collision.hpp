@@ -253,9 +253,9 @@ namespace CollisionData {
 		// Calculate circle stretch
 		float angle		= point.angleTo(area.position);
 		float stretch	= sin(angle + area.angle) * .5 + .5;
-		stretch *= area.stretch;
+		stretch = stretch * area.stretch + 1;
 		// Check collision
-		return point.distanceTo(area.position) < (area.radius + stretch);
+		return point.distanceTo(area.position) < (area.radius * stretch);
 	}
 
 	inline bool withinBounds(Vector2& a, RayBounds2D& b) {
@@ -279,10 +279,10 @@ namespace CollisionData {
 		float angle		= a.position.angleTo(b.position);
 		float stretchA	= sin(angle + a.angle) * .5 + .5;
 		float stretchB	= sin(angle + b.angle) * .5 + .5;
-		stretchA *= a.stretch;
-		stretchB *= b.stretch;
+		stretchA = stretchA * a.stretch + 1;
+		stretchB = stretchB * b.stretch + 1;
 		// Check collision
-		return a.position.distanceTo(b.position) < (a.radius + stretchA + b.radius + stretchB);
+		return a.position.distanceTo(b.position) < (a.radius * stretchA + b.radius * stretchB);
 	}
 
 	// Box
