@@ -253,37 +253,34 @@ public:
 	}
 
 	Collectible* createCollectible() {
+		Collectible* current = nullptr;
 		//GAME_PARALLEL_FOR
 		for $seachif(item, items, ITEM_COUNT, item.isFree()) {
-			last = item.enable()->setZero();
-			last->pause = Pause();
-			last->params = CollectibleData();
-			last->taskers.clearTaskers();
-			last->flags.clear();
-			last->clearSignals();
-			last->updateSprite();
-			#ifdef $_PREVENT_BULLET_OVERFLOW_BY_WRAP
+			current = item.enable()->setZero();
+			#ifdef $_PREVENT_INSTANCE_OVERFLOW_BY_WRAP
 			pbobw = 0;
 			#endif
-			return last;
+			break;
 		} $endseach
-		#ifndef $_PREVENT_BULLET_OVERFLOW_BY_WRAP
-		throw OutOfObjects(
-			getName()
-			+ ": Out of usable items ("
-			+ std::to_string(ITEM_COUNT)
-			+ ")!"
-		);
+		if (!current)
+		#ifndef $_PREVENT_INSTANCE_OVERFLOW_BY_WRAP
+			throw OutOfObjects(
+				getName()
+				+ ": Out of usable items! ("
+				+ std::to_string(ITEM_COUNT)
+				+ ")!"
+			);
 		#else
-		last = items[pbobw++].enable()->setZero();
+			last = items[pbobw++].enable()->setZero();
+		#endif
+		else last = current;
+		last->pause = Pause();
 		last->params = CollectibleData();
 		last->taskers.clearTaskers();
 		last->flags.clear();
 		last->clearSignals();
-		if (pbobw > ITEM_COUNT) pbobw = 0;
 		last->updateSprite();
 		return last;
-		#endif
 	}
 
 	Collectible* createCollectible(CollectibleData item) {
@@ -321,7 +318,7 @@ public:
 
 private:
 	bool created = false;
-	#ifdef $_PREVENT_BULLET_OVERFLOW_BY_WRAP
+	#ifdef $_PREVENT_INSTANCE_OVERFLOW_BY_WRAP
 	size_t pbobw = 0;
 	#endif
 	Collectible* last = nullptr;

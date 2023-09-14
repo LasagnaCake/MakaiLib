@@ -297,31 +297,28 @@ public:
 	}
 
 	Bullet* createBullet() {
+		Bullet* current = nullptr;
 		//GAME_PARALLEL_FOR
 		for $seachif(b, bullets, BULLET_COUNT, b.isFree()) {
-			last = b.enable()->setZero();
-			last->pause = Pause();
-			last->params = BulletData();
-			last->grazed = false;
-			last->taskers.clearTaskers();
-			last->flags.clear();
-			last->clearSignals();
-			last->updateSprite();
-			last->sprite->setColor();
-			#ifdef $_PREVENT_BULLET_OVERFLOW_BY_WRAP
+			current = b.enable()->setZero();
+			#ifdef $_PREVENT_INSTANCE_OVERFLOW_BY_WRAP
 			pbobw = 0;
 			#endif
-			return last;
+			break;
 		} $endseach
-		#ifndef $_PREVENT_BULLET_OVERFLOW_BY_WRAP
-		throw OutOfObjects(
-			getName()
-			+ ": Out of usable bullets ("
-			+ std::to_string(BULLET_COUNT)
-			+ ")!"
-		);
+		if (!current)
+		#ifndef $_PREVENT_INSTANCE_OVERFLOW_BY_WRAP
+			throw OutOfObjects(
+				getName()
+				+ ": Out of usable bullets ("
+				+ std::to_string(BULLET_COUNT)
+				+ ")!"
+			);
 		#else
-		last = bullets[pbobw++].enable()->setZero();
+			last = bullets[pbobw++].enable()->setZero();
+		#endif
+		else last = current;
+		last->pause = Pause();
 		last->params = BulletData();
 		last->grazed = false;
 		last->taskers.clearTaskers();
@@ -329,10 +326,7 @@ public:
 		last->clearSignals();
 		last->updateSprite();
 		last->sprite->setColor();
-		if (pbobw > BULLET_COUNT) pbobw = 0;
-		last->updateSprite();
 		return last;
-		#endif
 	}
 
 	Bullet* createBullet(BulletData bullet) {
@@ -347,7 +341,7 @@ public:
 
 private:
 	bool created = false;
-	#ifdef $_PREVENT_BULLET_OVERFLOW_BY_WRAP
+	#ifdef $_PREVENT_INSTANCE_OVERFLOW_BY_WRAP
 	size_t pbobw = 0;
 	#endif
 	Bullet* last = nullptr;

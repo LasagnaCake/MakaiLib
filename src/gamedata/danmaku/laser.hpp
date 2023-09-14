@@ -248,39 +248,35 @@ public:
 	}
 
 	LineLaser* createLineLaser() {
+		LineLaser* current = nullptr;
 		//GAME_PARALLEL_FOR
 		for $seachif(l, lasers, LASER_COUNT, l.isFree()) {
-			last = l.enable()->setZero();
-			last->pause = Pause();
-			last->params = LineLaserData();
-			last->taskers.clearTaskers();
-			last->flags.clear();
-			last->clearSignals();
-			last->setLaserShape();
-			last->updateSprite();
-			#ifdef $_PREVENT_BULLET_OVERFLOW_BY_WRAP
+			current = l.enable()->setZero();
+			#ifdef $_PREVENT_INSTANCE_OVERFLOW_BY_WRAP
 			pbobw = 0;
 			#endif
-			return last;
+			break;
 		} $endseach
-		#ifndef $_PREVENT_BULLET_OVERFLOW_BY_WRAP
-		throw OutOfObjects(
-			getName()
-			+ ": Out of usable lasers ("
-			+ std::to_string(LASER_COUNT)
-			+ ")!"
-		);
+		if (!current)
+		#ifndef $_PREVENT_INSTANCE_OVERFLOW_BY_WRAP
+			throw OutOfObjects(
+				getName()
+				+ ": Out of usable line lasers ("
+				+ std::to_string(LASER_COUNT)
+				+ ")!"
+			);
 		#else
-		last = lasers[pbobw++].enable()->setZero();
+			last = lasers[pbobw++].enable()->setZero();
+		#endif
+		else last = current;
+		last->pause = Pause();
 		last->params = LineLaserData();
 		last->taskers.clearTaskers();
 		last->flags.clear();
 		last->clearSignals();
-		if (pbobw > LASER_COUNT) pbobw = 0;
 		last->setLaserShape();
 		last->updateSprite();
 		return last;
-		#endif
 	}
 
 	LineLaser* createLineLaser(LineLaserData laser) {
@@ -295,7 +291,7 @@ public:
 
 private:
 	bool created = false;
-	#ifdef $_PREVENT_BULLET_OVERFLOW_BY_WRAP
+	#ifdef $_PREVENT_INSTANCE_OVERFLOW_BY_WRAP
 	size_t pbobw = 0;
 	#endif
 	LineLaser* last = nullptr;
