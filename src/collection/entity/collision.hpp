@@ -138,7 +138,7 @@ namespace CollisionData {
 	CDT_BOUNDS(Shape);
 	#undef	CDT_BOUNDS
 
-	inline RayBounds2D makeRayBounds(Vector2 from, Vector2 to, float width = 1) {
+	inline RayBounds2D makeRayBounds(Vector2 const& from, Vector2 const& to, float const& width = 1) {
 		return RayBounds2D {
 			from,
 			from.distanceTo(to),
@@ -147,7 +147,7 @@ namespace CollisionData {
 		};
 	}
 
-	inline BoxBounds2D makeBoundsAB(Vector2 a, Vector2 b) {
+	inline BoxBounds2D makeBoundsAB(Vector2 const& a, Vector2 const& b) {
 		return BoxBounds2D {
 			Vector2(
 				Math::min(a.x, b.x),
@@ -160,25 +160,25 @@ namespace CollisionData {
 		};
 	}
 
-	inline BoxBounds2D makeBounds(Vector2 position, Vector2 size) {
-		size /= 2;
+	inline BoxBounds2D makeBounds(Vector2 const& position, Vector2 const& size) {
+		Vector2 hSize = size / 2.0;
 		return makeBoundsAB(
-			position - size,
-			position + size
+			position - hSize,
+			position + hSize
 		);
 	}
 
 	// CUTE conversions
 
-	inline c2AABB cuteify(BoxBounds2D& b) {
+	inline c2AABB cuteify(BoxBounds2D const& b) {
 		return c2AABB{c2v{b.min.x, b.min.y}, c2v{b.max.x, b.max.y}};
 	}
 
-	inline c2Circle cuteify(CircleBounds2D& b) {
+	inline c2Circle cuteify(CircleBounds2D const& b) {
 		return c2Circle{c2v{b.position.x, b.position.y}, b.radius};
 	}
 
-	inline c2Capsule cuteify(RayBounds2D& b) {
+	inline c2Capsule cuteify(RayBounds2D const& b) {
 		Vector2 end = VecMath::angleV2(b.angle) * b.length + b.position;
 		return c2Capsule{
 			c2v{b.position.x, b.position.y},
@@ -187,7 +187,7 @@ namespace CollisionData {
 		};
 	}
 
-	inline c2Ray cuteify(LineBounds2D& b) {
+	inline c2Ray cuteify(LineBounds2D const& b) {
 		Vector2 normal = VecMath::angleV2(b.angle);
 		return c2Ray{
 			c2v{b.position.x, b.position.y},
@@ -196,7 +196,7 @@ namespace CollisionData {
 		};
 	}
 
-	inline PolyX cuteify(PolygonBounds2D& b) {
+	inline PolyX cuteify(PolygonBounds2D const& b) {
 		c2Poly shape = c2Poly{b.count};
 		auto& scale = b.trans.scale;
 		for $ssrange(i, 0, b.count) {
@@ -218,7 +218,7 @@ namespace CollisionData {
 	}
 
 	template <size_t COUNT = 0>
-	inline PolyX cuteify(BaseShape<COUNT>& b) {
+	inline PolyX cuteify(BaseShape<COUNT> const& b) {
 		c2Poly shape = c2Poly{COUNT};
 		auto& scale = b.trans.scale;
 		for $ssrange(i, 0, COUNT) {
@@ -241,7 +241,7 @@ namespace CollisionData {
 
 	// Shape to Point collision detection code
 
-	inline bool withinBounds(Vector2 point, BoxBounds2D area) {
+	inline bool withinBounds(Vector2 const& point, BoxBounds2D const& area) {
 		return (
 			( area.min.x < point.x) && (point.x < area.max.x)
 		) && (
@@ -249,7 +249,7 @@ namespace CollisionData {
 		);
 	}
 
-	inline bool withinBounds(Vector2& point, CircleBounds2D& area) {
+	inline bool withinBounds(Vector2 const& point, CircleBounds2D const& area) {
 		// Calculate circle stretch
 		float angle		= point.angleTo(area.position);
 		float stretch	= Math::abcos(angle + area.angle) * area.stretch + 1;
@@ -257,7 +257,7 @@ namespace CollisionData {
 		return point.distanceTo(area.position) < (area.radius * stretch);
 	}
 
-	inline bool withinBounds(Vector2& a, RayBounds2D& b) {
+	inline bool withinBounds(Vector2 const& a, RayBounds2D const& b) {
 		// Get distance between targets
 		float distance = a.distanceTo(b.position);
 		// If too distant, return
@@ -273,7 +273,7 @@ namespace CollisionData {
 
 	// Circle
 
-	inline bool withinBounds(CircleBounds2D& a, CircleBounds2D& b) {
+	inline bool withinBounds(CircleBounds2D const& a, CircleBounds2D const& b) {
 		// Calculate circle stretches
 		float angle		= a.position.angleTo(b.position);
 		float stretchA	= Math::abcos(angle + a.angle) * a.stretch + 1;
@@ -284,7 +284,7 @@ namespace CollisionData {
 
 	// Box
 
-	bool withinBounds(BoxBounds2D& a, BoxBounds2D& b) {
+	bool withinBounds(BoxBounds2D const& a, BoxBounds2D const& b) {
 		// Get overlap on X
 		bool overlapX = (
 			(b.min.x < a.min.x) && (a.min.x < b.max.x)
@@ -301,13 +301,13 @@ namespace CollisionData {
 		return overlapX && overlapY;
 	}
 
-	bool withinBounds(CircleBounds2D& a, BoxBounds2D& b) {
+	bool withinBounds(CircleBounds2D const& a, BoxBounds2D const& b) {
 		return c2CircletoAABB(cuteify(a), cuteify(b));
 	}
 
 	// Ray
 
-	inline bool withinBounds(CircleBounds2D& a, RayBounds2D& b) {
+	inline bool withinBounds(CircleBounds2D const& a, RayBounds2D const& b) {
 		// Get distance between targets
 		float distance = a.position.distanceTo(b.position);
 		// If too distant, return
@@ -319,32 +319,32 @@ namespace CollisionData {
 		return withinBounds(a, target);
 	}
 
-	inline bool withinBounds(BoxBounds2D& a, RayBounds2D& b) {
+	inline bool withinBounds(BoxBounds2D const& a, RayBounds2D const& b) {
 		return c2AABBtoCapsule(cuteify(a), cuteify(b));
 	}
 
-	inline bool withinBounds(RayBounds2D& a, RayBounds2D& b) {
+	inline bool withinBounds(RayBounds2D const& a, RayBounds2D const& b) {
 		return c2CapsuletoCapsule(cuteify(a), cuteify(b));
 	}
 
 	// Line
 
-	inline bool withinBounds(BoxBounds2D& a, LineBounds2D& b, c2Raycast* result = nullptr) {
+	inline bool withinBounds(BoxBounds2D const& a, LineBounds2D const& b, c2Raycast* result = nullptr) {
 		c2Raycast r;
 		return c2RaytoAABB(cuteify(b), cuteify(a), result ? result : &r);
 	}
 
-	inline bool withinBounds(CircleBounds2D& a, LineBounds2D& b, c2Raycast* result = nullptr) {
+	inline bool withinBounds(CircleBounds2D const& a, LineBounds2D const& b, c2Raycast* result = nullptr) {
 		c2Raycast r;
 		return c2RaytoCircle(cuteify(b), cuteify(a), result ? result : &r);
 	}
 
-	inline bool withinBounds(RayBounds2D& a, LineBounds2D& b, c2Raycast* result = nullptr) {
+	inline bool withinBounds(RayBounds2D const& a, LineBounds2D const& b, c2Raycast* result = nullptr) {
 		c2Raycast r;
 		return c2RaytoCapsule(cuteify(b), cuteify(a), result ? result : &r);
 	}
 
-	inline bool withinBounds(LineBounds2D& a, LineBounds2D& b, c2Raycast* result = nullptr) {
+	inline bool withinBounds(LineBounds2D const& a, LineBounds2D const& b, c2Raycast* result = nullptr) {
 		c2Raycast r;
 		RayBounds2D ray = {b.position, b.length, 0, b.angle};
 		return c2RaytoCapsule(cuteify(b), cuteify(ray), result ? result : &r);
@@ -353,27 +353,27 @@ namespace CollisionData {
 	// TODO: Collision code for between Polygons and GenericShapes
 	// Polygon
 
-	inline bool withinBounds(PolygonBounds2D& a, PolygonBounds2D& b) {
+	inline bool withinBounds(PolygonBounds2D const& a, PolygonBounds2D const& b) {
 		PolyX pa = cuteify(a), pb = cuteify(b);
 		return c2PolytoPoly(&pa.p, &pa.t, &pb.p, &pb.t);
 	}
 
-	inline bool withinBounds(CircleBounds2D& a, PolygonBounds2D& b) {
+	inline bool withinBounds(CircleBounds2D const& a, PolygonBounds2D const& b) {
 		PolyX pb = cuteify(b);
 		return c2CircletoPoly(cuteify(a), &pb.p, &pb.t);
 	}
 
-	inline bool withinBounds(BoxBounds2D& a, PolygonBounds2D& b) {
+	inline bool withinBounds(BoxBounds2D const& a, PolygonBounds2D const& b) {
 		PolyX pb = cuteify(b);
 		return c2AABBtoPoly(cuteify(a), &pb.p, &pb.t);
 	}
 
-	inline bool withinBounds(RayBounds2D& a, PolygonBounds2D& b) {
+	inline bool withinBounds(RayBounds2D const& a, PolygonBounds2D const& b) {
 		PolyX pb = cuteify(b);
 		return c2CapsuletoPoly(cuteify(a), &pb.p, &pb.t);
 	}
 
-	inline bool withinBounds(LineBounds2D& a, PolygonBounds2D& b, c2Raycast* result = nullptr) {
+	inline bool withinBounds(LineBounds2D const& a, PolygonBounds2D const& b, c2Raycast* result = nullptr) {
 		c2Raycast r;
 		PolyX pb = cuteify(b);
 		return c2RaytoPoly(cuteify(a), &pb.p, &pb.t, result ? result : &r);
@@ -381,32 +381,32 @@ namespace CollisionData {
 
 	// Triangle
 
-	inline bool withinBounds(TriangleBounds2D& a, TriangleBounds2D& b) {
+	inline bool withinBounds(TriangleBounds2D const& a, TriangleBounds2D const& b) {
 		PolyX pa = cuteify(a), pb = cuteify(b);
 		return c2PolytoPoly(&pa.p, &pa.t, &pb.p, &pb.t);
 	}
 
-	inline bool withinBounds(PolygonBounds2D& a, TriangleBounds2D& b) {
+	inline bool withinBounds(PolygonBounds2D const& a, TriangleBounds2D const& b) {
 		PolyX pa = cuteify(a), pb = cuteify(b);
 		return c2PolytoPoly(&pa.p, &pa.t, &pb.p, &pb.t);
 	}
 
-	inline bool withinBounds(CircleBounds2D& a, TriangleBounds2D& b) {
+	inline bool withinBounds(CircleBounds2D const& a, TriangleBounds2D const& b) {
 		PolyX pb = cuteify(b);
 		return c2CircletoPoly(cuteify(a), &pb.p, &pb.t);
 	}
 
-	inline bool withinBounds(BoxBounds2D& a, TriangleBounds2D& b) {
+	inline bool withinBounds(BoxBounds2D const& a, TriangleBounds2D const& b) {
 		PolyX pb = cuteify(b);
 		return c2AABBtoPoly(cuteify(a), &pb.p, &pb.t);
 	}
 
-	inline bool withinBounds(RayBounds2D& a, TriangleBounds2D& b) {
+	inline bool withinBounds(RayBounds2D const& a, TriangleBounds2D const& b) {
 		PolyX pb = cuteify(b);
 		return c2CapsuletoPoly(cuteify(a), &pb.p, &pb.t);
 	}
 
-	inline bool withinBounds(LineBounds2D& a, TriangleBounds2D& b, c2Raycast* result = nullptr) {
+	inline bool withinBounds(LineBounds2D const& a, TriangleBounds2D const& b, c2Raycast* result = nullptr) {
 		c2Raycast r;
 		PolyX pb = cuteify(b);
 		return c2RaytoPoly(cuteify(a), &pb.p, &pb.t, result ? result : &r);
@@ -414,37 +414,37 @@ namespace CollisionData {
 
 	// Quad
 
-	inline bool withinBounds(QuadBounds2D& a, QuadBounds2D& b) {
+	inline bool withinBounds(QuadBounds2D const& a, QuadBounds2D const& b) {
 		PolyX pa = cuteify(a), pb = cuteify(b);
 		return c2PolytoPoly(&pa.p, &pa.t, &pb.p, &pb.t);
 	}
 
-	inline bool withinBounds(TriangleBounds2D& a, QuadBounds2D& b) {
+	inline bool withinBounds(TriangleBounds2D const& a, QuadBounds2D const& b) {
 		PolyX pa = cuteify(a), pb = cuteify(b);
 		return c2PolytoPoly(&pa.p, &pa.t, &pb.p, &pb.t);
 	}
 
-	inline bool withinBounds(PolygonBounds2D& a, QuadBounds2D& b) {
+	inline bool withinBounds(PolygonBounds2D const& a, QuadBounds2D const& b) {
 		PolyX pa = cuteify(a), pb = cuteify(b);
 		return c2PolytoPoly(&pa.p, &pa.t, &pb.p, &pb.t);
 	}
 
-	inline bool withinBounds(CircleBounds2D& a, QuadBounds2D& b) {
+	inline bool withinBounds(CircleBounds2D const& a, QuadBounds2D const& b) {
 		PolyX pb = cuteify(b);
 		return c2CircletoPoly(cuteify(a), &pb.p, &pb.t);
 	}
 
-	inline bool withinBounds(BoxBounds2D& a, QuadBounds2D& b) {
+	inline bool withinBounds(BoxBounds2D const& a, QuadBounds2D const& b) {
 		PolyX pb = cuteify(b);
 		return c2AABBtoPoly(cuteify(a), &pb.p, &pb.t);
 	}
 
-	inline bool withinBounds(RayBounds2D& a, QuadBounds2D& b) {
+	inline bool withinBounds(RayBounds2D const& a, QuadBounds2D const& b) {
 		PolyX pb = cuteify(b);
 		return c2CapsuletoPoly(cuteify(a), &pb.p, &pb.t);
 	}
 
-	inline bool withinBounds(LineBounds2D& a, QuadBounds2D& b, c2Raycast* result = nullptr) {
+	inline bool withinBounds(LineBounds2D const& a, QuadBounds2D const& b, c2Raycast* result = nullptr) {
 		c2Raycast r;
 		PolyX pb = cuteify(b);
 		return c2RaytoPoly(cuteify(a), &pb.p, &pb.t, result ? result : &r);
@@ -452,12 +452,12 @@ namespace CollisionData {
 
 	// Shape
 
-	inline bool withinBounds(ShapeBounds2D& a, ShapeBounds2D& b) {
+	inline bool withinBounds(ShapeBounds2D const& a, ShapeBounds2D const& b) {
 		TriangleBounds2D ta;
 		TriangleBounds2D tb;
 		bool colliding = true;
-		for (Triangle& tra: b.triangles) {
-			for (Triangle& trb: a.triangles) {
+		for (Triangle const& tra: b.triangles) {
+			for (Triangle const& trb: a.triangles) {
 				ta = (TriangleBounds2D)tra;
 				ta = (TriangleBounds2D)trb;
 				ta.trans = a.trans;
@@ -468,10 +468,10 @@ namespace CollisionData {
 		return colliding;
 	}
 
-	inline bool withinBounds(TriangleBounds2D& a, ShapeBounds2D& b) {
+	inline bool withinBounds(TriangleBounds2D const& a, ShapeBounds2D const& b) {
 		TriangleBounds2D tb;
 		bool colliding = true;
-		for (Triangle& t: b.triangles) {
+		for (Triangle const& t: b.triangles) {
 			tb = (TriangleBounds2D)t;
 			tb.trans = b.trans;
 			colliding = colliding && withinBounds(a, tb);
@@ -479,10 +479,10 @@ namespace CollisionData {
 		return colliding;
 	}
 
-	inline bool withinBounds(QuadBounds2D& a, ShapeBounds2D& b) {
+	inline bool withinBounds(QuadBounds2D const& a, ShapeBounds2D const& b) {
 		TriangleBounds2D tb;
 		bool colliding = true;
-		for (Triangle& t: b.triangles) {
+		for (Triangle const& t: b.triangles) {
 			tb = (TriangleBounds2D)t;
 			tb.trans = b.trans;
 			colliding = colliding && withinBounds(tb, a);
@@ -490,10 +490,10 @@ namespace CollisionData {
 		return colliding;
 	}
 
-	inline bool withinBounds(PolygonBounds2D& a, ShapeBounds2D& b) {
+	inline bool withinBounds(PolygonBounds2D const& a, ShapeBounds2D const& b) {
 		TriangleBounds2D tb;
 		bool colliding = true;
-		for (Triangle& t: b.triangles) {
+		for (Triangle const& t: b.triangles) {
 			tb = (TriangleBounds2D)t;
 			tb.trans = b.trans;
 			colliding = colliding && withinBounds(a, tb);
@@ -501,10 +501,10 @@ namespace CollisionData {
 		return colliding;
 	}
 
-	inline bool withinBounds(CircleBounds2D& a, ShapeBounds2D& b) {
+	inline bool withinBounds(CircleBounds2D const& a, ShapeBounds2D const& b) {
 		TriangleBounds2D tb;
 		bool colliding = true;
-		for (Triangle& t: b.triangles) {
+		for (Triangle const& t: b.triangles) {
 			tb = (TriangleBounds2D)t;
 			tb.trans = b.trans;
 			colliding = colliding && withinBounds(a, tb);
@@ -512,10 +512,10 @@ namespace CollisionData {
 		return colliding;
 	}
 
-	inline bool withinBounds(BoxBounds2D& a, ShapeBounds2D& b) {
+	inline bool withinBounds(BoxBounds2D const& a, ShapeBounds2D const& b) {
 		TriangleBounds2D tb;
 		bool colliding = true;
-		for (Triangle& t: b.triangles) {
+		for (Triangle const& t: b.triangles) {
 			tb = (TriangleBounds2D)t;
 			tb.trans = b.trans;
 			colliding = colliding && withinBounds(a, tb);
@@ -523,10 +523,10 @@ namespace CollisionData {
 		return colliding;
 	}
 
-	inline bool withinBounds(RayBounds2D& a, ShapeBounds2D& b) {
+	inline bool withinBounds(RayBounds2D const& a, ShapeBounds2D const& b) {
 		TriangleBounds2D tb;
 		bool colliding = true;
-		for (Triangle& t: b.triangles) {
+		for (Triangle const& t: b.triangles) {
 			tb = (TriangleBounds2D)t;
 			tb.trans = b.trans;
 			colliding = colliding && withinBounds(a, tb);
@@ -534,11 +534,11 @@ namespace CollisionData {
 		return colliding;
 	}
 
-	inline bool withinBounds(LineBounds2D& a, ShapeBounds2D& b, c2Raycast** results = nullptr) {
+	inline bool withinBounds(LineBounds2D const& a, ShapeBounds2D const& b, c2Raycast** results = nullptr) {
 		TriangleBounds2D tb;
 		bool colliding = true;
 		size_t i = 0;
-		for (Triangle& t: b.triangles) {
+		for (Triangle const& t: b.triangles) {
 			tb = (TriangleBounds2D)t;
 			tb.trans = b.trans;
 			colliding = colliding && withinBounds(a, tb, results ? results[i] : nullptr);
@@ -550,48 +550,48 @@ namespace CollisionData {
 	// Flipped Functions
 
 	template<CollisionType T>
-	inline bool withinBounds(CircleBounds2D& a, T& b) {
+	inline bool withinBounds(CircleBounds2D const& a, T const& b) {
 		return withinBounds(b, a);
 	}
 
 	template<CollisionType T>
-	inline bool withinBounds(BoxBounds2D& a, T& b) {
+	inline bool withinBounds(BoxBounds2D const& a, T const& b) {
 		return withinBounds(b, a);
 	}
 
 	template<CollisionType T>
-	inline bool withinBounds(RayBounds2D& a, T& b) {
+	inline bool withinBounds(RayBounds2D const& a, T const& b) {
 		return withinBounds(b, a);
 	}
 
 	template<CollisionType T>
-	inline bool withinBounds(LineBounds2D& a, T& b, c2Raycast* result = nullptr) {
+	inline bool withinBounds(LineBounds2D const& a, T const& b, c2Raycast* result = nullptr) {
 		return withinBounds(b, a, result);
 	}
 
 	template<CollisionType T>
-	inline bool withinBounds(PolygonBounds2D& a, T& b) {
+	inline bool withinBounds(PolygonBounds2D const& a, T const& b) {
 		return withinBounds(b, a);
 	}
 
 	template<CollisionType T>
-	inline bool withinBounds(TriangleBounds2D& a, T& b) {
+	inline bool withinBounds(TriangleBounds2D const& a, T const& b) {
 		return withinBounds(b, a);
 	}
 
 	template<CollisionType T>
-	inline bool withinBounds(QuadBounds2D& a, T& b) {
+	inline bool withinBounds(QuadBounds2D const& a, T const& b) {
 		return withinBounds(b, a);
 	}
 
 	template<CollisionType T>
-	inline bool withinBounds(ShapeBounds2D& a, T& b) {
+	inline bool withinBounds(ShapeBounds2D const& a, T const& b) {
 		return withinBounds(b, a);
 	}
 
 	// Clamping functions
 
-	inline Vector2 getBounded(Vector2& point, BoxBounds2D& box) {
+	inline Vector2 getBounded(Vector2 const& point, BoxBounds2D const& box) {
 		return point.clamped(
 			Vector2(box.min.x, box.min.y),
 			Vector2(box.max.x, box.max.y)
@@ -621,7 +621,7 @@ namespace CollisionData {
 	typedef AreaCollisionData<PolygonBounds2D>	AreaPolygonData;
 
 	template <CollisionType A, CollisionType B>
-	bool isColliding(AreaCollisionData<A>& a, AreaCollisionData<B>& b) {
+	bool isColliding(AreaCollisionData<A> const& a, AreaCollisionData<B> const& b) {
 		if (!(a.enabled && b.enabled))
 			return false;
 		return withinBounds(a.shape, b.shape);
