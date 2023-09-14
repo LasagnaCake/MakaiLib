@@ -252,8 +252,7 @@ namespace CollisionData {
 	inline bool withinBounds(Vector2& point, CircleBounds2D& area) {
 		// Calculate circle stretch
 		float angle		= point.angleTo(area.position);
-		float stretch	= sin(angle + area.angle) * .5 + .5;
-		stretch = stretch * area.stretch + 1;
+		float stretch	= Math::abcos(angle + area.angle) * area.stretch + 1;
 		// Check collision
 		return point.distanceTo(area.position) < (area.radius * stretch);
 	}
@@ -277,10 +276,8 @@ namespace CollisionData {
 	inline bool withinBounds(CircleBounds2D& a, CircleBounds2D& b) {
 		// Calculate circle stretches
 		float angle		= a.position.angleTo(b.position);
-		float stretchA	= sin(angle + a.angle) * .5 + .5;
-		float stretchB	= sin(angle + b.angle) * .5 + .5;
-		stretchA = stretchA * a.stretch + 1;
-		stretchB = stretchB * b.stretch + 1;
+		float stretchA	= Math::abcos(angle + a.angle) * a.stretch + 1;
+		float stretchB	= Math::abcos(angle + b.angle) * b.stretch + 1;
 		// Check collision
 		return a.position.distanceTo(b.position) < (a.radius * stretchA + b.radius * stretchB);
 	}
@@ -314,7 +311,7 @@ namespace CollisionData {
 		// Get distance between targets
 		float distance = a.position.distanceTo(b.position);
 		// If too distant, return
-		if (distance > b.length + b.width + a.stretch + a.radius) return false;
+		if (distance > b.length + b.width + a.radius + Math::max(a.stretch, .0f)) return false;
 		// Get ray position to check
 		Vector2 rayPosition = VecMath::angleV2(b.angle) * distance + b.position;
 		// Check collision

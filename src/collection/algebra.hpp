@@ -300,6 +300,10 @@ namespace Math {
 		return nroot(val, val);
 	}
 
+	CONST_ANYTYPE_I absin(T val) requires Type::Number<T> {return abs(sin(val));}
+	CONST_ANYTYPE_I abcos(T val) requires Type::Number<T> {return abs(cos(val));}
+	CONST_ANYTYPE_I abtan(T val) requires Type::Number<T> {return abs(tan(val));}
+
 	inline size_t digitCount(size_t number) {
 		return std::to_string(number).size();
 	}
@@ -430,14 +434,6 @@ namespace Math {
 		}
 	}
 }
-
-#ifndef nrtn
-#define nrtn(val) Math::nrtn(val);
-#endif // nrtn
-
-#ifndef nroot
-#define nroot(val, root) Math::nroot(val, root)
-#endif // nroot
 
 #define $mth Math::
 #define $rng Math::Random::
