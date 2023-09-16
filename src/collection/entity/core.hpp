@@ -37,7 +37,7 @@
 	using	BASE :: BASE ;\
 	inline	virtual string getClass() {return #NAME;}\
 	inline	virtual string getBaseClass() {return #BASE;}\
-	inline	static string getCoreClass() {return BASE::getCoreClass();}
+	inline	static string getCoreClass() {return #NAME;}
 
 namespace EntityClass {
 	// Conflict prevention
@@ -446,6 +446,9 @@ namespace EntityClass {
 		void queueDestroy() {
 			destroyQueue.push_back(&destroy);
 		}
+
+		template <EntityType T>
+		inline T* as() {return (T*)this;}
 
 	protected:
 		bool condemned = false;

@@ -728,6 +728,33 @@ namespace EntityClass {
 	typedef AreaCollision2D<QuadBounds2D>		AreaQuad2D;
 	typedef AreaCollision2D<ShapeBounds2D>		AreaShape2D;
 	typedef AreaCollision2D<PolygonBounds2D>	AreaPolygon2D;
+
+	enum class CollisionType2D {
+		CT2D_CIRCLE,
+		CT2D_BOX,
+		CT2D_RAY,
+		CT2D_LINE,
+		CT2D_TRIANGLE,
+		CT2D_QUAD,
+		CT2D_SHAPE,
+		CT2D_POLYGON,
+		CT2D_NULL
+	};
+
+	#define CT2D_IF(TYPE, RESULT) if (e->getCoreClass() == #TYPE) return CT2D_##RESULT;
+	CollisionType2D getCollisionType2D(Entity* e) {
+		using enum CollisionType2D;
+		CT2D_IF(AreaCircle2D,	CIRCLE		);
+		CT2D_IF(AreaBox2D,		BOX			);
+		CT2D_IF(AreaRay2D,		RAY			);
+		CT2D_IF(AreaLine2D,		LINE		);
+		CT2D_IF(AreaTriangle2D,	TRIANGLE	);
+		CT2D_IF(AreaQuad2D,		QUAD		);
+		CT2D_IF(AreaShape2D,	SHAPE		);
+		CT2D_IF(AreaPolygon2D,	POLYGON		);
+		return CT2D_NULL;
+	}
+	#undef CT2D_IF
 };
 
 #endif // COLLISION_2D_3D_OBJECT_H
