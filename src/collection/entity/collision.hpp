@@ -56,7 +56,7 @@ namespace CollisionData {
 	struct Circle {
 		Vector2 position;
 		float radius = 1;
-		float angle = 0;
+		float rotation = 0;
 		float stretch = 0;
 	};
 
@@ -72,6 +72,8 @@ namespace CollisionData {
 		float length = 1;
 		float width	= 1;
 		float angle = 0;
+		float rotation = 0;
+		float stretch = 0;
 	};
 
 	/**
@@ -252,7 +254,7 @@ namespace CollisionData {
 	inline bool withinBounds(Vector2 const& point, CircleBounds2D const& area) {
 		// Calculate circle stretch
 		float angle		= point.angleTo(area.position);
-		float stretch	= Math::abcos(angle + area.angle) * area.stretch + 1;
+		float stretch	= Math::abcos(angle + area.rotation) * area.stretch + 1;
 		// Check collision
 		return point.distanceTo(area.position) < (area.radius * stretch);
 	}
@@ -263,7 +265,7 @@ namespace CollisionData {
 		// If too distant, return
 		if (distance > b.length + b.width) return false;
 		// Get ray position to check
-		Vector2 rayPosition = VecMath::angleV2(b.angle) * distance + b.position;
+		Vector2 rayPosition = VecMath::angleV2(b.rotation) * distance + b.position;
 		// Check collision
 		CircleBounds2D target{rayPosition, b.width};
 		return withinBounds(a, target);
@@ -276,8 +278,8 @@ namespace CollisionData {
 	inline bool withinBounds(CircleBounds2D const& a, CircleBounds2D const& b) {
 		// Calculate circle stretches
 		float angle		= a.position.angleTo(b.position);
-		float stretchA	= Math::abcos(angle + a.angle) * a.stretch + 1;
-		float stretchB	= Math::abcos(angle + b.angle) * b.stretch + 1;
+		float stretchA	= Math::abcos(angle + a.rotation) * a.stretch + 1;
+		float stretchB	= Math::abcos(angle + b.rotation) * b.stretch + 1;
 		// Check collision
 		return a.position.distanceTo(b.position) < (a.radius * stretchA + b.radius * stretchB);
 	}
@@ -315,7 +317,7 @@ namespace CollisionData {
 		// Get ray position to check
 		Vector2 rayPosition = VecMath::angleV2(b.angle) * distance + b.position;
 		// Check collision
-		CircleBounds2D target{rayPosition, b.width};
+		CircleBounds2D target{rayPosition, b.width, b.angle + b.rotation, b.stretch};
 		return withinBounds(a, target);
 	}
 
@@ -346,7 +348,7 @@ namespace CollisionData {
 
 	inline bool withinBounds(LineBounds2D const& a, LineBounds2D const& b, c2Raycast* result = nullptr) {
 		c2Raycast r;
-		RayBounds2D ray = {b.position, b.length, 0, b.angle};
+		RayBounds2D ray = {b.position, b.length, 0.001, b.angle};
 		return c2RaytoCapsule(cuteify(b), cuteify(ray), result ? result : &r);
 	}
 
