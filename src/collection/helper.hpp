@@ -150,6 +150,28 @@ namespace Helper {
 			res[i++] = elem;
 		return res;
 	}
+
+	template<typename T>
+	class DataView {
+	public:
+		DataView(T& _data):					data(_data)			{}
+		DataView(DataView<T> const& other):	data(other.data)	{}
+		DataView(DataView<T>&& other):		data(other.data)	{}
+
+		DataView& operator=(T const& value) {
+			data = value;
+			return (*this);
+		}
+
+		inline operator T()	{return data;}
+		inline T value()	{return data;}
+
+	protected:
+		inline T& view()	{return data;}
+
+	private:
+		T& data;
+	};
 }
 
 using Helper::String;
@@ -163,6 +185,7 @@ using Helper::Dictionary;
 using Helper::FuzzyDictionary;
 using Helper::Pair;
 using Helper::Entry;
+using Helper::DataView;
 
 WideString toWideString(String const& str){
 	using convert_typeX = std::codecvt_utf8_utf16<wchar_t>;
