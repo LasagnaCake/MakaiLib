@@ -594,7 +594,7 @@ namespace Makai {
 				frameRate = SDL_GetTicks() - frameTicks;
 				// If should process, then do so
 				#ifndef $_PROCESS_RENDER_BEFORE_LOGIC
-				if (cycleRate > (((float)(cycleDelta * 1000) - 1) / speed)) {
+				if (cycleRate > ((cycleDelta * 1000.0 - 1) / speed)) {
 					// Update audio system
 					Audio::updateAudioSystem();
 					// Update input manager
@@ -615,7 +615,7 @@ namespace Makai {
 					#endif // FRAME_DEPENDENT_PROCESS
 				}
 				#endif
-				if (frameRate > (frameDelta * 1000) - 1) {
+				if (frameRate > (frameDelta * 1000 - 1)) {
 					// Get current time
 					frameTicks = SDL_GetTicks();
 					// increment frame counter

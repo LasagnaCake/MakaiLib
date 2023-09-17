@@ -622,6 +622,18 @@ namespace CollisionData {
 	typedef AreaCollisionData<ShapeBounds2D>	AreaShapeData;
 	typedef AreaCollisionData<PolygonBounds2D>	AreaPolygonData;
 
+	enum class CollisionType2D {
+		CT2D_CIRCLE,
+		CT2D_BOX,
+		CT2D_RAY,
+		CT2D_LINE,
+		CT2D_TRIANGLE,
+		CT2D_QUAD,
+		CT2D_SHAPE,
+		CT2D_POLYGON,
+		CT2D_NULL
+	};
+
 	template <CollisionType A, CollisionType B>
 	bool isColliding(AreaCollisionData<A> const& a, AreaCollisionData<B> const& b) {
 		if (!(a.enabled && b.enabled))
@@ -645,6 +657,21 @@ namespace EntityClass {
 
 	/// Collision Layers (used for collision detection).
 	EntityGroup collisionLayers;
+
+	#define CT2D_CASE(TYPE, RESULT) if (obj->getCoreClass() == TYPE) return CT2D_##RESULT
+	CollisionType2D getCollisionType2D(Entity* const& obj) {
+		using enum CollisionType2D;
+		CT2D_CASE("AreaCircle2D",	CIRCLE		);
+		CT2D_CASE("AreaBox2D",		BOX			);
+		CT2D_CASE("AreaRay2D",		RAY			);
+		CT2D_CASE("AreaLine2D",		LINE		);
+		CT2D_CASE("AreaTriangle2D",	TRIANGLE	);
+		CT2D_CASE("AreaQuad2D",		QUAD		);
+		CT2D_CASE("AreaShape2D",	SHAPE		);
+		CT2D_CASE("AreaPolygon2D",	POLYGON		);
+		return CT2D_NULL;
+	}
+	#undef CT2D_CASE
 
 	/**
 	*****************************
@@ -680,10 +707,27 @@ namespace EntityClass {
 
 		template <CollisionType C>
 		void checkCollision(AreaCollision2D<C>* const& target) {
-			if (colliding(target->collision)) {
+			if (colliding(target)) {
 				onCollision(target);
 				target->onCollision(this);
 			}
+		}
+
+		void castAndCheck(Entity* const& target) {
+			using enum CollisionType2D;
+			#define CT2D_CASE(RESULT, TYPE) case CT2D_##TYPE: {RESULT* cTarget = (RESULT*)target; checkCollision(cTarget); break;}
+			switch (getCollisionType2D(target)) {
+				CT2D_CASE(AreaCollision2D<CircleBounds2D>,		CIRCLE		)
+				CT2D_CASE(AreaCollision2D<BoxBounds2D>,			BOX			)
+				CT2D_CASE(AreaCollision2D<RayBounds2D>,			RAY			)
+				CT2D_CASE(AreaCollision2D<LineBounds2D>,		LINE		)
+				CT2D_CASE(AreaCollision2D<TriangleBounds2D>,	TRIANGLE	)
+				CT2D_CASE(AreaCollision2D<QuadBounds2D>,		QUAD		)
+				CT2D_CASE(AreaCollision2D<ShapeBounds2D>,		SHAPE		)
+				CT2D_CASE(AreaCollision2D<PolygonBounds2D>,		POLYGON		)
+				default: return;
+			}
+			#undef CT2D_CASE
 		}
 
 		/// Adds the object to the given collision layer.
@@ -729,32 +773,22 @@ namespace EntityClass {
 	typedef AreaCollision2D<ShapeBounds2D>		AreaShape2D;
 	typedef AreaCollision2D<PolygonBounds2D>	AreaPolygon2D;
 
-	enum class CollisionType2D {
-		CT2D_CIRCLE,
-		CT2D_BOX,
-		CT2D_RAY,
-		CT2D_LINE,
-		CT2D_TRIANGLE,
-		CT2D_QUAD,
-		CT2D_SHAPE,
-		CT2D_POLYGON,
-		CT2D_NULL
-	};
-
-	#define CT2D_IF(TYPE, RESULT) if (e->getCoreClass() == #TYPE) return CT2D_##RESULT;
-	CollisionType2D getCollisionType2D(Entity* e) {
+	void castAndCheck(Entity* a, Entity* b) {
 		using enum CollisionType2D;
-		CT2D_IF(AreaCircle2D,	CIRCLE		);
-		CT2D_IF(AreaBox2D,		BOX			);
-		CT2D_IF(AreaRay2D,		RAY			);
-		CT2D_IF(AreaLine2D,		LINE		);
-		CT2D_IF(AreaTriangle2D,	TRIANGLE	);
-		CT2D_IF(AreaQuad2D,		QUAD		);
-		CT2D_IF(AreaShape2D,	SHAPE		);
-		CT2D_IF(AreaPolygon2D,	POLYGON		);
-		return CT2D_NULL;
+		#define CT2D_CASE(RESULT, TYPE) case CT2D_##TYPE: {RESULT* target = (RESULT*)a; target->castAndCheck(b); break;}
+		switch (getCollisionType2D(a)) {
+			CT2D_CASE(AreaCircle2D,		CIRCLE		)
+			CT2D_CASE(AreaBox2D,		BOX			)
+			CT2D_CASE(AreaRay2D,		RAY			)
+			CT2D_CASE(AreaLine2D,		LINE		)
+			CT2D_CASE(AreaTriangle2D,	TRIANGLE	)
+			CT2D_CASE(AreaQuad2D,		QUAD		)
+			CT2D_CASE(AreaShape2D,		SHAPE		)
+			CT2D_CASE(AreaPolygon2D,	POLYGON		)
+			default: return;
+		}
+		#undef CT2D_CASE
 	}
-	#undef CT2D_IF
 };
 
 #endif // COLLISION_2D_3D_OBJECT_H
