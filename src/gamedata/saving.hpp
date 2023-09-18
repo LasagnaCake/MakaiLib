@@ -72,10 +72,10 @@ public:
 		return (*this);
 	}
 
-	SaveFile& close(String const& path) {return save(path).destroy();}
+	inline SaveFile& close(String const& path) {return save(path).destroy();}
 
 	SaveFile& destroy() {
-		data = JSONData();
+		data = JSON::object();
 		return (*this);
 	}
 
@@ -113,7 +113,7 @@ public:
 		return save(path);
 	}
 
-	bool exists() {return data.is_object();}
+	inline bool exists() {return data.is_object();}
 
 private:
 	JSONData& file() {
@@ -121,5 +121,5 @@ private:
 		return data;
 	}
 
-	JSONData	data	= JSONData();
+	JSONData	data	= JSON::object();
 };
