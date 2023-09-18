@@ -52,16 +52,16 @@ The ```src``` only needs to be set if your file is not at the top of the ```buil
 
 These are already included in the ```lib/``` folder.
 
-| Name       | Purpose             |
-|:----------:|---------------------|
-| SDL2       | Graphical rendering |
-| SDL2_Mixer | Audio backend       |
-| GLM        | (some) 3D Math      |
-| stb_image  | Image loading       |
-| cute_c2    | Collision           |
-| jsoncpp    | Multiple things     |
-| cppcodec   | Multiple things     |
-
+| Name       | Purpose                 |
+|:----------:|-------------------------|
+| OpenGL     | Window & Input handling |
+| OpenGL     | Window & Input handling |
+| SDL2_Mixer | Audio backend           |
+| GLM        | (some) 3D Math          |
+| stb_image  | Image loading           |
+| cute_c2    | Collision               |
+| jsoncpp    | Multiple things         |
+| cppcodec   | Multiple things         |
 ## Documentation
 
 Currently VERY scarce. Some of the code is commented.
@@ -71,9 +71,9 @@ Currently VERY scarce. Some of the code is commented.
 ### Current
 
 - [ ] Optimize GPU usage
-- [ ] Replace `.ini`-based savefile system with a different format
+- [x] Replace `.ini`-based savefile system with a different format
 - - Using JSON
-- [ ] GUI system
+- [x] GUI system
 - [x] Menu system
 - [ ] Dialogue system
 - [ ] Spellcard system
@@ -123,7 +123,6 @@ Currently VERY scarce. Some of the code is commented.
 #### Under consideration
 
 - C++20 modules?
-- Replace or refactor [entity](src/collection/entity) system
 - Rename stuff
 
 ### Very far future
