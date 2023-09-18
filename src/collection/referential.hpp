@@ -1,6 +1,7 @@
 #ifndef REFERENCE_HANDLER_H
 #define REFERENCE_HANDLER_H
 
+#include "helper.hpp"
 #include "conceptual.hpp"
 #include "errors.hpp"
 #include <map>
@@ -24,7 +25,7 @@ namespace SmartPointer {
 	}
 
 	template <Pointable T>
-	using Operation = function<void(T&)>;
+	using PointerOperation = Function<void(T&)>;
 
 	#define ASSERT_STRONG	static_assert(!weak,	"It is forbidden to implicitly convert a strong pointer to a weak pointer!")
 	#define ASSERT_WEAK		static_assert(weak,		"It is forbidden to implicitly convert a weak pointer to a strong pointer!")
@@ -83,7 +84,7 @@ namespace SmartPointer {
 			return (*this);
 		}
 
-		SameType& modify(Operation<T> op) {
+		SameType& modify(PointerOperation<T> op) {
 			if(exists())
 				op(*ref);
 			return *this;
@@ -105,7 +106,7 @@ namespace SmartPointer {
 			return exists();
 		}
 
-		inline SameType& operator()(Operation<T> op) {
+		inline SameType& operator()(PointerOperation<T> op) {
 			return modify(op);
 		}
 

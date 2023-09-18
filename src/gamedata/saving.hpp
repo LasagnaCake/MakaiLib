@@ -1,8 +1,8 @@
 class SaveDataView: public DataView<JSONData> {
 public:
-	SaveDataView(JSONData& source, String const& _name):	DataView(source), name(_name)		{}
-	SaveDataView(SaveDataView const& other):				DataView(other), name(other.name)	{}
-	SaveDataView(SaveDataView&& other):						DataView(other), name(other.name)	{}
+	SaveDataView(JSONData& _data, String const& _name):	DataView(_data), name(_name)		{}
+	SaveDataView(SaveDataView const& other):			DataView(other), name(other.name)	{}
+	SaveDataView(SaveDataView&& other):					DataView(other), name(other.name)	{}
 
 	template<typename T>
 	T get(T const& fallback) {
@@ -15,13 +15,13 @@ public:
 	}
 
 	SaveDataView operator[](String const& key) {
-		if (isNull()) view()[key] = JSONData();
+		if (isNull()) view() = JSON::object();
 		else if (!isObject()) throw Error::InvalidAction("Parameter '" + name + "' is not an object!");
 		return SaveDataView(view()[key], key);
 	}
 
 	SaveDataView operator[](size_t const& index) {
-		if (isNull()) view()[index] = JSONData();
+		if (isNull()) view() = JSON::array();
 		else if (!isArray()) throw Error::InvalidAction("Parameter '" + name + "' is not an array!");
 		return SaveDataView(view()[index], "index:"+toString(index));
 	}
@@ -95,7 +95,7 @@ public:
 	}
 
 	SaveDataView operator[](string const& key) {
-		if (data[key].is_null()) data[key] = JSONData();
+		if (data[key].is_null()) data[key] = JSON::object();
 		return SaveDataView(data[key], key);
 	}
 

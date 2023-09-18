@@ -136,6 +136,7 @@
 #include "collection/referential.hpp"
 #include "collection/algebra.hpp"
 #include "collection/definitions.hpp"
+#include "collection/dataview.hpp"
 #include "collection/helper.hpp"
 #include "collection/errors.hpp"
 #include "collection/entity/entity.hpp"

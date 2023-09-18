@@ -7,7 +7,7 @@
 namespace Shared {
 	using
 		SmartPointer::Pointable,
-		SmartPointer::Operation
+		SmartPointer::PointerOperation
 	;
 	using std::vector;
 
@@ -47,11 +47,11 @@ namespace Shared {
 		GroupValue<T>& unbind(T& obj)			{return unbind(&obj);}
 		GroupValue<T>& unbind()					{refs.clear(); return (*this);}
 
-		GroupValue<T>& modify(Operation<T> op)	{for (auto obj: refs) op(*obj);		}
-		GroupValue<T>& modify(void (*op)(T&))	{for (auto obj: refs) (*op)(*obj);	}
+		GroupValue<T>& modify(PointerOperation<T> op)	{for (auto obj: refs) op(*obj);		}
+		GroupValue<T>& modify(void (*op)(T&))			{for (auto obj: refs) (*op)(*obj);	}
 
-		inline GroupValue<T>& operator()(Operation<T> op)	{return modify(op);	}
-		inline GroupValue<T>& operator()(void (*op)(T&))	{return modify(op);	}
+		inline GroupValue<T>& operator()(PointerOperation<T> op)	{return modify(op);	}
+		inline GroupValue<T>& operator()(void (*op)(T&))			{return modify(op);	}
 
 		inline T& operator[](size_t index)	{return (*refs[index]);}
 
