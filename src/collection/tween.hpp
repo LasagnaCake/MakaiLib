@@ -28,7 +28,7 @@ namespace Tween{
 			_EaseFunc circ;
 			_EaseFunc bounce;
 			_EaseFunc back;
-			_EaseFunc& operator[](string type) {
+			_EaseFunc const& operator[](string const& type) const {
 				CASE_FUNC(linear);
 				CASE_FUNC(sine);
 				CASE_FUNC(quad);
@@ -65,8 +65,8 @@ namespace Tween{
 	#pragma GCC diagnostic ignored "-Wsequence-point"
 	#pragma GCC diagnostic ignored "-Wsubobject-linkage"
 
-	#define $easing					[](float step, float from, float to, float stop) -> float
-	#define $$EFUNC					[](float t, float b, float c, float d) -> float
+	#define $easing [](float step, float from, float to, float stop) -> float
+	#define $$EFUNC [](float t, float b, float c, float d) -> float
 	#define PI_VALUE Math::pi
 	#define EASE_F(TYPE) .TYPE = $$EFUNC
 	/// Easing function template
@@ -241,7 +241,7 @@ namespace Tween{
 			EASE_F(linear) {return c * t/d + b;},
 		};
 		/// List accessing
-		const EaseType& operator[](string type) {
+		EaseType const& operator[](string const& type) const {
 			CASE_FUNC(in);
 			CASE_FUNC(out);
 			CASE_FUNC(inOut);

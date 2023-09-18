@@ -57,6 +57,9 @@ namespace Helper {
 	template<typename T>
 	using Function = function<T>;
 
+	template<typename T>
+	using Operation = Function<T(T const&)>;
+
 	typedef List<String>		StringList;
 	typedef Arguments<String>	StringArguments;
 
@@ -168,6 +171,7 @@ using Helper::FuzzyDictionary;
 using Helper::Pair;
 using Helper::Entry;
 using Helper::Function;
+using Helper::Operation;
 
 WideString toWideString(String const& str){
 	using convert_typeX = std::codecvt_utf8_utf16<wchar_t>;

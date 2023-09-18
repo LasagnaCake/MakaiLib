@@ -1,21 +1,20 @@
 #ifndef SHARED_VALUE_HANDLER_H
 #define SHARED_VALUE_HANDLER_H
 
+#include "helper.hpp"
 #include "referential.hpp"
 #include <vector>
 
 namespace Shared {
 	using
-		SmartPointer::Pointable,
-		SmartPointer::PointerOperation
+		SmartPointer::Pointable
 	;
-	using std::vector;
 
 	template<typename T>
 	concept Shareable = Pointable<T> && !Type::Array<T>;
 
 	template<Shareable T>
-	using RefList = vector<T*>;
+	using RefList = List<T*>;
 
 	template <Shareable T>
 	class GroupValue {
@@ -44,14 +43,14 @@ namespace Shared {
 				refs.remove(i + refs.begin());
 			return (*this);
 		}
-		GroupValue<T>& unbind(T& obj)			{return unbind(&obj);}
-		GroupValue<T>& unbind()					{refs.clear(); return (*this);}
+		GroupValue<T>& unbind(T& obj)			{return unbind(&obj);			}
+		GroupValue<T>& unbind()					{refs.clear(); return (*this);	}
 
-		GroupValue<T>& modify(PointerOperation<T> op)	{for (auto obj: refs) op(*obj);		}
-		GroupValue<T>& modify(void (*op)(T&))			{for (auto obj: refs) (*op)(*obj);	}
+		GroupValue<T>& modify(Operation<T> op)		{for (auto obj: refs) (*obj) = op(*obj); return (*this);	}
+		GroupValue<T>& modify(T (*op)(T const&))	{for (auto obj: refs) (*obj) = (*op)(*obj); return (*this);	}
 
-		inline GroupValue<T>& operator()(PointerOperation<T> op)	{return modify(op);	}
-		inline GroupValue<T>& operator()(void (*op)(T&))			{return modify(op);	}
+		inline GroupValue<T>& operator()(Operation<T> op)	{return modify(op);	}
+		inline GroupValue<T>& operator()(T (*op)(T const&))	{return modify(op);	}
 
 		inline T& operator[](size_t index)	{return (*refs[index]);}
 

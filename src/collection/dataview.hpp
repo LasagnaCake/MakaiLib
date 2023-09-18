@@ -2,9 +2,6 @@
 
 namespace View {
 	template<typename T>
-	using ViewOperation = Function<T(T const&)>;
-
-	template<typename T>
 	class Reference {
 	public:
 		Reference(T& _data):					data(&_data)		{}
@@ -30,8 +27,8 @@ namespace View {
 		DataView(DataView<T> const& other):	data(other.data)	{}
 		DataView(DataView<T>&& other):		data(other.data)	{}
 
-		inline DataView& modify(ViewOperation<T> op)		{data = op(data); return (*this);}
-		inline DataView& operator()(ViewOperation<T> op)	{return modify(op);}
+		inline DataView& modify(Operation<T> op)		{data = op(data); return (*this);	}
+		inline DataView& operator()(Operation<T> op)	{return modify(op);					}
 
 		inline DataView& operator=(T const& val) {data = val; return (*this);}
 

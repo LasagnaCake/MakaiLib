@@ -4,6 +4,7 @@
 #include "helper.hpp"
 #include "conceptual.hpp"
 #include "errors.hpp"
+#include "types.hpp"
 #include <map>
 #include <stdexcept>
 #include <functional>
@@ -18,14 +19,11 @@ namespace SmartPointer {
 		;
 
 		struct _pData{
-			bool exists		= false;
-			size_t count	= 0;
+			bool exists	= false;
+			int64 count	= 0;
 		};
 		map<void*, _pData> _pointerDB;
 	}
-
-	template <Pointable T>
-	using PointerOperation = Function<void(T&)>;
 
 	#define ASSERT_STRONG	static_assert(!weak,	"It is forbidden to implicitly convert a strong pointer to a weak pointer!")
 	#define ASSERT_WEAK		static_assert(weak,		"It is forbidden to implicitly convert a weak pointer to a strong pointer!")
@@ -84,43 +82,30 @@ namespace SmartPointer {
 			return (*this);
 		}
 
-		SameType& modify(PointerOperation<T> op) {
+		SameType& modify(Operation<T> op) {
 			if(exists())
-				op(*ref);
+				(*ref) = op(*ref);
 			return *this;
 		}
 
-		SameType& modify(void (*op)(T&)) {
+		SameType& modify(T (*op)(T const&)) {
 			if(exists())
-				(*op)(*ref);
+				(*ref) = (*op)(*ref);
 			return *this;
 		}
 
 		bool exists() {
 			if (ref == nullptr) return false;
-			IF_STRONG	return (_pointerDB[(void*)ref].count != 0);
+			IF_STRONG	return (_pointerDB[(void*)ref].count > 0);
 			else		return (_pointerDB[(void*)ref].exists);
 		}
 
-		inline bool operator()() {
-			return exists();
-		}
+		inline bool operator()()	{return exists();}
 
-		inline SameType& operator()(PointerOperation<T> op) {
-			return modify(op);
-		}
+		inline SameType& operator()(Operation<T> op)		{return modify(op);}
+		inline SameType& operator()(void (*op)(T const&))	{return modify(op);}
 
-		inline SameType& operator()(void (*op)(T&)) {
-			return modify(op);
-		}
-		/*
-		inline SameType& operator()(T* obj)						{	return operator=(obj);		}
-		inline SameType& operator()(T& obj)						{	return operator=(obj);		}
-		inline SameType& operator()(const SameType& other)		{	return operator=(other);	}
-		*/
-		inline T& operator[](size_t index) {
-			return getPointer()[index];
-		}
+		inline T& operator[](size_t index)	{return getPointer()[index];}
 
 		template<Pointable NEW_T>
 		inline Pointer<NEW_T, weak>	castedTo()	{return	(NEW_T*)getPointer();	}

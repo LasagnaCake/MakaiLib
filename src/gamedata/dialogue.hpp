@@ -18,7 +18,7 @@ namespace Dialog {
 		$evt Signal	action = $evt DEF_SIGNAL;
 	};
 
-	typedef std::vector<ActorData>	ActorDataList;
+	typedef List<ActorData>	ActorDataList;
 
 	struct Message {
 		ActorDataList	actors;
@@ -29,8 +29,8 @@ namespace Dialog {
 		bool			autoplay	= false;
 	};
 
-	typedef std::vector<Message>				MessageList;
-	typedef std::unordered_map<String, Actor>	ActorList;
+	typedef List<Message>				MessageList;
+	typedef FuzzyHashMap<String, Actor>	ActorList;
 
 	struct Dialog: public Entity {
 		DERIVED_CLASS(Dialog, Entity)
@@ -136,6 +136,38 @@ namespace Dialog {
 			showText(msg.title, msg.text);
 		}
 
+		void loadFromDefinition(JSONData def) {
+			MessageList messages;
+			for(JSONData msg: def["messages"].get<List<JSONData>>()) {
+				Message message;
+				// Message packet actor data
+				for(JSONData a: msg["actors"].get<List<JSONData>>()) {
+					ActorData actor;
+					actor.name	= a["name"].get<String>();
+					actor.frame	= Vector2(
+						a["frame"][0].get<float>(),
+						a["frame"][1].get<float>()
+					);
+					actor.tint	= Vector4(
+						a["tint"][0].get<float>(),
+						a["tint"][1].get<float>(),
+						a["tint"][2].get<float>(),
+						a["tint"][3].get<float>()
+					);
+					actor.leaving = a["leaving"].get<bool>();
+					message.actors.push_back(actor);
+				}
+				// Main message packet data
+				StringList ease		= Helper::splitString(msg["easing"].get<String>(), '.');
+				message.title		= msg["title"].get<String>();
+				message.text		= msg["text"].get<String>();
+				message.easing		= Tween::ease[ease[0]][ease[1]];
+				message.duration	= msg["duration"].get<size_t>();
+				message.autoplay	= msg["autoplay"].get<bool>();
+			}
+			this->messages = messages;
+		}
+
 		size_t time = 100;
 	private:
 		void showText(String title, String text) {
@@ -143,7 +175,7 @@ namespace Dialog {
 			box.message.text.content	= text;
 		}
 		Event::Timer autotimer;
-		std::unordered_map<String, Tween::Tween<Vector3>> animator;
+		FuzzyHashMap<String, Tween::Tween<Vector3>> animator;
 		size_t current	= 0;
 		bool autoplay	= false;
 		bool isFinished	= false;
