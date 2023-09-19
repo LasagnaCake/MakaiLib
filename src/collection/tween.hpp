@@ -40,6 +40,7 @@ namespace Tween{
 				CASE_FUNC(circ);
 				CASE_FUNC(bounce);
 				CASE_FUNC(back);
+				return linear;
 			}
 		};
 	}
@@ -246,6 +247,7 @@ namespace Tween{
 			CASE_FUNC(out);
 			CASE_FUNC(inOut);
 			CASE_FUNC(outIn);
+			return out;
 		}
 	};
 
@@ -509,7 +511,7 @@ namespace Tween{
 		float factor = 1.0f;
 
 		/// Whether the tween is finished.
-		bool isFinished;
+		bool isFinished = true;
 
 		/// The current tween step.
 		unsigned long step;

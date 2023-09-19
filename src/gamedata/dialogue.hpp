@@ -32,10 +32,10 @@ namespace Dialog {
 	typedef List<Message>				MessageList;
 	typedef FuzzyHashMap<String, Actor>	ActorList;
 
-	struct Dialog: public Entity {
-		DERIVED_CLASS(Dialog, Entity)
+	struct DialogPlayer: public Entity {
+		DERIVED_CLASS(DialogPlayer, Entity)
 
-		DERIVED_CONSTRUCTOR(Dialog, Entity, {
+		DERIVED_CONSTRUCTOR(DialogPlayer, Entity, {
 			addToGame(this, "Dialog");
 			autotimer.onSignal = $signal {
 				nextMessage();
@@ -61,7 +61,9 @@ namespace Dialog {
 			animator.clear();
 			for (auto& [aName, actor]: actors) {
 				if (!actor.sprite) continue;
-				actor.sprite->local.position = actor.position.out;
+				animator[aName].from			=
+				animator[aName].to				=
+				actor.sprite->local.position	= actor.position.out;
 				animator[aName].value = &actor.sprite->local.position;
 				animator[aName].setManual();
 			}
@@ -137,35 +139,50 @@ namespace Dialog {
 		}
 
 		void loadFromDefinition(JSONData def) {
-			MessageList messages;
-			for(JSONData msg: def["messages"].get<List<JSONData>>()) {
-				Message message;
-				// Message packet actor data
-				for(JSONData a: msg["actors"].get<List<JSONData>>()) {
-					ActorData actor;
-					actor.name	= a["name"].get<String>();
-					actor.frame	= Vector2(
-						a["frame"][0].get<float>(),
-						a["frame"][1].get<float>()
-					);
-					actor.tint	= Vector4(
-						a["tint"][0].get<float>(),
-						a["tint"][1].get<float>(),
-						a["tint"][2].get<float>(),
-						a["tint"][3].get<float>()
-					);
-					actor.leaving = a["leaving"].get<bool>();
-					message.actors.push_back(actor);
+			try {
+				MessageList messages;
+				for(JSONData msg: def["messages"].get<List<JSONData>>()) {
+					Message message;
+					// Message packet actor data
+					for(JSONData a: msg["actors"].get<List<JSONData>>()) {
+						ActorData actor;
+						actor.name	= a["name"].get<String>();
+						actor.frame	= Vector2(
+							a["frame"][0].get<float>(),
+							a["frame"][1].get<float>()
+						);
+						actor.tint	= Vector4(
+							a["tint"][0].get<float>(),
+							a["tint"][1].get<float>(),
+							a["tint"][2].get<float>(),
+							a["tint"][3].get<float>()
+						);
+						actor.leaving = a["leaving"].get<bool>();
+						message.actors.push_back(actor);
+					}
+					// Main message packet data
+					StringList ease		= Helper::splitString(msg["easing"].get<String>(), '.');
+					message.title		= msg["title"].get<String>();
+					message.text		= msg["text"].get<String>();
+					message.easing		= Tween::ease[ease[0]][ease[1]];
+					message.duration	= msg["duration"].get<size_t>();
+					message.autoplay	= msg["autoplay"].get<bool>();
 				}
-				// Main message packet data
-				StringList ease		= Helper::splitString(msg["easing"].get<String>(), '.');
-				message.title		= msg["title"].get<String>();
-				message.text		= msg["text"].get<String>();
-				message.easing		= Tween::ease[ease[0]][ease[1]];
-				message.duration	= msg["duration"].get<size_t>();
-				message.autoplay	= msg["autoplay"].get<bool>();
+				this->messages = messages;
+			} catch (JSON::exception e) {
+				throw Error::FailedAction(
+					"Failed at parsing dialog definition!",
+					__FILE__,
+					toString(__LINE__),
+					"extendFromDefinition",
+					e.what(),
+					"Please check to see if values are correct!"
+				);
 			}
-			this->messages = messages;
+		}
+
+		void loadFromDefinitionFile(String const& path) {
+			loadFromDefinition(FileLoader::loadJSON(path));
 		}
 
 		size_t time = 100;

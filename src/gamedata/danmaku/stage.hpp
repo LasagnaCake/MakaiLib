@@ -13,6 +13,9 @@ struct Stage: Entity {
 
 	virtual void onPracticeEnd()	= 0;
 	virtual void onStageEnd()		= 0;
+	virtual void onRepeat()			= 0;
+
+	void repeat() {onRepeat();}
 
 	void endStage() {
 		if (practiceMode)	onPracticeEnd();
