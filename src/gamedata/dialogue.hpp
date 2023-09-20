@@ -47,8 +47,8 @@ namespace Dialog {
 			box.title.setRenderLayer(DIALOG_LAYER);
 			box.message.setRenderLayer(DIALOG_LAYER);
 			autotimer.setManual();
-			keys["next"]	= SDL_SCANCODE_X;
-			keys["skip"]	= SDL_SCANCODE_Z;
+			keys["next"]	= SDL_SCANCODE_Z;
+			keys["skip"]	= SDL_SCANCODE_X;
 			input.update();
 		})
 
