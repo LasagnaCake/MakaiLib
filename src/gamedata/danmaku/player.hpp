@@ -162,6 +162,7 @@ struct PlayerEntity2D: AreaCircle2D {
 	BoxBounds2D board;
 
 	bool isFocused	= false;
+	bool inDialog	= false;
 
 	bool canBomb		= true;
 	bool canShoot		= true;
@@ -364,10 +365,10 @@ struct PlayerEntity2D: AreaCircle2D {
 				((AreaCircle2D*)enemy)->onCollision(this);
 		}
 		// Do shot actions
-		optionShot.paused =
-		mainShot.paused = !(action("shot") && canShoot);
+		optionShot.paused	=
+		mainShot.paused		= (inDialog) || !(canShoot && action("shot"));
 		// If can bomb and bombing...
-		if(action("bomb", true) && canBomb) {
+		if((!inDialog) && canBomb && action("bomb", true)) {
 			// Do normal bomb or deathbomb, acoordingly
 			if (deathbomb.paused) {
 				$debug("Normal bomb!");

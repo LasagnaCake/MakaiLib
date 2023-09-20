@@ -43,22 +43,25 @@ namespace Dialog {
 			isFinished = true;
 			autotimer.repeat = true;
 			autotimer.stop();
-			box.shape.setRenderLayer(DIALOG_LAYER - 1);
+			box.shape.setRenderLayer(DIALOG_BOTTOM_LAYER);
 			box.title.setRenderLayer(DIALOG_LAYER);
 			box.message.setRenderLayer(DIALOG_LAYER);
 			autotimer.setManual();
+			keys["next"]	= SDL_SCANCODE_X;
+			keys["skip"]	= SDL_SCANCODE_Z;
 		})
 
 		MessageList	messages;
 		ActorList	actors;
 
 		void setCurrentMessage(size_t index) {
-			current = --index;
+			current = index;
 			nextMessage();
 		}
 
 		void begin() {
 			animator.clear();
+			input.update();
 			for (auto& [aName, actor]: actors) {
 				if (!actor.sprite) continue;
 				animator[aName].from			=
@@ -71,17 +74,20 @@ namespace Dialog {
 		}
 
 		void end() {
+			input.update();
 			for (auto& [aName, actor]: actors) {
 				if (!actor.sprite) continue;
 				auto& anim = animator[aName];
 				anim.reinterpolateTo(actor.position.rest);
 			}
+			onDialogEnd();
 			autotimer.stop();
 			isFinished = true;
 		}
 
 		void onFrame(float delta) override {
 			autotimer.yield();
+			input.update();
 			for (auto& [aName, aTween]: animator) {
 				aTween.yield();
 			}
@@ -89,7 +95,8 @@ namespace Dialog {
 			if (!autoplay) {
 				if (
 					input.isButtonJustPressed(keys["next"])
-					|| input.isButtonHeld(keys["next"])
+				||	input.isButtonHeld(keys["next"])
+				||	input.isButtonDown(keys["skip"])
 				) nextMessage();
 			}
 		}
@@ -110,13 +117,17 @@ namespace Dialog {
 		void nextMessage() {
 			autotimer.reset();
 			input.update();
-			if (isFinished) return;
-			if (++current > (messages.size()-1)) {
+			$debug("Here: 00");
+			if (isFinished || messages.empty()) return;
+			if (current > (messages.size()-1)) {
 				end();
 				return;
 			}
+			$debug("Here: 01");
 			Message& msg = messages[current];
+			$debug("Here: 02");
 			for (auto& [actor, _]: actors) {
+				$debug("Here: 03 - "+actor);
 				auto& anim = animator[actor];
 				auto& a = actors[actor];
 				if (!a.sprite) continue;
@@ -124,23 +135,33 @@ namespace Dialog {
 				anim.reinterpolateTo(a.position.rest, time);
 				a.sprite->setColor(Color::GRAY);
 			}
-			for (auto& actor: msg.actors) {
+			$debug("Here: 04");
+			$debug(msg.actors.size());
+			for (ActorData& actor: msg.actors) {
+				$debug("Here: 05a - "+actor.name);
 				if (!actors.contains(actor.name)) continue;
+				$debug("Here: 05b - "+actor.name);
 				auto& anim = animator[actor.name];
 				auto& a = actors[actor.name];
 				actor.action();
+				$debug("Here: 05c - "+actor.name);
 				if (!a.sprite) continue;
+				$debug("Here: 05d - "+actor.name);
 				a.sprite->frame = actor.frame;
 				anim.reinterpolateTo(actor.leaving ? a.position.out : a.position.talking, time);
 				a.sprite->setColor(actor.tint);
 			}
+			$debug("Here: 06");
+			current++;
 			autoplay = msg.autoplay;
 			autotimer.delay = msg.duration;
+			onMessage(current);
 			showText(msg.title, msg.text);
 		}
 
 		void loadFromDefinition(JSONData def) {
 			try {
+				time = def["transitionTime"].get<size_t>();
 				MessageList messages;
 				for(JSONData msg: def["messages"].get<List<JSONData>>()) {
 					Message message;
@@ -168,6 +189,7 @@ namespace Dialog {
 					message.easing		= Tween::ease[ease[0]][ease[1]];
 					message.duration	= msg["duration"].get<size_t>();
 					message.autoplay	= msg["autoplay"].get<bool>();
+					messages.push_back(message);
 				}
 				this->messages = messages;
 			} catch (JSON::exception e) {
