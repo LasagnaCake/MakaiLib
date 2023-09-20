@@ -49,6 +49,7 @@ namespace Dialog {
 			autotimer.setManual();
 			keys["next"]	= SDL_SCANCODE_X;
 			keys["skip"]	= SDL_SCANCODE_Z;
+			input.update();
 		})
 
 		MessageList	messages;
@@ -60,8 +61,8 @@ namespace Dialog {
 		}
 
 		void begin() {
-			animator.clear();
 			input.update();
+			animator.clear();
 			for (auto& [aName, actor]: actors) {
 				if (!actor.sprite) continue;
 				animator[aName].from			=
@@ -86,8 +87,8 @@ namespace Dialog {
 		}
 
 		void onFrame(float delta) override {
-			autotimer.yield();
 			input.update();
+			autotimer.yield();
 			for (auto& [aName, aTween]: animator) {
 				aTween.yield();
 			}
@@ -115,8 +116,8 @@ namespace Dialog {
 		} box;
 
 		void nextMessage() {
-			autotimer.reset();
 			input.update();
+			autotimer.reset();
 			$debug("Here: 00");
 			if (isFinished || messages.empty()) return;
 			if (current > (messages.size()-1)) {
