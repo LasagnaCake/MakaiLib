@@ -66,12 +66,12 @@ namespace GameData {
 		namespace Material {using namespace RenderData::Material;}
 	}
 
-	typedef std::unordered_map<string, SDL_Scancode> KeyBinds;
+	typedef std::unordered_map<String, SDL_Scancode> KeyBinds;
 
 	template <typename T>
 	using TypedSignal = $tev Signal<T>;
 
-	void addToGame(Entity* e, std::string gameType) {
+	void addToGame(Entity* const& e, String const& gameType) {
 		if (!EntityClass::_ROOT)
 			throw Error::NonexistentValue(
 				"Root wasn't created!",
@@ -92,11 +92,15 @@ namespace GameData {
 		game->addChild(e);
 	}
 
+	Entity* getGame(String const& gameType) {
+		return EntityClass::_ROOT->getChild("Game/"+gameType);
+	}
+
 	void setWorldMaterial(WorldMaterial& mat) {
 		setMaterial($mainshader, mat);
 	}
 
-	template <typename T> using Callback = std::function<void(T&)>;
+	template <typename T> using Callback = Function<void(T&)>;
 
 	#include "gamedata/program.hpp"
 	#include "gamedata/dialogue.hpp"

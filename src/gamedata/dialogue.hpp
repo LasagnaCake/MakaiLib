@@ -43,9 +43,9 @@ namespace Dialog {
 			isFinished = true;
 			autotimer.repeat = true;
 			autotimer.stop();
-			box.shape.setRenderLayer($layer(DIALOG) - 1);
-			box.title.setRenderLayer($layer(DIALOG));
-			box.message.setRenderLayer($layer(DIALOG));
+			box.shape.setRenderLayer(DIALOG_LAYER - 1);
+			box.title.setRenderLayer(DIALOG_LAYER);
+			box.message.setRenderLayer(DIALOG_LAYER);
 			autotimer.setManual();
 		})
 
@@ -64,7 +64,7 @@ namespace Dialog {
 				animator[aName].from			=
 				animator[aName].to				=
 				actor.sprite->local.position	= actor.position.out;
-				animator[aName].value = &actor.sprite->local.position;
+				if (actor.sprite) animator[aName].value = &(actor.sprite->local.position);
 				animator[aName].setManual();
 			}
 			isFinished = false;
@@ -125,6 +125,7 @@ namespace Dialog {
 				a.sprite->setColor(Color::GRAY);
 			}
 			for (auto& actor: msg.actors) {
+				if (!actors.contains(actor.name)) continue;
 				auto& anim = animator[actor.name];
 				auto& a = actors[actor.name];
 				actor.action();
