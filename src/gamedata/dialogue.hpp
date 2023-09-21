@@ -43,10 +43,12 @@ namespace Dialog {
 			isFinished = true;
 			autotimer.repeat = true;
 			autotimer.stop();
+			endtimer.stop();
 			box.shape.setRenderLayer(DIALOG_BOTTOM_LAYER);
 			box.title.setRenderLayer(DIALOG_LAYER);
 			box.message.setRenderLayer(DIALOG_LAYER);
 			autotimer.setManual();
+			endtimer.setManual();
 			keys["next"]	= SDL_SCANCODE_Z;
 			keys["skip"]	= SDL_SCANCODE_X;
 			input.update();
@@ -63,6 +65,9 @@ namespace Dialog {
 		void begin() {
 			input.update();
 			animator.clear();
+			box.shape.active	=
+			box.title.active	=
+			box.message.active	= true;
 			for (auto& [aName, actor]: actors) {
 				if (!actor.sprite) continue;
 				animator[aName].from			=
@@ -71,28 +76,26 @@ namespace Dialog {
 				if (actor.sprite) animator[aName].value = &(actor.sprite->local.position);
 				animator[aName].setManual();
 			}
-			isFinished = false;
+			isFinished	= false;
+			current		= 0;
 		}
 
 		void end() {
 			input.update();
-			for (auto& [aName, actor]: actors) {
-				if (!actor.sprite) continue;
-				auto& anim = animator[aName];
-				anim.reinterpolateTo(actor.position.rest);
-			}
 			onDialogEnd();
 			autotimer.stop();
+			endtimer.stop();
 			isFinished = true;
 		}
 
 		void onFrame(float delta) override {
+			endtimer.yield();
 			input.update();
 			autotimer.yield();
 			for (auto& [aName, aTween]: animator) {
 				aTween.yield();
 			}
-			if (isFinished) return;
+			if (isFinished || !endtimer.finished()) return;
 			if (!autoplay) {
 				if (
 					input.isButtonJustPressed(keys["next"])
@@ -118,46 +121,46 @@ namespace Dialog {
 		void nextMessage() {
 			input.update();
 			autotimer.reset();
-			$debug("Here: 00");
-			if (isFinished || messages.empty()) return;
+			if (isFinished || messages.empty() || !endtimer.finished()) return;
 			if (current > (messages.size()-1)) {
 				end();
 				return;
 			}
-			$debug("Here: 01");
 			Message& msg = messages[current];
-			$debug("Here: 02");
-			for (auto& [actor, _]: actors) {
-				$debug("Here: 03 - "+actor);
-				auto& anim = animator[actor];
-				auto& a = actors[actor];
-				if (!a.sprite) continue;
-				anim.tweenStep = msg.easing;
-				anim.reinterpolateTo(a.position.rest, time);
-				a.sprite->setColor(Color::GRAY);
+			size_t tsize = msg.title.size();
+			if (
+				msg.title[0] != '@'
+			&&	msg.title[tsize-1] != ':' && msg.title[1] != ':'
+			) {
+				for (ActorData& actor: last.actors) {
+					auto& anim = animator[actor.name];
+					auto& a = actors[actor.name];
+					if (!a.sprite) continue;
+					anim.tweenStep = msg.easing;
+					anim.reinterpolateTo(a.position.rest, time);
+					a.sprite->setColor(Color::GRAY);
+				}
+				for (ActorData& actor: msg.actors) {
+					if (!actors.contains(actor.name)) continue;
+					auto& anim = animator[actor.name];
+					auto& a = actors[actor.name];
+					actor.action();
+					if (!a.sprite) continue;
+					a.sprite->frame = actor.frame;
+					anim.reinterpolateTo(actor.leaving ? a.position.out : a.position.talking, time);
+					a.sprite->setColor(actor.tint);
+				}
+				onMessage(current);
+				showText(msg.title, msg.text);
+			} else {
+				last = msg;
+				if (msg.title == "@:exit:")	exitDialog();
+				if (msg.title == "@:end:")	finish();
 			}
-			$debug("Here: 04");
-			$debug(msg.actors.size());
-			for (ActorData& actor: msg.actors) {
-				$debug("Here: 05a - "+actor.name);
-				if (!actors.contains(actor.name)) continue;
-				$debug("Here: 05b - "+actor.name);
-				auto& anim = animator[actor.name];
-				auto& a = actors[actor.name];
-				actor.action();
-				$debug("Here: 05c - "+actor.name);
-				if (!a.sprite) continue;
-				$debug("Here: 05d - "+actor.name);
-				a.sprite->frame = actor.frame;
-				anim.reinterpolateTo(actor.leaving ? a.position.out : a.position.talking, time);
-				a.sprite->setColor(actor.tint);
-			}
-			$debug("Here: 06");
 			current++;
 			autoplay = msg.autoplay;
 			autotimer.delay = msg.duration;
-			onMessage(current);
-			showText(msg.title, msg.text);
+			last = msg;
 		}
 
 		void loadFromDefinition(JSONData def) {
@@ -167,7 +170,8 @@ namespace Dialog {
 				for(JSONData msg: def["messages"].get<List<JSONData>>()) {
 					Message message;
 					// Message packet actor data
-					for(JSONData a: msg["actors"].get<List<JSONData>>()) {
+					List<JSONData> adat = msg["actors"].get<List<JSONData>>();
+					if (!adat.empty()) for(JSONData a: adat) {
 						ActorData actor;
 						actor.name	= a["name"].get<String>();
 						actor.frame	= Vector2(
@@ -205,18 +209,50 @@ namespace Dialog {
 			}
 		}
 
+		void finish() {
+			$debug("[ Finishing dialog... ]");
+			if (isFinished || !endtimer.finished()) return;
+			exitDialog();
+			endtimer.repeat		= false;
+			endtimer.delay		= time;
+			endtimer.onSignal	= [this](){this->end();};
+			endtimer.start();
+			autotimer.stop();
+			isFinished = true;
+		}
+
 		void loadFromDefinitionFile(String const& path) {
 			loadFromDefinition(FileLoader::loadJSON(path));
 		}
 
-		size_t time = 100;
+		size_t time = 60;
 	private:
+		Message last;
+
+		Event::Timer endtimer;
+
 		void showText(String title, String text) {
 			box.title.text.content		= title;
 			box.message.text.content	= text;
 		}
+
+		void exitDialog() {
+			for (auto& [actor, _]: actors) {
+				auto& anim = animator[actor];
+				auto& a = actors[actor];
+				if (!a.sprite) continue;
+				anim.tweenStep = last.easing;
+				anim.reinterpolateTo(a.position.out, time);
+				a.sprite->setColor(Color::GRAY);
+			}
+			box.shape.active	=
+			box.title.active	=
+			box.message.active	= false;
+		}
+
 		Event::Timer autotimer;
 		FuzzyHashMap<String, Tween::Tween<Vector3>> animator;
+
 		size_t current	= 0;
 		bool autoplay	= false;
 		bool isFinished	= false;
