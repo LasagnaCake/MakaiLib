@@ -52,7 +52,7 @@ namespace Dialog {
 			keys["next"]	= SDL_SCANCODE_Z;
 			keys["skip"]	= SDL_SCANCODE_X;
 			input.update();
-			input.threshold = 60;
+			input.threshold = 120;
 		})
 
 		MessageList	messages;
@@ -100,7 +100,6 @@ namespace Dialog {
 			if (!autoplay) {
 				if (
 					input.isButtonJustPressed(keys["next"])
-				||	input.isButtonHeld(keys["next"])
 				||	input.isButtonDown(keys["skip"])
 				) nextMessage();
 			}
