@@ -52,6 +52,7 @@ namespace Dialog {
 			keys["next"]	= SDL_SCANCODE_Z;
 			keys["skip"]	= SDL_SCANCODE_X;
 			input.update();
+			input.threshold = 60;
 		})
 
 		MessageList	messages;
