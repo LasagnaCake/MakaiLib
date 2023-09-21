@@ -270,6 +270,7 @@ This can be saved as a `JSON` file of extension `.mdd` (Makai Dialogue Definitio
 ```javascript
 "dialogue": {
 	// Required
+	"transitionTime": 100,
 	"messages": [
 		{
 			// Required
