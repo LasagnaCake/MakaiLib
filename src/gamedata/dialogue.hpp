@@ -183,47 +183,41 @@ namespace Dialog {
 					global.autoplay	= def["autoplay"].get<bool>();
 				for(JSONData msg: def["messages"].get<List<JSONData>>()) {
 					Message message = global;
+					// Message packet actor data
+					List<JSONData> adat = msg["actors"].get<List<JSONData>>();
+					if (!adat.empty()) for(JSONData a: adat) {
+						ActorData actor;
+						actor.name	= a["name"].get<String>();
+						actor.frame	= Vector2(
+							a["frame"][0].get<float>(),
+							a["frame"][1].get<float>()
+						);
+						if (a["tint"].is_array())
+							actor.tint	= Vector4(
+								a["tint"][0].get<float>(),
+								a["tint"][1].get<float>(),
+								a["tint"][2].get<float>(),
+								a["tint"][3].get<float>()
+							);
+						if (a["leaving"].is_boolean())
+							actor.leaving = a["leaving"].get<bool>();
+						message.actors.push_back(actor);
+					}
+					// Main message packet data
 					// Check for metatag
 					message.title		= msg["title"].get<String>();
-					if (!isMetaTag(message.title)) {
-						// Message packet actor data
-						List<JSONData> adat = msg["actors"].get<List<JSONData>>();
-						if (!adat.empty()) for(JSONData a: adat) {
-							ActorData actor;
-							actor.name	= a["name"].get<String>();
-							actor.frame	= Vector2(
-								a["frame"][0].get<float>(),
-								a["frame"][1].get<float>()
-							);
-							if (a["tint"].is_array())
-								actor.tint	= Vector4(
-									a["tint"][0].get<float>(),
-									a["tint"][1].get<float>(),
-									a["tint"][2].get<float>(),
-									a["tint"][3].get<float>()
-								);
-							if (a["leaving"].is_boolean())
-								actor.leaving = a["leaving"].get<bool>();
-							message.actors.push_back(actor);
-						}
-						// Main message packet data
-						message.text		= msg["text"].get<String>();
-						if (msg["easing"].is_string()) {
-							StringList ease		= Helper::splitString(msg["easing"].get<String>(), '.');
-							message.easing		= Tween::ease[ease[0]][ease[1]];
-						}
-						if (msg["duration"].is_number_integer())
-							message.duration	= msg["duration"].get<size_t>();
-						if (msg["autoplay"].is_boolean())
-							message.autoplay	= msg["autoplay"].get<bool>();
-					} else {
-						if(msg["value"].is_string())
-							message.text = msg["value"].get<String>();
-						if (msg["duration"].is_number_integer())
-							message.duration = msg["duration"].get<size_t>();
-						else
-							message.duration = time;
+					if (!isMetaTag(message.title))
+						message.text	= msg["text"].get<String>();
+					else if (msg["text"].is_string())
+						message.text	= msg["text"].get<String>();
+					if (msg["easing"].is_string()) {
+						StringList ease		= Helper::splitString(msg["easing"].get<String>(), '.');
+						message.easing		= Tween::ease[ease[0]][ease[1]];
 					}
+					if (msg["duration"].is_number_integer())
+						message.duration	= msg["duration"].get<size_t>();
+					if (msg["autoplay"].is_boolean())
+						message.autoplay	= msg["autoplay"].get<bool>();
 					messages.push_back(message);
 				}
 				this->messages = messages;
