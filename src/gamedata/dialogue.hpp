@@ -24,7 +24,7 @@ namespace Dialog {
 		ActorDataList	actors;
 		String			title;
 		String			text;
-		$twn EaseFunc	easing		= $twn ease.out.cubic;
+		$twn EaseFunc	easing		= Tween::ease.out.cubic;
 		size_t			duration	= 600;
 		bool			autoplay	= false;
 	};
