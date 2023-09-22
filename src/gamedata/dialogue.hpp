@@ -107,6 +107,7 @@ namespace Dialog {
 
 		TypedSignal<size_t>	onMessage	= $tsignal(size_t index) {};
 		Signal				onDialogEnd	= $signal {queueDestroy();};
+		TypedSignal<String>	onMetaTag	= $tsignal(String tag) {};
 
 		KeyBinds keys;
 
@@ -160,9 +161,10 @@ namespace Dialog {
 				last.text		= msg.text;
 				last.title		= msg.title;
 				last.actors		= msg.actors;
+				onMetaTag(msg.title);
 				if (msg.title == "@:exit:")		exitDialog();
 				if (msg.title == "@:reenter:")	reEnterDialog();
-				if (msg.title == "@:end:")		finish();
+				if (msg.title == "@:end:")		{time = msg.duration; finish();}
 			}
 			current++;
 			last = msg;
@@ -183,29 +185,31 @@ namespace Dialog {
 					global.autoplay	= def["autoplay"].get<bool>();
 				for(JSONData msg: def["messages"].get<List<JSONData>>()) {
 					Message message = global;
+					// Check for metatag
+					message.title = msg["title"].get<String>();
 					// Message packet actor data
-					List<JSONData> adat = msg["actors"].get<List<JSONData>>();
-					if (!adat.empty()) for(JSONData a: adat) {
-						ActorData actor;
-						actor.name	= a["name"].get<String>();
-						actor.frame	= Vector2(
-							a["frame"][0].get<float>(),
-							a["frame"][1].get<float>()
-						);
-						if (a["tint"].is_array())
-							actor.tint	= Vector4(
-								a["tint"][0].get<float>(),
-								a["tint"][1].get<float>(),
-								a["tint"][2].get<float>(),
-								a["tint"][3].get<float>()
+					if (msg["actors"].is_array()) {
+						List<JSONData> adat = msg["actors"].get<List<JSONData>>();
+						if (!adat.empty()) for(JSONData a: adat) {
+							ActorData actor;
+							actor.name	= a["name"].get<String>();
+							actor.frame	= Vector2(
+								a["frame"][0].get<float>(),
+								a["frame"][1].get<float>()
 							);
-						if (a["leaving"].is_boolean())
-							actor.leaving = a["leaving"].get<bool>();
-						message.actors.push_back(actor);
+							if (a["tint"].is_array())
+								actor.tint	= Vector4(
+									a["tint"][0].get<float>(),
+									a["tint"][1].get<float>(),
+									a["tint"][2].get<float>(),
+									a["tint"][3].get<float>()
+								);
+							if (a["leaving"].is_boolean())
+								actor.leaving = a["leaving"].get<bool>();
+							message.actors.push_back(actor);
+						}
 					}
 					// Main message packet data
-					// Check for metatag
-					message.title		= msg["title"].get<String>();
 					if (!isMetaTag(message.title))
 						message.text	= msg["text"].get<String>();
 					else if (msg["text"].is_string())
