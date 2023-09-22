@@ -133,7 +133,7 @@ namespace Dialog {
 					auto& a = actors[actor.name];
 					if (!a.sprite) continue;
 					anim.tweenStep = msg.easing;
-					anim.reinterpolateTo(a.position.rest, time);
+					anim.reinterpolateTo(actor.leaving ? a.position.out: a.position.rest, time);
 					a.sprite->setColor(Color::GRAY);
 				}
 				for (ActorData& actor: msg.actors) {
