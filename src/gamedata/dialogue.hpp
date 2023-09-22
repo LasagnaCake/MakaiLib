@@ -182,7 +182,8 @@ namespace Dialog {
 								a["tint"][2].get<float>(),
 								a["tint"][3].get<float>()
 							);
-						actor.leaving = a["leaving"].get<bool>();
+						if (a["leaving"].is_boolean())
+							actor.leaving = a["leaving"].get<bool>();
 						message.actors.push_back(actor);
 					}
 					// Main message packet data
