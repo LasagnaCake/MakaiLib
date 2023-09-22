@@ -258,6 +258,7 @@ If data is to be integrated in the file:
 	// Required
 	"name": "",
 	"frame": [0.0, 0.0],
+	// Option
 	"tint": [1.0, 1.0, 1.0, 1.0],
 	"leaving": false
 }
@@ -277,6 +278,7 @@ This can be saved as a `JSON` file of extension `.mdd` (Makai Dialogue Definitio
 			"actors": [{/* See Dialogue:ActorData:Layout */}],
 			"title": "",
 			"text": "",
+			// Optional
 			"easing": "out.cubic",
 			"duration": 600,
 			"autoplay": false
