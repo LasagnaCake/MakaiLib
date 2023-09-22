@@ -284,5 +284,9 @@ This can be saved as a `JSON` file of extension `.mdd` (Makai Dialogue Definitio
 			"autoplay": false
 		}
 	]
+	// Optional
+	"easing": "out.cubic",
+	"duration": 600,
+	"autoplay": false
 }
 ``````

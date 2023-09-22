@@ -37,11 +37,10 @@ namespace Dialog {
 
 		DERIVED_CONSTRUCTOR(DialogPlayer, Entity, {
 			addToGame(this, "Dialog");
-			autotimer.onSignal = $signal {
-				nextMessage();
-			};
+			autotimer.onSignal = [this](){this->nextMessage();};
 			isFinished = true;
-			autotimer.repeat = true;
+			autotimer.repeat	= true;
+			endtimer.repeat		= false;
 			autotimer.stop();
 			endtimer.stop();
 			box.shape.setRenderLayer(DIALOG_LAYER - 1);
@@ -66,6 +65,7 @@ namespace Dialog {
 		void begin() {
 			input.update();
 			animator.clear();
+			autotimer.start(999999);
 			box.shape.active	=
 			box.title.active	=
 			box.message.active	= true;
@@ -128,6 +128,9 @@ namespace Dialog {
 			}
 			Message& msg = messages[current];
 			if (!isMetaTag(msg.title)) {
+				box.shape.active	=
+				box.title.active	=
+				box.message.active	= true;
 				for (ActorData& actor: last.actors) {
 					auto& anim = animator[actor.name];
 					auto& a = actors[actor.name];
@@ -145,18 +148,23 @@ namespace Dialog {
 					anim.tweenStep = msg.easing;
 					a.sprite->frame = actor.frame;
 					anim.reinterpolateTo(actor.leaving ? a.position.out : a.position.talking, time);
+					inScene[actor.name] = !actor.leaving;
 					a.sprite->setColor(actor.tint);
 				}
 				onMessage(current);
 				showText(msg.title, msg.text);
+				autoplay = msg.autoplay;
+				autotimer.delay = msg.duration;
 			} else {
-				last = msg;
-				if (msg.title == "@:exit:")	exitDialog();
-				if (msg.title == "@:end:")	finish();
+				last.duration	= msg.duration;
+				last.text		= msg.text;
+				last.title		= msg.title;
+				last.actors		= msg.actors;
+				if (msg.title == "@:exit:")		exitDialog();
+				if (msg.title == "@:reenter:")	reEnterDialog();
+				if (msg.title == "@:end:")		finish();
 			}
 			current++;
-			autoplay = msg.autoplay;
-			autotimer.delay = msg.duration;
 			last = msg;
 		}
 
@@ -164,39 +172,58 @@ namespace Dialog {
 			try {
 				time = def["transitionTime"].get<size_t>();
 				MessageList messages;
+				Message global;
+				if (def["easing"].is_string()) {
+					StringList ease	= Helper::splitString(def["easing"].get<String>(), '.');
+					global.easing	= Tween::ease[ease[0]][ease[1]];
+				}
+				if (def["duration"].is_number_integer())
+					global.duration	= def["duration"].get<size_t>();
+				if (def["autoplay"].is_boolean())
+					global.autoplay	= def["autoplay"].get<bool>();
 				for(JSONData msg: def["messages"].get<List<JSONData>>()) {
-					Message message;
-					// Message packet actor data
-					List<JSONData> adat = msg["actors"].get<List<JSONData>>();
-					if (!adat.empty()) for(JSONData a: adat) {
-						ActorData actor;
-						actor.name	= a["name"].get<String>();
-						actor.frame	= Vector2(
-							a["frame"][0].get<float>(),
-							a["frame"][1].get<float>()
-						);
-						if (a["tint"].is_array())
-							actor.tint	= Vector4(
-								a["tint"][0].get<float>(),
-								a["tint"][1].get<float>(),
-								a["tint"][2].get<float>(),
-								a["tint"][3].get<float>()
-							);
-						if (a["leaving"].is_boolean())
-							actor.leaving = a["leaving"].get<bool>();
-						message.actors.push_back(actor);
-					}
-					// Main message packet data
+					Message message = global;
+					// Check for metatag
 					message.title		= msg["title"].get<String>();
-					message.text		= msg["text"].get<String>();
-					if (msg["easing"].is_string()) {
-						StringList ease		= Helper::splitString(msg["easing"].get<String>(), '.');
-						message.easing		= Tween::ease[ease[0]][ease[1]];
+					if (!isMetaTag(message.title)) {
+						// Message packet actor data
+						List<JSONData> adat = msg["actors"].get<List<JSONData>>();
+						if (!adat.empty()) for(JSONData a: adat) {
+							ActorData actor;
+							actor.name	= a["name"].get<String>();
+							actor.frame	= Vector2(
+								a["frame"][0].get<float>(),
+								a["frame"][1].get<float>()
+							);
+							if (a["tint"].is_array())
+								actor.tint	= Vector4(
+									a["tint"][0].get<float>(),
+									a["tint"][1].get<float>(),
+									a["tint"][2].get<float>(),
+									a["tint"][3].get<float>()
+								);
+							if (a["leaving"].is_boolean())
+								actor.leaving = a["leaving"].get<bool>();
+							message.actors.push_back(actor);
+						}
+						// Main message packet data
+						message.text		= msg["text"].get<String>();
+						if (msg["easing"].is_string()) {
+							StringList ease		= Helper::splitString(msg["easing"].get<String>(), '.');
+							message.easing		= Tween::ease[ease[0]][ease[1]];
+						}
+						if (msg["duration"].is_number_integer())
+							message.duration	= msg["duration"].get<size_t>();
+						if (msg["autoplay"].is_boolean())
+							message.autoplay	= msg["autoplay"].get<bool>();
+					} else {
+						if(msg["value"].is_string())
+							message.text = msg["value"].get<String>();
+						if (msg["duration"].is_number_integer())
+							message.duration = msg["duration"].get<size_t>();
+						else
+							message.duration = time;
 					}
-					if (msg["duration"].is_number_integer())
-						message.duration	= msg["duration"].get<size_t>();
-					if (msg["autoplay"].is_boolean())
-						message.autoplay	= msg["autoplay"].get<bool>();
 					messages.push_back(message);
 				}
 				this->messages = messages;
@@ -230,6 +257,8 @@ namespace Dialog {
 
 		size_t time = 60;
 	private:
+		HashMap<String, bool> inScene;
+
 		Message last;
 
 		Event::Timer endtimer;
@@ -241,15 +270,36 @@ namespace Dialog {
 			box.message.text.content	= text;
 		}
 
+		void reEnterDialog() {
+			for (auto& [actor, isInScene]: inScene)
+				if (isInScene) {
+					auto& anim = animator[actor];
+					auto& a = actors[actor];
+					if (!a.sprite) continue;
+					anim.tweenStep = last.easing;
+					anim.reinterpolateTo(a.position.rest, last.duration);
+					a.sprite->setColor(Color::GRAY);
+				}
+			autoplay		= true;
+			autotimer.delay	= last.duration;
+			autotimer.reset();
+			box.shape.active	=
+			box.title.active	=
+			box.message.active	= false;
+		}
+
 		void exitDialog() {
 			for (auto& [actor, _]: actors) {
 				auto& anim = animator[actor];
 				auto& a = actors[actor];
 				if (!a.sprite) continue;
 				anim.tweenStep = last.easing;
-				anim.reinterpolateTo(a.position.out, time);
+				anim.reinterpolateTo(a.position.out, last.duration);
 				a.sprite->setColor(Color::GRAY);
 			}
+			autoplay		= true;
+			autotimer.delay	= last.duration;
+			autotimer.reset();
 			box.shape.active	=
 			box.title.active	=
 			box.message.active	= false;
