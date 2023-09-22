@@ -195,6 +195,12 @@ constexpr inline String toWideString(const T& val) {
 	return std::to_wstring(val);
 }
 
+inline int			toInt(String s)			{return std::stoi(s);	}
+inline long			toLong(String s)		{return std::stol(s);	}
+inline long long	toLongLong(String s)	{return std::stoll(s);	}
+inline float		toFloat(String s)		{return std::stof(s);	}
+inline double		toDouble(String s)		{return std::stod(s);	}
+
 namespace FileSystem {
 	namespace {
 		namespace fs = std::filesystem;

@@ -30,7 +30,7 @@ namespace Dialog {
 	};
 
 	typedef List<Message>				MessageList;
-	typedef FuzzyHashMap<String, Actor>	ActorList;
+	typedef FuzzyHashMap<String, Actor>	ActorGroup;
 
 	struct DialogPlayer: public Entity {
 		DERIVED_CLASS(DialogPlayer, Entity)
@@ -44,7 +44,7 @@ namespace Dialog {
 			autotimer.repeat = true;
 			autotimer.stop();
 			endtimer.stop();
-			box.shape.setRenderLayer(DIALOG_BOTTOM_LAYER);
+			box.shape.setRenderLayer(DIALOG_LAYER - 1);
 			box.title.setRenderLayer(DIALOG_LAYER);
 			box.message.setRenderLayer(DIALOG_LAYER);
 			autotimer.setManual();
@@ -56,7 +56,7 @@ namespace Dialog {
 		})
 
 		MessageList	messages;
-		ActorList	actors;
+		ActorGroup	actors;
 
 		void setCurrentMessage(size_t index) {
 			current = index;
@@ -127,11 +127,7 @@ namespace Dialog {
 				return;
 			}
 			Message& msg = messages[current];
-			size_t tsize = msg.title.size();
-			if (
-				msg.title[0] != '@'
-			&&	msg.title[tsize-1] != ':' && msg.title[1] != ':'
-			) {
+			if (!isMetaTag(msg.title)) {
 				for (ActorData& actor: last.actors) {
 					auto& anim = animator[actor.name];
 					auto& a = actors[actor.name];
@@ -146,6 +142,7 @@ namespace Dialog {
 					auto& a = actors[actor.name];
 					actor.action();
 					if (!a.sprite) continue;
+					anim.tweenStep = msg.easing;
 					a.sprite->frame = actor.frame;
 					anim.reinterpolateTo(actor.leaving ? a.position.out : a.position.talking, time);
 					a.sprite->setColor(actor.tint);
@@ -188,12 +185,16 @@ namespace Dialog {
 						message.actors.push_back(actor);
 					}
 					// Main message packet data
-					StringList ease		= Helper::splitString(msg["easing"].get<String>(), '.');
 					message.title		= msg["title"].get<String>();
 					message.text		= msg["text"].get<String>();
-					message.easing		= Tween::ease[ease[0]][ease[1]];
-					message.duration	= msg["duration"].get<size_t>();
-					message.autoplay	= msg["autoplay"].get<bool>();
+					if (msg["easing"].is_string()) {
+						StringList ease		= Helper::splitString(msg["easing"].get<String>(), '.');
+						message.easing		= Tween::ease[ease[0]][ease[1]];
+					}
+					if (msg["duration"].is_number_integer())
+						message.duration	= msg["duration"].get<size_t>();
+					if (msg["autoplay"].is_boolean())
+						message.autoplay	= msg["autoplay"].get<bool>();
 					messages.push_back(message);
 				}
 				this->messages = messages;
@@ -230,6 +231,8 @@ namespace Dialog {
 		Message last;
 
 		Event::Timer endtimer;
+
+		inline bool isMetaTag(String const& tag) {return tag[0] == '@' && tag[tag.size()-1] == ':' && tag[1] == ':';}
 
 		void showText(String title, String text) {
 			box.title.text.content		= title;
