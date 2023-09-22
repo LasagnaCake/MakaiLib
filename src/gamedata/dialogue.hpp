@@ -175,12 +175,13 @@ namespace Dialog {
 							a["frame"][0].get<float>(),
 							a["frame"][1].get<float>()
 						);
-						actor.tint	= Vector4(
-							a["tint"][0].get<float>(),
-							a["tint"][1].get<float>(),
-							a["tint"][2].get<float>(),
-							a["tint"][3].get<float>()
-						);
+						if (a["tint"].is_array())
+							actor.tint	= Vector4(
+								a["tint"][0].get<float>(),
+								a["tint"][1].get<float>(),
+								a["tint"][2].get<float>(),
+								a["tint"][3].get<float>()
+							);
 						actor.leaving = a["leaving"].get<bool>();
 						message.actors.push_back(actor);
 					}
