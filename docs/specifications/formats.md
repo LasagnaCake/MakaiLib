@@ -276,7 +276,7 @@ This can be saved as a `JSON` file of extension `.mdd` (Makai Dialogue Definitio
 		{
 			// Required
 			"title": "",
-			// Required if title is not a metatag, else optional
+			// Required if title is not an action tag, else optional
 			"text": "",
 			// Optional
 			"actors": [{/* See Dialogue:ActorData:Layout */}],
