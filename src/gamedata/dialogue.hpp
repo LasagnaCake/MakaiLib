@@ -238,13 +238,13 @@ namespace Dialog {
 		void finish() {
 			$debug("[ Finishing dialog... ]");
 			if (isFinished || !endtimer.finished()) return;
-			exitDialog();
 			endtimer.repeat		= false;
 			endtimer.delay		= time;
 			endtimer.onSignal	= [this](){this->end();};
 			endtimer.start();
 			autotimer.stop();
 			isFinished = true;
+			actionExit();
 		}
 
 		void loadFromDefinitionFile(String const& path) {
