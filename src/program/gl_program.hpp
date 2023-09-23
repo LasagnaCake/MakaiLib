@@ -576,8 +576,8 @@ namespace Makai {
 			float frameDelta = 1.0/maxFrameRate;
 			float cycleDelta = 1.0/maxCycleRate;
 			// Last time of execution
-			size_t frameTicks = SDL_GetTicks() + frameDelta * 1000;
-			size_t cycleTicks = SDL_GetTicks() + cycleDelta * 1000;
+			size_t frameTicks = SDL_GetTicks() + frameDelta * 1000.0;
+			size_t cycleTicks = SDL_GetTicks() + cycleDelta * 1000.0;
 			// While program is running...
 			while(shouldRun) {
 				// Poll events and check if should close
