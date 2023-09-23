@@ -164,6 +164,7 @@ namespace Dialog {
 				onMetaTag(msg.title);
 				if (msg.title == "@:exit:")		exitDialog();
 				if (msg.title == "@:reenter:")	reEnterDialog();
+				if (msg.title == "@:wait:")		wait();
 				if (msg.title == "@:end:")		{time = msg.duration; finish();}
 			}
 			current++;
@@ -278,12 +279,7 @@ namespace Dialog {
 					anim.reinterpolateTo(a.position.rest, last.duration);
 					a.sprite->setColor(Color::GRAY);
 				}
-			autoplay		= true;
-			autotimer.delay	= last.duration;
-			autotimer.reset();
-			box.shape.active	=
-			box.title.active	=
-			box.message.active	= false;
+			wait();
 		}
 
 		void exitDialog() {
@@ -295,6 +291,10 @@ namespace Dialog {
 				anim.reinterpolateTo(a.position.out, last.duration);
 				a.sprite->setColor(Color::GRAY);
 			}
+			wait();
+		}
+
+		void wait() {
 			autoplay		= true;
 			autotimer.delay	= last.duration;
 			autotimer.reset();
