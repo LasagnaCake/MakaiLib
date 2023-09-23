@@ -107,7 +107,7 @@ namespace Dialog {
 
 		TypedSignal<size_t>	onMessage	= $tsignal(size_t index) {};
 		Signal				onDialogEnd	= $signal {queueDestroy();};
-		TypedSignal<String>	onMetaTag	= $tsignal(String tag) {};
+		TypedSignal<String>	onAction	= $tsignal(String tag) {};
 
 		KeyBinds keys;
 
@@ -128,7 +128,7 @@ namespace Dialog {
 				return;
 			}
 			Message& msg = messages[current];
-			if (!isMetaTag(msg.title)) {
+			if (!isActionTag(msg.title)) {
 				box.shape.active	=
 				box.title.active	=
 				box.message.active	= true;
@@ -157,15 +157,12 @@ namespace Dialog {
 				autoplay = msg.autoplay;
 				autotimer.delay = msg.duration;
 			} else {
-				last.duration	= msg.duration;
-				last.text		= msg.text;
-				last.title		= msg.title;
-				last.actors		= msg.actors;
-				onMetaTag(msg.title);
-				if (msg.title == "@:exit:")		exitDialog();
-				if (msg.title == "@:reenter:")	reEnterDialog();
-				if (msg.title == "@:wait:")		wait();
-				if (msg.title == "@:end:")		{time = msg.duration; finish();}
+				last = msg;
+				onAction(msg.title);
+				if		(msg.title == "@:exit:")	actionExit();
+				else if	(msg.title == "@:reenter:")	actionReenter();
+				else if	(msg.title == "@:wait:")	actionWait();
+				else if	(msg.title == "@:end:")		actionFinish();
 			}
 			current++;
 			last = msg;
@@ -211,7 +208,7 @@ namespace Dialog {
 						}
 					}
 					// Main message packet data
-					if (!isMetaTag(message.title))
+					if (!isActionTag(message.title))
 						message.text	= msg["text"].get<String>();
 					else if (msg["text"].is_string())
 						message.text	= msg["text"].get<String>();
@@ -262,14 +259,14 @@ namespace Dialog {
 
 		Event::Timer endtimer;
 
-		inline bool isMetaTag(String const& tag) {return tag[0] == '@' && tag[tag.size()-1] == ':' && tag[1] == ':';}
+		inline bool isActionTag(String const& tag) {return tag[0] == '@' && tag[tag.size()-1] == ':' && tag[1] == ':';}
 
 		void showText(String title, String text) {
 			box.title.text.content		= title;
 			box.message.text.content	= text;
 		}
 
-		void reEnterDialog() {
+		void actionReenter() {
 			for (auto& [actor, isInScene]: inScene)
 				if (isInScene) {
 					auto& anim = animator[actor];
@@ -282,7 +279,7 @@ namespace Dialog {
 			wait();
 		}
 
-		void exitDialog() {
+		void actionExit() {
 			for (auto& [actor, _]: actors) {
 				auto& anim = animator[actor];
 				auto& a = actors[actor];
@@ -294,7 +291,12 @@ namespace Dialog {
 			wait();
 		}
 
-		void wait() {
+		void actionFinish() {
+			time = last.duration;
+			finish();
+		}
+
+		void actionWait() {
 			autoplay		= true;
 			autotimer.delay	= last.duration;
 			autotimer.reset();
