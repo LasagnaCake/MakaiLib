@@ -109,7 +109,7 @@ endif
 
 GUI_MODE ?= -mwindows
 
-.PHONY: clean debug release all demo both test
+.PHONY: clean debug release all demo both test help
 
 export HELP_MESSAGE
 
