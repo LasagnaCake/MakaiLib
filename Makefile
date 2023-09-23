@@ -140,7 +140,7 @@ debug: build\$(src)
 	$(GET_TIME)
 	
 	@echo "[--- END ---]"
-	@echo ^G
+	@echo 
 
 
 demo: build\$(src)
@@ -167,7 +167,7 @@ demo: build\$(src)
 	$(GET_TIME)
 	
 	@echo "[--- END ---]"
-	@echo ^G
+	@echo 
 
 
 release: build\$(src)
@@ -194,7 +194,7 @@ release: build\$(src)
 	$(GET_TIME)
 	
 	@echo "[--- END ---]"
-	@echo ^G
+	@echo 
 	
 
 test: debug release
