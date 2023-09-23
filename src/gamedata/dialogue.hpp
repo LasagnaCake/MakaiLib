@@ -276,7 +276,7 @@ namespace Dialog {
 					anim.reinterpolateTo(a.position.rest, last.duration);
 					a.sprite->setColor(Color::GRAY);
 				}
-			wait();
+			actionWait();
 		}
 
 		void actionExit() {
@@ -288,7 +288,7 @@ namespace Dialog {
 				anim.reinterpolateTo(a.position.out, last.duration);
 				a.sprite->setColor(Color::GRAY);
 			}
-			wait();
+			actionWait();
 		}
 
 		void actionFinish() {
