@@ -159,10 +159,11 @@ namespace Dialog {
 			} else {
 				last = msg;
 				onAction(msg.title);
-				if		(msg.title == "@:exit:")	actionExit();
-				else if	(msg.title == "@:reenter:")	actionReenter();
-				else if	(msg.title == "@:wait:")	actionWait();
-				else if	(msg.title == "@:end:")		actionFinish();
+				if		(msg.title == "@:exit:")		actionExit();
+				else if	(msg.title == "@:reenter:")		actionReenter();
+				else if	(msg.title == "@:wait:")		actionWait();
+				else if	(msg.title == "@:finish:")		actionFinish();
+				else if	(msg.title == "@:setframe:")	actionSetFrame();
 			}
 			current++;
 			last = msg;
@@ -289,6 +290,16 @@ namespace Dialog {
 				a.sprite->setColor(Color::GRAY);
 			}
 			actionWait();
+		}
+
+		void actionSetFrame() {
+			for (ActorData& actor: last.actors) {
+				if (!actors.contains(actor.name)) continue;
+				auto& a = actors[actor.name];
+				if (!a.sprite) continue;
+				a.sprite->frame = actor.frame;
+			}
+			nextMessage();
 		}
 
 		void actionFinish() {
