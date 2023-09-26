@@ -67,9 +67,9 @@ namespace Tween{
 	#pragma GCC diagnostic ignored "-Wsubobject-linkage"
 
 	#define $easing [](float step, float from, float to, float stop) -> float
-	#define $$EFUNC [](float t, float b, float c, float d) -> float
+	#define E_FUNC [&](float t, float b, float c, float d) -> float
 	#define PI_VALUE Math::pi
-	#define EASE_F(TYPE) .TYPE = $$EFUNC
+	#define EASE_F(TYPE) .TYPE = E_FUNC
 	/// Easing function template
 	typedef _EaseFunc EaseFunc;
 
@@ -86,9 +86,9 @@ namespace Tween{
 		const EaseType in {
 			// Linear
 			EASE_F(linear) {return c * t/d + b;},
-			// sine
+			// Sine
 			EASE_F(sine) {return -c * cos(t/d * (PI_VALUE/2)) + c + b;},
-			// quad
+			// Quad
 			EASE_F(quad) {return c*(t/=d)*t + b;},
 			// Cubic
 			EASE_F(cubic) {return c*(t/=d)*t*t + b;},
@@ -108,9 +108,9 @@ namespace Tween{
 				float postFix =a*pow(2,10*(t-=1));
 				return -(postFix * sin((t*d-s)*(2*PI_VALUE)/p )) + b;
 			},
-			// circ
+			// Circ
 			EASE_F(circ) {return -c * (sqrt(1 - (t/=d)*t) - 1) + b;},
-			// bounce
+			// Bounce
 			EASE_F(bounce) {
 				float s = 1.70158f;
 				return c*((t=t/d-1)*t*((s+1)*t + s) + 1) + b;
@@ -126,9 +126,9 @@ namespace Tween{
 		const EaseType out {
 			// Linear
 			EASE_F(linear) {return c * t/d + b;},
-			// sine
+			// Sine
 			EASE_F(sine) {return c * sin(t/d * (PI_VALUE/2)) + b;},
-			// quad
+			// Quad
 			EASE_F(quad) {return -c *(t/=d)*(t-2) + b;},
 			// Cubic
 			EASE_F(cubic) {return c*((t=t/d-1)*t*t + 1) + b;},
@@ -147,9 +147,9 @@ namespace Tween{
 				float s=p/4;
 				return (a*pow(2,-10*t) * sin( (t*d-s)*(2*PI_VALUE)/p ) + c + b);
 			},
-			// circ
+			// Circ
 			EASE_F(circ) {return c * sqrt(1 - (t=t/d-1)*t) + b;},
-			// bounce
+			// Bounce
 			EASE_F(bounce) {
 				float s = 1.70158f;
 				float postFix = t/=d;
@@ -165,9 +165,9 @@ namespace Tween{
 		const EaseType inOut {
 			// Linear
 			EASE_F(linear) {return c * t/d + b;},
-			// sine
+			// Sine
 			EASE_F(sine) {return -c/2 * (cos(PI_VALUE*t/d) - 1) + b;},
-			// quad
+			// Quad
 			EASE_F(quad) {
 				if ((t/=d/2) < 1)
 					return ((c/2)*(t*t)) + b;
@@ -213,13 +213,13 @@ namespace Tween{
 				float postFix =  a*pow(2,-10*(t-=1));
 				return postFix * sin( (t*d-s)*(2*PI_VALUE)/p )*.5f + c + b;
 			},
-			// circ
+			// Circ
 			EASE_F(circ) {
 				if ((t/=d/2) < 1)
 					return -c/2 * (sqrt(1 - t*t) - 1) + b;
 				return c/2 * (sqrt(1 - t*(t-=2)) + 1) + b;
 			},
-			// bounce
+			// Bounce
 			EASE_F(bounce) {
 				float s = 1.70158f;
 				if ((t/=d/2) < 1)
@@ -237,10 +237,37 @@ namespace Tween{
 			}
 		};
 		/// Ease OUT-IN functions
+		#define OUTIN_F(TYPE) \
+		EASE_F(TYPE) {\
+			if ((t/d) < 0.5)\
+				return this->out.TYPE(t*2, b, c/2, d);\
+			return this->in.TYPE((t-0.5)*2, b+c/2, c, d);\
+		}
 		const EaseType outIn {
 			// Linear
 			EASE_F(linear) {return c * t/d + b;},
+			// Sine
+			OUTIN_F(sine),
+			// Quad
+			OUTIN_F(quad),
+			// Cubic
+			OUTIN_F(cubic),
+			// Quart
+			OUTIN_F(quart),
+			// Quint
+			OUTIN_F(quint),
+			// Expo
+			OUTIN_F(expo),
+			// Elastic
+			OUTIN_F(elastic),
+			// Circ
+			OUTIN_F(circ),
+			// Bounce
+			OUTIN_F(bounce),
+			// Back
+			OUTIN_F(back)
 		};
+		#undef OUTIN_F
 		/// List accessing
 		EaseType const& operator[](string const& type) const {
 			CASE_FUNC(in);
@@ -253,7 +280,7 @@ namespace Tween{
 
 	const Easing ease;
 
-	#undef $$EFUNC
+	#undef E_FUNC
 	#undef EASE_F
 	#undef PI_VALUE
 
