@@ -237,12 +237,12 @@ namespace Tween{
 			}
 		};
 		/// Ease OUT-IN functions
-		#define OUTIN_F(TYPE) \
-		EASE_F(TYPE) {\
-			if ((t/d) < 0.5)\
-				return this->out.TYPE(t*2, b, c/2, d);\
-			return this->in.TYPE((t-0.5)*2, b+c/2, c, d);\
-		}
+		#define OUTIN_F(TYPE)\
+			EASE_F(TYPE) {\
+				if ((t/d) < 0.5)\
+					return this->out.TYPE(t*2, b, c/2, d);\
+				return this->in.TYPE((t-0.5)*2, b+c/2, c, d);\
+			}
 		const EaseType outIn {
 			// Linear
 			EASE_F(linear) {return c * t/d + b;},
