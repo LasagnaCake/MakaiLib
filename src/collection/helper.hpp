@@ -8,6 +8,7 @@
 #include <codecvt>
 #include <any>
 #include <variant>
+#include <optional>
 #ifdef _USE_CPP20_FORMAT_
 #include <format>
 #endif // _USE_CPP20_FORMAT_
@@ -26,7 +27,8 @@ namespace Helper {
 			std::pair,
 			std::function,
 			std::any,
-			std::variant
+			std::variant,
+			std::optional
 		;
 	}
 
@@ -66,6 +68,9 @@ namespace Helper {
 
 	template<typename... Types>
 	using PolyType = variant<Types...>;
+
+	template<typename T>
+	using Option = optional<T>;
 
 	typedef any Any;
 
@@ -183,6 +188,7 @@ using Helper::Function;
 using Helper::Operation;
 using Helper::PolyType;
 using Helper::Any;
+using Helper::Option;
 
 WideString toWideString(String const& str){
 	using convert_typeX = std::codecvt_utf8_utf16<wchar_t>;
