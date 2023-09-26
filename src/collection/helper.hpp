@@ -6,6 +6,8 @@
 #include <filesystem>
 #include <locale>
 #include <codecvt>
+#include <any>
+#include <variant>
 #ifdef _USE_CPP20_FORMAT_
 #include <format>
 #endif // _USE_CPP20_FORMAT_
@@ -22,7 +24,9 @@ namespace Helper {
 			std::wstring,
 			std::initializer_list,
 			std::pair,
-			std::function
+			std::function,
+			std::any,
+			std::variant
 		;
 	}
 
@@ -59,6 +63,11 @@ namespace Helper {
 
 	template<typename T>
 	using Operation = Function<T(T const&)>;
+
+	template<typename... Types>
+	using PolyType = variant<Types...>;
+
+	typedef any Any;
 
 	typedef List<String>		StringList;
 	typedef Arguments<String>	StringArguments;
@@ -172,6 +181,8 @@ using Helper::Pair;
 using Helper::Entry;
 using Helper::Function;
 using Helper::Operation;
+using Helper::PolyType;
+using Helper::Any;
 
 WideString toWideString(String const& str){
 	using convert_typeX = std::codecvt_utf8_utf16<wchar_t>;
