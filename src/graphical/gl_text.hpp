@@ -1,15 +1,3 @@
-enum class HAlign {
-	LEFT,
-	RIGHT,
-	CENTER
-};
-
-enum class VAlign {
-	TOP,
-	BOTTOM,
-	CENTER
-};
-
 struct TextRect {
 	size_t h = 0, v = 0;
 };
@@ -20,26 +8,27 @@ struct FontData {
 	Vector2		spacing		= Vector2(1);
 };
 
-// TODO: Replace AlignRect with Vector2
-
 struct TextData {
 	String		content		= "Hello\nWorld!";
 	TextRect	rect		= {40, 100};
 	Vector2		textAlign	= 0;
 	Vector2		rectAlign	= 0;
 	Vector2		spacing		= 0;
+	long		maxChars	= -1;
 };
 
 namespace {
 	bool isTextDataEqual(TextData& a, TextData& b) {
-		return	a.content	== b.content
-			&&	a.rect.h	== b.rect.h
-			&&	a.rect.v	== b.rect.v
+		return	a.content		== b.content
+			&&	a.rect.h		== b.rect.h
+			&&	a.rect.v		== b.rect.v
 			&&	a.textAlign.x	== b.textAlign.x
 			&&	a.textAlign.y	== b.textAlign.y
 			&&	a.rectAlign.x	== b.rectAlign.x
 			&&	a.rectAlign.y	== b.rectAlign.y
-			&&	a.spacing	== b.spacing;
+			&&	a.spacing		== b.spacing
+			&&	a.maxChars		== b.maxChars
+		;
 	}
 }
 
@@ -135,9 +124,14 @@ private:
 		cursor.x	= lineStart[0];
 		cursor.y 	= text.rect.v * (text.spacing.y + font->spacing.y) * text.textAlign.y;
 		cursor -= rectStart * Vector2(1,-1);
+		// The current line and current character
 		size_t curLine = 0;
+		size_t curChar = 0;
 		// Loop through each character and...
 		for (char c: text.content) {
+			// Check if max characters hasn't been reached
+			if ((curChar > (text.maxChars-1)) && (text.maxChars > -1)) break;
+			else curChar++;
 			// Check if character is newline
 			bool newline = c == '\n';
 			// If cursor has reached the rect's horizontal limit or newline, move to new line
