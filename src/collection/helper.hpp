@@ -67,10 +67,10 @@ namespace Helper {
 	using Operation = Function<T(T const&)>;
 
 	template<typename... Types>
-	using PolyType = variant<Types...>;
+	using Poly = variant<Types...>;
 
 	template<typename T>
-	using Option = optional<T>;
+	using Nullable = optional<T>;
 
 	typedef any Any;
 
@@ -186,9 +186,9 @@ using Helper::Pair;
 using Helper::Entry;
 using Helper::Function;
 using Helper::Operation;
-using Helper::PolyType;
+using Helper::Poly;
 using Helper::Any;
-using Helper::Option;
+using Helper::Nullable;
 
 WideString toWideString(String const& str){
 	using convert_typeX = std::codecvt_utf8_utf16<wchar_t>;
