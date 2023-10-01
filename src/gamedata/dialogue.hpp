@@ -15,7 +15,6 @@ namespace Dialog {
 		Vector2		frame;
 		Vector4		tint = Color::WHITE;
 		bool		leaving = false;
-		$evt Signal	action = $evt DEF_SIGNAL;
 	};
 
 	typedef List<ActorData>	ActorDataList;
@@ -107,7 +106,8 @@ namespace Dialog {
 
 		TypedSignal<size_t>	onMessage	= $tsignal(size_t index) {};
 		Signal				onDialogEnd	= $signal {queueDestroy();};
-		TypedSignal<String>	onAction	= $tsignal(String tag) {};
+
+		virtual void onAction(Message const& msg) {}
 
 		KeyBinds keys;
 
@@ -144,7 +144,6 @@ namespace Dialog {
 					if (!actors.contains(actor.name)) continue;
 					auto& anim = animator[actor.name];
 					auto& a = actors[actor.name];
-					actor.action();
 					if (!a.sprite) continue;
 					anim.tweenStep = msg.easing;
 					a.sprite->frame = actor.frame;
@@ -158,12 +157,7 @@ namespace Dialog {
 				autotimer.delay = msg.duration;
 			} else {
 				last = msg;
-				onAction(msg.title);
-				if		(msg.title == "@:exit:")		actionExit();
-				else if	(msg.title == "@:reenter:")		actionReenter();
-				else if	(msg.title == "@:wait:")		actionWait();
-				else if	(msg.title == "@:finish:")		actionFinish();
-				else if	(msg.title == "@:setframe:")	actionSetFrame();
+				executeAction(msg);
 			}
 			current++;
 			last = msg;
@@ -248,25 +242,21 @@ namespace Dialog {
 			actionExit();
 		}
 
+		void executeAction(Message const& msg) {
+			if		(msg.title == "@:exit:")		actionExit();
+			else if	(msg.title == "@:reenter:")		actionReenter();
+			else if	(msg.title == "@:wait:")		actionWait();
+			else if	(msg.title == "@:finish:")		actionFinish();
+			else if	(msg.title == "@:setframe:")	actionSetFrame();
+			else	onAction(msg);
+		}
+
 		void loadFromDefinitionFile(String const& path) {
 			loadFromDefinition(FileLoader::loadJSON(path));
 		}
 
 		size_t time = 60;
 	private:
-		HashMap<String, bool> inScene;
-
-		Message last;
-
-		Event::Timer endtimer;
-
-		inline bool isActionTag(String const& tag) {return tag[0] == '@' && tag[tag.size()-1] == ':' && tag[1] == ':';}
-
-		void showText(String title, String text) {
-			box.title.text.content		= title;
-			box.message.text.content	= text;
-		}
-
 		void actionReenter() {
 			for (auto& [actor, isInScene]: inScene)
 				if (isInScene) {
@@ -314,6 +304,19 @@ namespace Dialog {
 			box.shape.active	=
 			box.title.active	=
 			box.message.active	= false;
+		}
+
+		HashMap<String, bool> inScene;
+
+		Message last;
+
+		Event::Timer endtimer;
+
+		inline bool isActionTag(String const& tag) {return tag[0] == '@' && tag[tag.size()-1] == ':' && tag[1] == ':';}
+
+		void showText(String title, String text) {
+			box.title.text.content		= title;
+			box.message.text.content	= text;
 		}
 
 		Event::Timer autotimer;
