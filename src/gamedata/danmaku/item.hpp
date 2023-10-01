@@ -40,6 +40,8 @@ struct Collectible: DanmakuObject {
 
 	Collectible* setZero() override {
 		sprite->local.rotation.z =
+		local.rotation =
+		params.hitbox.rotation =
 		gravity = 0;
 		return this;
 	}

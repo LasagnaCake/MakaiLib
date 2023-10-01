@@ -292,18 +292,26 @@ float pattern(float t, uint shape, float lod) {
 		// Sine wave
 		case 0x01:	return sin(t);
 		case 0x02:	return bin(sin(t), lod);
+		case 0x03:	return abs(sin(t));
+		case 0x04:	return bin(abs(sin(t)), lod);
 		// Triangle wave
-		case 0x03:	return tri(t);
-		case 0x04:	return bin(tri(t), lod);
+		case 0x05:	return tri(t);
+		case 0x06:	return bin(tri(t), lod);
+		case 0x07:	return abs(tri(t));
+		case 0x08:	return bin(abs(tri(t)), lod);
 		// Half-sine wave
-		case 0x05:	return hsin(t);
-		case 0x06:	return bin(hsin(t), lod);
+		case 0x09:	return hsin(t);
+		case 0x0A:	return bin(hsin(t), lod);
+		case 0x0B:	return abs(hsin(t));
+		case 0x0C:	return bin(abs(hsin(t)), lod);
 		// Half-triangle wave
-		case 0x07:	return htri(t);
-		case 0x08:	return bin(htri(t), lod);
+		case 0x0D:	return htri(t);
+		case 0x0E:	return bin(htri(t), lod);
+		case 0x0F:	return abs(htri(t));
+		case 0x10:	return bin(abs(htri(t)), lod);
 		// Noise
-		case 0x09:	return simplenoise(vec2(t, 1-t)) * 2.0 - 1.0;
-		case 0x0A:	return bin(simplenoise(vec2(t, 1-t)), lod) * 2.0 - 1.0;
+		case 0x11:	return simplenoise(vec2(t, 1-t)) * 2.0 - 1.0;
+		case 0x12:	return bin(simplenoise(vec2(t, 1-t)), lod) * 2.0 - 1.0;
 	}
 }
 

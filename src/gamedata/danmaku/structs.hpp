@@ -22,7 +22,6 @@ struct MODULAR GenericObjectData {
 	// Flags
 	bool discardable	= true;
 	bool collidable		= true;
-	bool rotateHitbox	= true;
 	// Destroy on Playfield Exit
 	bool dope = true;
 };
@@ -31,6 +30,7 @@ struct ObjectData: GenericObjectData {
 	ObjectParam	vel;
 	ObjectParam	rot;
 	ObjectParam stretch;
+	bool rotateHitbox	= true;
 };
 
 typedef std::vector<float> ObjectFlags;

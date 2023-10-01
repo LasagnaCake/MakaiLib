@@ -49,7 +49,6 @@ public:
 	}
 
 	Bullet* setZero() override {
-		params.hitboxRotationOffset =
 		params.vel.current =
 		local.rotation =
 		params.rot.current =
@@ -88,7 +87,7 @@ public:
 		// Set hitbox transforms
 		params.hitbox.position	= local.position;
 		if (params.rotateHitbox)
-			params.hitbox.rotation	= local.rotation
+			params.hitbox.rotation	= local.rotation;
 	}
 
 	Bullet* clearSignals() override {
