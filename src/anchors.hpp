@@ -137,6 +137,7 @@
 #include "collection/algebra.hpp"
 #include "collection/definitions.hpp"
 #include "collection/dataview.hpp"
+#include "collection/threaddata.hpp"
 #include "collection/helper.hpp"
 #include "collection/errors.hpp"
 #include "collection/entity/entity.hpp"

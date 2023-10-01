@@ -1,3 +1,6 @@
+#ifndef DATA_VISUALIZATION_H
+#define DATA_VISUALIZATION_H
+
 #include "helper.hpp"
 
 namespace View {
@@ -32,8 +35,10 @@ namespace View {
 
 		inline DataView& operator=(T const& val) {data = val; return (*this);}
 
-		inline operator T()	{return data;}
-		inline T value()	{return data;}
+		inline operator T() const	{return value();	}
+		inline operator T()			{return value();	}
+		inline T value() const		{return data;		}
+		inline T value() 			{return data;		}
 
 	protected:
 		inline T& view()	{return data;}
@@ -44,3 +49,5 @@ namespace View {
 }
 
 using namespace View;
+
+#endif // DATA_VISUALIZATION_H
