@@ -89,7 +89,7 @@ public:
 
 	void updateSprite() override {
 		if (!sprite) return;
-		// Copy position data to sprite
+		// Set sprite transforms
 		sprite->local.position		= $vec3(local.position, zIndex + _zOffset);
 		sprite->local.rotation.z	= local.rotation;
 		sprite->local.scale			= Vector3(local.scale, zScale);

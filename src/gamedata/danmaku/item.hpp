@@ -66,12 +66,13 @@ struct Collectible: DanmakuObject {
 
 	void updateSprite() override {
 		if (!sprite) return;
-		// Set sprite position
+		// Set sprite transforms
 		sprite->local.position = Vector3(local.position, zIndex + _zOffset);
-		// Set sprite rotation
 		sprite->local.rotation.z = local.rotation;
-		// Set sprite scale
 		sprite->local.scale = Vector3(local.scale, zScale);
+		// Set hitbox transforms
+		params.hitbox.position	= local.position;
+		params.hitbox.rotation	= local.rotation;
 	}
 
 	Collectible* setAutoCollect(Vector2* target = nullptr) {
