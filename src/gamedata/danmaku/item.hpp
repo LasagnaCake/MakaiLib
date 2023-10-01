@@ -65,7 +65,6 @@ struct Collectible: DanmakuObject {
 		if (!sprite) return;
 		// Set sprite position
 		sprite->local.position = Vector3(local.position, zIndex + _zOffset);
-		params.hitbox.position = local.position;
 		// Set sprite rotation
 		sprite->local.rotation.z = local.rotation;
 		// Set sprite scale

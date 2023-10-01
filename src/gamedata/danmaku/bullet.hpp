@@ -28,6 +28,7 @@ public:
 		DANMAKU_FRAME_BEGIN;
 		UPDATE_PARAM(vel)
 		UPDATE_PARAM(rot)
+		UPDATE_PARAM(stretch)
 		if (params.vel.current)
 			local.position += VecMath::angleV2(params.rot.current) * params.vel.current * delta;
 		local.rotation = params.rot.current;
@@ -39,6 +40,7 @@ public:
 		params.vel.current = params.vel.start;
 		local.rotation =
 		params.rot.current = params.rot.start;
+		params.stretch.current = params.stretch.start;
 		params.hitbox.position = local.position;
 		updateSprite();
 		if (sprite)
@@ -47,11 +49,13 @@ public:
 	}
 
 	Bullet* setZero() override {
+		params.hitboxRotationOffset =
 		params.vel.current =
 		local.rotation =
 		params.rot.current =
 		params.vel.factor =
-		params.rot.factor = 0;
+		params.rot.factor =
+		params.stretch.factor = 0;
 		return this;
 	}
 
@@ -75,13 +79,16 @@ public:
 	void updateSprite() override {
 		if (!sprite) return;
 		// Set sprite position
-		sprite->local.position = Vector3(local.position, zIndex + _zOffset);
-		params.hitbox.position = local.position;
+		sprite->local.position	= Vector3(local.position, zIndex + _zOffset);
 		// Set sprite rotation
 		if (params.rotateSprite)
 			sprite->local.rotation.z = local.rotation;
 		// Set sprite scale
 		sprite->local.scale = Vector3(local.scale, zScale);
+		// Set hitbox transforms
+		params.hitbox.position	= local.position;
+		if (params.rotateHitbox)
+			params.hitbox.rotation	= local.rotation
 	}
 
 	Bullet* clearSignals() override {

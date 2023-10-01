@@ -25,6 +25,7 @@ public:
 		UPDATE_PARAM(rot)
 		UPDATE_PARAM(width)
 		UPDATE_PARAM(length)
+		UPDATE_PARAM(stretch)
 		if (params.vel.current)
 			local.position += VecMath::angleV2(params.rot.current) * params.vel.current * delta;
 		local.rotation = params.rot.current;
@@ -39,6 +40,7 @@ public:
 		params.rot.current = params.rot.start;
 		params.width.current = params.width.start;
 		params.length.current = params.length.start;
+		params.stretch.current = params.stretch.start;
 		setLaserShape();
 		updateSprite();
 		return this;
@@ -53,7 +55,7 @@ public:
 		params.width.current =
 		params.width.factor =
 		params.length.current =
-		params.length.factor = 0;
+		params.stretch.factor = 0;
 		return this;
 	}
 
@@ -100,7 +102,9 @@ public:
 			local.position,
 			params.length.current,
 			params.width.current / SQRT2,
-			params.rot.current
+			params.rot.current,
+			params.rotateHitbox ? params.rot.current : params.hitbox.rotation,
+			params.stretch.current
 		};
 		return withinBounds(target, self);
 	}
