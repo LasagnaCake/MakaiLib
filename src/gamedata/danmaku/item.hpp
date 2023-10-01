@@ -23,7 +23,8 @@ struct Collectible: DanmakuObject {
 
 	void onFrame(float delta) override {
 		DANMAKU_FRAME_BEGIN;
-		local.rotation += params.spin;
+		local.rotation			+= params.spin;
+		params.hitbox.rotation	+= params.spin;
 		gravity = Math::clamp(gravity + params.gravity * delta, -params.bounce * delta, params.gravity * delta * 10.0f);
 		local.position.y -= gravity;
 		if (pocing && target)
