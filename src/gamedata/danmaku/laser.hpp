@@ -77,13 +77,14 @@ public:
 
 	void setLaserShape() {
 		if (!sprite) return;
-		float hWidth = (params.width.current * 0.5);
+		float width = (params.width.current * 0.5);
+		float stretch = (params.stretch.current * 0.5);
 		float curLen = params.length.current;
 		sprite->setOrigin(
-			$vec3(-hWidth, hWidth),
-			$vec3(curLen + hWidth, hWidth),
-			$vec3(-hWidth, -hWidth),
-			$vec3(curLen + hWidth, -hWidth)
+			$vec3(-width - stretch, +width),
+			$vec3(curLen + width + stretch, +width),
+			$vec3(-width - stretch, -width),
+			$vec3(curLen + width + stretch, -width)
 		);
 	}
 
@@ -101,7 +102,7 @@ public:
 		RayBounds2D self = RayBounds2D {
 			local.position,
 			params.length.current,
-			params.width.current / SQRT2,
+			Math::max((float)(params.width.current / SQRT2 + params.hitbox.radius), 0.0f),
 			params.rot.current,
 			params.rotateHitbox ? params.rot.current : params.hitbox.rotation,
 			params.stretch.current
@@ -109,18 +110,18 @@ public:
 		return withinBounds(target, self);
 	}
 
-	std::function<Vector2(float)> getAsLineFunc( bool includeWidth = false) {
+	std::function<Vector2(float)> getAsLineFunc(bool includeWidth = false) {
 		Vector2 from = local.position;
-		Vector2 to = $vmt angleV2(params.rot.current);
+		Vector2 to = VecMath::angleV2(params.rot.current);
 		if (includeWidth){
-			from -= $vmt angleV2(params.rot.current - PI) * params.width.current;
+			from -= VecMath::angleV2(params.rot.current - PI) * params.width.current;
 			to *= params.length.current + params.width.current;
 		}
 		else
 			to *= params.length.current;
 		to += local.position;
 		return [=](float fac) -> Vector2 {
-			return $mth lerp(from, to, $vec2(fac));
+			return Math::lerp(from, to, Vector2(fac));
 		};
 	}
 };
