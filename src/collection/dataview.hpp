@@ -2,9 +2,12 @@
 #define DATA_VISUALIZATION_H
 
 #include "helper.hpp"
+#include "conceptual.hpp"
 
 namespace View {
-	template<typename T>
+	template <typename T> concept Viewable = Type::Safe<T>;
+
+	template<Viewable T>
 	class Reference {
 	public:
 		Reference(T& _data):					data(&_data)		{}
@@ -18,12 +21,13 @@ namespace View {
 		inline Reference& operator=(T const& val)				{if (exists()) (*data) = val; return (*this);	}
 		inline Reference& operator=(Reference<T> const& val)	{if (exists()) data = val.data; return (*this);	}
 
-		inline operator T&() {return (*data);}
+		inline operator T&()		{return (*data);}
+		inline operator T&() const	{return (*data);}
 	private:
 		T* data = nullptr;
 	};
 
-	template<typename T>
+	template<Viewable T>
 	class DataView {
 	public:
 		DataView(T& _data):					data(_data)			{}

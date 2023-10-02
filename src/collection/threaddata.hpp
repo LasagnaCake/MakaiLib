@@ -4,7 +4,7 @@
 #include "dataview.hpp"
 
 namespace Threaded {
-	template <typename T>
+	template <Viewable T>
 	class Atomic {
 	public:
 		Atomic()							{}
@@ -52,7 +52,7 @@ namespace Threaded {
 		bool locked = false;
 	};
 
-	template <typename T>
+	template <Viewable T>
 	using AtomicView = DataView<Atomic<T>>;
 }
 
