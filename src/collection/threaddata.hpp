@@ -1,5 +1,5 @@
-#ifndef THREADED_DATA_MANIPULATION_T
-#define THREADED_DATA_MANIPULATION_T
+#ifndef THREADED_DATA_MANIPULATION_H
+#define THREADED_DATA_MANIPULATION_H
 
 #include "dataview.hpp"
 
@@ -56,4 +56,4 @@ namespace Threaded {
 	using AtomicView = DataView<Atomic<T>>;
 }
 
-#endif // THREADED_DATA_MANIPULATION_T
+#endif // THREADED_DATA_MANIPULATION_H
