@@ -44,7 +44,7 @@ namespace Shared {
 			return (*this);
 		}
 		GroupValue<T>& unbind(T& obj)			{return unbind(&obj);			}
-		GroupValue<T>& unbind()					{refs.clear(); return (*this);	}
+		GroupValue<T>& unbindAll()				{refs.clear(); return (*this);	}
 
 		GroupValue<T>& modify(Operation<T> op)		{for (auto obj: refs) (*obj) = op(*obj); return (*this);	}
 		GroupValue<T>& modify(T (*op)(T const&))	{for (auto obj: refs) (*obj) = (*op)(*obj); return (*this);	}
