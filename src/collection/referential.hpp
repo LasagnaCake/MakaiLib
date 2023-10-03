@@ -13,22 +13,17 @@ namespace SmartPointer {
 	template <typename T> concept Pointable = Type::Safe<T>;
 
 	namespace {
-		using
-			std::map,
-			std::function
-		;
-
 		struct _pData{
 			bool exists	= false;
 			int64 count	= 0;
 		};
-		map<void*, _pData> _pointerDB;
+
+		HashMap<void*, _pData> _pointerDB;
 	}
 
 	#define ASSERT_STRONG	static_assert(!weak,	"It is forbidden to implicitly convert a strong pointer to a weak pointer!")
 	#define ASSERT_WEAK		static_assert(weak,		"It is forbidden to implicitly convert a weak pointer to a strong pointer!")
 	#define IF_STRONG	if constexpr(!weak)
-	#define SameType	Pointer<T, weak>
 	template <Pointable T, bool weak = false>
 	class Pointer {
 	public:
@@ -45,7 +40,7 @@ namespace SmartPointer {
 
 		~Pointer() {unbind();}
 
-		SameType& bind(T* obj) {
+		Pointer& bind(T* obj) {
 			unbind();
 			if (obj == nullptr) return (*this);
 			ref = obj;
@@ -54,12 +49,10 @@ namespace SmartPointer {
 			return (*this);
 		}
 
-		// Destroy if Last Pointer.
-		// I.E. Delete object if last Pointer to exist with it.
-		SameType& unbind(bool dilp = true) {
+		Pointer& unbind() {
 			if (!exists()) return (*this);
 			IF_STRONG {
-				if ((_pointerDB[(void*)ref].count-1 < 1) && dilp) {
+				if ((_pointerDB[(void*)ref].count-1 < 1)) {
 					$debug("Deleting reference...");
 					return destroy();
 				}
@@ -72,7 +65,7 @@ namespace SmartPointer {
 			return (*this);
 		}
 
-		SameType& destroy() {
+		Pointer& destroy() {
 			IF_STRONG {
 				if (!exists()) return (*this);
 				_pointerDB[(void*)ref] = {false, 0};
@@ -82,13 +75,13 @@ namespace SmartPointer {
 			return (*this);
 		}
 
-		SameType& modify(Operation<T> op) {
+		Pointer& modify(Operation<T> op) {
 			if(exists())
 				(*ref) = op(*ref);
 			return *this;
 		}
 
-		SameType& modify(T (*op)(T const&)) {
+		Pointer& modify(T (*op)(T const&)) {
 			if(exists())
 				(*ref) = (*op)(*ref);
 			return *this;
@@ -102,8 +95,8 @@ namespace SmartPointer {
 
 		inline bool operator()()	{return exists();}
 
-		inline SameType& operator()(Operation<T> op)		{return modify(op);}
-		inline SameType& operator()(void (*op)(T const&))	{return modify(op);}
+		inline Pointer& operator()(Operation<T> op)			{return modify(op);}
+		inline Pointer& operator()(void (*op)(T const&))	{return modify(op);}
 
 		inline T& operator[](size_t index)	{return getPointer()[index];}
 
@@ -112,7 +105,7 @@ namespace SmartPointer {
 		inline Pointer<T, true>		asWeak()	{return	getPointer();			}
 		inline T*					raw()		{return	getPointer();			}
 
-		explicit operator T*() const	{return ref;				}
+		explicit operator T*() const	{return getPointer();		}
 		operator bool() const			{return exists();			}
 
 		inline bool operator!()			{return	!exists();			}
@@ -123,19 +116,19 @@ namespace SmartPointer {
 		inline bool operator<=(T* obj)	{return	!operator>(obj);	}
 		inline bool operator>=(T* obj)	{return	!operator<(obj);	}
 
-		inline bool operator==(const SameType& other)	{return operator==(other.ref);	}
-		inline bool operator!=(const SameType& other)	{return operator!=(other.ref);	}
-		inline bool operator<(const SameType& other)	{return operator<(other.ref);	}
-		inline bool operator>(const SameType& other)	{return operator>(other.ref);	}
-		inline bool operator<=(const SameType& other)	{return operator<=(other.ref);	}
-		inline bool operator>=(const SameType& other)	{return operator>=(other.ref);	}
+		inline bool operator==(const Pointer<T, weak>& other)	{return operator==(other.ref);	}
+		inline bool operator!=(const Pointer<T, weak>& other)	{return operator!=(other.ref);	}
+		inline bool operator<(const Pointer<T, weak>& other)	{return operator<(other.ref);	}
+		inline bool operator>(const Pointer<T, weak>& other)	{return operator>(other.ref);	}
+		inline bool operator<=(const Pointer<T, weak>& other)	{return operator<=(other.ref);	}
+		inline bool operator>=(const Pointer<T, weak>& other)	{return operator>=(other.ref);	}
 
-		SameType& operator=(T* obj)								{bind(obj); return (*this);			}
-		const SameType& operator=(T* obj) const					{bind(obj); return (*this);			}
-		SameType& operator=(T& obj)								{bind(&obj); return (*this);		}
-		const SameType& operator=(T& obj) const					{bind(&obj); return (*this);		}
-		SameType& operator=(const SameType& other)				{bind(other.ref); return (*this);	}
-		const SameType& operator=(const SameType& other) const	{bind(other.ref); return (*this);	}
+		Pointer& operator=(T* obj)										{bind(obj); return (*this);			}
+		const Pointer& operator=(T* obj) const							{bind(obj); return (*this);			}
+		Pointer& operator=(T& obj)										{bind(&obj); return (*this);		}
+		const Pointer& operator=(T& obj) const							{bind(&obj); return (*this);		}
+		Pointer& operator=(const Pointer<T, weak>& other)				{bind(other.ref); return (*this);	}
+		const Pointer& operator=(const Pointer<T, weak>& other) const	{bind(other.ref); return (*this);	}
 
 		T* operator->()				{return getPointer();	}
 		const T* operator->() const	{return getPointer();	}
@@ -196,7 +189,6 @@ namespace SmartPointer {
 			return (*ref);
 		}
 	};
-	#undef SameType
 	#undef ASSERT_STRONG
 	#undef ASSERT_WEAK
 	#undef IF_STRONG
@@ -207,7 +199,5 @@ namespace SmartPointer {
 	template <Pointable T>
 	using StrongPointer	= Pointer<T,	false>;
 }
-
-#define $ptr SmartPointer::
 
 #endif // REFERENCE_HANDLER_H

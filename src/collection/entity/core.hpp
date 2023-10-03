@@ -83,16 +83,6 @@ namespace EntityClass {
 	/// The root object.
 	Entity* _ROOT = nullptr;
 
-	template <EntityType T>
-	T* create(string name = "Entity", bool uniqueEntity = true) {
-		return new T(name);
-	}
-
-	template <EntityType T>
-	T* create(Entity* parent, string name = "Entity", bool uniqueEntity = true) {
-		return new T(parent, name, uniqueEntity);
-	}
-
 	typedef Group::Group<Entity*> EntityGroup;
 	EntityGroup groups;
 
@@ -107,8 +97,6 @@ namespace EntityClass {
 	*/
 	class Entity {
 	public:
-		template <EntityType T> friend T* create() {};
-
 		/// Whether the object and children should be processing or not.
 		bool process = true;
 
