@@ -119,7 +119,7 @@ public:
 		unsigned char* data = NULL,
 		unsigned int internalFormat = 0
 	) {
-		create(
+		make(
 			width,
 			height,
 			type,
@@ -136,19 +136,19 @@ public:
 		unsigned int magFilter = GL_LINEAR,
 		unsigned int minFilter = GL_LINEAR_MIPMAP_LINEAR
 	) {
-		create(path, minFilter, magFilter);
+		make(path, minFilter, magFilter);
 	}
 
 	Texture2D(
 		ImageData2D const& image
 	) {
-		create(image);
+		make(image);
 	}
 
 	Texture2D(
 		Texture2D const& other
 	) {
-		create(other);
+		make(other);
 	}
 
 	void create(
@@ -225,13 +225,107 @@ public:
 	void create(
 		Texture2D const& other
 	) {
-		create(other.getData());
+		create(
+			other.width,
+			other.height,
+			other.type,
+			other.format,
+			other.minFilter,
+			other.magFilter,
+			NULL,
+			other.internalFormat
+		);
+		copyFrom(other);
+	}
+
+	void make(
+		unsigned int width,
+		unsigned int height,
+		unsigned int type = GL_UNSIGNED_BYTE,
+		unsigned int format = GL_RGBA,
+		unsigned int magFilter = GL_LINEAR,
+		unsigned int minFilter = GL_LINEAR_MIPMAP_LINEAR,
+		unsigned char* data = NULL,
+		unsigned int internalFormat = 0
+	) {
+		destroy();
+		create(width, height, type, format, magFilter, minFilter, data, internalFormat);
+	}
+
+	void make(
+		std::string path,
+		unsigned int magFilter = GL_LINEAR,
+		unsigned int minFilter = GL_LINEAR_MIPMAP_LINEAR
+	) {
+		destroy();
+		create(path, minFilter, magFilter);
+	}
+
+	void make(
+		ImageData2D image
+	) {
+		destroy();
+		create(image);
+	}
+
+	void make(
+		Texture2D const& other
+	) {
+		destroy();
+		create(other);
 	}
 
 	void destroy() {
 		if (!created) return;
 		glDeleteTextures(1, &id);
 		created = false;
+	}
+
+	void copyFrom(
+		Texture2D const& other,
+		unsigned int startX,
+		unsigned int startY,
+		unsigned int endX,
+		unsigned int endY
+	) {
+		// Get image width
+		unsigned int width = (int)Math::min(
+			endX - startX,
+			Math::min(this->width, other.width)
+		);
+		// Get image height
+		unsigned int height = (int)Math::min(
+			endY - startY,
+			Math::min(this->height, other.height)
+		);
+		// Copy data
+		glCopyImageSubData(
+			id,			GL_TEXTURE_2D, startX, startY, 0, 0,
+			other.id,	GL_TEXTURE_2D, 0, 0, 0, 0,
+			width, height, 1
+		);
+		// Regenerate mipmaps
+		glBindTexture(GL_TEXTURE_2D, id);
+		glGenerateMipmap(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, 0);
+	}
+
+	void copyFrom(
+		Texture2D const& other
+	) {
+		// Get image dimentions
+		unsigned int width = Math::min(this->width, other.width);
+		unsigned int height = Math::min(this->height, other.height);
+		// Copy data
+		glCopyImageSubData(
+			id,			GL_TEXTURE_2D, 0, 0, 0, 0,
+			other.id,	GL_TEXTURE_2D, 0, 0, 0, 0,
+			width, height, 1
+		);
+		// Regenerate mipmaps
+		glBindTexture(GL_TEXTURE_2D, id);
+		glGenerateMipmap(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
 	/*
