@@ -27,7 +27,7 @@ namespace Audio {
 				audioList.push_back(&update);
 			}
 
-			Playable(const String& path): Playable() {
+			Playable(String const& path): Playable() {
 				create(path);
 			}
 
