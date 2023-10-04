@@ -479,14 +479,14 @@ namespace Makai {
 			$debug("Created!");
 			$debug("Starting GLEW...");
 			// Try and initialize GLEW
-			GLenum glew_status = glewInit();
-			if (glew_status != GLEW_OK) {
-				$errlog("Error: glewInit: " << glewGetErrorString(glew_status));
-				throw Error::FailedAction(string("glewInit"));
+			GLenum glewStatus = glewInit();
+			if (glewStatus != GLEW_OK) {
+				$errlog("Error: glewInit: " << glewGetErrorString(glewStatus));
+				throw Error::FailedAction(string("glewInit: ") + (const char*)glewGetErrorString(glewStatus));
 			}
-			if (!GLEW_VERSION_4_2) {
-				$errlog("Your computer does not support OpenGL 4.2+!");
-				throw Error::InvalidValue(string("No OpenGL 4.2+"));
+			if (!GLEW_VERSION_4_3) {
+				$errlog("Your computer does not support OpenGL 4.3+!");
+				throw Error::InvalidValue(string("No OpenGL 4.3+"));
 			}
 			$debug("Started!");
 			// Create default shader
