@@ -105,6 +105,50 @@ unsigned int createTexture2D(
 	return createTexture(width, height, type, format, format, minFilter, magFilter, data);
 }
 
+namespace {
+	unsigned int createCopyBuffer() {
+		unsigned int id = 0;
+		glGenFramebuffers(1, &id);
+		return id;
+	}
+}
+
+void copyTexture(
+	unsigned int src,
+	unsigned int dst,
+	unsigned int srcStartX,
+	unsigned int srcStartY,
+	unsigned int srcEndX,
+	unsigned int srcEndY,
+	unsigned int dstStartX,
+	unsigned int dstStartY,
+	unsigned int dstEndX,
+	unsigned int dstEndY,
+	unsigned int filter = GL_NEAREST
+) {
+	static unsigned int const fb = createCopyBuffer();
+	glBindFramebuffer(GL_FRAMEBUFFER, fb);
+	glFramebufferTexture2D(
+		GL_READ_FRAMEBUFFER,
+		GL_COLOR_ATTACHMENT0,
+		GL_TEXTURE_2D,
+		src,
+		0
+	);
+	glFramebufferTexture2D(
+		GL_DRAW_FRAMEBUFFER,
+		GL_COLOR_ATTACHMENT1,
+		GL_TEXTURE_2D,
+		dst,
+		0
+	);
+	glBlitFramebuffer(
+		srcStartX, srcStartY, srcEndX, srcEndY,
+		dstStartX, dstStartY, dstEndX, dstEndY,
+		GL_COLOR_BUFFER_BIT, filter
+	);
+}
+
 class Texture2D {
 public:
 	Texture2D() {}
@@ -146,9 +190,21 @@ public:
 	}
 
 	Texture2D(
-		Texture2D const& other
+		Texture2D const& other,
+		bool filter = false
 	) {
-		make(other);
+		make(other, filter);
+	}
+
+	Texture2D(
+		Texture2D const& other,
+		unsigned int startX,
+		unsigned int startY,
+		unsigned int endX,
+		unsigned int endY,
+		bool filter = false
+	) {
+		make(other, startX, startY, endX, endY, filter);
 	}
 
 	void create(
@@ -223,7 +279,8 @@ public:
 	}
 
 	void create(
-		Texture2D const& other
+		Texture2D const& other,
+		bool filter = false
 	) {
 		create(
 			other.width,
@@ -235,7 +292,30 @@ public:
 			NULL,
 			other.internalFormat
 		);
-		copyFrom(other);
+		copyFrom(other, filter);
+	}
+
+	void create(
+		Texture2D const& other,
+		unsigned int startX,
+		unsigned int startY,
+		unsigned int endX,
+		unsigned int endY,
+		bool filter = false
+	) {
+		unsigned int w, h;
+		w = Math::max(startX, endX) - Math::min(startX, endX);
+		h = Math::max(startY, endY) - Math::min(startY, endY);
+		create(
+			w, h,
+			other.type,
+			other.format,
+			other.minFilter,
+			other.magFilter,
+			NULL,
+			other.internalFormat
+		);
+		copyFrom(other, startX, startY, endX, endY, filter);
 	}
 
 	void make(
@@ -269,10 +349,11 @@ public:
 	}
 
 	void make(
-		Texture2D const& other
+		Texture2D const& other,
+		bool filter = false
 	) {
 		destroy();
-		create(other);
+		create(other, filter);
 	}
 
 	void destroy() {
@@ -281,28 +362,32 @@ public:
 		created = false;
 	}
 
+	void make(
+		Texture2D const& other,
+		unsigned int startX,
+		unsigned int startY,
+		unsigned int endX,
+		unsigned int endY,
+		bool filter = false
+	) {
+		destroy();
+		create(other, startX, startY, endX, endY, filter);
+	}
+
 	void copyFrom(
 		Texture2D const& other,
 		unsigned int startX,
 		unsigned int startY,
 		unsigned int endX,
-		unsigned int endY
+		unsigned int endY,
+		bool filter = false
 	) {
-		// Get image width
-		unsigned int width = (int)Math::min(
-			endX - startX,
-			Math::min(this->width, other.width)
-		);
-		// Get image height
-		unsigned int height = (int)Math::min(
-			endY - startY,
-			Math::min(this->height, other.height)
-		);
 		// Copy data
-		glCopyImageSubData(
-			id,			GL_TEXTURE_2D, startX, startY, 0, 0,
-			other.id,	GL_TEXTURE_2D, 0, 0, 0, 0,
-			width, height, 1
+		copyTexture(
+			id, other.id,
+			startX, startY, endX, endY,
+			0, 0, width, height,
+			filter ? GL_LINEAR : GL_NEAREST
 		);
 		// Regenerate mipmaps
 		glBindTexture(GL_TEXTURE_2D, id);
@@ -311,16 +396,15 @@ public:
 	}
 
 	void copyFrom(
-		Texture2D const& other
+		Texture2D const& other,
+		bool filter = false
 	) {
-		// Get image dimentions
-		unsigned int width = Math::min(this->width, other.width);
-		unsigned int height = Math::min(this->height, other.height);
 		// Copy data
-		glCopyImageSubData(
-			id,			GL_TEXTURE_2D, 0, 0, 0, 0,
-			other.id,	GL_TEXTURE_2D, 0, 0, 0, 0,
-			width, height, 1
+		copyTexture(
+			id, other.id,
+			0, 0, other.width, other.height,
+			0, 0, width, height,
+			filter ? GL_LINEAR : GL_NEAREST
 		);
 		// Regenerate mipmaps
 		glBindTexture(GL_TEXTURE_2D, id);
