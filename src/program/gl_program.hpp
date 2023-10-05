@@ -423,6 +423,28 @@ namespace Makai {
 		} mouse;
 	};
 
+	#ifdef $_ENABLE_OPENGL_DEBUG
+	namespace {
+		void GLAPIENTRY glAPIMessageCallback(
+			GLenum source,
+			GLenum type,
+			GLuint id,
+			GLenum severity,
+			GLsizei length,
+			const GLchar* message,
+			const void* userParam
+		) {
+			$debug(
+				"[GL CALLBACK"
+				+ String(type == GL_DEBUG_TYPE_ERROR ? " (GL ERROR)" : "") + "] "
+				+ "Type: " + toString(type) + ", "
+				+ "Severity: " + toString(severity) + ", "
+				+ "Message: " + String(message) + ", "
+			);
+		}
+	}
+	#endif
+
 	/**
 	*******************
 	*                 *
@@ -501,6 +523,10 @@ namespace Makai {
 			// This keeps the alpha from shitting itself
 			glEnable(GL_BLEND);
 			glEnable(GL_ALPHA_TEST);
+			#ifdef $_ENABLE_OPENGL_DEBUG
+			glEnable(GL_DEBUG_OUTPUT);
+			glDebugMessageCallback(glAPIMessageCallback, 0);
+			#endif
 			glBlendFuncSeparatei(0, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 			// This keeps the alpha from shitting itself
 			glBlendEquationSeparatei(0, GL_FUNC_ADD, GL_MAX);
@@ -773,6 +799,11 @@ namespace Makai {
 
 		/// The program's taskers.
 		Tasking::MultiTasker taskers;
+
+		void queueScreenCopy(Drawer::Texture2D* target) {
+			screenQueue.push_back(target);
+		};
+
 	protected:
 		Drawer::FrameBufferData toFrameBufferData() {
 			return Drawer::FrameBufferData{0};
@@ -780,6 +811,8 @@ namespace Makai {
 
 	private:
 		size_t cycleRate = 0, frameRate = 0;
+
+		List<Drawer::Texture2D*> screenQueue;
 
 		Shader::Shader bufferShader;
 
@@ -862,10 +895,19 @@ namespace Makai {
 			framebuffer.render(toFrameBufferData());
 			// Call rendering end function
 			onDrawEnd();
+			// Copy screen to queued textures
+			copyScreenToQueue();
 			// Disable depth testing
 			glDisable(GL_DEPTH_TEST);
 			// Display window
 			SDL_GL_SwapWindow(window);
+		}
+
+		void copyScreenToQueue() {
+			Drawer::Texture2D& screen = *framebuffer.toFrameBufferData().screen;
+			for (Drawer::Texture2D* target: screenQueue)
+				target->make(screen);
+			screenQueue.clear();
 		}
 
 		/// Frame counter.
