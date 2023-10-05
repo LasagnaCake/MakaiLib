@@ -147,6 +147,7 @@ void copyTexture(
 		dstStartX, dstStartY, dstEndX, dstEndY,
 		GL_COLOR_BUFFER_BIT, filter
 	);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 class Texture2D {
