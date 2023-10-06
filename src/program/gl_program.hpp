@@ -423,7 +423,6 @@ namespace Makai {
 		} mouse;
 	};
 
-	#ifdef $_ENABLE_OPENGL_DEBUG
 	namespace {
 		void GLAPIENTRY glAPIMessageCallback(
 			GLenum source,
@@ -443,7 +442,6 @@ namespace Makai {
 			);
 		}
 	}
-	#endif
 
 	/**
 	*******************
@@ -526,8 +524,8 @@ namespace Makai {
 			glEnable(GL_ALPHA_TEST);
 			#ifdef $_ENABLE_OPENGL_DEBUG
 			glEnable(GL_DEBUG_OUTPUT);
-			glDebugMessageCallback(glAPIMessageCallback, 0);
 			#endif
+			glDebugMessageCallback(glAPIMessageCallback, 0);
 			glBlendFuncSeparatei(0, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 			// This keeps the alpha from shitting itself
 			glBlendEquationSeparatei(0, GL_FUNC_ADD, GL_MAX);
@@ -783,6 +781,17 @@ namespace Makai {
 		/// Gets called when the program is closing. Happens before Window is terminated.
 		virtual void onClose()	{};
 
+		/// Queues a texture to recieve a copy of the screen.
+		void queueScreenCopy(Drawer::Texture2D* target) {
+			screenQueue.push_back(target);
+		}
+
+		/// Removes a texture from the screen copy queue.
+		void unqueueScreenCopy(Drawer::Texture2D* target) {
+			ERASE_IF(screenQueue, elem == target);
+		}
+
+
 		/// The window's clear color.
 		Vector4 color = Color::BLACK;
 
@@ -800,14 +809,6 @@ namespace Makai {
 
 		/// The program's taskers.
 		Tasking::MultiTasker taskers;
-
-		void queueScreenCopy(Drawer::Texture2D* target) {
-			screenQueue.push_back(target);
-		}
-
-		void unqueueScreenCopy(Drawer::Texture2D* target) {
-			ERASE_IF(screenQueue, elem == target);
-		}
 
 	protected:
 		Drawer::FrameBufferData toFrameBufferData() {
@@ -898,20 +899,22 @@ namespace Makai {
 			onPreFrameDraw();
 			// Render frame buffer
 			framebuffer.render(toFrameBufferData());
+			// Copy screen to queued textures
+			copyScreenToQueued();
 			// Call rendering end function
 			onDrawEnd();
-			// Copy screen to queued textures
-			copyScreenToQueue();
 			// Disable depth testing
 			glDisable(GL_DEPTH_TEST);
 			// Display window
 			SDL_GL_SwapWindow(window);
 		}
 
-		void copyScreenToQueue() {
-			Drawer::Texture2D& screen = *framebuffer.toFrameBufferData().screen;
-			for (Drawer::Texture2D* target: screenQueue)
-				target->copyFrom(screen);
+		void copyScreenToQueued() {
+			if (!screenQueue.empty()) {
+				auto& screen = *framebuffer.toFrameBufferData().screen;
+				for (Drawer::Texture2D* target: screenQueue)
+					target->make(screen);
+			}
 			screenQueue.clear();
 		}
 

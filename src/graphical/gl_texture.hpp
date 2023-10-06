@@ -146,6 +146,8 @@ void copyTexture(
 		dst,
 		0
 	);
+	glReadBuffer(GL_COLOR_ATTACHMENT0);
+	glDrawBuffer(GL_COLOR_ATTACHMENT1);
 	DEBUGLN((glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE ? "OK" : "ERR"));
 	DEBUGLN("Copying textures...");
 	glBlitFramebuffer(
@@ -225,6 +227,7 @@ public:
 		unsigned char* data = NULL,
 		unsigned int internalFormat = 0
 	) {
+		if (created) return;
 		this->width				= width;
 		this->height			= height;
 		this->format			= format;
@@ -232,7 +235,6 @@ public:
 		this->minFilter			= minFilter;
 		this->magFilter			= magFilter;
 		this->internalFormat	= internalFormat ? internalFormat : format;
-		if (created) return;
 		created = true;
 		id = createTexture2D(
 			width,
@@ -251,6 +253,7 @@ public:
 		unsigned int magFilter = GL_LINEAR,
 		unsigned int minFilter = GL_LINEAR_MIPMAP_LINEAR
 	) {
+		if (created) return;
 		int imgWidth, imgHeight;
 		int nrChannels;
 		unsigned char* data = stbi_load(path.c_str(), &imgWidth, &imgHeight, &nrChannels, 4);
@@ -271,9 +274,12 @@ public:
 	}
 
 	void create(
-		ImageData2D image
+		ImageData2D const& image
 	) {
+		if (created) return;
+		DEBUGLN("copying textures...");
 		if (image.data.empty()) return;
+		DEBUGLN("Texture data exists!");
 		create(
 			image.width,
 			image.height,
@@ -290,6 +296,7 @@ public:
 		Texture2D const& other,
 		bool filter = false
 	) {
+		if (created) return;
 		create(
 			other.width,
 			other.height,
@@ -311,6 +318,7 @@ public:
 		unsigned int endY,
 		bool filter = false
 	) {
+		if (created) return;
 		unsigned int w, h;
 		w = Math::max(startX, endX) - Math::min(startX, endX);
 		h = Math::max(startY, endY) - Math::min(startY, endY);
@@ -324,6 +332,12 @@ public:
 			other.internalFormat
 		);
 		copyFrom(other, startX, startY, endX, endY, filter);
+	}
+
+	void destroy() {
+		if (!created) return;
+		glDeleteTextures(1, &id);
+		created = false;
 	}
 
 	void make(
@@ -362,12 +376,6 @@ public:
 	) {
 		destroy();
 		create(other, filter);
-	}
-
-	void destroy() {
-		if (!created) return;
-		glDeleteTextures(1, &id);
-		created = false;
 	}
 
 	void make(
@@ -492,6 +500,7 @@ public:
 	}
 
 	ImageData2D getData() const {
+		DEBUGLN("Getting image data...");
 		if (!created) return ImageData2D{0,0,0,0,0,0};
 		size_t size = 0;
 		switch (type) {
@@ -505,6 +514,8 @@ public:
 			case GL_INT:
 			case GL_FLOAT:			size = 4;	break;
 		}
+		DEBUG("Image Size: ");
+		DEBUGLN(size);
 		switch (format) {
 			case GL_DEPTH_COMPONENT:
 			case GL_RED:							break;
@@ -514,15 +525,31 @@ public:
 			default:
 			case GL_RGBA:				size *= 4;	break;
 		}
+		DEBUG("Image Pixel Width: ");
+		DEBUGLN(size);
+		DEBUG("Width: ");
+		DEBUGLN(width);
+		DEBUG("Height: ");
+		DEBUGLN(height);
+		DEBUG("Image Size: ");
+		DEBUGLN(((size_t)width) * ((size_t)height) * size);
 		ImageData2D imgdat = {width, height, type, format, internalFormat, minFilter, magFilter};
-		imgdat.data.reserve(width * height * size);
+		DEBUGLN("Reserving buffer...");
+		imgdat.data.resize(((size_t)width) * ((size_t)height) * size, 0);
+		DEBUG("Reserved: ");
+		DEBUGLN(imgdat.data.size());
+		if (imgdat.data.empty()) throw Error::FailedAction("Somehow, the image data is empty.");
+		DEBUGLN("Extracting pixels...");
 		glBindTexture(GL_TEXTURE_2D, id);
 		glGetTexImage(GL_TEXTURE_2D, 0, format, type, imgdat.data.data());
 		glBindTexture(GL_TEXTURE_2D, 0);
+		DEBUGLN("Done!");
+		DEBUG("Reserved: ");
+		DEBUGLN(imgdat.data.size());
 		return imgdat;
 	}
 
-	void saveToFile(string const& path) {
+	void saveToFile(string const& path) const {
 		if (!created) return;
 		ImageData2D imgdat = getData();
 		uchar channels = 0;
