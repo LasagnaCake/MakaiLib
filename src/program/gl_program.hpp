@@ -914,8 +914,8 @@ namespace Makai {
 				auto& screen = *framebuffer.toFrameBufferData().screen;
 				for (Drawer::Texture2D* target: screenQueue)
 					target->make(screen);
+				screenQueue.clear();
 			}
-			screenQueue.clear();
 		}
 
 		/// Frame counter.
