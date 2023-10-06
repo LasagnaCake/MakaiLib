@@ -61,11 +61,11 @@ public:
 
 	virtual ~Renderable() {
 		locked = false;
-		$debug("Renderable!");
-		$debug(references.plane.size());
-		$debug("Deleting references...");
+		DEBUGLN("Renderable!");
+		DEBUGLN(references.plane.size());
+		DEBUGLN("Deleting references...");
 		clearData();
-		$debug("Killing renderable object...");
+		DEBUGLN("Killing renderable object...");
 	}
 
 	/// Creates a reference and binds it to this object.
@@ -202,7 +202,7 @@ public:
 		if (!ref) return;
 		if (locked) return;
 		auto& rp = references.plane;
-		$eraseif(rp, elem == ref);
+		ERASE_IF(rp, elem == ref);
 		delete ref;
 	}
 
@@ -211,7 +211,7 @@ public:
 		if (!ref) return;
 		if (locked) return;
 		auto& rp = references.trigon;
-		$eraseif(rp, elem == ref);
+		ERASE_IF(rp, elem == ref);
 		delete ref;
 	}
 
@@ -233,7 +233,7 @@ public:
 		triangles.resize(triangles.size() + (size / 3));
 		if (this->vertices)
 			delete[] this->vertices;
-		for $range(i, 0, size, 3) {
+		for RANGE(i, 0, size, 3) {
 			triangles[arrEnd + (i / 3)] = (
 				new Triangle{
 					vertices[i],
@@ -254,7 +254,7 @@ public:
 	}
 
 	void extend(vector<Renderable*> parts) {
-		for $each(p, parts)
+		for EACH(p, parts)
 			extend(p);
 	}
 
@@ -262,8 +262,8 @@ public:
 		auto data = FileLoader::loadBinaryFile(path);
 		if (!data.size()) throw Error::FailedAction("File does not exist or is empty! (" + path + ")!");
 		extend((RawVertex*)&data[0], data.size() / RAW_VERTEX_BYTE_SIZE);
-		$debugp("Vertices: ");
-		$debug(data.size() / RAW_VERTEX_BYTE_SIZE);
+		DEBUG("Vertices: ");
+		DEBUGLN(data.size() / RAW_VERTEX_BYTE_SIZE);
 	}
 
 	inline void extendFromDefinitionFile(
@@ -320,11 +320,11 @@ public:
 		bool integratedTextures	= false,
 		bool pretty = false
 	) {
-		$debug("Saving object '" + name + "'...");
+		DEBUGLN("Saving object '" + name + "'...");
 		// Get paths
 		string binpath		= folder + "/" + name + ".mesh";
-		$debug(binpath);
-		$debug(folder + "/" + name + ".mrod");
+		DEBUGLN(binpath);
+		DEBUGLN(folder + "/" + name + ".mrod");
 		FileSystem::makeDirectory(FileSystem::concatenatePath(folder, texturesFolder));
 		// Get object definition
 		JSONData file = getObjectDefinition("base64", integratedBinary, integratedTextures);
@@ -525,7 +525,7 @@ private:
 				"Please check to see if values are correct!"
 			);
 		}
-		$debug(componentData);
+		DEBUGLN(componentData);
 		// Check if important data is not empty
 		{
 			string error = "";
@@ -887,14 +887,14 @@ public:
 	}
 
 	virtual ~LineRenderable() {
-		$debug("LineRenderable!");
-		$debug("Killing LineRenderable object...");
+		DEBUGLN("LineRenderable!");
+		DEBUGLN("Killing LineRenderable object...");
 	}
 
 	void extend(RawVertex* points, size_t size) {
 		if (points == nullptr || size == 0)
 			throw Error::InvalidValue("No vertices were provided!");
-		for $ssrange(i, 0, size) {
+		for SSRANGE(i, 0, size) {
 			this->points.push_back(points[i]);
 		}
 	}
@@ -908,18 +908,18 @@ public:
 	}
 
 	void extend(vector<LineRenderable*> parts) {
-		for $each(p, parts)
+		for EACH(p, parts)
 			extend(p);
 	}
 
 	void extendFromBinaryFile(string const& path) {
-		auto data = $fld loadBinaryFile(path);
+		auto data = FileLoader::loadBinaryFile(path);
 		if (!data.size()) throw Error::FailedAction("File does not exist or is empty! (" + path + ")!");
 		extend((RawVertex*)&data[0], data.size() / sizeof(RawVertex));
 	}
 
 	void saveToFile(std::string const& path) {
-		$fld saveBinaryFile(path, points.data(), points.size());
+		FileLoader::saveBinaryFile(path, points.data(), points.size());
 	}
 
 	vector<RawVertex> points;
@@ -959,14 +959,14 @@ public:
 	}
 
 	virtual ~PointRenderable() {
-		$debug("PointRenderable!");
-		$debug("Killing PointRenderable object...");
+		DEBUGLN("PointRenderable!");
+		DEBUGLN("Killing PointRenderable object...");
 	}
 
 	void extend(RawVertex* points, size_t size) {
 		if (points == nullptr || size == 0)
 			throw Error::InvalidValue("No vertices were provided!");
-		for $ssrange(i, 0, size) {
+		for SSRANGE(i, 0, size) {
 			this->points.push_back(points[i]);
 		}
 	}
@@ -980,18 +980,18 @@ public:
 	}
 
 	void extend(vector<PointRenderable*> parts) {
-		for $each(p, parts)
+		for EACH(p, parts)
 			extend(p);
 	}
 
 	void extendFromBinaryFile(string const& path) {
-		auto data = $fld loadBinaryFile(path);
+		auto data = FileLoader::loadBinaryFile(path);
 		if (!data.size()) throw Error::FailedAction("File does not exist or is empty! (" + path + ")!");
 		extend((RawVertex*)&data[0], data.size() / sizeof(RawVertex));
 	}
 
 	void saveToFile(string const& path) {
-		$fld saveBinaryFile(path, points.data(), points.size());
+		FileLoader::saveBinaryFile(path, points.data(), points.size());
 	}
 
 	vector<RawVertex> points;

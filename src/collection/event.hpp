@@ -3,48 +3,48 @@
 
 #include <functional>
 #include <vector>
+#include "helper.hpp"
 #include "conceptual.hpp"
 
-#define $_tsignal(...)	(...)->void
-#define $_ttrigger(...)	(...)->bool
-#define $_tcall(...)	(...)->Trigger
-#define $_tchain(...)	(...)->Signal
+#define T_SIGNAL_U(...)		(...)->void
+#define T_TRIGGER_U(...)	(...)->bool
+#define T_CALL_U(...)		(...)->Trigger
+#define T_CHAIN_U(...)		(...)->Signal
 
-#define	$tsignal(...)	[&] $_tsignal(...)
-#define	$ttrigger(...)	[&] $_ttrigger(...)
-#define	$tcall(...)		[&] $_tcall(...)
-#define	$tchain(...)	[&] $_tchain(...)
+#define	T_SIGNAL(...)	[&] T_SIGNAL_U(...)
+#define	T_TRIGER(...)	[&] T_TRIGGER_U(...)
+#define	T_CALL(...)		[&] T_CALL_U(...)
+#define	T_CHAIN(...)	[&] T_CHAIN_U(...)
 
-#define $signal			$tsignal()
-#define $trigger		$ttrigger()
-#define $call			$tcall()
-#define $chain			$tchain()
+#define SIGNAL			T_SIGNAL()
+#define TRIGGER			T_TRIGGER()
+#define CALL			T_CALL()
+#define CHAIN			T_CHAIN()
 
 namespace Event{
 	namespace {
-		using std::function, std::vector;
-		vector<const function<void(float)>*> timerList;
+		List<const Procedure<float>*> timerList;
 	}
-	#define $$FUNC function<void(float)>
+
 	/// Yields all available non-manual timers.
 	void yieldAllTimers(float delta = 1) {
 		// Loop through timers and step them
 		if (timerList.size())
-			for(const $$FUNC* func : timerList)
+			for(const Procedure<float>* func : timerList)
 				(*func)(delta);
 	}
 
 	/// A signal to be fired, whenever.
-	typedef function<void()>		Signal;
+	typedef Function<void()>		Signal;
 
 	/// A trigger to wait for.
-	typedef function<bool()>		Trigger;
+	typedef Function<bool()>		Trigger;
 
 	/// A call to be fired, which returns a Trigger to wait for.
-	typedef function<Trigger()>		Call;
+	typedef Function<Trigger()>		Call;
 
 	/// A signal to be fired whenever, which returns a Signal.
-	typedef function<Signal()>		Chain;
+	typedef Function<Signal()>		Chain;
 
 	const Signal	DEF_SIGNAL	=	[]()->void		{};
 	const Trigger	DEF_TRIGGER	=	[]()->bool		{return true;};
@@ -208,7 +208,7 @@ namespace Event{
 
 	private:
 		/// Internal signal used for automatic processing.
-		const $$FUNC _yield = [&](float delta = 1) {
+		const Procedure<float> _yield = [&](float delta = 1) {
 			this->yield(delta);
 		};
 
@@ -220,32 +220,24 @@ namespace Event{
 		/// The current yield cycle.
 		float counter = 0;
 	};
-	#undef $$FUNC
 }
 
 namespace TypedEvent {
-	namespace {
-		using std::function, std::vector;
-	}
-
 	/// A signal to be fired, whenever.
 	template <typename T = void>
-	using Signal = function<void(T)>;
+	using Signal = Function<void(T)>;
 
 	/// A trigger to wait for.
 	template <typename T = void>
-	using Trigger = function<bool(T)>;
+	using Trigger = Function<bool(T)>;
 
 	/// A call to be fired, which returns a Trigger to wait for.
 	template <typename T = void, typename T2 = void>
-	using Call = function<Trigger<T>(T2)>;
+	using Call = Function<Trigger<T>(T2)>;
 
 	/// A call to be fired, which returns a Signal.
 	template <typename T = void, typename T2 = void>
-	using Chain = function<Signal<T>(T2)>;
+	using Chain = Function<Signal<T>(T2)>;
 }
-
-#define $evt Event::
-#define $tev TypedEvent::
 
 #endif // SIGNAL_TRIGGER_H

@@ -1064,15 +1064,6 @@ namespace Vector{
 	};
 }
 
-#define $vec	Vector::
-#define $vec2	Vector::Vector2
-#define $vec3	Vector::Vector3
-#define $vec4	Vector::Vector4
-
-#define Vec2	Vector::Vector2
-#define Vec3	Vector::Vector3
-#define Vec4	Vector::Vector4
-
 namespace VecMath
 {
 	using namespace Vector;
@@ -1194,7 +1185,7 @@ namespace VecMath
 	}
 
 	/// Gets a 3D Vector of size 1, pointing towards a given axis, rotated at a given angle.
-	Vector3 angleV3(Vec3 angle, Axis axis = Axis::NEG_Z) {
+	Vector3 angleV3(Vector3 angle, Axis axis = Axis::NEG_Z) {
 		switch (axis) {
 		case Axis::POS_X:
 			return rotateV3(Vector3(+1,0,0), angle);
@@ -1469,6 +1460,8 @@ namespace VecMath
 	}
 }
 
-#define $vmt VecMath::
+typedef Vector::Vector2 Vec2;
+typedef Vector::Vector3 Vec3;
+typedef Vector::Vector4 Vec4;
 
 #endif // VECTOR234_H

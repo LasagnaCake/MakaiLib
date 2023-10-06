@@ -17,8 +17,8 @@ struct Empty {
 	virtual ~Empty() {onDestroy = onUnbind = [](){};};
 	friend class RenderData::Renderable;
 private:
-	$evt Signal onDestroy;
-	$evt Signal onUnbind;
+	Event::Signal onDestroy;
+	Event::Signal onUnbind;
 };
 
 // [[ PLANES ]]

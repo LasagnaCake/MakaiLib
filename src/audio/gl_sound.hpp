@@ -41,13 +41,13 @@ public:
 	}
 
 	void onDestroy() final override {
-		$debug("Destroying sound source...");
+		DEBUGLN("Destroying sound source...");
 		if (!isAudioSystemClosed) {
 			if (active())
 				Mix_HaltChannel(channel);
 			Mix_FreeChunk(source);
 		}
-		$debug("Sound source deleted!");
+		DEBUGLN("Sound source deleted!");
 	}
 
 	void onUpdate() override {

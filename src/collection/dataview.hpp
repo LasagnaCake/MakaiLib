@@ -8,18 +8,18 @@ namespace View {
 	template <typename T> concept Viewable = Type::Safe<T>;
 
 	template<Viewable T>
-	class Reference {
+	class Referend {
 	public:
-		Reference(T& _data):					data(&_data)		{}
-		Reference(Reference<T> const& other):	data(other.data)	{}
-		Reference(Reference<T>&& other):		data(other.data)	{}
+		Referend(T& _data):					data(&_data)		{}
+		Referend(Referend<T> const& other):	data(other.data)	{}
+		Referend(Referend<T>&& other):		data(other.data)	{}
 
-		inline Reference& rebind(T& data)	{this->data = &data; return (*this);}
+		inline Referend& rebind(T& data)	{this->data = &data; return (*this);}
 
 		bool exists() {return data != nullptr;};
 
-		inline Reference& operator=(T const& val)				{if (exists()) (*data) = val; return (*this);	}
-		inline Reference& operator=(Reference<T> const& val)	{data = val.data; return (*this);				}
+		inline Referend& operator=(T const& val)			{if (exists()) (*data) = val; return (*this);	}
+		inline Referend& operator=(Referend<T> const& val)	{data = val.data; return (*this);				}
 
 		inline T& operator*()		{assertExistence(); return (*data);}
 		inline T& operator*() const	{assertExistence(); return (*data);}
@@ -29,7 +29,7 @@ namespace View {
 	private:
 		T* data = nullptr;
 
-		inline void assertExistence() {if (!exists()) throw Error::NullPointer("Reference is not bound to any data!");}
+		inline void assertExistence() {if (!exists()) throw Error::NullPointer("Referend is not bound to any data!");}
 	};
 
 	template<Viewable T>

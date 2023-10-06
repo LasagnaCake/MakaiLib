@@ -3,7 +3,7 @@ namespace {
 }
 
 struct ObjectParam {
-	$twn EaseFunc easing = $twn ease.out.linear;
+	Tween::EaseFunc easing = Tween::ease.out.linear;
 	float start		= 0;
 	float end		= 0;
 	float omega		= 0;
@@ -39,22 +39,22 @@ struct DanmakuObject;
 
 typedef TypedSignal<DanmakuObject*> ObjectSignal;
 
-typedef $tts Task<DanmakuObject> ObjectTask;
+typedef TypedTasking::Task<DanmakuObject> ObjectTask;
 
-#define $objtask	$ttask(DanmakuObject)
-#define $objsignal	$tsignal(DanmakuObject)
+#define DANMAKU_OBJ_TASK	T_TASK(DanmakuObject*)
+#define DANMAKU_OBJ_SIGNAL	T_SIGNAL(DanmakuObject*)
 
 struct DanmakuObject {
 	DanmakuObject() {
-		auto pass = $objsignal {};
+		auto pass = DANMAKU_OBJ_SIGNAL {};
 		onFree			= pass;
 		onObjectFrame	= pass;
 		onUnpause		= pass;
 	}
 
-	$ref AnimatedPlane* sprite = nullptr;
+	RenderData::Reference::AnimatedPlane* sprite = nullptr;
 
-	$tts MultiTasker<DanmakuObject> taskers;
+	TypedTasking::MultiTasker<DanmakuObject> taskers;
 
 	ObjectSignal onFree;
 	ObjectSignal onUnpause;
@@ -101,7 +101,7 @@ struct DanmakuObject {
 	}
 
 	virtual DanmakuObject* clearSignals() {
-		auto pass = $tsignal(DanmakuObject*) {};
+		auto pass = T_SIGNAL(DanmakuObject*) {};
 		onObjectFrame = onFree = onUnpause = pass;
 		return this;
 	}

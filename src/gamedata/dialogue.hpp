@@ -23,7 +23,7 @@ namespace Dialog {
 		ActorDataList	actors;
 		String			title;
 		String			text;
-		$twn EaseFunc	easing		= Tween::ease.out.cubic;
+		Tween::EaseFunc	easing		= Tween::ease.out.cubic;
 		size_t			duration	= 600;
 		bool			autoplay	= false;
 	};
@@ -104,8 +104,8 @@ namespace Dialog {
 			}
 		}
 
-		TypedSignal<size_t>	onMessage	= $tsignal(size_t index) {};
-		Signal				onDialogEnd	= $signal {queueDestroy();};
+		TypedSignal<size_t>	onMessage	= T_SIGNAL(size_t index) {};
+		Signal				onDialogEnd	= SIGNAL {queueDestroy();};
 
 		virtual void onAction(Message const& msg) {}
 
@@ -231,7 +231,7 @@ namespace Dialog {
 		}
 
 		void finish() {
-			$debug("[ Finishing dialog... ]");
+			DEBUGLN("[ Finishing dialog... ]");
 			if (isFinished || !endtimer.finished()) return;
 			endtimer.repeat		= false;
 			endtimer.delay		= time;

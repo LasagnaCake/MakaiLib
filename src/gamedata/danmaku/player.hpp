@@ -19,7 +19,7 @@ struct Familiar2D: Entity2D {
 
 	})
 
-	$ref AnimatedPlane* sprite;
+	RenderData::Reference::AnimatedPlane* sprite;
 
 	virtual void onFrame(float delta) {
 		updateSprite();
@@ -58,50 +58,50 @@ struct PlayerEntity2D: AreaCircle2D {
 		actionKeys["skip"]	= SDL_SCANCODE_LCTRL;
 		// Create sprite
 		sprite = mesh.createReference<Reference::AnimatedPlane>();
-		mesh.setRenderLayer($layer(PLAYER));
+		mesh.setRenderLayer(PLAYER_LAYER);
 		// Create hitbox sprite
 		hitboxSprite = hitboxMesh.createReference<Reference::AnimatedPlane>();
-		hitboxMesh.setRenderLayer($layer(PLAYER_HITBOX));
+		hitboxMesh.setRenderLayer(PLAYER_HITBOX_LAYER);
 		// Create grazebox sprite
 		grazeboxSprite = grazeboxMesh.createReference<Reference::AnimatedPlane>();
-		grazeboxMesh.setRenderLayer($layer(PLAYER_HITBOX));
+		grazeboxMesh.setRenderLayer(PLAYER_HITBOX_LAYER);
 		// Add to game
-		$debug("< FINGERS IN HIS ASS SUNDAY >");
+		DEBUGLN("< FINGERS IN HIS ASS SUNDAY >");
 		addToGame(this, "DanmakuGame");
-		$ecl groups.addObject(this, $layer(PLAYER));
+		addToGroup(PLAYER_LAYER);
 		removeFromCollisionLayer(0);
-		addToCollisionLayer($layer(PLAYER));
+		addToCollisionLayer(PLAYER_LAYER);
 		// Invincibility timer
-		invincibility.pause().onSignal = $signal{
+		invincibility.pause().onSignal = SIGNAL {
 			this->collision.enabled = true;
 			sprite->setColor(Color::WHITE);
 		};
 		invincibility.delay = 90;
 		// Animation timer
 		animator.repeat = true;
-		animator.onSignal = $signal {
+		animator.onSignal = SIGNAL {
 			if((++sprite->frame.x) >= sprite->size.x)
 				sprite->frame.x = 0;
 		};
 		// Death bomb timer
-		deathbomb.stop().onSignal = $signal {$debug("Hit!"); onDeath();};
+		deathbomb.stop().onSignal = SIGNAL {DEBUGLN("Hit!"); onDeath();};
 		deathbomb.delay = 5;
 		// Bomb cooldown timer
-		bombCooldown.stop().onSignal = $signal {canBomb = true;};
+		bombCooldown.stop().onSignal = SIGNAL {canBomb = true;};
 		bombCooldown.delay = 300;
 		// Shot cooldown timer
-		shotCooldown.stop().onSignal = $signal {canShoot = true;};
+		shotCooldown.stop().onSignal = SIGNAL {canShoot = true;};
 		shotCooldown.delay = 300;
 		// Movement tween
 		moveTween.tweenStep = Tween::ease.out.cubic;
 		moveTween.setTarget(&position).setStepCount(30).conclude();
 		// Main shot
 		mainShot.pause().repeat = true;
-		mainShot.onSignal	= $signal {$debug("Main Shot!"); onShotRequest();};
+		mainShot.onSignal	= SIGNAL {DEBUGLN("Main Shot!"); onShotRequest();};
 		mainShot.delay = 1;
 		// Option shot
 		optionShot.pause().repeat = true;
-		optionShot.onSignal	= $signal {$debug("Option Shot!"); onOptionShotRequest();};
+		optionShot.onSignal	= SIGNAL {DEBUGLN("Option Shot!"); onOptionShotRequest();};
 		optionShot.delay = 20;
 		// Hitbox size
 		collision.shape.radius = 0.1;
@@ -121,21 +121,21 @@ struct PlayerEntity2D: AreaCircle2D {
 	})
 
 	virtual ~PlayerEntity2D() {
-		$debug("Deleting player...");
+		DEBUGLN("Deleting player...");
 	}
 
 	KeyBinds actionKeys;
 
 	Renderable mesh;
-	$ref AnimatedPlane*	sprite;
+	RenderData::Reference::AnimatedPlane*	sprite;
 
 	Renderable hitboxMesh;
-	$ref AnimatedPlane* hitboxSprite;
+	RenderData::Reference::AnimatedPlane* hitboxSprite;
 
 	Renderable grazeboxMesh;
-	$ref AnimatedPlane* grazeboxSprite;
+	RenderData::Reference::AnimatedPlane* grazeboxSprite;
 
-	$mki InputManager	input;
+	Makai::InputManager	input;
 
 	struct {
 		float bullet	= 3.0;
@@ -168,21 +168,21 @@ struct PlayerEntity2D: AreaCircle2D {
 	bool canShoot		= true;
 	bool focusShooting	= false;
 
-	$evt Timer invincibility;
-	$evt Timer animator;
-	$evt Timer deathbomb;
-	$evt Timer bombCooldown;
-	$evt Timer shotCooldown;
-	$evt Timer mainShot;
-	$evt Timer optionShot;
+	Event::Timer invincibility;
+	Event::Timer animator;
+	Event::Timer deathbomb;
+	Event::Timer bombCooldown;
+	Event::Timer shotCooldown;
+	Event::Timer mainShot;
+	Event::Timer optionShot;
 
 	Vector2 movement = Vector2(0);
 
 	virtual void onCreate() override {}
 	virtual void onDelete() override {}
 
-	virtual void onEnteringFocus()	{$debug("Focus Enter!");}
-	virtual void onExitingFocus()	{$debug("Focus Exit!");}
+	virtual void onEnteringFocus()	{DEBUGLN("Focus Enter!");}
+	virtual void onExitingFocus()	{DEBUGLN("Focus Exit!");}
 
 	virtual void onShotRequest()		{
 		if (playerBulletManager) {
@@ -216,28 +216,28 @@ struct PlayerEntity2D: AreaCircle2D {
 	}
 
 	virtual void onGraze(size_t count, BulletList list) {
-		$debug("Bullet Graze!");
+		DEBUGLN("Bullet Graze!");
 		data.graze += count;
 	}
 	virtual void onGraze(size_t count, LineLaserList list) {
-		$debug("Laser Graze!");
+		DEBUGLN("Laser Graze!");
 		data.graze += count;
 	}
 
 	virtual void onItemGet(size_t type, size_t quantity) {
-		$debugp("{ Item Type: ");
-		$debugp(type);
-		$debugp(" (");
-		$debugp(quantity);
-		$debug(") }");
+		DEBUG("{ Item Type: ");
+		DEBUG(type);
+		DEBUG(" (");
+		DEBUG(quantity);
+		DEBUGLN(") }");
 		switch (type) {
-			case $item(POWER):		data.power		+= quantity; break;
-			case $item(POINT):		data.point		+= quantity; break;
-			case $item(EXTRA):		data.extra		+= quantity; break;
-			case $item(LIFE):		data.life		+= quantity; break;
-			case $item(LIFE_BIT):	data.lifeBit	+= quantity; break;
-			case $item(BOMB):		data.bomb		+= quantity; break;
-			case $item(BOMB_BIT):	data.bombBit	+= quantity; break;
+			case ItemType::POWER_ITEM:		data.power		+= quantity; break;
+			case ItemType::POINT_ITEM:		data.point		+= quantity; break;
+			case ItemType::EXTRA_ITEM:		data.extra		+= quantity; break;
+			case ItemType::LIFE_ITEM:		data.life		+= quantity; break;
+			case ItemType::LIFE_BIT_ITEM:	data.lifeBit	+= quantity; break;
+			case ItemType::BOMB_ITEM:		data.bomb		+= quantity; break;
+			case ItemType::BOMB_BIT_ITEM:	data.bombBit	+= quantity; break;
 		}
 	}
 
@@ -307,7 +307,7 @@ struct PlayerEntity2D: AreaCircle2D {
 		else
 			position -= direction * speed.unfocused * delta;
 		// Clamp position
-		position = $cdt getBounded(position, board);
+		position = CollisionData::getBounded(position, board);
 		// Set collision's position
 		collision.shape.position = globalPosition();
 		// Update sprite
@@ -352,12 +352,12 @@ struct PlayerEntity2D: AreaCircle2D {
 			if (!lllist.empty())
 				onGraze(lllist.size(), lllist);
 		}
-		auto elist = $ecl groups.getGroup($layer(ENEMY));
+		auto elist = EntityClass::groups.getGroup(ENEMY_LAYER);
 		if (elist.size()) {
-			for $eachif(
+			for EACH_IF(
 				enemy,
 				elist,
-				$cdt isColliding(
+				CollisionData::isColliding(
 					((AreaCircle2D*)enemy)->collision,
 					collision
 				)
@@ -371,10 +371,10 @@ struct PlayerEntity2D: AreaCircle2D {
 		if((!inDialog) && canBomb && action("bomb", true)) {
 			// Do normal bomb or deathbomb, acoordingly
 			if (deathbomb.paused) {
-				$debug("Normal bomb!");
+				DEBUGLN("Normal bomb!");
 				onBomb();
 			} else {
-				$debug("Deathbomb!");
+				DEBUGLN("Deathbomb!");
 				onDeathBomb();
 			}
 		}
@@ -385,12 +385,12 @@ struct PlayerEntity2D: AreaCircle2D {
 
 	virtual void onCollision(Entity* target) {
 		if (
-			target->isInGroup($layer(ENEMY)) ||
-			target->isInGroup($layer(ENEMY_BULLET)) ||
-			target->isInGroup($layer(ENEMY_LASER)) ||
-			$ecl collisionLayers.isInGroup(target, $layer(ENEMY)) ||
-			$ecl collisionLayers.isInGroup(target, $layer(ENEMY_BULLET)) ||
-			$ecl collisionLayers.isInGroup(target, $layer(ENEMY_LASER))
+			target->isInGroup(ENEMY_LAYER) ||
+			target->isInGroup(ENEMY_BULLET_LAYER) ||
+			target->isInGroup(ENEMY_LASER_LAYER) ||
+			EntityClass::collisionLayers.isInGroup(target, ENEMY_LAYER) ||
+			EntityClass::collisionLayers.isInGroup(target, ENEMY_BULLET_LAYER) ||
+			EntityClass::collisionLayers.isInGroup(target, ENEMY_LASER_LAYER)
 		) {
 			pichun();
 		}

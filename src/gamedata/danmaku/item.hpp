@@ -1,5 +1,5 @@
 struct CollectibleData: GenericObjectData {
-	size_t type		= $item(POWER);
+	size_t type		= ItemType::POWER_ITEM;
 	float value		= 1;
 	float gravity	= 1;
 	float bounce	= 10;
@@ -98,12 +98,12 @@ public:
 
 	DERIVED_CONSTRUCTOR(CollectibleManager, Entity, {
 		addToGame(this, "DanmakuGame");
-		mesh.setRenderLayer($layer(ITEM));
-		addToGroup($layer(ITEM));
+		mesh.setRenderLayer(ITEM_LAYER);
+		addToGroup(ITEM_LAYER);
 		mesh.material.shaded = false;
 	})
 
-	$cdt BoxBounds2D playfield;
+	CollisionData::BoxBounds2D playfield;
 
 	float poc = 0;
 
@@ -111,20 +111,20 @@ public:
 
 	virtual ~CollectibleManager() {
 		//delete &mesh;
-		$debug("\nDeleting item manager...");
+		DEBUGLN("\nDeleting item manager...");
 		delete[] items;
 	}
 
 	void onFrame(float delta) override {
 		GAME_PARALLEL_FOR
-		for $seach(item, items, ITEM_COUNT)
+		for SEACH(item, items, ITEM_COUNT)
 			item.onFrame(delta);
 			if (!item.isFree() && item.params.collidable) {
 				auto a = (PlayerEntity2D*)mainPlayer;
 				if (a) {
 					auto targetBounds = a->getGrazeBounds();
 					if (
-						$cdt withinBounds(
+						CollisionData::withinBounds(
 							item.params.hitbox,
 							targetBounds
 						)
@@ -141,20 +141,20 @@ public:
 			}
 			if (item.params.dope)
 				if (
-					! $cdt withinBounds(
+					! CollisionData::withinBounds(
 						item.params.hitbox,
 						playfield
 					)
 				) {
 					item.setFree(true);
 				}
-		$endseach
+		END_SEACH
 	}
 
 	void collectAll(bool forceCollect = false, bool forceDiscard = false) {
 		auto mp = getMainPlayer();
 		GAME_PARALLEL_FOR
-		for $seachif(item, items, ITEM_COUNT, !item.isFree()) {
+		for SEACH_IF(item, items, ITEM_COUNT, !item.isFree()) {
 			if (forceCollect) {
 				mp->onItemGet(
 					item.params.type,
@@ -167,26 +167,26 @@ public:
 			} else {
 				item.setAutoCollect(&mp->position);
 			}
-		} $endseach
+		} END_SEACH
 	}
 
 	void freeAll() {
 		GAME_PARALLEL_FOR
-		for $seach(item, items, ITEM_COUNT) item.setFree(); $endseach
+		for SEACH(item, items, ITEM_COUNT) item.setFree(); END_SEACH
 	}
 
 	void discardAll() {
 		GAME_PARALLEL_FOR
-		for $seach(item, items, ITEM_COUNT) item.discard(); $endseach
+		for SEACH(item, items, ITEM_COUNT) item.discard(); END_SEACH
 	}
 
 	size_t getFreeCount() {
 		size_t count = 0;
 		GAME_PARALLEL_FOR
-		for $seach(item, items, ITEM_COUNT)
+		for SEACH(item, items, ITEM_COUNT)
 			if (item.isFree())
 				count++;
-		$endseach
+		END_SEACH
 		return count;
 	}
 
@@ -209,33 +209,33 @@ public:
 	CollectibleList getInArea(T target) {
 		CollectibleList res;
 		GAME_PARALLEL_FOR
-		for $seachif(item, items, ITEM_COUNT, !item.isFree() && item.params.collidable) {
+		for SEACH_IF(item, items, ITEM_COUNT, !item.isFree() && item.params.collidable) {
 			if (
-				$cdt withinBounds(
+				CollisionData::withinBounds(
 					item.params.hitbox,
 					target
 				)
 			) res.push_back(&item);
-		} $endseach
+		} END_SEACH
 		return res;
 	}
 
 	CollectibleList getActive() {
 		CollectibleList res;
 		GAME_PARALLEL_FOR
-		for $seachif(item, items, ITEM_COUNT, !item.isFree()) res.push_back(&item); $endseach
+		for SEACH_IF(item, items, ITEM_COUNT, !item.isFree()) res.push_back(&item); END_SEACH
 		return res;
 	}
 
 	void forEach(Callback<Collectible> func) {
 		GAME_PARALLEL_FOR
-		for $ssrange(i, 0, ITEM_COUNT)
+		for SSRANGE(i, 0, ITEM_COUNT)
 			func(items[i]);
 	}
 
 	void forEachActive(Callback<Collectible> func) {
 		GAME_PARALLEL_FOR
-		for $ssrange(i, 0, ITEM_COUNT)
+		for SSRANGE(i, 0, ITEM_COUNT)
 			if (!items[i].isFree())
 				func(items[i]);
 	}
@@ -243,11 +243,11 @@ public:
 	template <CollisionType T>
 	void forEachInArea(T area, Callback<Collectible> func) {
 		GAME_PARALLEL_FOR
-		for $ssrange(i, 0, ITEM_COUNT)
+		for SSRANGE(i, 0, ITEM_COUNT)
 			if (
 				!items[i].isFree()
 			&&	items[i].params.collidable
-			&&	$cdt withinBounds(items[i].params.hitbox, area)
+			&&	CollisionData::withinBounds(items[i].params.hitbox, area)
 			) func(items[i]);
 	}
 
@@ -258,13 +258,13 @@ public:
 	Collectible* createCollectible() {
 		Collectible* current = nullptr;
 		//GAME_PARALLEL_FOR
-		for $seachif(item, items, ITEM_COUNT, item.isFree()) {
+		for SEACH_IF(item, items, ITEM_COUNT, item.isFree()) {
 			current = item.enable()->setZero();
 			#ifdef $_PREVENT_INSTANCE_OVERFLOW_BY_WRAP
 			pbobw = 0;
 			#endif
 			break;
-		} $endseach
+		} END_SEACH
 		if (!current)
 		#ifndef $_PREVENT_INSTANCE_OVERFLOW_BY_WRAP
 			throw OutOfObjects(
@@ -304,9 +304,9 @@ public:
 	) {
 		CollectibleList res;
 		GAME_PARALLEL_FOR
-		for $ssrange(i, 0, count) {
+		for SSRANGE(i, 0, count) {
 			res.push_back(createCollectible(item));
-			last->local.position = at + ($vmt angleV2(spread * ((float)i / (float)count) + angleOffset) * radius);
+			last->local.position = at + (VecMath::angleV2(spread * ((float)i / (float)count) + angleOffset) * radius);
 			last->local.scale = scale;
 			last->sprite->frame = frame;
 			last->reset();
@@ -331,4 +331,4 @@ typedef CollectibleManager<COLLECTIBLE_ITEM_COUNT> ItemManager;
 
 ItemManager* itemManager = nullptr;
 
-#define DANMAKU_IM $dmk itemManager
+#define DANMAKU_IM GameData::Danmaku::itemManager

@@ -434,7 +434,7 @@ namespace Makai {
 			const GLchar* message,
 			const void* userParam
 		) {
-			$debug(
+			DEBUGLN(
 				"[GL CALLBACK"
 				+ String(type == GL_DEBUG_TYPE_ERROR ? " (GL ERROR)" : "") + "] "
 				+ "Type: " + toString(type) + ", "
@@ -467,27 +467,27 @@ namespace Makai {
 			#if (_WIN32 || _WIN64 || __WIN32__ || __WIN64__)
 			SetProcessDPIAware();
 			#endif
-			$debug(EntityClass::_ROOT == nullptr);
+			DEBUGLN(EntityClass::_ROOT == nullptr);
 			// Save window resolution
 			this->width = width;
 			this->height = height;
 			// Initialize SDL
-			$debug("Starting SDL...");
+			DEBUGLN("Starting SDL...");
 			if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_AUDIO) != 0) {
-				$errlog(string("Unable to start SDL! (") + SDL_GetError() + ")");
+				ERR_LOG(string("Unable to start SDL! (") + SDL_GetError() + ")");
 				throw Error::FailedAction(string("SDL (") + SDL_GetError() + ")");
 			}
-			$debug("Started!");
+			DEBUGLN("Started!");
 			// Initialize YSE
-			$debug("Starting Audio System...");
+			DEBUGLN("Starting Audio System...");
 			if (!Mix_Init(MIX_INIT_MP3 | MIX_INIT_OGG | (useMIDI ? MIX_INIT_MID : 0))) {
-				$errlog(string("Unable to start Mixer! (") + Mix_GetError() + ")");
+				ERR_LOG(string("Unable to start Mixer! (") + Mix_GetError() + ")");
 				throw Error::FailedAction(string("Mixer (") + Mix_GetError() + ")");
 			}
 			Audio::openSystem();
-			$debug("Started!");
+			DEBUGLN("Started!");
 			// Create window and make active
-			$debug("Creating window...");
+			DEBUGLN("Creating window...");
 			window = SDL_CreateWindow(
 				windowTitle.c_str(),
 				SDL_WINDOWPOS_CENTERED,
@@ -498,23 +498,24 @@ namespace Makai {
 			);
 			SDL_SetWindowFullscreen(window, fullscreen ? SDL_WINDOW_FULLSCREEN : 0);
 			SDL_GL_CreateContext(window);
-			$debug("Created!");
-			$debug("Starting GLEW...");
+			DEBUGLN("Created!");
+			DEBUGLN("Starting GLEW...");
 			// Try and initialize GLEW
 			GLenum glewStatus = glewInit();
 			if (glewStatus != GLEW_OK) {
-				$errlog("Error: glewInit: " << glewGetErrorString(glewStatus));
+				ERR_LOG("Error: glewInit: ");
+				ERR_LOG(glewGetErrorString(glewStatus));
 				throw Error::FailedAction(string("glewInit: ") + (const char*)glewGetErrorString(glewStatus));
 			}
 			if (!GLEW_VERSION_4_2) {
-				$errlog("Your computer does not support OpenGL 4.2+!");
+				ERR_LOG("Your computer does not support OpenGL 4.2+!");
 				throw Error::InvalidValue(string("No OpenGL 4.2+"));
 			}
-			$debug("Started!");
+			DEBUGLN("Started!");
 			// Create default shader
-			/*$debug("Creating default shader...");
+			/*DEBUGLN("Creating default shader...");
 			Shader::defaultShader.create();
-			$debug("Created!");*/
+			DEBUGLN("Created!");*/
 			SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 16);
 			SDL_GL_SetAttribute(SDL_GL_BUFFER_SIZE, 16);
 			SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
@@ -535,10 +536,10 @@ namespace Makai {
 			//glBlendEquationSeparatei(0, DEFAULT_BLEND_EQUATION);
 			//glBlendFunc(GL_ONE_MINUS_DST_ALPHA, GL_ONE);
 			// Setup camera
-			$debug("Setting starting camera...");
+			DEBUGLN("Setting starting camera...");
 			Scene::camera.aspect = Vector2(width, height);
 			Scene::camera.fov = glm::radians(45.0f);
-			$debug("creating default framebuffer...");
+			DEBUGLN("creating default framebuffer...");
 			// Create framebuffer
 			framebuffer.create(width, height);
 			// Fix alpha being a bitch
@@ -552,20 +553,20 @@ namespace Makai {
 			// Create layer buffer
 			layerbuffer.create(width, height);
 			// Create composition shader
-			$debug("Creating shaders...");
+			DEBUGLN("Creating shaders...");
 			bufferShader.create(SLF::parseFile(bufferShaderPath));
 			framebuffer.shader = bufferShader;
 			layerbuffer.shader = bufferShader;
 			// Create main shader
 			SLF::SLFData data = SLF::parseFile(mainShaderPath);
-			$mainshader.destroy();
-			$mainshader.create(data);
-			$debug(EntityClass::_ROOT ? "Root Exists!" : "Root does not exist!");
+			MAIN_SHADER.destroy();
+			MAIN_SHADER.create(data);
+			DEBUGLN(EntityClass::_ROOT ? "Root Exists!" : "Root does not exist!");
 			if (!EntityClass::_ROOT) {
-				$debug("Initializing root tree...");
+				DEBUGLN("Initializing root tree...");
 				EntityClass::init();
 			}
-			$debug("All core systems initialized!");
+			DEBUGLN("All core systems initialized!");
 		}
 
 		virtual ~Program() {}
@@ -637,7 +638,7 @@ namespace Makai {
 					logicFunc(cycleDelta);
 					onLogicFrame(cycleDelta);
 					// Destroy queued entities
-					$ecl destroyQueued();
+					EntityClass::destroyQueued();
 					#endif // FRAME_DEPENDENT_PROCESS
 				}
 				#endif
@@ -653,7 +654,7 @@ namespace Makai {
 					logicFunc(frameDelta);
 					onLogicFrame(frameDelta);
 					// Destroy queued entities
-					$ecl destroyQueued();
+					EntityClass::destroyQueued();
 					#endif // FRAME_DEPENDENT_PROCESS
 					// Render screen
 					render();
@@ -676,13 +677,13 @@ namespace Makai {
 					logicFunc(cycleDelta);
 					onLogicFrame(cycleDelta);
 					// Destroy queued entities
-					$ecl destroyQueued();
+					EntityClass::destroyQueued();
 					#endif // FRAME_DEPENDENT_PROCESS
 				}
 				#endif
 			}
 			// Terminate program
-			$debug("\nClosing incoherent program...");
+			DEBUGLN("\nClosing incoherent program...");
 			terminate();
 		}
 
@@ -802,7 +803,11 @@ namespace Makai {
 
 		void queueScreenCopy(Drawer::Texture2D* target) {
 			screenQueue.push_back(target);
-		};
+		}
+
+		void unqueueScreenCopy(Drawer::Texture2D* target) {
+			ERASE_IF(screenQueue, elem == target);
+		}
 
 	protected:
 		Drawer::FrameBufferData toFrameBufferData() {
@@ -828,20 +833,20 @@ namespace Makai {
 			// Call final function
 			onClose();
 			// Close YSE
-			$debug("Closing sound system...");
+			DEBUGLN("Closing sound system...");
 			Audio::closeSystem();
 			Mix_Quit();
 			EntityClass::_ROOT->deleteChildren();
-			$debug("Sound system closed!");
+			DEBUGLN("Sound system closed!");
 			// Destroy buffers
-			$debug("Destroying frame buffers...");
+			DEBUGLN("Destroying frame buffers...");
 			framebuffer.destroy();
 			layerbuffer.destroy();
-			$debug("Frame buffers destroyed!");
+			DEBUGLN("Frame buffers destroyed!");
 			// Quit SDL
-			$debug("Ending SDL...");
+			DEBUGLN("Ending SDL...");
 			SDL_Quit();
-			$debug("SDL ended!");
+			DEBUGLN("SDL ended!");
 			//exit(0);
 		}
 
@@ -906,7 +911,7 @@ namespace Makai {
 		void copyScreenToQueue() {
 			Drawer::Texture2D& screen = *framebuffer.toFrameBufferData().screen;
 			for (Drawer::Texture2D* target: screenQueue)
-				target->make(screen);
+				target->copyFrom(screen);
 			screenQueue.clear();
 		}
 
@@ -925,10 +930,10 @@ namespace Makai {
 
 	Vector2 getDeviceSize(unsigned int display = 0) {
 		SDL_Rect bounds;
-		$debug("Starting SDL...");
+		DEBUGLN("Starting SDL...");
 		if (!SDL_WasInit(SDL_INIT_VIDEO))
 			if (SDL_Init(SDL_INIT_VIDEO) != 0) {
-				$errlog(string("Unable to start SDL! (") + SDL_GetError() + ")");
+				ERR_LOG(string("Unable to start SDL! (") + SDL_GetError() + ")");
 				throw Error::FailedAction(string("SDL (") + SDL_GetError() + ")");
 			}
 		if (SDL_GetDisplayBounds(display, &bounds))
@@ -963,8 +968,6 @@ namespace Makai {
 		};
 		#undef RESOLUTION
 	}
-	#define $mki Makai::
-	#define $res $mki Resolution::
 }
 
 namespace Popup {
@@ -1025,7 +1028,7 @@ namespace Popup {
 		size_t buttonCount = options.size();
 		SDL_MessageBoxButtonData buttons[options.size()];
 		size_t idx = buttonCount - 1;
-		for $each(b, buttons) {
+		for EACH(b, buttons) {
 			b = SDL_MessageBoxButtonData {
 				0,
 				idx,
@@ -1044,7 +1047,7 @@ namespace Popup {
 		};
 		int buttonid;
 		if (SDL_ShowMessageBox(&messageBoxData, &buttonid) < 0) {
-			$errlog("Could not show messagebox!");
+			ERR_LOG("Could not show messagebox!");
 			throw Error::FailedAction("SDL MessageBox");
 		}
 		return buttonid;
@@ -1061,6 +1064,6 @@ namespace Popup {
 	}
 }
 
-#define $event(EVENT) ($mki pollEvents().type == EVENT)
+#define SDL_EVENT(EVENT) (Makai::pollEvents().type == EVENT)
 
 #endif // MAKAILIB_MAKAI_H

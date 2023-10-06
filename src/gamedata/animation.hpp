@@ -50,7 +50,7 @@ namespace Animation {
 
 		Animation<T> animation;
 
-		$tev Signal<AnimationPlayer<T>*> onAllAnimationsDone = $tsignal(auto& target) {};
+		TypedEvent::Signal<AnimationPlayer<T>*> onAllAnimationsDone = T_SIGNAL(auto& target) {};
 
 		void onFrame(float delta) override {
 			if (!playing)	return;
@@ -129,5 +129,3 @@ namespace Animation {
 		}
 	};
 }
-
-#define $anm GameData::Animation::

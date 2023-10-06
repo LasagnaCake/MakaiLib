@@ -3,25 +3,38 @@
 
 #include "conceptual.hpp"
 
-#define $func(...)	[&](__VA_ARGS__) -> void
+#define FUNC(...)	[&](__VA_ARGS__) -> void
 
-#define $addenum(NAME, STEP) \
+#define ADD_ENUM_ENTRY(NAME, STEP) \
     NAME##_$_$, \
     NAME = NAME##_$_$ + (STEP) - 1
 
-#define $each(I, LIST) (auto& I: LIST)
-#define $eachif(I, LIST, CONDITION) $each(I, LIST) if(CONDITION)
+#define ILTF(A, B, C) (((A) > (B)) ? -(C) : +(C))
 
-#define $seach(I, LIST, SIZE) $ssrange(_##I, 0, SIZE) { auto& I = LIST[_##I];
-#define $seachif(I, LIST, SIZE, CONDITION) $seach(I, LIST, SIZE) if(CONDITION)
-#define $endseach }
+#define RANGE(I, BEGIN, END, STEP) (auto I = (BEGIN); I < (END); I += (STEP))
+#define SSRANGE(I, BEGIN, END) RANGE(I, BEGIN, END, ILTF(BEGIN, END, 1))
 
-#define $iltf(A, B, C) (((A) > (B)) ? -(C) : +(C))
+#define EACH(I, LIST) (auto& I: LIST)
+#define EACH_IF(I, LIST, CONDITION) EACH(I, LIST) if(CONDITION)
 
-#define $range(I, BEGIN, END, STEP) (auto I = (BEGIN); I < (END); I += (STEP))
-#define $ssrange(I, BEGIN, END) $range(I, BEGIN, END, $iltf(BEGIN, END, 1))
+#define SEACH(I, LIST, SIZE) SSRANGE(_##I, 0, SIZE) { auto& I = LIST[_##I];
+#define SEACH_IF(I, LIST, SIZE, CONDITION) SEACH(I, LIST, SIZE) if(CONDITION)
+#define END_SEACH }
 
-#define $eraseif(VEC, COND) if (!VEC.empty()) std::erase_if(VEC, [&](auto& elem){return (COND);})
+#define ERASE_IF(VEC, COND) if (!VEC.empty()) std::erase_if(VEC, [&](auto& elem){return (COND);})
+
+#ifdef $_DEBUG_OUTPUT_
+#include <iostream>
+#ifndef DEBUGLN
+#define DEBUGLN(TEXT)	std::cout << (TEXT) << "\n";
+#endif
+#ifndef DEBUG
+#define DEBUG(TEXT)	std::cout << (TEXT);
+#endif
+#else
+#define DEBUGLN(TEXT)
+#define DEBUG(TEXT)
+#endif
 
 /*
 #define DLL_EXPORT	__declspec(dllexport)

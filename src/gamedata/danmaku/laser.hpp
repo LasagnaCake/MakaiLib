@@ -81,17 +81,17 @@ public:
 		float stretch = (params.stretch.current * 0.5);
 		float curLen = params.length.current;
 		sprite->setOrigin(
-			$vec3(-width - stretch, +width),
-			$vec3(curLen + width + stretch, +width),
-			$vec3(-width - stretch, -width),
-			$vec3(curLen + width + stretch, -width)
+			Vector3(-width - stretch, +width),
+			Vector3(curLen + width + stretch, +width),
+			Vector3(-width - stretch, -width),
+			Vector3(curLen + width + stretch, -width)
 		);
 	}
 
 	void updateSprite() override {
 		if (!sprite) return;
 		// Set sprite transforms
-		sprite->local.position		= $vec3(local.position, zIndex + _zOffset);
+		sprite->local.position		= Vector3(local.position, zIndex + _zOffset);
 		sprite->local.rotation.z	= local.rotation;
 		sprite->local.scale			= Vector3(local.scale, zScale);
 	}
@@ -130,8 +130,8 @@ typedef std::vector<LineLaser*> LineLaserList;
 
 template <
 	size_t LASER_COUNT,
-	size_t ACTOR_LAYER = $layer(ENEMY_BULLET),
-	size_t ENEMY_LAYER = $layer(PLAYER)
+	size_t ACTOR_LAYER = ENEMY_BULLET_LAYER,
+	size_t ENEMY_LAYER = PLAYER_LAYER
 >
 class LineLaserManager: Entity {
 public:
@@ -148,7 +148,7 @@ public:
 
 	virtual ~LineLaserManager() {
 		//delete &mesh;
-		$debug("\nDeleting laser manager...");
+		DEBUGLN("\nDeleting laser manager...");
 		delete[] lasers;
 	}
 
@@ -158,7 +158,7 @@ public:
 			auto* l = &lasers[i];
 			l->onFrame(delta);
 			if (!l->isFree() && l->params.collidable) {
-				for $each(actor, $ecl groups.getGroup(ENEMY_LAYER)) {
+				for EACH(actor, EntityClass::groups.getGroup(ENEMY_LAYER)) {
 					auto a = (AreaCircle2D*)actor;
 					if (
 						a->collision.enabled
@@ -174,20 +174,20 @@ public:
 
 	void freeAll() {
 		GAME_PARALLEL_FOR
-		for $seach(l, lasers, LASER_COUNT) l.setFree(); $endseach
+		for SEACH(l, lasers, LASER_COUNT) l.setFree(); END_SEACH
 	}
 
 	void discardAll() {
 		GAME_PARALLEL_FOR
-		for $seach(l, lasers, LASER_COUNT) l.discard(); $endseach
+		for SEACH(l, lasers, LASER_COUNT) l.discard(); END_SEACH
 	}
 
 	size_t getFreeCount() {
 		size_t count = 0;
-		for $seach(l, lasers, LASER_COUNT)
+		for SEACH(l, lasers, LASER_COUNT)
 			if (l.isFree())
 				count++;
-		$endseach
+		END_SEACH
 		return count;
 	}
 
@@ -210,29 +210,29 @@ public:
 	LineLaserList getInArea(T target) {
 		LineLaserList res;
 		GAME_PARALLEL_FOR
-		for $seachif(l, lasers, LASER_COUNT, !l.isFree() && l.params.collidable) {
+		for SEACH_IF(l, lasers, LASER_COUNT, !l.isFree() && l.params.collidable) {
 			if (l.colliding(target))
 			res.push_back(&l);
-		} $endseach
+		} END_SEACH
 		return res;
 	}
 
 	LineLaserList getActive() {
 		LineLaserList res;
 		GAME_PARALLEL_FOR
-		for $seachif(l, lasers, LASER_COUNT, !l.isFree()) res.push_back(&l); $endseach
+		for SEACH_IF(l, lasers, LASER_COUNT, !l.isFree()) res.push_back(&l); END_SEACH
 		return res;
 	}
 
 	void forEach(Callback<LineLaser> func) {
 		GAME_PARALLEL_FOR
-		for $ssrange(i, 0, LASER_COUNT)
+		for SSRANGE(i, 0, LASER_COUNT)
 			func(lasers[i]);
 	}
 
 	void forEachActive(Callback<LineLaser> func) {
 		GAME_PARALLEL_FOR
-		for $ssrange(i, 0, LASER_COUNT)
+		for SSRANGE(i, 0, LASER_COUNT)
 			if (!lasers[i].isFree())
 				func(lasers[i]);
 	}
@@ -240,11 +240,11 @@ public:
 	template <CollisionType T>
 	void forEachInArea(T area, Callback<LineLaser> func) {
 		GAME_PARALLEL_FOR
-		for $ssrange(i, 0, LASER_COUNT)
+		for SSRANGE(i, 0, LASER_COUNT)
 			if (
 				!lasers[i].isFree()
 			&&	lasers[i].params.collidable
-			&&	$cdt withinBounds(lasers[i].params.hitbox, area)
+			&&	CollisionData::withinBounds(lasers[i].params.hitbox, area)
 			) func(lasers[i]);
 	}
 
@@ -255,13 +255,13 @@ public:
 	LineLaser* createLineLaser() {
 		LineLaser* current = nullptr;
 		//GAME_PARALLEL_FOR
-		for $seachif(l, lasers, LASER_COUNT, l.isFree()) {
+		for SEACH_IF(l, lasers, LASER_COUNT, l.isFree()) {
 			current = l.enable()->setZero();
 			#ifdef $_PREVENT_INSTANCE_OVERFLOW_BY_WRAP
 			pbobw = 0;
 			#endif
 			break;
-		} $endseach
+		} END_SEACH
 		if (!current)
 		#ifndef $_PREVENT_INSTANCE_OVERFLOW_BY_WRAP
 			throw OutOfObjects(
@@ -302,14 +302,11 @@ private:
 	LineLaser* last = nullptr;
 };
 
-typedef LineLaserManager<PLAYER_LASER_COUNT, $layer(PLAYER_LASER), $layer(ENEMY)>	PlayerLineLaserManager;
-typedef LineLaserManager<ENEMY_LASER_COUNT, $layer(ENEMY_LASER), $layer(PLAYER)>	EnemyLineLaserManager;
+typedef LineLaserManager<PLAYER_LASER_COUNT, PLAYER_LASER_LAYER, ENEMY_LAYER>	PlayerLineLaserManager;
+typedef LineLaserManager<ENEMY_LASER_COUNT, ENEMY_LASER_LAYER, PLAYER_LAYER>	EnemyLineLaserManager;
 
 PlayerLineLaserManager*	playerLineLaserManager = nullptr;
 EnemyLineLaserManager*	enemyLineLaserManager = nullptr;
 
-#define DANMAKU_PLLM $dmk playerLineLaserManager
-#define DANMAKU_ELLM $dmk enemyLineLaserManager
-
-#define $linelaser(TYPE)	$getman( TYPE##LineLaser )
-#define $setll(TYPE)		$setman( TYPE##LineLaser )
+#define DANMAKU_PLLM GameData::Danmaku::playerLineLaserManager
+#define DANMAKU_ELLM GameData::Danmaku::enemyLineLaserManager

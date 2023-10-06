@@ -76,6 +76,7 @@ namespace Drawer {
 			glGenFramebuffers(1, &id);
 			glBindFramebuffer(GL_FRAMEBUFFER, id);
 			buffer.screen.create(width, height, GL_FLOAT, GL_RGBA, GL_LINEAR, GL_LINEAR);
+			//buffer.screen.create(width, height, GL_UNSIGNED_BYTE, GL_RGBA, GL_LINEAR, GL_LINEAR);
 			glFramebufferTexture2D(
 				GL_FRAMEBUFFER,
 				GL_COLOR_ATTACHMENT0,
@@ -186,7 +187,7 @@ namespace Drawer {
 			shader["uvMatrix"](asGLMMatrix(uv));
 			shader["resolution"](Vector2(width, height));
 			// Set material data
-			$mat setMaterial(shader, material);
+			RenderData::Material::setMaterial(shader, material);
 			// Enable attribute pointers
 			Drawer::enableVertexAttributes();
 			// Set VAO as active
@@ -217,7 +218,7 @@ namespace Drawer {
 		/// The framebuffer's UV transformation.
 		Transform3D uv;
 		/// The framebuffer's material.
-		$mat BufferMaterial material;
+		RenderData::Material::BufferMaterial material;
 		/// The framebuffer's shape.
 		RawVertex rect[4];
 		/// The framebuffer's rendering shader.

@@ -63,7 +63,7 @@ public:
 	}
 
 	void onDestroy() final override {
-		$debug("Deleting music source...");
+		DEBUGLN("Deleting music source...");
 		if (!isAudioSystemClosed) {
 			if (queued == &onQueue)
 				queued = nullptr;
@@ -71,7 +71,7 @@ public:
 				Mix_HaltMusic();
 			Mix_FreeMusic(source);
 		}
-		$debug("Music source deleted!");
+		DEBUGLN("Music source deleted!");
 	}
 
 	void onUpdate() override {
@@ -129,7 +129,7 @@ private:
 	size_t	fadeInTime	= 0;
 	int		loops		= 0;
 
-	AudioFunc onQueue = $signal {
+	AudioFunc onQueue = SIGNAL {
 		play(loops, fadeInTime);
 	};
 

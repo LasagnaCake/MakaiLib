@@ -50,14 +50,11 @@
 #error "Too many instances!"
 #endif
 
-#define $getman(TYPE) $dmk TYPE##Manager
-#define $setman(TYPE) $dmk TYPE##Manager = &
-
 #define UPDATE_PARAM(PNAME) \
 	if (params.PNAME.omega) { \
 		params.PNAME.factor = Math::clamp(params.PNAME.factor + params.PNAME.omega * (delta * 100.0f), 0.0f, 1.0f); \
 		float vf = params.PNAME.easing(params.PNAME.factor, 0.0, 1.0, 1.0f); \
-		params.PNAME.current = $mth lerp( \
+		params.PNAME.current = Math::lerp( \
 			params.PNAME.start, \
 			params.PNAME.end, \
 			vf \
@@ -85,5 +82,3 @@ namespace ItemType {
 		BOMB_BIT_ITEM
 	};
 };
-
-#define $item(NAME) ItemType::NAME##_ITEM

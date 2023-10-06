@@ -5,9 +5,9 @@ struct ManagerSet {
 	void destroy() {
 		if (destroyed) return;
 		destroyed = true;
-		$debug(("Deleting enemy manager..."));
+		DEBUGLN(("Deleting enemy manager..."));
 		delete enemy;
-		$debug(("Deleting player manager..."));
+		DEBUGLN(("Deleting player manager..."));
 		delete player;
 	}
 private:
@@ -21,11 +21,11 @@ struct DanmakuManagerSet {
 	void destroy() {
 		if (destroyed) return;
 		destroyed = true;
-		$debug("Deleting bullet managers...");
+		DEBUGLN("Deleting bullet managers...");
 		bullet.destroy();
-		$debug("Deleting line laser managers...");
+		DEBUGLN("Deleting line laser managers...");
 		lineLaser.destroy();
-		$debug("Deleting item manager...");
+		DEBUGLN("Deleting item manager...");
 		delete item;
 	}
 private:
@@ -86,7 +86,7 @@ public:
 			while (!doneCreating) {
 				onLoading();
 				renderReservedLayer();
-				if $event(SDL_QUIT) {
+				if SDL_EVENT(SDL_QUIT) {
 					managers.bullet.enemy->haltProcedure =
 					managers.lineLaser.enemy->haltProcedure =
 					managers.bullet.player->haltProcedure =
@@ -107,7 +107,7 @@ public:
 		secondary.join();
 		// Set playfield
 		Vector2 screenSpace = getWindowScale();
-		Vector2 screenSize = $scn camera.ortho.size.absolute();
+		Vector2 screenSize = Scene::camera.ortho.size.absolute();
 		setGameBounds(screenSize);
 	}
 
@@ -118,9 +118,9 @@ public:
 		;
 		Vector2	at			= (screenSize / 2.0) + position;
 		BoxBounds2D
-			ePlayfield	= $cdt makeBounds(at, size * Vector2(1.1, 1.1)),
-			pPlayfield	= $cdt makeBounds(at, size * Vector2(1.25, 1.25)),
-			board		= $cdt makeBounds(at, size);
+			ePlayfield	= CollisionData::makeBounds(at, size * Vector2(1.1, 1.1)),
+			pPlayfield	= CollisionData::makeBounds(at, size * Vector2(1.25, 1.25)),
+			board		= CollisionData::makeBounds(at, size);
 		managers.item->poc = -screenSize.y / 3.0;
 		managers.bullet.player->playfield = pPlayfield;
 		managers.item->playfield =
@@ -162,8 +162,8 @@ public:
 
 private:
 	void destroyManagers() {
-		$debug("_( - v -)_");
-		$debug("Clearing References...");
+		DEBUGLN("_( - v -)_");
+		DEBUGLN("Clearing References...");
 		if (managers.bullet.enemy		== enemyBulletManager)
 			enemyBulletManager		= nullptr;
 		if (managers.lineLaser.enemy	== enemyLineLaserManager)
@@ -174,9 +174,9 @@ private:
 			playerLineLaserManager	= nullptr;
 		if (managers.item				== itemManager)
 			itemManager				= nullptr;
-		$debug("Deleting Danmaku Managers ...");
+		DEBUGLN("Deleting Danmaku Managers ...");
 		managers.destroy();
-		$debug("Managers Deleted!");
-		$debug("\\( > w <)/");
+		DEBUGLN("Managers Deleted!");
+		DEBUGLN("\\( > w <)/");
 	}
 };

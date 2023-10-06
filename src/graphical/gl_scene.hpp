@@ -141,7 +141,7 @@ public:
 
 	void deleteObject(Renderable* obj) {
 		if (obj) {
-			$eraseif(objects, elem == obj);
+			ERASE_IF(objects, elem == obj);
 			std::erase_if(
 				textures,
 				[=](Texture2D* tx){
@@ -317,7 +317,7 @@ private:
 	void draw() override {
 		auto lastcam = Scene::camera;
 		Scene::camera = camera;
-		Material::setMaterial($mainshader, world);
+		Material::setMaterial(MAIN_SHADER, world);
 		for(Renderable* obj: objects)
 			obj->render();
 		Scene::camera = lastcam;

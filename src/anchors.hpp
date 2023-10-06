@@ -1,19 +1,20 @@
 #ifndef ANCHORED_HEADERS_H
 #define ANCHORED_HEADERS_H
 
-#define $enforce(WHAT, CHECK) if(!(CHECK)) throw Error::FailedAction(std::string("Failed to initialize ") + WHAT)
+#define ENFORCE(WHAT, CHECK) if(!(CHECK)) throw Error::FailedAction(std::string("Failed to initialize ") + WHAT)
 
 #ifdef _DEBUG_OUTPUT_
+#define $_DEBUG_OUTPUT_
 #include <iostream>
-#define $errlog(TEXT) std::cerr << TEXT << std::endl
-#define $debug(TEXT) std::cout << (TEXT); std::cout << "\n"
-#define $debugp(TEXT) std::cout << (TEXT)
-#define $flush() std::cout << std::endl
+#define ERR_LOG(TEXT) std::cerr << (TEXT) << std::endl
+#define DEBUGLN(TEXT) std::cout << (TEXT); std::cout << "\n"
+#define DEBUG(TEXT) std::cout << (TEXT)
+#define FLUSH() std::cout << std::endl
 #else
-#define $errlog(TEXT)
-#define $debug(TEXT)
-#define $debugp(TEXT)
-#define $flush()
+#define ERR_LOG(TEXT)
+#define DEBUGLN(TEXT)
+#define DEBUG(TEXT)
+#define FLUSH()
 #endif // _MAKAI_DEBUG_
 
 /*
@@ -148,6 +149,8 @@
 #include "collection/tasking.hpp"
 #include "collection/grouping.hpp"
 #include "collection/sharedvalue.hpp"
+
+using namespace Vector;
 
 #include "fileloader.hpp"
 #include "predefs.hpp"

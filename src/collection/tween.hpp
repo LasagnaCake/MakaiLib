@@ -66,7 +66,7 @@ namespace Tween{
 	#pragma GCC diagnostic ignored "-Wsequence-point"
 	#pragma GCC diagnostic ignored "-Wsubobject-linkage"
 
-	#define $easing [](float step, float from, float to, float stop) -> float
+	#define EASING [](float step, float from, float to, float stop) -> float
 	#define E_FUNC [&](float t, float b, float c, float d) -> float
 	#define PI_VALUE Math::pi
 	#define EASE_F(TYPE) .TYPE = E_FUNC
@@ -550,8 +550,6 @@ namespace Tween{
 		T defaultVar;
 	};
 }
-
-#define $twn Tween::
 
 #undef CASE_FUNC
 

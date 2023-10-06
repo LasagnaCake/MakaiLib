@@ -23,8 +23,8 @@ struct GameUI {
 
 	GameUI() {
 		power.bar.trans.position.z = 0.1;
-		power.bar.setRenderLayer($layer(UI));
-		power.label.setRenderLayer($layer(UI));
+		power.bar.setRenderLayer(UI_LAYER);
+		power.label.setRenderLayer(UI_LAYER);
 		life.setRenderLayer(UI_LAYER);
 		bomb.setRenderLayer(UI_LAYER);
 		lifeBit.setRenderLayer(UI_LAYER);

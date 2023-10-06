@@ -126,6 +126,4 @@ namespace Camera {
 	};
 }
 
-#define $cam Camera::
-
 #endif // MAKAI_VIEWPERSPECTIVE_CAMERA

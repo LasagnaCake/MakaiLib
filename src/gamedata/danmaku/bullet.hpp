@@ -12,7 +12,7 @@ struct BulletData: ObjectData {
 class Bullet: public DanmakuObject {
 public:
 	Bullet(): DanmakuObject() {
-		auto pass = $objsignal {};
+		auto pass = DANMAKU_OBJ_SIGNAL {};
 		onRebound		= pass;
 		onShuttle		= pass;
 	}
@@ -90,21 +90,18 @@ public:
 
 	Bullet* clearSignals() override {
 		DanmakuObject::clearSignals();
-		auto pass = $tsignal(DanmakuObject*) {};
+		auto pass = T_SIGNAL (DanmakuObject*) {};
 		onRebound = onShuttle = pass;
 		return this;
 	}
 };
 
-#define $_b(VAR) ((Bullet*)(VAR))
-#define $b(VAR) (($dmk Bullet*)(VAR))
-
 typedef std::vector<Bullet*> BulletList;
 
 template <
 	size_t BULLET_COUNT,
-	size_t ACTOR_LAYER = $layer(ENEMY_BULLET),
-	size_t ENEMY_LAYER = $layer(PLAYER)
+	size_t ACTOR_LAYER = ENEMY_BULLET_LAYER,
+	size_t ENEMY_LAYER = PLAYER_LAYER
 >
 class BulletManager: Entity {
 public:
@@ -117,14 +114,14 @@ public:
 		mesh.material.shaded = false;
 	})
 
-	$cdt BoxBounds2D playfield;
-	$cdt BoxBounds2D board;
+	CollisionData::BoxBounds2D playfield;
+	CollisionData::BoxBounds2D board;
 
 	Renderable mesh;
 
 	virtual ~BulletManager() {
 		//delete &mesh;
-		$debug("\nDeleting bullet manager...");
+		DEBUGLN("\nDeleting bullet manager...");
 		delete[] bullets;
 	}
 
@@ -134,12 +131,12 @@ public:
 			auto& b = bullets[i];
 			b.onFrame(delta);
 			if (!b.isFree() && b.params.collidable) {
-				for $each(actor, $ecl groups.getGroup(ENEMY_LAYER)) {
+				for EACH(actor, EntityClass::groups.getGroup(ENEMY_LAYER)) {
 					auto a = (AreaCircle2D*)actor;
 					auto targetBounds = a->collision.shape;
 					if (
 						a->collision.enabled
-						&& $cdt withinBounds(
+						&& CollisionData::withinBounds(
 							b.params.hitbox,
 							targetBounds
 						)
@@ -151,38 +148,38 @@ public:
 			}
 			if (b.params.rebound || b.params.shuttle)
 				if (
-					! $cdt withinBounds(
+					! CollisionData::withinBounds(
 						b.local.position,
 						board
 					)
 				) {
 					// Rebounding (reflecting) takes precedence over shuttling (wrapping)
 					if (b.params.rebound) {
-						#define $wreflect(AA) AA = Math::pi - AA
+						#define W_REFLECT(AA) AA = Math::pi - AA
 						// Check X
 						if (
 							b.local.position.x < board.min.x||
 							b.local.position.x > board.max.x
 						) {
-							$wreflect(b.params.rot.current);
-							$wreflect(b.params.rot.start);
-							$wreflect(b.params.rot.end);
+							W_REFLECT(b.params.rot.current);
+							W_REFLECT(b.params.rot.start);
+							W_REFLECT(b.params.rot.end);
 						}
-						#undef $wreflect
-						#define $wreflect(AA) AA = - AA
+						#undef W_REFLECT
+						#define W_REFLECT(AA) AA = - AA
 						// Check Y
 						if (
 							b.local.position.y < board.min.y ||
 							b.local.position.y > board.max.y
 						) {
-							$wreflect(b.params.rot.current);
-							$wreflect(b.params.rot.start);
-							$wreflect(b.params.rot.end);
+							W_REFLECT(b.params.rot.current);
+							W_REFLECT(b.params.rot.start);
+							W_REFLECT(b.params.rot.end);
 						}
 						b.onRebound(&b);
 						// Disable rebounding
 						b.params.rebound = false;
-						#undef $wreflect
+						#undef W_REFLECT
 					}
 					else if (b.params.shuttle) {
 						// Check X
@@ -202,7 +199,7 @@ public:
 				}
 			if (b.params.dope)
 				if (
-					! $cdt withinBounds(
+					! CollisionData::withinBounds(
 						b.params.hitbox,
 						playfield
 					)
@@ -214,21 +211,21 @@ public:
 
 	void freeAll() {
 		GAME_PARALLEL_FOR
-		for $seach(b, bullets, BULLET_COUNT) b.setFree(); $endseach
+		for SEACH(b, bullets, BULLET_COUNT) b.setFree(); END_SEACH
 	}
 
 	void discardAll() {
 		GAME_PARALLEL_FOR
-		for $seach(b, bullets, BULLET_COUNT) b.discard(); $endseach
+		for SEACH(b, bullets, BULLET_COUNT) b.discard(); END_SEACH
 	}
 
 	size_t getFreeCount() {
 		size_t count = 0;
 		GAME_PARALLEL_FOR
-		for $seach(b, bullets, BULLET_COUNT)
+		for SEACH(b, bullets, BULLET_COUNT)
 			if (b.isFree())
 				count++;
-		$endseach
+		END_SEACH
 		return count;
 	}
 
@@ -252,35 +249,35 @@ public:
 	BulletList getInArea(T target) {
 		BulletList res;
 		GAME_PARALLEL_FOR
-		for $seachif(b, bullets, BULLET_COUNT, !b.isFree() && b.params.collidable) {
+		for SEACH_IF(b, bullets, BULLET_COUNT, !b.isFree() && b.params.collidable) {
 			if (
-				$cdt withinBounds(
+				CollisionData::withinBounds(
 					b.params.hitbox,
 					target
 				)
 			) {
 				res.push_back(&b);
 			}
-		} $endseach
+		} END_SEACH
 		return res;
 	}
 
 	BulletList getActive() {
 		BulletList res;
 		GAME_PARALLEL_FOR
-		for $seachif(b, bullets, BULLET_COUNT, !b.isFree()) res.push_back(&b); $endseach
+		for SEACH_IF(b, bullets, BULLET_COUNT, !b.isFree()) res.push_back(&b); END_SEACH
 		return res;
 	}
 
 	void forEach(Callback<Bullet> func) {
 		GAME_PARALLEL_FOR
-		for $ssrange(i, 0, BULLET_COUNT)
+		for SSRANGE(i, 0, BULLET_COUNT)
 			func(bullets[i]);
 	}
 
 	void forEachActive(Callback<Bullet> func) {
 		GAME_PARALLEL_FOR
-		for $ssrange(i, 0, BULLET_COUNT)
+		for SSRANGE(i, 0, BULLET_COUNT)
 			if (!bullets[i].isFree())
 				func(bullets[i]);
 	}
@@ -288,11 +285,11 @@ public:
 	template <CollisionType T>
 	void forEachInArea(T area, Callback<Bullet> func) {
 		GAME_PARALLEL_FOR
-		for $ssrange(i, 0, BULLET_COUNT)
+		for SSRANGE(i, 0, BULLET_COUNT)
 			if (
 				!bullets[i].isFree()
 			&&	bullets[i].params.collidable
-			&&	$cdt withinBounds(bullets[i].params.hitbox, area)
+			&&	CollisionData::withinBounds(bullets[i].params.hitbox, area)
 			) func(bullets[i]);
 	}
 
@@ -303,13 +300,13 @@ public:
 	Bullet* createBullet() {
 		Bullet* current = nullptr;
 		//GAME_PARALLEL_FOR
-		for $seachif(b, bullets, BULLET_COUNT, b.isFree()) {
+		for SEACH_IF(b, bullets, BULLET_COUNT, b.isFree()) {
 			current = b.enable()->setZero();
 			#ifdef $_PREVENT_INSTANCE_OVERFLOW_BY_WRAP
 			pbobw = 0;
 			#endif
 			break;
-		} $endseach
+		} END_SEACH
 		if (!current)
 		#ifndef $_PREVENT_INSTANCE_OVERFLOW_BY_WRAP
 			throw OutOfObjects(
@@ -351,16 +348,13 @@ private:
 	Bullet* last = nullptr;
 };
 
-typedef BulletManager<PLAYER_BULLET_COUNT, $layer(PLAYER_BULLET), $layer(ENEMY)>	PlayerBulletManager;
-typedef BulletManager<ENEMY_BULLET_COUNT, $layer(ENEMY_BULLET), $layer(PLAYER)>		EnemyBulletManager;
+typedef BulletManager<PLAYER_BULLET_COUNT, PLAYER_BULLET_LAYER, ENEMY_LAYER>	PlayerBulletManager;
+typedef BulletManager<ENEMY_BULLET_COUNT, ENEMY_BULLET_LAYER, PLAYER_LAYER>		EnemyBulletManager;
 
 PlayerBulletManager*	playerBulletManager	= nullptr;
 EnemyBulletManager*		enemyBulletManager	= nullptr;
 
-#define DANMAKU_PBM $dmk playerBulletManager
-#define DANMAKU_EBM $dmk enemyBulletManager
-
-#define $bullet(TYPE)	$getman( TYPE##Bullet )
-#define $setb(TYPE)		$setman( TYPE##Bullet )
+#define DANMAKU_PBM GameData::Danmaku::playerBulletManager
+#define DANMAKU_EBM GameData::Danmaku::enemyBulletManager
 
 #endif // MAKAI_BASE_BULLET_H

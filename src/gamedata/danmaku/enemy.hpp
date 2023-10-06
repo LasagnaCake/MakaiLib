@@ -11,7 +11,7 @@ struct EnemyEntity2D: public AreaCircle2D {
 		sprite->setColor(Color::WHITE);
 		// Invincibility timer
 		invincibility.stop();
-		invincibility.onSignal = $signal{
+		invincibility.onSignal = SIGNAL {
 			invincible = false;
 		};
 		invincibility.delay = 60;
@@ -52,17 +52,17 @@ struct EnemyEntity2D: public AreaCircle2D {
 	void onCollision(Entity* e) override {
 		auto player = getMainPlayer();
 		if (!invincible) {
-			if (e->isInGroup($layer(PLAYER_BULLET))) {
+			if (e->isInGroup(PLAYER_BULLET_LAYER)) {
 				if (player) health -= player->damage.bullet;
 				else health -= defaults.playerDamage.bullet;
 				onDamage();
 			}
-			if (e->isInGroup($layer(PLAYER_LASER))) {
+			if (e->isInGroup(PLAYER_LASER_LAYER)) {
 				if (player) health -= player->damage.laser;
 				else health -= defaults.playerDamage.laser;
 				onDamage();
 			}
-			if (e->isInGroup($layer(PLAYER_BOMB))) {
+			if (e->isInGroup(PLAYER_BOMB_LAYER)) {
 				if (player) health -= player->damage.bomb;
 				else health -= defaults.playerDamage.bomb;
 				onDamage();
@@ -93,5 +93,5 @@ struct EnemyEntity2D: public AreaCircle2D {
 	}
 
 private:
-	$evt Timer invincibility;
+	Event::Timer invincibility;
 };

@@ -435,9 +435,6 @@ namespace Math {
 	}
 }
 
-#define $mth Math::
-#define $rng Math::Random::
-
 #define RNG	Math::Random
 
 #undef CONST_ANYTYPE_I

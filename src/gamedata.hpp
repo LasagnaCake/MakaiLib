@@ -35,26 +35,26 @@
 	//virtual ~NAME() {onDelete();}
 
 namespace GameData {
-	#define $gdt GameData::
 	namespace {
 		using
-		$ecl AreaCircle2D,
-		$ecl Entity2D,
-		$ecl Entity,
-		$rdt Renderable,
-		$ref AnimatedPlane,
-		$drw Texture2D,
-		$vmt Transform2D,
-		$vmt Transform3D,
-		$mat WorldMaterial,
-		$mat BufferMaterial,
-		$mat ObjectMaterial,
-		$mat setMaterial,
-		$cdt AreaCollisionData,
-		$cdt CollisionType,
-		$evt Signal,
-		$mki InputManager,
-		$mki Program,
+		EntityClass::AreaCircle2D,
+		EntityClass::Entity2D,
+		EntityClass::Entity,
+		RenderData::Renderable,
+		RenderData::Reference::Plane,
+		RenderData::Reference::AnimatedPlane,
+		Drawer::Texture2D,
+		VecMath::Transform2D,
+		VecMath::Transform3D,
+		RenderData::Material::WorldMaterial,
+		RenderData::Material::BufferMaterial,
+		RenderData::Material::ObjectMaterial,
+		RenderData::Material::setMaterial,
+		CollisionData::AreaCollisionData,
+		CollisionData::CollisionType,
+		Event::Signal,
+		Makai::InputManager,
+		Makai::Program,
 		std::string;
 
 		using namespace Vector;
@@ -69,7 +69,7 @@ namespace GameData {
 	typedef std::unordered_map<String, SDL_Scancode> KeyBinds;
 
 	template <typename T>
-	using TypedSignal = $tev Signal<T>;
+	using TypedSignal = TypedEvent::Signal<T>;
 
 	void addToGame(Entity* const& e, String const& gameType) {
 		if (!EntityClass::_ROOT)
@@ -97,7 +97,7 @@ namespace GameData {
 	}
 
 	void setWorldMaterial(WorldMaterial& mat) {
-		setMaterial($mainshader, mat);
+		setMaterial(MAIN_SHADER, mat);
 	}
 
 	template <typename T> using Callback = Function<void(T&)>;
@@ -113,7 +113,7 @@ namespace GameData {
 	namespace Danmaku {
 		namespace {
 			using
-				$mat PolarWarpEffect
+				GameData::Material::PolarWarpEffect
 			;
 		}
 		class BossEntity2D;
@@ -121,7 +121,6 @@ namespace GameData {
 		class PlayerEntity2D;
 		class Stage;
 		class DanmakuApp;
-		#define $dmk GameData::Danmaku::
 		AreaCircle2D* mainPlayer = nullptr;
 		#include "gamedata/danmaku/predefs.hpp"
 		#include "gamedata/danmaku/structs.hpp"

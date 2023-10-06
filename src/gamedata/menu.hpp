@@ -33,11 +33,11 @@ namespace Menu {
 			keys["previous"]	= SDL_SCANCODE_UP;
 			keys["exit"]		= SDL_SCANCODE_ESCAPE;
 			input.threshold		= 30;
-			nextOptTimer.onSignal	= $signal {this->nextOption();};
+			nextOptTimer.onSignal	= SIGNAL {this->nextOption();};
 			nextOptTimer.delay		= 5;
 			nextOptTimer.paused		= true;
 			nextOptTimer.repeat		= true;
-			prevOptTimer.onSignal	= $signal {this->previousOption();};
+			prevOptTimer.onSignal	= SIGNAL {this->previousOption();};
 			prevOptTimer.delay		= 5;
 			prevOptTimer.paused		= true;
 			prevOptTimer.repeat		= true;
@@ -70,7 +70,7 @@ namespace Menu {
 
 		void removeOption(Option* o) {
 			o->onDelete(o);
-			$eraseif(all, elem->id == o->id);
+			ERASE_IF(all, elem->id == o->id);
 			delete o;
 		}
 
@@ -169,18 +169,18 @@ namespace Menu {
 
 		KeyBinds keys;
 
-		virtual void onReturn()															{$debug("Return!");}
-		virtual void onExit()															{$debugp("Menu Exited!");}
-		virtual void onFinalOption(Option* opt)											{$debugp("Final Option Selected: "); if (opt) {$debug(opt->id);} else {$debug("NULL");}}
-		virtual void onOptionSelected(Option* opt)										{$debugp("Option Selected: "); if (opt) {$debug(opt->id);} else {$debug("NULL");}}
-		virtual void onOptionSetChanged(OptionSet const& prev, OptionSet const& next)	{$debug("Option Set Changed!");}
+		virtual void onReturn()															{DEBUGLN("Return!");}
+		virtual void onExit()															{DEBUG("Menu Exited!");}
+		virtual void onFinalOption(Option* opt)											{DEBUG("Final Option Selected: "); if (opt) {DEBUGLN(opt->id);} else {DEBUGLN("NULL");}}
+		virtual void onOptionSelected(Option* opt)										{DEBUG("Option Selected: "); if (opt) {DEBUGLN(opt->id);} else {DEBUGLN("NULL");}}
+		virtual void onOptionSetChanged(OptionSet const& prev, OptionSet const& next)	{DEBUGLN("Option Set Changed!");}
 		virtual void onOptionChanged(Option* prev, Option* next) {
-			$debugp("Option Changed: ");
-			if (prev) {$debugp(prev->id);}
-			else {$debugp("NULL");}
-			$debugp(" -> ");
-			if (next) {$debug(next->id);}
-			else {$debug("NULL");}
+			DEBUG("Option Changed: ");
+			if (prev) {DEBUG(prev->id);}
+			else {DEBUG("NULL");}
+			DEBUG(" -> ");
+			if (next) {DEBUGLN(next->id);}
+			else {DEBUGLN("NULL");}
 		}
 
 		bool action(std::string what, bool justPressed = false) {
@@ -210,5 +210,3 @@ namespace Menu {
 		size_t id = 0;
 	};
 }
-
-#define $menu GameData::Menu::

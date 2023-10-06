@@ -120,8 +120,4 @@ namespace Color {
 	};
 }
 
-#define $col Color::
-
-#define $color Color::Color
-
 #endif

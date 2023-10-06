@@ -76,7 +76,7 @@ public:
 	Label(size_t layer = 0, bool manual = false): DrawableObject(layer, manual) {}
 
 	virtual ~Label() {
-		$debug("Text!");
+		DEBUGLN("Text!");
 	}
 
 	FontData*		font = nullptr;
@@ -182,13 +182,4 @@ private:
 	}
 	#undef CHAR_VERTEX
 };
-
-#define $txt $rdt Text::
-
-#if defined(_GRAPHICAL_TEXT_DEBUG_) && !defined(_DEBUG_OUTPUT_)
-Label $_DEBUG(Math::Max::SIZET_V);
-#define $debug(TEXT)	$txt $_DEBUG.text.content = (TEXT) + "\n"
-#define $debugp(TEXT)	$txt $_DEBUG.text.content += (TEXT)
-#define $flush()		$txt $_DEBUG.text.content = ""
-#endif
 

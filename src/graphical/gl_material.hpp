@@ -449,5 +449,3 @@ void setMaterial(Shader& shader, WorldMaterial& material) {
 	shader["ambientColor"](material.ambient.color);
 	shader["ambientStrength"](material.ambient.strength);
 }
-
-#define $mat RenderData::Material::

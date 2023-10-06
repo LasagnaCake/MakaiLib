@@ -50,6 +50,4 @@ enum Layer: size_t {
 #undef R_LAYER
 #undef CR_LAYER
 
-#define $layer(NAME) (NAME##_LAYER)
-
 #endif // MAKAI_GAME_SYSTEM_LAYOUT

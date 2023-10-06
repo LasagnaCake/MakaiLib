@@ -2,18 +2,18 @@ struct SpellCard: Entity {
 	DERIVED_CLASS(SpellCard, Entity)
 
 	DERIVED_CONSTRUCTOR(SpellCard, Entity, {
-		background.setRenderLayer($layer(SPELL));
-		effect.setRenderLayer($layer(ENEMY));
+		background.setRenderLayer(SPELL_LAYER);
+		effect.setRenderLayer(ENEMY_LAYER - 1);
 		boss = (BossEntity2D*)getParent();
-		time.setRenderLayer($layer(UI));
-		spellName.setRenderLayer($layer(UI));
+		time.setRenderLayer(UI_LAYER);
+		spellName.setRenderLayer(UI_LAYER);
 	})
 
-	$rdt Renderable	background;
-	$rdt Renderable	effect;
+	RenderData::Renderable	background;
+	RenderData::Renderable	effect;
 
-	$txt Label	time;
-	$txt Label	spellName;
+	RenderData::Text::Label	time;
+	RenderData::Text::Label	spellName;
 
 	BossEntity2D* boss;
 

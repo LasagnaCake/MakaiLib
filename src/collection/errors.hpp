@@ -104,6 +104,4 @@ namespace Error {
 		): Error (#NAME, message, file, line, caller, info, callerInfo) {}\
 	}
 
-#define $err Error::
-
 #endif // CUSTOM_RUNTIME_ERRORS_H

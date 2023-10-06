@@ -14,8 +14,6 @@ namespace Scene {
 	Camera::Camera3D camera;
 }
 
-#define $scn	Scene::
-
 namespace Shader {
 	namespace {
 		using namespace std;
@@ -91,37 +89,37 @@ namespace Shader {
 			}
 
 			void operator()(Vector2* const values, size_t count) {
-				for $ssrange(i, 0, count)
+				for SSRANGE(i, 0, count)
 					glUniform2f(getUniformArray(i), values[i].x, values[i].y);
 				glUniform1ui(getUniform("Count"), count);
 			}
 
 			void operator()(glm::vec2* const values, size_t count) {
-				for $ssrange(i, 0, count)
+				for SSRANGE(i, 0, count)
 					glUniform2f(getUniformArray(i), values[i].x, values[i].y);
 				glUniform1ui(getUniform("Count"), count);
 			}
 
 			void operator()(Vector3* const values, size_t count) {
-				for $ssrange(i, 0, count)
+				for SSRANGE(i, 0, count)
 					glUniform3f(getUniformArray(i), values[i].x, values[i].y, values[i].z);
 				glUniform1ui(getUniform("Count"), count);
 			}
 
 			void operator()(glm::vec3* const values, size_t count) {
-				for $ssrange(i, 0, count)
+				for SSRANGE(i, 0, count)
 					glUniform3f(getUniformArray(i), values[i].x, values[i].y, values[i].z);
 				glUniform1ui(getUniform("Count"), count);
 			}
 
 			void operator()(Vector4* const values, size_t count) {
-				for $ssrange(i, 0, count)
+				for SSRANGE(i, 0, count)
 					glUniform4f(getUniformArray(i), values[i].x, values[i].y, values[i].z, values[i].w);
 				glUniform1ui(getUniform("Count"), count);
 			}
 
 			void operator()(glm::vec4* const values, size_t count) {
-				for $ssrange(i, 0, count)
+				for SSRANGE(i, 0, count)
 					glUniform4f(getUniformArray(i), values[i].x, values[i].y, values[i].z, values[i].w);
 				glUniform1ui(getUniform("Count"), count);
 			}
@@ -379,8 +377,6 @@ namespace Shader {
 	Shader defaultShader;
 }
 
-#define $shd Shader::
-
-#define $mainshader Shader::defaultShader
+#define MAIN_SHADER Shader::defaultShader
 
 #endif // MAKAILIB_SHADER_HANDLER

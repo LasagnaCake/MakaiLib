@@ -3,8 +3,6 @@
 
 #include "../anchors.hpp"
 
-#define $yse(COMPONENT) YSE::COMPONENT()
-
 namespace Audio {
 
 	namespace {
@@ -32,9 +30,9 @@ namespace Audio {
 			}
 
 			virtual ~Playable() {
-				$debug("Deleting playable object...");
-				$eraseif(audioList, elem == &update);
-				$debug("Object deleted!");
+				DEBUGLN("Deleting playable object...");
+				ERASE_IF(audioList, elem == &update);
+				DEBUGLN("Object deleted!");
 			}
 
 			void create(String path)	{
@@ -55,7 +53,7 @@ namespace Audio {
 			virtual void onPlaybackStart()	{}
 			virtual void onUpdate()			{}
 
-			AudioFunc update = $signal {
+			AudioFunc update = SIGNAL {
 				this->onUpdate();
 			};
 		protected:
@@ -89,9 +87,9 @@ namespace Audio {
 	}
 
 	void updateAudioSystem() {
-		//$debug("Updating music queue...");
+		//DEBUGLN("Updating music queue...");
 		Music::update();
-		//$debug("Updating audio systems...");
+		//DEBUGLN("Updating audio systems...");
 		for(AudioFunc*& func : audioList) (*func)();
 	}
 
@@ -99,9 +97,5 @@ namespace Audio {
 		return !isAudioSystemClosed;
 	}
 }
-
-#define $aud Audio::
-#define $mus $aud Music::
-#define $snd $aud Sound::
 
 #endif // AUDIO_PLAYER_SYSTEM_H

@@ -35,17 +35,17 @@ public:
 	WorldMaterial world2D;
 	WorldMaterial world3D;
 
-	$cam Camera3D cam2D;
-	$cam Camera3D cam3D{$vec3(0, 5, -10), $vec3(0, 0, 0)};
+	Camera::Camera3D cam2D;
+	Camera::Camera3D cam3D{Vector3(0, 5, -10), Vector3(0, 0, 0)};
 
 	size_t gameSeed = 0;
 
 	inline void setCamera2D() {
-		$scn camera = cam2D;
+		Scene::camera = cam2D;
 	}
 
 	inline void setCamera3D() {
-		$scn camera = cam3D;
+		Scene::camera = cam3D;
 	}
 
 	inline void setWorldMaterial2D() {
@@ -66,12 +66,12 @@ public:
 
 	void onOpen() override {
 		// Set RNG Seed
-		gameSeed = $rng getNewSeed();
-		$debug(gameSeed);
-		$rng setSeed(gameSeed);
+		gameSeed = Math::Random::getNewSeed();
+		DEBUGLN(gameSeed);
+		Math::Random::setSeed(gameSeed);
 		// Create 2D Camera
 		Vector2 screenSpace = getWindowScale();
-		cam2D = $cam getCamera2D(64, screenSpace);
+		cam2D = Camera::getCamera2D(64, screenSpace);
 		// Set 2D Camera
 		setCamera2D();
 	}
@@ -94,16 +94,16 @@ struct ProgramSetting {
 ProgramSetting queryProgramSettingsFromUser(bool use16by9 = false, bool letUserChooseFramerate = true, bool extendedFramerate = false) {
 	StringList resList;
 	std::vector<Vector2> resValue;
-	for $each(res, (use16by9 ? $res set16x9 : $res set4x3)) {
+	for EACH(res, (use16by9 ? Makai::Resolution::set16x9 : Makai::Resolution::set4x3)) {
 		resList.push_back(res.first);
 		resValue.push_back(res.second);
 	}
 	resList.push_back("Detect");
 	Vector2 devSize = Makai::getDeviceSize();
-	$debug(devSize.y * (4.0 / 3.0));
-	$debug(devSize.y);
-	$debug(devSize.y * (16.0 / 9.0));
-	$debug(devSize.y);
+	DEBUGLN(devSize.y * (4.0 / 3.0));
+	DEBUGLN(devSize.y);
+	DEBUGLN(devSize.y * (16.0 / 9.0));
+	DEBUGLN(devSize.y);
 	if (Popup::dialogBox(
 		"Warning!",
 		"Pressing escape on any of the next set of dialog boxes,\n"

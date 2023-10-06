@@ -6,10 +6,10 @@ public:
 	}
 
 	virtual ~Drawable() {
-		$debug("Removing from rendering layers...");
+		DEBUGLN("Removing from rendering layers...");
 		if(!manualMode)
 			Drawer::layers.removeFromAll(&render);
-		$debug("Finalizing...\n");
+		DEBUGLN("Finalizing...\n");
 	}
 
 	/// Called before rendering to screen.
@@ -52,7 +52,7 @@ public:
 	}
 
 	/// Renders the object to the screen.
-	DrawFunc render = $func() {
+	DrawFunc render = FUNC() {
 		// If not active, return
 		if (!active) return;
 		// Call onDrawBegin function
@@ -77,13 +77,13 @@ private:
 class DrawableObject: public Drawable {
 public:
 	DrawableObject(size_t layer = 0, bool manual = false): Drawable(layer, manual){
-		$debug("Drawable object created!");
+		DEBUGLN("Drawable object created!");
 		glGenVertexArrays(1, &vao);
 		glGenBuffers(1, &vbo);
 	}
 
 	virtual ~DrawableObject() {
-		$debug("Deleting buffers...");
+		DEBUGLN("Deleting buffers...");
 		glDeleteBuffers(1, &vbo);
 		glDeleteVertexArrays(1, &vao);
 	}
@@ -95,8 +95,8 @@ public:
 		material.instances.push_back(Vector3(0, 0, 0));
 	}
 
-	$mat ObjectMaterial	material;
-	Transform3D			trans;
+	Material::ObjectMaterial	material;
+	Transform3D					trans;
 
 protected:
 	void display(RawVertex* vertices, size_t count, GLuint mode = GL_TRIANGLES) {
@@ -139,19 +139,19 @@ protected:
 
 	void setDefaultShader() {
 		// Render with basic shader
-		$mainshader();
+		MAIN_SHADER();
 		// Get transformation matrices
 		glm::mat4
 			actor		= VecMath::asGLMMatrix(trans),
 			camera		= Scene::camera.matrix(),
 			projection	= Scene::camera.perspective();
 		// Set shader data
-		$mat setMaterial($mainshader, material);
+		Material::setMaterial(MAIN_SHADER, material);
 		// Set transformation matrices
-		$mainshader["world"](Scene::world);
-		$mainshader["camera"](camera);
-		$mainshader["projection"](projection);
-		$mainshader["actor"](actor);
+		MAIN_SHADER["world"](Scene::world);
+		MAIN_SHADER["camera"](camera);
+		MAIN_SHADER["projection"](projection);
+		MAIN_SHADER["actor"](actor);
 	}
 
 	GLuint vao, vbo;

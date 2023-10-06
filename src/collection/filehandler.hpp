@@ -134,6 +134,4 @@ namespace FileLoader {
 	}
 };
 
-#define $fld FileLoader::
-
 #endif // SYSTEM_FILE_LOADER_H

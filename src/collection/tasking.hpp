@@ -10,22 +10,22 @@
 //#include "asynchronous.hpp"
 
 /// Task parameter definition macro (AVOID USING).
-#define $T_CATCHR		[&]
-#define $T_CCATCH(...)	[&, __VA_ARGS__]
-#define $T_PARAMS		($tsk Tasker* _tasker) -> size_t
-#define $T_TPARAM(T)	($tts Tasker<T>* _tasker, T* _self) -> size_t
+#define T_CATCHR		[&]
+#define T_CCATCH(...)	[&, __VA_ARGS__]
+#define T_PARAMS		(Tasking::Tasker* _tasker) -> size_t
+#define T_TPARAM(T)		(TypedTasking::Tasker<T>* _tasker, T* _self) -> size_t
 
 /// Task parameter definition macro.
-#define	$task			$T_CATCHR $T_PARAMS
-#define	$ttask(TYPE)	$T_CATCHR $T_TPARAM(TYPE)
+#define	TASK			T_CATCHR T_PARAMS
+#define	T_TASK(TYPE)	T_CATCHR T_TPARAM(TYPE)
 
-#define $waittask(TIME)	[](auto){return (TIME);}
+#define WAIT_TASK(TIME)	[](auto){return (TIME);}
 
 /// Zero-cycle delay task conclusion macro.
-#define	$next	return 0
+#define	NEXT_TASK	return 0
 
 /// Single-cycle delay task conclusion macro.
-#define	$end	return 1
+#define	END_TASK	return 1
 
 // TODO: Add "C++ 20 coroutine" functionality to tasks.
 /* NOTE: It would be impossible to do such thing.
@@ -74,10 +74,10 @@ namespace Tasking {
 		bool loop = false;
 
 		/// Current trigger to wait for.
-		$evt Trigger trigger = Event::DEF_TRIGGER;
+		Event::Trigger trigger = Event::DEF_TRIGGER;
 
 		/// Signal to fire when completed.
-		$evt Signal onCompleted = Event::DEF_SIGNAL;
+		Event::Signal onCompleted = Event::DEF_SIGNAL;
 
 		/// Current task being executed.
 		size_t current = 0;
@@ -365,10 +365,10 @@ namespace TypedTasking {
 		bool loop = false;
 
 		/// Current trigger to wait for.
-		$evt Trigger trigger = Event::DEF_TRIGGER;
+		Event::Trigger trigger = Event::DEF_TRIGGER;
 
 		/// Signal to fire when completed.
-		$tev Signal<Tasker<T>*> onCompleted = [&](Tasker<T>* tskr){};
+		TypedEvent::Signal<Tasker<T>*> onCompleted = [&](Tasker<T>* tskr){};
 
 		/// The target object of the tasker.
 		T* target = nullptr;
@@ -605,8 +605,5 @@ namespace TypedTasking {
 	template <typename T>
 	using MultiTaskerList = vector<MultiTasker<T>>;
 }
-
-#define $tsk Tasking::
-#define $tts TypedTasking::
 
 #endif // TASKER_TASK_H

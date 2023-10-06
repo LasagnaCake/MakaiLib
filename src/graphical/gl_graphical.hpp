@@ -4,10 +4,8 @@
 #include "../anchors.hpp"
 #include "gl_shader.hpp"
 
-#define $$FUNC function<void()>
-
-#define $glpointer(start, offset) (void*)((start) + (offset) * sizeof(float))
-#define $gloffset(offset) (void*)((offset) * sizeof(float))
+#define GET_GL_POINTER(start, offset) (void*)((start) + (offset) * sizeof(float))
+#define GET_GL_OFFSET(offset) (void*)((offset) * sizeof(float))
 
 #define glSetClearColor(COLOR) glClearColor(COLOR.x, COLOR.y, COLOR.z, COLOR.w);
 
@@ -143,7 +141,7 @@ namespace Drawer {
 			GL_FLOAT,
 			GL_FALSE,
 			RAW_VERTEX_BYTE_SIZE,
-			$gloffset(0)
+			GET_GL_OFFSET(0)
 		);
 		// UV
 		glVertexAttribPointer(
@@ -152,7 +150,7 @@ namespace Drawer {
 			GL_FLOAT,
 			GL_FALSE,
 			RAW_VERTEX_BYTE_SIZE,
-			$gloffset(3)
+			GET_GL_OFFSET(3)
 		);
 		// Color
 		glVertexAttribPointer(
@@ -161,7 +159,7 @@ namespace Drawer {
 			GL_FLOAT,
 			GL_FALSE,
 			RAW_VERTEX_BYTE_SIZE,
-			$gloffset(5)
+			GET_GL_OFFSET(5)
 		);
 		// Normal
 		glVertexAttribPointer(
@@ -170,7 +168,7 @@ namespace Drawer {
 			GL_FLOAT,
 			GL_FALSE,
 			RAW_VERTEX_BYTE_SIZE,
-			$gloffset(8)
+			GET_GL_OFFSET(8)
 		);
 	}
 
@@ -382,11 +380,5 @@ namespace RenderData {
 }
 
 #include "gl_framebuffer.hpp"
-
-#define $ref	RenderData::Reference::
-#define $rdt	RenderData::
-#define $drw	Drawer::
-
-#undef $$FUNC
 
 #endif // GRAPHICAL_RENDERER_H

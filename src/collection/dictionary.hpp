@@ -50,6 +50,4 @@ namespace Dictionary {
 	};
 }
 
-#define $dic Dictionary::
-
 #endif // DICTIONARY_LIBRARY_H

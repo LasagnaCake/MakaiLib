@@ -7,10 +7,10 @@
 #include <stdexcept>
 
 /// Object state checking function macro
-#define $check(TYPE)	[&](TYPE* object) -> bool
+#define POOL_CHECH(TYPE)	[&](TYPE* object) -> bool
 
 /// Object state setting function macro
-#define $setto(TYPE)	[&](TYPE* object) -> void
+#define POOL_SET(TYPE)		[&](TYPE* object) -> void
 
 namespace Pooling{
 	namespace {

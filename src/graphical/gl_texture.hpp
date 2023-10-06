@@ -107,7 +107,7 @@ unsigned int createTexture2D(
 
 namespace {
 	unsigned int createCopyBuffer() {
-		$debug("Creating copy buffer...");
+		DEBUGLN("Creating copy buffer...");
 		unsigned int id = 0;
 		glGenFramebuffers(1, &id);
 		return id;
@@ -128,9 +128,9 @@ void copyTexture(
 	unsigned int filter = GL_NEAREST
 ) {
 	static unsigned int const fb = createCopyBuffer();
-	$debug("Binding copy buffer...");
+	DEBUGLN("Binding copy buffer...");
 	glBindFramebuffer(GL_FRAMEBUFFER, fb);
-	$debug("Binding source...");
+	DEBUGLN("Binding source...");
 	glFramebufferTexture2D(
 		GL_READ_FRAMEBUFFER,
 		GL_COLOR_ATTACHMENT0,
@@ -138,7 +138,7 @@ void copyTexture(
 		src,
 		0
 	);
-	$debug("Binding destination...");
+	DEBUGLN("Binding destination...");
 	glFramebufferTexture2D(
 		GL_DRAW_FRAMEBUFFER,
 		GL_COLOR_ATTACHMENT1,
@@ -146,14 +146,14 @@ void copyTexture(
 		dst,
 		0
 	);
-	$debug((glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE ? "OK" : "ERR"));
-	$debug("Copying textures...");
+	DEBUGLN((glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE ? "OK" : "ERR"));
+	DEBUGLN("Copying textures...");
 	glBlitFramebuffer(
 		srcStartX, srcStartY, srcEndX, srcEndY,
 		dstStartX, dstStartY, dstEndX, dstEndY,
 		GL_COLOR_BUFFER_BIT, filter
 	);
-	$debug("Finalizing...");
+	DEBUGLN("Finalizing...");
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 

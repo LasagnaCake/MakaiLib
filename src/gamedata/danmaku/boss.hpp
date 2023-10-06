@@ -1,8 +1,8 @@
 struct BossPhaseData {
-	float		health			= 100;
-	size_t		delay			= 60;
-	size_t		invincibility	= 60;
-	$evt Signal	action			= $evt DEF_SIGNAL;
+	float			health			= 100;
+	size_t			delay			= 60;
+	size_t			invincibility	= 60;
+	Event::Signal	action			= Event::DEF_SIGNAL;
 };
 
 class BossEntity2D: public EnemyEntity2D {
@@ -12,7 +12,7 @@ public:
 	DERIVED_CONSTRUCTOR(BossEntity2D, EnemyEntity2D, {
 		// Boss phase timer
 		phaseTimer.stop();
-		phaseTimer.onSignal = $signal{
+		phaseTimer.onSignal = SIGNAL {
 			beginNextPhase();
 		};
 	})
@@ -69,5 +69,5 @@ public:
 private:
 	bool battling = false;
 
-	$evt Timer phaseTimer;
+	Event::Timer phaseTimer;
 };

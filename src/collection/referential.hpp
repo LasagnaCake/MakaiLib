@@ -5,6 +5,7 @@
 #include "conceptual.hpp"
 #include "errors.hpp"
 #include "types.hpp"
+#include "definitions.hpp"
 #include <map>
 #include <stdexcept>
 #include <functional>
@@ -53,13 +54,13 @@ namespace SmartPointer {
 			if (!exists()) return (*this);
 			IF_STRONG {
 				if ((_pointerDB[(void*)ref].count-1 < 1)) {
-					$debug("Deleting reference...");
+					DEBUGLN("Deleting reference...");
 					return destroy();
 				}
-				$debug("Updating reference counter...");
+				DEBUGLN("Updating reference counter...");
 				_pointerDB[(void*)ref].count--;
-				$debugp("References: ");
-				$debug(_pointerDB[(void*)ref].count);
+				DEBUG("References: ");
+				DEBUGLN(_pointerDB[(void*)ref].count);
 			}
 			ref = nullptr;
 			return (*this);

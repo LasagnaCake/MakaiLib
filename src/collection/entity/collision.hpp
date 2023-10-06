@@ -145,7 +145,7 @@ namespace CollisionData {
 			from,
 			from.distanceTo(to),
 			width,
-			$vmt angleTo(from, to)
+			VecMath::angleTo(from, to)
 		};
 	}
 
@@ -201,7 +201,7 @@ namespace CollisionData {
 	inline PolyX cuteify(PolygonBounds2D const& b) {
 		c2Poly shape = c2Poly{b.count};
 		auto& scale = b.trans.scale;
-		for $ssrange(i, 0, b.count) {
+		for SSRANGE(i, 0, b.count) {
 			Vector2
 				p = b.points[i] * scale,
 				n = (b.normals[i] * scale).normalized();
@@ -223,7 +223,7 @@ namespace CollisionData {
 	inline PolyX cuteify(BaseShape<COUNT> const& b) {
 		c2Poly shape = c2Poly{COUNT};
 		auto& scale = b.trans.scale;
-		for $ssrange(i, 0, COUNT) {
+		for SSRANGE(i, 0, COUNT) {
 			Vector2
 				p = b.points[i] * scale,
 				n = (b.normals[i] * scale).normalized();
@@ -641,8 +641,6 @@ namespace CollisionData {
 		return withinBounds(a.shape, b.shape);
 	}
 }
-
-#define $cdt CollisionData::
 
 namespace EntityClass {
 	namespace {

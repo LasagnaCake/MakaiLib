@@ -66,6 +66,9 @@ namespace Helper {
 	template<typename T>
 	using Operation = Function<T(T const&)>;
 
+	template<typename T>
+	using Procedure = Function<void(T)>;
+
 	template<typename... Types>
 	using Poly = variant<Types...>;
 
@@ -81,7 +84,7 @@ namespace Helper {
 	List<T> convertList(List<T2> const& source) {
 		List<T> res;
 		res.reserve(source.size());
-		for $each(i, source)
+		for EACH(i, source)
 			res.push_back((T)i);
 		return res;
 	}
@@ -186,6 +189,7 @@ using Helper::Pair;
 using Helper::Entry;
 using Helper::Function;
 using Helper::Operation;
+using Helper::Procedure;
 using Helper::Poly;
 using Helper::Any;
 using Helper::Nullable;

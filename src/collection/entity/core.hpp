@@ -16,6 +16,7 @@
 #include "../conceptual.hpp"
 #include "../grouping.hpp"
 #include "../errors.hpp"
+#include "../definitions.hpp"
 
 #ifndef _$_ENTITY_ROOT_NAME
 /// Default entity root name (MUST NOT CONTAIN '/')
@@ -23,7 +24,7 @@
 #endif // _$_ENTITY_ROOT_NAME
 
 /// Type getter macro.
-#define $gettype(VAR) abi::__cxa_demangle(typeid(VAR).name(),0,0,NULL)
+#define GET_TYPE_STRING(VAR) abi::__cxa_demangle(typeid(VAR).name(),0,0,NULL)
 
 /// Core class construction macro.
 #define ENTITY_CLASS(NAME, BASE)\
@@ -112,9 +113,9 @@ namespace EntityClass {
 		// onAction functions
 
 		/// Called when object is created.
-		virtual void	onCreate()	{$debug("Hello!");}
+		virtual void	onCreate()	{DEBUGLN("Hello!");}
 		/// Called when object is deleted.
-		virtual void	onDelete()	{$debug("Bye!");}
+		virtual void	onDelete()	{DEBUGLN("Bye!");}
 		/// Called every cycle (or frame).
 		virtual void	onFrame(float delta)	{}
 
@@ -426,7 +427,7 @@ namespace EntityClass {
 		}
 
 		/// Deletes self.
-		Event::Signal const destroy = $signal {
+		Event::Signal const destroy = SIGNAL {
 			condemn();
 			delete this;
 		};
@@ -445,24 +446,24 @@ namespace EntityClass {
 		void condemn() {
 			if (condemned) return;
 			condemned = true;
-			$debugp("\n<");
-			$debugp(name);
-			$debug(">\n");
+			DEBUG("\n<");
+			DEBUG(name);
+			DEBUGLN(">\n");
 			// Clear taskers
-			$debug("Clearing taskers...");
+			DEBUGLN("Clearing taskers...");
 			taskers.clearTaskers();
 			// Call function to be executed at deletion
-			$debug("Calling onDelete()...");
+			DEBUGLN("Calling onDelete()...");
 			callOnDelete();
 			// Remove self from the equation
-			$debug("Removing self from equation...");
+			DEBUGLN("Removing self from equation...");
 			removeFromTree();
 			removeFromAllGroups();
-			$eraseif(destroyQueue, elem == &destroy);
-			$debug("Adieu!");
-			$debugp("\n</");
-			$debugp(name);
-			$debug(">\n");
+			ERASE_IF(destroyQueue, elem == &destroy);
+			DEBUGLN("Adieu!");
+			DEBUG("\n</");
+			DEBUG(name);
+			DEBUGLN(">\n");
 		}
 
 		/// Returns whether a given object would be a valid parent object.
@@ -483,7 +484,7 @@ namespace EntityClass {
 
 		/// Removes a child from the object's children. Does not delete child.
 		void removeChild(Entity* child) {
-			$eraseif(children, elem == child);
+			ERASE_IF(children, elem == child);
 			child->parent = nullptr;
 		}
 
@@ -527,9 +528,9 @@ namespace EntityClass {
 	*/
 	[[gnu::constructor]] void init() {
 		if (EntityClass::_ROOT == nullptr) {
-			$debug("Creating root tree...");
+			DEBUGLN("Creating root tree...");
 			_ROOT = new Entity($_ROOT_NAME);
-			$debug("Root tree created!");
+			DEBUGLN("Root tree created!");
 		}
 	}
 
@@ -539,10 +540,10 @@ namespace EntityClass {
 	*/
 	[[gnu::destructor]] void close() {
 		if (EntityClass::_ROOT != nullptr) {
-			$debug("Destroying root tree...");
+			DEBUGLN("Destroying root tree...");
 			delete _ROOT;
 			_ROOT = nullptr;
-			$debug("Root tree destroyed!");
+			DEBUGLN("Root tree destroyed!");
 		}
 	}
 
@@ -557,7 +558,5 @@ namespace EntityClass {
 		return nullptr;
 	}
 }
-
-#define $ecl EntityClass::
 
 #endif // COREOBJECT_ROOT_OBJECT_H
