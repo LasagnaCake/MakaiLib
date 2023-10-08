@@ -256,6 +256,7 @@ namespace Dialog {
 		}
 
 		size_t time = 60;
+
 	private:
 		void actionReenter() {
 			for (auto& [actor, isInScene]: inScene)
