@@ -354,6 +354,30 @@ namespace RenderData {
 
 	class Renderable;
 
+	#define _ENCDEC_CASE(T, F) if (encoding == T) return F(data)
+	List<ubyte> decodeData(String const& data, String const& encoding) {
+		_ENCDEC_CASE	("base32",	cppcodec::base32_rfc4648::decode);
+		_ENCDEC_CASE	("base64",	cppcodec::base64_rfc4648::decode);
+		throw Error::InvalidValue(
+			"Invalid encoding: " + encoding,
+			__FILE__,
+			toString(__LINE__),
+			"decodeData"
+		);
+	}
+
+	String encodeData(List<ubyte> const& data, String const& encoding) {
+		_ENCDEC_CASE	("base32",	cppcodec::base32_rfc4648::encode);
+		_ENCDEC_CASE	("base64",	cppcodec::base64_rfc4648::encode);
+		throw Error::InvalidValue(
+			"Invalid encoding: " + encoding,
+			__FILE__,
+			toString(__LINE__),
+			"decodeData"
+		);
+	}
+	#undef _ENCDEC_CASE
+
 	namespace Material {
 		#include "gl_material.hpp"
 	}

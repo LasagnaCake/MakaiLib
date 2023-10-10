@@ -6,30 +6,6 @@ namespace {
 	using std::string;
 }
 
-#define _ENCDEC_CASE(T, F) if (encoding == T) return F(data)
-vector<ubyte> decodeData(string const& data, string const& encoding) {
-	_ENCDEC_CASE	("base32",	cppcodec::base32_rfc4648::decode);
-	_ENCDEC_CASE	("base64",	cppcodec::base64_rfc4648::decode);
-	throw Error::InvalidValue(
-		"Invalid encoding: " + encoding,
-		__FILE__,
-		toString(__LINE__),
-		"decodeData"
-	);
-}
-
-string encodeData(vector<ubyte> const& data, string const& encoding) {
-	_ENCDEC_CASE	("base32",	cppcodec::base32_rfc4648::encode);
-	_ENCDEC_CASE	("base64",	cppcodec::base64_rfc4648::encode);
-	throw Error::InvalidValue(
-		"Invalid encoding: " + encoding,
-		__FILE__,
-		toString(__LINE__),
-		"decodeData"
-	);
-}
-#undef _ENCDEC_CASE
-
 class Renderable: public Base::DrawableObject {
 public:
 	Renderable(size_t layer = 0, bool manual = false): DrawableObject(layer, manual) {}
@@ -333,27 +309,8 @@ public:
 			FileLoader::saveBinaryFile(binpath, vertices, vertexCount);
 			file["mesh"]["data"] = {{"path", name + ".mesh"}};
 		}
-		Material::ObjectMaterial& mat = material;
-		auto& mdef = file["material"];
-		// Save image texture
-		if (!integratedTextures)
-			mdef["texture"] = saveImageEffect(mat.texture, folder, texturesFolder + "/texture.tga");
-		mdef["texture"]["alphaClip"] = mat.texture.alphaClip;
-		// Save emission texture
-		if (!integratedTextures)
-			mdef["emission"] = saveImageEffect(mat.emission, folder, texturesFolder + "/emission.tga");
-		mdef["emission"]["alphaClip"] = mat.emission.alphaClip;
-		mdef["emission"]["strength"] = mat.emission.strength;
-		// Save warp texture
-		if (!integratedTextures)
-			mdef["warp"] = saveImageEffect(mat.warp, folder, texturesFolder + "/warp.tga");
-		mdef["warp"]["channelX"] = mat.warp.channelX;
-		mdef["warp"]["channelY"] = mat.warp.channelY;
-		mdef["warp"]["trans"] = {
-			{"position",	{mat.warp.trans.position.x,	mat.warp.trans.position.y	}	},
-			{"rotation",	mat.warp.trans.rotation										},
-			{"scale",		{mat.warp.trans.scale.x,	mat.warp.trans.scale.y		}	}
-		};
+		// Get material data
+		file["material"] = getMaterialDefinition(material, folder, texturesFolder, integratedTextures);
 		// convert to text
 		auto contents = file.dump(pretty ? 1 : -1, '\t', false, JSON::error_handler_t::replace);
 		// Save definition file
@@ -364,78 +321,6 @@ public:
 
 private:
 	friend class Scene3D;
-
-	JSONData saveImageEffect(Material::ImageEffect& effect, string const& folder, string const& path) {
-		JSONData def;
-		def["enabled"] = effect.enabled;
-		if (effect.image && effect.image->exists()) {
-			effect.image->saveToFile(folder + "/" + path);
-			def["image"] = {
-				{"path", path},
-				{"minFilter", effect.image->getTextureMinFilter()},
-				{"magFilter", effect.image->getTextureMagFilter()}
-			};
-		} else def["enabled"] = false;
-		return def;
-	}
-
-	Material::ImageEffect loadImageEffect(JSONData& effect, string const& sourcepath, Texture2D* texture = nullptr) {
-		try {
-			Material::ImageEffect fx;
-			fx.enabled = effect["enabled"].get<bool>();
-			auto& img = effect["image"];
-			if (!texture)
-				texture = new Texture2D();
-			fx.image = texture;
-			if (img["data"].is_object() && img["data"]["path"].is_string() && !img["data"]["path"].get<string>().empty()) {
-				texture->create(FileSystem::concatenatePath(sourcepath, img["path"].get<string>()));
-				texture->setTextureFilterMode(
-					img["minFilter"].get<unsigned int>(),
-					img["magFilter"].get<unsigned int>()
-				);
-			} else if (img["data"].is_string() && !img["data"].get<string>().empty()) {
-				vector<ubyte> data = decodeData(img["data"].get<string>(), img["encoding"]);
-				int w, h, nc;
-				uchar* imgdat = stbi_load_from_memory(
-					data.data(),
-					data.size(),
-					&w,
-					&h,
-					&nc,
-					4
-				);
-				if (imgdat) {
-					texture->create(
-						w,
-						h,
-						GL_UNSIGNED_BYTE,
-						GL_RGBA,
-						img["magFilter"].get<unsigned int>(),
-						img["minFilter"].get<unsigned int>(),
-						imgdat
-					);
-					stbi_image_free(imgdat);
-				} else throw Error::FailedAction(
-						"Failed at getting image effect!",
-						__FILE__,
-						toString(__LINE__),
-						"extendFromDefinition",
-						"Could not decode embedded image data!",
-						"Please check to see if values are correct!"
-					);
-			} else fx.enabled = false;
-			return fx;
-		} catch (JSON::exception e) {
-			throw Error::FailedAction(
-				"Failed at getting image effect!",
-				__FILE__,
-				toString(__LINE__),
-				"extendFromDefinition",
-				e.what(),
-				"Please check to see if values are correct!"
-			);
-		}
-	}
 
 	RawVertex* vertices = nullptr;
 
@@ -642,136 +527,7 @@ private:
 		#undef _SET_PARAM
 		// Set material data
 		if (def["material"].is_object()) {
-			try {
-				auto& dmat = def["material"];
-				// Set color
-				if(dmat["color"].is_array()) {
-					material.color.x = dmat["color"][0].get<float>();
-					material.color.y = dmat["color"][1].get<float>();
-					material.color.z = dmat["color"][2].get<float>();
-					material.color.w = dmat["color"][3].get<float>();
-				}
-				// Set color & shading params
-				#define _SET_BOOL_PARAM(PARAM) if(dmat[#PARAM].is_boolean()) material.PARAM = dmat[#PARAM].get<bool>()
-				_SET_BOOL_PARAM(shaded);
-				_SET_BOOL_PARAM(illuminated);
-				#undef _SET_BOOL_PARAM
-				#define _SET_FLOAT_PARAM(PARAM) if(dmat[#PARAM].is_number()) material.PARAM = dmat[#PARAM].get<float>()
-				_SET_FLOAT_PARAM(hue);
-				_SET_FLOAT_PARAM(saturation);
-				_SET_FLOAT_PARAM(luminosity);
-				_SET_FLOAT_PARAM(brightness);
-				_SET_FLOAT_PARAM(contrast);
-				#undef _SET_FLOAT_PARAM
-				// Set UV shift
-				if(dmat["uvShift"].is_array()) {
-					material.uvShift.x = dmat["uvShift"][0].get<float>();
-					material.uvShift.y = dmat["uvShift"][1].get<float>();
-				}
-				// Set texture
-				if (dmat["texture"].is_object()) {
-					auto fx = loadImageEffect(dmat["texture"], sourcepath, texture);
-					material.texture.enabled	= fx.enabled;
-					material.texture.image		= fx.image;
-					if (dmat["texture"]["alphaClip"].is_number())
-						material.texture.alphaClip	= dmat["texture"]["alphaClip"].get<float>();
-				}
-				// Set emission texture
-				if (dmat["emission"].is_object()) {
-					auto fx = loadImageEffect(dmat["emission"], sourcepath, emission);
-					material.emission.enabled	= fx.enabled;
-					material.emission.image		= fx.image;
-					if (dmat["emission"]["alphaClip"].is_number())
-						material.emission.alphaClip	= dmat["emission"]["alphaClip"].get<float>();
-					if (dmat["emission"]["strength"].is_number())
-						material.emission.alphaClip	= dmat["emission"]["strength"].get<float>();
-				}
-				// Set warp texture
-				if (dmat["warp"].is_object()) {
-					auto fx = loadImageEffect(dmat["warp"], sourcepath, warp);
-					material.warp.enabled	= fx.enabled;
-					material.warp.image		= fx.image;
-					{
-						auto& mwtrans = dmat["warp"]["trans"];
-						material.warp.trans.position = Vector2(
-							mwtrans["position"][0].get<float>(),
-							mwtrans["position"][1].get<float>()
-						);
-						material.warp.trans.rotation = mwtrans["rotation"].get<float>();
-						material.warp.trans.scale = Vector2(
-							mwtrans["scale"][0].get<float>(),
-							mwtrans["scale"][1].get<float>()
-						);
-					}
-					material.warp.channelX = dmat["warp"]["channelX"];
-					material.warp.channelY = dmat["warp"]["channelY"];
-				}
-				// Set negative
-				if (dmat["negative"].is_object()) {
-					material.negative.enabled	= dmat["negative"]["enabled"].get<bool>();
-					material.negative.strength	= dmat["negative"]["strength"].get<float>();
-				}
-				// Set gradient
-				if (dmat["gradient"].is_object()) {
-					material.gradient.enabled	= dmat["gradient"]["enabled"].get<bool>();
-					material.gradient.channel	= dmat["gradient"]["channel"].get<unsigned int>();
-					auto& dgbegin	= dmat["gradient"]["begin"];
-					auto& dgend		= dmat["gradient"]["end"];
-					material.gradient.begin		= Vector4(
-						dgbegin[0].get<float>(),
-						dgbegin[1].get<float>(),
-						dgbegin[2].get<float>(),
-						dgbegin[3].get<float>()
-					);
-					material.gradient.end		= Vector4(
-						dgend[0].get<float>(),
-						dgend[1].get<float>(),
-						dgend[2].get<float>(),
-						dgend[3].get<float>()
-					);
-					material.gradient.invert	= dmat["gradient"]["invert"].get<bool>();
-				}
-				// Set instances
-				if (dmat["instances"].is_array()) {
-					material.instances.clear();
-					for(auto& inst: dmat["instances"])
-						material.instances.push_back(
-							Vector3(
-								inst[0].get<float>(),
-								inst[1].get<float>(),
-								inst[2].get<float>()
-							)
-						);
-				}
-				// Set culling, fill & view
-				if (dmat["culling"].is_number()) {
-					switch (dmat["culling"].get<unsigned int>()) {
-						default:
-						case 0: material.culling = GL_FRONT_AND_BACK;	break;
-						case 1: material.culling = GL_FRONT;			break;
-						case 2: material.culling = GL_BACK;				break;
-					}
-				}
-				if (dmat["fill"].is_number()) {
-					switch (dmat["fill"].get<unsigned int>()) {
-						default:
-						case 0: material.fill = GL_FILL;	break;
-						case 1: material.fill = GL_LINE;	break;
-						case 2: material.fill = GL_POINT;	break;
-					}
-				}
-				if (dmat["debug"].is_number())
-					material.debug = (Material::ObjectDebugView)dmat["debug"].get<unsigned int>();
-			} catch (JSON::exception e) {
-				throw Error::FailedAction(
-					"Failed at getting material values!",
-					__FILE__,
-					toString(__LINE__),
-					"extendFromDefinition",
-					e.what(),
-					"Please check to see if values are correct!"
-				);
-			}
+			material = Material::fromObjectMaterialDefinition(def["material"], sourcepath, texture, emission, warp);
 		}
 	}
 
@@ -807,51 +563,6 @@ private:
 		};
 		// Set active data
 		def["active"] = active;
-		// Get material
-		Material::ObjectMaterial& mat = material;
-		// Copy instances
-		vector<JSONData> instanceData;
-		for (Vector3& inst: mat.instances) {
-			instanceData.push_back({inst.x, inst.y, inst.z});
-		}
-		// Save material data
-		def["material"] = {
-			{"color", {mat.color.x, mat.color.y, mat.color.z, mat.color.w}},
-			{"shaded", mat.shaded},
-			{"illuminated", mat.illuminated},
-			{"hue", mat.hue},
-			{"saturation", mat.saturation},
-			{"luminosity", mat.luminosity},
-			{"brightness", mat.brightness},
-			{"contrast", mat.contrast},
-			{"uvShift", {mat.uvShift.x, mat.uvShift.y}},
-			{"negative", {
-				{"enabled", mat.negative.enabled},
-				{"strength", mat.negative.strength}
-			}},
-			{"gradient", {
-				{"enabled", mat.gradient.enabled},
-				{"channel", mat.gradient.channel},
-				{"begin", {mat.gradient.begin.x, mat.gradient.begin.y, mat.gradient.begin.z, mat.gradient.begin.w}},
-				{"end", {mat.gradient.end.x, mat.gradient.end.y, mat.gradient.end.z, mat.gradient.end.w}},
-				{"invert", mat.gradient.invert}
-			}},
-			{"instances", instanceData},
-			{"debugView", (unsigned int)mat.debug}
-		};
-		switch (mat.fill) {
-			case GL_FILL:	def["material"]["fill"] = 0; break;
-			case GL_LINE:	def["material"]["fill"] = 1; break;
-			case GL_POINT:	def["material"]["fill"] = 2; break;
-		}
-		switch (mat.culling) {
-			case GL_FRONT_AND_BACK:	def["material"]["culling"] = 0; break;
-			case GL_FRONT:			def["material"]["culling"] = 1; break;
-			case GL_BACK:			def["material"]["culling"] = 2; break;
-		}
-		if (integratedTextures) {
-			// TODO: Do integrated textures
-		}
 		// Unbake object if applicable
 		if (!wasBaked) unbake();
 		// Return definition

@@ -106,18 +106,18 @@ public:
 					auto& mdef = file["data"][i]["material"];
 					auto& mat = obj->material;
 					// Save image texture
-					mdef["texture"] = obj->saveImageEffect(mat.texture, folderpath, "tx/texture.tga");
+					mdef["texture"] = Material::saveImageEffect(obj->material.texture, folderpath, "tx/texture.tga");
 					mdef["texture"]["alphaClip"] = mat.texture.alphaClip;
 					// Save emission texture
-					mdef["emission"] = obj->saveImageEffect(mat.emission, folderpath, "tx/emission.tga");
+					mdef["emission"] = Material::saveImageEffect(obj->material.emission, folderpath, "tx/emission.tga");
 					mdef["texture"]["alphaClip"] = mat.emission.alphaClip;
 					// Save warp texture
-					mdef["warp"] = obj->saveImageEffect(mat.warp, folderpath, "tx/warp.tga");
+					mdef["warp"] = Material::saveImageEffect(obj->material.warp, folderpath, "tx/warp.tga");
 					mdef["warp"]["channelX"] = mat.warp.channelX;
 					mdef["warp"]["channelY"] = mat.warp.channelY;
 					mdef["warp"]["trans"] = {
 						{"position",	{mat.warp.trans.position.x,	mat.warp.trans.position.y	}	},
-						{"rotation",	mat.warp.trans.rotation								},
+						{"rotation",	mat.warp.trans.rotation										},
 						{"scale",		{mat.warp.trans.scale.x,	mat.warp.trans.scale.y		}	}
 					};
 				}
@@ -173,7 +173,7 @@ public:
 
 private:
 	RenderableList		objects;
-	vector<Texture2D*>	textures;
+	List<Texture2D*>	textures;
 
 	void extendFromDefinition(
 		JSONData def,
@@ -232,7 +232,7 @@ private:
 			// Get objects data
 			{
 				if (def["data"].is_object()) {
-					for(auto& obj: def["data"]["path"].get<vector<JSONData>>()) {
+					for(auto& obj: def["data"]["path"].get<List<JSONData>>()) {
 						Renderable* r = createObject();
 						if (obj["type"].get<string>() == "MROD")
 							r->extendFromDefinitionFile(obj["source"].get<string>());
@@ -241,8 +241,11 @@ private:
 						}
 					}
 				} else {
-					for(auto& obj: def["data"].get<vector<JSONData>>()) {
-						createObject()->extendFromDefinition(obj, sourcepath + FileSystem::getDirectoryFromPath(obj));
+					for(auto& obj: def["data"].get<List<JSONData>>()) {
+						createObject()->extendFromDefinition(
+							obj,
+							sourcepath + FileSystem::getDirectoryFromPath(obj)
+						);
 					}
 				}
 			}

@@ -115,7 +115,7 @@ Currently VERY scarce. Some of the code is commented.
 - [ ] Cleanup & polish [graphical](src/graphical) system
 - [ ] Cleanup & polish [audio](src/audio) system
 - [ ] Replace raw pointers with smart pointers (see [referential.hpp](src/collection/referential.hpp))
-- [ ] Remove or replace `$` macros
+- [x] Remove or replace `$` macros
 - [ ] Reorganize and remove haphazardness/mess
 - [ ] Shorten namespace names or unify them under the `Makai` namespace
 - [ ] "C++20 coroutine"-ify [tasking system](src/collection/tasking.hpp)
