@@ -56,27 +56,22 @@ namespace Color {
 	}
 
 	inline Vector4 fromHexCodeString(String code) {
-		// Get color code size
-		size_t sz = code.size();
-		// Remove color marker if necessary
-		code = std::regex_replace(code, std::regex("\\#"), "");
-		// Remove hex marker if necessary
-		code = std::regex_replace(code, std::regex("0x"), "");
+		// Remove hex markers if necessary
+		code = regexReplace(code, "(#|0x)", "");
 		// Bit fuckery for 4-bit color
-		if (sz <= 4) {
+		if (code.size() <= 4) {
 			std::stringstream nc;
 			nc
-			<< "0x"
 			<< code[0] << code[0]
 			<< code[1] << code[1]
 			<< code[2] << code[2]
 			;
-			if (sz == 4)
+			if (code.size() == 4)
 				nc << code[3] << code[3];
 			code = nc.str();
 		}
-		// Convert
-		if (sz == 8)
+		// Convert to uint32
+		if (code.size() == 6)
 			return fromHexCodeRGB(toUInt32(code, 16));
 		return fromHexCodeRGBA(toUInt32(code, 16));
 	}
@@ -105,7 +100,7 @@ namespace Color {
 		std::stringstream code;
 		code
 		<<	(webColor ? "#" : "0x")
-		<<	std::setfill ('0')
+		<<	std::setfill('0')
 		<<	std::setw(toRGB ? 6 : 8)
 		<<	std::hex
 		<<	(toRGB ? toHexCodeRGB(color) : toHexCodeRGBA(color))
