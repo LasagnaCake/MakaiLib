@@ -20,12 +20,25 @@ namespace Color {
 	inline Vector4 Color(float r, float g, float b, float a = 1) {
 		return Vector4(r, g, b, a);
 	}
+
 	inline Vector4 Color(float gray, float a = 1) {
 		return Vector4(gray, gray, gray, a);
 	}
+
 	// Custom transparency level
 	inline Vector4 ALPHA(float level) {
 		return Vector4(1, 1, 1, Math::clamp(level, -0.1f, 1.0f));
+	}
+
+	inline Vector4 fromHexCode(uint32 code) {
+		uint8 s = (code > 0xFFFFFF) ? 8 : 0;
+		uint8
+			r = (code >> (16+s))	& 0xFF,
+			g = (code >> (8+s))		& 0xFF,
+			b = (code >> s)			& 0xFF,
+			a = (s ? (code & 0xFF) : 0xFF)
+		;
+		return Vector4(r, g, b, a) / 255;
 	}
 
 	// TODO: Optimize this
