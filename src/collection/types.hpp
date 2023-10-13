@@ -3,13 +3,9 @@
 
 #include <cstdint>
 
-#if		(INTPTR_MAX == INT16_MAX || INTPTR_MAX == INT8_MAX)
-#define int long
-#endif
-
 typedef unsigned char		uint8;
 typedef unsigned short		uint16;
-typedef unsigned int	   	uint32;
+typedef unsigned long	   	uint32;
 typedef unsigned long long	uint64;
 #if		INTPTR_MAX == INT64_MAX
 typedef	uint64				uintmax;
@@ -23,7 +19,7 @@ typedef	uint8				uintmax;
 
 typedef signed char			int8;
 typedef signed short		int16;
-typedef signed int			int32;
+typedef signed long			int32;
 typedef signed long long	int64;
 #if		INTPTR_MAX == INT64_MAX
 typedef	int64				intmax;
@@ -44,11 +40,11 @@ typedef	float64				floatmax;
 typedef	float32				floatmax;
 #endif
 
-typedef uint8	uchar;
-typedef uint16	ushort;
-typedef uint16	uint;
-typedef uint32	ulong;
-typedef uint64	ullong;
+typedef uint8			uchar;
+typedef uint16			ushort;
+typedef unsigned int	uint;
+typedef uint32			ulong;
+typedef uint64			ullong;
 
 typedef int8	schar;
 typedef int64	llong;

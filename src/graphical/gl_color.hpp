@@ -16,18 +16,24 @@ namespace Color {
             return 0;
 		}
 	}
-	// Custom color
-	inline Vector4 Color(float r, float g, float b, float a = 1) {
-		return Vector4(r, g, b, a);
+	typedef Vector4 Color;
+
+	// Custom transparency level
+	inline Vector4 alpha(float level) {
+		return Vector4(1, 1, 1, Math::clamp(level, -0.1f, 1.0f));
 	}
 
-	inline Vector4 Color(float gray, float a = 1) {
+	// Custom color
+	inline Vector4 fromRGBA255(float r, float g, float b, float a = 255) {
+		return Vector4(r, g, b, a) / 255;
+	}
+
+	inline Vector4 fromGrayscale(float gray, float a = 1) {
 		return Vector4(gray, gray, gray, a);
 	}
 
-	// Custom transparency level
-	inline Vector4 ALPHA(float level) {
-		return Vector4(1, 1, 1, Math::clamp(level, -0.1f, 1.0f));
+	inline Vector4 fromGrayscale255(float gray, float a = 255) {
+		return fromGrayscale(gray, a) / 255;
 	}
 
 	inline Vector4 fromHexCodeRGBA(uint32 code) {
@@ -47,6 +53,52 @@ namespace Color {
 			b =	(code)			& 0xFF
 		;
 		return Vector4(r, g, b, 255) / 255;
+	}
+
+	inline Vector4 fromHexCodeString(String code) {
+		// Get color code size
+		size_t sz = code.size();
+		// Remove marker
+		code = std::regex_replace(code, std::regex("\\#"), "");
+		// Add hex "pre-word-thingy" if necessary
+		if (code.substr(0, 2) != "0x")
+			code = "0x" + code;
+		// Convert
+		if (sz == 8)
+			return fromHexCodeRGB(toUInt32(code));
+		return fromHexCodeRGBA(toUInt32(code));
+	}
+
+	inline uint32 toHexCodeRGBA(Vector4 const& color) {
+		uint8
+			r = Math::clamp(color.x, 0.0f, 1.0f) * 255,
+			g = Math::clamp(color.y, 0.0f, 1.0f) * 255,
+			b = Math::clamp(color.z, 0.0f, 1.0f) * 255,
+			a = Math::clamp(color.w, 0.0f, 1.0f) * 255
+		;
+		uint32 code =
+			(((uint32)r) << 24)
+		|	(((uint32)g) << 16)
+		|	(((uint32)b) << 8)
+		|	((uint32)a)
+		;
+		return code;
+	}
+
+	inline uint32 toHexCodeRGB(Vector4 const& color) {
+		return toHexCodeRGBA(color) >> 8;
+	}
+
+	inline String toHexCodeString(Vector4 const& color, bool toRGB = false, bool webColor = false) {
+		std::stringstream stream;
+		stream
+		<<	(webColor ? "#" : "0x")
+		<<	std::setfill ('0')
+		<<	std::setw(toRGB ? 6 : 8)
+		<<	std::hex
+		<<	(toRGB ? toHexCodeRGB(color) : toHexCodeRGBA(color))
+		;
+		return stream.str();
 	}
 
 	// TODO: Optimize this
@@ -71,9 +123,9 @@ namespace Color {
 		);
 	}
 
-	Vector4 toRGB(float h, float s, float v, float a) {
+	Vector4 fromHSL(float h, float s, float l, float a) {
 		Vector4 res = hueToRGB(h);
-		res *= (v * 2);
+		res *= (l * 2);
 		Vector4 gray(Vector3((res.x + res.y + res.z) / 3), 1);
 		res = Math::lerp(gray, res, Vector4(s));
 		res.w = a;
@@ -82,36 +134,36 @@ namespace Color {
 
 	// Transparency
 	const Vector4 NONE			= Vector4(0);
-	const Vector4 CLEAR			= ALPHA(.0);
-	const Vector4 SEMIMISTY		= ALPHA(.125);
-	const Vector4 MISTY			= ALPHA(.25);
-	const Vector4 SEMILUCENT	= ALPHA(.375);
-	const Vector4 LUCENT		= ALPHA(.50);
-	const Vector4 SEMIMILKY		= ALPHA(.625);
-	const Vector4 MILKY			= ALPHA(.75);
-	const Vector4 SEMISOLID		= ALPHA(.875);
-	const Vector4 SOLID			= ALPHA(1);
+	const Vector4 CLEAR			= alpha(.0);
+	const Vector4 SEMIMISTY		= alpha(.125);
+	const Vector4 MISTY			= alpha(.25);
+	const Vector4 SEMILUCENT	= alpha(.375);
+	const Vector4 LUCENT		= alpha(.50);
+	const Vector4 SEMIMILKY		= alpha(.625);
+	const Vector4 MILKY			= alpha(.75);
+	const Vector4 SEMISOLID		= alpha(.875);
+	const Vector4 SOLID			= alpha(1);
 	// Luminance
-	const Vector4 WHITE			= Color(1, 1);
-	const Vector4 LIGHTGRAY		= Color(.75, 1);
-	const Vector4 GRAY			= Color(.5, 1);
-	const Vector4 DARKGRAY		= Color(.25, 1);
-	const Vector4 BLACK			= Color(0, 1);
+	const Vector4 WHITE			= fromGrayscale(1, 1);
+	const Vector4 LIGHTGRAY		= fromGrayscale(.75, 1);
+	const Vector4 GRAY			= fromGrayscale(.5, 1);
+	const Vector4 DARKGRAY		= fromGrayscale(.25, 1);
+	const Vector4 BLACK			= fromGrayscale(0, 1);
 	// Primary Colors
-	const Vector4 RED			= Color(1,	0,	0);
-	const Vector4 GREEN			= Color(0,	1,	0);
-	const Vector4 BLUE			= Color(0,	0,	1);
+	const Vector4 RED			= Vector4(1,	0,	0);
+	const Vector4 GREEN			= Vector4(0,	1,	0);
+	const Vector4 BLUE			= Vector4(0,	0,	1);
 	// Secondary Colors
-	const Vector4 YELLOW		= Color(1,	1,	0);
-	const Vector4 MAGENTA		= Color(1,	0,	1);
-	const Vector4 CYAN			= Color(0,	1,	1);
+	const Vector4 YELLOW		= Vector4(1,	1,	0);
+	const Vector4 MAGENTA		= Vector4(1,	0,	1);
+	const Vector4 CYAN			= Vector4(0,	1,	1);
 	// Tertiary Colors
-	const Vector4 ORANGE		= Color(1,	.5,	0);
-	const Vector4 AZURE			= Color(0,	.5,	1);
-	const Vector4 TEAL			= Color(0,	1,	.5);
-	const Vector4 LIME			= Color(.5,	1,	0);
-	const Vector4 PURPLE		= Color(.5,	0,	1);
-	const Vector4 PINK			= Color(1,	0,	.5);
+	const Vector4 ORANGE		= Vector4(1,	.5,	0);
+	const Vector4 AZURE			= Vector4(0,	.5,	1);
+	const Vector4 TEAL			= Vector4(0,	1,	.5);
+	const Vector4 LIME			= Vector4(.5,	1,	0);
+	const Vector4 PURPLE		= Vector4(.5,	0,	1);
+	const Vector4 PINK			= Vector4(1,	0,	.5);
 
 	const Vector4 rainbow8[] = {
 		PURPLE,
