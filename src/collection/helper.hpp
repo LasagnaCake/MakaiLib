@@ -28,7 +28,8 @@ namespace Helper {
 			std::function,
 			std::any,
 			std::variant,
-			std::optional
+			std::optional/*,
+			std::valarray*/
 		;
 	}
 
@@ -74,6 +75,9 @@ namespace Helper {
 
 	template<typename T>
 	using Nullable = optional<T>;
+
+	/*template<typename T>
+	using Vector = valarray<T>;*/
 
 	typedef any Any;
 
