@@ -30,15 +30,23 @@ namespace Color {
 		return Vector4(1, 1, 1, Math::clamp(level, -0.1f, 1.0f));
 	}
 
-	inline Vector4 fromHexCode(uint32 code) {
-		uint8 s = (code > 0xFFFFFF) ? 8 : 0;
+	inline Vector4 fromHexCodeRGBA(uint32 code) {
 		uint8
-			r = (code >> (16+s))	& 0xFF,
-			g = (code >> (8+s))		& 0xFF,
-			b = (code >> s)			& 0xFF,
-			a = (s ? (code & 0xFF) : 0xFF)
+			r = (code >> 24)	& 0xFF,
+			g = (code >> 16)	& 0xFF,
+			b = (code >> 8)		& 0xFF,
+			a = (code)			& 0xFF
 		;
 		return Vector4(r, g, b, a) / 255;
+	}
+
+	inline Vector4 fromHexCodeRGB(uint32 code) {
+		uint8
+			r = (code >> 16)	& 0xFF,
+			g = (code >> 8)		& 0xFF,
+			b =	(code)			& 0xFF
+		;
+		return Vector4(r, g, b, 255) / 255;
 	}
 
 	// TODO: Optimize this
