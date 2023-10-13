@@ -179,6 +179,14 @@ namespace Helper {
 			res[i++] = elem;
 		return res;
 	}
+
+	typedef Pair<int, String>		RegexMatch;
+	typedef HashMap<size_t, String>	RegexResult;
+	typedef std::regex				Regex;
+
+	typedef Pair<int, String>		WideRegexMatch;
+	typedef HashMap<size_t, String>	WideRegexResult;
+	typedef std::wregex				WideRegex;
 }
 
 using Helper::String;
@@ -198,6 +206,32 @@ using Helper::Procedure;
 using Helper::Poly;
 using Helper::Any;
 using Helper::Nullable;
+using Helper::Regex;
+using Helper::RegexMatch;
+using Helper::RegexResult;
+
+constexpr inline String regexReplace(String const& str, Regex const& expr, String const& fmt) {
+	return std::regex_replace(str, expr, fmt);
+}
+
+constexpr inline RegexResult regexContains(String const& string, Regex const& expr) {
+	return std::regex_search(string, rm, expr);
+}
+
+constexpr inline RegexResult regexFind(String const& string, Regex const& expr) {
+	std::smatch rm;
+	RegexResult result;
+	std::regex_search(string, rm, expr);
+	for (auto& m: rm)
+		result[m->first] = m.str();
+	return result;
+}
+
+constexpr inline RegexMatch regexFindFirst(String const& string, Regex const& expr) {
+	std::smatch rm;
+	std::regex_search(string, rm, expr);
+	return RegexMatch{rm[0]->first, rm[0].str};
+}
 
 WideString toWideString(String const& str){
 	using convert_typeX = std::codecvt_utf8_utf16<wchar_t>;
