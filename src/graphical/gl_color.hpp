@@ -58,15 +58,27 @@ namespace Color {
 	inline Vector4 fromHexCodeString(String code) {
 		// Get color code size
 		size_t sz = code.size();
-		// Remove marker
+		// Remove color marker if necessary
 		code = std::regex_replace(code, std::regex("\\#"), "");
-		// Add hex "pre-word-thingy" if necessary
-		if (code.substr(0, 2) != "0x")
-			code = "0x" + code;
+		// Remove hex marker if necessary
+		code = std::regex_replace(code, std::regex("0x"), "");
+		// Bit fuckery for 4-bit color
+		if (sz <= 4) {
+			std::stringstream nc;
+			nc
+			<< "0x"
+			<< code[0] << code[0]
+			<< code[1] << code[1]
+			<< code[2] << code[2]
+			;
+			if (sz == 4)
+				nc << code[3] << code[3];
+			code = nc.str();
+		}
 		// Convert
 		if (sz == 8)
-			return fromHexCodeRGB(toUInt32(code));
-		return fromHexCodeRGBA(toUInt32(code));
+			return fromHexCodeRGB(toUInt32(code, 16));
+		return fromHexCodeRGBA(toUInt32(code, 16));
 	}
 
 	inline uint32 toHexCodeRGBA(Vector4 const& color) {
@@ -90,15 +102,15 @@ namespace Color {
 	}
 
 	inline String toHexCodeString(Vector4 const& color, bool toRGB = false, bool webColor = false) {
-		std::stringstream stream;
-		stream
+		std::stringstream code;
+		code
 		<<	(webColor ? "#" : "0x")
 		<<	std::setfill ('0')
 		<<	std::setw(toRGB ? 6 : 8)
 		<<	std::hex
 		<<	(toRGB ? toHexCodeRGB(color) : toHexCodeRGBA(color))
 		;
-		return stream.str();
+		return code.str();
 	}
 
 	// TODO: Optimize this
