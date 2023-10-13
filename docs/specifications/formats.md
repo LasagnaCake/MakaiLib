@@ -1,5 +1,7 @@
 Undefined optional values are set to their defaults.
 
+TODO: Add support for hex color codes
+
 # Transform2D
 
 ## Layout
