@@ -9,6 +9,7 @@
 #include <any>
 #include <variant>
 #include <optional>
+#include <span>
 #ifdef _USE_CPP20_FORMAT_
 #include <format>
 #endif // _USE_CPP20_FORMAT_
@@ -30,7 +31,8 @@ namespace Helper {
 			std::any,
 			std::variant,
 			std::optional/*,
-			std::valarray*/
+			std::valarray*/,
+			std::span
 		;
 	}
 
@@ -79,6 +81,9 @@ namespace Helper {
 
 	/*template<typename T>
 	using Vector = valarray<T>;*/
+
+	template<typename T, size_t LEN>
+	using Span = span<T, LEN>;
 
 	typedef any Any;
 
@@ -202,6 +207,7 @@ using Helper::Poly;
 using Helper::Any;
 using Helper::Nullable;
 using Helper::Regex;
+using Helper::Span;
 
 inline String regexReplace(String const& str, Regex const& expr, String const& fmt) {
 	return std::regex_replace(str, expr, fmt);
