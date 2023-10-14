@@ -260,9 +260,9 @@ constexpr inline String toWideString(const T& val) {
 	return std::to_wstring(val);
 }
 
-inline int			toInt(String s, size_t base = 10)						{return std::stoi(s, nullptr, base);	}
-inline long			toLong(String s, size_t base = 10)						{return std::stol(s, nullptr, base);	}
-inline long long	toLongLong(String s, size_t base = 10)					{return std::stoll(s, nullptr, base);	}
+inline int					toInt(String s, size_t base = 10)				{return std::stoi(s, nullptr, base);	}
+inline long					toLong(String s, size_t base = 10)				{return std::stol(s, nullptr, base);	}
+inline long long			toLongLong(String s, size_t base = 10)			{return std::stoll(s, nullptr, base);	}
 
 inline unsigned int			toUnsignedInt(String s, size_t base = 10)		{return std::stoul(s, nullptr, base);	}
 inline unsigned long		toUnsignedLong(String s, size_t base = 10)		{return std::stoul(s, nullptr, base);	}
@@ -272,9 +272,9 @@ inline float		toFloat(String s)		{return std::stof(s);	}
 inline double		toDouble(String s)		{return std::stod(s);	}
 inline long double	toLongDouble(String s)	{return std::stold(s);	}
 
-inline int16	toInt16(String s, size_t base = 10)	{return std::stoi(s, nullptr, base);	}
-inline int32	toInt32(String s, size_t base = 10)	{return std::stol(s, nullptr, base);	}
-inline int64	toInt64(String s, size_t base = 10)	{return std::stoll(s, nullptr, base);	}
+inline int16	toInt16(String s, size_t base = 10)		{return std::stoi(s, nullptr, base);	}
+inline int32	toInt32(String s, size_t base = 10)		{return std::stol(s, nullptr, base);	}
+inline int64	toInt64(String s, size_t base = 10)		{return std::stoll(s, nullptr, base);	}
 
 inline uint16	toUInt16(String s, size_t base = 10)	{return std::stoul(s, nullptr, base);	}
 inline uint32	toUInt32(String s, size_t base = 10)	{return std::stoul(s, nullptr, base);	}
