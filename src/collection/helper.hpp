@@ -180,12 +180,7 @@ namespace Helper {
 		return res;
 	}
 
-	typedef Pair<int, String>		RegexMatch;
-	typedef HashMap<size_t, String>	RegexResult;
 	typedef std::regex				Regex;
-
-	typedef Pair<int, String>		WideRegexMatch;
-	typedef HashMap<size_t, String>	WideRegexResult;
 	typedef std::wregex				WideRegex;
 }
 
@@ -207,31 +202,41 @@ using Helper::Poly;
 using Helper::Any;
 using Helper::Nullable;
 using Helper::Regex;
-using Helper::RegexMatch;
-using Helper::RegexResult;
 
-constexpr inline String regexReplace(String const& str, Regex const& expr, String const& fmt) {
+inline String regexReplace(String const& str, Regex const& expr, String const& fmt) {
 	return std::regex_replace(str, expr, fmt);
 }
 
-constexpr inline RegexResult regexContains(String const& string, Regex const& expr) {
-	return std::regex_search(string, rm, expr);
+inline bool regexContains(String const& str, Regex const& expr) {
+	std::smatch rm;
+	return std::regex_search(str, rm, expr);
 }
 
-constexpr inline RegexResult regexFind(String const& string, Regex const& expr) {
+inline bool regexMatches(String const& str, Regex const& expr) {
 	std::smatch rm;
-	RegexResult result;
-	std::regex_search(string, rm, expr);
-	for (auto& m: rm)
-		result[m->first] = m.str();
+	return std::regex_match(str, rm, expr);
+}
+
+inline StringList regexFind(String const& str, Regex const& expr) {
+	std::smatch rm;
+	StringList result;
+	std::regex_search(str, rm, expr);
+	for SSRANGE(i, 1, rm.size()-1)
+		result.push_back(rm[i].str());
 	return result;
 }
 
-constexpr inline RegexMatch regexFindFirst(String const& string, Regex const& expr) {
+inline String regexFindFirst(String const& str, Regex const& expr) {
 	std::smatch rm;
-	std::regex_search(string, rm, expr);
-	return RegexMatch{rm[0]->first, rm[0].str};
+	std::regex_search(str, rm, expr);
+	return rm[1].str();
 }
+
+inline String		regexReplace(String const& str, String const& expr, String const& fmt)	{return regexReplace(str, Regex(expr), fmt);	}
+inline bool			regexContains(String const& str, String const& expr)					{return regexContains(str, Regex(expr));		}
+inline bool			regexMatches(String const& str, String const& expr)						{return regexMatches(str, Regex(expr));			}
+inline StringList	regexFind(String const& str, String const& expr)						{return regexFind(str, Regex(expr));			}
+inline String		regexFindFirst(String const& str, String const& expr)					{return regexFindFirst(str, Regex(expr));		}
 
 WideString toWideString(String const& str){
 	using convert_typeX = std::codecvt_utf8_utf16<wchar_t>;
