@@ -629,12 +629,12 @@ namespace Makai {
 					// Increment cycle counter
 					cycle++;
 					// Do timer-related stuff
-					timerFunc(cycleDelta / speed);
-					taskers.yield(cycleDelta / speed);
+					timerFunc(cycleDelta * speed);
+					taskers.yield(cycleDelta * speed);
 					#ifndef $_FRAME_DEPENDENT_PROCESS
 					// Do normal logic-related stuff
-					logicFunc(cycleDelta / speed);
-					onLogicFrame(cycleDelta / speed);
+					logicFunc(cycleDelta * speed);
+					onLogicFrame(cycleDelta * speed);
 					// Destroy queued entities
 					EntityClass::destroyQueued();
 					#endif // FRAME_DEPENDENT_PROCESS
@@ -668,12 +668,12 @@ namespace Makai {
 					// Increment cycle counter
 					cycle++;
 					// Do timer-related stuff
-					timerFunc(cycleDelta / speed);
-					taskers.yield(cycleDelta / speed);
+					timerFunc(cycleDelta * speed);
+					taskers.yield(cycleDelta * speed);
 					#ifndef $_FRAME_DEPENDENT_PROCESS
 					// Do normal logic-related stuff
-					logicFunc(cycleDelta / speed);
-					onLogicFrame(cycleDelta / speed);
+					logicFunc(cycleDelta * speed);
+					onLogicFrame(cycleDelta * speed);
 					// Destroy queued entities
 					EntityClass::destroyQueued();
 					#endif // FRAME_DEPENDENT_PROCESS
