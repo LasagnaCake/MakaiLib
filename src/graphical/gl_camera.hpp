@@ -123,6 +123,10 @@ namespace Camera {
 			zFar		= cam.zFar;
 			ortho		= cam.ortho;
 		}
+
+		inline void operator=(Camera3D const& cam) {
+			fromCamera3D(cam);
+		}
 	};
 }
 
