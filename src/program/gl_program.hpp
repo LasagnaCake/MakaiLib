@@ -619,7 +619,7 @@ namespace Makai {
 				frameRate = SDL_GetTicks() - frameTicks;
 				// If should process, then do so
 				#ifndef $_PROCESS_RENDER_BEFORE_LOGIC
-				if (cycleRate > ((cycleDelta * 1000.0 - 1) / speed)) {
+				if (cycleRate > (cycleDelta * 1000.0 - 1)) {
 					// Update audio system
 					Audio::updateAudioSystem();
 					// Update input manager
@@ -629,12 +629,12 @@ namespace Makai {
 					// Increment cycle counter
 					cycle++;
 					// Do timer-related stuff
-					timerFunc(cycleDelta);
-					taskers.yield(cycleDelta);
+					timerFunc(cycleDelta / speed);
+					taskers.yield(cycleDelta / speed);
 					#ifndef $_FRAME_DEPENDENT_PROCESS
 					// Do normal logic-related stuff
-					logicFunc(cycleDelta);
-					onLogicFrame(cycleDelta);
+					logicFunc(cycleDelta / speed);
+					onLogicFrame(cycleDelta / speed);
 					// Destroy queued entities
 					EntityClass::destroyQueued();
 					#endif // FRAME_DEPENDENT_PROCESS
@@ -658,7 +658,7 @@ namespace Makai {
 					render();
 				}
 				#ifdef $_PROCESS_RENDER_BEFORE_LOGIC
-				if (SDL_GetTicks() - (((float)(cycleDelta * 1000) - 1) / speed)) {
+				if (cycleRate > (cycleDelta * 1000.0 - 1)) {
 					// Update audio system
 					Audio::updateAudioSystem();
 					// Update input manager
@@ -668,12 +668,12 @@ namespace Makai {
 					// Increment cycle counter
 					cycle++;
 					// Do timer-related stuff
-					timerFunc(cycleDelta);
-					taskers.yield(cycleDelta);
+					timerFunc(cycleDelta / speed);
+					taskers.yield(cycleDelta / speed);
 					#ifndef $_FRAME_DEPENDENT_PROCESS
 					// Do normal logic-related stuff
-					logicFunc(cycleDelta);
-					onLogicFrame(cycleDelta);
+					logicFunc(cycleDelta / speed);
+					onLogicFrame(cycleDelta / speed);
 					// Destroy queued entities
 					EntityClass::destroyQueued();
 					#endif // FRAME_DEPENDENT_PROCESS
