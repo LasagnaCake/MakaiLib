@@ -387,6 +387,11 @@ namespace Math {
 		return (T)::ldexp((double)val, exp);
 	}
 
+	CONST_ANYTYPE_I factorial(T val) requires Type::Integer<T> {
+		if (val < 2) return val;
+		else return val * factorial(val-1);
+	}
+
 	namespace Random {
 		namespace {
 			typedef std::uniform_real_distribution<double> RandReal;

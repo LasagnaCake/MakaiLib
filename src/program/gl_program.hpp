@@ -612,8 +612,6 @@ namespace Makai {
 				// Get deltas
 				frameDelta	= 1.0/maxFrameRate;
 				cycleDelta	= 1.0/maxCycleRate;
-				// Clamp speed
-				speed = Math::clamp(speed, 0.0f, 1.0f);
 				// Get rates
 				cycleRate = SDL_GetTicks() - cycleTicks;
 				frameRate = SDL_GetTicks() - frameTicks;
