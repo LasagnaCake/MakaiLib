@@ -15,7 +15,7 @@ public:
 #endif // RADIAL_BAR_RESOLUTION
 
 template<class T>
-concept BarType = Type::Subclass<T, BaseBar>;
+concept BarType = Type::Subclass<T, BaseBar> && Type::Subclass<T, Base::Drawable>;
 
 class LinearBar: public DrawableObject, public BaseBar {
 public:

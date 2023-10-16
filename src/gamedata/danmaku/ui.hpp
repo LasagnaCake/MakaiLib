@@ -78,20 +78,20 @@ struct GameUI {
 	void hide()	{	setVisible(false);	}
 
 	void setVisible(bool visibility = true) {
-		power.bar.active	=
-		power.label.active	=
-		life.active			=
-		bomb.active			=
-		scoreTitle.active	=
-		hiScoreTitle.active	=
-		grazeTitle.active	=
-		pointTitle.active	=
-		bomb.active			=
-		lifeBit.active		=
-		bombBit.active		=
-		score.active		=
-		hiScore.active		=
-		point.active		=
+		power.bar.active	= visibility;
+		power.label.active	= visibility;
+		life.active			= visibility;
+		bomb.active			= visibility;
+		scoreTitle.active	= visibility;
+		hiScoreTitle.active	= visibility;
+		grazeTitle.active	= visibility;
+		pointTitle.active	= visibility;
+		bomb.active			= visibility;
+		lifeBit.active		= visibility;
+		bombBit.active		= visibility;
+		score.active		= visibility;
+		hiScore.active		= visibility;
+		point.active		= visibility;
 		graze.active		= visibility;
 	}
 
