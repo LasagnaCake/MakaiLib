@@ -143,7 +143,7 @@ namespace Helper {
 	// God fucking dammit, MSYS2.
 	#ifdef _USE_CPP20_FORMAT_
 	template<Type::Number T>
-	String floatString(T val, size_t precision = 2) {
+	String floatString(T const& val, size_t const& precision = 2) {
 		return std::format(std::format("{{:.{}f}}", precision), val);
 	}
 	#else
@@ -178,7 +178,7 @@ namespace Helper {
 	using Enumerated = HashMap<size_t, T>;
 
 	template<typename T>
-	Enumerated<T> enumerate(List<T> lst) {
+	Enumerated<T> enumerate(List<T> const& lst) {
 		Enumerated<T> res;
 		size_t i = 0;
 		for(auto& elem: lst)
