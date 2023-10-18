@@ -23,6 +23,8 @@ namespace Dialog {
 		ActorDataList	actors;
 		String			title;
 		String			text;
+		Vector4			titleColor	= Color::WHITE;
+		Vector4			textColor	= Color::WHITE;
 		Tween::EaseFunc	easing		= Tween::ease.out.cubic;
 		size_t			duration	= 600;
 		bool			autoplay	= false;
@@ -138,7 +140,7 @@ namespace Dialog {
 					if (!a.sprite) continue;
 					anim.tweenStep = msg.easing;
 					anim.reinterpolateTo(actor.leaving ? a.position.out: a.position.rest, time);
-					a.sprite->setColor(Color::GRAY);
+					a.sprite->setColor(standbyColor);
 				}
 				for (ActorData& actor: msg.actors) {
 					if (!actors.contains(actor.name)) continue;
@@ -197,6 +199,8 @@ namespace Dialog {
 									a["tint"][2].get<float>(),
 									a["tint"][3].get<float>()
 								);
+							else if (a["tint"].is_string())
+								actor.tint = Color::fromHexCodeString(a["tint"].get<String>());
 							if (a["leaving"].is_boolean())
 								actor.leaving = a["leaving"].get<bool>();
 							message.actors.push_back(actor);
@@ -207,6 +211,27 @@ namespace Dialog {
 						message.text	= msg["text"].get<String>();
 					else if (msg["text"].is_string())
 						message.text	= msg["text"].get<String>();
+					// Title color data
+					if (msg["titleColor"].is_array())
+						message.titleColor	= Vector4(
+							msg["titleColor"][0].get<float>(),
+							msg["titleColor"][1].get<float>(),
+							msg["titleColor"][2].get<float>(),
+							msg["titleColor"][3].get<float>()
+						);
+					else if (msg["titleColor"].is_string())
+						message.titleColor = Color::fromHexCodeString(msg["titleColor"].get<String>());
+					// Text color data
+					if (msg["textColor"].is_array())
+						message.textColor	= Vector4(
+							msg["textColor"][0].get<float>(),
+							msg["textColor"][1].get<float>(),
+							msg["textColor"][2].get<float>(),
+							msg["textColor"][3].get<float>()
+						);
+					else if (msg["textColor"].is_string())
+						message.textColor = Color::fromHexCodeString(msg["textColor"].get<String>());
+					// Other stuff
 					if (msg["easing"].is_string()) {
 						StringList ease		= Helper::splitString(msg["easing"].get<String>(), '.');
 						message.easing		= Tween::ease[ease[0]][ease[1]];
@@ -248,6 +273,7 @@ namespace Dialog {
 			else if	(msg.title == "@:wait:")		actionWait();
 			else if	(msg.title == "@:finish:")		actionFinish();
 			else if	(msg.title == "@:setframe:")	actionSetFrame();
+			else if	(msg.title == "@:setcolor:")	actionSetColor();
 			else	onAction(msg);
 		}
 
@@ -257,7 +283,17 @@ namespace Dialog {
 
 		size_t time = 60;
 
+		Vector4 standbyColor = Color::GRAY;
+
 	private:
+		void actionSetColor() {
+			StringList tag = Helper::splitString(last.text, '=');
+			Vector4 color = Color::fromHexCodeString(tag[1]);
+			if		(tag[0] == "standby")	standbyColor = color;
+			else if	(tag[0] == "title")		box.title.material.color	= color;
+			else if	(tag[0] == "text")		box.message.material.color	= color;
+		}
+
 		void actionReenter() {
 			for (auto& [actor, isInScene]: inScene)
 				if (isInScene) {
@@ -266,7 +302,7 @@ namespace Dialog {
 					if (!a.sprite) continue;
 					anim.tweenStep = last.easing;
 					anim.reinterpolateTo(a.position.rest, last.duration);
-					a.sprite->setColor(Color::GRAY);
+					a.sprite->setColor(standbyColor);
 				}
 			actionWait();
 		}
@@ -278,7 +314,7 @@ namespace Dialog {
 				if (!a.sprite) continue;
 				anim.tweenStep = last.easing;
 				anim.reinterpolateTo(a.position.out, last.duration);
-				a.sprite->setColor(Color::GRAY);
+				a.sprite->setColor(standbyColor);
 			}
 			actionWait();
 		}

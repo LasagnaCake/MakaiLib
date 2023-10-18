@@ -209,23 +209,29 @@ private:
 						mat.FOG_TYPE.enabled	= dmat[#FOG_TYPE]["enabled"].get<bool>();\
 						mat.FOG_TYPE.start		= dmat[#FOG_TYPE]["start"].get<float>();\
 						mat.FOG_TYPE.stop		= dmat[#FOG_TYPE]["stop"].get<float>();\
-						mat.FOG_TYPE.color		= Vector4(\
-							dmat[#FOG_TYPE]["color"][0].get<float>(),\
-							dmat[#FOG_TYPE]["color"][1].get<float>(),\
-							dmat[#FOG_TYPE]["color"][2].get<float>(),\
-							dmat[#FOG_TYPE]["color"][3].get<float>()\
-						);\
+						if (dmat[#FOG_TYPE]["color"].is_array())\
+							mat.FOG_TYPE.color		= Vector4(\
+								dmat[#FOG_TYPE]["color"][0].get<float>(),\
+								dmat[#FOG_TYPE]["color"][1].get<float>(),\
+								dmat[#FOG_TYPE]["color"][2].get<float>(),\
+								dmat[#FOG_TYPE]["color"][3].get<float>()\
+							);\
+						else if (dmat[#FOG_TYPE]["color"].is_string())\
+							mat.FOG_TYPE.color = Color::fromHexCodeString(dmat[#FOG_TYPE]["color"]);\
 						mat.FOG_TYPE.strength	= dmat[#FOG_TYPE]["strength"].get<float>();\
 					}
 				_SET_FOG_PROPERTY(nearFog)
 				_SET_FOG_PROPERTY(farFog)
 				#undef _SET_FOG_PROPERTY
 				if (dmat["ambient"].is_object()) {
-					mat.ambient.color = Vector3(
-						dmat["ambient"]["color"][0].get<float>(),
-						dmat["ambient"]["color"][1].get<float>(),
-						dmat["ambient"]["color"][2].get<float>()
-					);
+					if (dmat["ambient"]["color"].is_array())
+						mat.ambient.color = Vector3(
+							dmat["ambient"]["color"][0].get<float>(),
+							dmat["ambient"]["color"][1].get<float>(),
+							dmat["ambient"]["color"][2].get<float>()
+						);
+					else if (dmat["ambient"]["color"].is_string())
+						mat.ambient.color = Color::fromHexCodeString(dmat["ambient"]["color"].get<String>()).xyz();
 					mat.ambient.strength = dmat["ambient"]["strength"].get<float>();
 				}
 			}
@@ -292,12 +298,7 @@ private:
 		#define _FOG_JSON_VALUE(FOG_TYPE)\
 			{#FOG_TYPE, {\
 				{"enabled", world.FOG_TYPE.enabled},\
-				{"color", {\
-					world.FOG_TYPE.color.x,\
-					world.FOG_TYPE.color.y,\
-					world.FOG_TYPE.color.z,\
-					world.FOG_TYPE.color.w\
-				}},\
+				{"color", Color::toHexCodeString(world.FOG_TYPE.color, false, true)},\
 				{"start", world.FOG_TYPE.start},\
 				{"stop", world.FOG_TYPE.stop},\
 				{"strength", world.FOG_TYPE.strength}\
@@ -306,11 +307,7 @@ private:
 			_FOG_JSON_VALUE(nearFog),
 			_FOG_JSON_VALUE(farFog),
 			{"ambient", {
-				{"color", {
-					world.ambient.color.x,
-					world.ambient.color.y,
-					world.ambient.color.z
-				}},
+				{"color", Color::toHexCodeString(world.ambient.color, true, true)},
 				{"strength", world.ambient.strength}
 			}}
 		};

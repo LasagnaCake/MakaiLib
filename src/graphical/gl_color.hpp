@@ -7,7 +7,7 @@ namespace Color {
 	namespace {
 		using namespace Vector;
 
-		float _hueify(float t) {
+		constexpr float _hueify(float t) {
 			if(t < 0) t++;
             if(t > 1) t--;
             if(t < 1.0/6.0) return 6.0 * t;
@@ -19,7 +19,7 @@ namespace Color {
 	typedef Vector4 Color;
 
 	// TODO: Optimize this
-	Vector4 hueToPastel(float hue) {
+	constexpr Vector4 hueToPastel(float hue) {
 		hue *= PI;
 		Vector3 res(
 			cos(hue),
@@ -30,7 +30,7 @@ namespace Color {
 		return Vector4(res.clamped(0, 1), 1);
 	}
 
-	Vector4 hueToRGB(float h) {
+	constexpr Vector4 hueToRGB(float h) {
 		h -= floor(h);
         return Vector4(
 			_hueify(h + 1.0/3.0),
@@ -41,29 +41,29 @@ namespace Color {
 	}
 
 	// Custom transparency level
-	inline Vector4 alpha(float level) {
+	constexpr Vector4 alpha(float level) {
 		return Vector4(1, 1, 1, Math::clamp(level, -0.1f, 1.0f));
 	}
 
 	// Custom color
-	inline Vector4 fromRGBA(float r, float g, float b, float a = 1) {
+	constexpr Vector4 fromRGBA(float r, float g, float b, float a = 1) {
 		return Vector4(r, g, b, a);
 	}
 
 	// Custom color
-	inline Vector4 fromRGBA255(float r, float g, float b, float a = 255) {
+	constexpr Vector4 fromRGBA255(float r, float g, float b, float a = 255) {
 		return Vector4(r, g, b, a) / 255;
 	}
 
-	inline Vector4 fromGrayscale(float gray, float a = 1) {
+	constexpr Vector4 fromGrayscale(float gray, float a = 1) {
 		return Vector4(gray, gray, gray, a);
 	}
 
-	inline Vector4 fromGrayscale255(float gray, float a = 255) {
+	constexpr Vector4 fromGrayscale255(float gray, float a = 255) {
 		return fromGrayscale(gray, a) / 255;
 	}
 
-	Vector4 fromHSL(float h, float s, float l, float a) {
+	constexpr Vector4 fromHSL(float h, float s, float l, float a) {
 		Vector4 res = hueToRGB(h);
 		res *= (l * 2);
 		Vector4 gray(Vector3((res.x + res.y + res.z) / 3), 1);
@@ -72,7 +72,7 @@ namespace Color {
 		return res.clamped(0, 1);
 	}
 
-	inline Vector4 fromHexCodeRGBA(uint32 code) {
+	constexpr  Vector4 fromHexCodeRGBA(uint32 code) {
 		uint8
 			r = (code >> 24)	& 0xFF,
 			g = (code >> 16)	& 0xFF,
@@ -82,7 +82,7 @@ namespace Color {
 		return Vector4(r, g, b, a) / 255;
 	}
 
-	inline Vector4 fromHexCodeRGB(uint32 code) {
+	constexpr  Vector4 fromHexCodeRGB(uint32 code) {
 		uint8
 			r = (code >> 16)	& 0xFF,
 			g = (code >> 8)		& 0xFF,
@@ -91,7 +91,7 @@ namespace Color {
 		return Vector4(r, g, b, 255) / 255;
 	}
 
-	inline Vector4 fromHexCodeString(String code) {
+	Vector4 fromHexCodeString(String code) {
 		// Remove hex markers if necessary
 		code = regexReplace(code, "(#|0x)", "");
 		// Bit fuckery for 4-bit color
@@ -112,7 +112,7 @@ namespace Color {
 		return fromHexCodeRGBA(toUInt32(code, 16));
 	}
 
-	inline uint32 toHexCodeRGBA(Vector4 const& color) {
+	constexpr inline uint32 toHexCodeRGBA(Vector4 const& color) {
 		uint8
 			r = Math::clamp(color.x, 0.0f, 1.0f) * 255,
 			g = Math::clamp(color.y, 0.0f, 1.0f) * 255,
@@ -128,7 +128,7 @@ namespace Color {
 		return code;
 	}
 
-	inline uint32 toHexCodeRGB(Vector4 const& color) {
+	constexpr inline uint32 toHexCodeRGB(Vector4 const& color) {
 		return toHexCodeRGBA(color) >> 8;
 	}
 
@@ -145,39 +145,39 @@ namespace Color {
 	}
 
 	// Transparency
-	const Vector4 NONE			= Vector4(0);
-	const Vector4 CLEAR			= alpha(.0);
-	const Vector4 SEMIMISTY		= alpha(.125);
-	const Vector4 MISTY			= alpha(.25);
-	const Vector4 SEMILUCENT	= alpha(.375);
-	const Vector4 LUCENT		= alpha(.50);
-	const Vector4 SEMIMILKY		= alpha(.625);
-	const Vector4 MILKY			= alpha(.75);
-	const Vector4 SEMISOLID		= alpha(.875);
-	const Vector4 SOLID			= alpha(1);
+	constexpr Vector4 NONE			= Vector4(0);
+	constexpr Vector4 CLEAR			= alpha(.0);
+	constexpr Vector4 SEMIMISTY		= alpha(.125);
+	constexpr Vector4 MISTY			= alpha(.25);
+	constexpr Vector4 SEMILUCENT	= alpha(.375);
+	constexpr Vector4 LUCENT		= alpha(.50);
+	constexpr Vector4 SEMIMILKY		= alpha(.625);
+	constexpr Vector4 MILKY			= alpha(.75);
+	constexpr Vector4 SEMISOLID		= alpha(.875);
+	constexpr Vector4 SOLID			= alpha(1);
 	// Luminance
-	const Vector4 WHITE			= fromGrayscale(1, 1);
-	const Vector4 LIGHTGRAY		= fromGrayscale(.75, 1);
-	const Vector4 GRAY			= fromGrayscale(.5, 1);
-	const Vector4 DARKGRAY		= fromGrayscale(.25, 1);
-	const Vector4 BLACK			= fromGrayscale(0, 1);
+	constexpr Vector4 WHITE			= fromGrayscale(1, 1);
+	constexpr Vector4 LIGHTGRAY		= fromGrayscale(.75, 1);
+	constexpr Vector4 GRAY			= fromGrayscale(.5, 1);
+	constexpr Vector4 DARKGRAY		= fromGrayscale(.25, 1);
+	constexpr Vector4 BLACK			= fromGrayscale(0, 1);
 	// Primary Colors
-	const Vector4 RED			= fromRGBA(1,	0,	0);
-	const Vector4 GREEN			= fromRGBA(0,	1,	0);
-	const Vector4 BLUE			= fromRGBA(0,	0,	1);
+	constexpr Vector4 RED			= fromRGBA(1,	0,	0);
+	constexpr Vector4 GREEN			= fromRGBA(0,	1,	0);
+	constexpr Vector4 BLUE			= fromRGBA(0,	0,	1);
 	// Secondary Colors
-	const Vector4 YELLOW		= fromRGBA(1,	1,	0);
-	const Vector4 MAGENTA		= fromRGBA(1,	0,	1);
-	const Vector4 CYAN			= fromRGBA(0,	1,	1);
+	constexpr Vector4 YELLOW		= fromRGBA(1,	1,	0);
+	constexpr Vector4 MAGENTA		= fromRGBA(1,	0,	1);
+	constexpr Vector4 CYAN			= fromRGBA(0,	1,	1);
 	// Tertiary Colors
-	const Vector4 ORANGE		= fromRGBA(1,	.5,	0);
-	const Vector4 AZURE			= fromRGBA(0,	.5,	1);
-	const Vector4 TEAL			= fromRGBA(0,	1,	.5);
-	const Vector4 LIME			= fromRGBA(.5,	1,	0);
-	const Vector4 PURPLE		= fromRGBA(.5,	0,	1);
-	const Vector4 PINK			= fromRGBA(1,	0,	.5);
+	constexpr Vector4 ORANGE		= fromRGBA(1,	.5,	0);
+	constexpr Vector4 AZURE			= fromRGBA(0,	.5,	1);
+	constexpr Vector4 TEAL			= fromRGBA(0,	1,	.5);
+	constexpr Vector4 LIME			= fromRGBA(.5,	1,	0);
+	constexpr Vector4 PURPLE		= fromRGBA(.5,	0,	1);
+	constexpr Vector4 PINK			= fromRGBA(1,	0,	.5);
 
-	const Vector4 rainbow8[] = {
+	constexpr Vector4 rainbow8[] = {
 		PURPLE,
 		MAGENTA,
 		RED,
@@ -189,7 +189,7 @@ namespace Color {
 		BLUE
 	};
 
-	const Vector4 rainbow[] = {
+	constexpr Vector4 rainbow[] = {
 		PURPLE,
 		MAGENTA,
 		PINK,

@@ -543,6 +543,8 @@ ObjectMaterial fromObjectMaterialDefinition(
 			mat.color.z = dmat["color"][2].get<float>();
 			mat.color.w = dmat["color"][3].get<float>();
 		}
+		else if (dmat["color"].is_string())
+			mat.color = Color::fromHexCodeString(dmat["color"].get<String>());
 		// Set color & shading params
 		#define _SET_BOOL_PARAM(PARAM) if(dmat[#PARAM].is_boolean()) mat.PARAM = dmat[#PARAM].get<bool>()
 		_SET_BOOL_PARAM(shaded);
@@ -609,18 +611,24 @@ ObjectMaterial fromObjectMaterialDefinition(
 			mat.gradient.channel	= dmat["gradient"]["channel"].get<unsigned int>();
 			auto& dgbegin	= dmat["gradient"]["begin"];
 			auto& dgend		= dmat["gradient"]["end"];
-			mat.gradient.begin		= Vector4(
-				dgbegin[0].get<float>(),
-				dgbegin[1].get<float>(),
-				dgbegin[2].get<float>(),
-				dgbegin[3].get<float>()
-			);
-			mat.gradient.end		= Vector4(
-				dgend[0].get<float>(),
-				dgend[1].get<float>(),
-				dgend[2].get<float>(),
-				dgend[3].get<float>()
-			);
+			if (dgbegin.is_array())
+				mat.gradient.begin = Vector4(
+					dgbegin[0].get<float>(),
+					dgbegin[1].get<float>(),
+					dgbegin[2].get<float>(),
+					dgbegin[3].get<float>()
+				);
+			else if (dgbegin.is_string())
+				mat.gradient.begin = Color::fromHexCodeString(dgbegin.get<String>());
+			if (dgend.is_array())
+				mat.gradient.end = Vector4(
+					dgend[0].get<float>(),
+					dgend[1].get<float>(),
+					dgend[2].get<float>(),
+					dgend[3].get<float>()
+				);
+			else if (dgend.is_string())
+				mat.gradient.end = Color::fromHexCodeString(dgend.get<String>());
 			mat.gradient.invert	= dmat["gradient"]["invert"].get<bool>();
 		}
 		// Set instances
@@ -681,7 +689,7 @@ JSONData getMaterialDefinition(
 	}
 	// Define object
 	def = {
-		{"color", {mat.color.x, mat.color.y, mat.color.z, mat.color.w}},
+		{"color", Color::toHexCodeString(mat.color, false, true)},
 		{"shaded", mat.shaded},
 		{"illuminated", mat.illuminated},
 		{"hue", mat.hue},

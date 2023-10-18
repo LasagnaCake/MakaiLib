@@ -1,6 +1,6 @@
 Undefined optional values are set to their defaults.
 
-TODO: Add support for hex color codes
+NOTE: Any 4D vector representing color can also
 
 # Transform2D
 
@@ -281,6 +281,8 @@ This can be saved as a `JSON` file of extension `.mdd` (Makai Dialogue Definitio
 			// Required if title is not an action tag, else optional
 			"text": "",
 			// Optional
+			"titleColor": [1.0, 1.0, 1.0, 1.0],
+			"textColor": [1.0, 1.0, 1.0, 1.0],
 			"actors": [{/* See Dialogue:ActorData:Layout */}],
 			"easing": "out.cubic",
 			"duration": 600,
