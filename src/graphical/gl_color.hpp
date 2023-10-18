@@ -94,6 +94,24 @@ namespace Color {
 	Vector4 fromHexCodeString(String code) {
 		// Remove hex markers if necessary
 		code = regexReplace(code, "(#|0x)", "");
+		// Check if color exists
+		if (code.empty())
+			throw Error::InvalidValue(
+				"Color value does not exist!",
+				__FILE__,
+				toString(__LINE__),
+				"fromHexCodeString",
+				"Make sure the color values are correct!"
+			);
+		// Check if color value is valid
+		if (code.size() < 3 || code.size() > 8 || !Helper::isHexString(code))
+			throw Error::InvalidValue(
+				"Invalid color value \"#"+ code +"\"!",
+				__FILE__,
+				toString(__LINE__),
+				"fromHexCodeString",
+				"Make sure the color values are correct!"
+			);
 		// Bit fuckery for 4-bit color
 		if (code.size() <= 4) {
 			std::stringstream nc;

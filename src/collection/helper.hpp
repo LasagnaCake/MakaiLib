@@ -10,6 +10,7 @@
 #include <variant>
 #include <optional>
 #include <span>
+#include <cctype>
 #ifdef _USE_CPP20_FORMAT_
 #include <format>
 #endif // _USE_CPP20_FORMAT_
@@ -183,6 +184,10 @@ namespace Helper {
 		for(auto& elem: lst)
 			res[i++] = elem;
 		return res;
+	}
+
+	inline bool isHexString(String const& str) {
+		return std::all_of(str.begin(), str.end(), [](unsigned char const& c)->bool{return std::isxdigit(c);});
 	}
 
 	typedef std::regex				Regex;
