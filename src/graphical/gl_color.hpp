@@ -72,7 +72,7 @@ namespace Color {
 		return res.clamped(0, 1);
 	}
 
-	constexpr  Vector4 fromHexCodeRGBA(uint32 code) {
+	constexpr Vector4 fromHexCodeRGBA(uint32 code) {
 		uint8
 			r = (code >> 24)	& 0xFF,
 			g = (code >> 16)	& 0xFF,
@@ -82,7 +82,7 @@ namespace Color {
 		return Vector4(r, g, b, a) / 255;
 	}
 
-	constexpr  Vector4 fromHexCodeRGB(uint32 code) {
+	constexpr Vector4 fromHexCodeRGB(uint32 code) {
 		uint8
 			r = (code >> 16)	& 0xFF,
 			g = (code >> 8)		& 0xFF,

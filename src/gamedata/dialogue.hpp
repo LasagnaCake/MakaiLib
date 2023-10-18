@@ -154,7 +154,7 @@ namespace Dialog {
 					a.sprite->setColor(actor.tint);
 				}
 				onMessage(current);
-				showText(msg.title, msg.text);
+				showText(msg.title, msg.text, msg.titleColor, msg.textColor);
 				autoplay = msg.autoplay;
 				autotimer.delay = msg.duration;
 			} else {
@@ -289,9 +289,7 @@ namespace Dialog {
 		void actionSetColor() {
 			StringList tag = Helper::splitString(last.text, '=');
 			Vector4 color = Color::fromHexCodeString(tag[1]);
-			if		(tag[0] == "standby")	standbyColor = color;
-			else if	(tag[0] == "title")		box.title.material.color	= color;
-			else if	(tag[0] == "text")		box.message.material.color	= color;
+			if (tag[0] == "standby") standbyColor = color;
 		}
 
 		void actionReenter() {
@@ -351,9 +349,11 @@ namespace Dialog {
 
 		inline bool isActionTag(String const& tag) {return tag[0] == '@' && tag[tag.size()-1] == ':' && tag[1] == ':';}
 
-		void showText(String title, String text) {
+		void showText(String title, String text, Vector4 titleColor, Vector4 textColor) {
 			box.title.text.content		= title;
 			box.message.text.content	= text;
+			box.title.material.color	= titleColor;
+			box.message.material.color	= textColor;
 		}
 
 		Event::Timer autotimer;
