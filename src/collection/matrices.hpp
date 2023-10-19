@@ -54,13 +54,13 @@ public:
 	constexpr Matrix(const T2(&v)[R][C]) {
 		for (size_t i = 0; i < R; i++)
 			for (size_t j = 0; j < C; j++)
-				data[i][j] = v[i][j];
+				data[i][j] = T(v[i][j]);
 	}
 
 	template<MatType::Compatitble<T> T2>
 	constexpr Matrix(const T2(&v)[R*C]) {
 		for (size_t i = 0; i < R*C; i++)
-			((float*)data)[i] = v[i];
+			((float*)data)[i] = T(v[i]);
 	}
 
 	constexpr Matrix(Vector2 const& vec) requires MatType::EqualSize<R, 2> {
@@ -266,13 +266,13 @@ public:
 	constexpr Matrix<R, C, T>& operator=(const T(&v)[R][C]) {
 		for (size_t i = 0; i < R; i++) {
 			for (size_t j = 0; j < C; j++)
-				data[i][j] = v[i][j];
+				data[i][j] = T(v[i][j]);
 		}
 	}
 
 	constexpr Matrix<R, C, T>& operator=(const T(&v)[R*C]) {
 		for (size_t i = 0; i < R*C; i++)
-			((float*)data)[i] = v[i];
+			((float*)data)[i] = T(v[i]);
 	}
 
 	constexpr Matrix<R, C, T>& operator+=(T const& val) {
