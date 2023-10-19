@@ -316,9 +316,13 @@ public:
 	constexpr operator Vector3() const requires MatType::EqualSize<R, 3> {return toVector3();}
 	constexpr operator Vector4() const requires MatType::EqualSize<R, 4> {return toVector4();}
 
+	/// Size accessors.
+
 	constexpr static size_t rowCount() {return R;}
 
 	constexpr static size_t columnCount() {return C;}
+
+	/// Converters.
 
 	constexpr Vector2 toVector2() const requires MatType::EqualSize<R, 2> {
 		static_assert(R == 2, "Matrix is not a valid representation of a 2D vector!");
@@ -333,6 +337,25 @@ public:
 	constexpr Vector4 toVector4() const requires MatType::EqualSize<R, 4> {
 		static_assert(R == 4, "Matrix is not a valid representation of a 4D vector!");
 		return Vector2(data[0][C-1], data[1][C-1], data[2][C-1], data[3][C-1]);
+	}
+
+	[[unavailable("Unimplemented!")]]
+	constexpr void compose(VecMath::Transform3D trans) requires MatType::EqualSize<R, C> {
+		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
+	}
+
+	[[unavailable("Unimplemented!")]]
+	constexpr VecMath::Transform3D decompose() const requires MatType::EqualSize<R, C> {
+		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
+		VecMath::Transform3D res;
+		res.position = Vector3(data[0][3], data[1][3], data[2][3]);
+		Vector3
+			sx = Vector3(data[0][0], data[1][0], data[2][0]),
+			sy = Vector3(data[0][1], data[1][1], data[2][1]),
+			sz = Vector3(data[0][2], data[1][2], data[2][2])
+		;
+		res.scale = Vector3(sx.length(), sy.length(), sz.length());
+
 	}
 
 	/// Gets the dot product of a given row by another given row.
