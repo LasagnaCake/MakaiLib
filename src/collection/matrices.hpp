@@ -14,6 +14,12 @@ namespace Matrix {
 		;
 	}
 
+	template <size_t A, size_t B>
+	concept EqualSize = (A == B);
+
+	template <typename T, typename T2>
+	concept NewMatrixType = Math::Operatable<T2> && Type::Convertible<T2, T>;
+
 	/**
 	* [---------------------]
 	* [                     ]
@@ -24,6 +30,9 @@ namespace Matrix {
 	template<size_t R, size_t C, Math::Operatable T>
 	class Mat {
 	public:
+		static_assert(R != 0, "Matrix row size must not be zero!");
+		static_assert(C != 0, "Matrix column size must not be zero!");
+
 		/// Constructors.
 		constexpr Mat() {
 			for (size_t i = 0; i < R; i++)
@@ -37,35 +46,44 @@ namespace Matrix {
 					data[i][j] = v;
 		}
 
-		constexpr Mat(T v[R][C]) {
-			for (size_t i = 0; i < R; i++) {
-				for (size_t j = 0; j < C; j++)
-					data[i][j] = v[i][j];
-			}
-		}
-
 		constexpr Mat(const T(&v)[R][C]) {
-			for (size_t i = 0; i < R; i++) {
+			for (size_t i = 0; i < R; i++)
 				for (size_t j = 0; j < C; j++)
 					data[i][j] = v[i][j];
-			}
 		}
 
+		constexpr Mat(const T(&v)[R*C]) {
+			for (size_t i = 0; i < R*C; i++)
+				((float*)data)[i] = v[i];
+		}
 
-		constexpr Mat(Vector2 const& vec) {
+		template<NewMatrixType<T> T2>
+		constexpr Mat(const T2(&v)[R][C]) {
+			for (size_t i = 0; i < R; i++)
+				for (size_t j = 0; j < C; j++)
+					data[i][j] = v[i][j];
+		}
+
+		template<NewMatrixType<T> T2>
+		constexpr Mat(const T2(&v)[R*C]) {
+			for (size_t i = 0; i < R*C; i++)
+				((float*)data)[i] = v[i];
+		}
+
+		constexpr Mat(Vector2 const& vec) requires EqualSize<R, 2> {
 			static_assert(R == 2 && C == 1, "Matrix is not a valid representation of a 2D vector!");
 			data[0][0] = vec.x;
 			data[0][1] = vec.y;
 		}
 
-		constexpr Mat(Vector3 const& vec) {
+		constexpr Mat(Vector3 const& vec) requires EqualSize<R, 3> {
 			static_assert(R == 3 && C == 1, "Matrix is not a valid representation of a 3D vector!");
 			data[0][0] = vec.x;
 			data[0][1] = vec.y;
 			data[0][2] = vec.z;
 		}
 
-		constexpr Mat(Vector4 const& vec) {
+		constexpr Mat(Vector4 const& vec) requires EqualSize<R, 4> {
 			static_assert(R == 4 && C == 1, "Matrix is not a valid representation of a 4D vector!");
 			data[0][0] = vec.x;
 			data[0][1] = vec.y;
@@ -91,23 +109,17 @@ namespace Matrix {
 			return res;
 		}
 
-		constexpr Mat<R, C, T> inverted() const {
+		constexpr Nullable<Mat<R, C, T>> inverted() const requires EqualSize<R, C> {
 			static_assert(C == R, "Matrix is not a square matrix!");
 			static_assert(determinant() != T(0), "Determinant cannot be zero!");
 			Mat<R, C, T> res;
 			T det = determinant();
-			if (det == T(0))
-				throw Error::InvalidValue(
-					"Matrix determinant is zero!",
-					__FILE__,
-					toString(__LINE__),
-					"inverted()"
-				);
+			if (det == T(0)) return nullptr;
 			res = cofactors().transposed() * (T(1) / det);
 			return res;
 		}
 
-		constexpr Mat<R, C, T> cofactors() const {
+		constexpr Mat<R, C, T> cofactors() const requires EqualSize<R, C> {
 			static_assert(C == R, "Matrix is not a square matrix!");
 			Mat<R, C, T> res;
 			for (size_t i = 0; i < R; i++)
@@ -116,7 +128,7 @@ namespace Matrix {
 			return res;
 		}
 
-		constexpr T determinant() const {
+		constexpr T determinant() const requires EqualSize<R, C> {
 			static_assert(C == R, "Matrix is not a square matrix!");
 			if constexpr(C == 1)		return data[0][0];
 			else if constexpr(C == 2)	return data[0][0] * data[1][1] - data[1][0] * data[0][1];
@@ -156,6 +168,7 @@ namespace Matrix {
 		template<size_t RF = 1, size_t CF = 1>
 		constexpr Mat<R-RF, C-CF, T> shrunkBy(size_t const& rowStart = 0, size_t const& colStart = 0) const {
 			static_assert(R > 1 && C > 1, "Cannot shrink a 1-dimensional matrix!");
+			static_assert(RF > R && CF > C, "Shrinking factor(s) are bigger than the matrix!");
 			static_assert(rowStart < (R-RF) && colStart < (C-CF), "Row/Column starts cannot be bigger than the shrunk matrix!");
 			if (rowStart < (R-RF) && colStart < (C-CF))
 				throw Error::InvalidValue(
@@ -233,12 +246,12 @@ namespace Matrix {
 		}
 
 		template<size_t C2>
-		constexpr Mat<R, C2, T> operator*(Mat<C, C2, T> mat) const {
+		constexpr Mat<R, C2, T> operator*(Mat<C, C2, T> const& mat) const {
 			Mat<R, C2, T> res;
 			auto nmat = mat.transposed();
 			for (size_t i = 0; i < R; i++)
-				for (size_t j = 0; j < R; j++)
-					res[i][j] = rdp(i, nmat[j]);
+				for (size_t j = 0; j < C2; j++)
+					res[i][j] = rdp(i, nmat.data[j]);
 			return res;
 		}
 
@@ -256,6 +269,18 @@ namespace Matrix {
 		}
 
 		/// Assignment operator overloading.
+
+		constexpr Mat<R, C, T>& operator=(const T(&v)[R][C]) {
+			for (size_t i = 0; i < R; i++) {
+				for (size_t j = 0; j < C; j++)
+					data[i][j] = v[i][j];
+			}
+		}
+
+		constexpr Mat<R, C, T>& operator=(const T(&v)[R*C]) {
+			for (size_t i = 0; i < R*C; i++)
+				((float*)data)[i] = v[i];
+		}
 
 		constexpr Mat<R, C, T>& operator+=(T const& val) {
 			for (size_t i = 0; i < R; i++)
@@ -286,29 +311,29 @@ namespace Matrix {
 		}
 
 		/// Other operator overloadings.
+
 		constexpr Span<T, C> operator[](size_t const& idx) {
 			return Span{data[idx]};
 		}
 
-		constexpr size_t rowCount() const {
-			return R;
-		}
+		template <NewMatrixType<T> T2>
+		constexpr operator Mat<R, C, T2>() {return Mat<R, C, T2>(data);}
 
-		constexpr size_t columnCount() const {
-			return C;
-		}
+		constexpr static size_t rowCount() {return R;}
 
-		constexpr Vector2 toVector2() const {
+		constexpr static size_t columnCount() {return C;}
+
+		constexpr Vector2 toVector2() const requires EqualSize<R, 2> {
 			static_assert(R == 2, "Matrix is not a valid representation of a 2D vector!");
 			return Vector2(data[0][C-1], data[1][C-1]);
 		}
 
-		constexpr Vector3 toVector3() const {
+		constexpr Vector3 toVector3() const requires EqualSize<R, 3> {
 			static_assert(R == 3, "Matrix is not a valid representation of a 3D vector!");
 			return Vector2(data[0][C-1], data[1][C-1], data[2][C-1]);
 		}
 
-		constexpr Vector4 toVector4() const {
+		constexpr Vector4 toVector4() const requires EqualSize<R, 4> {
 			static_assert(R == 4, "Matrix is not a valid representation of a 4D vector!");
 			return Vector2(data[0][C-1], data[1][C-1], data[2][C-1], data[3][C-1]);
 		}
@@ -334,11 +359,12 @@ namespace Matrix {
 		}
 
 	private:
+		template<size_t R2, size_t C2, Math::Operatable T2> friend class Mat;
 
 		/// The matrix's columns;
 		T data[R][C];
 	};
-
+	// Float matrices
 	typedef Mat<2, 1, float> Matrix2x1;
 	typedef Mat<3, 1, float> Matrix3x1;
 	typedef Mat<4, 1, float> Matrix4x1;
@@ -354,6 +380,23 @@ namespace Matrix {
 	typedef Mat<2, 4, float> Matrix2x4;
 	typedef Mat<3, 4, float> Matrix3x4;
 	typedef Mat<4, 4, float> Matrix4x4;
+
+	// Integer matrices
+	typedef Mat<2, 1, int> Matrix2x1i;
+	typedef Mat<3, 1, int> Matrix3x1i;
+	typedef Mat<4, 1, int> Matrix4x1i;
+
+	typedef Mat<2, 2, int> Matrix2x2i;
+	typedef Mat<3, 2, int> Matrix3x2i;
+	typedef Mat<4, 2, int> Matrix4x2i;
+
+	typedef Mat<2, 3, int> Matrix2x3i;
+	typedef Mat<3, 3, int> Matrix3x3i;
+	typedef Mat<4, 3, int> Matrix4x3i;
+
+	typedef Mat<2, 4, int> Matrix2x4i;
+	typedef Mat<3, 4, int> Matrix3x4i;
+	typedef Mat<4, 4, int> Matrix4x4i;
 }
 
 #endif // FLOAT_MATRICES_234_H
