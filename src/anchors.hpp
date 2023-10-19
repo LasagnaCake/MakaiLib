@@ -151,8 +151,6 @@
 #include "collection/grouping.hpp"
 #include "collection/sharedvalue.hpp"
 
-using namespace Vector;
-
 #include "fileloader.hpp"
 #include "predefs.hpp"
 
