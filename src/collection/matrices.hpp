@@ -235,10 +235,10 @@ namespace Matrix {
 		template<size_t C2>
 		constexpr Mat<R, C2, T> operator*(Mat<C, C2, T> mat) const {
 			Mat<R, C2, T> res;
-			mat = mat.transposed();
+			auto nmat = mat.transposed();
 			for (size_t i = 0; i < R; i++)
 				for (size_t j = 0; j < R; j++)
-					res[i][j] = rdp(i, mat[j]);
+					res[i][j] = rdp(i, nmat[j]);
 			return res;
 		}
 
@@ -314,15 +314,22 @@ namespace Matrix {
 		}
 
 		/// Gets the dot product of a given row by another given row.
-		template<size_t S>
-		constexpr T rdp(size_t const& row, T other[S]) const {
+		constexpr T rdp(size_t const& row, const T (&other)[R]) const {
 			T res = 0;
-			for (size_t i = 0; i < S; i++)
+			for (size_t i = 0; i < R; i++)
 				res += other[i] * data[row][i];
 			return res;
 		}
 
-		constexpr T cofactor(size_t row, size_t col) const {
+		/// Gets the dot product of a given row by another given row.
+		constexpr T rdp(size_t const& row, Span<T, R> const& other) const {
+			T res = 0;
+			for (size_t i = 0; i < R; i++)
+				res += other[i] * data[row][i];
+			return res;
+		}
+
+		constexpr T cofactor(size_t const& row, size_t const& col) const {
 			return ((((row + col) % 2) == 0) ? T(+1) : T(-1)) * truncated(row, col).determinant();
 		}
 
