@@ -92,9 +92,16 @@ namespace Matrix {
 
 		constexpr Mat<R, C, T> inverted() const {
 			static_assert(C == R, "Matrix is not a square matrix!");
+			static_assert(determinant() != T(0), "Determinant cannot be zero!");
 			Mat<R, C, T> res;
 			T det = determinant();
-			if (det == T(0)) return Mat<R, C, T>(Math::infinity);
+			if (det == T(0))
+				throw Error::InvalidValue(
+					"Matrix determinant is zero!",
+					__FILE__,
+					toString(__LINE__),
+					"inverted()"
+				);
 			res = cofactors().transposed() * (T(1) / det);
 			return res;
 		}
