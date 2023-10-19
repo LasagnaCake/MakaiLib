@@ -354,6 +354,7 @@ public:
 			sy = Vector3(data[0][1], data[1][1], data[2][1]),
 			sz = Vector3(data[0][2], data[1][2], data[2][2])
 		;
+		if (sx.crossProd(sy).dotProd(sz) < 0) sx *= -1;
 		res.scale = Vector3(sx.length(), sy.length(), sz.length());
 
 	}
