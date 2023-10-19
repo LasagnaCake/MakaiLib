@@ -44,8 +44,7 @@ namespace Matrix {
 			}
 		}
 
-		constexpr Mat(Arguments<T[C]> const& v) {
-			static_assert(v.size() == R, "Initializer list is ill-formed!");
+		constexpr Mat(const T(&v)[R][C]) {
 			for (size_t i = 0; i < R; i++) {
 				for (size_t j = 0; j < C; j++)
 					data[i][j] = v[i][j];
