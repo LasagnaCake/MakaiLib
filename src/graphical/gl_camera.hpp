@@ -6,9 +6,6 @@
 namespace Camera {
 	namespace {
 		using
-		Vector::Vector2,
-		Vector::Vector3,
-		Vector::Vector4,
 		VecMath::Transform,
 		VecMath::Transform2D,
 		VecMath::Transform3D,

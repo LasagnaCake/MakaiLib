@@ -7,8 +7,6 @@
 namespace EntityClass {
 	namespace {
 		using
-		Vector::Vector2,
-		Vector::Vector3,
 		VecMath::srpTransform,
 		VecMath::Transform2D,
 		VecMath::Transform3D;

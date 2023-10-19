@@ -57,7 +57,6 @@ namespace GameData {
 		Makai::Program,
 		std::string;
 
-		using namespace Vector;
 		using namespace RenderData::Bar;
 		using namespace RenderData::Text;
 

@@ -25,8 +25,6 @@ namespace CollisionData {
 		std::unordered_map,
 		std::string,
 		std::vector;
-
-		using namespace Vector;
 	}
 
 	// Concepts, here I go!

@@ -5,8 +5,6 @@
 
 namespace Color {
 	namespace {
-		using namespace Vector;
-
 		constexpr float _hueify(float t) {
 			if(t < 0) t++;
             if(t > 1) t--;

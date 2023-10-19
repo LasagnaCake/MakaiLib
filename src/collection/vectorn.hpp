@@ -5,9 +5,9 @@
 #include <vector>
 #include "algebra.hpp"
 
-namespace Vector{
+namespace VecType {
 	template<typename T>
-	concept BaseVectorType = requires {
+	concept ValidBase = requires {
 		requires	Type::Arithmetic<T, T>;
 		requires	Type::Arithmetic<T, float>;
 		requires	Type::HasModulo<T, T>;
@@ -16,16 +16,16 @@ namespace Vector{
 	};
 
 	template<typename T>
-	concept Vector2Type = requires {
-		requires	BaseVectorType<T>;
+	concept ValidVec2 = requires {
+		requires	ValidBase<T>;
 		requires	Type::Constructible<T, float, float>;
 		T::x;
 		T::y;
 	};
 
 	template<typename T>
-	concept Vector3Type = requires {
-		requires	BaseVectorType<T>;
+	concept ValidVec3 = requires {
+		requires	ValidBase<T>;
 		requires	Type::Constructible<T, float, float>;
 		requires	Type::Constructible<T, float, float, float>;
 		T::x;
@@ -34,8 +34,8 @@ namespace Vector{
 	};
 
 	template<typename T>
-	concept Vector4Type = requires {
-		requires	BaseVectorType<T>;
+	concept ValidVec4 = requires {
+		requires	ValidBase<T>;
 		requires	Type::Constructible<T, float, float>;
 		requires	Type::Constructible<T, float, float, float>;
 		requires	Type::Constructible<T, float, float, float, float>;
@@ -46,1054 +46,1056 @@ namespace Vector{
 	};
 
 	template<typename T>
-	concept VectorType =
-		Vector2Type<T>
-	||	Vector3Type<T>
-	||	Vector4Type<T>
+	concept ValidVector =
+		ValidVec2<T>
+	||	ValidVec3<T>
+	||	ValidVec4<T>
 	;
 
 	template<typename T>
-	concept Vectorable = Type::Equal<T, float> || VectorType<T>;
-
-	/**
-	* [-----------------]
-	* [                 ]
-	* [  Vector2 Class  ]
-	* [                 ]
-	* [-----------------]
-	*/
-	class Vector2
-	{
-		public:
-			/// The vector's position.
-			float x, y;
-
-			/// Consturctors.
-			constexpr Vector2() {
-				x = 0;
-				y = 0;
-			}
-
-			constexpr Vector2(float v) {
-				x = v;
-				y = v;
-			}
-
-			constexpr Vector2(float x, float y) {
-				this->x = x;
-				this->y = y;
-			}
-
-			constexpr Vector2(Vector2 const& vec) {
-				x = vec.x;
-				y = vec.y;
-			}
-
-			/// Destructor.
-			constexpr ~Vector2() {}
-
-			/// Vector operator overloading.
-			constexpr Vector2 operator+(Vector2 const& vec) const {
-				return Vector2(
-					x + vec.x,
-					y + vec.y
-				);
-			}
-
-			constexpr Vector2 operator-(Vector2 const& vec) const {
-				return Vector2(
-					x - vec.x,
-					y - vec.y
-				);
-			}
-
-			constexpr Vector2 operator*(Vector2 const& vec) const {
-				return Vector2(
-					x * vec.x,
-					y * vec.y
-				);
-			}
-
-			constexpr Vector2 operator/(Vector2 const& vec) const {
-				return Vector2(
-					x / vec.x,
-					y / vec.y
-				);
-			}
-
-			constexpr Vector2 operator%(Vector2 const& vec) const {
-				return Vector2(
-					fmod(x, vec.x),
-					fmod(y, vec.y)
-				);
-			}
-
-			constexpr Vector2 operator^(Vector2 const& vec) const {
-				return Vector2(
-					pow(x, vec.x),
-					pow(y, vec.y)
-				);
-			}
-
-			constexpr Vector2& operator+=(Vector2 const& vec) {
-				x += vec.x;
-				y += vec.y;
-				return *this;
-			}
-
-			constexpr Vector2& operator-=(Vector2 const& vec) {
-				x -= vec.x;
-				y -= vec.y;
-				return *this;
-			}
-
-			constexpr Vector2& operator*=(Vector2 const& vec) {
-				x *= vec.x;
-				y *= vec.y;
-				return *this;
-			}
-
-			constexpr Vector2& operator/=(Vector2 const& vec) {
-				x /= vec.x;
-				y /= vec.y;
-				return *this;
-			}
-
-			constexpr Vector2& operator%=(Vector2 const& vec) {
-				x = fmod(x, vec.x);
-				y = fmod(y, vec.y);
-				return *this;
-			}
-
-			constexpr Vector2& operator^=(Vector2 const& vec) {
-				x = fmod(x, vec.x);
-				y = fmod(y, vec.y);
-				return *this;
-			}
-
-			constexpr bool operator==(Vector2 const& vec) const {
-				return (
-					x == vec.x &&
-					y == vec.y
-				);
-			}
-
-			constexpr bool operator!=(Vector2 const& vec) const {
-				return !(*this == vec);
-			}
-
-			/// Float operator overloading.
-			constexpr Vector2 operator+(float val) const {
-				return *this + Vector2(val);
-			}
-
-			constexpr Vector2 operator-(float val) const {
-				return *this - Vector2(val);
-			}
-
-			constexpr Vector2 operator*(float val) const {
-				return *this * Vector2(val);
-			}
-
-			constexpr Vector2 operator/(float val) const {
-				return *this / Vector2(val);
-			}
-
-			constexpr Vector2 operator%(float val) const {
-				return *this % Vector2(val);
-			}
-
-			constexpr Vector2 operator^(float val) const {
-				return *this ^ Vector2(val);
-			}
-
-			constexpr Vector2& operator+=(float val) {
-				*this += Vector2(val);
-				return *this;
-			}
-
-			constexpr Vector2& operator-=(float val) {
-				*this -= Vector2(val);
-				return *this;
-			}
-
-			constexpr Vector2& operator*=(float val) {
-				*this *= Vector2(val);
-				return *this;
-			}
-
-			constexpr Vector2& operator/=(float val) {
-				*this /= Vector2(val);
-				return *this;
-			}
-
-			constexpr Vector2& operator%=(float val) {
-				*this %= Vector2(val);
-				return *this;
-			}
-
-			constexpr Vector2& operator^=(float val) {
-				*this ^= Vector2(val);
-				return *this;
-			}
-
-			// Other overloads
-
-			constexpr float& operator[](char const& pos) {
-				switch (pos) {
-				case 'x':
-				case 'X':
-				default:
-					return x;
-				case 'y':
-				case 'Y':
-					return y;
-				}
-			}
-
-			constexpr float& operator[](unsigned char const& pos) {
-				switch (pos) {
-				case 0:
-				default:
-					return x;
-				case 1:
-					return y;
-				}
-			}
-
-			// Extra functions
-
-			/// Gets the vector's length (distance to origin).
-			constexpr float length() const {
-				return sqrt((x * x) + (y * y));
-			}
-
-			/// Gets the vector's length (distance to origin).
-			constexpr float lengthSquared() const {
-				return ((x * x) + (y * y));
-			}
-
-			/// Gets the normalized vector.
-			constexpr Vector2 normalized() const {
-				if (*this != 0)
-					return *this / length();
-				else
-					return *this;
-			}
-
-			/// Normalizes the vector.
-			constexpr Vector2& normalize() {
-				if (*this != 0)
-					return *this /= length();
-				else
-					return *this;
-			}
-
-			/// Gets the distance to another vector.
-			constexpr float distanceTo(Vector2 vec) const {
-				Vector2 diff = vec - *this;
-				return diff.length();
-			}
-
-			/// Gets the distance to another vector.
-			constexpr float squaredDistanceTo(Vector2 vec) const {
-				Vector2 diff = vec - *this;
-				return diff.lengthSquared();
-			}
-
-			/// Gets the vector's angle.
-			constexpr float angle() const {
-				return - atan2(x, y) + Math::hpi;
-			}
-
-			/// Gets the vector's angle to another vector.
-			constexpr float angleTo(Vector2 vec) const {
-				Vector2 diff = vec - *this;
-				return diff.angle();
-			}
-
-			/// Gets a normalized vector pointing towards another vector.
-			constexpr Vector2 normalTo(Vector2 vec) const {
-				Vector2 diff = vec - *this;
-				return diff.normalized();
-			}
-
-
-			/// Clamps the vector between two values.
-			constexpr void clamp(Vector2 const& min, Vector2 const& max) {
-				x = Math::clamp(x, min.x, max.x);
-				y = Math::clamp(y, min.y, max.y);
-			}
-
-			/// Returns the vector clamped between two values.
-			constexpr Vector2 clamped(Vector2 const& min, Vector2 const& max) const {
-				return Vector2(
-					Math::clamp(x, min.x, max.x),
-					Math::clamp(y, min.y, max.y)
-				);
-			}
-
-			/// Gets the tangent of the vector.
-			constexpr float tangent() const {
-				return x / y;
-			}
-
-			/// Returns the dot product with another vector.
-			constexpr float dotProd(Vector2 const& vec) const {
-				Vector2 mult = (*this) * vec;
-				return mult.x + mult.y;
-			}
-
-			/// Returns the cross product with another vector.
-			constexpr float crossProd(Vector2 const& vec) const {
-				return (x * vec.y) - (y * vec.x);
-			}
-
-			constexpr Vector2 absolute() const {
-				return Vector2(
-					abs(x),
-					abs(y)
-				);
-			}
-
-			constexpr Vector2 yx() const {
-				return Vector2(y, x);
-			}
-	};
-
-	/**
-	* [-----------------]
-	* [                 ]
-	* [  Vector3 Class  ]
-	* [                 ]
-	* [-----------------]
-	*/
-
-	class Vector3
-	{
-		public:
-			/// The vector's position.
-			float x, y, z;
-
-			/// Constructors.
-
-			constexpr Vector3() {
-				x = 0;
-				y = 0;
-				z = 0;
-			}
-
-			constexpr Vector3(float v) {
-				x = v;
-				y = v;
-				z = v;
-			}
-
-			constexpr Vector3(float x, float y, float z = 0.0) {
-				this->x = x;
-				this->y = y;
-				this->z = z;
-			}
-
-			constexpr Vector3(Vector3 const& vec) {
-				x = vec.x;
-				y = vec.y;
-				z = vec.z;
-			}
-
-			constexpr Vector3(Vector2 const& vec, float z = 0.0) {
-				x = vec.x;
-				y = vec.y;
-				this->z = z;
-			}
-
-			/// Destructor.
-
-			constexpr ~Vector3() {}
-
-			/// Vector operator overloading.
-
-			constexpr Vector3 operator+(Vector3 const& vec) const {
-				return Vector3(
-					x + vec.x,
-					y + vec.y,
-					z + vec.z
-				);
-			}
-
-			constexpr Vector3 operator-(Vector3 const& vec) const {
-				return Vector3(
-					x - vec.x,
-					y - vec.y,
-					z - vec.z
-				);
-			}
-
-			constexpr Vector3 operator*(Vector3 const& vec) const {
-				return Vector3(
-					x * vec.x,
-					y * vec.y,
-					z * vec.z
-				);
-			}
-
-			constexpr Vector3 operator/(Vector3 const& vec) const {
-				return Vector3(
-					x / vec.x,
-					y / vec.y,
-					z / vec.z
-				);
-			}
-
-			constexpr Vector3 operator%(Vector3 const& vec) const {
-				return Vector3(
-					fmod(x, vec.x),
-					fmod(y, vec.y),
-					fmod(z, vec.z)
-				);
-			}
-
-			constexpr Vector3 operator^(Vector3 const& vec) const {
-				return Vector3(
-					pow(x, vec.x),
-					pow(y, vec.y),
-					pow(z, vec.z)
-				);
-			}
-
-			constexpr Vector3& operator+=(Vector3 const& vec) {
-				x += vec.x;
-				y += vec.y;
-				z += vec.z;
-				return *this;
-			}
-
-			constexpr Vector3& operator-=(Vector3 const& vec) {
-				x -= vec.x;
-				y -= vec.y;
-				z -= vec.z;
-				return *this;
-			}
-
-			constexpr Vector3& operator*=(Vector3 const& vec) {
-				x *= vec.x;
-				y *= vec.y;
-				z *= vec.z;
-				return *this;
-			}
-
-			constexpr Vector3& operator/=(Vector3 const& vec) {
-				x /= vec.x;
-				y /= vec.y;
-				z /= vec.z;
-				return *this;
-			}
-
-			constexpr Vector3& operator%=(Vector3 const& vec) {
-				x = fmod(x, vec.x);
-				y = fmod(y, vec.y);
-				z = fmod(z, vec.z);
-				return *this;
-			}
-
-			constexpr Vector3& operator^=(Vector3 const& vec) {
-				x = pow(x, vec.x);
-				y = pow(y, vec.y);
-				z = pow(z, vec.z);
-				return *this;
-			}
-
-			constexpr bool operator==(Vector3 const& vec) const {
-				return (
-					x == vec.x &&
-					y == vec.y &&
-					y == vec.z
-				);
-			}
-
-			constexpr bool operator!=(Vector3 vec) const {
-				return !(*this == vec);
-			}
-
-			/// Float operator overloading.
-
-			constexpr Vector3 operator+(float val) const {
-				return *this + Vector3(val);
-			}
-
-			constexpr Vector3 operator-(float val) const {
-				return *this - Vector3(val);
-			}
-
-			constexpr Vector3 operator*(float val) const {
-				return *this * Vector3(val);
-			}
-
-			constexpr Vector3 operator/(float val) const {
-				return *this / Vector3(val);
-			}
-
-			constexpr Vector3 operator%(float val) const {
-				return *this % Vector3(val);
-			}
-
-			constexpr Vector3 operator^(float val) const {
-				return *this ^ Vector3(val);
-			}
-
-			constexpr Vector3& operator+=(float val) {
-				*this += Vector3(val);
-				return *this;
-			}
-
-			constexpr Vector3& operator-=(float val) {
-				*this -= Vector3(val);
-				return *this;
-			}
-
-			constexpr Vector3& operator*=(float val) {
-				*this *= Vector3(val);
-				return *this;
-			}
-
-			constexpr Vector3& operator/=(float val) {
-				*this /= Vector3(val);
-				return *this;
-			}
-
-			constexpr Vector3& operator%=(float val) {
-				*this %= Vector3(val);
-				return *this;
-			}
-
-			constexpr Vector3& operator^=(float val) {
-				*this ^= Vector3(val);
-				return *this;
-			}
-
-			// Other overloads
-
-			constexpr float& operator[](char const& pos) {
-				switch (pos) {
-				case 'x':
-				case 'X':
-				default:
-					return x;
-				case 'y':
-				case 'Y':
-					return y;
-				case 'z':
-				case 'Z':
-					return z;
-				}
-			}
-
-			constexpr float& operator[](unsigned char const& pos) {
-				switch (pos) {
-				case 0:
-				default:
-					return x;
-				case 1:
-					return y;
-				case 2:
-					return z;
-				}
-			}
-
-			// Extra functions
-
-			/// Gets the vector's length (distance to origin).
-			constexpr float length() const {
-				return sqrt((x * x) + (y * y) + (z * z));
-			}
-
-			/// Gets the vector's length (distance to origin).
-			constexpr float lengthSquared() const {
-				return ((x * x) + (y * y) + (z * z));
-			}
-
-			/// Gets the vector's angle.
-			constexpr Vector3 angle() const {
-				Vector3 res;
-				float mag = length();
-				res.x = acos(x/mag);
-				res.y = acos(y/mag);
-				res.z = acos(z/mag);
-				return res;
-			}
-
-			/// Gets the vector's angle to another vector.
-			constexpr Vector3 angleTo(Vector3 vec) const {
-				Vector3 diff = vec - *this;
-				return diff.angle();
-			}
-
-			/// Gets the normalized vector.
-			constexpr Vector3 normalized() const {
-				if (*this != 0)
-					return *this / length();
-				else
-					return *this;
-			}
-
-			/// Normalizes the vector.
-			constexpr Vector3& normalize() {
-				if (*this != 0)
-					return *this /= length();
-				else
-					return *this;
-			}
-
-			/// Gets a normalized vector pointing towards another vector.
-			constexpr Vector3 normalTo(Vector3 vec) const {
-				Vector3 diff = vec - *this;
-				return diff.normalized();
-			}
-
-			/// Gets the distance to another vector.
-			constexpr float distanceTo(Vector3 vec) const {
-				Vector3 diff = vec - *this;
-				return diff.length();
-			}
-
-			/// Gets the distance to another vector.
-			constexpr float squaredDistanceTo(Vector3 vec) const {
-				Vector3 diff = vec - *this;
-				return diff.lengthSquared();
-			}
-
-			/// Clamps the vector between two values.
-			constexpr void clamp(Vector3 const& min, Vector3 const& max) {
-				x = Math::clamp(x, min.x, max.x);
-				y = Math::clamp(y, min.y, max.y);
-				z = Math::clamp(z, min.z, max.z);
-			}
-
-			/// Returns the vector clamped between two values.
-			constexpr Vector3 clamped(Vector3 const& min, Vector3 const& max) const {
-				return Vector3(
-					Math::clamp(x, min.x, max.x),
-					Math::clamp(y, min.y, max.y),
-					Math::clamp(z, min.z, max.z)
-				);
-			}
-
-			/// Returns the dot product with another vector.
-			constexpr float dotProd(Vector3 const& vec) const {
-				Vector3 mult = (*this) * vec;
-				return mult.x + mult.y + mult.z;
-			}
-
-			/// Returns the cross product with another vector.
-			constexpr Vector3 crossProd(Vector3 const& vec) const {
-				return Vector3(
-					(y * vec.z) - (z * vec.y),
-					(z * vec.x) - (x * vec.z),
-					(x * vec.y) - (y * vec.x)
-				);
-			}
-
-			constexpr Vector2 xy() const {
-				return Vector2(x, y);
-			}
-
-			constexpr Vector2 yz() const {
-				return Vector2(x, y);
-			}
-
-			constexpr Vector2 xz() const {
-				return Vector2(x, y);
-			}
-
-			constexpr Vector3 zyx() const {
-				return Vector3(z, y, x);
-			}
-
-			constexpr Vector3 absolute() const {
-				return Vector3(
-					abs(x),
-					abs(y),
-					abs(z)
-				);
-			}
-	};
-
-	/**
-	* [-----------------]
-	* [                 ]
-	* [  Vector4 Class  ]
-	* [                 ]
-	* [-----------------]
-	*/
-	class Vector4
-	{
-		public:
-			/// The vector's position.
-			float  x, y, z, w;
-
-			/// Constructors.
-
-			constexpr Vector4() {
-				x = 0;
-				y = 0;
-				z = 0;
-				w = 0;
-			}
-
-			constexpr Vector4(float v) {
-				x = v;
-				y = v;
-				z = v;
-				w = v;
-			}
-
-			constexpr Vector4(float x, float y, float z, float w = 0.0) {
-				this->x = x;
-				this->y = y;
-				this->z = z;
-				this->w = w;
-			}
-
-			constexpr Vector4(Vector2 const& v1, Vector2 const& v2) {
-				this->x = v1.x;
-				this->y = v1.y;
-				this->z = v2.x;
-				this->w = v2.y;
-			}
-
-			constexpr Vector4(Vector4 const& vec) {
-				x = vec.x;
-				y = vec.y;
-				z = vec.z;
-				w = vec.w;
-			}
-
-			constexpr Vector4(Vector3 const& vec, float w = 0) {
-				x = vec.x;
-				y = vec.y;
-				z = vec.z;
-				this->w = w;
-			}
-
-			constexpr Vector4(Vector2 const& vec, float z = 0, float w = 0) {
-				x = vec.x;
-				y = vec.y;
-				this->z = z;
-				this->w = w;
-			}
-
-			/// Destructor.
-
-			constexpr ~Vector4() {}
-
-			/// Vector operator overloading.
-
-			constexpr Vector4 operator+(Vector4 const& vec) const {
-				return Vector4(
-					x + vec.x,
-					y + vec.y,
-					z + vec.z,
-					w + vec.w
-				);
-			}
-
-			constexpr Vector4 operator-(Vector4 const& vec) const {
-				return Vector4(
-					x - vec.x,
-					y - vec.y,
-					z - vec.z,
-					w - vec.w
-				);
-			}
-
-			constexpr Vector4 operator*(Vector4 const& vec) const {
-				return Vector4(
-					x * vec.x,
-					y * vec.y,
-					z * vec.z,
-					w * vec.w
-				);
-			}
-
-			constexpr Vector4 operator/(Vector4 const& vec) const {
-				return Vector4(
-					x / vec.x,
-					y / vec.y,
-					z / vec.z,
-					w / vec.w
-				);
-			}
-
-			constexpr Vector4 operator%(Vector4 const& vec) const {
-				return Vector4(
-					fmod(x, vec.x),
-					fmod(y, vec.y),
-					fmod(z, vec.z),
-					fmod(w, vec.w)
-				);
-			}
-
-			constexpr Vector4 operator^(Vector4 const& vec) const {
-				return Vector4(
-					pow(x, vec.x),
-					pow(y, vec.y),
-					pow(z, vec.z),
-					pow(w, vec.w)
-				);
-			}
-
-			constexpr Vector4& operator+=(Vector4 const& vec) {
-				x += vec.x;
-				y += vec.y;
-				z += vec.z;
-				w += vec.w;
-				return *this;
-			}
-
-			constexpr Vector4& operator-=(Vector4 const& vec) {
-				x -= vec.x;
-				y -= vec.y;
-				z -= vec.z;
-				w -= vec.w;
-				return *this;
-			}
-
-			constexpr Vector4& operator*=(Vector4 const& vec) {
-				x *= vec.x;
-				y *= vec.y;
-				z *= vec.z;
-				w *= vec.w;
-				return *this;
-			}
-
-			constexpr Vector4& operator/=(Vector4 const& vec) {
-				x /= vec.x;
-				y /= vec.y;
-				z /= vec.z;
-				w /= vec.w;
-				return *this;
-			}
-
-			constexpr Vector4& operator%=(Vector4 const& vec) {
-				x = fmod(x, vec.x);
-				y = fmod(y, vec.y);
-				z = fmod(z, vec.z);
-				w = fmod(w, vec.w);
-				return *this;
-			}
-
-			constexpr Vector4& operator^=(Vector4 const& vec) {
-				x = pow(x, vec.x);
-				y = pow(y, vec.y);
-				z = pow(z, vec.z);
-				w = pow(w, vec.w);
-				return *this;
-			}
-
-			constexpr bool operator==(Vector4 const& vec) const {
-				return (
-					x == vec.x &&
-					y == vec.y &&
-					y == vec.z &&
-					y == vec.w
-				);
-			}
-
-			constexpr bool operator!=(Vector4 const& vec) const {
-				return !(*this == vec);
-			}
-
-			/// Float operator overloading.
-
-			constexpr Vector4 operator+(float val) const {
-				return *this + Vector4(val);
-			}
-
-			constexpr Vector4 operator-(float val) const {
-				return *this - Vector4(val);
-			}
-
-			constexpr Vector4 operator*(float val) const {
-				return *this * Vector4(val);
-			}
-
-			constexpr Vector4 operator/(float val) const {
-				return *this / Vector4(val);
-			}
-
-			constexpr Vector4 operator%(float val) const {
-				return *this % Vector4(val);
-			}
-
-			constexpr Vector4 operator^(float val) const {
-				return *this ^ Vector4(val);
-			}
-
-			constexpr Vector4& operator+=(float val) {
-				*this += Vector4(val);
-				return *this;
-			}
-
-			constexpr Vector4& operator-=(float val) {
-				*this -= Vector4(val);
-				return *this;
-			}
-
-			constexpr Vector4& operator*=(float val) {
-				*this *= Vector4(val);
-				return *this;
-			}
-
-			constexpr Vector4& operator/=(float val) {
-				*this /= Vector4(val);
-				return *this;
-			}
-
-			constexpr Vector4& operator^=(float val) {
-				*this ^= Vector4(val);
-				return *this;
-			}
-
-			constexpr Vector4& operator%=(float val) {
-				*this %= Vector4(val);
-				return *this;
-			}
-
-			// Other overloads
-
-			constexpr float& operator[](char const& pos) {
-				switch (pos) {
-				case 'x':
-				case 'X':
-				default:
-					return x;
-				case 'y':
-				case 'Y':
-					return y;
-				case 'z':
-				case 'Z':
-					return z;
-				case 'w':
-				case 'W':
-					return w;
-				}
-			}
-
-			constexpr float& operator[](unsigned char const& pos) {
-				switch (pos) {
-				case 0:
-				default:
-					return x;
-				case 1:
-					return y;
-				case 2:
-					return z;
-				case 3:
-					return w;
-				}
-			}
-
-			// Extra functions
-
-			/// Gets the vector's length (distance to origin).
-			constexpr float length() const {
-				return sqrt((x * x) + (y * y) + (z * z) + (w * w));
-			}
-
-			/// Gets the vector's length (distance to origin).
-			constexpr float lengthSquared() const {
-				return ((x * x) + (y * y) + (z * z) + (w * w));
-			}
-
-			/// Gets the normalized vector.
-			constexpr Vector4 normalized() const {
-				if (*this != 0)
-					return *this / length();
-				else
-					return *this;
-			}
-
-			/// Normalizes the vector.
-			constexpr Vector4& normalize() {
-				if (*this != 0)
-					return *this /= length();
-				else
-					return *this;
-			}
-
-			/// Gets the distance to another vector.
-			constexpr float distanceTo(Vector4 vec) const {
-				Vector4 diff = vec - *this;
-				return diff.length();
-			}
-
-			/// Gets the distance to another vector.
-			constexpr float squaredDistanceTo(Vector4 vec) const {
-				Vector4 diff = vec - *this;
-				return diff.lengthSquared();
-			}
-
-			/// Gets a normalized vector pointing towards another vector.
-			constexpr Vector4 normalTo(Vector4 vec) const {
-				Vector4 diff = vec - *this;
-				return diff.normalized();
-			}
-
-			/// Clamps the vector between two values.
-			constexpr void clamp(Vector4 const& min, Vector4 const& max) {
-				x = Math::clamp(x, min.x, max.x);
-				y = Math::clamp(y, min.y, max.y);
-				z = Math::clamp(z, min.z, max.z);
-				z = Math::clamp(w, min.w, max.w);
-			}
-
-			/// Returns the vector clamped between two values.
-			constexpr Vector4 clamped(Vector4 const& min, Vector4 const& max) const {
-				return Vector4(
-					Math::clamp(x, min.x, max.x),
-					Math::clamp(y, min.y, max.y),
-					Math::clamp(z, min.z, max.z),
-					Math::clamp(w, min.w, max.w)
-				);
-			}
-
-			/// Returns the dot product with another vector.
-			constexpr float dotProd(Vector4 const& vec) const {
-				Vector4 mult = (*this) * vec;
-				return mult.x + mult.y + mult.z + mult.w;
-			}
-
-			constexpr Vector4 absolute() const {
-				return Vector4(
-					abs(x),
-					abs(y),
-					abs(z),
-					abs(w)
-				);
-			}
-
-			constexpr Vector3 xyz() const {
-				return Vector3(x, y, z);
-			}
-
-			constexpr Vector4 wzyx() const {
-				return Vector4(w, z, y, x);
-			}
-
-			constexpr Vector4 wxyz() const {
-				return Vector4(w, x, y, z);
-			}
-
-			constexpr Vector4 compensated() const {
-				return Vector4(xyz() / w, w);
-			}
-	};
+	concept Vectorable = Type::Equal<T, float> || ValidVector<T>;
 }
+
+/**
+* [-----------------]
+* [                 ]
+* [  Vector2 Class  ]
+* [                 ]
+* [-----------------]
+*/
+class Vector2
+{
+	public:
+		/// The vector's position.
+		float x, y;
+
+		/// Consturctors.
+		constexpr Vector2() {
+			x = 0;
+			y = 0;
+		}
+
+		constexpr Vector2(float v) {
+			x = v;
+			y = v;
+		}
+
+		constexpr Vector2(float x, float y) {
+			this->x = x;
+			this->y = y;
+		}
+
+		constexpr Vector2(Vector2 const& vec) {
+			x = vec.x;
+			y = vec.y;
+		}
+
+		/// Destructor.
+		constexpr ~Vector2() {}
+
+		/// Vector operator overloading.
+		constexpr Vector2 operator+(Vector2 const& vec) const {
+			return Vector2(
+				x + vec.x,
+				y + vec.y
+			);
+		}
+
+		constexpr Vector2 operator-(Vector2 const& vec) const {
+			return Vector2(
+				x - vec.x,
+				y - vec.y
+			);
+		}
+
+		constexpr Vector2 operator*(Vector2 const& vec) const {
+			return Vector2(
+				x * vec.x,
+				y * vec.y
+			);
+		}
+
+		constexpr Vector2 operator/(Vector2 const& vec) const {
+			return Vector2(
+				x / vec.x,
+				y / vec.y
+			);
+		}
+
+		constexpr Vector2 operator%(Vector2 const& vec) const {
+			return Vector2(
+				fmod(x, vec.x),
+				fmod(y, vec.y)
+			);
+		}
+
+		constexpr Vector2 operator^(Vector2 const& vec) const {
+			return Vector2(
+				pow(x, vec.x),
+				pow(y, vec.y)
+			);
+		}
+
+		constexpr Vector2& operator+=(Vector2 const& vec) {
+			x += vec.x;
+			y += vec.y;
+			return *this;
+		}
+
+		constexpr Vector2& operator-=(Vector2 const& vec) {
+			x -= vec.x;
+			y -= vec.y;
+			return *this;
+		}
+
+		constexpr Vector2& operator*=(Vector2 const& vec) {
+			x *= vec.x;
+			y *= vec.y;
+			return *this;
+		}
+
+		constexpr Vector2& operator/=(Vector2 const& vec) {
+			x /= vec.x;
+			y /= vec.y;
+			return *this;
+		}
+
+		constexpr Vector2& operator%=(Vector2 const& vec) {
+			x = fmod(x, vec.x);
+			y = fmod(y, vec.y);
+			return *this;
+		}
+
+		constexpr Vector2& operator^=(Vector2 const& vec) {
+			x = fmod(x, vec.x);
+			y = fmod(y, vec.y);
+			return *this;
+		}
+
+		constexpr bool operator==(Vector2 const& vec) const {
+			return (
+				x == vec.x &&
+				y == vec.y
+			);
+		}
+
+		constexpr bool operator!=(Vector2 const& vec) const {
+			return !(*this == vec);
+		}
+
+		/// Float operator overloading.
+		constexpr Vector2 operator+(float val) const {
+			return *this + Vector2(val);
+		}
+
+		constexpr Vector2 operator-(float val) const {
+			return *this - Vector2(val);
+		}
+
+		constexpr Vector2 operator*(float val) const {
+			return *this * Vector2(val);
+		}
+
+		constexpr Vector2 operator/(float val) const {
+			return *this / Vector2(val);
+		}
+
+		constexpr Vector2 operator%(float val) const {
+			return *this % Vector2(val);
+		}
+
+		constexpr Vector2 operator^(float val) const {
+			return *this ^ Vector2(val);
+		}
+
+		constexpr Vector2& operator+=(float val) {
+			*this += Vector2(val);
+			return *this;
+		}
+
+		constexpr Vector2& operator-=(float val) {
+			*this -= Vector2(val);
+			return *this;
+		}
+
+		constexpr Vector2& operator*=(float val) {
+			*this *= Vector2(val);
+			return *this;
+		}
+
+		constexpr Vector2& operator/=(float val) {
+			*this /= Vector2(val);
+			return *this;
+		}
+
+		constexpr Vector2& operator%=(float val) {
+			*this %= Vector2(val);
+			return *this;
+		}
+
+		constexpr Vector2& operator^=(float val) {
+			*this ^= Vector2(val);
+			return *this;
+		}
+
+		// Other overloads
+
+		constexpr float& operator[](char const& pos) {
+			switch (pos) {
+			case 'x':
+			case 'X':
+			default:
+				return x;
+			case 'y':
+			case 'Y':
+				return y;
+			}
+		}
+
+		constexpr float& operator[](unsigned char const& pos) {
+			switch (pos) {
+			case 0:
+			default:
+				return x;
+			case 1:
+				return y;
+			}
+		}
+
+		// Extra functions
+
+		/// Gets the vector's length (distance to origin).
+		constexpr float length() const {
+			return sqrt((x * x) + (y * y));
+		}
+
+		/// Gets the vector's length (distance to origin).
+		constexpr float lengthSquared() const {
+			return ((x * x) + (y * y));
+		}
+
+		/// Gets the normalized vector.
+		constexpr Vector2 normalized() const {
+			if (*this != 0)
+				return *this / length();
+			else
+				return *this;
+		}
+
+		/// Normalizes the vector.
+		constexpr Vector2& normalize() {
+			if (*this != 0)
+				return *this /= length();
+			else
+				return *this;
+		}
+
+		/// Gets the distance to another vector.
+		constexpr float distanceTo(Vector2 vec) const {
+			Vector2 diff = vec - *this;
+			return diff.length();
+		}
+
+		/// Gets the distance to another vector.
+		constexpr float squaredDistanceTo(Vector2 vec) const {
+			Vector2 diff = vec - *this;
+			return diff.lengthSquared();
+		}
+
+		/// Gets the vector's angle.
+		constexpr float angle() const {
+			return - atan2(x, y) + Math::hpi;
+		}
+
+		/// Gets the vector's angle to another vector.
+		constexpr float angleTo(Vector2 vec) const {
+			Vector2 diff = vec - *this;
+			return diff.angle();
+		}
+
+		/// Gets a normalized vector pointing towards another vector.
+		constexpr Vector2 normalTo(Vector2 vec) const {
+			Vector2 diff = vec - *this;
+			return diff.normalized();
+		}
+
+
+		/// Clamps the vector between two values.
+		constexpr void clamp(Vector2 const& min, Vector2 const& max) {
+			x = Math::clamp(x, min.x, max.x);
+			y = Math::clamp(y, min.y, max.y);
+		}
+
+		/// Returns the vector clamped between two values.
+		constexpr Vector2 clamped(Vector2 const& min, Vector2 const& max) const {
+			return Vector2(
+				Math::clamp(x, min.x, max.x),
+				Math::clamp(y, min.y, max.y)
+			);
+		}
+
+		/// Gets the tangent of the vector.
+		constexpr float tangent() const {
+			return x / y;
+		}
+
+		/// Returns the dot product with another vector.
+		constexpr float dotProd(Vector2 const& vec) const {
+			Vector2 mult = (*this) * vec;
+			return mult.x + mult.y;
+		}
+
+		/// Returns the cross product with another vector.
+		constexpr float crossProd(Vector2 const& vec) const {
+			return (x * vec.y) - (y * vec.x);
+		}
+
+		constexpr Vector2 absolute() const {
+			return Vector2(
+				abs(x),
+				abs(y)
+			);
+		}
+
+		constexpr Vector2 yx() const {
+			return Vector2(y, x);
+		}
+};
+
+/**
+* [-----------------]
+* [                 ]
+* [  Vector3 Class  ]
+* [                 ]
+* [-----------------]
+*/
+
+class Vector3
+{
+	public:
+		/// The vector's position.
+		float x, y, z;
+
+		/// Constructors.
+
+		constexpr Vector3() {
+			x = 0;
+			y = 0;
+			z = 0;
+		}
+
+		constexpr Vector3(float v) {
+			x = v;
+			y = v;
+			z = v;
+		}
+
+		constexpr Vector3(float x, float y, float z = 0.0) {
+			this->x = x;
+			this->y = y;
+			this->z = z;
+		}
+
+		constexpr Vector3(Vector3 const& vec) {
+			x = vec.x;
+			y = vec.y;
+			z = vec.z;
+		}
+
+		constexpr Vector3(Vector2 const& vec, float z = 0.0) {
+			x = vec.x;
+			y = vec.y;
+			this->z = z;
+		}
+
+		/// Destructor.
+
+		constexpr ~Vector3() {}
+
+		/// Vector operator overloading.
+
+		constexpr Vector3 operator+(Vector3 const& vec) const {
+			return Vector3(
+				x + vec.x,
+				y + vec.y,
+				z + vec.z
+			);
+		}
+
+		constexpr Vector3 operator-(Vector3 const& vec) const {
+			return Vector3(
+				x - vec.x,
+				y - vec.y,
+				z - vec.z
+			);
+		}
+
+		constexpr Vector3 operator*(Vector3 const& vec) const {
+			return Vector3(
+				x * vec.x,
+				y * vec.y,
+				z * vec.z
+			);
+		}
+
+		constexpr Vector3 operator/(Vector3 const& vec) const {
+			return Vector3(
+				x / vec.x,
+				y / vec.y,
+				z / vec.z
+			);
+		}
+
+		constexpr Vector3 operator%(Vector3 const& vec) const {
+			return Vector3(
+				fmod(x, vec.x),
+				fmod(y, vec.y),
+				fmod(z, vec.z)
+			);
+		}
+
+		constexpr Vector3 operator^(Vector3 const& vec) const {
+			return Vector3(
+				pow(x, vec.x),
+				pow(y, vec.y),
+				pow(z, vec.z)
+			);
+		}
+
+		constexpr Vector3& operator+=(Vector3 const& vec) {
+			x += vec.x;
+			y += vec.y;
+			z += vec.z;
+			return *this;
+		}
+
+		constexpr Vector3& operator-=(Vector3 const& vec) {
+			x -= vec.x;
+			y -= vec.y;
+			z -= vec.z;
+			return *this;
+		}
+
+		constexpr Vector3& operator*=(Vector3 const& vec) {
+			x *= vec.x;
+			y *= vec.y;
+			z *= vec.z;
+			return *this;
+		}
+
+		constexpr Vector3& operator/=(Vector3 const& vec) {
+			x /= vec.x;
+			y /= vec.y;
+			z /= vec.z;
+			return *this;
+		}
+
+		constexpr Vector3& operator%=(Vector3 const& vec) {
+			x = fmod(x, vec.x);
+			y = fmod(y, vec.y);
+			z = fmod(z, vec.z);
+			return *this;
+		}
+
+		constexpr Vector3& operator^=(Vector3 const& vec) {
+			x = pow(x, vec.x);
+			y = pow(y, vec.y);
+			z = pow(z, vec.z);
+			return *this;
+		}
+
+		constexpr bool operator==(Vector3 const& vec) const {
+			return (
+				x == vec.x &&
+				y == vec.y &&
+				y == vec.z
+			);
+		}
+
+		constexpr bool operator!=(Vector3 vec) const {
+			return !(*this == vec);
+		}
+
+		/// Float operator overloading.
+
+		constexpr Vector3 operator+(float val) const {
+			return *this + Vector3(val);
+		}
+
+		constexpr Vector3 operator-(float val) const {
+			return *this - Vector3(val);
+		}
+
+		constexpr Vector3 operator*(float val) const {
+			return *this * Vector3(val);
+		}
+
+		constexpr Vector3 operator/(float val) const {
+			return *this / Vector3(val);
+		}
+
+		constexpr Vector3 operator%(float val) const {
+			return *this % Vector3(val);
+		}
+
+		constexpr Vector3 operator^(float val) const {
+			return *this ^ Vector3(val);
+		}
+
+		constexpr Vector3& operator+=(float val) {
+			*this += Vector3(val);
+			return *this;
+		}
+
+		constexpr Vector3& operator-=(float val) {
+			*this -= Vector3(val);
+			return *this;
+		}
+
+		constexpr Vector3& operator*=(float val) {
+			*this *= Vector3(val);
+			return *this;
+		}
+
+		constexpr Vector3& operator/=(float val) {
+			*this /= Vector3(val);
+			return *this;
+		}
+
+		constexpr Vector3& operator%=(float val) {
+			*this %= Vector3(val);
+			return *this;
+		}
+
+		constexpr Vector3& operator^=(float val) {
+			*this ^= Vector3(val);
+			return *this;
+		}
+
+		// Other overloads
+
+		constexpr float& operator[](char const& pos) {
+			switch (pos) {
+			case 'x':
+			case 'X':
+			default:
+				return x;
+			case 'y':
+			case 'Y':
+				return y;
+			case 'z':
+			case 'Z':
+				return z;
+			}
+		}
+
+		constexpr float& operator[](unsigned char const& pos) {
+			switch (pos) {
+			case 0:
+			default:
+				return x;
+			case 1:
+				return y;
+			case 2:
+				return z;
+			}
+		}
+
+		// Extra functions
+
+		/// Gets the vector's length (distance to origin).
+		constexpr float length() const {
+			return sqrt((x * x) + (y * y) + (z * z));
+		}
+
+		/// Gets the vector's length (distance to origin).
+		constexpr float lengthSquared() const {
+			return ((x * x) + (y * y) + (z * z));
+		}
+
+		/// Gets the vector's angle.
+		constexpr Vector3 angle() const {
+			Vector3 res;
+			float mag = length();
+			res.x = acos(x/mag);
+			res.y = acos(y/mag);
+			res.z = acos(z/mag);
+			return res;
+		}
+
+		/// Gets the vector's angle to another vector.
+		constexpr Vector3 angleTo(Vector3 vec) const {
+			Vector3 diff = vec - *this;
+			return diff.angle();
+		}
+
+		/// Gets the normalized vector.
+		constexpr Vector3 normalized() const {
+			if (*this != 0)
+				return *this / length();
+			else
+				return *this;
+		}
+
+		/// Normalizes the vector.
+		constexpr Vector3& normalize() {
+			if (*this != 0)
+				return *this /= length();
+			else
+				return *this;
+		}
+
+		/// Gets a normalized vector pointing towards another vector.
+		constexpr Vector3 normalTo(Vector3 vec) const {
+			Vector3 diff = vec - *this;
+			return diff.normalized();
+		}
+
+		/// Gets the distance to another vector.
+		constexpr float distanceTo(Vector3 vec) const {
+			Vector3 diff = vec - *this;
+			return diff.length();
+		}
+
+		/// Gets the distance to another vector.
+		constexpr float squaredDistanceTo(Vector3 vec) const {
+			Vector3 diff = vec - *this;
+			return diff.lengthSquared();
+		}
+
+		/// Clamps the vector between two values.
+		constexpr void clamp(Vector3 const& min, Vector3 const& max) {
+			x = Math::clamp(x, min.x, max.x);
+			y = Math::clamp(y, min.y, max.y);
+			z = Math::clamp(z, min.z, max.z);
+		}
+
+		/// Returns the vector clamped between two values.
+		constexpr Vector3 clamped(Vector3 const& min, Vector3 const& max) const {
+			return Vector3(
+				Math::clamp(x, min.x, max.x),
+				Math::clamp(y, min.y, max.y),
+				Math::clamp(z, min.z, max.z)
+			);
+		}
+
+		/// Returns the dot product with another vector.
+		constexpr float dotProd(Vector3 const& vec) const {
+			Vector3 mult = (*this) * vec;
+			return mult.x + mult.y + mult.z;
+		}
+
+		/// Returns the cross product with another vector.
+		constexpr Vector3 crossProd(Vector3 const& vec) const {
+			return Vector3(
+				(y * vec.z) - (z * vec.y),
+				(z * vec.x) - (x * vec.z),
+				(x * vec.y) - (y * vec.x)
+			);
+		}
+
+		constexpr Vector2 xy() const {
+			return Vector2(x, y);
+		}
+
+		constexpr Vector2 yz() const {
+			return Vector2(x, y);
+		}
+
+		constexpr Vector2 xz() const {
+			return Vector2(x, y);
+		}
+
+		constexpr Vector3 zyx() const {
+			return Vector3(z, y, x);
+		}
+
+		constexpr Vector3 absolute() const {
+			return Vector3(
+				abs(x),
+				abs(y),
+				abs(z)
+			);
+		}
+};
+
+/**
+* [-----------------]
+* [                 ]
+* [  Vector4 Class  ]
+* [                 ]
+* [-----------------]
+*/
+class Vector4
+{
+	public:
+		/// The vector's position.
+		float  x, y, z, w;
+
+		/// Constructors.
+
+		constexpr Vector4() {
+			x = 0;
+			y = 0;
+			z = 0;
+			w = 0;
+		}
+
+		constexpr Vector4(float v) {
+			x = v;
+			y = v;
+			z = v;
+			w = v;
+		}
+
+		constexpr Vector4(float x, float y, float z, float w = 0.0) {
+			this->x = x;
+			this->y = y;
+			this->z = z;
+			this->w = w;
+		}
+
+		constexpr Vector4(Vector2 const& v1, Vector2 const& v2) {
+			this->x = v1.x;
+			this->y = v1.y;
+			this->z = v2.x;
+			this->w = v2.y;
+		}
+
+		constexpr Vector4(Vector4 const& vec) {
+			x = vec.x;
+			y = vec.y;
+			z = vec.z;
+			w = vec.w;
+		}
+
+		constexpr Vector4(Vector3 const& vec, float w = 0) {
+			x = vec.x;
+			y = vec.y;
+			z = vec.z;
+			this->w = w;
+		}
+
+		constexpr Vector4(Vector2 const& vec, float z = 0, float w = 0) {
+			x = vec.x;
+			y = vec.y;
+			this->z = z;
+			this->w = w;
+		}
+
+		/// Destructor.
+
+		constexpr ~Vector4() {}
+
+		/// Vector operator overloading.
+
+		constexpr Vector4 operator+(Vector4 const& vec) const {
+			return Vector4(
+				x + vec.x,
+				y + vec.y,
+				z + vec.z,
+				w + vec.w
+			);
+		}
+
+		constexpr Vector4 operator-(Vector4 const& vec) const {
+			return Vector4(
+				x - vec.x,
+				y - vec.y,
+				z - vec.z,
+				w - vec.w
+			);
+		}
+
+		constexpr Vector4 operator*(Vector4 const& vec) const {
+			return Vector4(
+				x * vec.x,
+				y * vec.y,
+				z * vec.z,
+				w * vec.w
+			);
+		}
+
+		constexpr Vector4 operator/(Vector4 const& vec) const {
+			return Vector4(
+				x / vec.x,
+				y / vec.y,
+				z / vec.z,
+				w / vec.w
+			);
+		}
+
+		constexpr Vector4 operator%(Vector4 const& vec) const {
+			return Vector4(
+				fmod(x, vec.x),
+				fmod(y, vec.y),
+				fmod(z, vec.z),
+				fmod(w, vec.w)
+			);
+		}
+
+		constexpr Vector4 operator^(Vector4 const& vec) const {
+			return Vector4(
+				pow(x, vec.x),
+				pow(y, vec.y),
+				pow(z, vec.z),
+				pow(w, vec.w)
+			);
+		}
+
+		constexpr Vector4& operator+=(Vector4 const& vec) {
+			x += vec.x;
+			y += vec.y;
+			z += vec.z;
+			w += vec.w;
+			return *this;
+		}
+
+		constexpr Vector4& operator-=(Vector4 const& vec) {
+			x -= vec.x;
+			y -= vec.y;
+			z -= vec.z;
+			w -= vec.w;
+			return *this;
+		}
+
+		constexpr Vector4& operator*=(Vector4 const& vec) {
+			x *= vec.x;
+			y *= vec.y;
+			z *= vec.z;
+			w *= vec.w;
+			return *this;
+		}
+
+		constexpr Vector4& operator/=(Vector4 const& vec) {
+			x /= vec.x;
+			y /= vec.y;
+			z /= vec.z;
+			w /= vec.w;
+			return *this;
+		}
+
+		constexpr Vector4& operator%=(Vector4 const& vec) {
+			x = fmod(x, vec.x);
+			y = fmod(y, vec.y);
+			z = fmod(z, vec.z);
+			w = fmod(w, vec.w);
+			return *this;
+		}
+
+		constexpr Vector4& operator^=(Vector4 const& vec) {
+			x = pow(x, vec.x);
+			y = pow(y, vec.y);
+			z = pow(z, vec.z);
+			w = pow(w, vec.w);
+			return *this;
+		}
+
+		constexpr bool operator==(Vector4 const& vec) const {
+			return (
+				x == vec.x &&
+				y == vec.y &&
+				y == vec.z &&
+				y == vec.w
+			);
+		}
+
+		constexpr bool operator!=(Vector4 const& vec) const {
+			return !(*this == vec);
+		}
+
+		/// Float operator overloading.
+
+		constexpr Vector4 operator+(float val) const {
+			return *this + Vector4(val);
+		}
+
+		constexpr Vector4 operator-(float val) const {
+			return *this - Vector4(val);
+		}
+
+		constexpr Vector4 operator*(float val) const {
+			return *this * Vector4(val);
+		}
+
+		constexpr Vector4 operator/(float val) const {
+			return *this / Vector4(val);
+		}
+
+		constexpr Vector4 operator%(float val) const {
+			return *this % Vector4(val);
+		}
+
+		constexpr Vector4 operator^(float val) const {
+			return *this ^ Vector4(val);
+		}
+
+		constexpr Vector4& operator+=(float val) {
+			*this += Vector4(val);
+			return *this;
+		}
+
+		constexpr Vector4& operator-=(float val) {
+			*this -= Vector4(val);
+			return *this;
+		}
+
+		constexpr Vector4& operator*=(float val) {
+			*this *= Vector4(val);
+			return *this;
+		}
+
+		constexpr Vector4& operator/=(float val) {
+			*this /= Vector4(val);
+			return *this;
+		}
+
+		constexpr Vector4& operator^=(float val) {
+			*this ^= Vector4(val);
+			return *this;
+		}
+
+		constexpr Vector4& operator%=(float val) {
+			*this %= Vector4(val);
+			return *this;
+		}
+
+		// Other overloads
+
+		constexpr float& operator[](char const& pos) {
+			switch (pos) {
+			case 'x':
+			case 'X':
+			default:
+				return x;
+			case 'y':
+			case 'Y':
+				return y;
+			case 'z':
+			case 'Z':
+				return z;
+			case 'w':
+			case 'W':
+				return w;
+			}
+		}
+
+		constexpr float& operator[](unsigned char const& pos) {
+			switch (pos) {
+			case 0:
+			default:
+				return x;
+			case 1:
+				return y;
+			case 2:
+				return z;
+			case 3:
+				return w;
+			}
+		}
+
+		// Extra functions
+
+		/// Gets the vector's length (distance to origin).
+		constexpr float length() const {
+			return sqrt((x * x) + (y * y) + (z * z) + (w * w));
+		}
+
+		/// Gets the vector's length (distance to origin).
+		constexpr float lengthSquared() const {
+			return ((x * x) + (y * y) + (z * z) + (w * w));
+		}
+
+		/// Gets the normalized vector.
+		constexpr Vector4 normalized() const {
+			if (*this != 0)
+				return *this / length();
+			else
+				return *this;
+		}
+
+		/// Normalizes the vector.
+		constexpr Vector4& normalize() {
+			if (*this != 0)
+				return *this /= length();
+			else
+				return *this;
+		}
+
+		/// Gets the distance to another vector.
+		constexpr float distanceTo(Vector4 vec) const {
+			Vector4 diff = vec - *this;
+			return diff.length();
+		}
+
+		/// Gets the distance to another vector.
+		constexpr float squaredDistanceTo(Vector4 vec) const {
+			Vector4 diff = vec - *this;
+			return diff.lengthSquared();
+		}
+
+		/// Gets a normalized vector pointing towards another vector.
+		constexpr Vector4 normalTo(Vector4 vec) const {
+			Vector4 diff = vec - *this;
+			return diff.normalized();
+		}
+
+		/// Clamps the vector between two values.
+		constexpr void clamp(Vector4 const& min, Vector4 const& max) {
+			x = Math::clamp(x, min.x, max.x);
+			y = Math::clamp(y, min.y, max.y);
+			z = Math::clamp(z, min.z, max.z);
+			z = Math::clamp(w, min.w, max.w);
+		}
+
+		/// Returns the vector clamped between two values.
+		constexpr Vector4 clamped(Vector4 const& min, Vector4 const& max) const {
+			return Vector4(
+				Math::clamp(x, min.x, max.x),
+				Math::clamp(y, min.y, max.y),
+				Math::clamp(z, min.z, max.z),
+				Math::clamp(w, min.w, max.w)
+			);
+		}
+
+		/// Returns the dot product with another vector.
+		constexpr float dotProd(Vector4 const& vec) const {
+			Vector4 mult = (*this) * vec;
+			return mult.x + mult.y + mult.z + mult.w;
+		}
+
+		constexpr Vector4 absolute() const {
+			return Vector4(
+				abs(x),
+				abs(y),
+				abs(z),
+				abs(w)
+			);
+		}
+
+		constexpr Vector3 xyz() const {
+			return Vector3(x, y, z);
+		}
+
+		constexpr Vector4 wzyx() const {
+			return Vector4(w, z, y, x);
+		}
+
+		constexpr Vector4 wxyz() const {
+			return Vector4(w, x, y, z);
+		}
+
+		constexpr Vector4 compensated() const {
+			return Vector4(xyz() / w, w);
+		}
+};
+
+typedef Vector2 Vec2;
+typedef Vector3 Vec3;
+typedef Vector4 Vec4;
 
 namespace VecMath
 {
-	using namespace Vector;
-
 	enum class Axis: size_t
 	{
 		POS_X,
@@ -1440,7 +1442,7 @@ namespace VecMath
 	typedef vector<Vector4> Points4D;
 
 	/// Base transformation data structure.
-	template <VectorType T, Vectorable ROT_T>
+	template <VecType::ValidVector T, VecType::Vectorable ROT_T>
 	struct Transform {
 		constexpr Transform() {}
 		constexpr Transform(T const& position, ROT_T const& rotation, T const& scale) {
@@ -1474,9 +1476,5 @@ namespace VecMath
 		);
 	}
 }
-
-typedef Vector::Vector2 Vec2;
-typedef Vector::Vector3 Vec3;
-typedef Vector::Vector4 Vec4;
 
 #endif // VECTOR234_H

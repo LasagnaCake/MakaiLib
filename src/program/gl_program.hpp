@@ -19,10 +19,7 @@ namespace Makai {
 		std::vector,
 		std::function,
 		std::string,
-		std::unordered_map,
-		Vector::Vector2,
-		Vector::Vector3,
-		Vector::Vector4;
+		std::unordered_map;
 	}
 
 	SDL_Event pollEvents() {

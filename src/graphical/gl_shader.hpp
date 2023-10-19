@@ -18,7 +18,6 @@ namespace Shader {
 	namespace {
 		using namespace std;
 		using namespace FileLoader;
-		using namespace Vector;
 
 		struct _UniSet {
 			string name;
