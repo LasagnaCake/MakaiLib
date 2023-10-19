@@ -4,7 +4,6 @@
 #include "algebra.hpp"
 #include "vectorn.hpp"
 #include "helper.hpp"
-#include <vector>
 
 namespace Matrix {
 	namespace {
