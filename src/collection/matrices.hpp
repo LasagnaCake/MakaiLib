@@ -81,6 +81,8 @@ namespace Matrix {
 			}
 		}
 
+		constexpr ~Mat() {}
+
 		/// Gets the transposed matrix.
 		constexpr Mat<C, R, T> transposed() const {
 			Mat<C, R, T> res;
