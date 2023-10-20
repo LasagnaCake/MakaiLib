@@ -517,7 +517,7 @@ public:
 		return *this;
 	}
 
-	constexpr Matrix<R, C, T>& operator*=(Matrix<R, C, T> const& mat) requires MatType::EqualSize<R, C>{
+	constexpr Matrix<R, C, T>& operator*=(Matrix<R, C, T> const& mat) requires MatType::EqualSize<R, C> {
 		(*this) = (*this) * mat;
 		return *this;
 	}
@@ -530,7 +530,7 @@ public:
 	}
 
 	template<size_t C2>
-	constexpr Matrix<R, C, T>& operator/=(Matrix<R, C, T> const& mat) requires MatType::EqualSize<R, C>{
+	constexpr Matrix<R, C, T>& operator/=(Matrix<R, C, T> const& mat) requires MatType::EqualSize<R, C> {
 		(*this) = (*this) / mat;
 		return *this;
 	}
@@ -847,25 +847,48 @@ typedef Matrix3x4i Mat3x4i;
 typedef Matrix4x4i Mat4x4i;
 
 namespace MatMath {
-	Matrix4x4 lookAt(Vector3 const& eye, Vector3 const& at, Vector3 const& up) {
+	constexpr Matrix4x4 rightHandedLookAt(Vector3 const& eye, Vector3 const& at, Vector3 const& up) {
 		Vector3 const f((at - eye).normalized());
 		Vector3 const s(f.crossProd(up).normalized());
 		Vector3 const u(s.crossProd(f));
-
-		Matrix4x4 result(1);
-		result[0][0] = s.x;
-		result[1][0] = s.y;
-		result[2][0] = s.z;
-		result[0][1] = u.x;
-		result[1][1] = u.y;
-		result[2][1] = u.z;
-		result[0][2] =-f.x;
-		result[1][2] =-f.y;
-		result[2][2] =-f.z;
-		result[3][0] =-s.dotProd(eye);
-		result[3][1] =-u.dotProd(eye);
-		result[3][2] = f.dotProd(eye);
+		Matrix4x4 result(Matrix4x4::identity());
+		result[0][0] = +s.x;
+		result[1][0] = +s.y;
+		result[2][0] = +s.z;
+		result[0][1] = +u.x;
+		result[1][1] = +u.y;
+		result[2][1] = +u.z;
+		result[0][2] = -f.x;
+		result[1][2] = -f.y;
+		result[2][2] = -f.z;
+		result[3][0] = -s.dotProd(eye);
+		result[3][1] = -u.dotProd(eye);
+		result[3][2] = +f.dotProd(eye);
 		return result;
+	}
+
+	constexpr Matrix4x4 leftHandedLookAt(Vector3 const& eye, Vector3 const& at, Vector3 const& up) {
+		Vector3 const f((at - eye).normalized());
+		Vector3 const s(f.crossProd(up).normalized());
+		Vector3 const u(s.crossProd(f));
+		Matrix4x4 result(Matrix4x4::identity());
+		result[0][0] = +s.x;
+		result[1][0] = +s.y;
+		result[2][0] = +s.z;
+		result[0][1] = +u.x;
+		result[1][1] = +u.y;
+		result[2][1] = +u.z;
+		result[0][2] = +f.x;
+		result[1][2] = +f.y;
+		result[2][2] = +f.z;
+		result[3][0] = -s.dotProd(eye);
+		result[3][1] = -u.dotProd(eye);
+		result[3][2] = -f.dotProd(eye);
+		return result;
+	}
+
+	constexpr Matrix4x4 lookAt(Vector3 const& eye, Vector3 const& at, Vector3 const& up) {
+		return rightHandedLookAt(eye, at, up);
 	}
 }
 
