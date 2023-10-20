@@ -696,10 +696,10 @@ public:
 		) {
 			// Get right-hand side of the equation
 			Vector4 rhs;
-			for (size_t i = 0; i < R; i++)
+			for (size_t i = 0; i < 4; i++)
 				rhs.data[i] = local.data[i][3];
 			Matrix<R, C, T> tipMatrix = pMatrix.inverted().transposed();
-			perspective = tipMatrix * Matrix<R, 1, float>(rhs);
+			perspective = tipMatrix * Matrix<4, 1, float>(rhs);
 			// Clear perspective
 			local.data[0][3] =
 			local.data[1][3] =
@@ -710,13 +710,13 @@ public:
 		}
 		// Isolate translation
 		result.position = Vector3(
-			local.data[0][3],
-			local.data[1][3],
-			local.data[2][3]
+			local.data[3][0],
+			local.data[3][1],
+			local.data[3][2]
 		);
-		local.data[0][3] =
-		local.data[1][3] =
-		local.data[2][3] = T(0);
+		local.data[3][0] =
+		local.data[3][1] =
+		local.data[3][2] = T(0);
 		// Isolate scale & shear
 		Vector3 row[3];
 		for (size_t i = 0; i < 3; i++)
