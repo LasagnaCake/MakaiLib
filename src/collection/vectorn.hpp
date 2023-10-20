@@ -102,6 +102,14 @@ class Vector2
 		/// Destructor.
 		constexpr ~Vector2() {}
 
+		/// Static values.
+		constexpr static Vector2 ZERO()		{return 0;					}
+		constexpr static Vector2 ONE()		{return 1;					}
+		constexpr static Vector2 RIGHT()	{return Vector2(+1, +0);	}
+		constexpr static Vector2 LEFT()		{return Vector2(-1, +0);	}
+		constexpr static Vector2 UP()		{return Vector2(+0, +1);	}
+		constexpr static Vector2 DOWN()		{return Vector2(+0, -1);	}
+
 		/// Vector operator overloading.
 		constexpr Vector2 operator+(Vector2 const& vec) const {
 			return Vector2(
@@ -410,9 +418,21 @@ class Vector3
 				this->data[i] = data[i];
 		}
 
+
 		/// Destructor.
 
 		constexpr ~Vector3() {}
+
+		/// Static values.
+
+		constexpr static Vector3 ZERO()		{return 0;						}
+		constexpr static Vector3 ONE()		{return 1;						}
+		constexpr static Vector3 RIGHT()	{return Vector2::RIGHT();		}
+		constexpr static Vector3 LEFT()		{return Vector2::LEFT();		}
+		constexpr static Vector3 UP()		{return Vector2::UP();			}
+		constexpr static Vector3 DOWN()		{return Vector2::DOWN();		}
+		constexpr static Vector3 BACK()		{return Vector3(+0, +0, +1);	}
+		constexpr static Vector3 FRONT()	{return Vector3(+0, +0, -1);	}
 
 		/// Vector operator overloading.
 
@@ -776,6 +796,19 @@ class Vector4
 		/// Destructor.
 
 		constexpr ~Vector4() {}
+
+		/// Static values.
+
+		constexpr static Vector4 ZERO()		{return 0;							}
+		constexpr static Vector4 ONE()		{return 1;							}
+		constexpr static Vector4 RIGHT()	{return Vector2::RIGHT();			}
+		constexpr static Vector4 LEFT()		{return Vector2::LEFT();			}
+		constexpr static Vector4 UP()		{return Vector2::UP();				}
+		constexpr static Vector4 DOWN()		{return Vector2::DOWN();			}
+		constexpr static Vector4 BACK()		{return Vector3::BACK();			}
+		constexpr static Vector4 FRONT()	{return Vector3::FRONT();			}
+		constexpr static Vector4 FUTURE()	{return Vector4(+0, +0, +0, +1);	}
+		constexpr static Vector4 PAST()		{return Vector4(+0, +0, +0, -1);	}
 
 		/// Vector operator overloading.
 

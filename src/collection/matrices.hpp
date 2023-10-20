@@ -16,15 +16,6 @@ namespace MatType {
 	concept ValidTransform = EqualSize<R, C> && (R == 4);
 }
 
-#define MATRIX_SNAPSHOT \
-	DEBUGLN("<mat>");\
-	for (size_t i = 0; i < 4; i++) {\
-			DEBUG(data[i][0]); DEBUG(" ");\
-			DEBUG(data[i][1]); DEBUG(" ");\
-			DEBUG(data[i][2]); DEBUG(" ");\
-			DEBUGLN(data[i][3]);\
-		} DEBUGLN("</mat>")
-
 /**
 * [---------------------]
 * [                     ]
@@ -40,56 +31,67 @@ public:
 
 	/// Constructors.
 	constexpr Matrix() {
-		fill(0);
+		fill(T(0));
 	}
 
 	constexpr Matrix(T const& v) {
-		fill(1);
+		fill(v);
 	}
 
 	constexpr Matrix(const T(&v)[R][C]) {
-		for (size_t i = 0; i < R; i++)
-			for (size_t j = 0; j < C; j++)
-				data[i][j] = v[i][j];
+		for (size_t i = 0; i < C; i++)
+			for (size_t j = 0; j < R; j++)
+				data[i][j] = v[j][i];
 	}
 
 	constexpr Matrix(const T(&v)[R*C]) {
+		T hack[R][C];
 		for (size_t i = 0; i < R*C; i++)
-			((float*)data)[i] = v[i];
+			((T*)hack)[i] = v[i];
+		for (size_t i = 0; i < C; i++)
+			for (size_t j = 0; j < R; j++)
+				data[i][j] = hack[j][i];
 	}
 
 	template<MatType::Compatitble<T> T2>
 	constexpr Matrix(const T2(&v)[R][C]) {
-		for (size_t i = 0; i < R; i++)
-			for (size_t j = 0; j < C; j++)
-				data[i][j] = T(v[i][j]);
+		for (size_t i = 0; i < C; i++)
+			for (size_t j = 0; j < R; j++)
+				data[i][j] = T(v[j][i]);
 	}
 
 	template<MatType::Compatitble<T> T2>
 	constexpr Matrix(const T2(&v)[R*C]) {
+		T2 hack[R][C];
 		for (size_t i = 0; i < R*C; i++)
-			((float*)data)[i] = T(v[i]);
+			((T2*)hack)[i] = v[i];
+		for (size_t i = 0; i < C; i++)
+			for (size_t j = 0; j < R; j++)
+				data[i][j] = hack[j][i];
 	}
 
-	constexpr Matrix(Vector2 const& vec) requires MatType::EqualSize<R, 2> {
-		static_assert(R == 2 && C == 1, "Matrix is not a valid representation of a 2D vector!");
-		data[0][0] = vec.x;
-		data[0][1] = vec.y;
+	constexpr Matrix(Vector2 const& vec) {
+		static_assert(R >= 2 && C >= 1, "Matrix is not a valid representation of a 2D vector!");
+		data[C-1][R-1] = 1;
+		data[C-1][0] = vec.x;
+		data[C-1][1] = vec.y;
 	}
 
-	constexpr Matrix(Vector3 const& vec) requires MatType::EqualSize<R, 3> {
-		static_assert(R == 3 && C == 1, "Matrix is not a valid representation of a 3D vector!");
-		data[0][0] = vec.x;
-		data[0][1] = vec.y;
-		data[0][2] = vec.z;
+	constexpr Matrix(Vector3 const& vec) {
+		static_assert(R >= 3 && C >= 1, "Matrix is not a valid representation of a 3D vector!");
+		data[C-1][R-1] = 1;
+		data[C-1][0] = vec.x;
+		data[C-1][1] = vec.y;
+		data[C-1][2] = vec.z;
 	}
 
-	constexpr Matrix(Vector4 const& vec) requires MatType::EqualSize<R, 4> {
-		static_assert(R == 4 && C == 1, "Matrix is not a valid representation of a 4D vector!");
-		data[0][0] = vec.x;
-		data[0][1] = vec.y;
-		data[0][2] = vec.z;
-		data[0][3] = vec.w;
+	constexpr Matrix(Vector4 const& vec) {
+		static_assert(R >= 4 && C >= 1, "Matrix is not a valid representation of a 4D vector!");
+		data[C-1][R-1] = 1;
+		data[C-1][0] = vec.x;
+		data[C-1][1] = vec.y;
+		data[C-1][2] = vec.z;
+		data[C-1][3] = vec.w;
 	}
 
 	constexpr Matrix(VecMath::Transform3D const& trans) requires MatType::ValidTransform<R, C> {
@@ -123,17 +125,23 @@ public:
 	}
 
 	constexpr Matrix(Matrix<R, C, T> const& other) {
-		for (size_t i = 0; i < R; i++) {
-			for (size_t j = 0; j < C; j++)
+		for (size_t i = 0; i < C; i++)
+			for (size_t j = 0; j < R; j++)
 				data[i][j] = other.data[i][j];
-		}
+	}
+
+	template <typename T2>
+	constexpr Matrix(Matrix<R, C, T2> const& other) {
+		for (size_t i = 0; i < C; i++)
+			for (size_t j = 0; j < R; j++)
+				data[i][j] = T(other.data[i][j]);
 	}
 
 	constexpr ~Matrix() {}
 
 	constexpr Matrix<R, C, T>& fill(T const& v) {
-		for (size_t i = 0; i < R; i++)
-			for (size_t j = 0; j < C; j++)
+		for (size_t i = 0; i < C; i++)
+			for (size_t j = 0; j < R; j++)
 				data[i][j] = v;
 		return *this;
 	}
@@ -141,18 +149,14 @@ public:
 	/// Gets the transposed matrix.
 	constexpr Matrix<C, R, T> transposed() const {
 		Matrix<C, R, T> res;
-		for (size_t i = 0; i < R; i++)
-			for (size_t j = 0; j < C; j++)
+		for (size_t i = 0; i < C; i++)
+			for (size_t j = 0; j < R; j++)
 				res[j][i] = data[i][j];
 		return res;
 	}
 
 	constexpr Matrix<C, R, T>& transpose() const requires MatType::EqualSize<R, C> {
-		Matrix<C, R, T> res;
-		for (size_t i = 0; i < R; i++)
-			for (size_t j = 0; j < C; j++)
-				res[j][i] = data[i][j];
-		(*this) = res;
+		(*this) = transposed();
 		return *this;
 	}
 
@@ -161,6 +165,21 @@ public:
 		Matrix<R, C, T> res(0);
 		for(size_t i = 0; i < R; i++)
 			res.data[i][i] = 1;
+		return res;
+	}
+
+	constexpr static Matrix<R, C, T> prototype() requires MatType::EqualSize<R, C> {
+		static_assert(C == R, "Matrix is not a square matrix!");
+		Matrix<R, C, T> res(0);
+		res.data[R-1][C-1] = 1;
+		return res;
+	}
+
+	constexpr static Matrix<R, C, T> mirror() requires MatType::EqualSize<R, C> {
+		static_assert(C == R, "Matrix is not a square matrix!");
+		Matrix<R, C, T> res(0);
+		for(size_t i = 0; i < R; i++)
+			res.data[(R-1)-i][i] = 1;
 		return res;
 	}
 
@@ -198,10 +217,10 @@ public:
 	// https://github.com/g-truc/glm/blob/master/glm/gtx/euler_angles.inl
 	constexpr static Matrix<4, 4, T> fromEulerYXZ(Vector3 const& angle) {
 		// Get sines and cosines
-		T tmp_ch = cos(angle.x);
-		T tmp_sh = sin(angle.x);
-		T tmp_cp = cos(angle.y);
-		T tmp_sp = sin(angle.y);
+		T tmp_ch = cos(angle.y);
+		T tmp_sh = sin(angle.y);
+		T tmp_cp = cos(angle.x);
+		T tmp_sp = sin(angle.x);
 		T tmp_cb = cos(angle.z);
 		T tmp_sb = sin(angle.z);
 		// Compute matrix
@@ -251,11 +270,10 @@ public:
 	// https://github.com/g-truc/glm/blob/master/glm/ext/matrix_transform.inl
 	constexpr Matrix<4, 4, T>& translate(Vector3 const& vec) requires MatType::ValidTransform<R, C> {
 		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
-		Matrix<4, 4, T> tm(data);
 		Vector4 calc =
-			Vector4(data[0]) * vec.x
-		+	Vector4(data[1]) * vec.y
-		+	Vector4(data[2]) * vec.z
+			Vector4(data[0]) * vec[0]
+		+	Vector4(data[1]) * vec[1]
+		+	Vector4(data[2]) * vec[2]
 		+	Vector4(data[3])
 		;
 		data[3][0] = calc[0];
@@ -281,21 +299,21 @@ public:
 	// https://github.com/g-truc/glm/blob/master/glm/ext/matrix_transform.inl
 	constexpr Matrix<4, 4, T> scaled(Vector3 const& vec) const requires MatType::ValidTransform<R, C> {
 		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
-		Matrix<4, 4, T> result(T(1));
+		Matrix<4, 4, T> result(Matrix<4, 4, T>::identity());
 		result[0][0] = vec.x;
 		result[1][1] = vec.y;
 		result[2][2] = vec.z;
-		return (*this) * result;
+		return result * (*this);
 	}
 
 	// https://github.com/g-truc/glm/blob/master/glm/ext/matrix_transform.inl
 	constexpr Matrix<4, 4, T>& scale(Vector3 const& vec) requires MatType::ValidTransform<R, C> {
 		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
-		Matrix<4, 4, T> result(T(1));
+		Matrix<4, 4, T> result(Matrix<4, 4, T>::identity());
 		result[0][0] = vec.x;
 		result[1][1] = vec.y;
 		result[2][2] = vec.z;
-		(*this) *= result;
+		(*this) = result * (*this);
 		return (*this);
 	}
 
@@ -314,11 +332,11 @@ public:
 		else if constexpr(C == 2)	return data[0][0] * data[1][1] - data[1][0] * data[0][1];
 		else if constexpr(C == 3)	return (
 			(data[0][0] * data[1][1] * data[2][2])
-		+	(data[0][1] * data[1][2] * data[2][0])
-		+	(data[0][2] * data[1][0] * data[2][1])
-		-	(data[0][2] * data[1][1] * data[2][0])
-		-	(data[0][0] * data[1][2] * data[2][1])
-		-	(data[0][1] * data[1][0] * data[2][2])
+		+	(data[1][0] * data[2][1] * data[0][2])
+		+	(data[2][0] * data[0][1] * data[1][2])
+		-	(data[2][0] * data[1][1] * data[0][2])
+		-	(data[0][0] * data[2][1] * data[1][2])
+		-	(data[1][0] * data[0][1] * data[2][2])
 		);
 		else {
 			T res;
@@ -334,12 +352,12 @@ public:
 		static_assert(R > 1 && C > 1, "Cannot truncate a 1-dimensional matrix!");
 		Matrix<R-1, C-1, T> res;
 		int ro = 0, co = 0;
-		for (size_t i = 0; i < R; i++) {
-			co = 0;
-			if (i == row) {ro--; continue;}
-			for (size_t j = 0; j < C; j++) {
-				if (j == col) {co--; continue;}
-				res[i+ro][j+co] = data[i][j];
+		for (size_t i = 0; i < C; i++) {
+			ro = 0;
+			if (i == col) {co--; continue;}
+			for (size_t j = 0; j < R; j++) {
+				if (j == row) {ro--; continue;}
+				res[i+co][j+ro] = data[i][j];
 			}
 		}
 		return res;
@@ -359,9 +377,9 @@ public:
 				"Values cannot be bigger than the shrunk matrix's dimensions!"
 			);
 		Matrix<R-RF, C-CF, T> res;
-		for (size_t i = 0; i < R-RF; i++)
-			for (size_t j = 0; j < C-CF; j++)
-				res[i][j] = data[i+rowStart][j+colStart];
+		for (size_t i = 0; i < C-CF; i++)
+			for (size_t j = 0; j < R-RF; j++)
+				res[i][j] = data[i+colStart][j+rowStart];
 		return res;
 	}
 
@@ -377,9 +395,9 @@ public:
 				"Values cannot be bigger than the expansion factors!"
 			);
 		Matrix<R+RF, C+CF, T> res;
-		for (size_t i = 0; i < R; i++)
-			for (size_t j = 0; j < C; j++)
-				res[i+rowStart][j+colStart] = data[i][j];
+		for (size_t i = 0; i < C; i++)
+			for (size_t j = 0; j < R; j++)
+				res[i+colStart][j+rowStart] = data[i][j];
 		return res;
 	}
 
@@ -387,40 +405,40 @@ public:
 
 	constexpr Matrix<R, C, T> operator+(T const& val) const {
 		Matrix<R, C, T> res;
-		for (size_t i = 0; i < R; i++)
-			for (size_t j = 0; j < C; j++)
+		for (size_t i = 0; i < C; i++)
+			for (size_t j = 0; j < R; j++)
 				res[j][i] = data[i][j] + val;
 		return res;
 	}
 
 	constexpr Matrix<R, C, T> operator+(Matrix<R, C, T> const& mat) const {
 		Matrix<R, C, T> res;
-		for (size_t i = 0; i < R; i++)
-			for (size_t j = 0; j < C; j++)
+		for (size_t i = 0; i < C; i++)
+			for (size_t j = 0; j < R; j++)
 				res[j][i] = data[i][j] + mat.data[i][j];
 		return res;
 	}
 
 	constexpr Matrix<R, C, T> operator-(T const& val) const {
 		Matrix<R, C, T> res;
-		for (size_t i = 0; i < R; i++)
-			for (size_t j = 0; j < C; j++)
+		for (size_t i = 0; i < C; i++)
+			for (size_t j = 0; j < R; j++)
 				res[j][i] = data[i][j] - val;
 		return res;
 	}
 
 	constexpr Matrix<R, C, T> operator-(Matrix<R, C, T> const& mat) const {
 		Matrix<R, C, T> res;
-		for (size_t i = 0; i < R; i++)
-			for (size_t j = 0; j < C; j++)
+		for (size_t i = 0; i < C; i++)
+			for (size_t j = 0; j < R; j++)
 				res[j][i] = data[i][j] - mat.data[i][j];
 		return res;
 	}
 
 	constexpr Matrix<R, C, T> operator*(T const& val) const {
 		Matrix<R, C, T> res;
-		for (size_t i = 0; i < R; i++)
-			for (size_t j = 0; j < C; j++)
+		for (size_t i = 0; i < C; i++)
+			for (size_t j = 0; j < R; j++)
 				res[j][i] = data[i][j] * val;
 		return res;
 	}
@@ -428,17 +446,19 @@ public:
 	template<size_t C2>
 	constexpr Matrix<R, C2, T> operator*(Matrix<C, C2, T> const& mat) const {
 		Matrix<R, C2, T> res;
-		auto nmat = mat.transposed();
 		for (size_t i = 0; i < R; i++)
-			for (size_t j = 0; j < C2; j++)
-				res[i][j] = rdp(i, nmat.data[j]);
+			for (size_t j = 0; j < C2; j++) {
+				res.data[j][i] = 0;
+				for (size_t k = 0; k < C; k++)
+					res.data[j][i] += data[k][i] * mat.data[j][k];
+			}
 		return res;
 	}
 
 	constexpr Matrix<R, C, T> operator/(T const& val) const {
 		Matrix<R, C, T> res;
-		for (size_t i = 0; i < R; i++)
-			for (size_t j = 0; j < C; j++)
+		for (size_t i = 0; i < C; i++)
+			for (size_t j = 0; j < R; j++)
 				res[j][i] = data[i][j] / val;
 		return res;
 	}
@@ -451,8 +471,8 @@ public:
 	/// Assignment operator overloading.
 
 	constexpr Matrix<R, C, T>& operator=(const T(&v)[R][C]) {
-		for (size_t i = 0; i < R; i++) {
-			for (size_t j = 0; j < C; j++)
+		for (size_t i = 0; i < C; i++) {
+			for (size_t j = 0; j < R; j++)
 				data[i][j] = T(v[i][j]);
 		}
 	}
@@ -463,36 +483,36 @@ public:
 	}
 
 	constexpr Matrix<R, C, T>& operator+=(T const& val) {
-		for (size_t i = 0; i < R; i++)
-			for (size_t j = 0; j < C; j++)
+		for (size_t i = 0; i < C; i++)
+			for (size_t j = 0; j < R; j++)
 				data[i][j] += val;
 		return *this;
 	}
 
 	constexpr Matrix<R, C, T>& operator+=(Matrix<R, C, T> const& mat) {
-		for (size_t i = 0; i < R; i++)
-			for (size_t j = 0; j < C; j++)
+		for (size_t i = 0; i < C; i++)
+			for (size_t j = 0; j < R; j++)
 				data[i][j] += mat.data[i][j];
 		return *this;
 	}
 
 	constexpr Matrix<R, C, T>& operator-=(T const& val) {
-		for (size_t i = 0; i < R; i++)
-			for (size_t j = 0; j < C; j++)
+		for (size_t i = 0; i < C; i++)
+			for (size_t j = 0; j < R; j++)
 				data[i][j] -= val;
 		return *this;
 	}
 
 	constexpr Matrix<R, C, T>& operator-=(Matrix<R, C, T> const& mat) {
-		for (size_t i = 0; i < R; i++)
-			for (size_t j = 0; j < C; j++)
+		for (size_t i = 0; i < C; i++)
+			for (size_t j = 0; j < R; j++)
 				data[i][j] -= mat.data[i][j];
 		return *this;
 	}
 
 	constexpr Matrix<R, C, T>& operator*=(T const& val) {
-		for (size_t i = 0; i < R; i++)
-			for (size_t j = 0; j < C; j++)
+		for (size_t i = 0; i < C; i++)
+			for (size_t j = 0; j < R; j++)
 				data[i][j] *= val;
 		return *this;
 	}
@@ -517,16 +537,16 @@ public:
 
 	/// Other operator overloadings.
 
-	constexpr Span<T, C> operator[](size_t const& idx) {
+	constexpr Span<T, R> operator[](size_t const& idx) {
 		return Span{data[idx]};
 	}
 
 	template <MatType::Compatitble<T> T2>
 	constexpr operator Matrix<R, C, T2>() const {return Matrix<R, C, T2>(data);}
 
-	constexpr operator Vector2() const requires MatType::EqualSize<R, 2> {return toVector2();}
-	constexpr operator Vector3() const requires MatType::EqualSize<R, 3> {return toVector3();}
-	constexpr operator Vector4() const requires MatType::EqualSize<R, 4> {return toVector4();}
+	constexpr operator Vector2() const {return toVector2();}
+	constexpr operator Vector3() const {return toVector3();}
+	constexpr operator Vector4() const {return toVector4();}
 
 	constexpr explicit operator const T*() const	{return data;}
 	constexpr explicit operator T*()				{return (T*)data;}
@@ -539,19 +559,19 @@ public:
 
 	/// Converters.
 
-	constexpr Vector2 toVector2() const requires MatType::EqualSize<R, 2> {
-		static_assert(R == 2, "Matrix is not a valid representation of a 2D vector!");
-		return Vector2(data[0][C-1], data[1][C-1]);
+	constexpr Vector2 toVector2() const {
+		static_assert(R >= 2, "Matrix is not a valid representation of a 2D vector!");
+		return Vector2(data[C-1][0], data[C-1][1]);
 	}
 
-	constexpr Vector3 toVector3() const requires MatType::EqualSize<R, 3> {
-		static_assert(R == 3, "Matrix is not a valid representation of a 3D vector!");
-		return Vector3(data[0][C-1], data[1][C-1], data[2][C-1]);
+	constexpr Vector3 toVector3() const {
+		static_assert(R >= 3, "Matrix is not a valid representation of a 3D vector!");
+		return Vector3(data[C-1][0], data[C-1][1], data[C-1][2]);
 	}
 
-	constexpr Vector4 toVector4() const requires MatType::EqualSize<R, 4> {
-		static_assert(R == 4, "Matrix is not a valid representation of a 4D vector!");
-		return Vector4(data[0][C-1], data[1][C-1], data[2][C-1], data[3][C-1]);
+	constexpr Vector4 toVector4() const {
+		static_assert(R >= 4, "Matrix is not a valid representation of a 4D vector!");
+		return Vector4(data[C-1][0], data[C-1][1], data[C-1][2], data[C-1][3]);
 	}
 
 	template<Matrix<4, 4, T>(*EULER_FUNC)(Vector3 const&) = Matrix::fromEulerYXZ>
@@ -562,13 +582,9 @@ public:
 	) requires MatType::ValidTransform<R, C> {
 		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
 		// Transform
-		MATRIX_SNAPSHOT;
 		translate(position);
-		MATRIX_SNAPSHOT;
-		this->scale(scale);
-		MATRIX_SNAPSHOT;
 		rotate<EULER_FUNC>(rotation);
-		MATRIX_SNAPSHOT;
+		this->scale(scale);
 		return *this;
 	}
 
@@ -586,7 +602,8 @@ public:
 	) requires MatType::ValidTransform<R, C> {
 		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
 		// Fill & Transform
-		return fill(1).template transform<EULER_FUNC>(position, rotation, scale);
+		(*this) = Matrix::identity();
+		return transform<EULER_FUNC>(position, rotation, scale);
 	}
 
 	template<Matrix<4, 4, T>(*EULER_FUNC)(Vector3 const&) = Matrix::fromEulerYXZ>
@@ -605,15 +622,15 @@ public:
 		Vector3 const& skew
 	) requires MatType::ValidTransform<R, C> {
 		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
-		Matrix<4, 4, T> result(1);
+		Matrix<4, 4, T> result(Matrix<4, 4, T>::identity());
 		// Apply perspective
-		result.data[0][3] = perspective.x;
-		result.data[1][3] = perspective.y;
-		result.data[2][3] = perspective.z;
+		result.data[3][0] = perspective.x;
+		result.data[3][1] = perspective.y;
+		result.data[3][2] = perspective.z;
 		result.data[3][3] = perspective.w;
 		// Translate & rotate
 		result.translate(position).template rotate<EULER_FUNC>(rotation);
-		Matrix<4, 4, T> tmp(1);
+		Matrix<4, 4, T> tmp = Matrix<4, 4, T>::identity();
 		// Skew
 		if (skew.x) {
 			tmp = 1;
@@ -749,31 +766,15 @@ public:
 		return decompose(_p, _s);
 	}
 
-	/// Gets the dot product of a given row by another given row.
-	constexpr T rdp(size_t const& row, const T (&other)[R]) const {
-		T res = 0;
-		for (size_t i = 0; i < R; i++)
-			res += other[i] * data[row][i];
-		return res;
-	}
-
-	/// Gets the dot product of a given row by another given row.
-	constexpr T rdp(size_t const& row, Span<T, R> const& other) const {
-		T res = 0;
-		for (size_t i = 0; i < R; i++)
-			res += other[i] * data[row][i];
-		return res;
-	}
-
 	constexpr T cofactor(size_t const& row, size_t const& col) const {
 		return ((((row + col) % 2) == 0) ? T(+1) : T(-1)) * truncated(row, col).determinant();
 	}
 
 private:
 	template<size_t R2, size_t C2, Math::Operatable T2> friend class Matrix;
-	template<typename T2> friend Matrix<4, 4, T2> translate(Matrix<4, 4, T2>, Vector3);
+	template<typename T2> friend Matrix<4, 4, T2> translate(Matrix<4, 4, T2>, Vector3 const&);
 	/// The matrix's columns;
-	T data[R][C];
+	T data[C][R];
 };
 // Float matrices
 typedef Matrix<2, 1, float> Matrix2x1;
