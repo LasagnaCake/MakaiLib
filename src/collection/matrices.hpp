@@ -102,12 +102,20 @@ public:
 		return res;
 	}
 
-	constexpr Nullable<Matrix<R, C, T>> inverted() const requires MatType::EqualSize<R, C> {
+	constexpr static Matrix<R, C, T> identity() requires MatType::EqualSize<R, C> {
+		static_assert(C == R, "Matrix is not a square matrix!");
+		Matrix<R, C, T> res(0);
+		for(size_t i = 0; i < R; i++)
+			res.data[i][j] = 1;
+		return res;
+	}
+
+	constexpr Matrix<R, C, T> inverted() const requires MatType::EqualSize<R, C> {
 		static_assert(C == R, "Matrix is not a square matrix!");
 		static_assert(determinant() != T(0), "Determinant cannot be zero!");
 		Matrix<R, C, T> res;
 		T det = determinant();
-		if (det == T(0)) return nullptr;
+		if (det == T(0)) return Matrix::identity();
 		res = cofactors().transposed() * (T(1) / det);
 		return res;
 	}
