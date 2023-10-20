@@ -16,6 +16,15 @@ namespace MatType {
 	concept ValidTransform = EqualSize<R, C> && (R == 4);
 }
 
+#define MATRIX_SNAPSHOT \
+	DEBUGLN("<mat>");\
+	for (size_t i = 0; i < 4; i++) {\
+			DEBUG(data[i][0]); DEBUG(" ");\
+			DEBUG(data[i][1]); DEBUG(" ");\
+			DEBUG(data[i][2]); DEBUG(" ");\
+			DEBUGLN(data[i][3]);\
+		} DEBUGLN("</mat>")
+
 /**
 * [---------------------]
 * [                     ]
@@ -138,6 +147,15 @@ public:
 		return res;
 	}
 
+	constexpr Matrix<C, R, T>& transpose() const requires MatType::EqualSize<R, C> {
+		Matrix<C, R, T> res;
+		for (size_t i = 0; i < R; i++)
+			for (size_t j = 0; j < C; j++)
+				res[j][i] = data[i][j];
+		(*this) = res;
+		return *this;
+	}
+
 	constexpr static Matrix<R, C, T> identity() requires MatType::EqualSize<R, C> {
 		static_assert(C == R, "Matrix is not a square matrix!");
 		Matrix<R, C, T> res(0);
@@ -225,30 +243,19 @@ public:
 		return *this;
 	}
 
-	// https://github.com/g-truc/glm/blob/master/glm/ext/matrix_transform.inl
 	constexpr Matrix<4, 4, T> translated(Vector3 const& vec) const requires MatType::ValidTransform<R, C> {
 		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
-		Matrix<4, 4, T> result(data);
-		Vector4 calc =
-			Vector4(data[0]) * Vector4(vec[0])
-		+	Vector4(data[1]) * Vector4(vec[1])
-		+	Vector4(data[2]) * Vector4(vec[2])
-		+	Vector4(data[3])
-		;
-		result[3][0] = calc[0];
-		result[3][1] = calc[1];
-		result[3][2] = calc[2];
-		result[3][3] = calc[3];
-		return result;
+		return Matrix<4, 4, T>(data).translate(vec);
 	}
 
 	// https://github.com/g-truc/glm/blob/master/glm/ext/matrix_transform.inl
 	constexpr Matrix<4, 4, T>& translate(Vector3 const& vec) requires MatType::ValidTransform<R, C> {
 		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
+		Matrix<4, 4, T> tm(data);
 		Vector4 calc =
-			Vector4(data[0]) * Vector4(vec[0])
-		+	Vector4(data[1]) * Vector4(vec[1])
-		+	Vector4(data[2]) * Vector4(vec[2])
+			Vector4(data[0]) * vec.x
+		+	Vector4(data[1]) * vec.y
+		+	Vector4(data[2]) * vec.z
 		+	Vector4(data[3])
 		;
 		data[3][0] = calc[0];
@@ -267,7 +274,7 @@ public:
 	template<Matrix<4, 4, T>(*EULER_FUNC)(Vector3 const&) = Matrix::fromEulerYXZ>
 	constexpr Matrix<4, 4, T>& rotate(Vector3 const& vec) requires MatType::ValidTransform<R, C> {
 		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
-		(*this) = (*this) * EULER_FUNC(vec);
+		(*this) *= EULER_FUNC(vec);
 		return (*this);
 	}
 
@@ -288,7 +295,7 @@ public:
 		result[0][0] = vec.x;
 		result[1][1] = vec.y;
 		result[2][2] = vec.z;
-		(*this) = (*this) * result;
+		(*this) *= result;
 		return (*this);
 	}
 
@@ -555,7 +562,14 @@ public:
 	) requires MatType::ValidTransform<R, C> {
 		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
 		// Transform
-		return translate(position).scale(scale).template rotate<EULER_FUNC>(rotation);
+		MATRIX_SNAPSHOT;
+		translate(position);
+		MATRIX_SNAPSHOT;
+		this->scale(scale);
+		MATRIX_SNAPSHOT;
+		rotate<EULER_FUNC>(rotation);
+		MATRIX_SNAPSHOT;
+		return *this;
 	}
 
 	template<Matrix<4, 4, T>(*EULER_FUNC)(Vector3 const&) = Matrix::fromEulerYXZ>
@@ -654,7 +668,6 @@ public:
 		pMatrix.data[2][3] = T(0);
 		pMatrix.data[3][3] = T(1);
 		// If perspective's determinant is zero, return
-		DEBUG("Determinant: "); DEBUGLN(pMatrix.determinant());
 		if (pMatrix.determinant() == T(0))
 			return VecMath::Transform3D();
 		// Isolate perspective
