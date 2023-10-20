@@ -666,6 +666,7 @@ public:
 	}
 
 	// https://opensource.apple.com/source/WebCore/WebCore-514/platform/graphics/transforms/TransformationMatrix.cpp
+	[[unavailable("Not working as intended!")]]
 	constexpr VecMath::Transform3D decompose(
 			Vector4& perspective,
 			Vector3& skew
@@ -760,6 +761,7 @@ public:
 		return result;
 	}
 
+	[[unavailable("Not working as intended!")]]
 	constexpr VecMath::Transform3D decompose() const requires MatType::ValidTransform<R, C> {
 		Vector4 _p;
 		Vector3 _s;
