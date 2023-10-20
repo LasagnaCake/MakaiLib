@@ -199,6 +199,8 @@ release: build\$(src)
 
 test: debug release
 
+preview: debug demo
+
 both: demo release
 	
 all: debug demo release
