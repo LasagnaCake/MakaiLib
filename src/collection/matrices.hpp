@@ -106,7 +106,7 @@ public:
 		static_assert(C == R, "Matrix is not a square matrix!");
 		Matrix<R, C, T> res(0);
 		for(size_t i = 0; i < R; i++)
-			res.data[i][j] = 1;
+			res.data[i][i] = 1;
 		return res;
 	}
 
