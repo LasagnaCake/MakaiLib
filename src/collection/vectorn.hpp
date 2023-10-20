@@ -67,7 +67,11 @@ class Vector2
 {
 	public:
 		/// The vector's position.
-		float x, y;
+		union {
+			struct {float x, y;};
+			struct {float u, v;};
+			float data[2];
+		};
 
 		/// Consturctors.
 		constexpr Vector2() {
@@ -88,6 +92,11 @@ class Vector2
 		constexpr Vector2(Vector2 const& vec) {
 			x = vec.x;
 			y = vec.y;
+		}
+
+		constexpr Vector2(const float (&data)[2]) {
+			for (size_t i = 0; i < 2; i++)
+				this->data[i] = data[i];
 		}
 
 		/// Destructor.
@@ -240,27 +249,11 @@ class Vector2
 
 		// Other overloads
 
-		constexpr float& operator[](char const& pos) {
-			switch (pos) {
-			case 'x':
-			case 'X':
-			default:
-				return x;
-			case 'y':
-			case 'Y':
-				return y;
-			}
-		}
+		constexpr float& operator[](size_t const& pos)		{if (pos > 1) return data[0]; return data[pos];}
+		constexpr float operator[](size_t const& pos) const	{if (pos > 1) return data[0]; return data[pos];}
 
-		constexpr float& operator[](unsigned char const& pos) {
-			switch (pos) {
-			case 0:
-			default:
-				return x;
-			case 1:
-				return y;
-			}
-		}
+		constexpr explicit operator float*()				{return data;}
+		constexpr explicit operator const float*() const	{return data;}
 
 		// Extra functions
 
@@ -374,7 +367,11 @@ class Vector3
 {
 	public:
 		/// The vector's position.
-		float x, y, z;
+		union {
+			struct {float x, y, z;};
+			struct {float r, g, b;};
+			float data[3];
+		};
 
 		/// Constructors.
 
@@ -406,6 +403,11 @@ class Vector3
 			x = vec.x;
 			y = vec.y;
 			this->z = z;
+		}
+
+		constexpr Vector3(const float (&data)[3]) {
+			for (size_t i = 0; i < 3; i++)
+				this->data[i] = data[i];
 		}
 
 		/// Destructor.
@@ -574,32 +576,11 @@ class Vector3
 
 		// Other overloads
 
-		constexpr float& operator[](char const& pos) {
-			switch (pos) {
-			case 'x':
-			case 'X':
-			default:
-				return x;
-			case 'y':
-			case 'Y':
-				return y;
-			case 'z':
-			case 'Z':
-				return z;
-			}
-		}
+		constexpr explicit operator float*()				{return data;}
+		constexpr explicit operator const float*() const	{return data;}
 
-		constexpr float& operator[](unsigned char const& pos) {
-			switch (pos) {
-			case 0:
-			default:
-				return x;
-			case 1:
-				return y;
-			case 2:
-				return z;
-			}
-		}
+		constexpr float& operator[](size_t const& pos)		{if (pos > 2) return data[0]; return data[pos];}
+		constexpr float operator[](size_t const& pos) const	{if (pos > 2) return data[0]; return data[pos];}
 
 		// Extra functions
 
@@ -730,7 +711,11 @@ class Vector4
 {
 	public:
 		/// The vector's position.
-		float  x, y, z, w;
+		union {
+			struct {float x, y, z, w;};
+			struct {float r, g, b, a;};
+			float data[4];
+		};
 
 		/// Constructors.
 
@@ -781,6 +766,11 @@ class Vector4
 			y = vec.y;
 			this->z = z;
 			this->w = w;
+		}
+
+		constexpr Vector4(const float (&data)[4]) {
+			for (size_t i = 0; i < 4; i++)
+				this->data[i] = data[i];
 		}
 
 		/// Destructor.
@@ -962,37 +952,11 @@ class Vector4
 
 		// Other overloads
 
-		constexpr float& operator[](char const& pos) {
-			switch (pos) {
-			case 'x':
-			case 'X':
-			default:
-				return x;
-			case 'y':
-			case 'Y':
-				return y;
-			case 'z':
-			case 'Z':
-				return z;
-			case 'w':
-			case 'W':
-				return w;
-			}
-		}
+		constexpr explicit operator float*()				{return data;}
+		constexpr explicit operator const float*() const	{return data;}
 
-		constexpr float& operator[](unsigned char const& pos) {
-			switch (pos) {
-			case 0:
-			default:
-				return x;
-			case 1:
-				return y;
-			case 2:
-				return z;
-			case 3:
-				return w;
-			}
-		}
+		constexpr float& operator[](size_t const& pos)		{if (pos > 3) return data[0]; return data[pos];}
+		constexpr float operator[](size_t const& pos) const	{if (pos > 3) return data[0]; return data[pos];}
 
 		// Extra functions
 
@@ -1450,6 +1414,9 @@ namespace VecMath
 			this->rotation	= rotation;
 			this->scale		= scale;
 		}
+
+		constexpr static Transform<T, ROT_T> identity() {return Transform(T(0), ROT_T(0), T(1));}
+
 		T		position	= T(0.0);
 		ROT_T	rotation	= ROT_T(0.0);
 		T		scale		= T(1.0);

@@ -11,6 +11,9 @@ namespace MatType {
 
 	template <typename T1, typename T2>
 	concept Compatitble = Math::Operatable<T2> && Type::Convertible<T2, T1>;
+
+	template <size_t R, size_t C>
+	concept ValidTransform = EqualSize<R, C> && (R == 4);
 }
 
 /**
@@ -28,15 +31,11 @@ public:
 
 	/// Constructors.
 	constexpr Matrix() {
-		for (size_t i = 0; i < R; i++)
-			for (size_t j = 0; j < C; j++)
-				data[i][j] = 0;
+		fill(0);
 	}
 
 	constexpr Matrix(T const& v) {
-		for (size_t i = 0; i < R; i++)
-			for (size_t j = 0; j < C; j++)
-				data[i][j] = v;
+		fill(1);
 	}
 
 	constexpr Matrix(const T(&v)[R][C]) {
@@ -84,6 +83,36 @@ public:
 		data[0][3] = vec.w;
 	}
 
+	constexpr Matrix(VecMath::Transform3D const& trans) requires MatType::ValidTransform<R, C> {
+		compose(trans);
+	}
+
+	constexpr Matrix(
+		Vector3 const& pos,
+		Vector3 const& rot,
+		Vector3 const& scale
+	) requires MatType::ValidTransform<R, C> {
+		compose(pos, rot, scale);
+	}
+
+	constexpr Matrix(
+		VecMath::Transform3D const& trans,
+		Vector4 const& perspective,
+		Vector3 const& skew
+	) requires MatType::ValidTransform<R, C> {
+		compose(trans, perspective, skew);
+	}
+
+	constexpr Matrix(
+		Vector3 const& pos,
+		Vector3 const& rot,
+		Vector3 const& scale,
+		Vector4 const& perspective,
+		Vector3 const& skew
+	) requires MatType::ValidTransform<R, C> {
+		compose(pos, rot, scale, perspective, skew);
+	}
+
 	constexpr Matrix(Matrix<R, C, T> const& other) {
 		for (size_t i = 0; i < R; i++) {
 			for (size_t j = 0; j < C; j++)
@@ -92,6 +121,13 @@ public:
 	}
 
 	constexpr ~Matrix() {}
+
+	constexpr Matrix<R, C, T>& fill(T const& v) {
+		for (size_t i = 0; i < R; i++)
+			for (size_t j = 0; j < C; j++)
+				data[i][j] = v;
+		return *this;
+	}
 
 	/// Gets the transposed matrix.
 	constexpr Matrix<C, R, T> transposed() const {
@@ -110,14 +146,150 @@ public:
 		return res;
 	}
 
+	// https://github.com/g-truc/glm/blob/master/glm/gtx/euler_angles.inl
+	constexpr static Matrix<4, 4, T> fromEulerXYZ(Vector3 const& angle) {
+		// Get sines and cosines
+		T c1 = cos(-angle.x);
+        T c2 = cos(-angle.y);
+        T c3 = cos(-angle.z);
+        T s1 = sin(-angle.x);
+        T s2 = sin(-angle.y);
+        T s3 = sin(-angle.z);
+		// Formulate matrix
+        Matrix<4, 4, T> result;
+        result[0][0] = c2 * c3;
+        result[0][1] =-c1 * s3 + s1 * s2 * c3;
+        result[0][2] = s1 * s3 + c1 * s2 * c3;
+        result[0][3] = T(0);
+        result[1][0] = c2 * s3;
+        result[1][1] = c1 * c3 + s1 * s2 * s3;
+        result[1][2] =-s1 * c3 + c1 * s2 * s3;
+        result[1][3] = T(0);
+        result[2][0] =-s2;
+        result[2][1] = s1 * c2;
+        result[2][2] = c1 * c2;
+        result[2][3] = T(0);
+        result[3][0] = T(0);
+        result[3][1] = T(0);
+        result[3][2] = T(0);
+        result[3][3] = T(1);
+        // Return result
+        return result;
+	}
+
+	// https://github.com/g-truc/glm/blob/master/glm/gtx/euler_angles.inl
+	constexpr static Matrix<4, 4, T> fromEulerYXZ(Vector3 const& angle) {
+		// Get sines and cosines
+		T tmp_ch = cos(angle.x);
+		T tmp_sh = sin(angle.x);
+		T tmp_cp = cos(angle.y);
+		T tmp_sp = sin(angle.y);
+		T tmp_cb = cos(angle.z);
+		T tmp_sb = sin(angle.z);
+		// Compute matrix
+		Matrix<4, 4, T> result;
+		result[0][0] = tmp_ch * tmp_cb + tmp_sh * tmp_sp * tmp_sb;
+		result[0][1] = tmp_sb * tmp_cp;
+		result[0][2] = -tmp_sh * tmp_cb + tmp_ch * tmp_sp * tmp_sb;
+		result[0][3] = T(0);
+		result[1][0] = -tmp_ch * tmp_sb + tmp_sh * tmp_sp * tmp_cb;
+		result[1][1] = tmp_cb * tmp_cp;
+		result[1][2] = tmp_sb * tmp_sh + tmp_ch * tmp_sp * tmp_cb;
+		result[1][3] = T(0);
+		result[2][0] = tmp_sh * tmp_cp;
+		result[2][1] = -tmp_sp;
+		result[2][2] = tmp_ch * tmp_cp;
+		result[2][3] = T(0);
+		result[3][0] = T(0);
+		result[3][1] = T(0);
+		result[3][2] = T(0);
+		result[3][3] = T(1);
+		// Return result
+		return result;
+	}
+
 	constexpr Matrix<R, C, T> inverted() const requires MatType::EqualSize<R, C> {
 		static_assert(C == R, "Matrix is not a square matrix!");
-		static_assert(determinant() != T(0), "Determinant cannot be zero!");
-		Matrix<R, C, T> res;
 		T det = determinant();
 		if (det == T(0)) return Matrix::identity();
-		res = cofactors().transposed() * (T(1) / det);
+		Matrix<R, C, T> res = cofactors().transposed() * (T(1) / det);
 		return res;
+	}
+
+	constexpr Matrix<R, C, T>& invert() const requires MatType::EqualSize<R, C> {
+		static_assert(C == R, "Matrix is not a square matrix!");
+		static_assert(determinant() != T(0), "Determinant cannot be zero!");
+		T det = determinant();
+		if (det == T(0)) (*this) = Matrix::identity();
+		(*this) = cofactors().transposed() * (T(1) / det);
+		return *this;
+	}
+
+	// https://github.com/g-truc/glm/blob/master/glm/ext/matrix_transform.inl
+	constexpr Matrix<4, 4, T> translated(Vector3 const& vec) const requires MatType::ValidTransform<R, C> {
+		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
+		Matrix<4, 4, T> result(data);
+		Vector4 calc =
+			Vector4(data[0]) * Vector4(vec[0])
+		+	Vector4(data[1]) * Vector4(vec[1])
+		+	Vector4(data[2]) * Vector4(vec[2])
+		+	Vector4(data[3])
+		;
+		result[3][0] = calc[0];
+		result[3][1] = calc[1];
+		result[3][2] = calc[2];
+		result[3][3] = calc[3];
+		return result;
+	}
+
+	// https://github.com/g-truc/glm/blob/master/glm/ext/matrix_transform.inl
+	constexpr Matrix<4, 4, T>& translate(Vector3 const& vec) requires MatType::ValidTransform<R, C> {
+		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
+		Vector4 calc =
+			Vector4(data[0]) * Vector4(vec[0])
+		+	Vector4(data[1]) * Vector4(vec[1])
+		+	Vector4(data[2]) * Vector4(vec[2])
+		+	Vector4(data[3])
+		;
+		data[3][0] = calc[0];
+		data[3][1] = calc[1];
+		data[3][2] = calc[2];
+		data[3][3] = calc[3];
+		return (*this);
+	}
+
+	template<Matrix<4, 4, T>(*EULER_FUNC)(Vector3 const&) = Matrix::fromEulerYXZ>
+	constexpr Matrix<4, 4, T> rotated(Vector3 const& vec) const requires MatType::ValidTransform<R, C> {
+		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
+		return (*this) * EULER_FUNC(vec);
+	}
+
+	template<Matrix<4, 4, T>(*EULER_FUNC)(Vector3 const&) = Matrix::fromEulerYXZ>
+	constexpr Matrix<4, 4, T>& rotate(Vector3 const& vec) requires MatType::ValidTransform<R, C> {
+		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
+		(*this) = (*this) * EULER_FUNC(vec);
+		return (*this);
+	}
+
+	// https://github.com/g-truc/glm/blob/master/glm/ext/matrix_transform.inl
+	constexpr Matrix<4, 4, T> scaled(Vector3 const& vec) const requires MatType::ValidTransform<R, C> {
+		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
+		Matrix<4, 4, T> result(T(1));
+		result[0][0] = vec.x;
+		result[1][1] = vec.y;
+		result[2][2] = vec.z;
+		return (*this) * result;
+	}
+
+	// https://github.com/g-truc/glm/blob/master/glm/ext/matrix_transform.inl
+	constexpr Matrix<4, 4, T>& scale(Vector3 const& vec) requires MatType::ValidTransform<R, C> {
+		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
+		Matrix<4, 4, T> result(T(1));
+		result[0][0] = vec.x;
+		result[1][1] = vec.y;
+		result[2][2] = vec.z;
+		(*this) = (*this) * result;
+		return (*this);
 	}
 
 	constexpr Matrix<R, C, T> cofactors() const requires MatType::EqualSize<R, C> {
@@ -214,7 +386,7 @@ public:
 		return res;
 	}
 
-	constexpr Matrix<R, C, T> operator+(Matrix<C, R, T> const& mat) const {
+	constexpr Matrix<R, C, T> operator+(Matrix<R, C, T> const& mat) const {
 		Matrix<R, C, T> res;
 		for (size_t i = 0; i < R; i++)
 			for (size_t j = 0; j < C; j++)
@@ -290,7 +462,7 @@ public:
 		return *this;
 	}
 
-	constexpr Matrix<R, C, T>& operator+=(Matrix<C, R, T> const& mat) {
+	constexpr Matrix<R, C, T>& operator+=(Matrix<R, C, T> const& mat) {
 		for (size_t i = 0; i < R; i++)
 			for (size_t j = 0; j < C; j++)
 				data[i][j] += mat.data[i][j];
@@ -311,6 +483,31 @@ public:
 		return *this;
 	}
 
+	constexpr Matrix<R, C, T>& operator*=(T const& val) {
+		for (size_t i = 0; i < R; i++)
+			for (size_t j = 0; j < C; j++)
+				data[i][j] *= val;
+		return *this;
+	}
+
+	constexpr Matrix<R, C, T>& operator*=(Matrix<R, C, T> const& mat) requires MatType::EqualSize<R, C>{
+		(*this) = (*this) * mat;
+		return *this;
+	}
+
+	constexpr Matrix<R, C, T>& operator/=(T const& val) {
+		for (size_t i = 0; i < R; i++)
+			for (size_t j = 0; j < C; j++)
+				data[i][j] /= val;
+		return *this;
+	}
+
+	template<size_t C2>
+	constexpr Matrix<R, C, T>& operator/=(Matrix<R, C, T> const& mat) requires MatType::EqualSize<R, C>{
+		(*this) = (*this) / mat;
+		return *this;
+	}
+
 	/// Other operator overloadings.
 
 	constexpr Span<T, C> operator[](size_t const& idx) {
@@ -323,6 +520,9 @@ public:
 	constexpr operator Vector2() const requires MatType::EqualSize<R, 2> {return toVector2();}
 	constexpr operator Vector3() const requires MatType::EqualSize<R, 3> {return toVector3();}
 	constexpr operator Vector4() const requires MatType::EqualSize<R, 4> {return toVector4();}
+
+	constexpr explicit operator const T*() const	{return data;}
+	constexpr explicit operator T*()				{return (T*)data;}
 
 	/// Size accessors.
 
@@ -339,33 +539,201 @@ public:
 
 	constexpr Vector3 toVector3() const requires MatType::EqualSize<R, 3> {
 		static_assert(R == 3, "Matrix is not a valid representation of a 3D vector!");
-		return Vector2(data[0][C-1], data[1][C-1], data[2][C-1]);
+		return Vector3(data[0][C-1], data[1][C-1], data[2][C-1]);
 	}
 
 	constexpr Vector4 toVector4() const requires MatType::EqualSize<R, 4> {
 		static_assert(R == 4, "Matrix is not a valid representation of a 4D vector!");
-		return Vector2(data[0][C-1], data[1][C-1], data[2][C-1], data[3][C-1]);
+		return Vector4(data[0][C-1], data[1][C-1], data[2][C-1], data[3][C-1]);
 	}
 
-	[[unavailable("Unimplemented!")]]
-	constexpr void compose(VecMath::Transform3D trans) requires MatType::EqualSize<R, C> {
+	template<Matrix<4, 4, T>(*EULER_FUNC)(Vector3 const&) = Matrix::fromEulerYXZ>
+	constexpr Matrix<R, C, T>& transform(
+		Vector3 const& position,
+		Vector3 const& rotation,
+		Vector3 const& scale
+	) requires MatType::ValidTransform<R, C> {
 		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
+		// Transform
+		return translate(position).scale(scale).template rotate<EULER_FUNC>(rotation);
+	}
+
+	template<Matrix<4, 4, T>(*EULER_FUNC)(Vector3 const&) = Matrix::fromEulerYXZ>
+	constexpr Matrix<R, C, T>& transform(VecMath::Transform3D const& trans) requires MatType::ValidTransform<R, C> {
+		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
+		return transform<EULER_FUNC>(trans.position, trans.rotation, trans.scale);
+	}
+
+	template<Matrix<4, 4, T>(*EULER_FUNC)(Vector3 const&) = Matrix::fromEulerYXZ>
+	constexpr Matrix<R, C, T>& compose(
+		Vector3 const& position,
+		Vector3 const& rotation,
+		Vector3 const& scale
+	) requires MatType::ValidTransform<R, C> {
+		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
+		// Fill & Transform
+		return fill(1).template transform<EULER_FUNC>(position, rotation, scale);
+	}
+
+	template<Matrix<4, 4, T>(*EULER_FUNC)(Vector3 const&) = Matrix::fromEulerYXZ>
+	constexpr Matrix<R, C, T>& compose(VecMath::Transform3D const& trans) requires MatType::ValidTransform<R, C> {
+		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
+		return compose<EULER_FUNC>(trans.position, trans.rotation, trans.scale);
+	}
+
+	// https://github.com/g-truc/glm/blob/master/glm/gtx/matrix_decompose.inl
+	template<Matrix<4, 4, T>(*EULER_FUNC)(Vector3 const&) = Matrix::fromEulerYXZ>
+	constexpr Matrix<R, C, T>& compose(
+		Vector3 const& position,
+		Vector3 const& rotation,
+		Vector3 const& scale,
+		Vector4 const& perspective,
+		Vector3 const& skew
+	) requires MatType::ValidTransform<R, C> {
+		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
+		Matrix<4, 4, T> result(1);
+		// Apply perspective
+		result.data[0][3] = perspective.x;
+		result.data[1][3] = perspective.y;
+		result.data[2][3] = perspective.z;
+		result.data[3][3] = perspective.w;
+		// Translate & rotate
+		result.translate(position).template rotate<EULER_FUNC>(rotation);
+		Matrix<4, 4, T> tmp(1);
+		// Skew
+		if (skew.x) {
+			tmp = 1;
+			tmp[2][1] = skew.x;
+			result *= tmp;
+		}
+		if (skew.y) {
+			tmp = 1;
+			tmp[2][0] = skew.y;
+			result *= tmp;
+		}
+		if (skew.z) {
+			tmp = 1;
+			tmp[1][0] = skew.z;
+			result *= tmp;
+		}
+		// Scale
+		result.scale(scale);
+		// Apply result
+		(*this) = result;
+		return *this;
+	}
+
+	// https://github.com/g-truc/glm/blob/master/glm/gtx/matrix_decompose.inl
+	template<Matrix<4, 4, T>(*EULER_FUNC)(Vector3 const&) = Matrix::fromEulerYXZ>
+	constexpr Matrix<R, C, T>& compose(
+		VecMath::Transform3D const&	trans,
+		Vector4 const&				perspective,
+		Vector3 const&				skew
+	) requires MatType::ValidTransform<R, C> {
+		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
+		return compose<EULER_FUNC>(trans.position, trans.rotation, trans.scale, perspective, skew);
 	}
 
 	// https://opensource.apple.com/source/WebCore/WebCore-514/platform/graphics/transforms/TransformationMatrix.cpp
-	[[unavailable("Unimplemented!")]]
-	constexpr VecMath::Transform3D decompose() const requires MatType::EqualSize<R, C> {
+	constexpr VecMath::Transform3D decompose(
+			Vector4& perspective,
+			Vector3& skew
+		) const requires MatType::ValidTransform<R, C> {
 		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
-		VecMath::Transform3D res;
-		res.position = Vector3(data[0][3], data[1][3], data[2][3]);
-		Vector3
-			sx = Vector3(data[0][0], data[1][0], data[2][0]),
-			sy = Vector3(data[0][1], data[1][1], data[2][1]),
-			sz = Vector3(data[0][2], data[1][2], data[2][2])
-		;
-		if (sx.crossProd(sy).dotProd(sz) < 0) sx *= -1;
-		res.scale = Vector3(sx.length(), sy.length(), sz.length());
+		VecMath::Transform3D result;
+		// if identity thingamabob is 0, return
+		if (data[3][3] == 0) return VecMath::Transform3D();
+		// Copy & normalize matrix
+		Matrix<R, C, T> local(data);
+		local /= local.data[3][3];
+		// Copy normalized
+		Matrix<R, C, T> pMatrix(local);
+		// Remove translation
+		pMatrix.data[0][3] =
+		pMatrix.data[1][3] =
+		pMatrix.data[2][3] = T(0);
+		pMatrix.data[3][3] = T(1);
+		// If perspective's determinant is zero, return
+		DEBUG("Determinant: "); DEBUGLN(pMatrix.determinant());
+		if (pMatrix.determinant() == T(0))
+			return VecMath::Transform3D();
+		// Isolate perspective
+		if (
+			local.data[0][3] != T(0)
+		||	local.data[1][3] != T(0)
+		||	local.data[2][3] != T(0)
+		) {
+			// Get right-hand side of the equation
+			Vector4 rhs;
+			for (size_t i = 0; i < R; i++)
+				rhs.data[i] = local.data[i][3];
+			Matrix<R, C, T> tipMatrix = pMatrix.inverted().transposed();
+			perspective = tipMatrix * Matrix<R, 1, float>(rhs);
+			// Clear perspective
+			local.data[0][3] =
+			local.data[1][3] =
+			local.data[2][3] = T(0);
+			local.data[3][3] = T(1);
+		} else {
+			perspective = Vector4(0, 0, 0, 1);
+		}
+		// Isolate translation
+		result.position = Vector3(
+			local.data[0][3],
+			local.data[1][3],
+			local.data[2][3]
+		);
+		local.data[0][3] =
+		local.data[1][3] =
+		local.data[2][3] = T(0);
+		// Isolate scale & shear
+		Vector3 row[3];
+		for (size_t i = 0; i < 3; i++)
+			for (size_t j = 0; i < 3; i++)
+				row[i][j] = local.data[i][j];
+		// Compute X scale & normalize first row
+		result.scale.x = row[0].length();
+		row[0].normalize();
+		// Compute XY shear factor & orthogonalize 2nd row to 1st
+		skew.z = row[0].dotProd(row[1]);
+		row[1] = (row[1] * 1.0) + (row[0] * -skew.z);
+		// Compute Y scale & normalize second row
+		result.scale.y = row[1].length();
+		row[1].normalize();
+		skew.z /= result.scale.y;
+		// Compute remaining shears & orthogonalize 3rd row
+		skew.y = row[0].dotProd(row[2]);
+		row[2] = (row[2] * 1.0) + (row[0] * -skew.y);
+		skew.x = row[1].dotProd(row[2]);
+		row[2] = (row[2] * 1.0) + (row[1] * -skew.x);
+		// Get Z scale & normalize third row
+		result.scale.z = row[2].length();
+		row[2].normalize();
+		skew.y /= result.scale.z;
+		skew.x /= result.scale.z;
+		// Check for coordinate flip
+		if (row[0].dotProd(row[1].crossProd(row[2])) < 0)
+			for (size_t i = 0; i < 3; i++) {
+				result.scale[i] *= T(-1);
+				row[i] *= T(-1);
+			}
+		// Get euler angles
+		result.rotation.y = asin(-row[0][2]);
+		if (cos(result.rotation.x) != 0) {
+			result.rotation.x = atan2(row[1][2], row[2][2]);
+			result.rotation.z = atan2(row[0][1], row[0][0]);
+		} else {
+			result.rotation.x = atan2(-row[2][0], row[1][1]);
+			result.rotation.z = 0;
+		}
+		// Return result
+		return result;
+	}
 
+	constexpr VecMath::Transform3D decompose() const requires MatType::ValidTransform<R, C> {
+		Vector4 _p;
+		Vector3 _s;
+		return decompose(_p, _s);
 	}
 
 	/// Gets the dot product of a given row by another given row.
@@ -390,7 +758,7 @@ public:
 
 private:
 	template<size_t R2, size_t C2, Math::Operatable T2> friend class Matrix;
-
+	template<typename T2> friend Matrix<4, 4, T2> translate(Matrix<4, 4, T2>, Vector3);
 	/// The matrix's columns;
 	T data[R][C];
 };
@@ -463,6 +831,26 @@ typedef Matrix3x4i Mat3x4i;
 typedef Matrix4x4i Mat4x4i;
 
 namespace MatMath {
+	Matrix4x4 lookAt(Vector3 const& eye, Vector3 const& at, Vector3 const& up) {
+		Vector3 const f((at - eye).normalized());
+		Vector3 const s(f.crossProd(up).normalized());
+		Vector3 const u(s.crossProd(f));
+
+		Matrix4x4 result(1);
+		result[0][0] = s.x;
+		result[1][0] = s.y;
+		result[2][0] = s.z;
+		result[0][1] = u.x;
+		result[1][1] = u.y;
+		result[2][1] = u.z;
+		result[0][2] =-f.x;
+		result[1][2] =-f.y;
+		result[2][2] =-f.z;
+		result[3][0] =-s.dotProd(eye);
+		result[3][1] =-u.dotProd(eye);
+		result[3][2] = f.dotProd(eye);
+		return result;
+	}
 }
 
 #endif // FLOAT_MATRICES_234_H
