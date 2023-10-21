@@ -55,9 +55,7 @@ These are already included in the ```lib/``` folder.
 | Name       | Purpose                 |
 |:----------:|-------------------------|
 | OpenGL     | Window & Input handling |
-| OpenGL     | Window & Input handling |
 | SDL2_Mixer | Audio backend           |
-| GLM        | (some) 3D Math          |
 | stb_image  | Image loading           |
 | cute_c2    | Collision               |
 | jsoncpp    | Multiple things         |
