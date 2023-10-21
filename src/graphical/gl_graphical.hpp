@@ -302,11 +302,9 @@ namespace VecMath {
 		Vector3 const pvec = Vector3(tmat[3][0], tmat[3][1], tmat[3][2]);
 		// Position
 		Vector3 res = (tmat * Matrix4x1(Vector4(vtx.x, vtx.y, vtx.z, 1.0f))).toVector3();
-		//res += pvec;
 		Drawer::vertexSetPosition(vtx, res);
 		// Normal
 		res = (tmat * Matrix4x1(Vector4(vtx.nx, vtx.ny, vtx.nz, 1.0f))).toVector3();
-		//res += pvec;
 		Drawer::vertexSetNormal(vtx, res);
 	}
 
