@@ -415,6 +415,21 @@ public:
 		return res;
 	}
 
+	constexpr Matrix<R, C, T> operator+(Vector2 const& vec) const {
+		static_assert(R == 2 && C == 1, "Matrix size is invalid!");
+		return (*this) + Matrix<R, C, float>(vec);
+	}
+
+	constexpr Matrix<R, C, T> operator+(Vector3 const& vec) const {
+		static_assert(R == 3 && C == 1, "Matrix size is invalid!");
+		return (*this) + Matrix<R, C, float>(vec);
+	}
+
+	constexpr Matrix<R, C, T> operator+(Vector4 const& vec) const {
+		static_assert(R == 4 && C == 1, "Matrix size is invalid!");
+		return (*this) + Matrix<R, C, float>(vec);
+	}
+
 	constexpr Matrix<R, C, T> operator-(T const& val) const {
 		Matrix<R, C, T> res;
 		for (size_t i = 0; i < C; i++)
@@ -429,6 +444,21 @@ public:
 			for (size_t j = 0; j < R; j++)
 				res[j][i] = data[i][j] - mat.data[i][j];
 		return res;
+	}
+
+	constexpr Matrix<R, C, T> operator-(Vector2 const& vec) const {
+		static_assert(R == 2 && C == 1, "Matrix size is invalid!");
+		return (*this) - Matrix<R, C, float>(vec);
+	}
+
+	constexpr Matrix<R, C, T> operator-(Vector3 const& vec) const {
+		static_assert(R == 3 && C == 1, "Matrix size is invalid!");
+		return (*this) - Matrix<R, C, float>(vec);
+	}
+
+	constexpr Matrix<R, C, T> operator-(Vector4 const& vec) const {
+		static_assert(R == 4 && C == 1, "Matrix size is invalid!");
+		return (*this) - Matrix<R, C, float>(vec);
 	}
 
 	constexpr Matrix<R, C, T> operator*(T const& val) const {
@@ -449,6 +479,26 @@ public:
 					res.data[j][i] += data[k][i] * mat.data[j][k];
 			}
 		return res;
+	}
+
+	constexpr Matrix<R, 1, T> operator*(Vector2 const& vec) const {
+		static_assert(R == 2, "Matrix row count is invalid!");
+		return (*this) * Matrix<R, 1, float>(vec);
+	}
+
+	constexpr Matrix<R, 1, T> operator*(Vector3 const& vec) const {
+		static_assert(R == 3, "Matrix row count is invalid!");
+		return (*this) * Matrix<R, 1, float>(vec);
+	}
+
+	constexpr Matrix<R, 1, T> operator*(Vector4 const& vec) const {
+		static_assert(R == 4, "Matrix row count is invalid!");
+		return (*this) * Matrix<R, 1, float>(vec);
+	}
+
+	constexpr Matrix<R, C, T> operator*(VecMath::Transform3D const& trans) const requires MatType::ValidTransform<R, C> {
+		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
+		return (*this) * Matrix<R, C, float>(trans);
 	}
 
 	constexpr Matrix<R, C, T> operator/(T const& val) const {
@@ -492,6 +542,21 @@ public:
 		return *this;
 	}
 
+	constexpr Matrix<R, C, T> operator+=(Vector2 const& vec) {
+		static_assert(R == 2 && C == 1, "Matrix size is invalid!");
+		return (*this) += Matrix<R, C, float>(vec);
+	}
+
+	constexpr Matrix<R, C, T> operator+=(Vector3 const& vec) {
+		static_assert(R == 3 && C == 1, "Matrix size is invalid!");
+		return (*this) += Matrix<R, C, float>(vec);
+	}
+
+	constexpr Matrix<R, C, T> operator+=(Vector4 const& vec) {
+		static_assert(R == 4 && C == 1, "Matrix size is invalid!");
+		return (*this) += Matrix<R, C, float>(vec);
+	}
+
 	constexpr Matrix<R, C, T>& operator-=(T const& val) {
 		for (size_t i = 0; i < C; i++)
 			for (size_t j = 0; j < R; j++)
@@ -506,6 +571,21 @@ public:
 		return *this;
 	}
 
+	constexpr Matrix<R, C, T> operator-=(Vector2 const& vec) {
+		static_assert(R == 2 && C == 1, "Matrix size is invalid!");
+		return (*this) -= Matrix<R, C, float>(vec);
+	}
+
+	constexpr Matrix<R, C, T> operator-=(Vector3 const& vec) {
+		static_assert(R == 3 && C == 1, "Matrix size is invalid!");
+		return (*this) -= Matrix<R, C, float>(vec);
+	}
+
+	constexpr Matrix<R, C, T> operator-=(Vector4 const& vec) {
+		static_assert(R == 4 && C == 1, "Matrix size is invalid!");
+		return (*this) -= Matrix<R, C, float>(vec);
+	}
+
 	constexpr Matrix<R, C, T>& operator*=(T const& val) {
 		for (size_t i = 0; i < C; i++)
 			for (size_t j = 0; j < R; j++)
@@ -516,6 +596,11 @@ public:
 	constexpr Matrix<R, C, T>& operator*=(Matrix<R, C, T> const& mat) requires MatType::EqualSize<R, C> {
 		(*this) = (*this) * mat;
 		return *this;
+	}
+
+	constexpr Matrix<R, C, T> operator*=(VecMath::Transform3D const& trans) const requires MatType::ValidTransform<R, C> {
+		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
+		return (*this) *= Matrix<R, C, float>(trans);
 	}
 
 	constexpr Matrix<R, C, T>& operator/=(T const& val) {
