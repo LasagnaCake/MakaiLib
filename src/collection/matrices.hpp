@@ -217,12 +217,12 @@ public:
 	// https://github.com/g-truc/glm/blob/master/glm/gtx/euler_angles.inl
 	constexpr static Matrix<4, 4, T> fromEulerYXZ(Vector3 const& angle) {
 		// Get sines and cosines
-		T tmp_ch = cos(angle.y);
-		T tmp_sh = sin(angle.y);
-		T tmp_cp = cos(angle.x);
-		T tmp_sp = sin(angle.x);
-		T tmp_cb = cos(angle.z);
-		T tmp_sb = sin(angle.z);
+		T tmp_ch = cos(-angle.y);
+		T tmp_sh = sin(-angle.y);
+		T tmp_cp = cos(-angle.x);
+		T tmp_sp = sin(-angle.x);
+		T tmp_cb = cos(-angle.z);
+		T tmp_sb = sin(-angle.z);
 		// Compute matrix
 		Matrix<4, 4, T> result;
 		result[0][0] = tmp_ch * tmp_cb + tmp_sh * tmp_sp * tmp_sb;
