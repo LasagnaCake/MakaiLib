@@ -141,10 +141,11 @@ protected:
 		// Render with basic shader
 		MAIN_SHADER();
 		// Get transformation matrices
-		glm::mat4
-			actor		= VecMath::asGLMMatrix(trans),
-			camera		= Scene::camera.matrix(),
-			projection	= Scene::camera.perspective();
+		Matrix4x4
+			actor(trans),
+			camera(Scene::camera.matrix()),
+			projection(Scene::camera.projection())
+		;
 		// Set shader data
 		Material::setMaterial(MAIN_SHADER, material);
 		// Set transformation matrices

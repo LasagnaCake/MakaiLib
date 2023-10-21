@@ -32,22 +32,20 @@ namespace Camera {
 		/// Whether most points given (3D Perspective) are relative to the eye's position.
 		bool relativeToEye = false;
 
-		glm::mat4 matrix() const {
-			glm::vec3
-				camEye = glm::vec3(eye.x, eye.y, eye.z),
-				camAt = glm::vec3(at.x, at.y, at.z);
+		constexpr Matrix4x4 matrix() const {
+			Vector3 camAt = at;
 			if (relativeToEye)
-				camAt += camEye;
-			return glm::lookAt(
-				camEye,
+				camAt += eye;
+			return MatMath::lookAt(
+				eye,
 				camAt,
-				glm::vec3(up.x, up.y, up.z)
+				up
 			);
 		}
 
-		glm::mat4 perspective() const {
+		constexpr Matrix4x4 projection() const {
 			if (ortho.enabled)
-				return glm::ortho(
+				return MatMath::ortho(
 					ortho.origin.x,
 					ortho.size.x,
 					ortho.size.y,
@@ -55,7 +53,7 @@ namespace Camera {
 					zNear,
 					zFar
 				);
-			return glm::perspective(
+			return MatMath::perspective(
 				fov,
 				aspect.tangent(),
 				zNear,
@@ -93,10 +91,22 @@ namespace Camera {
 		float zFar	= 100.0;
 		OrthographicData ortho;
 
-		operator Camera3D() const {
+		constexpr operator Camera3D() const {
 			Vector3 eye	= position;
 			Vector3 at	= Vector3(0, -1, 0);
 			Vector3 up	= Vector3(0, 0, 1);
+			/*Matrix4x4 const rmat = Matrix4x4::fromEulerYXZ(rotation);
+			return Camera3D {
+				eye,
+				rmat * Matrix4x1(at),
+				rmat * Matrix4x1(up),
+				aspect,
+				fov,
+				zNear,
+				zFar,
+				ortho,
+				true
+			};*/
 			return Camera3D {
 				eye,
 				VecMath::srpTransform(at, 0, rotation, 1),
@@ -110,8 +120,8 @@ namespace Camera {
 			};
 		}
 
-		void fromCamera3D(Camera3D const& cam) {
-			auto crot	= glm::eulerAngles(glm::toQuat(cam.matrix()));
+		constexpr GimbalCamera3D& fromCamera3D(Camera3D const& cam) {
+			auto crot	= MatMath::getEulerAnglesYXZ(cam.matrix());
 			position	= cam.eye;
 			rotation	= Vector3(crot.x, crot.y, crot.z);
 			aspect		= cam.aspect;
@@ -119,10 +129,12 @@ namespace Camera {
 			zNear		= cam.zNear;
 			zFar		= cam.zFar;
 			ortho		= cam.ortho;
+			return (*this);
 		}
 
-		inline void operator=(Camera3D const& cam) {
+		constexpr  inline GimbalCamera3D& operator=(Camera3D const& cam) {
 			fromCamera3D(cam);
+			return (*this);
 		}
 	};
 }

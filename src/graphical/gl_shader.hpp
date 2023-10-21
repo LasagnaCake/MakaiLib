@@ -10,7 +10,7 @@
 #define shaderTypeId(SHADER_TYPE_NAME) shaderTypes.find(SHADER_TYPE_NAME)->second
 
 namespace Scene {
-	glm::mat4 world = glm::mat4(1.0f);
+	Matrix4x4 world = Matrix4x4(Matrix4x4::identity());
 	Camera::Camera3D camera;
 }
 
@@ -28,96 +28,66 @@ namespace Shader {
 				this->id	= id;
 			}
 
-			void operator()(bool value) const {
+			void operator()(bool const& value) const {
 				glUniform1i(getUniform(), (int)value);
 			}
 
-			void operator()(int value) const {
+			void operator()(int const& value) const {
 				glUniform1i(getUniform(), value);
 			}
 
-			void operator()(unsigned int value) const {
+			void operator()(unsigned int const& value) const {
 				glUniform1ui(getUniform(), value);
 			}
 
-			void operator()(float value) const {
+			void operator()(float const& value) const {
 				glUniform1f(getUniform(), value);
 			}
 
-			void operator()(glm::vec2 value) const {
+			void operator()(Vector2 const& value) const {
 				glUniform2f(getUniform(), value.x, value.y);
 			}
 
-			void operator()(Vector2 value) const {
-				glUniform2f(getUniform(), value.x, value.y);
-			}
-
-			void operator()(glm::vec3 value) const {
+			void operator()(Vector3 const& value) const {
 				glUniform3f(getUniform(), value.x, value.y, value.z);
 			}
 
-			void operator()(Vector3 value) const {
-				glUniform3f(getUniform(), value.x, value.y, value.z);
-			}
-
-			void operator()(glm::vec4 value) const {
+			void operator()(Vector4 const& value) const {
 				glUniform4f(getUniform(), value.x, value.y, value.z, value.w);
 			}
 
-			void operator()(Vector4 value) const {
-				glUniform4f(getUniform(), value.x, value.y, value.z, value.w);
+			void operator()(Matrix4x4 const& value) const {
+				glUniformMatrix4fv(getUniform(), 1, GL_FALSE, (const float*)value);
 			}
 
-			void operator()(glm::mat4 value) const {
-				glUniformMatrix4fv(getUniform(), 1, GL_FALSE, glm::value_ptr(value));
-			}
-
-			void operator()(int* const values, size_t count) {
+			void operator()(int* const& values, size_t const& count) {
 				glUniform1iv(getUniform(), count, values);
 				glUniform1ui(getUniform("Count"), count);
 			}
 
-			void operator()(unsigned int* const values, size_t count) {
+			void operator()(unsigned int* const& values, size_t const& count) {
 				glUniform1uiv(getUniform(), count, values);
 				glUniform1ui(getUniform("Count"), count);
 			}
 
-			void operator()(float* const values, size_t count) {
+			void operator()(float* const& values, size_t const& count) {
 				glUniform1fv(getUniform(), count, values);
 				glUniform1ui(getUniform("Count"), count);
 			}
 
-			void operator()(Vector2* const values, size_t count) {
+			void operator()(Vector2* const& values, size_t const& count) {
 				for SSRANGE(i, 0, count)
 					glUniform2f(getUniformArray(i), values[i].x, values[i].y);
 				glUniform1ui(getUniform("Count"), count);
 			}
 
-			void operator()(glm::vec2* const values, size_t count) {
-				for SSRANGE(i, 0, count)
-					glUniform2f(getUniformArray(i), values[i].x, values[i].y);
-				glUniform1ui(getUniform("Count"), count);
-			}
-
-			void operator()(Vector3* const values, size_t count) {
+			void operator()(Vector3* const& values, size_t const& count) {
 				for SSRANGE(i, 0, count)
 					glUniform3f(getUniformArray(i), values[i].x, values[i].y, values[i].z);
 				glUniform1ui(getUniform("Count"), count);
 			}
 
-			void operator()(glm::vec3* const values, size_t count) {
-				for SSRANGE(i, 0, count)
-					glUniform3f(getUniformArray(i), values[i].x, values[i].y, values[i].z);
-				glUniform1ui(getUniform("Count"), count);
-			}
-
-			void operator()(Vector4* const values, size_t count) {
-				for SSRANGE(i, 0, count)
-					glUniform4f(getUniformArray(i), values[i].x, values[i].y, values[i].z, values[i].w);
-				glUniform1ui(getUniform("Count"), count);
-			}
-
-			void operator()(glm::vec4* const values, size_t count) {
+			void operator()(Vector4* const& values, size_t const& count) {
 				for SSRANGE(i, 0, count)
 					glUniform4f(getUniformArray(i), values[i].x, values[i].y, values[i].z, values[i].w);
 				glUniform1ui(getUniform("Count"), count);
@@ -129,12 +99,12 @@ namespace Shader {
 			}
 
 		private:
-			GLuint getUniformArray(size_t index) {
+			GLuint getUniformArray(size_t const& index) {
 				auto cname = (name + "[" + std::to_string(index) + "]").c_str();
 				return glGetUniformLocation(id, cname);
 			}
 
-			inline GLuint getUniform(string append = "") const {
+			inline GLuint getUniform(string const& append = "") const {
 				return glGetUniformLocation(id, (name + append).c_str());
 			}
 		};
