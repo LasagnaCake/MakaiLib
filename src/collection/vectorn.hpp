@@ -260,6 +260,8 @@ class Vector2
 		constexpr float& operator[](size_t const& pos)		{if (pos > 1) return data[0]; return data[pos];}
 		constexpr float operator[](size_t const& pos) const	{if (pos > 1) return data[0]; return data[pos];}
 
+		constexpr float* operator*() {return data;};
+
 		constexpr explicit operator float*()				{return data;}
 		constexpr explicit operator const float*() const	{return data;}
 
@@ -598,6 +600,8 @@ class Vector3
 
 		constexpr explicit operator float*()				{return data;}
 		constexpr explicit operator const float*() const	{return data;}
+
+		constexpr float* operator*() {return data;};
 
 		constexpr float& operator[](size_t const& pos)		{if (pos > 2) return data[0]; return data[pos];}
 		constexpr float operator[](size_t const& pos) const	{if (pos > 2) return data[0]; return data[pos];}
@@ -987,6 +991,8 @@ class Vector4
 
 		constexpr explicit operator float*()				{return data;}
 		constexpr explicit operator const float*() const	{return data;}
+
+		constexpr float* operator*() {return data;};
 
 		constexpr float& operator[](size_t const& pos)		{if (pos > 3) return data[0]; return data[pos];}
 		constexpr float operator[](size_t const& pos) const	{if (pos > 3) return data[0]; return data[pos];}

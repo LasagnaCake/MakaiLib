@@ -245,6 +245,14 @@ public:
 		return result;
 	}
 
+	constexpr static Matrix<4, 4, T> fromTranslation(Vector3 const& vec) {
+		return Matrix::identity().translated(vec);
+	}
+
+	constexpr static Matrix<4, 4,, T> fromScale(Vector3 const& vec) {
+		return Matrix::identity().scaled(vec);
+	}
+
 	constexpr Matrix<R, C, T> inverted() const requires MatType::EqualSize<R, C> {
 		static_assert(C == R, "Matrix is not a square matrix!");
 		T det = determinant();
@@ -271,9 +279,9 @@ public:
 	constexpr Matrix<4, 4, T>& translate(Vector3 const& vec) requires MatType::ValidTransform<R, C> {
 		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
 		Vector4 calc =
-			Vector4(data[0]) * vec[0]
-		+	Vector4(data[1]) * vec[1]
-		+	Vector4(data[2]) * vec[2]
+			(Vector4(data[0]) * vec[0])
+		+	(Vector4(data[1]) * vec[1])
+		+	(Vector4(data[2]) * vec[2])
 		+	Vector4(data[3])
 		;
 		data[3][0] = calc[0];
@@ -299,21 +307,23 @@ public:
 	// https://github.com/g-truc/glm/blob/master/glm/ext/matrix_transform.inl
 	constexpr Matrix<4, 4, T> scaled(Vector3 const& vec) const requires MatType::ValidTransform<R, C> {
 		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
-		Matrix<4, 4, T> result(Matrix<4, 4, T>::identity());
-		result[0][0] = vec.x;
-		result[1][1] = vec.y;
-		result[2][2] = vec.z;
-		return result * (*this);
+		Vector4 result[4];
+		result[0] = Vector4(data[0]) * vec[0];
+		result[1] = Vector4(data[1]) * vec[1];
+		result[2] = Vector4(data[2]) * vec[2];
+		result[3] = Vector4(data[3]);
+		return Matrix<4, 4, T>({
+			result[0][0], result[1][0], result[2][0], result[3][0],
+			result[0][1], result[1][1], result[2][1], result[3][1],
+			result[0][2], result[1][2], result[2][2], result[3][2],
+			result[0][3], result[1][3], result[2][3], result[3][3]
+		});
 	}
 
 	// https://github.com/g-truc/glm/blob/master/glm/ext/matrix_transform.inl
 	constexpr Matrix<4, 4, T>& scale(Vector3 const& vec) requires MatType::ValidTransform<R, C> {
 		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
-		Matrix<4, 4, T> result(Matrix<4, 4, T>::identity());
-		result[0][0] = vec.x;
-		result[1][1] = vec.y;
-		result[2][2] = vec.z;
-		(*this) = result * (*this);
+		*this = scaled(vec);
 		return (*this);
 	}
 
@@ -368,14 +378,7 @@ public:
 		static_assert(R > 1 && C > 1, "Cannot shrink a 1-dimensional matrix!");
 		static_assert(RF > R && CF > C, "Shrinking factor(s) are bigger than the matrix!");
 		static_assert(rowStart < (R-RF) && colStart < (C-CF), "Row/Column starts cannot be bigger than the shrunk matrix!");
-		if (rowStart < (R-RF) && colStart < (C-CF))
-			throw Error::InvalidValue(
-				"Invalid row / column start!",
-				__FILE__,
-				toString(__LINE__),
-				"shrunkBy",
-				"Values cannot be bigger than the shrunk matrix's dimensions!"
-			);
+		if (rowStart < (R-RF) && colStart < (C-CF)) Matrix<R-RF, C-CF, T>(0);
 		Matrix<R-RF, C-CF, T> res;
 		for (size_t i = 0; i < C-CF; i++)
 			for (size_t j = 0; j < R-RF; j++)
@@ -386,14 +389,7 @@ public:
 	template<size_t RF = 1, size_t CF = 1>
 	constexpr Matrix<R+RF, C+CF, T> expandedBy(size_t const& rowStart = 0, size_t const& colStart = 0) const {
 		static_assert(rowStart < RF && colStart < CF, "Row/Column starts cannot be bigger than the expansion factor!");
-		if (rowStart < (RF) && colStart < (CF))
-			throw Error::InvalidValue(
-				"Invalid row / column start!",
-				__FILE__,
-				toString(__LINE__),
-				"shrunkBy",
-				"Values cannot be bigger than the expansion factors!"
-			);
+		if (rowStart < (RF) && colStart < (CF)) return Matrix<R+RF, C+CF, T>(0);
 		Matrix<R+RF, C+CF, T> res;
 		for (size_t i = 0; i < C; i++)
 			for (size_t j = 0; j < R; j++)
@@ -575,6 +571,23 @@ public:
 	}
 
 	template<Matrix<4, 4, T>(*EULER_FUNC)(Vector3 const&) = Matrix::fromEulerYXZ>
+	constexpr Matrix<R, C, T>& transformed(
+		Vector3 const& position,
+		Vector3 const& rotation,
+		Vector3 const& scale
+	) const requires MatType::ValidTransform<R, C> {
+		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
+		// Transform
+		return translatedposition).template rotated<EULER_FUNC>(rotation).scaled(scale);
+	}
+
+	template<Matrix<4, 4, T>(*EULER_FUNC)(Vector3 const&) = Matrix::fromEulerYXZ>
+	constexpr Matrix<R, C, T>& transformed(VecMath::Transform3D const& trans) const requires MatType::ValidTransform<R, C> {
+		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
+		return transformed<EULER_FUNC>(trans.position, trans.rotation, trans.scale);
+	}
+
+	template<Matrix<4, 4, T>(*EULER_FUNC)(Vector3 const&) = Matrix::fromEulerYXZ>
 	constexpr Matrix<R, C, T>& transform(
 		Vector3 const& position,
 		Vector3 const& rotation,
@@ -582,10 +595,7 @@ public:
 	) requires MatType::ValidTransform<R, C> {
 		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
 		// Transform
-		translate(position);
-		rotate<EULER_FUNC>(rotation);
-		this->scale(scale);
-		return *this;
+		return translate(position).template rotate<EULER_FUNC>(rotation).scale(scale);
 	}
 
 	template<Matrix<4, 4, T>(*EULER_FUNC)(Vector3 const&) = Matrix::fromEulerYXZ>
@@ -666,7 +676,7 @@ public:
 	}
 
 	// https://opensource.apple.com/source/WebCore/WebCore-514/platform/graphics/transforms/TransformationMatrix.cpp
-	[[unavailable("Not working as intended!")]]
+	[[gnu::unavailable("Not working as intended!")]]
 	constexpr VecMath::Transform3D decompose(
 			Vector4& perspective,
 			Vector3& skew
@@ -761,7 +771,7 @@ public:
 		return result;
 	}
 
-	[[unavailable("Not working as intended!")]]
+	[[gnu::unavailable("Not working as intended!")]]
 	constexpr VecMath::Transform3D decompose() const requires MatType::ValidTransform<R, C> {
 		Vector4 _p;
 		Vector3 _s;
