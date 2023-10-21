@@ -242,61 +242,6 @@ namespace Drawer {
 namespace VecMath {
 	using Drawer::RawVertex;
 
-	/*inline glm::vec3 asGLMVector(Vector3& vec) {
-		return glm::vec3(vec.x, vec.y, vec.z);
-	}
-
-	inline Vector3 asVector(glm::vec3& vec) {
-		return Vector3(vec.x, vec.y, vec.z);
-	}
-
-	inline glm::vec4 asGLMVector(Vector4& vec) {
-		return glm::vec4(vec.x, vec.y, vec.z, vec.w);
-	}
-
-	inline Vector4 asVector(glm::vec4& vec) {
-		return Vector4(vec.x, vec.y, vec.z, vec.w);
-	}
-
-	inline Vector3 asVector3(glm::vec4& vec) {
-		return Vector3(vec.x, vec.y, vec.z);
-	}
-
-	inline Vector3 glmRotateV3(Vector3& vec, Vector3 angle) {
-		glm::vec3 res = asGLMVector(vec);
-		res = glm::rotateZ(res, angle.z);
-		res = glm::rotateY(res, angle.y);
-		res = glm::rotateX(res, angle.x);
-		return asVector(res);
-	}
-
-	inline glm::mat4 rotationMatrix(Vector3& rotation) {
-		return glm::eulerAngleYXZ(
-			rotation.y,
-			rotation.x,
-			rotation.z
-		);
-	}
-
-	glm::mat4 asGLMMatrix(Transform3D& trans) {
-		glm::mat4 res(1.0f);
-		res = glm::translate(res, asGLMVector(trans.position));
-		res = glm::scale(res, asGLMVector(trans.scale));
-		res *= rotationMatrix(trans.rotation);
-		return res;
-	}
-
-	Vector3 srpTransform(Vector3& vec, glm::mat4& matrix) {
-		glm::vec4 res = glm::vec4(vec.x, vec.y, vec.z, 1.0f) * matrix;
-		res += glm::vec4(glm::vec3(matrix[3]), 0.0);
-		return Vector3(res.x, res.y, res.z);
-	}
-
-	inline Vector3 glmSrpTransform(Vector3& vec, Transform3D& trans) {
-		auto tmat = asGLMMatrix(trans);
-		return srpTransform(vec, tmat);
-	}*/
-
 	void srpTransform(RawVertex& vtx, Matrix4x4 const& tmat) {
 		// Position
 		Vector3 res = (tmat * Vector4(vtx.x, vtx.y, vtx.z, 1.0f)).toVector3();

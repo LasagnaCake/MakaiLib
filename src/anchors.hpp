@@ -86,14 +86,6 @@
 #include <GLEW/include/GL/glew.h>
 #include <GLEW/include/GL/wglew.h>
 #include <GL/gl.h>
-//#include <GLFW/include/GLFW/glfw3.h>
-#include <GLM/glm.hpp>
-#include <glm/gtx/rotate_vector.hpp>
-#include <glm/gtx/euler_angles.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
-#include <glm/gtx/matrix_decompose.hpp>
-#include <glm/gtx/quaternion.hpp>
 
 /*
 ***************
@@ -177,22 +169,6 @@ typedef nlohmann::ordered_json JSONData;
 
 /*
 *	[+]=[   [Headers END]   ]=[+]
-*/
-/*
-#ifdef _$_LUA_STYLE_PROGRAMMING
-#define END		}
-#define AND		&&
-#define OR		||
-#define NOT		!
-#define THEN	)
-#define EXECUTE	{
-#define TAKE	(
-#define DONE	;
-#define LESS	<
-#define MORE	>
-#define IS		==
-#define EQUALS	=
-#endif // _$_LUA_STYLE_PROGRAMMING
 */
 
 #endif // ANCHORED_HEADERS_H
