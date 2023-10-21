@@ -242,7 +242,7 @@ namespace Drawer {
 namespace VecMath {
 	using Drawer::RawVertex;
 
-	inline glm::vec3 asGLMVector(Vector3& vec) {
+	/*inline glm::vec3 asGLMVector(Vector3& vec) {
 		return glm::vec3(vec.x, vec.y, vec.z);
 	}
 
@@ -295,29 +295,23 @@ namespace VecMath {
 	inline Vector3 glmSrpTransform(Vector3& vec, Transform3D& trans) {
 		auto tmat = asGLMMatrix(trans);
 		return srpTransform(vec, tmat);
-	}
+	}*/
 
-	/*RawVertex srpTransform(RawVertex& vtx, glm::mat4& matrix) {
-		glm::vec4 res = glm::vec4(vtx.x, vtx.y, vtx.z, 1.0f) * matrix;
-		res += glm::vec4(glm::vec3(matrix[3]), 0.0);
-		return RawVertex{res.x, res.y, res.z, vtx.u, vtx.v, vtx.r, vtx.g, vtx.b, vtx.a};
-	}
-	*/
-
-	void srpTransform(RawVertex& vtx, glm::mat4& matrix) {
+	void srpTransform(RawVertex& vtx, Matrix4x4 const& tmat) {
+		// Matrix position
+		Vector3 const pvec = Vector3(tmat[3][0], tmat[3][1], tmat[3][2]);
 		// Position
-		glm::vec4 res = glm::vec4(vtx.x, vtx.y, vtx.z, 1.0f) * matrix;
-		res += glm::vec4(glm::vec3(matrix[3]), 0.0);
-		Drawer::vertexSetPosition(vtx, Vector3(res.x, res.y, res.z));
+		Vector3 res = (tmat * Matrix4x1(Vector4(vtx.x, vtx.y, vtx.z, 1.0f))).toVector3();
+		//res += pvec;
+		Drawer::vertexSetPosition(vtx, res);
 		// Normal
-		res = glm::vec4(vtx.nx, vtx.ny, vtx.nz, 1.0f) * matrix;
-		res += glm::vec4(glm::vec3(matrix[3]), 0.0);
-		Drawer::vertexSetNormal(vtx, Vector3(res.x, res.y, res.z));
+		res = (tmat * Matrix4x1(Vector4(vtx.nx, vtx.ny, vtx.nz, 1.0f))).toVector3();
+		//res += pvec;
+		Drawer::vertexSetNormal(vtx, res);
 	}
 
-	inline void glmSrpTransform(RawVertex& vtx, Transform3D& trans) {
-		auto tmat = asGLMMatrix(trans);
-		srpTransform(vtx, tmat);
+	inline void srpTransform(RawVertex& vtx, Transform3D const& trans) {
+		srpTransform(vtx, Matrix4x4(trans));
 	}
 }
 
@@ -328,9 +322,6 @@ namespace RenderData {
 		VecMath::Transform2D,
 		VecMath::Transform3D,
 		VecMath::srpTransform,
-		VecMath::asGLMVector,
-		VecMath::asVector3,
-		VecMath::asGLMMatrix,
 		Drawer::RawVertex,
 		Drawer::toRawVertex,
 		Drawer::DrawFunc,

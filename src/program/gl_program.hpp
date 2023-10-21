@@ -533,7 +533,7 @@ namespace Makai {
 			// Setup camera
 			DEBUGLN("Setting starting camera...");
 			Scene::camera.aspect = Vector2(width, height);
-			Scene::camera.fov = glm::radians(45.0f);
+			Scene::camera.fov = Math::radians(45.0f);
 			DEBUGLN("creating default framebuffer...");
 			// Create framebuffer
 			framebuffer.create(width, height);

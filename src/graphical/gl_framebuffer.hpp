@@ -183,8 +183,8 @@ namespace Drawer {
 			shader["depth"](30);
 			shader["screen"](31);
 			// Set transformation matrix
-			shader["posMatrix"](asGLMMatrix(trans));
-			shader["uvMatrix"](asGLMMatrix(uv));
+			shader["posMatrix"](Matrix4x4(trans));
+			shader["uvMatrix"](Matrix4x4(uv));
 			shader["resolution"](Vector2(width, height));
 			// Set material data
 			RenderData::Material::setMaterial(shader, material);

@@ -8,7 +8,7 @@ struct Empty {
 	virtual Empty* reset() {return this;}
 	virtual Empty* transform() {return this;}
 	virtual Triangle** getBoundTriangles() {return nullptr;}
-	virtual void forEachVertex(VertexFunc f) {};
+	virtual void forEachVertex(VertexFunc const& f) {};
 	void destroy()	{onDestroy();}
 	void unbind()	{onUnbind();}
 	bool fixed = true;
@@ -26,7 +26,7 @@ private:
 class Plane: public Empty {
 public:
 	Plane(
-		Triangle* tris[2]
+		Triangle* const (&tris)[2]
 	) {
 		this->tris[0]	= tris[0];
 		this->tris[1]	= tris[1];
@@ -39,12 +39,12 @@ public:
 	}
 
 	Plane(
-		RawVertex* tl,
-		RawVertex* tr1,
-		RawVertex* tr2,
-		RawVertex* bl1,
-		RawVertex* bl2,
-		RawVertex* br
+		RawVertex* const& tl,
+		RawVertex* const& tr1,
+		RawVertex* const& tr2,
+		RawVertex* const& bl1,
+		RawVertex* const& bl2,
+		RawVertex* const& br
 	) {
 		this->tl	= tl;
 		this->tr1	= tr1;
@@ -62,10 +62,10 @@ public:
 
 	/// Sets the plane's posOrigin.
 	Plane* setOrigin(
-			Vector3 tlPos = Vector3(-1, +1),
-			Vector3 trPos = Vector3(+1, +1),
-			Vector3 blPos = Vector3(-1, -1),
-			Vector3 brPos = Vector3(+1, -1)
+			Vector3 const& tlPos = Vector3(-1, +1),
+			Vector3 const& trPos = Vector3(+1, +1),
+			Vector3 const& blPos = Vector3(-1, -1),
+			Vector3 const& brPos = Vector3(+1, -1)
 		) {
 		VERTEX_SET_POS(origin[0],	tlPos);
 		VERTEX_SET_POS(origin[1],	trPos);
@@ -75,20 +75,20 @@ public:
 	}
 
 	/// Transforms the plane's origin and normals by a given transform.
-	Plane* setOrigin(Transform3D trans) {
-		glm::mat4 glmtrans = asGLMMatrix(trans);
-		srpTransform(origin[0],	glmtrans);
-		srpTransform(origin[1],	glmtrans);
-		srpTransform(origin[2],	glmtrans);
-		srpTransform(origin[3],	glmtrans);
+	Plane* setOrigin(Transform3D const& trans) {
+		Matrix4x4 tmat(trans);
+		srpTransform(origin[0],	tmat);
+		srpTransform(origin[1],	tmat);
+		srpTransform(origin[2],	tmat);
+		srpTransform(origin[3],	tmat);
 		return this;
 	}
 
 	Plane* setUV(
-			Vector2 tlUV,
-			Vector2 trUV,
-			Vector2 blUV,
-			Vector2 brUV
+			Vector2 const& tlUV,
+			Vector2 const& trUV,
+			Vector2 const& blUV,
+			Vector2 const& brUV
 		) {
 		Drawer::vertexSetUV(origin[0],	tlUV);
 		Drawer::vertexSetUV(origin[1],	trUV);
@@ -98,10 +98,10 @@ public:
 	}
 
 	Plane* setColor(
-			Vector4 tlCol,
-			Vector4 trCol,
-			Vector4 blCol,
-			Vector4 brCol
+			Vector4 const& tlCol,
+			Vector4 const& trCol,
+			Vector4 const& blCol,
+			Vector4 const& brCol
 		) {
 		Drawer::vertexSetColor(origin[0],	tlCol);
 		Drawer::vertexSetColor(origin[1],	trCol);
@@ -111,7 +111,7 @@ public:
 	}
 
 	Plane* setColor(
-			Vector4 col = Color::WHITE
+			Vector4 const& col = Color::WHITE
 		) {
 		Drawer::vertexSetColor(origin[0],	col);
 		Drawer::vertexSetColor(origin[1],	col);
@@ -121,10 +121,10 @@ public:
 	}
 
 	Plane* setNormal(
-			Vector3 tln,
-			Vector3 trn,
-			Vector3 bln,
-			Vector3 brn
+			Vector3 const& tln,
+			Vector3 const& trn,
+			Vector3 const& bln,
+			Vector3 const& brn
 		) {
 		VERTEX_SET_NORM(origin[0],	tln);
 		VERTEX_SET_NORM(origin[1],	trn);
@@ -134,7 +134,7 @@ public:
 	}
 
 	Plane* setNormal(
-			Vector3 n
+			Vector3 const& n
 		) {
 		VERTEX_SET_NORM(origin[0],	n);
 		VERTEX_SET_NORM(origin[1],	n);
@@ -159,13 +159,13 @@ public:
 		// Get transformation
 		Transform3D self = local;
 		self.scale *= (float)visible;
-		glm::mat4 trans = asGLMMatrix(self);
+		Matrix4x4 tmat(self);
 		// Calculate transformed vertices
 		RawVertex plane[4] = {origin[0], origin[1], origin[2], origin[3]};
-		srpTransform(plane[0], trans);
-		srpTransform(plane[1], trans);
-		srpTransform(plane[2], trans);
-		srpTransform(plane[3], trans);
+		srpTransform(plane[0], tmat);
+		srpTransform(plane[1], tmat);
+		srpTransform(plane[2], tmat);
+		srpTransform(plane[3], tmat);
 		// Apply transformation
 		*tl		= plane[0];
 		*tr1	= *tr2	= plane[1];
@@ -178,7 +178,7 @@ public:
 		return tris;
 	}
 
-	void forEachVertex(VertexFunc f) override {
+	void forEachVertex(VertexFunc const& f) override {
 		f(origin[0]);
 		f(origin[1]);
 		f(origin[2]);
@@ -229,9 +229,9 @@ public:
 	}
 
 	Trigon(
-		RawVertex* a,
-		RawVertex* b,
-		RawVertex* c
+		RawVertex* const& a,
+		RawVertex* const& b,
+		RawVertex* const& c
 	) {
 		this->a	= a;
 		this->b	= b;
@@ -246,9 +246,9 @@ public:
 
 	/// Sets the triangle's origin.
 	Trigon* setOrigin(
-			Vector3 aPos = Vector3(+0, +1),
-			Vector3 bPos = Vector3(-1, -1),
-			Vector3 cPos = Vector3(+1, -1)
+			Vector3 const& aPos = Vector3(+0, +1),
+			Vector3 const& bPos = Vector3(-1, -1),
+			Vector3 const& cPos = Vector3(+1, -1)
 		) {
 		VERTEX_SET_POS(origin[0],	aPos);
 		VERTEX_SET_POS(origin[1],	bPos);
@@ -257,18 +257,18 @@ public:
 	}
 
 	/// Transforms the triangle's origin and normals by a given transform.
-	Trigon* setOrigin(Transform3D trans) {
-		glm::mat4 glmtrans = asGLMMatrix(trans);
-		srpTransform(origin[0],	glmtrans);
-		srpTransform(origin[1],	glmtrans);
-		srpTransform(origin[2],	glmtrans);
+	Trigon* setOrigin(Transform3D const& trans) {
+		Matrix4x4 tmat(trans);
+		srpTransform(origin[0],	tmat);
+		srpTransform(origin[1],	tmat);
+		srpTransform(origin[2],	tmat);
 		return this;
 	}
 
 	Trigon* setUV(
-			Vector2 aUV,
-			Vector2 bUV,
-			Vector2 cUV
+			Vector2 const& aUV,
+			Vector2 const& bUV,
+			Vector2 const& cUV
 		) {
 		Drawer::vertexSetUV(origin[0],	aUV);
 		Drawer::vertexSetUV(origin[1],	bUV);
@@ -277,9 +277,9 @@ public:
 	}
 
 	Trigon* setColor(
-			Vector4 aCol,
-			Vector4 bCol,
-			Vector4 cCol
+			Vector4 const& aCol,
+			Vector4 const& bCol,
+			Vector4 const& cCol
 		) {
 		Drawer::vertexSetColor(origin[0],	aCol);
 		Drawer::vertexSetColor(origin[1],	bCol);
@@ -288,7 +288,7 @@ public:
 	}
 
 	Trigon* setColor(
-			Vector4 col = Color::WHITE
+			Vector4 const& col = Color::WHITE
 		) {
 		Drawer::vertexSetColor(origin[0],	col);
 		Drawer::vertexSetColor(origin[1],	col);
@@ -297,9 +297,9 @@ public:
 	}
 
 	Trigon* setNormal(
-			Vector3 an,
-			Vector3 bn,
-			Vector3 cn
+			Vector3 const& an,
+			Vector3 const& bn,
+			Vector3 const& cn
 		) {
 		VERTEX_SET_NORM(origin[0],	an);
 		VERTEX_SET_NORM(origin[1],	bn);
@@ -308,7 +308,7 @@ public:
 	}
 
 	Trigon* setNormal(
-			Vector3 n
+			Vector3 const& n
 		) {
 		VERTEX_SET_NORM(origin[0],	n);
 		VERTEX_SET_NORM(origin[1],	n);
@@ -330,12 +330,12 @@ public:
 		// Get transformation
 		Transform3D self = local;
 		self.scale *= (float)visible;
-		glm::mat4 trans = asGLMMatrix(self);
+		Matrix4x4 tmat(self);
 		// Calculate transformed vertices
 		RawVertex tri[3] = {origin[0], origin[1], origin[2]};
-		srpTransform(tri[0], trans);
-		srpTransform(tri[1], trans);
-		srpTransform(tri[2], trans);
+		srpTransform(tri[0], tmat);
+		srpTransform(tri[1], tmat);
+		srpTransform(tri[2], tmat);
 		// Apply transformation
 		*a	= tri[0];
 		*b	= tri[1];
@@ -347,7 +347,7 @@ public:
 		return tris;
 	}
 
-	void forEachVertex(VertexFunc f) override {
+	void forEachVertex(VertexFunc const& f) override {
 		f(origin[0]);
 		f(origin[1]);
 		f(origin[2]);
