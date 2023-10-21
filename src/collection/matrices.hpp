@@ -249,7 +249,7 @@ public:
 		return Matrix::identity().translated(vec);
 	}
 
-	constexpr static Matrix<4, 4,, T> fromScale(Vector3 const& vec) {
+	constexpr static Matrix<4, 4, T> fromScale(Vector3 const& vec) {
 		return Matrix::identity().scaled(vec);
 	}
 
@@ -533,9 +533,11 @@ public:
 
 	/// Other operator overloadings.
 
-	constexpr Span<T, R> operator[](size_t const& idx) {
-		return Span{data[idx]};
-	}
+	constexpr Span<T, R> operator[](size_t const& idx) {return Span{data[idx]};}
+
+	constexpr Span<const T, R> operator[](size_t const& idx) const {return Span{data[idx]};}
+
+	constexpr float* operator*() {return data;};
 
 	template <MatType::Compatitble<T> T2>
 	constexpr operator Matrix<R, C, T2>() const {return Matrix<R, C, T2>(data);}
@@ -544,7 +546,7 @@ public:
 	constexpr operator Vector3() const {return toVector3();}
 	constexpr operator Vector4() const {return toVector4();}
 
-	constexpr explicit operator const T*() const	{return data;}
+	constexpr explicit operator const T*() const	{return (const T*)data;}
 	constexpr explicit operator T*()				{return (T*)data;}
 
 	/// Size accessors.
@@ -578,7 +580,7 @@ public:
 	) const requires MatType::ValidTransform<R, C> {
 		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
 		// Transform
-		return translatedposition).template rotated<EULER_FUNC>(rotation).scaled(scale);
+		return translated(position).template rotated<EULER_FUNC>(rotation).scaled(scale);
 	}
 
 	template<Matrix<4, 4, T>(*EULER_FUNC)(Vector3 const&) = Matrix::fromEulerYXZ>
@@ -857,7 +859,8 @@ typedef Matrix3x4i Mat3x4i;
 typedef Matrix4x4i Mat4x4i;
 
 namespace MatMath {
-	constexpr Matrix4x4 rightHandedLookAt(Vector3 const& eye, Vector3 const& at, Vector3 const& up) {
+	// https://github.com/g-truc/glm/blob/master/glm/ext/matrix_transform.inl
+	constexpr Matrix4x4 lookAt(Vector3 const& eye, Vector3 const& at, Vector3 const& up) {
 		Vector3 const f((at - eye).normalized());
 		Vector3 const s(f.crossProd(up).normalized());
 		Vector3 const u(s.crossProd(f));
@@ -877,28 +880,144 @@ namespace MatMath {
 		return result;
 	}
 
-	constexpr Matrix4x4 leftHandedLookAt(Vector3 const& eye, Vector3 const& at, Vector3 const& up) {
-		Vector3 const f((at - eye).normalized());
-		Vector3 const s(f.crossProd(up).normalized());
-		Vector3 const u(s.crossProd(f));
-		Matrix4x4 result(Matrix4x4::identity());
-		result[0][0] = +s.x;
-		result[1][0] = +s.y;
-		result[2][0] = +s.z;
-		result[0][1] = +u.x;
-		result[1][1] = +u.y;
-		result[2][1] = +u.z;
-		result[0][2] = +f.x;
-		result[1][2] = +f.y;
-		result[2][2] = +f.z;
-		result[3][0] = -s.dotProd(eye);
-		result[3][1] = -u.dotProd(eye);
-		result[3][2] = -f.dotProd(eye);
+	// https://github.com/g-truc/glm/blob/master/glm/ext/matrix_clip_space.inl
+	template<Math::Operatable T>
+	constexpr Matrix<4, 4, T> ortho(
+		T const& left,
+		T const& right,
+		T const& bottom,
+		T const& top,
+		T const& zNear,
+		T const& zFar
+	) {
+		Matrix<4, 4, T> result(Matrix<4, 4, T>::identity());
+		result[0][0] = T(2) / (right - left);
+		result[1][1] = T(2) / (top - bottom);
+		result[2][2] = - T(2) / (zFar - zNear);
+		result[3][0] = - (right + left) / (right - left);
+		result[3][1] = - (top + bottom) / (top - bottom);
+		result[3][2] = - (zFar + zNear) / (zFar - zNear);
 		return result;
 	}
 
-	constexpr Matrix4x4 lookAt(Vector3 const& eye, Vector3 const& at, Vector3 const& up) {
-		return rightHandedLookAt(eye, at, up);
+	// https://github.com/g-truc/glm/blob/master/glm/ext/matrix_clip_space.inl
+	template<Math::Operatable T>
+	constexpr Matrix<4, 4, T> infiniteOrtho(
+		T const& left,
+		T const& right,
+		T const& bottom,
+		T const& top
+	) {
+		Matrix<4, 4, T> result(Matrix<4, 4, T>::identity());
+		result[0][0] = T(2) / (right - left);
+		result[1][1] = T(2) / (top - bottom);
+		result[2][2] = - T(1);
+		result[3][0] = - (right + left) / (right - left);
+		result[3][1] = - (top + bottom) / (top - bottom);
+		return result;
+	}
+
+	// https://github.com/g-truc/glm/blob/master/glm/ext/matrix_clip_space.inl
+	template<Math::Operatable T>
+	constexpr Matrix<4, 4, T> frustum(
+		T const& left,
+		T const& right,
+		T const& bottom,
+		T const& top,
+		T const& zNear,
+		T const& zFar
+	) {
+		Matrix<4, 4, T> result(T(0));
+		result[0][0] = (T(2) * zNear) / (right - left);
+		result[1][1] = (T(2) * zNear) / (top - bottom);
+		result[2][0] = (right + left) / (right - left);
+		result[2][1] = (top + bottom) / (top - bottom);
+		result[2][2] = - (zFar + zNear) / (zFar - zNear);
+		result[2][3] = T(-1);
+		result[3][2] = - (T(2) * zFar * zNear) / (zFar - zNear);
+		return result;
+	}
+
+	// https://github.com/g-truc/glm/blob/master/glm/ext/matrix_clip_space.inl
+	template<Math::Operatable T>
+	constexpr Matrix<4, 4, T> perspective(
+		T const& fovy,
+		T const& aspect,
+		T const& zNear,
+		T const& zFar
+	) {
+		Matrix<4, 4, T> result(T(0));
+		T const tanHalfFovy = tan(fovy / T(2));
+		result[0][0] = T(1) / (aspect * tanHalfFovy);
+		result[1][1] = T(1) / (tanHalfFovy);
+		result[2][2] = - (zFar + zNear) / (zFar - zNear);
+		result[2][3] = - T(1);
+		result[3][2] = - (T(2) * zFar * zNear) / (zFar - zNear);
+		return result;
+	}
+
+	// https://github.com/g-truc/glm/blob/master/glm/ext/matrix_clip_space.inl
+	template<Math::Operatable T>
+	constexpr Matrix<4, 4, T> perspectiveFOV(
+		T const& fov,
+		T const& width,
+		T const& height,
+		T const& zNear,
+		T const& zFar
+	) {
+		Matrix<4, 4, T> result(T(0));
+		T const rad	= fov;
+		T const h	= cos(T(0.5) * rad) / sin(T(0.5) * rad);
+		T const w	= h * height / width;
+		result[0][0] = w;
+		result[1][1] = h;
+		result[2][2] = - (zFar + zNear) / (zFar - zNear);
+		result[2][3] = - T(1);
+		result[3][2] = - (T(2) * zFar * zNear) / (zFar - zNear);
+		return result;
+	}
+
+	// https://github.com/g-truc/glm/blob/master/glm/ext/matrix_clip_space.inl
+	template<Math::Operatable T>
+	constexpr Matrix<4, 4, T> infinitePerspective(
+		T const& fovy,
+		T const& aspect,
+		T const& zNear
+	) {
+		T const range	= tan(fovy / T(2)) * zNear;
+		T const left	= -range * aspect;
+		T const right	= range * aspect;
+		T const bottom	= -range;
+		T const top		= range;
+		Matrix<4, 4, T> result(T(0));
+		result[0][0] = (T(2) * zNear) / (right - left);
+		result[1][1] = (T(2) * zNear) / (top - bottom);
+		result[2][2] = - T(1);
+		result[2][3] = - T(1);
+		result[3][2] = - T(2) * zNear;
+		return result;
+	}
+
+	template<Math::Operatable T>
+	constexpr Vector3 getEulerAnglesYXZ(Matrix<4, 4, T> const& mat) {
+		float T1 = atan2(mat[2][0], mat[2][2]);
+		float C2 = sqrt(mat[0][1]*mat[0][1] + mat[1][1]*mat[1][1]);
+		float T2 = atan2(-mat[2][1], C2);
+		float S1 = sin(T1);
+		float C1 = cos(T1);
+		float T3 = atan2(S1*mat[1][2] - C1*mat[1][0], C1*mat[0][0] - S1*mat[0][2]);
+		return Vector3(T1, T2, T3);
+	}
+
+	template<Math::Operatable T>
+	constexpr Vector3 getEulerAnglesXYZ(Matrix<4, 4, T> const& mat) {
+		float T1 = atan2(mat[2][1], mat[2][2]);
+		float C2 = sqrt(mat[0][0]*mat[0][0] + mat[1][0]*mat[1][0]);
+		float T2 = atan2(-mat[2][0], C2);
+		float S1 = sin(T1);
+		float C1 = cos(T1);
+		float T3 = atan2(S1*mat[0][2] - C1*mat[0][1], C1*mat[1][1] - S1*mat[1][2]);
+		return Vector3(T1, T2, T3);
 	}
 }
 
