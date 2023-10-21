@@ -61,7 +61,6 @@ These are already included in the ```lib/``` folder.
 | cute_c2    | Collision                |
 | jsoncpp    | Multiple things          |
 | cppcodec   | Data encoding & decoding |
-|            |                          |
 ## Documentation
 
 Currently VERY scarce. Some of the code is commented.
