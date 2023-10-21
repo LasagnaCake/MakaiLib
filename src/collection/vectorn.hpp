@@ -715,6 +715,14 @@ class Vector3
 			return Vector3(z, y, x);
 		}
 
+		constexpr Vector3 xzy() const {
+			return Vector3(x, z, y);
+		}
+
+		constexpr Vector3 yzx() const {
+			return Vector3(y, z, x);
+		}
+
 		constexpr Vector3 absolute() const {
 			return Vector3(
 				abs(x),
