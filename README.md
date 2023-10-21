@@ -52,14 +52,16 @@ The ```src``` only needs to be set if your file is not at the top of the ```buil
 
 These are already included in the ```lib/``` folder.
 
-| Name       | Purpose                 |
-|:----------:|-------------------------|
-| OpenGL     | Window & Input handling |
-| SDL2_Mixer | Audio backend           |
-| stb_image  | Image loading           |
-| cute_c2    | Collision               |
-| jsoncpp    | Multiple things         |
-| cppcodec   | Multiple things         |
+| Name       | Purpose                  |
+|:----------:|--------------------------|
+| SDL        | Window & Input handling  |
+| OpenGL     | Graphics backend         |
+| SDL2_Mixer | Audio backend            |
+| stb_image  | Image loading            |
+| cute_c2    | Collision                |
+| jsoncpp    | Multiple things          |
+| cppcodec   | Data encoding & decoding |
+|            |                          |
 ## Documentation
 
 Currently VERY scarce. Some of the code is commented.
