@@ -62,23 +62,25 @@ namespace Camera {
 		}
 	};
 
-	Camera3D getCamera2D(Vector2 size) {
+	constexpr Camera3D getCamera2D(Vector2 const& size) {
 		Camera3D camera;
 		camera.eye = Vec3(0, 0, -10);
-		camera.at = Vec3(0, 0, 0);
+		camera.at = Vec3(0, 0, 1);
 		camera.ortho.enabled = true;
 		camera.ortho.origin = 0;
 		camera.ortho.size = size * -1;
+		camera.relativeToEye = true;
 		return camera;
 	}
 
-	Camera3D getCamera2D(float scale, Vector2 ratio) {
+	constexpr Camera3D getCamera2D(float const& scale, Vector2 const& ratio) {
 		Camera3D camera;
 		camera.eye = Vec3(0, 0, -10);
-		camera.at = Vec3(0, 0, 0);
+		camera.at = Vec3(0, 0, 1);
 		camera.ortho.enabled	= true;
 		camera.ortho.origin		= 0;
 		camera.ortho.size		= ratio * -scale;
+		camera.relativeToEye = true;
 		return camera;
 	}
 
@@ -98,8 +100,8 @@ namespace Camera {
 			/*Matrix4x4 const rmat = Matrix4x4::fromEulerYXZ(rotation);
 			return Camera3D {
 				eye,
-				rmat * Matrix4x1(at),
-				rmat * Matrix4x1(up),
+				rmat * Vector4(at, 1),
+				rmat * Vector4(up, 1),
 				aspect,
 				fov,
 				zNear,
@@ -132,7 +134,7 @@ namespace Camera {
 			return (*this);
 		}
 
-		constexpr  inline GimbalCamera3D& operator=(Camera3D const& cam) {
+		constexpr GimbalCamera3D& operator=(Camera3D const& cam) {
 			fromCamera3D(cam);
 			return (*this);
 		}
