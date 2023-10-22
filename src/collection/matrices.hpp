@@ -30,8 +30,7 @@ public:
 	static_assert(C != 0, "Matrix column size must not be zero!");
 
 	/// Constructors.
-	constexpr Matrix() {
-	}
+	constexpr Matrix() {}
 
 	constexpr Matrix(T const& v) {
 		size_t const start = Math::min(C, R);
@@ -163,10 +162,7 @@ public:
 
 	constexpr static Matrix<R, C, T> identity() requires MatType::EqualSize<R, C> {
 		static_assert(C == R, "Matrix is not a square matrix!");
-		Matrix<R, C, T> res(0);
-		for(size_t i = 0; i < R; i++)
-			res.data[i][i] = 1;
-		return res;
+		return Matrix<R, C, T>(1);
 	}
 
 	constexpr static Matrix<R, C, T> prototype() requires MatType::EqualSize<R, C> {
