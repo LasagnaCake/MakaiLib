@@ -4,6 +4,7 @@
 #include "../anchors.hpp"
 #include "../graphical.hpp"
 #include "../audio.hpp"
+#include "../interpreter.hpp"
 
 #if (_WIN32 || _WIN64 || __WIN32__ || __WIN64__)
 #include <winuser.h>

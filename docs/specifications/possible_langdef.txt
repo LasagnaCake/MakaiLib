@@ -1,0 +1,39 @@
+<vartypes
+	int
+	float
+	string
+	mat<N>
+	vec<N>
+>
+
+<var> : <type or deduced> = <val>
+<var/val> <operand> <var/val>
+<var> <operand>= <var/val>
+
+call <name> with
+	...<params>
+end
+
+if <cond> then
+endif
+
+task <name> wait <endtime> begin
+end
+
+create TaskManager <name> with
+	...<tasks>
+end
+
+create Bullet <name> with
+	<pname> {...<params>}
+	...<params>
+end
+
+create Enemy <name> type <type> with
+	TaskManager [<...params>]
+	...<params>
+end
+
+create <objclass> <name> type <subclass> with
+	...<params>
+end
