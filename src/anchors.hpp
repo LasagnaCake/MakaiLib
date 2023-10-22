@@ -4,7 +4,7 @@
 #define ENFORCE(WHAT, CHECK) if(!(CHECK)) throw Error::FailedAction(std::string("Failed to initialize ") + WHAT)
 
 #ifdef _DEBUG_OUTPUT_
-#define $_DEBUG_OUTPUT_
+#define ENABLE_DEBUG_OUTPUT_
 #include <iostream>
 #define ERR_LOG(TEXT) std::cerr << (TEXT) << std::endl
 #define DEBUGLN(TEXT) std::cout << (TEXT); std::cout << "\n"

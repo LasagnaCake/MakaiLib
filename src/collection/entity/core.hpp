@@ -18,10 +18,10 @@
 #include "../errors.hpp"
 #include "../definitions.hpp"
 
-#ifndef _$_ENTITY_ROOT_NAME
+#ifndef DEFAULT_ENTITY_ROOT_NAME
 /// Default entity root name (MUST NOT CONTAIN '/')
-#define _$_ENTITY_ROOT_NAME "@root"
-#endif // _$_ENTITY_ROOT_NAME
+#define DEFAULT_ENTITY_ROOT_NAME "@root"
+#endif // DEFAULT_ENTITY_ROOT_NAME
 
 /// Type getter macro.
 #define GET_TYPE_STRING(VAR) abi::__cxa_demangle(typeid(VAR).name(),0,0,NULL)
@@ -53,7 +53,7 @@ namespace EntityClass {
 
 		// Duplicate root prevention system
 		namespace { bool rc = false; }
-		bool $_ROOT_CREATED() {
+		bool ENTITY_ROOT_CREATED() {
 			if (!rc) {
 				rc = true;
 				return false;
@@ -74,7 +74,7 @@ namespace EntityClass {
 	}
 
 	/// The root object's name.
-	const string $_ROOT_NAME = _$_ENTITY_ROOT_NAME;
+	const string ENTITY_ROOT_NAME = DEFAULT_ENTITY_ROOT_NAME;
 
 	class Entity;
 
@@ -135,7 +135,7 @@ namespace EntityClass {
 		/// Parent-less constructor.
 		Entity(string name = "Entity", bool uniqueEntity = true) {
 			// If root doesn't exist, create it
-			if (name != $_ROOT_NAME)
+			if (name != ENTITY_ROOT_NAME)
 				init();
 			// Set object's name
 			if (name.length()) setName(name);
@@ -144,7 +144,7 @@ namespace EntityClass {
 			// Call function to be executed at creation
 			callOnCreate();
 			// Add to root tree
-			if (name != $_ROOT_NAME)
+			if (name != ENTITY_ROOT_NAME)
 				_ROOT->addChild(this, uniqueEntity);
 		}
 
@@ -201,7 +201,7 @@ namespace EntityClass {
 			// If next isn't empty, remove last character
 			if (next != "") next.pop_back();
 			// If root requested...
-			if (root == $_ROOT_NAME) {
+			if (root == ENTITY_ROOT_NAME) {
 				// If not last object to search, search root
 				if(!isLast) return getRoot()->getChild(next);
 				// Else, return root
@@ -281,7 +281,7 @@ namespace EntityClass {
 		/// Sets the object's parent, while also avoiding cyclical parenting.
 		void setParent(Entity* parent) {
 			// Check if object is root object
-			if (name == $_ROOT_NAME)
+			if (name == ENTITY_ROOT_NAME)
 				throw Error::InvalidValue("Root cannot be parented.");
 			// Check if new parent is valid parent
 			if (!isValidParent(parent))
@@ -307,13 +307,13 @@ namespace EntityClass {
 		void yield(float delta = 0.0f) {
 			if (process) {
 				if (active) {
-					#ifdef _$_TASKERS_BEFORE_MAIN
+					#ifdef ENTITY_TASKERS_BEFORE_MAIN
 					taskers.yield(delta * 60.0f);
 					onFrame(delta);
 					#else
 					onFrame(delta);
 					taskers.yield(delta * 60.0f);
-					#endif // _$_TASKERS_BEFORE_MAIN
+					#endif // ENTITY_TASKERS_BEFORE_MAIN
 				}
 				if (children.size()) {
 					auto clist = children;
@@ -326,10 +326,10 @@ namespace EntityClass {
 		/// Renames object, while also being careful with duplicate names.
 		void setName(string newName, bool mustHaveUniqueName = true) {
 			// if root, or trying to rename to root, error
-			if ((name == $_ROOT_NAME || newName == $_ROOT_NAME) && $_ROOT_CREATED())
+			if ((name == ENTITY_ROOT_NAME || newName == ENTITY_ROOT_NAME) && ENTITY_ROOT_CREATED())
 				throw Error::InvalidValue(
 					string("Cannot rename root object, or name object '")
-					+ $_ROOT_NAME
+					+ ENTITY_ROOT_NAME
 					+ string("'.")
 				);
 			// Check if name does not contain invalid characters
@@ -529,7 +529,7 @@ namespace EntityClass {
 	[[gnu::constructor]] void init() {
 		if (EntityClass::_ROOT == nullptr) {
 			DEBUGLN("Creating root tree...");
-			_ROOT = new Entity($_ROOT_NAME);
+			_ROOT = new Entity(ENTITY_ROOT_NAME);
 			DEBUGLN("Root tree created!");
 		}
 	}

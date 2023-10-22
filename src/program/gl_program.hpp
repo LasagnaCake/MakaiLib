@@ -520,7 +520,7 @@ namespace Makai {
 			// This keeps the alpha from shitting itself
 			glEnable(GL_BLEND);
 			glEnable(GL_ALPHA_TEST);
-			#ifdef $_ENABLE_OPENGL_DEBUG
+			#ifdef MAKAILIB_ENABLE_OPENGL_DEBUG
 			glEnable(GL_DEBUG_OUTPUT);
 			#endif
 			glDebugMessageCallback(glAPIMessageCallback, 0);
@@ -614,7 +614,7 @@ namespace Makai {
 				cycleRate = SDL_GetTicks() - cycleTicks;
 				frameRate = SDL_GetTicks() - frameTicks;
 				// If should process, then do so
-				#ifndef $_PROCESS_RENDER_BEFORE_LOGIC
+				#ifndef MAKAILIB_PROCESS_RENDER_BEFORE_LOGIC
 				if (cycleRate > (cycleDelta * 1000.0 - 1)) {
 					// Update audio system
 					Audio::updateAudioSystem();
@@ -627,7 +627,7 @@ namespace Makai {
 					// Do timer-related stuff
 					timerFunc(cycleDelta * speed);
 					taskers.yield(cycleDelta * speed);
-					#ifndef $_FRAME_DEPENDENT_PROCESS
+					#ifndef MAKAILIB_FRAME_DEPENDENT_PROCESS
 					// Do normal logic-related stuff
 					logicFunc(cycleDelta * speed);
 					onLogicFrame(cycleDelta * speed);
@@ -643,7 +643,7 @@ namespace Makai {
 					frame++;
 					// Update audio system
 					// TODO: Audio System
-					#ifdef $_FRAME_DEPENDENT_PROCESS
+					#ifdef MAKAILIB_FRAME_DEPENDENT_PROCESS
 					// Do normal logic-related stuff
 					logicFunc(frameDelta);
 					onLogicFrame(frameDelta);
@@ -653,7 +653,7 @@ namespace Makai {
 					// Render screen
 					render();
 				}
-				#ifdef $_PROCESS_RENDER_BEFORE_LOGIC
+				#ifdef MAKAILIB_PROCESS_RENDER_BEFORE_LOGIC
 				if (cycleRate > (cycleDelta * 1000.0 - 1)) {
 					// Update audio system
 					Audio::updateAudioSystem();
@@ -666,7 +666,7 @@ namespace Makai {
 					// Do timer-related stuff
 					timerFunc(cycleDelta * speed);
 					taskers.yield(cycleDelta * speed);
-					#ifndef $_FRAME_DEPENDENT_PROCESS
+					#ifndef MAKAILIB_FRAME_DEPENDENT_PROCESS
 					// Do normal logic-related stuff
 					logicFunc(cycleDelta * speed);
 					onLogicFrame(cycleDelta * speed);

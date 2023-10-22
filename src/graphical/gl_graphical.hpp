@@ -124,7 +124,7 @@ namespace Drawer {
 
 	Group::Group<DrawFunc*> layers;
 
-	void renderLayer(size_t layerID) {
+	void renderLayer(size_t const& layerID) {
 		for (auto rFunc: layers[layerID]) {
 			(*rFunc)();
 		}
@@ -183,7 +183,7 @@ namespace Drawer {
 		glDisableVertexAttribArray(0);
 	}
 
-	inline void clearColorBuffer(Vector4 color) {
+	inline void clearColorBuffer(Vector4 const& color) {
 		glSetClearColor(color);
 		glClear(GL_COLOR_BUFFER_BIT);
 	}
@@ -194,25 +194,25 @@ namespace Drawer {
 
 	// Vertex Setters
 
-	inline void vertexSetPosition(RawVertex& v, Vector3 pos) {
+	constexpr void vertexSetPosition(RawVertex& v, Vector3 const& pos) {
 		v.x = pos.x;
 		v.y = pos.y;
 		v.z = pos.z;
 	}
 
-	inline void vertexSetUV(RawVertex& v, Vector2 uv) {
+	constexpr void vertexSetUV(RawVertex& v, Vector2 const& uv) {
 		v.u = uv.x;
 		v.v = uv.y;
 	}
 
-	inline void vertexSetColor(RawVertex& v, Vector4 color) {
+	constexpr void vertexSetColor(RawVertex& v, Vector4 const& color) {
 		v.r = color.x;
 		v.g = color.y;
 		v.b = color.z;
 		v.a = color.w;
 	}
 
-	inline void vertexSetNormal(RawVertex& v, Vector3 n) {
+	constexpr void vertexSetNormal(RawVertex& v, Vector3 const& n) {
 		v.nx = n.x;
 		v.ny = n.y;
 		v.nz = n.z;
@@ -220,19 +220,19 @@ namespace Drawer {
 
 	// Vertex Getters
 
-	inline Vector3 vertexGetPosition(RawVertex& v) {
+	constexpr Vector3 vertexGetPosition(RawVertex& v) {
 		return Vector3(v.x, v.y, v.z);
 	}
 
-	inline Vector2 vertexGetUV(RawVertex& v) {
+	constexpr Vector2 vertexGetUV(RawVertex& v) {
 		return Vector2(v.u, v.v);
 	}
 
-	inline Vector4 vertexGetColor(RawVertex& v) {
+	constexpr Vector4 vertexGetColor(RawVertex& v) {
 		return Vector4(v.r, v.g, v.b, v.a);
 	}
 
-	inline Vector3 vertexGetNormal(RawVertex& v) {
+	constexpr Vector3 vertexGetNormal(RawVertex& v) {
 		return Vector3(v.nx, v.ny, v.nz);
 	}
 

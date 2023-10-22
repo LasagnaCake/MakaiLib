@@ -107,7 +107,7 @@ namespace GameData {
 	#include "gamedata/animation.hpp"
 	#include "gamedata/menu.hpp"
 
-	#ifdef $_DANMAKU_GAME
+	#ifdef MAKAILIB_DANMAKU_GAME
 
 	namespace Danmaku {
 		namespace {

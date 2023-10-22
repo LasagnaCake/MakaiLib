@@ -5,10 +5,6 @@
 
 #define FUNC(...)	[&](__VA_ARGS__) -> void
 
-#define ADD_ENUM_ENTRY(NAME, STEP) \
-    NAME##_$_$, \
-    NAME = NAME##_$_$ + (STEP) - 1
-
 #define ILTF(A, B, C) (((A) > (B)) ? -(C) : +(C))
 
 #define RANGE(I, BEGIN, END, STEP) (auto I = (BEGIN); I < (END); I += (STEP))
@@ -23,7 +19,7 @@
 
 #define ERASE_IF(VEC, COND) if (!VEC.empty()) std::erase_if(VEC, [&](auto& elem){return (COND);})
 
-#ifdef $_DEBUG_OUTPUT_
+#ifdef ENABLE_DEBUG_OUTPUT_
 #include <iostream>
 #ifndef DEBUGLN
 #define DEBUGLN(TEXT)	std::cout << (TEXT) << "\n";

@@ -302,13 +302,13 @@ public:
 		//GAME_PARALLEL_FOR
 		for SEACH_IF(b, bullets, BULLET_COUNT, b.isFree()) {
 			current = b.enable()->setZero();
-			#ifdef $_PREVENT_INSTANCE_OVERFLOW_BY_WRAP
+			#ifdef MAKAILIB_DANMAKU_PREVENT_INSTANCE_OVERFLOW_BY_WRAP
 			pbobw = 0;
 			#endif
 			break;
 		} END_SEACH
 		if (!current)
-		#ifndef $_PREVENT_INSTANCE_OVERFLOW_BY_WRAP
+		#ifndef MAKAILIB_DANMAKU_PREVENT_INSTANCE_OVERFLOW_BY_WRAP
 			throw OutOfObjects(
 				getName()
 				+ ": Out of usable bullets ("
@@ -342,14 +342,21 @@ public:
 
 private:
 	bool created = false;
-	#ifdef $_PREVENT_INSTANCE_OVERFLOW_BY_WRAP
+	#ifdef MAKAILIB_DANMAKU_PREVENT_INSTANCE_OVERFLOW_BY_WRAP
 	size_t pbobw = 0;
 	#endif
 	Bullet* last = nullptr;
 };
 
+#ifndef MAKAILIB_DANMAKU_PHANTASMAGORIA_GAME
 typedef BulletManager<PLAYER_BULLET_COUNT, PLAYER_BULLET_LAYER, ENEMY_LAYER>	PlayerBulletManager;
 typedef BulletManager<ENEMY_BULLET_COUNT, ENEMY_BULLET_LAYER, PLAYER_LAYER>		EnemyBulletManager;
+#else
+typedef BulletManager<PLAYER_BULLET_COUNT/2, PLAYER1_BULLET_LAYER, ENEMY1_LAYER>	Player1BulletManager;
+typedef BulletManager<PLAYER_BULLET_COUNT/2, PLAYER2_BULLET_LAYER, ENEMY2_LAYER>	Player2BulletManager;
+typedef BulletManager<ENEMY_BULLET_COUNT/2, ENEMY1_BULLET_LAYER, PLAYER1_LAYER>		Enemy1BulletManager;
+typedef BulletManager<ENEMY_BULLET_COUNT/2, ENEMY2_BULLET_LAYER, PLAYER2_LAYER>		Enemy2BulletManager;
+#endif
 
 PlayerBulletManager*	playerBulletManager	= nullptr;
 EnemyBulletManager*		enemyBulletManager	= nullptr;

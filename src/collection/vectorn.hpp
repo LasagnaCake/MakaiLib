@@ -1145,7 +1145,7 @@ namespace VecMath
 		*/
 		// Get a copy of the vector
 		Vector3 res = vec;
-		#ifndef $_SIMPLIFIED_ROTATION_MATH
+		#ifndef VECTOR_SIMPLIFIED_ROTATION_MATH
 		// Get sines and cosines
 		float sinX = sin(angle.x);
 		float cosX = cos(angle.x);

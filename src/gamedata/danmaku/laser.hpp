@@ -257,13 +257,13 @@ public:
 		//GAME_PARALLEL_FOR
 		for SEACH_IF(l, lasers, LASER_COUNT, l.isFree()) {
 			current = l.enable()->setZero();
-			#ifdef $_PREVENT_INSTANCE_OVERFLOW_BY_WRAP
+			#ifdef MAKAILIB_DANMAKU_PREVENT_INSTANCE_OVERFLOW_BY_WRAP
 			pbobw = 0;
 			#endif
 			break;
 		} END_SEACH
 		if (!current)
-		#ifndef $_PREVENT_INSTANCE_OVERFLOW_BY_WRAP
+		#ifndef MAKAILIB_DANMAKU_PREVENT_INSTANCE_OVERFLOW_BY_WRAP
 			throw OutOfObjects(
 				getName()
 				+ ": Out of usable line lasers ("
@@ -296,14 +296,21 @@ public:
 
 private:
 	bool created = false;
-	#ifdef $_PREVENT_INSTANCE_OVERFLOW_BY_WRAP
+	#ifdef MAKAILIB_DANMAKU_PREVENT_INSTANCE_OVERFLOW_BY_WRAP
 	size_t pbobw = 0;
 	#endif
 	LineLaser* last = nullptr;
 };
 
+#ifndef MAKAILIB_DANMAKU_PHANTASMAGORIA_GAME
 typedef LineLaserManager<PLAYER_LASER_COUNT, PLAYER_LASER_LAYER, ENEMY_LAYER>	PlayerLineLaserManager;
 typedef LineLaserManager<ENEMY_LASER_COUNT, ENEMY_LASER_LAYER, PLAYER_LAYER>	EnemyLineLaserManager;
+#else
+typedef LineLaserManager<PLAYER_LASER_COUNT/2, PLAYER1_LASER_LAYER, ENEMY1_LAYER>	PlayerLineLaserManager;
+typedef LineLaserManager<PLAYER_LASER_COUNT/2, PLAYER2_LASER_LAYER, ENEMY2_LAYER>	PlayerLineLaserManager;
+typedef LineLaserManager<ENEMY_LASER_COUNT/2, ENEMY1_LASER_LAYER, PLAYER1_LAYER>	EnemyLineLaserManager;
+typedef LineLaserManager<ENEMY_LASER_COUNT/2, ENEMY2_LASER_LAYER, PLAYER2_LAYER>	EnemyLineLaserManager;
+#endif
 
 PlayerLineLaserManager*	playerLineLaserManager = nullptr;
 EnemyLineLaserManager*	enemyLineLaserManager = nullptr;

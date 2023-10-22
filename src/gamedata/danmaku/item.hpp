@@ -91,7 +91,7 @@ private:
 
 typedef std::vector<Collectible*> CollectibleList;
 
-template <size_t ITEM_COUNT>
+template <size_t ITEM_COUNT, size_t ACTOR_LAYER>
 class CollectibleManager: Entity {
 public:
 	DERIVED_CLASS(CollectibleManager, Entity)
@@ -118,36 +118,38 @@ public:
 	void onFrame(float delta) override {
 		GAME_PARALLEL_FOR
 		for SEACH(item, items, ITEM_COUNT)
-			item.onFrame(delta);
-			if (!item.isFree() && item.params.collidable) {
-				auto a = (PlayerEntity2D*)mainPlayer;
-				if (a) {
-					auto targetBounds = a->getGrazeBounds();
-					if (
-						CollisionData::withinBounds(
-							item.params.hitbox,
-							targetBounds
-						)
-					) {
-						a->onItemGet(item.params.type, item.params.value);
-						item.discard();
-					} else if (
-						(a->position.y > poc)
-						&& item.params.pocable
-					) {
-						item.setAutoCollect(&a->position);
+			for EACH(actor, EntityClass::collisionLayers.getGroup(ACTOR_LAYER)) {
+				item.onFrame(delta);
+				if (!item.isFree() && item.params.collidable) {
+					auto a = (PlayerEntity2D*)actor;
+					if (a) {
+						auto targetBounds = a->getGrazeBounds();
+						if (
+							CollisionData::withinBounds(
+								item.params.hitbox,
+								targetBounds
+							)
+						) {
+							a->onItemGet(item.params.type, item.params.value);
+							item.discard();
+						} else if (
+							(a->position.y > poc)
+							&& item.params.pocable
+						) {
+							item.setAutoCollect(&a->position);
+						}
 					}
 				}
+				if (item.params.dope)
+					if (
+						! CollisionData::withinBounds(
+							item.params.hitbox,
+							playfield
+						)
+					) {
+						item.setFree(true);
+					}
 			}
-			if (item.params.dope)
-				if (
-					! CollisionData::withinBounds(
-						item.params.hitbox,
-						playfield
-					)
-				) {
-					item.setFree(true);
-				}
 		END_SEACH
 	}
 
@@ -260,13 +262,13 @@ public:
 		//GAME_PARALLEL_FOR
 		for SEACH_IF(item, items, ITEM_COUNT, item.isFree()) {
 			current = item.enable()->setZero();
-			#ifdef $_PREVENT_INSTANCE_OVERFLOW_BY_WRAP
+			#ifdef MAKAILIB_DANMAKU_PREVENT_INSTANCE_OVERFLOW_BY_WRAP
 			pbobw = 0;
 			#endif
 			break;
 		} END_SEACH
 		if (!current)
-		#ifndef $_PREVENT_INSTANCE_OVERFLOW_BY_WRAP
+		#ifndef MAKAILIB_DANMAKU_PREVENT_INSTANCE_OVERFLOW_BY_WRAP
 			throw OutOfObjects(
 				getName()
 				+ ": Out of usable items! ("
@@ -321,13 +323,18 @@ public:
 
 private:
 	bool created = false;
-	#ifdef $_PREVENT_INSTANCE_OVERFLOW_BY_WRAP
+	#ifdef MAKAILIB_DANMAKU_PREVENT_INSTANCE_OVERFLOW_BY_WRAP
 	size_t pbobw = 0;
 	#endif
 	Collectible* last = nullptr;
 };
 
-typedef CollectibleManager<COLLECTIBLE_ITEM_COUNT> ItemManager;
+#ifndef MAKAILIB_DANMAKU_PHANTASMAGORIA_GAME
+typedef CollectibleManager<COLLECTIBLE_ITEM_COUNT, PLAYER_LAYER> ItemManager;
+#else
+typedef CollectibleManager<COLLECTIBLE_ITEM_COUNT, PLAYER1_LAYER> Item1Manager;
+typedef CollectibleManager<COLLECTIBLE_ITEM_COUNT, PLAYER2_LAYER> Item2Manager;
+#endif // MAKAILIB_DANMAKU_PHANTASMAGORIA_GAME
 
 ItemManager* itemManager = nullptr;
 
