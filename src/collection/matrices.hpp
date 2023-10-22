@@ -31,11 +31,12 @@ public:
 
 	/// Constructors.
 	constexpr Matrix() {
-		fill(T(0));
 	}
 
 	constexpr Matrix(T const& v) {
-		fill(v);
+		size_t const start = Math::min(C, R);
+		for (size_t i = 0; i < start; i++)
+			data[start-1-i][start-1-i] = v;
 	}
 
 	constexpr Matrix(const T(&v)[R][C]) {
@@ -246,17 +247,17 @@ public:
 	}
 
 	constexpr static Matrix<4, 4, T> fromTranslation(Vector3 const& vec) {
-		return Matrix::identity().translated(vec);
+		return Matrix(1).translated(vec);
 	}
 
 	constexpr static Matrix<4, 4, T> fromScale(Vector3 const& vec) {
-		return Matrix::identity().scaled(vec);
+		return Matrix(1).scaled(vec);
 	}
 
 	constexpr Matrix<R, C, T> inverted() const requires MatType::EqualSize<R, C> {
 		static_assert(C == R, "Matrix is not a square matrix!");
 		T det = determinant();
-		if (det == T(0)) return Matrix::identity();
+		if (det == T(0)) return Matrix(1);
 		Matrix<R, C, T> res = cofactors().transposed() * (T(1) / det);
 		return res;
 	}
@@ -265,7 +266,7 @@ public:
 		static_assert(C == R, "Matrix is not a square matrix!");
 		static_assert(determinant() != T(0), "Determinant cannot be zero!");
 		T det = determinant();
-		if (det == T(0)) (*this) = Matrix::identity();
+		if (det == T(0)) (*this) = Matrix(1);
 		(*this) = cofactors().transposed() * (T(1) / det);
 		return *this;
 	}
@@ -644,12 +645,14 @@ public:
 
 	constexpr Vector2 toVector2() const {
 		static_assert(R >= 2, "Matrix is not a valid representation of a 2D vector!");
-		return Vector2(data[C-1][0], data[C-1][1]);
+		if constexpr(R == 4) return Vector2(data[C-1][0], data[C-1][1]) / data[C-1][3];
+		else return Vector2(data[C-1][0], data[C-1][1]);
 	}
 
 	constexpr Vector3 toVector3() const {
 		static_assert(R >= 3, "Matrix is not a valid representation of a 3D vector!");
-		return Vector3(data[C-1][0], data[C-1][1], data[C-1][2]);
+		if constexpr(R == 4) return Vector3(data[C-1][0], data[C-1][1], data[C-1][2]) / data[C-1][3];
+		else return Vector3(data[C-1][0], data[C-1][1], data[C-1][2]);
 	}
 
 	constexpr Vector4 toVector4() const {
@@ -699,7 +702,7 @@ public:
 	) requires MatType::ValidTransform<R, C> {
 		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
 		// Fill & Transform
-		(*this) = Matrix::identity();
+		(*this) = Matrix(1);
 		return transform<EULER_FUNC>(position, rotation, scale);
 	}
 
@@ -719,7 +722,7 @@ public:
 		Vector3 const& skew
 	) requires MatType::ValidTransform<R, C> {
 		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
-		Matrix<4, 4, T> result(Matrix<4, 4, T>::identity());
+		Matrix<4, 4, T> result(Matrix<4, 4, T>(1));
 		// Apply perspective
 		result.data[3][0] = perspective.x;
 		result.data[3][1] = perspective.y;
@@ -727,7 +730,7 @@ public:
 		result.data[3][3] = perspective.w;
 		// Translate & rotate
 		result.translate(position).template rotate<EULER_FUNC>(rotation);
-		Matrix<4, 4, T> tmp = Matrix<4, 4, T>::identity();
+		Matrix<4, 4, T> tmp = Matrix<4, 4, T>(1);
 		// Skew
 		if (skew.x) {
 			tmp = 1;
@@ -770,7 +773,7 @@ public:
 		) const requires MatType::ValidTransform<R, C> {
 		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
 		VecMath::Transform3D result;
-		// if identity thingamabob is 0, return
+		// if identity value is 0, return
 		if (data[3][3] == 0) return VecMath::Transform3D();
 		// Copy & normalize matrix
 		Matrix<R, C, T> local(data);
@@ -873,7 +876,7 @@ private:
 	template<size_t R2, size_t C2, Math::Operatable T2> friend class Matrix;
 	template<typename T2> friend Matrix<4, 4, T2> translate(Matrix<4, 4, T2>, Vector3 const&);
 	/// The matrix's columns;
-	T data[C][R];
+	T data[C][R] = {};
 };
 // Float matrices
 typedef Matrix<2, 1, float> Matrix2x1;

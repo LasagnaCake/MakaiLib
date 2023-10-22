@@ -1,8 +1,5 @@
 typedef std::function<void(RawVertex&)> VertexFunc;
 
-#define VERTEX_SET_POS(VERT, VAL)	Drawer::vertexSetPosition(VERT, VAL);
-#define VERTEX_SET_NORM(VERT, VAL)	Drawer::vertexSetNormal(VERT, VAL);
-
 struct Empty {
 	virtual void onTransform() {}
 	virtual Empty* reset() {return this;}
@@ -67,10 +64,10 @@ public:
 			Vector3 const& blPos = Vector3(-1, -1),
 			Vector3 const& brPos = Vector3(+1, -1)
 		) {
-		VERTEX_SET_POS(origin[0],	tlPos);
-		VERTEX_SET_POS(origin[1],	trPos);
-		VERTEX_SET_POS(origin[2],	blPos);
-		VERTEX_SET_POS(origin[3],	brPos);
+		Drawer::vertexSetPosition(origin[0],	tlPos);
+		Drawer::vertexSetPosition(origin[1],	trPos);
+		Drawer::vertexSetPosition(origin[2],	blPos);
+		Drawer::vertexSetPosition(origin[3],	brPos);
 		return this;
 	}
 
@@ -126,20 +123,20 @@ public:
 			Vector3 const& bln,
 			Vector3 const& brn
 		) {
-		VERTEX_SET_NORM(origin[0],	tln);
-		VERTEX_SET_NORM(origin[1],	trn);
-		VERTEX_SET_NORM(origin[2],	bln);
-		VERTEX_SET_NORM(origin[3],	brn);
+		Drawer::vertexSetNormal(origin[0],	tln);
+		Drawer::vertexSetNormal(origin[1],	trn);
+		Drawer::vertexSetNormal(origin[2],	bln);
+		Drawer::vertexSetNormal(origin[3],	brn);
 		return this;
 	}
 
 	Plane* setNormal(
 			Vector3 const& n
 		) {
-		VERTEX_SET_NORM(origin[0],	n);
-		VERTEX_SET_NORM(origin[1],	n);
-		VERTEX_SET_NORM(origin[2],	n);
-		VERTEX_SET_NORM(origin[3],	n);
+		Drawer::vertexSetNormal(origin[0],	n);
+		Drawer::vertexSetNormal(origin[1],	n);
+		Drawer::vertexSetNormal(origin[2],	n);
+		Drawer::vertexSetNormal(origin[3],	n);
 		return this;
 	}
 
@@ -250,9 +247,9 @@ public:
 			Vector3 const& bPos = Vector3(-1, -1),
 			Vector3 const& cPos = Vector3(+1, -1)
 		) {
-		VERTEX_SET_POS(origin[0],	aPos);
-		VERTEX_SET_POS(origin[1],	bPos);
-		VERTEX_SET_POS(origin[2],	cPos);
+		Drawer::vertexSetPosition(origin[0],	aPos);
+		Drawer::vertexSetPosition(origin[1],	bPos);
+		Drawer::vertexSetPosition(origin[2],	cPos);
 		return this;
 	}
 
@@ -301,18 +298,18 @@ public:
 			Vector3 const& bn,
 			Vector3 const& cn
 		) {
-		VERTEX_SET_NORM(origin[0],	an);
-		VERTEX_SET_NORM(origin[1],	bn);
-		VERTEX_SET_NORM(origin[2],	cn);
+		Drawer::vertexSetNormal(origin[0],	an);
+		Drawer::vertexSetNormal(origin[1],	bn);
+		Drawer::vertexSetNormal(origin[2],	cn);
 		return this;
 	}
 
 	Trigon* setNormal(
 			Vector3 const& n
 		) {
-		VERTEX_SET_NORM(origin[0],	n);
-		VERTEX_SET_NORM(origin[1],	n);
-		VERTEX_SET_NORM(origin[2],	n);
+		Drawer::vertexSetNormal(origin[0],	n);
+		Drawer::vertexSetNormal(origin[1],	n);
+		Drawer::vertexSetNormal(origin[2],	n);
 		return this;
 	}
 
@@ -371,6 +368,3 @@ concept PlaneType	= Type::Derived<T, Plane> && NotEmpty<T>;
 
 template<class T>
 concept TrigonType	= Type::Derived<T, Trigon> && NotEmpty<T>;
-
-#undef VERTEX_SET_POS
-#undef VERTEX_SET_NORM
