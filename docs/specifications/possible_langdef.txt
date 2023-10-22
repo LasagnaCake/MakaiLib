@@ -13,7 +13,7 @@
 <var> <operand>= <var/val>
 
 function <name> takes
-	<pname>[: <type>] = <val>,
+	<pname>[: <type>][ = <val>],
 	...<params>
 returns
 	<pname>[: <type>]
