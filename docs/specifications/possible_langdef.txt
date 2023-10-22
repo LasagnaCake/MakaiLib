@@ -2,25 +2,40 @@
 	int
 	float
 	string
-	mat<N>
+	bool
 	vec<N>
+	mat<N>
 >
 
-<var> : <type or deduced> = <val>
+// At least one is required (if type is not set, then it is deduced)
+<var> [: <type>][= <val>]
 <var/val> <operand> <var/val>
 <var> <operand>= <var/val>
 
-call <name> with
+function <name> takes
+	<pname>[: <type>] = <val>,
+	...<params>
+returns
+	<pname>[: <type>]
+begin
+	...<code>
+end
+
+call <name> to <var> with
 	...<params>
 end
 
 if <cond> then
-endif
-
-task <name> wait <endtime> begin
+	...<code>
+elseif <cond> then
+	...<code>
 end
 
-create TaskManager <name> with
+task <name> wait <endtime> begin
+	...<code>
+end
+
+create Tasker <name> with
 	...<tasks>
 end
 
@@ -30,10 +45,53 @@ create Bullet <name> with
 end
 
 create Enemy <name> type <type> with
-	TaskManager [<...params>]
+	<pname> {<...params>}
 	...<params>
 end
 
 create <objclass> <name> type <subclass> with
+	<pname> {<...params>}
 	...<params>
 end
+
+// comment
+
+/* block comment */
+
+/*
+	GENERAL WORDS:
+		break // exits out of the loop.
+		leave // exits out of the nest of loops.
+		return // self-explanatory.
+		destroy <name> // destroys the object <name>.
+		
+	STACK WORDS (prefixed with `stack`):
+		init <name>: <type> // creates a stack <name> of type <type>
+		push <val/var>[: <type>][ to <name>] // pushes <val/var> onto stack <name> (else global <type> stack)
+		pop [<var>][: <type>][ from <name>] // pops a value from stack <name> (else global <type> stack) and stores it in <var>
+		add [<name>][: <type>]// pops the top two values of stack <name> (else, global <type> stack), adds them and pushes them back onto the stack in order of FIRST + SECOND
+		sub [<name>][: <type>] // Ditto, but for subtraction
+		mul [<name>][: <type>] // Ditto, but for multiplication
+		div [<name>][: <type>] // Ditto, but for division
+		mod [<name>][: <type>] // Ditto, but for modulo
+		eq [<name>][: <type>] // Ditto, but for equality (result gets pushed into global bool stack)
+		neq [<name>][: <type>] // Ditto, but for inequality (result gets pushed into global bool stack)
+		
+		INTEGER EXCLUSIVES (default stack is global int stack, else <name>):
+			band [<name>] // Ditto, but for bitwise and
+			bor [<name>] // Ditto, but for bitwise or
+			bxor [<name>] // Ditto, but for bitwise xor
+			bnot [<name>] // Similar - unary, but for bitwise not
+		
+		BOOLEAN EXCLUSIVES(default stack is global bool stack, else <name>):
+			land [<name>] // Ditto, but for logical and
+			lor [<name>] // Ditto, but for logical or
+			lxor [<name>] // Ditto, but for logical xor
+			lnot [<name>] // Similar - unary, but for logical not
+	
+	TASK EXCLUSIVES:
+		goto <index>: exits current task and jumps to a task at <index> in the Tasker's tasklist.
+		exit <delay>: exits out of the current task and waits <delay> until next task.
+		skip: exits out of the current task and waits the default task delay until next task.
+		next: exits out of the current task and proceeds immediately to the next one in the Tasker's tasklist.
+*/
