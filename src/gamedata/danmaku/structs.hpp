@@ -69,8 +69,11 @@ struct DanmakuObject {
 
 	Pause pause;
 
+	Vector4 color = Color::WHITE;
+
 	virtual void onFrame(float delta) {
 		if (free) return;
+		if (sprite) sprite->setColor(color);
 		onObjectFrame(this);
 		if (pause.enabled) {
 			if (pause.time < 0) return;
