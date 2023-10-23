@@ -17,7 +17,7 @@ struct EnemyEntity2D: public AreaCircle2D {
 		invincibility.delay = 60;
 		healthBar.setRenderLayer(ENEMY_TOP_LAYER);
 		healthBar.material.color.w = 0.5;
-		healthBar.trans.rotation.z = HPI;
+		healthBar.trans.rotation.z = -HPI;
 		healthBar.size = 2;
 	});
 

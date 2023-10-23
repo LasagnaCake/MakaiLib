@@ -124,6 +124,10 @@ public:
 			return Math::lerp(from, to, Vector2(fac));
 		};
 	}
+
+protected:
+	void onObjectSpawnBegin() override {params.collidable = false;}
+	void onObjectSpawnEnd() override {params.collidable = true;}
 };
 
 typedef std::vector<LineLaser*> LineLaserList;

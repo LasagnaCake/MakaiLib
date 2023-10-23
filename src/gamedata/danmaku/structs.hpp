@@ -50,6 +50,7 @@ struct DanmakuObject {
 		onFree			= pass;
 		onObjectFrame	= pass;
 		onUnpause		= pass;
+		onSpawnEnd		= pass;
 	}
 
 	RenderData::Reference::AnimatedPlane* sprite = nullptr;
@@ -59,11 +60,14 @@ struct DanmakuObject {
 	ObjectSignal onFree;
 	ObjectSignal onUnpause;
 	ObjectSignal onObjectFrame;
+	ObjectSignal onSpawnEnd;
 
 	ObjectFlags flags;
 
 	float zIndex = 0;
 	float zScale = 0;
+
+	float spawnSpeed = .2f;
 
 	Transform2D local;
 
@@ -73,8 +77,14 @@ struct DanmakuObject {
 
 	virtual void onFrame(float delta) {
 		if (free) return;
-		if (sprite) sprite->setColor(color);
+		if (sprite) sprite->setColor(color * colorInternal);
 		onObjectFrame(this);
+		if (spawning) {
+			if (colorInternal.a < 1.0) colorInternal.a += spawnSpeed;
+			else {colorInternal.a = 1.0; spawning = false;}
+			onObjectSpawnEnd();
+			onSpawnEnd(this);
+		}
 		if (pause.enabled) {
 			if (pause.time < 0) return;
 			pause.time = Math::clamp(pause.time - delta, 0.0f, 1.0f);
@@ -83,6 +93,13 @@ struct DanmakuObject {
 			onUnpause(this);
 		}
 		taskers.yield(delta, this);
+	}
+
+	DanmakuObject* spawn() {
+		spawning = true;
+		colorInternal.a = 0.0f;
+		onObjectSpawnBegin();
+		return this;
 	}
 
 	virtual DanmakuObject* reset() {return this;}
@@ -105,7 +122,7 @@ struct DanmakuObject {
 
 	virtual DanmakuObject* clearSignals() {
 		auto pass = T_SIGNAL(DanmakuObject*) {};
-		onObjectFrame = onFree = onUnpause = pass;
+		onSpawnEnd = onObjectFrame = onFree = onUnpause = pass;
 		return this;
 	}
 
@@ -123,7 +140,14 @@ struct DanmakuObject {
 	}
 
 protected:
-	bool free;
+	virtual void onObjectSpawnBegin()	{}
+	virtual void onObjectSpawnEnd()		{}
+
+	Vector4 colorInternal = Color::WHITE;
+
+	bool spawning = false;
+
+	bool free = true;
 
 	float _zOffset = 0;
 };

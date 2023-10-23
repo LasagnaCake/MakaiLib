@@ -94,6 +94,10 @@ public:
 		onRebound = onShuttle = pass;
 		return this;
 	}
+
+protected:
+	void onObjectSpawnBegin() override {params.collidable = false;}
+	void onObjectSpawnEnd() override {params.collidable = true;}
 };
 
 typedef std::vector<Bullet*> BulletList;
