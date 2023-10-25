@@ -9,6 +9,8 @@ struct BulletData: ObjectData {
 	bool rotateSprite	= true;
 };
 
+template <size_t BULLET_COUNT, size_t ACTOR_LAYER, size_t ENEMY_LAYER> class BulletManager;
+
 class Bullet: public DanmakuObject {
 public:
 	Bullet(): DanmakuObject() {
@@ -78,7 +80,7 @@ public:
 	void updateSprite() override {
 		if (!sprite) return;
 		// Set sprite transforms
-		sprite->local.position	= Vector3(local.position, zIndex + _zOffset);
+		sprite->local.position	= Vector3(local.position, zIndex + zOffset);
 		if (params.rotateSprite)
 			sprite->local.rotation.z = local.rotation;
 		sprite->local.scale = Vector3(local.scale, zScale);
@@ -98,21 +100,23 @@ public:
 protected:
 	void onObjectSpawnBegin() override {params.collidable = false;}
 	void onObjectSpawnEnd() override {params.collidable = true;}
+
+private:
+	template<size_t A, size_t B, size_t C> friend class BulletManager;
 };
 
 typedef std::vector<Bullet*> BulletList;
 
 template <
 	size_t BULLET_COUNT,
-	size_t ACTOR_LAYER = ENEMY_BULLET_LAYER,
-	size_t ENEMY_LAYER = PLAYER_LAYER
+	size_t ACTOR_LAYER,
+	size_t ENEMY_LAYER
 >
-class BulletManager: Entity {
+class BulletManager: DanmakuObjectManager {
 public:
-	DERIVED_CLASS(BulletManager, Entity)
+	DERIVED_CLASS(BulletManager, DanmakuObjectManager)
 
-	DERIVED_CONSTRUCTOR(BulletManager, Entity, {
-		addToGame(this, "DanmakuGame");
+	DERIVED_CONSTRUCTOR(BulletManager, DanmakuObjectManager, {
 		mesh.setRenderLayer(ACTOR_LAYER);
 		addToGroup(ACTOR_LAYER);
 		mesh.material.shaded = false;
@@ -240,9 +244,7 @@ public:
 			auto& b = bullets[i-1];
 			if (!b.sprite) b.sprite = mesh.createReference<AnimatedPlane>();
 			b.setFree(true);
-			b._setZOffset(
-				(1.0 - ((((float)BULLET_COUNT)-((float)i)) / ((float)BULLET_COUNT)))
-			);
+			b.zOffset = (1.0 - ((((float)BULLET_COUNT)-((float)i)) / ((float)BULLET_COUNT)));
 			b.sprite->size = Vector2(16, 16);
 			if (haltProcedure) return;
 		}

@@ -12,6 +12,8 @@ struct LineLaserData: LaserData {
 struct BentLaserData: LaserData {
 };
 
+template <size_t LASER_COUNT, size_t ACTOR_LAYER, size_t ENEMY_LAYER> class LineLaserManager;
+
 class LineLaser: public DanmakuObject {
 public:
 	LineLaser(): DanmakuObject() {
@@ -91,7 +93,7 @@ public:
 	void updateSprite() override {
 		if (!sprite) return;
 		// Set sprite transforms
-		sprite->local.position		= Vector3(local.position, zIndex + _zOffset);
+		sprite->local.position		= Vector3(local.position, zIndex + zOffset);
 		sprite->local.rotation.z	= local.rotation;
 		sprite->local.scale			= Vector3(local.scale, zScale);
 	}
@@ -128,21 +130,23 @@ public:
 protected:
 	void onObjectSpawnBegin() override {params.collidable = false;}
 	void onObjectSpawnEnd() override {params.collidable = true;}
+
+private:
+	template<size_t A, size_t B, size_t C> friend class LineLaserManager;
 };
 
 typedef std::vector<LineLaser*> LineLaserList;
 
 template <
 	size_t LASER_COUNT,
-	size_t ACTOR_LAYER = ENEMY_BULLET_LAYER,
-	size_t ENEMY_LAYER = PLAYER_LAYER
+	size_t ACTOR_LAYER,
+	size_t ENEMY_LAYER
 >
-class LineLaserManager: Entity {
+class LineLaserManager: DanmakuObjectManager {
 public:
-	DERIVED_CLASS(LineLaserManager, Entity)
+	DERIVED_CLASS(LineLaserManager, DanmakuObjectManager)
 
-	DERIVED_CONSTRUCTOR(LineLaserManager, Entity, {
-		addToGame(this, "DanmakuGame");
+	DERIVED_CONSTRUCTOR(LineLaserManager, DanmakuObjectManager, {
 		mesh.setRenderLayer(ACTOR_LAYER);
 		addToGroup(ACTOR_LAYER);
 		mesh.material.shaded = false;
@@ -202,9 +206,7 @@ public:
 			auto& l = lasers[i-1];
 			if (!l.sprite) l.sprite = mesh.createReference<AnimatedPlane>();
 			l.setFree(true);
-			l._setZOffset(
-				(1 - ((((float)LASER_COUNT)-((float)i)) / ((float)LASER_COUNT)))
-			);
+			l.zOffset = (1 - ((((float)LASER_COUNT)-((float)i)) / ((float)LASER_COUNT)));
 			if (haltProcedure) return;
 		}
 		created = true;

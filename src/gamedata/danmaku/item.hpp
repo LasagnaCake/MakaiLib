@@ -15,6 +15,8 @@ CollectibleData getItemData(size_t type, float value = 1, bool autoCollect = tru
 	return item;
 }
 
+template <size_t ITEM_COUNT, size_t ACTOR_LAYER> class CollectibleManager;
+
 struct Collectible: DanmakuObject {
 	Collectible() : DanmakuObject() {
 	}
@@ -67,7 +69,7 @@ struct Collectible: DanmakuObject {
 	void updateSprite() override {
 		if (!sprite) return;
 		// Set sprite transforms
-		sprite->local.position = Vector3(local.position, zIndex + _zOffset);
+		sprite->local.position = Vector3(local.position, zIndex + zOffset);
 		sprite->local.rotation.z = local.rotation;
 		sprite->local.scale = Vector3(local.scale, zScale);
 		// Set hitbox transforms
@@ -87,17 +89,18 @@ struct Collectible: DanmakuObject {
 
 private:
 	float gravity = 0;
+
+	template<size_t A, size_t B> friend class CollectibleManager;
 };
 
 typedef std::vector<Collectible*> CollectibleList;
 
 template <size_t ITEM_COUNT, size_t ACTOR_LAYER>
-class CollectibleManager: Entity {
+class CollectibleManager: public DanmakuObjectManager {
 public:
-	DERIVED_CLASS(CollectibleManager, Entity)
+	DERIVED_CLASS(CollectibleManager, DanmakuObjectManager)
 
-	DERIVED_CONSTRUCTOR(CollectibleManager, Entity, {
-		addToGame(this, "DanmakuGame");
+	DERIVED_CONSTRUCTOR(CollectibleManager, DanmakuObjectManager, {
 		mesh.setRenderLayer(ITEM_LAYER);
 		addToGroup(ITEM_LAYER);
 		mesh.material.shaded = false;
@@ -199,9 +202,7 @@ public:
 			auto& c = items[i-1];
 			if (!c.sprite) c.sprite = mesh.createReference<AnimatedPlane>();
 			c.setFree(true);
-			c._setZOffset(
-				(1 - ((((float)ITEM_COUNT)-((float)i)) / ((float)ITEM_COUNT)))
-			);
+			c.zOffset = (1 - ((((float)ITEM_COUNT)-((float)i)) / ((float)ITEM_COUNT)));
 			if (haltProcedure) return;
 		}
 		created = true;

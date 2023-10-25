@@ -77,11 +77,11 @@ struct DanmakuObject {
 
 	virtual void onFrame(float delta) {
 		if (free) return;
-		if (sprite) sprite->setColor(color * colorInternal);
+		if (sprite) sprite->setColor(color * tint);
 		onObjectFrame(this);
 		if (spawning) {
-			if (colorInternal.a < 1.0) colorInternal.a += spawnSpeed;
-			else {colorInternal.a = 1.0; spawning = false;}
+			if (tint.a < 1.0) tint.a += spawnSpeed;
+			else {tint.a = 1.0; spawning = false;}
 			onObjectSpawnEnd();
 			onSpawnEnd(this);
 		}
@@ -97,7 +97,7 @@ struct DanmakuObject {
 
 	DanmakuObject* spawn() {
 		spawning = true;
-		colorInternal.a = 0.0f;
+		tint.a = 0.0f;
 		onObjectSpawnBegin();
 		return this;
 	}
@@ -130,11 +130,6 @@ struct DanmakuObject {
 
 	virtual void updateSprite() {}
 
-	// INTERNAL USE ONLY DO NOT TOUCH
-	void _setZOffset(float offset) {
-		_zOffset = offset;
-	}
-
 	bool isFree() {
 		return free;
 	}
@@ -143,13 +138,20 @@ protected:
 	virtual void onObjectSpawnBegin()	{}
 	virtual void onObjectSpawnEnd()		{}
 
-	Vector4 colorInternal = Color::WHITE;
+	Vector4 tint = Color::WHITE;
 
 	bool spawning = false;
 
 	bool free = true;
 
-	float _zOffset = 0;
+	float zOffset = 0;
+
+	friend class DanmakuObjectManager;
+};
+
+struct DanmakuObjectManager: Entity {
+	DERIVED_CLASS(DanmakuObjectManager, Entity)
+	DERIVED_CONSTRUCTOR(DanmakuObjectManager, Entity, {addToGame(this, "DanmakuGame");})
 };
 
 typedef std::vector<DanmakuObject*> ObjectList;
