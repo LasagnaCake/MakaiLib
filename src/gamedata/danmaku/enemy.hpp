@@ -3,10 +3,6 @@ struct EnemyEntity2D: public AreaCircle2D {
 
 	DERIVED_CONSTRUCTOR(EnemyEntity2D, AreaCircle2D, {
 		health = 100.0;
-		#ifndef MAKAILIB_DANMAKU_PHANTASMAGORIA_GAME
-		mesh.setRenderLayer(ENEMY_LAYER);
-		addToGroup(ENEMY_LAYER);
-		#endif // MAKAILIB_DANMAKU_PHANTASMAGORIA_GAME
 		sprite = mesh.createReference<AnimatedPlane>();
 		collision.shape.radius = 1;
 		addToGame(this, "DanmakuGame");
@@ -17,9 +13,7 @@ struct EnemyEntity2D: public AreaCircle2D {
 			invincible = false;
 		};
 		invincibility.delay = 60;
-		#ifndef MAKAILIB_DANMAKU_PHANTASMAGORIA_GAME
-		healthBar.setRenderLayer(ENEMY_TOP_LAYER);
-		#endif
+		setAppropriateStartingLayer();
 		healthBar.material.color.w = 0.5;
 		healthBar.trans.rotation.z = -HPI;
 		healthBar.size = 2;
@@ -39,6 +33,7 @@ struct EnemyEntity2D: public AreaCircle2D {
 	virtual ~EnemyEntity2D() {
 	}
 
+	virtual void onCreate() {}
 	virtual void onDelete() {}
 
 	virtual void onDeath() {queueDestroy();}
@@ -88,6 +83,12 @@ struct EnemyEntity2D: public AreaCircle2D {
 		invincibility.start(time);
 	}
 
+	void setObjectLayer(size_t layer, size_t topLayer) {
+		mesh.setRenderLayer(layer);
+		addToGroup(layer);
+		healthBar.setRenderLayer(topLayer);
+	}
+
 	void updateSprite() {
 		Transform2D self = globalTransform();
 		mesh.trans.position			= Vector3(self.position, zIndex);
@@ -97,5 +98,13 @@ struct EnemyEntity2D: public AreaCircle2D {
 	}
 
 private:
+	void setAppropriateStartingLayer() {
+		#ifndef MAKAILIB_DANMAKU_PHANTASMAGORIA_GAME
+		setObjectLayer(ENEMY_LAYER, ENEMY_TOP_LAYER);
+		#else
+		setObjectLayer(ENEMY1_LAYER, ENEMY1_TOP_LAYER);
+		#endif
+	}
+
 	Event::Timer invincibility;
 };
