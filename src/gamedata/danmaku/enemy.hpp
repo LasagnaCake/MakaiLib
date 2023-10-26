@@ -3,8 +3,10 @@ struct EnemyEntity2D: public AreaCircle2D {
 
 	DERIVED_CONSTRUCTOR(EnemyEntity2D, AreaCircle2D, {
 		health = 100.0;
+		#ifndef MAKAILIB_DANMAKU_PHANTASMAGORIA_GAME
 		mesh.setRenderLayer(ENEMY_LAYER);
 		addToGroup(ENEMY_LAYER);
+		#endif // MAKAILIB_DANMAKU_PHANTASMAGORIA_GAME
 		sprite = mesh.createReference<AnimatedPlane>();
 		collision.shape.radius = 1;
 		addToGame(this, "DanmakuGame");
@@ -15,7 +17,9 @@ struct EnemyEntity2D: public AreaCircle2D {
 			invincible = false;
 		};
 		invincibility.delay = 60;
+		#ifndef MAKAILIB_DANMAKU_PHANTASMAGORIA_GAME
 		healthBar.setRenderLayer(ENEMY_TOP_LAYER);
+		#endif
 		healthBar.material.color.w = 0.5;
 		healthBar.trans.rotation.z = -HPI;
 		healthBar.size = 2;

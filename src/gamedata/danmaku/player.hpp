@@ -58,7 +58,9 @@ struct PlayerEntity2D: AreaCircle2D {
 		actionKeys["skip"]	= SDL_SCANCODE_LCTRL;
 		// Create sprite
 		sprite = mesh.createReference<Reference::AnimatedPlane>();
+		#ifndef MAKAILIB_DANMAKU_PHANTASMAGORIA_GAME
 		mesh.setRenderLayer(PLAYER_LAYER);
+		#endif // MAKAILIB_DANMAKU_PHANTASMAGORIA_GAME
 		// Create hitbox sprite
 		hitboxSprite = hitboxMesh.createReference<Reference::AnimatedPlane>();
 		hitboxMesh.setRenderLayer(PLAYER_HITBOX_LAYER);
@@ -68,9 +70,11 @@ struct PlayerEntity2D: AreaCircle2D {
 		// Add to game
 		DEBUGLN("< FINGERS IN HIS ASS SUNDAY >");
 		addToGame(this, "DanmakuGame");
+		#ifndef MAKAILIB_DANMAKU_PHANTASMAGORIA_GAME
 		addToGroup(PLAYER_LAYER);
-		removeFromCollisionLayer(0);
 		addToCollisionLayer(PLAYER_LAYER);
+		#endif // MAKAILIB_DANMAKU_PHANTASMAGORIA_GAME
+		removeFromCollisionLayer(0);
 		// Invincibility timer
 		invincibility.pause().onSignal = SIGNAL {
 			this->collision.enabled = true;
