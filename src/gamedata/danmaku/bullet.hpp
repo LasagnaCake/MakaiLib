@@ -102,7 +102,7 @@ protected:
 	void onObjectSpawnEnd() override {params.collidable = true;}
 
 private:
-	template<size_t A, size_t B, size_t C> friend class BulletManager;
+	template<size_t B, size_t A, size_t E> friend class BulletManager;
 };
 
 typedef std::vector<Bullet*> BulletList;

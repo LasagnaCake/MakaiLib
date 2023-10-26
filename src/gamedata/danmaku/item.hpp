@@ -90,7 +90,7 @@ struct Collectible: DanmakuObject {
 private:
 	float gravity = 0;
 
-	template<size_t A, size_t B> friend class CollectibleManager;
+	template<size_t C, size_t A> friend class CollectibleManager;
 };
 
 typedef std::vector<Collectible*> CollectibleList;

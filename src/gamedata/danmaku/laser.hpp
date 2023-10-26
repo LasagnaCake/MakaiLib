@@ -132,7 +132,7 @@ protected:
 	void onObjectSpawnEnd() override {params.collidable = true;}
 
 private:
-	template<size_t A, size_t B, size_t C> friend class LineLaserManager;
+	template<size_t L, size_t A, size_t E> friend class LineLaserManager;
 };
 
 typedef std::vector<LineLaser*> LineLaserList;
