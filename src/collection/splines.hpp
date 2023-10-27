@@ -82,10 +82,11 @@ namespace Spline {
 		};
 
 		template<class T>
-		using QuadraticBezier = Bezieroid<T, 3>;
-
+		using QuadraticBezier	= Bezieroid<T, 2>;
 		template<class T>
-		using CubicBezier = Bezieroid<T, 3>;
+		using CubicBezier		= Bezieroid<T, 3>;
+		template<class T>
+		using QuarticBezier		= Bezieroid<T, 4>;
 	}
 }
 
