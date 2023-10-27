@@ -69,6 +69,7 @@ class Vector2
 		/// The vector's position.
 		union {
 			struct {float x, y;};
+			struct {float nx, ny;};
 			struct {float u, v;};
 			float data[2];
 		};
@@ -379,7 +380,9 @@ class Vector3
 		/// The vector's position.
 		union {
 			struct {float x, y, z;};
+			struct {float nx, ny, nz;};
 			struct {float r, g, b;};
+			struct {float u, v, t;};
 			float data[3];
 		};
 
@@ -745,7 +748,9 @@ class Vector4
 		/// The vector's position.
 		union {
 			struct {float x, y, z, w;};
+			struct {float nx, ny, nz, nw;};
 			struct {float r, g, b, a;};
+			struct {float u, v, t, s;};
 			float data[4];
 		};
 
