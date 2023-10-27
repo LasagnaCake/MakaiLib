@@ -142,6 +142,7 @@
 #include "collection/tasking.hpp"
 #include "collection/grouping.hpp"
 #include "collection/sharedvalue.hpp"
+#include "collection/splines.hpp"
 
 #include "fileloader.hpp"
 #include "predefs.hpp"

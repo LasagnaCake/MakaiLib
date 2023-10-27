@@ -148,10 +148,10 @@ private:
 			// If cursor has reach the rect's vertical limit, break
 			if(chrRect.v >= text.rect.v) break;
 			// Get character index
-			index = Math::max((int)c - 0x20, 0);
+			index = Math::max<int>(c - 0x20, 0);
 			// Get character's top left UV index in the font texture
 			uv = Vector2(
-				(int)Math::wmax((float)index, font->size.x),
+				(int)Math::wmax<float>(index, font->size.x),
 				(int)(index / font->size.x)
 			);
 			// Get vertex positions

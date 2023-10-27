@@ -104,7 +104,7 @@ public:
 		RayBounds2D self = RayBounds2D {
 			local.position,
 			params.length.current,
-			Math::max((float)(params.width.current / SQRT2 + params.hitbox.radius), 0.0f),
+			Math::max<float>(params.width.current / SQRT2 + params.hitbox.radius, 0.0f),
 			params.rot.current,
 			params.rotateHitbox ? params.rot.current : params.hitbox.rotation,
 			params.stretch.current

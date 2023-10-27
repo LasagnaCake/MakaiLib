@@ -142,7 +142,7 @@ public:
 			else
 				getLayerBuffer().material.polarWarp.enabled = false;
 			if (screenShake)
-				getLayerBuffer().material.uvShift += Vector2(getWindowScale() * VecMath::angleV2(Math::Random::real(0.0f, (float)TAU)) * screenShake);
+				getLayerBuffer().material.uvShift += Vector2(getWindowScale() * VecMath::angleV2(Math::Random::real<float>(0.0f, TAU)) * screenShake);
 		}
 		switch (layerID / TRUE_SUBLAYER_COUNT) {
 		case (WORLD_BOTTOM_LAYER / TRUE_SUBLAYER_COUNT):

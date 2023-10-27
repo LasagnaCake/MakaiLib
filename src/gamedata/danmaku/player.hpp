@@ -333,7 +333,7 @@ struct PlayerEntity2D: AreaCircle2D {
 		);
 		grazeboxSprite->local.rotation.z += 0.025;
 		// Set hitbox visibility
-		hitboxMesh.trans.scale = Math::max(0.4f, float(collision.shape.radius * SQRT2 * 2.0));
+		hitboxMesh.trans.scale = Math::max<float>(0.4f, (collision.shape.radius * SQRT2 * 2.0));
 		hitboxMesh.active = isFocused;
 		// Do graze action
 		CircleBounds2D grazeShape = getGrazeBounds();
