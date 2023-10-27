@@ -6,8 +6,35 @@
 #include "helper.hpp"
 
 namespace Spline {
-	namespace Linear {
-	}
+	template<class T>
+	class Linear {
+	public:
+		List<T> points;
+
+		constexpr Linear() {}
+
+		constexpr Linear(List<T> const& ps) {
+			points = ps;
+		}
+
+		constexpr Linear(Arguments<T> const& ps) {
+			for (T& p: ps)
+				points.push_back(p);
+		}
+
+		template<size_t N>
+		constexpr Linear(const T (&ps)[N]) {
+			for (T& p: ps)
+				points.push_back(p);
+		}
+
+		constexpr T lerp(float by) {
+			by = Math::clamp<float>(by, 0, 1);
+			if (by == 1.0) return points.end();
+			size_t curp = Math::floor(by * points.size());
+			return Math::lerp(points[curp], points[curp+1], by);
+		}
+	};
 
 	namespace Bezier {
 		template <Math::Operatable T, size_t N>
@@ -24,9 +51,7 @@ namespace Spline {
 			constexpr Bezieroid() {}
 
 			constexpr Bezieroid(SectionList<T, N> const& secs) {
-				sections.reserve(N);
-				for (Section<T, N>& s: secs)
-					sections.push_back(s);
+				sections = secs;
 			}
 
 			constexpr Bezieroid(Arguments<Section<T, N>> const& secs) {
@@ -60,6 +85,7 @@ namespace Spline {
 
 			constexpr T lerp(float by) {
 				by = Math::clamp<float>(by, 0, 1);
+				if (by == 1.0) return sections.end()[0];
 				size_t sec = Math::floor(by * sections.size());
 				return lerpSection(sections[sec], sections[sec+1].points[0], by);
 			}
@@ -81,12 +107,9 @@ namespace Spline {
 			}
 		};
 
-		template<class T>
-		using QuadraticBezier	= Bezieroid<T, 2>;
-		template<class T>
-		using CubicBezier		= Bezieroid<T, 3>;
-		template<class T>
-		using QuarticBezier		= Bezieroid<T, 4>;
+		template<class T> using Quadratic	= Bezieroid<T, 2>;
+		template<class T> using Cubic		= Bezieroid<T, 3>;
+		template<class T> using Quartic		= Bezieroid<T, 4>;
 	}
 }
 
