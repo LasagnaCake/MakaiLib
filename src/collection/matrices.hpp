@@ -1,5 +1,5 @@
-#ifndef FLOAT_MATRICES_234_H
-#define FLOAT_MATRICES_234_H
+#ifndef TYPE_MATRICES_H
+#define TYPE_MATRICES_H
 
 #include "algebra.hpp"
 #include "vectorn.hpp"
@@ -1105,4 +1105,4 @@ namespace MatMath {
 	}
 }
 
-#endif // FLOAT_MATRICES_234_H
+#endif // TYPE_MATRICES_H
