@@ -71,21 +71,18 @@ class Vector2
 			struct {float x, y;};
 			struct {float nx, ny;};
 			struct {float u, v;};
-			float data[2];
+			float data[2] = {0};
 		};
 
 		/// Consturctors.
-		constexpr Vector2() {
-			x = 0;
-			y = 0;
-		}
+		constexpr Vector2() {}
 
-		constexpr Vector2(float v) {
+		constexpr Vector2(float const& v) {
 			x = v;
 			y = v;
 		}
 
-		constexpr Vector2(float x, float y) {
+		constexpr Vector2(float const& x, float const& y) {
 			this->x = x;
 			this->y = y;
 		}
@@ -202,56 +199,56 @@ class Vector2
 		}
 
 		/// Float operator overloading.
-		constexpr Vector2 operator+(float val) const {
+		constexpr Vector2 operator+(float const& val) const {
 			return *this + Vector2(val);
 		}
 
-		constexpr Vector2 operator-(float val) const {
+		constexpr Vector2 operator-(float const& val) const {
 			return *this - Vector2(val);
 		}
 
-		constexpr Vector2 operator*(float val) const {
+		constexpr Vector2 operator*(float const& val) const {
 			return *this * Vector2(val);
 		}
 
-		constexpr Vector2 operator/(float val) const {
+		constexpr Vector2 operator/(float const& val) const {
 			return *this / Vector2(val);
 		}
 
-		constexpr Vector2 operator%(float val) const {
+		constexpr Vector2 operator%(float const& val) const {
 			return *this % Vector2(val);
 		}
 
-		constexpr Vector2 operator^(float val) const {
+		constexpr Vector2 operator^(float const& val) const {
 			return *this ^ Vector2(val);
 		}
 
-		constexpr Vector2& operator+=(float val) {
+		constexpr Vector2& operator+=(float const& val) {
 			*this += Vector2(val);
 			return *this;
 		}
 
-		constexpr Vector2& operator-=(float val) {
+		constexpr Vector2& operator-=(float const& val) {
 			*this -= Vector2(val);
 			return *this;
 		}
 
-		constexpr Vector2& operator*=(float val) {
+		constexpr Vector2& operator*=(float const& val) {
 			*this *= Vector2(val);
 			return *this;
 		}
 
-		constexpr Vector2& operator/=(float val) {
+		constexpr Vector2& operator/=(float const& val) {
 			*this /= Vector2(val);
 			return *this;
 		}
 
-		constexpr Vector2& operator%=(float val) {
+		constexpr Vector2& operator%=(float const& val) {
 			*this %= Vector2(val);
 			return *this;
 		}
 
-		constexpr Vector2& operator^=(float val) {
+		constexpr Vector2& operator^=(float const& val) {
 			*this ^= Vector2(val);
 			return *this;
 		}
@@ -295,13 +292,13 @@ class Vector2
 		}
 
 		/// Gets the distance to another vector.
-		constexpr float distanceTo(Vector2 vec) const {
+		constexpr float distanceTo(Vector2 const& vec) const {
 			Vector2 diff = vec - *this;
 			return diff.length();
 		}
 
 		/// Gets the distance to another vector.
-		constexpr float squaredDistanceTo(Vector2 vec) const {
+		constexpr float squaredDistanceTo(Vector2 const& vec) const {
 			Vector2 diff = vec - *this;
 			return diff.lengthSquared();
 		}
@@ -312,13 +309,13 @@ class Vector2
 		}
 
 		/// Gets the vector's angle to another vector.
-		constexpr float angleTo(Vector2 vec) const {
+		constexpr float angleTo(Vector2 const& vec) const {
 			Vector2 diff = vec - *this;
 			return diff.angle();
 		}
 
 		/// Gets a normalized vector pointing towards another vector.
-		constexpr Vector2 normalTo(Vector2 vec) const {
+		constexpr Vector2 normalTo(Vector2 const& vec) const {
 			Vector2 diff = vec - *this;
 			return diff.normalized();
 		}
@@ -383,24 +380,20 @@ class Vector3
 			struct {float nx, ny, nz;};
 			struct {float r, g, b;};
 			struct {float u, v, t;};
-			float data[3];
+			float data[3] = {0};
 		};
 
 		/// Constructors.
 
-		constexpr Vector3() {
-			x = 0;
-			y = 0;
-			z = 0;
-		}
+		constexpr Vector3() {}
 
-		constexpr Vector3(float v) {
+		constexpr Vector3(float const& v) {
 			x = v;
 			y = v;
 			z = v;
 		}
 
-		constexpr Vector3(float x, float y, float z = 0.0) {
+		constexpr Vector3(float const& x, float const& y, float const& z = 0.0) {
 			this->x = x;
 			this->y = y;
 			this->z = z;
@@ -412,7 +405,7 @@ class Vector3
 			z = vec.z;
 		}
 
-		constexpr Vector3(Vector2 const& vec, float z = 0.0) {
+		constexpr Vector3(Vector2 const& vec, float const& z = 0.0) {
 			x = vec.x;
 			y = vec.y;
 			this->z = z;
@@ -539,62 +532,62 @@ class Vector3
 			);
 		}
 
-		constexpr bool operator!=(Vector3 vec) const {
+		constexpr bool operator!=(Vector3 const& vec) const {
 			return !(*this == vec);
 		}
 
 		/// Float operator overloading.
 
-		constexpr Vector3 operator+(float val) const {
+		constexpr Vector3 operator+(float const& val) const {
 			return *this + Vector3(val);
 		}
 
-		constexpr Vector3 operator-(float val) const {
+		constexpr Vector3 operator-(float const& val) const {
 			return *this - Vector3(val);
 		}
 
-		constexpr Vector3 operator*(float val) const {
+		constexpr Vector3 operator*(float const& val) const {
 			return *this * Vector3(val);
 		}
 
-		constexpr Vector3 operator/(float val) const {
+		constexpr Vector3 operator/(float const& val) const {
 			return *this / Vector3(val);
 		}
 
-		constexpr Vector3 operator%(float val) const {
+		constexpr Vector3 operator%(float const& val) const {
 			return *this % Vector3(val);
 		}
 
-		constexpr Vector3 operator^(float val) const {
+		constexpr Vector3 operator^(float const& val) const {
 			return *this ^ Vector3(val);
 		}
 
-		constexpr Vector3& operator+=(float val) {
+		constexpr Vector3& operator+=(float const& val) {
 			*this += Vector3(val);
 			return *this;
 		}
 
-		constexpr Vector3& operator-=(float val) {
+		constexpr Vector3& operator-=(float const& val) {
 			*this -= Vector3(val);
 			return *this;
 		}
 
-		constexpr Vector3& operator*=(float val) {
+		constexpr Vector3& operator*=(float const& val) {
 			*this *= Vector3(val);
 			return *this;
 		}
 
-		constexpr Vector3& operator/=(float val) {
+		constexpr Vector3& operator/=(float const& val) {
 			*this /= Vector3(val);
 			return *this;
 		}
 
-		constexpr Vector3& operator%=(float val) {
+		constexpr Vector3& operator%=(float const& val) {
 			*this %= Vector3(val);
 			return *this;
 		}
 
-		constexpr Vector3& operator^=(float val) {
+		constexpr Vector3& operator^=(float const& val) {
 			*this ^= Vector3(val);
 			return *this;
 		}
@@ -632,7 +625,7 @@ class Vector3
 		}
 
 		/// Gets the vector's angle to another vector.
-		constexpr Vector3 angleTo(Vector3 vec) const {
+		constexpr Vector3 angleTo(Vector3 const& vec) const {
 			Vector3 diff = vec - *this;
 			return diff.angle();
 		}
@@ -654,19 +647,19 @@ class Vector3
 		}
 
 		/// Gets a normalized vector pointing towards another vector.
-		constexpr Vector3 normalTo(Vector3 vec) const {
+		constexpr Vector3 normalTo(Vector3 const& vec) const {
 			Vector3 diff = vec - *this;
 			return diff.normalized();
 		}
 
 		/// Gets the distance to another vector.
-		constexpr float distanceTo(Vector3 vec) const {
+		constexpr float distanceTo(Vector3 const& vec) const {
 			Vector3 diff = vec - *this;
 			return diff.length();
 		}
 
 		/// Gets the distance to another vector.
-		constexpr float squaredDistanceTo(Vector3 vec) const {
+		constexpr float squaredDistanceTo(Vector3 const& vec) const {
 			Vector3 diff = vec - *this;
 			return diff.lengthSquared();
 		}
@@ -751,17 +744,12 @@ class Vector4
 			struct {float nx, ny, nz, nw;};
 			struct {float r, g, b, a;};
 			struct {float u, v, t, s;};
-			float data[4];
+			float data[4] = {0};
 		};
 
 		/// Constructors.
 
-		constexpr Vector4() {
-			x = 0;
-			y = 0;
-			z = 0;
-			w = 0;
-		}
+		constexpr Vector4() {}
 
 		constexpr Vector4(float v) {
 			x = v;
@@ -770,7 +758,7 @@ class Vector4
 			w = v;
 		}
 
-		constexpr Vector4(float x, float y, float z, float w = 0.0) {
+		constexpr Vector4(float const& x, float const& y, float const& z, float const& w = 0.0) {
 			this->x = x;
 			this->y = y;
 			this->z = z;
@@ -946,56 +934,56 @@ class Vector4
 
 		/// Float operator overloading.
 
-		constexpr Vector4 operator+(float val) const {
+		constexpr Vector4 operator+(float const& val) const {
 			return *this + Vector4(val);
 		}
 
-		constexpr Vector4 operator-(float val) const {
+		constexpr Vector4 operator-(float const& val) const {
 			return *this - Vector4(val);
 		}
 
-		constexpr Vector4 operator*(float val) const {
+		constexpr Vector4 operator*(float const& val) const {
 			return *this * Vector4(val);
 		}
 
-		constexpr Vector4 operator/(float val) const {
+		constexpr Vector4 operator/(float const& val) const {
 			return *this / Vector4(val);
 		}
 
-		constexpr Vector4 operator%(float val) const {
+		constexpr Vector4 operator%(float const& val) const {
 			return *this % Vector4(val);
 		}
 
-		constexpr Vector4 operator^(float val) const {
+		constexpr Vector4 operator^(float const& val) const {
 			return *this ^ Vector4(val);
 		}
 
-		constexpr Vector4& operator+=(float val) {
+		constexpr Vector4& operator+=(float const& val) {
 			*this += Vector4(val);
 			return *this;
 		}
 
-		constexpr Vector4& operator-=(float val) {
+		constexpr Vector4& operator-=(float const& val) {
 			*this -= Vector4(val);
 			return *this;
 		}
 
-		constexpr Vector4& operator*=(float val) {
+		constexpr Vector4& operator*=(float const& val) {
 			*this *= Vector4(val);
 			return *this;
 		}
 
-		constexpr Vector4& operator/=(float val) {
+		constexpr Vector4& operator/=(float const& val) {
 			*this /= Vector4(val);
 			return *this;
 		}
 
-		constexpr Vector4& operator^=(float val) {
+		constexpr Vector4& operator^=(float const& val) {
 			*this ^= Vector4(val);
 			return *this;
 		}
 
-		constexpr Vector4& operator%=(float val) {
+		constexpr Vector4& operator%=(float const& val) {
 			*this %= Vector4(val);
 			return *this;
 		}
@@ -1039,19 +1027,19 @@ class Vector4
 		}
 
 		/// Gets the distance to another vector.
-		constexpr float distanceTo(Vector4 vec) const {
+		constexpr float distanceTo(Vector4 const& vec) const {
 			Vector4 diff = vec - *this;
 			return diff.length();
 		}
 
 		/// Gets the distance to another vector.
-		constexpr float squaredDistanceTo(Vector4 vec) const {
+		constexpr float squaredDistanceTo(Vector4 const& vec) const {
 			Vector4 diff = vec - *this;
 			return diff.lengthSquared();
 		}
 
 		/// Gets a normalized vector pointing towards another vector.
-		constexpr Vector4 normalTo(Vector4 vec) const {
+		constexpr Vector4 normalTo(Vector4 const& vec) const {
 			Vector4 diff = vec - *this;
 			return diff.normalized();
 		}
@@ -1129,7 +1117,7 @@ namespace VecMath
 	// Vector rotation
 
 	/// Rotates a 2D Vector around the origin by a given angle.
-	constexpr Vector2 rotateV2(Vector2 vec, float angle) {
+	constexpr Vector2 rotateV2(Vector2 vec, float const& angle) {
 		// Calculate the sine & cosine of the angle
 		float sinA = sin(angle);
 		float cosA = cos(angle);
