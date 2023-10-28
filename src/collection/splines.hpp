@@ -28,7 +28,7 @@ namespace Spline {
 				points.push_back(p);
 		}
 
-		constexpr T lerp(float by) {
+		constexpr T interpolate(float by) {
 			by = Math::clamp<float>(by, 0, 1);
 			if (by == 1.0) return points.end();
 			size_t curp = Math::floor(by * points.size());
@@ -46,22 +46,22 @@ namespace Spline {
 		using SectionList = List<Section<T, N>>;
 
 		template<Math::Operatable T, size_t N>
-		class Bezieroid {
+		class Spline {
 		public:
-			constexpr Bezieroid() {}
+			constexpr Spline() {}
 
-			constexpr Bezieroid(SectionList<T, N> const& secs) {
+			constexpr Spline(SectionList<T, N> const& secs) {
 				sections = secs;
 			}
 
-			constexpr Bezieroid(Arguments<Section<T, N>> const& secs) {
+			constexpr Spline(Arguments<Section<T, N>> const& secs) {
 				sections.reserve(N);
 				for (Section<T, N>& s: secs)
 					sections.push_back(s);
 			}
 
 			template <size_t P>
-			constexpr Bezieroid(const T (&points)[P][N]) {
+			constexpr Spline(const T (&points)[P][N]) {
 				for SSRANGE(i, 0, P) {
 					Section<T, N> sec;
 					for SSRANGE(j, 0, N)
@@ -71,7 +71,7 @@ namespace Spline {
 			}
 
 			template <size_t P>
-			constexpr Bezieroid(const T (&points)[P]) {
+			constexpr Spline(const T (&points)[P]) {
 				static_assert(P % N == 0, "Point count is not a multiple of N!");
 				for RANGE(i, 0, P, N) {
 					Section<T, N> sec;
@@ -83,14 +83,12 @@ namespace Spline {
 
 			SectionList<T, N> sections;
 
-			constexpr T lerp(float by) {
+			constexpr T interpolate(float by) {
 				by = Math::clamp<float>(by, 0, 1);
 				if (by == 1.0) return sections.end()[0];
 				size_t sec = Math::floor(by * sections.size());
 				return lerpSection(sections[sec], sections[sec+1].points[0], by);
 			}
-
-		protected:
 
 		private:
 			template <size_t S>
@@ -107,9 +105,52 @@ namespace Spline {
 			}
 		};
 
-		template<class T> using Quadratic	= Bezieroid<T, 2>;
-		template<class T> using Cubic		= Bezieroid<T, 3>;
-		template<class T> using Quartic		= Bezieroid<T, 4>;
+		template<Math::Operatable T> using Quadratic	= Spline<T, 2>;
+		template<Math::Operatable T> using Cubic		= Spline<T, 3>;
+		template<Math::Operatable T> using Quartic		= Spline<T, 4>;
+		template<Math::Operatable T> using Quintic		= Spline<T, 5>;
+
+		namespace Hermite {
+			template<Math::Operatable T>
+			struct Section {
+				T position;
+				T velocity;
+			};
+
+			template<typename T>
+			using SectionList = List<Section<T>>;
+
+			template<Math::Operatable T>
+			class Spline {
+			public:
+				List<Section<T>> sections;
+
+				constexpr T interpolate(float by) {
+					by = Math::clamp<float>(by, 0, 1);
+					if (by == 1.0) return sections.end().position;
+					size_t sec = Math::floor(by * sections.size());
+					return lerpSection(sections[sec], sections[sec+1], by);
+				}
+
+			private:
+				constexpr T lerpSection(Section<T> const& sec, Section<T> const& next, float const& by) {
+					T const pos[2] = {
+						sec.position + sec.velocity,
+						next.position - next.velocity
+					};
+					T const p1[3] = {
+						Math::lerp(sec.position, pos[0], T(by)),
+						Math::lerp(pos[0], pos[1], T(by)),
+						Math::lerp(pos[1], next.position, T(by))
+					};
+					T const p2[2] = {
+						Math::lerp(p1[0], p1[1], T(by)),
+						Math::lerp(p1[1], p1[2], T(by))
+					};
+					return Math::lerp(p2[0], p2[1], T(by));
+				}
+			};
+		}
 	}
 }
 
