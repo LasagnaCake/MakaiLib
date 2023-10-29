@@ -296,6 +296,8 @@ namespace Tween{
 	template <Tweenable T = float>
 	class Tween {
 	public:
+		typedef T ParamType;
+
 		/// The tween's target variable.
 		T* value = &defaultVar;
 

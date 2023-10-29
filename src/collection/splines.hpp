@@ -6,10 +6,15 @@
 #include "helper.hpp"
 
 namespace Spline {
-	template <Math::Operatable T>
+	template<Math::Operatable T>
 	struct Splinoid {
+		typedef T ParamType;
+
 		constexpr virtual T interpolate(float by) = 0;
 	};
+
+	template<class T>
+	concept SplineType = Type::Subclass<T, Splinoid<typename T::ParamType>>;
 
 	template<class T>
 	class Linear: public Splinoid<T> {
@@ -44,12 +49,12 @@ namespace Spline {
 	};
 
 	namespace Bezier {
-		template <Math::Operatable T, size_t N>
+		template<Math::Operatable T, size_t N>
 		struct Section {
 			T points[N];
 		};
 
-		template <Math::Operatable T, size_t N>
+		template<Math::Operatable T, size_t N>
 		using SectionList = List<Section<T, N>>;
 
 		template<Math::Operatable T, size_t N>
@@ -100,7 +105,7 @@ namespace Spline {
 			}
 
 		private:
-			template <size_t S>
+			template<size_t S>
 			constexpr T lerpSection(Section<T, S> const& sec, T const& end, float const& by) {
 				if constexpr(S < 2)
 					return Math::lerp(sec.points[0], end, T(by));
@@ -158,7 +163,7 @@ namespace Spline {
 				}
 			}
 
-			template <size_t P>
+			template<size_t P>
 			constexpr Spline(const T (&points)[P]) {
 				sections.reserve(P/2);
 				static_assert(P % 2 == 0, "Point count is not a multiple of 2!");
