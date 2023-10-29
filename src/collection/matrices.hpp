@@ -26,6 +26,11 @@ namespace MatType {
 template<size_t R, size_t C, Math::Operatable T>
 class Matrix {
 public:
+	constexpr static size_t rowCount	= R;
+	constexpr static size_t columnCount	= C;
+
+	typedef T ParamType;
+
 	static_assert(R != 0, "Matrix row size must not be zero!");
 	static_assert(C != 0, "Matrix column size must not be zero!");
 
@@ -630,12 +635,6 @@ public:
 
 	constexpr explicit operator const T*() const	{return (const T*)data;}
 	constexpr explicit operator T*()				{return (T*)data;}
-
-	/// Size accessors.
-
-	constexpr static size_t rowCount() {return R;}
-
-	constexpr static size_t columnCount() {return C;}
 
 	/// Converters.
 
