@@ -19,6 +19,7 @@ concept BarType = Type::Subclass<T, BaseBar> && Type::Subclass<T, Base::Drawable
 
 class LinearBar: public DrawableObject, public BaseBar {
 public:
+	float uvOffset = 0;
 
 	LinearBar(size_t layer = 0, bool manual = false): DrawableObject(layer, manual) {
 	}
@@ -30,10 +31,10 @@ private:
 		float
 			length	= percent * size.x,
 			width	= size.y / 2;
-		vertices[0]	= toRawVertex(Vector2(0, -width),		Vector2(0,1) * uvScale);
-		vertices[1]	= toRawVertex(Vector2(0, +width),		Vector2(0,0) * uvScale);
-		vertices[2]	= toRawVertex(Vector2(length, -width),	Vector2((dynamicUV ? percent : 1),1) * uvScale);
-		vertices[3]	= toRawVertex(Vector2(length, +width),	Vector2((dynamicUV ? percent : 1),0) * uvScale);
+		vertices[0]	= toRawVertex(Vector2(0, -width),		Vector2(0+uvOffset,1) * uvScale);
+		vertices[1]	= toRawVertex(Vector2(0, +width),		Vector2(0+uvOffset,0) * uvScale);
+		vertices[2]	= toRawVertex(Vector2(length, -width),	Vector2((dynamicUV ? percent : 1)+uvOffset,1) * uvScale);
+		vertices[3]	= toRawVertex(Vector2(length, +width),	Vector2((dynamicUV ? percent : 1)+uvOffset,0) * uvScale);
 		setDefaultShader();
 		display(vertices, 4, GL_TRIANGLE_STRIP);
 	}
@@ -50,7 +51,7 @@ public:
 	}
 
 private:
-	RawVertex vertices[RADIAL_BAR_RESOLUTION + 3] = {RawVertex{}};
+	RawVertex vertices[RADIAL_BAR_RESOLUTION + 2] = {RawVertex{}};
 	void draw() override {
 		update();
 		setDefaultShader();
