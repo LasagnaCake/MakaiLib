@@ -10,6 +10,12 @@ template<
 	BarType BOMB_BIT_T	= LinearBar
 >
 struct GameUI {
+	typedef POWER_T		PowerBarType;
+	typedef LIFE_T		LifeBarType;
+	typedef BOMB_T		BombBarType;
+	typedef LIFE_BIT_T	LifeBitBarType;
+	typedef BOMB_BIT_T	BombBitBarType;
+
 	LabeledBar<POWER_T>	power;
 	LIFE_T				life;
 	BOMB_T				bomb;

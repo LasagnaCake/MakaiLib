@@ -144,6 +144,8 @@ template <
 >
 class LineLaserManager: DanmakuObjectManager {
 public:
+	constexpr static size_t laserCount = LASER_COUNT;
+
 	DERIVED_CLASS(LineLaserManager, DanmakuObjectManager)
 
 	DERIVED_CONSTRUCTOR(LineLaserManager, DanmakuObjectManager, {

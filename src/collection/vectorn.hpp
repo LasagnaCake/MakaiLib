@@ -1448,6 +1448,10 @@ namespace VecMath
 	/// Base transformation data structure.
 	template <VecType::ValidVector T, VecType::Vectorable ROT_T>
 	struct Transform {
+		typedef T		PositionType;
+		typedef ROT_T	RotationType;
+		typedef T		ScaleType;
+
 		constexpr Transform() {}
 		constexpr Transform(T const& position, ROT_T const& rotation, T const& scale) {
 			this->position	= position;

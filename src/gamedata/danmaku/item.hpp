@@ -98,6 +98,8 @@ typedef std::vector<Collectible*> CollectibleList;
 template <size_t ITEM_COUNT, size_t ACTOR_LAYER>
 class CollectibleManager: public DanmakuObjectManager {
 public:
+	constexpr static size_t itemCount = ITEM_COUNT;
+
 	DERIVED_CLASS(CollectibleManager, DanmakuObjectManager)
 
 	DERIVED_CONSTRUCTOR(CollectibleManager, DanmakuObjectManager, {

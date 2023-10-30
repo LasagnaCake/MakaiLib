@@ -13,6 +13,8 @@ namespace Group {
 	template <class T>
 	class Group {
 	public:
+		typedef T DataType;
+
 		/// Gets a group of a given ID.
 		inline vector<T>& getGroup(size_t group) {
 			if (&g[group] == nullptr)

@@ -28,6 +28,8 @@ namespace SmartPointer {
 	template <Pointable T, bool weak = false>
 	class Pointer {
 	public:
+		typedef T DataType;
+
 		Pointer() {}
 
 		Pointer(Pointer<T, false>&& other)		{ASSERT_STRONG;	bind(other.ref);}

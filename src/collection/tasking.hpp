@@ -358,6 +358,8 @@ namespace TypedTasking {
 	template<typename T>
 	class Tasker {
 	public:
+		typedef T DataType;
+
 		/// Whether the current Tasker is paused. Different from completed.
 		bool paused	= false;
 

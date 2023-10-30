@@ -29,7 +29,7 @@ public:
 	constexpr static size_t rowCount	= R;
 	constexpr static size_t columnCount	= C;
 
-	typedef T ParamType;
+	typedef T DataType;
 
 	static_assert(R != 0, "Matrix row size must not be zero!");
 	static_assert(C != 0, "Matrix column size must not be zero!");

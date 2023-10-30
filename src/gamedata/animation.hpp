@@ -38,6 +38,8 @@ namespace Animation {
 
 	template <Tweenable T>
 	struct AnimationPlayer: Entity {
+		typedef T DataType;
+
 		DERIVED_CLASS(AnimationPlayer, Entity)
 
 		DERIVED_CONSTRUCTOR(AnimationPlayer, Entity, {

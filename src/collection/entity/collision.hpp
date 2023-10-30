@@ -679,6 +679,8 @@ namespace EntityClass {
 	template<CollisionType T>
 	class AreaCollision2D : public Entity2D {
 	public:
+		typedef T DataType;
+
 		/// Constructor.
 		DERIVED_CLASS(AreaCollision2D, Entity2D)
 

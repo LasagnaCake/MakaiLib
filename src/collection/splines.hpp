@@ -8,13 +8,13 @@
 namespace Spline {
 	template<Math::Operatable T>
 	struct Splinoid {
-		typedef T ParamType;
+		typedef T DataType;
 
 		constexpr virtual T interpolate(float by) = 0;
 	};
 
 	template<class T>
-	concept SplineType = Type::Subclass<T, Splinoid<typename T::ParamType>>;
+	concept SplineType = Type::Subclass<T, Splinoid<typename T::DataType>>;
 
 	template<class T>
 	class Linear: public Splinoid<T> {

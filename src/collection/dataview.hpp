@@ -10,6 +10,8 @@ namespace View {
 	template<Viewable T>
 	class Referend {
 	public:
+		typedef T DataType;
+
 		Referend(T& _data):					data(&_data)		{}
 		Referend(Referend<T> const& other):	data(other.data)	{}
 		Referend(Referend<T>&& other):		data(other.data)	{}
@@ -35,6 +37,8 @@ namespace View {
 	template<Viewable T>
 	class DataView {
 	public:
+		typedef T DataType;
+
 		DataView(T& _data):					data(_data)			{}
 		DataView(DataView<T> const& other):	data(other.data)	{}
 		DataView(DataView<T>&& other):		data(other.data)	{}

@@ -7,6 +7,8 @@ namespace Threaded {
 	template <Viewable T>
 	class Atomic {
 	public:
+		typedef T DataType;
+
 		Atomic()							{}
 		Atomic(T const& _data): data(_data)	{}
 

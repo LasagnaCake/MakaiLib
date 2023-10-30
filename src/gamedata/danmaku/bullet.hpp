@@ -114,6 +114,8 @@ template <
 >
 class BulletManager: DanmakuObjectManager {
 public:
+	constexpr static size_t bulletCount = BULLET_COUNT;
+
 	DERIVED_CLASS(BulletManager, DanmakuObjectManager)
 
 	DERIVED_CONSTRUCTOR(BulletManager, DanmakuObjectManager, {

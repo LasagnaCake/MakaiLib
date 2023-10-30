@@ -89,6 +89,7 @@ private:
 
 template<BarType T = RadialBar>
 struct LabeledBar {
+	typedef T DataType;
 	T			bar;
 	Text::Label	label;
 };

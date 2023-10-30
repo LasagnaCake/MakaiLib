@@ -19,6 +19,8 @@ namespace Shared {
 	template <Shareable T>
 	class GroupValue {
 	public:
+		typedef T DataType;
+
 		GroupValue() {}
 
 		GroupValue(GroupValue<T>&& other)		{bind(other.refs);}
