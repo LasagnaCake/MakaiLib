@@ -334,11 +334,17 @@ private:
 
 #ifndef MAKAILIB_DANMAKU_PHANTASMAGORIA_GAME
 typedef CollectibleManager<COLLECTIBLE_ITEM_COUNT, PLAYER_LAYER> ItemManager;
-#else
-typedef CollectibleManager<COLLECTIBLE_ITEM_COUNT, PLAYER1_LAYER> Item1Manager;
-typedef CollectibleManager<COLLECTIBLE_ITEM_COUNT, PLAYER2_LAYER> Item2Manager;
-#endif // MAKAILIB_DANMAKU_PHANTASMAGORIA_GAME
 
 ItemManager* itemManager = nullptr;
 
 #define DANMAKU_IM GameData::Danmaku::itemManager
+#else
+typedef CollectibleManager<COLLECTIBLE_ITEM_COUNT, PLAYER1_LAYER> Item1Manager;
+typedef CollectibleManager<COLLECTIBLE_ITEM_COUNT, PLAYER2_LAYER> Item2Manager;
+
+Item1Manager* item1Manager = nullptr;
+Item2Manager* item2Manager = nullptr;
+
+#define DANMAKU_IM1 GameData::Danmaku::item1Manager
+#define DANMAKU_IM2 GameData::Danmaku::item2Manager
+#endif // MAKAILIB_DANMAKU_PHANTASMAGORIA_GAME

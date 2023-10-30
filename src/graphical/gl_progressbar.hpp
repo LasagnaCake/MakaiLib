@@ -4,6 +4,7 @@ namespace {
 
 class BaseBar {
 public:
+	float uvShift = 0;
 	float value = 0, max = 100;
 	Vector2 size = 1;
 	Vector2 uvScale = Vector2(1);
@@ -19,8 +20,6 @@ concept BarType = Type::Subclass<T, BaseBar> && Type::Subclass<T, Base::Drawable
 
 class LinearBar: public DrawableObject, public BaseBar {
 public:
-	float uvOffset = 0;
-
 	LinearBar(size_t layer = 0, bool manual = false): DrawableObject(layer, manual) {
 	}
 
@@ -31,10 +30,10 @@ private:
 		float
 			length	= percent * size.x,
 			width	= size.y / 2;
-		vertices[0]	= toRawVertex(Vector2(0, -width),		Vector2(0+uvOffset,1) * uvScale);
-		vertices[1]	= toRawVertex(Vector2(0, +width),		Vector2(0+uvOffset,0) * uvScale);
-		vertices[2]	= toRawVertex(Vector2(length, -width),	Vector2((dynamicUV ? percent : 1)+uvOffset,1) * uvScale);
-		vertices[3]	= toRawVertex(Vector2(length, +width),	Vector2((dynamicUV ? percent : 1)+uvOffset,0) * uvScale);
+		vertices[0]	= toRawVertex(Vector2(0, -width),		Vector2(0+uvShift,1) * uvScale);
+		vertices[1]	= toRawVertex(Vector2(0, +width),		Vector2(0+uvShift,0) * uvScale);
+		vertices[2]	= toRawVertex(Vector2(length, -width),	Vector2((dynamicUV ? percent : 1)+uvShift,1) * uvScale);
+		vertices[3]	= toRawVertex(Vector2(length, +width),	Vector2((dynamicUV ? percent : 1)+uvShift,0) * uvScale);
 		setDefaultShader();
 		display(vertices, 4, GL_TRIANGLE_STRIP);
 	}
@@ -42,7 +41,6 @@ private:
 
 class RadialBar: public DrawableObject, public BaseBar {
 public:
-	float	uvAngle		= 0;
 	bool	centered	= false;
 	Vector2 offset		= Vector2(0);
 
@@ -77,11 +75,11 @@ private:
 			// Dynamicise UV if aplicable
 			if (dynamicUV) uvfrac = posfrac;
 			// Add angle offset to UV fraction
-			uvfrac += uvAngle;
+			uvfrac += uvShift;
 			// Set vertex position
 			Drawer::vertexSetPosition(vertices[i], VecMath::angleV2(posfrac) * size);
 			// Set vertex UV
-			Vector2 uv = (((VecMath::angleV2(uvfrac + uvAngle) / 2.0) + 0.5)) * uvScale;
+			Vector2 uv = (((VecMath::angleV2(uvfrac + uvShift) / 2.0) + 0.5)) * uvScale;
 			uv.y = 1 - uv.y;
 			Drawer::vertexSetUV(vertices[i], uv);
 		}

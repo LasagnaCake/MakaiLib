@@ -12,8 +12,7 @@
 #define DERIVED_CLASS(NAME, BASE)\
 	inline	virtual string getClass() {return #NAME;}\
 	inline	virtual string getBaseClass() {return #BASE;}\
-	inline	static string getCoreClass() {return BASE::getCoreClass();}\
-	// virtual	~NAME() {condemn();}
+	inline	static string getCoreClass() {return BASE::getCoreClass();}
 	// NOTE: This is the WORST way this could have been done, but it works I guess
 
 #include "gamedata/layout.hpp"
@@ -31,8 +30,7 @@
 	inline	virtual String getBaseClass() {return #BASE;}\
 	inline	static String getCoreClass() {return BASE::getCoreClass();}\
 	NAME(String name = #NAME, bool uniqueEntity = true) : BASE(name, uniqueEntity) {onCreate();}\
-	NAME(EntityClass::Entity* parent, String name = #NAME , bool uniqueEntity = true) : BASE(parent, name, uniqueEntity) {onCreate();}\
-	//virtual ~NAME() {onDelete();}
+	NAME(EntityClass::Entity* parent, String name = #NAME , bool uniqueEntity = true) : BASE(parent, name, uniqueEntity) {onCreate();}
 
 namespace GameData {
 	namespace {

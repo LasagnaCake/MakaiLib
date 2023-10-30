@@ -313,15 +313,23 @@ private:
 #ifndef MAKAILIB_DANMAKU_PHANTASMAGORIA_GAME
 typedef LineLaserManager<PLAYER_LASER_COUNT, PLAYER_LASER_LAYER, ENEMY_LAYER>	PlayerLineLaserManager;
 typedef LineLaserManager<ENEMY_LASER_COUNT, ENEMY_LASER_LAYER, PLAYER_LAYER>	EnemyLineLaserManager;
-#else
-typedef LineLaserManager<PLAYER_LASER_COUNT/2, PLAYER1_LASER_LAYER, ENEMY1_LAYER>	PlayerLineLaserManager;
-typedef LineLaserManager<PLAYER_LASER_COUNT/2, PLAYER2_LASER_LAYER, ENEMY2_LAYER>	PlayerLineLaserManager;
-typedef LineLaserManager<ENEMY_LASER_COUNT/2, ENEMY1_LASER_LAYER, PLAYER1_LAYER>	EnemyLineLaserManager;
-typedef LineLaserManager<ENEMY_LASER_COUNT/2, ENEMY2_LASER_LAYER, PLAYER2_LAYER>	EnemyLineLaserManager;
-#endif
-
 PlayerLineLaserManager*	playerLineLaserManager = nullptr;
 EnemyLineLaserManager*	enemyLineLaserManager = nullptr;
 
 #define DANMAKU_PLLM GameData::Danmaku::playerLineLaserManager
 #define DANMAKU_ELLM GameData::Danmaku::enemyLineLaserManager
+#else
+typedef LineLaserManager<PLAYER_LASER_COUNT/2, PLAYER1_LASER_LAYER, ENEMY1_LAYER>	Player1LineLaserManager;
+typedef LineLaserManager<PLAYER_LASER_COUNT/2, PLAYER2_LASER_LAYER, ENEMY2_LAYER>	Player2LineLaserManager;
+typedef LineLaserManager<ENEMY_LASER_COUNT/2, ENEMY1_LASER_LAYER, PLAYER1_LAYER>	Enemy1LineLaserManager;
+typedef LineLaserManager<ENEMY_LASER_COUNT/2, ENEMY2_LASER_LAYER, PLAYER2_LAYER>	Enemy2LineLaserManager;
+Player1LineLaserManager*	player1LineLaserManager	= nullptr;
+Enemy1LineLaserManager*		enemy1LineLaserManager	= nullptr;
+Player2LineLaserManager*	player2LineLaserManager	= nullptr;
+Enemy2LineLaserManager*		enemy2LineLaserManager	= nullptr;
+
+#define DANMAKU_PLLM1 GameData::Danmaku::player1LineLaserManager
+#define DANMAKU_ELLM1 GameData::Danmaku::enemy1LineLaserManager
+#define DANMAKU_PLLM2 GameData::Danmaku::player2LineLaserManager
+#define DANMAKU_ELLM2 GameData::Danmaku::enemy2LineLaserManager
+#endif

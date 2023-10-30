@@ -359,17 +359,28 @@ private:
 #ifndef MAKAILIB_DANMAKU_PHANTASMAGORIA_GAME
 typedef BulletManager<PLAYER_BULLET_COUNT, PLAYER_BULLET_LAYER, ENEMY_LAYER>	PlayerBulletManager;
 typedef BulletManager<ENEMY_BULLET_COUNT, ENEMY_BULLET_LAYER, PLAYER_LAYER>		EnemyBulletManager;
-#else
-typedef BulletManager<PLAYER_BULLET_COUNT/2, PLAYER1_BULLET_LAYER, ENEMY1_LAYER>	Player1BulletManager;
-typedef BulletManager<PLAYER_BULLET_COUNT/2, PLAYER2_BULLET_LAYER, ENEMY2_LAYER>	Player2BulletManager;
-typedef BulletManager<ENEMY_BULLET_COUNT/2, ENEMY1_BULLET_LAYER, PLAYER1_LAYER>		Enemy1BulletManager;
-typedef BulletManager<ENEMY_BULLET_COUNT/2, ENEMY2_BULLET_LAYER, PLAYER2_LAYER>		Enemy2BulletManager;
-#endif
 
 PlayerBulletManager*	playerBulletManager	= nullptr;
 EnemyBulletManager*		enemyBulletManager	= nullptr;
 
 #define DANMAKU_PBM GameData::Danmaku::playerBulletManager
 #define DANMAKU_EBM GameData::Danmaku::enemyBulletManager
+
+#else
+typedef BulletManager<PLAYER_BULLET_COUNT/2, PLAYER1_BULLET_LAYER, ENEMY1_LAYER>	Player1BulletManager;
+typedef BulletManager<PLAYER_BULLET_COUNT/2, PLAYER2_BULLET_LAYER, ENEMY2_LAYER>	Player2BulletManager;
+typedef BulletManager<ENEMY_BULLET_COUNT/2, ENEMY1_BULLET_LAYER, PLAYER1_LAYER>		Enemy1BulletManager;
+typedef BulletManager<ENEMY_BULLET_COUNT/2, ENEMY2_BULLET_LAYER, PLAYER2_LAYER>		Enemy2BulletManager;
+
+Player1BulletManager*	player1BulletManager	= nullptr;
+Player2BulletManager*	player2BulletManager	= nullptr;
+Enemy1BulletManager*	enemy1BulletManager		= nullptr;
+Enemy2BulletManager*	enemy2BulletManager		= nullptr;
+
+#define DANMAKU_PBM1 GameData::Danmaku::player1BulletManager
+#define DANMAKU_EBM1 GameData::Danmaku::enemy1BulletManager
+#define DANMAKU_PBM2 GameData::Danmaku::player2BulletManager
+#define DANMAKU_EBM2 GameData::Danmaku::enemy2BulletManager
+#endif
 
 #endif // MAKAI_BASE_BULLET_H
