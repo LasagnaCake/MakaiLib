@@ -30,20 +30,20 @@ namespace SmartPointer {
 	public:
 		typedef T DataType;
 
-		Pointer() {}
+		constexpr Pointer() {}
 
-		Pointer(Pointer<T, false>&& other)		{ASSERT_STRONG;	bind(other.ref);}
-		Pointer(Pointer<T, true>&& other)		{ASSERT_WEAK;	bind(other.ref);}
+		constexpr Pointer(Pointer<T, false>&& other)		{ASSERT_STRONG;	bind(other.ref);}
+		constexpr Pointer(Pointer<T, true>&& other)			{ASSERT_WEAK;	bind(other.ref);}
 
-		Pointer(const Pointer<T, false>& other)	{ASSERT_STRONG; bind(other.ref);}
-		Pointer(const Pointer<T, true>& other)	{ASSERT_WEAK;	bind(other.ref);}
+		constexpr Pointer(Pointer<T, false> const& other)	{ASSERT_STRONG; bind(other.ref);}
+		constexpr Pointer(Pointer<T, true> const& other)	{ASSERT_WEAK;	bind(other.ref);}
 
-		Pointer(const T* const& obj)	{bind(obj);}
-		Pointer(T* const& obj)			{bind(obj);}
+		constexpr Pointer(T* const& obj)					{bind(obj);}
+		constexpr Pointer(T& obj)							{bind(&obj);}
 
-		~Pointer() {unbind();}
+		constexpr ~Pointer() {unbind();}
 
-		Pointer& bind(T* obj) {
+		constexpr Pointer& bind(T* const& obj) {
 			unbind();
 			if (obj == nullptr) return (*this);
 			ref = obj;
@@ -52,7 +52,7 @@ namespace SmartPointer {
 			return (*this);
 		}
 
-		Pointer& unbind() {
+		constexpr Pointer& unbind() {
 			if (!exists()) return (*this);
 			IF_STRONG {
 				if ((_pointerDB[(void*)ref].count-1 < 1)) {
@@ -68,7 +68,7 @@ namespace SmartPointer {
 			return (*this);
 		}
 
-		Pointer& destroy() {
+		constexpr Pointer& destroy() {
 			IF_STRONG {
 				if (!exists()) return (*this);
 				_pointerDB[(void*)ref] = {false, 0};
@@ -78,65 +78,63 @@ namespace SmartPointer {
 			return (*this);
 		}
 
-		Pointer& modify(Operation<T> op) {
+		constexpr Pointer& modify(Operation<T> const& op) {
 			if(exists())
 				(*ref) = op(*ref);
 			return *this;
 		}
 
-		Pointer& modify(T (*op)(T const&)) {
+		constexpr Pointer& modify(T (*op)(T const&)) {
 			if(exists())
 				(*ref) = (*op)(*ref);
 			return *this;
 		}
 
-		bool exists() {
+		constexpr bool exists() {
 			if (ref == nullptr) return false;
 			IF_STRONG	return (_pointerDB[(void*)ref].count > 0);
 			else		return (_pointerDB[(void*)ref].exists);
 		}
 
-		inline bool operator()()	{return exists();}
+		constexpr bool operator()()	{return exists();}
 
-		inline Pointer& operator()(Operation<T> op)			{return modify(op);}
-		inline Pointer& operator()(void (*op)(T const&))	{return modify(op);}
+		constexpr Pointer& operator()(Operation<T> const& op)	{return modify(op);}
+		constexpr Pointer& operator()(void (*op)(T const&))	{return modify(op);}
 
-		inline T& operator[](size_t index)	{return getPointer()[index];}
+		constexpr T& operator[](size_t const& index)	{return getPointer()[index];}
 
 		template<Pointable NEW_T>
-		inline Pointer<NEW_T, weak>	castedTo()	{return	(NEW_T*)getPointer();	}
-		inline Pointer<T, true>		asWeak()	{return	getPointer();			}
-		inline T*					raw()		{return	getPointer();			}
+		constexpr Pointer<NEW_T, weak>	castedTo()	{return	(NEW_T*)getPointer();	}
+		constexpr Pointer<T, true>		asWeak()	{return	getPointer();			}
+		constexpr T*					raw()		{return	getPointer();			}
 
-		explicit operator T*() const	{return getPointer();		}
-		operator bool() const			{return exists();			}
+		constexpr explicit operator T*() const	{return getPointer();		}
+		constexpr explicit operator T*()		{return getPointer();		}
+		constexpr operator bool() const			{return exists();			}
 
-		inline bool operator!()			{return	!exists();			}
-		inline bool operator==(T* obj)	{return	ref == obj;			}
-		inline bool operator!=(T* obj)	{return	!operator==(obj);	}
-		inline bool operator<(T* obj)	{return	ref < obj;			}
-		inline bool operator>(T* obj)	{return	operator<(obj);		}
-		inline bool operator<=(T* obj)	{return	!operator>(obj);	}
-		inline bool operator>=(T* obj)	{return	!operator<(obj);	}
+		constexpr bool operator!()					{return	!exists();			}
+		constexpr bool operator==(T* const& obj)	{return	ref == obj;			}
+		constexpr bool operator!=(T* const& obj)	{return	!operator==(obj);	}
+		constexpr bool operator<(T* const& obj)		{return	ref < obj;			}
+		constexpr bool operator>(T* const& obj)		{return	operator<(obj);		}
+		constexpr bool operator<=(T* const& obj)	{return	!operator>(obj);	}
+		constexpr bool operator>=(T* const& obj)	{return	!operator<(obj);	}
 
-		inline bool operator==(const Pointer<T, weak>& other)	{return operator==(other.ref);	}
-		inline bool operator!=(const Pointer<T, weak>& other)	{return operator!=(other.ref);	}
-		inline bool operator<(const Pointer<T, weak>& other)	{return operator<(other.ref);	}
-		inline bool operator>(const Pointer<T, weak>& other)	{return operator>(other.ref);	}
-		inline bool operator<=(const Pointer<T, weak>& other)	{return operator<=(other.ref);	}
-		inline bool operator>=(const Pointer<T, weak>& other)	{return operator>=(other.ref);	}
+		constexpr bool operator==(Pointer<T, weak> const& other) const	{return operator==(other.ref);	}
+		constexpr bool operator!=(Pointer<T, weak> const& other) const	{return operator!=(other.ref);	}
+		constexpr bool operator<(Pointer<T, weak> const& other) const	{return operator<(other.ref);	}
+		constexpr bool operator>(Pointer<T, weak> const& other) const	{return operator>(other.ref);	}
+		constexpr bool operator<=(Pointer<T, weak> const& other) const	{return operator<=(other.ref);	}
+		constexpr bool operator>=(Pointer<T, weak> const& other) const	{return operator>=(other.ref);	}
 
-		Pointer& operator=(T* obj)										{bind(obj); return (*this);			}
-		const Pointer& operator=(T* obj) const							{bind(obj); return (*this);			}
-		Pointer& operator=(T& obj)										{bind(&obj); return (*this);		}
-		const Pointer& operator=(T& obj) const							{bind(&obj); return (*this);		}
-		Pointer& operator=(const Pointer<T, weak>& other)				{bind(other.ref); return (*this);	}
-		const Pointer& operator=(const Pointer<T, weak>& other) const	{bind(other.ref); return (*this);	}
+		constexpr Pointer& operator=(T* const& obj)					{bind(obj); return (*this);			}
+		constexpr Pointer& operator=(T& obj)						{bind(&obj); return (*this);		}
+		constexpr Pointer& operator=(Pointer<T, weak> const& other)	{bind(other.ref); return (*this);	}
 
-		T* operator->()				{return getPointer();	}
-		const T* operator->() const	{return getPointer();	}
-		T& operator*()				{return getValue();		}
-		const T& operator*() const	{return getValue();		}
+		constexpr T* operator->()				{return getPointer();	}
+		constexpr const T* operator->() const	{return getPointer();	}
+		constexpr T& operator*()				{return getValue();		}
+		constexpr const T& operator*() const	{return getValue();		}
 
 	private:
 		friend class Pointer<T,	false	>;
@@ -144,7 +142,7 @@ namespace SmartPointer {
 
 		T* ref = nullptr;
 
-		inline T* getPointer()	{
+		constexpr T* getPointer()	{
 			if (!exists())
 				throw Error::NullPointer(
 					"Pointer reference does not exist!",
@@ -156,7 +154,7 @@ namespace SmartPointer {
 			return (ref);
 		}
 
-		inline const T* getPointer() const	{
+		constexpr const T* getPointer() const	{
 			if (!exists())
 				throw Error::NullPointer(
 					"Pointer reference does not exist!",
@@ -168,7 +166,7 @@ namespace SmartPointer {
 			return (ref);
 		}
 
-		inline T& getValue() {
+		constexpr T& getValue() {
 			if (!exists())
 				throw Error::NullPointer(
 					"Pointer reference does not exist!",
@@ -180,7 +178,7 @@ namespace SmartPointer {
 			return (*ref);
 		}
 
-		inline const T& getValue() const {
+		constexpr const T& getValue() const {
 			if (!exists())
 				throw Error::NullPointer(
 					"Pointer reference does not exist!",
