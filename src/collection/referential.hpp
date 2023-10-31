@@ -39,7 +39,6 @@ namespace SmartPointer {
 		constexpr Pointer(Pointer<T, true> const& other)	{ASSERT_WEAK;	bind(other.ref);}
 
 		constexpr Pointer(T* const& obj)					{bind(obj);}
-		constexpr Pointer(T& obj)							{bind(&obj);}
 
 		constexpr ~Pointer() {unbind();}
 
@@ -128,7 +127,6 @@ namespace SmartPointer {
 		constexpr bool operator>=(Pointer<T, weak> const& other) const	{return operator>=(other.ref);	}
 
 		constexpr Pointer& operator=(T* const& obj)					{bind(obj); return (*this);			}
-		constexpr Pointer& operator=(T& obj)						{bind(&obj); return (*this);		}
 		constexpr Pointer& operator=(Pointer<T, weak> const& other)	{bind(other.ref); return (*this);	}
 
 		constexpr T* operator->()				{return getPointer();	}

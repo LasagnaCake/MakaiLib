@@ -67,7 +67,7 @@ struct DanmakuObject {
 	float zIndex = 0;
 	float zScale = 0;
 
-	float spawnSpeed = .2f;
+	float spawnSpeed = .1f;
 
 	Transform2D local;
 
@@ -97,7 +97,7 @@ struct DanmakuObject {
 
 	DanmakuObject* spawn() {
 		spawning = true;
-		tint.a = 0.0f;
+		tint.a = 0.5f;
 		onObjectSpawnBegin();
 		return this;
 	}
