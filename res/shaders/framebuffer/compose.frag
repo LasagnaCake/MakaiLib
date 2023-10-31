@@ -65,7 +65,7 @@ uniform uint prismShape		= 0;
 uniform float prismLOD		= 4;
 
 // [ SCREEN POLAR DISTORTION ]
-uniform bool	usePolarWarp			= true;
+uniform bool	usePolarWarp			= false;
 uniform vec2	polarWarpPosition		= vec2(800, 450);
 uniform vec2	polarWarpStrength		= vec2(1);
 uniform float	polarWarpSize			= 200;

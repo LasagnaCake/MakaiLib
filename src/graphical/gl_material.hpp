@@ -311,14 +311,18 @@ void setMaterial(Shader& shader, ObjectMaterial& material) {
 		shader["warpRotate"](material.warp.trans.rotation);
 	} else shader["useWarp"](false);
 	// Color inversion
-	shader["useNegative"](material.negative.enabled);
-	shader["negativeStrength"](material.negative.strength);
+	if (material.negative.enabled) {
+		shader["useNegative"](true);
+		shader["negativeStrength"](material.negative.strength);
+	} else shader["useNegative"](false);
 	// Color to gradient
-	shader["useGradient"](material.gradient.enabled);
-	shader["gradientChannel"](material.gradient.channel);
-	shader["gradientStart"](material.gradient.begin);
-	shader["gradientEnd"](material.gradient.end);
-	shader["gradientInvert"](material.gradient.invert);
+	if (material.gradient.enabled) {
+		shader["useGradient"](true);
+		shader["gradientChannel"](material.gradient.channel);
+		shader["gradientStart"](material.gradient.begin);
+		shader["gradientEnd"](material.gradient.end);
+		shader["gradientInvert"](material.gradient.invert);
+	} else shader["useGradient"](false);
 	// Lighted
 	shader["shaded"](material.shaded);
 	shader["useLights"](material.illuminated);
@@ -364,50 +368,82 @@ void setMaterial(Shader& shader, BufferMaterial& material) {
 		shader["warpChannelY"](material.warp.channelY);
 	} else shader["useWarp"](false);
 	// Set color to gradient data
-	shader["useGradient"](material.gradient.enabled);
-	shader["gradientChannel"](material.gradient.channel);
-	shader["gradientStart"](material.gradient.begin);
-	shader["gradientEnd"](material.gradient.end);
-	shader["gradientInvert"](material.gradient.invert);
+	if (material.gradient.enabled){
+		shader["useGradient"](true);
+		shader["gradientChannel"](material.gradient.channel);
+		shader["gradientStart"](material.gradient.begin);
+		shader["gradientEnd"](material.gradient.end);
+		shader["gradientInvert"](material.gradient.invert);
+	} else shader["useGradient"](false);
 	// set screen wave data
-	shader["useWave"](material.wave.enabled);
-	shader["waveAmplitude"](material.wave.amplitude);
-	shader["waveFrequency"](material.wave.frequency);
-	shader["waveShift"](material.wave.shift);
-	shader["waveShape"](material.wave.shape);
+	if (material.wave.enabled) {
+		shader["useWave"](true);
+		shader["waveAmplitude"](material.wave.amplitude);
+		shader["waveFrequency"](material.wave.frequency);
+		shader["waveShift"](material.wave.shift);
+		shader["waveShape"](material.wave.shape);
+	} else shader["useWave"](false);
 	// set screen prism data
-	shader["usePrism"](material.prism.enabled);
-	shader["prismAmplitude"](material.prism.amplitude);
-	shader["prismFrequency"](material.prism.frequency);
-	shader["prismShift"](material.prism.shift);
-	shader["prismShape"](material.prism.shape);
+	if (material.prism.enabled) {
+		shader["usePrism"](true);
+		shader["prismAmplitude"](material.prism.amplitude);
+		shader["prismFrequency"](material.prism.frequency);
+		shader["prismShift"](material.prism.shift);
+		shader["prismShape"](material.prism.shape);
+	} else shader["usePrism"](false);
 	// Set color inversion
-	shader["useNegative"](material.negative.enabled);
-	shader["negativeStrength"](material.negative.strength);
+	if (material.negative.enabled) {
+		shader["useNegative"](true);
+		shader["negativeStrength"](material.negative.strength);
+	} else shader["useNegative"](false);
 	// Set rainbow data
-	shader["useRainbow"](material.rainbow.enabled);
-	shader["rainbowFrequency"](material.rainbow.frequency);
-	shader["rainbowShift"](material.rainbow.shift);
-	shader["rainbowStrength"](material.rainbow.strength);
-	shader["rainbowAbsolute"](material.rainbow.absoluteColor);
-	shader["rainbowPolar"](material.rainbow.polar);
-	shader["rainbowPolarShift"](material.rainbow.polarShift);
+	if (material.rainbow.enabled) {
+		shader["useRainbow"](true);
+		shader["rainbowFrequency"](material.rainbow.frequency);
+		shader["rainbowShift"](material.rainbow.shift);
+		shader["rainbowStrength"](material.rainbow.strength);
+		shader["rainbowAbsolute"](material.rainbow.absoluteColor);
+		shader["rainbowPolar"](material.rainbow.polar);
+		shader["rainbowPolarShift"](material.rainbow.polarShift);
+	} else shader["useRainbow"](false);
 	// Set blur data
-	shader["useBlur"](material.blur.enabled);
-	shader["blurStrength"](material.blur.strength);
+	if (material.blur.enabled) {
+		shader["useBlur"](true);
+		shader["blurStrength"](material.blur.strength);
+	} else shader["useBlur"](false);
 	// Set polar warp data
-	shader["usePolarWarp"](material.polarWarp.enabled);
-	shader["polarWarpStrength"](material.polarWarp.strength);
-	shader["polarWarpSize"](material.polarWarp.size);
-	shader["polarWarpPosition"](material.polarWarp.position);
-	shader["polarWarpColor"](material.polarWarp.color);
-	shader["polarWarpTintStrength"](material.polarWarp.tintStrength);
-	shader["polarWarpFishEye"](material.polarWarp.fishEye);
+	if (material.polarWarp.enabled) {
+		shader["usePolarWarp"](true);
+		shader["polarWarpStrength"](material.polarWarp.strength);
+		shader["polarWarpSize"](material.polarWarp.size);
+		shader["polarWarpPosition"](material.polarWarp.position);
+		shader["polarWarpColor"](material.polarWarp.color);
+		shader["polarWarpTintStrength"](material.polarWarp.tintStrength);
+		shader["polarWarpFishEye"](material.polarWarp.fishEye);
+	} else shader["usePolarWarp"](false);
 	// Set outline data
-	shader["useOutline"](material.outline.enabled);
-	shader["outlineSize"](material.outline.size);
-	shader["outlineColor"](material.outline.color);
-	shader["outlineMatchAlpha"](material.outline.relativeAlpha);
+	if (material.outline.enabled) {
+		shader["useOutline"](true);
+		shader["outlineSize"](material.outline.size);
+		shader["outlineColor"](material.outline.color);
+		shader["outlineMatchAlpha"](material.outline.relativeAlpha);
+	} else shader["useOutline"](false);
+	// Set noise data
+	if (material.noise.enabled) {
+		shader["useNoise"](true);
+		shader["noiseOffset"](material.noise.trans.position);
+		//shader["noiseRotation"](material.noise.trans.rotation);
+		shader["noiseStrength"](material.noise.trans.scale);
+		shader["noiseScale"](material.noise.strength);
+		shader["noiseSeed"](material.noise.seed);
+		shader["noiseType"]((unsigned int)material.noise.type);
+		shader["noiseBlendSrcColorFunc"]((unsigned int)material.noise.blend.color.source);
+		shader["noiseBlendDstColorFunc"]((unsigned int)material.noise.blend.color.destination);
+		shader["noiseBlendColorEq"]((unsigned int)material.noise.blend.color.equation);
+		shader["noiseBlendSrcAlphaFunc"]((unsigned int)material.noise.blend.alpha.source);
+		shader["noiseBlendDstAlphaFunc"]((unsigned int)material.noise.blend.alpha.destination);
+		shader["noiseBlendAlphaEq"]((unsigned int)material.noise.blend.alpha.equation);
+	} else shader["useNoise"](false);
 	// Set debug data
 	shader["debugView"]((unsigned int)material.debug);
 	// Set HSLBC data
@@ -416,35 +452,25 @@ void setMaterial(Shader& shader, BufferMaterial& material) {
 	shader["luminosity"](material.luminosity);
 	shader["brightness"](material.brightness);
 	shader["contrast"](material.contrast);
-	// Set noise data
-	shader["useNoise"](material.noise.enabled);
-	shader["noiseOffset"](material.noise.trans.position);
-	//shader["noiseRotation"](material.noise.trans.rotation);
-	shader["noiseStrength"](material.noise.trans.scale);
-	shader["noiseScale"](material.noise.strength);
-	shader["noiseSeed"](material.noise.seed);
-	shader["noiseType"]((unsigned int)material.noise.type);
-	shader["noiseBlendSrcColorFunc"]((unsigned int)material.noise.blend.color.source);
-	shader["noiseBlendDstColorFunc"]((unsigned int)material.noise.blend.color.destination);
-	shader["noiseBlendColorEq"]((unsigned int)material.noise.blend.color.equation);
-	shader["noiseBlendSrcAlphaFunc"]((unsigned int)material.noise.blend.alpha.source);
-	shader["noiseBlendDstAlphaFunc"]((unsigned int)material.noise.blend.alpha.destination);
-	shader["noiseBlendAlphaEq"]((unsigned int)material.noise.blend.alpha.equation);
 }
 
 void setMaterial(Shader& shader, WorldMaterial& material) {
 	// Fog
-	shader["useFog"](material.farFog.enabled);
-	shader["fogNear"](material.farFog.start);
-	shader["fogFar"](material.farFog.stop);
-	shader["fogColor"](material.farFog.color);
-	shader["fogStrength"](material.farFog.strength);
+	if (material.farFog.enabled) {
+		shader["useFog"](true);
+		shader["fogNear"](material.farFog.start);
+		shader["fogFar"](material.farFog.stop);
+		shader["fogColor"](material.farFog.color);
+		shader["fogStrength"](material.farFog.strength);
+	} else shader["useFog"](false);
 	// Void
-	shader["useVoid"](material.nearFog.enabled);
-	shader["voidNear"](material.nearFog.start);
-	shader["voidFar"](material.nearFog.stop);
-	shader["voidColor"](material.nearFog.color);
-	shader["voidStrength"](material.nearFog.strength);
+	if (material.nearFog.enabled) {
+		shader["useVoid"](true);
+		shader["voidNear"](material.nearFog.start);
+		shader["voidFar"](material.nearFog.stop);
+		shader["voidColor"](material.nearFog.color);
+		shader["voidStrength"](material.nearFog.strength);
+	} else shader["useVoid"](false);
 	// Ambient light
 	shader["ambientColor"](material.ambient.color);
 	shader["ambientStrength"](material.ambient.strength);
