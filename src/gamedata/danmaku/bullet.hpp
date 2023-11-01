@@ -85,7 +85,7 @@ public:
 		sprite->local.position	= Vector3(local.position, zIndex + zOffset);
 		if (params.rotateSprite)
 			sprite->local.rotation.z = local.rotation;
-		sprite->local.scale = Vector3(local.scale, zScale) * (1+(1-factor)*2);
+		sprite->local.scale = Vector3(local.scale, zScale)/* * (1+(1-factor)*2)*/;
 		// Set hitbox transforms
 		params.hitbox.position	= local.position;
 		if (params.rotateHitbox)

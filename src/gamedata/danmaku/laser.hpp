@@ -97,7 +97,7 @@ public:
 		// Set sprite transforms
 		sprite->local.position		= Vector3(local.position, zIndex + zOffset);
 		sprite->local.rotation.z	= local.rotation;
-		sprite->local.scale			= Vector3(local.scale, zScale) * (1+(1-factor)*2);
+		sprite->local.scale			= Vector3(local.scale, zScale)/* * (1+(1-factor)*2)*/;
 	}
 
 	template <class T>
