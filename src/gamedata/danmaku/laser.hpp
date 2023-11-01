@@ -73,7 +73,7 @@ public:
 
 	LineLaser* discard() override {
 		if (params.discardable)
-			setFree();
+			despawn();
 		return this;
 	}
 
@@ -130,6 +130,8 @@ public:
 protected:
 	void onObjectSpawnBegin() override {params.collidable = false;}
 	void onObjectSpawnEnd() override {params.collidable = true;}
+	void onObjectDespawnBegin() override {params.collidable = false;}
+	//void onObjectDespawnEnd() override {setFree(true);}
 
 private:
 	template<size_t L, size_t A, size_t E> friend class LineLaserManager;

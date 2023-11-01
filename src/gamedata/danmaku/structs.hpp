@@ -50,7 +50,10 @@ struct DanmakuObject {
 		onFree			= pass;
 		onObjectFrame	= pass;
 		onUnpause		= pass;
+		onSpawnBegin	= pass;
 		onSpawnEnd		= pass;
+		onDespawnBegin	= pass;
+		onDespawnEnd	= pass;
 	}
 
 	RenderData::Reference::AnimatedPlane* sprite = nullptr;
@@ -60,14 +63,18 @@ struct DanmakuObject {
 	ObjectSignal onFree;
 	ObjectSignal onUnpause;
 	ObjectSignal onObjectFrame;
+	ObjectSignal onSpawnBegin;
 	ObjectSignal onSpawnEnd;
+	ObjectSignal onDespawnBegin;
+	ObjectSignal onDespawnEnd;
 
 	ObjectFlags flags;
 
 	float zIndex = 0;
 	float zScale = 0;
 
-	float spawnSpeed = .1f;
+	float spawnSpeed	= .1f;
+	float despawnSpeed	= .1f;
 
 	Transform2D local;
 
@@ -80,11 +87,23 @@ struct DanmakuObject {
 		if (sprite) sprite->setColor(color * tint);
 		onObjectFrame(this);
 		if (spawning) {
-			if (tint.a < 1.0) tint.a += spawnSpeed;
-			else {tint.a = 1.0; spawning = false;}
-			onObjectSpawnEnd();
-			onSpawnEnd(this);
+			if (factor < 1.0) factor += spawnSpeed;
+			else {
+				factor = 1.0; spawning = false;
+				onObjectSpawnEnd();
+				onSpawnEnd(this);
+			}
 		}
+		if (despawning) {
+			if (factor > 0.0f) factor -= despawnSpeed;
+			else {
+				factor = 0.0; despawning = false;
+				onObjectDespawnEnd();
+				onDespawnEnd(this);
+				setFree(true);
+			}
+		}
+		tint.a = factor;
 		if (pause.enabled) {
 			if (pause.time < 0) return;
 			pause.time = Math::clamp(pause.time - delta, 0.0f, 1.0f);
@@ -96,13 +115,24 @@ struct DanmakuObject {
 	}
 
 	DanmakuObject* spawn() {
+		if (despawning) return this;
 		spawning = true;
-		tint.a = 0.5f;
+		factor = 0.5f;
 		onObjectSpawnBegin();
+		onSpawnBegin(this);
 		return this;
 	}
 
-	virtual DanmakuObject* reset() {return this;}
+	DanmakuObject* despawn() {
+		despawning = true;
+		spawning = false;
+		factor = 1.0f;
+		onObjectDespawnBegin();
+		onDespawnBegin(this);
+		return this;
+	}
+
+	virtual DanmakuObject* reset() {factor = 1.0; return this;}
 
 	virtual DanmakuObject* setZero() {return this;}
 
@@ -115,6 +145,7 @@ struct DanmakuObject {
 		if (free) {
 			onFree(this);
 			flags.clear();
+			spawning = despawning = false;
 		}
 		local.position = 0;
 		return this;
@@ -122,7 +153,13 @@ struct DanmakuObject {
 
 	virtual DanmakuObject* clearSignals() {
 		auto pass = T_SIGNAL(DanmakuObject*) {};
-		onSpawnEnd = onObjectFrame = onFree = onUnpause = pass;
+		onObjectFrame	= pass;
+		onFree			= pass;
+		onUnpause		= pass;
+		onSpawnBegin	= pass;
+		onSpawnEnd		= pass;
+		onDespawnBegin	= pass;
+		onDespawnEnd	= pass;
 		return this;
 	}
 
@@ -137,8 +174,14 @@ struct DanmakuObject {
 protected:
 	virtual void onObjectSpawnBegin()	{}
 	virtual void onObjectSpawnEnd()		{}
+	virtual void onObjectDespawnBegin()	{}
+	virtual void onObjectDespawnEnd()	{}
 
 	Vector4 tint = Color::WHITE;
+
+	float factor = 1.0f;
+
+	bool despawning = false;
 
 	bool spawning = false;
 
