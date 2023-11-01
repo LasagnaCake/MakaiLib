@@ -73,7 +73,7 @@ struct DanmakuObject {
 	float zIndex = 0;
 	float zScale = 0;
 
-	float spawnSpeed	= .1f;
+	float spawnSpeed	= .2f;
 	float despawnSpeed	= .1f;
 
 	Transform2D local;
@@ -93,6 +93,7 @@ struct DanmakuObject {
 				onObjectSpawnEnd();
 				onSpawnEnd(this);
 			}
+			spawnAnimation(factor);
 		}
 		if (despawning) {
 			if (factor > 0.0f) factor -= despawnSpeed;
@@ -102,8 +103,8 @@ struct DanmakuObject {
 				onDespawnEnd(this);
 				setFree(true);
 			}
+			despawnAnimation(factor);
 		}
-		tint.a = factor;
 		if (pause.enabled) {
 			if (pause.time < 0) return;
 			pause.time = Math::clamp(pause.time - delta, 0.0f, 1.0f);
@@ -117,7 +118,7 @@ struct DanmakuObject {
 	DanmakuObject* spawn() {
 		if (despawning) return this;
 		spawning = true;
-		factor = 0.5f;
+		factor = 0.0f;
 		onObjectSpawnBegin();
 		onSpawnBegin(this);
 		return this;
@@ -132,9 +133,26 @@ struct DanmakuObject {
 		return this;
 	}
 
-	virtual DanmakuObject* reset() {factor = 1.0; return this;}
+	DanmakuObject* clearAnimation() {
+		spawning = despawning = false;
+		factor = 1.0;
+		clearAnimationData();
+		return this;
+	}
 
-	virtual DanmakuObject* setZero() {return this;}
+	virtual DanmakuObject* reset() {
+		return this;
+	}
+
+	virtual DanmakuObject* setZero() {
+		clearAnimation();
+		zIndex = 0;
+		zScale = 0;
+		tint = Color::WHITE;
+		spawnSpeed		= .2f;
+		despawnSpeed	= .1f;
+		return this;
+	}
 
 	virtual DanmakuObject* enable() {
 		return setFree(false);
@@ -147,7 +165,7 @@ struct DanmakuObject {
 			flags.clear();
 			spawning = despawning = false;
 		}
-		local.position = 0;
+		local.position = Vector2(-64, 64);
 		return this;
 	}
 
@@ -165,7 +183,7 @@ struct DanmakuObject {
 
 	virtual DanmakuObject* discard() {return this;}
 
-	virtual void updateSprite() {}
+	virtual void updateSprite() = 0;
 
 	bool isFree() {
 		return free;
@@ -176,6 +194,10 @@ protected:
 	virtual void onObjectSpawnEnd()		{}
 	virtual void onObjectDespawnBegin()	{}
 	virtual void onObjectDespawnEnd()	{}
+
+	virtual void spawnAnimation(float t)	{tint.a = (factor * 0.5) + 0.5;	}
+	virtual void despawnAnimation(float t)	{tint.a = factor;				}
+	virtual void clearAnimationData()		{tint.a = 1;					}
 
 	Vector4 tint = Color::WHITE;
 

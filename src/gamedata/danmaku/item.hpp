@@ -35,12 +35,14 @@ struct Collectible: DanmakuObject {
 	}
 
 	Collectible* reset() override {
+		DanmakuObject::reset();
 		setZero();
 		gravity = -params.bounce;
 		return this;
 	}
 
 	Collectible* setZero() override {
+		DanmakuObject::setZero();
 		sprite->local.rotation.z =
 		local.rotation =
 		params.hitbox.rotation =

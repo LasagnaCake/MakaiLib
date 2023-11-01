@@ -38,6 +38,7 @@ public:
 	}
 
 	Bullet* reset() override {
+		DanmakuObject::reset();
 		setZero();
 		params.vel.current = params.vel.start;
 		local.rotation =
@@ -51,6 +52,7 @@ public:
 	}
 
 	Bullet* setZero() override {
+		DanmakuObject::setZero();
 		params.vel.current =
 		local.rotation =
 		params.rot.current =
@@ -83,7 +85,7 @@ public:
 		sprite->local.position	= Vector3(local.position, zIndex + zOffset);
 		if (params.rotateSprite)
 			sprite->local.rotation.z = local.rotation;
-		sprite->local.scale = Vector3(local.scale, zScale);
+		sprite->local.scale = Vector3(local.scale, zScale) * (1+(1-factor)*2);
 		// Set hitbox transforms
 		params.hitbox.position	= local.position;
 		if (params.rotateHitbox)

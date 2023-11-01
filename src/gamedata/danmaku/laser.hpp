@@ -36,6 +36,7 @@ public:
 	}
 
 	LineLaser* reset() override {
+		DanmakuObject::reset();
 		setZero();
 		params.vel.current = params.vel.start;
 		local.rotation =
@@ -49,6 +50,7 @@ public:
 	}
 
 	LineLaser* setZero() override {
+		DanmakuObject::setZero();
 		local.rotation =
 		params.vel.current =
 		params.vel.factor =
@@ -95,7 +97,7 @@ public:
 		// Set sprite transforms
 		sprite->local.position		= Vector3(local.position, zIndex + zOffset);
 		sprite->local.rotation.z	= local.rotation;
-		sprite->local.scale			= Vector3(local.scale, zScale);
+		sprite->local.scale			= Vector3(local.scale, zScale) * (1+(1-factor)*2);
 	}
 
 	template <class T>
