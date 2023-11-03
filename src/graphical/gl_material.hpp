@@ -500,7 +500,13 @@ ImageEffect loadImageEffect(
 		fx.enabled = effect["enabled"].get<bool>();
 		auto& img = effect["image"];
 		if (!texture)
-			texture = new Texture2D();
+			throw Error::InvalidValue(
+				"Texture cannot be null!",
+				__FILE__,
+				toString(__LINE__),
+				"loadImageEffect",
+				"Make sure you are passing a texture!"
+			);
 		fx.image = texture;
 		if (img["data"].is_object() && img["data"]["path"].is_string() && !img["data"]["path"].get<string>().empty()) {
 			texture->create(FileSystem::concatenatePath(sourcepath, img["path"].get<string>()));

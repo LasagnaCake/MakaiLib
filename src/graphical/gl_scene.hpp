@@ -2,11 +2,11 @@ class Scene3D: public Base::Drawable {
 public:
 	Scene3D(size_t layer = 0, bool manual = false): Drawable(layer, manual) {}
 
-	Scene3D(string path, size_t layer = 0, bool manual = false): Scene3D(layer, manual) {
+	Scene3D(size_t layer, string const& path, bool manual = false): Scene3D(layer, manual) {
 		extendFromSceneFile(path);
 	}
 
-	Scene3D(Scene3D* other, size_t layer = 0, bool manual = false): Scene3D(layer, manual) {
+	Scene3D(Scene3D* const& other, size_t layer, bool manual = false): Scene3D(layer, manual) {
 		extend(other);
 	}
 
@@ -17,11 +17,11 @@ public:
 	Camera::GimbalCamera3D	camera;
 	Material::WorldMaterial	world;
 
-	void extendFromSceneFile(string path) {
+	void extendFromSceneFile(string const& path) {
 		extendFromDefinition(FileLoader::loadJSON(path), FileSystem::getDirectoryFromPath(path));
 	}
 
-	void extend(Scene3D* other) {
+	void extend(Scene3D* const& other) {
 		for(Renderable* obj: other->objects) {
 			Renderable* nobj = createObject();
 			{
@@ -132,39 +132,15 @@ public:
 	}
 
 	Renderable* createObject() {
-		Renderable* r = new Renderable();
-		textures.push_back(r->material.texture.image	= new Drawer::Texture2D());
-		textures.push_back(r->material.emission.image	= new Drawer::Texture2D());
-		textures.push_back(r->material.warp.image		= new Drawer::Texture2D());
+		Renderable* r = new Renderable(0, true);
 		return r;
 	}
 
-	void deleteObject(Renderable* obj) {
+	void deleteObject(Renderable* const& obj) {
 		if (obj) {
 			ERASE_IF(objects, elem == obj);
-			std::erase_if(
-				textures,
-				[=](Texture2D* tx){
-					if (tx == obj->material.texture.image) {delete tx; return true;}
-					return false;
-				}
-			);
-			std::erase_if(
-				textures,
-				[=](Texture2D* tx){
-					if (tx == obj->material.emission.image) {delete tx; return true;}
-					return false;
-				}
-			);
-			std::erase_if(
-				textures,
-				[=](Texture2D* tx){
-					if (tx == obj->material.warp.image) {delete tx; return true;}
-					return false;
-				}
-			);
+			delete obj;
 		}
-		delete obj;
 	}
 
 	inline RenderableList getObjects() {
@@ -173,7 +149,6 @@ public:
 
 private:
 	RenderableList		objects;
-	List<Texture2D*>	textures;
 
 	void extendFromDefinition(
 		JSONData def,

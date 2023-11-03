@@ -8,7 +8,12 @@ namespace {
 
 class Renderable: public Base::DrawableObject {
 public:
-	Renderable(size_t layer = 0, bool manual = false): DrawableObject(layer, manual) {}
+	Renderable(size_t layer = 0, bool manual = false):
+	DrawableObject(layer, manual) {
+		material.texture.image	= &texture;
+		material.emission.image	= &emission;
+		material.warp.image		= &warp;
+	}
 
 	Renderable(
 		vector<Triangle*> triangles,
@@ -244,9 +249,9 @@ public:
 
 	inline void extendFromDefinitionFile(
 		string const& path,
-		Texture2D* texture	= nullptr,
-		Texture2D* emission	= nullptr,
-		Texture2D* warp		= nullptr
+		Texture2D* const& texture	= nullptr,
+		Texture2D* const& emission	= nullptr,
+		Texture2D* const& warp		= nullptr
 	) {
 		extendFromDefinition(FileLoader::loadJSON(path), FileSystem::getDirectoryFromPath(path), texture, emission, warp);
 	}
@@ -319,6 +324,8 @@ public:
 
 	vector<Triangle*> triangles;
 
+	Texture2D texture, emission, warp;
+
 private:
 	friend class Scene3D;
 
@@ -381,10 +388,13 @@ private:
 	void extendFromDefinition(
 		JSONData def,
 		string const& sourcepath,
-		Texture2D* const& texture	= nullptr,
-		Texture2D* const& emission	= nullptr,
-		Texture2D* const& warp		= nullptr
+		Texture2D* texture	= nullptr,
+		Texture2D* emission	= nullptr,
+		Texture2D* warp		= nullptr
 	) {
+		if (!texture)	texture = &this->texture;
+		if (!emission)	texture = &this->emission;
+		if (!warp)		texture = &this->warp;
 		// Component data
 		string componentData;
 		// Vertex data
