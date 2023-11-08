@@ -749,7 +749,6 @@ public:
 		return *this;
 	}
 
-	// https://github.com/g-truc/glm/blob/master/glm/gtx/matrix_decompose.inl
 	template<auto EULER_FUNC = Matrix::fromEulerYXZ>
 	constexpr Matrix<R, C, T>& compose(
 		VecMath::Transform3D const&	trans,
