@@ -928,6 +928,23 @@ typedef TMat2x4<double> Matrix2x4d;
 typedef TMat3x4<double> Matrix3x4d;
 typedef TMat4x4<double> Matrix4x4d;
 
+// Long double matrices
+typedef TMat2x1<long double> Matrix2x1ld;
+typedef TMat3x1<long double> Matrix3x1ld;
+typedef TMat4x1<long double> Matrix4x1ld;
+
+typedef TMat2x2<long double> Matrix2x2ld;
+typedef TMat3x2<long double> Matrix3x2ld;
+typedef TMat4x2<long double> Matrix4x2ld;
+
+typedef TMat2x3<long double> Matrix2x3ld;
+typedef TMat3x3<long double> Matrix3x3ld;
+typedef TMat4x3<long double> Matrix4x3ld;
+
+typedef TMat2x4<long double> Matrix2x4ld;
+typedef TMat3x4<long double> Matrix3x4ld;
+typedef TMat4x4<long double> Matrix4x4ld;
+
 // Integer matrices
 typedef TMat2x1<int> Matrix2x1i;
 typedef TMat3x1<int> Matrix3x1i;
@@ -986,6 +1003,27 @@ typedef Matrix4x4d Mat4x4d;
 typedef Mat2x2d Mat2d;
 typedef Mat3x3d Mat3d;
 typedef Mat4x4d Mat4d;
+
+//Long double shorthands
+typedef Matrix2x1ld Mat2x1ld;
+typedef Matrix3x1ld Mat3x1ld;
+typedef Matrix4x1ld Mat4x1ld;
+
+typedef Matrix2x2ld Mat2x2ld;
+typedef Matrix3x2ld Mat3x2ld;
+typedef Matrix4x2ld Mat4x2ld;
+
+typedef Matrix2x3ld Mat2x3ld;
+typedef Matrix3x3ld Mat3x3ld;
+typedef Matrix4x3ld Mat4x3ld;
+
+typedef Matrix2x4ld Mat2x4ld;
+typedef Matrix3x4ld Mat3x4ld;
+typedef Matrix4x4ld Mat4x4ld;
+
+typedef Mat2x2ld Mat2ld;
+typedef Mat3x3ld Mat3ld;
+typedef Mat4x4ld Mat4ld;
 
 // Integer shorthands
 typedef Matrix2x1i Mat2x1i;
