@@ -874,6 +874,8 @@ private:
 };
 
 // Template matrices
+template <Math::Operatable T, size_t R, size_t C> using Mat = Matrix<R, C, T>;
+
 template <Math::Operatable T> using TMat2x1 = Matrix<2, 1, T>;
 template <Math::Operatable T> using TMat3x1 = Matrix<3, 1, T>;
 template <Math::Operatable T> using TMat4x1 = Matrix<4, 1, T>;
@@ -911,6 +913,10 @@ typedef TMat2x4<float> Matrix2x4;
 typedef TMat3x4<float> Matrix3x4;
 typedef TMat4x4<float> Matrix4x4;
 
+typedef TMat2<float> Matrix2;
+typedef TMat3<float> Matrix3;
+typedef TMat4<float> Matrix4;
+
 // Double matrices
 typedef TMat2x1<double> Matrix2x1d;
 typedef TMat3x1<double> Matrix3x1d;
@@ -927,6 +933,10 @@ typedef TMat4x3<double> Matrix4x3d;
 typedef TMat2x4<double> Matrix2x4d;
 typedef TMat3x4<double> Matrix3x4d;
 typedef TMat4x4<double> Matrix4x4d;
+
+typedef TMat2<double> Matrix2d;
+typedef TMat3<double> Matrix3d;
+typedef TMat4<double> Matrix4d;
 
 // Long double matrices
 typedef TMat2x1<long double> Matrix2x1ld;
@@ -945,6 +955,10 @@ typedef TMat2x4<long double> Matrix2x4ld;
 typedef TMat3x4<long double> Matrix3x4ld;
 typedef TMat4x4<long double> Matrix4x4ld;
 
+typedef TMat2<long double> Matrix2ld;
+typedef TMat3<long double> Matrix3ld;
+typedef TMat4<long double> Matrix4ld;
+
 // Integer matrices
 typedef TMat2x1<int> Matrix2x1i;
 typedef TMat3x1<int> Matrix3x1i;
@@ -961,6 +975,10 @@ typedef TMat4x3<int> Matrix4x3i;
 typedef TMat2x4<int> Matrix2x4i;
 typedef TMat3x4<int> Matrix3x4i;
 typedef TMat4x4<int> Matrix4x4i;
+
+typedef TMat2<int> Matrix2i;
+typedef TMat3<int> Matrix3i;
+typedef TMat4<int> Matrix4i;
 
 // Float shorthands
 typedef Matrix2x1 Mat2x1;
@@ -979,9 +997,9 @@ typedef Matrix2x4 Mat2x4;
 typedef Matrix3x4 Mat3x4;
 typedef Matrix4x4 Mat4x4;
 
-typedef Mat2x2 Mat2;
-typedef Mat3x3 Mat3;
-typedef Mat4x4 Mat4;
+typedef Matrix2 Mat2;
+typedef Matrix3 Mat3;
+typedef Matrix4 Mat4;
 
 // Double shorthands
 typedef Matrix2x1d Mat2x1d;
@@ -1000,9 +1018,9 @@ typedef Matrix2x4d Mat2x4d;
 typedef Matrix3x4d Mat3x4d;
 typedef Matrix4x4d Mat4x4d;
 
-typedef Mat2x2d Mat2d;
-typedef Mat3x3d Mat3d;
-typedef Mat4x4d Mat4d;
+typedef Matrix2d Mat2d;
+typedef Matrix3d Mat3d;
+typedef Matrix4d Mat4d;
 
 //Long double shorthands
 typedef Matrix2x1ld Mat2x1ld;
@@ -1021,9 +1039,9 @@ typedef Matrix2x4ld Mat2x4ld;
 typedef Matrix3x4ld Mat3x4ld;
 typedef Matrix4x4ld Mat4x4ld;
 
-typedef Mat2x2ld Mat2ld;
-typedef Mat3x3ld Mat3ld;
-typedef Mat4x4ld Mat4ld;
+typedef Matrix2ld Mat2ld;
+typedef Matrix3ld Mat3ld;
+typedef Matrix4ld Mat4ld;
 
 // Integer shorthands
 typedef Matrix2x1i Mat2x1i;
@@ -1042,9 +1060,9 @@ typedef Matrix2x4i Mat2x4i;
 typedef Matrix3x4i Mat3x4i;
 typedef Matrix4x4i Mat4x4i;
 
-typedef Mat2x2i Mat2i;
-typedef Mat3x3i Mat3i;
-typedef Mat4x4i Mat4i;
+typedef Matrix2i Mat2i;
+typedef Matrix3i Mat3i;
+typedef Matrix4i Mat4i;
 
 namespace MatMath {
 	// https://github.com/g-truc/glm/blob/master/glm/ext/matrix_transform.inl
