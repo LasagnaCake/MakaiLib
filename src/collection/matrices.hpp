@@ -1098,7 +1098,7 @@ namespace MatMath {
 		Vector3 const f((at - eye).normalized());
 		Vector3 const s(f.crossProd(up).normalized());
 		Vector3 const u(s.crossProd(f));
-		Matrix4x4 result(Matrix4x4::identity());
+		Matrix4x4 result(1);
 		result[0][0] = +s.x;
 		result[1][0] = +s.y;
 		result[2][0] = +s.z;
@@ -1124,7 +1124,7 @@ namespace MatMath {
 		T const& zNear,
 		T const& zFar
 	) {
-		Matrix<4, 4, T> result(Matrix<4, 4, T>::identity());
+		Matrix<4, 4, T> result(1);
 		result[0][0] = T(2) / (right - left);
 		result[1][1] = T(2) / (top - bottom);
 		result[2][2] = - T(2) / (zFar - zNear);
@@ -1142,7 +1142,7 @@ namespace MatMath {
 		T const& bottom,
 		T const& top
 	) {
-		Matrix<4, 4, T> result(Matrix<4, 4, T>::identity());
+		Matrix<4, 4, T> result(1);
 		result[0][0] = T(2) / (right - left);
 		result[1][1] = T(2) / (top - bottom);
 		result[2][2] = - T(1);
