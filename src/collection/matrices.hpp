@@ -1239,20 +1239,31 @@ namespace MatMath {
 		return Vector3(T1, T2, T3);
 	}
 
-	template<size_t R, size_t C, Math::Operatable T>
-	constexpr Matrix<R, C, T> lerp(Matrix<R, C, T> const& from, Matrix<R, C, T> const& to, T const& by) {
-		Matrix<R, C, T> result(0);
-		for (size_t i = 0; i < C; i++)
-			for (size_t j = 0; j < R; i++)
-				result[i][j] = Math::lerp<T>(from[i][j], to[i][j], by);
+	template <class T>
+	concept ValidMatrix = requires {
+		T::rowCount;
+		T::columnCount;
+		T::DataType;
+	}
+	&&	Type::Equal<T, Matrix<T::rowCount, T::columnCount, typename T::DataType>>
+	;
+
+	template <ValidMatrix T>
+	constexpr T lerp(T const& from, T const& to, typename T::DataType const& by) {
+		T result(0);
+		for (size_t i = 0; i < T::columnCount; i++)
+			for (size_t j = 0; j < T::rowCount; j++)
+				result[i][j] = Math::lerp<typename T::DataType>(from[i][j], to[i][j], by);
+		return result;
 	}
 
-	template<size_t R, size_t C, Math::Operatable T>
-	constexpr Matrix<R, C, T> lerp(Matrix<R, C, T> const& from, Matrix<R, C, T> const& to, Matrix<R, C, T> const& by) {
-		Matrix<R, C, T> result(0);
-		for (size_t i = 0; i < C; i++)
-			for (size_t j = 0; j < R; i++)
-				result[i][j] = Math::lerp<T>(from[i][j], to[i][j], by[i][j]);
+	template <ValidMatrix T>
+	constexpr T lerp(T const& from, T const& to, T const& by) {
+		T result(0);
+		for (size_t i = 0; i < T::columnCount; i++)
+			for (size_t j = 0; j < T::rowCount; j++)
+				result[i][j] = Math::lerp<typename T::DataType>(from[i][j], to[i][j], by[i][j]);
+		return result;
 	}
 }
 
