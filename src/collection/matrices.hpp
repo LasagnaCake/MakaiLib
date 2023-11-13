@@ -1229,16 +1229,16 @@ namespace MatMath {
 	template<Math::Operatable T, size_t R, size_t C>
 	constexpr Matrix<R, C, T> lerp(Matrix<R, C, T> const& from, Matrix<R, C, T> const& to, T const& by) {
 		Matrix<R, C, T> result(0);
-		for SSRANGE(i, 0, R)
-			for SSRANGE(j, 0, C)
+		for (size_t i = 0; i < R; i++)
+			for (size_t i = 0; i < C; i++)
 				result[j][i] = Math::lerp<T>(from[j][i], to[j][i], by);
 	}
 
 	template<Math::Operatable T, size_t R, size_t C>
 	constexpr Matrix<R, C, T> lerp(Matrix<R, C, T> const& from, Matrix<R, C, T> const& to, Matrix<R, C, T> const& by) {
 		Matrix<R, C, T> result(0);
-		for SSRANGE(i, 0, R)
-			for SSRANGE(j, 0, C)
+		for (size_t i = 0; i < R; i++)
+			for (size_t i = 0; i < C; i++)
 				result[j][i] = Math::lerp<T>(from[j][i], to[j][i], by[j][i]);
 	}
 }
