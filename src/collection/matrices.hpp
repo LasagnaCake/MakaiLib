@@ -58,6 +58,12 @@ public:
 				data[i][j] = hack[j][i];
 	}
 
+	constexpr Matrix(const T(&v)[C]) {
+		for (size_t i = 0; i < C; i++)
+			for (size_t j = 0; j < R; j++)
+				data[i][j] = v[i];
+	}
+
 	template<MatType::Compatitble<T> T2>
 	constexpr Matrix(const T2(&v)[R][C]) {
 		for (size_t i = 0; i < C; i++)
@@ -72,7 +78,14 @@ public:
 			((T2*)hack)[i] = v[i];
 		for (size_t i = 0; i < C; i++)
 			for (size_t j = 0; j < R; j++)
-				data[i][j] = hack[j][i];
+				data[i][j] = T(hack[j][i]);
+	}
+
+	template<MatType::Compatitble<T> T2>
+	constexpr Matrix(const T2(&v)[C]) {
+		for (size_t i = 0; i < C; i++)
+			for (size_t j = 0; j < R; j++)
+				data[i][j] = T(v[i]);
 	}
 
 	constexpr Matrix(Vector2 const& vec) {
@@ -1229,17 +1242,17 @@ namespace MatMath {
 	template<Math::Operatable T, size_t R, size_t C>
 	constexpr Matrix<R, C, T> lerp(Matrix<R, C, T> const& from, Matrix<R, C, T> const& to, T const& by) {
 		Matrix<R, C, T> result(0);
-		for (size_t i = 0; i < R; i++)
-			for (size_t i = 0; i < C; i++)
-				result[j][i] = Math::lerp<T>(from[j][i], to[j][i], by);
+		for (size_t i = 0; i < C; i++)
+			for (size_t j = 0; j < R; i++)
+				result[i][j] = Math::lerp<T>(from[i][j], to[i][j], by);
 	}
 
 	template<Math::Operatable T, size_t R, size_t C>
 	constexpr Matrix<R, C, T> lerp(Matrix<R, C, T> const& from, Matrix<R, C, T> const& to, Matrix<R, C, T> const& by) {
 		Matrix<R, C, T> result(0);
-		for (size_t i = 0; i < R; i++)
-			for (size_t i = 0; i < C; i++)
-				result[j][i] = Math::lerp<T>(from[j][i], to[j][i], by[j][i]);
+		for (size_t i = 0; i < C; i++)
+			for (size_t j = 0; j < R; i++)
+				result[i][j] = Math::lerp<T>(from[i][j], to[i][j], by[i][j]);
 	}
 }
 
