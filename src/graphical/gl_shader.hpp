@@ -10,7 +10,7 @@
 #define shaderTypeId(SHADER_TYPE_NAME) shaderTypes.find(SHADER_TYPE_NAME)->second
 
 namespace Scene {
-	Matrix4x4 world = Matrix4x4(Matrix4x4::identity());
+	Matrix4x4 world = Matrix4x4(1);
 	Camera::Camera3D camera;
 }
 
