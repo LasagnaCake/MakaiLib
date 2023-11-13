@@ -1239,7 +1239,7 @@ namespace MatMath {
 		return Vector3(T1, T2, T3);
 	}
 
-	template<Math::Operatable T, size_t R, size_t C>
+	template<size_t R, size_t C, Math::Operatable T>
 	constexpr Matrix<R, C, T> lerp(Matrix<R, C, T> const& from, Matrix<R, C, T> const& to, T const& by) {
 		Matrix<R, C, T> result(0);
 		for (size_t i = 0; i < C; i++)
@@ -1247,7 +1247,7 @@ namespace MatMath {
 				result[i][j] = Math::lerp<T>(from[i][j], to[i][j], by);
 	}
 
-	template<Math::Operatable T, size_t R, size_t C>
+	template<size_t R, size_t C, Math::Operatable T>
 	constexpr Matrix<R, C, T> lerp(Matrix<R, C, T> const& from, Matrix<R, C, T> const& to, Matrix<R, C, T> const& by) {
 		Matrix<R, C, T> result(0);
 		for (size_t i = 0; i < C; i++)
