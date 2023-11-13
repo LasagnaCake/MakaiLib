@@ -1225,6 +1225,22 @@ namespace MatMath {
 		float T3 = atan2(S1*mat[0][2] - C1*mat[0][1], C1*mat[1][1] - S1*mat[1][2]);
 		return Vector3(T1, T2, T3);
 	}
+
+	template<Math::Operatable T, size_t R, size_t C>
+	constexpr Matrix<R, C, T> lerp(Matrix<R, C, T> const& from, Matrix<R, C, T> const& to, T const& by) {
+		Matrix<R, C, T> result(0);
+		for SSRANGE(i, 0, R)
+			for SSRANGE(j, 0, C)
+				result[j][i] = Math::lerp<T>(from[j][i], to[j][i], by);
+	}
+
+	template<Math::Operatable T, size_t R, size_t C>
+	constexpr Matrix<R, C, T> lerp(Matrix<R, C, T> const& from, Matrix<R, C, T> const& to, Matrix<R, C, T> const& by) {
+		Matrix<R, C, T> result(0);
+		for SSRANGE(i, 0, R)
+			for SSRANGE(j, 0, C)
+				result[j][i] = Math::lerp<T>(from[j][i], to[j][i], by[j][i]);
+	}
 }
 
 #endif // TYPE_MATRICES_H
