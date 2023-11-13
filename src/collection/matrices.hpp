@@ -44,7 +44,6 @@ public:
 	}
 
 	constexpr Matrix(const T(&v)[1]) {
-		size_t const start = Math::min(C, R);
 		for (size_t i = 0; i < C; i++)
 			for (size_t j = 0; j < R; j++)
 				data[i][j] = v[0];
