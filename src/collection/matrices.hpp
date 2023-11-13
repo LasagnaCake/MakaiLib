@@ -43,6 +43,13 @@ public:
 			data[start-1-i][start-1-i] = v;
 	}
 
+	constexpr Matrix(const T(&v)[1]) {
+		size_t const start = Math::min(C, R);
+		for (size_t i = 0; i < C; i++)
+			for (size_t j = 0; j < R; j++)
+				data[i][j] = v[0];
+	}
+
 	constexpr Matrix(const T(&v)[R][C]) {
 		for (size_t i = 0; i < C; i++)
 			for (size_t j = 0; j < R; j++)
@@ -62,6 +69,15 @@ public:
 		for (size_t i = 0; i < C; i++)
 			for (size_t j = 0; j < R; j++)
 				data[i][j] = v[i];
+	}
+
+	template<MatType::Compatitble<T> T2>
+	constexpr Matrix(const T2(&v)[1]) {
+		T rv = T(v[0]);
+		size_t const start = Math::min(C, R);
+		for (size_t i = 0; i < C; i++)
+			for (size_t j = 0; j < R; j++)
+				data[i][j] = rv;
 	}
 
 	template<MatType::Compatitble<T> T2>
