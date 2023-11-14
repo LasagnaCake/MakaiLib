@@ -361,17 +361,25 @@ T vblendfunc(T src, T dst, uint func) {	\
 	}									\
 }
 
-#define VBLEND_EQ_DEFINE(T)			\
-T vblendeq(T a, T b, uint eq) {		\
-	switch (eq) {					\
-		default:					\
-		case 0x00: return a + b;	\
-		case 0x01: return a - b;	\
-		case 0x02: return a * b;	\
-		case 0x03: return a / b;	\
-		case 0x04: return b - a;	\
-		case 0x05: return b / a;	\
-	}								\
+#define VBLEND_EQ_DEFINE(T)						\
+T vblendeq(T a, T b, uint eq) {					\
+	switch (eq) {								\
+		default:								\
+		case 0x00: return a + b;				\
+		case 0x01: return a - b;				\
+		case 0x02: return a * b;				\
+		case 0x03: return a / b;				\
+		case 0x04: return b - a;				\
+		case 0x05: return b / a;				\
+		case 0x06: return clamp(a + b, 0, 1);	\
+		case 0x07: return clamp(a - b, 0, 1);	\
+		case 0x08: return clamp(a * b, 0, 1);	\
+		case 0x09: return clamp(a / b, 0, 1);	\
+		case 0x0A: return clamp(b - a, 0, 1);	\
+		case 0x0B: return clamp(b / a, 0, 1);	\
+		case 0x0B: return max(a, b);			\
+		case 0x0B: return min(a, b);			\
+	}											\
 }
 
 #define VBLEND_DEFINE(T)															\

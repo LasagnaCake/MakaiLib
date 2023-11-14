@@ -96,13 +96,31 @@ enum class BlendFunction: unsigned int {
 	BF_ONE_MINUS_DST,
 };
 
-enum class BlendEquation {
+enum class BlendEquation: unsigned int {
 	BE_ADD,
 	BE_SUBTRACT,
 	BE_MULTIPLY,
 	BE_DIVIDE,
 	BE_REVERSE_SUBTRACT,
 	BE_REVERSE_DIVIDE,
+	BE_ADD_CLAMP,
+	BE_SUBTRACT_CLAMP,
+	BE_MULTIPLY_CLAMP,
+	BE_DIVIDE_CLAMP,
+	BE_REVERSE_SUBTRACT_CLAMP,
+	BE_REVERSE_DIVIDE_CLAMP,
+	BE_MAX,
+	BE_MIN,
+};
+
+enum class BlendSource: unsigned int {
+	BS_ZERO,
+	BS_ONE,
+	BS_COLOR,
+	BS_ALPHA,
+	BS_NOISE,
+	BS_SOLID_COLOR,
+	BS_SOLID_ALPHA,
 };
 
 struct BlendMode {
