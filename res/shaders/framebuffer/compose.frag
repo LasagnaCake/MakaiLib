@@ -377,8 +377,8 @@ T vblendeq(T a, T b, uint eq) {					\
 		case 0x09: return clamp(a / b, 0, 1);	\
 		case 0x0A: return clamp(b - a, 0, 1);	\
 		case 0x0B: return clamp(b / a, 0, 1);	\
-		case 0x0B: return max(a, b);			\
-		case 0x0B: return min(a, b);			\
+		case 0x0C: return max(a, b);			\
+		case 0x0D: return min(a, b);			\
 	}											\
 }
 
