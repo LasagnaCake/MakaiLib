@@ -8,6 +8,8 @@ namespace {
 
 class Renderable: public Base::DrawableObject {
 public:
+	constexpr static String version = "0.0.0";
+
 	Renderable(size_t layer = 0, bool manual = false):
 	DrawableObject(layer, manual) {
 		material.texture.image	= &texture;
@@ -388,6 +390,29 @@ private:
 	void extendFromDefinition(
 		JSONData def,
 		string const& sourcepath,
+		Texture2D* const& texture	= nullptr,
+		Texture2D* const& emission	= nullptr,
+		Texture2D* const& warp		= nullptr
+	) {
+		if (def["version"].is_string()) {
+			StringList ver = Helper::splitString(def["version"].get<String>(), '.');
+			size_t vss = ver.size();
+			size_t
+				major = vss > 0 ? toUInt64(ver[0]) : 0,
+				minor = vss > 1 ? toUInt64(ver[1]) : 0,
+				patch = vss > 2 ? toUInt64(ver[2]) : 0
+			;
+			// Do stuff for versions
+			switch (major) {
+				default:
+				case 0: extendFromDefinitionV0(def, sourcepath, texture, emission, warp); break;
+			}
+		} else extendFromDefinitionV0(def, sourcepath, texture, emission, warp);
+	}
+
+	void extendFromDefinitionV0(
+		JSONData def,
+		string const& sourcepath,
 		Texture2D* texture	= nullptr,
 		Texture2D* emission	= nullptr,
 		Texture2D* warp		= nullptr
@@ -554,6 +579,7 @@ private:
 		def["mesh"] = {
 			{"components", RAW_VERTEX_COMPONENTS}
 		};
+		def["version"] = version;
 		// If data is to be integrated into the JSON object, do so
 		if (integratedBinary) {
 			// Allocate data buffer

@@ -168,6 +168,7 @@ If data is to be integrated in the file:
 		"data": "", // Vertex data as string
 	},
 	// Optional
+	"version": "0.0.0" // The renderable definition version
 	"trans": {/* See Transform3D:Layout */},
 	"material": {/* See ObjectMaterial:Layout */},
 	"active": true,
@@ -186,6 +187,7 @@ If data gets saved in a different file:
 		},
 	},
 	// Optional
+	"version": "0.0.0" // The renderable definition version
 	"trans": {/* See Transform3D:Layout */},
 	"material": {/* See ObjectMaterial:Layout */},
 	"active": true,
@@ -235,6 +237,8 @@ If data gets saved in a separate file:
 			"type": "MROD" // Object file type
 		}] // Paths to objects
 	} 
+	// Optional
+	"version": "0.0.0" // The scene definition version
 }
 ```
 
@@ -246,6 +250,8 @@ If data is to be integrated in the file:
 	"camera": {/*See Camera3D:Layout */}, // Scene's camera
 	"world": {/* See WorldMaterial:Layout */}, // Scene's WorldMaterial
 	"data": [{/* See Renderable Object:Layout */}] // List of object definitions
+	// Optional
+	"version": "0.0.0" // The scene definition version
 }
 ```
 
