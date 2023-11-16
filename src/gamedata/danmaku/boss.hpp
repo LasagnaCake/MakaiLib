@@ -3,6 +3,7 @@ struct BossPhaseData {
 	size_t			delay			= 60;
 	size_t			invincibility	= 60;
 	size_t			duration		= 3600;
+	bool			spell			= false;
 	Event::Signal	action			= Event::DEF_SIGNAL;
 };
 
@@ -21,9 +22,31 @@ public:
 		durationTimer.onSignal = SIGNAL {
 			beginNextPhase();
 		};
+		timerDisplay.font = &timerFont;
+		phaseDisplay.font = &phaseFont;
+		phaseDisplay.font =
+		timerDisplay.font = TextData {
+			"0",
+			TextRect{7, 1},
+			Vector2(0.5, 0.5)
+		};
 	})
 
-	Label		timerDisplay;
+	Texture2D
+		timerFontTX,
+		phaseFontTX
+	;
+
+	FontData
+		timerFont = {&timerFontTX},
+		phaseFont = {&phaseFontTX}
+	;
+
+	Label
+		timerDisplay,
+		phaseDisplay
+	;
+
 	LinearBar	remainingPhases;
 
 	std::vector<BossPhaseData> phases;
@@ -33,23 +56,27 @@ public:
 		beginNextPhase();
 	}
 
-	virtual void onBattleBegin() {}
+	virtual void onBattleBegin() {beginNextPhase();}
 
-	virtual void onPhaseBegin(size_t phase)	{}
-	virtual void onPhaseEnd(size_t phase)	{}
+	virtual void onPhaseBegin(size_t phase, bool spell)	{}
+	virtual void onPhaseEnd(size_t phase, bool spell)	{}
 
 	virtual void onBattleEnd() {}
 
 	virtual void onFrame(float delta) override {
 		EnemyEntity2D::onFrame(delta);
+		if (!battling) return;
 		float tsec = (phaseDuration - durationTimer.getCounter()) / getMainProgram()->maxCycleRate;
 		timerDisplay.text.content = Helper::floatString(tsec, 2);
+		remainingPhases.max			= phases.size();
+		remainingPhases.value		= phases.size() - currentPhase;
+		phaseDisplay.text.content	= toString(currentPhase) + " / " + toString(phases.size());
 	}
 
 	void beginNextPhase() {
 		timerDisplay.text.content = "00.00";
 		auto& phase = phases[currentPhase];
-		onPhaseEnd(currentPhase-1);
+		onPhaseEnd(currentPhase-1, phases[currentPhase-1].spell);
 		if (!phase.delay) {
 			setInvincible(phase.invincibility);
 			updatePhase();
@@ -64,6 +91,8 @@ public:
 		battling =
 		collision.enabled = true;
 		currentPhase = 0;
+		phaseTimer.stop();
+		durationTimer.stop();
 		onBattleBegin();
 	}
 
@@ -72,7 +101,15 @@ public:
 		battling =
 		collision.enabled = false;
 		currentPhase = Math::Max::SIZET_V;
+		phaseTimer.stop();
+		durationTimer.stop();
 		onBattleEnd();
+	}
+
+	void setUIVisibility(bool visible = true) {
+		healthBar.active		= visible;
+		timerDisplay.active		= visible;
+		remainingPhases.active	= visible;
 	}
 
 	size_t currentPhase = 0;
@@ -87,7 +124,7 @@ private:
 		phase.action();
 		phaseDuration = phase.duration;
 		durationTimer.start(phase.duration);
-		onPhaseBegin(currentPhase);
+		onPhaseBegin(currentPhase, phase.spell);
 		++currentPhase;
 	}
 
