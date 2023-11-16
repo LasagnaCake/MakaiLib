@@ -1,6 +1,6 @@
 typedef Helper::FloatFormat<float> PowerFormat;
 
-typedef std::function<std::string(size_t)> PowerStringFunc;
+typedef Function<String(size_t)> PowerStringFunc;
 
 template<
 	BarType POWER_T		= LinearBar,
@@ -22,7 +22,7 @@ struct GameUI {
 	LIFE_BIT_T			lifeBit;
 	BOMB_BIT_T			bombBit;
 	Label				score, hiScore, point, graze;
-	Label				grazeTitle, pointTitle, scoreTitle, hiScoreTitle;
+	Label				grazeTitle, pointTitle, scoreTitle, hiScoreTitle, difficulty;
 
 	Texture2D		fontTX;
 	FontData		font{&fontTX};
@@ -43,6 +43,7 @@ struct GameUI {
 		pointTitle.setRenderLayer(UI_LAYER);
 		scoreTitle.setRenderLayer(UI_LAYER);
 		hiScoreTitle.setRenderLayer(UI_LAYER);
+		difficulty.font		=
 		hiScoreTitle.font	=
 		scoreTitle.font		=
 		grazeTitle.font		=
@@ -65,6 +66,7 @@ struct GameUI {
 			TextRect{10, 1},
 			Vec2(1.0, 0.5)
 		};
+		difficulty.text		=
 		scoreTitle.text		=
 		hiScoreTitle.text	=
 		grazeTitle.text		=
@@ -73,6 +75,7 @@ struct GameUI {
 			TextRect{10, 1},
 			Vector2(0, 0.5)
 		};
+		difficulty.text.content		= "NULL";
 		pointTitle.text.content		= "Point";
 		grazeTitle.text.content		= "Graze";
 		scoreTitle.text.content		= "Score";
@@ -118,9 +121,9 @@ struct GameUI {
 	void setUIValues(PlayerData const& data) {
 		power.bar.value				= data.power;
 		power.label.text.content	= onPowerStringRequest(data.power);
-		point.text.content			= std::to_string(data.point);
-		graze.text.content			= std::to_string(data.graze);
-		score.text.content			= std::to_string(data.score);
+		point.text.content			= toString(data.point);
+		graze.text.content			= toString(data.graze);
+		score.text.content			= toString(data.score);
 		life.value					= data.life;
 		bomb.value					= data.bomb;
 		lifeBit.value				= data.lifeBit;
@@ -128,6 +131,7 @@ struct GameUI {
 	}
 
 	void setCharacterSpacing(Vec2 kerning) {
+		difficulty.text.spacing		=
 		grazeTitle.text.spacing		=
 		pointTitle.text.spacing		=
 		scoreTitle.text.spacing		=
@@ -139,11 +143,11 @@ struct GameUI {
 		graze.text.spacing			= kerning;
 	}
 
-	void setHighScore(size_t score) {
-		hiScore.text.content		= std::to_string(score);
-	}
+	void setHighScore(size_t score) {hiScore.text.content = toString(score);}
 
-	PowerStringFunc onPowerStringRequest = [](size_t p){return std::to_string(p);};
+	void setDifficulty(String difficulty) {hiScore.text.content = difficulty;}
+
+	PowerStringFunc onPowerStringRequest = [](size_t p){return toString(p);};
 };
 
 /// "Single Bar Type" Game UI alias.
