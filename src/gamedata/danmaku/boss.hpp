@@ -24,8 +24,8 @@ public:
 		};
 		timerDisplay.font = &timerFont;
 		phaseDisplay.font = &phaseFont;
-		phaseDisplay.font =
-		timerDisplay.font = TextData {
+		phaseDisplay.text =
+		timerDisplay.text = TextData {
 			"0",
 			TextRect{7, 1},
 			Vector2(0.5, 0.5)
