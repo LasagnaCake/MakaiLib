@@ -193,6 +193,15 @@ namespace Color {
 	constexpr Vector4 PURPLE		= fromRGBA(.5,	0,	1);
 	constexpr Vector4 PINK			= fromRGBA(1,	0,	.5);
 
+	constexpr Vector4 rainbow6[] = {
+		MAGENTA,
+		RED,
+		YELLOW,
+		GREEN,
+		CYAN,
+		BLUE
+	};
+
 	constexpr Vector4 rainbow8[] = {
 		PURPLE,
 		MAGENTA,

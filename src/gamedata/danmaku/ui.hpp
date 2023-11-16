@@ -43,6 +43,7 @@ struct GameUI {
 		pointTitle.setRenderLayer(UI_LAYER);
 		scoreTitle.setRenderLayer(UI_LAYER);
 		hiScoreTitle.setRenderLayer(UI_LAYER);
+		difficulty.setRenderLayer(UI_LAYER);
 		difficulty.font		=
 		hiScoreTitle.font	=
 		scoreTitle.font		=
@@ -66,7 +67,6 @@ struct GameUI {
 			TextRect{10, 1},
 			Vec2(1.0, 0.5)
 		};
-		difficulty.text		=
 		scoreTitle.text		=
 		hiScoreTitle.text	=
 		grazeTitle.text		=
@@ -74,6 +74,11 @@ struct GameUI {
 			"0",
 			TextRect{10, 1},
 			Vector2(0, 0.5)
+		};
+		difficulty.text	= TextData{
+			"0",
+			TextRect{10, 1},
+			Vector2(0.5, 0.5)
 		};
 		difficulty.text.content		= "NULL";
 		pointTitle.text.content		= "Point";
@@ -87,6 +92,7 @@ struct GameUI {
 	void hide()	{	setVisible(false);	}
 
 	void setVisible(bool visibility = true) {
+		difficulty.active	= visibility;
 		power.bar.active	= visibility;
 		power.label.active	= visibility;
 		life.active			= visibility;
@@ -145,7 +151,7 @@ struct GameUI {
 
 	void setHighScore(size_t score) {hiScore.text.content = toString(score);}
 
-	void setDifficulty(String difficulty) {hiScore.text.content = difficulty;}
+	void setDifficulty(String const& diff) {difficulty.text.content = diff;}
 
 	PowerStringFunc onPowerStringRequest = [](size_t p){return toString(p);};
 };
