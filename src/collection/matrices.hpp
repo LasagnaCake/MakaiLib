@@ -1231,6 +1231,7 @@ namespace MatMath {
 		return result;
 	}
 
+	// https://github.com/g-truc/glm/blob/master/glm/gtx/euler_angles.inl
 	template<Math::Operatable T>
 	constexpr Vector3 getEulerAnglesYXZ(Matrix<4, 4, T> const& mat) {
 		float T1 = atan2(mat[2][0], mat[2][2]);
@@ -1242,6 +1243,7 @@ namespace MatMath {
 		return Vector3(T1, T2, T3);
 	}
 
+	// https://github.com/g-truc/glm/blob/master/glm/gtx/euler_angles.inl
 	template<Math::Operatable T>
 	constexpr Vector3 getEulerAnglesXYZ(Matrix<4, 4, T> const& mat) {
 		float T1 = atan2(mat[2][1], mat[2][2]);
