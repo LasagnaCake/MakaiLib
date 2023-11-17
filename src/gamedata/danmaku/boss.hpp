@@ -22,14 +22,7 @@ public:
 		durationTimer.onSignal = SIGNAL {
 			beginNextPhase();
 		};
-		timerDisplay.font = &timerFont;
-		phaseDisplay.font = &phaseFont;
-		phaseDisplay.text =
-		timerDisplay.text = TextData {
-			"0",
-			TextRect{7, 1},
-			Vector2(0.5, 0.5)
-		};
+		setUIElements();
 	})
 
 	Texture2D
@@ -67,10 +60,11 @@ public:
 		EnemyEntity2D::onFrame(delta);
 		if (!battling) return;
 		float tsec = (phaseDuration - durationTimer.getCounter()) / getMainProgram()->maxCycleRate;
+		size_t ps = phases.size();
 		timerDisplay.text.content = Helper::floatString(tsec, 2);
-		remainingPhases.max			= phases.size();
-		remainingPhases.value		= phases.size() - currentPhase;
-		phaseDisplay.text.content	= toString(currentPhase) + " / " + toString(phases.size());
+		remainingPhases.max			= ps;
+		remainingPhases.value		= ps - currentPhase;
+		phaseDisplay.text.content	= toString(currentPhase) + " / " + toString(ps);
 	}
 
 	void beginNextPhase() {
@@ -115,6 +109,17 @@ public:
 	size_t currentPhase = 0;
 
 private:
+	void setUIElements() {
+		timerDisplay.font = &timerFont;
+		phaseDisplay.font = &phaseFont;
+		phaseDisplay.text =
+		timerDisplay.text = TextData {
+			"0",
+			TextRect{7, 1},
+			Vector2(0.5, 0.5)
+		};
+	}
+
 	void updatePhase() {
 		if(!battling) return;
 		if(phases.empty() || !(currentPhase < phases.size()))
