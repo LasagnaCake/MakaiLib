@@ -83,7 +83,7 @@ struct EnemyEntity2D: public AreaCircle2D {
 		invincibility.start(time);
 	}
 
-	void setObjectLayer(size_t layer, size_t topLayer) {
+	virtual void setObjectLayer(size_t layer, size_t topLayer) {
 		mesh.setRenderLayer(layer);
 		addToGroup(layer);
 		healthBar.setRenderLayer(topLayer);

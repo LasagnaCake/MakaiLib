@@ -75,7 +75,7 @@ Currently VERY scarce. Some of the code is commented.
 - - Using JSON
 - [x] GUI system
 - [x] Menu system
-- [ ] Dialogue system
+- [x] Dialogue system
 - [ ] Spellcard system
 - [ ] Curvy/Bent lasers
 - [ ] Bugs & Errors (see [Issues.txt](Issues.txt))

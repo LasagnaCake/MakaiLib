@@ -23,6 +23,7 @@ public:
 			beginNextPhase();
 		};
 		setUIElements();
+		setUILayer(UI_LAYER);
 	})
 
 	Texture2D
@@ -104,6 +105,15 @@ public:
 		healthBar.active		= visible;
 		timerDisplay.active		= visible;
 		remainingPhases.active	= visible;
+	}
+
+	/*virtual void setObjectLayer(size_t layer, size_t topLayer) override {
+		EnemyEntity2D::setObjectLayer(layer, topLayer);
+	}*/
+
+	void setUILayer(size_t layer) {
+		timerDisplay.setRenderLayer(layer);
+		phaseDisplay.setRenderLayer(layer);
 	}
 
 	size_t currentPhase = 0;

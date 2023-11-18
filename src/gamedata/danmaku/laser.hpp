@@ -7,6 +7,7 @@ struct LaserData: ObjectData {
 };
 
 struct LineLaserData: LaserData {
+	bool staticSpriteShape	= false;
 };
 
 struct BentLaserData: LaserData {
@@ -79,16 +80,27 @@ public:
 		return this;
 	}
 
+	void setSpriteSize(float width, float const& length, float stretch = 0) {
+		width	*= 0.5;
+		stretch	*= 0.5;
+		sprite->setOrigin(
+			Vector3(-stretch, +width),
+			Vector3(length + stretch, +width),
+			Vector3(-stretch, -width),
+			Vector3(length + stretch, -width)
+		);
+	}
+
 	void setLaserShape() {
-		if (!sprite) return;
+		if (!sprite || params.staticSpriteShape) return;
 		float width = (params.width.current * 0.5);
 		float stretch = (params.stretch.current * 0.5);
-		float curLen = params.length.current;
+		float length = params.length.current;
 		sprite->setOrigin(
 			Vector3(-width - stretch, +width),
-			Vector3(curLen + width + stretch, +width),
+			Vector3(length + width + stretch, +width),
 			Vector3(-width - stretch, -width),
-			Vector3(curLen + width + stretch, -width)
+			Vector3(length + width + stretch, -width)
 		);
 	}
 
@@ -106,9 +118,9 @@ public:
 		RayBounds2D self = RayBounds2D {
 			local.position,
 			params.length.current,
-			Math::max<float>(params.width.current / SQRT2 + params.hitbox.radius, 0.0f),
+			Math::max<float>((params.width.current / SQRT2) + params.hitbox.radius, 0.0f),
 			params.rot.current,
-			params.rotateHitbox ? params.rot.current : params.hitbox.rotation,
+			params.rotateHitbox ? (params.rot.current + params.hitbox.rotation) : params.hitbox.rotation,
 			params.stretch.current
 		};
 		return withinBounds(target, self);

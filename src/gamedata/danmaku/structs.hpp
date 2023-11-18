@@ -41,8 +41,8 @@ typedef TypedSignal<DanmakuObject*> ObjectSignal;
 
 typedef TypedTasking::Task<DanmakuObject> ObjectTask;
 
-#define DANMAKU_OBJ_TASK	T_TASK(DanmakuObject*)
-#define DANMAKU_OBJ_SIGNAL	T_SIGNAL(DanmakuObject*)
+#define DANMAKU_OBJ_TASK	T_TASK(DanmakuObject* self)
+#define DANMAKU_OBJ_SIGNAL	T_SIGNAL(DanmakuObject* self)
 
 struct DanmakuObject {
 	DanmakuObject() {
@@ -170,7 +170,7 @@ struct DanmakuObject {
 	}
 
 	virtual DanmakuObject* clearSignals() {
-		auto pass = T_SIGNAL(DanmakuObject*) {};
+		auto pass = DANMAKU_OBJ_SIGNAL {};
 		onObjectFrame	= pass;
 		onFree			= pass;
 		onUnpause		= pass;
