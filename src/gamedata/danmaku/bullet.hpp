@@ -46,7 +46,7 @@ public:
 		params.stretch.current = params.stretch.start;
 		params.hitbox.position = local.position;
 		updateSprite();
-		if (sprite)
+		if (sprite && params.rotateSprite)
 			sprite->local.rotation.z = local.rotation;
 		return this;
 	}
