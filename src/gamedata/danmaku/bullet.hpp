@@ -38,8 +38,8 @@ public:
 	}
 
 	Bullet* reset() override {
-		DanmakuObject::reset();
 		setZero();
+		DanmakuObject::reset();
 		params.vel.current = params.vel.start;
 		local.rotation =
 		params.rot.current = params.rot.start;
