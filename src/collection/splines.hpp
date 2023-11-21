@@ -28,14 +28,14 @@ namespace Spline {
 		}
 
 		constexpr Linear(Arguments<T> const& ps) {
-			points.reserve(ps.size());
+			points.resize(ps.size());
 			for (T& p: ps)
 				points.push_back(p);
 		}
 
 		template<size_t N>
 		constexpr Linear(const T (&ps)[N]) {
-			points.reserve(N);
+			points.resize(N);
 			for (T& p: ps)
 				points.push_back(p);
 		}
@@ -67,14 +67,14 @@ namespace Spline {
 			}
 
 			constexpr Spline(Arguments<Section<T, N>> const& secs) {
-				sections.reserve(secs.size());
+				sections.resize(secs.size());
 				for (Section<T, N>& s: secs)
 					sections.push_back(s);
 			}
 
 			template <size_t P>
 			constexpr Spline(const T (&points)[P][N]) {
-				sections.reserve(P);
+				sections.resize(P);
 				for SSRANGE(i, 0, P) {
 					Section<T, N> sec;
 					for SSRANGE(j, 0, N)
@@ -86,7 +86,7 @@ namespace Spline {
 			template <size_t P>
 			constexpr Spline(const T (&points)[P]) {
 				static_assert(P % N == 0, "Point count is not a multiple of N!");
-				sections.reserve(P/N);
+				sections.resize(P/N);
 				for RANGE(i, 0, P, N) {
 					Section<T, N> sec;
 					for SSRANGE(j, 0, N)
@@ -145,14 +145,14 @@ namespace Spline {
 			}
 
 			constexpr Spline(Arguments<Section<T>> const& secs) {
-				sections.reserve(secs.size());
+				sections.resize(secs.size());
 				for (Section<T>& s: secs)
 					sections.push_back(s);
 			}
 
 			template <size_t P>
 			constexpr Spline(const T (&points)[P][2]) {
-				sections.reserve(P);
+				sections.resize(P);
 				for SSRANGE(i, 0, P) {
 					sections.push_back(
 						Section<T> {
@@ -165,7 +165,7 @@ namespace Spline {
 
 			template<size_t P>
 			constexpr Spline(const T (&points)[P]) {
-				sections.reserve(P/2);
+				sections.resize(P/2);
 				static_assert(P % 2 == 0, "Point count is not a multiple of 2!");
 				for RANGE(i, 0, P, 2) {
 					sections.push_back(
