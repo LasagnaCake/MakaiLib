@@ -15,10 +15,21 @@ namespace Camera {
 	}
 
 	struct OrthographicData {
-		bool enabled	= false;
+		float strength	= 0;
 		Vector2 origin	= Vector2(0);
 		Vector2 size	= Vector2(1);
 	};
+
+	constexpr Matrix4x4 asMatrix(OrthographicData const& data, float const& zNear, float const& zFar) {
+		return MatMath::ortho(
+			data.origin.x,
+			data.size.x,
+			data.size.y,
+			data.origin.y,
+			zNear,
+			zFar
+		);
+	}
 
 	struct Camera3D {
 		Vector3 eye;
@@ -44,7 +55,14 @@ namespace Camera {
 		}
 
 		constexpr Matrix4x4 projection() const {
-			if (ortho.enabled)
+			if (ortho.strength == 0.0)
+				return MatMath::perspective(
+					fov,
+					aspect.tangent(),
+					zNear,
+					zFar
+				);
+			if (ortho.strength == 1.0)
 				return MatMath::ortho(
 					ortho.origin.x,
 					ortho.size.x,
@@ -53,12 +71,21 @@ namespace Camera {
 					zNear,
 					zFar
 				);
-			return MatMath::perspective(
+			Matrix4x4 om = MatMath::ortho(
+				ortho.origin.x,
+				ortho.size.x,
+				ortho.size.y,
+				ortho.origin.y,
+				zNear,
+				zFar
+			);
+			Matrix4x4 pm = MatMath::perspective(
 				fov,
 				aspect.tangent(),
 				zNear,
 				zFar
 			);
+			return MatMath::lerp<Matrix4x4>(pm, om, ortho.strength);
 		}
 	};
 
@@ -66,7 +93,7 @@ namespace Camera {
 		Camera3D camera;
 		camera.eye = Vec3(0, 0, -10);
 		camera.at = Vec3(0, 0, 1);
-		camera.ortho.enabled = true;
+		camera.ortho.strength = 1.0;
 		camera.ortho.origin = 0;
 		camera.ortho.size = size * -1;
 		camera.relativeToEye = true;
@@ -77,7 +104,7 @@ namespace Camera {
 		Camera3D camera;
 		camera.eye = Vec3(0, 0, -10);
 		camera.at = Vec3(0, 0, 1);
-		camera.ortho.enabled	= true;
+		camera.ortho.strength	= 1.0;
 		camera.ortho.origin		= 0;
 		camera.ortho.size		= ratio * -scale;
 		camera.relativeToEye = true;
@@ -118,7 +145,7 @@ namespace Camera {
 				zNear,
 				zFar,
 				ortho,
-				true
+				1.0
 			};
 		}
 

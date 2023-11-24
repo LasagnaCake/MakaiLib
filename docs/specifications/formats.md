@@ -212,7 +212,7 @@ If data gets saved in a different file:
 		// Required
 		"origin": [0, 0],
 		"size": [1, 1],
-		"enabled": false
+		"strength": 0.0
 	},
 	"relativeToEye": false
 }

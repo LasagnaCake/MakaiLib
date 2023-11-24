@@ -187,7 +187,7 @@ private:
 				cam.zNear	= dcam["zNear"].get<float>();
 				cam.zFar	= dcam["zFar"].get<float>();
 				if (dcam["ortho"].is_object()) {
-					cam.ortho.enabled	= dcam["ortho"]["enabled"].get<bool>();
+					cam.ortho.strength	= dcam["ortho"]["strength"].get<float>();
 					cam.ortho.origin	= Vector2(dcam["ortho"]["origin"][0].get<float>(), dcam["ortho"]["origin"][1].get<float>());
 					cam.ortho.size		= Vector2(dcam["ortho"]["size"][0].get<float>(), dcam["ortho"]["size"][1].get<float>());
 				}
@@ -284,9 +284,9 @@ private:
 			{"zNear",	cam.zNear	},
 			{"zFar",	cam.zFar	},
 			{"ortho", {
-				{"enabled",	cam.ortho.enabled							},
-				{"origin",	{cam.ortho.origin.x, cam.ortho.origin.y}	},
-				{"size",	{cam.ortho.size.x, cam.ortho.size.y}		}
+				{"strength",	cam.ortho.strength							},
+				{"origin",		{cam.ortho.origin.x, cam.ortho.origin.y}	},
+				{"size",		{cam.ortho.size.x, cam.ortho.size.y}		}
 			}},
 			{"relativeToEye", cam.relativeToEye}
 		};
