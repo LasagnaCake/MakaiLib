@@ -1259,7 +1259,7 @@ namespace MatMath {
 	concept ValidMatrix = requires {
 		T::rowCount;
 		T::columnCount;
-		T::DataType;
+		typename T::DataType;
 	}
 	&&	Type::Equal<T, Matrix<T::rowCount, T::columnCount, typename T::DataType>>
 	;
