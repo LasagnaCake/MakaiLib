@@ -19,19 +19,6 @@
 
 #define ERASE_IF(VEC, COND) if (!VEC.empty()) std::erase_if(VEC, [&](auto& elem){return (COND);})
 
-#ifdef ENABLE_DEBUG_OUTPUT_
-#include <iostream>
-#ifndef DEBUGLN
-#define DEBUGLN(TEXT)	std::cout << (TEXT) << "\n";
-#endif
-#ifndef DEBUG
-#define DEBUG(TEXT)	std::cout << (TEXT);
-#endif
-#else
-#define DEBUGLN(TEXT)
-#define DEBUG(TEXT)
-#endif
-
 /*
 #define DLL_EXPORT	__declspec(dllexport)
 #define DLL_IMPORT	__declspec(dllimport)

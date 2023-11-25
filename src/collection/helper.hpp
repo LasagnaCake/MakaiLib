@@ -1,6 +1,9 @@
 #ifndef HELPING_HAND_H
 #define HELPING_HAND_H
 
+#ifdef ENABLE_DEBUG_OUTPUT_
+#include <iostream>
+#endif
 #include <string>
 #include <vector>
 #include <filesystem>
@@ -17,6 +20,55 @@
 #include "conceptual.hpp"
 #include "definitions.hpp"
 #include "types.hpp"
+
+
+
+namespace Fold {
+	template<typename... Args>
+	constexpr bool land(Args... args) {
+		return (... && args);
+	}
+
+	template<typename... Args>
+	constexpr bool lor(Args... args) {
+		return (... || args);
+	}
+
+	template<typename... Args>
+	constexpr bool band(Args... args) {
+		return (... & args);
+	}
+
+	template<typename... Args>
+	constexpr bool bor(Args... args) {
+		return (... | args);
+	}
+
+	template<typename... Args>
+	constexpr bool bxor(Args... args) {
+		return (... ^ args);
+	}
+
+	template<typename... Args>
+	constexpr bool add(Args... args) {
+		return (... + args);
+	}
+
+	template<typename... Args>
+	constexpr bool sub(Args... args) {
+		return (... - args);
+	}
+
+	template<typename... Args>
+	constexpr bool mul(Args... args) {
+		return (... * args);
+	}
+
+	template<typename... Args>
+	constexpr bool div(Args... args) {
+		return (... / args);
+	}
+}
 
 namespace Helper {
 	namespace {
@@ -92,7 +144,7 @@ namespace Helper {
 	typedef Arguments<String>	StringArguments;
 
 	template<typename T, typename T2>
-	List<T> convertList(List<T2> const& source) {
+	constexpr List<T> convertList(List<T2> const& source) {
 		List<T> res;
 		res.reserve(source.size());
 		for EACH(i, source)
@@ -101,7 +153,7 @@ namespace Helper {
 	}
 
 	template<typename T, typename T2>
-	List<T> getKeys(HashMap<T, T2> const& lst) {
+	constexpr List<T> getKeys(HashMap<T, T2> const& lst) {
 		List<T> keys;
 		keys.reserve(lst.size());
 		for (auto i = lst.begin(); i != lst.end(); i++) {
@@ -111,7 +163,7 @@ namespace Helper {
 	}
 
 	template<typename T, typename T2>
-	List<T2> getValues(HashMap<T, T2> const& lst) {
+	constexpr List<T2> getValues(HashMap<T, T2> const& lst) {
 		List<T2> values;
 		values.reserve(lst.size());
 		for (auto i = lst.begin(); i != lst.end(); i++) {
@@ -121,7 +173,7 @@ namespace Helper {
 	}
 
 	template<typename T, typename T2>
-	List<T> getKeys(FuzzyHashMap<T, T2> const& lst) {
+	constexpr List<T> getKeys(FuzzyHashMap<T, T2> const& lst) {
 		List<T> keys;
 		keys.reserve(lst.size());
 		for (auto i = lst.begin(); i != lst.end(); i++) {
@@ -131,7 +183,7 @@ namespace Helper {
 	}
 
 	template<typename T, typename T2>
-	List<T2> getValues(FuzzyHashMap<T, T2> const& lst) {
+	constexpr List<T2> getValues(FuzzyHashMap<T, T2> const& lst) {
 		List<T2> values;
 		values.reserve(lst.size());
 		for (auto i = lst.begin(); i != lst.end(); i++) {
@@ -178,7 +230,7 @@ namespace Helper {
 	using Enumerated = HashMap<size_t, T>;
 
 	template<typename T>
-	Enumerated<T> enumerate(List<T> const& lst) {
+	constexpr Enumerated<T> enumerate(List<T> const& lst) {
 		Enumerated<T> res;
 		size_t i = 0;
 		for(auto& elem: lst)
@@ -186,13 +238,49 @@ namespace Helper {
 		return res;
 	}
 
-	inline bool isHexString(String const& str) {
+	constexpr bool isHexString(String const& str) {
 		return std::all_of(str.begin(), str.end(), [](unsigned char const& c)->bool{return std::isxdigit(c);});
 	}
+
+	template<typename T>
+	constexpr void byteCopy(T& from, T& to) {
+		memcpy(&from, &to, sizeof(T));
+	}
+
+	template<typename T>
+	constexpr void arrayCopy(T* from, T* to, size_t sz) {
+		if (!Fold::land(from, to, sz))
+			return;
+		memcpy(from, to, sizeof(T) * sz);
+	}
+
+	#ifdef ENABLE_DEBUG_OUTPUT_
+	template<typename... Args>
+	constexpr void println(Args... args) {
+		(std::cout << ... << args) << "\n";
+	}
+
+	template<typename... Args>
+	constexpr void print(Args... args) {
+		(std::cout << ... << args);
+	}
+	#endif // ENABLE_DEBUG_OUTPUT_
 
 	typedef std::regex				Regex;
 	typedef std::wregex				WideRegex;
 }
+
+#ifdef ENABLE_DEBUG_OUTPUT_
+#ifndef DEBUGLN
+#define DEBUG(...)		Helper::print(__VA_ARGS__)
+#endif
+#ifndef DEBUG
+#define DEBUGLN(...)	Helper::println(__VA_ARGS__)
+#endif
+#else
+#define DEBUGLN(...)
+#define DEBUG(...)
+#endif // ENABLE_DEBUG_OUTPUT_
 
 using Helper::String;
 using Helper::WideString;
