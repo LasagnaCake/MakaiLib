@@ -431,13 +431,13 @@ namespace Makai {
 			const GLchar* message,
 			const void* userParam
 		) {
-			DEBUGLN(toString(
+			DEBUGLN(
 				"[GL CALLBACK"
 				, String(type == GL_DEBUG_TYPE_ERROR ? " (GL ERROR)" : "")	, "] "
 				, "Type: "		, type				, ", "
 				, "Severity: "	, severity			, ", "
 				, "Message: "	, String(message)	, ", "
-			));
+			);
 		}
 	}
 
