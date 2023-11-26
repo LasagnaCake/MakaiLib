@@ -21,6 +21,16 @@
 #include "definitions.hpp"
 #include "types.hpp"
 
+namespace std {
+	constexpr std::string	to_string(std::string const& s)		{return s;	}
+	constexpr std::wstring	to_wstring(std::wstring const& ws)	{return ws;	}
+
+	template<typename T>
+	constexpr std::string	to_string(T const& val)	requires Type::Convertible<T, string>	{return string(val);	}
+	template<typename T>
+	constexpr std::wstring	to_wstring(T const& val) requires Type::Convertible<T, wstring>	{return wstring(val);	}
+}
+
 namespace Fold {
 	template<typename... Args>
 	constexpr bool land(Args const&... args) {
@@ -66,16 +76,6 @@ namespace Fold {
 	constexpr bool div(Args const&... args) {
 		return (... / args);
 	}
-}
-
-namespace std {
-	constexpr std::string	to_string(std::string const& s)		{return s;	}
-	constexpr std::wstring	to_wstring(std::wstring const& ws)	{return ws;	}
-
-	template<typename T>
-	constexpr std::string	to_string(T const& val) requires Type::Convertible<T, string>	{return string(val);	}
-	template<typename T>
-	constexpr std::wstring	to_wstring(T const& val) requires Type::Convertible<T, wstring>	{return wstring(val);	}
 }
 
 namespace Helper {
@@ -436,10 +436,12 @@ inline float		toFloat(String s)		{return std::stof(s);	}
 inline double		toDouble(String s)		{return std::stod(s);	}
 inline long double	toLongDouble(String s)	{return std::stold(s);	}
 
+inline int8		toInt8(String s, size_t base = 10)		{return std::stoi(s, nullptr, base);	}
 inline int16	toInt16(String s, size_t base = 10)		{return std::stoi(s, nullptr, base);	}
 inline int32	toInt32(String s, size_t base = 10)		{return std::stol(s, nullptr, base);	}
 inline int64	toInt64(String s, size_t base = 10)		{return std::stoll(s, nullptr, base);	}
 
+inline uint8	toUInt8(String s, size_t base = 10)		{return std::stoul(s, nullptr, base);	}
 inline uint16	toUInt16(String s, size_t base = 10)	{return std::stoul(s, nullptr, base);	}
 inline uint32	toUInt32(String s, size_t base = 10)	{return std::stoul(s, nullptr, base);	}
 inline uint64	toUInt64(String s, size_t base = 10)	{return std::stoull(s, nullptr, base);	}
