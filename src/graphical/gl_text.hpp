@@ -18,17 +18,18 @@ struct TextData {
 };
 
 namespace {
-	bool isTextDataEqual(TextData& a, TextData& b) {
-		return	a.content		== b.content
-			&&	a.rect.h		== b.rect.h
-			&&	a.rect.v		== b.rect.v
-			&&	a.textAlign.x	== b.textAlign.x
-			&&	a.textAlign.y	== b.textAlign.y
-			&&	a.rectAlign.x	== b.rectAlign.x
-			&&	a.rectAlign.y	== b.rectAlign.y
-			&&	a.spacing		== b.spacing
-			&&	a.maxChars		== b.maxChars
-		;
+	constexpr bool isTextDataEqual(TextData const& a, TextData const& b) {
+		return Fold::land(
+			a.content		== b.content
+		,	a.rect.h		== b.rect.h
+		,	a.rect.v		== b.rect.v
+		,	a.textAlign.x	== b.textAlign.x
+		,	a.textAlign.y	== b.textAlign.y
+		,	a.rectAlign.x	== b.rectAlign.x
+		,	a.rectAlign.y	== b.rectAlign.y
+		,	a.spacing		== b.spacing
+		,	a.maxChars		== b.maxChars
+		);
 	}
 }
 
