@@ -21,8 +21,6 @@
 #include "definitions.hpp"
 #include "types.hpp"
 
-
-
 namespace Fold {
 	template<typename... Args>
 	constexpr bool land(Args... args) {
@@ -68,6 +66,11 @@ namespace Fold {
 	constexpr bool div(Args... args) {
 		return (... / args);
 	}
+}
+
+namespace std {
+	constexpr std::string to_string(std::string s)		{return s;}
+	constexpr std::wstring to_wstring(std::wstring ws)	{return ws;}
 }
 
 namespace Helper {
@@ -266,20 +269,44 @@ namespace Helper {
 	}
 	#endif // ENABLE_DEBUG_OUTPUT_
 
+	template<typename... Args>
+	constexpr StringList asStringList(Args... args) {
+		StringList sl;
+		(sl.push_back(std::to_string(args)), ...);
+		return sl;
+	}
+
+	template<typename... Args>
+	constexpr String concatenateString(Args... args) {
+		return (... + std::to_string(args));
+	}
+
+	constexpr String concatenateString(StringArguments const& args) {
+		String s = "";
+		for (String a: args) s += a;
+		return s;
+	}
+
+	constexpr String concatenateString(StringList const& args) {
+		String s = "";
+		for (String a: args) s += a;
+		return s;
+	}
+
 	typedef std::regex				Regex;
 	typedef std::wregex				WideRegex;
 }
 
 #ifdef ENABLE_DEBUG_OUTPUT_
-#ifndef DEBUGLN
+#ifndef DEBUG
 #define DEBUG(...)		Helper::print(__VA_ARGS__)
 #endif
-#ifndef DEBUG
+#ifndef DEBUGLN
 #define DEBUGLN(...)	Helper::println(__VA_ARGS__)
 #endif
 #else
-#define DEBUGLN(...)
 #define DEBUG(...)
+#define DEBUGLN(...)
 #endif // ENABLE_DEBUG_OUTPUT_
 
 using Helper::String;
@@ -350,14 +377,9 @@ String toString(WideString const& wstr){
 }
 
 template<typename T>
-constexpr inline String toString(const T& val) {
-	return std::to_string(val);
-}
-
+constexpr inline String toString(const T& val)		{return std::to_string(val);}
 template<typename T>
-constexpr inline String toWideString(const T& val) {
-	return std::to_wstring(val);
-}
+constexpr inline String toWideString(const T& val)	{return std::to_wstring(val);}
 
 inline int					toInt(String s, size_t base = 10)				{return std::stoi(s, nullptr, base);	}
 inline long					toLong(String s, size_t base = 10)				{return std::stol(s, nullptr, base);	}

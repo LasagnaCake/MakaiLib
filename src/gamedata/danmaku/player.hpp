@@ -223,11 +223,7 @@ struct PlayerEntity2D: AreaCircle2D {
 	}
 
 	virtual void onItemGet(size_t type, size_t quantity) {
-		DEBUG("{ Item Type: ");
-		DEBUG(type);
-		DEBUG(" (");
-		DEBUG(quantity);
-		DEBUGLN(") }");
+		DEBUGLN("{ Item Type: ", type, " (", quantity, ") }");
 		switch (type) {
 			case ItemType::POWER_ITEM:		data.power		+= quantity; break;
 			case ItemType::POINT_ITEM:		data.point		+= quantity; break;

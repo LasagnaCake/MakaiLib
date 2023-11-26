@@ -514,8 +514,7 @@ public:
 			case GL_INT:
 			case GL_FLOAT:			size = 4;	break;
 		}
-		DEBUG("Image Size: ");
-		DEBUGLN(size);
+		DEBUG("Image Size: ", size);
 		switch (format) {
 			case GL_DEPTH_COMPONENT:
 			case GL_RED:							break;
@@ -525,27 +524,21 @@ public:
 			default:
 			case GL_RGBA:				size *= 4;	break;
 		}
-		DEBUG("Image Pixel Width: ");
-		DEBUGLN(size);
-		DEBUG("Width: ");
-		DEBUGLN(width);
-		DEBUG("Height: ");
-		DEBUGLN(height);
-		DEBUG("Image Size: ");
-		DEBUGLN(((size_t)width) * ((size_t)height) * size);
+		DEBUGLN("Image Pixel Width: ", size);
+		DEBUGLN("Width: ", width);
+		DEBUGLN("Height: ", height);
+		DEBUGLN("Image Size: ", ((size_t)width) * ((size_t)height) * size);
 		ImageData2D imgdat = {width, height, type, format, internalFormat, minFilter, magFilter};
 		DEBUGLN("Reserving buffer...");
 		imgdat.data.resize(((size_t)width) * ((size_t)height) * size, 0);
-		DEBUG("Reserved: ");
-		DEBUGLN(imgdat.data.size());
+		DEBUGLN("Reserved: ", imgdat.data.size());
 		if (imgdat.data.empty()) throw Error::FailedAction("Somehow, the image data is empty.");
 		DEBUGLN("Extracting pixels...");
 		glBindTexture(GL_TEXTURE_2D, id);
 		glGetTexImage(GL_TEXTURE_2D, 0, format, type, imgdat.data.data());
 		glBindTexture(GL_TEXTURE_2D, 0);
 		DEBUGLN("Done!");
-		DEBUG("Reserved: ");
-		DEBUGLN(imgdat.data.size());
+		DEBUGLN("Reserved: ", imgdat.data.size());
 		return imgdat;
 	}
 

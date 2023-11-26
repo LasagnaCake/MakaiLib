@@ -17,6 +17,7 @@
 #include "../grouping.hpp"
 #include "../errors.hpp"
 #include "../definitions.hpp"
+#include "../helper.hpp"
 
 #ifndef DEFAULT_ENTITY_ROOT_NAME
 /// Default entity root name (MUST NOT CONTAIN '/')
@@ -446,9 +447,7 @@ namespace EntityClass {
 		void condemn() {
 			if (condemned) return;
 			condemned = true;
-			DEBUG("\n<");
-			DEBUG(name);
-			DEBUGLN(">\n");
+			DEBUGLN("\n<", name, ">\n");
 			// Clear taskers
 			DEBUGLN("Clearing taskers...");
 			taskers.clearTaskers();
@@ -461,9 +460,7 @@ namespace EntityClass {
 			removeFromAllGroups();
 			ERASE_IF(destroyQueue, elem == &destroy);
 			DEBUGLN("Adieu!");
-			DEBUG("\n</");
-			DEBUG(name);
-			DEBUGLN(">\n");
+			DEBUGLN("\n</", name, ">\n");
 		}
 
 		/// Returns whether a given object would be a valid parent object.

@@ -7,13 +7,9 @@
 #define ENABLE_DEBUG_OUTPUT_
 #include <iostream>
 #define ERR_LOG(TEXT) std::cerr << (TEXT) << std::endl
-#define DEBUGLN(TEXT) std::cout << (TEXT); std::cout << "\n"
-#define DEBUG(TEXT) std::cout << (TEXT)
 #define FLUSH() std::cout << std::endl
 #else
 #define ERR_LOG(TEXT)
-#define DEBUGLN(TEXT)
-#define DEBUG(TEXT)
 #define FLUSH()
 #endif // _MAKAI_DEBUG_
 
@@ -124,6 +120,7 @@
 #error "This engine was designed for at least 32 bit processors."
 #endif
 
+#include "collection/helper.hpp"
 #include "collection/types.hpp"
 #include "collection/conceptual.hpp"
 #include "collection/referential.hpp"
@@ -131,7 +128,6 @@
 #include "collection/definitions.hpp"
 #include "collection/dataview.hpp"
 #include "collection/threaddata.hpp"
-#include "collection/helper.hpp"
 #include "collection/errors.hpp"
 #include "collection/entity/entity.hpp"
 #include "collection/vectorn.hpp"

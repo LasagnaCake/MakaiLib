@@ -60,8 +60,7 @@ namespace SmartPointer {
 				}
 				DEBUGLN("Updating reference counter...");
 				_pointerDB[(void*)ref].count--;
-				DEBUG("References: ");
-				DEBUGLN(_pointerDB[(void*)ref].count);
+				DEBUGLN("References: ", _pointerDB[(void*)ref].count);
 			}
 			ref = nullptr;
 			return (*this);

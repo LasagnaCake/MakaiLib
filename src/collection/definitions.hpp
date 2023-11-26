@@ -19,6 +19,9 @@
 
 #define ERASE_IF(VEC, COND) if (!VEC.empty()) std::erase_if(VEC, [&](auto& elem){return (COND);})
 
+#define NAMEOF(VALUE)	#VALUE
+#define TYPENAME(VALUE)	typeid(VALUE).name()
+
 /*
 #define DLL_EXPORT	__declspec(dllexport)
 #define DLL_IMPORT	__declspec(dllimport)
