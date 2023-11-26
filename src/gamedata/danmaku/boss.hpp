@@ -61,11 +61,11 @@ public:
 		EnemyEntity2D::onFrame(delta);
 		if (!battling) return;
 		float tsec = (phaseDuration - durationTimer.getCounter()) / getMainProgram()->maxCycleRate;
-		size_t ps = phases.size();
+		size_t phaseCount = phases.size();
 		timerDisplay.text.content = Helper::floatString(tsec, 2);
-		remainingPhases.max			= ps;
-		remainingPhases.value		= ps - currentPhase;
-		phaseDisplay.text.content	= toString(currentPhase) + " / " + toString(ps);
+		remainingPhases.max			= phaseCount;
+		remainingPhases.value		= phaseCount - currentPhase;
+		phaseDisplay.text.content	= toString(currentPhase, " / ", phaseCount);
 	}
 
 	void beginNextPhase() {

@@ -23,47 +23,47 @@
 
 namespace Fold {
 	template<typename... Args>
-	constexpr bool land(Args... args) {
+	constexpr bool land(Args const&... args) {
 		return (... && args);
 	}
 
 	template<typename... Args>
-	constexpr bool lor(Args... args) {
+	constexpr bool lor(Args const&... args) {
 		return (... || args);
 	}
 
 	template<typename... Args>
-	constexpr bool band(Args... args) {
+	constexpr bool band(Args const&... args) {
 		return (... & args);
 	}
 
 	template<typename... Args>
-	constexpr bool bor(Args... args) {
+	constexpr bool bor(Args const&... args) {
 		return (... | args);
 	}
 
 	template<typename... Args>
-	constexpr bool bxor(Args... args) {
+	constexpr bool bxor(Args const&... args) {
 		return (... ^ args);
 	}
 
 	template<typename... Args>
-	constexpr bool add(Args... args) {
+	constexpr bool add(Args const&... args) {
 		return (... + args);
 	}
 
 	template<typename... Args>
-	constexpr bool sub(Args... args) {
+	constexpr bool sub(Args const&... args) {
 		return (... - args);
 	}
 
 	template<typename... Args>
-	constexpr bool mul(Args... args) {
+	constexpr bool mul(Args const&... args) {
 		return (... * args);
 	}
 
 	template<typename... Args>
-	constexpr bool div(Args... args) {
+	constexpr bool div(Args const&... args) {
 		return (... / args);
 	}
 }
@@ -241,6 +241,15 @@ namespace Helper {
 		return res;
 	}
 
+	template<typename T, typename... Args>
+	constexpr Enumerated<T> enumerate(Args... args)
+	requires (... && Type::Constructible<T, Args>) {
+		Enumerated<T> res;
+		size_t i = 0;
+		((res[i++] = args), ...);
+		return res;
+	}
+
 	constexpr bool isHexString(String const& str) {
 		return std::all_of(str.begin(), str.end(), [](unsigned char const& c)->bool{return std::isxdigit(c);});
 	}
@@ -269,25 +278,13 @@ namespace Helper {
 	}
 	#endif // ENABLE_DEBUG_OUTPUT_
 
-	template<typename... Args>
-	constexpr StringList asStringList(Args... args) {
-		StringList sl;
-		(sl.push_back(std::to_string(args)), ...);
-		return sl;
-	}
-
-	template<typename... Args>
-	constexpr String concatenateString(Args... args) {
-		return (... + std::to_string(args));
-	}
-
-	constexpr String concatenateString(StringArguments const& args) {
+	constexpr String concatenate(StringArguments const& args) {
 		String s = "";
 		for (String a: args) s += a;
 		return s;
 	}
 
-	constexpr String concatenateString(StringList const& args) {
+	constexpr String concatenate(StringList const& args) {
 		String s = "";
 		for (String a: args) s += a;
 		return s;
@@ -328,6 +325,44 @@ using Helper::Any;
 using Helper::Nullable;
 using Helper::Regex;
 using Helper::Span;
+
+namespace Fold {
+	template<typename T, typename... Args>
+	constexpr List<T> toList(Args const&... args)
+	requires (... && Type::Constructible<T, Args>) {
+		List<T> lst;
+		(lst.push_back(T(args)), ...);
+		return lst;
+	}
+
+	template<typename T, typename... Args>
+	constexpr StringList toList(Args const&... args)
+	requires Type::Equal<T, String> {
+		StringList lst;
+		(lst.push_back(std::to_string(args)), ...);
+		return lst;
+	}
+
+	template<typename T, typename... Args>
+	constexpr List<WideString> toList(Args const&... args)
+	requires Type::Equal<T, WideString> {
+		List<WideString> lst;
+		(lst.push_back(std::to_wstring(args)), ...);
+		return lst;
+	}
+
+	template<typename T, typename... Args>
+	constexpr String concatenate(Args const&... args)
+	requires Type::Equal<T, String> {
+		return (... + std::to_string(args));
+	}
+
+	template<typename T, typename... Args>
+	constexpr WideString concatenate(Args const&... args)
+	requires Type::Equal<T, WideString> {
+		return (... + std::to_wstring(args));
+	}
+}
 
 inline String regexReplace(String const& str, Regex const& expr, String const& fmt) {
 	return std::regex_replace(str, expr, fmt);
@@ -377,9 +412,14 @@ String toString(WideString const& wstr){
 }
 
 template<typename T>
-constexpr inline String toString(const T& val)		{return std::to_string(val);}
+constexpr inline String toString(const T& val)		{return std::to_string(val);	}
 template<typename T>
-constexpr inline String toWideString(const T& val)	{return std::to_wstring(val);}
+constexpr inline String toWideString(const T& val)	{return std::to_wstring(val);	}
+
+template<typename... Args>
+String toString(Args const&... args)			{return Fold::concatenate<String>(args...);		}
+template<typename... Args>
+WideString toWideString(Args const&... args)	{return Fold::concatenate<WideString>(args...);	}
 
 inline int					toInt(String s, size_t base = 10)				{return std::stoi(s, nullptr, base);	}
 inline long					toLong(String s, size_t base = 10)				{return std::stol(s, nullptr, base);	}

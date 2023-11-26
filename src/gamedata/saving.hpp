@@ -23,7 +23,7 @@ public:
 	SaveDataView operator[](size_t const& index) {
 		if (isNull()) view() = JSON::array();
 		else if (!isArray()) throw Error::InvalidAction("Parameter '" + name + "' is not an array!");
-		return SaveDataView(view()[index], "index:"+toString(index));
+		return SaveDataView(view()[index], toString("index:", toString(index)));
 	}
 
 	template<typename T>

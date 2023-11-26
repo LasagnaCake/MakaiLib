@@ -77,7 +77,7 @@ public:
 		vector<JSONData> objpaths;
 		FileSystem::makeDirectory(folder);
 		for (auto [i, obj]: Helper::enumerate(objects)) {
-			string objname		= "obj_" + toString(i);
+			string objname		= toString("obj_", i);
 			string folderpath	= FileSystem::concatenatePath(folder, objname);
 			string objpath		= FileSystem::concatenatePath(folder, objname);
 			if (!integratedObjects) {
