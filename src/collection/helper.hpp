@@ -69,8 +69,13 @@ namespace Fold {
 }
 
 namespace std {
-	constexpr std::string to_string(std::string s)		{return s;}
-	constexpr std::wstring to_wstring(std::wstring ws)	{return ws;}
+	constexpr std::string	to_string(std::string const& s)		{return s;	}
+	constexpr std::wstring	to_wstring(std::wstring const& ws)	{return ws;	}
+
+	template<typename T>
+	constexpr std::string	to_string(T const& val) requires Type::Convertible<T, string>	{return string(val);	}
+	template<typename T>
+	constexpr std::wstring	to_wstring(T const& val) requires Type::Convertible<T, wstring>	{return wstring(val);	}
 }
 
 namespace Helper {
@@ -278,6 +283,42 @@ namespace Helper {
 	}
 	#endif // ENABLE_DEBUG_OUTPUT_
 
+	template<typename T, typename... Args>
+	constexpr List<T> toList(Args const&... args)
+	requires (... && Type::Constructible<T, Args>) {
+		List<T> lst;
+		(lst.push_back(T(args)), ...);
+		return lst;
+	}
+
+	template<typename T, typename... Args>
+	constexpr StringList toList(Args const&... args)
+	requires Type::Equal<T, String> {
+		StringList lst;
+		(lst.push_back(std::to_string(args)), ...);
+		return lst;
+	}
+
+	template<typename T, typename... Args>
+	constexpr List<WideString> toList(Args const&... args)
+	requires Type::Equal<T, WideString> {
+		List<WideString> lst;
+		(lst.push_back(std::to_wstring(args)), ...);
+		return lst;
+	}
+
+	template<typename T, typename... Args>
+	constexpr String concatenate(Args const&... args)
+	requires Type::Equal<T, String> {
+		return (... + std::to_string(args));
+	}
+
+	template<typename T, typename... Args>
+	constexpr WideString concatenate(Args const&... args)
+	requires Type::Equal<T, WideString> {
+		return (... + std::to_wstring(args));
+	}
+
 	constexpr String concatenate(StringArguments const& args) {
 		String s = "";
 		for (String a: args) s += a;
@@ -325,44 +366,6 @@ using Helper::Any;
 using Helper::Nullable;
 using Helper::Regex;
 using Helper::Span;
-
-namespace Fold {
-	template<typename T, typename... Args>
-	constexpr List<T> toList(Args const&... args)
-	requires (... && Type::Constructible<T, Args>) {
-		List<T> lst;
-		(lst.push_back(T(args)), ...);
-		return lst;
-	}
-
-	template<typename T, typename... Args>
-	constexpr StringList toList(Args const&... args)
-	requires Type::Equal<T, String> {
-		StringList lst;
-		(lst.push_back(std::to_string(args)), ...);
-		return lst;
-	}
-
-	template<typename T, typename... Args>
-	constexpr List<WideString> toList(Args const&... args)
-	requires Type::Equal<T, WideString> {
-		List<WideString> lst;
-		(lst.push_back(std::to_wstring(args)), ...);
-		return lst;
-	}
-
-	template<typename T, typename... Args>
-	constexpr String concatenate(Args const&... args)
-	requires Type::Equal<T, String> {
-		return (... + std::to_string(args));
-	}
-
-	template<typename T, typename... Args>
-	constexpr WideString concatenate(Args const&... args)
-	requires Type::Equal<T, WideString> {
-		return (... + std::to_wstring(args));
-	}
-}
 
 inline String regexReplace(String const& str, Regex const& expr, String const& fmt) {
 	return std::regex_replace(str, expr, fmt);
@@ -417,9 +420,9 @@ template<typename T>
 constexpr inline String toWideString(const T& val)	{return std::to_wstring(val);	}
 
 template<typename... Args>
-String toString(Args const&... args)			{return Fold::concatenate<String>(args...);		}
+String toString(Args const&... args)			{return Helper::concatenate<String>(args...);		}
 template<typename... Args>
-WideString toWideString(Args const&... args)	{return Fold::concatenate<WideString>(args...);	}
+WideString toWideString(Args const&... args)	{return Helper::concatenate<WideString>(args...);	}
 
 inline int					toInt(String s, size_t base = 10)				{return std::stoi(s, nullptr, base);	}
 inline long					toLong(String s, size_t base = 10)				{return std::stol(s, nullptr, base);	}
