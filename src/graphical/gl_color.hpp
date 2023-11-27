@@ -128,6 +128,14 @@ namespace Color {
 		return fromHexCodeRGBA(toUInt32(code, 16));
 	}
 
+	constexpr inline uint32 toHexCodeRGB(uint32 const& color) {
+		return color >> 8;
+	}
+
+	constexpr inline uint32 toHexCodeRGBA(uint32 const& color) {
+		return (color << 8) | 0xFF;
+	}
+
 	constexpr inline uint32 toHexCodeRGBA(Vector4 const& color) {
 		uint8
 			r = Math::clamp(color.x, 0.0f, 1.0f) * 255,
@@ -148,7 +156,11 @@ namespace Color {
 		return toHexCodeRGBA(color) >> 8;
 	}
 
-	inline String toHexCodeString(Vector4 const& color, bool toRGB = false, bool webColor = false) {
+	inline String toHexCodeString(
+		Vector4 const& color,
+		bool const& toRGB		= false,
+		bool const& webColor	= true
+	) {
 		std::stringstream code;
 		code
 		<<	(webColor ? "#" : "0x")
