@@ -30,6 +30,9 @@ namespace std {
 	constexpr std::string	to_string(T const& val)	requires Type::Convertible<T, string>	{return static_cast<string>(val);	}
 	template<typename T>
 	constexpr std::wstring	to_wstring(T const& val) requires Type::Convertible<T, wstring>	{return static_cast<wstring>(val);	}
+
+	constexpr std::string	to_string(char const& c)	{return c;	}
+	constexpr std::wstring	to_wstring(wchar const& wc)	{return wc;	}
 }
 
 namespace Fold {
