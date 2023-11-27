@@ -14,6 +14,7 @@
 #include <optional>
 #include <span>
 #include <cctype>
+#include <tuple>
 #ifdef _USE_CPP20_FORMAT_
 #include <format>
 #endif // _USE_CPP20_FORMAT_
@@ -26,9 +27,9 @@ namespace std {
 	constexpr std::wstring	to_wstring(std::wstring const& ws)	{return ws;	}
 
 	template<typename T>
-	constexpr std::string	to_string(T const& val)	requires Type::Convertible<T, string>	{return string(val);	}
+	constexpr std::string	to_string(T const& val)	requires Type::Convertible<T, string>	{return static_cast<string>(val);	}
 	template<typename T>
-	constexpr std::wstring	to_wstring(T const& val) requires Type::Convertible<T, wstring>	{return wstring(val);	}
+	constexpr std::wstring	to_wstring(T const& val) requires Type::Convertible<T, wstring>	{return static_cast<wstring>(val);	}
 }
 
 namespace Fold {
@@ -42,39 +43,45 @@ namespace Fold {
 		return (... || args);
 	}
 
-	template<typename... Args>
-	constexpr bool band(Args const&... args) {
+	template<typename T, typename... Args>
+	constexpr T band(Args const&... args) {
 		return (... & args);
 	}
 
-	template<typename... Args>
-	constexpr bool bor(Args const&... args) {
+	template<typename T, typename... Args>
+	constexpr T bor(Args const&... args) {
 		return (... | args);
 	}
 
-	template<typename... Args>
-	constexpr bool bxor(Args const&... args) {
+	template<typename T, typename... Args>
+	constexpr T bxor(Args const&... args) {
 		return (... ^ args);
 	}
 
-	template<typename... Args>
-	constexpr bool add(Args const&... args) {
+	template<typename T, typename... Args>
+	constexpr T add(Args const&... args) {
 		return (... + args);
 	}
 
-	template<typename... Args>
-	constexpr bool sub(Args const&... args) {
+	template<typename T, typename... Args>
+	constexpr T sub(Args const&... args) {
 		return (... - args);
 	}
 
-	template<typename... Args>
-	constexpr bool mul(Args const&... args) {
+	template<typename T, typename... Args>
+	constexpr T mul(Args const&... args) {
 		return (... * args);
 	}
 
-	template<typename... Args>
-	constexpr bool div(Args const&... args) {
+	template<typename T, typename... Args>
+	constexpr T div(Args const&... args) {
 		return (... / args);
+	}
+
+	template<typename T, typename... Args>
+	constexpr T& strins(T& stream, Args const&... args) {
+		(stream << ... << args);
+		return stream;
 	}
 }
 
@@ -91,10 +98,10 @@ namespace Helper {
 			std::function,
 			std::any,
 			std::variant,
-			std::optional/*,
-			std::valarray*/,
-			std::span
-		;
+			std::optional,
+			std::span,
+			std::tuple
+			;
 	}
 
 	typedef string String;
@@ -140,11 +147,11 @@ namespace Helper {
 	template<typename T>
 	using Nullable = optional<T>;
 
-	/*template<typename T>
-	using Vector = valarray<T>;*/
-
 	template<typename T, size_t LEN>
 	using Span = span<T, LEN>;
+
+	template<typename T>
+	using Tuple = tuple<T>;
 
 	typedef any Any;
 
@@ -212,7 +219,12 @@ namespace Helper {
 		if (!precision)
 			return std::to_string((long long)val);
 		std::stringstream ss;
-		ss << std::fixed << std::setprecision(precision) << val;
+		Fold::strins(
+			ss,
+			std::fixed,
+			std::setprecision(precision),
+			val
+		);
 		return ss.str();
 	}
 	#endif // _USE_CPP20_FORMAT_
@@ -273,19 +285,20 @@ namespace Helper {
 
 	#ifdef ENABLE_DEBUG_OUTPUT_
 	template<typename... Args>
-	constexpr void println(Args... args) {
-		(std::cout << ... << args) << "\n";
+	constexpr void print(Args... args) {
+		Fold::strins(std::cout, args...);
 	}
 
 	template<typename... Args>
-	constexpr void print(Args... args) {
-		(std::cout << ... << args);
+	constexpr void println(Args... args) {
+		print(args..., "\n");
 	}
 	#endif // ENABLE_DEBUG_OUTPUT_
 
 	template<typename T, typename... Args>
 	constexpr List<T> toList(Args const&... args)
-	requires (... && Type::Constructible<T, Args>) {
+	requires (... && Type::Constructible<T, Args>)
+	&& (!(Type::Equal<T, String> || Type::Equal<T, WideString>)) {
 		List<T> lst;
 		(lst.push_back(T(args)), ...);
 		return lst;
