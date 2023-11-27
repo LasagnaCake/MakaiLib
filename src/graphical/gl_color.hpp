@@ -128,15 +128,15 @@ namespace Color {
 		return fromHexCodeRGBA(toUInt32(code, 16));
 	}
 
-	constexpr inline uint32 toHexCodeRGB(uint32 const& color) {
+	constexpr uint32 toHexCodeRGB(uint32 const& color) {
 		return color >> 8;
 	}
 
-	constexpr inline uint32 toHexCodeRGBA(uint32 const& color) {
+	constexpr uint32 toHexCodeRGBA(uint32 const& color) {
 		return (color << 8) | 0xFF;
 	}
 
-	constexpr inline uint32 toHexCodeRGBA(Vector4 const& color) {
+	constexpr uint32 toHexCodeRGBA(Vector4 const& color) {
 		uint8
 			r = Math::clamp(color.x, 0.0f, 1.0f) * 255,
 			g = Math::clamp(color.y, 0.0f, 1.0f) * 255,
@@ -152,24 +152,29 @@ namespace Color {
 		return code;
 	}
 
-	constexpr inline uint32 toHexCodeRGB(Vector4 const& color) {
+	constexpr uint32 toHexCodeRGB(Vector4 const& color) {
 		return toHexCodeRGBA(color) >> 8;
 	}
 
-	inline String toHexCodeString(
+	constexpr String toHexCodeString(
 		Vector4 const& color,
 		bool const& toRGB		= false,
 		bool const& webColor	= true
 	) {
-		std::stringstream code;
-		code
-		<<	(webColor ? "#" : "0x")
-		<<	std::setfill('0')
-		<<	std::setw(toRGB ? 6 : 8)
-		<<	std::hex
-		<<	(toRGB ? toHexCodeRGB(color) : toHexCodeRGBA(color))
-		;
-		return code.str();
+		String code;
+		code += (webColor ? "#" : "0x");
+		uint32 hci = (toRGB ? toHexCodeRGB(color) : toHexCodeRGBA(color));
+		const uint8 hclen{toRGB ? 6 : 8};
+		uint8 nib{};
+		for SSRANGE(i, 0, hclen) {
+			nib = hci >> ((hclen - 1) - i) * 4;
+			code += (char)(
+				((nib & 0xF) < 0xA)
+			?	((nib & 0xF) + 0x30)
+			:	((nib & 0xF) - 0xA + 0x41)
+			);
+		}
+		return code;
 	}
 
 	// Transparency
