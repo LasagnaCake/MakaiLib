@@ -77,7 +77,7 @@ namespace Makai {
 				// If button is pressed...
 				if(state[button]) {
 					// If buffer not overflowing, increment buffer
-					if(buttonState < 0xffff) buttonState++;
+					if(buttonState < 0xFFFF) buttonState++;
 				}
 				// Else, zero state
 				else buttonState = 0;
@@ -107,7 +107,7 @@ namespace Makai {
 				// If button is pressed.
 				if(btn & SDL_BUTTON(i)) {
 					// If buffer not overflowing, increment buffer
-					if(buttonState < 0xffff) buttonState++;
+					if(buttonState < 0xFFFF) buttonState++;
 				}
 				// Else, zero state
 				else buttonState = 0;
