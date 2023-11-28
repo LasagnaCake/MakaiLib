@@ -158,8 +158,9 @@ namespace Dialog {
 				showText(msg.title, msg.text, msg.titleColor, msg.textColor);
 				autoplay = msg.autoplay;
 				autotimer.delay = msg.duration;
+				lastText	= msg;
 			} else {
-				last = msg;
+				last		= msg;
 				executeAction(msg);
 			}
 			last = msg;
@@ -275,6 +276,7 @@ namespace Dialog {
 			else if	(msg.title == "@:setframe:")	actionSetFrame();
 			else if	(msg.title == "@:setcolor:")	actionSetColor();
 			else if	(msg.title == "@:setpos:")		actionSetPosition();
+			else if	(msg.title == "@:settime:")		actionSetTransTime();
 			else	onAction(msg);
 		}
 
@@ -341,6 +343,13 @@ namespace Dialog {
 					actor,
 					"\" does not exist!\n</error>\n"
 				);
+			restAllInScene(time);
+			nextMessage();
+		}
+
+		void actionSetTransTime() {
+			time = last.duration;
+			restAllInScene(time);
 			nextMessage();
 		}
 
@@ -349,19 +358,12 @@ namespace Dialog {
 			if (tag.size() != 2) failedAction(toString(__LINE__), "@:setcolor:");
 			Vector4 color = Color::fromHexCodeString(tag[1]);
 			if (tag[0] == "standby") standbyColor = color;
+			restAllInScene(time);
 			nextMessage();
 		}
 
 		void actionReenter() {
-			for (auto& [actor, isInScene]: inScene)
-				if (isInScene) {
-					auto& anim = animator[actor];
-					auto& a = actors[actor];
-					if (!a.sprite) continue;
-					anim.tweenStep = last.easing;
-					anim.reinterpolateTo(a.position.rest, last.duration);
-					a.sprite->setColor(standbyColor);
-				}
+			restAllInScene(last.duration);
 			actionWait();
 		}
 
@@ -384,6 +386,7 @@ namespace Dialog {
 				if (!a.sprite) continue;
 				a.sprite->frame = actor.frame;
 			}
+			restAllInScene(time);
 			nextMessage();
 		}
 
@@ -401,9 +404,21 @@ namespace Dialog {
 			box.message.active	= false;
 		}
 
+		void restAllInScene(size_t const& time) {
+			for (auto& [actor, isInScene]: inScene)
+				if (isInScene) {
+					auto& anim = animator[actor];
+					auto& a = actors[actor];
+					if (!a.sprite) continue;
+					anim.tweenStep = last.easing;
+					anim.reinterpolateTo(a.position.rest, time);
+					a.sprite->setColor(standbyColor);
+				}
+		}
+
 		HashMap<String, bool> inScene;
 
-		Message last;
+		Message last, lastText;
 
 		Event::Timer endtimer;
 
