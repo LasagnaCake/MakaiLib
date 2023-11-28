@@ -186,9 +186,8 @@ namespace Drawer {
 			shader["posMatrix"](Matrix4x4(trans));
 			shader["uvMatrix"](Matrix4x4(uv));
 			shader["resolution"](Vector2(width, height));
-			Vector2 screenVUSize = (Scene::camera.ortho.size * -1);
-			shader["screenVUSize"](screenVUSize);
-			shader["screenVUSpace"](Vector2(width, height) / screenVUSize);
+			shader["screenVUSpace"](screenVUSpace);
+			shader["pixelVU"](Vector2(width, height) / screenVUSpace);
 			// Set material data
 			RenderData::Material::setMaterial(shader, material);
 			// Enable attribute pointers
@@ -226,6 +225,8 @@ namespace Drawer {
 		RawVertex rect[4];
 		/// The framebuffer's rendering shader.
 		Shader::Shader shader;
+		/// The framebuffer's screen Vertex Unit space. Usually the inverse of the camera's orthographic size.
+		Vector2 screenVUSpace = 1;
 
 	private:
 

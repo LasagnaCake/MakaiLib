@@ -12,8 +12,8 @@ in vec2 screenScale;
 
 layout (location = 0) out vec4	FragColor;
 
+uniform vec2 pixelVU;
 uniform vec2 screenVUSpace;
-uniform vec2 screenVUSize;
 
 uniform vec2 resolution = vec2(0);
 
@@ -146,8 +146,8 @@ uniform uint	debugView	= 0;
 #endif
 
 vec2 getCorrectCoords(vec2 v) {
-	v.y = screenVUSize.y - (v.y * -1);
-	return v * screenVUSpace;
+	v.y = screenVUSpace.y - (v.y * -1);
+	return v * pixelVU;
 }
 
 // TODO?: www.youtube.com/watch?v=5EuYKEvugLU
@@ -248,7 +248,7 @@ vec2 normalTo(vec2 vec) {
 
 vec2 polarWarp(out float pfac) {
 	vec2 target = (getCorrectCoords(polarWarpPosition) - gl_FragCoord.xy);
-	float distance = clamp(1 - length(target) / polarWarpSize, 0, 1);
+	float distance = clamp(1 - length(target) / (polarWarpSize * pixelVU.y), 0, 1);
 	pfac = distance;
 	if (polarWarpFishEye)
 		distance = sin(distance * PI);

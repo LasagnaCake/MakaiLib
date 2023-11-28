@@ -72,12 +72,14 @@ public:
 		// Create 2D Camera
 		Vector2 screenSpace = getWindowScale();
 		cam2D = Camera::getCamera2D(64, screenSpace);
+		getLayerBuffer().screenVUSpace = screenSpace * 64;
 		// Set 2D Camera
 		setCamera2D();
 	}
 
 	void onLayerDrawBegin(size_t layerID) override {
 		setLayerMaterial(layerID);
+		getLayerBuffer().screenVUSpace = cam2D.ortho.size * -1;
 	}
 
 	void onClose() override {}
