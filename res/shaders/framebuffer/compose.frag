@@ -146,7 +146,7 @@ uniform uint	debugView	= 0;
 #endif
 
 vec2 getCorrectCoords(vec2 v) {
-	v.y = screenVUSize.y - v.y;
+	v.y = screenVUSize.y - (v.y * -1);
 	return v * screenVUSpace;
 }
 
