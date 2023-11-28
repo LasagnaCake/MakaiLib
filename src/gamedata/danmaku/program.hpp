@@ -248,6 +248,10 @@ public:
 		default:
 			break;
 		}
+	}
+
+	void onPreLayerDraw(size_t layerID) override {
+		GameApp::onPreLayerDraw(layerID);
 		if (layerID <= BOSS_SPELL_OVERLAY_TOP_LAYER) {
 			getLayerBuffer().material.polarWarp = bossAura;
 			if (screenShake)
