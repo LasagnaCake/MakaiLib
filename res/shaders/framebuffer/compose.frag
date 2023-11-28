@@ -248,7 +248,7 @@ vec2 normalTo(vec2 vec) {
 
 vec2 polarWarp(out float pfac) {
 	vec2 target = (getCorrectCoords(polarWarpPosition) - gl_FragCoord.xy);
-	float distance =  clamp(1 - length(target) / polarWarpSize, 0, 1);
+	float distance = clamp(1 - length(target) / polarWarpSize, 0, 1);
 	pfac = distance;
 	if (polarWarpFishEye)
 		distance = sin(distance * PI);
