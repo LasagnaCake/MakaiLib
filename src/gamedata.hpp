@@ -131,6 +131,7 @@ namespace GameData {
 		#include "gamedata/danmaku/stage.hpp"
 		#include "gamedata/danmaku/program.hpp"
 		#include "gamedata/danmaku/ui.hpp"
+		#include "gamedata/danmaku/dialogue.hpp"
 	}
 
 	#endif

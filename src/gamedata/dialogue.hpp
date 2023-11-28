@@ -129,7 +129,8 @@ namespace Dialog {
 				end();
 				return;
 			}
-			Message& msg = messages[current];
+			DEBUGLN("Message: ", current);
+			Message& msg = messages[current++];
 			if (!isActionTag(msg.title)) {
 				box.shape.active	=
 				box.title.active	=
@@ -153,7 +154,7 @@ namespace Dialog {
 					inScene[actor.name] = !actor.leaving;
 					a.sprite->setColor(actor.tint);
 				}
-				onMessage(current);
+				onMessage(current-1);
 				showText(msg.title, msg.text, msg.titleColor, msg.textColor);
 				autoplay = msg.autoplay;
 				autotimer.delay = msg.duration;
@@ -161,7 +162,6 @@ namespace Dialog {
 				last = msg;
 				executeAction(msg);
 			}
-			current++;
 			last = msg;
 		}
 
@@ -274,6 +274,7 @@ namespace Dialog {
 			else if	(msg.title == "@:finish:")		actionFinish();
 			else if	(msg.title == "@:setframe:")	actionSetFrame();
 			else if	(msg.title == "@:setcolor:")	actionSetColor();
+			else if	(msg.title == "@:setpos:")		actionSetPosition();
 			else	onAction(msg);
 		}
 
@@ -286,10 +287,69 @@ namespace Dialog {
 		Vector4 standbyColor = Color::GRAY;
 
 	private:
+		void failedAction(String const& action, String const& line, String const& info = "none") {
+			throw Error::InvalidValue(
+				"Invalid action tag value!",
+				__FILE__,
+				line,
+				action,
+				"Please ensure the tag's value is formatted correctly!",
+				info
+			);
+		}
+
+		void actionSetPosition() {
+			if(last.text.empty()) failedAction(toString(__LINE__), "@:setpos:", "Missing action data");
+			// Get actor
+			StringList tag = Helper::splitString(last.text, '.');
+			if (tag.size() != 2) failedAction(toString(__LINE__), "@:setpos:", "Missing actor position to modify");
+			String actor = tag[0];
+			// Get target position
+			tag = Helper::splitString(tag[1], '=');
+			if (tag.size() != 2) failedAction(toString(__LINE__), "@:setpos:", "Missing assignment operator");
+			String target = tag[0];
+			target.erase(std::remove_if(target.begin(), target.end(), [](auto& e){return std::isspace(e);}), target.end());
+			// Get new position
+			tag = Helper::splitString(tag[1], ',');
+			if (tag.size() != 2) failedAction(toString(__LINE__), "@:setpos:", "Must contain both X and Y positional values");
+			// Do stuff
+			if (actors.contains(actor)) {
+				Actor& a = actors[actor];
+				Vector2 pos;
+				try {
+					pos.x = toFloat(tag[0]);
+					pos.y = toFloat(tag[1]);
+				} catch (std::invalid_argument const& e) {
+					failedAction(toString(__LINE__), "@:setpos:", "Could not convert positional data's values");
+				}
+				if		(target == "talk")	a.position.talking	= pos;
+				else if	(target == "rest")	a.position.rest		= pos;
+				else if	(target == "out")	a.position.out		= pos;
+				else
+					DEBUGLN(
+						"\n<error>\n"
+						"    !!! FAILED ACTION \"@:setpos:\" !!!"
+						"\n    Position target \"",
+						target,
+						"\" does not exist!\n</error>\n"
+					);
+			} else
+				DEBUGLN(
+					"\n<error>\n"
+					"    !!! FAILED ACTION \"@:setpos:\" !!!"
+					"\n    Actor \"",
+					actor,
+					"\" does not exist!\n</error>\n"
+				);
+			nextMessage();
+		}
+
 		void actionSetColor() {
 			StringList tag = Helper::splitString(last.text, '=');
+			if (tag.size() != 2) failedAction(toString(__LINE__), "@:setcolor:");
 			Vector4 color = Color::fromHexCodeString(tag[1]);
 			if (tag[0] == "standby") standbyColor = color;
+			nextMessage();
 		}
 
 		void actionReenter() {
