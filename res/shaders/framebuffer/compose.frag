@@ -12,6 +12,9 @@ in vec2 screenScale;
 
 layout (location = 0) out vec4	FragColor;
 
+uniform vec2 screenVUSpace;
+uniform vec2 screenVUSize;
+
 uniform vec2 resolution = vec2(0);
 
 uniform vec4 albedo = vec4(1);
@@ -142,6 +145,11 @@ uniform uint	debugView	= 0;
 #define SQRT2 1.4142135623
 #endif
 
+vec2 getCorrectCoords(vec2 v) {
+	v.y = screenVUSize.y - v.y;
+	return v * screenVUSpace;
+}
+
 // TODO?: www.youtube.com/watch?v=5EuYKEvugLU
 
 vec4 hueToPastel(float hue) {
@@ -187,10 +195,10 @@ vec4 applyGradient(vec4 color) {
 vec4 applyRainbow(vec4 color, vec2 coords) {
 	float fac = 0;
 	if (rainbowPolar)  {
-		vec2 target = (rainbowShift - gl_FragCoord.xy);
+		vec2 target = (getCorrectCoords(rainbowShift) - gl_FragCoord.xy);
 		fac = length(target / rainbowFrequency) + rainbowPolarShift;
 	} else {
-		vec2 rv = coords * rainbowFrequency + rainbowShift;
+		vec2 rv = coords * rainbowFrequency + getCorrectCoords(rainbowShift);
 		fac = rv.x + rv.y;
 	}
 	vec4 rainbow = vec4(hsl2rgb(vec3(fac, 1, 1)), 1);
@@ -239,7 +247,7 @@ vec2 normalTo(vec2 vec) {
 }
 
 vec2 polarWarp(out float pfac) {
-	vec2 target = (polarWarpPosition - gl_FragCoord.xy);
+	vec2 target = (getCorrectCoords(polarWarpPosition) - gl_FragCoord.xy);
 	float distance =  clamp(1 - length(target) / polarWarpSize, 0, 1);
 	pfac = distance;
 	if (polarWarpFishEye)

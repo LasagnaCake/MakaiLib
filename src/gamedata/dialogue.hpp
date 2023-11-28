@@ -288,6 +288,21 @@ namespace Dialog {
 
 		Vector4 standbyColor = Color::GRAY;
 
+	protected:
+		void restAllInScene(size_t const& time) {
+			for (auto& [actor, isInScene]: inScene)
+				if (isInScene) {
+					auto& anim = animator[actor];
+					auto& a = actors[actor];
+					if (!a.sprite) continue;
+					anim.tweenStep = last.easing;
+					anim.reinterpolateTo(a.position.rest, time);
+					a.sprite->setColor(standbyColor);
+				}
+		}
+
+		void restAllInScene() {restAllInScene(time);}
+
 	private:
 		void failedAction(String const& action, String const& line, String const& info = "none") {
 			throw Error::InvalidValue(
@@ -402,18 +417,6 @@ namespace Dialog {
 			box.shape.active	=
 			box.title.active	=
 			box.message.active	= false;
-		}
-
-		void restAllInScene(size_t const& time) {
-			for (auto& [actor, isInScene]: inScene)
-				if (isInScene) {
-					auto& anim = animator[actor];
-					auto& a = actors[actor];
-					if (!a.sprite) continue;
-					anim.tweenStep = last.easing;
-					anim.reinterpolateTo(a.position.rest, time);
-					a.sprite->setColor(standbyColor);
-				}
 		}
 
 		HashMap<String, bool> inScene;

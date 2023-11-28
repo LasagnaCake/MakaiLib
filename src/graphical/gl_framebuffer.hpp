@@ -186,6 +186,9 @@ namespace Drawer {
 			shader["posMatrix"](Matrix4x4(trans));
 			shader["uvMatrix"](Matrix4x4(uv));
 			shader["resolution"](Vector2(width, height));
+			Vector2 screenVUSize = (Scene::camera.ortho.size * -1);
+			shader["screenVUSize"](screenVUSize);
+			shader["screenVUSpace"](Vector2(width, height) / screenVUSize);
 			// Set material data
 			RenderData::Material::setMaterial(shader, material);
 			// Enable attribute pointers

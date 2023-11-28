@@ -7,7 +7,7 @@ struct DanmakuDialog: public Dialog::DialogPlayer {
 	TypedSignal<String> onBossMoveRequest	= T_SIGNAL(auto*) {};
 	TypedSignal<String> onBossExitRequest	= T_SIGNAL(auto*) {};
 
-	virtual void onAction(Dialog::Message const& msg) {
+	virtual void onAction(Dialog::Message const& msg) override {
 		Dialog::DialogPlayer::onAction(msg);
 		if (msg.title == "@:bossenter:")	actionBossEnter(msg);
 		if (msg.title == "@:bossexit:")		actionBossExit(msg);

@@ -113,7 +113,7 @@ public:
 	DanmakuManagerSet managers;
 
 	struct {
-		PolarWarpEffect effect;
+		PolarWarpEffect effect = {true};
 		bool enabled = false;
 	} bossAura;
 
@@ -244,10 +244,13 @@ public:
 	void onLayerDrawBegin(size_t layerID) override {
 		GameApp::onLayerDrawBegin(layerID);
 		if (layerID <= BOSS_SPELL_OVERLAY_TOP_LAYER) {
-			if (bossAura.enabled)
-				getLayerBuffer().material.polarWarp = bossAura.effect;
+			if (bossAura.enabled) {
+				PolarWarpEffect& pw = getLayerBuffer().material.polarWarp;
+				pw			= bossAura.effect;
+				pw.enabled	= true;
+			}
 			else
-				getLayerBuffer().material.polarWarp.enabled = false;
+				getLayerBuffer().material.polarWarp.enabled	= false;
 			if (screenShake)
 				getLayerBuffer().material.uvShift += Vector2(getWindowScale() * VecMath::angleV2(Math::Random::real<float>(0.0f, TAU)) * screenShake);
 		}
