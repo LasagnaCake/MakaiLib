@@ -240,11 +240,6 @@ public:
 
 	void onLayerDrawBegin(size_t layerID) override {
 		GameApp::onLayerDrawBegin(layerID);
-		if (layerID <= BOSS_SPELL_OVERLAY_TOP_LAYER) {
-			getLayerBuffer().material.polarWarp = bossAura;
-			if (screenShake)
-				getLayerBuffer().material.uvShift += Vector2(getWindowScale() * VecMath::angleV2(Math::Random::real<float>(0.0f, TAU)) * screenShake);
-		}
 		switch (layerID / TRUE_SUBLAYER_COUNT) {
 		case (WORLD_BOTTOM_LAYER / TRUE_SUBLAYER_COUNT):
 			setWorldMaterial3D();
@@ -252,6 +247,11 @@ public:
 			break;
 		default:
 			break;
+		}
+		if (layerID <= BOSS_SPELL_OVERLAY_TOP_LAYER) {
+			getLayerBuffer().material.polarWarp = bossAura;
+			if (screenShake)
+				getLayerBuffer().material.uvShift += Vector2(getWindowScale() * VecMath::angleV2(Math::Random::real<float>(0.0f, TAU)) * screenShake);
 		}
 	}
 
