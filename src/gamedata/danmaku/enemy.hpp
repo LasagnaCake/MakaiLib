@@ -17,6 +17,7 @@ struct EnemyEntity2D: public AreaCircle2D {
 		healthBar.material.color.w = 0.5;
 		healthBar.trans.rotation.z = -HPI;
 		healthBar.size = 2;
+		mesh.trans.position			= Vector3(-128, 128, 0);
 	});
 
 	float& health		= healthBar.value;
