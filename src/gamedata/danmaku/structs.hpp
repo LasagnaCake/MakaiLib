@@ -116,7 +116,7 @@ struct DanmakuObject {
 	}
 
 	DanmakuObject* spawn() {
-		if (despawning) return this;
+		if (despawning || free) return this;
 		spawning = true;
 		factor = 0.0f;
 		onObjectSpawnBegin();
@@ -125,6 +125,7 @@ struct DanmakuObject {
 	}
 
 	DanmakuObject* despawn() {
+		if (free) return this;
 		despawning = true;
 		spawning = false;
 		factor = 1.0f;
@@ -181,7 +182,8 @@ struct DanmakuObject {
 		return this;
 	}
 
-	virtual DanmakuObject* discard() {return this;}
+	virtual DanmakuObject* discard()		{return this;}
+	virtual DanmakuObject* forceDiscard()	{return this;}
 
 	virtual void updateSprite() = 0;
 

@@ -80,6 +80,11 @@ public:
 		return this;
 	}
 
+	LineLaser* forceDiscard() override {
+		despawn();
+		return this;
+	}
+
 	void setSpriteSize(float width, float const& length, float stretch = 0) {
 		width	*= 0.5;
 		stretch	*= 0.5;
@@ -142,10 +147,10 @@ public:
 	}
 
 protected:
-	void onObjectSpawnBegin() override {params.collidable = false;}
-	void onObjectSpawnEnd() override {params.collidable = true;}
-	void onObjectDespawnBegin() override {params.collidable = false;}
-	//void onObjectDespawnEnd() override {setFree(true);}
+	void onObjectSpawnBegin()	override {params.collidable = false;}
+	void onObjectSpawnEnd()		override {params.collidable = true;}
+	void onObjectDespawnBegin()	override {params.collidable = false;}
+	//void onObjectDespawnEnd()	override {setFree(true);}
 
 private:
 	template<size_t L, size_t A, size_t E> friend class LineLaserManager;
@@ -206,6 +211,11 @@ public:
 	void discardAll() {
 		GAME_PARALLEL_FOR
 		for SEACH(l, lasers, LASER_COUNT) l.discard(); END_SEACH
+	}
+
+	void forceDiscardAll() {
+		GAME_PARALLEL_FOR
+		for SEACH(l, lasers, LASER_COUNT) l.forceDiscard(); END_SEACH
 	}
 
 	size_t getFreeCount() {

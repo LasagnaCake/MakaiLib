@@ -79,6 +79,11 @@ public:
 		return this;
 	}
 
+	Bullet* forceDiscard() override {
+		despawn();
+		return this;
+	}
+
 	void updateSprite() override {
 		if (!sprite) return;
 		// Set sprite transforms
@@ -100,10 +105,10 @@ public:
 	}
 
 protected:
-	void onObjectSpawnBegin() override {params.collidable = false;}
-	void onObjectSpawnEnd() override {params.collidable = true;}
-	void onObjectDespawnBegin() override {params.collidable = false;}
-	//void onObjectDespawnEnd() override {setFree(true);}
+	void onObjectSpawnBegin()	override {params.collidable = false;}
+	void onObjectSpawnEnd()		override {params.collidable = true;}
+	void onObjectDespawnBegin()	override {params.collidable = false;}
+	//void onObjectDespawnEnd()	override {setFree(true);}
 
 private:
 	template<size_t B, size_t A, size_t E> friend class BulletManager;
@@ -231,6 +236,11 @@ public:
 	void discardAll() {
 		GAME_PARALLEL_FOR
 		for SEACH(b, bullets, BULLET_COUNT) b.discard(); END_SEACH
+	}
+
+	void forceDiscardAll() {
+		GAME_PARALLEL_FOR
+		for SEACH(b, bullets, BULLET_COUNT) b.forceDiscard(); END_SEACH
 	}
 
 	size_t getFreeCount() {

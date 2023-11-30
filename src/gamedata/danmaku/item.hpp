@@ -64,6 +64,11 @@ struct Collectible: DanmakuObject {
 		return this;
 	}
 
+	Collectible* forceDiscard() override {
+		setFree();
+		return this;
+	}
+
 	Collectible* enable() override {
 		return (Collectible*)setFree(false);
 	}
@@ -187,6 +192,11 @@ public:
 	void discardAll() {
 		GAME_PARALLEL_FOR
 		for SEACH(item, items, ITEM_COUNT) item.discard(); END_SEACH
+	}
+
+	void forceDiscardAll() {
+		GAME_PARALLEL_FOR
+		for SEACH(item, items, ITEM_COUNT) item.forceDiscard(); END_SEACH
 	}
 
 	size_t getFreeCount() {
