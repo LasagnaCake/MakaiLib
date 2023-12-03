@@ -3,9 +3,9 @@ struct DanmakuDialog: public Dialog::DialogPlayer {
 
 	DERIVED_CONSTRUCTOR(DanmakuDialog, Dialog::DialogPlayer, {})
 
-	TypedSignal<String> onBossEnterRequest	= T_SIGNAL(auto*) {};
-	TypedSignal<String> onBossMoveRequest	= T_SIGNAL(auto*) {};
-	TypedSignal<String> onBossExitRequest	= T_SIGNAL(auto*) {};
+	TypedSignal<String const&> onBossEnterRequest	= T_SIGNAL(auto) {};
+	TypedSignal<String const&> onBossMoveRequest	= T_SIGNAL(auto) {};
+	TypedSignal<String const&> onBossExitRequest	= T_SIGNAL(auto) {};
 
 	virtual void onAction(Dialog::Message const& msg) override {
 		Dialog::DialogPlayer::onAction(msg);
