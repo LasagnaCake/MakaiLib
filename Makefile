@@ -21,11 +21,18 @@ Supported options:
 >    debug-release = [ 1 : 0 ]        : Spec. whether to enable -g on release ( DEFAULT: 0        )
 >    rcscript      = [ value | none ] : Spec. the location of a .rc file      ( DEFAULT: 0        )
 
+Pack-exclusive options:
+>    extra-files   = [ value | none ] : Spec. extra files to pack in zip file ( DEFAULT: none     )
+
 NOTES:
 (Safe, in this case, means 'IEEE compliant'.)
 >    meth   : Enables FAST, but IMPRECISE and UNSAFE floating point operations.
 >    sath   : Enables SAFE math. If this one is enabled, METH is disabled.
 >    rcfile : Must be located within the 'build/' folder.
+>    name   : For targers "debug" and "demo", "_debug" and "_demo" gets appended at the end of the file, respectively.
+
+Pack:
+>    name   : Both the name used for the output zip file, and the name of the .exe, minus the compilation target name.
 endef
 
 define GET_TIME
@@ -204,6 +211,20 @@ preview: debug demo
 both: demo release
 	
 all: debug demo release
+
+pack-demo:
+	@echo "Packing files..."
+	@cd res
+	@zip $(name).zip -r res/data/ res/shaders/ res/*.dll res/$(name)_demo.exe $(extra-files)
+	@cd ..
+	@echo "Done!"
+
+pack-release:
+	@echo "Packing files..."
+	@cd res
+	@zip $(name).zip -r res/data/ res/shaders/ res/*.dll res/$(name).exe $(extra-files)
+	@cd ..
+	@echo "Done!"
 	
 clean:
 	@echo "Cleaning up..."
