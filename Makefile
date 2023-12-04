@@ -23,6 +23,7 @@ Supported options:
 
 Pack-exclusive options:
 >    extra-files   = [ value | none ] : Spec. extra files to pack in zip file ( DEFAULT: none     )
+>    extra-progs   = [ value | none ] : Spec. extra programs to pack in zip   ( DEFAULT: none     )
 
 NOTES:
 (Safe, in this case, means 'IEEE compliant'.)
@@ -32,7 +33,9 @@ NOTES:
 >    name   : For targers "debug" and "demo", "_debug" and "_demo" gets appended at the end of the file, respectively.
 
 Pack:
->    name   : Both the name used for the output zip file, and the name of the .exe, minus the compilation target name.
+>    name        : Both the name used for the output zip file, and the name of the .exe, minus the compilation target name.
+>    extra-files : Must be the name of a folder to copy its contents from.
+>    extra-progs : Must be Separate executables.
 endef
 
 define GET_TIME
@@ -49,6 +52,8 @@ use-openmp		?= 0
 meth			?= 0
 sath			?= 0
 debug-release	?= 0
+extra-files		?=
+extra-progs		?=
 
 CC 	?= gcc
 CXX ?= g++
@@ -116,7 +121,7 @@ endif
 
 GUI_MODE ?= -mwindows
 
-.PHONY: clean debug release all demo both test help
+.PHONY: clean debug release all demo both test help pack-debug pack-release pack-all pack-demo pack-both pack-test pack-help
 
 export HELP_MESSAGE
 
@@ -213,22 +218,94 @@ both: demo release
 all: debug demo release
 
 pack-debug:
-	@echo "Packing files..."
+	@echo ""
+	@echo "[--- START ---]"
+
+	$(GET_TIME)
+	
+	@echo "Packing files for '$@'..."
+	@echo "[0/3] Creating folders..."
 	@mkdir -p packed
-	@zip packed/$(name)_debug.zip -r res/data/ res/shaders/ res/*.dll res/$(name)_debug.exe $(extra-files)
-	@echo "Done!"
+	@mkdir -p $(name)_debug
+	
+	@echo "[1/3] Copying contents..."
+	@cp -r -v res/data/ $(name)_debug
+	@cp -r -v res/shaders/ $(name)_debug
+	@cp -r -v res/*.dll $(name)_debug
+	@cp -r -v res/$(name)_debug.exe $(name)_debug
+	@cp -r -v $(extra-progs) $(name)_debug
+	@cp -r -v $(extra-files)/* $(name)_debug
+	
+	@echo "[2/3] Zipping files..."
+	@zip packed/$(name)_debug.zip -r $(name)_debug/*
+	
+	@echo "[3/3] Done!"
+	@rm -rf $(name)_debug
+	
+	$(GET_TIME)
+	
+	@echo "[--- END ---]"
+	@echo 
 
 pack-demo:
-	@echo "Packing files..."
+	@echo ""
+	@echo "[--- START ---]"
+
+	$(GET_TIME)
+	
+	@echo "Packing files for '$@'..."
+	@echo "[0/3] Creating folders..."
 	@mkdir -p packed
-	@zip packed/$(name)_demo.zip -r res/data/ res/shaders/ res/*.dll res/$(name)_demo.exe $(extra-files)
-	@echo "Done!"
+	@mkdir -p $(name)_demo
+	
+	@echo "[1/3] Copying contents..."
+	@cp -r -v res/data/ $(name)_demo
+	@cp -r -v res/shaders/ $(name)_demo
+	@cp -r -v res/*.dll $(name)_demo
+	@cp -r -v res/$(name)_demo.exe $(name)_demo
+	@cp -r -v $(extra-progs) $(name)_demo
+	@cp -r -v $(extra-files)/* $(name)_demo
+	
+	@echo "[2/3] Zipping files..."
+	@zip packed/$(name)_demo.zip -r $(name)_demo/*
+	
+	@echo "[3/3] Done!"
+	@rm -rf $(name)_demo
+	
+	$(GET_TIME)
+	
+	@echo "[--- END ---]"
+	@echo 
 
 pack-release:
-	@echo "Packing files..."
+	@echo ""
+	@echo "[--- START ---]"
+
+	$(GET_TIME)
+	
+	@echo "Packing files for '$@'..."
+	@echo "[0/3] Creating folders..."
 	@mkdir -p packed
-	@zip packed/$(name).zip -r res/data/ res/shaders/ res/*.dll res/$(name).exe $(extra-files)
-	@echo "Done!"
+	@mkdir -p $(name)
+	
+	@echo "[1/3] Copying contents..."
+	@cp -r -v res/data/ $(name)
+	@cp -r -v res/shaders/ $(name)
+	@cp -r -v res/*.dll $(name)
+	@cp -r -v res/$(name).exe $(name)
+	@cp -r -v $(extra-progs) $(name)
+	@cp -r -v $(extra-files)/* $(name)
+	
+	@echo "[2/3] Zipping files..."
+	@zip packed/$(name).zip -r $(name)/*
+	
+	@echo "[3/3] Done!"
+	@rm -rf $(name)
+	
+	$(GET_TIME)
+	
+	@echo "[--- END ---]"
+	@echo 
 
 pack-test: pack-debug pack-release
 
