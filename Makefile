@@ -212,10 +212,17 @@ both: demo release
 	
 all: debug demo release
 
+pack-debug:
+	@echo "Packing files..."
+	@cd res
+	@zip $(name)_debug.zip -r res/data/ res/shaders/ res/*.dll res/$(name)_debug.exe $(extra-files)
+	@cd ..
+	@echo "Done!"
+
 pack-demo:
 	@echo "Packing files..."
 	@cd res
-	@zip $(name).zip -r res/data/ res/shaders/ res/*.dll res/$(name)_demo.exe $(extra-files)
+	@zip $(name)_demo.zip -r res/data/ res/shaders/ res/*.dll res/$(name)_demo.exe $(extra-files)
 	@cd ..
 	@echo "Done!"
 
@@ -225,7 +232,15 @@ pack-release:
 	@zip $(name).zip -r res/data/ res/shaders/ res/*.dll res/$(name).exe $(extra-files)
 	@cd ..
 	@echo "Done!"
-	
+
+pack-test: pack-debug pack-release
+
+pack-preview: pack-debug pack-demo
+
+pack-both: pack-demo pack-release
+
+pack-all: pack-debug pack-demo pack-release
+
 clean:
 	@echo "Cleaning up..."
 	@rm -rf $(CLEAN_TARGET)
