@@ -214,23 +214,20 @@ all: debug demo release
 
 pack-debug:
 	@echo "Packing files..."
-	@cd res
-	@zip $(name)_debug.zip -r res/data/ res/shaders/ res/*.dll res/$(name)_debug.exe $(extra-files)
-	@cd ..
+	@mkdir -p packed
+	@zip packed/$(name)_debug.zip -r res/data/ res/shaders/ res/*.dll res/$(name)_debug.exe $(extra-files)
 	@echo "Done!"
 
 pack-demo:
 	@echo "Packing files..."
-	@cd res
-	@zip $(name)_demo.zip -r res/data/ res/shaders/ res/*.dll res/$(name)_demo.exe $(extra-files)
-	@cd ..
+	@mkdir -p packed
+	@zip packed/$(name)_demo.zip -r res/data/ res/shaders/ res/*.dll res/$(name)_demo.exe $(extra-files)
 	@echo "Done!"
 
 pack-release:
 	@echo "Packing files..."
-	@cd res
-	@zip $(name).zip -r res/data/ res/shaders/ res/*.dll res/$(name).exe $(extra-files)
-	@cd ..
+	@mkdir -p packed
+	@zip packed/$(name).zip -r res/data/ res/shaders/ res/*.dll res/$(name).exe $(extra-files)
 	@echo "Done!"
 
 pack-test: pack-debug pack-release

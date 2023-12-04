@@ -10,6 +10,7 @@ gmon.out
 res/data/*
 res/*.exe
 build/*
+packed/*
 docs/notes.sqlite
 res/_config/*
 res/_saves/*
