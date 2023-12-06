@@ -77,6 +77,7 @@ namespace Tweening {
 	*                *
 	******************
 	*/
+	// TODO: figure out string accessor mess
 	[[deprecated("Please use the 'Ease' namespace!")]]
 	struct Easing {
 		/// Ease IN functions
