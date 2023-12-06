@@ -15,8 +15,10 @@
 namespace Tween{
 	/*
 		TODO:
-			rework easing system using https://easings.net/
+			Rework easing system using https://easings.net/ 's easing functions.
 		NOTE:
+			Since the function already barely gets used the way it was intended,
+				and the current way is close to the above mentioned.
 			Probably turn the easing class into a namespace, perhaps?
 			But then again, std::function seems to hate when you try to pass a non-lambda...
 	*/
