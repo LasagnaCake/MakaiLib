@@ -29,7 +29,7 @@ namespace Tweening {
 			_EaseFunc back;
 			_EaseFunc elastic;
 			_EaseFunc bounce;
-			_EaseFunc linear = Ease::In::linear;
+			_EaseFunc linear = Ease::linear;
 			_EaseFunc const& operator[](String const& type) const {
 				CASE_FUNC(linear);
 				CASE_FUNC(sine);

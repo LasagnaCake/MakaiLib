@@ -25,7 +25,7 @@ namespace Dialog {
 		String				text;
 		Vector4				titleColor	= Color::WHITE;
 		Vector4				textColor	= Color::WHITE;
-		Tweening::EaseFunc	easing		= Ease::Out::linear;
+		Tweening::EaseFunc	easing		= Ease::linear;
 		size_t				duration	= 600;
 		bool				autoplay	= false;
 	};
