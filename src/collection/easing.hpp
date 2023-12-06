@@ -168,15 +168,16 @@ namespace Ease {
 		}
 	auto& getMode(String const& mode, String const& type) {
 		if (type == "linear") return linear;
-		MODE_CASE("in", In);
-		MODE_CASE("out", Out);
-		MODE_CASE("inOut", InOut);
-		MODE_CASE("outIn", OutIn);
-		MODE_CASE("inIn", InIn);
-		MODE_CASE("outOut", OutOut);
+		MODE_CASE("in", In)
+		MODE_CASE("out", Out)
+		MODE_CASE("inOut", InOut)
+		MODE_CASE("outIn", OutIn)
+		MODE_CASE("inIn", InIn)
+		MODE_CASE("outOut", OutOut)
 		return linear;
 	}
 	#undef MODE_CASE
+	#undef CASE_FUN
 }
 
 #pragma GCC diagnostic pop
