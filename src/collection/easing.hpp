@@ -128,7 +128,7 @@ namespace Ease {
 		COMPOSITE_FUN(bounce)
 		#undef COMPOSITE_FUN
 	}
-	/// In-In easing functions
+	/// Out-Out easing functions
 	namespace OutOut {
 		#define COMPOSITE_FUN(NAME) EASE_FUN(NAME) {return (x < 0.5) ? Out::NAME(x*2.0)/2.0 : 0.5 + Out::NAME(x*2.0 -1)/2.0;}
 		EASE_FUN(linear) {return x;}
