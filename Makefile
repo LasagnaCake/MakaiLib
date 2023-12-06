@@ -16,14 +16,18 @@ Supported options:
 >    debug-profile = [ 1 | 0 ]        : Spec. whether to enable gmon          ( DEFAULT: 0        )
 >    keep-o-files  = [ 1 | 0 ]        : Spec. if .o files should be kept      ( DEFAULT: 0        )
 >    macro         = [ value | none ] : Spec. a macro to be defined           ( DEFAULT: none     )
->    meth          = [ 1 : 0 ]        : Spec. whether to enable fast math     ( DEFAULT: 0        )
->    sath          = [ 1 : 0 ]        : Spec. whether to enable safe math     ( DEFAULT: 0        )
->    debug-release = [ 1 : 0 ]        : Spec. whether to enable -g on release ( DEFAULT: 0        )
+>    meth          = [ 1 | 0 ]        : Spec. whether to enable fast math     ( DEFAULT: 0        )
+>    sath          = [ 1 | 0 ]        : Spec. whether to enable safe math     ( DEFAULT: 0        )
+>    debug-release = [ 1 | 0 ]        : Spec. whether to enable -g on release ( DEFAULT: 0        )
 >    rcscript      = [ value | none ] : Spec. the location of a .rc file      ( DEFAULT: 0        )
 
 Pack-exclusive options:
 >    extra-files   = [ value | none ] : Spec. extra files to pack in zip file ( DEFAULT: none     )
 >    extra-progs   = [ value | none ] : Spec. extra programs to pack in zip   ( DEFAULT: none     )
+>    data-folder   = [ value | none ] : Spec. data folder to override main    ( DEFAULT: none     )
+>    over-debug    = [ 1 | 0 ]        : Spec. whether to over. debug data/    ( DEFAULT: 0        )
+>    over-demo     = [ 1 | 0 ]        : Spec. whether to over. demo data/     ( DEFAULT: 0        )
+>    over-release  = [ 1 | 0 ]        : Spec. whether to over. release data/  ( DEFAULT: 0        )
 
 NOTES:
 (Safe, in this case, means 'IEEE compliant'.)
@@ -34,8 +38,11 @@ NOTES:
 
 Pack:
 >    name        : Both the name used for the output zip file, and the name of the .exe, minus the compilation target name.
->    extra-files : Must be the name of a folder to copy its contents from.
 >    extra-progs : Must be Separate executables.
+>    extra-files : Must be the relative path to a folder to copy its contents from.
+>    data-folder : Must be the relative path to a folder containing a "data/" folder to use its contents from.
+>    over-*      : Only enabled if previous is set. specifies if corresponding target's "data/" folder should be replaced.
+                   Only used for multi-target pakings.
 endef
 
 define GET_TIME
@@ -52,8 +59,9 @@ use-openmp		?= 0
 meth			?= 0
 sath			?= 0
 debug-release	?= 0
-extra-files		?=
-extra-progs		?=
+over-debug		?= 0
+over-demo		?= 0
+over-release	?= 0
 
 CC 	?= gcc
 CXX ?= g++
@@ -117,6 +125,37 @@ endif
 
 ifdef macro
 macro = -D$(macro)
+endif
+
+DATA_FOLDER := res/data/
+DEBUG_DATA		:= $(DATA_FOLDER)
+DEMO_DATA		:= $(DATA_FOLDER)
+RElEASE_DATA	:= $(DATA_FOLDER)
+
+PACK_TARGET := $(filter pack-%,$(MAKECMDGOALS))
+
+ifeq ($(PACK_TARGET), pack-debug)
+over-debug := 1
+endif
+ifeq ($(PACK_TARGET), pack-demo)
+over-demo := 1
+endif
+ifeq ($(PACK_TARGET), pack-release)
+over-release := 1
+endif
+
+ifdef data-folder
+DATA_FOLDER := $(data-folder)/data/
+endif
+
+ifeq ($(over-debug), 1)
+DEBUG_DATA := $(DATA_FOLDER)
+endif
+ifeq ($(over-demo), 1)
+DEMO_DATA := $(DATA_FOLDER)
+endif
+ifeq ($(over-release), 1)
+RELEASE_DATA := $(DATA_FOLDER)
 endif
 
 GUI_MODE ?= -mwindows
@@ -229,7 +268,7 @@ pack-debug:
 	@mkdir -p $(name)_debug
 	
 	@echo "[1/3] Copying contents..."
-	@cp -r -v res/data/ $(name)_debug
+	@cp -r -v $(DEBUG_DATA) $(name)_debug
 	@cp -r -v res/shaders/ $(name)_debug
 	@cp -r -v res/*.dll $(name)_debug
 	@cp -r -v res/$(name)_debug.exe $(name)_debug
@@ -259,7 +298,7 @@ pack-demo:
 	@mkdir -p $(name)_demo
 	
 	@echo "[1/3] Copying contents..."
-	@cp -r -v res/data/ $(name)_demo
+	@cp -r -v $(DEMO_DATA) $(name)_demo
 	@cp -r -v res/shaders/ $(name)_demo
 	@cp -r -v res/*.dll $(name)_demo
 	@cp -r -v res/$(name)_demo.exe $(name)_demo
@@ -289,7 +328,7 @@ pack-release:
 	@mkdir -p $(name)
 	
 	@echo "[1/3] Copying contents..."
-	@cp -r -v res/data/ $(name)
+	@cp -r -v $(RElEASE_DATA) $(name)
 	@cp -r -v res/shaders/ $(name)
 	@cp -r -v res/*.dll $(name)
 	@cp -r -v res/$(name).exe $(name)
