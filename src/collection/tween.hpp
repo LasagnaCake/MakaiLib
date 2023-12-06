@@ -13,6 +13,14 @@
 #define CASE_FUNC(F_NAME) if ( type == #F_NAME ) return F_NAME
 
 namespace Tween{
+	/*
+		TODO:
+			rework easing system using https://easings.net/
+		NOTE:
+			Probably turn the easing class into a namespace, perhaps?
+			But then again, std::function seems to hate when you try to pass a non-lambda...
+	*/
+
 	namespace {
 		using TypedEvent::Signal;
 		List<const Function<void(float)>*> tweenList;
