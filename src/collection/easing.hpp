@@ -176,6 +176,7 @@ namespace Ease {
 		MODE_CASE("outOut", OutOut);
 		return linear;
 	}
+	#undef MODE_CASE
 }
 
 #pragma GCC diagnostic pop
