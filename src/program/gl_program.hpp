@@ -576,7 +576,7 @@ namespace Makai {
 		void run(){
 			// The timer process
 			auto timerFunc	= [&](float delta)-> void {
-				Tween::yieldAllTweens(1.0);
+				Tweening::yieldAllTweens(1.0);
 				Event::yieldAllTimers(1.0);
 			};
 			// The logical process

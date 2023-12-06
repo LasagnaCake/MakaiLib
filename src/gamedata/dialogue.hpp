@@ -20,14 +20,14 @@ namespace Dialog {
 	typedef List<ActorData>	ActorDataList;
 
 	struct Message {
-		ActorDataList	actors;
-		String			title;
-		String			text;
-		Vector4			titleColor	= Color::WHITE;
-		Vector4			textColor	= Color::WHITE;
-		Tween::EaseFunc	easing		= Tween::ease.out.cubic;
-		size_t			duration	= 600;
-		bool			autoplay	= false;
+		ActorDataList		actors;
+		String				title;
+		String				text;
+		Vector4				titleColor	= Color::WHITE;
+		Vector4				textColor	= Color::WHITE;
+		Tweening::EaseFunc	easing		= Ease::Out::linear;
+		size_t				duration	= 600;
+		bool				autoplay	= false;
 	};
 
 	typedef List<Message>				MessageList;
@@ -139,7 +139,7 @@ namespace Dialog {
 					auto& anim = animator[actor.name];
 					auto& a = actors[actor.name];
 					if (!a.sprite) continue;
-					anim.tweenStep = msg.easing;
+					anim.easeMode = msg.easing;
 					anim.reinterpolateTo(actor.leaving ? a.position.out: a.position.rest, time);
 					a.sprite->setColor(standbyColor);
 				}
@@ -148,7 +148,7 @@ namespace Dialog {
 					auto& anim = animator[actor.name];
 					auto& a = actors[actor.name];
 					if (!a.sprite) continue;
-					anim.tweenStep = msg.easing;
+					anim.easeMode = msg.easing;
 					a.sprite->frame = actor.frame;
 					anim.reinterpolateTo(actor.leaving ? a.position.out : a.position.talking, time);
 					inScene[actor.name] = !actor.leaving;
@@ -173,7 +173,7 @@ namespace Dialog {
 				Message global;
 				if (def["easing"].is_string()) {
 					StringList ease	= Helper::splitString(def["easing"].get<String>(), '.');
-					global.easing	= Tween::ease[ease[0]][ease[1]];
+					global.easing	= Tweening::ease[ease[0]][ease[1]];
 				}
 				if (def["duration"].is_number_integer())
 					global.duration	= def["duration"].get<size_t>();
@@ -235,7 +235,18 @@ namespace Dialog {
 					// Other stuff
 					if (msg["easing"].is_string()) {
 						StringList ease		= Helper::splitString(msg["easing"].get<String>(), '.');
-						message.easing		= Tween::ease[ease[0]][ease[1]];
+						if (ease.size() == 0)
+							Error::FailedAction(
+								"Failed at parsing dialog definition!",
+								__FILE__,
+								toString(__LINE__),
+								"extendFromDefinition",
+								"Empty easing parameter!",
+								"Please check to see if values are correct!"
+							);
+						else if (ease.size() == 1)
+							message.easing		= Ease::linear;
+						else message.easing		= Tweening::ease[ease[0]][ease[1]];
 					}
 					if (msg["duration"].is_number_integer())
 						message.duration	= msg["duration"].get<size_t>();
@@ -295,7 +306,7 @@ namespace Dialog {
 					auto& anim = animator[actor];
 					auto& a = actors[actor];
 					if (!a.sprite) continue;
-					anim.tweenStep = last.easing;
+					anim.easeMode = last.easing;
 					anim.reinterpolateTo(a.position.rest, time);
 					a.sprite->setColor(standbyColor);
 				}
@@ -387,7 +398,7 @@ namespace Dialog {
 				auto& anim = animator[actor];
 				auto& a = actors[actor];
 				if (!a.sprite) continue;
-				anim.tweenStep = last.easing;
+				anim.easeMode = last.easing;
 				anim.reinterpolateTo(a.position.out, last.duration);
 				a.sprite->setColor(standbyColor);
 			}
@@ -435,7 +446,7 @@ namespace Dialog {
 		}
 
 		Event::Timer autotimer;
-		FuzzyHashMap<String, Tween::Tween<Vector3>> animator;
+		FuzzyHashMap<String, Tweening::Tween<Vector3>> animator;
 
 		size_t current	= 0;
 		bool autoplay	= false;

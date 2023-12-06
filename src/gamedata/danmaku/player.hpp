@@ -91,7 +91,7 @@ struct PlayerEntity2D: AreaCircle2D {
 		shotCooldown.stop().onSignal = SIGNAL {canShoot = true;};
 		shotCooldown.delay = 300;
 		// Movement tween
-		moveTween.tweenStep = Tween::ease.out.cubic;
+		moveTween.easeMode = Ease::Out::cubic;
 		moveTween.setTarget(&position).setStepCount(30).conclude();
 		// Main shot
 		mainShot.pause().repeat = true;
@@ -449,7 +449,7 @@ struct PlayerEntity2D: AreaCircle2D {
 		mainPlayer = this;
 	}
 
-	inline Tween::Tween<Vector2>& getPlayerTween() {
+	inline Tweening::Tween<Vector2>& getPlayerTween() {
 		return moveTween;
 	}
 
@@ -475,7 +475,7 @@ private:
 		sprite->local.scale			= Vector3(self.scale, 0);
 	}
 
-	Tween::Tween<Vector2> moveTween;
+	Tweening::Tween<Vector2> moveTween;
 };
 
 PlayerEntity2D* getMainPlayer() {

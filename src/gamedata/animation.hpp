@@ -1,6 +1,6 @@
 namespace Animation {
 	namespace {
-		using Tween::Tweenable, Tween::EaseFunc, Tween::ease, Tween::Tween;
+		using Tweening::Tweenable, Tweening::EaseFunc, Tweening::Tween;
 	}
 
 	template <Tweenable T>
@@ -8,7 +8,7 @@ namespace Animation {
 		T			to;
 		size_t		delay;
 		size_t		duration;
-		EaseFunc	easing = ease.in.linear;
+		EaseFunc	easing = Ease::linear;
 	};
 
 	template <Tweenable T>
