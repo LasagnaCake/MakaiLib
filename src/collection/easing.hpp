@@ -80,9 +80,10 @@ namespace Ease {
 			return n1 * (cx -= 2.625 / d1) * cx + 0.984375;
 		}
 	}
+	#define COMPOSICALC(NAME, LHS, RHS) {return (x < 0.5) ? RHS::NAME(x*2.0)/2.0 : 0.5 + LHS::NAME(x*2.0 -1)/2.0;}
 	/// In-Out easing functions
 	namespace InOut {
-		#define COMPOSITE_FUN(NAME) EASE_FUN(NAME) {return (x < 0.5) ? In::NAME(x*2.0)/2.0 : 0.5 + Out::NAME(x*2.0 -1)/2.0;}
+		#define COMPOSITE_FUN(NAME) EASE_FUN(NAME) COMPOSICALC(NAME, In, Out)
 		EASE_FUN(linear) {return x;}
 		COMPOSITE_FUN(sine)
 		COMPOSITE_FUN(quad)
@@ -98,7 +99,7 @@ namespace Ease {
 	}
 	/// Out-In easing functions
 	namespace OutIn {
-		#define COMPOSITE_FUN(NAME) EASE_FUN(NAME) {return (x < 0.5) ? Out::NAME(x*2.0)/2.0 : 0.5 + In::NAME(x*2.0 -1)/2.0;}
+		#define COMPOSITE_FUN(NAME) EASE_FUN(NAME) COMPOSICALC(NAME, Out, In)
 		EASE_FUN(linear) {return x;}
 		COMPOSITE_FUN(sine)
 		COMPOSITE_FUN(quad)
@@ -114,7 +115,7 @@ namespace Ease {
 	}
 	/// In-In easing functions
 	namespace InIn {
-		#define COMPOSITE_FUN(NAME) EASE_FUN(NAME) {return (x < 0.5) ? In::NAME(x*2.0)/2.0 : 0.5 + In::NAME(x*2.0 -1)/2.0;}
+		#define COMPOSITE_FUN(NAME) EASE_FUN(NAME) COMPOSICALC(NAME, In, In)
 		EASE_FUN(linear) {return x;}
 		COMPOSITE_FUN(sine)
 		COMPOSITE_FUN(quad)
@@ -130,7 +131,7 @@ namespace Ease {
 	}
 	/// Out-Out easing functions
 	namespace OutOut {
-		#define COMPOSITE_FUN(NAME) EASE_FUN(NAME) {return (x < 0.5) ? Out::NAME(x*2.0)/2.0 : 0.5 + Out::NAME(x*2.0 -1)/2.0;}
+		#define COMPOSITE_FUN(NAME) EASE_FUN(NAME) COMPOSICALC(NAME, Out, Out)
 		EASE_FUN(linear) {return x;}
 		COMPOSITE_FUN(sine)
 		COMPOSITE_FUN(quad)
@@ -144,6 +145,7 @@ namespace Ease {
 		COMPOSITE_FUN(bounce)
 		#undef COMPOSITE_FUN
 	}
+	#undef COMPOSICALC
 	#undef EASE_FUN
 }
 
