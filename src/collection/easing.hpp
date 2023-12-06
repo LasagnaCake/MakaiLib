@@ -80,7 +80,7 @@ namespace Ease {
 			return n1 * (cx -= 2.625 / d1) * cx + 0.984375;
 		}
 	}
-	#define COMPOSICALC(NAME, LHS, RHS) {return (x < 0.5) ? RHS::NAME(x*2.0)/2.0 : 0.5 + LHS::NAME(x*2.0 -1)/2.0;}
+	#define COMPOSICALC(NAME, LHS, RHS) {return (x < 0.5) ? LHS::NAME(x*2.0)/2.0 : 0.5 + RHS::NAME(x*2.0 -1)/2.0;}
 	/// In-Out easing functions
 	namespace InOut {
 		#define COMPOSITE_FUN(NAME) EASE_FUN(NAME) COMPOSICALC(NAME, In, Out)
