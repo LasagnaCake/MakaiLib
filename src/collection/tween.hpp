@@ -5,6 +5,7 @@
 #include "algebra.hpp"
 #include "vectorn.hpp"
 #include "conceptual.hpp"
+#include "helper.hpp"
 #include <vector>
 #include <functional>
 #include <string>
@@ -13,9 +14,9 @@
 
 namespace Tween{
 	namespace {
-		using std::function, std::vector, std::string, TypedEvent::Signal;
-		vector<const function<void(float)>*> tweenList;
-		typedef function<float(float, float, float, float)> _EaseFunc;
+		using TypedEvent::Signal;
+		List<const Function<void(float)>*> tweenList;
+		typedef Function<float(float, float, float, float)> _EaseFunc;
 		struct EaseType {
 			_EaseFunc linear;
 			_EaseFunc sine;
@@ -28,7 +29,7 @@ namespace Tween{
 			_EaseFunc circ;
 			_EaseFunc bounce;
 			_EaseFunc back;
-			_EaseFunc const& operator[](string const& type) const {
+			_EaseFunc const& operator[](String const& type) const {
 				CASE_FUNC(linear);
 				CASE_FUNC(sine);
 				CASE_FUNC(quad);
@@ -269,7 +270,7 @@ namespace Tween{
 		};
 		#undef OUTIN_F
 		/// List accessing
-		EaseType const& operator[](string const& type) const {
+		EaseType const& operator[](String const& type) const {
 			CASE_FUNC(in);
 			CASE_FUNC(out);
 			CASE_FUNC(inOut);
