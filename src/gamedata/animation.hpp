@@ -1,14 +1,14 @@
 namespace Animation {
 	namespace {
-		using Tweening::Tweenable, Tweening::EaseFunc, Tweening::Tween;
+		using Tweening::Tweenable, Tweening::Tween;
 	}
 
 	template <Tweenable T>
 	struct Keyframe {
-		T			to;
-		size_t		delay;
-		size_t		duration;
-		EaseFunc	easing = Ease::linear;
+		T				to;
+		size_t			delay;
+		size_t			duration;
+		Ease::EaseMode	easing = Ease::linear;
 	};
 
 	template <Tweenable T>

@@ -20,14 +20,14 @@ namespace Dialog {
 	typedef List<ActorData>	ActorDataList;
 
 	struct Message {
-		ActorDataList		actors;
-		String				title;
-		String				text;
-		Vector4				titleColor	= Color::WHITE;
-		Vector4				textColor	= Color::WHITE;
-		Tweening::EaseFunc	easing		= Ease::linear;
-		size_t				duration	= 600;
-		bool				autoplay	= false;
+		ActorDataList	actors;
+		String			title;
+		String			text;
+		Vector4			titleColor	= Color::WHITE;
+		Vector4			textColor	= Color::WHITE;
+		Ease::EaseMode	easing		= Ease::linear;
+		size_t			duration	= 600;
+		bool			autoplay	= false;
 	};
 
 	typedef List<Message>				MessageList;
@@ -173,12 +173,24 @@ namespace Dialog {
 				Message global;
 				if (def["easing"].is_string()) {
 					StringList ease	= Helper::splitString(def["easing"].get<String>(), '.');
-					global.easing	= Tweening::ease[ease[0]][ease[1]];
+					if (ease.size() == 0)
+						Error::FailedAction(
+							"Failed at parsing dialog definition!",
+							__FILE__,
+							toString(__LINE__),
+							"extendFromDefinition",
+							"Empty global easing parameter!",
+							"Please check to see if values are correct!"
+						);
+					else if (ease.size() == 1)
+						global.easing	= Ease::linear;
+					global.easing		= Ease::getMode(ease[0], ease[1]);
 				}
 				if (def["duration"].is_number_integer())
 					global.duration	= def["duration"].get<size_t>();
 				if (def["autoplay"].is_boolean())
 					global.autoplay	= def["autoplay"].get<bool>();
+				size_t msgIndex = 0;
 				for(JSONData msg: def["messages"].get<List<JSONData>>()) {
 					Message message = global;
 					// Check for metatag
@@ -241,18 +253,19 @@ namespace Dialog {
 								__FILE__,
 								toString(__LINE__),
 								"extendFromDefinition",
-								"Empty easing parameter!",
+								toString("Empty message easing parameter at message ", msgIndex, "!"),
 								"Please check to see if values are correct!"
 							);
 						else if (ease.size() == 1)
 							message.easing		= Ease::linear;
-						else message.easing		= Tweening::ease[ease[0]][ease[1]];
+						else message.easing		= Ease::getMode(ease[0], ease[1]);
 					}
 					if (msg["duration"].is_number_integer())
 						message.duration	= msg["duration"].get<size_t>();
 					if (msg["autoplay"].is_boolean())
 						message.autoplay	= msg["autoplay"].get<bool>();
 					messages.push_back(message);
+					msgIndex++;
 				}
 				this->messages = messages;
 			} catch (JSON::exception e) {

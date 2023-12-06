@@ -3,7 +3,7 @@ namespace {
 }
 
 struct ObjectParam {
-	Tweening::EaseFunc easing = Ease::linear;
+	Ease::EaseMode easing = Ease::linear;
 	float start		= 0;
 	float end		= 0;
 	float omega		= 0;

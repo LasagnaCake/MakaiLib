@@ -2,6 +2,7 @@
 #define EASING_FUNCTIONS_H
 
 #include "algebra.hpp"
+#include "helper.hpp"
 
 // Shut
 #pragma GCC diagnostic push
@@ -9,6 +10,8 @@
 
 // Taken from https://easings.net
 namespace Ease {
+	/// Easing function template
+	typedef Operation<float> EaseMode;
 	#define EASE_FUN(NAME) constexpr float NAME(float const& x)
 	EASE_FUN(linear)	{return x;}
 	/// In easing functions
@@ -147,6 +150,32 @@ namespace Ease {
 	}
 	#undef COMPOSICALC
 	#undef EASE_FUN
+
+	#define CASE_FUN(MODE, CASE) if (type == #CASE) return MODE::CASE
+	#define MODE_CASE(STR, MODE)\
+		if (mode == STR) {\
+			CASE_FUN(MODE, linear);\
+			CASE_FUN(MODE, sine);\
+			CASE_FUN(MODE, quad);\
+			CASE_FUN(MODE, cubic);\
+			CASE_FUN(MODE, quart);\
+			CASE_FUN(MODE, quint);\
+			CASE_FUN(MODE, expo);\
+			CASE_FUN(MODE, circ);\
+			CASE_FUN(MODE, back);\
+			CASE_FUN(MODE, elastic);\
+			CASE_FUN(MODE, bounce);\
+		}
+	auto& getMode(String const& mode, String const& type) {
+		if (type == "linear") return linear;
+		MODE_CASE("in", In);
+		MODE_CASE("out", Out);
+		MODE_CASE("inOut", InOut);
+		MODE_CASE("outIn", OutIn);
+		MODE_CASE("inIn", InIn);
+		MODE_CASE("outOut", OutOut);
+		return linear;
+	}
 }
 
 #pragma GCC diagnostic pop

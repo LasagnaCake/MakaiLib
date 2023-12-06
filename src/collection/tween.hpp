@@ -17,34 +17,6 @@ namespace Tweening {
 	namespace {
 		using TypedEvent::Signal;
 		List<const Function<void(float)>*> tweenList;
-		typedef Operation<float> _EaseFunc;
-		struct EaseType {
-			_EaseFunc sine;
-			_EaseFunc quad;
-			_EaseFunc cubic;
-			_EaseFunc quart;
-			_EaseFunc quint;
-			_EaseFunc expo;
-			_EaseFunc circ;
-			_EaseFunc back;
-			_EaseFunc elastic;
-			_EaseFunc bounce;
-			_EaseFunc linear = Ease::linear;
-			_EaseFunc const& operator[](String const& type) const {
-				CASE_FUNC(linear);
-				CASE_FUNC(sine);
-				CASE_FUNC(quad);
-				CASE_FUNC(cubic);
-				CASE_FUNC(quart);
-				CASE_FUNC(quint);
-				CASE_FUNC(expo);
-				CASE_FUNC(elastic);
-				CASE_FUNC(circ);
-				CASE_FUNC(bounce);
-				CASE_FUNC(back);
-				return linear;
-			}
-		};
 	}
 
 	/**
@@ -63,89 +35,6 @@ namespace Tweening {
 				(*func)(delta);
 	}
 
-	// Shut up for two seconds
-	#pragma GCC diagnostic push
-	#pragma GCC diagnostic ignored "-Wsequence-point"
-	#pragma GCC diagnostic ignored "-Wsubobject-linkage"
-	/// Easing function template
-	typedef Operation<float> EaseFunc;
-
-	/**
-	******************
-	*                *
-	*  Easing Class  *
-	*                *
-	******************
-	*/
-	// TODO: figure out string accessor mess
-	[[deprecated("Please use the 'Ease' namespace!")]]
-	struct Easing {
-		/// Ease IN functions
-		const EaseType in {
-			Ease::In::sine,
-			Ease::In::quad,
-			Ease::In::cubic,
-			Ease::In::quart,
-			Ease::In::quint,
-			Ease::In::expo,
-			Ease::In::circ,
-			Ease::In::back,
-			Ease::In::elastic,
-			Ease::In::bounce
-		};
-		/// Ease OUT functions
-		const EaseType out {
-			Ease::Out::sine,
-			Ease::Out::quad,
-			Ease::Out::cubic,
-			Ease::Out::quart,
-			Ease::Out::quint,
-			Ease::Out::expo,
-			Ease::Out::circ,
-			Ease::Out::back,
-			Ease::Out::elastic,
-			Ease::Out::bounce
-		};
-		/// Ease IN-OUT functions
-		const EaseType inOut {
-			Ease::InOut::sine,
-			Ease::InOut::quad,
-			Ease::InOut::cubic,
-			Ease::InOut::quart,
-			Ease::InOut::quint,
-			Ease::InOut::expo,
-			Ease::InOut::circ,
-			Ease::InOut::back,
-			Ease::InOut::elastic,
-			Ease::InOut::bounce
-		};
-		/// Ease OUT-IN functions
-		const EaseType outIn {
-			Ease::OutIn::sine,
-			Ease::OutIn::quad,
-			Ease::OutIn::cubic,
-			Ease::OutIn::quart,
-			Ease::OutIn::quint,
-			Ease::OutIn::expo,
-			Ease::OutIn::circ,
-			Ease::OutIn::back,
-			Ease::OutIn::elastic,
-			Ease::OutIn::bounce
-		};
-		/// List accessing
-		EaseType const& operator[](String const& type) const {
-			CASE_FUNC(in);
-			CASE_FUNC(out);
-			CASE_FUNC(inOut);
-			CASE_FUNC(outIn);
-			return out;
-		}
-	};
-
-	[[deprecated("Please use the 'Ease' namespace!")]]
-	const Easing ease;
-	#pragma GCC diagnostic pop
-
 	/**
 	*****************
 	*               *
@@ -162,7 +51,7 @@ namespace Tweening {
 		T* value = &defaultVar;
 
 		/// The tween's easing function.
-		EaseFunc easeMode = Ease::linear;
+		Ease::EaseMode easeMode = Ease::linear;
 
 		/// The signal to be fired upon completion.
 		Event::Signal onCompleted = Event::DEF_SIGNAL;
@@ -184,7 +73,7 @@ namespace Tweening {
 		}
 
 		/// Targetless Constructor.
-		Tween(T from, T to, unsigned long step, EaseFunc easeMode, bool manual = false) {
+		Tween(T from, T to, unsigned long step, Ease::EaseMode easeMode, bool manual = false) {
 			setInterpolation(from, to, step, easeMode);
 			if (!manual)
 				tweenList.push_back(&_yield);
@@ -192,7 +81,7 @@ namespace Tweening {
 		}
 
 		/// Targeted Constructor.
-		Tween(T from, T to, unsigned long step, EaseFunc easeMode, T* targetVar, bool manual = false) {
+		Tween(T from, T to, unsigned long step, Ease::EaseMode easeMode, T* targetVar, bool manual = false) {
 			setInterpolation(from, to, step, easeMode, targetVar);
 			if (!manual)
 				tweenList.push_back(&_yield);
@@ -270,7 +159,7 @@ namespace Tweening {
 		}
 
 		/// Sets the interpolation.
-		Tween<T>& setInterpolation(T from, T to, unsigned long step, EaseFunc easeMode) {
+		Tween<T>& setInterpolation(T from, T to, unsigned long step, Ease::EaseMode easeMode) {
 			isFinished = false;
 			this->step = 0;
 			this->from = from;
@@ -283,7 +172,7 @@ namespace Tweening {
 		}
 
 		/// Sets the interpolation with a target.
-		Tween<T>& setInterpolation(T from, T to, unsigned long step, EaseFunc easeMode, T* targetVar) {
+		Tween<T>& setInterpolation(T from, T to, unsigned long step, Ease::EaseMode easeMode, T* targetVar) {
 			value = targetVar;
 			isFinished = false;
 			this->step = 0;
