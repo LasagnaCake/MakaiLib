@@ -1,15 +1,17 @@
 define HELP_MESSAGE
 Supported targets:
 >    debug   : Builds enabling debug options, and with all warnings enabled (+ pedantic)
->    release : Builds enabling optimizations
 >    demo    : Builds enabling optimizations, and with the _DEMO_BUILD_ macro defined
+>    release : Builds enabling optimizations
 >    test    : Builds both debug and release
 >    both    : Builds both release and demo
 >    all     : Builds all options (debug, demo and release)
 
 Supported options:
->    src           = [ value ]        : Spec. the source file                 ( DEFAULT: main.cpp )
 >    name          = [ value ]        : Spec. the name of the output file     ( DEFAULT: program  )
+
+Build-exclusive options:
+>    src           = [ value ]        : Spec. the source file                 ( DEFAULT: main.cpp )
 >    warn          = [ value | none ] : Spec. the warning to enable           ( DEFAULT: none     )
 >    use-openmp    = [ 1 | 0 ]        : Spec. whether ro enable OpenMP        ( DEFAULT: 0        )
 >    optimize-lvl  = [ 0 - 3 | g ]    : Spec. the optimization level          ( DEFAULT: 2        )
@@ -19,12 +21,12 @@ Supported options:
 >    meth          = [ 1 | 0 ]        : Spec. whether to enable fast math     ( DEFAULT: 0        )
 >    sath          = [ 1 | 0 ]        : Spec. whether to enable safe math     ( DEFAULT: 0        )
 >    debug-release = [ 1 | 0 ]        : Spec. whether to enable -g on release ( DEFAULT: 0        )
->    rcscript      = [ value | none ] : Spec. the location of a .rc file      ( DEFAULT: 0        )
+>    rcscript      = [ value | none ] : Spec. the location of a .rc file      ( DEFAULT: none     )
 
 Pack-exclusive options:
 >    extra-files   = [ value | none ] : Spec. extra files to pack in zip file ( DEFAULT: none     )
 >    extra-progs   = [ value | none ] : Spec. extra programs to pack in zip   ( DEFAULT: none     )
->    data-folder   = [ value | none ] : Spec. data folder to override main    ( DEFAULT: none     )
+>    data-folder   = [ value | none ] : Spec. data folder to use instead      ( DEFAULT: none     )
 >    over-debug    = [ 1 | 0 ]        : Spec. whether to over. debug data/    ( DEFAULT: 0        )
 >    over-demo     = [ 1 | 0 ]        : Spec. whether to over. demo data/     ( DEFAULT: 0        )
 >    over-release  = [ 1 | 0 ]        : Spec. whether to over. release data/  ( DEFAULT: 0        )
@@ -34,15 +36,18 @@ NOTES:
 >    meth   : Enables FAST, but IMPRECISE and UNSAFE floating point operations.
 >    sath   : Enables SAFE math. If this one is enabled, METH is disabled.
 >    rcfile : Must be located within the 'build/' folder.
->    name   : For targers "debug" and "demo", "_debug" and "_demo" gets appended at the end of the file, respectively.
+>    name   : For targers "debug" and "demo", "_debug" and "_demo" gets appended at the end of the
+              file, respectively.
 
 Pack:
->    name        : Both the name used for the output zip file, and the name of the .exe, minus the compilation target name.
+>    name        : Both the name used for the output zip file, and the name of the .exe, minus the
+                   compilation target name.
 >    extra-progs : Must be Separate executables.
 >    extra-files : Must be the relative path to a folder to copy its contents from.
->    data-folder : Must be the relative path to a folder containing a "data/" folder to use its contents from.
->    over-*      : Only enabled if previous is set. specifies if corresponding target's "data/" folder should be replaced.
-                   Only used for multi-target pakings.
+>    data-folder : Must be the relative path to a folder containing a "data/" folder to use its
+                   contents from.
+>    over-*      : Only enabled if previous is set. specifies if corresponding target's "data/"
+                   folder should be replaced. Only used for multi-target pakings.
 endef
 
 define GET_TIME
