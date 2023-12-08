@@ -461,7 +461,9 @@ namespace Makai {
 			string mainShaderPath = "shaders/base/base.slf"
 		) {
 			#if (_WIN32 || _WIN64 || __WIN32__ || __WIN64__)
+			#ifndef MAKAILIB_MANUAL_DPI_AWARENESS
 			SetProcessDPIAware();
+			#endif
 			#endif
 			DEBUGLN(EntityClass::_ROOT == nullptr);
 			// Save window resolution
@@ -1022,7 +1024,9 @@ namespace Popup {
 		SDL_MessageBoxColorScheme const& colorScheme = DialogBoxColorScheme::LIGHT
 	) {
 		#if (_WIN32 || _WIN64 || __WIN32__ || __WIN64__)
+		#ifndef MAKAILIB_MANUAL_DPI_AWARENESS
 		SetProcessDPIAware();
+		#endif
 		#endif
 		size_t buttonCount = options.size();
 		SDL_MessageBoxButtonData buttons[options.size()];
