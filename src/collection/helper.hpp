@@ -86,6 +86,11 @@ namespace Fold {
 		(stream << ... << args);
 		return stream;
 	}
+
+	template<typename T, typename... Args>
+	constexpr T avg(Args const&... args) {
+		return (add(args...)) / sizeof...(Args);
+	}
 }
 
 namespace Helper {
