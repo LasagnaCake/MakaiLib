@@ -1,7 +1,8 @@
 #ifndef MAKAI_BASE_BULLET_H
 #define MAKAI_BASE_BULLET_H
 
-typedef ObjectParam	BulletParam;
+template<Tweening::Tweenable T>
+using	BulletParam = ObjectParam<T>;
 
 struct BulletData: ObjectData {
 	bool shuttle		= false;
@@ -30,7 +31,6 @@ public:
 		DANMAKU_FRAME_BEGIN;
 		UPDATE_PARAM(vel)
 		UPDATE_PARAM(rot)
-		UPDATE_PARAM(stretch)
 		if (params.vel.current)
 			local.position += VecMath::angleV2(params.rot.current) * params.vel.current * delta;
 		local.rotation = params.rot.current;
@@ -43,7 +43,6 @@ public:
 		params.vel.current = params.vel.start;
 		local.rotation =
 		params.rot.current = params.rot.start;
-		params.stretch.current = params.stretch.start;
 		params.hitbox.position = local.position;
 		updateSprite();
 		if (sprite && params.rotateSprite)
@@ -57,8 +56,7 @@ public:
 		local.rotation =
 		params.rot.current =
 		params.vel.factor =
-		params.rot.factor =
-		params.stretch.factor = 0;
+		params.rot.factor = 0;
 		return this;
 	}
 

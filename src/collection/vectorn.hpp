@@ -265,6 +265,26 @@ class Vector2
 
 		// Extra functions
 
+		/// Gets the sum of the vector's components.
+		constexpr float sum() const {
+			return x + y;
+		}
+
+		/// Gets the average of the vector's components.
+		constexpr float average() const {
+			return sum() / 2;
+		}
+
+		/// Gets the smallest of the vector's components.
+		constexpr float min() const {
+			return (x < y) ? x : y;
+		}
+
+		/// Gets the biggest of the vector's components.
+		constexpr float max() const {
+			return (x > y) ? x : y;
+		}
+
 		/// Gets the vector's length (distance to origin).
 		constexpr float length() const {
 			return sqrt((x * x) + (y * y));
@@ -603,6 +623,26 @@ class Vector3
 		constexpr float operator[](size_t const& pos) const	{if (pos > 2) return data[0]; return data[pos];}
 
 		// Extra functions
+
+		/// Gets the sum of the vector's components.
+		constexpr float sum() const {
+			return x + y + z;
+		}
+
+		/// Gets the average of the vector's components.
+		constexpr float average() const {
+			return sum() / 3;
+		}
+
+		/// Gets the smallest of the vector's components.
+		constexpr float min() const {
+			return Math::min(Math::min(x, y), z);
+		}
+
+		/// Gets the biggest of the vector's components.
+		constexpr float max() const {
+			return Math::max(Math::max(x, y), z);
+		}
 
 		/// Gets the vector's length (distance to origin).
 		constexpr float length() const {
@@ -999,6 +1039,26 @@ class Vector4
 		constexpr float operator[](size_t const& pos) const	{if (pos > 3) return data[0]; return data[pos];}
 
 		// Extra functions
+
+		/// Gets the sum of the vector's components.
+		constexpr float sum() const {
+			return x + y + z + w;
+		}
+
+		/// Gets the average of the vector's components.
+		constexpr float average() const {
+			return sum() / 4;
+		}
+
+		/// Gets the smallest of the vector's components.
+		constexpr float min() const {
+			return Math::min(Math::min(Math::min(x, y), z), w);
+		}
+
+		/// Gets the biggest of the vector's components.
+		constexpr float max() const {
+			return Math::max(Math::max(Math::max(x, y), z), w);
+		}
 
 		/// Gets the vector's length (distance to origin).
 		constexpr float length() const {

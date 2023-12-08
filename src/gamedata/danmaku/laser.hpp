@@ -1,9 +1,10 @@
-typedef ObjectParam	LaserParam;
+template<Tweening::Tweenable T>
+using	LaserParam = ObjectParam<T>;
 
 struct LaserData: ObjectData {
-	ObjectParam length;
-	ObjectParam width;
-	bool active	= false;
+	ObjectParam<float>		length;
+	ObjectParam<Vector2>	width;
+	bool	active	= false;
 };
 
 struct LineLaserData: LaserData {
@@ -28,7 +29,6 @@ public:
 		UPDATE_PARAM(rot)
 		UPDATE_PARAM(width)
 		UPDATE_PARAM(length)
-		UPDATE_PARAM(stretch)
 		if (params.vel.current)
 			local.position += VecMath::angleV2(params.rot.current) * params.vel.current * delta;
 		local.rotation = params.rot.current;
@@ -44,7 +44,6 @@ public:
 		params.rot.current = params.rot.start;
 		params.width.current = params.width.start;
 		params.length.current = params.length.start;
-		params.stretch.current = params.stretch.start;
 		setLaserShape();
 		updateSprite();
 		return this;
@@ -52,15 +51,14 @@ public:
 
 	LineLaser* setZero() override {
 		DanmakuObject::setZero();
+		params.width.current =
+		params.width.factor =
 		local.rotation =
 		params.vel.current =
 		params.vel.factor =
 		params.rot.current =
 		params.rot.factor =
-		params.width.current =
-		params.width.factor =
-		params.length.current =
-		params.stretch.factor = 0;
+		params.length.current = 0;
 		return this;
 	}
 
@@ -85,27 +83,25 @@ public:
 		return this;
 	}
 
-	void setSpriteSize(float width, float const& length, float stretch = 0) {
+	void setSpriteSize(Vector2 width, float const& length) {
 		width	*= 0.5;
-		stretch	*= 0.5;
 		sprite->setOrigin(
-			Vector3(-stretch, +width),
-			Vector3(length + stretch, +width),
-			Vector3(-stretch, -width),
-			Vector3(length + stretch, -width)
+			Vector3(-width.x, +width.y),
+			Vector3(length + width.x, +width.y),
+			Vector3(-width.x, -width.y),
+			Vector3(length + width.x, -width.y)
 		);
 	}
 
 	void setLaserShape() {
 		if (!sprite || params.staticSpriteShape) return;
-		float width = (params.width.current * 0.5);
-		float stretch = (params.stretch.current * 0.5);
+		Vector2 width = (params.width.current * 0.5);
 		float length = params.length.current;
 		sprite->setOrigin(
-			Vector3(-width - stretch, +width),
-			Vector3(length + width + stretch, +width),
-			Vector3(-width - stretch, -width),
-			Vector3(length + width + stretch, -width)
+			Vector3(-width.x, +width.y),
+			Vector3(length + width.x, +width.y),
+			Vector3(-width.x, -width.y),
+			Vector3(length + width.x, -width.y)
 		);
 	}
 
@@ -122,21 +118,25 @@ public:
 		if (!params.active) return false;
 		RayBounds2D self = RayBounds2D {
 			local.position,
+			(params.width.current / SQRT2) + params.hitbox.radius,
 			params.length.current,
-			Math::max<float>((params.width.current / SQRT2) + params.hitbox.radius, 0.0f),
 			params.rot.current,
-			params.rotateHitbox ? (params.rot.current + params.hitbox.rotation) : params.hitbox.rotation,
-			params.stretch.current
+			params.rotateHitbox ? params.hitbox.rotation : (params.hitbox.rotation - params.rot.current)
 		};
 		return withinBounds(target, self);
 	}
 
-	std::function<Vector2(float)> getAsLineFunc(bool includeWidth = false) {
+	Function<Vector2(float)> getAsLineFunc(bool includeWidth = false) {
 		Vector2 from = local.position;
 		Vector2 to = VecMath::angleV2(params.rot.current);
+		float trot = (
+			params.rotateHitbox
+		?	params.hitbox.rotation
+		:	(params.hitbox.rotation - params.rot.current)
+		);
 		if (includeWidth){
 			from -= VecMath::angleV2(params.rot.current - PI) * params.width.current;
-			to *= params.length.current + params.width.current;
+			to *= CollisionData::getRadius(params.width.current, trot) + params.length.current;
 		}
 		else
 			to *= params.length.current;

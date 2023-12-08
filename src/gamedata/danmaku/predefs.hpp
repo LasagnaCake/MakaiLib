@@ -54,11 +54,12 @@
 	if (params.PNAME.omega) { \
 		params.PNAME.factor = Math::clamp(params.PNAME.factor + params.PNAME.omega * (delta * 100.0f), 0.0f, 1.0f); \
 		float vf = params.PNAME.easing(params.PNAME.factor); \
-		params.PNAME.current = Math::lerp( \
-			params.PNAME.start, \
-			params.PNAME.end, \
-			vf \
-		); \
+		params.PNAME.current = Math::lerp \
+			<decltype(params.PNAME.start)>( \
+				params.PNAME.start, \
+				params.PNAME.end, \
+				vf \
+			); \
 	}
 
 #define DANMAKU_FRAME_BEGIN \

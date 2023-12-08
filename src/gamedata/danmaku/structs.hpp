@@ -2,13 +2,14 @@ namespace {
 	using namespace CollisionData;
 }
 
+template<Tweening::Tweenable T = float>
 struct ObjectParam {
 	Ease::EaseMode easing = Ease::linear;
-	float start		= 0;
-	float end		= 0;
+	T start			= 0;
+	T end			= 0;
 	float omega		= 0;
 	float factor	= 0;
-	float current	= 0;
+	T current		= 0;
 };
 
 struct Pause {
@@ -27,9 +28,8 @@ struct MODULAR GenericObjectData {
 };
 
 struct ObjectData: GenericObjectData {
-	ObjectParam	vel;
-	ObjectParam	rot;
-	ObjectParam stretch;
+	ObjectParam<>	vel;
+	ObjectParam<>	rot;
 	bool rotateHitbox	= true;
 };
 

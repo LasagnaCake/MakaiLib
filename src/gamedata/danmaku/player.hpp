@@ -324,12 +324,13 @@ struct PlayerEntity2D: AreaCircle2D {
 		// Set grazebox visibility
 		grazeboxMesh.trans.scale = Math::lerp(
 			grazeboxMesh.trans.scale,
-			Vec3(isFocused * grazebox.radius),
+			Vec3(grazebox.radius * float(isFocused)),
 			Vec3(0.25f)
 		);
 		grazeboxSprite->local.rotation.z += 0.025;
 		// Set hitbox visibility
-		hitboxMesh.trans.scale = Math::max<float>(0.4f, (collision.shape.radius * SQRT2 * 2.0));
+		Vector2 hitboxScale = (collision.shape.radius * SQRT2 * 2.0);
+		hitboxMesh.trans.scale = hitboxScale.clamped(0.4f, hitboxScale);
 		hitboxMesh.active = isFocused;
 		// Do graze action
 		CircleBounds2D grazeShape = getGrazeBounds();

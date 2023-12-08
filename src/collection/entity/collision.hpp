@@ -53,9 +53,8 @@ namespace CollisionData {
 	*/
 	struct Circle {
 		Vector2 position;
-		float radius = 1;
+		Vector2 radius = 1;
 		float rotation = 0;
-		float stretch = 0;
 	};
 
 	/**
@@ -67,11 +66,10 @@ namespace CollisionData {
 	*/
 	struct Ray {
 		Vector2 position;
+		Vector2 width = 1;
 		float length = 1;
-		float width	= 1;
 		float angle = 0;
 		float rotation = 0;
-		float stretch = 0;
 	};
 
 	/**
@@ -138,11 +136,18 @@ namespace CollisionData {
 	CDT_BOUNDS(Shape);
 	#undef	CDT_BOUNDS
 
-	inline RayBounds2D makeRayBounds(Vector2 const& from, Vector2 const& to, float const& width = 1) {
+	constexpr float getRadius(Vector2 const& radius, float const& angle) {
+		return
+			(Math::absin(angle) * radius.x)
+		+	(Math::abcos(angle) * radius.y)
+		;
+	}
+
+	inline RayBounds2D makeRayBounds(Vector2 const& from, Vector2 const& to, Vector2 const& width = 1) {
 		return RayBounds2D {
 			from,
-			from.distanceTo(to),
 			width,
+			from.distanceTo(to),
 			VecMath::angleTo(from, to)
 		};
 	}
@@ -175,7 +180,7 @@ namespace CollisionData {
 	}
 
 	inline c2Circle cuteify(CircleBounds2D const& b) {
-		return c2Circle{c2v{b.position.x, b.position.y}, b.radius};
+		return c2Circle{c2v{b.position.x, b.position.y}, b.radius.average()};
 	}
 
 	inline c2Capsule cuteify(RayBounds2D const& b) {
@@ -183,7 +188,7 @@ namespace CollisionData {
 		return c2Capsule{
 			c2v{b.position.x, b.position.y},
 			c2v{end.x, end.y},
-			b.width
+			b.width.average()
 		};
 	}
 
@@ -252,16 +257,16 @@ namespace CollisionData {
 	inline bool withinBounds(Vector2 const& point, CircleBounds2D const& area) {
 		// Calculate circle stretch
 		float angle		= point.angleTo(area.position);
-		float stretch	= Math::abcos(angle + area.rotation) * area.stretch + 1;
+		float radius	= getRadius(area.radius, angle + area.rotation);
 		// Check collision
-		return point.distanceTo(area.position) < (area.radius * stretch);
+		return point.distanceTo(area.position) < (radius);
 	}
 
 	inline bool withinBounds(Vector2 const& a, RayBounds2D const& b) {
 		// Get distance between targets
 		float distance = a.distanceTo(b.position);
 		// If too distant, return
-		if (distance > b.length + b.width) return false;
+		if (distance > b.length + b.width.max()) return false;
 		// Get ray position to check
 		Vector2 rayPosition = VecMath::angleV2(b.rotation) * distance + b.position;
 		// Check collision
@@ -276,10 +281,10 @@ namespace CollisionData {
 	inline bool withinBounds(CircleBounds2D const& a, CircleBounds2D const& b) {
 		// Calculate circle stretches
 		float angle		= a.position.angleTo(b.position);
-		float stretchA	= Math::abcos(angle + a.rotation) * a.stretch + 1;
-		float stretchB	= Math::abcos(angle + b.rotation) * b.stretch + 1;
+		float radiusA	= getRadius(a.radius, angle + a.rotation);
+		float radiusB	= getRadius(b.radius, angle + b.rotation);
 		// Check collision
-		return a.position.distanceTo(b.position) < (a.radius * stretchA + b.radius * stretchB);
+		return a.position.distanceTo(b.position) < (radiusA + radiusB);
 	}
 
 	// Box
@@ -311,11 +316,11 @@ namespace CollisionData {
 		// Get distance between targets
 		float distance = a.position.distanceTo(b.position);
 		// If too distant, return
-		if (distance > b.length + b.width + a.radius + Math::max(a.stretch, .0f)) return false;
+		if (distance > b.length + b.width.max() + a.radius.max()) return false;
 		// Get ray position to check
 		Vector2 rayPosition = VecMath::angleV2(b.angle) * distance + b.position;
 		// Check collision
-		CircleBounds2D target{rayPosition, b.width, b.angle + b.rotation, b.stretch};
+		CircleBounds2D target{rayPosition, b.width, b.angle + b.rotation};
 		return withinBounds(a, target);
 	}
 
