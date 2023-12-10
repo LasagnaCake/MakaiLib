@@ -108,8 +108,6 @@ Currently VERY scarce. Some of the code is commented.
 
 #### Major refactor
 
-- [ ] "De-headerify" library
-- - Except things on the `src/collection/` folder
 - [ ] Cleanup & polish [graphical](src/graphical) system
 - [ ] Cleanup & polish [audio](src/audio) system
 - [ ] Replace raw pointers with smart pointers (see [referential.hpp](src/collection/referential.hpp))
