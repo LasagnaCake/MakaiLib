@@ -292,22 +292,6 @@ Converts the `Renderable` object into an *Object Definition*[^4].
 
 # Functions
 
-## `loadObjectFromBinaryFile()`
-
-**Full:** `Renderable* loadObjectFromBinaryFile(string const& path)`.
-
-## `loadObjectFromGLTFFile()`
-
-**Full:** `Renderable* loadObjectFromGLTFFile(string const& path)`.
-
-## `loadObjectFromDefinition()`
-
-**Full:** `Renderable* loadObjectFromDefinition(nlohmann::json def)`.
-
-## `loadObjectFromDefinitionFile()`
-
-**Full:** `Renderable* loadObjectFromDefinitionFile(string const& path)`.
-
 # Footnotes
 
 [^1]: For more information, see [[gl_drawable]] → [gl_drawable.md](gl_drawable.md).

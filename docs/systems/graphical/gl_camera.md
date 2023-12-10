@@ -18,7 +18,7 @@ namespace Camera {
 		float zNear = 0.01;
 		float zFar  = 100.0;
 		struct {
-			bool enabled   = false;
+			float strength = 0;
 			Vector2 origin = Vector2(0);
 			Vector2 size   = Vector2(1);
 		} ortho;
@@ -51,7 +51,7 @@ The base camera the engine uses. Contains the following member variables:
 - `zFar`: The camera's far clipping plane.
 
 **Orthography**
-- `ortho.enabled`: Whether orthographic projection is enabled.
+- `ortho.strength`: How "orthographic" the view is.
 - `ortho.origin`: The orthographic projection's origin in 2D space.
 - `ortho.size`: The orthographic projection's size in Vertex Units.
 
