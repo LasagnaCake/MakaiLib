@@ -194,6 +194,12 @@ public:
 			ePlayfield	= CollisionData::makeBounds(at, size * Vector2(1.1, 1.1)),
 			pPlayfield	= CollisionData::makeBounds(at, size * Vector2(1.25, 1.25)),
 			board		= CollisionData::makeBounds(at, size);
+		DEBUGLN(
+			"GAME BOUNDS -> {\n\t",
+			board.min.x, " : ", board.min.y, "\n\t",
+			board.max.x, " : ", board.max.y,
+			"\n}"
+		);
 		managers.item->poc = -screenSize.y / 3.0;
 		managers.bullet.player->playfield = pPlayfield;
 		managers.item->playfield =

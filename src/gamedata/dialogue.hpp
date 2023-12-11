@@ -106,8 +106,9 @@ namespace Dialog {
 			}
 		}
 
-		TypedSignal<size_t>	onMessage	= T_SIGNAL(size_t index) {};
-		Signal				onDialogEnd	= SIGNAL {queueDestroy();};
+		TypedSignal<String>	onMusicRequest	= T_SIGNAL(auto) {};
+		TypedSignal<size_t>	onMessage		= T_SIGNAL(auto) {};
+		Signal				onDialogEnd		= SIGNAL {queueDestroy();};
 
 		virtual void onAction(Message const& msg) {}
 
@@ -135,7 +136,7 @@ namespace Dialog {
 				box.shape.active	=
 				box.title.active	=
 				box.message.active	= true;
-				for (ActorData& actor: last.actors) {
+				for (ActorData& actor: lastText.actors) {
 					auto& anim = animator[actor.name];
 					auto& a = actors[actor.name];
 					if (!a.sprite) continue;
@@ -301,6 +302,8 @@ namespace Dialog {
 			else if	(msg.title == "@:setcolor:")	actionSetColor();
 			else if	(msg.title == "@:setpos:")		actionSetPosition();
 			else if	(msg.title == "@:settime:")		actionSetTransTime();
+			else if	(msg.title == "@:stopmusic:")	actionStopMusic();
+			else if	(msg.title == "@:playmusic:")	actionPlayMusic();
 			else	onAction(msg);
 		}
 
@@ -382,13 +385,13 @@ namespace Dialog {
 					actor,
 					"\" does not exist!\n</error>\n"
 				);
-			restAllInScene(time);
+			//restAllInScene(time);
 			nextMessage();
 		}
 
 		void actionSetTransTime() {
 			time = last.duration;
-			restAllInScene(time);
+			//restAllInScene(time);
 			nextMessage();
 		}
 
@@ -397,7 +400,7 @@ namespace Dialog {
 			if (tag.size() != 2) failedAction(toString(__LINE__), "@:setcolor:");
 			Vector4 color = Color::fromHexCodeString(tag[1]);
 			if (tag[0] == "standby") standbyColor = color;
-			restAllInScene(time);
+			//restAllInScene(time);
 			nextMessage();
 		}
 
@@ -425,13 +428,26 @@ namespace Dialog {
 				if (!a.sprite) continue;
 				a.sprite->frame = actor.frame;
 			}
-			restAllInScene(time);
+			//restAllInScene(time);
 			nextMessage();
 		}
 
 		void actionFinish() {
 			time = last.duration;
 			finish();
+		}
+
+		void actionStopMusic() {
+			size_t msc = (last.duration / float(getMainProgram()->maxCycleRate)) * 1000;
+			Audio::Music::stopMusic(msc);
+			//restAllInScene(time);
+			nextMessage();
+		}
+
+		void actionPlayMusic() {
+			onMusicRequest(last.text);
+			//restAllInScene(time);
+			nextMessage();
 		}
 
 		void actionWait() {

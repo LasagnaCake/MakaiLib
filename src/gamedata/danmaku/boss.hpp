@@ -24,6 +24,8 @@ public:
 		};
 		setUIElements();
 		setUILayer(UI_LAYER);
+		battling =
+		collision.enabled = false;
 	})
 
 	Texture2D
@@ -111,6 +113,14 @@ public:
 		EnemyEntity2D::setObjectLayer(layer, topLayer);
 	}*/
 
+	void moveTo(
+		Vector2 const&	pos,
+		size_t			time,
+		Ease::EaseMode	mode = Ease::linear
+	) {
+		bossMover.setInterpolation(position, pos, time, mode, &position);
+	}
+
 	void setUILayer(size_t layer) {
 		timerDisplay.setRenderLayer(layer);
 		phaseDisplay.setRenderLayer(layer);
@@ -149,4 +159,6 @@ private:
 
 	Event::Timer phaseTimer;
 	Event::Timer durationTimer;
+
+	Tweening::Tween<Vector2> bossMover;
 };
