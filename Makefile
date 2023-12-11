@@ -1,35 +1,36 @@
 define HELP_MESSAGE
 Supported targets:
->    debug   : Builds enabling debug options, and with all warnings enabled (+ pedantic)
->    demo    : Builds enabling optimizations, and with the _DEMO_BUILD_ macro defined
->    release : Builds enabling optimizations
->    test    : Builds both debug and release
->    both    : Builds both release and demo
->    all     : Builds all options (debug, demo and release)
+>   debug   : Builds enabling debug options, and with all warnings enabled (+ pedantic)
+>   demo    : Builds enabling optimizations, and with the _DEMO_BUILD_ macro defined
+>   release : Builds enabling optimizations
+>   test    : Builds both debug and release
+>   both    : Builds both release and demo
+>   all     : Builds all options (debug, demo and release)
+>   pack-*  : Exports the selected build target into a game package
 
 Supported options:
->    name          = [ value ]        : Spec. the name of the output file     ( DEFAULT: program  )
+>   name          = [ value ]        : Spec. the name of the output file      ( DEFAULT: program  )
 
 Build-exclusive options:
->    src           = [ value ]        : Spec. the source file                 ( DEFAULT: main.cpp )
->    warn          = [ value | none ] : Spec. the warning to enable           ( DEFAULT: none     )
->    use-openmp    = [ 1 | 0 ]        : Spec. whether ro enable OpenMP        ( DEFAULT: 0        )
->    optimize-lvl  = [ 0 - 3 | g ]    : Spec. the optimization level          ( DEFAULT: 2        )
->    debug-profile = [ 1 | 0 ]        : Spec. whether to enable gmon          ( DEFAULT: 0        )
->    keep-o-files  = [ 1 | 0 ]        : Spec. if .o files should be kept      ( DEFAULT: 0        )
->    macro         = [ value | none ] : Spec. a macro to be defined           ( DEFAULT: none     )
->    meth          = [ 1 | 0 ]        : Spec. whether to enable fast math     ( DEFAULT: 0        )
->    sath          = [ 1 | 0 ]        : Spec. whether to enable safe math     ( DEFAULT: 0        )
->    debug-release = [ 1 | 0 ]        : Spec. whether to enable -g on release ( DEFAULT: 0        )
->    rcscript      = [ value | none ] : Spec. the location of a .rc file      ( DEFAULT: none     )
+>   src           = [ value ]        : Spec. the source file                  ( DEFAULT: main.cpp )
+>   warn          = [ value | none ] : Spec. the warning to enable            ( DEFAULT: none     )
+>   use-openmp    = [ 1 | 0 ]        : Spec. whether ro enable OpenMP         ( DEFAULT: 0        )
+>   optimize-lvl  = [ 0 - 3 | g ]    : Spec. the optimization level           ( DEFAULT: 2        )
+>   debug-profile = [ 1 | 0 ]        : Spec. whether to enable gmon           ( DEFAULT: 0        )
+>   keep-o-files  = [ 1 | 0 ]        : Spec. if .o files should be kept       ( DEFAULT: 0        )
+>   macro         = [ value | none ] : Spec. a macro to be defined            ( DEFAULT: none     )
+>   meth          = [ 1 | 0 ]        : Spec. whether to enable fast math      ( DEFAULT: 0        )
+>   sath          = [ 1 | 0 ]        : Spec. whether to enable safe math      ( DEFAULT: 0        )
+>   debug-release = [ 1 | 0 ]        : Spec. whether to enable -g on release  ( DEFAULT: 0        )
+>   rcscript      = [ value | none ] : Spec. the location of a .rc file       ( DEFAULT: none     )
 
 Pack-exclusive options:
->    extra-files   = [ value | none ] : Spec. extra files to pack in zip file ( DEFAULT: none     )
->    extra-progs   = [ value | none ] : Spec. extra programs to pack in zip   ( DEFAULT: none     )
->    data-folder   = [ value | none ] : Spec. data folder to use instead      ( DEFAULT: none     )
->    over-debug    = [ 1 | 0 ]        : Spec. whether to over. debug data/    ( DEFAULT: 0        )
->    over-demo     = [ 1 | 0 ]        : Spec. whether to over. demo data/     ( DEFAULT: 0        )
->    over-release  = [ 1 | 0 ]        : Spec. whether to over. release data/  ( DEFAULT: 0        )
+>   extra-files   = [ value | none ] : Spec. extra files to pack in zip file  ( DEFAULT: none     )
+>   extra-progs   = [ value | none ] : Spec. extra programs to pack in zip    ( DEFAULT: none     )
+>   data-folder   = [ value | none ] : Spec. data folder to use instead       ( DEFAULT: none     )
+>   over-debug    = [ 1 | 0 ]        : Spec. whether to over. debug data/     ( DEFAULT: 0        )
+>   over-demo     = [ 1 | 0 ]        : Spec. whether to over. demo data/      ( DEFAULT: 0        )
+>   over-release  = [ 1 | 0 ]        : Spec. whether to over. release data/   ( DEFAULT: 0        )
 
 NOTES:
 (Safe, in this case, means 'IEEE compliant'.)
