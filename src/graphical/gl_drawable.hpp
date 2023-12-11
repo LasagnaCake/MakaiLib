@@ -144,8 +144,10 @@ protected:
 		Matrix4x4
 			actor(trans),
 			camera(Scene::camera.matrix()),
-			projection(Scene::camera.projection())
+			projection(Scene::camera.projection()),
+			normals(Scene::world * actor)
 		;
+		normals.transpose().invert();
 		// Set shader data
 		Material::setMaterial(MAIN_SHADER, material);
 		// Set transformation matrices
@@ -153,6 +155,7 @@ protected:
 		MAIN_SHADER["camera"](camera);
 		MAIN_SHADER["projection"](projection);
 		MAIN_SHADER["actor"](actor);
+		MAIN_SHADER["normals"](normals);
 	}
 
 	GLuint vao, vbo;

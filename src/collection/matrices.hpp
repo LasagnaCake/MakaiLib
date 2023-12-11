@@ -188,7 +188,7 @@ public:
 		return res;
 	}
 
-	constexpr Matrix<C, R, T>& transpose() const requires MatType::EqualSize<R, C> {
+	constexpr Matrix<C, R, T>& transpose() requires MatType::EqualSize<R, C> {
 		(*this) = transposed();
 		return *this;
 	}
@@ -285,16 +285,14 @@ public:
 
 	constexpr Matrix<R, C, T> inverted() const requires MatType::EqualSize<R, C> {
 		static_assert(C == R, "Matrix is not a square matrix!");
-		static_assert(determinant() != T(0), "Determinant cannot be zero!");
 		T det = determinant();
 		if (det == T(0)) return Matrix(1);
 		Matrix<R, C, T> res = cofactors().transposed() * (T(1) / det);
 		return res;
 	}
 
-	constexpr Matrix<R, C, T>& invert() const requires MatType::EqualSize<R, C> {
+	constexpr Matrix<R, C, T>& invert() requires MatType::EqualSize<R, C> {
 		static_assert(C == R, "Matrix is not a square matrix!");
-		static_assert(determinant() != T(0), "Determinant cannot be zero!");
 		(*this) = inverted();
 		return *this;
 	}

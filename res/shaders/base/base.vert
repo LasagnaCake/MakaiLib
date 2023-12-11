@@ -11,6 +11,7 @@ uniform mat4 actor = mat4(1);
 uniform mat4 world;
 uniform mat4 camera;
 uniform mat4 projection;
+uniform mat4 normals;
 
 layout (location = 0) in vec3 vertPos;
 layout (location = 1) in vec2 vertUV;
@@ -92,7 +93,7 @@ void main() {
 	warp.y = warp.x * sin(warpRotate) + warp.y * cos(warpRotate);
 	warpUV = (warp * warpScale) + warpOffset;
 	vec4 vertex	= transformed(vertPos);
-	vec3 normal	= normalize(mat3(projection * camera * world * actor) * vertNormal);
+	vec3 normal	= normalize(mat3(normals) * vertNormal);
 	// Point Size
 	//gl_PointSize = min(0.00001, 1 - vertex.z);
 	//gl_PointSize = 5.0;

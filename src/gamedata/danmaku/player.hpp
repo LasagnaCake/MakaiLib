@@ -128,10 +128,10 @@ struct PlayerEntity2D: AreaCircle2D {
 	RenderData::Reference::AnimatedPlane*	sprite;
 
 	Renderable hitboxMesh;
-	RenderData::Reference::AnimatedPlane* hitboxSprite;
+	RenderData::Reference::AnimatedPlane*	hitboxSprite;
 
 	Renderable grazeboxMesh;
-	RenderData::Reference::AnimatedPlane* grazeboxSprite;
+	RenderData::Reference::AnimatedPlane*	grazeboxSprite;
 
 	Makai::InputManager	input;
 
