@@ -71,6 +71,7 @@ public:
 	}
 
 	void beginNextPhase() {
+		if (!battling) return;
 		timerDisplay.text.content = "00.00";
 		auto& phase = phases[currentPhase];
 		onPhaseEnd(currentPhase-1, phases[currentPhase-1].spell);
@@ -125,6 +126,8 @@ public:
 		timerDisplay.setRenderLayer(layer);
 		phaseDisplay.setRenderLayer(layer);
 	}
+
+	bool isInBattle() {return battling;}
 
 	size_t currentPhase = 0;
 
