@@ -116,7 +116,7 @@ public:
 	template <class T>
 	bool colliding(T target) {
 		if (!params.active) return false;
-		RayBounds2D self = RayBounds2D {
+		CapsuleBounds2D self = CapsuleBounds2D {
 			local.position,
 			(params.width.current / SQRT2) + params.hitbox.radius,
 			params.length.current,

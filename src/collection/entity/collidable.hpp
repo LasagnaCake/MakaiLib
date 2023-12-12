@@ -28,8 +28,8 @@ namespace EntityClass {
 		using enum CollisionType2D;
 		CT2D_CASE("AreaCircle2D",	CIRCLE		);
 		CT2D_CASE("AreaBox2D",		BOX			);
+		CT2D_CASE("AreaCapsule2D",	CAPSULE		);
 		CT2D_CASE("AreaRay2D",		RAY			);
-		CT2D_CASE("AreaLine2D",		LINE		);
 		CT2D_CASE("AreaTriangle2D",	TRIANGLE	);
 		CT2D_CASE("AreaQuad2D",		QUAD		);
 		CT2D_CASE("AreaShape2D",	SHAPE		);
@@ -86,8 +86,8 @@ namespace EntityClass {
 			switch (getCollisionType2D(target)) {
 				CT2D_CASE(AreaCollision2D<CircleBounds2D>,		CIRCLE		)
 				CT2D_CASE(AreaCollision2D<BoxBounds2D>,			BOX			)
+				CT2D_CASE(AreaCollision2D<CapsuleBounds2D>,		CAPSULE		)
 				CT2D_CASE(AreaCollision2D<RayBounds2D>,			RAY			)
-				CT2D_CASE(AreaCollision2D<LineBounds2D>,		LINE		)
 				CT2D_CASE(AreaCollision2D<TriangleBounds2D>,	TRIANGLE	)
 				CT2D_CASE(AreaCollision2D<QuadBounds2D>,		QUAD		)
 				CT2D_CASE(AreaCollision2D<ShapeBounds2D>,		SHAPE		)
@@ -133,8 +133,8 @@ namespace EntityClass {
 
 	typedef AreaCollision2D<CircleBounds2D>		AreaCircle2D;
 	typedef AreaCollision2D<BoxBounds2D>		AreaBox2D;
+	typedef AreaCollision2D<CapsuleBounds2D>	AreaCapsule2D;
 	typedef AreaCollision2D<RayBounds2D>		AreaRay2D;
-	typedef AreaCollision2D<LineBounds2D>		AreaLine2D;
 	typedef AreaCollision2D<TriangleBounds2D>	AreaTriangle2D;
 	typedef AreaCollision2D<QuadBounds2D>		AreaQuad2D;
 	typedef AreaCollision2D<ShapeBounds2D>		AreaShape2D;
@@ -146,8 +146,8 @@ namespace EntityClass {
 		switch (getCollisionType2D(a)) {
 			CT2D_CASE(AreaCircle2D,		CIRCLE		)
 			CT2D_CASE(AreaBox2D,		BOX			)
+			CT2D_CASE(AreaCapsule2D,	CAPSULE		)
 			CT2D_CASE(AreaRay2D,		RAY			)
-			CT2D_CASE(AreaLine2D,		LINE		)
 			CT2D_CASE(AreaTriangle2D,	TRIANGLE	)
 			CT2D_CASE(AreaQuad2D,		QUAD		)
 			CT2D_CASE(AreaShape2D,		SHAPE		)

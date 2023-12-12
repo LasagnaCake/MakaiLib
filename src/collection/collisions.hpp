@@ -54,13 +54,13 @@ namespace Collision {
 	};
 
 	/**
-	**********************************************
-	*                                            *
-	*  2D Ray (Capsule) Boundary Data Structure  *
-	*                                            *
-	**********************************************
+	****************************************
+	*                                      *
+	*  2D Capsule Boundary Data Structure  *
+	*                                      *
+	****************************************
 	*/
-	struct Ray {
+	struct Capsule {
 		Vector2 position;
 		Vector2 width = 1;
 		float length = 1;
@@ -69,13 +69,13 @@ namespace Collision {
 	};
 
 	/**
-	***********************************************
-	*                                             *
-	*  2D Line (Raycast) Boundary Data Structure  *
-	*                                             *
-	***********************************************
+	**********************************************
+	*                                            *
+	*  2D Ray (Raycast) Boundary Data Structure  *
+	*                                            *
+	**********************************************
 	*/
-	struct Line {
+	struct Ray {
 		Vector2 position;
 		float length = 1;
 		float angle = 0;
@@ -124,8 +124,8 @@ namespace Collision {
 	#define	CDT_BOUNDS(CLASS) struct CLASS##Bounds2D: CLASS, Bounds2D {}
 	CDT_BOUNDS(Circle);
 	CDT_BOUNDS(Box);
+	CDT_BOUNDS(Capsule);
 	CDT_BOUNDS(Ray);
-	CDT_BOUNDS(Line);
 	CDT_BOUNDS(Polygon);
 	CDT_BOUNDS(Triangle);
 	CDT_BOUNDS(Quad);
@@ -139,8 +139,8 @@ namespace Collision {
 		;
 	}
 
-	inline RayBounds2D makeRayBounds(Vector2 const& from, Vector2 const& to, Vector2 const& width = 1) {
-		return RayBounds2D {
+	inline CapsuleBounds2D makeCapsuleBounds(Vector2 const& from, Vector2 const& to, Vector2 const& width = 1) {
+		return CapsuleBounds2D {
 			from,
 			width,
 			from.distanceTo(to),
@@ -179,7 +179,7 @@ namespace Collision {
 		return c2Circle{c2v{b.position.x, b.position.y}, b.radius.average()};
 	}
 
-	inline c2Capsule cuteify(RayBounds2D const& b) {
+	inline c2Capsule cuteify(CapsuleBounds2D const& b) {
 		Vector2 end = VecMath::angleV2(b.angle) * b.length + b.position;
 		return c2Capsule{
 			c2v{b.position.x, b.position.y},
@@ -188,7 +188,7 @@ namespace Collision {
 		};
 	}
 
-	inline c2Ray cuteify(LineBounds2D const& b) {
+	inline c2Ray cuteify(RayBounds2D const& b) {
 		Vector2 normal = VecMath::angleV2(b.angle);
 		return c2Ray{
 			c2v{b.position.x, b.position.y},
@@ -258,7 +258,7 @@ namespace Collision {
 		return point.distanceTo(area.position) < (radius);
 	}
 
-	inline bool withinBounds(Vector2 const& a, RayBounds2D const& b) {
+	inline bool withinBounds(Vector2 const& a, CapsuleBounds2D const& b) {
 		// Get distance between targets
 		float distance = a.distanceTo(b.position);
 		// If too distant, return
@@ -308,7 +308,7 @@ namespace Collision {
 
 	// Ray
 
-	inline bool withinBounds(CircleBounds2D const& a, RayBounds2D const& b) {
+	inline bool withinBounds(CircleBounds2D const& a, CapsuleBounds2D const& b) {
 		// Get distance between targets
 		float distance = a.position.distanceTo(b.position);
 		// If too distant, return
@@ -320,34 +320,34 @@ namespace Collision {
 		return withinBounds(a, target);
 	}
 
-	inline bool withinBounds(BoxBounds2D const& a, RayBounds2D const& b) {
+	inline bool withinBounds(BoxBounds2D const& a, CapsuleBounds2D const& b) {
 		return c2AABBtoCapsule(cuteify(a), cuteify(b));
 	}
 
-	inline bool withinBounds(RayBounds2D const& a, RayBounds2D const& b) {
+	inline bool withinBounds(CapsuleBounds2D const& a, CapsuleBounds2D const& b) {
 		return c2CapsuletoCapsule(cuteify(a), cuteify(b));
 	}
 
 	// Line
 
-	inline bool withinBounds(BoxBounds2D const& a, LineBounds2D const& b, c2Raycast* result = nullptr) {
+	inline bool withinBounds(BoxBounds2D const& a, RayBounds2D const& b, c2Raycast* result = nullptr) {
 		c2Raycast r;
 		return c2RaytoAABB(cuteify(b), cuteify(a), result ? result : &r);
 	}
 
-	inline bool withinBounds(CircleBounds2D const& a, LineBounds2D const& b, c2Raycast* result = nullptr) {
+	inline bool withinBounds(CircleBounds2D const& a, RayBounds2D const& b, c2Raycast* result = nullptr) {
 		c2Raycast r;
 		return c2RaytoCircle(cuteify(b), cuteify(a), result ? result : &r);
 	}
 
-	inline bool withinBounds(RayBounds2D const& a, LineBounds2D const& b, c2Raycast* result = nullptr) {
+	inline bool withinBounds(CapsuleBounds2D const& a, RayBounds2D const& b, c2Raycast* result = nullptr) {
 		c2Raycast r;
 		return c2RaytoCapsule(cuteify(b), cuteify(a), result ? result : &r);
 	}
 
-	inline bool withinBounds(LineBounds2D const& a, LineBounds2D const& b, c2Raycast* result = nullptr) {
+	inline bool withinBounds(RayBounds2D const& a, RayBounds2D const& b, c2Raycast* result = nullptr) {
 		c2Raycast r;
-		RayBounds2D ray = {b.position, b.length, 0.001, b.angle};
+		CapsuleBounds2D ray = {b.position, b.length, 0.001, b.angle};
 		return c2RaytoCapsule(cuteify(b), cuteify(ray), result ? result : &r);
 	}
 
@@ -369,12 +369,12 @@ namespace Collision {
 		return c2AABBtoPoly(cuteify(a), &pb.p, &pb.t);
 	}
 
-	inline bool withinBounds(RayBounds2D const& a, PolygonBounds2D const& b) {
+	inline bool withinBounds(CapsuleBounds2D const& a, PolygonBounds2D const& b) {
 		PolyX pb = cuteify(b);
 		return c2CapsuletoPoly(cuteify(a), &pb.p, &pb.t);
 	}
 
-	inline bool withinBounds(LineBounds2D const& a, PolygonBounds2D const& b, c2Raycast* result = nullptr) {
+	inline bool withinBounds(RayBounds2D const& a, PolygonBounds2D const& b, c2Raycast* result = nullptr) {
 		c2Raycast r;
 		PolyX pb = cuteify(b);
 		return c2RaytoPoly(cuteify(a), &pb.p, &pb.t, result ? result : &r);
@@ -402,12 +402,12 @@ namespace Collision {
 		return c2AABBtoPoly(cuteify(a), &pb.p, &pb.t);
 	}
 
-	inline bool withinBounds(RayBounds2D const& a, TriangleBounds2D const& b) {
+	inline bool withinBounds(CapsuleBounds2D const& a, TriangleBounds2D const& b) {
 		PolyX pb = cuteify(b);
 		return c2CapsuletoPoly(cuteify(a), &pb.p, &pb.t);
 	}
 
-	inline bool withinBounds(LineBounds2D const& a, TriangleBounds2D const& b, c2Raycast* result = nullptr) {
+	inline bool withinBounds(RayBounds2D const& a, TriangleBounds2D const& b, c2Raycast* result = nullptr) {
 		c2Raycast r;
 		PolyX pb = cuteify(b);
 		return c2RaytoPoly(cuteify(a), &pb.p, &pb.t, result ? result : &r);
@@ -440,12 +440,12 @@ namespace Collision {
 		return c2AABBtoPoly(cuteify(a), &pb.p, &pb.t);
 	}
 
-	inline bool withinBounds(RayBounds2D const& a, QuadBounds2D const& b) {
+	inline bool withinBounds(CapsuleBounds2D const& a, QuadBounds2D const& b) {
 		PolyX pb = cuteify(b);
 		return c2CapsuletoPoly(cuteify(a), &pb.p, &pb.t);
 	}
 
-	inline bool withinBounds(LineBounds2D const& a, QuadBounds2D const& b, c2Raycast* result = nullptr) {
+	inline bool withinBounds(RayBounds2D const& a, QuadBounds2D const& b, c2Raycast* result = nullptr) {
 		c2Raycast r;
 		PolyX pb = cuteify(b);
 		return c2RaytoPoly(cuteify(a), &pb.p, &pb.t, result ? result : &r);
@@ -524,7 +524,7 @@ namespace Collision {
 		return colliding;
 	}
 
-	inline bool withinBounds(RayBounds2D const& a, ShapeBounds2D const& b) {
+	inline bool withinBounds(CapsuleBounds2D const& a, ShapeBounds2D const& b) {
 		TriangleBounds2D tb;
 		bool colliding = true;
 		for (Triangle const& t: b.triangles) {
@@ -535,7 +535,7 @@ namespace Collision {
 		return colliding;
 	}
 
-	inline bool withinBounds(LineBounds2D const& a, ShapeBounds2D const& b, c2Raycast** results = nullptr) {
+	inline bool withinBounds(RayBounds2D const& a, ShapeBounds2D const& b, c2Raycast** results = nullptr) {
 		TriangleBounds2D tb;
 		bool colliding = true;
 		size_t i = 0;
@@ -561,12 +561,12 @@ namespace Collision {
 	}
 
 	template<CollisionType T>
-	inline bool withinBounds(RayBounds2D const& a, T const& b) {
+	inline bool withinBounds(CapsuleBounds2D const& a, T const& b) {
 		return withinBounds(b, a);
 	}
 
 	template<CollisionType T>
-	inline bool withinBounds(LineBounds2D const& a, T const& b, c2Raycast* result = nullptr) {
+	inline bool withinBounds(RayBounds2D const& a, T const& b, c2Raycast* result = nullptr) {
 		return withinBounds(b, a, result);
 	}
 
@@ -593,10 +593,7 @@ namespace Collision {
 	// Clamping functions
 
 	inline Vector2 getBounded(Vector2 const& point, BoxBounds2D const& box) {
-		return point.clamped(
-			Vector2(box.min.x, box.min.y),
-			Vector2(box.max.x, box.max.y)
-		);
+		return point.clamped(box.min,box.max);
 	}
 
 	/**
@@ -614,8 +611,8 @@ namespace Collision {
 
 	typedef AreaCollisionData<CircleBounds2D>	AreaCircleData;
 	typedef AreaCollisionData<BoxBounds2D>		AreaBoxData;
+	typedef AreaCollisionData<CapsuleBounds2D>	AreaCapsuleData;
 	typedef AreaCollisionData<RayBounds2D>		AreaRayData;
-	typedef AreaCollisionData<LineBounds2D>		AreaLineData;
 	typedef AreaCollisionData<TriangleBounds2D>	AreaTriangleData;
 	typedef AreaCollisionData<QuadBounds2D>		AreaQuadData;
 	typedef AreaCollisionData<ShapeBounds2D>	AreaShapeData;
@@ -624,8 +621,8 @@ namespace Collision {
 	enum class CollisionType2D {
 		CT2D_CIRCLE,
 		CT2D_BOX,
+		CT2D_CAPSULE,
 		CT2D_RAY,
-		CT2D_LINE,
 		CT2D_TRIANGLE,
 		CT2D_QUAD,
 		CT2D_SHAPE,
