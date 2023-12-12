@@ -191,9 +191,9 @@ public:
 		;
 		Vector2	at			= (screenSize / 2.0) + position;
 		BoxBounds2D
-			ePlayfield	= CollisionData::makeBounds(at, size * Vector2(1.1, 1.1)),
-			pPlayfield	= CollisionData::makeBounds(at, size * Vector2(1.25, 1.25)),
-			board		= CollisionData::makeBounds(at, size);
+			ePlayfield	= Collision::makeBounds(at, size * Vector2(1.1, 1.1)),
+			pPlayfield	= Collision::makeBounds(at, size * Vector2(1.25, 1.25)),
+			board		= Collision::makeBounds(at, size);
 		DEBUGLN(
 			"GAME BOUNDS -> {\n\t",
 			board.min.x, " : ", board.min.y, "\n\t",
@@ -216,12 +216,12 @@ public:
 		Vector2	at1			= (screenSize / 2.0) + pos1;
 		Vector2	at2			= (screenSize / 2.0) + pos2;
 		BoxBounds2D
-			e1Playfield	= CollisionData::makeBounds(at1, size * Vector2(1.1, 1.1)),
-			e2Playfield	= CollisionData::makeBounds(at2, size * Vector2(1.1, 1.1)),
-			p1Playfield	= CollisionData::makeBounds(at1, size * Vector2(1.25, 1.25)),
-			p2Playfield	= CollisionData::makeBounds(at2, size * Vector2(1.25, 1.25)),
-			board1		= CollisionData::makeBounds(at1, size);
-			board2		= CollisionData::makeBounds(at2, size);
+			e1Playfield	= Collision::makeBounds(at1, size * Vector2(1.1, 1.1)),
+			e2Playfield	= Collision::makeBounds(at2, size * Vector2(1.1, 1.1)),
+			p1Playfield	= Collision::makeBounds(at1, size * Vector2(1.25, 1.25)),
+			p2Playfield	= Collision::makeBounds(at2, size * Vector2(1.25, 1.25)),
+			board1		= Collision::makeBounds(at1, size);
+			board2		= Collision::makeBounds(at2, size);
 		managers.item1->poc =
 		managers.item2->poc = -screenSize.y / 3.0;
 		// Set 1

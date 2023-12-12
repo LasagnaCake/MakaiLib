@@ -307,7 +307,7 @@ struct PlayerEntity2D: AreaCircle2D {
 		else
 			position -= direction * speed.unfocused * delta;
 		// Clamp position
-		position = CollisionData::getBounded(position, board);
+		position = Collision::getBounded(position, board);
 		// Set collision's position
 		collision.shape.position = globalPosition();
 		// Update sprite
@@ -358,7 +358,7 @@ struct PlayerEntity2D: AreaCircle2D {
 			for EACH_IF(
 				enemy,
 				elist,
-				CollisionData::isColliding(
+				Collision::isColliding(
 					((AreaCircle2D*)enemy)->collision,
 					collision
 				)

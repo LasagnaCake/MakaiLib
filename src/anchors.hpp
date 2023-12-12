@@ -129,7 +129,6 @@
 #include "collection/dataview.hpp"
 #include "collection/threaddata.hpp"
 #include "collection/errors.hpp"
-#include "collection/entity/entity.hpp"
 #include "collection/vectorn.hpp"
 #include "collection/matrices.hpp"
 #include "collection/cyclical.hpp"
@@ -139,6 +138,8 @@
 #include "collection/grouping.hpp"
 #include "collection/sharedvalue.hpp"
 #include "collection/splines.hpp"
+#include "collection/collisions.hpp"
+#include "collection/entity/entity.hpp"
 
 #include "fileloader.hpp"
 #include "predefs.hpp"

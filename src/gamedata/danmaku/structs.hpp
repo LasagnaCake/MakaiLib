@@ -1,5 +1,5 @@
 namespace {
-	using namespace CollisionData;
+	using namespace Collision;
 }
 
 template<Tweening::Tweenable T = float>

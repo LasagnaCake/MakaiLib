@@ -131,8 +131,8 @@ public:
 		mesh.material.shaded = false;
 	})
 
-	CollisionData::BoxBounds2D playfield;
-	CollisionData::BoxBounds2D board;
+	Collision::BoxBounds2D playfield;
+	Collision::BoxBounds2D board;
 
 	Renderable mesh;
 
@@ -153,7 +153,7 @@ public:
 					auto targetBounds = a->collision.shape;
 					if (
 						a->collision.enabled
-						&& CollisionData::withinBounds(
+						&& Collision::withinBounds(
 							b.params.hitbox,
 							targetBounds
 						)
@@ -165,7 +165,7 @@ public:
 			}
 			if (b.params.rebound || b.params.shuttle)
 				if (
-					! CollisionData::withinBounds(
+					! Collision::withinBounds(
 						b.local.position,
 						board
 					)
@@ -216,7 +216,7 @@ public:
 				}
 			if (b.params.dope)
 				if (
-					! CollisionData::withinBounds(
+					! Collision::withinBounds(
 						b.params.hitbox,
 						playfield
 					)
@@ -271,7 +271,7 @@ public:
 		GAME_PARALLEL_FOR
 		for SEACH_IF(b, bullets, BULLET_COUNT, !b.isFree() && b.params.collidable) {
 			if (
-				CollisionData::withinBounds(
+				Collision::withinBounds(
 					b.params.hitbox,
 					target
 				)
@@ -309,7 +309,7 @@ public:
 			if (
 				!bullets[i].isFree()
 			&&	bullets[i].params.collidable
-			&&	CollisionData::withinBounds(bullets[i].params.hitbox, area)
+			&&	Collision::withinBounds(bullets[i].params.hitbox, area)
 			) func(bullets[i]);
 	}
 

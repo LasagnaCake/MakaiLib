@@ -136,7 +136,7 @@ public:
 		);
 		if (includeWidth){
 			from -= VecMath::angleV2(params.rot.current - PI) * params.width.current;
-			to *= CollisionData::getRadius(params.width.current, trot) + params.length.current;
+			to *= Collision::getRadius(params.width.current, trot) + params.length.current;
 		}
 		else
 			to *= params.length.current;
@@ -278,7 +278,7 @@ public:
 			if (
 				!lasers[i].isFree()
 			&&	lasers[i].params.collidable
-			&&	CollisionData::withinBounds(lasers[i].params.hitbox, area)
+			&&	Collision::withinBounds(lasers[i].params.hitbox, area)
 			) func(lasers[i]);
 	}
 

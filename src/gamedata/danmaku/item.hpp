@@ -115,7 +115,7 @@ public:
 		mesh.material.shaded = false;
 	})
 
-	CollisionData::BoxBounds2D playfield;
+	Collision::BoxBounds2D playfield;
 
 	float poc = 0;
 
@@ -137,7 +137,7 @@ public:
 					if (a) {
 						auto targetBounds = a->getGrazeBounds();
 						if (
-							CollisionData::withinBounds(
+							Collision::withinBounds(
 								item.params.hitbox,
 								targetBounds
 							)
@@ -154,7 +154,7 @@ public:
 				}
 				if (item.params.dope)
 					if (
-						! CollisionData::withinBounds(
+						! Collision::withinBounds(
 							item.params.hitbox,
 							playfield
 						)
@@ -228,7 +228,7 @@ public:
 		GAME_PARALLEL_FOR
 		for SEACH_IF(item, items, ITEM_COUNT, !item.isFree() && item.params.collidable) {
 			if (
-				CollisionData::withinBounds(
+				Collision::withinBounds(
 					item.params.hitbox,
 					target
 				)
@@ -264,7 +264,7 @@ public:
 			if (
 				!items[i].isFree()
 			&&	items[i].params.collidable
-			&&	CollisionData::withinBounds(items[i].params.hitbox, area)
+			&&	Collision::withinBounds(items[i].params.hitbox, area)
 			) func(items[i]);
 	}
 

@@ -3,7 +3,7 @@
 
 #include "core.hpp"
 #include "2d3d.hpp"
-#include "collision.hpp"
+#include "collidable.hpp"
 
 #undef ENTITY_CLASS
 #undef DERIVED_CLASS
