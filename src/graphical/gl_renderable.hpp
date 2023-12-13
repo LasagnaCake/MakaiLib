@@ -394,16 +394,9 @@ private:
 		Texture2D* const& emission	= nullptr,
 		Texture2D* const& warp		= nullptr
 	) {
-		if (def["version"].is_string()) {
-			StringList ver = Helper::splitString(def["version"].get<String>(), '.');
-			size_t vss = ver.size();
-			size_t
-				major = vss > 0 ? toUInt64(ver[0]) : 0,
-				minor = vss > 1 ? toUInt64(ver[1]) : 0,
-				patch = vss > 2 ? toUInt64(ver[2]) : 0
-			;
+		if (def["version"].is_number()) {
 			// Do stuff for versions
-			switch (major) {
+			switch (def["version"].get<size_t>()) {
 				default:
 				case 0: extendFromDefinitionV0(def, sourcepath, texture, emission, warp); break;
 			}
