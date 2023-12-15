@@ -499,7 +499,7 @@ void main() {
 	
 	color = applyBrightnessAndContrast(color);
 
-	FragColor = mix(color, polarWarpColor, pfac * polarWarpTintStrength);
+	FragColor = mix(color, vec4(polarWarpColor.xyz, polarWarpColor.w * color.w), pfac * polarWarpTintStrength);
 
 	if (debugView > 0) {
 		switch(debugView) {
