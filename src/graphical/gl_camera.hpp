@@ -125,7 +125,7 @@ namespace Camera {
 			Vector3 at	= Vector3(0, -1, 0);
 			Vector3 up	= Vector3(0, 0, 1);
 			/*Matrix4x4 const rmat = Matrix4x4::fromEulerYXZ(rotation);
-			return Camera3D {
+			return Camera3D{
 				eye,
 				rmat * Vector4(at, 1),
 				rmat * Vector4(up, 1),
