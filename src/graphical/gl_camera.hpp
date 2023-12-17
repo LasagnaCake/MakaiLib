@@ -120,7 +120,7 @@ namespace Camera {
 		float zFar	= 100.0;
 		OrthographicData ortho;
 
-		constexpr operator Camera3D() const {
+		constexpr Camera3D toCamera3D() const {
 			Vector3 eye	= position;
 			Vector3 at	= Vector3(0, -1, 0);
 			Vector3 up	= Vector3(0, 0, 1);
@@ -136,7 +136,7 @@ namespace Camera {
 				ortho,
 				true
 			};*/
-			return Camera3D {
+			return Camera3D{
 				eye,
 				VecMath::srpTransform(at, 0, rotation, 1),
 				VecMath::srpTransform(up, 0, rotation, 1),
@@ -148,6 +148,8 @@ namespace Camera {
 				1.0
 			};
 		}
+
+		constexpr operator Camera3D() const {return toCamera3D();}
 
 		constexpr GimbalCamera3D& fromCamera3D(Camera3D const& cam) {
 			auto crot	= MatMath::getEulerAnglesYXZ(cam.matrix());
