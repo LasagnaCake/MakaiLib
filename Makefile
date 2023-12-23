@@ -124,9 +124,12 @@ WARNINGS := -W$(warn)
 endif
 
 ifdef rcscript
-PROCESS_RC_FILE		:= @windres build/$(rcscript) -o obj/rc/cfg.o
+WINRC				:= @windres
+RC_FILE_DIRS		:= build/$(rcscript) -o obj/rc/cfg.o
 CREATE_RC_FOLDER	:= @mkdir -p obj\rc
 INCLUDE_RC_FILE		:= obj/rc/cfg.o
+else
+WINRC				:= @:
 endif
 
 ifdef macro
@@ -183,10 +186,10 @@ debug: build\$(src)
 	
 	@echo "[0/2] processing resources [$@]..."
 	$(CREATE_RC_FOLDER)
-	$(PROCESS_RC_FILE)
+	$(WINRC) -D_DEBUG_OUTPUT_ $(RC_FILE_DIRS)
 	
 	@echo "[1/2] compiling [$@]..."
-	@$(CXX) $(COMPILER_CONFIG) -Wall -Wpedantic $(SAFE_MATH) -pg -Og -ggdb3 $(SANITIZER_OPTIONS) -fno-omit-frame-pointer -D_DEBUG_OUTPUT_ -D$(macro) $(INCLUDES) -c build\$(src) -o obj/$@/$(name).o
+	@$(CXX) $(COMPILER_CONFIG) -Wall -Wpedantic $(SAFE_MATH) -pg -Og -ggdb3 $(SANITIZER_OPTIONS) -fno-omit-frame-pointer -D_DEBUG_OUTPUT_ $(macro) $(INCLUDES) -c build\$(src) -o obj/$@/$(name).o
 	
 	@echo "[2/2] linking libraries..."
 	@$(CXX) -o res/$(name)_$@.exe obj/$@/$(name).o $(INCLUDE_RC_FILE) $(LINKER_CONFIG) -pg -Og $(LIBRARIES) $(SANITIZER_OPTIONS)
@@ -210,10 +213,10 @@ demo: build\$(src)
 	
 	@echo "[0/2] processing resources [$@]..."
 	$(CREATE_RC_FOLDER)
-	$(PROCESS_RC_FILE)
+	$(WINRC) -D_DEMO_BUILD_ $(RC_FILE_DIRS)
 	
 	@echo "[1/2] compiling [$@]..."
-	@$(CXX) $(COMPILER_CONFIG) $(WARNINGS) $(OPTIMIZATIONS) -O$(optimize-lvl) $(DEBUG_SYMBOL) $(SAFE_MATH) $(OPENMP_ENABLED) $(INCLUDES) -D_DEMO_BUILD_ -D$(macro) -c build\$(src) -o obj/$@/$(name).o
+	@$(CXX) $(COMPILER_CONFIG) $(WARNINGS) $(OPTIMIZATIONS) -O$(optimize-lvl) $(DEBUG_SYMBOL) $(SAFE_MATH) $(OPENMP_ENABLED) $(INCLUDES) -D_DEMO_BUILD_ $(macro) -c build\$(src) -o obj/$@/$(name).o
 	
 	@echo "[2/2] linking libraries..."
 	@$(CXX) -o res/$(name)_$@.exe obj/$@/$(name).o $(INCLUDE_RC_FILE) $(LINKER_CONFIG) -O$(optimize-lvl)  $(LIBRARIES) $(GUI_MODE)
@@ -237,10 +240,10 @@ release: build\$(src)
 	
 	@echo "[0/2] processing resources [$@]..."
 	$(CREATE_RC_FOLDER)
-	$(PROCESS_RC_FILE)
+	$(WINRC) $(RC_FILE_DIRS)
 	
 	@echo "[1/2] compiling [$@]..."
-	@$(CXX) $(COMPILER_CONFIG) $(WARNINGS) $(OPTIMIZATIONS) -O$(optimize-lvl) $(DEBUG_SYMBOL) $(SAFE_MATH) $(OPENMP_ENABLED) $(INCLUDES) -D$(macro) -c build\$(src) -o obj/$@/$(name).o
+	@$(CXX) $(COMPILER_CONFIG) $(WARNINGS) $(OPTIMIZATIONS) -O$(optimize-lvl) $(DEBUG_SYMBOL) $(SAFE_MATH) $(OPENMP_ENABLED) $(INCLUDES) $(macro) -c build\$(src) -o obj/$@/$(name).o
 	
 	@echo "[2/2] linking libraries..."
 	@$(CXX) -o res/$(name).exe obj/$@/$(name).o $(INCLUDE_RC_FILE) $(LINKER_CONFIG) -O$(optimize-lvl)  $(LIBRARIES) $(GUI_MODE)
