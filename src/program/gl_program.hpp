@@ -863,7 +863,7 @@ namespace Makai {
 			// Clear frame buffer
 			framebuffer.clearBuffers();
 			// Set frontface order
-			glFrontFace(GL_CW);
+			Drawer::setFrontFace(true);
 			// Call post frame clearing function
 			onPostFrameClear();
 			// Draw objects

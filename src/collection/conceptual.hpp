@@ -315,4 +315,9 @@ namespace Type {
 	concept Mutable = Safe<T> && !(Array<T> || Constant<T>);
 }
 
+namespace Meta {
+	template<bool COND, class T, class F>
+	using Option = std::conditional<COND, T, F>::type;
+}
+
 #endif // CONCEPTUAL_TYPES_H

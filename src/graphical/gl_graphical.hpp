@@ -183,6 +183,10 @@ namespace Drawer {
 		glDisableVertexAttribArray(0);
 	}
 
+	inline void setFrontFace(bool const& clockwise = true) {
+		glFrontFace(clockwise ? GL_CW : GL_CCW);
+	}
+
 	inline void clearColorBuffer(Vector4 const& color) {
 		glSetClearColor(color);
 		glClear(GL_COLOR_BUFFER_BIT);

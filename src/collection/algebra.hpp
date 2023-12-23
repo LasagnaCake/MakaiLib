@@ -394,42 +394,56 @@ namespace Math {
 
 	namespace Random {
 		namespace {
-			typedef std::uniform_real_distribution<double> RandReal;
-			typedef std::uniform_int_distribution<size_t> RandLong;
+			template<typename T>
+			using IntDist = std::uniform_int_distribution<T>;
+
+			template<typename T>
+			using RealDist = std::uniform_real_distribution<T>;
+
 			typedef std::mt19937_64 RandomEngine;
 			// The random number generator engine used
 			RandomEngine	engine{Time::sinceEpoch<Time::Millis>()};
 			// Default distributions
-			RandReal	longDist(0, Math::Max::SIZET_V);
-			RandLong	realDist(0.0,1.0);
+			IntDist<size_t>		longDist(0, Math::Max::SIZET_V);
+			RealDist<double>	realDist(0.0,1.0);
 		}
+		typedef RandomEngine Engine;
+
+		template <Type::Number T>
+		using Distribution = Meta::Option<Type::Integer<T>, IntDist<T>, RealDist<T>>;
 
 		/// Returns a random double between 0 and 1.
-		double real() {
+		inline double real() {
 			return realDist(engine);
 		}
 
 		/// Returns a random double between the given values.
 		template<Type::Real T = float>
-		T real(T min, T max) {
-			RandReal dist(min, max);
-			return (T)dist(engine);
+		inline T real(T const& min, T const& max) {
+			RealDist<T> dist(min, max);
+			return dist(engine);
 		}
 
 		/// Returns a random integer between 0 and maximum size_t.
-		size_t integer() {
+		inline size_t integer() {
 			return longDist(engine);
 		}
 
 		/// Returns a random integer between the given values.
 		template<Type::Integer T = int>
-		T integer(T min, T max) {
-			RandLong dist(min, max);
-			return (T)dist(engine);
+		inline T integer(T const& min, T const& max) {
+			IntDist<T> dist(min, max);
+			return dist(engine);
+		}
+
+		template<Type::Number T = int, class E>
+		inline T custom(T const& min, T const& max, E& engine) {
+			Distribution<T> dist(min, max);
+			return dist(engine);
 		}
 
 		/// Sets the random number generator's seed.
-		inline void setSeed(size_t seed) {
+		inline void setSeed(size_t const& seed) {
 			engine = RandomEngine{seed};
 		}
 
