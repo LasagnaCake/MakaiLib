@@ -133,7 +133,7 @@ WINRC				:= @:
 endif
 
 ifdef macro
-macro = -D$(macro)
+DEFINE_MACRO = -D$(macro)
 endif
 
 DATA_FOLDER := res/data/
@@ -189,7 +189,7 @@ debug: build\$(src)
 	$(WINRC) -D_DEBUG_OUTPUT_ $(RC_FILE_DIRS)
 	
 	@echo "[1/2] compiling [$@]..."
-	@$(CXX) $(COMPILER_CONFIG) -Wall -Wpedantic $(SAFE_MATH) -pg -Og -ggdb3 $(SANITIZER_OPTIONS) -fno-omit-frame-pointer -D_DEBUG_OUTPUT_ $(macro) $(INCLUDES) -c build\$(src) -o obj/$@/$(name).o
+	@$(CXX) $(COMPILER_CONFIG) -Wall -Wpedantic $(SAFE_MATH) -pg -Og -ggdb3 $(SANITIZER_OPTIONS) -fno-omit-frame-pointer -D_DEBUG_OUTPUT_ $(DEFINE_MACRO) $(INCLUDES) -c build\$(src) -o obj/$@/$(name).o
 	
 	@echo "[2/2] linking libraries..."
 	@$(CXX) -o res/$(name)_$@.exe obj/$@/$(name).o $(INCLUDE_RC_FILE) $(LINKER_CONFIG) -pg -Og $(LIBRARIES) $(SANITIZER_OPTIONS)
@@ -216,7 +216,7 @@ demo: build\$(src)
 	$(WINRC) -D_DEMO_BUILD_ $(RC_FILE_DIRS)
 	
 	@echo "[1/2] compiling [$@]..."
-	@$(CXX) $(COMPILER_CONFIG) $(WARNINGS) $(OPTIMIZATIONS) -O$(optimize-lvl) $(DEBUG_SYMBOL) $(SAFE_MATH) $(OPENMP_ENABLED) $(INCLUDES) -D_DEMO_BUILD_ $(macro) -c build\$(src) -o obj/$@/$(name).o
+	@$(CXX) $(COMPILER_CONFIG) $(WARNINGS) $(OPTIMIZATIONS) -O$(optimize-lvl) $(DEBUG_SYMBOL) $(SAFE_MATH) $(OPENMP_ENABLED) $(INCLUDES) -D_DEMO_BUILD_ $(DEFINE_MACRO) -c build\$(src) -o obj/$@/$(name).o
 	
 	@echo "[2/2] linking libraries..."
 	@$(CXX) -o res/$(name)_$@.exe obj/$@/$(name).o $(INCLUDE_RC_FILE) $(LINKER_CONFIG) -O$(optimize-lvl)  $(LIBRARIES) $(GUI_MODE)
@@ -243,7 +243,7 @@ release: build\$(src)
 	$(WINRC) $(RC_FILE_DIRS)
 	
 	@echo "[1/2] compiling [$@]..."
-	@$(CXX) $(COMPILER_CONFIG) $(WARNINGS) $(OPTIMIZATIONS) -O$(optimize-lvl) $(DEBUG_SYMBOL) $(SAFE_MATH) $(OPENMP_ENABLED) $(INCLUDES) $(macro) -c build\$(src) -o obj/$@/$(name).o
+	@$(CXX) $(COMPILER_CONFIG) $(WARNINGS) $(OPTIMIZATIONS) -O$(optimize-lvl) $(DEBUG_SYMBOL) $(SAFE_MATH) $(OPENMP_ENABLED) $(INCLUDES) $(DEFINE_MACRO) -c build\$(src) -o obj/$@/$(name).o
 	
 	@echo "[2/2] linking libraries..."
 	@$(CXX) -o res/$(name).exe obj/$@/$(name).o $(INCLUDE_RC_FILE) $(LINKER_CONFIG) -O$(optimize-lvl)  $(LIBRARIES) $(GUI_MODE)
