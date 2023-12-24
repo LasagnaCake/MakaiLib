@@ -40,7 +40,8 @@ NOTES:
 >   rcfile     : Must be located within the 'build/' folder.
 >   name       : For targers "debug" and "demo", "_debug" and "_demo" gets appended at the end of
                  the file, respectively.
->   no-archive : The value set while packing MUST match the value set while building.
+>   no-archive : The value set while packing MUST match the value set while building. Ignored for
+                 debug.
 
 Pack:
 >   name        : Both the name used for the output zip file, and the name of the .exe, minus the
@@ -196,7 +197,7 @@ debug: build\$(src)
 	$(WINRC) -D_DEBUG_OUTPUT_ $(RC_FILE_DIRS)
 	
 	@echo "[1/2] compiling [$@]..."
-	@$(CXX) $(COMPILER_CONFIG) -Wall -Wpedantic $(SAFE_MATH) -pg -Og -ggdb3 $(SANITIZER_OPTIONS) -fno-omit-frame-pointer -D_DEBUG_OUTPUT_ $(DEFINE_MACRO) $(INCLUDES) $(DISABLE_ARCHIVE) -c build\$(src) -o obj/$@/$(name).o
+	@$(CXX) $(COMPILER_CONFIG) -Wall -Wpedantic $(SAFE_MATH) -pg -Og -ggdb3 $(SANITIZER_OPTIONS) -fno-omit-frame-pointer -D_DEBUG_OUTPUT_ $(DEFINE_MACRO) $(INCLUDES) -D_ARCHIVE_SYSTEM_DISABLED_ -c build\$(src) -o obj/$@/$(name).o
 	
 	@echo "[2/2] linking libraries..."
 	@$(CXX) -o res/$(name)_$@.exe obj/$@/$(name).o $(INCLUDE_RC_FILE) $(LINKER_CONFIG) -pg -Og $(LIBRARIES) $(SANITIZER_OPTIONS)
