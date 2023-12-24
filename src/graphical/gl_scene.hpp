@@ -20,7 +20,7 @@ public:
 	Material::WorldMaterial	world;
 
 	void extendFromSceneFile(string const& path) {
-		extendFromDefinition(FileLoader::loadJSON(path), FileSystem::getDirectoryFromPath(path));
+		extendFromDefinition(FileLoader::getJSON(path), FileSystem::getDirectoryFromPath(path));
 	}
 
 	void extend(Scene3D* const& other) {

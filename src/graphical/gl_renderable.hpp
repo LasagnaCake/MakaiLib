@@ -242,7 +242,7 @@ public:
 	}
 
 	void extendFromBinaryFile(string const& path) {
-		auto data = FileLoader::loadBinaryFile(path);
+		auto data = FileLoader::getBinaryFile(path);
 		if (!data.size()) throw Error::FailedAction("File does not exist or is empty! (" + path + ")!");
 		extend((RawVertex*)&data[0], data.size() / RAW_VERTEX_BYTE_SIZE);
 		DEBUG("Vertices: ");
@@ -255,7 +255,7 @@ public:
 		Texture2D* const& emission	= nullptr,
 		Texture2D* const& warp		= nullptr
 	) {
-		extendFromDefinition(FileLoader::loadJSON(path), FileSystem::getDirectoryFromPath(path), texture, emission, warp);
+		extendFromDefinition(FileLoader::getJSON(path), FileSystem::getDirectoryFromPath(path), texture, emission, warp);
 	}
 
 	void bake() {
@@ -425,7 +425,7 @@ private:
 				string encoding	= mesh["encoding"].get<string>();
 				vdata			= decodeData(data.get<string>(), encoding);
 			} else if (data.is_object()) {
-				vdata			= FileLoader::loadBinaryFile(FileSystem::concatenatePath(sourcepath, data["path"].get<string>()));
+				vdata			= FileLoader::getBinaryFile(FileSystem::concatenatePath(sourcepath, data["path"].get<string>()));
 			}
 			componentData		= mesh["components"].get<string>();
 		} catch (JSON::exception e) {
@@ -653,7 +653,7 @@ public:
 	}
 
 	void extendFromBinaryFile(string const& path) {
-		auto data = FileLoader::loadBinaryFile(path);
+		auto data = FileLoader::getBinaryFile(path);
 		if (!data.size()) throw Error::FailedAction("File does not exist or is empty! (" + path + ")!");
 		extend((RawVertex*)&data[0], data.size() / sizeof(RawVertex));
 	}
@@ -725,7 +725,7 @@ public:
 	}
 
 	void extendFromBinaryFile(string const& path) {
-		auto data = FileLoader::loadBinaryFile(path);
+		auto data = FileLoader::getBinaryFile(path);
 		if (!data.size()) throw Error::FailedAction("File does not exist or is empty! (" + path + ")!");
 		extend((RawVertex*)&data[0], data.size() / sizeof(RawVertex));
 	}
@@ -748,7 +748,7 @@ private:
 };
 
 Renderable* loadObjectFromBinaryFile(string const& path) {
-	auto data = FileLoader::loadBinaryFile(path);
+	auto data = FileLoader::getBinaryFile(path);
 	if (data.empty()) throw Error::FailedAction("File does not exist or is empty! (" + path + ")!");
 	return new Renderable((RawVertex*)&data[0], data.size() / sizeof(RawVertex));
 }

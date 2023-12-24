@@ -14,6 +14,8 @@
 #include <algorithm>
 #include <regex>
 
+#include "../fileloader.hpp"
+
 namespace SLF {
 	/**
 	* Loads a SLF (Shader Layout Format) file as a list of strings.
@@ -34,25 +36,8 @@ namespace SLF {
 	typedef vector<string> SLFData;
 
 	SLFData parseFile(string path) {
-		// The file and its contents
-		string content;
-		ifstream file;
-		// Ensure ifstream object can throw exception:
-		file.exceptions(ifstream::failbit | ifstream::badbit);
-		try {
-			// Open file
-			file.open(path);
-			stringstream stream;
-			// Read file’s buffer contents into streams
-			stream << file.rdbuf();
-			// Close file handler
-			file.close();
-			// Convert stream into string
-			content = stream.str();
-		}
-		catch (ifstream::failure e) {
-			throw Error::FailedAction(string("Could not load file '") + path + "'!\n\n" + e.what());
-		}
+		// Try and get the file
+		string content = FileLoader::getTextFile(path);
 		// Remove comments and empty lines
 		content = regex_replace(
 			content,

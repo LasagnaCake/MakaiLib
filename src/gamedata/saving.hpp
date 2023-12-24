@@ -38,7 +38,7 @@ public:
 	}
 
 	SaveDataView& load(String const& path) {
-		view() = FileLoader::loadJSON(path);
+		view() = FileLoader::getJSON(path);
 		return (*this);
 	}
 
@@ -68,7 +68,7 @@ public:
 	SaveFile(String const& path) {load(path);}
 
 	SaveFile& load(String const& path) {
-		data = FileLoader::loadJSON(path);
+		data = FileLoader::getJSON(path);
 		return (*this);
 	}
 

@@ -243,7 +243,7 @@ namespace Shader {
 			GLuint type;
 			if (shaderTypes.find(slfData[1]) == shaderTypes.end()) {
 				for (size_t i = 1; i < slfData.size(); i += 2) {
-					code = loadTextFile(dir + slfData[i]);
+					code = getTextFile(dir + slfData[i]);
 					type = shaderTypeId(slfData[i+1]);
 					try {
 						attach(code, type);
@@ -255,7 +255,7 @@ namespace Shader {
 			} else {
 				type = shaderTypeId(slfData[1]);
 				for (size_t i = 2; i < slfData.size(); i++) {
-					code = loadTextFile(dir + slfData[i]);
+					code = getTextFile(dir + slfData[i]);
 					try {
 						attach(code, type);
 					} catch (Error::Error err) {

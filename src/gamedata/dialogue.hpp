@@ -310,7 +310,7 @@ namespace Dialog {
 		}
 
 		void loadFromDefinitionFile(String const& path) {
-			loadFromDefinition(FileLoader::loadJSON(path));
+			loadFromDefinition(FileLoader::getJSON(path));
 		}
 
 		size_t time = 60;
