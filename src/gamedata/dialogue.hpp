@@ -106,6 +106,7 @@ namespace Dialog {
 			}
 		}
 
+		TypedSignal<String>	onTitleRequest	= T_SIGNAL(auto) {};
 		TypedSignal<String>	onMusicRequest	= T_SIGNAL(auto) {};
 		TypedSignal<size_t>	onMessage		= T_SIGNAL(auto) {};
 		Signal				onDialogEnd		= SIGNAL {queueDestroy();};
@@ -304,6 +305,7 @@ namespace Dialog {
 			else if	(msg.title == "@:settime:")		actionSetTransTime();
 			else if	(msg.title == "@:stopmusic:")	actionStopMusic();
 			else if	(msg.title == "@:playmusic:")	actionPlayMusic();
+			else if	(msg.title == "@:showtitle:")	actionDisplayTitle();
 			else	onAction(msg);
 		}
 
@@ -400,6 +402,12 @@ namespace Dialog {
 			if (tag.size() != 2) failedAction(toString(__LINE__), "@:setcolor:");
 			Vector4 color = Color::fromHexCodeString(tag[1]);
 			if (tag[0] == "standby") standbyColor = color;
+			//restAllInScene(time);
+			nextMessage();
+		}
+
+		void actionDisplayTitle() {
+			onTitleRequest(last.text);
 			//restAllInScene(time);
 			nextMessage();
 		}
