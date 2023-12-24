@@ -30,16 +30,27 @@ namespace FileLoader {
 	#pragma GCC diagnostic push
 	#pragma GCC diagnostic ignored "-Wreturn-type"
 
+	#define _ARCHIVE_SYSTEM_DISABLED_
+
 	void attachArchive(string const& path, string const& key) {
+		#if !(defined(_DEBUG_OUTPUT_) || defined(_ARCHIVE_SYSTEM_DISABLED_))
 		arc.name = FileSystem::getFileName(path, true);
+		#endif
 	}
 
 	inline bool isArchiveAttached() {
+		#if !(defined(_DEBUG_OUTPUT_) || defined(_ARCHIVE_SYSTEM_DISABLED_))
 		return arc.name.empty();
+		#else
+		return true;
+		#endif
 	}
 
 	void detachArchive() {
+		#if !(defined(_DEBUG_OUTPUT_) || defined(_ARCHIVE_SYSTEM_DISABLED_))
+		#endif
 	}
+
 	namespace {
 		inline void assertArchive(String const& path) {
 			if (!isArchiveAttached())
@@ -85,15 +96,11 @@ namespace FileLoader {
 		fileLoadError(path, "Unimplemented archive functionality!");
 	}
 
-	#define _IGNORE_AND_MOVE_ON_
-
 	inline string getTextFile(string const& path) {
+		#if !(defined(_DEBUG_OUTPUT_) || defined(_ARCHIVE_SYSTEM_DISABLED_))
 		string res;
-		#if (!defined(_DEBUG_OUTPUT_) && !defined(_IGNORE_AND_MOVE_ON_))
 		try {
-		#endif // _DEBUG_OUTPUT_
 			res = loadTextFile(path);
-		#if (!defined(_DEBUG_OUTPUT_) && !defined(_IGNORE_AND_MOVE_ON_))
 		} catch (Error::FailedAction fe) {
 			try {
 				res = loadTextFileFromArchive(path);
@@ -101,17 +108,17 @@ namespace FileLoader {
 				fileGetError(path, fe.info, ae.info);
 			}
 		}
-		#endif // _DEBUG_OUTPUT_
 		return res;
+		#else
+		return loadTextFile(path);
+		#endif
 	}
 
 	inline BinaryData getBinaryFile(string const& path) {
+		#if !(defined(_DEBUG_OUTPUT_) || defined(_ARCHIVE_SYSTEM_DISABLED_))
 		BinaryData res;
-		#if (!defined(_DEBUG_OUTPUT_) && !defined(_IGNORE_AND_MOVE_ON_))
 		try {
-		#endif // _DEBUG_OUTPUT_
 			res = loadBinaryFile(path);
-		#if (!defined(_DEBUG_OUTPUT_) && !defined(_IGNORE_AND_MOVE_ON_))
 		} catch (Error::FailedAction fe) {
 			try {
 				res = loadBinaryFileFromArchive(path);
@@ -119,17 +126,17 @@ namespace FileLoader {
 				fileGetError(path, fe.info, ae.info);
 			}
 		}
-		#endif // _DEBUG_OUTPUT_
 		return res;
+		#else
+		return loadBinaryFile(path);
+		#endif
 	}
 
 	inline CSVData getCSVFile(string const& path) {
+		#if !(defined(_DEBUG_OUTPUT_) || defined(_ARCHIVE_SYSTEM_DISABLED_))
 		CSVData res;
-		#if (!defined(_DEBUG_OUTPUT_) && !defined(_IGNORE_AND_MOVE_ON_))
 		try {
-		#endif // _DEBUG_OUTPUT_
 			res = loadCSVFile(path);
-		#if (!defined(_DEBUG_OUTPUT_) && !defined(_IGNORE_AND_MOVE_ON_))
 		} catch (Error::FailedAction fe) {
 			try {
 				res = loadCSVFileFromArchive(path);
@@ -137,17 +144,17 @@ namespace FileLoader {
 				fileGetError(path, fe.info, ae.info);
 			}
 		}
-		#endif // _DEBUG_OUTPUT_
 		return res;
+		#else
+		return loadCSVFile(path);
+		#endif
 	}
 
 	inline nlohmann::ordered_json getJSON(string const& path) {
+		#if !(defined(_DEBUG_OUTPUT_) || defined(_ARCHIVE_SYSTEM_DISABLED_))
 		nlohmann::ordered_json res;
-		#if (!defined(_DEBUG_OUTPUT_) && !defined(_IGNORE_AND_MOVE_ON_))
 		try {
-		#endif // _DEBUG_OUTPUT_
 			res = loadJSON(path);
-		#if (!defined(_DEBUG_OUTPUT_) && !defined(_IGNORE_AND_MOVE_ON_))
 		} catch (Error::FailedAction fe) {
 			try {
 				res = loadJSONFromArchive(path);
@@ -155,11 +162,11 @@ namespace FileLoader {
 				fileGetError(path, fe.info, ae.info);
 			}
 		}
-		#endif // _DEBUG_OUTPUT_
 		return res;
+		#else
+		return loadJSON(path);
+		#endif
 	}
-
-	#undef _IGNORE_AND_MOVE_ON_
 
 	#pragma GCC diagnostic pop
 }

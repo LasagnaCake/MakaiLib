@@ -10,6 +10,7 @@ Supported targets:
 
 Supported options:
 >   name          = [ value ]        : Spec. the name of the output file      ( DEFAULT: program  )
+>   no-archive    = [ 1 | 0 ]        : Unimplemented                          ( DEFAULT: 0        )
 
 Build-exclusive options:
 >   src           = [ value ]        : Spec. the source file                  ( DEFAULT: main.cpp )
@@ -34,20 +35,21 @@ Pack-exclusive options:
 
 NOTES:
 (Safe, in this case, means 'IEEE compliant'.)
->    meth   : Enables FAST, but IMPRECISE and UNSAFE floating point operations.
->    sath   : Enables SAFE math. If this one is enabled, METH is disabled.
->    rcfile : Must be located within the 'build/' folder.
->    name   : For targers "debug" and "demo", "_debug" and "_demo" gets appended at the end of the
-              file, respectively.
+>   meth       : Enables FAST, but IMPRECISE and UNSAFE floating point operations.
+>   sath       : Enables SAFE math. If this one is enabled, METH is disabled.
+>   rcfile     : Must be located within the 'build/' folder.
+>   name       : For targers "debug" and "demo", "_debug" and "_demo" gets appended at the end of
+                 the file, respectively.
+>   no-archive : The value set while packing MUST match the value set while building.
 
 Pack:
->    name        : Both the name used for the output zip file, and the name of the .exe, minus the
-                   compilation target name.
->    extra-progs : Must be Separate executables.
->    extra-files : Must be the relative path to a folder to copy its contents from.
->    data-folder : Must be the relative path to a folder containing a "data/" folder to use its
+>   name        : Both the name used for the output zip file, and the name of the .exe, minus the
+                   compilation target name MUST be the same name set while building.
+>   extra-progs : Must be Separate executables.
+>   extra-files : Must be the relative path to a folder to copy its contents from.
+>   data-folder : Must be the relative path to a folder containing a "data/" folder to use its
                    contents from.
->    over-*      : Only enabled if previous is set. specifies if corresponding target's "data/"
+>   over-*      : Only enabled if previous is set. specifies if corresponding target's "data/"
                    folder should be replaced. Only used for multi-target pakings.
 endef
 
@@ -68,6 +70,7 @@ debug-release	?= 0
 over-debug		?= 0
 over-demo		?= 0
 over-release	?= 0
+no-archive		?= 0
 
 CC 	?= gcc
 CXX ?= g++
@@ -136,6 +139,10 @@ ifdef macro
 DEFINE_MACRO = -D$(macro)
 endif
 
+ifeq ($(no-archive), 1)
+DISABLE_ARCHIVE = -D_ARCHIVE_SYSTEM_DISABLED_
+endif
+
 DATA_FOLDER := res/data/
 DEBUG_DATA		:= $(DATA_FOLDER)
 DEMO_DATA		:= $(DATA_FOLDER)
@@ -189,7 +196,7 @@ debug: build\$(src)
 	$(WINRC) -D_DEBUG_OUTPUT_ $(RC_FILE_DIRS)
 	
 	@echo "[1/2] compiling [$@]..."
-	@$(CXX) $(COMPILER_CONFIG) -Wall -Wpedantic $(SAFE_MATH) -pg -Og -ggdb3 $(SANITIZER_OPTIONS) -fno-omit-frame-pointer -D_DEBUG_OUTPUT_ $(DEFINE_MACRO) $(INCLUDES) -c build\$(src) -o obj/$@/$(name).o
+	@$(CXX) $(COMPILER_CONFIG) -Wall -Wpedantic $(SAFE_MATH) -pg -Og -ggdb3 $(SANITIZER_OPTIONS) -fno-omit-frame-pointer -D_DEBUG_OUTPUT_ $(DEFINE_MACRO) $(INCLUDES) $(DISABLE_ARCHIVE) -c build\$(src) -o obj/$@/$(name).o
 	
 	@echo "[2/2] linking libraries..."
 	@$(CXX) -o res/$(name)_$@.exe obj/$@/$(name).o $(INCLUDE_RC_FILE) $(LINKER_CONFIG) -pg -Og $(LIBRARIES) $(SANITIZER_OPTIONS)
@@ -216,7 +223,7 @@ demo: build\$(src)
 	$(WINRC) -D_DEMO_BUILD_ $(RC_FILE_DIRS)
 	
 	@echo "[1/2] compiling [$@]..."
-	@$(CXX) $(COMPILER_CONFIG) $(WARNINGS) $(OPTIMIZATIONS) -O$(optimize-lvl) $(DEBUG_SYMBOL) $(SAFE_MATH) $(OPENMP_ENABLED) $(INCLUDES) -D_DEMO_BUILD_ $(DEFINE_MACRO) -c build\$(src) -o obj/$@/$(name).o
+	@$(CXX) $(COMPILER_CONFIG) $(WARNINGS) $(OPTIMIZATIONS) -O$(optimize-lvl) $(DEBUG_SYMBOL) $(SAFE_MATH) $(OPENMP_ENABLED) $(INCLUDES) -D_DEMO_BUILD_ $(DEFINE_MACRO) $(DISABLE_ARCHIVE) -c build\$(src) -o obj/$@/$(name).o
 	
 	@echo "[2/2] linking libraries..."
 	@$(CXX) -o res/$(name)_$@.exe obj/$@/$(name).o $(INCLUDE_RC_FILE) $(LINKER_CONFIG) -O$(optimize-lvl)  $(LIBRARIES) $(GUI_MODE)
@@ -243,7 +250,7 @@ release: build\$(src)
 	$(WINRC) $(RC_FILE_DIRS)
 	
 	@echo "[1/2] compiling [$@]..."
-	@$(CXX) $(COMPILER_CONFIG) $(WARNINGS) $(OPTIMIZATIONS) -O$(optimize-lvl) $(DEBUG_SYMBOL) $(SAFE_MATH) $(OPENMP_ENABLED) $(INCLUDES) $(DEFINE_MACRO) -c build\$(src) -o obj/$@/$(name).o
+	@$(CXX) $(COMPILER_CONFIG) $(WARNINGS) $(OPTIMIZATIONS) -O$(optimize-lvl) $(DEBUG_SYMBOL) $(SAFE_MATH) $(OPENMP_ENABLED) $(INCLUDES) $(DEFINE_MACRO) $(DISABLE_ARCHIVE) -c build\$(src) -o obj/$@/$(name).o
 	
 	@echo "[2/2] linking libraries..."
 	@$(CXX) -o res/$(name).exe obj/$@/$(name).o $(INCLUDE_RC_FILE) $(LINKER_CONFIG) -O$(optimize-lvl)  $(LIBRARIES) $(GUI_MODE)
