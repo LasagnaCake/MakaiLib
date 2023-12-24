@@ -501,13 +501,18 @@ namespace FileSystem {
 			makeDirectory(d);
 	}
 
-	String concatenatePath(String const& root, String const& path) {
+	template <typename... Args>
+	void makeDirectory(Args const&... args) {
+		(makeDirectory(toString(args)), ...);
+	}
+
+	constexpr String concatenatePath(String const& root, String const& path) {
 		String res = root;
 		if (!path.empty()) res += "/" + path;
 		return res;
 	}
 
-	String concatenatePath(String const& root, StringList const& paths) {
+	constexpr String concatenatePath(String const& root, StringList const& paths) {
 		String res = root;
 		for(auto& path: paths) {
 			if (!path.empty()) res += "/" + path;
@@ -523,7 +528,18 @@ namespace FileSystem {
 		return res;
 	}
 
-	inline String getFileName(string path, bool removeExtension = false) {
+	namespace {
+		constexpr String getPathDirectory(String const& s) {
+			return s.empty() ? "/" + s : "";
+		}
+	}
+
+	template <typename... Args>
+	constexpr String concatenatePath(String const& root, Args const&... paths) {
+		return root + (... + getPathDirectory(toString(paths)));
+	}
+
+	inline String getFileName(String path, bool removeExtension = false) {
 		return toString(WideString((removeExtension ? fs::path(path).stem() : fs::path(path).filename()).c_str()));
 	}
 
