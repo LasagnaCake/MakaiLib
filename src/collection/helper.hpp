@@ -520,7 +520,7 @@ namespace FileSystem {
 		return res;
 	}
 
-	String concatenatePath(String const& root, StringArguments const& paths) {
+	constexpr String concatenatePath(String const& root, StringArguments const& paths) {
 		String res = root;
 		for(auto& path: paths) {
 			if (!path.empty()) res += "/" + path;
@@ -539,16 +539,24 @@ namespace FileSystem {
 		return root + (... + getPathDirectory(toString(paths)));
 	}
 
-	inline String getFileName(String path, bool removeExtension = false) {
+	inline String getFileName(String const& path, bool removeExtension = false) {
 		return toString(WideString((removeExtension ? fs::path(path).stem() : fs::path(path).filename()).c_str()));
 	}
 
-	String getDirectoryFromPath(String const& path) {
+	inline String getDirectoryFromPath(String const& path) {
 		return std::regex_replace(
 			path,
 			std::regex("(?!([A-z].*)[/])([A-z].*\\.[A-z].*)"),
 			""
 		);
+	}
+
+	inline String getRootDirectory(String const& path) {
+		return toString(WideString(fs::path(path).root_name()));
+	}
+
+	inline String getPathWithoutRoot(String const& path) {
+		return toString(WideString(fs::path(path).relative_path()));
 	}
 }
 

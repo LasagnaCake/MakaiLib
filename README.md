@@ -70,6 +70,7 @@ Currently VERY scarce. Some of the code is commented.
 
 ### Current
 
+- [ ] `data/` folder packing system
 - [ ] Optimize GPU usage
 - [x] Replace `.ini`-based savefile system with a different format
 - - Using JSON
