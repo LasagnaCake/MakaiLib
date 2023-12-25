@@ -100,7 +100,7 @@ namespace FileLoader {
 	};
 
 	namespace {
-		#if !(defined(_DEBUG_OUTPUT_) || defined(_ARCHIVE_SYSTEM_DISABLED_)) || 1
+		#if !(defined(_DEBUG_OUTPUT_) || defined(_ARCHIVE_SYSTEM_DISABLED_))
 		bool				loadingArchive	= false;
 		#endif
 		ZIPFile 			arc;
@@ -116,7 +116,7 @@ namespace FileLoader {
 	#define _ARCHIVE_SYSTEM_DISABLED_*/
 
 	inline void attachArchive(string const& path, string const& password = "") {
-		#if !(defined(_DEBUG_OUTPUT_) || defined(_ARCHIVE_SYSTEM_DISABLED_)) || 1
+		#if !(defined(_DEBUG_OUTPUT_) || defined(_ARCHIVE_SYSTEM_DISABLED_))
 		DEBUGLN("Attaching archive...");
 		if (loadingArchive)
 			fileLoadError(path, "Other archive is being loaded!");
@@ -146,7 +146,7 @@ namespace FileLoader {
 	}
 
 	inline bool isArchiveAttached() {
-		#if !(defined(_DEBUG_OUTPUT_) || defined(_ARCHIVE_SYSTEM_DISABLED_)) || 1
+		#if !(defined(_DEBUG_OUTPUT_) || defined(_ARCHIVE_SYSTEM_DISABLED_))
 		if (loadingArchive) return false;
 		return arc.isOpen();
 		#else
@@ -155,7 +155,7 @@ namespace FileLoader {
 	}
 
 	[[gnu::destructor]] inline void detachArchive() {
-		#if !(defined(_DEBUG_OUTPUT_) || defined(_ARCHIVE_SYSTEM_DISABLED_)) || 1
+		#if !(defined(_DEBUG_OUTPUT_) || defined(_ARCHIVE_SYSTEM_DISABLED_))
 		DEBUGLN("Detaching archive...");
 		arc.close();
 		DEBUGLN("Archive detached!");
@@ -206,7 +206,7 @@ namespace FileLoader {
 	}
 
 	inline String getTextFile(String const& path) {
-		#if !(defined(_DEBUG_OUTPUT_) || defined(_ARCHIVE_SYSTEM_DISABLED_)) || 1
+		#if !(defined(_DEBUG_OUTPUT_) || defined(_ARCHIVE_SYSTEM_DISABLED_))
 		String res;
 		awaitArchiveLoad();
 		if (isArchiveAttached())
@@ -234,7 +234,7 @@ namespace FileLoader {
 	}
 
 	inline BinaryData getBinaryFile(String const& path) {
-		#if !(defined(_DEBUG_OUTPUT_) || defined(_ARCHIVE_SYSTEM_DISABLED_)) || 1
+		#if !(defined(_DEBUG_OUTPUT_) || defined(_ARCHIVE_SYSTEM_DISABLED_))
 		BinaryData res;
 		awaitArchiveLoad();
 		if (isArchiveAttached())
@@ -262,7 +262,7 @@ namespace FileLoader {
 	}
 
 	inline CSVData getCSVFile(String const& path, char const& delimiter = ',') {
-		#if !(defined(_DEBUG_OUTPUT_) || defined(_ARCHIVE_SYSTEM_DISABLED_)) || 1
+		#if !(defined(_DEBUG_OUTPUT_) || defined(_ARCHIVE_SYSTEM_DISABLED_))
 		CSVData res;
 		awaitArchiveLoad();
 		if (isArchiveAttached())
@@ -290,7 +290,7 @@ namespace FileLoader {
 	}
 
 	inline nlohmann::ordered_json getJSON(String const& path) {
-		#if !(defined(_DEBUG_OUTPUT_) || defined(_ARCHIVE_SYSTEM_DISABLED_)) || 1
+		#if !(defined(_DEBUG_OUTPUT_) || defined(_ARCHIVE_SYSTEM_DISABLED_))
 		nlohmann::ordered_json res;
 		awaitArchiveLoad();
 		if (isArchiveAttached())
