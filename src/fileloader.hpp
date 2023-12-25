@@ -1,115 +1,220 @@
 #ifndef MAKAI_FILE_LOADER
 #define MAKAI_FILE_LOADER
 
+#include "collection/helper.hpp"
 #include "collection/filehandler.hpp"
 #include <nlohmann/json.hpp>
+#include <zip_utils/unzip.h>
 
 namespace FileLoader {
-	inline nlohmann::ordered_json loadJSON(string const& path) {
-		try {
-			return nlohmann::ordered_json::parse(loadTextFile(path));
+	inline nlohmann::ordered_json parseJSON(String const& data) {try {
+		return nlohmann::ordered_json::parse(data);
 		} catch (nlohmann::json::exception e) {
 			throw Error::FailedAction(
 				"Failed at loading JSON file!",
 				__FILE__,
 				toString(__LINE__),
-				"loadJSON",
+				"parseJSON",
 				e.what(),
 				"Please check to see if values are correct!"
 			);
 		}
 	}
 
+	inline nlohmann::ordered_json loadJSON(String const& path) {
+		return parseJSON(loadTextFile(path));
+	}
+
+	struct ZIPFile {
+		constexpr ZIPFile() {}
+
+		constexpr ZIPFile(String const& path) {open(path);}
+
+		constexpr ~ZIPFile() {close();}
+
+		constexpr ZIPFile& open(String const& path, String const& password = "") {
+			if (isOpen()) return (*this);
+			file	= OpenZip(path.c_str(), password.c_str());
+			if (!isOpen()) fileLoadError(path, "Archive does not exist!");
+			name	= FileSystem::getFileName(path, true);
+			ext		= regexFindFirst(FileSystem::getFileName(path, false), "(\\.[^.]+)$");
+			 return (*this);
+		}
+
+		constexpr ZIPFile& close() {
+			if (!isOpen())  return (*this);
+			CloseZip(file);
+			file = nullptr;
+			 return (*this);
+		};
+
+		String getTextFile(String const& path) const {
+			auto [idx, entry] = getFileInfo(path);
+			String contents;
+			contents.reserve(entry.unc_size);
+			assertOK(UnzipItem(file, idx, contents.data(), contents.size()), path);
+			return contents;
+		}
+
+		BinaryData getBinaryFile(String const& path) const {
+			auto [idx, entry] = getFileInfo(path);
+			BinaryData contents;
+			contents.reserve(entry.unc_size);
+			assertOK(UnzipItem(file, idx, contents.data(), contents.size()), path);
+			return contents;
+		}
+
+		constexpr bool isOpen() const	{return (file != nullptr && file != 0 && file != NULL);}
+
+		constexpr String getName() const		{return name;		}
+		constexpr String getExtension() const	{return ext;		}
+		constexpr String getFullName() const	{return name + ext;	}
+
+	private:
+		constexpr void assertOK(int const& res, String const& path) const {
+			if (res != ZR_OK) {
+				char error[1024];
+				FormatZipMessage(res, error, 1024);
+				fileLoadError(toString(name, ext, "/", path), error);
+			}
+		}
+
+		Pair<int, ZIPENTRY> getFileInfo(String const& path) const {
+			if (!isOpen()) fileLoadError(toString(path), "Archive not loaded!");
+			int idx = -1;
+			ZIPENTRY entry;
+			assertOK(FindZipItem(file, path.c_str(), true, &idx, &entry), path);
+			return Pair<int, ZIPENTRY>(idx, entry);
+		}
+
+		String name, ext;
+
+		HZIP file = nullptr;
+	};
+
 	namespace {
-		struct Archive {
-			string name;
-		} arc;
+		#if !(defined(_DEBUG_OUTPUT_) || defined(_ARCHIVE_SYSTEM_DISABLED_))
+		bool				loadingArchive	= false;
+		#endif
+		ZIPFile 			arc;
+		Thread				arcLoader;
+		Error::ErrorPointer	arcfail			= nullptr;
 	}
 
 	// Until this puzzle is figured, this shall do
 	#pragma GCC diagnostic push
 	#pragma GCC diagnostic ignored "-Wreturn-type"
 
-	#pragma push_macro("_ARCHIVE_SYSTEM_DISABLED_")
+	/*#undef _ARCHIVE_SYSTEM_DISABLED_
+	#define _ARCHIVE_SYSTEM_DISABLED_*/
 
-	#undef _ARCHIVE_SYSTEM_DISABLED_
-	#define _ARCHIVE_SYSTEM_DISABLED_
-
-	void attachArchive(string const& path, string const& key) {
+	inline void attachArchive(string const& path, string const& password = "") {
 		#if !(defined(_DEBUG_OUTPUT_) || defined(_ARCHIVE_SYSTEM_DISABLED_))
-		arc.name = FileSystem::getFileName(path, true);
+		DEBUGLN("Attaching archive...");
+		if (loadingArchive)
+			fileLoadError(path, "Other archive is being loaded!");
+		loadingArchive = true;
+		arcLoader = Thread(
+			[&] {
+				try {
+					arcfail = nullptr;
+					arc.close();
+					arc.open(path, password);
+					loadingArchive = false;
+					DEBUGLN("Archive Attached!");
+				} catch (...) {
+					DEBUGLN("Archive attachment failed!");
+					arcfail = Error::current();
+				}
+			}
+		);
 		#endif
+	}
+
+	inline void awaitArchiveLoad() {
+		DEBUGLN("Awaiting archive load...");
+		if (arcLoader.joinable()) arcLoader.join();
+		DEBUGLN("Archive loaded!");
 	}
 
 	inline bool isArchiveAttached() {
 		#if !(defined(_DEBUG_OUTPUT_) || defined(_ARCHIVE_SYSTEM_DISABLED_))
-		return arc.name.empty();
+		if (loadingArchive) return false;
+		return arc.isOpen();
 		#else
 		return true;
 		#endif
 	}
 
-	void detachArchive() {
+	[[gnu::destructor]] inline void detachArchive() {
 		#if !(defined(_DEBUG_OUTPUT_) || defined(_ARCHIVE_SYSTEM_DISABLED_))
+		DEBUGLN("Detaching archive...");
+		arc.close();
+		DEBUGLN("Archive detached!");
 		#endif
 	}
 
 	namespace {
 		inline void assertArchive(String const& path) {
+			awaitArchiveLoad();
+			if (arcfail) Error::rethrow(arcfail);
 			if (!isArchiveAttached())
-				fileLoadError(path, "Archive is not attached!");
-			if (FileSystem::getRootDirectory(path) != arc.name)
-				fileLoadError(path, "Attached archive name does not match root name!");
+				fileLoadError(path, "Archive is not attached!", "fileloader.hpp");
+			if (FileSystem::getRootDirectory(path) != arc.getName())
+				fileLoadError(path, "Attached archive name does not match root name!", "fileloader.hpp");
 		}
 
 		[[noreturn]] inline void fileGetError(String const& path, String const& fe, String const& ae) {
 			fileLoadError(
 				path,
 				toString(
-					"Multiple possibilities:\n\n",
-					"FOLDER: ", ae, "\n\n",
-					"ARCHIVE: ", fe, "\n"
-				)
+					"\nMultiple possibilities!\n\n",
+					"FOLDER: ", fe, "\n",
+					"ARCHIVE: ", ae, "\n"
+				),
+				"fileloader.hpp"
 			);
 		}
 	}
 
-	BinaryData loadDataFromArchive(string const& path) {
-		fileLoadError(path, "Unimplemented archive functionality!");
+	inline String loadTextFileFromArchive(String const& path) {
 		assertArchive(path);
+		return arc.getTextFile(path);
 	}
 
-	string loadTextFileFromArchive(string const& path) {
-		fileLoadError(path, "Unimplemented archive functionality!");
+	inline BinaryData loadBinaryFileFromArchive(String const& path) {
 		assertArchive(path);
+		return arc.getBinaryFile(path);
 	}
 
-	BinaryData loadBinaryFileFromArchive(string const& path) {
-		fileLoadError(path, "Unimplemented archive functionality!");
+	inline CSVData loadCSVFileFromArchive(String const& path, char const& delimiter = ',') {
 		assertArchive(path);
+		return Helper::splitString(arc.getTextFile(path), delimiter);
 	}
 
-	inline CSVData loadCSVFileFromArchive(string const& path) {
-		fileLoadError(path, "Unimplemented archive functionality!");
+	inline nlohmann::ordered_json loadJSONFromArchive(String const& path) {
 		assertArchive(path);
+		return parseJSON(arc.getTextFile(path));
 	}
 
-	inline nlohmann::ordered_json loadJSONFromArchive(string const& path) {
-		fileLoadError(path, "Unimplemented archive functionality!");
-		assertArchive(path);
-	}
-
-	inline string getTextFile(string const& path) {
+	inline String getTextFile(String const& path) {
 		#if !(defined(_DEBUG_OUTPUT_) || defined(_ARCHIVE_SYSTEM_DISABLED_))
 		string res;
-		try {
-			res = loadTextFile(path);
-		} catch (Error::FailedAction fe) {
+		awaitArchiveLoad();
+		if (isArchiveAttached())
 			try {
 				res = loadTextFileFromArchive(path);
-			} catch (Error::FailedAction ae) {
-				fileGetError(path, fe.info, ae.info);
+			} catch (FileLoadError const& ae) {
+				try {
+					res = loadTextFile(path);
+				} catch (FileLoadError const& fe) {
+					fileGetError(path, fe.info, ae.info);
+				}
 			}
+		else try {
+			res = loadTextFile(path);
+		} catch (FileLoadError const& e) {
+			fileGetError(path, e.info, "Archive not attached!");
 		}
 		return res;
 		#else
@@ -117,35 +222,48 @@ namespace FileLoader {
 		#endif
 	}
 
-	inline BinaryData getBinaryFile(string const& path) {
+	inline BinaryData getBinaryFile(String const& path) {
 		#if !(defined(_DEBUG_OUTPUT_) || defined(_ARCHIVE_SYSTEM_DISABLED_))
 		BinaryData res;
-		try {
-			res = loadBinaryFile(path);
-		} catch (Error::FailedAction fe) {
+		awaitArchiveLoad();
+		if (isArchiveAttached())
 			try {
 				res = loadBinaryFileFromArchive(path);
-			} catch (Error::FailedAction ae) {
-				fileGetError(path, fe.info, ae.info);
+			} catch (FileLoadError const& ae) {
+				try {
+					res = loadBinaryFile(path);
+				} catch (FileLoadError const& fe) {
+					fileGetError(path, fe.info, ae.info);
+				}
 			}
+		else try {
+			res = loadBinaryFile(path);
+		} catch (FileLoadError const& e) {
+			fileGetError(path, e.info, "Archive not attached!");
 		}
-		return res;
 		#else
 		return loadBinaryFile(path);
 		#endif
 	}
 
-	inline CSVData getCSVFile(string const& path) {
+	inline CSVData getCSVFile(String const& path, char const& delimiter = ',') {
 		#if !(defined(_DEBUG_OUTPUT_) || defined(_ARCHIVE_SYSTEM_DISABLED_))
 		CSVData res;
-		try {
-			res = loadCSVFile(path);
-		} catch (Error::FailedAction fe) {
+		awaitArchiveLoad();
+		if (isArchiveAttached())
 			try {
 				res = loadCSVFileFromArchive(path);
-			} catch (Error::FailedAction ae) {
-				fileGetError(path, fe.info, ae.info);
+			} catch (FileLoadError const& ae) {
+				try {
+					res = loadCSVFile(path);
+				} catch (FileLoadError const& fe) {
+					fileGetError(path, fe.info, ae.info);
+				}
 			}
+		else try {
+			res = loadCSVFile(path);
+		} catch (FileLoadError const& e) {
+			fileGetError(path, e.info, "Archive not attached!");
 		}
 		return res;
 		#else
@@ -153,25 +271,30 @@ namespace FileLoader {
 		#endif
 	}
 
-	inline nlohmann::ordered_json getJSON(string const& path) {
+	inline nlohmann::ordered_json getJSON(String const& path) {
 		#if !(defined(_DEBUG_OUTPUT_) || defined(_ARCHIVE_SYSTEM_DISABLED_))
 		nlohmann::ordered_json res;
-		try {
-			res = loadJSON(path);
-		} catch (Error::FailedAction fe) {
+		awaitArchiveLoad();
+		if (isArchiveAttached())
 			try {
 				res = loadJSONFromArchive(path);
-			} catch (Error::FailedAction ae) {
-				fileGetError(path, fe.info, ae.info);
+			} catch (FileLoadError const& ae) {
+				try {
+					res = loadJSON(path);
+				} catch (FileLoadError const& fe) {
+					fileGetError(path, fe.info, ae.info);
+				}
 			}
+		else try {
+			res = loadJSON(path);
+		} catch (FileLoadError const& e) {
+			fileGetError(path, e.info, "Archive not attached!");
 		}
 		return res;
 		#else
 		return loadJSON(path);
 		#endif
 	}
-
-	#pragma pop_macro("_ARCHIVE_SYSTEM_DISABLED_")
 
 	#pragma GCC diagnostic pop
 }

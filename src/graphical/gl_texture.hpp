@@ -256,7 +256,9 @@ public:
 		if (created) return;
 		int imgWidth, imgHeight;
 		int nrChannels;
-		unsigned char* data = stbi_load(path.c_str(), &imgWidth, &imgHeight, &nrChannels, 4);
+		FileLoader::BinaryData imgdat = FileLoader::getBinaryFile(path);
+		unsigned char* data = stbi_load_from_memory(imgdat.data(), imgdat.size(), &imgWidth, &imgHeight, &nrChannels, 4);
+		imgdat.clear();
 		if (data) {
 			create(
 				imgWidth,
@@ -563,7 +565,7 @@ public:
 			imgdat.data.data()
 		);
 		if (!result) {
-			throw Error::FailedAction(
+			throw FileLoader::FileSaveError(
 				"Could not save image file!",
 				__FILE__,
 				toString(__LINE__),

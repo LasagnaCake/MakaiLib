@@ -166,6 +166,8 @@ namespace Helper {
 	typedef List<String>		StringList;
 	typedef Arguments<String>	StringArguments;
 
+	typedef std::thread			Thread;
+
 	template<typename T, typename T2>
 	constexpr List<T> convertList(List<T2> const& source) {
 		List<T> res;
@@ -387,6 +389,7 @@ using Helper::Any;
 using Helper::Nullable;
 using Helper::Regex;
 using Helper::Span;
+using Helper::Thread;
 
 inline String regexReplace(String const& str, Regex const& expr, String const& fmt) {
 	return std::regex_replace(str, expr, fmt);
@@ -586,7 +589,7 @@ namespace System {
 			&sInfo,
 			&pInfo
 		);
-		if (!proc) throw Error::FailedAction("could not find 'data/subsys/winres.exe'!");
+		if (!proc) throw Error::FailedAction(toString("could not find '", path,"!"));
 		proc = WaitForSingleObject(pInfo.hProcess, INFINITE);
 		DWORD res;
 		GetExitCodeProcess(pInfo.hProcess, &res);

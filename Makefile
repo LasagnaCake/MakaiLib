@@ -1,4 +1,8 @@
 define HELP_MESSAGE
+
+!!! WARNING !!!
+Archive system functionality is not implemented yet!
+
 Supported targets:
 >   debug   : Builds enabling debug options, and with all warnings enabled (+ pedantic)
 >   demo    : Builds enabling optimizations, and with the _DEMO_BUILD_ macro defined
@@ -10,7 +14,6 @@ Supported targets:
 
 Supported options:
 >   name          = [ value ]        : Spec. the name of the output file      ( DEFAULT: program  )
->   no-archive    = [ 1 | 0 ]        : Unimplemented                          ( DEFAULT: 0        )
 
 Build-exclusive options:
 >   src           = [ value ]        : Spec. the source file                  ( DEFAULT: main.cpp )
@@ -32,6 +35,9 @@ Pack-exclusive options:
 >   over-debug    = [ 1 | 0 ]        : Spec. whether to over. debug data/     ( DEFAULT: 0        )
 >   over-demo     = [ 1 | 0 ]        : Spec. whether to over. demo data/      ( DEFAULT: 0        )
 >   over-release  = [ 1 | 0 ]        : Spec. whether to over. release data/   ( DEFAULT: 0        )
+>   no-archive    = [ 1 | 0 ]        : Spec. whether to compress data/        ( DEFAULT: 0        )
+>   archive-pass  = [ value | none ] : Spec. the archive's password           ( DEFAULT: none     )
+>   archive-ext   = [ value | none ] : Spec. the archive's file extension     ( DEFAULT: arc      )
 
 NOTES:
 (Safe, in this case, means 'IEEE compliant'.)
@@ -39,9 +45,9 @@ NOTES:
 >   sath       : Enables SAFE math. If this one is enabled, METH is disabled.
 >   rcfile     : Must be located within the 'build/' folder.
 >   name       : For targers "debug" and "demo", "_debug" and "_demo" gets appended at the end of
-                 the file, respectively.
->   no-archive : The value set while packing MUST match the value set while building. Ignored for
-                 debug.
+                  the file, respectively.
+>   no-archive : Not required to be set for building, since the engine automatically detects if an
+                  archive is attached.
 
 Pack:
 >   name        : Both the name used for the output zip file, and the name of the .exe, minus the
@@ -52,6 +58,7 @@ Pack:
                    contents from.
 >   over-*      : Only enabled if previous is set. specifies if corresponding target's "data/"
                    folder should be replaced. Only used for multi-target pakings.
+
 endef
 
 define GET_TIME
@@ -72,6 +79,7 @@ over-debug		?= 0
 over-demo		?= 0
 over-release	?= 0
 no-archive		?= 0
+archive-ext		?= arc
 
 CC 	?= gcc
 CXX ?= g++
@@ -98,9 +106,9 @@ else
 optimize-lvl	?= 2
 endif
 
-INCLUDES		:= -Ilib -Isrc -Ilib\SDL2-2.0.10\include -Ilib\OpenGL -Ilib\OpenGL\GLEW\include -Ilib\cute_headers -Ilib\stb -Ilib\jsoncpp-3.11.2\include -Ilib\cppcodec-0.2
+INCLUDES		:= -Ilib -Isrc -Ilib\SDL2-2.0.10\include -Ilib\OpenGL -Ilib\OpenGL\GLEW\include -Ilib\cute_headers -Ilib\stb -Ilib\jsoncpp-3.11.2\include -Ilib\cppcodec-0.2 -Ilib\zip_utils\include
 
-LIBRARIES		:= lib\SDL2-2.0.10\lib\libSDL2.dll.a lib\SDL2-2.0.10\lib\libSDL2main.a lib\SDL2-2.0.10\lib\libSDL2_mixer.dll.a lib\OpenGL\GLEW\lib\libglew32.dll.a -lopengl32 -lgomp -lpowrprof -lwinmm -lcomdlg32
+LIBRARIES		:= lib\SDL2-2.0.10\lib\libSDL2.dll.a lib\SDL2-2.0.10\lib\libSDL2main.a lib\SDL2-2.0.10\lib\libSDL2_mixer.dll.a lib\OpenGL\GLEW\lib\libglew32.dll.a -lopengl32 -lgomp -lpowrprof -lwinmm -lcomdlg32 lib\zip_utils\lib\libziputils.a
 
 # This doesn't work. Oh well.
 # SANITIZER_OPTIONS := -fsanitize=leak -fsanitize=memory
@@ -224,7 +232,7 @@ demo: build\$(src)
 	$(WINRC) -D_DEMO_BUILD_ $(RC_FILE_DIRS)
 	
 	@echo "[1/2] compiling [$@]..."
-	@$(CXX) $(COMPILER_CONFIG) $(WARNINGS) $(OPTIMIZATIONS) -O$(optimize-lvl) $(DEBUG_SYMBOL) $(SAFE_MATH) $(OPENMP_ENABLED) $(INCLUDES) -D_DEMO_BUILD_ $(DEFINE_MACRO) $(DISABLE_ARCHIVE) -c build\$(src) -o obj/$@/$(name).o
+	@$(CXX) $(COMPILER_CONFIG) $(WARNINGS) $(OPTIMIZATIONS) -O$(optimize-lvl) $(DEBUG_SYMBOL) $(SAFE_MATH) $(OPENMP_ENABLED) $(INCLUDES) -D_DEMO_BUILD_ $(DEFINE_MACRO) -c build\$(src) -o obj/$@/$(name).o
 	
 	@echo "[2/2] linking libraries..."
 	@$(CXX) -o res/$(name)_$@.exe obj/$@/$(name).o $(INCLUDE_RC_FILE) $(LINKER_CONFIG) -O$(optimize-lvl)  $(LIBRARIES) $(GUI_MODE)
@@ -251,7 +259,7 @@ release: build\$(src)
 	$(WINRC) $(RC_FILE_DIRS)
 	
 	@echo "[1/2] compiling [$@]..."
-	@$(CXX) $(COMPILER_CONFIG) $(WARNINGS) $(OPTIMIZATIONS) -O$(optimize-lvl) $(DEBUG_SYMBOL) $(SAFE_MATH) $(OPENMP_ENABLED) $(INCLUDES) $(DEFINE_MACRO) $(DISABLE_ARCHIVE) -c build\$(src) -o obj/$@/$(name).o
+	@$(CXX) $(COMPILER_CONFIG) $(WARNINGS) $(OPTIMIZATIONS) -O$(optimize-lvl) $(DEBUG_SYMBOL) $(SAFE_MATH) $(OPENMP_ENABLED) $(INCLUDES) $(DEFINE_MACRO) -c build\$(src) -o obj/$@/$(name).o
 	
 	@echo "[2/2] linking libraries..."
 	@$(CXX) -o res/$(name).exe obj/$@/$(name).o $(INCLUDE_RC_FILE) $(LINKER_CONFIG) -O$(optimize-lvl)  $(LIBRARIES) $(GUI_MODE)

@@ -231,4 +231,4 @@ struct {
 	} playerDamage;
 } defaults;
 
-ErrorType(OutOfObjects);
+DEFINE_ERROR_TYPE(OutOfObjects);

@@ -90,17 +90,23 @@ namespace Error {
 	DEFINE_ERROR_TYPE(NotAnError);
 
 	#undef DEFINE_ERROR_TYPE
+
+	typedef std::exception_ptr ErrorPointer;
+
+	ErrorPointer current() {return std::current_exception();}
+
+	[[noreturn]] void rethrow(ErrorPointer const& err) {std::rethrow_exception(err);}
 }
 
-#define ErrorType(NAME)\
+#define DEFINE_ERROR_TYPE(NAME)\
 	struct NAME: public Error::Error {\
 		NAME (\
-			string const& message		= "none",\
-			string const& file			= "unspecified",\
-			string const& line			= "unspecified",\
-			string const& caller		= "unspecified",\
-			string const& info			= "none",\
-			string const& callerInfo	= "none"\
+			std::string const& message		= "none",\
+			std::string const& file			= "unspecified",\
+			std::string const& line			= "unspecified",\
+			std::string const& caller		= "unspecified",\
+			std::string const& info			= "none",\
+			std::string const& callerInfo	= "none"\
 		): Error (#NAME, message, file, line, caller, info, callerInfo) {}\
 	}
 

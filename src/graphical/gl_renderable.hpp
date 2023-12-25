@@ -243,7 +243,7 @@ public:
 
 	void extendFromBinaryFile(string const& path) {
 		auto data = FileLoader::getBinaryFile(path);
-		if (!data.size()) throw Error::FailedAction("File does not exist or is empty! (" + path + ")!");
+		if (!data.size()) throw FileLoader::FileLoadError("File does not exist or is empty! (" + path + ")!");
 		extend((RawVertex*)&data[0], data.size() / RAW_VERTEX_BYTE_SIZE);
 		DEBUG("Vertices: ");
 		DEBUGLN(data.size() / RAW_VERTEX_BYTE_SIZE);
@@ -648,7 +648,7 @@ public:
 
 	void extendFromBinaryFile(string const& path) {
 		auto data = FileLoader::getBinaryFile(path);
-		if (!data.size()) throw Error::FailedAction("File does not exist or is empty! (" + path + ")!");
+		if (!data.size()) throw FileLoader::FileLoadError("File does not exist or is empty! (" + path + ")!");
 		extend((RawVertex*)&data[0], data.size() / sizeof(RawVertex));
 	}
 
@@ -720,7 +720,7 @@ public:
 
 	void extendFromBinaryFile(string const& path) {
 		auto data = FileLoader::getBinaryFile(path);
-		if (!data.size()) throw Error::FailedAction("File does not exist or is empty! (" + path + ")!");
+		if (!data.size()) throw FileLoader::FileLoadError("File does not exist or is empty! (" + path + ")!");
 		extend((RawVertex*)&data[0], data.size() / sizeof(RawVertex));
 	}
 
@@ -743,7 +743,7 @@ private:
 
 Renderable* loadObjectFromBinaryFile(string const& path) {
 	auto data = FileLoader::getBinaryFile(path);
-	if (data.empty()) throw Error::FailedAction("File does not exist or is empty! (" + path + ")!");
+	if (data.empty()) throw FileLoader::FileLoadError("File does not exist or is empty! (" + path + ")!");
 	return new Renderable((RawVertex*)&data[0], data.size() / sizeof(RawVertex));
 }
 
