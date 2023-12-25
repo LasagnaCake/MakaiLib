@@ -35,12 +35,9 @@ namespace FileLoader {
 	namespace {
 		using namespace std;
 
-		inline void assertDirectory(String const& path, bool saving = false) {
-			String dirpath = FileSystem::getDirectoryFromPath(path);
-			if (!FileSystem::isDirectory(dirpath)) {
-				if (saving)	fileSaveError(path, toString("Directory '", dirpath, "' does not exist!"));
-				else		fileLoadError(path, toString("Directory '", dirpath, "' does not exist!"));
-			}
+		inline void assertFileExists(String const& path) {
+			if (!FileSystem::exists(path))
+				fileLoadError(path, toString("Directory '", path, "' does not exist!"));
 		}
 	}
 
@@ -53,7 +50,7 @@ namespace FileLoader {
 		// Ensure ifstream object can throw exceptions
 		file.exceptions(ifstream::failbit | ifstream::badbit);
 		// Ensure directory exists
-		assertDirectory(path);
+		assertFileExists(path);
 		// Try and load binary
 		try {
 			// Preallocate data
@@ -76,7 +73,7 @@ namespace FileLoader {
 		String content;
 		ifstream file;
 		// Ensure directory exists
-		assertDirectory(path);
+		assertFileExists(path);
 		// Ensure ifstream object can throw exceptions
 		file.exceptions(ifstream::failbit | ifstream::badbit);
 		try {
@@ -106,7 +103,7 @@ namespace FileLoader {
 		String content;
 		ifstream file;
 		// Ensure directory exists
-		assertDirectory(path);
+		assertFileExists(path);
 		// Ensure ifstream object can throw exceptions
 		file.exceptions(ifstream::failbit | ifstream::badbit);
 		try {
@@ -139,8 +136,6 @@ namespace FileLoader {
 	template <typename T>
 	void saveBinaryFile(String const& path, T* data, size_t size) {
 		ofstream file(path.c_str() , ios::binary);
-		// Ensure directory exists
-		//assertDirectory(path, true);
 		// Ensure ifstream object can throw exceptions
 		file.exceptions(ofstream::failbit | ofstream::badbit);
 		// Try and save data
@@ -156,8 +151,6 @@ namespace FileLoader {
 	/// Saves an string as a text file (Non-destructive).
 	void saveTextFile(String const& path, String const& text) {
 		ofstream file(path.c_str() , ios::trunc);
-		// Ensure directory exists
-		//assertDirectory(path, true);
 		// Ensure ifstream object can throw exceptions
 		file.exceptions(ofstream::failbit | ofstream::badbit);
 		// Try and save data

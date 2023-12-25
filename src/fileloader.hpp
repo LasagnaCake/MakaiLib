@@ -34,18 +34,23 @@ namespace FileLoader {
 
 		constexpr ZIPFile& open(String const& path, String const& password = "") {
 			if (isOpen()) return (*this);
+			if (!FileSystem::exists(path))
+				fileLoadError(path, "Archive does not exist!");
 			file	= OpenZip(path.c_str(), password.c_str());
-			if (!isOpen()) fileLoadError(path, "Archive does not exist!");
+			if (!isOpen())
+				fileLoadError(path, "Could not load archive!");
 			name	= FileSystem::getFileName(path, true);
 			ext		= regexFindFirst(FileSystem::getFileName(path, false), "(\\.[^.]+)$");
-			 return (*this);
+			fileOpen = true;
+			return (*this);
 		}
 
 		constexpr ZIPFile& close() {
 			if (!isOpen())  return (*this);
 			CloseZip(file);
 			file = nullptr;
-			 return (*this);
+			fileOpen = false;
+			return (*this);
 		};
 
 		String getTextFile(String const& path) const {
@@ -64,13 +69,15 @@ namespace FileLoader {
 			return contents;
 		}
 
-		constexpr bool isOpen() const	{return (file != nullptr && file != 0 && file != NULL);}
+		constexpr bool isOpen() const	{return fileOpen;}
 
 		constexpr String getName() const		{return name;		}
 		constexpr String getExtension() const	{return ext;		}
 		constexpr String getFullName() const	{return name + ext;	}
 
 	private:
+		bool fileOpen = false;
+
 		constexpr void assertOK(int const& res, String const& path) const {
 			if (res != ZR_OK) {
 				char error[1024];
@@ -93,7 +100,7 @@ namespace FileLoader {
 	};
 
 	namespace {
-		#if !(defined(_DEBUG_OUTPUT_) || defined(_ARCHIVE_SYSTEM_DISABLED_))
+		#if !(defined(_DEBUG_OUTPUT_) || defined(_ARCHIVE_SYSTEM_DISABLED_)) || 1
 		bool				loadingArchive	= false;
 		#endif
 		ZIPFile 			arc;
@@ -109,7 +116,7 @@ namespace FileLoader {
 	#define _ARCHIVE_SYSTEM_DISABLED_*/
 
 	inline void attachArchive(string const& path, string const& password = "") {
-		#if !(defined(_DEBUG_OUTPUT_) || defined(_ARCHIVE_SYSTEM_DISABLED_))
+		#if !(defined(_DEBUG_OUTPUT_) || defined(_ARCHIVE_SYSTEM_DISABLED_)) || 1
 		DEBUGLN("Attaching archive...");
 		if (loadingArchive)
 			fileLoadError(path, "Other archive is being loaded!");
@@ -132,22 +139,23 @@ namespace FileLoader {
 	}
 
 	inline void awaitArchiveLoad() {
-		DEBUGLN("Awaiting archive load...");
-		if (arcLoader.joinable()) arcLoader.join();
-		DEBUGLN("Archive loaded!");
+		if (arcLoader.joinable()) {
+			DEBUGLN("Awaiting archive load...");
+			arcLoader.join();
+		}
 	}
 
 	inline bool isArchiveAttached() {
-		#if !(defined(_DEBUG_OUTPUT_) || defined(_ARCHIVE_SYSTEM_DISABLED_))
+		#if !(defined(_DEBUG_OUTPUT_) || defined(_ARCHIVE_SYSTEM_DISABLED_)) || 1
 		if (loadingArchive) return false;
 		return arc.isOpen();
 		#else
-		return true;
+		return false;
 		#endif
 	}
 
 	[[gnu::destructor]] inline void detachArchive() {
-		#if !(defined(_DEBUG_OUTPUT_) || defined(_ARCHIVE_SYSTEM_DISABLED_))
+		#if !(defined(_DEBUG_OUTPUT_) || defined(_ARCHIVE_SYSTEM_DISABLED_)) || 1
 		DEBUGLN("Detaching archive...");
 		arc.close();
 		DEBUGLN("Archive detached!");
@@ -198,20 +206,23 @@ namespace FileLoader {
 	}
 
 	inline String getTextFile(String const& path) {
-		#if !(defined(_DEBUG_OUTPUT_) || defined(_ARCHIVE_SYSTEM_DISABLED_))
-		string res;
+		#if !(defined(_DEBUG_OUTPUT_) || defined(_ARCHIVE_SYSTEM_DISABLED_)) || 1
+		String res;
 		awaitArchiveLoad();
 		if (isArchiveAttached())
 			try {
+				DEBUGLN("[ARC] Loading text file...");
 				res = loadTextFileFromArchive(path);
 			} catch (FileLoadError const& ae) {
 				try {
+					DEBUGLN("[FLD-2] Loading text file...");
 					res = loadTextFile(path);
 				} catch (FileLoadError const& fe) {
 					fileGetError(path, fe.info, ae.info);
 				}
 			}
 		else try {
+			DEBUGLN("[FLD-1] Loading text file...");
 			res = loadTextFile(path);
 		} catch (FileLoadError const& e) {
 			fileGetError(path, e.info, "Archive not attached!");
@@ -223,44 +234,51 @@ namespace FileLoader {
 	}
 
 	inline BinaryData getBinaryFile(String const& path) {
-		#if !(defined(_DEBUG_OUTPUT_) || defined(_ARCHIVE_SYSTEM_DISABLED_))
+		#if !(defined(_DEBUG_OUTPUT_) || defined(_ARCHIVE_SYSTEM_DISABLED_)) || 1
 		BinaryData res;
 		awaitArchiveLoad();
 		if (isArchiveAttached())
 			try {
+				DEBUGLN("[ARC] Loading binary file...");
 				res = loadBinaryFileFromArchive(path);
 			} catch (FileLoadError const& ae) {
 				try {
+					DEBUGLN("[FLD-2] Loading binary file...");
 					res = loadBinaryFile(path);
 				} catch (FileLoadError const& fe) {
 					fileGetError(path, fe.info, ae.info);
 				}
 			}
 		else try {
+			DEBUGLN("[FLD-1] Loading binary file...");
 			res = loadBinaryFile(path);
 		} catch (FileLoadError const& e) {
 			fileGetError(path, e.info, "Archive not attached!");
 		}
+		return res;
 		#else
 		return loadBinaryFile(path);
 		#endif
 	}
 
 	inline CSVData getCSVFile(String const& path, char const& delimiter = ',') {
-		#if !(defined(_DEBUG_OUTPUT_) || defined(_ARCHIVE_SYSTEM_DISABLED_))
+		#if !(defined(_DEBUG_OUTPUT_) || defined(_ARCHIVE_SYSTEM_DISABLED_)) || 1
 		CSVData res;
 		awaitArchiveLoad();
 		if (isArchiveAttached())
 			try {
+				DEBUGLN("[ARC] Loading CSV file...");
 				res = loadCSVFileFromArchive(path);
 			} catch (FileLoadError const& ae) {
 				try {
+					DEBUGLN("[FLD-2] Loading CSV file...");
 					res = loadCSVFile(path);
 				} catch (FileLoadError const& fe) {
 					fileGetError(path, fe.info, ae.info);
 				}
 			}
 		else try {
+			DEBUGLN("[FLD-1] Loading CSV file...");
 			res = loadCSVFile(path);
 		} catch (FileLoadError const& e) {
 			fileGetError(path, e.info, "Archive not attached!");
@@ -272,20 +290,23 @@ namespace FileLoader {
 	}
 
 	inline nlohmann::ordered_json getJSON(String const& path) {
-		#if !(defined(_DEBUG_OUTPUT_) || defined(_ARCHIVE_SYSTEM_DISABLED_))
+		#if !(defined(_DEBUG_OUTPUT_) || defined(_ARCHIVE_SYSTEM_DISABLED_)) || 1
 		nlohmann::ordered_json res;
 		awaitArchiveLoad();
 		if (isArchiveAttached())
 			try {
+				DEBUGLN("[ARC] Loading JSON file...");
 				res = loadJSONFromArchive(path);
 			} catch (FileLoadError const& ae) {
 				try {
+					DEBUGLN("[FLD-2] Loading JSON file...");
 					res = loadJSON(path);
 				} catch (FileLoadError const& fe) {
 					fileGetError(path, fe.info, ae.info);
 				}
 			}
 		else try {
+			DEBUGLN("[FLD-1] Loading JSON file...");
 			res = loadJSON(path);
 		} catch (FileLoadError const& e) {
 			fileGetError(path, e.info, "Archive not attached!");
