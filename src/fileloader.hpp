@@ -30,6 +30,9 @@ namespace FileLoader {
 	#pragma GCC diagnostic push
 	#pragma GCC diagnostic ignored "-Wreturn-type"
 
+	#pragma push_macro("_ARCHIVE_SYSTEM_DISABLED_")
+
+	#undef _ARCHIVE_SYSTEM_DISABLED_
 	#define _ARCHIVE_SYSTEM_DISABLED_
 
 	void attachArchive(string const& path, string const& key) {
@@ -72,28 +75,28 @@ namespace FileLoader {
 	}
 
 	BinaryData loadDataFromArchive(string const& path) {
-		assertArchive(path);
 		fileLoadError(path, "Unimplemented archive functionality!");
+		assertArchive(path);
 	}
 
 	string loadTextFileFromArchive(string const& path) {
-		assertArchive(path);
 		fileLoadError(path, "Unimplemented archive functionality!");
+		assertArchive(path);
 	}
 
 	BinaryData loadBinaryFileFromArchive(string const& path) {
-		assertArchive(path);
 		fileLoadError(path, "Unimplemented archive functionality!");
+		assertArchive(path);
 	}
 
 	inline CSVData loadCSVFileFromArchive(string const& path) {
-		assertArchive(path);
 		fileLoadError(path, "Unimplemented archive functionality!");
+		assertArchive(path);
 	}
 
 	inline nlohmann::ordered_json loadJSONFromArchive(string const& path) {
-		assertArchive(path);
 		fileLoadError(path, "Unimplemented archive functionality!");
+		assertArchive(path);
 	}
 
 	inline string getTextFile(string const& path) {
@@ -167,6 +170,8 @@ namespace FileLoader {
 		return loadJSON(path);
 		#endif
 	}
+
+	#pragma pop_macro("_ARCHIVE_SYSTEM_DISABLED_")
 
 	#pragma GCC diagnostic pop
 }

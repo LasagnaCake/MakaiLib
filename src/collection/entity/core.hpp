@@ -347,7 +347,7 @@ namespace EntityClass {
 			// If parented and must have unique name, check for duplicate names
 			if (parent && mustHaveUniqueName)
 				while (parent->getChild(uniqueName))
-					uniqueName = newName + "_" + std::to_string(copies++);
+					uniqueName = toString(newName, "_", copies++);
 			// Set unique name
 			name = uniqueName;
 		}

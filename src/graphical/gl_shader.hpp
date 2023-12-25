@@ -100,7 +100,7 @@ namespace Shader {
 
 		private:
 			GLuint getUniformArray(size_t const& index) {
-				auto cname = (name + "[" + std::to_string(index) + "]").c_str();
+				auto cname = toString(name,"[", index, "]").c_str();
 				return glGetUniformLocation(id, cname);
 			}
 

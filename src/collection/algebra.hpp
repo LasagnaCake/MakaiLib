@@ -305,11 +305,11 @@ namespace Math {
 	CONST_ANYTYPE_I abtan(T val) requires Type::Number<T> {return abs(tan(val));}
 
 	inline size_t digitCount(size_t number) {
-		return std::to_string(number).size();
+		return toString(number).size();
 	}
 
 	inline unsigned char digit(size_t val, unsigned char digit) {
-		std::string vstr = std::to_string(val);
+		std::string vstr = toString(val);
 		return vstr[(vstr.size()-1) - digit] - '0';
 	}
 

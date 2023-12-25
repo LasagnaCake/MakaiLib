@@ -460,7 +460,7 @@ private:
 			string indexes = "";
 			size_t i = 0;
 			for (auto& c: components) {
-				if(c.empty()) indexes += std::to_string(i) + " ";
+				if(c.empty()) indexes += toString(i, " ");
 				i++;
 			}
 			if (!indexes.empty()) {
@@ -483,16 +483,10 @@ private:
 					__FILE__,
 					toString(__LINE__),
 					"extendFromDefinition",
-					(
-						"Vertex data size is "
-					+	std::to_string(vds)
-					+	" ("
-					+	std::to_string(vdata.size())
-					+	" bytes).\nExpected size is "
-					+	std::to_string(expected)
-					+	" ("
-					+	std::to_string(expected * vsize)
-					+	" bytes)."
+					toString(
+						"Vertex data size is ",
+						vds, " (", vdata.size(), " bytes).\nExpected size is ",
+						expected, " (", expected * vsize, " bytes)."
 					),
 					"You either have extra data, or missing data."
 				);
