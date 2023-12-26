@@ -13,31 +13,31 @@ Supported targets:
 >   pack-*  : Exports the selected build target into a game package
 
 Supported options:
->   name          = [ value ]        : Spec. the name of the output file      ( DEFAULT: program  )
+>   name          = [ value ]        : Spec. the name of the output file       ( DEFAULT: program  )
 
 Build-exclusive options:
->   src           = [ value ]        : Spec. the source file                  ( DEFAULT: main.cpp )
->   warn          = [ value | none ] : Spec. the warning to enable            ( DEFAULT: none     )
->   use-openmp    = [ 1 | 0 ]        : Spec. whether ro enable OpenMP         ( DEFAULT: 0        )
->   optimize-lvl  = [ 0 - 3 | g ]    : Spec. the optimization level           ( DEFAULT: 2        )
->   debug-profile = [ 1 | 0 ]        : Spec. whether to enable gmon           ( DEFAULT: 0        )
->   keep-o-files  = [ 1 | 0 ]        : Spec. if .o files should be kept       ( DEFAULT: 0        )
->   macro         = [ value | none ] : Spec. a macro to be defined            ( DEFAULT: none     )
->   meth          = [ 1 | 0 ]        : Spec. whether to enable fast math      ( DEFAULT: 0        )
->   sath          = [ 1 | 0 ]        : Spec. whether to enable safe math      ( DEFAULT: 0        )
->   debug-release = [ 1 | 0 ]        : Spec. whether to enable -g on release  ( DEFAULT: 0        )
->   rcscript      = [ value | none ] : Spec. the location of a .rc file       ( DEFAULT: none     )
+>   src           = [ value ]        : Spec. the source file                   ( DEFAULT: main.cpp )
+>   warn          = [ value | none ] : Spec. the warning to enable             ( DEFAULT: none     )
+>   use-openmp    = [ 1 | 0 ]        : Spec. whether ro enable OpenMP          ( DEFAULT: 0        )
+>   optimize-lvl  = [ 0 - 3 | g ]    : Spec. the optimization level            ( DEFAULT: 2        )
+>   debug-profile = [ 1 | 0 ]        : Spec. whether to enable gmon            ( DEFAULT: 0        )
+>   keep-o-files  = [ 1 | 0 ]        : Spec. if .o files should be kept        ( DEFAULT: 0        )
+>   macro         = [ value | none ] : Spec. a macro to be defined             ( DEFAULT: none     )
+>   meth          = [ 1 | 0 ]        : Spec. whether to enable fast math       ( DEFAULT: 0        )
+>   sath          = [ 1 | 0 ]        : Spec. whether to enable safe math       ( DEFAULT: 0        )
+>   debug-release = [ 1 | 0 ]        : Spec. whether to enable -g on release   ( DEFAULT: 0        )
+>   rcscript      = [ value | none ] : Spec. the location of a .rc file        ( DEFAULT: none     )
 
 Pack-exclusive options:
->   extra-files   = [ value | none ] : Spec. extra files to pack in zip file  ( DEFAULT: none     )
->   extra-progs   = [ value | none ] : Spec. extra programs to pack in zip    ( DEFAULT: none     )
->   data-folder   = [ value | none ] : Spec. data folder to use instead       ( DEFAULT: none     )
->   over-debug    = [ 1 | 0 ]        : Spec. whether to over. debug data/     ( DEFAULT: 0        )
->   over-demo     = [ 1 | 0 ]        : Spec. whether to over. demo data/      ( DEFAULT: 0        )
->   over-release  = [ 1 | 0 ]        : Spec. whether to over. release data/   ( DEFAULT: 0        )
->   no-archive    = [ 1 | 0 ]        : Spec. whether to compress data/        ( DEFAULT: 0        )
->   archive-pass  = [ value | none ] : Spec. the archive's password           ( DEFAULT: none     )
->   archive-ext   = [ value | none ] : Spec. the archive's file extension     ( DEFAULT: arc      )
+>   extra-files   = [ value | none ] : Spec. extra files to pack in zip file   ( DEFAULT: none     )
+>   extra-progs   = [ value | none ] : Spec. extra programs to pack in zip     ( DEFAULT: none     )
+>   data-folder   = [ value | none ] : Spec. data folder to use instead        ( DEFAULT: none     )
+>   over-debug    = [ 1 | 0 ]        : Spec. whether to overw. debug data/     ( DEFAULT: 0        )
+>   over-demo     = [ 1 | 0 ]        : Spec. whether to overw. demo data/      ( DEFAULT: 0        )
+>   over-release  = [ 1 | 0 ]        : Spec. whether to overw. release data/   ( DEFAULT: 0        )
+>   no-archive    = [ 1 | 0 ]        : Spec. whether to not compact data/      ( DEFAULT: 0        )
+>   archive-pass  = [ value | none ] : Spec. the archive's password            ( DEFAULT: none     )
+>   archive-ext   = [ value | none ] : Spec. the archive's file extension      ( DEFAULT: arc      )
 
 NOTES:
 (Safe, in this case, means 'IEEE compliant'.)
@@ -46,8 +46,6 @@ NOTES:
 >   rcfile     : Must be located within the 'build/' folder.
 >   name       : For targers "debug" and "demo", "_debug" and "_demo" gets appended at the end of
                   the file, respectively.
->   no-archive : Not required to be set for building, since the engine automatically detects if an
-                  archive is attached.
 
 Pack:
 >   name        : Both the name used for the output zip file, and the name of the .exe, minus the
@@ -58,6 +56,10 @@ Pack:
                    contents from.
 >   over-*      : Only enabled if previous is set. specifies if corresponding target's "data/"
                    folder should be replaced. Only used for multi-target pakings.
+>   no-archive : Specifies whether the data/ folder is not compacted into an archive. Useful if
+                   resources are to be shared. Generally, loading from a folder is faster than
+                   loading from an archive, but does not offer the password protection an archive
+                   provides.
 
 endef
 
