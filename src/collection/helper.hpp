@@ -4,6 +4,7 @@
 #ifdef ENABLE_DEBUG_OUTPUT_
 #include <iostream>
 #endif
+#include <syncstream>
 #include <string>
 #include <vector>
 #include <filesystem>
@@ -294,9 +295,13 @@ namespace Helper {
 	}
 
 	#ifdef ENABLE_DEBUG_OUTPUT_
+	namespace {
+		std::osyncstream output(std::cout);
+	}
+
 	template<typename... Args>
 	constexpr void print(Args... args) {
-		Fold::strins(std::cout, args...);
+		Fold::strins(output, args...);
 	}
 
 	template<typename... Args>
