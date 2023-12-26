@@ -295,6 +295,7 @@ pack-debug:
 	@echo "[1/3] Copying contents..."
 	@cp -r -v $(DEBUG_DATA) $(name)_debug
 	@cp -r -v res/shaders/ $(name)_debug
+	@cp -r -v res/subsys/ $(name)_debug
 	@cp -r -v res/*.dll $(name)_debug
 	@cp -r -v res/$(name)_debug.exe $(name)_debug
 	@cp -r -v $(extra-progs) $(name)_debug
@@ -325,6 +326,7 @@ pack-demo:
 	@echo "[1/3] Copying contents..."
 	@cp -r -v $(DEMO_DATA) $(name)_demo
 	@cp -r -v res/shaders/ $(name)_demo
+	@cp -r -v res/subsys/ $(name)_demo
 	@cp -r -v res/*.dll $(name)_demo
 	@cp -r -v res/$(name)_demo.exe $(name)_demo
 	@cp -r -v $(extra-progs) $(name)_demo
@@ -355,6 +357,7 @@ pack-release:
 	@echo "[1/3] Copying contents..."
 	@cp -r -v $(RElEASE_DATA) $(name)
 	@cp -r -v res/shaders/ $(name)
+	@cp -r -v res/subsys/ $(name)
 	@cp -r -v res/*.dll $(name)
 	@cp -r -v res/$(name).exe $(name)
 	@cp -r -v $(extra-progs) $(name)

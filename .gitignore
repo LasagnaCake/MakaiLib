@@ -8,6 +8,7 @@ res/rundebug.ps1
 res/runrelease.ps1
 gmon.out
 res/data/*
+res/subsys/*
 res/*.exe
 build/*
 packed/*
