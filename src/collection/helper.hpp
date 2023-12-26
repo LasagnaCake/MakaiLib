@@ -295,18 +295,24 @@ namespace Helper {
 	}
 
 	#ifdef ENABLE_DEBUG_OUTPUT_
-	namespace {
-		std::osyncstream output(std::cout);
-	}
-
 	template<typename... Args>
 	constexpr void print(Args... args) {
-		Fold::strins(output, args...);
+		Fold::strins(std::cout, args...);
 	}
 
 	template<typename... Args>
 	constexpr void println(Args... args) {
 		print(args..., "\n");
+	}
+
+	template<typename... Args>
+	constexpr void syncprint(Args... args) {
+		Fold::strins(std::osyncstream(std::cout), args...);
+	}
+
+	template<typename... Args>
+	constexpr void syncprintln(Args... args) {
+		syncprint(args..., "\n");
 	}
 	#endif // ENABLE_DEBUG_OUTPUT_
 
@@ -366,13 +372,29 @@ namespace Helper {
 #ifdef ENABLE_DEBUG_OUTPUT_
 #ifndef DEBUG
 #define DEBUG(...)		Helper::print(__VA_ARGS__)
-#endif
+#endif // DEBUG
 #ifndef DEBUGLN
 #define DEBUGLN(...)	Helper::println(__VA_ARGS__)
-#endif
+#endif // DEBUGLN
+#ifndef SYNCDEBUG
+#define SYNCDEBUG(...)		Helper::syncprint(__VA_ARGS__)
+#endif // SYNCDEBUG
+#ifndef SYNCDEBUGLN
+#define SYNCDEBUGLN(...)	Helper::syncprintln(__VA_ARGS__)
+#endif // SYNCDEBUGLN
 #else
+#ifndef DEBUG
 #define DEBUG(...)
+#endif // DEBUG
+#ifndef DEBUGLN
 #define DEBUGLN(...)
+#endif // DEBUGLN
+#ifndef SYNCDEBUG
+#define SYNCDEBUG(...)
+#endif // SYNCDEBUG
+#ifndef SYNCDEBUGLN
+#define SYNCDEBUGLN(...)
+#endif // SYNCDEBUGLN
 #endif // ENABLE_DEBUG_OUTPUT_
 
 using Helper::String;
