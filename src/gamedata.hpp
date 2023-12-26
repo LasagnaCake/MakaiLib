@@ -81,7 +81,7 @@ namespace GameData {
 			gameRoot = new EntityClass::Entity("Game");
 			EntityClass::_ROOT->addChild(gameRoot);
 		}
-		Entity* game = EntityClass::_ROOT->getChild(gameType);
+		Entity* game = gameRoot->getChild(gameType);
 		if (game == nullptr) {
 			game = new EntityClass::Entity(gameType);
 			gameRoot->addChild(game);
