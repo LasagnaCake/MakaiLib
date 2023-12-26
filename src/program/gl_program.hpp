@@ -789,6 +789,11 @@ namespace Makai {
 			ERASE_IF(screenQueue, elem == target);
 		}
 
+		/**
+		Skips the drawing process of the current layer being drawn.
+		Can only be used during onLayerDrawBegin().
+		*/
+		void skipDrawingThisLayer() {skipLayer = true;}
 
 		/// The window's clear color.
 		Vector4 color = Color::BLACK;
@@ -815,6 +820,8 @@ namespace Makai {
 
 	private:
 		size_t cycleRate = 0, frameRate = 0;
+
+		bool skipLayer = false;
 
 		List<Drawer::Texture2D*> screenQueue;
 
@@ -870,6 +877,8 @@ namespace Makai {
 			vector<size_t> rLayers = Drawer::layers.getAllGroups();
 			for (auto layer : rLayers) {
 				if (layer != Math::Max::SIZET_V && !Drawer::layers[layer].empty()) {
+					// Reset layer skip flag
+					skipLayer = false;
 					// Clear target depth buffer
 					framebuffer();
 					// Enable layer buffer
@@ -879,6 +888,8 @@ namespace Makai {
 					layerbuffer.uv		= VecMath::Transform3D();
 					// Call onLayerDrawBegin function
 					onLayerDrawBegin(layer);
+					// Skip layer if applicable
+					if (skipLayer) continue;
 					// Clear buffers
 					layerbuffer.clearBuffers();
 					// Call onLayerDrawBegin function
