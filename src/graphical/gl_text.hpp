@@ -40,6 +40,7 @@ namespace {
 	}
 }
 
+// TODO: figure out how the fuck to deal with different line break formats
 List<float> getTextLineStarts(TextData& text, FontData& font) {
 	List<float> result;
 	StringList	lines;
