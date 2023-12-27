@@ -8,6 +8,12 @@ struct FontData {
 	Vector2		spacing		= Vector2(1);
 };
 
+enum class LineBreak {
+	LB_CHARACTER,
+	LB_FULL_WORD,
+	LB_HYPHEN_WORD
+};
+
 struct TextData {
 	String		content		= "Hello\nWorld!";
 	TextRect	rect		= {40, 100};
@@ -15,6 +21,7 @@ struct TextData {
 	Vector2		rectAlign	= 0;
 	Vector2		spacing		= 0;
 	long		maxChars	= -1;
+	LineBreak	lineBreak	= LineBreak::LB_CHARACTER;
 };
 
 namespace {
@@ -33,8 +40,8 @@ namespace {
 	}
 }
 
-vector<float> getTextLineStarts(TextData& text, FontData& font) {
-	vector<float> result;
+List<float> getTextLineStarts(TextData& text, FontData& font) {
+	List<float> result;
 	StringList	lines;
 	String		line;
 	// Separate text by newline characters
@@ -72,6 +79,73 @@ Vector2 getTextRectStart(TextData& text, FontData& font) {
 	return rectPos;
 }
 
+namespace {
+	constexpr List<size_t> calculateIndices(StringList const& words, TextRect const& rect) {
+		List<size_t> indices;
+		size_t
+			ls = 0,
+			sc = 0
+		;
+		for (String const& w: words) {
+			if ((ls + sc + w.size()) > (rect.h-1)) {
+				indices.push_back(ls + sc - 1);
+				ls = w.size();
+				sc = 1;
+			} else {
+				ls += w.size();
+				sc++;
+			}
+		}
+		indices.push_back(ls + sc - 1);
+		return indices;
+	}
+}
+
+// TODO: figure out how the fuck to deal with line breaks
+List<size_t> getTextLineBreakIndices(TextData& text) {
+	List<size_t>	indices;
+	switch (text.lineBreak) {
+	case LineBreak::LB_CHARACTER:
+		break;
+	case LineBreak::LB_HYPHEN_WORD: {
+			StringList words, buf = Helper::splitString(text.content, ' ');
+			for (String const& w: buf) {
+				StringList buf2 = Helper::splitString(
+					regexReplace(
+						regexReplace(
+							w,
+							"([\\x01-\\x1f])",
+							" "
+						),
+						"~",
+						"-"
+					),
+					'-'
+				);
+				for(String const& w2: buf2)
+					words.push_back(w2);
+			}
+			indices = calculateIndices(words, text.rect);
+		}
+		break;
+	case LineBreak::LB_FULL_WORD: {
+			indices = calculateIndices(
+				Helper::splitString(
+					regexReplace(
+						text.content,
+						"([\\x01-\\x1f])",
+						" "
+					),
+					' '
+				),
+				text.rect
+			);
+		}
+		break;
+	}
+	return indices;
+}
+
 class Label: public Base::DrawableObject {
 public:
 	Label(size_t layer = 0, bool manual = false): DrawableObject(layer, manual) {}
@@ -84,7 +158,7 @@ public:
 	TextData		text;
 
 private:
-	vector<RawVertex> vertices;
+	List<RawVertex> vertices;
 
 	TextData last = {"",{0,0}};
 
@@ -120,8 +194,8 @@ private:
 		Vector2 uv;
 		unsigned char index;
 		// The lines' starting positions (if applicable)
-		vector<float> lineStart;
-		lineStart	= getTextLineStarts(text, *font);
+		List<float>		lineStart = getTextLineStarts(text, *font);
+		List<size_t>	lineBreak = getTextLineBreakIndices(text);
 		cursor.x	= lineStart[0];
 		cursor.y 	= text.rect.v * (text.spacing.y + font->spacing.y) * text.textAlign.y;
 		cursor -= rectStart * Vector2(1,-1);
@@ -134,9 +208,15 @@ private:
 			if ((curChar > (text.maxChars-1)) && (text.maxChars > -1)) break;
 			else curChar++;
 			// Check if character is newline
-			bool newline = c == '\n';
+			bool
+				newline = (c == '\n'),
+				endOfWordLine = false
+			;
+			// Check if should break line
+			if (text.lineBreak != LineBreak::LB_CHARACTER && text.content.size() >= text.rect.h)
+				endOfWordLine = chrRect.h > lineBreak[curLine];
 			// If cursor has reached the rect's horizontal limit or newline, move to new line
-			if((chrRect.h >= text.rect.h) || newline) {
+			if((chrRect.h >= text.rect.h) || newline || endOfWordLine) {
 				// If cursor has reach the rect's vertical limit, break
 				if(chrRect.v >= text.rect.v) break;
 				cursor.x = (lineStart[++curLine]) - rectStart.x;
@@ -148,6 +228,8 @@ private:
 			}
 			// If cursor has reach the rect's vertical limit, break
 			if(chrRect.v >= text.rect.v) break;
+			// If character is a control character, skip
+			if (c < 0x20) continue;
 			// Get character index
 			index = Math::max<int>(c - 0x20, 0);
 			// Get character's top left UV index in the font texture

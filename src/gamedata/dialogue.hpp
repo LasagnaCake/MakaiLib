@@ -53,6 +53,7 @@ namespace Dialog {
 			keys["skip"]	= SDL_SCANCODE_X;
 			input.update();
 			input.threshold = 120;
+			box.message.text.lineBreak = RenderData::Text::LineBreak::LB_FULL_WORD;
 		})
 
 		MessageList	messages;
@@ -106,10 +107,10 @@ namespace Dialog {
 			}
 		}
 
-		TypedSignal<String>	onTitleRequest	= T_SIGNAL(auto) {};
-		TypedSignal<String>	onMusicRequest	= T_SIGNAL(auto) {};
-		TypedSignal<size_t>	onMessage		= T_SIGNAL(auto) {};
-		Signal				onDialogEnd		= SIGNAL {queueDestroy();};
+		TypedSignal<String>	onNametagRequest	= T_SIGNAL(auto) {};
+		TypedSignal<String>	onMusicRequest		= T_SIGNAL(auto) {};
+		TypedSignal<size_t>	onMessage			= T_SIGNAL(auto) {};
+		Signal				onDialogEnd			= SIGNAL {queueDestroy();};
 
 		virtual void onAction(Message const& msg) {}
 
@@ -305,7 +306,7 @@ namespace Dialog {
 			else if	(msg.title == "@:settime:")		actionSetTransTime();
 			else if	(msg.title == "@:stopmusic:")	actionStopMusic();
 			else if	(msg.title == "@:playmusic:")	actionPlayMusic();
-			else if	(msg.title == "@:showtitle:")	actionDisplayTitle();
+			else if	(msg.title == "@:showtag:")		actionDisplayNametag();
 			else	onAction(msg);
 		}
 
@@ -406,8 +407,8 @@ namespace Dialog {
 			nextMessage();
 		}
 
-		void actionDisplayTitle() {
-			onTitleRequest(last.text);
+		void actionDisplayNametag() {
+			onNametagRequest(last.text);
 			//restAllInScene(time);
 			nextMessage();
 		}
