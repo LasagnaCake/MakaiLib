@@ -99,7 +99,7 @@ Vector2 getTextRectStart(TextData const& text, FontData const& font) {
 namespace {
 	constexpr List<size_t> calculateIndices(StringList const& words, TextRect const& rect) {
 		List<size_t> indices;
-		size_t
+		/*size_t
 			ls = 0,
 			sc = 0
 		;
@@ -113,7 +113,25 @@ namespace {
 				sc++;
 			}
 		}
-		indices.push_back(ls + sc - 1);
+		indices.push_back(ls + sc - 1);*/
+		size_t
+			lastBreak	= 0,
+			curWord		= 0
+		;
+		for (String const& word: words) {
+			for (char const& c: word) {
+				if (c == '\n') {
+					indices.push_back(curWord+lastBreak-1);
+					lastBreak = 0;
+				} else if ((lastBreak + (++curWord)) > (rect.h-1)) {
+					indices.push_back(lastBreak-1);
+					lastBreak = 0;
+				}
+			}
+			lastBreak += ++curWord;
+			curWord = 0;
+		}
+		indices.push_back(lastBreak-1);
 		return indices;
 	}
 }
@@ -126,7 +144,7 @@ List<size_t> getTextLineWrapIndices(TextData& text) {
 	case LineWrap::LW_HYPHEN_WORD: {
 			StringList words = Helper::splitString(
 				text.content,
-				{'-', ' ', '~', '\n', '\t'}
+				{'-', ' ', '~', '\t'}
 			);
 			indices = calculateIndices(words, text.rect);
 		}
@@ -135,7 +153,7 @@ List<size_t> getTextLineWrapIndices(TextData& text) {
 			indices = calculateIndices(
 				Helper::splitString(
 					text.content,
-					{' ', '~', '\n', '\t'}
+					{' ', '~', '\t'}
 				),
 				text.rect
 			);
@@ -180,7 +198,6 @@ private:
 
 	#define CHAR_VERTEX(POS, UV) RawVertex{(POS).x,(POS).y,0,(UV).x,(UV).y}
 	void update() {
-		// If font doesn't exist, return
 		// Clear previous characters
 		vertices.clear();
 		// The current character's position
@@ -221,7 +238,10 @@ private:
 				chrRect.h = 0;
 				chrRect.v++;
 				// If newline, move on to next character
-				if (newline) continue;
+				if (newline) {
+					if (endOfWordLine) chrRect.v--;
+					continue;
+				}
 			}
 			// If cursor has reach the rect's vertical limit, break
 			if(chrRect.v >= text.rect.v) break;
