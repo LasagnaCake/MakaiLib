@@ -115,7 +115,7 @@ List<size_t> getTextLineBreakIndices(TextData& text) {
 						regexReplace(
 							w,
 							"([\\x01-\\x1f])",
-							" "
+							""
 						),
 						"~",
 						"-"
@@ -134,7 +134,7 @@ List<size_t> getTextLineBreakIndices(TextData& text) {
 					regexReplace(
 						text.content,
 						"([\\x01-\\x1f])",
-						" "
+						""
 					),
 					' '
 				),
