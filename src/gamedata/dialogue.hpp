@@ -53,7 +53,7 @@ namespace Dialog {
 			keys["skip"]	= SDL_SCANCODE_X;
 			input.update();
 			input.threshold = 120;
-			box.message.text.lineBreak = RenderData::Text::LineBreak::LB_FULL_WORD;
+			box.message.text.lineWrap = RenderData::Text::LineWrap::LW_FULL_WORD;
 		})
 
 		MessageList	messages;

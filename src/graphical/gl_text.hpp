@@ -8,10 +8,10 @@ struct FontData {
 	Vector2		spacing		= Vector2(1);
 };
 
-enum class LineBreak {
-	LB_CHARACTER,
-	LB_FULL_WORD,
-	LB_HYPHEN_WORD
+enum class LineWrap {
+	LW_CHARACTER,
+	LW_FULL_WORD,
+	LW_HYPHEN_WORD
 };
 
 struct TextData {
@@ -21,7 +21,7 @@ struct TextData {
 	Vector2		rectAlign	= 0;
 	Vector2		spacing		= 0;
 	long		maxChars	= -1;
-	LineBreak	lineBreak	= LineBreak::LB_CHARACTER;
+	LineWrap	lineWrap	= LineWrap::LW_CHARACTER;
 };
 
 namespace {
@@ -36,44 +36,60 @@ namespace {
 		,	a.rectAlign.y	== b.rectAlign.y
 		,	a.spacing		== b.spacing
 		,	a.maxChars		== b.maxChars
+		,	a.lineWrap		== b.lineWrap
 		);
 	}
 }
 
-// TODO: figure out how the fuck to deal with different line break formats
-List<float> getTextLineStarts(TextData& text, FontData& font) {
+List<float> getTextLineStarts(TextData const& text, FontData const& font, List<size_t> const& breaks) {
 	List<float> result;
-	StringList	lines;
-	String		line;
-	// Separate text by newline characters
-	std::istringstream content(text.content);
-	while (std::getline(content, line, '\n'))
-		lines.push_back(line);
-	// Calculate starting points
-	for (String& l : lines) {
-		size_t lineSize		= l.size();
-		size_t lastLineSize	= Math::wmax(lineSize, text.rect.h+1);
-		if (lineSize > text.rect.h) {
-			for (size_t i = 0; i < (lineSize - lastLineSize) / text.rect.h; i++)
-				result.push_back(0);
+	switch (text.lineWrap) {
+	case LineWrap::LW_CHARACTER: {
+			// Separate text by newline characters
+			StringList	lines = Helper::splitString(text.content, '\n');
+			// Calculate starting points
+			for (String& l : lines) {
+				size_t lineSize		= l.size();
+				size_t lastLineSize	= Math::wmax(lineSize, text.rect.h+1);
+				if (lineSize > text.rect.h) {
+					for (size_t i = 0; i < (lineSize - lastLineSize) / text.rect.h; i++)
+						result.push_back(0);
+				}
+				result.push_back(
+					((float)text.rect.h - (float)lastLineSize)
+				*	(text.spacing.x + font.spacing.x)
+				*	text.textAlign.x
+				+	(
+						(text.spacing.x + font.spacing.x)
+					*	text.textAlign.x
+					*	text.textAlign.x
+					*	text.textAlign.x
+					)
+				);
+			}
 		}
-		result.push_back(
-			((float)text.rect.h - (float)lastLineSize)
-		*	(text.spacing.x + font.spacing.x)
-		*	text.textAlign.x
-		+	(
-				(text.spacing.x + font.spacing.x)
-			*	text.textAlign.x
-			*	text.textAlign.x
-			*	text.textAlign.x
-			)
-		);
+	case LineWrap::LW_FULL_WORD:
+	case LineWrap::LW_HYPHEN_WORD: {
+			for (size_t const& lb: breaks) {
+				result.push_back(
+					((float)text.rect.h - (float)lb)
+				*	(text.spacing.x + font.spacing.x)
+				*	text.textAlign.x
+				+	(
+						(text.spacing.x + font.spacing.x)
+					*	text.textAlign.x
+					*	text.textAlign.x
+					*	text.textAlign.x
+					)
+				);
+			}
+		}
 	}
 	// Return result
 	return result;
 }
 
-Vector2 getTextRectStart(TextData& text, FontData& font) {
+Vector2 getTextRectStart(TextData const& text, FontData const& font) {
 	Vector2 rectPos = Vector2(text.rect.h, text.rect.v) * text.rectAlign;
 	rectPos += (text.spacing + font.spacing) * text.rectAlign * Vector2(1, -1);
 	rectPos *= (text.spacing + font.spacing);
@@ -102,42 +118,24 @@ namespace {
 	}
 }
 
-// TODO: figure out how the fuck to deal with line breaks
-List<size_t> getTextLineBreakIndices(TextData& text) {
+List<size_t> getTextLineWrapIndices(TextData& text) {
 	List<size_t>	indices;
-	switch (text.lineBreak) {
-	case LineBreak::LB_CHARACTER:
+	switch (text.lineWrap) {
+	case LineWrap::LW_CHARACTER:
 		break;
-	case LineBreak::LB_HYPHEN_WORD: {
-			StringList words, buf = Helper::splitString(text.content, ' ');
-			for (String const& w: buf) {
-				StringList buf2 = Helper::splitString(
-					regexReplace(
-						regexReplace(
-							w,
-							"([\\x01-\\x1f])",
-							""
-						),
-						"~",
-						"-"
-					),
-					'-'
-				);
-				for(String const& w2: buf2)
-					words.push_back(w2);
-			}
+	case LineWrap::LW_HYPHEN_WORD: {
+			StringList words = Helper::splitString(
+				text.content,
+				{'-', ' ', '~', '\n', '\t'}
+			);
 			indices = calculateIndices(words, text.rect);
 		}
 		break;
-	case LineBreak::LB_FULL_WORD: {
+	case LineWrap::LW_FULL_WORD: {
 			indices = calculateIndices(
 				Helper::splitString(
-					regexReplace(
-						text.content,
-						"([\\x01-\\x1f])",
-						""
-					),
-					' '
+					text.content,
+					{' ', '~', '\n', '\t'}
 				),
 				text.rect
 			);
@@ -180,8 +178,6 @@ private:
 		display(&vertices[0], vertices.size());
 	}
 
-
-	// TODO: Proper text alignment
 	#define CHAR_VERTEX(POS, UV) RawVertex{(POS).x,(POS).y,0,(UV).x,(UV).y}
 	void update() {
 		// If font doesn't exist, return
@@ -195,8 +191,8 @@ private:
 		Vector2 uv;
 		unsigned char index;
 		// The lines' starting positions (if applicable)
-		List<float>		lineStart = getTextLineStarts(text, *font);
-		List<size_t>	lineBreak = getTextLineBreakIndices(text);
+		List<size_t>	lineEnd = getTextLineWrapIndices(text);
+		List<float>		lineStart = getTextLineStarts(text, *font, lineEnd);
 		cursor.x	= lineStart[0];
 		cursor.y 	= text.rect.v * (text.spacing.y + font->spacing.y) * text.textAlign.y;
 		cursor -= rectStart * Vector2(1,-1);
@@ -214,8 +210,8 @@ private:
 				endOfWordLine = false
 			;
 			// Check if should break line
-			if (text.lineBreak != LineBreak::LB_CHARACTER && text.content.size() >= text.rect.h)
-				endOfWordLine = chrRect.h > lineBreak[curLine];
+			if (text.lineWrap != LineWrap::LW_CHARACTER && text.content.size() >= text.rect.h)
+				endOfWordLine = chrRect.h > lineEnd[curLine];
 			// If cursor has reached the rect's horizontal limit or newline, move to new line
 			if((chrRect.h >= text.rect.h) || newline || endOfWordLine) {
 				// If cursor has reach the rect's vertical limit, break

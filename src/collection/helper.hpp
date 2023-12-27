@@ -257,6 +257,19 @@ namespace Helper {
 		return res;
 	}
 
+	StringList splitString(String const& str, Arguments<char> const& seps) {
+		StringList res = {str};
+		for (char const& sep: seps) {
+			StringList buf1 = res;
+			res.clear();
+			for (String const& s1: buf1) {
+				StringList buf2 = splitString(s1, sep);
+				for (String s2: buf2) res.push_back(s2);
+			}
+		}
+		return res;
+	}
+
 	template<typename T>
 	using Enumerated = HashMap<size_t, T>;
 
