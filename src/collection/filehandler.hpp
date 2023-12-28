@@ -37,7 +37,7 @@ namespace FileLoader {
 
 		inline void assertFileExists(String const& path) {
 			if (!FileSystem::exists(path))
-				fileLoadError(path, toString("Directory '", path, "' does not exist!"));
+				fileLoadError(path, toString("File or directory '", path, "' does not exist!"));
 		}
 	}
 
