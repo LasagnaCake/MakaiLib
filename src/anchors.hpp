@@ -51,8 +51,6 @@
 ***************************
 */
 
-#include <zlib.h>
-#include <bzlib.h>
 #include <nlohmann/json.hpp>
 
 /*

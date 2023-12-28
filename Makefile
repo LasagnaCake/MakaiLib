@@ -109,9 +109,9 @@ else
 optimize-lvl	?= 2
 endif
 
-INCLUDES		:= -Ilib -Isrc -Ilib/SDL2-2.0.10/include -Ilib/OpenGL -Ilib/OpenGL/GLEW/include -Ilib/cute_headers -Ilib/stb -Ilib/jsoncpp-3.11.2/include -Ilib/cppcodec-0.2 -Ilib/libzippp/include
+INCLUDES		:= -Ilib -Isrc -Ilib/SDL2-2.0.10/include -Ilib/OpenGL -Ilib/OpenGL/GLEW/include -Ilib/cute_headers -Ilib/stb -Ilib/jsoncpp-3.11.2/include -Ilib/cppcodec-0.2 -Ilib/zip_utils/include
 
-LIBRARIES		:= lib/SDL2-2.0.10/lib/libSDL2.dll.a lib/SDL2-2.0.10/lib/libSDL2main.a lib/SDL2-2.0.10/lib/libSDL2_mixer.dll.a lib/OpenGL/GLEW/lib/libglew32.dll.a lib/libzippp/lib/libzippp.a -lopengl32 -lgomp -lpowrprof -lwinmm -lcomdlg32
+LIBRARIES		:= lib/SDL2-2.0.10/lib/libSDL2.dll.a lib/SDL2-2.0.10/lib/libSDL2main.a lib/SDL2-2.0.10/lib/libSDL2_mixer.dll.a lib/OpenGL/GLEW/lib/libglew32.dll.a lib/zip_utils/lib/libziputils.a -lopengl32 -lgomp -lpowrprof -lwinmm -lcomdlg32
 
 # This doesn't work. Oh well.
 # SANITIZER_OPTIONS := -fsanitize=leak -fsanitize=memory
@@ -203,15 +203,15 @@ endif
 GUI_MODE ?= -mwindows
 
 .PHONY: clean debug release all demo both test help pack-debug pack-release pack-all pack-demo pack-both pack-test pack-help
+.ONESHELL:
+.SHELLFLAGS = -ec
 
 export HELP_MESSAGE
 
-.ONESHELL:
 help:
 	@echo "$$HELP_MESSAGE"
 
 
-.ONESHELL:
 debug: build/$(src)
 	@echo ""
 	@echo "[--- START ---]"
@@ -239,7 +239,6 @@ debug: build/$(src)
 	@echo 
 
 
-.ONESHELL:
 demo: build/$(src)
 	@echo ""
 	@echo "[--- START ---]"
@@ -267,7 +266,6 @@ demo: build/$(src)
 	@echo 
 
 
-.ONESHELL:
 release: build/$(src)
 	@echo ""
 	@echo "[--- START ---]"
@@ -307,7 +305,6 @@ both: demo release
 all: debug demo release
 
 
-.ONESHELL:
 pack-debug:
 	@echo ""
 	@echo "[--- START ---]"
@@ -344,8 +341,7 @@ pack-debug:
 	@echo "[--- END ---]"
 	@echo 
 	
-	
-.ONESHELL:
+
 pack-demo:
 	@echo ""
 	@echo "[--- START ---]"
@@ -388,7 +384,6 @@ pack-demo:
 	@echo 
 
 
-.ONESHELL:
 pack-release:
 	@echo ""
 	@echo "[--- START ---]"
@@ -442,7 +437,6 @@ pack-both: pack-demo pack-release
 
 pack-all: pack-debug pack-demo pack-release
 
-.ONESHELL:
 clean:
 	@echo "Cleaning up..."
 	@rm -rf $(CLEAN_TARGET)
