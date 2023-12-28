@@ -6,15 +6,15 @@
 #include "helper.hpp"
 #include "conceptual.hpp"
 
-#define T_SIGNAL_U(...)		(...)->void
-#define T_TRIGGER_U(...)	(...)->bool
-#define T_CALL_U(...)		(...)->Trigger
-#define T_CHAIN_U(...)		(...)->Signal
+#define T_SIGNAL_U(...)		(__VA_ARGS__)->void
+#define T_TRIGGER_U(...)	(__VA_ARGS__)->bool
+#define T_CALL_U(...)		(__VA_ARGS__)->Trigger
+#define T_CHAIN_U(...)		(__VA_ARGS__)->Signal
 
-#define	T_SIGNAL(...)	[&] T_SIGNAL_U(...)
-#define	T_TRIGER(...)	[&] T_TRIGGER_U(...)
-#define	T_CALL(...)		[&] T_CALL_U(...)
-#define	T_CHAIN(...)	[&] T_CHAIN_U(...)
+#define	T_SIGNAL(...)	[&] T_SIGNAL_U(__VA_ARGS__)
+#define	T_TRIGER(...)	[&] T_TRIGGER_U(__VA_ARGS__)
+#define	T_CALL(...)		[&] T_CALL_U(__VA_ARGS__)
+#define	T_CHAIN(...)	[&] T_CHAIN_U(__VA_ARGS__)
 
 #define SIGNAL			T_SIGNAL()
 #define TRIGGER			T_TRIGGER()
