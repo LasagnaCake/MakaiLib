@@ -48,18 +48,19 @@ NOTES:
                   the file, respectively.
 
 Pack:
->   name        : Both the name used for the output zip file, and the name of the .exe, minus the
-                   compilation target name MUST be the same name set while building.
->   extra-progs : Must be Separate executables.
->   extra-files : Must be the relative path to a folder to copy its contents from.
->   data-folder : Must be the relative path to a folder containing a "data/" folder to use its
-                   contents from.
->   over-*      : Only enabled if previous is set. specifies if corresponding target's "data/"
-                   folder should be replaced. Only used for multi-target pakings.
->   no-archive : Specifies whether the data/ folder is not compacted into an archive. Useful if
-                   resources are to be shared. Generally, loading from a folder is faster than
-                   loading from an archive, but does not offer the password protection an archive
-                   provides.
+>   name         : Both the name used for the output zip file, and the name of the .exe, minus the
+                    compilation target name MUST be the same name set while building.
+>   extra-progs  : Must be Separate executables.
+>   extra-files  : Must be the relative path to a folder to copy its contents from.
+>   data-folder  : Must be the relative path to a folder containing a "data/" folder to use its
+                    contents from.
+>   over-*       : Only enabled if previous is set. specifies if corresponding target's "data/"
+                    folder should be replaced. Only used for multi-target pakings.
+>   no-archive   : Specifies whether the data/ folder is not compacted into an archive. Useful if
+                    resources are to be shared. Generally, loading from a folder is faster than
+                    loading from an archive, but does not offer the password protection an archive
+                    provides.
+>   archive-pass : Must not contain spaces. ASCII characters only.
 
 endef
 
@@ -108,9 +109,9 @@ else
 optimize-lvl	?= 2
 endif
 
-INCLUDES		:= -Ilib -Isrc -Ilib\SDL2-2.0.10\include -Ilib\OpenGL -Ilib\OpenGL\GLEW\include -Ilib\cute_headers -Ilib\stb -Ilib\jsoncpp-3.11.2\include -Ilib\cppcodec-0.2 -Ilib\zip_utils\include
+INCLUDES		:= -Ilib -Isrc -Ilib/SDL2-2.0.10/include -Ilib/OpenGL -Ilib/OpenGL/GLEW/include -Ilib/cute_headers -Ilib/stb -Ilib/jsoncpp-3.11.2/include -Ilib/cppcodec-0.2 -Ilib/zip_utils/include
 
-LIBRARIES		:= lib\SDL2-2.0.10\lib\libSDL2.dll.a lib\SDL2-2.0.10\lib\libSDL2main.a lib\SDL2-2.0.10\lib\libSDL2_mixer.dll.a lib\OpenGL\GLEW\lib\libglew32.dll.a -lopengl32 -lgomp -lpowrprof -lwinmm -lcomdlg32 lib\zip_utils\lib\libziputils.a
+LIBRARIES		:= lib/SDL2-2.0.10/lib/libSDL2.dll.a lib/SDL2-2.0.10/lib/libSDL2main.a lib/SDL2-2.0.10/lib/libSDL2_mixer.dll.a lib/OpenGL/GLEW/lib/libglew32.dll.a -lopengl32 -lgomp -lpowrprof -lwinmm -lcomdlg32 lib/zip_utils/lib/libziputils.a
 
 # This doesn't work. Oh well.
 # SANITIZER_OPTIONS := -fsanitize=leak -fsanitize=memory
@@ -140,7 +141,7 @@ endif
 ifdef rcscript
 WINRC				:= @windres
 RC_FILE_DIRS		:= build/$(rcscript) -o obj/rc/cfg.o
-CREATE_RC_FOLDER	:= @mkdir -p obj\rc
+CREATE_RC_FOLDER	:= @mkdir -p obj/rc
 INCLUDE_RC_FILE		:= obj/rc/cfg.o
 else
 WINRC				:= @:
@@ -185,29 +186,46 @@ ifeq ($(over-release), 1)
 RELEASE_DATA := $(DATA_FOLDER)
 endif
 
+#-r -v
+ifdef archive-pass
+ARCPASS := -p $(archive-pass)
+endif
+
+ifeq ($(no-archive), 1)
+DATA_ARCHIVE	:= @:
+DATA_REMOVE		:= @:
+else
+DATA_ARCHIVE	:= @zip -r $(ARC_PASS) data.$(archive-ext) data/*
+DATA_REMOVE		:= @rm -rf data
+endif
+
+
 GUI_MODE ?= -mwindows
 
 .PHONY: clean debug release all demo both test help pack-debug pack-release pack-all pack-demo pack-both pack-test pack-help
 
 export HELP_MESSAGE
 
+.ONESHELL:
 help:
 	@echo "$$HELP_MESSAGE"
 
-debug: build\$(src)
+
+.ONESHELL:
+debug: build/$(src)
 	@echo ""
 	@echo "[--- START ---]"
 	
 	$(GET_TIME)
 	
-	@mkdir -p obj\$@
+	@mkdir -p obj/$@
 	
 	@echo "[0/2] processing resources [$@]..."
 	$(CREATE_RC_FOLDER)
 	$(WINRC) -D_DEBUG_OUTPUT_ $(RC_FILE_DIRS)
 	
 	@echo "[1/2] compiling [$@]..."
-	@$(CXX) $(COMPILER_CONFIG) -Wall -Wpedantic $(SAFE_MATH) -pg -Og -ggdb3 $(SANITIZER_OPTIONS) -fno-omit-frame-pointer -D_DEBUG_OUTPUT_ $(DEFINE_MACRO) $(INCLUDES) -D_ARCHIVE_SYSTEM_DISABLED_ -c build\$(src) -o obj/$@/$(name).o
+	@$(CXX) $(COMPILER_CONFIG) -Wall -Wpedantic $(SAFE_MATH) -pg -Og -ggdb3 $(SANITIZER_OPTIONS) -fno-omit-frame-pointer -D_DEBUG_OUTPUT_ $(DEFINE_MACRO) $(INCLUDES) -D_ARCHIVE_SYSTEM_DISABLED_ -c build/$(src) -o obj/$@/$(name).o
 	
 	@echo "[2/2] linking libraries..."
 	@$(CXX) -o res/$(name)_$@.exe obj/$@/$(name).o $(INCLUDE_RC_FILE) $(LINKER_CONFIG) -pg -Og $(LIBRARIES) $(SANITIZER_OPTIONS)
@@ -221,20 +239,21 @@ debug: build\$(src)
 	@echo 
 
 
-demo: build\$(src)
+.ONESHELL:
+demo: build/$(src)
 	@echo ""
 	@echo "[--- START ---]"
 
 	$(GET_TIME)
 	
-	@mkdir -p obj\$@
+	@mkdir -p obj/$@
 	
 	@echo "[0/2] processing resources [$@]..."
 	$(CREATE_RC_FOLDER)
 	$(WINRC) -D_DEMO_BUILD_ $(RC_FILE_DIRS)
 	
 	@echo "[1/2] compiling [$@]..."
-	@$(CXX) $(COMPILER_CONFIG) $(WARNINGS) $(OPTIMIZATIONS) -O$(optimize-lvl) $(DEBUG_SYMBOL) $(SAFE_MATH) $(OPENMP_ENABLED) $(INCLUDES) -D_DEMO_BUILD_ $(DEFINE_MACRO) -c build\$(src) -o obj/$@/$(name).o
+	@$(CXX) $(COMPILER_CONFIG) $(WARNINGS) $(OPTIMIZATIONS) -O$(optimize-lvl) $(DEBUG_SYMBOL) $(SAFE_MATH) $(OPENMP_ENABLED) $(INCLUDES) -D_DEMO_BUILD_ $(DEFINE_MACRO) -c build/$(src) -o obj/$@/$(name).o
 	
 	@echo "[2/2] linking libraries..."
 	@$(CXX) -o res/$(name)_$@.exe obj/$@/$(name).o $(INCLUDE_RC_FILE) $(LINKER_CONFIG) -O$(optimize-lvl)  $(LIBRARIES) $(GUI_MODE)
@@ -248,20 +267,21 @@ demo: build\$(src)
 	@echo 
 
 
-release: build\$(src)
+.ONESHELL:
+release: build/$(src)
 	@echo ""
 	@echo "[--- START ---]"
 
 	$(GET_TIME)
 	
-	@mkdir -p obj\$@
+	@mkdir -p obj/$@
 	
 	@echo "[0/2] processing resources [$@]..."
 	$(CREATE_RC_FOLDER)
 	$(WINRC) $(RC_FILE_DIRS)
 	
 	@echo "[1/2] compiling [$@]..."
-	@$(CXX) $(COMPILER_CONFIG) $(WARNINGS) $(OPTIMIZATIONS) -O$(optimize-lvl) $(DEBUG_SYMBOL) $(SAFE_MATH) $(OPENMP_ENABLED) $(INCLUDES) $(DEFINE_MACRO) -c build\$(src) -o obj/$@/$(name).o
+	@$(CXX) $(COMPILER_CONFIG) $(WARNINGS) $(OPTIMIZATIONS) -O$(optimize-lvl) $(DEBUG_SYMBOL) $(SAFE_MATH) $(OPENMP_ENABLED) $(INCLUDES) $(DEFINE_MACRO) -c build/$(src) -o obj/$@/$(name).o
 	
 	@echo "[2/2] linking libraries..."
 	@$(CXX) -o res/$(name).exe obj/$@/$(name).o $(INCLUDE_RC_FILE) $(LINKER_CONFIG) -O$(optimize-lvl)  $(LIBRARIES) $(GUI_MODE)
@@ -277,12 +297,17 @@ release: build\$(src)
 
 test: debug release
 
+
 preview: debug demo
+
 
 both: demo release
 	
+	
 all: debug demo release
 
+
+.ONESHELL:
 pack-debug:
 	@echo ""
 	@echo "[--- START ---]"
@@ -292,28 +317,35 @@ pack-debug:
 	@echo "Packing files for '$@'..."
 	@echo "[0/3] Creating folders..."
 	@mkdir -p packed
-	@mkdir -p $(name)_debug
+	@mkdir -p packed/$(name)_debug
 	
 	@echo "[1/3] Copying contents..."
-	@cp -r -v $(DEBUG_DATA) $(name)_debug
-	@cp -r -v res/shaders/ $(name)_debug
-	@cp -r -v res/subsys/ $(name)_debug
-	@cp -r -v res/*.dll $(name)_debug
-	@cp -r -v res/$(name)_debug.exe $(name)_debug
-	@cp -r -v $(extra-progs) $(name)_debug
-	@cp -r -v $(extra-files)/* $(name)_debug
+	@cp -r -v $(DEBUG_DATA) packed/$(name)_debug
+	@cp -r -v res/shaders/ packed/$(name)_debug
+	@cp -r -v res/subsys/ packed/$(name)_debug
+	@cp -r -v res/*.dll packed/$(name)_debug
+	@cp -r -v res/$(name)_debug.exe packed/$(name)_debug
+	@cp -r -v $(extra-progs) packed/$(name)_debug
+	@cp -r -v $(extra-files)/* packed/$(name)_debug
 	
 	@echo "[2/3] Zipping files..."
-	@zip packed/$(name)_debug.zip -r $(name)_debug/*
+	
+	@cd packed
+	
+	@zip $(name)_debug.zip -r $(name)_debug/*
+	
+	@cd ..
 	
 	@echo "[3/3] Done!"
-	@rm -rf $(name)_debug
+	@rm -rf packed/$(name)_debug
 	
 	$(GET_TIME)
 	
 	@echo "[--- END ---]"
 	@echo 
-
+	
+	
+.ONESHELL:
 pack-demo:
 	@echo ""
 	@echo "[--- START ---]"
@@ -323,28 +355,40 @@ pack-demo:
 	@echo "Packing files for '$@'..."
 	@echo "[0/3] Creating folders..."
 	@mkdir -p packed
-	@mkdir -p $(name)_demo
+	@mkdir -p packed/$(name)_demo
 	
 	@echo "[1/3] Copying contents..."
-	@cp -r -v $(DEMO_DATA) $(name)_demo
-	@cp -r -v res/shaders/ $(name)_demo
-	@cp -r -v res/subsys/ $(name)_demo
-	@cp -r -v res/*.dll $(name)_demo
-	@cp -r -v res/$(name)_demo.exe $(name)_demo
-	@cp -r -v $(extra-progs) $(name)_demo
-	@cp -r -v $(extra-files)/* $(name)_demo
+	@cp -r -v $(DEMO_DATA) packed/$(name)_demo
+	@cp -r -v res/shaders/ packed/$(name)_demo
+	@cp -r -v res/subsys/ packed/$(name)_demo
+	@cp -r -v res/*.dll packed/$(name)_demo
+	@cp -r -v res/$(name)_demo.exe packed/$(name)_demo
+	@cp -r -v $(extra-progs) packed/$(name)_demo
+	@cp -r -v $(extra-files)/* packed/$(name)_demo
 	
 	@echo "[2/3] Zipping files..."
-	@zip packed/$(name)_demo.zip -r $(name)_demo/*
+	
+	@cd packed
+	
+	@cd $(name)_demo
+	$(DATA_ARCHIVE)
+	$(DATA_REMOVE)
+	@cd ..
+	
+	@zip $(name)_demo.zip -r $(name)_demo/*
+	
+	@cd ..
 	
 	@echo "[3/3] Done!"
-	@rm -rf $(name)_demo
+	@rm -rf packed/$(name)_demo
 	
 	$(GET_TIME)
 	
 	@echo "[--- END ---]"
 	@echo 
 
+
+.ONESHELL:
 pack-release:
 	@echo ""
 	@echo "[--- START ---]"
@@ -354,36 +398,51 @@ pack-release:
 	@echo "Packing files for '$@'..."
 	@echo "[0/3] Creating folders..."
 	@mkdir -p packed
-	@mkdir -p $(name)
+	@mkdir -p packed/$(name)
 	
 	@echo "[1/3] Copying contents..."
-	@cp -r -v $(RElEASE_DATA) $(name)
-	@cp -r -v res/shaders/ $(name)
-	@cp -r -v res/subsys/ $(name)
-	@cp -r -v res/*.dll $(name)
-	@cp -r -v res/$(name).exe $(name)
-	@cp -r -v $(extra-progs) $(name)
-	@cp -r -v $(extra-files)/* $(name)
+	@cp -r -v $(RElEASE_DATA) packed/$(name)
+	@cp -r -v res/shaders/ packed/$(name)
+	@cp -r -v res/subsys/ packed/$(name)
+	@cp -r -v res/*.dll packed/$(name)
+	@cp -r -v res/$(name).exe packed/$(name)
+	@cp -r -v $(extra-progs) packed/$(name)
+	@cp -r -v $(extra-files)/* packed/$(name)
 	
 	@echo "[2/3] Zipping files..."
-	@zip packed/$(name).zip -r $(name)/*
+	
+	@cd packed
+	
+	@cd $(name)
+	$(DATA_ARCHIVE)
+	$(DATA_REMOVE)
+	@cd ..
+	
+	@zip $(name).zip -r $(name)/*
+	
+	@cd ..
 	
 	@echo "[3/3] Done!"
-	@rm -rf $(name)
+	@rm -rf packed/$(name)
 	
 	$(GET_TIME)
 	
 	@echo "[--- END ---]"
 	@echo 
 
+
 pack-test: pack-debug pack-release
+
 
 pack-preview: pack-debug pack-demo
 
+
 pack-both: pack-demo pack-release
+
 
 pack-all: pack-debug pack-demo pack-release
 
+.ONESHELL:
 clean:
 	@echo "Cleaning up..."
 	@rm -rf $(CLEAN_TARGET)

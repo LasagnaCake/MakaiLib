@@ -142,11 +142,13 @@ List<size_t> getTextLineWrapIndices(TextData& text) {
 	case LineWrap::LW_CHARACTER:
 		break;
 	case LineWrap::LW_HYPHEN_WORD: {
-			StringList words = Helper::splitString(
-				text.content,
-				{'-', ' ', '~', '\t'}
+			indices = calculateIndices(
+				Helper::splitString(
+					text.content,
+					{' ', '~', '\t', '-'}
+				),
+				text.rect
 			);
-			indices = calculateIndices(words, text.rect);
 		}
 		break;
 	case LineWrap::LW_FULL_WORD: {

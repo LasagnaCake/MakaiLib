@@ -68,7 +68,7 @@ public:
 	SaveFile(String const& path) {load(path);}
 
 	SaveFile& load(String const& path) {
-		data = FileLoader::getJSON(path);
+		data = FileLoader::loadJSON(path);
 		return (*this);
 	}
 
