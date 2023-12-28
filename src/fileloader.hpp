@@ -101,9 +101,9 @@ namespace FileLoader {
 		HZIP file = nullptr;
 	};
 
-	#ifndef _TESTING_ARCHIVE_SYS_
+	/*#ifndef _TESTING_ARCHIVE_SYS_
 	#define _TESTING_ARCHIVE_SYS_
-	#endif // _TESTING_ARCHIVE_SYS_
+	#endif // _TESTING_ARCHIVE_SYS_*/
 
 	namespace {
 		#if !(defined(_DEBUG_OUTPUT_) || defined(_ARCHIVE_SYSTEM_DISABLED_)) || defined(_TESTING_ARCHIVE_SYS_)
