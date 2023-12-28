@@ -4,7 +4,7 @@
 #include "collection/helper.hpp"
 #include "collection/filehandler.hpp"
 #include <nlohmann/json.hpp>
-#include <zip_utils/unzip.h>
+#include <libzippp.h>
 
 namespace FileLoader {
 	inline nlohmann::ordered_json parseJSON(String const& data) {try {
@@ -25,6 +25,10 @@ namespace FileLoader {
 		return parseJSON(loadTextFile(path));
 	}
 
+	namespace {
+		using namespace libzippp;
+	}
+
 	struct ZIPFile {
 		constexpr ZIPFile() {}
 
@@ -36,7 +40,8 @@ namespace FileLoader {
 			if (isOpen()) return (*this);
 			if (!FileSystem::exists(path))
 				fileLoadError(path, "Archive does not exist!");
-			file	= OpenZip(path.c_str(), password.c_str());
+			file	= new ZipArchive(path, password);
+			file->open();
 			if (!fileExists())
 				fileLoadError(path, "Could not load archive!");
 			name	= FileSystem::getFileName(path, true);
@@ -47,26 +52,22 @@ namespace FileLoader {
 
 		constexpr ZIPFile& close() {
 			if (!isOpen()) return (*this);
-			CloseZip(file);
+			file->close();
+			delete file;
 			file = nullptr;
 			fileOpen = false;
 			return (*this);
 		};
 
 		String getTextFile(String const& path) const {
-			auto [idx, entry] = getFileInfo(path);
-			String contents;
-			contents.reserve(entry.unc_size);
-			assertOK(UnzipItem(file, idx, contents.data(), contents.size()), path);
-			return contents;
+			ZipEntry const e = getFileInfo(path);
+			return e.readAsText();
 		}
 
 		BinaryData getBinaryFile(String const& path) const {
-			auto [idx, entry] = getFileInfo(path);
-			BinaryData contents;
-			contents.reserve(entry.unc_size);
-			assertOK(UnzipItem(file, idx, contents.data(), contents.size()), path);
-			return contents;
+			ZipEntry const e = getFileInfo(path);
+			uint8* data = (uint8*)e.readAsBinary();
+			return BinaryData(data, data + e.getSize());
 		}
 
 		constexpr bool isOpen() const	{return fileOpen;}
@@ -78,32 +79,27 @@ namespace FileLoader {
 	private:
 		bool fileOpen = false;
 
-		bool fileExists() const {return file != 0 && file != nullptr && file != NULL;}
+		bool fileExists() const {return file != nullptr && file->isOpen();}
 
-		constexpr void assertOK(int const& res, String const& path) const {
-			if (res != ZR_OK) {
-				char error[1024];
-				FormatZipMessage(res, error, 1024);
-				fileLoadError(toString(name, ext, "/", path), error);
-			}
+		constexpr void assertOK(bool const& ok, String const& path) const {
+			if (!ok) fileLoadError(toString(name, ".", ext, "/", path), "File could not be found!");
 		}
 
-		Pair<int, ZIPENTRY> getFileInfo(String const& path) const {
-			if (!isOpen()) fileLoadError(toString(path), "Archive not loaded!");
-			int idx = -1;
-			ZIPENTRY entry;
-			assertOK(FindZipItem(file, path.c_str(), true, &idx, &entry), path);
-			return Pair<int, ZIPENTRY>(idx, entry);
+		ZipEntry getFileInfo(String const& path) const {
+			if (!isOpen())
+				fileLoadError(toString(path), "Archive not loaded!");
+			assertOK(file->hasEntry(path, true, true), path);
+			return file->getEntry(path, true, true);
 		}
 
 		String name, ext;
 
-		HZIP file = nullptr;
+		ZipArchive* file = nullptr;
 	};
 
-	/*#ifndef _TESTING_ARCHIVE_SYS_
+	#ifndef _TESTING_ARCHIVE_SYS_
 	#define _TESTING_ARCHIVE_SYS_
-	#endif // _TESTING_ARCHIVE_SYS_*/
+	#endif // _TESTING_ARCHIVE_SYS_//*/
 
 	namespace {
 		#if !(defined(_DEBUG_OUTPUT_) || defined(_ARCHIVE_SYSTEM_DISABLED_)) || defined(_TESTING_ARCHIVE_SYS_)

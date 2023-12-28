@@ -35,7 +35,9 @@
   OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
   IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-
+#ifndef _WIN32
+#include <cstdint>
+#endif
 #include <cstdio>
 #include <string>
 #include <vector>
@@ -64,11 +66,11 @@ struct zip_source;
         #define LIBZIPPP_SHARED_LIBRARY_IMPORT
 #else
         //standard ISO c++ does not support long long
-        typedef long int libzippp_int64;
-        typedef unsigned long int libzippp_uint64;
-        typedef unsigned int libzippp_uint32;
-        typedef unsigned short libzippp_uint16;
-        
+        typedef std::int64_t libzippp_int64;
+        typedef std::uint64_t libzippp_uint64;
+        typedef std::uint32_t libzippp_uint32;
+        typedef std::uint16_t libzippp_uint16;
+
         #define LIBZIPPP_SHARED_LIBRARY_EXPORT
         #define LIBZIPPP_SHARED_LIBRARY_IMPORT
 #endif
@@ -91,6 +93,7 @@ struct zip_source;
 #define LIBZIPPP_ERROR_FREAD_FAILURE -26
 #define LIBZIPPP_ERROR_OWRITE_FAILURE -35
 #define LIBZIPPP_ERROR_OWRITE_INDEX_FAILURE -36
+#define LIBZIPPP_ERROR_HANDLE_FAILURE -37
 #define LIBZIPPP_ERROR_UNKNOWN -99
 
 /**
@@ -231,7 +234,7 @@ namespace libzippp {
          * 
          * Use ZipArchive::free to delete the returned pointer.
          */
-        static ZipArchive* fromSource(zip_source* source, OpenMode mode=ReadOnly, bool checkConsistency=false);
+        static ZipArchive* fromSource(zip_source* source, OpenMode mode=ReadOnly, bool checkConsistency=false, const std::string& password="", Encryption encryptionMethod=Encryption::None);
         
         /**
          * Creates a new ZipArchive from the specified data. The archive will
@@ -243,7 +246,7 @@ namespace libzippp {
          * 
          * Use ZipArchive::free to delete the returned pointer.
          */
-        static ZipArchive* fromBuffer(const void* data, libzippp_uint32 size, bool checkConsistency=false);
+        static ZipArchive* fromBuffer(const void* data, libzippp_uint32 size, bool checkConsistency=false, const std::string& password="", Encryption encryptionMethod=Encryption::None);
         
         /**
          * Creates a new ZipArchive from the specified data. The archive will
@@ -261,7 +264,7 @@ namespace libzippp {
          * 
          * Use ZipArchive::free to delete the returned pointer.
          */
-        static ZipArchive* fromWriteableBuffer(void** data, libzippp_uint32 size, OpenMode mode=Write, bool checkConsistency=false);
+        static ZipArchive* fromWritableBuffer(void** data, libzippp_uint32 size, OpenMode mode=Write, bool checkConsistency=false, const std::string& password="", Encryption encryptionMethod=Encryption::None);
         
         /**
          * Deletes a ZipArchive.
@@ -296,9 +299,11 @@ namespace libzippp {
          * not open previously, this method does nothing. If the archive was open in modification
          * and some were done, they will be committed.
          * This method returns LIBZIPPP_OK if the archive was successfully closed, otherwise it 
-         * returns the value returned by the zip_close() function.
+         * returns a LIBZIPPP error code. The error is dispatched to ErrorHandlerCallback.
          * While being closed, all the registered ZipProgressListener instances will be invoked on
          * a regular basis, depending on the progression precision.
+         * In some cases (when the archive is created with fromWritableBuffer), the archive is still
+         * being closed, even if an error code is returned.
          */
         int close(void);
         
@@ -403,7 +408,7 @@ namespace libzippp {
          * Defines the compression method of an entry. If the ZipArchive is not open
          * or the entry is not linked to this archive, false will be returned.
          **/
-        bool setEntryCompressionMethod(ZipEntry& entry, CompressionMethod compMethod = CompressionMethod::DEFAULT) const;
+        bool setEntryCompressionConfig(ZipEntry& entry, CompressionMethod compMethod=CompressionMethod::DEFAULT, libzippp_uint32 compLevel=0) const;
         
         /**
          * Reads the specified ZipEntry of the ZipArchive and returns its content within
@@ -574,11 +579,27 @@ namespace libzippp {
         inline double getProgressPrecision(void) const { return progressPrecision; }
         void setProgressPrecision(double p) { progressPrecision = p; }
 
+        /**
+         * Defines the error handler callback to notify in case of error while handling
+         * the underlying zip file.
+         */
         void setErrorHandlerCallback(ErrorHandlerCallback* callback) {
            errorHandlingCallback = callback;
         }
 
+        /**
+         * Defines the compression method to used for the newly created ZipEntry.
+         */
         void setCompressionMethod(CompressionMethod comp);
+        CompressionMethod getCompressionMethod(void) const;
+
+        /**
+         * Defines the compression level to use. By default this value is zero to use the default behaviour of libzip.
+         * Otherwise, this value should be between 1 and 9, 1 being the fastest compression and 9 the best.
+         * For ZSTD, possible values are defined by ZSTD_minCLevel and ZSTD_maxCLevel.
+         */
+        inline void setCompressionLevel(libzippp_uint32 level) { this->compressionLevel = level; }
+        inline libzippp_uint32 getCompressionLevel(void) const { return compressionLevel; }
 
     private:
         std::string path;
@@ -595,6 +616,7 @@ namespace libzippp {
 
         bool useArchiveCompressionMethod;
         libzippp_uint16 compressionMethod;
+        libzippp_uint32 compressionLevel;
 
         // User-defined error handler
         ErrorHandlerCallback* errorHandlingCallback;
@@ -636,7 +658,7 @@ namespace libzippp {
          * If this function return 1 the operation is cancelled.
          * If this function return 0 the operation will continue.
          */
-        virtual int cancel() = 0;
+        virtual int cancel(void) = 0;
     };
     
     /**
@@ -669,10 +691,19 @@ namespace libzippp {
         inline time_t getDate(void) const { return time; }
         
         /**
-         * Returns the compression method. By default, ZIP_CM_DEFAULT.
+         * Defines the compression method to be used. By default, ZIP_CM_DEFAULT.
          * Can be one of ZIP_CM_DEFAULT,ZIP_CM_STORE,ZIP_CM_BZIP2,ZIP_CM_DEFLATE,ZIP_CM_XZ or ZIP_CM_ZSTD.
          */
         CompressionMethod getCompressionMethod(void) const;
+        bool setCompressionMethod(CompressionMethod compMethod);
+        
+        /**
+         * Defines the compression level to use. By default this value is zero to use the default behaviour of libzip.
+         * Otherwise, this value should be between 1 and 9, 1 being the fastest compression and 9 the best.
+         * For ZSTD, possible values are defined by ZSTD_minCLevel and ZSTD_maxCLevel.
+         */
+        inline libzippp_uint32 getCompressionLevel(void) const { return compressionLevel; }
+        bool setCompressionLevel(libzippp_uint32 level);
         
         /**
          * Returns the encryption method.
@@ -709,13 +740,6 @@ namespace libzippp {
          * Returns true if this entry is null (means no more entry is available).
          */
         inline bool isNull(void) const { return zipFile==nullptr; }
-        
-        /**
-         * Defines the compression method to be used
-         * Those methods are wrappers around setEntryCompressionMethod and
-         * getCompressionMethod.
-         */
-        bool setCompressionMethod(CompressionMethod compMethod);
         
         /**
          * Defines the comment of the entry. In order to call either one of those
@@ -763,13 +787,14 @@ namespace libzippp {
         libzippp_uint64 index;
         time_t time;
         libzippp_uint16 compressionMethod;
+        libzippp_uint32 compressionLevel;
         libzippp_uint16 encryptionMethod;
         libzippp_uint64 size;
         libzippp_uint64 sizeComp;
         int crc;
         
-        ZipEntry(const ZipArchive* zipFile, const std::string& name, libzippp_uint64 index, time_t time, libzippp_uint16 compMethod, libzippp_uint16 encMethod, libzippp_uint64 size, libzippp_uint64 sizeComp, int crc) : 
-                zipFile(zipFile), name(name), index(index), time(time), compressionMethod(compMethod), encryptionMethod(encMethod), size(size), sizeComp(sizeComp), crc(crc) {}
+        ZipEntry(const ZipArchive* zipFile, const std::string& name, libzippp_uint64 index, time_t time, libzippp_uint16 compMethod, libzippp_uint32 compLevel, libzippp_uint16 encMethod, libzippp_uint64 size, libzippp_uint64 sizeComp, int crc) : 
+                zipFile(zipFile), name(name), index(index), time(time), compressionMethod(compMethod), compressionLevel(compLevel), encryptionMethod(encMethod), size(size), sizeComp(sizeComp), crc(crc) {}
     };
 }
 
