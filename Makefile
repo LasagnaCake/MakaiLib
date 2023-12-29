@@ -186,13 +186,33 @@ ifeq ($(over-release), 1)
 RELEASE_DATA := $(DATA_FOLDER)
 endif
 
+COLOR_RED	:= \033[0;31m
+COLOR_NONE	:= \033[0m
+
+define ZIPWARNMSG
+	@echo ""
+	@echo -e "$(COLOR_RED)!!! WARNING !!!$(COLOR_NONE)"
+	@echo "7-Zip not found. Using zip instead."
+	@echo "Please install p7zip, as it provides stronger encryption."
+	@echo -e "$(COLOR_RED)!!! WARNING !!!$(COLOR_NONE)"
+	@echo ""
+endef
+
 #-r
-ifdef archive-pass
-ARCZIPCMD := @7za a -tzip -mem=AES256 -p"$(archive-pass)"
-#ARCZIPCMD := @zip -P $(archive-pass) -r
+ifneq (, $(shell which 7za))
+WARNABOUT7ZIP := @:
+ZIPCMD := @7za a -tzip -mem=AES256
+ARCPASS := -p"$(archive-pass)"
 else
-ARCZIPCMD := @7za a -tzip -mem=AES256
-#ARCZIPCMD := @zip -r
+WARNABOUT7ZIP := $(ZIPWARNMSG)
+ZIPCMD := @zip -r
+ARCPASS := -P $(archive-pass)
+endif
+
+ifdef archive-pass
+ARCZIPCMD := $(ZIPCMD) $(ARCPASS)
+else
+ARCZIPCMD := $(ZIPCMD)
 endif
 
 ifeq ($(no-archive), 1)
@@ -202,7 +222,6 @@ else
 DATA_ARCHIVE	:= $(ARCZIPCMD) data.$(archive-ext) data
 DATA_REMOVE		:= @rm -rf data
 endif
-
 
 GUI_MODE ?= -mwindows
 
@@ -310,6 +329,8 @@ all: debug demo release
 
 
 pack-debug:
+	$(WARNABOUT7ZIP)
+
 	@echo ""
 	@echo "[--- START ---]"
 
@@ -333,7 +354,7 @@ pack-debug:
 	
 	@cd packed
 	
-	@7za a -tzip $(name)_debug.zip $(name)_debug
+	$(ZIPCMD) $(name)_debug.zip $(name)_debug
 	
 	@cd ..
 	
@@ -345,8 +366,12 @@ pack-debug:
 	@echo "[--- END ---]"
 	@echo 
 	
+	$(WARNABOUT7ZIP)
+	
 
 pack-demo:
+	$(WARNABOUT7ZIP)
+
 	@echo ""
 	@echo "[--- START ---]"
 
@@ -375,7 +400,7 @@ pack-demo:
 	$(DATA_REMOVE)
 	@cd ..
 	
-	@7za a -tzip $(name)_demo.zip $(name)_demo
+	$(ZIPCMD) $(name)_demo.zip $(name)_demo
 	
 	@cd ..
 	
@@ -386,9 +411,13 @@ pack-demo:
 	
 	@echo "[--- END ---]"
 	@echo 
+	
+	$(WARNABOUT7ZIP)
 
 
 pack-release:
+	$(WARNABOUT7ZIP)
+
 	@echo ""
 	@echo "[--- START ---]"
 
@@ -417,7 +446,7 @@ pack-release:
 	$(DATA_REMOVE)
 	@cd ..
 	
-	@7za a -tzip $(name).zip $(name)
+	$(ZIPCMD) $(name).zip $(name)
 	
 	@cd ..
 	
@@ -428,6 +457,8 @@ pack-release:
 	
 	@echo "[--- END ---]"
 	@echo 
+	
+	$(WARNABOUT7ZIP)
 
 
 pack-test: pack-debug pack-release
