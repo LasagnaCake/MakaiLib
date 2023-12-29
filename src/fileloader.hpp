@@ -11,6 +11,9 @@
 //*
 #include <zip_utils/unzip.h>
 //*/
+/*
+#include <bit7z/bit7z.hpp>
+//*/
 
 namespace FileLoader {
 	inline nlohmann::ordered_json parseJSON(String const& data) {try {
@@ -181,6 +184,99 @@ namespace FileLoader {
 		String name, ext;
 
 		HZIP file = nullptr;
+	};
+	//*/
+	/*
+	namespace {
+		using namespace bit7z;
+
+		Bit7zLibrary lib7z{kDefaultLibrary};
+	}
+
+	struct ZIPFile {
+		constexpr ZIPFile() {}
+
+		constexpr ZIPFile(String const& path, String const& password = "") {open(path, password);}
+
+		constexpr ~ZIPFile() {close();}
+
+		constexpr ZIPFile& open(String const& path, String const& password = "")
+		try {
+			if (isOpen()) return (*this);
+			if (!FileSystem::exists(path))
+				fileLoadError(path, "Archive does not exist!");
+			reader = new BitArchiveReader(lib7z, path, BitFormat::Zip, password);
+			fileOpen = true;
+			return (*this);
+		} catch (BitException const& e) {
+			fileLoadError(path, e.what(), "fileloader.hpp");
+		}
+
+		constexpr ZIPFile& close()
+		try {
+			if (!isOpen()) return (*this);
+			delete reader;
+			reader = nullptr;
+			fileOpen = false;
+			return (*this);
+		} catch (BitException const& e) {
+			throw FileLoadError(e.what(), "fileloader.hpp");
+		}
+
+		String getTextFile(String const& path) const
+		try {
+			auto [idx, entry] = getFileInfo(path);
+			BinaryData contents;
+			reader->extractTo(contents, idx);
+			assertOK(!contents.empty(), path);
+			return String((char*)contents.data());
+		} catch (BitException const& e) {
+			fileLoadError(path, e.what(), "fileloader.hpp");
+		}
+
+		BinaryData getBinaryFile(String const& path) const
+		try {
+			auto [idx, entry] = getFileInfo(path);
+			BinaryData contents;
+			reader->extractTo(contents, idx);
+			assertOK(!contents.empty(), path);
+			return contents;
+		} catch (BitException const& e) {
+			fileLoadError(path, e.what(), "fileloader.hpp");
+		}
+
+		constexpr bool isOpen() const	{return fileOpen;}
+
+		constexpr String getName() const		{return name;		}
+		constexpr String getExtension() const	{return ext;		}
+		constexpr String getFullName() const	{return name + ext;	}
+
+	private:
+		typedef BitInputArchive::ConstIterator	FileInfo;
+		typedef Pair<size_t, FileInfo>			FileData;
+
+		bool fileOpen = false;
+
+		constexpr void assertOK(bool const& ok, String const& path) const {
+			if (!ok)
+				fileLoadError(toString(name, ext, "/", path), "File could not be loaded!");
+		}
+
+		FileData getFileInfo(String const& path) const
+		try {
+			if (!isOpen())
+				fileLoadError(toString(path), "Archive not loaded!", "fileloader.hpp");
+			if (!reader->contains(path))
+				fileLoadError(path, "File does not exist!", "fileloader.hpp");
+			FileInfo info = reader->find(path);
+			return FileData(info->index(), info);
+		} catch (BitException const& e) {
+			fileLoadError(path, e.what(), "fileloader.hpp");
+		}
+
+		String name, ext;
+
+		BitArchiveReader* reader = nullptr;
 	};
 	//*/
 	//*

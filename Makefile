@@ -107,13 +107,17 @@ endif
 
 ZIPINC	:= -Ilib/zip_utils/include
 #ZIPINC	:= -Ilib/libzippp/include
+#ZIPINC	:= -Ilib/bit7z/include
 
 ZIPLIB	:= lib/zip_utils/lib/libziputils.a
 #ZIPLIB	:= lib/libzippp/lib/libzippp.a
+#ZIPLIB	:= lib/bit7z/lib/x64_custom/libbit7z64.a
 
 INCLUDES		:= -Ilib -Isrc -Ilib/SDL2-2.0.10/include -Ilib/OpenGL -Ilib/OpenGL/GLEW/include -Ilib/cute_headers -Ilib/stb -Ilib/jsoncpp-3.11.2/include -Ilib/cppcodec-0.2 $(ZIPINC)
 
-LIBRARIES		:= $(ZIPLIB) lib/SDL2-2.0.10/lib/libSDL2.dll.a lib/SDL2-2.0.10/lib/libSDL2main.a lib/SDL2-2.0.10/lib/libSDL2_mixer.dll.a lib/OpenGL/GLEW/lib/libglew32.dll.a -lopengl32 -lgomp -lpowrprof -lwinmm -lcomdlg32
+WINGARBAGE		:= -lole32 -loleaut32 -limm32 -lwinmm -lversion -lpowrprof -lcomdlg32 -lsetupapi -lgdi32
+
+LIBRARIES		:= $(ZIPLIB) lib/SDL2-2.0.10/lib/libSDL2.dll.a lib/SDL2-2.0.10/lib/libSDL2main.a lib/SDL2-2.0.10/lib/libSDL2_mixer.dll.a lib/OpenGL/GLEW/lib/libglew32.dll.a $(WINGARBAGE) -lopengl32 -lgomp
 
 # This doesn't work. Oh well.
 # SANITIZER_OPTIONS := -fsanitize=leak -fsanitize=memory
