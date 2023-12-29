@@ -32,6 +32,16 @@ No plans to support 32-bit systems.
 ### Windows
 
 - GCC via MinGW (MSYS (Recommended), Cygwin, TDM-GCC) (DOES NOT SUPPORT CLANG)
+- Make
+- 7-Zip command-line (Recommended) or zip command-line
+
+If using MSYS, all of them must be installed via pacman:
+
+```
+For toolchain (GCC, make & other utils): pacman -S mingw-w64-x86_64-toolchain
+For zip: pacman -S zip
+For 7-zip: pacman -S p7zip
+```
 
 ## How To use
 
