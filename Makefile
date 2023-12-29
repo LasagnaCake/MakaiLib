@@ -186,15 +186,20 @@ ifeq ($(over-release), 1)
 RELEASE_DATA := $(DATA_FOLDER)
 endif
 
-COLOR_RED	:= \033[0;31m
+# Red bold
+COLOR_ERR	:= \033[1;91m
+# Yellow bold
+COLOR_WARN	:= \033[1;93m
+# Reset color
 COLOR_NONE	:= \033[0m
 
 define ZIPWARNMSG
 	@echo ""
-	@echo -e "$(COLOR_RED)!!! WARNING !!!$(COLOR_NONE)"
+	@echo -e "$(COLOR_WARN)!!! WARNING !!!$(COLOR_NONE)"
 	@echo "7-Zip not found. Using zip instead."
 	@echo "Please install p7zip, as it provides stronger encryption."
-	@echo -e "$(COLOR_RED)!!! WARNING !!!$(COLOR_NONE)"
+	@echo "If you're using MSYS, simply install it via \"pacman -S p7zip\"."
+	@echo -e "$(COLOR_WARN)!!! WARNING !!!$(COLOR_NONE)"
 	@echo ""
 endef
 
