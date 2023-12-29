@@ -41,7 +41,7 @@ namespace FileLoader {
 			if (isOpen()) return (*this);
 			if (!FileSystem::exists(path))
 				fileLoadError(path, "Archive does not exist!");
-			file	= new ZipArchive(path, password);
+			file	= new ZipArchive(path, password, ZipArchive::Encryption::Aes256);
 			file->open();
 			if (!fileExists())
 				fileLoadError(path, "Could not load archive!");

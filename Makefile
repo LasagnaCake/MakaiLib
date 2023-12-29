@@ -188,14 +188,15 @@ endif
 
 #-r -v
 ifdef archive-pass
-ARCPASS := --password $(archive-pass)
+ARCPASS := -p$(archive-pass)
 endif
 
 ifeq ($(no-archive), 1)
 DATA_ARCHIVE	:= @:
 DATA_REMOVE		:= @:
 else
-DATA_ARCHIVE	:= @zip $(ARC_PASS) data.$(archive-ext) -r data/*
+DATA_ARCHIVE	:= @7za a -t7z $(ARC_PASS) -mem=AES256 data.$(archive-ext) data
+#DATA_ARCHIVE	:= @zip $(ARC_PASS) data.$(archive-ext) -r data/*
 DATA_REMOVE		:= @rm -rf data
 endif
 
@@ -329,7 +330,7 @@ pack-debug:
 	
 	@cd packed
 	
-	@zip $(name)_debug.zip -r $(name)_debug/*
+	@7za a -tzip $(name)_debug.zip $(name)_debug
 	
 	@cd ..
 	
@@ -371,7 +372,7 @@ pack-demo:
 	$(DATA_REMOVE)
 	@cd ..
 	
-	@zip $(name)_demo.zip -r $(name)_demo/*
+	@7za a -tzip $(name)_demo.zip $(name)_demo
 	
 	@cd ..
 	
@@ -413,7 +414,7 @@ pack-release:
 	$(DATA_REMOVE)
 	@cd ..
 	
-	@zip $(name).zip -r $(name)/*
+	@7za a -tzip $(name).zip $(name)
 	
 	@cd ..
 	
