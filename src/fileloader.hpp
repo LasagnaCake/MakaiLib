@@ -102,7 +102,7 @@ namespace FileLoader {
 	struct ZIPFile {
 		constexpr ZIPFile() {}
 
-		constexpr ZIPFile(String const& path) {open(path);}
+		constexpr ZIPFile(String const& path, String const& password = "") {open(path, password);}
 
 		constexpr ~ZIPFile() {close();}
 
