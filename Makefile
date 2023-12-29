@@ -188,14 +188,14 @@ endif
 
 #-r -v
 ifdef archive-pass
-ARCPASS := -p $(archive-pass)
+ARCPASS := --password $(archive-pass)
 endif
 
 ifeq ($(no-archive), 1)
 DATA_ARCHIVE	:= @:
 DATA_REMOVE		:= @:
 else
-DATA_ARCHIVE	:= @zip -r $(ARC_PASS) data.$(archive-ext) data/*
+DATA_ARCHIVE	:= @zip $(ARC_PASS) data.$(archive-ext) -r data/*
 DATA_REMOVE		:= @rm -rf data
 endif
 
