@@ -38,11 +38,11 @@
 #endif // threadlocal
 
 #ifdef SHARED_LIBRARY
-#ifdef COMPILING_DLL
+#ifdef _COMPILING_DLL_
 #define SHAREDLIB DLL_EXPORT
 #else
 #define SHAREDLIB DLL_IMPORT
-#endif // COMPILING_DLL
+#endif // _COMPILING_DLL_
 #else
 #define SHAREDLIB
 #endif // SHARED_LIBRARY
