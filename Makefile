@@ -1,8 +1,5 @@
 define HELP_MESSAGE
 
-!!! WARNING !!!
-Archive system functionality is not implemented yet!
-
 Supported targets:
 >   debug   : Builds enabling debug options, and with all warnings enabled (+ pedantic)
 >   demo    : Builds enabling optimizations, and with the _DEMO_BUILD_ macro defined
