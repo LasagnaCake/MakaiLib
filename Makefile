@@ -186,17 +186,20 @@ ifeq ($(over-release), 1)
 RELEASE_DATA := $(DATA_FOLDER)
 endif
 
-#-r -v
+#-r
 ifdef archive-pass
-ARCPASS := -p$(archive-pass)
+ARCZIPCMD := @7za a -tzip -mem=AES256 -p"$(archive-pass)"
+#ARCZIPCMD := @zip -P $(archive-pass) -r
+else
+ARCZIPCMD := @7za a -tzip -mem=AES256
+#ARCZIPCMD := @zip -r
 endif
 
 ifeq ($(no-archive), 1)
 DATA_ARCHIVE	:= @:
 DATA_REMOVE		:= @:
 else
-DATA_ARCHIVE	:= @7za a -t7z $(ARC_PASS) -mem=AES256 data.$(archive-ext) data
-#DATA_ARCHIVE	:= @zip $(ARC_PASS) data.$(archive-ext) -r data/*
+DATA_ARCHIVE	:= $(ARCZIPCMD) data.$(archive-ext) data
 DATA_REMOVE		:= @rm -rf data
 endif
 
