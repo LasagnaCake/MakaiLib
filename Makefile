@@ -105,9 +105,15 @@ else
 optimize-lvl	?= 2
 endif
 
-INCLUDES		:= -Ilib -Isrc -Ilib/SDL2-2.0.10/include -Ilib/OpenGL -Ilib/OpenGL/GLEW/include -Ilib/cute_headers -Ilib/stb -Ilib/jsoncpp-3.11.2/include -Ilib/cppcodec-0.2 -Ilib/zip_utils/include
+ZIPINC	:= -Ilib/zip_utils/include
+#ZIPINC	:= -Ilib/libzippp/include
 
-LIBRARIES		:= lib/SDL2-2.0.10/lib/libSDL2.dll.a lib/SDL2-2.0.10/lib/libSDL2main.a lib/SDL2-2.0.10/lib/libSDL2_mixer.dll.a lib/OpenGL/GLEW/lib/libglew32.dll.a lib/zip_utils/lib/libziputils.a -lopengl32 -lgomp -lpowrprof -lwinmm -lcomdlg32
+ZIPLIB	:= lib/zip_utils/lib/libziputils.a
+#ZIPLIB	:= lib/libzippp/lib/libzippp.a
+
+INCLUDES		:= -Ilib -Isrc -Ilib/SDL2-2.0.10/include -Ilib/OpenGL -Ilib/OpenGL/GLEW/include -Ilib/cute_headers -Ilib/stb -Ilib/jsoncpp-3.11.2/include -Ilib/cppcodec-0.2 $(ZIPINC)
+
+LIBRARIES		:= $(ZIPLIB) lib/SDL2-2.0.10/lib/libSDL2.dll.a lib/SDL2-2.0.10/lib/libSDL2main.a lib/SDL2-2.0.10/lib/libSDL2_mixer.dll.a lib/OpenGL/GLEW/lib/libglew32.dll.a -lopengl32 -lgomp -lpowrprof -lwinmm -lcomdlg32
 
 # This doesn't work. Oh well.
 # SANITIZER_OPTIONS := -fsanitize=leak -fsanitize=memory

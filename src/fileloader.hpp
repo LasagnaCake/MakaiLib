@@ -4,7 +4,13 @@
 #include "collection/helper.hpp"
 #include "collection/filehandler.hpp"
 #include <nlohmann/json.hpp>
+/*
+#define LIBZIPPP_WITH_ENCRYPTION
+#include <libzippp.h>
+//*/
+//*
 #include <zip_utils/unzip.h>
+//*/
 
 namespace FileLoader {
 	inline nlohmann::ordered_json parseJSON(String const& data) {try {
@@ -97,8 +103,8 @@ namespace FileLoader {
 
 		ZipArchive* file = nullptr;
 	};
-	*/
-
+	//*/
+	//*
 	struct ZIPFile {
 		constexpr ZIPFile() {}
 
@@ -176,10 +182,12 @@ namespace FileLoader {
 
 		HZIP file = nullptr;
 	};
-
+	//*/
+	//*
 	#ifndef _TESTING_ARCHIVE_SYS_
 	#define _TESTING_ARCHIVE_SYS_
-	#endif // _TESTING_ARCHIVE_SYS_//*/
+	#endif // _TESTING_ARCHIVE_SYS_
+	//*/
 
 	namespace {
 		#if !(defined(_DEBUG_OUTPUT_) || defined(_ARCHIVE_SYSTEM_DISABLED_)) || defined(_TESTING_ARCHIVE_SYS_)
