@@ -53,17 +53,17 @@ namespace ArcSys {
 		BinaryData const&		data,
 		String					password	= "",
 		EncryptionMethod const&	method		= EncryptionMethod::AEM_AES256
-	) {
+	) try {
 		String result;
 		while (password.size() < AES::DEFAULT_KEYLENGTH)
 			password += " ";
 		T tf;
-		SecByteBlock iv;
+		uint8* iv = nullptr;
 		switch (method) {
-		case EncryptionMethod::AEM_AES128: iv = SecByteBlock(16); break;
-		case EncryptionMethod::AEM_AES192: iv = SecByteBlock(24); break;
-		case EncryptionMethod::AEM_AES256: iv = SecByteBlock(32); break;
 		case EncryptionMethod::AEM_NONE: return data;
+		case EncryptionMethod::AEM_AES128: iv = new uint8[16]; break;
+		case EncryptionMethod::AEM_AES192: iv = new uint8[24]; break;
+		case EncryptionMethod::AEM_AES256: iv = new uint8[32]; break;
 		}
 		tf.SetKeyWithIV((uint8*)password.data(), password.length(), iv);
 		StringSource ss(
@@ -75,7 +75,12 @@ namespace ArcSys {
                 new StringSink(result)
             )
         );
+        delete iv;
 		return BinaryData(result.begin(), result.end());
+	} catch (Exception const& e) {
+		throw Error::FailedAction(
+			e.what()
+		);
 	}
 
 	template<class T>
@@ -83,7 +88,7 @@ namespace ArcSys {
 		BinaryData	const&			data,
 		CompressionMethod const&	method	= CompressionMethod::ACM_ZIP,
 		uint8 const&				level	= 9
-	) {
+	) try {
 		String result;
 		switch (method) {
 		case CompressionMethod::ACM_NONE: return data;
@@ -99,6 +104,10 @@ namespace ArcSys {
 			}
 		}
 		return BinaryData(result.begin(), result.end());
+	} catch (Exception const& e) {
+		throw Error::FailedAction(
+			e.what()
+		);
 	}
 
 	BinaryData encrypt(
@@ -258,6 +267,7 @@ namespace ArcSys {
 			hptr32 = (uint32*)fheader;
 			hptr16 = (uint16*)fheader;
 			hptr64[0] = contents.size();		// Uncompressed file size
+			// Process file
 			if (!contents.empty())
 				contents = encrypt(
 					compress(
@@ -271,7 +281,8 @@ namespace ArcSys {
 			hptr64[1] = contents.size();		// Compressed file size
 			hptr32 = (uint32*)&hptr64[2];
 			hptr32[0] = generateCRC(contents);	// CRC
-			// TODO: encryption stuff
+			// Copy header & file data
+			file.write(fheader, fhSize);
 			file.write((char*)contents.data(), contents.size());
 		}
 		// Return & write proper directory info
