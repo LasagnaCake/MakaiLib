@@ -1,4 +1,8 @@
+#ifndef MAKAILIB_TOOL_ARCHIVE_FUNCTIONALITY_H
+#define MAKAILIB_TOOL_ARCHIVE_FUNCTIONALITY_H
+
 #include <helper.hpp>
+#include <algebra.hpp>
 #include <filehandler.hpp>
 #include <nlohmann/json.hpp>
 #include <cryptopp/aes.h>
@@ -59,14 +63,17 @@ namespace ArcSys {
 			password += " ";
 		T tf;
 		// TODO: figure out how to use this
-		uint8* iv = nullptr;
+		uint8* iv = nullptr, ivSize = 32;
 		switch (method) {
 		case EncryptionMethod::AEM_NONE: return data;
-		case EncryptionMethod::AEM_AES128: iv = new uint8[16]; break;
-		case EncryptionMethod::AEM_AES192: iv = new uint8[24]; break;
-		case EncryptionMethod::AEM_AES256: iv = new uint8[32]; break;
+		case EncryptionMethod::AEM_AES128: ivSize = 16/2; break;
+		case EncryptionMethod::AEM_AES192: ivSize = 24/2; break;
+		case EncryptionMethod::AEM_AES256: ivSize = 32/2; break;
 		}
-		tf.SetKeyWithIV((uint8*)password.data(), password.length(), iv);
+		iv = new uint8[ivSize];
+		memset(iv, 0, ivSize);
+		DEBUGLN("MAX KEY LENGTH: ", tf.MaxKeyLength());
+		tf.SetKeyWithIV((uint8*)password.data(), password.length(), iv, ivSize);
 		StringSource ss(
 			data.data(),
 			data.size(),
@@ -76,12 +83,22 @@ namespace ArcSys {
                 new StringSink(result)
             )
         );
-        delete iv;
+        delete[] iv;
 		return BinaryData(result.begin(), result.end());
 	} catch (Exception const& e) {
 		throw Error::FailedAction(
 			e.what()
 		);
+	}
+
+	template<Type::Equal<Deflator> T>
+	T* getFlator(String& result, uint8 const& level) {
+		return new T(new StringSink(result), level);
+	}
+
+	template<Type::Equal<Inflator> T>
+	T* getFlator(String& result, uint8 const& level) {
+		return new T(new StringSink(result));
 	}
 
 	template<class T>
@@ -98,9 +115,7 @@ namespace ArcSys {
 					data.data(),
 					data.size(),
 					true,
-					new T(
-						new StringSink(result)
-					)
+					getFlator<T>(result, Math::clamp<uint8>(level, 0, 9))
 				);
 			}
 		}
@@ -113,7 +128,7 @@ namespace ArcSys {
 
 	BinaryData encrypt(
 		BinaryData const&		data,
-		String					password	= "",
+		String const&			password	= "",
 		EncryptionMethod const&	method		= EncryptionMethod::AEM_AES256
 	) {
 		return transform<CBC_Mode<AES>::Encryption>(data, password, method);
@@ -121,7 +136,7 @@ namespace ArcSys {
 
 	BinaryData decrypt(
 		BinaryData const&		data,
-		String					password	= "",
+		String const&			password	= "",
 		EncryptionMethod const&	method		= EncryptionMethod::AEM_AES256
 	) {
 		return transform<CBC_Mode<AES>::Decryption>(data, password, method);
@@ -144,13 +159,12 @@ namespace ArcSys {
 	}
 
 	// TODO: CRC Stuff
-
 	uint32 generateCRC(BinaryData const& data) {
 		return 0;
 	}
 
 	bool calculateCRC(BinaryData const& data, uint32 const& crc) {
-		return false;
+		return true;
 	}
 
 	JSONData getStructure(fs::path const& path, StringList& files, String const& root = "") {
@@ -182,13 +196,27 @@ namespace ArcSys {
 		return res;
 	}
 
-	size_t populateTree(JSONData& tree, List<uint64> values, size_t const& start = 0) {
+	size_t populateTree(JSONData& tree, List<uint64> const& values, size_t const& start = 0) {
+		if (!tree.is_object())
+			throw Error::FailedAction("file tree is not a JSON object!");
 		size_t idx = start;
 		for (auto& [name, data]: tree.items()) {
 			if (data.is_string()) data = encoded(values[idx++]);
-			else idx = populateTree(data, values, idx);
+			else if (data.is_object()) idx = populateTree(data, values, idx);
+			else throw Error::FailedAction("Invalid data type in file tree!");
 		}
 		return idx;
+	}
+
+	void populateTree(JSONData& tree, String const& root = "") {
+		if (!tree.is_object())
+			throw Error::FailedAction("file tree is not a JSON object!");
+		for (auto& [name, data]: tree.items()) {
+			String path = FileSystem::concatenatePath(root, name);
+			if (data.is_string()) data = path;
+			else if (data.is_object()) populateTree(data, path);
+			else throw Error::FailedAction("Invalid data type in file tree!");
+		}
 	}
 
 	struct FileHeader {
@@ -202,11 +230,11 @@ namespace ArcSys {
 		uint64	const headerSize		= sizeof(ArchiveHeader);
 		uint64	const fileHeaderSize	= sizeof(FileHeader);
 		uint64	dirInfoSize;
-		uint64	version;
-		uint64	minVersion;
-		uint16	encryption;
-		uint16	compression;
-		uint8	level;
+		uint64	version			= 0;
+		uint64	minVersion		= 0;
+		uint16	encryption		= (uint16) EncryptionMethod::AEM_AES256;
+		uint16	compression		= (uint16)CompressionMethod::ACM_ZIP;
+		uint8	level			= 9;
 		// Put new things BELOW this line
 	};
 
@@ -277,16 +305,20 @@ namespace ArcSys {
 			FileHeader fheader;
 			fheader.uncSize = contents.size();				// Uncompressed file size
 			// Process file
-			if (!contents.empty())
+			if (!contents.empty()) {
+				contents = compress(
+					contents,
+					comp,
+					complvl
+				);
+				DEBUGLN("Before encryption: ", contents.size());
 				contents = encrypt(
-					compress(
-						contents,
-						comp,
-						complvl
-					),
+					contents,
 					password,
 					enc
 				);
+				DEBUGLN("After encryption: ", contents.size());
+			}
 			fheader.compSize	= contents.size();			// Compressed file size
 			fheader.crc			= generateCRC(contents);	// CRC
 			// Debug info
@@ -311,17 +343,6 @@ namespace ArcSys {
 		// Close file
 		file.flush();
 		file.close();
-	} catch (Error::Error const& e) {
-		DEBUGLN(e.report());
-	} catch (std::runtime_error const& e) {
-		DEBUGLN("ERROR: ", e.what());
-	}
-
-	void unpack(
-		String const& archivePath,
-		String const folderPath,
-		String const& password = ""
-	) try {
 	} catch (Error::Error const& e) {
 		DEBUGLN(e.report());
 	} catch (std::runtime_error const& e) {
@@ -360,6 +381,7 @@ namespace ArcSys {
 			}
 			// Set open flag
 			streamOpen = true;
+			return *this;
 		} catch (std::runtime_error const& e) {
 			throw FileLoader::FileLoadError(e.what());
 		}
@@ -368,71 +390,99 @@ namespace ArcSys {
 			if (!streamOpen) return *this;
 			archive.close();
 			streamOpen = false;
+			return *this;
 		}
 
-		String readTextFile(String const& path) {
+		String getTextFile(String const& path) {
+			assertOpen();
 			FileEntry fe = getFileEntry(path);
 			processFileEntry(fe);
 			return String(fe.data.begin(), fe.data.end());
 		}
 
-		BinaryData readBinaryFile(String const& path) {
+		BinaryData getBinaryFile(String const& path) {
+			assertOpen();
 			FileEntry fe = getFileEntry(path);
 			processFileEntry(fe);
 			return fe.data;
 		}
 
+		JSONData getFileTree(String const& root = "") const {
+			assertOpen();
+			JSONData dir = fstruct["tree"];
+			populateTree((!root.empty()) ? dir[root] : dir, root);
+			return dir;
+		}
+
+		FileArchive& unpackTo(String const& path) {
+			if (!streamOpen) return *this;
+			JSONData ftree = getFileTree();
+			DEBUGLN(ftree.dump(2, ' ', false, JSON::error_handler_t::replace), "\n");
+			unpackLayer(ftree, path);
+			return *this;
+		}
+
+		bool isOpen() const {return streamOpen;}
+
 	private:
-		[[noreturn]] void notOpenError() {
-			throw FileLoader::FileLoadError(
-				"Archive is not open!"
-			);
+
+		void unpackLayer(JSONData& layer, String const& path) {
+			assertOpen();
+			for (auto& [name, data]: layer.items()) {
+				if (data.is_string()) {
+					String filepath = FileSystem::concatenatePath(path, data.get<String>());
+					DEBUGLN(path, " + ", data.get<String>(), " = ", filepath);
+					DEBUGLN(
+						"'", name, "': ",
+						filepath,
+						" (dir: ", FileSystem::getDirectoryFromPath(filepath), ")"
+					);
+					FileSystem::makeDirectory(FileSystem::getDirectoryFromPath(filepath));
+					FileLoader::saveBinaryFile(filepath, getBinaryFile(data));
+				}
+				else if (data.is_object()) unpackLayer(data, path);
+				else directoryTreeError();
+			}
 		}
 
-		[[noreturn]] void doesNotExistError(String const& file) {
-			throw FileLoader::FileLoadError(
-				"Directory or file '" + file + "' does not exist!",
-				__FILE__
-			);
-		}
-
-		[[noreturn]] void directoryTreeError() {
-			throw FileLoader::FileLoadError(
-				"Missing or corrupted directory tree info!",
-				__FILE__
-			);
-		}
-
-		[[noreturn]] void corruptedFileError(String const& path) {
-			throw FileLoader::FileLoadError(
-				"Corrupted file '" + path + "'",
-				__FILE__
-			);
-		}
-
-		void processFileEntry(FileEntry& entry) {
-			BinaryData data = decrypt(
-				decompress(
-					entry.data,
-					(CompressionMethod)header.compression,
-					header.level
-				),
+		void processFileEntry(FileEntry& entry) const {
+			BinaryData data = entry.data;
+			if (entry.header.uncSize == 0) return;
+			DEBUGLN("Before decryption: ", data.size());
+			data = decrypt(
+				data,
 				pass,
 				(EncryptionMethod)header.encryption
 			);
+			DEBUGLN("After decryption: ", data.size());
+			data = decompress(
+				data,
+				(CompressionMethod)header.compression,
+				header.level
+			);
 			if (data.size() != entry.header.uncSize)
 				corruptedFileError(entry.path);
+			if (!calculateCRC(data, entry.header.crc))
+				crcFailError(entry.path);
 			entry.data = data;
 		}
 
 		FileEntry getFileEntry(String const& path) try {
 			if (!fstruct["tree"].is_object())
 				directoryTreeError();
-			String root = FileSystem::getRootDirectory(root), rest = "";
+			DEBUGLN("Getting file entry root...");
+			String root = FileSystem::getParentDirectory(path), rest = "";
 			if (root != path)
-				rest = FileSystem::getPathWithoutRoot(path);
+				rest = FileSystem::getChildPath(path);
+			DEBUGLN("Getting file entry location...");
 			uint64		idx	= getFileEntryLocation(root, rest, fstruct["tree"]);
+			DEBUGLN("ENTRY LOCATION: ", idx);
+			DEBUGLN("Getting file entry header...");
 			FileHeader	fh	= getFileEntryHeader(idx);
+			DEBUGLN("   UNCOMPRESSED SIZE: ", fh.uncSize	);
+			DEBUGLN("     COMPRESSED SIZE: ", fh.compSize	);
+			DEBUGLN("               CRC32: ", fh.crc		);
+			DEBUGLN("Getting file entry data...");
 			return FileEntry{idx, path, fh, getFileEntryData(idx, fh)};
 		} catch (std::runtime_error const& e) {
 			throw FileLoader::FileLoadError(
@@ -463,16 +513,56 @@ namespace ArcSys {
 		}
 
 		uint64 getFileEntryLocation(String const& root, String const& path, JSONData& folder) try {
+			if (folder.is_string())
+				return decoded(folder.get<String>());
 			if (!folder.is_object())
 				doesNotExistError(root);
-			if (path.empty())
+			if (path == "") {
+				DEBUGLN("Getting file location...");
 				return decoded(folder[root].get<String>());
-			String newRoot = FileSystem::getRootDirectory(path), newPath = "";
+			}
+			String newRoot = FileSystem::getParentDirectory(path), newPath = "";
 			if (newRoot != path)
-				newPath = FileSystem::getPathWithoutRoot(path);
-			return getFileEntryLocation(root, path, folder[root]);
+				newPath = FileSystem::getChildPath(path);
+			return getFileEntryLocation(newRoot, newPath, folder[root]);
 		} catch (JSON::exception const& e) {
 			doesNotExistError(root);
+		}
+
+		void assertOpen() const {if (!streamOpen) notOpenError();}
+
+		[[noreturn]] void notOpenError() const {
+			throw FileLoader::FileLoadError(
+				"Archive is not open!"
+			);
+		}
+
+		[[noreturn]] void doesNotExistError(String const& file) const {
+			throw FileLoader::FileLoadError(
+				"Directory or file '" + file + "' does not exist!",
+				__FILE__
+			);
+		}
+
+		[[noreturn]] void directoryTreeError() const {
+			throw FileLoader::FileLoadError(
+				"Missing or corrupted directory tree info!",
+				__FILE__
+			);
+		}
+
+		[[noreturn]] void corruptedFileError(String const& path) const {
+			throw FileLoader::FileLoadError(
+				"Corrupted file '" + path + "'",
+				__FILE__
+			);
+		}
+
+		[[noreturn]] void crcFailError(String const& path) const {
+			throw FileLoader::FileLoadError(
+				"CRC check failed for file '" + path + "'",
+				__FILE__
+			);
 		}
 
 		bool			streamOpen	= false;
@@ -481,4 +571,21 @@ namespace ArcSys {
 		ArchiveHeader	header;
 		JSONData		fstruct;
 	};
+
+	void unpack(
+		String const& archivePath,
+		String const folderPath,
+		String const& password = ""
+	) try {
+		DEBUGLN("\nOpening archive...\n");
+		FileArchive arc(archivePath, password);
+		DEBUGLN("\nExtracting data...\n");
+		arc.unpackTo(folderPath);
+	} catch (Error::Error const& e) {
+		DEBUGLN(e.report());
+	} catch (std::runtime_error const& e) {
+		DEBUGLN("ERROR: ", e.what());
+	}
 }
+
+#endif // MAKAILIB_TOOL_ARCHIVE_FUNCTIONALITY_H

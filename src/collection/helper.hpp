@@ -559,6 +559,7 @@ namespace FileSystem {
 	}
 
 	constexpr String concatenatePath(String const& root, String const& path) {
+		if (root.empty()) return path;
 		String res = root;
 		if (!path.empty()) res += "/" + path;
 		return res;
@@ -567,7 +568,7 @@ namespace FileSystem {
 	constexpr String concatenatePath(String const& root, StringList const& paths) {
 		String res = root;
 		for(auto& path: paths) {
-			if (!path.empty()) res += "/" + path;
+			if (!path.empty()) res = concatenatePath(res, path);
 		}
 		return res;
 	}
@@ -575,7 +576,7 @@ namespace FileSystem {
 	constexpr String concatenatePath(String const& root, StringArguments const& paths) {
 		String res = root;
 		for(auto& path: paths) {
-			if (!path.empty()) res += "/" + path;
+			if (!path.empty()) res = concatenatePath(res, path);
 		}
 		return res;
 	}
@@ -596,19 +597,20 @@ namespace FileSystem {
 	}
 
 	inline String getDirectoryFromPath(String const& path) {
-		return std::regex_replace(
-			path,
-			std::regex("(?!([A-z].*)[/])([A-z].*\\.[A-z].*)"),
-			""
-		);
+		return fs::path(path).remove_filename().string();
 	}
 
-	inline String getRootDirectory(String const& path) {
-		return toString(fs::path(path).root_name());
+	inline String getParentDirectory(String const& path) {
+		return splitString(path, {'\\', '/'})[0];
 	}
 
-	inline String getPathWithoutRoot(String const& path) {
-		return toString(fs::path(path).relative_path());
+	inline String getChildPath(String const& path) {
+		StringList dirs = splitString(path, {'\\', '/'});
+		if (dirs.size() == 1) return path;
+		String child = dirs[1];
+		for SSRANGE(i, 2, dirs.size())
+			child += "/" + dirs[i];
+		return child;
 	}
 }
 

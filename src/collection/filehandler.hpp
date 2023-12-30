@@ -148,6 +148,12 @@ namespace FileLoader {
 		}
 	}
 
+	/// Saves an array of data as a binary file (Non-destructive).
+	template <typename T>
+	void saveBinaryFile(String const& path, List<T> data) {
+		saveBinaryFile<T>(path, data.data(), data.size());
+	}
+
 	/// Saves an string as a text file (Non-destructive).
 	void saveTextFile(String const& path, String const& text) {
 		ofstream file(path.c_str() , ios::trunc);
