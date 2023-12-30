@@ -34,6 +34,8 @@ namespace ArcSys {
 		List<uint8> data;
 		data.reserve(8);
 		for SSRANGE(i, 0, 8) data[i] = (v >> (8 * i)) & 0xFF;
+		for (uint8& b: data) DEBUG((uint16)b, "");
+		DEBUGLN("");
 		return cppcodec::base64_rfc4648::encode(data);
 	}
 
