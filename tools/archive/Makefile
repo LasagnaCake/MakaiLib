@@ -6,22 +6,22 @@ ROOT	:= ../..
 PACKPROGNAME	:= arcpack
 UNPACKPROGNAME	:= arcunpack
 
-COMPILER_CONFIG	:= -fexpensive-optimizations -flto -m64 -std=gnu++20 -fcoroutines -fms-extensions -DENABLE_DEBUG_OUTPUT_
-LINKER_CONFIG	:= -flto -static-libstdc++ -static-libgcc -static -m64 -fms-extensions
+COMPILER_CONFIG	:= -fexpensive-optimizations -m64 -std=gnu++20 -fcoroutines -fms-extensions -DENABLE_DEBUG_OUTPUT_ -DNDEBUG
+LINKER_CONFIG	:= -static-libstdc++ -static-libgcc -static -m64 -fms-extensions
 
 OPTIMIZATIONS	:= -fopenmp -openmp -ftree-parallelize-loops=128 -funswitch-loops -fpredictive-commoning -fgcse-after-reload -ftree-vectorize
 
 WINGARBAGE	:= -lole32 -loleaut32 -limm32 -lwinmm -lversion -lpowrprof -lcomdlg32 -lsetupapi -lgdi32
 
 
-INCLUDES	:= -I$(ROOT)/src/collection -I$(ROOT)/lib/jsoncpp-3.11.2/include -I$(ROOT)/lib/cryptopp/include
+INCLUDES	:= -I$(ROOT)/src/collection -I$(ROOT)/lib/jsoncpp-3.11.2/include -I$(ROOT)/lib/cryptopp/include -I$(ROOT)/lib/cppcodec-0.2
 LIBRARIES	:= $(WINGARBAGE) $(ROOT)/lib/cryptopp/lib/libcryptopp.a -lopengl32 -lgomp
 
 DEBUGCOMPCFG	:= $(COMPILER_CONFIG) -Wall -Wpedantic -pg -Og -ggdb3 -fno-omit-frame-pointer
 DEBUGLINKCFG	:= $(LINKER_CONFIG) -pg -Og $(LIBRARIES)
 
-COMPCFG	:= -O3 $(COMPILER_CONFIG) $(OPTIMIZATIONS) -D_DEBUG_OUTPUT_
-LINKCFG	:= -O3 $(LINKER_CONFIG) $(LIBRARIES)
+COMPCFG	:= $(COMPILER_CONFIG) -O3 $(OPTIMIZATIONS) -D_DEBUG_OUTPUT_
+LINKCFG	:= $(LINKER_CONFIG) -O3 $(LIBRARIES)
 
 COMPILER	:= @$(CXX) $(INCLUDES)
 LINKER		:= @$(CXX)

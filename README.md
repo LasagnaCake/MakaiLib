@@ -42,6 +42,8 @@ For toolchain (GCC): pacman -S mingw-w64-x86_64-toolchain
 For make: pacman -S make
 For zip: pacman -S zip
 For 7-zip: pacman -S p7zip
+
+In a single line: pacman -S mingw-w64-x86_64-toolchain ; pacman -S zip ; pacman -S p7zip ;  pacman -S make
 ```
 
 ## How To use
