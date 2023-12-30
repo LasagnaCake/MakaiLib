@@ -3,6 +3,7 @@
 #include <nlohmann/json.hpp>
 #include <cryptopp/aes.h>
 #include <cryptopp/zlib.h>
+#include <cryptopp/modes.h>
 #include <cppcodec/base64_rfc4648.hpp>
 #include <cppcodec/base32_rfc4648.hpp>
 #include <filesystem>
@@ -13,6 +14,9 @@ namespace ArcSys {
 
 	namespace {
 		namespace fs = std::filesystem;
+		namespace FLD = FileLoader;
+		using namespace CryptoPP;
+		using FLD::BinaryData;
 	}
 
 	enum class EncryptionMethod: uint64 {
@@ -42,6 +46,101 @@ namespace ArcSys {
 		for (auto [i, b]: Helper::enumerate(data))
 			result |= (uint64(b) << (8 * i));
 		return result;
+	}
+
+	template<class T>
+	BinaryData transform(
+		BinaryData const&		data,
+		String					password	= "",
+		EncryptionMethod const&	method		= EncryptionMethod::AEM_AES256
+	) {
+		String result;
+		while (password.size() < AES::DEFAULT_KEYLENGTH)
+			password += " ";
+		T tf;
+		SecByteBlock iv;
+		switch (method) {
+		case EncryptionMethod::AEM_AES128: iv = SecByteBlock(16); break;
+		case EncryptionMethod::AEM_AES192: iv = SecByteBlock(24); break;
+		case EncryptionMethod::AEM_AES256: iv = SecByteBlock(32); break;
+		case EncryptionMethod::AEM_NONE: return data;
+		}
+		tf.SetKeyWithIV((uint8*)password.data(), password.length(), iv);
+		StringSource ss(
+			data.data(),
+			data.size(),
+			true,
+			new StreamTransformationFilter(
+				tf,
+                new StringSink(result)
+            )
+        );
+		return BinaryData(result.begin(), result.end());
+	}
+
+	template<class T>
+	BinaryData flate(
+		BinaryData	const&			data,
+		CompressionMethod const&	method	= CompressionMethod::ACM_ZIP,
+		uint8 const&				level	= 9
+	) {
+		String result;
+		switch (method) {
+		case CompressionMethod::ACM_NONE: return data;
+		case CompressionMethod::ACM_ZIP: {
+				StringSource ss(
+					data.data(),
+					data.size(),
+					true,
+					new T(
+						new StringSink(result)
+					)
+				);
+			}
+		}
+		return BinaryData(result.begin(), result.end());
+	}
+
+	BinaryData encrypt(
+		BinaryData const&		data,
+		String					password	= "",
+		EncryptionMethod const&	method		= EncryptionMethod::AEM_AES256
+	) {
+		return transform<CBC_Mode<AES>::Encryption>(data, password, method);
+	}
+
+	BinaryData decrypt(
+		BinaryData const&		data,
+		String					password	= "",
+		EncryptionMethod const&	method		= EncryptionMethod::AEM_AES256
+	) {
+		return transform<CBC_Mode<AES>::Encryption>(data, password, method);
+	}
+
+	BinaryData compress(
+		BinaryData	const&			data,
+		CompressionMethod const&	method	= CompressionMethod::ACM_ZIP,
+		uint8 const&				level	= 9
+	) {
+		return flate<Deflator>(data, method, level);
+	}
+
+	BinaryData decompress(
+		BinaryData	const&			data,
+		CompressionMethod const&	method	= CompressionMethod::ACM_ZIP,
+		uint8 const&				level	= 9
+	) {
+		return flate<Inflator>(data, method, level);
+	}
+
+	// TODO: CRC Stuff
+
+	uint32 generateCRC(BinaryData const& data) {
+		return 0;
+	}
+
+	bool calculateCRC(BinaryData const& data, uint32 const& crc) {
+		return false;
 	}
 
 	JSONData getStructure(fs::path const& path, StringList& files, String const& root = "") {
@@ -85,7 +184,7 @@ namespace ArcSys {
 	void pack(
 			String const& archivePath,
 			String const& folderPath,
-			String const& password = "",
+			String password = "",
 			EncryptionMethod const& enc = EncryptionMethod::AEM_AES256,
 			CompressionMethod const& comp = CompressionMethod::ACM_ZIP,
 			uint8 const& complvl = 9
@@ -99,17 +198,17 @@ namespace ArcSys {
 		tree = getStructure(fs::path(folderPath), files, fs::path(folderPath).stem().string());
 		DEBUGLN("\n", dir.dump(2, ' ', false, JSON::error_handler_t::replace), "\n");
 		// Populate with temporary values
-		List<uint64> locations;
-		for SSRANGE(i, 0, files.size())
-			locations.push_back(0);
+		List<uint64> locations(files.size(), 0);
 		populateTree(tree, locations);
 		// Get directory information
 		String dirInfo = dir.dump(-1, ' ', false, JSON::error_handler_t::replace);
 		// Open file
 		std::ofstream file(archivePath, std::ios::binary | std::ios::trunc);
 		file.exceptions(std::ofstream::badbit | std::ofstream::failbit);
-		// Compressor
-		CryptoPP::ZlibCompressor zipper;
+		// Compressor & encryptor
+		while (password.size() < CryptoPP::Rijndael::DEFAULT_KEYLENGTH)
+			password += " ";
+		ZlibCompressor			zipper;
 		// Populate header
 		DEBUGLN("Creating header...\n");
 		// Preliminary parameters
@@ -121,6 +220,7 @@ namespace ArcSys {
 		uint8 header[headerSize];
 		// Accessors
 		uint64*	hptr64	= (uint64*)header;
+		uint32* hptr32	= (uint32*)header;
 		uint16*	hptr16	= (uint16*)header;
 		uint8*	hptr8	= (uint8*)header;
 		// Set main header params
@@ -150,10 +250,33 @@ namespace ArcSys {
 		// Write file info
 		for (auto const& [i, f]: Helper::enumerate(files)) {
 			locations[i] = file.tellp();
+			// Read file
+			FLD::BinaryData contents = FLD::loadBinaryFile(f);
+			// Prepare header
+			uint8 fheader[fhSize];
+			hptr64 = (uint64*)fheader;
+			hptr32 = (uint32*)fheader;
+			hptr16 = (uint16*)fheader;
+			hptr64[0] = contents.size();		// Uncompressed file size
+			if (!contents.empty())
+				contents = encrypt(
+					compress(
+						contents,
+						comp,
+						complvl
+					),
+					password,
+					enc
+				);
+			hptr64[1] = contents.size();		// Compressed file size
+			hptr32 = (uint32*)&hptr64[2];
+			hptr32[0] = generateCRC(contents);	// CRC
+			// TODO: encryption stuff
+			file.write((char*)contents.data(), contents.size());
 		}
-		populateTree(tree, locations);
 		// Return & write proper directory info
 		DEBUGLN("\nWriting directory info...\n");
+		populateTree(tree, locations);
 		file.seekp(headerSize);
 		file.write(dirInfo.data(), dirInfo.size());
 		// Close file
