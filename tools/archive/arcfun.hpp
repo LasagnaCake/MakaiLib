@@ -31,11 +31,8 @@ namespace ArcSys {
 	//cppcodec::base64_rfc4648::encode
 
 	String encoded(uint64 const& v) {
-		List<uint8> data;
-		data.reserve(8);
-		for SSRANGE(i, 0, 8) data[i] = (v >> (8 * i)) & 0xFF;
-		for (uint8& b: data) DEBUG((uint16)b, "");
-		DEBUGLN("");
+		List<uint8> data(8, 0);
+		for SSRANGE(i, 0, 8) data[i] = uint8((v >> (8 * i)) & 0xFF);
 		return cppcodec::base64_rfc4648::encode(data);
 	}
 
@@ -43,7 +40,7 @@ namespace ArcSys {
 		List<uint8> data = cppcodec::base64_rfc4648::decode(v);
 		size_t result = 0;
 		for (auto [i, b]: Helper::enumerate(data))
-			result |= (b << (8 * i));
+			result |= (uint64(b) << (8 * i));
 		return result;
 	}
 
