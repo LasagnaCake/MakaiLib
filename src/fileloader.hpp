@@ -29,18 +29,22 @@ namespace FileLoader {
 	};
 
 	//*
-	#ifndef _TESTING_ARCHIVE_SYS_
-	#define _TESTING_ARCHIVE_SYS_
-	#endif // _TESTING_ARCHIVE_SYS_
+	#ifndef _ARCHIVE_SYSTEM_DISABLED_
+	#define _ARCHIVE_SYSTEM_DISABLED_
+	#endif // _ARCHIVE_SYSTEM_DISABLED_
 	//*/
 
+	#if !(defined(_DEBUG_OUTPUT_) || defined(_ARCHIVE_SYSTEM_DISABLED_)) || defined(_TESTING_ARCHIVE_SYS_)
+	#define _IMPL_ARCHIVE_
+	#endif
+
 	namespace {
-		#if !(defined(_DEBUG_OUTPUT_) || defined(_ARCHIVE_SYSTEM_DISABLED_)) || defined(_TESTING_ARCHIVE_SYS_)
+		#ifdef _IMPL_ARCHIVE_
 		bool				loadingArchive	= false;
-		#endif
 		FileArchive 		arc;
 		Thread				arcLoader;
 		Error::ErrorPointer	arcfail			= nullptr;
+		#endif
 	}
 
 	// Until this puzzle is figured, this shall do
@@ -51,7 +55,7 @@ namespace FileLoader {
 	#define _ARCHIVE_SYSTEM_DISABLED_*/
 
 	inline void attachArchive(string const& path, string const& password = "") {
-		#if !(defined(_DEBUG_OUTPUT_) || defined(_ARCHIVE_SYSTEM_DISABLED_)) || defined(_TESTING_ARCHIVE_SYS_)
+		#ifdef _IMPL_ARCHIVE_
 		DEBUGLN("Attaching archive...");
 		if (loadingArchive)
 			fileLoadError(path, "Other archive is being loaded!");
@@ -74,14 +78,16 @@ namespace FileLoader {
 	}
 
 	inline void awaitArchiveLoad() {
+		#ifdef _IMPL_ARCHIVE_
 		if (arcLoader.joinable()) {
 			DEBUGLN("Awaiting archive load...");
 			arcLoader.join();
 		}
+		#endif
 	}
 
 	inline bool isArchiveAttached() {
-		#if !(defined(_DEBUG_OUTPUT_) || defined(_ARCHIVE_SYSTEM_DISABLED_)) || defined(_TESTING_ARCHIVE_SYS_)
+		#ifdef _IMPL_ARCHIVE_
 		if (loadingArchive) return false;
 		return arc.isOpen();
 		#else
@@ -90,13 +96,14 @@ namespace FileLoader {
 	}
 
 	[[gnu::destructor]] inline void detachArchive() {
-		#if !(defined(_DEBUG_OUTPUT_) || defined(_ARCHIVE_SYSTEM_DISABLED_)) || defined(_TESTING_ARCHIVE_SYS_)
+		#ifdef _IMPL_ARCHIVE_
 		DEBUGLN("Detaching archive...");
 		arc.close();
 		DEBUGLN("Archive detached!");
 		#endif
 	}
 
+	#ifdef _IMPL_ARCHIVE_
 	namespace {
 		inline void assertArchive(String const& path) {
 			awaitArchiveLoad();
@@ -117,29 +124,46 @@ namespace FileLoader {
 			);
 		}
 	}
+	#endif
 
 	inline String loadTextFileFromArchive(String const& path) {
+		#ifdef _IMPL_ARCHIVE_
 		assertArchive(path);
 		return arc.getTextFile(path);
+		#else
+		fileLoadError(path, "Archive functionality disabled!");
+		#endif
 	}
 
 	inline BinaryData loadBinaryFileFromArchive(String const& path) {
+		#ifdef _IMPL_ARCHIVE_
 		assertArchive(path);
 		return arc.getBinaryFile(path);
+		#else
+		fileLoadError(path, "Archive functionality disabled!");
+		#endif
 	}
 
 	inline CSVData loadCSVFileFromArchive(String const& path, char const& delimiter = ',') {
+		#ifdef _IMPL_ARCHIVE_
 		assertArchive(path);
 		return Helper::splitString(arc.getTextFile(path), delimiter);
+		#else
+		fileLoadError(path, "Archive functionality disabled!");
+		#endif
 	}
 
 	inline nlohmann::ordered_json loadJSONFromArchive(String const& path) {
+		#ifdef _IMPL_ARCHIVE_
 		assertArchive(path);
 		return parseJSON(arc.getTextFile(path));
+		#else
+		fileLoadError(path, "Archive functionality disabled!");
+		#endif
 	}
 
 	inline String getTextFile(String const& path) {
-		#if !(defined(_DEBUG_OUTPUT_) || defined(_ARCHIVE_SYSTEM_DISABLED_)) || defined(_TESTING_ARCHIVE_SYS_)
+		#ifdef _IMPL_ARCHIVE_
 		String res;
 		awaitArchiveLoad();
 		if (isArchiveAttached())
@@ -167,7 +191,7 @@ namespace FileLoader {
 	}
 
 	inline BinaryData getBinaryFile(String const& path) {
-		#if !(defined(_DEBUG_OUTPUT_) || defined(_ARCHIVE_SYSTEM_DISABLED_)) || defined(_TESTING_ARCHIVE_SYS_)
+		#ifdef _IMPL_ARCHIVE_
 		BinaryData res;
 		awaitArchiveLoad();
 		if (isArchiveAttached())
@@ -195,7 +219,7 @@ namespace FileLoader {
 	}
 
 	inline CSVData getCSVFile(String const& path, char const& delimiter = ',') {
-		#if !(defined(_DEBUG_OUTPUT_) || defined(_ARCHIVE_SYSTEM_DISABLED_)) || defined(_TESTING_ARCHIVE_SYS_)
+		#ifdef _IMPL_ARCHIVE_
 		CSVData res;
 		awaitArchiveLoad();
 		if (isArchiveAttached())
@@ -223,7 +247,7 @@ namespace FileLoader {
 	}
 
 	inline nlohmann::ordered_json getJSON(String const& path) {
-		#if !(defined(_DEBUG_OUTPUT_) || defined(_ARCHIVE_SYSTEM_DISABLED_)) || defined(_TESTING_ARCHIVE_SYS_)
+		#ifdef _IMPL_ARCHIVE_
 		nlohmann::ordered_json res;
 		awaitArchiveLoad();
 		if (isArchiveAttached())

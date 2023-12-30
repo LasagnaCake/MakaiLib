@@ -16,6 +16,10 @@
 #include <span>
 #include <cctype>
 #include <tuple>
+#include <map>
+#include <unordered_map>
+#include <thread>
+#include <regex>
 #ifdef _USE_CPP20_FORMAT_
 #include <format>
 #endif // _USE_CPP20_FORMAT_
@@ -478,6 +482,10 @@ String toString(WideString const& wstr){
 	return converterX.to_bytes(wstr);
 }
 
+inline String toString(std::filesystem::path const& p) {
+	return p.string();
+}
+
 template<typename T>
 constexpr inline String toString(const T& val)		{return std::to_string(val);	}
 template<typename T>
@@ -583,7 +591,7 @@ namespace FileSystem {
 	}
 
 	inline String getFileName(String const& path, bool removeExtension = false) {
-		return toString(WideString((removeExtension ? fs::path(path).stem() : fs::path(path).filename()).c_str()));
+		return toString(removeExtension ? fs::path(path).stem() : fs::path(path).filename());
 	}
 
 	inline String getDirectoryFromPath(String const& path) {
@@ -595,11 +603,11 @@ namespace FileSystem {
 	}
 
 	inline String getRootDirectory(String const& path) {
-		return toString(WideString(fs::path(path).root_name()));
+		return toString(fs::path(path).root_name());
 	}
 
 	inline String getPathWithoutRoot(String const& path) {
-		return toString(WideString(fs::path(path).relative_path()));
+		return toString(fs::path(path).relative_path());
 	}
 }
 

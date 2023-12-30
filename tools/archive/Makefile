@@ -1,6 +1,8 @@
 CC 	?= gcc
 CXX ?= g++
 
+ROOT	:= ../..
+
 PACKPROGNAME	:= arcpack
 UNPACKPROGNAME	:= arcunpack
 
@@ -11,23 +13,24 @@ OPTIMIZATIONS	:= -fopenmp -openmp -ftree-parallelize-loops=128 -funswitch-loops 
 
 WINGARBAGE	:= -lole32 -loleaut32 -limm32 -lwinmm -lversion -lpowrprof -lcomdlg32 -lsetupapi -lgdi32
 
-INCLUDES	:= -I../../src/collection -I../../lib/jsoncpp-3.11.2/include
-LIBRARIES	:= $(WINGARBAGE)
+
+INCLUDES	:= -I$(ROOT)/src/collection -I$(ROOT)/lib/jsoncpp-3.11.2/include -I$(ROOT)/lib/cryptopp/include
+LIBRARIES	:= $(WINGARBAGE) $(ROOT)/lib/cryptopp/lib/libcryptopp.a -lopengl32 -lgomp
 
 DEBUGCOMPCFG	:= $(COMPILER_CONFIG) -Wall -Wpedantic -pg -Og -ggdb3 -fno-omit-frame-pointer -D_DEBUG_OUTPUT_
 DEBUGLINKCFG	:= $(LINKER_CONFIG) -pg -Og
 
-COMPCFG	:= -O3 $(COMPILER_CONFIG) $(OPTIMIZATIONS)
-LINKCFG	:= -O3 $(LINKER_CONFIG) $(GUI_MODE)
+COMPCFG	:= -O3 $(COMPILER_CONFIG) $(OPTIMIZATIONS) -D_DEBUG_OUTPUT_
+LINKCFG	:= -O3 $(LINKER_CONFIG)
 
 COMPILER	:= @$(CXX) $(INCLUDES)
 LINKER		:= @$(CXX) $(LIBRARIES)
 
-GUI_MODE	?= -mwindows
-
 .PHONY: debug release all
 .ONESHELL:
 .SHELLFLAGS = -ec
+
+all: debug release
 
 debug:
 	@echo ""
@@ -78,5 +81,3 @@ release:
 	
 	@echo "[--- END ---]"
 	@echo 
-
-all: debug release
