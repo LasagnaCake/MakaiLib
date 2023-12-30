@@ -26,6 +26,7 @@
 #include "conceptual.hpp"
 #include "definitions.hpp"
 #include "types.hpp"
+#include "errors.hpp"
 
 namespace std {
 	constexpr std::string	to_string(std::string const& s)		{return s;	}
@@ -611,7 +612,8 @@ namespace FileSystem {
 	}
 }
 
-#if (_WIN32 || _WIN64 || __WIN32__ || __WIN64__)
+#if (_WIN32 || _WIN64 || __WIN32__ || __WIN64__) && !defined(_NO_WINDOWS_PLEASE_)
+#include <windows.h>
 #include <winapifamily.h>
 #include <commdlg.h>
 #endif
@@ -619,7 +621,7 @@ namespace FileSystem {
 namespace System {
 	int launchApp(String const& path, String const& directory = "") {
 		// This is a nightmare, but the other option pops up a command prompt.
-		#if (_WIN32 || _WIN64 || __WIN32__ || __WIN64__)
+		#if (_WIN32 || _WIN64 || __WIN32__ || __WIN64__) && !defined(_NO_WINDOWS_PLEASE_)
 		STARTUPINFO sInfo;
 		PROCESS_INFORMATION pInfo;
 		ZeroMemory(&sInfo, sizeof(sInfo));
@@ -650,7 +652,7 @@ namespace System {
 	}
 
 	String openFileDialog(String filter = "All\0*.*\0") {
-		#if (_WIN32 || _WIN64 || __WIN32__ || __WIN64__)
+		#if (_WIN32 || _WIN64 || __WIN32__ || __WIN64__) && !defined(_NO_WINDOWS_PLEASE_)
 		OPENFILENAME ofn;
 		char szFile[260]	= {0};
 		ZeroMemory(&ofn, sizeof(ofn));
@@ -677,7 +679,7 @@ namespace System {
 	}
 
 	String saveFileDialog(String filter = "All\0*.*\0") {
-		#if (_WIN32 || _WIN64 || __WIN32__ || __WIN64__)
+		#if (_WIN32 || _WIN64 || __WIN32__ || __WIN64__) && !defined(_NO_WINDOWS_PLEASE_)
 		OPENFILENAME ofn;
 		char szFile[260]	= {0};
 		ZeroMemory(&ofn, sizeof(ofn));

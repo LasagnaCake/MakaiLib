@@ -7,7 +7,7 @@
 
 #define ILTF(A, B, C) (((A) > (B)) ? -(C) : +(C))
 
-#define RANGE(I, BEGIN, END, STEP) (auto I = (BEGIN); I < (END); I += (STEP))
+#define RANGE(I, BEGIN, END, STEP) (size_t I = (BEGIN); I < (END); I += (STEP))
 #define SSRANGE(I, BEGIN, END) RANGE(I, BEGIN, END, ILTF(BEGIN, END, 1))
 
 #define EACH(I, LIST) (auto& I: LIST)

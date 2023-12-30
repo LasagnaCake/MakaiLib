@@ -62,7 +62,7 @@ endef
 
 define GET_TIME
 @printf "\nTime: "
-@date +”%H:%M:%S”
+@date +\"%H:%M:%S\"
 @echo ""
 endef
 

@@ -38,7 +38,8 @@ No plans to support 32-bit systems.
 If using MSYS, all of them must be installed via pacman:
 
 ```
-For toolchain (GCC, make & other utils): pacman -S mingw-w64-x86_64-toolchain
+For toolchain (GCC): pacman -S mingw-w64-x86_64-toolchain
+For make: pacman -S make
 For zip: pacman -S zip
 For 7-zip: pacman -S p7zip
 ```

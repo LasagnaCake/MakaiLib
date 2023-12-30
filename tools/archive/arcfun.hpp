@@ -4,35 +4,43 @@
 #include <cryptopp/aes.h>
 #include <filesystem>
 
-namespace Arc {
+namespace ArcSys {
 	using JSON = nlohmann::json;
-	typedef nlohmann::unordered_json JSONData;
+	typedef nlohmann::ordered_json JSONData;
 
 	namespace {
-		using fs = std::filesystem
+		namespace fs = std::filesystem;
 	}
 
-	JSON getStructure(fs::path const& path) {
-		JSON result;
+	JSON getStructure(fs::path const& path, String const& root = "") {
+		JSON result = JSON::object();
 		for (auto const& e : fs::directory_iterator(path)) {
-			JSON& folder = result[path.root_name().string()];
+			String eName = e.path().stem().string();
 			if (e.is_directory())
-				folder[e.root_name().string()] = getStructure(e);
+				result[eName] = getStructure(e, root + "/" + eName);
 			else
-				folder[e.root_name().string()] = e.filename().string();
+				result[eName] = root + "/" + e.path().filename().string();
 		}
 		return result;
 	}
 
-	void pack(String const& folderPath, String const& archivePath) {
-		try {
-			JSON dir = getStructure(fs::path(folderPath));
-			DEBUGLN(dir.dump(2, ' ', false, JSON::error_handler_t::replace));
-		} catch (std::runtime_error const& e) {
-			DEBUGLN("ERROR: " e.what());
-		}
+	void pack(String const& archivePath, String const& folderPath, String const& password = "")
+	try {
+		DEBUGLN("FOLDER: ", folderPath, "\nARCHIVE: ", archivePath);
+		DEBUGLN("Getting file structure...");
+		JSON dir = getStructure(fs::path(folderPath), fs::path(folderPath).stem().string());
+		DEBUGLN("\n", dir.dump(2, ' ', false, JSON::error_handler_t::replace), "\n");
+	} catch (Error::Error const& e) {
+		DEBUGLN(e.report());
+	} catch (std::runtime_error const& e) {
+		DEBUGLN("ERROR: ", e.what());
 	}
 
-	void unpack(String const& archivePath, String const folderPath) {
+	void unpack(String const& archivePath, String const folderPath, String const& password = "")
+	try {
+	} catch (Error::Error const& e) {
+		DEBUGLN(e.report());
+	} catch (std::runtime_error const& e) {
+		DEBUGLN("ERROR: ", e.what());
 	}
 }

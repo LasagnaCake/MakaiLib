@@ -6,7 +6,7 @@ ROOT	:= ../..
 PACKPROGNAME	:= arcpack
 UNPACKPROGNAME	:= arcunpack
 
-COMPILER_CONFIG	:= -fexpensive-optimizations -flto -m64 -std=gnu++20 -fcoroutines -fms-extensions
+COMPILER_CONFIG	:= -fexpensive-optimizations -flto -m64 -std=gnu++20 -fcoroutines -fms-extensions -DENABLE_DEBUG_OUTPUT_
 LINKER_CONFIG	:= -flto -static-libstdc++ -static-libgcc -static -m64 -fms-extensions
 
 OPTIMIZATIONS	:= -fopenmp -openmp -ftree-parallelize-loops=128 -funswitch-loops -fpredictive-commoning -fgcse-after-reload -ftree-vectorize
@@ -17,14 +17,20 @@ WINGARBAGE	:= -lole32 -loleaut32 -limm32 -lwinmm -lversion -lpowrprof -lcomdlg32
 INCLUDES	:= -I$(ROOT)/src/collection -I$(ROOT)/lib/jsoncpp-3.11.2/include -I$(ROOT)/lib/cryptopp/include
 LIBRARIES	:= $(WINGARBAGE) $(ROOT)/lib/cryptopp/lib/libcryptopp.a -lopengl32 -lgomp
 
-DEBUGCOMPCFG	:= $(COMPILER_CONFIG) -Wall -Wpedantic -pg -Og -ggdb3 -fno-omit-frame-pointer -D_DEBUG_OUTPUT_
-DEBUGLINKCFG	:= $(LINKER_CONFIG) -pg -Og
+DEBUGCOMPCFG	:= $(COMPILER_CONFIG) -Wall -Wpedantic -pg -Og -ggdb3 -fno-omit-frame-pointer
+DEBUGLINKCFG	:= $(LINKER_CONFIG) -pg -Og $(LIBRARIES)
 
 COMPCFG	:= -O3 $(COMPILER_CONFIG) $(OPTIMIZATIONS) -D_DEBUG_OUTPUT_
-LINKCFG	:= -O3 $(LINKER_CONFIG)
+LINKCFG	:= -O3 $(LINKER_CONFIG) $(LIBRARIES)
 
 COMPILER	:= @$(CXX) $(INCLUDES)
-LINKER		:= @$(CXX) $(LIBRARIES)
+LINKER		:= @$(CXX)
+
+define GET_TIME
+@printf "\nTime: "
+@date +\"%H:%M:%S\"
+@echo ""
+endef
 
 .PHONY: debug release all
 .ONESHELL:
@@ -39,8 +45,8 @@ debug:
 	$(GET_TIME)
 	
 	@echo "[1/2] compiling [$@]..."
-	$(COMPILER) $(DEBUGCOMPCFG) $(PACKPROGNAME).cpp -o $(PACKPROGNAME)_$@.o
-	$(COMPILER) $(DEBUGCOMPCFG) $(UNPACKPROGNAME).cpp -o $(UNPACKPROGNAME)_$@.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c $(PACKPROGNAME).cpp -o $(PACKPROGNAME)_$@.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c $(UNPACKPROGNAME).cpp -o $(UNPACKPROGNAME)_$@.o
 	
 	@echo "[2/2] linking libraries..."
 	$(LINKER) -o $(PACKPROGNAME)_$@.exe $(PACKPROGNAME)_$@.o $(DEBUGLINKCFG)
@@ -65,8 +71,8 @@ release:
 	$(GET_TIME)
 	
 	@echo "[1/2] compiling [$@]..."
-	$(COMPILER) $(COMPCFG) $(PACKPROGNAME).cpp -o $(PACKPROGNAME).o
-	$(COMPILER) $(COMPCFG) $(UNPACKPROGNAME).cpp -o $(UNPACKPROGNAME).o
+	$(COMPILER) $(COMPCFG) -c $(PACKPROGNAME).cpp -o $(PACKPROGNAME).o
+	$(COMPILER) $(COMPCFG) -c $(UNPACKPROGNAME).cpp -o $(UNPACKPROGNAME).o
 	
 	@echo "[2/2] linking libraries..."
 	$(LINKER) -o $(PACKPROGNAME).exe $(PACKPROGNAME).o $(LINKCFG)
