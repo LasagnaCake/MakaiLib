@@ -15,11 +15,12 @@ namespace ArcSys {
 	JSON getStructure(fs::path const& path, String const& root = "") {
 		JSON result = JSON::object();
 		for (auto const& e : fs::directory_iterator(path)) {
-			String eName = e.path().stem().string();
 			if (e.is_directory())
-				result[eName] = getStructure(e, root + "/" + eName);
-			else
-				result[eName] = root + "/" + e.path().filename().string();
+				result[e.path().stem().string()] = getStructure(e, root + "/" + eName);
+			else {
+				String filename = e.path().filename().string();
+				result[filename] = root + "/" + filename;
+			}
 		}
 		return result;
 	}
