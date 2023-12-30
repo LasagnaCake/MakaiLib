@@ -56,7 +56,7 @@ Pack:
 >   no-archive   : Specifies whether the data/ folder is not compacted into an archive. Useful if
                     resources are to be shared. Generally, loading from a folder is faster than
                     loading from an archive, but does not offer the encryption an archive provides.
->   archive-pass : Must not contain spaces. ASCII characters only.
+>   archive-pass : ASCII characters only. Maximum of 32 characters.
 
 endef
 
@@ -83,8 +83,10 @@ archive-ext		?= marc
 CC 	?= gcc
 CXX ?= g++
 
-COMPILER_CONFIG	:= -fexpensive-optimizations -flto -m64 -std=gnu++20 -fcoroutines -fms-extensions
-LINKER_CONFIG	:= -flto -static-libstdc++ -static-libgcc -static -m64 -fms-extensions
+#USE_FLTO := -flto
+
+COMPILER_CONFIG	:= -fexpensive-optimizations -m64 -std=gnu++20 -fcoroutines -fms-extensions $(USE_FLTO)
+LINKER_CONFIG	:= -static-libstdc++ -static-libgcc -static -m64 -fms-extensions $(USE_FLTO)
 
 ifeq ($(sath), 1)
 meth				:= 0
@@ -104,11 +106,11 @@ optimize-lvl	:= g
 else
 optimize-lvl	?= 2
 endif
-INCLUDES		:= -Ilib -Isrc -Ilib/SDL2-2.0.10/include -Ilib/OpenGL -Ilib/OpenGL/GLEW/include -Ilib/cute_headers -Ilib/stb -Ilib/jsoncpp-3.11.2/include -Ilib/cppcodec-0.2
+INCLUDES		:= -Ilib -Isrc -Ilib/SDL2-2.0.10/include -Ilib/OpenGL -Ilib/OpenGL/GLEW/include -Ilib/cute_headers -Ilib/stb -Ilib/jsoncpp-3.11.2/include -Ilib/cppcodec-0.2 -Ilib/cryptopp/include -Itools
 
 WINGARBAGE		:= -lole32 -loleaut32 -limm32 -lwinmm -lversion -lpowrprof -lcomdlg32 -lsetupapi -lgdi32
 
-LIBRARIES		:= lib/SDL2-2.0.10/lib/libSDL2.dll.a lib/SDL2-2.0.10/lib/libSDL2main.a lib/SDL2-2.0.10/lib/libSDL2_mixer.dll.a lib/OpenGL/GLEW/lib/libglew32.dll.a $(WINGARBAGE) -lopengl32 -lgomp
+LIBRARIES		:= lib/SDL2-2.0.10/lib/libSDL2.dll.a lib/SDL2-2.0.10/lib/libSDL2main.a lib/SDL2-2.0.10/lib/libSDL2_mixer.dll.a lib/cryptopp/lib/libcryptopp.a lib/OpenGL/GLEW/lib/libglew32.dll.a $(WINGARBAGE) -lopengl32 -lgomp
 
 # This doesn't work. Oh well.
 # SANITIZER_OPTIONS := -fsanitize=leak -fsanitize=memory
@@ -202,26 +204,22 @@ endef
 
 #-r
 ifneq (, $(shell which 7za))
-WARNABOUT7ZIP := @:
 ZIPCMD := @7za a -tzip -mem=AES256
-ARCPASS := -p"$(archive-pass)"
 else
-WARNABOUT7ZIP := $(ZIPWARNMSG)
 ZIPCMD := @zip -r
-ARCPASS := -P $(archive-pass)
 endif
 
 ifdef archive-pass
-ARCZIPCMD := $(ZIPCMD) $(ARCPASS)
-else
-ARCZIPCMD := $(ZIPCMD)
+ARCPASS := "$(archive-pass)"
 endif
+
+ARCPACK := @../../tools/archive/arcpack.exe
 
 ifeq ($(no-archive), 1)
 DATA_ARCHIVE	:= @:
 DATA_REMOVE		:= @:
 else
-DATA_ARCHIVE	:= $(ARCZIPCMD) data.$(archive-ext) data
+DATA_ARCHIVE	:= $(ARCPACK) "data.$(archive-ext)" "data" $(ARCPASS)
 DATA_REMOVE		:= @rm -rf data
 endif
 
@@ -331,8 +329,6 @@ all: debug demo release
 
 
 pack-debug:
-	$(WARNABOUT7ZIP)
-
 	@echo ""
 	@echo "[--- START ---]"
 
@@ -368,12 +364,8 @@ pack-debug:
 	@echo "[--- END ---]"
 	@echo 
 	
-	$(WARNABOUT7ZIP)
-	
 
 pack-demo:
-	$(WARNABOUT7ZIP)
-
 	@echo ""
 	@echo "[--- START ---]"
 
@@ -413,13 +405,9 @@ pack-demo:
 	
 	@echo "[--- END ---]"
 	@echo 
-	
-	$(WARNABOUT7ZIP)
 
 
 pack-release:
-	$(WARNABOUT7ZIP)
-
 	@echo ""
 	@echo "[--- START ---]"
 
@@ -459,8 +447,6 @@ pack-release:
 	
 	@echo "[--- END ---]"
 	@echo 
-	
-	$(WARNABOUT7ZIP)
 
 
 pack-test: pack-debug pack-release

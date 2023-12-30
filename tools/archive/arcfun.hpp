@@ -1,9 +1,9 @@
 #ifndef MAKAILIB_TOOL_ARCHIVE_FUNCTIONALITY_H
 #define MAKAILIB_TOOL_ARCHIVE_FUNCTIONALITY_H
 
-#include <helper.hpp>
-#include <algebra.hpp>
-#include <filehandler.hpp>
+#include <collection/helper.hpp>
+#include <collection/algebra.hpp>
+#include <collection/filehandler.hpp>
 #include <nlohmann/json.hpp>
 #include <cryptopp/aes.h>
 #include <cryptopp/zlib.h>
@@ -11,6 +11,16 @@
 #include <cppcodec/base64_rfc4648.hpp>
 #include <cppcodec/base32_rfc4648.hpp>
 #include <filesystem>
+
+#ifdef ARCSYS_APLLICATION_
+#define _ARCDEBUG(...)		DEBUG(__VA_ARGS__)
+#define _ARCDEBUGLN(...)	DEBUGLN(__VA_ARGS__)
+#define _ARCEXIT exit(-1)
+#else
+#define _ARCDEBUG(...)
+#define _ARCDEBUGLN(...)
+#define _ARCEXIT
+#endif // ARCSYS_ARCHIVE_APLLICATION_
 
 namespace ArcSys {
 	using JSON = nlohmann::json;
@@ -25,8 +35,6 @@ namespace ArcSys {
 
 	enum class EncryptionMethod: uint64 {
 		AEM_NONE,
-		AEM_AES128,
-		AEM_AES192,
 		AEM_AES256,
 	};
 
@@ -53,27 +61,19 @@ namespace ArcSys {
 	}
 
 	template<class T>
-	BinaryData transform(
+	BinaryData cbcTransform(
 		BinaryData const&		data,
-		String					password	= "",
-		EncryptionMethod const&	method		= EncryptionMethod::AEM_AES256
+		String					password	= ""
 	) try {
 		String result;
-		while (password.size() < AES::DEFAULT_KEYLENGTH)
-			password += " ";
 		T tf;
-		// TODO: figure out how to use this
-		uint8* iv = nullptr, ivSize = 32;
-		switch (method) {
-		case EncryptionMethod::AEM_NONE: return data;
-		case EncryptionMethod::AEM_AES128: ivSize = 16/2; break;
-		case EncryptionMethod::AEM_AES192: ivSize = 24/2; break;
-		case EncryptionMethod::AEM_AES256: ivSize = 32/2; break;
-		}
-		iv = new uint8[ivSize];
-		memset(iv, 0, ivSize);
-		DEBUGLN("MAX KEY LENGTH: ", tf.MaxKeyLength());
-		tf.SetKeyWithIV((uint8*)password.data(), password.length(), iv, ivSize);
+		uint8* iv = new uint8[16];
+		memset(iv, 0, 16);
+		while (password.size() < tf.MaxKeyLength())
+			password += " ";
+		if (password.size() > 32)
+			password = password.substr(0, 32);
+		tf.SetKeyWithIV((uint8*)password.data(), password.length(), iv, 16);
 		StringSource ss(
 			data.data(),
 			data.size(),
@@ -125,13 +125,35 @@ namespace ArcSys {
 			e.what()
 		);
 	}
+	namespace {
+		template<typename T>
+		BinaryData cbcEncrypt(
+			BinaryData const&		data,
+			String const&			password	= ""
+		) {
+			return cbcTransform<typename CBC_Mode<T>::Encryption>(data, password);
+		}
+
+		template<typename T>
+		BinaryData cbcDecrypt(
+			BinaryData const&		data,
+			String const&			password	= ""
+		) {
+			return cbcTransform<typename CBC_Mode<T>::Decryption>(data, password);
+		}
+	}
 
 	BinaryData encrypt(
 		BinaryData const&		data,
 		String const&			password	= "",
 		EncryptionMethod const&	method		= EncryptionMethod::AEM_AES256
 	) {
-		return transform<CBC_Mode<AES>::Encryption>(data, password, method);
+		switch (method) {
+			default: throw Error::InvalidValue("Invalid encryption method!");
+			case EncryptionMethod::AEM_NONE:	return data;
+			case EncryptionMethod::AEM_AES256:	return cbcEncrypt<AES>(data, password);
+		}
+		return data;
 	}
 
 	BinaryData decrypt(
@@ -139,7 +161,12 @@ namespace ArcSys {
 		String const&			password	= "",
 		EncryptionMethod const&	method		= EncryptionMethod::AEM_AES256
 	) {
-		return transform<CBC_Mode<AES>::Decryption>(data, password, method);
+		switch (method) {
+			default: throw Error::InvalidValue("Invalid decryption method!");
+			case EncryptionMethod::AEM_NONE:	return data;
+			case EncryptionMethod::AEM_AES256:	return cbcDecrypt<AES>(data, password);
+		}
+		return data;
 	}
 
 	BinaryData compress(
@@ -248,14 +275,14 @@ namespace ArcSys {
 	) try {
 		if (enc != EncryptionMethod::AEM_NONE && password.empty())
 			throw Error::InvalidValue("Missing password for encrypted file!");
-		DEBUGLN("FOLDER: ", folderPath, "\nARCHIVE: ", archivePath);
+		_ARCDEBUGLN("FOLDER: ", folderPath, "\nARCHIVE: ", archivePath);
 		// Get file structure
-		DEBUGLN("Getting file structure...");
+		_ARCDEBUGLN("Getting file structure...");
 		JSONData dir;
 		StringList files;
 		JSONData& tree = dir["tree"];
 		tree = getStructure(fs::path(folderPath), files, fs::path(folderPath).stem().string());
-		DEBUGLN("\n", dir.dump(2, ' ', false, JSON::error_handler_t::replace), "\n");
+		_ARCDEBUGLN("\n", dir.dump(2, ' ', false, JSON::error_handler_t::replace), "\n");
 		// Populate with temporary values
 		List<uint64> locations(files.size(), 0);
 		populateTree(tree, locations);
@@ -269,7 +296,7 @@ namespace ArcSys {
 			password += " ";
 		ZlibCompressor			zipper;
 		// Populate header
-		DEBUGLN("Creating header...\n");
+		_ARCDEBUGLN("Creating header...\n");
 		// Preliminary parameters
 		constexpr uint64 version	= 0;
 		constexpr uint64 minVersion	= 0;
@@ -282,21 +309,21 @@ namespace ArcSys {
 		header.encryption	= (uint16)enc;		// encryption mode
 		header.compression	= (uint16)comp;		// compression mode
 		header.level		= complvl;			// compression level
-		DEBUGLN("             HEADER SIZE: ", (uint64)header.headerSize,		"B"	);
-		DEBUGLN("        FILE HEADER SIZE: ", (uint64)header.fileHeaderSize,	"B"	);
-		DEBUGLN("     DIRECTORY INFO SIZE: ", (uint64)header.dirInfoSize,		"B"	);
-		DEBUGLN("     FILE FORMAT VERSION: ", (uint64)header.version				);
-		DEBUGLN(" FILE FORMAT MIN VERSION: ", (uint64)header.minVersion				);
-		DEBUGLN("         ENCRYPTION MODE: ", (uint64)header.encryption				);
-		DEBUGLN("        COMPRESSION MODE: ", (uint64)header.compression			);
-		DEBUGLN("       COMPRESSION LEVEL: ", (uint64)header.level					);
+		_ARCDEBUGLN("             HEADER SIZE: ", (uint64)header.headerSize,		"B"	);
+		_ARCDEBUGLN("        FILE HEADER SIZE: ", (uint64)header.fileHeaderSize,	"B"	);
+		_ARCDEBUGLN("     DIRECTORY INFO SIZE: ", (uint64)header.dirInfoSize,		"B"	);
+		_ARCDEBUGLN("     FILE FORMAT VERSION: ", (uint64)header.version				);
+		_ARCDEBUGLN(" FILE FORMAT MIN VERSION: ", (uint64)header.minVersion				);
+		_ARCDEBUGLN("         ENCRYPTION MODE: ", (uint64)header.encryption				);
+		_ARCDEBUGLN("        COMPRESSION MODE: ", (uint64)header.compression			);
+		_ARCDEBUGLN("       COMPRESSION LEVEL: ", (uint64)header.level					);
 		// Write header
 		file.write((char*)&header, header.headerSize);
 		// Write temp dir info
 		file.seekp(header.headerSize);
 		file.write(dirInfo.data(), dirInfo.size());
 		// Write file info
-		DEBUGLN("\nWriting files...\n");
+		_ARCDEBUGLN("\nWriting files...\n");
 		for (auto const& [i, f]: Helper::enumerate(files)) {
 			locations[i] = file.tellp();
 			// Read file
@@ -311,32 +338,32 @@ namespace ArcSys {
 					comp,
 					complvl
 				);
-				DEBUGLN("Before encryption: ", contents.size());
+				_ARCDEBUGLN("Before encryption: ", contents.size());
 				contents = encrypt(
 					contents,
 					password,
 					enc
 				);
-				DEBUGLN("After encryption: ", contents.size());
+				_ARCDEBUGLN("After encryption: ", contents.size());
 			}
 			fheader.compSize	= contents.size();			// Compressed file size
 			fheader.crc			= generateCRC(contents);	// CRC
 			// Debug info
-			DEBUGLN("'", files[i], "':");
-			DEBUGLN("          FILE INDEX: ", i					);
-			DEBUGLN("       FILE LOCATION: ", locations[i]		, " (", encoded(locations[i]), ")");
-			DEBUGLN("   UNCOMPRESSED SIZE: ", fheader.uncSize	);
-			DEBUGLN("     COMPRESSED SIZE: ", fheader.compSize	);
-			DEBUGLN("               CRC32: ", fheader.crc		);
-			DEBUGLN("");
+			_ARCDEBUGLN("'", files[i], "':");
+			_ARCDEBUGLN("          FILE INDEX: ", i					);
+			_ARCDEBUGLN("       FILE LOCATION: ", locations[i]		, " (", encoded(locations[i]), ")");
+			_ARCDEBUGLN("   UNCOMPRESSED SIZE: ", fheader.uncSize	);
+			_ARCDEBUGLN("     COMPRESSED SIZE: ", fheader.compSize	);
+			_ARCDEBUGLN("               CRC32: ", fheader.crc		);
+			_ARCDEBUGLN("");
 			// Copy header & file data
 			file.write((char*)&fheader, header.fileHeaderSize);
 			file.write((char*)contents.data(), contents.size());
 		}
 		// Return & write proper directory info
-		DEBUGLN("\nWriting directory info...\n");
+		_ARCDEBUGLN("\nWriting directory info...\n");
 		populateTree(tree, locations);
-		DEBUGLN("\n", dir.dump(2, ' ', false, JSON::error_handler_t::replace), "\n");
+		_ARCDEBUGLN("\n", dir.dump(2, ' ', false, JSON::error_handler_t::replace), "\n");
 		dirInfo = dir.dump(-1, ' ', false, JSON::error_handler_t::replace);
 		file.seekp(header.headerSize);
 		file.write(dirInfo.data(), dirInfo.size());
@@ -344,9 +371,11 @@ namespace ArcSys {
 		file.flush();
 		file.close();
 	} catch (Error::Error const& e) {
-		DEBUGLN(e.report());
+		_ARCDEBUGLN(e.report());
+		_ARCEXIT;
 	} catch (std::runtime_error const& e) {
-		DEBUGLN("ERROR: ", e.what());
+		_ARCDEBUGLN("ERROR: ", e.what());
+		_ARCEXIT;
 	}
 
 	struct FileArchive {
@@ -371,10 +400,12 @@ namespace ArcSys {
 			// Open file
 			archive.open(path, std::ios::binary | std::ios::in);
 			// Read header
+			auto lp = archive.tellg();
 			archive.read((char*)&header, sizeof(ArchiveHeader));
 			// Read file info
 			String fs(header.dirInfoSize, ' ');
 			archive.read(fs.data(), fs.size());
+			archive.seekg(lp);
 			try {
 				fstruct = JSON::parse(fs);
 			} catch (JSON::exception const& e) {
@@ -386,25 +417,43 @@ namespace ArcSys {
 			throw FileLoader::FileLoadError(e.what());
 		}
 
-		FileArchive& close() {
+		FileArchive& close() try {
 			if (!streamOpen) return *this;
 			archive.close();
 			streamOpen = false;
 			return *this;
+		} catch (std::runtime_error const& e) {
+			throw FileLoader::FileLoadError(e.what());
 		}
 
-		String getTextFile(String const& path) {
+		String getTextFile(String const& path) try {
 			assertOpen();
 			FileEntry fe = getFileEntry(path);
 			processFileEntry(fe);
 			return String(fe.data.begin(), fe.data.end());
+		} catch (Error::FailedAction const& e) {
+			throw FileLoader::FileLoadError(
+				"could not load file '" + path + "'!",
+				__FILE__,
+				"unspecified",
+				"unspecified",
+				e.message
+			);
 		}
 
-		BinaryData getBinaryFile(String const& path) {
+		BinaryData getBinaryFile(String const& path) try {
 			assertOpen();
 			FileEntry fe = getFileEntry(path);
 			processFileEntry(fe);
 			return fe.data;
+		} catch (Error::FailedAction const& e) {
+			throw FileLoader::FileLoadError(
+				"could not load file '" + path + "'!",
+				__FILE__,
+				"unspecified",
+				"unspecified",
+				e.message
+			);
 		}
 
 		JSONData getFileTree(String const& root = "") const {
@@ -417,7 +466,7 @@ namespace ArcSys {
 		FileArchive& unpackTo(String const& path) {
 			if (!streamOpen) return *this;
 			JSONData ftree = getFileTree();
-			DEBUGLN(ftree.dump(2, ' ', false, JSON::error_handler_t::replace), "\n");
+			_ARCDEBUGLN(ftree.dump(2, ' ', false, JSON::error_handler_t::replace), "\n");
 			unpackLayer(ftree, path);
 			return *this;
 		}
@@ -431,8 +480,8 @@ namespace ArcSys {
 			for (auto& [name, data]: layer.items()) {
 				if (data.is_string()) {
 					String filepath = FileSystem::concatenatePath(path, data.get<String>());
-					DEBUGLN(path, " + ", data.get<String>(), " = ", filepath);
-					DEBUGLN(
+					_ARCDEBUGLN(path, " + ", data.get<String>(), " = ", filepath);
+					_ARCDEBUGLN(
 						"'", name, "': ",
 						filepath,
 						" (dir: ", FileSystem::getDirectoryFromPath(filepath), ")"
@@ -448,13 +497,13 @@ namespace ArcSys {
 		void processFileEntry(FileEntry& entry) const {
 			BinaryData data = entry.data;
 			if (entry.header.uncSize == 0) return;
-			DEBUGLN("Before decryption: ", data.size());
+			_ARCDEBUGLN("Before decryption: ", data.size());
 			data = decrypt(
 				data,
 				pass,
 				(EncryptionMethod)header.encryption
 			);
-			DEBUGLN("After decryption: ", data.size());
+			_ARCDEBUGLN("After decryption: ", data.size());
 			data = decompress(
 				data,
 				(CompressionMethod)header.compression,
@@ -470,19 +519,19 @@ namespace ArcSys {
 		FileEntry getFileEntry(String const& path) try {
 			if (!fstruct["tree"].is_object())
 				directoryTreeError();
-			DEBUGLN("Getting file entry root...");
+			_ARCDEBUGLN("Getting file entry root...");
 			String root = FileSystem::getParentDirectory(path), rest = "";
 			if (root != path)
 				rest = FileSystem::getChildPath(path);
-			DEBUGLN("Getting file entry location...");
+			_ARCDEBUGLN("Getting file entry location...");
 			uint64		idx	= getFileEntryLocation(root, rest, fstruct["tree"]);
-			DEBUGLN("ENTRY LOCATION: ", idx);
-			DEBUGLN("Getting file entry header...");
+			_ARCDEBUGLN("ENTRY LOCATION: ", idx);
+			_ARCDEBUGLN("Getting file entry header...");
 			FileHeader	fh	= getFileEntryHeader(idx);
-			DEBUGLN("   UNCOMPRESSED SIZE: ", fh.uncSize	);
-			DEBUGLN("     COMPRESSED SIZE: ", fh.compSize	);
-			DEBUGLN("               CRC32: ", fh.crc		);
-			DEBUGLN("Getting file entry data...");
+			_ARCDEBUGLN("   UNCOMPRESSED SIZE: ", fh.uncSize	);
+			_ARCDEBUGLN("     COMPRESSED SIZE: ", fh.compSize	);
+			_ARCDEBUGLN("               CRC32: ", fh.crc		);
+			_ARCDEBUGLN("Getting file entry data...");
 			return FileEntry{idx, path, fh, getFileEntryData(idx, fh)};
 		} catch (std::runtime_error const& e) {
 			throw FileLoader::FileLoadError(
@@ -518,7 +567,7 @@ namespace ArcSys {
 			if (!folder.is_object())
 				doesNotExistError(root);
 			if (path == "") {
-				DEBUGLN("Getting file location...");
+				_ARCDEBUGLN("Getting file location...");
 				return decoded(folder[root].get<String>());
 			}
 			String newRoot = FileSystem::getParentDirectory(path), newPath = "";
@@ -577,15 +626,22 @@ namespace ArcSys {
 		String const folderPath,
 		String const& password = ""
 	) try {
-		DEBUGLN("\nOpening archive...\n");
+		_ARCDEBUGLN("\nOpening archive...\n");
 		FileArchive arc(archivePath, password);
-		DEBUGLN("\nExtracting data...\n");
+		_ARCDEBUGLN("\nExtracting data...\n");
 		arc.unpackTo(folderPath);
 	} catch (Error::Error const& e) {
-		DEBUGLN(e.report());
+		_ARCDEBUGLN(e.report());
+		_ARCEXIT;
 	} catch (std::runtime_error const& e) {
-		DEBUGLN("ERROR: ", e.what());
+		_ARCDEBUGLN("ERROR: ", e.what());
+		_ARCEXIT;
 	}
 }
+
+
+#undef _ARCDEBUG
+#undef _ARCDEBUGLN
+#undef _ARCEXIT
 
 #endif // MAKAILIB_TOOL_ARCHIVE_FUNCTIONALITY_H

@@ -4,6 +4,7 @@
 #include "collection/helper.hpp"
 #include "collection/filehandler.hpp"
 #include <nlohmann/json.hpp>
+#include <archive/arcfun.hpp>
 
 namespace FileLoader {
 	inline nlohmann::ordered_json parseJSON(String const& data) {try {
@@ -24,11 +25,9 @@ namespace FileLoader {
 		return parseJSON(loadTextFile(path));
 	}
 
-	struct FileArchive {
+	using ArcSys::FileArchive;
 
-	};
-
-	//*
+	/*
 	#ifndef _ARCHIVE_SYSTEM_DISABLED_
 	#define _ARCHIVE_SYSTEM_DISABLED_
 	#endif // _ARCHIVE_SYSTEM_DISABLED_
@@ -129,7 +128,7 @@ namespace FileLoader {
 	inline String loadTextFileFromArchive(String const& path) {
 		#ifdef _IMPL_ARCHIVE_
 		assertArchive(path);
-		return arc.getTextFile(path);
+		return arc.getTextFile(FileSystem::getChildPath(path));
 		#else
 		fileLoadError(path, "Archive functionality disabled!");
 		#endif
@@ -138,7 +137,7 @@ namespace FileLoader {
 	inline BinaryData loadBinaryFileFromArchive(String const& path) {
 		#ifdef _IMPL_ARCHIVE_
 		assertArchive(path);
-		return arc.getBinaryFile(path);
+		return arc.getBinaryFile(FileSystem::getChildPath(path));
 		#else
 		fileLoadError(path, "Archive functionality disabled!");
 		#endif
@@ -147,7 +146,7 @@ namespace FileLoader {
 	inline CSVData loadCSVFileFromArchive(String const& path, char const& delimiter = ',') {
 		#ifdef _IMPL_ARCHIVE_
 		assertArchive(path);
-		return Helper::splitString(arc.getTextFile(path), delimiter);
+		return Helper::splitString(arc.getTextFile(FileSystem::getChildPath(path)), delimiter);
 		#else
 		fileLoadError(path, "Archive functionality disabled!");
 		#endif
@@ -156,7 +155,7 @@ namespace FileLoader {
 	inline nlohmann::ordered_json loadJSONFromArchive(String const& path) {
 		#ifdef _IMPL_ARCHIVE_
 		assertArchive(path);
-		return parseJSON(arc.getTextFile(path));
+		return parseJSON(arc.getTextFile(FileSystem::getChildPath(path)));
 		#else
 		fileLoadError(path, "Archive functionality disabled!");
 		#endif

@@ -376,7 +376,7 @@ public:
 		-	(data[1][0] * data[0][1] * data[2][2])
 		);
 		else {
-			T res;
+			T res = 0;
 			for (size_t i = 0; i < R; i++) {
 				if (data[i][0] == 0) continue;
 				res += data[i][0] * cofactor(i, 0);
