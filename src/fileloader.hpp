@@ -32,6 +32,11 @@ namespace FileLoader {
 	#define _ARCHIVE_SYSTEM_DISABLED_
 	#endif // _ARCHIVE_SYSTEM_DISABLED_
 	//*/
+	//*
+	#ifndef _TESTING_ARCHIVE_SYS_
+	#define _TESTING_ARCHIVE_SYS_
+	#endif // _TESTING_ARCHIVE_SYS_
+	//*/
 
 	#if !(defined(_DEBUG_OUTPUT_) || defined(_ARCHIVE_SYSTEM_DISABLED_)) || defined(_TESTING_ARCHIVE_SYS_)
 	#define _IMPL_ARCHIVE_
