@@ -40,7 +40,7 @@ namespace ArcSys {
 		return cppcodec::base64_rfc4648::encode(data);
 	}
 
-	uint64 decoded(List<uint8> const& v) {
+	uint64 decoded(String const& v) {
 		List<uint8> data = cppcodec::base64_rfc4648::decode(v);
 		size_t result = 0;
 		for (auto [i, b]: Helper::enumerate(data))
@@ -58,6 +58,7 @@ namespace ArcSys {
 		while (password.size() < AES::DEFAULT_KEYLENGTH)
 			password += " ";
 		T tf;
+		// TODO: figure out how to use this
 		uint8* iv = nullptr;
 		switch (method) {
 		case EncryptionMethod::AEM_NONE: return data;
@@ -123,7 +124,7 @@ namespace ArcSys {
 		String					password	= "",
 		EncryptionMethod const&	method		= EncryptionMethod::AEM_AES256
 	) {
-		return transform<CBC_Mode<AES>::Encryption>(data, password, method);
+		return transform<CBC_Mode<AES>::Decryption>(data, password, method);
 	}
 
 	BinaryData compress(
@@ -184,11 +185,30 @@ namespace ArcSys {
 	size_t populateTree(JSONData& tree, List<uint64> values, size_t const& start = 0) {
 		size_t idx = start;
 		for (auto& [name, data]: tree.items()) {
-			if (data.is_string()) data = encoded(idx++);
+			if (data.is_string()) data = encoded(values[idx++]);
 			else idx = populateTree(data, values, idx);
 		}
 		return idx;
 	}
+
+	struct FileHeader {
+		uint64 uncSize;
+		uint64 compSize;
+		uint32 crc;
+		// Put new things BELOW this line
+	};
+
+	struct ArchiveHeader {
+		uint64	const headerSize		= sizeof(ArchiveHeader);
+		uint64	const fileHeaderSize	= sizeof(FileHeader);
+		uint64	dirInfoSize;
+		uint64	version;
+		uint64	minVersion;
+		uint16	encryption;
+		uint16	compression;
+		uint8	level;
+		// Put new things BELOW this line
+	};
 
 	void pack(
 			String const& archivePath,
@@ -198,6 +218,8 @@ namespace ArcSys {
 			CompressionMethod const& comp = CompressionMethod::ACM_ZIP,
 			uint8 const& complvl = 9
 	) try {
+		if (enc != EncryptionMethod::AEM_NONE && password.empty())
+			throw Error::InvalidValue("Missing password for encrypted file!");
 		DEBUGLN("FOLDER: ", folderPath, "\nARCHIVE: ", archivePath);
 		// Get file structure
 		DEBUGLN("Getting file structure...");
@@ -221,52 +243,39 @@ namespace ArcSys {
 		// Populate header
 		DEBUGLN("Creating header...\n");
 		// Preliminary parameters
-		constexpr uint64 headerSize	= 128;
-		constexpr uint64 fhSize		= 128;
 		constexpr uint64 version	= 0;
 		constexpr uint64 minVersion	= 0;
 		// Header
-		uint8 header[headerSize];
-		// Accessors
-		uint64*	hptr64	= (uint64*)header;
-		uint32* hptr32	= (uint32*)header;
-		uint16*	hptr16	= (uint16*)header;
-		uint8*	hptr8	= (uint8*)header;
+		ArchiveHeader header;
 		// Set main header params
-		hptr64[0]	= headerSize;		// header size
-		hptr64[1]	= fhSize;			// file header size
-		hptr64[2]	= dirInfo.length();	// directory info size
-		hptr64[3]	= version;			// file format version
-		hptr64[4]	= minVersion;		// file format minimum version
-		hptr16	= (uint16*)&hptr64[5];
-		hptr16[0]	= (uint16)enc;		// encryption mode
-		hptr16[1]	= (uint16)comp;		// compression mode
-		hptr8	= (uint8*)&hptr16[2];
-		hptr8[0]	= complvl;			// compression level
-		DEBUGLN("HEADER SIZE:             ", (uint64)hptr64[0], "B");
-		DEBUGLN("FILE HEADER SIZE:        ", (uint64)hptr64[1], "B");
-		DEBUGLN("DIRECTORY INFO SIZE:     ", (uint64)hptr64[2], "B");
-		DEBUGLN("FILE FORMAT VERSION:     ", (uint64)hptr64[3]);
-		DEBUGLN("FILE FORMAT MIN VERSION: ", (uint64)hptr64[4]);
-		DEBUGLN("ENCRYPTION MODE:         ", (uint64)hptr16[0]);
-		DEBUGLN("COMPRESSION MODE:        ", (uint64)hptr16[1]);
-		DEBUGLN("COMPRESSION LEVEL:       ", (uint64)hptr8[0]);
+		header.dirInfoSize	= dirInfo.length();	// directory info size
+		header.version		= version;			// file format version
+		header.minVersion	= minVersion;		// file format minimum version
+		header.encryption	= (uint16)enc;		// encryption mode
+		header.compression	= (uint16)comp;		// compression mode
+		header.level		= complvl;			// compression level
+		DEBUGLN("             HEADER SIZE: ", (uint64)header.headerSize,		"B"	);
+		DEBUGLN("        FILE HEADER SIZE: ", (uint64)header.fileHeaderSize,	"B"	);
+		DEBUGLN("     DIRECTORY INFO SIZE: ", (uint64)header.dirInfoSize,		"B"	);
+		DEBUGLN("     FILE FORMAT VERSION: ", (uint64)header.version				);
+		DEBUGLN(" FILE FORMAT MIN VERSION: ", (uint64)header.minVersion				);
+		DEBUGLN("         ENCRYPTION MODE: ", (uint64)header.encryption				);
+		DEBUGLN("        COMPRESSION MODE: ", (uint64)header.compression			);
+		DEBUGLN("       COMPRESSION LEVEL: ", (uint64)header.level					);
 		// Write header
-		file.write((char*)header, headerSize);
+		file.write((char*)&header, header.headerSize);
 		// Write temp dir info
-		file.seekp(headerSize);
+		file.seekp(header.headerSize);
 		file.write(dirInfo.data(), dirInfo.size());
 		// Write file info
+		DEBUGLN("\nWriting files...\n");
 		for (auto const& [i, f]: Helper::enumerate(files)) {
 			locations[i] = file.tellp();
 			// Read file
 			FLD::BinaryData contents = FLD::loadBinaryFile(f);
 			// Prepare header
-			uint8 fheader[fhSize];
-			hptr64 = (uint64*)fheader;
-			hptr32 = (uint32*)fheader;
-			hptr16 = (uint16*)fheader;
-			hptr64[0] = contents.size();		// Uncompressed file size
+			FileHeader fheader;
+			fheader.uncSize = contents.size();				// Uncompressed file size
 			// Process file
 			if (!contents.empty())
 				contents = encrypt(
@@ -278,17 +287,25 @@ namespace ArcSys {
 					password,
 					enc
 				);
-			hptr64[1] = contents.size();		// Compressed file size
-			hptr32 = (uint32*)&hptr64[2];
-			hptr32[0] = generateCRC(contents);	// CRC
+			fheader.compSize	= contents.size();			// Compressed file size
+			fheader.crc			= generateCRC(contents);	// CRC
+			// Debug info
+			DEBUGLN("'", files[i], "':");
+			DEBUGLN("          FILE INDEX: ", i					);
+			DEBUGLN("       FILE LOCATION: ", locations[i]		, " (", encoded(locations[i]), ")");
+			DEBUGLN("   UNCOMPRESSED SIZE: ", fheader.uncSize	);
+			DEBUGLN("     COMPRESSED SIZE: ", fheader.compSize	);
+			DEBUGLN("               CRC32: ", fheader.crc		);
+			DEBUGLN("");
 			// Copy header & file data
-			file.write(fheader, fhSize);
+			file.write((char*)&fheader, header.fileHeaderSize);
 			file.write((char*)contents.data(), contents.size());
 		}
 		// Return & write proper directory info
 		DEBUGLN("\nWriting directory info...\n");
 		populateTree(tree, locations);
-		file.seekp(headerSize);
+		DEBUGLN("\n", dir.dump(2, ' ', false, JSON::error_handler_t::replace), "\n");
+		file.seekp(header.headerSize);
 		file.write(dirInfo.data(), dirInfo.size());
 		// Close file
 		file.flush();
@@ -309,4 +326,158 @@ namespace ArcSys {
 	} catch (std::runtime_error const& e) {
 		DEBUGLN("ERROR: ", e.what());
 	}
+
+	struct FileArchive {
+		struct FileEntry {
+			uint64 const	index;
+			String const	path;
+			FileHeader		header;
+			BinaryData		data;
+		};
+
+		FileArchive() {}
+		FileArchive(String const& path, String const& password = "") {open(path, password);}
+
+		~FileArchive() {close();}
+
+		FileArchive& open(String const& path, String const& password) try {
+			if (streamOpen) return *this;
+			// Set password
+			pass = password;
+			// Set exceptions
+			archive.exceptions(std::ifstream::badbit | std::ifstream::failbit);
+			// Open file
+			archive.open(path, std::ios::binary | std::ios::in);
+			// Read header
+			archive.read((char*)&header, sizeof(ArchiveHeader));
+			// Read file info
+			String fs(header.dirInfoSize, ' ');
+			archive.read(fs.data(), fs.size());
+			try {
+				fstruct = JSON::parse(fs);
+			} catch (JSON::exception const& e) {
+			}
+			// Set open flag
+			streamOpen = true;
+		} catch (std::runtime_error const& e) {
+			throw FileLoader::FileLoadError(e.what());
+		}
+
+		FileArchive& close() {
+			if (!streamOpen) return *this;
+			archive.close();
+			streamOpen = false;
+		}
+
+		String readTextFile(String const& path) {
+			FileEntry fe = getFileEntry(path);
+			processFileEntry(fe);
+			return String(fe.data.begin(), fe.data.end());
+		}
+
+		BinaryData readBinaryFile(String const& path) {
+			FileEntry fe = getFileEntry(path);
+			processFileEntry(fe);
+			return fe.data;
+		}
+
+	private:
+		[[noreturn]] void notOpenError() {
+			throw FileLoader::FileLoadError(
+				"Archive is not open!"
+			);
+		}
+
+		[[noreturn]] void doesNotExistError(String const& file) {
+			throw FileLoader::FileLoadError(
+				"Directory or file '" + file + "' does not exist!",
+				__FILE__
+			);
+		}
+
+		[[noreturn]] void directoryTreeError() {
+			throw FileLoader::FileLoadError(
+				"Missing or corrupted directory tree info!",
+				__FILE__
+			);
+		}
+
+		[[noreturn]] void corruptedFileError(String const& path) {
+			throw FileLoader::FileLoadError(
+				"Corrupted file '" + path + "'",
+				__FILE__
+			);
+		}
+
+		void processFileEntry(FileEntry& entry) {
+			BinaryData data = decrypt(
+				decompress(
+					entry.data,
+					(CompressionMethod)header.compression,
+					header.level
+				),
+				pass,
+				(EncryptionMethod)header.encryption
+			);
+			if (data.size() != entry.header.uncSize)
+				corruptedFileError(entry.path);
+			entry.data = data;
+		}
+
+		FileEntry getFileEntry(String const& path) try {
+			if (!fstruct["tree"].is_object())
+				directoryTreeError();
+			String root = FileSystem::getRootDirectory(root), rest = "";
+			if (root != path)
+				rest = FileSystem::getPathWithoutRoot(path);
+			uint64		idx	= getFileEntryLocation(root, rest, fstruct["tree"]);
+			FileHeader	fh	= getFileEntryHeader(idx);
+			return FileEntry{idx, path, fh, getFileEntryData(idx, fh)};
+		} catch (std::runtime_error const& e) {
+			throw FileLoader::FileLoadError(
+				"Failed at getting file entry '" + path + "'!",
+				__FILE__,
+				"unspecified",
+				"unspecified",
+				e.what()
+			);
+		}
+
+		BinaryData getFileEntryData(uint64 const& index, FileHeader const& fh) {
+			BinaryData fd(fh.compSize, 0);
+			auto lp = archive.tellg();
+			archive.seekg(index + header.fileHeaderSize);
+			archive.read((char*)fd.data(), fh.compSize);
+			archive.seekg(lp);
+			return fd;
+		}
+
+		FileHeader getFileEntryHeader(uint64 const& index) {
+			FileHeader fh;
+			auto lp = archive.tellg();
+			archive.seekg(index);
+			archive.read((char*)&fh, header.fileHeaderSize);
+			archive.seekg(lp);
+			return fh;
+		}
+
+		uint64 getFileEntryLocation(String const& root, String const& path, JSONData& folder) try {
+			if (!folder.is_object())
+				doesNotExistError(root);
+			if (path.empty())
+				return decoded(folder[root].get<String>());
+			String newRoot = FileSystem::getRootDirectory(path), newPath = "";
+			if (newRoot != path)
+				newPath = FileSystem::getPathWithoutRoot(path);
+			return getFileEntryLocation(root, path, folder[root]);
+		} catch (JSON::exception const& e) {
+			doesNotExistError(root);
+		}
+
+		bool			streamOpen	= false;
+		String			pass;
+		std::ifstream	archive;
+		ArchiveHeader	header;
+		JSONData		fstruct;
+	};
 }
