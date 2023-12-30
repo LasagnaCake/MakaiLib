@@ -305,6 +305,7 @@ namespace ArcSys {
 		DEBUGLN("\nWriting directory info...\n");
 		populateTree(tree, locations);
 		DEBUGLN("\n", dir.dump(2, ' ', false, JSON::error_handler_t::replace), "\n");
+		dirInfo = dir.dump(-1, ' ', false, JSON::error_handler_t::replace);
 		file.seekp(header.headerSize);
 		file.write(dirInfo.data(), dirInfo.size());
 		// Close file

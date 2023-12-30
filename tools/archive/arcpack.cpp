@@ -1,6 +1,7 @@
 #include "arcfun.hpp"
 
 int main(int argc, char** argv) {
+	DEBUGLN("Starting...");
 	if (argc < 3)
 		DEBUGLN(
 			"\n\nHow to use ArcPack:\n\n"
