@@ -34,7 +34,7 @@ Pack-exclusive options:
 >   over-release  = [ 1 | 0 ]        : Spec. whether to overw. release data/   ( DEFAULT: 0        )
 >   no-archive    = [ 1 | 0 ]        : Spec. whether to not compact data/      ( DEFAULT: 0        )
 >   archive-pass  = [ value | none ] : Spec. the archive's password            ( DEFAULT: none     )
->   archive-ext   = [ value | none ] : Spec. the archive's file extension      ( DEFAULT: arc      )
+>   archive-ext   = [ value | none ] : Spec. the archive's file extension      ( DEFAULT: marc     )
 
 NOTES:
 (Safe, in this case, means 'IEEE compliant'.)
@@ -78,7 +78,7 @@ over-debug		?= 0
 over-demo		?= 0
 over-release	?= 0
 no-archive		?= 0
-archive-ext		?= arc
+archive-ext		?= marc
 
 CC 	?= gcc
 CXX ?= g++

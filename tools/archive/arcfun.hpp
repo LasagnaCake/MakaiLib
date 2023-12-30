@@ -13,16 +13,16 @@ namespace ArcSys {
 		namespace fs = std::filesystem;
 	}
 
-	enum class EncryptionMethod: size_t {
-		EM_NONE,
-		EM_AES128,
-		EM_AES192,
-		EM_AES256,
+	enum class EncryptionMethod: uint64 {
+		AEM_NONE,
+		AEM_AES128,
+		AEM_AES192,
+		AEM_AES256,
 	};
 
-	enum class CompressionMethod: size_t {
-		CM_NONE,
-		CM_ZIP
+	enum class CompressionMethod: uint64 {
+		ACM_NONE,
+		ACM_ZIP,
 	};
 
 	JSON getStructure(fs::path const& path, String const& root = "") {
@@ -44,8 +44,8 @@ namespace ArcSys {
 			String const& archivePath,
 			String const& folderPath,
 			String const& password = "",
-			EncryptionMethod const& enc = EncryptionMethod::EM_AES256,
-			CompressionMethod const& comp = CompressionMethod::CM_ZIP,
+			EncryptionMethod const& enc = EncryptionMethod::AEM_AES256,
+			CompressionMethod const& comp = CompressionMethod::ACM_ZIP,
 			uint16 const& complvl = 64
 	) try {
 		DEBUGLN("FOLDER: ", folderPath, "\nARCHIVE: ", archivePath);
@@ -72,7 +72,7 @@ namespace ArcSys {
 		// Accessors
 		uint64*	hptr64	= (uint64*)header;
 		uint16*	hptr16	= (uint16*)header;
-		uint8*	hptr8	= (uint8*)header;
+		//uint8*	hptr8	= (uint8*)header;
 		// Set main header params
 		hptr64[0]	= headerSize;		// header size
 		hptr64[1]	= fhSize;			// file header size
@@ -82,12 +82,12 @@ namespace ArcSys {
 		hptr16	= (uint16*)&hptr64[4];
 		hptr16[0]	= (uint16)enc;		// encryption mode
 		hptr16[1]	= (uint16)comp;		// compression mode
-		hptr8	= (uint8*)&hptr16[3];
 		hptr16[2]	= complvl;			// compression level
+		//hptr8	= (uint8*)&hptr16[3];
 		// Write header
-		file.write(header, headerSize);
+		file.write((char*)header, headerSize);
 		// Write directory info
-		file.write(dirInfo.data(), dirInfo.size())
+		file.write(dirInfo.data(), dirInfo.size());
 		// Close file
 		file.flush();
 		file.close();

@@ -1,7 +1,6 @@
 *.save-failed
 bin
 obj
-*.exe
 *.o
 *.backup
 res/rundebug.ps1
@@ -10,6 +9,7 @@ gmon.out
 res/data/*
 res/subsys/*
 res/*.exe
+lib/**/*.exe
 build/*
 packed/*
 docs/notes.sqlite
