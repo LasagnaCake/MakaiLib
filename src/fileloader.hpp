@@ -32,7 +32,7 @@ namespace FileLoader {
 	#define _ARCHIVE_SYSTEM_DISABLED_
 	#endif // _ARCHIVE_SYSTEM_DISABLED_
 	//*/
-	//*
+	/*
 	#ifndef _TESTING_ARCHIVE_SYS_
 	#define _TESTING_ARCHIVE_SYS_
 	#endif // _TESTING_ARCHIVE_SYS_
