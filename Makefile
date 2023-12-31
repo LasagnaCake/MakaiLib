@@ -55,7 +55,8 @@ Pack:
                     folder should be replaced. Only used for multi-target pakings.
 >   no-archive   : Specifies whether the data/ folder is not compacted into an archive. Useful if
                     resources are to be shared. Generally, loading from a folder is faster than
-                    loading from an archive, but does not offer the encryption an archive provides.
+                    loading from an archive, but does not offer the encryption an archive provides -
+                    - if a password was provided.
 >   archive-pass : ASCII characters only. Maximum of 32 characters.
 
 endef
