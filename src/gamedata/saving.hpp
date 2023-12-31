@@ -121,5 +121,5 @@ private:
 		return data;
 	}
 
-	JSONData	data	= JSON::object();
+	JSONData	data	= JSONData::object();
 };

@@ -142,8 +142,8 @@
 #include "fileloader.hpp"
 #include "predefs.hpp"
 
-using JSON = nlohmann::json;
-typedef nlohmann::ordered_json JSONData;
+using JSON = ArcSys::JSON;
+typedef ArcSys::JSONData JSONData;
 
 #ifdef _USE_OPENMP_
 #ifndef _DEBUG_OUTPUT_

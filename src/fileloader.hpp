@@ -8,7 +8,7 @@
 
 namespace FileLoader {
 	inline ArcSys::JSONData parseJSON(String const& data) {try {
-		return ArcSys::JSON::parse(data);
+		return ArcSys::JSONData::parse(data);
 		} catch (ArcSys::JSON::exception e) {
 			throw Error::FailedAction(
 				"Failed at loading JSON file!",
