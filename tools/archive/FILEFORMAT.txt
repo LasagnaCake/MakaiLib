@@ -42,7 +42,7 @@ The main header is structured as follows, in order:
      FILE FORMAT MINIMUM VERSION : 8 Bytes
                  ENCRYPTION MODE : 2 Bytes
                 COMPRESSION MODE : 2 Bytes
-               COMPRESSION LEVEL : 2 Bytes
+               COMPRESSION LEVEL : 1 Byte
 
 The directory information is formatted as a JSON object:
 {
