@@ -29,8 +29,8 @@ public:
 
 	void onCreate(String path) final override {
 		if (isAudioSystemClosed) throw Error::FailedAction("Failed to load file: Audio system is closed!");
-		List<uint8> data = FileLoader::getBinaryFile(path);
-		source = Mix_LoadWAV_RW(SDL_RWFromConstMem(data.data(), data.size()), true);
+		FileLoader::BinaryData data = FileLoader::getBinaryFile(path);
+		source = Mix_LoadWAV_RW(SDL_RWFromMem(data.data(), data.size()), true);
 		if (!source)
 			throw Error::FailedAction(
 				"Could not load file '" + path + "'!",
