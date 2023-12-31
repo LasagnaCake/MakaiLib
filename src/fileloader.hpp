@@ -7,9 +7,9 @@
 #include <archive/arcfun.hpp>
 
 namespace FileLoader {
-	inline nlohmann::ordered_json parseJSON(String const& data) {try {
-		return nlohmann::ordered_json::parse(data);
-		} catch (nlohmann::json::exception e) {
+	inline ArcSys::JSONData parseJSON(String const& data) {try {
+		return ArcSys::JSON::parse(data);
+		} catch (ArcSys::JSON::exception e) {
 			throw Error::FailedAction(
 				"Failed at loading JSON file!",
 				__FILE__,
@@ -21,7 +21,7 @@ namespace FileLoader {
 		}
 	}
 
-	inline nlohmann::ordered_json loadJSON(String const& path) {
+	inline ArcSys::JSONData loadJSON(String const& path) {
 		return parseJSON(loadTextFile(path));
 	}
 
@@ -46,7 +46,6 @@ namespace FileLoader {
 		#ifdef _IMPL_ARCHIVE_
 		bool				loadingArchive	= false;
 		FileArchive 		arc;
-		Thread				arcLoader;
 		Error::ErrorPointer	arcfail			= nullptr;
 		#endif
 	}
@@ -63,36 +62,20 @@ namespace FileLoader {
 		DEBUGLN("Attaching archive...");
 		if (loadingArchive)
 			fileLoadError(path, "Other archive is being loaded!");
-		loadingArchive = true;
-		arcLoader = Thread(
-			[&] {
-				try {
-					arcfail = nullptr;
-					arc.close();
-					arc.open(path, password);
-					loadingArchive = false;
-					DEBUGLN("Archive Attached!");
-				} catch (...) {
-					DEBUGLN("Archive attachment failed!");
-					arcfail = Error::current();
-				}
-			}
-		);
-		#endif
-	}
-
-	inline void awaitArchiveLoad() {
-		#ifdef _IMPL_ARCHIVE_
-		if (arcLoader.joinable()) {
-			DEBUGLN("Awaiting archive load...");
-			arcLoader.join();
+		try {
+			arcfail = nullptr;
+			arc.close();
+			arc.open(path, password);
+			DEBUGLN("Archive Attached!");
+		} catch (...) {
+			DEBUGLN("Archive attachment failed!");
+			arcfail = Error::current();
 		}
 		#endif
 	}
 
 	inline bool isArchiveAttached() {
 		#ifdef _IMPL_ARCHIVE_
-		if (loadingArchive) return false;
 		return arc.isOpen();
 		#else
 		return false;
@@ -110,7 +93,6 @@ namespace FileLoader {
 	#ifdef _IMPL_ARCHIVE_
 	namespace {
 		inline void assertArchive(String const& path) {
-			awaitArchiveLoad();
 			if (arcfail) Error::rethrow(arcfail);
 			if (!isArchiveAttached())
 				fileLoadError(path, "Archive is not attached!", "fileloader.hpp");
@@ -157,7 +139,7 @@ namespace FileLoader {
 		#endif
 	}
 
-	inline nlohmann::ordered_json loadJSONFromArchive(String const& path) {
+	inline ArcSys::JSONData loadJSONFromArchive(String const& path) {
 		#ifdef _IMPL_ARCHIVE_
 		assertArchive(path);
 		return parseJSON(arc.getTextFile(FileSystem::getChildPath(path)));
@@ -169,7 +151,6 @@ namespace FileLoader {
 	inline String getTextFile(String const& path) {
 		#ifdef _IMPL_ARCHIVE_
 		String res;
-		awaitArchiveLoad();
 		if (isArchiveAttached())
 			try {
 				DEBUGLN("[ARC] Loading text file...");
@@ -197,7 +178,6 @@ namespace FileLoader {
 	inline BinaryData getBinaryFile(String const& path) {
 		#ifdef _IMPL_ARCHIVE_
 		BinaryData res;
-		awaitArchiveLoad();
 		if (isArchiveAttached())
 			try {
 				DEBUGLN("[ARC] Loading binary file...");
@@ -225,7 +205,6 @@ namespace FileLoader {
 	inline CSVData getCSVFile(String const& path, char const& delimiter = ',') {
 		#ifdef _IMPL_ARCHIVE_
 		CSVData res;
-		awaitArchiveLoad();
 		if (isArchiveAttached())
 			try {
 				DEBUGLN("[ARC] Loading CSV file...");
@@ -250,10 +229,9 @@ namespace FileLoader {
 		#endif
 	}
 
-	inline nlohmann::ordered_json getJSON(String const& path) {
+	inline ArcSys::JSONData getJSON(String const& path) {
 		#ifdef _IMPL_ARCHIVE_
-		nlohmann::ordered_json res;
-		awaitArchiveLoad();
+		ArcSys::JSONData res;
 		if (isArchiveAttached())
 			try {
 				DEBUGLN("[ARC] Loading JSON file...");

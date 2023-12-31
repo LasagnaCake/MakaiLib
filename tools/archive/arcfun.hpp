@@ -269,7 +269,7 @@ namespace ArcSys {
 	void pack(
 			String const& archivePath,
 			String const& folderPath,
-			String password = "",
+			String const& password = "",
 			EncryptionMethod const& enc = EncryptionMethod::AEM_AES256,
 			CompressionMethod const& comp = CompressionMethod::ACM_ZIP,
 			uint8 const& complvl = 9
@@ -292,10 +292,6 @@ namespace ArcSys {
 		// Open file
 		std::ofstream file(archivePath, std::ios::binary | std::ios::trunc);
 		file.exceptions(std::ofstream::badbit | std::ofstream::failbit);
-		// Compressor & encryptor
-		while (password.size() < CryptoPP::Rijndael::DEFAULT_KEYLENGTH)
-			password += " ";
-		ZlibCompressor			zipper;
 		// Populate header
 		_ARCDEBUGLN("Creating header...\n");
 		// Preliminary parameters
