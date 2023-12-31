@@ -406,6 +406,13 @@ namespace ArcSys {
 			try {
 				fstruct = JSON::parse(fs);
 			} catch (JSON::exception const& e) {
+				throw FileLoader::FileLoadError(
+					"Invalid or corrupted file structure!",
+					__FILE__,
+					toString(__LINE__),
+					"FileArchive::load",
+					e.what()
+				);
 			}
 			// Set open flag
 			streamOpen = true;
@@ -480,7 +487,7 @@ namespace ArcSys {
 				else if (data.is_object()) unpackLayer(data, path);
 				else directoryTreeError();
 			}
-			std::reverse(files.begin(), files.end());
+			std::random_shuffle(files.begin(), files.end());
 			for (auto& [name, data]: files) {
 				String filepath = FileSystem::concatenatePath(path, data);
 				_ARCDEBUGLN(path, " + ", data, " = ", filepath);
@@ -489,8 +496,9 @@ namespace ArcSys {
 					filepath,
 					" (dir: ", FileSystem::getDirectoryFromPath(filepath), ")"
 				);
+				BinaryData contents = getBinaryFile(data);
 				FileSystem::makeDirectory(FileSystem::getDirectoryFromPath(filepath));
-				FileLoader::saveBinaryFile(filepath, getBinaryFile(data));
+				FileLoader::saveBinaryFile(filepath, contents);
 			}
 		}
 
@@ -519,12 +527,8 @@ namespace ArcSys {
 		FileEntry getFileEntry(String const& path) try {
 			if (!fstruct["tree"].is_object())
 				directoryTreeError();
-			_ARCDEBUGLN("Getting file entry root...");
-			String root = FileSystem::getParentDirectory(path), rest = "";
-			if (root != path)
-				rest = FileSystem::getChildPath(path);
 			_ARCDEBUGLN("Getting file entry location...");
-			uint64		idx	= getFileEntryLocation(root, rest, fstruct["tree"]);
+			uint64		idx	= getFileEntryLocation(Helper::toLower(path), path);
 			_ARCDEBUGLN("ENTRY LOCATION: ", idx);
 			_ARCDEBUGLN("Getting file entry header...");
 			FileHeader	fh	= getFileEntryHeader(idx);
@@ -533,6 +537,8 @@ namespace ArcSys {
 			_ARCDEBUGLN("               CRC32: ", fh.crc		);
 			_ARCDEBUGLN("Getting file entry data...");
 			return FileEntry{idx, path, fh, getFileEntryData(idx, fh)};
+		} catch (FileLoader::FileLoadError const& e) {
+			Error::rethrow(e);
 		} catch (std::runtime_error const& e) {
 			throw FileLoader::FileLoadError(
 				"Failed at getting file entry '" + path + "'!",
@@ -543,39 +549,45 @@ namespace ArcSys {
 			);
 		}
 
-		BinaryData getFileEntryData(uint64 const& index, FileHeader const& fh) {
+		BinaryData getFileEntryData(uint64 const& index, FileHeader const& fh) try {
 			BinaryData fd(fh.compSize, 0);
 			auto lp = archive.tellg();
 			archive.seekg(index + header.fileHeaderSize);
 			archive.read((char*)fd.data(), fh.compSize);
 			archive.seekg(lp);
 			return fd;
+		} catch (std::ios_base::failure const& e) {
+			throw std::runtime_error(String("Failed at getting file entry data: ") + String(e.what()));
 		}
 
-		FileHeader getFileEntryHeader(uint64 const& index) {
+		FileHeader getFileEntryHeader(uint64 const& index) try {
 			FileHeader fh;
 			auto lp = archive.tellg();
 			archive.seekg(index);
 			archive.read((char*)&fh, header.fileHeaderSize);
 			archive.seekg(lp);
 			return fh;
+		} catch (std::ios_base::failure const& e) {
+			throw std::runtime_error(String("Failed at getting file entry header: ") + String(e.what()));
 		}
 
-		uint64 getFileEntryLocation(String const& root, String const& path, JSONData& folder) try {
-			if (folder.is_string())
-				return decoded(folder.get<String>());
-			if (!folder.is_object())
-				doesNotExistError(root);
-			if (path == "") {
-				_ARCDEBUGLN("Getting file location...");
-				return decoded(folder[root].get<String>());
-			}
-			String newRoot = FileSystem::getParentDirectory(path), newPath = "";
-			if (newRoot != path)
-				newPath = FileSystem::getChildPath(path);
-			return getFileEntryLocation(newRoot, newPath, folder[root]);
+		uint64 getFileEntryLocation(String const& path, String const& origpath) try {
+			JSONData entry = fstruct["tree"];
+			// Loop through path and get entry location
+			for (String fld: Helper::splitString(path, {'\\', '/'}))
+				if (entry.is_object()) {
+					for (auto [k, v]: entry.items())
+						if (Helper::toLower(k) == fld) {entry = v; break;}
+				}
+				else if (entry.is_string() && Helper::toLower(entry) == fld)
+					return decoded(entry);
+				else doesNotExistError(fld);
+			// Try and get entry location
+			if (entry.is_string())
+				return decoded(entry.get<String>());
+			else notAFileError(origpath);
 		} catch (JSON::exception const& e) {
-			doesNotExistError(root);
+			doesNotExistError(origpath);
 		}
 
 		void assertOpen() const {if (!streamOpen) notOpenError();}
@@ -593,6 +605,13 @@ namespace ArcSys {
 			);
 		}
 
+		[[noreturn]] void notAFileError(String const& file) const {
+			throw FileLoader::FileLoadError(
+				"Entry '" + file + "' is not a file!",
+				__FILE__
+			);
+		}
+
 		[[noreturn]] void directoryTreeError() const {
 			throw FileLoader::FileLoadError(
 				"Missing or corrupted directory tree info!",
@@ -602,7 +621,7 @@ namespace ArcSys {
 
 		[[noreturn]] void corruptedFileError(String const& path) const {
 			throw FileLoader::FileLoadError(
-				"Corrupted file '" + path + "'",
+				"Corrupted file '" + path + "'!",
 				__FILE__
 			);
 		}

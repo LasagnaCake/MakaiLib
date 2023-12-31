@@ -275,6 +275,11 @@ namespace Helper {
 		return res;
 	}
 
+	constexpr String toLower(String data) {
+		std::transform(data.begin(), data.end(), data.begin(), [](unsigned char c){return std::tolower(c);});
+		return data;
+	}
+
 	template<typename T>
 	using Enumerated = HashMap<size_t, T>;
 

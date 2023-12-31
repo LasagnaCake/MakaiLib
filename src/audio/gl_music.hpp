@@ -51,7 +51,8 @@ public:
 
 	void onCreate(String path) final override {
 		if (isAudioSystemClosed) throw Error::FailedAction("Failed to load file: Audio system is closed!");
-		source = Mix_LoadMUS(path.c_str());
+		List<uint8> data = FileLoader::getBinaryFile(path);
+		source = Mix_LoadMUS_RW(SDL_RWFromConstMem(data.data(), data.size()), true);
 		if (!source)
 			throw Error::FailedAction(
 				"Could not load file '" + path + "'!",

@@ -3,6 +3,7 @@
 
 #include <string>
 #include <stdexcept>
+#include "conceptual.hpp"
 
 namespace Error {
 	namespace {
@@ -39,6 +40,18 @@ namespace Error {
 			caller(_caller),
 			info(_info),
 			callerInfo(_callerInfo)
+		{sumbuf = summary();}
+
+		Error(Error const& other):
+			Error(
+				other.type,
+				other.message,
+				other.file,
+				other.line,
+				other.caller,
+				other.info,
+				other.callerInfo
+			)
 		{}
 
 		string report() const noexcept {
@@ -55,9 +68,16 @@ namespace Error {
 			);
 		}
 
-		const char* what() const noexcept {
-			return (type + ": " + message + (!info.empty() ? ("\n\n" + info) : "")).c_str();
+		string summary() const noexcept {
+			return (type + ": " + message + (!info.empty() ? ("\n" + info) : "")).c_str();
 		}
+
+		const char* what() const noexcept {
+			return sumbuf.c_str();
+		}
+
+	private:
+		string sumbuf = "";
 	};
 
 	#define DEFINE_ERROR_TYPE(NAME)\
@@ -96,6 +116,9 @@ namespace Error {
 	ErrorPointer current() {return std::current_exception();}
 
 	[[noreturn]] void rethrow(ErrorPointer const& err) {std::rethrow_exception(err);}
+
+	template<Type::Derived<Error> T>
+	[[noreturn]] void rethrow(T const& err) {throw T(err);}
 }
 
 #define DEFINE_ERROR_TYPE(NAME)\

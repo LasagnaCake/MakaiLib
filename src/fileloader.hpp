@@ -103,8 +103,8 @@ namespace FileLoader {
 				path,
 				toString(
 					"\nMultiple possibilities!\n\n",
-					"FOLDER: ", fe, "\n",
-					"ARCHIVE: ", ae, "\n"
+					"[[ FOLDER ]]\n", fe, "\n",
+					"[[ ARCHIVE ]]\n", ae, "\n"
 				),
 				"fileloader.hpp"
 			);
@@ -160,14 +160,14 @@ namespace FileLoader {
 					DEBUGLN("[FLD-2] Loading text file...");
 					res = loadTextFile(path);
 				} catch (FileLoadError const& fe) {
-					fileGetError(path, fe.info, ae.info);
+					fileGetError(path, fe.summary(), ae.summary());
 				}
 			}
 		else try {
 			DEBUGLN("[FLD-1] Loading text file...");
 			res = loadTextFile(path);
 		} catch (FileLoadError const& e) {
-			fileGetError(path, e.info, "Archive not attached!");
+			fileGetError(path, e.summary(), "Archive not attached!");
 		}
 		return res;
 		#else
@@ -187,14 +187,14 @@ namespace FileLoader {
 					DEBUGLN("[FLD-2] Loading binary file...");
 					res = loadBinaryFile(path);
 				} catch (FileLoadError const& fe) {
-					fileGetError(path, fe.info, ae.info);
+					fileGetError(path, fe.summary(), ae.summary());
 				}
 			}
 		else try {
 			DEBUGLN("[FLD-1] Loading binary file...");
 			res = loadBinaryFile(path);
 		} catch (FileLoadError const& e) {
-			fileGetError(path, e.info, "Archive not attached!");
+			fileGetError(path, e.summary(), "Archive not attached!");
 		}
 		return res;
 		#else
@@ -214,14 +214,14 @@ namespace FileLoader {
 					DEBUGLN("[FLD-2] Loading CSV file...");
 					res = loadCSVFile(path);
 				} catch (FileLoadError const& fe) {
-					fileGetError(path, fe.info, ae.info);
+					fileGetError(path, fe.summary(), ae.summary());
 				}
 			}
 		else try {
 			DEBUGLN("[FLD-1] Loading CSV file...");
 			res = loadCSVFile(path);
 		} catch (FileLoadError const& e) {
-			fileGetError(path, e.info, "Archive not attached!");
+			fileGetError(path, e.summary(), "Archive not attached!");
 		}
 		return res;
 		#else
@@ -241,14 +241,14 @@ namespace FileLoader {
 					DEBUGLN("[FLD-2] Loading JSON file...");
 					res = loadJSON(path);
 				} catch (FileLoadError const& fe) {
-					fileGetError(path, fe.info, ae.info);
+					fileGetError(path, fe.summary(), ae.summary());
 				}
 			}
 		else try {
 			DEBUGLN("[FLD-1] Loading JSON file...");
 			res = loadJSON(path);
 		} catch (FileLoadError const& e) {
-			fileGetError(path, e.info, "Archive not attached!");
+			fileGetError(path, e.summary(), "Archive not attached!");
 		}
 		return res;
 		#else
