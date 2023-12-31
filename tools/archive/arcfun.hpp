@@ -11,6 +11,7 @@
 #include <cppcodec/base64_rfc4648.hpp>
 #include <cppcodec/base32_rfc4648.hpp>
 #include <filesystem>
+#include <algorithm>
 
 #ifdef ARCSYS_APLLICATION_
 #define _ARCDEBUG(...)		DEBUG(__VA_ARGS__)
@@ -477,20 +478,23 @@ namespace ArcSys {
 
 		void unpackLayer(JSONData& layer, String const& path) {
 			assertOpen();
+			List<Entry<String>> files;
 			for (auto& [name, data]: layer.items()) {
-				if (data.is_string()) {
-					String filepath = FileSystem::concatenatePath(path, data.get<String>());
-					_ARCDEBUGLN(path, " + ", data.get<String>(), " = ", filepath);
-					_ARCDEBUGLN(
-						"'", name, "': ",
-						filepath,
-						" (dir: ", FileSystem::getDirectoryFromPath(filepath), ")"
-					);
-					FileSystem::makeDirectory(FileSystem::getDirectoryFromPath(filepath));
-					FileLoader::saveBinaryFile(filepath, getBinaryFile(data));
-				}
+				if (data.is_string()) files.push_back(Entry<String>(name, data));
 				else if (data.is_object()) unpackLayer(data, path);
 				else directoryTreeError();
+			}
+			std::reverse(files.begin(), files.end());
+			for (auto& [name, data]: files) {
+				String filepath = FileSystem::concatenatePath(path, data);
+				_ARCDEBUGLN(path, " + ", data, " = ", filepath);
+				_ARCDEBUGLN(
+					"'", name, "': ",
+					filepath,
+					" (dir: ", FileSystem::getDirectoryFromPath(filepath), ")"
+				);
+				FileSystem::makeDirectory(FileSystem::getDirectoryFromPath(filepath));
+				FileLoader::saveBinaryFile(filepath, getBinaryFile(data));
 			}
 		}
 
