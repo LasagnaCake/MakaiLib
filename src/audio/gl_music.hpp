@@ -51,7 +51,7 @@ public:
 
 	void onCreate(String path) final override {
 		if (isAudioSystemClosed) throw Error::FailedAction("Failed to load file: Audio system is closed!");
-		FileLoader::BinaryData data = FileLoader::getBinaryFile(path);
+		data = FileLoader::getBinaryFile(path);
 		source = Mix_LoadMUS_RW(SDL_RWFromMem(data.data(), data.size()), true);
 		if (!source)
 			throw Error::FailedAction(
@@ -72,6 +72,7 @@ public:
 				Mix_HaltMusic();
 			Mix_FreeMusic(source);
 		}
+		data.clear();
 		DEBUGLN("Music source deleted!");
 	}
 
@@ -134,5 +135,7 @@ private:
 		play(loops, fadeInTime);
 	};
 
-	Mix_Music* source = nullptr;
+	FileLoader::BinaryData data;
+
+	Mix_Music* source = NULL;
 };
