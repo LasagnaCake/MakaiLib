@@ -14,7 +14,6 @@ namespace EntityClass {
 		using
 		VecMath::Points2D,
 		VecMath::Points3D,
-		VecMath::angleTo,
 		VecMath::center,
 		std::unordered_map;
 		using namespace Collision;
