@@ -325,7 +325,7 @@ class Vector2
 
 		/// Gets the vector's angle.
 		constexpr float angle() const {
-			return - atan2(x, y) + Math::hpi;
+			return atan2(x, y) - Math::hpi;
 		}
 
 		/// Gets the vector's angle to another vector.
