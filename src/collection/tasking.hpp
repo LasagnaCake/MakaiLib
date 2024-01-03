@@ -260,9 +260,15 @@ namespace Tasking {
 		MultiTasker() {}
 
 		/// Vector constructor.
-		MultiTasker(TaskerList tList) {
+		MultiTasker(TaskerList const& tList) {
 			clearTaskers();
 			taskers = tList;
+		}
+
+		/// Init list constructor.
+		MultiTasker(Arguments<Tasker*> tList) {
+			clearTaskers();
+			for (auto t: tList) taskers.push_back(t);
 		}
 
 		/// Array pointer constructor (UNTESTED).
@@ -276,7 +282,7 @@ namespace Tasking {
 		}
 
 		/// Sets the MultiTasker's Taskers.
-		void setTaskers(TaskerList tList) {
+		void setTaskers(TaskerList const& tList) {
 			clearTaskers();
 			taskers = tList;
 		}

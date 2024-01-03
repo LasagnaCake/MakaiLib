@@ -7,6 +7,8 @@ struct BossPhaseData {
 	Event::Signal	action			= Event::DEF_SIGNAL;
 };
 
+typedef List<BossPhaseData> BossPhases;
+
 class BossEntity2D: public EnemyEntity2D {
 public:
 	DERIVED_CLASS(BossEntity2D, EnemyEntity2D)
@@ -45,7 +47,7 @@ public:
 
 	LinearBar	remainingPhases;
 
-	std::vector<BossPhaseData> phases;
+	BossPhases	phases;
 
 	virtual void onDeath() {
 		if (!battling) return;
@@ -74,7 +76,8 @@ public:
 		if (!battling) return;
 		timerDisplay.text.content = "00.00";
 		auto& phase = phases[currentPhase];
-		onPhaseEnd(currentPhase-1, phases[currentPhase-1].spell);
+		if (currentPhase != 0)
+			onPhaseEnd(currentPhase-1, phases[currentPhase-1].spell);
 		if (!phase.delay) {
 			setInvincible(phase.invincibility);
 			updatePhase();
@@ -117,9 +120,11 @@ public:
 	void moveTo(
 		Vector2 const&	pos,
 		size_t			time,
-		Ease::EaseMode	mode = Ease::linear
+		Ease::EaseMode	mode		= Ease::linear,
+		Event::Signal	onCompleted	= Event::DEF_SIGNAL
 	) {
 		bossMover.setInterpolation(position, pos, time, mode, &position);
+		bossMover.onCompleted = onCompleted;
 	}
 
 	void setUILayer(size_t layer) {
@@ -148,6 +153,7 @@ private:
 		if(phases.empty() || !(currentPhase < phases.size()))
 			endBattle();
 		auto& phase = phases[currentPhase];
+		maxHealth =
 		health = phase.health;
 		phase.action();
 		phaseDuration = phase.duration;

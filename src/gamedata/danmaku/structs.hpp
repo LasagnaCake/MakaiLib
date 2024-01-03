@@ -33,7 +33,7 @@ struct ObjectData: GenericObjectData {
 	bool rotateHitbox	= true;
 };
 
-typedef std::vector<float> ObjectFlags;
+typedef HashMap<String, float> ObjectFlags;
 
 struct DanmakuObject;
 
