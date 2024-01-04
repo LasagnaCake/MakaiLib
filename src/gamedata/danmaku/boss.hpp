@@ -121,7 +121,7 @@ public:
 
 	void moveTo(
 		Vector2 const&	pos,
-		size_t			time,
+		size_t const&	time,
 		Ease::EaseMode	mode		= Ease::linear,
 		Event::Signal	onCompleted	= Event::DEF_SIGNAL
 	) {
