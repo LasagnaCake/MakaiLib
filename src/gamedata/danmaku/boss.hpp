@@ -78,6 +78,8 @@ public:
 		auto& phase = phases[currentPhase];
 		if (currentPhase != 0)
 			onPhaseEnd(currentPhase-1, phases[currentPhase-1].spell);
+		if (currentPhase == phases.size())
+			endBattle();
 		if (!phase.delay) {
 			setInvincible(phase.invincibility);
 			updatePhase();
