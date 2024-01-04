@@ -226,12 +226,12 @@ namespace Helper {
 	// God fucking dammit, MSYS2.
 	#ifdef _USE_CPP20_FORMAT_
 	template<Type::Number T>
-	String floatString(T const& val, size_t const& precision = 2) {
+	String floatString(T const& val, size_t const& precision) {
 		return std::format(std::format("{{:.{}f}}", precision), val);
 	}
 	#else
 	template<Type::Number T>
-	String floatString(T const& val, size_t const& precision = 1) {
+	String floatString(T const& val, size_t const& precision) {
 		if (!precision)
 			return std::to_string((long long)val);
 		std::stringstream ss;
@@ -246,11 +246,32 @@ namespace Helper {
 	#endif // _USE_CPP20_FORMAT_
 
 	template<Type::Number T>
-	using FloatFormat = Pair<T, size_t>;
+	using NumberFormat = Pair<T, size_t>;
 
 	template<Type::Number T>
-	String floatString(FloatFormat<T> const& fmt) {
+	String floatString(NumberFormat<T> const& fmt) {
 		return floatString(fmt->first, fmt->second);
+	}
+
+	String padString(String const& str, char const& chr, size_t const width) {
+		std::stringstream ss;
+		Fold::strins(
+			ss,
+			std::setfill(chr),
+			std::setw(width),
+			str
+		);
+		return ss.str();
+	}
+
+	template<Type::Number T>
+	String formatNumber(T const& val, size_t const& leading) {
+		return padString(std::to_string(val), '0', leading);
+	}
+
+	template<Type::Number T>
+	String floatString(T const& val, size_t const& precision, size_t const& leading) {
+		return padString(floatString(val, precision), '0', leading);
 	}
 
 	StringList splitString(String const& str, char const& sep) {

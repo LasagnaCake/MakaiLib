@@ -27,7 +27,7 @@ public:
 			beginNextPhase();
 		};
 		// Boss mover tween
-		bossMover.yield();
+		bossMover.setManual();
 		setUIElements();
 		setUILayer(UI_LAYER);
 		battling =
@@ -69,16 +69,20 @@ public:
 
 	virtual void onFrame(float delta) override {
 		EnemyEntity2D::onFrame(delta);
+		bossMover.yield();
 		if (!battling) return;
 		phaseTimer.yield();
 		durationTimer.yield();
-		bossMover.yield();
 		float tsec = (phaseDuration - durationTimer.getCounter()) / getMainProgram()->maxCycleRate;
 		size_t phaseCount = phases.size();
 		timerDisplay.text.content = Helper::floatString(tsec, 2);
 		remainingPhases.max			= phaseCount;
 		remainingPhases.value		= phaseCount - currentPhase;
-		phaseDisplay.text.content	= toString(currentPhase, "/", phaseCount);
+		phaseDisplay.text.content	= toString(
+			Helper::formatNumber(currentPhase, 2),
+			"/",
+			Helper::formatNumber(phaseCount, 2)
+		);
 	}
 
 	void beginNextPhase() {

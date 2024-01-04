@@ -1,4 +1,4 @@
-typedef Helper::FloatFormat<float> PowerFormat;
+typedef Helper::NumberFormat<float> PowerFormat;
 
 typedef Function<String(size_t)> PowerStringFunc;
 
