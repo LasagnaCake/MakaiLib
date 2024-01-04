@@ -15,19 +15,25 @@ public:
 
 	DERIVED_CONSTRUCTOR(BossEntity2D, EnemyEntity2D, {
 		// Boss phase timer
+		phaseTimer.setManual();
 		phaseTimer.stop();
 		phaseTimer.onSignal = SIGNAL {
 			updatePhase();
 		};
 		// Boss phase duration timer
+		durationTimer.setManual();
 		durationTimer.stop();
 		durationTimer.onSignal = SIGNAL {
 			beginNextPhase();
 		};
+		// Boss mover tween
+		bossMover.yield();
 		setUIElements();
 		setUILayer(UI_LAYER);
 		battling =
 		collision.enabled = false;
+		timerDisplay.text.rectAlign	=
+		timerDisplay.text.textAlign	= .5;
 	})
 
 	Texture2D
@@ -64,12 +70,15 @@ public:
 	virtual void onFrame(float delta) override {
 		EnemyEntity2D::onFrame(delta);
 		if (!battling) return;
+		phaseTimer.yield();
+		durationTimer.yield();
+		bossMover.yield();
 		float tsec = (phaseDuration - durationTimer.getCounter()) / getMainProgram()->maxCycleRate;
 		size_t phaseCount = phases.size();
 		timerDisplay.text.content = Helper::floatString(tsec, 2);
 		remainingPhases.max			= phaseCount;
 		remainingPhases.value		= phaseCount - currentPhase;
-		phaseDisplay.text.content	= toString(currentPhase, " / ", phaseCount);
+		phaseDisplay.text.content	= toString(currentPhase, "/", phaseCount);
 	}
 
 	void beginNextPhase() {
@@ -112,6 +121,7 @@ public:
 	void setUIVisibility(bool visible = true) {
 		healthBar.active		= visible;
 		timerDisplay.active		= visible;
+		phaseDisplay.active		= visible;
 		remainingPhases.active	= visible;
 	}
 
