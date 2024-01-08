@@ -57,7 +57,7 @@ public:
 
 	virtual void onDeath() {
 		if (!battling) return;
-		beginNextPhase();
+		if (!invincible) beginNextPhase();
 	}
 
 	virtual void onBattleBegin() {beginNextPhase();}
