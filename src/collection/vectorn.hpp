@@ -253,6 +253,16 @@ class Vector2
 			return *this;
 		}
 
+		/// Unary operators
+
+		constexpr Vector2 operator+() const {
+			return *this;
+		}
+
+		constexpr Vector2 operator-() const {
+			return *this * -1;
+		}
+
 		// Other overloads
 
 		constexpr float& operator[](size_t const& pos)		{if (pos > 1) return data[0]; return data[pos];}
@@ -610,6 +620,16 @@ class Vector3
 		constexpr Vector3& operator^=(float const& val) {
 			*this ^= Vector3(val);
 			return *this;
+		}
+
+		/// Unary operators
+
+		constexpr Vector3 operator+() const {
+			return *this;
+		}
+
+		constexpr Vector3 operator-() const {
+			return *this * -1;
 		}
 
 		// Other overloads
@@ -1026,6 +1046,14 @@ class Vector4
 		constexpr Vector4& operator%=(float const& val) {
 			*this %= Vector4(val);
 			return *this;
+		}
+
+		constexpr Vector4 operator+() const {
+			return *this;
+		}
+
+		constexpr Vector4 operator-() const {
+			return *this * -1;
 		}
 
 		// Other overloads
