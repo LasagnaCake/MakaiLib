@@ -91,12 +91,15 @@ public:
 		auto& phase = phases[currentPhase];
 		if (currentPhase != 0)
 			onPhaseEnd(currentPhase-1, phases[currentPhase-1].spell);
-		if (currentPhase == phases.size())
+		if (currentPhase >= phases.size()) {
 			endBattle();
+			return;
+		}
 		if (!phase.delay) {
 			setInvincible(phase.invincibility);
 			updatePhase();
 		} else {
+			maxHealth = ++health;
 			setInvincible(phase.delay + phase.invincibility);
 			phaseTimer.start(phase.delay);
 		}
@@ -166,8 +169,10 @@ private:
 
 	void updatePhase() {
 		if(!battling) return;
-		if(phases.empty() || !(currentPhase < phases.size()))
+		if(phases.empty() || currentPhase >= phases.size()) {
 			endBattle();
+			return;
+		}
 		auto& phase = phases[currentPhase];
 		maxHealth =
 		health = phase.health;
