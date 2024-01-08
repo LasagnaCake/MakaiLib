@@ -88,6 +88,7 @@ public:
 	void beginNextPhase() {
 		if (!battling) return;
 		timerDisplay.text.content = "00.00";
+		durationTimer.stop();
 		auto& phase = phases[currentPhase];
 		if (currentPhase != 0)
 			onPhaseEnd(currentPhase-1, phases[currentPhase-1].spell);

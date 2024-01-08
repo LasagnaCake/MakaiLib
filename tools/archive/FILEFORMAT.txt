@@ -55,3 +55,4 @@ The file header is structured as follows, in order:
   UNCOMPRESSED SIZE : 8 Bytes
     COMPRESSED SIZE : 8 Bytes
               CRC32 : 4 Bytes
+              BLOCK : 16 Bytes

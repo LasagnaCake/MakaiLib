@@ -64,12 +64,14 @@ namespace ArcSys {
 	template<class T>
 	BinaryData cbcTransform(
 		BinaryData const&		data,
-		String					password	= ""
+		String					password	= "",
+		uint8* const&			block		= nullptr
 	) try {
 		String result;
 		T tf;
 		uint8* iv = new uint8[16];
-		memset(iv, 0, 16);
+		if (iv != nullptr)	memcpy(iv, block, 16);
+		else				memset(iv, 0, 16);
 		while (password.size() < tf.MaxKeyLength())
 			password += " ";
 		if (password.size() > 32)
@@ -130,29 +132,32 @@ namespace ArcSys {
 		template<typename T>
 		BinaryData cbcEncrypt(
 			BinaryData const&		data,
-			String const&			password	= ""
+			String const&			password	= "",
+			uint8* const&			block		= nullptr
 		) {
-			return cbcTransform<typename CBC_Mode<T>::Encryption>(data, password);
+			return cbcTransform<typename CBC_Mode<T>::Encryption>(data, password, block);
 		}
 
 		template<typename T>
 		BinaryData cbcDecrypt(
 			BinaryData const&		data,
-			String const&			password	= ""
+			String const&			password	= "",
+			uint8* const&			block		= nullptr
 		) {
-			return cbcTransform<typename CBC_Mode<T>::Decryption>(data, password);
+			return cbcTransform<typename CBC_Mode<T>::Decryption>(data, password, block);
 		}
 	}
 
 	BinaryData encrypt(
 		BinaryData const&		data,
 		String const&			password	= "",
-		EncryptionMethod const&	method		= EncryptionMethod::AEM_AES256
+		EncryptionMethod const&	method		= EncryptionMethod::AEM_AES256,
+		uint8* const&			block		= nullptr
 	) {
 		switch (method) {
 			default: throw Error::InvalidValue("Invalid encryption method!");
 			case EncryptionMethod::AEM_NONE:	return data;
-			case EncryptionMethod::AEM_AES256:	return cbcEncrypt<AES>(data, password);
+			case EncryptionMethod::AEM_AES256:	return cbcEncrypt<AES>(data, password, block);
 		}
 		return data;
 	}
@@ -160,12 +165,13 @@ namespace ArcSys {
 	BinaryData decrypt(
 		BinaryData const&		data,
 		String const&			password	= "",
-		EncryptionMethod const&	method		= EncryptionMethod::AEM_AES256
+		EncryptionMethod const&	method		= EncryptionMethod::AEM_AES256,
+		uint8* const&			block		= nullptr
 	) {
 		switch (method) {
 			default: throw Error::InvalidValue("Invalid decryption method!");
 			case EncryptionMethod::AEM_NONE:	return data;
-			case EncryptionMethod::AEM_AES256:	return cbcDecrypt<AES>(data, password);
+			case EncryptionMethod::AEM_AES256:	return cbcDecrypt<AES>(data, password, block);
 		}
 		return data;
 	}
@@ -248,9 +254,10 @@ namespace ArcSys {
 	}
 
 	struct FileHeader {
-		uint64 uncSize;
-		uint64 compSize;
-		uint32 crc;
+		uint64	uncSize;
+		uint64	compSize;
+		uint32	crc			= 0;
+		uint8	block[16]	= {0};
 		// Put new things BELOW this line
 	};
 
@@ -260,11 +267,17 @@ namespace ArcSys {
 		uint64	dirInfoSize;
 		uint64	version			= 0;
 		uint64	minVersion		= 0;
-		uint16	encryption		= (uint16) EncryptionMethod::AEM_AES256;
+		uint16	encryption		= (uint16)EncryptionMethod::AEM_AES256;
 		uint16	compression		= (uint16)CompressionMethod::ACM_ZIP;
 		uint8	level			= 9;
 		// Put new things BELOW this line
 	};
+
+	void generateBlock(uint8 const(& block)[16]) {
+		uint64* b = (uint64*)block;
+		b[0] = Math::Random::integer();
+		b[1] = Math::Random::integer();
+	}
 
 	void pack(
 			String const& archivePath,
@@ -322,12 +335,15 @@ namespace ArcSys {
 		// Write file info
 		_ARCDEBUGLN("\nWriting files...\n");
 		for (auto const& [i, f]: Helper::enumerate(files)) {
+			// Get current stream position as file location
 			locations[i] = file.tellp();
 			// Read file
 			FLD::BinaryData contents = FLD::loadBinaryFile(f);
 			// Prepare header
 			FileHeader fheader;
 			fheader.uncSize = contents.size();				// Uncompressed file size
+			// Generate block
+			generateBlock(fheader.block);					// Encryption block
 			// Process file
 			if (!contents.empty()) {
 				contents = compress(
@@ -339,7 +355,8 @@ namespace ArcSys {
 				contents = encrypt(
 					contents,
 					password,
-					enc
+					enc,
+					fheader.block
 				);
 				_ARCDEBUGLN("After encryption: ", contents.size());
 			}
@@ -352,7 +369,6 @@ namespace ArcSys {
 			_ARCDEBUGLN("   UNCOMPRESSED SIZE: ", fheader.uncSize	);
 			_ARCDEBUGLN("     COMPRESSED SIZE: ", fheader.compSize	);
 			_ARCDEBUGLN("               CRC32: ", fheader.crc		);
-			_ARCDEBUGLN("");
 			// Copy header & file data
 			file.write((char*)&fheader, header.fileHeaderSize);
 			file.write((char*)contents.data(), contents.size());
@@ -509,7 +525,8 @@ namespace ArcSys {
 			data = decrypt(
 				data,
 				pass,
-				(EncryptionMethod)header.encryption
+				(EncryptionMethod)header.encryption,
+				entry.header.block
 			);
 			_ARCDEBUGLN("After decryption: ", data.size());
 			data = decompress(
