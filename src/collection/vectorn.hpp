@@ -92,7 +92,7 @@ class Vector2
 			y = vec.y;
 		}
 
-		constexpr Vector2(const float (&data)[2]) {
+		constexpr Vector2(float const(& data)[2]) {
 			for (size_t i = 0; i < 2; i++)
 				this->data[i] = data[i];
 		}
@@ -441,7 +441,7 @@ class Vector3
 			this->z = z;
 		}
 
-		constexpr Vector3(const float (&data)[3]) {
+		constexpr Vector3(float const(& data)[3]) {
 			for (size_t i = 0; i < 3; i++)
 				this->data[i] = data[i];
 		}
@@ -853,7 +853,7 @@ class Vector4
 			this->w = w;
 		}
 
-		constexpr Vector4(const float (&data)[4]) {
+		constexpr Vector4(float const(& data)[4]) {
 			for (size_t i = 0; i < 4; i++)
 				this->data[i] = data[i];
 		}

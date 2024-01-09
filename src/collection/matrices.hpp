@@ -6,14 +6,11 @@
 #include "helper.hpp"
 
 namespace MatType {
-	template <size_t A, size_t B>
-	concept EqualSize = (A == B);
-
 	template <typename T1, typename T2>
 	concept Compatitble = Math::Operatable<T2> && Type::Convertible<T2, T1>;
 
 	template <size_t R, size_t C>
-	concept ValidTransform = EqualSize<R, C> && (R == 4);
+	concept ValidTransform = (R == 4) && (R == C);
 }
 
 /**
@@ -43,19 +40,19 @@ public:
 			data[start-1-i][start-1-i] = v;
 	}
 
-	constexpr Matrix(const T(&v)[1]) {
+	constexpr Matrix(T const(& v)[1]) {
 		for (size_t i = 0; i < C; i++)
 			for (size_t j = 0; j < R; j++)
 				data[i][j] = v[0];
 	}
 
-	constexpr Matrix(const T(&v)[R][C]) {
+	constexpr Matrix(T const(& v)[R][C]) {
 		for (size_t i = 0; i < C; i++)
 			for (size_t j = 0; j < R; j++)
 				data[i][j] = v[j][i];
 	}
 
-	constexpr Matrix(const T(&v)[R*C]) {
+	constexpr Matrix(T const(& v)[R*C]) {
 		T hack[R][C];
 		for (size_t i = 0; i < R*C; i++)
 			((T*)hack)[i] = v[i];
@@ -64,14 +61,15 @@ public:
 				data[i][j] = hack[j][i];
 	}
 
-	/*constexpr Matrix(const T(&v)[C]) {
+	constexpr Matrix(const T(&v)[C])
+	requires (C > 1) {
 		for (size_t i = 0; i < C; i++)
 			for (size_t j = 0; j < R; j++)
 				data[i][j] = v[i];
-	}*/
+	}
 
 	template<MatType::Compatitble<T> T2>
-	constexpr Matrix(const T2(&v)[1]) {
+	constexpr Matrix(T2 const(& v)[1]) {
 		T rv = T(v[0]);
 		size_t const start = Math::min(C, R);
 		for (size_t i = 0; i < C; i++)
@@ -80,14 +78,14 @@ public:
 	}
 
 	template<MatType::Compatitble<T> T2>
-	constexpr Matrix(const T2(&v)[R][C]) {
+	constexpr Matrix(T2 const(& v)[R][C]) {
 		for (size_t i = 0; i < C; i++)
 			for (size_t j = 0; j < R; j++)
 				data[i][j] = T(v[j][i]);
 	}
 
 	template<MatType::Compatitble<T> T2>
-	constexpr Matrix(const T2(&v)[R*C]) {
+	constexpr Matrix(T2 const(& v)[R*C]) {
 		T2 hack[R][C];
 		for (size_t i = 0; i < R*C; i++)
 			((T2*)hack)[i] = v[i];
@@ -96,12 +94,13 @@ public:
 				data[i][j] = T(hack[j][i]);
 	}
 
-	/*template<MatType::Compatitble<T> T2>
-	constexpr Matrix(const T2(&v)[C]) {
+	template<MatType::Compatitble<T> T2>
+	constexpr Matrix(const T2(&v)[C])
+	requires (C > 1) {
 		for (size_t i = 0; i < C; i++)
 			for (size_t j = 0; j < R; j++)
 				data[i][j] = T(v[i]);
-	}*/
+	}
 
 	constexpr Matrix(Vector2 const& vec) {
 		static_assert(R >= 2 && C >= 1, "Matrix is not a valid representation of a 2D vector!");
@@ -188,24 +187,24 @@ public:
 		return res;
 	}
 
-	constexpr Matrix<C, R, T>& transpose() requires MatType::EqualSize<R, C> {
+	constexpr Matrix<C, R, T>& transpose() requires (R == C) {
 		(*this) = transposed();
 		return *this;
 	}
 
-	constexpr static Matrix<R, C, T> identity() requires MatType::EqualSize<R, C> {
+	constexpr static Matrix<R, C, T> identity() requires (R == C) {
 		static_assert(C == R, "Matrix is not a square matrix!");
 		return Matrix<R, C, T>(1);
 	}
 
-	constexpr static Matrix<R, C, T> prototype() requires MatType::EqualSize<R, C> {
+	constexpr static Matrix<R, C, T> prototype() requires (R == C) {
 		static_assert(C == R, "Matrix is not a square matrix!");
 		Matrix<R, C, T> res(0);
 		res.data[R-1][C-1] = 1;
 		return res;
 	}
 
-	constexpr static Matrix<R, C, T> mirror() requires MatType::EqualSize<R, C> {
+	constexpr static Matrix<R, C, T> mirror() requires (R == C) {
 		static_assert(C == R, "Matrix is not a square matrix!");
 		Matrix<R, C, T> res(0);
 		for(size_t i = 0; i < R; i++)
@@ -283,7 +282,7 @@ public:
 		return Matrix(1).scaled(vec);
 	}
 
-	constexpr Matrix<R, C, T> inverted() const requires MatType::EqualSize<R, C> {
+	constexpr Matrix<R, C, T> inverted() const requires (R == C) {
 		static_assert(C == R, "Matrix is not a square matrix!");
 		T det = determinant();
 		if (det == T(0)) return Matrix(1);
@@ -291,7 +290,7 @@ public:
 		return res;
 	}
 
-	constexpr Matrix<R, C, T>& invert() requires MatType::EqualSize<R, C> {
+	constexpr Matrix<R, C, T>& invert() requires (R == C) {
 		static_assert(C == R, "Matrix is not a square matrix!");
 		(*this) = inverted();
 		return *this;
@@ -354,7 +353,7 @@ public:
 		return (*this);
 	}
 
-	constexpr Matrix<R, C, T> cofactors() const requires MatType::EqualSize<R, C> {
+	constexpr Matrix<R, C, T> cofactors() const requires (R == C) {
 		static_assert(C == R, "Matrix is not a square matrix!");
 		Matrix<R, C, T> res;
 		for (size_t i = 0; i < R; i++)
@@ -363,7 +362,7 @@ public:
 		return res;
 	}
 
-	constexpr T determinant() const requires MatType::EqualSize<R, C> {
+	constexpr T determinant() const requires (R == C) {
 		static_assert(C == R, "Matrix is not a square matrix!");
 		if constexpr(C == 1)		return data[0][0];
 		else if constexpr(C == 2)	return data[0][0] * data[1][1] - data[1][0] * data[0][1];
@@ -543,14 +542,14 @@ public:
 
 	/// Assignment operator overloading.
 
-	constexpr Matrix<R, C, T>& operator=(const T(&v)[R][C]) {
+	constexpr Matrix<R, C, T>& operator=(T const(& v)[R][C]) {
 		for (size_t i = 0; i < C; i++) {
 			for (size_t j = 0; j < R; j++)
 				data[i][j] = T(v[i][j]);
 		}
 	}
 
-	constexpr Matrix<R, C, T>& operator=(const T(&v)[R*C]) {
+	constexpr Matrix<R, C, T>& operator=(T const(& v)[R*C]) {
 		for (size_t i = 0; i < R*C; i++)
 			((float*)data)[i] = T(v[i]);
 	}
@@ -620,7 +619,7 @@ public:
 		return *this;
 	}
 
-	constexpr Matrix<R, C, T>& operator*=(Matrix<R, C, T> const& mat) requires MatType::EqualSize<R, C> {
+	constexpr Matrix<R, C, T>& operator*=(Matrix<R, C, T> const& mat) requires (R == C) {
 		(*this) = (*this) * mat;
 		return *this;
 	}
@@ -638,7 +637,7 @@ public:
 	}
 
 	template<size_t C2>
-	constexpr Matrix<R, C, T>& operator/=(Matrix<R, C, T> const& mat) requires MatType::EqualSize<R, C> {
+	constexpr Matrix<R, C, T>& operator/=(Matrix<R, C, T> const& mat) requires (R == C) {
 		(*this) = (*this) / mat;
 		return *this;
 	}
