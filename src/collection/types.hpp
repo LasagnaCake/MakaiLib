@@ -55,8 +55,12 @@ typedef int8	sbyte;
 typedef uint8	ubyte;
 typedef int16	sword;
 typedef uint16	uword;
+typedef uint32	udword;
+typedef uint64	uqword;
 
 typedef ubyte	byte;
 typedef uword	word;
+typedef udword	dword;
+typedef uqword	qword;
 
 #endif // EXTENDED_TYPES_H
