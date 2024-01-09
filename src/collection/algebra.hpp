@@ -68,7 +68,7 @@ namespace Math {
 		constexpr auto FLOAT128_V	= LDOUBLE_V;
 	}
 
-	namespace Period {
+	namespace Interval {
 		constexpr auto BYTE_V		= 1;
 		constexpr auto UBYTE_V		= 1;
 		constexpr auto SHORT_V		= 1;
