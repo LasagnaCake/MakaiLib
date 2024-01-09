@@ -13,7 +13,7 @@
 #include <filesystem>
 #include <algorithm>
 
-#ifdef ARCSYS_APLLICATION_
+#ifdef ARCSYS_APPLICATION_
 #define _ARCDEBUG(...)		DEBUG(__VA_ARGS__)
 #define _ARCDEBUGLN(...)	DEBUGLN(__VA_ARGS__)
 #define _ARCEXIT exit(-1)
@@ -286,7 +286,11 @@ namespace ArcSys {
 			EncryptionMethod const& enc = EncryptionMethod::AEM_AES256,
 			CompressionMethod const& comp = CompressionMethod::ACM_ZIP,
 			uint8 const& complvl = 9
+	#ifdef ARCSYS_APPLICATION_
 	) try {
+	#else
+	) {
+	#endif // ARCSYS_APPLICATION_
 		if (enc != EncryptionMethod::AEM_NONE && password.empty())
 			throw Error::InvalidValue("Missing password for encrypted file!");
 		_ARCDEBUGLN("FOLDER: ", folderPath, "\nARCHIVE: ", archivePath);
@@ -383,6 +387,7 @@ namespace ArcSys {
 		// Close file
 		file.flush();
 		file.close();
+	#ifdef ARCSYS_APPLICATION_
 	} catch (Error::Error const& e) {
 		_ARCDEBUGLN(e.report());
 		_ARCEXIT;
@@ -390,6 +395,9 @@ namespace ArcSys {
 		_ARCDEBUGLN("ERROR: ", e.what());
 		_ARCEXIT;
 	}
+	#else
+	}
+	#endif // ARCSYS_APPLICATION_
 
 	struct FileArchive {
 		struct FileEntry {
@@ -456,7 +464,7 @@ namespace ArcSys {
 				"could not load file '" + path + "'!",
 				__FILE__,
 				"unspecified",
-				"unspecified",
+				"FileArchive::getTextFile",
 				e.message
 			);
 		}
@@ -471,7 +479,7 @@ namespace ArcSys {
 				"could not load file '" + path + "'!",
 				__FILE__,
 				"unspecified",
-				"unspecified",
+				"FileArchive::getBinaryFile",
 				e.message
 			);
 		}
@@ -561,7 +569,7 @@ namespace ArcSys {
 				"Failed at getting file entry '" + path + "'!",
 				__FILE__,
 				"unspecified",
-				"unspecified",
+				"FileArchive::getFileEntry",
 				e.what()
 			);
 		}
@@ -661,11 +669,16 @@ namespace ArcSys {
 		String const& archivePath,
 		String const folderPath,
 		String const& password = ""
+	#ifdef ARCSYS_APPLICATION_
 	) try {
+	#else
+	) {
+	#endif // ARCSYS_APPLICATION_
 		_ARCDEBUGLN("\nOpening archive...\n");
 		FileArchive arc(archivePath, password);
 		_ARCDEBUGLN("\nExtracting data...\n");
 		arc.unpackTo(folderPath);
+	#ifdef ARCSYS_APPLICATION_
 	} catch (Error::Error const& e) {
 		_ARCDEBUGLN(e.report());
 		_ARCEXIT;
@@ -673,6 +686,9 @@ namespace ArcSys {
 		_ARCDEBUGLN("ERROR: ", e.what());
 		_ARCEXIT;
 	}
+	#else
+	}
+	#endif // ARCSYS_APPLICATION_
 }
 
 

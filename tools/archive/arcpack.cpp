@@ -1,4 +1,4 @@
-#define ARCSYS_APLLICATION_
+#define ARCSYS_APPLICATION_
 
 #include "arcfun.hpp"
 
