@@ -15,6 +15,8 @@
 
 namespace Math {
 	namespace Max {
+		constexpr auto CHAR_V		= std::numeric_limits<signed char>::max();
+		constexpr auto UCHAR_V		= std::numeric_limits<unsigned char>::max();
 		constexpr auto BYTE_V		= std::numeric_limits<signed char>::max();
 		constexpr auto UBYTE_V		= std::numeric_limits<unsigned char>::max();
 		constexpr auto SHORT_V		= std::numeric_limits<short>::max();
@@ -69,6 +71,8 @@ namespace Math {
 	}
 
 	namespace Interval {
+		constexpr auto CHAR_V		= 1;
+		constexpr auto UCHAR_V		= 1;
 		constexpr auto BYTE_V		= 1;
 		constexpr auto UBYTE_V		= 1;
 		constexpr auto SHORT_V		= 1;
@@ -122,8 +126,8 @@ namespace Math {
 	constexpr const double	tauphi		= tau / phi;
 	constexpr const double	infinity	= std::numeric_limits<double>::infinity();
 	constexpr const float	infinityF	= std::numeric_limits<float>::infinity();
-	constexpr const double	epsilon		= std::numeric_limits<double>::epsilon() * 10.0;
-	constexpr const float	epsilonF	= std::numeric_limits<float>::epsilon() * 10.0;
+	constexpr const double	epsilon		= std::numeric_limits<double>::epsilon();
+	constexpr const float	epsilonF	= std::numeric_limits<float>::epsilon();
 
 	#ifndef SQRT2
 	#define SQRT2 Math::sqrt2
