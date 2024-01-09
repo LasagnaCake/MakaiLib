@@ -296,6 +296,26 @@ namespace Helper {
 		return res;
 	}
 
+	constexpr StringList splitStringAtFirst(String const& str, char const& sep) {
+		auto pos = str.find(sep);
+		if (pos == str.npos)
+			return StringList{str};
+		return StringList{
+			str.substr(0, pos),
+			str.substr(pos)
+		};
+	}
+
+	constexpr StringList splitStringAtFirst(String const& str, Arguments<char> const& seps) {
+		StringList res = {str}, buf;
+		for (char const& sep: seps) {
+			buf = splitStringAtFirst(str, sep);
+			if (buf[0].size() < res[0].size())
+				res = buf;
+		}
+		return res;
+	}
+
 	constexpr String toLower(String data) {
 		std::transform(data.begin(), data.end(), data.begin(), [](unsigned char c){return std::tolower(c);});
 		return data;
@@ -627,16 +647,13 @@ namespace FileSystem {
 	}
 
 	inline String getParentDirectory(String const& path) {
-		return splitString(path, {'\\', '/'})[0];
+		return splitStringAtFirst(path, {'\\', '/'})[0];
 	}
 
 	inline String getChildPath(String const& path) {
-		StringList dirs = splitString(path, {'\\', '/'});
+		StringList dirs = splitStringAtFirst(path, {'\\', '/'});
 		if (dirs.size() == 1) return path;
-		String child = dirs[1];
-		for SSRANGE(i, 2, dirs.size())
-			child += "/" + dirs[i];
-		return child;
+		return dirs[1];
 	}
 }
 

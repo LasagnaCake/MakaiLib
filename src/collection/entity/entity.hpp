@@ -10,13 +10,13 @@
 
 /// Derived class construction macro.
 #define ENTITY_CLASS(NAME, BASE) \
-	using EntityClass:: BASE :: BASE ;\
-	using EntityClass:: BASE ::~ BASE ;\
+	using Entities:: BASE :: BASE ;\
+	using Entities:: BASE ::~ BASE ;\
 	inline virtual std::string getClass() {return #NAME;}\
 	inline virtual std::string getBaseClass() {return #BASE;}\
 	inline static std::string getCoreClass() {return BASE::getCoreClass();}
 
-namespace EntityClass {
+namespace Entities {
 }
 
 #endif // OBJECT_MAIN_HEADER_H

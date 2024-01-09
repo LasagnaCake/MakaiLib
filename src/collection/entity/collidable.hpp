@@ -9,7 +9,7 @@
 #include "../errors.hpp"
 #include "../collisions.hpp"
 
-namespace EntityClass {
+namespace Entities {
 	namespace {
 		using
 		VecMath::Points2D,

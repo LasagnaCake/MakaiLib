@@ -465,7 +465,7 @@ namespace Makai {
 			SetProcessDPIAware();
 			#endif
 			#endif
-			DEBUGLN(EntityClass::_ROOT == nullptr);
+			DEBUGLN(Entities::_ROOT == nullptr);
 			// Save window resolution
 			this->width = width;
 			this->height = height;
@@ -559,10 +559,10 @@ namespace Makai {
 			SLF::SLFData data = SLF::parseFile(mainShaderPath);
 			MAIN_SHADER.destroy();
 			MAIN_SHADER.create(data);
-			DEBUGLN(EntityClass::_ROOT ? "Root Exists!" : "Root does not exist!");
-			if (!EntityClass::_ROOT) {
+			DEBUGLN(Entities::_ROOT ? "Root Exists!" : "Root does not exist!");
+			if (!Entities::_ROOT) {
 				DEBUGLN("Initializing root tree...");
-				EntityClass::init();
+				Entities::init();
 			}
 			DEBUGLN("All core systems initialized!");
 		}
@@ -583,8 +583,8 @@ namespace Makai {
 			};
 			// The logical process
 			auto logicFunc	= [&](float delta)-> void {
-				if (EntityClass::_ROOT)
-					EntityClass::_ROOT->yield(delta);
+				if (Entities::_ROOT)
+					Entities::_ROOT->yield(delta);
 			};
 			// Clear screen
 			Drawer::clearColorBuffer(color);
@@ -634,7 +634,7 @@ namespace Makai {
 					logicFunc(cycleDelta * speed);
 					onLogicFrame(cycleDelta * speed);
 					// Destroy queued entities
-					EntityClass::destroyQueued();
+					Entities::destroyQueued();
 					#endif // FRAME_DEPENDENT_PROCESS
 				}
 				#endif
@@ -650,7 +650,7 @@ namespace Makai {
 					logicFunc(frameDelta);
 					onLogicFrame(frameDelta);
 					// Destroy queued entities
-					EntityClass::destroyQueued();
+					Entities::destroyQueued();
 					#endif // FRAME_DEPENDENT_PROCESS
 					// Render screen
 					render();
@@ -673,7 +673,7 @@ namespace Makai {
 					logicFunc(cycleDelta * speed);
 					onLogicFrame(cycleDelta * speed);
 					// Destroy queued entities
-					EntityClass::destroyQueued();
+					Entities::destroyQueued();
 					#endif // FRAME_DEPENDENT_PROCESS
 				}
 				#endif
@@ -842,7 +842,7 @@ namespace Makai {
 			DEBUGLN("Closing sound system...");
 			Audio::closeSystem();
 			Mix_Quit();
-			EntityClass::_ROOT->deleteChildren();
+			Entities::_ROOT->destroyChildren();
 			DEBUGLN("Sound system closed!");
 			// Destroy buffers
 			DEBUGLN("Destroying frame buffers...");

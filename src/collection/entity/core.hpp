@@ -30,27 +30,21 @@
 /// Core class construction macro.
 #define ENTITY_CLASS(NAME, BASE)\
 	using	Entity::Entity;\
-	inline	virtual string getClass() {return #NAME;}\
-	inline	virtual string getBaseClass() {return #BASE;}\
-	inline	static string getCoreClass() {return #NAME;}
+	inline	virtual String getClass() {return #NAME;}\
+	inline	virtual String getBaseClass() {return #BASE;}\
+	inline	static String getCoreClass() {return #NAME;}
 
 /// Core derived class construction macro.
 #define DERIVED_CLASS(NAME, BASE)\
 	using	BASE :: BASE ;\
-	inline	virtual string getClass() {return #NAME;}\
-	inline	virtual string getBaseClass() {return #BASE;}\
-	inline	static string getCoreClass() {return #NAME;}
+	inline	virtual String getClass() {return #NAME;}\
+	inline	virtual String getBaseClass() {return #BASE;}\
+	inline	static String getCoreClass() {return #NAME;}
 
-namespace EntityClass {
+namespace Entities {
 	// Conflict prevention
 	namespace {
-		using
-		std::vector,
-		std::string,
-		std::invalid_argument,
-		std::function,
-		std::unordered_map,
-		Tasking::MultiTasker;
+		using Tasking::MultiTasker;
 
 		// Duplicate root prevention system
 		namespace { bool rc = false; }
@@ -62,7 +56,7 @@ namespace EntityClass {
 			return true;
 		}
 
-		vector<const Event::Signal*> destroyQueue;
+		List<const Event::Signal*> destroyQueue;
 	}
 
 	/// Deletes all queued objects.
@@ -75,7 +69,7 @@ namespace EntityClass {
 	}
 
 	/// The root object's name.
-	const string ENTITY_ROOT_NAME = DEFAULT_ENTITY_ROOT_NAME;
+	const String ENTITY_ROOT_NAME = DEFAULT_ENTITY_ROOT_NAME;
 
 	class Entity;
 
@@ -87,6 +81,8 @@ namespace EntityClass {
 
 	typedef Group::Group<Entity*> EntityGroup;
 	EntityGroup groups;
+
+	typedef List<Entity*> EntityList;
 
 	void init();
 
@@ -121,11 +117,11 @@ namespace EntityClass {
 		virtual void	onFrame(float delta)	{}
 
 		/// Gets the object's class.
-		inline virtual string getClass() {return "Entity";}
+		inline virtual String getClass() {return "Entity";}
 		/// Gets the object's base class.
-		inline virtual string getBaseClass() {return "Entity";}
+		inline virtual String getBaseClass() {return "Entity";}
 		/// Gets the object's "core" (EClass::) class
-		inline static string getCoreClass() {return "Entity";}
+		inline static String getCoreClass() {return "Entity";}
 
 		/// Destructor.
 		virtual ~Entity() {
@@ -134,12 +130,15 @@ namespace EntityClass {
 		}
 
 		/// Parent-less constructor.
-		Entity(string name = "Entity", bool uniqueEntity = true) {
+		Entity(
+			String const& name = "Entity",
+			bool const& uniqueEntity = true
+		) {
 			// If root doesn't exist, create it
 			if (name != ENTITY_ROOT_NAME)
 				init();
 			// Set object's name
-			if (name.length()) setName(name);
+			if (name.length()) setName(name, uniqueEntity);
 			else
 				Error::InvalidValue("Name cannot be null or empty.");
 			// Call function to be executed at creation
@@ -150,20 +149,24 @@ namespace EntityClass {
 		}
 
 		/// Parented constructor.
-		Entity(Entity* parent, string name = "Entity", bool uniqueEntity = true): Entity(name) {
+		Entity(
+			Entity* const& parent,
+			String const& name = "Entity",
+			bool const& uniqueEntity = true
+		): Entity(name) {
 			// Parent object
 			parent->addChild(this, uniqueEntity);
 		}
 
-		void addToGroup(size_t group) {
+		void addToGroup(size_t const& group) {
 			groups.addObject(this, group);
 		}
 
-		vector<size_t> getGroups(size_t group) {
+		List<size_t> getGroups(size_t const& group) {
 			return groups.getGroups(this);
 		}
 
-		bool isInGroup(size_t group) {
+		bool isInGroup(size_t const& group) {
 			return groups.isInGroup(this, group);
 		}
 
@@ -171,7 +174,7 @@ namespace EntityClass {
 			groups.removeFromAll(this);
 		}
 
-		void removeFromGroup(size_t group) {
+		void removeFromGroup(size_t const& group) {
 			groups.removeFromGroup(this, group);
 		}
 
@@ -182,41 +185,36 @@ namespace EntityClass {
 		* Returns null if child does not exist.
 		* TODO: Refactor this code, to be less of a mess.
 		*/
-		Entity* getChild(string path) {
-			// The current level of the path
-			string level;
+		Entity* getChild(String const& path) {
 			// The object's child to look for
-			string root = "";
-			// The object to look for in the child, if applicable
-			string next = "";
-			// Whether it is the last object to search
-			bool isLast = true;
-			// Create stream and get root
-			std::istringstream objPath(path);
-			std::getline(objPath, root, '/');
-			// Loop through path string and get the rest
-			while (getline(objPath, level, '/')) {
-				isLast = false;
-				next += level + '/';
-			}
-			// If next isn't empty, remove last character
-			if (next != "") next.pop_back();
+			StringList tree = Helper::splitStringAtFirst(path, '/');
+			// Whether it is the last object in the list
+			bool isFinalBranch = tree.size() == 1;
 			// If root requested...
-			if (root == ENTITY_ROOT_NAME) {
+			if (tree[0] == ENTITY_ROOT_NAME) {
 				// If not last object to search, search root
-				if(!isLast) return getRoot()->getChild(next);
+				if(!isFinalBranch)
+					return getRoot()->getChild(tree[1]);
 				// Else, return root
-				else return getRoot();
+				return getRoot();
 			}
 			// If object has children...
 			if(children.size()) {
+				// If must go a level higher...
+				if (tree[0] == "..") {
+					// If parented, check in parent
+					if (parent)
+						return parent->getChild(tree[1]);
+					// Else, return null pointer
+					return nullptr;
+				}
 				// If not last object to search...
-				if (!isLast)
+				if (!isFinalBranch)
 					// Loop through children and...
 					for(Entity* child : children){
 						// If child is root, search through child
-						if (child->name == root)
-							return child->getChild(next);
+						if (child->name == tree[0])
+							return child->getChild(tree[1]);
 					}
 				// else, loop through children (but different!) and...
 				else for(Entity* child : children)
@@ -229,7 +227,7 @@ namespace EntityClass {
 
 		/// Gets one of the object's child, and casts it.
 		template <class T>
-		T* getChild(string path) {
+		T* getChild(String const& path) {
 			// Try and get object
 			Entity* child = getChild(path);
 			// If it exists, return object (casted)
@@ -241,7 +239,7 @@ namespace EntityClass {
 		/**
 		* Gets the object's Nth child.
 		*/
-		inline Entity* getChild(size_t index) {
+		inline Entity* getChild(size_t const& index) {
 			return children[index];
 		}
 
@@ -250,13 +248,21 @@ namespace EntityClass {
 			return children.size();
 		}
 
+		/// Gets a copy of the object's children.
+		inline EntityList getChildren() {
+			return children;
+		}
+
 		/**
 		* Re-parents a child to object.
 		* uniqueChild: Whether to check if child is unique
 		* (i.e. must have unique name).
 		* Useful if child will need to be searchable.
 		*/
-		void addChild(Entity* child, bool uniqueChild = true) {
+		void addChild(
+			Entity* const& child,
+			bool const& uniqueChild = true
+		) {
 			// If parented, remove child from parent
 			Entity* oldParent = child->getParent();
 			if (oldParent) oldParent->removeChild(child);
@@ -269,7 +275,7 @@ namespace EntityClass {
 		}
 
 		/// Re-parents children to new parent.
-		void reparentChildren(Entity* newParent) {
+		void reparentChildren(Entity* const& newParent) {
 			// If there are children...
 			if (children.size())
 				// Loop through children and re-parent them
@@ -280,7 +286,7 @@ namespace EntityClass {
 		}
 
 		/// Sets the object's parent, while also avoiding cyclical parenting.
-		void setParent(Entity* parent) {
+		void setParent(Entity* const& parent) {
 			// Check if object is root object
 			if (name == ENTITY_ROOT_NAME)
 				throw Error::InvalidValue("Root cannot be parented.");
@@ -325,25 +331,25 @@ namespace EntityClass {
 		}
 
 		/// Renames object, while also being careful with duplicate names.
-		void setName(string newName, bool mustHaveUniqueName = true) {
+		void setName(String const& newName, bool const& mustHaveUniqueName = true) {
 			// if root, or trying to rename to root, error
 			if ((name == ENTITY_ROOT_NAME || newName == ENTITY_ROOT_NAME) && ENTITY_ROOT_CREATED())
 				throw Error::InvalidValue(
-					string("Cannot rename root object, or name object '")
+					String("Cannot rename root object, or name object '")
 					+ ENTITY_ROOT_NAME
-					+ string("'.")
+					+ String("'.")
 				);
 			// Check if name does not contain invalid characters
 			for (char c : newName)
 				if (c == '/')
 					throw Error::InvalidValue(
-						string("Name cannot contain '/': ")
+						String("Name cannot contain '/': ")
 						+ newName
 					);
 			// Name copies count
 			size_t copies = 0;
 			// Name to check
-			string uniqueName = newName;
+			String uniqueName = newName;
 			// If parented and must have unique name, check for duplicate names
 			if (parent && mustHaveUniqueName)
 				while (parent->getChild(uniqueName))
@@ -353,27 +359,27 @@ namespace EntityClass {
 		}
 
 		/// Returns the object's name.
-		inline string getName() {
+		inline String getName() {
 			return name;
 		}
 
 		/// Compares self with another object, and returns whether they are the same.
-		bool compare(Entity* other) {
+		bool compare(Entity* const& other) {
 			return this == other;
 		}
 
 		/// Deletes a child of a given name.
-		void deleteChild(string name) {
+		void destroyChild(String const& name) {
 			getChild(name)->destroy();
 		}
 
 		/// Deletes a child at a given index.
-		void deleteChild(size_t index) {
+		void destroyChild(size_t const& index) {
 			children[index]->destroy();
 		}
 
 		/// Deletes all children.
-		void deleteChildren() {
+		void destroyChildren() {
 			auto chvec = children;
 			for (Entity* child : chvec) {
 				removeChild(child);
@@ -383,32 +389,32 @@ namespace EntityClass {
 		}
 
 		/// Equality operator overload.
-		bool operator==(Entity other) {
+		bool operator==(Entity& other) {
 			return compare(&other);
 		}
 
 		/// Equality operator overload (reference).
-		bool operator==(Entity* other) {
+		bool operator==(Entity* const& other) {
 			return (this == other);
 		}
 
 		/// Inequality operator overload.
-		bool operator!=(Entity other) {
+		bool operator!=(Entity& other) {
 			return !compare(&other);
 		}
 
 		/// Inequality operator overload (reference).
-		bool operator!=(Entity* other) {
+		bool operator!=(Entity* const& other) {
 			return !(this == other);
 		}
 
 		/// Bracket operator overload (name).
-		Entity* operator[](string name) {
+		Entity* operator[](String const& name) {
 			return getChild(name);
 		}
 
 		/// Bracket operator overload (index).
-		Entity* operator[](size_t idx) {
+		Entity* operator[](size_t const& idx) {
 			return getChild(idx);
 		}
 
@@ -418,13 +424,13 @@ namespace EntityClass {
 		}
 
 		/// Subtraction Assignment operator overload (name).
-		void operator-=(string name) {
-			deleteChild(name);
+		void operator-=(String const& name) {
+			destroyChild(name);
 		}
 
 		/// Subtraction Assignment operator overload (index).
-		void operator-=(size_t index) {
-			deleteChild(index);
+		void operator-=(size_t const& index) {
+			destroyChild(index);
 		}
 
 		/// Deletes self.
@@ -486,10 +492,9 @@ namespace EntityClass {
 		}
 
 		void removeFromTree() {
-			// If there are children...
+			// If there are children, delete them
 			if (children.size())
-				// Delete them
-				deleteChildren();
+				destroyChildren();
 			// If parented, remove self from parent's children
 			if (parent) parent->removeChild(this);
 			// Clear children list
@@ -501,10 +506,10 @@ namespace EntityClass {
 		Entity* parent = nullptr;
 
 		/// The object's name.
-		string name;
+		String name;
 
 		/// The object's children.
-		vector<Entity*> children;
+		EntityList children;
 
 		/// Calls the onDelete function.
 		void callOnDelete() {
@@ -524,7 +529,7 @@ namespace EntityClass {
 	* Gets called upon program start.
 	*/
 	[[gnu::constructor]] void init() {
-		if (EntityClass::_ROOT == nullptr) {
+		if (Entities::_ROOT == nullptr) {
 			DEBUGLN("Creating root tree...");
 			_ROOT = new Entity(ENTITY_ROOT_NAME);
 			DEBUGLN("Root tree created!");
@@ -536,7 +541,7 @@ namespace EntityClass {
 	* Gets called upon program end.
 	*/
 	[[gnu::destructor]] void close() {
-		if (EntityClass::_ROOT != nullptr) {
+		if (Entities::_ROOT != nullptr) {
 			DEBUGLN("Destroying root tree...");
 			delete _ROOT;
 			_ROOT = nullptr;
@@ -546,7 +551,7 @@ namespace EntityClass {
 
 	/// Gets a specific object in the root tree, and casts it appropriately.
 	template <EntityType T>
-	T* getEntity(string path) {
+	T* getEntity(String const& path) {
 		// Try and get object
 		Entity* res = _ROOT->getChild(path);
 		// If it exists, return object (casted)

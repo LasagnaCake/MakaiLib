@@ -130,7 +130,7 @@ public:
 	void onFrame(float delta) override {
 		GAME_PARALLEL_FOR
 		for SEACH(item, items, ITEM_COUNT)
-			for EACH(actor, EntityClass::collisionLayers.getGroup(ACTOR_LAYER)) {
+			for EACH(actor, Entities::collisionLayers.getGroup(ACTOR_LAYER)) {
 				item.onFrame(delta);
 				if (!item.isFree() && item.params.collidable) {
 					auto a = (PlayerEntity2D*)actor;

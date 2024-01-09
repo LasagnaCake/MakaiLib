@@ -148,7 +148,7 @@ public:
 			auto& b = bullets[i];
 			b.onFrame(delta);
 			if (!b.isFree() && b.params.collidable) {
-				for EACH(actor, EntityClass::groups.getGroup(ENEMY_LAYER)) {
+				for EACH(actor, Entities::groups.getGroup(ENEMY_LAYER)) {
 					auto a = (AreaCircle2D*)actor;
 					auto targetBounds = a->collision.shape;
 					if (

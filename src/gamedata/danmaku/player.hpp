@@ -353,7 +353,7 @@ struct PlayerEntity2D: AreaCircle2D {
 			if (!lllist.empty())
 				onGraze(lllist.size(), lllist);
 		}
-		auto elist = EntityClass::groups.getGroup(ENEMY_LAYER);
+		auto elist = Entities::groups.getGroup(ENEMY_LAYER);
 		if (elist.size()) {
 			for EACH_IF(
 				enemy,
@@ -389,9 +389,9 @@ struct PlayerEntity2D: AreaCircle2D {
 			target->isInGroup(ENEMY_LAYER) ||
 			target->isInGroup(ENEMY_BULLET_LAYER) ||
 			target->isInGroup(ENEMY_LASER_LAYER) ||
-			EntityClass::collisionLayers.isInGroup(target, ENEMY_LAYER) ||
-			EntityClass::collisionLayers.isInGroup(target, ENEMY_BULLET_LAYER) ||
-			EntityClass::collisionLayers.isInGroup(target, ENEMY_LASER_LAYER)
+			Entities::collisionLayers.isInGroup(target, ENEMY_LAYER) ||
+			Entities::collisionLayers.isInGroup(target, ENEMY_BULLET_LAYER) ||
+			Entities::collisionLayers.isInGroup(target, ENEMY_LASER_LAYER)
 		) {
 			pichun();
 		}

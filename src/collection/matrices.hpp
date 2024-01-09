@@ -126,7 +126,8 @@ public:
 		data[C-1][3] = vec.w;
 	}
 
-	constexpr Matrix(VecMath::Transform3D const& trans) requires MatType::ValidTransform<R, C> {
+	constexpr Matrix(VecMath::Transform3D const& trans)
+	requires MatType::ValidTransform<R, C> {
 		compose(trans);
 	}
 
@@ -425,6 +426,8 @@ public:
 
 	/// Arithmetic operator overloading.
 
+	constexpr Matrix<R, C, T> operator+() const {return *this;}
+
 	constexpr Matrix<R, C, T> operator+(T const& val) const {
 		Matrix<R, C, T> res;
 		for (size_t i = 0; i < C; i++)
@@ -454,6 +457,14 @@ public:
 	constexpr Matrix<R, C, T> operator+(Vector4 const& vec) const {
 		static_assert(R == 4 && C == 1, "Matrix size is invalid!");
 		return (*this) + Matrix<R, C, float>(vec);
+	}
+
+	constexpr Matrix<R, C, T> operator-() const {
+		Matrix<R, C, T> res;
+		for (size_t i = 0; i < C; i++)
+			for (size_t j = 0; j < R; j++)
+				res[j][i] = -data[i][j];
+		return res;
 	}
 
 	constexpr Matrix<R, C, T> operator-(T const& val) const {
@@ -619,12 +630,14 @@ public:
 		return *this;
 	}
 
-	constexpr Matrix<R, C, T>& operator*=(Matrix<R, C, T> const& mat) requires (R == C) {
+	constexpr Matrix<R, C, T>& operator*=(Matrix<R, C, T> const& mat)
+	requires (R == C) {
 		(*this) = (*this) * mat;
 		return *this;
 	}
 
-	constexpr Matrix<R, C, T> operator*=(VecMath::Transform3D const& trans) const requires MatType::ValidTransform<R, C> {
+	constexpr Matrix<R, C, T> operator*=(VecMath::Transform3D const& trans)
+	requires MatType::ValidTransform<R, C> {
 		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
 		return (*this) *= Matrix<R, C, float>(trans);
 	}
@@ -637,18 +650,22 @@ public:
 	}
 
 	template<size_t C2>
-	constexpr Matrix<R, C, T>& operator/=(Matrix<R, C, T> const& mat) requires (R == C) {
+	constexpr Matrix<R, C, T>& operator/=(Matrix<R, C, T> const& mat)
+	requires (R == C) {
 		(*this) = (*this) / mat;
 		return *this;
 	}
 
 	/// Other operator overloadings.
 
-	constexpr Span<T, R> operator[](size_t const& idx) {return Span{data[idx]};}
+	constexpr Span<T, R> operator[](size_t const& idx)				{return Span{data[idx]};	}
+	constexpr Span<const T, R> operator[](size_t const& idx) const	{return Span{data[idx]};	}
 
-	constexpr Span<const T, R> operator[](size_t const& idx) const {return Span{data[idx]};}
+	constexpr T* begin()	{return &data[0][0];		}
+	constexpr T* end()		{return &data[C-1][R-1];	}
 
-	constexpr float* operator*() {return data;};
+	constexpr const T* begin() const	{return &data[0][0];		}
+	constexpr const T* end() const		{return &data[C-1][R-1];	}
 
 	template <MatType::Compatitble<T> T2>
 	constexpr operator Matrix<R, C, T2>() const {return Matrix<R, C, T2>(data);}
@@ -657,8 +674,8 @@ public:
 	constexpr operator Vector3() const {return toVector3();}
 	constexpr operator Vector4() const {return toVector4();}
 
-	constexpr explicit operator const T*() const	{return (const T*)data;}
-	constexpr explicit operator T*()				{return (T*)data;}
+	constexpr explicit operator const T*() const	{return data.begin();	}
+	constexpr explicit operator T*()				{return data.begin();	}
 
 	/// Converters.
 

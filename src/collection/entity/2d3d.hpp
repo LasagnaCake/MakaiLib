@@ -4,7 +4,7 @@
 #include "core.hpp"
 #include "../vectorn.hpp"
 
-namespace EntityClass {
+namespace Entities {
 	namespace {
 		using
 		VecMath::srpTransform,

@@ -57,7 +57,7 @@ namespace Shader {
 			}
 
 			void operator()(Matrix4x4 const& value) const {
-				glUniformMatrix4fv(getUniform(), 1, GL_FALSE, (const float*)value);
+				glUniformMatrix4fv(getUniform(), 1, GL_FALSE, value.begin());
 			}
 
 			void operator()(int* const& values, size_t const& count) {

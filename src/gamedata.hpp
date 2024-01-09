@@ -30,14 +30,14 @@
 	inline	virtual String getBaseClass() {return #BASE;}\
 	inline	static String getCoreClass() {return BASE::getCoreClass();}\
 	NAME(String name = #NAME, bool uniqueEntity = true) : BASE(name, uniqueEntity) {onCreate();}\
-	NAME(EntityClass::Entity* parent, String name = #NAME , bool uniqueEntity = true) : BASE(parent, name, uniqueEntity) {onCreate();}
+	NAME(Entities::Entity* parent, String name = #NAME , bool uniqueEntity = true) : BASE(parent, name, uniqueEntity) {onCreate();}
 
 namespace GameData {
 	namespace {
 		using
-		EntityClass::AreaCircle2D,
-		EntityClass::Entity2D,
-		EntityClass::Entity,
+		Entities::AreaCircle2D,
+		Entities::Entity2D,
+		Entities::Entity,
 		RenderData::Renderable,
 		RenderData::Reference::Plane,
 		RenderData::Reference::AnimatedPlane,
@@ -69,28 +69,28 @@ namespace GameData {
 	using TypedSignal = TypedEvent::Signal<T>;
 
 	void addToGame(Entity* const& e, String const& gameType) {
-		if (!EntityClass::_ROOT)
+		if (!Entities::_ROOT)
 			throw Error::NonexistentValue(
 				"Root wasn't created!",
 				__FILE__,
 				toString(__LINE__),
 				"GameData::addToGame()"
 			);
-		Entity* gameRoot = EntityClass::_ROOT->getChild("Game");
+		Entity* gameRoot = Entities::_ROOT->getChild("Game");
 		if (gameRoot == nullptr) {
-			gameRoot = new EntityClass::Entity("Game");
-			EntityClass::_ROOT->addChild(gameRoot);
+			gameRoot = new Entities::Entity("Game");
+			Entities::_ROOT->addChild(gameRoot);
 		}
 		Entity* game = gameRoot->getChild(gameType);
 		if (game == nullptr) {
-			game = new EntityClass::Entity(gameType);
+			game = new Entities::Entity(gameType);
 			gameRoot->addChild(game);
 		}
 		game->addChild(e);
 	}
 
 	Entity* getGame(String const& gameType) {
-		return EntityClass::_ROOT->getChild("Game/"+gameType);
+		return Entities::_ROOT->getChild("Game/"+gameType);
 	}
 
 	void setWorldMaterial(WorldMaterial& mat) {

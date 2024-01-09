@@ -189,7 +189,7 @@ public:
 			auto* l = &lasers[i];
 			l->onFrame(delta);
 			if (!l->isFree() && l->params.collidable) {
-				for EACH(actor, EntityClass::groups.getGroup(ENEMY_LAYER)) {
+				for EACH(actor, Entities::groups.getGroup(ENEMY_LAYER)) {
 					auto a = (AreaCircle2D*)actor;
 					if (
 						a->collision.enabled
