@@ -167,7 +167,7 @@ namespace Math {
 
 	#ifndef MARIBEL
 	#define MARIBEL Math::maribel
-	#endif // DEGRAD
+	#endif // MARIBEL
 
 	#ifndef TAUPHI
 	#define TAUPHI Math::tauphi
