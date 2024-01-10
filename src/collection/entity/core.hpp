@@ -187,24 +187,24 @@ namespace Entities {
 		*/
 		Entity* getChild(String const& path) {
 			// The object's child to look for
-			StringList tree = Helper::splitStringAtFirst(path, '/');
+			auto [root, next] = Helper::splitStringAtFirst(path, '/');
 			// Whether it is the last object in the list
-			bool isFinalBranch = tree.size() == 1;
+			bool isFinalBranch = next.empty();
 			// If root requested...
-			if (tree[0] == ENTITY_ROOT_NAME) {
+			if (root == ENTITY_ROOT_NAME) {
 				// If not last object to search, search root
 				if(!isFinalBranch)
-					return getRoot()->getChild(tree[1]);
+					return getRoot()->getChild(next);
 				// Else, return root
 				return getRoot();
 			}
 			// If object has children...
 			if(children.size()) {
 				// If must go a level higher...
-				if (tree[0] == "..") {
+				if (root == "..") {
 					// If parented, check in parent
 					if (parent)
-						return parent->getChild(tree[1]);
+						return parent->getChild(next);
 					// Else, return null pointer
 					return nullptr;
 				}
@@ -213,8 +213,8 @@ namespace Entities {
 					// Loop through children and...
 					for(Entity* child : children){
 						// If child is root, search through child
-						if (child->name == tree[0])
-							return child->getChild(tree[1]);
+						if (child->name == root)
+							return child->getChild(next);
 					}
 				// else, loop through children (but different!) and...
 				else for(Entity* child : children)
@@ -396,16 +396,6 @@ namespace Entities {
 		/// Equality operator overload (reference).
 		bool operator==(Entity* const& other) {
 			return (this == other);
-		}
-
-		/// Inequality operator overload.
-		bool operator!=(Entity& other) {
-			return !compare(&other);
-		}
-
-		/// Inequality operator overload (reference).
-		bool operator!=(Entity* const& other) {
-			return !(this == other);
 		}
 
 		/// Bracket operator overload (name).

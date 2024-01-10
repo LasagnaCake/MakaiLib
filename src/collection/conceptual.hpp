@@ -233,6 +233,9 @@ namespace Type {
 		concept GreaterEquals = requires (A a, B b) {a >= b;};
 
 		template <typename A, typename B>
+		concept Threeway = requires (A a, B b) {a <=> b;};
+
+		template <typename A, typename B>
 		concept All =
 			Equals<A, B>
 		&&	NotEquals<A, B>

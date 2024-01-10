@@ -187,17 +187,6 @@ class Vector2
 			return *this;
 		}
 
-		constexpr bool operator==(Vector2 const& vec) const {
-			return (
-				x == vec.x &&
-				y == vec.y
-			);
-		}
-
-		constexpr bool operator!=(Vector2 const& vec) const {
-			return !(*this == vec);
-		}
-
 		/// Float operator overloading.
 		constexpr Vector2 operator+(float const& val) const {
 			return *this + Vector2(val);
@@ -251,6 +240,30 @@ class Vector2
 		constexpr Vector2& operator^=(float const& val) {
 			*this ^= Vector2(val);
 			return *this;
+		}
+
+		/// Comparison operators
+
+		typedef Helper::PartialOrder OrderType;
+
+		constexpr bool operator==(Vector2 const& other) const {
+			return (
+				x == other.x
+			&&	y == other.y
+			);
+		}
+
+		constexpr OrderType operator<=>(Vector2 const& other) const {
+			constexpr OrderType equiv = OrderType::equivalent;
+			OrderType result = OrderType::equivalent;
+			if ((result = x <=> other.x) != OrderType::equivalent) return result;
+			return y <=> other.y;
+		}
+
+		template <typename T>
+		constexpr OrderType operator<=>(T const& val) const
+		requires Type::Convertible<T, float> {
+			return *this <=> Vector2(val);
 		}
 
 		/// Unary operators
@@ -554,18 +567,6 @@ class Vector3
 			return *this;
 		}
 
-		constexpr bool operator==(Vector3 const& vec) const {
-			return (
-				x == vec.x &&
-				y == vec.y &&
-				y == vec.z
-			);
-		}
-
-		constexpr bool operator!=(Vector3 const& vec) const {
-			return !(*this == vec);
-		}
-
 		/// Float operator overloading.
 
 		constexpr Vector3 operator+(float const& val) const {
@@ -620,6 +621,32 @@ class Vector3
 		constexpr Vector3& operator^=(float const& val) {
 			*this ^= Vector3(val);
 			return *this;
+		}
+
+		/// Comparison operators
+
+		typedef Helper::PartialOrder OrderType;
+
+		constexpr bool operator==(Vector3 const& other) const {
+			return (
+				x == other.x
+			&&	y == other.y
+			&&	z == other.z
+			);
+		}
+
+		constexpr OrderType operator<=>(Vector3 const& other) const {
+			constexpr OrderType equiv = OrderType::equivalent;
+			OrderType result = OrderType::equivalent;
+			if ((result = x <=> other.x) != OrderType::equivalent) return result;
+			if ((result = y <=> other.y) != OrderType::equivalent) return result;
+			return z <=> other.z;
+		}
+
+		template <typename T>
+		constexpr OrderType operator<=>(T const& val) const
+		requires Type::Convertible<T, float> {
+			return *this <=> Vector3(val);
 		}
 
 		/// Unary operators
@@ -979,19 +1006,6 @@ class Vector4
 			return *this;
 		}
 
-		constexpr bool operator==(Vector4 const& vec) const {
-			return (
-				x == vec.x &&
-				y == vec.y &&
-				y == vec.z &&
-				y == vec.w
-			);
-		}
-
-		constexpr bool operator!=(Vector4 const& vec) const {
-			return !(*this == vec);
-		}
-
 		/// Float operator overloading.
 
 		constexpr Vector4 operator+(float const& val) const {
@@ -1047,6 +1061,36 @@ class Vector4
 			*this %= Vector4(val);
 			return *this;
 		}
+
+		/// Comparison operators
+
+		typedef Helper::PartialOrder OrderType;
+
+		constexpr bool operator==(Vector4 const& other) const {
+			return (
+				x == other.x
+			&&	y == other.y
+			&&	z == other.z
+			&&	w == other.w
+			);
+		}
+
+		constexpr OrderType operator<=>(Vector4 const& other) const {
+			constexpr OrderType equiv = OrderType::equivalent;
+			OrderType result = OrderType::equivalent;
+			if ((result = x <=> other.x) != OrderType::equivalent) return result;
+			if ((result = y <=> other.y) != OrderType::equivalent) return result;
+			if ((result = z <=> other.z) != OrderType::equivalent) return result;
+			return w <=> other.w;
+		}
+
+		template <typename T>
+		constexpr OrderType operator<=>(T const& val) const
+		requires Type::Convertible<T, float> {
+			return *this <=> Vector4(val);
+		}
+
+		/// Unary operators
 
 		constexpr Vector4 operator+() const {
 			return *this;

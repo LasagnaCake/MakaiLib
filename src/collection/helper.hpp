@@ -138,13 +138,13 @@ namespace Helper {
 	using Pair = pair<A, B>;
 
 	template<typename T>
+	using Entry = Pair<String, T>;
+
+	template<typename T>
 	using Dictionary = map<String, T>;
 
 	template<typename T>
 	using FuzzyDictionary = unordered_map<String, T>;
-
-	template<typename T>
-	using Entry = Pair<String, T>;
 
 	template<typename T>
 	using Function = function<T>;
@@ -169,8 +169,13 @@ namespace Helper {
 
 	typedef any Any;
 
-	typedef List<String>		StringList;
-	typedef Arguments<String>	StringArguments;
+	typedef std::strong_ordering	StrongOrder;
+	typedef std::weak_ordering		WeakOrder;
+	typedef std::partial_ordering	PartialOrder;
+
+	typedef List<String>			StringList;
+	typedef Arguments<String>		StringArguments;
+	typedef Pair<String, String>	StringPair;
 
 	typedef std::thread			Thread;
 
@@ -296,21 +301,41 @@ namespace Helper {
 		return res;
 	}
 
-	constexpr StringList splitStringAtFirst(String const& str, char const& sep) {
+	constexpr StringPair splitStringAtFirst(String const& str, char const& sep) {
 		auto pos = str.find(sep);
 		if (pos == str.npos)
-			return StringList{str};
-		return StringList{
+			return StringPair(str, "");
+		return StringPair(
 			str.substr(0, pos),
 			str.substr(pos)
-		};
+		);
 	}
 
-	constexpr StringList splitStringAtFirst(String const& str, Arguments<char> const& seps) {
-		StringList res = {str}, buf;
+	constexpr StringPair splitStringAtFirst(String const& str, Arguments<char> const& seps) {
+		StringPair res = StringPair(str, ""), buf;
 		for (char const& sep: seps) {
 			buf = splitStringAtFirst(str, sep);
-			if (buf[0].size() < res[0].size())
+			if (buf.first.size() < res.first.size())
+				res = buf;
+		}
+		return res;
+	}
+
+	constexpr StringPair splitStringAtLast(String const& str, char const& sep) {
+		auto pos = str.rfind(sep);
+		if (pos == str.npos)
+			return StringPair(str, "");
+		return StringPair(
+			str.substr(0, pos),
+			str.substr(pos)
+		);
+	}
+
+	constexpr StringPair splitStringAtLast(String const& str, Arguments<char> const& seps) {
+		StringPair res = StringPair("", str), buf;
+		for (char const& sep: seps) {
+			buf = splitStringAtLast(str, sep);
+			if (buf.first.size() > res.first.size() && buf.first.size() != str.size())
 				res = buf;
 		}
 		return res;
@@ -467,6 +492,8 @@ using Helper::List;
 using Helper::HashMap;
 using Helper::FuzzyHashMap;
 using Helper::StringList;
+using Helper::StringPair;
+using Helper::StringArguments;
 using Helper::Arguments;
 using Helper::Dictionary;
 using Helper::FuzzyDictionary;
@@ -646,14 +673,15 @@ namespace FileSystem {
 		return fs::path(path).remove_filename().string();
 	}
 
-	inline String getParentDirectory(String const& path) {
-		return splitStringAtFirst(path, {'\\', '/'})[0];
+	constexpr String getParentDirectory(String const& path) {
+		return splitStringAtFirst(path, {'\\', '/'}).first;
 	}
 
-	inline String getChildPath(String const& path) {
-		StringList dirs = splitStringAtFirst(path, {'\\', '/'});
-		if (dirs.size() == 1) return path;
-		return dirs[1];
+	constexpr String getChildPath(String const& path) {
+		StringPair dirs = splitStringAtFirst(path, {'\\', '/'});
+		if (dirs.second.empty())
+			return path;
+		return dirs.second;
 	}
 }
 
