@@ -338,6 +338,7 @@ namespace Helper {
 			if (buf.first.size() > res.first.size() && buf.first.size() != str.size())
 				res = buf;
 		}
+		if (res.first.empty()) return StringPair(str, "");
 		return res;
 	}
 
