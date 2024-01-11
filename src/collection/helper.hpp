@@ -693,7 +693,12 @@ namespace FileSystem {
 #endif
 
 namespace System {
-	int launchApp(String const& path, String const& directory = "") {
+	int launchApp(String const& path, String const& directory = "", String args = "") {
+		const char* prgArgs = NULL
+		if (!args.empty()) {
+			args = path + " " + args;
+			prgArgs = args.c_str();
+		}
 		// This is a nightmare, but the other option pops up a command prompt.
 		#if (_WIN32 || _WIN64 || __WIN32__ || __WIN64__) && !defined(_NO_WINDOWS_PLEASE_)
 		STARTUPINFO sInfo;
@@ -703,7 +708,7 @@ namespace System {
 		ZeroMemory(&pInfo, sizeof(pInfo));
 		auto proc = CreateProcess(
 			path.c_str(),
-			NULL,
+			prgArgs,
 			NULL,
 			NULL,
 			FALSE,
@@ -721,7 +726,7 @@ namespace System {
 		CloseHandle(pInfo.hThread);
 		return (int)res;
 		#else
-		return system("data\\subsys\\winres.exe");
+		return system(path + " " + args);
 		#endif
 	}
 
