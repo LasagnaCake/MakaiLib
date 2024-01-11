@@ -694,13 +694,14 @@ namespace FileSystem {
 
 namespace System {
 	int launchApp(String const& path, String const& directory = "", String args = "") {
-		const char* prgArgs = NULL
-		if (!args.empty()) {
-			args = path + " " + args;
-			prgArgs = args.c_str();
-		}
 		// This is a nightmare, but the other option pops up a command prompt.
 		#if (_WIN32 || _WIN64 || __WIN32__ || __WIN64__) && !defined(_NO_WINDOWS_PLEASE_)
+		char* prgArgs = NULL;
+		if (!args.empty()) {
+			args = path + " " + args;
+			prgArgs = new char[args.size()];
+			memcpy(prgArgs, path.c_str(), args.size());
+		}
 		STARTUPINFO sInfo;
 		PROCESS_INFORMATION pInfo;
 		ZeroMemory(&sInfo, sizeof(sInfo));
@@ -724,9 +725,12 @@ namespace System {
 		GetExitCodeProcess(pInfo.hProcess, &res);
 		CloseHandle(pInfo.hProcess);
 		CloseHandle(pInfo.hThread);
+		if (prgArgs) delete[] prgArgs;
 		return (int)res;
 		#else
-		return system(path + " " + args);
+		if (!args.empty())
+			return system(path + " " + args);
+		return system(path);
 		#endif
 	}
 
