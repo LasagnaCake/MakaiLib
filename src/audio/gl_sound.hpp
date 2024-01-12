@@ -27,6 +27,58 @@ public:
 
 	virtual ~Sound() final {destroy();}
 
+	void play(int loops = 0, size_t fadeInTime = 0, bool force = false) {
+		if (!exists()) return;
+		if (active() && !force) return;
+		if (fadeInTime)
+			channel = Mix_FadeInChannel(active() ? channel : -1, source, loops, fadeInTime);
+		else
+			channel = Mix_PlayChannel(active() ? channel : -1, source, loops);
+	}
+
+	void playOnceThisFrame(int loops = 0, size_t fadeInTime = 0, bool force = false) {
+		if (!exists()) return;
+		if (active() && !force) return;
+		if (!canPlayThisFrame) return;
+		canPlayThisFrame = false;
+		if (fadeInTime)
+			channel = Mix_FadeInChannel(getChannel(), source, loops, fadeInTime);
+		else
+			channel = Mix_PlayChannel(getChannel(), source, loops);
+	}
+
+	void stop(size_t fadeOutTime = 0) {
+		if (!exists()) return;
+		if (!active()) return;
+		if (fadeOutTime)
+			Mix_FadeOutChannel(channel, fadeOutTime);
+		else
+			Mix_HaltChannel(channel);
+	}
+
+	void pause() {
+		if (!exists()) return;
+		if (!active()) return;
+		Mix_Pause(channel);
+	}
+
+	void resume() {
+		if (!exists()) return;
+		if (!active()) return;
+		Mix_Resume(channel);
+	}
+
+	void setVolume(uchar volume) {
+		if (!exists()) return;
+		Mix_VolumeChunk(source, volume);
+	}
+
+	int getVolume() {
+		if (!exists()) return -1;
+		return Mix_VolumeChunk(source, -1);
+	}
+
+protected:
 	void onCreate(String path) final override {
 		if (isAudioSystemClosed) throw Error::FailedAction("Failed to load file: Audio system is closed!");
 		data = FileLoader::getBinaryFile(path);
@@ -52,7 +104,7 @@ public:
 		DEBUGLN("Sound source deleted!");
 	}
 
-	void onUpdate() override {
+	void onUpdate() final override {
 		canPlayThisFrame = true;
 		if (!active()) {
 			channel = -1;
@@ -60,62 +112,15 @@ public:
 		}
 	}
 
-	void play(int loops = 0, size_t fadeInTime = 0, bool force = false) {
-		if (!created) return;
-		if (active() && !force) return;
-		if (fadeInTime)
-			channel = Mix_FadeInChannel(-1, source, loops, fadeInTime);
-		else
-			channel = Mix_PlayChannel(-1, source, loops);
-	}
-
-	void playOnceThisFrame(int loops = 0, size_t fadeInTime = 0, bool force = false) {
-		if (!created) return;
-		if (active() && !force) return;
-		if (!canPlayThisFrame) return;
-		canPlayThisFrame = false;
-		if (fadeInTime)
-			channel = Mix_FadeInChannel(-1, source, loops, fadeInTime);
-		else
-			channel = Mix_PlayChannel(-1, source, loops);
-	}
-
-	void stop(size_t fadeOutTime = 0) {
-		if (!created) return;
-		if (!active()) return;
-		if (fadeOutTime)
-			Mix_FadeOutChannel(channel, fadeOutTime);
-		else
-			Mix_HaltChannel(channel);
-	}
-
-	void pause() {
-		if (!created) return;
-		if (!active()) return;
-		Mix_Pause(channel);
-	}
-
-	void resume() {
-		if (!created) return;
-		if (!active()) return;
-		Mix_Resume(channel);
-	}
-
-	void setVolume(uchar volume) {
-		if (!created) return;
-		Mix_VolumeChunk(source, volume);
-	}
-
-	int getVolume() {
-		if (!created) return -1;
-		return Mix_VolumeChunk(source, -1);
-	}
-
 private:
 	bool canPlayThisFrame = true;
 
+	int getChannel() {
+		return active() ? channel : -1;
+	}
+
 	bool active() {
-		if (!created)		return false;
+		if (!exists())		return false;
 		if (channel == -1)	return false;
 		return (
 			Mix_Playing(channel)

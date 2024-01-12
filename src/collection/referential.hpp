@@ -36,7 +36,7 @@ namespace SmartPointer {
 		constexpr Pointer(Pointer<T, false>&& other)		{ASSERT_STRONG;	bind(other.ref);}
 		constexpr Pointer(Pointer<T, true>&& other)			{ASSERT_WEAK;	bind(other.ref);}
 
-		constexpr Pointer(Pointer<T, false> const& other)	{ASSERT_STRONG; bind(other.ref);}
+		constexpr Pointer(Pointer<T, false> const& other)	{				bind(other.ref);}
 		constexpr Pointer(Pointer<T, true> const& other)	{ASSERT_WEAK;	bind(other.ref);}
 
 		constexpr Pointer(T* const& obj)					{bind(obj);}
@@ -83,15 +83,26 @@ namespace SmartPointer {
 			return (*this);
 		}
 
-		constexpr Pointer& modify(Operation<T> const& op) {
+		constexpr Pointer& release() {
+			IF_STRONG {
+				DEBUGLN("Releasing reference...");
+				if (!exists()) return (*this);
+				database[(void*)ref] = {false, 0};
+				ref = nullptr;
+				DEBUGLN("Reference released!");
+			}
+			return (*this);
+		}
+
+		constexpr Pointer& modify(Operation<T const&> const& op) const {
 			if(exists())
-				(*ref) = op(*ref);
+				mutate(op(*ref));
 			return *this;
 		}
 
-		constexpr Pointer& modify(T (*op)(T const&)) {
+		constexpr Pointer& modify(T (*const& op)(T const&)) const {
 			if(exists())
-				(*ref) = (*op)(*ref);
+				mutate((*op)(*ref));
 			return *this;
 		}
 
@@ -103,19 +114,23 @@ namespace SmartPointer {
 
 		constexpr bool operator()() const	{return exists();}
 
-		constexpr Pointer& operator()(Operation<T> const& op)	{return modify(op);}
-		constexpr Pointer& operator()(void (*op)(T const&))		{return modify(op);}
+		constexpr Pointer& operator()(Operation<T const&> const& op) const	{return modify(op);}
+		constexpr Pointer& operator()(void (*op)(T const&)) const			{return modify(op);}
 
-		constexpr T& operator[](size_t const& index)	{return getPointer()[index];}
+		constexpr T& operator[](size_t const& index) const	{return getPointer()[index];}
+
+		constexpr T* operator&()				{return getPointer();}
+		constexpr T* const operator&() const	{return getPointer();}
 
 		template<Pointable NEW_T>
 		constexpr Pointer<NEW_T, weak>	castedTo() const	{return	(NEW_T*)getPointer();	}
 		constexpr Pointer<T, true>		asWeak() const		{return	getPointer();			}
 		constexpr T*					raw() const			{return	getPointer();			}
 
-		constexpr explicit operator T*() const	{return getPointer();		}
-		//constexpr explicit operator T*()		{return getPointer();		}
-		constexpr operator bool() const			{return exists();			}
+		constexpr explicit operator T* const() const	{return getPointer();		}
+		constexpr explicit operator T*()				{return getPointer();		}
+
+		constexpr operator bool() const	{return exists();	}
 
 		constexpr bool operator!() const				{return	!exists();			}
 		constexpr bool operator==(T* const& obj) const	{return	ref == obj;			}
@@ -136,9 +151,9 @@ namespace SmartPointer {
 		constexpr Pointer& operator=(Pointer<T, weak> const& other)	{bind(other.ref); return (*this);	}
 
 		constexpr T* operator->()				{return getPointer();	}
-		constexpr const T* operator->() const	{return getPointer();	}
+		constexpr T* const operator->() const	{return getPointer();	}
 		constexpr T& operator*()				{return getValue();		}
-		constexpr const T& operator*() const	{return getValue();		}
+		constexpr T& operator*() const			{return getValue();		}
 
 		static bool isBound(T* const& ptr)	{return isBound(ptr);}
 
@@ -147,6 +162,9 @@ namespace SmartPointer {
 		friend class Pointer<T,	true	>;
 
 		T* ref = nullptr;
+
+		constexpr void mutate(T const& v) const requires (!Type::Constant<T>)	{(*ref) = v;	}
+		constexpr void mutate(T const& v) const requires (Type::Constant<T>)	{return;		}
 
 		constexpr T* getPointer()	{
 			if (!exists())
@@ -160,7 +178,7 @@ namespace SmartPointer {
 			return (ref);
 		}
 
-		constexpr const T* getPointer() const	{
+		constexpr T* const getPointer() const	{
 			if (!exists())
 				throw Error::NullPointer(
 					"Pointer reference does not exist!",
@@ -184,7 +202,7 @@ namespace SmartPointer {
 			return (*ref);
 		}
 
-		constexpr const T& getValue() const {
+		constexpr T& getValue() const {
 			if (!exists())
 				throw Error::NullPointer(
 					"Pointer reference does not exist!",

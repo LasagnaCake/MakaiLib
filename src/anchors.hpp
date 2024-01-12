@@ -136,6 +136,7 @@
 #include "collection/grouping.hpp"
 #include "collection/sharedvalue.hpp"
 #include "collection/splines.hpp"
+#include "collection/waves.hpp"
 #include "collection/collisions.hpp"
 #include "collection/entity/entity.hpp"
 

@@ -49,6 +49,55 @@ public:
 
 	virtual ~Music() final {destroy();}
 
+	void play(int loops = 0, size_t fadeInTime = 0) {
+		if (!exists()) return;
+		this->loops = loops;
+		current	= source;
+		if (fadeInTime)
+			Mix_FadeInMusic(source, loops, fadeInTime);
+		else
+			Mix_PlayMusic(source, loops);
+	}
+
+	String getTitle() {
+		return String(Mix_GetMusicTitle(source));
+	}
+
+	SongMetaData getMetaData() {
+		const char* data;
+		return SongMetaData {
+			(data = Mix_GetMusicTitleTag(source)) ? data : "",
+			(data = Mix_GetMusicArtistTag(source)) ? data : "",
+			(data = Mix_GetMusicAlbumTag(source)) ? data : "",
+			(data = Mix_GetMusicCopyrightTag(source)) ? data : ""
+		};
+	}
+
+	void switchInto(size_t fadeOutTime, size_t fadeInTime) {
+		if (!exists()) return;
+		this->fadeInTime = fadeInTime;
+		queueMusic();
+		stopMusic(fadeOutTime);
+	}
+
+	void switchInto(size_t fadeOutTime, size_t fadeInTime, int loops) {
+		if (!exists()) return;
+		this->fadeInTime	= fadeInTime;
+		this->loops			= loops;
+		queueMusic();
+		stopMusic(fadeOutTime);
+	}
+
+	void queueMusic() {
+		if (!exists()) return;
+		queued = &onQueue;
+	}
+
+	inline Mix_Music* getSource() {
+		return source;
+	}
+
+protected:
 	void onCreate(String path) final override {
 		if (isAudioSystemClosed) throw Error::FailedAction("Failed to load file: Audio system is closed!");
 		data = FileLoader::getBinaryFile(path);
@@ -76,57 +125,10 @@ public:
 		DEBUGLN("Music source deleted!");
 	}
 
-	void onUpdate() override {
+	void onUpdate() final override {
 		if (current != source) return;
 	}
 
-	void play(int loops = 0, size_t fadeInTime = 0) {
-		if (!created) return;
-		this->loops = loops;
-		current	= source;
-		if (fadeInTime)
-			Mix_FadeInMusic(source, loops, fadeInTime);
-		else
-			Mix_PlayMusic(source, loops);
-	}
-
-	string getTitle() {
-		return string(Mix_GetMusicTitle(source));
-	}
-
-	SongMetaData getMetaData() {
-		const char* data;
-		return SongMetaData {
-			(data = Mix_GetMusicTitleTag(source)) ? data : "",
-			(data = Mix_GetMusicArtistTag(source)) ? data : "",
-			(data = Mix_GetMusicAlbumTag(source)) ? data : "",
-			(data = Mix_GetMusicCopyrightTag(source)) ? data : ""
-		};
-	}
-
-	void switchTo(size_t fadeOutTime, size_t fadeInTime) {
-		if (!created) return;
-		this->fadeInTime	= fadeInTime;
-		queueMusic();
-		stopMusic(fadeOutTime);
-	}
-
-	void switchTo(size_t fadeOutTime, size_t fadeInTime, int loops) {
-		if (!created) return;
-		this->fadeInTime	= fadeInTime;
-		this->loops			= loops;
-		queueMusic();
-		stopMusic(fadeOutTime);
-	}
-
-	void queueMusic() {
-		if (!created) return;
-		queued = &onQueue;
-	}
-
-	inline Mix_Music* getSource() {
-		return source;
-	}
 private:
 	size_t	fadeInTime	= 0;
 	int		loops		= 0;

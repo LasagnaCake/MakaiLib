@@ -47,16 +47,21 @@ namespace Audio {
 				created = false;
 			};
 
-			virtual void onCreate(String path)	= 0;
-			virtual void onDestroy()			= 0;
 			virtual void onPlaybackEnd()	{}
 			virtual void onPlaybackStart()	{}
-			virtual void onUpdate()			{}
+
+			bool exists() {return created;}
 
 			AudioFunc update = SIGNAL {
 				this->onUpdate();
 			};
+
 		protected:
+			virtual void onCreate(String path)	= 0;
+			virtual void onDestroy()			= 0;
+			virtual void onUpdate()			{}
+
+		private:
 			bool created = false;
 		};
 	}
