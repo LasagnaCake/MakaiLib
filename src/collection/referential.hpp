@@ -6,20 +6,21 @@
 #include "errors.hpp"
 #include "types.hpp"
 #include "definitions.hpp"
-#include <map>
-#include <stdexcept>
-#include <functional>
 
 namespace SmartPointer {
 	template <typename T> concept Pointable = Type::Safe<T>;
 
 	namespace {
-		struct _pData{
-			bool exists	= false;
-			int64 count	= 0;
+		struct PointerData {
+			bool	exists	= false;
+			int64	count	= 0;
 		};
 
-		HashMap<void*, _pData> _pointerDB;
+		static HashMap<void*, PointerData> database;
+	}
+
+	bool isBound(void* const& ptr) {
+		return database.contains(ptr);
 	}
 
 	#define ASSERT_STRONG	static_assert(!weak,	"It is forbidden to implicitly convert a strong pointer to a weak pointer!")
@@ -45,22 +46,26 @@ namespace SmartPointer {
 		constexpr Pointer& bind(T* const& obj) {
 			unbind();
 			if (obj == nullptr) return (*this);
+			DEBUGLN("Binding reference...");
 			ref = obj;
-			_pointerDB[(void*)obj].exists = true;
-			IF_STRONG _pointerDB[(void*)obj].count++;
+			database[(void*)obj].exists = true;
+			IF_STRONG {
+				DEBUGLN("Updating reference counter...");
+				database[(void*)obj].count++;
+				DEBUGLN("References: ", database[(void*)ref].count);
+			}
 			return (*this);
 		}
 
 		constexpr Pointer& unbind() {
 			if (!exists()) return (*this);
+			DEBUGLN("Unbinding reference...");
 			IF_STRONG {
-				if ((_pointerDB[(void*)ref].count-1 < 1)) {
-					DEBUGLN("Deleting reference...");
+				if ((database[(void*)ref].count-1 < 1))
 					return destroy();
-				}
 				DEBUGLN("Updating reference counter...");
-				_pointerDB[(void*)ref].count--;
-				DEBUGLN("References: ", _pointerDB[(void*)ref].count);
+				database[(void*)ref].count--;
+				DEBUGLN("References: ", database[(void*)ref].count);
 			}
 			ref = nullptr;
 			return (*this);
@@ -68,10 +73,12 @@ namespace SmartPointer {
 
 		constexpr Pointer& destroy() {
 			IF_STRONG {
+				DEBUGLN("Deleting reference...");
 				if (!exists()) return (*this);
-				_pointerDB[(void*)ref] = {false, 0};
+				database[(void*)ref] = {false, 0};
 				delete ref;
 				ref = nullptr;
+				DEBUGLN("Reference deleted!");
 			}
 			return (*this);
 		}
@@ -88,35 +95,35 @@ namespace SmartPointer {
 			return *this;
 		}
 
-		constexpr bool exists() {
+		constexpr bool exists() const {
 			if (ref == nullptr) return false;
-			IF_STRONG	return (_pointerDB[(void*)ref].count > 0);
-			else		return (_pointerDB[(void*)ref].exists);
+			IF_STRONG	return (database[(void*)ref].count > 0);
+			else		return (database[(void*)ref].exists);
 		}
 
-		constexpr bool operator()()	{return exists();}
+		constexpr bool operator()() const	{return exists();}
 
 		constexpr Pointer& operator()(Operation<T> const& op)	{return modify(op);}
-		constexpr Pointer& operator()(void (*op)(T const&))	{return modify(op);}
+		constexpr Pointer& operator()(void (*op)(T const&))		{return modify(op);}
 
 		constexpr T& operator[](size_t const& index)	{return getPointer()[index];}
 
 		template<Pointable NEW_T>
-		constexpr Pointer<NEW_T, weak>	castedTo()	{return	(NEW_T*)getPointer();	}
-		constexpr Pointer<T, true>		asWeak()	{return	getPointer();			}
-		constexpr T*					raw()		{return	getPointer();			}
+		constexpr Pointer<NEW_T, weak>	castedTo() const	{return	(NEW_T*)getPointer();	}
+		constexpr Pointer<T, true>		asWeak() const		{return	getPointer();			}
+		constexpr T*					raw() const			{return	getPointer();			}
 
 		constexpr explicit operator T*() const	{return getPointer();		}
-		constexpr explicit operator T*()		{return getPointer();		}
+		//constexpr explicit operator T*()		{return getPointer();		}
 		constexpr operator bool() const			{return exists();			}
 
-		constexpr bool operator!()					{return	!exists();			}
-		constexpr bool operator==(T* const& obj)	{return	ref == obj;			}
-		constexpr bool operator!=(T* const& obj)	{return	!operator==(obj);	}
-		constexpr bool operator<(T* const& obj)		{return	ref < obj;			}
-		constexpr bool operator>(T* const& obj)		{return	operator<(obj);		}
-		constexpr bool operator<=(T* const& obj)	{return	!operator>(obj);	}
-		constexpr bool operator>=(T* const& obj)	{return	!operator<(obj);	}
+		constexpr bool operator!() const				{return	!exists();			}
+		constexpr bool operator==(T* const& obj) const	{return	ref == obj;			}
+		constexpr bool operator!=(T* const& obj) const	{return	!operator==(obj);	}
+		constexpr bool operator<(T* const& obj) const	{return	ref < obj;			}
+		constexpr bool operator>(T* const& obj) const	{return	operator<(obj);		}
+		constexpr bool operator<=(T* const& obj) const	{return	!operator>(obj);	}
+		constexpr bool operator>=(T* const& obj) const	{return	!operator<(obj);	}
 
 		constexpr bool operator==(Pointer<T, weak> const& other) const	{return operator==(other.ref);	}
 		constexpr bool operator!=(Pointer<T, weak> const& other) const	{return operator!=(other.ref);	}
@@ -133,6 +140,8 @@ namespace SmartPointer {
 		constexpr T& operator*()				{return getValue();		}
 		constexpr const T& operator*() const	{return getValue();		}
 
+		static bool isBound(T* const& ptr)	{return isBound(ptr);}
+
 	private:
 		friend class Pointer<T,	false	>;
 		friend class Pointer<T,	true	>;
@@ -144,9 +153,9 @@ namespace SmartPointer {
 				throw Error::NullPointer(
 					"Pointer reference does not exist!",
 					__FILE__,
-					"",
-					"SmartPointer",
-					"Pointer might be null or nonexistent"
+					"unspecified",
+					"Pointer",
+					"Pointer might be null or nonexistent."
 				);
 			return (ref);
 		}
@@ -156,9 +165,9 @@ namespace SmartPointer {
 				throw Error::NullPointer(
 					"Pointer reference does not exist!",
 					__FILE__,
-					"",
-					"SmartPointer",
-					"Pointer might be null or nonexistent"
+					"unspecified",
+					"Pointer",
+					"Pointer might be null or nonexistent."
 				);
 			return (ref);
 		}
@@ -168,9 +177,9 @@ namespace SmartPointer {
 				throw Error::NullPointer(
 					"Pointer reference does not exist!",
 					__FILE__,
-					"",
-					"SmartPointer",
-					"Pointer might be null or nonexistent"
+					"unspecified",
+					"Pointer",
+					"Pointer might be null or nonexistent."
 				);
 			return (*ref);
 		}
@@ -180,9 +189,9 @@ namespace SmartPointer {
 				throw Error::NullPointer(
 					"Pointer reference does not exist!",
 					__FILE__,
-					"",
-					"SmartPointer",
-					"Pointer might be null or nonexistent"
+					"unspecified",
+					"Pointer",
+					"Pointer might be null or nonexistent."
 				);
 			return (*ref);
 		}
