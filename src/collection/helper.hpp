@@ -7,6 +7,7 @@
 #include <syncstream>
 #include <string>
 #include <vector>
+#include <list>
 #include <filesystem>
 #include <locale>
 #include <codecvt>
@@ -103,6 +104,7 @@ namespace Helper {
 	namespace {
 		using
 			std::vector,
+			std::list,
 			std::map,
 			std::unordered_map,
 			std::string,
@@ -127,6 +129,9 @@ namespace Helper {
 
 	template<typename T>
 	using List = vector<T>;
+
+	template<typename T>
+	using LinkedList = list<T>;
 
 	template<typename K, typename V>
 	using HashMap = map<K, V>;
@@ -490,6 +495,7 @@ namespace Helper {
 using Helper::String;
 using Helper::WideString;
 using Helper::List;
+using Helper::LinkedList;
 using Helper::HashMap;
 using Helper::FuzzyHashMap;
 using Helper::StringList;
