@@ -12,6 +12,10 @@ public:
 		extend(other);
 	}
 
+	Scene3D(Scene3D& other, size_t layer, bool manual = false): Scene3D(layer, manual) {
+		extend(other);
+	}
+
 	virtual ~Scene3D() {
 		destroy();
 	}
@@ -24,6 +28,7 @@ public:
 	}
 
 	void extend(Scene3D* const& other) {
+		if (!other) return;
 		for(Renderable* obj: other->objects) {
 			Renderable* nobj = createObject();
 			{
@@ -46,15 +51,19 @@ public:
 				nobj->material.emission.image	= em;
 				nobj->material.warp.image		= wp;
 				if (obj->material.texture.image)
-					tx->create(obj->material.texture.image->getData());
+					tx->create(*obj->material.texture.image);
 				if (obj->material.emission.image)
-					em->create(obj->material.emission.image->getData());
+					em->create(*obj->material.emission.image);
 				if (obj->material.warp.image)
-					wp->create(obj->material.warp.image->getData());
+					wp->create(*obj->material.warp.image);
 			}
 		}
 		camera	= other->camera;
 		world	= other->world;
+	}
+
+	void extend(Scene3D& other) {
+		extend(&other);
 	}
 
 	void destroy() {

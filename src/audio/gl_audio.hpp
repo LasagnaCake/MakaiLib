@@ -35,13 +35,13 @@ namespace Audio {
 				DEBUGLN("Object deleted!");
 			}
 
-			void create(String path)	{
+			void create(String const& path) {
 				if (created) return;
 				onCreate(path);
 				created = true;
 			};
 
-			void destroy()				{
+			void destroy() {
 				if (!created) return;
 				onDestroy();
 				created = false;
@@ -57,9 +57,9 @@ namespace Audio {
 			};
 
 		protected:
-			virtual void onCreate(String path)	= 0;
-			virtual void onDestroy()			= 0;
-			virtual void onUpdate()			{}
+			virtual void onCreate(String const& path)	= 0;
+			virtual void onDestroy()					= 0;
+			virtual void onUpdate()						{}
 
 		private:
 			bool created = false;

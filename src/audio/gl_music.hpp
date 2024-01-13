@@ -49,7 +49,7 @@ public:
 
 	virtual ~Music() final {destroy();}
 
-	void play(int loops = 0, size_t fadeInTime = 0) {
+	void play(int const& loops = 0, size_t const& fadeInTime = 0) {
 		if (!exists()) return;
 		this->loops = loops;
 		current	= source;
@@ -73,14 +73,14 @@ public:
 		};
 	}
 
-	void switchInto(size_t fadeOutTime, size_t fadeInTime) {
+	void switchInto(size_t const& fadeOutTime, size_t const& fadeInTime) {
 		if (!exists()) return;
 		this->fadeInTime = fadeInTime;
 		queueMusic();
 		stopMusic(fadeOutTime);
 	}
 
-	void switchInto(size_t fadeOutTime, size_t fadeInTime, int loops) {
+	void switchInto(size_t const& fadeOutTime, size_t const& fadeInTime, int const& loops) {
 		if (!exists()) return;
 		this->fadeInTime	= fadeInTime;
 		this->loops			= loops;
@@ -98,7 +98,7 @@ public:
 	}
 
 protected:
-	void onCreate(String path) final override {
+	void onCreate(String const& path) final override {
 		if (isAudioSystemClosed) throw Error::FailedAction("Failed to load file: Audio system is closed!");
 		data = FileLoader::getBinaryFile(path);
 		source = Mix_LoadMUS_RW(SDL_RWFromMem(data.data(), data.size()), true);

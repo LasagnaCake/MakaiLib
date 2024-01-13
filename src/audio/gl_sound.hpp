@@ -27,7 +27,11 @@ public:
 
 	virtual ~Sound() final {destroy();}
 
-	void play(int loops = 0, size_t fadeInTime = 0, bool force = false) {
+	void play(
+		int const&		loops		= 0,
+		size_t const&	fadeInTime	= 0,
+		bool const&		force		= false
+	) {
 		if (!exists()) return;
 		if (active() && !force) return;
 		if (fadeInTime)
@@ -36,7 +40,11 @@ public:
 			channel = Mix_PlayChannel(active() ? channel : -1, source, loops);
 	}
 
-	void playOnceThisFrame(int loops = 0, size_t fadeInTime = 0, bool force = false) {
+	void playOnceThisFrame(
+		int const&		loops		= 0,
+		size_t const&	fadeInTime	= 0,
+		bool const&		force		= false
+	) {
 		if (!exists()) return;
 		if (active() && !force) return;
 		if (!canPlayThisFrame) return;
@@ -47,7 +55,24 @@ public:
 			channel = Mix_PlayChannel(getChannel(), source, loops);
 	}
 
-	void stop(size_t fadeOutTime = 0) {
+	void playOnceAndWait(
+		int const&		loops		= 0,
+		size_t const&	fadeInTime	= 0,
+		bool const&		force		= false,
+		size_t const&	cycles		= 0
+	) {
+		if (!exists()) return;
+		if (active() && !force) return;
+		if (!canPlayThisFrame || delay > 0) return;
+		canPlayThisFrame = false;
+		delay = cycles;
+		if (fadeInTime)
+			channel = Mix_FadeInChannel(getChannel(), source, loops, fadeInTime);
+		else
+			channel = Mix_PlayChannel(getChannel(), source, loops);
+	}
+
+	void stop(size_t const& fadeOutTime = 0) {
 		if (!exists()) return;
 		if (!active()) return;
 		if (fadeOutTime)
@@ -68,7 +93,7 @@ public:
 		Mix_Resume(channel);
 	}
 
-	void setVolume(uchar volume) {
+	void setVolume(uchar const& volume) {
 		if (!exists()) return;
 		Mix_VolumeChunk(source, volume);
 	}
@@ -79,7 +104,7 @@ public:
 	}
 
 protected:
-	void onCreate(String path) final override {
+	void onCreate(String const& path) final override {
 		if (isAudioSystemClosed) throw Error::FailedAction("Failed to load file: Audio system is closed!");
 		data = FileLoader::getBinaryFile(path);
 		source = Mix_LoadWAV_RW(SDL_RWFromMem(data.data(), data.size()), true);
@@ -110,10 +135,13 @@ protected:
 			channel = -1;
 			return;
 		}
+		if (delay > 0) delay--;
 	}
 
 private:
 	bool canPlayThisFrame = true;
+
+	size_t delay = 0;
 
 	int getChannel() {
 		return active() ? channel : -1;
