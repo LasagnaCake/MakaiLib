@@ -174,6 +174,11 @@ namespace Helper {
 
 	typedef any Any;
 
+	struct Discard {
+		template<typename T>
+		constexpr T&& operator=(T&& v) {return v;}
+	} _;
+
 	typedef std::strong_ordering	StrongOrder;
 	typedef std::weak_ordering		WeakOrder;
 	typedef std::partial_ordering	PartialOrder;
@@ -506,6 +511,7 @@ using Helper::Dictionary;
 using Helper::FuzzyDictionary;
 using Helper::Pair;
 using Helper::Entry;
+using Helper::Tuple;
 using Helper::Function;
 using Helper::Operation;
 using Helper::Procedure;
@@ -515,6 +521,8 @@ using Helper::Nullable;
 using Helper::Regex;
 using Helper::Span;
 using Helper::Thread;
+
+using Helper::_;
 
 inline String regexReplace(String const& str, Regex const& expr, String const& fmt) {
 	return std::regex_replace(str, expr, fmt);
