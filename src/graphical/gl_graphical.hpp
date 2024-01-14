@@ -12,21 +12,22 @@
 #include "gl_color.hpp"
 
 #ifndef DEFAULT_BLEND_FUNC
-//#define DEFAULT_BLEND_FUNC GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO
+#define DEFAULT_BLEND_FUNC GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO
 //#define DEFAULT_BLEND_FUNC GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA
 //#define DEFAULT_BLEND_FUNC GL_DST_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA
 //#define DEFAULT_BLEND_FUNC GL_ONE, GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA
 //#define DEFAULT_BLEND_FUNC GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA
 //#define DEFAULT_BLEND_FUNC GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ZERO, GL_ONE
 //#define DEFAULT_BLEND_FUNC GL_ONE, GL_ONE, GL_ONE, GL_ONE
-#define DEFAULT_BLEND_FUNC GL_SRC_ALPHA, GL_SRC_ALPHA, GL_DST_ALPHA, GL_DST_ALPHA
+//#define DEFAULT_BLEND_FUNC GL_SRC_ALPHA, GL_SRC_ALPHA, GL_DST_ALPHA, GL_DST_ALPHA
 //#define DEFAULT_BLEND_FUNC GL_SRC_ALPHA, GL_ONE, GL_SRC_ALPHA, GL_ONE
 //#define DEFAULT_BLEND_FUNC GL_SRC_ALPHA, GL_SRC_ALPHA, GL_ONE, GL_ONE
 #endif // DEFAULT_BLEND_FUNC
 
 #ifndef DEFAULT_BLEND_EQUATION
 //#define DEFAULT_BLEND_EQUATION GL_FUNC_ADD, GL_FUNC_REVERSE_SUBTRACT
-#define DEFAULT_BLEND_EQUATION GL_FUNC_ADD, GL_FUNC_ADD
+//#define DEFAULT_BLEND_EQUATION GL_FUNC_ADD, GL_FUNC_ADD
+#define DEFAULT_BLEND_EQUATION GL_FUNC_ADD, GL_MAX
 #endif // DEFAULT_BLEND_EQUATION
 
 #ifndef GRAPHICAL_PARALLEL_THREAD_COUNT
@@ -238,6 +239,38 @@ namespace Drawer {
 
 	constexpr Vector3 vertexGetNormal(RawVertex& v) {
 		return Vector3(v.nx, v.ny, v.nz);
+	}
+
+	struct BlendData {
+		struct BlendFunctionData {
+			GLenum
+				srcColor,
+				dstColor,
+				srcAlpha,
+				dstAlpha
+			;
+		} func;
+		struct BlendEquationData {
+			GLenum
+				color,
+				alpha
+			;
+		} eq;
+	};
+
+	inline void setBlend(BlendData const& blend, unsigned int const& drawBuffer = 0) {
+		glBlendFuncSeparatei(
+			drawBuffer,
+			blend.func.srcColor,
+			blend.func.dstColor,
+			blend.func.srcAlpha,
+			blend.func.dstAlpha
+		);
+		glBlendEquationSeparatei(
+			drawBuffer,
+			blend.eq.color,
+			blend.eq.alpha
+		);
 	}
 
 	#include "gl_texture.hpp"

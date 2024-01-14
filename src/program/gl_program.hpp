@@ -520,19 +520,15 @@ namespace Makai {
 			SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
 			//glViewport(0, 0, width, height);
 			// This keeps the alpha from shitting itself
-			glEnable(GL_BLEND);
-			glEnable(GL_ALPHA_TEST);
+			setFlag(GL_BLEND);
+			setFlag(GL_ALPHA_TEST);
 			#ifdef MAKAILIB_ENABLE_OPENGL_DEBUG
-			glEnable(GL_DEBUG_OUTPUT);
+			setFlag(GL_DEBUG_OUTPUT);
 			#endif
 			glDebugMessageCallback(glAPIMessageCallback, 0);
-			glBlendFuncSeparatei(0, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 			// This keeps the alpha from shitting itself
-			glBlendEquationSeparatei(0, GL_FUNC_ADD, GL_MAX);
-			//glEnable(GL_CULL_FACE);
-			//glBlendFuncSeparatei(0, DEFAULT_BLEND_FUNC);
-			//glBlendEquationSeparatei(0, DEFAULT_BLEND_EQUATION);
-			//glBlendFunc(GL_ONE_MINUS_DST_ALPHA, GL_ONE);
+			setBlendFunction(DEFAULT_BLEND_FUNC);
+			setBlendEquation(DEFAULT_BLEND_EQUATION);
 			// Setup camera
 			DEBUGLN("Setting starting camera...");
 			Scene::camera.aspect = Vector2(width, height);
@@ -540,16 +536,15 @@ namespace Makai {
 			DEBUGLN("creating default framebuffer...");
 			// Create framebuffer
 			framebuffer.create(width, height);
-			// Fix alpha being a bitch
-			framebuffer();
-			//glDisable(GL_BLEND);
-			//unsigned int fid = framebuffer.toFrameBufferData().id;
-			//glBlendEquationSeparatei(fid, GL_FUNC_ADD, GL_MAX);
-			//glBlendFuncSeparatei(fid, GL_ONE, GL_ONE, GL_ONE, GL_ONE);
-			//glBlendEquationSeparatei(fid, GL_FUNC_ADD, GL_FUNC_ADD);
-			glBindBuffer(GL_FRAMEBUFFER, 0);
+			framebuffer.setFlag(GL_BLEND);
+			framebuffer.setFlag(GL_ALPHA_TEST);
+			framebuffer.setFlag(GL_DEPTH_TEST);
 			// Create layer buffer
 			layerbuffer.create(width, height);
+			layerbuffer.setFlag(GL_BLEND);
+			layerbuffer.setFlag(GL_ALPHA_TEST);
+			layerbuffer.setFlag(GL_DEPTH_TEST);
+			enableMainBuffer();
 			// Create composition shader
 			DEBUGLN("Creating shaders...");
 			bufferShader.create(SLF::parseFile(bufferShaderPath));
@@ -724,10 +719,57 @@ namespace Makai {
 		inline void renderReservedLayer() {
 			Drawer::clearColorBuffer(color);
 			glClear(GL_DEPTH_BUFFER_BIT);
-			//framebuffer()->clearBuffers();
+			//framebuffer().clearBuffers();
 			Drawer::renderLayer(Math::Max::SIZET_V);
 			//framebuffer.render(toFrameBufferData());
 			SDL_GL_SwapWindow(window);
+		}
+
+		inline void setFlag(GLenum const& flag, bool const& state = true) {
+			if (state) glEnable(flag);
+			else glDisable(flag);
+		}
+
+		inline void setValue(GLenum const& flag, int const& value, bool const& state = true) {
+			if (state) glEnablei(flag, value);
+			else glDisablei(flag, value);
+		}
+
+		constexpr inline void setBlend(Drawer::BlendData const& blend) {
+			this->blend = blend;
+		}
+
+		constexpr inline void setBlendFunction(
+			GLenum const& srcColor,
+			GLenum const& dstColor,
+			GLenum const& srcAlpha,
+			GLenum const& dstAlpha
+		) {
+			blend.func = {srcColor, dstColor, srcAlpha, dstAlpha};
+		}
+
+		constexpr inline void setBlendFunction(
+			GLenum const& src,
+			GLenum const& dst
+		) {
+			blend.func = {src, src, dst, dst};
+		}
+
+		constexpr inline void setBlendEquation(
+			GLenum const& color,
+			GLenum const& alpha
+		) {
+			blend.eq = {color, alpha};
+		}
+
+		constexpr inline void setBlendEquation(
+			GLenum const& eq
+		) {
+			blend.eq = {eq, eq};
+		}
+
+		constexpr inline void enableMainBuffer() {
+			glBindBuffer(GL_FRAMEBUFFER, 0);
 		}
 
 		constexpr inline Drawer::FrameBuffer& getFrameBuffer() {
@@ -813,9 +855,17 @@ namespace Makai {
 		/// The program's taskers.
 		Tasking::MultiTasker taskers;
 
+		/// The program's blend mode.
+		Drawer::BlendData blend;
+
 	protected:
 		Drawer::FrameBufferData toFrameBufferData() {
-			return Drawer::FrameBufferData{0};
+			Drawer::FrameBufferData self;
+			self.id		= 0;
+			self.width	= width;
+			self.height	= height;
+			self.blend	= blend;
+			return self;
 		}
 
 	private:
@@ -863,6 +913,8 @@ namespace Makai {
 			glClear(GL_DEPTH_BUFFER_BIT);
 			// Enable depth testing
 			glEnable(GL_DEPTH_TEST);
+			// Set blend mode
+			Drawer::setBlend(blend);
 			// Enable frame buffer
 			framebuffer();
 			// Call rendering start function
@@ -889,17 +941,18 @@ namespace Makai {
 					// Call onLayerDrawBegin function
 					onLayerDrawBegin(layer);
 					// Skip layer if applicable
-					if (skipLayer) continue;
-					// Clear buffers
-					layerbuffer.clearBuffers();
-					// Call onLayerDrawBegin function
-					onPostLayerClear(layer);
-					// Render layer
-					Drawer::renderLayer(layer);
-					// Call onPreLayerDraw function
-					onPreLayerDraw(layer);
-					// Render layer buffer
-					layerbuffer.render(framebuffer);
+					if (!skipLayer) {
+						// Clear buffers
+						layerbuffer.clearBuffers().setBufferBlend();
+						// Call onLayerDrawBegin function
+						onPostLayerClear(layer);
+						// Render layer
+						Drawer::renderLayer(layer);
+						// Call onPreLayerDraw function
+						onPreLayerDraw(layer);
+						// Render layer buffer
+						layerbuffer.render(framebuffer);
+					}
 					// Call onLayerDrawEnd function
 					onLayerDrawEnd(layer);
 				}

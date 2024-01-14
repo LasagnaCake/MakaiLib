@@ -425,6 +425,7 @@ namespace ArcSys {
 			// Open file
 			archive.open(path, std::ios::binary | std::ios::in);
 			// Read header
+			size_t hs = 0;
 			archive.read((char*)&hs, sizeof(uint64));
 			archive.seekg(0);
 			archive.read((char*)&header, hs);

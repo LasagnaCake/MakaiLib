@@ -28,6 +28,7 @@ namespace Drawer {
 		using
 		VecMath::srpTransform;
 	}
+
 	struct FrameBufferData {
 		unsigned int
 			id		= 0,
@@ -38,6 +39,7 @@ namespace Drawer {
 			*screen	= nullptr,
 			*depth	= nullptr
 		;
+		BlendData blend;
 	};
 
 	// Todo: Fix this
@@ -47,8 +49,8 @@ namespace Drawer {
 		}
 
 		FrameBuffer(
-			unsigned int width,
-			unsigned int height
+			unsigned int const& width,
+			unsigned int const& height
 		) {
 			create(width, height);
 		}
@@ -57,21 +59,22 @@ namespace Drawer {
 			destroy();
 		}
 
-		void destroy() {
-			if (!created) return;
+		FrameBuffer& destroy() {
+			if (!created) return *this;
 			else created = false;
 			glDeleteFramebuffers(1, &id);
 			buffer.screen.destroy();
 			buffer.depth.destroy();
 			glDeleteBuffers(1, &vbo);
 			glDeleteVertexArrays(1, &vao);
+			return *this;
 		}
 
-		FrameBuffer* create(
-			unsigned int width,
-			unsigned int height
+		FrameBuffer& create(
+			unsigned int const& width,
+			unsigned int const& height
 		) {
-			if (created) return this;
+			if (created) return *this;
 			else created = true;
 			glGenFramebuffers(1, &id);
 			glBindFramebuffer(GL_FRAMEBUFFER, id);
@@ -102,61 +105,69 @@ namespace Drawer {
 			glGenVertexArrays(1, &vao);
 			glGenBuffers(1, &vbo);
 			// This keeps the alpha from shitting itself
-			glEnable(GL_BLEND);
-			glEnable(GL_ALPHA_TEST);
-			//glDisable(GL_BLEND);
-			//glEnable(GL_CULL_FACE);
-			glBlendFuncSeparatei(id, DEFAULT_BLEND_FUNC);
-			glBlendEquationSeparatei(id, DEFAULT_BLEND_EQUATION);
+			setFlag(GL_BLEND);
+			setFlag(GL_ALPHA_TEST);
+			setBlendFunction(DEFAULT_BLEND_FUNC);
+			setBlendEquation(DEFAULT_BLEND_EQUATION);
 			glDepthFunc(GL_LESS);
-			//glBlendFunc(GL_DST_ALPHA, GL_ONE_MINUS_DST_ALPHA);
-			//glBlendFunc(GL_ONE_MINUS_DST_ALPHA, GL_ONE);
-			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+			disable();
 			this->width = width;
 			this->height = height;
-			return this;
+			return *this;
 		}
 
-		FrameBuffer* operator()() {
+		FrameBuffer& operator()() {
 			return enable();
 		}
 
-		FrameBuffer* enable() {
+		FrameBuffer& enable() {
+			if (!created) return *this;
 			glBindFramebuffer(GL_FRAMEBUFFER, id);
-			glClear(GL_DEPTH_BUFFER_BIT);
-			return this;
+			this->clearDepthBuffer();
+			setBufferBlend();
+			return *this;
+		}
+
+		FrameBuffer& setBufferBlend() {
+			setBlend(blend);
+			return *this;
 		}
 
 		FrameBufferData toFrameBufferData() {
+			if (!created)
+				return FrameBufferData{};
 			return FrameBufferData{
 				id,
 				width,
 				height,
 				&buffer.screen,
-				&buffer.depth
+				&buffer.depth,
+				blend
 			};
 		}
 
-		FrameBuffer* clearBuffers() {
+		FrameBuffer& clearBuffers() {
 			this->clearColorBuffer();
 			this->clearDepthBuffer();
-			return this;
+			return *this;
 		}
 
-		FrameBuffer* clearColorBuffer() {
+		FrameBuffer& clearColorBuffer() {
 			Drawer::clearColorBuffer(material.background);
-			return this;
+			return *this;
 		}
 
-		FrameBuffer* clearDepthBuffer() {
+		FrameBuffer& clearDepthBuffer() {
 			glClear(GL_DEPTH_BUFFER_BIT);
-			return this;
+			return *this;
 		}
 
-		FrameBuffer* render(FrameBufferData target) {
-			if (!created) return this;
+		FrameBuffer& render(FrameBufferData const& target) {
+			if (!created) return *this;
 			// Set target buffer
 			glBindFramebuffer(GL_FRAMEBUFFER, target.id);
+			// set blend func & equation data
+			setBlend(target.blend);
 			// Set VBO as active
 			glBindBuffer(GL_ARRAY_BUFFER, vbo);
 			// Copy vertices to VBO
@@ -203,12 +214,75 @@ namespace Drawer {
 			glBindVertexArray(0);
 			// Disable attributes
 			Drawer::disableVertexAttributes();
-			return this;
+			disable();
+			return *this;
 		}
 
-		FrameBuffer* render(FrameBuffer& targetBuffer) {
-			if (!targetBuffer.exists()) return this;
+		FrameBuffer& render(FrameBuffer& targetBuffer) {
+			if (!created) return *this;
+			if (!targetBuffer.exists()) return *this;
 			return render(targetBuffer.toFrameBufferData());
+		}
+
+		FrameBuffer& setBlend(BlendData const& blend) {
+			this->blend = blend;
+			return *this;
+		}
+
+		FrameBuffer& setBlendFunction(
+			GLenum const& srcColor,
+			GLenum const& dstColor,
+			GLenum const& srcAlpha,
+			GLenum const& dstAlpha
+		) {
+			blend.func = {srcColor, dstColor, srcAlpha, dstAlpha};
+			return *this;
+		}
+
+		FrameBuffer& setBlendFunction(
+			GLenum const& src,
+			GLenum const& dst
+		) {
+			blend.func = {src, src, dst, dst};
+			return *this;
+		}
+
+		FrameBuffer& setBlendEquation(
+			GLenum const& color,
+			GLenum const& alpha
+		) {
+			blend.eq = {color, alpha};
+			return *this;
+		}
+
+		FrameBuffer& setBlendEquation(
+			GLenum const& eq
+		) {
+			blend.eq = {eq, eq};
+			return *this;
+		}
+
+		FrameBuffer& setFlag(GLenum const& flag, bool const& state = true) {
+			if (!created) return *this;
+			enable();
+			if (state) glEnable(flag);
+			else glDisable(flag);
+			disable();
+			return *this;
+		}
+
+		FrameBuffer& setValue(GLenum const& flag, int const& value = 0, bool const& state = true) {
+			if (!created) return *this;
+			enable();
+			if (state) glEnablei(flag, value);
+			else glDisablei(flag, value);
+			disable();
+			return *this;
+		}
+
+		FrameBuffer& disable() {
+			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+			return *this;
 		}
 
 		bool exists() {
@@ -227,9 +301,10 @@ namespace Drawer {
 		Shader::Shader shader;
 		/// The framebuffer's screen Vertex Unit space. Usually the inverse of the camera's orthographic size.
 		Vector2 screenVUSpace = 1;
+		/// The framebuffer's blend function & equation setting.
+		BlendData blend;
 
 	private:
-
 		bool created = false;
 		unsigned int id;
 		unsigned int width, height;
