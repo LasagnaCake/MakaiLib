@@ -425,10 +425,8 @@ namespace ArcSys {
 			// Open file
 			archive.open(path, std::ios::binary | std::ios::in);
 			// Read header
-			auto lp = archive.tellg();
-			uint64 hs = 0;
 			archive.read((char*)&hs, sizeof(uint64));
-			archive.seekg(lp);
+			archive.seekg(0);
 			archive.read((char*)&header, hs);
 			// check if file is archive
 			if (header.flags & Flags::SINGLE_FILE_ARCHIVE_BIT)
@@ -438,7 +436,7 @@ namespace ArcSys {
 			// Read file info
 			String fs(header.dirInfoSize, ' ');
 			archive.read(fs.data(), fs.size());
-			archive.seekg(lp);
+			archive.seekg(0);
 			try {
 				fstruct = JSON::parse(fs);
 			} catch (JSON::exception const& e) {
@@ -728,16 +726,10 @@ namespace ArcSys {
 			FileLoader::fileLoadError(path, "File is not a single-file archive!", __FILE__);
 		// Get file header
 		FileHeader fh;
-		{
-			archive.seekg(header.headerSize);
-			archive.read((char*)&fh, header.fileHeaderSize);
-		}
+		archive.read((char*)&fh, header.fileHeaderSize);
 		// Get file data
 		BinaryData fd(fh.compSize, 0);
-		{
-			archive.seekg(header.headerSize + header.fileHeaderSize);
-			archive.read((char*)fd.data(), fh.compSize);
-		}
+		archive.read((char*)fd.data(), fh.compSize);
 		// Extract file contents
 		{
 			if (fh.uncSize == 0) return BinaryData();
