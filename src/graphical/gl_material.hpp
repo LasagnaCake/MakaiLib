@@ -1,81 +1,81 @@
 namespace Module {
-	struct MODULAR Effect {
+	struct Effect {
 		bool enabled = false;
 	};
 
-	struct MODULAR Limitable {
+	struct Limitable {
 		float
 			start	= 0.0,
 			stop	= 10.0;
 	};
 
-	struct MODULAR Variable {
+	struct Variable {
 		float	strength = 1;
 	};
 
-	struct MODULAR Variable2D {
+	struct Variable2D {
 		Vector2	strength = 1;
 	};
 
-	struct MODULAR Variable3D {
+	struct Variable3D {
 		Vector3	strength = 1;
 	};
 
-	struct MODULAR Variable4D {
+	struct Variable4D {
 		Vector4	strength = 1;
 	};
 
-	struct MODULAR ColorableRGBA {
+	struct ColorableRGBA {
 		Vector4	color = Color::WHITE;
 	};
 
-	struct MODULAR ColorableRGB {
+	struct ColorableRGB {
 		Vector3	color = 1;
 	};
 
-	struct MODULAR Imageable2D {
+	struct Imageable2D {
 		Texture2D* image = nullptr;
 	};
 
-	struct MODULAR Channelable {
+	struct Channelable {
 		int channel = -1;
 	};
 
-	struct MODULAR Transformable2D {
+	struct Transformable2D {
 		Transform2D trans;
 	};
 
-	struct MODULAR Positionable2D {
+	struct Positionable2D {
 		Vector2 position;
 	};
 
-	struct MODULAR Invertible {
+	struct Invertible {
 		bool invert = false;
 	};
 
-	struct MODULAR Tuneable {
+	struct Tuneable {
 		float
 			frequency	= 0,
 			amplitude	= 0,
 			shift		= 0;
 	};
 
-	struct MODULAR Tuneable2D {
+	struct Tuneable2D {
 		Vector2
 			frequency	= Vector2(0),
 			amplitude	= Vector2(0),
 			shift		= Vector2(0);
 	};
 
-	struct MODULAR Sizeable {
+	struct Sizeable {
 		float size = 0;
 	};
 
-	struct MODULAR Sizeable2D {
+	struct Sizeable2D {
 		Vector2 size = 0;
 	};
 
-	struct MODULAR Countable {
+	struct Countable {
 		size_t count = 1;
 	};
 }
