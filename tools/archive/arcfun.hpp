@@ -192,7 +192,6 @@ namespace ArcSys {
 		return flate<Inflator>(data, method, level);
 	}
 
-	// TODO: CRC Stuff
 	uint32 generateCRC(BinaryData const& data) {
 		return 0;
 	}
@@ -253,6 +252,7 @@ namespace ArcSys {
 		}
 	}
 
+	#pragma pack(1)
 	struct FileHeader {
 		uint64	uncSize;
 		uint64	compSize;
@@ -261,6 +261,7 @@ namespace ArcSys {
 		// Put new things BELOW this line
 	};
 
+	#pragma pack(1)
 	struct ArchiveHeader {
 		uint64	const headerSize		= sizeof(ArchiveHeader);
 		uint64	const fileHeaderSize	= sizeof(FileHeader);
@@ -270,8 +271,13 @@ namespace ArcSys {
 		uint16	encryption		= (uint16)EncryptionMethod::AEM_AES256;
 		uint16	compression		= (uint16)CompressionMethod::ACM_ZIP;
 		uint8	level			= 9;
+		uint64	flags			= 0;
 		// Put new things BELOW this line
 	};
+
+	namespace Flags {
+		constexpr uint64 SINGLE_FILE_ARCHIVE_BIT	= 1;
+	}
 
 	void generateBlock(uint8 const(& block)[16]) {
 		uint64* b = (uint64*)block;
@@ -370,8 +376,8 @@ namespace ArcSys {
 			_ARCDEBUGLN("'", files[i], "':");
 			_ARCDEBUGLN("          FILE INDEX: ", i					);
 			_ARCDEBUGLN("       FILE LOCATION: ", locations[i]		, " (", encoded(locations[i]), ")");
-			_ARCDEBUGLN("   UNCOMPRESSED SIZE: ", fheader.uncSize	);
-			_ARCDEBUGLN("     COMPRESSED SIZE: ", fheader.compSize	);
+			_ARCDEBUGLN("   UNCOMPRESSED SIZE: ", fheader.uncSize,	"B"	);
+			_ARCDEBUGLN("     COMPRESSED SIZE: ", fheader.compSize,	"B"	);
 			_ARCDEBUGLN("               CRC32: ", fheader.crc		);
 			// Copy header & file data
 			file.write((char*)&fheader, header.fileHeaderSize);
@@ -422,7 +428,15 @@ namespace ArcSys {
 			archive.open(path, std::ios::binary | std::ios::in);
 			// Read header
 			auto lp = archive.tellg();
-			archive.read((char*)&header, sizeof(ArchiveHeader));
+			uint64 hs = 0;
+			archive.read((char*)&hs, sizeof(uint64));
+			archive.seekg(lp);
+			archive.read((char*)&header, hs);
+			// check if file is archive
+			if (header.flags & Flags::SINGLE_FILE_ARCHIVE_BIT)
+				singleFileArchiveError(path);
+			if (!header.dirInfoSize)
+				directoryTreeError();
 			// Read file info
 			String fs(header.dirInfoSize, ' ');
 			archive.read(fs.data(), fs.size());
@@ -557,9 +571,9 @@ namespace ArcSys {
 			_ARCDEBUGLN("ENTRY LOCATION: ", idx);
 			_ARCDEBUGLN("Getting file entry header...");
 			FileHeader	fh	= getFileEntryHeader(idx);
-			_ARCDEBUGLN("   UNCOMPRESSED SIZE: ", fh.uncSize	);
-			_ARCDEBUGLN("     COMPRESSED SIZE: ", fh.compSize	);
-			_ARCDEBUGLN("               CRC32: ", fh.crc		);
+			_ARCDEBUGLN("   UNCOMPRESSED SIZE: ", fh.uncSize,	"B"	);
+			_ARCDEBUGLN("     COMPRESSED SIZE: ", fh.compSize,	"B"	);
+			_ARCDEBUGLN("               CRC32: ", fh.crc	);
 			_ARCDEBUGLN("Getting file entry data...");
 			return FileEntry{idx, path, fh, getFileEntryData(idx, fh)};
 		} catch (FileLoader::FileLoadError const& e) {
@@ -620,6 +634,13 @@ namespace ArcSys {
 		[[noreturn]] void notOpenError() const {
 			throw FileLoader::FileLoadError(
 				"Archive is not open!"
+			);
+		}
+
+		[[noreturn]] void singleFileArchiveError(String const& file) const {
+			throw FileLoader::FileLoadError(
+				"Archive is not a multi-file archive!",
+				__FILE__
 			);
 		}
 
@@ -689,6 +710,158 @@ namespace ArcSys {
 	#else
 	}
 	#endif // ARCSYS_APPLICATION_
+
+	BinaryData loadEncryptedBinaryFile(String const& path, String const& password) try {
+		std::ifstream archive;
+		// Set exceptions
+		archive.exceptions(std::ifstream::badbit | std::ifstream::failbit);
+		// Open file
+		archive.open(path, std::ios::binary | std::ios::in);
+		// Get archive header
+		ArchiveHeader header;
+		{
+			uint64 hs = 0;
+			archive.read((char*)&hs, sizeof(uint64));
+			archive.seekg(0);
+			archive.read((char*)&header, hs);
+		}
+		// Check if single-file archive
+		if (!(header.flags & Flags::SINGLE_FILE_ARCHIVE_BIT))
+			FileLoader::fileLoadError(path, "File is not a single-file archive!", __FILE__);
+		// Get file header
+		FileHeader fh;
+		{
+			archive.seekg(header.headerSize);
+			archive.read((char*)&fh, header.fileHeaderSize);
+		}
+		// Get file data
+		BinaryData fd(fh.compSize, 0);
+		{
+			archive.seekg(header.headerSize + header.fileHeaderSize);
+			archive.read((char*)fd.data(), fh.compSize);
+		}
+		// Extract file contents
+		{
+			if (fh.uncSize == 0) return BinaryData();
+			fd = decrypt(
+				fd,
+				password,
+				(EncryptionMethod)header.encryption,
+				fh.block
+			);
+			fd = decompress(
+				fd,
+				(CompressionMethod)header.compression,
+				header.level
+			);
+			if (fd.size() != fh.uncSize)
+				FileLoader::fileLoadError(path, "Uncompresses size doesn't match!", "arcfun.hpp");
+			if (!calculateCRC(fd, fh.crc))
+				FileLoader::fileLoadError(path, "CRC check failed!", "arcfun.hpp");
+		}
+		// Return file
+		return fd;
+	} catch (std::runtime_error const& e) {
+		FileLoader::fileLoadError(path, e.what(), __FILE__);
+	}
+
+	String loadEncryptedTextFile(String const& path, String const& password) {
+		BinaryData fd = loadEncryptedBinaryFile(path, password);
+		return String(fd.begin(), fd.end());
+	}
+
+	template<typename T>
+	void saveEncryptedBinaryFile(
+		T* const&					data,
+		size_t const&				size,
+		String const&				path,
+		String const&				password,
+		EncryptionMethod const&		enc			= EncryptionMethod::AEM_AES256,
+		CompressionMethod const&	comp		= CompressionMethod::ACM_ZIP,
+		uint8 const&				lvl			= 9
+	) {
+		if (enc != EncryptionMethod::AEM_NONE && password.empty())
+			throw Error::InvalidValue("Missing password for encrypted file!");
+		// Open file
+		std::ofstream file(path, std::ios::binary | std::ios::trunc);
+		file.exceptions(std::ofstream::badbit | std::ofstream::failbit);
+		// Header
+		ArchiveHeader header;
+		// Set main header params
+		header.dirInfoSize	= 0;			// directory info size
+		header.encryption	= (uint16)enc;	// encryption mode
+		header.compression	= (uint16)comp;	// compression mode
+		header.level		= lvl;			// compression level
+		header.flags		= Flags::SINGLE_FILE_ARCHIVE_BIT;
+		// Write header
+		file.write((char*)&header, header.headerSize);
+		// Write file info
+		{
+			size_t uncSize = (size*sizeof(T));
+			BinaryData contents(data, data + uncSize);
+			// Prepare header
+			FileHeader fheader;
+			fheader.uncSize = uncSize;		// Uncompressed file size
+			// Generate block
+			generateBlock(fheader.block);	// Encryption block
+			// Process file
+			if (!contents.empty()) {
+				contents = compress(
+					contents,
+					comp,
+					lvl
+				);
+				contents = encrypt(
+					contents,
+					password,
+					enc,
+					fheader.block
+				);
+			}
+			fheader.compSize	= contents.size();			// Compressed file size
+			fheader.crc			= generateCRC(contents);	// CRC
+			// Copy header & file data
+			file.write((char*)&fheader, header.fileHeaderSize);
+			file.write((char*)contents.data(), contents.size());
+		}
+		// Flush & close file
+		file.flush();
+		file.close();
+	}
+
+	void saveEncryptedBinaryFile(
+		BinaryData const&			data,
+		String const&				path,
+		String const&				password,
+		EncryptionMethod const&		enc			= EncryptionMethod::AEM_AES256,
+		CompressionMethod const&	comp		= CompressionMethod::ACM_ZIP,
+		uint8 const&				lvl			= 9
+	) {
+		saveEncryptedBinaryFile(data.data(), data.size(), path, password, enc, comp, lvl);
+	}
+
+	template<typename T>
+	void saveEncryptedBinaryFile(
+		List<T> const&				data,
+		String const&				path,
+		String const&				password,
+		EncryptionMethod const&		enc			= EncryptionMethod::AEM_AES256,
+		CompressionMethod const&	comp		= CompressionMethod::ACM_ZIP,
+		uint8 const&				lvl			= 9
+	) {
+		saveEncryptedBinaryFile<T>(data.data(), data.size(), path, password, enc, comp, lvl);
+	}
+
+	void saveEncryptedTextFile(
+		String const&				data,
+		String const&				path,
+		String const&				password,
+		EncryptionMethod const&		enc			= EncryptionMethod::AEM_AES256,
+		CompressionMethod const&	comp		= CompressionMethod::ACM_ZIP,
+		uint8 const&				lvl			= 9
+	) {
+		saveEncryptedBinaryFile(data.data(), data.size(), path, password, enc, comp, lvl);
+	}
 }
 
 

@@ -43,6 +43,7 @@ The main header is structured as follows, in order:
                  ENCRYPTION MODE : 2 Bytes
                 COMPRESSION MODE : 2 Bytes
                COMPRESSION LEVEL : 1 Byte
+                           FLAGS : 8 Bytes
 
 The directory information is formatted as a JSON object:
 {
@@ -56,3 +57,19 @@ The file header is structured as follows, in order:
     COMPRESSED SIZE : 8 Bytes
               CRC32 : 4 Bytes
               BLOCK : 16 Bytes
+
+For single-file archives, it is laid out as such:
+
++--------------------------------+
+|           Main Header          |
++--------------------------------+
+|           File Header          |
++--------------------------------+
+|                                |
+|                                |
+|              File              |
+|                                |
+|                                |
++--------------------------------+
+
+The headers' contents are the same, except that the "DIRECTORY INFO SIZE" is set to 0, and the SINGLE_FILE_ARCHIVE bit is set to 1.
