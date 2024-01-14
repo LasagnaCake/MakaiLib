@@ -297,8 +297,6 @@ namespace ArcSys {
 	#else
 	) {
 	#endif // ARCSYS_APPLICATION_
-		if (enc != EncryptionMethod::AEM_NONE && password.empty())
-			throw Error::InvalidValue("Missing password for encrypted file!");
 		_ARCDEBUGLN("FOLDER: ", folderPath, "\nARCHIVE: ", archivePath);
 		// Get file structure
 		_ARCDEBUGLN("Getting file structure...");
@@ -711,7 +709,7 @@ namespace ArcSys {
 	}
 	#endif // ARCSYS_APPLICATION_
 
-	BinaryData loadEncryptedBinaryFile(String const& path, String const& password) try {
+	BinaryData loadEncryptedBinaryFile(String const& path, String const& password = "") try {
 		std::ifstream archive;
 		// Set exceptions
 		archive.exceptions(std::ifstream::badbit | std::ifstream::failbit);
@@ -765,17 +763,17 @@ namespace ArcSys {
 		FileLoader::fileLoadError(path, e.what(), __FILE__);
 	}
 
-	String loadEncryptedTextFile(String const& path, String const& password) {
+	String loadEncryptedTextFile(String const& path, String const& password = "") {
 		BinaryData fd = loadEncryptedBinaryFile(path, password);
 		return String(fd.begin(), fd.end());
 	}
 
 	template<typename T>
 	void saveEncryptedBinaryFile(
+		String const&				path,
 		T* const&					data,
 		size_t const&				size,
-		String const&				path,
-		String const&				password,
+		String const&				password	= "",
 		EncryptionMethod const&		enc			= EncryptionMethod::AEM_AES256,
 		CompressionMethod const&	comp		= CompressionMethod::ACM_ZIP,
 		uint8 const&				lvl			= 9
@@ -830,37 +828,37 @@ namespace ArcSys {
 	}
 
 	void saveEncryptedBinaryFile(
-		BinaryData const&			data,
 		String const&				path,
-		String const&				password,
+		BinaryData const&			data,
+		String const&				password	= "",
 		EncryptionMethod const&		enc			= EncryptionMethod::AEM_AES256,
 		CompressionMethod const&	comp		= CompressionMethod::ACM_ZIP,
 		uint8 const&				lvl			= 9
 	) {
-		saveEncryptedBinaryFile(data.data(), data.size(), path, password, enc, comp, lvl);
+		saveEncryptedBinaryFile(path, data.data(), data.size(), password, enc, comp, lvl);
 	}
 
 	template<typename T>
 	void saveEncryptedBinaryFile(
-		List<T> const&				data,
 		String const&				path,
-		String const&				password,
+		List<T> const&				data,
+		String const&				password	= "",
 		EncryptionMethod const&		enc			= EncryptionMethod::AEM_AES256,
 		CompressionMethod const&	comp		= CompressionMethod::ACM_ZIP,
 		uint8 const&				lvl			= 9
 	) {
-		saveEncryptedBinaryFile<T>(data.data(), data.size(), path, password, enc, comp, lvl);
+		saveEncryptedBinaryFile<T>(path, data.data(), data.size(), password, enc, comp, lvl);
 	}
 
 	void saveEncryptedTextFile(
-		String const&				data,
 		String const&				path,
-		String const&				password,
+		String const&				data,
+		String const&				password	= "",
 		EncryptionMethod const&		enc			= EncryptionMethod::AEM_AES256,
 		CompressionMethod const&	comp		= CompressionMethod::ACM_ZIP,
 		uint8 const&				lvl			= 9
 	) {
-		saveEncryptedBinaryFile(data.data(), data.size(), path, password, enc, comp, lvl);
+		saveEncryptedBinaryFile(path, data.data(), data.size(), password, enc, comp, lvl);
 	}
 }
 

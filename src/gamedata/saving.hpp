@@ -65,22 +65,25 @@ public:
 
 	SaveFile(JSONData const& data) {this->data = data;}
 
-	SaveFile(String const& path) {load(path);}
+	SaveFile(String const& path, String const& pass = "") {load(path, pass);}
 
-	SaveFile& load(String const& path) {
-		data = FileLoader::loadJSON(path);
+	SaveFile& load(String const& path, String const& pass = "") {
+		if (pass.empty()) data = FileLoader::loadJSON(path);
+		else data = FileLoader::parseJSON(ArcSys::loadEncryptedTextFile(path, pass));
 		return (*this);
 	}
 
-	inline SaveFile& close(String const& path) {return save(path).destroy();}
+	inline SaveFile& close(String const& path, String const& pass = "") {return save(path, pass).destroy();}
 
 	SaveFile& destroy() {
 		data = JSON::object();
 		return (*this);
 	}
 
-	SaveFile& save(String const& path) {
-		FileLoader::saveTextFile(path, file().dump(1, '\t', false, JSON::error_handler_t::replace));
+	SaveFile& save(String const& path, String const& pass = "") {
+		String content = file().dump(1, '\t', false, JSON::error_handler_t::replace);
+		if (pass.empty()) FileLoader::saveTextFile(path, content);
+		else ArcSys::saveEncryptedTextFile(path, content, pass);
 		return (*this);
 	}
 
@@ -94,7 +97,7 @@ public:
 		}
 	}
 
-	SaveDataView operator[](string const& key) {
+	SaveDataView operator[](String const& key) {
 		if (data[key].is_null()) data[key] = JSON::object();
 		return SaveDataView(data[key], key);
 	}
