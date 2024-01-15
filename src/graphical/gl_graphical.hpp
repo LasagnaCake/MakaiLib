@@ -249,13 +249,13 @@ namespace Drawer {
 				srcAlpha = GL_ONE,
 				dstAlpha = GL_ZERO
 			;
-		} func;
+		} func = {DEFAULT_BLEND_FUNC};
 		struct BlendEquationData {
 			GLenum
 				color = GL_FUNC_ADD,
 				alpha = GL_MAX
 			;
-		} eq;
+		} eq = {DEFAULT_BLEND_EQUATION};
 	};
 
 	inline void setBlend(BlendData const& blend, unsigned int const& drawBuffer = 0) {
