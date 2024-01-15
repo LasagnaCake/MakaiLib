@@ -650,7 +650,7 @@ public:
 	}
 
 	template<size_t C2>
-	constexpr Matrix<R, C, T>& operator/=(Matrix<R, C, T> const& mat)
+	constexpr Matrix<R, C, T>& operator/=(Matrix<R, C2, T> const& mat)
 	requires (R == C) {
 		(*this) = (*this) / mat;
 		return *this;
