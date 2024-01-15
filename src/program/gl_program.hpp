@@ -519,9 +519,6 @@ namespace Makai {
 			SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
 			SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
 			//glViewport(0, 0, width, height);
-			// This keeps the alpha from shitting itself
-			setFlag(GL_BLEND);
-			setFlag(GL_ALPHA_TEST);
 			#ifdef MAKAILIB_ENABLE_OPENGL_DEBUG
 			setFlag(GL_DEBUG_OUTPUT);
 			#endif
@@ -529,6 +526,9 @@ namespace Makai {
 			// This keeps the alpha from shitting itself
 			setBlendFunction(DEFAULT_BLEND_FUNC);
 			setBlendEquation(DEFAULT_BLEND_EQUATION);
+			setFlag(GL_BLEND);
+			setFlag(GL_ALPHA_TEST);
+			setFlag(GL_DEPTH_TEST);
 			// Setup camera
 			DEBUGLN("Setting starting camera...");
 			Scene::camera.aspect = Vector2(width, height);
@@ -536,24 +536,17 @@ namespace Makai {
 			DEBUGLN("creating default framebuffer...");
 			// Create framebuffer
 			framebuffer.create(width, height);
-			framebuffer.setFlag(GL_BLEND);
-			framebuffer.setFlag(GL_ALPHA_TEST);
-			framebuffer.setFlag(GL_DEPTH_TEST);
 			// Create layer buffer
 			layerbuffer.create(width, height);
-			layerbuffer.setFlag(GL_BLEND);
-			layerbuffer.setFlag(GL_ALPHA_TEST);
-			layerbuffer.setFlag(GL_DEPTH_TEST);
 			enableMainBuffer();
-			// Create composition shader
+			// Create buffer shaders
 			DEBUGLN("Creating shaders...");
-			bufferShader.create(SLF::parseFile(bufferShaderPath));
-			framebuffer.shader = bufferShader;
-			layerbuffer.shader = bufferShader;
+			SLF::SLFData data = SLF::parseFile(bufferShaderPath);
+			framebuffer.shader.create(data);
+			layerbuffer.shader.create(data);
 			// Create main shader
-			SLF::SLFData data = SLF::parseFile(mainShaderPath);
 			MAIN_SHADER.destroy();
-			MAIN_SHADER.create(data);
+			MAIN_SHADER.create(SLF::parseFile(mainShaderPath));
 			DEBUGLN(Entities::_ROOT ? "Root Exists!" : "Root does not exist!");
 			if (!Entities::_ROOT) {
 				DEBUGLN("Initializing root tree...");
@@ -780,10 +773,6 @@ namespace Makai {
 			return layerbuffer;
 		}
 
-		constexpr inline Shader::Shader& getBufferShader() {
-			return bufferShader;
-		}
-
 		inline Vector2 getWindowSize() {
 			return Vector2(width, height);
 		}
@@ -875,8 +864,6 @@ namespace Makai {
 
 		List<Drawer::Texture2D*> screenQueue;
 
-		Shader::Shader bufferShader;
-
 		/// The program's main framebuffer.
 		Drawer::FrameBuffer framebuffer;
 		Drawer::FrameBuffer layerbuffer;
@@ -912,7 +899,7 @@ namespace Makai {
 			Drawer::clearColorBuffer(color);
 			glClear(GL_DEPTH_BUFFER_BIT);
 			// Enable depth testing
-			glEnable(GL_DEPTH_TEST);
+			setFlag(GL_DEPTH_TEST, true);
 			// Set blend mode
 			Drawer::setBlend(blend);
 			// Enable frame buffer
@@ -966,7 +953,7 @@ namespace Makai {
 			// Call rendering end function
 			onDrawEnd();
 			// Disable depth testing
-			glDisable(GL_DEPTH_TEST);
+			setFlag(GL_DEPTH_TEST, false);
 			// Display window
 			SDL_GL_SwapWindow(window);
 		}

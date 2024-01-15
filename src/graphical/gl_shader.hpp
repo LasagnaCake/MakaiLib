@@ -304,6 +304,21 @@ namespace Shader {
 			return true;
 		}
 
+		void make(string vertexCode, string fragmentCode) {
+			destroy();
+			create(vertexCode, fragmentCode);
+		}
+
+		void make(CSVData slfData) {
+			destroy();
+			create(slfData);
+		}
+
+		void make(string code, GLuint shaderType) {
+			destroy();
+			create(code, shaderType);
+		}
+
 		/// Destroys the shader associated with this object, if any. Does not delete object.
 		void destroy() {
 			if (created) {

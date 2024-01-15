@@ -104,9 +104,6 @@ namespace Drawer {
 			// Create buffers
 			glGenVertexArrays(1, &vao);
 			glGenBuffers(1, &vbo);
-			// This keeps the alpha from shitting itself
-			setFlag(GL_BLEND);
-			setFlag(GL_ALPHA_TEST);
 			setBlendFunction(DEFAULT_BLEND_FUNC);
 			setBlendEquation(DEFAULT_BLEND_EQUATION);
 			glDepthFunc(GL_LESS);
@@ -254,24 +251,6 @@ namespace Drawer {
 			GLenum const& eq
 		) {
 			blend.eq = {eq, eq};
-			return *this;
-		}
-
-		FrameBuffer& setFlag(GLenum const& flag, bool const& state = true) {
-			if (!created) return *this;
-			enable();
-			if (state) glEnable(flag);
-			else glDisable(flag);
-			disable();
-			return *this;
-		}
-
-		FrameBuffer& setValue(GLenum const& flag, int const& value = 0, bool const& state = true) {
-			if (!created) return *this;
-			enable();
-			if (state) glEnablei(flag, value);
-			else glDisablei(flag, value);
-			disable();
 			return *this;
 		}
 
