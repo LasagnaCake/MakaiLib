@@ -943,7 +943,7 @@ namespace Makai {
 					// Skip layer if applicable
 					if (!skipLayer) {
 						// Clear buffers
-						layerbuffer.clearBuffers().setBufferBlend();
+						layerbuffer.clearBuffers().setBlend();
 						// Call onLayerDrawBegin function
 						onPostLayerClear(layer);
 						// Render layer

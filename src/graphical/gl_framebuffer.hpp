@@ -124,12 +124,12 @@ namespace Drawer {
 			if (!created) return *this;
 			glBindFramebuffer(GL_FRAMEBUFFER, id);
 			this->clearDepthBuffer();
-			setBufferBlend();
+			setBlend();
 			return *this;
 		}
 
-		FrameBuffer& setBufferBlend() {
-			setBlend(blend);
+		FrameBuffer& setBlend() {
+			Drawer::setBlend(blend);
 			return *this;
 		}
 
@@ -167,7 +167,7 @@ namespace Drawer {
 			// Set target buffer
 			glBindFramebuffer(GL_FRAMEBUFFER, target.id);
 			// set blend func & equation data
-			setBlend(target.blend);
+			Drawer::setBlend(target.blend);
 			// Set VBO as active
 			glBindBuffer(GL_ARRAY_BUFFER, vbo);
 			// Copy vertices to VBO
@@ -224,11 +224,6 @@ namespace Drawer {
 			return render(targetBuffer.toFrameBufferData());
 		}
 
-		FrameBuffer& setBlend(BlendData const& blend) {
-			this->blend = blend;
-			return *this;
-		}
-
 		FrameBuffer& setBlendFunction(
 			GLenum const& srcColor,
 			GLenum const& dstColor,
@@ -243,7 +238,7 @@ namespace Drawer {
 			GLenum const& src,
 			GLenum const& dst
 		) {
-			blend.func = {src, src, dst, dst};
+			blend.func = {src, dst, src, dst};
 			return *this;
 		}
 

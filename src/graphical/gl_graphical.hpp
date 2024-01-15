@@ -244,16 +244,16 @@ namespace Drawer {
 	struct BlendData {
 		struct BlendFunctionData {
 			GLenum
-				srcColor,
-				dstColor,
-				srcAlpha,
-				dstAlpha
+				srcColor = GL_SRC_ALPHA,
+				dstColor = GL_ONE_MINUS_SRC_ALPHA,
+				srcAlpha = GL_ONE,
+				dstAlpha = GL_ZERO
 			;
 		} func;
 		struct BlendEquationData {
 			GLenum
-				color,
-				alpha
+				color = GL_FUNC_ADD,
+				alpha = GL_MAX
 			;
 		} eq;
 	};
