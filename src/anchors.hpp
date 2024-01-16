@@ -146,6 +146,8 @@
 using JSON = ArcSys::JSON;
 typedef ArcSys::JSONData JSONData;
 
+#include "globalclasses.hpp"
+
 #ifdef _USE_OPENMP_
 #ifndef _DEBUG_OUTPUT_
 #include <omp.h>

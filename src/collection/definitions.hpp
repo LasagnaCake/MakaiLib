@@ -7,7 +7,7 @@
 
 #define ILTF(A, B, C) (((A) > (B)) ? -(C) : +(C))
 
-#define RANGE(I, BEGIN, END, STEP) (long long I = (BEGIN); I < (long long)(END); I += (STEP))
+#define RANGE(I, BEGIN, END, STEP) (auto I = (BEGIN); I < (decltype(I))(END); I += (decltype(I))(STEP))
 #define SSRANGE(I, BEGIN, END) RANGE(I, BEGIN, END, ILTF(BEGIN, END, 1))
 
 #define EACH(I, LIST) (auto& I: LIST)
@@ -19,8 +19,7 @@
 
 #define ERASE_IF(VEC, COND) if (!VEC.empty()) std::erase_if(VEC, [&](auto& elem){return (COND);})
 
-#define NAMEOF(VALUE)	#VALUE
-#define TYPENAME(VALUE)	typeid(VALUE).name()
+#define NAMEOF(TYPEID) abi::__cxa_demangle((TYPEID).name(),0,0,NULL)
 
 /*
 #define DLL_EXPORT	__declspec(dllexport)

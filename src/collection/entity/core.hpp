@@ -24,9 +24,6 @@
 #define DEFAULT_ENTITY_ROOT_NAME "@root"
 #endif // DEFAULT_ENTITY_ROOT_NAME
 
-/// Type getter macro.
-#define GET_TYPE_STRING(VAR) abi::__cxa_demangle(typeid(VAR).name(),0,0,NULL)
-
 /// Core class construction macro.
 #define ENTITY_CLASS(NAME, BASE)\
 	using	Entity::Entity;\

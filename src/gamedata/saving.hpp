@@ -1,36 +1,6 @@
-class SaveDataView: public DataView<JSONData> {
+class SaveDataView: public JSONView {
 public:
-	SaveDataView(JSONData& _data, String const& _name):	DataView(_data), name(_name)		{}
-	SaveDataView(SaveDataView const& other):			DataView(other), name(other.name)	{}
-	SaveDataView(SaveDataView&& other):					DataView(other), name(other.name)	{}
-
-	template<typename T>
-	T get(T const& fallback) {
-		try {
-			return value().get<T>();
-		} catch (JSON::exception e) {
-			view() = fallback;
-			return fallback;
-		}
-	}
-
-	SaveDataView operator[](String const& key) {
-		if (isNull()) view() = JSON::object();
-		else if (!isObject()) throw Error::InvalidAction("Parameter '" + name + "' is not an object!");
-		return SaveDataView(view()[key], key);
-	}
-
-	SaveDataView operator[](size_t const& index) {
-		if (isNull()) view() = JSON::array();
-		else if (!isArray()) throw Error::InvalidAction("Parameter '" + name + "' is not an array!");
-		return SaveDataView(view()[index], toString("index:", toString(index)));
-	}
-
-	template<typename T>
-	SaveDataView& operator=(T const& v) {
-		view() = v;
-		return (*this);
-	}
+	using JSONView::JSONView;
 
 	SaveDataView& save(String const& path) {
 		FileLoader::saveTextFile(path, value().dump(1, '\t', false, JSON::error_handler_t::replace));
@@ -41,22 +11,6 @@ public:
 		view() = FileLoader::getJSON(path);
 		return (*this);
 	}
-
-	inline bool isNull()		{return view().is_null();				}
-	inline bool isInt()			{return view().is_number_integer();		}
-	inline bool isFloat()		{return view().is_number_float();		}
-	inline bool isNumber()		{return view().is_number();				}
-	inline bool isObject()		{return view().is_object();				}
-	inline bool isUnsigned()	{return view().is_number_unsigned();	}
-	inline bool isArray()		{return view().is_array();				}
-	inline bool isBool()		{return view().is_boolean();			}
-	inline bool isString()		{return view().is_string();				}
-	inline bool isPrimitive()	{return view().is_primitive();			}
-	inline bool isStructured()	{return view().is_structured();			}
-	inline bool isDiscarded()	{return view().is_discarded();			}
-
-private:
-	String const name;
 };
 
 class SaveFile {
