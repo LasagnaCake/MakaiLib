@@ -30,13 +30,11 @@ struct Variant {
 	template<Type::Variable T> inline Variant& operator=(Variant const& v)	{return set(v.value, v.type);}
 	template<Type::Variable T> inline Variant& operator=(Variant&& v)		{return set(v.value, v.type);}
 
-	template<Type::Variable T> constexpr operator T() const requires (!Type::Fundamental<T>)	{return get<T>();}
 	template<Type::Fundamental T> constexpr operator T() const									{return get<T>();}
+	template<Type::Variable T> constexpr operator T() const requires (!Type::Fundamental<T>)	{return get<T>();}
 
 	template<Type::Variable T>
 	constexpr Variant& set(T const& v) {return set(v, &typeid(T));}
-
-	template<Type::Variable T> constexpr T get() const requires (!Type::Fundamental<T>) {return as<T>();}
 
 	#define FUNDAMENTAL_CASE(TYPE) case &typeid(TYPE): return T(as<TYPE>());
 	template<Type::Fundamental T>
@@ -75,6 +73,8 @@ struct Variant {
 		}
 	}
 	#undef FUNDAMENTAL_CASE
+
+	template<Type::Variable T> constexpr T get() const requires (!Type::Fundamental<T>) {return as<T>();}
 
 private:
 	typedef std::any AnyType;
