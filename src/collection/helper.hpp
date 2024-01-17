@@ -112,7 +112,6 @@ namespace Helper {
 			std::initializer_list,
 			std::pair,
 			std::function,
-			std::any,
 			std::variant,
 			std::optional,
 			std::span,
@@ -171,8 +170,6 @@ namespace Helper {
 
 	template<typename T>
 	using Tuple = tuple<T>;
-
-	typedef any Any;
 
 	struct Discard {
 		template<typename T>
@@ -516,7 +513,6 @@ using Helper::Function;
 using Helper::Operation;
 using Helper::Procedure;
 using Helper::Poly;
-using Helper::Any;
 using Helper::Nullable;
 using Helper::Regex;
 using Helper::Span;

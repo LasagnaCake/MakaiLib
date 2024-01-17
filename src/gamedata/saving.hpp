@@ -2,14 +2,26 @@ class SaveDataView: public JSONView {
 public:
 	using JSONView::JSONView;
 
-	SaveDataView& save(String const& path) {
-		FileLoader::saveTextFile(path, value().dump(1, '\t', false, JSON::error_handler_t::replace));
+	SaveDataView const& save(String const& path, String const& pass = "") const {
+		saveToFile(path, pass);
+		return (*this);
+	}
+
+	SaveDataView& save(String const& path, String const& pass = "") {
+		saveToFile(path, pass);
 		return (*this);
 	}
 
 	SaveDataView& load(String const& path) {
 		view() = FileLoader::getJSON(path);
 		return (*this);
+	}
+
+private:
+	void saveToFile(String const& path, String const& pass = "") const {
+		String const content = value().dump(1, '\t', false, JSON::error_handler_t::replace);
+		if (pass.empty()) FileLoader::saveTextFile(path, content);
+		else ArcSys::saveEncryptedTextFile(path, content, pass);
 	}
 };
 
@@ -18,6 +30,7 @@ public:
 	SaveFile() {}
 
 	SaveFile(JSONData const& data) {this->data = data;}
+	SaveFile(JSONView const& data) {this->data = data;}
 
 	SaveFile(String const& path, String const& pass = "") {load(path, pass);}
 
@@ -60,14 +73,20 @@ public:
 
 	JSONData value() {return file();}
 
+	SaveFile& operator=(JSONView const& data) {
+		if (!data.isObject()) throw Error::InvalidValue("Save data must be explicitly a JSON object!");
+		this->data = data;
+		return (*this);
+	}
+
 	SaveFile& operator=(JSONData const& data) {
 		if (!data.is_object()) throw Error::InvalidValue("Save data must be explicitly a JSON object!");
 		this->data = data;
 		return (*this);
 	}
 
-	SaveFile& operator()(String const& path) {
-		return save(path);
+	SaveFile& operator()(String const& path, String const& pass = "") {
+		return save(path, pass);
 	}
 
 	inline bool exists() {return data.is_object();}

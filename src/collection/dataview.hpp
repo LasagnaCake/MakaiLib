@@ -39,22 +39,23 @@ namespace View {
 	public:
 		typedef T DataType;
 
-		DataView(T& _data):					data(_data)			{}
-		DataView(DataView<T> const& other):	data(other.data)	{}
-		DataView(DataView<T>&& other):		data(other.data)	{}
+		constexpr DataView(T& _data):					data(_data)			{}
+		constexpr DataView(DataView<T> const& other):	data(other.data)	{}
+		constexpr DataView(DataView<T>&& other):		data(other.data)	{}
 
-		inline DataView& modify(Operation<T> op)		{data = op(data); return (*this);	}
-		inline DataView& operator()(Operation<T> op)	{return modify(op);					}
+		constexpr DataView& modify(Operation<T> op)		{data = op(data); return (*this);	}
+		constexpr DataView& operator()(Operation<T> op)	{return modify(op);					}
 
-		inline DataView& operator=(T const& val) {data = val; return (*this);}
+		constexpr DataView& operator=(T const& val) {data = val; return (*this);}
 
-		inline operator T() const	{return value();	}
-		inline operator T()			{return value();	}
-		inline T value() const		{return data;		}
-		inline T value() 			{return data;		}
+		constexpr operator T() const	{return value();	}
+		constexpr operator T()			{return value();	}
+		constexpr T value() const		{return data;		}
+		constexpr T value() 			{return data;		}
 
 	protected:
-		inline T& view()	{return data;}
+		constexpr T& view()				{return data;}
+		constexpr const T& view() const	{return data;}
 
 	private:
 		T& data;

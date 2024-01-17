@@ -2,6 +2,7 @@
 #define EXTRA_DEFINITION_MACROS_H
 
 #include "conceptual.hpp"
+#include <cxxabi.h>
 
 #define FUNC(...)	[&](__VA_ARGS__) -> void
 

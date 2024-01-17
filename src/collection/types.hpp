@@ -46,6 +46,8 @@ typedef unsigned int	uint;
 typedef uint32			ulong;
 typedef uint64			ullong;
 
+typedef float128	ldouble;
+
 typedef int8	schar;
 typedef int64	llong;
 
