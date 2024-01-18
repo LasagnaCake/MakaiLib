@@ -318,7 +318,7 @@ namespace RenderData {
 	class Renderable;
 
 	#define _ENCDEC_CASE(T, F) if (encoding == T) return F(data)
-	List<ubyte> decodeData(String const& data, String const& encoding) {
+	List<ubyte> decodeData(String const& data, String const& encoding) try {
 		_ENCDEC_CASE	("base32",	cppcodec::base32_rfc4648::decode);
 		_ENCDEC_CASE	("base64",	cppcodec::base64_rfc4648::decode);
 		throw Error::InvalidValue(
@@ -327,9 +327,17 @@ namespace RenderData {
 			toString(__LINE__),
 			"decodeData"
 		);
+	} catch (cppcodec::parse_error const& e) {
+		throw Error::FailedAction(
+			"Failed at decoding byte data!",
+			__FILE__,
+			toString(__LINE__),
+			"decodeData",
+			e.what()
+		);
 	}
 
-	String encodeData(List<ubyte> const& data, String const& encoding) {
+	String encodeData(List<ubyte> const& data, String const& encoding) try {
 		_ENCDEC_CASE	("base32",	cppcodec::base32_rfc4648::encode);
 		_ENCDEC_CASE	("base64",	cppcodec::base64_rfc4648::encode);
 		throw Error::InvalidValue(
@@ -337,6 +345,14 @@ namespace RenderData {
 			__FILE__,
 			toString(__LINE__),
 			"decodeData"
+		);
+	} catch (cppcodec::parse_error const& e) {
+		throw Error::FailedAction(
+			"Failed at encoding byte data!",
+			__FILE__,
+			toString(__LINE__),
+			"encodeData",
+			e.what()
 		);
 	}
 	#undef _ENCDEC_CASE
