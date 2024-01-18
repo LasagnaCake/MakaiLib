@@ -68,7 +68,7 @@ If image is to be saved in a separate file:
 ```javascript
 "material": {
 	// Optional
-	"color": [1.0, 1.0, 1.0, 1.0], // 4D vector representing the object's color
+	"color": [1.0, 1.0, 1.0, 1.0], // 4D vector representing the object's color, or a hex string the color value
 	"shaded": false,
 	"illuminated": false,
 	"hue": 0.0,
@@ -107,8 +107,8 @@ If image is to be saved in a separate file:
 		"enabled": true,
 		"channel": 0, // Index of the pixel's channel to be used for gradient transformation. If -1, an average of the RGB is used
 		"invert": false,
-		"begin": [0.0, 0.0, 0.0, 1.0], // 4D vector representing the start color
-		"end": [1.0, 1.0, 1.0, 1.0], // 4D vector representing the end color
+		"begin": [0.0, 0.0, 0.0, 1.0], // 4D vector representing the start color, or a hex string representing the color value
+		"end": [1.0, 1.0, 1.0, 1.0], // 4D vector representing the end color, or a hex string representing the color value
 	},
 	"instances": [
 		// Required
@@ -131,7 +131,7 @@ If image is to be saved in a separate file:
 	"enabled": true,
 	"start": 0.0, // The fog's start position (distance from camera)
 	"stop": 10.0, // The fog's end position (distance from camera)
-	"color": [0.0, 0.0, 0.0, 0.0], // 4D vector representing the fog's color
+	"color": [0.0, 0.0, 0.0, 0.0], // 4D vector representing the fog's color, or a hex string representing the color value
 	"strength": 0.0 // The fog's strength
 }
 ```
@@ -145,7 +145,7 @@ If image is to be saved in a separate file:
 	"farFog": {/* See WorldMaterial:FogEffect:Layout */},
 	"ambient": {
 		// Required
-		"color": [1.0, 1.0, 1.0], // eD vector representing the ambient light's color
+		"color": [1.0, 1.0, 1.0], // 3D vector representing the ambient light's color
 		"strength": 1.0 // How bright the ambient light is
 	}
 }
@@ -267,7 +267,7 @@ If data is to be integrated in the file:
 	"name": "",
 	"frame": [0.0, 0.0],
 	// Optional
-	"tint": [1.0, 1.0, 1.0, 1.0],
+	"tint": [1.0, 1.0, 1.0, 1.0], // Or a hex string representing the color
 	"leaving": false
 }
 ```
@@ -287,8 +287,8 @@ This can be saved as a `JSON` file of extension `.mdd` (Makai Dialogue Definitio
 			// Required if title is not an action tag, else optional
 			"text": "",
 			// Optional
-			"titleColor": [1.0, 1.0, 1.0, 1.0],
-			"textColor": [1.0, 1.0, 1.0, 1.0],
+			"titleColor": [1.0, 1.0, 1.0, 1.0], // Or a hex string representing the color
+			"textColor": [1.0, 1.0, 1.0, 1.0], // Or a hex string representing the color
 			"actors": [{/* See Dialogue:ActorData:Layout */}],
 			"easing": "out.cubic",
 			"duration": 600,
