@@ -53,6 +53,12 @@ def image_to_base64(path):
 	with open(path, "rb") as image_file:
 		return str(base64.b64encode(image_file.read()))[2:-1]
 
+def as_hex_string(color):
+	def to255(x): 
+		return max(0, min(x*255, 255))
+
+	"#{0:02x}{1:02x}{2:02x}{2:02x}".format(to255(color[0]), to255(color[1]), to255(color[2]), to255(color[3]))
+
 def get_color(material, node_type):
 	# Get the material by name
 	if material is not None:
@@ -106,7 +112,7 @@ def process_image_file(embed_texture, material, node_type, path, temp_path, rela
 			}
 	return None
 
-def create_render_definition(context, obj, filepath, tx_folder, mesh_folder, embed_texture, embed_mesh, apply_modifiers):
+def create_render_definition(context, obj, filepath, tx_folder, mesh_folder, embed_texture, embed_mesh, apply_modifiers, hexcolor):
 	mrodpath = filepath + "\\" + obj.name
 	txpath = mrodpath + "\\" + tx_folder
 	meshpath = mrodpath + "\\" + mesh_folder
@@ -171,7 +177,7 @@ def create_render_definition(context, obj, filepath, tx_folder, mesh_folder, emb
 		"scale": [scale.x, scale.y, scale.z]
 	}
 	strfile["material"] = {
-		"color": [1.0, 1.0, 1.0, 1.0],
+		"color": "#FFFFFFFF" if hexcolor else [0.0, 0.0, 0.0, 0.0],
 		"shaded": True,
 		"illuminated": False,
 		"hue": 0.0,
@@ -200,7 +206,7 @@ def create_render_definition(context, obj, filepath, tx_folder, mesh_folder, emb
 		else:
 			cdat = get_color(mat, "Base Color")
 			if cdat is not None:
-				strfile["material"]["color"] = [cdat[0], cdat[1], cdat[2], cdat[3]]
+				strfile["material"]["color"] = to_hex_string(cdat) if hexcolor else [cdat[0], cdat[1], cdat[2], cdat[3]]
 		# Process image texture
 		imgsave = process_image_file(
 			embed_texture,
@@ -208,7 +214,7 @@ def create_render_definition(context, obj, filepath, tx_folder, mesh_folder, emb
 			"Emission",
 			f"{txpath}\\emission.png",
 			f"{mrodpath}\\_em_TMP.png",
-			f"{tx_folder}\\texture.png"
+			f"{tx_folder}\\emission.png"
 		)
 		if imgsave is not None:
 			strfile["emission"] = imgsave
