@@ -51,7 +51,7 @@ def save_texture_to_image(material, node_type, file_path):
 
 def image_to_base64(path):
 	with open(path, "rb") as image_file:
-		return str(base64.b64encode(image_file.read()))
+		return str(base64.b64encode(image_file.read()))[2:-1]
 
 def get_color(material, node_type):
 	# Get the material by name
@@ -156,7 +156,7 @@ def create_render_definition(context, obj, filepath, tx_folder, mesh_folder, emb
 		}
 	}
 	if embed_mesh:
-		strfile["mesh"]["data"] = str(base64.b64encode(vertex_binary))
+		strfile["mesh"]["data"] = str(base64.b64encode(vertex_binary))[2:-1]
 		strfile["mesh"]["encoding"] = "base64"
 	else:
 		with open(f"{meshpath}\\{obj.name}.mesh", "wb") as f:
