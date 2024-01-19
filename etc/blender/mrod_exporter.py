@@ -49,6 +49,12 @@ class ExportMRODOperator(Operator, ExportHelper):
 		default="",
 	)
 
+	no_hex_color: bpy.props.BoolProperty(
+		name="Do not use hex color",
+		description="Whether to use an array for color information instead of a hex string",
+		default=False,
+	)
+
 	def execute(self, context):
 		objects = [obj for obj in bpy.data.objects if obj.type == "MESH"]
 		print(f"Objects: {len(objects)}")
@@ -63,7 +69,8 @@ class ExportMRODOperator(Operator, ExportHelper):
 					self.mesh_folder,
 					self.embed_texture,
 					self.embed_mesh,
-					self.apply_modifiers
+					self.apply_modifiers,
+					not self.no_hex_color
 				)
 				f.write(json.dumps(rendef, indent="	"))
 			
@@ -78,6 +85,7 @@ class ExportMRODOperator(Operator, ExportHelper):
 		layout.prop(self, "embed_mesh")
 		if not self.embed_mesh:
 			layout.prop(self, "mesh_folder")
+		layout.prop(self, "no_hex_color")
 
 
 # Only needed if you want to add into a dynamic menu
