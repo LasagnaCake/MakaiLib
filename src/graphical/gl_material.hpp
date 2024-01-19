@@ -268,8 +268,11 @@ struct ObjectMaterial {
 	ObjectDebugView	debug	= ObjectDebugView::ODV_NONE;
 };
 
-struct BufferMaterial {
+struct BaseBufferMaterial {
 	Vector4 background = Color::NONE;
+};
+
+struct BufferMaterial: BaseBufferMaterial {
 	Vector4
 		color	= Color::WHITE,
 		accent	= Color::NONE;

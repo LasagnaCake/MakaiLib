@@ -42,24 +42,23 @@ namespace Drawer {
 		BlendData blend;
 	};
 
-	// Todo: Fix this
-	class FrameBuffer {
+	class BaseFrameBuffer {
 	public:
-		FrameBuffer() {
+		BaseFrameBuffer() {
 		}
 
-		FrameBuffer(
+		BaseFrameBuffer(
 			unsigned int const& width,
 			unsigned int const& height
 		) {
 			create(width, height);
 		}
 
-		~FrameBuffer() {
+		~BaseFrameBuffer() {
 			destroy();
 		}
 
-		FrameBuffer& destroy() {
+		BaseFrameBuffer& destroy() {
 			if (!created) return *this;
 			else created = false;
 			glDeleteFramebuffers(1, &id);
@@ -70,7 +69,7 @@ namespace Drawer {
 			return *this;
 		}
 
-		FrameBuffer& create(
+		BaseFrameBuffer& create(
 			unsigned int const& width,
 			unsigned int const& height
 		) {
@@ -113,11 +112,11 @@ namespace Drawer {
 			return *this;
 		}
 
-		FrameBuffer& operator()() {
+		BaseFrameBuffer& operator()() {
 			return enable();
 		}
 
-		FrameBuffer& enable() {
+		BaseFrameBuffer& enable() {
 			if (!created) return *this;
 			glBindFramebuffer(GL_FRAMEBUFFER, id);
 			this->clearDepthBuffer();
@@ -125,7 +124,7 @@ namespace Drawer {
 			return *this;
 		}
 
-		FrameBuffer& setBlend() {
+		BaseFrameBuffer& setBlend() {
 			Drawer::setBlend(blend);
 			return *this;
 		}
@@ -143,23 +142,22 @@ namespace Drawer {
 			};
 		}
 
-		FrameBuffer& clearBuffers() {
+		BaseFrameBuffer& clearBuffers() {
 			this->clearColorBuffer();
 			this->clearDepthBuffer();
 			return *this;
 		}
 
-		FrameBuffer& clearColorBuffer() {
-			Drawer::clearColorBuffer(material.background);
+		virtual BaseFrameBuffer& clearColorBuffer() {
 			return *this;
 		}
 
-		FrameBuffer& clearDepthBuffer() {
+		BaseFrameBuffer& clearDepthBuffer() {
 			glClear(GL_DEPTH_BUFFER_BIT);
 			return *this;
 		}
 
-		FrameBuffer& render(FrameBufferData const& target) {
+		virtual BaseFrameBuffer& render(FrameBufferData const& target) {
 			if (!created) return *this;
 			// Set target buffer
 			glBindFramebuffer(GL_FRAMEBUFFER, target.id);
@@ -196,8 +194,6 @@ namespace Drawer {
 			shader["resolution"](Vector2(width, height));
 			shader["screenVUSpace"](screenVUSpace);
 			shader["pixelVU"](Vector2(width, height) / screenVUSpace);
-			// Set material data
-			RenderData::Material::setMaterial(shader, material);
 			// Enable attribute pointers
 			Drawer::enableVertexAttributes();
 			// Set VAO as active
@@ -215,13 +211,13 @@ namespace Drawer {
 			return *this;
 		}
 
-		FrameBuffer& render(FrameBuffer& targetBuffer) {
+		BaseFrameBuffer& render(BaseFrameBuffer& targetBuffer) {
 			if (!created) return *this;
 			if (!targetBuffer.exists()) return *this;
 			return render(targetBuffer.toFrameBufferData());
 		}
 
-		FrameBuffer& setBlendFunction(
+		BaseFrameBuffer& setBlendFunction(
 			GLenum const& srcColor,
 			GLenum const& dstColor,
 			GLenum const& srcAlpha,
@@ -231,7 +227,7 @@ namespace Drawer {
 			return *this;
 		}
 
-		FrameBuffer& setBlendFunction(
+		BaseFrameBuffer& setBlendFunction(
 			GLenum const& src,
 			GLenum const& dst
 		) {
@@ -239,7 +235,7 @@ namespace Drawer {
 			return *this;
 		}
 
-		FrameBuffer& setBlendEquation(
+		BaseFrameBuffer& setBlendEquation(
 			GLenum const& color,
 			GLenum const& alpha
 		) {
@@ -247,14 +243,14 @@ namespace Drawer {
 			return *this;
 		}
 
-		FrameBuffer& setBlendEquation(
+		BaseFrameBuffer& setBlendEquation(
 			GLenum const& eq
 		) {
 			blend.eq = {eq, eq};
 			return *this;
 		}
 
-		FrameBuffer& disable() {
+		BaseFrameBuffer& disable() {
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 			return *this;
 		}
@@ -267,8 +263,6 @@ namespace Drawer {
 		Transform3D trans;
 		/// The framebuffer's UV transformation.
 		Transform3D uv;
-		/// The framebuffer's material.
-		RenderData::Material::BufferMaterial material;
 		/// The framebuffer's shape.
 		RawVertex rect[4];
 		/// The framebuffer's rendering shader.
@@ -288,6 +282,35 @@ namespace Drawer {
 		} buffer;
 		unsigned int vao;
 		unsigned int vbo;
+	};
+
+	// Todo: Fix this
+	class FrameBuffer: public BaseFrameBuffer {
+	public:
+		using BaseFrameBuffer::BaseFrameBuffer;
+
+		BaseFrameBuffer& clearColorBuffer() final {
+			Drawer::clearColorBuffer(material.background);
+			return *this;
+		}
+
+		FrameBuffer& render(FrameBufferData const& target) final {
+			if (!exists()) return *this;
+			// Set material data
+			RenderData::Material::setMaterial(shader, material);
+			// Render buffer
+			BaseFrameBuffer::render(target);
+			return *this;
+		}
+
+		FrameBuffer& render(FrameBuffer& targetBuffer) {
+			if (!exists()) return *this;
+			if (!targetBuffer.exists()) return *this;
+			return render(targetBuffer.toFrameBufferData());
+		}
+
+		/// The framebuffer's material.
+		RenderData::Material::BufferMaterial material;
 	};
 }
 
