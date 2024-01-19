@@ -608,16 +608,27 @@ namespace ArcSys {
 		}
 
 		uint64 getFileEntryLocation(String const& path, String const& origpath) try {
+			List<JSONData> stack;
 			JSONData entry = fstruct["tree"];
 			// Loop through path and get entry location
-			for (String fld: Helper::splitString(path, {'\\', '/'}))
-				if (entry.is_object()) {
+			for (String fld: Helper::splitString(path, {'\\', '/'})) {
+				if (fld == "..") {
+					if (stack.empty())
+						outOfArchiveBoundsError(origpath);
+					entry = stack.back();
+					stack.pop_back();
+					continue;
+				} else if (entry.is_object()) {
 					for (auto [k, v]: entry.items())
-						if (Helper::toLower(k) == fld) {entry = v; break;}
-				}
-				else if (entry.is_string() && Helper::toLower(entry) == fld)
+						if (Helper::toLower(k) == fld) {
+							stack.push_back(entry);
+							entry = v;
+							break;
+						}
+				} else if (entry.is_string() && Helper::toLower(entry) == fld)
 					return decoded(entry);
 				else doesNotExistError(fld);
+			}
 			// Try and get entry location
 			if (entry.is_string())
 				return decoded(entry.get<String>());
@@ -644,6 +655,13 @@ namespace ArcSys {
 		[[noreturn]] void doesNotExistError(String const& file) const {
 			throw FileLoader::FileLoadError(
 				"Directory or file '" + file + "' does not exist!",
+				__FILE__
+			);
+		}
+
+		[[noreturn]] void outOfArchiveBoundsError(String const& file) const {
+			throw FileLoader::FileLoadError(
+				"Directory or file '" + file + "' lives outside the archive!",
 				__FILE__
 			);
 		}
