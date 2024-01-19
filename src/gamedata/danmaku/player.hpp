@@ -380,18 +380,18 @@ struct PlayerEntity2D: AreaCircle2D {
 			}
 		}
 		// Do extra actions
-		if(action("sub"))	onSubAction();
-		if(action("extra"))	onExtraAction();
+		if((!inDialog) && action("sub"))	onSubAction();
+		if((!inDialog) && action("extra"))	onExtraAction();
 	}
 
 	virtual void onCollision(Entity* target) {
 		if (
-			target->isInGroup(ENEMY_LAYER) ||
-			target->isInGroup(ENEMY_BULLET_LAYER) ||
-			target->isInGroup(ENEMY_LASER_LAYER) ||
-			Entities::collisionLayers.isInGroup(target, ENEMY_LAYER) ||
-			Entities::collisionLayers.isInGroup(target, ENEMY_BULLET_LAYER) ||
-			Entities::collisionLayers.isInGroup(target, ENEMY_LASER_LAYER)
+			target->isInGroup(ENEMY_LAYER)
+		||	target->isInGroup(ENEMY_BULLET_LAYER)
+		||	target->isInGroup(ENEMY_LASER_LAYER)
+		||	Entities::collisionLayers.isInGroup(target, ENEMY_LAYER)
+		||	Entities::collisionLayers.isInGroup(target, ENEMY_BULLET_LAYER)
+		||	Entities::collisionLayers.isInGroup(target, ENEMY_LASER_LAYER)
 		) {
 			pichun();
 		}
