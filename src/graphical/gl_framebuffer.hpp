@@ -26,7 +26,11 @@ GOING TO QUESTION IT.
 namespace Drawer {
 	namespace {
 		using
-		VecMath::srpTransform;
+			VecMath::srpTransform,
+			RenderData::Material::BaseBufferMaterial,
+			RenderData::Material::BufferMaterial,
+			RenderData::Material::setMaterial
+		;
 	}
 
 	struct FrameBufferData {
@@ -42,6 +46,8 @@ namespace Drawer {
 		BlendData blend;
 	};
 
+	// Todo: Fix this
+	template<Type::Derived<BaseBufferMaterial> T>
 	class BaseFrameBuffer {
 	public:
 		BaseFrameBuffer() {
@@ -148,7 +154,8 @@ namespace Drawer {
 			return *this;
 		}
 
-		virtual BaseFrameBuffer& clearColorBuffer() {
+		BaseFrameBuffer& clearColorBuffer() {
+			Drawer::clearColorBuffer(material.background);
 			return *this;
 		}
 
@@ -267,6 +274,8 @@ namespace Drawer {
 		RawVertex rect[4];
 		/// The framebuffer's rendering shader.
 		Shader::Shader shader;
+		/// The framebuffer's material.
+		T material;
 		/// The framebuffer's screen Vertex Unit space. Usually the inverse of the camera's orthographic size.
 		Vector2 screenVUSpace = 1;
 		/// The framebuffer's blend function & equation setting.
@@ -284,20 +293,14 @@ namespace Drawer {
 		unsigned int vbo;
 	};
 
-	// Todo: Fix this
-	class FrameBuffer: public BaseFrameBuffer {
+	class FrameBuffer: public BaseFrameBuffer<BufferMaterial> {
 	public:
 		using BaseFrameBuffer::BaseFrameBuffer;
-
-		BaseFrameBuffer& clearColorBuffer() final {
-			Drawer::clearColorBuffer(material.background);
-			return *this;
-		}
 
 		FrameBuffer& render(FrameBufferData const& target) final {
 			if (!exists()) return *this;
 			// Set material data
-			RenderData::Material::setMaterial(shader, material);
+			setMaterial(shader, material);
 			// Render buffer
 			BaseFrameBuffer::render(target);
 			return *this;
@@ -308,9 +311,6 @@ namespace Drawer {
 			if (!targetBuffer.exists()) return *this;
 			return render(targetBuffer.toFrameBufferData());
 		}
-
-		/// The framebuffer's material.
-		RenderData::Material::BufferMaterial material;
 	};
 }
 
