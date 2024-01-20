@@ -26,7 +26,7 @@ public:
 	constexpr static size_t rowCount	= R;
 	constexpr static size_t columnCount	= C;
 
-	typedef T DataType;
+	typedef T						DataType;
 
 	static_assert(R != 0, "Matrix row size must not be zero!");
 	static_assert(C != 0, "Matrix column size must not be zero!");
@@ -275,6 +275,9 @@ public:
 		return result;
 	}
 
+	// Euler function type
+	typedef decltype(fromEulerXYZ)	EulerFunction;
+
 	constexpr static Matrix<4, 4, T> fromTranslation(Vector3 const& vec) {
 		return Matrix(1).translated(vec);
 	}
@@ -318,13 +321,13 @@ public:
 		return (*this);
 	}
 
-	template<auto EULER_FUNC = Matrix::fromEulerYXZ>
+	template<EulerFunction EULER_FUNC = Matrix::fromEulerYXZ>
 	constexpr Matrix<4, 4, T> rotated(Vector3 const& vec) const requires MatType::ValidTransform<R, C> {
 		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
 		return (*this) * EULER_FUNC(vec);
 	}
 
-	template<auto EULER_FUNC = Matrix::fromEulerYXZ>
+	template<EulerFunction EULER_FUNC = Matrix::fromEulerYXZ>
 	constexpr Matrix<4, 4, T>& rotate(Vector3 const& vec) requires MatType::ValidTransform<R, C> {
 		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
 		(*this) *= EULER_FUNC(vec);
@@ -696,7 +699,7 @@ public:
 		return Vector4(data[C-1][0], data[C-1][1], data[C-1][2], data[C-1][3]);
 	}
 
-	template<auto EULER_FUNC = Matrix::fromEulerYXZ>
+	template<EulerFunction EULER_FUNC = Matrix::fromEulerYXZ>
 	constexpr Matrix<R, C, T>& transformed(
 		Vector3 const& position,
 		Vector3 const& rotation,
@@ -707,13 +710,13 @@ public:
 		return translated(position).template rotated<EULER_FUNC>(rotation).scaled(scale);
 	}
 
-	template<auto EULER_FUNC = Matrix::fromEulerYXZ>
+	template<EulerFunction EULER_FUNC = Matrix::fromEulerYXZ>
 	constexpr Matrix<R, C, T>& transformed(VecMath::Transform3D const& trans) const requires MatType::ValidTransform<R, C> {
 		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
 		return transformed<EULER_FUNC>(trans.position, trans.rotation, trans.scale);
 	}
 
-	template<auto EULER_FUNC = Matrix::fromEulerYXZ>
+	template<EulerFunction EULER_FUNC = Matrix::fromEulerYXZ>
 	constexpr Matrix<R, C, T>& transform(
 		Vector3 const& position,
 		Vector3 const& rotation,
@@ -724,13 +727,13 @@ public:
 		return translate(position).template rotate<EULER_FUNC>(rotation).scale(scale);
 	}
 
-	template<auto EULER_FUNC = Matrix::fromEulerYXZ>
+	template<EulerFunction EULER_FUNC = Matrix::fromEulerYXZ>
 	constexpr Matrix<R, C, T>& transform(VecMath::Transform3D const& trans) requires MatType::ValidTransform<R, C> {
 		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
 		return transform<EULER_FUNC>(trans.position, trans.rotation, trans.scale);
 	}
 
-	template<auto EULER_FUNC = Matrix::fromEulerYXZ>
+	template<EulerFunction EULER_FUNC = Matrix::fromEulerYXZ>
 	constexpr Matrix<R, C, T>& compose(
 		Vector3 const& position,
 		Vector3 const& rotation,
@@ -742,14 +745,14 @@ public:
 		return transform<EULER_FUNC>(position, rotation, scale);
 	}
 
-	template<auto EULER_FUNC = Matrix::fromEulerYXZ>
+	template<EulerFunction EULER_FUNC = Matrix::fromEulerYXZ>
 	constexpr Matrix<R, C, T>& compose(VecMath::Transform3D const& trans) requires MatType::ValidTransform<R, C> {
 		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
 		return compose<EULER_FUNC>(trans.position, trans.rotation, trans.scale);
 	}
 
 	// https://github.com/g-truc/glm/blob/master/glm/gtx/matrix_decompose.inl
-	template<auto EULER_FUNC = Matrix::fromEulerYXZ>
+	template<EulerFunction EULER_FUNC = Matrix::fromEulerYXZ>
 	constexpr Matrix<R, C, T>& compose(
 		Vector3 const& position,
 		Vector3 const& rotation,
@@ -790,7 +793,7 @@ public:
 		return *this;
 	}
 
-	template<auto EULER_FUNC = Matrix::fromEulerYXZ>
+	template<EulerFunction EULER_FUNC = Matrix::fromEulerYXZ>
 	constexpr Matrix<R, C, T>& compose(
 		VecMath::Transform3D const&	trans,
 		Vector4 const&				perspective,

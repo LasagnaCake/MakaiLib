@@ -13,7 +13,10 @@ namespace Ease {
 	/// Easing function template
 	typedef Operation<float> EaseMode;
 	#define EASE_FUN(NAME) constexpr float NAME(float const& x)
-	EASE_FUN(linear)	{return x;}
+	EASE_FUN(linear) {return x;}
+
+	typedef decltype(linear) EaseFunction;
+
 	/// In easing functions
 	namespace In {
 		EASE_FUN(linear)	{return x;}
@@ -166,7 +169,7 @@ namespace Ease {
 			CASE_FUN(MODE, elastic);\
 			CASE_FUN(MODE, bounce);\
 		}
-	auto& getMode(String const& mode, String const& type) {
+	EaseFunction& getMode(String const& mode, String const& type) {
 		if (type == "linear") return linear;
 		MODE_CASE("in", In)
 		MODE_CASE("out", Out)
@@ -178,6 +181,22 @@ namespace Ease {
 	}
 	#undef MODE_CASE
 	#undef CASE_FUN
+
+	EaseMode custom(EaseFunction const& in, EaseFunction const& out) {
+		return [=] (float const& x) {
+			if (x < 0.5)
+				return in(x * 2.0) / 2.0;
+			return 0.5 + out(x * 2.0 - 1) / 2.0;
+		};
+	}
+
+	EaseMode custom(EaseMode const& in, EaseMode const& out) {
+		return [=] (float const& x) {
+			if (x < 0.5)
+				return in(x * 2.0) / 2.0;
+			return 0.5 + out(x * 2.0 - 1) / 2.0;
+		};
+	}
 }
 
 #pragma GCC diagnostic pop
