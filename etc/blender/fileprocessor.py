@@ -196,7 +196,7 @@ def create_render_definition(context, obj, filepath, tx_folder, mesh_folder, emb
 		imgsave = process_image_file(
 			embed_texture,
 			mat,
-			"Base Color",
+			0,
 			f"{txpath}\\texture.png",
 			f"{mrodpath}\\_tx_TMP.png",
 			f"{tx_folder}\\texture.png"
@@ -211,7 +211,7 @@ def create_render_definition(context, obj, filepath, tx_folder, mesh_folder, emb
 		imgsave = process_image_file(
 			embed_texture,
 			mat,
-			"Emission",
+			26,
 			f"{txpath}\\emission.png",
 			f"{mrodpath}\\_em_TMP.png",
 			f"{tx_folder}\\emission.png"

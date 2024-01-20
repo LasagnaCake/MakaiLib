@@ -95,7 +95,41 @@ public:
 		material.instances.push_back(Vector3(0, 0, 0));
 	}
 
+	Drawable& setBlendFunction(
+		GLenum const& srcColor,
+		GLenum const& dstColor,
+		GLenum const& srcAlpha,
+		GLenum const& dstAlpha
+	) {
+		blend.func = {srcColor, dstColor, srcAlpha, dstAlpha};
+		return *this;
+	}
+
+	Drawable& setBlendFunction(
+		GLenum const& src,
+		GLenum const& dst
+	) {
+		blend.func = {src, dst, src, dst};
+		return *this;
+	}
+
+	Drawable& setBlendEquation(
+		GLenum const& color,
+		GLenum const& alpha
+	) {
+		blend.eq = {color, alpha};
+		return *this;
+	}
+
+	Drawable& setBlendEquation(
+		GLenum const& eq
+	) {
+		blend.eq = {eq, eq};
+		return *this;
+	}
+
 	Material::ObjectMaterial	material;
+	Drawer::BlendData			blend;
 	Transform3D					trans;
 
 protected:
@@ -103,6 +137,8 @@ protected:
 		// If no instances, add one
 		if (material.instances.empty())
 			material.instances.push_back(Vector3(0, 0, 0));
+		// Set blend
+		Drawer::setBlend(blend);
 		// Set VBO as active
 		glBindBuffer(GL_ARRAY_BUFFER, vbo);
 		// Copy IVB to VBO

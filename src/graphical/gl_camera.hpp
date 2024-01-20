@@ -91,23 +91,25 @@ namespace Camera {
 
 	constexpr Camera3D getCamera2D(Vector2 const& size) {
 		Camera3D camera;
-		camera.eye = Vec3(0, 0, -10);
-		camera.at = Vec3(0, 0, 1);
-		camera.ortho.strength = 1.0;
-		camera.ortho.origin = 0;
-		camera.ortho.size = size * -1;
-		camera.relativeToEye = true;
+		camera.eye				= Vec3(0, 0, -100);
+		camera.at				= Vec3(0, 0, 1);
+		camera.ortho.strength	= 1.0;
+		camera.ortho.origin		= 0;
+		camera.ortho.size		= size * -1;
+		camera.zFar				= 1000.0;
+		camera.relativeToEye	= true;
 		return camera;
 	}
 
 	constexpr Camera3D getCamera2D(float const& scale, Vector2 const& ratio) {
 		Camera3D camera;
-		camera.eye = Vec3(0, 0, -10);
-		camera.at = Vec3(0, 0, 1);
+		camera.eye				= Vec3(0, 0, -100);
+		camera.at				= Vec3(0, 0, 1);
 		camera.ortho.strength	= 1.0;
 		camera.ortho.origin		= 0;
 		camera.ortho.size		= ratio * -scale;
-		camera.relativeToEye = true;
+		camera.zFar				= 1000.0;
+		camera.relativeToEye	= true;
 		return camera;
 	}
 

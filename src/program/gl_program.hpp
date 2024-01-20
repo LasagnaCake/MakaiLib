@@ -524,8 +524,6 @@ namespace Makai {
 			#endif
 			glDebugMessageCallback(glAPIMessageCallback, 0);
 			// This keeps the alpha from shitting itself
-			setBlendFunction(DEFAULT_BLEND_FUNC);
-			setBlendEquation(DEFAULT_BLEND_EQUATION);
 			setFlag(GL_BLEND);
 			setFlag(GL_ALPHA_TEST);
 			setFlag(GL_DEPTH_TEST);
@@ -728,39 +726,6 @@ namespace Makai {
 			else glDisablei(flag, value);
 		}
 
-		constexpr inline void setBlend(Drawer::BlendData const& blend) {
-			this->blend = blend;
-		}
-
-		constexpr inline void setBlendFunction(
-			GLenum const& srcColor,
-			GLenum const& dstColor,
-			GLenum const& srcAlpha,
-			GLenum const& dstAlpha
-		) {
-			blend.func = {srcColor, dstColor, srcAlpha, dstAlpha};
-		}
-
-		constexpr inline void setBlendFunction(
-			GLenum const& src,
-			GLenum const& dst
-		) {
-			blend.func = {src, src, dst, dst};
-		}
-
-		constexpr inline void setBlendEquation(
-			GLenum const& color,
-			GLenum const& alpha
-		) {
-			blend.eq = {color, alpha};
-		}
-
-		constexpr inline void setBlendEquation(
-			GLenum const& eq
-		) {
-			blend.eq = {eq, eq};
-		}
-
 		constexpr inline void enableMainBuffer() {
 			glBindBuffer(GL_FRAMEBUFFER, 0);
 		}
@@ -844,16 +809,12 @@ namespace Makai {
 		/// The program's taskers.
 		Tasking::MultiTasker taskers;
 
-		/// The program's blend mode.
-		Drawer::BlendData blend;
-
 	protected:
 		Drawer::FrameBufferData toFrameBufferData() {
 			Drawer::FrameBufferData self;
 			self.id		= 0;
 			self.width	= width;
 			self.height	= height;
-			self.blend	= blend;
 			return self;
 		}
 
@@ -900,8 +861,6 @@ namespace Makai {
 			glClear(GL_DEPTH_BUFFER_BIT);
 			// Enable depth testing
 			setFlag(GL_DEPTH_TEST, true);
-			// Set blend mode
-			Drawer::setBlend(blend);
 			// Enable frame buffer
 			framebuffer();
 			// Call rendering start function
@@ -930,7 +889,7 @@ namespace Makai {
 					// Skip layer if applicable
 					if (!skipLayer) {
 						// Clear buffers
-						layerbuffer.clearBuffers().setBlend();
+						layerbuffer.clearBuffers();
 						// Call onLayerDrawBegin function
 						onPostLayerClear(layer);
 						// Render layer

@@ -43,7 +43,6 @@ namespace Drawer {
 			*screen	= nullptr,
 			*depth	= nullptr
 		;
-		BlendData blend;
 	};
 
 	// Todo: Fix this
@@ -126,7 +125,6 @@ namespace Drawer {
 			if (!created) return *this;
 			glBindFramebuffer(GL_FRAMEBUFFER, id);
 			this->clearDepthBuffer();
-			setBlend();
 			return *this;
 		}
 
@@ -143,8 +141,7 @@ namespace Drawer {
 				width,
 				height,
 				&buffer.screen,
-				&buffer.depth,
-				blend
+				&buffer.depth
 			};
 		}
 
@@ -169,7 +166,7 @@ namespace Drawer {
 			// Set target buffer
 			glBindFramebuffer(GL_FRAMEBUFFER, target.id);
 			// set blend func & equation data
-			Drawer::setBlend(target.blend);
+			Drawer::setBlend(blend);
 			// Set VBO as active
 			glBindBuffer(GL_ARRAY_BUFFER, vbo);
 			// Copy vertices to VBO
