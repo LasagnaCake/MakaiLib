@@ -113,6 +113,7 @@ public:
 	DanmakuManagerSet managers;
 
 	PolarWarpEffect bossAura;
+	size_t auraEndPoint = BOSS_SPELL_TOP_LAYER;
 
 	float screenShake = 0;
 
@@ -258,7 +259,7 @@ public:
 
 	void onPreLayerDraw(size_t layerID) override {
 		GameApp::onPreLayerDraw(layerID);
-		if (layerID <= BOSS_SPELL_OVERLAY_TOP_LAYER) {
+		if (layerID <= auraEndPoint) {
 			getLayerBuffer().material.polarWarp = bossAura;
 			if (screenShake)
 				getLayerBuffer().material.uvShift += Vector2(getWindowScale() * VecMath::angleV2(Math::Random::real<float>(0.0f, TAU)) * screenShake);
