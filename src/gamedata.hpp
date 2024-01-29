@@ -93,10 +93,6 @@ namespace GameData {
 		return Entities::_ROOT->getChild("Game/"+gameType);
 	}
 
-	void setWorldMaterial(WorldMaterial& mat) {
-		setMaterial(MAIN_SHADER, mat);
-	}
-
 	template <typename T> using Callback = Function<void(T&)>;
 
 	#include "gamedata/program.hpp"

@@ -18,7 +18,7 @@ public:
 template<class T>
 concept BarType = Type::Subclass<T, BaseBar> && Type::Subclass<T, Base::Drawable>;
 
-class LinearBar: public DrawableObject, public BaseBar {
+class LinearBar: public DrawableObject<Material::ObjectMaterial>, public BaseBar {
 public:
 	LinearBar(size_t layer = 0, bool manual = false): DrawableObject(layer, manual) {
 	}
@@ -34,12 +34,13 @@ private:
 		vertices[1]	= toRawVertex(Vector2(0, +width),		Vector2(0+uvShift,0) * uvScale);
 		vertices[2]	= toRawVertex(Vector2(length, -width),	Vector2((dynamicUV ? percent : 1)+uvShift,1) * uvScale);
 		vertices[3]	= toRawVertex(Vector2(length, +width),	Vector2((dynamicUV ? percent : 1)+uvShift,0) * uvScale);
-		setDefaultShader();
+		setShaderData();
+		Material::setMaterial(shader, material);
 		display(vertices, 4, GL_TRIANGLE_STRIP);
 	}
 };
 
-class RadialBar: public DrawableObject, public BaseBar {
+class RadialBar: public DrawableObject<Material::ObjectMaterial>, public BaseBar {
 public:
 	bool	centered	= false;
 	Vector2 offset		= Vector2(0);
@@ -52,7 +53,8 @@ private:
 	RawVertex vertices[RADIAL_BAR_RESOLUTION + 2] = {RawVertex{}};
 	void draw() override {
 		update();
-		setDefaultShader();
+		setShaderData();
+		Material::setMaterial(shader, material);
 		display(vertices, RADIAL_BAR_RESOLUTION + 2, GL_TRIANGLE_FAN);
 	}
 

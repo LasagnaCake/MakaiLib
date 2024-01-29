@@ -6,7 +6,7 @@ namespace {
 	using std::string;
 }
 
-class Renderable: public Base::DrawableObject {
+class Renderable: public Base::DrawableObject<Material::ObjectMaterial> {
 public:
 	constexpr static String version = "0.0.0";
 
@@ -373,7 +373,8 @@ private:
 		// If no vertices, return
 		if (!vertices) return;
 		// Set shader data
-		setDefaultShader();
+		setShaderData();
+		Material::setMaterial(shader, material);
 		// Present to screen
 		display(vertices, vertexCount);
 	}
@@ -551,6 +552,35 @@ private:
 		if (def["material"].is_object()) {
 			material = Material::fromObjectMaterialDefinition(def["material"], sourcepath, texture, emission, warp);
 		}
+		// Set blend data
+		if (def["blend"].is_object()) {
+			JSONData& bfun	= def["blend"]["function"];
+			JSONData& beq	= def["blend"]["equation"];
+			if (bfun.is_number()) {
+				GLenum bv = getBlendFunction(bfun.get<uint>());
+				blend.func = {bv, bv, bv, bv};
+			} else if (bfun.is_object()) {
+				if (bfun["src"].is_number()) {
+					blend.func.srcColor = blend.func.srcAlpha = getBlendFunction(bfun["src"].get<uint>());
+				} else {
+					setBlendFunctionFromJSON(blend.func.srcColor, bfun["srcColor"]);
+					setBlendFunctionFromJSON(blend.func.srcAlpha, bfun["srcAlpha"]);
+				}
+				if (bfun["dst"].is_number()) {
+					blend.func.dstColor = blend.func.dstAlpha = getBlendFunction(bfun["dst"].get<uint>());
+				} else {
+					setBlendFunctionFromJSON(blend.func.dstColor, bfun["dstColor"]);
+					setBlendFunctionFromJSON(blend.func.dstAlpha, bfun["dstAlpha"]);
+				}
+			}
+			if (beq.is_number()) {
+				GLenum bv = getBlendFunction(beq.get<uint>());
+				blend.eq = {bv, bv};
+			} else if (beq.is_object()) {
+				setBlendEquationFromJSON(blend.eq.color, beq["color"]);
+				setBlendEquationFromJSON(blend.eq.alpha, beq["alpha"]);
+			}
+		}
 	}
 
 	JSONData getObjectDefinition(string const& encoding = "base64", bool integratedBinary = true, bool integratedTextures = true) {
@@ -586,12 +616,117 @@ private:
 		};
 		// Set active data
 		def["active"] = active;
+		// Set blend data
+		def["blend"] = {
+			{"function", {
+				{"srcColor", blendFunctionToJSON(blend.func.srcColor)},
+				{"dstColor", blendFunctionToJSON(blend.func.dstColor)},
+				{"srcAlpha", blendFunctionToJSON(blend.func.srcAlpha)},
+				{"dstAlpha", blendFunctionToJSON(blend.func.dstAlpha)}
+			}},
+			{"equation", {
+				{"color", blendEquationToJSON(blend.eq.color)},
+				{"alpha", blendEquationToJSON(blend.eq.alpha)}
+			}}
+		};
 		// Unbake object if applicable
 		if (!wasBaked) unbake();
 		// Return definition
 		return def;
 	}
+
+	void setBlendFunctionFromJSON(GLenum& param, JSONData& value) {
+		if (!value.is_number()) return;
+		param = getBlendFunction(value.get<GLuint>());
+	}
+
+	void setBlendEquationFromJSON(GLenum& param, JSONData& value) {
+		if (!value.is_number()) return;
+		param = getBlendEquation(value.get<GLuint>());
+	}
+
+	uint blendFunctionToJSON(GLenum const& value) {
+		switch (value) {
+			case GL_ZERO:						return 0x00;
+			case GL_ONE:						return 0x01;
+			case GL_SRC_COLOR:					return 0x02;
+			case GL_ONE_MINUS_SRC_COLOR:		return 0x03;
+			case GL_DST_COLOR:					return 0x04;
+			case GL_ONE_MINUS_DST_COLOR:		return 0x05;
+			case GL_SRC_ALPHA:					return 0x06;
+			case GL_ONE_MINUS_SRC_ALPHA:		return 0x07;
+			case GL_DST_ALPHA:					return 0x08;
+			case GL_ONE_MINUS_DST_ALPHA:		return 0x09;
+			case GL_CONSTANT_COLOR:				return 0x0A;
+			case GL_ONE_MINUS_CONSTANT_COLOR:	return 0x0B;
+			case GL_CONSTANT_ALPHA:				return 0x0C;
+			case GL_ONE_MINUS_CONSTANT_ALPHA:	return 0x0D;
+			case GL_SRC_ALPHA_SATURATE:			return 0x0E;
+			/*
+			case GL_SRC1_COLOR:					return 0x0F;
+			case GL_ONE_MINUS_SRC1_COLOR:		return 0x10;
+			case GL_SRC1_ALPHA:					return 0x11;
+			case GL_ONE_MINUS_SRC1_ALPHA:		return 0x12;
+			*/
+			default: return 0x1; break;
+		}
+	}
+
+	uint blendEquationToJSON(GLenum const& value) {
+		switch (value) {
+			case GL_ZERO:					return 0x00;
+			case GL_ONE:					return 0x01;
+			case GL_FUNC_ADD:				return 0x02;
+			case GL_FUNC_SUBTRACT:			return 0x03;
+			case GL_FUNC_REVERSE_SUBTRACT:	return 0x04;
+			case GL_MIN:					return 0x05;
+			case GL_MAX:					return 0x06;
+			default: return 0x2;
+		}
+	}
+
+	GLenum getBlendFunction(uint const& value) {
+		switch (value) {
+			case 0x00: return GL_ZERO;
+			case 0x01: return GL_ONE;
+			case 0x02: return GL_SRC_COLOR;
+			case 0x03: return GL_ONE_MINUS_SRC_COLOR;
+			case 0x04: return GL_DST_COLOR;
+			case 0x05: return GL_ONE_MINUS_DST_COLOR;
+			case 0x06: return GL_SRC_ALPHA;
+			case 0x07: return GL_ONE_MINUS_SRC_ALPHA;
+			case 0x08: return GL_DST_ALPHA;
+			case 0x09: return GL_ONE_MINUS_DST_ALPHA;
+			case 0x0A: return GL_CONSTANT_COLOR;
+			case 0x0B: return GL_ONE_MINUS_CONSTANT_COLOR;
+			case 0x0C: return GL_CONSTANT_ALPHA;
+			case 0x0D: return GL_ONE_MINUS_CONSTANT_ALPHA;
+			case 0x0E: return GL_SRC_ALPHA_SATURATE;
+			/*
+			case 0x0F: return GL_SRC1_COLOR;
+			case 0x10: return GL_ONE_MINUS_SRC1_COLOR;
+			case 0x11: return GL_SRC1_ALPHA;
+			case 0x12: return GL_ONE_MINUS_SRC1_ALPHA;
+			*/
+			default: return GL_ONE;
+		}
+	}
+
+	GLenum getBlendEquation(uint const& value) {
+		switch (value) {
+			case 0x00: return GL_ZERO;
+			case 0x01: return GL_ONE;
+			case 0x02: return GL_FUNC_ADD;
+			case 0x03: return GL_FUNC_SUBTRACT;
+			case 0x04: return GL_FUNC_REVERSE_SUBTRACT;
+			case 0x05: return GL_MIN;
+			case 0x06: return GL_MAX;
+			default: return GL_FUNC_ADD;
+		}
+	}
 };
+
+
 
 enum class LineType {
 	SEGMENTS,
@@ -599,7 +734,7 @@ enum class LineType {
 	LINKED
 };
 
-class LineRenderable: public Base::DrawableObject {
+class LineRenderable: public Base::DrawableObject<Material::ObjectMaterial> {
 public:
 	LineRenderable(size_t layer = 0, bool manual = false): DrawableObject(layer, manual) {}
 
@@ -665,13 +800,14 @@ private:
 		// If no points, return
 		if (points.empty()) return;
 		// Set shader data
-		setDefaultShader();
+		setShaderData();
+		Material::setMaterial(shader, material);
 		// Present to screen
 		display(points.data(), points.size(), GL_LINES + (unsigned int)type);
 	}
 };
 
-class PointRenderable: public Base::DrawableObject {
+class PointRenderable: public Base::DrawableObject<Material::ObjectMaterial> {
 public:
 	PointRenderable(size_t layer = 0, bool manual = false): DrawableObject(layer, manual) {}
 
@@ -735,7 +871,8 @@ private:
 		// If no points, return
 		if (points.empty()) return;
 		// Set shader data
-		setDefaultShader();
+		setShaderData();
+		Material::setMaterial(shader, material);
 		// Present to screen
 		display(points.data(), points.size(), GL_POINT);
 	}

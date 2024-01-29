@@ -45,9 +45,72 @@ namespace Drawer {
 		;
 	};
 
+	class BaseBuffer {
+	public:
+		BaseBuffer() {
+		}
+
+		BaseBuffer(
+			unsigned int const& width,
+			unsigned int const& height
+		) {
+			create(width, height);
+		}
+
+		~BaseBuffer() {
+			destroy();
+		}
+
+		virtual BaseBuffer& destroy() {
+			if (!created) return *this;
+			else created = false;
+			glDeleteFramebuffers(1, &id);
+			return *this;
+		}
+
+		virtual BaseBuffer& create(
+			unsigned int const& width,
+			unsigned int const& height
+		) {
+			if (created) return *this;
+			else created = true;
+			glGenFramebuffers(1, &id);
+			glBindFramebuffer(GL_FRAMEBUFFER, id);
+			this->width = width;
+			this->height = height;
+			disable();
+			return *this;
+		}
+
+		virtual BaseBuffer& enable() {
+			if (!created) return *this;
+			glBindFramebuffer(GL_FRAMEBUFFER, id);
+			return *this;
+		}
+
+		BaseBuffer& operator()() {return enable();}
+
+		virtual BaseBuffer& disable() {
+			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+			return *this;
+		}
+
+		inline bool exists() {return created;}
+
+	protected:
+		inline unsigned int getWidth()	{return width;	}
+		inline unsigned int getHeight()	{return height;	}
+		inline unsigned int getID()		{return id;		}
+
+	private:
+		bool created = false;
+		unsigned int id;
+		unsigned int width, height;
+	};
+
 	// Todo: Fix this
 	template<Type::Derived<BaseBufferMaterial> T>
-	class BaseFrameBuffer {
+	class BaseFrameBuffer: public BaseBuffer, public Blendable {
 	public:
 		BaseFrameBuffer() {
 		}
@@ -63,27 +126,24 @@ namespace Drawer {
 			destroy();
 		}
 
-		BaseFrameBuffer& destroy() {
-			if (!created) return *this;
-			else created = false;
-			glDeleteFramebuffers(1, &id);
+		BaseFrameBuffer& destroy() override {
+			if (!exists()) return *this;
 			buffer.screen.destroy();
 			buffer.depth.destroy();
 			glDeleteBuffers(1, &vbo);
 			glDeleteVertexArrays(1, &vao);
+			BaseBuffer::destroy();
 			return *this;
 		}
 
 		BaseFrameBuffer& create(
 			unsigned int const& width,
 			unsigned int const& height
-		) {
-			if (created) return *this;
-			else created = true;
-			glGenFramebuffers(1, &id);
-			glBindFramebuffer(GL_FRAMEBUFFER, id);
-			buffer.screen.create(width, height, GL_FLOAT, GL_RGBA, GL_LINEAR, GL_LINEAR);
-			//buffer.screen.create(width, height, GL_UNSIGNED_BYTE, GL_RGBA, GL_LINEAR, GL_LINEAR);
+		) override {
+			if (exists()) return *this;
+			BaseBuffer::create(width, height);
+			glBindFramebuffer(GL_FRAMEBUFFER, getID());
+			buffer.screen.create(width, height, GL_FLOAT, GL_RGBA, GL_LINEAR, GL_LINEAR, NULL, GL_RGBA16F);
 			glFramebufferTexture2D(
 				GL_FRAMEBUFFER,
 				GL_COLOR_ATTACHMENT0,
@@ -110,36 +170,24 @@ namespace Drawer {
 			glGenBuffers(1, &vbo);
 			setBlendFunction(DEFAULT_BLEND_FUNC);
 			setBlendEquation(DEFAULT_BLEND_EQUATION);
-			glDepthFunc(GL_LESS);
 			disable();
-			this->width = width;
-			this->height = height;
 			return *this;
 		}
 
-		BaseFrameBuffer& operator()() {
-			return enable();
-		}
-
-		BaseFrameBuffer& enable() {
-			if (!created) return *this;
-			glBindFramebuffer(GL_FRAMEBUFFER, id);
+		BaseFrameBuffer& enable() override {
+			if (!exists()) return *this;
+			BaseBuffer::enable();
 			this->clearDepthBuffer();
 			return *this;
 		}
 
-		BaseFrameBuffer& setBlend() {
-			Drawer::setBlend(blend);
-			return *this;
-		}
-
 		FrameBufferData toFrameBufferData() {
-			if (!created)
+			if (!exists())
 				return FrameBufferData{};
 			return FrameBufferData{
-				id,
-				width,
-				height,
+				getID(),
+				getWidth(),
+				getHeight(),
 				&buffer.screen,
 				&buffer.depth
 			};
@@ -162,11 +210,11 @@ namespace Drawer {
 		}
 
 		virtual BaseFrameBuffer& render(FrameBufferData const& target) {
-			if (!created) return *this;
+			if (!exists()) return *this;
 			// Set target buffer
 			glBindFramebuffer(GL_FRAMEBUFFER, target.id);
 			// set blend func & equation data
-			Drawer::setBlend(blend);
+			setBlend();
 			// Set VBO as active
 			glBindBuffer(GL_ARRAY_BUFFER, vbo);
 			// Copy vertices to VBO
@@ -195,9 +243,10 @@ namespace Drawer {
 			// Set transformation matrix
 			shader["posMatrix"](Matrix4x4(trans));
 			shader["uvMatrix"](Matrix4x4(uv));
-			shader["resolution"](Vector2(width, height));
+			Vector2 const resolution = Vector2(getWidth(), getHeight());
+			shader["resolution"](resolution);
 			shader["screenVUSpace"](screenVUSpace);
-			shader["pixelVU"](Vector2(width, height) / screenVUSpace);
+			shader["pixelVU"](resolution / screenVUSpace);
 			// Enable attribute pointers
 			Drawer::enableVertexAttributes();
 			// Set VAO as active
@@ -216,51 +265,14 @@ namespace Drawer {
 		}
 
 		BaseFrameBuffer& render(BaseFrameBuffer& targetBuffer) {
-			if (!created) return *this;
+			if (!exists()) return *this;
 			if (!targetBuffer.exists()) return *this;
 			return render(targetBuffer.toFrameBufferData());
 		}
 
-		BaseFrameBuffer& setBlendFunction(
-			GLenum const& srcColor,
-			GLenum const& dstColor,
-			GLenum const& srcAlpha,
-			GLenum const& dstAlpha
-		) {
-			blend.func = {srcColor, dstColor, srcAlpha, dstAlpha};
+		BaseFrameBuffer& disable() override {
+			BaseBuffer::disable();
 			return *this;
-		}
-
-		BaseFrameBuffer& setBlendFunction(
-			GLenum const& src,
-			GLenum const& dst
-		) {
-			blend.func = {src, dst, src, dst};
-			return *this;
-		}
-
-		BaseFrameBuffer& setBlendEquation(
-			GLenum const& color,
-			GLenum const& alpha
-		) {
-			blend.eq = {color, alpha};
-			return *this;
-		}
-
-		BaseFrameBuffer& setBlendEquation(
-			GLenum const& eq
-		) {
-			blend.eq = {eq, eq};
-			return *this;
-		}
-
-		BaseFrameBuffer& disable() {
-			glBindFramebuffer(GL_FRAMEBUFFER, 0);
-			return *this;
-		}
-
-		bool exists() {
-			return created;
 		}
 
 		/// The framebuffer's vertex transformation.
@@ -279,9 +291,6 @@ namespace Drawer {
 		BlendData blend;
 
 	private:
-		bool created = false;
-		unsigned int id;
-		unsigned int width, height;
 		struct {
 			Texture2D screen;
 			Texture2D depth;

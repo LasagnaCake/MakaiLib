@@ -155,7 +155,7 @@ namespace SmartPointer {
 		constexpr T& operator*()				{return getValue();		}
 		constexpr T& operator*() const			{return getValue();		}
 
-		static bool isBound(T* const& ptr)	{return isBound(ptr);}
+		static bool isBound(T* const& ptr)	{return SmartPointer::isBound(ptr);}
 
 	private:
 		friend class Pointer<T,	false	>;
@@ -167,51 +167,33 @@ namespace SmartPointer {
 		constexpr void mutate(T const& v) const requires (Type::Constant<T>)	{return;		}
 
 		constexpr T* getPointer()	{
-			if (!exists())
-				throw Error::NullPointer(
-					"Pointer reference does not exist!",
-					__FILE__,
-					"unspecified",
-					"Pointer",
-					"Pointer might be null or nonexistent."
-				);
+			if (!exists()) nullPointerError();
 			return (ref);
 		}
 
 		constexpr T* const getPointer() const	{
-			if (!exists())
-				throw Error::NullPointer(
-					"Pointer reference does not exist!",
-					__FILE__,
-					"unspecified",
-					"Pointer",
-					"Pointer might be null or nonexistent."
-				);
+			if (!exists()) nullPointerError();
 			return (ref);
 		}
 
 		constexpr T& getValue() {
-			if (!exists())
-				throw Error::NullPointer(
-					"Pointer reference does not exist!",
-					__FILE__,
-					"unspecified",
-					"Pointer",
-					"Pointer might be null or nonexistent."
-				);
+			if (!exists()) nullPointerError();
 			return (*ref);
 		}
 
 		constexpr T& getValue() const {
-			if (!exists())
-				throw Error::NullPointer(
-					"Pointer reference does not exist!",
-					__FILE__,
-					"unspecified",
-					"Pointer",
-					"Pointer might be null or nonexistent."
-				);
+			if (!exists()) nullPointerError();
 			return (*ref);
+		}
+
+		[[noreturn]] void nullPointerError() {
+			throw Error::NullPointer(
+				toString("Pointer reference of type '", NAMEOF(typeid(T)), "' does not exist!"),
+				__FILE__,
+				"unspecified",
+				"Pointer",
+				"Pointer might be null or nonexistent."
+			);
 		}
 	};
 	#undef ASSERT_STRONG
@@ -224,5 +206,8 @@ namespace SmartPointer {
 	template <Pointable T>
 	using StrongPointer	= Pointer<T,	false>;
 }
+
+using SmartPointer::StrongPointer;
+using SmartPointer::WeakPointer;
 
 #endif // REFERENCE_HANDLER_H

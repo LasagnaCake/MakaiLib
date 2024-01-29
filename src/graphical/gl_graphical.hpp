@@ -258,7 +258,7 @@ namespace Drawer {
 		} eq = {DEFAULT_BLEND_EQUATION};
 	};
 
-	inline void setBlend(BlendData const& blend, unsigned int const& drawBuffer = 0) {
+	inline void setBlendMode(BlendData const& blend, unsigned int const& drawBuffer = 0) {
 		glBlendFuncSeparatei(
 			drawBuffer,
 			blend.func.srcColor,
@@ -272,6 +272,49 @@ namespace Drawer {
 			blend.eq.alpha
 		);
 	}
+
+	struct Blendable {
+		Blendable& setBlendFunction(
+			GLenum const& srcColor,
+			GLenum const& dstColor,
+			GLenum const& srcAlpha,
+			GLenum const& dstAlpha
+		) {
+			blend.func = {srcColor, dstColor, srcAlpha, dstAlpha};
+			return *this;
+		}
+
+		Blendable& setBlendFunction(
+			GLenum const& src,
+			GLenum const& dst
+		) {
+			blend.func = {src, dst, src, dst};
+			return *this;
+		}
+
+		Blendable& setBlendEquation(
+			GLenum const& color,
+			GLenum const& alpha
+		) {
+			blend.eq = {color, alpha};
+			return *this;
+		}
+
+		Blendable& setBlendEquation(
+			GLenum const& eq
+		) {
+			blend.eq = {eq, eq};
+			return *this;
+		}
+
+		BlendData blend;
+
+	protected:
+		Blendable& setBlend() {
+			setBlendMode(blend);
+			return *this;
+		}
+	};
 
 	#include "gl_texture.hpp"
 }

@@ -20,10 +20,10 @@ namespace Shader {
 		using namespace FileLoader;
 
 		struct _UniSet {
-			string name;
+			String name;
 			GLuint id;
 
-			_UniSet(string name, GLuint id) {
+			_UniSet(String name, GLuint id) {
 				this->name	= name;
 				this->id	= id;
 			}
@@ -94,7 +94,7 @@ namespace Shader {
 			}
 
 			template <typename T>
-			void operator()(vector<T> const& values) {
+			void operator()(List<T> const& values) {
 				(*this)((T*)values.data(), values.size());
 			}
 
@@ -104,13 +104,13 @@ namespace Shader {
 				return glGetUniformLocation(id, cname);
 			}
 
-			inline GLuint getUniform(string const& append = "") const {
+			inline GLuint getUniform(String const& append = "") const {
 				return glGetUniformLocation(id, (name + append).c_str());
 			}
 		};
 	}
 
-	const map<string, GLuint> shaderTypes = {
+	const Dictionary<GLuint> shaderTypes = {
 		{"frag", GL_FRAGMENT_SHADER},
 		{"vert", GL_VERTEX_SHADER},
 		{"comp", GL_COMPUTE_SHADER},
@@ -121,10 +121,22 @@ namespace Shader {
 
 	class Shader {
 	private:
-		GLuint id;
+		struct ShaderProgram {
+			ShaderProgram()		{}
+			ShaderProgram(bool)	{id = glCreateProgram();	}
+			~ShaderProgram()	{glDeleteProgram(id);		}
+			void create() {if (id == 0) id = glCreateProgram();}
+			GLuint id = 0;
+		};
+
+		typedef StrongPointer<ShaderProgram> ShaderInstance;
+
+		ShaderInstance instance;
+
 		bool created = false;
+
 		/// Similar to create, but internal.
-		void attach(string code, GLuint shaderType) {
+		void attach(String code, GLuint shaderType) {
 			// Compile shaders
 			GLuint shader;
 			int success;
@@ -138,25 +150,27 @@ namespace Shader {
 			glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
 			if (!success) {
 				glGetShaderInfoLog(shader, 2048, NULL, infoLog);
-				throw Error::FailedAction(string("Could not compile Shader!\n") + infoLog);
+				throw Error::FailedAction(String("Could not compile Shader!\n") + infoLog);
 			};
 			// Shader Program
-			if (!created) id = glCreateProgram();
-			glAttachShader(id, shader);
-			glLinkProgram(id);
+			instance->create();
+			glAttachShader(instance->id, shader);
+			glLinkProgram(instance->id);
 			// Log linking errors if any
-			glGetProgramiv(id, GL_LINK_STATUS, &success);
+			glGetProgramiv(instance->id, GL_LINK_STATUS, &success);
 			if (!success) {
-				glGetProgramInfoLog(id, 2048, NULL, infoLog);
-				throw Error::FailedAction(string("Could not link shader program!\n") + infoLog);
+				glGetProgramInfoLog(instance->id, 2048, NULL, infoLog);
+				throw Error::FailedAction(String("Could not link shader program!\n") + infoLog);
 			}
 			glDeleteShader(shader);
 			created = true;
 		}
 	public:
-		Shader() {}
+		Shader() {
+			instance.bind(new ShaderProgram());
+		}
 
-		Shader(string vertexCode, string fragmentCode) {
+		Shader(String vertexCode, String fragmentCode) {
 			create(vertexCode, fragmentCode);
 		}
 
@@ -164,17 +178,20 @@ namespace Shader {
 			create(slfData);
 		}
 
-		Shader(string code, GLuint shaderType) {
+		Shader(String code, GLuint shaderType) {
 			create(code, shaderType);
+		}
+
+		Shader(Shader const& other) {
+			instance = other.instance;
+		}
+
+		Shader(Shader&& other) {
+			instance = other.instance;
 		}
 
 		~Shader() {
 			destroy();
-		}
-
-		/// Gets the attached shader program's ID.
-		inline GLuint getID() {
-			return id;
 		}
 
 		/// Returns whether this object has a shader associated with it (i.e. "is created").
@@ -183,7 +200,7 @@ namespace Shader {
 		}
 
 		/// Creates a shader and associates it to the object. Returns false if already created.
-		bool create(string vertexCode, string fragmentCode) {
+		bool create(String vertexCode, String fragmentCode) {
 			if (created) return false;
 			else created = true;
 			// Compile shaders
@@ -200,7 +217,7 @@ namespace Shader {
 				glGetShaderiv(vertex, GL_COMPILE_STATUS, &success);
 				if (!success) {
 					glGetShaderInfoLog(vertex, 2048, NULL, infoLog);
-					throw Error::FailedAction(string("Could not compile Vertex Shader!\n") + infoLog);
+					throw Error::FailedAction(String("Could not compile Vertex Shader!\n") + infoLog);
 				};
 			}
 			// similiar for Fragment Shader
@@ -214,19 +231,19 @@ namespace Shader {
 				glGetShaderiv(fragment, GL_COMPILE_STATUS, &success);
 				if (!success) {
 					glGetShaderInfoLog(fragment, 2048, NULL, infoLog);
-					throw Error::FailedAction(string("Could not compile Fragment Shader!\n") + infoLog);
+					throw Error::FailedAction(String("Could not compile Fragment Shader!\n") + infoLog);
 				}
 			}
 			// Shader Program
-			if (!created) id = glCreateProgram();
-			if (vertex)		glAttachShader(id, vertex);
-			if (fragment)	glAttachShader(id, fragment);
-			glLinkProgram(id);
+			instance->create();
+			if (vertex)		glAttachShader(instance->id, vertex);
+			if (fragment)	glAttachShader(instance->id, fragment);
+			glLinkProgram(instance->id);
 			// Log linking errors if any
-			glGetProgramiv(id, GL_LINK_STATUS, &success);
+			glGetProgramiv(instance->id, GL_LINK_STATUS, &success);
 			if (!success) {
-				glGetProgramInfoLog(id, 2048, NULL, infoLog);
-				throw Error::FailedAction(string("Could not link shader program!\n") + infoLog + "\n\n\n Program:" + vertexCode + "\n\n\n" + fragmentCode);
+				glGetProgramInfoLog(instance->id, 2048, NULL, infoLog);
+				throw Error::FailedAction(String("Could not link shader program!\n") + infoLog + "\n\n\n Program:" + vertexCode + "\n\n\n" + fragmentCode);
 			}
 			// Delete shaders
 			if (vertex)		glDeleteShader(vertex);
@@ -237,9 +254,9 @@ namespace Shader {
 		/// Creates a shader from an SLF file and associates it to the object. Returns false if already created.
 		bool create(CSVData slfData) {
 			if (created) return false;
-			string dir = slfData[0];
-			string log = "";
-			string code;
+			String dir = slfData[0];
+			String log = "";
+			String code;
 			GLuint type;
 			if (shaderTypes.find(slfData[1]) == shaderTypes.end()) {
 				for (size_t i = 1; i < slfData.size(); i += 2) {
@@ -248,7 +265,7 @@ namespace Shader {
 					try {
 						attach(code, type);
 					} catch (Error::Error err) {
-						log += string("\n[[ Error on shader '") + dir + slfData[i] + "' ]]:\n";
+						log += String("\n[[ Error on shader '") + dir + slfData[i] + "' ]]:\n";
 						log += err.what();
 					}
 				}
@@ -259,7 +276,7 @@ namespace Shader {
 					try {
 						attach(code, type);
 					} catch (Error::Error err) {
-						log += string("\n[[ Error on shader '") + dir + slfData[i] + "' ]]:\n";
+						log += String("\n[[ Error on shader '") + dir + slfData[i] + "' ]]:\n";
 						log += err.what();
 					}
 				}
@@ -272,7 +289,7 @@ namespace Shader {
 		}
 
 		/// Creates a shader from a given shader code, and a shader type  and associates it to the object. Returns false if already created.
-		bool create(string code, GLuint shaderType) {
+		bool create(String code, GLuint shaderType) {
 			if (created) return false;
 			else created = true;
 			// Compile shaders
@@ -288,23 +305,23 @@ namespace Shader {
 			glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
 			if (!success) {
 				glGetShaderInfoLog(shader, 2048, NULL, infoLog);
-				throw Error::FailedAction(string("Could not compile Shader!\n") + infoLog);
+				throw Error::FailedAction(String("Could not compile Shader!\n") + infoLog);
 			};
 			// Shader Program
-			if (!created) id = glCreateProgram();
-			glAttachShader(id, shader);
-			glLinkProgram(id);
+			instance->create();
+			glAttachShader(instance->id, shader);
+			glLinkProgram(instance->id);
 			// Log linking errors if any
-			glGetProgramiv(id, GL_LINK_STATUS, &success);
+			glGetProgramiv(instance->id, GL_LINK_STATUS, &success);
 			if (!success) {
-				glGetProgramInfoLog(id, 2048, NULL, infoLog);
-				throw Error::FailedAction(string("Could not link shader program!\n") + infoLog  + infoLog + "\n\n\n Program:" + code);
+				glGetProgramInfoLog(instance->id, 2048, NULL, infoLog);
+				throw Error::FailedAction(String("Could not link shader program!\n") + infoLog  + infoLog + "\n\n\n Program:" + code);
 			}
 			glDeleteShader(shader);
 			return true;
 		}
 
-		void make(string vertexCode, string fragmentCode) {
+		void make(String vertexCode, String fragmentCode) {
 			destroy();
 			create(vertexCode, fragmentCode);
 		}
@@ -314,7 +331,7 @@ namespace Shader {
 			create(slfData);
 		}
 
-		void make(string code, GLuint shaderType) {
+		void make(String code, GLuint shaderType) {
 			destroy();
 			create(code, shaderType);
 		}
@@ -322,28 +339,28 @@ namespace Shader {
 		/// Destroys the shader associated with this object, if any. Does not delete object.
 		void destroy() {
 			if (created) {
-				glDeleteProgram(id);
+				instance.unbind();
 				created = false;
 			}
 		}
 
 		/// Operator overload.
 		void operator()() {
-			glUseProgram(id);
+			glUseProgram(instance->id);
 		}
 
 		/// Enables the shader object.
 		void enable() {
-			glUseProgram(id);
+			glUseProgram(instance->id);
 		}
 
 		/**
 		* The way to set uniforms.
 		* Done like this: SHADER.uniform(UNIFORM_NAME)(UNIFORM_VALUE);
 		*/
-		_UniSet uniform(const string& name) {
-			glUseProgram(id);
-			_UniSet su(name, id);
+		_UniSet uniform(const String& name) {
+			glUseProgram(instance->id);
+			_UniSet su(name, instance->id);
 			return su;
 		}
 
@@ -351,8 +368,18 @@ namespace Shader {
 		* The way to set uniforms.
 		* Done like this: SHADER[UNIFORM_NAME](UNIFORM_VALUE);
 		*/
-		_UniSet operator[](const string& name) {
+		_UniSet operator[](const String& name) {
 			return uniform(name);
+		}
+
+		Shader& operator=(Shader const& other) {
+			instance = other.instance;
+			return *this;
+		}
+
+		Shader& operator=(Shader&& other) {
+			instance = other.instance;
+			return *this;
 		}
 	};
 

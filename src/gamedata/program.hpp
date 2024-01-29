@@ -49,11 +49,11 @@ public:
 	}
 
 	inline void setWorldMaterial2D() {
-		setWorldMaterial(world2D);
+		setMaterial(MAIN_SHADER, world2D);
 	}
 
 	inline void setWorldMaterial3D() {
-		setWorldMaterial(world3D);
+		setMaterial(MAIN_SHADER, world3D);
 	}
 
 	void setLayerMaterial(size_t layerID) {

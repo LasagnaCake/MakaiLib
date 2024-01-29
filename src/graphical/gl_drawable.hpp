@@ -74,7 +74,8 @@ private:
 	bool manualMode = false;
 };
 
-class DrawableObject: public Drawable {
+template<Type::Derived<Material::BaseObjectMaterial> T>
+class DrawableObject: public Drawable, public Drawer::Blendable {
 public:
 	DrawableObject(size_t layer = 0, bool manual = false): Drawable(layer, manual){
 		DEBUGLN("Drawable object created!");
@@ -95,42 +96,9 @@ public:
 		material.instances.push_back(Vector3(0, 0, 0));
 	}
 
-	Drawable& setBlendFunction(
-		GLenum const& srcColor,
-		GLenum const& dstColor,
-		GLenum const& srcAlpha,
-		GLenum const& dstAlpha
-	) {
-		blend.func = {srcColor, dstColor, srcAlpha, dstAlpha};
-		return *this;
-	}
-
-	Drawable& setBlendFunction(
-		GLenum const& src,
-		GLenum const& dst
-	) {
-		blend.func = {src, dst, src, dst};
-		return *this;
-	}
-
-	Drawable& setBlendEquation(
-		GLenum const& color,
-		GLenum const& alpha
-	) {
-		blend.eq = {color, alpha};
-		return *this;
-	}
-
-	Drawable& setBlendEquation(
-		GLenum const& eq
-	) {
-		blend.eq = {eq, eq};
-		return *this;
-	}
-
-	Material::ObjectMaterial	material;
-	Drawer::BlendData			blend;
-	Transform3D					trans;
+	T					material;
+	Transform3D			trans;
+	Shader::Shader		shader = MAIN_SHADER;
 
 protected:
 	void display(RawVertex* vertices, size_t count, GLuint mode = GL_TRIANGLES) {
@@ -138,7 +106,7 @@ protected:
 		if (material.instances.empty())
 			material.instances.push_back(Vector3(0, 0, 0));
 		// Set blend
-		Drawer::setBlend(blend);
+		setBlend();
 		// Set VBO as active
 		glBindBuffer(GL_ARRAY_BUFFER, vbo);
 		// Copy IVB to VBO
@@ -173,9 +141,9 @@ protected:
 		glBindVertexArray(0);
 	}
 
-	void setDefaultShader() {
-		// Render with basic shader
-		MAIN_SHADER();
+	void setShaderData() {
+		// Render with bject's shader
+		shader();
 		// Get transformation matrices
 		Matrix4x4
 			actor(trans),
@@ -184,14 +152,12 @@ protected:
 			normals(Scene::world * actor)
 		;
 		normals.transpose().invert();
-		// Set shader data
-		Material::setMaterial(MAIN_SHADER, material);
 		// Set transformation matrices
-		MAIN_SHADER["world"](Scene::world);
-		MAIN_SHADER["camera"](camera);
-		MAIN_SHADER["projection"](projection);
-		MAIN_SHADER["actor"](actor);
-		MAIN_SHADER["normals"](normals);
+		shader["world"](Scene::world);
+		shader["camera"](camera);
+		shader["projection"](projection);
+		shader["actor"](actor);
+		shader["normals"](normals);
 	}
 
 	GLuint vao, vbo;

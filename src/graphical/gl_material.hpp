@@ -247,8 +247,11 @@ enum class ObjectDebugView: unsigned int {
 
 // Materials
 
-struct ObjectMaterial {
+struct BaseObjectMaterial {
 	Vector4	color = Color::WHITE;
+};
+
+struct ObjectMaterial: BaseObjectMaterial {
 	bool shaded			= false;
 	bool illuminated	= false;
 	float			hue			= 0;

@@ -265,19 +265,15 @@ namespace Helper {
 		return floatString(fmt->first, fmt->second);
 	}
 
-	String padString(String const& str, char const& chr, size_t const width) {
-		std::stringstream ss;
-		Fold::strins(
-			ss,
-			std::setfill(chr),
-			std::setw(width),
-			str
-		);
-		return ss.str();
+	constexpr String padString(String str, char const& chr, size_t const& width, bool const& left = true) {
+		size_t const strsz = str.size();
+		if(width > strsz)
+			str.insert(left ? 0 : (strsz-1), width - strsz, chr);
+		return str;
 	}
 
 	template<Type::Number T>
-	String formatNumber(T const& val, size_t const& leading) {
+	constexpr String formatNumber(T const& val, size_t const& leading) {
 		return padString(std::to_string(val), '0', leading);
 	}
 
@@ -286,16 +282,20 @@ namespace Helper {
 		return padString(floatString(val, precision), '0', leading);
 	}
 
-	StringList splitString(String const& str, char const& sep) {
+	constexpr StringList splitString(String const& str, char const& sep) {
 		StringList res;
-		std::istringstream stream(str);
-		String current;
-		while (std::getline(stream, current, sep))
-			res.push_back(current);
+		if (!sep) return StringList{str};
+		res.reserve(std::count(str.begin(), str.end(), sep) + 1);
+		size_t pos = 0, last = 0;
+		while((pos = str.find(sep, last)) != str.npos) {
+			res.push_back(last != pos ? str.substr(last, pos-last) : "");
+			last = pos+1;
+		}
+		res.push_back(str.substr(last));
 		return res;
 	}
 
-	StringList splitString(String const& str, Arguments<char> const& seps) {
+	constexpr StringList splitString(String const& str, Arguments<char> const& seps) {
 		StringList res = {str};
 		for (char const& sep: seps) {
 			StringList buf1 = res;
@@ -331,7 +331,7 @@ namespace Helper {
 	constexpr StringPair splitStringAtLast(String const& str, char const& sep) {
 		auto pos = str.rfind(sep);
 		if (pos == str.npos)
-			return StringPair(str, "");
+			return StringPair("", str);
 		return StringPair(
 			str.substr(0, pos),
 			str.substr(pos)
@@ -342,7 +342,7 @@ namespace Helper {
 		StringPair res = StringPair("", str), buf;
 		for (char const& sep: seps) {
 			buf = splitStringAtLast(str, sep);
-			if (buf.first.size() > res.first.size() && buf.first.size() != str.size())
+			if (buf.second.size() < res.second.size())
 				res = buf;
 		}
 		if (res.first.empty()) return StringPair(str, "");
@@ -577,9 +577,9 @@ template<typename T>
 constexpr inline String toWideString(const T& val)	{return std::to_wstring(val);	}
 
 template<typename... Args>
-String toString(Args const&... args)			{return Helper::concatenate<String>(args...);		}
+constexpr String toString(Args const&... args)			{return Helper::concatenate<String>(args...);		}
 template<typename... Args>
-WideString toWideString(Args const&... args)	{return Helper::concatenate<WideString>(args...);	}
+constexpr WideString toWideString(Args const&... args)	{return Helper::concatenate<WideString>(args...);	}
 
 inline int					toInt(String s, size_t base = 10)				{return std::stoi(s, nullptr, base);	}
 inline long					toLong(String s, size_t base = 10)				{return std::stol(s, nullptr, base);	}

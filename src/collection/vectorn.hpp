@@ -782,6 +782,11 @@ class Vector3
 			);
 		}
 
+		/// Returns the mixed (scalar triple) product with two other vectors in the order of this->dotProd(a.crossProd(b))).
+		constexpr float mixProd(Vector3 const& a, Vector3 const& b) const {
+			return dotProd(a.crossProd(b));
+		}
+
 		constexpr Vector2 xy() const {
 			return Vector2(x, y);
 		}

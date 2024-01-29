@@ -541,7 +541,7 @@ namespace Makai {
 			DEBUGLN("Creating shaders...");
 			SLF::SLFData data = SLF::parseFile(bufferShaderPath);
 			framebuffer.shader.create(data);
-			layerbuffer.shader.create(data);
+			layerbuffer.shader = framebuffer.shader;
 			// Create main shader
 			MAIN_SHADER.destroy();
 			MAIN_SHADER.create(SLF::parseFile(mainShaderPath));

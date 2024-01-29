@@ -82,7 +82,7 @@ struct DanmakuObject {
 
 	ObjectFlags flags;
 
-	float zIndex = 0;
+	int64 zIndex = 0;
 	float zScale = 0;
 
 	float spawnSpeed	= .2f;

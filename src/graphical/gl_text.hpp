@@ -165,7 +165,7 @@ List<size_t> getTextLineWrapIndices(TextData& text) {
 	return indices;
 }
 
-class Label: public Base::DrawableObject {
+class Label: public Base::DrawableObject<Material::ObjectMaterial> {
 public:
 	Label(size_t layer = 0, bool manual = false): DrawableObject(layer, manual) {}
 
@@ -193,7 +193,8 @@ private:
 		if (!vertices.size()) return;
 		// Set shader data
 		material.texture = {true, font->face, material.texture.alphaClip};
-		setDefaultShader();
+		setShaderData();
+		Material::setMaterial(shader, material);
 		// Display to screen
 		display(&vertices[0], vertices.size());
 	}

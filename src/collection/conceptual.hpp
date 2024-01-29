@@ -316,6 +316,15 @@ namespace Type {
 	*/
 	template <typename T>
 	concept Mutable = Safe<T> && !(Array<T> || Constant<T>);
+
+	namespace {
+		template<class Lambda, int=(Lambda{}(), 0)>
+		constexpr bool isConstexpr(Lambda)	{return true;	}
+		constexpr bool isConstexpr(...)		{return false;	}
+	}
+
+	template <typename T>
+	concept CompileTimeable = isConstexpr([]{return T();});
 }
 
 namespace Meta {

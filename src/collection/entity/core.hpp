@@ -44,14 +44,14 @@ namespace Entities {
 		using Tasking::MultiTasker;
 
 		// Duplicate root prevention system
-		namespace { bool rc = false; }
+		/*namespace { bool rc = false; }
 		bool ENTITY_ROOT_CREATED() {
 			if (!rc) {
 				rc = true;
 				return false;
 			}
 			return true;
-		}
+		}*/
 
 		List<const Event::Signal*> destroyQueue;
 	}
@@ -114,11 +114,11 @@ namespace Entities {
 		virtual void	onFrame(float delta)	{}
 
 		/// Gets the object's class.
-		inline virtual String getClass() {return "Entity";}
+		inline virtual String getClass()		{return "Entity";}
 		/// Gets the object's base class.
-		inline virtual String getBaseClass() {return "Entity";}
-		/// Gets the object's "core" (EClass::) class
-		inline static String getCoreClass() {return "Entity";}
+		inline virtual String getBaseClass()	{return "Entity";}
+		/// Gets the object's "core" (Entities::) class
+		inline static String getCoreClass()		{return "Entity";}
 
 		/// Destructor.
 		virtual ~Entity() {
@@ -223,7 +223,7 @@ namespace Entities {
 		}
 
 		/// Gets one of the object's child, and casts it.
-		template <class T>
+		template <EntityType T>
 		T* getChild(String const& path) {
 			// Try and get object
 			Entity* child = getChild(path);
@@ -238,6 +238,16 @@ namespace Entities {
 		*/
 		inline Entity* getChild(size_t const& index) {
 			return children[index];
+		}
+
+		/**
+		* Gets the object's Nth child, and casts it.
+		*/
+		template <EntityType T>
+		inline Entity* getChild(size_t const& index) {
+			if (index < children.size())
+				return (T*)children[index];
+			return nullptr;
 		}
 
 		/// Gets the amount of children the object has.
@@ -330,7 +340,7 @@ namespace Entities {
 		/// Renames object, while also being careful with duplicate names.
 		void setName(String const& newName, bool const& mustHaveUniqueName = true) {
 			// if root, or trying to rename to root, error
-			if ((name == ENTITY_ROOT_NAME || newName == ENTITY_ROOT_NAME) && ENTITY_ROOT_CREATED())
+			if ((name == ENTITY_ROOT_NAME || newName == ENTITY_ROOT_NAME) && (_ROOT != nullptr))
 				throw Error::InvalidValue(
 					String("Cannot rename root object, or name object '")
 					+ ENTITY_ROOT_NAME
@@ -375,6 +385,16 @@ namespace Entities {
 			children[index]->destroy();
 		}
 
+		/// Queues a child of a given name for deletion.
+		void queueDestroyChild(String const& name) {
+			getChild(name)->queueDestroy();
+		}
+
+		/// Queues a child at a given index for deletion.
+		void queueDestroyChild(size_t const& index) {
+			children[index]->queueDestroy();
+		}
+
 		/// Deletes all children.
 		void destroyChildren() {
 			auto chvec = children;
@@ -405,21 +425,6 @@ namespace Entities {
 			return getChild(idx);
 		}
 
-		/// Addition Assignment operator overload.
-		void operator+=(Entity* child) {
-			addChild(child);
-		}
-
-		/// Subtraction Assignment operator overload (name).
-		void operator-=(String const& name) {
-			destroyChild(name);
-		}
-
-		/// Subtraction Assignment operator overload (index).
-		void operator-=(size_t const& index) {
-			destroyChild(index);
-		}
-
 		/// Deletes self.
 		Event::Signal const destroy = SIGNAL {
 			condemn();
@@ -429,6 +434,9 @@ namespace Entities {
 		void queueDestroy() {
 			destroyQueue.push_back(&destroy);
 		}
+
+		Entity& operator=(Entity const& other)	= delete;
+		Entity& operator=(Entity&& other)		= delete;
 
 		template <EntityType T>
 		inline T* as() {return (T*)this;}

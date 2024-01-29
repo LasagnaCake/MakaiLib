@@ -677,8 +677,8 @@ public:
 	constexpr operator Vector3() const {return toVector3();}
 	constexpr operator Vector4() const {return toVector4();}
 
-	constexpr explicit operator const T*() const	{return data.begin();	}
-	constexpr explicit operator T*()				{return data.begin();	}
+	constexpr explicit operator const T*() const	{return begin();	}
+	constexpr explicit operator T*()				{return begin();	}
 
 	/// Converters.
 
@@ -881,7 +881,7 @@ public:
 		skew.y /= result.scale.z;
 		skew.x /= result.scale.z;
 		// Check for coordinate flip
-		if (row[0].dotProd(row[1].crossProd(row[2])) < 0)
+		if (row[0].mixProd(row[1], row[2]) < 0)
 			for (size_t i = 0; i < 3; i++) {
 				result.scale[i] *= T(-1);
 				row[i] *= T(-1);

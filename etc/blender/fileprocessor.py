@@ -156,9 +156,22 @@ def create_render_definition(context, obj, filepath, tx_folder, mesh_folder, emb
 	vertex_binary = struct.pack("<" + "f"*len(vertex_data), *vertex_data)
 	# Do appropriate procedure
 	strfile = {
+		"version": 0,
 		"mesh": {
 			"data": None,
 			"components": component_data
+		},
+		"blend": {
+			"function": {
+				"srcColor": 0x06, 
+				"dstColor": 0x07,
+				"srcAlpha": 0x01,
+				"dstAlpha": 0x00
+			},
+			"equation": {
+				"color": 0x02,
+				"alpha": 0x06
+			}
 		}
 	}
 	if embed_mesh:

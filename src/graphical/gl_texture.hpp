@@ -392,6 +392,9 @@ public:
 		create(other, startX, startY, endX, endY, filter);
 	}
 
+	Texture2D& operator=(Texture2D const& other)	{make(other); return *this;}
+	Texture2D& operator=(Texture2D&& other)			{make(other); return *this;}
+
 	void copyFrom(
 		Texture2D const& other,
 		unsigned int startX,
