@@ -328,7 +328,8 @@ namespace Makai {
 
 		/// Enables/Disables mouse capturing.
 		inline void setMouseCapturing(bool enabled = false) {
-			SDL_CaptureMouse(enabled ? SDL_TRUE : SDL_FALSE);
+			if (window)
+				SDL_SetWindowGrab(window, enabled ? SDL_TRUE : SDL_FALSE);
 		}
 
 		/**
@@ -570,6 +571,8 @@ namespace Makai {
 		unsigned int threshold = 2048;
 
 	private:
+		inline static SDL_Window* window = nullptr;
+
 		/// The internal buffer state.
 		inline static KeyBuffer		buffer;
 		inline static KeyBuffer		last;
@@ -653,6 +656,8 @@ namespace Makai {
 			);
 			SDL_SetWindowFullscreen(window, fullscreen ? SDL_WINDOW_FULLSCREEN : 0);
 			SDL_GL_CreateContext(window);
+			if (!input.window)
+				input.window = window;
 			DEBUGLN("Created!");
 			DEBUGLN("Starting GLEW...");
 			// Try and initialize GLEW
@@ -993,6 +998,9 @@ namespace Makai {
 		void terminate() {
 			// Call final function
 			onClose();
+			// Remove window from input manager
+			if (input.window == window)
+				input.window = nullptr;
 			// Close YSE
 			DEBUGLN("Closing sound system...");
 			Audio::closeSystem();
