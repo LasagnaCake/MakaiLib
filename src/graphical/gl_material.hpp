@@ -570,7 +570,7 @@ ImageEffect loadImageEffect(
 				);
 		} else fx.enabled = false;
 		return fx;
-	} catch (JSON::exception e) {
+	} catch (JSON::exception const& e) {
 		throw Error::FailedAction(
 			"Failed at getting image effect!",
 			__FILE__,
@@ -693,7 +693,7 @@ ObjectMaterial fromObjectMaterialDefinition(
 		}
 		if (dmat["debug"].is_number())
 			mat.debug = (ObjectDebugView)dmat["debug"].get<unsigned int>();
-	} catch (JSON::exception e) {
+	} catch (JSON::exception const& e) {
 		throw Error::FailedAction(
 			"Failed at getting material values!",
 			__FILE__,

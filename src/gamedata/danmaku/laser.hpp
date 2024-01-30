@@ -185,7 +185,7 @@ public:
 
 	void onFrame(float delta) override {
 		GAME_PARALLEL_FOR
-		for (auto i = 0; i < LASER_COUNT; i++) {
+		for (size_t i = 0; i < LASER_COUNT; i++) {
 			auto* l = &lasers[i];
 			l->onFrame(delta);
 			if (!l->isFree() && l->params.collidable) {

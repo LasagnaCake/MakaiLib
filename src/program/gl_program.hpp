@@ -138,7 +138,7 @@ namespace Makai {
 			// Get keyboard state
 			int keyCount = 0;
 			const unsigned char* state = SDL_GetKeyboardState(&keyCount);
-			for (auto i = 0; i < keyCount; i++) {
+			for (int i = 0; i < keyCount; i++) {
 				// Jankify
 				KeyboardButton button = (KeyboardButton)i;
 				// Get previous key state
@@ -494,12 +494,13 @@ namespace Makai {
 		* 1+	= Pressed;
 		* Recommended if time pressed is required.
 		*/
+		[[gnu::warning("Controller input is currently unimplemented!")]]
 		inline unsigned int getButtonState(Button const& button) {
 			if (!enabled) return 0;
 			switch (button.type) {
 				case ButtonCodeType::BCT_KEYBOARD:		return getButtonState(button.code.keyboard);
 				case ButtonCodeType::BCT_MOUSE:			return getButtonState(button.code.mouse);
-				case ButtonCodeType::BCT_CONTROLLER:	throw Error::InvalidValue("Joystick input is unimplemented!");
+				case ButtonCodeType::BCT_CONTROLLER:	return 0;
 			}
 			return 0;
 		}
@@ -529,12 +530,13 @@ namespace Makai {
 		}
 
 		/// Returns if the button's state has changed.
+		[[gnu::warning("Controller input is currently unimplemented!")]]
 		inline bool isButtonChanged(Button const& button) {
 			if (!enabled) return false;
 			switch (button.type) {
 				case ButtonCodeType::BCT_KEYBOARD:		return isButtonChanged(button.code.keyboard);
 				case ButtonCodeType::BCT_MOUSE:			return isButtonChanged(button.code.mouse);
-				case ButtonCodeType::BCT_CONTROLLER:	throw Error::InvalidValue("Joystick input is unimplemented!");
+				case ButtonCodeType::BCT_CONTROLLER:	return false;
 			}
 			return false;
 		}

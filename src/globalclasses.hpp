@@ -8,7 +8,7 @@ public:
 	constexpr T get() {
 		try {
 			return value().get<T>();
-		} catch (JSON::exception e) {
+		} catch (JSON::exception const& e) {
 			throw Error::FailedAction(
 				"Parameter '" + name + "' is not of type '"
 				+ NAMEOF(typeid(T)) + "'!",
@@ -24,7 +24,7 @@ public:
 	constexpr T get(T const& fallback) {
 		try {
 			return value().get<T>();
-		} catch (JSON::exception e) {
+		} catch (JSON::exception const& e) {
 			view() = fallback;
 			return fallback;
 		}

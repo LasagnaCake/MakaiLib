@@ -251,7 +251,7 @@ private:
 					}
 				}
 			}
-		} catch (JSON::exception e) {
+		} catch (JSON::exception const& e) {
 			throw Error::FailedAction(
 				"Failed at getting image effect!",
 				__FILE__,

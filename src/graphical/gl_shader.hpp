@@ -264,7 +264,7 @@ namespace Shader {
 					type = shaderTypeId(slfData[i+1]);
 					try {
 						attach(code, type);
-					} catch (Error::Error err) {
+					} catch (Error::Error const& err) {
 						log += String("\n[[ Error on shader '") + dir + slfData[i] + "' ]]:\n";
 						log += err.what();
 					}
@@ -275,7 +275,7 @@ namespace Shader {
 					code = getTextFile(dir + slfData[i]);
 					try {
 						attach(code, type);
-					} catch (Error::Error err) {
+					} catch (Error::Error const& err) {
 						log += String("\n[[ Error on shader '") + dir + slfData[i] + "' ]]:\n";
 						log += err.what();
 					}

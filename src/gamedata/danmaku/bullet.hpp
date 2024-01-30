@@ -144,7 +144,7 @@ public:
 
 	void onFrame(float delta) override {
 		GAME_PARALLEL_FOR
-		for (auto i = 0; i < BULLET_COUNT; i++) {
+		for (size_t i = 0; i < BULLET_COUNT; i++) {
 			auto& b = bullets[i];
 			b.onFrame(delta);
 			if (!b.isFree() && b.params.collidable) {

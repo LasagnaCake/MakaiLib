@@ -53,7 +53,7 @@ public:
 
 	/// Creates a reference and binds it to this object.
 	template <Reference::PlaneType T>
-	T* createReference() {
+	[[nodiscard]] T* createReference() {
 		if (locked) throw Error::InvalidAction("Renderable object is locked!");
 		Triangle* tris[2] = {
 			new Triangle(),
@@ -91,7 +91,7 @@ public:
 	}
 
 	template <Reference::TrigonType T>
-	T* createReference() {
+	[[nodiscard]] T* createReference() {
 		if (locked) throw Error::InvalidAction("Renderable object is locked!");
 		Triangle* tris[1] = {new Triangle()};
 		// Add triangles
@@ -429,7 +429,7 @@ private:
 				vdata			= FileLoader::getBinaryFile(FileSystem::concatenatePath(sourcepath, data["path"].get<string>()));
 			}
 			componentData		= mesh["components"].get<string>();
-		} catch (JSON::exception e) {
+		} catch (JSON::exception const& e) {
 			throw Error::FailedAction(
 				"Failed at getting mesh values!",
 				__FILE__,
@@ -530,7 +530,7 @@ private:
 				trans.position = VecMath::fromJSONArrayV3(dtrans["position"]);
 				trans.position = VecMath::fromJSONArrayV3(dtrans["rotation"]);
 				trans.position = VecMath::fromJSONArrayV3(dtrans["scale"]);
-			} catch (JSON::exception e) {
+			} catch (JSON::exception const& e) {
 				throw Error::FailedAction(
 					"Failed at getting transformation values!",
 					__FILE__,

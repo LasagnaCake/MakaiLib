@@ -272,7 +272,7 @@ namespace Dialog {
 					msgIndex++;
 				}
 				this->messages = messages;
-			} catch (JSON::exception e) {
+			} catch (JSON::exception const& e) {
 				throw Error::FailedAction(
 					"Failed at parsing dialog definition!",
 					__FILE__,

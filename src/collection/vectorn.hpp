@@ -68,9 +68,9 @@ class Vector2
 	public:
 		/// The vector's position.
 		union {
-			struct {float x, y;};
-			struct {float nx, ny;};
-			struct {float u, v;};
+			struct {float x, y;		};
+			struct {float nx, ny;	};
+			struct {float u, v;		};
 			float data[2] = {0};
 		};
 
@@ -254,7 +254,6 @@ class Vector2
 		}
 
 		constexpr OrderType operator<=>(Vector2 const& other) const {
-			constexpr OrderType equiv = OrderType::equivalent;
 			OrderType result = OrderType::equivalent;
 			if ((result = x <=> other.x) != OrderType::equivalent) return result;
 			return y <=> other.y;
@@ -419,10 +418,10 @@ class Vector3
 	public:
 		/// The vector's position.
 		union {
-			struct {float x, y, z;};
-			struct {float nx, ny, nz;};
-			struct {float r, g, b;};
-			struct {float u, v, t;};
+			struct {float x, y, z;		};
+			struct {float nx, ny, nz;	};
+			struct {float r, g, b;		};
+			struct {float u, v, t;		};
 			float data[3] = {0};
 		};
 
@@ -636,7 +635,6 @@ class Vector3
 		}
 
 		constexpr OrderType operator<=>(Vector3 const& other) const {
-			constexpr OrderType equiv = OrderType::equivalent;
 			OrderType result = OrderType::equivalent;
 			if ((result = x <=> other.x) != OrderType::equivalent) return result;
 			if ((result = y <=> other.y) != OrderType::equivalent) return result;
@@ -832,10 +830,10 @@ class Vector4
 	public:
 		/// The vector's position.
 		union {
-			struct {float x, y, z, w;};
-			struct {float nx, ny, nz, nw;};
-			struct {float r, g, b, a;};
-			struct {float u, v, t, s;};
+			struct {float x, y, z, w;		};
+			struct {float nx, ny, nz, nw;	};
+			struct {float r, g, b, a;		};
+			struct {float u, v, t, s;		};
 			float data[4] = {0};
 		};
 
@@ -1081,7 +1079,6 @@ class Vector4
 		}
 
 		constexpr OrderType operator<=>(Vector4 const& other) const {
-			constexpr OrderType equiv = OrderType::equivalent;
 			OrderType result = OrderType::equivalent;
 			if ((result = x <=> other.x) != OrderType::equivalent) return result;
 			if ((result = y <=> other.y) != OrderType::equivalent) return result;

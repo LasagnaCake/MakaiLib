@@ -58,7 +58,7 @@ public:
 	T get(String const& key, T const& fallback) {
 		try {
 			return (*this)[key].get<T>();
-		} catch (JSON::exception e) {
+		} catch (JSON::exception const& e) {
 			(*this)[key] = fallback;
 			return fallback;
 		}
