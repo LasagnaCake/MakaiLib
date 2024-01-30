@@ -129,6 +129,11 @@ namespace Makai {
 		/// Empty Constructor.
 		InputManager() {}
 
+		/**
+		* Updates the input manager.
+		* Not required to call every cycle, as the program already handles it.
+		*/
+		// Should this be privated? Probably not...
 		void update() {
 			// Get keyboard state
 			int keyCount = 0;
