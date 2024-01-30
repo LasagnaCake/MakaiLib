@@ -49,7 +49,7 @@ namespace Makai {
 	enum class ButtonCodeType {
 		BCT_KEYBOARD,
 		BCT_MOUSE,
-		BCT_JOYSTICK
+		BCT_CONTROLLER
 	};
 
 	typedef HashMap<SDL_Scancode, unsigned int>		KeyBuffer;
@@ -438,9 +438,9 @@ namespace Makai {
 		inline unsigned int getButtonState(ButtonBind const& button) {
 			if (!enabled) return 0;
 			switch (button.first) {
-				case ButtonCodeType::BCT_KEYBOARD:	return getButtonState(std::get<SDL_Scancode>(button.second));
-				case ButtonCodeType::BCT_MOUSE:		return getButtonState(std::get<MouseScancode>(button.second));
-				case ButtonCodeType::BCT_JOYSTICK:	throw Error::InvalidValue("Joystick input is unimplemented!");
+				case ButtonCodeType::BCT_KEYBOARD:		return getButtonState(std::get<SDL_Scancode>(button.second));
+				case ButtonCodeType::BCT_MOUSE:			return getButtonState(std::get<MouseScancode>(button.second));
+				case ButtonCodeType::BCT_CONTROLLER:	throw Error::InvalidValue("Joystick input is unimplemented!");
 			}
 		}
 
@@ -472,9 +472,9 @@ namespace Makai {
 		inline bool isButtonChanged(ButtonBind const& button) {
 			if (!enabled) return false;
 			switch (button.first) {
-				case ButtonCodeType::BCT_KEYBOARD:	return isButtonChanged(std::get<SDL_Scancode>(button.second));
-				case ButtonCodeType::BCT_MOUSE:		return isButtonChanged(std::get<MouseScancode>(button.second));
-				case ButtonCodeType::BCT_JOYSTICK:	throw Error::InvalidValue("Joystick input is unimplemented!");
+				case ButtonCodeType::BCT_KEYBOARD:		return isButtonChanged(std::get<SDL_Scancode>(button.second));
+				case ButtonCodeType::BCT_MOUSE:			return isButtonChanged(std::get<MouseScancode>(button.second));
+				case ButtonCodeType::BCT_CONTROLLER:	throw Error::InvalidValue("Joystick input is unimplemented!");
 			}
 		}
 
