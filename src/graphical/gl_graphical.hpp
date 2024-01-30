@@ -316,6 +316,21 @@ namespace Drawer {
 		}
 	};
 
+	Vector4 colorFromJSON(JSONData const& json) {
+		try {
+			if (json.is_array())
+				return Vector4(
+					json[0],
+					json[1],
+					json[2],
+					json[3]
+				);
+			else return Vector4(1);
+		} catch (JSON::exception const& e) {
+			return Vector4(1);
+		}
+	}
+
 	#include "gl_texture.hpp"
 }
 
@@ -333,6 +348,48 @@ namespace VecMath {
 
 	inline void srpTransform(RawVertex& vtx, Transform3D const& trans) {
 		srpTransform(vtx, Matrix4x4(trans));
+	}
+
+	Vector2 fromJSONArray(JSONData const& json) {
+		try {
+			if (json.is_array())
+				return Vector2(
+					json[0],
+					json[1]
+				);
+			else return Vector2(0);
+		} catch (JSON::exception const& e) {
+			return Vector2(0);
+		}
+	}
+
+	Vector3 fromJSONArray(JSONData const& json) {
+		try {
+			if (json.is_array())
+				return Vector3(
+					json[0],
+					json[1],
+					json[2]
+				);
+			else return Vector3(0);
+		} catch (JSON::exception const& e) {
+			return Vector3(0);
+		}
+	}
+
+	Vector4 fromJSONArray(JSONData const& json) {
+		try {
+			if (json.is_array())
+				return Vector4(
+					json[0],
+					json[1],
+					json[2],
+					json[3]
+				);
+			else return Vector4(0);
+		} catch (JSON::exception const& e) {
+			return Vector4(0);
+		}
 	}
 }
 
