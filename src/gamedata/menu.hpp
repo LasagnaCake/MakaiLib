@@ -26,7 +26,7 @@ namespace Menu {
 		DERIVED_CLASS(BaseMenu, Entity)
 
 		DERIVED_CONSTRUCTOR(BaseMenu, Entity, {
-			input.update();
+			//input.update();
 			keys["select"]		= SDL_SCANCODE_Z;
 			keys["return"]		= SDL_SCANCODE_X;
 			keys["next"]		= SDL_SCANCODE_DOWN;
@@ -50,7 +50,7 @@ namespace Menu {
 		void onCreate() override {}
 
 		void onFrame(float delta) override {
-			input.update();
+			//input.update();
 			if (action("exit", true))		{setTopLevelOption(); return;}
 			if (action("select", true))		{selectOption(); return;}
 			if (action("return", true))		{returnOption(); return;}

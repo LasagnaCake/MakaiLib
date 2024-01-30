@@ -44,6 +44,29 @@ namespace Makai {
 		MS_UNKNOWN
 	};
 
+	typedef Poly<SDL_Scancode, MouseScancode, size_t> ButtonCode;
+
+	enum class ButtonCodeType {
+		BCT_KEYBOARD,
+		BCT_MOUSE,
+		BCT_JOYSTICK
+	};
+
+	typedef HashMap<SDL_Scancode, unsigned int>		KeyBuffer;
+	typedef HashMap<MouseScancode, unsigned int>	MouseButtonBuffer;
+
+	struct MouseBuffer {
+		MouseData global;
+		MouseData local;
+		MouseButtonBuffer buffer, last;
+	};
+
+	typedef Pair<ButtonCodeType, ButtonCode> ButtonBind;
+
+	typedef List<ButtonBind> ButtonBinds;
+
+	typedef HashMap<String, ButtonBinds> ButtonMap;
+
 	/**
 	*************************
 	*                       *
@@ -73,7 +96,7 @@ namespace Makai {
 				SDL_Scancode button = (SDL_Scancode)i;
 				// Get previous key state
 				unsigned int buttonState = 0;
-				if (buffer[button]) buttonState = buffer[button];
+				if (buffer()[button]) buttonState = buffer()[button];
 				// If button is pressed...
 				if(state[button]) {
 					// If buffer not overflowing, increment buffer
@@ -82,14 +105,14 @@ namespace Makai {
 				// Else, zero state
 				else buttonState = 0;
 				// Copy previous state to secondary buffer
-				last[button]	= buffer[button];
+				last()[button]		= buffer()[button];
 				// Set buffer to button state
-				buffer[button]	= buttonState;
+				buffer()[button]	= buttonState;
 			}
 			// Get mouse structures
 			MouseData&
-				lm = mouse.local,
-				gm = mouse.global
+				lm = mouse().local,
+				gm = mouse().global
 			;
 			// Save last positional data
 			lm.last = lm.pos;
@@ -103,7 +126,7 @@ namespace Makai {
 				MouseScancode button = (MouseScancode)i;
 				// Get previous button state
 				unsigned int buttonState = 0;
-				if (mouse.buffer[button]) buttonState = mouse.buffer[button];
+				if (mouse().buffer[button]) buttonState = mouse().buffer[button];
 				// If button is pressed.
 				if(btn & SDL_BUTTON(i)) {
 					// If buffer not overflowing, increment buffer
@@ -112,9 +135,9 @@ namespace Makai {
 				// Else, zero state
 				else buttonState = 0;
 				// Copy previous state to secondary buffer
-				mouse.last[button]		= mouse.buffer[button];
+				mouse().last[button]	= mouse().buffer[button];
 				// Set buffer to button state
-				mouse.buffer[button]	= buttonState;
+				mouse().buffer[button]	= buttonState;
 			}
 		}
 
@@ -126,13 +149,13 @@ namespace Makai {
 		*/
 		inline unsigned int getButtonState(SDL_Scancode button) {
 			if (!enabled || button == SDL_SCANCODE_UNKNOWN) return 0;
-			return buffer[button];
+			return buffer()[button];
 		}
 
 		/// Returns whether the button is pressed.
 		inline bool isButtonDown(SDL_Scancode button) {
 			if (!enabled || button == SDL_SCANCODE_UNKNOWN) return false;
-			return buffer[button] > 0;
+			return buffer()[button] > 0;
 		}
 
 		/// Returns if the button has just been pressed (state == 1).
@@ -156,14 +179,14 @@ namespace Makai {
 		/// Returns if the button's state has changed.
 		inline bool isButtonChanged(SDL_Scancode button) {
 			if (!enabled || button == SDL_SCANCODE_UNKNOWN) return false;
-			return last[button]	== buffer[button];
+			return last()[button]	== buffer()[button];
 		}
 
 		/// Returns the button that was most recently pressed.
 		inline SDL_Scancode mostRecentButtonDown() {
 			SDL_Scancode button		= SDL_SCANCODE_UNKNOWN;
 			unsigned int duration	= Math::Max::UINT_V;
-			for (auto [b, d] : buffer)
+			for (auto [b, d] : buffer())
 				if ((d) && d < duration) {
 					button		= b;
 					duration	= d;
@@ -173,7 +196,7 @@ namespace Makai {
 
 		/// Returns the button that was most recently just pressed.
 		inline SDL_Scancode mostRecentButtonJustPressed() {
-			for (auto [b, d] : buffer)
+			for (auto [b, d] : buffer())
 				if (d == 1)
 					return b;
 			return SDL_SCANCODE_UNKNOWN;
@@ -183,7 +206,7 @@ namespace Makai {
 		inline SDL_Scancode mostRecentButtonHeld() {
 			SDL_Scancode button		= SDL_SCANCODE_UNKNOWN;
 			unsigned int duration	= Math::Max::UINT_V;
-			for (auto [b, d] : buffer)
+			for (auto [b, d] : buffer())
 				if (d > threshold && d < duration) {
 					button		= b;
 					duration	= d;
@@ -193,60 +216,60 @@ namespace Makai {
 
 		/// Returns the button that was most recently changed.
 		inline SDL_Scancode mostRecentButtonChanged() {
-			for (auto [b, d] : buffer)
-				if (d != last[b])
+			for (auto [b, d] : buffer())
+				if (d != last()[b])
 					return b;
 			return SDL_SCANCODE_UNKNOWN;
 		}
 
 		/// Returns the button that was most recently just released.
 		inline SDL_Scancode mostRecentButtonJustReleased() {
-			for (auto [b, d] : buffer)
-				if (d != last[b] && d == 0)
+			for (auto [b, d] : buffer())
+				if (d != last()[b] && d == 0)
 					return b;
 			return SDL_SCANCODE_UNKNOWN;
 		}
 
 		/// Returns all buttons currently pressed.
-		inline vector<SDL_Scancode> getButtonsDown() {
-			vector<SDL_Scancode> buttons;
-			for (auto [b, d] : buffer)
+		inline List<SDL_Scancode> getButtonsDown() {
+			List<SDL_Scancode> buttons;
+			for (auto [b, d] : buffer())
 				if (isButtonDown(b))
 					buttons.push_back(b);
 			return buttons;
 		}
 
 		/// Returns all buttons currently just pressed.
-		inline vector<SDL_Scancode> getButtonsJustPressed() {
-			vector<SDL_Scancode> buttons;
-			for (auto [b, d] : buffer)
+		inline List<SDL_Scancode> getButtonsJustPressed() {
+			List<SDL_Scancode> buttons;
+			for (auto [b, d] : buffer())
 				if (isButtonJustPressed(b))
 					buttons.push_back(b);
 			return buttons;
 		}
 
 		/// Returns all buttons currently just released.
-		inline vector<SDL_Scancode> getButtonsJustReleased() {
-			vector<SDL_Scancode> buttons;
-			for (auto [b, d] : buffer)
+		inline List<SDL_Scancode> getButtonsJustReleased() {
+			List<SDL_Scancode> buttons;
+			for (auto [b, d] : buffer())
 				if (isButtonJustReleased(b))
 					buttons.push_back(b);
 			return buttons;
 		}
 
 		/// Returns all buttons whose state changed.
-		inline vector<SDL_Scancode> getButtonsChanged() {
-			vector<SDL_Scancode> buttons;
-			for (auto [b, d] : buffer)
+		inline List<SDL_Scancode> getButtonsChanged() {
+			List<SDL_Scancode> buttons;
+			for (auto [b, d] : buffer())
 				if (isButtonChanged(b))
 					buttons.push_back(b);
 			return buttons;
 		}
 
 		/// Returns all buttons currently held.
-		inline vector<SDL_Scancode> getButtonsHeld() {
-			vector<SDL_Scancode> buttons;
-			for (auto [b, d] : buffer)
+		inline List<SDL_Scancode> getButtonsHeld() {
+			List<SDL_Scancode> buttons;
+			for (auto [b, d] : buffer())
 				if (isButtonHeld(b))
 					buttons.push_back(b);
 			return buttons;
@@ -254,17 +277,17 @@ namespace Makai {
 
 		/// Returns the mouse position relative to the window.
 		inline Vector2 getWindowMousePosition() {
-			return Vector2(mouse.local.pos.x, mouse.local.pos.y);
+			return Vector2(mouse().local.pos.x, mouse().local.pos.y);
 		}
 
 		/// Returns the mouse position relative to the desktop.
 		inline Vector2 getDesktopMousePosition() {
-			return Vector2(mouse.global.pos.x, mouse.global.pos.y);
+			return Vector2(mouse().global.pos.x, mouse().global.pos.y);
 		}
 
 		/// Returns which direction the mouse is moving towards.
 		inline Vector2 getMouseDirection() {
-			return getDesktopMousePosition() - Vector2(mouse.global.last.x, mouse.global.last.y);
+			return getDesktopMousePosition() - Vector2(mouse().global.last.x, mouse().global.last.y);
 		}
 
 		/// Enables/Disables mouse capturing.
@@ -280,13 +303,13 @@ namespace Makai {
 		*/
 		inline unsigned int getButtonState(MouseScancode button) {
 			if (!enabled || button == MS_UNKNOWN) return 0;
-			return mouse.buffer[button];
+			return mouse().buffer[button];
 		}
 
 		/// Returns whether the mouse button is pressed.
 		inline bool isButtonDown(MouseScancode button) {
 			if (!enabled || button == MS_UNKNOWN) return false;
-			return mouse.buffer[button] > 0;
+			return mouse().buffer[button] > 0;
 		}
 
 		/// Returns if the mouse button has just been pressed (state == 1).
@@ -310,14 +333,14 @@ namespace Makai {
 		/// Returns if the mouse button's state has changed.
 		inline bool isButtonChanged(MouseScancode button) {
 			if (!enabled || button == MS_UNKNOWN) return false;
-			return mouse.last[button] == mouse.buffer[button];
+			return mouse().last[button] == mouse().buffer[button];
 		}
 
 		/// Returns the mouse button that was most recently pressed.
 		inline MouseScancode mostRecentMouseButtonDown() {
 			MouseScancode button	= MS_UNKNOWN;
 			unsigned int duration	= Math::Max::UINT_V;
-			for (auto [b, d] : mouse.buffer)
+			for (auto [b, d] : mouse().buffer)
 				if ((d) && d < duration) {
 					button		= b;
 					duration	= d;
@@ -327,7 +350,7 @@ namespace Makai {
 
 		/// Returns the mouse button that was most recently just pressed.
 		inline MouseScancode mostRecentMouseButtonJustPressed() {
-			for (auto [b, d] : mouse.buffer)
+			for (auto [b, d] : mouse().buffer)
 				if (d == 1)
 					return b;
 			return MS_UNKNOWN;
@@ -337,7 +360,7 @@ namespace Makai {
 		inline MouseScancode mostRecentMouseButtonHeld() {
 			MouseScancode button	= MS_UNKNOWN;
 			unsigned int duration	= Math::Max::UINT_V;
-			for (auto [b, d] : mouse.buffer)
+			for (auto [b, d] : mouse().buffer)
 				if (d > threshold && d < duration) {
 					button		= b;
 					duration	= d;
@@ -347,64 +370,162 @@ namespace Makai {
 
 		/// Returns the mouse button that was most recently changed.
 		inline MouseScancode mostRecentMouseButtonChanged() {
-			for (auto [b, d] : mouse.buffer)
-				if (d != mouse.last[b])
+			for (auto [b, d] : mouse().buffer)
+				if (d != mouse().last[b])
 					return b;
 			return MS_UNKNOWN;
 		}
 
 		/// Returns the mouse button that was most recently just released.
 		inline MouseScancode mostRecentMouseButtonJustReleased() {
-			for (auto [b, d] : mouse.buffer)
-				if (d != mouse.last[b] && d == 0)
+			for (auto [b, d] : mouse().buffer)
+				if (d != mouse().last[b] && d == 0)
 					return b;
 			return MS_UNKNOWN;
 		}
 
 		/// Returns all mouse buttons currently pressed.
-		inline vector<MouseScancode> getMouseButtonsDown() {
-			vector<MouseScancode> buttons;
-			for (auto [b, d] : mouse.buffer)
+		inline List<MouseScancode> getMouseButtonsDown() {
+			List<MouseScancode> buttons;
+			for (auto [b, d] : mouse().buffer)
 				if (isButtonDown(b))
 					buttons.push_back(b);
 			return buttons;
 		}
 
 		/// Returns all mouse buttons currently just pressed.
-		inline vector<MouseScancode> getMouseButtonsJustPressed() {
-			vector<MouseScancode> buttons;
-			for (auto [b, d] : mouse.buffer)
+		inline List<MouseScancode> getMouseButtonsJustPressed() {
+			List<MouseScancode> buttons;
+			for (auto [b, d] : mouse().buffer)
 				if (isButtonJustPressed(b))
 					buttons.push_back(b);
 			return buttons;
 		}
 
 		/// Returns all mouse buttons currently just released.
-		inline vector<MouseScancode> getMouseButtonsJustReleased() {
-			vector<MouseScancode> buttons;
-			for (auto [b, d] : mouse.buffer)
+		inline List<MouseScancode> getMouseButtonsJustReleased() {
+			List<MouseScancode> buttons;
+			for (auto [b, d] : mouse().buffer)
 				if (isButtonJustReleased(b))
 					buttons.push_back(b);
 			return buttons;
 		}
 
 		/// Returns all mouse buttons whose state changed.
-		inline vector<MouseScancode> getMouseButtonsChanged() {
-			vector<MouseScancode> buttons;
-			for (auto [b, d] : mouse.buffer)
+		inline List<MouseScancode> getMouseButtonsChanged() {
+			List<MouseScancode> buttons;
+			for (auto [b, d] : mouse().buffer)
 				if (isButtonChanged(b))
 					buttons.push_back(b);
 			return buttons;
 		}
 
 		/// Returns all mouse buttons currently held.
-		inline vector<MouseScancode> getMouseButtonsHeld() {
-			vector<MouseScancode> buttons;
-			for (auto [b, d] : mouse.buffer)
+		inline List<MouseScancode> getMouseButtonsHeld() {
+			List<MouseScancode> buttons;
+			for (auto [b, d] : mouse().buffer)
 				if (isButtonHeld(b))
 					buttons.push_back(b);
 			return buttons;
 		}
+
+		/**
+		* Returns the button's state.
+		* 0		= Unpressed;
+		* 1+	= Pressed;
+		* Recommended if time pressed is required.
+		*/
+		inline unsigned int getButtonState(ButtonBind const& button) {
+			if (!enabled) return 0;
+			switch (button.first) {
+				case ButtonCodeType::BCT_KEYBOARD:	return getButtonState(std::get<SDL_Scancode>(button.second));
+				case ButtonCodeType::BCT_MOUSE:		return getButtonState(std::get<MouseScancode>(button.second));
+				case ButtonCodeType::BCT_JOYSTICK:	throw Error::InvalidValue("Joystick input is unimplemented!");
+			}
+		}
+
+		/// Returns whether the button is pressed.
+		inline bool isButtonDown(ButtonBind const& button) {
+			if (!enabled) return false;
+			return getButtonState(button) > 0;
+		}
+
+		/// Returns if the button has just been pressed (state == 1).
+		inline bool isButtonJustPressed(ButtonBind const& button) {
+			if (!enabled) return false;
+			return getButtonState(button) == 1;
+		}
+
+		/// Returns if the button has just been released.
+		inline bool isButtonJustReleased(ButtonBind const& button) {
+			if (!enabled) return false;
+			return (isButtonChanged(button) && (getButtonState(button) == 0));
+		}
+
+		/// Returns if the button is held (state > threshold).
+		inline bool isButtonHeld(ButtonBind const& button) {
+			if (!enabled) return false;
+			return getButtonState(button) > threshold;
+		}
+
+		/// Returns if the button's state has changed.
+		inline bool isButtonChanged(ButtonBind const& button) {
+			if (!enabled) return false;
+			switch (button.first) {
+				case ButtonCodeType::BCT_KEYBOARD:	return isButtonChanged(std::get<SDL_Scancode>(button.second));
+				case ButtonCodeType::BCT_MOUSE:		return isButtonChanged(std::get<MouseScancode>(button.second));
+				case ButtonCodeType::BCT_JOYSTICK:	throw Error::InvalidValue("Joystick input is unimplemented!");
+			}
+		}
+
+		/**
+		* Returns the button's state.
+		* 0		= Unpressed;
+		* 1+	= Pressed;
+		* Recommended if time pressed is required.
+		*/
+		inline unsigned int getButtonState(String const& button) {
+			if (!enabled) return 0;
+			unsigned int state = 0, current = 0;
+			for (ButtonBind btn: binds[button])
+				if ((current = getButtonState(btn)) > state)
+					state = current;
+			return state;
+		}
+
+		/// Returns whether the button is pressed.
+		inline bool isButtonDown(String const& button) {
+			if (!enabled) return false;
+			return getButtonState(button) > 0;
+		}
+
+		/// Returns if the button has just been pressed (state == 1).
+		inline bool isButtonJustPressed(String const& button) {
+			if (!enabled) return false;
+			return getButtonState(button) == 1;
+		}
+
+		/// Returns if the button has just been released.
+		inline bool isButtonJustReleased(String const& button) {
+			if (!enabled) return false;
+			return (isButtonChanged(button) && (getButtonState(button) == 0));
+		}
+
+		/// Returns if the button is held (state > threshold).
+		inline bool isButtonHeld(String const& button) {
+			if (!enabled) return false;
+			return getButtonState(button) > threshold;
+		}
+
+		/// Returns if the button's state has changed.
+		inline bool isButtonChanged(String const& button) {
+			if (!enabled) return false;
+			for (ButtonBind btn: binds[button])
+				if (isButtonChanged(btn)) return true;
+			return false;
+		}
+
+		static ButtonMap binds;
 
 		/// Whether input is enabled.
 		bool enabled = true;
@@ -412,13 +533,21 @@ namespace Makai {
 		/// How long before the input is considered "held".
 		unsigned int threshold = 2048;
 	private:
-		/// The internal buffer state.
-		unordered_map<SDL_Scancode, unsigned int> buffer, last;
-		struct {
-			MouseData global;
-			MouseData local;
-			unordered_map<MouseScancode, unsigned int> buffer, last;
-		} mouse;
+
+		static KeyBuffer& buffer() {
+			static KeyBuffer b;
+			return b;
+		}
+
+		static KeyBuffer& last() {
+			static KeyBuffer b;
+			return b;
+		}
+
+		static MouseBuffer& mouse() {
+			static MouseBuffer b;
+			return b;
+		}
 	};
 
 	namespace {

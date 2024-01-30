@@ -594,10 +594,7 @@ ObjectMaterial fromObjectMaterialDefinition(
 		auto& dmat = def;
 		// Set color
 		if(dmat["color"].is_array()) {
-			mat.color.x = dmat["color"][0].get<float>();
-			mat.color.y = dmat["color"][1].get<float>();
-			mat.color.z = dmat["color"][2].get<float>();
-			mat.color.w = dmat["color"][3].get<float>();
+			mat.color = Drawer::colorFromJSON(dmat["color"]);
 		}
 		else if (dmat["color"].is_string())
 			mat.color = Color::fromHexCodeString(dmat["color"].get<String>());
@@ -643,15 +640,9 @@ ObjectMaterial fromObjectMaterialDefinition(
 			mat.warp.image		= fx.image;
 			{
 				auto& mwtrans = dmat["warp"]["trans"];
-				mat.warp.trans.position = Vector2(
-					mwtrans["position"][0].get<float>(),
-					mwtrans["position"][1].get<float>()
-				);
+				mat.warp.trans.position = VecMath::fromJSONArrayV2(mwtrans["position"]);
 				mat.warp.trans.rotation = mwtrans["rotation"].get<float>();
-				mat.warp.trans.scale = Vector2(
-					mwtrans["scale"][0].get<float>(),
-					mwtrans["scale"][1].get<float>()
-				);
+				mat.warp.trans.scale = VecMath::fromJSONArrayV2(mwtrans["rotation"]);
 			}
 			mat.warp.channelX = dmat["warp"]["channelX"];
 			mat.warp.channelY = dmat["warp"]["channelY"];
@@ -668,21 +659,11 @@ ObjectMaterial fromObjectMaterialDefinition(
 			auto& dgbegin	= dmat["gradient"]["begin"];
 			auto& dgend		= dmat["gradient"]["end"];
 			if (dgbegin.is_array())
-				mat.gradient.begin = Vector4(
-					dgbegin[0].get<float>(),
-					dgbegin[1].get<float>(),
-					dgbegin[2].get<float>(),
-					dgbegin[3].get<float>()
-				);
+				mat.gradient.begin = Drawer::colorFromJSON(dgbegin);
 			else if (dgbegin.is_string())
 				mat.gradient.begin = Color::fromHexCodeString(dgbegin.get<String>());
 			if (dgend.is_array())
-				mat.gradient.end = Vector4(
-					dgend[0].get<float>(),
-					dgend[1].get<float>(),
-					dgend[2].get<float>(),
-					dgend[3].get<float>()
-				);
+				mat.gradient.begin = Drawer::colorFromJSON(dgend);
 			else if (dgend.is_string())
 				mat.gradient.end = Color::fromHexCodeString(dgend.get<String>());
 			mat.gradient.invert	= dmat["gradient"]["invert"].get<bool>();
@@ -691,13 +672,7 @@ ObjectMaterial fromObjectMaterialDefinition(
 		if (dmat["instances"].is_array()) {
 			mat.instances.clear();
 			for(auto& inst: dmat["instances"])
-				mat.instances.push_back(
-					Vector3(
-						inst[0].get<float>(),
-						inst[1].get<float>(),
-						inst[2].get<float>()
-					)
-				);
+				mat.instances.push_back(VecMath::fromJSONArrayV3(inst));
 		}
 		// Set culling, fill & view
 		if (dmat["culling"].is_number()) {

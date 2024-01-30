@@ -350,7 +350,7 @@ namespace VecMath {
 		srpTransform(vtx, Matrix4x4(trans));
 	}
 
-	Vector2 fromJSONArray(JSONData const& json) {
+	Vector2 fromJSONArrayV2(JSONData const& json) {
 		try {
 			if (json.is_array())
 				return Vector2(
@@ -363,7 +363,7 @@ namespace VecMath {
 		}
 	}
 
-	Vector3 fromJSONArray(JSONData const& json) {
+	Vector3 fromJSONArrayV3(JSONData const& json) {
 		try {
 			if (json.is_array())
 				return Vector3(
@@ -377,7 +377,7 @@ namespace VecMath {
 		}
 	}
 
-	Vector4 fromJSONArray(JSONData const& json) {
+	Vector4 fromJSONArrayV4(JSONData const& json) {
 		try {
 			if (json.is_array())
 				return Vector4(

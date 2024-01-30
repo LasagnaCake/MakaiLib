@@ -523,19 +523,13 @@ private:
 			);
 		// Create renderable object
 		extend(vertices.data(), vertices.size());
-		#define _SET_PARAM(PARAM)\
-			trans.PARAM = Vector3(\
-				dtrans[#PARAM][0].get<float>(),\
-				dtrans[#PARAM][1].get<float>(),\
-				dtrans[#PARAM][2].get<float>()\
-			)
 		// check for optional transform
 		if (def["trans"].is_object()) {
 			auto& dtrans = def["trans"];
 			try {
-				_SET_PARAM(position);
-				_SET_PARAM(rotation);
-				_SET_PARAM(scale);
+				trans.position = VecMath::fromJSONArrayV3(dtrans["position"]);
+				trans.position = VecMath::fromJSONArrayV3(dtrans["rotation"]);
+				trans.position = VecMath::fromJSONArrayV3(dtrans["scale"]);
 			} catch (JSON::exception e) {
 				throw Error::FailedAction(
 					"Failed at getting transformation values!",
@@ -547,7 +541,6 @@ private:
 				);
 			}
 		}
-		#undef _SET_PARAM
 		// Set material data
 		if (def["material"].is_object()) {
 			material = Material::fromObjectMaterialDefinition(def["material"], sourcepath, texture, emission, warp);

@@ -51,7 +51,7 @@ namespace Dialog {
 			endtimer.setManual();
 			keys["next"]	= SDL_SCANCODE_Z;
 			keys["skip"]	= SDL_SCANCODE_X;
-			input.update();
+			//input.update();
 			input.threshold = 120;
 			box.message.text.lineWrap = RenderData::Text::LineWrap::LW_FULL_WORD;
 		})
@@ -65,7 +65,7 @@ namespace Dialog {
 		}
 
 		void begin() {
-			input.update();
+			//input.update();
 			animator.clear();
 			autotimer.start(999999);
 			box.shape.active	=
@@ -84,7 +84,7 @@ namespace Dialog {
 		}
 
 		void end() {
-			input.update();
+			//input.update();
 			onDialogEnd();
 			autotimer.stop();
 			endtimer.stop();
@@ -93,7 +93,7 @@ namespace Dialog {
 
 		void onFrame(float delta) override {
 			endtimer.yield();
-			input.update();
+			//input.update();
 			autotimer.yield();
 			for (auto& [aName, aTween]: animator) {
 				aTween.yield();
@@ -125,7 +125,7 @@ namespace Dialog {
 		} box;
 
 		void nextMessage() {
-			input.update();
+			//input.update();
 			autotimer.reset();
 			if (isFinished || messages.empty() || !endtimer.finished()) return;
 			if (current > (messages.size()-1)) {

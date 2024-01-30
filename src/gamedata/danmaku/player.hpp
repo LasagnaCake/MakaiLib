@@ -278,8 +278,8 @@ struct PlayerEntity2D: AreaCircle2D {
 		mainShot.yield();
 		optionShot.yield();
 		moveTween.yield();
-		// Updat inputs
-		input.update();
+		// Update inputs
+		//input.update();
 		// Get focus state
 		isFocused = action("focus") || (focusShooting && action("shot"));
 		// Do parent class frame
