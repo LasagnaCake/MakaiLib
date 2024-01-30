@@ -1,6 +1,6 @@
 class Scene3D: public Base::Drawable {
 public:
-	constexpr static String version = "0.0.0";
+	constexpr static size_t version = 0;
 
 	Scene3D(size_t layer = 0, bool manual = false): Drawable(layer, manual) {}
 

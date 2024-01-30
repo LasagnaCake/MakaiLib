@@ -8,7 +8,7 @@ namespace {
 
 class Renderable: public Base::DrawableObject<Material::ObjectMaterial> {
 public:
-	constexpr static String version = "0.0.0";
+	constexpr static size_t version = 0;
 
 	Renderable(size_t layer = 0, bool manual = false):
 	DrawableObject(layer, manual) {
