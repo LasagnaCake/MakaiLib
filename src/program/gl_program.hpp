@@ -38,6 +38,23 @@ namespace Makai {
 	};
 
 	typedef SDL_Scancode				KeyboardButton;
+
+	/*
+		TODO: Controller support.
+		SEE:
+			API:
+				https://wiki.libsdl.org/SDL2/CategoryGameController
+			Relevant functions:
+				https://wiki.libsdl.org/SDL2/SDL_GameControllerOpen
+				https://wiki.libsdl.org/SDL2/SDL_GameControllerGetAxis
+				https://wiki.libsdl.org/SDL2/SDL_GameControllerGetButton
+				https://wiki.libsdl.org/SDL2/SDL_GameControllerAddMappingsFromRW
+			Controller mapping database:
+				(Source)		https://raw.githubusercontent.com/gabomdq/SDL_GameControllerDB/master/gamecontrollerdb.txt
+				(Web Archive)	https://web.archive.org/web/20240130192132/https://raw.githubusercontent.com/gabomdq/SDL_GameControllerDB/master/gamecontrollerdb.txt
+			SDL2 gamepad mapping maker:
+				https://gitlab.com/ryochan7/sdl2-gamepad-mapper
+	*/
 	typedef SDL_GameControllerButton	ControllerButton;
 
 	enum class MouseButton {
