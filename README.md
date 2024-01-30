@@ -83,14 +83,13 @@ Currently VERY scarce. Some of the code is commented.
 
 ### Current
 
-- [ ] `data/` folder packing system
+- [x] `data/` folder packing system
 - [ ] Optimize GPU usage
 - [x] Replace `.ini`-based savefile system with a different format
 - - Using JSON
 - [x] GUI system
 - [x] Menu system
 - [x] Dialogue system
-- [ ] Spellcard system
 - [ ] Curvy/Bent lasers
 - [ ] Bugs & Errors (see [Issues.txt](Issues.txt))
 - [ ] File format implementation (These need better names):
@@ -118,7 +117,6 @@ Currently VERY scarce. Some of the code is commented.
 - [ ] Cleanup & polish [entity](src/collection/entity/entity.hpp) system
 - [ ] Multi-platform support:
 - - [ ] Linux
-- - [ ] Mac
 
 #### Major refactor
 
