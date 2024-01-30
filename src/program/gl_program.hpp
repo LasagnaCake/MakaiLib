@@ -591,10 +591,14 @@ namespace Makai {
 		/// Returns the bindings the given button is associated with.
 		inline StringList getNamesForButton(Button const& button) {
 			StringList names;
-			for (auto& [name, buttons]: binds)
-				for (Button& btn: buttons)
-					if (button == btn)
+			for (auto& [name, buttons]: binds) {
+				for (Button& btn: buttons) {
+					if (button == btn) {
 						names.push_back(name);
+						break;
+					}
+				}
+			}
 			return names;
 		}
 
