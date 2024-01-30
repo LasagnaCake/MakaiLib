@@ -46,16 +46,17 @@ struct PlayerEntity2D: AreaCircle2D {
 	DERIVED_CLASS(PlayerEntity2D, AreaCircle2D)
 	DERIVED_CONSTRUCTOR(PlayerEntity2D, AreaCircle2D, {
 		// Set acton keys
-		actionKeys["up"]	= SDL_SCANCODE_UP;
-		actionKeys["down"]	= SDL_SCANCODE_DOWN;
-		actionKeys["left"]	= SDL_SCANCODE_LEFT;
-		actionKeys["right"]	= SDL_SCANCODE_RIGHT;
-		actionKeys["focus"]	= SDL_SCANCODE_LSHIFT;
-		actionKeys["shot"]	= SDL_SCANCODE_Z;
-		actionKeys["bomb"]	= SDL_SCANCODE_X;
-		actionKeys["sub"]	= SDL_SCANCODE_C;
-		actionKeys["extra"]	= SDL_SCANCODE_SPACE;
-		actionKeys["skip"]	= SDL_SCANCODE_LCTRL;
+		/*
+		input.binds["up"]		= Makai::ButtonList{SDL_SCANCODE_UP};
+		input.binds["down"]		= Makai::ButtonList{SDL_SCANCODE_DOWN};
+		input.binds["left"]		= Makai::ButtonList{SDL_SCANCODE_LEFT};
+		input.binds["right"]	= Makai::ButtonList{SDL_SCANCODE_RIGHT};
+		input.binds["focus"]	= Makai::ButtonList{SDL_SCANCODE_LSHIFT};
+		input.binds["shot"]		= Makai::ButtonList{SDL_SCANCODE_Z};
+		input.binds["bomb"]		= Makai::ButtonList{SDL_SCANCODE_X};
+		input.binds["sub"]		= Makai::ButtonList{SDL_SCANCODE_C};
+		input.binds["extra"]	= Makai::ButtonList{SDL_SCANCODE_SPACE};
+		*/
 		// Create sprite
 		sprite = mesh.createReference<Reference::AnimatedPlane>();
 		setAppropriateStartingLayer();
@@ -122,8 +123,6 @@ struct PlayerEntity2D: AreaCircle2D {
 		DEBUGLN("Deleting player...");
 	}
 
-	KeyBinds actionKeys;
-
 	Renderable mesh;
 	RenderData::Reference::AnimatedPlane*	sprite;
 
@@ -134,6 +133,18 @@ struct PlayerEntity2D: AreaCircle2D {
 	RenderData::Reference::AnimatedPlane*	grazeboxSprite;
 
 	Makai::InputManager	input;
+
+	ButtonNameMap binds = {
+		{"up",		"playerUp"		},
+		{"down",	"playerDown"	},
+		{"left",	"playerLeft"	},
+		{"right",	"playerRight"	},
+		{"focus",	"playerFocus"	},
+		{"shot",	"playerShot"	},
+		{"bomb",	"playerBomb"	},
+		{"sub",		"playerSub"		},
+		{"extra",	"playerExtra"	}
+	};
 
 	struct {
 		float bullet	= 3.0;
@@ -235,15 +246,15 @@ struct PlayerEntity2D: AreaCircle2D {
 		}
 	}
 
-	bool action(std::string what, bool justPressed = false) {
+	bool action(String const& what, bool const& justPressed = false) {
 		if (justPressed)
-			return input.isButtonJustPressed(actionKeys[what]);
+			return input.isButtonJustPressed(binds[what]);
 		else
-			return input.isButtonDown(actionKeys[what]);
+			return input.isButtonDown(binds[what]);
 	}
 
-	size_t actionState(std::string what) {
-		return input.getButtonState(actionKeys[what]);
+	size_t actionState(String const& what) {
+		return input.getButtonState(binds[what]);
 	}
 
 	void pichun() {

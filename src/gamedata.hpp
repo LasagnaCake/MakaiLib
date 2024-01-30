@@ -63,7 +63,7 @@ namespace GameData {
 		namespace Material {using namespace RenderData::Material;}
 	}
 
-	typedef std::unordered_map<String, SDL_Scancode> KeyBinds;
+	typedef HashMap<String, String> ButtonNameMap;
 
 	template <typename T>
 	using TypedSignal = TypedEvent::Signal<T>;

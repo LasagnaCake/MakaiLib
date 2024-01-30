@@ -68,6 +68,7 @@ namespace Makai {
 		KeyboardButton		keyboard;
 		MouseButton			mouse;
 		ControllerButton	controller;
+		size_t				value;
 	};
 
 	enum class ButtonCodeType {
@@ -76,15 +77,19 @@ namespace Makai {
 		BCT_CONTROLLER
 	};
 
-	struct Button {
+	struct ButtonData {
+		ButtonCode		code;
+		ButtonCodeType	type;
+	};
+
+	struct Button: private ButtonData {
 		constexpr Button(KeyboardButton const& _code)	{code.keyboard = _code;		type = ButtonCodeType::BCT_KEYBOARD;	}
 		constexpr Button(MouseButton const& _code)		{code.mouse = _code;		type = ButtonCodeType::BCT_MOUSE;		}
 		constexpr Button(ControllerButton const& _code)	{code.controller = _code;	type = ButtonCodeType::BCT_CONTROLLER;	}
-		constexpr ButtonCode getCode()		{return code;}
-		constexpr ButtonCodeType getType()	{return type;}
+		constexpr ButtonCode getCode() const 		{return code;}
+		constexpr ButtonCodeType getType() const 	{return type;}
+		constexpr bool operator==(Button const& other) const {return code.value == other.code.value && type == other.type;}
 	private:
-		ButtonCode		code;
-		ButtonCodeType	type;
 		friend class InputManager;
 	};
 
@@ -112,6 +117,7 @@ namespace Makai {
 		struct MouseBuffer {
 			MouseData global;
 			MouseData local;
+			MouseData relative;
 			MouseButtonBuffer buffer, last;
 		};
 
@@ -148,14 +154,17 @@ namespace Makai {
 			// Get mouse structures
 			MouseData&
 				lm = mouse.local,
-				gm = mouse.global
+				gm = mouse.global,
+				rm = mouse.relative
 			;
 			// Save last positional data
 			lm.last = lm.pos;
 			gm.last = gm.pos;
+			rm.last = rm.pos;
 			// Get position & button data
 			uint32 btn = SDL_GetMouseState(&lm.pos.x, &lm.pos.y);
 			SDL_GetGlobalMouseState(&gm.pos.x, &gm.pos.y);
+			SDL_GetRelativeMouseState(&rm.pos.x, &rm.pos.y);
 			// Update button data
 			for (auto i = 0; i < (((int)MS_UNKNOWN)-1); i++) {
 				// Jankify
@@ -183,44 +192,44 @@ namespace Makai {
 		* 1+	= Pressed;
 		* Recommended if time pressed is required.
 		*/
-		inline unsigned int getButtonState(KeyboardButton button) {
+		inline unsigned int getButtonState(KeyboardButton const& button) {
 			if (!enabled || button == SDL_SCANCODE_UNKNOWN) return 0;
 			return buffer[button];
 		}
 
 		/// Returns whether the button is pressed.
-		inline bool isButtonDown(KeyboardButton button) {
+		inline bool isButtonDown(KeyboardButton const& button) {
 			if (!enabled || button == SDL_SCANCODE_UNKNOWN) return false;
 			return buffer[button] > 0;
 		}
 
 		/// Returns if the button has just been pressed (state == 1).
-		inline bool isButtonJustPressed(KeyboardButton button) {
+		inline bool isButtonJustPressed(KeyboardButton const& button) {
 			if (!enabled || button == SDL_SCANCODE_UNKNOWN) return false;
 			return getButtonState(button) == 1;
 		}
 
 		/// Returns if the button has just been released.
-		inline bool isButtonJustReleased(KeyboardButton button) {
+		inline bool isButtonJustReleased(KeyboardButton const& button) {
 			if (!enabled || button == SDL_SCANCODE_UNKNOWN) return false;
 			return (isButtonChanged(button) && (getButtonState(button) == 0));
 		}
 
 		/// Returns if the button is held (state > threshold).
-		inline bool isButtonHeld(KeyboardButton button) {
+		inline bool isButtonHeld(KeyboardButton const& button) {
 			if (!enabled || button == SDL_SCANCODE_UNKNOWN) return false;
 			return getButtonState(button) > threshold;
 		}
 
 		/// Returns if the button's state has changed.
-		inline bool isButtonChanged(KeyboardButton button) {
+		inline bool isButtonChanged(KeyboardButton const& button) {
 			if (!enabled || button == SDL_SCANCODE_UNKNOWN) return false;
 			return last[button]	== buffer[button];
 		}
 
 		/// Returns the button that was most recently pressed.
 		inline KeyboardButton mostRecentKeyboardButtonDown() {
-			KeyboardButton button		= SDL_SCANCODE_UNKNOWN;
+			KeyboardButton button	= SDL_SCANCODE_UNKNOWN;
 			unsigned int duration	= Math::Max::UINT_V;
 			for (auto [b, d] : buffer)
 				if ((d) && d < duration) {
@@ -240,7 +249,7 @@ namespace Makai {
 
 		/// Returns the button that was most recently held.
 		inline KeyboardButton mostRecentKeyboardButtonHeld() {
-			KeyboardButton button		= SDL_SCANCODE_UNKNOWN;
+			KeyboardButton button	= SDL_SCANCODE_UNKNOWN;
 			unsigned int duration	= Math::Max::UINT_V;
 			for (auto [b, d] : buffer)
 				if (d > threshold && d < duration) {
@@ -323,13 +332,21 @@ namespace Makai {
 
 		/// Returns which direction the mouse is moving towards.
 		inline Vector2 getMouseDirection() {
-			return getDesktopMousePosition() - Vector2(mouse.global.last.x, mouse.global.last.y);
+			return Vector2(mouse.relative.pos.x, mouse.relative.pos.y);
 		}
 
 		/// Enables/Disables mouse capturing.
-		inline void setMouseCapturing(bool enabled = false) {
-			if (window)
-				SDL_SetWindowGrab(window, enabled ? SDL_TRUE : SDL_FALSE);
+		inline static void setMouseCapturing(bool enabled = false, bool hideCursor = true) {
+			//SDL_CaptureMouse(enabled ? SDL_TRUE : SDL_FALSE);
+			if (!window) return;
+			SDL_SetWindowGrab(window, enabled ? SDL_TRUE : SDL_FALSE);
+			SDL_SetRelativeMouseMode(hideCursor ? SDL_TRUE : SDL_FALSE);
+		}
+
+		/// Shows/Hides the cursor while in the window.
+		inline static void setCursorVisibility(bool enabled = true) {
+			if (!window) return;
+			SDL_ShowCursor(enabled ? SDL_TRUE : SDL_FALSE);
 		}
 
 		/**
@@ -338,13 +355,13 @@ namespace Makai {
 		* 1+	= Pressed;
 		* Recommended if time pressed is required.
 		*/
-		inline unsigned int getButtonState(MouseButton button) {
+		inline unsigned int getButtonState(MouseButton const& button) {
 			if (!enabled || button == MS_UNKNOWN) return 0;
 			return mouse.buffer[button];
 		}
 
 		/// Returns whether the mouse button is pressed.
-		inline bool isButtonDown(MouseButton button) {
+		inline bool isButtonDown(MouseButton const& button) {
 			if (!enabled || button == MS_UNKNOWN) return false;
 			return mouse.buffer[button] > 0;
 		}
@@ -356,19 +373,19 @@ namespace Makai {
 		}
 
 		/// Returns if the mouse button has just been released.
-		inline bool isButtonJustReleased(MouseButton button) {
+		inline bool isButtonJustReleased(MouseButton const& button) {
 			if (!enabled || button == MS_UNKNOWN) return false;
 			return (isButtonChanged(button) && (getButtonState(button) == 0));
 		}
 
 		/// Returns if the mouse button is held (state > threshold).
-		inline bool isButtonHeld(MouseButton button) {
+		inline bool isButtonHeld(MouseButton const& button) {
 			if (!enabled || button == MS_UNKNOWN) return false;
 			return getButtonState(button) > threshold;
 		}
 
 		/// Returns if the mouse button's state has changed.
-		inline bool isButtonChanged(MouseButton button) {
+		inline bool isButtonChanged(MouseButton const& button) {
 			if (!enabled || button == MS_UNKNOWN) return false;
 			return mouse.last[button] == mouse.buffer[button];
 		}
@@ -395,7 +412,7 @@ namespace Makai {
 
 		/// Returns the mouse button that was most recently held.
 		inline MouseButton mostRecentMouseButtonHeld() {
-			MouseButton button	= MS_UNKNOWN;
+			MouseButton button		= MS_UNKNOWN;
 			unsigned int duration	= Math::Max::UINT_V;
 			for (auto [b, d] : mouse.buffer)
 				if (d > threshold && d < duration) {
@@ -479,6 +496,7 @@ namespace Makai {
 				case ButtonCodeType::BCT_MOUSE:			return getButtonState(button.code.mouse);
 				case ButtonCodeType::BCT_CONTROLLER:	throw Error::InvalidValue("Joystick input is unimplemented!");
 			}
+			return 0;
 		}
 
 		/// Returns whether the button is pressed.
@@ -513,6 +531,7 @@ namespace Makai {
 				case ButtonCodeType::BCT_MOUSE:			return isButtonChanged(button.code.mouse);
 				case ButtonCodeType::BCT_CONTROLLER:	throw Error::InvalidValue("Joystick input is unimplemented!");
 			}
+			return false;
 		}
 
 		/**
@@ -522,7 +541,8 @@ namespace Makai {
 		* Recommended if time pressed is required.
 		*/
 		inline unsigned int getButtonState(String const& button) {
-			if (!enabled) return 0;
+			if (!enabled || !isBound(button))
+				return 0;
 			unsigned int state = 0, current = 0;
 			for (Button& btn: binds[button])
 				if ((current = getButtonState(btn)) > state)
@@ -556,10 +576,41 @@ namespace Makai {
 
 		/// Returns if the button's state has changed.
 		inline bool isButtonChanged(String const& button) {
-			if (!enabled) return false;
+			if (!enabled || !isBound(button))
+				return false;
 			for (Button& btn: binds[button])
 				if (isButtonChanged(btn)) return true;
 			return false;
+		}
+
+		/// Returns if there is a button binding with the given name.
+		inline bool isBound(String const& name) {
+			return binds.contains(name);
+		}
+
+		/// Returns the bindings the given button is associated with.
+		inline StringList getNamesForButton(Button const& button) {
+			StringList names;
+			for (auto& [name, buttons]: binds)
+				for (Button& btn: buttons)
+					if (button == btn)
+						names.push_back(name);
+			return names;
+		}
+
+		/// Returns the bindings the given button is associated with.
+		inline StringList getNamesForButton(KeyboardButton const& button) {
+			return getNamesForButton(Button(button));
+		}
+
+		/// Returns the bindings the given button is associated with.
+		inline StringList getNamesForButton(MouseButton const& button) {
+			return getNamesForButton(Button(button));
+		}
+
+		/// Returns the bindings the given button is associated with.
+		inline StringList getNamesForButton(ControllerButton const& button) {
+			return getNamesForButton(Button(button));
 		}
 
 		inline static ButtonMap binds;

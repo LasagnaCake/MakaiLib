@@ -49,8 +49,6 @@ namespace Dialog {
 			box.message.setRenderLayer(DIALOG_LAYER);
 			autotimer.setManual();
 			endtimer.setManual();
-			keys["next"]	= SDL_SCANCODE_Z;
-			keys["skip"]	= SDL_SCANCODE_X;
 			//input.update();
 			input.threshold = 120;
 			box.message.text.lineWrap = RenderData::Text::LineWrap::LW_FULL_WORD;
@@ -101,8 +99,8 @@ namespace Dialog {
 			if (isFinished || !endtimer.finished()) return;
 			if (!autoplay) {
 				if (
-					input.isButtonJustPressed(keys["next"])
-				||	input.isButtonDown(keys["skip"])
+					input.isButtonJustPressed(binds["next"])
+				||	input.isButtonDown(binds["skip"])
 				) nextMessage();
 			}
 		}
@@ -114,9 +112,12 @@ namespace Dialog {
 
 		virtual void onAction(Message const& msg) {}
 
-		KeyBinds keys;
-
 		InputManager input;
+
+		ButtonNameMap binds = {
+			{"next",	"dialogNext"	},
+			{"skip",	"dialogSkip"	}
+		};
 
 		struct {
 			Renderable	shape;

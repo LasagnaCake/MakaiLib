@@ -27,11 +27,13 @@ namespace Menu {
 
 		DERIVED_CONSTRUCTOR(BaseMenu, Entity, {
 			//input.update();
-			keys["select"]		= SDL_SCANCODE_Z;
-			keys["return"]		= SDL_SCANCODE_X;
-			keys["next"]		= SDL_SCANCODE_DOWN;
-			keys["previous"]	= SDL_SCANCODE_UP;
-			keys["exit"]		= SDL_SCANCODE_ESCAPE;
+			/*
+			input.binds["menuSelect"]	= Makai::ButtonList{SDL_SCANCODE_Z};
+			input.binds["menuReturn"]	= Makai::ButtonList{SDL_SCANCODE_X};
+			input.binds["menuNext"]		= Makai::ButtonList{SDL_SCANCODE_DOWN};
+			input.binds["menuPrevious"]	= Makai::ButtonList{SDL_SCANCODE_UP};
+			input.binds["menuExit"]		= Makai::ButtonList{SDL_SCANCODE_ESCAPE};
+			*/
 			input.threshold		= 30;
 			nextOptTimer.onSignal	= SIGNAL {this->nextOption();};
 			nextOptTimer.delay		= 5;
@@ -167,7 +169,13 @@ namespace Menu {
 
 		InputManager input;
 
-		KeyBinds keys;
+		ButtonNameMap binds = {
+			{"select",		"menuSelect"	},
+			{"return",		"menuReturn"	},
+			{"next",		"menuNext"		},
+			{"previous",	"menuPrevious"	},
+			{"exit",		"menuExit"		}
+		};
 
 		virtual void onReturn()															{DEBUGLN("Return!");}
 		virtual void onExit()															{DEBUG("Menu Exited!");}
@@ -183,19 +191,19 @@ namespace Menu {
 			else {DEBUGLN("NULL");}
 		}
 
-		bool action(std::string what, bool justPressed = false) {
+		bool action(String const& what, bool const& justPressed = false) {
 			if (justPressed)
-				return input.isButtonJustPressed(keys[what]);
+				return input.isButtonJustPressed(binds[what]);
 			else
-				return input.isButtonDown(keys[what]);
+				return input.isButtonDown(binds[what]);
 		}
 
-		bool actionHeld(std::string what) {
-			return input.isButtonHeld(keys[what]);
+		bool actionHeld(String const& what) {
+			return input.isButtonHeld(binds[what]);
 		}
 
-		size_t actionState(std::string what) {
-			return input.getButtonState(keys[what]);
+		size_t actionState(String const& what) {
+			return input.getButtonState(binds[what]);
 		}
 
 	private:
