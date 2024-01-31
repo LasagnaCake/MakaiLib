@@ -507,6 +507,12 @@ struct PlayerEntity2D: BasePlayerEntity2D<Makai::InputManager> {
 	DERIVED_CONSTRUCTOR(PlayerEntity2D, BasePlayerEntity2D, {})
 };
 
+[[gnu::unavailable("Unimplemented!")]]
+struct ReplayPlayerEntity2D: BasePlayerEntity2D<Makai::InputManager> {
+	DERIVED_CLASS(PlayerEntity2D, BasePlayerEntity2D)
+	DERIVED_CONSTRUCTOR(PlayerEntity2D, BasePlayerEntity2D, {})
+};
+
 PlayerEntity2D* getMainPlayer() {
 	if (mainPlayer)
 		return (PlayerEntity2D*)mainPlayer;
