@@ -728,7 +728,25 @@ namespace Makai {
 				height,
 				SDL_WINDOW_OPENGL
 			);
+			if (!window) {
+				throw Error::FailedAction(
+					"Failed to create window!",
+					__FILE__,
+					toString(__LINE__),
+					"Program constructor",
+					SDL_GetError()
+				);
+			}
 			SDL_SetWindowFullscreen(window, fullscreen ? SDL_WINDOW_FULLSCREEN : 0);
+			// Set OpenGL flags
+			setGLAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
+			setGLAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
+			setGLAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+			setGLAttribute(SDL_GL_ALPHA_SIZE, 16);
+			setGLAttribute(SDL_GL_BUFFER_SIZE, 16);
+			setGLAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
+			setGLAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
+			// Create OpenGL context
 			SDL_GL_CreateContext(window);
 			if (!input.window)
 				input.window = window;
@@ -750,10 +768,6 @@ namespace Makai {
 			/*DEBUGLN("Creating default shader...");
 			Shader::defaultShader.create();
 			DEBUGLN("Created!");*/
-			SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 16);
-			SDL_GL_SetAttribute(SDL_GL_BUFFER_SIZE, 16);
-			SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
-			SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
 			//glViewport(0, 0, width, height);
 			#ifdef MAKAILIB_ENABLE_OPENGL_DEBUG
 			setFlag(GL_DEBUG_OUTPUT);
@@ -1083,6 +1097,17 @@ namespace Makai {
 
 		/// The window's resolution.
 		unsigned int width, height;
+
+		inline void setGLAttribute(SDL_GLattr const& a, int const& v) {
+			if (SDL_GL_SetAttribute(a, v))
+				throw Error::FailedAction(
+					"Failed to set attribute!",
+					__FILE__,
+					"unspecified",
+					"unspecified",
+					SDL_GetError()
+				);
+		}
 
 		/// Properly finishes program execution.
 		void terminate() {
