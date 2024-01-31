@@ -341,17 +341,16 @@ namespace Makai {
 		}
 
 		/// Enables/Disables mouse capturing.
-		inline static void setMouseCapturing(bool enabled = false, bool hideCursor = true) {
-			//SDL_CaptureMouse(enabled ? SDL_TRUE : SDL_FALSE);
-			if (!window) return;
-			SDL_SetWindowGrab(window, enabled ? SDL_TRUE : SDL_FALSE);
-			SDL_SetRelativeMouseMode(hideCursor ? SDL_TRUE : SDL_FALSE);
+		inline static void setMouseCapturing(bool const& enabled = true, bool const& hideCursor = true) {
+			SDL_SetRelativeMouseMode(enabled ? SDL_TRUE : SDL_FALSE);
+			setCursorVisibility(!hideCursor);
+			mouseCaptured = enabled;
 		}
 
 		/// Shows/Hides the cursor while in the window.
-		inline static void setCursorVisibility(bool enabled = true) {
-			if (!window) return;
+		inline static void setCursorVisibility(bool const& enabled = true) {
 			SDL_ShowCursor(enabled ? SDL_TRUE : SDL_FALSE);
+			mouseVisible = enabled;
 		}
 
 		/**
@@ -635,6 +634,15 @@ namespace Makai {
 	private:
 		inline static SDL_Window* window = nullptr;
 
+		inline static void refreshCapture() {
+			setMouseCapturing(mouseCaptured, !mouseVisible);
+		}
+
+		inline static bool
+			mouseCaptured	= false,
+			mouseVisible	= true
+		;
+
 		/// The internal buffer state.
 		inline static KeyBuffer		buffer;
 		inline static KeyBuffer		last;
@@ -816,9 +824,18 @@ namespace Makai {
 			// While program is running...
 			while(shouldRun) {
 				// Poll events and check if should close
-				while (SDL_PollEvent(&event))
-					if (event.type == SDL_QUIT)
-						shouldRun = false;
+				while (SDL_PollEvent(&event)) {
+					switch (event.type) {
+						case SDL_QUIT: shouldRun = false; break;
+						case SDL_WINDOWEVENT: {
+							switch (event.window.event) {
+								case SDL_WINDOWEVENT_FOCUS_GAINED: input.refreshCapture(); break;
+								default: break;
+							}
+						} break;
+						default: break;
+					}
+				}
 				// Get deltas
 				frameDelta	= 1.0/maxFrameRate;
 				cycleDelta	= 1.0/maxCycleRate;
