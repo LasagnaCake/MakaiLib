@@ -42,9 +42,17 @@ private:
 	}
 };
 
-struct PlayerEntity2D: AreaCircle2D {
-	DERIVED_CLASS(PlayerEntity2D, AreaCircle2D)
-	DERIVED_CONSTRUCTOR(PlayerEntity2D, AreaCircle2D, {
+template<typename T>
+concept InputHandlerType = requires (T inst) {
+	{inst.isButtonJustPressed(String())}	-> Type::Convertible<bool>;
+	{inst.isButtonDown(String())}			-> Type::Convertible<bool>;
+	{inst.getButtonState(String())}			-> Type::Convertible<unsigned int>;
+};
+
+template<InputHandlerType T = InputManager>
+struct BasePlayerEntity2D: AreaCircle2D {
+	DERIVED_CLASS(BasePlayerEntity2D, AreaCircle2D)
+	DERIVED_CONSTRUCTOR(BasePlayerEntity2D, AreaCircle2D, {
 		// Set acton keys
 		/*
 		input.binds["up"]		= Makai::ButtonList{SDL_SCANCODE_UP};
@@ -119,7 +127,9 @@ struct PlayerEntity2D: AreaCircle2D {
 		moveTween.setManual();
 	})
 
-	virtual ~PlayerEntity2D() {
+	typedef T InputType;
+
+	virtual ~BasePlayerEntity2D() {
 		DEBUGLN("Deleting player...");
 	}
 
@@ -132,7 +142,7 @@ struct PlayerEntity2D: AreaCircle2D {
 	Renderable grazeboxMesh;
 	RenderData::Reference::AnimatedPlane*	grazeboxSprite;
 
-	Makai::InputManager	input;
+	InputType input;
 
 	inline static ButtonNameMap const defaultBinds = {
 		{"up",		"playerUp"		},
@@ -490,6 +500,11 @@ private:
 	}
 
 	Tweening::Tween<Vector2> moveTween;
+};
+
+struct PlayerEntity2D: BasePlayerEntity2D<Makai::InputManager> {
+	DERIVED_CLASS(PlayerEntity2D, BasePlayerEntity2D)
+	DERIVED_CONSTRUCTOR(PlayerEntity2D, BasePlayerEntity2D, {})
 };
 
 PlayerEntity2D* getMainPlayer() {
