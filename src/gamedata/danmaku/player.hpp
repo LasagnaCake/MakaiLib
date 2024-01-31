@@ -42,29 +42,10 @@ private:
 	}
 };
 
-template<typename T>
-concept InputHandlerType = requires (T inst) {
-	{inst.isButtonJustPressed(String())}	-> Type::Convertible<bool>;
-	{inst.isButtonDown(String())}			-> Type::Convertible<bool>;
-	{inst.getButtonState(String())}			-> Type::Convertible<unsigned int>;
-};
-
-template<InputHandlerType T = InputManager>
 struct BasePlayerEntity2D: AreaCircle2D {
 	DERIVED_CLASS(BasePlayerEntity2D, AreaCircle2D)
 	DERIVED_CONSTRUCTOR(BasePlayerEntity2D, AreaCircle2D, {
-		// Set acton keys
-		/*
-		input.binds["up"]		= Makai::ButtonList{SDL_SCANCODE_UP};
-		input.binds["down"]		= Makai::ButtonList{SDL_SCANCODE_DOWN};
-		input.binds["left"]		= Makai::ButtonList{SDL_SCANCODE_LEFT};
-		input.binds["right"]	= Makai::ButtonList{SDL_SCANCODE_RIGHT};
-		input.binds["focus"]	= Makai::ButtonList{SDL_SCANCODE_LSHIFT};
-		input.binds["shot"]		= Makai::ButtonList{SDL_SCANCODE_Z};
-		input.binds["bomb"]		= Makai::ButtonList{SDL_SCANCODE_X};
-		input.binds["sub"]		= Makai::ButtonList{SDL_SCANCODE_C};
-		input.binds["extra"]	= Makai::ButtonList{SDL_SCANCODE_SPACE};
-		*/
+
 		// Create sprite
 		sprite = mesh.createReference<Reference::AnimatedPlane>();
 		setAppropriateStartingLayer();
@@ -127,8 +108,6 @@ struct BasePlayerEntity2D: AreaCircle2D {
 		moveTween.setManual();
 	})
 
-	typedef T InputType;
-
 	virtual ~BasePlayerEntity2D() {
 		DEBUGLN("Deleting player...");
 	}
@@ -141,8 +120,6 @@ struct BasePlayerEntity2D: AreaCircle2D {
 
 	Renderable grazeboxMesh;
 	RenderData::Reference::AnimatedPlane*	grazeboxSprite;
-
-	InputType input;
 
 	inline static ButtonNameMap const defaultBinds = {
 		{"up",		"playerUp"		},
@@ -258,16 +235,8 @@ struct BasePlayerEntity2D: AreaCircle2D {
 		}
 	}
 
-	bool action(String const& what, bool const& justPressed = false) {
-		if (justPressed)
-			return input.isButtonJustPressed(binds[what]);
-		else
-			return input.isButtonDown(binds[what]);
-	}
-
-	size_t actionState(String const& what) {
-		return input.getButtonState(binds[what]);
-	}
+	virtual bool action(String const& what, bool const& justPressed = false) = 0;
+	virtual size_t actionState(String const& what) = 0;
 
 	void pichun() {
 		if (!collision.enabled) return;
@@ -301,8 +270,6 @@ struct BasePlayerEntity2D: AreaCircle2D {
 		mainShot.yield();
 		optionShot.yield();
 		moveTween.yield();
-		// Update inputs
-		//input.update();
 		// Get focus state
 		isFocused = action("focus") || (focusShooting && action("shot"));
 		// Do parent class frame
@@ -394,7 +361,7 @@ struct BasePlayerEntity2D: AreaCircle2D {
 		// If can bomb and bombing...
 		if((!inDialog) && canBomb && action("bomb", true)) {
 			// Do normal bomb or deathbomb, acoordingly
-			if (deathbomb.paused) {
+			if (deathbomb.finished()) {
 				DEBUGLN("Normal bomb!");
 				onBomb();
 			} else {
@@ -502,20 +469,54 @@ private:
 	Tweening::Tween<Vector2> moveTween;
 };
 
-struct PlayerEntity2D: BasePlayerEntity2D<Makai::InputManager> {
+struct PlayerEntity2D: BasePlayerEntity2D {
 	DERIVED_CLASS(PlayerEntity2D, BasePlayerEntity2D)
-	DERIVED_CONSTRUCTOR(PlayerEntity2D, BasePlayerEntity2D, {})
+	DERIVED_CONSTRUCTOR(PlayerEntity2D, BasePlayerEntity2D, {
+		// Set acton keys
+		/*
+		input.binds["up"]		= Makai::ButtonList{SDL_SCANCODE_UP};
+		input.binds["down"]		= Makai::ButtonList{SDL_SCANCODE_DOWN};
+		input.binds["left"]		= Makai::ButtonList{SDL_SCANCODE_LEFT};
+		input.binds["right"]	= Makai::ButtonList{SDL_SCANCODE_RIGHT};
+		input.binds["focus"]	= Makai::ButtonList{SDL_SCANCODE_LSHIFT};
+		input.binds["shot"]		= Makai::ButtonList{SDL_SCANCODE_Z};
+		input.binds["bomb"]		= Makai::ButtonList{SDL_SCANCODE_X};
+		input.binds["sub"]		= Makai::ButtonList{SDL_SCANCODE_C};
+		input.binds["extra"]	= Makai::ButtonList{SDL_SCANCODE_SPACE};
+		*/
+	})
+
+	Makai::InputManager input;
+
+	bool action(String const& what, bool const& justPressed = false) final {
+		if (justPressed)
+			return input.isButtonJustPressed(binds[what]);
+		else
+			return input.isButtonDown(binds[what]);
+	}
+
+	size_t actionState(String const& what) final {
+		return input.getButtonState(binds[what]);
+	}
 };
 
 [[gnu::unavailable("Unimplemented!")]]
-struct ReplayPlayerEntity2D: BasePlayerEntity2D<Makai::InputManager> {
-	DERIVED_CLASS(PlayerEntity2D, BasePlayerEntity2D)
-	DERIVED_CONSTRUCTOR(PlayerEntity2D, BasePlayerEntity2D, {})
+struct ReplayPlayerEntity2D: BasePlayerEntity2D {
+	DERIVED_CLASS(ReplayPlayerEntity2D, BasePlayerEntity2D)
+	DERIVED_CONSTRUCTOR(ReplayPlayerEntity2D, BasePlayerEntity2D, {})
+
+	bool action(String const& what, bool const& justPressed = false) final {
+		return false;
+	}
+
+	size_t actionState(String const& what) final {
+		return 0;
+	}
 };
 
-PlayerEntity2D* getMainPlayer() {
+BasePlayerEntity2D* getMainPlayer() {
 	if (mainPlayer)
-		return (PlayerEntity2D*)mainPlayer;
+		return (BasePlayerEntity2D*)mainPlayer;
 	else
 		return nullptr;
 }
