@@ -114,10 +114,12 @@ namespace Dialog {
 
 		InputManager input;
 
-		ButtonNameMap binds = {
+		inline static ButtonNameMap const defaultBinds = {
 			{"next",	"dialogNext"	},
 			{"skip",	"dialogSkip"	}
 		};
+
+		ButtonNameMap binds = defaultBinds;
 
 		struct {
 			Renderable	shape;

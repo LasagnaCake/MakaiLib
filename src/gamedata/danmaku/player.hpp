@@ -134,7 +134,7 @@ struct PlayerEntity2D: AreaCircle2D {
 
 	Makai::InputManager	input;
 
-	ButtonNameMap binds = {
+	inline static ButtonNameMap const defaultBinds = {
 		{"up",		"playerUp"		},
 		{"down",	"playerDown"	},
 		{"left",	"playerLeft"	},
@@ -145,6 +145,8 @@ struct PlayerEntity2D: AreaCircle2D {
 		{"sub",		"playerSub"		},
 		{"extra",	"playerExtra"	}
 	};
+
+	ButtonNameMap binds = defaultBinds;
 
 	struct {
 		float bullet	= 3.0;

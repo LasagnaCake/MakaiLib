@@ -169,13 +169,15 @@ namespace Menu {
 
 		InputManager input;
 
-		ButtonNameMap binds = {
+		inline static ButtonNameMap const defaultBinds = {
 			{"select",		"menuSelect"	},
 			{"return",		"menuReturn"	},
 			{"next",		"menuNext"		},
 			{"previous",	"menuPrevious"	},
 			{"exit",		"menuExit"		}
 		};
+
+		ButtonNameMap binds = defaultBinds;
 
 		virtual void onReturn()															{DEBUGLN("Return!");}
 		virtual void onExit()															{DEBUG("Menu Exited!");}
