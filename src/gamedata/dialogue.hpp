@@ -30,8 +30,8 @@ namespace Dialog {
 		bool			autoplay	= false;
 	};
 
-	typedef List<Message>				MessageList;
-	typedef FuzzyHashMap<String, Actor>	ActorGroup;
+	typedef List<Message>			MessageList;
+	typedef HashMap<String, Actor>	ActorGroup;
 
 	struct DialogPlayer: public Entity {
 		DERIVED_CLASS(DialogPlayer, Entity)
@@ -487,7 +487,7 @@ namespace Dialog {
 		}
 
 		Event::Timer autotimer;
-		FuzzyHashMap<String, Tweening::Tween<Vector3>> animator;
+		HashMap<String, Tweening::Tween<Vector3>> animator;
 
 		size_t current	= 0;
 		bool autoplay	= false;

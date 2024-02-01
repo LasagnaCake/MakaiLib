@@ -21,7 +21,7 @@ namespace Animation {
 	};
 
 	template <Tweenable T>
-	using KeyFrameList	= std::vector<Keyframe<T>>;
+	using KeyFrameList	= List<Keyframe<T>>;
 
 	template <Tweenable T>
 	struct Track {
@@ -31,10 +31,10 @@ namespace Animation {
 	};
 
 	template <Tweenable T>
-	using	Animation	= std::map<size_t, Track<T>>;
+	using	Animation	= HashMap<size_t, Track<T>>;
 
 	template <Tweenable T>
-	using	TrackData	= std::map<size_t, Metadata<T>>;
+	using	TrackData	= HashMap<size_t, Metadata<T>>;
 
 	template <Tweenable T>
 	struct AnimationPlayer: Entity {

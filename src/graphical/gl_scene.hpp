@@ -170,6 +170,12 @@ public:
 				}
 	}
 
+	void deleteObject(String const& name = "") {
+		if (!objects.contains(name)) return;
+		delete objects[name];
+		objects.erase(name);
+	}
+
 	inline Dictionary<Renderable*> getObjects() {
 		return objects;
 	}

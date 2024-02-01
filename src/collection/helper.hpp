@@ -133,10 +133,10 @@ namespace Helper {
 	using LinkedList = list<T>;
 
 	template<typename K, typename V>
-	using HashMap = map<K, V>;
+	using HashMap = unordered_map<K, V>;
 
 	template<typename K, typename V>
-	using FuzzyHashMap = unordered_map<K, V>;
+	using SortedMap = map<K, V>;
 
 	template<typename A, typename B>
 	using Pair = pair<A, B>;
@@ -145,10 +145,10 @@ namespace Helper {
 	using Entry = Pair<String, T>;
 
 	template<typename T>
-	using Dictionary = map<String, T>;
+	using Dictionary = HashMap<String, T>;
 
 	template<typename T>
-	using FuzzyDictionary = unordered_map<String, T>;
+	using SortedDictionary = SortedMap<String, T>;
 
 	template<typename T>
 	using Function = function<T>;
@@ -216,7 +216,7 @@ namespace Helper {
 	}
 
 	template<typename T, typename T2>
-	constexpr List<T> getKeys(FuzzyHashMap<T, T2> const& lst) {
+	constexpr List<T> getKeys(SortedMap<T, T2> const& lst) {
 		List<T> keys;
 		keys.reserve(lst.size());
 		for (auto i = lst.begin(); i != lst.end(); i++) {
@@ -226,7 +226,7 @@ namespace Helper {
 	}
 
 	template<typename T, typename T2>
-	constexpr List<T2> getValues(FuzzyHashMap<T, T2> const& lst) {
+	constexpr List<T2> getValues(SortedMap<T, T2> const& lst) {
 		List<T2> values;
 		values.reserve(lst.size());
 		for (auto i = lst.begin(); i != lst.end(); i++) {
@@ -499,13 +499,13 @@ using Helper::WideString;
 using Helper::List;
 using Helper::LinkedList;
 using Helper::HashMap;
-using Helper::FuzzyHashMap;
+using Helper::SortedMap;
 using Helper::StringList;
 using Helper::StringPair;
 using Helper::StringArguments;
 using Helper::Arguments;
 using Helper::Dictionary;
-using Helper::FuzzyDictionary;
+using Helper::SortedDictionary;
 using Helper::Pair;
 using Helper::Entry;
 using Helper::Tuple;

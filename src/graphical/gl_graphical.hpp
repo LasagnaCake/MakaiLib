@@ -70,7 +70,7 @@ namespace Drawer {
 			nz	= 1;
 	};
 
-	typedef std::map<string, float> VertexMap;
+	typedef HashMap<String, float> VertexMap;
 
 	const VertexMap baseVertexMap = {
 		{"x",0},
