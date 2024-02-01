@@ -57,7 +57,7 @@ def as_hex_string(color):
 	def to255(x): 
 		return max(0, min(x*255, 255))
 
-	"#{0:02x}{1:02x}{2:02x}{2:02x}".format(to255(color[0]), to255(color[1]), to255(color[2]), to255(color[3]))
+	return "#{0:02x}{1:02x}{2:02x}{2:02x}".format(to255(color[0]), to255(color[1]), to255(color[2]), to255(color[3]))
 
 def get_color(material, node_type):
 	# Get the material by name
