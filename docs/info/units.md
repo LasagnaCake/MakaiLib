@@ -46,8 +46,8 @@ It follows the order of $Yaw → Pitch → Roll$ (Z → X → Y, since rotations
 
 Time is divided in two separate categories: *render time* and *logic time*. Of note:
 
-- If `$_FRAME_DEPENDENT_PROCESS` has not been `#define`d, then the program and all entities gets processed during *logic time*. All `Timer`s & `Tween`s are processed during *logic time*.
-- If `$_PROCESS_RENDER_BEFORE_LOGIC` has not been `#define`d, then *logic time* happens before *render time*.
+- If `MAKAILIB_FRAME_DEPENDENT_PROCESS` has not been `#define`d, then the program and all entities gets processed during *logic time*. All `Timer`s & `Tween`s are processed during *logic time*.
+- If `MAKAILIB_PROCESS_RENDER_BEFORE_LOGIC` has not been `#define`d, then *logic time* happens before *render time*.
 
 ## Logic Time
 
