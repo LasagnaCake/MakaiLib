@@ -195,7 +195,7 @@ public:
 		return objects[name];
 	}
 
-	Renderable* operator[](String const& name) {
+	inline Renderable* operator[](String const& name) {
 		return getObject(name);
 	}
 

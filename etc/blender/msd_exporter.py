@@ -106,7 +106,7 @@ class ExportMSDOperator(Operator, ExportHelper):
 			}
 		}
 		if self.embed_objects:
-			scenedef["data"] = []
+			scenedef["data"] = {}
 		else:
 			scenedef["path"] = []
 		for obj in objects:

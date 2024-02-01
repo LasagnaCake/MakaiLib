@@ -160,18 +160,6 @@ def create_render_definition(context, obj, filepath, tx_folder, mesh_folder, emb
 		"mesh": {
 			"data": None,
 			"components": component_data
-		},
-		"blend": {
-			"function": {
-				"srcColor": 0x06, 
-				"dstColor": 0x07,
-				"srcAlpha": 0x01,
-				"dstAlpha": 0x00
-			},
-			"equation": {
-				"color": 0x02,
-				"alpha": 0x06
-			}
 		}
 	}
 	if embed_mesh:
@@ -201,6 +189,18 @@ def create_render_definition(context, obj, filepath, tx_folder, mesh_folder, emb
 		],
 		"culling": 0,
 		"fill": 0
+	}
+	strfile["blend"] = {
+		"function": {
+			"srcColor": 0x06, 
+			"dstColor": 0x07,
+			"srcAlpha": 0x01,
+			"dstAlpha": 0x00
+		},
+		"equation": {
+			"color": 0x02,
+			"alpha": 0x06
+		}
 	}
 	strfile["active"] = True
 	if len(obj.material_slots) > 0:
