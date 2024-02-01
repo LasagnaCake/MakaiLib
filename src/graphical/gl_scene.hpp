@@ -2,9 +2,11 @@ class Scene3D: public Base::Drawable {
 public:
 	constexpr static size_t version = 0;
 
+	typedef Pair<String, Renderable*> RenderableEntry;
+
 	Scene3D(size_t layer = 0, bool manual = false): Drawable(layer, manual) {}
 
-	Scene3D(size_t layer, string const& path, bool manual = false): Scene3D(layer, manual) {
+	Scene3D(size_t layer, String const& path, bool manual = false): Scene3D(layer, manual) {
 		extendFromSceneFile(path);
 	}
 
@@ -23,14 +25,14 @@ public:
 	Camera::GimbalCamera3D	camera;
 	Material::WorldMaterial	world;
 
-	void extendFromSceneFile(string const& path) {
+	void extendFromSceneFile(String const& path) {
 		extendFromDefinition(FileLoader::getJSON(path), FileSystem::getDirectoryFromPath(path));
 	}
 
 	void extend(Scene3D* const& other) {
 		if (!other) return;
-		for(Renderable* obj: other->objects) {
-			Renderable* nobj = createObject();
+		for(auto& [name, obj]: other->objects) {
+			auto [_, nobj] = createObject(name);
 			{
 				bool wasBaked = obj->baked;
 				if(!wasBaked)
@@ -68,27 +70,26 @@ public:
 
 	void destroy() {
 		auto objs = objects;
-		for (Renderable* o: objs)
+		for (auto& [n, o]: objs)
 			delete o;
 		objects.clear();
 	}
 
 	void saveToSceneFile(
-		string folder,
-		string name,
-		bool integratedObjects			= false,
-		bool integratedObjectBinaries	= false,
-		bool integratedObjectTextures	= false,
-		bool pretty = false
+		String const& folder,
+		String const& name,
+		bool const& integratedObjects			= false,
+		bool const& integratedObjectBinaries	= false,
+		bool const& integratedObjectTextures	= false,
+		bool const& pretty = false
 
 	) {
 		JSONData file = getSceneDefinition(integratedObjects, integratedObjectBinaries, integratedObjectTextures);
 		vector<JSONData> objpaths;
 		FileSystem::makeDirectory(folder);
-		for (auto [i, obj]: Helper::enumerate(objects)) {
-			string objname		= toString("obj_", i);
-			string folderpath	= FileSystem::concatenatePath(folder, objname);
-			string objpath		= FileSystem::concatenatePath(folder, objname);
+		for (auto& [objname, obj]: objects) {
+			String folderpath	= FileSystem::concatenatePath(folder, objname);
+			String objpath		= FileSystem::concatenatePath(folder, objname);
 			if (!integratedObjects) {
 				FileSystem::makeDirectory(folderpath);
 				obj->saveToDefinitionFile(
@@ -114,7 +115,7 @@ public:
 				}
 				if (!integratedObjectTextures) {
 					FileSystem::makeDirectory(FileSystem::concatenatePath(folderpath, "tx"));
-					auto& mdef = file["data"][i]["material"];
+					auto& mdef = file["data"][objname]["material"];
 					auto& mat = obj->material;
 					// Save image texture
 					mdef["texture"] = Material::saveImageEffect(obj->material.texture, folderpath, "tx/texture.tga");
@@ -142,27 +143,83 @@ public:
 		FileLoader::saveTextFile(FileSystem::concatenatePath(folder, name) + ".msd", contents);
 	}
 
-	Renderable* createObject() {
-		Renderable* r = new Renderable(0, true);
-		return r;
+	RenderableEntry createObject(String name = "") {
+		#ifdef MAKAILIB_SCENE_ERROR_IF_DUPLICATE_NAME
+		if (objects.contains(name))
+			throw Error::InvalidValue(
+				"Object of name '"+name+"' already exists!",
+				__FILE__,
+				toString(__LINE__),
+				"createObject"
+			);
+		#endif // MAKAILIB_SCENE_ERROR_IF_DUPLICATE_NAME
+		Renderable* r = nullptr;
+		if (name.empty())	name = validateName("unnamed");
+		else				name = validateName(name);
+		objects[name] = (r = new Renderable(0, true));
+		return RenderableEntry{name, r};
 	}
 
 	void deleteObject(Renderable* const& obj) {
-		if (obj) {
-			ERASE_IF(objects, elem == obj);
-			delete obj;
-		}
+		if (obj)
+			for (auto& [k, v]: objects)
+				if (obj == v) {
+					objects.erase(k);
+					delete obj;
+					break;
+				}
 	}
 
-	inline RenderableList getObjects() {
+	inline Dictionary<Renderable*> getObjects() {
 		return objects;
 	}
 
+	String getNameOfObject(Renderable* const& obj) {
+		String name = "";
+		if (obj)
+			for (auto& [k, v]: objects)
+				if (obj == v)
+					name = k;
+		return name;
+	}
+
+	Renderable* getObject(String const& name) {
+		if (!objects.contains(name))
+			return nullptr;
+		return objects[name];
+	}
+
+	Renderable* operator[](String const& name) {
+		return getObject(name);
+	}
+
+	static bool isValidName(String const& name) {
+		return regexContains(name, "([\\cA-\\cZ]|[ \\t\"\\\\/?*<>:|])");
+	}
+
 private:
-	RenderableList		objects;
+	Dictionary<Renderable*> objects;
+
+	String validateName(String const& name) {
+		if (!isValidName(name))
+			throw Error::InvalidValue(
+				"Name must not contain control and/or specific characters!",
+				__FILE__,
+				toString(__LINE__),
+				"validateName",
+				"Name must not contain control characters, and the following:"
+				"\n- newlines, spaces or tabs"
+				"\n- \\, /, ?, *, <, >, :, \" and/or |"
+			);
+		String newName = name;
+		size_t i = 0;
+		while (objects.contains(newName))
+			newName = name + toString(i++);
+		return newName;
+	}
 
 	void extendFromDefinition(
-		JSONData def,
+		JSONData const& def,
 		String const& sourcepath
 	) {
 		if (def["version"].is_number()) {
@@ -174,24 +231,24 @@ private:
 		} else extendFromDefinitionV0(def, sourcepath);
 	}
 
-	void extendFromDefinitionV0(JSONData def, String const& sourcepath) {
+	void extendFromDefinitionV0(JSONData const& def, String const& sourcepath) {
 		try {
 			Camera::Camera3D		cam;
 			Material::WorldMaterial	mat;
 			// Get camera data
 			{
 				auto& dcam = def["camera"];
-				cam.eye		= Vector3(dcam["eye"][0].get<float>(), dcam["eye"][1].get<float>(), dcam["eye"][2].get<float>());
-				cam.at		= Vector3(dcam["at"][0].get<float>(), dcam["at"][1].get<float>(), dcam["at"][2].get<float>());
-				cam.up		= Vector3(dcam["up"][0].get<float>(), dcam["up"][1].get<float>(), dcam["up"][2].get<float>());
-				cam.aspect	= Vector2(dcam["aspect"][0].get<float>(), dcam["aspect"][1].get<float>());
+				cam.eye		= VecMath::fromJSONArrayV3(dcam["eye"]);
+				cam.at		= VecMath::fromJSONArrayV3(dcam["at"]);
+				cam.up		= VecMath::fromJSONArrayV3(dcam["up"]);
+				cam.aspect	= VecMath::fromJSONArrayV2(dcam["aspect"]);
 				cam.fov		= dcam["fov"].get<float>();
 				cam.zNear	= dcam["zNear"].get<float>();
 				cam.zFar	= dcam["zFar"].get<float>();
 				if (dcam["ortho"].is_object()) {
 					cam.ortho.strength	= dcam["ortho"]["strength"].get<float>();
-					cam.ortho.origin	= Vector2(dcam["ortho"]["origin"][0].get<float>(), dcam["ortho"]["origin"][1].get<float>());
-					cam.ortho.size		= Vector2(dcam["ortho"]["size"][0].get<float>(), dcam["ortho"]["size"][1].get<float>());
+					cam.ortho.origin	= VecMath::fromJSONArrayV2(dcam["ortho"]["origin"]);
+					cam.ortho.size		= VecMath::fromJSONArrayV2(dcam["ortho"]["origin"]);
 				}
 				if (dcam["relativeToEye"].is_boolean())
 					cam.relativeToEye	= dcam["relativeToEye"].get<bool>();
@@ -206,12 +263,7 @@ private:
 						mat.FOG_TYPE.start		= dmat[#FOG_TYPE]["start"].get<float>();\
 						mat.FOG_TYPE.stop		= dmat[#FOG_TYPE]["stop"].get<float>();\
 						if (dmat[#FOG_TYPE]["color"].is_array())\
-							mat.FOG_TYPE.color		= Vector4(\
-								dmat[#FOG_TYPE]["color"][0].get<float>(),\
-								dmat[#FOG_TYPE]["color"][1].get<float>(),\
-								dmat[#FOG_TYPE]["color"][2].get<float>(),\
-								dmat[#FOG_TYPE]["color"][3].get<float>()\
-							);\
+							mat.FOG_TYPE.color		= VecMath::fromJSONArrayV4(dmat[#FOG_TYPE]["color"]);\
 						else if (dmat[#FOG_TYPE]["color"].is_string())\
 							mat.FOG_TYPE.color = Color::fromHexCodeString(dmat[#FOG_TYPE]["color"]);\
 						mat.FOG_TYPE.strength	= dmat[#FOG_TYPE]["strength"].get<float>();\
@@ -221,11 +273,7 @@ private:
 				#undef _SET_FOG_PROPERTY
 				if (dmat["ambient"].is_object()) {
 					if (dmat["ambient"]["color"].is_array())
-						mat.ambient.color = Vector3(
-							dmat["ambient"]["color"][0].get<float>(),
-							dmat["ambient"]["color"][1].get<float>(),
-							dmat["ambient"]["color"][2].get<float>()
-						);
+						mat.ambient.color = VecMath::fromJSONArrayV3(dmat["ambient"]["color"]);
 					else if (dmat["ambient"]["color"].is_string())
 						mat.ambient.color = Color::fromHexCodeString(dmat["ambient"]["color"].get<String>()).xyz();
 					mat.ambient.strength = dmat["ambient"]["strength"].get<float>();
@@ -233,18 +281,27 @@ private:
 			}
 			// Get objects data
 			{
-				if (def["data"].is_object()) {
+				if (def["path"].is_object()) {
 					for(auto& obj: def["data"]["path"].get<List<JSONData>>()) {
-						Renderable* r = createObject();
-						if (obj["type"].get<string>() == "MROD")
-							r->extendFromDefinitionFile(obj["source"].get<string>());
-						if (obj["type"].get<string>() == "MESH" || obj["type"].get<string>() == "MSBO") {
-							r->extendFromBinaryFile(obj["source"].get<string>());
+						auto [_, r] = createObject(
+							FileSystem::getFileName(obj["source"].get<String>(), true)
+						);
+						if (obj["type"].get<String>() == "MROD")
+							r->extendFromDefinitionFile(obj["source"].get<String>());
+						if (obj["type"].get<String>() == "MESH" || obj["type"].get<String>() == "MSBO") {
+							r->extendFromBinaryFile(obj["source"].get<String>());
 						}
 					}
-				} else {
+				} else if (def["data"].is_array()) {
 					for(auto& obj: def["data"].get<List<JSONData>>()) {
-						createObject()->extendFromDefinition(
+						createObject().second->extendFromDefinition(
+							obj,
+							sourcepath + FileSystem::getDirectoryFromPath(obj)
+						);
+					}
+				} else {
+					for(auto& [name, obj]: def["data"].items()) {
+						createObject(name).second->extendFromDefinition(
 							obj,
 							sourcepath + FileSystem::getDirectoryFromPath(obj)
 						);
@@ -264,18 +321,15 @@ private:
 	}
 
 	JSONData getSceneDefinition(
-		bool integratedObjects			= true,
-		bool integratedObjectBinaries	= true,
-		bool integratedObjectTextures	= true
+		bool const& integratedObjects			= true,
+		bool const& integratedObjectBinaries	= true,
+		bool const& integratedObjectTextures	= true
 	) {
 		JSONData def;
 		def["version"] = version;
-		if (integratedObjects) {
-			vector<JSONData> objdefs;
-			for (Renderable* obj: objects)
-				objdefs.push_back(obj->getObjectDefinition("base64", integratedObjectBinaries, integratedObjectTextures));
-			def["data"] = objdefs;
-		}
+		if (integratedObjects)
+			for (auto& [name, obj]: objects)
+				def["data"][name] = obj->getObjectDefinition("base64", integratedObjectBinaries, integratedObjectTextures);
 		Camera::Camera3D cam = camera;
 		def["camera"] = {
 			{"eye",		{cam.eye.x, cam.eye.y, cam.eye.z}	},
@@ -315,7 +369,7 @@ private:
 		auto lastcam = Scene::camera;
 		Scene::camera = camera;
 		Material::setMaterial(MAIN_SHADER, world);
-		for(Renderable* obj: objects)
+		for(auto& [_, obj]: objects)
 			obj->render();
 		Scene::camera = lastcam;
 	}

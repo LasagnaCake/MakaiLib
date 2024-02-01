@@ -108,7 +108,7 @@ class ExportMSDOperator(Operator, ExportHelper):
 		if self.embed_objects:
 			scenedef["data"] = []
 		else:
-			scenedef["data"] = {"path": []}
+			scenedef["path"] = []
 		for obj in objects:
 			rendef = fp.create_render_definition(
 				context,
@@ -122,18 +122,18 @@ class ExportMSDOperator(Operator, ExportHelper):
 				not self.no_hex_color
 			)
 			if self.embed_objects:
-				scenedef["data"].append(rendef)
+				scenedef["data"][obj.name] = rendef
 			else:
 				defpath = f"{self.filepath}\\{obj.name}\\{obj.name}.mrod"
 				with open(defpath, "wt") as f:
-					f.write(json.dumps(rendef, indent="	"))
-				scenedef["data"]["path"].append({
+					f.write(json.dumps(rendef, indent="\t"))
+				scenedef["path"].append({
 					"source": f"{obj.name}\\{obj.name}.mrod",
 					"type": "MROD"
 				})
 			with open(f"{self.filepath}\\scene.msd", "wt") as f:
 				print(scenedef)
-				f.write(json.dumps(scenedef, indent="	"))
+				f.write(json.dumps(scenedef, indent="\t"))
 		return {'FINISHED'}
 
 	def draw(self, context):

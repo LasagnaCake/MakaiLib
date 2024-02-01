@@ -231,16 +231,15 @@ If data gets saved in a separate file:
 	// Required
 	"camera": {/* See Camera3D:Layout */}, // Scene's camera
 	"world": {/* See WorldMaterial:Layout */}, // Scene's WorldMaterial
-	"data": {
-		"path": [{
-			"source": "", // Object file source relative to file
-			"type": "MROD" // Object file type
-		}] // Paths to objects
-	} 
+	"path": [{
+		"source": "", // Object file source relative to file
+		"type": "MROD" // Object file type
+	}] // Paths to objects
 	// Optional
 	"version": 0 // The scene definition version
 }
 ```
+In the previous case, the object's name gets deduced from the filename, minus the extension.
 
 If data is to be integrated in the file:
 
@@ -249,11 +248,15 @@ If data is to be integrated in the file:
 	// Required
 	"camera": {/*See Camera3D:Layout */}, // Scene's camera
 	"world": {/* See WorldMaterial:Layout */}, // Scene's WorldMaterial
-	"data": [{/* See Renderable Object:Layout */}] // List of object definitions
+	// Option 1:
+	"data": [{/* See Renderable Object:Layout */}...] // List of object definitions
+	// Option 2:
+	"data": {"name": {/* See Renderable Object:Layout */}...} // Named objects
 	// Optional
 	"version": 0 // The scene definition version
 }
 ```
+In the previous case, if using a list of definitions, the names default to `unnamed` + the object's index.
 
 # Dialogue
 
