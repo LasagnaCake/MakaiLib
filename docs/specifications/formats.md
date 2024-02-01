@@ -258,6 +258,8 @@ If data is to be integrated in the file:
 ```
 In the previous case, if using a list of definitions, the names default to `unnamed` + the object's index.
 
+For a name to be valid, it must **not** contain spaces, newlines, tabs, and/or any of the following characters: \\, /, ?, \*, \<, \>, :, " and/or |.
+
 # Dialogue
 
 ## ActorData
