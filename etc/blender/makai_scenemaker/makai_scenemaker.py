@@ -14,7 +14,7 @@ bl_info = {
     "version": (0, 0, 1),
     "blender": (3, 4, 0),
     "location": "3D Viewport > Sidebar > [Scene Object, Scene]",
-    "description": "Custom scene builder & exporter for MakaiLib's scene format",
+    "description": "Custom scene builder & exporter for Makai's scene format",
     "category": "Development"
 }
 
