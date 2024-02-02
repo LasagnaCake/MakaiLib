@@ -193,8 +193,6 @@ class ObjectMaterialProperties(bt.PropertyGroup):
         self.render_child(target, "warp_")
         self.render_child(target, "negative_")
         self.render_child(target, "gradient_")
-        layout.prop(self, "instances")
-        layout.separator_spacer()
         layout.prop(self, "culling")
         layout.prop(self, "fill")
 
