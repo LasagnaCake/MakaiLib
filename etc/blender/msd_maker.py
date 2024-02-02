@@ -66,8 +66,8 @@ def RangeProperty(prop_name, prop_default=0):
 def AlphaClipProperty(prop_name):
     return RangeProperty(prop_name + " Alpha Clip", 0.2)
 
-def EnumProperty(prop_name, prop_values, prop_default=0, prop_update=None):
-    prop_items = [(f"enum_{i}", prop_values[i], "", i) for i in range(len(prop_values))]
+def EnumProperty(prop_name, prop_values, prop_default=0, prop_update=None, prop_index_offset=0):
+    prop_items = [(f"enum_{i}", prop_values[i], "", i+prop_index_offset) for i in range(len(prop_values))]
     return bp.EnumProperty(
         name=prop_name,
         items=prop_items,
@@ -75,8 +75,22 @@ def EnumProperty(prop_name, prop_values, prop_default=0, prop_update=None):
         update=prop_update
     )
 
-def ChannelProperty(prop_name, default=0, secret_channel_minus_one=False):
-    values = ["Red", "Green", "Blue", "Alpha"]
+def ChannelProperty(prop_name, prop_default=0, composite_channel=False):
+    if composite_channel:
+        return EnumProperty(
+            prop_name,
+            ["RGB Average", "Red", "Green", "Blue", "Alpha"],
+            prop_default,
+            None,
+            -1
+        )
+    return EnumProperty(
+        prop_name,
+        ["Red", "Green", "Blue", "Alpha"],
+        prop_default,
+        None,
+        0
+    )
 
 blend_equations = [
     "Zero",
@@ -139,17 +153,17 @@ class ObjectMaterialProperties(bt.PropertyGroup):
     warp_2_position: Vector2Property("Warp Position")
     warp_3_rotation: FloatProperty("Warp Rotation")
     warp_4_scale: Vector2Property("Warp Scale", (0, 0))
-    warp_5_channelX: IntProperty("Warp Channel for X", 0, 0, 3)
-    warp_6_channelY: IntProperty("Warp Channel for Y", 1, 0, 3)
+    warp_5_channelX: ChannelProperty("Warp Channel for X", 0)
+    warp_6_channelY: ChannelProperty("Warp Channel for Y", 1)
     
     negative_0_enabled: BoolProperty("Enable Negative")
     negative_1_strength: RangeProperty("Negative Strength")
     
     gradient_0_enabled: BoolProperty("Enable Gradient")
-    gradient_1_channel: IntProperty("Gradient Channel", 0, -1, 3)
-    gradient_2_invert: BoolProperty("Gradient Invert")
-    gradient_3_begin: ColorProperty("Gradient Begin", (0,0,0,1))
-    gradient_4_end: ColorProperty("Gradient End", (1,1,1,1))
+    gradient_1_channel: ChannelProperty("Gradient Channel", -1, True)
+    gradient_2_begin: ColorProperty("Gradient Begin", (0,0,0,1))
+    gradient_3_end: ColorProperty("Gradient End", (1,1,1,1))
+    gradient_4_invert: BoolProperty("Gradient Invert")
     
     # Ugliness over
     # Hopefully that won't happen again
@@ -217,7 +231,7 @@ class ObjectBlendProperties(bt.PropertyGroup):
         if self.func_sep:
             layout.prop(self, "func_src_rgb")
             layout.prop(self, "func_src_alpha")
-            layout.separator_spacer()
+            #layout.separator_spacer()
             layout.prop(self, "func_dst_rgb")
             layout.prop(self, "func_dst_alpha")
         else:
