@@ -7,11 +7,14 @@
 
 precision mediump float;
 
+uniform mat4 vertMatrix;
+/*
 uniform mat4 actor = mat4(1);
 uniform mat4 world;
 uniform mat4 camera;
 uniform mat4 projection;
-uniform mat4 normals;
+*/
+uniform mat4 normalsMatrix;
 
 layout (location = 0) in vec3 vertPos;
 layout (location = 1) in vec2 vertUV;
@@ -75,7 +78,7 @@ float length(in vec3 vec) {
 }
 
 vec4 transformed(vec3 vec) {
-	return projection * camera * world * actor * vec4(vec + getInstancePosition(), 1.0);
+	return vertMatrix * vec4(vec + getInstancePosition(), 1.0);
 }
 
 vec3 getShadingColor(vec3 position, vec3 normal) {
@@ -93,7 +96,7 @@ void main() {
 	warp.y = warp.x * sin(warpRotate) + warp.y * cos(warpRotate);
 	warpUV = (warp * warpScale) + warpOffset;
 	vec4 vertex	= transformed(vertPos);
-	vec3 normal	= normalize(mat3(normals) * vertNormal);
+	vec3 normal	= normalize(mat3(normalsMatrix) * vertNormal);
 	// Point Size
 	//gl_PointSize = min(0.00001, 1 - vertex.z);
 	//gl_PointSize = 5.0;

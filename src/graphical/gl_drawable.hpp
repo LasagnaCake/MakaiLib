@@ -142,22 +142,13 @@ protected:
 	}
 
 	void setShaderData() {
-		// Render with bject's shader
+		// Render with object's shader
 		shader();
 		// Get transformation matrices
-		Matrix4x4
-			actor(trans),
-			camera(Scene::camera.matrix()),
-			projection(Scene::camera.projection()),
-			normals(Scene::world * actor * camera)
-		;
-		normals.transpose().invert();
+		Matrix4x4 cameraWorldActor(Scene::camera.matrix() * Scene::world * trans);
 		// Set transformation matrices
-		shader["world"](Scene::world);
-		shader["camera"](camera);
-		shader["projection"](projection);
-		shader["actor"](actor);
-		shader["normals"](normals);
+		shader["vertMatrix"](Scene::camera.projection() * cameraWorldActor);
+		shader["normalsMatrix"](cameraWorldActor.transposed().inverted());
 	}
 
 	GLuint vao, vbo;
