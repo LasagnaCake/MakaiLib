@@ -3,23 +3,34 @@ import struct
 import os
 import sys
 import inspect
+
 from bpy import types as bt
 from bpy import props as bp
+from bpy import utils as bu
 
 bl_info = {
     "name": "Makai SceneMaker",
     "author": "LasagnaCake",
     "version": (0, 0, 1),
     "blender": (3, 4, 0),
-    "location": "3D Viewport > Sidebar > [Item, Scene]",
-    "description": "Custom scene builder & exporter for MakaiLib's custom scene format",
+    "location": "3D Viewport > Sidebar > [Scene Object, Scene]",
+    "description": "Custom scene builder & exporter for MakaiLib's scene format",
     "category": "Development"
 }
+
+"""
+    ----------
+
+    Properties
+
+    ----------
+"""
 
 def BoolProperty(prop_name, prop_default=False):
     return bp.BoolProperty(
         name=prop_name,
-        default = prop_default
+        default=prop_default,
+        options=set()
     )
 
 def IntProperty(prop_name, prop_default=0, prop_min=sys.float_info.min, prop_max=sys.float_info.max):
@@ -27,7 +38,8 @@ def IntProperty(prop_name, prop_default=0, prop_min=sys.float_info.min, prop_max
         name=prop_name,
         default=prop_default,
         min=prop_min,
-        max=prop_max
+        max=prop_max,
+        options=set()
     )
 
 def FloatProperty(prop_name, prop_default=0, prop_min=sys.float_info.min, prop_max=sys.float_info.max):
@@ -35,7 +47,8 @@ def FloatProperty(prop_name, prop_default=0, prop_min=sys.float_info.min, prop_m
         name=prop_name,
         default=prop_default,
         min=prop_min,
-        max=prop_max
+        max=prop_max,
+        options=set()
     )
 
 def Vector2Property(prop_name, prop_default=(0, 0), prop_subtype="XYZ"):
@@ -43,7 +56,8 @@ def Vector2Property(prop_name, prop_default=(0, 0), prop_subtype="XYZ"):
         name=prop_name,
         size=2,
         default=prop_default,
-        subtype=prop_subtype
+        subtype=prop_subtype,
+        options=set()
     )
 
 def Vector3Property(prop_name, prop_default=(0, 0, 0), prop_subtype="XYZ"):
@@ -51,19 +65,22 @@ def Vector3Property(prop_name, prop_default=(0, 0, 0), prop_subtype="XYZ"):
         name=prop_name,
         size=3,
         default=prop_default,
-        subtype=prop_subtype
+        subtype=prop_subtype,
+        options=set()
     )
 
 def ImageProperty(prop_name = "Image"):
     return bp.PointerProperty(
         name=prop_name,
-        type=bt.Image
+        type=bt.Image,
+        options=set()
     )
 
 def CameraProperty(prop_name = "Camera"):
     return bp.PointerProperty(
         name=prop_name,
-        type=bt.Camera
+        type=bt.Camera,
+        options=set()
     )
 
 def RGBAColorProperty(prop_name = "Color", prop_default=(1,1,1,1)):
@@ -73,7 +90,8 @@ def RGBAColorProperty(prop_name = "Color", prop_default=(1,1,1,1)):
         default=prop_default,
         min=0,
         max=1,
-        subtype="COLOR"
+        subtype="COLOR",
+        options=set()
     )
 
 def RGBColorProperty(prop_name = "Color", prop_default=(1,1,1)):
@@ -83,7 +101,8 @@ def RGBColorProperty(prop_name = "Color", prop_default=(1,1,1)):
         default=prop_default,
         min=0,
         max=1,
-        subtype="COLOR"
+        subtype="COLOR",
+        options=set()
     )
 
 def RangeProperty(prop_name, prop_default=0):
@@ -98,7 +117,8 @@ def EnumProperty(prop_name, prop_values, prop_default=0, prop_update=None, prop_
         name=prop_name,
         items=prop_items,
         default=prop_default,
-        update=prop_update
+        update=prop_update,
+        options=set()
     )
 
 def ChannelProperty(prop_name, prop_default=0, composite_channel=False):
@@ -152,27 +172,74 @@ def BlendFunctionProperty(prop_name, prop_default, prop_update=None):
 def BlendEquationProperty(prop_name, prop_default, prop_update=None):
     return EnumProperty(prop_name, blend_equations, prop_default, prop_update)
 
-def DirectoryPathProperty(prop_name):
+def DirectoryPathProperty(prop_name, prop_default="", prop_options=set()):
     return bp.StringProperty(
         name=prop_name,
-        subtype="DIR_PATH"
+        subtype="DIR_PATH",
+        default=prop_default,
+        options=prop_options
     )
 
-def FileNameProperty(prop_name):
+def FileNameProperty(prop_name, prop_default="", prop_options=set()):
     return bp.StringProperty(
         name=prop_name,
-        subtype="FILE_NAME"
+        subtype="FILE_NAME",
+        default=prop_default,
+        options=prop_options
     )
 
-# Class stuff
+"""
+    ------------
+
+    Base Classes
     
-class ObjectMaterialProperties(bt.PropertyGroup):
+    ------------
+"""
+
+class BaseProperties(bt.PropertyGroup):
+    def render_child(self, target, child):
+        layout = target.layout
+        props = [x for x,_ in inspect.getmembers(self)]
+        if f"{child}0_enabled" in props:
+            layout.prop(self, f"{child}0_enabled")
+            if self.get(f"{child}0_enabled", False):
+                for name in props:
+                    if child in name and name != f"{child}0_enabled":
+                        layout.prop(self, name)
+        else:
+            for name, _ in inspect.getmembers(self):
+                if child in name:
+                    layout.prop(self, name)
+        layout.column()
+
+class PropertyPanel(bt.Panel):
+    bl_space_type = "VIEW_3D"   
+    bl_region_type = "UI"
+    bl_context = "objectmode" 
+    bl_options = {"DEFAULT_CLOSED", "HEADER_LAYOUT_EXPAND"}
+
+    @classmethod
+    def poll(self, context):
+        return context.object is not None
+ 
+"""
+    ---------------
+
+    Property Groups
+    
+    ---------------
+
+"""
+    
+class ObjectMaterialProperties(BaseProperties):
     color: RGBAColorProperty("Color")
     shaded: BoolProperty("Shaded")
     illuminated: BoolProperty("Illuminated")
     h: FloatProperty("Hue", 0, (-3.1415) * 2, (3.1415) * 2)
-    s: FloatProperty("Saturation", 0, 0, 2)
-    l: FloatProperty("Luminosity", 0, -1, 1)
+    s: FloatProperty("Saturation", 1, 0, 2)
+    l: FloatProperty("Luminosity", 1, 0, 2)
+    b: FloatProperty("Brightness", 0, -1, 1)
+    c: FloatProperty("Contrast", 1, 0, 2)
     
     # Please avert your eyes in the following lines, I needed getmembers() to be ordered in this way
     # Why? because lazy (render_child function)
@@ -183,7 +250,6 @@ class ObjectMaterialProperties(bt.PropertyGroup):
     
     emission_0_enabled: BoolProperty("Enable Emission")
     emission_1_image: ImageProperty("Emission Image")
-    emission_2_alpha_clip: AlphaClipProperty("Emission")
     emission_3_strength: RangeProperty("Emission Strength")
     
     warp_0_enabled: BoolProperty("Enable Texture Warp")
@@ -208,22 +274,7 @@ class ObjectMaterialProperties(bt.PropertyGroup):
     
     culling: EnumProperty("Culling", ["Front and Back", "Front", "Back"])
     
-    fill: EnumProperty("Fill", ["Fill", "Line", "Point"])
-    
-    def render_child(self, target, child):
-        layout = target.layout
-        if f"{child}0_enabled" in self.keys():
-            layout.prop(self, f"{child}0_enabled")
-            if self[f"{child}0_enabled"]:
-                for name, _ in inspect.getmembers(self):
-                    if child in name and name != f"{child}0_enabled":
-                        layout.prop(self, name)
-        else:
-            for name, _ in inspect.getmembers(self):
-                if child in name:
-                    layout.prop(self, name)
-        layout.column()
-                    
+    fill: EnumProperty("Fill", ["Fill", "Line", "Point"])              
     
     def render(self, target):
         layout = target.layout
@@ -236,6 +287,9 @@ class ObjectMaterialProperties(bt.PropertyGroup):
         layout.prop(self, "h")
         layout.prop(self, "s")
         layout.prop(self, "l")
+        layout.label(text="Brightness & Contrast")
+        layout.prop(self, "b")
+        layout.prop(self, "c")
         layout.column()
         layout.label(text="Texture Effect")
         self.render_child(target, "texture_")
@@ -251,7 +305,7 @@ class ObjectMaterialProperties(bt.PropertyGroup):
         layout.prop(self, "culling")
         layout.prop(self, "fill")
 
-class ObjectBlendProperties(bt.PropertyGroup):  
+class ObjectBlendProperties(BaseProperties):  
     def update_src_func(self, context):
         self.func_src_alpha = self.func_src
         self.func_src_rgb = self.func_src
@@ -300,7 +354,36 @@ class ObjectBlendProperties(bt.PropertyGroup):
         else:
             layout.prop(self, "eq")
 
-class SceneProperties(bt.PropertyGroup):
+class ObjectExportProperties(BaseProperties):
+    dir_path: DirectoryPathProperty("Output Folder", "", set(["OUTPUT_PATH"])) 
+    file_name: FileNameProperty("Object File Name")
+
+    apply_mods: BoolProperty("Apply Modifiers", True)
+    embed_meshes: BoolProperty("Embed Meshes", True)
+    embed_textures: BoolProperty("Embed Textures", True)
+    no_hex_color: BoolProperty("Don't use Hex Color", False)
+    
+    tx_dir_path: DirectoryPathProperty("Mesh Folder", "tx", set(["OUTPUT_PATH"])) 
+    mesh_dir_path: DirectoryPathProperty("Textures Folder", "mesh", set(["OUTPUT_PATH"]))
+
+    def render(self, target):
+        layout = target.layout
+        layout.label(text="Path")
+        layout.prop(self, "dir_path")
+        layout.prop(self, "file_name")
+        layout.label(text="Settings")
+        layout.prop(self, "apply_mods")
+        layout.prop(self, "embed_meshes")
+        if not self.embed_meshes:
+            layout.prop(self, "mesh_dir_path")
+        layout.prop(self, "embed_textures")
+        if not self.embed_textures:
+            layout.prop(self, "tx_dir_path")
+        layout.prop(self, "no_hex_color")
+        layout.column()
+        pass
+
+class SceneProperties(BaseProperties):
     camera: CameraProperty("Scene Camera")
     
     # It returns...
@@ -322,20 +405,6 @@ class SceneProperties(bt.PropertyGroup):
     
     # This is why you should never be lazy
     
-    def render_child(self, target, child):
-        layout = target.layout
-        if f"{child}0_enabled" in self.keys():
-            layout.prop(self, f"{child}0_enabled")
-            if self[f"{child}0_enabled"]:
-                for name, _ in inspect.getmembers(self):
-                    if child in name and name != f"{child}0_enabled":
-                        layout.prop(self, name)
-        else:
-            for name, _ in inspect.getmembers(self):
-                if child in name:
-                    layout.prop(self, name)
-        layout.column()
-    
     def render(self, target):
         layout = target.layout
         layout.prop(self, "camera")
@@ -347,14 +416,21 @@ class SceneProperties(bt.PropertyGroup):
         layout.label(text="Ambient Light")
         self.render_child(target, "ambient_")
 
-class SceneExportProperties(bt.PropertyGroup):
+class SceneExportProperties(BaseProperties):
     
-    dir_path: DirectoryPathProperty("Output Folder") 
+    dir_path: DirectoryPathProperty("Output Folder", "", set(["OUTPUT_PATH"])) 
     file_name: FileNameProperty("Scene File Name") 
     
+    apply_mods: BoolProperty("Apply Modifiers", True)
+    cam_up_pos_y: BoolProperty("Camera 'UP' is Positive Y", True)
+    over_obj_export: BoolProperty("Override Object Export Properties", True)
     embed_objects: BoolProperty("Embed Objects", True)
     embed_meshes: BoolProperty("Embed Meshes", True)
     embed_textures: BoolProperty("Embed Textures", True)
+    no_hex_color: BoolProperty("Don't use Hex Color", False)
+    
+    tx_dir_path: DirectoryPathProperty("Mesh Folder", "tx", set(["OUTPUT_PATH"])) 
+    mesh_dir_path: DirectoryPathProperty("Textures Folder", "mesh", set(["OUTPUT_PATH"])) 
     
     def render(self, target):
         layout = target.layout
@@ -362,114 +438,143 @@ class SceneExportProperties(bt.PropertyGroup):
         layout.prop(self, "dir_path")
         layout.prop(self, "file_name")
         layout.label(text="Settings")
-        layout.prop(self, "embed_objects")
-        layout.prop(self, "embed_meshes")
-        layout.prop(self, "embed_textures")
+        layout.prop(self, "cam_up_pos_y")
+        layout.prop(self, "over_obj_export")
+        if self.over_obj_export:
+            layout.prop(self, "apply_mods")
+            layout.prop(self, "embed_objects")
+            layout.prop(self, "embed_meshes")
+            if not self.embed_meshes:
+                layout.prop(self, "mesh_dir_path")
+            layout.prop(self, "embed_textures")
+            if not self.embed_textures:
+                layout.prop(self, "tx_dir_path")
+            layout.prop(self, "no_hex_color")
         layout.column()
         pass
+"""
+    ---------
 
-class SCENE_OT_ExportSceneOperator(bt.Operator):
+    Operators
+
+    ---------
+"""
+
+class EXPORT_OT_ExportSceneObjectOperator(bt.Operator):
+    bl_label = "Export Scene Object to File (.mrod)"
+    bl_idname = "object.export_to_mrod"
+
+    def execute(self, props):
+        return {"FINISHED"}
+
+class EXPORT_OT_ExportSceneOperator(bt.Operator):
     bl_label = "Export Scene to File (.msd)"
     bl_idname = "scene.export_to_msd"
 
     def execute(self, props):
         return {"FINISHED"}
 
-class ITEM_PT_SceneObjectMaterialPanel(bt.Panel):
+"""
+    ------
+
+    Panels
+
+    ------
+"""
+
+class SCENEOBJECT_PT_SceneObjectMaterialPanel(PropertyPanel):
     bl_label = "Material Properties"
-    bl_idname = "OBJECT_PT_SceneObjectMaterialPanel"
-    bl_space_type = "VIEW_3D"   
-    bl_region_type = "UI"
+    bl_idname = "0_OBJECT_PT_SceneObjectMaterialPanel"
     bl_category = "Scene Object"
-    bl_context = "objectmode" 
-    
-    @classmethod
-    def poll(self, context):
-        return context.object is not None
     
     def draw(self, context):
         obj = context.object
         if obj.type != "MESH":
             return
         layout = self.layout
-        material = context.object.material_props
-        material.render(self)
+        props = context.object.material_props
+        props.render(self)
         layout.column()
 
-class ITEM_PT_SceneObjectBlendPanel(bt.Panel):
+class SCENEOBJECT_PT_SceneObjectBlendPanel(PropertyPanel):
     bl_label = "Blend Properties"
-    bl_idname = "OBJECT_PT_SceneObjectBlendPanel"
-    bl_space_type = "VIEW_3D"   
-    bl_region_type = "UI"
+    bl_idname = "1_SCENEOBJECT_PT_SceneObjectBlendPanel"
     bl_category = "Scene Object"
-    bl_context = "objectmode"
-    
-    @classmethod
-    def poll(self, context):
-        return context.object is not None
     
     def draw(self, context):
         obj = context.object
         if obj.type != "MESH":
             return
         layout = self.layout
-        blend = context.object.blend_props
-        blend.render(self)
+        props = context.object.blend_props
+        props.render(self)
+        layout.column()
+
+class SCENEOBJECT_PT_SceneObjectExportPanel(PropertyPanel):
+    bl_label = "Export Properties"
+    bl_idname = "2_SCENEOBJECT_PT_SceneObjectExportPanel"
+    bl_category = "Scene Object"
+    
+    def draw(self, context):
+        obj = context.object
+        if obj.type != "MESH":
+            return
+        layout = self.layout
+        props = context.object.object_export_props
+        props.render(self)
+        layout.label(text="Export")
+        layout.operator("object.export_to_mrod", text="Export Object")
         layout.column()
         
 
-class SCENE_PT_ScenePanel(bt.Panel):
+class SCENE_PT_ScenePanel(PropertyPanel):
     bl_label = "Scene Properties"
     bl_idname = "TOOL_PT_ScenePanel"
-    bl_space_type = "VIEW_3D"   
-    bl_region_type = "UI"
     bl_category = "Scene"
-    bl_context = "objectmode"
-    
-    @classmethod
-    def poll(self, context):
-        return context.object is not None
     
     def draw(self, context):
         obj = context.object
         layout = self.layout
-        blend = context.scene.scene_props
-        blend.render(self)
+        props = context.scene.scene_props
+        props.render(self)
 
-class SCENE_PT_SceneExportPanel(bt.Panel):
+class SCENE_PT_SceneExportPanel(PropertyPanel):
     bl_label = "Export Properties"
     bl_idname = "TOOL_PT_SceneExportPanel"
-    bl_space_type = "VIEW_3D"   
-    bl_region_type = "UI"
     bl_category = "Scene"
-    bl_context = "objectmode"
-    
-    @classmethod
-    def poll(self, context):
-        return context.object is not None
     
     def draw(self, context):
         obj = context.object
         layout = self.layout
-        blend = context.scene.scene_export_props
-        blend.render(self)
+        props = context.scene.scene_export_props
+        props.render(self)
         layout.label(text="Export")
         layout.operator("scene.export_to_msd", text="Export Scene")
         layout.column()
 
+"""
+    ------------------
+
+    Class Registration
+
+    ------------------
+"""
+
 classes = (
     ObjectMaterialProperties,
     ObjectBlendProperties,
+    ObjectExportProperties,
     SceneProperties,
     SceneExportProperties,
-    SCENE_OT_ExportSceneOperator,
-    ITEM_PT_SceneObjectMaterialPanel,
-    ITEM_PT_SceneObjectBlendPanel,
+    EXPORT_OT_ExportSceneOperator,
+    EXPORT_OT_ExportSceneObjectOperator,
+    SCENEOBJECT_PT_SceneObjectMaterialPanel,
+    SCENEOBJECT_PT_SceneObjectBlendPanel,
+    SCENEOBJECT_PT_SceneObjectExportPanel,
     SCENE_PT_ScenePanel,
     SCENE_PT_SceneExportPanel
 )
     
-
 def register():
     from bpy.utils import register_class
     for cls in classes:
@@ -477,6 +582,7 @@ def register():
     
     bt.Object.material_props = bp.PointerProperty(type=ObjectMaterialProperties)
     bt.Object.blend_props = bp.PointerProperty(type=ObjectBlendProperties)
+    bt.Object.object_export_props = bp.PointerProperty(type=ObjectExportProperties)
     bt.Scene.scene_props = bp.PointerProperty(type=SceneProperties)
     bt.Scene.scene_export_props = bp.PointerProperty(type=SceneExportProperties)
 
@@ -486,8 +592,10 @@ def unregister():
         unregister_class(cls)
     del bt.Object.material_props
     del bt.Object.blend_props
+    del bt.Object.object_export_props
     del bt.Scene.scene_props
     del bt.Scene.scene_export_props
+
 
 if __name__ == "__main__":
     register()

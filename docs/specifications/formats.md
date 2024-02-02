@@ -85,7 +85,6 @@ If image is to be saved in a separate file:
 		"enabled": true,
 		"image": {/* See ImageData2D:Layout */},
 		// Optional
-		"alphaClip": 0.1, // Texture alpha clipping
 		"strength": 1.0, // Emission strength
 	},
 	"warp": {
@@ -221,10 +220,11 @@ If data gets saved in a different file:
 # Camera3D
 
 ## Layout
-
+TODO: Add `"GIMBAL"` type
 ```javascript
 "camera": {
 	// Required
+	"type": "DEFAULT"
 	"eye": [0.0, 0.0, 0.0],
 	"at": [0.0, 0.0, -1.0],
 	"up": [0.0, 1.0, 0.0],

@@ -244,22 +244,30 @@ private:
 			// Get camera data
 			{
 				auto& dcam = def["camera"];
-				cam.eye		= VecMath::fromJSONArrayV3(dcam["eye"]);
-				cam.at		= VecMath::fromJSONArrayV3(dcam["at"]);
-				cam.up		= VecMath::fromJSONArrayV3(dcam["up"]);
-				cam.aspect	= VecMath::fromJSONArrayV2(dcam["aspect"]);
-				cam.fov		= dcam["fov"].get<float>();
-				cam.zNear	= dcam["zNear"].get<float>();
-				cam.zFar	= dcam["zFar"].get<float>();
-				if (dcam["ortho"].is_object()) {
-					cam.ortho.strength	= dcam["ortho"]["strength"].get<float>();
-					cam.ortho.origin	= VecMath::fromJSONArrayV2(dcam["ortho"]["origin"]);
-					cam.ortho.size		= VecMath::fromJSONArrayV2(dcam["ortho"]["origin"]);
+				String camType = "DEFAULT";
+				if (dcam["type"].is_string()) camType = dcam["type"].get<String>();
+				if (camType == "DEFAULT") {
+					Camera::Camera3D cam;
+					cam.eye		= VecMath::fromJSONArrayV3(dcam["eye"]);
+					cam.at		= VecMath::fromJSONArrayV3(dcam["at"]);
+					cam.up		= VecMath::fromJSONArrayV3(dcam["up"]);
+					if (dcam["relativeToEye"].is_boolean())
+						cam.relativeToEye	= dcam["relativeToEye"].get<bool>();
+					camera.fromCamera3D(cam);
+				} else if (camType == "GIMBAL") {
+					camera.position	= VecMath::fromJSONArrayV3(dcam["position"]);
+					camera.rotation	= VecMath::fromJSONArrayV3(dcam["rotation"]);
 				}
-				if (dcam["relativeToEye"].is_boolean())
-					cam.relativeToEye	= dcam["relativeToEye"].get<bool>();
+				camera.aspect	= VecMath::fromJSONArrayV2(dcam["aspect"]);
+				camera.fov		= dcam["fov"].get<float>();
+				camera.zNear	= dcam["zNear"].get<float>();
+				camera.zFar		= dcam["zFar"].get<float>();
+				if (dcam["ortho"].is_object()) {
+					camera.ortho.strength	= dcam["ortho"]["strength"].get<float>();
+					camera.ortho.origin		= VecMath::fromJSONArrayV2(dcam["ortho"]["origin"]);
+					camera.ortho.size		= VecMath::fromJSONArrayV2(dcam["ortho"]["origin"]);
+				}
 			}
-			camera.fromCamera3D(cam);
 			// Get world data
 			{
 				auto& dmat = def["world"];
