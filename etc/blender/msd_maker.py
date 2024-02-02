@@ -347,7 +347,7 @@ class ITEM_PT_SceneObjectMaterialPanel(bt.Panel):
     bl_idname = "OBJECT_PT_SceneObjectMaterialPanel"
     bl_space_type = "VIEW_3D"   
     bl_region_type = "UI"
-    bl_category = "Item"
+    bl_category = "Scene Object"
     bl_context = "objectmode" 
     
     @classmethod
@@ -368,7 +368,7 @@ class ITEM_PT_SceneObjectBlendPanel(bt.Panel):
     bl_idname = "OBJECT_PT_SceneObjectBlendPanel"
     bl_space_type = "VIEW_3D"   
     bl_region_type = "UI"
-    bl_category = "Item"
+    bl_category = "Scene Object"
     bl_context = "objectmode"
     
     @classmethod
