@@ -231,9 +231,9 @@ class ObjectBlendProperties(bt.PropertyGroup):
         else:
             layout.prop(self, "eq")
 
-class OBJECT_PT_SceneObjectMaterialManager(bt.Panel):
-    bl_label = "Scene Object Properties"
-    bl_idname = "SceneObjectManager"
+class OBJECT_PT_SceneObjectMaterialPanel(bt.Panel):
+    bl_label = "Scene Object Material Properties"
+    bl_idname = "OBJECT_PT_SceneObjectMaterialPanel"
     bl_space_type = "VIEW_3D"   
     bl_region_type = "UI"
     bl_category = "Item"
@@ -249,17 +249,35 @@ class OBJECT_PT_SceneObjectMaterialManager(bt.Panel):
             return
         layout = self.layout
         material = context.object.material_props
-        blend = context.object.blend_props
         material.render(self)
         layout.separator_spacer()
+
+class OBJECT_PT_SceneObjectBlendPanel(bt.Panel):
+    bl_label = "Scene Object Blend Properties"
+    bl_idname = "OBJECT_PT_SceneObjectBlendPanel"
+    bl_space_type = "VIEW_3D"   
+    bl_region_type = "UI"
+    bl_category = "Item"
+    bl_context = "objectmode"  
+    
+    @classmethod
+    def poll(self, context):
+        return context.object is not None
+    
+    def draw(self, context):
+        obj = context.object
+        if obj.type != "MESH":
+            return
+        layout = self.layout
+        blend = context.object.blend_props
         blend.render(self)
         layout.separator_spacer()
-        
 
 classes = (
     ObjectMaterialProperties,
     ObjectBlendProperties,
-    OBJECT_PT_SceneObjectMaterialManager
+    OBJECT_PT_SceneObjectMaterialPanel,
+    OBJECT_PT_SceneObjectBlendPanel
 )
 
 def register():
