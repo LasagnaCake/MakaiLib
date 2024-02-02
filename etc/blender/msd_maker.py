@@ -130,6 +130,9 @@ class ObjectMaterialProperties(bt.PropertyGroup):
     s: FloatProperty("Saturation", 0, 0, 2)
     l: FloatProperty("Luminosity", 0, -1, 1)
     
+    # Please avert your eyes in the following lines, I needed getmembers() to be ordered in this way
+    # Why? because lazy (render_child function)
+    
     texture_0_enabled: BoolProperty("Enable Texture")
     texture_1_image: ImageProperty("Texture Image")
     texture_2_alpha_clip: AlphaClipProperty("Texture")
