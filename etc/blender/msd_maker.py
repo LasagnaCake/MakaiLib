@@ -121,6 +121,11 @@ def BlendEquationProperty(prop_name, prop_default, prop_update=None):
 
 class ObjectMaterialProperties(bt.PropertyGroup):
     color: ColorProperty("Color")
+    shaded: BoolProperty("Shaded")
+    illuminated: BoolProperty("Illuminated")
+    h: FloatProperty("Hue", 0, (-3.1415) * 2, (3.1415) * 2)
+    s: FloatProperty("Saturation", 0, 0, 2)
+    l: FloatProperty("Luminosity", 0, -1, 1)
     
     texture_0_enabled: BoolProperty("Enable Texture")
     texture_1_image: ImageProperty("Texture Image")
@@ -162,6 +167,11 @@ class ObjectMaterialProperties(bt.PropertyGroup):
     def render(self, target):
         layout = target.layout
         layout.prop(self, "color")
+        layout.prop(self, "shaded")
+        layout.prop(self, "illuminated")
+        layout.prop(self, "h")
+        layout.prop(self, "s")
+        layout.prop(self, "l")
         layout.separator_spacer()
         try:
             self.render_child(target, "texture_")
@@ -223,8 +233,8 @@ class ObjectBlendProperties(bt.PropertyGroup):
         else:
             layout.prop(self, "eq")
 
-class SceneObjectMaterialManager(bt.Panel):
-    bl_label = "Object Properties"
+class OBJECT_PT_SceneObjectMaterialManager(bt.Panel):
+    bl_label = "Scene Object Properties"
     bl_idname = "SceneObjectManager"
     bl_space_type = "VIEW_3D"   
     bl_region_type = "UI"
@@ -236,6 +246,9 @@ class SceneObjectMaterialManager(bt.Panel):
         return context.object is not None
     
     def draw(self, context):
+        obj = context.object
+        if obj.type != "MESH":
+            return
         layout = self.layout
         material = context.object.material_props
         blend = context.object.blend_props
@@ -248,7 +261,7 @@ class SceneObjectMaterialManager(bt.Panel):
 classes = (
     ObjectMaterialProperties,
     ObjectBlendProperties,
-    SceneObjectMaterialManager
+    OBJECT_PT_SceneObjectMaterialManager
 )
 
 def register():
