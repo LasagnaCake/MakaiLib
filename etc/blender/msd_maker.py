@@ -159,6 +159,9 @@ class ObjectMaterialProperties(bt.PropertyGroup):
     gradient_3_begin: ColorProperty("Gradient Begin", (0,0,0,1))
     gradient_4_end: ColorProperty("Gradient End", (1,1,1,1))
     
+    # Ugliness over
+    # Hopefully that won't happen again
+    
     culling: DrawProperty("Culling")
     
     fill: DrawProperty("Fill")
