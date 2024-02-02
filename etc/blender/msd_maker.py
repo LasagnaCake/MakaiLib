@@ -45,7 +45,10 @@ def Vector3Property(prop_name, prop_default=(0, 0, 0)):
     )
 
 def ImageProperty(prop_name = "Image"):
-    return None
+    return bp.PointerProperty(
+        name=prop_name,
+        type=bt.Image
+    )
 
 def ColorProperty(prop_name = "Color", prop_default=(1,1,1,1)):
     return bp.FloatVectorProperty(
@@ -173,14 +176,11 @@ class ObjectMaterialProperties(bt.PropertyGroup):
         layout.prop(self, "s")
         layout.prop(self, "l")
         layout.separator_spacer()
-        try:
-            self.render_child(target, "texture_")
-            self.render_child(target, "emission_")
-            self.render_child(target, "warp_")
-            self.render_child(target, "negative_")
-            self.render_child(target, "gradient_")
-        except:
-            pass
+        self.render_child(target, "texture_")
+        self.render_child(target, "emission_")
+        self.render_child(target, "warp_")
+        self.render_child(target, "negative_")
+        self.render_child(target, "gradient_")
         layout.prop(self, "culling")
         layout.prop(self, "fill")
 
