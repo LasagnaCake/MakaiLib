@@ -66,18 +66,7 @@ def RangeProperty(prop_name, prop_default=0):
 def AlphaClipProperty(prop_name):
     return RangeProperty(prop_name + " Alpha Clip", 0.2)
 
-def DrawProperty(prop_name):
-    return bp.EnumProperty(
-        name=prop_name,
-        items=[
-            ("enum_0", "Front and Back", "", 0),
-            ("enum_1", "Front", "", 1),
-            ("enum_2", "Back", "", 2)
-        ],
-        default=0
-    )
-
-def BlendProperty(prop_name, prop_values, prop_default=0, prop_update=None):
+def EnumProperty(prop_name, prop_values, prop_default=0, prop_update=None):
     prop_items = [(f"enum_{i}", prop_values[i], "", i) for i in range(len(prop_values))]
     return bp.EnumProperty(
         name=prop_name,
@@ -86,39 +75,45 @@ def BlendProperty(prop_name, prop_values, prop_default=0, prop_update=None):
         update=prop_update
     )
 
+def DrawProperty(prop_name):
+    return EnumProperty(prop_name, ["Front and Back","Front","Back"], 0)
+
+def ChannelProperty(prop_name, default=0, secret_channel_minus_one=False):
+    values = ["Red", "Green", "Blue", "Alpha"]
+
 blend_equations = [
-    "GL_ZERO",
-    "GL_ONE",
-    "GL_FUNC_ADD",
-    "GL_FUNC_SUBTRACT",
-    "GL_FUNC_REVERSE_SUBTRACT",
-    "GL_MIN",
-    "GL_MAX"
+    "Zero",
+    "One",
+    "Add",
+    "Subtract",
+    "Reverse Subtract",
+    "Min",
+    "Max"
 ]
 
 blend_functions = [
-    "GL_ZERO",
-    "GL_ONE",
-    "GL_SRC_COLOR",
-    "GL_ONE_MINUS_SRC_COLOR",
-    "GL_DST_COLOR",
-    "GL_ONE_MINUS_DST_COLOR",
-    "GL_SRC_ALPHA",
-    "GL_ONE_MINUS_SRC_ALPHA",
-    "GL_DST_ALPHA",
-    "GL_ONE_MINUS_DST_ALPHA",
-    "GL_CONSTANT_COLOR",
-    "GL_ONE_MINUS_CONSTANT_COLOR",
-    "GL_CONSTANT_ALPHA",
-    "GL_ONE_MINUS_CONSTANT_ALPHA",
-    "GL_SRC_ALPHA_SATURATE"
+    "Zero",
+    "One",
+    "SRC color",
+    "One minus SRC Color",
+    "DST Color",
+    "One Minus DST Color",
+    "SRC Alpha",
+    "One Minus SRC Alpha",
+    "DST Alpha",
+    "One Minus DST Alpha",
+    "Constant Color",
+    "One Minus Constant color",
+    "Constant Alpha",
+    "One Minus Constant alpha",
+    "SRC Alpha Saturate"
 ]
 
 def BlendFunctionProperty(prop_name, prop_default, prop_update=None):
-    return BlendProperty(prop_name, blend_functions, prop_default, prop_update)
+    return EnumProperty(prop_name, blend_functions, prop_default, prop_update)
 
 def BlendEquationProperty(prop_name, prop_default, prop_update=None):
-    return BlendProperty(prop_name, blend_equations, prop_default, prop_update)
+    return EnumProperty(prop_name, blend_equations, prop_default, prop_update)
 
 # Class stuff
 
