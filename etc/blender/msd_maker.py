@@ -192,7 +192,7 @@ class ObjectMaterialProperties(bt.PropertyGroup):
     gradient_4_invert: BoolProperty("Gradient Invert")
     
     # Ugliness over
-    # Hopefully that won't happen again
+    # Hopefully that won't happen again (clueless)
     
     culling: EnumProperty("Culling", ["Front and Back", "Front", "Back"])
     
@@ -200,9 +200,16 @@ class ObjectMaterialProperties(bt.PropertyGroup):
     
     def render_child(self, target, child):
         layout = target.layout
-        for name, _ in inspect.getmembers(self):
-            if child in name:
-                layout.prop(self, name)
+        if f"{child}0_enabled" in self.keys():
+            layout.prop(self, f"{child}0_enabled")
+            if self[f"{child}0_enabled"]:
+                for name, _ in inspect.getmembers(self):
+                    if child in name and name != f"{child}0_enabled":
+                        layout.prop(self, name)
+        else:
+            for name, _ in inspect.getmembers(self):
+                if child in name:
+                    layout.prop(self, name)
         layout.column()
                     
     
@@ -305,9 +312,16 @@ class SceneProperties(bt.PropertyGroup):
     
     def render_child(self, target, child):
         layout = target.layout
-        for name, _ in inspect.getmembers(self):
-            if child in name:
-                layout.prop(self, name)
+        if f"{child}0_enabled" in self.keys():
+            layout.prop(self, f"{child}0_enabled")
+            if self[f"{child}0_enabled"]:
+                for name, _ in inspect.getmembers(self):
+                    if child in name and name != f"{child}0_enabled":
+                        layout.prop(self, name)
+        else:
+            for name, _ in inspect.getmembers(self):
+                if child in name:
+                    layout.prop(self, name)
         layout.column()
     
     def render(self, target):
@@ -343,7 +357,7 @@ class SCENE_OT_ExportSceneOperator(bt.Operator):
         return {"FINISHED"}
 
 class ITEM_PT_SceneObjectMaterialPanel(bt.Panel):
-    bl_label = "Scene Object Material Properties"
+    bl_label = "Material Properties"
     bl_idname = "OBJECT_PT_SceneObjectMaterialPanel"
     bl_space_type = "VIEW_3D"   
     bl_region_type = "UI"
@@ -364,7 +378,7 @@ class ITEM_PT_SceneObjectMaterialPanel(bt.Panel):
         layout.column()
 
 class ITEM_PT_SceneObjectBlendPanel(bt.Panel):
-    bl_label = "Scene Object Blend Properties"
+    bl_label = "Blend Properties"
     bl_idname = "OBJECT_PT_SceneObjectBlendPanel"
     bl_space_type = "VIEW_3D"   
     bl_region_type = "UI"
@@ -404,7 +418,7 @@ class SCENE_PT_ScenePanel(bt.Panel):
         blend.render(self)
 
 class SCENE_PT_SceneExportPanel(bt.Panel):
-    bl_label = "Scene Export Properties"
+    bl_label = "Export Properties"
     bl_idname = "TOOL_PT_SceneExportPanel"
     bl_space_type = "VIEW_3D"   
     bl_region_type = "UI"
@@ -419,7 +433,9 @@ class SCENE_PT_SceneExportPanel(bt.Panel):
         obj = context.object
         layout = self.layout
         blend = context.scene.scene_export_props
+        layout.label(text="Settings")
         blend.render(self)
+        layout.label(text="Export")
         layout.operator("scene.export_to_msd", text="Export Scene")
         layout.column()
 
