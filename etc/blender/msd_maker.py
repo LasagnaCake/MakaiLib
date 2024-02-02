@@ -152,6 +152,18 @@ def BlendFunctionProperty(prop_name, prop_default, prop_update=None):
 def BlendEquationProperty(prop_name, prop_default, prop_update=None):
     return EnumProperty(prop_name, blend_equations, prop_default, prop_update)
 
+def DirectoryPathProperty(prop_name):
+    return bp.StringProperty(
+        name=prop_name,
+        subtype="DIR_PATH"
+    )
+
+def FileNameProperty(prop_name):
+    return bp.StringProperty(
+        name=prop_name,
+        subtype="FILE_NAME"
+    )
+
 # Class stuff
     
 class ObjectMaterialProperties(bt.PropertyGroup):
@@ -337,12 +349,19 @@ class SceneProperties(bt.PropertyGroup):
 
 class SceneExportProperties(bt.PropertyGroup):
     
+    dir_path: DirectoryPathProperty("Output Folder") 
+    file_name: FileNameProperty("Scene File Name") 
+    
     embed_objects: BoolProperty("Embed Objects", True)
     embed_meshes: BoolProperty("Embed Meshes", True)
     embed_textures: BoolProperty("Embed Textures", True)
     
     def render(self, target):
         layout = target.layout
+        layout.label(text="Path")
+        layout.prop(self, "dir_path")
+        layout.prop(self, "file_name")
+        layout.label(text="Settings")
         layout.prop(self, "embed_objects")
         layout.prop(self, "embed_meshes")
         layout.prop(self, "embed_textures")
@@ -433,7 +452,6 @@ class SCENE_PT_SceneExportPanel(bt.Panel):
         obj = context.object
         layout = self.layout
         blend = context.scene.scene_export_props
-        layout.label(text="Settings")
         blend.render(self)
         layout.label(text="Export")
         layout.operator("scene.export_to_msd", text="Export Scene")
