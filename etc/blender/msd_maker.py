@@ -75,9 +75,6 @@ def EnumProperty(prop_name, prop_values, prop_default=0, prop_update=None):
         update=prop_update
     )
 
-def DrawProperty(prop_name):
-    return EnumProperty(prop_name, ["Front and Back","Front","Back"], 0)
-
 def ChannelProperty(prop_name, default=0, secret_channel_minus_one=False):
     values = ["Red", "Green", "Blue", "Alpha"]
 
@@ -157,9 +154,9 @@ class ObjectMaterialProperties(bt.PropertyGroup):
     # Ugliness over
     # Hopefully that won't happen again
     
-    culling: DrawProperty("Culling")
+    culling: EnumProperty("Culling", ["Front and Back", "Front", "Back"])
     
-    fill: DrawProperty("Fill")
+    fill: EnumProperty("Fill", ["Fill", "Line", "Point"])
     
     def render_child(self, target, child):
         for name, _ in inspect.getmembers(self):
