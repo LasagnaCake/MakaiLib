@@ -9,8 +9,9 @@ import json
 
 bl_info = {
 	"name": "MROD (Makai Renderable Object Definition) Exporter",
+    "author": "LasagnaCake",
 	"blender": (3, 4, 0),
-	"category": "Import-Export",
+	"category": "Import-Export"
 }
 
 class ExportMRODOperator(Operator, ExportHelper):

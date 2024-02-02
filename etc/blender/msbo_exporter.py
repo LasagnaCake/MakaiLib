@@ -6,8 +6,9 @@ from bpy_extras.io_utils import ExportHelper
 
 bl_info = {
 	"name": "MSBO (Makai Simple Binary Object) Exporter",
+    "author": "LasagnaCake",
 	"blender": (3, 4, 0),
-	"category": "Import-Export",
+	"category": "Import-Export"
 }
 
 # Exports every mesh into separate files, into a folder of the name given to the file

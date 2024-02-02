@@ -9,8 +9,9 @@ import json
 
 bl_info = {
 	"name": "MSD (Makai Scene Definition) Exporter",
+    "author": "LasagnaCake",
 	"blender": (3, 4, 0),
-	"category": "Import-Export",
+	"category": "Import-Export"
 }
 
 class ExportMSDOperator(Operator, ExportHelper):
