@@ -149,7 +149,7 @@ protected:
 			actor(trans),
 			camera(Scene::camera.matrix()),
 			projection(Scene::camera.projection()),
-			normals(Scene::world * actor)
+			normals(Scene::world * actor * camera)
 		;
 		normals.transpose().invert();
 		// Set transformation matrices
