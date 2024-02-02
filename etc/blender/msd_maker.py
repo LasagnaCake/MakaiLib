@@ -28,20 +28,20 @@ def FloatProperty(prop_name, prop_default=0, prop_min=sys.float_info.min, prop_m
         max=prop_max
     )
 
-def Vector2Property(prop_name, prop_default=(0, 0)):
+def Vector2Property(prop_name, prop_default=(0, 0), prop_subtype="XYZ"):
     return bp.FloatVectorProperty(
         name=prop_name,
         size=2,
         default=prop_default,
-        subtype="XYZ"
+        subtype=prop_subtype
     )
 
-def Vector3Property(prop_name, prop_default=(0, 0, 0)):
+def Vector3Property(prop_name, prop_default=(0, 0, 0), prop_subtype="XYZ"):
     return bp.FloatVectorProperty(
         name=prop_name,
         size=3,
         default=prop_default,
-        subtype="XYZ"
+        subtype=prop_subtype
     )
 
 def ImageProperty(prop_name = "Image"):
@@ -127,7 +127,7 @@ def BlendEquationProperty(prop_name, prop_default, prop_update=None):
     return EnumProperty(prop_name, blend_equations, prop_default, prop_update)
 
 # Class stuff
-
+    
 class ObjectMaterialProperties(bt.PropertyGroup):
     color: ColorProperty("Color")
     shaded: BoolProperty("Shaded")
@@ -193,6 +193,8 @@ class ObjectMaterialProperties(bt.PropertyGroup):
         self.render_child(target, "warp_")
         self.render_child(target, "negative_")
         self.render_child(target, "gradient_")
+        layout.prop(self, "instances")
+        layout.separator_spacer()
         layout.prop(self, "culling")
         layout.prop(self, "fill")
 
@@ -298,7 +300,7 @@ def register():
     from bpy.utils import register_class
     for cls in classes:
         register_class(cls)
-
+    
     bpy.types.Object.material_props = bp.PointerProperty(type=ObjectMaterialProperties)
     bpy.types.Object.blend_props = bp.PointerProperty(type=ObjectBlendProperties)
 
