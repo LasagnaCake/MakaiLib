@@ -710,7 +710,7 @@ class EXPORT_OT_ExportSceneObjectOperator(bt.Operator):
             context,
             context.object,
             export_props.file_name,
-            cexport_props.folder_path,
+            export_props.folder_path,
             export_props.tx_folder,
             export_props.mesh_folder,
             export_props.embed_texture,
@@ -729,14 +729,19 @@ class EXPORT_OT_ExportSceneOperator(bt.Operator):
     bl_idname = "scene.export_to_msd"
 
     def execute(self, context):
+        scene_props = context.scene.scene_props
+        export_props = context.scene.scene_export_props
         def hex_color_or_array(color, color_func=as_hex_string):
             return color_func(color) if context.scene.scene_props.hex_color else [x for x in color]
         objects = [obj for obj in bpy.data.objects if obj.type == "MESH"]
         print(f"Objects: {len(objects)}")
-        make_if_not_exists(context.scene.scene_props.dir_path)
-        camera = context.scene.scene_props.camera
+        make_if_not_exists(scene_props.dir_path)
+        camera = scene_props.camera
         cpos, crot, cscale = camera.matrix_world.decompose()
         crot = crot.to_euler('YXZ')
+        resolution = context.scene.render.resolution
+        caspect = [resolution.x / resolution.y, 1]
+        ortho_size = camera.data.ortho_scale
         scenedef = {
             "camera": {
                 "type": "GIMBAL",
@@ -745,44 +750,42 @@ class EXPORT_OT_ExportSceneOperator(bt.Operator):
                 "fov": camera.data.angle,
                 "zNear": camera.data.clip_start,
                 "zFar": camera.data.clip_end,
-                # TODO: aspect ratio
-                "aspect": None,
+                "aspect": caspect,
                 "ortho": {
                     "enabled": camera.data.type == "ORTHO",
                     "origin": [0.0, 0.0],
-                    "size": [camera.data.ortho_scale, camera.data.ortho_scale]
+                    "size": [ortho_size * caspect[0], ortho_size * caspect[1]]
                 },
                 "relativeToEye": True
             }
         }
         scenedef["world"] = {
             "nearFog": {
-                "enabled": context.scene.scene_props.near_fog_0_enabled,
-                "start": context.scene.scene_props.near_fog_1_start,
-                "stop": context.scene.scene_props.near_fog_2_stop,
-                "color": hex_color_or_array(context.scene.scene_props.near_fog_3_color),
-                "strength": context.scene.scene_props.near_fog_4_strength
+                "enabled": scene_props.near_fog_0_enabled,
+                "start": scene_props.near_fog_1_start,
+                "stop": scene_props.near_fog_2_stop,
+                "color": hex_color_or_array(scene_props.near_fog_3_color),
+                "strength": scene_props.near_fog_4_strength
             },
             "farFog": {
-                "enabled": context.scene.scene_props.far_fog_0_enabled,
-                "start": context.scene.scene_props.far_fog_1_start,
-                "stop": context.scene.scene_props.far_fog_2_stop,
-                "color": hex_color_or_array(context.scene.scene_props.far_fog_3_color),
-                "strength": context.scene.scene_props.far_fog_4_strength
+                "enabled": scene_props.far_fog_0_enabled,
+                "start": scene_props.far_fog_1_start,
+                "stop": scene_props.far_fog_2_stop,
+                "color": hex_color_or_array(scene_props.far_fog_3_color),
+                "strength": scene_props.far_fog_4_strength
             },
             "ambient": {
-                "color": hex_color_or_array(context.scene.scene_props.ambient_0_color, as_hex_string_rgb),
-                "strength": context.scene.scene_props.ambient_1_strength
+                "color": hex_color_or_array(scene_props.ambient_0_color, as_hex_string_rgb),
+                "strength": scene_props.ambient_1_strength
             }
         }
-        if self.embed_objects:
+        if export_props.embed_objects:
             scenedef["data"] = {}
         else:
             scenedef["path"] = []
-        export_props = context.scene.scene_export_props
         for obj in objects:
             rendef = None
-            if context.scene.scene_export_props.over_obj_export:
+            if export_props.over_obj_export:
                 rendef = create_render_definition(
                     context,
                     obj,
@@ -808,14 +811,16 @@ class EXPORT_OT_ExportSceneOperator(bt.Operator):
                     obj.object_export_props.apply_modifiers,
                     not self.no_hex_color
                 )
-            if context.scene.scene_export_props.embed_objects:
+            if export_props.embed_objects:
                 scenedef["data"][obj.name] = rendef
             else:
-                defpath = f"{self.filepath}\\{obj.name}\\{obj.name}.mrod"
+                obj_name = obj.object_export_props.file_name
+                obj_name = obj_name if (obj_name is not None) and (obj_name != "") else obj.name
+                defpath = f"{export_props.dir_path}\\{obj_name}\\{obj_name}.mrod"
                 with open(defpath, "wt") as f:
                     f.write(json.dumps(rendef, indent="\t"))
                 scenedef["path"].append({
-                    "source": f"{obj.name}\\{obj.name}.mrod",
+                    "source": f"{obj_name}\\{obj_name}.mrod",
                     "type": "MROD"
                 })
             path = f"{export_props.dir_path}\\{export_props.file_name}.msd"
