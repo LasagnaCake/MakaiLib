@@ -662,8 +662,8 @@ class SceneExportProperties(BaseProperties):
     dir_path: DirectoryPathProperty("Output Folder", "", set(["OUTPUT_PATH"])) 
     file_name: FileNameProperty("Scene File Name") 
     
-    apply_mods: BoolProperty("Apply Modifiers", True)
     over_obj_export: BoolProperty("Override Object Export Properties", True)
+    apply_mods: BoolProperty("Apply Modifiers", True)
     embed_objects: BoolProperty("Embed Objects", True)
     embed_meshes: BoolProperty("Embed Meshes", True)
     embed_textures: BoolProperty("Embed Images", True)
@@ -709,13 +709,13 @@ class EXPORT_OT_ExportSceneObjectOperator(bt.Operator):
         objdef = create_render_definition(
             context,
             context.object,
-            context.object.object_export_props.file_name,
-            context.object.object_export_props.folder_path,
-            context.object.object_export_props.tx_folder,
-            context.object.object_export_props.mesh_folder,
-            context.object.object_export_props.embed_texture,
-            context.object.object_export_props.embed_mesh,
-            context.object.object_export_props.apply_modifiers,
+            export_props.file_name,
+            cexport_props.folder_path,
+            export_props.tx_folder,
+            export_props.mesh_folder,
+            export_props.embed_texture,
+            export_props.embed_mesh,
+            export_props.apply_modifiers,
             not self.no_hex_color
         )
         path = f"{export_props.dir_path}\\{export_props.file_name}.mrod"
