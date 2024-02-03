@@ -18,6 +18,7 @@ bl_info = {
     "category": "Development"
 }
 
+
 """
     ----------
 
@@ -187,6 +188,246 @@ def FileNameProperty(prop_name, prop_default="", prop_options=set()):
         default=prop_default,
         options=prop_options
     )
+    
+"""
+    ----------------
+
+    Helper Functions
+    
+    ----------------
+"""
+
+def make_if_not_exists(dir: str):
+    if not os.path.isdir(dir):
+        os.makedirs(dir)
+
+def save_image_to_file(image, path):
+    # Check if the image is not packed
+    image_packed = False
+    if image.packed_file is not None:
+        image_packed = True
+        try:
+            image_texture.unpack()
+        except:
+            return "ERR_IMAGE_UNPACKING_FAILED"
+    # Save the image to a file (adjust the path as needed)
+    image_texture.file_format = "PNG"
+    image_texture.save_render(image_path, scene=None, quality=75)
+    if image_packed:
+        image_texture.pack()
+    return "OK"
+
+
+def image_to_base64(path):
+    with open(path, "rb") as image_file:
+        return str(base64.b64encode(image_file.read()))[2:-1]
+
+def as_hex_string(color):
+    def to255(x): 
+        return max(0, min(x*255, 255))
+
+    return "#{0:02x}{1:02x}{2:02x}{2:02x}".format(to255(color[0]), to255(color[1]), to255(color[2]), to255(color[3]))
+
+def as_hex_string_rgb(color):
+    def to255(x): 
+        return max(0, min(x*255, 255))
+
+    return "#{0:02x}{1:02x}{2:02x}".format(to255(color[0]), to255(color[1]), to255(color[2]))
+
+
+def process_image_file(embed_texture, image, path, temp_path, relative_path = "", enabled=True, alpha_clip=0.2):
+    if not embed_texture:
+        result = save_texture_to_image(image, path)
+        print(f"Texture: {result}")
+        if result == "OK":
+            file = {
+                "enabled": enabled,
+                "image": {"path": relative_path},
+            }
+            if alpha_clip is not None:
+                file["alphaClip"] = alpha_clip
+            return file
+    else:
+        result = save_texture_to_image(image, temp_path)
+        if result == "OK":
+            imgstr = str(image_to_base64(temp_path))
+            os.remove(temp_path)
+            if imgstr is None:
+                return None
+            file = {
+                "enabled": enabled,
+                "image": imgstr,
+                "encoding": "base64"
+            }
+            if alpha_clip is not None:
+                file["alphaClip"] = alpha_clip
+            return file
+    return None
+
+def get_binary_data(mesh):
+    # iterate through the mesh's loop triangles to collect the vertex data
+    vertex_data = []
+    component_data = "x,y,z"
+    if mesh.uv_layers.active: component_data += ",u,v"
+    if mesh.vertex_colors.active: component_data += ",r,g,b,a"
+    component_data += ",nx,ny,nz"
+    for loop_tri in mesh.loop_triangles:
+        for loop_index in loop_tri.loops:
+            vertex = mesh.vertices[mesh.loops[loop_index].vertex_index]
+            normal = vertex.normal
+            uv = mesh.uv_layers.active.data[loop_index].uv if mesh.uv_layers.active else None
+            color = mesh.vertex_colors.active.data[loop_index].color if mesh.vertex_colors.active else None
+            vertex_pos = vertex.co
+            # Copy position data
+            vtxdat = [-vertex_pos.x, vertex_pos.z, vertex_pos.y]
+            # Get UV & color data, if applicable
+            if mesh.uv_layers.active:
+                vtxdat.extend([uv[0], 1-uv[1]])
+            if mesh.vertex_colors.active:
+                vtxdat.extend([color[0], color[1], color[2], color[3]])
+            # Append normal data
+            vtxdat.extend([-normal.x, normal.z, normal.y])
+            # Append to array
+            vertex_data.extend(vtxdat)
+    # Pack binary
+    vertex_binary = struct.pack("<" + "f"*len(vertex_data), *vertex_data)
+    return (vertex_binary, component_data)
+
+def create_render_definition(context, obj, file_name, folder_path, tx_folder, mesh_folder, embed_texture, embed_mesh, apply_modifiers, hexcolor):
+    def hex_color_or_array(color):
+        return as_hex_string(color) if hexcolor else [x for x in color]
+    mrodpath = folder_path + "\\" + file_name 
+    txpath = mrodpath + "\\" + tx_folder
+    meshpath = mrodpath + "\\" + mesh_folder
+    if not embed_texture:
+        make_if_not_exists(txpath)
+    if not embed_mesh:
+        make_if_not_exists(meshpath)
+    dg = context.evaluated_depsgraph_get()
+    mesh = None
+    #TODO: fix this
+    if apply_modifiers:
+        mesh = obj.to_mesh(preserve_all_data_layers=False, depsgraph=dg)
+    else:
+        mesh = obj.to_mesh(preserve_all_data_layers=True, depsgraph=dg)
+    verts = mesh.vertices
+    # iterate through the mesh's loop triangles to collect the vertex data
+    vertex_binary, vertex_data = get_binary_data(mesh)
+    # Do appropriate mesh procedure
+    strfile = {
+        "version": 0,
+        "mesh": {
+            "data": None,
+            "components": component_data
+        }
+    }
+    if embed_mesh:
+        strfile["mesh"]["data"] = str(base64.b64encode(vertex_binary))[2:-1]
+        strfile["mesh"]["encoding"] = "base64"
+    else:
+        with open(f"{meshpath}\\{obj.name}.mesh", "wb") as f:
+            # write the binary data to the file
+            f.write(vertex_binary)
+        strfile["mesh"]["data"] = {"path": f"{mesh_folder}\\{obj.name}.mesh"}
+    # Get transforms
+    pos, rot, scale = obj.matrix_world.decompose()
+    rot = rot.to_euler('YXZ')
+    strfile["trans"] = {
+        "position": [pos.x, pos.y, pos.z],
+        "rotation": [rot.x, rot.y, rot.z],
+        "scale": [scale.x, scale.y, scale.z]
+    }
+    # Set preliminary material data
+    strfile["material"] = {
+        "color": hex_color_or_array(obj.material_props.color),
+        "shaded": obj.material_props.shaded,
+        "illuminated": obj.material_props.illuminated,
+        "hue": obj.material_props.h,
+        "saturation": obj.material_props.s,
+        "luminosity": obj.material_props.l,
+        "brightness": obj.material_props.b,
+        "contrast": obj.material_props.c,
+        "instances": [
+            [0.0, 0.0, 0.0],
+        ],
+        "culling": obj.material_props.culling,
+        "fill": obj.material_props.fill
+    }
+    # set blend stuff
+    if obj.blend_props.func_sep:
+        strfile["blend"]["function"] = {
+            "srcColor": obj.blend_props.func_src_rgb, 
+            "dstColor": obj.blend_props.func_dst_rgb,
+            "srcAlpha": obj.blend_props.func_src_alpha,
+            "dstAlpha": obj.blend_props.func_dst_alpha
+        }
+    else:
+        strfile["blend"]["function"] = {
+            "src": obj.blend_props.func_src, 
+            "dst": obj.blend_props.func_dst,
+        }
+        
+    if obj.blend_props.eq_sep:
+        strfile["blend"]["equation"] = {
+            "color": obj.blend_props.eq_rgb,
+            "alpha": obj.blend_props.eq_alpha
+        }
+    else:
+        strfile["blend"]["equation"] = obj.blend_props.eq
+    # Set active (TODO: Check if object visible in scene)
+    strfile["active"] = True
+    # Set texture
+    strfile["material"]["texture"] = process_image_file(
+        embed_texture,
+        obj.material_props.texture_1_image,
+        f"{txpath}\\texture.png",
+        f"{mrodpath}\\_tx_TMP.png",
+        f"{tx_folder}\\texture.png",
+        obj.material_props.texture_0_enabled,
+        obj.material_props.texture_2_alpha_clip
+    )
+    # Set emission
+    strfile["material"]["emission"] = process_image_file(
+        embed_texture,
+        obj.material_props.emission_1_image,
+        f"{txpath}\\emission.png",
+        f"{mrodpath}\\_em_TMP.png",
+        f"{tx_folder}\\emission.png",
+        obj.material_props.emission_0_enabled,
+        None
+    )
+    strfile["material"]["emission"]["strength"] = obj.material_props.emission_2_strength
+    # Set warp
+    strfile["material"]["warp"] = process_image_file(
+        embed_texture,
+        obj.material_props.warp_1_image,
+        f"{txpath}\\warp.png",
+        f"{mrodpath}\\_wp_TMP.png",
+        f"{tx_folder}\\warp.png",
+        obj.material_props.warp_0_enabled,
+        None
+    )
+    strfile["material"]["warp"]["trans"] = {
+        "position": [x for x in obj.material_props.warp_2_position],
+        "rotation": obj.material_props.warp_3_rotation,
+        "scale": [x for x in obj.material_props.warp_4_scale]
+    }
+    strfile["material"]["warp"]["channelX"] = obj.material_props.warp_5_channelX
+    strfile["material"]["warp"]["channelY"] = obj.material_props.warp_5_channelY
+    # Set negative
+    strfile["material"]["negative"] = {
+        "enabled": obj.material_props.negative_0_enabled,
+        "strenagth": obj.material_props.negative_1_strength
+    }
+    # Set Gradient
+    strfile["material"]["gradient"] = {
+        "enabled": obj.material_props.gradient_0_enabled,
+        "channel": obj.material_props.gradient_1_channel,
+        "begin": hex_color_or_array(obj.material_props.gradient_2_begin),
+        "end": hex_color_or_array(obj.material_props.gradient_3_end),
+        "invert": obj.material_props.gradient_4_invert
+    }
+    return strfile;
 
 """
     ------------
@@ -360,11 +601,11 @@ class ObjectExportProperties(BaseProperties):
 
     apply_mods: BoolProperty("Apply Modifiers", True)
     embed_meshes: BoolProperty("Embed Meshes", True)
-    embed_textures: BoolProperty("Embed Textures", True)
+    embed_textures: BoolProperty("Embed Images", True)
     no_hex_color: BoolProperty("Don't use Hex Color", False)
     
     tx_dir_path: DirectoryPathProperty("Mesh Folder", "tx", set(["OUTPUT_PATH"])) 
-    mesh_dir_path: DirectoryPathProperty("Textures Folder", "mesh", set(["OUTPUT_PATH"]))
+    mesh_dir_path: DirectoryPathProperty("Images Folder", "mesh", set(["OUTPUT_PATH"]))
 
     def render(self, target):
         layout = target.layout
@@ -422,15 +663,14 @@ class SceneExportProperties(BaseProperties):
     file_name: FileNameProperty("Scene File Name") 
     
     apply_mods: BoolProperty("Apply Modifiers", True)
-    cam_up_pos_y: BoolProperty("Camera 'UP' is Positive Y", True)
     over_obj_export: BoolProperty("Override Object Export Properties", True)
     embed_objects: BoolProperty("Embed Objects", True)
     embed_meshes: BoolProperty("Embed Meshes", True)
-    embed_textures: BoolProperty("Embed Textures", True)
+    embed_textures: BoolProperty("Embed Images", True)
     no_hex_color: BoolProperty("Don't use Hex Color", False)
     
     tx_dir_path: DirectoryPathProperty("Mesh Folder", "tx", set(["OUTPUT_PATH"])) 
-    mesh_dir_path: DirectoryPathProperty("Textures Folder", "mesh", set(["OUTPUT_PATH"])) 
+    mesh_dir_path: DirectoryPathProperty("Images Folder", "mesh", set(["OUTPUT_PATH"])) 
     
     def render(self, target):
         layout = target.layout
@@ -438,7 +678,6 @@ class SceneExportProperties(BaseProperties):
         layout.prop(self, "dir_path")
         layout.prop(self, "file_name")
         layout.label(text="Settings")
-        layout.prop(self, "cam_up_pos_y")
         layout.prop(self, "over_obj_export")
         if self.over_obj_export:
             layout.prop(self, "apply_mods")
@@ -452,6 +691,7 @@ class SceneExportProperties(BaseProperties):
             layout.prop(self, "no_hex_color")
         layout.column()
         pass
+
 """
     ---------
 
@@ -464,14 +704,118 @@ class EXPORT_OT_ExportSceneObjectOperator(bt.Operator):
     bl_label = "Export Scene Object to File (.mrod)"
     bl_idname = "object.export_to_mrod"
 
-    def execute(self, props):
+    def execute(self, context):
+        objdef = create_render_definition(
+            context,
+            context.object,
+            context.object.object_export_props.file_name,
+            context.object.object_export_props.folder_path,
+            context.object.object_export_props.tx_folder,
+            context.object.object_export_props.mesh_folder,
+            context.object.object_export_props.embed_texture,
+            context.object.object_export_props.embed_mesh,
+            context.object.object_export_props.apply_modifiers,
+            not self.no_hex_color
+        )
         return {"FINISHED"}
 
 class EXPORT_OT_ExportSceneOperator(bt.Operator):
     bl_label = "Export Scene to File (.msd)"
     bl_idname = "scene.export_to_msd"
 
-    def execute(self, props):
+    def execute(self, context):
+        def hex_color_or_array(color, color_func=as_hex_string):
+            return color_func(color) if context.scene.scene_props.hex_color else [x for x in color]
+        objects = [obj for obj in bpy.data.objects if obj.type == "MESH"]
+        print(f"Objects: {len(objects)}")
+        make_if_not_exists(context.scene.scene_props.dir_path)
+        camera = context.scene.scene_props.camera
+        cpos, crot, cscale = camera.matrix_world.decompose()
+        crot = crot.to_euler('YXZ')
+        scenedef = {
+            "camera": {
+                "type": "GIMBAL",
+                "position": [-cpos.x, cpos.y, cpos.z],
+                "rotation": [crot.x, crot.y, crot.z],
+                "fov": camera.data.angle,
+                "zNear": camera.data.clip_start,
+                "zFar": camera.data.clip_end,
+                # TODO: aspect ratio
+                "aspect": None,
+                "ortho": {
+                    "enabled": camera.data.type == "ORTHO",
+                    "origin": [0.0, 0.0],
+                    "size": [camera.data.ortho_scale, camera.data.ortho_scale]
+                },
+                "relativeToEye": True
+            }
+        }
+        scenedef["world"] = {
+            "nearFog": {
+                "enabled": context.scene.scene_props.near_fog_0_enabled,
+                "start": context.scene.scene_props.near_fog_1_start,
+                "stop": context.scene.scene_props.near_fog_2_stop,
+                "color": hex_color_or_array(context.scene.scene_props.near_fog_3_color),
+                "strength": context.scene.scene_props.near_fog_4_strength
+            },
+            "farFog": {
+                "enabled": context.scene.scene_props.far_fog_0_enabled,
+                "start": context.scene.scene_props.far_fog_1_start,
+                "stop": context.scene.scene_props.far_fog_2_stop,
+                "color": hex_color_or_array(context.scene.scene_props.far_fog_3_color),
+                "strength": context.scene.scene_props.far_fog_4_strength
+            },
+            "ambient": {
+                "color": hex_color_or_array(context.scene.scene_props.ambient_0_color, as_hex_string_rgb),
+                "strength": context.scene.scene_props.ambient_1_strength
+            }
+        }
+        if self.embed_objects:
+            scenedef["data"] = {}
+        else:
+            scenedef["path"] = []
+        for obj in objects:
+            rendef = None
+            if context.scene.scene_export_props.over_obj_export:
+                rendef = create_render_definition(
+                    context,
+                    obj,
+                    obj.object_export_props.file_name,
+                    context.scene.scene_export_props.folder_path,
+                    context.scene.scene_export_props.tx_folder,
+                    context.scene.scene_export_props.mesh_folder,
+                    context.scene.scene_export_props.embed_texture,
+                    context.scene.scene_export_props.embed_mesh,
+                    context.scene.scene_export_props.apply_modifiers,
+                    not self.no_hex_color
+                )
+            else:
+                rendef = create_render_definition(
+                    context,
+                    obj,
+                    obj.object_export_props.file_name,
+                    obj.object_export_props.folder_path,
+                    obj.object_export_props.tx_folder,
+                    obj.object_export_props.mesh_folder,
+                    obj.object_export_props.embed_texture,
+                    obj.object_export_props.embed_mesh,
+                    obj.object_export_props.apply_modifiers,
+                    not self.no_hex_color
+                )
+            if context.scene.scene_export_props.embed_objects:
+                scenedef["data"][obj.name] = rendef
+            else:
+                defpath = f"{self.filepath}\\{obj.name}\\{obj.name}.mrod"
+                with open(defpath, "wt") as f:
+                    f.write(json.dumps(rendef, indent="\t"))
+                scenedef["path"].append({
+                    "source": f"{obj.name}\\{obj.name}.mrod",
+                    "type": "MROD"
+                })
+            path = f"{context.scene.scene_export_props.dir_path}\\{context.scene.scene_export_props.file_name}.msd"
+            with open(path, "wt") as f:
+                print(scenedef)
+                f.write(json.dumps(scenedef, indent="\t"))
         return {"FINISHED"}
 
 """
