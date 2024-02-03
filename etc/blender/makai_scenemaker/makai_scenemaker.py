@@ -784,12 +784,16 @@ class EXPORT_OT_ExportSceneOperator(bt.Operator):
         else:
             scenedef["path"] = []
         for obj in objects:
+            obj_name = obj.object_export_props.file_name
+            obj_name = obj_name if (obj_name is not None) and (obj_name != "") else obj.name
+            if export_props.over_obj_export:
+                obj_name = obj.name
             rendef = None
             if export_props.over_obj_export:
                 rendef = create_render_definition(
                     context,
                     obj,
-                    obj.object_export_props.file_name,
+                    obj_name,
                     export_props.folder_path,
                     export_props.tx_folder,
                     export_props.mesh_folder,
@@ -802,7 +806,7 @@ class EXPORT_OT_ExportSceneOperator(bt.Operator):
                 rendef = create_render_definition(
                     context,
                     obj,
-                    obj.object_export_props.file_name,
+                    obj_name,
                     obj.object_export_props.folder_path,
                     obj.object_export_props.tx_folder,
                     obj.object_export_props.mesh_folder,
@@ -814,8 +818,6 @@ class EXPORT_OT_ExportSceneOperator(bt.Operator):
             if export_props.embed_objects:
                 scenedef["data"][obj.name] = rendef
             else:
-                obj_name = obj.object_export_props.file_name
-                obj_name = obj_name if (obj_name is not None) and (obj_name != "") else obj.name
                 defpath = f"{export_props.dir_path}\\{obj_name}\\{obj_name}.mrod"
                 with open(defpath, "wt") as f:
                     f.write(json.dumps(rendef, indent="\t"))
