@@ -387,7 +387,7 @@ def create_render_definition(context, obj, file_name, folder_path, tx_folder, me
     # Set active (TODO: Check if object visible in scene)
     strfile["active"] = True
     # Set texture
-    if obj.material_props.texture_1_image is not None:
+    if obj.material_props.texture_0_enabled and obj.material_props.texture_1_image is not None:
         strfile["material"]["texture"] = process_image_file(
             embed_texture,
             obj.material_props.texture_1_image,
@@ -398,7 +398,7 @@ def create_render_definition(context, obj, file_name, folder_path, tx_folder, me
             obj.material_props.texture_2_alpha_clip
         )
     # Set emission
-    if obj.material_props.emission_1_image is not None:
+    if obj.material_props.emission_0_enabled and obj.material_props.emission_1_image is not None:
         strfile["material"]["emission"] = process_image_file(
             embed_texture,
             obj.material_props.emission_1_image,
@@ -410,7 +410,7 @@ def create_render_definition(context, obj, file_name, folder_path, tx_folder, me
         )
         strfile["material"]["emission"]["strength"] = obj.material_props.emission_2_strength
     # Set warp
-    if obj.material_props.warp_1_image is not None:
+    if obj.material_props.warp_0_enabled and obj.material_props.warp_1_image is not None:
         strfile["material"]["warp"] = process_image_file(
             embed_texture,
             obj.material_props.warp_1_image,
@@ -747,7 +747,7 @@ class EXPORT_OT_ExportSceneOperator(bt.Operator):
         export_props = context.scene.scene_export_props
         def hex_color_or_array(color, color_func=as_hex_string):
             return color_func(color) if not export_props.no_hex_color else [x for x in color]
-        objects = [obj for obj in bpy.data.objects if obj.type == "MESH"]
+        objects = [obj for obj in context.scene.objects if obj.type == "MESH"]
         print(f"Objects: {len(objects)}")
         make_if_not_exists(export_props.dir_path)
         camera = scene_props.camera.data
@@ -773,25 +773,27 @@ class EXPORT_OT_ExportSceneOperator(bt.Operator):
             }
         }
         scenedef["world"] = {
-            "nearFog": {
-                "enabled": scene_props.near_fog_0_enabled,
-                "start": scene_props.near_fog_1_start,
-                "stop": scene_props.near_fog_2_stop,
-                "color": hex_color_or_array(scene_props.near_fog_3_color),
-                "strength": scene_props.near_fog_4_strength
-            },
-            "farFog": {
-                "enabled": scene_props.far_fog_0_enabled,
-                "start": scene_props.far_fog_1_start,
-                "stop": scene_props.far_fog_2_stop,
-                "color": hex_color_or_array(scene_props.far_fog_3_color),
-                "strength": scene_props.far_fog_4_strength
-            },
             "ambient": {
                 "color": hex_color_or_array(scene_props.ambient_0_color, as_hex_string_rgb),
                 "strength": scene_props.ambient_1_strength
             }
         }
+        if scene_props.near_fog_0_enabled:
+            world["nearFog"] = {
+                "enabled": scene_props.near_fog_0_enabled,
+                "start": scene_props.near_fog_1_start,
+                "stop": scene_props.near_fog_2_stop,
+                "color": hex_color_or_array(scene_props.near_fog_3_color),
+                "strength": scene_props.near_fog_4_strength
+            }
+        if scene_props.far_fog_0_enabled:
+            world["farFog"] = {
+                "enabled": scene_props.far_fog_0_enabled,
+                "start": scene_props.far_fog_1_start,
+                "stop": scene_props.far_fog_2_stop,
+                "color": hex_color_or_array(scene_props.far_fog_3_color),
+                "strength": scene_props.far_fog_4_strength
+            }
         if export_props.embed_objects:
             scenedef["data"] = {}
         else:
