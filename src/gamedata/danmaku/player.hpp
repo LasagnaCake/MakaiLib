@@ -500,8 +500,7 @@ struct PlayerEntity2D: BasePlayerEntity2D {
 	}
 };
 
-[[gnu::unavailable("Unimplemented!")]]
-struct ReplayPlayerEntity2D: BasePlayerEntity2D {
+struct [[gnu::unavailable("Unimplemented!")]] ReplayPlayerEntity2D: BasePlayerEntity2D {
 	DERIVED_CLASS(ReplayPlayerEntity2D, BasePlayerEntity2D)
 	DERIVED_CONSTRUCTOR(ReplayPlayerEntity2D, BasePlayerEntity2D, {})
 
