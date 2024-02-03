@@ -720,8 +720,8 @@ class EXPORT_OT_ExportSceneObjectOperator(bt.Operator):
         )
         path = f"{export_props.dir_path}\\{export_props.file_name}.mrod"
         with open(path, "wt") as f:
-            print(scenedef)
-            f.write(json.dumps(scenedef, indent="\t"))
+            print(objdef)
+            f.write(json.dumps(objdef, indent="\t"))
         return {"FINISHED"}
 
 class EXPORT_OT_ExportSceneOperator(bt.Operator):
