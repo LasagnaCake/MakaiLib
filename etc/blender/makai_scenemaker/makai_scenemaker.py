@@ -833,6 +833,7 @@ class EXPORT_OT_ExportSceneOperator(bt.Operator):
             if export_props.embed_objects:
                 scenedef["data"][obj.name] = rendef
             else:
+                make_if_not_exists(f"{export_props.dir_path}\\{obj_name}");
                 defpath = f"{export_props.dir_path}\\{obj_name}\\{obj_name}.mrod"
                 with open(defpath, "wt") as f:
                     f.write(json.dumps(rendef, indent="\t"))
