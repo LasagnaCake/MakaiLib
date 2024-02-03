@@ -962,6 +962,7 @@ def unregister():
     from bpy.utils import unregister_class
     for cls in reversed(classes):
         unregister_class(cls)
+    
     del bt.Object.material_props
     del bt.Object.blend_props
     del bt.Object.object_export_props
