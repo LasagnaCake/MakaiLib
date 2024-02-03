@@ -705,6 +705,7 @@ class EXPORT_OT_ExportSceneObjectOperator(bt.Operator):
     bl_idname = "object.export_to_mrod"
 
     def execute(self, context):
+        export_props = ontext.object.object_export_props
         objdef = create_render_definition(
             context,
             context.object,
@@ -717,6 +718,10 @@ class EXPORT_OT_ExportSceneObjectOperator(bt.Operator):
             context.object.object_export_props.apply_modifiers,
             not self.no_hex_color
         )
+        path = f"{export_props.dir_path}\\{export_props.file_name}.mrod"
+        with open(path, "wt") as f:
+            print(scenedef)
+            f.write(json.dumps(scenedef, indent="\t"))
         return {"FINISHED"}
 
 class EXPORT_OT_ExportSceneOperator(bt.Operator):
@@ -774,6 +779,7 @@ class EXPORT_OT_ExportSceneOperator(bt.Operator):
             scenedef["data"] = {}
         else:
             scenedef["path"] = []
+        export_props = context.scene.scene_export_props
         for obj in objects:
             rendef = None
             if context.scene.scene_export_props.over_obj_export:
@@ -781,12 +787,12 @@ class EXPORT_OT_ExportSceneOperator(bt.Operator):
                     context,
                     obj,
                     obj.object_export_props.file_name,
-                    context.scene.scene_export_props.folder_path,
-                    context.scene.scene_export_props.tx_folder,
-                    context.scene.scene_export_props.mesh_folder,
-                    context.scene.scene_export_props.embed_texture,
-                    context.scene.scene_export_props.embed_mesh,
-                    context.scene.scene_export_props.apply_modifiers,
+                    export_props.folder_path,
+                    export_props.tx_folder,
+                    export_props.mesh_folder,
+                    export_props.embed_texture,
+                    export_props.embed_mesh,
+                    export_props.apply_modifiers,
                     not self.no_hex_color
                 )
             else:
@@ -812,7 +818,7 @@ class EXPORT_OT_ExportSceneOperator(bt.Operator):
                     "source": f"{obj.name}\\{obj.name}.mrod",
                     "type": "MROD"
                 })
-            path = f"{context.scene.scene_export_props.dir_path}\\{context.scene.scene_export_props.file_name}.msd"
+            path = f"{export_props.dir_path}\\{export_props.file_name}.msd"
             with open(path, "wt") as f:
                 print(scenedef)
                 f.write(json.dumps(scenedef, indent="\t"))
