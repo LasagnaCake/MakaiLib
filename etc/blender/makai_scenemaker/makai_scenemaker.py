@@ -1,8 +1,12 @@
-import bpy
-import struct
 import os
 import sys
 import inspect
+
+import struct
+import json
+import base64
+
+import bpy
 
 from bpy import types as bt
 from bpy import props as bp
@@ -78,10 +82,13 @@ def ImageProperty(prop_name = "Image"):
     )
 
 def CameraProperty(prop_name = "Camera"):
+    def is_camera(self, obj):
+        return obj.type=="CAMERA"
     return bp.PointerProperty(
         name=prop_name,
-        type=bt.Camera,
-        options=set()
+        type=bt.Object,
+        options=set(),
+        poll=is_camera
     )
 
 def RGBAColorProperty(prop_name = "Color", prop_default=(1,1,1,1)):
@@ -113,7 +120,7 @@ def AlphaClipProperty(prop_name):
     return RangeProperty(prop_name + " Alpha Clip", 0.2)
 
 def EnumProperty(prop_name, prop_values, prop_default=0, prop_update=None, prop_index_offset=0):
-    prop_items = [(f"enum_{i}", prop_values[i], "", i+prop_index_offset) for i in range(len(prop_values))]
+    prop_items = [(str(i+prop_index_offset), prop_values[i], "", i+prop_index_offset) for i in range(len(prop_values))]
     return bp.EnumProperty(
         name=prop_name,
         items=prop_items,
@@ -202,6 +209,8 @@ def make_if_not_exists(dir: str):
         os.makedirs(dir)
 
 def save_image_to_file(image, path):
+    if image is None:
+        return "ERR_IMAGE_DOES_NOT_EXIST"
     # Check if the image is not packed
     image_packed = False
     if image.packed_file is not None:
@@ -224,13 +233,13 @@ def image_to_base64(path):
 
 def as_hex_string(color):
     def to255(x): 
-        return max(0, min(x*255, 255))
+        return int(max(0, min(x*255, 255)))
 
     return "#{0:02x}{1:02x}{2:02x}{2:02x}".format(to255(color[0]), to255(color[1]), to255(color[2]), to255(color[3]))
 
 def as_hex_string_rgb(color):
     def to255(x): 
-        return max(0, min(x*255, 255))
+        return int(max(0, min(x*255, 255)))
 
     return "#{0:02x}{1:02x}{2:02x}".format(to255(color[0]), to255(color[1]), to255(color[2]))
 
@@ -248,7 +257,7 @@ def process_image_file(embed_texture, image, path, temp_path, relative_path = ""
                 file["alphaClip"] = alpha_clip
             return file
     else:
-        result = save_texture_to_image(image, temp_path)
+        result = save_image_to_file(image, temp_path)
         if result == "OK":
             imgstr = str(image_to_base64(temp_path))
             os.remove(temp_path)
@@ -312,7 +321,7 @@ def create_render_definition(context, obj, file_name, folder_path, tx_folder, me
         mesh = obj.to_mesh(preserve_all_data_layers=True, depsgraph=dg)
     verts = mesh.vertices
     # iterate through the mesh's loop triangles to collect the vertex data
-    vertex_binary, vertex_data = get_binary_data(mesh)
+    vertex_binary, component_data = get_binary_data(mesh)
     # Do appropriate mesh procedure
     strfile = {
         "version": 0,
@@ -350,83 +359,89 @@ def create_render_definition(context, obj, file_name, folder_path, tx_folder, me
         "instances": [
             [0.0, 0.0, 0.0],
         ],
-        "culling": obj.material_props.culling,
-        "fill": obj.material_props.fill
+        "culling": int(obj.material_props.culling),
+        "fill": int(obj.material_props.fill)
     }
+    strfile["blend"] = {}
     # set blend stuff
     if obj.blend_props.func_sep:
         strfile["blend"]["function"] = {
-            "srcColor": obj.blend_props.func_src_rgb, 
-            "dstColor": obj.blend_props.func_dst_rgb,
-            "srcAlpha": obj.blend_props.func_src_alpha,
-            "dstAlpha": obj.blend_props.func_dst_alpha
+            "srcColor": int(obj.blend_props.func_src_rgb), 
+            "dstColor": int(obj.blend_props.func_dst_rgb),
+            "srcAlpha": int(obj.blend_props.func_src_alpha),
+            "dstAlpha": int(obj.blend_props.func_dst_alpha)
         }
     else:
         strfile["blend"]["function"] = {
-            "src": obj.blend_props.func_src, 
-            "dst": obj.blend_props.func_dst,
+            "src": int(obj.blend_props.func_src), 
+            "dst": int(obj.blend_props.func_dst),
         }
         
     if obj.blend_props.eq_sep:
         strfile["blend"]["equation"] = {
-            "color": obj.blend_props.eq_rgb,
-            "alpha": obj.blend_props.eq_alpha
+            "color": int(obj.blend_props.eq_rgb),
+            "alpha": int(obj.blend_props.eq_alpha)
         }
     else:
-        strfile["blend"]["equation"] = obj.blend_props.eq
+        strfile["blend"]["equation"] = int(obj.blend_props.eq)
     # Set active (TODO: Check if object visible in scene)
     strfile["active"] = True
     # Set texture
-    strfile["material"]["texture"] = process_image_file(
-        embed_texture,
-        obj.material_props.texture_1_image,
-        f"{txpath}\\texture.png",
-        f"{mrodpath}\\_tx_TMP.png",
-        f"{tx_folder}\\texture.png",
-        obj.material_props.texture_0_enabled,
-        obj.material_props.texture_2_alpha_clip
-    )
+    if obj.material_props.texture_1_image is not None:
+        strfile["material"]["texture"] = process_image_file(
+            embed_texture,
+            obj.material_props.texture_1_image,
+            f"{txpath}\\texture.png",
+            f"{mrodpath}\\_tx_TMP.png",
+            f"{tx_folder}\\texture.png",
+            obj.material_props.texture_0_enabled,
+            obj.material_props.texture_2_alpha_clip
+        )
     # Set emission
-    strfile["material"]["emission"] = process_image_file(
-        embed_texture,
-        obj.material_props.emission_1_image,
-        f"{txpath}\\emission.png",
-        f"{mrodpath}\\_em_TMP.png",
-        f"{tx_folder}\\emission.png",
-        obj.material_props.emission_0_enabled,
-        None
-    )
-    strfile["material"]["emission"]["strength"] = obj.material_props.emission_2_strength
+    if obj.material_props.emission_1_image is not None:
+        strfile["material"]["emission"] = process_image_file(
+            embed_texture,
+            obj.material_props.emission_1_image,
+            f"{txpath}\\emission.png",
+            f"{mrodpath}\\_em_TMP.png",
+            f"{tx_folder}\\emission.png",
+            obj.material_props.emission_0_enabled,
+            None
+        )
+        strfile["material"]["emission"]["strength"] = obj.material_props.emission_2_strength
     # Set warp
-    strfile["material"]["warp"] = process_image_file(
-        embed_texture,
-        obj.material_props.warp_1_image,
-        f"{txpath}\\warp.png",
-        f"{mrodpath}\\_wp_TMP.png",
-        f"{tx_folder}\\warp.png",
-        obj.material_props.warp_0_enabled,
-        None
-    )
-    strfile["material"]["warp"]["trans"] = {
-        "position": [x for x in obj.material_props.warp_2_position],
-        "rotation": obj.material_props.warp_3_rotation,
-        "scale": [x for x in obj.material_props.warp_4_scale]
-    }
-    strfile["material"]["warp"]["channelX"] = obj.material_props.warp_5_channelX
-    strfile["material"]["warp"]["channelY"] = obj.material_props.warp_5_channelY
+    if obj.material_props.warp_1_image is not None:
+        strfile["material"]["warp"] = process_image_file(
+            embed_texture,
+            obj.material_props.warp_1_image,
+            f"{txpath}\\warp.png",
+            f"{mrodpath}\\_wp_TMP.png",
+            f"{tx_folder}\\warp.png",
+            obj.material_props.warp_0_enabled,
+            None
+        )
+        strfile["material"]["warp"]["trans"] = {
+            "position": [x for x in obj.material_props.warp_2_position],
+            "rotation": obj.material_props.warp_3_rotation,
+            "scale": [x for x in obj.material_props.warp_4_scale]
+        }
+        strfile["material"]["warp"]["channelX"] = int(obj.material_props.warp_5_channelX)
+        strfile["material"]["warp"]["channelY"] = int(obj.material_props.warp_5_channelY)
     # Set negative
-    strfile["material"]["negative"] = {
-        "enabled": obj.material_props.negative_0_enabled,
-        "strenagth": obj.material_props.negative_1_strength
-    }
+    if obj.material_props.negative_0_enabled:
+        strfile["material"]["negative"] = {
+            "enabled": obj.material_props.negative_0_enabled,
+            "strenagth": obj.material_props.negative_1_strength
+        }
     # Set Gradient
-    strfile["material"]["gradient"] = {
-        "enabled": obj.material_props.gradient_0_enabled,
-        "channel": obj.material_props.gradient_1_channel,
-        "begin": hex_color_or_array(obj.material_props.gradient_2_begin),
-        "end": hex_color_or_array(obj.material_props.gradient_3_end),
-        "invert": obj.material_props.gradient_4_invert
-    }
+    if obj.material_props.gradient_0_enabled:
+        strfile["material"]["gradient"] = {
+            "enabled": obj.material_props.gradient_0_enabled,
+            "channel": int(obj.material_props.gradient_1_channel),
+            "begin": hex_color_or_array(obj.material_props.gradient_2_begin),
+            "end": hex_color_or_array(obj.material_props.gradient_3_end),
+            "invert": obj.material_props.gradient_4_invert
+        }
     return strfile;
 
 """
@@ -599,7 +614,7 @@ class ObjectExportProperties(BaseProperties):
     dir_path: DirectoryPathProperty("Output Folder", "", set(["OUTPUT_PATH"])) 
     file_name: FileNameProperty("Object File Name")
 
-    apply_mods: BoolProperty("Apply Modifiers", True)
+    apply_modifiers: BoolProperty("Apply Modifiers", True)
     embed_meshes: BoolProperty("Embed Meshes", True)
     embed_textures: BoolProperty("Embed Images", True)
     no_hex_color: BoolProperty("Don't use Hex Color", False)
@@ -613,7 +628,7 @@ class ObjectExportProperties(BaseProperties):
         layout.prop(self, "dir_path")
         layout.prop(self, "file_name")
         layout.label(text="Settings")
-        layout.prop(self, "apply_mods")
+        layout.prop(self, "apply_modifiers")
         layout.prop(self, "embed_meshes")
         if not self.embed_meshes:
             layout.prop(self, "mesh_dir_path")
@@ -663,7 +678,7 @@ class SceneExportProperties(BaseProperties):
     file_name: FileNameProperty("Scene File Name") 
     
     over_obj_export: BoolProperty("Override Object Export Properties", True)
-    apply_mods: BoolProperty("Apply Modifiers", True)
+    apply_modifiers: BoolProperty("Apply Modifiers", True)
     embed_objects: BoolProperty("Embed Objects", True)
     embed_meshes: BoolProperty("Embed Meshes", True)
     embed_textures: BoolProperty("Embed Images", True)
@@ -678,10 +693,10 @@ class SceneExportProperties(BaseProperties):
         layout.prop(self, "dir_path")
         layout.prop(self, "file_name")
         layout.label(text="Settings")
+        layout.prop(self, "embed_objects")
         layout.prop(self, "over_obj_export")
         if self.over_obj_export:
-            layout.prop(self, "apply_mods")
-            layout.prop(self, "embed_objects")
+            layout.prop(self, "apply_modifiers")
             layout.prop(self, "embed_meshes")
             if not self.embed_meshes:
                 layout.prop(self, "mesh_dir_path")
@@ -705,22 +720,21 @@ class EXPORT_OT_ExportSceneObjectOperator(bt.Operator):
     bl_idname = "object.export_to_mrod"
 
     def execute(self, context):
-        export_props = ontext.object.object_export_props
+        export_props = context.object.object_export_props
         objdef = create_render_definition(
             context,
             context.object,
             export_props.file_name,
-            export_props.folder_path,
-            export_props.tx_folder,
-            export_props.mesh_folder,
-            export_props.embed_texture,
-            export_props.embed_mesh,
+            export_props.dir_path,
+            export_props.tx_dir_path,
+            export_props.mesh_dir_path,
+            export_props.embed_textures,
+            export_props.embed_meshes,
             export_props.apply_modifiers,
-            not self.no_hex_color
+            not export_props.no_hex_color
         )
         path = f"{export_props.dir_path}\\{export_props.file_name}.mrod"
         with open(path, "wt") as f:
-            print(objdef)
             f.write(json.dumps(objdef, indent="\t"))
         return {"FINISHED"}
 
@@ -732,31 +746,30 @@ class EXPORT_OT_ExportSceneOperator(bt.Operator):
         scene_props = context.scene.scene_props
         export_props = context.scene.scene_export_props
         def hex_color_or_array(color, color_func=as_hex_string):
-            return color_func(color) if context.scene.scene_props.hex_color else [x for x in color]
+            return color_func(color) if not export_props.no_hex_color else [x for x in color]
         objects = [obj for obj in bpy.data.objects if obj.type == "MESH"]
         print(f"Objects: {len(objects)}")
-        make_if_not_exists(scene_props.dir_path)
-        camera = scene_props.camera
-        cpos, crot, cscale = camera.matrix_world.decompose()
+        make_if_not_exists(export_props.dir_path)
+        camera = scene_props.camera.data
+        cpos, crot, cscale = scene_props.camera.matrix_world.decompose()
         crot = crot.to_euler('YXZ')
-        resolution = context.scene.render.resolution
-        caspect = [resolution.x / resolution.y, 1]
-        ortho_size = camera.data.ortho_scale
+        rset = context.scene.render
+        caspect = [rset.resolution_x / rset.resolution_y, 1]
+        ortho_size = camera.ortho_scale
         scenedef = {
             "camera": {
                 "type": "GIMBAL",
                 "position": [-cpos.x, cpos.y, cpos.z],
                 "rotation": [crot.x, crot.y, crot.z],
-                "fov": camera.data.angle,
-                "zNear": camera.data.clip_start,
-                "zFar": camera.data.clip_end,
+                "fov": camera.angle,
+                "zNear": camera.clip_start,
+                "zFar": camera.clip_end,
                 "aspect": caspect,
                 "ortho": {
-                    "enabled": camera.data.type == "ORTHO",
+                    "strength": 1.0 if camera.type == "ORTHO" else 0.0,
                     "origin": [0.0, 0.0],
                     "size": [ortho_size * caspect[0], ortho_size * caspect[1]]
-                },
-                "relativeToEye": True
+                }
             }
         }
         scenedef["world"] = {
@@ -794,26 +807,26 @@ class EXPORT_OT_ExportSceneOperator(bt.Operator):
                     context,
                     obj,
                     obj_name,
-                    export_props.folder_path,
-                    export_props.tx_folder,
-                    export_props.mesh_folder,
-                    export_props.embed_texture,
-                    export_props.embed_mesh,
+                    export_props.dir_path,
+                    export_props.tx_dir_path,
+                    export_props.mesh_dir_path,
+                    export_props.embed_textures,
+                    export_props.embed_meshes,
                     export_props.apply_modifiers,
-                    not self.no_hex_color
+                    not export_props.no_hex_color
                 )
             else:
                 rendef = create_render_definition(
                     context,
                     obj,
                     obj_name,
-                    obj.object_export_props.folder_path,
-                    obj.object_export_props.tx_folder,
-                    obj.object_export_props.mesh_folder,
-                    obj.object_export_props.embed_texture,
-                    obj.object_export_props.embed_mesh,
+                    obj.object_export_props.dir_path,
+                    obj.object_export_props.tx_dir_path,
+                    obj.object_export_props.mesh_dir_path,
+                    obj.object_export_props.embed_textures,
+                    obj.object_export_props.embed_meshes,
                     obj.object_export_props.apply_modifiers,
-                    not self.no_hex_color
+                    not obj.object_export_props.no_hex_color
                 )
             if export_props.embed_objects:
                 scenedef["data"][obj.name] = rendef
@@ -827,7 +840,6 @@ class EXPORT_OT_ExportSceneOperator(bt.Operator):
                 })
             path = f"{export_props.dir_path}\\{export_props.file_name}.msd"
             with open(path, "wt") as f:
-                print(scenedef)
                 f.write(json.dumps(scenedef, indent="\t"))
         return {"FINISHED"}
 
@@ -841,7 +853,7 @@ class EXPORT_OT_ExportSceneOperator(bt.Operator):
 
 class SCENEOBJECT_PT_SceneObjectMaterialPanel(PropertyPanel):
     bl_label = "Material Properties"
-    bl_idname = "0_OBJECT_PT_SceneObjectMaterialPanel"
+    bl_idname = "SO0_OBJECT_PT_SceneObjectMaterialPanel"
     bl_category = "Scene Object"
     
     def draw(self, context):
@@ -855,7 +867,7 @@ class SCENEOBJECT_PT_SceneObjectMaterialPanel(PropertyPanel):
 
 class SCENEOBJECT_PT_SceneObjectBlendPanel(PropertyPanel):
     bl_label = "Blend Properties"
-    bl_idname = "1_SCENEOBJECT_PT_SceneObjectBlendPanel"
+    bl_idname = "SO1_SCENEOBJECT_PT_SceneObjectBlendPanel"
     bl_category = "Scene Object"
     
     def draw(self, context):
@@ -869,7 +881,7 @@ class SCENEOBJECT_PT_SceneObjectBlendPanel(PropertyPanel):
 
 class SCENEOBJECT_PT_SceneObjectExportPanel(PropertyPanel):
     bl_label = "Export Properties"
-    bl_idname = "2_SCENEOBJECT_PT_SceneObjectExportPanel"
+    bl_idname = "SO2_SCENEOBJECT_PT_SceneObjectExportPanel"
     bl_category = "Scene Object"
     
     def draw(self, context):
