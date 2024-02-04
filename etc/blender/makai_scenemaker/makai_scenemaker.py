@@ -216,14 +216,14 @@ def save_image_to_file(image, path):
     if image.packed_file is not None:
         image_packed = True
         try:
-            image_texture.unpack()
+            image.unpack()
         except:
             return "ERR_IMAGE_UNPACKING_FAILED"
     # Save the image to a file (adjust the path as needed)
-    image_texture.file_format = "PNG"
-    image_texture.save_render(image_path, scene=None, quality=75)
+    image.file_format = "PNG"
+    image.save_render(path, scene=None, quality=75)
     if image_packed:
-        image_texture.pack()
+        image.pack()
     return "OK"
 
 
@@ -779,7 +779,7 @@ class EXPORT_OT_ExportSceneOperator(bt.Operator):
             }
         }
         if scene_props.near_fog_0_enabled:
-            world["nearFog"] = {
+            scenedef["world"]["nearFog"] = {
                 "enabled": scene_props.near_fog_0_enabled,
                 "start": scene_props.near_fog_1_start,
                 "stop": scene_props.near_fog_2_stop,
@@ -787,7 +787,7 @@ class EXPORT_OT_ExportSceneOperator(bt.Operator):
                 "strength": scene_props.near_fog_4_strength
             }
         if scene_props.far_fog_0_enabled:
-            world["farFog"] = {
+            scenedef["world"]["farFog"] = {
                 "enabled": scene_props.far_fog_0_enabled,
                 "start": scene_props.far_fog_1_start,
                 "stop": scene_props.far_fog_2_stop,
