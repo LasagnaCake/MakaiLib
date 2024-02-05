@@ -276,7 +276,8 @@ namespace ArcSys {
 	};
 
 	namespace Flags {
-		constexpr uint64 SINGLE_FILE_ARCHIVE_BIT	= 1;
+		constexpr uint64 SINGLE_FILE_ARCHIVE_BIT	= (1 << 0);
+		constexpr uint64 CALCULATE_CRC_BIT			= (1 << 1);
 	}
 
 	void generateBlock(uint8 const(& block)[16]) {
@@ -555,7 +556,7 @@ namespace ArcSys {
 			);
 			if (data.size() != entry.header.uncSize)
 				corruptedFileError(entry.path);
-			if (!calculateCRC(data, entry.header.crc))
+			if (header.flags & Flags::CALCULATE_CRC_BIT && !calculateCRC(data, entry.header.crc))
 				crcFailError(entry.path);
 			entry.data = data;
 		}
@@ -838,7 +839,7 @@ namespace ArcSys {
 		file.close();
 	}
 
-	void saveEncryptedBinaryFile(
+	void saveEncryptedTextFile(
 		String const&				path,
 		BinaryData const&			data,
 		String const&				password	= "",
