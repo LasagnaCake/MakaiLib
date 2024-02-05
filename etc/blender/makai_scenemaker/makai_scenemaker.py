@@ -747,7 +747,8 @@ class EXPORT_OT_ExportSceneOperator(bt.Operator):
         export_props = context.scene.scene_export_props
         def hex_color_or_array(color, color_func=as_hex_string):
             return color_func(color) if not export_props.no_hex_color else [x for x in color]
-        objects = [obj for obj in context.scene.objects if obj.type == "MESH"]
+        objects = [obj for obj in context.scene.objects if obj.type == "MESH" and obj.visible_get()]
+        objects.sort(key=lambda x: x.name, reverse=False)
         print(f"Objects: {len(objects)}")
         make_if_not_exists(export_props.dir_path)
         camera = scene_props.camera.data
@@ -799,8 +800,6 @@ class EXPORT_OT_ExportSceneOperator(bt.Operator):
         else:
             scenedef["path"] = []
         for obj in objects:
-            if not obj.visible_get():
-                continue
             obj_name = obj.object_export_props.file_name
             obj_name = obj_name if (obj_name is not None) and (obj_name != "") else obj.name
             if export_props.over_obj_export:

@@ -41,6 +41,7 @@ If image is to be embedded in the file:
 	"data": "", // Image file data, encoded as string
 	"encoding": "" // Image file data's encoding
 	// Optional
+	// TODO: Change these to be its own enums
 	"minFilter": 0, // See GL's GL_TEXTURE_MIN_FILTER
 	"magFilter": 0  // See GL's GL_TEXTURE_MAG_FILTER
 }
@@ -51,10 +52,11 @@ If image is to be saved in a separate file:
 ```javascript
 "image": {
 	// Required
-	data: {
+	"data": {
 		"path": "" // Path to image file, relative to object definition file
 	},
 	// Optional
+	// TODO: Change these to be its own enums
 	"minFilter": 0, // See GL's GL_TEXTURE_MIN_FILTER
 	"magFilter": 0  // See GL's GL_TEXTURE_MAG_FILTER
 }
