@@ -43,11 +43,11 @@ class ExportMSBOOperator(Operator, ExportHelper):
 			with open(f"{filepath}\\{filename}", "wb") as f:
 				dg = context.evaluated_depsgraph_get()
 				mesh = None
-				#TODO: fix this
-				if self.apply_modifiers:
-					mesh = obj.to_mesh(preserve_all_data_layers=False, depsgraph=dg)
+				#NOTE: is it working?
+				if apply_modifiers:
+					mesh = obj.evaluated_get(dg).to_mesh(preserve_all_data_layers=True, depsgraph=dg)
 				else:
-					mesh = obj.to_mesh(preserve_all_data_layers=True, depsgraph=dg)
+					mesh = obj.to_mesh()
 				verts = mesh.vertices
 				# iterate through the mesh's loop triangles to collect the vertex data
 				vertex_data = []
