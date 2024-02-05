@@ -314,11 +314,11 @@ def create_render_definition(context, obj, file_name, folder_path, tx_folder, me
         make_if_not_exists(meshpath)
     dg = context.evaluated_depsgraph_get()
     mesh = None
-    #TODO: fix this
+    #NOTE: is it working?
     if apply_modifiers:
-        mesh = obj.to_mesh(preserve_all_data_layers=False, depsgraph=dg)
+        mesh = obj.evaluated_get(dg).to_mesh(preserve_all_data_layers=True, depsgraph=dg)
     else:
-        mesh = obj.to_mesh(preserve_all_data_layers=True, depsgraph=dg)
+        mesh = obj.to_mesh()
     verts = mesh.vertices
     # iterate through the mesh's loop triangles to collect the vertex data
     vertex_binary, component_data = get_binary_data(mesh)
@@ -799,6 +799,8 @@ class EXPORT_OT_ExportSceneOperator(bt.Operator):
         else:
             scenedef["path"] = []
         for obj in objects:
+            if not obj.visible_get():
+                continue
             obj_name = obj.object_export_props.file_name
             obj_name = obj_name if (obj_name is not None) and (obj_name != "") else obj.name
             if export_props.over_obj_export:
