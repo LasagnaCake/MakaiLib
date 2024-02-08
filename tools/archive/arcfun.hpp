@@ -192,12 +192,59 @@ namespace ArcSys {
 		return flate<Inflator>(data, method, level);
 	}
 
-	uint32 generateCRC(BinaryData const& data) {
-		return 0;
+	typedef std::array<uint32, 256> CRCTable;
+
+	consteval CRCTable getCRCTable() {
+		CRCTable table;
+		uint32  remainder;
+		constexpr uint32 POLYNOMIAL	= 0x04C11DB7;
+		constexpr uint32 SIZE		= (8 * sizeof(uint32));
+		constexpr uint32 TOP_BIT	= 1 << (SIZE-1);
+		// Populate table
+		for (size_t i = 0; i < 256; i++) {
+			// Get remainder for number
+			remainder = i << (SIZE - 8);
+			// For each bit, calculate modulo 2 division
+			for (uint8_t bit = 8; bit > 0; bit--) {
+				if (remainder & TOP_BIT)
+					remainder = (remainder << 1) ^ POLYNOMIAL;
+				else
+					remainder = (remainder << 1);
+			}
+			// Store remainder into table
+			table[i] = remainder;
+		}
+		return table;
 	}
 
-	bool calculateCRC(BinaryData const& data, uint32 const& crc) {
-		return true;
+	namespace {
+		constexpr CRCTable const crcTable = getCRCTable();
+	}
+
+	template<Type::Integer T>
+	constexpr T reflect(T data) {
+		T result = 0;
+		constexpr size_t BIT_WIDTH = sizeof(T);
+		for (byte i = 0; i < BIT_WIDTH; i++)
+			if (data & (1 << i)) result |= (1 << (BIT_WIDTH-1-i));
+		return (result);
+	}
+
+	// https://barrgroup.com/blog/crc-series-part-3-crc-implementation-code-cc
+	constexpr uint32 calculateCRC(BinaryData const& data) {
+		uint8 index;
+		uint32 remainder = 0xFFFFFFFF;
+		constexpr uint32 SIZE = (8 * sizeof(uint32));
+		for (auto& b: data) {
+			index = reflect<uint8>(b) ^ (remainder >> (SIZE - 8));
+			remainder = crcTable[index] ^ (remainder << 8);
+		}
+		return reflect<uint32>(remainder) ^ 0xFFFFFFFF;
+	}
+
+	constexpr bool checkCRC(BinaryData const& data, uint32 const& crc) {
+		return calculateCRC(data) == crc;
+
 	}
 
 	JSONData getStructure(fs::path const& path, StringList& files, String const& root = "") {
@@ -277,7 +324,7 @@ namespace ArcSys {
 
 	namespace Flags {
 		constexpr uint64 SINGLE_FILE_ARCHIVE_BIT	= (1 << 0);
-		constexpr uint64 CALCULATE_CRC_BIT			= (1 << 1);
+		constexpr uint64 SHOULD_CHECK_CRC_BIT			= (1 << 1);
 	}
 
 	void generateBlock(uint8 const(& block)[16]) {
@@ -328,6 +375,10 @@ namespace ArcSys {
 		header.encryption	= (uint16)enc;		// encryption mode
 		header.compression	= (uint16)comp;		// compression mode
 		header.level		= complvl;			// compression level
+		header.flags =
+			0
+	//		Flags::SHOULD_CHECK_CRC_BIT			// Do CRC step
+		;
 		_ARCDEBUGLN("             HEADER SIZE: ", (uint64)header.headerSize,		"B"	);
 		_ARCDEBUGLN("        FILE HEADER SIZE: ", (uint64)header.fileHeaderSize,	"B"	);
 		_ARCDEBUGLN("     DIRECTORY INFO SIZE: ", (uint64)header.dirInfoSize,		"B"	);
@@ -370,7 +421,7 @@ namespace ArcSys {
 				_ARCDEBUGLN("After encryption: ", contents.size());
 			}
 			fheader.compSize	= contents.size();			// Compressed file size
-			fheader.crc			= generateCRC(contents);	// CRC
+			fheader.crc			= calculateCRC(contents);	// CRC
 			// Debug info
 			_ARCDEBUGLN("'", files[i], "':");
 			_ARCDEBUGLN("          FILE INDEX: ", i					);
@@ -556,7 +607,7 @@ namespace ArcSys {
 			);
 			if (data.size() != entry.header.uncSize)
 				corruptedFileError(entry.path);
-			if (header.flags & Flags::CALCULATE_CRC_BIT && !calculateCRC(data, entry.header.crc))
+			if (header.flags & Flags::SHOULD_CHECK_CRC_BIT && !checkCRC(data, entry.header.crc))
 				crcFailError(entry.path);
 			entry.data = data;
 		}
@@ -766,7 +817,7 @@ namespace ArcSys {
 			);
 			if (fd.size() != fh.uncSize)
 				FileLoader::fileLoadError(path, "Uncompressed size doesn't match!", "arcfun.hpp");
-			if ((header.flags & Flags::CALCULATE_CRC_BIT) && !calculateCRC(fd, fh.crc))
+			if ((header.flags & Flags::SHOULD_CHECK_CRC_BIT) && !checkCRC(fd, fh.crc))
 				FileLoader::fileLoadError(path, "CRC check failed!", "arcfun.hpp");
 		}
 		// Return file
@@ -802,7 +853,10 @@ namespace ArcSys {
 		header.encryption	= (uint16)enc;	// encryption mode
 		header.compression	= (uint16)comp;	// compression mode
 		header.level		= lvl;			// compression level
-		header.flags		= Flags::SINGLE_FILE_ARCHIVE_BIT;
+		header.flags =
+			Flags::SINGLE_FILE_ARCHIVE_BIT	// Single-file archive
+	//	|	Flags::SHOULD_CHECK_CRC_BIT		// Do CRC step
+		;
 		// Write header
 		file.write((char*)&header, header.headerSize);
 		// Write file info
@@ -829,7 +883,7 @@ namespace ArcSys {
 				);
 			}
 			fheader.compSize	= contents.size();			// Compressed file size
-			fheader.crc			= generateCRC(contents);	// CRC
+			fheader.crc			= calculateCRC(contents);	// CRC
 			// Copy header & file data
 			file.write((char*)&fheader, header.fileHeaderSize);
 			file.write((char*)contents.data(), contents.size());
