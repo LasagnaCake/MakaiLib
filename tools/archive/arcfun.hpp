@@ -197,7 +197,7 @@ namespace ArcSys {
 	consteval CRCTable getCRCTable() {
 		CRCTable table;
 		uint32  remainder;
-		constexpr uint32 POLYNOMIAL	= 0x04C11DB7;
+		constexpr uint64 POLYNOMIAL	= (0x04C11DB7);
 		constexpr uint32 SIZE		= (8 * sizeof(uint32));
 		constexpr uint32 TOP_BIT	= 1 << (SIZE-1);
 		// Populate table
@@ -221,25 +221,16 @@ namespace ArcSys {
 		constexpr CRCTable const crcTable = getCRCTable();
 	}
 
-	template<Type::Integer T>
-	constexpr T reflect(T data) {
-		T result = 0;
-		constexpr size_t BIT_WIDTH = sizeof(T);
-		for (byte i = 0; i < BIT_WIDTH; i++)
-			if (data & (1 << i)) result |= (1 << (BIT_WIDTH-1-i));
-		return (result);
-	}
-
 	// https://barrgroup.com/blog/crc-series-part-3-crc-implementation-code-cc
 	constexpr uint32 calculateCRC(BinaryData const& data) {
 		uint8 index;
-		uint32 remainder = 0xFFFFFFFF;
+		uint32 remainder = 0xFFFFFFFFu;
 		constexpr uint32 SIZE = (8 * sizeof(uint32));
 		for (auto& b: data) {
-			index = reflect<uint8>(b) ^ (remainder >> (SIZE - 8));
+			index = Helper::reflect<uint8>(b) ^ (remainder >> (SIZE - 8));
 			remainder = crcTable[index] ^ (remainder << 8);
 		}
-		return reflect<uint32>(remainder) ^ 0xFFFFFFFF;
+		return Helper::reflect<uint32>(remainder) ^ 0xFFFFFFFFu;
 	}
 
 	constexpr bool checkCRC(BinaryData const& data, uint32 const& crc) {

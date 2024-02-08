@@ -391,6 +391,15 @@ namespace Helper {
 		memcpy(from, to, sizeof(T) * sz);
 	}
 
+	template<Type::Integer T>
+	constexpr T reflect(T const& data) {
+		T result = 0;
+		constexpr size_t BIT_WIDTH = sizeof(T) * 8;
+		for (size_t i = 0; i < BIT_WIDTH; i++)
+			if ((data >> i) & 1) result |= (T(1) << (BIT_WIDTH-1-i));
+		return (result);
+	}
+
 	#ifdef ENABLE_DEBUG_OUTPUT_
 	template<typename... Args>
 	constexpr void print(Args... args) {
