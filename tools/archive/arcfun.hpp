@@ -765,8 +765,8 @@ namespace ArcSys {
 				header.level
 			);
 			if (fd.size() != fh.uncSize)
-				FileLoader::fileLoadError(path, "Uncompresses size doesn't match!", "arcfun.hpp");
-			if (!calculateCRC(fd, fh.crc))
+				FileLoader::fileLoadError(path, "Uncompressed size doesn't match!", "arcfun.hpp");
+			if ((header.flags & Flags::CALCULATE_CRC_BIT) && !calculateCRC(fd, fh.crc))
 				FileLoader::fileLoadError(path, "CRC check failed!", "arcfun.hpp");
 		}
 		// Return file
