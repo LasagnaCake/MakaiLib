@@ -329,7 +329,7 @@ namespace Type {
 
 namespace Meta {
 	template<bool COND, class T, class F>
-	using Option = std::conditional<COND, T, F>::type;
+	using DualType = std::conditional<COND, T, F>::type;
 }
 
 #endif // CONCEPTUAL_TYPES_H

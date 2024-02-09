@@ -162,8 +162,8 @@ namespace Helper {
 	template<typename... Types>
 	using Poly = variant<Types...>;
 
-	template<typename T>
-	using Nullable = optional<T>;
+	/*template<typename T>
+	using Nullable = optional<T>;*/
 
 	template<typename T, size_t LEN>
 	using Span = span<T, LEN>;
@@ -522,7 +522,7 @@ using Helper::Function;
 using Helper::Operation;
 using Helper::Procedure;
 using Helper::Poly;
-using Helper::Nullable;
+//using Helper::Nullable;
 using Helper::Regex;
 using Helper::Span;
 using Helper::Thread;

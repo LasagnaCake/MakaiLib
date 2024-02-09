@@ -345,26 +345,45 @@ namespace Math {
 	* polygon of "size" S (the shape's circumradius) at a given angle THETA,
 	* rotated by angle A.
 	*/
+
+	/*
+		Based off of the formula from https://www.desmos.com/calculator/hghrnwbcdh
+		(Archive) https://web.archive.org/web/20240209160635/https://www.desmos.com/calculator/hghrnwbcdh
+	*/
+	/// Precise version. Better results, but more computationally intensive.
+	constexpr float precisePolarPolyPoint(
+		float const& theta,
+		float const& sides,
+		float const& size	= 1,
+		float const& angle	= 0
+	) {
+		float const constant	= size * cos(pi / sides);
+		float const shape		= (sides / 2.0) * theta + angle;
+		return constant / cos((2.0 / sides) * asin(cos(shape)));
+	}
+
+	/// General version. Not as accurate, but still good for general use.
 	constexpr float polarPolyPoint(
 		float const& theta,
 		float const& sides,
 		float const& size	= 1,
 		float const& angle	= 0
 	) {
-		float constant	= (size * sqrt3) / (sides * sqrt(sides));
-		float shape		= (theta * sides + angle - hpi) / 2.0;
-		return size - constant * abs(cos(shape));
+		float const constant	= (size * sqrt3) / (sides * sqrt(sides));
+		float const shape		= (theta * sides + angle - hpi) / 2.0;
+		return size - constant * abcos(shape);
 	}
 
+	/// Fast version. Least accurate, but computationally fast.
 	constexpr float fastPolarPolyPoint(
 		float const& theta,
 		float const& sides,
 		float const& size	= 1,
 		float const& angle	= 0
 	) {
-		float constant	= (size * sqrt2) / (sides * 2.0);
-		float shape		= (theta * sides + angle - hpi) / 2.0;
-		return size - constant * abs(cos(shape));
+		float const constant	= (size * sqrt2) / (sides * 2.0);
+		float const shape		= (theta * sides + angle - hpi) / 2.0;
+		return size - constant * abcos(shape);
 	}
 
 	/// Reflects a given angle A in relation to a surface along angle S.
@@ -437,7 +456,7 @@ namespace Math {
 		typedef RandomEngine Engine;
 
 		template <Type::Number T>
-		using Distribution = Meta::Option<Type::Integer<T>, IntDist<T>, RealDist<T>>;
+		using Distribution = Meta::DualType<Type::Integer<T>, IntDist<T>, RealDist<T>>;
 
 		/// Returns a random double between 0 and 1.
 		inline double real() {
