@@ -367,8 +367,7 @@ namespace ArcSys {
 		header.compression	= (uint16)comp;		// compression mode
 		header.level		= complvl;			// compression level
 		header.flags =
-			0
-	//		Flags::SHOULD_CHECK_CRC_BIT			// Do CRC step
+			Flags::SHOULD_CHECK_CRC_BIT			// Do CRC step
 		;
 		_ARCDEBUGLN("             HEADER SIZE: ", (uint64)header.headerSize,		"B"	);
 		_ARCDEBUGLN("        FILE HEADER SIZE: ", (uint64)header.fileHeaderSize,	"B"	);
@@ -846,7 +845,7 @@ namespace ArcSys {
 		header.level		= lvl;			// compression level
 		header.flags =
 			Flags::SINGLE_FILE_ARCHIVE_BIT	// Single-file archive
-	//	|	Flags::SHOULD_CHECK_CRC_BIT		// Do CRC step
+		|	Flags::SHOULD_CHECK_CRC_BIT		// Do CRC step
 		;
 		// Write header
 		file.write((char*)&header, header.headerSize);
