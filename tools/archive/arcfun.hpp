@@ -221,20 +221,29 @@ namespace ArcSys {
 		constexpr CRCTable const crcTable = getCRCTable();
 	}
 
-	// https://barrgroup.com/blog/crc-series-part-3-crc-implementation-code-cc
-	constexpr uint32 calculateCRC(BinaryData const& data) {
+	constexpr uint32 calculateCRC(const uint8* const& data, size_t const& size) {
 		uint8 index;
 		uint32 remainder = 0xFFFFFFFFu;
 		constexpr uint32 SIZE = (8 * sizeof(uint32));
-		for (auto& b: data) {
-			index = Helper::reflect<uint8>(b) ^ (remainder >> (SIZE - 8));
+		for (size_t i = 0; i < size; i++) {
+			index = Helper::reflect<uint8>(data[i]) ^ (remainder >> (SIZE - 8));
 			remainder = crcTable[index] ^ (remainder << 8);
 		}
 		return Helper::reflect<uint32>(remainder) ^ 0xFFFFFFFFu;
 	}
 
+	constexpr bool checkCRC(const uint8* const& data, size_t const& size, uint32 const& crc) {
+		return calculateCRC(data, size) == crc;
+
+	}
+
+	// https://barrgroup.com/blog/crc-series-part-3-crc-implementation-code-cc
+	constexpr uint32 calculateCRC(BinaryData const& data) {
+		return calculateCRC(data.data(), data.size());
+	}
+
 	constexpr bool checkCRC(BinaryData const& data, uint32 const& crc) {
-		return calculateCRC(data) == crc;
+		return checkCRC(data.data(), data.size(), crc);
 
 	}
 
