@@ -234,7 +234,6 @@ namespace Event{
 		Notification(Notification&& other): Notification(other.id, other.func)				{}
 
 		Notification& operator=(String const& name)			{id = name; return *this;												}
-		Notification& operator=(const char* const& name)	{id = name; return *this;												}
 		Notification& operator=(Notification const& other)	{id = other.id; return *this;											}
 		Notification& operator=(Notification&& other)		{id = other.id; if (!func) db[id] = func = other.func; return *this;	}
 
@@ -367,8 +366,42 @@ namespace Event{
 					s();
 		}
 
+		static void broadcast(StringList const& signals) {
+			for (String const& s: signals)
+				broadcast(s);
+		}
+
+		static void broadcast(StringArguments const& signals) {
+			for (String const& s: signals)
+				broadcast(s);
+		}
+
+		template <typename... Args>
+		static void broadcast(Args const&... signals)
+		requires (... && Type::Equal<Args, String>) {
+			(..., broadcast(signals));
+		}
+
+
 		Notifier& operator()(String const& signal) {
 			broadcast(signal);
+			return *this;
+		}
+
+		Notifier& operator()(StringList const& signals) {
+			broadcast(signals);
+			return *this;
+		}
+
+		Notifier& operator()(StringArguments const& signals) {
+			broadcast(signals);
+			return *this;
+		}
+
+		template <typename... Args>
+		Notifier& operator()(Args const&... signals)
+		requires (... && Type::Equal<Args, String>) {
+			broadcast(signals...);
 			return *this;
 		}
 
@@ -398,7 +431,6 @@ namespace TypedEvent {
 		Notification(Notification&& other): Notification(other.id, other.func)				{}
 
 		Notification& operator=(String const& name)			{id = name; return *this;												}
-		Notification& operator=(const char* const& name)	{id = name; return *this;												}
 		Notification& operator=(Notification const& other)	{id = other.id; return *this;											}
 		Notification& operator=(Notification&& other)		{id = other.id; if (!func) db[id] = func = other.func; return *this;	}
 
