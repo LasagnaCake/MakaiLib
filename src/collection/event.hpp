@@ -348,6 +348,8 @@ namespace Event{
 
 		Notifier& unsubscribeFromAll() {
 			for (auto& [name, lst]: db) {
+				if (!added.contains(name))
+					continue;
 				auto& al = added[name];
 				std::erase_if(
 					lst,
