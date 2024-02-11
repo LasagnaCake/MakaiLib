@@ -104,6 +104,9 @@ namespace Entities {
 		*/
 		MultiTasker taskers;
 
+		/// The object's notification handler.
+		Event::Notifier notifier;
+
 		// onAction functions
 
 		/// Called when object is created.

@@ -221,26 +221,43 @@ namespace Event{
 		float counter = 0;
 	};
 
+	struct Notification {
+		typedef Signal			SignalType;
+		typedef Functor<void()>	SignalWrapper;
+
+		Notification() {}
+
+		Notification(String const& name): id(name)											{}
+		Notification(String const& name, SignalType const& action): Notification(name)		{if (!func) return; db[id] = func = action;}
+		Notification(String const& name, SignalWrapper const& action): Notification(name)	{if (!func) return; db[id] = func = action;}
+		Notification(Notification const& other): Notification(other.id)						{}
+		Notification(Notification&& other): Notification(other.id, other.func)				{}
+
+		Notification& operator=(String const& name)			{id = name; return *this;												}
+		Notification& operator=(const char* const& name)	{id = name; return *this;												}
+		Notification& operator=(Notification const& other)	{id = other.id; return *this;											}
+		Notification& operator=(Notification&& other)		{id = other.id; if (!func) db[id] = func = other.func; return *this;	}
+
+		~Notification() {if (db[id] == func) db[id] = SignalType();}
+
+		Notification const& emit() const		{db[id](); return *this;	}
+		Notification& emit()					{db[id](); return *this;	}
+		Notification const& operator()() const	{return emit();				}
+		Notification& operator()()				{return emit();				}
+	private:
+		SignalWrapper	func;
+		String			id;
+
+		inline static Dictionary<SignalWrapper> db;
+	};
+
 	class Notifier {
 	public:
-		typedef Signal						SignalType;
-
-		struct SignalWrapper {
-			SignalWrapper(SignalType const& s): signal(s), id(count++) {}
-
-			void operator()() const {signal();}
-
-			bool operator==(SignalWrapper const& other) const {return id == other.id;}
-
-			Helper::PartialOrder operator<=>(SignalWrapper const& other) const {return id <=> other.id;}
-		private:
-			SignalType	signal;
-			size_t		id = 0;
-			inline static size_t count = 0;
-		};
+		typedef Signal	SignalType;
 
 		typedef List<SignalType>				SignalList;
 		typedef Arguments<SignalType>			SignalArguments;
+		typedef Functor<void()>					SignalWrapper;
 		typedef Dictionary<List<SignalWrapper>>	SignalDatabase;
 
 		Notifier() {}
@@ -350,6 +367,11 @@ namespace Event{
 					s();
 		}
 
+		Notifier& operator()(String const& signal) {
+			broadcast(signal);
+			return *this;
+		}
+
 	private:
 		SignalDatabase added;
 
@@ -359,20 +381,39 @@ namespace Event{
 
 namespace TypedEvent {
 	/// A signal to be fired, whenever.
-	template <typename T = void>
-	using Signal = Function<void(T)>;
+	template <typename... Args>
+	using Signal = Function<void(Args...)>;
 
-	/// A trigger to wait for.
-	template <typename T = void>
-	using Trigger = Function<bool(T)>;
+	template<typename... Args>
+	struct Notification {
+		typedef Signal<Args...>			SignalType;
+		typedef Functor<void(Args...)>	SignalWrapper;
 
-	/// A call to be fired, which returns a Trigger to wait for.
-	template <typename T = void, typename T2 = void>
-	using Call = Function<Trigger<T>(T2)>;
+		Notification() {}
 
-	/// A call to be fired, which returns a Signal.
-	template <typename T = void, typename T2 = void>
-	using Chain = Function<Signal<T>(T2)>;
+		Notification(String const& name): id(name)											{}
+		Notification(String const& name, SignalType const& action): Notification(name)		{if (!func) return; db[id] = func = action;}
+		Notification(String const& name, SignalWrapper const& action): Notification(name)	{if (!func) return; db[id] = func = action;}
+		Notification(Notification const& other): Notification(other.id)						{}
+		Notification(Notification&& other): Notification(other.id, other.func)				{}
+
+		Notification& operator=(String const& name)			{id = name; return *this;												}
+		Notification& operator=(const char* const& name)	{id = name; return *this;												}
+		Notification& operator=(Notification const& other)	{id = other.id; return *this;											}
+		Notification& operator=(Notification&& other)		{id = other.id; if (!func) db[id] = func = other.func; return *this;	}
+
+		~Notification() {if (db[id] == func) db[id] = SignalType();}
+
+		Notification const& emit(Args... args) const		{db[id](args...); return *this;	}
+		Notification& emit(Args... args)					{db[id](args...); return *this;	}
+		Notification const& operator()(Args... args) const	{return emit(args...);			}
+		Notification& operator()(Args... args)				{return emit(args...);			}
+	private:
+		SignalWrapper	func;
+		String			id;
+
+		inline static Dictionary<SignalWrapper> db;
+	};
 }
 
 #endif // SIGNAL_TRIGGER_H

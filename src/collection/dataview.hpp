@@ -127,6 +127,36 @@ namespace View {
 		T data;
 		bool isSet = false;
 	};
+
+	template<typename T> class Functor;
+
+	template<typename F, typename... Args>
+	class Functor<F(Args...)> {
+	private:
+	public:
+		typedef Function<F(Args...)> FunctionType;
+
+		Functor() {}
+
+		Functor(FunctionType const& f): func(f), id(count++)			{}
+		Functor(Functor const& other): func(other.func), id(other.id)	{}
+
+		Functor& operator=(FunctionType const& f)	{func = f; id = count++; return *this;				}
+		Functor& operator=(Functor const& other)	{func = other.func; id = other.id; return *this;	}
+
+		void operator()(Args... args) const {func(args...);}
+
+		operator bool() const {return id;}
+
+		bool operator==(Functor const& other) const {return id == other.id;}
+
+		Helper::PartialOrder operator<=>(Functor const& other) const {return id <=> other.id;}
+
+	private:
+		FunctionType	func;
+		size_t			id = 0;
+		inline static size_t count = 0;
+	};
 }
 
 using namespace View;

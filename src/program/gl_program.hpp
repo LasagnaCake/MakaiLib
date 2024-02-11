@@ -1075,6 +1075,9 @@ namespace Makai {
 		/// The program's taskers.
 		Tasking::MultiTasker taskers;
 
+		/// The program's notification handler.
+		Event::Notifier notifier;
+
 	protected:
 		Drawer::FrameBufferData toFrameBufferData() {
 			Drawer::FrameBufferData self;
