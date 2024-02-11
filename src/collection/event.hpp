@@ -238,7 +238,7 @@ namespace Event{
 		Notification& operator=(Notification const& other)	{id = other.id; return *this;											}
 		Notification& operator=(Notification&& other)		{id = other.id; if (!func) db[id] = func = other.func; return *this;	}
 
-		~Notification() {if (db[id] == func) db[id] = SignalType();}
+		~Notification() {if (db[id] == func) db[id] = SignalWrapper();}
 
 		Notification const& emit() const		{db[id](); return *this;	}
 		Notification& emit()					{db[id](); return *this;	}
@@ -402,7 +402,7 @@ namespace TypedEvent {
 		Notification& operator=(Notification const& other)	{id = other.id; return *this;											}
 		Notification& operator=(Notification&& other)		{id = other.id; if (!func) db[id] = func = other.func; return *this;	}
 
-		~Notification() {if (db[id] == func) db[id] = SignalType();}
+		~Notification() {if (db[id] == func) db[id] = SignalWrapper();}
 
 		Notification const& emit(Args... args) const		{db[id](args...); return *this;	}
 		Notification& emit(Args... args)					{db[id](args...); return *this;	}
