@@ -17,13 +17,13 @@ namespace Group {
 
 		/// Gets a group of a given ID.
 		inline vector<T>& getGroup(size_t group) {
-			if (&g[group] == nullptr)
+			if (!g.contains(group))
 				g[group] = vector<T>();
 			return g[group];
 		}
 
 		vector<T>& operator[](size_t group) {
-			if (&g[group] == nullptr)
+			if (!g.contains(group))
 				g[group] = vector<T>();
 			return g[group];
 		}
@@ -44,7 +44,7 @@ namespace Group {
 
 		/// Adds an object to a group. if nonexistent, create group.
 		inline void addObject(T e, size_t group) {
-			if (&g[group] == nullptr)
+			if (!g.contains(group))
 				g[group] = vector<T>();
 			g[group].push_back(e);
 		}
