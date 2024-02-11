@@ -574,6 +574,8 @@ private:
 				setBlendEquationFromJSON(blend.eq.alpha, beq["alpha"]);
 			}
 		}
+		if (def["active"].is_boolean())
+			active = def["active"].get<bool>();
 	}
 
 	JSONData getObjectDefinition(string const& encoding = "base64", bool integratedBinary = true, bool integratedTextures = true) {

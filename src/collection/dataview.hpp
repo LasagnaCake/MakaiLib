@@ -13,26 +13,26 @@ namespace View {
 	public:
 		typedef T DataType;
 
-		Referend(T& _data):					data(&_data)		{}
-		Referend(Referend<T> const& other):	data(other.data)	{}
-		Referend(Referend<T>&& other):		data(other.data)	{}
+		constexpr Referend(T& _data):					data(&_data)		{}
+		constexpr Referend(Referend<T> const& other):	data(other.data)	{}
+		constexpr Referend(Referend<T>&& other):		data(other.data)	{}
 
-		inline Referend& rebind(T& data)	{this->data = &data; return (*this);}
+		constexpr Referend& rebind(T& data)	{this->data = &data; return (*this);}
 
-		bool exists() {return data != nullptr;};
+		constexpr bool exists() {return data != nullptr;};
 
-		inline Referend& operator=(T const& val)			{if (exists()) (*data) = val; return (*this);	}
-		inline Referend& operator=(Referend<T> const& val)	{data = val.data; return (*this);				}
+		constexpr Referend& operator=(T const& val)				{if (exists()) (*data) = val; return (*this);	}
+		constexpr Referend& operator=(Referend<T> const& val)	{data = val.data; return (*this);				}
 
-		inline T& operator*()		{assertExistence(); return (*data);}
-		inline T& operator*() const	{assertExistence(); return (*data);}
+		constexpr T& operator*()		{assertExistence(); return (*data);}
+		constexpr T& operator*() const	{assertExistence(); return (*data);}
 
-		inline operator T&()		{assertExistence(); return (*data);}
-		inline operator T&() const	{assertExistence(); return (*data);}
+		constexpr operator T&()			{assertExistence(); return (*data);}
+		constexpr operator T&() const	{assertExistence(); return (*data);}
 	private:
 		T* data = nullptr;
 
-		inline void assertExistence() {if (!exists()) throw Error::NullPointer("Referend is not bound to any data!");}
+		constexpr void assertExistence() {if (!exists()) throw Error::NullPointer("Referend is not bound to any data!");}
 	};
 
 	template<Viewable T>
