@@ -229,7 +229,6 @@ namespace Event{
 
 		Notification(String const& name): id(name)											{}
 		Notification(String const& name, SignalType const& action): Notification(name)		{if (!func) return; db[id] = func = action;}
-		Notification(String const& name, SignalWrapper const& action): Notification(name)	{if (!func) return; db[id] = func = action;}
 		Notification(Notification const& other): Notification(other.id)						{}
 		Notification(Notification&& other): Notification(other.id, other.func)				{}
 
@@ -243,7 +242,10 @@ namespace Event{
 		Notification& emit()					{db[id](); return *this;	}
 		Notification const& operator()() const	{return emit();				}
 		Notification& operator()()				{return emit();				}
+
 	private:
+		Notification(String const& name, SignalWrapper const& action): Notification(name) {if (!func) return; db[id] = func = action;}
+
 		SignalWrapper	func;
 		String			id;
 
@@ -428,7 +430,6 @@ namespace TypedEvent {
 
 		Notification(String const& name): id(name)											{}
 		Notification(String const& name, SignalType const& action): Notification(name)		{if (!func) return; db[id] = func = action;}
-		Notification(String const& name, SignalWrapper const& action): Notification(name)	{if (!func) return; db[id] = func = action;}
 		Notification(Notification const& other): Notification(other.id)						{}
 		Notification(Notification&& other): Notification(other.id, other.func)				{}
 
@@ -442,7 +443,10 @@ namespace TypedEvent {
 		Notification& emit(Args... args)					{db[id](args...); return *this;	}
 		Notification const& operator()(Args... args) const	{return emit(args...);			}
 		Notification& operator()(Args... args)				{return emit(args...);			}
+
 	private:
+		Notification(String const& name, SignalWrapper const& action): Notification(name) {if (!func) return; db[id] = func = action;}
+
 		SignalWrapper	func;
 		String			id;
 
