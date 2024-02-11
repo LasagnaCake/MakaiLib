@@ -228,13 +228,13 @@ namespace Event{
 		Notification() {}
 
 		Notification(String const& name): id(name)											{}
-		Notification(String const& name, SignalType const& action): Notification(name)		{if (!func) return; db[id] = func = action;}
+		Notification(String const& name, SignalType const& action): Notification(name)		{db[id] = (func = action);}
 		Notification(Notification const& other): Notification(other.id)						{}
 		Notification(Notification&& other): Notification(other.id, other.func)				{}
 
-		Notification& operator=(String const& name)			{id = name; return *this;												}
-		Notification& operator=(Notification const& other)	{id = other.id; return *this;											}
-		Notification& operator=(Notification&& other)		{id = other.id; if (!func) db[id] = func = other.func; return *this;	}
+		Notification& operator=(String const& name)			{id = name; return *this;								}
+		Notification& operator=(Notification const& other)	{id = other.id; return *this;							}
+		Notification& operator=(Notification&& other)		{id = other.id; moveFunction(other.func); return *this;	}
 
 		~Notification() {if (db[id] == func) db[id] = SignalWrapper();}
 
@@ -244,7 +244,14 @@ namespace Event{
 		Notification& operator()()				{return emit();				}
 
 	private:
-		Notification(String const& name, SignalWrapper const& action): Notification(name) {if (!func) return; db[id] = func = action;}
+		void moveFunction(SignalWrapper& f) {
+			if (f) {
+				db[id] = (func = f);
+				f = SignalWrapper();
+			}
+		}
+
+		Notification(String const& name, SignalWrapper& action): Notification(name) {moveFunction(action);}
 
 		SignalWrapper	func;
 		String			id;
@@ -429,13 +436,13 @@ namespace TypedEvent {
 		Notification() {}
 
 		Notification(String const& name): id(name)											{}
-		Notification(String const& name, SignalType const& action): Notification(name)		{if (!func) return; db[id] = func = action;}
+		Notification(String const& name, SignalType const& action): Notification(name)		{db[id] = (func = action);}
 		Notification(Notification const& other): Notification(other.id)						{}
 		Notification(Notification&& other): Notification(other.id, other.func)				{}
 
-		Notification& operator=(String const& name)			{id = name; return *this;												}
-		Notification& operator=(Notification const& other)	{id = other.id; return *this;											}
-		Notification& operator=(Notification&& other)		{id = other.id; if (!func) db[id] = func = other.func; return *this;	}
+		Notification& operator=(String const& name)			{id = name; return *this;								}
+		Notification& operator=(Notification const& other)	{id = other.id; return *this;							}
+		Notification& operator=(Notification&& other)		{id = other.id; moveFunction(other.func); return *this;	}
 
 		~Notification() {if (db[id] == func) db[id] = SignalWrapper();}
 
@@ -445,7 +452,14 @@ namespace TypedEvent {
 		Notification& operator()(Args... args)				{return emit(args...);			}
 
 	private:
-		Notification(String const& name, SignalWrapper const& action): Notification(name) {if (!func) return; db[id] = func = action;}
+		void moveFunction(SignalWrapper& f) {
+			if (f) {
+				db[id] = (func = f);
+				f = SignalWrapper();
+			}
+		}
+
+		Notification(String const& name, SignalWrapper& action): Notification(name) {moveFunction(action);}
 
 		SignalWrapper	func;
 		String			id;

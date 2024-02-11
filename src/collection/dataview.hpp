@@ -136,15 +136,16 @@ namespace View {
 	public:
 		typedef Function<F(Args...)> FunctionType;
 
-		Functor() {}
+		Functor(): id(0) {}
 
-		Functor(FunctionType const& f): func(f), id(count++)			{}
+		Functor(FunctionType const& f): func(f), id(++count)			{}
 		Functor(Functor const& other): func(other.func), id(other.id)	{}
 
-		Functor& operator=(FunctionType const& f)	{func = f; id = count++; return *this;				}
+		Functor& operator=(FunctionType const& f)	{func = f; id = ++count; return *this;				}
 		Functor& operator=(Functor const& other)	{func = other.func; id = other.id; return *this;	}
 
-		void operator()(Args... args) const {func(args...);}
+		void evoke(Args... args) const		{if (id) func(args...);	}
+		void operator()(Args... args) const	{evoke(args...);		}
 
 		operator bool() const {return id;}
 
