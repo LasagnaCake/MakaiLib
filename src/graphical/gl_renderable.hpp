@@ -527,9 +527,9 @@ private:
 		if (def["trans"].is_object()) {
 			auto& dtrans = def["trans"];
 			try {
-				trans.position = VecMath::fromJSONArrayV3(dtrans["position"]);
-				trans.position = VecMath::fromJSONArrayV3(dtrans["rotation"]);
-				trans.position = VecMath::fromJSONArrayV3(dtrans["scale"]);
+				trans.position	= VecMath::fromJSONArrayV3(dtrans["position"]);
+				trans.rotation	= VecMath::fromJSONArrayV3(dtrans["rotation"]);
+				trans.scale		= VecMath::fromJSONArrayV3(dtrans["scale"]);
 			} catch (JSON::exception const& e) {
 				throw Error::FailedAction(
 					"Failed at getting transformation values!",
