@@ -663,7 +663,7 @@ ObjectMaterial fromObjectMaterialDefinition(
 			else if (dgbegin.is_string())
 				mat.gradient.begin = Color::fromHexCodeString(dgbegin.get<String>());
 			if (dgend.is_array())
-				mat.gradient.begin = Drawer::colorFromJSON(dgend);
+				mat.gradient.end = Drawer::colorFromJSON(dgend);
 			else if (dgend.is_string())
 				mat.gradient.end = Color::fromHexCodeString(dgend.get<String>());
 			mat.gradient.invert	= dmat["gradient"]["invert"].get<bool>();
