@@ -22,6 +22,7 @@ public:
 		destroy();
 	}
 
+	VecMath::Transform3D	global;
 	Camera::GimbalCamera3D	camera;
 	Material::WorldMaterial	world;
 
@@ -381,10 +382,13 @@ private:
 
 	void draw() override {
 		auto lastcam = Scene::camera;
-		Scene::camera = camera;
+		auto lastmat = Scene::world;
+		Scene::camera	= camera;
+		Scene::world	= Matrix4x4(global);
 		Material::setMaterial(MAIN_SHADER, world);
 		for(auto& [_, obj]: objects)
 			obj->render();
-		Scene::camera = lastcam;
+		Scene::camera	= lastcam;
+		Scene::world	= lastmat;
 	}
 };
