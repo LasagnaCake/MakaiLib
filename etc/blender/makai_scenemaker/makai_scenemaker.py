@@ -342,9 +342,9 @@ def create_render_definition(context, obj, file_name, folder_path, tx_folder, me
     pos, rot, scale = obj.matrix_world.decompose()
     rot = rot.to_euler('YXZ')
     strfile["trans"] = {
-        "position": [pos.x, pos.y, pos.z],
-        "rotation": [rot.x, rot.y, rot.z],
-        "scale": [scale.x, scale.y, scale.z]
+        "position": [-pos.x, pos.z, pos.y],
+        "rotation": [-rot.x, rot.z, rot.y],
+        "scale": [scale.x, scale.z, scale.y]
     }
     # Set preliminary material data
     strfile["material"] = {
@@ -760,8 +760,8 @@ class EXPORT_OT_ExportSceneOperator(bt.Operator):
         scenedef = {
             "camera": {
                 "type": "GIMBAL",
-                "position": [-cpos.x, cpos.y, cpos.z],
-                "rotation": [crot.x, crot.y, crot.z],
+                "position": [-cpos.x, cpos.z, cpos.y],
+                "rotation": [-crot.x, crot.z, crot.y],
                 "fov": camera.angle,
                 "zNear": camera.clip_start,
                 "zFar": camera.clip_end,
