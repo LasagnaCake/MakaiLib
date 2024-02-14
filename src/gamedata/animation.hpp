@@ -37,24 +37,33 @@ namespace Animation {
 	using	TrackData	= HashMap<size_t, Metadata<T>>;
 
 	template <Tweenable T>
-	struct AnimationPlayer: Entity {
+	struct AnimationHandler {
 		typedef T DataType;
 
-		DERIVED_CLASS(AnimationPlayer, Entity)
-
-		DERIVED_CONSTRUCTOR(AnimationPlayer, Entity, {
-
-		})
-
-		bool	paused = false;
-		bool	loop = false;
-		float	speed = 1.0;
+		bool	paused		= false;
+		bool	repeat		= false;
+		long	loopCount	= -1;
+		float	speed		= 1.0;
 
 		Animation<T> animation;
 
-		TypedEvent::Signal<AnimationPlayer<T>*> onAllAnimationsDone = T_SIGNAL(auto& target) {};
+		TypedEvent::Signal<AnimationHandler<T>*> onAllAnimationsDone = T_SIGNAL(auto& target) {};
 
-		void onFrame(float delta) override {
+		void start() {
+			if (playing) return;
+			paused = playing = true;
+			for (auto& [_, md]: metadata) {
+				md = Metadata<T>{};
+			}
+		}
+
+		void stop() {
+			if (!playing) return;
+			playing = false;
+		}
+
+	protected:
+		void processAnimations(float const& delta = 1.0) {
 			if (!playing)	return;
 			if (paused)		return;
 			bool allDone = true;
@@ -79,22 +88,12 @@ namespace Animation {
 			if (allDone) {
 				onAllAnimationsDone(this);
 				// Loop if required
-				if (loop)	start();
-				else		stop();
+				if (repeat && loopCount != 0) {
+					loopCount--;
+					start();
+				}
+				else stop();
 			}
-		}
-
-		void start() {
-			if (playing) return;
-			paused = playing = true;
-			for (auto& [_, md]: metadata) {
-				md = Metadata<T>{};
-			}
-		}
-
-		void stop() {
-			if (!playing) return;
-			playing = false;
 		}
 
 	private:
@@ -102,13 +101,13 @@ namespace Animation {
 
 		TrackData<T> metadata;
 
-		void processAnimation(size_t index, Keyframe<T>& anim, Metadata<T>& track, T* target, float delta) {
+		void processAnimation(size_t index, Keyframe<T>& anim, Metadata<T>& track, T* const& target, float const& delta) {
 			// If animation is completed or no target specified, return
 			if (!(track.done && target)) return;
 			// Get start of animation
 			T from = animation[index].keyframes[track.index-1].to;
 			// Increment step
-			track.step += speed * delta * 10.0;
+			track.step += speed * delta;
 			// If begin != end, calculate step
 			if (track.step < track.stop) {
 				track.factor	= anim.easing(track.step, 0.0f, 1.0f, track.stop);
@@ -128,6 +127,52 @@ namespace Animation {
 				// Set next track data
 				track = {track.index, 0, 0, animation[index].keyframes[track.index].duration};
 			}
+		}
+	};
+
+	template <Tweenable T>
+	struct AnimationPlayer: public AnimationHandler<T> {
+		AnimationPlayer() {
+			anims.repeat	= true;
+			anims.delay		= 1;
+			anims.onSignal	= SIGNAL {
+				this->processAnimations();
+			};
+			anims.start();
+		}
+
+		AnimationPlayer& setManual() {
+			anims.setManual();
+			return *this;
+		}
+
+		AnimationPlayer& setAutomatic() {
+			anims.setAutomatic();
+			return *this;
+		}
+
+		void yield(float const& delta = 1.0) {
+			anims.yield(delta);
+		}
+
+		AnimationPlayer& setTimerDelay(size_t const& delay) {
+			anims.delay = delay;
+		}
+
+	private:
+		Event::Timer anims;
+	};
+
+	template <Tweenable T>
+	struct AnimationPlayerEntity: public AnimationHandler<T>, public Entity {
+		DERIVED_CLASS(AnimationPlayerEntity, Entity)
+
+		DERIVED_CONSTRUCTOR(AnimationPlayerEntity, Entity, {
+
+		})
+
+		void onFrame(float delta) override {
+			this->processAnimations(delta);
 		}
 	};
 }
