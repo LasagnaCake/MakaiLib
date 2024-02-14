@@ -659,6 +659,9 @@ class SceneProperties(BaseProperties):
     ambient_0_color: RGBColorProperty("Ambient Light Color", (1, 1, 1))
     ambient_1_strength: FloatProperty("Ambient Light Strength", 1, 0)
     
+    shade_0_intensity: FloatProperty("Shade Intensity", .5)
+    shade_1_direction: Vector3Property("Shade Direction", (0, 1, 0))
+    
     # This is why you should never be lazy
     
     def render(self, target):
@@ -671,6 +674,8 @@ class SceneProperties(BaseProperties):
         self.render_child(target, "far_fog_")
         layout.label(text="Ambient Light")
         self.render_child(target, "ambient_")
+        layout.label(text="Shading")
+        self.render_child(target, "shade_")
 
 class SceneExportProperties(BaseProperties):
     
@@ -773,10 +778,15 @@ class EXPORT_OT_ExportSceneOperator(bt.Operator):
                 }
             }
         }
+        acdir = scene_props.shade_1_direction
         scenedef["world"] = {
             "ambient": {
                 "color": hex_color_or_array(scene_props.ambient_0_color, as_hex_string_rgb),
                 "strength": scene_props.ambient_1_strength
+            },
+            "shade": {
+                "direction": scene_props.shade_0_intensity,
+                "direction": [acdir.x, acdir.y, acdir.z]
             }
         }
         if scene_props.near_fog_0_enabled:
