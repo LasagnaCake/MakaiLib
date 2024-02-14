@@ -172,7 +172,7 @@ namespace Animation {
 		})
 
 		void onFrame(float delta) override {
-			this->processAnimations(delta);
+			this->processAnimations(delta * 60.0);
 		}
 	};
 }
