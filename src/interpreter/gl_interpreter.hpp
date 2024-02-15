@@ -62,11 +62,21 @@ namespace Language {
 		II_SUB,
 		II_MUL,
 		II_DIV,
+		II_POW,
+		II_MOD,
 		II_PUSH,
 		II_POP,
 		II_STORE,
 		II_LOAD,
+		II_MOVE,
+		II_SWAP,
+		II_COPY,
 		II_CALL,
+		II_SIN,
+		II_COS,
+		II_TAN,
+		II_SQRT,
+		II_ROOT,
 	};
 
 	enum class CodeType {
@@ -185,7 +195,8 @@ namespace Language {
 			return *this;
 		}
 
-		List<DataBlock> data;
+		List<DataBlock>	data;
+		DataBlock		reg[64];
 
 		List<byte> bytecode;
 
