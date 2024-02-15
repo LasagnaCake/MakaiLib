@@ -15,6 +15,7 @@
 #include "program.hpp"
 #include "graphical.hpp"
 #include "gamedata.hpp"
+#include "interpreter.hpp"
 
 #ifndef MAKAILIB_FORCE_INTEGRATED_GRAPHICS
 extern "C" {
