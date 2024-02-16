@@ -88,6 +88,7 @@ namespace Language {
 	};
 
 	enum class InstructionMethod: uint64 {
+		IM_NOOP,
 		IM_ADD,
 		IM_SUB,
 		IM_MUL,
@@ -101,12 +102,13 @@ namespace Language {
 		IM_MOVE,
 		IM_SWAP,
 		IM_COPY,
-		IM_CALL,
 		IM_SIN,
 		IM_COS,
 		IM_TAN,
 		IM_SQRT,
 		IM_ROOT,
+		IM_CALL,
+		IM_RET,
 		IM_JUMP,
 		IM_CMP_EQ,
 		IM_CMP_LT,
@@ -121,6 +123,10 @@ namespace Language {
 
 	typedef uint64 InstructionValue;
 
+	/*
+		An instruction is formed as following:
+		<METHOD> [TARGET<1> .. TARGET<N>] [VALUE<1> .. VALUE<N>]
+	*/
 	template<size_t ARGC>
 	struct Instruction {
 		InstructionMethod	method;
