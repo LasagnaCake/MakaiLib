@@ -195,7 +195,7 @@ def FileNameProperty(prop_name, prop_default="", prop_options=set()):
         default=prop_default,
         options=prop_options
     )
-    
+ 
 """
     ----------------
 
@@ -203,6 +203,11 @@ def FileNameProperty(prop_name, prop_default="", prop_options=set()):
     
     ----------------
 """
+
+def absolute_path(path: str):
+	if path is not None and path != "":
+		return bpy.path.abspath(path)
+	return bpy.path.abspath("\\")
 
 def make_if_not_exists(dir: str):
     if not os.path.isdir(dir):
@@ -726,19 +731,20 @@ class EXPORT_OT_ExportSceneObjectOperator(bt.Operator):
 
     def execute(self, context):
         export_props = context.object.object_export_props
+        dir_path = absolute_path(export_props.dir_path)
         objdef = create_render_definition(
             context,
             context.object,
             export_props.file_name,
-            export_props.dir_path,
-            export_props.tx_dir_path,
-            export_props.mesh_dir_path,
+            dir_path,
+            absolute_path(export_props.tx_dir_path),
+            absolute_path(export_props.mesh_dir_path),
             export_props.embed_textures,
             export_props.embed_meshes,
             export_props.apply_modifiers,
             not export_props.no_hex_color
         )
-        path = f"{export_props.dir_path}\\{export_props.file_name}.mrod"
+        path = f"{dir_path}\\{export_props.file_name}.mrod"
         with open(path, "wt") as f:
             f.write(json.dumps(objdef, indent="\t"))
         return {"FINISHED"}
@@ -754,8 +760,11 @@ class EXPORT_OT_ExportSceneOperator(bt.Operator):
             return color_func(color) if not export_props.no_hex_color else [x for x in color]
         objects = [obj for obj in context.scene.objects if obj.type == "MESH" and obj.visible_get()]
         objects.sort(key=lambda x: x.name, reverse=False)
+        dir_path = absolute_path(export_props.dir_path)
+        tx_dir_path = absolute_path(export_props.tx_dir_path)
+        mesh_dir_path = absolute_path(export_props.mesh_dir_path)
         print(f"Objects: {len(objects)}")
-        make_if_not_exists(export_props.dir_path)
+        make_if_not_exists(dir_path)
         camera = scene_props.camera.data
         cpos, crot, cscale = scene_props.camera.matrix_world.decompose()
         crot = crot.to_euler('YXZ')
@@ -820,9 +829,9 @@ class EXPORT_OT_ExportSceneOperator(bt.Operator):
                     context,
                     obj,
                     obj_name,
-                    export_props.dir_path,
-                    export_props.tx_dir_path,
-                    export_props.mesh_dir_path,
+                    dir_path,
+                    tx_dir_path,
+                    mesh_dir_path,
                     export_props.embed_textures,
                     export_props.embed_meshes,
                     export_props.apply_modifiers,
@@ -833,9 +842,9 @@ class EXPORT_OT_ExportSceneOperator(bt.Operator):
                     context,
                     obj,
                     obj_name,
-                    obj.object_export_props.dir_path,
-                    obj.object_export_props.tx_dir_path,
-                    obj.object_export_props.mesh_dir_path,
+                    absolute_path(obj.object_export_props.dir_path),
+                    absolute_path(obj.object_export_props.tx_dir_path),
+                    absolute_path(obj.object_export_props.mesh_dir_path),
                     obj.object_export_props.embed_textures,
                     obj.object_export_props.embed_meshes,
                     obj.object_export_props.apply_modifiers,
@@ -844,15 +853,15 @@ class EXPORT_OT_ExportSceneOperator(bt.Operator):
             if export_props.embed_objects:
                 scenedef["data"][obj.name] = rendef
             else:
-                make_if_not_exists(f"{export_props.dir_path}\\{obj_name}");
-                defpath = f"{export_props.dir_path}\\{obj_name}\\{obj_name}.mrod"
+                make_if_not_exists(f"{dir_path}\\{obj_name}");
+                defpath = f"{dir_path}\\{obj_name}\\{obj_name}.mrod"
                 with open(defpath, "wt") as f:
                     f.write(json.dumps(rendef, indent="\t"))
                 scenedef["path"].append({
                     "source": f"{obj_name}\\{obj_name}.mrod",
                     "type": "MROD"
                 })
-            path = f"{export_props.dir_path}\\{export_props.file_name}.msd"
+            path = f"{dir_path}\\{export_props.file_name}.msd"
             with open(path, "wt") as f:
                 f.write(json.dumps(scenedef, indent="\t"))
         return {"FINISHED"}
