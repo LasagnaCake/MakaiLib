@@ -9,15 +9,16 @@ namespace Language {
 	typedef Index TypeIndex;
 
 	struct DataBlock {
-		void*	data;
-		Index	type;
+		void*	data = nullptr;
+		Index	type = -2;
 	};
 
 	#define TYPEINFO(TYPE, ID) TypeInfo{(ID), sizeof(TYPE)}
 	#define SU_TYPEINFO(TYPE, ID) TYPEINFO(sizeof(TYPE), (ID)), TYPEINFO(sizeof(unsigned TYPE), (ID)+1)
 	TypeInfo const systemTypes[] = {
-		TypeInfo{0, 0},
-		TYPEINFO(		decltype(nullptr),	1	),
+		TYPEINFO(		decltype(nullptr),	-1	),
+		TypeInfo{0, 0}, // void
+		TYPEINFO(		void*,				1	),
 		SU_TYPEINFO(	char,				2	),
 		SU_TYPEINFO(	short,				4	),
 		SU_TYPEINFO(	int,				6	),
@@ -35,14 +36,15 @@ namespace Language {
 
 	#define SYS_TYPE_FUNC(TYPE, INDEX)\
 		template<> TypeIndex		getSystemTypeIndex<TYPE>()	{return (INDEX);				}\
-		template<> TypeInfo const&	getSystemTypeInfo<TYPE>()	{return systemTypes[(INDEX)];	}\
+		template<> TypeInfo const&	getSystemTypeInfo<TYPE>()	{return systemTypes[(INDEX+1)];	}\
 
 	#define SU_SYS_TYPE_FUNC(TYPE, INDEX)\
 		SYS_TYPE_FUNC(TYPE, (INDEX))\
 		SYS_TYPE_FUNC(unsigned TYPE, (INDEX)+1)
 
-	SYS_TYPE_FUNC(		decltype(nullptr),	0	)
-	SYS_TYPE_FUNC(		void,				1	)
+	SYS_TYPE_FUNC(		decltype(nullptr),	-1	)
+	SYS_TYPE_FUNC(		void,				0	)
+	SYS_TYPE_FUNC(		void*,				1	)
 
 	SU_SYS_TYPE_FUNC(	char,				2	)
 	SU_SYS_TYPE_FUNC(	short,				4	)
@@ -57,26 +59,73 @@ namespace Language {
 	#undef SU_SYS_TYPE_FUNC
 	#undef SYS_TYPE_FUNC
 
-	enum class Instruction {
-		II_ADD,
-		II_SUB,
-		II_MUL,
-		II_DIV,
-		II_POW,
-		II_MOD,
-		II_PUSH,
-		II_POP,
-		II_STORE,
-		II_LOAD,
-		II_MOVE,
-		II_SWAP,
-		II_COPY,
-		II_CALL,
-		II_SIN,
-		II_COS,
-		II_TAN,
-		II_SQRT,
-		II_ROOT,
+	enum class ConstantType: uint8 {
+		CT_NULL,
+		CT_VOIDPTR,
+		CT_VOID,
+		CT_BYTE,
+		CT_UBYTE,
+		CT_CHAR		= CT_BYTE,
+		CT_UCHAR	= CT_UBYTE,
+		CT_SHORT,
+		CT_USHORT,
+		CT_INT,
+		CT_UINT,
+		CT_LONG		= CT_INT,
+		CT_ULONG	= CT_UINT,
+		CT_LLONG,
+		CT_ULLONG,
+		CT_FLOAT,
+		CT_DOUBLE,
+		CT_LDOUBLE,
+	};
+
+	enum class InstructionTarget: uint16 {
+		IT_DISCARD,
+		IT_CONSTANT,
+		IT_REGISTER,
+		IT_STACK,
+	};
+
+	enum class InstructionMethod: uint64 {
+		IM_ADD,
+		IM_SUB,
+		IM_MUL,
+		IM_DIV,
+		IM_POW,
+		IM_MOD,
+		IM_PUSH,
+		IM_POP,
+		IM_STORE,
+		IM_LOAD,
+		IM_MOVE,
+		IM_SWAP,
+		IM_COPY,
+		IM_CALL,
+		IM_SIN,
+		IM_COS,
+		IM_TAN,
+		IM_SQRT,
+		IM_ROOT,
+		IM_JUMP,
+		IM_CMP_EQ,
+		IM_CMP_LT,
+		IM_CMP_GT,
+		IM_NOT,
+		IM_AND,
+		IM_OR,
+		IM_XOR,
+		IM_JUMP_IF,
+		IM_JUMP_IF_NOT,
+	};
+
+	typedef uint64 InstructionValue;
+
+	template<size_t ARGC>
+	struct Instruction {
+		InstructionMethod	method;
+		InstructionTarget	targets[ARGC];
+		InstructionValue	values[ARGC];
 	};
 
 	enum class CodeType {
