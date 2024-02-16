@@ -89,6 +89,7 @@ namespace Language {
 
 	enum class InstructionMethod: uint64 {
 		IM_NOOP,
+		IM_HALT,
 		IM_ADD,
 		IM_SUB,
 		IM_MUL,
@@ -240,6 +241,12 @@ namespace Language {
 		bool isRunning	= false;
 		size_t frame	= 0;
 
+		template<typename T>
+		Interpreter& increment() {
+			codeptr += sizeof(T);
+			return *this;
+		}
+
 		constexpr TypeIndex addUserType(TypeInfo const& type) {
 			userTypes.push_back(type);
 			return userTypes.size()-1;
@@ -253,7 +260,9 @@ namespace Language {
 		List<DataBlock>	data;
 		DataBlock		reg[64];
 
-		List<byte> bytecode;
+		byte*			codeptr;
+		List<byte>		bytecode;
+		List<size_t>	frameStack;
 
 		List<TypeInfo> apiTypes;
 		List<TypeInfo> userTypes;
