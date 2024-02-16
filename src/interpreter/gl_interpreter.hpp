@@ -118,8 +118,12 @@ namespace Language {
 		IM_AND,
 		IM_OR,
 		IM_XOR,
+		IM_SHIFT_L,
+		IM_SHIFT_R,
 		IM_JUMP_IF,
 		IM_JUMP_IF_NOT,
+		IM_CAST,
+		IM_BIT_CAST,
 	};
 
 	typedef uint64 InstructionValue;
