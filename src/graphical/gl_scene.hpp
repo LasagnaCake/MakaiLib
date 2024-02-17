@@ -298,28 +298,33 @@ private:
 			{
 				if (def["path"].is_object()) {
 					for(auto& obj: def["data"]["path"].get<List<JSONData>>()) {
-						auto [_, r] = createObject(
+						auto r = createObject(
 							FileSystem::getFileName(obj["source"].get<String>(), true)
-						);
+						).second;
 						if (obj["type"].get<String>() == "MROD")
 							r->extendFromDefinitionFile(obj["source"].get<String>());
 						if (obj["type"].get<String>() == "MESH" || obj["type"].get<String>() == "MSBO") {
 							r->extendFromBinaryFile(obj["source"].get<String>());
 						}
+						r->bake();
 					}
 				} else if (def["data"].is_array()) {
 					for(auto& obj: def["data"].get<List<JSONData>>()) {
-						createObject().second->extendFromDefinition(
+						auto r = createObject().second;
+						r->extendFromDefinition(
 							obj,
 							sourcepath + FileSystem::getDirectoryFromPath(obj)
 						);
+						r->bake();
 					}
 				} else {
 					for(auto& [name, obj]: def["data"].items()) {
-						createObject(name).second->extendFromDefinition(
+						auto r = createObject().second;
+						r->extendFromDefinition(
 							obj,
 							sourcepath + FileSystem::getDirectoryFromPath(obj)
 						);
+						r->bake();
 					}
 				}
 			}
