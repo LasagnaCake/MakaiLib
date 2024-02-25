@@ -23,7 +23,6 @@ uniform float		alphaClip = 0.2;
 
 uniform bool		useEmission			= false;
 uniform sampler2D	emissionTexture;
-uniform float		emissionAlphaClip	= 0.2;
 uniform float		emissionStrength	= 1.0;
 
 uniform vec4 albedo = vec4(1);
@@ -176,8 +175,7 @@ void main(void) {
 	if (useEmission) {
 		vec4	emitColor	= texture(emissionTexture, calculatedFragUV) * fragColor;
 		float	emitFactor	= rgb2hsl(emitColor.rgb).z * emitColor.a;
-		if (emitColor.a > fragColor.a * emissionAlphaClip)
-			color.rgb = mix(color.rgb, emitColor.rgb, emitFactor * emissionStrength);
+		color.rgb = mix(color.rgb, emitColor.rgb, emitFactor * emissionStrength);
 	}
 
 	FragColor = color;

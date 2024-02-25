@@ -132,7 +132,13 @@ protected:
 		}
 		// Draw object to screen
 		glPolygonMode(GL_FRONT_AND_BACK, material.fill);
-		glDrawArraysInstanced(mode, 0, count, material.instances.size());
+		/*if (material.culling == GL_FRONT_AND_BACK) {
+			glEnable(GL_CULL_FACE);
+			glCullFace(GL_BACK);
+			glDrawArraysInstanced(mode, 0, count, material.instances.size());
+			glCullFace(GL_FRONT);
+			glDrawArraysInstanced(mode, 0, count, material.instances.size());
+		} else */glDrawArraysInstanced(mode, 0, count, material.instances.size());
 		// Disable culling
 		glDisable(GL_CULL_FACE);
 		// Disable attributes

@@ -123,7 +123,7 @@ public:
 					mdef["texture"]["alphaClip"] = mat.texture.alphaClip;
 					// Save emission texture
 					mdef["emission"] = Material::saveImageEffect(obj->material.emission, folderpath, "tx/emission.tga");
-					mdef["texture"]["alphaClip"] = mat.emission.alphaClip;
+					mdef["texture"]["strength"] = mat.emission.strength;
 					// Save warp texture
 					mdef["warp"] = Material::saveImageEffect(obj->material.warp, folderpath, "tx/warp.tga");
 					mdef["warp"]["channelX"] = mat.warp.channelX;

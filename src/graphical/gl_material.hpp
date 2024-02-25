@@ -156,7 +156,7 @@ struct TextureEffect: ImageEffect {
 	float alphaClip = 0.1;
 };
 
-struct EmissionEffect: TextureEffect, Variable {
+struct EmissionEffect: ImageEffect, Variable {
 };
 
 // Buffer Material Effects
@@ -318,7 +318,6 @@ void setMaterial(Shader& shader, ObjectMaterial& material) {
 	// Emission Texture
 	if (material.emission.image && material.emission.enabled && material.emission.image->exists()) {
 		shader["useEmission"](true);
-		shader["emissionAlphaClip"](material.emission.alphaClip);
 		shader["emissionTexture"](1);
 		shader["emissionStrength"](material.emission.strength);
 		material.emission.image->enable(1);
@@ -628,10 +627,8 @@ ObjectMaterial fromObjectMaterialDefinition(
 			auto fx = loadImageEffect(dmat["emission"], definitionFolder, emission ? emission : mat.emission.image);
 			mat.emission.enabled	= fx.enabled;
 			mat.emission.image		= fx.image;
-			if (dmat["emission"]["alphaClip"].is_number())
-				mat.emission.alphaClip	= dmat["emission"]["alphaClip"].get<float>();
 			if (dmat["emission"]["strength"].is_number())
-				mat.emission.alphaClip	= dmat["emission"]["strength"].get<float>();
+				mat.emission.strength	= dmat["emission"]["strength"].get<float>();
 		}
 		// Set warp texture
 		if (dmat["warp"].is_object()) {
@@ -763,7 +760,6 @@ JSONData getMaterialDefinition(
 	}
 	// Set stuff
 	def["texture"]["alphaClip"] = mat.texture.alphaClip;
-	def["emission"]["alphaClip"] = mat.emission.alphaClip;
 	def["emission"]["strength"] = mat.emission.strength;
 	def["warp"]["channelX"] = mat.warp.channelX;
 	def["warp"]["channelY"] = mat.warp.channelY;
