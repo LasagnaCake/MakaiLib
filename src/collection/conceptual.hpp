@@ -321,10 +321,19 @@ namespace Type {
 		template<class Lambda, int=(Lambda{}(), 0)>
 		constexpr bool isConstexpr(Lambda)	{return true;	}
 		constexpr bool isConstexpr(...)		{return false;	}
+
+		template<typename T, typename = void>
+		constexpr bool isDefined = false;
+
+		template<typename T>
+		constexpr bool isDefined<T, decltype(typeid(T), void())> = true;
 	}
 
 	template <typename T>
 	concept CompileTimeable = isConstexpr([]{return T();});
+
+	template <class T>
+	concept Defined = isDefined<T>;
 }
 
 namespace Meta {

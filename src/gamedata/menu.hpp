@@ -2,7 +2,7 @@ namespace Menu {
 	struct Option;
 	struct BaseMenu;
 
-	typedef std::vector<Option*>		OptionSet;
+	typedef List<Option*>				OptionSet;
 	typedef TypedEvent::Signal<Option*>	OptionAction;
 
 	const OptionAction OPTION_DEF_ACTION = [](Option* o){};
@@ -20,6 +20,7 @@ namespace Menu {
 		OptionAction		onFocusGained	= OPTION_DEF_ACTION;
 		OptionAction		onFocusLost		= OPTION_DEF_ACTION;
 		OptionAction		onDelete		= OPTION_DEF_ACTION;
+		OptionAction		onReturn		= OPTION_DEF_ACTION;
 	};
 
 	struct BaseMenu: public Entity {
@@ -73,6 +74,7 @@ namespace Menu {
 		void removeOption(Option* o) {
 			o->onDelete(o);
 			ERASE_IF(all, elem->id == o->id);
+			ERASE_IF(actionStack, elem = &o->onReturn);
 			delete o;
 		}
 
@@ -80,6 +82,7 @@ namespace Menu {
 			for(Option* o : all) delete o;
 			all.clear();
 			currentSet.clear();
+			actionStack.clear();
 		}
 
 		Option* getCurrentOption() {
@@ -127,6 +130,7 @@ namespace Menu {
 			if (!current->previous) {onExit(); return;}
 			Option* now		= current->previous->previous;
 			Option* prev	= current->previous;
+			Option* tlast	= last;
 			setCurrentOptionSet(now ? now->next : top);
 			setOption(
 				std::find_if(
@@ -137,6 +141,10 @@ namespace Menu {
 					}
 				) - currentSet.begin()
 			);
+			if (!actionStack.empty()) {
+				(*actionStack.back())(tlast);
+				actionStack.pop_back();
+			}
 			onReturn();
 		}
 
@@ -150,6 +158,7 @@ namespace Menu {
 				return;
 			}
 			setCurrentOptionSet(current->next);
+			actionStack.push_back(&current->onReturn);
 			if (!setOption(current->nextID)) {
 				option = 0;
 				nextOption();
@@ -209,6 +218,8 @@ namespace Menu {
 		}
 
 	private:
+		List<OptionAction*> actionStack;
+
 		OptionSet		currentSet, lastSet, all;
 		Event::Timer	nextOptTimer, prevOptTimer;
 
