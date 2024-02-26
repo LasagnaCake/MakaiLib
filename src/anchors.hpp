@@ -1,7 +1,7 @@
 #ifndef ANCHORED_HEADERS_H
 #define ANCHORED_HEADERS_H
 
-#define ENFORCE(WHAT, CHECK) if(!(CHECK)) throw Error::FailedAction(std::string("Failed to initialize ") + WHAT)
+#define ENFORCE(WHAT, CHECK) if(!(CHECK)) throw Error::FailedAction(String("Failed to initialize ") + WHAT)
 
 #ifdef _DEBUG_OUTPUT_
 #define ENABLE_DEBUG_OUTPUT_
@@ -111,9 +111,7 @@
 */
 
 #if INTPTR_MAX == INT64_MAX
-#define size_t uint64_t
 #elif INTPTR_MAX == INT32_MAX
-#define size_t uint32_t
 #else
 #error "This engine was designed for at least 32 bit processors."
 #endif
