@@ -48,6 +48,11 @@ public:
 		return (*this);
 	}
 
+	template<typename T>
+	constexpr operator T() const {
+		return get<T>(T());
+	}
+
 	constexpr bool isNull() const		{return view().is_null();				}
 	constexpr bool isInt() const		{return view().is_number_integer();		}
 	constexpr bool isFloat() const		{return view().is_number_float();		}

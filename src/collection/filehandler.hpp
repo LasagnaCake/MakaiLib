@@ -135,6 +135,7 @@ namespace FileLoader {
 	/// Saves an array of data as a binary file (Non-destructive).
 	template <typename T>
 	void saveBinaryFile(String const& path, T* data, size_t size) {
+		FileSystem::makeDirectory(FileSystem::getDirectoryFromPath(path));
 		ofstream file(path.c_str() , ios::binary);
 		// Ensure ifstream object can throw exceptions
 		file.exceptions(ofstream::failbit | ofstream::badbit);
@@ -151,12 +152,14 @@ namespace FileLoader {
 	/// Saves an array of data as a binary file (Non-destructive).
 	template <typename T>
 	void saveBinaryFile(String const& path, List<T> data) {
+		FileSystem::makeDirectory(FileSystem::getDirectoryFromPath(path));
 		saveBinaryFile<T>(path, data.data(), data.size());
 	}
 
 	/// Saves an string as a text file (Non-destructive).
 	void saveTextFile(String const& path, String const& text) {
-		ofstream file(path.c_str() , ios::trunc);
+		FileSystem::makeDirectory(FileSystem::getDirectoryFromPath(path));
+		ofstream file(path.c_str(), ios::trunc);
 		// Ensure ifstream object can throw exceptions
 		file.exceptions(ofstream::failbit | ofstream::badbit);
 		// Try and save data
