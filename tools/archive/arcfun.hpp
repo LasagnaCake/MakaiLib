@@ -375,9 +375,9 @@ namespace ArcSys {
 		header.encryption	= (uint16)enc;		// encryption mode
 		header.compression	= (uint16)comp;		// compression mode
 		header.level		= complvl;			// compression level
-		header.flags =
+		/*header.flags =
 			Flags::SHOULD_CHECK_CRC_BIT			// Do CRC step
-		;
+		;*/
 		_ARCDEBUGLN("             HEADER SIZE: ", (uint64)header.headerSize,		"B"	);
 		_ARCDEBUGLN("        FILE HEADER SIZE: ", (uint64)header.fileHeaderSize,	"B"	);
 		_ARCDEBUGLN("     DIRECTORY INFO SIZE: ", (uint64)header.dirInfoSize,		"B"	);

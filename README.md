@@ -63,6 +63,14 @@ For more information, type ```make help```.
 
 The ```src``` only needs to be set if your file is not at the top of the ```build/``` folder or not named ```main.cpp```.
 
+Any resource files that the game uses MUST be placed inside the ```data/``` folder in the ```res/``` directory. If the folder doesn't exist, create it.
+
+The ```data/``` folder gets archived during the packing procedure, if ```no-archive``` is set to `0` (default) and the target is not ```pack-debug```. This allows the folder to be compressed and encrypted, ensuring security.
+
+Any subsystems (separate programs) that the game launches can be placed inside the ```subsys/``` folder in the ```res/``` directory, for organization purposes. If the folder doesn't exist, create it.
+
+The ```subsys/``` folder does not get archived during the packing procedure.
+
 ## Libraries used
 
 These are already included in the ```lib/``` folder.
@@ -76,6 +84,7 @@ These are already included in the ```lib/``` folder.
 | cute_c2    | Collision                |
 | jsoncpp    | Multiple things          |
 | cppcodec   | Data encoding & decoding |
+| CryptoPP   |                          |
 
 ## Documentation
 
