@@ -34,6 +34,7 @@ No plans to support 32-bit systems.
 - GCC via MinGW (MSYS (Recommended), Cygwin, TDM-GCC) (DOES NOT SUPPORT CLANG)
 - Make
 - 7-Zip command-line (Recommended) or zip command-line
+- RSync
 
 If using MSYS, all of them must be installed via pacman:
 
@@ -42,8 +43,9 @@ For toolchain (GCC): pacman -S mingw-w64-x86_64-toolchain
 For make: pacman -S make
 For zip: pacman -S zip
 For 7-zip: pacman -S p7zip
+For rsync: pacman -S rsync
 
-In a single line: pacman -S mingw-w64-x86_64-toolchain ; pacman -S zip ; pacman -S p7zip ;  pacman -S make
+In a single line: pacman -S mingw-w64-x86_64-toolchain ; pacman -S zip ; pacman -S p7zip ; pacman -S make ; pacman -S rsync
 ```
 
 ## How To use

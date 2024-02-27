@@ -158,7 +158,7 @@ endif
 DATA_FOLDER := res/data/
 DEBUG_DATA		:= $(DATA_FOLDER)
 DEMO_DATA		:= $(DATA_FOLDER)
-RElEASE_DATA	:= $(DATA_FOLDER)
+RELEASE_DATA	:= $(DATA_FOLDER)
 
 PACK_TARGET := $(filter pack-%,$(MAKECMDGOALS))
 
@@ -328,6 +328,7 @@ both: demo release
 	
 all: debug demo release
 
+PACK_EXCLUSIONS := --exclude .git --exclude .gitignore
 
 pack-debug:
 	@echo ""
@@ -341,7 +342,7 @@ pack-debug:
 	@mkdir -p packed/$(name)_debug
 	
 	@echo "[1/3] Copying contents..."
-	@cp -r -v $(DEBUG_DATA) packed/$(name)_debug
+	@rsync -av --progress $(DEBUG_DATA) packed/$(name)_debug/data $(PACK_EXCLUSIONS)
 	@cp -r -v res/shaders/ packed/$(name)_debug
 	@cp -r -v res/subsys/ packed/$(name)_debug
 	@cp -r -v res/*.dll packed/$(name)_debug
@@ -378,7 +379,7 @@ pack-demo:
 	@mkdir -p packed/$(name)_demo
 	
 	@echo "[1/3] Copying contents..."
-	@cp -r -v $(DEMO_DATA) packed/$(name)_demo
+	@rsync -av --progress $(DEMO_DATA) packed/$(name)_demo/data $(PACK_EXCLUSIONS)
 	@cp -r -v res/shaders/ packed/$(name)_demo
 	@cp -r -v res/subsys/ packed/$(name)_demo
 	@cp -r -v res/*.dll packed/$(name)_demo
@@ -420,7 +421,7 @@ pack-release:
 	@mkdir -p packed/$(name)
 	
 	@echo "[1/3] Copying contents..."
-	@cp -r -v $(RElEASE_DATA) packed/$(name)
+	@rsync -av --progress $(RELEASE_DATA) packed/$(name)/data $(PACK_EXCLUSIONS)
 	@cp -r -v res/shaders/ packed/$(name)
 	@cp -r -v res/subsys/ packed/$(name)
 	@cp -r -v res/*.dll packed/$(name)
