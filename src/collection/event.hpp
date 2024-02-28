@@ -138,7 +138,7 @@ namespace Event{
 		/**
 		* Yields a cycle.
 		*/
-		void yield(float delta = 1) {
+		void yield(unsigned long delta = 1) {
 			// If not paused or not finished...
 			if (!isFinished && !paused) {
 				// If counter has reached target...
@@ -218,7 +218,7 @@ namespace Event{
 		bool isFinished = false;
 
 		/// The current yield cycle.
-		float counter = 0;
+		unsigned long counter = 0;
 	};
 
 	struct Notification {

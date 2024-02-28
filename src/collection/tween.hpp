@@ -129,7 +129,7 @@ namespace Tweening {
 		}
 
 		/// Calculates (and if targeted, applies) a step.
-		void yield(float delta = 1) {
+		void yield(unsigned long delta = 1) {
 			// If value pointer is null, point to default var
 			if (!value) value = &defaultVar;
 			// If paused, return

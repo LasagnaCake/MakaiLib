@@ -125,7 +125,7 @@ namespace Tasking {
 		* If returned delay is 0, process next Task,
 		* until reaching the end of the list, or until returned delay is not 0.
 		*/
-		void yield(float delta = 1) {
+		void yield(unsigned long delta = 1) {
 			// If empty, exit
 			if (maxTask < 1) return;
 			// If loop count is zero...
@@ -235,7 +235,7 @@ namespace Tasking {
 		TaskList tasks;
 
 		/// The delay until next Task. gets decremented when yield() is called, until 0.
-		float delay = 0;
+		unsigned long delay = 0;
 
 		/// The number of Tasks in the list.
 		size_t maxTask = 0;
