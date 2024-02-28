@@ -32,28 +32,6 @@ namespace Async {
 
 	DEFINE_ERROR_TYPE(OccupiedError);
 
-	template<typename T>
-	class Promise {
-	public:
-		constexpr Promise(Atomic<T>& v, WeakPointer<Thread> t): data(v), thread(t) {}
-
-		T awaitValue() {
-			if ((!thread()) || thread->joinable())
-				thread->join();
-			return data;
-		}
-
-		Nullable<T> value() {
-			if ((!thread()) || thread->joinable())
-				return nullptr;
-			return data;
-		}
-
-	public:
-		WeakPointer<Thread>	thread;
-		Atomic<T>&			data;
-	}
-
 	template<class T = Time::Millis>
 	void wait(size_t const& millis) {
 		std::this_thread::sleep_for<T>(millis);
@@ -69,23 +47,24 @@ namespace Async {
 		while (predicate.value()()) {};
 	}
 
-	typedef StrongPointer<Atomic<size_t>> CounterReference;
-
-	class Waiter {
-		constexpr Waiter(CounterReference const& _counter): counter(_counter) {}
-
-		constexpr ~Waiter() {counter.unbind();}
-
-		constexpr void wait(size_t const& ticks) {
-			counter = ticks;
-			while (ticks > 0) {}
-		}
-
-	private:
-		CounterReference counter;
-	};
-
 	class Processor {
+		class Waiter {
+			constexpr Waiter(CounterReference const& _counter): counter(_counter) {}
+
+			constexpr ~Waiter() {counter.unbind();}
+
+			constexpr void wait(size_t const& ticks) {
+				counter = ticks;
+				while (ticks > 0) {}
+			}
+
+		private:
+			CounterReference counter;
+		};
+
+	public:
+		typedef StrongPointer<Atomic<size_t>> CounterReference;
+
 		constexpr Processor() {}
 
 		void yield() {
@@ -114,34 +93,63 @@ namespace Async {
 		typedef R FunctionType(Args...);
 		typedef Functor<FunctionType> FunctorType;
 
+		template<typename T>
+		class Promise {
+		public:
+			constexpr Promise(Atomic<Nullable<T>>& v, WeakPointer<Thread> t): data(v), thread(t) {}
+
+			Nullable<T> awaitValue() {
+				if (!ready())
+					thread->join();
+				return data;
+			}
+
+			Nullable<T> value() {
+				if (ready())
+					return data;
+				return nullptr;
+			}
+
+			bool ready() {
+				return !(thread() && thread->joinable());
+			}
+
+		private:
+			WeakPointer<Thread>		thread;
+			Atomic<Nullable<T>>&	data;
+		}
+
 	public:
 		constexpr Task(FunctorType const& f) {
 			target = f;
 		}
 
-		constexpr operator=(FunctorType const& f) {
+		constexpr Task& operator=(FunctorType const& f) {
+			if (!running()) target = f;
+			return *this;
 		}
 
 		Promise run(Args... args) {
-			executor
-			.destroy()
-			.bind(
-				new Thread(
-					[&result, ...args] {
-						result = target(...args);
-					}
-				)
-			);
+			if (!running())
+				executor
+				.destroy()
+				.bind(
+					new Thread(
+						[&target, &result, ...args] {
+							result = target(...args);
+						}
+					)
+				);
 			return getPromise();
 		}
 
-		T await() {
+		Nullable<R> await() {
 			if (running())
 				executor->join();
 			return result;
 		}
 
-		Nullable<T> result() {
+		Nullable<R> result() {
 			if (running())
 				return nullptr;
 			return result;
@@ -160,7 +168,8 @@ namespace Async {
 		}
 
 	private:
-		Atomic<T>				result;
+		Functor
+		Atomic<Nullable<T>>		result;
 		FunctorType				target;
 		StrongPointer<Thread>	executor;
 	}
