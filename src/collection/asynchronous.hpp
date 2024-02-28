@@ -49,6 +49,8 @@ namespace Async {
 	}
 
 	class Timekeeper {
+		typedef StrongPointer<Atomic<size_t>> CounterReference;
+
 		class Waiter {
 			constexpr Waiter(CounterReference const& _counter): counter(_counter)	{}
 			constexpr Waiter(Waiter const& other): counter(other.counter)			{}
@@ -66,8 +68,6 @@ namespace Async {
 		};
 
 	public:
-		typedef StrongPointer<Atomic<size_t>> CounterReference;
-
 		constexpr Timekeeper() {}
 
 		void yield() {
@@ -136,7 +136,6 @@ namespace Async {
 		executor(std::move(other.executor)),
 		result(std::move(other.result)),
 		target(std::move(other.target)) {
-
 		}
 
 		constexpr Task(FunctorType const& f) {
@@ -148,11 +147,11 @@ namespace Async {
 			run(...args);
 		}
 
-		constexpr Task& operator=(FunctorType const& f) {
-			if (!running()) {
-				target = f;
-			}
-			return *this;
+		Promise invoke(FunctorType const& f, Args... args) {
+			if (running())
+				return getPromise();
+			executor = f;
+			return run(...args);
 		}
 
 		Promise run(Args... args) {
@@ -189,8 +188,9 @@ namespace Async {
 			return executor() && executor->joinable();
 		}
 
-		void stop() {
+		Task& stop() {
 			executor.destroy();
+			return *this;
 		}
 
 	private:
