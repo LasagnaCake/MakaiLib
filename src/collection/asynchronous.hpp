@@ -115,6 +115,8 @@ namespace Async {
 				return !(thread() && thread->joinable());
 			}
 
+			constexpr Promise(Promise const& other): Promise(other.data, other.thread) {}
+
 		private:
 			constexpr Promise(Atomic<Nullable<T>>& v, WeakPointer<Thread> t): data(v), thread(t) {}
 
