@@ -130,7 +130,7 @@ namespace Threaded {
 		Atomic<Nullable<Thread::id>> current;
 	};
 
-	template<Type::Derived<Mutex> T>
+	template<Type::Derived<Mutex> T = Mutex>
 	class BaseLock {
 	public:
 		typedef T DataType;
@@ -141,7 +141,7 @@ namespace Threaded {
 		T& mtx;
 	};
 
-	template<Type::Derived<Mutex> T>
+	template<Type::Derived<Mutex> T = Mutex>
 	class ScopeLock: public BaseLock<T> {
 	public:
 		ScopeLock(T& mutex): BaseLock<T>(mutex)	{this->mtx.capture();}
