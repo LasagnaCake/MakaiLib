@@ -43,6 +43,11 @@ namespace SmartPointer {
 
 		constexpr ~Pointer() {unbind();}
 
+		constexpr size_t count() {
+			if (!exists()) return 0;
+			return database[ref].count;
+		}
+
 		constexpr Pointer& bind(T* const& obj) {
 			unbind();
 			if (obj == nullptr) return (*this);
