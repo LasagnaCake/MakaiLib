@@ -69,7 +69,7 @@ The ```data/``` folder gets archived during the packing procedure, if ```no-arch
 
 Any subsystems that the game uses can be placed inside the ```subsys/``` folder in the ```res/``` directory, for organization purposes. If the folder doesn't exist, create it.
 
-The ```subsys/``` folder does not get archived during the packing procedure, so it is recommended to be used for stuff that **must be loaded unpacked**.
+The ```subsys/``` folder does not get archived during the packing procedure, so it is recommended to be used for stuff that **must be loaded unarchived**.
 
 ## Libraries used
 
