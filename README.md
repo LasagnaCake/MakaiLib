@@ -75,16 +75,16 @@ The ```subsys/``` folder does not get archived during the packing procedure, so 
 
 These are already included in the ```lib/``` folder.
 
-| Name       | Purpose                  |
-|:----------:|--------------------------|
-| SDL        | Window & Input handling  |
-| OpenGL     | Graphics backend         |
-| SDL2_Mixer | Audio backend            |
-| stb_image  | Image loading            |
-| cute_c2    | Collision                |
-| jsoncpp    | Multiple things          |
-| cppcodec   | Data encoding & decoding |
-| CryptoPP   |                          |
+| Name       | Purpose                                             |
+|:----------:|-----------------------------------------------------|
+| SDL        | Window & Input handling                             |
+| OpenGL     | Graphics backend                                    |
+| SDL2_Mixer | Audio backend                                       |
+| stb_image  | Image loading                                       |
+| cute_c2    | Collision                                           |
+| jsoncpp    | Multiple things                                     |
+| cppcodec   | Data encoding & decoding                            |
+| CryptoPP   | Encryption, decryption, compression & decompression |
 
 ## Documentation
 
