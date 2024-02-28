@@ -122,12 +122,34 @@ namespace Async {
 			friend class Task<R(Args...)>;
 		}
 
+		constexpr Task() {}
+
+		constexpr Task(Task const& other):
+		executor(other.executor),
+		result(other.result),
+		target(other.target) {
+		}
+
+		constexpr Task(Task&& other):
+		executor(std::move(other.executor)),
+		result(std::move(other.result)),
+		target(std::move(other.target)) {
+
+		}
+
 		constexpr Task(FunctorType const& f) {
 			target = f;
 		}
 
+		constexpr Task(FunctorType const& f, Args... args) {
+			target = f;
+			run(...args);
+		}
+
 		constexpr Task& operator=(FunctorType const& f) {
-			if (!running()) target = f;
+			if (!running()) {
+				target = f;
+			}
 			return *this;
 		}
 
@@ -151,7 +173,7 @@ namespace Async {
 			return result;
 		}
 
-		Nullable<R> result() {
+		Nullable<R> value() {
 			if (running())
 				return nullptr;
 			return result;
@@ -170,7 +192,6 @@ namespace Async {
 		}
 
 	private:
-		Functor
 		Atomic<Nullable<T>>		result;
 		FunctorType				target;
 		StrongPointer<Thread>	executor;
