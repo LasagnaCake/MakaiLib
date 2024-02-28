@@ -50,7 +50,9 @@ namespace Async {
 
 	class Timekeeper {
 		class Waiter {
-			constexpr Waiter(CounterReference const& _counter): counter(_counter) {}
+			constexpr Waiter(CounterReference const& _counter): counter(_counter)	{}
+			constexpr Waiter(Waiter const& other): counter(other.counter)			{}
+			constexpr Waiter(Waiter&& other): counter(std::move(other.counter))		{}
 
 			constexpr ~Waiter() {counter.unbind();}
 
