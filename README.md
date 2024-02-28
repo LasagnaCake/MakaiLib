@@ -67,9 +67,9 @@ Any resource files that the game uses MUST be placed inside the ```data/``` fold
 
 The ```data/``` folder gets archived during the packing procedure, if ```no-archive``` is set to `0` (default) and the target is not ```pack-debug```. This allows the folder to be compressed and encrypted, ensuring security.
 
-Any subsystems (separate programs) that the game launches can be placed inside the ```subsys/``` folder in the ```res/``` directory, for organization purposes. If the folder doesn't exist, create it.
+Any subsystems that the game uses can be placed inside the ```subsys/``` folder in the ```res/``` directory, for organization purposes. If the folder doesn't exist, create it.
 
-The ```subsys/``` folder does not get archived during the packing procedure.
+The ```subsys/``` folder does not get archived during the packing procedure, so it is recommended to be used for stuff that **must be loaded unpacked**.
 
 ## Libraries used
 
