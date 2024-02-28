@@ -144,8 +144,8 @@ namespace Threaded {
 	template<Type::Derived<Mutex> T>
 	class ScopeLock: public BaseLock<T> {
 	public:
-		ScopeLock(T& mutex): BaseLock(mutex)	{mtx.capture();}
-		~ScopeLock()							{mtx.release();}
+		ScopeLock(T& mutex): BaseLock<T>(mutex)	{this->mtx.capture();}
+		~ScopeLock()							{this->mtx.release();}
 	};
 
 	template<class T>
