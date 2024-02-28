@@ -6,6 +6,7 @@
 #include "referential.hpp"
 #include "threaddata.hpp"
 #include <thread>
+#include <utility>
 
 namespace Async {
 	/*struct Promise;
@@ -47,7 +48,7 @@ namespace Async {
 		while (predicate.value()()) {};
 	}
 
-	class Processor {
+	class Timekeeper {
 		class Waiter {
 			constexpr Waiter(CounterReference const& _counter): counter(_counter) {}
 
@@ -65,7 +66,7 @@ namespace Async {
 	public:
 		typedef StrongPointer<Atomic<size_t>> CounterReference;
 
-		constexpr Processor() {}
+		constexpr Timekeeper() {}
 
 		void yield() {
 			size_t i = 0;
@@ -135,7 +136,7 @@ namespace Async {
 				.destroy()
 				.bind(
 					new Thread(
-						[&target, &result, ...args] {
+						[&target, &result, ...args = std::forward<Args>(args)] {
 							result = target(...args);
 						}
 					)
