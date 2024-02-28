@@ -163,7 +163,8 @@ namespace Async {
 				.bind(
 					new Thread(
 						[&target, &result, ...args = std::forward<Args>(args)] {
-							result = target(...args);
+							result = nullptr;
+							result = target.value()(...args);
 						}
 					)
 				);
@@ -196,8 +197,8 @@ namespace Async {
 		}
 
 	private:
-		Atomic<Nullable<T>>		result;
-		FunctorType				target;
+		Atomic<Nullable<T>>		result = nullptr;
+		Atomic<FunctorType>		target;
 		StrongPointer<Thread>	executor;
 	}
 
