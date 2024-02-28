@@ -91,6 +91,11 @@ namespace View {
 		constexpr Nullable& operator=(T&& value)		{data = std::move(value); isSet = true; return *this;}
 		constexpr Nullable& operator=(NullType)			{isSet = false; return *this;}
 
+		constexpr bool operator==(Nullable const& other) const	{if (isSet) return other == data; return false;}
+		constexpr bool operator==(T const& value) const			{if (isSet) return data == value; return false;}
+		constexpr bool operator==(T&& value) const				{if (isSet) return data == value; return false;}
+		constexpr bool operator==(NullType) const				{return isSet;}
+
 		constexpr Nullable& operator=(Nullable<T> const& other) {
 			if (other.isSet) data = other.data;
 			isSet = other.isSet;
