@@ -94,18 +94,16 @@ namespace Async {
 		typedef R FunctionType(Args...);
 		typedef Functor<FunctionType> FunctorType;
 
-		template<typename T>
+	public:
 		class Promise {
 		public:
-			constexpr Promise(Atomic<Nullable<T>>& v, WeakPointer<Thread> t): data(v), thread(t) {}
-
-			Nullable<T> awaitValue() {
+			Nullable<R> await() {
 				if (!ready())
 					thread->join();
 				return data;
 			}
 
-			Nullable<T> value() {
+			Nullable<R> value() {
 				if (ready())
 					return data;
 				return nullptr;
@@ -116,11 +114,14 @@ namespace Async {
 			}
 
 		private:
+			constexpr Promise(Atomic<Nullable<T>>& v, WeakPointer<Thread> t): data(v), thread(t) {}
+
 			WeakPointer<Thread>		thread;
-			Atomic<Nullable<T>>&	data;
+			Atomic<Nullable<R>>&	data;
+
+			friend class Task<R(Args...)>;
 		}
 
-	public:
 		constexpr Task(FunctorType const& f) {
 			target = f;
 		}
@@ -157,7 +158,7 @@ namespace Async {
 		}
 
 		Promise getPromise() {
-			return Promise<R>(result, executor);
+			return Promise(result, executor);
 		}
 
 		bool running() const {
