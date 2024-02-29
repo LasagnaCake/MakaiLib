@@ -168,14 +168,8 @@ namespace Async {
 		target(std::move(other.target)) {
 		}
 
-		constexpr Task(FunctorType const& f) {
-			target = f;
-		}
-
-		constexpr Task(FunctorType const& f, Args... args) {
-			target = f;
-			run(args...);
-		}
+		constexpr Task(FunctorType const& f): target(f)				{				}
+		constexpr Task(FunctorType const& f, Args... args): Task(f)	{run(args...);	}
 
 		PromiseType invoke(FunctorType const& f, Args... args) {
 			if (running())
