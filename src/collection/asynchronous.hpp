@@ -98,23 +98,17 @@ namespace Async {
 	class Promise;
 
 	template<> class Promise<void> {
-		void await() {
-			if (!ready()) thread->join();
-		}
+		void await() {if (!ready()) thread->join();				}
+		bool ready() {return !(thread() && thread->joinable());	}
 
-		bool ready() {
-			return !(thread() && thread->joinable());
-		}
-
-		constexpr Promise(Promise const& other): Promise(other.data, other.thread) {}
+		constexpr Promise(Promise const& other): Promise(other.thread) {}
 
 	private:
-		constexpr Promise(Atomic<Nullable<void>>& v, WeakPointer<Thread> t): data(v), thread(t) {}
+		constexpr Promise(WeakPointer<Thread> t): thread(t) {}
 
-		Atomic<Nullable<void>>&	data;
-		WeakPointer<Thread>		thread;
+		WeakPointer<Thread> thread;
 
-		template<typename R> friend class Task;
+		template<typename F> friend class Task;
 	};
 
 	template<Type::Different<void> T> class Promise<T> {
@@ -143,13 +137,14 @@ namespace Async {
 		WeakPointer<Thread>		thread;
 		Atomic<Nullable<T>>&	data;
 
-		template<typename R> friend class Task;
+		template<typename F> friend class Task;
 	};
 
 	template<typename R, typename... Args>
 	class Task<R(Args...)> {
 	public:
-		typedef R FunctionType(Args...);
+		typedef R ReturnType;
+		typedef ReturnType FunctionType(Args...);
 		typedef Functor<FunctionType>	FunctorType;
 		typedef Promise<R>				PromiseType;
 		typedef Nullable<R>				NullableType;
@@ -184,7 +179,7 @@ namespace Async {
 				.destroy()
 				.bind(
 					new Thread(
-						[this, ... args = std::forward<Args>(args)] {
+						[this, ...args = std::forward<Args>(args)] {
 							result = nullptr;
 							result = target.value()(args...);
 						}
@@ -199,9 +194,8 @@ namespace Async {
 				.destroy()
 				.bind(
 					new Thread(
-						[this, ... args = std::forward<Args>(args)] {
-							target.value()(args...);
-						}
+						target.value(),
+						...args = std::forward<Args>(args)
 					)
 				);
 			return getPromise();
@@ -213,15 +207,14 @@ namespace Async {
 			return result;
 		}
 
-		NullableType value() {
+		NullableType value() requires Type::Different<R, void> {
 			if (running())
 				return nullptr;
 			return result;
 		}
 
-		NullableType getPromise() {
-			return Promise(result, executor);
-		}
+		PromiseType getPromise() requires Type::Different<R, void>	{return Promise(result, executor);	}
+		PromiseType getPromise() requires Type::Equal<R, void>		{return Promise(executor);			}
 
 		bool running() const {
 			return executor() && executor->joinable();
