@@ -62,8 +62,20 @@ namespace View {
 		T& data;
 	};
 
-	template<typename T>
-	class Nullable {
+	template<class T> class Nullable;
+
+	template<> class Nullable<void> {
+	public:
+		typedef decltype(nullptr) NullType;
+
+		constexpr Nullable() noexcept			{}
+		constexpr Nullable(NullType) noexcept	{}
+
+		constexpr ~Nullable() {}
+	};
+
+	template<Type::Different<void> T>
+	class Nullable<T> {
 	public:
 		typedef T DataType;
 		typedef decltype(nullptr) NullType;
@@ -94,7 +106,7 @@ namespace View {
 		constexpr bool operator==(Nullable const& other) const	{if (isSet) return other == data; return false;}
 		constexpr bool operator==(T const& value) const			{if (isSet) return data == value; return false;}
 		constexpr bool operator==(T&& value) const				{if (isSet) return data == value; return false;}
-		constexpr bool operator==(NullType) const				{return isSet;}
+		constexpr bool operator==(NullType) const				{return !isSet;}
 
 		constexpr Nullable& operator=(Nullable<T> const& other) {
 			if (other.isSet) data = other.data;
@@ -118,7 +130,7 @@ namespace View {
 			);
 		}
 
-		constexpr operator T() const {
+		constexpr operator T() const requires Type::Different<T, bool> {
 			if (isSet) return value;
 			throw Error::NonexistentValue(
 				"Value is not set!",
@@ -139,7 +151,8 @@ namespace View {
 	class Functor<F(Args...)> {
 	private:
 	public:
-		typedef Function<F(Args...)> FunctionType;
+		typedef Function<F(Args...)>	FunctionType;
+		typedef F						ReturnType;
 
 		Functor(): id(0) {}
 
@@ -149,8 +162,11 @@ namespace View {
 		Functor& operator=(FunctionType const& f)	{func = f; id = ++count; return *this;				}
 		Functor& operator=(Functor const& other)	{func = other.func; id = other.id; return *this;	}
 
-		void evoke(Args... args) const		{if (id) func(args...);	}
-		void operator()(Args... args) const	{evoke(args...);		}
+		Nullable<F> evoke(Args... args) const requires Type::Different<F, void>			{if (id) return func(args...); return nullptr;	}
+		Nullable<F> operator()(Args... args) const requires Type::Different<F, void>	{return evoke(args...);							}
+
+		void evoke(Args... args) const requires Type::Equal<F, void>					{if (id) func(args...);							}
+		void operator()(Args... args) const requires Type::Equal<F, void>				{evoke(args...);								}
 
 		operator bool() const {return id;}
 

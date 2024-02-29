@@ -51,37 +51,40 @@ namespace Async {
 	class Timekeeper {
 		typedef StrongPointer<Atomic<size_t>> CounterReference;
 
+	public:
 		class Waiter {
-			constexpr Waiter(CounterReference const& _counter): counter(_counter)	{}
 			constexpr Waiter(Waiter const& other): counter(other.counter)			{}
 			constexpr Waiter(Waiter&& other): counter(std::move(other.counter))		{}
 
 			constexpr ~Waiter() {counter.unbind();}
 
-			constexpr void wait(size_t const& ticks) {
-				counter = ticks;
-				while (ticks > 0) {}
+			void wait(size_t const& ticks) {
+				(*counter) = ticks;
+				while (counter->value() > 0) {}
 			}
 
 		private:
+			constexpr Waiter(CounterReference const& _counter): counter(_counter)	{}
+
 			CounterReference counter;
+
+			friend class Timekeeper;
 		};
 
-	public:
-		constexpr Timekeeper() {}
+		Timekeeper() {}
 
 		void yield() {
 			size_t i = 0;
 			for (CounterReference& counter: counters) {
-				if (counter.count() < 2)	counters.erase(counters.begin() + i);
-				else if (counter > 0)		(*counter)--;
+				if (counter.count() < 2)		counters.erase(std::next(counters.begin(), i));
+				else if (counter->value() > 0)	(*counter)--;
 				++i;
 			}
 		}
 
 		Waiter getWaiter() {
 			counters.push_back(new Atomic<size_t>());
-			return Waiter(counter.back());
+			return Waiter(counters.back());
 		}
 
 	private:
@@ -91,40 +94,65 @@ namespace Async {
 	template<typename T>
 	class Task;
 
+	template<class T>
+	class Promise;
+
+	template<> class Promise<void> {
+		void await() {
+			if (!ready()) thread->join();
+		}
+
+		bool ready() {
+			return !(thread() && thread->joinable());
+		}
+
+		constexpr Promise(Promise const& other): Promise(other.data, other.thread) {}
+
+	private:
+		constexpr Promise(Atomic<Nullable<void>>& v, WeakPointer<Thread> t): data(v), thread(t) {}
+
+		Atomic<Nullable<void>>&	data;
+		WeakPointer<Thread>		thread;
+
+		template<typename R> friend class Task;
+	};
+
+	template<Type::Different<void> T> class Promise<T> {
+	public:
+		Nullable<T> await() {
+			if (!ready())
+				thread->join();
+			return data;
+		}
+
+		Nullable<T> value() {
+			if (ready())
+				return data;
+			return nullptr;
+		}
+
+		bool ready() {
+			return !(thread() && thread->joinable());
+		}
+
+		constexpr Promise(Promise const& other): Promise(other.data, other.thread) {}
+
+	private:
+		constexpr Promise(Atomic<Nullable<T>>& v, WeakPointer<Thread> t): data(v), thread(t) {}
+
+		WeakPointer<Thread>		thread;
+		Atomic<Nullable<T>>&	data;
+
+		template<typename R> friend class Task;
+	};
+
 	template<typename R, typename... Args>
 	class Task<R(Args...)> {
-		typedef R FunctionType(Args...);
-		typedef Functor<FunctionType> FunctorType;
-
 	public:
-		class Promise {
-		public:
-			Nullable<R> await() {
-				if (!ready())
-					thread->join();
-				return data;
-			}
-
-			Nullable<R> value() {
-				if (ready())
-					return data;
-				return nullptr;
-			}
-
-			bool ready() {
-				return !(thread() && thread->joinable());
-			}
-
-			constexpr Promise(Promise const& other): Promise(other.data, other.thread) {}
-
-		private:
-			constexpr Promise(Atomic<Nullable<T>>& v, WeakPointer<Thread> t): data(v), thread(t) {}
-
-			WeakPointer<Thread>		thread;
-			Atomic<Nullable<R>>&	data;
-
-			friend class Task<R(Args...)>;
-		}
+		typedef R FunctionType(Args...);
+		typedef Functor<FunctionType>	FunctorType;
+		typedef Promise<R>				PromiseType;
+		typedef Nullable<R>				NullableType;
 
 		constexpr Task() {}
 
@@ -146,44 +174,58 @@ namespace Async {
 
 		constexpr Task(FunctorType const& f, Args... args) {
 			target = f;
-			run(...args);
+			run(args...);
 		}
 
-		Promise invoke(FunctorType const& f, Args... args) {
+		PromiseType invoke(FunctorType const& f, Args... args) {
 			if (running())
 				return getPromise();
 			executor = f;
-			return run(...args);
+			return run(args...);
 		}
 
-		Promise run(Args... args) {
+		PromiseType run(Args... args) requires Type::Different<R, void> {
 			if (!running())
 				executor
 				.destroy()
 				.bind(
 					new Thread(
-						[&target, &result, ...args = std::forward<Args>(args)] {
+						[this, ... args = std::forward<Args>(args)] {
 							result = nullptr;
-							result = target.value()(...args);
+							result = target.value()(args...);
 						}
 					)
 				);
 			return getPromise();
 		}
 
-		Nullable<R> await() {
+		PromiseType run(Args... args) requires Type::Equal<R, void> {
+			if (!running())
+				executor
+				.destroy()
+				.bind(
+					new Thread(
+						[this, ... args = std::forward<Args>(args)] {
+							target.value()(args...);
+						}
+					)
+				);
+			return getPromise();
+		}
+
+		NullableType await() {
 			if (running())
 				executor->join();
 			return result;
 		}
 
-		Nullable<R> value() {
+		NullableType value() {
 			if (running())
 				return nullptr;
 			return result;
 		}
 
-		Promise getPromise() {
+		NullableType getPromise() {
 			return Promise(result, executor);
 		}
 
@@ -197,10 +239,10 @@ namespace Async {
 		}
 
 	private:
-		Atomic<Nullable<T>>		result = nullptr;
+		Atomic<NullableType>	result = nullptr;
 		Atomic<FunctorType>		target;
 		StrongPointer<Thread>	executor;
-	}
+	};
 
 }
 

@@ -124,6 +124,7 @@
 #include "collection/definitions.hpp"
 #include "collection/dataview.hpp"
 #include "collection/threaddata.hpp"
+#include "collection/asynchronous.hpp"
 #include "collection/errors.hpp"
 #include "collection/vectorn.hpp"
 #include "collection/matrices.hpp"

@@ -30,6 +30,13 @@ namespace Threaded {
 			return release();
 		}
 
+		inline Atomic& operator=(T&& val) {
+			capture();
+			data = std::move(val);
+			release();
+			return *this;
+		}
+
 		inline Atomic& modify(Operation<T> op) {
 			capture();
 			data = op(data);
