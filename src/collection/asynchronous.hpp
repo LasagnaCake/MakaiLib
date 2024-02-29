@@ -104,7 +104,7 @@ namespace Async {
 		constexpr Promise(Promise const& other): Promise(other.thread) {}
 
 	private:
-		constexpr Promise(WeakPointer<Thread> t): thread(t) {}
+		constexpr Promise(WeakPointer<Thread> const& t): thread(t) {}
 
 		WeakPointer<Thread> thread;
 
@@ -132,7 +132,7 @@ namespace Async {
 		constexpr Promise(Promise const& other): Promise(other.data, other.thread) {}
 
 	private:
-		constexpr Promise(Atomic<Nullable<T>>& v, WeakPointer<Thread> t): data(v), thread(t) {}
+		constexpr Promise(Atomic<Nullable<T>>& v, WeakPointer<Thread> const& t): data(v), thread(t) {}
 
 		WeakPointer<Thread>		thread;
 		Atomic<Nullable<T>>&	data;
@@ -201,10 +201,15 @@ namespace Async {
 			return getPromise();
 		}
 
-		NullableType await() {
+		NullableType await() requires Type::Different<R, void> {
 			if (running())
 				executor->join();
 			return result;
+		}
+
+		void await() requires Type::Equal<R, void> {
+			if (running())
+				executor->join();
 		}
 
 		NullableType value() requires Type::Different<R, void> {
