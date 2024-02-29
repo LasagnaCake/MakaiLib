@@ -28,7 +28,7 @@ namespace Async {
 	};*/
 
 	namespace {
-		using Threaded::Atomic;
+		using Threaded::Atomic, Threaded::Thread;
 	}
 
 	DEFINE_ERROR_TYPE(OccupiedError);
