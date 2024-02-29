@@ -114,11 +114,6 @@ namespace Threaded {
 			return *this;
 		}
 
-		inline Mutex& waitUntilIsOwner() {
-			while(!isCurrentOwner()) {}
-			return *this;
-		}
-
 		inline bool isCaptured()						{return current.value().exists();		}
 		inline bool isOwnedBy(Thread::id const& thread)	{return current == thread;				}
 		inline bool isCurrentOwner()					{return current == currentThreadID();	}
