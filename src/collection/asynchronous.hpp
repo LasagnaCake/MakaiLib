@@ -42,7 +42,6 @@ namespace Async {
 		std::this_thread::sleep_for<T>(millis);
 	}
 
-	template<class T = Time::Millis>
 	void wait(Atomic<bool>& condition) {
 		std::mutex				handler;
 		std::condition_variable	waiter;
@@ -50,7 +49,6 @@ namespace Async {
 		waiter.wait(lock, [&condition] {return condition.value();});
 	}
 
-	template<class T = Time::Millis>
 	void wait(Atomic<Functor<bool(void)>>& predicate) {
 		std::mutex				handler;
 		std::condition_variable	waiter;
@@ -58,7 +56,6 @@ namespace Async {
 		waiter.wait(lock, [&predicate] {return predicate.value()();});
 	}
 
-	template<class T = Time::Millis>
 	void wait(Functor<bool(void)> const& predicate) {
 		std::mutex				handler;
 		std::condition_variable	waiter;
