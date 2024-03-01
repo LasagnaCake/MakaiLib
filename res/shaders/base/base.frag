@@ -149,9 +149,8 @@ void main(void) {
 	}
 	else color = fragColor;
 
-	if (textured)
-		if (color.a <= (fragColor.a * alphaClip))
-			discard;
+	if (textured && color.a <= (fragColor.a * alphaClip))
+		discard;
 
 	color.xyz *= fragLightColor * fragShadeColor;
 
