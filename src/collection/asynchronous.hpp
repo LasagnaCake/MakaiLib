@@ -33,6 +33,10 @@ namespace Async {
 
 	DEFINE_ERROR_TYPE(OccupiedError);
 
+	void yieldThread() {
+		std::this_thread::yield();
+	}
+
 	template<class T = Time::Millis>
 	void wait(size_t const& millis) {
 		std::this_thread::sleep_for<T>(millis);
@@ -40,12 +44,26 @@ namespace Async {
 
 	template<class T = Time::Millis>
 	void wait(Atomic<bool>& condition) {
-		while (condition) {};
+		std::mutex				handler;
+		std::condition_variable	waiter;
+		std::unique_lock		lock(handler);
+		waiter.wait(lock, [&condition] {return condition.value();});
 	}
 
 	template<class T = Time::Millis>
 	void wait(Atomic<Functor<bool(void)>>& predicate) {
-		while (predicate.value()()) {};
+		std::mutex				handler;
+		std::condition_variable	waiter;
+		std::unique_lock		lock(handler);
+		waiter.wait(lock, [&predicate] {return predicate.value()();});
+	}
+
+	template<class T = Time::Millis>
+	void wait(Functor<bool(void)> const& predicate) {
+		std::mutex				handler;
+		std::condition_variable	waiter;
+		std::unique_lock		lock(handler);
+		waiter.wait(lock, [&predicate] {return predicate();});
 	}
 
 	class Timekeeper {
@@ -60,10 +78,11 @@ namespace Async {
 
 			void wait(size_t const& ticks) {
 				(*counter) = ticks;
-				while (counter->value() > 0) {}
+				wait(Functor<bool(void)>([this] {return !(counter && counter->value() > 0);}));
 			}
 
 		private:
+
 			constexpr Waiter(CounterReference const& _counter): counter(_counter)	{}
 
 			CounterReference counter;
@@ -163,8 +182,10 @@ namespace Async {
 		target(std::move(other.target)) {
 		}
 
-		constexpr Task(FunctorType const& f): target(f)				{				}
-		constexpr Task(FunctorType const& f, Args... args): Task(f)	{run(args...);	}
+		constexpr Task(FunctorType const& f): target(f)					{				}
+		constexpr Task(FunctorType const& f, Args... args): Task(f)		{run(args...);	}
+		constexpr Task(Task const& other, Args... args): Task(other)	{run(args...);	}
+		constexpr Task(Task&& other, Args... args): Task(other)			{run(args...);	}
 
 		PromiseType invoke(FunctorType const& f, Args... args) {
 			if (running())
@@ -174,9 +195,10 @@ namespace Async {
 		}
 
 		PromiseType run(Args... args) requires Type::Different<R, void> {
-			if (!running())
+			if (!running()) {
+				rebindResult();
 				executor
-				.destroy()
+				.unbind()
 				.bind(
 					new Thread(
 						[this, ...args = std::forward<Args>(args)] {
@@ -185,19 +207,22 @@ namespace Async {
 						}
 					)
 				);
+			}
 			return getPromise();
 		}
 
 		PromiseType run(Args... args) requires Type::Equal<R, void> {
-			if (!running())
+			if (!running()) {
+				rebindResult();
 				executor
-				.destroy()
+				.unbind()
 				.bind(
 					new Thread(
 						target.value(),
 						args...
 					)
 				);
+			}
 			return getPromise();
 		}
 
@@ -215,10 +240,10 @@ namespace Async {
 		NullableType value() requires Type::Different<R, void> {
 			if (running())
 				return nullptr;
-			return result;
+			return result->value();
 		}
 
-		PromiseType getPromise() requires Type::Different<R, void>	{return Promise(result, executor);	}
+		PromiseType getPromise() requires Type::Different<R, void>	{return Promise(*result, executor);	}
 		PromiseType getPromise() requires Type::Equal<R, void>		{return Promise(executor);			}
 
 		bool running() const {
@@ -231,9 +256,14 @@ namespace Async {
 		}
 
 	private:
-		Atomic<NullableType>	result = nullptr;
-		Atomic<FunctorType>		target;
-		StrongPointer<Thread>	executor;
+
+		void rebindResult() {
+			result.unbind().bind(new Atomic<NullableType>());
+		}
+
+		StrongPointer<Atomic<NullableType>>	result = new Atomic<NullableType>();
+		Atomic<FunctorType>					target;
+		StrongPointer<Thread>				executor;
 	};
 
 }
