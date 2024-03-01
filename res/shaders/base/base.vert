@@ -58,6 +58,8 @@ uniform vec3[MAX_INSTANCES]	instances;
 vec3 calculateLights(vec3 position, vec3 normal) {
 	if (!useLights) return vec3(1);
 	vec3 result = ambientColor * ambientStrength;
+	// TODO: figure out if this actually works
+	#ifdef IMPLEMENT_LIGHTS
 	if (lightsCount == 0) return result;
 	uint lc = (lightsCount < MAX_LIGHTS ? lightsCount : MAX_LIGHTS);
 	for (uint i = 0; i < lc; i++) {
@@ -67,6 +69,7 @@ vec3 calculateLights(vec3 position, vec3 normal) {
 		float diffuse = max(dot(normal, lightDir), 0.0);
 		result *= lightColor[i] * lightStrength[i] * factor + diffuse;
 	}
+	#endif
 	return result;
 }
 
