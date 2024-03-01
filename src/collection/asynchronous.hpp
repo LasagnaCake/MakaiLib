@@ -195,7 +195,7 @@ namespace Async {
 				.bind(
 					new Thread(
 						target.value(),
-						...args = std::forward<Args>(args)
+						args...
 					)
 				);
 			return getPromise();
