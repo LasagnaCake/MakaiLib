@@ -33,8 +33,7 @@ namespace Threaded {
 		inline Atomic& operator=(T&& val) {
 			capture();
 			data = std::move(val);
-			release();
-			return *this;
+			return release();
 		}
 
 		inline Atomic& modify(Operation<T> op) {
@@ -92,7 +91,7 @@ namespace Threaded {
 
 	class Mutex {
 	public:
-		constexpr Mutex() {}
+		Mutex() {}
 
 		inline Mutex& capture()	{
 			Thread::id const thisThread = currentThreadID();
@@ -154,7 +153,7 @@ namespace Threaded {
 	template<class T>
 	concept LockType =
 		requires {typename T::DataType;}
-	&&	Type::Derived<T, BaseLock<typename T::DataType>>
+	&&	Type::Subclass<T, BaseLock<typename T::DataType>>
 	;
 
 	template<Viewable T, LockType Lock>
@@ -221,11 +220,14 @@ namespace Threaded {
 		typedef T			DataType;
 		typedef L			LockType;
 		typedef L::DataType	MutexType;
+		typedef Box<T>		BoxType;
 
-		BoxLock(Box<T>& b): L(b.mutex), box(b) {}
+		BoxLock(BoxType& b): L(b.mutex), data(b) {}
+
+		BoxType& box() {return data;}
 
 	private:
-		Box<T>& box;
+		BoxType& data;
 	};
 
 	template <Viewable T>
