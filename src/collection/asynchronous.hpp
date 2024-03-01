@@ -43,24 +43,15 @@ namespace Async {
 	}
 
 	void wait(Atomic<bool>& condition) {
-		std::mutex				handler;
-		std::condition_variable	waiter;
-		std::unique_lock		lock(handler);
-		waiter.wait(lock, [&condition] {return condition.value();});
+		while (condition()) yieldThread();
 	}
 
 	void wait(Atomic<Functor<bool(void)>>& predicate) {
-		std::mutex				handler;
-		std::condition_variable	waiter;
-		std::unique_lock		lock(handler);
-		waiter.wait(lock, [&predicate] {return predicate.value()();});
+		while (predicate.value()()) yieldThread();
 	}
 
 	void wait(Functor<bool(void)> const& predicate) {
-		std::mutex				handler;
-		std::condition_variable	waiter;
-		std::unique_lock		lock(handler);
-		waiter.wait(lock, [&predicate] {return predicate();});
+		while (predicate()) yieldThread();
 	}
 
 	class Timekeeper {
@@ -75,7 +66,8 @@ namespace Async {
 
 			void wait(size_t const& ticks) {
 				(*counter) = ticks;
-				wait(Functor<bool(void)>([this] {return !(counter && counter->value() > 0);}));
+				while (counter && counter->value() > 0) yieldThread();
+				// wait(Functor<bool(void)>([this] {return !(counter && counter->value() > 0);}));
 			}
 
 		private:
