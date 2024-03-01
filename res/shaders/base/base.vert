@@ -57,16 +57,17 @@ uniform vec3[MAX_INSTANCES]	instances;
 
 vec3 calculateLights(vec3 position, vec3 normal) {
 	if (!useLights) return vec3(1);
-	vec3 finalColor = ambientColor * ambientStrength;
-	if (lightsCount == 0) return finalColor;
-	for (uint i = 0; i < (lightsCount < MAX_LIGHTS ? lightsCount : MAX_LIGHTS); i++) {
-		float distance = distance(position, lights[i]);
-		float attenuation = max(0.0, 1.0 - distance / lightRadius[i]);
-		vec3 lightDirection = normalize(lights[i] - position);
-		float diffuse = max(dot(normal, lightDirection), 0.0);
-		finalColor *= lightColor[i] * lightStrength[i] * attenuation + diffuse;
+	vec3 result = ambientColor * ambientStrength;
+	if (lightsCount == 0) return result;
+	uint lc = (lightsCount < MAX_LIGHTS ? lightsCount : MAX_LIGHTS);
+	for (uint i = 0; i < lc; i++) {
+		float dist = distance(position, lights[i]);
+		float factor = max(0.0, 1.0 - dist / lightRadius[i]);
+		vec3 lightDir = normalize(lights[i] - position);
+		float diffuse = max(dot(normal, lightDir), 0.0);
+		result *= lightColor[i] * lightStrength[i] * factor + diffuse;
 	}
-	return finalColor;
+	return result;
 }
 
 vec3 getInstancePosition() {
