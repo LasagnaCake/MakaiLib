@@ -43,7 +43,7 @@ namespace Async {
 	}
 
 	void wait(Atomic<bool>& condition) {
-		while (condition()) yieldThread();
+		while (condition.value()) yieldThread();
 	}
 
 	void wait(Atomic<Functor<bool(void)>>& predicate) {
