@@ -11,7 +11,7 @@ namespace Threaded {
 		return std::this_thread::get_id();
 	}
 
-	template <Viewable T>
+	template <class T>
 	class Atomic {
 	public:
 		typedef T DataType;
@@ -21,8 +21,6 @@ namespace Threaded {
 		constexpr Atomic(T&& _data):		data(std::move(_data))	{}
 
 		inline bool isLocked() {return locked;}
-
-		inline Atomic& wait() {while (getLock()) yield(); return (*this);}
 
 		inline Atomic& operator=(T const& val) {
 			capture();
@@ -153,57 +151,26 @@ namespace Threaded {
 		Atomic<Nullable<Thread::id>> current;
 	};
 
-	template<Type::Derived<Mutex> T = Mutex>
-	class BaseLock {
+	template<class T, Type::Derived<Mutex> M = Mutex>
+	class Box: public M {
 	public:
-		typedef T DataType;
-
-		BaseLock(T& mutex): mtx(mutex) {}
-
-	protected:
-		T& mtx;
-	};
-
-	template<Type::Derived<Mutex> T = Mutex>
-	class ScopeLock: public BaseLock<T> {
-	public:
-		ScopeLock(T& mutex): BaseLock<T>(mutex)	{this->mtx.capture();}
-		~ScopeLock()							{this->mtx.release();}
-	};
-
-	template<class T>
-	concept LockType =
-		requires {typename T::DataType;}
-	&&	Type::Subclass<T, BaseLock<typename T::DataType>>
-	;
-
-	template<Viewable T, LockType Lock>
-	class BoxLock;
-
-	template<Viewable T>
-	class Box {
-	public:
-		typedef T DataType;
+		typedef T ValueType;
+		typedef M MutexType;
 
 		constexpr Box()											{}
 		constexpr Box(T const& _data):	data(_data)				{}
 		constexpr Box(T&& _data):		data(std::move(_data))	{}
 
 		inline Box& operator=(T const& val) {
-			mutex.wait();
+			this->wait();
 			data = val;
-			return *this;
-		}
-
-		inline DataView<Box<T>> view() {
-			mutex.wait();
 			return *this;
 		}
 
 		inline operator T() {return value();}
 
 		inline T value() {
-			mutex.wait();
+			this->wait();
 			return data;
 		}
 
@@ -213,46 +180,48 @@ namespace Threaded {
 		inline Helper::PartialOrder operator<=>(T const& other) const	{return value() <=> other;			}
 		inline Helper::PartialOrder operator<=>(Box const& other) const	{return value() <=> other.value();	}
 
-		Box<T>& operator++() requires Type::PreIncrementable<T>						{mutex.wait(); ++data;					}
-		T operator++(int) requires Type::PostIncrementable<T>						{mutex.wait(); T v = data++; return v;	}
-		Box<T>& operator--() requires Type::PreDecrementable<T>						{mutex.wait(); --data;					}
-		T operator--(int) requires Type::PostDecrementable<T>						{mutex.wait(); T v = data--; return v;	}
-		Box<T>& operator+=(T const& v) requires Type::AddAssignable<T, T>			{mutex.wait(); data += v;				}
-		Box<T>& operator-=(T const& v) requires Type::SubAssignable<T, T>			{mutex.wait(); data -= v;				}
-		Box<T>& operator*=(T const& v) requires Type::MulAssignable<T, T>			{mutex.wait(); data *= v;				}
-		Box<T>& operator/=(T const& v) requires Type::DivAssignable<T, T>			{mutex.wait(); data /= v;				}
-		Box<T>& operator^=(T const& v) requires Type::Bitwise::XorAssignable<T, T>	{mutex.wait(); data ^= v;				}
-		Box<T>& operator&=(T const& v) requires Type::Bitwise::AndAssignable<T, T>	{mutex.wait(); data &= v;				}
-		Box<T>& operator|=(T const& v) requires Type::Bitwise::OrAssignable<T, T>	{mutex.wait(); data |= v;				}
-		Box<T>& operator%=(T const& v) requires Type::ModAssignable<T, T>			{mutex.wait(); data %= v;				}
-		Box<T>& operator<<=(T const& v) requires Type::Stream::InsAssignable<T, T>	{mutex.wait(); data <<= v;				}
-		Box<T>& operator>>=(T const& v) requires Type::Stream::ExtAssignable<T, T>	{mutex.wait(); data >>= v;				}
+		Box<T>& operator++() requires Type::PreIncrementable<T>						{this->wait(); ++data;					}
+		T operator++(int) requires Type::PostIncrementable<T>						{this->wait(); T v = data++; return v;	}
+		Box<T>& operator--() requires Type::PreDecrementable<T>						{this->wait(); --data;					}
+		T operator--(int) requires Type::PostDecrementable<T>						{this->wait(); T v = data--; return v;	}
+		Box<T>& operator+=(T const& v) requires Type::AddAssignable<T, T>			{this->wait(); data += v;				}
+		Box<T>& operator-=(T const& v) requires Type::SubAssignable<T, T>			{this->wait(); data -= v;				}
+		Box<T>& operator*=(T const& v) requires Type::MulAssignable<T, T>			{this->wait(); data *= v;				}
+		Box<T>& operator/=(T const& v) requires Type::DivAssignable<T, T>			{this->wait(); data /= v;				}
+		Box<T>& operator^=(T const& v) requires Type::Bitwise::XorAssignable<T, T>	{this->wait(); data ^= v;				}
+		Box<T>& operator&=(T const& v) requires Type::Bitwise::AndAssignable<T, T>	{this->wait(); data &= v;				}
+		Box<T>& operator|=(T const& v) requires Type::Bitwise::OrAssignable<T, T>	{this->wait(); data |= v;				}
+		Box<T>& operator%=(T const& v) requires Type::ModAssignable<T, T>			{this->wait(); data %= v;				}
+		Box<T>& operator<<=(T const& v) requires Type::Stream::InsAssignable<T, T>	{this->wait(); data <<= v;				}
+		Box<T>& operator>>=(T const& v) requires Type::Stream::ExtAssignable<T, T>	{this->wait(); data >>= v;				}
 
 	private:
-		T		data;
-		Mutex	mutex;
-
-		template<typename V, LockType Lock> friend class BoxLock;
+		T data;
 	};
 
-	template<Viewable T, LockType L>
-	class BoxLock: L {
+	template<Type::Derived<Mutex> T = Mutex>
+	class BaseLock {
 	public:
-		typedef T			DataType;
-		typedef L			LockType;
-		typedef L::DataType	MutexType;
-		typedef Box<T>		BoxType;
+		typedef T DataType;
 
-		BoxLock(BoxType& b): L(b.mutex), data(b) {}
+		BaseLock(T& _mutex): mutex(_mutex) {}
 
-		BoxType& box() {return data;}
+	protected:
+		T& mutex;
+	};
 
-	private:
-		BoxType& data;
+	template<Type::Derived<Mutex> T = Mutex>
+	class ScopeLock: public BaseLock<T> {
+	public:
+		ScopeLock(T& mutex): BaseLock<T>(mutex)	{this->mutex.capture();}
+		~ScopeLock()							{this->mutex.release();}
 	};
 
 	template <Viewable T>
 	using AtomicView = DataView<Atomic<T>>;
+
+	template <Viewable... Args>
+	using AtomicTuple = Tuple<Atomic<Args>...>;
 }
 
 #endif // THREADED_DATA_MANIPULATION_H
