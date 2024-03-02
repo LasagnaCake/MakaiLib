@@ -168,12 +168,12 @@ namespace Helper {
 	template<typename T, size_t LEN>
 	using Span = span<T, LEN>;
 
-	template<typename T>
-	using Tuple = tuple<T>;
+	template<typename... Types>
+	using Tuple = tuple<Types...>;
 
 	struct Discard {
-		template<typename T>
-		constexpr T&& operator=(T&& v) {return v;}
+		template<typename T>constexpr T&& operator=(T&& v)				{return v;}
+		template<typename T>constexpr T const& operator=(T const& v)	{return v;}
 	} _;
 
 	typedef std::strong_ordering	StrongOrder;
