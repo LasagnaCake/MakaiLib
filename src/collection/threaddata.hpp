@@ -22,7 +22,7 @@ namespace Threaded {
 
 		inline bool isLocked() {return locked;}
 
-		inline Atomic& wait() {while (locked) std::this_thread::yield(); return (*this);}
+		inline Atomic& wait() {while (getLock()) yield(); return (*this);}
 
 		inline Atomic& operator=(T const& val) {
 			capture();
@@ -82,8 +82,29 @@ namespace Threaded {
 		Atomic<T>& operator>>=(T const& v) requires Type::Stream::ExtAssignable<T, T>	{capture(); data >>= v; return release();		}
 
 	private:
-		inline Atomic& capture()	{wait(); locked = true;	return *this;	}
-		inline Atomic& release()	{locked = false; return *this;			}
+		inline Atomic& capture()	{return acquireLock();	}
+		inline Atomic& release()	{return releaseLock();	}
+
+		inline Atomic& acquireLock() {
+			do {
+				while (getLock())
+					yield();
+			} while (__atomic_test_and_set(&locked, __ATOMIC_ACQUIRE));
+			return *this;
+		}
+
+		inline Atomic& releaseLock() {
+			__atomic_clear(&locked, __ATOMIC_RELEASE);
+			return *this;
+		}
+
+		inline bool getLock() {
+			return __atomic_load_n(&locked, __ATOMIC_RELAXED);
+		}
+
+		inline void yield() {
+			std::this_thread::yield();
+		}
 
 		T data;
 		volatile bool locked = false;
