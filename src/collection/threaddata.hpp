@@ -11,8 +11,18 @@ namespace Threaded {
 		return std::this_thread::get_id();
 	}
 
+	inline void yieldThread() {
+		std::this_thread::yield();
+	}
+
+	struct Yieldable {
+		inline void yield() {
+			yieldThread();
+		}
+	};
+
 	template <class T>
-	class Atomic {
+	class Atomic: Yieldable {
 	public:
 		typedef T DataType;
 
@@ -100,15 +110,11 @@ namespace Threaded {
 			return __atomic_load_n(&locked, __ATOMIC_RELAXED);
 		}
 
-		inline void yield() {
-			std::this_thread::yield();
-		}
-
 		T data;
 		volatile bool locked = false;
 	};
 
-	class Mutex {
+	class Mutex: Yieldable {
 	public:
 		Mutex() {}
 
@@ -136,7 +142,7 @@ namespace Threaded {
 		inline Mutex& wait() {
 			if (!isCurrentOwner())
 				while(isCaptured())
-					std::this_thread::yield();
+					yield();
 			return *this;
 		}
 
