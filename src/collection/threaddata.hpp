@@ -7,16 +7,16 @@
 namespace Threaded {
 	typedef std::thread Thread;
 
-	Thread::id currentThreadID() {
+	Thread::id currentThreadID() noexcept {
 		return std::this_thread::get_id();
 	}
 
-	inline void yieldThread() {
+	inline void yieldThread() noexcept {
 		std::this_thread::yield();
 	}
 
 	struct Yieldable {
-		inline void yield() {
+		inline void yield() noexcept {
 			yieldThread();
 		}
 	};
