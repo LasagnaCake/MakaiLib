@@ -45,7 +45,7 @@ For zip: pacman -S zip
 For 7-zip: pacman -S p7zip
 For rsync: pacman -S rsync
 
-In a single line: pacman -S mingw-w64-x86_64-toolchain ; pacman -S zip ; pacman -S p7zip ; pacman -S make ; pacman -S rsync
+In a single line: pacman -S mingw-w64-x86_64-toolchain zip p7zip make rsync
 ```
 
 ## How To use

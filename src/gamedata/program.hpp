@@ -91,7 +91,11 @@ struct ProgramSetting {
 	bool	fullscreen;
 };
 
-#define USER_QUIT throw Error::FailedAction("User quit the setup process!")
+namespace {
+	[[noreturn]] inline void userQuitError() {
+		throw Error::FailedAction("User quit the setup process!");
+	}
+}
 
 ProgramSetting queryProgramSettingsFromUser(bool use16by9 = false, bool letUserChooseFramerate = true, bool extendedFramerate = false) {
 	StringList resList;
@@ -113,7 +117,7 @@ ProgramSetting queryProgramSettingsFromUser(bool use16by9 = false, bool letUserC
 		"Do you understand?",
 		Popup::Option::YES,
 		SDL_MESSAGEBOX_WARNING
-	) < 0) USER_QUIT;
+	) < 0) userQuitError();
 	int winSize = Popup::dialogBox(
 		std::string("App Configuration (1/") + (letUserChooseFramerate ? "3)" : "2)"),
 		"Please select a window size.\n"
@@ -121,7 +125,7 @@ ProgramSetting queryProgramSettingsFromUser(bool use16by9 = false, bool letUserC
 		"WARNING: Selecting \"Detect\" will set the application to fullscreen!\n",
 		resList
 	);
-	if (winSize < 0) USER_QUIT;
+	if (winSize < 0) userQuitError();
 	int fullscreen = 0;
 	if (winSize != resList.size() - 1) {
 		fullscreen = Popup::dialogBox(
@@ -130,7 +134,7 @@ ProgramSetting queryProgramSettingsFromUser(bool use16by9 = false, bool letUserC
 			StringList{"Fullscreen", "Windowed"}
 		);
 	}
-	if (fullscreen < 0) USER_QUIT;
+	if (fullscreen < 0) userQuitError();
 	int framerate = 1;
 	if (letUserChooseFramerate) {
 		framerate = Popup::dialogBox(
@@ -142,7 +146,7 @@ ProgramSetting queryProgramSettingsFromUser(bool use16by9 = false, bool letUserC
 			? StringList{"10", "20", "30", "40", "50", "60"}
 			: StringList{"30", "60"}
 		);
-		if (framerate < 0) USER_QUIT;
+		if (framerate < 0) userQuitError();
 	}
 	Vector2 window;
 	if (winSize == resList.size() - 1) {
@@ -151,7 +155,7 @@ ProgramSetting queryProgramSettingsFromUser(bool use16by9 = false, bool letUserC
 	} else
 		window = resValue[winSize];
 	float frate = 0;
-	if (extendedFramerate)
+	if (letUserChooseFramerate && extendedFramerate)
 		frate =  10 + (framerate * 10);
 	else frate = 30 + (framerate * 30);
 	return ProgramSetting{
