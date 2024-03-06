@@ -72,6 +72,15 @@ private:
 };
 
 template<typename T>
+using ForwardIterator = Iterator<T, false>;
+template<typename T>
 using ReverseIterator = Iterator<T, true>;
+
+template<typename T>
+concept ValidNode = requires {
+	T::previous,
+	T::next,
+	T::data
+};
 
 #endif // TYPE_ITERATOR_H

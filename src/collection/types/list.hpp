@@ -10,345 +10,350 @@
 template<typename T, Type::Integer I = size_t>
 class List {
 public:
-		// Types
-		typedef T								DataType;
-		typedef DataType const					ConstantType;
-		typedef DataType&						ReferenceType;
-		typedef DataType const&					ConstReferenceType;
-		typedef std::initializer_list<DataType>	ArgumentListType;
-		typedef DataType*						PointerType;
-		typedef const DataType*					ConstPointerType;
-		// Size types
-		typedef I							SizeType;
-		typedef std::make_signed<SizeType>	IndexType;
-		// Iterators
-		typedef Iterator<DataType>						IteratorType;
-		typedef Iterator<ConstantType>					ConstIteratorType;
-		typedef Iterator<DataType, true, SizeType>		ReverseIteratorType;
-		typedef Iterator<ConstantType, true, SizeType>	ConstReverseIteratorType;
+	// Types
+	typedef T								DataType;
+	typedef DataType const					ConstantType;
+	typedef DataType&						ReferenceType;
+	typedef DataType const&					ConstReferenceType;
+	typedef std::initializer_list<DataType>	ArgumentListType;
+	typedef DataType*						PointerType;
+	typedef const DataType*					ConstPointerType;
+	// Size types
+	typedef I							SizeType;
+	typedef std::make_signed<SizeType>	IndexType;
+	// Iterators
+	typedef Iterator<DataType>						IteratorType;
+	typedef Iterator<ConstantType>					ConstIteratorType;
+	typedef Iterator<DataType, true, SizeType>		ReverseIteratorType;
+	typedef Iterator<ConstantType, true, SizeType>	ConstReverseIteratorType;
+	// Constant values
+	constexpr SizeType maxSize = std::numeric_limits<SizeType>::max;
 
-		constexpr List() {invoke(1);}
+	constexpr List() {invoke(1);}
 
-		constexpr List(SizeType const& size) {
-			invoke(size);
+	constexpr List(SizeType const& size) {
+		invoke(size);
+	}
+
+	constexpr List(SizeType const& size, DataType const& fill) {
+		invoke(size);
+		for (size_t i = 0; i < size; ++i)
+			data[i] = fill;
+		count = size;
+	}
+
+	constexpr List(ArgumentListType const& values) {
+		invoke(values.size());
+		for (DataType& v: values) pushBack(v);
+	}
+
+	template<SizeType COUNT>
+	constexpr List(DataType const(& values)[COUNT]) {
+		invoke(size);
+		copy(values, data, COUNT);
+		count = COUNT;
+	}
+
+	constexpr List(List const& other) {
+		invoke(other.maximum);
+		copy(other.data, data, other.count);
+		count = other.count;
+	}
+
+	constexpr List(IteratorType const& begin, IteratorType const& end) {
+		invoke(end - begin);
+		copy(begin, data, end - begin);
+		count = end - begin;
+	}
+
+	constexpr List(ReverseIteratorType const& begin, ReverseIteratorType const& end) {
+		invoke(end - begin);
+		for (IteratorType i = begin; i != end; ++i)
+			pushBack(i);
+		count = end - begin;
+	}
+
+	constexpr ~List() {delete[] data;}
+
+	constexpr List& pushBack(DataType const& value) {
+		if (count >= maximum)
+			increase();
+		data[count++] = value;
+		return *this;
+	}
+
+	constexpr DataType popBack() {
+		DataType value = data[count];
+		count--;
+		return value;
+	}
+
+	constexpr List& insert(DataType const& value, IndexType const& index) {
+		assertIsInBounds(index);
+		if (index < 0) return insert(value, count - index);
+		SizeType span = count - index;
+		DataType* buf = new DataType[span];
+		copy(&data[index], buf, span);
+		data[index] = value;
+		if (count >= maximum) increase();
+		copy(buf, &data[index+1], span);
+		++count;
+		delete buf;
+		return *this;
+	}
+
+	constexpr List& insert(List const& other, IndexType const& index) {
+		assertIsInBounds(index);
+		if (index < 0) return insert(value, count - index);
+		SizeType span = count - index;
+		DataType* buf = new DataType[span];
+		copy(&data[index], buf, span);
+		while ((count + other.count) < maximum)
+			increase();
+		copy(other.data, &data[index], other.count);
+		copy(buf, &data[index+other.count], span);
+		++count;
+		delete buf;
+		return *this;
+	}
+
+	constexpr List& insert(ArgumentListType const& values, IndexType const& index) {
+		return insert(List(values), index);
+	}
+
+	template<SizeType COUNT>
+	constexpr List& insert(DataType const(& values)[COUNT], IndexType const& index) {
+		return insert(List(values), index);
+	}
+
+	constexpr List& reserve(SizeType const& count) {
+		if (count > this->count) grow(count - this->count);
+		count = 0;
+		return *this;
+	}
+
+	constexpr List& resize(SizeType const& newSize) {
+		DataType* newData = new T[newSize];
+		if (data) {
+			copy(data, newData, newSize);
+			delete[] data;
 		}
+		maximum = newSize;
+		recalculateMagnitude();
+		data = newData;
+		count = 0;
+		return *this;
+	}
 
-		constexpr List(SizeType const& size, DataType const& fill) {
-			invoke(size);
-			for (size_t i = 0; i < size; ++i)
-				data[i] = fill;
-			count = size;
+	constexpr List& reserve(SizeType const& count, DataType const& fill) {
+		reserve(count);
+		for (SizeType i = 0; i < count; ++i);
+			data[i] = fill;
+		return *this;
+	}
+
+	constexpr List& resize(SizeType const& newSize, DataType const& fill) {
+		resize(count);
+		for (SizeType i = 0; i < count; ++i);
+			data[i] = fill;
+		return *this;
+	}
+
+	constexpr List& reverse() {
+		List buf(end(), begin());
+		copy(buf.data, data, count);
+		return *this;
+	}
+
+	constexpr List reversed() const {
+		return List(rbegin(), rend());
+	}
+
+	constexpr IndexType find(DataType const& value) const {
+		auto const start = begin();
+		for (auto i = start; i != end(); ++i)
+			if ((*i) == value)
+				return i-start;
+		return -1;
+	}
+
+	constexpr IndexType reverseFind(DataType const& value) const {
+		auto const start = rbegin();
+		for (auto i = start; i != rend(); ++i)
+			if ((*i) == value)
+				return i-start;
+		return -1;
+	}
+
+	constexpr List& remove(IndexType const& index) {
+		assertIsInBounds(index);
+		copy(&data[index], &data[index-1], count-index);
+	}
+
+	constexpr List& erase(IndexType const& index) {
+		remove(index);
+		count--;
+	}
+
+	constexpr IndexType removeIf(View::Functor<bool(DataType const&)> const& predicate) const {
+		auto const start = begin();
+		for(auto i = begin(); i != end(); ++i) {
+			if (predicate(*i))
+				remove(i-start);
 		}
+	}
 
-		constexpr List(ArgumentListType const& values) {
-			invoke(values.size());
-			for (DataType& v: values) pushBack(v);
-		}
-
-		template<SizeType COUNT>
-		constexpr List(DataType const(& values)[COUNT]) {
-			invoke(size);
-			copy(values, data, COUNT);
-			count = COUNT;
-		}
-
-		constexpr List(List const& other) {
-			invoke(other.maximum);
-			copy(other.data, data, other.count);
-			count = other.count;
-		}
-
-		constexpr List(IteratorType const& begin, IteratorType const& end) {
-			invoke(end - begin);
-			copy(begin, data, end - begin);
-			count = end - begin;
-		}
-
-		constexpr List(ReverseIteratorType const& begin, ReverseIteratorType const& end) {
-			invoke(end - begin);
-			for (IteratorType i = begin; i != end; ++i)
-				pushBack(i);
-			count = end - begin;
-		}
-
-		constexpr List& pushBack(DataType const& value) {
-			if (count >= maximum)
-				increase();
-			data[count++] = value;
-			return *this;
-		}
-
-		constexpr DataType popBack() {
-			DataType value = data[count];
-			count--;
-			return value;
-		}
-
-		constexpr List& insert(DataType const& value, IndexType const& index) {
-			assertIsInBounds(index);
-			if (index < 0) return insert(value, count - index);
-			SizeType span = count - index;
-			DataType* buf = new DataType[span];
-			copy(&data[index], buf, span);
-			data[index] = value;
-			if (count >= maximum) increase();
-			copy(buf, &data[index+1], span);
-			++count;
-			delete buf;
-			return *this;
-		}
-
-		constexpr List& insert(List const& other, IndexType const& index) {
-			assertIsInBounds(index);
-			if (index < 0) return insert(value, count - index);
-			SizeType span = count - index;
-			DataType* buf = new DataType[span];
-			copy(&data[index], buf, span);
-			while ((count + other.count) < maximum)
-				increase();
-			copy(other.data, &data[index], other.count);
-			copy(buf, &data[index+other.count], span);
-			++count;
-			delete buf;
-			return *this;
-		}
-
-		constexpr List& insert(ArgumentListType const& values, IndexType const& index) {
-			return insert(List(values), index);
-		}
-
-		template<SizeType COUNT>
-		constexpr List& insert(DataType const(& values)[COUNT], IndexType const& index) {
-			return insert(List(values), index);
-		}
-
-		constexpr List& reserve(SizeType const& count) {
-			if (count > this->count) grow(count - this->count);
-			count = 0;
-			return *this;
-		}
-
-		constexpr List& resize(SizeType const& newSize) {
-			DataType* newData = new T[newSize];
-			if (data) {
-				copy(data, newData, newSize);
-				delete[] data;
+	constexpr IndexType eraseIf(View::Functor<bool(DataType const&)> const& predicate) const {
+		SizeType removed = 0;
+		auto const start = begin();
+		for(auto i = begin(); i != end(); ++i) {
+			if (predicate(*i)) {
+				remove(i-start);
+				removed++;
 			}
-			maximum = newSize;
-			recalculateMagnitude();
-			data = newData;
-			count = 0;
-			return *this;
 		}
+		count -= removed;
+	}
 
-		constexpr List& reserve(SizeType const& count, DataType const& fill) {
-			reserve(count);
-			for (SizeType i = 0; i < count; ++i);
-				data[i] = fill;
-			return *this;
-		}
+	constexpr slice(IndexType start, SizeType count) {
+		assertIsInBounds(start);
+		assertIsInBounds(start + count);
+	}
 
-		constexpr List& resize(SizeType const& newSize, DataType const& fill) {
-			resize(count);
-			for (SizeType i = 0; i < count; ++i);
-				data[i] = fill;
-			return *this;
-		}
+	constexpr List& appendBack(List const& other) {
+		while ((count + other.count) > maximum)
+			increase();
+		copy(other.data, back(), other.count);
+		return *this;
+	}
 
-		constexpr List& reverse() {
-			List buf(end(), begin());
-			copy(buf.data, data, count);
-			return *this;
-		}
+	constexpr List& appendBack(ArgumentListType const& values) {
+		return appendBack(List(values));
+	}
 
-		constexpr List reversed() const {
-			return List(rbegin(), rend());
-		}
+	constexpr List& appendBack(SizeType const& count, DataType const& fill) {
+		return appendBack(List(count, fill));
+	}
 
-		constexpr IndexType find(DataType const& value) const {
-			auto const start = begin();
-			for (auto i = start; i != end(); ++i)
-				if ((*i) == value)
-					return i-start;
-			return -1;
-		}
+	constexpr List& appendBack(IteratorType const& begin, IteratorType const& end) {
+		return appendBack(List(begin, end));
+	}
 
-		constexpr IndexType reverseFind(DataType const& value) const {
-			auto const start = rbegin();
-			for (auto i = start; i != rend(); ++i)
-				if ((*i) == value)
-					return i-start;
-			return -1;
-		}
+	constexpr List& appendBack(ReverseIteratorType const& begin, ReverseIteratorType const& end) {
+		return appendBack(List(begin, end));
+	}
 
-		constexpr List& remove(IndexType const& index) {
-			assertIsInBounds(index);
-			copy(&data[index], &data[index-1], count-index);
-		}
+	template<SizeType COUNT>
+	constexpr List& appendBack(DataType const(& values)[COUNT]) {
+		return insert(List(values), index);
+	}
 
-		constexpr List& erase(IndexType const& index) {
-			remove(index);
-			count--;
-		}
+	constexpr IteratorType		begin()			{return data;			}
+	constexpr IteratorType		end()			{return &data[count-1];	}
+	constexpr ConstIteratorType	begin() const	{return data;			}
+	constexpr ConstIteratorType	end() const		{return &data[count-1];	}
 
-		constexpr IndexType removeIf(View::Functor<bool(DataType const&)> const& predicate) const {
-			auto const start = begin();
-			for(auto i = begin(); i != end(); ++i) {
-				if (predicate(*i))
-					remove(i-start);
-			}
-		}
+	constexpr ReverseIteratorType		rbegin()		{return &data[count-1];	}
+	constexpr ReverseIteratorType		rend()			{return data;			}
+	constexpr ConstReverseIteratorType	rbegin() const	{return &data[count-1];	}
+	constexpr ConstReverseIteratorType	rend() const	{return data;			}
 
-		constexpr IndexType eraseIf(View::Functor<bool(DataType const&)> const& predicate) const {
-			SizeType removed = 0;
-			auto const start = begin();
-			for(auto i = begin(); i != end(); ++i) {
-				if (predicate(*i)) {
-					remove(i-start);
-					removed++;
-				}
-			}
-			count -= removed;
-		}
+	constexpr PointerType		cbegin()		{return data;			}
+	constexpr PointerType		cend()			{return &data[count-1];	}
+	constexpr ConstPointerType	cbegin() const	{return data;			}
+	constexpr ConstPointerType	cend() const	{return &data[count-1];	}
 
-		constexpr slice(IndexType start, SizeType count) {
-			assertIsInBounds(start);
-			assertIsInBounds(start + count);
-		}
+	constexpr ReferenceType			front()			{return data[0];		}
+	constexpr ReferenceType 		back()			{return data[count-1];	}
+	constexpr ReferenceType const	front() const	{return data[0];		}
+	constexpr ReferenceType const	back() const	{return data[count-1];	}
 
-		constexpr List& appendBack(List const& other) {
-			while ((count + other.count) > maximum)
-				increase();
-			copy(other.data, back(), other.count);
-			return *this;
-		}
+	constexpr ReferenceType at(IndexType const& index) {
+		assertIsInBounds(index);
+		if (index < 0)
+			return at(count - index);
+		return data[index];
+	}
 
-		constexpr List& appendBack(ArgumentListType const& values) {
-			return appendBack(List(values));
-		}
+	constexpr ReferenceType const at(IndexType const& index) const {
+		assertIsInBounds(index);
+		if (index < 0)
+			return at(count - index);
+		return data[index];
+	}
 
-		constexpr List& appendBack(SizeType const& count, DataType const& fill) {
-			return appendBack(List(count, fill));
-		}
+	constexpr ReferenceType			operator[](IndexType const& index)			{return at(index);}
+	constexpr ReferenceType const	operator[](IndexType const& index) const	{return at(index);}
 
-		constexpr List& appendBack(IteratorType const& begin, IteratorType const& end) {
-			return appendBack(List(begin, end));
-		}
+	constexpr SizeType size() const		{return count;		}
+	constexpr SizeType capacity() const	{return maximum;	}
+	constexpr SizeType empty() const	{return count == 0;	}
 
-		constexpr List& appendBack(ReverseIteratorType const& begin, ReverseIteratorType const& end) {
-			return appendBack(List(begin, end));
-		}
-
-		template<SizeType COUNT>
-		constexpr List& appendBack(DataType const(& values)[COUNT]) {
-			return insert(List(values), index);
-		}
-
-		constexpr IteratorType		begin()			{return data;			}
-		constexpr IteratorType		end()			{return &data[count-1];	}
-		constexpr ConstIteratorType	begin() const	{return data;			}
-		constexpr ConstIteratorType	end() const		{return &data[count-1];	}
-
-		constexpr ReverseIteratorType		rbegin()		{return &data[count-1];	}
-		constexpr ReverseIteratorType		rend()			{return data;			}
-		constexpr ConstReverseIteratorType	rbegin() const	{return &data[count-1];	}
-		constexpr ConstReverseIteratorType	rend() const	{return data;			}
-
-		constexpr PointerType		cbegin()		{return data;			}
-		constexpr PointerType		cend()			{return &data[count-1];	}
-		constexpr ConstPointerType	cbegin() const	{return data;			}
-		constexpr ConstPointerType	cend() const	{return &data[count-1];	}
-
-		constexpr ReferenceType			front()			{return data[0];		}
-		constexpr ReferenceType 		back()			{return data[count-1];	}
-		constexpr ReferenceType const	front() const	{return data[0];		}
-		constexpr ReferenceType const	back() const	{return data[count-1];	}
-
-		constexpr ReferenceType at(IndexType const& index) {
-			assertIsInBounds(index);
-			if (index < 0)
-				return at(count - index);
-			return data[index];
-		}
-
-		constexpr ReferenceType const at(IndexType const& index) const {
-			assertIsInBounds(index);
-			if (index < 0)
-				return at(count - index);
-			return data[index];
-		}
-
-		constexpr ReferenceType			operator[](IndexType const& index)			{return at(index);}
-		constexpr ReferenceType const	operator[](IndexType const& index) const	{return at(index);}
-
-		constexpr SizeType size() const		{return count;		}
-		constexpr SizeType capacity() const	{return maximum;	}
-
-		// TODO: rename this
-		constexpr bool isTighterThanBarkOnATree() const {return count == maximum;}
+	// TODO: rename this
+	constexpr bool isTighterThanBarkOnATree() const {return count == maximum;}
 private:
-		constexpr void copy(DataType* const& src, DataType* const& dst, SizeType const& count) {
-			memcpy(dst, src, count * sizeof(DataType));
-		};
+	constexpr void copy(DataType* const& src, DataType* const& dst, SizeType const& count) {
+		memcpy(dst, src, count * sizeof(DataType));
+	};
 
-		constexpr List& invoke(SizeType const& size) {
-			if (data) delete[] data;
-			data = new T[size];
-			maximum = size;
-			recalculateMagnitude();
+	constexpr List& invoke(SizeType const& size) {
+		if (data) delete[] data;
+		data = new T[size];
+		maximum = size;
+		recalculateMagnitude();
+		return *this;
+	}
+
+	constexpr List& recalculateMagnitude() {
+		if (maximum == 0) {
+			magnitude = 1;
 			return *this;
 		}
-
-		constexpr List& recalculateMagnitude() {
-			if (maximum == 0) {
-				magnitude = 1;
+		magnitude = 0;
+		SizeType const order = (sizeof(SizeType) * 8);
+		for (SizeType i = 1; i <= order; ++i) {
+			magnitude = 1 << order - i;
+			if ((maximum >> order) & 1) {
+				magnitude <<= 1;
 				return *this;
 			}
-			magnitude = 0;
-			SizeType const order = (sizeof(SizeType) * 8);
-			for (SizeType i = 1; i <= order; ++i) {
-				magnitude = 1 << order - i;
-				if ((maximum >> order) & 1) {
-					magnitude <<= 1;
-					return *this;
-				}
-			}
+		}
+		magnitude = 0;
+	}
+
+	constexpr List& increase() {
+		if (magnitude == 0) atItsLimitError();
+		resize(magnitude);
+		return *this;
+	}
+
+	constexpr List& grow(SizeType const& count) {
+		if (SizeType(this->count + count) < count)
 			atItsLimitError();
-		}
+		SizeType const newSize = this->count + count;
+		resize(newSize);
+		return *this;
+	}
 
-		constexpr List& increase() {
-			if (magnitude == 0) atItsLimitError();
-			resize(magnitude);
-			return *this;
-		}
+	void assertIsInBounds(IndexType const& index) {
+		if (index > count-1) outOfBoundsError();
+	}
 
-		constexpr List& grow(SizeType const& count) {
-			if (SizeType(this->count + count) < count)
-				atItsLimitError();
-			SizeType const newSize = this->count + count;
-			resize(newSize);
-			return *this;
-		}
+	[[noreturn]] constexpr void invalidSizeError(SizeType const& size) {
+		throw Error::FailedAction(toString("Invalid size of '", index, "'!"), __FILE_);
+	}
 
-		void assertIsInBounds(IndexType const& index) {
-			if (index > count-1) outOfBoundsError();
-		}
+	[[noreturn]] constexpr void atItsLimitError() {
+		throw Error::FailedAction("Maximum array capacity reached!", __FILE_);
+	}
 
-		[[noreturn]] constexpr void invalidSizeError(SizeType const& size) {
-			throw Error::FailedAction(toString("Invalid size of '", index, "'!"));
-		}
+	[[noreturn]] constexpr void outOfBoundsError(IndexType const& index) {
+		throw Error::OutOfBounds(toString("Index '", index, "' is out of bounds!"), __FILE_);
+	}
 
-		[[noreturn]] constexpr void atItsLimitError() {
-			throw Error::FailedAction("Maximum array capacity reached!");
-		}
-
-		[[noreturn]] constexpr void outOfBoundsError(IndexType const& index) {
-			throw Error::OutOfBoundsError(
-				toString("Index '", index, "' is out of bounds!"),
-				__FILE__,
-				toString(__LINE__)
-			);
-		}
+	[[noreturn]] constexpr void emptyError() {
+		throw Error::OutOfBounds("Container is empty!", __FILE__);
+	}
 
 	SizeType	magnitude	= 1;
 	SizeType	maximum		= 0;
@@ -359,22 +364,109 @@ private:
 template<typename T, Type::Integer I = size_t>
 class LinkedList {
 public:
-		// Types
-		typedef T								DataType;
-		typedef DataType const					ConstantType;
-		typedef DataType&						ReferenceType;
-		typedef DataType const&					ConstReferenceType;
-		typedef std::initializer_list<DataType>	ArgumentListType;
-		typedef DataType*						PointerType;
-		typedef const DataType*					ConstPointerType;
-		// Size types
-		typedef I							SizeType;
-		typedef std::make_signed<SizeType>	IndexType;
-		// Iterators
-		typedef Iterator<DataType>						IteratorType;
-		typedef Iterator<ConstantType>					ConstIteratorType;
-		typedef Iterator<DataType, true, SizeType>		ReverseIteratorType;
-		typedef Iterator<ConstantType, true, SizeType>	ConstReverseIteratorType;
-}
+	// Types
+	typedef T								DataType;
+	typedef DataType const					ConstantType;
+	typedef DataType&						ReferenceType;
+	typedef DataType const&					ConstReferenceType;
+	typedef std::initializer_list<DataType>	ArgumentListType;
+	typedef DataType*						PointerType;
+	typedef const DataType*					ConstPointerType;
+	// Size types
+	typedef I							SizeType;
+	typedef std::make_signed<SizeType>	IndexType;
+	// Iterators
+	typedef Iterator<DataType>						IteratorType;
+	typedef Iterator<ConstantType>					ConstIteratorType;
+	typedef Iterator<DataType, true, SizeType>		ReverseIteratorType;
+	typedef Iterator<ConstantType, true, SizeType>	ConstReverseIteratorType;
+	// Constant values
+	constexpr SizeType maxSize = std::numeric_limits<SizeType>::max;
+
+	struct Node {
+		DataType	value		= nullptr;
+		Node*		previous	= nullptr;
+		Node*		next		= nullptr;
+	};
+
+	constexpr ~LinkedList() {
+		while (!empty()) popBack();
+	}
+
+	constexpr LinkedList& pushBack(DataType const& value) {
+		assertNotAtItsLimit();
+		Node* newTail = new Node{value};
+		tail->next = newTail;
+		newTail->previous = tail;
+		tail = newTail;
+		count++;
+		return *this;
+	}
+
+	constexpr LinkedList& pushFront(DataType const& value) {
+		assertNotAtItsLimit();
+		Node* newHead = new Node{value};
+		head->previous = newHead;
+		newHead->next = head;
+		head = newHead;
+		count++;
+		return *this;
+	}
+
+	constexpr DataType& popBack() {
+		if (empty()) emptyContainerError();
+		DataType value = tail->value;
+		Node* newTail = tail->previous;
+		tail->previous->next = nullptr;
+		delete tail;
+		tail = newTail;
+		count--;
+		return value;
+	}
+
+	constexpr DataType& popFront() {
+		if (empty()) emptyContainerError();
+		DataType value = head->value;
+		Node* newHead = head->previous;
+		head->previous->next = nullptr;
+		delete head;
+		head = newHead;
+		count--;
+		return value;
+	}
+
+	constexpr SizeType size() const		{return count;		}
+	constexpr SizeType empty() const	{return count == 0;	}
+
+private:
+	void assertIsInBounds(IndexType const& index) {
+		if (index > count-1) outOfBoundsError();
+	}
+
+	void assertNotAtItsLimit() {
+		if (count >= maxSize) atItsLimitError();
+	}
+
+	[[noreturn]] constexpr void invalidSizeError(SizeType const& size) {
+		throw Error::FailedAction(toString("Invalid size of '", index, "'!"), __FILE_);
+	}
+
+	[[noreturn]] constexpr void atItsLimitError() {
+		throw Error::FailedAction("Maximum array capacity reached!", __FILE_);
+	}
+
+	[[noreturn]] constexpr void outOfBoundsError(IndexType const& index) {
+		throw Error::OutOfBoundsError(toString("Index '", index, "' is out of bounds!"), __FILE_);
+	}
+
+	[[noreturn]] constexpr void emptyContainerError() {
+		throw Error::OutOfBounds("Container is empty!", __FILE__);
+	}
+
+	SizeType count = 0;
+
+	Node* head = nullptr;
+	Node* tail = nullptr;
+};
 
 #endif // TYPE_LIST_H
