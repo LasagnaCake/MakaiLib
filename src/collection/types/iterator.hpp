@@ -2,8 +2,9 @@
 #define TYPE_ITERATOR_H
 
 #include <compare>
+#include <type_traits>
 
-template<typename T, bool REVERSE = false>
+template<typename T, bool REVERSE = false, Type::Integer I = size_t>
 class Iterator {
 public:
 	typedef T		DataType;
@@ -13,6 +14,9 @@ public:
 	typedef DataType&		ReferenceType;
 	typedef ConstantType*	ConstPointerType;
 	typedef ConstantType&	ConstReferenceType;
+
+	typedef I							SizeType;
+	typedef std::make_signed<SizeType>	IndexType;
 
 	constexpr Iterator() {}
 
@@ -38,15 +42,30 @@ public:
 	constexpr bool operator==(Iterator const& other) const						{return iterand == other.iterand;	}
 	constexpr std::partial_ordering operator<=>(Iterator const& other) const	{return compare(other.iterand);		}
 
+	constexpr SizeType operator-(Iterator const& other)	const	{return difference<REVERSE>(other.iterand);	}
+	constexpr Iterator operator-(IndexType const& value) const	{return difference<REVERSE>(value);			}
+	constexpr Iterator operator+(IndexType const& value) const	{return difference<!REVERSE>(value);		}
+
 private:
 	constexpr void step() {
 		if constexpr (REVERSE)	--iterand;
 		else					++iterand;
 	}
 
-	constexpr void compare(PointerType const& other) {
+	constexpr void compare(PointerType const& other) const {
 		if constexpr (REVERSE)	return other <=> iterand;
 		else					return iterand <=> other;
+	}
+
+	constexpr PointerType difference(PointerType const& other) const {
+		if constexpr (REVERSE)	return other - iterand;
+		else					return iterand - other;
+	}
+
+	template <bool FLIP>
+	constexpr PointerType offset(IndexType const& value) const {
+		if constexpr (FLIP)	return iterand + value;
+		else				return iterand - value;
 	}
 
 	PointerType iterand = nullptr;
