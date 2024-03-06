@@ -431,7 +431,7 @@ def create_render_definition(context, obj, file_name, folder_path, tx_folder, me
             "scale": [x for x in obj.material_props.warp_4_scale]
         }
         strfile["material"]["warp"]["channelX"] = int(obj.material_props.warp_5_channelX)
-        strfile["material"]["warp"]["channelY"] = int(obj.material_props.warp_5_channelY)
+        strfile["material"]["warp"]["channelY"] = int(obj.material_props.warp_6_channelY)
     # Set negative
     if obj.material_props.negative_0_enabled:
         strfile["material"]["negative"] = {
