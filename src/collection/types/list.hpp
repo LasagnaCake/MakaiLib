@@ -160,8 +160,10 @@ public:
 			return List(end(), begin());
 		}
 
-		constexpr IndexType find() const {
+		[[gnu::unavailable("Unimplemented!")]] constexpr IndexType find() const {
+		}
 
+		[[gnu::unavailable("Unimplemented!")]] constexpr IndexType reverseFind() const {
 		}
 
 		constexpr List& appendBack(List const& other) {
