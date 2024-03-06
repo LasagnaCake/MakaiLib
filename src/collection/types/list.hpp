@@ -19,7 +19,7 @@ public:
 		typedef std::make_signed<I>				IndexType;
 		typedef Iterator<DataType>				IteratorType;
 		typedef Iterator<ConstantType>			ConstIteratorType;
-		typedef Reverse<DataType, true>			ReverseIteratorType;
+		typedef Iterator<DataType, true>		ReverseIteratorType;
 		typedef Iterator<ConstantType, true>	ConstReverseIteratorType;
 
 		constexpr List() {invoke(1);}
