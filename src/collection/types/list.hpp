@@ -10,17 +10,17 @@
 template<typename T, Type::Integer I = size_t>
 class List {
 public:
-		typedef T							DataType;
-		typedef DataType const				ConstantType;
-		typedef DataType&					ReferenceType;
-		typedef DataType const&				ConstReferenceType;
-		typedef std::initializer_list<T>	ArgumentListType;
-		typedef I							SizeType;
-		typedef std::make_signed<I>			IndexType;
-		typedef Iterator<DataType>			IteratorType;
-		typedef Iterator<ConstantType>		ConstIteratorType;
-		typedef Iterator<DataType>			ReverseIteratorType;
-		typedef Iterator<ConstantType>		ConstReverseIteratorType;
+		typedef T								DataType;
+		typedef DataType const					ConstantType;
+		typedef DataType&						ReferenceType;
+		typedef DataType const&					ConstReferenceType;
+		typedef std::initializer_list<T>		ArgumentListType;
+		typedef I								SizeType;
+		typedef std::make_signed<I>				IndexType;
+		typedef Iterator<DataType>				IteratorType;
+		typedef Iterator<ConstantType>			ConstIteratorType;
+		typedef Reverse<DataType, true>			ReverseIteratorType;
+		typedef Iterator<ConstantType, true>	ConstReverseIteratorType;
 
 		constexpr List() {invoke(1);}
 
