@@ -160,16 +160,16 @@ public:
 			return List(end(), begin());
 		}
 
-		[[gnu::unavailable("Unimplemented!")]] constexpr IndexType find() const {
+		[[gnu::unavailable("Unimplemented!")]] constexpr IndexType find(DataType const& value) const {
 		}
 
-		[[gnu::unavailable("Unimplemented!")]] constexpr IndexType reverseFind() const {
+		[[gnu::unavailable("Unimplemented!")]] constexpr IndexType reverseFind(DataType const& value) const {
 		}
 
-		[[gnu::unavailable("Unimplemented!")]] constexpr IndexType remove() const {
+		[[gnu::unavailable("Unimplemented!")]] constexpr IndexType remove(IndexType const& index) const {
 		}
 
-		[[gnu::unavailable("Unimplemented!")]] constexpr IndexType erase() const {
+		[[gnu::unavailable("Unimplemented!")]] constexpr IndexType erase(IndexType const& index) const {
 		}
 
 		[[gnu::unavailable("Unimplemented!")]] constexpr IndexType removeIf() const {
