@@ -166,6 +166,18 @@ public:
 		[[gnu::unavailable("Unimplemented!")]] constexpr IndexType reverseFind() const {
 		}
 
+		[[gnu::unavailable("Unimplemented!")]] constexpr IndexType remove() const {
+		}
+
+		[[gnu::unavailable("Unimplemented!")]] constexpr IndexType erase() const {
+		}
+
+		[[gnu::unavailable("Unimplemented!")]] constexpr IndexType removeIf() const {
+		}
+
+		[[gnu::unavailable("Unimplemented!")]] constexpr IndexType eraseIf() const {
+		}
+
 		constexpr List& appendBack(List const& other) {
 			while ((count + other.count) > maximum)
 				increase();
