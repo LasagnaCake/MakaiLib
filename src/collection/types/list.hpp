@@ -1,21 +1,26 @@
-#ifndef LIST_H
-#define LIST_H
+#ifndef TYPE_LIST_H
+#define TYPE_LIST_H
 
 #include <initializer_list>
 #include <type_traits>
 #include <numeric_limits>
 
+#include "iterator.hpp"
+
 template<typename T, Type::Integer I = size_t>
 class List {
 public:
 		typedef T							DataType;
+		typedef DataType const				ConstantType;
 		typedef DataType&					ReferenceType;
+		typedef DataType const&				ConstReferenceType;
 		typedef std::initializer_list<T>	ArgumentListType;
 		typedef I							SizeType;
 		typedef std::make_signed<I>			IndexType;
-		typedef DataType const				ConstantType;
-		typedef DataType*					IteratorType;
-		typedef ConstantType*				ConstIteratorType;
+		typedef Iterator<DataType>			IteratorType;
+		typedef Iterator<ConstantType>		ConstIteratorType;
+		typedef Iterator<DataType>			ReverseIteratorType;
+		typedef Iterator<ConstantType>		ConstReverseIteratorType;
 
 		constexpr List() {invoke(1);}
 
@@ -27,14 +32,38 @@ public:
 			invoke(size);
 			for (size_t i = 0; i < size; ++i)
 				data[i] = fill;
+			count = size;
 		}
 
-		constexpr List(ArgumentListType const& values) {}
+		constexpr List(ArgumentListType const& values) {
+			invoke(values.size());
+			for (DataType& v: values) pushBack(v);
+		}
 
 		template<SizeType COUNT>
 		constexpr List(DataType const(& values)[COUNT]) {
 			invoke(size);
 			copy(values, data, COUNT);
+			count = COUNT;
+		}
+
+		constexpr List(List const& other) {
+			invoke(other.maximum);
+			copy(other.data, data, other.count);
+			count = other.count;
+		}
+
+		constexpr List(IteratorType const& begin, IteratorType const& end) {
+			if (begin > end) {
+				invoke(end - begin);
+				copy(begin, data, end - begin);
+				count = end - begin;
+			} else {
+				invoke(begin - end);
+				for (IteratorType i = end; i != begin; --i)
+					pushBack(i);
+				count = begin - end;
+			}
 		}
 
 		constexpr List& pushBack(DataType const& value) {
@@ -121,6 +150,20 @@ public:
 			return *this;
 		}
 
+		constexpr List& reverse() {
+			List buf(end(), begin());
+			copy(buf.data, data, count);
+			return *this;
+		}
+
+		constexpr List reversed() const {
+			return List(end(), begin());
+		}
+
+		constexpr IndexType find() const {
+
+		}
+
 		constexpr List& appendBack(List const& other) {
 			while ((count + other.count) > maximum)
 				increase();
@@ -145,6 +188,11 @@ public:
 		constexpr IteratorType end()				{return &data[count-1];	}
 		constexpr ConstIteratorType begin() const	{return data;			}
 		constexpr ConstIteratorType end() const		{return &data[count-1];	}
+
+		constexpr ReverseIteratorType rbegin()				{return &data[count-1];	}
+		constexpr ReverseIteratorType rend()				{return data;			}
+		constexpr ConstReverseIteratorType rbegin() const	{return &data[count-1];	}
+		constexpr ConstReverseIteratorType rend() const		{return data;			}
 
 		constexpr ReferenceType front()				{return data[0];		}
 		constexpr ReferenceType back()				{return data[count-1];	}
@@ -171,8 +219,7 @@ public:
 		constexpr SizeType size() const		{return count;		}
 		constexpr SizeType capacity() const	{return maximum;	}
 
-		// TODO: Rename this
-		constexpr bool isTightLikeBarkOnATree() const {return count == maximum;}
+		constexpr bool isTighterThanBarkOnATree() const {return count == maximum;}
 private:
 		constexpr void copy(DataType* const& src, DataType* const& dst, SizeType const& count) {
 			memcpy(dst, src, count * sizeof(DataType));
@@ -181,6 +228,8 @@ private:
 		constexpr List& invoke(SizeType const& size) {
 			if (data) delete[] data;
 			data = new T[size];
+			maximum = size;
+			recalculateMagnitude();
 			return *this;
 		}
 
@@ -241,5 +290,4 @@ private:
 	DataType*	data		= nullptr;
 };
 
-
-#endif // LIST_H
+#endif // TYPE_LIST_H
