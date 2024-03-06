@@ -10,17 +10,22 @@
 template<typename T, Type::Integer I = size_t>
 class List {
 public:
+		// Types
 		typedef T								DataType;
 		typedef DataType const					ConstantType;
 		typedef DataType&						ReferenceType;
 		typedef DataType const&					ConstReferenceType;
-		typedef std::initializer_list<T>		ArgumentListType;
-		typedef I								SizeType;
-		typedef std::make_signed<I>				IndexType;
-		typedef Iterator<DataType>				IteratorType;
-		typedef Iterator<ConstantType>			ConstIteratorType;
-		typedef Iterator<DataType, true>		ReverseIteratorType;
-		typedef Iterator<ConstantType, true>	ConstReverseIteratorType;
+		typedef std::initializer_list<DataType>	ArgumentListType;
+		typedef DataType*						PointerType;
+		typedef const DataType*					ConstPointerType;
+		// Size types
+		typedef I							SizeType;
+		typedef std::make_signed<SizeType>	IndexType;
+		// Iterators
+		typedef Iterator<DataType>						IteratorType;
+		typedef Iterator<ConstantType>					ConstIteratorType;
+		typedef Iterator<DataType, true, SizeType>		ReverseIteratorType;
+		typedef Iterator<ConstantType, true, SizeType>	ConstReverseIteratorType;
 
 		constexpr List() {invoke(1);}
 
@@ -54,16 +59,16 @@ public:
 		}
 
 		constexpr List(IteratorType const& begin, IteratorType const& end) {
-			if (begin > end) {
-				invoke(end - begin);
-				copy(begin, data, end - begin);
-				count = end - begin;
-			} else {
-				invoke(begin - end);
-				for (IteratorType i = end; i != begin; --i)
-					pushBack(i);
-				count = begin - end;
-			}
+			invoke(end - begin);
+			copy(begin, data, end - begin);
+			count = end - begin;
+		}
+
+		constexpr List(ReverseIteratorType const& begin, ReverseIteratorType const& end) {
+			invoke(end - begin);
+			for (IteratorType i = begin; i != end; ++i)
+				pushBack(i);
+			count = end - begin;
 		}
 
 		constexpr List& pushBack(DataType const& value) {
@@ -157,25 +162,58 @@ public:
 		}
 
 		constexpr List reversed() const {
-			return List(end(), begin());
+			return List(rbegin(), rend());
 		}
 
-		[[gnu::unavailable("Unimplemented!")]] constexpr IndexType find(DataType const& value) const {
+		constexpr IndexType find(DataType const& value) const {
+			auto const start = begin();
+			for (auto i = start; i != end(); ++i)
+				if ((*i) == value)
+					return i-start;
+			return -1;
 		}
 
-		[[gnu::unavailable("Unimplemented!")]] constexpr IndexType reverseFind(DataType const& value) const {
+		constexpr IndexType reverseFind(DataType const& value) const {
+			auto const start = rbegin();
+			for (auto i = start; i != rend(); ++i)
+				if ((*i) == value)
+					return i-start;
+			return -1;
 		}
 
-		[[gnu::unavailable("Unimplemented!")]] constexpr IndexType remove(IndexType const& index) const {
+		constexpr List& remove(IndexType const& index) {
+			assertIsInBounds(index);
+			copy(&data[index], &data[index-1], count-index);
 		}
 
-		[[gnu::unavailable("Unimplemented!")]] constexpr IndexType erase(IndexType const& index) const {
+		constexpr List& erase(IndexType const& index) {
+			remove(index);
+			count--;
 		}
 
-		[[gnu::unavailable("Unimplemented!")]] constexpr IndexType removeIf() const {
+		constexpr IndexType removeIf(View::Functor<bool(DataType const&)> const& predicate) const {
+			auto const start = begin();
+			for(auto i = begin(); i != end(); ++i) {
+				if (predicate(*i))
+					remove(i-start);
+			}
 		}
 
-		[[gnu::unavailable("Unimplemented!")]] constexpr IndexType eraseIf() const {
+		constexpr IndexType eraseIf(View::Functor<bool(DataType const&)> const& predicate) const {
+			SizeType removed = 0;
+			auto const start = begin();
+			for(auto i = begin(); i != end(); ++i) {
+				if (predicate(*i)) {
+					remove(i-start);
+					removed++;
+				}
+			}
+			count -= removed;
+		}
+
+		constexpr slice(IndexType start, SizeType count) {
+			assertIsInBounds(start);
+			assertIsInBounds(start + count);
 		}
 
 		constexpr List& appendBack(List const& other) {
@@ -193,25 +231,38 @@ public:
 			return appendBack(List(count, fill));
 		}
 
+		constexpr List& appendBack(IteratorType const& begin, IteratorType const& end) {
+			return appendBack(List(begin, end));
+		}
+
+		constexpr List& appendBack(ReverseIteratorType const& begin, ReverseIteratorType const& end) {
+			return appendBack(List(begin, end));
+		}
+
 		template<SizeType COUNT>
 		constexpr List& appendBack(DataType const(& values)[COUNT]) {
 			return insert(List(values), index);
 		}
 
-		constexpr IteratorType begin()				{return data;			}
-		constexpr IteratorType end()				{return &data[count-1];	}
-		constexpr ConstIteratorType begin() const	{return data;			}
-		constexpr ConstIteratorType end() const		{return &data[count-1];	}
+		constexpr IteratorType		begin()			{return data;			}
+		constexpr IteratorType		end()			{return &data[count-1];	}
+		constexpr ConstIteratorType	begin() const	{return data;			}
+		constexpr ConstIteratorType	end() const		{return &data[count-1];	}
 
-		constexpr ReverseIteratorType rbegin()				{return &data[count-1];	}
-		constexpr ReverseIteratorType rend()				{return data;			}
-		constexpr ConstReverseIteratorType rbegin() const	{return &data[count-1];	}
-		constexpr ConstReverseIteratorType rend() const		{return data;			}
+		constexpr ReverseIteratorType		rbegin()		{return &data[count-1];	}
+		constexpr ReverseIteratorType		rend()			{return data;			}
+		constexpr ConstReverseIteratorType	rbegin() const	{return &data[count-1];	}
+		constexpr ConstReverseIteratorType	rend() const	{return data;			}
 
-		constexpr ReferenceType front()				{return data[0];		}
-		constexpr ReferenceType back()				{return data[count-1];	}
-		constexpr ReferenceType const front() const	{return data[0];		}
-		constexpr ReferenceType const back() const	{return data[count-1];	}
+		constexpr PointerType		cbegin()		{return data;			}
+		constexpr PointerType		cend()			{return &data[count-1];	}
+		constexpr ConstPointerType	cbegin() const	{return data;			}
+		constexpr ConstPointerType	cend() const	{return &data[count-1];	}
+
+		constexpr ReferenceType			front()			{return data[0];		}
+		constexpr ReferenceType 		back()			{return data[count-1];	}
+		constexpr ReferenceType const	front() const	{return data[0];		}
+		constexpr ReferenceType const	back() const	{return data[count-1];	}
 
 		constexpr ReferenceType at(IndexType const& index) {
 			assertIsInBounds(index);
@@ -227,12 +278,13 @@ public:
 			return data[index];
 		}
 
-		constexpr ReferenceType operator[](IndexType const& index)				{return at(index);}
-		constexpr ReferenceType const operator[](IndexType const& index) const	{return at(index);}
+		constexpr ReferenceType			operator[](IndexType const& index)			{return at(index);}
+		constexpr ReferenceType const	operator[](IndexType const& index) const	{return at(index);}
 
 		constexpr SizeType size() const		{return count;		}
 		constexpr SizeType capacity() const	{return maximum;	}
 
+		// TODO: rename this
 		constexpr bool isTighterThanBarkOnATree() const {return count == maximum;}
 private:
 		constexpr void copy(DataType* const& src, DataType* const& dst, SizeType const& count) {
@@ -303,5 +355,26 @@ private:
 	SizeType	count		= 0;
 	DataType*	data		= nullptr;
 };
+
+template<typename T, Type::Integer I = size_t>
+class LinkedList {
+public:
+		// Types
+		typedef T								DataType;
+		typedef DataType const					ConstantType;
+		typedef DataType&						ReferenceType;
+		typedef DataType const&					ConstReferenceType;
+		typedef std::initializer_list<DataType>	ArgumentListType;
+		typedef DataType*						PointerType;
+		typedef const DataType*					ConstPointerType;
+		// Size types
+		typedef I							SizeType;
+		typedef std::make_signed<SizeType>	IndexType;
+		// Iterators
+		typedef Iterator<DataType>						IteratorType;
+		typedef Iterator<ConstantType>					ConstIteratorType;
+		typedef Iterator<DataType, true, SizeType>		ReverseIteratorType;
+		typedef Iterator<ConstantType, true, SizeType>	ConstReverseIteratorType;
+}
 
 #endif // TYPE_LIST_H
