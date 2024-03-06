@@ -25,17 +25,18 @@ public:
 	constexpr ReferenceType operator*()	{return *iterand;	}
 	constexpr PointerType operator->()	{return iterand;	}
 
-	constexpr ConstReferenceType operator*() const	{return *iterand;	}
-	constexpr ConstPointerType operator->() const	{return iterand;	}
+	constexpr ReferenceType operator*() const	{return *iterand;	}
+	constexpr PointerType operator->() const	{return iterand;	}
 
 	Iterator& operator++()		{step(); return *this;							}
 	Iterator operator++(int)	{Iterator copy = *this; ++(*this); return copy;	}
 
-	constexpr operator ReferenceType()				{return *this;	}
-	constexpr operator ConstReferenceType() const	{return *this;	}
+	constexpr operator PointerType() const			{return iterand;	}
+	constexpr operator ReferenceType()				{return *iterand;	}
+	constexpr operator ConstReferenceType() const	{return *iterand;	}
 
 	constexpr bool operator==(Iterator const& other) const						{return iterand == other.iterand;	}
-	constexpr std::partial_ordering operator<=>(Iterator const& other) const	{return compare(other);				}
+	constexpr std::partial_ordering operator<=>(Iterator const& other) const	{return compare(other.iterand);		}
 
 private:
 	constexpr void step() {
