@@ -251,7 +251,7 @@ def as_hex_string_rgb(color):
 
 def process_image_file(embed_texture, image, path, temp_path, relative_path = "", enabled=True, alpha_clip=0.2):
     if not embed_texture:
-        result = save_texture_to_image(image, path)
+        result = save_image_to_file(image, path)
         print(f"Texture: {result}")
         if result == "OK":
             file = {

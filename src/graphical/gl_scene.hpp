@@ -229,7 +229,7 @@ private:
 		JSONData const& def,
 		String const& sourcepath
 	) {
-		if (def["version"].is_number()) {
+		if (def.contains("number") && def["version"].is_number()) {
 			// Do stuff for versions
 			switch (def["version"].get<size_t>()) {
 				default:
@@ -238,7 +238,7 @@ private:
 		} else extendFromDefinitionV0(def, sourcepath);
 	}
 
-	void extendFromDefinitionV0(JSONData const& def, String const& sourcepath) {
+	void extendFromDefinitionV0(JSONData def, String const& sourcepath) {
 		try {
 			Camera::Camera3D		cam;
 			Material::WorldMaterial	mat;
@@ -317,7 +317,7 @@ private:
 						);
 						r->bake();
 					}
-				} else {
+				} else if (def["data"].is_object()) {
 					for(auto& [name, obj]: def["data"].items()) {
 						auto r = createObject().second;
 						r->extendFromDefinition(

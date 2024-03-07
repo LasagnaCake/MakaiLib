@@ -250,20 +250,20 @@ public:
 		return insert(List(values), index);
 	}
 
-	constexpr IteratorType		begin()			{return data;			}
-	constexpr IteratorType		end()			{return &data[count-1];	}
-	constexpr ConstIteratorType	begin() const	{return data;			}
-	constexpr ConstIteratorType	end() const		{return &data[count-1];	}
+	constexpr IteratorType		begin()			{return data;		}
+	constexpr IteratorType		end()			{return data+count;	}
+	constexpr ConstIteratorType	begin() const	{return data;		}
+	constexpr ConstIteratorType	end() const		{return data+count;	}
 
-	constexpr ReverseIteratorType		rbegin()		{return &data[count-1];	}
-	constexpr ReverseIteratorType		rend()			{return data;			}
-	constexpr ConstReverseIteratorType	rbegin() const	{return &data[count-1];	}
-	constexpr ConstReverseIteratorType	rend() const	{return data;			}
+	constexpr ReverseIteratorType		rbegin()		{return data+count;	}
+	constexpr ReverseIteratorType		rend()			{return data;		}
+	constexpr ConstReverseIteratorType	rbegin() const	{return data+count;	}
+	constexpr ConstReverseIteratorType	rend() const	{return data;		}
 
-	constexpr PointerType		cbegin()		{return data;			}
-	constexpr PointerType		cend()			{return &data[count-1];	}
-	constexpr ConstPointerType	cbegin() const	{return data;			}
-	constexpr ConstPointerType	cend() const	{return &data[count-1];	}
+	constexpr PointerType		cbegin()		{return data;		}
+	constexpr PointerType		cend()			{return data+count;	}
+	constexpr ConstPointerType	cbegin() const	{return data;		}
+	constexpr ConstPointerType	cend() const	{return data+count;	}
 
 	constexpr ReferenceType			front()			{return data[0];		}
 	constexpr ReferenceType 		back()			{return data[count-1];	}

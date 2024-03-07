@@ -395,7 +395,7 @@ private:
 		Texture2D* const& emission	= nullptr,
 		Texture2D* const& warp		= nullptr
 	) {
-		if (def["version"].is_number()) {
+		if (def.contains("number") && def["version"].is_number()) {
 			// Do stuff for versions
 			switch (def["version"].get<size_t>()) {
 				default:
