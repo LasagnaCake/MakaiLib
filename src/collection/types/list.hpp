@@ -22,8 +22,8 @@ public:
 	typedef I							SizeType;
 	typedef std::make_signed<SizeType>	IndexType;
 	// Iterators
-	typedef Iterator<DataType>						IteratorType;
-	typedef Iterator<ConstantType>					ConstIteratorType;
+	typedef Iterator<DataType, false, SizeType>		IteratorType;
+	typedef Iterator<ConstantType, false, SizeType>	ConstIteratorType;
 	typedef Iterator<DataType, true, SizeType>		ReverseIteratorType;
 	typedef Iterator<ConstantType, true, SizeType>	ConstReverseIteratorType;
 	// Constant values
@@ -88,9 +88,9 @@ public:
 		return value;
 	}
 
-	constexpr List& insert(DataType const& value, IndexType const& index) {
+	constexpr List& insert(DataType const& value, IndexType index) {
 		assertIsInBounds(index);
-		if (index < 0) return insert(value, count - index);
+		while (index < 0) index += count;
 		SizeType span = count - index;
 		DataType* buf = new DataType[span];
 		copy(&data[index], buf, span);
@@ -102,9 +102,9 @@ public:
 		return *this;
 	}
 
-	constexpr List& insert(List const& other, IndexType const& index) {
+	constexpr List& insert(List const& other, IndexType index) {
 		assertIsInBounds(index);
-		if (index < 0) return insert(value, count - index);
+		while (index < 0) index += count;
 		SizeType span = count - index;
 		DataType* buf = new DataType[span];
 		copy(&data[index], buf, span);
@@ -195,15 +195,16 @@ public:
 		count--;
 	}
 
-	constexpr IndexType removeIf(View::Functor<bool(DataType const&)> const& predicate) const {
+	constexpr List& removeIf(View::Functor<bool(DataType const&)> const& predicate) const {
 		auto const start = begin();
 		for(auto i = begin(); i != end(); ++i) {
 			if (predicate(*i))
 				remove(i-start);
 		}
+		return *this;
 	}
 
-	constexpr IndexType eraseIf(View::Functor<bool(DataType const&)> const& predicate) const {
+	constexpr List& eraseIf(View::Functor<bool(DataType const&)> const& predicate) const {
 		SizeType removed = 0;
 		auto const start = begin();
 		for(auto i = begin(); i != end(); ++i) {
@@ -213,6 +214,7 @@ public:
 			}
 		}
 		count -= removed;
+		return *this;
 	}
 
 	constexpr slice(IndexType start, SizeType count) {
@@ -268,17 +270,15 @@ public:
 	constexpr ReferenceType const	front() const	{return data[0];		}
 	constexpr ReferenceType const	back() const	{return data[count-1];	}
 
-	constexpr ReferenceType at(IndexType const& index) {
+	constexpr ReferenceType at(IndexType index) {
 		assertIsInBounds(index);
-		if (index < 0)
-			return at(count - index);
+		while (index < 0) index += count;
 		return data[index];
 	}
 
-	constexpr ReferenceType const at(IndexType const& index) const {
+	constexpr ReferenceType const at(IndexType index) const {
 		assertIsInBounds(index);
-		if (index < 0)
-			return at(count - index);
+		while (index < 0) index += count;
 		return data[index];
 	}
 
@@ -375,13 +375,49 @@ public:
 	// Size types
 	typedef I							SizeType;
 	typedef std::make_signed<SizeType>	IndexType;
-	// Iterators
-	typedef Iterator<DataType>						IteratorType;
-	typedef Iterator<ConstantType>					ConstIteratorType;
-	typedef Iterator<DataType, true, SizeType>		ReverseIteratorType;
-	typedef Iterator<ConstantType, true, SizeType>	ConstReverseIteratorType;
 	// Constant values
 	constexpr SizeType maxSize = std::numeric_limits<SizeType>::max;
+
+	template<bool REVERSE = false>
+	class NodeIterator {
+	public:
+		constexpr NodeIterator() {}
+
+		constexpr NodeIterator(PointerType const& value): node(value)		{}
+		constexpr NodeIterator(PointerType&& value): node(std::move(value))	{}
+
+		constexpr NodeIterator(NodeIterator const& other): node(other.node)			{}
+		constexpr NodeIterator(NodeIterator&& other): node(std::move(other.node))	{}
+
+		constexpr ReferenceType operator*()	{return node->data;		}
+		constexpr PointerType operator->()	{return &node->data;	}
+
+		constexpr ReferenceType operator*() const	{return node->data;		}
+		constexpr PointerType operator->() const	{return &node->data;	}
+
+		NodeIterator& operator++()		{step(); return *this;								}
+		NodeIterator operator++(int)	{NodeIterator copy = *this; ++(*this); return copy;	}
+
+		constexpr operator PointerType() const			{return &node->data;	}
+		constexpr operator ReferenceType()				{return node->data;		}
+		constexpr operator ConstReferenceType() const	{return node->data;		}
+
+		constexpr bool operator==(NodeIterator const& other) const {return node == other.node;	}
+
+	private:
+		constexpr void step() {
+			if constexpr (REVERSE)	node = node->previous;
+			else					node = node->next;
+		}
+
+		Node* node = nullptr;
+	};
+
+	// Iterators
+	typedef NodeIterator<false>	IteratorType;
+	typedef NodeIterator<false>	ConstIteratorType;
+	typedef NodeIterator<true>	ReverseIteratorType;
+	typedef NodeIterator<true>	ConstReverseIteratorType;
 
 	struct Node {
 		DataType	value		= nullptr;
@@ -413,7 +449,7 @@ public:
 		return *this;
 	}
 
-	constexpr DataType& popBack() {
+	constexpr DataType popBack() {
 		if (empty()) emptyContainerError();
 		DataType value = tail->value;
 		Node* newTail = tail->previous;
@@ -424,7 +460,7 @@ public:
 		return value;
 	}
 
-	constexpr DataType& popFront() {
+	constexpr DataType popFront() {
 		if (empty()) emptyContainerError();
 		DataType value = head->value;
 		Node* newHead = head->previous;
@@ -435,8 +471,36 @@ public:
 		return value;
 	}
 
+	constexpr List& insert(DataType const& value, IndexType index) {
+		assertIsInBounds(index);
+		while (index < 0) index += count;
+		Node* current = head;
+		for (SizeType i = 0; i < index; ++i)
+			current = current->next;
+		Node* newCurrent = new Node{data, current->previous, current};
+		newCurrent->next = current;
+		current->previous = newCurrent;
+		return *this;
+	}
+
+	constexpr ValueType at(IndexType index) const {
+		while (index < 0) index += count;
+		assertIsInBounds(index);
+		Node* current = head;
+		for (SizeType i = 0; i < index; ++i)
+			current = current->next;
+		return current->value;
+	}
+
+	constexpr ValueType operator[](IndexType const& index) const {return at(index);}
+
 	constexpr SizeType size() const		{return count;		}
 	constexpr SizeType empty() const	{return count == 0;	}
+
+	constexpr ReferenceType			front()			{return head->data;	}
+	constexpr ReferenceType 		back()			{return tail->data;	}
+	constexpr ReferenceType const	front() const	{return head->data;	}
+	constexpr ReferenceType const	back() const	{return tail->data;	}
 
 private:
 	void assertIsInBounds(IndexType const& index) {
