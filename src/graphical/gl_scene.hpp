@@ -318,8 +318,9 @@ private:
 						r->bake();
 					}
 				} else if (def["data"].is_object()) {
+					DEBUGLN("Here!");
 					for(auto& [name, obj]: def["data"].items()) {
-						auto r = createObject().second;
+						auto r = createObject(name).second;
 						r->extendFromDefinition(
 							obj,
 							sourcepath + FileSystem::getDirectoryFromPath(obj)
@@ -330,7 +331,7 @@ private:
 			}
 		} catch (JSON::exception const& e) {
 			throw Error::FailedAction(
-				"Failed at getting image effect!",
+				"Failed at parsing scene file!",
 				__FILE__,
 				toString(__LINE__),
 				"extendFromDefinition",
