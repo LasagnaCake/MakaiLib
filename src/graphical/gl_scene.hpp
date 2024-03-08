@@ -2,7 +2,8 @@ class Scene3D: public Base::Drawable {
 public:
 	constexpr static size_t version = 0;
 
-	typedef Pair<String, Renderable*> RenderableEntry;
+	typedef Pair<String, Renderable*>		RenderableEntry;
+	typedef SortedDictionary<Renderable*>	RenderableBank;
 
 	Scene3D(size_t layer = 0, bool manual = false): Drawable(layer, manual) {}
 
@@ -177,7 +178,7 @@ public:
 		objects.erase(name);
 	}
 
-	inline Dictionary<Renderable*> getObjects() {
+	inline RenderableBank getObjects() {
 		return objects;
 	}
 
@@ -205,7 +206,7 @@ public:
 	}
 
 private:
-	Dictionary<Renderable*> objects;
+	RenderableBank objects;
 
 	String validateName(String const& name) {
 		if (!isValidName(name))
@@ -319,14 +320,12 @@ private:
 					}
 				} else if (def["data"].is_object()) {
 					for(auto& [name, obj]: def["data"].items()) {
-						DEBUGLN("[[ Here! 0/2 ]]");
+						DEBUGLN("[[ ", name," ]]");
 						auto r = createObject(name).second;
-						DEBUGLN("[[ Here! 1/2 ]]");
 						r->extendFromDefinition(
 							obj,
 							FileSystem::concatenatePath(sourcepath, name)
 						);
-						DEBUGLN("[[ Here! 2/2 ]]");
 						r->bake();
 					}
 				}
