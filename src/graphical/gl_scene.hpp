@@ -313,18 +313,20 @@ private:
 						auto r = createObject().second;
 						r->extendFromDefinition(
 							obj,
-							sourcepath + FileSystem::getDirectoryFromPath(obj)
+							FileSystem::concatenatePath(sourcepath, obj)
 						);
 						r->bake();
 					}
 				} else if (def["data"].is_object()) {
-					DEBUGLN("Here!");
 					for(auto& [name, obj]: def["data"].items()) {
+						DEBUGLN("[[ Here! 0/2 ]]");
 						auto r = createObject(name).second;
+						DEBUGLN("[[ Here! 1/2 ]]");
 						r->extendFromDefinition(
 							obj,
-							sourcepath + FileSystem::getDirectoryFromPath(obj)
+							FileSystem::concatenatePath(sourcepath, name)
 						);
+						DEBUGLN("[[ Here! 2/2 ]]");
 						r->bake();
 					}
 				}

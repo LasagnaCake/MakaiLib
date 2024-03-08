@@ -126,7 +126,7 @@ namespace Camera {
 			Vector3 eye	= position;
 			Vector3 at	= Vector3(0, -1, 0);
 			Vector3 up	= Vector3(0, 0, 1);
-			/*Matrix4x4 const rmat = Matrix4x4::fromEulerYXZ(rotation);
+			Matrix4x4 const rmat = Matrix4x4::fromEulerYXZ(rotation);
 			return Camera3D{
 				eye,
 				rmat * Vector4(at, 1),
@@ -137,17 +137,6 @@ namespace Camera {
 				zFar,
 				ortho,
 				true
-			};*/
-			return Camera3D{
-				eye,
-				VecMath::srpTransform(at, 0, rotation, 1),
-				VecMath::srpTransform(up, 0, rotation, 1),
-				aspect,
-				fov,
-				zNear,
-				zFar,
-				ortho,
-				1.0
 			};
 		}
 

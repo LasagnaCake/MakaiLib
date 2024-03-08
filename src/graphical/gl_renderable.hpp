@@ -411,9 +411,9 @@ private:
 		Texture2D* emission	= nullptr,
 		Texture2D* warp		= nullptr
 	) {
-		if (!texture)	texture = &this->texture;
-		if (!emission)	texture = &this->emission;
-		if (!warp)		texture = &this->warp;
+		if (!texture)	texture		= &this->texture;
+		if (!emission)	emission	= &this->emission;
+		if (!warp)		warp		= &this->warp;
 		// Component data
 		string componentData;
 		// Vertex data
@@ -547,31 +547,42 @@ private:
 		}
 		// Set blend data
 		if (def["blend"].is_object()) {
-			JSONData& bfun	= def["blend"]["function"];
-			JSONData& beq	= def["blend"]["equation"];
-			if (bfun.is_number()) {
-				GLenum bv = getBlendFunction(bfun.get<uint>());
-				blend.func = {bv, bv, bv, bv};
-			} else if (bfun.is_object()) {
-				if (bfun["src"].is_number()) {
-					blend.func.srcColor = blend.func.srcAlpha = getBlendFunction(bfun["src"].get<uint>());
-				} else {
-					setBlendFunctionFromJSON(blend.func.srcColor, bfun["srcColor"]);
-					setBlendFunctionFromJSON(blend.func.srcAlpha, bfun["srcAlpha"]);
+			try {
+				JSONData& bfun	= def["blend"]["function"];
+				JSONData& beq	= def["blend"]["equation"];
+				if (bfun.is_number()) {
+					GLenum bv = getBlendFunction(bfun.get<uint>());
+					blend.func = {bv, bv, bv, bv};
+				} else if (bfun.is_object()) {
+					if (bfun["src"].is_number()) {
+						blend.func.srcColor = blend.func.srcAlpha = getBlendFunction(bfun["src"].get<uint>());
+					} else {
+						setBlendFunctionFromJSON(blend.func.srcColor, bfun["srcColor"]);
+						setBlendFunctionFromJSON(blend.func.srcAlpha, bfun["srcAlpha"]);
+					}
+					if (bfun["dst"].is_number()) {
+						blend.func.dstColor = blend.func.dstAlpha = getBlendFunction(bfun["dst"].get<uint>());
+					} else {
+						setBlendFunctionFromJSON(blend.func.dstColor, bfun["dstColor"]);
+						setBlendFunctionFromJSON(blend.func.dstAlpha, bfun["dstAlpha"]);
+					}
 				}
-				if (bfun["dst"].is_number()) {
-					blend.func.dstColor = blend.func.dstAlpha = getBlendFunction(bfun["dst"].get<uint>());
-				} else {
-					setBlendFunctionFromJSON(blend.func.dstColor, bfun["dstColor"]);
-					setBlendFunctionFromJSON(blend.func.dstAlpha, bfun["dstAlpha"]);
+				if (beq.is_number()) {
+					GLenum bv = getBlendFunction(beq.get<uint>());
+					blend.eq = {bv, bv};
+				} else if (beq.is_object()) {
+					setBlendEquationFromJSON(blend.eq.color, beq["color"]);
+					setBlendEquationFromJSON(blend.eq.alpha, beq["alpha"]);
 				}
-			}
-			if (beq.is_number()) {
-				GLenum bv = getBlendFunction(beq.get<uint>());
-				blend.eq = {bv, bv};
-			} else if (beq.is_object()) {
-				setBlendEquationFromJSON(blend.eq.color, beq["color"]);
-				setBlendEquationFromJSON(blend.eq.alpha, beq["alpha"]);
+			} catch (JSON::exception const& e) {
+				throw Error::FailedAction(
+					"Failed at getting blending values!",
+					__FILE__,
+					toString(__LINE__),
+					"extendFromDefinition",
+					e.what(),
+					"Please check to see if values are correct!"
+				);
 			}
 		}
 		if (def["active"].is_boolean())

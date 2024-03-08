@@ -534,8 +534,8 @@ ImageEffect loadImageEffect(
 		if (img["data"].is_object() && img["data"]["path"].is_string() && !img["data"]["path"].get<string>().empty()) {
 			texture->create(FileSystem::concatenatePath(sourcepath, img["path"].get<string>()));
 			texture->setTextureFilterMode(
-				img["minFilter"].get<unsigned int>(),
-				img["magFilter"].get<unsigned int>()
+				img.value<uint>("minFilter", GL_NEAREST_MIPMAP_NEAREST),
+				img.value<uint>("magFilter", GL_NEAREST)
 			);
 		} else if (img["data"].is_string() && !img["data"].get<string>().empty()) {
 			vector<ubyte> data = decodeData(img["data"].get<string>(), img["encoding"]);
@@ -554,8 +554,8 @@ ImageEffect loadImageEffect(
 					h,
 					GL_UNSIGNED_BYTE,
 					GL_RGBA,
-					img["magFilter"].get<unsigned int>(),
-					img["minFilter"].get<unsigned int>(),
+					img.value<uint>("minFilter", GL_NEAREST_MIPMAP_NEAREST),
+					img.value<uint>("magFilter", GL_NEAREST),
 					imgdat
 				);
 				stbi_image_free(imgdat);
