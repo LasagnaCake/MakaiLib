@@ -393,7 +393,6 @@ private:
 		auto lastmat = Scene::world;
 		Scene::camera	= camera;
 		Scene::world	= Matrix4x4(global);
-		DEBUGLN(world.ambient.strength);
 		Material::setMaterial(MAIN_SHADER, world);
 		for(auto& [_, obj]: objects)
 			obj->render();
