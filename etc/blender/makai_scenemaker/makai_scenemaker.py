@@ -270,8 +270,10 @@ def process_image_file(embed_texture, image, path, temp_path, relative_path = ""
                 return None
             file = {
                 "enabled": enabled,
-                "image": imgstr,
-                "encoding": "base64"
+                "image": {
+                    "data": imgstr,
+                    "encoding": "base64"
+                }
             }
             if alpha_clip is not None:
                 file["alphaClip"] = alpha_clip
@@ -348,7 +350,7 @@ def create_render_definition(context, obj, file_name, folder_path, tx_folder, me
     rot = rot.to_euler('YXZ')
     strfile["trans"] = {
         "position": [-pos.x, pos.z, pos.y],
-        "rotation": [-rot.x, rot.z, rot.y],
+        "rotation": [rot.x, rot.z, rot.y],
         "scale": [scale.x, scale.z, scale.y]
     }
     # Set preliminary material data
@@ -775,7 +777,7 @@ class EXPORT_OT_ExportSceneOperator(bt.Operator):
             "camera": {
                 "type": "GIMBAL",
                 "position": [-cpos.x, cpos.z, cpos.y],
-                "rotation": [-crot.x, crot.z, crot.y],
+                "rotation": [crot.x, crot.z, crot.y],
                 "fov": camera.angle,
                 "zNear": camera.clip_start,
                 "zFar": camera.clip_end,
