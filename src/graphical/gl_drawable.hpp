@@ -13,9 +13,9 @@ public:
 	}
 
 	/// Called before rendering to screen.
-	virtual void onDrawBegin() {}
+	virtual void onDrawBegin()	{}
 	/// Called after rendering to screen.
-	virtual void onDrawEnd() {};
+	virtual void onDrawEnd()	{};
 
 	Drawable* setManual() {
 		if(!manualMode)

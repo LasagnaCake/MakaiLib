@@ -246,6 +246,7 @@ public:
 			magFilter,
 			data
 		);
+		setTextureWrapMode();
 	}
 
 	void create(

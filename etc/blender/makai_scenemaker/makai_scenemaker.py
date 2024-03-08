@@ -323,7 +323,7 @@ def create_render_definition(context, obj, file_name, folder_path, tx_folder, me
     mesh = None
     #NOTE: is it working?
     if apply_modifiers:
-        mesh = obj.evaluated_get(dg).to_mesh(preserve_all_data_layers=True, depsgraph=dg)
+        mesh = obj.evaluated_get(dg).to_mesh()
     else:
         mesh = obj.to_mesh()
     verts = mesh.vertices
@@ -350,7 +350,7 @@ def create_render_definition(context, obj, file_name, folder_path, tx_folder, me
     rot = rot.to_euler('YXZ')
     strfile["trans"] = {
         "position": [-pos.x, pos.z, pos.y],
-        "rotation": [rot.x, rot.z, rot.y],
+        "rotation": [rot.x, -rot.z, rot.y],
         "scale": [scale.x, scale.z, scale.y]
     }
     # Set preliminary material data
@@ -519,7 +519,7 @@ class ObjectMaterialProperties(BaseProperties):
     warp_1_image: ImageProperty("Warp Image")
     warp_2_position: Vector2Property("Warp Position")
     warp_3_rotation: FloatProperty("Warp Rotation")
-    warp_4_scale: Vector2Property("Warp Scale", (0, 0))
+    warp_4_scale: Vector2Property("Warp Scale", (1, 1))
     warp_5_channelX: ChannelProperty("Warp Channel for X", 0)
     warp_6_channelY: ChannelProperty("Warp Channel for Y", 1)
     
@@ -777,7 +777,7 @@ class EXPORT_OT_ExportSceneOperator(bt.Operator):
             "camera": {
                 "type": "GIMBAL",
                 "position": [-cpos.x, cpos.z, cpos.y],
-                "rotation": [crot.x, crot.z, crot.y],
+                "rotation": [crot.x, -crot.z, crot.y],
                 "fov": camera.angle,
                 "zNear": camera.clip_start,
                 "zFar": camera.clip_end,

@@ -96,9 +96,11 @@ vec3 getShadingColor(vec3 position, vec3 normal) {
 void main() {
 	// Warping
 	vec2 warp = vertUV;
+	warp *= warpScale;
 	warp.x = warp.x * cos(warpRotate) - warp.y * sin(warpRotate);
 	warp.y = warp.x * sin(warpRotate) + warp.y * cos(warpRotate);
-	warpUV = (warp * warpScale) + warpOffset;
+	warpUV = warp + warpOffset;
+	// Vertex & Normal
 	vec4 vertex	= transformed(vertPos);
 	vec3 normal	= normalize(mat3(normalsMatrix) * vertNormal);
 	// Point Size
