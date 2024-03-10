@@ -19,7 +19,7 @@
 #define	TASK			T_CATCHR T_PARAMS
 #define	T_TASK(TYPE)	T_CATCHR T_TPARAM(TYPE)
 
-#define WAIT_TASK(TIME)	[](auto){return (TIME);}
+#define WAIT_TASK(TIME)	[=](auto){return (TIME);}
 
 /// Zero-cycle delay task conclusion macro.
 #define	NEXT_TASK	return 0
