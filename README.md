@@ -50,12 +50,12 @@ In a single line: pacman -S mingw-w64-x86_64-toolchain zip p7zip make rsync
 
 ## How To use
 
-1) Create a C++ source file within the ```build/``` directory (create directory if nonexistent);
-2) Add ```#include <makai.hpp>``` in your source file;
-3) Program your game <mark>(TODO: Tutorial and Documentation)</mark>;
-4) Open root directory on command line (MSYS MinGW64 or Cygwin, if you're using it);
-5) Compile with ```make (TARGET) [src=PATH_TO_YOUR_FILE.cpp [name=YOUR_PROGRAM_NAME]]``` (See [notes](#Note) for more detail);
-6) Done! Your compiled program should be within the ```res/``` directory.
+1. Create a C++ source file within the ```build/``` directory (create directory if nonexistent);
+2. Add ```#include <makai.hpp>``` in your source file;
+3. Program your game <mark>(TODO: Tutorial and Documentation)</mark>;
+4. Open root directory on command line (MSYS MinGW64 or Cygwin, if you're using it);
+5. Compile with ```make (TARGET) [src=PATH_TO_YOUR_FILE.cpp [name=YOUR_PROGRAM_NAME]]``` (See [notes](#Note) for more detail);
+6. Done! Your compiled program should be within the ```res/``` directory.
 
 ### Note
 
@@ -136,7 +136,7 @@ Currently VERY scarce. Some of the code is commented.
 - [ ] Replace raw pointers with smart pointers (see [referential.hpp](src/collection/referential.hpp))
 - [x] Remove or replace `$` macros
 - [ ] Reorganize and remove haphazardness/mess
-- [ ] "C++20 coroutine"-ify [tasking system](src/collection/tasking.hpp)
+- [ ]"Async"-ify [tasking system](src/collection/tasking.hpp) (see [asynchronous.hpp](src/collection/asynchronous.hpp))
 
 #### Under consideration
 
