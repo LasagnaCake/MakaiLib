@@ -214,6 +214,18 @@ ifdef archive-pass
 ARCPASS := "$(archive-pass)"
 endif
 
+ifdef extra-files
+CPEXF := @cp
+else
+CPEXF := @:
+endif
+
+ifdef extra-progs
+CPEXP := @cp
+else
+CPEXP := @:
+endif
+
 ARCPACK := @../../tools/archive/arcpack.exe
 
 ifeq ($(no-archive), 1)
@@ -342,13 +354,13 @@ pack-debug:
 	@mkdir -p packed/$(name)_debug
 	
 	@echo "[1/3] Copying contents..."
-	@rsync -av --progress $(DEBUG_DATA) packed/$(name)_debug/data $(PACK_EXCLUSIONS)
-	@cp -r -v res/shaders/ packed/$(name)_debug
-	@cp -r -v res/subsys/ packed/$(name)_debug
-	@cp -r -v res/*.dll packed/$(name)_debug
-	@cp -r -v res/$(name)_debug.exe packed/$(name)_debug
-	@cp -r -v $(extra-progs) packed/$(name)_debug
-	@cp -r -v $(extra-files)/* packed/$(name)_debug
+	@rsync -av --progress "$(DEBUG_DATA)" "packed/$(name)_debug/data" $(PACK_EXCLUSIONS)
+	@cp -r -v "res/shaders" "packed/$(name)_debug"
+	@cp -r -v "res/subsys" "packed/$(name)_debug"
+	@cp -r -v res/*.dll "packed/$(name)_debug"
+	@cp -r -v "res/$(name)_debug.exe" "packed/$(name)_debug"
+	$(CPEXP) -r -v "$(extra-progs)" "packed/$(name)_debug"
+	$(CPEXF) -r -v $(extra-files)/* "packed/$(name)_debug"
 	
 	@echo "[2/3] Zipping files..."
 	
@@ -379,13 +391,13 @@ pack-demo:
 	@mkdir -p packed/$(name)_demo
 	
 	@echo "[1/3] Copying contents..."
-	@rsync -av --progress $(DEMO_DATA) packed/$(name)_demo/data $(PACK_EXCLUSIONS)
-	@cp -r -v res/shaders/ packed/$(name)_demo
-	@cp -r -v res/subsys/ packed/$(name)_demo
-	@cp -r -v res/*.dll packed/$(name)_demo
-	@cp -r -v res/$(name)_demo.exe packed/$(name)_demo
-	@cp -r -v $(extra-progs) packed/$(name)_demo
-	@cp -r -v $(extra-files)/* packed/$(name)_demo
+	@rsync -av --progress "$(DEMO_DATA)" "packed/$(name)_demo/data" $(PACK_EXCLUSIONS)
+	@cp -r -v "res/shaders/" "packed/$(name)_demo"
+	@cp -r -v "res/subsys/" "packed/$(name)_demo"
+	@cp -r -v res/*.dll "packed/$(name)_demo"
+	@cp -r -v "res/$(name)_demo.exe" "packed/$(name)_demo"
+	$(CPEXP) -r -v "$(extra-progs)" "packed/$(name)_demo"
+	$(CPEXF) -r -v $(extra-files)/* "packed/$(name)_demo"
 	
 	@echo "[2/3] Zipping files..."
 	
@@ -421,13 +433,13 @@ pack-release:
 	@mkdir -p packed/$(name)
 	
 	@echo "[1/3] Copying contents..."
-	@rsync -av --progress $(RELEASE_DATA) packed/$(name)/data $(PACK_EXCLUSIONS)
-	@cp -r -v res/shaders/ packed/$(name)
-	@cp -r -v res/subsys/ packed/$(name)
-	@cp -r -v res/*.dll packed/$(name)
-	@cp -r -v res/$(name).exe packed/$(name)
-	@cp -r -v $(extra-progs) packed/$(name)
-	@cp -r -v $(extra-files)/* packed/$(name)
+	@rsync -av --progress "$(RELEASE_DATA)" "packed/$(name)/data" $(PACK_EXCLUSIONS)
+	@cp -r -v "res/shaders" "packed/$(name)"
+	@cp -r -v "res/subsys" "packed/$(name)"
+	@cp -r -v res/*.dll "packed/$(name)"
+	@cp -r -v "res/$(name).exe" "packed/$(name)"
+	$(CPEXP) -r -v "$(extra-progs)" "packed/$(name)"
+	$(CPEXF) -r -v $(extra-files)/* "packed/$(name)"
 	
 	@echo "[2/3] Zipping files..."
 	
