@@ -136,7 +136,7 @@ Currently VERY scarce. Some of the code is commented.
 - [ ] Replace raw pointers with smart pointers (see [referential.hpp](src/collection/referential.hpp))
 - [x] Remove or replace `$` macros
 - [ ] Reorganize and remove haphazardness/mess
-- [ ]"Async"-ify [tasking system](src/collection/tasking.hpp) (see [asynchronous.hpp](src/collection/asynchronous.hpp))
+- [ ] "Async"-ify [tasking system](src/collection/tasking.hpp) (see [asynchronous.hpp](src/collection/asynchronous.hpp))
 
 #### Under consideration
 
