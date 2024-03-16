@@ -82,26 +82,26 @@ namespace View {
 
 		constexpr Nullable() noexcept											{}
 		constexpr Nullable(NullType) noexcept									{}
-		constexpr Nullable(T const& value): isSet(true)							{data = value;}
-		constexpr Nullable(T&& value): isSet(true)								{data = std::move(value);}
-		constexpr Nullable(Nullable<T> const& other): isSet(other.isSet)		{if (other.isSet) data = other.data;}
-		constexpr Nullable(Nullable<T>&& other): isSet(std::move(other.isSet))	{if (other.isSet) data = std::move(other.data);}
+		constexpr Nullable(DataType const& value): isSet(true)					{data = value;}
+		constexpr Nullable(DataType&& value): isSet(true)						{data = std::move(value);}
+		constexpr Nullable(Nullable const& other): isSet(other.isSet)			{if (other.isSet) data = other.data;}
+		constexpr Nullable(Nullable && other): isSet(std::move(other.isSet))	{if (other.isSet) data = std::move(other.data);}
 
 		constexpr ~Nullable() {}
 
-		constexpr T value(T const& fallback = T()) const {return (isSet) ? data : fallback;}
+		constexpr DataType value(DataType const& fallback = DataType()) const {return (isSet) ? data : fallback;}
 
-		constexpr Nullable& then(Operation<T> const& op) {if (isSet) data = op(data); return *this;}
+		constexpr Nullable& then(Operation<DataType> const& op) {if (isSet) data = op(data); return *this;}
 
-		constexpr bool exists()		const {return isSet;}
-		constexpr operator bool()	const {return exists();}
-		constexpr bool operator()()	const {return exists();}
+		constexpr bool exists()		const {return isSet;	}
+		constexpr operator bool()	const {return exists();	}
+		constexpr bool operator()()	const {return exists();	}
 
-		constexpr Nullable& operator()(Operation<T> const& op) {return then();}
+		constexpr Nullable& operator()(Operation<DataType> const& op) {return then();}
 
-		constexpr Nullable& operator=(T const& value)	{data = value; isSet = true; return *this;}
-		constexpr Nullable& operator=(T&& value)		{data = std::move(value); isSet = true; return *this;}
-		constexpr Nullable& operator=(NullType)			{isSet = false; return *this;}
+		constexpr Nullable& operator=(DataType const& value)	{data = value; isSet = true; return *this;				}
+		constexpr Nullable& operator=(DataType&& value)			{data = std::move(value); isSet = true; return *this;	}
+		constexpr Nullable& operator=(NullType)					{isSet = false; return *this;							}
 
 		constexpr bool operator==(Nullable const& other) const	{if (isSet) return other == data; return false;}
 		constexpr bool operator==(T const& value) const			{if (isSet) return data == value; return false;}
@@ -120,8 +120,8 @@ namespace View {
 			return *this;
 		}
 
-		constexpr T operator *() const {
-			if (isSet) return value;
+		constexpr DataType operator *() const {
+			if (isSet) return data;
 			throw Error::NonexistentValue(
 				"Value is not set!",
 				__FILE__,
@@ -130,18 +130,18 @@ namespace View {
 			);
 		}
 
-		constexpr operator T() const requires Type::Different<T, bool> {
-			if (isSet) return value;
+		/*constexpr operator DataType() const requires Type::Different<DataType, bool> {
+			if (isSet) return data;
 			throw Error::NonexistentValue(
 				"Value is not set!",
 				__FILE__,
 				toString(__LINE__),
 				"operator T()"
 			);
-		}
+		}*/
 
 	private:
-		T data;
+		DataType data;
 		bool isSet = false;
 	};
 

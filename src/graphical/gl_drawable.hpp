@@ -98,7 +98,8 @@ public:
 
 	T					material;
 	Transform3D			trans;
-	Shader::Shader		shader = MAIN_SHADER;
+	Shader::Shader		shader		= MAIN_SHADER;
+	Nullable<float>		pointSize	= nullptr;
 
 protected:
 	void display(RawVertex* vertices, size_t count, GLuint mode = GL_TRIANGLES) {
@@ -107,6 +108,9 @@ protected:
 			material.instances.push_back(Vector3(0, 0, 0));
 		// Set blend
 		setBlend();
+		// Set point size, if applicable
+		if (pointSize)	glPointSize(*pointSize);
+		else			glEnable(GL_PROGRAM_POINT_SIZE);
 		// Set VBO as active
 		glBindBuffer(GL_ARRAY_BUFFER, vbo);
 		// Copy IVB to VBO
@@ -145,6 +149,8 @@ protected:
 		Drawer::disableVertexAttributes();
 		// Unbind vertex array
 		glBindVertexArray(0);
+		// Disable program point size
+		glDisable(GL_PROGRAM_POINT_SIZE);
 	}
 
 	void setShaderData() {

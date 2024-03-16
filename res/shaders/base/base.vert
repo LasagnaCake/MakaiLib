@@ -115,4 +115,5 @@ void main() {
 	fragUV = vertUV + uvShift;
 	fragCoord3D	= vertex.xyz;
 	fragNormal	= normal;
+	gl_PointSize = vertex.z;
 }
