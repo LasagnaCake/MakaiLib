@@ -104,8 +104,7 @@ void main() {
 	vec4 vertex	= transformed(vertPos);
 	vec3 normal	= normalize(mat3(normalsMatrix) * vertNormal);
 	// Point Size
-	//gl_PointSize = min(0.00001, 1 - vertex.z);
-	//gl_PointSize = 5.0;
+	gl_PointSize = vertex.z;
 	// Coordinates
 	gl_Position	= vertex;
 	// TODO: Proper shading
@@ -115,5 +114,4 @@ void main() {
 	fragUV = vertUV + uvShift;
 	fragCoord3D	= vertex.xyz;
 	fragNormal	= normal;
-	gl_PointSize = vertex.z;
 }
