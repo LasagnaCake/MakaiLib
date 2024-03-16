@@ -100,6 +100,7 @@ public:
 	Transform3D			trans;
 	Shader::Shader		shader		= MAIN_SHADER;
 	Nullable<float>		pointSize	= nullptr;
+	float				lineWidth	= 1.0;
 
 protected:
 	void display(RawVertex* vertices, size_t count, GLuint mode = GL_TRIANGLES) {
@@ -111,6 +112,8 @@ protected:
 		// Set point size, if applicable
 		if (pointSize)	glPointSize(*pointSize);
 		else			glEnable(GL_PROGRAM_POINT_SIZE);
+		// Set line width
+		glLineWidth(lineWidth);
 		// Set VBO as active
 		glBindBuffer(GL_ARRAY_BUFFER, vbo);
 		// Copy IVB to VBO
