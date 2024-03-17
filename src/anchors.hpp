@@ -38,6 +38,7 @@
 //#include <coroutine>
 #include <filesystem>
 #include <execution>
+#include <ranges>
 
 #include "redefines.hpp"
 
