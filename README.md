@@ -105,6 +105,8 @@ Currently VERY scarce. Some of the code is commented.
 - - - - Would also play nicely with the sublayers
 - - - - Would also be the fastest, but more complicated on the end-user
 - - - - This one would also play nicely without messing the current rendering pipeline too much
+- [ ] Implement a framebuffer push-pop stack system, perhaps?
+- - On second thought, this might be a stupid idea. Or not
 - [x] Replace `.ini`-based savefile system with a different format
 - - Using JSON
 - [x] GUI system
