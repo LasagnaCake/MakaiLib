@@ -218,7 +218,7 @@ public:
 		return *this;
 	}
 
-	constexpr slice(IndexType start, SizeType count) {
+	constexpr slice(IndexType const& start, SizeType const& count) const {
 		IndexType const stop = start + count;
 		assertIsInBounds(start);
 		return List(begin() + start, begin() + (stop < this->count ? stop : this->count-1));
@@ -291,7 +291,7 @@ public:
 	constexpr SizeType capacity() const	{return maximum;	}
 	constexpr SizeType empty() const	{return count == 0;	}
 
-	constexpr bool operator==(List const& other)
+	constexpr bool operator==(List const& other) const
 	requires Type::Comparable::Equals<DataType, DataType> {
 		bool result = true;
 		IndexType i = 0;
@@ -304,7 +304,7 @@ public:
 		return result;
 	}
 
-	constexpr OrderType operator<=>(List const& other)
+	constexpr OrderType operator<=>(List const& other) const
 	requires Type::Comparable::Threeway<DataType, DataType> {
 		OrderType result = OrderType::EQUAL;
 		IndexType i = 0;
@@ -317,7 +317,7 @@ public:
 		return result;
 	}
 
-	constexpr List operator+(List const& other) {
+	constexpr List operator+(List const& other) const {
 		List result(*this);
 		return result.appendBack(other);
 	}
@@ -326,14 +326,14 @@ public:
 		return appendBack(other);
 	}
 
-	constexpr List operator*(SizeType const& times) {
+	constexpr List operator*(SizeType const& times) const {
 		List result(count * times);
 		for SSRANGE(i, 0, times)
-			result.appendBack(*this);
+			result += (*this);
 		return result;
 	}
 
-	constexpr List& operator+=(SizeType const& times) {
+	constexpr List& operator*=(SizeType const& times) {
 		*this = (*this) * times;
 	}
 
