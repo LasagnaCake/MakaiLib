@@ -1,6 +1,7 @@
 #ifndef TYPE_STRING_H
 #define TYPE_STRING_H
 
+#include <iostream>
 #include "list.hpp"
 
 template <class T>
@@ -9,6 +10,9 @@ concept CharacterType = Type::Equal<T, char> || Type::Equal<wchar_t>;
 template <CharacterType T>
 class BaseString: public List<T> {
 	typedef List<T> BaseType;
+
+	typedef std::ostream	OutputStreamType;
+	typedef std::istream	InputStreamType;
 
 	constexpr BaseString(const DataType* const& v) {
 		size_t len = 0;
@@ -23,7 +27,10 @@ class BaseString: public List<T> {
 		copy(v, data, len);
 	}
 
-	constexpr operator<<(ostream& out)
+	OutputStreamType& constexpr operator<<(OutputStreamType& o) {
+		o << data;
+		return out;
+	}
 };
 
 #endif // TYPE_STRING_H
