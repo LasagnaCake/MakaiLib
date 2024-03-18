@@ -29,20 +29,13 @@ public:
 		copy(v, data, len);
 	}
 
-	constexpr OutputStreamType& operator<<(OutputStreamType& o) {
-		o << data;
-		return out;
-	}
+	constexpr OutputStreamType const& operator<<(OutputStreamType& o) const	{o << data; return out;}
+	constexpr OutputStreamType& operator<<(OutputStreamType& o)				{o << data; return out;}
 
-	constexpr BaseString& operator<<(BaseString& other) const {
-		other.appendBack(*this);
-		return *this;
-	}
+	constexpr BaseString const& operator<<(BaseString& other) const	{other.appendBack(*this); return *this;}
+	constexpr BaseString& operator<<(BaseString& other)				{other.appendBack(*this); return *this;}
 
-	constexpr BaseString& operator>>(BaseString& other) {
-		appendBack(other);
-		return other;
-	}
+	constexpr BaseString& operator>>(BaseString const& other)	{appendBack(other); return other;}
 
 	constexpr BaseString operator+(BaseString const& other) const {
 		BaseString result(*this);
