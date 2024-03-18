@@ -96,7 +96,7 @@ Currently VERY scarce. Some of the code is commented.
 
 - [x] `data/` folder packing system
 - [ ] Optimize GPU usage
-- - [ ] Instead of rendering every layer from the layerbuffer to the framebuffer, maybe implement sublayers?
+- -  Instead of rendering every layer from the layerbuffer to the framebuffer, maybe implement sublayers?
 - - - A: Group every X layers to be rendered by clearing the depth bit in-between layers
 - - - - Would play nicely with the sublayers in gamedata
 - - - - Would still be somewhat resource-intensive, but not as much
@@ -115,7 +115,7 @@ Currently VERY scarce. Some of the code is commented.
 - - For more info, see the [specifications](docs/specifications) folder
 - - [ ] Material configuration definitions
 - - - [x] ObjectMaterial
-- - - [ ] WorldMaterial
+- - - [x] WorldMaterial
 - - - [ ] BufferMaterial
 - - [x] Renderable object definition
 - - - [x] Mesh Parser
