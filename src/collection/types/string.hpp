@@ -39,9 +39,9 @@ public:
 		return *this;
 	}
 
-	constexpr BaseString& operator>>(BaseString& other) {
+	constexpr BaseString& operator>>(BaseString& other) const {
 		other.appendBack(*this);
-		return *this;
+		return other;
 	}
 
 	constexpr BaseString operator+(BaseString const& other) const {
