@@ -34,13 +34,13 @@ public:
 		return out;
 	}
 
-	constexpr BaseString& operator<<(BaseString const& other) {
-		appendBack(other);
+	constexpr BaseString& operator<<(BaseString& other) const {
+		other.appendBack(*this);
 		return *this;
 	}
 
-	constexpr BaseString& operator>>(BaseString& other) const {
-		other.appendBack(*this);
+	constexpr BaseString& operator>>(BaseString& other) {
+		appendBack(other);
 		return other;
 	}
 
