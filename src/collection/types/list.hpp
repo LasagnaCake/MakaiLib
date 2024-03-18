@@ -2,11 +2,11 @@
 #define TYPE_LIST_H
 
 #include <initializer_list>
-#include <type_traits>
 #include <numeric_limits>
 
 #include "iterator.hpp"
 #include "../types.hpp"
+#include "../conceptual.hpp"
 
 template<class T, Type::Integer I = size_t>
 class List {
@@ -94,11 +94,9 @@ public:
 		assertIsInBounds(index);
 		while (index < 0) index += count;
 		SizeType span = count - index;
-		DataType* buf = new DataType[span];
-		copy(&data[index], buf, span);
-		data[index] = value;
 		if (count >= maximum) increase();
-		copy(buf, &data[index+1], span);
+		copy(&data[index], &data[index+1], span);
+		data[index] = value;
 		++count;
 		delete buf;
 		return *this;
@@ -107,13 +105,11 @@ public:
 	constexpr List& insert(List const& other, IndexType index) {
 		assertIsInBounds(index);
 		while (index < 0) index += count;
-		SizeType span = count - index;
-		DataType* buf = new DataType[span];
-		copy(&data[index], buf, span);
+		SizeType span = count - index;;
 		while ((count + other.count) < maximum)
 			increase();
+		copy(&data[index], &data[index+other.count], span);
 		copy(other.data, &data[index], other.count);
-		copy(buf, &data[index+other.count], span);
 		++count;
 		delete buf;
 		return *this;

@@ -1,8 +1,9 @@
 #ifndef TYPE_ITERATOR_H
 #define TYPE_ITERATOR_H
 
-#include <type_traits>
 #include "order.hpp"
+#include "../types.hpp"
+#include "../conceptual.hpp"
 
 template<class T, bool REVERSE = false, Type::Integer I = size_t>
 class Iterator {
