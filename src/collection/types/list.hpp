@@ -8,7 +8,7 @@
 #include "iterator.hpp"
 #include "../types.hpp"
 
-template<typename T, Type::Integer I = size_t>
+template<class T, Type::Integer I = size_t>
 class List {
 public:
 	// Types
@@ -419,7 +419,7 @@ private:
 	DataType*	data		= nullptr;
 };
 
-template<typename T, Type::Integer I = size_t>
+template<class T, Type::Integer I = size_t>
 class LinkedList {
 public:
 	// Types

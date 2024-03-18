@@ -4,7 +4,7 @@
 #include <type_traits>
 #include "order.hpp"
 
-template<typename T, bool REVERSE = false, Type::Integer I = size_t>
+template<class T, bool REVERSE = false, Type::Integer I = size_t>
 class Iterator {
 public:
 	typedef T		DataType;
@@ -73,9 +73,9 @@ private:
 	PointerType iterand = nullptr;
 };
 
-template<typename T>
+template<class T>
 using ForwardIterator = Iterator<T, false>;
-template<typename T>
+template<class T>
 using ReverseIterator = Iterator<T, true>;
 
 #endif // TYPE_ITERATOR_H
