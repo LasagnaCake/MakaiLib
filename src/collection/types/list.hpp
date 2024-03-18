@@ -6,6 +6,7 @@
 #include <numeric_limits>
 
 #include "iterator.hpp"
+#include "../types.hpp"
 
 template<typename T, Type::Integer I = size_t>
 class List {
@@ -589,5 +590,7 @@ private:
 	Node* head = nullptr;
 	Node* tail = nullptr;
 };
+
+typedef List<uint8> BinaryData;
 
 #endif // TYPE_LIST_H
