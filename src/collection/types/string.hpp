@@ -5,10 +5,10 @@
 #include <ostream>
 #include "list.hpp"
 
-template <class T>
+template<class T>
 concept CharacterType = Type::Equal<T, char> || Type::Equal<wchar>;
 
-template <CharacterType T>
+template<CharacterType T>
 class BaseString: public List<T> {
 public:
 	typedef List<T> BaseType;
@@ -23,7 +23,7 @@ public:
 		copy(v, data, len);
 	}
 
-	template <SizeType S>
+	template<SizeType S>
 	constexpr BaseString(const DataType (const& v)[S]) {
 		reserve(S);
 		copy(v, data, len);
