@@ -33,7 +33,12 @@ class BaseString: public List<T> {
 		return out;
 	}
 
-	constexpr BaseString operator+(BaseString const& other) {
+	constexpr BaseString& operator<<(BaseString const& o) {
+		appendBack(o);
+		return *this;
+	}
+
+	constexpr BaseString operator+(BaseString const& other) const {
 		BaseString result(*this);
 		return result.appendBack(other);
 	}
@@ -42,18 +47,18 @@ class BaseString: public List<T> {
 		return appendBack(other);
 	}
 
-	constexpr BaseString operator*(SizeType const& times) {
+	constexpr BaseString operator*(SizeType const& times) const {
 		BaseString result(count * times);
 		for SSRANGE(i, 0, times)
-			result.appendBack(*this);
+			result += (*this);
 		return result;
 	}
 
-	constexpr BaseString& operator+=(SizeType const& times) {
+	constexpr BaseString& operator*=(SizeType const& times) {
 		*this = (*this) * times;
 	}
 
-	BaseString substring(IndexType const& start, SizeType const& length) {
+	BaseString substring(IndexType const& start, SizeType const& length) const {
 		IndexType const stop = start + length;
 		assertIsInBounds(start);
 		return String(begin() + start, begin() + (stop < count ? stop : count-1));
