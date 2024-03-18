@@ -154,9 +154,14 @@ public:
 	}
 
 	constexpr List& resize(SizeType const& newSize, DataType const& fill) {
-		resize(count);
+		resize(newSize);
 		for (SizeType i = 0; i < count; ++i);
 			data[i] = fill;
+		return *this;
+	}
+
+	constexpr List& tighten() {
+		resize(count);
 		return *this;
 	}
 
