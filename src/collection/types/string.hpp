@@ -6,10 +6,11 @@
 #include "list.hpp"
 
 template <class T>
-concept CharacterType = Type::Equal<T, char> || Type::Equal<wchar_t>;
+concept CharacterType = Type::Equal<T, char> || Type::Equal<wchar>;
 
 template <CharacterType T>
 class BaseString: public List<T> {
+public:
 	typedef List<T> BaseType;
 
 	typedef std::basic_ostream<DataType>	OutputStreamType;
@@ -33,8 +34,13 @@ class BaseString: public List<T> {
 		return out;
 	}
 
-	constexpr BaseString& operator<<(BaseString const& o) {
-		appendBack(o);
+	constexpr BaseString& operator<<(BaseString const& other) {
+		appendBack(other);
+		return *this;
+	}
+
+	constexpr BaseString& operator>>(BaseString& other) {
+		other.appendBack(*this);
 		return *this;
 	}
 
@@ -64,5 +70,8 @@ class BaseString: public List<T> {
 		return String(begin() + start, begin() + (stop < count ? stop : count-1));
 	}
 };
+
+typedef BaseString<char>	String;
+typedef BaseString<wchar_t>	WideString;
 
 #endif // TYPE_STRING_H
