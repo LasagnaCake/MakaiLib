@@ -104,6 +104,7 @@ Currently VERY scarce. Some of the code is commented.
 - - - - Would be called in the `onLayerDrawEnd` step
 - - - - Would also play nicely with the sublayers
 - - - - Would also be the fastest, but more complicated on the end-user
+- - - - This one would also play nicely without messing the current rendering pipeline too much
 - [x] Replace `.ini`-based savefile system with a different format
 - - Using JSON
 - [x] GUI system
