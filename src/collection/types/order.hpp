@@ -11,10 +11,10 @@ enum class StandardOrder {
 };
 
 struct ValueOrder: public std::partial_ordering {
-	constexpr static LESS		= std::partial_ordering::less;
-	constexpr static EQUAL		= std::partial_ordering::equivalent;
-	constexpr static GREATER	= std::partial_ordering::greater;
-	constexpr static UNORDERED	= std::partial_ordering::unordered;
+	constexpr static auto LESS		= std::partial_ordering::less;
+	constexpr static auto EQUAL		= std::partial_ordering::equivalent;
+	constexpr static auto GREATER	= std::partial_ordering::greater;
+	constexpr static auto UNORDERED	= std::partial_ordering::unordered;
 };
 
 
