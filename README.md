@@ -96,6 +96,13 @@ Currently VERY scarce. Some of the code is commented.
 
 - [x] `data/` folder packing system
 - [ ] Optimize GPU usage
+- - [ ] Instead of rendering every layer from the layerbuffer to the framebuffer, maybe implement sublayers?
+- - - A: Group every X layers to be rendered by clearing the depth bit in-between layers
+- - - - Would play nicely with the sublayers in gamedata
+- - - - Would still be somewhat resource-intensive, but not as much
+- - - B: Create special functions to tell the system to render the layerbuffer to the framebuffer in a specific layer
+- - - - Would also play nicely with the sublayers
+- - - - Would also be the fastest, but more complicated on the end-user
 - [x] Replace `.ini`-based savefile system with a different format
 - - Using JSON
 - [x] GUI system
