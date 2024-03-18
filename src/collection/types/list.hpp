@@ -219,8 +219,9 @@ public:
 	}
 
 	constexpr slice(IndexType start, SizeType count) {
+		IndexType const stop = start + count;
 		assertIsInBounds(start);
-		assertIsInBounds(start + count);
+		return List(begin() + start, begin() + (stop < this->count ? stop : this->count-1));
 	}
 
 	constexpr List& appendBack(List const& other) {
@@ -290,6 +291,19 @@ public:
 	constexpr SizeType capacity() const	{return maximum;	}
 	constexpr SizeType empty() const	{return count == 0;	}
 
+	constexpr bool operator==(List const& other)
+	requires Type::Comparable::Equals<DataType, DataType> {
+		bool result = true;
+		IndexType i = 0;
+		while (result) {
+			if (i == count || i == other.count)
+				return count == other.count;
+			result = data[i] == other.data[i];
+			++i;
+		}
+		return result;
+	}
+
 	constexpr OrderType operator<=>(List const& other)
 	requires Type::Comparable::Threeway<DataType, DataType> {
 		OrderType result = OrderType::EQUAL;
@@ -301,6 +315,26 @@ public:
 			++i;
 		}
 		return result;
+	}
+
+	constexpr List operator+(List const& other) {
+		List result(*this);
+		return result.appendBack(other);
+	}
+
+	constexpr List& operator+=(List const& other) {
+		return appendBack(other);
+	}
+
+	constexpr List operator*(SizeType const& times) {
+		List result(count * times);
+		for SSRANGE(i, 0, times)
+			result.appendBack(*this);
+		return result;
+	}
+
+	constexpr List& operator+=(SizeType const& times) {
+		*this = (*this) * times;
 	}
 
 	// TODO: rename this
