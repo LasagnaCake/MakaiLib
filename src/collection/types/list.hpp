@@ -490,9 +490,13 @@ public:
 	constexpr LinkedList& pushBack(DataType const& value) {
 		assertNotAtItsLimit();
 		Node* newTail = new Node{value};
-		tail->next = newTail;
-		newTail->previous = tail;
+		if (tail) {
+			tail->next = newTail;
+			newTail->previous = tail;
+		}
 		tail = newTail;
+		if (!head)
+			head = newTail;
 		count++;
 		return *this;
 	}
@@ -500,9 +504,13 @@ public:
 	constexpr LinkedList& pushFront(DataType const& value) {
 		assertNotAtItsLimit();
 		Node* newHead = new Node{value};
-		head->previous = newHead;
-		newHead->next = head;
+		if (head) {
+			head->previous = newHead;
+			newHead->next = head;
+		}
 		head = newHead;
+		if (!tail)
+			tail = newHead;
 		count++;
 		return *this;
 	}
@@ -511,7 +519,10 @@ public:
 		if (empty()) emptyContainerError();
 		DataType value = tail->value;
 		Node* newTail = tail->previous;
-		tail->previous->next = nullptr;
+		if (tail->previous)
+			tail->previous->next = nullptr;
+		if (head == tail)
+			head = newTail;
 		delete tail;
 		tail = newTail;
 		count--;
@@ -521,8 +532,11 @@ public:
 	constexpr DataType popFront() {
 		if (empty()) emptyContainerError();
 		DataType value = head->value;
-		Node* newHead = head->previous;
-		head->previous->next = nullptr;
+		Node* newHead = head->next;
+		if (head->next)
+			head->next->previous = nullptr;
+		if (tail == head)
+			tail = newHead;
 		delete head;
 		head = newHead;
 		count--;
@@ -554,6 +568,16 @@ public:
 
 	constexpr SizeType size() const		{return count;		}
 	constexpr SizeType empty() const	{return count == 0;	}
+
+	constexpr IteratorType		begin()			{return head;		}
+	constexpr IteratorType		end()			{return nullptr;	}
+	constexpr ConstIteratorType	begin() const	{return head;		}
+	constexpr ConstIteratorType	end() const		{return nullptr;	}
+
+	constexpr ReverseIteratorType		rbegin()		{return head;		}
+	constexpr ReverseIteratorType		rend()			{return nullptr;	}
+	constexpr ConstReverseIteratorType	rbegin() const	{return head;		}
+	constexpr ConstReverseIteratorType	rend() const	{return nullptr;	}
 
 	constexpr ReferenceType			front()			{return head->data;	}
 	constexpr ReferenceType 		back()			{return tail->data;	}
