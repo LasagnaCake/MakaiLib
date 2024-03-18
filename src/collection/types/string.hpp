@@ -1,7 +1,8 @@
 #ifndef TYPE_STRING_H
 #define TYPE_STRING_H
 
-#include <iostream>
+#include <istream>
+#include <ostream>
 #include "list.hpp"
 
 template <class T>
@@ -11,8 +12,8 @@ template <CharacterType T>
 class BaseString: public List<T> {
 	typedef List<T> BaseType;
 
-	typedef std::ostream	OutputStreamType;
-	typedef std::istream	InputStreamType;
+	typedef std::basic_ostream<DataType>	OutputStreamType;
+	typedef std::basic_istream<DataType>	InputStreamType;
 
 	constexpr BaseString(const DataType* const& v) {
 		size_t len = 0;
@@ -27,9 +28,35 @@ class BaseString: public List<T> {
 		copy(v, data, len);
 	}
 
-	OutputStreamType& constexpr operator<<(OutputStreamType& o) {
+	constexpr OutputStreamType& operator<<(OutputStreamType& o) {
 		o << data;
 		return out;
+	}
+
+	constexpr BaseString operator+(BaseString const& other) {
+		BaseString result(*this);
+		return result.appendBack(other);
+	}
+
+	constexpr BaseString& operator+=(BaseString const& other) {
+		return appendBack(other);
+	}
+
+	constexpr BaseString operator*(SizeType const& times) {
+		BaseString result(count * times);
+		for SSRANGE(i, 0, times)
+			result.appendBack(*this);
+		return result;
+	}
+
+	constexpr BaseString& operator+=(SizeType const& times) {
+		*this = (*this) * times;
+	}
+
+	BaseString substring(IndexType const& start, SizeType const& length) {
+		IndexType const stop = start + length;
+		assertIsInBounds(start);
+		return String(begin() + start, begin() + (stop < count ? stop : count-1));
 	}
 };
 
