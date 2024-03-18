@@ -18,6 +18,7 @@ public:
 	typedef std::initializer_list<DataType>	ArgumentListType;
 	typedef DataType*						PointerType;
 	typedef const DataType*					ConstPointerType;
+	typedef ValueOrder						OrderType;
 	// Size types
 	typedef I							SizeType;
 	typedef std::make_signed<SizeType>	IndexType;
@@ -289,9 +290,26 @@ public:
 	constexpr SizeType capacity() const	{return maximum;	}
 	constexpr SizeType empty() const	{return count == 0;	}
 
+	constexpr OrderType operator<=>(List const& other)
+	requires Type::Comparable::Threeway<DataType, DataType> {
+		OrderType result = OrderType::EQUAL;
+		IndexType i = 0;
+		while (result == OrderType::EQUAL) {
+			if (i == count || i == other.count)
+				return count <=> other.count;
+			result = data[i] <=> other.data[i];
+			++i;
+		}
+		return result;
+	}
+
 	// TODO: rename this
 	constexpr bool isTighterThanBarkOnATree() const {return count == maximum;}
+
 private:
+	template <typename T>
+	friend class BaseString;
+
 	constexpr void copy(DataType* const& src, DataType* const& dst, SizeType const& count) {
 		memcpy(dst, src, count * sizeof(DataType));
 	};

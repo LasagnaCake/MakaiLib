@@ -1,8 +1,8 @@
 #ifndef TYPE_ITERATOR_H
 #define TYPE_ITERATOR_H
 
-#include <compare>
 #include <type_traits>
+#include "order.hpp"
 
 template<typename T, bool REVERSE = false, Type::Integer I = size_t>
 class Iterator {
@@ -17,6 +17,8 @@ public:
 
 	typedef I							SizeType;
 	typedef std::make_signed<SizeType>	IndexType;
+
+	typedef ValueOrder	OrderType;
 
 	constexpr Iterator() {}
 
@@ -39,8 +41,8 @@ public:
 	constexpr operator ReferenceType()				{return *iterand;	}
 	constexpr operator ConstReferenceType() const	{return *iterand;	}
 
-	constexpr bool operator==(Iterator const& other) const						{return iterand == other.iterand;	}
-	constexpr std::partial_ordering operator<=>(Iterator const& other) const	{return compare(other.iterand);		}
+	constexpr bool operator==(Iterator const& other) const			{return iterand == other.iterand;	}
+	constexpr OrderType operator<=>(Iterator const& other) const	{return compare(other.iterand);		}
 
 	constexpr SizeType operator-(Iterator const& other)	const	{return difference<REVERSE>(other.iterand);	}
 	constexpr Iterator operator-(IndexType const& value) const	{return difference<REVERSE>(value);			}
@@ -52,7 +54,7 @@ private:
 		else					++iterand;
 	}
 
-	constexpr void compare(PointerType const& other) const {
+	constexpr OrderType compare(PointerType const& other) const {
 		if constexpr (REVERSE)	return other <=> iterand;
 		else					return iterand <=> other;
 	}
