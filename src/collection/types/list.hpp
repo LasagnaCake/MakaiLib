@@ -124,7 +124,7 @@ public:
 	}
 
 	template<SizeType COUNT>
-	constexpr List& insert(DataType const(& values)[COUNT], IndexType const& index) {
+	constexpr List& insert(DataType(const& values)[COUNT], IndexType const& index) {
 		return insert(List(values), index);
 	}
 
@@ -436,6 +436,12 @@ public:
 	// Constant values
 	constexpr SizeType maxSize = std::numeric_limits<SizeType>::max;
 
+	struct Node {
+		DataType	value		= nullptr;
+		Node*		previous	= nullptr;
+		Node*		next		= nullptr;
+	};
+
 	template<bool REVERSE = false>
 	class NodeIterator {
 	public:
@@ -477,11 +483,49 @@ public:
 	typedef NodeIterator<true>	ReverseIteratorType;
 	typedef NodeIterator<true>	ConstReverseIteratorType;
 
-	struct Node {
-		DataType	value		= nullptr;
-		Node*		previous	= nullptr;
-		Node*		next		= nullptr;
-	};
+	constexpr LinkedList() {}
+
+	constexpr LinkedList(LinkedList const& other) {
+		for (DataType const& v: other)
+			pushBack(v);
+	}
+
+	constexpr LinkedList(ArgumentListType const& other) {
+		for (DataType const& v: other)
+			pushBack(v);
+	}
+
+	constexpr LinkedList(LinkedList&& other) {
+		for (DataType const& v: other)
+			pushBack(v);
+	}
+
+	constexpr LinkedList(SizeType const& size, DataType const& fill) {
+		for (SizeType i = 0; i < size; ++i)
+			pushBack(fill);
+	}
+
+	constexpr LinkedList(ArgumentListType const& values) {
+		invoke(values.size());
+		for (DataType& v: values)
+			pushBack(v);
+	}
+
+	template<SizeType COUNT>
+	constexpr LinkedList(DataType(const& values)[COUNT]) {
+		for (SizeType i = 0; i < COUNT; ++i)
+			pushBack(values[i]);
+	}
+
+	constexpr LinkedList(IteratorType const& begin, IteratorType const& end) {
+		for (IteratorType i = begin; i != end; ++i)
+			pushBack(i);
+	}
+
+	constexpr LinkedList(ReverseIteratorType const& begin, ReverseIteratorType const& end) {
+		for (IteratorType i = begin; i != end; ++i)
+			pushBack(i);
+	}
 
 	constexpr ~LinkedList() {
 		while (!empty()) popBack();
