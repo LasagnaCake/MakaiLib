@@ -7,6 +7,7 @@
 #include "iterator.hpp"
 #include "../types.hpp"
 #include "../conceptual.hpp"
+#include "algorithm.hpp"
 
 template<class T, Type::Integer I = size_t>
 class List {
@@ -98,20 +99,17 @@ public:
 		copy(&data[index], &data[index+1], span);
 		data[index] = value;
 		++count;
-		delete buf;
 		return *this;
 	}
 
 	constexpr List& insert(List const& other, IndexType index) {
 		assertIsInBounds(index);
 		while (index < 0) index += count;
-		SizeType span = count - index;;
 		while ((count + other.count) < maximum)
 			increase();
-		copy(&data[index], &data[index+other.count], span);
+		copy(&data[index], &data[index+other.count], other.count);
 		copy(other.data, &data[index], other.count);
-		++count;
-		delete buf;
+		count += other.count;
 		return *this;
 	}
 
@@ -170,6 +168,14 @@ public:
 
 	constexpr List reversed() const {
 		return List(rbegin(), rend());
+	}
+
+	constexpr List& sort() {
+		::sort(begin(), end());
+	}
+
+	constexpr List sorted() {
+		return List(*this).sort();
 	}
 
 	constexpr IndexType find(DataType const& value) const {
