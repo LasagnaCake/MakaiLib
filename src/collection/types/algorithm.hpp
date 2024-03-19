@@ -12,9 +12,9 @@ concept SortableIteratorType = requires {
 
 template<class T>
 constexpr void swap(T& a T& b) {
-	T buf = a;
-	a = b;
-	b = buf;
+	T buf(std::move(a));
+	a = std::move(b);
+	b = std::move(buf);
 }
 
 template<SortableIteratorType T>
