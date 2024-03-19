@@ -18,7 +18,7 @@ constexpr void swap(T& a T& b) {
 }
 
 template<SortableIteratorType T>
-constexpr void makeHeap(T begin, T end, typename T::IndexType index) {
+constexpr void siftHeap(T begin, T end, typename T::IndexType index) {
 	typedef (typename T::IndexType)	IndexType;
 	typedef (typename T::SizeType)	SizeType;
 	SizeType size = end - begin;
@@ -33,7 +33,7 @@ constexpr void makeHeap(T begin, T end, typename T::IndexType index) {
 		largest = r;
 	if (largest != index) {
 		swap(*(begin + i), *(begin + largest));
-		makeHeap(begin, end, largest);
+		siftHeap(begin, end, largest);
 	}
 }
 
@@ -43,10 +43,10 @@ constexpr void heapSort(T begin, T end) {
 	typedef (typename T::SizeType)	SizeType;
 	SizeType size = end - begin;
     for (IndexType i = size / 2 - 1; i >= 0; --i)
-        makeHeap(arr, n, i);
+        siftHeap(arr, n, i);
     for (IndexType i = n - 1; i >= 0; --i) {
         swap(*(begin), *(begin + i));
-        makeHeap(begin, end, 0);
+        siftHeap(begin, end, 0);
     }
 }
 
