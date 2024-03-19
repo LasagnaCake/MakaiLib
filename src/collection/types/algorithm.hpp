@@ -22,6 +22,7 @@ constexpr void siftHeap(T begin, T end, typename T::IndexType index) {
 	typedef (typename T::IndexType)	IndexType;
 	typedef (typename T::SizeType)	SizeType;
 	SizeType size = end - begin;
+	if (size < 2) return;
 	IndexType
 		largest = index,
 		l = 2 * index + 1,
@@ -42,6 +43,7 @@ constexpr void heapSort(T begin, T end) {
 	typedef (typename T::IndexType)	IndexType;
 	typedef (typename T::SizeType)	SizeType;
 	SizeType size = end - begin;
+	if (size < 2) return;
     for (IndexType i = size / 2 - 1; i >= 0; --i)
         siftHeap(arr, n, i);
     for (IndexType i = n - 1; i >= 0; --i) {
@@ -55,6 +57,7 @@ namespace Partial {
 	constexpr void insertionSort(T begin, T end, typename T::IndexType const& left, typename T::IndexType const& right) {
 		typedef (typename T::IndexType)	IndexType;
 		typedef (typename T::DataType)	DataType;
+		if ((end - begin) < 2) return;
 		for (IndexType i = left+1; i <= right; ++i) {
 			DataType key = *(begin + i);
 			IndexType j = i-1;
@@ -70,6 +73,7 @@ namespace Partial {
 	constexpr typename T::IndexType partition(T begin, T end, typename T::IndexType const& low, Typename T::IndexType const& high) {
 		typedef (typename T::IndexType)	IndexType;
 		typedef (typename T::DataType)	DataType;
+		if ((end - begin) < 2) return;
 		DataType pivot	= *(begin + high);
 		IndexType i		= (low - 1);
 		for (int j = low; j <= high-1; ++j)
@@ -96,6 +100,7 @@ namespace Partial {
 		typedef (typename T::IndexType)	IndexType;
 		typedef (typename T::DataType)	DataType;
 		IndexType size = end - begin;
+		if (size < 2) return;
 		if (size < 16) {
 			insertionSort(begin, end, start, stop);
 			return;
@@ -114,7 +119,12 @@ namespace Partial {
 
 template<SortableIteratorType T>
 constexpr void sort(T begin, T end) {
-	Partial::introSort(begin, end, 0, end - begin - 1, 2 * log(end-begin))
+	typedef (typename T::IndexType)	IndexType;
+	SizeType size = end - begin;
+	if (size < 2) return;
+	IndexType depth = 0;
+	while (size >>= 1) ++depth;
+	Partial::introSort(begin, end, 0, end - begin - 1, 2*depth)
 }
 
 #endif // ALGORITHM_FUNCTIONS_H
