@@ -72,12 +72,11 @@ namespace Partial {
 		typedef (typename T::DataType)	DataType;
 		DataType pivot	= *(begin + high);
 		IndexType i		= (low - 1);
-		for (int j = low; j <= high-1; ++j) {
+		for (int j = low; j <= high-1; ++j)
 			if (*(begin + j) <= pivot) {
 				++i;
 				swap(*(begin + i), *(begin + j));
 			}
-		}
 		swap(*(begin + i + 1), *(begin + high));
 		return (i + 1);
 	}
