@@ -8,10 +8,10 @@
 template<class T>
 concept CharacterType = Type::Equal<T, char> || Type::Equal<wchar>;
 
-template<CharacterType T>
-class BaseString: public List<T> {
+template<CharacterType T, Type::Integer I = size_t>
+class BaseString: public List<T, I> {
 public:
-	typedef List<T> BaseType;
+	typedef List<T, I> BaseType;
 
 	typedef std::basic_ostream<DataType>	OutputStreamType;
 	typedef std::basic_istream<DataType>	InputStreamType;
