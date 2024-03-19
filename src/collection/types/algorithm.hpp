@@ -17,8 +17,9 @@ constexpr void swap(T& a T& b) {
 	b = std::move(buf);
 }
 
+// Based on https://www.geeksforgeeks.org/cpp-program-for-heap-sort/
 template<SortableIteratorType T>
-constexpr void siftHeap(T begin, T end, typename T::IndexType index) {
+constexpr void siftHeap(T begin, T end, typename T::IndexType const& index) {
 	typedef (typename T::IndexType)	IndexType;
 	typedef (typename T::SizeType)	SizeType;
 	SizeType size = end - begin;
@@ -38,6 +39,7 @@ constexpr void siftHeap(T begin, T end, typename T::IndexType index) {
 	}
 }
 
+// Based on https://www.geeksforgeeks.org/cpp-program-for-heap-sort/
 template<SortableIteratorType T>
 constexpr void heapSort(T begin, T end) {
 	typedef (typename T::IndexType)	IndexType;
@@ -53,6 +55,7 @@ constexpr void heapSort(T begin, T end) {
 }
 
 namespace Partial {
+	// Based on https://www.geeksforgeeks.org/introsort-cs-sorting-weapon/
 	template<SortableIteratorType T>
 	constexpr void insertionSort(T begin, T end, typename T::IndexType const& left, typename T::IndexType const& right) {
 		typedef (typename T::IndexType)	IndexType;
@@ -69,6 +72,7 @@ namespace Partial {
 	   }
 	}
 
+	// Based on https://www.geeksforgeeks.org/introsort-cs-sorting-weapon/
 	template<SortableIteratorType T>
 	constexpr typename T::IndexType partition(T begin, T end, typename T::IndexType const& low, Typename T::IndexType const& high) {
 		typedef (typename T::IndexType)	IndexType;
@@ -85,6 +89,7 @@ namespace Partial {
 		return (i + 1);
 	}
 
+	// Based on https://www.geeksforgeeks.org/introsort-cs-sorting-weapon/
 	template<SortableIteratorType T>
 	T median3(T a, T b, T c) {
 		if (*a < *b && *b < *c)		return (b);
@@ -95,8 +100,15 @@ namespace Partial {
 		if (*c <= *b && *b <= *a)	return (b);
 	}
 
+	// Based on https://www.geeksforgeeks.org/introsort-cs-sorting-weapon/
 	template<SortableIteratorType T>
-	constexpr void introSort(T begin, T end, typename T::IndexType start, typename T::IndexType stop, typename T::SizeType maxDepth) {
+	constexpr void introSort(
+		T begin,
+		T end,
+		typename T::IndexType const& start,
+		typename T::IndexType const& stop,
+		typename T::SizeType const& maxDepth
+	) {
 		typedef (typename T::IndexType)	IndexType;
 		typedef (typename T::DataType)	DataType;
 		IndexType size = end - begin;
@@ -117,13 +129,21 @@ namespace Partial {
 	}
 }
 
+// Based on https://www.geeksforgeeks.org/introsort-cs-sorting-weapon/
 template<SortableIteratorType T>
 constexpr void sort(T begin, T end) {
 	typedef (typename T::IndexType)	IndexType;
-	SizeType size = end - begin;
+	// Get the size of the array
+	SizeType
+		size	= end - begin,
+		logSize	= size
+	;
+	// If array is too small, return
 	if (size < 2) return;
+	// Calculate the base-2 log of the size
 	IndexType depth = 0;
-	while (size >>= 1) ++depth;
+	while (logSize >>= 1) ++depth;
+	// Sort the array
 	Partial::introSort(begin, end, 0, size - 1, 2*depth)
 }
 
