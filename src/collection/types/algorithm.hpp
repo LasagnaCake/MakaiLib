@@ -43,10 +43,10 @@ constexpr void heapSort(T begin, T end) {
 	typedef (typename T::SizeType)	SizeType;
 	SizeType size = end - begin;
     for (IndexType i = size / 2 - 1; i >= 0; --i)
-        heapify(arr, n, i);
+        makeHeap(arr, n, i);
     for (IndexType i = n - 1; i >= 0; --i) {
         swap(*(begin), *(begin + i));
-        heapify(begin, end, 0);
+        makeHeap(begin, end, 0);
     }
 }
 
