@@ -22,16 +22,18 @@ constexpr void makeHeap(T begin, T end, typename T::IndexType index) {
 	typedef (typename T::IndexType)	IndexType;
 	typedef (typename T::SizeType)	SizeType;
 	SizeType size = end - begin;
-	IndexType largest = index;
-	IndexType l = 2 * index + 1;
-	IndexType r = 2 * index + 2;
+	IndexType
+		largest = index,
+		l = 2 * index + 1,
+		r = 2 * index + 2
+	;
 	if (l < size && *(begin + l) > *(begin + largest))
 		largest = l;
 	if (r < size && *(begin + r) > *(begin + largest))
 		largest = r;
 	if (largest != index) {
 		swap(*(begin + i), *(begin + largest));
-		heapify(begin, end, largest);
+		makeHeap(begin, end, largest);
 	}
 }
 
