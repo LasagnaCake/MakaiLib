@@ -124,7 +124,7 @@ constexpr void sort(T begin, T end) {
 	if (size < 2) return;
 	IndexType depth = 0;
 	while (size >>= 1) ++depth;
-	Partial::introSort(begin, end, 0, end - begin - 1, 2*depth)
+	Partial::introSort(begin, end, 0, size - 1, 2*depth)
 }
 
 #endif // ALGORITHM_FUNCTIONS_H
