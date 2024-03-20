@@ -22,7 +22,7 @@ public:
 	typedef const DataType*					ConstPointerType;
 	typedef ValueOrder						OrderType;
 	// Size types
-	typedef I							SizeType;
+	typedef std::make_unsigned<I>		SizeType;
 	typedef std::make_signed<SizeType>	IndexType;
 	// Iterators
 	typedef Iterator<DataType, false, SizeType>		IteratorType;
@@ -433,7 +433,7 @@ public:
 	typedef DataType*						PointerType;
 	typedef const DataType*					ConstPointerType;
 	// Size types
-	typedef I							SizeType;
+	typedef std::make_unsigned<I>		SizeType;
 	typedef std::make_signed<SizeType>	IndexType;
 	// Constant values
 	constexpr SizeType maxSize = std::numeric_limits<SizeType>::max;
