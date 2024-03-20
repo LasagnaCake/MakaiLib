@@ -16,7 +16,7 @@ public:
 	typedef ConstantType*	ConstPointerType;
 	typedef ConstantType&	ConstReferenceType;
 
-	typedef I							SizeType;
+	typedef std::make_unsigned<I>		SizeType;
 	typedef std::make_signed<SizeType>	IndexType;
 
 	typedef ValueOrder	OrderType;
