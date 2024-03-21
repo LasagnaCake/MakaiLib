@@ -95,7 +95,7 @@ Currently VERY scarce. Some of the code is commented.
 ### Current
 
 - [x] `data/` folder packing system
-- [ ] Optimize GPU usage
+- [x] "Optimize" GPU usage
 - - Instead of rendering every layer from the layerbuffer to the framebuffer, maybe implement sublayers?
 - - ( ) A: Group every X layers to be rendered by clearing the depth bit in-between layers
 - - - - Would play nicely with the sublayers in gamedata
