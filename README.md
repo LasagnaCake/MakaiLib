@@ -97,14 +97,15 @@ Currently VERY scarce. Some of the code is commented.
 - [x] `data/` folder packing system
 - [ ] Optimize GPU usage
 - - Instead of rendering every layer from the layerbuffer to the framebuffer, maybe implement sublayers?
-- - - A: Group every X layers to be rendered by clearing the depth bit in-between layers
+- - ( ) A: Group every X layers to be rendered by clearing the depth bit in-between layers
 - - - - Would play nicely with the sublayers in gamedata
 - - - - Would still be somewhat resource-intensive, but not as much
-- - - B: Create special functions to tell the system when to render the layerbuffer to the framebuffer
-- - - - Would be called in the `onLayerDrawEnd` step
+- - (x) B: Create special functions to tell the system when to render the layerbuffer to the framebuffer
+- - - - Would be called in the `onPreLayerDraw` step
 - - - - Would also play nicely with the sublayers
 - - - - Would also be the fastest, but more complicated on the end-user
 - - - - This one would also play nicely without messing the current rendering pipeline too much
+- - It is now up to the developer to figure out when to render their own layers, or to just just leave it like the old system
 - [ ] Implement a framebuffer push-pop stack system, perhaps?
 - - On second thought, this might be a stupid idea. Or not
 - [x] Replace `.ini`-based savefile system with a different format
