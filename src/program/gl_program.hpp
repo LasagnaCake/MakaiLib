@@ -1164,6 +1164,7 @@ namespace Makai {
 			onPostFrameClear();
 			// Enable layer buffer
 			layerbuffer();
+			layerbuffer.clearBuffers();
 			// Draw objects
 			vector<size_t> rLayers = Drawer::layers.getAllGroups();;
 			for (auto layer : rLayers) {
@@ -1204,6 +1205,8 @@ namespace Makai {
 					onLayerDrawEnd(layer);
 				}
 			}
+			// If last layer wasn't rendered, do so
+			if (!pushToFrame) layerbuffer.render(framebuffer);
 			// Call pre frame drawing function
 			onPreFrameDraw();
 			// Render frame buffer
