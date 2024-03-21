@@ -257,13 +257,16 @@ public:
 		}
 	}
 
-	void onPreLayerDraw(size_t layerID) override {
-		GameApp::onPreLayerDraw(layerID);
+	void onPostLayerClear(size_t layerID) override {
 		if (layerID <= auraEndPoint) {
 			getLayerBuffer().material.polarWarp = bossAura;
 			if (screenShake)
 				getLayerBuffer().material.uvShift += Vector2(getWindowScale() * VecMath::angleV2(Math::Random::real<float>(0.0f, TAU)) * screenShake);
 		}
+	}
+
+	void onPreLayerDraw(size_t layerID) override {
+		GameApp::onPreLayerDraw(layerID);
 	}
 
 	void onLayerDrawEnd(size_t layerID) override {

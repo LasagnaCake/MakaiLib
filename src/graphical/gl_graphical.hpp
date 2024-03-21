@@ -469,6 +469,7 @@ namespace RenderData {
 		#include "gl_reference.hpp"
 	}
 
+	#include "gl_dummy.hpp"
 	#include "gl_renderable.hpp"
 
 	namespace Text {

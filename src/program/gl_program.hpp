@@ -1026,7 +1026,7 @@ namespace Makai {
 		/// Gets called when the program begins rendering a layer, after the the layer buffer is cleared.
 		virtual void onPostLayerClear(size_t layerID)	{};
 		/// Gets called when the program ends rendering a layer, before the layer buffer is drawn to the screen.
-		virtual void onPreLayerDraw(size_t layerID)		{};
+		virtual void onPreLayerDraw(size_t layerID)		{pushLayerToFrame();};
 		/// Gets called when the program ends rendering a layer, after the layer buffer is drawn to the screen.
 		virtual void onLayerDrawEnd(size_t layerID)		{};
 		/// Happens after the screen is rendered, before the frame buffer is drawn to the screen.
@@ -1055,6 +1055,12 @@ namespace Makai {
 		Can only be used during onLayerDrawBegin().
 		*/
 		void skipDrawingThisLayer() {skipLayer = true;}
+
+		/**
+		Queues the current data in the layerbuffer to be pushed to the framebuffer.
+		Can only be used during onPreLayerDraw().
+		*/
+		void pushLayerToFrame() {pushToFrame = true;}
 
 		/// The window's clear color.
 		Vector4 color = Color::BLACK;
@@ -1089,7 +1095,10 @@ namespace Makai {
 	private:
 		size_t cycleRate = 0, frameRate = 0;
 
-		bool skipLayer = false;
+		bool
+			skipLayer = false,
+			pushToFrame = false
+		;
 
 		List<Drawer::Texture2D*> screenQueue;
 
@@ -1153,16 +1162,23 @@ namespace Makai {
 			Drawer::setFrontFace(true);
 			// Call post frame clearing function
 			onPostFrameClear();
+			// Enable layer buffer
+			layerbuffer();
 			// Draw objects
-			vector<size_t> rLayers = Drawer::layers.getAllGroups();
+			vector<size_t> rLayers = Drawer::layers.getAllGroups();;
 			for (auto layer : rLayers) {
 				if (layer != Math::Max::SIZET_V && !Drawer::layers[layer].empty()) {
-					// Reset layer skip flag
+					// Clear layer skip flag
 					skipLayer = false;
-					// Clear target depth buffer
-					framebuffer();
-					// Enable layer buffer
-					layerbuffer();
+					// If previous layer was pushed to framebuffer...
+					if (pushToFrame) {
+						// Clear target depth buffer
+						framebuffer();
+						// Enable layer buffer
+						layerbuffer();
+					}
+					// Clear depth buffer
+					//layerbuffer.clearDepthBuffer();
 					// Reset layerbuffer's positions
 					layerbuffer.trans	= VecMath::Transform3D();
 					layerbuffer.uv		= VecMath::Transform3D();
@@ -1171,15 +1187,18 @@ namespace Makai {
 					// Skip layer if applicable
 					if (!skipLayer) {
 						// Clear buffers
-						layerbuffer.clearBuffers();
+						if (pushToFrame)	layerbuffer.clearBuffers();
+						else				layerbuffer.clearDepthBuffer();
 						// Call onLayerDrawBegin function
 						onPostLayerClear(layer);
 						// Render layer
 						Drawer::renderLayer(layer);
+						// Clear layer push flag
+						pushToFrame = false;
 						// Call onPreLayerDraw function
 						onPreLayerDraw(layer);
 						// Render layer buffer
-						layerbuffer.render(framebuffer);
+						if (pushToFrame) layerbuffer.render(framebuffer);
 					}
 					// Call onLayerDrawEnd function
 					onLayerDrawEnd(layer);
