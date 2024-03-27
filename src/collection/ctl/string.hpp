@@ -4,6 +4,7 @@
 #include <istream>
 #include <ostream>
 #include "list.hpp"
+#include <stdlib.h>
 
 template<class T>
 concept CharacterType = Type::Equal<T, char> || Type::Equal<wchar>;
@@ -72,80 +73,15 @@ public:
 	}
 
 	constexpr static floatmax toFloat(String const& str) try {
-		if (str.split('.').size() != 2) invalidNumberError();
-		IndexType split = str.find('.');
-		String num =
-			String(str)
-			.remove(split)
-			.remove(str.find('f')),
-			.remove(str.find('d'))
-		;
-		return toInt(num, 10) * pow(10, -split);
-	} catch (Error::InvalidValue const& e) {
-		invalidNumberError(str);
+		return atod(str.cbegin());
 	}
 
 	constexpr static uintmax toUnsignedInt(String const& str) {
-		uintmax res = 0;
-		SizeType start = 0;
-		NumberBase base = NumberBase::NB_DECIMAL;
-		if (str[0] == '-' || str[0] == '+')
-			invalidNumberError(str);
-		if (str[0] == '0') {
-			switch (str[1]) {
-				default:	return toUnsignedInt(str.substring(1, str.size()), 8);
-				case 'o':	return toUnsignedInt(str.substring(2, str.size()), 8);
-				case 'x':	return toUnsignedInt(str.substring(2, str.size()), 16);
-				case 'b':	return toUnsignedInt(str.substring(2, str.size()), 2);
-				case 'd':	return toUnsignedInt(str.substring(2, str.size()), 10);
-			}
-		}
-		return toUnsignedInt(str.substring(start, str.size()), 10);
-	}
-
-	constexpr static uintmax toUnsignedInt(String const& str, uintmax const& base) {
-		uintmax result = 0;
-		SizeType i = str.size();
-		if (str[0] == '-' || str[0] == '+')
-			invalidNumberError(str);
-		for (DataType c: str) {
-			if (c - '0' > base)
-				invalidNumberError(str);
-			result += uintmax(c - '0') * pow(base, --i);
-		}
-		return result;
+		return atoull(str.cbegin());
 	}
 
 	constexpr static intmax toInt(String const& str) {
-		intmax res = 0;
-		intmax sign = 1;
-		SizeType start = 0;
-		NumberBase base = NumberBase::NB_DECIMAL;
-		if (str[0] == '-' || str[0] == '+') {
-			if (str[0] == '-') sign = -1;
-			++start;
-		}
-		if (str[start] == '0') {
-			switch (str[start+1]) {
-				default:	return sign * toInt(str.substring(start+1, str.size()), 8);
-				case 'o':	return sign * toInt(str.substring(start+2, str.size()), 8);
-				case 'x':	return sign * toInt(str.substring(start+2, str.size()), 16);
-				case 'b':	return sign * toInt(str.substring(start+2, str.size()), 2);
-				case 'd':	return sign * toInt(str.substring(start+2, str.size()), 10);
-			}
-		}
-		return sign * toInt(str.substring(start, str.size()), 10);
-	}
-
-	constexpr static intmax toInt(String const& str, uintmax const& base) {
-		intmax result = 0;
-		SizeType i = str.size();
-		for (DataType c: str) {
-			if (c - '0' > base)
-				invalidNumberError(str);
-			result += intmax(c - '0') * pow(base, --i);
-		}
-		return result;
+		return atoll(str.cbegin());
 	}
 
 private:
