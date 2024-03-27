@@ -51,6 +51,7 @@ public:
 	constexpr SelfType operator+(const DataType* const& str, SelfType const& self) const		{return String(str) + self;}
 	constexpr SelfType operator+(const DataType (const& str)[S], SelfType const& self) const	{return String(str) + self;}
 
+	// TODO: Write '\0' checking
 	constexpr SelfType& operator+=(SelfType const& other)			{return appendBack(other);	}
 	constexpr SelfType& operator+=(const DataType* const& str)		{return appendBack(str);	}
 	constexpr SelfType& operator+=(const DataType (const& str)[S])	{return appendBack(str);	}
