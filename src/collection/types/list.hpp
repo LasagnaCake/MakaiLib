@@ -176,7 +176,7 @@ public:
 		::sort(begin(), end());
 	}
 
-	constexpr SelfType sorted() {
+	constexpr SelfType sorted() const {
 		return SelfType(*this).sort();
 	}
 
@@ -206,7 +206,7 @@ public:
 		count--;
 	}
 
-	constexpr SelfType& removeIf(View::Functor<bool(DataType const&)> const& predicate) const {
+	constexpr SelfType& removeIf(View::Functor<bool(DataType const&)> const& predicate) {
 		auto const start = begin();
 		for(auto i = begin(); i != end(); ++i) {
 			if (predicate(*i))
@@ -215,7 +215,7 @@ public:
 		return *this;
 	}
 
-	constexpr SelfType& eraseIf(View::Functor<bool(DataType const&)> const& predicate) const {
+	constexpr SelfType& eraseIf(View::Functor<bool(DataType const&)> const& predicate) {
 		SizeType removed = 0;
 		auto const start = begin();
 		for(auto i = begin(); i != end(); ++i) {
@@ -333,7 +333,7 @@ public:
 		return result;
 	}
 
-	constexpr SizeType equals(SelfType const& other) {
+	constexpr SizeType equals(SelfType const& other) const
 	requires Type::Comparable::Equals<DataType, DataType> {
 		bool result = true;
 		IndexType i = 0;
@@ -346,7 +346,7 @@ public:
 		return result;
 	}
 
-	constexpr SizeType disparity(SelfType const& other)
+	constexpr SizeType disparity(SelfType const& other) const
 	requires Type::Comparable::NotEquals<DataType, DataType> {
 		SizeType
 			diff	= 0,
@@ -387,7 +387,7 @@ public:
 		*this = (*this) * times;
 	}
 
-	constexpr List<SelfType, IndexType> split(DataType const& sep) {
+	constexpr List<SelfType, IndexType> split(DataType const& sep) const {
 		List<SelfType, IndexType> res;
 		SelfType buf;
 		for (DataType& v : *this) {
@@ -400,7 +400,7 @@ public:
 		}
 	}
 
-	constexpr List<SelfType, IndexType> split(List const& seps) {
+	constexpr List<SelfType, IndexType> split(List const& seps) const {
 		List<SelfType, IndexType> res;
 		SelfType buf;
 		for (DataType& v : *this) {
@@ -413,7 +413,7 @@ public:
 		}
 	}
 
-	constexpr List<SelfType, IndexType> split(ArgumentListType const& seps) {
+	constexpr List<SelfType, IndexType> split(ArgumentListType const& seps) const {
 		List<SelfType, IndexType> res;
 		SelfType buf;
 		for (DataType& v : *this) {
@@ -736,7 +736,7 @@ public:
 		return compare(other);
 	}
 
-	constexpr OrderType compare(SelfType const& other) {
+	constexpr OrderType compare(SelfType const& other) const
 	requires Type::Comparable::Threeway<DataType, DataType> {
 		OrderType result = OrderType::EQUAL;
 		IndexType i = 0;
@@ -753,7 +753,7 @@ public:
 		return result;
 	}
 
-	constexpr SizeType equals(SelfType const& other) {
+	constexpr SizeType equals(SelfType const& other) const
 	requires Type::Comparable::Equals<DataType, DataType> {
 		bool result = true;
 		IndexType i = 0;
@@ -770,7 +770,7 @@ public:
 		return result;
 	}
 
-	constexpr SizeType disparity(SelfType const& other)
+	constexpr SizeType disparity(SelfType const& other) const
 	requires Type::Comparable::NotEquals<DataType, DataType> {
 		SizeType
 			diff	= 0,
