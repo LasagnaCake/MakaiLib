@@ -1,5 +1,5 @@
-#ifndef ALGORITHM_FUNCTIONS_H
-#define ALGORITHM_FUNCTIONS_H
+#ifndef CTL_ALGORITHM_FUNCTIONS_H
+#define CTL_ALGORITHM_FUNCTIONS_H
 
 #include "iterator.hpp"
 
@@ -147,4 +147,4 @@ constexpr void sort(T begin, T end) {
 	Partial::introSort(begin, end, 0, size - 1, 2*depth)
 }
 
-#endif // ALGORITHM_FUNCTIONS_H
+#endif // CTL_ALGORITHM_FUNCTIONS_H

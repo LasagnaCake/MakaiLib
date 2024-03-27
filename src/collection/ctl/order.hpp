@@ -1,13 +1,15 @@
-#ifndef TYPE_ORDER_H
-#define TYPE_ORDER_H
+#ifndef CTL_TYPE_ORDER_H
+#define CTL_TYPE_ORDER_H
 
 #include <compare>
 
-enum class StandardOrder {
+#include "typeinfo.hpp"
+
+enum class StandardOrder: int {
 	LESS = -1,
 	EQUAL,
 	GREATER,
-	UNORDERED
+	UNORDERED = int(1 << (sizeof(int) *8) - 1)
 };
 
 struct ValueOrder: public std::partial_ordering {
@@ -18,4 +20,4 @@ struct ValueOrder: public std::partial_ordering {
 };
 
 
-#endif // TYPE_ORDER_H
+#endif // CTL_TYPE_ORDER_H

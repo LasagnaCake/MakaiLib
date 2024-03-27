@@ -4,7 +4,7 @@
 #include "helper.hpp"
 #include "conceptual.hpp"
 #include "errors.hpp"
-#include "types.hpp"
+#include "ctl/ctypes.hpp"
 #include "definitions.hpp"
 
 namespace SmartPointer {

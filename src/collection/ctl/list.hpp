@@ -1,11 +1,11 @@
-#ifndef TYPE_LIST_H
-#define TYPE_LIST_H
+#ifndef STDLIB_TYPE_LIST_H
+#define CTL_TYPE_LIST_H
 
 #include <initializer_list>
 #include <numeric_limits>
 
 #include "iterator.hpp"
-#include "../types.hpp"
+#include "ctypes.hpp"
 #include "../conceptual.hpp"
 #include "algorithm.hpp"
 
@@ -32,7 +32,7 @@ public:
 	// Self types
 	typedef List<DataType, IndexType>	SelfType;
 	// Constant values
-	constexpr SizeType maxSize = std::numeric_limits<SizeType>::max;
+	constexpr SizeType maxSize = TypeInfo<SizeType>::HIGHEST;
 
 	constexpr List() {invoke(1);}
 
@@ -441,9 +441,6 @@ public:
 	constexpr bool isTighterThanBarkOnATree() const {return count == maximum;}
 
 private:
-	template <typename T>
-	friend class BaseString;
-
 	constexpr void copy(DataType* const& src, DataType* const& dst, SizeType const& count) {
 		memcpy(dst, src, count * sizeof(DataType));
 	};
@@ -838,4 +835,4 @@ private:
 
 typedef List<uint8> BinaryData;
 
-#endif // TYPE_LIST_H
+#endif // CTL_TYPE_LIST_H

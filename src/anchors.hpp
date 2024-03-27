@@ -118,7 +118,7 @@
 #endif
 
 #include "collection/helper.hpp"
-#include "collection/types.hpp"
+#include "collection/ctl/ctypes.hpp"
 #include "collection/conceptual.hpp"
 #include "collection/referential.hpp"
 #include "collection/algebra.hpp"

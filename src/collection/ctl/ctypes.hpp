@@ -1,5 +1,5 @@
-#ifndef EXTENDED_TYPES_H
-#define EXTENDED_TYPES_H
+#ifndef CTL_EXTENDED_TYPES_H
+#define CTL_EXTENDED_TYPES_H
 
 #include <cstdint>
 
@@ -65,4 +65,4 @@ typedef uword	word;
 typedef udword	dword;
 typedef uqword	qword;
 
-#endif // EXTENDED_TYPES_H
+#endif // CTL_EXTENDED_TYPES_H

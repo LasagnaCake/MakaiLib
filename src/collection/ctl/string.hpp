@@ -1,5 +1,5 @@
-#ifndef TYPE_STRING_H
-#define TYPE_STRING_H
+#ifndef CTL_TYPE_STRING_H
+#define CTL_TYPE_STRING_H
 
 #include <istream>
 #include <ostream>
@@ -16,17 +16,19 @@ public:
 	typedef std::basic_ostream<DataType>	OutputStreamType;
 	typedef std::basic_istream<DataType>	InputStreamType;
 
+	using List::List;
+
 	constexpr BaseString(const DataType* const& v) {
 		size_t len = 0;
 		while (v[len++] != '\0');
 		reserve(len+1);
-		copy(v, data, len);
+		memcpy(cbegin(), v, len * sizeof(DataType));
 	}
 
 	template<SizeType S>
 	constexpr BaseString(const DataType (const& v)[S]) {
 		reserve(S);
-		copy(v, data, len);
+		memcpy(cbegin(), v, len * sizeof(DataType));
 	}
 
 	constexpr OutputStreamType const& operator<<(OutputStreamType& o) const	{o << data; return out;}
@@ -47,7 +49,7 @@ public:
 	}
 
 	constexpr BaseString operator*(SizeType const& times) const {
-		BaseString result(count * times);
+		BaseString result(size() * times);
 		for SSRANGE(i, 0, times)
 			result += (*this);
 		return result;
@@ -60,7 +62,7 @@ public:
 	BaseString substring(IndexType const& start, SizeType const& length) const {
 		IndexType const stop = start + length;
 		assertIsInBounds(start);
-		return String(begin() + start, begin() + (stop < count ? stop : count-1));
+		return String(begin() + start, begin() + (stop < size() ? stop : size()-1));
 	}
 
 	constexpr static float toFloat(String const& str) {
@@ -71,4 +73,4 @@ public:
 typedef BaseString<char>	String;
 typedef BaseString<wchar_t>	WideString;
 
-#endif // TYPE_STRING_H
+#endif // CTL_TYPE_STRING_H
