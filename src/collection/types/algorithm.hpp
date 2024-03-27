@@ -8,7 +8,7 @@ concept SortableIteratorType = requires {
 	typename T::SizeType;
 	typename T::IndexType;
 	typename T::DataType;
-} && Type::Equal<T, Iterator<typename T::DataType, typename T::IndexType>>;
+} && Type::Derived<T, Iterator<typename T::DataType, typename T::IndexType>>;
 
 template<class T>
 constexpr void swap(T& a T& b) {

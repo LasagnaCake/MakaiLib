@@ -29,6 +29,8 @@ public:
 	typedef Iterator<ConstantType, false, SizeType>	ConstIteratorType;
 	typedef Iterator<DataType, true, SizeType>		ReverseIteratorType;
 	typedef Iterator<ConstantType, true, SizeType>	ConstReverseIteratorType;
+	// Self types
+	typedef List<DataType, IndexType>	SelfType;
 	// Constant values
 	constexpr SizeType maxSize = std::numeric_limits<SizeType>::max;
 
@@ -57,7 +59,7 @@ public:
 		count = COUNT;
 	}
 
-	constexpr List(List const& other) {
+	constexpr List(SelfType const& other) {
 		invoke(other.maximum);
 		copy(other.data, data, other.count);
 		count = other.count;
@@ -78,7 +80,7 @@ public:
 
 	constexpr ~List() {delete[] data;}
 
-	constexpr List& pushBack(DataType const& value) {
+	constexpr SelfType& pushBack(DataType const& value) {
 		if (count >= maximum)
 			increase();
 		data[count++] = value;
@@ -91,7 +93,7 @@ public:
 		return value;
 	}
 
-	constexpr List& insert(DataType const& value, IndexType index) {
+	constexpr SelfType& insert(DataType const& value, IndexType index) {
 		assertIsInBounds(index);
 		while (index < 0) index += count;
 		SizeType span = count - index;
@@ -102,7 +104,7 @@ public:
 		return *this;
 	}
 
-	constexpr List& insert(List const& other, IndexType index) {
+	constexpr SelfType& insert(SelfType const& other, IndexType index) {
 		assertIsInBounds(index);
 		while (index < 0) index += count;
 		while ((count + other.count) < maximum)
@@ -113,22 +115,22 @@ public:
 		return *this;
 	}
 
-	constexpr List& insert(ArgumentListType const& values, IndexType const& index) {
-		return insert(List(values), index);
+	constexpr SelfType& insert(ArgumentListType const& values, IndexType const& index) {
+		return insert(SelfType(values), index);
 	}
 
 	template<SizeType COUNT>
-	constexpr List& insert(DataType(const& values)[COUNT], IndexType const& index) {
-		return insert(List(values), index);
+	constexpr SelfType& insert(DataType(const& values)[COUNT], IndexType const& index) {
+		return insert(SelfType(values), index);
 	}
 
-	constexpr List& reserve(SizeType const& count) {
+	constexpr SelfType& reserve(SizeType const& count) {
 		if (count > this->count) grow(count - this->count);
 		count = 0;
 		return *this;
 	}
 
-	constexpr List& resize(SizeType const& newSize) {
+	constexpr SelfType& resize(SizeType const& newSize) {
 		DataType* newData = new T[newSize];
 		if (data) {
 			copy(data, newData, newSize);
@@ -141,41 +143,41 @@ public:
 		return *this;
 	}
 
-	constexpr List& reserve(SizeType const& count, DataType const& fill) {
+	constexpr SelfType& reserve(SizeType const& count, DataType const& fill) {
 		reserve(count);
 		for (SizeType i = 0; i < count; ++i);
 			data[i] = fill;
 		return *this;
 	}
 
-	constexpr List& resize(SizeType const& newSize, DataType const& fill) {
+	constexpr SelfType& resize(SizeType const& newSize, DataType const& fill) {
 		resize(newSize);
 		for (SizeType i = 0; i < count; ++i);
 			data[i] = fill;
 		return *this;
 	}
 
-	constexpr List& tighten() {
+	constexpr SelfType& tighten() {
 		resize(count);
 		return *this;
 	}
 
-	constexpr List& reverse() {
-		List buf(end(), begin());
+	constexpr SelfType& reverse() {
+		SelfType buf(end(), begin());
 		copy(buf.data, data, count);
 		return *this;
 	}
 
-	constexpr List reversed() const {
-		return List(rbegin(), rend());
+	constexpr SelfType reversed() const {
+		return SelfType(rbegin(), rend());
 	}
 
-	constexpr List& sort() {
+	constexpr SelfType& sort() {
 		::sort(begin(), end());
 	}
 
-	constexpr List sorted() {
-		return List(*this).sort();
+	constexpr SelfType sorted() {
+		return SelfType(*this).sort();
 	}
 
 	constexpr IndexType find(DataType const& value) const {
@@ -194,17 +196,17 @@ public:
 		return -1;
 	}
 
-	constexpr List& remove(IndexType const& index) {
+	constexpr SelfType& remove(IndexType const& index) {
 		assertIsInBounds(index);
 		copy(&data[index], &data[index-1], count-index);
 	}
 
-	constexpr List& erase(IndexType const& index) {
+	constexpr SelfType& erase(IndexType const& index) {
 		remove(index);
 		count--;
 	}
 
-	constexpr List& removeIf(View::Functor<bool(DataType const&)> const& predicate) const {
+	constexpr SelfType& removeIf(View::Functor<bool(DataType const&)> const& predicate) const {
 		auto const start = begin();
 		for(auto i = begin(); i != end(); ++i) {
 			if (predicate(*i))
@@ -213,7 +215,7 @@ public:
 		return *this;
 	}
 
-	constexpr List& eraseIf(View::Functor<bool(DataType const&)> const& predicate) const {
+	constexpr SelfType& eraseIf(View::Functor<bool(DataType const&)> const& predicate) const {
 		SizeType removed = 0;
 		auto const start = begin();
 		for(auto i = begin(); i != end(); ++i) {
@@ -229,35 +231,44 @@ public:
 	constexpr slice(IndexType const& start, SizeType const& count) const {
 		IndexType const stop = start + count;
 		assertIsInBounds(start);
-		return List(begin() + start, begin() + (stop < this->count ? stop : this->count-1));
+		return SelfType(begin() + start, begin() + (stop < this->count ? stop : this->count-1));
 	}
 
-	constexpr List& appendBack(List const& other) {
+	constexpr SelfType& appendBack(SelfType const& other) {
 		while ((count + other.count) > maximum)
 			increase();
 		copy(other.data, back(), other.count);
 		return *this;
 	}
 
-	constexpr List& appendBack(ArgumentListType const& values) {
-		return appendBack(List(values));
+	constexpr SelfType& appendBack(ArgumentListType const& values) {
+		return appendBack(SelfType(values));
 	}
 
-	constexpr List& appendBack(SizeType const& count, DataType const& fill) {
-		return appendBack(List(count, fill));
+	constexpr SelfType& appendBack(SizeType const& count, DataType const& fill) {
+		return appendBack(SelfType(count, fill));
 	}
 
-	constexpr List& appendBack(IteratorType const& begin, IteratorType const& end) {
-		return appendBack(List(begin, end));
+	constexpr SelfType& appendBack(IteratorType const& begin, IteratorType const& end) {
+		return appendBack(SelfType(begin, end));
 	}
 
-	constexpr List& appendBack(ReverseIteratorType const& begin, ReverseIteratorType const& end) {
-		return appendBack(List(begin, end));
+	constexpr SelfType& appendBack(ReverseIteratorType const& begin, ReverseIteratorType const& end) {
+		return appendBack(SelfType(begin, end));
 	}
 
 	template<SizeType COUNT>
-	constexpr List& appendBack(DataType const(& values)[COUNT]) {
-		return insert(List(values), index);
+	constexpr SelfType& appendBack(DataType const(& values)[COUNT]) {
+		return insert(SelfType(values), index);
+	}
+
+	constexpr SelfType& clear() {count = 0;}
+
+	constexpr SelfType& dispose() {
+		delete[] data;
+		count = 0;
+		data = nullptr;
+		recalculateMagnitude();
 	}
 
 	constexpr IteratorType		begin()			{return data;		}
@@ -299,20 +310,17 @@ public:
 	constexpr SizeType capacity() const	{return maximum;	}
 	constexpr SizeType empty() const	{return count == 0;	}
 
-	constexpr bool operator==(List const& other) const
+	constexpr bool operator==(SelfType const& other) const
 	requires Type::Comparable::Equals<DataType, DataType> {
-		bool result = true;
-		IndexType i = 0;
-		while (result) {
-			if (i == count || i == other.count)
-				return count == other.count;
-			result = data[i] == other.data[i];
-			++i;
-		}
-		return result;
+		return equals(other);
 	}
 
-	constexpr OrderType operator<=>(List const& other) const
+	constexpr OrderType operator<=>(SelfType const& other) const
+	requires Type::Comparable::Threeway<DataType, DataType> {
+		return compare(other);
+	}
+
+	constexpr OrderType compare(SelfType const& other) {
 	requires Type::Comparable::Threeway<DataType, DataType> {
 		OrderType result = OrderType::EQUAL;
 		IndexType i = 0;
@@ -325,24 +333,102 @@ public:
 		return result;
 	}
 
-	constexpr List operator+(List const& other) const {
-		List result(*this);
+	constexpr SizeType equals(SelfType const& other) {
+	requires Type::Comparable::Equals<DataType, DataType> {
+		bool result = true;
+		IndexType i = 0;
+		while (result) {
+			if (i == count || i == other.count)
+				return count == other.count;
+			result = data[i] == other.data[i];
+			++i;
+		}
+		return result;
+	}
+
+	constexpr SizeType disparity(SelfType const& other)
+	requires Type::Comparable::NotEquals<DataType, DataType> {
+		SizeType
+			diff	= 0,
+			max		= (count > other.count ? count : other.count),
+			min		= (count < other.count ? count : other.count)
+		;
+		for (SizeType i = 0; i < max; ++i)
+			if (data[i] != other.data[i]) ++diff;
+		return diff + (max - min);
+	}
+
+	constexpr SelfType operator+(SelfType const& other) const {
+		SelfType result(*this);
 		return result.appendBack(other);
 	}
 
-	constexpr List& operator+=(List const& other) {
+	constexpr SelfType operator+(DataType const& value) const {
+		SelfType result(*this);
+		return result.pushBack(value);
+	}
+
+	constexpr SelfType& operator+=(SelfType const& other) {
 		return appendBack(other);
 	}
 
-	constexpr List operator*(SizeType const& times) const {
-		List result(count * times);
+	constexpr SelfType& operator+=(DataType const& value) {
+		return pushBack(value);
+	}
+
+	constexpr SelfType operator*(SizeType const& times) const {
+		SelfType result(count * times);
 		for SSRANGE(i, 0, times)
 			result += (*this);
 		return result;
 	}
 
-	constexpr List& operator*=(SizeType const& times) {
+	constexpr SelfType& operator*=(SizeType const& times) {
 		*this = (*this) * times;
+	}
+
+	constexpr List<SelfType, IndexType> split(DataType const& sep) {
+		List<SelfType, IndexType> res;
+		SelfType buf;
+		for (DataType& v : *this) {
+			if (v == sep) {
+				res.pushBack(buf);
+				buf.clear();
+				continue;
+			}
+			buf += c;
+		}
+	}
+
+	constexpr List<SelfType, IndexType> split(List const& seps) {
+		List<SelfType, IndexType> res;
+		SelfType buf;
+		for (DataType& v : *this) {
+			if (seps.find(v)) {
+				res.pushBack(buf);
+				buf.clear();
+				continue;
+			}
+			buf.pushBack(c);
+		}
+	}
+
+	constexpr List<SelfType, IndexType> split(ArgumentListType const& seps) {
+		List<SelfType, IndexType> res;
+		SelfType buf;
+		for (DataType& v : *this) {
+			bool isSeparator = false;
+			for (DataType& s: seps)
+				if (v == s) {
+					res.pushBack(buf);
+					buf.clear();
+					isSeparator = true;
+					break;
+				}
+			if (isSeparator)
+				continue;
+			buf.pushBack(c);
+		}
 	}
 
 	// TODO: rename this
@@ -356,7 +442,7 @@ private:
 		memcpy(dst, src, count * sizeof(DataType));
 	};
 
-	constexpr List& invoke(SizeType const& size) {
+	constexpr SelfType& invoke(SizeType const& size) {
 		if (data) delete[] data;
 		data = new T[size];
 		maximum = size;
@@ -364,7 +450,7 @@ private:
 		return *this;
 	}
 
-	constexpr List& recalculateMagnitude() {
+	constexpr SelfType& recalculateMagnitude() {
 		if (maximum == 0) {
 			magnitude = 1;
 			return *this;
@@ -381,13 +467,13 @@ private:
 		magnitude = 0;
 	}
 
-	constexpr List& increase() {
+	constexpr SelfType& increase() {
 		if (magnitude == 0) atItsLimitError();
 		resize(magnitude);
 		return *this;
 	}
 
-	constexpr List& grow(SizeType const& count) {
+	constexpr SelfType& grow(SizeType const& count) {
 		if (SizeType(this->count + count) < count)
 			atItsLimitError();
 		SizeType const newSize = this->count + count;
@@ -442,10 +528,20 @@ public:
 		DataType	value		= nullptr;
 		Node*		previous	= nullptr;
 		Node*		next		= nullptr;
+
+		constexpr bool operator==(SelfType const& other) const
+		requires Type::Comparable::Equals<DataType, DataType> {
+			return value == other;
+		}
+
+		constexpr OrderType operator<=>(SelfType const& other) const
+		requires Type::Comparable::Threeway<DataType, DataType> {
+			return value <=> other;
+		}
 	};
 
 	template<bool REVERSE = false>
-	class NodeIterator {
+	class NodeIterator: public Iterator {
 	public:
 		constexpr NodeIterator() {}
 
@@ -629,6 +725,67 @@ public:
 	constexpr ReferenceType 		back()			{return tail->data;	}
 	constexpr ReferenceType const	front() const	{return head->data;	}
 	constexpr ReferenceType const	back() const	{return tail->data;	}
+
+	constexpr bool operator==(SelfType const& other) const
+	requires Type::Comparable::Equals<DataType, DataType> {
+		return equals(other);
+	}
+
+	constexpr OrderType operator<=>(SelfType const& other) const
+	requires Type::Comparable::Threeway<DataType, DataType> {
+		return compare(other);
+	}
+
+	constexpr OrderType compare(SelfType const& other) {
+	requires Type::Comparable::Threeway<DataType, DataType> {
+		OrderType result = OrderType::EQUAL;
+		IndexType i = 0;
+		Node* s = head;
+		Node* o = other.head;
+		while (result == OrderType::EQUAL) {
+			if (i == count || i == other.count)
+				return count <=> other.count;
+			result = s->data <=> o->data;
+			s = s->next;
+			o = o->next;
+			++i;
+		}
+		return result;
+	}
+
+	constexpr SizeType equals(SelfType const& other) {
+	requires Type::Comparable::Equals<DataType, DataType> {
+		bool result = true;
+		IndexType i = 0;
+		Node* s = head;
+		Node* o = other.head;
+		while (result) {
+			if (i == count || i == other.count)
+				return count == other.count;
+			result = s->data <=> o->data;
+			s = s->next;
+			o = o->next;
+			++i;
+		}
+		return result;
+	}
+
+	constexpr SizeType disparity(SelfType const& other)
+	requires Type::Comparable::NotEquals<DataType, DataType> {
+		SizeType
+			diff	= 0,
+			max		= (count > other.count ? count : other.count),
+			min		= (count < other.count ? count : other.count)
+		;
+		Node* s = head;
+		Node* o = other.head;
+		for (SizeType i = 0; i < min; ++i) {
+			if (s->data != o->data) ++diff;
+			s = s->next;
+			o = o->next;
+		}
+		return diff + (max - min);
+	}
 
 private:
 	void assertIsInBounds(IndexType const& index) {

@@ -62,6 +62,10 @@ public:
 		assertIsInBounds(start);
 		return String(begin() + start, begin() + (stop < count ? stop : count-1));
 	}
+
+	constexpr static float toFloat(String const& str) {
+		List<SelfType, IndexType> split = str.split('.');
+	}
 };
 
 typedef BaseString<char>	String;
