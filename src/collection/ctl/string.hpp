@@ -96,11 +96,11 @@ public:
 		}
 		if (str[start] == '0') {
 			switch (str[start+1]) {
-				default: return sign * toInt(str.substring(start+1, str.size()), 8)		break;
-				case 'o': return sign * toInt(str.substring(start+2, str.size()), 8)	break;
-				case 'x': return sign * toInt(str.substring(start+2, str.size()), 16)	break;
-				case 'b': return sign * toInt(str.substring(start+2, str.size()), 2)	break;
-				case 'd': return sign * toInt(str.substring(start+2, str.size()), 10)	break;
+				default:	return sign * toInt(str.substring(start+1, str.size()), 8);
+				case 'o':	return sign * toInt(str.substring(start+2, str.size()), 8);
+				case 'x':	return sign * toInt(str.substring(start+2, str.size()), 16);
+				case 'b':	return sign * toInt(str.substring(start+2, str.size()), 2);
+				case 'd':	return sign * toInt(str.substring(start+2, str.size()), 10);
 			}
 		}
 		return sign * toInt(str.substring(start, str.size()), 10);
