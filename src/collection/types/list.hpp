@@ -16,7 +16,7 @@ public:
 	typedef T								DataType;
 	typedef DataType const					ConstantType;
 	typedef DataType&						ReferenceType;
-	typedef DataType const&					ConstReferenceType;
+	typedef ConstantType&					ConstReferenceType;
 	typedef std::initializer_list<DataType>	ArgumentListType;
 	typedef DataType*						PointerType;
 	typedef const DataType*					ConstPointerType;
@@ -228,7 +228,7 @@ public:
 		return *this;
 	}
 
-	constexpr slice(IndexType const& start, SizeType const& count) const {
+	constexpr SelfType sliced(IndexType const& start, SizeType const& count) const {
 		IndexType const stop = start + count;
 		assertIsInBounds(start);
 		return SelfType(begin() + start, begin() + (stop < this->count ? stop : this->count-1));
@@ -288,8 +288,8 @@ public:
 
 	constexpr ReferenceType			front()			{return data[0];		}
 	constexpr ReferenceType 		back()			{return data[count-1];	}
-	constexpr ReferenceType const	front() const	{return data[0];		}
-	constexpr ReferenceType const	back() const	{return data[count-1];	}
+	constexpr ConstReferenceType	front() const	{return data[0];		}
+	constexpr ConstReferenceType	back() const	{return data[count-1];	}
 
 	constexpr ReferenceType at(IndexType index) {
 		assertIsInBounds(index);
@@ -297,14 +297,20 @@ public:
 		return data[index];
 	}
 
-	constexpr ReferenceType const at(IndexType index) const {
+	constexpr ReferenceType at(IndexType index) {
+		assertIsInBounds(index);
+		while (index < 0) index += count;
+		return data[index];
+	}
+
+	constexpr ConstReferenceType at(IndexType index) const {
 		assertIsInBounds(index);
 		while (index < 0) index += count;
 		return data[index];
 	}
 
 	constexpr ReferenceType			operator[](IndexType const& index)			{return at(index);}
-	constexpr ReferenceType const	operator[](IndexType const& index) const	{return at(index);}
+	constexpr ConstReferenceType	operator[](IndexType const& index) const	{return at(index);}
 
 	constexpr SizeType size() const		{return count;		}
 	constexpr SizeType capacity() const	{return maximum;	}
@@ -320,19 +326,6 @@ public:
 		return compare(other);
 	}
 
-	constexpr OrderType compare(SelfType const& other) {
-	requires Type::Comparable::Threeway<DataType, DataType> {
-		OrderType result = OrderType::EQUAL;
-		IndexType i = 0;
-		while (result == OrderType::EQUAL) {
-			if (i == count || i == other.count)
-				return count <=> other.count;
-			result = data[i] <=> other.data[i];
-			++i;
-		}
-		return result;
-	}
-
 	constexpr SizeType equals(SelfType const& other) const
 	requires Type::Comparable::Equals<DataType, DataType> {
 		bool result = true;
@@ -341,6 +334,19 @@ public:
 			if (i == count || i == other.count)
 				return count == other.count;
 			result = data[i] == other.data[i];
+			++i;
+		}
+		return result;
+	}
+
+	constexpr OrderType compare(SelfType const& other) {
+	requires Type::Comparable::Threeway<DataType, DataType> {
+		OrderType result = OrderType::EQUAL;
+		IndexType i = 0;
+		while (result == OrderType::EQUAL) {
+			if (i == count || i == other.count)
+				return count <=> other.count;
+			result = data[i] <=> other.data[i];
 			++i;
 		}
 		return result;
@@ -514,7 +520,7 @@ public:
 	typedef T								DataType;
 	typedef DataType const					ConstantType;
 	typedef DataType&						ReferenceType;
-	typedef DataType const&					ConstReferenceType;
+	typedef ConstantType&					ConstReferenceType;
 	typedef std::initializer_list<DataType>	ArgumentListType;
 	typedef DataType*						PointerType;
 	typedef const DataType*					ConstPointerType;
@@ -523,18 +529,20 @@ public:
 	typedef std::make_signed<SizeType>	IndexType;
 	// Constant values
 	constexpr SizeType maxSize = std::numeric_limits<SizeType>::max;
+	// Self types
+	typedef LinkedList<DataType, IndexType>	SelfType;
 
 	struct Node {
 		DataType	value		= nullptr;
 		Node*		previous	= nullptr;
 		Node*		next		= nullptr;
 
-		constexpr bool operator==(SelfType const& other) const
+		constexpr bool operator==(DataType const& other) const
 		requires Type::Comparable::Equals<DataType, DataType> {
 			return value == other;
 		}
 
-		constexpr OrderType operator<=>(SelfType const& other) const
+		constexpr OrderType operator<=>(DataType const& other) const
 		requires Type::Comparable::Threeway<DataType, DataType> {
 			return value <=> other;
 		}
@@ -583,7 +591,7 @@ public:
 
 	constexpr LinkedList() {}
 
-	constexpr LinkedList(LinkedList const& other) {
+	constexpr LinkedList(SelfType const& other) {
 		for (DataType const& v: other)
 			pushBack(v);
 	}
@@ -593,7 +601,7 @@ public:
 			pushBack(v);
 	}
 
-	constexpr LinkedList(LinkedList&& other) {
+	constexpr LinkedList(SelfType&& other) {
 		for (DataType const& v: other)
 			pushBack(v);
 	}
@@ -629,7 +637,7 @@ public:
 		while (!empty()) popBack();
 	}
 
-	constexpr LinkedList& pushBack(DataType const& value) {
+	constexpr SelfType& pushBack(DataType const& value) {
 		assertNotAtItsLimit();
 		Node* newTail = new Node{value};
 		if (tail) {
@@ -643,7 +651,7 @@ public:
 		return *this;
 	}
 
-	constexpr LinkedList& pushFront(DataType const& value) {
+	constexpr SelfType& pushFront(DataType const& value) {
 		assertNotAtItsLimit();
 		Node* newHead = new Node{value};
 		if (head) {
@@ -685,7 +693,7 @@ public:
 		return value;
 	}
 
-	constexpr List& insert(DataType const& value, IndexType index) {
+	constexpr SelfType& insert(DataType const& value, IndexType index) {
 		assertIsInBounds(index);
 		while (index < 0) index += count;
 		Node* current = head;
@@ -697,7 +705,7 @@ public:
 		return *this;
 	}
 
-	constexpr ValueType at(IndexType index) const {
+	constexpr ReferenceType at(IndexType index) {
 		while (index < 0) index += count;
 		assertIsInBounds(index);
 		Node* current = head;
@@ -706,7 +714,17 @@ public:
 		return current->value;
 	}
 
-	constexpr ValueType operator[](IndexType const& index) const {return at(index);}
+	constexpr ConstReferenceType at(IndexType index) const {
+		while (index < 0) index += count;
+		assertIsInBounds(index);
+		Node* current = head;
+		for (SizeType i = 0; i < index; ++i)
+			current = current->next;
+		return current->value;
+	}
+
+	constexpr ReferenceType operator[](IndexType const& index)				{return at(index);}
+	constexpr ConstReferenceType operator[](IndexType const& index) const	{return at(index);}
 
 	constexpr SizeType size() const		{return count;		}
 	constexpr SizeType empty() const	{return count == 0;	}
@@ -723,8 +741,8 @@ public:
 
 	constexpr ReferenceType			front()			{return head->data;	}
 	constexpr ReferenceType 		back()			{return tail->data;	}
-	constexpr ReferenceType const	front() const	{return head->data;	}
-	constexpr ReferenceType const	back() const	{return tail->data;	}
+	constexpr ConstReferenceType	front() const	{return head->data;	}
+	constexpr ConstReferenceType	back() const	{return tail->data;	}
 
 	constexpr bool operator==(SelfType const& other) const
 	requires Type::Comparable::Equals<DataType, DataType> {
@@ -736,6 +754,23 @@ public:
 		return compare(other);
 	}
 
+	constexpr bool equals(SelfType const& other) const
+	requires Type::Comparable::Equals<DataType, DataType> {
+		bool result = true;
+		IndexType i = 0;
+		Node* s = head;
+		Node* o = other.head;
+		while (result) {
+			if (i == count || i == other.count)
+				return count == other.count;
+			result = s->data == o->data;
+			s = s->next;
+			o = o->next;
+			++i;
+		}
+		return result;
+	}
+
 	constexpr OrderType compare(SelfType const& other) const
 	requires Type::Comparable::Threeway<DataType, DataType> {
 		OrderType result = OrderType::EQUAL;
@@ -745,23 +780,6 @@ public:
 		while (result == OrderType::EQUAL) {
 			if (i == count || i == other.count)
 				return count <=> other.count;
-			result = s->data <=> o->data;
-			s = s->next;
-			o = o->next;
-			++i;
-		}
-		return result;
-	}
-
-	constexpr SizeType equals(SelfType const& other) const
-	requires Type::Comparable::Equals<DataType, DataType> {
-		bool result = true;
-		IndexType i = 0;
-		Node* s = head;
-		Node* o = other.head;
-		while (result) {
-			if (i == count || i == other.count)
-				return count == other.count;
 			result = s->data <=> o->data;
 			s = s->next;
 			o = o->next;
