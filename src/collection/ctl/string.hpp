@@ -85,6 +85,37 @@ public:
 		invalidNumberError(str);
 	}
 
+	constexpr static uintmax toUnsignedInt(String const& str) {
+		uintmax res = 0;
+		SizeType start = 0;
+		NumberBase base = NumberBase::NB_DECIMAL;
+		if (str[0] == '-' || str[0] == '+')
+			invalidNumberError(str);
+		if (str[0] == '0') {
+			switch (str[1]) {
+				default:	return toUnsignedInt(str.substring(1, str.size()), 8);
+				case 'o':	return toUnsignedInt(str.substring(2, str.size()), 8);
+				case 'x':	return toUnsignedInt(str.substring(2, str.size()), 16);
+				case 'b':	return toUnsignedInt(str.substring(2, str.size()), 2);
+				case 'd':	return toUnsignedInt(str.substring(2, str.size()), 10);
+			}
+		}
+		return toUnsignedInt(str.substring(start, str.size()), 10);
+	}
+
+	constexpr static uintmax toUnsignedInt(String const& str, uintmax const& base) {
+		uintmax result = 0;
+		SizeType i = str.size();
+		if (str[0] == '-' || str[0] == '+')
+			invalidNumberError(str);
+		for (DataType c: str) {
+			if (c - '0' > base)
+				invalidNumberError(str);
+			result += uintmax(c - '0') * pow(base, --i);
+		}
+		return result;
+	}
+
 	constexpr static intmax toInt(String const& str) {
 		intmax res = 0;
 		intmax sign = 1;
@@ -112,7 +143,7 @@ public:
 		for (DataType c: str) {
 			if (c - '0' > base)
 				invalidNumberError(str);
-			result += (c - '0') * pow(base, --i);
+			result += intmax(c - '0') * pow(base, --i);
 		}
 		return result;
 	}
