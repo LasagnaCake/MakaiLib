@@ -29,7 +29,7 @@ public:
 	typedef Iterator<ConstantType, false, SizeType>	ConstIteratorType;
 	typedef Iterator<DataType, true, SizeType>		ReverseIteratorType;
 	typedef Iterator<ConstantType, true, SizeType>	ConstReverseIteratorType;
-	// Self types
+	// Self type
 	typedef List<DataType, IndexType>	SelfType;
 	// Constant values
 	constexpr SizeType maxSize = TypeInfo<SizeType>::HIGHEST;
