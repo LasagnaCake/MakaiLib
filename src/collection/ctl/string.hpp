@@ -11,12 +11,15 @@ concept CharacterType = Type::Equal<T, char> || Type::Equal<wchar>;
 template<CharacterType T, Type::Integer I = size_t>
 class BaseString: public List<T, I> {
 public:
+	// Parent type
 	typedef List<T, I> BaseType;
-
+	// Stream types
 	typedef std::basic_ostream<DataType>	OutputStreamType;
 	typedef std::basic_istream<DataType>	InputStreamType;
+	// Self type
+	typedef BaseString<DataType, IndexType>	SelfType;
 
-	using List::List;
+	using BaseType::List;
 
 	constexpr BaseString(const DataType* const& v) {
 		size_t len = 0;
@@ -34,39 +37,93 @@ public:
 	constexpr OutputStreamType const& operator<<(OutputStreamType& o) const	{o << data; return out;}
 	constexpr OutputStreamType& operator<<(OutputStreamType& o)				{o << data; return out;}
 
-	constexpr BaseString const& operator<<(BaseString& other) const	{other.appendBack(*this); return *this;}
-	constexpr BaseString& operator<<(BaseString& other)				{other.appendBack(*this); return *this;}
+	constexpr SelfType const& operator<<(SelfType& other) const	{other.appendBack(*this); return *this;}
+	constexpr SelfType& operator<<(SelfType& other)				{other.appendBack(*this); return *this;}
 
-	constexpr BaseString& operator>>(BaseString const& other)	{appendBack(other); return other;}
+	constexpr SelfType& operator>>(SelfType const& other)	{appendBack(other); return other;}
 
-	constexpr BaseString operator+(BaseString const& other) const {
-		BaseString result(*this);
-		return result.appendBack(other);
-	}
+	constexpr SelfType operator+(SelfType const& other) const	{return SelfType(*this) + result.appendBack(other);}
 
-	constexpr BaseString& operator+=(BaseString const& other) {
-		return appendBack(other);
-	}
+	constexpr SelfType operator+(const DataType* const& str) const		{return (*this) + String(str);}
+	constexpr SelfType operator+(const DataType (const& str)[S]) const	{return (*this) + String(str);}
 
-	constexpr BaseString operator*(SizeType const& times) const {
-		BaseString result(size() * times);
+	constexpr SelfType operator+(const DataType* const& str, SelfType const& self) const		{return String(str) + self;}
+	constexpr SelfType operator+(const DataType (const& str)[S], SelfType const& self) const	{return String(str) + self;}
+
+	constexpr SelfType& operator+=(SelfType const& other)			{return appendBack(other);	}
+	constexpr SelfType& operator+=(const DataType* const& str)		{return appendBack(str);	}
+	constexpr SelfType& operator+=(const DataType (const& str)[S])	{return appendBack(str);	}
+
+	constexpr SelfType operator*(SizeType const& times) const {
+		SelfType result(size() * times);
 		for SSRANGE(i, 0, times)
 			result += (*this);
 		return result;
 	}
 
-	constexpr BaseString& operator*=(SizeType const& times) {
+	constexpr SelfType& operator*=(SizeType const& times) {
 		*this = (*this) * times;
 	}
 
-	BaseString substring(IndexType const& start, SizeType const& length) const {
+	SelfType substring(IndexType const& start, SizeType const& length) const {
 		IndexType const stop = start + length;
 		assertIsInBounds(start);
 		return String(begin() + start, begin() + (stop < size() ? stop : size()-1));
 	}
 
-	constexpr static float toFloat(String const& str) {
-		List<SelfType, IndexType> split = str.split('.');
+	constexpr static floatmax toFloat(String const& str) try {
+		if (str.split('.').size() != 2) invalidNumberError();
+		IndexType split = str.find('.');
+		String num =
+			String(str)
+			.remove(split)
+			.remove(str.find('f')),
+			.remove(str.find('d'))
+		;
+		return toInt(num, 10) * pow(10, -split);
+	} catch (Error::InvalidValue const& e) {
+		invalidNumberError(str);
+	}
+
+	constexpr static intmax toInt(String const& str) {
+		intmax res = 0;
+		intmax sign = 1;
+		SizeType start = 0;
+		NumberBase base = NumberBase::NB_DECIMAL;
+		if (str[0] == '-' || str[0] == '+') {
+			if (str[0] == '-') sign = -1;
+			++start;
+		}
+		if (str[start] == '0') {
+			switch (str[start+1]) {
+				default: return sign * toInt(str.substring(start+1, str.size()), 8)		break;
+				case 'o': return sign * toInt(str.substring(start+2, str.size()), 8)	break;
+				case 'x': return sign * toInt(str.substring(start+2, str.size()), 16)	break;
+				case 'b': return sign * toInt(str.substring(start+2, str.size()), 2)	break;
+				case 'd': return sign * toInt(str.substring(start+2, str.size()), 10)	break;
+			}
+		}
+		return sign * toInt(str.substring(start, str.size()), 10);
+	}
+
+	constexpr static intmax toInt(String const& str, uintmax const& base) {
+		intmax result = 0;
+		SizeType i = str.size();
+		for (DataType c: str) {
+			if (c - '0' > base)
+				invalidNumberError(str);
+			result += (c - '0') * pow(base, --i);
+		}
+		return result;
+	}
+
+private:
+	[[noreturn]] void invalidNumberError(String const& v) {
+		throw Error::InvalidValue(
+			"Value '" + v + "' is not a valid number!",
+			__FILE__,
+			toString(__LINE__)
+		);
 	}
 };
 
