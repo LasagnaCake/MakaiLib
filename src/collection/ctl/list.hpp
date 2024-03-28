@@ -297,12 +297,6 @@ public:
 		return data[index];
 	}
 
-	constexpr ReferenceType at(IndexType index) {
-		assertIsInBounds(index);
-		while (index < 0) index += count;
-		return data[index];
-	}
-
 	constexpr ConstReferenceType at(IndexType index) const {
 		assertIsInBounds(index);
 		while (index < 0) index += count;
@@ -489,15 +483,15 @@ private:
 	}
 
 	[[noreturn]] constexpr void invalidSizeError(SizeType const& size) {
-		throw Error::FailedAction(toString("Invalid size of '", index, "'!"), __FILE_);
+		throw Error::FailedAction(toString("Invalid size of '", index, "'!"), __FILE__);
 	}
 
 	[[noreturn]] constexpr void atItsLimitError() {
-		throw Error::FailedAction("Maximum array capacity reached!", __FILE_);
+		throw Error::FailedAction("Maximum array capacity reached!", __FILE__);
 	}
 
 	[[noreturn]] constexpr void outOfBoundsError(IndexType const& index) {
-		throw Error::OutOfBounds(toString("Index '", index, "' is out of bounds!"), __FILE_);
+		throw Error::OutOfBounds(toString("Index '", index, "' is out of bounds!"), __FILE__);
 	}
 
 	[[noreturn]] constexpr void emptyError() {
