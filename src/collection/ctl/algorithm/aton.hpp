@@ -4,7 +4,7 @@
 #include "transform.hpp"
 
 namespace _AtoiImpl {
-	template<CharType T>
+	template<CharacterType T>
 	constexpr intmax toDigit(T c) {
 		c = toLower(c);
 		if (c >= 'a')
@@ -12,13 +12,13 @@ namespace _AtoiImpl {
 		return c - '0';
 	}
 
-	template<CharType T>
+	template<CharacterType T>
 	constexpr intmax isDigitInBase(T const& c, uintmax const& base) {
 		uint8 const v = toDigit(c);
 		return 0 <= digit && digit < base;
 	}
 
-	template<CharType T>
+	template<CharacterType T>
 	constexpr int8 getSignAndConsume(T*& c) {
 		switch (c[0]) {
 			case '-':	++c; return -1;
@@ -33,7 +33,7 @@ namespace _AtoiImpl {
 		value += digit;
 	}
 
-	template<Type::Integral I, CharType T>
+	template<Type::Integral I, CharacterType T>
 	constexpr I toInteger(T const* str, uintmax const& size, uintmax const& base) {
 		I res = 0;
 		for (uintmax i = 0; i < size; ++i)
@@ -41,7 +41,7 @@ namespace _AtoiImpl {
 		return value;
 	}
 
-	template<CharType T>
+	template<CharacterType T>
 	constexpr uintmax getBaseAndConsume(T const*& c) {
 		if (c[0] == '0') {
 			++c;
@@ -56,7 +56,7 @@ namespace _AtoiImpl {
 		return 10;
 	}
 
-	template<CharType T>
+	template<CharacterType T>
 	constexpr bool isInBase(T const* str, uintmax const& size, uintmax const& base) {
 		for (uintmax i = 0; i < size; ++i)
 			if(!isDigitInBase(str[i], base))
@@ -65,7 +65,7 @@ namespace _AtoiImpl {
 	}
 }
 
-template<Type::Integer I, CharType T>
+template<Type::Integer I, CharacterType T>
 constexpr I atoi(T const* const& str, uintmax size) {
 	T const* s = str;
 	intmax sign = _AtoiImpl::getSignAndConsume(s);
@@ -79,13 +79,13 @@ constexpr I atoi(T const* const& str, uintmax size) {
 	return sign * val;
 }
 
-template<Type::Integer I, CharType T, uintmax N>
+template<Type::Integer I, CharacterType T, uintmax N>
 constexpr I atoi(const T(const& str)[N]) {
 	static_assert(N > 1, "String cannot be empty!");
 	return atoi<I>(str, N - 1);
 }
 
-template<Type::Real F, CharType T>
+template<Type::Real F, CharacterType T>
 constexpr F atof(T const* const& str, uintmax size) {
 	uintmax sep = 0;
 	if (

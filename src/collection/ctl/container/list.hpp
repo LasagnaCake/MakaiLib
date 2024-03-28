@@ -6,7 +6,7 @@
 
 #include "iterator.hpp"
 #include "../ctypes.hpp"
-#include "../conceptual.hpp"
+#include "../../conceptual.hpp"
 #include "../algorithm/sort.hpp"
 
 template<class T, Type::Integer I = size_t>

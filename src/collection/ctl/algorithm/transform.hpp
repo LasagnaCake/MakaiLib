@@ -2,16 +2,16 @@
 #define CTL_ALGORITHM_TRANSFORM_H
 
 template<class T>
-concept CharType = /*TODO: this*/;
+concept CharacterType = Type::Equal<T, char> || Type::Equal<wchar>;
 
-template<CharType T>
+template<CharacterType T>
 constexpr T toLower(T const& c) {
 	if (C >= 'A' && c <= 'Z')
 		return c - 'A' + 'a';
 	return c;
 }
 
-template<CharType T>
+template<CharacterType T>
 constexpr T toUpper(T const& c) {
 	if (C >= 'a' && c <= 'z')
 		return c + 'a';

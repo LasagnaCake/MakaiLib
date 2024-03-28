@@ -6,9 +6,6 @@
 #include "list.hpp"
 #include <stdlib.h>
 
-template<class T>
-concept CharacterType = Type::Equal<T, char> || Type::Equal<wchar>;
-
 template<CharacterType T, Type::Integer I = size_t>
 class BaseString: private List<T, I> {
 public:
@@ -19,8 +16,6 @@ public:
 	typedef std::basic_istream<DataType>	InputStreamType;
 	// Self type
 	typedef BaseString<DataType, IndexType>	SelfType;
-
-	using BaseType::List;
 
 	using BaseType::begin;
 	//using BaseType::end;
@@ -75,9 +70,8 @@ public:
 
 	constexpr SelfType& operator>>(SelfType const& other)	{popBack(); appendBack(other); return other;}
 
-	constexpr SelfType operator+(DataType const& value) const	{SelfType self(*this); self.popBack(); return self.pushBack(value);}
-
-	constexpr SelfType operator+(SelfType const& other) const	{SelfType self(*this); self.popBack(); return self + other;}
+	constexpr SelfType operator+(DataType const& value) const	{SelfType self(*this); self.popBack(); return self.pushBack(value);	}
+	constexpr SelfType operator+(SelfType const& other) const	{SelfType self(*this); self.popBack(); return self + other;			}
 
 	constexpr SelfType operator+(const DataType* const& str) const		{return (*this) + String(str);}
 	constexpr SelfType operator+(const DataType (const& str)[S]) const	{return (*this) + String(str);}
@@ -85,7 +79,6 @@ public:
 	constexpr SelfType operator+(const DataType* const& str, SelfType const& self) const		{return String(str) + self;}
 	constexpr SelfType operator+(const DataType (const& str)[S], SelfType const& self) const	{return String(str) + self;}
 
-	// TODO: Write '\0' checking
 	constexpr SelfType& operator+=(SelfType const& other)			{popBack(); return appendBack(other);	}
 	constexpr SelfType& operator+=(const DataType* const& str)		{popBack(); return appendBack(str);		}
 	constexpr SelfType& operator+=(const DataType (const& str)[S])	{popBack(); return appendBack(str);		}
