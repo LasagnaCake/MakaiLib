@@ -126,7 +126,7 @@ constexpr F atof(T const* const& str, uintmax size) {
 }
 
 template<Type::Integer I, CharacterType T>
-constexpr uintmax itoa(I val, I const& base, T* const& buf, uintmax const& bufSize){
+constexpr void itoa(I val, I const& base, T* const& buf, uintmax const& bufSize){
 	if (bufSize < 4) throw "ERROR: Buffer is too small!";
 	memset(buf, 0, bufSize);
 	uintmax
