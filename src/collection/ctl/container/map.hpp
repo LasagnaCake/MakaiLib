@@ -1,5 +1,5 @@
-#ifndef CTL_TYPE_MAP_H
-#define CTL_TYPE_MAP_H
+#ifndef CTL_CONTAINER_MAP_H
+#define CTL_CONTAINER_MAP_H
 
 #include "../conceptual.hpp"
 
@@ -15,4 +15,4 @@ public:
 private:
 };
 
-#endif // CTL_TYPE_MAP_H
+#endif // CTL_CONTAINER_MAP_H

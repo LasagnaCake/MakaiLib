@@ -1,5 +1,5 @@
-#ifndef CTL_TYPE_PAIR_H
-#define CTL_TYPE_PAIR_H
+#ifndef CTL_CONTAINER_PAIR_H
+#define CTL_CONTAINER_PAIR_H
 
 template<class K, class V>
 class Pair {
@@ -14,4 +14,4 @@ public:
 	union {KeyType right, second, b;	};
 };
 
-#endif // CTL_TYPE_PAIR_H
+#endif // CTL_CONTAINER_PAIR_H

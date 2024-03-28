@@ -1,13 +1,13 @@
-#ifndef STDLIB_TYPE_LIST_H
-#define CTL_TYPE_LIST_H
+#ifndef CTL_CONTAINER_LIST_H
+#define CTL_CONTAINER_LIST_H
 
 #include <initializer_list>
 #include <numeric_limits>
 
 #include "iterator.hpp"
-#include "ctypes.hpp"
+#include "../ctypes.hpp"
 #include "../conceptual.hpp"
-#include "algorithm.hpp"
+#include "../algorithm/sort.hpp"
 
 template<class T, Type::Integer I = size_t>
 class List {
@@ -180,7 +180,8 @@ public:
 		return SelfType(*this).sort();
 	}
 
-	constexpr IndexType find(DataType const& value) const {
+	constexpr IndexType find(DataType const& value) const
+	requires Type::Comparable::Equals<DataType, DataType> {
 		auto const start = begin();
 		for (auto i = start; i != end(); ++i)
 			if ((*i) == value)
@@ -188,7 +189,8 @@ public:
 		return -1;
 	}
 
-	constexpr IndexType reverseFind(DataType const& value) const {
+	constexpr IndexType rfind(DataType const& value) const
+	requires Type::Comparable::Equals<DataType, DataType> {
 		auto const start = rbegin();
 		for (auto i = start; i != rend(); ++i)
 			if ((*i) == value)
@@ -829,4 +831,4 @@ private:
 
 typedef List<uint8> BinaryData;
 
-#endif // CTL_TYPE_LIST_H
+#endif // CTL_CONTAINER_LIST_H

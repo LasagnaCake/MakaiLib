@@ -1,5 +1,5 @@
-#ifndef CTL_TYPE_STRING_H
-#define CTL_TYPE_STRING_H
+#ifndef CTL_CONTAINER_STRING_H
+#define CTL_CONTAINER_STRING_H
 
 #include <istream>
 #include <ostream>
@@ -29,7 +29,8 @@ public:
 	using BaseType::cbegin;
 	//using BaseType::cend;
 	using BaseType::find;
-	using BaseType::reverseFind;
+	using BaseType::rfind;
+	//using BaseType::size;
 	using BaseType::empty;
 	using BaseType::capacity;
 	using BaseType::clear;
@@ -42,19 +43,29 @@ public:
 	using BaseType::compare;
 	using BaseType::disparity;
 
+	constexpr BaseString() {pushBack('\0');}
+
 	constexpr BaseString(const DataType* const& v) {
 		size_t len = 0;
 		while (v[len++] != '\0');
-		reserve(len);
+		reserve(len+1);
 		memcpy(cbegin(), v, len * sizeof(DataType));
+		terminateString();
 	}
 
 	template<SizeType S>
 	constexpr BaseString(const DataType (const& v)[S]) {
-		reserve(S);
-		memcpy(cbegin(), v, len * sizeof(DataType));
-		if (v[S-1] != '\0') pushBack('\0');
+		reserve((v[S-1] != '\0') ? S+1 : S);
+		memcpy(cbegin(), v, S * sizeof(DataType));
+		terminateString();
 	}
+
+	constexpr BaseString(SizeType const& size):												List(size)			{					}
+	constexpr BaseString(SizeType const& size, DataType const& fill):						List(size+1, fill)	{back() = '\0';		}
+	constexpr BaseString(ArgumentListType const& values):									List(values)		{terminateString();	}
+	constexpr BaseString(SelfType const& other):											List(other)			{					}
+	constexpr BaseString(IteratorType const& begin, IteratorType const& end):				List(begin, end)	{terminateString();	}
+	constexpr BaseString(ReverseIteratorType const& begin, ReverseIteratorType const& end):	List(begin, end)	{terminateString();	}
 
 	constexpr OutputStreamType const& operator<<(OutputStreamType& o) const	{o << data; return out;}
 	constexpr OutputStreamType& operator<<(OutputStreamType& o)				{o << data; return out;}
@@ -96,8 +107,6 @@ public:
 		return String(begin() + start, begin() + (stop < size() ? stop : size())) + '\0';
 	}
 
-	constexpr ConstPointerType cstr() const {return cbegin();}
-
 	constexpr ReferenceType at(IndexType index) {
 		assertIsInBounds(index);
 		while (index < 0) index += size();
@@ -125,9 +134,17 @@ public:
 	constexpr PointerType		cend()			{return data+size();	}
 	constexpr ConstPointerType	cend() const	{return data+size();	}
 
+	constexpr ConstPointerType cstr() const	{return cbegin();}
+
 	constexpr SizeType size() const		{return BaseType::size()-1;		}
 
+	constexpr bool nullTerminated() {return List::back() != '\0';}
+
 private:
+	constexpr void terminateString() {
+		if (!nullTerminated()) pushBack('\0');
+	}
+
 	[[noreturn]] void invalidNumberError(String const& v) {
 		throw Error::InvalidValue(
 			"Value '" + v + "' is not a valid number!",
@@ -135,8 +152,6 @@ private:
 			toString(__LINE__)
 		);
 	}
-
-
 
 	void assertIsInBounds(IndexType const& index) {
 		if (index > size()-2) outOfBoundsError();
@@ -150,4 +165,4 @@ private:
 typedef BaseString<char>	String;
 typedef BaseString<wchar_t>	WideString;
 
-#endif // CTL_TYPE_STRING_H
+#endif // CTL_CONTAINER_STRING_H
