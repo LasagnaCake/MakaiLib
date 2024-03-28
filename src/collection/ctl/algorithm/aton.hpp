@@ -128,9 +128,18 @@ constexpr F atof(T const* const& str, uintmax size) {
 template<Type::Integer I, CharacterType T>
 constexpr uintmax itoa(I val, I const& base, T* const& buf, uintmax const& bufSize){
 	if (bufSize < 4) throw "ERROR: Buffer is too small!";
-	uintmax offset = 0;
+	memset(buf, 0, bufSize);
+	uintmax
+		offset = 0,
+		i = bufSize-2
+	;
+	if (!val) {
+		buf[0] = '0';
+		return;
+	}
 	if (val < 0) {
 		buf[0] = '-';
+		val = -val;
 		++offset;
 	}
 	if (base != 10) {
@@ -144,8 +153,6 @@ constexpr uintmax itoa(I val, I const& base, T* const& buf, uintmax const& bufSi
 			case 8:		break;
 		}
 	}
-	uintmax i = bufSize-2;
-	memset(buf, 0, bufSize);
 	for(; val && (i-offset) ; --i, val /= base)
 		buf[i] = "0123456789abcdef"[val % base];
 	memcpy(buf, buf+i, bufSize-i);
