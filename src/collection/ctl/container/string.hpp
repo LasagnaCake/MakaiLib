@@ -122,4 +122,22 @@ private:
 typedef BaseString<char>	String;
 typedef BaseString<wchar_t>	WideString;
 
+template<Type::Integer I>
+constexpr String toString(I const& val, uintmax const& base = 10) {
+	String result(64, '\0');
+	intmax i = itoa(val, result.cend(), result.size(), base);
+	if (i == -1)
+		throw String("ERROR: Invalid number!");
+	return result.resize(i);
+}
+
+template<Type::Float F>
+constexpr String toString(F const& val, uintmax const& precision = 16) {
+	String result(64, '\0');
+	intmax i = ftoa(val, result.cbegin(), result.size(), base);
+	if (i == -1)
+		throw String("ERROR: Invalid number!");
+	return result.resize(i);
+}
+
 #endif // CTL_CONTAINER_STRING_H
