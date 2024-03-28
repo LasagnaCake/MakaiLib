@@ -140,17 +140,17 @@ constexpr void itoa(I val, I const& base, T* const& buf, uintmax const& bufSize)
 		return;
 	}
 	if (val < 0) {
-		buf[0] = '-';
+		buf[offset] = '-';
 		val = -val;
 		++offset;
 	}
 	if (base != 10) {
-		buf[1] = '0';
+		buf[offset] = '0';
 		++offset;
 		switch (base) {
-			case 2:		buf[2] = 'b'; ++offset; break;
-			case 4:		buf[2] = 'q'; ++offset; break;
-			case 16:	buf[2] = 'x'; ++offset; break;
+			case 2:		buf[offset] = 'b'; ++offset; break;
+			case 4:		buf[offset] = 'q'; ++offset; break;
+			case 16:	buf[offset] = 'x'; ++offset; break;
 			default:
 			case 8:		break;
 		}
