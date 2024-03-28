@@ -19,6 +19,11 @@ namespace _AtoiImpl {
 	}
 
 	template<CharacterType T>
+	constexpr bool isSign(T const& c) {
+		return c == '-' || c == '+';
+	}
+
+	template<CharacterType T>
 	constexpr int8 getSignAndConsume(T*& c) {
 		switch (c[0]) {
 			case '-':	++c; return -1;
@@ -68,13 +73,22 @@ namespace _AtoiImpl {
 template<Type::Integer I, CharacterType T>
 constexpr I atoi(T const* const& str, uintmax size) {
 	T const* s = str;
+	if (size == 1) {
+		if (isDigitInBase(str[0], 10)) return toDigit(str[0]);
+		else throw "ERROR: Invalid number!";
+	}
+	if (
+		size == 2
+	&&	_AtoiImpl::isSign(str[0])
+	&&	isDigitInBase(str[1], 10)
+	) return toDigit(str[0]);
 	intmax sign = _AtoiImpl::getSignAndConsume(s);
-	if (size < s-str) throw "ERROR: String is too small!";
+	if (size < s-str) throw "ERROR: Invalid number!";
 	intmax base = _AtoiImpl::getBaseAndConsume(s);
-	if (size < s-str) throw "ERROR: String is too small!";
+	if (size < s-str) throw "ERROR: Invalid number!";
 	size -= s-str;
 	if (!_AtoiImpl::isInBase(s, size, base))
-		throw "ERROR: Integer value does not match base!";
+		throw "ERROR: Integer value does not match its base!";
 	intmax val = _AtoiImpl::toInteger<I>(s, size, base);
 	return sign * val;
 }
