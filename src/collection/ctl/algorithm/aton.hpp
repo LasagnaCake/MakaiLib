@@ -52,6 +52,7 @@ namespace _AtoiImpl {
 		if (c[0] == '0') {
 			++c;
 			switch (c[0]) {
+				case 'y':	++c; return 32;
 				case 'x':	++c; return 16;
 				case 'q':	++c; return 4;
 				case 'b':	++c; return 2;
@@ -151,13 +152,14 @@ constexpr void itoa(I val, I const& base, T* const& buf, uintmax const& bufSize)
 			case 2:		buf[offset] = 'b'; ++offset; break;
 			case 4:		buf[offset] = 'q'; ++offset; break;
 			case 16:	buf[offset] = 'x'; ++offset; break;
+			case 32:	buf[offset] = 'y'; ++offset; break;
 			default:
 			case 8:		break;
 		}
 	}
-	for(; val && (i-offset) ; --i, val /= base)
+	for(; val && (i-offset); --i, val /= base)
 		buf[i] = "0123456789abcdef"[val % base];
-	memcpy(buf, buf+i, bufSize-i);
+	memcpy(buf+offset, buf+offset+i, bufSize-i-offset);
 }
 
 #endif // CTL_ALGORITHM_ATOI_H
