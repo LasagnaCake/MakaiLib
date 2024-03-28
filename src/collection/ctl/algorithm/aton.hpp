@@ -52,6 +52,7 @@ namespace _AtoiImpl {
 			++c;
 			switch (c[0]) {
 				case 'x':	++c; return 16;
+				case 'q':	++c; return 4;
 				case 'b':	++c; return 2;
 				case 'd':	++c; return 10;
 				case 'o':	++c;
@@ -122,6 +123,32 @@ constexpr F atof(T const* const& str, uintmax size) {
 		return ival * __builtin_pow(10, -intmax(size-sep));
 	else
 		return ival * __builtin_powd(10, -intmax(size-sep));
+}
+
+template<Type::Integer I, CharacterType T>
+constexpr uintmax itoa(I val, I const& base, T* const& buf, uintmax const& bufSize){
+	if (bufSize < 4) throw "ERROR: Buffer is too small!";
+	uintmax offset = 0;
+	if (val < 0) {
+		buf[0] = '-';
+		++offset;
+	}
+	if (base != 10) {
+		buf[1] = '0';
+		++offset;
+		switch (base) {
+			case 2:		buf[2] = 'b'; ++offset; break;
+			case 4:		buf[2] = 'q'; ++offset; break;
+			case 16:	buf[2] = 'x'; ++offset; break;
+			default:
+			case 8:		break;
+		}
+	}
+	uintmax i = bufSize-2;
+	memset(buf, 0, bufSize);
+	for(; val && (i-offset) ; --i, val /= base)
+		buf[i] = "0123456789abcdef"[val % base];
+	memcpy(buf, buf+i, bufSize-i);
 }
 
 #endif // CTL_ALGORITHM_ATOI_H
