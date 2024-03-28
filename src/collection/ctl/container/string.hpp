@@ -131,7 +131,7 @@ private:
 typedef BaseString<char>	String;
 typedef BaseString<wchar_t>	WideString;
 
-template<Type::Integer I, CharacterType C, Type::Integer S = size_t>
+template<Type::Integer I, CharacterType C = char, Type::Integer S = size_t>
 constexpr BaseString<C, S> toString(I const& val, uintmax const& base = 10) {
 	BaseString<C, S> result(64, '\0');
 	intmax i = itoa(val, result.cbegin(), result.size(), base);
@@ -140,7 +140,7 @@ constexpr BaseString<C, S> toString(I const& val, uintmax const& base = 10) {
 	return result.reserve(i);
 }
 
-template<Type::Float F, CharacterType C, Type::Integer S = size_t>
+template<Type::Float F, CharacterType C = char, Type::Integer S = size_t>
 constexpr BaseString<C, S> toString(F const& val, uintmax const& precision = 16) {
 	BaseString<C, S> result(64, '\0');
 	intmax i = ftoa(val, result.cbegin(), result.size(), base);
