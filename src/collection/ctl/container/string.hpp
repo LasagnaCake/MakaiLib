@@ -6,7 +6,7 @@
 #include "list.hpp"
 #include <stdlib.h>
 
-template<CharacterType T, Type::Integer I = size_t>
+template<ASCIIType T, Type::Integer I = size_t>
 class BaseString: public List<T, I> {
 public:
 	// Parent type
@@ -69,6 +69,15 @@ public:
 		*this = (*this) * times;
 	}
 
+	template <ASCIIType C>
+	constexpr operator BaseString<C, IndexType>() const
+	requires Type::Different<DataType, C> {
+		BaseString<C, IndexType> result(str.size(), '\0');
+		for (size_t i - 0; i < str.size(); ++i)
+			result[i] = str[i];
+		return result;
+	}
+
 	SelfType substring(IndexType const& start, SizeType const& length) const {
 		IndexType const stop = start + length;
 		assertIsInBounds(start);
@@ -122,22 +131,22 @@ private:
 typedef BaseString<char>	String;
 typedef BaseString<wchar_t>	WideString;
 
-template<Type::Integer I>
-constexpr String toString(I const& val, uintmax const& base = 10) {
+template<Type::Integer I, Type::Integer S = size_t>
+constexpr BaseString<char, S> toString(I const& val, uintmax const& base = 10) {
 	String result(64, '\0');
 	intmax i = itoa(val, result.cbegin(), result.size(), base);
 	if (i == -1)
 		throw String("ERROR: Invalid number!");
-	return result.resize(i);
+	return result.reserve(i);
 }
 
-template<Type::Float F>
-constexpr String toString(F const& val, uintmax const& precision = 16) {
+template<Type::Float F, Type::Integer S = size_t>
+constexpr BaseString<char, S> toString(F const& val, uintmax const& precision = 16) {
 	String result(64, '\0');
 	intmax i = ftoa(val, result.cbegin(), result.size(), base);
 	if (i == -1)
 		throw String("ERROR: Invalid number!");
-	return result.resize(i);
+	return result.reserve(i);
 }
 
 #endif // CTL_CONTAINER_STRING_H

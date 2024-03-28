@@ -322,6 +322,15 @@ public:
 		return compare(other);
 	}
 
+	template <class T2>
+	constexpr explicit operator List<T2, IndexType>() const
+	requires (Type::Different<DataType, T2> && Type::Convertible<T, T2>) {
+		List<T2, IndexType> result(str.size(), '\0');
+		for (size_t i - 0; i < str.size(); ++i)
+			result[i] = T2(str[i]);
+		return result;
+	}
+
 	constexpr SizeType equals(SelfType const& other) const
 	requires Type::Comparable::Equals<DataType, DataType> {
 		bool result = true;

@@ -5,7 +5,7 @@
 
 // atoi implementation based off of https://stackoverflow.com/a/59537554
 namespace _AtoiImpl {
-	template<CharacterType T>
+	template<ASCIIType T>
 	constexpr intmax toDigit(T c) {
 		c = toLower(c);
 		if (c >= 'a')
@@ -13,18 +13,18 @@ namespace _AtoiImpl {
 		return c - '0';
 	}
 
-	template<CharacterType T>
+	template<ASCIIType T>
 	constexpr intmax isDigitInBase(T const& c, uintmax const& base) {
 		uint8 const v = toDigit(c);
 		return 0 <= digit && digit < base;
 	}
 
-	template<CharacterType T>
+	template<ASCIIType T>
 	constexpr bool isSign(T const& c) {
 		return c == '-' || c == '+';
 	}
 
-	template<CharacterType T>
+	template<ASCIIType T>
 	constexpr int8 getSignAndConsume(T*& c) {
 		switch (c[0]) {
 			case '-':	++c; return -1;
@@ -39,7 +39,7 @@ namespace _AtoiImpl {
 		value += digit;
 	}
 
-	template<Type::Integral I, CharacterType T>
+	template<Type::Integral I, ASCIIType T>
 	constexpr I toInteger(T const* str, uintmax const& size, uintmax const& base) {
 		I res = 0;
 		for (uintmax i = 0; i < size; ++i)
@@ -47,7 +47,7 @@ namespace _AtoiImpl {
 		return value;
 	}
 
-	template<CharacterType T>
+	template<ASCIIType T>
 	constexpr uintmax getBaseAndConsume(T const*& c) {
 		if (c[0] == '0') {
 			++c;
@@ -64,7 +64,7 @@ namespace _AtoiImpl {
 		return 10;
 	}
 
-	template<CharacterType T>
+	template<ASCIIType T>
 	constexpr bool isInBase(T const* str, uintmax const& size, uintmax const& base) {
 		for (uintmax i = 0; i < size; ++i)
 			if(!isDigitInBase(str[i], base))
@@ -73,7 +73,7 @@ namespace _AtoiImpl {
 	}
 }
 
-template<Type::Integer I, CharacterType T>
+template<Type::Integer I, ASCIIType T>
 constexpr bool atoi(T const* const& str, uintmax size, I& out) {
 	// Copy string pointer
 	T const* s = str;
@@ -104,13 +104,13 @@ constexpr bool atoi(T const* const& str, uintmax size, I& out) {
 	return true;
 }
 
-template<Type::Integer I, CharacterType T, uintmax S>
+template<Type::Integer I, ASCIIType T, uintmax S>
 constexpr bool atoi(const T(const& str)[S], I& out) {
 	static_assert(S, "String cannot be empty!");
 	return atoi<I>(str, S - 1, out);
 }
 
-template<Type::Real F, CharacterType T>
+template<Type::Real F, ASCIIType T>
 constexpr bool atof(T const* const& str, uintmax size, F& out) {
 	// If character is appended to the end, exclude it
 	if (
@@ -143,14 +143,14 @@ constexpr bool atof(T const* const& str, uintmax size, F& out) {
 	return true;
 }
 
-template<Type::Real F, CharacterType T, uintmax S>
+template<Type::Real F, ASCIIType T, uintmax S>
 constexpr bool atof(const T(const& str)[S], F& out) {
 	static_assert(S, "String cannot be empty!");
 	return atof<F>(str, S - 1, out);
 }
 
 // Based off of https://stackoverflow.com/a/3987783
-template<Type::Integer I, CharacterType T>
+template<Type::Integer I, ASCIIType T>
 constexpr intmax itoa(I val, T* const& buf, uintmax const& bufSize, I const& base = 10){
 	// If empty buffer, or buffer is too small for a non-decimal base
 	if ((!bufSize) || (bufSize < 4 && base != 10))
@@ -195,7 +195,7 @@ constexpr intmax itoa(I val, T* const& buf, uintmax const& bufSize, I const& bas
 	return offset+i+1;
 }
 
-template<Type::Real F, CharacterType T>
+template<Type::Real F, ASCIIType T>
 constexpr intmax ftoa(F val, T* const& buf, uintmax const& bufSize, uintmax const& precision = sizeof(F)*4) {
 	// Get amount of zeroes to add to number
 	uintmax zeroes = pow<F>(10, precision);
