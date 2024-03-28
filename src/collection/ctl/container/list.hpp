@@ -182,8 +182,8 @@ public:
 
 	constexpr IndexType find(DataType const& value) const
 	requires Type::Comparable::Equals<DataType, DataType> {
-		auto const start = begin();
-		for (auto i = start; i != end(); ++i)
+		auto const start = begin(), stop = end();
+		for (auto i = start; i != stop; ++i)
 			if ((*i) == value)
 				return i-start;
 		return -1;
@@ -191,8 +191,8 @@ public:
 
 	constexpr IndexType rfind(DataType const& value) const
 	requires Type::Comparable::Equals<DataType, DataType> {
-		auto const start = rbegin();
-		for (auto i = start; i != rend(); ++i)
+		auto const start = rbegin(), stop = rend();
+		for (auto i = start; i != stop; ++i)
 			if ((*i) == value)
 				return i-start;
 		return -1;
