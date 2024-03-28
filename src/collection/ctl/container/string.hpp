@@ -7,7 +7,7 @@
 #include <stdlib.h>
 
 template<CharacterType T, Type::Integer I = size_t>
-class BaseString: private List<T, I> {
+class BaseString: public List<T, I> {
 public:
 	// Parent type
 	typedef List<T, I> BaseType;
@@ -17,61 +17,35 @@ public:
 	// Self type
 	typedef BaseString<DataType, IndexType>	SelfType;
 
-	using BaseType::begin;
-	//using BaseType::end;
-	//using BaseType::rbegin;
-	using BaseType::rend;
-	using BaseType::cbegin;
-	//using BaseType::cend;
-	using BaseType::find;
-	using BaseType::rfind;
-	//using BaseType::size;
-	using BaseType::empty;
-	using BaseType::capacity;
-	using BaseType::clear;
-	using BaseType::dispose;
-	using BaseType::front;
-	//using BaseType::back;
-	using BaseType::operator==;
-	using BaseType::operator<=>;
-	using BaseType::equals;
-	using BaseType::compare;
-	using BaseType::disparity;
+	constexpr BaseString() {}
 
-	constexpr BaseString() {pushBack('\0');}
+	constexpr ~BaseString() {
+		delete[] strbuf;
+	}
 
 	constexpr BaseString(const DataType* const& v) {
 		size_t len = 0;
 		while (v[len++] != '\0');
 		reserve(len+1);
 		memcpy(cbegin(), v, len * sizeof(DataType));
-		terminateString();
 	}
 
 	template<SizeType S>
 	constexpr BaseString(const DataType (const& v)[S]) {
-		reserve((v[S-1] != '\0') ? S+1 : S);
+		reserve(S);
 		memcpy(cbegin(), v, S * sizeof(DataType));
-		terminateString();
 	}
 
-	constexpr BaseString(SizeType const& size):												List(size)			{					}
-	constexpr BaseString(SizeType const& size, DataType const& fill):						List(size+1, fill)	{back() = '\0';		}
-	constexpr BaseString(ArgumentListType const& values):									List(values)		{terminateString();	}
-	constexpr BaseString(SelfType const& other):											List(other)			{					}
-	constexpr BaseString(IteratorType const& begin, IteratorType const& end):				List(begin, end)	{terminateString();	}
-	constexpr BaseString(ReverseIteratorType const& begin, ReverseIteratorType const& end):	List(begin, end)	{terminateString();	}
+	constexpr OutputStreamType const& operator<<(OutputStreamType& o) const	{o << cstr(); return out;}
+	constexpr OutputStreamType& operator<<(OutputStreamType& o)				{o << cstr(); return out;}
 
-	constexpr OutputStreamType const& operator<<(OutputStreamType& o) const	{o << data; return out;}
-	constexpr OutputStreamType& operator<<(OutputStreamType& o)				{o << data; return out;}
+	constexpr SelfType const& operator<<(SelfType& other) const	{other.appendBack(*this); return *this;}
+	constexpr SelfType& operator<<(SelfType& other)				{other.appendBack(*this); return *this;}
 
-	constexpr SelfType const& operator<<(SelfType& other) const	{other.popBack(); other.appendBack(*this); return *this;}
-	constexpr SelfType& operator<<(SelfType& other)				{other.popBack(); other.appendBack(*this); return *this;}
+	constexpr SelfType& operator>>(SelfType const& other)	{appendBack(other); return other;}
 
-	constexpr SelfType& operator>>(SelfType const& other)	{popBack(); appendBack(other); return other;}
-
-	constexpr SelfType operator+(DataType const& value) const	{SelfType self(*this); self.popBack(); return self.pushBack(value);	}
-	constexpr SelfType operator+(SelfType const& other) const	{SelfType self(*this); self.popBack(); return self + other;			}
+	constexpr SelfType operator+(DataType const& value) const	{return SelfType(*this).pushBack(value);	}
+	constexpr SelfType operator+(SelfType const& other) const	{return (*this) + other;					}
 
 	constexpr SelfType operator+(const DataType* const& str) const		{return (*this) + String(str);}
 	constexpr SelfType operator+(const DataType (const& str)[S]) const	{return (*this) + String(str);}
@@ -79,9 +53,10 @@ public:
 	constexpr SelfType operator+(const DataType* const& str, SelfType const& self) const		{return String(str) + self;}
 	constexpr SelfType operator+(const DataType (const& str)[S], SelfType const& self) const	{return String(str) + self;}
 
-	constexpr SelfType& operator+=(SelfType const& other)			{popBack(); return appendBack(other);	}
-	constexpr SelfType& operator+=(const DataType* const& str)		{popBack(); return appendBack(str);		}
-	constexpr SelfType& operator+=(const DataType (const& str)[S])	{popBack(); return appendBack(str);		}
+	constexpr SelfType& operator+=(DataType const& value)			{return pushBack(value);	}
+	constexpr SelfType& operator+=(SelfType const& other)			{return appendBack(other);	}
+	constexpr SelfType& operator+=(const DataType* const& str)		{return appendBack(str);	}
+	constexpr SelfType& operator+=(const DataType (const& str)[S])	{return appendBack(str);	}
 
 	constexpr SelfType operator*(SizeType const& times) const {
 		SelfType result(size() * times);
@@ -97,46 +72,35 @@ public:
 	SelfType substring(IndexType const& start, SizeType const& length) const {
 		IndexType const stop = start + length;
 		assertIsInBounds(start);
-		return String(begin() + start, begin() + (stop < size() ? stop : size())) + '\0';
+		return String(begin() + start, begin() + (stop < size() ? stop : size()));
 	}
 
-	constexpr ReferenceType at(IndexType index) {
-		assertIsInBounds(index);
-		while (index < 0) index += size();
-		return data[index];
-	}
+	constexpr bool nullTerminated() const {return back() == '\0';}
 
-	constexpr ConstReferenceType at(IndexType index) const {
-		assertIsInBounds(index);
-		while (index < 0) index += size();
-		return data[index];
-	}
-
-	constexpr ReferenceType			operator[](IndexType const& index)			{return at(index);}
-	constexpr ConstReferenceType	operator[](IndexType const& index) const	{return at(index);}
-
-	constexpr ReferenceType 		back()			{return data[size()-1];	}
-	constexpr ConstReferenceType	back() const	{return data[size()-1];	}
-
-	constexpr IteratorType		end()			{return data+size();	}
-	constexpr ConstIteratorType	end() const		{return data+size();	}
-
-	constexpr ReverseIteratorType		rbegin()		{return data+size();	}
-	constexpr ConstReverseIteratorType	rbegin() const	{return data+size();	}
-
-	constexpr PointerType		cend()			{return data+size();	}
-	constexpr ConstPointerType	cend() const	{return data+size();	}
-
-	constexpr ConstPointerType cstr() const	{return cbegin();}
-
-	constexpr SizeType size() const		{return BaseType::size()-1;		}
-
-	constexpr bool nullTerminated() {return List::back() != '\0';}
-
-private:
 	constexpr void terminateString() {
 		if (!nullTerminated()) pushBack('\0');
 	}
+
+	constexpr ConstPointerType cstr() const {
+		if (strbuf) delete[] strbuf;
+		strbuf = new DataType[size()+1];
+		memcpy(strbuf, cbegin(), size());
+		strbuf[size()] = '\0';
+		return strbuf;
+	}
+
+	template<Type::Integer T>
+	constexpr static T toInt(SelfType const& str) {
+		return atoi<T>(str.cstr(), str.size());
+	}
+
+	template<Type::Real T>
+	constexpr static T toFloat(SelfType const& str) {
+		return atof<T>(str.cstr(), str.size());
+	}
+
+private:
+	PointerType mutable strbuf = nullptr;
 
 	[[noreturn]] void invalidNumberError(String const& v) {
 		throw Error::InvalidValue(
