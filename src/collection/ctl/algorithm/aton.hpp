@@ -3,6 +3,7 @@
 
 #include "transform.hpp"
 
+// atoi implementation based off of https://stackoverflow.com/a/59537554
 namespace _AtoiImpl {
 	template<CharacterType T>
 	constexpr intmax toDigit(T c) {
@@ -125,6 +126,7 @@ constexpr F atof(T const* const& str, uintmax size) {
 		return ival * __builtin_powd(10, -intmax(size-sep));
 }
 
+// Based off of https://stackoverflow.com/a/3987783
 template<Type::Integer I, CharacterType T>
 constexpr void itoa(I val, I const& base, T* const& buf, uintmax const& bufSize){
 	if (bufSize < 4) throw "ERROR: Buffer is too small!";
