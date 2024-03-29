@@ -92,6 +92,7 @@ public:
 
 	constexpr ConstPointerType cstr() const {
 		if (strbuf) delete[] strbuf;
+		if (str.back() == '\0') return cbegin();
 		strbuf = new DataType[size()+1];
 		memcpy(strbuf, cbegin(), size());
 		strbuf[size()] = '\0';
