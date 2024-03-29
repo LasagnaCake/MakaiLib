@@ -3,8 +3,10 @@
 
 #include <istream>
 #include <ostream>
-#include "list.hpp"
 #include <stdlib.h>
+
+#include "list.hpp"
+#include "../typeinfo.hpp"
 
 template<ASCIIType T, Type::Integer I = size_t>
 class BaseString: public List<T, I> {
@@ -24,9 +26,9 @@ public:
 	}
 
 	constexpr BaseString(const DataType* const& v) {
-		size_t len = 0;
-		while (v[len++] != '\0');
-		reserve(len+1);
+		SizeType len = 0;
+		while (v[len++] != '\0' && len != TypeInfo<SizeType>::HIGHEST);
+		reserve(len);
 		memcpy(cbegin(), v, len * sizeof(DataType));
 	}
 
@@ -92,8 +94,9 @@ public:
 
 	constexpr ConstPointerType cstr() const {
 		if (strbuf) delete[] strbuf;
-		if (str.back() == '\0') return cbegin();
-		strbuf = new DataType[size()+1];
+		if (nullTerminated()) return cbegin();
+		strbuflen = size() + 1;
+		strbuf = new DataType[strbuflen];
 		memcpy(strbuf, cbegin(), size());
 		strbuf[size()] = '\0';
 		return strbuf;
@@ -110,7 +113,8 @@ public:
 	}
 
 private:
-	PointerType mutable strbuf = nullptr;
+	PointerType mutable	strbuf		= nullptr;
+	size_t mutable		strbuflen	= 0;
 
 	[[noreturn]] void invalidNumberError(String const& v) {
 		throw Error::InvalidValue(

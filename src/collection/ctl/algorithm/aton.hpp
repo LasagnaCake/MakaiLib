@@ -2,6 +2,7 @@
 #define CTL_ALGORITHM_ATOI_H
 
 #include "transform.hpp"
+#include "../cmath.hpp"
 
 // atoi implementation based off of https://stackoverflow.com/a/59537554
 namespace _AtoiImpl {
