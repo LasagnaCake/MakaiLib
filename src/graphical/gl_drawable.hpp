@@ -77,6 +77,8 @@ private:
 template<Type::Derived<Material::BaseObjectMaterial> T>
 class DrawableObject: public Drawable, public Drawer::Blendable {
 public:
+	typedef T MaterialType;
+
 	DrawableObject(size_t layer = 0, bool manual = false): Drawable(layer, manual){
 		DEBUGLN("Drawable object created!");
 		glGenVertexArrays(1, &vao);
@@ -168,3 +170,8 @@ protected:
 
 	GLuint vao, vbo;
 };
+
+template<class T>
+concept DrawableObjectType = requires {
+	typename T::MaterialType;
+} && Type::Subclass<T, DrawableObject<typename T::MaterialType>>;

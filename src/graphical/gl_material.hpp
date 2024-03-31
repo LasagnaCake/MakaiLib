@@ -299,7 +299,9 @@ struct BufferMaterial: BaseBufferMaterial {
 	BufferDebugView	debug	= BufferDebugView::BDV_NONE;
 };
 
-struct WorldMaterial {
+struct BaseWorldMaterial {};
+
+struct WorldMaterial: BaseWorldMaterial {
 	FogEffect		nearFog;
 	FogEffect		farFog;
 	AmbientEffect	ambient;
@@ -498,6 +500,18 @@ void setMaterial(Shader& shader, WorldMaterial& material) {
 	shader["ambientColor"](material.ambient.color);
 	shader["ambientStrength"](material.ambient.strength);
 }
+
+template<class T, class BASE>
+concept ValidMaterial =
+	Type::Derived<T, BASE>
+&&	requires (Shader& s, T& mat) {
+		setMaterial(s, mat);
+	}
+;
+
+template<class T> concept UsableObjectMaterial	= ValidMaterial<T, BaseObjectMaterial>;
+template<class T> concept UsableBufferMaterial	= ValidMaterial<T, BaseBufferMaterial>;
+template<class T> concept UsableWorldMaterial	= ValidMaterial<T, BaseWorldMaterial>;
 
 JSONData saveImageEffect(ImageEffect& effect, String const& folder, String const& path) {
 	JSONData def;

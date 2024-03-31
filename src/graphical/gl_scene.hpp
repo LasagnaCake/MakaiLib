@@ -1,37 +1,37 @@
-class Scene3D: public Base::Drawable {
+template<class T>
+concept UsableCameraType = Type::Convertible<T, Camera::Camera3D>;
+
+template<Base::DrawableObjectType T, Material::UsableWorldMaterial W, UsableCameraType C>
+class BaseScene: public Base::Drawable {
 public:
+	typedef T DrawableType;
+	typedef W WorldMaterialType;
+	typedef C CameraType;
+
 	constexpr static size_t version = 0;
 
-	typedef Pair<String, Renderable*>		RenderableEntry;
-	typedef SortedDictionary<Renderable*>	RenderableBank;
+	typedef Pair<String, DrawableType*>		DrawableEntry;
+	typedef SortedDictionary<DrawableType*>	DrawableBank;
 
-	Scene3D(size_t layer = 0, bool manual = false): Drawable(layer, manual) {}
+	BaseScene(size_t layer = 0, bool manual = false): Drawable(layer, manual) {}
 
-	Scene3D(size_t layer, String const& path, bool manual = false): Scene3D(layer, manual) {
-		extendFromSceneFile(path);
-	}
-
-	Scene3D(Scene3D* const& other, size_t layer, bool manual = false): Scene3D(layer, manual) {
+	BaseScene(BaseScene* const& other, size_t layer, bool manual = false): BaseScene(layer, manual) {
 		extend(other);
 	}
 
-	Scene3D(Scene3D& other, size_t layer, bool manual = false): Scene3D(layer, manual) {
+	BaseScene(BaseScene& other, size_t layer, bool manual = false): BaseScene(layer, manual) {
 		extend(other);
 	}
 
-	virtual ~Scene3D() {
+	virtual ~BaseScene() {
 		destroy();
 	}
 
 	VecMath::Transform3D	global;
-	Camera::GimbalCamera3D	camera;
-	Material::WorldMaterial	world;
+	CameraType				camera;
+	WorldMaterialType		world;
 
-	void extendFromSceneFile(String const& path) {
-		extendFromDefinition(FileLoader::getJSON(path), FileSystem::getDirectoryFromPath(path));
-	}
-
-	void extend(Scene3D* const& other) {
+	void extend(BaseScene* const& other) {
 		if (!other) return;
 		for(auto& [name, obj]: other->objects) {
 			auto [_, nobj] = createObject(name);
@@ -66,7 +66,7 @@ public:
 		world	= other->world;
 	}
 
-	void extend(Scene3D& other) {
+	void extend(BaseScene& other) {
 		extend(&other);
 	}
 
@@ -75,6 +75,115 @@ public:
 		for (auto& [n, o]: objs)
 			delete o;
 		objects.clear();
+	}
+
+	DrawableEntry createObject(String name = "") {
+		#ifdef MAKAILIB_SCENE_ERROR_IF_DUPLICATE_NAME
+		if (objects.contains(name))
+			throw Error::InvalidValue(
+				"Object of name '"+name+"' already exists!",
+				__FILE__,
+				toString(__LINE__),
+				"createObject"
+			);
+		#endif // MAKAILIB_SCENE_ERROR_IF_DUPLICATE_NAME
+		DrawableType* r = nullptr;
+		if (name.empty())	name = validateName("unnamed");
+		else				name = validateName(name);
+		objects[name] = (r = new DrawableType(0, true));
+		return DrawableEntry{name, r};
+	}
+
+	void deleteObject(DrawableType* const& obj) {
+		if (obj)
+			for (auto& [k, v]: objects)
+				if (obj == v) {
+					objects.erase(k);
+					delete obj;
+					break;
+				}
+	}
+
+	void deleteObject(String const& name = "") {
+		if (!objects.contains(name)) return;
+		delete objects[name];
+		objects.erase(name);
+	}
+
+	inline DrawableBank getObjects() {
+		return objects;
+	}
+
+	String getNameOfObject(DrawableType* const& obj) {
+		String name = "";
+		if (obj)
+			for (auto& [k, v]: objects)
+				if (obj == v)
+					name = k;
+		return name;
+	}
+
+	DrawableType* getObject(String const& name) {
+		if (!objects.contains(name))
+			return nullptr;
+		return objects[name];
+	}
+
+	inline DrawableType* operator[](String const& name) {
+		return getObject(name);
+	}
+
+	static bool isValidName(String const& name) {
+		return regexContains(name, "([\\cA-\\cZ]|[ \\t\"\\\\/?*<>:|])");
+	}
+
+protected:
+	String validateName(String const& name) {
+		if (!isValidName(name))
+			throw Error::InvalidValue(
+				"Name must not contain control and/or specific characters!",
+				__FILE__,
+				toString(__LINE__),
+				"validateName",
+				"Name must not contain control characters, and the following:"
+				"\n- newlines, spaces or tabs"
+				"\n- \\, /, ?, *, <, >, :, \" and/or |"
+			);
+		String newName = name;
+		size_t i = 0;
+		while (objects.contains(newName))
+			newName = name + toString(i++);
+		return newName;
+	}
+
+private:
+	DrawableBank objects;
+
+	void draw() override {
+		auto lastcam = Scene::camera;
+		auto lastmat = Scene::world;
+		Scene::camera	= camera;
+		Scene::world	= Matrix4x4(global);
+		Material::setMaterial(MAIN_SHADER, world);
+		for(auto& [_, obj]: objects)
+			obj->render();
+		Scene::camera	= lastcam;
+		Scene::world	= lastmat;
+	}
+};
+
+class Scene3D: public BaseScene<Renderable, Material::WorldMaterial, Camera::GimbalCamera3D> {
+public:
+	typedef BaseScene<Renderable, Material::WorldMaterial, Camera::GimbalCamera3D> BaseType;
+
+	using BaseType::BaseScene;
+
+	Scene3D(size_t layer, String const& path, bool manual = false): BaseScene(layer, manual) {
+		extendFromSceneFile(path);
+	}
+
+	void extendFromSceneFile(String const& path) {
+		extendFromDefinition(FileLoader::getJSON(path), FileSystem::getDirectoryFromPath(path));
 	}
 
 	void saveToSceneFile(
@@ -89,7 +198,7 @@ public:
 		JSONData file = getSceneDefinition(integratedObjects, integratedObjectBinaries, integratedObjectTextures);
 		vector<JSONData> objpaths;
 		FileSystem::makeDirectory(folder);
-		for (auto& [objname, obj]: objects) {
+		for (auto& [objname, obj]: getObjects()) {
 			String folderpath	= FileSystem::concatenatePath(folder, objname);
 			String objpath		= FileSystem::concatenatePath(folder, objname);
 			if (!integratedObjects) {
@@ -145,87 +254,7 @@ public:
 		FileLoader::saveTextFile(FileSystem::concatenatePath(folder, name) + ".msd", contents);
 	}
 
-	RenderableEntry createObject(String name = "") {
-		#ifdef MAKAILIB_SCENE_ERROR_IF_DUPLICATE_NAME
-		if (objects.contains(name))
-			throw Error::InvalidValue(
-				"Object of name '"+name+"' already exists!",
-				__FILE__,
-				toString(__LINE__),
-				"createObject"
-			);
-		#endif // MAKAILIB_SCENE_ERROR_IF_DUPLICATE_NAME
-		Renderable* r = nullptr;
-		if (name.empty())	name = validateName("unnamed");
-		else				name = validateName(name);
-		objects[name] = (r = new Renderable(0, true));
-		return RenderableEntry{name, r};
-	}
-
-	void deleteObject(Renderable* const& obj) {
-		if (obj)
-			for (auto& [k, v]: objects)
-				if (obj == v) {
-					objects.erase(k);
-					delete obj;
-					break;
-				}
-	}
-
-	void deleteObject(String const& name = "") {
-		if (!objects.contains(name)) return;
-		delete objects[name];
-		objects.erase(name);
-	}
-
-	inline RenderableBank getObjects() {
-		return objects;
-	}
-
-	String getNameOfObject(Renderable* const& obj) {
-		String name = "";
-		if (obj)
-			for (auto& [k, v]: objects)
-				if (obj == v)
-					name = k;
-		return name;
-	}
-
-	Renderable* getObject(String const& name) {
-		if (!objects.contains(name))
-			return nullptr;
-		return objects[name];
-	}
-
-	inline Renderable* operator[](String const& name) {
-		return getObject(name);
-	}
-
-	static bool isValidName(String const& name) {
-		return regexContains(name, "([\\cA-\\cZ]|[ \\t\"\\\\/?*<>:|])");
-	}
-
 private:
-	RenderableBank objects;
-
-	String validateName(String const& name) {
-		if (!isValidName(name))
-			throw Error::InvalidValue(
-				"Name must not contain control and/or specific characters!",
-				__FILE__,
-				toString(__LINE__),
-				"validateName",
-				"Name must not contain control characters, and the following:"
-				"\n- newlines, spaces or tabs"
-				"\n- \\, /, ?, *, <, >, :, \" and/or |"
-			);
-		String newName = name;
-		size_t i = 0;
-		while (objects.contains(newName))
-			newName = name + toString(i++);
-		return newName;
-	}
-
 	void extendFromDefinition(
 		JSONData const& def,
 		String const& sourcepath
@@ -351,7 +380,7 @@ private:
 		JSONData def;
 		def["version"] = version;
 		if (integratedObjects)
-			for (auto& [name, obj]: objects)
+			for (auto& [name, obj]: getObjects())
 				def["data"][name] = obj->getObjectDefinition("base64", integratedObjectBinaries, integratedObjectTextures);
 		Camera::Camera3D cam = camera;
 		def["camera"] = {
@@ -386,17 +415,5 @@ private:
 			}}
 		};
 		return def;
-	}
-
-	void draw() override {
-		auto lastcam = Scene::camera;
-		auto lastmat = Scene::world;
-		Scene::camera	= camera;
-		Scene::world	= Matrix4x4(global);
-		Material::setMaterial(MAIN_SHADER, world);
-		for(auto& [_, obj]: objects)
-			obj->render();
-		Scene::camera	= lastcam;
-		Scene::world	= lastmat;
 	}
 };
