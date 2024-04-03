@@ -4,11 +4,7 @@
 #include "iterator.hpp"
 
 template<class T>
-concept SortableIteratorType = requires {
-	typename T::SizeType;
-	typename T::IndexType;
-	typename T::DataType;
-} && Type::Derived<T, Iterator<typename T::DataType, typename T::IndexType>>;
+concept SortableIteratorType = IteratorType<T>;
 
 template<class T>
 constexpr void swap(T& a T& b) {

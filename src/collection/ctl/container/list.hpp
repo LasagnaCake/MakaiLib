@@ -8,6 +8,7 @@
 #include "../ctypes.hpp"
 #include "../../conceptual.hpp"
 #include "../algorithm/sort.hpp"
+#include "../algorithm/reverse.hpp"
 
 template<class T, Type::Integer I = size_t>
 class List {
@@ -163,13 +164,12 @@ public:
 	}
 
 	constexpr SelfType& reverse() {
-		SelfType buf(end(), begin());
-		copy(buf.data, data, count);
+		::reverse(begin(), end());
 		return *this;
 	}
 
 	constexpr SelfType reversed() const {
-		return SelfType(rbegin(), rend());
+		return SelfType(*this).reverse();
 	}
 
 	constexpr SelfType& sort() {

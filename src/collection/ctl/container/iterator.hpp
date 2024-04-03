@@ -46,8 +46,8 @@ public:
 	constexpr OrderType operator<=>(Iterator const& other) const	{return compare(other.iterand);		}
 
 	constexpr SizeType operator-(Iterator const& other)	const	{return difference<REVERSE>(other.iterand);	}
-	constexpr Iterator operator-(IndexType const& value) const	{return difference<REVERSE>(value);			}
-	constexpr Iterator operator+(IndexType const& value) const	{return difference<!REVERSE>(value);		}
+	constexpr Iterator operator-(IndexType const& value) const	{return offset<REVERSE>(value);				}
+	constexpr Iterator operator+(IndexType const& value) const	{return offset<REVERSE>(value);				}
 
 private:
 	constexpr void step() {
@@ -65,10 +65,9 @@ private:
 		else					return iterand - other;
 	}
 
-	template <bool FLIP>
 	constexpr PointerType offset(IndexType const& value) const {
-		if constexpr (FLIP)	return iterand + value;
-		else				return iterand - value;
+		if constexpr (REVERSE)	return iterand + value;
+		else					return iterand - value;
 	}
 
 	PointerType iterand = nullptr;
@@ -78,5 +77,14 @@ template<class T>
 using ForwardIterator = Iterator<T, false>;
 template<class T>
 using ReverseIterator = Iterator<T, true>;
+
+
+
+template<class T>
+concept IteratorType = requires {
+	typename T::SizeType;
+	typename T::IndexType;
+	typename T::DataType;
+} && Type::Derived<T, Iterator<typename T::DataType, typename T::IndexType>>;
 
 #endif // CTL_CONTAINER_ITERATOR_H
