@@ -45,94 +45,38 @@ public:
 	virtual ~Renderable() {
 		locked = false;
 		DEBUGLN("Renderable!");
-		DEBUGLN(references.plane.size());
 		DEBUGLN("Deleting references...");
 		clearData();
 		DEBUGLN("Killing renderable object...");
 	}
 
 	/// Creates a reference and binds it to this object.
-	template <Reference::PlaneType T>
+	template<Reference::ShapeType T>
 	[[nodiscard]] T* createReference() {
+		constexpr size_t count = T::triangleCount;
 		if (locked) throw Error::InvalidAction("Renderable object is locked!");
-		Triangle* tris[2] = {
-			new Triangle(),
-			new Triangle()
-		};
-		// Add triangles
-		triangles.push_back(tris[0]);
-		triangles.push_back(tris[1]);
-		// Create reference
-		T* plane = new T(tris);
-		// Setup plane
-		plane->setOrigin(
-			Vector3(-1.0, +1.0, 0.0),
-			Vector3(+1.0, +1.0, 0.0),
-			Vector3(-1.0, -1.0, 0.0),
-			Vector3(+1.0, -1.0, 0.0)
-		);
-		plane->setUV(
-			Vector2(+0.0, +1.0),
-			Vector2(+1.0, +1.0),
-			Vector2(+0.0, +0.0),
-			Vector2(+1.0, +0.0)
-		);
-		plane->setColor();
-		plane->setNormal(
-			Vector3(+0.0, +0.0, -1.0)
-		);
-		// Add to reference list
-		references.plane.push_back(plane);
+		Triangle* tris[count] = {nullptr};
+		// Create triangles
+		for SSRANGE(i, 0, count) {
+			tris[i] = new Triangle();
+			triangles.push_back(tris[i]);
+		}
+		// Create shape
+		T* shape = new T(tris);
 		// Set destructor function
-		plane->onDestroy =	[this, plane](){this->removeReference<T>(plane);};
-		plane->onUnbind =	[this, plane](){this->unbindReference<T>(plane);};
-		// return plane
-		return plane;
-	}
-
-	template <Reference::TrigonType T>
-	[[nodiscard]] T* createReference() {
-		if (locked) throw Error::InvalidAction("Renderable object is locked!");
-		Triangle* tris[1] = {new Triangle()};
-		// Add triangles
-		triangles.push_back(tris[0]);
-		// Create reference
-		T* tg = new T(tris);
-		// Setup trigon
-		tg->setOrigin(
-			Vector3(-0.0, +1.0, 0.0),
-			Vector3(-1.0, -1.0, 0.0),
-			Vector3(+1.0, -1.0, 0.0)
-		);
-		tg->setUV(
-			Vector2(+0.5, +1.0),
-			Vector2(+0.0, +0.0),
-			Vector2(+1.0, +0.0)
-		);
-		tg->setColor();
-		tg->setNormal(
-			Vector3(+0.0, +0.0, -1.0)
-		);
+		shape->onDestroy =	[this, shape](){this->removeReference<T>(shape);};
+		shape->onUnbind =	[this, shape](){this->unbindReference<T>(shape);};
 		// Add to reference list
-		references.trigon.push_back(tg);
-		// Set destructor function
-		tg->onDestroy =	[this, tg](){this->removeReference<T>(tg);};
-		tg->onUnbind =	[this, tg](){this->unbindReference<T>(tg);};
-		// return trigon
-		return tg;
+		references.shape.push_back((Reference::Shape<0>*)shape);
+		// return shape
+		return shape;
 	}
 
 	/// Gets a reference bound to this object by index.
-	template <Reference::PlaneType T>
+	template <Reference::ShapeType T>
 	inline T* getReference(size_t index) {
 		if (locked) throw Error::InvalidAction("Renderable object is locked!");
-		return (T*)references.plane[index];
-	}
-
-	template <Reference::TrigonType T>
-	inline T* getReference(size_t index) {
-		if (locked) throw Error::InvalidAction("Renderable object is locked!");
-		return (T*)references.trigon[index];
+		return (T*)references.shape[index];
 	}
 
 	/**
@@ -142,31 +86,17 @@ public:
 	* and the triangles associated to it.
 	* It also deletes the reference.
 	*/
-	template <Reference::PlaneType T>
+	template <Reference::ShapeType T>
 	void removeReference(T* ref) {
 		if (!ref) return;
 		if (locked) return;
+		constexpr size_t count = T::triangleCount;
 		auto tris = ref->getBoundTriangles();
 		if (!triangles.empty()) std::erase_if(
 			triangles,
 			[=](Triangle* e){
-				if (e == tris[0]) {delete tris[0]; return true;}
-				if (e == tris[1]) {delete tris[1]; return true;}
-				return false;
-			}
-		);
-		unbindReference<T>(ref);
-	}
-
-	template <Reference::TrigonType T>
-	void removeReference(T* ref) {
-		if (!ref) return;
-		if (locked) return;
-		auto tris = ref->getBoundTriangles();
-		if (!triangles.empty())std::erase_if(
-			triangles,
-			[=](Triangle* e){
-				if (e == tris[0]) {delete tris[0]; return true;}
+				for SSRANGE(i, 0, count)
+					if (e == tris[i]) {delete tris[i]; return true;}
 				return false;
 			}
 		);
@@ -180,21 +110,12 @@ public:
 	* but keeps the triangles associated to it.
 	* It also deletes the reference.
 	*/
-	template <Reference::PlaneType T>
+	template <Reference::ShapeType T>
 	void unbindReference(T* ref) {
 		if (!ref) return;
 		if (locked) return;
-		auto& rp = references.plane;
-		ERASE_IF(rp, elem == ref);
-		delete ref;
-	}
-
-	template <Reference::TrigonType T>
-	void unbindReference(T* ref) {
-		if (!ref) return;
-		if (locked) return;
-		auto& rp = references.trigon;
-		ERASE_IF(rp, elem == ref);
+		auto& rs = references.shape;
+		ERASE_IF(rs, elem == (Reference::Shape<0>*)ref);
 		delete ref;
 	}
 
@@ -269,21 +190,17 @@ public:
 		if (!baked || locked) return;
 		baked = false;
 		// Clear vertex buffer
-		delete [] vertices;
+		delete[] vertices;
 		vertices = nullptr;
 	}
 
 	void clearData() {
 		if (vertices && !locked)
 			delete [] vertices;
-		if (!references.plane.empty())
-			for (auto pr: references.plane)
-				delete pr;
-		if (!references.trigon.empty())
-			for (auto pr: references.trigon)
-				delete pr;
-		references.plane.clear();
-		references.trigon.clear();
+		if (!references.shape.empty())
+			for (auto sr: references.shape)
+				delete sr;
+		references.shape.clear();
 		if (!triangles.empty())
 			for (auto t: triangles)
 				delete t;
@@ -342,9 +259,7 @@ private:
 		if (!triangles.size()) return;
 		// Transform references (if applicable)
 		GRAPHICAL_PARALLEL_FOR
-		for (auto& plane: references.plane)	plane->transform();
-		GRAPHICAL_PARALLEL_FOR
-		for (auto& tg: references.trigon)	tg->transform();
+		for (auto& shape: references.shape)	shape->transform();
 		// Copy data to vertex buffer
 		// Get vertex count
 		vertexCount = triangles.size() * 3;
@@ -362,9 +277,7 @@ private:
 		}
 		// De-transform references (if applicable)
 		GRAPHICAL_PARALLEL_FOR
-		for (auto& plane: references.plane)	plane->reset();
-		GRAPHICAL_PARALLEL_FOR
-		for (auto& tg: references.trigon)	tg->reset();
+		for (auto& shape: references.shape)	shape->reset();
 	}
 
 	void draw() override {
@@ -381,8 +294,7 @@ private:
 
 	/// List of references linked to this object.
 	struct {
-		vector<Reference::Plane*>	plane;
-		vector<Reference::Trigon*>	trigon;
+		List<Reference::Shape<0>*>	shape;
 	} references;
 
 	/// The amount of vertices this object has.

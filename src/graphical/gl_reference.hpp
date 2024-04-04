@@ -1,61 +1,88 @@
-typedef std::function<void(RawVertex&)> VertexFunc;
+typedef Function<void(RawVertex&)> VertexFunc;
 
 struct Empty {
-	virtual void onTransform() {}
-	virtual Empty* reset() {return this;}
-	virtual Empty* transform() {return this;}
-	virtual Triangle** getBoundTriangles() {return nullptr;}
-	virtual void forEachVertex(VertexFunc const& f) {};
 	void destroy()	{onDestroy();}
 	void unbind()	{onUnbind();}
-	bool fixed = true;
-	bool visible = true;
-	Transform3D local;
-	virtual ~Empty() {onDestroy = onUnbind = [](){};};
+	virtual ~Empty() {onDestroy = onUnbind = []{};};
 	friend class RenderData::Renderable;
 private:
 	Event::Signal onDestroy;
 	Event::Signal onUnbind;
 };
 
+template<size_t COUNT>
+struct Shape: public Empty {
+	constexpr static size_t triangleCount = COUNT;
+
+	Shape(Triangle* const(& tris)[triangleCount]) {
+		for SSRANGE(i, 0, triangleCount)
+			this->tris[i] = tris[i];
+	}
+
+	virtual ~Shape() {
+		DEBUGLN("Deleting bound triangles (", triangleCount, ")...");
+		delete[] tris;
+	};
+
+	virtual Shape* reset()		= 0;
+	virtual Shape* transform()	= 0;
+
+	typedef Span<Triangle*, triangleCount> Triangles;
+
+	Triangles getBoundTriangles() {
+		return Triangles(tris, 2);
+	}
+
+	virtual void forEachVertex(VertexFunc const& f) {
+		for SSRANGE(i, 0, triangleCount)
+			for SSRANGE(j, 0, 3)
+				f(((RawVertex*)tris[i])[j]);
+	};
+
+	bool fixed		= true;
+	bool visible	= true;
+
+	Transform3D local;
+
+	friend class RenderData::Renderable;
+protected:
+	Triangle** tris = new Triangle*[triangleCount](nullptr);
+};
+
 // [[ PLANES ]]
 
-class Plane: public Empty {
+class Plane: public Shape<2> {
 public:
 	Plane(
-		Triangle* const (&tris)[2]
-	) {
-		this->tris[0]	= tris[0];
-		this->tris[1]	= tris[1];
+		Triangle* const(& tris)[2]
+	): Shape<2>(tris) {
+		// Get vertices
 		this->tl	= &(tris[0]->verts[0]);
 		this->tr1	= &(tris[0]->verts[1]);
 		this->tr2	= &(tris[1]->verts[0]);
 		this->bl1	= &(tris[0]->verts[2]);
 		this->bl2	= &(tris[1]->verts[1]);
 		this->br	= &(tris[1]->verts[2]);
+		// Setup plane
+		this->setOrigin(
+			Vector3(-1.0, +1.0, 0.0),
+			Vector3(+1.0, +1.0, 0.0),
+			Vector3(-1.0, -1.0, 0.0),
+			Vector3(+1.0, -1.0, 0.0)
+		);
+		this->setUV(
+			Vector2(+0.0, +1.0),
+			Vector2(+1.0, +1.0),
+			Vector2(+0.0, +0.0),
+			Vector2(+1.0, +0.0)
+		);
+		this->setColor();
+		this->setNormal(
+			Vector3(+0.0, +0.0, -1.0)
+		);
 	}
 
-	Plane(
-		RawVertex* const& tl,
-		RawVertex* const& tr1,
-		RawVertex* const& tr2,
-		RawVertex* const& bl1,
-		RawVertex* const& bl2,
-		RawVertex* const& br
-	) {
-		this->tl	= tl;
-		this->tr1	= tr1;
-		this->tr2	= tr2;
-		this->bl1	= bl1;
-		this->bl2	= bl2;
-		this->br	= br;
-	}
-
-	virtual ~Plane() {
-		Empty::~Empty();
-		tl = tr1 = tr2 = bl1 = bl2 = br = nullptr;
-		tris[0] = tris[1] = nullptr;
-	}
+	virtual ~Plane() {}
 
 	/// Sets the plane's posOrigin.
 	Plane* setOrigin(
@@ -141,7 +168,7 @@ public:
 	}
 
 	/// Sets the plane to its original state (last state set with setPosition).
-	Plane* reset() override {
+	Plane* reset() override final {
 		// Set origin
 		*tl				= origin[0];
 		*tr1	= *tr2	= origin[1];
@@ -150,7 +177,7 @@ public:
 		return this;
 	}
 
-	Plane* transform() override {
+	Plane* transform() override final {
 		onTransform();
 		if (!fixed) return this;
 		// Get transformation
@@ -164,24 +191,26 @@ public:
 		srpTransform(plane[2], tmat);
 		srpTransform(plane[3], tmat);
 		// Apply transformation
-		*tl		= plane[0];
+		*tl				= plane[0];
 		*tr1	= *tr2	= plane[1];
 		*bl1	= *bl2	= plane[2];
-		*br		= plane[3];
+		*br				= plane[3];
 		return this;
 	}
 
-	Triangle** getBoundTriangles() override {
-		return tris;
-	}
-
-	void forEachVertex(VertexFunc const& f) override {
+	void forEachVertex(VertexFunc const& f) override final {
 		f(origin[0]);
 		f(origin[1]);
 		f(origin[2]);
 		f(origin[3]);
 	}
 
+	RawVertex	origin[4];
+
+protected:
+	virtual void onTransform() {};
+
+private:
 	RawVertex
 		*tl		= nullptr,
 		*tr1	= nullptr,
@@ -189,10 +218,6 @@ public:
 		*bl1	= nullptr,
 		*bl2	= nullptr,
 		*br		= nullptr;
-
-protected:
-	Triangle* tris[2] = {nullptr, nullptr};
-	RawVertex	origin[4];
 };
 
 class AnimatedPlane: public Plane {
@@ -214,32 +239,33 @@ public:
 };
 
 // [[ TRIANGLES ]]
-class Trigon: public Empty {
+class Trigon: public Shape<1> {
 public:
 	Trigon(
-		Triangle* tris[1]
-	) {
-		this->tris[0]	= tris[0];
-		this->a	= &(tris[0]->verts[0]);
-		this->b	= &(tris[0]->verts[1]);
-		this->c	= &(tris[0]->verts[2]);
+		Triangle* const(& tris)[1]
+	): Shape<1>(tris) {
+		// Get vertices
+		this->a = &(tris[0]->verts[0]);
+		this->b = &(tris[0]->verts[1]);
+		this->c = &(tris[0]->verts[2]);
+		// Setup trigon
+		this->setOrigin(
+			Vector3(-0.0, +1.0, 0.0),
+			Vector3(-1.0, -1.0, 0.0),
+			Vector3(+1.0, -1.0, 0.0)
+		);
+		this->setUV(
+			Vector2(+0.5, +1.0),
+			Vector2(+0.0, +0.0),
+			Vector2(+1.0, +0.0)
+		);
+		this->setColor();
+		this->setNormal(
+			Vector3(+0.0, +0.0, -1.0)
+		);
 	}
 
-	Trigon(
-		RawVertex* const& a,
-		RawVertex* const& b,
-		RawVertex* const& c
-	) {
-		this->a	= a;
-		this->b	= b;
-		this->c	= c;
-	}
-
-	virtual ~Trigon() {
-		Empty::~Empty();
-		a = b = c = nullptr;
-		tris[0] = nullptr;
-	}
+	virtual ~Trigon() {}
 
 	/// Sets the triangle's origin.
 	Trigon* setOrigin(
@@ -314,14 +340,14 @@ public:
 	}
 
 	/// Sets the triangle to its original state (last state set with setPosition).
-	Trigon* reset() override {
+	Trigon* reset() override final {
 		*a = origin[0];
 		*b = origin[1];
 		*c = origin[2];
 		return this;
 	}
 
-	Trigon* transform() override {
+	Trigon* transform() override final {
 		onTransform();
 		if (!fixed) return this;
 		// Get transformation
@@ -340,28 +366,31 @@ public:
 		return this;
 	}
 
-	Triangle** getBoundTriangles() override {
-		return tris;
-	}
-
-	void forEachVertex(VertexFunc const& f) override {
+	void forEachVertex(VertexFunc const& f) override final {
 		f(origin[0]);
 		f(origin[1]);
 		f(origin[2]);
 	}
 
+	RawVertex origin[3];
+
+protected:
+	virtual void onTransform() {};
+
+private:
 	RawVertex
 		*a	= nullptr,
 		*b	= nullptr,
 		*c	= nullptr;
-
-protected:
-	Triangle* tris[1] = {nullptr};
-	RawVertex origin[3];
 };
 
 template<class T>
 concept NotEmpty	= Type::Different<T, Empty>;
+
+template<class T>
+concept ShapeType	= requires {
+	T::triangleCount;
+} && Type::Derived<T, Shape<T::triangleCount>> && NotEmpty<T>;
 
 template<class T>
 concept PlaneType	= Type::Derived<T, Plane> && NotEmpty<T>;
