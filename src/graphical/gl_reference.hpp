@@ -30,7 +30,7 @@ struct Shape: public Empty {
 	typedef Span<Triangle*, triangleCount> Triangles;
 
 	Triangles getBoundTriangles() {
-		return Triangles(tris, 2);
+		return Triangles(tris, triangleCount);
 	}
 
 	virtual void forEachVertex(VertexFunc const& f) {
