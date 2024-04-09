@@ -156,6 +156,14 @@ public:
 
 	size_t currentPhase = 0;
 
+	size_t getPhaseTimeLeft() {
+		return phaseTimer.delay - phaseTimer.getCounter();
+	}
+
+	size_t getPhaseDuration() {
+		return phaseTimer.delay;
+	}
+
 private:
 	void setUIElements() {
 		timerDisplay.font = &timerFont;
