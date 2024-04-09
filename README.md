@@ -93,7 +93,7 @@ Currently VERY scarce. Some of the code is commented.
 ## TODO
 
 ### Current
-
+- [ ] Separate `itembox` and `grazebox`
 - [x] `data/` folder packing system
 - [x] "Optimize" GPU usage
 - - Instead of rendering every layer from the layerbuffer to the framebuffer, maybe implement sublayers?
