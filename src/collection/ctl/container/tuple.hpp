@@ -46,8 +46,10 @@ using Tuple = TuplePack<0, Types...>;
 
 template<class Self, class... MemberTypes>
 struct Reflective: SelfIdentified<Self> {
-	typedef Tuple<MemberTypes&...>		ReflectionType;
+	typedef Tuple<MemberTypes&...>		MemberListType;
 	typedef PackInfo<MemberTypes...>	MemberTypes;
+
+	MemberListType members;
 };
 
 #define MAKE_REFLECTIVE(__VA_ARGS__) ReflectionType members = {__VA_ARGS__}
