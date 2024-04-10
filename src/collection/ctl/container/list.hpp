@@ -1,9 +1,6 @@
 #ifndef CTL_CONTAINER_LIST_H
 #define CTL_CONTAINER_LIST_H
 
-#include <initializer_list>
-#include <numeric_limits>
-
 #include "iterator.hpp"
 #include "../ctypes.hpp"
 #include "../../conceptual.hpp"
