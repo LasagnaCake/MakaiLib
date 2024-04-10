@@ -29,19 +29,19 @@ struct Indexed {
 };
 
 template <uintmax N, typename... T>
-struct PackType;
+struct NthInPack;
 
 template <typename T, typename... Types>
-struct PackType<0, T, Types...> {
+struct NthInPack<0, T, Types...> {
     typedef T Type;
 };
 template <uintmax N, typename T, typename... Types>
-struct PackType<N, T, Types...> {
-    typedef typename PackType<N-1, Types...>::Type Type;
+struct NthInPack<N, T, Types...> {
+    typedef typename NthInPack<N-1, Types...>::Type Type;
 };
 
 template<uintmax N, typename... Types>
-using NthType = typename PackType<N, Types...>::Type;
+using NthType = typename NthInPack<N, Types...>::Type;
 
 template<class... Bases>
 struct PackInfo {
