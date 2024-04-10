@@ -1,3 +1,9 @@
+#ifndef CTL_CLASS_TEMPLATES_H
+#define CTL_CLASS_TEMPLATES_H
+
+#include <initializer_list>
+#include <numeric_limits>
+
 template<class Self>
 struct Reflective {
 	typedef Self SelfType;
@@ -49,3 +55,5 @@ template<class... Bases>
 struct Derived {
 	typedef PackInfo<Bases...> Bases;
 };
+
+#endif // CTL_CLASS_TEMPLATES_H
