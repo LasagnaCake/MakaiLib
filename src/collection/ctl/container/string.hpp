@@ -135,7 +135,7 @@ typedef BaseString<wchar_t>	WideString;
 template<Type::Integer I, CharacterType C = char, Type::Integer S = size_t>
 constexpr BaseString<C, S> toString(I const& val, usize const& base = 10) {
 	BaseString<C, S> result(64, '\0');
-	intmax i = itoa(val, result.cbegin(), result.size(), base);
+	ssize i = itoa(val, result.cbegin(), result.size(), base);
 	if (i == -1)
 		throw BaseString<C, S>("ERROR: Invalid number!");
 	return result.reserve(i);
@@ -144,7 +144,7 @@ constexpr BaseString<C, S> toString(I const& val, usize const& base = 10) {
 template<Type::Float F, CharacterType C = char, Type::Integer S = size_t>
 constexpr BaseString<C, S> toString(F const& val, usize const& precision = 16) {
 	BaseString<C, S> result(64, '\0');
-	intmax i = ftoa(val, result.cbegin(), result.size(), base);
+	ssize i = ftoa(val, result.cbegin(), result.size(), base);
 	if (i == -1)
 		throw BaseString<C, S>("ERROR: Invalid number!");
 	return result.reserve(i);
