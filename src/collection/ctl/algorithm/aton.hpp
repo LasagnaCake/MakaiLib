@@ -7,7 +7,7 @@
 // atoi implementation based off of https://stackoverflow.com/a/59537554
 namespace _AtoiImpl {
 	template<ASCIIType T>
-	constexpr intmax toDigit(T c) {
+	constexpr ssize toDigit(T c) {
 		c = toLower(c);
 		if (c >= 'a')
 			return c - 'a' + 10;
@@ -15,7 +15,7 @@ namespace _AtoiImpl {
 	}
 
 	template<ASCIIType T>
-	constexpr intmax isDigitInBase(T const& c, usize const& base) {
+	constexpr ssize isDigitInBase(T const& c, usize const& base) {
 		uint8 const v = toDigit(c);
 		return 0 <= digit && digit < base;
 	}
@@ -90,10 +90,10 @@ constexpr bool atoi(T const* const& str, usize size, I& out) {
 	&&	isDigitInBase(str[1], 10)
 	) return getSignAndConsume(s) * toDigit(s[0]);
 	// Try and get sign of number
-	intmax sign = _AtoiImpl::getSignAndConsume(s);
+	ssize sign = _AtoiImpl::getSignAndConsume(s);
 	if (size < s-str) return false;
 	// Try and get base of number
-	intmax base = _AtoiImpl::getBaseAndConsume(s);
+	ssize base = _AtoiImpl::getBaseAndConsume(s);
 	if (size < s-str) return false;
 	// Remove difference from size
 	size -= s-str;
@@ -124,9 +124,9 @@ constexpr bool atof(T const* const& str, usize size, F& out) {
 		if (str[sep++] == '.')
 			break;
 	// If no separator was found, convert number and return
-	intmax ival = 0;
+	ssize ival = 0;
 	if (sep == size) {
-		if (!atoi<intmax>(str, size, ival))
+		if (!atoi<ssize>(str, size, ival))
 			return false;
 		out = ival;
 		return true;
@@ -140,7 +140,7 @@ constexpr bool atof(T const* const& str, usize size, F& out) {
 		return false;
 	delete[] ns;
 	// Convert integer to string by "reverse scientific notation" and return
-	out = ival * pow<F>(10, -intmax(size-sep));
+	out = ival * pow<F>(10, -ssize(size-sep));
 	return true;
 }
 
@@ -152,7 +152,7 @@ constexpr bool atof(const T(const& str)[S], F& out) {
 
 // Based off of https://stackoverflow.com/a/3987783
 template<Type::Integer I, ASCIIType T>
-constexpr intmax itoa(I val, T* const& buf, usize const& bufSize, I const& base = 10){
+constexpr ssize itoa(I val, T* const& buf, usize const& bufSize, I const& base = 10){
 	// If empty buffer, or buffer is too small for a non-decimal base
 	if ((!bufSize) || (bufSize < 4 && base != 10))
 		return -1;
@@ -197,22 +197,22 @@ constexpr intmax itoa(I val, T* const& buf, usize const& bufSize, I const& base 
 }
 
 template<Type::Real F, ASCIIType T>
-constexpr intmax ftoa(F val, T* const& buf, usize const& bufSize, usize const& precision = sizeof(F)*4) {
+constexpr ssize ftoa(F val, T* const& buf, usize const& bufSize, usize const& precision = sizeof(F)*4) {
 	// Get amount of zeroes to add to number
 	usize zeroes = pow<F>(10, precision);
 	// Get whole part of number
-	intmax whole = val;
+	ssize whole = val;
 	// Get fractional part
 	usize frac = (val * zeroes) - (whole * zeroes);
-	intmax lhs = 0, rhs = 0;
+	ssize lhs = 0, rhs = 0;
 	// Fill in whole part of number to string, return if error
-	if (lhs = itoa<intmax>(whole, buf, bufSize)) return -1;
+	if (lhs = itoa<ssize>(whole, buf, bufSize)) return -1;
 	// Check if buffer is not full, else append comma and re-check
 	if (lhs >= bufSize) return lhs;
 	buf[lhs++] = '.';
 	if (lhs >= bufSize) return lhs;
 	// Fill in fractional part, returning if error
-	if (rhs = itoa<intmax>(frac, buf+lhs, bufSize-lhs)) return -1;
+	if (rhs = itoa<ssize>(frac, buf+lhs, bufSize-lhs)) return -1;
 	// Return full size of number string
 	return lhs+rhs+1;
 }
