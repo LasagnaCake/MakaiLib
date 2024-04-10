@@ -8,8 +8,8 @@ template<class T>
 struct TypeInfo {
 	typedef T	DataType;
 
-	constexpr uintmax SIZE		= sizeof(T);
-	constexpr uintmax BIT_SIZE	= SIZE * 8;
+	constexpr usize SIZE		= sizeof(T);
+	constexpr usize BIT_SIZE	= SIZE * 8;
 
 	constexpr TypeInfo() {}
 

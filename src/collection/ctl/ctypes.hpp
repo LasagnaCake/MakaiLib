@@ -65,4 +65,7 @@ typedef uword	word;
 typedef udword	dword;
 typedef uqword	qword;
 
+typedef size_t usize;
+typedef ssize_t ssize;
+
 #endif // CTL_EXTENDED_TYPES_H

@@ -15,7 +15,7 @@ namespace _AtoiImpl {
 	}
 
 	template<ASCIIType T>
-	constexpr intmax isDigitInBase(T const& c, uintmax const& base) {
+	constexpr intmax isDigitInBase(T const& c, usize const& base) {
 		uint8 const v = toDigit(c);
 		return 0 <= digit && digit < base;
 	}
@@ -41,15 +41,15 @@ namespace _AtoiImpl {
 	}
 
 	template<Type::Integral I, ASCIIType T>
-	constexpr I toInteger(T const* str, uintmax const& size, uintmax const& base) {
+	constexpr I toInteger(T const* str, usize const& size, usize const& base) {
 		I res = 0;
-		for (uintmax i = 0; i < size; ++i)
+		for (usize i = 0; i < size; ++i)
 			shiftAndAppend(res, base, toDigit(str[i]));
 		return value;
 	}
 
 	template<ASCIIType T>
-	constexpr uintmax getBaseAndConsume(T const*& c) {
+	constexpr usize getBaseAndConsume(T const*& c) {
 		if (c[0] == '0') {
 			++c;
 			switch (c[0]) {
@@ -66,8 +66,8 @@ namespace _AtoiImpl {
 	}
 
 	template<ASCIIType T>
-	constexpr bool isInBase(T const* str, uintmax const& size, uintmax const& base) {
-		for (uintmax i = 0; i < size; ++i)
+	constexpr bool isInBase(T const* str, usize const& size, usize const& base) {
+		for (usize i = 0; i < size; ++i)
 			if(!isDigitInBase(str[i], base))
 				return false;
 		return true;
@@ -75,7 +75,7 @@ namespace _AtoiImpl {
 }
 
 template<Type::Integer I, ASCIIType T>
-constexpr bool atoi(T const* const& str, uintmax size, I& out) {
+constexpr bool atoi(T const* const& str, usize size, I& out) {
 	// Copy string pointer
 	T const* s = str;
 	// If string is size 1, try and convert digit
@@ -105,21 +105,21 @@ constexpr bool atoi(T const* const& str, uintmax size, I& out) {
 	return true;
 }
 
-template<Type::Integer I, ASCIIType T, uintmax S>
+template<Type::Integer I, ASCIIType T, usize S>
 constexpr bool atoi(const T(const& str)[S], I& out) {
 	static_assert(S, "String cannot be empty!");
 	return atoi<I>(str, S - 1, out);
 }
 
 template<Type::Real F, ASCIIType T>
-constexpr bool atof(T const* const& str, uintmax size, F& out) {
+constexpr bool atof(T const* const& str, usize size, F& out) {
 	// If character is appended to the end, exclude it
 	if (
 		toLower(str[size-1]) == 'f'
 	||	toLower(str[size-1]) == 'd'
 	) --size;
 	// Find separator character
-	uintmax sep = 0;
+	usize sep = 0;
 	while (sep < size)
 		if (str[sep++] == '.')
 			break;
@@ -136,7 +136,7 @@ constexpr bool atof(T const* const& str, uintmax size, F& out) {
 	memcpy(ns, str, sep-1);
 	memcpy(ns+sep-1, str+sep, size-sep);
 	// Try and convert resulting integer string
-	if (!atoi<uintmax>(ns, size-1, ival))
+	if (!atoi<usize>(ns, size-1, ival))
 		return false;
 	delete[] ns;
 	// Convert integer to string by "reverse scientific notation" and return
@@ -144,7 +144,7 @@ constexpr bool atof(T const* const& str, uintmax size, F& out) {
 	return true;
 }
 
-template<Type::Real F, ASCIIType T, uintmax S>
+template<Type::Real F, ASCIIType T, usize S>
 constexpr bool atof(const T(const& str)[S], F& out) {
 	static_assert(S, "String cannot be empty!");
 	return atof<F>(str, S - 1, out);
@@ -152,14 +152,14 @@ constexpr bool atof(const T(const& str)[S], F& out) {
 
 // Based off of https://stackoverflow.com/a/3987783
 template<Type::Integer I, ASCIIType T>
-constexpr intmax itoa(I val, T* const& buf, uintmax const& bufSize, I const& base = 10){
+constexpr intmax itoa(I val, T* const& buf, usize const& bufSize, I const& base = 10){
 	// If empty buffer, or buffer is too small for a non-decimal base
 	if ((!bufSize) || (bufSize < 4 && base != 10))
 		return -1;
 	// Clear buffer
 	memset(buf, 0, bufSize);
 	// Get stating points
-	uintmax
+	usize
 		offset = 0,
 		i = bufSize-2
 	;
@@ -197,13 +197,13 @@ constexpr intmax itoa(I val, T* const& buf, uintmax const& bufSize, I const& bas
 }
 
 template<Type::Real F, ASCIIType T>
-constexpr intmax ftoa(F val, T* const& buf, uintmax const& bufSize, uintmax const& precision = sizeof(F)*4) {
+constexpr intmax ftoa(F val, T* const& buf, usize const& bufSize, usize const& precision = sizeof(F)*4) {
 	// Get amount of zeroes to add to number
-	uintmax zeroes = pow<F>(10, precision);
+	usize zeroes = pow<F>(10, precision);
 	// Get whole part of number
 	intmax whole = val;
 	// Get fractional part
-	uintmax frac = (val * zeroes) - (whole * zeroes);
+	usize frac = (val * zeroes) - (whole * zeroes);
 	intmax lhs = 0, rhs = 0;
 	// Fill in whole part of number to string, return if error
 	if (lhs = itoa<intmax>(whole, buf, bufSize)) return -1;

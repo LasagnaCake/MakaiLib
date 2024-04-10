@@ -1,15 +1,16 @@
 #ifndef CTL_CONTAINER_LIST_H
 #define CTL_CONTAINER_LIST_H
 
-#include "iterator.hpp"
+#include "../templates.hpp"
 #include "../ctypes.hpp"
 #include "../../conceptual.hpp"
+#include "iterator.hpp"
 #include "../algorithm/sort.hpp"
 #include "../algorithm/reverse.hpp"
-#include "../templates.hpp"
+#include "../algorithm/memory.hpp"
 
 template<class T, Type::Integer I = size_t>
-class List: Iteratable<T, I>, Reflective<List<T, I>>, Ordered {
+class List: Iteratable<T, I>, SelfIdentified<List<T, I>>, Ordered {
 public:
 	constexpr List() {invoke(1);}
 
@@ -439,8 +440,8 @@ public:
 	constexpr bool isTighterThanBarkOnATree() const {return count == maximum;}
 
 private:
-	constexpr void copy(DataType* const& src, DataType* const& dst, SizeType const& count) {
-		memcpy(dst, src, count * sizeof(DataType));
+	constexpr void copy(DataType* src, DataType* dst, SizeType count) {
+		memcpy<DataType>(dst, src, count);
 	};
 
 	constexpr SelfType& invoke(SizeType const& size) {
@@ -509,7 +510,7 @@ private:
 };
 
 template<class T, Type::Integer I = size_t>
-class LinkedList: Typed<T>, Indexed<I>, Reflective<List<T, I>> {
+class LinkedList: Typed<T>, Indexed<I>, SelfIdentified<List<T, I>> {
 public:
 	struct Node {
 		DataType	value		= nullptr;

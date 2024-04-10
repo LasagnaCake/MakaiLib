@@ -7,7 +7,7 @@
 #include "../templates.hpp"
 
 template<class T, bool REVERSE = false, Type::Integer I = size_t>
-class Iterator: Typed<T>, Indexed<T>, Ordered {
+class Iterator: Typed<T>, Indexed<T>, Ordered, SelfIdentified<T, REVERSE, I> {
 public:
 	constexpr Iterator() {}
 

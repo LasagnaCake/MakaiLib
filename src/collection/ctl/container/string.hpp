@@ -9,7 +9,7 @@
 #include "../typeinfo.hpp"
 
 template<ASCIIType T, Type::Integer I = size_t>
-class BaseString: public List<T, I>, Reflective<BaseString<T, I>>, Derived<List<T, I>> {
+class BaseString: public List<T, I>, SelfIdentified<BaseString<T, I>>, Derived<List<T, I>> {
 public:
 	// Stream types
 	typedef std::basic_ostream<DataType>	OutputStreamType;
@@ -133,7 +133,7 @@ typedef BaseString<char>	String;
 typedef BaseString<wchar_t>	WideString;
 
 template<Type::Integer I, CharacterType C = char, Type::Integer S = size_t>
-constexpr BaseString<C, S> toString(I const& val, uintmax const& base = 10) {
+constexpr BaseString<C, S> toString(I const& val, usize const& base = 10) {
 	BaseString<C, S> result(64, '\0');
 	intmax i = itoa(val, result.cbegin(), result.size(), base);
 	if (i == -1)
@@ -142,7 +142,7 @@ constexpr BaseString<C, S> toString(I const& val, uintmax const& base = 10) {
 }
 
 template<Type::Float F, CharacterType C = char, Type::Integer S = size_t>
-constexpr BaseString<C, S> toString(F const& val, uintmax const& precision = 16) {
+constexpr BaseString<C, S> toString(F const& val, usize const& precision = 16) {
 	BaseString<C, S> result(64, '\0');
 	intmax i = ftoa(val, result.cbegin(), result.size(), base);
 	if (i == -1)

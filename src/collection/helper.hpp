@@ -723,9 +723,9 @@ namespace System {
 		}
 		STARTUPINFO sInfo;
 		PROCESS_INFORMATION pInfo;
-		ZeroMemory(&sInfo, sizeof(sInfo));
+		memset(&sInfo, 0, sizeof(sInfo));
 		sInfo.cb = sizeof(sInfo);
-		ZeroMemory(&pInfo, sizeof(pInfo));
+		memset(&pInfo, 0, sizeof(pInfo));
 		auto proc = CreateProcess(
 			path.c_str(),
 			prgArgs,
@@ -756,8 +756,8 @@ namespace System {
 	String openFileDialog(String filter = "All\0*.*\0") {
 		#if (_WIN32 || _WIN64 || __WIN32__ || __WIN64__) && !defined(_NO_WINDOWS_PLEASE_)
 		OPENFILENAME ofn;
-		char szFile[260]	= {0};
-		ZeroMemory(&ofn, sizeof(ofn));
+		char szFile[260] = {0};
+		memset(&ofn, 0, sizeof(ofn));
 		ofn.lStructSize = sizeof(ofn);
 		ofn.hwndOwner = NULL;
 		ofn.lpstrFile = szFile;
@@ -783,8 +783,8 @@ namespace System {
 	String saveFileDialog(String filter = "All\0*.*\0") {
 		#if (_WIN32 || _WIN64 || __WIN32__ || __WIN64__) && !defined(_NO_WINDOWS_PLEASE_)
 		OPENFILENAME ofn;
-		char szFile[260]	= {0};
-		ZeroMemory(&ofn, sizeof(ofn));
+		char szFile[260] = {0};
+		memset(&ofn, 0, sizeof(ofn));
 		ofn.lStructSize = sizeof(ofn);
 		ofn.hwndOwner = NULL;
 		ofn.lpstrFile = szFile;

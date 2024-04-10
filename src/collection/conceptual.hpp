@@ -57,6 +57,9 @@ namespace Type {
 	concept Void = std::is_void<T>::value;
 
 	template <typename T>
+	concept NonVoid = !std::is_void<T>::value;
+
+	template <typename T>
 	concept Null = std::is_null_pointer<T>::value;
 
 	template <typename T>
@@ -68,14 +71,14 @@ namespace Type {
 	template <typename A, typename B>
 	concept Different = !std::same_as<A, B>;
 
-	template <typename FROM, typename TO>
-	concept Convertible = std::convertible_to<FROM, TO>;
+	template <typename From, typename To>
+	concept Convertible = std::convertible_to<From, To>;
 
 	template <class T>
 	concept Abstract = std::is_abstract<T>::value;
 
-	template <class T, typename... ARGS>
-	concept Constructible = std::constructible_from<T, ARGS...>;
+	template <class T, typename... Args>
+	concept Constructible = std::constructible_from<T, Args...>;
 
 	template <typename T>
 	concept Numerable = Convertible<size_t, T>;
@@ -92,14 +95,14 @@ namespace Type {
 	template <typename T>
 	concept Derivable = !Primitive<T>;
 
-	template <class T, class DERIVED>
-	concept Base = std::derived_from<DERIVED, T>;
+	template <class T, class Derived>
+	concept Base = std::derived_from<Derived, T>;
 
-	template <class T, class BASE>
-	concept Derived = std::derived_from<T, BASE>;
+	template <class T, class Base>
+	concept Derived = std::derived_from<T, Base>;
 
-	template <class T, class BASE>
-	concept Subclass = Derived<T, BASE>  && Different<T, BASE>;
+	template <class T, class Base>
+	concept Subclass = Derived<T, Base>  && Different<T, Base>;
 
 	template <class A, class B>
 	concept Related = std::common_with<A, B>;
