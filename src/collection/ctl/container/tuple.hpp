@@ -5,7 +5,7 @@
 
 template<usize N, class T>
 struct TupleItem: Typed<T> {
-    T value;
+    DataType value;
 };
 
 template<usize N, class... Types>
@@ -48,8 +48,10 @@ template<class Self, class... MemberTypes>
 struct Reflective: SelfIdentified<Self> {
 	typedef Tuple<MemberTypes&...>		MemberListType;
 	typedef PackInfo<MemberTypes...>	MemberTypes;
+
+	MemberListType members;
 };
 
-#define MAKE_REFLECTIVE(__VA_ARGS__) MemberListType members = {__VA_ARGS__}
+//#define MAKE_REFLECTIVE(__VA_ARGS__) MemberListType members = {__VA_ARGS__}
 
 #endif // CTL_CONTAINER_TUPLE_H
