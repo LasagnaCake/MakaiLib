@@ -4,6 +4,7 @@
 #include <compare>
 
 #include "typeinfo.hpp"
+#include "templates.hpp"
 
 enum class StandardOrder: int {
 	LESS = -1,
@@ -19,5 +20,8 @@ struct ValueOrder: public std::partial_ordering {
 	constexpr static auto UNORDERED	= std::partial_ordering::unordered;
 };
 
+struct Ordered {
+	typedef ValueOrder OrderType;
+};
 
 #endif // CTL_TYPE_ORDER_H

@@ -9,15 +9,11 @@
 #include "../typeinfo.hpp"
 
 template<ASCIIType T, Type::Integer I = size_t>
-class BaseString: public List<T, I> {
+class BaseString: public List<T, I>, Reflective<BaseString<T, I>>, Derived<List<T, I>> {
 public:
-	// Parent type
-	typedef List<T, I> BaseType;
 	// Stream types
 	typedef std::basic_ostream<DataType>	OutputStreamType;
 	typedef std::basic_istream<DataType>	InputStreamType;
-	// Self type
-	typedef BaseString<DataType, IndexType>	SelfType;
 
 	constexpr BaseString() {}
 

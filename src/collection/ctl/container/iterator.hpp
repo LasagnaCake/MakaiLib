@@ -4,23 +4,11 @@
 #include "../order.hpp"
 #include "../ctypes.hpp"
 #include "../../conceptual.hpp"
+#include "../templates.hpp"
 
 template<class T, bool REVERSE = false, Type::Integer I = size_t>
-class Iterator {
+class Iterator: Typed<T>, Indexed<T>, Ordered {
 public:
-	typedef T		DataType;
-	typedef T const	ConstantType;
-
-	typedef DataType*		PointerType;
-	typedef DataType&		ReferenceType;
-	typedef ConstantType*	ConstPointerType;
-	typedef ConstantType&	ConstReferenceType;
-
-	typedef std::make_unsigned<I>		SizeType;
-	typedef std::make_signed<SizeType>	IndexType;
-
-	typedef ValueOrder	OrderType;
-
 	constexpr Iterator() {}
 
 	constexpr Iterator(PointerType const& value): iterand(value)		{}
@@ -78,13 +66,19 @@ using ForwardIterator = Iterator<T, false>;
 template<class T>
 using ReverseIterator = Iterator<T, true>;
 
-
-
 template<class T>
 concept IteratorType = requires {
 	typename T::SizeType;
 	typename T::IndexType;
 	typename T::DataType;
 } && Type::Derived<T, Iterator<typename T::DataType, typename T::IndexType>>;
+
+template<class T, Type::Integer I>
+struct Iteratable: Typed<T>, Indexed<I> {
+	typedef Iterator<DataType, false, SizeType>		IteratorType;
+	typedef Iterator<ConstantType, false, SizeType>	ConstIteratorType;
+	typedef Iterator<DataType, true, SizeType>		ReverseIteratorType;
+	typedef Iterator<ConstantType, true, SizeType>	ConstReverseIteratorType;
+}
 
 #endif // CTL_CONTAINER_ITERATOR_H

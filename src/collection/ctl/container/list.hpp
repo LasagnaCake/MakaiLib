@@ -9,32 +9,11 @@
 #include "../../conceptual.hpp"
 #include "../algorithm/sort.hpp"
 #include "../algorithm/reverse.hpp"
+#include "../templates.hpp"
 
 template<class T, Type::Integer I = size_t>
-class List {
+class List: Iteratable<T, I>, Reflective<List<T, I>>, Ordered {
 public:
-	// Types
-	typedef T								DataType;
-	typedef DataType const					ConstantType;
-	typedef DataType&						ReferenceType;
-	typedef ConstantType&					ConstReferenceType;
-	typedef std::initializer_list<DataType>	ArgumentListType;
-	typedef DataType*						PointerType;
-	typedef const DataType*					ConstPointerType;
-	typedef ValueOrder						OrderType;
-	// Size types
-	typedef std::make_unsigned<I>		SizeType;
-	typedef std::make_signed<SizeType>	IndexType;
-	// Iterators
-	typedef Iterator<DataType, false, SizeType>		IteratorType;
-	typedef Iterator<ConstantType, false, SizeType>	ConstIteratorType;
-	typedef Iterator<DataType, true, SizeType>		ReverseIteratorType;
-	typedef Iterator<ConstantType, true, SizeType>	ConstReverseIteratorType;
-	// Self type
-	typedef List<DataType, IndexType>	SelfType;
-	// Constant values
-	constexpr SizeType maxSize = TypeInfo<SizeType>::HIGHEST;
-
 	constexpr List() {invoke(1);}
 
 	constexpr List(SizeType const& size) {
@@ -195,6 +174,23 @@ public:
 		for (auto i = start; i != stop; ++i)
 			if ((*i) == value)
 				return i-start;
+		return -1;
+	}
+
+	constexpr IndexType bsearch(DataType const& value) const
+	requires (
+		Type::Comparable::Threeway<DataType, DataType>
+	&&	Type::Comparable::Equals<DataType, DataType>
+	) {
+		IndexType pivot = count / 2, index = pivot;
+		while (pivot != 0) {
+			switch (data[index] <=> value) {
+				case OrderType::EQUAL:		return index;
+				case OrderType::GREATER:	index -= (pivot /= 2);	break;
+				case OrderType::LESS:		index += (pivot /= 2);	break;
+				case OrderType::UNORDERED:	return -1;
+			}
+		}
 		return -1;
 	}
 
