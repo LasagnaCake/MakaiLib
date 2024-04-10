@@ -13,12 +13,13 @@ struct TypeInfo {
 
 	constexpr TypeInfo() {}
 
-	constexpr bool operator==(TypeInfo const& other) {return id->hash_code() == other.id->hash_code();}
+	constexpr static bool operator==(TypeInfo const& other) {return id->hash_code() == other.id->hash_code();}
 
-	constexpr const char* name() {return id->name();}
+	constexpr static const char* rawName()	{return id->name();}
+	constexpr static const char* name()		{return abi::__cxa_demangle(id->name(),0,0,NULL)}
 
 private;
-	constexpr const std::type_info* id = typeid(T);
+	constexpr static const std::type_info* id = typeid(T);
 };
 
 template<Type::Integer T>

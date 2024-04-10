@@ -4,9 +4,10 @@
 #include <initializer_list>
 #include <numeric_limits>
 
-template<class Self>
+template<class T>
 struct SelfIdentified {
-	typedef Self SelfType;
+	typedef T SelfType;
+	typedef TypeInfo<T> Self;
 };
 
 template<class T>
@@ -58,9 +59,9 @@ struct PackInfo {
 	constexpr static usize COUNT = sizeof...(bases);
 };
 
-template<class... Types>
+template<class... BaseTypes>
 struct Derived {
-	typedef PackInfo<Types...> Bases;
+	typedef PackInfo<BaseTypes...> Bases;
 };
 
 template<class... Types>
