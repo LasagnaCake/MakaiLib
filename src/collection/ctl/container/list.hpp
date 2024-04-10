@@ -509,24 +509,8 @@ private:
 };
 
 template<class T, Type::Integer I = size_t>
-class LinkedList {
+class LinkedList: Typed<T>, Indexed<I>, Reflective<List<T, I>> {
 public:
-	// Types
-	typedef T								DataType;
-	typedef DataType const					ConstantType;
-	typedef DataType&						ReferenceType;
-	typedef ConstantType&					ConstReferenceType;
-	typedef std::initializer_list<DataType>	ArgumentListType;
-	typedef DataType*						PointerType;
-	typedef const DataType*					ConstPointerType;
-	// Size types
-	typedef std::make_unsigned<I>		SizeType;
-	typedef std::make_signed<SizeType>	IndexType;
-	// Constant values
-	constexpr SizeType maxSize = std::numeric_limits<SizeType>::max;
-	// Self types
-	typedef LinkedList<DataType, IndexType>	SelfType;
-
 	struct Node {
 		DataType	value		= nullptr;
 		Node*		previous	= nullptr;
@@ -544,7 +528,7 @@ public:
 	};
 
 	template<bool REVERSE = false>
-	class NodeIterator: public Iterator {
+	class NodeIterator: public Iterator<Node, REVERSE, SizeType> {
 	public:
 		constexpr NodeIterator() {}
 
@@ -806,7 +790,7 @@ private:
 	}
 
 	void assertNotAtItsLimit() {
-		if (count >= maxSize) atItsLimitError();
+		if (count >= MAX_SIZE) atItsLimitError();
 	}
 
 	[[noreturn]] constexpr void invalidSizeError(SizeType const& size) {
