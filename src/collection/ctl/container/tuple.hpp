@@ -16,7 +16,7 @@ struct TuplePack<N>{};
 
 template<usize N, class T, class... Types>
 struct TuplePack<N, T, Types...>:
-	public TupleLeaf<N, T>,
+	public TupleItem<N, T>,
 	public TuplePack<N + 1, Types...>,
 	Polyglot<T, Types...>
 {
