@@ -25,7 +25,7 @@ struct Indexed {
 	typedef std::make_unsigned<I>		SizeType;
 	typedef std::make_signed<SizeType>	IndexType;
 
-	constexpr static SizeType maxSize = TypeInfo<SizeType>::HIGHEST;
+	constexpr static SizeType MAX_SIZE = TypeInfo<SizeType>::HIGHEST;
 };
 
 template <uintmax N, typename... T>
@@ -48,7 +48,7 @@ struct PackInfo {
 	template<uintmax N> using	Types = NthType<N, Bases...>;
 	typedef Types<0>			FirstType;
 
-	constexpr static uintmax count = sizeof...(bases);
+	constexpr static uintmax COUNT = sizeof...(bases);
 };
 
 template<class... Bases>
