@@ -62,9 +62,15 @@ constexpr void* memmove(void* const& dst, const void* const& src, usize size) {
 template<Type::NonVoid T>
 constexpr T* memmove(T* const& dst, const T* const& src, usize const& count) {
 	const usize sz = count * sizeof(T);
+	#if CPU_ARCH >= 64
 	if (sz%8==0 && CPU_ARCH >= 64)	return memmoveX<uint64>((void*)dst, (void*)src, sz);
+	#endif
+	#if CPU_ARCH >= 32
 	if (sz%4==0 && CPU_ARCH >= 32)	return memmoveX<uint32>((void*)dst, (void*)src, sz);
+	#endif
+	#if CPU_ARCH >= 16
 	if (sz%2==0 && CPU_ARCH >= 16)	return memmoveX<uint16>((void*)dst, (void*)src, sz);
+	#endif
 	return memmoveX<uint8>((void*)dst, (void*)src, sz);
 }
 
