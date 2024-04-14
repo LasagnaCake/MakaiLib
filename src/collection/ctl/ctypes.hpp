@@ -1,19 +1,21 @@
 #ifndef CTL_EXTENDED_TYPES_H
 #define CTL_EXTENDED_TYPES_H
 
-#include <cstdint>
-
 typedef unsigned char		uint8;
 typedef unsigned short		uint16;
 typedef unsigned long	   	uint32;
 typedef unsigned long long	uint64;
 #if		INTPTR_MAX == INT64_MAX
+#define CPU_ARCH 64
 typedef	uint64				uintmax;
 #elif	INTPTR_MAX == INT32_MAX
+#define CPU_ARCH 32
 typedef	uint32				uintmax;
 #elif	INTPTR_MAX == INT16_MAX
+#define CPU_ARCH 16
 typedef	uint16				uintmax;
 #elif	INTPTR_MAX == INT8_MAX
+#define CPU_ARCH 8
 typedef	uint8				uintmax;
 #endif
 
@@ -67,5 +69,7 @@ typedef uqword	qword;
 
 typedef size_t usize;
 typedef ssize_t ssize;
+
+#define CPU_ARCH (sizeof(void*) * 8)
 
 #endif // CTL_EXTENDED_TYPES_H
