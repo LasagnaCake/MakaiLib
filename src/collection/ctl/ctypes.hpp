@@ -82,37 +82,13 @@ typedef __m128	uint128x86;
 typedef __m128i	int128x86;
 #endif
 #if		CPU_ARCH == 64
-typedef uint64	uint128 __attribute__((vector_size(16)));
-typedef uint64	uint256 __attribute__((vector_size(32)));
-typedef uint64	uint512 __attribute__((vector_size(64)));
+typedef uintmax	uint128 __attribute__((vector_size(16)));
+typedef uintmax	uint256 __attribute__((vector_size(32)));
+typedef uintmax	uint512 __attribute__((vector_size(64)));
 
-typedef int64	int128 __attribute__((vector_size(16)));
-typedef int64	int256 __attribute__((vector_size(32)));
-typedef int64	int512 __attribute__((vector_size(64)));
-#elif	CPU_ARCH == 32
-typedef uint32	uint128 __attribute__((vector_size(16)));
-typedef uint32	uint256 __attribute__((vector_size(32)));
-typedef uint32	uint512 __attribute__((vector_size(64)));
-
-typedef int32	int128 __attribute__((vector_size(16)));
-typedef int32	int256 __attribute__((vector_size(32)));
-typedef int32	int512 __attribute__((vector_size(64)));
-#elif	CPU_ARCH == 16
-typedef uint16	uint128 __attribute__((vector_size(16)));
-typedef uint16	uint256 __attribute__((vector_size(32)));
-typedef uint16	uint512 __attribute__((vector_size(64)));
-
-typedef int16	int128 __attribute__((vector_size(16)));
-typedef int16	int256 __attribute__((vector_size(32)));
-typedef int16	int512 __attribute__((vector_size(64)));
-#else
-typedef uint8	uint128 __attribute__((vector_size(16)));
-typedef uint8	uint256 __attribute__((vector_size(32)));
-typedef uint8	uint512 __attribute__((vector_size(64)));
-
-typedef int8	int128 __attribute__((vector_size(16)));
-typedef int8	int256 __attribute__((vector_size(32)));
-typedef int8	int512 __attribute__((vector_size(64)));
+typedef intmax	int128 __attribute__((vector_size(16)));
+typedef intmax	int256 __attribute__((vector_size(32)));
+typedef intmax	int512 __attribute__((vector_size(64)));
 #endif
 
 #endif // CTL_EXTENDED_TYPES_H
