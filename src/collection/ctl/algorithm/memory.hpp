@@ -97,14 +97,18 @@ constexpr T* memset(T* const& dst, int const& val) {
 	return memset((void*)dst, val, sizeof(T));
 }
 
-template<Type::NonVoid T>
-constexpr T* memzero(void* const& dst, usize const& size) {
+constexpr void* memzero(void* const& dst, usize const& size) {
 	return memset(dst, 0, size);
+}
+
+template<Type::Integer I>
+constexpr I* memzeroX(I* const& dst, usize const& count) {
+	return memsetX<I>((void*)dst, 0, count * sizeof(T));
 }
 
 template<Type::NonVoid T>
 constexpr T* memzero(T* const& dst, usize const& count) {
-	return memsetX<uint8>((void*)dst, 0, count * sizeof(T));
+	return memzeroX<uint8>((void*)dst, 0, count * sizeof(T));
 }
 
 template<Type::NonVoid T>
