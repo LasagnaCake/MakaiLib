@@ -1,21 +1,27 @@
 #ifndef CTL_EXTENDED_TYPES_H
 #define CTL_EXTENDED_TYPES_H
 
+#if		INTPTR_MAX == INT64_MAX
+#define CPU_ARCH 64
+#elif	INTPTR_MAX == INT32_MAX
+#define CPU_ARCH 32
+#elif	INTPTR_MAX == INT16_MAX
+#define CPU_ARCH 16
+#else
+#define CPU_ARCH 8
+#endif
+
 typedef unsigned char		uint8;
 typedef unsigned short		uint16;
 typedef unsigned long	   	uint32;
 typedef unsigned long long	uint64;
-#if		INTPTR_MAX == INT64_MAX
-#define CPU_ARCH 64
+#if		CPU_ARCH == 64
 typedef	uint64				uintmax;
-#elif	INTPTR_MAX == INT32_MAX
-#define CPU_ARCH 32
+#elif	CPU_ARCH == 32
 typedef	uint32				uintmax;
-#elif	INTPTR_MAX == INT16_MAX
-#define CPU_ARCH 16
+#elif	CPU_ARCH == 16
 typedef	uint16				uintmax;
-#elif	INTPTR_MAX == INT8_MAX
-#define CPU_ARCH 8
+#else
 typedef	uint8				uintmax;
 #endif
 
@@ -23,20 +29,20 @@ typedef signed char			int8;
 typedef signed short		int16;
 typedef signed long			int32;
 typedef signed long long	int64;
-#if		INTPTR_MAX == INT64_MAX
+#if		CPU_ARCH == 64
 typedef	int64				intmax;
-#elif	INTPTR_MAX == INT32_MAX
+#elif	CPU_ARCH == 32
 typedef	int32				intmax;
-#elif	INTPTR_MAX == INT16_MAX
+#elif	CPU_ARCH == 16
 typedef	int16				intmax;
-#elif	INTPTR_MAX == INT8_MAX
+#else
 typedef	int8				intmax;
 #endif
 
 typedef float				float32;
 typedef double				float64;
 typedef long double			float128;
-#if		INTPTR_MAX == INT64_MAX
+#if		CPU_ARCH == 64
 typedef	float64				floatmax;
 #else
 typedef	float32				floatmax;
@@ -69,7 +75,5 @@ typedef uqword	qword;
 
 typedef size_t usize;
 typedef ssize_t ssize;
-
-#define CPU_ARCH (sizeof(void*) * 8)
 
 #endif // CTL_EXTENDED_TYPES_H
