@@ -25,18 +25,18 @@ template<Type::NonVoid T>
 constexpr void memcpy(T* const& src, T* const& dst, usize const& count) {
 	const usize sz = count * sizeof(T);
 	#if CPU_ARCH >= 64
-	if (sz%8==0)	memcpyX<uint64>(dst, src, sz);
+	if (sz%8==0)	memcpyX<uint64>((void*)dst, (void*)src, sz);
 	else
 	#endif
 	#if CPU_ARCH >= 32
-	if (sz%4==0)	memcpyX<uint32>(dst, src, sz);
+	if (sz%4==0)	memcpyX<uint32>((void*)dst, (void*)src, sz);
 	else
 	#endif
 	#if CPU_ARCH >= 16
-	if (sz%2==0)	memcpyX<uint16>(dst, src, sz);
+	if (sz%2==0)	memcpyX<uint16>((void*)dst, (void*)src, sz);
 	else
 	#endif
-	memcpyX<uint8>(dst, src, sz);
+	memcpyX<uint8>((void*)dst, (void*)src, sz);
 };
 
 template<Type::Integer I>
@@ -93,13 +93,13 @@ template<Type::NonVoid T>
 constexpr int memcmp(T* const& a, T* const& b, usize const& count) {
 	const usize sz = count * sizeof(T);
 	#if CPU_ARCH >= 64
-	if (sz%8==0) return memcmpX<uint64>(a, b, sz);
+	if (sz%8==0) return memcmpX<uint64>((void*)a, (void*)b, sz);
 	#endif
 	#if CPU_ARCH >= 32
-	if (sz%4==0) return memcmpX<uint32>(a, b, sz);
+	if (sz%4==0) return memcmpX<uint32>((void*)a, (void*)b, sz);
 	#endif
 	#if CPU_ARCH >= 16
-	if (sz%2==0) return memcmpX<uint16>(a, b, sz);
+	if (sz%2==0) return memcmpX<uint16>((void*)a, (void*)b, sz);
 	#endif
 	return memcmpX<uint8>((void*)a, (void*)b, sz);
 }
@@ -135,15 +135,15 @@ template<Type::NonVoid T>
 constexpr T* memzero(T* const& dst, usize const& count) {
 	const usize sz = count * sizeof(T);
 	#if CPU_ARCH >= 64
-	if (sz%8==0) return memsetX<uint64>(dst, 0, sz);
+	if (sz%8==0) return memsetX<uint64>((void*)dst, 0, sz);
 	#endif
 	#if CPU_ARCH >= 32
-	if (sz%4==0) return memsetX<uint32>(dst, 0, sz);
+	if (sz%4==0) return memsetX<uint32>((void*)dst, 0, sz);
 	#endif
 	#if CPU_ARCH >= 16
-	if (sz%2==0) return memsetX<uint16>(dst, 0, sz);
+	if (sz%2==0) return memsetX<uint16>((void*)dst, 0, sz);
 	#endif
-	return memsetX<uint8>(dst, 0, sz);
+	return memsetX<uint8>((void*)dst, 0, sz);
 }
 
 template<Type::NonVoid T>
