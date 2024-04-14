@@ -18,7 +18,6 @@
 template<Type::Integer I>
 constexpr void memcpyX(void* const& dst, void* const& src, usize size) {
 	I *s = src, *d = dst;
-	if (!size) return;
 	if (size == 1) *d = *s;
 	else while (size--) *d++ = *s++;
 }
@@ -61,10 +60,9 @@ template<Type::Integer I>
 constexpr int memcmpX(const void* const& a, const void* const& b, usize size) {
 	const I* s1 = a;
 	const I* s2 = b;
-	while (count-- > 0) {
+	while (count-- > 0)
 		if (*s1++ != *s2++)
-		return s1[-1] < s2[-1] ? -1 : 1;
-	}
+			return s1[-1] < s2[-1] ? -1 : 1;
 	return 0;
 }
 
