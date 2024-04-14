@@ -11,6 +11,10 @@
 
 #include "../ctypes.hpp"
 
+/*
+	TODO: Maybe optimize this?
+*/
+
 template<Type::Integer I>
 constexpr void memcpyX(void* const& dst, void* const& src, usize size) {
 	I *s = src, *d = dst;
