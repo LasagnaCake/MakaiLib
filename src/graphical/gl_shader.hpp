@@ -18,96 +18,6 @@ namespace Shader {
 	namespace {
 		using namespace std;
 		using namespace FileLoader;
-
-		struct _UniSet {
-			String name;
-			GLuint id;
-
-			_UniSet(String name, GLuint id) {
-				this->name	= name;
-				this->id	= id;
-			}
-
-			void operator()(bool const& value) const {
-				glUniform1i(getUniform(), (int)value);
-			}
-
-			void operator()(int const& value) const {
-				glUniform1i(getUniform(), value);
-			}
-
-			void operator()(unsigned int const& value) const {
-				glUniform1ui(getUniform(), value);
-			}
-
-			void operator()(float const& value) const {
-				glUniform1f(getUniform(), value);
-			}
-
-			void operator()(Vector2 const& value) const {
-				glUniform2f(getUniform(), value.x, value.y);
-			}
-
-			void operator()(Vector3 const& value) const {
-				glUniform3f(getUniform(), value.x, value.y, value.z);
-			}
-
-			void operator()(Vector4 const& value) const {
-				glUniform4f(getUniform(), value.x, value.y, value.z, value.w);
-			}
-
-			void operator()(Matrix4x4 const& value) const {
-				glUniformMatrix4fv(getUniform(), 1, GL_FALSE, value.begin());
-			}
-
-			void operator()(int* const& values, size_t const& count) {
-				glUniform1iv(getUniform(), count, values);
-				glUniform1ui(getUniform("Count"), count);
-			}
-
-			void operator()(unsigned int* const& values, size_t const& count) {
-				glUniform1uiv(getUniform(), count, values);
-				glUniform1ui(getUniform("Count"), count);
-			}
-
-			void operator()(float* const& values, size_t const& count) {
-				glUniform1fv(getUniform(), count, values);
-				glUniform1ui(getUniform("Count"), count);
-			}
-
-			void operator()(Vector2* const& values, size_t const& count) {
-				for SSRANGE(i, 0, count)
-					glUniform2f(getUniformArray(i), values[i].x, values[i].y);
-				glUniform1ui(getUniform("Count"), count);
-			}
-
-			void operator()(Vector3* const& values, size_t const& count) {
-				for SSRANGE(i, 0, count)
-					glUniform3f(getUniformArray(i), values[i].x, values[i].y, values[i].z);
-				glUniform1ui(getUniform("Count"), count);
-			}
-
-			void operator()(Vector4* const& values, size_t const& count) {
-				for SSRANGE(i, 0, count)
-					glUniform4f(getUniformArray(i), values[i].x, values[i].y, values[i].z, values[i].w);
-				glUniform1ui(getUniform("Count"), count);
-			}
-
-			template <typename T>
-			void operator()(List<T> const& values) {
-				(*this)((T*)values.data(), values.size());
-			}
-
-		private:
-			GLuint getUniformArray(size_t const& index) {
-				auto cname = toString(name,"[", index, "]").c_str();
-				return glGetUniformLocation(id, cname);
-			}
-
-			inline GLuint getUniform(String const& append = "") const {
-				return glGetUniformLocation(id, (name + append).c_str());
-			}
-		};
 	}
 
 	const Dictionary<GLuint> shaderTypes = {
@@ -117,6 +27,137 @@ namespace Shader {
 		{"geom", GL_GEOMETRY_SHADER},
 		{"tsct", GL_TESS_CONTROL_SHADER},
 		{"tsev", GL_TESS_EVALUATION_SHADER}
+	};
+
+	struct Uniform {
+		String const name;
+
+		Uniform(String const& _name, GLuint const& _id):
+			name(_name),
+			id(_id),
+			location(glGetUniformLocation(_id, _name.c_str()))
+		{}
+
+		void set(bool const& value) const {
+			glUniform1i(getUniform(), (int)value);
+		}
+
+		void set(int const& value) const {
+			glUniform1i(getUniform(), value);
+		}
+
+		void set(unsigned int const& value) const {
+			glUniform1ui(getUniform(), value);
+		}
+
+		void set(float const& value) const {
+			glUniform1f(getUniform(), value);
+		}
+
+		void set(Vector2 const& value) const {
+			glUniform2f(getUniform(), value.x, value.y);
+		}
+
+		void set(Vector3 const& value) const {
+			glUniform3f(getUniform(), value.x, value.y, value.z);
+		}
+
+		void set(Vector4 const& value) const {
+			glUniform4f(getUniform(), value.x, value.y, value.z, value.w);
+		}
+
+		void set(Matrix4x4 const& value) const {
+			glUniformMatrix4fv(getUniform(), 1, GL_FALSE, value.begin());
+		}
+
+		void setArray(int* const& values, size_t const& count) const {
+			glUniform1iv(getUniform(), count, values);
+		}
+
+		void setArray(unsigned int* const& values, size_t const& count) const {
+			glUniform1uiv(getUniform(), count, values);
+		}
+
+		void setArray(float* const& values, size_t const& count) const {
+			glUniform1fv(getUniform(), count, values);
+		}
+
+		void setArray(Vector2* const& values, size_t const& count) const {
+			for SSRANGE(i, 0, count)
+				glUniform2f(getUniformArray(i), values[i].x, values[i].y);
+		}
+
+		void setArray(Vector3* const& values, size_t const& count) const {
+			for SSRANGE(i, 0, count)
+				glUniform3f(getUniformArray(i), values[i].x, values[i].y, values[i].z);
+		}
+
+		void setArray(Vector4* const& values, size_t const& count) const {
+			for SSRANGE(i, 0, count)
+				glUniform4f(getUniformArray(i), values[i].x, values[i].y, values[i].z, values[i].w);
+		}
+
+		template <typename T>
+		void set(List<T> const& values) const {
+			setArray((T*)values.data(), values.size());
+			glUniform1ui(getUniform("Count"), values.size());
+		}
+
+		template <typename T, size_t S>
+		void set(Span<T, S> const& values) const {
+			setArray((T*)values.data(), values.size());
+			glUniform1ui(getUniform("Count"), S);
+		}
+
+		template<typename... Args>
+		void set(Args const&... args) const
+		requires (sizeof...(Args) > 1){
+			(setSpecial(args), ...);
+			offset = 0;
+		}
+
+		template <typename T>			void operator()(T const& value)				{set(value);	}
+		template <typename... Args>		void operator()(Args const&... args)		{set(args...);	}
+		template <typename T>			void operator()(List<T> const& values)		{set(values);	}
+		template <typename T, size_t S>	void operator()(Span<T, S> const& values)	{set(values);	}
+
+	private:
+		constexpr Uniform(String  const& _name, GLuint const& _id, GLuint const& _location): name(_name), id(_id), location(_location) {}
+
+		template<typename T>
+		void setSpecial(T const& value) const {
+			set(value);
+			++offset;
+		}
+
+		template <typename T>
+		void setSpecial(List<T> const& values) const {
+			set(values);
+			glUniform1ui(getUniform() + values.size() + 1, values.size());
+			offset += values.size() + 1;
+		}
+
+		template <typename T, size_t S>
+		void setSpecial(Span<T, S> const& values) const {
+			set(values);
+			glUniform1ui(getUniform() + S + 1, S);
+			offset += S + 1;
+		}
+
+		GLuint getUniformArray(size_t const& offset) const {
+			return location + this->offset + offset;
+		}
+
+		inline GLuint getUniform() const {
+			return location + offset;
+		}
+
+		inline GLuint getUniform(String const& append) const {
+			return glGetUniformLocation(id, (name + append).c_str()) + offset;
+		}
+
+		GLuint mutable offset = 0;
+		GLuint const id, location;
 	};
 
 	class Shader {
@@ -358,9 +399,9 @@ namespace Shader {
 		* The way to set uniforms.
 		* Done like this: SHADER.uniform(UNIFORM_NAME)(UNIFORM_VALUE);
 		*/
-		_UniSet uniform(const String& name) {
+		Uniform uniform(const String& name) {
 			glUseProgram(instance->id);
-			_UniSet su(name, instance->id);
+			Uniform su(name, instance->id);
 			return su;
 		}
 
@@ -368,7 +409,7 @@ namespace Shader {
 		* The way to set uniforms.
 		* Done like this: SHADER[UNIFORM_NAME](UNIFORM_VALUE);
 		*/
-		_UniSet operator[](const String& name) {
+		Uniform operator[](const String& name) {
 			return uniform(name);
 		}
 

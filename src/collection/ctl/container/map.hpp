@@ -36,11 +36,8 @@ public:
 
 	constexpr bool contains(KeyType const& key) const {
 		if (empty()) return false;
-		PairType* start = cbegin();
-		while(start != cend()) {
-			if (start->key == key) return true;
-			++start;
-		}
+		for(ValueType& e: (*this))
+			if (e.key == key) return true;
 		return false;
 	}
 

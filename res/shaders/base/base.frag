@@ -2,6 +2,8 @@
 
 #pragma optimize(on)
 
+#define MAX_LIGHTS 16
+
 precision mediump float;
 
 in vec3 fragCoord3D;
@@ -11,8 +13,8 @@ in vec3 fragNormal;
 
 in vec2 warpUV;
 
-in vec3 fragLightColor;
-in vec3 fragShadeColor;
+//in vec3 fragLightColor;
+//in vec3 fragShadeColor;
 
 layout (location = 0) out vec4	FragColor;
 //layout (location = 1) out float	DepthValue;
@@ -26,6 +28,24 @@ uniform sampler2D	emissionTexture;
 uniform float		emissionStrength	= 1.0;
 
 uniform vec4 albedo = vec4(1);
+
+uniform bool	shaded			= true;
+uniform float	shadeIntensity	= 0.5;
+uniform vec3	shadeDirection	= vec3(0, 1, 0);
+
+// [ POINT LIGHTING ]
+uniform bool				useLights		= false;
+uniform vec3				ambientColor	= vec3(1);
+uniform float				ambientStrength	= 1;
+uniform uint				lightsCount		= 0;
+uniform vec3[MAX_LIGHTS]	lights;
+uniform vec3[MAX_LIGHTS]	lightColor;
+uniform float[MAX_LIGHTS]	lightRadius;
+uniform float[MAX_LIGHTS]	lightStrength;
+
+// [ NORMAL MAPPING ]
+uniform bool		useNormalMap;
+uniform sampler2D	normalMapImage;
 
 // [ DISTANCE-BASED FOG ]
 uniform bool	useFog		= false;
@@ -63,9 +83,6 @@ uniform vec4	gradientStart	= vec4(0);
 uniform vec4	gradientEnd		= vec4(1);
 uniform bool	gradientInvert	= false;
 
-// [ POINT LIGHTING ]
-uniform bool	useLights	= false;
-
 // [ HSLBC MODIFIERS ]
 uniform float	hue			= 0;
 uniform float	saturation	= 1;
@@ -75,6 +92,32 @@ uniform float	contrast	= 1;
 
 // [ DEBUG MODE ]
 uniform uint	debugView	= 0;
+
+vec3 calculateLights(vec3 position, vec3 normal) {
+	if (!useLights) return vec3(1);
+	vec3 result = ambientColor * ambientStrength;
+	// TODO: figure out if this actually works
+	#ifdef IMPLEMENT_LIGHTS
+	if (lightsCount == 0) return result;
+	uint lc = (lightsCount < MAX_LIGHTS ? lightsCount : MAX_LIGHTS);
+	for (uint i = 0; i < lc; i++) {
+		float dist = distance(position, lights[i]);
+		float factor = max(0.0, 1.0 - dist / lightRadius[i]);
+		vec3 lightDir = normalize(lights[i] - position);
+		float diffuse = max(dot(normal, lightDir), 0.0);
+		result *= lightColor[i] * lightStrength[i] * factor + diffuse;
+	}
+	#endif
+	return result;
+}
+
+vec3 getShadingColor(vec3 position, vec3 normal) {
+	if (!shaded) return vec3(1);
+	//vec3 direction = normalize(normalize(shadeDirection) - position);
+	vec3 direction = normalize(shadeDirection);
+	float factor = max(0, 1-dot(shadeDirection, normal));
+	return vec3(1) - shadeIntensity * factor;
+}
 
 vec4 distanceGradient(vec4 start, vec4 end, float near, float far, float strength) {
 	// The vector's length needs to be calculated here, otherwise it breaks
@@ -136,6 +179,7 @@ vec4 applyBrightnessAndContrast(vec4 color) {
 void main(void) {
 	vec4 color;
 	vec2 calculatedFragUV = fragUV;
+	vec3 normal = fragNormal;
 	if (textured) {
 		if (useWarp) {
 			uint wcx = clamp(warpChannelX, 0u, 3u);
@@ -144,15 +188,16 @@ void main(void) {
 			vec2 warpCoord = vec2(warpFac[wcx], warpFac[wcy]) * 2 - 1;
 			calculatedFragUV = fragUV + warpCoord;
 			color = texture(texture2D, calculatedFragUV) * fragColor;
-		}
-		else color = texture(texture2D, fragUV) * fragColor;
-	}
-	else color = fragColor;
+		} else color = texture(texture2D, fragUV) * fragColor;
+	} else color = fragColor;
 
 	if (textured && color.a <= (fragColor.a * alphaClip))
 		discard;
-
-	color.xyz *= fragLightColor * fragShadeColor;
+	if (useNormalMap) {
+		normal = texture(normalMapImage, calculatedFragUV).rgb;
+		normal = normalize(normal * 2.0 - 1.0 + normal);  
+	}
+	color.xyz *= calculateLights(fragCoord3D, normal) * getShadingColor(fragCoord3D, normal);
 
 	color *= albedo;
 
