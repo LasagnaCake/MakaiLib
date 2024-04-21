@@ -9,7 +9,10 @@
 #include "../typeinfo.hpp"
 
 template<ASCIIType T, Type::Integer I = size_t>
-class BaseString: public List<T, I>, SelfIdentified<BaseString<T, I>>, Derived<List<T, I>> {
+struct BaseString:
+	List<T, I>,
+	SelfIdentified<BaseString<T, I>>,
+	Derived<List<T, I>> {
 public:
 	// Stream types
 	typedef std::basic_ostream<DataType>	OutputStreamType;

@@ -46,8 +46,6 @@ template<class Self, class... MemberTypes>
 struct Reflective: SelfIdentified<Self> {
 	typedef Tuple<MemberTypes&...>		MemberListType;
 	typedef PackInfo<MemberTypes...>	MemberTypes;
-
-	MemberListType members;
 };
 
 //#define MAKE_REFLECTIVE(__VA_ARGS__) MemberListType members = {__VA_ARGS__}

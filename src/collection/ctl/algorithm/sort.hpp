@@ -4,7 +4,11 @@
 #include "iterator.hpp"
 
 template<class T>
-concept SortableIteratorType = IteratorType<T>;
+concept SortableIteratorType =
+	IteratorType<T>
+	&& Type::Comparable::Threeway<typename T::DataType, typename T::DataType>
+	&& Type::Comparable::Eqials<typename T::DataType, typename T::DataType>
+;
 
 template<class T>
 constexpr void swap(T& a T& b) {

@@ -21,6 +21,18 @@ struct Typed {
 	typedef const DataType*					ConstPointerType;
 };
 
+template<class K>
+struct Keyed {
+	typedef Typed<K>	Key;
+	typedef K			KeyType;
+};
+
+template<class V>
+struct Valued {
+	typedef Typed<V>	Value;
+	typedef V			ValueType;
+};
+
 template<Type::Integer I>
 struct Indexed {
 	typedef std::make_unsigned<I>		SizeType;

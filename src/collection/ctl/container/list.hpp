@@ -10,7 +10,7 @@
 #include "../algorithm/memory.hpp"
 
 template<class T, Type::Integer I = size_t>
-class List: Iteratable<T, I>, SelfIdentified<List<T, I>>, Ordered {
+struct List: Iteratable<T, I>, SelfIdentified<List<T, I>>, Ordered {
 public:
 	constexpr List() {invoke(1);}
 
