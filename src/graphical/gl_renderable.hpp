@@ -243,7 +243,7 @@ public:
 
 	vector<Triangle*> triangles;
 
-	Texture2D texture, emission, warp;
+	Texture2D texture, normalMap, emission, warp;
 
 private:
 	friend class Scene3D;
@@ -304,6 +304,7 @@ private:
 		JSONData def,
 		string const& sourcepath,
 		Texture2D* const& texture	= nullptr,
+		Texture2D* const& normalMap	= nullptr,
 		Texture2D* const& emission	= nullptr,
 		Texture2D* const& warp		= nullptr
 	) {
@@ -311,19 +312,21 @@ private:
 			// Do stuff for versions
 			switch (def["version"].get<size_t>()) {
 				default:
-				case 0: extendFromDefinitionV0(def, sourcepath, texture, emission, warp); break;
+				case 0: extendFromDefinitionV0(def, sourcepath, texture, normalMap, emission, warp); break;
 			}
-		} else extendFromDefinitionV0(def, sourcepath, texture, emission, warp);
+		} else extendFromDefinitionV0(def, sourcepath, texture, normalMap, emission, warp);
 	}
 
 	void extendFromDefinitionV0(
 		JSONData def,
 		string const& sourcepath,
-		Texture2D* texture	= nullptr,
-		Texture2D* emission	= nullptr,
-		Texture2D* warp		= nullptr
+		Texture2D* texture		= nullptr,
+		Texture2D* normalMap	= nullptr,
+		Texture2D* emission		= nullptr,
+		Texture2D* warp			= nullptr
 	) {
 		if (!texture)	texture		= &this->texture;
+		if (!normalMap)	normalMap	= &this->normalMap;
 		if (!emission)	emission	= &this->emission;
 		if (!warp)		warp		= &this->warp;
 		// Component data
@@ -455,7 +458,7 @@ private:
 		}
 		// Set material data
 		if (def["material"].is_object()) {
-			material = Material::fromObjectMaterialDefinition(def["material"], sourcepath, texture, emission, warp);
+			material = Material::fromObjectMaterialDefinition(def["material"], sourcepath, texture, normalMap, emission, warp);
 		}
 		// Set blend data
 		if (def["blend"].is_object()) {

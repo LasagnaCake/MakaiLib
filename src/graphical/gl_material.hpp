@@ -608,6 +608,7 @@ ObjectMaterial fromObjectMaterialDefinition(
 	JSONData def,
 	String const& definitionFolder,
 	Texture2D* texture,
+	Texture2D* normalMap,
 	Texture2D* emission,
 	Texture2D* warp
 ) {
@@ -644,6 +645,14 @@ ObjectMaterial fromObjectMaterialDefinition(
 			mat.texture.image		= fx.image;
 			if (dmat["texture"]["alphaClip"].is_number())
 				mat.texture.alphaClip	= dmat["texture"]["alphaClip"].get<float>();
+		}
+		// Set normal map texture
+		if (dmat["normalMap"].is_object()) {
+			auto fx = loadImageEffect(dmat["normalMap"], definitionFolder, normalMap ? normalMap : mat.normalMap.image);
+			mat.normalMap.enabled	= fx.enabled;
+			mat.normalMap.image		= fx.image;
+			if (dmat["normalMap"]["strength"].is_number())
+				mat.normalMap.strength	= dmat["normalMap"]["strength"].get<float>();
 		}
 		// Set emission texture
 		if (dmat["emission"].is_object()) {

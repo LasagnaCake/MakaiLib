@@ -62,7 +62,6 @@ If image is to be saved in a separate file:
 }
 ```
 
-
 # ObjectMaterial
 
 ## Layout
@@ -81,6 +80,13 @@ If image is to be saved in a separate file:
 		"enabled": true,
 		"image": {/* See ImageData2D:Layout */},
 		"alphaClip": 0.1, // Texture alpha clipping
+	},
+	"normalMap": {
+		// Required
+		"enabled": true,
+		"image": {/* See ImageData2D:Layout */},
+		// Optional
+		"strength": 1.0, // Normal map strength
 	},
 	"emission": {
 		// Required
