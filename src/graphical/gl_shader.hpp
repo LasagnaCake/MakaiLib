@@ -66,6 +66,10 @@ namespace Shader {
 			glUniform4f(getUniform(), value.x, value.y, value.z, value.w);
 		}
 
+		void set(Matrix3x3 const& value) const {
+			glUniformMatrix3fv(getUniform(), 1, GL_FALSE, value.begin());
+		}
+
 		void set(Matrix4x4 const& value) const {
 			glUniformMatrix4fv(getUniform(), 1, GL_FALSE, value.begin());
 		}
@@ -111,7 +115,7 @@ namespace Shader {
 
 		template<typename... Args>
 		void set(Args const&... args) const
-		requires (sizeof...(Args) > 1){
+		requires (sizeof...(Args) > 1) {
 			(setSpecial(args), ...);
 			offset = 0;
 		}
@@ -157,7 +161,8 @@ namespace Shader {
 		}
 
 		GLuint mutable offset = 0;
-		GLuint const id, location;
+		GLuint const id;
+		intmax const location;
 	};
 
 	class Shader {

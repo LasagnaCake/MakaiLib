@@ -159,6 +159,9 @@ struct TextureEffect: ImageEffect {
 struct EmissionEffect: ImageEffect, Variable {
 };
 
+struct NormalMapEffect: ImageEffect, Variable {
+};
+
 // Buffer Material Effects
 
 struct MaskEffect: Effect, Imageable2D, Transformable2D, Invertible {
@@ -261,6 +264,7 @@ struct ObjectMaterial: BaseObjectMaterial {
 	float			contrast	= 1;
 	Vector2			uvShift;
 	TextureEffect	texture;
+	NormalMapEffect	normalMap;
 	EmissionEffect	emission;
 	WarpEffect		warp;
 	NegativeEffect	negative;
@@ -312,45 +316,46 @@ void setMaterial(Shader& shader, ObjectMaterial& material) {
 	shader["uvShift"](material.uvShift);
 	// Texture
 	if (material.texture.image && material.texture.enabled && material.texture.image->exists()) {
-		shader["textured"](true);
-		shader["alphaClip"](material.texture.alphaClip);
-		shader["texture2D"](0);
+		shader["imgTexture.enabled"](true, 0, material.texture.alphaClip);
 		material.texture.image->enable(0);
-	} else shader["textured"](false);
+	} else shader["imgTexture.enabled"](false);
 	// Emission Texture
 	if (material.emission.image && material.emission.enabled && material.emission.image->exists()) {
-		shader["useEmission"](true);
-		shader["emissionTexture"](1);
-		shader["emissionStrength"](material.emission.strength);
+		shader["emission.enabled"](true, 1, material.emission.strength);
 		material.emission.image->enable(1);
-	} else shader["useEmission"](false);
+	} else shader["emission.enabled"](false);
+	// Normal Map Texture
+	if (material.normalMap.image && material.normalMap.enabled && material.normalMap.image->exists()) {
+		shader["normalMap.enabled"](true, 2, material.normalMap.strength);
+		material.normalMap.image->enable(2);
+	} else shader["normalMap.enabled"](false);
 	// Texture warping
 	if (material.warp.image && material.warp.enabled && material.warp.image->exists()) {
-		shader["useWarp"](true);
-		shader["warpTexture"](8);
+		shader["warp.enabled"](true, 8, material.warp.channelX, material.warp.channelY);
 		material.warp.image->enable(8);
-		shader["warpChannelX"](material.warp.channelX);
-		shader["warpChannelY"](material.warp.channelY);
-		shader["warpOffset"](material.warp.trans.position);
-		shader["warpScale"](material.warp.trans.scale);
-		shader["warpRotate"](material.warp.trans.rotation);
-	} else shader["useWarp"](false);
+		shader["warpTrans.position"](
+			material.warp.trans.position,
+			material.warp.trans.rotation,
+			material.warp.trans.scale
+		);
+	} else shader["warp.enabled"](false);
 	// Color inversion
 	if (material.negative.enabled) {
-		shader["useNegative"](true);
-		shader["negativeStrength"](material.negative.strength);
-	} else shader["useNegative"](false);
+		shader["negative.enabled"](true, material.negative.strength);
+	} else shader["negative.enabled"](false);
 	// Color to gradient
 	if (material.gradient.enabled) {
-		shader["useGradient"](true);
-		shader["gradientChannel"](material.gradient.channel);
-		shader["gradientStart"](material.gradient.begin);
-		shader["gradientEnd"](material.gradient.end);
-		shader["gradientInvert"](material.gradient.invert);
-	} else shader["useGradient"](false);
+		shader["gradient.enabled"](
+			true,
+			material.gradient.channel,
+			material.gradient.begin,
+			material.gradient.end,
+			material.gradient.invert
+		);
+	} else shader["gradient.enabled"](false);
 	// Lighted
-	shader["shaded"](material.shaded);
-	shader["useLights"](material.illuminated);
+	shader["shade.enabled"](material.shaded);
+	shader["lights.enabled"](material.illuminated);
 	// Albedo
 	shader["albedo"](material.color);
 	// HSLBC data
@@ -365,6 +370,7 @@ void setMaterial(Shader& shader, ObjectMaterial& material) {
 	shader["debugView"]((unsigned int)material.debug);
 }
 
+// TODO: The rest of this rat's nest
 void setMaterial(Shader& shader, BufferMaterial& material) {
 	// Set UV data
 	shader["uvShift"](material.uvShift);
@@ -482,28 +488,31 @@ void setMaterial(Shader& shader, BufferMaterial& material) {
 void setMaterial(Shader& shader, WorldMaterial& material) {
 	// Fog
 	if (material.farFog.enabled) {
-		shader["useFog"](true);
-		shader["fogNear"](material.farFog.start);
-		shader["fogFar"](material.farFog.stop);
-		shader["fogColor"](material.farFog.color);
-		shader["fogStrength"](material.farFog.strength);
-	} else shader["useFog"](false);
+		shader["farFog.enabled"](
+			true,
+			material.farFog.start,
+			material.farFog.stop,
+			material.farFog.strength,
+			material.farFog.color
+		);
+	} else shader["farFog.enabled"](false);
 	// Void
 	if (material.nearFog.enabled) {
-		shader["useVoid"](true);
-		shader["voidNear"](material.nearFog.start);
-		shader["voidFar"](material.nearFog.stop);
-		shader["voidColor"](material.nearFog.color);
-		shader["voidStrength"](material.nearFog.strength);
-	} else shader["useVoid"](false);
+		shader["nearFog.enabled"](
+			true,
+			material.nearFog.start,
+			material.nearFog.stop,
+			material.nearFog.strength,
+			material.nearFog.color
+		);
+	} else shader["nearFog.enabled"](false);
 	// Ambient light
-	shader["ambientColor"](material.ambient.color);
-	shader["ambientStrength"](material.ambient.strength);
+	shader["ambient.color"](material.ambient.color, material.ambient.strength);
 }
 
 template<class T, class BASE>
 concept ValidMaterial =
-	Type::Derived<T, BASE>
+	Type::Subclass<T, BASE>
 &&	requires (Shader& s, T& mat) {
 		setMaterial(s, mat);
 	}

@@ -19,69 +19,85 @@ in vec2 warpUV;
 layout (location = 0) out vec4	FragColor;
 //layout (location = 1) out float	DepthValue;
 
-uniform bool		textured = false;
-uniform sampler2D	texture2D;
-uniform float		alphaClip = 0.2;
+struct TextureModule {
+	bool		enabled;
+	sampler2D 	image;
+	float		alphaClip;
+};
 
-uniform bool		useEmission			= false;
-uniform sampler2D	emissionTexture;
-uniform float		emissionStrength	= 1.0;
+struct NormalMapModule {
+	bool		enabled;
+	sampler2D	image;
+};
+
+struct EmissionModule {
+	bool		enabled;
+	sampler2D	image;
+	float		strength;
+};
+
+struct WarpModule {
+	bool		enabled;
+	sampler2D	image;
+	uint		channelX, channelY;
+};
 
 uniform vec4 albedo = vec4(1);
 
-uniform bool	shaded			= true;
-uniform float	shadeIntensity	= 0.5;
-uniform vec3	shadeDirection	= vec3(0, 1, 0);
+// [ SIMPLE SHADING ]
+struct ShadingModule {
+	bool	enabled;
+	float	intensity;
+	vec3	direction;
+};
 
 // [ POINT LIGHTING ]
-uniform bool				useLights		= false;
-uniform vec3				ambientColor	= vec3(1);
-uniform float				ambientStrength	= 1;
-uniform uint				lightsCount		= 0;
-uniform vec3[MAX_LIGHTS]	lights;
-uniform vec3[MAX_LIGHTS]	lightColor;
-uniform float[MAX_LIGHTS]	lightRadius;
-uniform float[MAX_LIGHTS]	lightStrength;
+struct LightData {
+	vec3 position;
+	vec3 color;
+	float radius;
+	float strength;
+};
 
-// [ NORMAL MAPPING ]
-uniform bool		useNormalMap;
-uniform sampler2D	normalMapImage;
+struct AmbientData {
+	vec3	color;
+	float	strength;
+};
+
+struct LightModule {
+	bool					enabled;
+	LightData[MAX_LIGHTS]	data;
+	uint					count;
+};
 
 // [ DISTANCE-BASED FOG ]
-uniform bool	useFog		= false;
-uniform float	fogFar		= 16;
-uniform float	fogNear		= 12;
-uniform float	fogStrength	= 1;
-uniform vec4	fogColor	= vec4(1);
-
-// [ VOID (NEAR FOG) ]
-uniform bool	useVoid			= false;
-uniform float	voidFar			= 6;
-uniform float	voidNear		= 4;
-uniform float	voidStrength	= 1;
-uniform vec4	voidColor		= vec4(0);
-
-// [ TEXTURE WARPING ]
-uniform bool		useWarp			= false;
-uniform sampler2D	warpTexture;
-uniform uint		warpChannelX	=	0;
-uniform uint		warpChannelY	=	1;
+struct FogModule {
+	bool	enabled;
+	float	start;
+	float	stop;
+	float	strength;
+	vec4	color;
+};
 
 // [ COLOR INVERSION ]
-uniform bool	useNegative			= false;
-uniform float	negativeStrength	= 1;
+struct NegativeModule {
+	bool	enabled;
+	float	strength;
+};
 
 // [ COLOR TO GRADIENT ]
-uniform bool	useGradient		= false;
-/**
-* If -1, the average between the color channels is used.
-* Else, the specified channel is used.
-* MUST be between -1 and 3.
-*/
-uniform int		gradientChannel	= -1;
-uniform vec4	gradientStart	= vec4(0);
-uniform vec4	gradientEnd		= vec4(1);
-uniform bool	gradientInvert	= false;
+struct GradientModule {
+	bool	enabled;
+	/**
+	* If -1, the average between the color channels is used.
+	* Else, the specified channel is used.
+	* MUST be between -1 and 3.
+	*/
+	int		channel;
+	vec4	start;
+	vec4	end;
+	bool	invert;
+};
 
 // [ HSLBC MODIFIERS ]
 uniform float	hue			= 0;
@@ -93,30 +109,43 @@ uniform float	contrast	= 1;
 // [ DEBUG MODE ]
 uniform uint	debugView	= 0;
 
+uniform AmbientData		ambient;
+uniform LightModule		lights;
+uniform ShadingModule	shade;
+uniform FogModule		farFog;
+uniform FogModule		nearFog;
+uniform NegativeModule	negative;
+uniform GradientModule	gradient;
+
+uniform TextureModule	imgTexture;
+uniform NormalMapModule	normalMap;
+uniform EmissionModule	emission;
+uniform WarpModule		warp;
+
 vec3 calculateLights(vec3 position, vec3 normal) {
-	if (!useLights) return vec3(1);
-	vec3 result = ambientColor * ambientStrength;
+	if (!lights.enabled) return vec3(1);
+	vec3 result = ambient.color * ambient.strength;
 	// TODO: figure out if this actually works
 	#ifdef IMPLEMENT_LIGHTS
-	if (lightsCount == 0) return result;
-	uint lc = (lightsCount < MAX_LIGHTS ? lightsCount : MAX_LIGHTS);
+	if (lights.data == 0) return result;
+	uint lc = (lights.count < MAX_LIGHTS ? lights.count : MAX_LIGHTS);
 	for (uint i = 0; i < lc; i++) {
-		float dist = distance(position, lights[i]);
-		float factor = max(0.0, 1.0 - dist / lightRadius[i]);
-		vec3 lightDir = normalize(lights[i] - position);
-		float diffuse = max(dot(normal, lightDir), 0.0);
-		result *= lightColor[i] * lightStrength[i] * factor + diffuse;
+		float dist = distance(position, lights.data[i].position);
+		float factor = max(0.0, 1.0 - dist / lights.data[i].radius);
+		vec3 lightDir = normalize(lights.data[i].position - position);
+		float diffuse = max(dot(normal, lights.data[i].direction), 0.0);
+		result *= lights.data[i].color * lights.data[i].strength * factor + diffuse;
 	}
 	#endif
 	return result;
 }
 
 vec3 getShadingColor(vec3 position, vec3 normal) {
-	if (!shaded) return vec3(1);
-	//vec3 direction = normalize(normalize(shadeDirection) - position);
-	vec3 direction = normalize(shadeDirection);
-	float factor = max(0, 1-dot(shadeDirection, normal));
-	return vec3(1) - shadeIntensity * factor;
+	if (!shade.enabled) return vec3(1);
+	//vec3 direction = normalize(normalize(shade.direction) - position);
+	vec3 direction = normalize(shade.direction);
+	float factor = max(0, 1-dot(shade.direction, normal));
+	return vec3(1) - shade.intensity * factor;
 }
 
 vec4 distanceGradient(vec4 start, vec4 end, float near, float far, float strength) {
@@ -127,25 +156,25 @@ vec4 distanceGradient(vec4 start, vec4 end, float near, float far, float strengt
 	return mix(start, end, value);
 }
 
-vec4 applyFog(vec4 color) {
-	return distanceGradient(color, vec4(fogColor.rgb, fogColor.a * color.a), fogNear, fogFar, fogStrength);
+vec4 applyNearFog(vec4 color) {
+	return distanceGradient(color, vec4(nearFog.color.rgb, nearFog.color.a * color.a), nearFog.stop, nearFog.start, nearFog.strength);
 }
 
-vec4 applyVoid(vec4 color) {
-	return distanceGradient(vec4(voidColor.rgb, fogColor.a * color.a), color, voidNear, voidFar, voidStrength);
+vec4 applyFarFog(vec4 color) {
+	return distanceGradient(color, vec4(farFog.color.rgb, farFog.color.a * color.a), farFog.start, farFog.stop, farFog.strength);
 }
 
 vec4 applyGradient(vec4 color) {
 	float gradientValue;
-	if (gradientChannel < 0)
+	if (gradient.channel < 0)
 		gradientValue = (color.r + color.g + color.b) / 3.0;
 	else
-		gradientValue = color[gradientChannel];
+		gradientValue = color[gradient.channel];
 	gradientValue = clamp(gradientValue, 0, 1);
-	if (gradientInvert)
-		return mix(gradientEnd, gradientStart, gradientValue);
+	if (gradient.invert)
+		return mix(gradient.end, gradient.start, gradientValue);
 	else
-		return mix(gradientStart, gradientEnd, gradientValue);
+		return mix(gradient.start, gradient.end, gradientValue);
 }
 
 vec3 rgb2hsl(vec3 c) {
@@ -180,21 +209,21 @@ void main(void) {
 	vec4 color;
 	vec2 calculatedFragUV = fragUV;
 	vec3 normal = fragNormal;
-	if (textured) {
-		if (useWarp) {
-			uint wcx = clamp(warpChannelX, 0u, 3u);
-			uint wcy = clamp(warpChannelY, 0u, 3u);
-			vec4 warpFac = texture(warpTexture, warpUV);
+	if (imgTexture.enabled) {
+		if (warp.enabled) {
+			uint wcx = clamp(warp.channelX, 0u, 3u);
+			uint wcy = clamp(warp.channelY, 0u, 3u);
+			vec4 warpFac = texture(warp.image, warpUV);
 			vec2 warpCoord = vec2(warpFac[wcx], warpFac[wcy]) * 2 - 1;
 			calculatedFragUV = fragUV + warpCoord;
-			color = texture(texture2D, calculatedFragUV) * fragColor;
-		} else color = texture(texture2D, fragUV) * fragColor;
+			color = texture(imgTexture.image, calculatedFragUV) * fragColor;
+		} else color = texture(imgTexture.image, fragUV) * fragColor;
 	} else color = fragColor;
 
-	if (textured && color.a <= (fragColor.a * alphaClip))
+	if (imgTexture.enabled && color.a <= (fragColor.a * imgTexture.alphaClip))
 		discard;
-	if (useNormalMap) {
-		normal = texture(normalMapImage, calculatedFragUV).rgb;
+	if (normalMap.enabled) {
+		normal = texture(normalMap.image, calculatedFragUV).rgb;
 		normal = normalize(normal * 2.0 - 1.0 + normal);  
 	}
 	color.xyz *= calculateLights(fragCoord3D, normal) * getShadingColor(fragCoord3D, normal);
@@ -205,21 +234,21 @@ void main(void) {
 
 	color = applyBrightnessAndContrast(color);
 
-	if (useNegative) {
+	if (negative.enabled) {
 		vec4 nc = vec4(vec3(1) - color.rgb, color.a);
-		color = mix(color, nc, negativeStrength);
+		color = mix(color, nc, negative.strength);
 	}
 
-	if (useGradient) color = applyGradient(color);
+	if (gradient.enabled) color = applyGradient(color);
 
-	if (useVoid) color = applyVoid(color);
+	if (nearFog.enabled) color = applyNearFog(color);
 
-	if (useFog) color = applyFog(color);
+	if (farFog.enabled) color = applyFarFog(color);
 
-	if (useEmission) {
-		vec4	emitColor	= texture(emissionTexture, calculatedFragUV) * fragColor;
+	if (emission.enabled) {
+		vec4	emitColor	= texture(emission.image, calculatedFragUV) * fragColor;
 		float	emitFactor	= rgb2hsl(emitColor.rgb).z * emitColor.a;
-		color.rgb = mix(color.rgb, emitColor.rgb, emitFactor * emissionStrength);
+		color.rgb = mix(color.rgb, emitColor.rgb, emitFactor * emission.strength);
 	}
 
 	FragColor = color;

@@ -10,7 +10,10 @@ namespace MatType {
 	concept Compatitble = Math::Operatable<T2> && Type::Convertible<T2, T1>;
 
 	template <size_t R, size_t C>
-	concept ValidTransform = (R == 4) && (R == C);
+	concept ValidTransform3D = (R == 4) && (R == C);
+
+	template <size_t R, size_t C>
+	concept ValidTransform2D = (R == 3) && (R == C);
 }
 
 /**
@@ -127,15 +130,20 @@ public:
 	}
 
 	constexpr Matrix(VecMath::Transform3D const& trans)
-	requires MatType::ValidTransform<R, C> {
+	requires MatType::ValidTransform3D<R, C> {
 		compose(trans);
+	}
+
+	constexpr Matrix(VecMath::Transform2D const& trans)
+	requires MatType::ValidTransform2D<R, C> {
+		*this = identity().transform(trans);
 	}
 
 	constexpr Matrix(
 		Vector3 const& pos,
 		Vector3 const& rot,
 		Vector3 const& scale
-	) requires MatType::ValidTransform<R, C> {
+	) requires MatType::ValidTransform3D<R, C> {
 		compose(pos, rot, scale);
 	}
 
@@ -143,7 +151,7 @@ public:
 		VecMath::Transform3D const& trans,
 		Vector4 const& perspective,
 		Vector3 const& skew
-	) requires MatType::ValidTransform<R, C> {
+	) requires MatType::ValidTransform3D<R, C> {
 		compose(trans, perspective, skew);
 	}
 
@@ -153,7 +161,7 @@ public:
 		Vector3 const& scale,
 		Vector4 const& perspective,
 		Vector3 const& skew
-	) requires MatType::ValidTransform<R, C> {
+	) requires MatType::ValidTransform3D<R, C> {
 		compose(pos, rot, scale, perspective, skew);
 	}
 
@@ -300,13 +308,13 @@ public:
 		return *this;
 	}
 
-	constexpr Matrix<4, 4, T> translated(Vector3 const& vec) const requires MatType::ValidTransform<R, C> {
+	constexpr Matrix<4, 4, T> translated(Vector3 const& vec) const requires MatType::ValidTransform3D<R, C> {
 		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
 		return Matrix<4, 4, T>(data).translate(vec);
 	}
 
 	// https://github.com/g-truc/glm/blob/master/glm/ext/matrix_transform.inl
-	constexpr Matrix<4, 4, T>& translate(Vector3 const& vec) requires MatType::ValidTransform<R, C> {
+	constexpr Matrix<4, 4, T>& translate(Vector3 const& vec) requires MatType::ValidTransform3D<R, C> {
 		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
 		Vector4 calc =
 			(Vector4(data[0]) * vec[0])
@@ -322,20 +330,20 @@ public:
 	}
 
 	template<EulerFunction EULER_FUNC = Matrix::fromEulerYXZ>
-	constexpr Matrix<4, 4, T> rotated(Vector3 const& vec) const requires MatType::ValidTransform<R, C> {
+	constexpr Matrix<4, 4, T> rotated(Vector3 const& vec) const requires MatType::ValidTransform3D<R, C> {
 		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
 		return (*this) * EULER_FUNC(vec);
 	}
 
 	template<EulerFunction EULER_FUNC = Matrix::fromEulerYXZ>
-	constexpr Matrix<4, 4, T>& rotate(Vector3 const& vec) requires MatType::ValidTransform<R, C> {
+	constexpr Matrix<4, 4, T>& rotate(Vector3 const& vec) requires MatType::ValidTransform3D<R, C> {
 		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
 		(*this) *= EULER_FUNC(vec);
 		return (*this);
 	}
 
 	// https://github.com/g-truc/glm/blob/master/glm/ext/matrix_transform.inl
-	constexpr Matrix<4, 4, T> scaled(Vector3 const& vec) const requires MatType::ValidTransform<R, C> {
+	constexpr Matrix<4, 4, T> scaled(Vector3 const& vec) const requires MatType::ValidTransform3D<R, C> {
 		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
 		Vector4 result[4];
 		result[0] = Vector4(data[0]) * vec[0];
@@ -351,7 +359,7 @@ public:
 	}
 
 	// https://github.com/g-truc/glm/blob/master/glm/ext/matrix_transform.inl
-	constexpr Matrix<4, 4, T>& scale(Vector3 const& vec) requires MatType::ValidTransform<R, C> {
+	constexpr Matrix<4, 4, T>& scale(Vector3 const& vec) requires MatType::ValidTransform3D<R, C> {
 		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
 		*this = scaled(vec);
 		return (*this);
@@ -536,7 +544,7 @@ public:
 		return (*this) * Matrix<R, 1, T>(vec);
 	}
 
-	constexpr Matrix<R, C, T> operator*(VecMath::Transform3D const& trans) const requires MatType::ValidTransform<R, C>  {
+	constexpr Matrix<R, C, T> operator*(VecMath::Transform3D const& trans) const requires MatType::ValidTransform3D<R, C>  {
 		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
 		return (*this) * Matrix<R, C, T>(trans);
 	}
@@ -640,7 +648,7 @@ public:
 	}
 
 	constexpr Matrix<R, C, T> operator*=(VecMath::Transform3D const& trans)
-	requires MatType::ValidTransform<R, C> {
+	requires MatType::ValidTransform3D<R, C> {
 		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
 		return (*this) *= Matrix<R, C, T>(trans);
 	}
@@ -704,16 +712,24 @@ public:
 		Vector3 const& position,
 		Vector3 const& rotation,
 		Vector3 const& scale
-	) const requires MatType::ValidTransform<R, C> {
+	) const requires MatType::ValidTransform3D<R, C> {
 		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
 		// Transform
 		return translated(position).template rotated<EULER_FUNC>(rotation).scaled(scale);
 	}
 
 	template<EulerFunction EULER_FUNC = Matrix::fromEulerYXZ>
-	constexpr Matrix<R, C, T>& transformed(VecMath::Transform3D const& trans) const requires MatType::ValidTransform<R, C> {
+	constexpr Matrix<R, C, T>& transformed(VecMath::Transform3D const& trans)
+	const requires MatType::ValidTransform3D<R, C> {
 		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
 		return transformed<EULER_FUNC>(trans.position, trans.rotation, trans.scale);
+	}
+
+	template<EulerFunction EULER_FUNC = Matrix::fromEulerYXZ>
+	constexpr Matrix<R, C, T>& transformed(VecMath::Transform2D const& trans)
+	const requires MatType::ValidTransform2D<R, C> {
+		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
+		return Matrix(*this).transform(trans);
 	}
 
 	template<EulerFunction EULER_FUNC = Matrix::fromEulerYXZ>
@@ -721,16 +737,41 @@ public:
 		Vector3 const& position,
 		Vector3 const& rotation,
 		Vector3 const& scale
-	) requires MatType::ValidTransform<R, C> {
+	) requires MatType::ValidTransform3D<R, C> {
 		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
 		// Transform
 		return translate(position).template rotate<EULER_FUNC>(rotation).scale(scale);
 	}
 
 	template<EulerFunction EULER_FUNC = Matrix::fromEulerYXZ>
-	constexpr Matrix<R, C, T>& transform(VecMath::Transform3D const& trans) requires MatType::ValidTransform<R, C> {
+	constexpr Matrix<R, C, T>& transform(VecMath::Transform3D const& trans)
+	requires MatType::ValidTransform3D<R, C> {
 		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
 		return transform<EULER_FUNC>(trans.position, trans.rotation, trans.scale);
+	}
+
+	constexpr Matrix<R, C, T>& transform(VecMath::Transform2D const& trans)
+	requires MatType::ValidTransform2D<R, C> {
+		static_assert(R == 3, "Matrix is not a valid representation of a 3D transform!");
+		Matrix<R, C, T>
+			pos		= Matrix::identity(),
+			rot		= Matrix::identity(),
+			scale	= Matrix::identity()
+		;
+		// Scale
+		scale[0][0] = trans.scale.x;
+		scale[1][1] = trans.scale.y;
+		// Position
+		pos[2][0] = trans.position.x;
+		pos[2][1] = trans.position.y;
+		// Rotation
+		rot[0][0] = cos(trans.rotation);
+		rot[1][0] = -sin(trans.rotation);
+		rot[0][1] = sin(trans.rotation);
+		rot[1][1] = cos(trans.rotation);
+		// Result
+		(*this) = pos * rot * scale * (*this);
+		return *this;
 	}
 
 	template<EulerFunction EULER_FUNC = Matrix::fromEulerYXZ>
@@ -738,7 +779,7 @@ public:
 		Vector3 const& position,
 		Vector3 const& rotation,
 		Vector3 const& scale
-	) requires MatType::ValidTransform<R, C> {
+	) requires MatType::ValidTransform3D<R, C> {
 		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
 		// Fill & Transform
 		(*this) = Matrix(1);
@@ -746,7 +787,7 @@ public:
 	}
 
 	template<EulerFunction EULER_FUNC = Matrix::fromEulerYXZ>
-	constexpr Matrix<R, C, T>& compose(VecMath::Transform3D const& trans) requires MatType::ValidTransform<R, C> {
+	constexpr Matrix<R, C, T>& compose(VecMath::Transform3D const& trans) requires MatType::ValidTransform3D<R, C> {
 		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
 		return compose<EULER_FUNC>(trans.position, trans.rotation, trans.scale);
 	}
@@ -759,7 +800,7 @@ public:
 		Vector3 const& scale,
 		Vector4 const& perspective,
 		Vector3 const& skew
-	) requires MatType::ValidTransform<R, C> {
+	) requires MatType::ValidTransform3D<R, C> {
 		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
 		Matrix<4, 4, T> result(Matrix<4, 4, T>(1));
 		// Apply perspective
@@ -798,7 +839,7 @@ public:
 		VecMath::Transform3D const&	trans,
 		Vector4 const&				perspective,
 		Vector3 const&				skew
-	) requires MatType::ValidTransform<R, C> {
+	) requires MatType::ValidTransform3D<R, C> {
 		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
 		return compose<EULER_FUNC>(trans.position, trans.rotation, trans.scale, perspective, skew);
 	}
@@ -808,7 +849,7 @@ public:
 	constexpr VecMath::Transform3D decompose(
 			Vector4& perspective,
 			Vector3& skew
-		) const requires MatType::ValidTransform<R, C> {
+		) const requires MatType::ValidTransform3D<R, C> {
 		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
 		VecMath::Transform3D result;
 		// if identity value is 0, return
@@ -900,7 +941,7 @@ public:
 	}
 
 	[[gnu::unavailable("Not working as intended!")]]
-	constexpr VecMath::Transform3D decompose() const requires MatType::ValidTransform<R, C> {
+	constexpr VecMath::Transform3D decompose() const requires MatType::ValidTransform3D<R, C> {
 		Vector4 _p;
 		Vector3 _s;
 		return decompose(_p, _s);
