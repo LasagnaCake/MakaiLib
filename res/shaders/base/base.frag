@@ -19,24 +19,24 @@ in vec2 warpUV;
 layout (location = 0) out vec4	FragColor;
 //layout (location = 1) out float	DepthValue;
 
-struct TextureModule {
+struct TextureEffect {
 	bool		enabled;
 	sampler2D 	image;
 	float		alphaClip;
 };
 
-struct NormalMapModule {
+struct NormalMapEffect {
 	bool		enabled;
 	sampler2D	image;
 };
 
-struct EmissionModule {
+struct EmissionEffect {
 	bool		enabled;
 	sampler2D	image;
 	float		strength;
 };
 
-struct WarpModule {
+struct WarpEffect {
 	bool		enabled;
 	sampler2D	image;
 	uint		channelX;
@@ -46,7 +46,7 @@ struct WarpModule {
 uniform vec4 albedo = vec4(1);
 
 // [ SIMPLE SHADING ]
-struct ShadingModule {
+struct ShadingEffect {
 	bool	enabled;
 	float	intensity;
 	vec3	direction;
@@ -65,14 +65,14 @@ struct AmbientData {
 	float	strength;
 };
 
-struct LightModule {
+struct LightEffect {
 	bool					enabled;
 	LightData[MAX_LIGHTS]	data;
 	uint					count;
 };
 
 // [ DISTANCE-BASED FOG ]
-struct FogModule {
+struct FogEffect {
 	bool	enabled;
 	float	start;
 	float	stop;
@@ -81,13 +81,13 @@ struct FogModule {
 };
 
 // [ COLOR INVERSION ]
-struct NegativeModule {
+struct NegativeEffect {
 	bool	enabled;
 	float	strength;
 };
 
 // [ COLOR TO GRADIENT ]
-struct GradientModule {
+struct GradientEffect {
 	bool	enabled;
 	/**
 	* If -1, the average between the color channels is used.
@@ -111,17 +111,17 @@ uniform float	contrast	= 1;
 uniform uint	debugView	= 0;
 
 uniform AmbientData		ambient;
-uniform LightModule		lights;
-uniform ShadingModule	shade;
-uniform FogModule		farFog;
-uniform FogModule		nearFog;
-uniform NegativeModule	negative;
-uniform GradientModule	gradient;
+uniform LightEffect		lights;
+uniform ShadingEffect	shade;
+uniform FogEffect		farFog;
+uniform FogEffect		nearFog;
+uniform NegativeEffect	negative;
+uniform GradientEffect	gradient;
 
-uniform TextureModule	imgTexture;
-uniform NormalMapModule	normalMap;
-uniform EmissionModule	emission;
-uniform WarpModule		warp;
+uniform TextureEffect	imgTexture;
+uniform NormalMapEffect	normalMap;
+uniform EmissionEffect	emission;
+uniform WarpEffect		warp;
 
 vec3 calculateLights(vec3 position, vec3 normal) {
 	if (!lights.enabled) return vec3(1);
