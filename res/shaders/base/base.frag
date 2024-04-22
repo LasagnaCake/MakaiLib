@@ -39,7 +39,8 @@ struct EmissionModule {
 struct WarpModule {
 	bool		enabled;
 	sampler2D	image;
-	uint		channelX, channelY;
+	uint		channelX;
+	uint		channelY;
 };
 
 uniform vec4 albedo = vec4(1);

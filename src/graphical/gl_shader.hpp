@@ -38,86 +38,116 @@ namespace Shader {
 			location(glGetUniformLocation(_id, _name.c_str()))
 		{}
 
-		void set(bool const& value) const {
-			glUniform1i(getUniform(), (int)value);
+		void set(bool const& value, size_t const& offset = 0) const {
+			this->offset = 0;
+			glUniform1i(getUniform() + offset, (int)value);
 		}
 
-		void set(int const& value) const {
-			glUniform1i(getUniform(), value);
+		void set(int const& value, size_t const& offset = 0) const {
+			this->offset = 0;
+			glUniform1i(getUniform() + offset, value);
 		}
 
-		void set(unsigned int const& value) const {
-			glUniform1ui(getUniform(), value);
+		void set(unsigned int const& value, size_t const& offset = 0) const {
+			this->offset = 0;
+			glUniform1ui(getUniform() + offset, value);
 		}
 
-		void set(float const& value) const {
-			glUniform1f(getUniform(), value);
+		void set(float const& value, size_t const& offset = 0) const {
+			this->offset = 0;
+			glUniform1f(getUniform() + offset, value);
 		}
 
-		void set(Vector2 const& value) const {
-			glUniform2f(getUniform(), value.x, value.y);
+		void set(Vector2 const& value, size_t const& offset = 0) const {
+			this->offset = 0;
+			glUniform2f(getUniform() + offset, value.x, value.y);
 		}
 
-		void set(Vector3 const& value) const {
-			glUniform3f(getUniform(), value.x, value.y, value.z);
+		void set(Vector3 const& value, size_t const& offset = 0) const {
+			this->offset = 0;
+			glUniform3f(getUniform() + offset, value.x, value.y, value.z);
 		}
 
-		void set(Vector4 const& value) const {
-			glUniform4f(getUniform(), value.x, value.y, value.z, value.w);
+		void set(Vector4 const& value, size_t const& offset = 0) const {
+			this->offset = 0;
+			glUniform4f(getUniform() + offset, value.x, value.y, value.z, value.w);
 		}
 
-		void set(Matrix3x3 const& value) const {
-			glUniformMatrix3fv(getUniform(), 1, GL_FALSE, value.begin());
+		void set(Matrix3x3 const& value, size_t const& offset = 0) const {
+			this->offset = 0;
+			glUniformMatrix3fv(getUniform() + offset, 1, GL_FALSE, value.begin());
 		}
 
-		void set(Matrix4x4 const& value) const {
-			glUniformMatrix4fv(getUniform(), 1, GL_FALSE, value.begin());
+		void set(Matrix4x4 const& value, size_t const& offset = 0) const {
+			this->offset = 0;
+			glUniformMatrix4fv(getUniform() + offset, 1, GL_FALSE, value.begin());
 		}
 
-		void setArray(int* const& values, size_t const& count) const {
-			glUniform1iv(getUniform(), count, values);
+		void setArray(int* const& values, size_t const& count, size_t const& offset = 0) const {
+			this->offset = 0;
+			glUniform1iv(getUniform() + offset, count, values);
+			this->offset = count;
 		}
 
-		void setArray(unsigned int* const& values, size_t const& count) const {
-			glUniform1uiv(getUniform(), count, values);
+		void setArray(unsigned int* const& values, size_t const& count, size_t const& offset = 0) const {
+			this->offset = 0;
+			glUniform1uiv(getUniform() + offset, count, values);
+			this->offset = count;
 		}
 
-		void setArray(float* const& values, size_t const& count) const {
-			glUniform1fv(getUniform(), count, values);
+		void setArray(float* const& values, size_t const& count, size_t const& offset = 0) const {
+			this->offset = 0;
+			glUniform1fv(getUniform() + offset, count, values);
+			this->offset = count;
 		}
 
-		void setArray(Vector2* const& values, size_t const& count) const {
+		void setArray(Vector2* const& values, size_t const& count, size_t const& offset = 0) const {
+			this->offset = 0;
 			for SSRANGE(i, 0, count)
-				glUniform2f(getUniformArray(i), values[i].x, values[i].y);
+				glUniform2f(getUniformArray(i) + offset, values[i].x, values[i].y);
+			this->offset = count;
 		}
 
-		void setArray(Vector3* const& values, size_t const& count) const {
+		void setArray(Vector3* const& values, size_t const& count, size_t const& offset = 0) const {
+			this->offset = 0;
 			for SSRANGE(i, 0, count)
-				glUniform3f(getUniformArray(i), values[i].x, values[i].y, values[i].z);
+				glUniform3f(getUniformArray(i)+ offset, values[i].x, values[i].y, values[i].z);
+			this->offset = count;
 		}
 
-		void setArray(Vector4* const& values, size_t const& count) const {
+		void setArray(Vector4* const& values, size_t const& count, size_t const& offset = 0) const {
+			this->offset = 0;
 			for SSRANGE(i, 0, count)
-				glUniform4f(getUniformArray(i), values[i].x, values[i].y, values[i].z, values[i].w);
+				glUniform4f(getUniformArray(i)+ offset, values[i].x, values[i].y, values[i].z, values[i].w);
+			this->offset = count;
 		}
 
 		template <typename T>
-		void set(List<T> const& values) const {
-			setArray((T*)values.data(), values.size());
-			glUniform1ui(getUniform("Count"), values.size());
+		void set(List<T> const& values, size_t const& offset = 0) const {
+			this->offset = 0;
+			setArray((T*)values.data(), values.size(), offset);
 		}
 
 		template <typename T, size_t S>
-		void set(Span<T, S> const& values) const {
-			setArray((T*)values.data(), values.size());
-			glUniform1ui(getUniform("Count"), S);
+		void set(Span<T, S> const& values, size_t const& offset = 0) const {
+			this->offset = 0;
+			setArray((T*)values.data(), values.size(), offset);
 		}
 
-		template<typename... Args>
+		template <typename... Args>
 		void set(Args const&... args) const
 		requires (sizeof...(Args) > 1) {
-			(setSpecial(args), ...);
-			offset = 0;
+			this->offset = 0;
+			size_t off = 0;
+			(setSpecial(args, off), ...);
+			offset = off;
+		}
+
+		template <Type::Class T>
+		void forEach(List<T> const& values, Functor<void(T&, Uniform const&)> func) const {
+			for (T& val: values) {
+				func(val, Uniform(name, id, location, offset+1));
+			}
 		}
 
 		template <typename T>			void operator()(T const& value)				{set(value);	}
@@ -126,30 +156,33 @@ namespace Shader {
 		template <typename T, size_t S>	void operator()(Span<T, S> const& values)	{set(values);	}
 
 	private:
-		constexpr Uniform(String  const& _name, GLuint const& _id, GLuint const& _location): name(_name), id(_id), location(_location) {}
+		constexpr Uniform(
+			String  const& _name,
+			GLuint const& _id,
+			GLuint const& _location,
+			size_t const& _offset
+		): name(_name), id(_id), location(_location), offset(_offset) {}
 
 		template<typename T>
-		void setSpecial(T const& value) const {
-			set(value);
+		void setSpecial(T const& value, size_t& offset) const {
+			set(value, offset);
 			++offset;
 		}
 
 		template <typename T>
-		void setSpecial(List<T> const& values) const {
-			set(values);
-			glUniform1ui(getUniform() + values.size() + 1, values.size());
-			offset += values.size() + 1;
+		void setSpecial(List<T> const& values, size_t& offset) const {
+			set(values, offset);
+			offset += this->offset;
 		}
 
 		template <typename T, size_t S>
-		void setSpecial(Span<T, S> const& values) const {
-			set(values);
-			glUniform1ui(getUniform() + S + 1, S);
-			offset += S + 1;
+		void setSpecial(Span<T, S> const& values, size_t& offset) const {
+			set(values, offset);
+			offset += this->offset;
 		}
 
 		GLuint getUniformArray(size_t const& offset) const {
-			return location + this->offset + offset;
+			return location + offset + this->offset;
 		}
 
 		inline GLuint getUniform() const {
@@ -157,12 +190,13 @@ namespace Shader {
 		}
 
 		inline GLuint getUniform(String const& append) const {
-			return glGetUniformLocation(id, (name + append).c_str()) + offset;
+			return glGetUniformLocation(id, (name + append).c_str());
 		}
 
-		GLuint mutable offset = 0;
 		GLuint const id;
 		intmax const location;
+
+		size_t mutable offset;
 	};
 
 	class Shader {
