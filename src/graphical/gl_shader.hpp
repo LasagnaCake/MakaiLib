@@ -146,7 +146,7 @@ namespace Shader {
 		template <Type::Class T>
 		void forEach(List<T> const& values, Functor<void(T&, Uniform const&)> func) const {
 			for (T& val: values) {
-				func(val, Uniform(name, id, location, offset+1));
+				func(val, Uniform(name, id, location + offset+1, 0));
 			}
 		}
 
@@ -159,9 +159,8 @@ namespace Shader {
 		constexpr Uniform(
 			String  const& _name,
 			GLuint const& _id,
-			GLuint const& _location,
-			size_t const& _offset
-		): name(_name), id(_id), location(_location), offset(_offset) {}
+			GLuint const& _location
+		): name(_name), id(_id), location(_location) {}
 
 		template<typename T>
 		void setSpecial(T const& value, size_t& offset) const {
