@@ -146,7 +146,7 @@ namespace Shader {
 		template <Type::Class T>
 		void forEach(List<T> const& values, Functor<void(T&, Uniform const&)> func) const {
 			for (T& val: values) {
-				func(val, Uniform(name, id, location + offset+1, 0));
+				func(val, Uniform(name, id, location + offset+1));
 			}
 		}
 
