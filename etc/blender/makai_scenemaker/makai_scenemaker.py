@@ -404,6 +404,18 @@ def create_render_definition(context, obj, file_name, folder_path, tx_folder, me
             obj.material_props.texture_0_enabled,
             obj.material_props.texture_2_alpha_clip
         )
+    # Set normal map
+    if obj.material_props.normalmap_0_enabled and obj.material_props.normalmap_1_image is not None:
+        strfile["material"]["normalMap"] = process_image_file(
+            embed_texture,
+            obj.material_props.normalmap_1_image,
+            f"{txpath}\\normalMap.png",
+            f"{mrodpath}\\_nm_TMP.png",
+            f"{tx_folder}\\normalMap.png",
+            obj.material_props.normalmap_0_enabled,
+            None
+        )
+        strfile["material"]["normalMap"]["strength"] = obj.material_props.normalmap_2_strength
     # Set emission
     if obj.material_props.emission_0_enabled and obj.material_props.emission_1_image is not None:
         strfile["material"]["emission"] = process_image_file(
@@ -511,6 +523,10 @@ class ObjectMaterialProperties(BaseProperties):
     texture_1_image: ImageProperty("Texture Image")
     texture_2_alpha_clip: AlphaClipProperty("Texture")
     
+    normalmap_0_enabled: BoolProperty("Enable Normal Map")
+    normalmap_1_image: ImageProperty("Normal Map Image")
+    normalmap_2_strength: RangeProperty("Normal Map Strength")
+    
     emission_0_enabled: BoolProperty("Enable Emission")
     emission_1_image: ImageProperty("Emission Image")
     emission_3_strength: RangeProperty("Emission Strength")
@@ -556,6 +572,8 @@ class ObjectMaterialProperties(BaseProperties):
         layout.column()
         layout.label(text="Texture Effect")
         self.render_child(target, "texture_")
+        layout.label(text="Normal Map Effect")
+        self.render_child(target, "normalmap_")
         layout.label(text="Emission Effect")
         self.render_child(target, "emission_")
         layout.label(text="Texture Warping Effect")
