@@ -41,16 +41,19 @@ namespace Shader {
 		void set(bool const& value, size_t const& offset = 0) const {
 			this->offset = 0;
 			glUniform1i(getUniform() + offset, (int)value);
+			++this->offset;
 		}
 
 		void set(int const& value, size_t const& offset = 0) const {
 			this->offset = 0;
 			glUniform1i(getUniform() + offset, value);
+			++this->offset;
 		}
 
 		void set(unsigned int const& value, size_t const& offset = 0) const {
 			this->offset = 0;
 			glUniform1ui(getUniform() + offset, value);
+			++this->offset;
 		}
 
 		void set(float const& value, size_t const& offset = 0) const {
@@ -61,21 +64,25 @@ namespace Shader {
 		void set(Vector2 const& value, size_t const& offset = 0) const {
 			this->offset = 0;
 			glUniform2f(getUniform() + offset, value.x, value.y);
+			++this->offset;
 		}
 
 		void set(Vector3 const& value, size_t const& offset = 0) const {
 			this->offset = 0;
 			glUniform3f(getUniform() + offset, value.x, value.y, value.z);
+			++this->offset;
 		}
 
 		void set(Vector4 const& value, size_t const& offset = 0) const {
 			this->offset = 0;
 			glUniform4f(getUniform() + offset, value.x, value.y, value.z, value.w);
+			++this->offset;
 		}
 
 		void set(Matrix3x3 const& value, size_t const& offset = 0) const {
 			this->offset = 0;
 			glUniformMatrix3fv(getUniform() + offset, 1, GL_FALSE, value.begin());
+			++this->offset;
 		}
 
 		void set(Matrix4x4 const& value, size_t const& offset = 0) const {
@@ -126,12 +133,14 @@ namespace Shader {
 		void set(List<T> const& values, size_t const& offset = 0) const {
 			this->offset = 0;
 			setArray((T*)values.data(), values.size(), offset);
+			this->offset = values.size();
 		}
 
 		template <typename T, size_t S>
 		void set(Span<T, S> const& values, size_t const& offset = 0) const {
 			this->offset = 0;
 			setArray((T*)values.data(), values.size(), offset);
+			this->offset = values.size();
 		}
 
 		template <typename... Args>
