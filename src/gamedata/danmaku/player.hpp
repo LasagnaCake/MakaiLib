@@ -65,12 +65,6 @@ struct BasePlayerEntity2D: AreaCircle2D {
 			sprite->setColor(Color::WHITE);
 		};
 		invincibility.delay = 90;
-		// Animation timer
-		animator.repeat = true;
-		animator.onSignal = SIGNAL {
-			if((++sprite->frame.x) >= sprite->size.x)
-				sprite->frame.x = 0;
-		};
 		// Death bomb timer
 		deathbomb.stop().onSignal = SIGNAL {DEBUGLN("Hit!"); onDeath();};
 		deathbomb.delay = 5;
@@ -99,7 +93,6 @@ struct BasePlayerEntity2D: AreaCircle2D {
 		mesh.material.shaded = false;
 		// Set timers & tweens manual
 		invincibility.setManual();
-		animator.setManual();
 		deathbomb.setManual();
 		bombCooldown.setManual();
 		shotCooldown.setManual();
@@ -167,7 +160,6 @@ struct BasePlayerEntity2D: AreaCircle2D {
 	bool focusShooting	= false;
 
 	Event::Timer invincibility;
-	Event::Timer animator;
 	Event::Timer deathbomb;
 	Event::Timer bombCooldown;
 	Event::Timer shotCooldown;
@@ -263,7 +255,6 @@ struct BasePlayerEntity2D: AreaCircle2D {
 	virtual void onFrame(float delta) {
 		// Process timers & tweens
 		invincibility.yield();
-		animator.yield();
 		deathbomb.yield();
 		bombCooldown.yield();
 		shotCooldown.yield();
