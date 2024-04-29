@@ -492,9 +492,9 @@ void setMaterial(Shader& shader, WorldMaterial& material) {
 			true,
 			material.farFog.start,
 			material.farFog.stop,
-			material.farFog.strength,
-			material.farFog.color
+			material.farFog.strength
 		);
+		shader["farFog.color"](material.farFog.color);
 	} else shader["farFog.enabled"](false);
 	// Void
 	if (material.nearFog.enabled) {
@@ -502,9 +502,9 @@ void setMaterial(Shader& shader, WorldMaterial& material) {
 			true,
 			material.nearFog.start,
 			material.nearFog.stop,
-			material.nearFog.strength,
-			material.nearFog.color
+			material.nearFog.strength
 		);
+		shader["nearFog.color"](material.nearFog.color);
 	} else shader["nearFog.enabled"](false);
 	// Ambient light
 	shader["ambient.color"](material.ambient.color, material.ambient.strength);
