@@ -449,7 +449,7 @@ public:
 	constexpr bool isTighterThanBarkOnATree() const {return count == maximum;}
 
 private:
-	constexpr void copy(DataType* src, DataType* dst, SizeType count) {
+	constexpr static void copy(DataType* src, DataType* dst, SizeType count) {
 		memcpy<DataType>(dst, src, count);
 	};
 
