@@ -43,6 +43,14 @@ public:
 		count = other.count;
 	}
 
+	constexpr List(SelfType&& other) {
+		maximum		= std::move(other.maximum);
+		data		= std::move(other.data);
+		count		= std::move(other.count);
+		magnitude	= std::move(other.magnitude);
+		other.data = nullptr;
+	}
+
 	constexpr List(IteratorType const& begin, IteratorType const& end) {
 		invoke(end - begin);
 		copy(begin, data, end - begin);
@@ -56,7 +64,7 @@ public:
 		count = end - begin;
 	}
 
-	constexpr ~List() {delete[] data;}
+	constexpr ~List() {if (data) delete[] data;}
 
 	constexpr SelfType& pushBack(DataType const& value) {
 		if (count >= maximum)
