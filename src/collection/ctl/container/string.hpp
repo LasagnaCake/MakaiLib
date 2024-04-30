@@ -18,11 +18,11 @@ public:
 	typedef std::basic_ostream<DataType>	OutputStreamType;
 	typedef std::basic_istream<DataType>	InputStreamType;
 
+	using BaseType::BaseType;
+
 	constexpr BaseString() {}
 
-	constexpr ~BaseString() {
-		delete[] strbuf;
-	}
+	constexpr ~BaseString() {if (strbuf) delete[] strbuf;}
 
 	constexpr BaseString(const DataType* const& v) {
 		SizeType len = 0;
