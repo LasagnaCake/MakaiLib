@@ -468,7 +468,7 @@ private:
 			return *this;
 		}
 		magnitude = 0;
-		SizeType const order = (sizeof(SizeType) * 8);
+		SizeType const order = (sizeof(SizeType) * 8)-1;
 		for (SizeType i = 1; i <= order; ++i) {
 			magnitude = 1 << order - i;
 			if ((maximum >> order) & 1) {
