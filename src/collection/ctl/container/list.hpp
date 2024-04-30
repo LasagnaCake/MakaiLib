@@ -125,9 +125,9 @@ public:
 			delete[] data;
 		}
 		maximum = newSize;
-		recalculateMagnitude();
 		data = newData;
 		count = newSize;
+		recalculateMagnitude();
 		return *this;
 	}
 
