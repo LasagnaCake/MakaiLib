@@ -48,7 +48,7 @@ public:
 		DataType const& _info		= "none",
 		DataType const& _callerInfo	= "none"
 	):
-		BasicError(_message),
+		BasicError((const char*)_message),
 		type(_type),
 		message(_message),
 		file(_file),
