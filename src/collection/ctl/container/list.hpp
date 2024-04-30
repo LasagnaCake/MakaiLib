@@ -9,8 +9,8 @@
 #include "../algorithm/reverse.hpp"
 #include "../algorithm/memory.hpp"
 
-template<class T, Type::Integer I = size_t>
-struct List: Iteratable<T, I>, SelfIdentified<List<T, I>>, Ordered {
+template<class TData, Type::Integer TIndex = size_t>
+struct List: Iteratable<TData, TIndex>, SelfIdentified<List<TData, TIndex>>, Ordered {
 public:
 	constexpr List() {invoke(1);}
 
@@ -517,8 +517,8 @@ private:
 	DataType*	data		= nullptr;
 };
 
-template<class T, Type::Integer I = size_t>
-class LinkedList: Typed<T>, Indexed<I>, SelfIdentified<List<T, I>> {
+template<class TData, Type::Integer TIndex = size_t>
+class LinkedList: Typed<TData>, Indexed<TIndex>, SelfIdentified<List<TData, TIndex>> {
 public:
 	struct Node {
 		DataType	value		= nullptr;

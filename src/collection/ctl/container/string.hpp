@@ -8,11 +8,11 @@
 #include "list.hpp"
 #include "../typeinfo.hpp"
 
-template<ASCIIType T, Type::Integer I = size_t>
+template<ASCIIType TChar, Type::Integer TIndex = size_t>
 struct BaseString:
-	List<T, I>,
-	SelfIdentified<BaseString<T, I>>,
-	Derived<List<T, I>> {
+	List<TChar, TIndex>,
+	SelfIdentified<BaseString<T, TIndex>>,
+	Derived<List<TChar, TIndex>> {
 public:
 	// Stream types
 	typedef std::basic_ostream<DataType>	OutputStreamType;

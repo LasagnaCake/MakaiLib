@@ -4,15 +4,15 @@
 #include <initializer_list>
 #include <numeric_limits>
 
-template<class T>
+template<class TSelf>
 struct SelfIdentified {
-	typedef T SelfType;
-	typedef TypeInfo<T> Self;
+	typedef TSelf SelfType;
+	typedef TypeInfo<TSelf> Self;
 };
 
-template<class T>
+template<class TData>
 struct Typed {
-	typedef T								DataType;
+	typedef TData							DataType;
 	typedef DataType const					ConstantType;
 	typedef DataType&						ReferenceType;
 	typedef ConstantType&					ConstReferenceType;
@@ -21,21 +21,21 @@ struct Typed {
 	typedef const DataType*					ConstPointerType;
 };
 
-template<class K>
+template<class TKey>
 struct Keyed {
-	typedef Typed<K>	Key;
-	typedef K			KeyType;
+	typedef Typed<TKey>	Key;
+	typedef TKey		KeyType;
 };
 
-template<class V>
+template<class TValue>
 struct Valued {
-	typedef Typed<V>	Value;
-	typedef V			ValueType;
+	typedef Typed<TValue>	Value;
+	typedef TValue			ValueType;
 };
 
-template<Type::Integer I>
+template<Type::Integer TIndex>
 struct Indexed {
-	typedef std::make_unsigned<I>		SizeType;
+	typedef std::make_unsigned<TIndex>	SizeType;
 	typedef std::make_signed<SizeType>	IndexType;
 
 	constexpr static SizeType MAX_SIZE = TypeInfo<SizeType>::HIGHEST;

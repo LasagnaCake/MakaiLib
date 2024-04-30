@@ -6,8 +6,8 @@
 #include "../../conceptual.hpp"
 #include "../templates.hpp"
 
-template<class T, bool REVERSE = false, Type::Integer I = size_t>
-struct Iterator: Typed<T>, Indexed<T>, Ordered, SelfIdentified<T, REVERSE, I> {
+template<class TData, bool REVERSE = false, Type::Integer TIndex = size_t>
+struct Iterator: Typed<TData>, Indexed<TData>, Ordered, SelfIdentified<TData, REVERSE, TIndex> {
 public:
 	constexpr Iterator() {}
 
@@ -61,10 +61,10 @@ private:
 	PointerType iterand = nullptr;
 };
 
-template<class T>
-using ForwardIterator = Iterator<T, false>;
-template<class T>
-using ReverseIterator = Iterator<T, true>;
+template<class TData>
+using ForwardIterator = Iterator<TData, false>;
+template<class TData>
+using ReverseIterator = Iterator<TData, true>;
 
 template<class T>
 concept IteratorType = requires {
@@ -73,8 +73,8 @@ concept IteratorType = requires {
 	typename T::DataType;
 } && Type::Derived<T, Iterator<typename T::DataType, typename T::IndexType>>;
 
-template<class T, Type::Integer I>
-struct Iteratable: Typed<T>, Indexed<I> {
+template<class TData, Type::Integer TIndex>
+struct Iteratable: Typed<TData>, Indexed<TIndex> {
 	typedef Iterator<DataType, false, SizeType>		IteratorType;
 	typedef Iterator<ConstantType, false, SizeType>	ConstIteratorType;
 	typedef Iterator<DataType, true, SizeType>		ReverseIteratorType;

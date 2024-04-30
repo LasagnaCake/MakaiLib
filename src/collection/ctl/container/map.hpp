@@ -4,13 +4,17 @@
 #include "list.hpp"
 #include "../templates.hpp"
 #include "../conceptual.hpp"
+#include "../algorithm/hash.hpp"
 
-template<class K, class V, Type::Integer I = size_t, PairType P = Pair>
-struct InsertionMap:
-	List<P<K, V>, I>,
-	Collected<K, V, P>,
-	SelfIdentified<InsertionMap<K, V, I, P>>
-requires Type::Comparable::Threeway<K, K> {
+template<class TKey, class TValue, Type::Integer TIndex = size_t, class TPair = Pair<TKey, TValue>>
+struct HashMap:
+	List<TPair<TKey, TValue>, TIndex>,
+	Collected<TKey, TValue, TPair>,
+	SelfIdentified<OrderedMap<TKey, TValue, TIndex, TPair>>
+requires (
+	Type::Comparable::Threeway<TKey, TKey>
+&&	PairType<TPair>
+) {
 public:
 	using List<PairType>::List;
 
@@ -46,5 +50,18 @@ public:
 
 private:
 };
+
+template<class TKey, class TValue, Type::Integer TIndex = size_t, class TPair = Pair<TKey, TValue>, class THasher = Hasher>
+struct HashMap:
+	List<TPair<TKey, TValue>, TIndex>,
+	Collected<TKey, TValue, TPair>,
+	SelfIdentified<OrderedMap<TKey, TValue, TIndex, TPair>>
+requires (
+	Type::Comparable::Threeway<TKey, TKey>
+&&	PairType<TPair>
+&&	Hashable<TKey, THasher>
+) {
+
+}
 
 #endif // CTL_CONTAINER_MAP_H

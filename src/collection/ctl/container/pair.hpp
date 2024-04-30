@@ -4,20 +4,18 @@
 #include "../templates.hpp"
 #include "tuple.hpp"
 
-template<class K, class V>
+template<class TKey, class TValue>
 struct Pair:
-	Keyed<K>,
-	Valued<V>,
-	SelfIdentified<Pair<K, V>>,
+	Keyed<TKey>,
+	Valued<TValue>,
+	SelfIdentified<Pair<TKey, TValue>>,
 	Ordered {
 public:
 	KeyType		key;
 	ValueType	value;
 
-	MAKE_REFLECTIVE(key, value);
-
 	constexpr OrderType operator<=>(SelfType const& other)
-	requires (Type::Comparable::Threeway<K, K> && Type::Comparable::Threeway<V, V>) {
+	requires (Type::Comparable::Threeway<KeyType, KeyType> && Type::Comparable::Threeway<ValueType, ValueType>) {
 		OrderType result = key <=> other.key;
 		if (result != OrderType::EQUAL)
 			return result;
@@ -25,12 +23,12 @@ public:
 	}
 
 	constexpr OrderType operator<=>(SelfType const& other)
-	requires (Type::Comparable::Threeway<K, K> && !Type::Comparable::Threeway<V, V>) {
+	requires (Type::Comparable::Threeway<KeyType, KeyType> && !Type::Comparable::Threeway<ValueType, ValueType>) {
 		return key <=> other.key;
 	}
 
 	constexpr OrderType operator<=>(SelfType const& other)
-	requires (!Type::Comparable::Threeway<K, K> && Type::Comparable::Threeway<V, V>) {
+	requires (!Type::Comparable::Threeway<KeyType, KeyType> && Type::Comparable::Threeway<ValueType, ValueType>) {
 		return value <=> other.value;
 	}
 };
@@ -41,9 +39,9 @@ concept PairType = requires {
 	typename T::ValueType;
 } && Type::Derived<T, Pair<typename T::KeyType, typename T::ValueType>>;
 
-template<class K, class V, PairType P>
-struct Collected: Keyed<K>, Valued<V> {
-	typedef P<K, V> PairType;
+template<class TKey, class TValue, PairType TPair<K, V>>
+struct Collected: Keyed<TKey>, Valued<TValue> {
+	typedef TPair PairType;
 };
 
 #endif // CTL_CONTAINER_PAIR_H
