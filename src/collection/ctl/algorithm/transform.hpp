@@ -18,15 +18,15 @@ concept ASCIIType =
 
 template<ASCIIType T>
 constexpr T toLower(T const& c) {
-	if (C >= 'A' && c <= 'Z')
-		return c - 'A' + 'a';
+	if (c >= 'A' && c <= 'Z')
+		return c - ('a' - 'A');
 	return c;
 }
 
 template<ASCIIType T>
 constexpr T toUpper(T const& c) {
-	if (C >= 'a' && c <= 'z')
-		return c + 'a';
+	if (c >= 'a' && c <= 'z')
+		return c + ('a' - 'A');
 	return c;
 }
 
