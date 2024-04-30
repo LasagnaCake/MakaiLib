@@ -112,21 +112,22 @@ public:
 	}
 
 	constexpr SelfType& reserve(SizeType const& count) {
-		if (count > this->count) grow(count - this->count);
-		count = 0;
+		while (count > maximum)
+			increase();
+		this->count = count;
 		return *this;
 	}
 
 	constexpr SelfType& resize(SizeType const& newSize) {
 		DataType* newData = new T[newSize];
 		if (data) {
-			copy(data, newData, newSize);
+			copy(data, newData, count);
 			delete[] data;
 		}
 		maximum = newSize;
 		recalculateMagnitude();
 		data = newData;
-		count = 0;
+		count = newSize;
 		return *this;
 	}
 
