@@ -3,6 +3,7 @@
 
 #include "../templates.hpp"
 #include "../ctypes.hpp"
+#include "../cpperror.hpp"
 #include "../../conceptual.hpp"
 #include "iterator.hpp"
 #include "../algorithm/sort.hpp"
@@ -492,23 +493,23 @@ private:
 	}
 
 	void assertIsInBounds(IndexType const& index) {
-		if (index > count-1) outOfBoundsError();
+		if (index > count-1) outOfBoundsError(index);
 	}
 
 	[[noreturn]] constexpr void invalidSizeError(SizeType const& size) {
-		throw Error::FailedAction(toString("Invalid size of '", index, "'!"), __FILE__);
+		throw BasicError("Invalid list size!");
 	}
 
 	[[noreturn]] constexpr void atItsLimitError() {
-		throw Error::FailedAction("Maximum array capacity reached!", __FILE__);
+		throw BasicError("Maximum list capacity reached!");
 	}
 
 	[[noreturn]] constexpr void outOfBoundsError(IndexType const& index) {
-		throw Error::OutOfBounds(toString("Index '", index, "' is out of bounds!"), __FILE__);
+		throw BasicError("Array is out of bounds!");
 	}
 
 	[[noreturn]] constexpr void emptyError() {
-		throw Error::OutOfBounds("Container is empty!", __FILE__);
+		throw BasicError("Container is empty!");
 	}
 
 	SizeType	magnitude	= 1;
@@ -795,7 +796,7 @@ public:
 
 private:
 	void assertIsInBounds(IndexType const& index) {
-		if (index > count-1) outOfBoundsError();
+		if (index > count-1) outOfBoundsError(index);
 	}
 
 	void assertNotAtItsLimit() {
@@ -803,19 +804,19 @@ private:
 	}
 
 	[[noreturn]] constexpr void invalidSizeError(SizeType const& size) {
-		throw Error::FailedAction(toString("Invalid size of '", index, "'!"), __FILE_);
+		throw BasicError("Invalid list size!");
 	}
 
 	[[noreturn]] constexpr void atItsLimitError() {
-		throw Error::FailedAction("Maximum array capacity reached!", __FILE_);
+		throw BasicError("Maximum list capacity reached!");
 	}
 
 	[[noreturn]] constexpr void outOfBoundsError(IndexType const& index) {
-		throw Error::OutOfBoundsError(toString("Index '", index, "' is out of bounds!"), __FILE_);
+		throw BasicError("Array is out of bounds!");
 	}
 
-	[[noreturn]] constexpr void emptyContainerError() {
-		throw Error::OutOfBounds("Container is empty!", __FILE__);
+	[[noreturn]] constexpr void emptyError() {
+		throw BasicError("Container is empty!");
 	}
 
 	SizeType count = 0;

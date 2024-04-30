@@ -7,6 +7,7 @@
 
 #include "list.hpp"
 #include "../typeinfo.hpp"
+#include "../cpperror.hpp"
 
 template<ASCIIType TChar, Type::Integer TIndex = size_t>
 struct BaseString:
@@ -70,6 +71,8 @@ public:
 		*this = (*this) * times;
 	}
 
+	constexpr explicit operator const char*() const {return cstr();}
+
 	template <ASCIIType C>
 	constexpr operator BaseString<C, IndexType>() const
 	requires Type::Different<DataType, C> {
@@ -116,19 +119,15 @@ private:
 	size_t mutable		strbuflen	= 0;
 
 	[[noreturn]] void invalidNumberError(String const& v) {
-		throw Error::InvalidValue(
-			"Value '" + v + "' is not a valid number!",
-			__FILE__,
-			toString(__LINE__)
-		);
+		throw BasicError("Not a valid number!");
 	}
 
 	void assertIsInBounds(IndexType const& index) {
-		if (index > size()-2) outOfBoundsError();
+		if (index > size()-1) outOfBoundsError(index);
 	}
 
 	[[noreturn]] constexpr void outOfBoundsError(IndexType const& index) {
-		throw Error::OutOfBounds(toString("Index '", index, "' is out of bounds!"), __FILE__);
+		throw BasicError("Index is out of bounds!");
 	}
 };
 
@@ -140,7 +139,7 @@ constexpr BaseString<C, S> toString(I const& val, usize const& base = 10) {
 	BaseString<C, S> result(64, '\0');
 	ssize i = itoa(val, result.cbegin(), result.size(), base);
 	if (i == -1)
-		throw BaseString<C, S>("ERROR: Invalid number!");
+		throw BasicError("Failed to convert number!");
 	return result.reserve(i);
 }
 
@@ -149,7 +148,7 @@ constexpr BaseString<C, S> toString(F const& val, usize const& precision = 16) {
 	BaseString<C, S> result(64, '\0');
 	ssize i = ftoa(val, result.cbegin(), result.size(), base);
 	if (i == -1)
-		throw BaseString<C, S>("ERROR: Invalid number!");
+		throw BasicError("Failed to convert number!");
 	return result.reserve(i);
 }
 
