@@ -4,15 +4,15 @@
 #include "../ctypes.hpp"
 
 struct Hasher {
-	template <Type::Integer I>
-	constexpr static usize hash(I const& value) {return value;}
+	template <Type::Integer T>
+	constexpr static usize hash(T const& value) {return value;}
 
-	template <Type::Float F>
-	constexpr static usize hash(F const& value) {return *((uint32*)(&value));}
+	template <Type::Float T>
+	constexpr static usize hash(T const& value) {return *((uint32*)(&value));}
 };
 
-template<class T, class THasher>
-concept Hashable = requires (T v) {
+template<class TValue, class THasher>
+concept Hashable = requires (TValue v) {
 	{THasher::hash(v);} -> Type::Equal<usize>;
 }
 
