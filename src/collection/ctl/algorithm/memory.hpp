@@ -23,9 +23,9 @@
 		SIZE -= sz;\
 	}
 
-#define memsolveXC3(FUN, T, C, A, B, SIZE) {\
+#define memsolveXZ3(FUN, T, Z, A, B, SIZE) {\
 		if (sz = (size / sizeof(T)))\
-			if (C = FUN<T>(A, B, SIZE)) return C;\
+			if (Z = FUN<T>(A, B, SIZE)) return Z;\
 		A += sz;\
 		B += sz;\
 		SIZE -= sz;\
@@ -39,39 +39,44 @@
 
 #if CPU_ARCH == 64
 #define memsolve(SOLVE, FUN, ...) {\
-		SOLVE(FUN, uint64, __ARGS__)\
-		SOLVE(FUN, uint32, __ARGS__)\
-		SOLVE(FUN, uint16, __ARGS__)\
-		SOLVE(FUN, uint8, __ARGS__)\
+		usize sz = 0;\
+		SOLVE(FUN, uint64, __VA_ARGS__)\
+		SOLVE(FUN, uint32, __VA_ARGS__)\
+		SOLVE(FUN, uint16, __VA_ARGS__)\
+		SOLVE(FUN, uint8, __VA_ARGS__)\
 	}
 #elif CPU_ARCH == 32
 #define memsolve(SOLVE, FUN, ...) {\
-		SOLVE(FUN, uint32, __ARGS__)\
-		SOLVE(FUN, uint16, __ARGS__)\
-		SOLVE(FUN, uint8, __ARGS__)\
+		usize sz = 0;\
+		SOLVE(FUN, uint32, __VA_ARGS__)\
+		SOLVE(FUN, uint16, __VA_ARGS__)\
+		SOLVE(FUN, uint8, __VA_ARGS__)\
 	}
 #elif CPU_ARCH == 16
 #define memsolve(SOLVE, FUN, ...) {\
-		SOLVE(FUN, uint16, __ARGS__)\
-		SOLVE(FUN, uint8, __ARGS__)\
+		usize sz = 0;\
+		SOLVE(FUN, uint16, __VA_ARGS__)\
+		SOLVE(FUN, uint8, __VA_ARGS__)\
 	}
 #else
 #define memsolve(SOLVE, FUN, ...) {\
-		SOLVE(FUN, uint8, __ARGS__)\
+		usize sz = 0;\
+		SOLVE(FUN, uint8, __VA_ARGS__)\
 	}
 #endif
 
 template<Type::Integer I>
 constexpr void* memcpyX(void* const& dst, void* const& src, usize size) {
-	I *s = src, *d = dst;
+	I *s = (I*)src, *d = (I*)dst;
 	if (size == 1) *d = *s;
 	else while (size--) *d++ = *s++;
 	return dst;
 }
 
 constexpr void* memcpy(void* dst, void* src, usize size) {
+	void* const ret = dst;
 	memsolve(memsolveX3, memcpyX, dst, src, size);
-	return dst;
+	return ret;
 }
 
 template<Type::NonVoid T>
@@ -81,8 +86,8 @@ constexpr void* memcpy(T* const& src, T* const& dst, usize const& count) {
 
 template<Type::Integer I>
 constexpr void* memmoveX(void* const& dst, const void* const& src, usize size) {
-	I* d = dest;
-	const I* s = src;
+	I* d = (I*)dst;
+	const I* s = (I*)src;
 	if (d < s)
 		while (size--)
 			*d++ = *s++;
@@ -96,8 +101,9 @@ constexpr void* memmoveX(void* const& dst, const void* const& src, usize size) {
 }
 
 constexpr void* memmove(void* dst, const void* src, usize size) {
-	return memsolve(memsolveX3, memmoveX, dst, src, size);
-	return dst;
+	void* const ret = dst;
+	memsolve(memsolveX3, memmoveX, dst, src, size);
+	return ret;
 }
 
 template<Type::NonVoid T>
@@ -107,8 +113,8 @@ constexpr T* memmove(T* const& dst, const T* const& src, usize const& count) {
 
 template<Type::Integer I>
 constexpr int memcmpX(const void* const& a, const void* const& b, usize size) {
-	const I* s1 = a;
-	const I* s2 = b;
+	const I* s1 = (I*)a;
+	const I* s2 = (I*)b;
 	while (count-- > 0)
 		if (*s1++ != *s2++)
 			return s1[-1] < s2[-1] ? -1 : 1;
@@ -117,7 +123,7 @@ constexpr int memcmpX(const void* const& a, const void* const& b, usize size) {
 
 constexpr int memcmp(const void* a, const void* b, usize size) {
 	int ret = 0;
-	memsolve(memsolveXC3, memcmpX, ret, a, b, size);
+	memsolve(memsolveXZ3, memcmpX, ret, a, b, size);
 	return ret;
 }
 
@@ -128,7 +134,7 @@ constexpr int memcmp(T* const& a, T* const& b, usize const& count) {
 
 template<Type::Integer I>
 constexpr void* memsetX(void* const& dst, int const& val, usize size) {
-	I* d = dst;
+	I* d = (I*)dst;
 	while (size-- > 0)
 		*d++ = val;
 	return dst;
@@ -154,7 +160,7 @@ constexpr void* memzero(void* const& dst, usize const& size) {
 
 template<Type::Integer I>
 constexpr I* memzeroX(I* dst, usize const& count) {
-	I* d = dst;
+	I* d = (I*)dst;
 	while (size-- > 0)
 		*d++ = 0;
 	return dst;
@@ -162,7 +168,9 @@ constexpr I* memzeroX(I* dst, usize const& count) {
 
 template<Type::NonVoid T>
 constexpr T* memzero(T* dst, usize size) {
-	return memsolve(memsolveX2, memzeroX, dst, size);
+	void* const ret = dst;
+	memsolve(memsolveX2, memzeroX, dst, size);
+	return ret;
 }
 
 template<Type::NonVoid T>
