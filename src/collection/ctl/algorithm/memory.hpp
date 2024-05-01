@@ -18,7 +18,6 @@
 
 #define memsolveX3(FUN, T, A, B, SIZE) {\
 		if (sz = (size / sizeof(T))) FUN<T>(A, B, SIZE);\
-		sz *= 8;\
 		A += sz;\
 		B += sz;\
 		SIZE -= sz;\
@@ -27,7 +26,6 @@
 #define memsolveXC3(FUN, T, C, A, B, SIZE) {\
 		if (sz = (size / sizeof(T)))\
 			if (C = FUN<T>(A, B, SIZE)) return C;\
-		sz *= 8;\
 		A += sz;\
 		B += sz;\
 		SIZE -= sz;\
@@ -35,7 +33,6 @@
 
 #define memsolveX2(FUN, T, A, SIZE) {\
 		if (sz = (size / sizeof(T))) FUN<T>(A, SIZE);\
-		sz *= 8;\
 		A += sz;\
 		SIZE -= sz;\
 	}
@@ -72,7 +69,7 @@ constexpr void* memcpyX(void* const& dst, void* const& src, usize size) {
 	return dst;
 }
 
-constexpr void* memcpy(void* const& dst, void* const& src, usize const& size) {
+constexpr void* memcpy(void* dst, void* src, usize size) {
 	memsolve(memsolveX3, memcpyX, dst, src, size);
 	return dst;
 }
@@ -98,7 +95,7 @@ constexpr void* memmoveX(void* const& dst, const void* const& src, usize size) {
 	return dst;
 }
 
-constexpr void* memmove(void* const& dst, const void* const& src, usize const& size) {
+constexpr void* memmove(void* dst, const void* src, usize size) {
 	return memsolve(memsolveX3, memmoveX, dst, src, size);
 	return dst;
 }
@@ -118,7 +115,7 @@ constexpr int memcmpX(const void* const& a, const void* const& b, usize size) {
 	return 0;
 }
 
-constexpr int memcmp(const void* const& a, const void* const& b, usize size) {
+constexpr int memcmp(const void* a, const void* b, usize size) {
 	int ret = 0;
 	memsolve(memsolveXC3, memcmpX, ret, a, b, size);
 	return ret;
@@ -156,7 +153,7 @@ constexpr void* memzero(void* const& dst, usize const& size) {
 }
 
 template<Type::Integer I>
-constexpr I* memzeroX(I* const& dst, usize const& count) {
+constexpr I* memzeroX(I* dst, usize const& count) {
 	I* d = dst;
 	while (size-- > 0)
 		*d++ = 0;
@@ -164,7 +161,7 @@ constexpr I* memzeroX(I* const& dst, usize const& count) {
 }
 
 template<Type::NonVoid T>
-constexpr T* memzero(T* const& dst, usize const& count) {
+constexpr T* memzero(T* dst, usize size) {
 	return memsolve(memsolveX2, memzeroX, dst, size);
 }
 
