@@ -43,7 +43,11 @@ namespace Sorting {
 		memcpy(right, arr+szLeft, szRight);
 		mergeSort(left, szLeft);
 		mergeSort(lright, szRight);
-		usize i = 0, j = 0, k = szLeft;
+		usize
+			i = 0,
+			j = 0,
+			k = szLeft
+		;
 		while (i < szLeft && j < szRight) {
 			if (left[i] <= right[j])
 				arr[k] = left[i++];
@@ -59,24 +63,32 @@ namespace Sorting {
 
 	namespace Partial {
 		template<Type::Sortable T>
-		constexpr void mergeSort(T* const& arr, usize const& leftSize, usize const& rightSize) {
+		constexpr void mergeSort(T* const& arr, usize const& sz) {
 			if (sz == 1) return;
-			T
-				*left = new T[leftSize]
-				*right = new T[rightSize]
+			usize
+				szRight	= sz/2,
+				szLeft	= szRight + (sz%2==0 ? 0 : 1)
 			;
-			memcpy(left, arr, leftSize);
-			memcpy(right, arr+leftSize, rightSize);
-			usize i = 0, j = 0, k = leftSize;
-			while (i < leftSize && j < rightSize) {
+			T
+				*left = new T[szLeft]
+				*right = new T[szRight]
+			;
+			memcpy(left, arr, szLeft);
+			memcpy(right, arr+szLeft, szRight);
+			usize
+				i = 0,
+				j = 0,
+				k = szLeft
+			;
+			while (i < szLeft && j < szRight) {
 				if (left[i] <= right[j])
 					arr[k] = left[i++];
 				else
 					arr[k] = right[j++];
-				++k;
+				k++;
 			}
-			while (i < leftSize) arr[k++] = left[i++];
-			while (j < rightSize) arr[k++] = right[j++];
+			while (i < szLeft) arr[k++] = left[i++];
+			while (j < szRight) arr[k++] = right[j++];
 			delete[] left;
 			delete[] right;
 		}
@@ -86,8 +98,10 @@ namespace Sorting {
 	template<Type::Sortable T>
 	constexpr void vivoSort(T* const& arr, usize const& sz) {
 		if (sz == 1) return;
-		usize j = 1;
-		usize offset = 0;
+		usize
+			j = 1,
+			offset = 0
+		;
 		auto
 			prevOrder = arr[1] <=> arr[0],
 			currentOrder = prevOrder
@@ -98,7 +112,7 @@ namespace Sorting {
 				if (currentOrder != prevOrder && currentOrder != ValueOrder::EQUAL) {
 					if (j < runSize) {
 						j = (offset+j > sz) ? (sz-offset) : j;
-						mergeSort(arr+offset, j);
+						Partial::mergeSort(arr+offset, j);
 					} else if (arr[offset] < arr[offset+j])
 						reverse(arr+offset, j);
 					offset += j;
