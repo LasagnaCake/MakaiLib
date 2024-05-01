@@ -37,7 +37,6 @@
 		if (sz = (size / sizeof(T))) FUN<T>(A, SIZE);\
 		sz *= 8;\
 		A += sz;\
-		B += sz;\
 		SIZE -= sz;\
 	}
 
