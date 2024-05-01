@@ -5,9 +5,10 @@
 #include "../templates.hpp"
 #include "../conceptual.hpp"
 #include "../algorithm/hash.hpp"
+#include "pair.hpp"
 
 template<class TKey, class TValue, Type::Integer TIndex = size_t, class TPair = Pair<TKey, TValue>>
-struct HashMap:
+struct OrderedMap:
 	List<TPair<TKey, TValue>, TIndex>,
 	Collected<TKey, TValue, TPair>,
 	SelfIdentified<OrderedMap<TKey, TValue, TIndex, TPair>>

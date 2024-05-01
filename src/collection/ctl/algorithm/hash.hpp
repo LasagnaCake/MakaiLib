@@ -5,10 +5,13 @@
 
 struct Hasher {
 	template <Type::Integer T>
-	constexpr static usize hash(T const& value) {return value;}
+	constexpr static usize hash(T const& value)		{return value;					}
 
 	template <Type::Float T>
-	constexpr static usize hash(T const& value) {return *((uint32*)(&value));}
+	constexpr static usize hash(T const& value)		{return *((uint32*)(&value));	}
+
+	template <class T>
+	constexpr static usize hash(T* const& value)	{return (usize)value;			}
 };
 
 template<class TValue, class THasher>

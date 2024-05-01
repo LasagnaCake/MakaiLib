@@ -3,6 +3,9 @@
 
 #include <initializer_list>
 #include <numeric_limits>
+#include "../conceptual.hpp"
+#include "ctypes.hpp"
+#include "typeinfo.hpp"
 
 template<class TSelf>
 struct SelfIdentified {
@@ -68,7 +71,7 @@ struct PackInfo {
 	typedef FirstType<Bases...>	FirstType;
 	typedef LastType<Bases...>	LastType;
 
-	constexpr static usize COUNT = sizeof...(bases);
+	constexpr static usize COUNT = sizeof...(Bases);
 };
 
 template<class... BaseTypes>
