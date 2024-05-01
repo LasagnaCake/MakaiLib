@@ -108,12 +108,12 @@ constexpr I* memzeroX(I* const& dst, usize const& count) {
 
 template<Type::NonVoid T>
 constexpr T* memzero(T* const& dst, usize const& count) {
-	return memzeroX<uint8>((void*)dst, 0, count * sizeof(T));
+	return memzeroX<uint8>((void*)dst, count * sizeof(T));
 }
 
 template<Type::NonVoid T>
 constexpr T* memzero(T* const& dst) {
-	return memzero((void*)dst, 0, sizeof(T));
+	return memzero((void*)dst, sizeof(T));
 }
 
 #endif // CTL_ALGORITHM_MEMORY_H
