@@ -1,14 +1,16 @@
 #ifndef CTL_EXTENDED_TYPES_H
 #define CTL_EXTENDED_TYPES_H
 
+#include <ctype.h>
+
 #if		INTPTR_MAX == INT64_MAX
-#define CPU_ARCH 64
+#define CPU_ARCH (64)
 #elif	INTPTR_MAX == INT32_MAX
-#define CPU_ARCH 32
+#define CPU_ARCH (32)
 #elif	INTPTR_MAX == INT16_MAX
-#define CPU_ARCH 16
+#define CPU_ARCH (16)
 #else
-#define CPU_ARCH 8
+#define CPU_ARCH (8)
 #endif
 
 typedef unsigned char		uint8;
