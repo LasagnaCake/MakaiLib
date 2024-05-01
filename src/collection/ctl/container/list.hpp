@@ -10,7 +10,7 @@
 #include "../algorithm/reverse.hpp"
 #include "../algorithm/memory.hpp"
 
-template<class TData, Type::Integer TIndex = size_t, ValidAllocator TAlloc = MemoryAllocator>
+template<class TData, Type::Integer TIndex = size_t>
 struct List:
 	Iteratable<TData, TIndex>,
 	SelfIdentified<List<TData, TIndex>>,
