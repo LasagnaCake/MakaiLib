@@ -2,6 +2,7 @@
 #define CTL_ALGORITHM_SORTING_H
 
 #include "../container/iterator.hpp"
+#include "memory.hpp"
 #include "transform"
 
 namespace Type {
@@ -118,6 +119,8 @@ namespace Sorting {
 					offset += j;
 					j = 1;
 					++i;
+					if (i < sz)
+						prevOrder = currentOrder = arr[i+1] <=> arr[i];
 				} else ++j;
 				if (currentOrder != ValueOrder::EQUAL)
 					prevOrder = currentOrder;
