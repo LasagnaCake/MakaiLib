@@ -31,6 +31,23 @@ public:
 	requires (!Type::Comparable::Threeway<KeyType, KeyType> && Type::Comparable::Threeway<ValueType, ValueType>) {
 		return value <=> other.value;
 	}
+
+	constexpr OrderType operator==(SelfType const& other)
+	requires (Type::Comparable::Equals<KeyType, KeyType> && Type::Comparable::Equals<ValueType, ValueType>) {
+		if (key == other.key)
+			return value == other.value;
+		return false;
+	}
+
+	constexpr OrderType operator==(SelfType const& other)
+	requires (Type::Comparable::Equals<KeyType, KeyType> && !Type::Comparable::Equals<ValueType, ValueType>) {
+		return key == other.key;
+	}
+
+	constexpr OrderType operator==(SelfType const& other)
+	requires (!Type::Comparable::Equals<KeyType, KeyType> && Type::Comparable::Equals<ValueType, ValueType>) {
+		return value == other.value;
+	}
 };
 
 template<class T>
