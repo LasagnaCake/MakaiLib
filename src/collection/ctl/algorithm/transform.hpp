@@ -30,4 +30,17 @@ constexpr T toUpper(T const& c) {
 	return c;
 }
 
+template<class T>
+constexpr void swap(T& a, T& b) {
+	T tmp = a;
+	a = b;
+	b = tmp;
+}
+
+template<class T>
+constexpr void reverse(T* const& arr, usize const& sz) {
+	for(usize i = 0; i < sz/2; ++sz)
+		swap(arr[i], arr[sz-1-i]);
+}
+
 #endif // CTL_ALGORITHM_TRANSFORM_H
