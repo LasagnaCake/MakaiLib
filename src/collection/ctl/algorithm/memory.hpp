@@ -24,6 +24,15 @@
 		SIZE -= sz;\
 	}
 
+#define memsolveXC3(FUN, T, C, A, B, SIZE) {\
+		if (sz = (size / sizeof(T)))\
+			if (C = FUN<T>(A, B, SIZE)) return C;\
+		sz *= 8;\
+		A += sz;\
+		B += sz;\
+		SIZE -= sz;\
+	}
+
 #define memsolveX2(FUN, T, A, SIZE) {\
 		if (sz = (size / sizeof(T))) FUN<T>(A, SIZE);\
 		sz *= 8;\
@@ -65,7 +74,8 @@ constexpr void* memcpyX(void* const& dst, void* const& src, usize size) {
 }
 
 constexpr void* memcpy(void* const& dst, void* const& src, usize const& size) {
-	return memsolve(memsolveX3, memcpyX, dst, src, size);
+	memsolve(memsolveX3, memcpyX, dst, src, size);
+	return dst;
 }
 
 template<Type::NonVoid T>
@@ -91,6 +101,7 @@ constexpr void* memmoveX(void* const& dst, const void* const& src, usize size) {
 
 constexpr void* memmove(void* const& dst, const void* const& src, usize const& size) {
 	return memsolve(memsolveX3, memmoveX, dst, src, size);
+	return dst;
 }
 
 template<Type::NonVoid T>
@@ -109,7 +120,9 @@ constexpr int memcmpX(const void* const& a, const void* const& b, usize size) {
 }
 
 constexpr int memcmp(const void* const& a, const void* const& b, usize size) {
-	return memsolve(memsolveX3, memcmpX, a, b, size);
+	int ret = 0;
+	memsolve(memsolveXC3, memcmpX, ret, a, b, size);
+	return ret;
 }
 
 template<Type::NonVoid T>
@@ -162,6 +175,7 @@ constexpr T* memzero(T* const& dst) {
 }
 
 #undef memsolve
+#undef memsolveXC3
 #undef memsolveX3
 #undef memsolveX2
 
