@@ -16,19 +16,20 @@
 */
 
 template<Type::Integer I>
-constexpr void memcpyX(void* const& dst, void* const& src, usize size) {
+constexpr void* memcpyX(void* const& dst, void* const& src, usize size) {
 	I *s = src, *d = dst;
 	if (size == 1) *d = *s;
 	else while (size--) *d++ = *s++;
+	return dst;
 }
 
-constexpr void memcpy(void* const& dst, void* const& src, usize const& size) {
-	memcpyX<uint8>(dst, src, size);
+constexpr void* memcpy(void* const& dst, void* const& src, usize const& size) {
+	return memcpyX<uint8>(dst, src, size);
 }
 
 template<Type::NonVoid T>
-constexpr void memcpy(T* const& src, T* const& dst, usize const& count) {
-	memcpyX<uint8>((void*)dst, (void*)src, count * sizeof(T));
+constexpr void* memcpy(T* const& src, T* const& dst, usize const& count) {
+	return memcpyX<uint8>((void*)dst, (void*)src, count * sizeof(T));
 };
 
 template<Type::Integer I>
