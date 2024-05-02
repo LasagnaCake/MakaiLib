@@ -7,7 +7,7 @@
 
 namespace Type {
 	template <class T>
-	concept Sortable = Type::Comparable::Threeway<T, T> && Type::Comparable::Equals<T, T>;
+	concept Sortable = Comparable::Threeway<T, T> && Comparable::Equals<T, T>;
 }
 
 template <class T>
