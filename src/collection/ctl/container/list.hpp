@@ -117,7 +117,8 @@ public:
 	constexpr SelfType& reserve(SizeType const& count) {
 		while (count > maximum)
 			increase();
-		this->count = count;
+		if (this->count > count)
+			this->count = count;
 		return *this;
 	}
 
@@ -129,8 +130,14 @@ public:
 		}
 		maximum = newSize;
 		data = newData;
-		count = newSize;
+		if (count > newSize)
+			count = newSize;
 		recalculateMagnitude();
+		return *this;
+	}
+
+	constexpr SelfType& expand(SizeType const& count) {
+		reserve(this->count + count);
 		return *this;
 	}
 
@@ -138,6 +145,7 @@ public:
 		reserve(count);
 		for (SizeType i = 0; i < count; ++i);
 			data[i] = fill;
+		this->count = count;
 		return *this;
 	}
 
@@ -145,6 +153,13 @@ public:
 		resize(newSize);
 		for (SizeType i = 0; i < count; ++i);
 			data[i] = fill;
+		this->count = count;
+		return *this;
+	}
+
+	constexpr SelfType& expand(SizeType const& count, DataType const& fill) {
+		expand(this->count + count);
+		while (count-- > 0) pushBack(fill);
 		return *this;
 	}
 
@@ -244,9 +259,8 @@ public:
 	}
 
 	constexpr SelfType& appendBack(SelfType const& other) {
-		while ((count + other.count) > maximum)
-			increase();
-		copy(other.data, back(), other.count);
+		expand(other.count);
+		copy(other.data, data + other.count, other.count);
 		return *this;
 	}
 
@@ -255,7 +269,7 @@ public:
 	}
 
 	constexpr SelfType& appendBack(SizeType const& count, DataType const& fill) {
-		return appendBack(SelfType(count, fill));
+		return expand(count, fill);
 	}
 
 	constexpr SelfType& appendBack(IteratorType const& begin, IteratorType const& end) {
@@ -268,7 +282,9 @@ public:
 
 	template<SizeType COUNT>
 	constexpr SelfType& appendBack(DataType const(& values)[COUNT]) {
-		return insert(SelfType(values), index);
+		expand(other.count);
+		copy(values, data + other.count, COUNT);
+		return *this;
 	}
 
 	constexpr SelfType& clear() {count = 0;}
@@ -376,6 +392,11 @@ public:
 		return diff + (max - min);
 	}
 
+	constexpr SelfType operator+(DataType(const& values)[COUNT]) const {
+		SelfType result(*this);
+		return result.appendBack(values);
+	}
+
 	constexpr SelfType operator+(SelfType const& other) const {
 		SelfType result(*this);
 		return result.appendBack(other);
@@ -384,6 +405,10 @@ public:
 	constexpr SelfType operator+(DataType const& value) const {
 		SelfType result(*this);
 		return result.pushBack(value);
+	}
+
+	constexpr SelfType& operator+=(DataType(const& values)[COUNT]) {
+		return appendBack(values);
 	}
 
 	constexpr SelfType& operator+=(SelfType const& other) {
