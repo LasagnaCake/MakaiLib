@@ -21,7 +21,7 @@ namespace Sorting {
 	template<Type::Sortable T>
 	constexpr void insertionSort(T* const& arr, usize const& sz) {
 		for (usize i = 1; i < sz; ++i) {
-			usize j = i;
+			usize j = i-1;
 			while(j-- > 0 && arr[j+1] < arr[j])
 				if (arr[j+1] < arr[j])
 					swap(arr[j], arr[j+1])
@@ -104,6 +104,7 @@ namespace Sorting {
 				swap(arr[0], arr[1]);
 			return;
 		}
+		if (sz < 4) insertionSort(arr, sz);
 		usize
 			j		= 1,
 			offset	= 0
@@ -112,7 +113,7 @@ namespace Sorting {
 			prevOrder = arr[1] <=> arr[0],
 			currentOrder = prevOrder
 		;
-		for (usize run = Math::max(highBit(sz) >> 4, 2); run < sz; run <<= 1) {
+		for (usize run = Math::max(highBit(sz) >> 4, 4); run < sz; run <<= 1) {
 			for (usize i = 1; i < sz; ++i) {
 				currentOrder = arr[i] <=> arr[i-1];
 				if (currentOrder != prevOrder && currentOrder != ValueOrder::EQUAL) {
