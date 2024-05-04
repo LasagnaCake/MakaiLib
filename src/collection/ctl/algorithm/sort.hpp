@@ -98,20 +98,25 @@ namespace Sorting {
 	// Based off of Tim Sort, with a minor change
 	template<Type::Sortable T>
 	constexpr void vivoSort(T* const& arr, usize const& sz) {
-		if (sz == 1) return;
+		if (sz < 2) return;
+		if (sz == 2) {
+			if (arr[0] > arr[1])
+				swap(arr[0], arr[1]);
+			return;
+		}
 		usize
-			j = 1,
-			offset = 0
+			j		= 1,
+			offset	= 0
 		;
 		auto
 			prevOrder = arr[1] <=> arr[0],
 			currentOrder = prevOrder
 		;
-		while ((runSize << 1) < sz) {
+		for (usize run = Math::max(highBit(sz) >> 4, 2); run < sz; run <<= 1) {
 			for (usize i = 1; i < sz; ++i) {
 				currentOrder = arr[i] <=> arr[i-1];
 				if (currentOrder != prevOrder && currentOrder != ValueOrder::EQUAL) {
-					if (j < runSize) {
+					if (j < run) {
 						j = (offset+j > sz) ? (sz-offset) : j;
 						Partial::mergeSort(arr+offset, j);
 					} else if (arr[offset] < arr[offset+j])
@@ -125,9 +130,13 @@ namespace Sorting {
 				if (currentOrder != ValueOrder::EQUAL)
 					prevOrder = currentOrder;
 			}
+			if (j == sz) {
+				if (currentOrder == ValueOrder::LESS)
+					reverse(arr, sz);
+				return;
+			}
 			currentOrder = prevOrder = arr[1] <=> arr[0];
 			offset = 0;
-			run <<= 1;
 		}
 	}
 }
