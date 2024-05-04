@@ -119,11 +119,12 @@ namespace Sorting {
 			j		= 1,
 			offset	= 0
 		;
+		usize const hibit = highBit(sz);
 		auto
 			prevOrder = arr[1] <=> arr[0],
 			currentOrder = prevOrder
 		;
-		for (usize run = Math::max(highBit(sz) >> 4, 4); run < sz; run <<= 1) {
+		for (usize run = ((hibit >> 4) > 4 ? (hibit >> 4) : 4); run < sz; run <<= 1) {
 			for (usize i = 1; i < sz; ++i) {
 				currentOrder = arr[i] <=> arr[i-1];
 				if (currentOrder != prevOrder && currentOrder != ValueOrder::EQUAL) {
@@ -142,7 +143,7 @@ namespace Sorting {
 					prevOrder = currentOrder;
 			}
 			if (j == sz) {
-				if (currentOrder == ValueOrder::LESS)
+				if (arr[0] > arr[sz-1])
 					reverse(arr, sz);
 				return;
 			}
