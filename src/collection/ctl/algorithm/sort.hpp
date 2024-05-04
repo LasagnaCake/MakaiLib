@@ -32,13 +32,18 @@ namespace Sorting {
 	template<Type::Sortable T>
 	constexpr void mergeSort(T* const& arr, usize const& sz) {
 		if (sz == 1) return;
+		if (sz == 2) {
+			if (arr[0] > arr[1])
+				swap(arr[0], arr[1]);
+			return;
+		}
 		usize
 			szRight	= sz/2,
 			szLeft	= szRight + (sz%2==0 ? 0 : 1)
 		;
 		T
-			*left = new T[szLeft]
-			*right = new T[szRight]
+			*left	= new T[szLeft]
+			*right	= new T[szRight]
 		;
 		memcpy(left, arr, szLeft);
 		memcpy(right, arr+szLeft, szRight);
@@ -66,6 +71,11 @@ namespace Sorting {
 		template<Type::Sortable T>
 		constexpr void mergeSort(T* const& arr, usize const& sz) {
 			if (sz == 1) return;
+			if (sz == 2) {
+				if (arr[0] > arr[1])
+					swap(arr[0], arr[1]);
+				return;
+			}
 			usize
 				szRight	= sz/2,
 				szLeft	= szRight + (sz%2==0 ? 0 : 1)
@@ -95,7 +105,7 @@ namespace Sorting {
 		}
 	}
 
-	// Based off of Tim Sort, with a minor change
+	// Based off of Tim Sort, with minor changes
 	template<Type::Sortable T>
 	constexpr void vivoSort(T* const& arr, usize const& sz) {
 		if (sz < 2) return;
