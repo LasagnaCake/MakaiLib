@@ -55,7 +55,10 @@ struct BasePlayerEntity2D: AreaCircle2D {
 		hitboxMesh.setRenderLayer(PLAYER_HITBOX_LAYER);
 		// Create grazebox sprite
 		grazeboxSprite = grazeboxMesh.createReference<Reference::AnimatedPlane>();
-		grazeboxMesh.setRenderLayer(PLAYER_HITBOX_LAYER);
+		grazeboxMesh.setRenderLayer(PLAYER_HITBOX_LAYER-1);
+		// Create itembox sprite
+		itemboxSprite = itemboxMesh.createReference<Reference::AnimatedPlane>();
+		itemboxMesh.setRenderLayer(PLAYER_HITBOX_LAYER-2);
 		// Add to game
 		DEBUGLN("< FINGERS IN HIS ASS SUNDAY >");
 		addToGame(this, "DanmakuGame");
@@ -114,6 +117,9 @@ struct BasePlayerEntity2D: AreaCircle2D {
 	Renderable grazeboxMesh;
 	RenderData::Reference::AnimatedPlane*	grazeboxSprite;
 
+	Renderable itemboxMesh;
+	RenderData::Reference::AnimatedPlane*	itemboxSprite;
+
 	inline static ButtonNameMap const defaultBinds = {
 		{"up",		"playerUp"		},
 		{"down",	"playerDown"	},
@@ -146,7 +152,7 @@ struct BasePlayerEntity2D: AreaCircle2D {
 
 	PlayerData data;
 
-	CircleBounds2D grazebox;
+	CircleBounds2D grazebox, itembox;
 
 	Vector4 invincibleColor = INVINCIBLE_COLOR;
 
@@ -293,6 +299,7 @@ struct BasePlayerEntity2D: AreaCircle2D {
 		collision.shape.position = globalPosition();
 		// Update sprite
 		updateSprite();
+		itemboxMesh.trans.position	=
 		grazeboxMesh.trans.position	=
 		hitboxMesh.trans.position	= Vec3(position, zIndex);
 		// Do focus entering & exiting action, acoordingly
@@ -306,6 +313,12 @@ struct BasePlayerEntity2D: AreaCircle2D {
 		grazeboxMesh.trans.scale = Math::lerp(
 			grazeboxMesh.trans.scale,
 			Vec3(grazebox.radius * float(isFocused)),
+			Vec3(0.25f)
+		);
+		// Set itembox visibility
+		itemboxMesh.trans.scale = Math::lerp(
+			itemboxMesh.trans.scale,
+			Vec3(itembox.radius * float(isFocused)),
 			Vec3(0.25f)
 		);
 		grazeboxSprite->local.rotation.z += 0.025;
@@ -424,6 +437,13 @@ struct BasePlayerEntity2D: AreaCircle2D {
 		return CircleBounds2D {
 			grazebox.position + globalPosition(),
 			grazebox.radius
+		};
+	}
+
+	inline CircleBounds2D getItemBounds() {
+		return CircleBounds2D {
+			itembox.position + globalPosition(),
+			itembox.radius
 		};
 	}
 

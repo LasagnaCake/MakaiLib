@@ -136,6 +136,7 @@ public:
 					auto a = (PlayerEntity2D*)actor;
 					if (a) {
 						auto targetBounds = a->getGrazeBounds();
+						auto targetItembox = a->getItemBounds();
 						if (
 							Collision::withinBounds(
 								item.params.hitbox,
@@ -145,8 +146,14 @@ public:
 							a->onItemGet(item.params.type, item.params.value);
 							item.discard();
 						} else if (
-							(a->position.y > poc)
-							&& item.params.pocable
+							(
+								(a->position.y > poc)
+							&&	item.params.pocable
+							)
+						||	Collision::withinBounds(
+								item.params.hitbox,
+								targetItembox
+							)
 						) {
 							item.setAutoCollect(&a->position);
 						}

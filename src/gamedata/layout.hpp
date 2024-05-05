@@ -32,14 +32,14 @@ enum Layer: size_t {
 	// Player spell
 	R_LAYER(SPELL),
 	R_LAYER(SPELL_OVERLAY),
-	// Item
-	R_LAYER(ITEM),
 	// Player
 	R_LAYER(PLAYER_BOMB),
 	R_LAYER(PLAYER_LASER),
 	R_LAYER(PLAYER_BULLET),
 	R_LAYER(PLAYER_OPTION),
 	R_LAYER(PLAYER),
+	// Item
+	R_LAYER(ITEM),
 	// Enemy
 	R_LAYER(ENEMY),
 	R_LAYER(ENEMY_LASER),
@@ -57,10 +57,6 @@ enum Layer: size_t {
 	// Player 2 spell
 	R_LAYER(SPELL2),
 	R_LAYER(SPELL2_OVERLAY),
-	// Item 1
-	R_LAYER(ITEM1),
-	// Item 2
-	R_LAYER(ITEM2),
 	// Player 1
 	R_LAYER(PLAYER1_BOMB),
 	R_LAYER(PLAYER1_LASER),
@@ -73,6 +69,10 @@ enum Layer: size_t {
 	R_LAYER(PLAYER2_BULLET),
 	R_LAYER(PLAYER2_OPTION),
 	R_LAYER(PLAYER2),
+	// Item 1
+	R_LAYER(ITEM1),
+	// Item 2
+	R_LAYER(ITEM2),
 	// Enemy 1
 	R_LAYER(ENEMY1),
 	R_LAYER(ENEMY1_LASER),
