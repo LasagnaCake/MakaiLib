@@ -139,10 +139,7 @@ Currently VERY scarce. Some of the code is commented.
 - [ ] More "multi-purpose" game classes
 - [ ] Cleanup & polish [entity](src/collection/entity/entity.hpp) system
 - [ ] (Maybe) replace JSON to other specification
-- - [TML](https://github.com/cppfw/tml)
-- - [MessagePack](https://github.com/msgpack/msgpack)
-- - [Cap'n proto](https://capnproto.org/)
-- - [Protocol Buffers (Potentially not Free)](https://protobuf.dev/)
+- - See [File Format Alternatives](docs/changes/AltFormats.md) for more informaion
 - [ ] Multi-platform support:
 - - [ ] Linux
 
