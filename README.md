@@ -140,6 +140,9 @@ Currently VERY scarce. Some of the code is commented.
 - [ ] Cleanup & polish [entity](src/collection/entity/entity.hpp) system
 - [ ] (Maybe) replace JSON to other specification
 - - [TML](https://github.com/cppfw/tml)
+- - [MessagePack](https://github.com/msgpack/msgpack)
+- - [Protocol Buffers (Potentially not Free)](https://protobuf.dev/)
+- - [Cap'n proto](https://capnproto.org/)
 - [ ] Multi-platform support:
 - - [ ] Linux
 
