@@ -138,6 +138,8 @@ Currently VERY scarce. Some of the code is commented.
 - [ ] Other game types
 - [ ] More "multi-purpose" game classes
 - [ ] Cleanup & polish [entity](src/collection/entity/entity.hpp) system
+- [ ] (Maybe) replace JSON to other specification
+- - [TML](https://github.com/cppfw/tml)
 - [ ] Multi-platform support:
 - - [ ] Linux
 
