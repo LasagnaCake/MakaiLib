@@ -3,8 +3,8 @@
 ## Formats
 
 **High Candidates**
-- [TML](https://github.com/cppfw/tml)
 - [MessagePack](https://msgpack.org/index.html) ([this version in particular](https://github.com/mikeloomisgg/cppack))
+- [TML](https://github.com/cppfw/tml)
 - [Cap'n proto](https://capnproto.org/)
 
 **Medium Candidates**
@@ -21,6 +21,30 @@
 
 The biggest hurdle will be the matter of the Blender explorter. More specifically, adding export support for the file.
 
-Ho do you even install python modules on blender?
+How do you even install python modules on blender?
 
-ould it be a problem to ship a blender addon with a python module in it?
+Would it be a problem to ship a blender addon with a python module in it?
+
+## Format Pros & Cons
+
+### MessagePack
+
+**Pros**
+- Header-only C++ library (see [this version in particular](https://github.com/mikeloomisgg/cppack))
+- (Seemingly) fast
+
+**Cons**
+
+### TML
+
+**Pros**
+
+**Cons**
+
+### Cap'n Proto
+
+**Pros**
+- (Seemingly) fastest
+
+**Cons**
+- Complicated as fuck
