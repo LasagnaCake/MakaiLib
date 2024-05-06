@@ -2,7 +2,7 @@
 
 **High Candidates**
 - [TML](https://github.com/cppfw/tml)
-- [MessagePack](https://github.com/msgpack/msgpack)
+- [MessagePack](https://msgpack.org/index.html)
 - [Cap'n proto](https://capnproto.org/)
 
 **Medium Candidates**
