@@ -3,13 +3,13 @@
 ## Formats
 
 **High Candidates**
-- [MessagePack](https://msgpack.org/index.html) ([this version in particular](https://github.com/mikeloomisgg/cppack))
-- [TML](https://github.com/cppfw/tml)
+- [MessagePack](https://msgpack.org/index.html)
 - [Cap'n proto](https://capnproto.org/)
+- [Apache Avro](https://avro.apache.org/)
 
 **Medium Candidates**
+- [TML](https://github.com/cppfw/tml)
 - [Internet Object](https://docs.internetobject.org/)
-- [Apache Avro](https://avro.apache.org/)
 
 **Low Candidates**
 - [Protocol Buffers](https://protobuf.dev/)
@@ -32,19 +32,32 @@ Would it be a problem to ship a blender addon with a python module in it?
 **Pros**
 - Header-only C++ library (see [this version in particular](https://github.com/mikeloomisgg/cppack))
 - (Seemingly) fast
+- Has libraries for Python
+- Middle-of-the-Road performance for simplicity (see library previously mentioned)
 
 **Cons**
+
+### Apache Avro
+
+**Pros**
+
+**Cons**
+- Not as fast as MessagePack
+
+### Cap'n Proto
+
+**Pros**
+- (Seemingly) fastest
+- Extensible
+- Faster than MessagePack
+
+**Cons**
+- Extensively complicated/bureaucratic
 
 ### TML
 
 **Pros**
 
 **Cons**
-
-### Cap'n Proto
-
-**Pros**
-- (Seemingly) fastest
-
-**Cons**
-- Complicated as fuck
+- (Semingly) not as fast as other alternatives
+- C++ only
