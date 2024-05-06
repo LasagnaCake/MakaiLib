@@ -15,7 +15,9 @@
 - [Protocol Buffers](https://protobuf.dev/)
 - [FlatBuffers](https://flatbuffers.dev/)
 
-## Biggest Hurdle
+## Hurdles
+
+### Blender Exporter Support
 
 The biggest hurdle will be the matter of the Blender explorter. More specifically, adding export support for the file.
 
