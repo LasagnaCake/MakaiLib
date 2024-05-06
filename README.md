@@ -139,6 +139,7 @@ Currently VERY scarce. Some of the code is commented.
 - [ ] More "multi-purpose" game classes
 - [ ] Cleanup & polish [entity](src/collection/entity/entity.hpp) system
 - [ ] (Maybe) replace JSON to other specification
+- - For the *custom file formats*, that is
 - - See [File Format Alternatives](docs/changes/AltFormats.md) for more informaion
 - [ ] Multi-platform support:
 - - [ ] Linux
