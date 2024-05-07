@@ -52,7 +52,6 @@ Performance profiling pulled from:
 
 **Pros**
 - (Seemingly) fastest
-- Extensible
 - Faster than MessagePack
 
 **Cons**
