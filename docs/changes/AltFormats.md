@@ -19,11 +19,11 @@
 
 ### Blender Exporter Support
 
-The biggest hurdle will be the matter of the Blender explorter. More specifically, adding export support for the file.
+The biggest hurdle will be the matter of the Blender exporter. More specifically, adding export support for the file.
 
 How do you even install python modules on blender?
 
-Would it be a problem to ship a blender addon with a python module in it?
+Would it be a problem to ship a blender add-on with a python module in it?
 
 ## Format Pros & Cons
 
@@ -62,5 +62,5 @@ Performance profiling pulled from:
 **Pros**
 
 **Cons**
-- (Semingly) not as fast as other alternatives
+- (Seemingly) not as fast as other alternatives
 - C++ only
