@@ -82,7 +82,7 @@ These are already included in the ```lib/``` folder.
 | SDL2_Mixer | Audio backend                                       |
 | stb_image  | Image loading                                       |
 | cute_c2    | Collision                                           |
-| jsoncpp    | Multiple things                                     |
+| nlohmann::jsoncpp   | Multiple things                                     |
 | cppcodec   | Data encoding & decoding                            |
 | CryptoPP   | Encryption, decryption, compression & decompression |
 
@@ -93,7 +93,7 @@ Currently VERY scarce. Some of the code is commented.
 ## TODO
 
 ### Current
-- [ ] Separate `itembox` and `grazebox`
+- [x] Separate `itembox` and `grazebox`
 - [x] `data/` folder packing system
 - [x] "Optimize" GPU usage
 - - Instead of rendering every layer from the layerbuffer to the framebuffer, maybe implement sublayers?
