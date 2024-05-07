@@ -28,7 +28,7 @@ Would it be a problem to ship a blender addon with a python module in it?
 ## Format Pros & Cons
 
 Performance profiling pulled from:
-- https://stackoverflow.com/a/20806438
+- [https://stackoverflow.com/a/20806438](https://stackoverflow.com/a/20806438)
 
 ### MessagePack
 
