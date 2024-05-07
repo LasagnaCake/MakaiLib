@@ -45,6 +45,7 @@ Performance profiling pulled from:
 **Pros**
 
 **Cons**
+- Some complexity overhead
 - Not as fast as MessagePack
 
 ### Cap'n Proto
@@ -55,7 +56,7 @@ Performance profiling pulled from:
 - Faster than MessagePack
 
 **Cons**
-- Extensively complicated/bureaucratic
+- High complexity overhead
 
 ### TML
 
