@@ -7,8 +7,8 @@
 template<class TData> class Nullable;
 
 template<> class Nullable<void>:
-	public SelfIdentitied<Nullable<void>>
-	public Nullable {
+	public SelfIdentitied<Nullable<void>>,
+	public Nulled {
 public:
 	typedef void DataType;
 
