@@ -6,6 +6,7 @@
 - [MessagePack](https://msgpack.org/index.html)
 - [Cap'n proto](https://capnproto.org/)
 - [Apache Avro](https://avro.apache.org/)
+- [Fast Binary Encoding](https://chronoxor.github.io/FastBinaryEncoding/)
 
 **Medium Candidates**
 - [TML](https://github.com/cppfw/tml)
