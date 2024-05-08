@@ -1,5 +1,5 @@
-#ifndef CUSTOM_RUNTIME_ERRORS_H
-#define CUSTOM_RUNTIME_ERRORS_H
+#ifndef CTL_CUSTOM_RUNTIME_ERRORS_H
+#define CTL_CUSTOM_RUNTIME_ERRORS_H
 
 #include "string.hpp"
 #include "../cpperror.hpp"
@@ -60,4 +60,4 @@ namespace Error {
 		): Error (#NAME, message, file, line, caller, info, callerInfo) {}\
 	}
 
-#endif // CUSTOM_RUNTIME_ERRORS_H
+#endif // CTL_CUSTOM_RUNTIME_ERRORS_H
