@@ -30,6 +30,7 @@ Would it be a problem to ship a blender add-on with a python module in it?
 
 Performance profiling pulled from:
 - [https://stackoverflow.com/a/20806438](https://stackoverflow.com/a/20806438)
+- [https://chronoxor.github.io/FastBinaryEncoding/](https://chronoxor.github.io/FastBinaryEncoding/)
 
 ### MessagePack
 
