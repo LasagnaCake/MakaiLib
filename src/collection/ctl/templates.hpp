@@ -84,4 +84,8 @@ struct Polyglot {
 	typedef PackInfo<Types...> DataTypes;
 };
 
+struct Nulled {
+	typedef decltype(nullptr) NullType;
+};
+
 #endif // CTL_CLASS_TEMPLATES_H
