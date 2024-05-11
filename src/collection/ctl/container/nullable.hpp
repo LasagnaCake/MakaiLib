@@ -32,7 +32,8 @@ template<Type::Different<void> TData>
 class Nullable<TData>:
 	public SelfIdentitied<Nullable<TData>>,
 	public Typed<TData>,
-	public Nulled {
+	public Nulled,
+	public Defaultable<TData, TData()> {
 public:
 	constexpr Nullable() noexcept											{}
 	constexpr Nullable(NullType) noexcept									{}
@@ -85,6 +86,12 @@ public:
 			toString(__LINE__),
 			"operator T()"
 		);
+	}
+
+	constexpr operator DataType() const
+	requires Type::Different<DataType, bool> {
+		if (isSet) return data;
+		return defaultValue();
 	}
 
 	constexpr explicit operator DataType() const
