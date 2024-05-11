@@ -88,4 +88,9 @@ struct Nulled {
 	typedef decltype(nullptr) NullType;
 };
 
+template<class T, auto V>
+struct Defaultable {
+	constexpr T defaultValue() {return V;}
+};
+
 #endif // CTL_CLASS_TEMPLATES_H
