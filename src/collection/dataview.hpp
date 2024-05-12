@@ -120,7 +120,7 @@ namespace View {
 			return *this;
 		}
 
-		constexpr DataType operator *() const {
+		constexpr DataType operator*() const {
 			if (isSet) return data;
 			throw Error::NonexistentValue(
 				"Value is not set!",
