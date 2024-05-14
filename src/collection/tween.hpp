@@ -370,13 +370,14 @@ namespace Tweening {
 			if (!isFinished)
 			{
 				// If current stage is done...
-				if (step >= current.step)
+				if (step >= current.step) {
 					// Check if truly finished, else continue on to next stage
-					if (!(isFinished = !(stage < stages.size()))) {
-						current->onCompleted();
+					current->onCompleted();
+					if (!(isFinished = stage >= stages.size())) {
 						current	= stages[stage++];
 						step	= 0;
 					}
+				}
 				// Increment step counter
 				step += delta;
 				// If begin != end, calculate step
