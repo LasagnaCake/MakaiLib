@@ -371,8 +371,9 @@ namespace Tweening {
 			{
 				// If current stage is done...
 				if (step >= current.step)
-					// Check if truly finished, else continue on next stage
-					if (!(isFinished = stage >= stages.size())) {
+					// Check if truly finished, else continue on to next stage
+					if (stage >= stages.size()) {
+						current->onCompleted();
 						current	= stages[++stage];
 						step	= 0;
 					}
@@ -393,6 +394,7 @@ namespace Tweening {
 				// Clamp step to prevent overflow
 				step = (step > current.step ? current.step : step);
 				// If done, fire signal
+				isFinished = stage >= stages.size();
 				if (isFinished)
 					onCompleted();
 			}
@@ -416,6 +418,36 @@ namespace Tweening {
 
 		TweenChain& setInterpolation(StageArguments const& stages) {
 			return setInterpolation(StageList(stages));
+		}
+
+		/// Sets the current tween step.
+		TweenChain& setStep(unsigned long step) {
+			step--;
+			this->step = step > current.step ? current.step : step;
+			yield();
+			return *this;
+		}
+
+		/// Gets the current tween step number.
+		T getStep() {
+			return step;
+		}
+
+		/// Sets the current tween stage.
+		TweenChain& setStage(unsigned long stage) {
+			this->stage = stage >= stages.size() ? stages.size() : stage;
+			yield();
+			return *this;
+		}
+
+		/// Gets the current tween stage number.
+		T getStep() {
+			return stage;
+		}
+
+		/// Gets the current tween value.
+		T getValue() {
+			return *target;
 		}
 
 		/// Returns whether the tween is finished.
