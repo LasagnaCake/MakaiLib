@@ -372,7 +372,7 @@ namespace Tweening {
 				// If current stage is done...
 				if (step >= current.step)
 					// Check if truly finished, else continue on to next stage
-					if (!(isFinished = !stage < stages.size())) {
+					if (!(isFinished = !(stage < stages.size()))) {
 						current->onCompleted();
 						current	= stages[stage++];
 						step	= 0;
