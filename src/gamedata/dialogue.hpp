@@ -74,7 +74,7 @@ namespace Dialog {
 				animator[aName].from			=
 				animator[aName].to				=
 				actor.sprite->local.position	= actor.position.out;
-				if (actor.sprite) animator[aName].value = &(actor.sprite->local.position);
+				if (actor.sprite) animator[aName].target = &(actor.sprite->local.position);
 				animator[aName].setManual();
 			}
 			isFinished	= false;

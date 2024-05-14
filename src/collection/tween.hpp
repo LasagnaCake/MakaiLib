@@ -35,6 +35,42 @@ namespace Tweening {
 				(*func)(delta);
 	}
 
+	struct Tweener {
+		Tweener(bool manual = false) {
+			if (!manual) setAutomatic();
+			this->manual = true;
+		}
+
+		void setManual() {
+			if (manual) return;
+			// Loop through tween calls and delete if matches
+			if (!tweenList.empty()) std::erase_if(tweenList, [&](auto& e){return e == &_yield;});
+			manual = true;
+		}
+
+		void setAutomatic() {
+			if (!manual) return;
+			tweenList.push_back(&_yield);
+			manual = false;
+		}
+
+		virtual ~Tweener() {
+			// Loop through tween calls and delete if matches
+			if (!tweenList.empty()) std::erase_if(tweenList, [&](auto& e){return e == &_yield;});
+		}
+
+		virtual void yield(unsigned long delta = 1) = 0;
+
+		bool isManual() {return manual;}
+
+	private:
+		const Signal<float> _yield = [&](float delta = 1) {
+			this->yield(delta);
+		};
+
+		bool manual = false;
+	};
+
 	/**
 	*****************
 	*               *
@@ -43,12 +79,14 @@ namespace Tweening {
 	*****************
 	*/
 	template <Tweenable T = float>
-	class Tween {
+	class Tween: public Tweener {
 	public:
 		typedef T DataType;
 
+		using Tweener::Tweener;
+
 		/// The tween's target variable.
-		T* value = &defaultVar;
+		T* target = &defaultVar;
 
 		/// The tween's easing function.
 		Ease::EaseMode easeMode = Ease::linear;
@@ -65,27 +103,16 @@ namespace Tweening {
 		/// The tween's target value.
 		T to;
 
-		/// Empty Constructor.
-		Tween(bool manual = false) {
-			if (!manual)
-				tweenList.push_back(&_yield);
-			this->manual = manual;
-		}
-
 		/// Targetless Constructor.
-		Tween(T from, T to, unsigned long step, Ease::EaseMode easeMode, bool manual = false) {
+		Tween(T from, T to, unsigned long step, Ease::EaseMode easeMode, bool manual = false)
+		: Tweener(manual) {
 			setInterpolation(from, to, step, easeMode);
-			if (!manual)
-				tweenList.push_back(&_yield);
-			this->manual = manual;
 		}
 
 		/// Targeted Constructor.
-		Tween(T from, T to, unsigned long step, Ease::EaseMode easeMode, T* targetVar, bool manual = false) {
+		Tween(T from, T to, unsigned long step, Ease::EaseMode easeMode, T* targetVar, bool manual = false)
+		: Tweener(manual) {
 			setInterpolation(from, to, step, easeMode, targetVar);
-			if (!manual)
-				tweenList.push_back(&_yield);
-			this->manual = manual;
 		}
 
 		/// Copy constructor
@@ -95,10 +122,10 @@ namespace Tweening {
 			other.to,
 			other.step,
 			other.easeMode,
-			other.manual
+			other.isManual()
 		) {
-			if (other.value != &other.defaultVar)
-				value = other.value;
+			if (other.target != &other.defaultVar)
+				target = other.target;
 			paused = other.paused;
 			onCompleted = other.onCompleted;
 			isFinished = other.isFinished;
@@ -107,31 +134,30 @@ namespace Tweening {
 		}
 
 		/// Copy constructor
-		Tween(Tween&& other): Tween(other) {}
+		Tween(Tween&& other)
+		: Tween(
+			other.from,
+			other.to,
+			other.step,
+			other.easeMode,
+			other.isManual()
+		) {
+			if (other.target != &other.defaultVar)
+				target = other.target;
+			paused = other.paused;
+			onCompleted = other.onCompleted;
+			isFinished = other.isFinished;
+			factor = other.factor;
+			other.setManual();
+		}
 
 		/// Destructor.
-		~Tween() {
-			// Loop through tween calls and delete if matches
-			if (!tweenList.empty()) std::erase_if(tweenList, [&](auto& e){return e == &_yield;});
-			value = &defaultVar;
-		}
-
-		void setManual() {
-			if (manual) return;
-			// Loop through tween calls and delete if matches
-			if (!tweenList.empty()) std::erase_if(tweenList, [&](auto& e){return e == &_yield;});
-			manual = true;
-		}
-
-		void setAutomatic() {
-			if (!manual) return;
-			tweenList.push_back(&_yield);
-		}
+		virtual ~Tween() {}
 
 		/// Calculates (and if targeted, applies) a step.
-		void yield(unsigned long delta = 1) {
-			// If value pointer is null, point to default var
-			if (!value) value = &defaultVar;
+		void yield(unsigned long delta = 1) final {
+			// If target pointer is null, point to default var
+			if (!target) target = &defaultVar;
 			// If paused, return
 			if (paused) return;
 			// If not finished...
@@ -143,19 +169,16 @@ namespace Tweening {
 				// If begin != end, calculate step
 				if (from != to) {
 					factor = easeMode(float(step)/float(stop));
-					*value = Math::lerp(from, to, T(factor));
+					*target = Math::lerp(from, to, T(factor));
 				}
-				// Else, set value to end
-				else *value = to;
+				// Else, set target to end
+				else *target = to;
 				// Clamp step to prevent overflow
 				step = (step > stop ? stop : step);
-				// If done, fire signal and clear it
-				if (isFinished) {
+				// If done, fire signal
+				if (isFinished)
 					onCompleted();
-				}
 			}
-			// // Else, clamp value to between required values
-			// else *value = (*value > to ? to : (*value < from ? from : *value))
 		}
 
 		/// Sets the interpolation.
@@ -165,7 +188,7 @@ namespace Tweening {
 			this->from = from;
 			this->to = to;
 			stop = step;
-			*value = from;
+			*target = from;
 			this->easeMode = easeMode;
 			factor = 0.0f;
 			return *this;
@@ -173,13 +196,13 @@ namespace Tweening {
 
 		/// Sets the interpolation with a target.
 		Tween<T>& setInterpolation(T from, T to, unsigned long step, Ease::EaseMode easeMode, T* targetVar) {
-			value = targetVar;
+			target = targetVar;
 			isFinished = false;
 			this->step = 0;
 			this->from = from;
 			this->to = to;
 			stop = step;
-			*value = from;
+			*target = from;
 			this->easeMode = easeMode;
 			factor = 0.0f;
 			return *this;
@@ -188,7 +211,7 @@ namespace Tweening {
 		/// Sets the interpolation to a new value, while maintaining the easing function.
 		Tween<T>& reinterpolateTo(T to) {
 			paused = false;
-			setInterpolation(*value, to, step, easeMode);
+			setInterpolation(*target, to, step, easeMode);
 			return *this;
 		}
 
@@ -202,7 +225,7 @@ namespace Tweening {
 		/// Sets the interpolation to a new value, while maintaining the easing function.
 		Tween<T>& reinterpolateTo(T to, unsigned long step) {
 			paused = false;
-			setInterpolation(*value, to, step, easeMode);
+			setInterpolation(*target, to, step, easeMode);
 			return *this;
 		}
 
@@ -215,14 +238,14 @@ namespace Tweening {
 
 		/// Sets the tween's target variable.
 		Tween<T>& setTarget(T* target) {
-			value = target;
+			this->target = target;
 			return *this;
 		}
 
 		/// Removes the tween's target variable.
 		Tween<T>& clearTarget() {
-			defaultVar = *value;
-			value = &defaultVar;
+			defaultVar = *target;
+			target = &defaultVar;
 			return *this;
 		}
 
@@ -247,7 +270,7 @@ namespace Tweening {
 
 		/// Gets the current tween value.
 		T getValue() {
-			return *value;
+			return *target;
 		}
 
 		/// Returns whether the tween is finished.
@@ -257,7 +280,7 @@ namespace Tweening {
 
 		/// Halts the tween's execution, and sets it to its end value.
 		Tween<T>& conclude() {
-			*value = to;
+			*target = to;
 			step = stop;
 			factor = 1.0f;
 			isFinished = true;
@@ -279,12 +302,6 @@ namespace Tweening {
 		}
 
 	private:
-		/// Internal signal used for automatic processing.
-		const Signal<float> _yield = [&](float delta = 1) {
-			this->yield(delta);
-		};
-
-		bool manual = false;
 
 		float factor = 1.0f;
 
@@ -299,6 +316,153 @@ namespace Tweening {
 
 		/// The tween's default target.
 		T defaultVar;
+	};
+
+	template<Tweenable T = float>
+	struct StageData {
+		typedef T DataType;
+
+		/// The starting & ending values.
+		DataType from, to;
+		/// The amount of steps to take.
+		unsigned long step;
+		/// The easing function to use.
+		Ease::EaseMode ease			= Ease::linear;
+		/// The target for this specific stage.
+		DataType* target			= nullptr;
+		/// Action to do when this stage is concluded.
+		Event::Signal onCompleted	= Event::DEF_SIGNAL;
+	};
+
+	template<Tweenable T = float>
+	class TweenChain: Tweener {
+	public:
+		typedef T DataType;
+
+		typedef StageData<DataType>	Stage;
+		typedef List<Stage>			StageList;
+		typedef Arguments<Stage>	StageArguments;
+
+		using Tweener::Tweener;
+
+		DataType* target = &defaultVar;
+
+		Event::Signal onCompleted = Event::DEF_SIGNAL;
+
+		bool paused = false;
+
+		TweenChain(StageList const& stages, bool const& manual = false)
+		: Tweener(manual) {
+			setInterpolation(stages);
+		}
+
+		TweenChain(StageArguments const& stages, bool const& manual = false)
+		: Tweener(manual) {
+			setInterpolation(stages);
+		}
+
+		void yield(unsigned long delta = 1) final {
+			// If target pointer is null, point to default var
+			if (!target) target = &defaultVar;
+			// If paused, return
+			if (paused) return;
+			// If not finished...
+			if (!isFinished)
+			{
+				// If current stage is done...
+				if (step >= current.step)
+					// Check if truly finished, else continue on next stage
+					if (!(isFinished = stage >= stages.size())) {
+						current	= stages[++stage];
+						step	= 0;
+					}
+				// Increment step counter
+				step += delta;
+				// If begin != end, calculate step
+				if (current.from != current.to) {
+					factor = current.ease(float(step)/float(current.step));
+					if (current.target)
+						*current.target = Math::lerp(current.from, current.to, T(factor));
+					else
+						*target = Math::lerp(current.from, current.to, T(factor));
+				}
+				// Else, set target to end
+				else if (current.target)
+					*current.target = current.to;
+				else *target = current.to;
+				// Clamp step to prevent overflow
+				step = (step > current.step ? current.step : step);
+				// If done, fire signal
+				if (isFinished)
+					onCompleted();
+			}
+		}
+
+		TweenChain& setTarget(DataType* const& target) {
+			this->target = target;
+			return *this;
+		}
+
+		TweenChain& clearTarget() {
+			defaultVar = *target;
+			target = &defaultVar;
+			return *this;
+		}
+
+		TweenChain& setInterpolation(StageList const& stages) {
+			this->stages = stages;
+			return start();
+		}
+
+		TweenChain& setInterpolation(StageArguments const& stages) {
+			return setInterpolation(StageList(stages));
+		}
+
+		/// Returns whether the tween is finished.
+		bool finished() {
+			return isFinished;
+		}
+
+		/// Starts the tween with its current state.
+		TweenChain& play() {
+			factor = 1.0f;
+			isFinished = false;
+			return *this;
+		}
+
+		/// Starts the tween from the beginning.
+		TweenChain& start() {
+			step = 0;
+			stage = 0;
+			return play();
+		}
+
+		/// Halts the tween's execution.
+		TweenChain& halt() {
+			factor = 1.0f;
+			isFinished = true;
+			return *this;
+		}
+
+		/// Halts the tween's execution, and sets it to its end value.
+		TweenChain& conclude() {
+			*target = stages.front().to;
+			step = stages.front().step;
+			return halt();
+		}
+
+		StageList stages;
+
+	private:
+		Stage current;
+
+		unsigned long step = 0, stage = 0;
+
+		float factor = 1.0f;
+
+		bool isFinished = true;
+
+		DataType defaultVar;
 	};
 }
 
