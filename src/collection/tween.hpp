@@ -372,9 +372,9 @@ namespace Tweening {
 				// If current stage is done...
 				if (step >= current.step)
 					// Check if truly finished, else continue on to next stage
-					if (stage >= stages.size()) {
+					if (!(isFinished = !stage < stages.size())) {
 						current->onCompleted();
-						current	= stages[++stage];
+						current	= stages[stage++];
 						step	= 0;
 					}
 				// Increment step counter
@@ -394,7 +394,6 @@ namespace Tweening {
 				// Clamp step to prevent overflow
 				step = (step > current.step ? current.step : step);
 				// If done, fire signal
-				isFinished = stage >= stages.size();
 				if (isFinished)
 					onCompleted();
 			}
@@ -426,11 +425,6 @@ namespace Tweening {
 			this->step = step > current.step ? current.step : step;
 			yield();
 			return *this;
-		}
-
-		/// Gets the current tween step number.
-		T getStep() {
-			return step;
 		}
 
 		/// Sets the current tween stage.
@@ -466,6 +460,7 @@ namespace Tweening {
 		TweenChain& start() {
 			step = 0;
 			stage = 0;
+			current = stages[stage++];
 			return play();
 		}
 
