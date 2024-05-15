@@ -161,8 +161,7 @@ namespace Tweening {
 			// If paused, return
 			if (paused) return;
 			// If not finished...
-			if (!isFinished)
-			{
+			if (!isFinished) {
 				// Check if finished, then increment step
 				isFinished = step >= stop;
 				step += delta;
@@ -367,8 +366,7 @@ namespace Tweening {
 			// If paused, return
 			if (paused) return;
 			// If not finished...
-			if (!isFinished)
-			{
+			if (!isFinished) {
 				// If current stage is done...
 				if (step >= current.step) {
 					// Fire stage's onCompleted signal;
