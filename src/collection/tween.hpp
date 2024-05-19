@@ -239,7 +239,7 @@ namespace Tweening {
 
 		/// Sets the tween's target variable.
 		Tween<T>& setTarget(T* target) {
-			this->target = target;
+			if (target) this->target = target;
 			return *this;
 		}
 
@@ -336,7 +336,7 @@ namespace Tweening {
 	};
 
 	template<Tweenable T = float>
-	class TweenChain: Tweener {
+	class TweenChain: public Tweener {
 	public:
 		typedef T DataType;
 
@@ -372,7 +372,7 @@ namespace Tweening {
 				// If current stage is done...
 				if (step >= current.step) {
 					// Fire stage's onCompleted signal;
-					current->onCompleted();
+					current.onCompleted();
 					// Check if truly finished, else continue on to next stage
 					if (!(isFinished = stage >= stages.size())) {
 						current	= stages[stage++];
@@ -402,7 +402,7 @@ namespace Tweening {
 		}
 
 		TweenChain& setTarget(DataType* const& target) {
-			this->target = target;
+			if (target) this->target = target;
 			return *this;
 		}
 
@@ -419,6 +419,16 @@ namespace Tweening {
 
 		TweenChain& setInterpolation(StageArguments const& stages) {
 			return setInterpolation(StageList(stages));
+		}
+
+		TweenChain& setInterpolation(StageList const& stages, DataType* const& target) {
+			setInterpolation(stages);
+			setTarget(target);
+			return start();
+		}
+
+		TweenChain& setInterpolation(StageArguments const& stages, DataType* const& target) {
+			return setInterpolation(StageList(stages), target);
 		}
 
 		/// Sets the current tween step.
