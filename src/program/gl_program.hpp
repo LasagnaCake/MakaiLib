@@ -282,6 +282,7 @@ namespace Makai {
 		/// Returns all buttons currently pressed.
 		inline List<KeyboardButton> getKeyboardButtonsDown() {
 			List<KeyboardButton> buttons;
+			buttons.reserve(buffer.size());
 			for (auto [b, d] : buffer)
 				if (isButtonDown(b))
 					buttons.push_back(b);
@@ -291,6 +292,7 @@ namespace Makai {
 		/// Returns all buttons currently just pressed.
 		inline List<KeyboardButton> getKeyboardButtonsJustPressed() {
 			List<KeyboardButton> buttons;
+			buttons.reserve(buffer.size());
 			for (auto [b, d] : buffer)
 				if (isButtonJustPressed(b))
 					buttons.push_back(b);
@@ -300,6 +302,7 @@ namespace Makai {
 		/// Returns all buttons currently just released.
 		inline List<KeyboardButton> getKeyboardButtonsJustReleased() {
 			List<KeyboardButton> buttons;
+			buttons.reserve(buffer.size());
 			for (auto [b, d] : buffer)
 				if (isButtonJustReleased(b))
 					buttons.push_back(b);
@@ -318,6 +321,7 @@ namespace Makai {
 		/// Returns all buttons currently held.
 		inline List<KeyboardButton> getKeyboardButtonsHeld() {
 			List<KeyboardButton> buttons;
+			buttons.reserve(buffer.size());
 			for (auto [b, d] : buffer)
 				if (isButtonHeld(b))
 					buttons.push_back(b);
@@ -447,6 +451,7 @@ namespace Makai {
 		/// Returns all mouse buttons currently pressed.
 		inline List<MouseButton> getMouseButtonsDown() {
 			List<MouseButton> buttons;
+			buttons.reserve(mouse.buffer.size());
 			for (auto [b, d] : mouse.buffer)
 				if (isButtonDown(b))
 					buttons.push_back(b);
@@ -456,6 +461,7 @@ namespace Makai {
 		/// Returns all mouse buttons currently just pressed.
 		inline List<MouseButton> getMouseButtonsJustPressed() {
 			List<MouseButton> buttons;
+			buttons.reserve(mouse.buffer.size());
 			for (auto [b, d] : mouse.buffer)
 				if (isButtonJustPressed(b))
 					buttons.push_back(b);
@@ -465,6 +471,7 @@ namespace Makai {
 		/// Returns all mouse buttons currently just released.
 		inline List<MouseButton> getMouseButtonsJustReleased() {
 			List<MouseButton> buttons;
+			buttons.reserve(mouse.buffer.size());
 			for (auto [b, d] : mouse.buffer)
 				if (isButtonJustReleased(b))
 					buttons.push_back(b);
@@ -474,6 +481,7 @@ namespace Makai {
 		/// Returns all mouse buttons whose state changed.
 		inline List<MouseButton> getMouseButtonsChanged() {
 			List<MouseButton> buttons;
+			buttons.reserve(mouse.buffer.size());
 			for (auto [b, d] : mouse.buffer)
 				if (isButtonChanged(b))
 					buttons.push_back(b);
@@ -483,6 +491,7 @@ namespace Makai {
 		/// Returns all mouse buttons currently held.
 		inline List<MouseButton> getMouseButtonsHeld() {
 			List<MouseButton> buttons;
+			buttons.reserve(mouse.buffer.size());
 			for (auto [b, d] : mouse.buffer)
 				if (isButtonHeld(b))
 					buttons.push_back(b);
@@ -540,6 +549,45 @@ namespace Makai {
 				case ButtonCodeType::BCT_CONTROLLER:	return false;
 			}
 			return false;
+		}
+
+		/// Returns all buttons whose state just changed.
+		[[gnu::warning("Controller input is currently unimplemented!")]]
+		inline List<Button> getButtonsChanged() {
+			List<Button> buttons;
+			for (auto b: getKeyboardButtonsChanged())
+				buttons.push_back(Button(b));
+			for (auto b: getMouseButtonsChanged())
+				buttons.push_back(Button(b));
+			/*for (auto b: getControllerButtonsChanged())
+				buttons.push_back(Button(b));*/
+			return buttons;
+		}
+
+		/// Returns all buttons who have been recently just pressed.
+		[[gnu::warning("Controller input is currently unimplemented!")]]
+		inline List<Button> getButtonsJustPressed() {
+			List<Button> buttons;
+			for (auto b: getKeyboardButtonsJustPressed())
+				buttons.push_back(Button(b));
+			for (auto b: getMouseButtonsJustPressed())
+				buttons.push_back(Button(b));
+			/*for (auto b: getControllerButtonsJustPressed())
+				buttons.push_back(Button(b));*/
+			return buttons;
+		}
+
+		/// Returns all buttons who have been recently just released.
+		[[gnu::warning("Controller input is currently unimplemented!")]]
+		inline List<Button> getButtonsJustReleased() {
+			List<Button> buttons;
+			for (auto b: getKeyboardButtonsJustReleased())
+				buttons.push_back(Button(b));
+			for (auto b: getMouseButtonsJustReleased())
+				buttons.push_back(Button(b));
+			/*for (auto b: getControllerButtonsJustReleased())
+				buttons.push_back(Button(b));*/
+			return buttons;
 		}
 
 		/**

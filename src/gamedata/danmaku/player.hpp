@@ -42,7 +42,7 @@ private:
 	}
 };
 
-struct BasePlayerEntity2D: AreaCircle2D {
+struct BasePlayerEntity2D: AreaCircle2D, Controlable {
 	DERIVED_CLASS(BasePlayerEntity2D, AreaCircle2D)
 	DERIVED_CONSTRUCTOR(BasePlayerEntity2D, AreaCircle2D, {
 
@@ -233,8 +233,8 @@ struct BasePlayerEntity2D: AreaCircle2D {
 		}
 	}
 
-	virtual bool action(String const& what, bool const& justPressed = false) = 0;
-	virtual size_t actionState(String const& what) = 0;
+	virtual bool action(String const& what, bool const& justPressed = false)	= 0;
+	virtual size_t actionState(String const& what)								= 0;
 
 	void pichun() {
 		if (!collision.enabled) return;
@@ -499,28 +499,15 @@ struct PlayerEntity2D: BasePlayerEntity2D {
 
 	Makai::InputManager input;
 
-	bool action(String const& what, bool const& justPressed = false) final {
+	bool action(String const& what, bool const& justPressed = false) override {
 		if (justPressed)
 			return input.isButtonJustPressed(binds[what]);
 		else
 			return input.isButtonDown(binds[what]);
 	}
 
-	size_t actionState(String const& what) final {
+	size_t actionState(String const& what) override {
 		return input.getButtonState(binds[what]);
-	}
-};
-
-struct [[gnu::unavailable("Unimplemented!")]] ReplayPlayerEntity2D: BasePlayerEntity2D {
-	DERIVED_CLASS(ReplayPlayerEntity2D, BasePlayerEntity2D)
-	DERIVED_CONSTRUCTOR(ReplayPlayerEntity2D, BasePlayerEntity2D, {})
-
-	bool action(String const& what, bool const& justPressed = false) final {
-		return false;
-	}
-
-	size_t actionState(String const& what) final {
-		return 0;
 	}
 };
 

@@ -95,6 +95,8 @@ namespace GameData {
 
 	template <typename T> using Callback = Function<void(T&)>;
 
+	#include "gamedata/structures.hpp"
+	#include "gamedata/replayer.hpp"
 	#include "gamedata/program.hpp"
 	#include "gamedata/dialogue.hpp"
 	#include "gamedata/saving.hpp"
