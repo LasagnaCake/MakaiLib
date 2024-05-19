@@ -27,16 +27,14 @@ struct TextData {
 namespace {
 	constexpr bool isTextDataEqual(TextData const& a, TextData const& b) {
 		return Fold::land(
-			a.content		== b.content
-		,	a.rect.h		== b.rect.h
-		,	a.rect.v		== b.rect.v
-		,	a.textAlign.x	== b.textAlign.x
-		,	a.textAlign.y	== b.textAlign.y
-		,	a.rectAlign.x	== b.rectAlign.x
-		,	a.rectAlign.y	== b.rectAlign.y
-		,	a.spacing		== b.spacing
-		,	a.maxChars		== b.maxChars
-		,	a.lineWrap		== b.lineWrap
+			a.content	== b.content
+		,	a.rect.h	== b.rect.h
+		,	a.rect.v	== b.rect.v
+		,	a.textAlign	== b.textAlign
+		,	a.rectAlign	== b.rectAlign
+		,	a.spacing	== b.spacing
+		,	a.maxChars	== b.maxChars
+		,	a.lineWrap	== b.lineWrap
 		);
 	}
 }
@@ -214,7 +212,8 @@ private:
 		List<size_t>	lineEnd = getTextLineWrapIndices(text);
 		List<float>		lineStart = getTextLineStarts(text, *font, lineEnd);
 		cursor.x	= lineStart[0];
-		cursor.y 	= text.rect.v * (text.spacing.y + font->spacing.y) * text.textAlign.y;
+		cursor.y 	= text.rect.v - Math::min<size_t>(lineEnd.size(), text.rect.v);
+		cursor.y	*= (text.spacing.y + font->spacing.y) * -text.textAlign.y;
 		cursor -= rectStart * Vector2(1,-1);
 		// The current line and current character
 		size_t curLine = 0;
@@ -222,7 +221,7 @@ private:
 		// Loop through each character and...
 		for (char c: text.content) {
 			// Check if max characters hasn't been reached
-			if ((curChar > (text.maxChars-1)) && (text.maxChars > -1)) break;
+			if (text.maxChars == 0 || ((curChar > (text.maxChars-1)) && (text.maxChars > -1))) break;
 			else curChar++;
 			// Check if character is newline
 			bool
