@@ -44,7 +44,8 @@ namespace Tweening {
 		void setManual() {
 			if (manual) return;
 			// Loop through tween calls and delete if matches
-			if (!tweenList.empty()) std::erase_if(tweenList, [&](auto& e){return e == &_yield;});
+			if (!tweenList.empty())
+				std::erase_if(tweenList, [&](auto& e){return e == &_yield;});
 			manual = true;
 		}
 
@@ -56,7 +57,8 @@ namespace Tweening {
 
 		virtual ~Tweener() {
 			// Loop through tween calls and delete if matches
-			if (!tweenList.empty()) std::erase_if(tweenList, [&](auto& e){return e == &_yield;});
+			if (!manual && !tweenList.empty())
+				std::erase_if(tweenList, [&](auto& e){return e == &_yield;});
 		}
 
 		virtual void yield(unsigned long delta = 1) = 0;
@@ -155,7 +157,7 @@ namespace Tweening {
 		virtual ~Tween() {}
 
 		/// Calculates (and if targeted, applies) a step.
-		void yield(unsigned long delta = 1) final {
+		void yield(unsigned long delta = 1) override final {
 			// If target pointer is null, point to default var
 			if (!target) target = &defaultVar;
 			// If paused, return
@@ -360,7 +362,7 @@ namespace Tweening {
 			setInterpolation(stages);
 		}
 
-		void yield(unsigned long delta = 1) final {
+		void yield(unsigned long delta = 1) override final {
 			// If target pointer is null, point to default var
 			if (!target) target = &defaultVar;
 			// If paused, return
