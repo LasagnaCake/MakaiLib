@@ -172,7 +172,8 @@ private:
 		timerDisplay.text = TextData {
 			"0",
 			TextRect{7, 1},
-			Vector2(0.5, 0.5)
+			Vector2(0.5, 0.5),
+			Vector2(0.0, 1.0)
 		};
 	}
 
