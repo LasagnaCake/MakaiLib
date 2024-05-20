@@ -1,4 +1,2 @@
-> SDL_Mixer cannot load MP3 files
-	> WAV and OGG seems to work fine
-	> Don't know about MIDI though
 > Fullscreen does not work properly
+> Automatic tweens are no longer working
