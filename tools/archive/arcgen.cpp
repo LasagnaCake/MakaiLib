@@ -27,7 +27,7 @@ int main(int argc, char** argv) {
 			"arcgen.exe \"YOUR_PASSWORD_HERE\""
 		);
 	else if (argc >= 2) {
-		String keyfile = "const char* passkey = \"";
+		String keyfile = "const char* const passkey = \"";
 		for (char& c: ArcSys::hashPassword(argv[1])) {
 			std::stringstream stream;
 			stream << std::hex << (unsigned int)(unsigned char)(c);
