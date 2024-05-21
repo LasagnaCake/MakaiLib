@@ -80,17 +80,17 @@ typedef ssize_t ssize;
 
 #if defined(__x86_64__) || defined(_M_X64) || defined(i386) || defined(__i386__) || defined(__i386) || defined(_M_IX86)
 #define CPU_X86
-typedef __m128	uint128x86;
-typedef __m128i	int128x86;
+//typedef __m128	uint128x86;
+//typedef __m128i	int128x86;
 #endif
 #if		CPU_ARCH == 64
-typedef uintmax	uint128 __attribute__((vector_size(16)));
-typedef uintmax	uint256 __attribute__((vector_size(32)));
-typedef uintmax	uint512 __attribute__((vector_size(64)));
-
 typedef intmax	int128 __attribute__((vector_size(16)));
 typedef intmax	int256 __attribute__((vector_size(32)));
 typedef intmax	int512 __attribute__((vector_size(64)));
+
+typedef uintmax	uint128 __attribute__((vector_size(16)));
+typedef uintmax	uint256 __attribute__((vector_size(32)));
+typedef uintmax	uint512 __attribute__((vector_size(64)));
 #endif
 
 #endif // CTL_EXTENDED_TYPES_H

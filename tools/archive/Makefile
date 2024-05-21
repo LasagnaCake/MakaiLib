@@ -5,6 +5,7 @@ ROOT	:= ../..
 
 PACKPROGNAME	:= arcpack
 UNPACKPROGNAME	:= arcunpack
+KEYGENPROGNAME	:= arcgen
 
 COMPILER_CONFIG	:= -fexpensive-optimizations -m64 -std=gnu++20 -fcoroutines -fms-extensions -DENABLE_DEBUG_OUTPUT_ -DNDEBUG
 LINKER_CONFIG	:= -static-libstdc++ -static-libgcc -static -m64 -fms-extensions
@@ -47,16 +48,19 @@ debug:
 	@echo "[1/2] compiling [$@]..."
 	$(COMPILER) $(DEBUGCOMPCFG) -c $(PACKPROGNAME).cpp -o $(PACKPROGNAME)_$@.o
 	$(COMPILER) $(DEBUGCOMPCFG) -c $(UNPACKPROGNAME).cpp -o $(UNPACKPROGNAME)_$@.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c $(KEYGENPROGNAME).cpp -o $(KEYGENPROGNAME)_$@.o
 	
 	@echo "[2/2] linking libraries..."
 	$(LINKER) -o $(PACKPROGNAME)_$@.exe $(PACKPROGNAME)_$@.o $(DEBUGLINKCFG)
 	$(LINKER) -o $(UNPACKPROGNAME)_$@.exe $(UNPACKPROGNAME)_$@.o $(DEBUGLINKCFG)
+	$(LINKER) -o $(KEYGENPROGNAME)_$@.exe $(KEYGENPROGNAME)_$@.o $(DEBUGLINKCFG)
 	
 	@echo "Done!"
 	
 	@echo "Cleaning up..."
 	@rm -rf $(PACKPROGNAME)_$@.o
 	@rm -rf $(UNPACKPROGNAME)_$@.o
+	@rm -rf $(KEYGENPROGNAME)_$@.o
 	@echo "Done!"
 	
 	$(GET_TIME)
@@ -73,14 +77,17 @@ release:
 	@echo "[1/2] compiling [$@]..."
 	$(COMPILER) $(COMPCFG) -c $(PACKPROGNAME).cpp -o $(PACKPROGNAME).o
 	$(COMPILER) $(COMPCFG) -c $(UNPACKPROGNAME).cpp -o $(UNPACKPROGNAME).o
+	$(COMPILER) $(COMPCFG) -c $(KEYGENPROGNAME).cpp -o $(KEYGENPROGNAME).o
 	
 	@echo "[2/2] linking libraries..."
 	$(LINKER) -o $(PACKPROGNAME).exe $(PACKPROGNAME).o $(LINKCFG)
 	$(LINKER) -o $(UNPACKPROGNAME).exe $(UNPACKPROGNAME).o $(LINKCFG)
+	$(LINKER) -o $(KEYGENPROGNAME).exe $(KEYGENPROGNAME).o $(LINKCFG)
 	
 	@echo "Cleaning up..."
 	@rm -rf $(PACKPROGNAME).o
 	@rm -rf $(UNPACKPROGNAME).o
+	@rm -rf $(KEYGENPROGNAME).o
 	@echo "Done!"
 	
 	$(GET_TIME)

@@ -631,6 +631,7 @@ namespace FileSystem {
 	}
 
 	void makeDirectory(String const& dir) {
+		if (dir.empty()) return;
 		if (!isDirectory(dir) || !exists(dir)) {
 			fs::create_directories(dir);
 		}
@@ -689,12 +690,14 @@ namespace FileSystem {
 		return toString(removeExtension ? fs::path(path).stem() : fs::path(path).filename());
 	}
 
-	inline String getDirectoryFromPath(String const& path) {
-		return fs::path(path).remove_filename().string();
+	constexpr String getParentDirectory(String const& path) {
+		StringPair splitPath = splitStringAtFirst(path, {'\\', '/'});
+		if (!splitPath.second.empty()) return splitPath.first;
+		return "";
 	}
 
-	constexpr String getParentDirectory(String const& path) {
-		return splitStringAtFirst(path, {'\\', '/'}).first;
+	inline String getDirectoryFromPath(String const& path) {
+		return fs::path(path).remove_filename().string();
 	}
 
 	constexpr String getChildPath(String const& path) {

@@ -1,3 +1,10 @@
+# Red bold
+COLOR_ERR	:= \033[1;91m
+# Yellow bold
+COLOR_WARN	:= \033[1;93m
+# Reset color
+COLOR_NONE	:= \033[0m
+
 define HELP_MESSAGE
 
 Supported targets:
@@ -38,10 +45,10 @@ Pack-exclusive options:
 
 NOTES:
 (Safe, in this case, means 'IEEE compliant'.)
->   meth       : Enables FAST, but IMPRECISE and UNSAFE floating point operations.
->   sath       : Enables SAFE math. If this one is enabled, METH is disabled.
->   rcfile     : Must be located within the 'build/' folder.
->   name       : For targers "debug" and "demo", "_debug" and "_demo" gets appended at the end of
+>   meth         : Enables FAST, but IMPRECISE and UNSAFE floating point operations.
+>   sath         : Enables SAFE math. If this one is enabled, METH is disabled.
+>   rcfile       : Must be located within the 'build/' folder.
+>   name         : For targers "debug" and "demo", "_debug" and "_demo" gets appended at the end of
                   the file, respectively.
 
 Pack:
@@ -55,10 +62,21 @@ Pack:
                     folder should be replaced. Only used for multi-target pakings.
 >   no-archive   : Specifies whether the data/ folder is not compacted into an archive. Useful if
                     resources are to be shared. Generally, loading from a folder is faster than
-                    loading from an archive, but does not offer the encryption an archive provides -
-                    - if a password was provided.
->   archive-pass : ASCII characters only. Maximum of 32 characters.
+                    loading from an archive, but does not offer the encryption an archive
+                    provides - if a password was provided.
+>   archive-pass : ASCII characters only.
+                    To get the key created from it to use in attaching the archive:
+                     1. Go to "tools/archive"
+                     2. Run [arcgen.exe "YOUR_PASSWORD_HERE"] to generate a "key.256.h" file
+                     3. Store that file somewhere in your "build/" folder
+                     4. [#include] it somewhere in your program
+                     5. Use the [passkey] variable as the password in the
+                         [FileLoader::attachArchive] function.
 
+!!! IMPORTANT !!!
+Pack:
+> Even if no password was set, you are still expected to generate a keyfile.
+   See NOTES:Pack:archive-pass for more information on how to do so.
 endef
 
 define GET_TIME
@@ -185,13 +203,6 @@ endif
 ifeq ($(over-release), 1)
 RELEASE_DATA := $(DATA_FOLDER)
 endif
-
-# Red bold
-COLOR_ERR	:= \033[1;91m
-# Yellow bold
-COLOR_WARN	:= \033[1;93m
-# Reset color
-COLOR_NONE	:= \033[0m
 
 define ZIPWARNMSG
 	@echo ""

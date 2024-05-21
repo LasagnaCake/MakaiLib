@@ -8,6 +8,7 @@
 #include <cryptopp/aes.h>
 #include <cryptopp/zlib.h>
 #include <cryptopp/modes.h>
+#include <cryptopp/sha3.h>
 #include <cppcodec/base64_rfc4648.hpp>
 #include <cppcodec/base32_rfc4648.hpp>
 #include <filesystem>
@@ -59,6 +60,27 @@ namespace ArcSys {
 		for (auto [i, b]: Helper::enumerate(data))
 			result |= (uint64(b) << (8 * i));
 		return result;
+	}
+
+	template<class T>
+	String hash(String const& str) {
+		String result;
+		T hasher;
+		hasher.Update((const byte*)str.data(), str.size());
+		result.resize(hasher.DigestSize());
+		hasher.Final((byte*)result.data());
+		return result;
+	}
+
+	constexpr String truncate(String const& str) {
+		String result(str.size()/2, ' ');
+		for SSRANGE(i, 0, str.size()/2)
+			result[i] = (str[i*2] ^ str[i*2+1]);
+		return result;
+	}
+
+	String hashPassword(String const& str) {
+		return hash<SHA3_256>(str);
 	}
 
 	template<class T>
@@ -313,8 +335,8 @@ namespace ArcSys {
 		uint64	const headerSize		= sizeof(ArchiveHeader);
 		uint64	const fileHeaderSize	= sizeof(FileHeader);
 		uint64	dirInfoSize;
-		uint64	version			= 0;
-		uint64	minVersion		= 0;
+		uint64	version			= 1;
+		uint64	minVersion		= 1;
 		uint16	encryption		= (uint16)EncryptionMethod::AEM_AES256;
 		uint16	compression		= (uint16)CompressionMethod::ACM_ZIP;
 		uint8	level			= 9;
@@ -324,7 +346,7 @@ namespace ArcSys {
 
 	namespace Flags {
 		constexpr uint64 SINGLE_FILE_ARCHIVE_BIT	= (1 << 0);
-		constexpr uint64 SHOULD_CHECK_CRC_BIT			= (1 << 1);
+		constexpr uint64 SHOULD_CHECK_CRC_BIT		= (1 << 1);
 	}
 
 	void generateBlock(uint8 const(& block)[16]) {
@@ -345,6 +367,8 @@ namespace ArcSys {
 	#else
 	) {
 	#endif // ARCSYS_APPLICATION_
+		// Hash the password
+		String passhash = hashPassword(password);
 		_ARCDEBUGLN("FOLDER: ", folderPath, "\nARCHIVE: ", archivePath);
 		// Get file structure
 		_ARCDEBUGLN("Getting file structure...");
@@ -413,7 +437,7 @@ namespace ArcSys {
 				_ARCDEBUGLN("Before encryption: ", contents.size());
 				contents = encrypt(
 					contents,
-					password,
+					passhash,
 					enc,
 					fheader.block
 				);
@@ -442,6 +466,8 @@ namespace ArcSys {
 		// Close file
 		file.flush();
 		file.close();
+		_ARCDEBUGLN("\nDone!");
+		_ARCDEBUGLN("Please run [arcgen \"YOUR_PASSWORD_HERE\"] to generate the hash to use in your game.");
 	#ifdef ARCSYS_APPLICATION_
 	} catch (Error::Error const& e) {
 		_ARCDEBUGLN(e.report());
@@ -460,6 +486,10 @@ namespace ArcSys {
 			String const	path;
 			FileHeader		header;
 			BinaryData		data;
+		};
+
+		struct ArchiveVersion {
+			uint64 const version, ninimum;
 		};
 
 		FileArchive() {}
@@ -551,6 +581,10 @@ namespace ArcSys {
 			JSONData dir = fstruct["tree"];
 			populateTree((!root.empty()) ? dir[root] : dir, root);
 			return dir;
+		}
+
+		ArchiveVersion getVersion() {
+			return ArchiveVersion{header.version, header.minVersion};
 		}
 
 		FileArchive& unpackTo(String const& path) {
@@ -752,7 +786,32 @@ namespace ArcSys {
 		JSONData		fstruct;
 	};
 
-	void unpack(
+	void unpackV1(
+		String const& archivePath,
+		String const folderPath,
+		String const& password = ""
+	#ifdef ARCSYS_APPLICATION_
+	) try {
+	#else
+	) {
+	#endif // ARCSYS_APPLICATION_
+		_ARCDEBUGLN("\nOpening archive...\n");
+		FileArchive arc(archivePath, hashPassword(password));
+		_ARCDEBUGLN("\nExtracting data...\n");
+		arc.unpackTo(folderPath);
+	#ifdef ARCSYS_APPLICATION_
+	} catch (Error::Error const& e) {
+		_ARCDEBUGLN(e.report());
+		_ARCEXIT;
+	} catch (std::runtime_error const& e) {
+		_ARCDEBUGLN("ERROR: ", e.what());
+		_ARCEXIT;
+	}
+	#else
+	}
+	#endif // ARCSYS_APPLICATION_
+
+	void unpackV0(
 		String const& archivePath,
 		String const folderPath,
 		String const& password = ""
@@ -765,6 +824,42 @@ namespace ArcSys {
 		FileArchive arc(archivePath, password);
 		_ARCDEBUGLN("\nExtracting data...\n");
 		arc.unpackTo(folderPath);
+	#ifdef ARCSYS_APPLICATION_
+	} catch (Error::Error const& e) {
+		_ARCDEBUGLN(e.report());
+		_ARCEXIT;
+	} catch (std::runtime_error const& e) {
+		_ARCDEBUGLN("ERROR: ", e.what());
+		_ARCEXIT;
+	}
+	#else
+	}
+	#endif // ARCSYS_APPLICATION_
+
+	void unpack(
+		String const& archivePath,
+		String const folderPath,
+		String const& password = ""
+	#ifdef ARCSYS_APPLICATION_
+	) try {
+	#else
+	) {
+	#endif // ARCSYS_APPLICATION_
+		uint64 mv;
+		{
+			FileArchive arc(archivePath, "");
+			mv = arc.getVersion().ninimum;
+		}
+		switch(mv) {
+			case 1: unpackV1(archivePath, folderPath, password);	break;
+			case 0: unpackV0(archivePath, folderPath, password);	break;
+			default: throw Error::InvalidValue(
+				"Unsupported or invalid minimum version!",
+				__FILE__,
+				toString(__LINE__),
+				"ArcSys::unpack"
+			);
+		}
 	#ifdef ARCSYS_APPLICATION_
 	} catch (Error::Error const& e) {
 		_ARCDEBUGLN(e.report());
