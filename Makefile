@@ -76,7 +76,8 @@ Pack:
 !!! IMPORTANT !!!
 Pack:
 > Even if no password was set, you are still expected to generate a keyfile.
-   See NOTES:Pack:archive-pass for more information on how to do so.
+   See NOTES:Pack:archive-pass for more information on how to do so. For this case, simply set the
+   "YOUR_PASSWORD_HERE" to " "
 endef
 
 define GET_TIME
