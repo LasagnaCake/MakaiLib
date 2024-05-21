@@ -36,6 +36,7 @@ int main(int argc, char** argv) {
 		}
 		keyfile += "\";";
 		FileLoader::saveTextFile("key.256.h", keyfile);
+		DEBUGLN("Key generated!");
 	}
 	return 0;
 }

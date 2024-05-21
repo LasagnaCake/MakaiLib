@@ -45,22 +45,12 @@ debug:
 	
 	$(GET_TIME)
 	
-	@echo "[1/2] compiling [$@]..."
-	$(COMPILER) $(DEBUGCOMPCFG) -c $(PACKPROGNAME).cpp -o $(PACKPROGNAME)_$@.o
-	$(COMPILER) $(DEBUGCOMPCFG) -c $(UNPACKPROGNAME).cpp -o $(UNPACKPROGNAME)_$@.o
-	$(COMPILER) $(DEBUGCOMPCFG) -c $(KEYGENPROGNAME).cpp -o $(KEYGENPROGNAME)_$@.o
-	
-	@echo "[2/2] linking libraries..."
-	$(LINKER) -o $(PACKPROGNAME)_$@.exe $(PACKPROGNAME)_$@.o $(DEBUGLINKCFG)
-	$(LINKER) -o $(UNPACKPROGNAME)_$@.exe $(UNPACKPROGNAME)_$@.o $(DEBUGLINKCFG)
-	$(LINKER) -o $(KEYGENPROGNAME)_$@.exe $(KEYGENPROGNAME)_$@.o $(DEBUGLINKCFG)
-	
-	@echo "Done!"
-	
-	@echo "Cleaning up..."
-	@rm -rf $(PACKPROGNAME)_$@.o
-	@rm -rf $(UNPACKPROGNAME)_$@.o
-	@rm -rf $(KEYGENPROGNAME)_$@.o
+	@echo "[1/3] making [$@:pack]..."
+	@make pack-$@ --no-print-directory
+	@echo "[2/3] making [$@:unpack]..."
+	@make unpack-$@ --no-print-directory
+	@echo "[3/3] making [$@:keygen]..."
+	@make keygen-$@ --no-print-directory
 	@echo "Done!"
 	
 	$(GET_TIME)
@@ -74,23 +64,102 @@ release:
 	
 	$(GET_TIME)
 	
-	@echo "[1/2] compiling [$@]..."
-	$(COMPILER) $(COMPCFG) -c $(PACKPROGNAME).cpp -o $(PACKPROGNAME).o
-	$(COMPILER) $(COMPCFG) -c $(UNPACKPROGNAME).cpp -o $(UNPACKPROGNAME).o
-	$(COMPILER) $(COMPCFG) -c $(KEYGENPROGNAME).cpp -o $(KEYGENPROGNAME).o
-	
-	@echo "[2/2] linking libraries..."
-	$(LINKER) -o $(PACKPROGNAME).exe $(PACKPROGNAME).o $(LINKCFG)
-	$(LINKER) -o $(UNPACKPROGNAME).exe $(UNPACKPROGNAME).o $(LINKCFG)
-	$(LINKER) -o $(KEYGENPROGNAME).exe $(KEYGENPROGNAME).o $(LINKCFG)
-	
-	@echo "Cleaning up..."
-	@rm -rf $(PACKPROGNAME).o
-	@rm -rf $(UNPACKPROGNAME).o
-	@rm -rf $(KEYGENPROGNAME).o
+	@echo "[1/3] making [$@:pack]..."
+	@make pack-$@ --no-print-directory
+	@echo "[2/3] making [$@:unpack]..."
+	@make unpack-$@ --no-print-directory
+	@echo "[3/3] making [$@:keygen]..."
+	@make keygen-$@ --no-print-directory
 	@echo "Done!"
 	
 	$(GET_TIME)
 	
 	@echo "[--- END ---]"
+	@echo 
+
+pack:
+	@echo ""
+	@echo "[--- START ---]"
+	
+	$(GET_TIME)
+	
+	@echo "[1/2] making [$@:debug]..."
+	@make $@-debug --no-print-directory
+	@echo "[2/2] making [$@:release]..."
+	@make $@-release --no-print-directory
+	@echo "Done!"
+	
+	$(GET_TIME)
+	
+	@echo "[--- END ---]"
+	@echo 
+
+unpack:
+	@echo ""
+	@echo "[--- START ---]"
+	
+	$(GET_TIME)
+	
+	@echo "[1/2] making [$@:debug]..."
+	@make $@-debug --no-print-directory
+	@echo "[2/2] making [$@:release]..."
+	@make $@-release --no-print-directory
+	@echo "Done!"
+	
+	$(GET_TIME)
+	
+	@echo "[--- END ---]"
+	@echo 
+
+keygen:
+	@echo ""
+	@echo "[--- START ---]"
+	
+	$(GET_TIME)
+	
+	@echo "[1/2] making [$@:debug]..."
+	@make $@-debug --no-print-directory
+	@echo "[2/2] making [$@:release]..."
+	@make $@-release --no-print-directory
+	@echo "Done!"
+	
+	$(GET_TIME)
+	
+	@echo "[--- END ---]"
+	@echo 
+
+pack-debug:
+	$(COMPILER) $(DEBUGCOMPCFG) -c $(PACKPROGNAME).cpp -o $(PACKPROGNAME)_debug.o
+	$(LINKER) -o $(PACKPROGNAME)_debug.exe $(PACKPROGNAME)_debug.o $(DEBUGLINKCFG)
+	@rm -rf $(PACKPROGNAME)_debug.o
+	@echo 
+
+unpack-debug:
+	$(COMPILER) $(DEBUGCOMPCFG) -c $(UNPACKPROGNAME).cpp -o $(UNPACKPROGNAME)_debug.o
+	$(LINKER) -o $(UNPACKPROGNAME)_debug.exe $(UNPACKPROGNAME)_debug.o $(DEBUGLINKCFG)
+	@rm -rf $(UNPACKPROGNAME)_debug.o
+	@echo 
+
+keygen-debug:
+	$(COMPILER) $(DEBUGCOMPCFG) -c $(KEYGENPROGNAME).cpp -o $(KEYGENPROGNAME)_debug.o
+	$(LINKER) -o $(KEYGENPROGNAME)_debug.exe $(KEYGENPROGNAME)_debug.o $(DEBUGLINKCFG)
+	@rm -rf $(KEYGENPROGNAME)_debug.o
+	@echo 
+
+pack-release:
+	$(COMPILER) $(COMPCFG) -c $(PACKPROGNAME).cpp -o $(PACKPROGNAME).o
+	$(LINKER) -o $(PACKPROGNAME).exe $(PACKPROGNAME).o $(LINKCFG)
+	@rm -rf $(PACKPROGNAME).o
+	@echo 
+
+unpack-release:
+	$(COMPILER) $(COMPCFG) -c $(UNPACKPROGNAME).cpp -o $(UNPACKPROGNAME).o
+	$(LINKER) -o $(UNPACKPROGNAME).exe $(UNPACKPROGNAME).o $(LINKCFG)
+	@rm -rf $(UNPACKPROGNAME).o
+	@echo 
+
+keygen-release:
+	$(COMPILER) $(COMPCFG) -c $(KEYGENPROGNAME).cpp -o $(KEYGENPROGNAME).o
+	$(LINKER) -o $(KEYGENPROGNAME).exe $(KEYGENPROGNAME).o $(LINKCFG)
+	@rm -rf $(KEYGENPROGNAME).o
 	@echo 

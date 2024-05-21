@@ -66,11 +66,10 @@ Pack:
                     provides - if a password was provided.
 >   archive-pass : ASCII characters only.
                     To get the key created from it to use in attaching the archive:
-                     1. Go to "tools/archive"
-                     2. Run [arcgen.exe "YOUR_PASSWORD_HERE"] to generate a "key.256.h" file
-                     3. Store that file somewhere in your "build/" folder
-                     4. [#include] it somewhere in your program
-                     5. Use the [passkey] variable as the password in the
+                     1. Run [make generate-key archive-pass="YOUR_PASSWORD_HERE"]to generate a
+                         "key.256.h" file in the "build/" folder (you can move it, if you want)
+                     2. [#include] it somewhere in your program
+                     3. Use the [passkey] variable as the password in the
                          [FileLoader::attachArchive] function.
 
 !!! IMPORTANT !!!
@@ -259,7 +258,6 @@ export HELP_MESSAGE
 help:
 	@echo "$$HELP_MESSAGE"
 
-
 debug: build/$(src)
 	@echo ""
 	@echo "[--- START ---]"
@@ -349,8 +347,11 @@ preview: debug demo
 
 both: demo release
 	
-	
 all: debug demo release
+
+generate-key:
+	@cd build
+	@../tools/archive/arcgen.exe "$(archive-pass)"
 
 PACK_EXCLUSIONS := --exclude .git --exclude .gitignore
 
