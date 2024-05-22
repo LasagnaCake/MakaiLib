@@ -66,7 +66,7 @@ Pack:
                     provides - if a password was provided.
 >   archive-pass : ASCII characters only.
                     To get the key created from it to use in attaching the archive:
-                     1. Run [make generate-key archive-pass="YOUR_PASSWORD_HERE"]to generate a
+                     1. Run [make generate-key archive-pass="YOUR_PASSWORD_HERE"] to generate a
                          "key.256.h" file in the "build/" folder (you can move it, if you want)
                      2. [#include] it somewhere in your program
                      3. Use the [passkey] variable as the password in the
