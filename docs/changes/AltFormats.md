@@ -35,7 +35,9 @@ Performance profiling pulled from:
 ### MessagePack
 
 **Pros**
-- Header-only C++ library (see [this version in particular](https://github.com/mikeloomisgg/cppack))
+- Multiple serialisers & deserialisers
+- - Has support in nlohmann
+- - Header-only C++ library (see [this version in particular](https://github.com/mikeloomisgg/cppack))
 - (Seemingly) fast
 - Has libraries for Python
 - Middle-of-the-Road performance for simplicity (see library previously mentioned)
