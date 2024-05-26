@@ -31,12 +31,13 @@ Would it be a problem to ship a blender add-on with a python module in it?
 Performance profiling pulled from:
 - [https://stackoverflow.com/a/20806438](https://stackoverflow.com/a/20806438)
 - [https://chronoxor.github.io/FastBinaryEncoding/](https://chronoxor.github.io/FastBinaryEncoding/)
+- `nlohmann` specific: [https://github.com/nlohmann/json/discussions/2581](https://github.com/nlohmann/json/discussions/2581)
 
 ### MessagePack
 
 **Pros**
-- Multiple serialisers & deserialisers
-- - Has support in nlohmann
+- Multiple implementations ([https://msgpack.org/#languages](https://msgpack.org/#languages))
+- - Has support in nlohmann (though it is slower than `json`???)
 - - Header-only C++ library (see [this version in particular](https://github.com/mikeloomisgg/cppack))
 - (Seemingly) fast
 - Has libraries for Python
