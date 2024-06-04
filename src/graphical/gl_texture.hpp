@@ -13,10 +13,55 @@ struct ImageData2D {
 		minFilter,
 		magFilter
 	;
-	vector<ubyte>	data;
+	vector<ubyte> data;
 };
 
-unsigned int createTexture(
+struct Image {
+	Image() {
+		create();
+	}
+
+	~Image() {
+		destroy();
+	}
+
+	inline Image const& bind(unsigned int target = GL_TEXTURE_2D) const {
+		glBindTexture(target, id);
+		return *this;
+	}
+
+	inline Image& destroy() {
+		if (!created) return *this;
+		glDeleteTextures(1, &id);
+		id = 0;
+		return *this;
+	}
+
+	inline Image& create() {
+		if (created) return *this;
+		glGenTextures(1, &id);
+		return *this;
+	}
+
+	inline Image& make() {
+		return destroy().make();
+	}
+
+	inline static void unbind(unsigned int target = GL_TEXTURE_2D) {
+		glBindTexture(target, 0);
+	}
+
+	inline operator unsigned int() const {return id;}
+
+	inline unsigned int getID() const {return id;}
+
+private:
+	bool created = false;
+
+	unsigned int id = 0;
+};
+
+Image* createTexture(
 	unsigned int width,
 	unsigned int height,
 	unsigned int type = GL_UNSIGNED_BYTE,
@@ -27,10 +72,8 @@ unsigned int createTexture(
 	unsigned char* data = NULL,
 	unsigned int target = GL_TEXTURE_2D
 ) {
-	GLuint texture;
-	// Create texture
-	glGenTextures(1, &texture);
-	glBindTexture(target, texture);
+	Image* texture = new Image();
+	texture->bind(target);
 	// Bind image data
 	glTexImage2D(
 		target,
@@ -51,48 +94,12 @@ unsigned int createTexture(
 	glTexParameteri(target, GL_TEXTURE_MIN_FILTER, minFilter);
 	glTexParameteri(target, GL_TEXTURE_MAG_FILTER, magFilter);
 	// Unbind texture
-	glBindTexture(target, 0);
+	Image::unbind(target);
 	// Return texture ID
 	return texture;
 }
 
-unsigned int createMultisampleTexture(
-	unsigned int width,
-	unsigned int height,
-	unsigned int samples,
-	unsigned int internalFormat = GL_RGBA32F,
-	unsigned int minFilter = GL_LINEAR,
-	unsigned int magFilter = GL_LINEAR,
-	unsigned int target = GL_TEXTURE_2D_MULTISAMPLE
-) {
-	GLuint texture;
-	// Create texture
-	glGenTextures(1, &texture);
-	glBindTexture(target, texture);
-	// Bind image data
-	glTexImage2DMultisample(
-		target,
-		samples,
-		internalFormat,
-		width,
-		height,
-		GL_TRUE
-	);
-
-	// Set texture wrapping & mipmaps
-	glTexParameteri(target, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(target, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glGenerateMipmap(target);
-	// Set filtering
-	glTexParameteri(target, GL_TEXTURE_MIN_FILTER, minFilter);
-	glTexParameteri(target, GL_TEXTURE_MAG_FILTER, magFilter);
-	// Unbind texture
-	glBindTexture(target, 0);
-	// Return texture ID
-	return texture;
-}
-
-unsigned int createTexture2D(
+Image* createTexture2D(
 	unsigned int width,
 	unsigned int height,
 	unsigned int type = GL_UNSIGNED_BYTE,
@@ -115,8 +122,8 @@ namespace {
 }
 
 void copyTexture(
-	unsigned int src,
-	unsigned int dst,
+	Image* src,
+	Image* dst,
 	unsigned int srcStartX,
 	unsigned int srcStartY,
 	unsigned int srcEndX,
@@ -127,6 +134,7 @@ void copyTexture(
 	unsigned int dstEndY,
 	unsigned int filter = GL_NEAREST
 ) {
+	if (!src || !dst) return;
 	static unsigned int const fb = createCopyBuffer();
 	DEBUGLN("Binding copy buffer...");
 	glBindFramebuffer(GL_FRAMEBUFFER, fb);
@@ -135,7 +143,7 @@ void copyTexture(
 		GL_READ_FRAMEBUFFER,
 		GL_COLOR_ATTACHMENT0,
 		GL_TEXTURE_2D,
-		src,
+		src->getID(),
 		0
 	);
 	DEBUGLN("Binding destination...");
@@ -143,7 +151,7 @@ void copyTexture(
 		GL_DRAW_FRAMEBUFFER,
 		GL_COLOR_ATTACHMENT1,
 		GL_TEXTURE_2D,
-		dst,
+		dst->getID(),
 		0
 	);
 	glReadBuffer(GL_COLOR_ATTACHMENT0);
@@ -161,6 +169,8 @@ void copyTexture(
 
 class Texture2D {
 public:
+	typedef SmartPointer::StrongPointer<Image> ImageInstance;
+
 	Texture2D() {}
 
 	Texture2D(
@@ -186,7 +196,7 @@ public:
 	}
 
 	Texture2D(
-		std::string  const& path,
+		std::string const& path,
 		unsigned int magFilter = GL_LINEAR,
 		unsigned int minFilter = GL_LINEAR_MIPMAP_LINEAR
 	) {
@@ -200,10 +210,16 @@ public:
 	}
 
 	Texture2D(
-		Texture2D const& other,
-		bool filter = false
+		Texture2D const& other
 	) {
-		make(other, filter);
+		image = other.image;
+	}
+
+	Texture2D(
+		Texture2D* const& other
+	) {
+		if (other)
+			image = other->image;
 	}
 
 	Texture2D(
@@ -217,17 +233,17 @@ public:
 		make(other, startX, startY, endX, endY, filter);
 	}
 
-	void create(
+	Texture2D& create(
 		unsigned int width,
 		unsigned int height,
-		unsigned int type = GL_UNSIGNED_BYTE,
-		unsigned int format = GL_RGBA,
-		unsigned int magFilter = GL_LINEAR,
-		unsigned int minFilter = GL_LINEAR_MIPMAP_LINEAR,
-		unsigned char* data = NULL,
-		unsigned int internalFormat = 0
+		unsigned int type			= GL_UNSIGNED_BYTE,
+		unsigned int format			= GL_RGBA,
+		unsigned int magFilter		= GL_LINEAR,
+		unsigned int minFilter		= GL_LINEAR_MIPMAP_LINEAR,
+		unsigned char* data			= NULL,
+		unsigned int internalFormat	= 0
 	) {
-		if (created) return;
+		if (exists()) return *this;
 		this->width				= width;
 		this->height			= height;
 		this->format			= format;
@@ -235,8 +251,7 @@ public:
 		this->minFilter			= minFilter;
 		this->magFilter			= magFilter;
 		this->internalFormat	= internalFormat ? internalFormat : format;
-		created = true;
-		id = createTexture2D(
+		image = createTexture2D(
 			width,
 			height,
 			type,
@@ -247,14 +262,15 @@ public:
 			data
 		);
 		setTextureWrapMode();
+		return *this;
 	}
 
-	void create(
+	Texture2D& create(
 		std::string path,
 		unsigned int magFilter = GL_LINEAR,
 		unsigned int minFilter = GL_LINEAR_MIPMAP_LINEAR
 	) {
-		if (created) return;
+		if (exists()) return *this;
 		int imgWidth, imgHeight;
 		int nrChannels;
 		FileLoader::BinaryData imgdat = FileLoader::getBinaryFile(path);
@@ -274,14 +290,15 @@ public:
 		} else {
 			throw Error::FailedAction(string("Could not load image file '") + path + "'!\n\n" + stbi_failure_reason());
 		}
+		return *this;
 	}
 
-	void create(
+	Texture2D& create(
 		ImageData2D const& image
 	) {
-		if (created) return;
+		if (exists()) return *this;
 		DEBUGLN("copying textures...");
-		if (image.data.empty()) return;
+		if (image.data.empty()) return *this;
 		DEBUGLN("Texture data exists!");
 		create(
 			image.width,
@@ -293,27 +310,25 @@ public:
 			(unsigned char*)image.data.data(),
 			image.internalFormat
 		);
+		return *this;
 	}
 
-	void create(
-		Texture2D const& other,
-		bool filter = false
+	Texture2D& create(
+		Texture2D const& other
 	) {
-		if (created) return;
-		create(
-			other.width,
-			other.height,
-			other.type,
-			other.format,
-			other.minFilter,
-			other.magFilter,
-			NULL,
-			other.internalFormat
-		);
-		copyFrom(other, filter);
+		if (exists()) return *this;
+		image			= other.image;
+		width			= other.width;
+		height			= other.height;
+		type			= other.type;
+		format			= other.format;
+		minFilter		= other.minFilter;
+		magFilter		= other.magFilter;
+		internalFormat	= other.internalFormat;
+		return *this;
 	}
 
-	void create(
+	Texture2D& create(
 		Texture2D const& other,
 		unsigned int startX,
 		unsigned int startY,
@@ -321,7 +336,7 @@ public:
 		unsigned int endY,
 		bool filter = false
 	) {
-		if (created) return;
+		if (exists()) return *this;
 		unsigned int w, h;
 		w = Math::max(startX, endX) - Math::min(startX, endX);
 		h = Math::max(startY, endY) - Math::min(startY, endY);
@@ -335,53 +350,63 @@ public:
 			other.internalFormat
 		);
 		copyFrom(other, startX, startY, endX, endY, filter);
+		return *this;
 	}
 
-	void destroy() {
-		if (!created) return;
-		glDeleteTextures(1, &id);
-		created = false;
+	Texture2D& destroy() {
+		if (!exists()) return *this;
+		image.unbind();
+		return *this;
 	}
 
-	void make(
+	Texture2D& clear() {
+		if (!exists()) return *this;
+		image->destroy();
+		return *this;
+	}
+
+	Texture2D& make(
 		unsigned int width,
 		unsigned int height,
-		unsigned int type = GL_UNSIGNED_BYTE,
-		unsigned int format = GL_RGBA,
-		unsigned int magFilter = GL_LINEAR,
-		unsigned int minFilter = GL_LINEAR_MIPMAP_LINEAR,
-		unsigned char* data = NULL,
-		unsigned int internalFormat = 0
+		unsigned int type			= GL_UNSIGNED_BYTE,
+		unsigned int format			= GL_RGBA,
+		unsigned int magFilter		= GL_LINEAR,
+		unsigned int minFilter		= GL_LINEAR_MIPMAP_LINEAR,
+		unsigned char* data			= NULL,
+		unsigned int internalFormat	= 0
 	) {
 		destroy();
 		create(width, height, type, format, magFilter, minFilter, data, internalFormat);
+		return *this;
 	}
 
-	void make(
+	Texture2D& make(
 		std::string path,
 		unsigned int magFilter = GL_LINEAR,
 		unsigned int minFilter = GL_LINEAR_MIPMAP_LINEAR
 	) {
 		destroy();
 		create(path, minFilter, magFilter);
+		return *this;
 	}
 
-	void make(
+	Texture2D& make(
 		ImageData2D image
 	) {
 		destroy();
 		create(image);
+		return *this;
 	}
 
-	void make(
-		Texture2D const& other,
-		bool filter = false
+	Texture2D& make(
+		Texture2D const& other
 	) {
 		destroy();
-		create(other, filter);
+		create(other);
+		return *this;
 	}
 
-	void make(
+	Texture2D& make(
 		Texture2D const& other,
 		unsigned int startX,
 		unsigned int startY,
@@ -391,12 +416,34 @@ public:
 	) {
 		destroy();
 		create(other, startX, startY, endX, endY, filter);
+		return *this;
 	}
 
-	Texture2D& operator=(Texture2D const& other)	{make(other); return *this;}
-	Texture2D& operator=(Texture2D&& other)			{make(other); return *this;}
+	Texture2D& makeUnique(bool filter = false) {
+		if (!exists()) return *this;
+		Image* newImg = createTexture2D(
+			width, height,
+			type,
+			format,
+			internalFormat,
+			minFilter,
+			magFilter
+		);
+		copyTexture(
+			(Image*)image, (Image*)newImg,
+			0, 0, width, height,
+			0, 0, width, height,
+			filter ? GL_LINEAR : GL_NEAREST
+		);
+		image = newImg;
+		return *this;
+	}
 
-	void copyFrom(
+	Texture2D& operator=(Texture2D const& other)	{make(other); return *this;								}
+	Texture2D& operator=(Texture2D&& other)			{make(other); return *this;								}
+	Texture2D& operator=(Texture2D* other)			{if (other) make(*other); else destroy(); return *this;	}
+
+	Texture2D& copyFrom(
 		Texture2D const& other,
 		unsigned int startX,
 		unsigned int startY,
@@ -404,34 +451,38 @@ public:
 		unsigned int endY,
 		bool filter = false
 	) {
+		if (!exists()) return *this;
 		// Copy data
 		copyTexture(
-			other.id, id,
+			(Image*)other.image, (Image*)image,
 			startX, startY, endX, endY,
 			0, 0, width, height,
 			filter ? GL_LINEAR : GL_NEAREST
 		);
 		// Regenerate mipmaps
-		glBindTexture(GL_TEXTURE_2D, id);
+		glBindTexture(GL_TEXTURE_2D, image->getID());
 		glGenerateMipmap(GL_TEXTURE_2D);
 		glBindTexture(GL_TEXTURE_2D, 0);
+		return *this;
 	}
 
-	void copyFrom(
+	Texture2D& copyFrom(
 		Texture2D const& other,
 		bool filter = false
 	) {
+		if (!exists()) return *this;
 		// Copy data
 		copyTexture(
-			other.id, id,
+			(Image*)other.image, (Image*)image,
 			0, 0, other.width, other.height,
 			0, 0, width, height,
 			filter ? GL_LINEAR : GL_NEAREST
 		);
 		// Regenerate mipmaps
-		glBindTexture(GL_TEXTURE_2D, id);
+		glBindTexture(GL_TEXTURE_2D, image->getID());
 		glGenerateMipmap(GL_TEXTURE_2D);
 		glBindTexture(GL_TEXTURE_2D, 0);
+		return *this;
 	}
 
 	/*
@@ -440,14 +491,16 @@ public:
 	GL_MIRRORED_REPEAT
 	GL_MIRROR_CLAMP_TO_EDGE
 	*/
-	void setTextureWrapMode(
+	Texture2D& setTextureWrapMode(
 		unsigned int horizontal,
 		unsigned int vertical
 	) {
-		glBindTexture(GL_TEXTURE_2D, id);
+		if (!exists()) return *this;
+		glBindTexture(GL_TEXTURE_2D, image->getID());
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, horizontal);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, vertical);
 		glBindTexture(GL_TEXTURE_2D, 0);
+		return *this;
 	}
 
 	/*
@@ -456,8 +509,9 @@ public:
 	GL_MIRRORED_REPEAT
 	GL_MIRROR_CLAMP_TO_EDGE
 	*/
-	void setTextureWrapMode(unsigned int mode = GL_REPEAT) {
+	Texture2D& setTextureWrapMode(unsigned int mode = GL_REPEAT) {
 		setTextureWrapMode(mode, mode);
+		return *this;
 	}
 
 	/*
@@ -473,16 +527,18 @@ public:
 		GL_NEAREST_MIPMAP_LINEAR
 		GL_LINEAR_MIPMAP_LINEAR
 	*/
-	void setTextureFilterMode(
+	Texture2D& setTextureFilterMode(
 		unsigned int magFilter = GL_LINEAR,
 		unsigned int minFilter = GL_LINEAR_MIPMAP_LINEAR
 	) {
-		glBindTexture(GL_TEXTURE_2D, id);
+		if (!exists()) return *this;
+		glBindTexture(GL_TEXTURE_2D, image->getID());
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minFilter);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magFilter);
 		glBindTexture(GL_TEXTURE_2D, 0);
 		this->minFilter = minFilter;
 		this->magFilter = magFilter;
+		return *this;
 	}
 
 	inline unsigned int getTextureMinFilter() {
@@ -493,21 +549,24 @@ public:
 		return magFilter;
 	}
 
-	void operator()(unsigned char texture = 0) {
+	Texture2D& operator()(unsigned char texture = 0) {
 		enable(texture);
+		return *this;
 	}
 
-	void enable(unsigned char texture = 0) {
-		setTexture2D(texture, id);
+	Texture2D& enable(unsigned char texture = 0) {
+		setTexture2D(texture, image->getID());
+		return *this;
 	}
 
-	inline unsigned int getID() {
-		return id;
+	inline unsigned int getID() const {
+		if (!exists()) return 0;
+		return image->getID();
 	}
 
 	ImageData2D getData() const {
 		DEBUGLN("Getting image data...");
-		if (!created) return ImageData2D{0,0,0,0,0,0};
+		if (!exists()) return ImageData2D{0,0,0,0,0,0};
 		size_t size = 0;
 		switch (type) {
 			default:
@@ -540,7 +599,7 @@ public:
 		DEBUGLN("Reserved: ", imgdat.data.size());
 		if (imgdat.data.empty()) throw Error::FailedAction("Somehow, the image data is empty.");
 		DEBUGLN("Extracting pixels...");
-		glBindTexture(GL_TEXTURE_2D, id);
+		glBindTexture(GL_TEXTURE_2D, image->getID());
 		glGetTexImage(GL_TEXTURE_2D, 0, format, type, imgdat.data.data());
 		glBindTexture(GL_TEXTURE_2D, 0);
 		DEBUGLN("Done!");
@@ -548,8 +607,8 @@ public:
 		return imgdat;
 	}
 
-	void saveToFile(string const& path) const {
-		if (!created) return;
+	Texture2D const& saveToFile(string const& path) const {
+		if (!exists()) return *this;
 		ImageData2D imgdat = getData();
 		uchar channels = 0;
 		switch (imgdat.format) {
@@ -576,125 +635,27 @@ public:
 				"Texture2D::saveToFile"
 			);
 		}
+		return *this;
 	}
 
-	bool exists() {
-		return created;
+	bool exists() const {
+		return image.exists() && image->getID();
 	}
+
+	inline Texture2D* operator->() {return this;}
+
+	inline operator bool() const {return exists();}
 
 private:
-	bool created = false;
-	unsigned int id = 0;
-	unsigned int width, height, format, internalFormat, type, minFilter, magFilter;
-};
+	ImageInstance image;
 
-class MultisampleTexture2D {
-public:
-	MultisampleTexture2D() {}
-
-	MultisampleTexture2D(
-		unsigned int width,
-		unsigned int height,
-		unsigned int samples = 4,
-		unsigned int format = GL_RGBA,
-		unsigned int magFilter = GL_LINEAR,
-		unsigned int minFilter = GL_LINEAR
-	) {
-		create(
-			width,
-			height,
-			samples,
-			format,
-			minFilter,
-			magFilter
-		);
-	}
-
-	void create(
-		unsigned int width,
-		unsigned int height,
-		unsigned int samples = 4,
-		unsigned int format = GL_RGBA,
-		unsigned int magFilter = GL_LINEAR,
-		unsigned int minFilter = GL_LINEAR
-	) {
-		if (created) return;
-		created = true;
-		id = createMultisampleTexture(
-			width,
-			height,
-			samples,
-			format,
-			minFilter,
-			magFilter
-		);
-	}
-
-	void destroy() {
-		if (!created) return;
-		glDeleteTextures(1, &id);
-		created = false;
-	}
-
-	/*
-	GL_CLAMP_TO_EDGE
-	GL_REPEAT
-	GL_MIRRORED_REPEAT
-	GL_MIRROR_CLAMP_TO_EDGE
-	*/
-	void setTextureWrapMode(
-		unsigned int horizontal,
-		unsigned int vertical
-	) {
-		glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, id);
-		glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_WRAP_S, horizontal);
-		glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_WRAP_T, vertical);
-		glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, 0);
-	}
-
-	/*
-	GL_CLAMP_TO_EDGE
-	GL_REPEAT
-	GL_MIRRORED_REPEAT
-	GL_MIRROR_CLAMP_TO_EDGE
-	*/
-	void setTextureWrapMode(unsigned int mode = GL_REPEAT) {
-		setTextureWrapMode(mode, mode);
-	}
-
-	/*
-	MagFilter:
-		GL_NEAREST
-		GL_LINEAR
-
-	MinFilter:
-		GL_NEAREST
-		GL_LINEAR
-		GL_NEAREST_MIPMAP_NEAREST
-		GL_LINEAR_MIPMAP_NEAREST
-		GL_NEAREST_MIPMAP_LINEAR
-		GL_LINEAR_MIPMAP_LINEAR
-	*/
-	void setTextureFilterMode(
-		unsigned int magFilter = GL_LINEAR,
-		unsigned int minFilter = GL_LINEAR_MIPMAP_LINEAR
-	) {
-		glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, id);
-		glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MIN_FILTER, minFilter);
-		glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MAG_FILTER, magFilter);
-		glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, 0);
-	}
-
-
-	inline unsigned int getID() {
-		return id;
-	}
-
-	bool exists() {
-		return created;
-	}
-
-private:
-	bool created = false;
-	unsigned int id = 0;
+	unsigned int
+		width,
+		height,
+		format,
+		internalFormat,
+		type,
+		minFilter,
+		magFilter
+	;
 };
