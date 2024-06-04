@@ -61,6 +61,8 @@ struct Image {
 		return *this;
 	}
 
+	Image& make() {return destroy().create();}
+
 	Image& make(
 		unsigned int width,
 		unsigned int height,
