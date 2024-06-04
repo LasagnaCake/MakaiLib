@@ -3,28 +3,10 @@ void setTexture2D(unsigned char index, GLuint texture) {
 	glBindTexture(GL_TEXTURE_2D, texture);
 }
 
-struct ImageAttributes2D {
-	unsigned int
-		width,
-		height,
-		type,
-		format,
-		internalFormat,
-		minFilter,
-		magFilter
-	;
-};
-
-struct ImageData2D: ImageAttributes2D {
-	vector<ubyte> data;
-};
-
 struct Image {
 	Image() {}
 
-	~Image() {
-		destroy();
-	}
+	~Image() {destroy();}
 
 	inline Image const& bind(unsigned int target = GL_TEXTURE_2D) const {
 		glBindTexture(target, id);
@@ -44,37 +26,7 @@ struct Image {
 		return *this;
 	}
 
-	Image& create(
-		unsigned int width,
-		unsigned int height,
-		unsigned int type			= GL_UNSIGNED_BYTE,
-		unsigned int format			= GL_RGBA,
-		unsigned int magFilter		= GL_LINEAR,
-		unsigned int minFilter		= GL_LINEAR_MIPMAP_LINEAR,
-		unsigned char* data			= NULL,
-		unsigned int internalFormat	= 0
-	) {
-		if (exists()) return *this;
-		if (!internalFormat)
-			internalFormat = format;
-		newImage(this, width, height, type, format, internalFormat, minFilter, magFilter, data);
-		return *this;
-	}
-
 	Image& make() {return destroy().create();}
-
-	Image& make(
-		unsigned int width,
-		unsigned int height,
-		unsigned int type			= GL_UNSIGNED_BYTE,
-		unsigned int format			= GL_RGBA,
-		unsigned int magFilter		= GL_LINEAR,
-		unsigned int minFilter		= GL_LINEAR_MIPMAP_LINEAR,
-		unsigned char* data			= NULL,
-		unsigned int internalFormat	= 0
-	) {
-		return destroy().create(width, height, type, format, minFilter, magFilter, data, internalFormat);
-	}
 
 	inline static void unbind(unsigned int target = GL_TEXTURE_2D) {
 		glBindTexture(target, 0);
@@ -96,14 +48,69 @@ struct Image {
 	inline operator unsigned int() const {return id;}
 
 	inline unsigned int getID()					const {return id;			}
-	inline ImageAttributes2D getAttributes()	const {return attributes;	}
 
 	inline bool exists() const		{return id != 0;	}
 	inline operator bool() const	{return exists();	}
 
-	ImageData2D getData() const {
+private:
+	unsigned int id = 0;
+};
+
+struct Image2D: public Image {
+	using Image::create;
+
+	struct Attributes {
+		unsigned int
+			width,
+			height,
+			type,
+			format,
+			internalFormat,
+			minFilter,
+			magFilter
+		;
+	};
+
+	struct ImageData: Attributes {
+		vector<ubyte> data;
+	};
+
+	Image2D& create(
+		unsigned int width,
+		unsigned int height,
+		unsigned int type			= GL_UNSIGNED_BYTE,
+		unsigned int format			= GL_RGBA,
+		unsigned int magFilter		= GL_LINEAR,
+		unsigned int minFilter		= GL_LINEAR_MIPMAP_LINEAR,
+		unsigned char* data			= NULL,
+		unsigned int internalFormat	= 0
+	) {
+		if (exists()) return *this;
+		if (!internalFormat)
+			internalFormat = format;
+		newImage(this, width, height, type, format, internalFormat, minFilter, magFilter, data);
+		return *this;
+	}
+
+	Image2D& make(
+		unsigned int width,
+		unsigned int height,
+		unsigned int type			= GL_UNSIGNED_BYTE,
+		unsigned int format			= GL_RGBA,
+		unsigned int magFilter		= GL_LINEAR,
+		unsigned int minFilter		= GL_LINEAR_MIPMAP_LINEAR,
+		unsigned char* data			= NULL,
+		unsigned int internalFormat	= 0
+	) {
+		destroy();
+		return create(width, height, type, format, minFilter, magFilter, data, internalFormat);
+	}
+
+	inline Attributes getAttributes() const {return attributes;	}
+
+	ImageData getData() const {
 		DEBUGLN("Getting image data...");
-		if (!exists()) return ImageData2D{0,0,0,0,0,0};
+		if (!exists()) return ImageData{0,0,0,0,0,0};
 		size_t size = 0;
 		switch (attributes.type) {
 			default:
@@ -130,13 +137,13 @@ struct Image {
 		DEBUGLN("Width: ", attributes.width);
 		DEBUGLN("Height: ", attributes.height);
 		DEBUGLN("Image Size: ", ((size_t)attributes.width) * ((size_t)attributes.height) * size);
-		ImageData2D imgdat = (ImageData2D)attributes;
+		ImageData imgdat = (ImageData)attributes;
 		DEBUGLN("Reserving buffer...");
 		imgdat.data.resize(((size_t)attributes.width) * ((size_t)attributes.height) * size, 0);
 		DEBUGLN("Reserved: ", imgdat.data.size());
 		if (imgdat.data.empty()) throw Error::FailedAction("Somehow, the image data is empty.");
 		DEBUGLN("Extracting pixels...");
-		glBindTexture(GL_TEXTURE_2D, id);
+		glBindTexture(GL_TEXTURE_2D, getID());
 		glGetTexImage(GL_TEXTURE_2D, 0, attributes.format, attributes.type, imgdat.data.data());
 		glBindTexture(GL_TEXTURE_2D, 0);
 		DEBUGLN("Done!");
@@ -144,9 +151,9 @@ struct Image {
 		return imgdat;
 	}
 
-	Image const& saveToFile(string const& path) const {
+	Image2D const& saveToFile(string const& path) const {
 		if (!exists()) return *this;
-		ImageData2D imgdat = getData();
+		ImageData imgdat = getData();
 		uchar channels = 0;
 		switch (imgdat.format) {
 			case GL_DEPTH_COMPONENT:
@@ -175,7 +182,7 @@ struct Image {
 		return *this;
 	}
 
-	static Image* newImage(
+	static Image2D* newImage(
 		unsigned int width,
 		unsigned int height,
 		unsigned int type = GL_UNSIGNED_BYTE,
@@ -186,12 +193,12 @@ struct Image {
 		unsigned char* data = NULL,
 		unsigned int target = GL_TEXTURE_2D
 	) {
-		Image* image = new Image();
+		Image2D* image = new Image2D();
 		return newImage(image, width, height, type, format, format, minFilter, magFilter, data);
 	}
 
-	static Image* newImage(
-		Image* image,
+	static Image2D* newImage(
+		Image2D* image,
 		unsigned int width,
 		unsigned int height,
 		unsigned int type = GL_UNSIGNED_BYTE,
@@ -241,13 +248,11 @@ struct Image {
 private:
 	friend class Texture2D;
 
-	unsigned int id = 0;
-
-	ImageAttributes2D attributes;
+	Attributes attributes;
 };
 
-Image* createTexture2D(
-	Image* texture,
+Image2D* createTexture2D(
+	Image2D* texture,
 	unsigned int width,
 	unsigned int height,
 	unsigned int type = GL_UNSIGNED_BYTE,
@@ -257,10 +262,10 @@ Image* createTexture2D(
 	unsigned int magFilter = GL_LINEAR,
 	unsigned char* data = NULL
 ) {
-	return Image::newImage(texture, width, height, type, format, format, minFilter, magFilter, data);
+	return Image2D::newImage(texture, width, height, type, format, format, minFilter, magFilter, data);
 }
 
-Image* createTexture2D(
+Image2D* createTexture2D(
 	unsigned int width,
 	unsigned int height,
 	unsigned int type = GL_UNSIGNED_BYTE,
@@ -270,7 +275,7 @@ Image* createTexture2D(
 	unsigned int magFilter = GL_LINEAR,
 	unsigned char* data = NULL
 ) {
-	return Image::newImage(width, height, type, format, format, minFilter, magFilter, data);
+	return Image2D::newImage(width, height, type, format, format, minFilter, magFilter, data);
 }
 
 namespace {
@@ -283,8 +288,8 @@ namespace {
 }
 
 void copyTexture(
-	Image* src,
-	Image* dst,
+	Image2D* src,
+	Image2D* dst,
 	unsigned int srcStartX,
 	unsigned int srcStartY,
 	unsigned int srcEndX,
@@ -330,9 +335,9 @@ void copyTexture(
 
 class Texture2D {
 public:
-	typedef SmartPointer::StrongPointer<Image> ImageInstance;
+	typedef SmartPointer::StrongPointer<Image2D> Image2DInstance;
 
-	Texture2D() {image = new Image();}
+	Texture2D() {image = new Image2D();}
 
 	Texture2D(
 		unsigned int width,
@@ -365,7 +370,7 @@ public:
 	}
 
 	Texture2D(
-		ImageData2D const& image
+		Image2D::ImageData const& image
 	) {
 		make(image);
 	}
@@ -407,7 +412,7 @@ public:
 		if (!image) return *this;
 		else if (image && !image->exists())
 			createTexture2D(
-				(Image*)image,
+				(Image2D*)image,
 				width,
 				height,
 				type,
@@ -461,7 +466,7 @@ public:
 	}
 
 	Texture2D& create(
-		ImageData2D const& image
+		Image2D::ImageData const& image
 	) {
 		if (exists()) return *this;
 		DEBUGLN("copying textures...");
@@ -551,7 +556,7 @@ public:
 	}
 
 	Texture2D& make(
-		ImageData2D image
+		Image2D::ImageData const& image
 	) {
 		destroy();
 		create(image);
@@ -581,7 +586,7 @@ public:
 
 	Texture2D& makeUnique(bool filter = false) {
 		if (!exists()) return *this;
-		Image* newImg = createTexture2D(
+		Image2D* newImg = createTexture2D(
 			image->attributes.width, image->attributes.height,
 			image->attributes.type,
 			image->attributes.format,
@@ -590,7 +595,7 @@ public:
 			image->attributes.magFilter
 		);
 		copyTexture(
-			(Image*)image, (Image*)newImg,
+			(Image2D*)image, (Image2D*)newImg,
 			0, 0, image->attributes.width, image->attributes.height,
 			0, 0, image->attributes.width, image->attributes.height,
 			filter ? GL_LINEAR : GL_NEAREST
@@ -617,7 +622,7 @@ public:
 		if (!exists()) return *this;
 		// Copy data
 		copyTexture(
-			(Image*)other.image, (Image*)image,
+			(Image2D*)other.image, (Image2D*)image,
 			startX, startY, endX, endY,
 			0, 0, image->attributes.width, image->attributes.height,
 			filter ? GL_LINEAR : GL_NEAREST
@@ -636,7 +641,7 @@ public:
 		if (!exists()) return *this;
 		// Copy data
 		copyTexture(
-			(Image*)other.image, (Image*)image,
+			(Image2D*)other.image, (Image2D*)image,
 			0, 0, other.image->attributes.width, other.image->attributes.height,
 			0, 0, image->attributes.width, image->attributes.height,
 			filter ? GL_LINEAR : GL_NEAREST
@@ -712,7 +717,7 @@ public:
 		return image->attributes.magFilter;
 	}
 
-	inline ImageAttributes2D getAttributes() const {
+	inline Image2D::Attributes getAttributes() const {
 		return image->attributes;
 	}
 
@@ -731,7 +736,7 @@ public:
 		return image->getID();
 	}
 
-	ImageData2D getData() const {
+	Image2D::ImageData getData() const {
 		return image->getData();
 	}
 
@@ -750,7 +755,5 @@ public:
 	inline operator bool() const {return exists();}
 
 private:
-	ImageInstance image;
-
-	friend class Texture2DInstance;
+	Image2DInstance image;
 };
