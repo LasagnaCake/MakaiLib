@@ -1089,12 +1089,12 @@ namespace Makai {
 		virtual void onClose()	{};
 
 		/// Queues a texture to recieve a copy of the screen.
-		void queueScreenCopy(Drawer::Texture2D* target) {
+		void queueScreenCopy(Drawer::Texture2D target) {
 			screenQueue.push_back(target);
 		}
 
 		/// Removes a texture from the screen copy queue.
-		void unqueueScreenCopy(Drawer::Texture2D* target) {
+		void unqueueScreenCopy(Drawer::Texture2D target) {
 			ERASE_IF(screenQueue, elem == target);
 		}
 
@@ -1148,7 +1148,7 @@ namespace Makai {
 			pushToFrame = false
 		;
 
-		List<Drawer::Texture2D*> screenQueue;
+		List<Drawer::Texture2D> screenQueue;
 
 		/// The program's main framebuffer.
 		Drawer::FrameBuffer framebuffer;
@@ -1272,7 +1272,7 @@ namespace Makai {
 		void copyScreenToQueued() {
 			if (!screenQueue.empty()) {
 				auto& screen = *framebuffer.toFrameBufferData().screen;
-				for (Drawer::Texture2D* target: screenQueue)
+				for (Drawer::Texture2D target: screenQueue)
 					target->make(screen);
 				screenQueue.clear();
 			}

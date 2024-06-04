@@ -3,7 +3,7 @@ void setTexture2D(unsigned char index, GLuint texture) {
 	glBindTexture(GL_TEXTURE_2D, texture);
 }
 
-struct ImageData2D {
+struct ImageAttributes2D {
 	unsigned int
 		width,
 		height,
@@ -13,13 +13,14 @@ struct ImageData2D {
 		minFilter,
 		magFilter
 	;
+};
+
+struct ImageData2D: ImageAttributes2D {
 	vector<ubyte> data;
 };
 
 struct Image {
-	Image() {
-		create();
-	}
+	Image() {}
 
 	~Image() {
 		destroy();
@@ -31,72 +32,230 @@ struct Image {
 	}
 
 	inline Image& destroy() {
-		if (!created) return *this;
+		if (!exists()) return *this;
 		glDeleteTextures(1, &id);
 		id = 0;
 		return *this;
 	}
 
 	inline Image& create() {
-		if (created) return *this;
+		if (exists()) return *this;
 		glGenTextures(1, &id);
 		return *this;
 	}
 
-	inline Image& make() {
-		return destroy().make();
+	Image& create(
+		unsigned int width,
+		unsigned int height,
+		unsigned int type			= GL_UNSIGNED_BYTE,
+		unsigned int format			= GL_RGBA,
+		unsigned int magFilter		= GL_LINEAR,
+		unsigned int minFilter		= GL_LINEAR_MIPMAP_LINEAR,
+		unsigned char* data			= NULL,
+		unsigned int internalFormat	= 0
+	) {
+		if (exists()) return *this;
+		if (!internalFormat)
+			internalFormat = format;
+		newImage(this, width, height, type, format, internalFormat, minFilter, magFilter, data);
+		return *this;
+	}
+
+	Image& make(
+		unsigned int width,
+		unsigned int height,
+		unsigned int type			= GL_UNSIGNED_BYTE,
+		unsigned int format			= GL_RGBA,
+		unsigned int magFilter		= GL_LINEAR,
+		unsigned int minFilter		= GL_LINEAR_MIPMAP_LINEAR,
+		unsigned char* data			= NULL,
+		unsigned int internalFormat	= 0
+	) {
+		return destroy().create(width, height, type, format, minFilter, magFilter, data, internalFormat);
 	}
 
 	inline static void unbind(unsigned int target = GL_TEXTURE_2D) {
 		glBindTexture(target, 0);
 	}
 
+	inline Image& operator()(unsigned char texture = 0) {
+		use(texture);
+		return *this;
+	}
+
+	inline Image& use(unsigned char texture = 0) {
+		setTexture2D(texture, id);
+		return *this;
+	}
+
+	inline bool operator==(Image const& other)					{return id == other.id;		}
+	inline Helper::PartialOrder operator<=>(Image const& other)	{return id <=> other.id;	}
+
 	inline operator unsigned int() const {return id;}
 
-	inline unsigned int getID() const {return id;}
+	inline unsigned int getID()					const {return id;			}
+	inline ImageAttributes2D getAttributes()	const {return attributes;	}
+
+	inline bool exists() const		{return id != 0;	}
+	inline operator bool() const	{return exists();	}
+
+	ImageData2D getData() const {
+		DEBUGLN("Getting image data...");
+		if (!exists()) return ImageData2D{0,0,0,0,0,0};
+		size_t size = 0;
+		switch (attributes.type) {
+			default:
+			case GL_UNSIGNED_BYTE:
+			case GL_BYTE:			size = 1;	break;
+			case GL_UNSIGNED_SHORT:
+			case GL_SHORT:
+			case GL_HALF_FLOAT:		size = 2;	break;
+			case GL_UNSIGNED_INT:
+			case GL_INT:
+			case GL_FLOAT:			size = 4;	break;
+		}
+		DEBUG("Image Size: ", size);
+		switch (attributes.format) {
+			case GL_DEPTH_COMPONENT:
+			case GL_RED:							break;
+			case GL_DEPTH_STENCIL:
+			case GL_RG:					size *= 2;	break;
+			case GL_RGB:				size *= 3;	break;
+			default:
+			case GL_RGBA:				size *= 4;	break;
+		}
+		DEBUGLN("Image Pixel Width: ", size);
+		DEBUGLN("Width: ", attributes.width);
+		DEBUGLN("Height: ", attributes.height);
+		DEBUGLN("Image Size: ", ((size_t)attributes.width) * ((size_t)attributes.height) * size);
+		ImageData2D imgdat = (ImageData2D)attributes;
+		DEBUGLN("Reserving buffer...");
+		imgdat.data.resize(((size_t)attributes.width) * ((size_t)attributes.height) * size, 0);
+		DEBUGLN("Reserved: ", imgdat.data.size());
+		if (imgdat.data.empty()) throw Error::FailedAction("Somehow, the image data is empty.");
+		DEBUGLN("Extracting pixels...");
+		glBindTexture(GL_TEXTURE_2D, id);
+		glGetTexImage(GL_TEXTURE_2D, 0, attributes.format, attributes.type, imgdat.data.data());
+		glBindTexture(GL_TEXTURE_2D, 0);
+		DEBUGLN("Done!");
+		DEBUGLN("Reserved: ", imgdat.data.size());
+		return imgdat;
+	}
+
+	Image const& saveToFile(string const& path) const {
+		if (!exists()) return *this;
+		ImageData2D imgdat = getData();
+		uchar channels = 0;
+		switch (imgdat.format) {
+			case GL_DEPTH_COMPONENT:
+			case GL_RED:				channels = 1;	break;
+			case GL_DEPTH_STENCIL:
+			case GL_RG:					channels = 2;	break;
+			case GL_RGB:				channels = 3;	break;
+			default:
+			case GL_RGBA:				channels = 4;	break;
+		}
+		int result = stbi_write_tga(
+			path.c_str(),
+			imgdat.width,
+			imgdat.height,
+			channels,
+			imgdat.data.data()
+		);
+		if (!result) {
+			throw FileLoader::FileSaveError(
+				"Could not save image file!",
+				__FILE__,
+				toString(__LINE__),
+				"Texture2D::saveToFile"
+			);
+		}
+		return *this;
+	}
+
+	static Image* newImage(
+		unsigned int width,
+		unsigned int height,
+		unsigned int type = GL_UNSIGNED_BYTE,
+		unsigned int format = GL_RGBA,
+		unsigned int internalFormat = GL_RGBA32F,
+		unsigned int minFilter = GL_LINEAR_MIPMAP_LINEAR,
+		unsigned int magFilter = GL_LINEAR,
+		unsigned char* data = NULL,
+		unsigned int target = GL_TEXTURE_2D
+	) {
+		Image* image = new Image();
+		return newImage(image, width, height, type, format, format, minFilter, magFilter, data);
+	}
+
+	static Image* newImage(
+		Image* image,
+		unsigned int width,
+		unsigned int height,
+		unsigned int type = GL_UNSIGNED_BYTE,
+		unsigned int format = GL_RGBA,
+		unsigned int internalFormat = GL_RGBA32F,
+		unsigned int minFilter = GL_LINEAR_MIPMAP_LINEAR,
+		unsigned int magFilter = GL_LINEAR,
+		unsigned char* data = NULL,
+		unsigned int target = GL_TEXTURE_2D
+	) {
+		image->create();
+		image->bind(target);
+		image->attributes = {
+			width,
+			height,
+			type,
+			format,
+			internalFormat,
+			minFilter,
+			magFilter
+		};
+		// Bind image data
+		glTexImage2D(
+			target,
+			0,
+			internalFormat,
+			width,
+			height,
+			0,
+			format,
+			type,
+			data
+		);
+		// Set image wrapping & mipmaps
+		glTexParameteri(target, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(target, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glGenerateMipmap(target);
+		// Set filtering
+		glTexParameteri(target, GL_TEXTURE_MIN_FILTER, minFilter);
+		glTexParameteri(target, GL_TEXTURE_MAG_FILTER, magFilter);
+		// Unbind image
+		Image::unbind(target);
+		// Return image
+		return image;
+	}
 
 private:
-	bool created = false;
+	friend class Texture2D;
 
 	unsigned int id = 0;
+
+	ImageAttributes2D attributes;
 };
 
-Image* createTexture(
+Image* createTexture2D(
+	Image* texture,
 	unsigned int width,
 	unsigned int height,
 	unsigned int type = GL_UNSIGNED_BYTE,
 	unsigned int format = GL_RGBA,
-	unsigned int internalFormat = GL_RGBA32F,
+	unsigned int internalFormat = GL_RGBA,
 	unsigned int minFilter = GL_LINEAR_MIPMAP_LINEAR,
 	unsigned int magFilter = GL_LINEAR,
-	unsigned char* data = NULL,
-	unsigned int target = GL_TEXTURE_2D
+	unsigned char* data = NULL
 ) {
-	Image* texture = new Image();
-	texture->bind(target);
-	// Bind image data
-	glTexImage2D(
-		target,
-		0,
-		internalFormat,
-		width,
-		height,
-		0,
-		format,
-		type,
-		data
-	);
-	// Set texture wrapping & mipmaps
-	glTexParameteri(target, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(target, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glGenerateMipmap(target);
-	// Set filtering
-	glTexParameteri(target, GL_TEXTURE_MIN_FILTER, minFilter);
-	glTexParameteri(target, GL_TEXTURE_MAG_FILTER, magFilter);
-	// Unbind texture
-	Image::unbind(target);
-	// Return texture ID
-	return texture;
+	return Image::newImage(texture, width, height, type, format, format, minFilter, magFilter, data);
 }
 
 Image* createTexture2D(
@@ -109,7 +268,7 @@ Image* createTexture2D(
 	unsigned int magFilter = GL_LINEAR,
 	unsigned char* data = NULL
 ) {
-	return createTexture(width, height, type, format, format, minFilter, magFilter, data);
+	return Image::newImage(width, height, type, format, format, minFilter, magFilter, data);
 }
 
 namespace {
@@ -171,7 +330,7 @@ class Texture2D {
 public:
 	typedef SmartPointer::StrongPointer<Image> ImageInstance;
 
-	Texture2D() {}
+	Texture2D() {image = new Image();}
 
 	Texture2D(
 		unsigned int width,
@@ -243,24 +402,30 @@ public:
 		unsigned char* data			= NULL,
 		unsigned int internalFormat	= 0
 	) {
-		if (exists()) return *this;
-		this->width				= width;
-		this->height			= height;
-		this->format			= format;
-		this->type				= type;
-		this->minFilter			= minFilter;
-		this->magFilter			= magFilter;
-		this->internalFormat	= internalFormat ? internalFormat : format;
-		image = createTexture2D(
-			width,
-			height,
-			type,
-			format,
-			this->internalFormat,
-			minFilter,
-			magFilter,
-			data
-		);
+		if (!image) return *this;
+		else if (image && !image->exists())
+			createTexture2D(
+				(Image*)image,
+				width,
+				height,
+				type,
+				format,
+				internalFormat ? internalFormat : format,
+				minFilter,
+				magFilter,
+				data
+			);
+		else
+			image = createTexture2D(
+				width,
+				height,
+				type,
+				format,
+				internalFormat ? internalFormat : format,
+				minFilter,
+				magFilter,
+				data
+			);
 		setTextureWrapMode();
 		return *this;
 	}
@@ -317,14 +482,7 @@ public:
 		Texture2D const& other
 	) {
 		if (exists()) return *this;
-		image			= other.image;
-		width			= other.width;
-		height			= other.height;
-		type			= other.type;
-		format			= other.format;
-		minFilter		= other.minFilter;
-		magFilter		= other.magFilter;
-		internalFormat	= other.internalFormat;
+		image = other.image;
 		return *this;
 	}
 
@@ -342,12 +500,12 @@ public:
 		h = Math::max(startY, endY) - Math::min(startY, endY);
 		create(
 			w, h,
-			other.type,
-			other.format,
-			other.minFilter,
-			other.magFilter,
+			other.image->attributes.type,
+			other.image->attributes.format,
+			other.image->attributes.minFilter,
+			other.image->attributes.magFilter,
 			NULL,
-			other.internalFormat
+			other.image->attributes.internalFormat
 		);
 		copyFrom(other, startX, startY, endX, endY, filter);
 		return *this;
@@ -422,17 +580,17 @@ public:
 	Texture2D& makeUnique(bool filter = false) {
 		if (!exists()) return *this;
 		Image* newImg = createTexture2D(
-			width, height,
-			type,
-			format,
-			internalFormat,
-			minFilter,
-			magFilter
+			image->attributes.width, image->attributes.height,
+			image->attributes.type,
+			image->attributes.format,
+			image->attributes.internalFormat,
+			image->attributes.minFilter,
+			image->attributes.magFilter
 		);
 		copyTexture(
 			(Image*)image, (Image*)newImg,
-			0, 0, width, height,
-			0, 0, width, height,
+			0, 0, image->attributes.width, image->attributes.height,
+			0, 0, image->attributes.width, image->attributes.height,
 			filter ? GL_LINEAR : GL_NEAREST
 		);
 		image = newImg;
@@ -442,6 +600,9 @@ public:
 	Texture2D& operator=(Texture2D const& other)	{make(other); return *this;								}
 	Texture2D& operator=(Texture2D&& other)			{make(other); return *this;								}
 	Texture2D& operator=(Texture2D* other)			{if (other) make(*other); else destroy(); return *this;	}
+
+	inline bool operator==(Texture2D const& other) const					{return image == other.image;	}
+	inline Helper::PartialOrder operator<=>(Texture2D const& other) const	{return image <=> other.image;	}
 
 	Texture2D& copyFrom(
 		Texture2D const& other,
@@ -456,7 +617,7 @@ public:
 		copyTexture(
 			(Image*)other.image, (Image*)image,
 			startX, startY, endX, endY,
-			0, 0, width, height,
+			0, 0, image->attributes.width, image->attributes.height,
 			filter ? GL_LINEAR : GL_NEAREST
 		);
 		// Regenerate mipmaps
@@ -474,8 +635,8 @@ public:
 		// Copy data
 		copyTexture(
 			(Image*)other.image, (Image*)image,
-			0, 0, other.width, other.height,
-			0, 0, width, height,
+			0, 0, other.image->attributes.width, other.image->attributes.height,
+			0, 0, image->attributes.width, image->attributes.height,
 			filter ? GL_LINEAR : GL_NEAREST
 		);
 		// Regenerate mipmaps
@@ -536,17 +697,21 @@ public:
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minFilter);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magFilter);
 		glBindTexture(GL_TEXTURE_2D, 0);
-		this->minFilter = minFilter;
-		this->magFilter = magFilter;
+		image->attributes.minFilter = minFilter;
+		image->attributes.magFilter = magFilter;
 		return *this;
 	}
 
-	inline unsigned int getTextureMinFilter() {
-		return minFilter;
+	inline unsigned int getTextureMinFilter() const {
+		return image->attributes.minFilter;
 	}
 
-	inline unsigned int getTextureMagFilter() {
-		return magFilter;
+	inline unsigned int getTextureMagFilter() const {
+		return image->attributes.magFilter;
+	}
+
+	inline ImageAttributes2D getAttributes() const {
+		return image->attributes;
 	}
 
 	Texture2D& operator()(unsigned char texture = 0) {
@@ -555,7 +720,7 @@ public:
 	}
 
 	Texture2D& enable(unsigned char texture = 0) {
-		setTexture2D(texture, image->getID());
+		image->use(texture);
 		return *this;
 	}
 
@@ -565,81 +730,17 @@ public:
 	}
 
 	ImageData2D getData() const {
-		DEBUGLN("Getting image data...");
-		if (!exists()) return ImageData2D{0,0,0,0,0,0};
-		size_t size = 0;
-		switch (type) {
-			default:
-			case GL_UNSIGNED_BYTE:
-			case GL_BYTE:			size = 1;	break;
-			case GL_UNSIGNED_SHORT:
-			case GL_SHORT:
-			case GL_HALF_FLOAT:		size = 2;	break;
-			case GL_UNSIGNED_INT:
-			case GL_INT:
-			case GL_FLOAT:			size = 4;	break;
-		}
-		DEBUG("Image Size: ", size);
-		switch (format) {
-			case GL_DEPTH_COMPONENT:
-			case GL_RED:							break;
-			case GL_DEPTH_STENCIL:
-			case GL_RG:					size *= 2;	break;
-			case GL_RGB:				size *= 3;	break;
-			default:
-			case GL_RGBA:				size *= 4;	break;
-		}
-		DEBUGLN("Image Pixel Width: ", size);
-		DEBUGLN("Width: ", width);
-		DEBUGLN("Height: ", height);
-		DEBUGLN("Image Size: ", ((size_t)width) * ((size_t)height) * size);
-		ImageData2D imgdat = {width, height, type, format, internalFormat, minFilter, magFilter};
-		DEBUGLN("Reserving buffer...");
-		imgdat.data.resize(((size_t)width) * ((size_t)height) * size, 0);
-		DEBUGLN("Reserved: ", imgdat.data.size());
-		if (imgdat.data.empty()) throw Error::FailedAction("Somehow, the image data is empty.");
-		DEBUGLN("Extracting pixels...");
-		glBindTexture(GL_TEXTURE_2D, image->getID());
-		glGetTexImage(GL_TEXTURE_2D, 0, format, type, imgdat.data.data());
-		glBindTexture(GL_TEXTURE_2D, 0);
-		DEBUGLN("Done!");
-		DEBUGLN("Reserved: ", imgdat.data.size());
-		return imgdat;
+		return image->getData();
 	}
 
 	Texture2D const& saveToFile(string const& path) const {
 		if (!exists()) return *this;
-		ImageData2D imgdat = getData();
-		uchar channels = 0;
-		switch (imgdat.format) {
-			case GL_DEPTH_COMPONENT:
-			case GL_RED:				channels = 1;	break;
-			case GL_DEPTH_STENCIL:
-			case GL_RG:					channels = 2;	break;
-			case GL_RGB:				channels = 3;	break;
-			default:
-			case GL_RGBA:				channels = 4;	break;
-		}
-		int result = stbi_write_tga(
-			path.c_str(),
-			imgdat.width,
-			imgdat.height,
-			channels,
-			imgdat.data.data()
-		);
-		if (!result) {
-			throw FileLoader::FileSaveError(
-				"Could not save image file!",
-				__FILE__,
-				toString(__LINE__),
-				"Texture2D::saveToFile"
-			);
-		}
+		image->saveToFile(path);
 		return *this;
 	}
 
 	bool exists() const {
-		return image.exists() && image->getID();
+		return image.exists() && image->exists();
 	}
 
 	inline Texture2D* operator->() {return this;}
@@ -649,13 +750,5 @@ public:
 private:
 	ImageInstance image;
 
-	unsigned int
-		width,
-		height,
-		format,
-		internalFormat,
-		type,
-		minFilter,
-		magFilter
-	;
+	friend class Texture2DInstance;
 };

@@ -171,13 +171,9 @@ public:
 	}
 
 	inline void extendFromDefinitionFile(
-		string const& path,
-		Texture2D* const& texture	= nullptr,
-		Texture2D* const& normalMap	= nullptr,
-		Texture2D* const& emission	= nullptr,
-		Texture2D* const& warp		= nullptr
+		string const& path
 	) {
-		extendFromDefinition(FileLoader::getJSON(path), FileSystem::getDirectoryFromPath(path), texture, normalMap, emission, warp);
+		extendFromDefinition(FileLoader::getJSON(path), FileSystem::getDirectoryFromPath(path));
 	}
 
 	void bake() {
@@ -303,33 +299,21 @@ private:
 
 	void extendFromDefinition(
 		JSONData def,
-		string const& sourcepath,
-		Texture2D* const& texture	= nullptr,
-		Texture2D* const& normalMap	= nullptr,
-		Texture2D* const& emission	= nullptr,
-		Texture2D* const& warp		= nullptr
+		string const& sourcepath
 	) {
 		if (def.contains("number") && def["version"].is_number()) {
 			// Do stuff for versions
 			switch (def["version"].get<size_t>()) {
 				default:
-				case 0: extendFromDefinitionV0(def, sourcepath, texture, normalMap, emission, warp); break;
+				case 0: extendFromDefinitionV0(def, sourcepath); break;
 			}
-		} else extendFromDefinitionV0(def, sourcepath, texture, normalMap, emission, warp);
+		} else extendFromDefinitionV0(def, sourcepath);
 	}
 
 	void extendFromDefinitionV0(
 		JSONData def,
-		string const& sourcepath,
-		Texture2D* texture		= nullptr,
-		Texture2D* normalMap	= nullptr,
-		Texture2D* emission		= nullptr,
-		Texture2D* warp			= nullptr
+		string const& sourcepath
 	) {
-		if (!texture)	texture		= &this->texture;
-		if (!normalMap)	normalMap	= &this->normalMap;
-		if (!emission)	emission	= &this->emission;
-		if (!warp)		warp		= &this->warp;
 		// Component data
 		string componentData;
 		// Vertex data
@@ -459,7 +443,14 @@ private:
 		}
 		// Set material data
 		if (def["material"].is_object()) {
-			material = Material::fromObjectMaterialDefinition(def["material"], sourcepath, texture, normalMap, emission, warp);
+			material = Material::fromObjectMaterialDefinition(
+				def["material"],
+				sourcepath,
+				texture,
+				normalMap,
+				emission,
+				warp
+			);
 		}
 		// Set blend data
 		if (def["blend"].is_object()) {

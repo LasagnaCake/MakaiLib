@@ -49,28 +49,29 @@ namespace SmartPointer {
 		}
 
 		constexpr Pointer& bind(T* const& obj) {
+			if (ref == obj) return (*this);
 			unbind();
 			if (obj == nullptr) return (*this);
-			DEBUGLN("Binding reference...");
+			//DEBUGLN("Binding reference...");
 			ref = obj;
 			database[(void*)obj].exists = true;
 			IF_STRONG {
-				DEBUGLN("Updating reference counter...");
+				//DEBUGLN("Updating reference counter...");
 				database[(void*)obj].count++;
-				DEBUGLN("References: ", database[(void*)ref].count);
+				//DEBUGLN("References: ", database[(void*)ref].count);
 			}
 			return (*this);
 		}
 
 		constexpr Pointer& unbind() {
 			if (!exists()) return (*this);
-			DEBUGLN("Unbinding reference...");
+			//DEBUGLN("Unbinding reference...");
 			IF_STRONG {
 				if ((database[(void*)ref].count-1 < 1))
 					return destroy();
-				DEBUGLN("Updating reference counter...");
+				//DEBUGLN("Updating reference counter...");
 				database[(void*)ref].count--;
-				DEBUGLN("References: ", database[(void*)ref].count);
+				//DEBUGLN("References: ", database[(void*)ref].count);
 			}
 			ref = nullptr;
 			return (*this);
@@ -78,23 +79,23 @@ namespace SmartPointer {
 
 		constexpr Pointer& destroy() {
 			IF_STRONG {
-				DEBUGLN("Deleting reference...");
+				//DEBUGLN("Deleting reference...");
 				if (!exists()) return (*this);
 				database[(void*)ref] = {false, 0};
 				delete ref;
 				ref = nullptr;
-				DEBUGLN("Reference deleted!");
+				//DEBUGLN("Reference deleted!");
 			}
 			return (*this);
 		}
 
 		constexpr Pointer& release() {
 			IF_STRONG {
-				DEBUGLN("Releasing reference...");
+				//DEBUGLN("Releasing reference...");
 				if (!exists()) return (*this);
 				database[(void*)ref] = {false, 0};
 				ref = nullptr;
-				DEBUGLN("Reference released!");
+				//DEBUGLN("Reference released!");
 			}
 			return (*this);
 		}
@@ -137,20 +138,13 @@ namespace SmartPointer {
 
 		constexpr operator bool() const	{return exists();	}
 
-		constexpr bool operator!() const				{return	!exists();			}
-		constexpr bool operator==(T* const& obj) const	{return	ref == obj;			}
-		constexpr bool operator!=(T* const& obj) const	{return	!operator==(obj);	}
-		constexpr bool operator<(T* const& obj) const	{return	ref < obj;			}
-		constexpr bool operator>(T* const& obj) const	{return	operator<(obj);		}
-		constexpr bool operator<=(T* const& obj) const	{return	!operator>(obj);	}
-		constexpr bool operator>=(T* const& obj) const	{return	!operator<(obj);	}
+		constexpr bool operator!() const	{return	!exists();			}
 
-		constexpr bool operator==(Pointer<T, weak> const& other) const	{return operator==(other.ref);	}
-		constexpr bool operator!=(Pointer<T, weak> const& other) const	{return operator!=(other.ref);	}
-		constexpr bool operator<(Pointer<T, weak> const& other) const	{return operator<(other.ref);	}
-		constexpr bool operator>(Pointer<T, weak> const& other) const	{return operator>(other.ref);	}
-		constexpr bool operator<=(Pointer<T, weak> const& other) const	{return operator<=(other.ref);	}
-		constexpr bool operator>=(Pointer<T, weak> const& other) const	{return operator>=(other.ref);	}
+		constexpr bool operator==(T* const& obj) const					{return	ref == obj;			}
+		constexpr Helper::PartialOrder operator<=>(T* const& obj) const	{return	ref <=> obj;		}
+
+		constexpr bool operator==(Pointer<T, weak> const& other) const					{return ref == other.ref;	}
+		constexpr Helper::PartialOrder operator<=>(Pointer<T, weak> const& other) const	{return ref <=> other.ref;	}
 
 		constexpr Pointer& operator=(T* const& obj)					{bind(obj); return (*this);			}
 		constexpr Pointer& operator=(Pointer<T, weak> const& other)	{bind(other.ref); return (*this);	}

@@ -45,21 +45,15 @@ public:
 				nobj->trans = obj->trans;
 			}
 			{
-				Texture2D
-					*tx = nobj->material.texture.image,
-					*em = nobj->material.emission.image,
-					*wp = nobj->material.warp.image
-				;
 				nobj->material = obj->material;
-				nobj->material.texture.image	= tx;
-				nobj->material.emission.image	= em;
-				nobj->material.warp.image		= wp;
-				if (obj->material.texture.image)
-					tx->create(*obj->material.texture.image);
-				if (obj->material.emission.image)
-					em->create(*obj->material.emission.image);
-				if (obj->material.warp.image)
-					wp->create(*obj->material.warp.image);
+				nobj->material.texture.image.makeUnique();
+				nobj->material.normalMap.image.makeUnique();
+				nobj->material.emission.image.makeUnique();
+				nobj->material.warp.image.makeUnique();
+				nobj->texture	= nobj->material.texture.image;
+				nobj->normalMap	= nobj->material.normalMap.image;
+				nobj->emission	= nobj->material.emission.image;
+				nobj->warp		= nobj->material.warp.image;
 			}
 		}
 		camera	= other->camera;

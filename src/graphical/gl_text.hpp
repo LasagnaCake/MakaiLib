@@ -3,9 +3,9 @@ struct TextRect {
 };
 
 struct FontData {
-	Texture2D*	face		= nullptr;
-	Vector2		size		= Vector2(16);
-	Vector2		spacing		= Vector2(1);
+	Texture2D	face	= nullptr;
+	Vector2				size	= Vector2(16);
+	Vector2				spacing	= Vector2(1);
 };
 
 enum class LineWrap {

@@ -34,7 +34,7 @@ namespace Module {
 	};
 
 	struct Imageable2D {
-		Texture2D* image = nullptr;
+		Texture2D image = nullptr;
 	};
 
 	struct Channelable {
@@ -539,24 +539,24 @@ JSONData saveImageEffect(ImageEffect& effect, String const& folder, String const
 ImageEffect loadImageEffect(
 	JSONData& effect,
 	String const& sourcepath,
-	Texture2D* texture
+	Texture2D& texture
 ) {
 	try {
 		ImageEffect fx;
 		fx.enabled = effect["enabled"].get<bool>();
 		auto& img = effect["image"];
-		if (!texture)
+		/*if (!texture.exists())
 			throw Error::InvalidValue(
 				"Texture cannot be null!",
 				__FILE__,
 				toString(__LINE__),
 				"loadImageEffect",
 				"Make sure you are passing a texture!"
-			);
+			);*/
 		fx.image = texture;
 		if (img["data"].is_object() && img["data"]["path"].is_string() && !img["data"]["path"].get<string>().empty()) {
-			texture->create(FileSystem::concatenatePath(sourcepath, img["path"].get<string>()));
-			texture->setTextureFilterMode(
+			texture.make(FileSystem::concatenatePath(sourcepath, img["path"].get<string>()));
+			texture.setTextureFilterMode(
 				img.value<uint>("minFilter", GL_NEAREST_MIPMAP_NEAREST),
 				img.value<uint>("magFilter", GL_NEAREST)
 			);
@@ -572,7 +572,7 @@ ImageEffect loadImageEffect(
 				4
 			);
 			if (imgdat) {
-				texture->create(
+				texture.make(
 					w,
 					h,
 					GL_UNSIGNED_BYTE,
@@ -607,10 +607,10 @@ ImageEffect loadImageEffect(
 ObjectMaterial fromObjectMaterialDefinition(
 	JSONData def,
 	String const& definitionFolder,
-	Texture2D* texture,
-	Texture2D* normalMap,
-	Texture2D* emission,
-	Texture2D* warp
+	Texture2D& texture,
+	Texture2D& normalMap,
+	Texture2D& emission,
+	Texture2D& warp
 ) {
 	ObjectMaterial mat;
 	try {
@@ -640,15 +640,15 @@ ObjectMaterial fromObjectMaterialDefinition(
 		}
 		// Set texture
 		if (dmat["texture"].is_object()) {
-			auto fx = loadImageEffect(dmat["texture"], definitionFolder, texture ? texture : mat.texture.image);
+			auto fx = loadImageEffect(dmat["texture"], definitionFolder, texture);
 			mat.texture.enabled	= fx.enabled;
-			mat.texture.image		= fx.image;
+			mat.texture.image	= fx.image;
 			if (dmat["texture"]["alphaClip"].is_number())
 				mat.texture.alphaClip	= dmat["texture"]["alphaClip"].get<float>();
 		}
 		// Set normal map texture
 		if (dmat["normalMap"].is_object()) {
-			auto fx = loadImageEffect(dmat["normalMap"], definitionFolder, normalMap ? normalMap : mat.normalMap.image);
+			auto fx = loadImageEffect(dmat["normalMap"], definitionFolder, normalMap);
 			mat.normalMap.enabled	= fx.enabled;
 			mat.normalMap.image		= fx.image;
 			if (dmat["normalMap"]["strength"].is_number())
@@ -656,7 +656,7 @@ ObjectMaterial fromObjectMaterialDefinition(
 		}
 		// Set emission texture
 		if (dmat["emission"].is_object()) {
-			auto fx = loadImageEffect(dmat["emission"], definitionFolder, emission ? emission : mat.emission.image);
+			auto fx = loadImageEffect(dmat["emission"], definitionFolder, emission);
 			mat.emission.enabled	= fx.enabled;
 			mat.emission.image		= fx.image;
 			if (dmat["emission"]["strength"].is_number())
@@ -664,7 +664,7 @@ ObjectMaterial fromObjectMaterialDefinition(
 		}
 		// Set warp texture
 		if (dmat["warp"].is_object()) {
-			auto fx = loadImageEffect(dmat["warp"], definitionFolder, warp ? warp : mat.warp.image);
+			auto fx = loadImageEffect(dmat["warp"], definitionFolder, warp);
 			mat.warp.enabled	= fx.enabled;
 			mat.warp.image		= fx.image;
 			{
