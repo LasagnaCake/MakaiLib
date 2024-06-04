@@ -173,10 +173,11 @@ public:
 	inline void extendFromDefinitionFile(
 		string const& path,
 		Texture2D* const& texture	= nullptr,
+		Texture2D* const& normalMap	= nullptr,
 		Texture2D* const& emission	= nullptr,
 		Texture2D* const& warp		= nullptr
 	) {
-		extendFromDefinition(FileLoader::getJSON(path), FileSystem::getDirectoryFromPath(path), texture, emission, warp);
+		extendFromDefinition(FileLoader::getJSON(path), FileSystem::getDirectoryFromPath(path), texture, normalMap, emission, warp);
 	}
 
 	void bake() {
