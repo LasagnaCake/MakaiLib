@@ -55,7 +55,7 @@ namespace Async {
 	}
 
 	class Timekeeper {
-		typedef StrongPointer<Atomic<size_t>> CounterReference;
+		typedef Instance<Atomic<size_t>> CounterReference;
 
 	public:
 		class Waiter {
@@ -112,9 +112,9 @@ namespace Async {
 		constexpr Promise(Promise const& other): Promise(other.thread) {}
 
 	private:
-		constexpr Promise(WeakPointer<Thread> const& t): thread(t) {}
+		constexpr Promise(Handle<Thread> const& t): thread(t) {}
 
-		WeakPointer<Thread> thread;
+		Handle<Thread> thread;
 
 		template<typename F> friend class Task;
 	};
@@ -140,9 +140,9 @@ namespace Async {
 		constexpr Promise(Promise const& other): Promise(other.data, other.thread) {}
 
 	private:
-		constexpr Promise(Atomic<Nullable<T>>& v, WeakPointer<Thread> const& t): data(v), thread(t) {}
+		constexpr Promise(Atomic<Nullable<T>>& v, Handle<Thread> const& t): data(v), thread(t) {}
 
-		WeakPointer<Thread>		thread;
+		Handle<Thread>			thread;
 		Atomic<Nullable<T>>&	data;
 
 		template<typename F> friend class Task;
@@ -250,9 +250,9 @@ namespace Async {
 			result.unbind().bind(new Atomic<NullableType>());
 		}
 
-		StrongPointer<Atomic<NullableType>>	result = new Atomic<NullableType>();
-		Atomic<FunctorType>					target;
-		StrongPointer<Thread>				executor;
+		Instance<Atomic<NullableType>>	result = new Atomic<NullableType>();
+		Atomic<FunctorType>				target;
+		Instance<Thread>				executor;
 	};
 
 }

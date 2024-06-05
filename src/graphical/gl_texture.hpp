@@ -335,7 +335,7 @@ void copyTexture(
 
 class Texture2D {
 public:
-	typedef SmartPointer::StrongPointer<Image2D> Image2DInstance;
+	typedef Instance<Image2D> Image2DInstance;
 
 	Texture2D() {image = new Image2D();}
 

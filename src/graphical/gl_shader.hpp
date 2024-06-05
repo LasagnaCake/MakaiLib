@@ -217,7 +217,7 @@ namespace Shader {
 			GLuint id = 0;
 		};
 
-		typedef StrongPointer<ShaderProgram> ShaderInstance;
+		typedef Instance<ShaderProgram> ShaderInstance;
 
 		ShaderInstance instance;
 
