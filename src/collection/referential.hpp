@@ -209,4 +209,10 @@ namespace SmartPointer {
 using SmartPointer::StrongPointer;
 using SmartPointer::WeakPointer;
 
+template<SmartPointer::Pointable T>
+using Instance	= SmartPointer::StrongPointer<T>;
+
+template<SmartPointer::Pointable T>
+using Handle	= SmartPointer::WeakPointer<T>;
+
 #endif // REFERENCE_HANDLER_H
