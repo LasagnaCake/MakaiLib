@@ -465,7 +465,7 @@ namespace RenderData {
 		#include "gl_drawable.hpp"
 	}
 
-	namespace Reference {
+	namespace Reference3D {
 		#include "gl_reference.hpp"
 	}
 

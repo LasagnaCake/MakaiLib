@@ -51,7 +51,7 @@ public:
 	}
 
 	/// Creates a reference and binds it to this object.
-	template<Reference::ShapeType T>
+	template<Reference3D::ShapeType T>
 	[[nodiscard]] T* createReference() {
 		constexpr size_t count = T::triangleCount;
 		if (locked) throw Error::InvalidAction("Renderable object is locked!");
@@ -67,13 +67,13 @@ public:
 		shape->onDestroy =	[this, shape](){this->removeReference<T>(shape);};
 		shape->onUnbind =	[this, shape](){this->unbindReference<T>(shape);};
 		// Add to reference list
-		references.shape.push_back((Reference::Shape<0>*)shape);
+		references.shape.push_back((Reference3D::Shape<0>*)shape);
 		// return shape
 		return shape;
 	}
 
 	/// Gets a reference bound to this object by index.
-	template <Reference::ShapeType T>
+	template <Reference3D::ShapeType T>
 	inline T* getReference(size_t index) {
 		if (locked) throw Error::InvalidAction("Renderable object is locked!");
 		return (T*)references.shape[index];
@@ -86,7 +86,7 @@ public:
 	* and the triangles associated to it.
 	* It also deletes the reference.
 	*/
-	template <Reference::ShapeType T>
+	template <Reference3D::ShapeType T>
 	void removeReference(T* ref) {
 		if (!ref) return;
 		if (locked) return;
@@ -110,12 +110,12 @@ public:
 	* but keeps the triangles associated to it.
 	* It also deletes the reference.
 	*/
-	template <Reference::ShapeType T>
+	template <Reference3D::ShapeType T>
 	void unbindReference(T* ref) {
 		if (!ref) return;
 		if (locked) return;
 		auto& rs = references.shape;
-		ERASE_IF(rs, elem == (Reference::Shape<0>*)ref);
+		ERASE_IF(rs, elem == (Reference3D::Shape<0>*)ref);
 		delete ref;
 	}
 
@@ -291,7 +291,7 @@ private:
 
 	/// List of references linked to this object.
 	struct {
-		List<Reference::Shape<0>*>	shape;
+		List<Reference3D::Shape<0>*>	shape;
 	} references;
 
 	/// The amount of vertices this object has.

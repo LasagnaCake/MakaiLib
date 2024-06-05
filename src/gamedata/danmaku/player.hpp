@@ -19,7 +19,7 @@ struct Familiar2D: Entity2D {
 
 	})
 
-	RenderData::Reference::AnimatedPlane* sprite;
+	Reference3D::AnimatedPlane* sprite;
 
 	virtual void onFrame(float delta) {
 		updateSprite();
@@ -47,17 +47,17 @@ struct BasePlayerEntity2D: AreaCircle2D, Controlable {
 	DERIVED_CONSTRUCTOR(BasePlayerEntity2D, AreaCircle2D, {
 
 		// Create sprite
-		sprite = mesh.createReference<Reference::AnimatedPlane>();
+		sprite = mesh.createReference<Reference3D::AnimatedPlane>();
 		setAppropriateStartingLayer();
 		removeFromCollisionLayer(0);
 		// Create hitbox sprite
-		hitboxSprite = hitboxMesh.createReference<Reference::AnimatedPlane>();
+		hitboxSprite = hitboxMesh.createReference<Reference3D::AnimatedPlane>();
 		hitboxMesh.setRenderLayer(PLAYER_HITBOX_LAYER);
 		// Create grazebox sprite
-		grazeboxSprite = grazeboxMesh.createReference<Reference::AnimatedPlane>();
+		grazeboxSprite = grazeboxMesh.createReference<Reference3D::AnimatedPlane>();
 		grazeboxMesh.setRenderLayer(PLAYER_HITBOX_LAYER-1);
 		// Create itembox sprite
-		itemboxSprite = itemboxMesh.createReference<Reference::AnimatedPlane>();
+		itemboxSprite = itemboxMesh.createReference<Reference3D::AnimatedPlane>();
 		itemboxMesh.setRenderLayer(PLAYER_HITBOX_LAYER-2);
 		// Add to game
 		DEBUGLN("< FINGERS IN HIS ASS SUNDAY >");
@@ -109,16 +109,16 @@ struct BasePlayerEntity2D: AreaCircle2D, Controlable {
 	}
 
 	Renderable mesh;
-	RenderData::Reference::AnimatedPlane*	sprite;
+	RenderData::Reference3D::AnimatedPlane*	sprite;
 
 	Renderable hitboxMesh;
-	RenderData::Reference::AnimatedPlane*	hitboxSprite;
+	RenderData::Reference3D::AnimatedPlane*	hitboxSprite;
 
 	Renderable grazeboxMesh;
-	RenderData::Reference::AnimatedPlane*	grazeboxSprite;
+	RenderData::Reference3D::AnimatedPlane*	grazeboxSprite;
 
 	Renderable itemboxMesh;
-	RenderData::Reference::AnimatedPlane*	itemboxSprite;
+	RenderData::Reference3D::AnimatedPlane*	itemboxSprite;
 
 	inline static ButtonNameMap const defaultBinds = {
 		{"up",		"playerUp"		},

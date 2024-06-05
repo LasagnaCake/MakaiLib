@@ -68,7 +68,7 @@ struct DanmakuObject {
 		onDespawnEnd	= pass;
 	}
 
-	RenderData::Reference::AnimatedPlane* sprite = nullptr;
+	Reference3D::AnimatedPlane* sprite = nullptr;
 
 	TypedTasking::MultiTasker<DanmakuObject> taskers;
 

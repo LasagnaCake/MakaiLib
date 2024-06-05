@@ -39,8 +39,8 @@ namespace GameData {
 		Entities::Entity2D,
 		Entities::Entity,
 		RenderData::Renderable,
-		RenderData::Reference::Plane,
-		RenderData::Reference::AnimatedPlane,
+		RenderData::Reference3D::Plane,
+		RenderData::Reference3D::AnimatedPlane,
 		Drawer::Texture2D,
 		VecMath::Transform2D,
 		VecMath::Transform3D,
@@ -58,7 +58,7 @@ namespace GameData {
 		using namespace RenderData::Bar;
 		using namespace RenderData::Text;
 
-		namespace Reference {using namespace RenderData::Reference;}
+		namespace Reference3D {using namespace RenderData::Reference3D;}
 
 		namespace Material {using namespace RenderData::Material;}
 	}

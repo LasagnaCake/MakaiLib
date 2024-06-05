@@ -27,9 +27,9 @@ struct EnemyEntity2D: public AreaCircle2D {
 
 	bool collideWithPlayer = false;
 
-	RenderData::Renderable					mesh;
-	RenderData::Reference::AnimatedPlane*	sprite = nullptr;
-	RenderData::Bar::RadialBar				healthBar;
+	RenderData::Renderable		mesh;
+	Reference3D::AnimatedPlane*	sprite = nullptr;
+	RenderData::Bar::RadialBar	healthBar;
 
 	virtual ~EnemyEntity2D() {
 	}

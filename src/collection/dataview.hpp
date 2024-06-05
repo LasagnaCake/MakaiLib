@@ -9,20 +9,20 @@ namespace View {
 	template <typename T> concept Viewable = Type::Safe<T>;
 
 	template<Viewable T>
-	class Referend {
+	class Reference {
 	public:
 		typedef T DataType;
 
-		constexpr Referend(T& _data):					data(&_data)		{}
-		constexpr Referend(Referend<T> const& other):	data(other.data)	{}
-		constexpr Referend(Referend<T>&& other):		data(other.data)	{}
+		constexpr Reference(T& _data):					data(&_data)		{}
+		constexpr Reference(Reference<T> const& other):	data(other.data)	{}
+		constexpr Reference(Reference<T>&& other):		data(other.data)	{}
 
-		constexpr Referend& rebind(T& data)	{this->data = &data; return (*this);}
+		constexpr Reference& rebind(T& data)	{this->data = &data; return (*this);}
 
 		constexpr bool exists() {return data != nullptr;};
 
-		constexpr Referend& operator=(T const& val)				{if (exists()) (*data) = val; return (*this);	}
-		constexpr Referend& operator=(Referend<T> const& val)	{data = val.data; return (*this);				}
+		constexpr Reference& operator=(T const& val)			{if (exists()) (*data) = val; return (*this);	}
+		constexpr Reference& operator=(Reference<T> const& val)	{data = val.data; return (*this);				}
 
 		constexpr T& operator*()		{assertExistence(); return (*data);}
 		constexpr T& operator*() const	{assertExistence(); return (*data);}
@@ -32,7 +32,16 @@ namespace View {
 	private:
 		T* data = nullptr;
 
-		constexpr void assertExistence() {if (!exists()) throw Error::NullPointer("Referend is not bound to any data!");}
+		constexpr void assertExistence() {
+			if (!exists())
+				throw Error::NullPointer(
+					toString(
+						"Reference of type '",
+						NAMEOF(typeid(T)),
+						"' is not bound to any data!"
+					)
+				);
+		}
 	};
 
 	template<Viewable T>
