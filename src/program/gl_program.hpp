@@ -1020,6 +1020,7 @@ namespace Makai {
 			return frameRate;
 		}
 
+		/// Renders the reserved layer.
 		inline void renderReservedLayer() {
 			Drawer::clearColorBuffer(color);
 			glClear(GL_DEPTH_BUFFER_BIT);
@@ -1027,6 +1028,27 @@ namespace Makai {
 			Drawer::renderLayer(Math::Max::SIZET_V);
 			//framebuffer.render(toFrameBufferData());
 			SDL_GL_SwapWindow(window);
+			// Clear target depth buffer
+			framebuffer();
+			// Enable layer buffer
+			layerbuffer();
+			// Reset layerbuffer's positions
+			layerbuffer.trans	= VecMath::Transform3D();
+			layerbuffer.uv		= VecMath::Transform3D();
+			// Call onLayerDrawBegin function
+			onReservedLayerDrawBegin();
+			// Clear buffers
+			layerbuffer.clearBuffers();
+			// Call onLayerDrawBegin function
+			onPostReservedLayerClear();
+			// Render layer
+			Drawer::renderLayer(Math::Max::SIZET_V);
+			// Call onPreLayerDraw function
+			onPreReservedLayerDraw();
+			// Render layer buffer
+			layerbuffer.render(framebuffer);
+			// Call onLayerDrawEnd function
+			onReservedLayerDrawEnd();
 		}
 
 		inline void setFlag(GLenum const& flag, bool const& state = true) {
@@ -1066,27 +1088,38 @@ namespace Makai {
 		/// Gets called whenever the program is rendering to the screen.
 
 		/// Happens before the screen is rendered, before the frame buffer is cleared.
-		virtual void onDrawBegin()		{};
+		virtual void onDrawBegin()		{}
 		/// Happens before the screen is rendered, after the frame buffer is cleared.
-		virtual void onPostFrameClear()	{};
+		virtual void onPostFrameClear()	{}
 		/// Gets called when the program begins rendering a layer, before the the layer buffer is cleared.
-		virtual void onLayerDrawBegin(size_t layerID)	{};
+		virtual void onLayerDrawBegin(size_t layerID)	{}
 		/// Gets called when the program begins rendering a layer, after the the layer buffer is cleared.
-		virtual void onPostLayerClear(size_t layerID)	{};
+		virtual void onPostLayerClear(size_t layerID)	{}
 		/// Gets called when the program ends rendering a layer, before the layer buffer is drawn to the screen.
-		virtual void onPreLayerDraw(size_t layerID)		{pushLayerToFrame();};
+		virtual void onPreLayerDraw(size_t layerID)		{pushLayerToFrame();}
 		/// Gets called when the program ends rendering a layer, after the layer buffer is drawn to the screen.
-		virtual void onLayerDrawEnd(size_t layerID)		{};
+		virtual void onLayerDrawEnd(size_t layerID)		{}
 		/// Happens after the screen is rendered, before the frame buffer is drawn to the screen.
-		virtual void onPreFrameDraw()	{};
+		virtual void onPreFrameDraw()	{}
 		/// Happens after the screen is rendered, after the frame buffer is drawn to the screen.
-		virtual void onDrawEnd()		{};
+		virtual void onDrawEnd()		{}
+
+		/// Reserved Layer only.
+
+		/// Gets called when the program begins rendering the reserved layer, before the the layer buffer is cleared.
+		virtual void onReservedLayerDrawBegin()	{}
+		/// Gets called when the program begins rendering the reserved layer, after the the layer buffer is cleared.
+		virtual void onPostReservedLayerClear()	{}
+		/// Gets called when the program ends rendering the reserved layer, before the layer buffer is drawn to the screen.
+		virtual void onPreReservedLayerDraw()	{}
+		/// Gets called when the program ends rendering the reserved layer, after the layer buffer is drawn to the screen.
+		virtual void onReservedLayerDrawEnd()	{}
 
 		/// Gets called every frame, along all other logic.
-		virtual void onLogicFrame(float delta)	{};
+		virtual void onLogicFrame(float delta)	{}
 
 		/// Gets called when the program is closing. Happens before Window is terminated.
-		virtual void onClose()	{};
+		virtual void onClose()	{}
 
 		/// Queues a texture to recieve a copy of the screen.
 		void queueScreenCopy(Drawer::Texture2D target) {
