@@ -45,8 +45,8 @@ struct Valued {
 
 template<Type::Integer TIndex>
 struct Indexed {
-	typedef Unsigned<TIndex>	SizeType;
-	typedef Signed<SizeType>	IndexType;
+	typedef AsUnsigned<TIndex>	SizeType;
+	typedef AsSigned<SizeType>	IndexType;
 
 	constexpr static SizeType MAX_SIZE = TypeInfo<SizeType>::HIGHEST;
 };
@@ -92,7 +92,7 @@ struct Polyglot {
 };
 
 struct Nulled {
-	typedef decltype(nullptr) NullType;
+	typedef nulltype NullType;
 };
 
 template<class T, auto V>

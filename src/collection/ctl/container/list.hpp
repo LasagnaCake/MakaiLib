@@ -4,7 +4,7 @@
 #include "../templates.hpp"
 #include "../ctypes.hpp"
 #include "../cpperror.hpp"
-#include "../../conceptual.hpp"
+#include "../typetraits/traits.hpp"
 #include "iterator.hpp"
 #include "../algorithm/sort.hpp"
 #include "../algorithm/reverse.hpp"

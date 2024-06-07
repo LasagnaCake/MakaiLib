@@ -1,7 +1,7 @@
 #ifndef CTL_TYPE_INFO_H
 #define CTL_TYPE_INFO_H
 
-#include "../conceptual.hpp"
+#include "typetraits/traits.hpp"
 #include <typeinfo>
 
 template<class T>
