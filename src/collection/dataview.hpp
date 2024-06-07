@@ -22,6 +22,7 @@ namespace View {
 		constexpr bool exists() {return data != nullptr;};
 
 		constexpr Reference& operator=(T const& val)			{if (exists()) (*data) = val; return (*this);	}
+		constexpr Reference& operator=(T* const& ref)			{rebind(ref); return (*this);					}
 		constexpr Reference& operator=(Reference<T> const& val)	{data = val.data; return (*this);				}
 
 		constexpr T& operator*()		{assertExistence(); return (*data);}
@@ -106,16 +107,16 @@ namespace View {
 		constexpr operator bool()	const {return exists();	}
 		constexpr bool operator()()	const {return exists();	}
 
-		constexpr Nullable& operator()(Operation<DataType> const& op) {return then();}
+		constexpr Nullable& operator()(Operation<DataType> const& op) {return then(op);}
 
 		constexpr Nullable& operator=(DataType const& value)	{data = value; isSet = true; return *this;				}
 		constexpr Nullable& operator=(DataType&& value)			{data = std::move(value); isSet = true; return *this;	}
 		constexpr Nullable& operator=(NullType)					{isSet = false; return *this;							}
 
-		constexpr bool operator==(Nullable const& other) const	{if (isSet) return other == data; return false;}
-		constexpr bool operator==(T const& value) const			{if (isSet) return data == value; return false;}
-		constexpr bool operator==(T&& value) const				{if (isSet) return data == value; return false;}
-		constexpr bool operator==(NullType) const				{return !isSet;}
+		constexpr bool operator==(Nullable const& other) const	{if (isSet) return other == data; return false;	}
+		constexpr bool operator==(T const& value) const			{if (isSet) return data == value; return false;	}
+		constexpr bool operator==(T&& value) const				{if (isSet) return data == value; return false;	}
+		constexpr bool operator==(NullType) const				{return !isSet;									}
 
 		constexpr Nullable& operator=(Nullable<T> const& other) {
 			if (other.isSet) data = other.data;
@@ -187,6 +188,54 @@ namespace View {
 		FunctionType	func;
 		size_t			id = 0;
 		inline static size_t count = 0;
+	};
+
+	template<typename TData, typename TError>
+	class Result {
+		typedef TData	DataType;
+		typedef TError	ErrorType;
+
+		constexpr Result(Result const& other)		{result = other.result; state = other.state;						}
+		constexpr Result(Result&& other) 			{result = std::move(other.result); state = std::move(other.state);	}
+		constexpr Result(DataType const& value)		{result.value = value; state = ResultState::RS_OK;					}
+		constexpr Result(DataType&& value)			{result.value = std::move(value); state = ResultState::RS_OK;		}
+		constexpr Result(ErrorType const& value)	{result.error = error; state = ResultState::RS_ERROR;				}
+		constexpr Result(ErrorType&& value)			{result.error = std::move(error); state = ResultState::RS_ERROR;	}
+
+		constexpr Result const& then(Procedure<ErrorType const&> const& proc) const 		{if (ok()) proc(result.value); return *this;	}
+		constexpr Result const& onError(Procedure<ErrorType const&> const& proc)	const	{if (!ok()) proc(result.error); return *this;	}
+
+		constexpr Result& operator=(DataType const& value)	{result.value = value; state = ResultState::RS_OK; return *this;				}
+		constexpr Result& operator=(DataType&& value)		{result.value = std::move(value); state = ResultState::RS_OK; return *this;		}
+		constexpr Result& operator=(ErrorType const& error)	{result.error = error; state = ResultState::RS_ERROR; return *this;				}
+		constexpr Result& operator=(ErrorType&& error)		{result.error = std::move(error); state = ResultState::RS_ERROR; return *this;	}
+
+		constexpr bool operator==(DataType const& value)	{if (!ok()) return false; return result.value == value;	}
+		constexpr bool operator==(ErrorType const& value)	{if (ok()) return false; return result.error == error;	}
+
+		constexpr bool ok()	const			{return state == ResultState::RS_OK;	}
+		constexpr operator bool() const		{return ok();							}
+		constexpr bool operator()() const	{return ok();							}
+
+		constexpr Result const& operator()(Procedure<DataType const&> const& proc)	const {return then(proc);}
+		constexpr Result const& operator()(Procedure<ErrorType const&> const& proc)	const {return then(proc);}
+
+		constexpr Nullable<DataType>	value() const {return ok() ? result.value : nullptr;	}
+		constexpr Nullable<ErrorType>	error() const {return !ok() ? result.error : nullptr;	}
+
+	private:
+		enum class ResultState {
+			RS_OK,
+			RS_ERROR
+		};
+
+		union ResultType {
+			DataType	value;
+			ErrorType	error;
+		};
+
+		ResultType result;
+		ResultState state;
 	};
 }
 
