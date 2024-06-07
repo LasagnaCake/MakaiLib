@@ -6,6 +6,7 @@
 #include "../conceptual.hpp"
 #include "ctypes.hpp"
 #include "typeinfo.hpp"
+#include "typetraits/converter.hpp"
 
 template<class TSelf>
 struct SelfIdentified {
@@ -18,10 +19,16 @@ struct Typed {
 	typedef TData							DataType;
 	typedef DataType const					ConstantType;
 	typedef DataType&						ReferenceType;
+	typedef DataType&&						TempReferenceType;
 	typedef ConstantType&					ConstReferenceType;
 	typedef std::initializer_list<DataType>	ArgumentListType;
 	typedef DataType*						PointerType;
 	typedef const DataType*					ConstPointerType;
+};
+
+template<class TError>
+struct Exceptionable {
+	typedef TError ErrorType;
 };
 
 template<class TKey>
@@ -38,8 +45,8 @@ struct Valued {
 
 template<Type::Integer TIndex>
 struct Indexed {
-	typedef std::make_unsigned<TIndex>	SizeType;
-	typedef std::make_signed<SizeType>	IndexType;
+	typedef Unsigned<TIndex>	SizeType;
+	typedef Signed<SizeType>	IndexType;
 
 	constexpr static SizeType MAX_SIZE = TypeInfo<SizeType>::HIGHEST;
 };
