@@ -1,5 +1,5 @@
-#ifndef CTL_CONTAINER_NULLABLE
-#define CTL_CONTAINER_NULLABLE
+#ifndef CTL_CONTAINER_NULLABLE_H
+#define CTL_CONTAINER_NULLABLE_H
 
 #include "../templates.hpp"
 #include "error.hpp"
@@ -35,12 +35,12 @@ class Nullable<TData>:
 	public Nulled,
 	public Defaultable<TData, TData()> {
 public:
-	constexpr Nullable() noexcept											{}
-	constexpr Nullable(NullType) noexcept									{}
-	constexpr Nullable(DataType const& value): isSet(true)					{data = value;}
-	constexpr Nullable(DataType&& value): isSet(true)						{data = std::move(value);}
-	constexpr Nullable(Nullable const& other): isSet(other.isSet)			{if (other.isSet) data = other.data;}
-	constexpr Nullable(Nullable && other): isSet(std::move(other.isSet))	{if (other.isSet) data = std::move(other.data);}
+	constexpr Nullable() noexcept										{}
+	constexpr Nullable(NullType) noexcept								{}
+	constexpr Nullable(DataType const& value): isSet(true)				{data = value;}
+	constexpr Nullable(DataType&& value): isSet(true)					{data = std::move(value);}
+	constexpr Nullable(Nullable const& other): isSet(other.isSet)		{if (other.isSet) data = other.data;}
+	constexpr Nullable(Nullable&& other): isSet(std::move(other.isSet))	{if (other.isSet) data = std::move(other.data);}
 
 	constexpr ~Nullable() {}
 
@@ -110,4 +110,4 @@ private:
 	bool isSet = false;
 };
 
-#endif // CTL_CONTAINER_NULLABLE
+#endif // CTL_CONTAINER_NULLABLE_H
