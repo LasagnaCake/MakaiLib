@@ -202,8 +202,8 @@ namespace View {
 		constexpr Result(ErrorType const& value)	{result.error = error; state = ResultState::RS_ERROR;				}
 		constexpr Result(ErrorType&& value)			{result.error = std::move(error); state = ResultState::RS_ERROR;	}
 
-		constexpr Result const& then(Procedure<ErrorType const&> const& proc) const 		{if (ok()) proc(result.value); return *this;	}
-		constexpr Result const& onError(Procedure<ErrorType const&> const& proc)	const	{if (!ok()) proc(result.error); return *this;	}
+		constexpr Result const& then(Procedure<ErrorType const&> const& proc) const 	{if (ok()) proc(result.value); return *this;	}
+		constexpr Result const& onError(Procedure<ErrorType const&> const& proc) const	{if (!ok()) proc(result.error); return *this;	}
 
 		constexpr Result& operator=(DataType const& value)	{result.value = value; state = ResultState::RS_OK; return *this;				}
 		constexpr Result& operator=(DataType&& value)		{result.value = std::move(value); state = ResultState::RS_OK; return *this;		}
