@@ -17,6 +17,7 @@ namespace Type {
 			template<typename T>	struct IsTemporary		: FalseType	{};
 			template<typename T>	struct IsTemporary<T&&>	: TrueType	{};
 
+			// cppreference
 			template<typename T>			struct IsMemberPointer:			FalseType	{};
 			template<typename T, class C>	struct IsMemberPointer<T C::*>:	TrueType	{};
 
@@ -24,23 +25,25 @@ namespace Type {
 			template<typename T>	struct IsUnion:			BooleanConstant<__is_union(T)>	{};
 			template<typename T>	struct IsEnumerator:	BooleanConstant<__is_enum(T)>	{};
 
+			// cppreference
 			template<class T>
 			BooleanConstant<!IsUnion<AsNonCV<T>>::value> isClass(int T::*);
-
 			template<class>
 			FalseType isClass(...);
 
+			// cppreference
 			template<typename Base>
 			TrueType isPointerConvertible(const volatile Base*);
 			template<typename>
 			FalseType isPointerConvertible(const volatile void*);
 
+			// cppreference
 			template<typename T, typename Base>
 			auto isDerived(int) -> decltype(isPointerConvertible<Base>(static_cast<T*>(nullptr)));
-
 			template<typename, typename>
 			auto isDerived(...) -> TrueType;
 
+			// cppreference
 			template<class T>
 			auto isReturnable(int) -> decltype(
 				void(static_cast<T(*)()>(nullptr)), TrueType {}
@@ -48,21 +51,16 @@ namespace Type {
 			template<class>
 			auto isReturnable(...) -> FalseType;
 
+			// cppreference
 			template<class From, class To>
 			auto isImplicit(int) -> decltype(
 				void(declval<void(&)(To)>()(declval<From>())), TrueType {}
 			);
-
 			template<class, class>
 			auto isImplicit(...) -> FalseType;
 
 			// Based off of: https://stackoverflow.com/a/38181716
 			template <class, class T, class... Args>	struct IsConstructible: FalseType {};
-
-			/*template <class T, class... Args>			struct IsConstructible<
-				VoidType<decltype(T(declval<Args>()...))>,
-			T, Args...>: TrueType {};*/
-
 			template <class T, class... Args>			struct IsConstructible<
 				VoidType<decltype(::new T(declval<Args>()...))
 			>, T, Args...> : TrueType {};
@@ -85,13 +83,13 @@ namespace Type {
 			}
 		> {};
 
-		template<typename T>	struct IsReal:		BooleanConstant<
-			IsEqual<float,			AsNonCV<T>>::value
-		||	IsEqual<double,			AsNonCV<T>>::value
-		||	IsEqual<long double,	AsNonCV<T>>::value
+		template<typename T>	struct IsReal:		TrueType::Or<
+			IsEqual<float,			AsNonCV<T>>
+		,	IsEqual<double,			AsNonCV<T>>
+		,	IsEqual<long double,	AsNonCV<T>>
 		> {};
 
-		template<typename T>	struct IsNumber: BooleanConstant<(IsInteger<T>::value || IsReal<T>::value)> {};
+		template<typename T>	struct IsNumber:	TrueType::And<IsInteger<T>, IsReal<T>> {};
 
 		template<typename T>	struct IsUnion:			Partial::IsUnion<AsNonCV<T>>		{};
 		template<typename T>	struct IsEnumerator:	Partial::IsEnumerator<AsNonCV<T>>	{};
@@ -99,17 +97,22 @@ namespace Type {
 		template<typename T>	struct IsVoid:			FalseType	{};
 		template<>				struct IsVoid<void>:	TrueType	{};
 
-		template<class T>					struct IsArray:			FalseType	{};
-		template<class T>					struct IsArray<T[]>:	TrueType	{};
-		template<class T, std::size_t N>	struct IsArray<T[N]>:	TrueType	{};
+		template<class T>					struct IsAutoArray:			FalseType	{};
+		template<class T>					struct IsAutoArray<T[]>:	TrueType	{};
+
+		template<class T>					struct IsFixedArray:		FalseType	{};
+		template<class T, std::size_t N>	struct IsFixedArray<T[N]>:	TrueType	{};
+
+		template<typename T>				struct IsArray:				TrueType::And<IsAutoArray<T>, IsFixedArray<T>>	{};
 
 		template<typename T>	struct IsNullPointer:			FalseType	{};
 		template<>				struct IsNullPointer<nulltype>:	TrueType	{};
 
 		template<typename T>	struct IsPointer:		Partial::IsPointer<AsNonCV<T>>			{};
 		template<typename T>	struct IsMemberPointer:	Partial::IsMemberPointer<AsNonCV<T>>	{};
-		template<typename T>	struct IsReference:		Partial::IsReference<AsNonCV<T>>		{};
+		template<typename T>	struct IsLeftReference:	Partial::IsReference<AsNonCV<T>>		{};
 		template<typename T>	struct IsTemporary:		Partial::IsTemporary<AsNonCV<T>>		{};
+		template<typename T>	struct IsReference:		TrueType::And<IsLeftReference<T>, IsTemporary<T>>	{};
 
 		template<class T>						struct IsFunction:				FalseType	{};
 		template<typename R, typename... Args>	struct IsFunction<R(Args...)>:	TrueType	{};
@@ -117,24 +120,25 @@ namespace Type {
 		template<typename T> requires (IsNumber<T>::value)	struct IsUnsigned:	BooleanConstant<(T(-1) > T(0))>				{};
 		template<typename T> requires (IsNumber<T>::value)	struct IsSigned:	BooleanConstant<(!IsUnsigned<T>::value)>	{};
 
+		// cppreference
 		template<typename T>	struct IsClass:			decltype(Partial::isClass<T>(nullptr))	{};
 
+		// cppreference
 		template<typename T, typename Base>	struct IsDerived:	BooleanConstant<
 			IsClass<Base>::value && IsClass<T>::value
 		&&	decltype(Partial::isDerived<T, Base>(0))::value
 		>	{};
-
 		template<class T, class To> struct IsConvertible:	BooleanConstant<
 			(
 				decltype(Partial::isReturnable<To>(0))::value
 			&&	decltype(Partial::isImplicit<T, To>(0))::value
 			)
-		||	(IsVoid<T>::value && IsVoid<To>::value)
+		||	TrueType::And<IsVoid<T>, IsVoid<To>>::value
 		> {};
 
+		// cppreference
 		template<class T, class To>
-		struct IsNothrowConvertible: BooleanConstant<IsVoid<T>::value && IsVoid<To>::value> {};
-
+		struct IsNothrowConvertible: TrueType::And<IsVoid<T>, IsVoid<To>> {};
 		template<class T, class To>
 			requires requires {
 				static_cast<To(*)()>(nullptr);
@@ -173,6 +177,12 @@ namespace Type {
 	concept Number = Integer<T> || Real<T>;
 
 	template<typename T>
+	concept AutoArray = Impl::IsArray<T>::value;
+
+	template<typename T>
+	concept FixedArray = Impl::IsArray<T>::value;
+
+	template<typename T>
 	concept Array = Impl::IsArray<T>::value;
 
 	template<typename T>
@@ -209,13 +219,13 @@ namespace Type {
 	concept MemberPointer = Impl::IsMemberPointer<T>::value;
 
 	template<typename T>
-	concept Reference = Impl::IsReference<T>::value;
+	concept LeftReference = Impl::IsLeftReference<T>::value;
 
 	template<typename T>
 	concept Temporary = Impl::IsTemporary<T>::value;
 
 	template<typename T>
-	concept RefOrTemp = Reference<T> || Temporary<T>;
+	concept Reference = LeftReference<T> || Temporary<T>;
 
 	template <typename T>
 	concept Numerable = Convertible<size_t, T>;
