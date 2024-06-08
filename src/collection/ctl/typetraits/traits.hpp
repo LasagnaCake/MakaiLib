@@ -108,7 +108,7 @@ namespace Type {
 
 		template<typename T>	struct IsPointer:		Partial::IsPointer<AsNonCV<T>>			{};
 		template<typename T>	struct IsMemberPointer:	Partial::IsMemberPointer<AsNonCV<T>>	{};
-		template<typename T>	struct IsReference:		Partial::IsReference<AsNonCV<T>>	{};
+		template<typename T>	struct IsReference:		Partial::IsReference<AsNonCV<T>>		{};
 		template<typename T>	struct IsTemporary:		Partial::IsTemporary<AsNonCV<T>>		{};
 
 		template<class T>						struct IsFunction:				FalseType	{};
