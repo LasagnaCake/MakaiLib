@@ -92,7 +92,7 @@ template<class T>			struct ArrayElementType:		TypeContainer<T>	{};
 template<class T>			struct ArrayElementType<T[]>:	TypeContainer<T>	{};
 template<class T, usize N>	struct ArrayElementType<T[N]>:	TypeContainer<T>	{};
 
-template<class T> using AsArrayElement	= typename ArrayElementType<T>::Type;
+template<class T> using AsArrayElement = typename ArrayElementType<T>::Type;
 
 template<class T>			struct NonExtentType:		TypeContainer<T>								{};
 template<class T>			struct NonExtentType<T[]>:	TypeContainer<typename NonExtentType<T>::Type>	{};
