@@ -6,13 +6,27 @@
 template <class...>
 using VoidType = void;
 
-template<class T, auto V> struct ValueConstant {constexpr static T value = V;};
+template<class T, auto V> struct ValueConstant {
+	typedef T DataType;
+
+	constexpr static DataType value = V;
+};
+
+template<class C>
+concept ValidValueConstant =
+	requires {
+		typename C::DataType;
+		C::value;
+	} && (reinterpret_cast<typename C::DataType>(C::value) == ValueConstant<typename C::DataType, C::value>::value)
+;
 
 template<bool V> struct BooleanConstant: ValueConstant<bool, V> {
 		template <typename... Args>
+		requires (... && ValidValueConstant<Args>)
 		struct And: BooleanConstant<(... && Args::value)> {};
 
 		template <typename... Args>
+		requires (... && ValidValueConstant<Args>)
 		struct Or: BooleanConstant<(... || Args::value)> {};
 };
 
