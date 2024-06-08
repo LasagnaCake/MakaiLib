@@ -3,10 +3,9 @@
 
 #include <initializer_list>
 #include <numeric_limits>
-#include "../conceptual.hpp"
 #include "ctypes.hpp"
 #include "typeinfo.hpp"
-#include "typetraits/converter.hpp"
+#include "typetraits/traits.hpp"
 
 template<class TSelf>
 struct SelfIdentified {

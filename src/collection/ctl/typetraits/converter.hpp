@@ -40,11 +40,6 @@ template<class T> struct NonReferenceType<T&&>:	TypeContainer<T> {};
 
 template<class T> using AsNonReference = typename NonReferenceType<T>::Type;
 
-template<class T> struct NonPointerType:		TypeContainer<T> {};
-template<class T> struct NonPointerType<T*>:	TypeContainer<T> {};
-
-template<class T> using AsNonPointer = typename NonPointerType<T>::Type;
-
 template<class T> struct NonConstType:					TypeContainer<T> {};
 template<class T> struct NonConstType<T const>:			TypeContainer<T> {};
 
@@ -66,6 +61,13 @@ template<class T> struct NormalType:	TypeContainer<AsNonCV<AsNonReference<T>>> {
 
 template<class T> using AsNormal = typename NormalType<T>::Type;
 
+template<class T> struct NonPointerType:		TypeContainer<AsNonCV<T>> {};
+template<class T> struct NonPointerType<T*>:	TypeContainer<AsNonCV<T>> {};
+
+template<class T> using AsNonPointer = typename NonPointerType<T>::Type;
+
+template<class T> using AsPointer = AsNonReference<T>*;
+
 template<class T> struct ReferenceType:			TypeContainer<T&> {};
 template<class T> struct ReferenceType<T&>:		TypeContainer<T&> {};
 template<class T> struct ReferenceType<T&&>:	TypeContainer<T&> {};
@@ -78,15 +80,13 @@ template<class T> struct TemporaryType<T&&>:	TypeContainer<T&&> {};
 
 template<class T> using AsTemporary	= typename TemporaryType<T>::Type;
 
-template<class T> struct ConstantType:				TypeContainer<T const> {};
-template<class T> struct ConstantType<T const>:		TypeContainer<T const> {};
+template<class T> struct ConstantType:				TypeContainer<T const>			{};
+template<class T> struct VolatileType:				TypeContainer<T volatile>		{};
+template<class T> struct ConstVolatileType:			TypeContainer<T const volatile>	{};
 
-template<class T> using AsConstant = typename ConstantType<T>::Type;
-
-template<class T> struct VolatileType:				TypeContainer<T volatile> {};
-template<class T> struct VolatileType<T volatile>:	TypeContainer<T volatile> {};
-
-template<class T> using AsVolatile = typename VolatileType<T>::Type;
+template<class T> using AsConstant		= typename ConstantType<T>::Type;
+template<class T> using AsVolatile		= typename VolatileType<T>::Type;
+template<class T> using AsConstVolatile	= typename ConstVolatileType<T>::Type;
 
 template<class T>			struct ArrayElementType:		TypeContainer<T>	{};
 template<class T>			struct ArrayElementType<T[]>:	TypeContainer<T>	{};
