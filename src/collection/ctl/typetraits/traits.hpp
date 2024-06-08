@@ -13,7 +13,9 @@ namespace Type {
 
 			template<typename T>	struct IsReference		: FalseType	{};
 			template<typename T>	struct IsReference<T&>	: TrueType	{};
-			template<typename T>	struct IsReference<T&&>	: TrueType	{};
+
+			template<typename T>	struct IsTemporary		: FalseType	{};
+			template<typename T>	struct IsTemporary<T&&>	: TrueType	{};
 
 			template<typename T>			struct IsMemberPointer:			FalseType	{};
 			template<typename T, class C>	struct IsMemberPointer<T C::*>:	TrueType	{};
@@ -106,7 +108,8 @@ namespace Type {
 
 		template<typename T>	struct IsPointer:		Partial::IsPointer<AsNonCV<T>>			{};
 		template<typename T>	struct IsMemberPointer:	Partial::IsMemberPointer<AsNonCV<T>>	{};
-		template<typename T>	struct IsReference:		Partial::IsReference<AsNonCV<T>>		{};
+		template<typename T>	struct IsReference:		Partial::IsReference<AsNonCV<T>>	{};
+		template<typename T>	struct IsTemporary:		Partial::IsTemporary<AsNonCV<T>>		{};
 
 		template<class T>						struct IsFunction:				FalseType	{};
 		template<typename R, typename... Args>	struct IsFunction<R(Args...)>:	TrueType	{};
@@ -207,6 +210,12 @@ namespace Type {
 
 	template<typename T>
 	concept Reference = Impl::IsReference<T>::value;
+
+	template<typename T>
+	concept Temporary = Impl::IsTemporary<T>::value;
+
+	template<typename T>
+	concept RefOrTemp = Reference<T> || Temporary<T>;
 
 	template <typename T>
 	concept Numerable = Convertible<size_t, T>;
