@@ -4,6 +4,7 @@
 #include <type_traits>
 #include <concepts>
 
+#ifdef CONCEPTUAL_USE_OLD_SYSTEM
 namespace Type {
 	template <typename T>
 	concept Integer = std::integral<T>;
@@ -343,5 +344,8 @@ namespace Meta {
 	template<bool COND, class T, class F>
 	using DualType = std::conditional<COND, T, F>::type;
 }
+#else
+#include "ctl/typetraits/traits.hpp"
+#endif // CONCEPTUAL_USE_OLD_SYSTEM
 
 #endif // CONCEPTUAL_TYPES_H

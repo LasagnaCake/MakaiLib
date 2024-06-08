@@ -3,13 +3,9 @@
 
 #include "../ctypes.hpp"
 #include "converter.hpp"
+#include "metaprogramming.hpp"
 
 namespace Type {
-	template<bool V> struct BooleanType {constexpr bool value = V;};
-
-	struct TrueType:	BooleanType<true>	{};
-	struct FalseType:	BooleanType<false>	{};
-
 	namespace Impl {
 		namespace Partial {
 			template<typename T>	struct IsPointer		: FalseType	{};
@@ -21,26 +17,24 @@ namespace Type {
 
 			template<typename T>			struct IsMemberPointer:			FalseType	{};
 			template<typename T, class C>	struct IsMemberPointer<T C::*>:	TrueType	{};
-			/*
-			template<struct>	struct IsEnumerator:		FalseType	{};
-			template<enum>		struct IsEnumerator<enum>:	TrueType	{};
-			*/
-			template<struct>	struct IsUnion:			FalseType	{};
-			template<union>		struct IsUnion<union>:	TrueType	{};
+
+			// Hooray... it's intrinsics...
+			template<typename T>	struct IsUnion:			BooleanConstant<__is_union(T)>	{};
+			template<typename T>	struct IsEnumerator:	BooleanConstant<__is_enum(T)>	{};
 
 			template<class T>
-			BooleanType<!IsUnion<T()>::value> isClass(int T::*);
+			BooleanConstant<!IsUnion<AsNonCV<T>>::value> isClass(int T::*);
 
 			template<class>
 			FalseType isClass(...);
 
 			template<typename Base>
-			TrueType convert(const volatile T*);
+			TrueType isPointerConvertible(const volatile Base*);
 			template<typename>
-			FalseType convert(const volatile void*);
+			FalseType isPointerConvertible(const volatile void*);
 
 			template<typename T, typename Base>
-			auto isDerived(int) -> decltype(convert<Base>(static_cast<T*>(nullptr)));
+			auto isDerived(int) -> decltype(isPointerConvertible<Base>(static_cast<T*>(nullptr)));
 
 			template<typename, typename>
 			auto isDerived(...) -> TrueType;
@@ -54,11 +48,22 @@ namespace Type {
 
 			template<class From, class To>
 			auto isImplicit(int) -> decltype(
-				void(AsTemporary<void(&)(To)>()(AsTemporary<From>())), TrueType {}
+				void(declval<void(&)(To)>()(declval<From>())), TrueType {}
 			);
 
 			template<class, class>
 			auto isImplicit(...) -> FalseType;
+
+			// Based off of: https://stackoverflow.com/a/38181716
+			template <class, class T, class... Args>	struct IsConstructible: FalseType {};
+
+			/*template <class T, class... Args>			struct IsConstructible<
+				VoidType<decltype(T(declval<Args>()...))>,
+			T, Args...>: TrueType {};*/
+
+			template <class T, class... Args>			struct IsConstructible<
+				VoidType<decltype(::new T(declval<Args>()...))
+			>, T, Args...> : TrueType {};
 		}
 
 		template<typename A, typename B>	struct IsEqual:			FalseType	{};
@@ -70,7 +75,7 @@ namespace Type {
 		template<typename T>	struct IsVolatile:				FalseType 	{};
 		template<typename T>	struct IsVolatile<T volatile>:	TrueType	{};
 
-		template<typename T>	struct IsInteger:	BooleanType<
+		template<typename T>	struct IsInteger:	BooleanConstant<
 			requires (T t, T* p, void (*f)(T)) {
 				reinterpret_cast<T>(t);
 				f(0);
@@ -78,19 +83,26 @@ namespace Type {
 			}
 		> {};
 
-		template<typename T>	struct IsReal:		BooleanType<
+		template<typename T>	struct IsReal:		BooleanConstant<
 			IsEqual<float,			AsNonCV<T>>::value
 		||	IsEqual<double,			AsNonCV<T>>::value
 		||	IsEqual<long double,	AsNonCV<T>>::value
 		> {};
 
-		template<typename T>	struct IsNumber: BooleanType<(IsInteger<T>::value || IsReal<T>::value)> {};
+		template<typename T>	struct IsNumber: BooleanConstant<(IsInteger<T>::value || IsReal<T>::value)> {};
+
+		template<typename T>	struct IsUnion:			Partial::IsUnion<AsNonCV<T>>		{};
+		template<typename T>	struct IsEnumerator:	Partial::IsEnumerator<AsNonCV<T>>	{};
 
 		template<typename T>	struct IsVoid:			FalseType	{};
-		template<void>			struct IsVoid<void>:	TrueType	{};
+		template<>				struct IsVoid<void>:	TrueType	{};
 
-		template<typename T>	struct IsNullPointer:			FalseType					{};
-		template<nulltype>		struct IsNullPointer<nulltype>:	TrueType					{};
+		template<class T>					struct IsArray:			FalseType	{};
+		template<class T>					struct IsArray<T[]>:	TrueType	{};
+		template<class T, std::size_t N>	struct IsArray<T[N]>:	TrueType	{};
+
+		template<typename T>	struct IsNullPointer:			FalseType	{};
+		template<>				struct IsNullPointer<nulltype>:	TrueType	{};
 
 		template<typename T>	struct IsPointer:		Partial::IsPointer<AsNonCV<T>>			{};
 		template<typename T>	struct IsMemberPointer:	Partial::IsMemberPointer<AsNonCV<T>>	{};
@@ -99,105 +111,369 @@ namespace Type {
 		template<class T>						struct IsFunction:				FalseType	{};
 		template<typename R, typename... Args>	struct IsFunction<R(Args...)>:	TrueType	{};
 
-		template<typename T>	struct IsUnsigned requires IsNumber<T>::value:	BooleanType<T(-1) > T(0)>			{};
-		template<typename T>	struct IsSigned requires IsNumber<T>::value:	BooleanType<!IsUnsigned<T>:value>	{};
+		template<typename T> requires (IsNumber<T>::value)	struct IsUnsigned:	BooleanConstant<(T(-1) > T(0))>				{};
+		template<typename T> requires (IsNumber<T>::value)	struct IsSigned:	BooleanConstant<(!IsUnsigned<T>::value)>	{};
 
-		template<typename T>	struct IsClass:			decltype(Partial::isClass<T>(nullptr))		{};
+		template<typename T>	struct IsClass:			decltype(Partial::isClass<T>(nullptr))	{};
 
-		template<typename T>	struct IsUnion:			BooleanType<Partial::IsUnion<T()>::value>	{};
-
-		template<typename T>	struct IsEnumerator:	Partial::IsEnumerator<
-			!(
-				IsVoid<T>::value
-			||	IsNumber<T>::value
-			||	IsPointer<T>::value
-			||	IsReference<T>::value
-			||	IsMemberPointer<T>::value
-			||	IsFunction<T>::value
-			||	IsClass<T>::value
-			||	IsUnion<T>::value
-			)
-		> {};
-
-		template<typename T, typename Base>	struct IsDerived:	BooleanType<
+		template<typename T, typename Base>	struct IsDerived:	BooleanConstant<
 			IsClass<Base>::value && IsClass<T>::value
 		&&	decltype(Partial::isDerived<T, Base>(0))::value
 		>	{};
 
-		template<class From, class To> struct IsConvertible	: BooleanType<
+		template<class T, class To> struct IsConvertible:	BooleanConstant<
 			(
 				decltype(Partial::isReturnable<To>(0))::value
-			&&	decltype(Partial::isImplicit<From, To>(0))::value
+			&&	decltype(Partial::isImplicit<T, To>(0))::value
 			)
-		||	(IsVoid<From>::value && IsVoid<To>::value)
+		||	(IsVoid<T>::value && IsVoid<To>::value)
 		> {};
+
+		template<class T, class To>
+		struct IsNothrowConvertible: BooleanConstant<IsVoid<T>::value && IsVoid<To>::value> {};
+
+		template<class T, class To>
+			requires requires {
+				static_cast<To(*)()>(nullptr);
+				{ declval<void(&)(To) noexcept>()(declval<T>()) } noexcept;
+			}
+		struct IsNothrowConvertible<T, To>: TrueType {};
+
+		template<typename T, typename... Args>	struct IsConstructible:	Partial::IsConstructible<VoidType<>, T, Args...>	{};
 	}
 
 	template<typename A, typename B>
-	constexpr bool Equal = Impl::IsEqual<A, B>::value;
+	concept Equal = Impl::IsEqual<A, B>::value;
 
 	template<typename A, typename B>
-	constexpr bool Different = !Equal<A, B>;
+	concept Different = !Equal<A, B>;
 
-	template<typename A, typename B>
-	constexpr bool Convertible = Impl::IsConvetible::value;
+	template<typename T, typename To>
+	concept Convertible = Impl::IsConvertible<T, To>::value;
 
-	template<typename T>
-	constexpr bool Constant = Impl::IsConstant<T>::value;
-
-	template<typename T>
-	constexpr bool Volatile = Impl::IsVolatile<T>::value;
+	template<typename T, typename To>
+	concept NothrowConvertible = Impl::IsNothrowConvertible<T, To>::value;
 
 	template<typename T>
-	constexpr bool Integer = Impl::IsInteger<T>::value;
+	concept Constant = Impl::IsConstant<T>::value;
 
 	template<typename T>
-	constexpr bool Real = Impl::IsReal<T>::value;
+	concept Volatile = Impl::IsVolatile<T>::value;
 
 	template<typename T>
-	constexpr bool Number = Integer<T> || Real<T>;
+	concept Integer = Impl::IsInteger<T>::value;
 
 	template<typename T>
-	constexpr bool Void = Impl::IsVoid<T>::value;
+	concept Real = Impl::IsReal<T>::value;
 
 	template<typename T>
-	constexpr bool NullPointer = Impl::IsNullPointer<T>::value;
+	concept Number = Integer<T> || Real<T>;
 
 	template<typename T>
-	constexpr bool Unsigned = Impl::IsUnsigned<T>::value;
+	concept Array = Impl::IsArray<T>::value;
 
 	template<typename T>
-	constexpr bool Signed = Impl::IsSigned<T>::value;
+	concept Void = Impl::IsVoid<T>::value;
+
+	template <typename T>
+	concept NonVoid = !Void<T>;
 
 	template<typename T>
-	constexpr bool Pointer = Impl::IsPointer<T>::value;
+	concept Null = Impl::IsNullPointer<T>::value;
 
 	template<typename T>
-	constexpr bool MemberPointer = Impl::IsMemberPointer<T>::value;
+	concept NonNull = !Null<T>;
 
 	template<typename T>
-	constexpr bool Reference = Impl::Reference<T>::value;
+	concept Unsigned = Impl::IsUnsigned<T>::value;
 
 	template<typename T>
-	constexpr bool Enumerator = Impl::IsEnumerator<T>::value;
+	concept Signed = Impl::IsSigned<T>::value;
 
 	template<typename T>
-	constexpr bool Union	= Impl::IsUnion<T>::value;
+	concept SignedInteger = Signed<T> && Integer<T>;
 
 	template<typename T>
-	constexpr bool Class	= Impl::IsClass<T>::value;
+	concept UnsignedInteger = Unsigned<T> && Integer<T>;
+
+	template<typename T>
+	concept Function = Impl::IsFunction<T>::value;
+
+	template<typename T>
+	concept Pointer = Impl::IsPointer<T>::value;
+
+	template<typename T>
+	concept MemberPointer = Impl::IsMemberPointer<T>::value;
+
+	template<typename T>
+	concept Reference = Impl::IsReference<T>::value;
+
+	template <typename T>
+	concept Numerable = Convertible<size_t, T>;
+
+	template<typename T>
+	concept Enumerator = Impl::IsEnumerator<T>::value;
+
+	template<typename T>
+	concept Union = Impl::IsUnion<T>::value;
+
+	template<typename T>
+	concept Class = Impl::IsClass<T>::value;
+
+	template <typename T>
+	concept NumerableEnum = Enumerator<T> && Numerable<T>;
+
+	template <typename T>
+	concept StandardEnum = Enumerator<T> && !Numerable<T>;
 
 	template<typename T, typename Base>
-	constexpr bool Derived	= Impl::IsDerived<T, Base>::value;
+	concept Derived	= Impl::IsDerived<T, Base>::value;
 
 	template<typename T, typename Base>
-	constexpr bool Subclass	= Derived<T, Base> && Different<T, Base>;
+	concept Subclass = Derived<T, Base> && Different<T, Base>;
+
+	template <typename T>
+	concept Primitive = !(Class<T> || Union<T> || StandardEnum<T>);
+
+	template <typename T>
+	concept Fundamental = Number<T> || Void<T> || Null<T>;
+
+	template <typename T>
+	concept Derivable = !Primitive<T>;
 
 	template<typename T>
-	constexpr bool Primitive = Function<T> || NullPointer<T> || Integer<T> || Real<T>;
+	concept Scalar = Integer<T> || Real<T> || Pointer<T> || MemberPointer<T> || Null<T>;
 
-	template<typename T>
-	constexpr bool Scalar = Integer<T> || Real<T> || Pointer<T> || MemberPointer<T> || NullPointer<T>;
+	template <class T, typename... Args>
+	concept Constructible = Impl::IsConstructible<T, Args...>::value;
+
+	template <typename A, typename B>
+	concept Addable = requires (A a, B b) {a + b;};
+
+	template <typename A, typename B>
+	concept Subtractable = requires (A a, B b) {a - b;};
+
+	template <typename A, typename B>
+	concept Multipliable = requires (A a, B b) {a * b;};
+
+	template <typename A, typename B>
+	concept Dividable = requires (A a, B b) {a / b;};
+
+	template <typename A, typename B>
+	concept Modulable = requires (A a, B b) {a % b;};
+
+	template <typename A, typename B>
+	concept AddAssignable = requires (A a, B b) {a += b;};
+
+	template <typename A, typename B>
+	concept SubAssignable = requires (A a, B b) {a -= b;};
+
+	template <typename A, typename B>
+	concept MulAssignable = requires (A a, B b) {a *= b;};
+
+	template <typename A, typename B>
+	concept DivAssignable = requires (A a, B b) {a /= b;};
+
+	template <typename A, typename B>
+	concept ModAssignable = requires (A a, B b) {a %= b;};
+
+	template <typename T>
+	concept PostIncrementable = requires (T t) {t++;};
+
+	template <typename T>
+	concept PostDecrementable = requires (T t) {t--;};
+
+	template <typename T>
+	concept PreIncrementable = requires (T t) {++t;};
+
+	template <typename T>
+	concept PreDecrementable = requires (T t) {--t;};
+
+	namespace Bitwise {
+		template <typename A, typename B>
+		concept Andable = requires (A a, B b) {a & b;};
+
+		template <typename A, typename B>
+		concept Orable = requires (A a, B b) {a | b;};
+
+		template <typename A, typename B>
+		concept Xorable = requires (A a, B b) {a ^ b;};
+
+		template <typename A, typename B>
+		concept Expressionable =
+			Andable<A, B>
+		&&	Orable<A, B>
+		&&	Xorable<A, B>
+		;
+
+		template <typename A, typename B>
+		concept AndAssignable = requires (A a, B b) {a &= b;};
+
+		template <typename A, typename B>
+		concept OrAssignable = requires (A a, B b) {a |= b;};
+
+		template <typename A, typename B>
+		concept XorAssignable = requires (A a, B b) {a ^= b;};
+
+		template <typename A, typename B>
+		concept Assignable =
+			AndAssignable<A, B>
+		&&	OrAssignable<A, B>
+		&&	XorAssignable<A, B>
+		;
+
+		template <typename T>
+		concept Negatable = requires (T t) {~t;};
+
+		template<typename A, typename B>
+		concept All =
+			Expressionable<A, B>
+		&&	Assignable<A, B>
+		&&	Negatable<A>
+		&&	Negatable<B>
+		;
+	}
+
+	namespace Logical {
+		template <typename A, typename B>
+		concept Andable = requires (A a, B b) {a && b;};
+
+		template <typename A, typename B>
+		concept Orable = requires (A a, B b) {a || b;};
+
+		template <typename T>
+		concept Negatable = requires (T t) {!t;};
+
+		template <typename A, typename B>
+		concept All =
+			Andable<A, B>
+		&&	Orable<A, B>
+		&&	Negatable<A>
+		&&	Negatable<B>
+		;
+	}
+
+	namespace Comparable {
+		template <typename A, typename B>
+		concept Equals = requires (A a, B b) {a == b;};
+
+		template <typename A, typename B>
+		concept NotEquals = requires (A a, B b) {a != b;};
+
+		template <typename A, typename B>
+		concept Lesser = requires (A a, B b) {a < b;};
+
+		template <typename A, typename B>
+		concept Greater = requires (A a, B b) {a > b;};
+
+		template <typename A, typename B>
+		concept LesserEquals = requires (A a, B b) {a <= b;};
+
+		template <typename A, typename B>
+		concept GreaterEquals = requires (A a, B b) {a >= b;};
+
+		template <typename A, typename B>
+		concept Threeway = requires (A a, B b) {a <=> b;};
+
+		template <typename A, typename B>
+		concept All =
+			Equals<A, B>
+		&&	NotEquals<A, B>
+		&&	Lesser<A, B>
+		&&	Greater<A, B>
+		&&	LesserEquals<A, B>
+		&&	GreaterEquals<A, B>
+		;
+	}
+
+	namespace Stream {
+		template <typename A, typename B>
+		concept Insertible = requires (A a, B b) {a << b;};
+
+		template <typename A, typename B>
+		concept Extractible = requires (A a, B b) {a >> b;};
+
+		template <typename A, typename B>
+		concept Expressionable = Insertible<A, B> && Extractible<A, B>;
+
+		template <typename A, typename B>
+		concept InsAssignable = requires (A a, B b) {a <<= b;};
+
+		template <typename A, typename B>
+		concept ExtAssignable = requires (A a, B b) {a >>= b;};
+
+		template <typename A, typename B>
+		concept Assignable = InsAssignable<A, B> && ExtAssignable<A, B>;
+
+		template <typename A, typename B>
+		concept All = Expressionable<A, B> && Assignable<A, B>;
+	}
+
+	template <typename A, typename B>
+	concept Calculable =
+			Addable<A, B>
+		&&	Subtractable<A, B>
+		&&	Multipliable<A, B>
+		&&	Dividable<A, B>
+	;
+
+	template <typename A, typename B>
+	concept CalcAssignable =
+			AddAssignable<A, B>
+		&&	SubAssignable<A, B>
+		&&	MulAssignable<A, B>
+		&&	DivAssignable<A, B>
+	;
+
+	template <typename A, typename B>
+	concept Arithmetic = Calculable<A, B> && CalcAssignable<A, B>;
+
+	template <typename A, typename B>
+	concept HasModulo = Modulable<A, B> && ModAssignable<A, B>;
+
+	/**
+	* A 'Safe' type must not be:
+	*	1)	A pointer (null or non-null),
+	*	2)	A reference,
+	*	3)	A function, or
+	*	4)	Void
+	* Ergo, a 'raw value' type.
+	*/
+	template <typename T>
+	concept Safe = !(
+			Pointer<T>
+		||	Reference<T>
+		||  Function<T>
+		||	Void<T>
+		||	Null<T>
+	);
+
+	template <typename T>
+	concept SafeArray = Array<T> && Safe<T>;
+
+	/**
+	* A 'Mutable' is a 'Safe' type that isn't an array or constant.
+	*/
+	template <typename T>
+	concept Mutable = Safe<T> && !(Array<T> || Constant<T>);
+
+	namespace {
+		template<class Lambda, int=(Lambda{}(), 0)>
+		constexpr bool isConstexpr(Lambda)	{return true;	}
+		constexpr bool isConstexpr(...)		{return false;	}
+
+		template<typename T, typename = void>
+		constexpr bool isDefined = false;
+
+		template<typename T>
+		constexpr bool isDefined<T, decltype(typeid(T), void())> = true;
+	}
+
+	template <typename T>
+	concept CompileTimeable = isConstexpr([]{return T();});
+
+	template <class T>
+	concept Defined = isDefined<T>;
 }
 
 #endif // CTL_TYPETRAITS_TRAITS_H
