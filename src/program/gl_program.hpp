@@ -861,8 +861,8 @@ namespace Makai {
 		void run(){
 			// The timer process
 			auto timerFunc	= [&](float delta)-> void {
-				Tweening::yieldAllTweens(1.0);
-				Event::yieldAllTimers(1.0);
+				Tweening::Tweener::process(1.0);
+				Event::Timeable::process(1.0);
 			};
 			// The logical process
 			auto logicFunc	= [&](float delta)-> void {

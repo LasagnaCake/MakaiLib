@@ -14,11 +14,6 @@
 #define CASE_FUNC(F_NAME) if ( type == #F_NAME ) return F_NAME
 
 namespace Tweening {
-	namespace {
-		using TypedEvent::Signal;
-		List<const Function<void(float)>*> tweenList;
-	}
-
 	/**
 	* A 'Tweenable' type is defined as:
 	*	a)	An 'Operatable' type that can be constructed
@@ -27,51 +22,10 @@ namespace Tweening {
 	template <typename T>
 	concept Tweenable = Math::Operatable<T> && Type::Constructible<T, float>;
 
-	/// Yields all available non-manual tweens.
-	void yieldAllTweens(float delta = 1) {
-		// Loop through tweens and step them
-		if (tweenList.size())
-			for(const Signal<float>* func : tweenList)
-				(*func)(delta);
-	}
+	template <Tweenable T = float>
+	class Tween;
 
-	struct Tweener {
-		Tweener(bool manual = false) {
-			if (!manual) setAutomatic();
-			this->manual = true;
-		}
-
-		void setManual() {
-			if (manual) return;
-			// Loop through tween calls and delete if matches
-			if (!tweenList.empty())
-				std::erase_if(tweenList, [&](auto& e){return e == &_yield;});
-			manual = true;
-		}
-
-		void setAutomatic() {
-			if (!manual) return;
-			tweenList.push_back(&_yield);
-			manual = false;
-		}
-
-		virtual ~Tweener() {
-			// Loop through tween calls and delete if matches
-			if (!manual && !tweenList.empty())
-				std::erase_if(tweenList, [&](auto& e){return e == &_yield;});
-		}
-
-		virtual void yield(unsigned long delta = 1) = 0;
-
-		bool isManual() {return manual;}
-
-	private:
-		const Signal<float> _yield = [&](float delta = 1) {
-			this->yield(delta);
-		};
-
-		bool manual = false;
-	};
+	typedef Event::Periodic<Tween<>> Tweener;
 
 	/**
 	*****************
@@ -80,7 +34,7 @@ namespace Tweening {
 	*               *
 	*****************
 	*/
-	template <Tweenable T = float>
+	template <Tweenable T>
 	class Tween: public Tweener {
 	public:
 		typedef T DataType;
@@ -117,26 +71,8 @@ namespace Tweening {
 			setInterpolation(from, to, step, easeMode, targetVar);
 		}
 
-		/// Copy constructor
+		/// Copy constructor.
 		Tween(Tween& other)
-		: Tween(
-			other.from,
-			other.to,
-			other.step,
-			other.easeMode,
-			other.isManual()
-		) {
-			if (other.target != &other.defaultVar)
-				target = other.target;
-			paused = other.paused;
-			onCompleted = other.onCompleted;
-			isFinished = other.isFinished;
-			factor = other.factor;
-			other.setManual();
-		}
-
-		/// Copy constructor
-		Tween(Tween&& other)
 		: Tween(
 			other.from,
 			other.to,

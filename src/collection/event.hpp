@@ -22,18 +22,6 @@
 #define CHAIN			T_CHAIN()
 
 namespace Event{
-	namespace {
-		List<const Procedure<float>*> timerList;
-	}
-
-	/// Yields all available non-manual timers.
-	void yieldAllTimers(float delta = 1) {
-		// Loop through timers and step them
-		if (timerList.size())
-			for(const Procedure<float>* func : timerList)
-				(*func)(delta);
-	}
-
 	/// A signal to be fired, whenever.
 	typedef Function<void()>		Signal;
 
@@ -51,6 +39,67 @@ namespace Event{
 	const Call		DEF_CALL	=	[]()->Trigger	{return DEF_TRIGGER;};
 	const Chain		DEF_CHAIN	=	[]()->Signal	{return DEF_SIGNAL;};
 
+	class Timer;
+
+	template<class T = void>
+	class Periodic {
+	public:
+		typedef Procedure<float>			EventWrapper;
+		typedef List<EventWrapper const*>	EventList;
+
+		/// Empty constructor.
+		Periodic(bool manual = false) {
+			if (!manual)
+				events.push_back(&doYield);
+			this->manual = manual;
+		}
+
+		/// Yields all available non-manual periodics.
+		static void process(float delta = 1) {
+			// Loop through timers and step them
+			if (events.size())
+				for(const Procedure<float>* func : events)
+					(*func)(delta);
+		}
+
+		void setManual() {
+			if (manual) return;
+			// Loop through tween calls and delete if matches
+			if (!events.empty())
+				std::erase_if(events, [&](auto& e){return e == &doYield;});
+			manual = true;
+		}
+
+		void setAutomatic() {
+			if (!manual) return;
+			events.push_back(&doYield);
+			manual = false;
+		}
+
+		virtual ~Periodic() {
+			// Loop through tween calls and delete if matches
+			if (!manual && !events.empty())
+				std::erase_if(events, [&](auto& e){return e == &doYield;});
+		}
+
+		virtual void yield(unsigned long delta = 1) = 0;
+
+		bool isManual() {return manual;}
+
+	private:
+		const EventWrapper doYield = [&](float delta = 1) {
+			this->yield(delta);
+		};
+
+		bool manual = false;
+
+		inline static EventList events;
+	};
+
+	class Timer;
+
+	typedef Periodic<Timer> Timeable;
+
 	/**
 	*****************
 	*               *
@@ -58,8 +107,10 @@ namespace Event{
 	*               *
 	*****************
 	*/
-	class Timer {
+	class Timer: public Timeable {
 	public:
+		using Timeable::Timeable;
+
 		/// The signal to be fired.
 		Signal onSignal = Event::DEF_SIGNAL;
 
@@ -75,38 +126,28 @@ namespace Event{
 		/// The amount of times to repeat for. If < 0, loops indefinitely.
 		long loopCount = -1;
 
-		/// Empty constructor.
-		Timer(bool manual = false) {
-			if (!manual)
-				timerList.push_back(&_yield);
-			this->manual = manual;
+		/// Delay + repeat constructor.
+		Timer(float delay, bool repeat = false, bool manual = false)
+		: Timeable(manual) {
+			this->delay		= delay;
+			this->repeat	= repeat;
 		}
 
 		/// Signal + delay + repeat constructor.
-		Timer(Signal onSignal, float delay = 1, bool repeat = false, bool manual = false) {
+		Timer(Signal onSignal, float delay = 1, bool repeat = false, bool manual = false)
+		: Timeable(manual) {
 			this->onSignal	= onSignal;
 			this->delay		= delay;
 			this->repeat	= repeat;
-			if (!manual)
-				timerList.push_back(&_yield);
-			this->manual = manual;
 		}
 
-		/// Delay + repeat constructor.
-		Timer(float delay, bool repeat = false, bool manual = false) {
-			this->delay		= delay;
-			this->repeat	= repeat;
-			if (!manual)
-				timerList.push_back(&_yield);
-			this->manual = manual;
-		}
-
+		/// Copy constructor.
 		Timer(Timer& other)
 		: Timer(
 			other.onSignal,
 			other.delay,
 			other.repeat,
-			other.manual
+			other.isManual()
 		) {
 			paused = other.paused;
 			loopCount = other.loopCount;
@@ -115,30 +156,8 @@ namespace Event{
 			other.setManual();
 		}
 
-		Timer(Timer&& other): Timer(other) {}
-
-		/// Destructor.
-		~Timer() {
-			// Loop through timer calls and delete if matches
-			if (!timerList.empty()) std::erase_if(timerList, [&](auto& e){return e == &_yield;});
-		}
-
-		void setManual() {
-			if (manual) return;
-			// Loop through timer calls and delete if matches
-			if (!timerList.empty()) std::erase_if(timerList, [&](auto& e){return e == &_yield;});
-			manual = true;
-		}
-
-		void setAutomatic() {
-			if (!manual) return;
-			timerList.push_back(&_yield);
-		}
-
-		/**
-		* Yields a cycle.
-		*/
-		void yield(unsigned long delta = 1) {
+		/// Yields a cycle.
+		void yield(unsigned long delta = 1) override final {
 			// If not paused or not finished...
 			if (!isFinished && !paused) {
 				// If counter has reached target...
@@ -207,13 +226,6 @@ namespace Event{
 		}
 
 	private:
-		/// Internal signal used for automatic processing.
-		const Procedure<float> _yield = [&](float delta = 1) {
-			this->yield(delta);
-		};
-
-		bool manual = false;
-
 		/// Whether the timer is finished.
 		bool isFinished = false;
 
