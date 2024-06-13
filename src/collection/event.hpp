@@ -54,7 +54,7 @@ namespace Event{
 			this->manual = manual;
 		}
 
-		/// Yields all available non-manual periodics.
+		/// Yields all available non-manual periodic events.
 		static void process(float delta = 1) {
 			// Loop through timers and step them
 			if (events.size())
