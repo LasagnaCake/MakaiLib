@@ -25,7 +25,7 @@ namespace Tweening {
 	template <Tweenable T = float>
 	class Tween;
 
-	typedef Event::Periodic<Tween<>> Tweener;
+	typedef Event::PeriodicEvent<Tween<>> Tweener;
 
 	/**
 	*****************

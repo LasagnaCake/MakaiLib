@@ -42,13 +42,13 @@ namespace Event{
 	class Timer;
 
 	template<class T = void>
-	class Periodic {
+	class PeriodicEvent {
 	public:
 		typedef Procedure<float>			EventWrapper;
 		typedef List<EventWrapper const*>	EventList;
 
 		/// Empty constructor.
-		Periodic(bool manual = false) {
+		PeriodicEvent(bool manual = false) {
 			if (!manual)
 				events.push_back(&doYield);
 			this->manual = manual;
@@ -76,7 +76,7 @@ namespace Event{
 			manual = false;
 		}
 
-		virtual ~Periodic() {
+		virtual ~PeriodicEvent() {
 			// Loop through tween calls and delete if matches
 			if (!manual && !events.empty())
 				std::erase_if(events, [&](auto& e){return e == &doYield;});
@@ -98,7 +98,7 @@ namespace Event{
 
 	class Timer;
 
-	typedef Periodic<Timer> Timeable;
+	typedef PeriodicEvent<Timer> Timeable;
 
 	/**
 	*****************
