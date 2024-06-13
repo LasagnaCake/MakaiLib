@@ -27,6 +27,39 @@ namespace Tweening {
 
 	typedef Event::PeriodicEvent<Tween<>> Tweener;
 
+	template<typename T>
+	struct Targetable {
+		typedef T DataType;
+
+		virtual Targetable&	setTarget(T* const& newTarget)	{if (newTarget) target = newTarget; return *this;			}
+		virtual Targetable&	clearTarget()					{defaultVar = *target; target = &defaultVar; return *this;	}
+		virtual T			getValue()						{return *target;											}
+
+		T* target = &defaultVar;
+
+	protected:
+		DataType defaultVar;
+	};
+
+	struct Stepable {
+		virtual usize		getStep()					{return step;	}
+		virtual Stepable&	setStep(usize const&)		{return *this;	}
+		virtual Stepable&	setStepCount(usize const&)	{return *this;	}
+
+	protected:
+		usize step = 0;
+	};
+
+	struct Playable: Event::Playable {
+		virtual Playable& conclude()	{return *this;	}
+		virtual Playable& halt()		{return *this;	}
+
+		Event::Signal onCompleted = Event::DEF_SIGNAL;
+
+	private:
+		virtual Playable& stop()		{return *this;	}
+	};
+
 	/**
 	*****************
 	*               *
@@ -35,23 +68,21 @@ namespace Tweening {
 	*****************
 	*/
 	template <Tweenable T>
-	class Tween: public Tweener {
+	class Tween:
+		public Tweener,
+		public Targetable<T>,
+		public Playable,
+		public Stepable {
 	public:
 		typedef T DataType;
 
-		using Tweener::Tweener;
-
-		/// The tween's target variable.
-		T* target = &defaultVar;
+		using
+			Tweener::Tweener,
+			Targetable<T>::target
+		;
 
 		/// The tween's easing function.
 		Ease::EaseMode easeMode = Ease::linear;
-
-		/// The signal to be fired upon completion.
-		Event::Signal onCompleted = Event::DEF_SIGNAL;
-
-		/// Whether the tween is paused.
-		bool paused = false;
 
 		/// The tween's starting value.
 		T from;
@@ -60,13 +91,13 @@ namespace Tweening {
 		T to;
 
 		/// Targetless Constructor.
-		Tween(T from, T to, unsigned long step, Ease::EaseMode easeMode, bool manual = false)
+		Tween(T from, T to, usize step, Ease::EaseMode easeMode, bool manual = false)
 		: Tweener(manual) {
 			setInterpolation(from, to, step, easeMode);
 		}
 
 		/// Targeted Constructor.
-		Tween(T from, T to, unsigned long step, Ease::EaseMode easeMode, T* targetVar, bool manual = false)
+		Tween(T from, T to, usize step, Ease::EaseMode easeMode, T* targetVar, bool manual = false)
 		: Tweener(manual) {
 			setInterpolation(from, to, step, easeMode, targetVar);
 		}
@@ -93,7 +124,7 @@ namespace Tweening {
 		virtual ~Tween() {}
 
 		/// Calculates (and if targeted, applies) a step.
-		void yield(unsigned long delta = 1) override final {
+		void yield(usize delta = 1) override final {
 			// If target pointer is null, point to default var
 			if (!target) target = &defaultVar;
 			// If paused, return
@@ -119,7 +150,7 @@ namespace Tweening {
 		}
 
 		/// Sets the interpolation.
-		Tween<T>& setInterpolation(T from, T to, unsigned long step, Ease::EaseMode easeMode) {
+		Tween<T>& setInterpolation(T from, T to, usize step, Ease::EaseMode easeMode) {
 			isFinished = false;
 			this->step = 0;
 			this->from = from;
@@ -132,7 +163,7 @@ namespace Tweening {
 		}
 
 		/// Sets the interpolation with a target.
-		Tween<T>& setInterpolation(T from, T to, unsigned long step, Ease::EaseMode easeMode, T* targetVar) {
+		Tween<T>& setInterpolation(T from, T to, usize step, Ease::EaseMode easeMode, T* targetVar) {
 			target = targetVar;
 			isFinished = false;
 			this->step = 0;
@@ -160,63 +191,46 @@ namespace Tweening {
 		}
 
 		/// Sets the interpolation to a new value, while maintaining the easing function.
-		Tween<T>& reinterpolateTo(T to, unsigned long step) {
+		Tween<T>& reinterpolateTo(T to, usize step) {
 			paused = false;
 			setInterpolation(*target, to, step, easeMode);
 			return *this;
 		}
 
 		/// Sets the interpolation to a new value, while maintaining the easing dunction.
-		Tween<T>& reinterpolate(T from, T to, unsigned long step) {
+		Tween<T>& reinterpolate(T from, T to, usize step) {
 			paused = false;
 			setInterpolation(from, to, step, easeMode);
 			return *this;
 		}
 
-		/// Sets the tween's target variable.
-		Tween<T>& setTarget(T* target) {
-			if (target) this->target = target;
-			return *this;
-		}
-
-		/// Removes the tween's target variable.
-		Tween<T>& clearTarget() {
-			defaultVar = *target;
-			target = &defaultVar;
-			return *this;
-		}
-
 		/// Sets the current tween step.
-		Tween<T>& setStep(unsigned long step) {
-			step--;
+		Tween<T>& setStep(usize const& step) override final {
 			this->step = step > stop ? stop : step;
 			yield();
 			return *this;
 		}
 
 		/// Sets the current tween step count.
-		Tween<T>& setStepCount(unsigned long stop) {
+		Tween<T>& setStepCount(usize const& stop) override final {
 			this->stop = stop;
 			return *this;
 		}
 
-		/// Gets the current tween step number.
-		T getStep() {
-			return step;
+		/// Sets the tween's target variable.
+		Tween<T>& setTarget(T* const& target) override final {
+			Targetable<T>::setTarget(target);
+			return *this;
 		}
 
-		/// Gets the current tween value.
-		T getValue() {
-			return *target;
-		}
-
-		/// Returns whether the tween is finished.
-		bool finished() {
-			return isFinished;
+		/// Removes the tween's target variable.
+		Tween<T>& clearTarget() override final {
+			Targetable<T>::clearTarget();
+			return *this;
 		}
 
 		/// Halts the tween's execution, and sets it to its end value.
-		Tween<T>& conclude() {
+		Tween<T>& conclude() override final {
 			*target = to;
 			step = stop;
 			factor = 1.0f;
@@ -225,34 +239,37 @@ namespace Tweening {
 		}
 
 		/// Starts the tween with its current state.
-		Tween<T>& play() {
+		Tween<T>& play() override final {
 			factor = 1.0f;
+			paused = false;
 			isFinished = false;
 			return *this;
 		}
 
+		/// Pauses the tween.
+		Tween<T>& pause() override final {
+			paused = true;
+			return *this;
+		}
+
 		/// Halts the tween's execution.
-		Tween<T>& halt() {
+		Tween<T>& halt() override final {
 			factor = 1.0f;
 			isFinished = true;
 			return *this;
 		}
 
 	private:
+		using
+			Targetable<T>::defaultVar,
+			Stepable::step,
+			Playable::isFinished
+		;
 
 		float factor = 1.0f;
 
-		/// Whether the tween is finished.
-		bool isFinished = true;
-
-		/// The current tween step.
-		unsigned long step;
-
 		/// The amount of steps to be executed.
-		unsigned long stop;
-
-		/// The tween's default target.
-		T defaultVar;
+		usize stop;
 	};
 
 	template<Tweenable T = float>
@@ -262,7 +279,7 @@ namespace Tweening {
 		/// The starting & ending values.
 		DataType from, to;
 		/// The amount of steps to take.
-		unsigned long step;
+		usize step;
 		/// The easing function to use.
 		Ease::EaseMode ease			= Ease::linear;
 		/// The target for this specific stage.
@@ -271,8 +288,23 @@ namespace Tweening {
 		Event::Signal onCompleted	= Event::DEF_SIGNAL;
 	};
 
+	struct Stageable: Stepable {
+		virtual Stageable&	setStage(usize const&)		{return *this;	}
+		virtual usize		getStage()					{return stage;	}
+
+	protected:
+		usize stage = 0;
+
+	private:
+		virtual Stageable&	setStepCount(usize const&)	{return *this;	}
+	};
+
 	template<Tweenable T = float>
-	class TweenChain: public Tweener {
+	class TweenChain:
+		public Tweener,
+		public Targetable<T>,
+		public Playable,
+		public Stageable {
 	public:
 		typedef T DataType;
 
@@ -280,9 +312,10 @@ namespace Tweening {
 		typedef List<Stage>			StageList;
 		typedef Arguments<Stage>	StageArguments;
 
-		using Tweener::Tweener;
-
-		DataType* target = &defaultVar;
+		using
+			Tweener::Tweener,
+			Targetable<T>::target
+		;
 
 		Event::Signal onCompleted = Event::DEF_SIGNAL;
 
@@ -298,7 +331,7 @@ namespace Tweening {
 			setInterpolation(stages);
 		}
 
-		void yield(unsigned long delta = 1) override final {
+		void yield(usize delta = 1) override final {
 			// If target pointer is null, point to default var
 			if (!target) target = &defaultVar;
 			// If paused, return
@@ -337,17 +370,6 @@ namespace Tweening {
 			}
 		}
 
-		TweenChain& setTarget(DataType* const& target) {
-			if (target) this->target = target;
-			return *this;
-		}
-
-		TweenChain& clearTarget() {
-			defaultVar = *target;
-			target = &defaultVar;
-			return *this;
-		}
-
 		TweenChain& setInterpolation(StageList const& stages) {
 			this->stages = stages;
 			return start();
@@ -368,44 +390,57 @@ namespace Tweening {
 		}
 
 		/// Sets the current tween step.
-		TweenChain& setStep(unsigned long step) {
-			step--;
-			this->step = step > current.step ? current.step : step;
+		TweenChain& setStep(usize const& step) override final {
+			this->step = (step-1) > current.step ? current.step : (step-1);
 			yield();
 			return *this;
 		}
 
 		/// Sets the current tween stage.
-		TweenChain& setStage(unsigned long stage) {
+		TweenChain& setStage(usize const& stage) override final {
 			this->stage = stage >= stages.size() ? stages.size() : stage;
 			yield();
 			return *this;
 		}
 
 		/// Gets the current tween stage number.
-		T getStep() {
+		usize getStage() override final {
 			return stage;
 		}
 
-		/// Gets the current tween value.
-		T getValue() {
-			return *target;
+		/// Sets the tween's target variable.
+		TweenChain& setTarget(T* const& target) override final {
+			Targetable<T>::setTarget(target);
+			return *this;
 		}
 
-		/// Returns whether the tween is finished.
-		bool finished() {
-			return isFinished;
+		/// Removes the tween's target variable.
+		TweenChain& clearTarget() override final {
+			Targetable<T>::clearTarget();
+			return *this;
+		}
+
+		/// Gets the current tween step number.
+		usize getStep() override final {
+			return step;
 		}
 
 		/// Starts the tween with its current state.
-		TweenChain& play() {
+		TweenChain& play() override final {
 			factor = 1.0f;
+			paused = false;
 			isFinished = false;
 			return *this;
 		}
 
+		/// Pauses the tween.
+		TweenChain& pause() override final {
+			paused = true;
+			return *this;
+		}
+
 		/// Starts the tween from the beginning.
-		TweenChain& start() {
+		TweenChain& start() override final {
 			step = 0;
 			stage = 0;
 			current = stages[stage++];
@@ -413,14 +448,14 @@ namespace Tweening {
 		}
 
 		/// Halts the tween's execution.
-		TweenChain& halt() {
+		TweenChain& halt() override final {
 			factor = 1.0f;
 			isFinished = true;
 			return *this;
 		}
 
 		/// Halts the tween's execution, and sets it to its end value.
-		TweenChain& conclude() {
+		TweenChain& conclude() override final {
 			*target = stages.front().to;
 			step = stages.front().step;
 			return halt();
@@ -429,15 +464,16 @@ namespace Tweening {
 		StageList stages;
 
 	private:
+		using
+			Targetable<T>::defaultVar,
+			Stageable::step,
+			Stageable::stage,
+			Playable::isFinished
+		;
+
 		Stage current;
 
-		unsigned long step = 0, stage = 0;
-
 		float factor = 1.0f;
-
-		bool isFinished = true;
-
-		DataType defaultVar;
 	};
 }
 

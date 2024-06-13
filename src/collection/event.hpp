@@ -82,7 +82,7 @@ namespace Event{
 				std::erase_if(events, [&](auto& e){return e == &doYield;});
 		}
 
-		virtual void yield(unsigned long delta = 1) = 0;
+		virtual void yield(usize delta = 1) = 0;
 
 		bool isManual() {return manual;}
 
@@ -100,6 +100,19 @@ namespace Event{
 
 	typedef PeriodicEvent<Timer> Timeable;
 
+	struct Playable {
+		virtual Playable&	start()		{return *this;		}
+		virtual Playable&	play()		{return *this;		}
+		virtual Playable&	pause()		{return *this;		}
+		virtual Playable&	stop()		{return *this;		}
+		virtual bool		finished()	{return isFinished;	}
+
+		bool paused		= false;
+
+	protected:
+		bool isFinished	= false;
+	};
+
 	/**
 	*****************
 	*               *
@@ -107,7 +120,9 @@ namespace Event{
 	*               *
 	*****************
 	*/
-	class Timer: public Timeable {
+	class Timer:
+		public Timeable,
+		public Playable {
 	public:
 		using Timeable::Timeable;
 
@@ -157,7 +172,7 @@ namespace Event{
 		}
 
 		/// Yields a cycle.
-		void yield(unsigned long delta = 1) override final {
+		void yield(usize delta = 1) override final {
 			// If not paused or not finished...
 			if (!isFinished && !paused) {
 				// If counter has reached target...
@@ -191,26 +206,26 @@ namespace Event{
 		}
 
 		/// Starts the timer from the beginning.
-		Timer& start() {
+		Timer& start() override final {
 			counter = 0;
 			isFinished = false;
 			return (*this);
 		}
 
 		/// Stops the timer.
-		Timer& stop() {
+		Timer& stop() override final {
 			isFinished = true;
 			return (*this);
 		}
 
 		/// Unpauses the timer.
-		Timer& play() {
+		Timer& play() override final {
 			paused = true;
 			return (*this);
 		}
 
 		/// Pauses the timer.
-		Timer& pause() {
+		Timer& pause() override final {
 			paused = false;
 			return (*this);
 		}
@@ -220,15 +235,7 @@ namespace Event{
 			return counter;
 		}
 
-		/// Gets whether the timer is done executing.
-		bool finished() {
-			return isFinished;
-		}
-
 	private:
-		/// Whether the timer is finished.
-		bool isFinished = false;
-
 		/// The current yield cycle.
 		unsigned long counter = 0;
 	};
