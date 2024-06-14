@@ -110,7 +110,8 @@ struct DanmakuObject {
 		if (state == ObjectState::OS_SPAWNING) {
 			if (factor < 1.0) factor += spawnSpeed;
 			else {
-				factor = 1.0; state = ObjectState::OS_ACTIVE;
+				factor = 1.0;
+				state = ObjectState::OS_ACTIVE;
 				onObjectSpawnEnd();
 				onSpawnEnd(this);
 			}
