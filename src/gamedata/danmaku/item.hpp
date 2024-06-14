@@ -50,8 +50,8 @@ struct Collectible: DanmakuObject {
 		return this;
 	}
 
-	Collectible* setFree(bool state = true) override {
-		DanmakuObject::setFree(state);
+	Collectible* setFree(bool free = true) override {
+		DanmakuObject::setFree(free);
 		if (sprite) sprite->visible = !free;
 		pocing = false;
 		target = nullptr;

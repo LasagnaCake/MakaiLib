@@ -63,7 +63,7 @@
 	}
 
 #define DANMAKU_FRAME_BEGIN \
-	if (free) return; \
+	if (isFree()) return; \
 	DanmakuObject::onFrame(delta); \
 	if (pause.enabled) return
 

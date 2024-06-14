@@ -64,9 +64,9 @@ public:
 		return (Bullet*)setFree(false);
 	}
 
-	Bullet* setFree(bool state = true) override {
-		DanmakuObject::setFree(state);
-		if (state) grazed = false;
+	Bullet* setFree(bool free = true) override {
+		DanmakuObject::setFree(free);
+		if (free) grazed = false;
 		if (sprite) sprite->visible = !free;
 		return this;
 	}

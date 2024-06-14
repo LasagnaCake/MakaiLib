@@ -60,6 +60,7 @@ struct DanmakuObject {
 	DanmakuObject() {
 		auto pass = DANMAKU_OBJ_SIGNAL {};
 		onFree			= pass;
+		onDiscard		= pass;
 		onObjectFrame	= pass;
 		onUnpause		= pass;
 		onSpawnBegin	= pass;
@@ -68,11 +69,19 @@ struct DanmakuObject {
 		onDespawnEnd	= pass;
 	}
 
+	enum class ObjectState {
+		OS_FREE,
+		OS_SPAWNING,
+		OS_ACTIVE,
+		OS_DESPAWNING
+	};
+
 	Reference3D::AnimatedPlane* sprite = nullptr;
 
 	TypedTasking::MultiTasker<DanmakuObject> taskers;
 
 	ObjectSignal onFree;
+	ObjectSignal onDiscard;
 	ObjectSignal onUnpause;
 	ObjectSignal onObjectFrame;
 	ObjectSignal onSpawnBegin;
@@ -95,22 +104,23 @@ struct DanmakuObject {
 	Vector4 color = Color::WHITE;
 
 	virtual void onFrame(float delta) {
-		if (free) return;
+		if (state == ObjectState::OS_FREE) return;
 		if (sprite) sprite->setColor(color * tint);
 		onObjectFrame(this);
-		if (spawning) {
+		if (state == ObjectState::OS_SPAWNING) {
 			if (factor < 1.0) factor += spawnSpeed;
 			else {
-				factor = 1.0; spawning = false;
+				factor = 1.0; state = ObjectState::OS_ACTIVE;
 				onObjectSpawnEnd();
 				onSpawnEnd(this);
 			}
 			spawnAnimation(factor);
 		}
-		if (despawning) {
+		else if (state == ObjectState::OS_DESPAWNING) {
 			if (factor > 0.0f) factor -= despawnSpeed;
 			else {
-				factor = 0.0; despawning = false;
+				factor = 0.0;
+				state = ObjectState::OS_FREE;
 				onObjectDespawnEnd();
 				onDespawnEnd(this);
 				setFree(true);
@@ -128,8 +138,11 @@ struct DanmakuObject {
 	}
 
 	DanmakuObject* spawn() {
-		if (despawning || free) return this;
-		spawning = true;
+		if (
+			state == ObjectState::OS_DESPAWNING
+		||	state == ObjectState::OS_FREE
+		) return this;
+		state = ObjectState::OS_SPAWNING;
 		factor = 0.0f;
 		onObjectSpawnBegin();
 		onSpawnBegin(this);
@@ -137,17 +150,17 @@ struct DanmakuObject {
 	}
 
 	DanmakuObject* despawn() {
-		if (free) return this;
-		despawning = true;
-		spawning = false;
+		if (state == ObjectState::OS_FREE) return this;
+		state = ObjectState::OS_DESPAWNING;
 		factor = 1.0f;
 		onObjectDespawnBegin();
 		onDespawnBegin(this);
+		onDiscard(this);
 		return this;
 	}
 
 	DanmakuObject* clearAnimation() {
-		spawning = despawning = false;
+		state = ObjectState::OS_ACTIVE;
 		factor = 1.0;
 		clearAnimationData();
 		return this;
@@ -171,12 +184,11 @@ struct DanmakuObject {
 		return setFree(false);
 	}
 
-	virtual DanmakuObject* setFree(bool state = true) {
-		free = state;
+	virtual DanmakuObject* setFree(bool free = true) {
+		state = free ? ObjectState::OS_FREE : ObjectState::OS_ACTIVE;
 		if (free) {
 			onFree(this);
 			flags.clear();
-			spawning = despawning = false;
 		}
 		local.position = Vector2(-64, 64);
 		return this;
@@ -200,7 +212,7 @@ struct DanmakuObject {
 	virtual void updateSprite() = 0;
 
 	bool isFree() {
-		return free;
+		return state == ObjectState::OS_FREE;
 	}
 
 protected:
@@ -217,11 +229,7 @@ protected:
 
 	float factor = 1.0f;
 
-	bool despawning = false;
-
-	bool spawning = false;
-
-	bool free = true;
+	ObjectState state;
 
 	float zOffset = 0;
 

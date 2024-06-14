@@ -66,9 +66,9 @@ public:
 		return setFree(false);
 	}
 
-	LineLaser* setFree(bool state = true) override {
-		DanmakuObject::setFree(state);
-		if (sprite)	sprite->visible	= !free;
+	LineLaser* setFree(bool free = true) override {
+		DanmakuObject::setFree(free);
+		if (sprite) sprite->visible = !free;
 		return this;
 	}
 
