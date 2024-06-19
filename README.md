@@ -132,6 +132,7 @@ Currently VERY scarce. Some of the code is commented.
 - [ ] Custom language (compiled (preferable) or interpreted)
 - - Currently have an idea, don't know if it would be feasible
 - - Could also implement support for Squirrel/LUA/AngelScript
+- - Or C# even, this one might be the more feasible option
 
 ### Future
 
