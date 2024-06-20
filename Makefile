@@ -204,16 +204,6 @@ ifeq ($(over-release), 1)
 RELEASE_DATA := $(DATA_FOLDER)
 endif
 
-define ZIPWARNMSG
-	@echo ""
-	@echo -e "$(COLOR_WARN)!!! WARNING !!!$(COLOR_NONE)"
-	@echo "7-Zip not found. Using zip instead."
-	@echo "Please install p7zip, as it provides stronger encryption."
-	@echo "If you're using MSYS, simply install it via \"pacman -S p7zip\"."
-	@echo -e "$(COLOR_WARN)!!! WARNING !!!$(COLOR_NONE)"
-	@echo ""
-endef
-
 #-r
 ifneq (, $(shell which 7za))
 ZIPCMD := @7za a -tzip -mem=AES256
