@@ -1,7 +1,7 @@
 [ Compiler-specific ]
 > vectorn.hpp throws error when compiling on GCC 14 and above
 	> error: accessing 'Vector*::<unnamed union>::<anonymous>' member instead of initialized 'Vector*::<unnamed union>::data' member in constant expression
-		> The code should compile in -std=gnu++20 (since the standard allows union access), but isn't for some reason
+		> The code should compile in -std=gnu++20 (since the standard allows different union member access), but isn't for some reason
 
 [ Library-specific ]
 > Fullscreen does not work properly
