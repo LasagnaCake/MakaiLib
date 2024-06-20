@@ -1061,7 +1061,7 @@ namespace Makai {
 			else glDisablei(flag, value);
 		}
 
-		constexpr inline void enableMainBuffer() {
+		inline void enableMainBuffer() {
 			glBindBuffer(GL_FRAMEBUFFER, 0);
 		}
 
