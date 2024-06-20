@@ -129,10 +129,11 @@ Currently VERY scarce. Some of the code is commented.
 - - [ ] Animation keyframes definition
 - - [ ] Danmaku stage layout definition
 - - - Possibly via combining 2nd & 3rd implementations
-- [ ] Custom language (compiled (preferable) or interpreted)
+- [ ] Embedded language (compiled (preferable, even if to bytecode), JIT or interpreted)
 - - Currently have an idea, don't know if it would be feasible
 - - Could also implement support for Squirrel/LUA/AngelScript
 - - Or C# even, this one might be the more feasible option
+- - - This one sounds enticing
 
 ### Future
 
