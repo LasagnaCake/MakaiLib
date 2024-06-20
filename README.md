@@ -67,7 +67,7 @@ pacman -U -d https://repo.msys2.org/mingw/mingw64/mingw-w64-x86_64-gcc-libs-13.2
 
 ### Note
 
-For more information, type ```make help```.
+For more information, open root directory on command line, and type ```make help```.
 
 The ```src``` only needs to be set if your file is not at the top of the ```build/``` folder or not named ```main.cpp```.
 
