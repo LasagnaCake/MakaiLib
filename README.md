@@ -48,7 +48,15 @@ For rsync: pacman -S rsync
 In a single line: pacman -S mingw-w64-x86_64-toolchain zip p7zip make rsync
 ```
 
-## How To use
+### GCC toolchain version
+<mark>Your GCC toolchain must be version 13.2.0-2!</mark> To ensure that it is the correct version, run the following command:
+
+```
+pacman -U -d https://repo.msys2.org/mingw/mingw64/mingw-w64-x86_64-gcc-libs-13.2.0-2-any.pkg.tar.zst ; pacman -U -d https://repo.msys2.org/mingw/mingw64/mingw-w64-x86_64-gcc-13.2.0-2-any.pkg.tar.zst
+
+```
+
+## How to use
 
 1. Create a C++ source file within the ```build/``` directory (create directory if nonexistent);
 2. Add ```#include <makai.hpp>``` in your source file;
