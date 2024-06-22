@@ -158,7 +158,7 @@ endif
 
 ifdef rcscript
 WINRC				:= @windres
-RC_FILE_DIRS		:= build/$(rcscript) -o obj/rc/cfg.o
+RC_FILE_DIRS		:= build/$(rcscript) -o obj/rc/cfg.o -lwinuser -lwindows
 CREATE_RC_FOLDER	:= @mkdir -p obj/rc
 INCLUDE_RC_FILE		:= obj/rc/cfg.o
 else
