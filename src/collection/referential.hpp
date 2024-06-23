@@ -10,26 +10,29 @@
 namespace SmartPointer {
 	template <typename T> concept Pointable = Type::Safe<T>;
 
-	namespace {
-		struct PointerData {
+	struct ReferenceCounter {
+		struct ReferenceData {
 			bool	exists	= false;
 			int64	count	= 0;
 		};
 
-		static HashMap<void*, PointerData> database;
-	}
+		typedef HashMap<void*, ReferenceData> ReferenceBank;
 
-	bool isBound(void* const& ptr) {
-		return database.contains(ptr);
-	}
+		inline static bool isBound(void* const& ptr) {return database.contains(ptr);}
+
+	protected:
+		inline static ReferenceBank database;
+	};
 
 	#define ASSERT_STRONG	static_assert(!weak,	"It is forbidden to implicitly convert a strong pointer to a weak pointer!")
 	#define ASSERT_WEAK		static_assert(weak,		"It is forbidden to implicitly convert a weak pointer to a strong pointer!")
 	#define IF_STRONG	if constexpr(!weak)
 	template <Pointable T, bool weak = false>
-	class Pointer {
+	class Pointer: private ReferenceCounter {
 	public:
 		typedef T DataType;
+
+		using ReferenceCounter::isBound;
 
 		constexpr Pointer() {}
 
@@ -128,8 +131,8 @@ namespace SmartPointer {
 		constexpr T* operator&()				{return getPointer();}
 		constexpr T* const operator&() const	{return getPointer();}
 
-		template<Pointable NEW_T>
-		constexpr Pointer<NEW_T, weak>	castedTo() const	{return	(NEW_T*)getPointer();	}
+		template<Pointable TNew>
+		constexpr Pointer<TNew, weak>	castedTo() const	{return	(TNew*)getPointer();	}
 		constexpr Pointer<T, true>		asWeak() const		{return	getPointer();			}
 		constexpr T*					raw() const			{return	getPointer();			}
 
@@ -146,19 +149,27 @@ namespace SmartPointer {
 		constexpr bool operator==(Pointer<T, weak> const& other) const					{return ref == other.ref;	}
 		constexpr Helper::PartialOrder operator<=>(Pointer<T, weak> const& other) const	{return ref <=> other.ref;	}
 
-		constexpr Pointer& operator=(T* const& obj)					{bind(obj); return (*this);			}
-		constexpr Pointer& operator=(Pointer<T, weak> const& other)	{bind(other.ref); return (*this);	}
+		constexpr Pointer& operator=(T* const& obj)					{bind(obj); return (*this);					}
+		constexpr Pointer& operator=(Pointer<T, weak> const& other)	{bind(other.ref); return (*this);			}
+		constexpr Pointer& operator=(T const& v) const				{*getPointer() = v; return (*this);			}
+	//	constexpr Pointer& operator=(T const& v) const				{if (exists()) *ref = v; return (*this);	}
+
+		constexpr T& value() const {
+			if (!exists()) nullPointerError();
+			return (*ref);
+		}
+
+		constexpr explicit operator T() const	{return value();	}
 
 		constexpr T* operator->()				{return getPointer();	}
 		constexpr T* const operator->() const	{return getPointer();	}
-		constexpr T& operator*()				{return getValue();		}
-		constexpr T& operator*() const			{return getValue();		}
-
-		static bool isBound(T* const& ptr)	{return SmartPointer::isBound(ptr);}
+		constexpr T& operator*() const			{return value();		}
 
 	private:
 		friend class Pointer<T,	false	>;
 		friend class Pointer<T,	true	>;
+
+		using ReferenceCounter::database;
 
 		T* ref = nullptr;
 
@@ -173,16 +184,6 @@ namespace SmartPointer {
 		constexpr T* const getPointer() const	{
 			if (!exists()) nullPointerError();
 			return (ref);
-		}
-
-		constexpr T& getValue() {
-			if (!exists()) nullPointerError();
-			return (*ref);
-		}
-
-		constexpr T& getValue() const {
-			if (!exists()) nullPointerError();
-			return (*ref);
 		}
 
 		[[noreturn]] void nullPointerError() const {
