@@ -330,13 +330,16 @@ namespace ArcSys {
 		// Put new things BELOW this line
 	};
 
+	constexpr uint64 ARCHIVE_VERSION		= 1;
+	constexpr uint64 ARCHIVE_MIN_VERSION	= 1;
+
 	#pragma pack(1)
 	struct ArchiveHeader {
 		uint64	const headerSize		= sizeof(ArchiveHeader);
 		uint64	const fileHeaderSize	= sizeof(FileHeader);
 		uint64	dirInfoSize;
-		uint64	version			= 1;
-		uint64	minVersion		= 1;
+		uint64	version			= ARCHIVE_VERSION;
+		uint64	minVersion		= ARCHIVE_MIN_VERSION;
 		uint16	encryption		= (uint16)EncryptionMethod::AEM_AES256;
 		uint16	compression		= (uint16)CompressionMethod::ACM_ZIP;
 		uint8	level			= 9;
@@ -387,20 +390,17 @@ namespace ArcSys {
 		file.exceptions(std::ofstream::badbit | std::ofstream::failbit);
 		// Populate header
 		_ARCDEBUGLN("Creating header...\n");
-		// Preliminary parameters
-		constexpr uint64 version	= 0;
-		constexpr uint64 minVersion	= 0;
 		// Header
 		ArchiveHeader header;
 		// Set main header params
-		header.dirInfoSize	= dirInfo.length();	// directory info size
-		header.version		= version;			// file format version
-		header.minVersion	= minVersion;		// file format minimum version
-		header.encryption	= (uint16)enc;		// encryption mode
-		header.compression	= (uint16)comp;		// compression mode
-		header.level		= complvl;			// compression level
+		header.dirInfoSize	= dirInfo.length();		// directory info size
+		header.version		= ARCHIVE_VERSION;		// file format version
+		header.minVersion	= ARCHIVE_MIN_VERSION;	// file format minimum version
+		header.encryption	= (uint16)enc;			// encryption mode
+		header.compression	= (uint16)comp;			// compression mode
+		header.level		= complvl;				// compression level
 		/*header.flags =
-			Flags::SHOULD_CHECK_CRC_BIT			// Do CRC step
+			Flags::SHOULD_CHECK_CRC_BIT				// Do CRC step
 		;*/
 		_ARCDEBUGLN("             HEADER SIZE: ", (uint64)header.headerSize,		"B"	);
 		_ARCDEBUGLN("        FILE HEADER SIZE: ", (uint64)header.fileHeaderSize,	"B"	);
@@ -489,7 +489,8 @@ namespace ArcSys {
 		};
 
 		struct ArchiveVersion {
-			uint64 const version, ninimum;
+			uint64 const version;
+			uint64 const minimum;
 		};
 
 		FileArchive() {}
@@ -848,7 +849,8 @@ namespace ArcSys {
 		uint64 mv;
 		{
 			FileArchive arc(archivePath, "");
-			mv = arc.getVersion().ninimum;
+			mv = arc.getVersion().minimum;
+			_ARCDEBUGLN("Minimum Version: ", toString(mv));
 		}
 		switch(mv) {
 			case 1: unpackV1(archivePath, folderPath, password);	break;
