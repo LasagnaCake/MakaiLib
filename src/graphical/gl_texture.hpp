@@ -32,22 +32,24 @@ struct Image {
 		glBindTexture(target, 0);
 	}
 
-	inline Image& operator()(unsigned char texture = 0) {
-		use(texture);
-		return *this;
-	}
-
 	inline Image& use(unsigned char texture = 0) {
 		setTexture2D(texture, id);
 		return *this;
 	}
 
-	inline bool operator==(Image const& other)					{return id == other.id;		}
-	inline Helper::PartialOrder operator<=>(Image const& other)	{return id <=> other.id;	}
+	inline Image const& use(unsigned char texture = 0) const {
+		setTexture2D(texture, id);
+		return *this;
+	}
 
-	inline operator unsigned int() const {return id;}
+	inline Image&		operator()(unsigned char texture = 0)		{return use(texture);}
+	inline Image const&	operator()(unsigned char texture = 0) const	{return use(texture);}
 
-	inline unsigned int getID()					const {return id;			}
+	inline bool operator==(Image const& other) const					{return id == other.id;		}
+	inline Helper::PartialOrder operator<=>(Image const& other) const	{return id <=> other.id;	}
+
+	inline operator unsigned int() const	{return id;	}
+	inline unsigned int getID() const		{return id;	}
 
 	inline bool exists() const		{return id != 0;	}
 	inline operator bool() const	{return exists();	}
@@ -608,8 +610,8 @@ public:
 	Texture2D& operator=(Texture2D&& other)			{make(other); return *this;								}
 	Texture2D& operator=(Texture2D* other)			{if (other) make(*other); else destroy(); return *this;	}
 
-	inline bool operator==(Texture2D const& other) const					{return image == other.image;	}
-	inline Helper::PartialOrder operator<=>(Texture2D const& other) const	{return image <=> other.image;	}
+	inline bool operator==(Texture2D const& other) const					{return *image == *other.image;		}
+	inline Helper::PartialOrder operator<=>(Texture2D const& other) const	{return *image <=> *other.image;	}
 
 	Texture2D& copyFrom(
 		Texture2D const& other,
@@ -721,15 +723,18 @@ public:
 		return image->attributes;
 	}
 
-	Texture2D& operator()(unsigned char texture = 0) {
-		enable(texture);
-		return *this;
-	}
-
 	Texture2D& enable(unsigned char texture = 0) {
 		image->use(texture);
 		return *this;
 	}
+
+	Texture2D const& enable(unsigned char texture = 0) const {
+		image->use(texture);
+		return *this;
+	}
+
+	Texture2D&			operator()(unsigned char texture = 0)		{return enable(texture);	}
+	Texture2D const&	operator()(unsigned char texture = 0) const	{return enable(texture);	}
 
 	inline unsigned int getID() const {
 		if (!exists()) return 0;
