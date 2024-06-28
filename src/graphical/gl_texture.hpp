@@ -751,6 +751,11 @@ public:
 		return *this;
 	}
 
+	Texture2D& saveToFile(string const& path) {
+		saveToFIle(parh);
+		return *this;
+	}
+
 	bool exists() const {
 		return image.exists() && image->exists();
 	}
