@@ -752,7 +752,7 @@ public:
 	}
 
 	Texture2D& saveToFile(string const& path) {
-		saveToFfle(path);
+		saveToFile(path);
 		return *this;
 	}
 
