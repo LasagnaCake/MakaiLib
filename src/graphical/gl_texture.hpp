@@ -61,6 +61,24 @@ private:
 struct Image2D: public Image {
 	using Image::create;
 
+	enum class FileType {
+		IFT_INVALID = -1,
+		IFT_AUTO_DETECT,
+		IFT_TGA,
+		IFT_PNG,
+		IFT_JPG,
+		IFT_BMP
+	};
+
+	constexpr static FileType fromFileExtension(string const& path) {
+		string ext = Helper::toLower(Helper::splitStringAtLast(path, '.').second);
+		if (ext == "png")					return FileType::IFT_PNG;
+		if (ext == "jpg" || ext == "jpeg")	return FileType::IFT_JPG;
+		if (ext == "tga")					return FileType::IFT_TGA;
+		if (ext == "bmp")					return FileType::IFT_BMP;
+		return FileType::IFT_INVALID;
+	}
+
 	struct Attributes {
 		unsigned int
 			width,
@@ -153,36 +171,18 @@ struct Image2D: public Image {
 		return imgdat;
 	}
 
-	Image2D const& saveToFile(string const& path) const {
-		if (!exists()) return *this;
-		ImageData imgdat = getData();
-		uchar channels = 0;
-		switch (imgdat.format) {
-			case GL_DEPTH_COMPONENT:
-			case GL_RED:				channels = 1;	break;
-			case GL_DEPTH_STENCIL:
-			case GL_RG:					channels = 2;	break;
-			case GL_RGB:				channels = 3;	break;
-			default:
-			case GL_RGBA:				channels = 4;	break;
-		}
-		int result = stbi_write_tga(
-			path.c_str(),
-			imgdat.width,
-			imgdat.height,
-			channels,
-			imgdat.data.data()
-		);
-		if (!result) {
-			throw FileLoader::FileSaveError(
-				"Could not save image file!",
-				__FILE__,
-				toString(__LINE__),
-				"Texture2D::saveToFile"
-			);
-		}
+	Image2D const& saveToFile(string const& path, uint8 const& quality, FileType type = FileType::IFT_AUTO_DETECT) const {
+		saveImageToFile(path, quality, type);
 		return *this;
 	}
+
+	Image2D& saveToFile(string const& path, uint8 const& quality, FileType type = FileType::IFT_AUTO_DETECT) {
+		saveImageToFile(path, quality, type);
+		return *this;
+	}
+
+	Image2D&		saveToFile(string const& path, FileType type = FileType::IFT_AUTO_DETECT)		{return saveToFile(path, 50, type);}
+	Image2D const&	saveToFile(string const& path, FileType type = FileType::IFT_AUTO_DETECT) const	{return saveToFile(path, 50, type);}
 
 	static Image2D* newImage(
 		unsigned int width,
@@ -248,6 +248,48 @@ struct Image2D: public Image {
 	}
 
 private:
+	void saveImageToFile(string const& path, uint8 const& quality, FileType type) const {
+		if (!exists()) return;
+		ImageData imgdat = getData();
+		uchar channels = 0;
+		switch (imgdat.format) {
+			case GL_DEPTH_COMPONENT:
+			case GL_RED:				channels = 1;	break;
+			case GL_DEPTH_STENCIL:
+			case GL_RG:					channels = 2;	break;
+			case GL_RGB:				channels = 3;	break;
+			default:
+			case GL_RGBA:				channels = 4;	break;
+		}
+		int result;
+		if (type == FileType::IFT_AUTO_DETECT) type = fromFileExtension(path);
+		if (type == FileType::IFT_INVALID)
+			throw Error::InvalidValue(
+				"Invalid file type of '." + Helper::splitStringAtLast(path, '.').second + "'!"
+				__FILE__,
+				toString(__LINE__),
+				"Image2D::saveToFile"
+			);
+		#define IMAGE2D_STBIWRITE_PARAMS path.c_str(), imgdat.width, imgdat.height, channels, imgdat.data.data()
+		switch (type) {
+			default:
+			case FileType::IFT_TGA:	result = stbi_write_tga(IMAGE2D_STBIWRITE_PARAMS);			break;
+			case FileType::IFT_PNG:	result = stbi_write_png(IMAGE2D_STBIWRITE_PARAMS, 0);		break;
+			case FileType::IFT_JPG:	result = stbi_write_jpg(IMAGE2D_STBIWRITE_PARAMS, quality);	break;
+			case FileType::IFT_BMP:	result = stbi_write_bmp(IMAGE2D_STBIWRITE_PARAMS);			break;
+		}
+		#undef IMAGE2D_STBIWRITE_PARAMS
+		if (!result) {
+			throw FileLoader::FileSaveError(
+				"Could not save image file!",
+				__FILE__,
+				toString(__LINE__),
+				"Image2D::saveToFile"
+			);
+		}
+		return;
+	}
+
 	friend class Texture2D;
 
 	Attributes attributes;
@@ -338,6 +380,8 @@ void copyTexture(
 class Texture2D {
 public:
 	typedef Instance<Image2D> Image2DInstance;
+
+	typedef Image2D::FileType ImageFileType;
 
 	Texture2D() {image = new Image2D();}
 
@@ -745,15 +789,38 @@ public:
 		return image->getData();
 	}
 
-	Texture2D const& saveToFile(string const& path) const {
+	Texture2D const& saveToFile(
+		string const& path,
+		uint8 const& quality,
+		ImageFileType const& type = ImageFileType::IFT_AUTO_DETECT
+	) const {
 		if (!exists()) return *this;
-		image->saveToFile(path);
+		image->saveToFile(path, quality, type);
 		return *this;
 	}
 
-	Texture2D& saveToFile(string const& path) {
-		saveToFile(path);
+	Texture2D& saveToFile(
+		string const& path,
+		uint8 const& quality,
+		ImageFileType const& type = ImageFileType::IFT_AUTO_DETECT
+	) {
+		if (!exists()) return *this;
+		image->saveToFile(path, quality, type);
 		return *this;
+	}
+
+	Texture2D const& saveToFile(
+		string const& path,
+		ImageFileType const& type = ImageFileType::IFT_AUTO_DETECT
+	) const {
+		return saveToFile(path, 50, type);
+	}
+
+	Texture2D& saveToFile(
+		string const& path,
+		ImageFileType const& type = ImageFileType::IFT_AUTO_DETECT
+	) {
+		return saveToFile(path, 50, type);
 	}
 
 	bool exists() const {
