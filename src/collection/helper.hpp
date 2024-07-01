@@ -354,6 +354,47 @@ namespace Helper {
 		return data;
 	}
 
+	constexpr String replace(String str, char const& c, char const& nc) {
+		for (char& sc: str)
+			if (sc == c) sc = nc;
+		return str;
+	}
+
+	constexpr String replace(String str, List<char> const& chars, char const& nc) {
+		for (char const& c: chars)
+			str = replace(str, c, nc);
+		return str;
+	}
+
+	constexpr String replace(String str, Arguments<char> const& chars, char const& nc) {
+		for (char const& c: chars)
+			str = replace(str, c, nc);
+		return str;
+	}
+
+	struct CharacterReplacement {
+		List<char>	targets;
+		char		replacement;
+	};
+
+	constexpr String replace(String str, CharacterReplacement const& rep) {
+		for (char const& c: rep.targets)
+			str = replace(str, c, rep.replacement);
+		return str;
+	}
+
+	constexpr String replace(String str, List<CharacterReplacement> const& reps) {
+		for (CharacterReplacement const& rep: reps)
+			str = replace (str, rep);
+		return str;
+	}
+
+	constexpr String replace(String str, Arguments<CharacterReplacement> const& reps) {
+		for (CharacterReplacement const& rep: reps)
+			str = replace (str, rep);
+		return str;
+	}
+
 	template<typename T>
 	using Enumerated = HashMap<size_t, T>;
 
@@ -622,6 +663,25 @@ namespace FileSystem {
 		using namespace Helper;
 	}
 
+	enum class PathSeparator: char {
+		PS_POSIX	= '/',
+		PS_WINDOWS	= '\\'
+	};
+
+	#if (_WIN32 || _WIN64 || __WIN32__ || __WIN64__) && !defined(_NO_WINDOWS_PLEASE_)
+	constexpr PathSeparator SEPARATOR = PathSeparator::PS_WINDOWS;
+	#else
+	constexpr PathSeparator SEPARATOR = PathSeparator::PS_POSIX;
+	#endif
+
+	constexpr String standardizePath(String const& path, PathSeparator const& sep) {
+		return replace(path, {'\\','/'}, (char)sep);
+	}
+
+	constexpr String standardizePath(String const& path) {
+		return standardizePath(path, SEPARATOR);
+	}
+
 	bool isDirectory(String const& dir) {
 		return fs::is_directory(dir);
 	}
@@ -724,15 +784,33 @@ namespace FileSystem {
 #endif
 
 namespace System {
-	int launchApp(String const& path, String const& directory = "", String args = "") {
-		// This is a nightmare, but the other option pops up a command prompt.
+	String sanitized(String arg) {
+		arg = regexReplace(arg, "\\\\+", "\\\\");
 		#if (_WIN32 || _WIN64 || __WIN32__ || __WIN64__) && !defined(_NO_WINDOWS_PLEASE_)
-		char* prgArgs = NULL;
-		if (!args.empty()) {
-			args = path + " " + args;
-			prgArgs = new char[args.size()];
-			memcpy(prgArgs, path.c_str(), args.size());
-		}
+		arg = regexReplace(arg, "\\\\+\"", "\\\"");
+		return "\"" + arg + "\"";
+		#else
+		arg = regexReplace(arg, "\\\\+'", "\\'");
+		arg = regexReplace(arg, "'", "\\'");
+		return "'" + arg + "'";
+		#endif
+	}
+
+	int launchApp(String const& path, String const& directory = "", StringList args = StringList()) {
+		if (!FileSystem::exists(path))
+			throw Error::InvalidValue(
+				"File [" + path + "] does not exist!",
+				__FILE__,
+				toString(__LINE__),
+				"System::launchApp"
+			);
+		String prgArgs = "";
+		if (!args.empty())
+			for (String const& arg: args)
+				prgArgs += sanitized(arg) + " ";
+		#if (_WIN32 || _WIN64 || __WIN32__ || __WIN64__) && !defined(_NO_WINDOWS_PLEASE_)
+		prgArgs = sanitized(path) + (args.empty() ? "" : (" " + prgArgs));
+		// This is a nightmare, but the other option pops up a command prompt.
 		STARTUPINFO sInfo;
 		PROCESS_INFORMATION pInfo;
 		memset(&sInfo, 0, sizeof(sInfo));
@@ -740,7 +818,7 @@ namespace System {
 		memset(&pInfo, 0, sizeof(pInfo));
 		auto proc = CreateProcess(
 			path.c_str(),
-			prgArgs,
+			(LPSTR)prgArgs.c_str(),
 			NULL,
 			NULL,
 			FALSE,
@@ -756,11 +834,10 @@ namespace System {
 		GetExitCodeProcess(pInfo.hProcess, &res);
 		CloseHandle(pInfo.hProcess);
 		CloseHandle(pInfo.hThread);
-		if (prgArgs) delete[] prgArgs;
 		return (int)res;
 		#else
 		if (!args.empty())
-			return system(path + " " + args);
+			return system(path + " " + prgArgs);
 		return system(path);
 		#endif
 	}
