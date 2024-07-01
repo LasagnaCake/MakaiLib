@@ -42,6 +42,7 @@ Pack-exclusive options:
 >   no-archive    = [ 1 | 0 ]        : Spec. whether to not compact data/      ( DEFAULT: 0        )
 >   archive-pass  = [ value | none ] : Spec. the archive's password            ( DEFAULT: none     )
 >   archive-ext   = [ value | none ] : Spec. the archive's file extension      ( DEFAULT: marc     )
+>   shader-folder = [ 1 | 0 ]        : Spec. whether to inc. the shader folder ( DEFAULT: 1        )
 
 NOTES:
 (Safe, in this case, means 'IEEE compliant'.)
@@ -52,25 +53,27 @@ NOTES:
                   the file, respectively.
 
 Pack:
->   name         : Both the name used for the output zip file, and the name of the .exe, minus the
+>   name          : Both the name used for the output zip file, and the name of the .exe, minus the
                     compilation target name MUST be the same name set while building.
->   extra-progs  : Must be Separate executables.
->   extra-files  : Must be the relative path to a folder to copy its contents from.
->   data-folder  : Must be the relative path to a folder containing a "data/" folder to use its
+>   extra-progs   : Must be Separate executables.
+>   extra-files   : Must be the relative path to a folder to copy its contents from.
+>   data-folder   : Must be the relative path to a folder containing a "data/" folder to use its
                     contents from.
->   over-*       : Only enabled if previous is set. specifies if corresponding target's "data/"
+>   over-*        : Only enabled if previous is set. specifies if corresponding target's "data/"
                     folder should be replaced. Only used for multi-target pakings.
->   no-archive   : Specifies whether the data/ folder is not compacted into an archive. Useful if
+>   no-archive    : Specifies whether the data/ folder is not compacted into an archive. Useful if
                     resources are to be shared. Generally, loading from a folder is faster than
                     loading from an archive, but does not offer the encryption an archive
                     provides - if a password was provided.
->   archive-pass : ASCII characters only.
+>   archive-pass  : ASCII characters only.
                     To get the key created from it to use in attaching the archive:
                      1. Run [make generate-key archive-pass="YOUR_PASSWORD_HERE"] to generate a
                          "key.256.h" file in the "build/" folder (you can move it, if you want)
                      2. [#include] it somewhere in your program
                      3. Use the [passkey] variable as the password in the
                          [FileLoader::attachArchive] function.
+>   shader-folder : Set this to 0 if and ONLY IF you are providing your shader code somewhere
+                    else.
 
 !!! IMPORTANT !!!
 Pack:
@@ -98,6 +101,7 @@ over-demo		?= 0
 over-release	?= 0
 no-archive		?= 0
 archive-ext		?= marc
+shader-folder   ?= 1
 
 CC 	?= gcc
 CXX ?= g++
@@ -237,6 +241,12 @@ DATA_ARCHIVE	:= $(ARCPACK) "data.$(archive-ext)" "data" $(ARCPASS)
 DATA_REMOVE		:= @rm -rf data
 endif
 
+ifeq ($(shader-folder), 1)
+INC_SHADER_FOLDER := @cp -r -v "res/shaders"
+else
+INC_SHADER_FOLDER += @:
+endif
+
 GUI_MODE ?= -mwindows
 
 .PHONY: clean debug release all demo both test help pack-debug pack-release pack-all pack-demo pack-both pack-test pack-help
@@ -358,7 +368,7 @@ pack-debug:
 	
 	@echo "[1/3] Copying contents..."
 	@rsync -av --progress "$(DEBUG_DATA)" "packed/$(name)_debug/data" $(PACK_EXCLUSIONS)
-	@cp -r -v "res/shaders" "packed/$(name)_debug"
+	$(INC_SHADER_FOLDER) "packed/$(name)_debug"
 	@cp -r -v "res/subsys" "packed/$(name)_debug"
 	@cp -r -v res/*.dll "packed/$(name)_debug"
 	@cp -r -v "res/$(name)_debug.exe" "packed/$(name)_debug"
@@ -395,7 +405,7 @@ pack-demo:
 	
 	@echo "[1/3] Copying contents..."
 	@rsync -av --progress "$(DEMO_DATA)" "packed/$(name)_demo/data" $(PACK_EXCLUSIONS)
-	@cp -r -v "res/shaders/" "packed/$(name)_demo"
+	$(INC_SHADER_FOLDER) "packed/$(name)_demo"
 	@cp -r -v "res/subsys/" "packed/$(name)_demo"
 	@cp -r -v res/*.dll "packed/$(name)_demo"
 	@cp -r -v "res/$(name)_demo.exe" "packed/$(name)_demo"
@@ -437,7 +447,7 @@ pack-release:
 	
 	@echo "[1/3] Copying contents..."
 	@rsync -av --progress "$(RELEASE_DATA)" "packed/$(name)/data" $(PACK_EXCLUSIONS)
-	@cp -r -v "res/shaders" "packed/$(name)"
+	$(INC_SHADER_FOLDER) "packed/$(name)"
 	@cp -r -v "res/subsys" "packed/$(name)"
 	@cp -r -v res/*.dll "packed/$(name)"
 	@cp -r -v "res/$(name).exe" "packed/$(name)"

@@ -7,8 +7,6 @@
 
 #define SHADER_NULL ""
 
-#define shaderTypeId(SHADER_TYPE_NAME) shaderTypes.find(SHADER_TYPE_NAME)->second
-
 namespace Scene {
 	Matrix4x4 world = Matrix4x4::identity();
 	Camera::Camera3D camera;
@@ -20,14 +18,21 @@ namespace Shader {
 		using namespace FileLoader;
 	}
 
-	const Dictionary<GLuint> shaderTypes = {
-		{"frag", GL_FRAGMENT_SHADER},
-		{"vert", GL_VERTEX_SHADER},
-		{"comp", GL_COMPUTE_SHADER},
-		{"geom", GL_GEOMETRY_SHADER},
-		{"tsct", GL_TESS_CONTROL_SHADER},
-		{"tsev", GL_TESS_EVALUATION_SHADER}
-	};
+	typedef SLF::ShaderType ShaderType;
+
+	constexpr GLuint getGLShaderType(ShaderType const& type) {
+		switch (type) {
+			default:
+			case ShaderType::ST_INVALID:	return GL_FALSE;
+			case ShaderType::ST_FRAGMENT:	return GL_FRAGMENT_SHADER;
+			case ShaderType::ST_VERTEX:		return GL_VERTEX_SHADER;
+			case ShaderType::ST_COMPUTE:	return GL_COMPUTE_SHADER;
+			case ShaderType::ST_GEOMETRY:	return GL_GEOMETRY_SHADER;
+			case ShaderType::ST_TESS_CTRL:	return GL_TESS_CONTROL_SHADER;
+			case ShaderType::ST_TESS_EVAL:	return GL_TESS_EVALUATION_SHADER;
+		}
+		return GL_FALSE;
+	}
 
 	struct Uniform {
 		String const name;
@@ -224,7 +229,7 @@ namespace Shader {
 		bool created = false;
 
 		/// Similar to create, but internal.
-		void attach(String code, GLuint shaderType) {
+		void attach(String const& code, GLuint const& shaderType) {
 			// Compile shaders
 			GLuint shader;
 			int success;
@@ -258,15 +263,15 @@ namespace Shader {
 			instance.bind(new ShaderProgram());
 		}
 
-		Shader(String vertexCode, String fragmentCode) {
+		Shader(String const& vertexCode, String const& fragmentCode) {
 			create(vertexCode, fragmentCode);
 		}
 
-		Shader(CSVData slfData) {
+		Shader(SLF::SLFData const& slfData) {
 			create(slfData);
 		}
 
-		Shader(String code, GLuint shaderType) {
+		Shader(String const& code, GLuint const& shaderType) {
 			create(code, shaderType);
 		}
 
@@ -288,7 +293,7 @@ namespace Shader {
 		}
 
 		/// Creates a shader and associates it to the object. Returns false if already created.
-		bool create(String vertexCode, String fragmentCode) {
+		bool create(String const& vertexCode, String const& fragmentCode) {
 			if (created) return false;
 			else created = true;
 			// Compile shaders
@@ -340,44 +345,33 @@ namespace Shader {
 		}
 
 		/// Creates a shader from an SLF file and associates it to the object. Returns false if already created.
-		bool create(CSVData slfData) {
+		bool create(SLF::SLFData const& slfData) {
 			if (created) return false;
-			String dir = slfData[0];
+			String dir = slfData.folder;
+			String shaderPath = "";
 			String log = "";
 			String code;
 			GLuint type;
-			if (shaderTypes.find(slfData[1]) == shaderTypes.end()) {
-				for (size_t i = 1; i < slfData.size(); i += 2) {
-					code = getTextFile(dir + slfData[i]);
-					type = shaderTypeId(slfData[i+1]);
-					try {
-						attach(code, type);
-					} catch (Error::Error const& err) {
-						log += String("\n[[ Error on shader '") + dir + slfData[i] + "' ]]:\n";
-						log += err.what();
-					}
-				}
-			} else {
-				type = shaderTypeId(slfData[1]);
-				for (size_t i = 2; i < slfData.size(); i++) {
-					code = getTextFile(dir + slfData[i]);
-					try {
-						attach(code, type);
-					} catch (Error::Error const& err) {
-						log += String("\n[[ Error on shader '") + dir + slfData[i] + "' ]]:\n";
-						log += err.what();
-					}
+			for (SLF::ShaderEntry const& shader: slfData.shaders) {
+				shaderPath = FileSystem::concatenatePath(dir, shader.path);
+				DEBUGLN(shaderPath);
+				code = getTextFile(shaderPath);
+				type = getGLShaderType(shader.type);
+				try {
+					attach(code, type);
+				} catch (Error::Error const& err) {
+					log += String("\n[[ Error on shader '") + shaderPath + "'! ]]:\n";
+					log += err.what();
 				}
 			}
-			if (log != "") {
+			if (!log.empty())
 				throw Error::FailedAction(log);
-			}
 			created = true;
 			return true;
 		}
 
 		/// Creates a shader from a given shader code, and a shader type  and associates it to the object. Returns false if already created.
-		bool create(String code, GLuint shaderType) {
+		bool create(String const& code, GLuint const& shaderType) {
 			if (created) return false;
 			else created = true;
 			// Compile shaders
@@ -403,23 +397,23 @@ namespace Shader {
 			glGetProgramiv(instance->id, GL_LINK_STATUS, &success);
 			if (!success) {
 				glGetProgramInfoLog(instance->id, 2048, NULL, infoLog);
-				throw Error::FailedAction(String("Could not link shader program!\n") + infoLog  + infoLog + "\n\n\n Program:" + code);
+				throw Error::FailedAction(String("Could not link shader program!\n") + infoLog + "\n\n\n Program:" + code);
 			}
 			glDeleteShader(shader);
 			return true;
 		}
 
-		void make(String vertexCode, String fragmentCode) {
+		void make(String const& vertexCode, String const& fragmentCode) {
 			destroy();
 			create(vertexCode, fragmentCode);
 		}
 
-		void make(CSVData slfData) {
+		void make(SLF::SLFData const& slfData) {
 			destroy();
 			create(slfData);
 		}
 
-		void make(String code, GLuint shaderType) {
+		void make(String const& code, GLuint const& shaderType) {
 			destroy();
 			create(code, shaderType);
 		}
@@ -446,7 +440,7 @@ namespace Shader {
 		* The way to set uniforms.
 		* Done like this: SHADER.uniform(UNIFORM_NAME)(UNIFORM_VALUE);
 		*/
-		Uniform uniform(const String& name) {
+		Uniform uniform(String const& name) {
 			glUseProgram(instance->id);
 			Uniform su(name, instance->id);
 			return su;
@@ -456,7 +450,7 @@ namespace Shader {
 		* The way to set uniforms.
 		* Done like this: SHADER[UNIFORM_NAME](UNIFORM_VALUE);
 		*/
-		Uniform operator[](const String& name) {
+		Uniform operator[](String const& name) {
 			return uniform(name);
 		}
 

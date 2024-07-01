@@ -314,7 +314,7 @@ namespace Helper {
 			return StringPair(str, "");
 		return StringPair(
 			str.substr(0, pos),
-			str.substr(pos)
+			str.substr(pos + 1)
 		);
 	}
 
@@ -334,7 +334,7 @@ namespace Helper {
 			return StringPair("", str);
 		return StringPair(
 			str.substr(0, pos),
-			str.substr(pos)
+			str.substr(pos + 1)
 		);
 	}
 
@@ -677,7 +677,8 @@ namespace FileSystem {
 
 	namespace {
 		constexpr String getPathDirectory(String const& s) {
-			return s.empty() ? "/" + s : "";
+			if (s.empty()) return "";
+			return (s[0] == '/' ? "" : "/") + s;
 		}
 	}
 
@@ -687,7 +688,15 @@ namespace FileSystem {
 	}
 
 	inline String getFileName(String const& path, bool removeExtension = false) {
+		/*String result = splitStringAtLast(path, {'\\', '/'}).second;
+		if (removeExtension)
+			return splitStringAtLast(result, '.').first;
+		return result;*/
 		return toString(removeExtension ? fs::path(path).stem() : fs::path(path).filename());
+	}
+
+	constexpr String getFileExtension(String const& path) {
+		return splitStringAtLast(path, '.').second;
 	}
 
 	constexpr String getParentDirectory(String const& path) {
