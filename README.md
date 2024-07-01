@@ -15,7 +15,7 @@
 
 ## Overview
 
-This is (currently) a header-only C++20 bullet hell engine, that utilizes SDL as a rendering and audio backend.
+This is (currently) a header-only C++20 bullet hell engine, that utilizes SDL2 as a rendering and audio backend.
 
 Currently in active development.
 
@@ -88,7 +88,7 @@ These are already included in the ```lib/``` folder.
 
 | Name       | Purpose                                             |
 |:----------:|-----------------------------------------------------|
-| SDL        | Window & Input handling                             |
+| SDL2       | Window & Input handling                             |
 | OpenGL     | Graphics backend                                    |
 | SDL2_Mixer | Audio backend                                       |
 | stb_image  | Image loading                                       |
