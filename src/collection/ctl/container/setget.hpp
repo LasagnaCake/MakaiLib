@@ -31,8 +31,8 @@ private:
 public:
 	typedef Function<DataType()> GetterFunction;
 
-	constexpr Setter(GetterFunction&& func):		getter(move(func))	{}
-	constexpr Setter(GetterFunction const& func):	getter(func)		{}
+	constexpr Getter(GetterFunction&& func):		getter(move(func))	{}
+	constexpr Getter(GetterFunction const& func):	getter(func)		{}
 	constexpr Getter(SelfType&& other):				Getter(other.func)	{}
 	constexpr Getter(SelfType const& other):		Getter(other.func)	{}
 
@@ -58,7 +58,8 @@ public:
 	constexpr SetGet(SelfType&& other):										SetGet(move(other.setter), move(other.getter))	{}
 	constexpr SetGet(SelfType const& other):								SetGet(other.setter, other.getter)				{}
 
-	constexpr SelfType& operator=(DataType const& value) {set(value); return *this;}
+	constexpr SelfType& set(DataType const& value)			{Setter::set(value); return *this;	}
+	constexpr SelfType& operator=(DataType const& value)	{set(value); return *this;			}
 };
 
 #endif // CTL_CONTAINER_SETGET_H
