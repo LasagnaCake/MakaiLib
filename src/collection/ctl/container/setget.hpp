@@ -47,7 +47,7 @@ template<typename TData>
 struct SetGet:
 	Setter<TData>,
 	Getter<TData>,
-	SelfIdentified<SetGet<TData, setter, getter>>,
+	SelfIdentified<SetGet<TData>>,
 	Typed<TData> {
 private:
 public:
