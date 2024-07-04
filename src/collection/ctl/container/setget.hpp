@@ -3,52 +3,60 @@
 
 #include "function.hpp"
 
-template<typename TData, template<typename TData> Function<void(TData&, TData)> setter>
+template<typename TData>
 struct Setter:
-	SelfIdentified<Setter<TData, setter>>,
+	SelfIdentified<Setter<TData>>,
 	Typed<TData> {
 private:
-	DataType& data;
 public:
-	constexpr Setter(DataType& var):	data(var)			{}
-	constexpr Setter(SelfType&& other):	Setter(other.data)	{}
+	typedef Function<void(DataType)>  SetterFunction;
 
-	constexpr static Function<void(TData&, TData)> setterFunction = setter;
+	constexpr Setter(SetterFunction&& func):		setter(move(func))	{}
+	constexpr Setter(SetterFunction const& func):	setter(func)		{}
+	constexpr Setter(SelfType&& func):				Setter(other.func)	{}
+	constexpr Setter(SelfType const& func):			Setter(other.func)	{}
 
-	constexpr SelfType& set(DataType const& value)			{setter(data, value); return *this;	}
-	constexpr SelfType& operator=(DataType const& value)	{return set(value);					}
+	constexpr SelfType& set(DataType const& value)			{setter(value); return *this;	}
+	constexpr SelfType& operator=(DataType const& value)	{return set(value);				}
+
+private:
+	SetterFunction const setter;
 };
 
-template<typename TData, template<typename TData> Function<TData(TData&)> getter>
+template<typename TData>
 struct Getter:
-	SelfIdentified<Getter<TData, getter>>,
+	SelfIdentified<Getter<TData>>,
 	Typed<TData> {
 private:
-	DataType& data;
 public:
-	constexpr Getter(DataType& var):	data(var)			{}
-	constexpr Getter(SelfType&& other):	Getter(other.data)	{}
+	typedef Function<DataType()> GetterFunction;
 
-	constexpr static Function<TData(TData&)> getterFunction = getter;
+	constexpr Setter(GetterFunction&& func):		getter(move(func))	{}
+	constexpr Setter(GetterFunction const& func):	getter(func)		{}
+	constexpr Getter(SelfType&& other):				Getter(other.func)	{}
+	constexpr Getter(SelfType const& other):		Getter(other.func)	{}
 
 	constexpr DataType operator DataType() const {return getter(value);	}
 	constexpr DataType operator DataType() const {return get(value);	}
+
+private:
+	GetterFunction const getter;
 };
 
-template<
-	typename TData,
-	template<typename TData> Function<void(TData&, TData)>	setter,
-	template<typename TData> Function<TData(TData&)>		getter
->
+template<typename TData>
 struct SetGet:
-	SelfIdentified<SetGet<TData, setter, getter>>,
-	Typed<TData>,
 	Setter<TData, setter>,
-	Getter<TData, getter> {
+	Getter<TData, getter>,
+	SelfIdentified<SetGet<TData, setter, getter>>,
+	Typed<TData> {
 private:
 public:
-	constexpr SetGet(DataType& var):	Setter(var), Getter(var)	{}
-	constexpr SetGet(SelfType&& other):	SetGet(other.data)			{}
+	constexpr SetGet(SetterFunction&& set, GetterFunction&& get):			Setter(move(set)), Getter(move(get))			{}
+	constexpr SetGet(SetterFunction&& set, GetterFunction const& get):		Setter(move(set)), Getter(get)					{}
+	constexpr SetGet(SetterFunction	const& set, GetterFunction&& get):		Setter(set), Getter(move(get))					{}
+	constexpr SetGet(SetterFunction const& set, GetterFunction const& get):	Setter(set), Getter(get)						{}
+	constexpr SetGet(SelfType&& other):										SetGet(move(other.setter), move(other.getter))	{}
+	constexpr SetGet(SelfType const& other):								SetGet(other.setter, other.getter)				{}
 
 	constexpr SelfType& operator=(DataType const& value) {set(value); return *this;}
 };
