@@ -1,7 +1,8 @@
 #ifndef CTL_TYPETRAITS_DECAY_H
 #define CTL_TYPETRAITS_DECAY_H
 
-#include "traits.hpp"
+#include "converter.hpp"
+#include "basictraits.hpp"
 
 namespace Decay {
 	template<class T>

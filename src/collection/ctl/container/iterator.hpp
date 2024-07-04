@@ -5,17 +5,18 @@
 #include "../ctypes.hpp"
 #include "../../conceptual.hpp"
 #include "../templates.hpp"
+#include "../typetraits/traits.hpp"
 
 template<class TData, bool REVERSE = false, Type::Integer TIndex = size_t>
 struct Iterator: Typed<TData>, Indexed<TData>, Ordered, SelfIdentified<TData, REVERSE, TIndex> {
 public:
 	constexpr Iterator() {}
 
-	constexpr Iterator(PointerType const& value): iterand(value)		{}
-	constexpr Iterator(PointerType&& value): iterand(std::move(value))	{}
+	constexpr Iterator(PointerType const& value): iterand(value)	{}
+	constexpr Iterator(PointerType&& value): iterand(move(value))	{}
 
-	constexpr Iterator(Iterator const& other): iterand(other.iterand)		{}
-	constexpr Iterator(Iterator&& other): iterand(std::move(other.iterand))	{}
+	constexpr Iterator(Iterator const& other): iterand(other.iterand)	{}
+	constexpr Iterator(Iterator&& other): iterand(move(other.iterand))	{}
 
 	constexpr ReferenceType operator*()	{return *iterand;	}
 	constexpr PointerType operator->()	{return iterand;	}

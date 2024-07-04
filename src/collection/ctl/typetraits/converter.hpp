@@ -119,4 +119,7 @@ template<class T> using AsReturn = typename ReturnType<T>::Type;
 
 template<typename T> AsTemporary<T> declval();
 
+template<typename T> constexpr AsTemporary<T>		forward(AsNonReference<T>&& v)	{return static_cast<T&&>(v);					}
+template<typename T> constexpr AsNonReference<T>&&	move(T&& v)						{return static_cast<AsNonReference<T>&&>(v);	}
+
 #endif // CTL_TYPETRAITS_CONVERTER_H

@@ -9,6 +9,7 @@
 #include "../algorithm/sort.hpp"
 #include "../algorithm/reverse.hpp"
 #include "../algorithm/memory.hpp"
+#include "../typetraits/traits.hpp"
 
 template<class TData, Type::Integer TIndex = size_t>
 struct List:
@@ -48,11 +49,11 @@ public:
 	}
 
 	constexpr List(SelfType&& other) {
-		maximum		= std::move(other.maximum);
-		data		= std::move(other.data);
-		count		= std::move(other.count);
-		magnitude	= std::move(other.magnitude);
-		other.data = nullptr;
+		maximum		= move(other.maximum);
+		data		= move(other.data);
+		count		= move(other.count);
+		magnitude	= move(other.magnitude);
+		other.data	= nullptr;
 	}
 
 	constexpr List(IteratorType const& begin, IteratorType const& end) {
@@ -290,7 +291,7 @@ public:
 	constexpr SelfType& clear() {count = 0;}
 
 	constexpr SelfType& dispose() {
-		delete[] data;
+		if (data) delete[] data;
 		count = 0;
 		data = nullptr;
 		recalculateMagnitude();
@@ -571,11 +572,11 @@ public:
 	public:
 		constexpr NodeIterator() {}
 
-		constexpr NodeIterator(PointerType const& value): node(value)		{}
-		constexpr NodeIterator(PointerType&& value): node(std::move(value))	{}
+		constexpr NodeIterator(PointerType const& value): node(value)	{}
+		constexpr NodeIterator(PointerType&& value): node(move(value))	{}
 
-		constexpr NodeIterator(NodeIterator const& other): node(other.node)			{}
-		constexpr NodeIterator(NodeIterator&& other): node(std::move(other.node))	{}
+		constexpr NodeIterator(NodeIterator const& other): node(other.node)		{}
+		constexpr NodeIterator(NodeIterator&& other): node(move(other.node))	{}
 
 		constexpr ReferenceType operator*()	{return node->data;		}
 		constexpr PointerType operator->()	{return &node->data;	}

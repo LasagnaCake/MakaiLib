@@ -99,4 +99,20 @@ struct Defaultable {
 	constexpr T defaultValue() {return V;}
 };
 
+template<class TReturn>
+struct Returnable {
+	typedef Typed<TReturn>	Return;
+	typedef TReturn			ReturnType;
+};
+
+template<class... Types>
+struct Argumented {
+	typedef PackInfo<Types...>	ArgumentTypes;
+};
+
+template<class TReturn, class... TArguments>
+struct Functional {
+	typedef TReturn(TArguments...) FunctionType;
+};
+
 #endif // CTL_CLASS_TEMPLATES_H
