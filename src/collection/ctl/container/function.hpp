@@ -57,8 +57,23 @@ private:
 		return new Impl::Function(f);
 	}
 
+	constexpr void destroy() {
+		if (func) delete func;
+		func = nullptr;
+	}
+
+	[[noreturn]] void badCallError() {
+		throw Error::InvalidAction(
+			"No function was assigned!",
+			__FILE__,
+			"unspecified",
+			"Function::invoke"
+		);
+	}
+
 public:
 	constexpr ReturnType invoke(TArgs... args) const {
+		if (!func) badCallError();
         return func->invoke(forward<TArgs>(args)...);
     }
 
@@ -68,40 +83,20 @@ public:
 
     constexpr ~Function() {destroy();}
 
-	constexpr SelfType& destroy() {
-		if (func) delete func;
-		func = nullptr;
-		return *this;
-	}
-
 	template<typename TFunction>
-	constexpr SelfType& create(TFunction&& f)		{if (!func) func = makeCallable(f); return *this;					}
-	template<typename TFunction>
-	constexpr SelfType& create(TFunction const& f)	{if (!func) func = makeCallable(f); return *this;					}
-	constexpr SelfType& create(SelfType&& f)		{if (!func) {func = move(f.func); f.func = nullptr;} return *this;	}
-	constexpr SelfType& create(SelfType const& f)	{return create(f.func->func);										}
-
-	template<typename TFunction>
-	constexpr SelfType& make(TFunction&& f)			{destroy(); return create(f);	}
-	template<typename TFunction>
-	constexpr SelfType& make(TFunction const& f)	{destroy(); return create(f);	}
-	constexpr SelfType& make(SelfType&& f)			{destroy(); return create(f);	}
-	constexpr SelfType& make(SelfType const& f)		{destroy(); return create(f);	}
-
-	template<typename TFunction>
-    constexpr SelfType& operator=(TFunction&& f)		{make(f);	}
+    constexpr SelfType& operator=(TFunction&& f)		{destroy(); func = makeCallable(f); return *this;					}
     template<typename TFunction>
-    constexpr SelfType& operator=(TFunction const& f)	{make(f);	}
-    constexpr SelfType& operator=(SelfType&& f)			{make(f);	}
-    constexpr SelfType& operator=(SelfType const& f)	{make(f);	}
+    constexpr SelfType& operator=(TFunction const& f)	{destroy(); func = makeCallable(f); return *this;					}
+    constexpr SelfType& operator=(SelfType&& f)			{destroy(); func = move(f.func); f.func = nullptr; return *this;	}
+    constexpr SelfType& operator=(SelfType const& f)	{destroy(); return operator=(f.func->func);							}
 
 
     template<typename TFunction>
-    constexpr Function(TFunction&& f)		{create(f);	}
+    constexpr Function(TFunction&& f)		{operator=(f);	}
     template<typename TFunction>
-    constexpr Function(TFunction const& f)	{create(f);	}
-    constexpr Function(SelfType&& f)		{create(f);	}
-    constexpr Function(SelfType const& f)	{create(f);	}
+    constexpr Function(TFunction const& f)	{operator=(f);	}
+    constexpr Function(SelfType&& f)		{operator=(f);	}
+    constexpr Function(SelfType const& f)	{operator=(f);	}
 };
 
 template<typename T> class Functor;
@@ -122,14 +117,14 @@ public:
 	constexpr Functor(WrapperType const& f): func(f), id(++count)			{}
 	constexpr Functor(Functor const& other): func(other.func), id(other.id)	{}
 
-	constexpr Functor& operator=(WrapperType const& f)	{func = f; id = ++count; return *this;				}
-	constexpr Functor& operator=(Functor const& other)	{func = other.func; id = other.id; return *this;	}
+	constexpr SelfType& operator=(WrapperType const& f)		{func = f; id = ++count; return *this;				}
+	constexpr SelfType& operator=(SelfType const& other)	{func = other.func; id = other.id; return *this;	}
 
-	constexpr Nullable<ReturnType> evoke(Args... args) const requires Type::Different<F, void>		{if (id) return func(args...); return nullptr;	}
-	constexpr Nullable<ReturnType> operator()(Args... args) const requires Type::Different<F, void>	{return evoke(args...);							}
+	constexpr Nullable<ReturnType> evoke(TArgs... args) const requires Type::Different<F, void>			{if (id) return func(args...); return nullptr;	}
+	constexpr Nullable<ReturnType> operator()(TArgs... args) const requires Type::Different<F, void>	{return evoke(args...);							}
 
-	constexpr void evoke(Args... args) const requires Type::Equal<F, void>					{if (id) func(args...);	}
-	constexpr void operator()(Args... args) const requires Type::Equal<F, void>				{evoke(args...);		}
+	constexpr void evoke(TArgs... args) const requires Type::Equal<F, void>			{if (id) func(args...);	}
+	constexpr void operator()(TArgs... args) const requires Type::Equal<F, void>	{evoke(args...);		}
 
 	constexpr operator bool() const {return id;}
 
