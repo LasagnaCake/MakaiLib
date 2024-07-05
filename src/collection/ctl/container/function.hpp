@@ -66,7 +66,7 @@ public:
         return invoke(forward<TArgs>(args)...);
     }
 
-    constexpr ~Function() {}
+    constexpr ~Function() {destroy();}
 
 	constexpr SelfType& destroy() {
 		if (func) delete func;
@@ -75,7 +75,7 @@ public:
 	}
 
 	template<typename TFunction>
-	constexpr SelfType& create(TFunction&& f)		{if (!func) func = makeCallable(f); return *this;					}
+	constexpr SelfType& create(TFunction&& f)		{if (!func) func = makeCallable(f); return *this;				}
 	template<typename TFunction>
 	constexpr SelfType& create(TFunction const& f)	{if (!func) func = makeCallable(f); return *this;				}
 	constexpr SelfType& create(SelfType&& f)		{return func = move(f.func); f.func = nullptr;	return *this;	}
