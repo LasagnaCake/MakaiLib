@@ -15,6 +15,8 @@ namespace Decay {
             AsNonCV<AsNonReference<T>>
         >
     >;
+
+	template<class T> using AsType = T;
 };
 
 #endif // CTL_TYPETRAITS_DECAY_H
