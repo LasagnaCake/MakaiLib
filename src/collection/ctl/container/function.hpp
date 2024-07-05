@@ -1,9 +1,6 @@
 #ifndef CTL_CONTAINER_FUNCTION_H
 #define CTL_CONTAINER_FUNCTION_H
 
-// TODO: function
-
-#include <function>
 #include "../templates.hpp"
 #include "../typetraits/traits.hpp"
 #include "nullable.hpp"
@@ -61,7 +58,6 @@ private:
 	}
 
 public:
-
 	constexpr ReturnType invoke(TArgs... args) const {
         return func->invoke(forward<TArgs>(args)...);
     }
@@ -142,8 +138,9 @@ public:
 	constexpr Helper::PartialOrder operator<=>(Functor const& other) const {return id <=> other.id;}
 
 private:
-	size_t			id = 0;
-	inline static size_t count = 0;
+	WrapperType				func;
+	size_t					id		= 0;
+	inline static size_t	count	= 0;
 };
 
 #endif // CTL_CONTAINER_FUNCTION_H

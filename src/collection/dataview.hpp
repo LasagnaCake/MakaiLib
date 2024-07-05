@@ -192,6 +192,7 @@ namespace View {
 
 	template<typename TData, typename TError>
 	class Result {
+	public:
 		typedef TData	DataType;
 		typedef TError	ErrorType;
 

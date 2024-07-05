@@ -25,11 +25,6 @@ struct Typed {
 	typedef const DataType*					ConstPointerType;
 };
 
-template<class TError>
-struct Exceptionable {
-	typedef TError ErrorType;
-};
-
 template<class TKey>
 struct Keyed {
 	typedef Typed<TKey>	Key;
@@ -113,6 +108,11 @@ struct Argumented {
 template<class TReturn, class... TArguments>
 struct Functional {
 	typedef TReturn(TArguments...) FunctionType;
+};
+
+template<class... Types>
+struct Throwable {
+	typedef PackInfo<Types...>  Errors;
 };
 
 #endif // CTL_CLASS_TEMPLATES_H

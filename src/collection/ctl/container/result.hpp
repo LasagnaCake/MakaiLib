@@ -10,8 +10,10 @@ template<typename TData, typename TError>
 class Result:
 public SelfIdentitied<Result<TData, TError>>,
 public Typed<TData>,
-public Exceptionable<TError>,
 public Defaultable<TData, TData()> {
+public:
+	typedef TError  ErrorType;
+
 	constexpr Result(SelfType const& other)		{result = other.result; state = other.state;				}
 	constexpr Result(SelfType&& other) 			{result = move(other.result); state = move(other.state);	}
 	constexpr Result(DataType const& value)		{result.value = value; state = ResultState::RS_OK;			}

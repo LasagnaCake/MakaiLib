@@ -3,7 +3,7 @@
 
 #include "list.hpp"
 #include "../templates.hpp"
-#include "../conceptual.hpp"
+#include "../typetraits/traits.hpp"
 #include "../algorithm/hash.hpp"
 #include "pair.hpp"
 

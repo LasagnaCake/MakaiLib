@@ -231,7 +231,7 @@ public:
 		count--;
 	}
 
-	constexpr SelfType& removeIf(View::Functor<bool(DataType const&)> const& predicate) {
+	constexpr SelfType& removeIf(Functor<bool(DataType const&)> const& predicate) {
 		auto const start = begin();
 		for(auto i = begin(); i != end(); ++i) {
 			if (predicate(*i))
@@ -240,7 +240,7 @@ public:
 		return *this;
 	}
 
-	constexpr SelfType& eraseIf(View::Functor<bool(DataType const&)> const& predicate) {
+	constexpr SelfType& eraseIf(Functor<bool(DataType const&)> const& predicate) {
 		SizeType removed = 0;
 		auto const start = begin();
 		for(auto i = begin(); i != end(); ++i) {
