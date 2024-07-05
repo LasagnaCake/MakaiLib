@@ -75,11 +75,11 @@ public:
 	}
 
 	template<typename TFunction>
-	constexpr SelfType& create(TFunction&& f)		{if (!func) func = makeCallable(f); return *this;				}
+	constexpr SelfType& create(TFunction&& f)		{if (!func) func = makeCallable(f); return *this;					}
 	template<typename TFunction>
-	constexpr SelfType& create(TFunction const& f)	{if (!func) func = makeCallable(f); return *this;				}
-	constexpr SelfType& create(SelfType&& f)		{return func = move(f.func); f.func = nullptr;	return *this;	}
-	constexpr SelfType& create(SelfType const& f)	{return create(f.func->func);									}
+	constexpr SelfType& create(TFunction const& f)	{if (!func) func = makeCallable(f); return *this;					}
+	constexpr SelfType& create(SelfType&& f)		{if (!func) {func = move(f.func); f.func = nullptr;} return *this;	}
+	constexpr SelfType& create(SelfType const& f)	{return create(f.func->func);										}
 
 	template<typename TFunction>
 	constexpr SelfType& make(TFunction&& f)			{destroy(); return create(f);	}
