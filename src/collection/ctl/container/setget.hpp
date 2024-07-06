@@ -19,8 +19,9 @@ public:
 	constexpr SelfType& set(DataType const& value)			{setter(value); return *this;	}
 	constexpr SelfType& operator=(DataType const& value)	{return set(value);				}
 
-private:
+protected:
 	SetterFunction const setter;
+private:
 };
 
 template<typename TData>
@@ -39,8 +40,9 @@ public:
 	constexpr DataType operator DataType() const {return getter(value);	}
 	constexpr DataType operator DataType() const {return get(value);	}
 
-private:
+protected:
 	GetterFunction const getter;
+private:
 };
 
 template<typename TData>
