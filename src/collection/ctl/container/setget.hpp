@@ -59,7 +59,7 @@ public:
 	constexpr SetGet(SelfType const& other):								SetGet(other.setter, other.getter)				{}
 
 	constexpr SelfType& set(DataType const& value)			{Setter::set(value); return *this;	}
-	constexpr SelfType& operator=(DataType const& value)	{set(value); return *this;			}
+	constexpr SelfType& operator=(DataType const& value)	{return set(value);					}
 };
 
 #endif // CTL_CONTAINER_SETGET_H
