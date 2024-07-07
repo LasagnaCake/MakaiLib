@@ -40,8 +40,8 @@ namespace Drawer {
 			height	= 0
 		;
 		Texture2D
-			*screen	= nullptr,
-			*depth	= nullptr
+			screen,
+			depth
 		;
 	};
 
