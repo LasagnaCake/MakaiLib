@@ -827,7 +827,8 @@ public:
 		return image.exists() && image->exists();
 	}
 
-	inline Texture2D* operator->() {return this;}
+	inline Texture2D* operator->()	{return this;	}
+	inline Texture2D& operator*()	{return *this;	}
 
 	inline operator bool() const {return exists();}
 
