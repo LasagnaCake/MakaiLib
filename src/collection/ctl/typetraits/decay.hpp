@@ -17,6 +17,8 @@ namespace Decay {
     >;
 
 	template<class T> using AsType = T;
+
+    template<class... Types> struct Pack {};
 };
 
 #endif // CTL_TYPETRAITS_DECAY_H
