@@ -344,6 +344,7 @@ namespace ArcSys {
 		uint16	compression		= (uint16)CompressionMethod::ACM_ZIP;
 		uint8	level			= 9;
 		uint64	flags			= 0;
+		uint8	block[16]		= {0};
 		// Put new things BELOW this line
 	};
 
@@ -365,11 +366,7 @@ namespace ArcSys {
 			EncryptionMethod const& enc = EncryptionMethod::AEM_AES256,
 			CompressionMethod const& comp = CompressionMethod::ACM_ZIP,
 			uint8 const& complvl = 9
-	#ifdef ARCSYS_APPLICATION_
 	) try {
-	#else
-	) {
-	#endif // ARCSYS_APPLICATION_
 		// Hash the password
 		String passhash = hashPassword(password);
 		_ARCDEBUGLN("FOLDER: ", folderPath, "\nARCHIVE: ", archivePath);
@@ -383,8 +380,6 @@ namespace ArcSys {
 		// Populate with temporary values
 		List<uint64> locations(files.size(), 0);
 		populateTree(tree, locations);
-		// Get directory information
-		String dirInfo = dir.dump(-1, ' ', false, JSON::error_handler_t::replace);
 		// Open file
 		std::ofstream file(archivePath, std::ios::binary | std::ios::trunc);
 		file.exceptions(std::ofstream::badbit | std::ofstream::failbit);
@@ -392,8 +387,14 @@ namespace ArcSys {
 		_ARCDEBUGLN("Creating header...\n");
 		// Header
 		ArchiveHeader header;
+		// Generate header block
+		generateBlock(header.block);
+		// Get directory info mockup
+		String dirInfo = dir.dump(-1, ' ', false, JSON::error_handler_t::replace);
+		BinaryData edi = BinaryData(dirInfo.size(), 0);
+		edi = encrypt(edi, passhash, enc, header.block);
 		// Set main header params
-		header.dirInfoSize	= dirInfo.length();		// directory info size
+		header.dirInfoSize	= edi.size();			// directory info size
 		header.version		= ARCHIVE_VERSION;		// file format version
 		header.minVersion	= ARCHIVE_MIN_VERSION;	// file format minimum version
 		header.encryption	= (uint16)enc;			// encryption mode
@@ -410,11 +411,15 @@ namespace ArcSys {
 		_ARCDEBUGLN("         ENCRYPTION MODE: ", (uint64)header.encryption				);
 		_ARCDEBUGLN("        COMPRESSION MODE: ", (uint64)header.compression			);
 		_ARCDEBUGLN("       COMPRESSION LEVEL: ", (uint64)header.level					);
+		_ARCDEBUGLN("\nDirectory structure layout:");
+		_ARCDEBUGLN("       FILE COUNT: ", files.size()			);
+		_ARCDEBUGLN(" UNENCRYPTED SIZE: ", dirInfo.size(),	"B"	);
+		_ARCDEBUGLN("   ENCRYPTED SIZE: ", edi.size(),		"B"	);
 		// Write header
 		file.write((char*)&header, header.headerSize);
-		// Write temp dir info
+		// Write mock dir info
 		file.seekp(header.headerSize);
-		file.write(dirInfo.data(), dirInfo.size());
+		file.write((char*)edi.data(), edi.size());
 		// Write file info
 		_ARCDEBUGLN("\nWriting files...\n");
 		for (auto const& [i, f]: Helper::enumerate(files)) {
@@ -447,11 +452,11 @@ namespace ArcSys {
 			fheader.crc			= calculateCRC(contents);	// CRC
 			// Debug info
 			_ARCDEBUGLN("'", files[i], "':");
-			_ARCDEBUGLN("          FILE INDEX: ", i					);
+			_ARCDEBUGLN("          FILE INDEX: ", i						);
 			_ARCDEBUGLN("       FILE LOCATION: ", locations[i]		, " (", encoded(locations[i]), ")");
 			_ARCDEBUGLN("   UNCOMPRESSED SIZE: ", fheader.uncSize,	"B"	);
 			_ARCDEBUGLN("     COMPRESSED SIZE: ", fheader.compSize,	"B"	);
-			_ARCDEBUGLN("               CRC32: ", fheader.crc		);
+			_ARCDEBUGLN("               CRC32: ", fheader.crc,		"\n"	);
 			// Copy header & file data
 			file.write((char*)&fheader, header.fileHeaderSize);
 			file.write((char*)contents.data(), contents.size());
@@ -459,10 +464,14 @@ namespace ArcSys {
 		// Return & write proper directory info
 		_ARCDEBUGLN("\nWriting directory info...\n");
 		populateTree(tree, locations);
-		_ARCDEBUGLN("\n", dir.dump(2, ' ', false, JSON::error_handler_t::replace), "\n");
 		dirInfo = dir.dump(-1, ' ', false, JSON::error_handler_t::replace);
+		_ARCDEBUGLN(" UNENCRYPTED SIZE: ", dirInfo.size(),	"B"	);
+		_ARCDEBUGLN("   ENCRYPTED SIZE: ", edi.size(),		"B"	);
+		_ARCDEBUGLN("\n", dir.dump(2, ' ', false, JSON::error_handler_t::replace), "\n");
+		edi = BinaryData(dirInfo.begin(), dirInfo.end());
+		edi = encrypt(edi, passhash, enc, header.block);
 		file.seekp(header.headerSize);
-		file.write(dirInfo.data(), dirInfo.size());
+		file.write((char*)edi.data(), edi.size());
 		// Close file
 		file.flush();
 		file.close();
@@ -477,6 +486,8 @@ namespace ArcSys {
 		_ARCEXIT;
 	}
 	#else
+	} catch (std::runtime_error const& e) {
+		throw FileLoader::FileLoadError(e.what(), __FILE__, toString(__LINE__), "ArcSys::pack");
 	}
 	#endif // ARCSYS_APPLICATION_
 
@@ -517,9 +528,27 @@ namespace ArcSys {
 			if (!header.dirInfoSize)
 				directoryTreeError();
 			// Read file info
-			String fs(header.dirInfoSize, ' ');
-			archive.read(fs.data(), fs.size());
-			archive.seekg(0);
+			String fs;
+			switch (header.minVersion) {
+			default:
+			case 0:
+				fs = String(header.dirInfoSize, ' ');
+				archive.read(fs.data(), fs.size());
+				archive.seekg(0);
+				break;
+			case 1:
+				BinaryData pfs(header.dirInfoSize, 0);
+				archive.read((char*)pfs.data(), pfs.size());
+				archive.seekg(0);
+				pfs = decrypt(
+					pfs,
+					password,
+					(EncryptionMethod)header.encryption,
+					header.block
+				);
+				fs = String(pfs.begin(), pfs.end());
+				break;
+			}
 			try {
 				fstruct = JSON::parse(fs);
 			} catch (JSON::exception const& e) {
@@ -791,11 +820,7 @@ namespace ArcSys {
 		String const& archivePath,
 		String const folderPath,
 		String const& password = ""
-	#ifdef ARCSYS_APPLICATION_
 	) try {
-	#else
-	) {
-	#endif // ARCSYS_APPLICATION_
 		_ARCDEBUGLN("\nOpening archive...\n");
 		FileArchive arc(archivePath, hashPassword(password));
 		_ARCDEBUGLN("\nExtracting data...\n");
@@ -809,6 +834,8 @@ namespace ArcSys {
 		_ARCEXIT;
 	}
 	#else
+	} catch (std::runtime_error const& e) {
+		throw FileLoader::FileLoadError(e.what(), __FILE__, toString(__LINE__), "ArcSys::unpackV1");
 	}
 	#endif // ARCSYS_APPLICATION_
 
@@ -816,11 +843,7 @@ namespace ArcSys {
 		String const& archivePath,
 		String const folderPath,
 		String const& password = ""
-	#ifdef ARCSYS_APPLICATION_
 	) try {
-	#else
-	) {
-	#endif // ARCSYS_APPLICATION_
 		_ARCDEBUGLN("\nOpening archive...\n");
 		FileArchive arc(archivePath, password);
 		_ARCDEBUGLN("\nExtracting data...\n");
@@ -834,6 +857,8 @@ namespace ArcSys {
 		_ARCEXIT;
 	}
 	#else
+	} catch (std::runtime_error const& e) {
+		throw FileLoader::FileLoadError(e.what(), __FILE__, toString(__LINE__), "ArcSys::unpackV0");
 	}
 	#endif // ARCSYS_APPLICATION_
 
@@ -841,11 +866,7 @@ namespace ArcSys {
 		String const& archivePath,
 		String const folderPath,
 		String const& password = ""
-	#ifdef ARCSYS_APPLICATION_
 	) try {
-	#else
-	) {
-	#endif // ARCSYS_APPLICATION_
 		uint64 mv;
 		{
 			FileArchive arc(archivePath, "");
@@ -871,6 +892,8 @@ namespace ArcSys {
 		_ARCEXIT;
 	}
 	#else
+	} catch (std::runtime_error const& e) {
+		throw FileLoader::FileLoadError(e.what(), __FILE__, toString(__LINE__), "ArcSys::unpack");
 	}
 	#endif // ARCSYS_APPLICATION_
 
