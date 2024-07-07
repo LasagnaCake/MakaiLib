@@ -30,10 +30,10 @@ template<typename T> struct Function;
 template<typename TReturn, typename... TArgs>
 class Function<TReturn(TArgs...)>:
 	Typed<TReturn>,
-	SelfIdentified<Function<TReturn, TArgs..>>,
+	SelfIdentified<Function<TReturn, TArgs...>>,
 	Returnable<TReturn>,
 	Argumented<TArgs...>,
-	Functional<TReturn, TArgs...> {
+	Functional<TReturn(TArgs...)> {
 private:
 	Impl::Partial::Function<ReturnType, TArgs...>* func{nullptr};
 
@@ -104,10 +104,10 @@ template<typename T> class Functor;
 template<typename TReturn, typename... TArgs>
 class Functor<TReturn(TArgs...)>:
 	Typed<TReturn>,
-	SelfIdentified<Functor<TReturn, TArgs..>>,
+	SelfIdentified<Functor<TReturn, TArgs...>>,
 	Returnable<TReturn>,
 	Argumented<TArgs...>,
-	Functional<TReturn, TArgs...> {
+	Functional<TReturn(TArgs...)> {
 private:
 public:
 	typedef Function<FunctionType>	WrapperType;
