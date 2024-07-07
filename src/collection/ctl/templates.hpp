@@ -66,13 +66,13 @@ using FirstType = typename NthInPack<0, Types...>::Type;
 template<typename... Types>
 using LastType = typename NthInPack<sizeof...(Types)-1, Types...>::Type;
 
-template<class... Bases>
-struct PackInfo {
-	template<usize N> using	Types = NthType<N, Bases...>;
-	typedef FirstType<Bases...>	FirstType;
-	typedef LastType<Bases...>	LastType;
+template<class... T>
+struct PackInfo: Decay::Pack<T...> {
+	template<usize N> using	Types = NthType<N, T...>;
+	typedef FirstType<T...>	FirstType;
+	typedef LastType<T...>	LastType;
 
-	constexpr static usize COUNT = sizeof...(Bases);
+	constexpr static usize COUNT = sizeof...(T);
 };
 
 template<class... BaseTypes>
