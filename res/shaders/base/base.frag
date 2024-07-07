@@ -128,7 +128,7 @@ vec3 calculateLights(vec3 position, vec3 normal) {
 	vec3 result = ambient.color * ambient.strength;
 	// TODO: figure out if this actually works
 	#ifdef IMPLEMENT_LIGHTS
-	if (lights.data == 0) return result;
+	if (lights.count == 0) return result;
 	uint lc = (lights.count < MAX_LIGHTS ? lights.count : MAX_LIGHTS);
 	for (uint i = 0; i < lc; i++) {
 		float dist = distance(position, lights.data[i].position);
