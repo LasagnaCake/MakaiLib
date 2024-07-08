@@ -27,14 +27,14 @@ int main(int argc, char** argv) {
 			"arcgen.exe \"YOUR_PASSWORD_HERE\""
 		);
 	else if (argc >= 2) {
-		String keyfile = "const char* const passkey = \"";
+		String keyfile = "constexpr ObfuscatedString<32> const passkey = ObfuscatedString<32>(\"";
 		for (char& c: ArcSys::hashPassword(argv[1])) {
 			std::stringstream stream;
 			stream << std::hex << (unsigned int)(unsigned char)(c);
 			std::string code = stream.str();
 			keyfile += std::string("\\x")+(code.size()<2?"0":"")+code;
 		}
-		keyfile += "\";";
+		keyfile += "\");";
 		FileLoader::saveTextFile("key.256.h", keyfile);
 		DEBUGLN("Key generated!");
 	}

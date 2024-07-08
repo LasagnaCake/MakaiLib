@@ -71,7 +71,7 @@ Pack:
                          "key.256.h" file in the "build/" folder (you can move it, if you want)
                      2. [#include] it somewhere in your program
                      3. Use the [passkey] variable as the password in the
-                         [FileLoader::attachArchive] function.
+                         [FileLoader::attachArchive] function, passing as [*passkey].
 >   shader-folder : Set this to 0 if and ONLY IF you are providing your shader code somewhere
                     else.
 

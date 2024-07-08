@@ -140,6 +140,7 @@
 #include "collection/variant.hpp"
 #include "collection/collisions.hpp"
 #include "collection/entity/entity.hpp"
+#include "collection/obfuscator.hpp"
 
 #include "fileloader.hpp"
 #include "predefs.hpp"
