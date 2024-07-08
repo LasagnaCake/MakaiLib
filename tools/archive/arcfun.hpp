@@ -330,6 +330,13 @@ namespace ArcSys {
 		// Put new things BELOW this line
 	};
 
+	struct DirectoryHeader {
+		uint64	uncSize;
+		uint64	compSize;
+		uint32	crc			= 0;
+		uint8	block[16]	= {0};
+	};
+
 	constexpr uint64 ARCHIVE_VERSION		= 1;
 	constexpr uint64 ARCHIVE_MIN_VERSION	= 1;
 
@@ -337,14 +344,14 @@ namespace ArcSys {
 	struct ArchiveHeader {
 		uint64	const headerSize		= sizeof(ArchiveHeader);
 		uint64	const fileHeaderSize	= sizeof(FileHeader);
-		uint64	dirInfoSize;
+		uint64	const dirHeaderSize		= sizeof(DirectoryHeader);
 		uint64	version			= ARCHIVE_VERSION;
 		uint64	minVersion		= ARCHIVE_MIN_VERSION;
 		uint16	encryption		= (uint16)EncryptionMethod::AEM_AES256;
 		uint16	compression		= (uint16)CompressionMethod::ACM_ZIP;
 		uint8	level			= 9;
 		uint64	flags			= 0;
-		uint8	block[16]		= {0};
+		uint64	dirHeaderLoc	= 0;
 		// Put new things BELOW this line
 	};
 
@@ -379,22 +386,14 @@ namespace ArcSys {
 		_ARCDEBUGLN("\n", dir.dump(2, ' ', false, JSON::error_handler_t::replace), "\n");
 		// Populate with temporary values
 		List<uint64> locations(files.size(), 0);
-		populateTree(tree, locations);
 		// Open file
 		std::ofstream file(archivePath, std::ios::binary | std::ios::trunc);
 		file.exceptions(std::ofstream::badbit | std::ofstream::failbit);
 		// Populate header
 		_ARCDEBUGLN("Creating header...\n");
-		// Header
-		ArchiveHeader header;
-		// Generate header block
-		generateBlock(header.block);
-		// Get directory info mockup
-		String dirInfo = dir.dump(-1, ' ', false, JSON::error_handler_t::replace);
-		BinaryData edi = BinaryData(dirInfo.size(), 0);
-		edi = encrypt(edi, passhash, enc, header.block);
+		// Headers
+		ArchiveHeader	header;
 		// Set main header params
-		header.dirInfoSize	= edi.size();			// directory info size
 		header.version		= ARCHIVE_VERSION;		// file format version
 		header.minVersion	= ARCHIVE_MIN_VERSION;	// file format minimum version
 		header.encryption	= (uint16)enc;			// encryption mode
@@ -405,7 +404,7 @@ namespace ArcSys {
 		;*/
 		_ARCDEBUGLN("             HEADER SIZE: ", (uint64)header.headerSize,		"B"	);
 		_ARCDEBUGLN("        FILE HEADER SIZE: ", (uint64)header.fileHeaderSize,	"B"	);
-		_ARCDEBUGLN("     DIRECTORY INFO SIZE: ", (uint64)header.dirInfoSize,		"B"	);
+		_ARCDEBUGLN("   DIRECTORY HEADER SIZE: ", (uint64)header.dirHeaderSize,		"B"	);
 		_ARCDEBUGLN("     FILE FORMAT VERSION: ", (uint64)header.version				);
 		_ARCDEBUGLN(" FILE FORMAT MIN VERSION: ", (uint64)header.minVersion				);
 		_ARCDEBUGLN("         ENCRYPTION MODE: ", (uint64)header.encryption				);
@@ -413,13 +412,8 @@ namespace ArcSys {
 		_ARCDEBUGLN("       COMPRESSION LEVEL: ", (uint64)header.level					);
 		_ARCDEBUGLN("\nDirectory structure layout:");
 		_ARCDEBUGLN("       FILE COUNT: ", files.size()			);
-		_ARCDEBUGLN(" UNENCRYPTED SIZE: ", dirInfo.size(),	"B"	);
-		_ARCDEBUGLN("   ENCRYPTED SIZE: ", edi.size(),		"B"	);
-		// Write header
+		// Write main header first pass
 		file.write((char*)&header, header.headerSize);
-		// Write mock dir info
-		file.seekp(header.headerSize);
-		file.write((char*)edi.data(), edi.size());
 		// Write file info
 		_ARCDEBUGLN("\nWriting files...\n");
 		for (auto const& [i, f]: Helper::enumerate(files)) {
@@ -461,17 +455,38 @@ namespace ArcSys {
 			file.write((char*)&fheader, header.fileHeaderSize);
 			file.write((char*)contents.data(), contents.size());
 		}
-		// Return & write proper directory info
-		_ARCDEBUGLN("\nWriting directory info...\n");
+		// Populate file tree
 		populateTree(tree, locations);
-		dirInfo = dir.dump(-1, ' ', false, JSON::error_handler_t::replace);
-		_ARCDEBUGLN(" UNENCRYPTED SIZE: ", dirInfo.size(),	"B"	);
-		_ARCDEBUGLN("   ENCRYPTED SIZE: ", edi.size(),		"B"	);
+		// Process directory structure
+		_ARCDEBUGLN("\nWriting directory structure...\n");
 		_ARCDEBUGLN("\n", dir.dump(2, ' ', false, JSON::error_handler_t::replace), "\n");
-		edi = BinaryData(dirInfo.begin(), dirInfo.end());
-		edi = encrypt(edi, passhash, enc, header.block);
-		file.seekp(header.headerSize);
-		file.write((char*)edi.data(), edi.size());
+		{
+			// Directory header
+			DirectoryHeader	dheader;
+			// Generate header block
+			generateBlock(dheader.block);
+			// Get directory info
+			String dirInfo = dir.dump(-1, ' ', false, JSON::error_handler_t::replace);
+			// Compress & encrypt directory info
+			BinaryData pdi = BinaryData(dirInfo.begin(), dirInfo.end());
+			pdi = compress(pdi, comp, complvl);
+			pdi = encrypt(pdi, passhash, enc, dheader.block);
+			// Populate header
+			dheader.compSize	= pdi.size();
+			dheader.uncSize		= dirInfo.size();
+			// Get directory header location
+			header.dirHeaderLoc = file.tellp();
+			// Debug info
+			_ARCDEBUGLN("  DIRECTORY INFO LOCATION: ", header.dirHeaderLoc		);
+			_ARCDEBUGLN("        UNCOMPRESSED SIZE: ", dheader.uncSize,		"B"	);
+			_ARCDEBUGLN("          COMPRESSED SIZE: ", dheader.compSize,	"B"	);
+			// Write header & directory info
+			file.write((char*)&dheader, header.dirHeaderSize);
+			file.write((char*)pdi.data(), pdi.size());
+			// Write main header second pass
+			file.seekp(0);
+			file.write((char*)&header, header.headerSize);
+		}
 		// Close file
 		file.flush();
 		file.close();
@@ -525,41 +540,10 @@ namespace ArcSys {
 			// check if file is archive
 			if (header.flags & Flags::SINGLE_FILE_ARCHIVE_BIT)
 				singleFileArchiveError(path);
-			if (!header.dirInfoSize)
+			if (!header.dirHeaderLoc)
 				directoryTreeError();
-			// Read file info
-			String fs;
-			switch (header.minVersion) {
-			default:
-			case 0:
-				fs = String(header.dirInfoSize, ' ');
-				archive.read(fs.data(), fs.size());
-				archive.seekg(0);
-				break;
-			case 1:
-				BinaryData pfs(header.dirInfoSize, 0);
-				archive.read((char*)pfs.data(), pfs.size());
-				archive.seekg(0);
-				pfs = decrypt(
-					pfs,
-					password,
-					(EncryptionMethod)header.encryption,
-					header.block
-				);
-				fs = String(pfs.begin(), pfs.end());
-				break;
-			}
-			try {
-				fstruct = JSON::parse(fs);
-			} catch (JSON::exception const& e) {
-				throw FileLoader::FileLoadError(
-					"Invalid or corrupted file structure!",
-					__FILE__,
-					toString(__LINE__),
-					"FileArchive::load",
-					e.what()
-				);
-			}
+			// Read directory tree info
+			parseFileTree();
 			// Set open flag
 			streamOpen = true;
 			return *this;
@@ -629,6 +613,64 @@ namespace ArcSys {
 
 	private:
 
+		void parseFileTree() {
+			String fs;
+			switch (header.minVersion) {
+			default:
+			case 0:
+				// "dirHeaderSize" is located in the old "dirInfoSize" parameter
+				fs = String(header.dirHeaderSize, ' ');
+				archive.read(fs.data(), fs.size());
+				archive.seekg(0);
+				break;
+			case 1:
+				DirectoryHeader dh;
+				archive.seekg(header.dirHeaderLoc);
+				archive.read((char*)&dh, header.dirHeaderSize);
+				if (!dh.compSize || !dh.uncSize) directoryTreeError();
+				_ARCDEBUGLN("  DIRECTORY INFO LOCATION: ", header.dirHeaderLoc		);
+				_ARCDEBUGLN("        UNCOMPRESSED SIZE: ", dh.uncSize,			"B"	);
+				_ARCDEBUGLN("          COMPRESSED SIZE: ", dh.compSize,			"B"	);
+				BinaryData pfs(dh.compSize, 0);
+				archive.read((char*)pfs.data(), pfs.size());
+				archive.seekg(0);
+				demangleData(pfs, dh.block);
+				fs = String(pfs.begin(), pfs.end());
+				if (fs.size() != dh.uncSize) directoryTreeError();
+				break;
+			}
+			try {
+				fstruct = JSON::parse(fs);
+			} catch (JSON::exception const& e) {
+				throw FileLoader::FileLoadError(
+					"Invalid or corrupted file structure!",
+					__FILE__,
+					toString(__LINE__),
+					"FileArchive::load",
+					e.what()
+				);
+			}
+			_ARCDEBUGLN("File Structure:\n", fstruct.dump(2, ' ', false, JSON::error_handler_t::replace), "\n");
+		}
+
+		void demangleData(BinaryData& data, uint8* const& block) const {
+			_ARCDEBUGLN("Before decryption: ", data.size());
+			data = decrypt(
+				data,
+				pass,
+				(EncryptionMethod)header.encryption,
+				block
+			);
+			_ARCDEBUGLN("After decryption: ", data.size());
+			_ARCDEBUGLN("After decompression: ", data.size());
+			data = decompress(
+				data,
+				(CompressionMethod)header.compression,
+				header.level
+			);
+			_ARCDEBUGLN("After decompression: ", data.size());
+		}
+
 		void unpackLayer(JSONData& layer, String const& path) {
 			assertOpen();
 			List<Entry<String>> files;
@@ -655,19 +697,7 @@ namespace ArcSys {
 		void processFileEntry(FileEntry& entry) const {
 			BinaryData data = entry.data;
 			if (entry.header.uncSize == 0) return;
-			_ARCDEBUGLN("Before decryption: ", data.size());
-			data = decrypt(
-				data,
-				pass,
-				(EncryptionMethod)header.encryption,
-				entry.header.block
-			);
-			_ARCDEBUGLN("After decryption: ", data.size());
-			data = decompress(
-				data,
-				(CompressionMethod)header.compression,
-				header.level
-			);
+			demangleData(data, entry.header.block);
 			if (data.size() != entry.header.uncSize)
 				corruptedFileError(entry.path);
 			if (header.flags & Flags::SHOULD_CHECK_CRC_BIT && !checkCRC(data, entry.header.crc))
@@ -968,7 +998,7 @@ namespace ArcSys {
 		// Header
 		ArchiveHeader header;
 		// Set main header params
-		header.dirInfoSize	= 0;			// directory info size
+		header.dirHeaderLoc	= 0;			// directory info size
 		header.encryption	= (uint16)enc;	// encryption mode
 		header.compression	= (uint16)comp;	// compression mode
 		header.level		= lvl;			// compression level
