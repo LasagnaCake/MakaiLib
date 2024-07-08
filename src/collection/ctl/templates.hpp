@@ -105,9 +105,12 @@ struct Argumented {
 	typedef PackInfo<Types...>	ArgumentTypes;
 };
 
+template<class TFunction>
+struct Functional {};
+
 template<class TReturn, class... TArguments>
 struct Functional {
-	typedef TReturn(TArguments...) FunctionType;
+	typedef Decay::AsType<TReturn(TArguments...)> FunctionType;
 };
 
 template<class... Types>
