@@ -41,10 +41,10 @@ namespace Obfuscation {
 			return 0;
 		}
 
-		template<usize S, bool PARITY, uint8 MASK>
+		template<usize S, bool PARITY, usize MASK>
 		struct MangledString;
 
-		template<bool PARITY, uint8 MASK>
+		template<bool PARITY, usize MASK>
 		struct MangledString<1, PARITY, MASK> {
 			constexpr static usize SIZE = 1;
 
@@ -58,7 +58,7 @@ namespace Obfuscation {
 			char c;
 		};
 
-		template<usize S, bool PARITY, uint8 MASK>
+		template<usize S, bool PARITY, usize MASK>
 		struct MangledString {
 			constexpr static usize SIZE = S;
 
