@@ -109,7 +109,7 @@ namespace Obfuscation {
 
 			constexpr static usize
 				H1{(EVEN_SIZE) ? (STRING_SIZE/2) : (STRING_SIZE/2+1)},
-				H2{(S/2)}
+				H2{(STRING_SIZE/2)}
 			;
 
 			constexpr static usize
