@@ -125,19 +125,18 @@ namespace Obfuscation {
 	template<usize S>
 	using StringMangler = Impl::StringMangler<S, true, 0b10110110>;
 
-	template<typename T>
+	template<typename T, usize S>
 	concept StringContainer =
 		Type::Constructible<T>
-	&&	Type::Constructible<T, FixedCString<T::STRING_SIZE> const&>
+	&&	Type::Constructible<T, FixedCString<S> const&>
 	&&	requires (T t) {
-			T::STRING_SIZE;
 			{t.build()} -> Type::Equal<String>;
 		}
 	;
 
 	template <usize N, template<usize> class TContainer = StringMangler>
 	struct ObfuscatedString: Obfuscator<String> {
-		static_assert(StringContainer<TContainer<N>>, "Container is not a valid string container!");
+		static_assert(StringContainer<TContainer<N, S>>, "Container is not a valid string container!");
 
 		constexpr static usize STRING_SIZE = N+1;
 
