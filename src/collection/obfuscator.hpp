@@ -41,16 +41,24 @@ namespace Obfuscation {
 			return 0;
 		}
 
+		template<usize N>
+		struct PrimeNumber {
+			constexpr static bool VALUE		= isPrime(N);
+			constexpr static usize NEAREST	= nearestPrime(N);
+		};
+	}
+
+	namespace StringMangler {
 		template<usize S, usize MASK, bool PARITY>
-		struct MangledString;
+		struct BinaryShuffle;
 
 		template<usize MASK, bool PARITY>
-		struct MangledString<1, MASK, PARITY> {
+		struct BinaryShuffle<1, MASK, PARITY> {
 			constexpr static usize SIZE = 1;
 
-			constexpr MangledString()							{				}
-			constexpr MangledString(FixedCString<1> const& dat)	{c = dat[0];	}
-			constexpr MangledString(Array<uint8, 1> const& dat)	{c = dat[0];	}
+			constexpr BinaryShuffle()							{				}
+			constexpr BinaryShuffle(FixedCString<1> const& dat)	{c = dat[0];	}
+			constexpr BinaryShuffle(Array<uint8, 1> const& dat)	{c = dat[0];	}
 
 			String mangled() const		{return toString(c);}
 			String demangled() const	{return toString(c);}
@@ -60,20 +68,20 @@ namespace Obfuscation {
 		};
 
 		template<usize S, usize M, bool P>
-		struct MangledString {
+		struct BinaryShuffle {
 			constexpr static usize
 				SIZE = S,
 				MASK = M
 			;
 			constexpr static bool PARITY = P;
 
-			constexpr MangledString() {}
+			constexpr BinaryShuffle() {}
 
-			constexpr MangledString(FixedCString<SIZE> const& dat) {
+			constexpr BinaryShuffle(FixedCString<SIZE> const& dat) {
 				decompose<FixedCString<SIZE>>(dat);
 			}
 
-			constexpr MangledString(Array<uint8, SIZE> const& dat) {
+			constexpr BinaryShuffle(Array<uint8, SIZE> const& dat) {
 				decompose<Array<uint8, SIZE>>(dat);
 			}
 
@@ -82,29 +90,6 @@ namespace Obfuscation {
 			String demangled() const requires (PARITY)	{return right.demangled() + left.demangled();	}
 			String demangled() const requires (!PARITY)	{return left.demangled() + right.demangled();	}
 		private:
-			template<class TArray>
-			constexpr void decompose(TArray const& dat) {
-				Array<uint8, S1> s1;
-				Array<uint8, S2> s2;
-				for (usize i = 0; i < H2; ++i) {
-					if constexpr (PARITY) {
-						s1[i] = dat[i+H2];
-						s2[i] = dat[i];
-					} else {
-						s1[i] = dat[i];
-						s2[i] = dat[i+H2];
-					}
-				}
-				if constexpr(H2 < H1) {
-					if constexpr (PARITY)
-						s1[H1-1] = dat[SIZE-1];
-					else
-						s2[H1-1] = dat[SIZE-1];
-				}
-				left	= MangledString<S1, NEW_MASK, LHS_PARITY>(s1);
-				right	= MangledString<S2, NEW_MASK, RHS_PARITY>(s2);
-			}
-
 			constexpr static usize NEW_MASK = MASK ^ (MASK >> 2);
 
 			constexpr static bool
@@ -119,17 +104,127 @@ namespace Obfuscation {
 			;
 
 			constexpr static usize
-				S1{(PARITY) ? H1 : H2},
-				S2{(PARITY) ? H2 : H1}
+				LEFT_SIZE{(PARITY) ? H1 : H2},
+				RIGHT_SIZE{(PARITY) ? H2 : H1}
 			;
 
-			MangledString<S1, NEW_MASK, LHS_PARITY> left;
-			MangledString<S2, NEW_MASK, RHS_PARITY> right;
+			typedef BinaryShuffle<LEFT_SIZE, NEW_MASK, LHS_PARITY>	LeftType;
+			typedef BinaryShuffle<RIGHT_SIZE, NEW_MASK, RHS_PARITY>	RightType;
+
+			template<class TArray>
+			constexpr void decompose(TArray const& dat) {
+				Array<uint8, LEFT_SIZE>		l;
+				Array<uint8, RIGHT_SIZE>	r;
+				for (usize i = 0; i < H2; ++i) {
+					if constexpr (PARITY) {
+						l[i] = dat[i+H2];
+						r[i] = dat[i];
+					} else {
+						l[i] = dat[i];
+						r[i] = dat[i+H2];
+					}
+				}
+				if constexpr(H2 < H1) {
+					if constexpr (PARITY)
+						l[H1-1] = dat[SIZE-1];
+					else
+						r[H1-1] = dat[SIZE-1];
+				}
+				left	= LeftType(l);
+				right	= RightType(r);
+			}
+
+			LeftType	left;
+			RightType	right;
+		};
+
+		template<usize S, usize MASK, bool PARITY>
+		struct PrimeShuffle;
+
+		template<usize MASK, bool PARITY>
+		struct PrimeShuffle<1, MASK, PARITY> {
+			constexpr static usize SIZE = 1;
+
+			constexpr PrimeShuffle()							{				}
+			constexpr PrimeShuffle(FixedCString<1> const& dat)	{c = dat[0];	}
+			constexpr PrimeShuffle(Array<uint8, 1> const& dat)	{c = dat[0];	}
+
+			String mangled() const		{return toString(c);}
+			String demangled() const	{return toString(c);}
+
+		private:
+			char c;
+		};
+
+		template<usize S, usize M, bool P>
+		struct PrimeShuffle {
+			constexpr static usize
+				SIZE = S,
+				MASK = M
+			;
+			constexpr static bool PARITY = P;
+
+			constexpr PrimeShuffle() {}
+
+			constexpr PrimeShuffle(FixedCString<SIZE> const& dat) {
+				decompose<FixedCString<SIZE>>(dat);
+			}
+
+			constexpr PrimeShuffle(Array<uint8, SIZE> const& dat) {
+				decompose<Array<uint8, SIZE>>(dat);
+			}
+
+			String mangled() const						{return left.mangled() + right.mangled();		}
+
+			String demangled() const requires (PARITY)	{return right.demangled() + left.demangled();	}
+			String demangled() const requires (!PARITY)	{return left.demangled() + right.demangled();	}
+		private:
+			constexpr static usize NEW_MASK = MASK ^ (MASK >> 2);
+
+			constexpr static bool
+				LHS_PARITY	= (MASK & 0b10) ? !PARITY : PARITY,
+				RHS_PARITY	= (MASK & 0b01) ? !PARITY : PARITY
+			;
+
+			constexpr static usize
+				H1{Impl::nearestPrime(S, true)},
+				H2{S - Impl::nearestPrime(S, true)}
+			;
+
+			constexpr static usize
+				LEFT_SIZE{(PARITY) ? H1 : H2},
+				RIGHT_SIZE{(PARITY) ? H2 : H1}
+			;
+
+			typedef PrimeShuffle<LEFT_SIZE, NEW_MASK, LHS_PARITY>	LeftType;
+			typedef PrimeShuffle<RIGHT_SIZE, NEW_MASK, RHS_PARITY>	RightType;
+
+			template<class TArray>
+			constexpr void decompose(TArray const& dat) {
+				Array<uint8, LEFT_SIZE>		l;
+				Array<uint8, RIGHT_SIZE>	r;
+				for (usize i = 0; i < LEFT_SIZE; ++i) {
+					if constexpr (PARITY)	l[i] = dat[i+RIGHT_SIZE];
+					else					l[i] = dat[i];
+				}
+				for (usize i = 0; i < RIGHT_SIZE; ++i) {
+					if constexpr (PARITY)	r[i] = dat[i];
+					else					r[i] = dat[i+LEFT_SIZE];
+				}
+				left	= LeftType(l);
+				right	= RightType(r);
+			}
+
+			LeftType	left;
+			RightType	right;
 		};
 	}
 
 	template<usize S>
-	using MangledString = Impl::MangledString<S, 0b10110110, true>;
+	using MangledString = StringMangler::PrimeShuffle<S, Impl::PrimeNumber<S>::NEAREST, !Impl::PrimeNumber<S>::VALUE>;
+	//using MangledString = StringMangler::PrimeShuffle<S, 0b00010110, true>;
+	//using MangledString = StringMangler::BinaryShuffle<S, Impl::PrimeNumber<S>::NEAREST, !Impl::PrimeNumber<S>::VALUE>;
+	//using MangledString = StringMangler::BinaryShuffle<S, 0b00010110, true>;
 
 	template<usize S>
 	MangledString<S> makeMangled(FixedCString<S> const& str) {
