@@ -123,7 +123,7 @@ namespace Obfuscation {
 	}
 
 	template<usize S>
-	using StringMangler = Impl::StringMangler<S, true, 0b11110110>;
+	using StringMangler = Impl::StringMangler<S, true, 0b10110110>;
 
 	template<typename T>
 	concept StringContainer =
