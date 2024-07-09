@@ -36,7 +36,7 @@ namespace Obfuscation {
 
 		consteval usize nearestPrime(usize const& v, bool exclueSelf = false) {
 			for (usize i = (exclueSelf ? (v-1) : v); i > 0; --i)
-				if (nearestPrime(i))
+				if (isPrime(i))
 					return i;
 			return 0;
 		}
@@ -59,9 +59,13 @@ namespace Obfuscation {
 			char c;
 		};
 
-		template<usize S, usize MASK, bool PARITY>
+		template<usize S, usize M, bool P>
 		struct MangledString {
-			constexpr static usize SIZE = S;
+			constexpr static usize
+				SIZE = S,
+				MASK = M
+			;
+			constexpr static bool PARITY = P;
 
 			constexpr MangledString() {}
 
@@ -126,6 +130,11 @@ namespace Obfuscation {
 
 	template<usize S>
 	using MangledString = Impl::MangledString<S, 0b10110110, true>;
+
+	template<usize S>
+	MangledString<S> makeMangled(FixedCString<S> const& str) {
+		return MangledString<S>(str);
+	}
 
 	template<typename T, usize S>
 	concept StringContainer =
