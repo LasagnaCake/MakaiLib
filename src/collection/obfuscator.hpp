@@ -94,8 +94,8 @@ namespace Obfuscation {
 					else
 						s2[H1-1] = dat[SIZE-1];
 				}
-				left	= MangledString<S1, LHS_PARITY, NEW_MASK>(s1);
-				right	= MangledString<S2, RHS_PARITY, NEW_MASK>(s2);
+				left	= MangledString<S1, NEW_MASK, LHS_PARITY>(s1);
+				right	= MangledString<S2, NEW_MASK, RHS_PARITY>(s2);
 			}
 
 			constexpr static uint8 NEW_MASK = MASK ^ (MASK >> 2);
@@ -116,8 +116,8 @@ namespace Obfuscation {
 				S2{(PARITY) ? H2 : H1}
 			;
 
-			MangledString<S1, LHS_PARITY, NEW_MASK> left;
-			MangledString<S2, RHS_PARITY, NEW_MASK> right;
+			MangledString<S1, NEW_MASK, LHS_PARITY> left;
+			MangledString<S1, NEW_MASK, RHS_PARITY> right;
 		};
 	}
 
