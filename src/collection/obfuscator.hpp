@@ -11,9 +11,6 @@ namespace Obfuscation {
 	using CArray = Decay::AsType<T[S]>;
 
 	template<usize S>
-	using FixedString = Array<const char, S>;
-
-	template<usize S>
 	using FixedCString = CArray<const char, S>;
 
 	template<typename TData>
@@ -45,13 +42,15 @@ namespace Obfuscation {
 		}
 
 		template<usize S, bool PARITY, uint8 MASK>
-		struct StringMangler;
+		struct MangledString;
 
 		template<bool PARITY, uint8 MASK>
-		struct StringMangler<1, PARITY, MASK> {
-			constexpr StringMangler()							{				}
-			constexpr StringMangler(FixedCString<1> const& dat)	{c = dat[0];	}
-			constexpr StringMangler(Array<uint8, 1> const& dat)	{c = dat[0];	}
+		struct MangledString<1, PARITY, MASK> {
+			constexpr static usize SIZE = 1;
+
+			constexpr MangledString()							{				}
+			constexpr MangledString(FixedCString<1> const& dat)	{c = dat[0];	}
+			constexpr MangledString(Array<uint8, 1> const& dat)	{c = dat[0];	}
 
 			String build() const {return toString(c);}
 
@@ -60,17 +59,17 @@ namespace Obfuscation {
 		};
 
 		template<usize S, bool PARITY, uint8 MASK>
-		struct StringMangler {
-			constexpr static usize STRING_SIZE = S;
+		struct MangledString {
+			constexpr static usize SIZE = S;
 
-			constexpr StringMangler() {}
+			constexpr MangledString() {}
 
-			constexpr StringMangler(FixedCString<STRING_SIZE> const& dat) {
-				decompose<FixedCString<STRING_SIZE>>(dat);
+			constexpr MangledString(FixedCString<SIZE> const& dat) {
+				decompose<FixedCString<SIZE>>(dat);
 			}
 
-			constexpr StringMangler(Array<uint8, STRING_SIZE> const& dat) {
-				decompose<Array<uint8, STRING_SIZE>>(dat);
+			constexpr MangledString(Array<uint8, SIZE> const& dat) {
+				decompose<Array<uint8, SIZE>>(dat);
 			}
 
 			String build() const requires (PARITY)	{return right.build() + left.build();}
@@ -91,25 +90,25 @@ namespace Obfuscation {
 				}
 				if constexpr(H2 < H1) {
 					if constexpr (PARITY)
-						s1[H1-1] = dat[STRING_SIZE-1];
+						s1[H1-1] = dat[SIZE-1];
 					else
-						s2[H1-1] = dat[STRING_SIZE-1];
+						s2[H1-1] = dat[SIZE-1];
 				}
-				left	= StringMangler<S1, LHS_PARITY, NEW_MASK>(s1);
-				right	= StringMangler<S2, RHS_PARITY, NEW_MASK>(s2);
+				left	= MangledString<S1, LHS_PARITY, NEW_MASK>(s1);
+				right	= MangledString<S2, RHS_PARITY, NEW_MASK>(s2);
 			}
 
 			constexpr static uint8 NEW_MASK = MASK ^ (MASK >> 2);
 
 			constexpr static bool
-				EVEN_SIZE	= (STRING_SIZE % 2 == 0),
+				EVEN_SIZE	= (SIZE % 2 == 0),
 				LHS_PARITY	= (MASK & 0b10) ? !PARITY : PARITY,
 				RHS_PARITY	= (MASK & 0b01) ? !PARITY : PARITY
 			;
 
 			constexpr static usize
-				H1{(EVEN_SIZE) ? (STRING_SIZE/2) : (STRING_SIZE/2+1)},
-				H2{(STRING_SIZE/2)}
+				H1{(EVEN_SIZE) ? (SIZE/2) : (SIZE/2+1)},
+				H2{(SIZE/2)}
 			;
 
 			constexpr static usize
@@ -117,13 +116,13 @@ namespace Obfuscation {
 				S2{(PARITY) ? H2 : H1}
 			;
 
-			StringMangler<S1, LHS_PARITY, NEW_MASK> left;
-			StringMangler<S2, RHS_PARITY, NEW_MASK> right;
+			MangledString<S1, LHS_PARITY, NEW_MASK> left;
+			MangledString<S2, RHS_PARITY, NEW_MASK> right;
 		};
 	}
 
 	template<usize S>
-	using StringMangler = Impl::StringMangler<S, true, 0b10110110>;
+	using MangledString = Impl::MangledString<S, true, 0b10110110>;
 
 	template<typename T, usize S>
 	concept StringContainer =
@@ -134,13 +133,13 @@ namespace Obfuscation {
 		}
 	;
 
-	template <usize N, template<usize> class TContainer = StringMangler>
+	template <usize N, template<usize> class TContainer = MangledString>
 	struct ObfuscatedString: Obfuscator<String> {
-		static_assert(StringContainer<TContainer<N, S>>, "Container is not a valid string container!");
+		constexpr static usize SIZE = N+1;
 
-		constexpr static usize STRING_SIZE = N+1;
+		static_assert(StringContainer<TContainer<SIZE>, SIZE>, "Container is not a valid string container!");
 
-		constexpr ObfuscatedString(FixedCString<STRING_SIZE> const& str): data(decompose(str)) {}
+		constexpr ObfuscatedString(FixedCString<SIZE> const& str): data(decompose(str)) {}
 
 		constexpr virtual ~ObfuscatedString() {}
 
@@ -153,14 +152,14 @@ namespace Obfuscation {
 		}
 
 	private:
-		typedef TContainer<STRING_SIZE> ContainerType;
+		typedef TContainer<SIZE> ContainerType;
 
 		ContainerType data;
 
-		constexpr static ContainerType decompose(FixedCString<STRING_SIZE> const& str) {
-			Array<uint8, STRING_SIZE> result;
+		constexpr static ContainerType decompose(FixedCString<SIZE> const& str) {
+			Array<uint8, SIZE> result;
 			uint8 off = 0;
-			for (usize i = 0; i < STRING_SIZE; ++i) {
+			for (usize i = 0; i < SIZE; ++i) {
 				result[i] = (str[i] - off);
 				off = str[i];
 			}
