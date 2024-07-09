@@ -98,7 +98,7 @@ namespace Obfuscation {
 				right	= MangledString<S2, NEW_MASK, RHS_PARITY>(s2);
 			}
 
-			constexpr static uint8 NEW_MASK = MASK ^ (MASK >> 2);
+			constexpr static usize NEW_MASK = MASK ^ (MASK >> 2);
 
 			constexpr static bool
 				EVEN_SIZE	= (SIZE % 2 == 0),
