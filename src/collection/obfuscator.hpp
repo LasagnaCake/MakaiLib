@@ -41,11 +41,11 @@ namespace Obfuscation {
 			return 0;
 		}
 
-		template<usize S, bool PARITY, usize MASK>
+		template<usize S, usize MASK, bool PARITY>
 		struct MangledString;
 
-		template<bool PARITY, usize MASK>
-		struct MangledString<1, PARITY, MASK> {
+		template<usize MASK, bool PARITY>
+		struct MangledString<1, MASK, PARITY> {
 			constexpr static usize SIZE = 1;
 
 			constexpr MangledString()							{				}
@@ -58,7 +58,7 @@ namespace Obfuscation {
 			char c;
 		};
 
-		template<usize S, bool PARITY, usize MASK>
+		template<usize S, usize MASK, bool PARITY>
 		struct MangledString {
 			constexpr static usize SIZE = S;
 
@@ -122,7 +122,7 @@ namespace Obfuscation {
 	}
 
 	template<usize S>
-	using MangledString = Impl::MangledString<S, true, 0b10110110>;
+	using MangledString = Impl::MangledString<S, 0b10110110, true>;
 
 	template<typename T, usize S>
 	concept StringContainer =
