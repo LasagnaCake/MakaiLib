@@ -52,7 +52,8 @@ namespace Obfuscation {
 			constexpr MangledString(FixedCString<1> const& dat)	{c = dat[0];	}
 			constexpr MangledString(Array<uint8, 1> const& dat)	{c = dat[0];	}
 
-			String build() const {return toString(c);}
+			String mangled() const		{return toString(c);}
+			String demangled() const	{return toString(c);}
 
 		private:
 			char c;
@@ -72,8 +73,10 @@ namespace Obfuscation {
 				decompose<Array<uint8, SIZE>>(dat);
 			}
 
-			String build() const requires (PARITY)	{return right.build() + left.build();}
-			String build() const requires (!PARITY)	{return left.build() + right.build();}
+			String mangled() const						{return left.mangled() + right.mangled();		}
+
+			String demangled() const requires (PARITY)	{return right.demangled() + left.demangled();	}
+			String demangled() const requires (!PARITY)	{return left.demangled() + right.demangled();	}
 		private:
 			template<class TArray>
 			constexpr void decompose(TArray const& dat) {
@@ -129,7 +132,7 @@ namespace Obfuscation {
 		Type::Constructible<T>
 	&&	Type::Constructible<T, FixedCString<S> const&>
 	&&	requires (T t) {
-			{t.build()} -> Type::Equal<String>;
+			{t.demangled()} -> Type::Equal<String>;
 		}
 	;
 
@@ -146,7 +149,7 @@ namespace Obfuscation {
 		DataType deobfuscated() const final {
 			DataType result;
 			uint8 off = 0;
-			for(uint8 c : data.build())
+			for(uint8 c : data.demangled())
 				result.push_back(off += c);
 			return result;
 		}
