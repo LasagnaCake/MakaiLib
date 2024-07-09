@@ -597,9 +597,22 @@ namespace ArcSys {
 			return dir;
 		}
 
-		ArchiveVersion getVersion() {
-			return ArchiveVersion{header.version, header.minVersion};
+		static ArchiveHeader getHeader(String const& path) {
+			std::ifstream arc;
+			ArchiveHeader ah;
+			// Set exceptions
+			arc.exceptions(std::ifstream::badbit | std::ifstream::failbit);
+			// Open file
+			arc.open(path, std::ios::binary | std::ios::in);
+			// Read header
+			size_t hs = 0;
+			arc.read((char*)&hs, sizeof(uint64));
+			arc.seekg(0);
+			arc.read((char*)&ah, hs);
+			return ah;
 		}
+
+
 
 		FileArchive& unpackTo(String const& path) {
 			if (!streamOpen) return *this;
@@ -899,8 +912,7 @@ namespace ArcSys {
 	) try {
 		uint64 mv;
 		{
-			FileArchive arc(archivePath, "");
-			mv = arc.getVersion().minimum;
+			mv = FileArchive::getHeader(archivePath).minVersion;
 			_ARCDEBUGLN("Minimum Version: ", toString(mv));
 		}
 		switch(mv) {
