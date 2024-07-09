@@ -117,7 +117,7 @@ namespace Obfuscation {
 			;
 
 			MangledString<S1, NEW_MASK, LHS_PARITY> left;
-			MangledString<S1, NEW_MASK, RHS_PARITY> right;
+			MangledString<S2, NEW_MASK, RHS_PARITY> right;
 		};
 	}
 
