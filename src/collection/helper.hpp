@@ -780,22 +780,19 @@ namespace FileSystem {
 		struct Entry {
 			constexpr Entry(String const& name, String const& path):
 				name(name),
-				path(path)
-			{}
+				path(path) {}
 
 			constexpr Entry(String const& name, String const& path, List<Entry>	children):
 				name(name),
 				path(path),
 				children(children),
-				folder(true)
-			{}
+				folder(true) {}
 
 			constexpr Entry(Entry const& other):
 				name(other.name),
 				path(other.path),
 				children(other.children),
-				folder(other.folder)
-			{}
+				folder(other.folder) {}
 
 			/*constexpr*/ Entry& forEach(Operation<Entry const&> const& op) {
 				for (Entry& e: children)
