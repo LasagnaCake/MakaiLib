@@ -7,8 +7,8 @@ PACKPROGNAME	:= arcpack
 UNPACKPROGNAME	:= arcunpack
 KEYGENPROGNAME	:= arcgen
 
-COMPILER_CONFIG	:= -fexpensive-optimizations -m64 -std=gnu++20 -fcoroutines -fms-extensions -DENABLE_DEBUG_OUTPUT_ -DNDEBUG
-LINKER_CONFIG	:= -static-libstdc++ -static-libgcc -static -m64 -fms-extensions
+COMPILER_CONFIG	:= -fexpensive-optimizations -m64 -std=gnu++20 -fcoroutines -fms-extensions -DENABLE_DEBUG_OUTPUT_ -DNDEBUG -static -s
+LINKER_CONFIG	:= -static-libstdc++ -static-libgcc -static -m64 -fms-extensions -s
 
 OPTIMIZATIONS	:= -fopenmp -openmp -ftree-parallelize-loops=128 -funswitch-loops -fpredictive-commoning -fgcse-after-reload -ftree-vectorize
 

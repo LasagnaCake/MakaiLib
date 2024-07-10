@@ -106,10 +106,12 @@ shader-folder   ?= 1
 CC 	?= gcc
 CXX ?= g++
 
+LEAN_BEAN_MACHINE := -static -s
+
 #USE_FLTO := -flto
 
-COMPILER_CONFIG	:= -fexpensive-optimizations -m64 -std=gnu++20 -fcoroutines -fms-extensions $(USE_FLTO)
-LINKER_CONFIG	:= -static-libstdc++ -static-libgcc -static -m64 -fms-extensions $(USE_FLTO)
+COMPILER_CONFIG	:= -fexpensive-optimizations -m64 -std=gnu++20 -fcoroutines -fms-extensions $(USE_FLTO) $(LEAN_BEAN_MACHINE)
+LINKER_CONFIG	:= -static-libstdc++ -static-libgcc -m64 -fms-extensions $(USE_FLTO) $(LEAN_BEAN_MACHINE)
 
 ifeq ($(sath), 1)
 meth				:= 0
