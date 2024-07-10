@@ -674,20 +674,20 @@ namespace FileSystem {
 	constexpr PathSeparator SEPARATOR = PathSeparator::PS_POSIX;
 	#endif
 
-	constexpr String standardizePath(String const& path, PathSeparator const& sep) {
-		return replace(path, {'\\','/'}, (char)sep);
-	}
-
-	constexpr String standardizePath(String const& path) {
-		return standardizePath(path, SEPARATOR);
+	bool exists(String const& path) {
+		return fs::exists(path);
 	}
 
 	bool isDirectory(String const& dir) {
 		return fs::is_directory(dir);
 	}
 
-	bool exists(String const& path) {
-		return fs::exists(path);
+	constexpr String standardizePath(String const& path, PathSeparator const& sep) {
+		return replace(path, {'\\','/'}, (char)sep);
+	}
+
+	constexpr String standardizePath(String const& path) {
+		return standardizePath(path, SEPARATOR);
 	}
 
 	void makeDirectory(String const& dir) {
@@ -775,6 +775,104 @@ namespace FileSystem {
 			return path;
 		return dirs.second;
 	}
+
+	struct FileTree {
+		struct Entry {
+			constexpr Entry(String const& name, String const& path):
+				name(name),
+				path(path)
+			{}
+
+			constexpr Entry(String const& name, String const& path, List<Entry>	children):
+				name(name),
+				path(path),
+				children(children),
+				folder(true)
+			{}
+
+			constexpr Entry(Entry const& other):
+				name(other.name),
+				path(other.path),
+				children(other.children),
+				folder(other.folder)
+			{}
+
+			/*constexpr*/ Entry& forEach(Operation<Entry const&> const& op) {
+				for (Entry& e: children)
+					op(e);
+				return *this;
+			}
+
+			/*constexpr*/ Entry const& forEach(Operation<Entry const&> const& op) const {
+				for (Entry const& e: children)
+					op(e);
+				return *this;
+			}
+
+			constexpr StringList getAllFiles() const {
+				if (!folder) return StringList{path};
+				StringList files;
+				for (Entry const& e: children) {
+					if (!e.folder)
+						files.push_back(e.path);
+					else {
+						StringList subfiles = e.getAllFiles();
+						files.insert(files.end(), subfiles.begin(), subfiles.end());
+					}
+				}
+				return files;
+			}
+
+			constexpr List<Entry> getChildren() const {return children;}
+
+			constexpr operator List<Entry>() const	{return getChildren();	}
+			constexpr operator String() const		{return path;			}
+
+			constexpr bool isFolder() const {return folder;}
+
+			String const name;
+			String const path;
+
+		private:
+			List<Entry>	children	= List<Entry>();
+			bool const	folder		= false;
+		};
+
+		FileTree(String const& path): tree(getStructure(path)) {}
+
+		constexpr FileTree(Entry const& entry): tree(entry) {}
+
+		constexpr FileTree(FileTree const& other): tree(other.tree) {}
+
+		constexpr operator Entry() const {return tree;}
+
+		static Entry getStructure(String const& path) {
+			if (!exists(path))
+				throw Error::InvalidValue("Path does not exist!");
+			if (!isDirectory(path)) return Entry(getFileName(path), path);
+			return Entry(
+				fs::path(path).stem().string(),
+				path,
+				getFolderContents(path)
+			);
+		}
+
+		static List<Entry> getFolderContents(String const& folder) {
+			if (!isDirectory(folder)) return List<Entry>();
+			List<Entry> entries;
+			for (auto const& e: fs::directory_iterator(folder)) {
+				String name = (e.is_directory()) ? e.path().stem().string() : e.path().filename().string();
+				String path = concatenatePath(folder, name);
+				if (e.is_directory())
+					entries.push_back(Entry(name, path, getFolderContents(path)));
+				else
+					entries.push_back(Entry(name, path));
+			}
+			return entries;
+		}
+
+		Entry tree;
+	};
 }
 
 #if (_WIN32 || _WIN64 || __WIN32__ || __WIN64__) && !defined(_NO_WINDOWS_PLEASE_)
