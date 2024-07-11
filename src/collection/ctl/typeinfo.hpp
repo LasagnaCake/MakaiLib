@@ -24,14 +24,14 @@ private;
 
 template<Type::Integer T>
 struct TypeInfo<T> {
-	constexpr T HIGHEST		= (T)(1 << BIT_SIZE - 1);
+	constexpr T HIGHEST		= (T)((1 << BIT_SIZE) - 1);
 	constexpr T SMALLEST	= (T)(1);
 	constexpr T LOWEST		= (T)(1 << BIT_SIZE);
 };
 
 template<Type::Real T>
 struct TypeInfo<T> {
-	constexpr T HIGHEST		= (T)(1 << BIT_SIZE - 1);
+	constexpr T HIGHEST		= (T)((1 << BIT_SIZE) - 1);
 	constexpr T SMALLEST	= reinterpret_cast<T>(1);
 	constexpr T LOWEST		= (T)(1 << BIT_SIZE);
 };

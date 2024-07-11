@@ -6,6 +6,7 @@
 #include <stdlib.h>
 
 #include "list.hpp"
+#include "array.hpp"
 #include "../typeinfo.hpp"
 #include "../cpperror.hpp"
 
@@ -29,13 +30,13 @@ public:
 		SizeType len = 0;
 		while (v[len++] != '\0' && len != TypeInfo<SizeType>::HIGHEST);
 		reserve(len);
-		memcpy(cbegin(), v, len * sizeof(DataType));
+		memcpy(v, cbegin(), len * sizeof(DataType));
 	}
 
 	template<SizeType S>
 	constexpr BaseString(const DataType (const& v)[S]) {
 		reserve(S);
-		memcpy(cbegin(), v, S * sizeof(DataType));
+		memcpy(v, cbegin(), S * sizeof(DataType));
 	}
 
 	constexpr OutputStreamType const& operator<<(OutputStreamType& o) const	{o << cstr(); return out;}
@@ -151,5 +152,44 @@ constexpr BaseString<C, S> toString(F const& val, usize const& precision = 16) {
 		throw BasicError("Failed to convert number!");
 	return result.reserve(i);
 }
+
+template<usize N, CharacterType TChar, Type::Integer TIndex = usize>
+struct BaseStaticString:
+	Array<N, TChar, TIndex>,
+	SelfIdentified<BaseStaticString<N, TChar, TIndex>>,
+	Derived<Array<N, TChar, TIndex>> {
+private:
+	constexpr static wrapAround(IndexType value) {
+		while (value < 0) index += SIZE;
+		return value;
+	}
+
+public:
+	constexpr BaseStaticString(const DataType* const& str) noexcept {
+		SizeType len = 0;
+		while (v[len++] != '\0' && len != TypeInfo<SizeType>::HIGHEST);
+		memcpy(str, cbegin(), (len < SIZE ? len : SIZE) * sizeof(DataType));
+	}
+
+	template<IndexType BEGIN, SizeType COUNT = SIZE>
+	constexpr auto substring() const noexcept {
+		constexpr SizeType start	= wrapAround(BEGIN);
+		constexpr SizeType stop		= ((start + COUNT) < SIZE) ? start + COUNT : SIZE;
+		BaseStaticString<stop - start + 1, TChar, TIndex> result('\0');
+		memcpy(cbegin() + begin, result(), stop - start);
+		return result;
+	}
+
+	constexpr ConstPointerType cstr() const noexcept {
+		return cbegin();
+	}
+
+	constexpr BaseString<TChar, TIndex> toString() const noexcept {
+		return BaseString<TChar, TIndex>(begin(), end());
+	}
+}
+
+typedef BaseStaticString<char>		StaticString;
+typedef BaseStaticString<wchar_t>	StaticWideString;
 
 #endif // CTL_CONTAINER_STRING_H

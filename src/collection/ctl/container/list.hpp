@@ -9,9 +9,8 @@
 #include "../algorithm/sort.hpp"
 #include "../algorithm/reverse.hpp"
 #include "../algorithm/memory.hpp"
-#include "../typetraits/traits.hpp"
 
-template<class TData, Type::Integer TIndex = size_t>
+template<class TData, Type::Integer TIndex = usize>
 struct List:
 	Iteratable<TData, TIndex>,
 	SelfIdentified<List<TData, TIndex>>,
@@ -25,7 +24,7 @@ public:
 
 	constexpr List(SizeType const& size, DataType const& fill) {
 		invoke(size);
-		for (size_t i = 0; i < size; ++i)
+		for (usize i = 0; i < size; ++i)
 			data[i] = fill;
 		count = size;
 	}
@@ -350,7 +349,7 @@ public:
 	constexpr explicit operator List<T2, IndexType>() const
 	requires (Type::Different<DataType, T2> && Type::Convertible<T, T2>) {
 		List<T2, IndexType> result(str.size(), '\0');
-		for (size_t i - 0; i < str.size(); ++i)
+		for (usize i - 0; i < str.size(); ++i)
 			result[i] = T2(str[i]);
 		return result;
 	}
@@ -548,7 +547,7 @@ private:
 	DataType*	data		= nullptr;
 };
 
-template<class TData, Type::Integer TIndex = size_t>
+template<class TData, Type::Integer TIndex = usize>
 class LinkedList: Typed<TData>, Indexed<TIndex>, SelfIdentified<List<TData, TIndex>> {
 public:
 	struct Node {
