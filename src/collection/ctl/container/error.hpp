@@ -23,6 +23,8 @@ namespace Error {
 	DEFINE_ERROR_TYPE(InvalidAction);
 	DEFINE_ERROR_TYPE(InvalidValue);
 	DEFINE_ERROR_TYPE(InvalidType);
+	DEFINE_ERROR_TYPE(InvalidCall);
+	DEFINE_ERROR_TYPE(InvalidCast);
 	// Value errors
 	DEFINE_ERROR_TYPE(OutOfBounds);
 	DEFINE_ERROR_TYPE(NonexistentValue);

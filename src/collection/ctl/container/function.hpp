@@ -63,7 +63,7 @@ private:
 	}
 
 	[[noreturn]] void badCallError() {
-		throw Error::InvalidAction(
+		throw Error::InvalidCall(
 			"No function was assigned!",
 			__FILE__,
 			"unspecified",
