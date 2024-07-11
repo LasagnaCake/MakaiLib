@@ -110,8 +110,8 @@ LEAN_BEAN_MACHINE := -static -s
 
 #USE_FLTO := -flto
 
-COMPILER_CONFIG	:= -fexpensive-optimizations -m64 -std=gnu++20 -fcoroutines -fms-extensions $(USE_FLTO) $(LEAN_BEAN_MACHINE)
-LINKER_CONFIG	:= -static-libstdc++ -static-libgcc -m64 -fms-extensions $(USE_FLTO) $(LEAN_BEAN_MACHINE)
+COMPILER_CONFIG	:= -fexpensive-optimizations -m64 -std=gnu++20 -fcoroutines -fms-extensions $(USE_FLTO)
+LINKER_CONFIG	:= -static-libstdc++ -static-libgcc -m64 -fms-extensions $(USE_FLTO)
 
 ifeq ($(sath), 1)
 meth				:= 0
@@ -122,7 +122,7 @@ ifeq ($(meth), 1)
 MATH_OPTIMIZATIONS	:= -ffast-math -fsingle-precision-constant
 endif
 
-OPTIMIZATIONS	:= $(MATH_OPTIMIZATIONS)
+OPTIMIZATIONS	:= $(MATH_OPTIMIZATIONS) $(LEAN_BEAN_MACHINE)
 
 ifeq ($(use-openmp), 1)
 OPTIMIZATIONS	+= -fopenmp -openmp -ftree-parallelize-loops=128 -funswitch-loops -fpredictive-commoning -fgcse-after-reload -ftree-vectorize
@@ -303,7 +303,7 @@ demo: build/$(src)
 	@$(CXX) $(COMPILER_CONFIG) $(WARNINGS) $(OPTIMIZATIONS) -O$(optimize-lvl) $(DEBUG_SYMBOL) $(SAFE_MATH) $(OPENMP_ENABLED) $(INCLUDES) -D_DEMO_BUILD_ $(DEFINE_MACRO) -c build/$(src) -o obj/$@/$(name).o
 	
 	@echo "[2/2] linking libraries..."
-	@$(CXX) -o res/$(name)_$@.exe obj/$@/$(name).o $(INCLUDE_RC_FILE) $(LINKER_CONFIG) -O$(optimize-lvl)  $(LIBRARIES) $(GUI_MODE)
+	@$(CXX) -o res/$(name)_$@.exe obj/$@/$(name).o $(INCLUDE_RC_FILE) $(LINKER_CONFIG) -O$(optimize-lvl) $(LIBRARIES) $(GUI_MODE) $(LEAN_BEAN_MACHINE)
 	
 	@echo "Done!"
 	$(MAKE_CLEAN)
@@ -330,7 +330,7 @@ release: build/$(src)
 	@$(CXX) $(COMPILER_CONFIG) $(WARNINGS) $(OPTIMIZATIONS) -O$(optimize-lvl) $(DEBUG_SYMBOL) $(SAFE_MATH) $(OPENMP_ENABLED) $(INCLUDES) $(DEFINE_MACRO) -c build/$(src) -o obj/$@/$(name).o
 	
 	@echo "[2/2] linking libraries..."
-	@$(CXX) -o res/$(name).exe obj/$@/$(name).o $(INCLUDE_RC_FILE) $(LINKER_CONFIG) -O$(optimize-lvl)  $(LIBRARIES) $(GUI_MODE)
+	@$(CXX) -o res/$(name).exe obj/$@/$(name).o $(INCLUDE_RC_FILE) $(LINKER_CONFIG) -O$(optimize-lvl) $(LIBRARIES) $(GUI_MODE) $(LEAN_BEAN_MACHINE)
 	
 	@echo "Done!"
 	$(MAKE_CLEAN)
