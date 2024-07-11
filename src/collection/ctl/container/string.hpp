@@ -165,14 +165,14 @@ private:
 	}
 
 public:
-	constexpr BaseStaticString(const DataType* const& str) noexcept {
+	constexpr BaseStaticString(const DataType* const& str) {
 		SizeType len = 0;
 		while (v[len++] != '\0' && len != TypeInfo<SizeType>::HIGHEST);
 		memcpy(str, cbegin(), (len < SIZE ? len : SIZE) * sizeof(DataType));
 	}
 
 	template<IndexType BEGIN, SizeType COUNT = SIZE>
-	constexpr auto substring() const noexcept {
+	constexpr auto substring() const {
 		constexpr SizeType start	= wrapAround(BEGIN);
 		constexpr SizeType stop		= ((start + COUNT) < SIZE) ? start + COUNT : SIZE;
 		BaseStaticString<stop - start + 1, TChar, TIndex> result('\0');
@@ -180,11 +180,11 @@ public:
 		return result;
 	}
 
-	constexpr ConstPointerType cstr() const noexcept {
+	constexpr ConstPointerType cstr() const {
 		return cbegin();
 	}
 
-	constexpr BaseString<TChar, TIndex> toString() const noexcept {
+	constexpr BaseString<TChar, TIndex> toString() const {
 		return BaseString<TChar, TIndex>(begin(), end());
 	}
 }

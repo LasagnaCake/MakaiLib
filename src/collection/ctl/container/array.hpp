@@ -22,11 +22,11 @@ public:
 
 	constexpr SizeType SIZE = N;
 
-	static_assert(N <= TypeInfo<SizeType>::HIGHEST, "Array size must not be bigger than max integer size!");
+	static_assert(N <= TypeInfo<SizeType>::HIGHEST, "Array size must not be bigger than highest SizeType!");
 
-	constexpr Array() requires(Type::DefaultConstructible<DataType>)	{for (auto& e: data) e = DataType();	}
-	constexpr Array(ArrayType const& data)								{memcpy(arr, data, SIZE);				}
-	constexpr Array(DataType const& v)									{for (auto& e: data) e = v;				}
+	constexpr Array() requires(Type::Constructible<DataType>)	{for (auto& e: data) e = DataType();	}
+	constexpr Array(ArrayType const& data)						{memcpy(arr, data, SIZE);				}
+	constexpr Array(DataType const& v)							{for (auto& e: data) e = v;				}
 
 	constexpr DataType& operator[](TIndex const& index) {
 		if (index >= SIZE)
@@ -66,5 +66,18 @@ public:
 private:
 	ArrayType data = {0};
 };
+
+namespace Impl {
+	template<typename T, Type::Integer TIndex = usize>
+	struct FromCArray;
+
+	template<usize N, class TData, Type::Integer TIndex>
+	struct FromCArray<TData[N], TIndex> {
+		typedef Array<N, TData, TIndex> Type;
+	};
+}
+
+template<typename T, Type::Integer TIndex = usize>
+using FromCArray = Impl::FromCArray<T, TIndex>::Type;
 
 #endif // CTL_CONTAINER_ARRAY_H
