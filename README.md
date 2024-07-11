@@ -104,6 +104,7 @@ Currently VERY scarce. Some of the code is commented.
 ## TODO
 
 ### Current
+- [ ] Add initializer lists wherever possible
 - [x] Separate `itembox` and `grazebox`
 - [x] `data/` folder packing system
 - [x] "Optimize" GPU usage
