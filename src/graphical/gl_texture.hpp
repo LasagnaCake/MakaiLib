@@ -383,6 +383,48 @@ public:
 
 	typedef Image2D::FileType ImageFileType;
 
+	static Texture2D fromJSON(JSONData const& img, String const& sourcepath = "") {
+		Texture2D texture;
+		if (img["data"].is_object() && img["data"]["path"].is_string() && !img["data"]["path"].get<String>().empty()) {
+			texture.make(FileSystem::concatenatePath(sourcepath, img["path"].get<String>()));
+			texture.setTextureFilterMode(
+				img.value<uint>("minFilter", GL_NEAREST_MIPMAP_NEAREST),
+				img.value<uint>("magFilter", GL_NEAREST)
+			);
+		} else if (img["data"].is_string() && !img["data"].get<String>().empty()) {
+			List<ubyte> data = decodeData(img["data"].get<String>(), img["encoding"]);
+			int w, h, nc;
+			uchar* imgdat = stbi_load_from_memory(
+				data.data(),
+				data.size(),
+				&w,
+				&h,
+				&nc,
+				4
+			);
+			if (imgdat) {
+				texture.make(
+					w,
+					h,
+					GL_UNSIGNED_BYTE,
+					GL_RGBA,
+					img.value<uint>("minFilter", GL_NEAREST_MIPMAP_NEAREST),
+					img.value<uint>("magFilter", GL_NEAREST),
+					imgdat
+				);
+				stbi_image_free(imgdat);
+			} else throw Error::FailedAction(
+				"Failed at getting image effect!",
+				__FILE__,
+				toString(__LINE__),
+				"loadImageEffect",
+				"Could not decode embedded image data!",
+				"Please check to see if values are correct!"
+			);
+		}
+		return texture;
+	}
+
 	Texture2D() {image = new Image2D();}
 
 	Texture2D(

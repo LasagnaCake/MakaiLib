@@ -38,6 +38,92 @@
 #define GRAPHICAL_PARALLEL_FOR PRAGMA_PARALLEL_FOR(GRAPHICAL_PARALLEL_THREAD_COUNT)
 #endif // GRAPHICAL_PARALLEL_FOR
 
+namespace VecMath {
+	Vector2 fromJSONArrayV2(JSONData const& json, Vector2 const& defaultValue = 0) {
+		try {
+			if (json.is_array())
+				return Vector2(
+					json[0],
+					json[1]
+				);
+			else return defaultValue;
+		} catch (JSON::exception const& e) {
+			return defaultValue;
+		}
+	}
+
+	Vector3 fromJSONArrayV3(JSONData const& json, Vector3 const& defaultValue = 0) {
+		try {
+			if (json.is_array())
+				return Vector3(
+					json[0],
+					json[1],
+					json[2]
+				);
+			else return defaultValue;
+		} catch (JSON::exception const& e) {
+			return defaultValue;
+		}
+	}
+
+	Vector4 fromJSONArrayV4(JSONData const& json, Vector4 const& defaultValue = 0) {
+		try {
+			if (json.is_array())
+				return Vector4(
+					json[0],
+					json[1],
+					json[2],
+					json[3]
+				);
+			else return defaultValue;
+		} catch (JSON::exception const& e) {
+			return defaultValue;
+		}
+	}
+}
+
+namespace Decoder {
+	#define _ENCDEC_CASE(T, F) if (encoding == T) return F(data)
+	List<ubyte> decodeData(String const& data, String const& encoding) try {
+		_ENCDEC_CASE	("base32",	cppcodec::base32_rfc4648::decode);
+		_ENCDEC_CASE	("base64",	cppcodec::base64_rfc4648::decode);
+		throw Error::InvalidValue(
+			"Invalid encoding: " + encoding,
+			__FILE__,
+			toString(__LINE__),
+			"decodeData"
+		);
+	} catch (cppcodec::parse_error const& e) {
+		throw Error::FailedAction(
+			"Failed at decoding byte data!",
+			__FILE__,
+			toString(__LINE__),
+			"decodeData",
+			e.what()
+		);
+	}
+
+	String encodeData(List<ubyte> const& data, String const& encoding) try {
+		_ENCDEC_CASE	("base32",	cppcodec::base32_rfc4648::encode);
+		_ENCDEC_CASE	("base64",	cppcodec::base64_rfc4648::encode);
+		throw Error::InvalidValue(
+			"Invalid encoding: " + encoding,
+			__FILE__,
+			toString(__LINE__),
+			"decodeData"
+		);
+	} catch (cppcodec::parse_error const& e) {
+		throw Error::FailedAction(
+			"Failed at encoding byte data!",
+			__FILE__,
+			toString(__LINE__),
+			"encodeData",
+			e.what()
+		);
+	}
+	#undef _ENCDEC_CASE
+}
+
 namespace Drawer {
 	namespace {
 		//GLuint defBackBuffer
@@ -49,6 +135,7 @@ namespace Drawer {
 		std::vector;
 
 		using namespace std;
+		using namespace Decoder;
 	}
 
 	#define RAW_VERTEX_SIZE (sizeof(RawVertex) / sizeof(float))
@@ -349,48 +436,6 @@ namespace VecMath {
 	inline void srpTransform(RawVertex& vtx, Transform3D const& trans) {
 		srpTransform(vtx, Matrix4x4(trans));
 	}
-
-	Vector2 fromJSONArrayV2(JSONData const& json) {
-		try {
-			if (json.is_array())
-				return Vector2(
-					json[0],
-					json[1]
-				);
-			else return Vector2(0);
-		} catch (JSON::exception const& e) {
-			return Vector2(0);
-		}
-	}
-
-	Vector3 fromJSONArrayV3(JSONData const& json) {
-		try {
-			if (json.is_array())
-				return Vector3(
-					json[0],
-					json[1],
-					json[2]
-				);
-			else return Vector3(0);
-		} catch (JSON::exception const& e) {
-			return Vector3(0);
-		}
-	}
-
-	Vector4 fromJSONArrayV4(JSONData const& json) {
-		try {
-			if (json.is_array())
-				return Vector4(
-					json[0],
-					json[1],
-					json[2],
-					json[3]
-				);
-			else return Vector4(0);
-		} catch (JSON::exception const& e) {
-			return Vector4(0);
-		}
-	}
 }
 
 namespace RenderData {
@@ -408,6 +453,7 @@ namespace RenderData {
 		std::function,
 		std::vector,
 		std::string;
+		using namespace Decoder;
 	}
 
 	/// Base triangle data structure.
@@ -416,46 +462,6 @@ namespace RenderData {
 	};
 
 	class Renderable;
-
-	#define _ENCDEC_CASE(T, F) if (encoding == T) return F(data)
-	List<ubyte> decodeData(String const& data, String const& encoding) try {
-		_ENCDEC_CASE	("base32",	cppcodec::base32_rfc4648::decode);
-		_ENCDEC_CASE	("base64",	cppcodec::base64_rfc4648::decode);
-		throw Error::InvalidValue(
-			"Invalid encoding: " + encoding,
-			__FILE__,
-			toString(__LINE__),
-			"decodeData"
-		);
-	} catch (cppcodec::parse_error const& e) {
-		throw Error::FailedAction(
-			"Failed at decoding byte data!",
-			__FILE__,
-			toString(__LINE__),
-			"decodeData",
-			e.what()
-		);
-	}
-
-	String encodeData(List<ubyte> const& data, String const& encoding) try {
-		_ENCDEC_CASE	("base32",	cppcodec::base32_rfc4648::encode);
-		_ENCDEC_CASE	("base64",	cppcodec::base64_rfc4648::encode);
-		throw Error::InvalidValue(
-			"Invalid encoding: " + encoding,
-			__FILE__,
-			toString(__LINE__),
-			"decodeData"
-		);
-	} catch (cppcodec::parse_error const& e) {
-		throw Error::FailedAction(
-			"Failed at encoding byte data!",
-			__FILE__,
-			toString(__LINE__),
-			"encodeData",
-			e.what()
-		);
-	}
-	#undef _ENCDEC_CASE
 
 	namespace Material {
 		#include "gl_material.hpp"

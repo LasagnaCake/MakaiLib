@@ -544,53 +544,7 @@ ImageEffect loadImageEffect(
 	try {
 		ImageEffect fx;
 		fx.enabled = effect["enabled"].get<bool>();
-		auto& img = effect["image"];
-		/*if (!texture.exists())
-			throw Error::InvalidValue(
-				"Texture cannot be null!",
-				__FILE__,
-				toString(__LINE__),
-				"loadImageEffect",
-				"Make sure you are passing a texture!"
-			);*/
-		fx.image = texture;
-		if (img["data"].is_object() && img["data"]["path"].is_string() && !img["data"]["path"].get<string>().empty()) {
-			texture.make(FileSystem::concatenatePath(sourcepath, img["path"].get<string>()));
-			texture.setTextureFilterMode(
-				img.value<uint>("minFilter", GL_NEAREST_MIPMAP_NEAREST),
-				img.value<uint>("magFilter", GL_NEAREST)
-			);
-		} else if (img["data"].is_string() && !img["data"].get<string>().empty()) {
-			vector<ubyte> data = decodeData(img["data"].get<string>(), img["encoding"]);
-			int w, h, nc;
-			uchar* imgdat = stbi_load_from_memory(
-				data.data(),
-				data.size(),
-				&w,
-				&h,
-				&nc,
-				4
-			);
-			if (imgdat) {
-				texture.make(
-					w,
-					h,
-					GL_UNSIGNED_BYTE,
-					GL_RGBA,
-					img.value<uint>("minFilter", GL_NEAREST_MIPMAP_NEAREST),
-					img.value<uint>("magFilter", GL_NEAREST),
-					imgdat
-				);
-				stbi_image_free(imgdat);
-			} else throw Error::FailedAction(
-					"Failed at getting image effect!",
-					__FILE__,
-					toString(__LINE__),
-					"loadImageEffect",
-					"Could not decode embedded image data!",
-					"Please check to see if values are correct!"
-				);
-		} else fx.enabled = false;
+		fx.image = texture = Texture2D::fromJSON(effect["image"], sourcepath);
 		return fx;
 	} catch (JSON::exception const& e) {
 		throw Error::FailedAction(
