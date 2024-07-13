@@ -24,8 +24,7 @@ struct GameUI {
 	Label				score, hiScore, point, graze;
 	Label				grazeTitle, pointTitle, scoreTitle, hiScoreTitle, difficulty;
 
-	Texture2D		fontTX;
-	FontData		font{&fontTX};
+	FontFace		font;
 
 	GameUI() {
 		power.bar.trans.position.z = 0.1;
@@ -53,7 +52,7 @@ struct GameUI {
 		score.font			=
 		hiScore.font		=
 		point.font			=
-		graze.font			= &font;
+		graze.font			= font;
 		power.label.text	= TextData{
 			"0.00",
 			TextRect{4,1},

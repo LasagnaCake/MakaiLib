@@ -36,14 +36,9 @@ public:
 		timerDisplay.text.textAlign	= .5;
 	})
 
-	Texture2D
-		timerFontTX,
-		phaseFontTX
-	;
-
-	FontData
-		timerFont = {&timerFontTX},
-		phaseFont = {&phaseFontTX}
+	FontFace
+		timerFont,
+		phaseFont
 	;
 
 	Label
@@ -166,8 +161,8 @@ public:
 
 private:
 	void setUIElements() {
-		timerDisplay.font = &timerFont;
-		phaseDisplay.font = &phaseFont;
+		timerDisplay.font = timerFont;
+		phaseDisplay.font = phaseFont;
 		phaseDisplay.text =
 		timerDisplay.text = TextData {
 			"0",

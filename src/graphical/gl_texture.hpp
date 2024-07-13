@@ -425,7 +425,7 @@ public:
 		return texture;
 	}
 
-	Texture2D() {image = new Image2D();}
+	Texture2D(): image(new Image2D()) {}
 
 	Texture2D(
 		unsigned int width,
@@ -436,7 +436,7 @@ public:
 		unsigned int minFilter = GL_LINEAR_MIPMAP_LINEAR,
 		unsigned char* data = NULL,
 		unsigned int internalFormat = 0
-	) {
+	): Texture2D() {
 		create(
 			width,
 			height,
@@ -453,13 +453,13 @@ public:
 		std::string const& path,
 		unsigned int magFilter = GL_LINEAR,
 		unsigned int minFilter = GL_LINEAR_MIPMAP_LINEAR
-	) {
+	): Texture2D() {
 		create(path, minFilter, magFilter);
 	}
 
 	Texture2D(
 		Image2D::ImageData const& image
-	) {
+	): Texture2D() {
 		create(image);
 	}
 
@@ -483,13 +483,8 @@ public:
 		unsigned int endX,
 		unsigned int endY,
 		bool filter = false
-	) {
+	): Texture2D() {
 		create(other, startX, startY, endX, endY, filter);
-	}
-
-	Texture2D create() {
-		image->create();
-		return *this;
 	}
 
 	Texture2D& create(
@@ -502,10 +497,9 @@ public:
 		unsigned char* data			= NULL,
 		unsigned int internalFormat	= 0
 	) {
-		if (!image) return *this;
-		else if (image && !image->exists())
-			createTexture2D(
-				(Image2D*)image,
+		if (exists()) return *this;
+		if (!image)
+			image = createTexture2D(
 				width,
 				height,
 				type,
@@ -515,8 +509,9 @@ public:
 				magFilter,
 				data
 			);
-		else
-			image = createTexture2D(
+		else if (image && !image->exists())
+			createTexture2D(
+				(Image2D*)image,
 				width,
 				height,
 				type,

@@ -3,9 +3,54 @@ struct TextRect {
 };
 
 struct FontData {
-	Texture2D	face	= nullptr;
-	Vector2				size	= Vector2(16);
-	Vector2				spacing	= Vector2(1);
+	Texture2D	image;
+	Vector2		size	= Vector2(16);
+	Vector2		spacing	= Vector2(1);
+};
+
+struct FontFace {
+public:
+	typedef Instance<FontData> FontInstance;
+
+	// This needs to be initialized this way, else it breaks somehow???
+	FontFace(): instance(new FontData()) {}
+
+	FontFace(FontData const& font): FontFace() {
+		instance->image		= font.image;
+		instance->size		= font.size;
+		instance->spacing	= font.spacing;
+	}
+
+	FontFace(String const& path): FontFace() {
+		JSONData const tx = FileLoader::getJSON(path);
+		instance->image		= Texture2D::fromJSON(tx["image"]);
+		instance->size		= VecMath::fromJSONArrayV2(tx["size"]);
+		instance->spacing	= VecMath::fromJSONArrayV2(tx["spacing"]);
+	}
+
+	FontFace& operator=(FontFace const& other) {
+		instance = other.instance;
+		return *this;
+	}
+
+	FontFace& operator=(FontData const& font) {
+		instance = new FontData();
+		instance->image		= font.image;
+		instance->size		= font.size;
+		instance->spacing	= font.spacing;
+		return *this;
+	}
+
+	inline FontData& data() const {return *instance; }
+
+	inline FontData& operator*() const		{return data();	}
+	inline FontData* operator->() const	{return &data();	}
+
+	inline bool exists() const				{return instance.exists() && instance->image.exists();	}
+	inline explicit operator bool() const	{return exists();										}
+
+private:
+	FontInstance instance;
 };
 
 enum class LineWrap {
@@ -171,8 +216,8 @@ public:
 		DEBUGLN("Text!");
 	}
 
-	FontData*		font = nullptr;
-	TextData		text;
+	FontFace	font;
+	TextData	text;
 
 private:
 	List<RawVertex> vertices;
@@ -180,8 +225,6 @@ private:
 	TextData last = {"",{0,0}};
 
 	void draw() override {
-		// If no font face exists return
-		if (!(font && font->face)) return;
 		// If text changed, update label
 		if (!isTextDataEqual(text, last)) {
 			last = text;
@@ -190,7 +233,7 @@ private:
 		// If no vertices, return
 		if (!vertices.size()) return;
 		// Set shader data
-		material.texture = {true, font->face, material.texture.alphaClip};
+		material.texture = {true, font->image, material.texture.alphaClip};
 		setShaderData();
 		Material::setMaterial(shader, material);
 		// Display to screen
