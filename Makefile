@@ -26,11 +26,12 @@ Build-exclusive options:
 >   optimize-lvl  = [ 0 - 3 | g ]    : Spec. the optimization level            ( DEFAULT: 2        )
 >   debug-profile = [ 1 | 0 ]        : Spec. whether to enable gmon            ( DEFAULT: 0        )
 >   keep-o-files  = [ 1 | 0 ]        : Spec. if .o files should be kept        ( DEFAULT: 0        )
->   macro         = [ value | none ] : Spec. a macro to be defined             ( DEFAULT: none     )
+>   macro         = [ value | none ] : Spec. macros to be defined              ( DEFAULT: none     )
 >   meth          = [ 1 | 0 ]        : Spec. whether to enable fast math       ( DEFAULT: 0        )
 >   sath          = [ 1 | 0 ]        : Spec. whether to enable safe math       ( DEFAULT: 0        )
 >   debug-release = [ 1 | 0 ]        : Spec. whether to enable -g on release   ( DEFAULT: 0        )
 >   rcscript      = [ value | none ] : Spec. the location of a .rc file        ( DEFAULT: none     )
+>   extra-libs    = [ value | none ] : Spec. extra libraries to link to prog.  ( DEFAULT: none     )
 
 Pack-exclusive options:
 >   extra-files   = [ value | none ] : Spec. extra files to pack in zip file   ( DEFAULT: none     )
@@ -45,12 +46,21 @@ Pack-exclusive options:
 >   shader-folder = [ 1 | 0 ]        : Spec. whether to inc. the shader folder ( DEFAULT: 1        )
 
 NOTES:
+>   name         : For targers "debug" and "demo", "_debug" and "_demo" gets appended at the end of
+                  the file, respectively.
+
+Build:
 (Safe, in this case, means 'IEEE compliant'.)
 >   meth         : Enables FAST, but IMPRECISE and UNSAFE floating point operations.
 >   sath         : Enables SAFE math. If this one is enabled, METH is disabled.
 >   rcfile       : Must be located within the 'build/' folder.
->   name         : For targers "debug" and "demo", "_debug" and "_demo" gets appended at the end of
-                  the file, respectively.
+>   macro        : If more than one macro, be a comma-separated list not containing spaces.
+>   extra-libs   : Must be a makefile containing the following two values:
+                    1. PROGRAM_INCLUDES : Path to each of the libraries' headers' folders. 
+                    1. PROGRAM_LIBRARIES : Path to each of the libraries' '.a' files, if the
+                       library has one.
+                   Both values MUST be comma-separated lists with no spaces.
+                   The makefile MUST be contained in the 'build/' folder.
 
 Pack:
 >   name          : Both the name used for the output zip file, and the name of the .exe, minus the
@@ -68,10 +78,10 @@ Pack:
 >   archive-pass  : ASCII characters only.
                     To get the key created from it to use in attaching the archive:
                      1. Run [make generate-key archive-pass="YOUR_PASSWORD_HERE"] to generate a
-                         "key.256.h" file in the "build/" folder (you can move it, if you want)
+                        "key.256.h" file in the "build/" folder (you can move it, if you want)
                      2. [#include] it somewhere in your program
                      3. Use the [passkey] variable as the password in the
-                         [FileLoader::attachArchive] function, passing as [*passkey].
+                        [FileLoader::attachArchive] function, passing as [*passkey].
 >   shader-folder : Set this to 0 if and ONLY IF you are providing your shader code somewhere
                     else.
 
@@ -81,6 +91,16 @@ Pack:
    See NOTES:Pack:archive-pass for more information on how to do so. For this case, simply set the
    "YOUR_PASSWORD_HERE" to " "
 endef
+
+ifdef extra-libs
+include build/$(extra-libs)
+ifdef PROGRAM_INCLUDES
+EXTRA_INCLUDES	:= -I"$(PROGRAM_INCLUDES:\,="\ -I")"
+endif
+ifdef PROGRAM_LIBRARIES
+EXTRA_LIBRARIES	:= "$(PROGRAM_LIBRARIES:\,="\ ")"
+endif
+endif
 
 define GET_TIME
 @printf "\nTime: "
@@ -131,11 +151,11 @@ optimize-lvl	:= g
 else
 optimize-lvl	?= 2
 endif
-INCLUDES		:= -Ilib -Isrc -Ilib/SDL2-2.0.10/include -Ilib/OpenGL -Ilib/OpenGL/GLEW/include -Ilib/cute_headers -Ilib/stb -Ilib/jsoncpp-3.11.2/include -Ilib/cppcodec-0.2 -Ilib/cryptopp/include -Itools
+INCLUDES		:= -Ilib -Isrc -Ilib/SDL2-2.0.10/include -Ilib/OpenGL -Ilib/OpenGL/GLEW/include -Ilib/cute_headers -Ilib/stb -Ilib/jsoncpp-3.11.2/include -Ilib/cppcodec-0.2 -Ilib/cryptopp/include -Itools $(EXTRA_INCLUDES)
 
 WINGARBAGE		:= -lole32 -loleaut32 -limm32 -lwinmm -lversion -lpowrprof -lcomdlg32 -lsetupapi -lgdi32
 
-LIBRARIES		:= lib/SDL2-2.0.10/lib/libSDL2.dll.a lib/SDL2-2.0.10/lib/libSDL2main.a lib/SDL2-2.0.10/lib/libSDL2_mixer.dll.a lib/cryptopp/lib/libcryptopp.a lib/OpenGL/GLEW/lib/libglew32.dll.a $(WINGARBAGE) -lopengl32 -lgomp
+LIBRARIES		:= lib/SDL2-2.0.10/lib/libSDL2.dll.a lib/SDL2-2.0.10/lib/libSDL2main.a lib/SDL2-2.0.10/lib/libSDL2_mixer.dll.a lib/cryptopp/lib/libcryptopp.a lib/OpenGL/GLEW/lib/libglew32.dll.a $(WINGARBAGE) -lopengl32 -lgomp $(EXTRA_LIBRARIES)
 
 # This doesn't work. Oh well.
 # SANITIZER_OPTIONS := -fsanitize=leak -fsanitize=memory
@@ -172,7 +192,7 @@ WINRC				:= @:
 endif
 
 ifdef macro
-DEFINE_MACRO = -D$(macro)
+DEFINE_MACRO = -D"$(macro:\,="\ -D")"
 endif
 
 ifeq ($(no-archive), 1)
