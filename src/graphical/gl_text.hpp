@@ -12,7 +12,7 @@ struct FontFace {
 public:
 	typedef Instance<FontData> FontInstance;
 
-	// This needs to be initialized this way, else it breaks somehow???
+	// This needs to be initialized this specific way, else it breaks somehow???
 	FontFace(): instance(new FontData()) {}
 
 	FontFace(FontData const& font): FontFace() {
