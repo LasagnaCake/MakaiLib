@@ -386,7 +386,7 @@ public:
 	static Texture2D fromJSON(JSONData const& img, String const& sourcepath = "") {
 		Texture2D texture;
 		if (img["data"].is_object() && img["data"]["path"].is_string() && !img["data"]["path"].get<String>().empty()) {
-			texture.make(FileSystem::concatenatePath(sourcepath, img["path"].get<String>()));
+			texture.create(FileSystem::concatenatePath(sourcepath, img["path"].get<String>()));
 			texture.setTextureFilterMode(
 				img.value<uint>("minFilter", GL_NEAREST_MIPMAP_NEAREST),
 				img.value<uint>("magFilter", GL_NEAREST)
@@ -403,7 +403,7 @@ public:
 				4
 			);
 			if (imgdat) {
-				texture.make(
+				texture.create(
 					w,
 					h,
 					GL_UNSIGNED_BYTE,
@@ -437,7 +437,7 @@ public:
 		unsigned char* data = NULL,
 		unsigned int internalFormat = 0
 	) {
-		make(
+		create(
 			width,
 			height,
 			type,
@@ -454,13 +454,13 @@ public:
 		unsigned int magFilter = GL_LINEAR,
 		unsigned int minFilter = GL_LINEAR_MIPMAP_LINEAR
 	) {
-		make(path, minFilter, magFilter);
+		create(path, minFilter, magFilter);
 	}
 
 	Texture2D(
 		Image2D::ImageData const& image
 	) {
-		make(image);
+		create(image);
 	}
 
 	Texture2D(
@@ -484,7 +484,12 @@ public:
 		unsigned int endY,
 		bool filter = false
 	) {
-		make(other, startX, startY, endX, endY, filter);
+		create(other, startX, startY, endX, endY, filter);
+	}
+
+	Texture2D create() {
+		image->create();
+		return *this;
 	}
 
 	Texture2D& create(
