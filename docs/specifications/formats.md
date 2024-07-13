@@ -1,10 +1,27 @@
-Undefined optional values are set to their defaults.
+# Notes
+* Undefined optional values are set to their specified defaults.
+* Any 4D vector representing color can also be represented by a hex string.
+* * **Example:** `[1.0, 1.0, 1.0, 1.0]` becomes `"#FFFFFFFF"` or `"0xFFFFFFFF"`.
+* Any vector whose components are *equivalent* can be represented by a single number value.
+* * **Example:** `[2.0, 2.0, 2.0]` becomes `2.0`, `[4.0, 4.0]` becomes `4.0`, and so forth.
 
-NOTE: Any 4D vector representing color can also
+## Valid Hex Strings
+Each string *must* be prepended with either `#` or `0x`.
 
-# Transform2D
+| String | Component Size | Components | Examples |
+|:---:|:---:|:---:|:---:|
+|`"RGB"`| 4-bit | `R`ed, `G`reen and `B`lue | `"#F00"` or `"0xF00"` |
+|`"RGBA"`| 4-bit | `R`ed, `G`reen, `B`lue and `A`lpha | `"#0F0F"` or `"0x0F0F"` |
+|`"RRGGBB"`| 8-bit | `R`ed, `G`reen and `B`lue | `"#0FF000"` or `"0x0FF000"` |
+|`"RRGGBBAA"`| 8-bit | `R`ed, `G`reen, `B`lue and `A`lpha | `"#F0FF00F0"` or `"0xF0FF00F0"` |
 
-## Layout
+# Formats
+
+## Components
+
+### Transform2D
+
+#### Layout
 
 ```javascript
 "trans": {
@@ -15,9 +32,9 @@ NOTE: Any 4D vector representing color can also
 }
 ```
 
-# Transform3D
+### Transform3D
 
-## Layout
+#### Layout
 
 ```javascript
 "trans": {
@@ -30,9 +47,9 @@ NOTE: Any 4D vector representing color can also
 
 ---
 
-# ImageData2D
+### ImageData2D
 
-## Layout
+#### Layout
 If image is to be embedded in the file:
 
 ```javascript
@@ -53,7 +70,7 @@ If image is to be saved in a separate file:
 "image": {
 	// Required
 	"data": {
-		"path": "" // Path to image file, relative to object definition file
+		"path": "" // Path to image file, relative to definition file
 	},
 	// Optional
 	// TODO: Change these to be its own enums
@@ -62,14 +79,40 @@ If image is to be saved in a separate file:
 }
 ```
 
-# ObjectMaterial
+### Camera3D
 
-## Layout
+#### Layout
+TODO: Add `"GIMBAL"` type
+```javascript
+"camera": {
+	// Required
+	"type": "DEFAULT"
+	"eye": [0.0, 0.0, 0.0],
+	"at": [0.0, 0.0, -1.0],
+	"up": [0.0, 1.0, 0.0],
+	"aspect": [4.0, 3.0],
+	"fov": 2.0,
+	"zNear": 0.01,
+	"zFar": 100.0,
+	// Optional
+	"ortho": {
+		// Required
+		"origin": [0, 0],
+		"size": [1, 1],
+		"strength": 0.0
+	},
+	"relativeToEye": false
+}
+```
+
+## ObjectMaterial
+
+### Layout
 
 ```javascript
 "material": {
 	// Optional
-	"color": [1.0, 1.0, 1.0, 1.0], // 4D vector representing the object's color, or a hex string the color value
+	"color": [1.0, 1.0, 1.0, 1.0], // 4D vector representing the object's color, or a hex string representing the color value
 	"shaded": false,
 	"illuminated": false,
 	"hue": 0.0,
@@ -78,28 +121,28 @@ If image is to be saved in a separate file:
 	"texture": {
 		// Required
 		"enabled": true,
-		"image": {/* See ImageData2D:Layout */},
+		"image": {/* See Components:ImageData2D:Layout */},
 		"alphaClip": 0.1, // Texture alpha clipping
 	},
 	"normalMap": {
 		// Required
 		"enabled": true,
-		"image": {/* See ImageData2D:Layout */},
+		"image": {/* See Components:ImageData2D:Layout */},
 		// Optional
 		"strength": 1.0, // Normal map strength
 	},
 	"emission": {
 		// Required
 		"enabled": true,
-		"image": {/* See ImageData2D:Layout */},
+		"image": {/* See Components:ImageData2D:Layout */},
 		// Optional
 		"strength": 1.0, // Emission strength
 	},
 	"warp": {
 		// Required
 		"enabled": true,
-		"image": {/* See ImageData2D:Layout */},
-		"trans": {/* See Transform2D:Layout */},
+		"image": {/* See Components:ImageData2D:Layout */},
+		"trans": {/* See Components:Transform2D:Layout */},
 		// Optional
 		"channelX": 0, // Index of the pixel's channel to be used for horizontal transformation
 		"channelY": 1, // Index of the pixel's channel to be used for vertical transformation
@@ -126,11 +169,11 @@ If image is to be saved in a separate file:
 }
 ```
 
-# WorldMaterial
+## WorldMaterial
 
-## FogEffect
+### FogEffect
 
-### Layout
+#### Layout
 	
 ```javascript
 "fog": {
@@ -143,7 +186,7 @@ If image is to be saved in a separate file:
 }
 ```
 
-## Layout
+### Layout
 
 ```javascript
 "material": {
@@ -158,9 +201,9 @@ If image is to be saved in a separate file:
 }
 ```
 
-# Renderable Object
+## Renderable Object
 
-## Layout
+### Layout
 
 This can be saved as a `JSON` file of extension `.mrod` (Makai Renderable Object Definition).
 
@@ -176,7 +219,7 @@ If data is to be integrated in the file:
 	},
 	// Optional
 	"version": 0 // The renderable definition version
-	"trans": {/* See Transform3D:Layout */},
+	"trans": {/* See Components:Transform3D:Layout */},
 	"material": {/* See ObjectMaterial:Layout */},
 	// See gl_renderable(.hpp) for further details
 	"blend": {
@@ -220,40 +263,15 @@ If data gets saved in a different file:
 	},
 	// Optional
 	"version": 0 // The renderable definition version
-	"trans": {/* See Transform3D:Layout */},
+	"trans": {/* See Components:Transform3D:Layout */},
 	"material": {/* See ObjectMaterial:Layout */},
 	"active": true,
 }
 ```
-# Camera3D
 
-## Layout
-TODO: Add `"GIMBAL"` type
-```javascript
-"camera": {
-	// Required
-	"type": "DEFAULT"
-	"eye": [0.0, 0.0, 0.0],
-	"at": [0.0, 0.0, -1.0],
-	"up": [0.0, 1.0, 0.0],
-	"aspect": [4.0, 3.0],
-	"fov": 2.0,
-	"zNear": 0.01,
-	"zFar": 100.0,
-	// Optional
-	"ortho": {
-		// Required
-		"origin": [0, 0],
-		"size": [1, 1],
-		"strength": 0.0
-	},
-	"relativeToEye": false
-}
-```
+## 3D Scene
 
-# 3D Scene
-
-## Layout
+### Layout
 
 This can be saved as a `JSON` file of extension `.msd` (Makai Scene Definition).
 
@@ -262,7 +280,7 @@ If data gets saved in a separate file:
 ```javascript
 "scene": {
 	// Required
-	"camera": {/* See Camera3D:Layout */}, // Scene's camera
+	"camera": {/* See Components:Camera3D:Layout */}, // Scene's camera
 	"world": {/* See WorldMaterial:Layout */}, // Scene's WorldMaterial
 	"path": [{
 		"source": "", // Object file source relative to file
@@ -279,12 +297,12 @@ If data is to be integrated in the file:
 ```javascript
 "scene": {
 	// Required
-	"camera": {/*See Camera3D:Layout */}, // Scene's camera
+	"camera": {/*See Components:Camera3D:Layout */}, // Scene's camera
 	"world": {/* See WorldMaterial:Layout */}, // Scene's WorldMaterial
 	// Option 1:
-	"data": [{/* See Renderable Object:Layout */}...] // List of object definitions
+	"data": [{/* See [Renderable Object]:Layout */}...] // List of object definitions
 	// Option 2:
-	"data": {"name": {/* See Renderable Object:Layout */}...} // Named objects
+	"data": {"name": {/* [See Renderable Object]:Layout */}...} // Named objects
 	// Optional
 	"version": 0 // The scene definition version
 }
@@ -293,11 +311,11 @@ In the previous case, if using a list of definitions, the names default to `unna
 
 For a name to be valid, it must **not** contain spaces, newlines, tabs, and/or any of the following characters: \\, /, ?, \*, \<, \>, :, " and/or |.
 
-# Dialogue
+## Dialogue
 
-## ActorData
+### ActorData
 
-### Layout
+#### Layout
 
 ```javascript
 "actor": {
@@ -310,7 +328,7 @@ For a name to be valid, it must **not** contain spaces, newlines, tabs, and/or a
 }
 ```
 
-## Layout
+### Layout
 
 This can be saved as a `JSON` file of extension `.mdd` (Makai Dialogue Definition). This does not include actor sprite data, purely only message text data.
 
@@ -339,3 +357,19 @@ This can be saved as a `JSON` file of extension `.mdd` (Makai Dialogue Definitio
 	"autoplay": false
 }
 ``````
+
+## Font Faces
+
+### Layout
+
+This can be saved as a `JSON` file of extension `.mffd` (Makai Font Face Definition).
+
+```javascript
+"face": {
+	// Required
+	"image": {/* See Components:ImageData2D:Layout */},
+	// Optional
+	"size": 16.0 // the caracter row & column count.
+	"spacing": 1.0 // The spacing between characters.
+}
+```
