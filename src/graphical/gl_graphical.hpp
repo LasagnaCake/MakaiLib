@@ -46,6 +46,8 @@ namespace VecMath {
 					json[0],
 					json[1]
 				);
+			else if (json.is_number())
+				return json.get<float>();
 			else return defaultValue;
 		} catch (JSON::exception const& e) {
 			return defaultValue;
@@ -60,6 +62,8 @@ namespace VecMath {
 					json[1],
 					json[2]
 				);
+			else if (json.is_number())
+				return json.get<float>();
 			else return defaultValue;
 		} catch (JSON::exception const& e) {
 			return defaultValue;
@@ -75,6 +79,8 @@ namespace VecMath {
 					json[2],
 					json[3]
 				);
+			else if (json.is_number())
+				return json.get<float>();
 			else return defaultValue;
 		} catch (JSON::exception const& e) {
 			return defaultValue;

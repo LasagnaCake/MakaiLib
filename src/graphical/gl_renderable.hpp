@@ -429,7 +429,7 @@ private:
 			try {
 				trans.position	= VecMath::fromJSONArrayV3(dtrans["position"]);
 				trans.rotation	= VecMath::fromJSONArrayV3(dtrans["rotation"]);
-				trans.scale		= VecMath::fromJSONArrayV3(dtrans["scale"]);
+				trans.scale		= VecMath::fromJSONArrayV3(dtrans["scale"], 1);
 			} catch (JSON::exception const& e) {
 				throw Error::FailedAction(
 					"Failed at getting transformation values!",

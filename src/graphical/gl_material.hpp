@@ -625,7 +625,7 @@ ObjectMaterial fromObjectMaterialDefinition(
 				auto& mwtrans = dmat["warp"]["trans"];
 				mat.warp.trans.position = VecMath::fromJSONArrayV2(mwtrans["position"]);
 				mat.warp.trans.rotation = mwtrans["rotation"].get<float>();
-				mat.warp.trans.scale = VecMath::fromJSONArrayV2(mwtrans["scale"]);
+				mat.warp.trans.scale = VecMath::fromJSONArrayV2(mwtrans["scale"], 1);
 			}
 			mat.warp.channelX = dmat["warp"]["channelX"];
 			mat.warp.channelY = dmat["warp"]["channelY"];

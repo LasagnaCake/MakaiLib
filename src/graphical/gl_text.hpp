@@ -23,9 +23,9 @@ public:
 
 	FontFace(String const& path): FontFace() {
 		JSONData const tx = FileLoader::getJSON(path);
-		instance->image		= Texture2D::fromJSON(tx["image"]);
-		instance->size		= VecMath::fromJSONArrayV2(tx["size"]);
-		instance->spacing	= VecMath::fromJSONArrayV2(tx["spacing"]);
+		instance->image		= Texture2D::fromJSON(tx["image"], FileSystem::getDirectoryFromPath(path));
+		instance->size		= VecMath::fromJSONArrayV2(tx["size"], 16);
+		instance->spacing	= VecMath::fromJSONArrayV2(tx["spacing"], 1);
 	}
 
 	FontFace& operator=(FontFace const& other) {
