@@ -18,30 +18,30 @@ struct Array:
 	Ordered {
 private:
 public:
-	typedef Decay::AsType<DataType[SIZE]> ArrayType;
+	constexpr SizeType length = N;
 
-	constexpr SizeType SIZE = N;
+	typedef Decay::AsType<DataType[length]> ArrayType;
 
 	static_assert(N <= TypeInfo<SizeType>::HIGHEST, "Array size must not be bigger than highest SizeType!");
 
 	constexpr Array() requires(Type::Constructible<DataType>)	{for (auto& e: data) e = DataType();	}
-	constexpr Array(ArrayType const& data)						{memcpy(arr, data, SIZE);				}
+	constexpr Array(ArrayType const& data)						{memcpy(arr, data, length);				}
 	constexpr Array(DataType const& v)							{for (auto& e: data) e = v;				}
 
 	constexpr DataType& operator[](TIndex const& index) {
-		if (index >= SIZE)
+		if (index >= length)
 			throw BasicError("Index is bigger than array size!");
 		return data[index];
 	}
 
 	constexpr DataType operator[](TIndex const& index) const {
-		if (index >= SIZE)
+		if (index >= length)
 			throw BasicError("Index is bigger than array size!");
 		return data[index];
 	}
 
-	constexpr bool empty()	const {return SIZE;}
-	constexpr bool size()	const {return SIZE;}
+	constexpr bool empty()	const {return length;}
+	constexpr bool size()	const {return length;}
 
 	constexpr IteratorType		begin()			{return data;		}
 	constexpr IteratorType		end()			{return data+SIZE;	}

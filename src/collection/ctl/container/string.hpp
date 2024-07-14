@@ -160,7 +160,7 @@ struct BaseStaticString:
 	Derived<Array<N, TChar, TIndex>> {
 private:
 	constexpr static wrapAround(IndexType value) {
-		while (value < 0) index += SIZE;
+		while (value < 0) index += length;
 		return value;
 	}
 
@@ -168,13 +168,13 @@ public:
 	constexpr BaseStaticString(const DataType* const& str) {
 		SizeType len = 0;
 		while (v[len++] != '\0' && len != TypeInfo<SizeType>::HIGHEST);
-		memcpy(str, cbegin(), (len < SIZE ? len : SIZE) * sizeof(DataType));
+		memcpy(str, cbegin(), (len < length ? len : length) * sizeof(DataType));
 	}
 
-	template<IndexType BEGIN, SizeType COUNT = SIZE>
+	template<IndexType BEGIN, SizeType COUNT = length>
 	constexpr auto substring() const {
 		constexpr SizeType start	= wrapAround(BEGIN);
-		constexpr SizeType stop		= ((start + COUNT) < SIZE) ? start + COUNT : SIZE;
+		constexpr SizeType stop		= ((start + COUNT) < length) ? start + COUNT : length;
 		BaseStaticString<stop - start + 1, TChar, TIndex> result('\0');
 		memcpy(cbegin() + begin, result(), stop - start);
 		return result;

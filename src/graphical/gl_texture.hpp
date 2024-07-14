@@ -92,7 +92,7 @@ struct Image2D: public Image {
 	};
 
 	struct ImageData: Attributes {
-		vector<ubyte> data;
+		List<ubyte> data;
 	};
 
 	Image2D& create(
@@ -184,6 +184,7 @@ struct Image2D: public Image {
 	Image2D&		saveToFile(string const& path, FileType type = FileType::IFT_AUTO_DETECT)		{return saveToFile(path, 50, type);}
 	Image2D const&	saveToFile(string const& path, FileType type = FileType::IFT_AUTO_DETECT) const	{return saveToFile(path, 50, type);}
 
+	[[nodiscard]]
 	static Image2D* newImage(
 		unsigned int width,
 		unsigned int height,

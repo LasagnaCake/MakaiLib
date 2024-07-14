@@ -52,7 +52,8 @@ public:
 
 	/// Creates a reference and binds it to this object.
 	template<Reference3D::ShapeType T>
-	[[nodiscard]] T* createReference() {
+	[[nodiscard]]
+	T* createReference() {
 		constexpr size_t count = T::triangleCount;
 		if (locked) throw Error::InvalidAction("Renderable object is locked!");
 		Triangle* tris[count] = {nullptr};
