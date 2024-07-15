@@ -22,7 +22,7 @@ public:
 
 	typedef Decay::AsType<DataType[length]> ArrayType;
 
-	static_assert(N <= TypeInfo<SizeType>::HIGHEST, "Array size must not be bigger than highest SizeType!");
+	static_assert(N <= maxSize, "Array size must not be bigger than highest SizeType!");
 
 	constexpr Array() requires(Type::Constructible<DataType>)	{for (auto& e: data) e = DataType();	}
 	constexpr Array(ArrayType const& data)						{memcpy(arr, data, length);				}

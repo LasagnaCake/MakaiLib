@@ -28,7 +28,7 @@ public:
 
 	constexpr BaseString(const DataType* const& v) {
 		SizeType len = 0;
-		while (v[len++] != '\0' && len != TypeInfo<SizeType>::HIGHEST);
+		while (v[len++] != '\0' && len != maxSize);
 		reserve(len);
 		memcpy(v, cbegin(), len * sizeof(DataType));
 	}
@@ -167,7 +167,7 @@ private:
 public:
 	constexpr BaseStaticString(const DataType* const& str) {
 		SizeType len = 0;
-		while (v[len++] != '\0' && len != TypeInfo<SizeType>::HIGHEST);
+		while (v[len++] != '\0' && len != maxSize);
 		memcpy(str, cbegin(), (len < length ? len : length) * sizeof(DataType));
 	}
 

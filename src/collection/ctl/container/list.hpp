@@ -829,7 +829,7 @@ private:
 	}
 
 	void assertNotAtItsLimit() {
-		if (count >= MAX_SIZE) atItsLimitError();
+		if (count >= highest) atItsLimitError();
 	}
 
 	[[noreturn]] constexpr void invalidSizeError(SizeType const& size) {
