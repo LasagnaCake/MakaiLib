@@ -104,6 +104,11 @@ Currently VERY scarce. Some of the code is commented.
 ## TODO
 
 ### Current
+- [ ] Overhaul [Collision System](src/collection/entity/collidable.hpp) (See [New Collision System Proposal](src/docs/changes/Collision.md#Collision-Server))
+- 1. Separate collision handling code into separate file
+- 2. Move collision handling to a server, that creates, destroys & manages collision shapes (See [Collision::\[Collision Server\]](src/docs/changes/Collision.md#Collision-Server))
+- 3. Integrate into existing structure, while allowing for custom collision checking (See [Collision::\[Collision Events\]](src/docs/changes/Collision.md#Collision-Events))
+- 4. Also, just clean it, in general
 - [ ] Add initializer lists wherever possible
 - [x] Separate `itembox` and `grazebox`
 - [x] `data/` folder packing system
@@ -154,7 +159,7 @@ Currently VERY scarce. Some of the code is commented.
 - [ ] Cleanup & polish [entity](src/collection/entity/entity.hpp) system
 - [ ] (Maybe) replace JSON to other specification
 - - For the *custom file formats*, that is
-- - See [File Format Alternatives](docs/changes/AltFormats.md) for more informaion
+- - See [File Format Alternatives Proposal](docs/changes/AltFormats.md) for more informaion
 - [ ] Multi-platform support:
 - - [ ] Linux
 
