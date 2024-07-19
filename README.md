@@ -104,7 +104,7 @@ Currently VERY scarce. Some of the code is commented.
 ## TODO
 
 ### Current
-- [ ] Overhaul [Collision System](src/collection/entity/collidable.hpp) (See [New Collision System Proposal](docs/changes/Collision.md#Collision-Server))
+- [ ] Overhaul [Collision System](src/collection/entity/collidable.hpp) (See [New Collision System Proposal](docs/changes/Collision.md))
 - 1. Separate collision handling code into separate file
 - 2. Move collision handling to a server, that creates, destroys & manages collision shapes (See [Collision::\[Collision Server\]](docs/changes/Collision.md#Collision-Server))
 - 3. Integrate into existing structure, while allowing for custom collision checking (See [Collision::\[Collision Events\]](docs/changes/Collision.md#Collision-Events))
