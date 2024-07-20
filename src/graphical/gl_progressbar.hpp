@@ -64,7 +64,7 @@ private:
 		// Set center to offset
 		Drawer::vertexSetPosition(vertices[0], offset.yx() * size);
 		// For each surrounding vertex...
-		for SSRANGE(i, 1, RADIAL_BAR_RESOLUTION + 2) {
+		for SRANGE(i, 1, RADIAL_BAR_RESOLUTION + 2) {
 			// UV fraction, Positional fraction
 			float uvfrac, posfrac;
 			// Get current vertex's fraction

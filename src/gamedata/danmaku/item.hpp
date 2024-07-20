@@ -253,13 +253,13 @@ public:
 
 	void forEach(Callback<Collectible> func) {
 		GAME_PARALLEL_FOR
-		for SSRANGE(i, 0, ITEM_COUNT)
+		for SRANGE(i, 0, ITEM_COUNT)
 			func(items[i]);
 	}
 
 	void forEachActive(Callback<Collectible> func) {
 		GAME_PARALLEL_FOR
-		for SSRANGE(i, 0, ITEM_COUNT)
+		for SRANGE(i, 0, ITEM_COUNT)
 			if (!items[i].isFree())
 				func(items[i]);
 	}
@@ -267,7 +267,7 @@ public:
 	template <CollisionType T>
 	void forEachInArea(T area, Callback<Collectible> func) {
 		GAME_PARALLEL_FOR
-		for SSRANGE(i, 0, ITEM_COUNT)
+		for SRANGE(i, 0, ITEM_COUNT)
 			if (
 				!items[i].isFree()
 			&&	items[i].params.collidable
@@ -328,7 +328,7 @@ public:
 	) {
 		CollectibleList res;
 		GAME_PARALLEL_FOR
-		for SSRANGE(i, 0, count) {
+		for SRANGE(i, 0, count) {
 			res.push_back(createCollectible(item));
 			last->local.position = at + (VecMath::angleV2(spread * ((float)i / (float)count) + angleOffset) * radius);
 			last->local.scale = scale;

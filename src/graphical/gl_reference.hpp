@@ -15,7 +15,7 @@ struct Shape: public Empty {
 	constexpr static size_t triangleCount = COUNT;
 
 	Shape(Triangle* const(& tris)[triangleCount]) {
-		for SSRANGE(i, 0, triangleCount)
+		for SRANGE(i, 0, triangleCount)
 			this->tris[i] = tris[i];
 	}
 
@@ -34,8 +34,8 @@ struct Shape: public Empty {
 	}
 
 	virtual void forEachVertex(VertexFunc const& f) {
-		for SSRANGE(i, 0, triangleCount)
-			for SSRANGE(j, 0, 3)
+		for SRANGE(i, 0, triangleCount)
+			for SRANGE(j, 0, 3)
 				f(((RawVertex*)tris[i])[j]);
 	};
 

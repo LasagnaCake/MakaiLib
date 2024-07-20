@@ -260,13 +260,13 @@ public:
 
 	void forEach(Callback<LineLaser> func) {
 		GAME_PARALLEL_FOR
-		for SSRANGE(i, 0, LASER_COUNT)
+		for SRANGE(i, 0, LASER_COUNT)
 			func(lasers[i]);
 	}
 
 	void forEachActive(Callback<LineLaser> func) {
 		GAME_PARALLEL_FOR
-		for SSRANGE(i, 0, LASER_COUNT)
+		for SRANGE(i, 0, LASER_COUNT)
 			if (!lasers[i].isFree())
 				func(lasers[i]);
 	}
@@ -274,7 +274,7 @@ public:
 	template <CollisionType T>
 	void forEachInArea(T area, Callback<LineLaser> func) {
 		GAME_PARALLEL_FOR
-		for SSRANGE(i, 0, LASER_COUNT)
+		for SRANGE(i, 0, LASER_COUNT)
 			if (
 				!lasers[i].isFree()
 			&&	lasers[i].params.collidable

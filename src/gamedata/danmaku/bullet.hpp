@@ -291,13 +291,13 @@ public:
 
 	void forEach(Callback<Bullet> func) {
 		GAME_PARALLEL_FOR
-		for SSRANGE(i, 0, BULLET_COUNT)
+		for SRANGE(i, 0, BULLET_COUNT)
 			func(bullets[i]);
 	}
 
 	void forEachActive(Callback<Bullet> func) {
 		GAME_PARALLEL_FOR
-		for SSRANGE(i, 0, BULLET_COUNT)
+		for SRANGE(i, 0, BULLET_COUNT)
 			if (!bullets[i].isFree())
 				func(bullets[i]);
 	}
@@ -305,7 +305,7 @@ public:
 	template <CollisionType T>
 	void forEachInArea(T area, Callback<Bullet> func) {
 		GAME_PARALLEL_FOR
-		for SSRANGE(i, 0, BULLET_COUNT)
+		for SRANGE(i, 0, BULLET_COUNT)
 			if (
 				!bullets[i].isFree()
 			&&	bullets[i].params.collidable

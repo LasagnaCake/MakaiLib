@@ -166,7 +166,7 @@ namespace Color {
 		uint32 hci = (toRGB ? toHexCodeRGB(color) : toHexCodeRGBA(color));
 		const uint8 hclen{toRGB ? 6 : 8};
 		uint8 nib{};
-		for SSRANGE(i, 0, hclen) {
+		for SRANGE(i, 0, hclen) {
 			nib = hci >> ((hclen - 1) - i) * 4;
 			code += (char)(
 				((nib & 0xF) < 0xA)

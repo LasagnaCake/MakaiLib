@@ -75,9 +75,9 @@ namespace Spline {
 			template <size_t P>
 			constexpr Spline(T const(& points)[P][N]) {
 				sections.resize(P);
-				for SSRANGE(i, 0, P) {
+				for SRANGE(i, 0, P) {
 					Section<T, N> sec;
-					for SSRANGE(j, 0, N)
+					for SRANGE(j, 0, N)
 						sec.points[j] = points[i][j];
 					sections.push_back(sec);
 				}
@@ -89,7 +89,7 @@ namespace Spline {
 				sections.resize(P/N);
 				for RANGE(i, 0, P, N) {
 					Section<T, N> sec;
-					for SSRANGE(j, 0, N)
+					for SRANGE(j, 0, N)
 						sec.points[j] = points[i+j];
 					sections.push_back(sec);
 				}
@@ -153,7 +153,7 @@ namespace Spline {
 			template <size_t P>
 			constexpr Spline(T const(& points)[P][2]) {
 				sections.resize(P);
-				for SSRANGE(i, 0, P) {
+				for SRANGE(i, 0, P) {
 					sections.push_back(
 						Section<T> {
 							points[i][0],

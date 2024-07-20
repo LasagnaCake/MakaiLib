@@ -588,7 +588,7 @@ inline StringList regexFind(String const& str, Regex const& expr) {
 	std::smatch rm;
 	StringList result;
 	std::regex_search(str, rm, expr);
-	for SSRANGE(i, 1, rm.size()-1)
+	for SRANGE(i, 1, rm.size()-1)
 		result.push_back(rm[i].str());
 	return result;
 }

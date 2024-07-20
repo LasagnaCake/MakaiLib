@@ -115,21 +115,21 @@ namespace Shader {
 
 		void setArray(Vector2* const& values, size_t const& count, size_t const& offset = 0) const {
 			this->offset = 0;
-			for SSRANGE(i, 0, count)
+			for SRANGE(i, 0, count)
 				glUniform2f(getUniformArray(i) + offset, values[i].x, values[i].y);
 			this->offset = count;
 		}
 
 		void setArray(Vector3* const& values, size_t const& count, size_t const& offset = 0) const {
 			this->offset = 0;
-			for SSRANGE(i, 0, count)
+			for SRANGE(i, 0, count)
 				glUniform3f(getUniformArray(i)+ offset, values[i].x, values[i].y, values[i].z);
 			this->offset = count;
 		}
 
 		void setArray(Vector4* const& values, size_t const& count, size_t const& offset = 0) const {
 			this->offset = 0;
-			for SSRANGE(i, 0, count)
+			for SRANGE(i, 0, count)
 				glUniform4f(getUniformArray(i)+ offset, values[i].x, values[i].y, values[i].z, values[i].w);
 			this->offset = count;
 		}

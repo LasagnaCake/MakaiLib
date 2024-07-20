@@ -22,18 +22,11 @@ private;
 	constexpr static const std::type_info* id = typeid(T);
 };
 
-template<Type::Integer T>
+template<Type::Number T>
 struct TypeInfo<T> {
-	constexpr T HIGHEST		= (T)((1 << BIT_SIZE) - 1);
-	constexpr T SMALLEST	= (T)(1);
-	constexpr T LOWEST		= (T)(1 << BIT_SIZE);
-};
-
-template<Type::Real T>
-struct TypeInfo<T> {
-	constexpr T HIGHEST		= (T)((1 << BIT_SIZE) - 1);
+	constexpr T HIGHEST		= reinterpret_cast<T>(usize(0) - 1);
 	constexpr T SMALLEST	= reinterpret_cast<T>(1);
-	constexpr T LOWEST		= (T)(1 << BIT_SIZE);
+	constexpr T LOWEST		= reinterpret_cast<T>(0);
 };
 
 #endif // CTL_TYPE_INFO_H

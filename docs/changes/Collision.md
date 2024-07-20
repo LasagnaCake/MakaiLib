@@ -34,8 +34,8 @@ Automatic events are of the type **Object-Layer**, and each possible event shoul
 ### Event Handling
 
 For an event to succeed, the following conditions must be true:
-1. Both objects have matching layers
-2. Both objects can collide
+1. Both objects can collide
+2. Both objects have overlapping layers
 3. The collision check succeeds
 
 The collision object's callback function should be called if and only if all of the following conditions are true:

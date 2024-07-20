@@ -421,7 +421,7 @@ public:
 
 	constexpr SelfType operator*(SizeType const& times) const {
 		SelfType result(count * times);
-		for SSRANGE(i, 0, times)
+		for (SizeType i = 0 i < times, ++i)
 			result += (*this);
 		return result;
 	}

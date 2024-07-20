@@ -58,7 +58,7 @@ public:
 		if (locked) throw Error::InvalidAction("Renderable object is locked!");
 		Triangle* tris[count] = {nullptr};
 		// Create triangles
-		for SSRANGE(i, 0, count) {
+		for SRANGE(i, 0, count) {
 			tris[i] = new Triangle();
 			triangles.push_back(tris[i]);
 		}
@@ -96,7 +96,7 @@ public:
 		if (!triangles.empty()) std::erase_if(
 			triangles,
 			[=](Triangle* e){
-				for SSRANGE(i, 0, count)
+				for SRANGE(i, 0, count)
 					if (e == tris[i]) {delete tris[i]; return true;}
 				return false;
 			}
@@ -677,7 +677,7 @@ public:
 	void extend(RawVertex* points, size_t size) {
 		if (points == nullptr || size == 0)
 			throw Error::InvalidValue("No vertices were provided!");
-		for SSRANGE(i, 0, size) {
+		for SRANGE(i, 0, size) {
 			this->points.push_back(points[i]);
 		}
 	}
@@ -750,7 +750,7 @@ public:
 	void extend(RawVertex* points, size_t size) {
 		if (points == nullptr || size == 0)
 			throw Error::InvalidValue("No vertices were provided!");
-		for SSRANGE(i, 0, size) {
+		for SRANGE(i, 0, size) {
 			this->points.push_back(points[i]);
 		}
 	}

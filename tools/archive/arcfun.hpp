@@ -50,7 +50,7 @@ namespace ArcSys {
 
 	String encoded(uint64 const& v) {
 		List<uint8> data(8, 0);
-		for SSRANGE(i, 0, 8) data[i] = uint8((v >> (8 * i)) & 0xFF);
+		for SRANGE(i, 0, 8) data[i] = uint8((v >> (8 * i)) & 0xFF);
 		return cppcodec::base64_rfc4648::encode(data);
 	}
 
@@ -74,7 +74,7 @@ namespace ArcSys {
 
 	constexpr String truncate(String const& str) {
 		String result(str.size()/2, ' ');
-		for SSRANGE(i, 0, str.size()/2)
+		for SRANGE(i, 0, str.size()/2)
 			result[i] = (str[i*2] ^ str[i*2+1]);
 		return result;
 	}
