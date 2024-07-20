@@ -30,7 +30,7 @@ template<class TDst, class TSrc>
 constexpr
 #endif // _DO_NOT_USE_BUILTINS_
 bitcast(TSrc const& v) noexcept {
-	static_assert(sizeof(TDst) <= sizeof(TSrc), "Sizes of target type must not be bigger than the source type!");
+	static_assert(sizeof(TDst) == sizeof(TSrc), "Sizes of source and target type must match!");
 	#ifdef _DO_NOT_USE_BUILTINS_
 	TDst r;
 	MX::memcpy(&r, &v, sizeof(TDst));

@@ -2,7 +2,6 @@
 #define CTL_CLASS_TEMPLATES_H
 
 #include <initializer_list>
-#include <numeric_limits>
 #include "ctypes.hpp"
 #include "typeinfo.hpp"
 #include "typetraits/traits.hpp"
@@ -109,7 +108,7 @@ template<class TFunction>
 struct Functional {};
 
 template<class TReturn, class... TArguments>
-struct Functional {
+struct Functional<TReturn(TArguments...)> {
 	typedef Decay::AsType<TReturn(TArguments...)> FunctionType;
 };
 
