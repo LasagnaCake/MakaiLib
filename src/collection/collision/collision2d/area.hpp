@@ -15,15 +15,15 @@ namespace Collision2D {
 
 	typedef BitMask<uint16, 4> LayerMask;
 
-	enum class CollisionDirection {
+	enum class Direction {
 		CD_NONE,
 		CD_FORWARDS,
 		CD_BACKWARDS,
 		CD_BOTH
 	};
 
-	constexpr CollisionDirection asDirection(bool const& forwards, bool const& backwards) {
-		return CollisionDirection(
+	constexpr Direction asDirection(bool const& forwards, bool const& backwards) {
+		return Direction(
 			usize(forwards)
 		|	(usize(backwards) << 1)
 		);
@@ -34,7 +34,7 @@ namespace Collision2D {
 		bool			enabled	= true;
 		LayerMask		affects, affectedBy;
 
-		constexpr CollisionDirection colliding(Area const& other) const {
+		constexpr Direction colliding(Area const& other) const {
 			return check(*this, other);
 		}
 
@@ -44,20 +44,20 @@ namespace Collision2D {
 				BACKWARD:	A <-- B
 				BOTH:		A <-> B
 		*/
-		constexpr static CollisionDirection check(Area const& a, Area const& b) {
+		constexpr static Direction check(Area const& a, Area const& b) {
 			if (
 				a.enabled
 			&&	b.enabled
 			) {
-				CollisionDirection dir = asDirection(
+				Direction dir = asDirection(
 					a.affects.match(b.affectedBy).overlap(),
 					b.affectedBy.match(a.affects).overlap()
 				);
 				if (
-					dir != CollisionDirection::CD_NONE
+					dir != Direction::CD_NONE
 				&&	withinBounds(a.shape, b.shape)
 				) return dir;
-				return CollisionDirection::CD_NONE;
+				return Direction::CD_NONE;
 			}
 		}
 	};

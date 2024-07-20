@@ -2,6 +2,8 @@
 #define COLLISION_COLLISION2D_BOUNDS_H
 
 #include "../../ctl/container/bitmask.hpp"
+#include "../../vectorn.hpp"
+#include "../../helper.hpp"
 
 namespace Collision2D {
 	namespace {
