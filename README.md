@@ -108,7 +108,7 @@ Currently VERY scarce. Some of the code is commented.
 - 1. Separate collision handling code into separate file
 - 2. Move collision handling to a server, that creates, destroys & manages collision shapes (See [Collision::\[Collision Server\]](docs/changes/Collision.md#Collision-Server))
 - 3. Integrate into existing structure, while allowing for custom collision checking (See [Collision::\[Collision Events\]](docs/changes/Collision.md#Collision-Events))
-- 4. Also, just clean it, in general
+- 4. Remove dependency on cute_c2
 - [ ] Add initializer lists wherever possible
 - [x] Separate `itembox` and `grazebox`
 - [x] `data/` folder packing system
