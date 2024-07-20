@@ -59,13 +59,13 @@ namespace Collision2D {
 
 		constexpr CollisionServer() {}
 
-		constexpr ColliderInstance createInstance() {
+		constexpr static ColliderInstance createInstance() {
 			ColliderInstance instance = new Collider();
 			bind(instance);
 			return instance;
 		}
 
-		constexpr ColliderInstance createInstance(Area const& shape) {
+		constexpr static ColliderInstance createInstance(Area const& shape) {
 			ColliderInstance instance = new Collider(shape);
 			bind(instance);
 			return instance;
@@ -93,12 +93,12 @@ namespace Collision2D {
 		}
 
 	private:
-		constexpr void bind(Collider* const& collider) {
+		constexpr static void bind(Collider* const& collider) {
 			colliders.push_back(collider);
 			collider->parent = this;
 		}
 
-		constexpr void unbind(Collider* const& collider) {
+		constexpr static void unbind(Collider* const& collider) {
 			ERASE_IF(colliders, elem == collider);
 		}
 
