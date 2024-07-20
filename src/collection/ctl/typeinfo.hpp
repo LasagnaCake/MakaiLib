@@ -24,9 +24,9 @@ private;
 
 template<Type::Number T>
 struct TypeInfo<T> {
-	constexpr T HIGHEST		= reinterpret_cast<T>(usize(0) - 1);
-	constexpr T SMALLEST	= reinterpret_cast<T>(1);
-	constexpr T LOWEST		= reinterpret_cast<T>(0);
+	constexpr T HIGHEST		= bitcast<T>(usize(0) - 1);
+	constexpr T SMALLEST	= bitcast<T>(1);
+	constexpr T LOWEST		= bitcast<T>(0);
 };
 
 #endif // CTL_TYPE_INFO_H
