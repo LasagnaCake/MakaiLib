@@ -26,12 +26,12 @@ template<typename T> constexpr AsTemporary<T>		forward(AsNonReference<T>&& v)	{r
 template<typename T> constexpr AsNonReference<T>&&	move(T&& v)						{return static_cast<AsNonReference<T>&&>(v);	}
 
 template<class TDst, class TSrc>
-#ifdef _DO_NOT_USE_BUILTINS_
+#ifndef _DO_NOT_USE_BUILTINS_
 constexpr
 #endif // _DO_NOT_USE_BUILTINS_
 bitcast(TSrc const& v) noexcept {
+	static_assert(sizeof(TDst) <= sizeof(TSrc), "Sizes of target type must not be bigger than the source type!");
 	#ifdef _DO_NOT_USE_BUILTINS_
-	static_assert(sizeof(TDst) == sizeof(TSrc), "Sizes of objects must match!");
 	TDst r;
 	MX::memcpy(&r, &v, sizeof(TDst));
 	return r;
