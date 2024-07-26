@@ -20,7 +20,7 @@ namespace Collision2D {
 
 		struct Collider: Area {
 			constexpr ~Collider() {
-				parent->unbind(this);
+				CollisionServer::unbind(this);
 			}
 
 			constexpr Collider() {}
@@ -95,7 +95,6 @@ namespace Collision2D {
 	private:
 		constexpr static void bind(Collider* const& collider) {
 			colliders.push_back(collider);
-			collider->parent = this;
 		}
 
 		constexpr static void unbind(Collider* const& collider) {
