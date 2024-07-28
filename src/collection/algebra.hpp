@@ -516,7 +516,7 @@ namespace Math {
 // "Degrees to Radians" literal conversion
 constexpr long double operator ""deg(long double d)	{return Math::radians<long double>(d);}
 // "Radians to Degrees" literal conversion
-//constexpr long double operator ""rad(long double r)	{return Math::degrees(r);}
+//constexpr long double operator ""rad(long double r)	{return Math::degrees<long double>(r);}
 #pragma GCC diagnostic pop
 
 #define RNG	Math::Random
