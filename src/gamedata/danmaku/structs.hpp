@@ -33,16 +33,8 @@ struct ObjectData: GenericObjectData {
 	bool rotateHitbox	= true;
 };
 
-struct ObjectFlags: JSONView {
-	ObjectFlags(): JSONView(flags, "flags") {}
-
-	ObjectFlags& clear() {
-		flags = JSON::object();
-		return *this;
-	}
-
-private:
-	JSONData flags;
+struct ObjectFlags: JSONValue {
+	ObjectFlags(): JSONValue("flags") {}
 };
 
 //typedef HashMap<String, JSONData> ObjectFlags;

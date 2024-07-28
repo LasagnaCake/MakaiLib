@@ -5,7 +5,7 @@ public:
 	constexpr JSONView(JSONView&& other):						DataView(other), name(other.name)	{}
 
 	template<typename T>
-	constexpr T get() {
+	constexpr T get() const {
 		try {
 			return value().get<T>();
 		} catch (JSON::exception const& e) {
@@ -21,11 +21,10 @@ public:
 	}
 
 	template<typename T>
-	constexpr T get(T const& fallback) {
+	constexpr T get(T const& fallback) const {
 		try {
 			return value().get<T>();
 		} catch (JSON::exception const& e) {
-			view() = fallback;
 			return fallback;
 		}
 	}
@@ -53,6 +52,8 @@ public:
 		return get<T>(T());
 	}
 
+	constexpr String getName() const {return name;}
+
 	constexpr bool isNull() const		{return view().is_null();				}
 	constexpr bool isInt() const		{return view().is_number_integer();		}
 	constexpr bool isFloat() const		{return view().is_number_float();		}
@@ -68,4 +69,20 @@ public:
 
 private:
 	String const name;
+};
+
+struct JSONValue: public JSONView {
+	JSONValue(String const& name): JSONView(data, name) {}
+
+	JSONValue(String const& name, JSONData const& data): JSONValue(name) {this->data = data;}
+
+	JSONValue(JSONValue const& other): JSONValue(other.getName(), other.data) {}
+
+	JSONValue& clear() {
+		data = JSON::object();
+		return *this;
+	}
+
+private:
+	JSONData data;
 };
