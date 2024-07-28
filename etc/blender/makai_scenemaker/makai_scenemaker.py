@@ -529,7 +529,7 @@ class ObjectMaterialProperties(BaseProperties):
     
     emission_0_enabled: BoolProperty("Enable Emission")
     emission_1_image: ImageProperty("Emission Image")
-    emission_3_strength: RangeProperty("Emission Strength")
+    emission_2_strength: RangeProperty("Emission Strength")
     
     warp_0_enabled: BoolProperty("Enable Texture Warp")
     warp_1_image: ImageProperty("Warp Image")
