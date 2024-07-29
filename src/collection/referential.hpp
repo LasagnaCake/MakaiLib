@@ -55,26 +55,18 @@ namespace SmartPointer {
 			if (ref == obj) return (*this);
 			unbind();
 			if (obj == nullptr) return (*this);
-			//DEBUGLN("Binding reference...");
 			ref = obj;
 			database[(void*)obj].exists = true;
-			IF_STRONG {
-				//DEBUGLN("Updating reference counter...");
-				database[(void*)obj].count++;
-				//DEBUGLN("References: ", database[(void*)ref].count);
-			}
+			IF_STRONG database[(void*)obj].count++;
 			return (*this);
 		}
 
 		constexpr Pointer& unbind() {
 			if (!exists()) return (*this);
-			//DEBUGLN("Unbinding reference...");
 			IF_STRONG {
 				if ((database[(void*)ref].count-1 < 1))
 					return destroy();
-				//DEBUGLN("Updating reference counter...");
-				database[(void*)ref].count--;
-				//DEBUGLN("References: ", database[(void*)ref].count);
+				else database[(void*)ref].count--;
 			}
 			ref = nullptr;
 			return (*this);
@@ -82,23 +74,19 @@ namespace SmartPointer {
 
 		constexpr Pointer& destroy() {
 			IF_STRONG {
-				//DEBUGLN("Deleting reference...");
 				if (!exists()) return (*this);
 				database[(void*)ref] = {false, 0};
 				delete ref;
 				ref = nullptr;
-				//DEBUGLN("Reference deleted!");
 			}
 			return (*this);
 		}
 
 		constexpr Pointer& release() {
 			IF_STRONG {
-				//DEBUGLN("Releasing reference...");
 				if (!exists()) return (*this);
 				database[(void*)ref] = {false, 0};
 				ref = nullptr;
-				//DEBUGLN("Reference released!");
 			}
 			return (*this);
 		}
