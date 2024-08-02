@@ -11,8 +11,11 @@ struct BitMask:
 	constexpr static usize SIZE = S;
 	constexpr static bool INITIAL_STATE = I;
 
-	using typename Typed<TData>::DataType;
-	using typename SelfIdentified<BitMask<TData, S, I>>::SelfType;
+	typedef Typed<TData> Typed;
+	using typename Typed::DataType;
+
+	typedef SelfIdentified<BitMask<DataType, S, I>> SelfIdentified;
+	using typename SelfIdentified::SelfType;
 
 	typedef Decay::AsType<DataType[SIZE]>	MaskType;
 
