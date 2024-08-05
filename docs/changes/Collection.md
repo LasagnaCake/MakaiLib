@@ -5,6 +5,7 @@
 | `CTL::Impl` | Implementations | `ctl/*` |
 | `CTL::Bases` | Class bases | `ctl/*` |
 | `CTL::Math` | Math-related stuff | `ctl/math/` |
+| `CTL::RNG` | RNG-related stuff | `ctl/math/rng/` |
 | `CTL::Range` | Range-related stuff | `ctl/range/` |
 | `CTL::FS` | Filesystem-related stuff | `ctl/fs/` |
 | `CTL::Time` | Time-related stuff | `ctl/time/` |
