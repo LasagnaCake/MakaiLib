@@ -7,7 +7,8 @@
 
 Some classes, `typedef`s, functions, etrc. will be moved into the `ctl/` folder. These classes are:
 
-- `SmartPointer::*` -> `Pointer` & `typedef`s to `CTL`, everything else to `CTL::Base`
+- `SmartPointer::*` -> `ReferenceCounter` to `CTL::Base`, rest to `CTL`
 - `View::*` -> `CTL`
 - `Threaded::*` -> `CTL`
 - `Async::*` -> `CTL`
+- `View::*` -> `CTL`
