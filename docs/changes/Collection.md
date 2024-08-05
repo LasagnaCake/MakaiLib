@@ -47,6 +47,6 @@ These are:
 - - (`Variant` becomes `Variable`) -> `CTL`
 - `Type::*` -> `CTL::Type`
 
-Everything else gets moved to `CTL::Ex`[^1]. 
+Everything else gets moved into `CTL::Ex`[^1]. 
 
-[^1]: **EXCEPTIONS**: 1. user-defined literals, which are global
+[^1]: **EXCEPTIONS**: 1. user-defined literals, which are global.
