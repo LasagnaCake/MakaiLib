@@ -16,7 +16,7 @@
 
 ## What Goes Where
 
-Some classes, `typedef`s, functions, etc. (**EXCEPT** user-defined literals, which do not get put in a namespace)
+Some classes, `typedef`s, functions, etc. (**EXCEPT** user-defined literals, which are global)
 in the root folder will be moved into the `CTL` namespace (and, subsequently, into `ctl/`).
 These are:
 
