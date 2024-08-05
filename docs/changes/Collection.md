@@ -10,6 +10,7 @@
 | `CTL::Time` | Time-related stuff | `ctl/*` |
 | `CTL::Error` | Error-related stuff | `ctl/*` |
 | `CTL::Fold` | Fold-expressions | `ctl/*` |
+| `CTL::Regex` | Regex-related stuff | `ctl/*` |
 | `CTL::Ex` | Extensions | root folder |
 
 ## What Goes Where
@@ -27,5 +28,6 @@ These are:
 - `FileLoader::*` -> `CTL::FS`
 - `Clock::*` -> `CTL::Time`
 - `Error::*` -> `CTL::Error`
+- `regex*` -> `CTL::Regex`
 
 Everything else gets moved to `CTL::Ex`.
