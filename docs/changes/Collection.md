@@ -34,7 +34,7 @@ These are:
 - `regex*()` -> `CTL::Regex`
 - `to*()` -> globally
 - `System::*` -> `CTL::OS`
-- [`variant.hpp`] -> (`Variant` >> `Variable`) to `CTL`
+- [`variant.hpp`] -> (`Variant` becomes `Variable`) to `CTL`
 - `Type::*` -> `CTL::Type`
 
 Everything else gets moved to `CTL::Ex`.
