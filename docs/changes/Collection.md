@@ -22,7 +22,7 @@ Some classes, `typedef`s, functions, etc. (**EXCEPT** user-defined literals, whi
 in the root folder will be moved into the `CTL` namespace (and, subsequently, into `ctl/`).
 These are:
 
-- `SmartPointer::*` -> `ReferenceCounter` to `CTL::Base`, rest to `CTL`
+- [`referential.hpp`]: (`SmartPointer::*` -> `ReferenceCounter` to `CTL::Base`, rest to `CTL`), (`Instance` & `Handle`) -> `CTL`
 - `View::*` -> `CTL` (except `Reference`, which will be deleted)
 - `Threaded::*` -> `CTL`
 - `Async::*` -> Everything but `TimeKeeper` to `CTL`
@@ -34,7 +34,7 @@ These are:
 - `regex*()` -> `CTL::Regex`
 - `to*()` -> globally
 - `System::*` -> `CTL::OS`
-- [`variant.hpp`] -> (`Variant` becomes `Variable`) to `CTL`
+- [`variant.hpp`]: (`Variant` becomes `Variable`) -> `CTL`
 - `Type::*` -> `CTL::Type`
 
 Everything else gets moved to `CTL::Ex`.
