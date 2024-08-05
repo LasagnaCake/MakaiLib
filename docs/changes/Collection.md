@@ -20,7 +20,7 @@ Gets compiled into its own library file, but for now it is header only.
 | `CTL::Regex` | Regex-related stuff | `ctl/regex/` |
 | `CTL::Type` | Concepts | `ctl/typetraits/` |
 | `CTL::OS` | Operating System stuff | `ctl/regex/` |
-| `CTL::Sort` | Sorting algorithms (excluding `sort` function) | `ctl/algorithm/*` |
+| `CTL::Sort` | Sorting algorithms (excluding `sort` function) | `ctl/algorithm/` |
 | `CTL::Ex` | Extensions | root folder |
 
 ### What Goes Where
