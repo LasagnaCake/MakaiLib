@@ -29,6 +29,7 @@ These are:
 - `FileLoader::*` -> `CTL::FS`
 - `Clock::*` -> `CTL::Time`
 - `Error::*` -> `CTL::Error`
-- `regex*` -> `CTL::Regex`
+- `regex*()` -> `CTL::Regex`
+- `to*()` -> globally
 
 Everything else gets moved to `CTL::Ex`.
