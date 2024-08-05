@@ -7,7 +7,7 @@ Gets compiled into its own library file, but for now it is header only.
 ## Structure
 | Namespace | Domain | Location |
 |:-:|:-|:-:|
-| `CTL` | Core classes | `ctl/*` |
+| `CTL` | Core stuff | `ctl/*` |
 | `CTL::*::Part` | Full & Partial implementations | `ctl/*` |
 | `CTL::Base` | Class bases | `ctl/*` |
 | `CTL::Math` | Math-related stuff | `ctl/math/*` |
