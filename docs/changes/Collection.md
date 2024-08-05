@@ -5,7 +5,10 @@
 | `CTL::Impl` | Implementations |
 | `CTL::Bases` | Class bases |
 | `CTL::Math` | Math-related stuff |
-| `CTL::Range` | Math-related stuff |
+| `CTL::Range` | Range-related stuff |
+| `CTL::FS` | Filesystem-related stuff |
+| `CTL::Time` | Time-related stuff |
+| `CTL::Error` | Error-related stuff |
 | `CTL::Ex` | Extensions (located in the root folder) |
 
 ## What Goes Where
@@ -19,5 +22,9 @@ These are:
 - `Threaded::*` -> `CTL`
 - `Async::*` -> Everything but `TimeKeeper` to `CTL`
 - `Math::*` -> `RNG::*` to `CTL::RNG`, rest to `CTL::Math`
+- `FileSystem::*` -> `CTL::FS`
+- `FileLoader::*` -> `CTL::FS`
+- `Clock::*` -> `CTL::Time`
+- `Error::*` -> `CTL::Error`
 
 Everything else gets moved to `CTL::Ex`.
