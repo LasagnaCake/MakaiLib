@@ -1,5 +1,5 @@
 # Structure
-| Namespace | Contents |
+| Namespace | Domain |
 |:---------:|:------|
 | `CTL` | Core classes (located in the `ctl/` folder) |
 | `CTL::Impl` | Implementations |
@@ -9,6 +9,7 @@
 | `CTL::FS` | Filesystem-related stuff |
 | `CTL::Time` | Time-related stuff |
 | `CTL::Error` | Error-related stuff |
+| `CTL::Fold` | Fold-expressions |
 | `CTL::Ex` | Extensions (located in the root folder) |
 
 ## What Goes Where
