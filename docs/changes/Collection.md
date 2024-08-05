@@ -5,6 +5,7 @@
 | `CTL::Impl` | Implementations |
 | `CTL::Bases` | Class bases |
 | `CTL::Math` | Math-related stuff |
+| `CTL::Range` | Math-related stuff |
 | `CTL::Ex` | Extensions (located in the root folder) |
 
 ## What Goes Where
@@ -15,6 +16,6 @@ Some classes, `typedef`s, functions, etc. in the root folder will be moved into 
 - `View::*` -> `CTL` (except `Reference`, which will be deleted)
 - `Threaded::*` -> `CTL`
 - `Async::*` -> Everything but `TimeKeeper` to `CTL`
-- `Math::*` -> `CTL::Math`
+- `Math::*` -> `RNG::*` to `CTL::RNG`, rest to `CTL::Math`
 
 Everything else gets moved to `CTL::Ex`.
