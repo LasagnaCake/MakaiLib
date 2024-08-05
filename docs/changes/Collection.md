@@ -12,10 +12,9 @@
 Some classes, `typedef`s, functions, etc. in the root folder will be moved into the `CTL` namespace (and, subsequently, into `ctl/`). These are:
 
 - `SmartPointer::*` -> `ReferenceCounter` to `CTL::Base`, rest to `CTL`
-- `View::*` -> `CTL`
+- `View::*` -> `CTL` (except `Reference`, which will be deleted)
 - `Threaded::*` -> `CTL`
 - `Async::*` -> Everything but `TimeKeeper` to `CTL`
-- `View::*` -> `CTL`
 - `Math::*` -> `CTL::Math`
 
 Everything else gets moved to `CTL::Ex`.
