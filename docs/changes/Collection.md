@@ -2,4 +2,4 @@
 | Namespace | Scope |
 |:---------:|:------|
 | `CTL` | Classes in the `ctl/` folder |
-| `CEX` | Everything else |
+| `CTL::Ex` | Everything else |
