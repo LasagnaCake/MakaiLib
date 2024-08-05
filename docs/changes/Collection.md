@@ -1,4 +1,10 @@
-# Structure
+# Collection Refactor
+
+## Compilation
+
+Gets compiled into its own library file.
+
+## Structure
 | Namespace | Domain | Location |
 |:-:|:-|:-:|
 | `CTL` | Core classes | `ctl/*` |
@@ -16,7 +22,7 @@
 | `CTL::OS` | Operating System stuff | `ctl/regex/` |
 | `CTL::Ex` | Extensions | root folder |
 
-## What Goes Where
+### What Goes Where
 
 Some classes, `typedef`s, functions, etc. (**EXCEPT** user-defined literals, which are global)
 in the root folder will be moved into the `CTL` namespace (and, subsequently, into `ctl/`).
