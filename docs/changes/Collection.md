@@ -1,15 +1,21 @@
 # Structure
-| Namespace | Scope |
+| Namespace | Contents |
 |:---------:|:------|
-| `CTL` | Classes in the `ctl/` folder |
+| `CTL` | Core classes (located in the `ctl/` folder) |
 | `CTL::Impl` | Implementations |
 | `CTL::Bases` | Class bases |
-| `CTL::Ex` | Everything else |
+| `CTL::Math` | Math-related stuff |
+| `CTL::Ex` | Extensions |
 
-Some classes, `typedef`s, functions, etrc. will be moved into the `ctl/` folder. These are:
+## What Goes Where
+
+Some classes, `typedef`s, functions, etrc. will be moved into the `CTL` namespace. These are:
 
 - `SmartPointer::*` -> `ReferenceCounter` to `CTL::Base`, rest to `CTL`
 - `View::*` -> `CTL`
 - `Threaded::*` -> `CTL`
 - `Async::*` -> Everything but `TimeKeeper` to `CTL`
 - `View::*` -> `CTL`
+- `Math::*` -> `CTL::Math`
+
+Everything else gets moved to `CTL::Ex`.
