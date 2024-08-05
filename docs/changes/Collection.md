@@ -22,19 +22,23 @@ Some classes, `typedef`s, functions, etc. (**EXCEPT** user-defined literals, whi
 in the root folder will be moved into the `CTL` namespace (and, subsequently, into `ctl/`).
 These are:
 
-- [`referential.hpp`]: (`SmartPointer::*` -> `ReferenceCounter` to `CTL::Base`, rest to `CTL`), (`Instance` & `Handle`) -> `CTL`
+- [`referential.hpp`]
+- - `SmartPointer::*` -> `ReferenceCounter` to `CTL::Base`, rest to `CTL`
+- - (`Instance` & `Handle`) -> `CTL`
 - `View::*` -> `CTL` (except `Reference`, which will be deleted)
 - `Threaded::*` -> `CTL`
 - `Async::*` -> Everything but `TimeKeeper` to `CTL`
 - `Math::*` -> `RNG::*` to `CTL::RNG`, rest to `CTL::Math`
-- `FileSystem::*` -> `CTL::FS`
 - `FileLoader::*` -> `CTL::FS`
-- `Time::*` -> `CTL::Time`
 - `Error::*` -> `CTL::Error`
-- `regex*()` -> `CTL::Regex`
-- `to*()` -> globally
+- [helper.hpp]
+- - `to*()` -> globally
+- - `regex*()` -> `CTL::Regex` drop `regex`
+- - `Time::*` -> `CTL::Time`
+- - `FileSystem::*` -> `CTL::FS`
 - `System::*` -> `CTL::OS`
-- [`variant.hpp`]: (`Variant` becomes `Variable`) -> `CTL`
+- [`variant.hpp`]
+- - (`Variant` becomes `Variable`) -> `CTL`
 - `Type::*` -> `CTL::Type`
 
 Everything else gets moved to `CTL::Ex`.
