@@ -10,17 +10,17 @@ Gets compiled into its own library file, but for now it is header only.
 | `CTL` | Core classes | `ctl/*` |
 | `CTL::*::Part` | Full & Partial implementations | `ctl/*` |
 | `CTL::Base` | Class bases | `ctl/*` |
-| `CTL::Math` | Math-related stuff | `ctl/math/` |
-| `CTL::RNG` | RNG-related stuff | `ctl/math/rng/` |
-| `CTL::Range` | Range-related stuff | `ctl/range/` |
-| `CTL::FS` | Filesystem-related stuff | `ctl/fs/` |
-| `CTL::Time` | Time-related stuff | `ctl/time/` |
-| `CTL::Error` | Error-related stuff | `ctl/container/` |
-| `CTL::Meta` | Metaprogramming stuff | `ctl/meta/` |
-| `CTL::Regex` | Regex-related stuff | `ctl/regex/` |
-| `CTL::Type` | Concepts | `ctl/typetraits/` |
-| `CTL::OS` | Operating System stuff | `ctl/regex/` |
-| `CTL::Sort` | Sorting algorithms (excluding `sort` function) | `ctl/algorithm/` |
+| `CTL::Math` | Math-related stuff | `ctl/math/*` |
+| `CTL::RNG` | RNG-related stuff | `ctl/math/rng/*` |
+| `CTL::Range` | Range-related stuff | `ctl/range/*` |
+| `CTL::FS` | Filesystem-related stuff | `ctl/fs/*` |
+| `CTL::Time` | Time-related stuff | `ctl/time/*` |
+| `CTL::Error` | Error-related stuff | `ctl/container/error/*` |
+| `CTL::Meta` | Metaprogramming stuff | `ctl/meta/*` |
+| `CTL::Regex` | Regex-related stuff | `ctl/regex/*` |
+| `CTL::Type` | Concepts | `ctl/typetraits/*` |
+| `CTL::OS` | Operating System stuff | `ctl/os/*` |
+| `CTL::Sort` | Sorting algorithms (excluding `sort` function) | `ctl/algorithm/sort/*` |
 | `CTL::Ex` | Extensions | root folder |
 
 ### What Goes Where
