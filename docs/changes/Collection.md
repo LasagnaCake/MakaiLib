@@ -9,7 +9,7 @@
 
 ## What Goes Where
 
-Some classes, `typedef`s, functions, etc. in the root folder will be moved into the `CTL` namespace. These are:
+Some classes, `typedef`s, functions, etc. in the root folder will be moved into the `CTL` namespace (and, subsequently, into `ctl/`). These are:
 
 - `SmartPointer::*` -> `ReferenceCounter` to `CTL::Base`, rest to `CTL`
 - `View::*` -> `CTL`
