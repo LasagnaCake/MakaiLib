@@ -1,12 +1,13 @@
 # Great Refactor
 
+
+
 ## Simple
 
 - [ ] Reorganize and remove haphazardness/mess
 - - [ ] Remove `#include`s inside of namespaces
-- - [ ] Unify everything under a single namespace (`Makai`? `MGE`?)
-- - - Except collection folder, that will get its [own namespace structure](Collection.md)
-- - [ ] Separate code from headers & compile _everything_ under a single library
+- - [ ] Unify everything under a single namespace[^1] (`Makai`? `MGE`?)
+- - [ ] Separate code from headers & compile *everything* under a single library[^1]
 - [ ] Overhaul [Collision System](../../src/collection/entity/collidable.hpp) (See [New Collision System Proposal](../changes/Collision.md))
 - 1. [x] Separate collision handling code into separate file
 - 2. [x] Move collision handling to a server, that creates, destroys & manages collision shapes (See [Collision::\[Collision Server\]](../changes/Collision.md#Collision-Server))
@@ -24,3 +25,5 @@
 ## Very Complex
 
 - [ ] Replace STL with own internal library
+
+[^1]: Except collection, which gets its [own special treatment](Collection.md#Structure).
