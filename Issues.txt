@@ -9,3 +9,4 @@
 
 [ Code-specific ]
 > Automatic tweens & timers are no longer working
+> If there is stutter, Audio::Sound may just stop working
