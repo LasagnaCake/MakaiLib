@@ -12,6 +12,7 @@
 | `CTL::Error` | Error-related stuff | `ctl/container/` |
 | `CTL::Meta` | Metaprogramming stuff | `ctl/meta/` |
 | `CTL::Regex` | Regex-related stuff | `ctl/regex/` |
+| `CTL::OS` | Operating System stuff | `ctl/regex/` |
 | `CTL::Ex` | Extensions | root folder |
 
 ## What Goes Where
@@ -31,5 +32,6 @@ These are:
 - `Error::*` -> `CTL::Error`
 - `regex*()` -> `CTL::Regex`
 - `to*()` -> globally
+- `System::*` -> `CTL::OS`
 
 Everything else gets moved to `CTL::Ex`.
