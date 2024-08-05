@@ -4,13 +4,13 @@
 | `CTL` | Core classes | `ctl/*` |
 | `CTL::Impl` | Implementations | `ctl/*` |
 | `CTL::Bases` | Class bases | `ctl/*` |
-| `CTL::Math` | Math-related stuff | `ctl/*` |
-| `CTL::Range` | Range-related stuff | `ctl/*` |
-| `CTL::FS` | Filesystem-related stuff | `ctl/*` |
-| `CTL::Time` | Time-related stuff | `ctl/*` |
-| `CTL::Error` | Error-related stuff | `ctl/*` |
-| `CTL::Fold` | Fold-expressions | `ctl/*` |
-| `CTL::Regex` | Regex-related stuff | `ctl/*` |
+| `CTL::Math` | Math-related stuff | `ctl/math/` |
+| `CTL::Range` | Range-related stuff | `ctl/range/` |
+| `CTL::FS` | Filesystem-related stuff | `ctl/fs/` |
+| `CTL::Time` | Time-related stuff | `ctl/time/` |
+| `CTL::Error` | Error-related stuff | `ctl/container/` |
+| `CTL::Meta` | Metaprogramming stuff | `ctl/meta/` |
+| `CTL::Regex` | Regex-related stuff | `ctl/regex/` |
 | `CTL::Ex` | Extensions | root folder |
 
 ## What Goes Where
