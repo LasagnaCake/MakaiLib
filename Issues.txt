@@ -9,4 +9,4 @@
 
 [ Code-specific ]
 > Automatic tweens & timers are no longer working
-> If there is stutter, Audio::Sound may just stop working
+> If there is stutter while playing, Audio::Sound object may lose sound forever
