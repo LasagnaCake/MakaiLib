@@ -33,7 +33,7 @@ These are:
 - `Error::*` -> `CTL::Error`
 - [`helper.hpp`]
 - - `to*()` -> globally
-- - `regex*()` -> `CTL::Regex` drop `regex`
+- - `regex*()` -> `CTL::Regex` drop `regex` prefix
 - - `Time::*` -> `CTL::Time`
 - - `FileSystem::*` -> `CTL::FS`
 - `System::*` -> `CTL::OS`
