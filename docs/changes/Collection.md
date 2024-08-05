@@ -3,7 +3,7 @@
 |:---------:|:------|
 | `CTL` | Classes in the `ctl/` folder |
 | `CTL::Impl` | Implementations |
-| `CTL::Core` | Class bases |
+| `CTL::Bases` | Class bases |
 | `CTL::Ex` | Everything else |
 
 Some classes, `typedef`s, functions, etrc. will be moved into the `ctl/` folder. These classes are:
