@@ -8,7 +8,7 @@ Gets compiled into its own library file.
 | Namespace | Domain | Location |
 |:-:|:-|:-:|
 | `CTL` | Core classes | `ctl/*` |
-| `CTL::Partial` | Implementations | `ctl/*` |
+| `CTL::Partial` | "Partial" Implementations | `ctl/*` |
 | `CTL::Bases` | Class bases | `ctl/*` |
 | `CTL::Math` | Math-related stuff | `ctl/math/` |
 | `CTL::RNG` | RNG-related stuff | `ctl/math/rng/` |
