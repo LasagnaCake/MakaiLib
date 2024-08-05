@@ -1,16 +1,16 @@
 # Structure
-| Namespace | Domain |
-|:---------:|:------|
-| `CTL` | Core classes (located in the `ctl/` folder) |
-| `CTL::Impl` | Implementations |
-| `CTL::Bases` | Class bases |
-| `CTL::Math` | Math-related stuff |
-| `CTL::Range` | Range-related stuff |
-| `CTL::FS` | Filesystem-related stuff |
-| `CTL::Time` | Time-related stuff |
-| `CTL::Error` | Error-related stuff |
-| `CTL::Fold` | Fold-expressions |
-| `CTL::Ex` | Extensions (located in the root folder) |
+| Namespace | Domain | Location |
+|:-:|:-|:-:|
+| `CTL` | Core classes | `ctl/` and subfolders |
+| `CTL::Impl` | Implementations | `ctl/` and subfolders |
+| `CTL::Bases` | Class bases | `ctl/` and subfolders |
+| `CTL::Math` | Math-related stuff | `ctl/` and subfolders |
+| `CTL::Range` | Range-related stuff | `ctl/` and subfolders |
+| `CTL::FS` | Filesystem-related stuff | `ctl/` and subfolders |
+| `CTL::Time` | Time-related stuff | `ctl/` and subfolders |
+| `CTL::Error` | Error-related stuff | `ctl/` and subfolders |
+| `CTL::Fold` | Fold-expressions | `ctl/` and subfolders |
+| `CTL::Ex` | Extensions (files located in the root folder) ||
 
 ## What Goes Where
 
