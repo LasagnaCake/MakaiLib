@@ -2,7 +2,7 @@
 
 - [ ] Reorganize and remove haphazardness/mess
 - - [ ] Remove `#include`s inside of namespaces
-- - [ ] Unify everything under a single namespace
+- - [ ] Unify everything under a single namespace (except collection folder, that will get its own namespace - `CTL`)
 - - [ ] Separate code from headers & compile _everything_ under a single library
 - [ ] Overhaul [Collision System](../../src/collection/entity/collidable.hpp) (See [New Collision System Proposal](../changes/Collision.md))
 - 1. [x] Separate collision handling code into separate file
