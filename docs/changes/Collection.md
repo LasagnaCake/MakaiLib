@@ -12,6 +12,7 @@
 | `CTL::Error` | Error-related stuff | `ctl/container/` |
 | `CTL::Meta` | Metaprogramming stuff | `ctl/meta/` |
 | `CTL::Regex` | Regex-related stuff | `ctl/regex/` |
+| `CTL::Type` | Concepts | `ctl/typetraits/` |
 | `CTL::OS` | Operating System stuff | `ctl/regex/` |
 | `CTL::Ex` | Extensions | root folder |
 
@@ -33,5 +34,7 @@ These are:
 - `regex*()` -> `CTL::Regex`
 - `to*()` -> globally
 - `System::*` -> `CTL::OS`
+- [`variant.hpp`] -> `Variant` >> `Variable` to `CTL`
+- `Type::*` -> `CTL::Type`
 
 Everything else gets moved to `CTL::Ex`.
