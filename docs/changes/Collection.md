@@ -24,8 +24,8 @@ Gets compiled into its own library file.
 
 ### What Goes Where
 
-Some classes, `typedef`s, functions, etc. (**EXCEPT** user-defined literals, which are global)
-in the root folder will be moved into the `CTL` namespace (and, subsequently, into `ctl/`).
+Some classes, `typedef`s, functions, etc.
+in the root folder will be moved into the `CTL` namespace[^1] (and, subsequently, into `ctl/`).
 These are:
 
 - [`referential.hpp`]
@@ -47,4 +47,6 @@ These are:
 - - (`Variant` becomes `Variable`) -> `CTL`
 - `Type::*` -> `CTL::Type`
 
-Everything else gets moved to `CTL::Ex`.
+Everything else gets moved to `CTL::Ex`[^1]. 
+
+[^1]: **EXCEPTIONS**: 1. user-defined literals, which are global
