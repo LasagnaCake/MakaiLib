@@ -28,7 +28,7 @@ These are:
 - `Math::*` -> `RNG::*` to `CTL::RNG`, rest to `CTL::Math`
 - `FileSystem::*` -> `CTL::FS`
 - `FileLoader::*` -> `CTL::FS`
-- `Clock::*` -> `CTL::Time`
+- `Time::*` -> `CTL::Time`
 - `Error::*` -> `CTL::Error`
 - `regex*()` -> `CTL::Regex`
 - `to*()` -> globally
