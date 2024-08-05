@@ -31,7 +31,7 @@ These are:
 - `Math::*` -> `RNG::*` to `CTL::RNG`, rest to `CTL::Math`
 - `FileLoader::*` -> `CTL::FS`
 - `Error::*` -> `CTL::Error`
-- [helper.hpp]
+- [`helper.hpp`]
 - - `to*()` -> globally
 - - `regex*()` -> `CTL::Regex` drop `regex`
 - - `Time::*` -> `CTL::Time`
