@@ -5,7 +5,7 @@
 | `CTL::Impl` | Implementations |
 | `CTL::Bases` | Class bases |
 | `CTL::Math` | Math-related stuff |
-| `CTL::Ex` | Extensions |
+| `CTL::Ex` | Extensions (located in the root folder) |
 
 ## What Goes Where
 
