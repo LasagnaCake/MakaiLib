@@ -2,7 +2,7 @@
 
 ## Compilation
 
-Gets compiled into its own library file.
+Gets compiled into its own library file, but for now it is header only.
 
 ## Structure
 | Namespace | Domain | Location |
