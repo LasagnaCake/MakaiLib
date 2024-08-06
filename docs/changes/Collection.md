@@ -9,7 +9,7 @@ Gets compiled into its own library file, but for now it is header only.
 |:-:|:-|:-:|
 | `CTL` | Core stuff | `ctl/*` |
 | `CTL::*::Part` | Full & Partial implementations | `ctl/*` |
-| `CTL::Base` | Class bases | `ctl/*` |
+| `CTL::*::Base` | Class bases | `ctl/*` |
 | `CTL::Math` | Math-related stuff | `ctl/math/*` |
 | `CTL::RNG` | RNG-related stuff | `ctl/math/rng/*` |
 | `CTL::Range` | Range-related stuff (excluding `range` function) | `ctl/range/*` |
