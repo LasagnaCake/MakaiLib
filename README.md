@@ -104,6 +104,7 @@ Currently VERY scarce. Some of the code is commented.
 ## TODO
 
 ### Current
+- [ ] Project creation recipe (`make project`)
 - [ ] Add initializer lists wherever possible
 - [x] Separate `itembox` and `grazebox`
 - [x] `data/` folder packing system
