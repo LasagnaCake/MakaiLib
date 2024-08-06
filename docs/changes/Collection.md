@@ -43,6 +43,7 @@ These are:
 - - `regex*()` -> `CTL::Regex` drop `regex` prefix
 - - `Time::*` -> `CTL::Time`
 - - `FileSystem::*` -> `CTL::FS`
+- - `Fold::*` -> `CTL::Meta`
 - `System::*` -> `CTL::OS`
 - [`variant.hpp`]
 - - (`Variant` becomes `Variable`) -> `CTL`
