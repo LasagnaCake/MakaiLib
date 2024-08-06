@@ -12,7 +12,7 @@ Gets compiled into its own library file, but for now it is header only.
 | `CTL::Base` | Class bases | `ctl/*` |
 | `CTL::Math` | Math-related stuff | `ctl/math/*` |
 | `CTL::RNG` | RNG-related stuff | `ctl/math/rng/*` |
-| `CTL::Range` | Range-related stuff | `ctl/range/*` |
+| `CTL::Range` | Range-related stuff (excluding `range` function) | `ctl/range/*` |
 | `CTL::FS` | Filesystem-related stuff | `ctl/fs/*` |
 | `CTL::Time` | Time-related stuff | `ctl/time/*` |
 | `CTL::Error` | Error-related stuff | `ctl/container/error/*` |
