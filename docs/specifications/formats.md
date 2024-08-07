@@ -55,7 +55,7 @@ If image is to be embedded in the file:
 ```javascript
 "image": {
 	// Required
-	"data": "", // Image file data, encoded as string
+	"data": "", // Image file data, as encoded string
 	"encoding": "" // Image file data's encoding
 	// Optional
 	// TODO: Change these to be its own enums
@@ -215,7 +215,7 @@ If data is to be integrated in the file:
 	"mesh": {
 		"components": "x,y,z,u,v,r,g,b,a,nx,ny,nz", // Vector components in order they appear, separated by commas
 		"encoding": "base64", // Vertex data's encoding
-		"data": "", // Vertex data as string
+		"data": "", // Vertex data as encoded string
 	},
 	// Optional
 	"version": 0 // The renderable definition version
