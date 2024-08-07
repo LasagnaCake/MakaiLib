@@ -370,6 +370,6 @@ This can be saved as a `JSON` file of extension `.mffd` (Makai Font Face Definit
 	"image": {/* See Components:ImageData2D:Layout */},
 	// Optional
 	"size": [16.0, 16.0] // the caracter row & column count.
-	"spacing": [1.0, 1.0] // The spacing between characters.
+	"spacing": [1.0, 1.0] // The X & Y spacing between characters.
 }
 ```
