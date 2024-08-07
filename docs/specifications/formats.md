@@ -232,7 +232,7 @@ If data is to be integrated in the file:
 			"src": 0,
 			// dst - Option 1
 			"dstColor": 0,
-			"dstAlpha": 0
+			"dstAlpha": 0,
 			// dst - Option 2
 			"dst": 0
 		},
