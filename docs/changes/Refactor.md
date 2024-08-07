@@ -1,7 +1,5 @@
 # Great Refactor
 
-
-
 ## Simple
 
 - [ ] Reorganize and remove haphazardness/mess
@@ -14,6 +12,12 @@
 - 3. [ ] Integrate into existing structure, while allowing for custom collision checking (See [Collision::\[Collision Events\]](../changes/Collision.md#Collision-Events))
 - 4. [ ] Remove dependency on cute_c2
 - [x] Remove or replace `$` macros
+
+## Intermediate
+
+- [ ] Remove dependency on external library types on header files (will require separating implementation from header first)
+- - Replace it with its own types
+- - - If required, create type conversion functions in implementation files
 
 ## Complex
 
