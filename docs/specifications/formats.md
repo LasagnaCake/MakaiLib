@@ -235,14 +235,14 @@ If data is to be integrated in the file:
 			"dstAlpha": 0
 			// dst - Option 2
 			"dst": 0
-		}
+		},
 		// function - Option 2
 		"function": 0,
 		// equation - Option 1
 		"equation": {
 			"color": 0,
 			"alpha": 0
-		}
+		},
 		// equation - Option 2
 		"equation": 0
 	}
