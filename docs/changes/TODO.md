@@ -3,7 +3,7 @@
 ### Current
 - [ ] Project creation recipe (`make project`)
 - [ ] Add initializer lists wherever possible
-- [ ] Add HSL & BC to buffer mask effect
+- [ ] Add HSL (Hue-Saturation-Luminosity) & BC (Brightness-Contrast) to buffer mask effect
 - [x] Separate `itembox` and `grazebox`
 - [x] `data/` folder packing system
 - [x] "Optimize" GPU usage
