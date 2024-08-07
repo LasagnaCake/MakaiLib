@@ -245,7 +245,7 @@ If data is to be integrated in the file:
 		},
 		// equation - Option 2
 		"equation": 0
-	}
+	},
 	"active": true,
 }
 ```
@@ -265,6 +265,30 @@ If data gets saved in a different file:
 	"version": 0 // The renderable definition version
 	"trans": {/* See Components:Transform3D:Layout */},
 	"material": {/* See ObjectMaterial:Layout */},
+	"blend": {
+		// function - Opton 1
+		"function": {
+			// src - Option 1
+			"srcColor": 0,
+			"srcAlpha": 0,
+			// src - Option 2
+			"src": 0,
+			// dst - Option 1
+			"dstColor": 0,
+			"dstAlpha": 0,
+			// dst - Option 2
+			"dst": 0
+		},
+		// function - Option 2
+		"function": 0,
+		// equation - Option 1
+		"equation": {
+			"color": 0,
+			"alpha": 0
+		},
+		// equation - Option 2
+		"equation": 0
+	},
 	"active": true,
 }
 ```
