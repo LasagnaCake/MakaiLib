@@ -69,3 +69,4 @@ See [Major Refactor](Refactor.md)
 ### Very far future (may never happen)
 
 - Vulkanize graphical system (VERY DIFFICULT, might not be done)
+- Maybe WebGPU instead?
