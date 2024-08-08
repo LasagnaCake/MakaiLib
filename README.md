@@ -11,7 +11,6 @@
 - [Libraries Used](#Libraries-Used)
 - [Documentation](#Documentation)
 - [TODO](#TODO)
-- - [Future](#Future)
 
 ## Overview
 
@@ -105,7 +104,3 @@ Currently VERY scarce. Some of the code is commented.
 
 
 See [TODO](docs/changes/TODO.md)
-
-### Very far future (may never happen)
-
-- Vulkanize graphical system (VERY DIFFICULT, might not be done)
