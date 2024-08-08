@@ -3,9 +3,6 @@
 ## Simple
 
 - [ ] Reorganize and remove haphazardness/mess
-- - [ ] Remove `#include`s inside of namespaces
-- - [ ] Unify everything under a single namespace[^1] (`Makai`? `MGE`?)
-- - [ ] Separate code from headers & compile *everything* under a single library[^1]
 - [ ] Overhaul [Collision System](../../src/collection/entity/collidable.hpp) (See [New Collision System Proposal](../changes/Collision.md))
 - 1. [x] Separate collision handling code into separate file
 - 2. [x] Move collision handling to a server, that creates, destroys & manages collision shapes (See [Collision::\[Collision Server\]](../changes/Collision.md#Collision-Server))
@@ -18,6 +15,13 @@
 - [ ] Remove dependency on external library types on header files (will require separating implementation from header first)
 - - Replace it with its own types
 - - - If required, create type conversion functions in implementation files
+- [ ] Remove `#include`s inside of namespaces
+- [ ] Unify everything under a single namespace[^1] (`Makai`? `MGE`?)
+- - Extensions are put under the `<NAMESPACE NAME>::Ex` namespace
+- [ ] Separate code from headers & compile *everything* under a single library[^1]
+- [ ] Move danmaku layer `enum` values into own `enum`
+- [ ] Separate danmaku game base from core engine
+- - Have it be an extension
 
 ## Complex
 
