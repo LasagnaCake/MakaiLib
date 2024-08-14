@@ -99,7 +99,21 @@ namespace View {
 
 		constexpr ~Nullable() {}
 
-		constexpr DataType value(DataType const& fallback = DataType()) const {return (isSet) ? data : fallback;}
+		constexpr DataType value() const {
+			if (isSet) return data;
+			throw Error::NonexistentValue(
+				"Value is not set!",
+				__FILE__,
+				toString(__LINE__),
+				"Nullable::value"
+			);
+		}
+
+		constexpr DataType orElse(DataType const& fallback) const
+		requires (!Type::Constructible<DataType>) {return (isSet) ? data : fallback;}
+
+		constexpr DataType orElse(DataType const& fallback = DataType()) const
+		requires (Type::Constructible<DataType>) {return (isSet) ? data : fallback;}
 
 		constexpr Nullable& then(Operation<DataType> const& op) {if (isSet) data = op(data); return *this;}
 

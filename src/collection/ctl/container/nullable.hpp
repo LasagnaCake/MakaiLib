@@ -44,9 +44,20 @@ public:
 
 	constexpr ~Nullable() {}
 
-	constexpr DataType value(DataType const& fallback) const
+	constexpr DataType value() const {
+		if (isSet) return data;
+		throw Error::NonexistentValue(
+			"Value is not set!",
+			__FILE__,
+			toString(__LINE__),
+			"Nullable::value"
+		);
+	}
+
+	constexpr DataType orElse(DataType const& fallback) const
 	requires (!Type::Constructible<DataType>) {return (isSet) ? data : fallback;}
-	constexpr DataType value(DataType const& fallback = DataType()) const
+
+	constexpr DataType orElse(DataType const& fallback = DataType()) const
 	requires (Type::Constructible<DataType>) {return (isSet) ? data : fallback;}
 
 	constexpr Nullable& then(Operation<DataType> const& op) {if (isSet) data = op(data); return *this;}
@@ -79,30 +90,12 @@ public:
 	}
 
 	constexpr DataType operator *() const {
-		if (isSet) return data;
-		throw Error::NonexistentValue(
-			"Value is not set!",
-			__FILE__,
-			toString(__LINE__),
-			"operator T()"
-		);
+		return value();
 	}
 
 	constexpr operator DataType() const
 	requires Type::Different<DataType, bool> {
-		if (isSet) return data;
-		return defaultValue();
-	}
-
-	constexpr explicit operator DataType() const
-	requires Type::Different<DataType, bool> {
-		if (isSet) return data;
-		throw Error::NonexistentValue(
-			"Value is not set!",
-			__FILE__,
-			toString(__LINE__),
-			"operator T()"
-		);
+		return value();
 	}
 
 private:

@@ -93,7 +93,7 @@ List<float> getTextLineStarts(TextData const& text, FontData const& font, List<s
 			// Calculate starting points
 			for (String& l : lines) {
 				size_t lineSize		= l.size();
-				size_t lastLineSize	= Math::wmax(lineSize, text.rect.h+1);
+				size_t lastLineSize	= lineSize % (text.rect.h+1);
 				if (lineSize > text.rect.h) {
 					for (size_t i = 0; i < (lineSize - lastLineSize) / text.rect.h; i++)
 						result.push_back(0);
@@ -296,7 +296,7 @@ private:
 			index = Math::max<int>(c - 0x20, 0);
 			// Get character's top left UV index in the font texture
 			uv = Vector2(
-				(int)Math::wmax<float>(index, font->size.x),
+				(int)(index % int(font->size.x)),
 				(int)(index / font->size.x)
 			);
 			// Get vertex positions
