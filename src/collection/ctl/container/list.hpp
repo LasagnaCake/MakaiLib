@@ -474,8 +474,7 @@ public:
 		}
 	}
 
-	// TODO: rename this
-	constexpr bool isTighterThanBarkOnATree() const {return count == maximum;}
+	constexpr bool tight() const {return count == maximum;}
 
 private:
 	constexpr static void copy(DataType* src, DataType* dst, SizeType count) {
