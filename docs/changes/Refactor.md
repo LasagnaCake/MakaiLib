@@ -16,8 +16,7 @@
 - - Replace it with its own types
 - - - If required, create type conversion functions in implementation files
 - [ ] Remove `#include`s inside of namespaces
-- [ ] Unify everything under a single namespace[^1] (`Makai`? `MGE`?)
-- - Extensions are put under the `<NAMESPACE NAME>::Ex` namespace
+- [ ] Unify everything under [a single namespace](Makai.md)[^1]
 - [ ] Separate code from headers & compile *everything* under a single library[^1]
 - [ ] Move danmaku layer `enum` values into own `enum`
 - [ ] Separate danmaku game base from core engine
@@ -34,4 +33,4 @@
 
 - [ ] Replace STL with own internal library
 
-[^1]: Except collection, which gets its [own special treatment](Collection.md#Structure).
+[^1]: Except anything in the `tools` folder (which should be its own separate library, and thus, separate namespace), and collection, which gets its [own special treatment](Collection.md#Structure).
