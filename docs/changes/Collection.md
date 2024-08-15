@@ -5,23 +5,36 @@
 Gets compiled into its own library file, but for now it is header only.
 
 ## Structure
+
+Root namespace name: `CTL`.
+
+---
+
+| Symbol | Meaning |
+|:-:|:-|
+| root | Self-explanatory. |
+| `::*` | Any namespace inside root. |
+| `::<NAME>` | A specific namespace inside root. |
+
+---
+
 | Namespace | Domain | Location |
 |:-:|:-|:-:|
-| `CTL` | Core stuff | `ctl/*` |
-| `CTL::*::Part` | Full & Partial implementations | `ctl/*` |
-| `CTL::*::Base` | Class bases | `ctl/*` |
-| `CTL::Math` | Math-related stuff | `ctl/math/*` |
-| `CTL::RNG` | RNG-related stuff | `ctl/math/rng/*` |
-| `CTL::Range` | Range-related stuff (excluding `range` function) | `ctl/range/*` |
-| `CTL::FS` | Filesystem-related stuff | `ctl/fs/*` |
-| `CTL::Time` | Time-related stuff | `ctl/time/*` |
-| `CTL::Error` | Error-related stuff | `ctl/container/error/*` |
-| `CTL::Meta` | Metaprogramming stuff | `ctl/meta/*` |
-| `CTL::Regex` | Regex-related stuff | `ctl/regex/*` |
-| `CTL::Type` | Concepts | `ctl/typetraits/*` |
-| `CTL::OS` | Operating System stuff | `ctl/os/*` |
-| `CTL::Sort` | Sorting algorithms (excluding `sort` function) | `ctl/algorithm/sort/*` |
-| `CTL::Ex` | Extensions | root folder |
+| root | Core stuff | `ctl/*` |
+| `::*::Part` | Full & Partial implementations | `ctl/*` |
+| `::*::Base` | Class bases | `ctl/*` |
+| `::Math` | Math-related stuff | `ctl/math/*` |
+| `::RNG` | RNG-related stuff | `ctl/math/rng/*` |
+| `::Range` | Range-related stuff (excluding `range` function) | `ctl/range/*` |
+| `::FS` | Filesystem-related stuff | `ctl/fs/*` |
+| `::Time` | Time-related stuff | `ctl/time/*` |
+| `::Error` | Error-related stuff | `ctl/container/error/*` |
+| `::Meta` | Metaprogramming stuff | `ctl/meta/*` |
+| `::Regex` | Regex-related stuff | `ctl/regex/*` |
+| `::Type` | Concepts | `ctl/typetraits/*` |
+| `::OS` | Operating System stuff | `ctl/os/*` |
+| `::Sort` | Sorting algorithms (excluding `sort` function) | `ctl/algorithm/sort/*` |
+| `::Ex` | Extensions | root folder |
 
 ### What Goes Where
 

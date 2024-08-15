@@ -1,12 +1,29 @@
 # New Codebase Layout
 
+Root namespace name options:
+- [ ] `Makai`
+- [ ] `MGE`
+- [ ] `Mk`
+
+---
+
+| Symbol | Meaning |
+|:-:|:-|
+| root | Self-explanatory. |
+| `::*` | Any namespace inside root. |
+| `::<NAME>` | A specific namespace inside root. |
+
+---
+
 | Namespace | Domain |
 |:-:|:-|
-| `Makai` | Core System |
-| `Makai::Graph(ical)` | Graphical Subsystem |
-| `Makai::Audio` | Audio Subsystem |
-| `Makai::Game` | Game-related Stuff |
-| `Makai::Ex` | Game Engine Extensions |
+| root | Core System |
+| `::*::Part` | Full & Partial implementations |
+| `::*::Base` | Class bases |
+| `::Graph(ical)` | Graphical Subsystem |
+| `::Audio` | Audio Subsystem |
+| `::Game` | Game-related Stuff |
+| `::Ex` | Game Engine Extensions |
 
 
 - Everything from `program` folder → `Makai` (rename `Program` to `App`)
