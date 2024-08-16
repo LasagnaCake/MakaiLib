@@ -16,6 +16,7 @@ TL,DR: Better header files!
 - - The issue isn't *really* the DLLs, it's more of the `.h` & `.o` files - do they also need to be shipped together (what I'm trying to avoid)?
 - - Also, how do I even do (most of) the  value macros the engine uses?
 - - - Could do something like this: [https://stackoverflow.com/a/75116431](https://stackoverflow.com/a/75116431)
+- - - Or just use command-line arguments
 
 ## File Naming Convention
 
