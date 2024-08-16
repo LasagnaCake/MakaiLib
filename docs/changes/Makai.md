@@ -28,11 +28,13 @@ Root namespace name options:
 - Should `CTL` be included globally inside the namespace (i.e. `using namespace CTL;`)?
 - Everything from `program` folder → root folder (rename `Program` to `App`)
 - Everything from `gamedata` folder (except game bases & related content) → `::Game`
-- Game bases & related content → `::Ex::(Game::)<GAME BASE>`
+- Game bases & related content → [see below](#Game-Bases)
 - Some `*App`-related stuff from `gamedata` should be moved into the core system
 
 ## Game Bases
 
 | Namespace | Domain |
 |:-:|:-|
-| `::Ex::Danmaku` | Danmaku (bullet hell) game base |
+| `::Ex(::Game)::Danmaku` | Danmaku (bullet hell) game base |
+
+## (Potential) Name Shorthands
