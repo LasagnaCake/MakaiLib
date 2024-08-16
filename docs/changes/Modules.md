@@ -20,6 +20,7 @@ TL,DR: Better header files!
 - - - - The macros in `gamedata/danmaku/predefs.hpp`, though, WILL be a problem (Could just also ditch them entirely)
 - - - Could do something like this: [https://stackoverflow.com/a/75116431](https://stackoverflow.com/a/75116431)
 - - - Or just use command-line arguments
+- - - - Probably the better option over here
 
 ## File Naming Convention
 
