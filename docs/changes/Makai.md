@@ -1,6 +1,6 @@
 # Codebase
 
-[WILL use C++ modules.](Modules.md#Why)
+[Will (probably) use C++ modules.](Modules.md#Why)
 
 ## Layout
 
