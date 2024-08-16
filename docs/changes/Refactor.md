@@ -26,7 +26,7 @@
 
 - [ ] Cleanup & polish [graphical](../../src/graphical) system
 - [ ] Cleanup & polish [audio](../../src/audio) system
-- [ ] Replace raw pointers with smart pointers (see [referential.hpp](../../src/collection/referential.hpp))
+- [ ] Replace raw pointers with smart pointers where possible (see [referential.hpp](../../src/collection/referential.hpp))
 - [ ] "Async"-ify [tasking system](../../src/collection/tasking.hpp) (see [asynchronous.hpp](../../src/collection/asynchronous.hpp))
 
 ## Very Complex
