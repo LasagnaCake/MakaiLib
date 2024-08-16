@@ -2,7 +2,7 @@
 
 ## Compilation
 
-Gets compiled into its own library file, but for now it is header only.
+Maybe it will get compiled into its own library file, but for now it is header only.
 
 ## Structure
 
