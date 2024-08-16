@@ -10,7 +10,7 @@ Root namespace name options:
 | Symbol | Meaning |
 |:-:|:-|
 | root | The top-level namespace. |
-| `::*` | Any namespace inside root. |
+| `::*` | Any namespace inside root, including root itself. |
 | `::<NAME>` | A specific namespace inside root. |
 
 ---
