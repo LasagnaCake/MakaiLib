@@ -17,7 +17,7 @@ TL,DR: Better header files!
 - - Also, how do I even do (most of) the  value macros the engine uses?
 - - - The macros in `definitions.hpp` can just be ditched
 - - - The game template inclusion macros will not be a problem (as they will be separated into extensions, making them unnecessary)
-- - - - The parameters, though, WILL be a problem
+- - - - The parameters, though, WILL be a problem (Could just also ditch them and refactor into a different method)
 - - - Could do something like this: [https://stackoverflow.com/a/75116431](https://stackoverflow.com/a/75116431)
 - - - Or just use command-line arguments
 
