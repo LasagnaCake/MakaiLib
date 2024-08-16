@@ -9,6 +9,11 @@ See:
 
 TL,DR: Better header files!
 
+## Drawbacks
+
+- It's new
+- How would it work with conventional libraries, like SDL, GLEW, CryptoPP, etc?
+
 ## File Naming Convention
 
 | Name | Usage |
