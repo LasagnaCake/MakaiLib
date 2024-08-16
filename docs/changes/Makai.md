@@ -1,9 +1,15 @@
-# New Codebase Layout
+# Codebase
+
+## Modules!
 
 WILL use C++ modules. See:
+- [https://en.cppreference.com/w/cpp/language/modules](https://en.cppreference.com/w/cpp/language/modules)
 - [https://www.geeksforgeeks.org/modules-in-cpp-20/](https://www.geeksforgeeks.org/modules-in-cpp-20/)
 - [https://learn.microsoft.com/en-us/cpp/cpp/modules-cpp?view=msvc-170](https://learn.microsoft.com/en-us/cpp/cpp/modules-cpp?view=msvc-170)
-- [https://en.cppreference.com/w/cpp/language/modules](https://en.cppreference.com/w/cpp/language/modules)
+
+Better header files!
+
+## Layout
 
 Root namespace name options:
 - [ ] `Makai` (Most likely)
@@ -36,13 +42,13 @@ Root namespace name options:
 - Game bases & related content → [see below](#Game-Bases)
 - Some `*App`-related stuff from `gamedata` should be moved into the core system
 
-## Game Bases
+### Game Bases
 
 | Namespace | Domain |
 |:-:|:-|
 | `::Ex(::Game)::Danmaku` | Danmaku (bullet hell) game base |
 
-## (Potential) Name Shorthands
+### (Potential) Name Shorthands
 
 
 | Namespace | Shorthand |
