@@ -63,7 +63,6 @@ See [Major Refactor](Refactor.md)
 
 #### Under consideration
 
-- C++20 modules?
 - Rename stuff
 
 ### Very far future (may never happen)
