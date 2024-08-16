@@ -34,4 +34,4 @@ Root namespace name options:
 
 | Namespace | Domain |
 |:-:|:-|
-| `::Ex::Danmaku` | Danmaku game base |
+| `::Ex::Danmaku` | Danmaku (bullet hell) game base |
