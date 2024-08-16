@@ -3,7 +3,7 @@
 Root namespace name options:
 - [ ] `Makai` (Most likely)
 - [ ] `MGE` (Just no.)
-- [ ] `Mk` (Could also be used as the shorthand for the namespace (and namespace shorthands))
+- [ ] `Mk` (Could also be used as the shorthand for the namespace)
 
 ---
 
