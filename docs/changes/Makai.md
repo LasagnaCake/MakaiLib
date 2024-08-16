@@ -23,7 +23,7 @@ Root namespace name options:
 | `::Graph(ical)` | Graphical Subsystem |
 | `::Audio` | Audio Subsystem |
 | `::Game` | Game-related Stuff |
-| `::Ex` | Game Engine Extensions |
+| `::Ex` | Extensions |
 
 
 - Everything from `program` folder → `Makai` (rename `Program` to `App`)
