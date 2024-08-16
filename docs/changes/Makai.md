@@ -27,7 +27,7 @@ Root namespace name options:
 
 
 - Everything from `program` folder → `Makai` (rename `Program` to `App`)
-- Everything from `gamedata` folder (except subfolders & related content) → `Makai`
+- Everything from `gamedata` folder (except subfolders & related content) → `::Game`
 - Some `*App`-related stuff from `gamedata` should be moved into the core system
 
 ## Game Bases
