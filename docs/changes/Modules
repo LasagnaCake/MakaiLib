@@ -1,0 +1,17 @@
+# Modules!
+
+## But why?
+
+See:
+- [https://en.cppreference.com/w/cpp/language/modules](https://en.cppreference.com/w/cpp/language/modules)
+- [https://www.geeksforgeeks.org/modules-in-cpp-20/](https://www.geeksforgeeks.org/modules-in-cpp-20/)
+- [https://learn.microsoft.com/en-us/cpp/cpp/modules-cpp?view=msvc-170](https://learn.microsoft.com/en-us/cpp/cpp/modules-cpp?view=msvc-170)
+
+TL,DR: Better header files!
+
+## File Naming Convention
+
+| Name | Usage |
+|:-:|:-|
+|`.hxx`| Module interface |
+|`.cxx`| Module implementation |
