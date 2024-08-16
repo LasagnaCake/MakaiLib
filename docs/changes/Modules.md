@@ -16,6 +16,7 @@ TL,DR: Better header files!
 - - The issue isn't *really* the DLLs, it's more of the `.h` & `.o` files - do they also need to be shipped together (what I'm trying to avoid)?
 - - Also, how do I even do (most of) the  value macros the engine uses?
 - - - The macros in `collection/definitions.hpp` & `predefs.hpp` can just be ditched
+- - - Ditch OpenMP support
 - - - The game template inclusion macros will not be a problem (as they will be separated into extensions, making them unnecessary)
 - - - Will just use command-line arguments (which means that if you want a different configuration, you'd have to recompile the source)
 - - - - Which will end up being the case, anyways
