@@ -1,5 +1,10 @@
 # New Codebase Layout
 
+WILL use C++ modules. See:
+- [https://www.geeksforgeeks.org/modules-in-cpp-20/](https://www.geeksforgeeks.org/modules-in-cpp-20/)
+- [https://learn.microsoft.com/en-us/cpp/cpp/modules-cpp?view=msvc-170](https://learn.microsoft.com/en-us/cpp/cpp/modules-cpp?view=msvc-170)
+- [https://en.cppreference.com/w/cpp/language/modules](https://en.cppreference.com/w/cpp/language/modules)
+
 Root namespace name options:
 - [ ] `Makai` (Most likely)
 - [ ] `MGE` (Just no.)
