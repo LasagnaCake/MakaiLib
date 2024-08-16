@@ -1,9 +1,9 @@
 # New Codebase Layout
 
 Root namespace name options:
-- [ ] `Makai`
-- [ ] `MGE`
-- [ ] `Mk`
+- [ ] `Makai` (Most likely)
+- [ ] `MGE` (Just no.)
+- [ ] `Mk` (Could also be used as the shorthand)
 
 ---
 
