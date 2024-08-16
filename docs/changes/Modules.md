@@ -15,6 +15,9 @@ TL,DR: Better header files!
 - How would it work with conventional libraries, like SDL, GLEW, CryptoPP, etc?
 - - The issue isn't *really* the DLLs, it's more of the `.h` & `.o` files - do they also need to be shipped together (what I'm trying to avoid)?
 - - Also, how do I even do (most of) the  value macros the engine uses?
+- - - The macros in `definitions.hpp` can just be ditched
+- - - The game template inclusion macros will not be a problem (as they will be separated into extensions, making them unnecessary)
+- - - - The parameters, though, WILL be a problem
 - - - Could do something like this: [https://stackoverflow.com/a/75116431](https://stackoverflow.com/a/75116431)
 - - - Or just use command-line arguments
 
