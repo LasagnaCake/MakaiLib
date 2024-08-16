@@ -9,7 +9,7 @@ Root namespace name options:
 
 | Symbol | Meaning |
 |:-:|:-|
-| root | Self-explanatory. |
+| root | The top-level namespace. |
 | `::*` | Any namespace inside root. |
 | `::<NAME>` | A specific namespace inside root. |
 
@@ -38,3 +38,11 @@ Root namespace name options:
 | `::Ex(::Game)::Danmaku` | Danmaku (bullet hell) game base |
 
 ## (Potential) Name Shorthands
+
+
+| Namespace | Shorthand |
+|:-:|:-|
+| `::Graph(ical)` | `MkGraph` |
+| `::Audio` | `MkAudio` |
+| `::Game` | `MkGame` |
+| `::Ex` | `MkEx` |
