@@ -13,6 +13,7 @@ TL,DR: Better header files!
 
 - It's new
 - How would it work with conventional libraries, like SDL, GLEW, CryptoPP, etc?
+- - The issue isn't *really* the DLLs, it's more of the `.h` & `.o` files - do they also need to be shipped together (what I'm trying to avoid)?
 
 ## File Naming Convention
 
