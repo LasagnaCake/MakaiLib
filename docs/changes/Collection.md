@@ -1,13 +1,6 @@
 # Collection Refactor
 
-## Modules!
-
-WILL use C++ modules. See:
-- [https://en.cppreference.com/w/cpp/language/modules](https://en.cppreference.com/w/cpp/language/modules)
-- [https://www.geeksforgeeks.org/modules-in-cpp-20/](https://www.geeksforgeeks.org/modules-in-cpp-20/)
-- [https://learn.microsoft.com/en-us/cpp/cpp/modules-cpp?view=msvc-170](https://learn.microsoft.com/en-us/cpp/cpp/modules-cpp?view=msvc-170)
-
-Better header files!
+[WILL use C++ modules.](Modules.md#Why)
 
 ## Compilation
 
