@@ -25,7 +25,7 @@ Root namespace name options:
 | `::Game` | Game-related Stuff |
 | `::Ex` | Extensions |
 
-- `CTL` should be included globally inside the namespace
+- `CTL` should be included globally inside the namespace (i.e. `using namespace CTL;`)
 - Everything from `program` folder → `Makai` (rename `Program` to `App`)
 - Everything from `gamedata` folder (except subfolders & related content) → `::Game`
 - Some `*App`-related stuff from `gamedata` should be moved into the core system
