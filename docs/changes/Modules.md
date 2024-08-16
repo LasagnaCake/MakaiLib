@@ -18,6 +18,7 @@ TL,DR: Better header files!
 - - - The macros in `collection/definitions.hpp` & `predefs.hpp` can just be ditched
 - - - Ditch OpenMP support
 - - - The game template inclusion macros will not be a problem (as they will be separated into extensions, making them unnecessary)
+- - - - `UPDATE_PARAM` macro can just be a `constexpr` function (or, at the very least, `inline`)
 - - - Will just use command-line arguments (which means that if you want a different configuration, you'd have to recompile the source)
 - - - - Which will end up being the case, anyways
 
