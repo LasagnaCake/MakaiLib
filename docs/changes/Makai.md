@@ -25,7 +25,7 @@ Root namespace name options:
 | `::Game` | Game-related Stuff |
 | `::Ex` | Extensions |
 
-- Should `CTL` be included globally inside the namespace (i.e. `using namespace CTL;`)?
+- Should `CTL` be included globally inside the namespace (i.e. `using namespace CTL;` inside root)?
 - Everything from `program` folder → root folder (rename `Program` to `App`)
 - Everything from `gamedata` folder (except game bases & related content) → `::Game`
 - Game bases & related content → [see below](#Game-Bases)
