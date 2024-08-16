@@ -19,8 +19,8 @@ TL,DR: Better header files!
 - - - The game template inclusion macros will not be a problem (as they will be separated into extensions, making them unnecessary)
 - - - - The macros in `gamedata/danmaku/predefs.hpp`, though, WILL be a problem (Could just also ditch them entirely)
 - - - Could do something like this: [https://stackoverflow.com/a/75116431](https://stackoverflow.com/a/75116431)
-- - - Or just use command-line arguments
-- - - - Probably the better option over here
+- - - Or just use command-line arguments (which means that if you want a different configuration, you'd have to recompile the source)
+- - - - Which will end up being the case, anyways
 
 ## File Naming Convention
 
