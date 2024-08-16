@@ -12,7 +12,7 @@ Root namespace name: `CTL`.
 
 | Symbol | Meaning |
 |:-:|:-|
-| root | Self-explanatory. |
+| root | The top-level namespace. |
 | `::*` | Any namespace inside root. |
 | `::<NAME>` | A specific namespace inside root. |
 
