@@ -11,7 +11,9 @@ TL,DR: Better header files!
 
 ## Drawbacks
 
-- It's new
+- It's new (i.e. almost no info)
+- - How does it find the `.hxx` files? Does it NEED those?
+- - Can you compile implementation files into a library file?
 - How would it work with conventional libraries, like SDL, GLEW, CryptoPP, etc?
 - - The issue isn't *really* the DLLs, it's more of the `.h` & `.o` files - do they also need to be shipped together (what I'm trying to avoid)?
 - - Also, how do I even do (most of) the  value macros the engine uses?
