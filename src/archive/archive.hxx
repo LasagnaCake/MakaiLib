@@ -1,16 +1,10 @@
 module;
 
 #include <nlohmann/json.hpp>
-#include <cryptopp/aes.h>
-#include <cryptopp/zlib.h>
-#include <cryptopp/modes.h>
-#include <cryptopp/sha3.h>
-#include <cppcodec/base64_rfc4648.hpp>
-#include <cppcodec/base32_rfc4648.hpp>
 #include <filesystem>
 #include <algorithm>
 
-export module Makai;
+export module Makai.Tool.Arch;
 
 import module CTL;
 
@@ -20,6 +14,8 @@ export namespace Makai::Tool::Arch {
 
 	using namespace CTL;
 	using namespace CTL::Ex;
+
+	using FileLoader::BinaryData;
 
 	enum class EncryptionMethod: uint64 {
 		AEM_NONE,
@@ -31,28 +27,9 @@ export namespace Makai::Tool::Arch {
 		ACM_ZIP,
 	};
 
-	String encoded(uint64 const& v);
-	uint64 decoded(String const& v);
-
-	template<class T>
-	String hash(String const& str);
-
 	constexpr String truncate(String const& str);
 
 	String hashPassword(String const& str);
-
-	template<class T>
-	BinaryData cbcTransform(
-		BinaryData const&	data,
-		String				password	= "",
-		uint8* const&		block		= nullptr
-	);
-
-	template<class T>
-	T* getFlator(String& result, uint8 const& level);
-
-	template<Type::Equal<Inflator> T>
-	T* getFlator(String& result, uint8 const& level);
 
 	BinaryData encrypt(
 		BinaryData const&		data,
@@ -79,14 +56,6 @@ export namespace Makai::Tool::Arch {
 		CompressionMethod const&	method	= CompressionMethod::ACM_ZIP,
 		uint8 const&				level	= 9
 	);
-
-	JSONData getStructure(fs::path const& path, StringList& files, String const& root = "");
-
-	StringList getFileInfo(JSONData const& filestruct);
-
-	usize populateTree(JSONData& tree, List<uint64> const& values, usize const& start = 0);
-
-	void populateTree(JSONData& tree, String const& root = "");
 
 	struct FileHeader {
 		uint64	uncSize;
@@ -123,10 +92,8 @@ export namespace Makai::Tool::Arch {
 
 	namespace Flags {
 		constexpr uint64 SINGLE_FILE_ARCHIVE_BIT	= (1 << 0);
-		constexpr uint64 SHOULD_CHECK_HASH_BIT		= (1 << 1);
+		constexpr uint64 SHOULD_CHECK_CRC_BIT		= (1 << 1);
 	}
-
-	void generateBlock(uint8 const(& block)[16]);
 
 	void pack(
 			String const& archivePath,
@@ -135,6 +102,12 @@ export namespace Makai::Tool::Arch {
 			EncryptionMethod const& enc = EncryptionMethod::AEM_AES256,
 			CompressionMethod const& comp = CompressionMethod::ACM_ZIP,
 			uint8 const& complvl = 9
+	);
+
+	void unpack(
+		String const& archivePath,
+		String const folderPath,
+		String const& password = ""
 	);
 
 	struct FileArchive {
@@ -199,28 +172,7 @@ export namespace Makai::Tool::Arch {
 		JSONData		fstruct;
 	};
 
-	void unpackV1(
-		String const&	archivePath,
-		String const	folderPath,
-		String const&	password = ""
-	);
-
-	void unpackV0(
-		String const&	archivePath,
-		String const	folderPath,
-		String const&	password = ""
-	);
-
-	void unpack(
-		String const& archivePath,
-		String const folderPath,
-		String const& password = ""
-	);
-
-	String loadEncryptedTextFile(String const& path, String const& password = "") {
-		BinaryData fd = loadEncryptedBinaryFile(path, password);
-		return String(fd.begin(), fd.end());
-	}
+	String loadEncryptedTextFile(String const& path, String const& password = "");
 
 	template<typename T>
 	void saveEncryptedBinaryFile(
