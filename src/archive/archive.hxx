@@ -12,9 +12,14 @@ module;
 
 export module Makai;
 
+import module CTL;
+
 export namespace Makai::Tool::Arch {
 	using JSON = nlohmann::json;
 	typedef nlohmann::ordered_json JSONData;
+
+	using namespace CTL;
+	using namespace CTL::Ex;
 
 	enum class EncryptionMethod: uint64 {
 		AEM_NONE,
