@@ -50,5 +50,5 @@ Root namespace name options:
 | `::Graph(ical)` | `MkGraph` |
 | `::Audio` | `MkAudio` |
 | `::Game` | `MkGame` |
-| `::Ex` | `MkTool` |
+| `::Tool` | `MkTool` |
 | `::Ex` | `MkEx` |
