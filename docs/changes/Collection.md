@@ -36,6 +36,8 @@ Root namespace name: `CTL`.
 | `::Type` | Concepts | `ctl/typetraits/*` |
 | `::OS` | Operating System stuff | `ctl/os/*` |
 | `::Sort` | Sorting algorithms (excluding `sort` function) | `ctl/algorithm/sort/*` |
+| `::IO` | I/O-related stuff | `ctl/io/*` |
+| `::Bit` | Bit-manipulation stuff | `ctl/bit/*` |
 | `::Ex` | Extensions | root folder |
 
 ### What Goes Where
@@ -45,24 +47,26 @@ in the root folder will be moved into appropriate `ctl/` folders.
 These are:
 
 - [`referential.hpp`]
-- - `SmartPointer::*` -> `ReferenceCounter` to `CTL::Base`, rest to `CTL`
-- - (`Instance` & `Handle`) -> `CTL`
-- `View::*` -> `CTL` (except `Reference`, which will be deleted)
-- `Threaded::*` -> `CTL`
-- `Async::*` -> Everything but `TimeKeeper` to `CTL`
-- `Math::*` -> `RNG::*` to `CTL::RNG`, rest to `CTL::Math`
-- `FileLoader::*` -> `CTL::FS`
-- `Error::*` -> `CTL::Error`
+- - `SmartPointer::*` → `ReferenceCounter` to `CTL::Base`, rest to `CTL`
+- - (`Instance` & `Handle`) → `CTL`
+- `View::*` → `CTL` (except `Reference`, which will be deleted)
+- `Threaded::*` → `CTL`
+- `Async::*` → Everything but `TimeKeeper` to `CTL`
+- `Math::*` → `RNG::*` to `CTL::RNG`, rest to `CTL::Math`
+- `FileLoader::*` → `CTL::FS`
+- `Error::*` → `CTL::Error`
 - [`helper.hpp`]
-- - `to*()` -> globally
-- - `regex*()` -> `CTL::Regex` drop `regex` prefix
-- - `Time::*` -> `CTL::Time`
-- - `FileSystem::*` -> `CTL::FS`
-- - `Fold::*` -> `CTL::Meta`
-- `System::*` -> `CTL::OS`
+- - `to*()` → globally
+- - `regex*()` → `CTL::Regex` drop `regex` prefix
+- - `Time::*` → `CTL::Time`
+- - `FileSystem::*` → `CTL::FS`
+- - `Fold::*` → `CTL::Meta`
+- - `System::*` → `CTL::OS`
+- - `print*` → `CTL::IO`
+- - Other `Helper` functions → their respective classes
 - [`variant.hpp`]
-- - (`Variant` becomes `Variable`) -> `CTL`
-- `Type::*` -> `CTL::Type`
+- - (`Variant` becomes `Variable`) → `CTL`
+- `Type::*` → `CTL::Type`
 
 Everything else gets moved into `CTL::Ex`[^1]. 
 
