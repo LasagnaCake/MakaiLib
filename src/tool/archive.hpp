@@ -1,13 +1,8 @@
-module;
-export module Makai.Tool.Arch;
+#include <nlohmann/json.hpp>
+#include <filesystem>
+#include <algorithm>
 
-import <nlohmann/json.hpp>;
-import <filesystem>;
-import <algorithm>;
-
-import module CTL;
-
-export namespace Makai::Tool::Arch {
+namespace Makai::Tool::Arch {
 	using JSON = nlohmann::json;
 	typedef nlohmann::ordered_json JSONData;
 
@@ -212,5 +207,3 @@ export namespace Makai::Tool::Arch {
 		uint8 const&				lvl			= 9
 	);
 }
-
-export namespace MkTool = Makai::Tool;

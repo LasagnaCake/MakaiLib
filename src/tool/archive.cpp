@@ -1,15 +1,18 @@
-module;
-module Makai.Tool.Arch;
+#include <nlohmann/json.hpp>
+#include <cryptopp/aes.h>
+#include <cryptopp/zlib.h>
+#include <cryptopp/modes.h>
+#include <cryptopp/sha3.h>
+#include <cppcodec/base64_rfc4648.hpp>
+#include <cppcodec/base32_rfc4648.hpp>
+#include <filesystem>
+#include <algorithm>
 
-import <nlohmann/json.hpp>;
-import <cryptopp/aes.h>;
-import <cryptopp/zlib.h>;
-import <cryptopp/modes.h>;
-import <cryptopp/sha3.h>;
-import <cppcodec/base64_rfc4648.hpp>;
-import <cppcodec/base32_rfc4648.hpp>;
-import <filesystem>;
-import <algorithm>;
+#include "../ctl/ex/helper.hpp"
+#include "../ctl/math/math.hpp"
+#include "../ctl/file/file.hpp"
+
+#include "archive.hxx"
 
 // Legacy stuff, TODO: Remove this later
 #ifdef ARCSYS_APPLICATION_
@@ -22,10 +25,6 @@ import <algorithm>;
 #define _ARCDEBUGLN(...)
 #define _ARCEXIT
 #endif // ARCSYS_ARCHIVE_APLLICATION_
-
-import CTL.Ex.Helper;
-import CTL.Math;
-import CTL.File;
 
 using namespace CTL;
 using namespace Ex;
