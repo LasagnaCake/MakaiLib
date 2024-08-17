@@ -1,13 +1,12 @@
 module;
-
-#include <cryptopp/aes.h>
-#include <cryptopp/zlib.h>
-#include <cryptopp/modes.h>
-#include <cryptopp/sha3.h>
-#include <cppcodec/base64_rfc4648.hpp>
-#include <cppcodec/base32_rfc4648.hpp>
-
 module Makai.Tool.Arch;
+
+import <cryptopp/aes.h>
+import <cryptopp/zlib.h>
+import <cryptopp/modes.h>
+import <cryptopp/sha3.h>
+import <cppcodec/base64_rfc4648.hpp>
+import <cppcodec/base32_rfc4648.hpp>
 
 // Legacy stuff, TODO: Remove this later
 #ifdef ARCSYS_APPLICATION_

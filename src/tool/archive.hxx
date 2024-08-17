@@ -1,10 +1,10 @@
 module;
-
-#include <nlohmann/json.hpp>
-#include <filesystem>
-#include <algorithm>
-
 export module Makai.Tool.Arch;
+
+import <nlohmann/json.hpp>
+import <filesystem>
+import <algorithm>
+
 
 import module CTL;
 
