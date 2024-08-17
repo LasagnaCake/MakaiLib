@@ -12,7 +12,7 @@
 #include "../ctl/math/math.hpp"
 #include "../ctl/file/file.hpp"
 
-#include "archive.hxx"
+#include "archive.hpp"
 
 // Legacy stuff, TODO: Remove this later
 #ifdef ARCSYS_APPLICATION_
