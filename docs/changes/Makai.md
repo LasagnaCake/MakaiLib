@@ -27,6 +27,7 @@ Root namespace name options:
 | `::Graph(ical)` | Graphical Subsystem |
 | `::Audio` | Audio Subsystem |
 | `::Game` | Game-related Stuff |
+| `::Tool` | Engine tools |
 | `::Ex` | Extensions |
 
 - Should `CTL` be included globally inside the namespace (i.e. `using namespace CTL;` inside root)?
@@ -49,4 +50,5 @@ Root namespace name options:
 | `::Graph(ical)` | `MkGraph` |
 | `::Audio` | `MkAudio` |
 | `::Game` | `MkGame` |
+| `::Ex` | `MkTool` |
 | `::Ex` | `MkEx` |
