@@ -1,3 +1,10 @@
+#ifndef MAKAILIB_TOOL_ARCHIVE_H
+#define MAKAILIB_TOOL_ARCHIVE_H
+
+#include "../ctl/legacy/helper.hpp"
+#include "../ctl/legacy/algebra.hpp"
+#include "../ctl/legacy/fileloader.hpp"
+
 #include <nlohmann/json.hpp>
 #include <filesystem>
 #include <algorithm>
@@ -5,9 +12,6 @@
 namespace Makai::Tool::Arch {
 	using JSON = nlohmann::json;
 	typedef nlohmann::ordered_json JSONData;
-
-	using namespace CTL;
-	using namespace CTL::Ex;
 
 	using FileLoader::BinaryData;
 
@@ -207,3 +211,5 @@ namespace Makai::Tool::Arch {
 		uint8 const&				lvl			= 9
 	);
 }
+
+#endif // MAKAILIB_TOOL_ARCHIVE_H

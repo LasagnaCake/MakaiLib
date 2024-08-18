@@ -1,0 +1,6 @@
+#ifndef COLLISION_HANDLING_SYSTEM_H
+#define COLLISION_HANDLING_SYSTEM_H
+
+#include "collision2d.hpp"
+
+#endif // COLLISION_HANDLING_SYSTEM_H

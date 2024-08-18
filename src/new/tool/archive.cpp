@@ -8,10 +8,6 @@
 #include <filesystem>
 #include <algorithm>
 
-#include "../ctl/ex/helper.hpp"
-#include "../ctl/math/math.hpp"
-#include "../ctl/file/file.hpp"
-
 #include "archive.hpp"
 
 // Legacy stuff, TODO: Remove this later
@@ -26,11 +22,9 @@
 #define _ARCEXIT
 #endif // ARCSYS_ARCHIVE_APLLICATION_
 
-using namespace CTL;
-using namespace Ex;
-
 namespace fs = std::filesystem;
 using namespace CryptoPP;
+namespace File = FileLoader;
 using File::BinaryData;
 
 namespace Arch = Makai::Tool::Arch;

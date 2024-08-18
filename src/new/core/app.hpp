@@ -1,0 +1,4 @@
+#ifndef MAKAILIB_CORE_APP_H
+#define MAKAILIB_CORE_APP_H
+
+#endif // MAKAILIB_CORE_APP_H
