@@ -1,7 +1,5 @@
 # Collection Refactor
 
-[Will (probably) use C++ modules.](Modules.md#Why)
-
 ## Compilation
 
 Maybe it will get compiled into its own library file, but for now it is header only.

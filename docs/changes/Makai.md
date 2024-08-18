@@ -1,7 +1,5 @@
 # Codebase
 
-[Will (probably) use C++ modules.](Modules.md#Why)
-
 ## Layout
 
 Root namespace name options:

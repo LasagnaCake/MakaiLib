@@ -12,7 +12,6 @@
 
 ## Intermediate
 
-- [ ] [Use modules?](Modules.md#Why)
 - [ ] Remove dependency on external library types on header files (will require separating implementation from header first)
 - - Replace it with its own types
 - - - If required, create type conversion functions in implementation files
