@@ -76,13 +76,13 @@ constexpr bool Makai::JSON::JSONView::isStructured() const	{return view().is_str
 constexpr bool Makai::JSON::JSONView::isDiscarded() const	{return view().is_discarded();			}
 
 
-constexpr Makai::JSON::JSONValue::JSONValue(String const& name) {}
+constexpr Makai::JSON::JSONValue::JSONValue(String const& name): JSONView(data, name) {}
 
-constexpr Makai::JSON::JSONValue::JSONValue(String const& name, Makai::JSON::Extern::JSONData const& data) {this->data = data;}
+constexpr Makai::JSON::JSONValue::JSONValue(String const& name, Makai::JSON::Extern::JSONData const& data): JSONValue(name) {this->data = data;}
 
-constexpr Makai::JSON::JSONValue::JSONValue(Makai::JSON::Extern::JSONData const& data) {}
+constexpr Makai::JSON::JSONValue::JSONValue(Makai::JSON::Extern::JSONData const& data): JSONValue("", data) {}
 
-constexpr Makai::JSON::JSONValue::JSONValue(Makai::JSON::JSONValue const& other) {}
+constexpr Makai::JSON::JSONValue::JSONValue(Makai::JSON::JSONValue const& other): JSONValue(other.getName(), other.data) {}
 
 constexpr Makai::JSON::JSONValue& clear() {
 	data = JSON::object();

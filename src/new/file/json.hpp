@@ -50,13 +50,13 @@ namespace Makai::JSON {
 	};
 
 	struct JSONValue: public JSONView {
-		constexpr JSONValue(String const& name): JSONView(data, name);
+		constexpr JSONValue(String const& name);
 
-		constexpr JSONValue(String const& name, Extern::JSONData const& data): JSONValue(name);
+		constexpr JSONValue(String const& name, Extern::JSONData const& data);
 
-		constexpr JSONValue(Extern::JSONData const& data): JSONValue("", data);
+		constexpr JSONValue(Extern::JSONData const& data);
 
-		constexpr JSONValue(JSONValue const& other): JSONValue(other.getName(), other.data);
+		constexpr JSONValue(JSONValue const& other);
 
 		constexpr JSONValue& clear();
 
