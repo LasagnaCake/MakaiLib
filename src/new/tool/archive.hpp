@@ -5,7 +5,7 @@
 #include "../ctl/legacy/algebra.hpp"
 #include "../ctl/legacy/fileloader.hpp"
 
-#include "../json/json.hpp"
+#include "../file/json.hpp"
 #include <filesystem>
 
 namespace Makai::Tool::Arch {

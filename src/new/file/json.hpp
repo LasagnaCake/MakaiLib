@@ -1,5 +1,5 @@
-#ifndef MAKAILIB_JSON_JSON_H
-#define MAKAILIB_JSON_JSON_H
+#ifndef MAKAILIB_FILE_JSON_H
+#define MAKAILIB_FILE_JSON_H
 
 #define JSON_NO_IO
 #include "_lib/nlohmann/json.hpp"

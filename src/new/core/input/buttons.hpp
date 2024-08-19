@@ -1,7 +1,7 @@
 #ifndef MAKAILIB_CORE_INPUT_BUTTONS_H
 #define MAKAILIB_CORE_INPUT_BUTTONS_H
 
-#include "../ctl/ctl.hpp"
+#include "../../ctl/ctl.hpp"
 
 namespace Makai::Input {
 	enum class KeyCode {

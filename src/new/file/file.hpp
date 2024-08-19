@@ -2,7 +2,7 @@
 #define MAKAILIB_FS_FILE_H
 
 #include "../ctl/ctl.hpp"
-#include "../json/json.hpp"
+#include "json.hpp"
 
 namespace Makai::File {
 	// Until this puzzle is figured, this shall do
