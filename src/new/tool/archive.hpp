@@ -5,14 +5,10 @@
 #include "../ctl/legacy/algebra.hpp"
 #include "../ctl/legacy/fileloader.hpp"
 
-#include <nlohmann/json.hpp>
+#include "../json/json.hpp"
 #include <filesystem>
-#include <algorithm>
 
 namespace Makai::Tool::Arch {
-	using JSON = nlohmann::json;
-	typedef nlohmann::ordered_json JSONData;
-
 	using FileLoader::BinaryData;
 
 	enum class EncryptionMethod: uint64 {
@@ -135,7 +131,7 @@ namespace Makai::Tool::Arch {
 
 		BinaryData getBinaryFile(String const& path);
 
-		JSONData getFileTree(String const& root = "") const;
+		JSON::JSONData getFileTree(String const& root = "") const;
 
 		static ArchiveHeader getHeader(String const& path);
 
@@ -149,7 +145,7 @@ namespace Makai::Tool::Arch {
 
 		void demangleData(BinaryData& data, uint8* const& block) const;
 
-		void unpackLayer(JSONData& layer, String const& path);
+		void unpackLayer(JSON::JSONData& layer, String const& path);
 
 		void processFileEntry(FileEntry& entry);
 
@@ -167,7 +163,7 @@ namespace Makai::Tool::Arch {
 		String			pass;
 		std::ifstream	archive;
 		ArchiveHeader	header;
-		JSONData		fstruct;
+		JSON::JSONData	fstruct;
 	};
 
 	String loadEncryptedTextFile(String const& path, String const& password = "");

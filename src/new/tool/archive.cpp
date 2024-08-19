@@ -1,11 +1,9 @@
-#include <nlohmann/json.hpp>
 #include <cryptopp/aes.h>
 #include <cryptopp/zlib.h>
 #include <cryptopp/modes.h>
 #include <cryptopp/sha3.h>
 #include <cppcodec/base64_rfc4648.hpp>
 #include <cppcodec/base32_rfc4648.hpp>
-#include <filesystem>
 #include <algorithm>
 
 #include "archive.hpp"
@@ -29,6 +27,9 @@ using File::BinaryData;
 
 namespace Arch = Makai::Tool::Arch;
 using namespace Arch;
+
+using JSON = nlohmann::json;
+using Makai::JSON::JSONData;
 
 String encoded(uint64 const& v) {
 	BinaryData data(8, 0);
@@ -215,33 +216,33 @@ JSONData Arch::getStructure(fs::path const& path, StringList& files, String cons
 StringList getFileInfo(JSONData const& filestruct) {
 	StringList res;
 	for (auto& [name, data]: filestruct.items()) {
-		if (data.is_string())
+		if (data.isString())
 			res.push_back(data);
-		else if (data.is_object() && !data.empty())
+		else if (data.isObject() && !data.empty())
 			for (String& s: getFileInfo(data))
 				res.push_back(s);
 	}
 	return res;
 }
 
-void populateTree(JSONData& tree, String const& root = "") {
-	if (!tree.is_object())
+void populateTree(JSONData tree, String const& root = "") {
+	if (!tree.isObject())
 		throw Error::FailedAction("file tree is not a JSON object!");
-	for (auto& [name, data]: tree.items()) {
+	for (auto& [name, data]: tree.value().items()) {
 		String path = FileSystem::concatenatePath(root, name);
-		if (data.is_string()) data = path;
-		else if (data.is_object()) populateTree(data, path);
+		if (data.isString()) data = path;
+		else if (data.isObject()) populateTree(data, path);
 		else throw Error::FailedAction("Invalid data type in file tree!");
 	}
 }
 
-size_t populateTree(JSONData& tree, List<uint64> const& values, size_t const& start = 0) {
-	if (!tree.is_object())
+size_t populateTree(JSONData tree, List<uint64> const& values, size_t const& start = 0) {
+	if (!tree.isObject())
 		throw Error::FailedAction("file tree is not a JSON object!");
 	size_t idx = start;
-	for (auto& [name, data]: tree.items()) {
-		if (data.is_string()) data = encoded(values[idx++]);
-		else if (data.is_object()) idx = populateTree(data, values, idx);
+	for (auto& [name, data]: tree.value().items()) {
+		if (data.isString()) data = encoded(values[idx++]);
+		else if (data.isObject()) idx = populateTree(data, values, idx);
 		else throw Error::FailedAction("Invalid data type in file tree!");
 	}
 	return idx;
@@ -268,9 +269,9 @@ void Arch::pack(
 	_ARCDEBUGLN("Getting file structure...");
 	JSONData dir;
 	StringList files;
-	JSONData& tree = dir["tree"];
+	JSONData tree = dir["tree"];
 	tree = getStructure(fs::path(folderPath), files, fs::path(folderPath).stem().string());
-	_ARCDEBUGLN("\n", dir.dump(2, ' ', false, JSON::error_handler_t::replace), "\n");
+	_ARCDEBUGLN("\n", dir.value().dump(2, ' ', false, JSON::error_handler_t::replace), "\n");
 	// Populate with temporary values
 	List<uint64> locations(files.size(), 0);
 	// Open file
@@ -608,12 +609,12 @@ void Arch::FileArchive::demangleData(BinaryData& data, uint8* const& block) cons
 	_ARCDEBUGLN("After decompression: ", data.size());
 }
 
-void Arch::FileArchive::unpackLayer(JSONData& layer, String const& path) {
+void Arch::FileArchive::unpackLayer(JSONData layer, String const& path) {
 	assertOpen();
 	List<Entry<String>> files;
 	for (auto& [name, data]: layer.items()) {
-		if (data.is_string()) files.push_back(Entry<String>(name, data));
-		else if (data.is_object()) unpackLayer(data, path);
+		if (data.isString()) files.push_back(Entry<String>(name, data));
+		else if (data.isObject()) unpackLayer(data, path);
 		else directoryTreeError();
 	}
 	std::random_shuffle(files.begin(), files.end());
@@ -643,7 +644,7 @@ void Arch::FileArchive::processFileEntry(FileEntry& entry) const {
 }
 
 FileEntry Arch::FileArchive::getFileEntry(String const& path) try {
-	if (!fstruct["tree"].is_object())
+	if (!fstruct["tree"].isObject())
 		directoryTreeError();
 	_ARCDEBUGLN("Getting file entry location...");
 	uint64		idx	= getFileEntryLocation(Helper::toLower(path), path);
@@ -700,19 +701,19 @@ uint64 Arch::FileArchive::getFileEntryLocation(String const& path, String const&
 			entry = stack.back();
 			stack.pop_back();
 			continue;
-		} else if (entry.is_object()) {
+		} else if (entry.isObject()) {
 			for (auto [k, v]: entry.items())
 				if (Helper::toLower(k) == fld) {
 					stack.push_back(entry);
 					entry = v;
 					break;
 				}
-		} else if (entry.is_string() && Helper::toLower(entry) == fld)
+		} else if (entry.isString() && Helper::toLower(entry) == fld)
 			return decoded(entry);
 		else doesNotExistError(fld);
 	}
 	// Try and get entry location
-	if (entry.is_string())
+	if (entry.isString())
 		return decoded(entry.get<String>());
 	else notAFileError(origpath);
 } catch (JSON::exception const& e) {
