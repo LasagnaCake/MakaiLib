@@ -1,6 +1,7 @@
 #ifndef MAKAILIB_GRAPH_TEXTURE_H
 #define MAKAILIB_GRAPH_TEXTURE_H
 
+#include "../ctl/ctl.hpp"
 #include "image.hpp"
 
 namespace Makai::Graph {
@@ -10,11 +11,11 @@ namespace Makai::Graph {
 
 		using Image2D::ImageFileType, Image2D::ComponentType, Image2D::ImageFormat, Image2D::FilterMode, Image::ImageTarget;
 
-		enum class TextureWrap {
-			TW_CLAMP,
-			TW_REPEAT,
-			TW_MIRROR_REPEAT,
-			TW_MIRROR_CLAMP
+		enum class WrapMode {
+			WM_CLAMP,
+			WM_REPEAT,
+			WM_MIRROR_REPEAT,
+			WM_MIRROR_CLAMP
 		};
 
 		static Texture2D fromJSON(JSON::JSONData const& img, String const& sourcepath = "");
@@ -153,12 +154,12 @@ namespace Makai::Graph {
 			bool filter = false
 		);
 
-		Texture2D& setTextureWrapMode(
-			TextureWrap const& horizontal,
-			TextureWrap const& vertical
+		Texture2D& setWrapMode(
+			WrapMode const& horizontal,
+			WrapMode const& vertical
 		);
 
-		Texture2D& setTextureWrapMode(TextureWrap const& mode = TextureWrap::TW_REPEAT);
+		Texture2D& setWrapMode(WrapMode const& mode = WrapMode::WM_REPEAT);
 
 		Texture2D& setFilterMode(
 			FilterMode magFilter = FilterMode::FM_SMOOTH,
@@ -169,14 +170,14 @@ namespace Makai::Graph {
 
 		inline Image2D::FilterMode magFilter() const;
 
-		inline Image2D::Attributes getAttributes() const;
+		inline Image2D::Attributes attributes() const;
 
-		Texture2D& enable(unsigned char texture = 0);
+		Texture2D& enable(uchar const& texture = 0);
 
-		Texture2D const& enable(unsigned char texture = 0) const;
+		Texture2D const& enable(uchar const& texture = 0) const;
 
-		Texture2D&			operator()(unsigned char texture = 0);
-		Texture2D const&	operator()(unsigned char texture = 0) const;
+		Texture2D&			operator()(uchar const& texture = 0);
+		Texture2D const&	operator()(uchar const& texture = 0) const;
 
 		inline uint getID() const;
 
