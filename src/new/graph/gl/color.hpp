@@ -2,6 +2,7 @@
 #define MAKAILIB_GRAPH_COLOR_H
 
 #include "../ctl/ctl.hpp"
+#include "../file/json.hpp"
 
 namespace Makai::Graph::Color {
 
@@ -30,6 +31,8 @@ namespace Makai::Graph::Color {
 	constexpr Vector4 fromHexCodeRGB(uint32 code);
 
 	Vector4 fromHexCodeString(String code);
+
+	constexpr Vector4 fromJSON(JSONData const& json);
 
 	constexpr uint32 toHexCodeRGB(uint32 const& color);
 

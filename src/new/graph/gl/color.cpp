@@ -166,3 +166,21 @@ constexpr String Color::toHexCodeString(
 	}
 	return code;
 }
+
+constexpr Vector4 Color::fromJSON(JSONData const& json) {
+	try {
+		if (json.isArray())
+			return Vector4(
+				json[0].value<float>(0),
+				json[1].value<float>(0),
+				json[2].value<float>(0),
+				json[3].value<float>(1)
+			);
+		else if (json.isString())
+			return Color::fromHexCodeString(json.get<String>());
+		else if (json.isNumber())
+			return Vector4(json.value<float>(1));
+	} catch (...) {
+		return Vector4(1);
+	}
+}
