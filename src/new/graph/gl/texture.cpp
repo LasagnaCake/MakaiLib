@@ -10,7 +10,14 @@
 
 #include "texture.hpp"
 
-using Texture2D::WrapMode, Image2D::FilterMode, Image2D::ImageFileType;
+using namespace Makai::Graph;
+
+using
+	Texture2D::WrapMode,
+	Texture2D::FilterMode,
+	Texture2D::ImageFileType,
+	Texture2D::ImageTarget
+;
 
 constexpr uint convert(WrapMode const& mode) {
 	switch (mode) {

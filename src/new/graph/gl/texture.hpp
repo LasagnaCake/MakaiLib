@@ -9,7 +9,13 @@ namespace Makai::Graph {
 	public:
 		using Image2DInstance = Instance<Image2D>;
 
-		using Image2D::ImageFileType, Image2D::ComponentType, Image2D::ImageFormat, Image2D::FilterMode, Image::ImageTarget;
+		using
+			Image2D::ImageFileType,
+			Image2D::ComponentType,
+			Image2D::ImageFormat,
+			Image2D::FilterMode,
+			Image::ImageTarget
+		;
 
 		enum class WrapMode {
 			WM_CLAMP,
