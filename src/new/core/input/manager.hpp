@@ -2,7 +2,8 @@
 #define MAKAI_CORE_INPUT_MANAGER_H
 
 #include "buttons.hpp"
-#include "../program.hpp"
+#include "extern.hpp"
+#include "../display.hpp"
 
 namespace Makai::Input {
 	struct MouseState {
@@ -27,8 +28,8 @@ namespace Makai::Input {
 	};
 
 	class Manager {
-		typedef HashMap<KeyCode, usize>		KeyBuffer;
-		typedef HashMap<MouseCode, usize>	MouseButtonBuffer;
+		using KeyBuffer			= HashMap<KeyCode, usize>;
+		using MouseButtonBuffer	= HashMap<MouseCode, usize>;
 
 		struct MouseBuffer {
 			MouseState global;
@@ -180,7 +181,7 @@ namespace Makai::Input {
 			mouseVisible	= true
 		;
 
-		static void* window;
+		static Extern::Resource window;
 
 		/// The internal buffer state.
 		inline static KeyBuffer		buffer;

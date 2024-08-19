@@ -3,11 +3,11 @@
 
 #define JSON_NO_IO
 #include "_lib/nlohmann/json.hpp"
-#include "../ctl/legacy/dataview.hpp"
+#include "../ctl/ctl.hpp"
 
 namespace Makai::JSON {
 	namespace Extern {
-		typedef nlohmann::ordered_json JSONData;
+		using JSONData = nlohmann::ordered_json;
 	}
 
 	class JSONView: public DataView<Extern::JSONData> {
@@ -69,6 +69,7 @@ namespace Makai::JSON {
 	constexpr JSONValue array();
 
 	typedef JSONValue JSONData;
-}
 
-#endif // MAKAILIB_JSON_JSON_H
+	constexpr JSONData parseJSON(String const& data);
+	JSONData loadFile(String const& path);
+}

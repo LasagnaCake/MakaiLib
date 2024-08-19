@@ -8,7 +8,7 @@
 
 #include "input.hpp"
 
-#define window ((SDL_Window*)window)
+#define sdlWindow ((SDL_Window*)window)
 
 using namespace Makai::Input
 
@@ -441,7 +441,7 @@ inline static void Manager::refreshCapture() {
 
 inline static void Manager::setMouseCapturing(bool const& enabled = true, bool const& hideCursor = true) {
 	if (!window) return;
-	SDL_SetWindowGrab(window, enabled ? SDL_TRUE : SDL_FALSE);
+	SDL_SetWindowGrab(sdlWindow, enabled ? SDL_TRUE : SDL_FALSE);
 	SDL_SetRelativeMouseMode(enabled ? SDL_TRUE : SDL_FALSE);
 	setCursorVisibility(!hideCursor);
 	mouseCaptured = enabled;

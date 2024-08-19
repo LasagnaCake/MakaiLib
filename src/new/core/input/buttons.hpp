@@ -185,9 +185,9 @@ namespace Makai::Input {
 		friend class InputManager;
 	};
 
-	typedef List<Button> ButtonList;
+	using ButtonList = List<Button>;
 
-	typedef HashMap<String, ButtonList> ButtonMap;
+	using ButtonMap = HashMap<String, ButtonList>;
 }
 
 #endif // MAKAILIB_CORE_INPUT_BUTTONS_H

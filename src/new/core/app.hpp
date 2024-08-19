@@ -3,33 +3,38 @@
 
 #include "../ctl/ctl.hpp"
 
-#include "program.hpp"
+#include "extern.hpp"
 #include "input/manager.hpp"
 
+using namespace Makai;
+
 namespace Makai {
-	struct Program {
+	struct App {
 	public:
 		/// Initializes the program.
-		Program (
-			unsigned int width,
-			unsigned int height,
-			String windowTitle,
-			bool fullscreen = false,
-			bool useMIDI = false,
-			String bufferShaderPath = "shaders/framebuffer/compose.slf",
-			String mainShaderPath = "shaders/base/base.slf"
+		App (
+			unsigned int const& width,
+			unsigned int const& height,
+			String const& windowTitle,
+			bool const& fullscreen = false,
+			bool const& useMIDI = false,
+			String const& bufferShaderPath = "shaders/framebuffer/compose.slf",
+			String const& mainShaderPath = "shaders/base/base.slf"
 		);
 
-		virtual ~Program() {}
+		virtual ~App();
+
+		/// Returns whether the user pressed the close button.
+		inline static bool shouldClose();
 
 		/// Sets the window's title.
-		inline void setWindowTitle(String windowTitle);
+		inline void setWindowTitle(String const& title);
+
+		/// Sets the program fullscreen.
+		void setFullscreen(bool const& state = false);
 
 		/// Runs the program.
 		void run();
-
-		/// Sets the program fullscreen.
-		void setFullscreen(bool state = false);
 
 		/// Closes the program.
 		void close();
@@ -41,25 +46,26 @@ namespace Makai {
 		void setWindowSize(Vector2 size);
 
 		/// Gets the current frame.
-		size_t getCurrentFrame();
+		usize getCurrentFrame();
 		/// Gets the current cycle.
-		size_t getCurrentCycle();
+		usize getCurrentCycle();
 
 		/// Gets the current cycle rate.
-		size_t getCycleRate();
+		usize getCycleRate();
 		/// Gets the current cycle rate.
-		size_t getFrameRate();
+		usize getFrameRate();
 
 		/// Renders the reserved layer.
+		[[deprecated]]
 		inline void renderReservedLayer();
 
-		inline void setFlag(usize const& flag, bool const& state = true);
-		inline void setValue(usize const& flag, int const& value, bool const& state = true);
+		/// Sets an OpenGL flag.
+		inline static void setGLFlag(usize const& flag, bool const& state = true);
+		/// Sets an OpenGL value.
+		inline static void setGLValue(usize const& flag, int const& value, bool const& state = true);
 
-		inline void enableMainBuffer();
-
-		constexpr inline Drawer::FrameBuffer& getFrameBuffer();
-		constexpr inline Drawer::FrameBuffer& getLayerBuffer();
+		constexpr inline Graph::FrameBuffer& getFrameBuffer();
+		constexpr inline Graph::FrameBuffer& getLayerBuffer();
 
 		inline Vector2 getWindowSize();
 
@@ -75,13 +81,13 @@ namespace Makai {
 		/// Happens before the screen is rendered, after the frame buffer is cleared.
 		virtual void onPostFrameClear()	{}
 		/// Gets called when the program begins rendering a layer, before the the layer buffer is cleared.
-		virtual void onLayerDrawBegin(size_t layerID)	{}
+		virtual void onLayerDrawBegin(usize const& layerID)	{}
 		/// Gets called when the program begins rendering a layer, after the the layer buffer is cleared.
-		virtual void onPostLayerClear(size_t layerID)	{}
+		virtual void onPostLayerClear(usize const& layerID)	{}
 		/// Gets called when the program ends rendering a layer, before the layer buffer is drawn to the screen.
-		virtual void onPreLayerDraw(size_t layerID)		{pushLayerToFrame();}
+		virtual void onPreLayerDraw(usize const& layerID)	{pushLayerToFrame();}
 		/// Gets called when the program ends rendering a layer, after the layer buffer is drawn to the screen.
-		virtual void onLayerDrawEnd(size_t layerID)		{}
+		virtual void onLayerDrawEnd(usize const& layerID)	{}
 		/// Happens after the screen is rendered, before the frame buffer is drawn to the screen.
 		virtual void onPreFrameDraw()	{}
 		/// Happens after the screen is rendered, after the frame buffer is drawn to the screen.
@@ -90,12 +96,16 @@ namespace Makai {
 		/// Reserved Layer only.
 
 		/// Gets called when the program begins rendering the reserved layer, before the the layer buffer is cleared.
+		[[deprecated]]
 		virtual void onReservedLayerDrawBegin()	{}
 		/// Gets called when the program begins rendering the reserved layer, after the the layer buffer is cleared.
+		[[deprecated]]
 		virtual void onPostReservedLayerClear()	{}
 		/// Gets called when the program ends rendering the reserved layer, before the layer buffer is drawn to the screen.
+		[[deprecated]]
 		virtual void onPreReservedLayerDraw()	{}
 		/// Gets called when the program ends rendering the reserved layer, after the layer buffer is drawn to the screen.
+		[[deprecated]]
 		virtual void onReservedLayerDrawEnd()	{}
 
 		/// Gets called every frame, along all other logic.
@@ -105,10 +115,10 @@ namespace Makai {
 		virtual void onClose()	{}
 
 		/// Queues a texture to recieve a copy of the screen.
-		void queueScreenCopy(Drawer::Texture2D target);
+		void queueScreenCopy(Graph::Texture2D target);
 
 		/// Removes a texture from the screen copy queue.
-		void unqueueScreenCopy(Drawer::Texture2D target);
+		void unqueueScreenCopy(Graph::Texture2D target);
 
 		/**
 		Skips the drawing process of the current layer being drawn.
@@ -143,22 +153,25 @@ namespace Makai {
 		/// The program's notification handler.
 		Event::Notifier notifier;
 
+		/// Enables/disables OpenGL debug logs.
+		void setGLDebug(bool const& state = false);
+
 	protected:
-		Drawer::FrameBufferData toFrameBufferData();
+		Graph::FrameBufferData toFrameBufferData();
 
 	private:
-		size_t cycleRate = 0, frameRate = 0;
+		usize cycleRate = 0, frameRate = 0;
 
 		bool
 			skipLayer	= false,
 			pushToFrame	= false
 		;
 
-		List<Drawer::Texture2D> screenQueue;
+		List<Graph::Texture2D> screenQueue;
 
 		/// The program's main framebuffer.
-		Drawer::FrameBuffer framebuffer;
-		Drawer::FrameBuffer layerbuffer;
+		Graph::FrameBuffer framebuffer;
+		Graph::FrameBuffer layerbuffer;
 
 		/// The window's resolution.
 		unsigned int width, height;
@@ -172,17 +185,20 @@ namespace Makai {
 		void copyScreenToQueued();
 
 		/// Frame counter.
-		size_t frame = 0;
+		usize frame = 0;
 
 		/// Cycle counter.
-		size_t cycle = 0;
+		usize cycle = 0;
 
 		/// Current execution state.
 		bool shouldRun = true;
 
 		/// The program's window.
-		void* window;
+		Extern::Resource window;
 	};
+
+	/// Returns the currently-opened app. Returns null if no app is open.
+	App* getOpenApp();
 }
 
 #endif // MAKAILIB_CORE_APP_H

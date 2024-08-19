@@ -92,3 +92,20 @@ constexpr Makai::JSON::JSONValue& clear() {
 constexpr Makai::JSON::JSONValue Makai::JSON::object(String const& name = "") {return JSONValue(name, JSON::object());}
 
 constexpr Makai::JSON::JSONValue Makai::JSON::array(String const& name = "") {return JSONValue(name, JSON::array());}
+
+constexpr Makai::JSON::JSONData Makai::JSON::parseJSON(String const& data) try {
+	return Makai::Extern::JSONData::parse(data);
+} catch (JSON::exception const& e) {
+	throw Error::FailedAction(
+		"Failed at parsing JSON!",
+		__FILE__,
+		toString(__LINE__),
+		"parseJSON",
+		e.what(),
+		"Please check to see if values are correct!"
+	);
+}
+
+constexpr Makai::JSON::JSONData Makai::JSON::loadFile(String const& path) {
+	return Makai::JSON::parseJSON(FileLoader::loadTextFile(path));
+}
