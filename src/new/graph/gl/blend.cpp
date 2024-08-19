@@ -41,7 +41,7 @@ constexpr Blendable& Blendable::setBlendEquation(
 }
 
 GLenum convert(BlendFunction const& value) {
-	using BlendFunction;
+	using enum BlendFunction;
 	switch (value) {
 		case BF_ZERO:					return GL_ZERO;
 		case BF_ONE:					return GL_ONE;
@@ -69,7 +69,7 @@ GLenum convert(BlendFunction const& value) {
 }
 
 GLenum convert(BlendEquation const& value) {
-	using BlendEquation;
+	using enum BlendEquation;
 	switch (value) {
 		case BE_ZERO:			return GL_ZERO;
 		case BE_ONE:			return GL_ONE;
