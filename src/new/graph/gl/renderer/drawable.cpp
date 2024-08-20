@@ -1,9 +1,9 @@
-#include "drawable.hpp"
-
 #define GLEW_STATIC
 #include <GLEW/include/GL/glew.h>
 #include <GLEW/include/GL/wglew.h>
 #include <GL/gl.h>
+
+#include "drawable.hpp"
 
 using namespace Makai::Graph;
 
