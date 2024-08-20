@@ -101,7 +101,8 @@ App::App (
 	DEBUGLN("Starting Audio System...");
 	{
 		using enum Makai::Audio::Format;
-		Makai::audio::open({AF_MP3, AF_OGG, (useMIDI ? AF_MIDI : AF_NONE)}, 2, 16);
+
+		Makai::audio::open(List<Formats>{AF_MP3, AF_OGG, (useMIDI ? AF_MIDI : AF_NONE)}, 2, 16);
 	}
 	DEBUGLN("Started!");
 	// Create window and make active
