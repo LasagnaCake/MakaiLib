@@ -1,6 +1,7 @@
 #include "materials.hpp"
 
-using namespace Makai::Graph::Material;
+using namespace Makai::Graph;
+using namespace Material;
 
 void ObjectMaterial::use(Shader& shader) {
 	// UV Data

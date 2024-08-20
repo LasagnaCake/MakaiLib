@@ -73,6 +73,9 @@ namespace Makai::Graph {
 
 		usize vao, vbo;
 	};
+
+	template<class T>
+	concept DrawableObjectType = requires Type::Subclass<T, DrawableObject>;
 }
 
 #endif // MAKAILIB_GRAPH_RENDERER_DRAWABLE_H
