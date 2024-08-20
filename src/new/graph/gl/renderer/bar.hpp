@@ -55,7 +55,7 @@ namespace Makai::Graph {
 
 	template<BarType T = RadialBar>
 	struct LabeledBar {
-		typedef T DataType;
+		using DataType = T;
 		DataType	bar;
 		Label		label;
 	};

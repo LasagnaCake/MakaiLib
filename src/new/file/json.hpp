@@ -68,7 +68,7 @@ namespace Makai::JSON {
 
 	constexpr JSONValue array();
 
-	typedef JSONValue JSONData;
+	using JSONData = JSONValue;
 
 	constexpr JSONData parseJSON(String const& data);
 	JSONData loadFile(String const& path);

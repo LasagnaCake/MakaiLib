@@ -16,7 +16,7 @@ namespace Makai::Graph {
 
 	struct FontFace {
 	public:
-		typedef Instance<FontData> FontInstance;
+		using FontInstance = Instance<FontData>;
 
 		// This needs to be initialized this specific way, else it breaks somehow???
 		FontFace(): instance(new FontData()) {}

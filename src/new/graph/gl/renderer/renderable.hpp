@@ -8,7 +8,7 @@
 namespace Makai::Graph {
 	class Renderable: public DrawableObject {
 	public:
-		constexpr static size_t version = 0;
+		constexpr static usize VERSION = 0;
 
 		Renderable(size_t layer = 0, bool manual = false);
 
