@@ -3,7 +3,7 @@
 ## Simple
 
 - [ ] Reorganize and remove haphazardness/mess
-- [ ] Overhaul [Collision System](../../src/collection/entity/collidable.hpp) (See [New Collision System Proposal](../changes/Collision.md))
+- [ ] Overhaul [Collision System](../../src/ctl/legacy/entity/collidable.hpp) (See [New Collision System Proposal](../changes/Collision.md))
 - 1. [x] Separate collision handling code into separate file
 - 2. [x] Move collision handling to a server, that creates, destroys & manages collision shapes (See [Collision::\[Collision Server\]](../changes/Collision.md#Collision-Server))
 - 3. [ ] Integrate into existing structure, while allowing for custom collision checking (See [Collision::\[Collision Events\]](../changes/Collision.md#Collision-Events))
@@ -23,13 +23,14 @@
 - - Have it be an extension
 
 ## Complex
-- [ ] Cleanup & polish [graphical](../../src/graphical) system
-- [ ] Cleanup & polish [audio](../../src/audio) system
-- [ ] Replace raw pointers with smart pointers where possible (see [referential.hpp](../../src/collection/referential.hpp))
-- [ ] "Async"-ify [tasking system](../../src/collection/tasking.hpp) (see [asynchronous.hpp](../../src/collection/asynchronous.hpp))
+- [ ] Cleanup & polish [graphical](../../src/new/graph) system
+- [ ] Cleanup & polish [audio](../../src/new/audio) system
+- [ ] Replace raw pointers with smart pointers where possible (see [referential.hpp](../../src/ctl/legacy/referential.hpp))
+- [ ] "Async"-ify [tasking system](../../src/ctl/legacy/tasking.hpp) (see [asynchronous.hpp](../../src/ctl/legacy/asynchronous.hpp))
 
 ## Very Complex
 
+- [ ] Rethink [entity](../../src/ctl/legacy/entity) system
 - [ ] Replace STL with own internal library
 
 [^1]: Except anything in the `tools` folder (which should be its own separate library, and thus, separate namespace), and collection, which gets its [own special treatment](Collection.md#Structure).
