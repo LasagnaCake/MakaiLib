@@ -88,8 +88,8 @@ void DrawableObject::display(Vertex* const& vertices, usize const& count, Object
 	// If no instances, add one
 	if (material.instances.empty())
 		material.instances.push_back(Vector3(0, 0, 0));
-	// Set blend
-	setBlend();
+	// Set blend mode
+	setBlendMode();
 	// Set point size, if applicable
 	if (pointSize)	glPointSize(*pointSize);
 	else			glEnable(GL_PROGRAM_POINT_SIZE);
@@ -136,7 +136,7 @@ void DrawableObject::display(Vertex* const& vertices, usize const& count, Object
 	glDisable(GL_PROGRAM_POINT_SIZE);
 }
 
-void DrawableObject::setShaderData() {
+void DrawableObject::prepare() {
 	// Render with object's shader
 	shader();
 	// Get transformation matrices
@@ -144,6 +144,4 @@ void DrawableObject::setShaderData() {
 	// Set transformation matrices
 	shader["vertMatrix"](Global::camera.projection() * cameraWorldActor);
 	shader["normalsMatrix"](cameraWorldActor.transposed().inverted());
-	// Set material data
-	material.use(shader);
 }

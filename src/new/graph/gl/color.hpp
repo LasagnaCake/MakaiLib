@@ -32,7 +32,7 @@ namespace Makai::Graph::Color {
 
 	Vector4 fromHexCodeString(String code);
 
-	constexpr Vector4 fromJSON(JSONData const& json);
+	constexpr Vector4 fromJSON(JSON::JSONData const& json);
 
 	constexpr uint32 toHexCodeRGB(uint32 const& color);
 

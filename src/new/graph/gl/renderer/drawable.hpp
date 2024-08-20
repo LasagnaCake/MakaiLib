@@ -53,18 +53,14 @@ namespace Makai::Graph {
 		ODM_PATCHES
 	};
 
-	template<Material::ValidObjectMaterial T>
 	class DrawableObject: public Drawable, public Blendable {
 	public:
-		typedef T MaterialType;
-
 		DrawableObject(usize const& layer = 0, bool const& manual = false);
 
 		virtual ~DrawableObject();
 
 		virtual void draw() {}
 
-		MaterialType		material;
 		Transform3D			trans;
 		Shader				shader		= defaultShader;
 		Nullable<float>		pointSize	= nullptr;
@@ -73,7 +69,7 @@ namespace Makai::Graph {
 	protected:
 		void display(Vertex* const& vertices, usize const& count, ObjectDisplayMode const& mode = ObjectDisplayMode::ODM_TRIANGLES);
 
-		void setShaderData();
+		void prepare();
 
 		usize vao, vbo;
 	};

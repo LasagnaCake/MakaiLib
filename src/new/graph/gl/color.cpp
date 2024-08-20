@@ -167,7 +167,7 @@ constexpr String Color::toHexCodeString(
 	return code;
 }
 
-constexpr Vector4 Color::fromJSON(JSONData const& json) {
+constexpr Vector4 Color::fromJSON(JSON::JSONData const& json) {
 	try {
 		if (json.isArray())
 			return Vector4(

@@ -94,13 +94,13 @@ void copyTexture(
 
 static Texture2D Texture2D::fromJSON(JSON::JSONData const& img, String const& sourcepath = "") {
 	Texture2D texture;
-	if (img["data"].is_object() && img["data"]["path"].is_string() && !img["data"]["path"].get<String>().empty()) {
+	if (img["data"].isObject() && img["data"]["path"].isString() && !img["data"]["path"].get<String>().empty()) {
 		texture.create(FileSystem::concatenatePath(sourcepath, img["path"].get<String>()));
 		texture.setTextureFilterMode(
 			img.value<uint>("minFilter", GL_NEAREST_MIPMAP_NEAREST),
 			img.value<uint>("magFilter", GL_NEAREST)
 		);
-	} else if (img["data"].is_string() && !img["data"].get<String>().empty()) {
+	} else if (img["data"].isString() && !img["data"].get<String>().empty()) {
 		List<ubyte> data = decodeData(img["data"].get<String>(), img["encoding"]);
 		int w, h, nc;
 		uchar* imgdat = stbi_load_from_memory(
