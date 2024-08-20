@@ -403,8 +403,8 @@ void Renderable::draw() override {
 	// If no vertices, return
 	if (!vertices) return;
 	// Set shader data
-	setShaderData();
-	Material::setMaterial(shader, material);
+	prepare();
+	material.use(shader);
 	// Present to screen
 	display(vertices, vertexCount);
 }

@@ -1,7 +1,7 @@
 #ifndef MAKAILIB_GRAPH_RENDERER_RENDERABLE_H
 #define MAKAILIB_GRAPH_RENDERER_RENDERABLE_H
 
-#include "../file/json.hpp"
+#include "../../file/json.hpp"
 #include "drawable.hpp"
 #include "material/material.hpp"
 
