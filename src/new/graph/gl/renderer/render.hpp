@@ -9,6 +9,14 @@ namespace Makai::Graph {
 
 		static void renderLayer(usize const& layer);
 
+		static List<usize> getLayers() {
+			return layers.getAllGroups();
+		}
+
+		static bool isLayerEmpty(usize const& layer) {
+			return layers[layer].empty();
+		}
+
 	private:
 		inline static Group::Group<Renderer::Callback> layers;
 		friend class Drawable;

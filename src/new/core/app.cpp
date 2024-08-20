@@ -19,6 +19,15 @@
 
 #include "app.hpp"
 
+inline void setFrontFace(bool const& clockwise = true) {
+	glFrontFace(clockwise ? GL_CW : GL_CCW);
+}
+
+inline void clearColorBuffer(Vector4 const& color) {
+	glClearColor(color.r, color.g, color.b, color.a);
+	glClear(GL_COLOR_BUFFER_BIT);
+}
+
 using namespace Makai;
 
 void GLAPIENTRY glAPIMessageCallback(
@@ -434,7 +443,7 @@ void App::terminate() {
 
 void App::render() {
 	// Clear screen
-	Drawer::clearColorBuffer(color);
+	clearColorBuffer(color);
 	glClear(GL_DEPTH_BUFFER_BIT);
 	// Enable depth testing
 	setFlag(GL_DEPTH_TEST, true);
@@ -445,16 +454,16 @@ void App::render() {
 	// Clear frame buffer
 	framebuffer.clearBuffers();
 	// Set frontface order
-	Drawer::setFrontFace(true);
+	setFrontFace(true);
 	// Call post frame clearing function
 	onPostFrameClear();
 	// Enable layer buffer
 	layerbuffer();
 	layerbuffer.clearBuffers();
 	// Draw objects
-	vector<size_t> rLayers = Drawer::layers.getAllGroups();;
+	auto rLayers = Graph::Renderer::getLayers();
 	for (auto layer : rLayers) {
-		if (layer != Math::Max::SIZET_V && !Drawer::layers[layer].empty()) {
+		if (!Graph::Renderer::isLayerEmpty(layer)) {
 			// Clear layer skip flag
 			skipLayer = false;
 			// If previous layer was pushed to framebuffer...
@@ -479,7 +488,7 @@ void App::render() {
 				// Call onLayerDrawBegin function
 				onPostLayerClear(layer);
 				// Render layer
-				Drawer::renderLayer(layer);
+				Graph::Renderer::renderLayer(layer);
 				// Clear layer push flag
 				pushToFrame = false;
 				// Call onPreLayerDraw function
@@ -510,7 +519,7 @@ void App::render() {
 void App::copyScreenToQueued() {
 	if (!screenQueue.empty()) {
 		auto& screen = *framebuffer.toFrameBufferData().screen;
-		for (Drawer::Texture2D target: screenQueue)
+		for (Graph::Texture2D target: screenQueue)
 			target->make(screen);
 		screenQueue.clear();
 	}
