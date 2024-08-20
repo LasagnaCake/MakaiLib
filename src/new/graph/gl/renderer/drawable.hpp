@@ -37,20 +37,7 @@ namespace Makai::Graph {
 		/// Whether manually rendering or not.
 		bool manualMode = false;
 	};
-	/*
-	GL_POINTS,
-	GL_LINE_STRIP,
-	GL_LINE_LOOP,
-	GL_LINES,
-	GL_TRIANGLE_STRIP,
-	GL_TRIANGLE_FAN,
-	GL_TRIANGLES,
-	GL_LINES_ADJACENCY,
-	GL_LINE_STRIP_ADJACENCY,
-	GL_TRIANGLES_ADJACENCY,
-	GL_TRIANGLE_STRIP_ADJACENCY,
-	GL_PATCHES
-	*/
+
 	enum class ObjectDisplayMode {
 		ODM_POINTS,
 		ODM_LINE_STRIP,
