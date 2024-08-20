@@ -5,7 +5,7 @@
 
 #include "extern.hpp"
 #include "input/manager.hpp"
-#include "../graph/graph.hpp"
+#include "../graph/gl/graph.hpp"
 
 using namespace Makai;
 
