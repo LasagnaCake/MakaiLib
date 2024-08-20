@@ -1,5 +1,5 @@
-#ifndef MAKAILIB_GRAPH_RENDERER_RENDER_H
-#define MAKAILIB_GRAPH_RENDERER_RENDER_H
+#ifndef MAKAILIB_GRAPH_RENDERER_CORE_H
+#define MAKAILIB_GRAPH_RENDERER_CORE_H
 
 #include "../../ctl/ctl.hpp"
 
@@ -25,4 +25,4 @@ namespace Makai::Graph {
 	using RenderCallback = typename Renderer::Callback;
 }
 
-#endif // MAKAILIB_GRAPH_RENDERER_RENDER_H
+#endif // MAKAILIB_GRAPH_RENDERER_CORE_H

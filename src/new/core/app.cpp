@@ -88,16 +88,21 @@ App::App (
 	DEBUGLN("Starting SDL...");
 	if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_AUDIO) != 0) {
 		ERR_LOG(String("Unable to start SDL! (") + SDL_GetError() + ")");
-		throw Error::FailedAction(String("SDL (") + SDL_GetError() + ")");
+		throw Error::FailedAction(
+			"Unable to start SDL!",
+			__FILE__,
+			toString(__LINE__),
+			"App::constructor",
+			SDL_GetError()
+		);
 	}
 	DEBUGLN("Started!");
 	// Initialize YSE
 	DEBUGLN("Starting Audio System...");
-	if (!Mix_Init(MIX_INIT_MP3 | MIX_INIT_OGG | (useMIDI ? MIX_INIT_MID : 0))) {
-		ERR_LOG(String("Unable to start Mixer! (") + Mix_GetError() + ")");
-		throw Error::FailedAction(String("Mixer (") + Mix_GetError() + ")");
+	{
+		using enum Makai::Audio::Format;
+		Makai::audio::open({AF_MP3, AF_OGG, (useMIDI ? AF_MIDI : AF_NONE)}, 2, 16);
 	}
-	Audio::openSystem();
 	DEBUGLN("Started!");
 	// Create window and make active
 	DEBUGLN("Creating window...");
@@ -114,7 +119,7 @@ App::App (
 			"Failed to create window!",
 			__FILE__,
 			toString(__LINE__),
-			"Program constructor",
+			"App::constructor",
 			SDL_GetError()
 		);
 	}
@@ -138,11 +143,17 @@ App::App (
 	if (glewStatus != GLEW_OK) {
 		ERR_LOG("Error: glewInit: ");
 		ERR_LOG(glewGetErrorString(glewStatus));
-		throw Error::FailedAction(string("glewInit: ") + (const char*)glewGetErrorString(glewStatus));
+		throw Error::FailedAction(
+			"Failed to initialize GLEW!",
+			__FILE__,
+			toString(__LINE__),
+			"App::constructor",
+			(const char*)glewGetErrorString(glewStatus)
+		);
 	}
 	if (!GLEW_VERSION_4_2) {
 		ERR_LOG("Your computer does not support OpenGL 4.2+!");
-		throw Error::InvalidValue(string("No OpenGL 4.2+"));
+		throw Error::Other("Your computer does not support OpenGL 4.2+!");
 	}
 	DEBUGLN("Started!");
 	// Create default shader
@@ -423,11 +434,10 @@ void App::terminate() {
 	// Remove window from input manager
 	if (input.window == window)
 		input.window = nullptr;
+	Entities::_ROOT->destroyChildren();
 	// Close YSE
 	DEBUGLN("Closing sound system...");
-	Audio::closeSystem();
-	Mix_Quit();
-	Entities::_ROOT->destroyChildren();
+	Makai::audio::close();
 	DEBUGLN("Sound system closed!");
 	// Destroy buffers
 	DEBUGLN("Destroying frame buffers...");

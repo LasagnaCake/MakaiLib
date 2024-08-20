@@ -4,7 +4,7 @@
 #include "../../ctl/ctl.hpp"
 #include "../material/material.hpp"
 #include "../blend.hpp"
-#include "render.hpp"
+#include "core.hpp"
 
 namespace Makai::Graph {
 	class Drawable {

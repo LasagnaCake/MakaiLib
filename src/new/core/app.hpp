@@ -6,6 +6,7 @@
 #include "extern.hpp"
 #include "input/manager.hpp"
 #include "../graph/gl/graph.hpp"
+#include "../audio/audio.hpp"
 
 using namespace Makai;
 

@@ -13,4 +13,6 @@
 #include "renderer/renderer.hpp"
 #include "material/material.hpp"
 
+namespace MkGraph = Makai::Graph;
+
 #endif // MAKAILIB_GRAPH_H

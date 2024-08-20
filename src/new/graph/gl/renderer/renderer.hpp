@@ -8,6 +8,6 @@
 #include "scene.hpp"
 #include "framebuffer.hpp"
 #include "reference.hpp"
-#include "render.hpp"
+#include "core.hpp"
 
 #endif // MAKAILIB_GRAPH_RENDERER_H
