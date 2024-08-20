@@ -2,7 +2,7 @@
 
 using namespace Makai::Graph::Material;
 
-void WorldMaterial::use(Shader& shader) {
+void ObjectMaterial::use(Shader& shader) {
 	// UV Data
 	shader["uvShift"](uvShift);
 	// Texture
@@ -62,7 +62,7 @@ void WorldMaterial::use(Shader& shader) {
 }
 
 // TODO: The rest of this rat's nest
-void WorldMaterial::use(Shader& shader) {
+void BufferMaterial::use(Shader& shader) {
 	// Set UV data
 	shader["uvShift"](uvShift);
 	// Set color data

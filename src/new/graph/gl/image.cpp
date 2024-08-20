@@ -12,7 +12,13 @@
 
 using namespace Makai::Graph;
 
-using Image2D::ImageFileType, Image2D::ComponentType, Image2D::ImageFormat, Image2D::FilterMode, Image::ImageTarget;
+using
+	Image2D::ImageFileType,
+	Image2D::ComponentType,
+	Image2D::ImageFormat,
+	Image2D::FilterMode,
+	Image::ImageTarget
+;
 
 constexpr uint convert(Image::ImageTarget const& target) {
 	switch (target) {

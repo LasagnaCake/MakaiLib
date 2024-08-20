@@ -1,0 +1,20 @@
+#ifndef MAKAILIB_GRAPH_RENDERER_RENDER_H
+#define MAKAILIB_GRAPH_RENDERER_RENDER_H
+
+#include "../../ctl/ctl.hpp"
+
+namespace Makai::Graph {
+	struct Renderer {
+		using Callback = const Event::Signal;
+
+		static void renderLayer(usize const& layer);
+
+	private:
+		inline static Group::Group<Renderer::Callback> layers;
+		friend class Drawable;
+	};
+
+	using RenderCallback = typename Renderer::Callback;
+}
+
+#endif // MAKAILIB_GRAPH_RENDERER_RENDER_H

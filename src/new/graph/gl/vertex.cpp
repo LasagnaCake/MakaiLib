@@ -1,9 +1,12 @@
-#include "vertex.hpp"
-
 #define GLEW_STATIC
 #include <GLEW/include/GL/glew.h>
 #include <GLEW/include/GL/wglew.h>
 #include <GL/gl.h>
+
+#define GET_GL_POINTER(start, offset) (void*)((start) + (offset) * sizeof(float))
+#define GET_GL_OFFSET(offset) (void*)((offset) * sizeof(float))
+
+#include "vertex.hpp"
 
 using namespace Makai::Graph;
 
@@ -53,7 +56,7 @@ static void Vertex::setAttributes() {
 		3,
 		GL_FLOAT,
 		GL_FALSE,
-		RAW_VERTEX_BYTE_SIZE,
+		sizeof(vertex),
 		GET_GL_OFFSET(0)
 	);
 	// UV
@@ -62,7 +65,7 @@ static void Vertex::setAttributes() {
 		2,
 		GL_FLOAT,
 		GL_FALSE,
-		RAW_VERTEX_BYTE_SIZE,
+		sizeof(vertex),
 		GET_GL_OFFSET(3)
 	);
 	// Color
@@ -71,7 +74,7 @@ static void Vertex::setAttributes() {
 		4,
 		GL_FLOAT,
 		GL_FALSE,
-		RAW_VERTEX_BYTE_SIZE,
+		sizeof(vertex),
 		GET_GL_OFFSET(5)
 	);
 	// Normal
@@ -80,7 +83,7 @@ static void Vertex::setAttributes() {
 		3,
 		GL_FLOAT,
 		GL_FALSE,
-		RAW_VERTEX_BYTE_SIZE,
+		sizeof(vertex),
 		GET_GL_OFFSET(8)
 	);
 }

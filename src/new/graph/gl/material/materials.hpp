@@ -1,16 +1,13 @@
 #ifndef MAKAILIB_GRAPH_MATERIAL_MATERIALS_H
 #define MAKAILIB_GRAPH_MATERIAL_DEBUG_H
 
+#include "../../ctl/ctl.hpp"
 #include "effect.hpp"
 #include "debug.hpp"
 #include "../color.hpp"
 #include "../shader.hpp"
 
 namespace Makai::Graph::Material {
-	struct BaseObjectMaterial {
-		Vector4	color = Color::WHITE;
-	};
-
 	enum class ObjectCulling {
 		OC_NONE,
 		OC_FRONT,
@@ -22,6 +19,9 @@ namespace Makai::Graph::Material {
 		OF_POINT,
 		OF_LINE,
 		OF_FILL,
+	};
+	struct BaseObjectMaterial {
+		Vector4	color = Color::WHITE;
 	};
 
 	struct ObjectMaterial: BaseObjectMaterial {

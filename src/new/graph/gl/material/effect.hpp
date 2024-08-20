@@ -1,6 +1,9 @@
 #ifndef MAKAILIB_GRAPH_MATERIAL_EFFECT_H
 #define MAKAILIB_GRAPH_MATERIAL_EFFECT_H
 
+#include "../../ctl/ctl.hpp"
+#include "../texture.hpp"
+
 namespace Makai::Graph::Material {
 	namespace Effect {
 		namespace Base {
