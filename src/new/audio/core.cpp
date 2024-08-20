@@ -16,12 +16,12 @@ void Makai::Audio::stopAll() {
 
 using Makai::Audio::Format;
 
-int getFlags(Format* formats, usize sz) {
+int getFlags(List<Format> const& formats) {
 	if (!formats) return;
 	using enum Format;
 	int flags = 0;
-    while (sz--) {
-		switch(*(formats++)) {
+    while (Format f: formats) {
+		switch(f) {
 			case (AF_FLAC):		flags |= MIX_INIT_FLAC;		break;
 			case (AF_MOD):		flags |= MIX_INIT_MOD;		break;
 			case (AF_MP3):		flags |= MIX_INIT_MP3;		break;
@@ -32,15 +32,15 @@ int getFlags(Format* formats, usize sz) {
 			default: break;
 		}
     }
+    return flags;
 }
 
 void Makai::Audio::open(
-	Format* const&	formats,
-	usize const&	sz,
-	uint const&		channels	= 2,
-	uint const&		audioTracks	= 16
+	List<Format> const&	formats,
+	uint const&			channels	= 2,
+	uint const&			audioTracks	= 16
 ) {
-	if (!Mix_Init(getFlags(formats, sz))) {
+	if (!Mix_Init(getFlags(formats))) {
 		throw Error::FailedAction(
 			"Unable to open audio system!",
 			__FILE__,

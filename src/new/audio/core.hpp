@@ -16,12 +16,7 @@ namespace Makai::Audio {
 		AF_MAX_FORMATS
 	};
 
-	void open(Format* const& formats, usize const& sz, uint const& channels = 2, uint const& audioTracks = 16);
-
-	template<usize N>
-	void open(Decay::AsType<Format[N]> const& formats, uint const& channels = 2, uint const& audioTracks = 16) {
-		open(formats, N, channels, audioTracks);
-	}
+	void open(List<Format> const& formats, uint const& channels = 2, uint const& audioTracks = 16);
 
 	void close();
 
