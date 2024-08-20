@@ -1,6 +1,7 @@
 #ifndef MAKAILIB_GRAPH_MATERIAL_MATERIALS_H
 #define MAKAILIB_GRAPH_MATERIAL_DEBUG_H
 
+#include "../../file/json.hpp"
 #include "../../ctl/ctl.hpp"
 #include "effect.hpp"
 #include "debug.hpp"
@@ -15,10 +16,10 @@ namespace Makai::Graph::Material {
 	};
 
 	enum class ObjectFill {
-		OF_NONE,
-		OF_POINT,
-		OF_LINE,
+		OF_NONE = -1,
 		OF_FILL,
+		OF_LINE,
+		OF_POINT,
 	};
 	struct BaseObjectMaterial {
 		Vector4	color = Color::WHITE;

@@ -26,7 +26,7 @@ Material::Effect::Image Material::loadImageEffect(
 		fx.enabled = effect["enabled"].get<bool>();
 		fx.image = texture = Texture2D::fromJSON(effect["image"], sourcepath);
 		return fx;
-	} catch (JSON::exception const& e) {
+	} catch (std::exception const& e) {
 		throw Error::FailedAction(
 			"Failed at getting image effect!",
 			__FILE__,

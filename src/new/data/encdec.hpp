@@ -15,6 +15,9 @@ namespace Makai::Data {
 	BinaryData decode(String const& data, EncodingType const& type);
 
 	String encode(BinaryData const& data, EncodingType const& type);
+
+	String			toString(EncodingType const& type);
+	EncodingType	fromString(String const& type);
 }
 
 #endif // MAKAILIB_DATA_ENCDEC_H

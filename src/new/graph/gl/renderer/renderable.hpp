@@ -1,6 +1,10 @@
 #ifndef MAKAILIB_GRAPH_RENDERER_RENDERABLE_H
 #define MAKAILIB_GRAPH_RENDERER_RENDERABLE_H
 
+#include "../file/json.hpp"
+#include "drawable.hpp"
+#include "material/material.hpp"
+
 namespace Makai::Graph {
 	class Renderable: public DrawableObject {
 	public:
@@ -106,14 +110,7 @@ namespace Makai::Graph {
 
 		void extend(Vertex* vertices, size_t size);
 
-		void extend(Renderable* other) {
-			if (locked) return;
-			if (!other->baked) {
-				other->bake();
-				extend(other->vertices, other->vertexCount);
-				other->unbake();
-			} else extend(other->vertices, other->vertexCount);
-		}
+		void extend(Renderable& other);
 
 		void extend(List<Renderable*> parts);
 
@@ -130,12 +127,12 @@ namespace Makai::Graph {
 		void saveToBinaryFile(String const& path);
 
 		void saveToDefinitionFile(
-			String folder,
-			String name = "object",
-			String texturesFolder = "tx",
-			bool integratedBinary	= false,
-			bool integratedTextures	= false,
-			bool pretty = false
+			String const& folder,
+			String const& name = "object",
+			String const& texturesFolder = "tx",
+			bool const& integratedBinary	= false,
+			bool const& integratedTextures	= false,
+			bool const& pretty = false
 		);
 
 		List<Triangle*> triangles;
@@ -156,26 +153,26 @@ namespace Makai::Graph {
 
 		/// List of references linked to this object.
 		struct {
-			List<Reference3D::Shape<0>*>	shape;
+			List<ShapeRef<0>*>	shape;
 		} references;
 
 		/// The amount of vertices this object has.
 		size_t vertexCount = 0;
 
 		void extendFromDefinition(
-			JSONData def,
+			JSON::JSONData def,
 			String const& sourcepath
 		);
 
 		void extendFromDefinitionV0(
-			JSONData def,
+			JSON::JSONData def,
 			String const& sourcepath
 		);
 
-		JSONData getObjectDefinition(
-			String const& encoding = "base64",
-			bool const& integratedBinary = true,
-			bool const& integratedTextures = true
+		JSON::JSONData getObjectDefinition(
+			String const& encoding			= "base64",
+			bool const& integratedBinary	= true,
+			bool const& integratedTextures	= true
 		);
 	};
 }
