@@ -32,6 +32,8 @@ namespace Makai::JSON {
 
 		constexpr String getName() const;
 
+		constexpr String toString(int const& indent = -1, char const& ch = '\t') const;
+
 		constexpr bool isNull() const;
 		constexpr bool isInt() const;
 		constexpr bool isFloat() const;

@@ -373,7 +373,7 @@ void Renderable::saveToDefinitionFile(
 	// Get material data
 	file["material"] = toDefinition(material, folder, texturesFolder, integratedTextures);
 	// convert to text
-	auto contents = file.dump(pretty ? 1 : -1, '\t', false, JSON::error_handler_t::replace);
+	auto contents = file.toString(pretty ? 1 : -1);
 	// Save definition file
 	FileLoader::saveTextFile(folder + "/" + name + ".mrod", contents);
 }

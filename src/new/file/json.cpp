@@ -62,6 +62,10 @@ constexpr Makai::JSON::JSONView::operator T() const {
 
 constexpr String Makai::JSON::JSONView::getName() const {return name;}
 
+constexpr String Makai::JSON::JSONView::toString(int const& indent = -1, char const& ch = '\t') const {
+	return view().value().dump(indent, ch, false, JSON::error_handler_t::replace);
+}
+
 constexpr bool Makai::JSON::JSONView::isNull() const		{return view().is_null();				}
 constexpr bool Makai::JSON::JSONView::isInt() const			{return view().is_number_integer();		}
 constexpr bool Makai::JSON::JSONView::isFloat() const		{return view().is_number_float();		}

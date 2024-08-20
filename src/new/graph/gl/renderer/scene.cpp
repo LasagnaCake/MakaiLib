@@ -1,5 +1,7 @@
 #include "scene.hpp"
 
+#include "../color.hpp"
+
 using namespace Makai::Graph;
 using Scene3D::BaseType;
 
@@ -100,10 +102,10 @@ void Scene3D::saveToSceneFile(
 		file["data"] = {{"path", {}}};
 		usize i = 0;
 		for (JSON::JSONData o: objpaths)
-			file["data"]["path"][i] = 0;
+			file["data"]["path"][i] = o.value();
 	}
 	// convert to text
-	auto contents = file.dump(pretty ? 1 : -1, '\t', false, JSON::error_handler_t::replace);
+	auto contents = file.toString(pretty ? 1 : -1);
 	// Save definition file
 	FileLoader::saveTextFile(FileSystem::concatenatePath(folder, name) + ".msd", contents);
 }
@@ -129,13 +131,13 @@ void extendFromDefinitionV0(JSON::JSONData def, String const& sourcepath) {
 		{
 			auto& dcam = def["camera"];
 			String camType = "DEFAULT";
-			if (dcam["type"].is_string()) camType = dcam["type"].get<String>();
+			if (dcam["type"].isString()) camType = dcam["type"].get<String>();
 			if (camType == "DEFAULT") {
 				Camera::Camera3D cam;
 				cam.eye		= VecMath::fromJSONArrayV3(dcam["eye"]);
 				cam.at		= VecMath::fromJSONArrayV3(dcam["at"]);
 				cam.up		= VecMath::fromJSONArrayV3(dcam["up"]);
-				if (dcam["relativeToEye"].is_boolean())
+				if (dcam["relativeToEye"].isBoolean())
 					cam.relativeToEye	= dcam["relativeToEye"].get<bool>();
 				camera.fromCamera3D(cam);
 			} else if (camType == "GIMBAL") {
@@ -146,7 +148,7 @@ void extendFromDefinitionV0(JSON::JSONData def, String const& sourcepath) {
 			camera.fov		= dcam["fov"].get<float>();
 			camera.zNear	= dcam["zNear"].get<float>();
 			camera.zFar		= dcam["zFar"].get<float>();
-			if (dcam["ortho"].is_object()) {
+			if (dcam["ortho"].isObject()) {
 				camera.ortho.strength	= dcam["ortho"]["strength"].get<float>();
 				camera.ortho.origin		= VecMath::fromJSONArrayV2(dcam["ortho"]["origin"]);
 				camera.ortho.size		= VecMath::fromJSONArrayV2(dcam["ortho"]["origin"]);
@@ -156,31 +158,25 @@ void extendFromDefinitionV0(JSON::JSONData def, String const& sourcepath) {
 		{
 			auto& dmat = def["world"];
 			#define _SET_FOG_PROPERTY(FOG_TYPE)\
-				if (dmat[#FOG_TYPE].is_object()) {\
+				if (dmat[#FOG_TYPE].isObject()) {\
 					mat.FOG_TYPE.enabled	= dmat[#FOG_TYPE]["enabled"].get<bool>();\
 					mat.FOG_TYPE.start		= dmat[#FOG_TYPE]["start"].get<float>();\
 					mat.FOG_TYPE.stop		= dmat[#FOG_TYPE]["stop"].get<float>();\
-					if (dmat[#FOG_TYPE]["color"].is_array())\
-						mat.FOG_TYPE.color		= VecMath::fromJSONArrayV4(dmat[#FOG_TYPE]["color"]);\
-					else if (dmat[#FOG_TYPE]["color"].is_string())\
-						mat.FOG_TYPE.color = Color::fromHexCodeString(dmat[#FOG_TYPE]["color"]);\
+					mat.FOG_TYPE.color		= Color::fromJSON(dmat[#FOG_TYPE]["color"].get<String>());\
 					mat.FOG_TYPE.strength	= dmat[#FOG_TYPE]["strength"].get<float>();\
 				}
 			_SET_FOG_PROPERTY(nearFog)
 			_SET_FOG_PROPERTY(farFog)
 			#undef _SET_FOG_PROPERTY
-			if (dmat["ambient"].is_object()) {
-				if (dmat["ambient"]["color"].is_array())
-					mat.ambient.color = VecMath::fromJSONArrayV3(dmat["ambient"]["color"]);
-				else if (dmat["ambient"]["color"].is_string())
-					mat.ambient.color = Color::fromHexCodeString(dmat["ambient"]["color"].get<String>()).xyz();
+			if (dmat["ambient"].isObject()) {
+				mat.ambient.color = Color::fromJSON(dmat["ambient"]["color"].get<String>()).xyz();
 				mat.ambient.strength = dmat["ambient"]["strength"].get<float>();
 			}
 			world = mat;
 		}
 		// Get objects data
 		{
-			if (def["path"].is_object()) {
+			if (def["path"].isObject()) {
 				for(auto& obj: def["data"]["path"].get<List<JSONData>>()) {
 					auto r = createObject(
 						FileSystem::getFileName(obj["source"].get<String>(), true)
@@ -201,7 +197,7 @@ void extendFromDefinitionV0(JSON::JSONData def, String const& sourcepath) {
 					);
 					r->bake();
 				}
-			} else if (def["data"].is_object()) {
+			} else if (def["data"].isObject()) {
 				for(auto& [name, obj]: def["data"].items()) {
 					DEBUGLN("[[ ", name," ]]");
 					auto r = createObject(name).second;
