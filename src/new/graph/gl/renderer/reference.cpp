@@ -1,6 +1,6 @@
 #include "reference.hpp"
 
-using namespace Makai::Graph
+using namespace Makai::Graph;
 
 void srpTransform(Vertex& vtx, Matrix4x4 const& tmat) {
 	// Position
@@ -14,30 +14,6 @@ void srpTransform(Vertex& vtx, Matrix4x4 const& tmat) {
 inline void srpTransform(Vertex& vtx, Transform3D const& trans) {
 	srpTransform(vtx, Matrix4x4(trans));
 }
-
-template<usize N>
-Shape<N>::Shape(Triangle* const(& tris)[N]) {
-	for SRANGE(i, 0, N)
-		this->tris[i] = tris[i];
-}
-
-template<usize N>
-virtual Shape<N>::~Shape() {
-	DEBUGLN("Deleting bound triangles (", N, ")...");
-	delete[] tris;
-};
-
-template<usize N>
-typename Shape<N>::Triangles Shape<N>::getBoundTriangles() {
-	return typename Shape<N>::Triangles(tris, N);
-}
-
-template<usize N>
-virtual void Shape<N>::forEachVertex(VertexFunction const& f) {
-	for SRANGE(i, 0, N)
-		for SRANGE(j, 0, 3)
-			f(((Vertex*)tris[i])[j]);
-};
 
 PlaneRef::PlaneRef(
 	Triangle* const(& tris)[2]
@@ -70,13 +46,13 @@ PlaneRef::PlaneRef(
 
 virtual ~Plane() {}
 
-/// Sets the plane's posOrigin.
+/// Sets the plane's origin.
 PlaneRef* PlaneRef::setOrigin(
-		Vector3 const& tlPos = Vector3(-1, +1),
-		Vector3 const& trPos = Vector3(+1, +1),
-		Vector3 const& blPos = Vector3(-1, -1),
-		Vector3 const& brPos = Vector3(+1, -1)
-	) {
+	Vector3 const& tlPos = Vector3(-1, +1),
+	Vector3 const& trPos = Vector3(+1, +1),
+	Vector3 const& blPos = Vector3(-1, -1),
+	Vector3 const& brPos = Vector3(+1, -1)
+) {
 	Vertex::setPosition(origin[0],	tlPos);
 	Vertex::setPosition(origin[1],	trPos);
 	Vertex::setPosition(origin[2],	blPos);
@@ -194,4 +170,131 @@ void AnimatedPlaneRef::onTransform() override  {
 		(frame + Vector2(0, 1)) / size,
 		(frame + Vector2(1)) / size
 	);
+}
+
+TriangleRef::TriangleRef(
+	Triangle* const(& tris)[1]
+): Shape<1>(tris) {
+	// Get vertices
+	this->a = &(tris[0]->verts[0]);
+	this->b = &(tris[0]->verts[1]);
+	this->c = &(tris[0]->verts[2]);
+	// Setup trigon
+	this->setOrigin(
+		Vector3(-0.0, +1.0, 0.0),
+		Vector3(-1.0, -1.0, 0.0),
+		Vector3(+1.0, -1.0, 0.0)
+	);
+	this->setUV(
+		Vector2(+0.5, +1.0),
+		Vector2(+0.0, +0.0),
+		Vector2(+1.0, +0.0)
+	);
+	this->setColor();
+	this->setNormal(
+		Vector3(+0.0, +0.0, -1.0)
+	);
+}
+
+virtual ~TriangleRef::TriangleRef() {}
+
+/// Sets the triangle's origin.
+TriangleRef* TriangleRef::setOrigin(
+	Vector3 const& aPos = Vector3(+0, +1),
+	Vector3 const& bPos = Vector3(-1, -1),
+	Vector3 const& cPos = Vector3(+1, -1)
+) {
+	Vertex::setPosition(origin[0],	aPos);
+	Vertex::setPosition(origin[1],	bPos);
+	Vertex::setPosition(origin[2],	cPos);
+	return this;
+}
+
+/// Transforms the triangle's origin and normals by a given transform.
+TriangleRef* TriangleRef::setOrigin(Transform3D const& trans) {
+	Matrix4x4 tmat(trans);
+	srpTransform(origin[0],	tmat);
+	srpTransform(origin[1],	tmat);
+	srpTransform(origin[2],	tmat);
+	return this;
+}
+
+TriangleRef* TriangleRef::setUV(
+	Vector2 const& aUV,
+	Vector2 const& bUV,
+	Vector2 const& cUV
+) {
+	Vertex::setUV(origin[0],	aUV);
+	Vertex::setUV(origin[1],	bUV);
+	Vertex::setUV(origin[2],	cUV);
+	return this;
+}
+
+TriangleRef* TriangleRef::setColor(
+	Vector4 const& aCol,
+	Vector4 const& bCol,
+	Vector4 const& cCol
+) {
+	Vertex::setColor(origin[0],	aCol);
+	Vertex::setColor(origin[1],	bCol);
+	Vertex::setColor(origin[2],	cCol);
+	return this;
+}
+
+TriangleRef* TriangleRef::setColor(
+	Vector4 const& col = Color::WHITE
+) {
+	setColor(col, col, col);
+	return this;
+}
+
+TriangleRef* TriangleRef::setNormal(
+	Vector3 const& an,
+	Vector3 const& bn,
+	Vector3 const& cn
+) {
+	Vertex::setNormal(origin[0],	an);
+	Vertex::setNormal(origin[1],	bn);
+	Vertex::setNormal(origin[2],	cn);
+	return this;
+}
+
+TriangleRef* TriangleRef::setNormal(
+	Vector3 const& n
+) {
+	setNormal(n, n, n);
+	return this;
+}
+
+/// Sets the triangle to its original state (last state set with setPosition).
+TriangleRef* TriangleRef::reset() override final {
+	*a = origin[0];
+	*b = origin[1];
+	*c = origin[2];
+	return this;
+}
+
+TriangleRef* TriangleRef::transform() override final {
+	onTransform();
+	if (!fixed) return this;
+	// Get transformation
+	Transform3D self = local;
+	self.scale *= (float)visible;
+	Matrix4x4 tmat(self);
+	// Calculate transformed vertices
+	RawVertex tri[3] = {origin[0], origin[1], origin[2]};
+	srpTransform(tri[0], tmat);
+	srpTransform(tri[1], tmat);
+	srpTransform(tri[2], tmat);
+	// Apply transformation
+	*a	= tri[0];
+	*b	= tri[1];
+	*c	= tri[2];
+	return this;
+}
+
+void TriangleRef::forEachVertex(VertexFunction const& f) override final {
+	f(origin[0]);
+	f(origin[1]);
+	f(origin[2]);
 }

@@ -17,21 +17,37 @@ namespace Makai::Graph {
 	};
 
 	template<usize N>
-	struct Shape: public Empty {
-		constexpr static usize COUNT = N;
+	struct ShapeRef: public Empty {
+		constexpr static usize SIZE = N;
 
-		using Triangles = Span<Triangle*, COUNT>;
+		using Triangles = Span<Triangle*, SIZE>;
 
-		Shape(Decay::AsType<Triangle*[COUNT]> const& tries);
+		ShapeRef(Triangle* const(& tris)[SIZE]) {
+			for SRANGE(i, 0, SIZE)
+				this->tris[i] = tris[i];
+		}
 
-		virtual ~Shape();
+		virtual ~ShapeRef() {
+			DEBUGLN("Deleting bound triangles (", SIZE, ")...");
+			delete[] tris;
+		};
 
-		virtual Shape* reset()		= 0;
-		virtual Shape* transform()	= 0;
+		typename Triangles getBoundTriangles() {
+			return typename Triangles(tris, SIZE);
+		}
+
+		virtual ~ShapeRef();
+
+		virtual ShapeRef* reset()		= 0;
+		virtual ShapeRef* transform()	= 0;
 
 		Triangles getBoundTriangles();
 
-		virtual void forEachVertex(VertexFunction const& f);
+		virtual void forEachVertex(VertexFunction const& f) {
+			for SRANGE(i, 0, SIZE)
+				for SRANGE(j, 0, 3)
+					f(((Vertex*)tris[i])[j]);
+		}
 
 		bool fixed		= true;
 		bool visible	= true;
@@ -51,7 +67,7 @@ namespace Makai::Graph {
 
 		virtual ~PlaneRef() {}
 
-		/// Sets the plane's posOrigin.
+		/// Sets the plane's origin.
 		PlaneRef* setOrigin(
 			Vector3 const& tlPos = Vector3(-1, +1),
 			Vector3 const& trPos = Vector3(+1, +1),
@@ -100,7 +116,7 @@ namespace Makai::Graph {
 		virtual void onTransform() {};
 
 	private:
-		RawVertex
+		Vertex
 			*tl		= nullptr,
 			*tr1	= nullptr,
 			*tr2	= nullptr,
@@ -117,6 +133,87 @@ namespace Makai::Graph {
 
 		void onTransform() override;
 	};
+
+	class TriangleRef: public Shape<1> {
+	public:
+		TriangleRef(
+			Triangle* const(& tris)[1]
+		);
+
+		virtual ~TriangleRef() {}
+
+		/// Sets the triangle's origin.
+		TriangleRef* setOrigin(
+			Vector3 const& aPos = Vector3(+0, +1),
+			Vector3 const& bPos = Vector3(-1, -1),
+			Vector3 const& cPos = Vector3(+1, -1)
+		);
+
+		/// Transforms the triangle's origin and normals by a given transform.
+		TriangleRef* setOrigin(Transform3D const& trans);
+
+		TriangleRef* setUV(
+			Vector2 const& aUV,
+			Vector2 const& bUV,
+			Vector2 const& cUV
+		);
+
+		TriangleRef* setColor(
+			Vector4 const& aCol,
+			Vector4 const& bCol,
+			Vector4 const& cCol
+		);
+
+		TriangleRef* setColor(
+			Vector4 const& col = Color::WHITE
+		);
+
+		TriangleRef* setNormal(
+			Vector3 const& an,
+			Vector3 const& bn,
+			Vector3 const& cn
+		);
+
+		TriangleRef* setNormal(
+			Vector3 const& n
+		);
+
+		/// Sets the triangle to its original state (last state set with setPosition).
+		TriangleRef* reset() override final;
+
+		TriangleRef* transform() override final;
+
+		void forEachVertex(VertexFunc const& f) override final {
+			f(origin[0]);
+			f(origin[1]);
+			f(origin[2]);
+		}
+
+		Vertex origin[3];
+
+	protected:
+		virtual void onTransform() {};
+
+	private:
+		Vertex
+			*a	= nullptr,
+			*b	= nullptr,
+			*c	= nullptr;
+	};
+
+	template<class T>
+	concept NotEmpty	= Type::Different<T, Empty>;
+
+	template<class T>
+	concept ShapeRefType	= requires {
+		T::SIZE;
+	} && Type::Derived<T, Shape<T::SIZE>> && NotEmpty<T>;
+
+	template<class T>
+	concept PlaneRefType	= Type::Derived<T, PlaneRef> && NotEmpty<T>;
+
+	template<class T>
+	concept TriangleRefType	= Type::Derived<T, TriangleRef> && NotEmpty<T>;
 }
 
 #endif // MAKAILIB_GRAPH_RENDERER_REFERENCE_H
