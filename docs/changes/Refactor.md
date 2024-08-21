@@ -12,24 +12,24 @@
 
 ## Intermediate
 
-- [ ] Remove dependency on external library types on header files (will require separating implementation from header first)
+- [ ] **`(IN PROGRESS)`** Remove dependency on external library types on header files (will require separating implementation from header first)
 - - Replace it with its own types
 - - - If required, create type conversion functions in implementation files
-- [ ] Remove `#include`s inside of namespaces
-- [ ] Unify everything under [a single namespace](Makai.md)[^1]
-- [ ] Separate code from headers & compile *everything* under a single library[^1]
+- [x] Remove `#include`s inside of namespaces
+- [ ] **`(IN PROGRESS)`** Unify everything under [a single namespace](Makai.md)[^1]
+- [ ] **`(IN PROGRESS)`** Separate code from headers & compile *everything* under a single library[^1]
 - [ ] Move danmaku layer `enum` values into own `enum`
 - [ ] Separate danmaku game base from core engine
 - - Have it be an extension
 
 ## Complex
-- [ ] Cleanup & polish [graphical](../../src/new/graph) system
-- [ ] Cleanup & polish [audio](../../src/new/audio) system
+- [ ] Polish [graphical](../../src/new/graph) system
+- [ ] Polish [audio](../../src/new/audio) system
 - [ ] Replace raw pointers with smart pointers where possible (see [referential.hpp](../../src/ctl/legacy/referential.hpp))
 - [ ] "Async"-ify [tasking system](../../src/ctl/legacy/tasking.hpp) (see [asynchronous.hpp](../../src/ctl/legacy/asynchronous.hpp))
 
 ## Very Complex
-
+- [ ] Change [../src/legacy/gamedata/menu.hpp] code into something more pleasant
 - [ ] Rethink [entity](../../src/ctl/legacy/entity) system
 - [ ] Replace STL with own internal library
 
