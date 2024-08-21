@@ -176,10 +176,8 @@ namespace Makai::Input {
 
 		inline static void refreshCapture();
 
-		inline static bool
-			mouseCaptured	= false,
-			mouseVisible	= true
-		;
+		inline static bool mouseCaptured	= false;
+		inline static bool mouseVisible		= true;
 
 		static Extern::Resource window;
 
