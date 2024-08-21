@@ -29,7 +29,7 @@
 - [ ] "Async"-ify [tasking system](../../src/ctl/legacy/tasking.hpp) (see [asynchronous.hpp](../../src/ctl/legacy/asynchronous.hpp))
 
 ## Very Complex
-- [ ] Change [../src/legacy/gamedata/menu.hpp] code into something more pleasant
+- [ ] Change [../../src/legacy/gamedata/menu.hpp] code into something more pleasant
 - [ ] Rethink [entity](../../src/ctl/legacy/entity) system
 - [ ] Replace STL with own internal library
 
