@@ -2,8 +2,6 @@
 
 #pragma optimize(on)
 
-#define MAX_LIGHTS 16
-
 precision mediump float;
 
 in vec3 fragCoord3D;
@@ -52,23 +50,13 @@ struct ShadingEffect {
 	vec3	direction;
 };
 
-// [ POINT LIGHTING ]
-struct LightData {
-	vec3 position;
-	vec3 color;
-	float radius;
-	float strength;
-};
-
 struct AmbientData {
 	vec3	color;
 	float	strength;
 };
 
 struct LightEffect {
-	bool					enabled;
-	LightData[MAX_LIGHTS]	data;
-	uint					count;
+	bool	enabled;
 };
 
 // [ DISTANCE-BASED FOG ]
@@ -126,17 +114,8 @@ uniform WarpEffect		warp;
 vec3 calculateLights(vec3 position, vec3 normal) {
 	if (!lights.enabled) return vec3(1);
 	vec3 result = ambient.color * ambient.strength;
-	// TODO: figure out if this actually works
+	// TODO: proper lighting
 	#ifdef IMPLEMENT_LIGHTS
-	if (lights.count == 0) return result;
-	uint lc = (lights.count < MAX_LIGHTS ? lights.count : MAX_LIGHTS);
-	for (uint i = 0; i < lc; i++) {
-		float dist = distance(position, lights.data[i].position);
-		float factor = max(0.0, 1.0 - dist / lights.data[i].radius);
-		vec3 lightDir = normalize(lights.data[i].position - position);
-		float diffuse = max(dot(normal, lights.data[i].direction), 0.0);
-		result *= lights.data[i].color * lights.data[i].strength * factor + diffuse;
-	}
 	#endif
 	return result;
 }
