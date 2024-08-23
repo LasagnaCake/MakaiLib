@@ -1,6 +1,8 @@
 #include "file.hpp"
 
-#if !(defined(_DEBUG_OUTPUT_) || defined(_ARCHIVE_SYSTEM_DISABLED_)) || defined(_TESTING_ARCHIVE_SYS_)
+#include "../tool/archive/archive.hpp"
+
+#if !(defined(_DEBUG_OUTPUT_) || defined(_ARCHIVE_SYSTEM_DISABLED_))
 #define _IMPL_ARCHIVE_
 #endif
 
@@ -8,13 +10,13 @@ using Makai::Tool::Arch::FileArchive;
 
 using namespace FileLoader;
 
-#include "../tool/archive.hpp"
-
 #ifdef _IMPL_ARCHIVE_
 bool				loadingArchive	= false;
 FileArchive 		arc;
 Error::ErrorPointer	arcfail			= nullptr;
 #endif
+
+using Makai::File::BinaryData;
 
 // Until this puzzle is figured, this shall do
 #pragma GCC diagnostic push
@@ -23,7 +25,7 @@ Error::ErrorPointer	arcfail			= nullptr;
 /*#undef _ARCHIVE_SYSTEM_DISABLED_
 #define _ARCHIVE_SYSTEM_DISABLED_*/
 
-inline void Makai::File::attachArchive(String const& path, String const& password = "") {
+inline void Makai::File::attachArchive(String const& path, String const& password) {
 	#ifdef _IMPL_ARCHIVE_
 	DEBUGLN("Attaching archive...");
 	if (loadingArchive)
@@ -59,7 +61,7 @@ inline bool Makai::File::isArchiveAttached() {
 #ifdef _IMPL_ARCHIVE_
 inline void assertArchive(String const& path) {
 	if (arcfail) Error::rethrow(arcfail);
-	if (!isArchiveAttached())
+	if (!Makai::File::isArchiveAttached())
 		fileLoadError(path, "Archive is not attached!", "fileloader.hpp");
 }
 
@@ -94,7 +96,7 @@ inline BinaryData Makai::File::loadBinaryFileFromArchive(String const& path) {
 	#endif
 }
 
-inline CSVData Makai::File::loadCSVFileFromArchive(String const& path, char const& delimiter = ',') {
+inline CSVData Makai::File::loadCSVFileFromArchive(String const& path, char const& delimiter) {
 	#ifdef _IMPL_ARCHIVE_
 	assertArchive(path);
 	return Helper::splitString(arc.getTextFile(FileSystem::getChildPath(path)), delimiter);
@@ -166,7 +168,7 @@ inline BinaryData Makai::File::getBinaryFile(String const& path) {
 	#endif
 }
 
-inline CSVData Makai::File::getCSVFile(String const& path, char const& delimiter = ',') {
+inline CSVData Makai::File::getCSVFile(String const& path, char const& delimiter) {
 	#ifdef _IMPL_ARCHIVE_
 	CSVData res;
 	if (isArchiveAttached())
@@ -195,118 +197,29 @@ inline CSVData Makai::File::getCSVFile(String const& path, char const& delimiter
 
 inline Makai::JSON::JSONData Makai::File::getJSONFile(String const& path) {
 	#ifdef _IMPL_ARCHIVE_
-	Makai::JSON::JSONData res;
+	Makai::JSON::JSONData res(FileSystem::getFileName(path));
 	if (isArchiveAttached())
 		try {
 			DEBUGLN("[ARC] Loading JSON file...");
-			res = Makai::File::loadJSONFromArchive(path);
+			res = Makai::File::loadJSONFileFromArchive(path);
 		} catch (FileLoadError const& ae) {
 			try {
 				DEBUGLN("[FLD-2] Loading JSON file...");
-				res = Makai::JSON::loadJSON(path);
+				res = Makai::JSON::loadFile(path);
 			} catch (FileLoadError const& fe) {
 				fileGetError(path, fe.summary(), ae.summary());
 			}
 		}
 	else try {
 		DEBUGLN("[FLD-1] Loading JSON file...");
-		res = Makai::JSON::loadJSON(path);
+		res = Makai::JSON::loadFile(path);
 	} catch (FileLoadError const& e) {
 		fileGetError(path, e.summary(), "Archive not attached!");
 	}
 	return res;
 	#else
-	return loadJSON(path);
+	return Makai::JSON::loadFile(path);
 	#endif
 }
 
 #pragma GCC diagnostic pop
-
-namespace File = Makai::File;
-using namespace File;
-using namespace SLF;
-
-constexpr String toFileExtension(ShaderType const& type) {
-	switch (type) {
-		default:
-		case ShaderType::ST_INVALID:	return "INVALID";
-		case ShaderType::ST_FRAGMENT:	return "vert";
-		case ShaderType::ST_VERTEX:		return "frag";
-		case ShaderType::ST_COMPUTE:	return "comp";
-		case ShaderType::ST_GEOMETRY:	return "geom";
-		case ShaderType::ST_TESS_CTRL:	return "tsct";
-		case ShaderType::ST_TESS_EVAL:	return "tsev";
-	}
-	return "INVALID";
-}
-
-constexpr ShaderType fromFileExtension(String const& str) {
-	if (str == "frag") return ShaderType::ST_FRAGMENT;
-	if (str == "vert") return ShaderType::ST_VERTEX;
-	if (str == "comp") return ShaderType::ST_COMPUTE;
-	if (str == "geom") return ShaderType::ST_GEOMETRY;
-	if (str == "tsct") return ShaderType::ST_TESS_CTRL;
-	if (str == "tsev") return ShaderType::ST_TESS_EVAL;
-	return ShaderType::ST_INVALID;
-}
-
-constexpr ShaderType fromFilePath(String const& path) {
-	return fromFileExtension(
-		FileSystem::getFileExtension(
-			Helper::toLower(path)
-		)
-	);
-}
-
-constexpr bool isValidShaderType(ShaderType const& type) {
-	return type != ShaderType::ST_INVALID;
-}
-
-constexpr bool isValidShaderExtension(String const& path) {
-	return isValidShaderType(fromFilePath(path));
-}
-
-SLFData File::SLF::getSLFFile(String const& path) {
-	// Try and get the file
-	String content = File::getTextFile(path);
-	// Remove comments and empty lines
-	content = regexReplace(content, "(:[<]([\\s\\S]*?)[>]:)|(::([\\s\\S]*?)(\\n|\\r|\\r\\n))", "");
-	content = regexReplace(content, "((\\n|\\r|\\r\\n)+)", "|");
-	// Get file location
-	String dir = FileSystem::getDirectoryFromPath(path);
-	// Get file specifier, if any
-	ShaderType type = fromFileExtension(
-		regexReplace(
-			regexFindFirst(content, "^[<](.*)[>]"),
-			"<|>",
-			""
-		)
-	);
-	// Remove specifier for processing
-	content = regexReplace(content, "^[<](.*)[>]", "");
-	// Process file
-	SLFData result{dir};
-	for (String shader: Helper::splitString(content, '|')) {
-		if (isValidShaderType(type))
-			result.shaders.push_back(ShaderEntry{shader, type});
-		else {
-			ShaderType st = fromFilePath(shader);
-			if (!isValidShaderType(st)) {
-				throw Error::InvalidValue(
-					::toString(
-						"Invalid shader type for shader'",
-						FileSystem::concatenatePath(dir, shader),
-						"'!"
-					),
-					__FILE__,
-					::toString(__LINE__),
-					"SLF::parseFile",
-					::toString("File extension is '", FileSystem::getFileExtension(path), "'")
-				);
-			}
-			result.shaders.push_back(ShaderEntry{shader, st});
-		}
-	}
-	// Return result
-	return result;
-}

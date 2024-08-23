@@ -28,8 +28,8 @@ using File::BinaryData;
 namespace Arch = Makai::Tool::Arch;
 using namespace Arch;
 
-using JSON = nlohmann::json;
-using Makai::JSON::JSONData;
+using Nlohmann = nlohmann::json;
+using Makai::JSON::Extern::JSONData;
 
 String encoded(uint64 const& v) {
 	BinaryData data(8, 0);
@@ -197,7 +197,7 @@ BinaryData decompress(
 }
 
 JSONData Arch::getStructure(fs::path const& path, StringList& files, String const& root = "") {
-	JSONData dir = JSON::object();
+	JSONData dir = Nlohmann::object();
 	for (auto const& e : fs::directory_iterator(path)) {
 		if (e.is_directory()) {
 			String dirname = e.path().stem().string();
@@ -225,10 +225,10 @@ StringList getFileInfo(JSONData const& filestruct) {
 	return res;
 }
 
-void populateTree(JSONData tree, String const& root = "") {
+void populateTree(JSONData& tree, String const& root = "") {
 	if (!tree.isObject())
 		throw Error::FailedAction("file tree is not a JSON object!");
-	for (auto& [name, data]: tree.value().items()) {
+	for (auto& [name, data]: tree.items()) {
 		String path = FileSystem::concatenatePath(root, name);
 		if (data.isString()) data = path;
 		else if (data.isObject()) populateTree(data, path);
@@ -236,11 +236,11 @@ void populateTree(JSONData tree, String const& root = "") {
 	}
 }
 
-size_t populateTree(JSONData tree, List<uint64> const& values, size_t const& start = 0) {
+size_t populateTree(JSONData& tree, List<uint64> const& values, size_t const& start = 0) {
 	if (!tree.isObject())
 		throw Error::FailedAction("file tree is not a JSON object!");
 	size_t idx = start;
-	for (auto& [name, data]: tree.value().items()) {
+	for (auto& [name, data]: tree.items()) {
 		if (data.isString()) data = encoded(values[idx++]);
 		else if (data.isObject()) idx = populateTree(data, values, idx);
 		else throw Error::FailedAction("Invalid data type in file tree!");
@@ -271,7 +271,7 @@ void Arch::pack(
 	StringList files;
 	JSONData tree = dir["tree"];
 	tree = getStructure(fs::path(folderPath), files, fs::path(folderPath).stem().string());
-	_ARCDEBUGLN("\n", dir.value().dump(2, ' ', false, JSON::error_handler_t::replace), "\n");
+	_ARCDEBUGLN("\n", dir.dump(2, ' ', false, Nlohmann::error_handler_t::replace), "\n");
 	// Populate with temporary values
 	List<uint64> locations(files.size(), 0);
 	// Open file
@@ -347,14 +347,14 @@ void Arch::pack(
 	populateTree(tree, locations);
 	// Process directory structure
 	_ARCDEBUGLN("\nWriting directory structure...\n");
-	_ARCDEBUGLN("\n", dir.dump(2, ' ', false, JSON::error_handler_t::replace), "\n");
+	_ARCDEBUGLN("\n", dir.dump(2, ' ', false, Nlohmann::error_handler_t::replace), "\n");
 	{
 		// Directory header
 		DirectoryHeader	dheader;
 		// Generate header block
 		generateBlock(dheader.block);
 		// Get directory info
-		String dirInfo = dir.dump(-1, ' ', false, JSON::error_handler_t::replace);
+		String dirInfo = dir.dump(-1, ' ', false, Nlohmann::error_handler_t::replace);
 		// Compress & encrypt directory info
 		BinaryData pdi = BinaryData(dirInfo.begin(), dirInfo.end());
 		pdi = compress(pdi, comp, complvl);
@@ -542,7 +542,7 @@ static ArchiveHeader Arch::FileArchive::getHeader(String const& path) {
 FileArchive& Arch::FileArchive::unpackTo(String const& path) {
 	if (!streamOpen) return *this;
 	JSONData ftree = getFileTree();
-	_ARCDEBUGLN(ftree.dump(2, ' ', false, JSON::error_handler_t::replace), "\n");
+	_ARCDEBUGLN(ftree.dump(2, ' ', false, Nlohmann::error_handler_t::replace), "\n");
 	unpackLayer(ftree, path);
 	return *this;
 }
@@ -578,8 +578,8 @@ void Arch::FileArchive::parseFileTree() {
 		break;
 	}
 	try {
-		fstruct = JSON::parse(fs);
-	} catch (JSON::exception const& e) {
+		fstruct = Nlohmann::parse(fs);
+	} catch (Nlohmann::exception const& e) {
 		throw File::FileLoadError(
 			"Invalid or corrupted file structure!",
 			__FILE__,
@@ -588,7 +588,7 @@ void Arch::FileArchive::parseFileTree() {
 			e.what()
 		);
 	}
-	_ARCDEBUGLN("File Structure:\n", fstruct.dump(2, ' ', false, JSON::error_handler_t::replace), "\n");
+	_ARCDEBUGLN("File Structure:\n", fstruct.dump(2, ' ', false, Nlohmann::error_handler_t::replace), "\n");
 }
 
 void Arch::FileArchive::demangleData(BinaryData& data, uint8* const& block) const {
@@ -609,7 +609,7 @@ void Arch::FileArchive::demangleData(BinaryData& data, uint8* const& block) cons
 	_ARCDEBUGLN("After decompression: ", data.size());
 }
 
-void Arch::FileArchive::unpackLayer(JSONData layer, String const& path) {
+void Arch::FileArchive::unpackLayer(JSONData const& layer, String const& path) {
 	assertOpen();
 	List<Entry<String>> files;
 	for (auto& [name, data]: layer.items()) {
@@ -716,7 +716,7 @@ uint64 Arch::FileArchive::getFileEntryLocation(String const& path, String const&
 	if (entry.isString())
 		return decoded(entry.get<String>());
 	else notAFileError(origpath);
-} catch (JSON::exception const& e) {
+} catch (Nlohmann::exception const& e) {
 	doesNotExistError(origpath);
 }
 

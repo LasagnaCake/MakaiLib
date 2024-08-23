@@ -12,7 +12,7 @@
 
 ## Intermediate
 
-- [ ] **`(IN PROGRESS)`** Remove dependency on external library types on header files (will require separating implementation from header first)
+- [x] Remove dependency on external library types on header files (will require separating implementation from header first)
 - - Replace it with its own types
 - - - If required, create type conversion functions in implementation files
 - [x] Remove `#include`s inside of namespaces

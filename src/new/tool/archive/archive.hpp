@@ -1,15 +1,12 @@
 #ifndef MAKAILIB_TOOL_ARCHIVE_H
 #define MAKAILIB_TOOL_ARCHIVE_H
 
-#include "../ctl/legacy/helper.hpp"
-#include "../ctl/legacy/algebra.hpp"
-#include "../ctl/legacy/fileloader.hpp"
-
-#include "../file/json.hpp"
+#include "../../ctl/ctl.hpp"
+#include "../../file/json.hpp"
 #include <filesystem>
 
 namespace Makai::Tool::Arch {
-	using FileLoader::BinaryData;
+	using BinaryData = FileLoader::BinaryData;
 
 	enum class EncryptionMethod: uint64 {
 		AEM_NONE,
@@ -145,7 +142,7 @@ namespace Makai::Tool::Arch {
 
 		void demangleData(BinaryData& data, uint8* const& block) const;
 
-		void unpackLayer(JSON::JSONData& layer, String const& path);
+		void unpackLayer(JSON::JSONData const& layer, String const& path);
 
 		void processFileEntry(FileEntry& entry);
 
@@ -159,11 +156,11 @@ namespace Makai::Tool::Arch {
 
 		void assertOpen();
 
-		bool			streamOpen	= false;
-		String			pass;
-		std::ifstream	archive;
-		ArchiveHeader	header;
-		JSON::JSONData	fstruct;
+		bool					streamOpen	= false;
+		String					pass;
+		std::ifstream			archive;
+		ArchiveHeader			header;
+		JSON::Extern::JSONData	fstruct;
 	};
 
 	String loadEncryptedTextFile(String const& path, String const& password = "");

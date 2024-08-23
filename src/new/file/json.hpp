@@ -12,9 +12,12 @@ namespace Makai::JSON {
 
 	class JSONView: public DataView<Extern::JSONData> {
 	public:
-		constexpr JSONView(Extern::JSONData& _data, String const& _name);
+		constexpr JSONView(Extern::JSONData& _data, String const& _name = "<anonymous>");
+		constexpr JSONView(Extern::JSONData const& _data, String const& _name = "<anonymous>");
 		constexpr JSONView(JSONView const& other);
 		constexpr JSONView(JSONView&& other);
+
+		constexpr Extern::JSONData json() const;
 
 		template<typename T> constexpr T get() const;
 
@@ -27,6 +30,8 @@ namespace Makai::JSON {
 		constexpr const JSONView operator[](size_t const& index) const;
 
 		template<typename T> constexpr JSONView& operator=(T const& v);
+
+		constexpr JSONView& operator=(JSONView const& v);
 
 		template<typename T> constexpr operator T() const;
 
@@ -48,11 +53,14 @@ namespace Makai::JSON {
 		constexpr bool isDiscarded() const;
 
 	private:
+		Extern::JSONData const& cdata;
+		Extern::JSONData dummy;
+
 		String const name;
 	};
 
 	struct JSONValue: public JSONView {
-		constexpr JSONValue(String const& name);
+		constexpr JSONValue(String const& name = "<anonymous>");
 
 		constexpr JSONValue(String const& name, Extern::JSONData const& data);
 
@@ -66,12 +74,14 @@ namespace Makai::JSON {
 		Extern::JSONData data;
 	};
 
-	constexpr JSONValue object();
+	constexpr JSONValue object(String const& name = "<anonymous>");
 
-	constexpr JSONValue array();
+	constexpr JSONValue array(String const& name = "<anonymous>");
 
 	using JSONData = JSONValue;
 
 	constexpr JSONData parseJSON(String const& data);
 	JSONData loadFile(String const& path);
 }
+
+#endif // MAKAILIB_FILE_JSON_H

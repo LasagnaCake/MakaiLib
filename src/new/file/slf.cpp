@@ -1,6 +1,9 @@
 #include "slf.hpp"
 
+
+namespace File = Makai::File;
 using namespace Makai::SLF;
+using namespace File;
 
 constexpr String toFileExtension(ShaderType const& type) {
 	switch (type) {

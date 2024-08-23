@@ -1,6 +1,9 @@
 #ifndef MAKAILIB_FILE_SLF_H
 #define MAKAILIB_FILE_SLF_H
 
+#include "../ctl/ctl.hpp"
+#include "get.hpp"
+
 namespace Makai::SLF {
 	enum class ShaderType {
 		ST_INVALID = -1,

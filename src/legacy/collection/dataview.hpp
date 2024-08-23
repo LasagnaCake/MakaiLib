@@ -66,7 +66,7 @@ namespace View {
 
 	protected:
 		constexpr T& view()				{return data;}
-		constexpr const T& view() const	{return data;}
+		constexpr T const& view() const	{return data;}
 
 	private:
 		T& data;
