@@ -56,6 +56,8 @@
 - - See [File Format Alternatives Proposal](../../docs/changes/AltFormats.md) for more informaion
 - [ ] Multi-platform support:
 - - [ ] Linux
+- [ ] Add [QOI](https://github.com/phoboslab/qoi/blob/master/qoi.h) support
+- [ ] Add [QOA](https://github.com/phoboslab/qoa/blob/master/qoa.h) support
 
 ### Major Refactor
 
