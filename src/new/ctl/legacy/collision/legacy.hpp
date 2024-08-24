@@ -1,6 +1,9 @@
 #ifndef LEGACY_COLLISION_SYSTEM_H
 #define LEGACY_COLLISION_SYSTEM_H
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wnarrowing"
+
 namespace Collision {
 	namespace {
 		using
@@ -628,5 +631,7 @@ namespace Collision {
 		return withinBounds(a.shape, b.shape);
 	}
 }
+
+#pragma GCC diagnostic pop
 
 #endif // LEGACY_COLLISION_SYSTEM_H

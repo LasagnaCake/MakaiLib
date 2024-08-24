@@ -3,7 +3,6 @@
 
 #include "../../ctl/ctl.hpp"
 #include "../../file/json.hpp"
-#include <filesystem>
 
 namespace Makai::Tool::Arch {
 	using BinaryData = FileLoader::BinaryData;
@@ -134,7 +133,7 @@ namespace Makai::Tool::Arch {
 
 		FileArchive& unpackTo(String const& path);
 
-		bool isOpen() const {return streamOpen;}
+		bool isOpen() const;
 
 	private:
 
@@ -142,9 +141,9 @@ namespace Makai::Tool::Arch {
 
 		void demangleData(BinaryData& data, uint8* const& block) const;
 
-		void unpackLayer(JSON::JSONData const& layer, String const& path);
+		void unpackLayer(JSON::Extern::JSONData const& layer, String const& path);
 
-		void processFileEntry(FileEntry& entry);
+		void processFileEntry(FileEntry& entry) const;
 
 		FileEntry getFileEntry(String const& path);
 
@@ -154,7 +153,7 @@ namespace Makai::Tool::Arch {
 
 		uint64 getFileEntryLocation(String const& path, String const& origpath);
 
-		void assertOpen();
+		void assertOpen() const;
 
 		bool					streamOpen	= false;
 		String					pass;
@@ -164,6 +163,8 @@ namespace Makai::Tool::Arch {
 	};
 
 	String loadEncryptedTextFile(String const& path, String const& password = "");
+
+	BinaryData loadEncryptedBinaryFile(String const& path, String const& password = "");
 
 	template<typename T>
 	void saveEncryptedBinaryFile(

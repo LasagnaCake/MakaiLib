@@ -5,6 +5,10 @@
 #include <vector>
 #include "algebra.hpp"
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wpedantic"
+#pragma GCC diagnostic ignored "-Wunknown-pragmas"
+
 namespace VecType {
 	template<typename T>
 	concept ValidBase = requires {
@@ -1621,5 +1625,7 @@ namespace VecMath
 		);
 	}
 }
+
+#pragma GCC diagnostic pop
 
 #endif // VECTOR234_H

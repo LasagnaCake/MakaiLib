@@ -118,7 +118,7 @@ constexpr Makai::JSON::JSONValue Makai::JSON::object(String const& name) {return
 
 constexpr Makai::JSON::JSONValue Makai::JSON::array(String const& name) {return JSONValue(name, JSON::array());}
 
-constexpr Makai::JSON::JSONData Makai::JSON::parseJSON(String const& json) try {
+constexpr Makai::JSON::JSONData Makai::JSON::parseJSON(String const& data) try {
 	return Extern::JSONData::parse(json);
 } catch (Nlohmann::exception const& e) {
 	throw Error::FailedAction(

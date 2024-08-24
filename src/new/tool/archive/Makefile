@@ -3,7 +3,7 @@ CXX ?= g++
 
 ROOT	:= ../../../..
 
-COMPILER_CONFIG	:= -fexpensive-optimizations -m64 -std=gnu++20 -fcoroutines -fms-extensions -DENABLE_DEBUG_OUTPUT_ -DNDEBUG -static -s
+COMPILER_CONFIG	:= -fexpensive-optimizations -m64 -std=gnu++20 -fcoroutines -fms-extensions -DENABLE_DEBUG_OUTPUT_ -DNDEBUG -static
 LINKER_CONFIG	:= -static-libstdc++ -static-libgcc -static -m64 -fms-extensions -s
 
 OPTIMIZATIONS	:= -fopenmp -openmp -ftree-parallelize-loops=128 -funswitch-loops -fpredictive-commoning -fgcse-after-reload -ftree-vectorize
@@ -17,10 +17,12 @@ DEBUGCOMPCFG	:= $(COMPILER_CONFIG) -Wall -Wpedantic -pg -Og -ggdb3 -fno-omit-fra
 DEBUGLINKCFG	:= $(LINKER_CONFIG) -pg -Og $(LIBRARIES)
 
 COMPCFG	:= $(COMPILER_CONFIG) -O3 $(OPTIMIZATIONS) -D_DEBUG_OUTPUT_
-LINKCFG	:= $(LINKER_CONFIG) -O3 $(LIBRARIES)
+LINKCFG	:= $(LINKER_CONFIG) -s -O3 $(LIBRARIES)
 
 COMPILER	:= @$(CXX) $(INCLUDES)
 LINKER		:= @$(CXX)
+
+EXTRAOBJS := ../../file/json.o
 
 LIBNAME	:= archive
 
@@ -42,9 +44,7 @@ debug:
 	$(GET_TIME)
 	
 	@echo "[1/2] compiling [$@]..."
-	$(COMPILER) $(DEBUGCOMPCFG) -c $(LIBNAME).cpp -o $(LIBNAME)lib_debug.o
-	ar ruv $(LIBNAME)lib_debug_.a $(LIBNAME)lib_debug.o
-	libtool --mode=link cc -static -o $(LIBNAME)lib_debug.a $(LIBNAME)lib_debug_.a $(ROOT)/lib/cryptopp/lib/libcryptopp.a
+	$(COMPILER) $(DEBUGCOMPCFG) -c $(LIBNAME).cpp -o $(LIBNAME)_debug.o
 
 	@echo "Done!"
 	
@@ -59,9 +59,7 @@ release:
 	$(GET_TIME)
 	
 	@echo "[1/2] compiling [$@]..."
-	$(COMPILER) $(COMPCFG) -c $(LIBNAME).cpp -o $(LIBNAME)lib.o
-	ar ruv $(LIBNAME)lib_.a $(LIBNAME)lib.o
-	libtool --mode=link cc -static -o $(LIBNAME)lib.a $(LIBNAME)lib_.a $(ROOT)/lib/cryptopp/lib/libcryptopp.a
+	$(COMPILER) $(COMPCFG) -c $(LIBNAME).cpp -o $(LIBNAME).o
 
 	@echo "Done!"
 	

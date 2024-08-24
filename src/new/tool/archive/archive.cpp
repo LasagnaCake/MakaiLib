@@ -196,7 +196,7 @@ BinaryData decompress(
 	return flate<Inflator>(data, method, level);
 }
 
-JSONData Arch::getStructure(fs::path const& path, StringList& files, String const& root = "") {
+JSONData getStructure(fs::path const& path, StringList& files, String const& root) {
 	JSONData dir = Nlohmann::object();
 	for (auto const& e : fs::directory_iterator(path)) {
 		if (e.is_directory()) {
@@ -216,9 +216,9 @@ JSONData Arch::getStructure(fs::path const& path, StringList& files, String cons
 StringList getFileInfo(JSONData const& filestruct) {
 	StringList res;
 	for (auto& [name, data]: filestruct.items()) {
-		if (data.isString())
+		if (data.is_string())
 			res.push_back(data);
-		else if (data.isObject() && !data.empty())
+		else if (data.is_object() && !data.empty())
 			for (String& s: getFileInfo(data))
 				res.push_back(s);
 	}
@@ -226,23 +226,23 @@ StringList getFileInfo(JSONData const& filestruct) {
 }
 
 void populateTree(JSONData& tree, String const& root = "") {
-	if (!tree.isObject())
+	if (!tree.is_object())
 		throw Error::FailedAction("file tree is not a JSON object!");
 	for (auto& [name, data]: tree.items()) {
 		String path = FileSystem::concatenatePath(root, name);
-		if (data.isString()) data = path;
-		else if (data.isObject()) populateTree(data, path);
+		if (data.is_string()) data = path;
+		else if (data.is_object()) populateTree(data, path);
 		else throw Error::FailedAction("Invalid data type in file tree!");
 	}
 }
 
 size_t populateTree(JSONData& tree, List<uint64> const& values, size_t const& start = 0) {
-	if (!tree.isObject())
+	if (!tree.is_object())
 		throw Error::FailedAction("file tree is not a JSON object!");
 	size_t idx = start;
 	for (auto& [name, data]: tree.items()) {
-		if (data.isString()) data = encoded(values[idx++]);
-		else if (data.isObject()) idx = populateTree(data, values, idx);
+		if (data.is_string()) data = encoded(values[idx++]);
+		else if (data.is_object()) idx = populateTree(data, values, idx);
 		else throw Error::FailedAction("Invalid data type in file tree!");
 	}
 	return idx;
@@ -257,10 +257,10 @@ void generateBlock(uint8 const(& block)[16]) {
 void Arch::pack(
 		String const& archivePath,
 		String const& folderPath,
-		String const& password = "",
-		EncryptionMethod const& enc = EncryptionMethod::AEM_AES256,
-		CompressionMethod const& comp = CompressionMethod::ACM_ZIP,
-		uint8 const& complvl = 9
+		String const& password,
+		EncryptionMethod const& enc,
+		CompressionMethod const& comp,
+		uint8 const& complvl
 ) try {
 	// Hash the password
 	String passhash = hashPassword(password);
@@ -394,62 +394,62 @@ void Arch::pack(
 }
 #endif // ARCSYS_APPLICATION_
 
-[[noreturn]] void notOpenError() const {
+[[noreturn]] void notOpenError() {
 	throw File::FileLoadError(
 		"Archive is not open!"
 	);
 }
 
-[[noreturn]] void singleFileArchiveError(String const& file) const {
+[[noreturn]] void singleFileArchiveError(String const& file) {
 	throw File::FileLoadError(
 		"Archive is not a multi-file archive!",
 		__FILE__
 	);
 }
 
-[[noreturn]] void doesNotExistError(String const& file) const {
+[[noreturn]] void doesNotExistError(String const& file) {
 	throw File::FileLoadError(
 		"Directory or file '" + file + "' does not exist!",
 		__FILE__
 	);
 }
 
-[[noreturn]] void outOfArchiveBoundsError(String const& file) const {
+[[noreturn]] void outOfArchiveBoundsError(String const& file) {
 	throw File::FileLoadError(
 		"Directory or file '" + file + "' lives outside the archive!",
 		__FILE__
 	);
 }
 
-[[noreturn]] void notAFileError(String const& file) const {
+[[noreturn]] void notAFileError(String const& file) {
 	throw File::FileLoadError(
 		"Entry '" + file + "' is not a file!",
 		__FILE__
 	);
 }
 
-[[noreturn]] void directoryTreeError() const {
+[[noreturn]] void directoryTreeError() {
 	throw File::FileLoadError(
 		"Missing or corrupted directory tree info!",
 		__FILE__
 	);
 }
 
-[[noreturn]] void corruptedFileError(String const& path) const {
+[[noreturn]] void corruptedFileError(String const& path) {
 	throw File::FileLoadError(
 		"Corrupted file '" + path + "'!",
 		__FILE__
 	);
 }
 
-[[noreturn]] void crcFailError(String const& path) const {
+[[noreturn]] void crcFailError(String const& path) {
 	throw File::FileLoadError(
 		"CRC check failed for file '" + path + "'",
 		__FILE__
 	);
 }
 
-Arch::FileArchive::FileArchive(String const& path, String const& password = "") {open(path, password);}
+Arch::FileArchive::FileArchive(String const& path, String const& password) {open(path, password);}
 
 FileArchive& Arch::FileArchive::open(String const& path, String const& password) try {
 	if (streamOpen) return *this;
@@ -517,31 +517,31 @@ BinaryData Arch::FileArchive::getBinaryFile(String const& path) try {
 	);
 }
 
-JSONData Arch::FileArchive::getFileTree(String const& root = "") const {
+Makai::JSON::JSONData Arch::FileArchive::getFileTree(String const& root) const {
 	assertOpen();
 	JSONData dir = fstruct["tree"];
 	populateTree((!root.empty()) ? dir[root] : dir, root);
 	return dir;
 }
 
-static ArchiveHeader Arch::FileArchive::getHeader(String const& path) {
-	std::ifstream arc;
+ArchiveHeader Arch::FileArchive::getHeader(String const& path) {
+	std::ifstream af;
 	ArchiveHeader ah;
 	// Set exceptions
-	arc.exceptions(std::ifstream::badbit | std::ifstream::failbit);
+	af.exceptions(std::ifstream::badbit | std::ifstream::failbit);
 	// Open file
-	arc.open(path, std::ios::binary | std::ios::in);
+	af.open(path, std::ios::binary | std::ios::in);
 	// Read header
 	size_t hs = 0;
-	arc.read((char*)&hs, sizeof(uint64));
-	arc.seekg(0);
-	arc.read((char*)&ah, hs);
+	af.read((char*)&hs, sizeof(uint64));
+	af.seekg(0);
+	af.read((char*)&ah, hs);
 	return ah;
 }
 
 FileArchive& Arch::FileArchive::unpackTo(String const& path) {
 	if (!streamOpen) return *this;
-	JSONData ftree = getFileTree();
+	JSONData ftree = getFileTree().json();
 	_ARCDEBUGLN(ftree.dump(2, ' ', false, Nlohmann::error_handler_t::replace), "\n");
 	unpackLayer(ftree, path);
 	return *this;
@@ -613,8 +613,8 @@ void Arch::FileArchive::unpackLayer(JSONData const& layer, String const& path) {
 	assertOpen();
 	List<Entry<String>> files;
 	for (auto& [name, data]: layer.items()) {
-		if (data.isString()) files.push_back(Entry<String>(name, data));
-		else if (data.isObject()) unpackLayer(data, path);
+		if (data.is_string()) files.push_back(Entry<String>(name, data));
+		else if (data.is_object()) unpackLayer(data, path);
 		else directoryTreeError();
 	}
 	std::random_shuffle(files.begin(), files.end());
@@ -643,8 +643,8 @@ void Arch::FileArchive::processFileEntry(FileEntry& entry) const {
 	entry.data = data;
 }
 
-FileEntry Arch::FileArchive::getFileEntry(String const& path) try {
-	if (!fstruct["tree"].isObject())
+Arch::FileArchive::FileEntry Arch::FileArchive::getFileEntry(String const& path) try {
+	if (!fstruct["tree"].is_object())
 		directoryTreeError();
 	_ARCDEBUGLN("Getting file entry location...");
 	uint64		idx	= getFileEntryLocation(Helper::toLower(path), path);
@@ -655,7 +655,7 @@ FileEntry Arch::FileArchive::getFileEntry(String const& path) try {
 	_ARCDEBUGLN("     COMPRESSED SIZE: ", fh.compSize,	"B"	);
 	_ARCDEBUGLN("               CRC32: ", fh.crc	);
 	_ARCDEBUGLN("Getting file entry data...");
-	return FileEntry{idx, path, fh, getFileEntryData(idx, fh)};
+	return Arch::FileArchive::FileEntry{idx, path, fh, getFileEntryData(idx, fh)};
 } catch (File::FileLoadError const& e) {
 	Error::rethrow(e);
 } catch (std::runtime_error const& e) {
@@ -701,19 +701,19 @@ uint64 Arch::FileArchive::getFileEntryLocation(String const& path, String const&
 			entry = stack.back();
 			stack.pop_back();
 			continue;
-		} else if (entry.isObject()) {
+		} else if (entry.is_object()) {
 			for (auto [k, v]: entry.items())
 				if (Helper::toLower(k) == fld) {
 					stack.push_back(entry);
 					entry = v;
 					break;
 				}
-		} else if (entry.isString() && Helper::toLower(entry) == fld)
+		} else if (entry.is_string() && Helper::toLower(entry) == fld)
 			return decoded(entry);
 		else doesNotExistError(fld);
 	}
 	// Try and get entry location
-	if (entry.isString())
+	if (entry.is_string())
 		return decoded(entry.get<String>());
 	else notAFileError(origpath);
 } catch (Nlohmann::exception const& e) {
@@ -774,7 +774,7 @@ void unpackV0(
 void Arch::unpack(
 	String const& archivePath,
 	String const folderPath,
-	String const& password = ""
+	String const& password
 ) try {
 	uint64 mv;
 	{
@@ -805,7 +805,7 @@ void Arch::unpack(
 }
 #endif // ARCSYS_APPLICATION_
 
-BinaryData Arch::loadEncryptedBinaryFile(String const& path, String const& password = "") try {
+BinaryData Arch::loadEncryptedBinaryFile(String const& path, String const& password) try {
 	std::ifstream archive;
 	// Set exceptions
 	archive.exceptions(std::ifstream::badbit | std::ifstream::failbit);
@@ -853,7 +853,7 @@ BinaryData Arch::loadEncryptedBinaryFile(String const& path, String const& passw
 	File::fileLoadError(path, e.what(), __FILE__);
 }
 
-String Arch::loadEncryptedTextFile(String const& path, String const& password = "") {
+String Arch::loadEncryptedTextFile(String const& path, String const& password) {
 	BinaryData fd = loadEncryptedBinaryFile(path, password);
 	return String(fd.begin(), fd.end());
 }
@@ -863,10 +863,10 @@ void Arch::saveEncryptedBinaryFile(
 	String const&				path,
 	T* const&					data,
 	size_t const&				size,
-	String const&				password	= "",
-	EncryptionMethod const&		enc			= EncryptionMethod::AEM_AES256,
-	CompressionMethod const&	comp		= CompressionMethod::ACM_ZIP,
-	uint8 const&				lvl			= 9
+	String const&				password,
+	EncryptionMethod const&		enc,
+	CompressionMethod const&	comp,
+	uint8 const&				lvl
 ) {
 	if (enc != EncryptionMethod::AEM_NONE && password.empty())
 		throw Error::InvalidValue("Missing password for encrypted file!");
@@ -923,10 +923,10 @@ void Arch::saveEncryptedBinaryFile(
 void Arch::saveEncryptedTextFile(
 	String const&				path,
 	BinaryData const&			data,
-	String const&				password	= "",
-	EncryptionMethod const&		enc			= EncryptionMethod::AEM_AES256,
-	CompressionMethod const&	comp		= CompressionMethod::ACM_ZIP,
-	uint8 const&				lvl			= 9
+	String const&				password,
+	EncryptionMethod const&		enc,
+	CompressionMethod const&	comp,
+	uint8 const&				lvl
 ) {
 	saveEncryptedBinaryFile(path, data.data(), data.size(), password, enc, comp, lvl);
 }
@@ -935,10 +935,10 @@ template<typename T>
 void Arch::saveEncryptedBinaryFile(
 	String const&				path,
 	List<T> const&				data,
-	String const&				password	= "",
-	EncryptionMethod const&		enc			= EncryptionMethod::AEM_AES256,
-	CompressionMethod const&	comp		= CompressionMethod::ACM_ZIP,
-	uint8 const&				lvl			= 9
+	String const&				password,
+	EncryptionMethod const&		enc,
+	CompressionMethod const&	comp,
+	uint8 const&				lvl
 ) {
 	saveEncryptedBinaryFile<T>(path, data.data(), data.size(), password, enc, comp, lvl);
 }
@@ -946,10 +946,10 @@ void Arch::saveEncryptedBinaryFile(
 void Arch::saveEncryptedTextFile(
 	String const&				path,
 	String const&				data,
-	String const&				password	= "",
-	EncryptionMethod const&		enc			= EncryptionMethod::AEM_AES256,
-	CompressionMethod const&	comp		= CompressionMethod::ACM_ZIP,
-	uint8 const&				lvl			= 9
+	String const&				password,
+	EncryptionMethod const&		enc,
+	CompressionMethod const&	comp,
+	uint8 const&				lvl
 ) {
 	saveEncryptedBinaryFile(path, data.data(), data.size(), password, enc, comp, lvl);
 }
