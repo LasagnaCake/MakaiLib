@@ -7,50 +7,76 @@
 
 namespace Makai::JSON {
 	namespace Extern {
+		using Nlohmann = nlohmann::json;
 		using JSONData = nlohmann::ordered_json;
 	}
 
 	class JSONView: public DataView<Extern::JSONData> {
 	public:
-		constexpr JSONView(Extern::JSONData& _data, String const& _name = "<anonymous>");
-		constexpr JSONView(Extern::JSONData const& _data, String const& _name = "<anonymous>");
-		constexpr JSONView(JSONView const& other);
-		constexpr JSONView(JSONView&& other);
+		JSONView(Extern::JSONData& _data, String const& _name = "<anonymous>");
+		JSONView(Extern::JSONData const& _data, String const& _name = "<anonymous>");
+		JSONView(JSONView const& other);
+		JSONView(JSONView&& other);
 
-		constexpr Extern::JSONData json() const;
+		Extern::JSONData json() const;
 
-		template<typename T> constexpr T get() const;
+		template<typename T>
+		inline T get() const {
+			try {
+				return view().get<T>();
+			} catch (Nlohmann::exception const& e) {
+				throw Error::FailedAction(
+					"Parameter '" + name + "' is not of type '"
+					+ NAMEOF(typeid(T)) + "'!",
+					__FILE__,
+					::toString(__LINE__),
+					::toString("get<", NAMEOF(typeid(T)), ">"),
+					e.what()
+				);
+			}
+		}
 
-		template<typename T> constexpr T get(T const& fallback) const;
+		template<typename T>
+		inline T get(T const& fallback) const {
+			try {
+				return view().get<T>();
+			} catch (Nlohmann::exception const& e) {
+				return fallback;
+			}
+		}
 
-		constexpr JSONView operator[](String const& key);
-		constexpr const JSONView operator[](String const& key) const;
+		JSONView operator[](String const& key);
+		const JSONView operator[](String const& key) const;
 
-		constexpr JSONView operator[](size_t const& index);
-		constexpr const JSONView operator[](size_t const& index) const;
+		JSONView operator[](size_t const& index);
+		const JSONView operator[](size_t const& index) const;
 
-		template<typename T> constexpr JSONView& operator=(T const& v);
+		template<typename T>
+		inline JSONView& operator=(T const& v) {
+			view() = v;
+			return (*this);
+		}
 
-		constexpr JSONView& operator=(JSONView const& v);
+		JSONView& operator=(JSONView const& v);
 
-		template<typename T> constexpr operator T() const;
+		template<typename T> operator T() const;
 
-		constexpr String getName() const;
+		String getName() const;
 
-		constexpr String toString(int const& indent = -1, char const& ch = '\t') const;
+		String toString(int const& indent = -1, char const& ch = '\t') const;
 
-		constexpr bool isNull() const;
-		constexpr bool isInt() const;
-		constexpr bool isFloat() const;
-		constexpr bool isNumber() const;
-		constexpr bool isObject() const;
-		constexpr bool isUnsigned() const;
-		constexpr bool isArray() const;
-		constexpr bool isBool() const;
-		constexpr bool isString() const;
-		constexpr bool isPrimitive() const;
-		constexpr bool isStructured() const;
-		constexpr bool isDiscarded() const;
+		bool isNull() const;
+		bool isInt() const;
+		bool isFloat() const;
+		bool isNumber() const;
+		bool isObject() const;
+		bool isUnsigned() const;
+		bool isArray() const;
+		bool isBool() const;
+		bool isString() const;
+		bool isPrimitive() const;
+		bool isStructured() const;
+		bool isDiscarded() const;
 
 	private:
 		Extern::JSONData const& cdata;
@@ -60,27 +86,27 @@ namespace Makai::JSON {
 	};
 
 	struct JSONValue: public JSONView {
-		constexpr JSONValue(String const& name = "<anonymous>");
+		JSONValue(String const& name = "<anonymous>");
 
-		constexpr JSONValue(String const& name, Extern::JSONData const& data);
+		JSONValue(String const& name, Extern::JSONData const& data);
 
-		constexpr JSONValue(Extern::JSONData const& data);
+		JSONValue(Extern::JSONData const& data);
 
-		constexpr JSONValue(JSONValue const& other);
+		JSONValue(JSONValue const& other);
 
-		constexpr JSONValue& clear();
+		JSONValue& clear();
 
 	private:
 		Extern::JSONData data;
 	};
 
-	constexpr JSONValue object(String const& name = "<anonymous>");
+	JSONValue object(String const& name = "<anonymous>");
 
-	constexpr JSONValue array(String const& name = "<anonymous>");
+	JSONValue array(String const& name = "<anonymous>");
 
 	using JSONData = JSONValue;
 
-	constexpr JSONData parseJSON(String const& data);
+	JSONData parseJSON(String const& data);
 	JSONData loadFile(String const& path);
 }
 
