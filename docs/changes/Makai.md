@@ -1,11 +1,9 @@
 # Codebase
 
-[Will (probably) use C++ modules.](Modules.md#Why)
-
 ## Layout
 
 Root namespace name options:
-- [ ] `Makai` (Most likely)
+- [x] `Makai` (Most likely)
 - [ ] `MGE` (Just no.)
 - [ ] `Mk` (Could also be used as the shorthand for the namespace)
 
@@ -24,10 +22,13 @@ Root namespace name options:
 | root | Core System |
 | `::*::Part` | Full & Partial implementations |
 | `::*::Base` | Class bases |
-| `::Graph(ical)` | Graphical Subsystem |
+| `::Graph` | Graphical Subsystem |
 | `::Audio` | Audio Subsystem |
 | `::Game` | Game-related Stuff |
 | `::Tool` | Engine tools |
+| `::File` | File-related Stuff |
+| `::JSON` | JSON-related Stuff |
+| `::SLF` | SLF-related Stuff |
 | `::Ex` | Extensions |
 
 - Should `CTL` be included globally inside the namespace (i.e. `using namespace CTL;` inside root)?

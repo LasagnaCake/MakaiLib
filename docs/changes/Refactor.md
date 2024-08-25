@@ -12,7 +12,6 @@
 
 ## Intermediate
 
-- [ ] [Use modules?](Modules.md#Why)
 - [ ] Remove dependency on external library types on header files (will require separating implementation from header first)
 - - Replace it with its own types
 - - - If required, create type conversion functions in implementation files
@@ -24,6 +23,8 @@
 - - Have it be an extension
 
 ## Complex
+- [ ] Rethink [menu](../../src/legacy/gamedata/menu.hpp) code
+- [ ] Rethink [entity](../../src/ctl/legacy/entity) system
 - [ ] Cleanup & polish [graphical](../../src/graphical) system
 - [ ] Cleanup & polish [audio](../../src/audio) system
 - [ ] Replace raw pointers with smart pointers where possible (see [referential.hpp](../../src/collection/referential.hpp))
