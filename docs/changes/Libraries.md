@@ -12,6 +12,12 @@ Having to ship external libraries (the *.a files, in this case)
 
 - https://stackoverflow.com/a/8170851
 
+### Possible `libtool` command
+
+```
+ibtool -static -o libmakai.a obj/libmakai_.a lib/SDL2-2.0.10/lib/libSDL2.dll.a lib/SDL2-2.0.10/lib/libSDL2_mixer.dll.a lib/SDL2-2.0.10/lib/libSDL2_net.dll.a lib/SDL2-2.0.10/lib/libSDL2main.dll.a lib/OpenGL/GLEW/lib/libglew32.dll.a lib/cryptopp/lib/libcryptopp.a
+```
+
 ### Possible MRI Script
 
 ```mri
