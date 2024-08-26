@@ -14,7 +14,7 @@ Having to ship external libraries (the *.a files, in this case)
 
 ### Possible `libtool` command
 
-```
+```sh
 ibtool -static -o libmakai.a \
 ...
 <every object file> \
