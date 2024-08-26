@@ -1,9 +1,10 @@
 # Solving the "External Libraries" issue
 
 ## Problem
+
 Having to ship external libraries (the *.a files, in this case)
 
-## Solution
+## Possible Solutions
 
 - https://stackoverflow.com/a/2980126
 
