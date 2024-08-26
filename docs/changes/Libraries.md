@@ -12,6 +12,8 @@ Having to ship external libraries (the *.a files, in this case)
 
 - https://stackoverflow.com/a/8170851
 
+### Possible MRI Script
+
 ```mri
 open libmakai.a
 addlib libSDL2.dll.a
