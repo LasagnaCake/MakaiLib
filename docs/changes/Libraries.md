@@ -16,7 +16,9 @@ Having to ship external libraries (the *.a files, in this case)
 
 ```
 ibtool -static -o libmakai.a \
-obj/libmakai_.a \
+...
+<every object file> \
+...
 lib/SDL2-2.0.10/lib/libSDL2.dll.a \
 lib/SDL2-2.0.10/lib/libSDL2_mixer.dll.a \
 lib/SDL2-2.0.10/lib/libSDL2_net.dll.a \
@@ -26,6 +28,8 @@ lib/cryptopp/lib/libcryptopp.a
 ```
 
 ### Possible MRI Script
+
+Assuming all objects were combined into a library file called `libmakai.a`:
 
 ```mri
 open libmakai.a
