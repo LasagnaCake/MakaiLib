@@ -14,7 +14,7 @@ Having to ship external libraries (the *.a files, in this case)
 
 ### Possible `libtool` command
 
-```sh
+```
 ibtool -static -o libmakai.a \
 ...
 <every object file> \
@@ -31,7 +31,7 @@ lib/cryptopp/lib/libcryptopp.a
 
 Assuming all objects were combined into a library file called `libmakai.a`:
 
-```mri
+```
 open libmakai.a
 addlib libSDL2.dll.a
 addlib libSDL2_mixer.dll.a
