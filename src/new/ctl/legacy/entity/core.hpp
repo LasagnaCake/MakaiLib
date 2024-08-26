@@ -74,10 +74,10 @@ namespace Entities {
 	concept EntityType = Type::Derived<T, Entity>;
 
 	/// The root object.
-	Entity* _ROOT = nullptr;
+	static Entity* _ROOT = nullptr;
 
 	typedef Group::Group<Entity*> EntityGroup;
-	EntityGroup groups;
+	static EntityGroup groups;
 
 	typedef List<Entity*> EntityList;
 

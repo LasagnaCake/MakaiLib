@@ -20,7 +20,7 @@ namespace Entities {
 	}
 
 	/// Collision Layers (used for collision detection).
-	EntityGroup collisionLayers;
+	static EntityGroup collisionLayers;
 
 	#define CT2D_CASE(TYPE, RESULT) if (obj->getCoreClass() == TYPE) return CT2D_##RESULT
 	inline CollisionType2D getCollisionType2D(Entity* const& obj) {
