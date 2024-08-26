@@ -16,7 +16,7 @@ open libmakai.a
 addlib libSDL2.dll.a
 addlib libSDL2_mixer.dll.a
 addlib libSDL2_net.dll.a
-addlib libSDL2nain.dll.a
+addlib libSDL2main.dll.a
 addlib libglew32.dll.a
 addlib libcryptopp.a
 save
