@@ -174,7 +174,7 @@ namespace Helper {
 	struct Discard {
 		template<typename T>constexpr T&& operator=(T&& v)				{return v;}
 		template<typename T>constexpr T const& operator=(T const& v)	{return v;}
-	} _;
+	} static _;
 
 	typedef std::strong_ordering	StrongOrder;
 	typedef std::weak_ordering		WeakOrder;
@@ -243,7 +243,7 @@ namespace Helper {
 	}
 	#else
 	template<Type::Number T>
-	String floatString(T const& val, size_t const& precision) {
+	inline String floatString(T const& val, size_t const& precision) {
 		if (!precision)
 			return std::to_string((long long)val);
 		std::stringstream ss;
@@ -261,7 +261,7 @@ namespace Helper {
 	using NumberFormat = Pair<T, size_t>;
 
 	template<Type::Number T>
-	String floatString(NumberFormat<T> const& fmt) {
+	inline String floatString(NumberFormat<T> const& fmt) {
 		return floatString(fmt->first, fmt->second);
 	}
 
@@ -278,7 +278,7 @@ namespace Helper {
 	}
 
 	template<Type::Number T>
-	String floatString(T const& val, size_t const& precision, size_t const& leading) {
+	inline String floatString(T const& val, size_t const& precision, size_t const& leading) {
 		return padString(floatString(val, precision), '0', leading);
 	}
 
@@ -605,13 +605,13 @@ inline bool			regexMatches(String const& str, String const& expr)						{return r
 inline StringList	regexFind(String const& str, String const& expr)						{return regexFind(str, Regex(expr));			}
 inline String		regexFindFirst(String const& str, String const& expr)					{return regexFindFirst(str, Regex(expr));		}
 
-WideString toWideString(String const& str){
+inline WideString toWideString(String const& str){
 	using convert_typeX = std::codecvt_utf8_utf16<wchar_t>;
 	std::wstring_convert<convert_typeX, wchar_t> converterX;
 	return converterX.from_bytes(str);
 }
 
-String toString(WideString const& wstr){
+inline String toString(WideString const& wstr){
 	using convert_typeX = std::codecvt_utf8_utf16<wchar_t>;
 	std::wstring_convert<convert_typeX, wchar_t> converterX;
 	return converterX.to_bytes(wstr);
@@ -674,11 +674,11 @@ namespace FileSystem {
 	constexpr PathSeparator SEPARATOR = PathSeparator::PS_POSIX;
 	#endif
 
-	bool exists(String const& path) {
+	inline bool exists(String const& path) {
 		return fs::exists(path);
 	}
 
-	bool isDirectory(String const& dir) {
+	inline bool isDirectory(String const& dir) {
 		return fs::is_directory(dir);
 	}
 
@@ -690,25 +690,25 @@ namespace FileSystem {
 		return standardizePath(path, SEPARATOR);
 	}
 
-	void makeDirectory(String const& dir) {
+	inline void makeDirectory(String const& dir) {
 		if (dir.empty()) return;
 		if (!isDirectory(dir) || !exists(dir)) {
 			fs::create_directories(dir);
 		}
 	}
 
-	void makeDirectory(StringList const& dirs) {
+	inline void makeDirectory(StringList const& dirs) {
 		for (auto& d: dirs)
 			makeDirectory(d);
 	}
 
-	void makeDirectory(StringArguments const& dirs) {
+	inline void makeDirectory(StringArguments const& dirs) {
 		for (auto& d: dirs)
 			makeDirectory(d);
 	}
 
 	template <typename... Args>
-	void makeDirectory(Args const&... args) {
+	inline void makeDirectory(Args const&... args) {
 		(makeDirectory(toString(args)), ...);
 	}
 
@@ -843,7 +843,7 @@ namespace FileSystem {
 
 		constexpr operator Entry() const {return tree;}
 
-		static Entry getStructure(String const& path) {
+		static inline Entry getStructure(String const& path) {
 			if (!exists(path))
 				throw Error::InvalidValue("Path does not exist!");
 			if (!isDirectory(path)) return Entry(getFileName(path), path);
@@ -854,7 +854,7 @@ namespace FileSystem {
 			);
 		}
 
-		static List<Entry> getFolderContents(String const& folder) {
+		static inline List<Entry> getFolderContents(String const& folder) {
 			if (!isDirectory(folder)) return List<Entry>();
 			List<Entry> entries;
 			for (auto const& e: fs::directory_iterator(folder)) {
@@ -879,7 +879,7 @@ namespace FileSystem {
 #endif
 
 namespace System {
-	String sanitized(String arg) {
+	inline String sanitized(String arg) {
 		arg = regexReplace(arg, "\\\\+", "\\\\");
 		#if (_WIN32 || _WIN64 || __WIN32__ || __WIN64__) && !defined(_NO_WINDOWS_PLEASE_)
 		arg = regexReplace(arg, "\\\\+\"", "\\\"");
@@ -891,7 +891,7 @@ namespace System {
 		#endif
 	}
 
-	int launchApp(String const& path, String const& directory = "", StringList args = StringList()) {
+	inline int launchApp(String const& path, String const& directory = "", StringList args = StringList()) {
 		if (!FileSystem::exists(path))
 			throw Error::InvalidValue(
 				"File [" + path + "] does not exist!",
@@ -937,7 +937,7 @@ namespace System {
 		#endif
 	}
 
-	String openFileDialog(String filter = "All\0*.*\0") {
+	inline String openFileDialog(String filter = "All\0*.*\0") {
 		#if (_WIN32 || _WIN64 || __WIN32__ || __WIN64__) && !defined(_NO_WINDOWS_PLEASE_)
 		OPENFILENAME ofn;
 		char szFile[260] = {0};
@@ -964,7 +964,7 @@ namespace System {
 		return "";
 	}
 
-	String saveFileDialog(String filter = "All\0*.*\0") {
+	inline String saveFileDialog(String filter = "All\0*.*\0") {
 		#if (_WIN32 || _WIN64 || __WIN32__ || __WIN64__) && !defined(_NO_WINDOWS_PLEASE_)
 		OPENFILENAME ofn;
 		char szFile[260] = {0};

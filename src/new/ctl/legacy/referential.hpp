@@ -174,7 +174,8 @@ namespace SmartPointer {
 			return (ref);
 		}
 
-		[[noreturn]] void nullPointerError() const {
+		[[noreturn]]
+		inline void nullPointerError() const {
 			throw Error::NullPointer(
 				toString("Pointer reference of type '", NAMEOF(typeid(T)), "' does not exist!"),
 				__FILE__,

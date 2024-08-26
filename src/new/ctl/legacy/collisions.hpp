@@ -5,6 +5,7 @@
 #pragma GCC diagnostic ignored "-Wall"
 #pragma GCC diagnostic ignored "-Wunused-function"
 #define CUTE_C2_IMPLEMENTATION
+#define CUTE_C2_API inline
 #include "libs/cute_c2.h"
 #pragma GCC diagnostic pop
 

@@ -44,7 +44,7 @@ namespace Entities {
 		}
 
 		/// Calculates the object's global position.
-		Vector2 globalPosition() {
+		inline Vector2 globalPosition() {
 			// Try and get parent
 			Entity* par = getParent();
 			// If unparented, or parent is root, return own position
@@ -65,7 +65,7 @@ namespace Entities {
 		}
 
 		/// Calculates the object's global rotation.
-		float globalRotation() {
+		inline float globalRotation() {
 			// Try and get parent
 			Entity* par = getParent();
 			// If unparented, or parent is root, return own rotation
@@ -83,7 +83,7 @@ namespace Entities {
 		}
 
 		/// Calculates the object's global scale.
-		Vector2 globalScale() {
+		inline Vector2 globalScale() {
 			// Try and get parent
 			Entity* par = getParent();
 			// If unparented, or parent is root, return own scale
@@ -165,7 +165,7 @@ namespace Entities {
 		}
 
 		/// Calculate's the object's global rotation.
-		Vector3 globalRotation() {
+		inline Vector3 globalRotation() {
 			// Try and get parent
 			Entity* par = getParent();
 			// If unparented, or parent is root, return own rotation
@@ -183,7 +183,7 @@ namespace Entities {
 		}
 
 		/// Calculates the object's global scale.
-		Vector3 globalScale() {
+		inline Vector3 globalScale() {
 			// Try and get parent
 			Entity* par = getParent();
 			// If unparented, or parent is root, return own scale

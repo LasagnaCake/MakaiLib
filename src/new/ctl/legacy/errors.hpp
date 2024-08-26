@@ -115,12 +115,12 @@ namespace Error {
 
 	typedef std::exception_ptr ErrorPointer;
 
-	ErrorPointer current() {return std::current_exception();}
+	inline ErrorPointer current() {return std::current_exception();}
 
-	[[noreturn]] void rethrow(ErrorPointer const& err) {std::rethrow_exception(err);}
+	[[noreturn]] inline void rethrow(ErrorPointer const& err) {std::rethrow_exception(err);}
 
 	template<Type::Derived<Error> T>
-	[[noreturn]] void rethrow(T const& err) {throw T(err);}
+	[[noreturn]] inline void rethrow(T const& err) {throw T(err);}
 }
 
 #define DEFINE_ERROR_TYPE(NAME)\

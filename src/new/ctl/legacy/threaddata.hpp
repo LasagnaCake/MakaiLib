@@ -7,7 +7,7 @@
 namespace Threaded {
 	typedef std::thread Thread;
 
-	Thread::id currentThreadID() noexcept {
+	inline Thread::id currentThreadID() noexcept {
 		return std::this_thread::get_id();
 	}
 

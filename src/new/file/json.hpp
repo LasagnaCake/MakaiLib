@@ -24,7 +24,7 @@ namespace Makai::JSON {
 		inline T get() const {
 			try {
 				return view().get<T>();
-			} catch (Nlohmann::exception const& e) {
+			} catch (Extern::Nlohmann::exception const& e) {
 				throw Error::FailedAction(
 					"Parameter '" + name + "' is not of type '"
 					+ NAMEOF(typeid(T)) + "'!",
@@ -40,7 +40,7 @@ namespace Makai::JSON {
 		inline T get(T const& fallback) const {
 			try {
 				return view().get<T>();
-			} catch (Nlohmann::exception const& e) {
+			} catch (Extern::Nlohmann::exception const& e) {
 				return fallback;
 			}
 		}

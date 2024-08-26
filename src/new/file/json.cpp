@@ -1,10 +1,10 @@
 #include "json.hpp"
 
-using Nlohmann = nlohmann::json;
+using Nlohmann = Makai::JSON::Extern::Nlohmann;
 
 namespace Extern = Makai::JSON::Extern;
 
-template<typename T>
+/*template<typename T>
 T Makai::JSON::JSONView::get() const {
 	try {
 		return view().get<T>();
@@ -27,17 +27,17 @@ T Makai::JSON::JSONView::get(T const& fallback) const {
 	} catch (Nlohmann::exception const& e) {
 		return fallback;
 	}
-}
+}*/
 
-Makai::JSON::JSONView::JSONView(Extern::JSONData& _data, String const& _name): DataView(_data), name(_name), cdata(_data)	{}
-Makai::JSON::JSONView::JSONView(JSONView const& other): DataView(other), name(other.name), cdata(other.view())			{}
-Makai::JSON::JSONView::JSONView(JSONView&& other): DataView(other), name(other.name), cdata(other.view())					{}
+Makai::JSON::JSONView::JSONView(Extern::JSONData& _data, String const& _name): DataView(_data), cdata(_data), name(_name)	{}
+Makai::JSON::JSONView::JSONView(JSONView const& other): DataView(other), cdata(other.view()), name(other.name)				{}
+Makai::JSON::JSONView::JSONView(JSONView&& other): DataView(other), cdata(other.view()), name(other.name)					{}
 
 Makai::JSON::JSONView::JSONView(Extern::JSONData const& _data, String const& _name):
 	DataView(dummy),
-	name(_name),
 	cdata(_data),
-	dummy(_data) {}
+	dummy(_data),
+	name(_name) {}
 
 Makai::JSON::JSONView Makai::JSON::JSONView::operator[](String const& key) {
 	if (isNull()) view() = Nlohmann::object();
@@ -61,11 +61,11 @@ const Makai::JSON::JSONView Makai::JSON::JSONView::operator[](size_t const& inde
 	return Makai::JSON::JSONView(cdata[index], ::toString(name, "[", index, "]"));
 }
 
-template<typename T>
+/*template<typename T>
 Makai::JSON::JSONView& Makai::JSON::JSONView::operator=(T const& v) {
 	view() = v;
 	return (*this);
-}
+}*/
 
 Makai::JSON::JSONView& Makai::JSON::JSONView::operator=(Makai::JSON::JSONView const& v) {
 	view() = v.json();
@@ -114,11 +114,11 @@ Makai::JSON::JSONValue& Makai::JSON::JSONValue::clear() {
 	return *this;
 }
 
-Makai::JSON::JSONValue Makai::JSON::object(String const& name) {return JSONValue(name, JSON::object());}
+Makai::JSON::JSONValue Makai::JSON::object(String const& name) {return JSONValue(name, Nlohmann::object());}
 
-Makai::JSON::JSONValue Makai::JSON::array(String const& name) {return JSONValue(name, JSON::array());}
+Makai::JSON::JSONValue Makai::JSON::array(String const& name) {return JSONValue(name, Nlohmann::array());}
 
-Makai::JSON::JSONData Makai::JSON::parseJSON(String const& data) try {
+Makai::JSON::JSONData Makai::JSON::parseJSON(String const& json) try {
 	return Extern::JSONData::parse(json);
 } catch (Nlohmann::exception const& e) {
 	throw Error::FailedAction(

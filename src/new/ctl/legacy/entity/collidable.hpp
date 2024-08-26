@@ -23,7 +23,7 @@ namespace Entities {
 	EntityGroup collisionLayers;
 
 	#define CT2D_CASE(TYPE, RESULT) if (obj->getCoreClass() == TYPE) return CT2D_##RESULT
-	CollisionType2D getCollisionType2D(Entity* const& obj) {
+	inline CollisionType2D getCollisionType2D(Entity* const& obj) {
 		using enum CollisionType2D;
 		CT2D_CASE("AreaCircle2D",	CIRCLE		);
 		CT2D_CASE("AreaBox2D",		BOX			);
@@ -139,7 +139,7 @@ namespace Entities {
 	typedef AreaCollision2D<ShapeBounds2D>		AreaShape2D;
 	typedef AreaCollision2D<PolygonBounds2D>	AreaPolygon2D;
 
-	void castAndCheck(Entity* a, Entity* b) {
+	inline void castAndCheck(Entity* a, Entity* b) {
 		using enum CollisionType2D;
 		#define CT2D_CASE(RESULT, TYPE) case CT2D_##TYPE: {RESULT* target = (RESULT*)a; target->castAndCheck(b); break;}
 		switch (getCollisionType2D(a)) {

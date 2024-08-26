@@ -44,7 +44,7 @@ namespace FileLoader {
 	typedef List<uint8> BinaryData;
 
 	/// Loads a binary file as an array;
-	BinaryData loadBinaryFile(String const& path) {
+	inline BinaryData loadBinaryFile(String const& path) {
 		// The file
 		ifstream file;
 		// Ensure ifstream object can throw exceptions
@@ -68,7 +68,7 @@ namespace FileLoader {
 	}
 
 	/// Loads a text file as a string.
-	String loadTextFile(String const& path) {
+	inline String loadTextFile(String const& path) {
 		// The file and its contents
 		String content;
 		ifstream file;
@@ -98,7 +98,7 @@ namespace FileLoader {
 	/**
 	* Loads a CSV file as a list of strings.
 	*/
-	CSVData loadCSVFile(String const& path, char delimiter = ',') {
+	inline CSVData loadCSVFile(String const& path, char delimiter = ',') {
 		// The file and its contents
 		String content;
 		ifstream file;
@@ -134,7 +134,7 @@ namespace FileLoader {
 
 	/// Saves an array of data as a binary file (Non-destructive).
 	template <typename T>
-	void saveBinaryFile(String const& path, T* data, size_t size) {
+	inline void saveBinaryFile(String const& path, T* data, size_t size) {
 		FileSystem::makeDirectory(FileSystem::getDirectoryFromPath(path));
 		ofstream file(path.c_str() , ios::binary);
 		// Ensure ifstream object can throw exceptions
@@ -151,13 +151,13 @@ namespace FileLoader {
 
 	/// Saves an array of data as a binary file (Non-destructive).
 	template <typename T>
-	void saveBinaryFile(String const& path, List<T> data) {
+	inline void saveBinaryFile(String const& path, List<T> data) {
 		FileSystem::makeDirectory(FileSystem::getDirectoryFromPath(path));
 		saveBinaryFile<T>(path, data.data(), data.size());
 	}
 
 	/// Saves an string as a text file (Non-destructive).
-	void saveTextFile(String const& path, String const& text) {
+	inline void saveTextFile(String const& path, String const& text) {
 		FileSystem::makeDirectory(FileSystem::getDirectoryFromPath(path));
 		ofstream file(path.c_str(), ios::trunc);
 		// Ensure ifstream object can throw exceptions

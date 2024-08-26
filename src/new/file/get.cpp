@@ -25,7 +25,7 @@ using Makai::File::BinaryData;
 /*#undef _ARCHIVE_SYSTEM_DISABLED_
 #define _ARCHIVE_SYSTEM_DISABLED_*/
 
-inline void Makai::File::attachArchive(String const& path, String const& password) {
+void Makai::File::attachArchive(String const& path, String const& password) {
 	#ifdef _IMPL_ARCHIVE_
 	DEBUGLN("Attaching archive...");
 	if (loadingArchive)
@@ -42,7 +42,7 @@ inline void Makai::File::attachArchive(String const& path, String const& passwor
 	#endif
 }
 
-inline bool Makai::File::isArchiveAttached() {
+bool Makai::File::isArchiveAttached() {
 	#ifdef _IMPL_ARCHIVE_
 	return arc.isOpen();
 	#else
@@ -50,7 +50,7 @@ inline bool Makai::File::isArchiveAttached() {
 	#endif
 }
 
-[[gnu::destructor]] inline void Makai::File::detachArchive() {
+[[gnu::destructor]] void Makai::File::detachArchive() {
 	#ifdef _IMPL_ARCHIVE_
 	DEBUGLN("Detaching archive...");
 	arc.close();
@@ -59,13 +59,13 @@ inline bool Makai::File::isArchiveAttached() {
 }
 
 #ifdef _IMPL_ARCHIVE_
-inline void assertArchive(String const& path) {
+void assertArchive(String const& path) {
 	if (arcfail) Error::rethrow(arcfail);
 	if (!Makai::File::isArchiveAttached())
 		fileLoadError(path, "Archive is not attached!", "fileloader.hpp");
 }
 
-[[noreturn]] inline void fileGetError(String const& path, String const& fe, String const& ae) {
+[[noreturn]] void fileGetError(String const& path, String const& fe, String const& ae) {
 	fileLoadError(
 		path,
 		toString(
@@ -78,7 +78,7 @@ inline void assertArchive(String const& path) {
 }
 #endif
 
-inline String Makai::File::loadTextFileFromArchive(String const& path) {
+String Makai::File::loadTextFileFromArchive(String const& path) {
 	#ifdef _IMPL_ARCHIVE_
 	assertArchive(path);
 	return arc.getTextFile(FileSystem::getChildPath(path));
@@ -87,7 +87,7 @@ inline String Makai::File::loadTextFileFromArchive(String const& path) {
 	#endif
 }
 
-inline BinaryData Makai::File::loadBinaryFileFromArchive(String const& path) {
+BinaryData Makai::File::loadBinaryFileFromArchive(String const& path) {
 	#ifdef _IMPL_ARCHIVE_
 	assertArchive(path);
 	return arc.getBinaryFile(FileSystem::getChildPath(path));
@@ -96,7 +96,7 @@ inline BinaryData Makai::File::loadBinaryFileFromArchive(String const& path) {
 	#endif
 }
 
-inline CSVData Makai::File::loadCSVFileFromArchive(String const& path, char const& delimiter) {
+CSVData Makai::File::loadCSVFileFromArchive(String const& path, char const& delimiter) {
 	#ifdef _IMPL_ARCHIVE_
 	assertArchive(path);
 	return Helper::splitString(arc.getTextFile(FileSystem::getChildPath(path)), delimiter);
@@ -105,7 +105,7 @@ inline CSVData Makai::File::loadCSVFileFromArchive(String const& path, char cons
 	#endif
 }
 
-inline Makai::JSON::JSONData Makai::File::loadJSONFileFromArchive(String const& path) {
+Makai::JSON::JSONData Makai::File::loadJSONFileFromArchive(String const& path) {
 	#ifdef _IMPL_ARCHIVE_
 	assertArchive(path);
 	return Makai::JSON::parseJSON(arc.getTextFile(FileSystem::getChildPath(path)));
@@ -114,7 +114,7 @@ inline Makai::JSON::JSONData Makai::File::loadJSONFileFromArchive(String const& 
 	#endif
 }
 
-inline String Makai::File::getTextFile(String const& path) {
+String Makai::File::getTextFile(String const& path) {
 	#ifdef _IMPL_ARCHIVE_
 	String res;
 	if (isArchiveAttached())
@@ -141,7 +141,7 @@ inline String Makai::File::getTextFile(String const& path) {
 	#endif
 }
 
-inline BinaryData Makai::File::getBinaryFile(String const& path) {
+BinaryData Makai::File::getBinaryFile(String const& path) {
 	#ifdef _IMPL_ARCHIVE_
 	BinaryData res;
 	if (isArchiveAttached())
@@ -168,7 +168,7 @@ inline BinaryData Makai::File::getBinaryFile(String const& path) {
 	#endif
 }
 
-inline CSVData Makai::File::getCSVFile(String const& path, char const& delimiter) {
+CSVData Makai::File::getCSVFile(String const& path, char const& delimiter) {
 	#ifdef _IMPL_ARCHIVE_
 	CSVData res;
 	if (isArchiveAttached())
@@ -195,7 +195,7 @@ inline CSVData Makai::File::getCSVFile(String const& path, char const& delimiter
 	#endif
 }
 
-inline Makai::JSON::JSONData Makai::File::getJSONFile(String const& path) {
+Makai::JSON::JSONData Makai::File::getJSONFile(String const& path) {
 	#ifdef _IMPL_ARCHIVE_
 	Makai::JSON::JSONData res(FileSystem::getFileName(path));
 	if (isArchiveAttached())

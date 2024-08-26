@@ -182,7 +182,7 @@ namespace Ease {
 	#undef MODE_CASE
 	#undef CASE_FUN
 
-	EaseMode custom(EaseFunction const& in, EaseFunction const& out) {
+	inline EaseMode custom(EaseFunction const& in, EaseFunction const& out) {
 		return [=] (float const& x) {
 			if (x < 0.5)
 				return in(x * 2.0) / 2.0;
@@ -190,7 +190,7 @@ namespace Ease {
 		};
 	}
 
-	EaseMode custom(EaseMode const& in, EaseMode const& out) {
+	inline EaseMode custom(EaseMode const& in, EaseMode const& out) {
 		return [=] (float const& x) {
 			if (x < 0.5)
 				return in(x * 2.0) / 2.0;

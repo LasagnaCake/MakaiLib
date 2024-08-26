@@ -57,7 +57,7 @@ namespace Entities {
 	}
 
 	/// Deletes all queued objects.
-	void destroyQueued() {
+	inline void destroyQueued() {
 		auto queue = destroyQueue;
 		for (auto queued : queue) {
 			(*queued)();
@@ -81,7 +81,7 @@ namespace Entities {
 
 	typedef List<Entity*> EntityList;
 
-	void init();
+	inline void init();
 
 	/**
 	***********************
@@ -526,7 +526,7 @@ namespace Entities {
 	* Initializes the root tree.
 	* Gets called upon program start.
 	*/
-	[[gnu::constructor]] void init() {
+	[[gnu::constructor]] inline void init() {
 		if (Entities::_ROOT == nullptr) {
 			DEBUGLN("Creating root tree...");
 			_ROOT = new Entity(ENTITY_ROOT_NAME);
@@ -538,7 +538,7 @@ namespace Entities {
 	* Denitializes the root tree.
 	* Gets called upon program end.
 	*/
-	[[gnu::destructor]] void close() {
+	[[gnu::destructor]] inline void close() {
 		if (Entities::_ROOT != nullptr) {
 			DEBUGLN("Destroying root tree...");
 			delete _ROOT;
@@ -549,7 +549,7 @@ namespace Entities {
 
 	/// Gets a specific object in the root tree, and casts it appropriately.
 	template <EntityType T>
-	T* getEntity(String const& path) {
+	inline T* getEntity(String const& path) {
 		// Try and get object
 		Entity* res = _ROOT->getChild(path);
 		// If it exists, return object (casted)

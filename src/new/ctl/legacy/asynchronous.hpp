@@ -33,24 +33,24 @@ namespace Async {
 
 	DEFINE_ERROR_TYPE(OccupiedError);
 
-	void yieldThread() {
+	inline void yieldThread() {
 		std::this_thread::yield();
 	}
 
 	template<class T = Time::Millis>
-	void wait(size_t const& millis) {
+	inline void wait(size_t const& millis) {
 		std::this_thread::sleep_for<T>(millis);
 	}
 
-	void wait(Atomic<bool>& condition) {
+	inline void wait(Atomic<bool>& condition) {
 		while (condition.value()) yieldThread();
 	}
 
-	void wait(Atomic<Functor<bool(void)>>& predicate) {
+	inline void wait(Atomic<Functor<bool(void)>>& predicate) {
 		while (predicate.value()()) yieldThread();
 	}
 
-	void wait(Functor<bool(void)> const& predicate) {
+	inline void wait(Functor<bool(void)> const& predicate) {
 		while (predicate()) yieldThread();
 	}
 

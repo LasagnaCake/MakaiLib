@@ -12,27 +12,27 @@ namespace Makai::File {
 	using BinaryData	= FileLoader::BinaryData;
 	using CSVData		= FileLoader::CSVData;
 
-	inline void attachArchive(String const& path, String const& password = "");
+	void attachArchive(String const& path, String const& password = "");
 
-	inline bool isArchiveAttached();
+	bool isArchiveAttached();
 
-	[[gnu::destructor]] inline void detachArchive();
+	[[gnu::destructor]] void detachArchive();
 
-	inline String loadTextFileFromArchive(String const& path);
+	String loadTextFileFromArchive(String const& path);
 
-	inline BinaryData loadBinaryFileFromArchive(String const& path);
+	BinaryData loadBinaryFileFromArchive(String const& path);
 
-	inline CSVData loadCSVFileFromArchive(String const& path, char const& delimiter = ',');
+	CSVData loadCSVFileFromArchive(String const& path, char const& delimiter = ',');
 
-	inline JSON::JSONData loadJSONFileFromArchive(String const& path);
+	JSON::JSONData loadJSONFileFromArchive(String const& path);
 
-	inline String getTextFile(String const& path);
+	String getTextFile(String const& path);
 
-	inline BinaryData getBinaryFile(String const& path);
+	BinaryData getBinaryFile(String const& path);
 
-	inline CSVData getCSVFile(String const& path, char const& delimiter = ',');
+	CSVData getCSVFile(String const& path, char const& delimiter = ',');
 
-	inline JSON::JSONData getJSONFile(String const& path);
+	JSON::JSONData getJSONFile(String const& path);
 
 	#pragma GCC diagnostic pop
 }

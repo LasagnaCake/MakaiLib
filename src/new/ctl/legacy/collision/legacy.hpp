@@ -279,7 +279,7 @@ namespace Collision {
 
 	// Box
 
-	bool withinBounds(BoxBounds2D const& a, BoxBounds2D const& b) {
+	inline bool withinBounds(BoxBounds2D const& a, BoxBounds2D const& b) {
 		// Get overlap on X
 		bool overlapX = (
 			(b.min.x < a.min.x) && (a.min.x < b.max.x)
@@ -296,7 +296,7 @@ namespace Collision {
 		return overlapX && overlapY;
 	}
 
-	bool withinBounds(CircleBounds2D const& a, BoxBounds2D const& b) {
+	inline bool withinBounds(CircleBounds2D const& a, BoxBounds2D const& b) {
 		return c2CircletoAABB(cuteify(a), cuteify(b));
 	}
 
@@ -625,7 +625,7 @@ namespace Collision {
 	};
 
 	template <CollisionType A, CollisionType B>
-	bool isColliding(AreaCollisionData<A> const& a, AreaCollisionData<B> const& b) {
+	inline bool isColliding(AreaCollisionData<A> const& a, AreaCollisionData<B> const& b) {
 		if (!(a.enabled && b.enabled))
 			return false;
 		return withinBounds(a.shape, b.shape);

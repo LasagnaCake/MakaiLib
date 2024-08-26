@@ -1,4 +1,9 @@
 /*
+	MODIFICATIONS:
+	- inlined EVERYTHING.
+*/
+
+/*
 	------------------------------------------------------------------------------
 		Licensing information can be found at the end of the file.
 	------------------------------------------------------------------------------
@@ -61,7 +66,7 @@
 			{
 				handle collision here...
 			}
-	
+
 		For more code examples and tests please see:
 		https://github.com/RandyGaul/cute_header/tree/master/examples_cute_gl_and_c2
 
@@ -87,7 +92,7 @@
 
 
 	Revision History
-	
+
 		1.0  (02/13/2017) initial release
 		1.01 (02/13/2017) const crusade, minor optimizations, capsule degen
 		1.02 (03/21/2017) compile fixes for c on more compilers
@@ -532,7 +537,7 @@ C2_INLINE void c2BBVerts(c2v* out, c2AABB* bb)
 #ifndef CUTE_C2_IMPLEMENTATION_ONCE
 #define CUTE_C2_IMPLEMENTATION_ONCE
 
-int c2Collided(const void* A, const c2x* ax, C2_TYPE typeA, const void* B, const c2x* bx, C2_TYPE typeB)
+inline int c2Collided(const void* A, const c2x* ax, C2_TYPE typeA, const void* B, const c2x* bx, C2_TYPE typeB)
 {
 	switch (typeA)
 	{
@@ -585,7 +590,7 @@ int c2Collided(const void* A, const c2x* ax, C2_TYPE typeA, const void* B, const
 	}
 }
 
-void c2Collide(const void* A, const c2x* ax, C2_TYPE typeA, const void* B, const c2x* bx, C2_TYPE typeB, c2Manifold* m)
+inline void c2Collide(const void* A, const c2x* ax, C2_TYPE typeA, const void* B, const c2x* bx, C2_TYPE typeB, c2Manifold* m)
 {
 	m->count = 0;
 
@@ -633,7 +638,7 @@ void c2Collide(const void* A, const c2x* ax, C2_TYPE typeA, const void* B, const
 	}
 }
 
-int c2CastRay(c2Ray A, const void* B, const c2x* bx, C2_TYPE typeB, c2Raycast* out)
+inline int c2CastRay(c2Ray A, const void* B, const c2x* bx, C2_TYPE typeB, c2Raycast* out)
 {
 	switch (typeB)
 	{
@@ -897,7 +902,7 @@ static C2_INLINE float c2GJKSimplexMetric(c2Simplex* s)
 // Please see http://box2d.org/downloads/ under GDC 2010 for Erin's demo code
 // and PDF slides for documentation on the GJK algorithm. This function is mostly
 // from Erin's version from his online resources.
-float c2GJK(const void* A, C2_TYPE typeA, const c2x* ax_ptr, const void* B, C2_TYPE typeB, const c2x* bx_ptr, c2v* outA, c2v* outB, int use_radius, int* iterations, c2GJKCache* cache)
+inline float c2GJK(const void* A, C2_TYPE typeA, const c2x* ax_ptr, const void* B, C2_TYPE typeB, const c2x* bx_ptr, c2v* outA, c2v* outB, int use_radius, int* iterations, c2GJKCache* cache)
 {
 	c2x ax;
 	c2x bx;
@@ -979,7 +984,7 @@ float c2GJK(const void* A, C2_TYPE typeA, const c2x* ax_ptr, const void* B, C2_T
 			saveA[i] = verts[i].iA;
 			saveB[i] = verts[i].iB;
 		}
-		
+
 		switch (s.count)
 		{
 		case 1: break;
@@ -1084,7 +1089,7 @@ float c2GJK(const void* A, C2_TYPE typeA, const c2x* ax_ptr, const void* B, C2_T
 // Referenced from Box2D's b2ShapeCast function.
 // GJK-Raycast algorithm by Gino van den Bergen.
 // "Smooth Mesh Contacts with GJK" in Game Physics Pearls, 2010.
-c2TOIResult c2TOI(const void* A, C2_TYPE typeA, const c2x* ax_ptr, c2v vA, const void* B, C2_TYPE typeB, const c2x* bx_ptr, c2v vB, int use_radius)
+inline c2TOIResult c2TOI(const void* A, C2_TYPE typeA, const c2x* ax_ptr, c2v vA, const void* B, C2_TYPE typeB, const c2x* bx_ptr, c2v vB, int use_radius)
 {
 	float t = 0;
 	c2x ax;
@@ -1183,7 +1188,7 @@ c2TOIResult c2TOI(const void* A, C2_TYPE typeA, const c2x* ax_ptr, c2v vA, const
 	return result;
 }
 
-int c2Hull(c2v* verts, int count)
+inline int c2Hull(c2v* verts, int count)
 {
 	if (count <= 2) return 0;
 	count = c2Min(C2_MAX_POLYGON_VERTS, count);
@@ -1238,7 +1243,7 @@ int c2Hull(c2v* verts, int count)
 	return out_count;
 }
 
-void c2Norms(c2v* verts, c2v* norms, int count)
+inline void c2Norms(c2v* verts, c2v* norms, int count)
 {
 	for (int  i = 0; i < count; ++i)
 	{
@@ -1249,13 +1254,13 @@ void c2Norms(c2v* verts, c2v* norms, int count)
 	}
 }
 
-void c2MakePoly(c2Poly* p)
+inline void c2MakePoly(c2Poly* p)
 {
 	p->count = c2Hull(p->verts, p->count);
 	c2Norms(p->verts, p->norms, p->count);
 }
 
-c2Poly c2Dual(c2Poly poly, float skin_factor)
+inline c2Poly c2Dual(c2Poly poly, float skin_factor)
 {
 	c2Poly dual;
 	dual.count = poly.count;
@@ -1292,7 +1297,7 @@ c2Poly c2Dual(c2Poly poly, float skin_factor)
 // 6. Compute the dual of the dual, this will be the poly to return.
 // 7. Translate the poly away from the origin by the center point from step 2.
 // 8. Return the inflated poly.
-c2Poly c2InflatePoly(c2Poly poly, float skin_factor)
+inline c2Poly c2InflatePoly(c2Poly poly, float skin_factor)
 {
 	c2v average = poly.verts[0];
 	for (int i = 1; i < poly.count; ++i) {
@@ -1314,7 +1319,7 @@ c2Poly c2InflatePoly(c2Poly poly, float skin_factor)
 	return poly;
 }
 
-void c2Inflate(void* shape, C2_TYPE type, float skin_factor)
+inline void c2Inflate(void* shape, C2_TYPE type, float skin_factor)
 {
 	switch (type)
 	{
@@ -1346,7 +1351,7 @@ void c2Inflate(void* shape, C2_TYPE type, float skin_factor)
 	}
 }
 
-int c2CircletoCircle(c2Circle A, c2Circle B)
+inline int c2CircletoCircle(c2Circle A, c2Circle B)
 {
 	c2v c = c2Sub(B.p, A.p);
 	float d2 = c2Dot(c, c);
@@ -1355,7 +1360,7 @@ int c2CircletoCircle(c2Circle A, c2Circle B)
 	return d2 < r2;
 }
 
-int c2CircletoAABB(c2Circle A, c2AABB B)
+inline int c2CircletoAABB(c2Circle A, c2AABB B)
 {
 	c2v L = c2Clampv(A.p, B.min, B.max);
 	c2v ab = c2Sub(A.p, L);
@@ -1364,7 +1369,7 @@ int c2CircletoAABB(c2Circle A, c2AABB B)
 	return d2 < r2;
 }
 
-int c2AABBtoAABB(c2AABB A, c2AABB B)
+inline int c2AABBtoAABB(c2AABB A, c2AABB B)
 {
 	int d0 = B.max.x < A.min.x;
 	int d1 = A.max.x < B.min.x;
@@ -1373,7 +1378,7 @@ int c2AABBtoAABB(c2AABB A, c2AABB B)
 	return !(d0 | d1 | d2 | d3);
 }
 
-int c2AABBtoPoint(c2AABB A, c2v B)
+inline int c2AABBtoPoint(c2AABB A, c2v B)
 {
 	int d0 = B.x < A.min.x;
 	int d1 = B.y < A.min.y;
@@ -1382,7 +1387,7 @@ int c2AABBtoPoint(c2AABB A, c2v B)
 	return !(d0 | d1 | d2 | d3);
 }
 
-int c2CircleToPoint(c2Circle A, c2v B)
+inline int c2CircleToPoint(c2Circle A, c2v B)
 {
 	c2v n = c2Sub(A.p, B);
 	float d2 = c2Dot(n, n);
@@ -1390,7 +1395,7 @@ int c2CircleToPoint(c2Circle A, c2v B)
 }
 
 // see: http://www.randygaul.net/2014/07/23/distance-point-to-line-segment/
-int c2CircletoCapsule(c2Circle A, c2Capsule B)
+inline int c2CircletoCapsule(c2Circle A, c2Capsule B)
 {
 	c2v n = c2Sub(B.b, B.a);
 	c2v ap = c2Sub(A.p, B.a);
@@ -1417,43 +1422,43 @@ int c2CircletoCapsule(c2Circle A, c2Capsule B)
 	return d2 < r * r;
 }
 
-int c2AABBtoCapsule(c2AABB A, c2Capsule B)
+inline int c2AABBtoCapsule(c2AABB A, c2Capsule B)
 {
 	if (c2GJK(&A, C2_TYPE_AABB, 0, &B, C2_TYPE_CAPSULE, 0, 0, 0, 1, 0, 0)) return 0;
 	return 1;
 }
 
-int c2CapsuletoCapsule(c2Capsule A, c2Capsule B)
+inline int c2CapsuletoCapsule(c2Capsule A, c2Capsule B)
 {
 	if (c2GJK(&A, C2_TYPE_CAPSULE, 0, &B, C2_TYPE_CAPSULE, 0, 0, 0, 1, 0, 0)) return 0;
 	return 1;
 }
 
-int c2CircletoPoly(c2Circle A, const c2Poly* B, const c2x* bx)
+inline int c2CircletoPoly(c2Circle A, const c2Poly* B, const c2x* bx)
 {
 	if (c2GJK(&A, C2_TYPE_CIRCLE, 0, B, C2_TYPE_POLY, bx, 0, 0, 1, 0, 0)) return 0;
 	return 1;
 }
 
-int c2AABBtoPoly(c2AABB A, const c2Poly* B, const c2x* bx)
+inline int c2AABBtoPoly(c2AABB A, const c2Poly* B, const c2x* bx)
 {
 	if (c2GJK(&A, C2_TYPE_AABB, 0, B, C2_TYPE_POLY, bx, 0, 0, 1, 0, 0)) return 0;
 	return 1;
 }
 
-int c2CapsuletoPoly(c2Capsule A, const c2Poly* B, const c2x* bx)
+inline int c2CapsuletoPoly(c2Capsule A, const c2Poly* B, const c2x* bx)
 {
 	if (c2GJK(&A, C2_TYPE_CAPSULE, 0, B, C2_TYPE_POLY, bx, 0, 0, 1, 0, 0)) return 0;
 	return 1;
 }
 
-int c2PolytoPoly(const c2Poly* A, const c2x* ax, const c2Poly* B, const c2x* bx)
+inline int c2PolytoPoly(const c2Poly* A, const c2x* ax, const c2Poly* B, const c2x* bx)
 {
 	if (c2GJK(A, C2_TYPE_POLY, ax, B, C2_TYPE_POLY, bx, 0, 0, 1, 0, 0)) return 0;
 	return 1;
 }
 
-int c2RaytoCircle(c2Ray A, c2Circle B, c2Raycast* out)
+inline int c2RaytoCircle(c2Ray A, c2Circle B, c2Raycast* out)
 {
 	c2v p = B.p;
 	c2v m = c2Sub(A.p, p);
@@ -1490,7 +1495,7 @@ static inline float c2RayToPlane_OneDimensional(float da, float db)
 	}
 }
 
-int c2RaytoAABB(c2Ray A, c2AABB B, c2Raycast* out)
+inline int c2RaytoAABB(c2Ray A, c2AABB B, c2Raycast* out)
 {
 	c2v p0 = A.p;
 	c2v p1 = c2Impact(A, A.t);
@@ -1546,19 +1551,19 @@ int c2RaytoAABB(c2Ray A, c2AABB B, c2Raycast* out)
 			out->t = t0 * A.t;
 			out->n = c2V(-1, 0);
 		}
-		
+
 		else if (t1 >= t0 && t1 >= t2 && t1 >= t3)
 		{
 			out->t = t1 * A.t;
 			out->n = c2V(1, 0);
 		}
-		
+
 		else if (t2 >= t0 && t2 >= t1 && t2 >= t3)
 		{
 			out->t = t2 * A.t;
 			out->n = c2V(0, -1);
 		}
-		
+
 		else
 		{
 			out->t = t3 * A.t;
@@ -1569,7 +1574,7 @@ int c2RaytoAABB(c2Ray A, c2AABB B, c2Raycast* out)
 	} else return 0; // This can still numerically happen.
 }
 
-int c2RaytoCapsule(c2Ray A, c2Capsule B, c2Raycast* out)
+inline int c2RaytoCapsule(c2Ray A, c2Capsule B, c2Raycast* out)
 {
 	c2m M;
 	M.y = c2Norm(c2Sub(B.b, B.a));
@@ -1642,7 +1647,7 @@ int c2RaytoCapsule(c2Ray A, c2Capsule B, c2Raycast* out)
 	return 0;
 }
 
-int c2RaytoPoly(c2Ray A, const c2Poly* B, const c2x* bx_ptr, c2Raycast* out)
+inline int c2RaytoPoly(c2Ray A, const c2Poly* B, const c2x* bx_ptr, c2Raycast* out)
 {
 	c2x bx = bx_ptr ? *bx_ptr : c2xIdentity();
 	c2v p = c2MulxvT(bx, A.p);
@@ -1679,7 +1684,7 @@ int c2RaytoPoly(c2Ray A, const c2Poly* B, const c2x* bx_ptr, c2Raycast* out)
 	return 0;
 }
 
-void c2CircletoCircleManifold(c2Circle A, c2Circle B, c2Manifold* m)
+inline void c2CircletoCircleManifold(c2Circle A, c2Circle B, c2Manifold* m)
 {
 	m->count = 0;
 	c2v d = c2Sub(B.p, A.p);
@@ -1696,7 +1701,7 @@ void c2CircletoCircleManifold(c2Circle A, c2Circle B, c2Manifold* m)
 	}
 }
 
-void c2CircletoAABBManifold(c2Circle A, c2AABB B, c2Manifold* m)
+inline void c2CircletoAABBManifold(c2Circle A, c2AABB B, c2Manifold* m)
 {
 	m->count = 0;
 	c2v L = c2Clampv(A.p, B.min, B.max);
@@ -1753,7 +1758,7 @@ void c2CircletoAABBManifold(c2Circle A, c2AABB B, c2Manifold* m)
 	}
 }
 
-void c2CircletoCapsuleManifold(c2Circle A, c2Capsule B, c2Manifold* m)
+inline void c2CircletoCapsuleManifold(c2Circle A, c2Capsule B, c2Manifold* m)
 {
 	m->count = 0;
 	c2v a, b;
@@ -1772,7 +1777,7 @@ void c2CircletoCapsuleManifold(c2Circle A, c2Capsule B, c2Manifold* m)
 	}
 }
 
-void c2AABBtoAABBManifold(c2AABB A, c2AABB B, c2Manifold* m)
+inline void c2AABBtoAABBManifold(c2AABB A, c2AABB B, c2Manifold* m)
 {
 	m->count = 0;
 	c2v mid_a = c2Mulvs(c2Add(A.min, A.max), 0.5f);
@@ -1829,7 +1834,7 @@ void c2AABBtoAABBManifold(c2AABB A, c2AABB B, c2Manifold* m)
 	m->n = n;
 }
 
-void c2AABBtoCapsuleManifold(c2AABB A, c2Capsule B, c2Manifold* m)
+inline void c2AABBtoCapsuleManifold(c2AABB A, c2Capsule B, c2Manifold* m)
 {
 	m->count = 0;
 	c2Poly p;
@@ -1840,7 +1845,7 @@ void c2AABBtoCapsuleManifold(c2AABB A, c2Capsule B, c2Manifold* m)
 	m->n = c2Neg(m->n);
 }
 
-void c2CapsuletoCapsuleManifold(c2Capsule A, c2Capsule B, c2Manifold* m)
+inline void c2CapsuletoCapsuleManifold(c2Capsule A, c2Capsule B, c2Manifold* m)
 {
 	m->count = 0;
 	c2v a, b;
@@ -1867,7 +1872,7 @@ static C2_INLINE c2h c2PlaneAt(const c2Poly* p, const int i)
 	return h;
 }
 
-void c2CircletoPolyManifold(c2Circle A, const c2Poly* B, const c2x* bx_tr, c2Manifold* m)
+inline void c2CircletoPolyManifold(c2Circle A, const c2Poly* B, const c2x* bx_tr, c2Manifold* m)
 {
 	m->count = 0;
 	c2v a, b;
@@ -1920,7 +1925,7 @@ void c2CircletoPolyManifold(c2Circle A, const c2Poly* B, const c2x* bx_tr, c2Man
 }
 
 // Forms a c2Poly and uses c2PolytoPolyManifold
-void c2AABBtoPolyManifold(c2AABB A, const c2Poly* B, const c2x* bx, c2Manifold* m)
+inline void c2AABBtoPolyManifold(c2AABB A, const c2Poly* B, const c2x* bx, c2Manifold* m)
 {
 	m->count = 0;
 	c2Poly p;
@@ -2040,7 +2045,7 @@ static void c2Incident(c2v* incident, const c2Poly* ip, c2x ix, c2v rn_in_incide
 	incident[1] = c2Mulxv(ix, ip->verts[index + 1 == ip->count ? 0 : index + 1]);
 }
 
-void c2CapsuletoPolyManifold(c2Capsule A, const c2Poly* B, const c2x* bx_ptr, c2Manifold* m)
+inline void c2CapsuletoPolyManifold(c2Capsule A, const c2Poly* B, const c2x* bx_ptr, c2Manifold* m)
 {
 	m->count = 0;
 	c2v a, b;
@@ -2151,7 +2156,7 @@ void c2CapsuletoPolyManifold(c2Capsule A, const c2Poly* B, const c2x* bx_ptr, c2
 	#pragma warning(pop)
 #endif
 
-static float c2CheckFaces(const c2Poly* A, c2x ax, const c2Poly* B, c2x bx, int* face_index)
+static inline float c2CheckFaces(const c2Poly* A, c2x ax, const c2Poly* B, c2x bx, int* face_index)
 {
 	c2x b_in_a = c2MulxxT(ax, bx);
 	c2x a_in_b = c2MulxxT(bx, ax);
@@ -2183,7 +2188,7 @@ static float c2CheckFaces(const c2Poly* A, c2x ax, const c2Poly* B, c2x bx, int*
 	// Find the incident face, which is most anti-normal face
 	// Clip incident face to reference face side planes
 	// Keep all points behind the reference face
-void c2PolytoPolyManifold(const c2Poly* A, const c2x* ax_ptr, const c2Poly* B, const c2x* bx_ptr, c2Manifold* m)
+inline void c2PolytoPolyManifold(const c2Poly* A, const c2x* ax_ptr, const c2Poly* B, const c2x* bx_ptr, c2Manifold* m)
 {
 	m->count = 0;
 	c2x ax = ax_ptr ? *ax_ptr : c2xIdentity();
@@ -2246,20 +2251,20 @@ void c2PolytoPolyManifold(const c2Poly* A, const c2x* ax_ptr, const c2Poly* B, c
 	------------------------------------------------------------------------------
 	ALTERNATIVE B - Public Domain (www.unlicense.org)
 	This is free and unencumbered software released into the public domain.
-	Anyone is free to copy, modify, publish, use, compile, sell, or distribute this 
-	software, either in source code form or as a compiled binary, for any purpose, 
+	Anyone is free to copy, modify, publish, use, compile, sell, or distribute this
+	software, either in source code form or as a compiled binary, for any purpose,
 	commercial or non-commercial, and by any means.
-	In jurisdictions that recognize copyright laws, the author or authors of this 
-	software dedicate any and all copyright interest in the software to the public 
-	domain. We make this dedication for the benefit of the public at large and to 
-	the detriment of our heirs and successors. We intend this dedication to be an 
-	overt act of relinquishment in perpetuity of all present and future rights to 
+	In jurisdictions that recognize copyright laws, the author or authors of this
+	software dedicate any and all copyright interest in the software to the public
+	domain. We make this dedication for the benefit of the public at large and to
+	the detriment of our heirs and successors. We intend this dedication to be an
+	overt act of relinquishment in perpetuity of all present and future rights to
 	this software under copyright law.
-	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
-	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
-	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
-	AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN 
-	ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION 
+	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+	AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+	ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 	WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 	------------------------------------------------------------------------------
 */
