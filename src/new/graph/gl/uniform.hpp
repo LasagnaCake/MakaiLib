@@ -1,5 +1,5 @@
-#ifndef GL_GRAPH_UNIFORM_H
-#define GL_GRAPH_UNIFORM_H
+#ifndef MAKAILIB_GRAPH_UNIFORM_H
+#define MAKAILIB_GRAPH_UNIFORM_H
 
 #include "../../ctl/ctl.hpp"
 
@@ -86,4 +86,4 @@ namespace Makai::Graph {
 	};
 }
 
-#endif // GL_GRAPH_UNIFORM_H
+#endif // MAKAILIB_GRAPH_UNIFORM_H

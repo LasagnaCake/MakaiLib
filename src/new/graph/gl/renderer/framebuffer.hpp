@@ -3,10 +3,9 @@
 
 #include "../texture.hpp"
 #include "../vertex.hpp"
+#include "../color.hpp"
 
 namespace Makai::Graph {
-	using Makai::Graph::Texure2D;
-
 	struct FrameBufferData {
 		uint
 			id		= 0,
@@ -119,7 +118,7 @@ namespace Makai::Graph {
 
 		Material::BufferMaterial material;
 
-		FrameBuffer& render(FrameBufferData const& target) final {
+		virtual FrameBuffer& render(FrameBufferData const& target) final {
 			if (!exists()) return *this;
 			// Set material data
 			material.use(shader);

@@ -8,7 +8,7 @@
 #include <GL/gl.h>
 
 #if (_WIN32 || _WIN64 || __WIN32__ || __WIN64__)
-#include <winuser.h>
+#include <windows.h>
 #define SDL_MAIN_HANDLED
 #endif
 #include <SDL2/SDL.h>
@@ -17,6 +17,7 @@
 
 #define sdlWindow ((SDL_Window*)window)
 
+#include "../file/slf.hpp"
 #include "app.hpp"
 
 void setFrontFace(bool const& clockwise = true) {
@@ -65,8 +66,8 @@ App::App (
 	unsigned int const& width,
 	unsigned int const& height,
 	String const& windowTitle,
-	bool const& fullscreen = false,
-	bool const& useMIDI = false,
+	bool const& fullscreen,
+	bool const& useMIDI,
 	String const& bufferShaderPath,
 	String const& mainShaderPath
 ) {
@@ -87,7 +88,6 @@ App::App (
 	// Initialize SDL
 	DEBUGLN("Starting SDL...");
 	if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_AUDIO) != 0) {
-		ERR_LOG(String("Unable to start SDL! (") + SDL_GetError() + ")");
 		throw Error::FailedAction(
 			"Unable to start SDL!",
 			__FILE__,
@@ -100,9 +100,9 @@ App::App (
 	// Initialize YSE
 	DEBUGLN("Starting Audio System...");
 	{
+		using Makai::Audio::Formats;
 		using enum Makai::Audio::Format;
-
-		Makai::audio::open(List<Formats>{AF_MP3, AF_OGG, (useMIDI ? AF_MIDI : AF_NONE)}, 2, 16);
+		Makai::Audio::open(Formats{AF_MP3, AF_OGG, (useMIDI ? AF_MIDI : AF_NONE)}, 2, 16);
 	}
 	DEBUGLN("Started!");
 	// Create window and make active
@@ -141,8 +141,6 @@ App::App (
 	// Try and initialize GLEW
 	GLenum glewStatus = glewInit();
 	if (glewStatus != GLEW_OK) {
-		ERR_LOG("Error: glewInit: ");
-		ERR_LOG(glewGetErrorString(glewStatus));
 		throw Error::FailedAction(
 			"Failed to initialize GLEW!",
 			__FILE__,
@@ -152,7 +150,6 @@ App::App (
 		);
 	}
 	if (!GLEW_VERSION_4_2) {
-		ERR_LOG("Your computer does not support OpenGL 4.2+!");
 		throw Error::Other("Your computer does not support OpenGL 4.2+!");
 	}
 	DEBUGLN("Started!");
@@ -168,22 +165,22 @@ App::App (
 	setGLFlag(GL_DEPTH_TEST);
 	// Setup camera
 	DEBUGLN("Setting starting camera...");
-	Scene::camera.aspect = Vector2(width, height);
-	Scene::camera.fov = Math::radians(45.0f);
+	Graph::Global::camera.aspect	= Vector2(width, height);
+	Graph::Global::camera.fov		= Math::radians(45.0f);
 	DEBUGLN("creating default framebuffer...");
 	// Create framebuffer
 	framebuffer.create(width, height);
 	// Create layer buffer
 	layerbuffer.create(width, height);
-	enableMainBuffer();
+	framebuffer();
 	// Create buffer shaders
 	DEBUGLN("Creating shaders...");
-	SLF::SLFData data = SLF::parseFile(bufferShaderPath);
+	SLF::SLFData data = SLF::loadFile(bufferShaderPath);
 	framebuffer.shader.create(data);
 	layerbuffer.shader = framebuffer.shader;
 	// Create main shader
 	Makai::Graph::defaultShader.destroy();
-	Makai::Graph::defaultShader.create(SLF::parseFile(mainShaderPath));
+	Makai::Graph::defaultShader.create(SLF::loadFile(mainShaderPath));
 	DEBUGLN(Entities::_ROOT ? "Root Exists!" : "Root does not exist!");
 	if (!Entities::_ROOT) {
 		DEBUGLN("Initializing root tree...");
@@ -395,11 +392,11 @@ void App::setGLValue(usize const& flag, int const& value, bool const& state) {
 	else glDisablei(flag, value);
 }
 
-constexpr Graph::FrameBuffer& App::getFrameBuffer() {
+Graph::FrameBuffer& App::getFrameBuffer() {
 	return framebuffer;
 }
 
-constexpr Graph::FrameBuffer& App::getLayerBuffer() {
+Graph::FrameBuffer& App::getLayerBuffer() {
 	return layerbuffer;
 }
 
@@ -451,7 +448,7 @@ void App::render() {
 	clearColorBuffer(color);
 	glClear(GL_DEPTH_BUFFER_BIT);
 	// Enable depth testing
-	setFlag(GL_DEPTH_TEST, true);
+	setGLFlag(GL_DEPTH_TEST, true);
 	// Enable frame buffer
 	framebuffer();
 	// Call rendering start function
@@ -516,16 +513,16 @@ void App::render() {
 	// Call rendering end function
 	onDrawEnd();
 	// Disable depth testing
-	setFlag(GL_DEPTH_TEST, false);
+	setGLFlag(GL_DEPTH_TEST, false);
 	// Display window
 	SDL_GL_SwapWindow(sdlWindow);
 }
 
 void App::copyScreenToQueued() {
 	if (!screenQueue.empty()) {
-		auto& screen = *framebuffer.toFrameBufferData().screen;
+		auto screen = framebuffer.toFrameBufferData().screen;
 		for (Graph::Texture2D target: screenQueue)
-			target->make(screen);
+			target.make(screen);
 		screenQueue.clear();
 	}
 }

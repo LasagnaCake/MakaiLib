@@ -11,14 +11,14 @@ using namespace Makai;
 int Popup::showDialog(
 	String const& title,
 	String const& text,
-	StringList const& options = Option::OK,
-	PopupType const& type = PopupType::PT_INFORMATION
+	StringList const& options,
+	PopupType const& type
 ) {
 	size_t buttonCount = options.size();
-	SDL_MessageBoxButtonData buttons[options.size()];
+	SDL_MessageBoxButtonData* buttons = new SDL_MessageBoxButtonData[options.size()];
 	size_t idx = buttonCount - 1;
-	for EACH(b, buttons) {
-		b = SDL_MessageBoxButtonData {
+	for (usize i = 0; i < options.size(); ++i) {
+		buttons[i] = SDL_MessageBoxButtonData {
 			0,
 			idx,
 			options[idx].c_str()
@@ -32,17 +32,16 @@ int Popup::showDialog(
 		case Popup::PopupType::PT_WARN:		flags = SDL_MESSAGEBOX_WARNING;		break;
 	}
 	const SDL_MessageBoxData messageBoxData = {
-		flags, /* .flags */
-		NULL, /* .window */
-		title.c_str(), /* .title */
-		text.c_str(), /* .message */
-		SDL_arraysize(buttons), /* .numbuttons */
-		buttons, /* .buttons */
+		flags,					/* .flags */
+		NULL,					/* .window */
+		title.c_str(),			/* .title */
+		text.c_str(),			/* .message */
+		(int)options.size(),	/* .numbuttons */
+		buttons,				/* .buttons */
 		NULL
 	};
 	int buttonid;
 	if (SDL_ShowMessageBox(&messageBoxData, &buttonid) < 0) {
-		ERR_LOG("Could not show popup!");
 		throw Error::FailedAction(
 			"Failed to show popup!",
 			__FILE__,
@@ -51,12 +50,13 @@ int Popup::showDialog(
 			SDL_GetError()
 		);
 	}
+	delete[] buttons;
 	return buttonid;
 }
 
 void Popup::showError(String const& what) {
 	//PlaySound("SystemExclamation", NULL, SND_ASYNC);
-	Popup::dialogBox(
+	Popup::showDialog(
 		"ERROR!",
 		what,
 		Popup::Option::OK,

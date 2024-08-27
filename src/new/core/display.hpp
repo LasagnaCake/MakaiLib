@@ -1,6 +1,8 @@
 #ifndef MAKAILIB_CORE_DISPLAY_H
 #define MAKAILIB_CORE_DISPLAY_H
 
+#include "../ctl/ctl.hpp"
+
 namespace Makai {
 	/// A position on the screen.
 	struct ScreenPosition {
@@ -11,4 +13,4 @@ namespace Makai {
 	Vector2 getDisplaySize(usize const& display = 0);
 }
 
-#endif // MAKAILIB_CORE_DEVICE_H
+#endif // MAKAILIB_CORE_DISPLAY_H

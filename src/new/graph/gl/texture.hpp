@@ -9,14 +9,6 @@ namespace Makai::Graph {
 	public:
 		using Image2DInstance = Instance<Image2D>;
 
-		using
-			Image2D::ImageFileType,
-			Image2D::ComponentType,
-			Image2D::ImageFormat,
-			Image2D::FilterMode,
-			Image::ImageTarget
-		;
-
 		enum class WrapMode {
 			WM_CLAMP,
 			WM_REPEAT,
@@ -31,18 +23,18 @@ namespace Makai::Graph {
 		Texture2D(
 			uint			width,
 			uint			height,
-			ComponentType	type			= ComponentType::CT_UBYTE,
-			ImageFormat		format			= ImageFormat::IF_RGBA,
-			FilterMode		magFilter		= FilterMode::FM_SMOOTH,
-			FilterMode		minFilter		= FilterMode::FM_SMS,
-			uchar*			data			= NULL,
-			uint			internalFormat	= 0,
+			Image2D::ComponentType	type		= Image2D::ComponentType::CT_UBYTE,
+			Image2D::ImageFormat	format		= Image2D::ImageFormat::IF_RGBA,
+			Image2D::FilterMode		magFilter	= Image2D::FilterMode::FM_SMOOTH,
+			Image2D::FilterMode		minFilter	= Image2D::FilterMode::FM_SMS,
+			uchar*			data				= NULL,
+			uint			internalFormat		= 0
 		);
 
 		Texture2D(
 			String const& path,
-			FilterMode magFilter = FilterMode::FM_SMOOTH,
-			FilterMode minFilter = FilterMode::FM_SMS
+			Image2D::FilterMode magFilter = Image2D::FilterMode::FM_SMOOTH,
+			Image2D::FilterMode minFilter = Image2D::FilterMode::FM_SMS
 		);
 
 		Texture2D(
@@ -69,18 +61,18 @@ namespace Makai::Graph {
 		Texture2D& create(
 			uint			width,
 			uint			height,
-			ComponentType	type			= ComponentType::CT_UBYTE,
-			ImageFormat		format			= ImageFormat::IF_RGBA,
-			FilterMode		magFilter		= FilterMode::FM_SMOOTH,
-			FilterMode		minFilter		= FilterMode::FM_SMS,
-			uchar*			data			= NULL,
-			uint			internalFormat	= 0,
+			Image2D::ComponentType	type		= Image2D::ComponentType::CT_UBYTE,
+			Image2D::ImageFormat	format		= Image2D::ImageFormat::IF_RGBA,
+			Image2D::FilterMode		magFilter	= Image2D::FilterMode::FM_SMOOTH,
+			Image2D::FilterMode		minFilter	= Image2D::FilterMode::FM_SMS,
+			uchar*			data				= NULL,
+			uint			internalFormat		= 0
 		);
 
 		Texture2D& create(
 			String path,
-			FilterMode magFilter = FilterMode::FM_SMOOTH,
-			FilterMode minFilter = FilterMode::FM_SMS
+			Image2D::FilterMode magFilter = Image2D::FilterMode::FM_SMOOTH,
+			Image2D::FilterMode minFilter = Image2D::FilterMode::FM_SMS
 		);
 
 		Texture2D& create(
@@ -107,18 +99,18 @@ namespace Makai::Graph {
 		Texture2D& make(
 			uint			width,
 			uint			height,
-			ComponentType	type			= ComponentType::CT_UBYTE,
-			ImageFormat		format			= ImageFormat::IF_RGBA,
-			FilterMode		magFilter		= FilterMode::FM_SMOOTH,
-			FilterMode		minFilter		= FilterMode::FM_SMS,
-			uchar*			data			= NULL,
-			uint			internalFormat	= 0,
+			Image2D::ComponentType	type		= Image2D::ComponentType::CT_UBYTE,
+			Image2D::ImageFormat	format		= Image2D::ImageFormat::IF_RGBA,
+			Image2D::FilterMode		magFilter	= Image2D::FilterMode::FM_SMOOTH,
+			Image2D::FilterMode		minFilter	= Image2D::FilterMode::FM_SMS,
+			uchar*			data				= NULL,
+			uint			internalFormat		= 0
 		);
 
 		Texture2D& make(
 			String path,
-			FilterMode magFilter = FilterMode::FM_SMOOTH,
-			FilterMode minFilter = FilterMode::FM_SMS
+			Image2D::FilterMode magFilter = Image2D::FilterMode::FM_SMOOTH,
+			Image2D::FilterMode minFilter = Image2D::FilterMode::FM_SMS
 		);
 
 		Texture2D& make(
@@ -168,8 +160,8 @@ namespace Makai::Graph {
 		Texture2D& setWrapMode(WrapMode const& mode = WrapMode::WM_REPEAT);
 
 		Texture2D& setFilterMode(
-			FilterMode magFilter = FilterMode::FM_SMOOTH,
-			FilterMode minFilter = FilterMode::FM_SMS
+			Image2D::FilterMode magFilter = Image2D::FilterMode::FM_SMOOTH,
+			Image2D::FilterMode minFilter = Image2D::FilterMode::FM_SMS
 		);
 
 		Image2D::FilterMode minFilter() const;
@@ -190,25 +182,25 @@ namespace Makai::Graph {
 		Image2D::ImageData getData() const;
 
 		Texture2D const& saveToFile(
-			string const& path,
+			String const& path,
 			uint8 const& quality,
-			ImageFileType const& type = ImageFileType::IFT_AUTO_DETECT
+			Image2D::ImageFileType const& type = Image2D::ImageFileType::IFT_AUTO_DETECT
 		) const;
 
 		Texture2D& saveToFile(
 			String const& path,
 			uint8 const& quality,
-			ImageFileType const& type = ImageFileType::IFT_AUTO_DETECT
+			Image2D::ImageFileType const& type = Image2D::ImageFileType::IFT_AUTO_DETECT
 		);
 
 		Texture2D const& saveToFile(
 			String const& path,
-			ImageFileType const& type = ImageFileType::IFT_AUTO_DETECT
+			Image2D::ImageFileType const& type = Image2D::ImageFileType::IFT_AUTO_DETECT
 		) const;
 
 		Texture2D& saveToFile(
 			String const& path,
-			ImageFileType const& type = ImageFileType::IFT_AUTO_DETECT
+			Image2D::ImageFileType const& type = Image2D::ImageFileType::IFT_AUTO_DETECT
 		);
 
 		bool exists() const;

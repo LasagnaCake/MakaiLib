@@ -16,20 +16,20 @@ namespace Group {
 		typedef T DataType;
 
 		/// Gets a group of a given ID.
-		inline vector<T>& getGroup(size_t group) {
+		inline vector<T>& getGroup(size_t const& group) {
 			if (!g.contains(group))
 				g[group] = vector<T>();
 			return g[group];
 		}
 
-		vector<T>& operator[](size_t group) {
+		vector<T>& operator[](size_t const& group) {
 			if (!g.contains(group))
 				g[group] = vector<T>();
 			return g[group];
 		}
 
 		/// Get the groups an object belongs to (if any).
-		vector<size_t> getGroups(T e) {
+		vector<size_t> getGroups(T const& e) {
 			vector<size_t> res;
 			try {
 				for (auto const& group : g)
@@ -43,19 +43,19 @@ namespace Group {
 		}
 
 		/// Adds an object to a group. if nonexistent, create group.
-		inline void addObject(T e, size_t group) {
+		inline void addObject(T const& e, size_t const& group) {
 			if (!g.contains(group))
 				g[group] = vector<T>();
 			g[group].push_back(e);
 		}
 
 		/// Empties/creates a given group.
-		inline void invokeGroup(size_t group) {
+		inline void invokeGroup(size_t const& group) {
 			g[group] = vector<T>();
 		}
 
 		/// Removes an object from a given group (if it is in said group).
-		void removeFromGroup(T e, size_t group) {
+		void removeFromGroup(T const& e, size_t const& group) {
 			// If group does not exist, return
 			if (&g[group] == nullptr) return;
 			// Get group
@@ -65,7 +65,7 @@ namespace Group {
 		}
 
 		/// Removes an object from all groups it is in.
-		void removeFromAll(T e) {
+		void removeFromAll(T const& e) {
 			vector<size_t> groups = getGroups(e);
 			for (auto grp: groups) {
 				removeFromGroup(e, grp);
@@ -82,7 +82,7 @@ namespace Group {
 		}
 
 		/// Checks if a group has a given entity.
-		bool isInGroup(T e, size_t group) {
+		bool isInGroup(T const& e, size_t const& group) {
 			for (auto i : g[group])
 				if (e == i)
 					return true;

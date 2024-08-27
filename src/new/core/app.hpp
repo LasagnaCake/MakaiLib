@@ -135,7 +135,7 @@ namespace Makai {
 		void pushLayerToFrame();
 
 		/// The window's clear color.
-		Vector4 color = Color::BLACK;
+		Vector4 color = Graph::Color::BLACK;
 
 		/// The program's input manager.
 		Input::Manager input;

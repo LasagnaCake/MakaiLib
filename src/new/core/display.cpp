@@ -6,7 +6,7 @@
 
 #include "display.hpp"
 
-Vector2 Makai::getDisplaySize(usize const& display = 0) {
+Vector2 Makai::getDisplaySize(usize const& display) {
 	SDL_Rect bounds;
 	DEBUGLN("Starting SDL...");
 	if (!SDL_WasInit(SDL_INIT_VIDEO))

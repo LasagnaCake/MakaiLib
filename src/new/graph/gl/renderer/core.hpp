@@ -18,7 +18,7 @@ namespace Makai::Graph {
 		}
 
 	private:
-		inline static Group::Group<Renderer::Callback> layers;
+		inline static Group::Group<Renderer::Callback*> layers;
 		friend class Drawable;
 	};
 
