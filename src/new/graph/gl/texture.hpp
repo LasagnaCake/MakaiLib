@@ -143,8 +143,8 @@ namespace Makai::Graph {
 		Texture2D& operator=(Texture2D const& other);
 		Texture2D& operator=(Texture2D&& other);
 
-		inline bool operator==(Texture2D const& other) const;
-		inline Helper::PartialOrder operator<=>(Texture2D const& other) const;
+		bool operator==(Texture2D const& other) const;
+		Helper::PartialOrder operator<=>(Texture2D const& other) const;
 
 		Texture2D& copyFrom(
 			Texture2D const& other,
@@ -172,11 +172,11 @@ namespace Makai::Graph {
 			FilterMode minFilter = FilterMode::FM_SMS
 		);
 
-		inline Image2D::FilterMode minFilter() const;
+		Image2D::FilterMode minFilter() const;
 
-		inline Image2D::FilterMode magFilter() const;
+		Image2D::FilterMode magFilter() const;
 
-		inline Image2D::Attributes attributes() const;
+		Image2D::Attributes attributes() const;
 
 		Texture2D& enable(uchar const& texture = 0);
 
@@ -185,7 +185,7 @@ namespace Makai::Graph {
 		Texture2D&			operator()(uchar const& texture = 0);
 		Texture2D const&	operator()(uchar const& texture = 0) const;
 
-		inline uint getID() const;
+		uint getID() const;
 
 		Image2D::ImageData getData() const;
 
@@ -213,7 +213,7 @@ namespace Makai::Graph {
 
 		bool exists() const;
 
-		inline operator bool() const;
+		operator bool() const;
 
 	private:
 		Image2DInstance image;

@@ -27,10 +27,10 @@ namespace Makai {
 		virtual ~App();
 
 		/// Returns whether the user pressed the close button.
-		inline static bool shouldClose();
+		static bool shouldClose();
 
 		/// Sets the window's title.
-		inline void setWindowTitle(String const& title);
+		void setWindowTitle(String const& title);
 
 		/// Sets the program fullscreen.
 		void setFullscreen(bool const& state = false);
@@ -42,7 +42,7 @@ namespace Makai {
 		void close();
 
 		/// Returns whether the program is currently running.
-		inline bool	running();
+		bool running();
 
 		/// Sets the program's window size.
 		void setWindowSize(Vector2 const& size);
@@ -59,19 +59,19 @@ namespace Makai {
 
 		/// Renders the reserved layer.
 		[[deprecated]]
-		inline void renderReservedLayer();
+		void renderReservedLayer();
 
 		/// Sets an OpenGL flag.
-		inline static void setGLFlag(usize const& flag, bool const& state = true);
+		static void setGLFlag(usize const& flag, bool const& state = true);
 		/// Sets an OpenGL value.
-		inline static void setGLValue(usize const& flag, int const& value, bool const& state = true);
+		static void setGLValue(usize const& flag, int const& value, bool const& state = true);
 
-		constexpr inline Graph::FrameBuffer& getFrameBuffer();
-		constexpr inline Graph::FrameBuffer& getLayerBuffer();
+		Graph::FrameBuffer& getFrameBuffer();
+		Graph::FrameBuffer& getLayerBuffer();
 
-		inline Vector2 getWindowSize();
+		Vector2 getWindowSize();
 
-		inline Vector2 getWindowScale();
+		Vector2 getWindowScale();
 
 		/// Gets called when the program is opened.
 		virtual void onOpen() {}

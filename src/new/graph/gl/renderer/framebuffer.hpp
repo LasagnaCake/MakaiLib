@@ -44,7 +44,7 @@ namespace Makai::Graph {
 
 			virtual DrawBuffer& disable() const;
 
-			inline bool exists() const;
+			bool exists() const;
 
 		protected:
 			inline uint getWidth() const;

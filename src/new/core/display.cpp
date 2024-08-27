@@ -11,12 +11,17 @@ Vector2 Makai::getDisplaySize(usize const& display = 0) {
 	DEBUGLN("Starting SDL...");
 	if (!SDL_WasInit(SDL_INIT_VIDEO))
 		if (SDL_Init(SDL_INIT_VIDEO) != 0) {
-			ERR_LOG(string("Unable to start SDL! (") + SDL_GetError() + ")");
-			throw Error::FailedAction(string("SDL (") + SDL_GetError() + ")");
+			throw Error::FailedAction(
+				"Unable to start SDL!",
+				__FILE__,
+				toString(__LINE__),
+				"getDisplaySize",
+				String(SDL_GetError())
+			);
 		}
 	if (SDL_GetDisplayBounds(display, &bounds))
 		throw Error::FailedAction(
-			"Couldn't get display bounds!\n\n",
+			"Couldn't get display bounds!",
 			__FILE__,
 			toString(__LINE__),
 			"getDisplaySize",

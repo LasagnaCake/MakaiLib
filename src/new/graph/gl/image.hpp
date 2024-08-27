@@ -13,31 +13,31 @@ namespace Makai::Graph {
 
 		~Image() {destroy();}
 
-		inline Image const& bind(ImageTarget const& target = ImageTarget::IT_TEXTURE_2D) const;
+		Image const& bind(ImageTarget const& target = ImageTarget::IT_TEXTURE_2D) const;
 
-		inline Image& destroy();
+		Image& destroy();
 
-		inline Image& create();
+		Image& create();
 
 		Image& make();
 
-		inline static void unbind(ImageTarget const& target = ImageTarget::IT_TEXTURE_2D);
+		static void unbind(ImageTarget const& target = ImageTarget::IT_TEXTURE_2D);
 
-		inline Image& use(uchar const& texture = 0);
+		Image& use(uchar const& texture = 0);
 
-		inline Image const& use(uchar const& texture = 0) const;
+		Image const& use(uchar const& texture = 0) const;
 
-		inline Image&		operator()(unsigned char texture = 0);
-		inline Image const&	operator()(unsigned char texture = 0) const;
+		Image&			operator()(unsigned char texture = 0);
+		Image const&	operator()(unsigned char texture = 0) const;
 
-		inline bool operator==(Image const& other) const;
-		inline Helper::PartialOrder operator<=>(Image const& other) const;
+		bool operator==(Image const& other) const;
+		Helper::PartialOrder operator<=>(Image const& other) const;
 
-		inline operator unsigned int() const;
-		inline unsigned int getID() const;
+		operator unsigned int() const;
+		unsigned int getID() const;
 
-		inline bool exists() const;
-		inline operator bool() const;
+		bool exists() const;
+		operator bool() const;
 
 	private:
 		unsigned int id = 0;
@@ -123,7 +123,7 @@ namespace Makai::Graph {
 			uint			internalFormat	= 0
 		);
 
-		inline Attributes getAttributes();
+		Attributes getAttributes();
 
 		ImageData getData() const;
 

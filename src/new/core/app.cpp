@@ -19,11 +19,11 @@
 
 #include "app.hpp"
 
-inline void setFrontFace(bool const& clockwise = true) {
+void setFrontFace(bool const& clockwise = true) {
 	glFrontFace(clockwise ? GL_CW : GL_CCW);
 }
 
-inline void clearColorBuffer(Vector4 const& color) {
+void clearColorBuffer(Vector4 const& color) {
 	glClearColor(color.r, color.g, color.b, color.a);
 	glClear(GL_COLOR_BUFFER_BIT);
 }
@@ -48,7 +48,7 @@ void GLAPIENTRY glAPIMessageCallback(
 	);
 }
 
-inline void setGLAttribute(SDL_GLattr const& a, int const& v) {
+void setGLAttribute(SDL_GLattr const& a, int const& v) {
 	if (SDL_GL_SetAttribute(a, v))
 		throw Error::FailedAction(
 			"Failed to set attribute!",
@@ -62,13 +62,13 @@ inline void setGLAttribute(SDL_GLattr const& a, int const& v) {
 App* mainApp = nullptr;
 
 App::App (
-	unsigned int width,
-	unsigned int height,
-	String windowTitle,
-	bool fullscreen = false,
-	bool useMIDI = false,
-	String bufferShaderPath,
-	String mainShaderPath
+	unsigned int const& width,
+	unsigned int const& height,
+	String const& windowTitle,
+	bool const& fullscreen = false,
+	bool const& useMIDI = false,
+	String const& bufferShaderPath,
+	String const& mainShaderPath
 ) {
 	// If there is another app open, throw error
 	if (mainApp)
@@ -329,11 +329,11 @@ void App::close() {
 	shouldRun = false;
 }
 
-inline bool	App::running() {
+bool App::running() {
 	return (shouldRun);
 }
 
-inline void App::setWindowSize(Vector2 const& size) {}
+void App::setWindowSize(Vector2 const& size) {}
 
 App* getOpenApp() {
 	return mainApp;
@@ -355,7 +355,7 @@ size_t App::getFrameRate() {
 	return frameRate;
 }
 
-inline void App::renderReservedLayer() {
+void App::renderReservedLayer() {
 	clearColorBuffer(color);
 	glClear(GL_DEPTH_BUFFER_BIT);
 	//framebuffer().clearBuffers();
@@ -376,7 +376,7 @@ inline void App::renderReservedLayer() {
 	// Call onLayerDrawBegin function
 	onPostReservedLayerClear();
 	// Render layer
-	Graph::renderLayer(NumberLimit<usize>::HIGHEST);
+	Graph::Renderer::renderLayer(NumberLimit<usize>::HIGHEST);
 	// Call onPreLayerDraw function
 	onPreReservedLayerDraw();
 	// Render layer buffer
@@ -385,29 +385,29 @@ inline void App::renderReservedLayer() {
 	onReservedLayerDrawEnd();
 }
 
-inline static void App::setGLFlag(usize const& flag, bool const& state) {
+void App::setGLFlag(usize const& flag, bool const& state) {
 	if (state) glEnable(flag);
 	else glDisable(flag);
 }
 
-inline static void App::setGLValue(usize const& flag, int const& value, bool const& state) {
+void App::setGLValue(usize const& flag, int const& value, bool const& state) {
 	if (state) glEnablei(flag, value);
 	else glDisablei(flag, value);
 }
 
-constexpr inline Graph::FrameBuffer& App::getFrameBuffer() {
+constexpr Graph::FrameBuffer& App::getFrameBuffer() {
 	return framebuffer;
 }
 
-constexpr inline Graph::FrameBuffer& App::getLayerBuffer() {
+constexpr Graph::FrameBuffer& App::getLayerBuffer() {
 	return layerbuffer;
 }
 
-inline Vector2 App::getWindowSize() {
+Vector2 App::getWindowSize() {
 	return Vector2(width, height);
 }
 
-inline Vector2 App::getWindowScale() {
+Vector2 App::getWindowScale() {
 	Vector2 ws = getWindowSize();
 	return Vector2(ws.x / ws.y, 1);
 }
@@ -432,7 +432,7 @@ void App::terminate() {
 	Entities::_ROOT->destroyChildren();
 	// Close YSE
 	DEBUGLN("Closing sound system...");
-	Makai::audio::close();
+	Makai::Audio::close();
 	DEBUGLN("Sound system closed!");
 	// Destroy buffers
 	DEBUGLN("Destroying frame buffers...");
