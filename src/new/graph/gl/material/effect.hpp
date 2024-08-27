@@ -227,7 +227,7 @@ namespace Makai::Graph::Material {
 		};
 
 		/// SRC = Pixel Color, DST = Noise
-		struct NoiseBlendMode: BlendSetting {};
+		struct NoiseBlendMode: EffectBlendSetting {};
 
 		struct Noise: Toggleable, Variable, Transformable2D {
 			float			seed	= 1;

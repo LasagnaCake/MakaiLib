@@ -530,7 +530,7 @@ void App::copyScreenToQueued() {
 	}
 }
 
-void App::shouldClose() {
+bool App::shouldClose() {
 	SDL_Event ev;
 	SDL_PollEvent(&ev);
 	return ev.type == SDL_QUIT;
