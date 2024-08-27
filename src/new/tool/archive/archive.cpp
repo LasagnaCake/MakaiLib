@@ -152,11 +152,11 @@ BinaryData cbcDecrypt(
 	return cbcTransform<typename CBC_Mode<T>::Decryption>(data, password, block);
 }
 
-BinaryData encrypt(
+BinaryData Arch::encrypt(
 	BinaryData const&		data,
-	String const&			password	= "",
-	EncryptionMethod const&	method		= EncryptionMethod::AEM_AES256,
-	uint8* const&			block		= nullptr
+	String const&			password,
+	EncryptionMethod const&	method,
+	uint8* const&			block
 ) {
 	switch (method) {
 		default: throw Error::InvalidValue("Invalid encryption method!");
@@ -166,11 +166,11 @@ BinaryData encrypt(
 	return data;
 }
 
-BinaryData decrypt(
+BinaryData Arch::decrypt(
 	BinaryData const&		data,
-	String const&			password	= "",
-	EncryptionMethod const&	method		= EncryptionMethod::AEM_AES256,
-	uint8* const&			block		= nullptr
+	String const&			password,
+	EncryptionMethod const&	method,
+	uint8* const&			block
 ) {
 	switch (method) {
 		default: throw Error::InvalidValue("Invalid decryption method!");
@@ -180,18 +180,18 @@ BinaryData decrypt(
 	return data;
 }
 
-BinaryData compress(
+BinaryData Arch::compress(
 	BinaryData	const&			data,
-	CompressionMethod const&	method	= CompressionMethod::ACM_ZIP,
-	uint8 const&				level	= 9
+	CompressionMethod const&	method,
+	uint8 const&				level
 ) {
 	return flate<Deflator>(data, method, level);
 }
 
-BinaryData decompress(
+BinaryData Arch::decompress(
 	BinaryData	const&			data,
-	CompressionMethod const&	method	= CompressionMethod::ACM_ZIP,
-	uint8 const&				level	= 9
+	CompressionMethod const&	method,
+	uint8 const&				level
 ) {
 	return flate<Inflator>(data, method, level);
 }
@@ -450,6 +450,8 @@ void Arch::pack(
 }
 
 Arch::FileArchive::FileArchive(String const& path, String const& password) {open(path, password);}
+
+Arch::FileArchive::~FileArchive() {close();}
 
 FileArchive& Arch::FileArchive::open(String const& path, String const& password) try {
 	if (streamOpen) return *this;

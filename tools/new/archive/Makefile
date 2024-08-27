@@ -3,26 +3,30 @@ CXX ?= g++
 
 ROOT	:= ../../..
 
-COMPILER_CONFIG	:= -fexpensive-optimizations -m64 -std=gnu++20 -fcoroutines -fms-extensions -DENABLE_DEBUG_OUTPUT_ -DNDEBUG -static
-LINKER_CONFIG	:= -static-libstdc++ -static-libgcc -static -m64 -fms-extensions -s
+LEAN := -static -s
 
-OPTIMIZATIONS	:= -fopenmp -openmp -ftree-parallelize-loops=128 -funswitch-loops -fpredictive-commoning -fgcse-after-reload -ftree-vectorize
+COMPILER_CONFIG	:= -fexpensive-optimizations -m64 -std=gnu++20 -fcoroutines -fms-extensions
+LINKER_CONFIG	:= -static-libstdc++ -static-libgcc -m64 -fms-extensions
+
+OPTIMIZATIONS	:= -fopenmp -openmp -ftree-parallelize-loops=128 -funswitch-loops -fpredictive-commoning -fgcse-after-reload -ftree-vectorize $(LEAN)
 
 WINGARBAGE	:= -lole32 -loleaut32 -limm32 -lwinmm -lversion -lpowrprof -lcomdlg32 -lsetupapi -lgdi32
 
 INCLUDES	:= -I$(ROOT)/lib/cryptopp/include -I$(ROOT)/lib/cppcodec-0.2 -I$(ROOT)/src/new/tool/archive
 LIBRARIES	:= $(WINGARBAGE) $(ROOT)/lib/cryptopp/lib/libcryptopp.a -lopengl32 -lgomp
 
-DEBUGCOMPCFG	:= $(COMPILER_CONFIG) -Wall -Wpedantic -pg -Og -ggdb3 -fno-omit-frame-pointer
-DEBUGLINKCFG	:= $(LINKER_CONFIG) -pg -Og $(LIBRARIES)
+DEBUGMODE := -DENABLE_DEBUG_OUTPUT_ -D_DEBUG_OUTPUT_ -DNDEBUG
+DEBUGCOMPCFG	:= $(COMPILER_CONFIG) -Wall -Wpedantic -Og -ggdb3 -fno-omit-frame-pointer $(DEBUGMODE)
+DEBUGLINKCFG	:= $(LINKER_CONFIG) -Og $(LIBRARIES) -lgcc -lstdc++
 
-COMPCFG	:= $(COMPILER_CONFIG) -O3 $(OPTIMIZATIONS) -D_DEBUG_OUTPUT_
-LINKCFG	:= $(LINKER_CONFIG) -s -O3 $(LIBRARIES)
+COMPCFG	:= $(COMPILER_CONFIG) -O3 $(OPTIMIZATIONS) $(DEBUGMODE)
+LINKCFG	:= $(LINKER_CONFIG) -s -O3 $(LIBRARIES) $(LEAN)
 
 COMPILER	:= @$(CXX) $(INCLUDES)
 LINKER		:= @$(CXX)
 
-EXTRAOBJS := $(ROOT)/src/new/file/json.o $(ROOT)/src/new/tool/archive/archive.o
+DEBUGEXTRAOBJS := $(ROOT)/src/new/tool/archive/archive_debug.o $(ROOT)/src/new/file/json_debug.o
+EXTRAOBJS := $(ROOT)/src/new/tool/archive/archive.o $(ROOT)/src/new/file/json.o
 
 LIBNAME	:= archive
 
@@ -48,9 +52,9 @@ debug:
 	$(COMPILER) $(DEBUGCOMPCFG) -c arcunpack.cpp -o arcunpack_debug.o
 	$(COMPILER) $(DEBUGCOMPCFG) -c arcgen.cpp -o arcgen_debug.o
 
-	$(LINKER) -o arcpack_debug.exe $(EXTRAOBJS) arcpack_debug.o $(LINKCFG)
-	$(LINKER) -o arcunpack_debug.exe $(EXTRAOBJS) arcunpack_debug.o $(LINKCFG)
-	$(LINKER) -o arcgen_debug.exe $(EXTRAOBJS) arcgen_debug.o $(LINKCFG)
+	$(LINKER) -o arcpack_debug.exe arcpack_debug.o $(DEBUGEXTRAOBJS) $(LINKCFG)
+	$(LINKER) -o arcunpack_debug.exe arcunpack_debug.o $(DEBUGEXTRAOBJS) $(LINKCFG)
+	$(LINKER) -o arcgen_debug.exe arcgen_debug.o $(DEBUGEXTRAOBJS) $(LINKCFG)
 
 	@echo "Done!"
 	
@@ -71,7 +75,7 @@ release:
 
 	$(LINKER) -o arcpack.exe $(EXTRAOBJS) arcpack.o $(LINKCFG)
 	$(LINKER) -o arcunpack.exe $(EXTRAOBJS) arcunpack.o $(LINKCFG)
-	$(LINKER) -o arcgen.exe $(EXTRAOBJS) arcgen.o $(LINKCFG)
+	$(LINKER) -o arcgen.exe $(EXTRAOBJS) arcgen.o  $(LINKCFG)
 
 	@echo "Done!"
 	

@@ -3,10 +3,14 @@ CXX ?= g++
 
 LEAN := -static -s
 
+ROOT	:= ../../..
+
 COMPILER_CONFIG	:= -fexpensive-optimizations -m64 -std=gnu++20 -fconcepts -fcoroutines -fms-extensions
 LINKER_CONFIG	:= -static-libstdc++ -static-libgcc -m64 -fms-extensions
 
 OPTIMIZATIONS	:= -fopenmp -openmp -ftree-parallelize-loops=128 -funswitch-loops -fpredictive-commoning -fgcse-after-reload -ftree-vectorize $(LEAN)
+
+INCLUDES := -I$(ROOT)/lib/cppcodec-0.2
 
 DEBUGMODE := -DENABLE_DEBUG_OUTPUT_ -D_DEBUG_OUTPUT_ -DNDEBUG
 DEBUGCOMPCFG	:= $(COMPILER_CONFIG) -Wall -Wpedantic -Og -ggdb3 -fno-omit-frame-pointer $(DEBUGMODE)
@@ -36,9 +40,7 @@ debug:
 	$(GET_TIME)
 	
 	@echo "[1/2] compiling [$@]..."
-	$(COMPILER) $(DEBUGCOMPCFG) -c json.cpp -o json_debug.o
-	$(COMPILER) $(DEBUGCOMPCFG) -c slf.cpp -o slf_debug.o
-	$(COMPILER) $(DEBUGCOMPCFG) -c get.cpp -o get_debug.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c encdec.cpp -o encdec_debug.o
 
 	@echo "Done!"
 	
@@ -53,9 +55,7 @@ release:
 	$(GET_TIME)
 	
 	@echo "[1/2] compiling [$@]..."
-	$(COMPILER) $(COMPCFG) -c json.cpp -o json.o
-	$(COMPILER) $(COMPCFG) -c slf.cpp -o slf.o
-	$(COMPILER) $(COMPCFG) -c get.cpp -o get.o
+	$(COMPILER) $(COMPCFG) -c encdec.cpp -o encdec.o
 
 	@echo "Done!"
 	

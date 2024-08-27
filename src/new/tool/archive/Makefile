@@ -3,21 +3,24 @@ CXX ?= g++
 
 ROOT	:= ../../../..
 
-COMPILER_CONFIG	:= -fexpensive-optimizations -m64 -std=gnu++20 -fcoroutines -fms-extensions -DENABLE_DEBUG_OUTPUT_ -DNDEBUG -static
-LINKER_CONFIG	:= -static-libstdc++ -static-libgcc -static -m64 -fms-extensions -s
+LEAN := -static -s
 
-OPTIMIZATIONS	:= -fopenmp -openmp -ftree-parallelize-loops=128 -funswitch-loops -fpredictive-commoning -fgcse-after-reload -ftree-vectorize
+COMPILER_CONFIG	:= -fexpensive-optimizations -m64 -std=gnu++20 -fcoroutines -fms-extensions
+LINKER_CONFIG	:= -static-libstdc++ -static-libgcc -m64 -fms-extensions
+
+OPTIMIZATIONS	:= -fopenmp -openmp -ftree-parallelize-loops=128 -funswitch-loops -fpredictive-commoning -fgcse-after-reload -ftree-vectorize $(LEAN)
 
 WINGARBAGE	:= -lole32 -loleaut32 -limm32 -lwinmm -lversion -lpowrprof -lcomdlg32 -lsetupapi -lgdi32
 
 INCLUDES	:= -I$(ROOT)/lib/cryptopp/include -I$(ROOT)/lib/cppcodec-0.2
 LIBRARIES	:= $(WINGARBAGE) $(ROOT)/lib/cryptopp/lib/libcryptopp.a -lopengl32 -lgomp
 
-DEBUGCOMPCFG	:= $(COMPILER_CONFIG) -Wall -Wpedantic -pg -Og -ggdb3 -fno-omit-frame-pointer
-DEBUGLINKCFG	:= $(LINKER_CONFIG) -pg -Og $(LIBRARIES)
+DEBUGMODE := -DENABLE_DEBUG_OUTPUT_ -D_DEBUG_OUTPUT_ -DNDEBUG
+DEBUGCOMPCFG	:= $(COMPILER_CONFIG) -Wall -Wpedantic -Og -ggdb3 -fno-omit-frame-pointer $(DEBUGMODE)
+DEBUGLINKCFG	:= $(LINKER_CONFIG) -Og $(LIBRARIES) 
 
-COMPCFG	:= $(COMPILER_CONFIG) -O3 $(OPTIMIZATIONS) -D_DEBUG_OUTPUT_
-LINKCFG	:= $(LINKER_CONFIG) -s -O3 $(LIBRARIES)
+COMPCFG	:= $(COMPILER_CONFIG) -O3 $(OPTIMIZATIONS)
+LINKCFG	:= $(LINKER_CONFIG) -s -O3 $(LIBRARIES) $(LEAN)
 
 COMPILER	:= @$(CXX) $(INCLUDES)
 LINKER		:= @$(CXX)

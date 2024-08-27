@@ -1,16 +1,14 @@
 #if (_WIN32 || _WIN64 || __WIN32__ || __WIN64__)
-#include <winuser.h>
+#include <windows.h>
 #define SDL_MAIN_HANDLED
 #endif
 #include <SDL2/SDL.h>
-
-#include <SDL2/SDL_mixer.h>
 
 #include "input.hpp"
 
 #define sdlWindow ((SDL_Window*)window)
 
-using namespace Makai::Input
+using namespace Makai::Input;
 
 SDL_Event pollEvents() {
 	SDL_Event ev;
@@ -42,15 +40,15 @@ constexpr KeyCode convert(SDL_Scancode const& key) {
 	return (KeyCode)code;
 }
 
-constexpr SDL_GameControllerButton convert(ControllerButton const& btn) {
+constexpr SDL_GameControllerButton convert(JoyCode const& btn) {
 	return (SDL_GameControllerButton)btn;
 }
 
-constexpr ControllerButton convert(SDL_GameControllerButton const& btn) {
-	return (ControllerButton)btn;
+constexpr JoyCode convert(SDL_GameControllerButton const& btn) {
+	return (JoyCode)btn;
 }
 
-static void Manager::update() {
+void Manager::update() {
 	// Get keyboard state
 	int keyCount = 0;
 	const unsigned char* state = SDL_GetKeyboardState(&keyCount);
@@ -88,7 +86,6 @@ static void Manager::update() {
 	// Update button data
 	for (auto i = 0; i < (((int)MouseCode::MC_MAX_BUTTONS)-1); i++) {
 		// Jankify
-		MouseCode button	= (MouseCode)i;
 		MouseCode code		= (MouseCode)i;
 		// Get previous button state
 		usize buttonState = 0;
@@ -107,82 +104,82 @@ static void Manager::update() {
 	}
 }
 
-inline usize Manager::getKeyState(KeyCode const& button) {
+usize Manager::getKeyState(KeyCode const& button) {
 	if (
 		!enabled
-	||	!(mask & InputMask::IM_KEY)
+	||	!((ubyte)mask & (ubyte)InputMask::IM_KEY)
 	||	button == KeyCode::KC_UNKNOWN
 	) return 0;
 	return buffer[button];
 }
 
-inline usize Manager::getMouseState(MouseCode const& button) {
+usize Manager::getMouseState(MouseCode const& button) {
 	if (
 		!enabled
-	||	!(mask & InputMask::IM_MOUSE)
+	||	!((ubyte)mask & (ubyte)InputMask::IM_MOUSE)
 	||	button == MouseCode::MC_UNKNOWN
 	) return 0;
 	return mouse.buffer[button];
 }
 
-inline usize Manager::getJoyState(JoyCode const& button) {
+usize Manager::getJoyState(JoyCode const& button) {
 	if (
 		!enabled
-	||	!(mask & InputMask::IM_JOY)
+	||	!((ubyte)mask & (ubyte)InputMask::IM_JOY)
 	||	button == JoyCode::JC_UNKNOWN
 	) return 0;
 	return 0;
 }
 
-inline usize Manager::getLastKeyState(KeyCode const& button) {
+usize Manager::getLastKeyState(KeyCode const& button) {
 	if (
 		!enabled
-	||	!(mask & InputMask::IM_KEY)
+	||	!((ubyte)mask & (ubyte)InputMask::IM_KEY)
 	||	button == KeyCode::KC_UNKNOWN
 	) return 0;
 	return last[button];
 }
 
-inline usize Manager::getLastMouseState(MouseCode const& button) {
+usize Manager::getLastMouseState(MouseCode const& button) {
 	if (
 		!enabled
-	||	!(mask & InputMask::IM_MOUSE)
+	||	!((ubyte)mask & (ubyte)InputMask::IM_MOUSE)
 	||	button == MouseCode::MC_UNKNOWN
 	) return 0;
 	return mouse.last[button];
 }
 
-inline usize Manager::getLastJoyState(JoyCode const& button) {
+usize Manager::getLastJoyState(JoyCode const& button) {
 	if (
 		!enabled
-	||	!(mask & InputMask::IM_JOY)
+	||	!((ubyte)mask & (ubyte)InputMask::IM_JOY)
 	||	button == JoyCode::JC_UNKNOWN
 	) return 0;
 	return 0;
 }
 
-inline bool isStateDown(usize const& state) {
+constexpr bool isStateDown(usize const& state) {
 	return state > 0;
 }
 
-inline bool isStateJustPressed(usize const& state) {
+constexpr bool isStateJustPressed(usize const& state) {
 	return state == 1;
 }
 
-inline bool isStateJustReleased(usize const& state, bool const& justChanged) {
+constexpr bool isStateJustReleased(usize const& state, bool const& justChanged) {
 	return (justChanged && (state == 0));
 }
 
-inline bool isStateHeld(usize const& state, usize const& threshold) {
+constexpr bool isStateHeld(usize const& state, usize const& threshold) {
 	return state > threshold;
 }
 
-inline bool hasStateChanged(usize const& state, usize const& last) {
+constexpr bool hasStateChanged(usize const& state, usize const& last) {
 	return state != last;
 }
 /*
 /// Returns the button that was most recently pressed.
-inline KeyboardButton mostRecentKeyboardButtonDown() {
+KeyboardButton mostRecentKeyboardButtonDown() {
 	KeyboardButton button	= SDL_SCANCODE_UNKNOWN;
 	usize duration	= Math::Max::UINT_V;
 	for (auto [b, d] : buffer)
@@ -194,7 +191,7 @@ inline KeyboardButton mostRecentKeyboardButtonDown() {
 }
 
 /// Returns the button that was most recently just pressed.
-inline KeyboardButton mostRecentKeyboardButtonJustPressed() {
+KeyboardButton mostRecentKeyboardButtonJustPressed() {
 	for (auto [b, d] : buffer)
 		if (d == 1)
 			return b;
@@ -202,7 +199,7 @@ inline KeyboardButton mostRecentKeyboardButtonJustPressed() {
 }
 
 /// Returns the button that was most recently held.
-inline KeyboardButton mostRecentKeyboardButtonHeld() {
+KeyboardButton mostRecentKeyboardButtonHeld() {
 	KeyboardButton button	= SDL_SCANCODE_UNKNOWN;
 	usize duration	= Math::Max::UINT_V;
 	for (auto [b, d] : buffer)
@@ -214,7 +211,7 @@ inline KeyboardButton mostRecentKeyboardButtonHeld() {
 }
 
 /// Returns the button that was most recently changed.
-inline KeyboardButton mostRecentKeyboardButtonChanged() {
+KeyboardButton mostRecentKeyboardButtonChanged() {
 	for (auto [b, d] : buffer)
 		if (d != last[b])
 			return b;
@@ -222,7 +219,7 @@ inline KeyboardButton mostRecentKeyboardButtonChanged() {
 }
 
 /// Returns the button that was most recently just released.
-inline KeyboardButton mostRecentKeyboardButtonJustReleased() {
+KeyboardButton mostRecentKeyboardButtonJustReleased() {
 	for (auto [b, d] : buffer)
 		if (d != last[b] && d == 0)
 			return b;
@@ -230,7 +227,7 @@ inline KeyboardButton mostRecentKeyboardButtonJustReleased() {
 }
 
 /// Returns all buttons currently pressed.
-inline List<KeyboardButton> getKeyboardButtonsDown() {
+List<KeyboardButton> getKeyboardButtonsDown() {
 	List<KeyboardButton> buttons;
 	buttons.reserve(buffer.size());
 	for (auto [b, d] : buffer)
@@ -240,7 +237,7 @@ inline List<KeyboardButton> getKeyboardButtonsDown() {
 }
 
 /// Returns all buttons currently just pressed.
-inline List<KeyboardButton> getKeyboardButtonsJustPressed() {
+List<KeyboardButton> getKeyboardButtonsJustPressed() {
 	List<KeyboardButton> buttons;
 	buttons.reserve(buffer.size());
 	for (auto [b, d] : buffer)
@@ -250,7 +247,7 @@ inline List<KeyboardButton> getKeyboardButtonsJustPressed() {
 }
 
 /// Returns all buttons currently just released.
-inline List<KeyboardButton> getKeyboardButtonsJustReleased() {
+List<KeyboardButton> getKeyboardButtonsJustReleased() {
 	List<KeyboardButton> buttons;
 	buttons.reserve(buffer.size());
 	for (auto [b, d] : buffer)
@@ -260,7 +257,7 @@ inline List<KeyboardButton> getKeyboardButtonsJustReleased() {
 }
 
 /// Returns all buttons whose state changed.
-inline List<KeyboardButton> getKeyboardButtonsChanged() {
+List<KeyboardButton> getKeyboardButtonsChanged() {
 	List<KeyboardButton> buttons;
 	for (auto [b, d] : buffer)
 		if (isButtonChanged(b))
@@ -269,7 +266,7 @@ inline List<KeyboardButton> getKeyboardButtonsChanged() {
 }
 
 /// Returns all buttons currently held.
-inline List<KeyboardButton> getKeyboardButtonsHeld() {
+List<KeyboardButton> getKeyboardButtonsHeld() {
 	List<KeyboardButton> buttons;
 	buttons.reserve(buffer.size());
 	for (auto [b, d] : buffer)
@@ -279,52 +276,52 @@ inline List<KeyboardButton> getKeyboardButtonsHeld() {
 }
 */
 
-inline usize Manager::getButtonState(Button const& button) {
+usize Manager::getButtonState(Button const& button) {
 	if (!enabled) return 0;
-	switch (button.type) {
-		case ButtonCodeType::BCT_KEY:	return getKeyState(button.code.key);
-		case ButtonCodeType::BCT_MOUSE:	return getMouseState(button.code.mouse);
-		case ButtonCodeType::BCT_KEY:	return getJoyState(button.code.joy);
+	switch (button.getType()) {
+		case ButtonCodeType::BCT_KEY:	return getKeyState(button.getCode().key);
+		case ButtonCodeType::BCT_MOUSE:	return getMouseState(button.getCode().mouse);
+		case ButtonCodeType::BCT_JOY:	return getJoyState(button.getCode().joy);
 	}
 	return 0;
 }
 
-inline usize Manager::getLastButtonState(Button const& button) {
+usize Manager::getLastButtonState(Button const& button) {
 	if (!enabled) return 0;
-	switch (button.type) {
-		case ButtonCodeType::BCT_KEY:	return getLastKeyState(button.code.key);
-		case ButtonCodeType::BCT_MOUSE:	return getLastMouseState(button.code.mouse);
-		case ButtonCodeType::BCT_KEY:	return getLastJoyState(button.code.joy);
+	switch (button.getType()) {
+		case ButtonCodeType::BCT_KEY:	return getLastKeyState(button.getCode().key);
+		case ButtonCodeType::BCT_MOUSE:	return getLastMouseState(button.getCode().mouse);
+		case ButtonCodeType::BCT_JOY:	return getLastJoyState(button.getCode().joy);
 	}
 	return 0;
 }
 
-inline bool Manager::isButtonDown(Button const& button) {
+bool Manager::isButtonDown(Button const& button) {
 	if (!enabled) return false;
 	return isStateDown(getButtonState(button));
 }
 
-inline bool Manager::isButtonJustPressed(Button const& button) {
+bool Manager::isButtonJustPressed(Button const& button) {
 	if (!enabled) return false;
 	return isStateJustPressed(getButtonState(button));
 }
 
-inline bool Manager::isButtonJustReleased(Button const& button) {
+bool Manager::isButtonJustReleased(Button const& button) {
 	if (!enabled) return false;
-	return isStateJustReleased(getButtonState(button), hasButtonJustChanged(button));
+	return isStateJustReleased(getButtonState(button), hasButtonChanged(button));
 }
 
-inline bool Manager::isButtonHeld(Button const& button) {
+bool Manager::isButtonHeld(Button const& button) {
 	if (!enabled || !isBound(button)) return false;
 	return isStateHeld(getButtonState(button), threshold);
 }
 
-inline bool Manager::hasButtonChanged(Button const& button) {
+bool Manager::hasButtonChanged(Button const& button) {
 	if (!enabled || !isBound(button)) return false;
 	return hasStateChanged(getButtonState(button), getLastButtonState(button));
 }
 
-inline bool Manager::getButtonState(String const& button) {
+bool Manager::getButtonState(String const& button) {
 	if (!enabled || !isBound(button))
 		return 0;
 	usize state = 0, current = 0;
@@ -334,27 +331,27 @@ inline bool Manager::getButtonState(String const& button) {
 	return state;
 }
 
-inline bool Manager::isButtonDown(String const& button) {
+bool Manager::isButtonDown(String const& button) {
 	if (!enabled || !isBound(button)) return false;
 	return isStateDown(getButtonState(button));
 }
 
-inline bool Manager::isButtonJustPressed(String const& button) {
+bool Manager::isButtonJustPressed(String const& button) {
 	if (!enabled || !isBound(button)) return false;
 	return isStateJustPressed(getButtonState(button));
 }
 
-inline bool Manager::isButtonJustReleased(String const& button) {
+bool Manager::isButtonJustReleased(String const& button) {
 	if (!enabled || !isBound(button)) return false;
-	return isStateJustReleased(getButtonState(button), hasButtonJustChanged(button));
+	return isStateJustReleased(getButtonState(button), hasButtonChanged(button));
 }
 
-inline bool Manager::isButtonHeld(String const& button) {
+bool Manager::isButtonHeld(String const& button) {
 	if (!enabled || !isBound(button)) return false;
 	return isStateHeld(getButtonState(button), threshold);
 }
 
-inline bool Manager::hasButtonChanged(String const& button) {
+bool Manager::hasButtonChanged(String const& button) {
 	if (!enabled || !isBound(button))
 		return false;
 	for (Button& btn: binds[button])
@@ -362,11 +359,11 @@ inline bool Manager::hasButtonChanged(String const& button) {
 	return false;
 }
 
-inline bool Manager::isBound(String const& name) {
+bool Manager::isBound(String const& name) {
 	return binds.contains(name);
 }
 
-inline StringList Manager::getNamesForButton(Button const& button) {
+StringList Manager::getNamesForButton(Button const& button) {
 	StringList names;
 	for (auto& [name, buttons]: binds) {
 		for (Button& btn: buttons) {
@@ -379,67 +376,72 @@ inline StringList Manager::getNamesForButton(Button const& button) {
 	return names;
 }
 
-inline List<Button> Manager::getButtonsDown() {
+List<Button> Manager::getButtonsDown() {
 	List<Button> buttons;
-	buttons.reserve(buffer.size() + mouse.buffer.size);
+	buttons.reserve(buffer.size() + mouse.buffer.size());
 	for (auto [b, d] : buffer)
 		if (isButtonDown(b))
 			buttons.push_back(b);
 	for (auto [b, d] : mouse.buffer)
 		if (isButtonDown(b))
 			buttons.push_back(b);
+	return buttons;
 }
 
-inline List<Button> Manager::getButtonsJustPressed() {
+List<Button> Manager::getButtonsJustPressed() {
 	List<Button> buttons;
-	buttons.reserve(buffer.size() + mouse.buffer.size);
+	buttons.reserve(buffer.size() + mouse.buffer.size());
 	for (auto [b, d] : buffer)
 		if (isButtonJustPressed(b))
 			buttons.push_back(b);
 	for (auto [b, d] : mouse.buffer)
 		if (isButtonJustPressed(b))
 			buttons.push_back(b);
+	return buttons;
 }
 
-inline List<Button> Manager::getButtonsJustReleased() {
+List<Button> Manager::getButtonsJustReleased() {
 	List<Button> buttons;
-	buttons.reserve(buffer.size() + mouse.buffer.size);
+	buttons.reserve(buffer.size() + mouse.buffer.size());
 	for (auto [b, d] : buffer)
 		if (isButtonJustReleased(b))
 			buttons.push_back(b);
 	for (auto [b, d] : mouse.buffer)
 		if (isButtonJustReleased(b))
 			buttons.push_back(b);
+	return buttons;
 }
 
-inline List<Button> Manager::getButtonsChanged() {
+List<Button> Manager::getButtonsChanged() {
 	List<Button> buttons;
-	buttons.reserve(buffer.size() + mouse.buffer.size);
+	buttons.reserve(buffer.size() + mouse.buffer.size());
 	for (auto [b, d] : buffer)
 		if (hasButtonChanged(b))
 			buttons.push_back(b);
 	for (auto [b, d] : mouse.buffer)
 		if (hasButtonChanged(b))
 			buttons.push_back(b);
+	return buttons;
 }
 
-inline List<Button> Manager::getButtonsHeld() {
+List<Button> Manager::getButtonsHeld() {
 	List<Button> buttons;
-	buttons.reserve(buffer.size() + mouse.buffer.size);
+	buttons.reserve(buffer.size() + mouse.buffer.size());
 	for (auto [b, d] : buffer)
 		if (isButtonHeld(b))
 			buttons.push_back(b);
 	for (auto [b, d] : mouse.buffer)
 		if (isButtonHeld(b))
 			buttons.push_back(b);
+	return buttons;
 }
 
-inline static void Manager::refreshCapture() {
+void Manager::refreshCapture() {
 	DEBUGLN("Refreshing mouse capture states...");
 	setMouseCapturing(mouseCaptured, !mouseVisible);
 }
 
-inline static void Manager::setMouseCapturing(bool const& enabled = true, bool const& hideCursor = true) {
+void Manager::setMouseCapturing(bool const& enabled, bool const& hideCursor) {
 	if (!window) return;
 	SDL_SetWindowGrab(sdlWindow, enabled ? SDL_TRUE : SDL_FALSE);
 	SDL_SetRelativeMouseMode(enabled ? SDL_TRUE : SDL_FALSE);
@@ -447,23 +449,23 @@ inline static void Manager::setMouseCapturing(bool const& enabled = true, bool c
 	mouseCaptured = enabled;
 }
 
-inline static void Manager::setCursorVisibility(bool const& enabled = true) {
+void Manager::setCursorVisibility(bool const& enabled) {
 	if (!window) return;
 	SDL_ShowCursor(enabled ? SDL_TRUE : SDL_FALSE);
 	mouseVisible = enabled;
 }
 
 /// Returns the mouse position relative to the window.
-inline Vector2 Manager::getWindowMousePosition() {
+Vector2 Manager::getWindowMousePosition() {
 	return Vector2(mouse.local.pos.x, mouse.local.pos.y);
 }
 
 /// Returns the mouse position relative to the desktop.
-inline Vector2 Manager::getDesktopMousePosition() {
+Vector2 Manager::getDesktopMousePosition() {
 	return Vector2(mouse.global.pos.x, mouse.global.pos.y);
 }
 
 /// Returns which direction the mouse is moving towards.
-inline Vector2 Manager::getMouseDirection() {
+Vector2 Manager::getMouseDirection() {
 	return Vector2(mouse.relative.pos.x, mouse.relative.pos.y);
 }

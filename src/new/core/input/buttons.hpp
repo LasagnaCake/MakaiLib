@@ -13,7 +13,7 @@ namespace Makai::Input {
 		// Numbers
 		KC_1, KC_2, KC_3, KC_4, KC_5, KC_6, KC_7, KC_8, KC_9, KC_0,
 		// Special keys 1
-		KC_RETURN, KC_ESCAPE, KC_BACKSPACE, KC_TAB, KC_SPACE
+		KC_RETURN, KC_ESCAPE, KC_BACKSPACE, KC_TAB, KC_SPACE,
 		// Math symbols 1
 		KC_PLUS, KC_MINUS, KC_EQUALS,
 		// Brackets
@@ -43,12 +43,12 @@ namespace Makai::Input {
 		// Special keys 2
 		KC_APP, KC_POWER,
 		// Keypad equals
-		KC_EQUALS,
+		KC_KEYPAD_EQUALS,
 		// Function keys 2
 		KC_F13, KC_F14, KC_F15, KC_F16, KC_F17, KC_F18, KC_F19, KC_F20, KC_F21, KC_F22, KC_F23, KC_F24,
 		// Special keys 3
 		KC_HELP, KC_MENU,
-		KC_SELECT, KC_AC_STOP, KC_AC_AGAIN, KC_AC_UNDO, KC_AC_CUT, KC_AC_COPY, KC_AC_PASTE, KC_AC_FIND,
+		KC_SELECT, KC_STOP, KC_AGAIN, KC_UNDO, KC_CUT, KC_COPY, KC_PASTE, KC_FIND,
 		KC_MUTE, KC_VOLUME_UP, KC_VOLUME_DOWN,
 		// Keypad keys 2
 		KC_KEYPAD_COMMA,
@@ -76,13 +76,13 @@ namespace Makai::Input {
 		// Keypad keys 4
 		KC_KEYPAD_OPEN_PAREN, KC_KEYPAD_PAREN_L = KC_KEYPAD_OPEN_PAREN,
 		KC_KEYPAD_CLOSE_PAREN, KC_KEYPAD_PAREN_R = KC_KEYPAD_CLOSE_PAREN,
-		KC_KEYPAD_KEYPAD_OPEN_BRACE, KC_KEYPAD_BRACE_L = KC_KEYPAD_OPEN_BRACE,
+		KC_KEYPAD_OPEN_BRACE, KC_KEYPAD_BRACE_L = KC_KEYPAD_OPEN_BRACE,
 		KC_KEYPAD_CLOSE_BRACE, KC_KEYPAD_BRACE_R = KC_KEYPAD_CLOSE_BRACE,
 		KC_KEYPAD_TAB, KC_KEYPAD_BACKSPACE,
 		KC_KEYPAD_A, KC_KEYPAD_B, KC_KEYPAD_C, KC_KEYPAD_D, KC_KEYPAD_E, KC_KEYPAD_F,
 		KC_KEYPAD_XOR, KC_KEYPAD_POWER, KC_KEYPAD_PCT, KC_KEYPAD_LT, KC_KEYPAD_GT,
 		KC_KEYPAD_AMP, KC_KEYPAD_DOUBLE_AMP,
-		KC_KEYPAD_VBARR KC_KEYPAD_DOUBLE_VBAR,
+		KC_KEYPAD_VBAR, KC_KEYPAD_DOUBLE_VBAR,
 		KC_KEYPAD_COLOR, KC_KEYPAD_HASH, KC_KEYPAD_POUND = KC_KEYPAD_HASH,
 		KC_KEYPAD_SPACE, KC_KEYPAD_AT, KC_KEYPAD_EXCLAMATION,
 		KC_KEYPAD_MEM_STORE, KC_KEYPAD_MEM_RECALL, KC_KEYPAD_MEM_RCL = KC_KEYPAD_MEM_RECALL,
@@ -120,7 +120,7 @@ namespace Makai::Input {
 		KC_MAX_KEYS = 512
 	};
 
-	enum class JoyCode: uint16 {
+	enum class JoyCode {
 		// Unknown
 		JC_UNKNOWN = -1,
 		// Face buttons
@@ -176,7 +176,7 @@ namespace Makai::Input {
 
 		constexpr ButtonCode getCode() const 		{return code;	}
 		constexpr ButtonCodeType getType() const 	{return type;	}
-		constexpr ButtonCodeType data() const 		{return *this;	}
+		constexpr ButtonData data() const 			{return *this;	}
 
 		constexpr bool operator==(Button const& other) const {
 			return type == other.type && code.value == other.code.value;

@@ -169,7 +169,7 @@ namespace Ease {
 			CASE_FUN(MODE, elastic);\
 			CASE_FUN(MODE, bounce);\
 		}
-	EaseFunction& getMode(String const& mode, String const& type) {
+	inline EaseFunction& getMode(String const& mode, String const& type) {
 		if (type == "linear") return linear;
 		MODE_CASE("in", In)
 		MODE_CASE("out", Out)
