@@ -3,6 +3,7 @@
 
 #include "legacy/helper.hpp"
 #include "legacy/ctl/ctypes.hpp"
+#include "legacy/ctl/typeinfo.hpp"
 #include "legacy/conceptual.hpp"
 #include "legacy/referential.hpp"
 #include "legacy/algebra.hpp"

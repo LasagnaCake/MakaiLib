@@ -45,7 +45,7 @@ namespace Makai {
 		inline bool	running();
 
 		/// Sets the program's window size.
-		void setWindowSize(Vector2 size);
+		void setWindowSize(Vector2 const& size);
 
 		/// Gets the current frame.
 		usize getCurrentFrame();

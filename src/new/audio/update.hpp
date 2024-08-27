@@ -5,7 +5,7 @@
 #include "music.hpp"
 
 namespace Makai::Audio {
-	void updateAll() {
+	inline void updateAll() {
 		Music::update();
 		Playable::update();
 	}

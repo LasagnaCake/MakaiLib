@@ -4,7 +4,7 @@
 #include "core.hpp"
 #include "playable.hpp"
 
-namespace Makai::Sound {
+namespace Makai::Audio {
 	class Sound: public Playable {
 	public:
 		using Playable::Playable;

@@ -1,7 +1,7 @@
 #ifndef MAKAILIB_GRAPH_RENDERER_CORE_H
 #define MAKAILIB_GRAPH_RENDERER_CORE_H
 
-#include "../../ctl/ctl.hpp"
+#include "../../../ctl/ctl.hpp"
 
 namespace Makai::Graph {
 	struct Renderer {

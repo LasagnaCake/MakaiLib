@@ -1,8 +1,8 @@
 #ifndef MAKAILIB_GRAPH_SHADER_H
 #define MAKAILIB_GRAPH_SHADER_H
 
-#include "../file/file.hpp"
-#include "../ctl/ctl.hpp"
+#include "../../file/file.hpp"
+#include "../../ctl/ctl.hpp"
 
 #include "uniform.hpp"
 #include "global.hpp"

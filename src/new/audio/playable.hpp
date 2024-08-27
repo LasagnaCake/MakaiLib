@@ -38,7 +38,7 @@ namespace Makai::Audio {
 		Data::BinaryData data;
 
 		bool created = false;
-	}
+	};
 
 	using AudioCallback = typename Playable::Callback;
 }

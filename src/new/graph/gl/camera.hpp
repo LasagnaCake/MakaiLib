@@ -1,7 +1,7 @@
 #ifndef MAKAILIB_GRAPH_CAMERA_H
 #define MAKAILIB_GRAPH_CAMERA_H
 
-#include "../ctl/ctl.hpp"
+#include "../../ctl/ctl.hpp"
 
 namespace Makai::Graph {
 	struct OrthographicData {

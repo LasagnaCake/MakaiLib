@@ -21,6 +21,9 @@ namespace Makai::Input {
 		IM_ALL				= 0b111,
 	};
 
+	/**
+	* WARNING: Controller input is currently unimplemented!
+	*/
 	class Manager {
 		using KeyBuffer			= HashMap<KeyCode, usize>;
 		using MouseButtonBuffer	= HashMap<MouseCode, usize>;
@@ -64,44 +67,48 @@ namespace Makai::Input {
 		* 1+	= Pressed;
 		* Recommended if time pressed is required.
 		*/
-		[[gnu::warning("Controller input is currently unimplemented!")]]
+		//[[gnu::warning("Controller input is currently unimplemented!")]]
 		usize getButtonState(Button const& button);
 
 		/// Returns whether the button is pressed.
-		[[gnu::warning("Controller input is currently unimplemented!")]]
+		//[[gnu::warning("Controller input is currently unimplemented!")]]
 		bool isButtonDown(Button const& button);
 
 		/// Returns if the button has just been pressed (state == 1).
-		[[gnu::warning("Controller input is currently unimplemented!")]]
+		//[[gnu::warning("Controller input is currently unimplemented!")]]
 		bool isButtonJustPressed(Button const& button);
 
 		/// Returns if the button has just been released.
-		[[gnu::warning("Controller input is currently unimplemented!")]]
+		//[[gnu::warning("Controller input is currently unimplemented!")]]
 		bool isButtonJustReleased(Button const& button);
 
 		/// Returns if the button is held (state > threshold).
-		[[gnu::warning("Controller input is currently unimplemented!")]]
+		//[[gnu::warning("Controller input is currently unimplemented!")]]
 		bool isButtonHeld(Button const& button);
 
 		/// Returns if the button's state has changed.
-		[[gnu::warning("Controller input is currently unimplemented!")]]
+		//[[gnu::warning("Controller input is currently unimplemented!")]]
 		bool hasButtonChanged(Button const& button);
 
 		/// Returns all buttons who are currently pressed.
-		[[gnu::warning("Controller input is currently unimplemented!")]]
-		List<Button> getButtonsPressed();
+		//[[gnu::warning("Controller input is currently unimplemented!")]]
+		List<Button> getButtonsDown();
 
 		/// Returns all buttons whose state just changed.
-		[[gnu::warning("Controller input is currently unimplemented!")]]
+		//[[gnu::warning("Controller input is currently unimplemented!")]]
 		List<Button> getButtonsChanged();
 
 		/// Returns all buttons who have been recently just pressed.
-		[[gnu::warning("Controller input is currently unimplemented!")]]
+		//[[gnu::warning("Controller input is currently unimplemented!")]]
 		List<Button> getButtonsJustPressed();
 
 		/// Returns all buttons who have been recently just released.
-		[[gnu::warning("Controller input is currently unimplemented!")]]
+		//[[gnu::warning("Controller input is currently unimplemented!")]]
 		List<Button> getButtonsJustReleased();
+
+		/// Returns all buttons who are currently held.
+		//[[gnu::warning("Controller input is currently unimplemented!")]]
+		List<Button> getButtonsHeld();
 
 		/**
 		* Returns the button's state.
@@ -150,17 +157,27 @@ namespace Makai::Input {
 		inline static ButtonMap binds;
 
 		/// Whether input is enabled.
-		bool enabled = true;
+		static inline bool enabled = true;
 
 		inline static InputMask mask = InputMask::IM_ALL;
 
 		/// How long before the input is considered "held".
-		usize threshold = 2048;
+		inline static usize threshold = 2048;
 
 		static void refreshCapture();
 
 		static void setTargetWindow(Extern::Resource const& target) {
-			window = target;
+			if (target && !window)
+				window = target;
+		}
+
+		static void clearTargetWindow(Extern::Resource const& target) {
+			if (target && window == target)
+				window = nullptr;
+		}
+
+		static bool isTargetWindow(Extern::Resource const& target) {
+			return target && window == target;
 		}
 
 	private:
@@ -177,7 +194,7 @@ namespace Makai::Input {
 		inline static bool mouseCaptured	= false;
 		inline static bool mouseVisible		= true;
 
-		inline static Extern::Resource window;
+		inline static Extern::Resource window = nullptr;
 
 		/// The internal buffer state.
 		inline static KeyBuffer		buffer;

@@ -312,16 +312,16 @@ bool Manager::isButtonJustReleased(Button const& button) {
 }
 
 bool Manager::isButtonHeld(Button const& button) {
-	if (!enabled || !isBound(button)) return false;
+	if (!enabled) return false;
 	return isStateHeld(getButtonState(button), threshold);
 }
 
 bool Manager::hasButtonChanged(Button const& button) {
-	if (!enabled || !isBound(button)) return false;
+	if (!enabled) return false;
 	return hasStateChanged(getButtonState(button), getLastButtonState(button));
 }
 
-bool Manager::getButtonState(String const& button) {
+usize Manager::getButtonState(String const& button) {
 	if (!enabled || !isBound(button))
 		return 0;
 	usize state = 0, current = 0;

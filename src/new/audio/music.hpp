@@ -5,7 +5,7 @@
 #include "playable.hpp"
 
 namespace Makai::Audio {
-	class Music: public Base::Playable {
+	class Music: public Playable {
 	public:
 		struct MetaData {
 			String	title;
@@ -50,7 +50,7 @@ namespace Makai::Audio {
 		usize	fadeInTime	= 0;
 		int		loops		= 0;
 
-		AudioFunc onQueue = SIGNAL {play(loops, fadeInTime);};
+		AudioCallback onQueue = SIGNAL {play(loops, fadeInTime);};
 
 		Extern::Resource source = NULL;
 	};

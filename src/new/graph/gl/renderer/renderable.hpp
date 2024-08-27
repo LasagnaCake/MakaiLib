@@ -1,9 +1,10 @@
 #ifndef MAKAILIB_GRAPH_RENDERER_RENDERABLE_H
 #define MAKAILIB_GRAPH_RENDERER_RENDERABLE_H
 
-#include "../../file/json.hpp"
+#include "../../../file/json.hpp"
 #include "drawable.hpp"
-#include "material/material.hpp"
+#include "reference.hpp"
+#include "../material/material.hpp"
 
 namespace Makai::Graph {
 	class Renderable: public DrawableObject {
@@ -53,7 +54,7 @@ namespace Makai::Graph {
 			shape->onDestroy =	[this, shape](){this->removeReference<T>(shape);};
 			shape->onUnbind =	[this, shape](){this->unbindReference<T>(shape);};
 			// Add to reference list
-			references.shape.push_back((Reference3D::Shape<0>*)shape);
+			references.shape.push_back((ShapeRef<0>*)shape);
 			// return shape
 			return shape;
 		}
@@ -101,7 +102,7 @@ namespace Makai::Graph {
 			if (!ref) return;
 			if (locked) return;
 			auto& rs = references.shape;
-			ERASE_IF(rs, elem == (Reference3D::Shape<0>*)ref);
+			ERASE_IF(rs, elem == (ShapeRef<0>*)ref);
 			delete ref;
 		}
 

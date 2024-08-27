@@ -1,8 +1,8 @@
 #ifndef MAKAILIB_GRAPH_MATERIAL_MATERIALS_H
 #define MAKAILIB_GRAPH_MATERIAL_DEBUG_H
 
-#include "../../file/json.hpp"
-#include "../../ctl/ctl.hpp"
+#include "../../../file/json.hpp"
+#include "../../../ctl/ctl.hpp"
 #include "effect.hpp"
 #include "debug.hpp"
 #include "../color.hpp"
@@ -63,17 +63,17 @@ namespace Makai::Graph::Material {
 		float			brightness	= 0;
 		float			contrast	= 1;
 		Vector2			uvShift;
-		Effect::Mask	mask;
-		WarpEffect		warp;
-		NegativeEffect	negative;
-		BlurEffect		blur;
-		OutlineEffect	outline;
-		WaveEffect		wave;
-		WaveEffect		prism;
-		PolarWarpEffect	polarWarp;
-		GradientEffect	gradient;
-		RainbowEffect	rainbow;
-		NoiseEffect		noise;
+		Effect::Mask		mask;
+		Effect::Warp		warp;
+		Effect::Negative	negative;
+		Effect::Blur		blur;
+		Effect::Outline		outline;
+		Effect::Wave		wave;
+		Effect::Wave		prism;
+		Effect::PolarWarp	polarWarp;
+		Effect::Gradient	gradient;
+		Effect::Rainbow		rainbow;
+		Effect::Noise		noise;
 		BufferDebugView	debug	= BufferDebugView::BDV_NONE;
 
 		void use(Shader& shader);
@@ -82,9 +82,9 @@ namespace Makai::Graph::Material {
 	struct BaseWorldMaterial {};
 
 	struct WorldMaterial: BaseWorldMaterial {
-		FogEffect		nearFog;
-		FogEffect		farFog;
-		AmbientEffect	ambient;
+		Effect::Fog		nearFog;
+		Effect::Fog		farFog;
+		Effect::Ambient	ambient;
 
 		void use(Shader& shader);
 	};

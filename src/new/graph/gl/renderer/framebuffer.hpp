@@ -2,8 +2,11 @@
 #define MAKAILIB_GRAPH_RENDERER_FRAMEBUFFER_H
 
 #include "../texture.hpp"
+#include "../vertex.hpp"
 
 namespace Makai::Graph {
+	using Makai::Graph::Texure2D;
+
 	struct FrameBufferData {
 		uint
 			id		= 0,
@@ -92,7 +95,7 @@ namespace Makai::Graph {
 			/// The framebuffer's UV transformation.
 			Transform3D uv;
 			/// The framebuffer's shape.
-			RawVertex rect[4];
+			Vertex rect[4];
 			/// The framebuffer's rendering shader.
 			Shader shader;
 			/// The framebuffer's screen Vertex Unit space. Usually the inverse of the camera's orthographic size.
@@ -116,7 +119,7 @@ namespace Makai::Graph {
 
 		Material::BufferMaterial material;
 
-		FrameBuffer& render(FrameBufferData const& target) const final {
+		FrameBuffer& render(FrameBufferData const& target) final {
 			if (!exists()) return *this;
 			// Set material data
 			material.use(shader);
@@ -125,7 +128,7 @@ namespace Makai::Graph {
 			return *this;
 		}
 
-		FrameBuffer& render(FrameBuffer& targetBuffer) const {
+		FrameBuffer& render(FrameBuffer& targetBuffer) {
 			if (!exists()) return *this;
 			if (!targetBuffer.exists()) return *this;
 			return render(targetBuffer.toFrameBufferData());

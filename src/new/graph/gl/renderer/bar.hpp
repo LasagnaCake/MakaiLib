@@ -1,7 +1,7 @@
 #ifndef MAKAILIB_GRAPH_RENDERER_BAR_H
 #define MAKAILIB_GRAPH_RENDERER_BAR_H
 
-#include "../../ctl/ctl.hpp"
+#include "../../../ctl/ctl.hpp"
 #include "drawable.hpp"
 #include "text.hpp"
 

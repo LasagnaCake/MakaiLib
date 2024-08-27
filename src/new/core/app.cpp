@@ -64,11 +64,11 @@ App* mainApp = nullptr;
 App::App (
 	unsigned int width,
 	unsigned int height,
-	string windowTitle,
+	String windowTitle,
 	bool fullscreen = false,
 	bool useMIDI = false,
-	string bufferShaderPath = "shaders/framebuffer/compose.slf",
-	string mainShaderPath = "shaders/base/base.slf"
+	String bufferShaderPath,
+	String mainShaderPath
 ) {
 	// If there is another app open, throw error
 	if (mainApp)
@@ -135,8 +135,7 @@ App::App (
 	setGLAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
 	// Create OpenGL context
 	SDL_GL_CreateContext(sdlWindow);
-	if (!input.window)
-		input.window = window;
+	Makai::Input::Manager::setTargetWindow(window);
 	DEBUGLN("Created!");
 	DEBUGLN("Starting GLEW...");
 	// Try and initialize GLEW
@@ -193,15 +192,15 @@ App::App (
 	DEBUGLN("All core systems initialized!");
 }
 
-void App::setGLDebug(bool const& state = false) {
+void App::setGLDebug(bool const& state) {
 	setGLFlag(GL_DEBUG_OUTPUT, state);
 }
 
 void App::setWindowTitle(String const& title) {
-	SDL_SetWindowTitle(sdlWindow, windowTitle.c_str());
+	SDL_SetWindowTitle(sdlWindow, title.c_str());
 }
 
-void App::setFullscreen(bool const& state = false) {
+void App::setFullscreen(bool const& state) {
 	SDL_SetWindowFullscreen(sdlWindow, state);
 }
 
@@ -213,18 +212,18 @@ void App::run() {
 	};
 	// The logical process
 	auto logicFunc	= [&](float delta)-> void {
-		onLogicFrame(cycleDelta);
-		taskers.yield(cycleDelta);
+		onLogicFrame(delta);
+		taskers.yield(1.0);
 		if (Entities::_ROOT)
 			Entities::_ROOT->yield(delta);
 	};
 	// Clear screen
-	Graph::clearColorBuffer(color);
+	clearColorBuffer(color);
 	glClear(GL_DEPTH_BUFFER_BIT);
 	// Render reserved layer
 	renderReservedLayer();
 	// Render simple frame
-	SDL_GL_SwapWindow(window);
+	SDL_GL_SwapWindow(sdlWindow);
 	// Call on open function
 	onOpen();
 	// SDL's events
@@ -267,7 +266,7 @@ void App::run() {
 		#ifndef MAKAILIB_PROCESS_RENDER_BEFORE_LOGIC
 		if (cycleRate > (cycleDelta * 1000.0 - 1)) {
 			// Update audio system
-			Audio::updateAudioSystem();
+			Audio::updateAll();
 			// Update input manager
 			input.update();
 			// Get current time
@@ -336,10 +335,6 @@ inline bool	App::running() {
 
 inline void App::setWindowSize(Vector2 const& size) {}
 
-usize App::getCurrentFrame() {
-	return frame;
-}
-
 App* getOpenApp() {
 	return mainApp;
 }
@@ -361,12 +356,12 @@ size_t App::getFrameRate() {
 }
 
 inline void App::renderReservedLayer() {
-	Graph::clearColorBuffer(color);
+	clearColorBuffer(color);
 	glClear(GL_DEPTH_BUFFER_BIT);
 	//framebuffer().clearBuffers();
-	Graph::renderLayer(NumberLimit<usize>::HIGHEST);
+	Graph::Renderer::renderLayer(NumberLimit<usize>::HIGHEST);
 	//framebuffer.render(toFrameBufferData());
-	SDL_GL_SwapWindow(window);
+	SDL_GL_SwapWindow(sdlWindow);
 	// Clear target depth buffer
 	framebuffer();
 	// Enable layer buffer
@@ -390,12 +385,12 @@ inline void App::renderReservedLayer() {
 	onReservedLayerDrawEnd();
 }
 
-inline static void App::setGLFlag(usize const& flag, bool const& state = true) {
+inline static void App::setGLFlag(usize const& flag, bool const& state) {
 	if (state) glEnable(flag);
 	else glDisable(flag);
 }
 
-inline static void App::setGLValue(usize const& flag, int const& value, bool const& state = true) {
+inline static void App::setGLValue(usize const& flag, int const& value, bool const& state) {
 	if (state) glEnablei(flag, value);
 	else glDisablei(flag, value);
 }
@@ -433,8 +428,7 @@ void App::terminate() {
 	// Call final function
 	onClose();
 	// Remove window from input manager
-	if (input.window == window)
-		input.window = nullptr;
+	Makai::Input::Manager::clearTargetWindow(window);
 	Entities::_ROOT->destroyChildren();
 	// Close YSE
 	DEBUGLN("Closing sound system...");
@@ -524,7 +518,7 @@ void App::render() {
 	// Disable depth testing
 	setFlag(GL_DEPTH_TEST, false);
 	// Display window
-	SDL_GL_SwapWindow(window);
+	SDL_GL_SwapWindow(sdlWindow);
 }
 
 void App::copyScreenToQueued() {

@@ -42,8 +42,8 @@ namespace Makai::Graph {
 		} func = {};
 		struct BlendEquationData {
 			BlendEquation
-				color = BlendFunction::BE_ADD,
-				alpha = BlendFunction::BE_ADD
+				color = BlendEquation::BE_ADD,
+				alpha = BlendEquation::BE_ADD
 			;
 		} eq = {};
 	};
@@ -54,21 +54,33 @@ namespace Makai::Graph {
 			BlendFunction const& dstColor,
 			BlendFunction const& srcAlpha,
 			BlendFunction const& dstAlpha
-		);
+		) {
+			blend.func = {srcColor, dstColor, srcAlpha, dstAlpha};
+			return *this;
+		}
 
 		constexpr Blendable& setBlendFunction(
 			BlendFunction const& src,
 			BlendFunction const& dst
-		);
+		) {
+			blend.func = {src, dst, src, dst};
+			return *this;
+		}
 
 		constexpr Blendable& setBlendEquation(
 			BlendEquation const& color,
 			BlendEquation const& alpha
-		);
+		) {
+			blend.eq = {color, alpha};
+			return *this;
+		}
 
 		constexpr Blendable& setBlendEquation(
 			BlendEquation const& eq
-		);
+		) {
+			blend.eq = {eq, eq};
+			return *this;
+		}
 
 		BlendData blend;
 

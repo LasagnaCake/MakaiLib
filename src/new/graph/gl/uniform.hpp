@@ -1,7 +1,7 @@
 #ifndef GL_GRAPH_UNIFORM_H
 #define GL_GRAPH_UNIFORM_H
 
-#include "../ctl/ctl.hpp"
+#include "../../ctl/ctl.hpp"
 
 namespace Makai::Graph {
 	struct Uniform {

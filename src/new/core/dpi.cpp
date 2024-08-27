@@ -2,7 +2,7 @@
 
 #if (_WIN32 || _WIN64 || __WIN32__ || __WIN64__)
 #ifndef MAKAILIB_WINDOWS_8_1_OR_LATER
-#include <winuser.h>
+#include <windows.h>
 #else
 #include <shellscalingapi.h>
 #endif // MAKAILIB_WINDOWS_8_1_OR_LATER

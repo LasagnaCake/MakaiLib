@@ -2,6 +2,7 @@
 #define MAKAILIB_GRAPH_RENDERER_SCENE_H
 
 #include "drawable.hpp"
+#include "renderable.hpp"
 #include "../material/material.hpp"
 
 namespace Makai::Graph {

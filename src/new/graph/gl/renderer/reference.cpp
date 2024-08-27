@@ -2,7 +2,7 @@
 
 using namespace Makai::Graph;
 
-void srpTransform(Vertex& vtx, Matrix4x4 const& tmat) {
+inline void srpTransform(Vertex& vtx, Matrix4x4 const& tmat) {
 	// Position
 	Vector3 res = (tmat * Vector4(vtx.x, vtx.y, vtx.z, 1.0f)).toVector3();
 	Vertex::setPosition(vtx, res);
@@ -17,7 +17,7 @@ inline void srpTransform(Vertex& vtx, Transform3D const& trans) {
 
 PlaneRef::PlaneRef(
 	Triangle* const(& tris)[2]
-): Shape<2>(tris) {
+): ShapeRef<2>(tris) {
 	// Get vertices
 	this->tl	= &(tris[0]->verts[0]);
 	this->tr1	= &(tris[0]->verts[1]);
@@ -44,7 +44,7 @@ PlaneRef::PlaneRef(
 	);
 }
 
-virtual ~Plane() {}
+virtual ~PlaneRef::PlaneRef() {}
 
 /// Sets the plane's origin.
 PlaneRef* PlaneRef::setOrigin(
@@ -174,7 +174,7 @@ void AnimatedPlaneRef::onTransform() override  {
 
 TriangleRef::TriangleRef(
 	Triangle* const(& tris)[1]
-): Shape<1>(tris) {
+): ShapeRef<1>(tris) {
 	// Get vertices
 	this->a = &(tris[0]->verts[0]);
 	this->b = &(tris[0]->verts[1]);

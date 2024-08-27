@@ -1,7 +1,7 @@
 #ifndef MAKAILIB_GRAPH_TEXTURE_H
 #define MAKAILIB_GRAPH_TEXTURE_H
 
-#include "../ctl/ctl.hpp"
+#include "../../ctl/ctl.hpp"
 
 namespace Makai::Graph {
 	struct Image {
@@ -21,7 +21,7 @@ namespace Makai::Graph {
 
 		Image& make();
 
-		inline static void unbind(ImageTarget const& target = ImageTarget::IT_TEXTURE_2D) const;
+		inline static void unbind(ImageTarget const& target = ImageTarget::IT_TEXTURE_2D);
 
 		inline Image& use(uchar const& texture = 0);
 
@@ -94,11 +94,11 @@ namespace Makai::Graph {
 			ComponentType	type;
 			ImageFormat		format;
 			uint			internalFormat;
-			FilterType		minFilter, magFilter;
+			FilterMode		minFilter, magFilter;
 		};
 
 		struct ImageData: Attributes {
-			Data::BinaryData data;
+			List<ubyte> data;
 		};
 
 		Image2D& create(
@@ -130,8 +130,8 @@ namespace Makai::Graph {
 		Image2D&		saveToFile(String const& path, uint8 const& quality, ImageFileType type = ImageFileType::IFT_AUTO_DETECT);
 		Image2D const&	saveToFile(String const& path, uint8 const& quality, ImageFileType type = ImageFileType::IFT_AUTO_DETECT) const;
 
-		Image2D&		saveToFile(string const& path, ImageFileType type = ImageFileType::IFT_AUTO_DETECT);
-		Image2D const&	saveToFile(string const& path, ImageFileType type = ImageFileType::IFT_AUTO_DETECT) const;
+		Image2D&		saveToFile(String const& path, ImageFileType type = ImageFileType::IFT_AUTO_DETECT);
+		Image2D const&	saveToFile(String const& path, ImageFileType type = ImageFileType::IFT_AUTO_DETECT) const;
 
 		[[nodiscard]]
 		static Image2D* newImage(

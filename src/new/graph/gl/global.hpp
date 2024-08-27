@@ -1,7 +1,7 @@
 #ifndef MAKAILIB_GRAPH_GLOBAL_H
 #define MAKAILIB_GRAPH_GLOBAL_H
 
-#include "../ctl/ctl.hpp"
+#include "../../ctl/ctl.hpp"
 #include "camera.hpp"
 
 namespace Makai::Graph {

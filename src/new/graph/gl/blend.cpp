@@ -7,39 +7,6 @@
 
 using namespace Makai::Graph;
 
-constexpr Blendable& Blendable::setBlendFunction(
-	BlendFunction const& srcColor,
-	BlendFunction const& dstColor,
-	BlendFunction const& srcAlpha,
-	BlendFunction const& dstAlpha
-) {
-	blend.func = {srcColor, dstColor, srcAlpha, dstAlpha};
-	return *this;
-}
-
-constexpr Blendable& Blendable::setBlendFunction(
-	BlendFunction const& src,
-	BlendFunction const& dst
-) {
-	blend.func = {src, dst, src, dst};
-	return *this;
-}
-
-constexpr Blendable& Blendable::setBlendEquation(
-	BlendEquation const& color,
-	BlendEquation const& alpha
-) {
-	blend.eq = {color, alpha};
-	return *this;
-}
-
-constexpr Blendable& Blendable::setBlendEquation(
-	BlendEquation const& eq
-) {
-	blend.eq = {eq, eq};
-	return *this;
-}
-
 GLenum convert(BlendFunction const& value) {
 	using enum BlendFunction;
 	switch (value) {

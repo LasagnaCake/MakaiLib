@@ -1,9 +1,12 @@
 #ifndef MAKAILIB_GRAPH_RENDERER_TEXT_H
 #define MAKAILIB_GRAPH_RENDERER_TEXT_H
 
-#include "../../ctl/ctl.hpp"
+#include "../../../ctl/ctl.hpp"
+#include "../texture.hpp"
 
 namespace Makai::Graph {
+	using Makai::Graph::Texture2D;
+
 	struct TextRect {
 		usize h = 0, v = 0;
 	};

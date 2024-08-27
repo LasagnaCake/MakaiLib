@@ -1626,6 +1626,12 @@ namespace VecMath
 	}
 }
 
+using
+	VecMath::Transform2D,
+	VecMath::Transform3D,
+	VecMath::Transform
+;
+
 #pragma GCC diagnostic pop
 
 #endif // VECTOR234_H

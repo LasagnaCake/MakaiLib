@@ -1,7 +1,7 @@
 #ifndef MAKAILIB_GRAPH_RENDERER_DRAWABLE_H
 #define MAKAILIB_GRAPH_RENDERER_DRAWABLE_H
 
-#include "../../ctl/ctl.hpp"
+#include "../../../ctl/ctl.hpp"
 #include "../material/material.hpp"
 #include "../blend.hpp"
 #include "core.hpp"
@@ -75,7 +75,7 @@ namespace Makai::Graph {
 	};
 
 	template<class T>
-	concept DrawableObjectType = requires Type::Subclass<T, DrawableObject>;
+	concept DrawableObjectType = Type::Subclass<T, DrawableObject>;
 }
 
 #endif // MAKAILIB_GRAPH_RENDERER_DRAWABLE_H

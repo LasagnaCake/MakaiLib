@@ -5,6 +5,7 @@
 #include "bar.hpp"
 #include "dummy.hpp"
 #include "renderable.hpp"
+#include "text.hpp"
 #include "scene.hpp"
 #include "framebuffer.hpp"
 #include "reference.hpp"

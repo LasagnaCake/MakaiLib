@@ -1,7 +1,7 @@
 #ifndef MAKAILIB_GRAPH_MATERIAL_EFFECT_H
 #define MAKAILIB_GRAPH_MATERIAL_EFFECT_H
 
-#include "../../ctl/ctl.hpp"
+#include "../../../ctl/ctl.hpp"
 #include "../texture.hpp"
 
 namespace Makai::Graph::Material {
@@ -244,7 +244,7 @@ namespace Makai::Graph::Material {
 
 	JSON::JSONData saveImageEffect(Effect::Image& effect, String const& folder, String const& path);
 
-	ImageEffect loadImageEffect(JSON::JSONData& effect, String const& sourcepath, Texture2D& texture);
+	Effect::Image loadImageEffect(JSON::JSONData& effect, String const& sourcepath, Texture2D& texture);
 }
 
 namespace MkEffect = Makai::Graph::Material::Effect;

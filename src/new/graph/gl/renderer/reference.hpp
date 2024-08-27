@@ -4,7 +4,9 @@
 #include "../vertex.hpp"
 
 namespace Makai::Graph {
-	using VertexFunction = Function<void(RawVertex&)>;
+	using VertexFunction = Function<void(Vertex&)>;
+
+	class Renderable;
 
 	struct Empty {
 		void destroy()		{onDestroy();					}
@@ -32,16 +34,12 @@ namespace Makai::Graph {
 			delete[] tris;
 		};
 
-		typename Triangles getBoundTriangles() {
-			return typename Triangles(tris, SIZE);
+		Triangles getBoundTriangles() {
+			return Triangles(tris, SIZE);
 		}
-
-		virtual ~ShapeRef();
 
 		virtual ShapeRef* reset()		= 0;
 		virtual ShapeRef* transform()	= 0;
-
-		Triangles getBoundTriangles();
 
 		virtual void forEachVertex(VertexFunction const& f) {
 			for SRANGE(i, 0, SIZE)
@@ -54,18 +52,18 @@ namespace Makai::Graph {
 
 		Transform3D local;
 
-		friend class RenderData::Renderable;
+		friend class Makai::Graph::Renderable;
 	protected:
-		Triangle** tris = new Triangle*[COUNT](nullptr);
+		Triangle** tris = new Triangle*[SIZE](nullptr);
 	};
 
-	class PlaneRef: public Shape<2> {
+	class PlaneRef: public ShapeRef<2> {
 	public:
 		PlaneRef(
 			Triangle* const(& tris)[2]
 		);
 
-		virtual ~PlaneRef() {}
+		virtual ~PlaneRef();
 
 		/// Sets the plane's origin.
 		PlaneRef* setOrigin(
@@ -134,13 +132,13 @@ namespace Makai::Graph {
 		void onTransform() override;
 	};
 
-	class TriangleRef: public Shape<1> {
+	class TriangleRef: public ShapeRef<1> {
 	public:
 		TriangleRef(
 			Triangle* const(& tris)[1]
 		);
 
-		virtual ~TriangleRef() {}
+		virtual ~TriangleRef();
 
 		/// Sets the triangle's origin.
 		TriangleRef* setOrigin(
@@ -183,7 +181,7 @@ namespace Makai::Graph {
 
 		TriangleRef* transform() override final;
 
-		void forEachVertex(VertexFunc const& f) override final {
+		void forEachVertex(VertexFunction const& f) override final {
 			f(origin[0]);
 			f(origin[1]);
 			f(origin[2]);
@@ -207,7 +205,7 @@ namespace Makai::Graph {
 	template<class T>
 	concept ShapeRefType	= requires {
 		T::SIZE;
-	} && Type::Derived<T, Shape<T::SIZE>> && NotEmpty<T>;
+	} && Type::Derived<T, ShapeRef<T::SIZE>> && NotEmpty<T>;
 
 	template<class T>
 	concept PlaneRefType	= Type::Derived<T, PlaneRef> && NotEmpty<T>;
