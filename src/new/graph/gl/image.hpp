@@ -1,5 +1,5 @@
-#ifndef MAKAILIB_GRAPH_TEXTURE_H
-#define MAKAILIB_GRAPH_TEXTURE_H
+#ifndef MAKAILIB_GRAPH_IMAGE_H
+#define MAKAILIB_GRAPH_IMAGE_H
 
 #include "../../ctl/ctl.hpp"
 
@@ -168,4 +168,4 @@ namespace Makai::Graph {
 	};
 }
 
-#endif // MAKAILIB_GRAPH_TEXTURE_H
+#endif // MAKAILIB_GRAPH_IMAGE_H
