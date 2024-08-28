@@ -127,7 +127,7 @@ namespace Makai::Graph::Color {
 		String code;
 		code += (webColor ? "#" : "0x");
 		uint32 hci = (toRGB ? toHexCodeRGB(color) : toHexCodeRGBA(color));
-		const uint8 hclen{toRGB ? 6u : 8u};
+		const uint8 hclen{toRGB ? uint8(6u) : uint8(8u)};
 		uint8 nib{};
 		for SRANGE(i, 0, hclen) {
 			nib = hci >> ((hclen - 1) - i) * 4;
