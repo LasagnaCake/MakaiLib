@@ -40,8 +40,8 @@ namespace Makai::Graph {
 
 		void reset() {
 			Global::camera	= camera;
-			Global::world	= space;
-			Global::space	= world;
+			Global::space	= space;
+			Global::world	= world;
 		}
 
 		~GlobalState() {reset();}
