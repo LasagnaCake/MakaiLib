@@ -7,7 +7,9 @@
 
 using namespace Makai::Graph;
 
-constexpr GLuint getGLShaderType(ShaderType const& type) {
+namespace SLF = Makai::SLF;
+
+constexpr GLuint getGLShaderType(SLF::ShaderType const& type) {
 	switch (type) {
 		default:
 		case ShaderType::ST_INVALID:	return GL_FALSE;
@@ -30,14 +32,14 @@ struct Shader::ShaderProgram {
 };
 
 /// Similar to create, but internal.
-void Shader::attach(String const& code, GLuint const& shaderType) {
+void Shader::attach(String const& code, SLF::ShaderType const& shaderType) {
 	// Compile shaders
 	GLuint shader;
 	int success;
 	char infoLog[2048];
 	const char* shaderCode = code.c_str();
 	// Vertex Shader
-	shader = glCreateShader(shaderType);
+	shader = glCreateShader(getGLShaderType(shaderType));
 	glShaderSource(shader, 1, &shaderCode, NULL);
 	glCompileShader(shader);
 	// Log compile errors if any
@@ -72,7 +74,7 @@ Shader::Shader(SLF::SLFData const& slfData) {
 	create(slfData);
 }
 
-Shader::Shader(String const& code, GLuint const& shaderType) {
+Shader::Shader(String const& code, SLF::ShaderType const& shaderType) {
 	create(code, shaderType);
 }
 
@@ -181,7 +183,7 @@ bool Shader::create(String const& code, GLuint const& shaderType) {
 	char infoLog[2048];
 	const char* shaderCode = code.c_str();
 	// Vertex Shader
-	shader = glCreateShader(shaderType);
+	shader = glCreateShader(getGLShaderType(shaderType));
 	glShaderSource(shader, 1, &shaderCode, NULL);
 	glCompileShader(shader);
 	// Log compile errors if any

@@ -2,6 +2,7 @@
 #define MAKAILIB_GRAPH_TEXTURE_H
 
 #include "../../ctl/ctl.hpp"
+#include "../../file/json.hpp"
 #include "image.hpp"
 
 namespace Makai::Graph {

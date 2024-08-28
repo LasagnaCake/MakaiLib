@@ -19,7 +19,7 @@ namespace Makai::Graph {
 		bool created = false;
 
 		/// Similar to create, but internal.
-		void attach(String const& code, GLuint const& shaderType);
+		void attach(String const& code, SLF::ShaderType const& shaderType);
 	public:
 		Shader();
 
@@ -27,7 +27,7 @@ namespace Makai::Graph {
 
 		Shader(SLF::SLFData const& slfData);
 
-		Shader(String const& code, GLuint const& shaderType);
+		Shader(String const& code, SLF::ShaderType const& shaderType);
 
 		Shader(Shader const& other);
 
@@ -45,13 +45,13 @@ namespace Makai::Graph {
 		bool create(SLF::SLFData const& slfData);
 
 		/// Creates a shader from a given shader code, and a shader type  and associates it to the object. Returns false if already created.
-		bool create(String const& code, GLuint const& shaderType);
+		bool create(String const& code, uint const& shaderType);
 
 		void make(String const& vertexCode, String const& fragmentCode);
 
 		void make(SLF::SLFData const& slfData);
 
-		void make(String const& code, GLuint const& shaderType);
+		void make(String const& code, SLF::ShaderType const& shaderType);
 
 		/// Destroys the shader associated with this object, if any. Does not delete object.
 		void destroy();

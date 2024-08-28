@@ -2,15 +2,17 @@
 
 using namespace Makai::Graph;
 
+namespace JSON = Makai::JSON;
+
 JSON::JSONData Material::saveImageEffect(Material::Effect::Image& effect, String const& folder, String const& path) {
-	JSONData def;
+	JSON::JSONData def;
 	def["enabled"] = effect.enabled;
-	if (effect.image && effect.image->exists()) {
-		effect.image->saveToFile(FileSystem::concatenatePath(folder, path));
-		def["image"] = {
+	if (effect.image && effect.image.exists()) {
+		effect.image.saveToFile(FileSystem::concatenatePath(folder, path));
+		def["image"] = JSON::Extern::JSONData{
 			{"path", path},
-			{"minFilter", effect.image->getMinFilter()},
-			{"magFilter", effect.image->getMagFilter()}
+			{"minFilter", effect.image.minFilter()},
+			{"magFilter", effect.image.magFilter()}
 		};
 	} else def["enabled"] = false;
 	return def;

@@ -1,5 +1,5 @@
 #ifndef MAKAILIB_GRAPH_MATERIAL_MATERIALS_H
-#define MAKAILIB_GRAPH_MATERIAL_DEBUG_H
+#define MAKAILIB_GRAPH_MATERIAL_MATERIALS_H
 
 #include "../../../file/json.hpp"
 #include "../../../ctl/ctl.hpp"

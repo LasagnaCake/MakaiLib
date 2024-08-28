@@ -2,7 +2,9 @@
 #define MAKAILIB_GRAPH_MATERIAL_EFFECT_H
 
 #include "../../../ctl/ctl.hpp"
+#include "../../../file/json.hpp"
 #include "../texture.hpp"
+#include "../color.hpp"
 
 namespace Makai::Graph::Material {
 	namespace Effect {
