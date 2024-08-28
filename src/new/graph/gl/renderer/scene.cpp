@@ -5,7 +5,13 @@
 using namespace Makai::Graph;
 using Scene3D::BaseType;
 
-Scene3D::Scene3D(Scene3D& other, usize const& layer, bool const& manual = false): BaseType(layer, manual) {
+void Scene3D::draw() {
+	GlobalState state(camera, Matrix4x4(global), world);
+	for(auto& [_, obj]: objects)
+		obj->render();
+}
+
+Scene3D::Scene3D(Scene3D& other, usize const& layer, bool const& manual): BaseType(layer, manual) {
 	extend(other);
 }
 
@@ -30,7 +36,7 @@ void Scene3D::extend(Scene3D& other) {
 	world	= other.world;
 }
 
-Scene3D::Scene3D(size_t layer, String const& path, bool manual = false): BaseScene(layer, manual) {
+Scene3D::Scene3D(size_t layer, String const& path, bool manual): BaseScene(layer, manual) {
 	extendFromSceneFile(path);
 }
 
@@ -41,10 +47,10 @@ void Scene3D::extendFromSceneFile(String const& path) {
 void Scene3D::saveToSceneFile(
 	String const& folder,
 	String const& name,
-	bool const& integratedObjects			= false,
-	bool const& integratedObjectBinaries	= false,
-	bool const& integratedObjectTextures	= false,
-	bool const& pretty = false
+	bool const& integratedObjects,
+	bool const& integratedObjectBinaries,
+	bool const& integratedObjectTextures,
+	bool const& pretty
 
 ) {
 	JSON::JSONData file = getSceneDefinition(integratedObjects, integratedObjectBinaries, integratedObjectTextures);
@@ -219,4 +225,50 @@ void extendFromDefinitionV0(JSON::JSONData def, String const& sourcepath) {
 			"Please check to see if values are correct!"
 		);
 	}
+}
+
+JSON::JSONData getSceneDefinition(
+	bool const& integratedObjects,
+	bool const& integratedObjectBinaries,
+	bool const& integratedObjectTextures
+) {
+	JSONData def;
+	def["version"] = version;
+	if (integratedObjects)
+		for (auto& [name, obj]: getObjects())
+			def["data"][name] = obj->getObjectDefinition("base64", integratedObjectBinaries, integratedObjectTextures);
+	Camera::Camera3D cam = camera;
+	def["camera"] = {
+		{"eye",		{cam.eye.x, cam.eye.y, cam.eye.z}	},
+		{"at",		{cam.at.x, cam.at.y, cam.at.z}		},
+		{"up",		{cam.up.x, cam.up.y, cam.up.z}		},
+		{"aspect",	{cam.aspect.x, cam.aspect.y,}		},
+		{"fov",		cam.fov		},
+		{"zNear",	cam.zNear	},
+		{"zFar",	cam.zFar	},
+		{"ortho", {
+			{"strength",	cam.ortho.strength							},
+			{"origin",		{cam.ortho.origin.x, cam.ortho.origin.y}	},
+			{"size",		{cam.ortho.size.x, cam.ortho.size.y}		}
+		}},
+		{"relativeToEye", cam.relativeToEye}
+	};
+	#define _FOG_JSON_VALUE(FOG_TYPE)\
+		{#FOG_TYPE, {\
+			{"enabled", world.FOG_TYPE.enabled},\
+			{"color", Color::toHexCodeString(world.FOG_TYPE.color, false, true)},\
+			{"start", world.FOG_TYPE.start},\
+			{"stop", world.FOG_TYPE.stop},\
+			{"strength", world.FOG_TYPE.strength}\
+		}}
+	def["world"] = {
+		_FOG_JSON_VALUE(nearFog),
+		_FOG_JSON_VALUE(farFog),
+		{"ambient", {
+			{"color", Color::toHexCodeString(world.ambient.color, true, true)},
+			{"strength", world.ambient.strength}
+		}}
+	};
+	#undef _FOG_JSON_VALUE
+	return def;
 }

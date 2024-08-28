@@ -9,6 +9,8 @@ using namespace Makai::Graph;
 
 using namespace Material;
 
+namespace JSON = Makai::JSON;
+
 Vector2 fromJSONArrayV2(JSON::JSONData const& json, Vector2 const& defaultValue = 0) {
 	try {
 		if (json.isArray())
@@ -66,9 +68,9 @@ ObjectMaterial fromDefinition(JSON::JSONData def, String const& definitionFolder
 	try {
 		auto& dmat = def;
 		// Set color
-		mat.color = Drawer::colorFromJSON(dmat["color"]);
+		mat.color = Color::fromJSON(dmat["color"]);
 		// Set color & shading params
-		#define _SET_BOOL_PARAM(PARAM) if(dmat[#PARAM].isBoolean()) mat.PARAM = dmat[#PARAM].get<bool>()
+		#define _SET_BOOL_PARAM(PARAM) if(dmat[#PARAM].isBool()) mat.PARAM = dmat[#PARAM].get<bool>()
 		_SET_BOOL_PARAM(shaded);
 		_SET_BOOL_PARAM(illuminated);
 		#undef _SET_BOOL_PARAM
@@ -115,9 +117,9 @@ ObjectMaterial fromDefinition(JSON::JSONData def, String const& definitionFolder
 			mat.warp.image		= fx.image;
 			{
 				auto mwtrans = dmat["warp"]["trans"];
-				mat.warp.trans.position = VecMath::fromJSONArrayV2(mwtrans["position"]);
+				mat.warp.trans.position = fromJSONArrayV2(mwtrans["position"]);
 				mat.warp.trans.rotation = mwtrans["rotation"].get<float>();
-				mat.warp.trans.scale = VecMath::fromJSONArrayV2(mwtrans["scale"], 1);
+				mat.warp.trans.scale = fromJSONArrayV2(mwtrans["scale"], 1);
 			}
 			mat.warp.channelX = dmat["warp"]["channelX"];
 			mat.warp.channelY = dmat["warp"]["channelY"];
@@ -140,12 +142,12 @@ ObjectMaterial fromDefinition(JSON::JSONData def, String const& definitionFolder
 		// Set instances
 		if (dmat["instances"].isArray()) {
 			mat.instances.clear();
-			for(auto& inst: dmat["instances"])
-				mat.instances.push_back(VecMath::fromJSONArrayV3(inst));
+			for(auto& inst: dmat["instances"].json())
+				mat.instances.push_back(fromJSONArrayV3(inst));
 		}
 		// Set culling, fill & view
-		if (dmat["culling"].isNumber())	mat.culling	= (ObjectCulling)dmat["culling"].get<unsigned int>();
-		if (dmat["fill"].isNumber())	mat.fill	= (ObjectFill)dmat["fill"].get<unsigned int>();
+		if (dmat["culling"].isNumber())	mat.culling	= (CullMode)dmat["culling"].get<unsigned int>();
+		if (dmat["fill"].isNumber())	mat.fill	= (FillMode)dmat["fill"].get<unsigned int>();
 		if (dmat["debug"].isNumber())	mat.debug	= (ObjectDebugView)dmat["debug"].get<unsigned int>();
 	} catch (std::exception const& e) {
 		throw Error::FailedAction(
@@ -164,11 +166,11 @@ JSON::JSONData toDefinition(
 	ObjectMaterial& mat,
 	String const& definitionFolder,
 	String const& texturesFolder,
-	bool integratedTextures = false
+	bool integratedTextures
 ) {
 	JSON::JSONData def;
 	// Define object
-	def = {
+	def = JSON::JSONType{
 		{"color", Color::toHexCodeString(mat.color, false, true)},
 		{"shaded", mat.shaded},
 		{"illuminated", mat.illuminated},
@@ -195,7 +197,7 @@ JSON::JSONData toDefinition(
 	def["instances"] = JSON::array();
 	usize idx = 0;
 	for (Vector3& inst: mat.instances) {
-		def["instances"][idx] = {inst.x, inst.y, inst.z};
+		def["instances"][idx] = JSON::JSONType{inst.x, inst.y, inst.z};
 	}
 	// Set cull & fill
 	def["material"]["fill"]		= (uint)(mat.fill);
@@ -213,7 +215,7 @@ JSON::JSONData toDefinition(
 	def["emission"]["strength"] = mat.emission.strength;
 	def["warp"]["channelX"] = mat.warp.channelX;
 	def["warp"]["channelY"] = mat.warp.channelY;
-	def["warp"]["trans"] = {
+	def["warp"]["trans"] = JSON::JSONType{
 		{"position",	{mat.warp.trans.position.x,	mat.warp.trans.position.y	}	},
 		{"rotation",	mat.warp.trans.rotation										},
 		{"scale",		{mat.warp.trans.scale.x,	mat.warp.trans.scale.y		}	}
@@ -222,39 +224,36 @@ JSON::JSONData toDefinition(
 	return def;
 }
 
-Renderable::Renderable(size_t layer = 0, bool manual = false):
+Renderable::Renderable(usize const& layer, bool const& manual):
 DrawableObject(layer, manual) {
-	material.texture.image	= &texture;
-	material.emission.image	= &emission;
-	material.warp.image		= &warp;
 }
 
 Renderable::Renderable(
-	List<Triangle*> triangles,
-	size_t layer = 0,
-	bool manual = false
+	List<Triangle*> const& triangles,
+	usize const& layer,
+	bool const& manual
 ): DrawableObject(layer, manual) {
 	this->triangles = triangles;
 }
 
 Renderable::Renderable(
-	Vertex* vertices,
-	size_t count,
-	size_t layer = 0,
-	bool manual = false
+	Vertex* const& vertices,
+	usize const& count,
+	usize const& layer,
+	bool const& manual
 ): DrawableObject(layer, manual) {
 	extend(vertices, count);
 }
 
 Renderable::Renderable(
 	Renderable& other,
-	size_t layer = 0,
-	bool manual = false
+	usize const& layer,
+	bool const& manual
 ): DrawableObject(layer, manual) {
 	extend(other);
 }
 
-virtual Renderable::~Renderable() {
+Renderable::~Renderable() {
 	locked = false;
 	DEBUGLN("Renderable!");
 	DEBUGLN("Deleting references...");
@@ -269,13 +268,13 @@ void Renderable::bakeAndLock() {
 	clearData();
 }
 
-void Renderable::extend(Vertex* vertices, size_t size) {
+void Renderable::extend(Vertex* const& vertices, usize const& size) {
 	if (locked) return;
 	if (vertices == nullptr || size == 0)
 		throw Error::InvalidValue("No vertices were provided!");
 	if (size % 3 != 0)
 		throw Error::InvalidValue("Vertex amount is not a multiple of 3!");
-	const size_t arrEnd = triangles.size();
+	const usize arrEnd = triangles.size();
 	triangles.resize(triangles.size() + (size / 3));
 	if (this->vertices)
 		delete[] this->vertices;
@@ -305,15 +304,15 @@ void Renderable::extend(List<Renderable*> const& parts) {
 }
 
 void Renderable::extendFromBinaryFile(String const& path) {
-	auto data = FileLoader::getBinaryFile(path);
+	auto data = File::getBinaryFile(path);
 	if (!data.size()) throw FileLoader::FileLoadError("File does not exist or is empty! (" + path + ")!");
-	extend((RawVertex*)&data[0], data.size() / sizeof(Vertex));
+	extend((Vertex*)&data[0], data.size() / sizeof(Vertex));
 	DEBUG("Vertices: ");
 	DEBUGLN(data.size() / sizeof(Vertex));
 }
 
 inline void Renderable::extendFromDefinitionFile(String const& path) {
-	extendFromDefinition(FileLoader::getJSON(path), FileSystem::getDirectoryFromPath(path));
+	extendFromDefinition(File::getJSONFile(path), FileSystem::getDirectoryFromPath(path));
 }
 
 void Renderable::bake() {
@@ -351,11 +350,11 @@ void Renderable::saveToBinaryFile(String const& path) {
 
 void Renderable::saveToDefinitionFile(
 	String const& folder,
-	String const& name = "object",
-	String const& texturesFolder = "tx",
-	bool const& integratedBinary	= false,
-	bool const& integratedTextures	= false,
-	bool const& pretty = false
+	String const& name,
+	String const& texturesFolder,
+	bool const& integratedBinary,
+	bool const& integratedTextures,
+	bool const& pretty
 ) {
 	DEBUGLN("Saving object '" + name + "'...");
 	// Get paths
@@ -368,7 +367,7 @@ void Renderable::saveToDefinitionFile(
 	// If binary is in a different location, save there
 	if (!integratedBinary) {
 		FileLoader::saveBinaryFile(binpath, vertices, vertexCount);
-		file["mesh"]["data"] = {{"path", name + ".mesh"}};
+		file["mesh"]["data"] = JSON::JSONType{{"path", name + ".mesh"}};
 	}
 	// Get material data
 	file["material"] = toDefinition(material, folder, texturesFolder, integratedTextures);
@@ -388,9 +387,9 @@ void Renderable::copyVertices() {
 	vertexCount = triangles.size() * 3;
 	// Copy data to vertex buffer
 	if (vertices) delete[] vertices;
-	vertices = new RawVertex[(vertexCount)];
+	vertices = new Vertex[(vertexCount)];
 	// Copy data to IVB
-	size_t i = 0;
+	usize i = 0;
 	for (auto& t: triangles) {
 		// Check if not null
 		if (!t) continue;
@@ -402,7 +401,7 @@ void Renderable::copyVertices() {
 	for (auto& shape: references.shape)	shape->reset();
 }
 
-void Renderable::draw() override {
+void Renderable::draw() {
 	// If object's vertices are not "baked" (i.e. finalized), copy them
 	if (!baked && !locked) copyVertices();
 	// If no vertices, return
@@ -411,16 +410,23 @@ void Renderable::draw() override {
 	prepare();
 	material.use(shader);
 	// Present to screen
-	display(vertices, vertexCount);
+	display(
+		vertices,
+		vertexCount,
+		material.culling,
+		material.fill,
+		DisplayMode::ODM_TRIS,
+		material.instances.size()
+	);
 }
 
 void Renderable::extendFromDefinition(
 	JSON::JSONData def,
 	String const& sourcepath
 ) {
-	if (def.contains("number") && def["version"].isNumber()) {
+	if (def.has("number") && def["version"].isNumber()) {
 		// Do stuff for versions
-		switch (def["version"].get<size_t>()) {
+		switch (def["version"].get<usize>()) {
 			default:
 			case 0: extendFromDefinitionV0(def, sourcepath); break;
 		}
@@ -437,13 +443,13 @@ void Renderable::extendFromDefinitionV0(
 	List<ubyte> vdata;
 	// Get mesh data
 	try {
-		auto& mesh	= def["mesh"];
-		auto& data	= mesh["data"];
-		if (data.is_String()) {
+		auto mesh	= def["mesh"];
+		auto data	= mesh["data"];
+		if (data.isString()) {
 			String encoding	= mesh["encoding"].get<String>();
-			vdata			= decodeData(data.get<String>(), encoding);
+			vdata			= Data::decode(data.get<String>(), Data::fromString(encoding));
 		} else if (data.isObject()) {
-			vdata			= FileLoader::getBinaryFile(FileSystem::concatenatePath(sourcepath, data["path"].get<String>()));
+			vdata			= File::getBinaryFile(FileSystem::concatenatePath(sourcepath, data["path"].get<String>()));
 		}
 		componentData		= mesh["components"].get<String>();
 	} catch (std::exception const& e) {
@@ -470,13 +476,13 @@ void Renderable::extendFromDefinitionV0(
 		);
 	}
 	// Vertex map
-	Drawer::VertexMap vm;
+	VertexMap vm;
 	// Component list in order they appear
 	List<String> components = Helper::splitString(componentData, ',');
 	// Check if valid component data
 	{
 		String indexes = "";
-		size_t i = 0;
+		usize i = 0;
 		for (auto& c: components) {
 			if(c.empty()) indexes += toString(i, " ");
 			i++;
@@ -492,9 +498,9 @@ void Renderable::extendFromDefinitionV0(
 	}
 	// Check if there are no missing vertices
 	{
-		const size_t vsize = (sizeof(float) * components.size());
-		const size_t vds = (vdata.size() / vsize);
-		const size_t expected = Math::ceil(vds / 3.0) * 3.0;
+		const usize vsize = (sizeof(float) * components.size());
+		const usize vds = (vdata.size() / vsize);
+		const usize expected = Math::ceil(vds / 3.0) * 3.0;
 		if (vds % 3 != 0)
 			throw Error::InvalidValue(
 				"Improper/incomplete vertex data!",
@@ -512,15 +518,15 @@ void Renderable::extendFromDefinitionV0(
 	// Get pointer to data
 	float* rawdata = (float*)vdata.data();
 	// Current vertex component being accessed
-	size_t component = 0;
+	usize component = 0;
 	// Resulting vertices
-	List<RawVertex> vertices;
+	List<Vertex> vertices;
 	// Loop time
 	while (component < vdata.size() / sizeof(float)) {
-		vm = Drawer::baseVertexMap;
+		vm = Vertex::defaultMap();
 		for (auto& c: components)
 			vm[c] = rawdata[component++];
-		vertices.push_back(Drawer::toRawVertex(vm));
+		vertices.push_back(Vertex::from(vm));
 	}
 	// Check if data is OK
 	if (vertices.size() % 3 != 0)
@@ -531,9 +537,9 @@ void Renderable::extendFromDefinitionV0(
 			"extendFromDefinition",
 			(
 				"Total vertex count is "
-			+	std::to_String(vertices.size())
+			+	toString(vertices.size())
 			+	" .\nExpected size is "
-			+	std::to_String(size_t(Math::ceil(vertices.size() / 3.0) * 3.0))
+			+	toString(usize(Math::ceil(vertices.size() / 3.0) * 3.0))
 			+	"."
 			),
 			"You either have extra data, or missing data."
@@ -542,7 +548,7 @@ void Renderable::extendFromDefinitionV0(
 	extend(vertices.data(), vertices.size());
 	// check for optional transform
 	if (def["trans"].isObject()) {
-		auto& dtrans = def["trans"];
+		auto dtrans = def["trans"];
 		try {
 			trans.position	= fromJSONArrayV3(dtrans["position"]);
 			trans.rotation	= fromJSONArrayV3(dtrans["rotation"]);
@@ -568,7 +574,7 @@ void Renderable::extendFromDefinitionV0(
 			JSON::JSONData bfun	= def["blend"]["function"];
 			JSON::JSONData beq	= def["blend"]["equation"];
 			if (bfun.isNumber()) {
-				GLenum bv = getBlendFunction(bfun.get<uint>());
+				BlendFunction bv = (BlendFunction)bfun.get<uint>();
 				blend.func = {bv, bv, bv, bv};
 			} else if (bfun.isObject()) {
 				if (bfun["src"].isNumber()) {
@@ -602,14 +608,14 @@ void Renderable::extendFromDefinitionV0(
 			);
 		}
 	}
-	if (def["active"].isBoolean())
+	if (def["active"].isBool())
 		active = def["active"].get<bool>();
 }
 
-JSON::JSONData getObjectDefinition(
-	String const& encoding = "base64",
-	bool const& integratedBinary = true,
-	bool const& integratedTextures = true
+JSON::JSONData Renderable::getObjectDefinition(
+	String const& encoding,
+	bool const& integratedBinary,
+	bool const& integratedTextures
 ) {
 	// Bake object
 	bool wasBaked = baked;
@@ -620,15 +626,15 @@ JSON::JSONData getObjectDefinition(
 	// Create definition
 	JSON::JSONData def;
 	// Save mesh components
-	def["mesh"] = {
+	def["mesh"] = JSON::JSONType{
 		{"components", "x,y,z,u,v,r,g,b,a,nx,ny,nz"}
 	};
-	def["version"] = version;
+	def["version"] = VERSION;
 	// If data is to be integrated into the JSON object, do so
 	if (integratedBinary) {
 		// Allocate data buffer
 		ubyte* vertEnd = (ubyte*)(&vertices[vertexCount-1]);
-		Data::BinaryData data((ubyte*)vertices, (ubyte*)(vertEnd + sizeof(vertex)));
+		Data::BinaryData data((ubyte*)vertices, (ubyte*)(vertEnd + sizeof(Vertex)));
 		// Save mesh data
 		def["mesh"]["data"]		= Data::encode(data, Data::fromString(encoding));
 		def["mesh"]["encoding"]	= encoding;
@@ -636,7 +642,7 @@ JSON::JSONData getObjectDefinition(
 		data.clear();
 	}
 	// Save transform data
-	def["trans"] = {
+	def["trans"] = JSON::JSONType{
 		{"position",	{trans.position.x,	trans.position.y,	trans.position.z}	},
 		{"rotation",	{trans.rotation.x,	trans.rotation.y,	trans.rotation.z}	},
 		{"scale",		{trans.scale.x,		trans.scale.y,		trans.scale.z}		}
@@ -644,7 +650,7 @@ JSON::JSONData getObjectDefinition(
 	// Set active data
 	def["active"] = active;
 	// Set blend data
-	def["blend"] = {
+	def["blend"] = JSON::JSONType{
 		{"function", {
 			{"srcColor", uint(blend.func.srcColor)},
 			{"dstColor", uint(blend.func.dstColor)},

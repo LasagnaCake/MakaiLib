@@ -171,10 +171,13 @@ namespace Helper {
 	template<typename... Types>
 	using Tuple = tuple<Types...>;
 
+	#pragma GCC diagnostic push
+	#pragma GCC diagnostic ignored "-Wunused-variable"
 	struct Discard {
 		template<typename T>constexpr T&& operator=(T&& v)				{return v;}
 		template<typename T>constexpr T const& operator=(T const& v)	{return v;}
 	} static _;
+	#pragma GCC diagnostic pop
 
 	typedef std::strong_ordering	StrongOrder;
 	typedef std::weak_ordering		WeakOrder;

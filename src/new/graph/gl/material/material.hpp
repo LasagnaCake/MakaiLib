@@ -1,5 +1,5 @@
-#ifndef CTL_GRAPH_MATERIAL_H
-#define CTL_GRAPH_MATERIAL_H
+#ifndef MAKAILIB_GRAPH_MATERIAL_H
+#define MAKAILIB_GRAPH_MATERIAL_H
 
 #include "debug.hpp"
 #include "effect.hpp"
@@ -7,4 +7,4 @@
 
 namespace MkMaterial = Makai::Graph::Material;
 
-#endif // CTL_GRAPH_MATERIAL_H
+#endif // MAKAILIB_GRAPH_MATERIAL_H

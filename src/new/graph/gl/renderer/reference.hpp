@@ -1,7 +1,10 @@
 #ifndef MAKAILIB_GRAPH_RENDERER_REFERENCE_H
 #define MAKAILIB_GRAPH_RENDERER_REFERENCE_H
 
+#include "../../../ctl/ctl.hpp"
+
 #include "../vertex.hpp"
+#include "../color.hpp"
 
 namespace Makai::Graph {
 	using VertexFunction = Function<void(Vertex&)>;
@@ -18,6 +21,8 @@ namespace Makai::Graph {
 		Event::Signal onUnbind;
 	};
 
+	#pragma GCC diagnostic push
+	#pragma GCC diagnostic ignored "-Wpedantic"
 	template<usize N>
 	struct ShapeRef: public Empty {
 		constexpr static usize SIZE = N;
@@ -56,6 +61,7 @@ namespace Makai::Graph {
 	protected:
 		Triangle** tris = new Triangle*[SIZE](nullptr);
 	};
+	#pragma GCC diagnostic pop
 
 	class PlaneRef: public ShapeRef<2> {
 	public:
@@ -63,7 +69,7 @@ namespace Makai::Graph {
 			Triangle* const(& tris)[2]
 		);
 
-		virtual ~PlaneRef();
+		virtual ~PlaneRef() {}
 
 		/// Sets the plane's origin.
 		PlaneRef* setOrigin(
@@ -138,7 +144,7 @@ namespace Makai::Graph {
 			Triangle* const(& tris)[1]
 		);
 
-		virtual ~TriangleRef();
+		virtual ~TriangleRef() {}
 
 		/// Sets the triangle's origin.
 		TriangleRef* setOrigin(
@@ -181,11 +187,7 @@ namespace Makai::Graph {
 
 		TriangleRef* transform() override final;
 
-		void forEachVertex(VertexFunction const& f) override final {
-			f(origin[0]);
-			f(origin[1]);
-			f(origin[2]);
-		}
+		virtual void forEachVertex(VertexFunction const& f) override final;
 
 		Vertex origin[3];
 

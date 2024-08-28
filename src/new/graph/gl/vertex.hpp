@@ -1,6 +1,8 @@
 #ifndef MAKAILIB_GRAPH_VERTEX_H
 #define MAKAILIB_GRAPH_VERTEX_H
 
+#include "../../ctl/ctl.hpp"
+
 namespace Makai::Graph {
 	using VertexMap = HashMap<String, float>;
 
@@ -19,6 +21,8 @@ namespace Makai::Graph {
 			ny	= 0,
 			nz	= 0
 		;
+
+		static VertexMap defaultMap();
 
 		static Vertex from(VertexMap vm);
 

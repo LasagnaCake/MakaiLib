@@ -147,6 +147,8 @@ namespace Makai::Graph {
 		void extend(Scene3D& other);
 
 	private:
+		void draw() override;
+
 		void extendFromDefinition(JSON::JSONData const& def, String const& sourcepath);
 
 		void extendFromDefinitionV0(JSON::JSONData def, String const& sourcepath);

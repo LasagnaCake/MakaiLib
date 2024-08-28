@@ -19,7 +19,7 @@ namespace Makai {
 			unsigned int const& height,
 			String const& windowTitle,
 			bool const& fullscreen = false,
-			bool const& useMIDI = false,
+			Audio::Formats const& formats = {Audio::Format::AF_OGG, Audio::Format::AF_MP3},
 			String const& bufferShaderPath = "shaders/framebuffer/compose.slf",
 			String const& mainShaderPath = "shaders/base/base.slf"
 		);

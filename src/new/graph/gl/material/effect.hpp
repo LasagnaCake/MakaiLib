@@ -246,7 +246,7 @@ namespace Makai::Graph::Material {
 
 	JSON::JSONData saveImageEffect(Effect::Image& effect, String const& folder, String const& path);
 
-	Effect::Image loadImageEffect(JSON::JSONData& effect, String const& sourcepath, Texture2D& texture);
+	Effect::Image loadImageEffect(JSON::JSONData effect, String const& sourcepath, Texture2D& texture);
 }
 
 namespace MkEffect = Makai::Graph::Material::Effect;

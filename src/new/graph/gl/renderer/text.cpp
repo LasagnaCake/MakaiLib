@@ -1,8 +1,10 @@
-#include "../../file/json.hpp"
+#include "../../../file/json.hpp"
 
 #include "text.hpp"
 
 using namespace Makai::Graph;
+
+namespace JSON = Makai::JSON;
 
 Vector2 fromJSONArrayV2(JSON::JSONData const& json, Vector2 const& defaultValue = 0) {
 	try {
@@ -59,18 +61,18 @@ FontFace::FontFace(FontData const& font): FontFace() {
 }
 
 FontFace::FontFace(String const& path): FontFace() {
-	JSONData tx			= FileLoader::getJSON(path);
+	JSON::JSONData tx	= File::getJSONFile(path);
 	instance->image		= Texture2D::fromJSON(tx["image"], FileSystem::getDirectoryFromPath(path));
 	instance->size		= fromJSONArrayV2(tx["size"], 16);
 	instance->spacing	= fromJSONArrayV2(tx["spacing"], 1);
 }
 
-FontFace::FontFace& operator=(FontFace const& other) {
+FontFace& FontFace::operator=(FontFace const& other) {
 	instance = other.instance;
 	return *this;
 }
 
-FontFace::FontFace& operator=(FontData const& font) {
+FontFace& FontFace::operator=(FontData const& font) {
 	instance = new FontData();
 	instance->image		= font.image;
 	instance->size		= font.size;
@@ -78,13 +80,13 @@ FontFace::FontFace& operator=(FontData const& font) {
 	return *this;
 }
 
-inline FontData& FontFace::operator*() const	{return data();		}
-inline FontData* FontFace::operator->() const	{return &data();	}
+FontData& FontFace::operator*() const	{return data();		}
+FontData* FontFace::operator->() const	{return &data();	}
 
-inline FontData& FontFace::data() const {return *instance; }
+FontData& FontFace::data() const {return *instance; }
 
-inline bool FontFace::exists() const			{return instance.exists() && instance->image.exists();	}
-inline explicit FontFace::operator bool() const	{return exists();										}
+bool FontFace::exists() const	{return instance.exists() && instance->image.exists();	}
+FontFace::operator bool() const	{return exists();										}
 
 constexpr bool isTextDataEqual(TextData const& a, TextData const& b) {
 	return Fold::land(
@@ -221,7 +223,7 @@ List<size_t> getTextLineWrapIndices(TextData& text) {
 	return indices;
 }
 
-void Label::draw() override {
+void Label::draw() {
 	// If text changed, update label
 	if (!isTextDataEqual(text, last)) {
 		last = text;
@@ -234,7 +236,13 @@ void Label::draw() override {
 	prepare();
 	material.use(shader);
 	// Display to screen
-	display(&vertices[0], vertices.size());
+	display(
+		&vertices[0], vertices.size(),
+		material.culling,
+		material.fill,
+		DisplayMode::ODM_TRIS,
+		material.instances.size()
+	);
 }
 
 void Label::update() {
@@ -255,12 +263,12 @@ void Label::update() {
 	cursor.y	*= (text.spacing.y + font->spacing.y) * -text.textAlign.y;
 	cursor -= rectStart * Vector2(1,-1);
 	// The current line and current character
-	size_t curLine = 0;
-	size_t curChar = 0;
+	usize curLine = 0;
+	usize curChar = 0;
 	// Loop through each character and...
 	for (char c: text.content) {
 		// Check if max characters hasn't been reached
-		if (text.maxChars == 0 || ((curChar > (text.maxChars-1)) && (text.maxChars > -1))) break;
+		if (text.maxChars == 0 || ((llong(curChar) > llong(text.maxChars-1)) && (text.maxChars > -1))) break;
 		else curChar++;
 		// Check if character is newline
 		bool

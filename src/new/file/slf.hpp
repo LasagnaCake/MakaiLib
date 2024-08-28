@@ -26,6 +26,7 @@ namespace Makai::SLF {
 	};
 
 	SLFData loadFile(String const& path);
+	SLFData getFile(String const& path);
 }
 
 #endif // MAKAILIB_FILE_SLF

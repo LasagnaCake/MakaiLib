@@ -40,6 +40,7 @@ debug:
 	$(GET_TIME)
 	
 	@echo "[1/2] compiling [$@]..."
+	$(COMPILER) $(DEBUGCOMPCFG) -c mode.cpp -o mode_debug.o
 	$(COMPILER) $(DEBUGCOMPCFG) -c core.cpp -o core_debug.o
 	$(COMPILER) $(DEBUGCOMPCFG) -c drawable.cpp -o drawable_debug.o
 	$(COMPILER) $(DEBUGCOMPCFG) -c reference.cpp -o reference_debug.o
@@ -62,6 +63,7 @@ release:
 	$(GET_TIME)
 	
 	@echo "[1/2] compiling [$@]..."
+	$(COMPILER) $(COMPCFG) -c mode.cpp -o mode.o
 	$(COMPILER) $(COMPCFG) -c core.cpp -o core.o
 	$(COMPILER) $(COMPCFG) -c drawable.cpp -o drawable.o
 	$(COMPILER) $(COMPCFG) -c reference.cpp -o reference.o

@@ -2,36 +2,40 @@
 #define MAKAILIB_GRAPH_RENDERER_RENDERABLE_H
 
 #include "../../../file/json.hpp"
+#include "../../../data/encdec.hpp"
 #include "drawable.hpp"
 #include "reference.hpp"
 #include "../material/material.hpp"
+#include "../vertex.hpp"
 
 namespace Makai::Graph {
+	class Scene3D;
+
 	class Renderable: public DrawableObject {
 	public:
 		constexpr static usize VERSION = 0;
 
-		Renderable(size_t layer = 0, bool manual = false);
+		Renderable(usize const& layer = 0, bool const& manual = false);
 
 		Material::ObjectMaterial material;
 
 		Renderable(
-			List<Triangle*> triangles,
-			size_t layer = 0,
-			bool manual = false
+			List<Triangle*> const& triangles,
+			usize const& layer = 0,
+			bool const& manual = false
 		);
 
 		Renderable(
-			Vertex* vertices,
-			size_t count,
-			size_t layer = 0,
-			bool manual = false
+			Vertex* const& vertices,
+			usize const& count,
+			usize const& layer = 0,
+			bool const& manual = false
 		);
 
 		Renderable(
 			Renderable& other,
-			size_t layer = 0,
-			bool manual = false
+			usize const& layer = 0,
+			bool const& manual = false
 		);
 
 		virtual ~Renderable();
@@ -40,7 +44,7 @@ namespace Makai::Graph {
 		template<ShapeRefType T>
 		[[nodiscard]]
 		T* createReference() {
-			constexpr size_t count = T::COUNT;
+			constexpr usize count = T::COUNT;
 			if (locked) throw Error::InvalidAction("Renderable object is locked!");
 			Triangle* tris[count] = {nullptr};
 			// Create triangles
@@ -61,7 +65,7 @@ namespace Makai::Graph {
 
 		/// Gets a reference bound to this object by index.
 		template <ShapeRefType T>
-		inline T* getReference(size_t index) {
+		inline T* getReference(usize const& index) {
 			if (locked) throw Error::InvalidAction("Renderable object is locked!");
 			return (T*)references.shape[index];
 		}
@@ -74,7 +78,7 @@ namespace Makai::Graph {
 		* It also deletes the reference.
 		*/
 		template <ShapeRefType T>
-		void removeReference(T* ref) {
+		void removeReference(T* const& ref) {
 			if (!ref) return;
 			if (locked) return;
 			constexpr usize count = T::COUNT;
@@ -98,7 +102,7 @@ namespace Makai::Graph {
 		* It also deletes the reference.
 		*/
 		template <ShapeRefType T>
-		void unbindReference(T* ref) {
+		void unbindReference(T* const& ref) {
 			if (!ref) return;
 			if (locked) return;
 			auto& rs = references.shape;
@@ -109,11 +113,11 @@ namespace Makai::Graph {
 		/// IRREVERSIBLE.
 		void bakeAndLock();
 
-		void extend(Vertex* vertices, size_t size);
+		void extend(Vertex* const& vertices, usize const& size);
 
 		void extend(Renderable& other);
 
-		void extend(List<Renderable*> parts);
+		void extend(List<Renderable*> const& parts);
 
 		void extendFromBinaryFile(String const& path);
 
@@ -158,7 +162,7 @@ namespace Makai::Graph {
 		} references;
 
 		/// The amount of vertices this object has.
-		size_t vertexCount = 0;
+		usize vertexCount = 0;
 
 		void extendFromDefinition(
 			JSON::JSONData def,

@@ -11,6 +11,8 @@ namespace Makai::JSON {
 		using JSONData = nlohmann::ordered_json;
 	}
 
+	using JSONType = Extern::JSONData;
+
 	class JSONView: public DataView<Extern::JSONData> {
 	public:
 		JSONView(Extern::JSONData& _data, String const& _name = "<anonymous>");
@@ -51,19 +53,26 @@ namespace Makai::JSON {
 		JSONView operator[](size_t const& index);
 		const JSONView operator[](size_t const& index) const;
 
-		template<typename T>
-		inline JSONView& operator=(T const& v) {
-			view() = v;
+		JSONView& operator=(JSONView const& v);
+
+		template<class T>
+		inline JSONView& operator=(T const& value)
+		requires (
+			!Type::Convertible<T, JSONView>
+		) {
+			view() = value;
 			return (*this);
 		}
-
-		JSONView& operator=(JSONView const& v);
 
 		template<typename T> operator T() const;
 
 		String getName() const;
 
 		String toString(int const& indent = -1, char const& ch = '\t') const;
+
+		inline bool has(String const& key) const {return view().contains(key); }
+
+		inline operator Extern::JSONData() {return view();}
 
 		bool isNull() const;
 		bool isInt() const;
@@ -79,7 +88,7 @@ namespace Makai::JSON {
 		bool isDiscarded() const;
 
 	private:
-		Extern::JSONData const& cdata;
+		Extern::JSONData& cdata;
 		Extern::JSONData dummy;
 
 		String const name;
@@ -92,9 +101,13 @@ namespace Makai::JSON {
 
 		JSONValue(Extern::JSONData const& data);
 
+		JSONValue(JSONView const& view);
+
 		JSONValue(JSONValue const& other);
 
 		JSONValue& clear();
+
+		//inline operator JSONView() {return JSONView(data, getName());}
 
 	private:
 		Extern::JSONData data;

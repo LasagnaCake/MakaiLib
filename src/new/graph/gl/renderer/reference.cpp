@@ -2,6 +2,8 @@
 
 using namespace Makai::Graph;
 
+using Makai::Graph::VertexFunction;
+
 inline void srpTransform(Vertex& vtx, Matrix4x4 const& tmat) {
 	// Position
 	Vector3 res = (tmat * Vector4(vtx.x, vtx.y, vtx.z, 1.0f)).toVector3();
@@ -44,14 +46,12 @@ PlaneRef::PlaneRef(
 	);
 }
 
-virtual ~PlaneRef::PlaneRef() {}
-
 /// Sets the plane's origin.
 PlaneRef* PlaneRef::setOrigin(
-	Vector3 const& tlPos = Vector3(-1, +1),
-	Vector3 const& trPos = Vector3(+1, +1),
-	Vector3 const& blPos = Vector3(-1, -1),
-	Vector3 const& brPos = Vector3(+1, -1)
+	Vector3 const& tlPos,
+	Vector3 const& trPos,
+	Vector3 const& blPos,
+	Vector3 const& brPos
 ) {
 	Vertex::setPosition(origin[0],	tlPos);
 	Vertex::setPosition(origin[1],	trPos);
@@ -96,9 +96,7 @@ PlaneRef* PlaneRef::setColor(
 	return this;
 }
 
-PlaneRef* PlaneRef::setColor(
-		Vector4 const& col = Color::WHITE
-	) {
+PlaneRef* PlaneRef::setColor(Vector4 const& col) {
 	setColor(col, col, col, col);
 	return this;
 }
@@ -124,7 +122,7 @@ PlaneRef* PlaneRef::setNormal(
 }
 
 /// Sets the plane to its original state (last state set with setPosition).
-PlaneRef* PlaneRef::reset() override final {
+PlaneRef* PlaneRef::reset() {
 	// Set origin
 	*tl				= origin[0];
 	*tr1	= *tr2	= origin[1];
@@ -133,7 +131,7 @@ PlaneRef* PlaneRef::reset() override final {
 	return this;
 }
 
-PlaneRef* PlaneRef::transform() override final {
+PlaneRef* PlaneRef::transform() {
 	onTransform();
 	if (!fixed) return this;
 	// Get transformation
@@ -154,14 +152,14 @@ PlaneRef* PlaneRef::transform() override final {
 	return this;
 }
 
-void PlaneRef::forEachVertex(VertexFunction const& f) override final {
+void PlaneRef::forEachVertex(VertexFunction const& f) {
 	f(origin[0]);
 	f(origin[1]);
 	f(origin[2]);
 	f(origin[3]);
 }
 
-void AnimatedPlaneRef::onTransform() override  {
+void AnimatedPlaneRef::onTransform() {
 	if (size.x == 0 || size.y == 0)
 		setUV(0, 0, 0, 0);
 	else setUV(
@@ -196,13 +194,11 @@ TriangleRef::TriangleRef(
 	);
 }
 
-virtual ~TriangleRef::TriangleRef() {}
-
 /// Sets the triangle's origin.
 TriangleRef* TriangleRef::setOrigin(
-	Vector3 const& aPos = Vector3(+0, +1),
-	Vector3 const& bPos = Vector3(-1, -1),
-	Vector3 const& cPos = Vector3(+1, -1)
+	Vector3 const& aPos,
+	Vector3 const& bPos,
+	Vector3 const& cPos
 ) {
 	Vertex::setPosition(origin[0],	aPos);
 	Vertex::setPosition(origin[1],	bPos);
@@ -241,9 +237,7 @@ TriangleRef* TriangleRef::setColor(
 	return this;
 }
 
-TriangleRef* TriangleRef::setColor(
-	Vector4 const& col = Color::WHITE
-) {
+TriangleRef* TriangleRef::setColor(Vector4 const& col) {
 	setColor(col, col, col);
 	return this;
 }
@@ -259,22 +253,20 @@ TriangleRef* TriangleRef::setNormal(
 	return this;
 }
 
-TriangleRef* TriangleRef::setNormal(
-	Vector3 const& n
-) {
+TriangleRef* TriangleRef::setNormal(Vector3 const& n) {
 	setNormal(n, n, n);
 	return this;
 }
 
 /// Sets the triangle to its original state (last state set with setPosition).
-TriangleRef* TriangleRef::reset() override final {
+TriangleRef* TriangleRef::reset() {
 	*a = origin[0];
 	*b = origin[1];
 	*c = origin[2];
 	return this;
 }
 
-TriangleRef* TriangleRef::transform() override final {
+TriangleRef* TriangleRef::transform() {
 	onTransform();
 	if (!fixed) return this;
 	// Get transformation
@@ -282,7 +274,7 @@ TriangleRef* TriangleRef::transform() override final {
 	self.scale *= (float)visible;
 	Matrix4x4 tmat(self);
 	// Calculate transformed vertices
-	RawVertex tri[3] = {origin[0], origin[1], origin[2]};
+	Vertex tri[3] = {origin[0], origin[1], origin[2]};
 	srpTransform(tri[0], tmat);
 	srpTransform(tri[1], tmat);
 	srpTransform(tri[2], tmat);
@@ -293,7 +285,7 @@ TriangleRef* TriangleRef::transform() override final {
 	return this;
 }
 
-void TriangleRef::forEachVertex(VertexFunction const& f) override final {
+void TriangleRef::forEachVertex(VertexFunction const& f) {
 	f(origin[0]);
 	f(origin[1]);
 	f(origin[2]);

@@ -67,7 +67,7 @@ App::App (
 	unsigned int const& height,
 	String const& windowTitle,
 	bool const& fullscreen,
-	bool const& useMIDI,
+	Makai::Audio::Formats const& formats,
 	String const& bufferShaderPath,
 	String const& mainShaderPath
 ) {
@@ -102,7 +102,7 @@ App::App (
 	{
 		using Makai::Audio::Formats;
 		using enum Makai::Audio::Format;
-		Makai::Audio::open(Formats{AF_MP3, AF_OGG, (useMIDI ? AF_MIDI : AF_NONE)}, 2, 16);
+		Makai::Audio::open(formats, 2, 16);
 	}
 	DEBUGLN("Started!");
 	// Create window and make active
@@ -175,12 +175,12 @@ App::App (
 	framebuffer();
 	// Create buffer shaders
 	DEBUGLN("Creating shaders...");
-	SLF::SLFData data = SLF::loadFile(bufferShaderPath);
+	SLF::SLFData data = SLF::getFile(bufferShaderPath);
 	framebuffer.shader.create(data);
 	layerbuffer.shader = framebuffer.shader;
 	// Create main shader
 	Makai::Graph::defaultShader.destroy();
-	Makai::Graph::defaultShader.create(SLF::loadFile(mainShaderPath));
+	Makai::Graph::defaultShader.create(SLF::getFile(mainShaderPath));
 	DEBUGLN(Entities::_ROOT ? "Root Exists!" : "Root does not exist!");
 	if (!Entities::_ROOT) {
 		DEBUGLN("Initializing root tree...");

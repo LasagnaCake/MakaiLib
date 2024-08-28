@@ -4,6 +4,8 @@
 #include "../../../ctl/ctl.hpp"
 #include "../material/material.hpp"
 #include "../blend.hpp"
+#include "../vertex.hpp"
+#include "mode.hpp"
 #include "core.hpp"
 
 namespace Makai::Graph {
@@ -38,21 +40,6 @@ namespace Makai::Graph {
 		bool manualMode = false;
 	};
 
-	enum class ObjectDisplayMode {
-		ODM_POINTS,
-		ODM_LINE_STRIP,
-		ODM_LINE_LOOP,
-		ODM_LINES,
-		ODM_TRIANGLE_STRIP,
-		ODM_TRIANGLE_FAN,
-		ODM_TRIANGLES,
-		ODM_LINES_ADJACENCY,
-		ODM_LINE_STRIP_ADJACENCY,
-		ODM_TRIANGLES_ADJACENCY,
-		ODM_TRIANGLE_STRIP_ADJACENCY,
-		ODM_PATCHES
-	};
-
 	class DrawableObject: public Drawable, public Blendable {
 	public:
 		DrawableObject(usize const& layer = 0, bool const& manual = false);
@@ -67,11 +54,18 @@ namespace Makai::Graph {
 		float				lineWidth	= 1.0;
 
 	protected:
-		void display(Vertex* const& vertices, usize const& count, ObjectDisplayMode const& mode = ObjectDisplayMode::ODM_TRIANGLES);
+		void display(
+			Vertex* const&		vertices,
+			usize const&		count,
+			CullMode const&		culling,
+			FillMode const&		fill,
+			DisplayMode const&	mode		= DisplayMode::ODM_TRIS,
+			usize const&		instances	= 1
+		);
 
 		void prepare();
 
-		usize vao, vbo;
+		uint vao, vbo;
 	};
 
 	template<class T>

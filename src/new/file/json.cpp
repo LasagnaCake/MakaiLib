@@ -4,31 +4,6 @@ using Nlohmann = Makai::JSON::Extern::Nlohmann;
 
 namespace Extern = Makai::JSON::Extern;
 
-/*template<typename T>
-T Makai::JSON::JSONView::get() const {
-	try {
-		return view().get<T>();
-	} catch (Nlohmann::exception const& e) {
-		throw Error::FailedAction(
-			"Parameter '" + name + "' is not of type '"
-			+ NAMEOF(typeid(T)) + "'!",
-			__FILE__,
-			::toString(__LINE__),
-			::toString("get<", NAMEOF(typeid(T)), ">"),
-			e.what()
-		);
-	}
-}
-
-template<typename T>
-T Makai::JSON::JSONView::get(T const& fallback) const {
-	try {
-		return view().get<T>();
-	} catch (Nlohmann::exception const& e) {
-		return fallback;
-	}
-}*/
-
 Makai::JSON::JSONView::JSONView(Extern::JSONData& _data, String const& _name): DataView(_data), cdata(_data), name(_name)	{}
 Makai::JSON::JSONView::JSONView(JSONView const& other): DataView(other), cdata(other.view()), name(other.name)				{}
 Makai::JSON::JSONView::JSONView(JSONView&& other): DataView(other), cdata(other.view()), name(other.name)					{}
@@ -108,6 +83,8 @@ Makai::JSON::JSONValue::JSONValue(String const& name, Makai::JSON::Extern::JSOND
 Makai::JSON::JSONValue::JSONValue(Makai::JSON::Extern::JSONData const& data): JSONValue("<anonymous>", data) {}
 
 Makai::JSON::JSONValue::JSONValue(Makai::JSON::JSONValue const& other): JSONValue(other.getName(), other.data) {}
+
+Makai::JSON::JSONValue::JSONValue(Makai::JSON::JSONView const& view): JSONValue(other.getName(), other.json()) {}
 
 Makai::JSON::JSONValue& Makai::JSON::JSONValue::clear() {
 	data = Nlohmann::object();

@@ -3,6 +3,7 @@
 
 #include "../../../ctl/ctl.hpp"
 #include "../texture.hpp"
+#include "drawable.hpp"
 
 namespace Makai::Graph {
 	using Makai::Graph::Texture2D;
@@ -32,13 +33,13 @@ namespace Makai::Graph {
 
 		FontFace& operator=(FontData const& font);
 
-		inline FontData& operator*() const;
-		inline FontData* operator->() const;
+		FontData& operator*() const;
+		FontData* operator->() const;
 
-		inline FontData& data() const;
+		FontData& data() const;
 
-		inline bool exists() const;
-		inline explicit operator bool() const;
+		bool exists() const;
+		explicit operator bool() const;
 
 	private:
 		FontInstance instance;

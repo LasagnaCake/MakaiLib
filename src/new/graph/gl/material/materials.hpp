@@ -7,20 +7,10 @@
 #include "debug.hpp"
 #include "../color.hpp"
 #include "../shader.hpp"
+#include "../renderer/mode.hpp"
 
 namespace Makai::Graph::Material {
-	enum class ObjectCulling {
-		OC_NONE,
-		OC_FRONT,
-		OC_BACK,
-	};
 
-	enum class ObjectFill {
-		OF_NONE = -1,
-		OF_FILL,
-		OF_LINE,
-		OF_POINT,
-	};
 	struct BaseObjectMaterial {
 		Vector4	color = Color::WHITE;
 	};
@@ -41,8 +31,8 @@ namespace Makai::Graph::Material {
 		Effect::Negative	negative;
 		Effect::Gradient	gradient;
 		List<Vector3>	instances = {Vec3(0, 0, 0)};
-		ObjectCulling	culling	= ObjectCulling::OC_NONE;
-		ObjectFill		fill	= ObjectFill::OF_FILL;
+		CullMode	culling		= CullMode::OCM_NONE;
+		FillMode	fill		= FillMode::OFM_FILL;
 		ObjectDebugView	debug	= ObjectDebugView::ODV_NONE;
 
 		void use(Shader& shader);

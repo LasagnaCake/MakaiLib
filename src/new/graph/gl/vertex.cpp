@@ -10,6 +10,23 @@
 
 using namespace Makai::Graph;
 
+VertexMap Vertex::defaultMap() {
+	return VertexMap{
+		{"x", 0},
+		{"y", 0},
+		{"z", 0},
+		{"u", 0},
+		{"v", 0},
+		{"r", 1},
+		{"g", 1},
+		{"b", 1},
+		{"a", 1},
+		{"nx", 0},
+		{"ny", 0},
+		{"nz", 0},
+	};
+}
+
 Vertex Vertex::from(VertexMap vm) {
 	return Vertex {
 		vm["x"],

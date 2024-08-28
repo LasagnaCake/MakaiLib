@@ -2,7 +2,7 @@
 
 using namespace Makai::Graph;
 
-void LinearBar::draw() override{
+void LinearBar::draw() {
 	float percent = Math::clamp((value / max), 0.0f, 1.0f);
 	float
 		length	= percent * size.x,
@@ -13,15 +13,29 @@ void LinearBar::draw() override{
 	vertices[2]	= Vertex::from(Vector2(length, -width),	Vector2((dynamicUV ? percent : 1)+uvShift,1) * uvScale);
 	vertices[3]	= Vertex::from(Vector2(length, +width),	Vector2((dynamicUV ? percent : 1)+uvShift,0) * uvScale);
 	prepare();
-	material.use(material);
-	display(vertices, 4, ObjectDisplayMode::ODM_TRIANGLE_STRIP);
+	material.use(shader);
+	display(
+		vertices,
+		4,
+		material.culling,
+		material.fill,
+		DisplayMode::ODM_TRI_STRIP,
+		material.instances.size()
+	);
 }
 
-void RadialBar::draw() override {
+void RadialBar::draw() {
 	update();
 	prepare();
-	material.use(material);
-	display(vertices, RADIAL_BAR_RESOLUTION + 2, ObjectDisplayMode::ODM_TRIANGLE_FAN);
+	material.use(shader);
+	display(
+		vertices,
+		RADIAL_BAR_RESOLUTION + 2,
+		material.culling,
+		material.fill,
+		DisplayMode::ODM_TRI_FAN,
+		material.instances.size()
+	);
 }
 
 void RadialBar::update() {
