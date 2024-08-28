@@ -28,6 +28,7 @@ Root namespace name options:
 | `::Tool` | Engine tools |
 | `::File` | File-related Stuff |
 | `::JSON` | JSON-related Stuff |
+| `::Data` | Data Processing Stuff |
 | `::SLF` | SLF-related Stuff |
 | `::Ex` | Extensions |
 
