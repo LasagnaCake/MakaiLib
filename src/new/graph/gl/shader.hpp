@@ -5,7 +5,6 @@
 #include "../../ctl/ctl.hpp"
 
 #include "uniform.hpp"
-#include "global.hpp"
 
 namespace Makai::Graph {
 	class Shader {

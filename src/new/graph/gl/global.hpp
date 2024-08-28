@@ -5,16 +5,15 @@
 #include "camera.hpp"
 #include "material/material.hpp"
 
-#ifndef MAKAILIB_GRAPH_MATERIAL_MATERIALS_H
-#error "HOW."
-#endif // MAKAILIB_GRAPH_MATERIAL_MATERIALS_H
-
 namespace Makai::Graph {
+	#pragma GCC diagnostic push
+	#pragma GCC diagnostic ignored "-Wpedantic"
 	namespace Global {
-		Matrix4x4				space = Matrix4x4::identity();
-		Camera3D				camera;
-		Material::WorldMaterial	world;
+		static Matrix4x4				space = Matrix4x4::identity();
+		static Camera3D					camera;
+		static Material::WorldMaterial	world;
 	}
+	#pragma GCC diagnostic pop
 
 	struct GlobalState {
 		/// Capture global state.

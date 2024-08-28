@@ -5,6 +5,7 @@
 #include "../material/material.hpp"
 #include "../blend.hpp"
 #include "../vertex.hpp"
+#include "../global.hpp"
 #include "mode.hpp"
 #include "core.hpp"
 
