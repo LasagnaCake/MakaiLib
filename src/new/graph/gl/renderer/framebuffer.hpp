@@ -40,11 +40,11 @@ namespace Makai::Graph {
 				uint const& height
 			);
 
-			virtual DrawBuffer const& enable() const;
+			virtual DrawBuffer& enable();
 
-			DrawBuffer const& operator()() const;
+			DrawBuffer& operator()();
 
-			virtual DrawBuffer const& disable() const;
+			virtual DrawBuffer& disable();
 
 			bool exists() const;
 
@@ -76,21 +76,21 @@ namespace Makai::Graph {
 				uint const& height
 			) override;
 
-			FrameBuffer const& enable() const override;
+			FrameBuffer& enable() override;
 
-			FrameBufferData toFrameBufferData() const;
+			FrameBufferData toFrameBufferData();
 
-			FrameBuffer const& clearBuffers() const;
+			FrameBuffer& clearBuffers();
 
-			FrameBuffer const& clearColorBuffer() const;
+			FrameBuffer& clearColorBuffer();
 
-			FrameBuffer const& clearDepthBuffer() const;
+			FrameBuffer& clearDepthBuffer();
 
-			virtual FrameBuffer const& render(FrameBufferData const& target) const;
+			virtual FrameBuffer& render(FrameBufferData const& target);
 
-			FrameBuffer const& render(FrameBuffer& targetBuffer) const;
+			FrameBuffer& render(FrameBuffer& targetBuffer);
 
-			FrameBuffer const& disable() const override;
+			FrameBuffer& disable() override;
 
 			/// The framebuffer's vertex transformation.
 			Transform3D trans;
@@ -104,6 +104,9 @@ namespace Makai::Graph {
 			Vector2 screenVUSpace = 1;
 			/// The framebuffer's blend function & equation setting.
 			BlendData blend;
+
+		protected:
+			Vector4 clearColor = Color::CLEAR;
 
 		private:
 			struct {
@@ -121,16 +124,17 @@ namespace Makai::Graph {
 
 		Material::BufferMaterial material;
 
-		virtual FrameBuffer const& render(FrameBufferData const& target) const final {
+		virtual FrameBuffer& render(FrameBufferData const& target) final {
 			if (!exists()) return *this;
 			// Set material data
+			clearColor = material.background;
 			material.use(shader);
 			// Render buffer
 			Base::FrameBuffer::render(target);
 			return *this;
 		}
 
-		FrameBuffer const& render(FrameBuffer& targetBuffer) const {
+		FrameBuffer& render(FrameBuffer& targetBuffer) {
 			if (!exists()) return *this;
 			if (!targetBuffer.exists()) return *this;
 			return render(targetBuffer.toFrameBufferData());

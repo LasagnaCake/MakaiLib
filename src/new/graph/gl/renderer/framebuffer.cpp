@@ -4,6 +4,7 @@
 #include <GL/gl.h>
 
 #include "framebuffer.hpp"
+#include "../global.hpp"
 
 using namespace Makai::Graph;
 
@@ -33,17 +34,17 @@ Base::DrawBuffer& Base::DrawBuffer::create(uint const& width, uint const& height
 	return *this;
 }
 
-Base::DrawBuffer const& Base::DrawBuffer::enable() const {
+Base::DrawBuffer& Base::DrawBuffer::enable() {
 	if (!created) return *this;
 	glBindFramebuffer(GL_FRAMEBUFFER, id);
 	return *this;
 }
 
-Base::DrawBuffer const& Base::DrawBuffer::operator()() const {
+Base::DrawBuffer& Base::DrawBuffer::operator()() {
 	return enable();
 }
 
-Base::DrawBuffer const& Base::DrawBuffer::disable() const {
+Base::DrawBuffer& Base::DrawBuffer::disable() {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	return *this;
 }
@@ -127,44 +128,43 @@ Base::FrameBuffer& Base::FrameBuffer::create(uint const& width, uint const& heig
 	return *this;
 }
 
-Base::FrameBuffer const& Base::FrameBuffer::enable() const {
+Base::FrameBuffer& Base::FrameBuffer::enable() {
 	if (!exists()) return *this;
 	Base::DrawBuffer::enable();
 	this->clearDepthBuffer();
 	return *this;
 }
 
-Base::FrameBuffer Base::FrameBuffer::toFrameBufferData() const {
+FrameBufferData Base::FrameBuffer::toFrameBufferData() {
 	if (!exists())
 		return FrameBufferData{};
 	return FrameBufferData{
 		getID(),
 		getWidth(),
 		getHeight(),
-		&buffer.screen,
-		&buffer.depth
+		buffer.screen,
+		buffer.depth
 	};
 }
 
-FrameBuffer const& Base::FrameBuffer::clearBuffers() const {
+Base::FrameBuffer& Base::FrameBuffer::clearBuffers() {
 	this->clearColorBuffer();
 	this->clearDepthBuffer();
 	return *this;
 }
 
-Base::FrameBuffer const& Base::FrameBuffer::clearColorBuffer() const {
-	Vector4& color = material.background;
-	glClearColor(color.r, color.g, color.b, color.a);
+Base::FrameBuffer& Base::FrameBuffer::clearColorBuffer() {
+	glClearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
 	glClear(GL_COLOR_BUFFER_BIT);
 	return *this;
 }
 
-Base::FrameBuffer const& Base::FrameBuffer::clearDepthBuffer() const {
+Base::FrameBuffer& Base::FrameBuffer::clearDepthBuffer() {
 	glClear(GL_DEPTH_BUFFER_BIT);
 	return *this;
 }
 
-Base::FrameBuffer const& Base::FrameBuffer::render(FrameBufferData const& target) const {
+Base::FrameBuffer& Base::FrameBuffer::render(FrameBufferData const& target) {
 	if (!exists()) return *this;
 	// Set target buffer
 	glBindFramebuffer(GL_FRAMEBUFFER, target.id);
@@ -219,13 +219,13 @@ Base::FrameBuffer const& Base::FrameBuffer::render(FrameBufferData const& target
 	return *this;
 }
 
-Base::FrameBuffer const& Base::FrameBuffer::render(FrameBuffer& targetBuffer) const {
+Base::FrameBuffer& Base::FrameBuffer::render(FrameBuffer& targetBuffer) {
 	if (!exists()) return *this;
 	if (!targetBuffer.exists()) return *this;
 	return render(targetBuffer.toFrameBufferData());
 }
 
-Base::FrameBuffer const& Base::FrameBuffer::disable() const {
+Base::FrameBuffer& Base::FrameBuffer::disable() {
 	Base::DrawBuffer::disable();
 	return *this;
 }
