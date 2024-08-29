@@ -85,7 +85,7 @@ namespace Makai::Graph {
 		BlendData blend;
 
 	protected:
-		Blendable& setBlendMode(usize const& drawBuffer = 0);
+		Blendable const& setBlendMode(usize const& drawBuffer = 0) const;
 	};
 }
 

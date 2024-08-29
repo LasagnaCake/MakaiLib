@@ -58,7 +58,8 @@ namespace Makai::Graph {
 		enum class ComponentType {
 			CT_UBYTE, CT_BYTE,
 			CT_USHORT, CT_SHORT, CT_HALF_FLOAT,
-			CT_UINT, CT_INT, CT_FLOAT
+			CT_UINT, CT_INT, CT_FLOAT,
+			CT_UINT_24_8
 		};
 
 		enum class ImageFormat {

@@ -3,7 +3,10 @@
 
 #include "../texture.hpp"
 #include "../vertex.hpp"
+#include "../shader.hpp"
 #include "../color.hpp"
+#include "../blend.hpp"
+#include "../material/material.hpp"
 
 namespace Makai::Graph {
 	struct FrameBufferData {
@@ -37,18 +40,18 @@ namespace Makai::Graph {
 				uint const& height
 			);
 
-			virtual DrawBuffer& enable() const;
+			virtual DrawBuffer const& enable() const;
 
-			DrawBuffer& operator()() const;
+			DrawBuffer const& operator()() const;
 
-			virtual DrawBuffer& disable() const;
+			virtual DrawBuffer const& disable() const;
 
 			bool exists() const;
 
 		protected:
-			inline uint getWidth() const;
-			inline uint getHeight() const;
-			inline uint getID() const;
+			uint getWidth() const;
+			uint getHeight() const;
+			uint getID() const;
 
 		private:
 			bool created = false;
@@ -73,21 +76,21 @@ namespace Makai::Graph {
 				uint const& height
 			) override;
 
-			FrameBuffer& enable() const override;
+			FrameBuffer const& enable() const override;
 
 			FrameBufferData toFrameBufferData() const;
 
-			FrameBuffer& clearBuffers() const;
+			FrameBuffer const& clearBuffers() const;
 
-			FrameBuffer& clearColorBuffer() const;
+			FrameBuffer const& clearColorBuffer() const;
 
-			FrameBuffer& clearDepthBuffer() const;
+			FrameBuffer const& clearDepthBuffer() const;
 
-			virtual FrameBuffer& render(FrameBufferData const& target) const;
+			virtual FrameBuffer const& render(FrameBufferData const& target) const;
 
-			FrameBuffer& render(FrameBuffer& targetBuffer) const;
+			FrameBuffer const& render(FrameBuffer& targetBuffer) const;
 
-			FrameBuffer& disable() const override;
+			FrameBuffer const& disable() const override;
 
 			/// The framebuffer's vertex transformation.
 			Transform3D trans;
@@ -118,7 +121,7 @@ namespace Makai::Graph {
 
 		Material::BufferMaterial material;
 
-		virtual FrameBuffer& render(FrameBufferData const& target) final {
+		virtual FrameBuffer const& render(FrameBufferData const& target) const final {
 			if (!exists()) return *this;
 			// Set material data
 			material.use(shader);
@@ -127,7 +130,7 @@ namespace Makai::Graph {
 			return *this;
 		}
 
-		FrameBuffer& render(FrameBuffer& targetBuffer) {
+		FrameBuffer const& render(FrameBuffer& targetBuffer) const {
 			if (!exists()) return *this;
 			if (!targetBuffer.exists()) return *this;
 			return render(targetBuffer.toFrameBufferData());

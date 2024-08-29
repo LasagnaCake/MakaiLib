@@ -91,7 +91,7 @@ Shader::~Shader() {
 }
 
 /// Returns whether this object has a shader associated with it (i.e. "is created").
-inline bool Shader::isCreated() {
+inline bool Shader::isCreated() const {
 	return created;
 }
 
@@ -230,12 +230,12 @@ void Shader::destroy() {
 }
 
 /// Operator overload.
-void Shader::operator()() {
+void Shader::operator()() const {
 	glUseProgram(instance->id);
 }
 
 /// Enables the shader object.
-void Shader::enable() {
+void Shader::enable() const {
 	glUseProgram(instance->id);
 }
 
@@ -243,7 +243,7 @@ void Shader::enable() {
 * The way to set uniforms.
 * Done like this: SHADER.uniform(UNIFORM_NAME)(UNIFORM_VALUE);
 */
-Uniform Shader::uniform(String const& name) {
+Uniform Shader::uniform(String const& name) const {
 	glUseProgram(instance->id);
 	Uniform su(name, instance->id);
 	return su;
@@ -253,7 +253,7 @@ Uniform Shader::uniform(String const& name) {
 * The way to set uniforms.
 * Done like this: SHADER[UNIFORM_NAME](UNIFORM_VALUE);
 */
-Uniform Shader::operator[](String const& name) {
+Uniform Shader::operator[](String const& name) const {
 	return uniform(name);
 }
 

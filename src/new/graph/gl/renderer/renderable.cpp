@@ -311,7 +311,7 @@ void Renderable::extendFromBinaryFile(String const& path) {
 	DEBUGLN(data.size() / sizeof(Vertex));
 }
 
-inline void Renderable::extendFromDefinitionFile(String const& path) {
+void Renderable::extendFromDefinitionFile(String const& path) {
 	extendFromDefinition(File::getJSONFile(path), FileSystem::getDirectoryFromPath(path));
 }
 
@@ -424,7 +424,7 @@ void Renderable::extendFromDefinition(
 	JSON::JSONData def,
 	String const& sourcepath
 ) {
-	if (def.has("number") && def["version"].isNumber()) {
+	if (def.has("version") && def["version"].isNumber()) {
 		// Do stuff for versions
 		switch (def["version"].get<usize>()) {
 			default:

@@ -3,7 +3,7 @@
 #include <GLEW/include/GL/wglew.h>
 #include <GL/gl.h>
 
-#include "framebuffer.cpp"
+#include "framebuffer.hpp"
 
 using namespace Makai::Graph;
 
@@ -15,14 +15,14 @@ Base::DrawBuffer::~DrawBuffer() {
 	destroy();
 }
 
-virtual Base::DrawBuffer& Base::DrawBuffer::destroy() {
+Base::DrawBuffer& Base::DrawBuffer::destroy() {
 	if (!created) return *this;
 	else created = false;
 	glDeleteFramebuffers(1, &id);
 	return *this;
 }
 
-virtual Base::DrawBuffer& Base::DrawBuffer::create(uint const& width, uint const& height) {
+Base::DrawBuffer& Base::DrawBuffer::create(uint const& width, uint const& height) {
 	if (created) return *this;
 	else created = true;
 	glGenFramebuffers(1, &id);
@@ -33,26 +33,26 @@ virtual Base::DrawBuffer& Base::DrawBuffer::create(uint const& width, uint const
 	return *this;
 }
 
-virtual Base::DrawBuffer& Base::DrawBuffer::enable() const {
+Base::DrawBuffer const& Base::DrawBuffer::enable() const {
 	if (!created) return *this;
 	glBindFramebuffer(GL_FRAMEBUFFER, id);
 	return *this;
 }
 
-Base::DrawBuffer& Base::DrawBuffer::operator()() const {
+Base::DrawBuffer const& Base::DrawBuffer::operator()() const {
 	return enable();
 }
 
-virtual Base::DrawBuffer& Base::DrawBuffer::disable() const {
+Base::DrawBuffer const& Base::DrawBuffer::disable() const {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	return *this;
 }
 
-inline bool Base::DrawBuffer::exists() const {return created;}
+bool Base::DrawBuffer::exists() const	{return created;}
 
-inline uint Base::DrawBuffer::getWidth() const	{return width;	}
-inline uint Base::DrawBuffer::getHeight() const	{return height;	}
-inline uint Base::DrawBuffer::getID() const		{return id;		}
+uint Base::DrawBuffer::getWidth() const		{return width;	}
+uint Base::DrawBuffer::getHeight() const	{return height;	}
+uint Base::DrawBuffer::getID() const		{return id;		}
 
 
 Base::FrameBuffer::FrameBuffer(
@@ -66,21 +66,30 @@ Base::FrameBuffer::~FrameBuffer() {
 	destroy();
 }
 
-Base::FrameBuffer& Base::FrameBuffer::destroy() override {
+Base::FrameBuffer& Base::FrameBuffer::destroy() {
 	if (!exists()) return *this;
 	buffer.screen.destroy();
 	buffer.depth.destroy();
 	glDeleteBuffers(1, &vbo);
 	glDeleteVertexArrays(1, &vao);
-	BaseBuffer::destroy();
+	Base::DrawBuffer::destroy();
 	return *this;
 }
 
-Base::FrameBuffer& Base::FrameBuffer::create(uint const& width, uint const& height) override {
+Base::FrameBuffer& Base::FrameBuffer::create(uint const& width, uint const& height) {
 	if (exists()) return *this;
 	Base::DrawBuffer::create(width, height);
 	glBindFramebuffer(GL_FRAMEBUFFER, getID());
-	buffer.screen.create(width, height, GL_FLOAT, GL_RGBA, GL_LINEAR, GL_LINEAR, NULL, GL_RGBA16F);
+	buffer.screen.create(
+		width,
+		height,
+		Image2D::ComponentType::CT_FLOAT,
+		Image2D::ImageFormat::IF_RGBA,
+		Image2D::FilterMode::FM_SMOOTH,
+		Image2D::FilterMode::FM_SMOOTH,
+		NULL,
+		GL_RGBA16F
+	);
 	glFramebufferTexture2D(
 		GL_FRAMEBUFFER,
 		GL_COLOR_ATTACHMENT0,
@@ -88,7 +97,16 @@ Base::FrameBuffer& Base::FrameBuffer::create(uint const& width, uint const& heig
 		buffer.screen.getID(),
 		0
 	);
-	buffer.depth.create(width, height, GL_UNSIGNED_INT_24_8, GL_DEPTH_STENCIL, GL_LINEAR, GL_LINEAR, NULL, GL_DEPTH24_STENCIL8);
+	buffer.depth.create(
+		width,
+		height,
+		Image2D::ComponentType::CT_UINT_24_8,
+		Image2D::ImageFormat::IF_DS,
+		Image2D::FilterMode::FM_SMOOTH,
+		Image2D::FilterMode::FM_SMOOTH,
+		NULL,
+		GL_DEPTH24_STENCIL8
+	);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LESS);
 	glFramebufferTexture2D(
 		GL_FRAMEBUFFER,
@@ -105,15 +123,13 @@ Base::FrameBuffer& Base::FrameBuffer::create(uint const& width, uint const& heig
 	// Create buffers
 	glGenVertexArrays(1, &vao);
 	glGenBuffers(1, &vbo);
-	setBlendFunction(DEFAULT_BLEND_FUNC);
-	setBlendEquation(DEFAULT_BLEND_EQUATION);
 	disable();
 	return *this;
 }
 
-Base::FrameBuffer& Base::FrameBuffer::enable() const override {
+Base::FrameBuffer const& Base::FrameBuffer::enable() const {
 	if (!exists()) return *this;
-	BaseBuffer::enable();
+	Base::DrawBuffer::enable();
 	this->clearDepthBuffer();
 	return *this;
 }
@@ -130,25 +146,25 @@ Base::FrameBuffer Base::FrameBuffer::toFrameBufferData() const {
 	};
 }
 
-FrameBuffer& Base::FrameBuffer::clearBuffers() const {
+FrameBuffer const& Base::FrameBuffer::clearBuffers() const {
 	this->clearColorBuffer();
 	this->clearDepthBuffer();
 	return *this;
 }
 
-Base::FrameBuffer& Base::FrameBuffer::clearColorBuffer() const {
+Base::FrameBuffer const& Base::FrameBuffer::clearColorBuffer() const {
 	Vector4& color = material.background;
 	glClearColor(color.r, color.g, color.b, color.a);
 	glClear(GL_COLOR_BUFFER_BIT);
 	return *this;
 }
 
-Base::FrameBuffer& Base::FrameBuffer::clearDepthBuffer() const {
+Base::FrameBuffer const& Base::FrameBuffer::clearDepthBuffer() const {
 	glClear(GL_DEPTH_BUFFER_BIT);
 	return *this;
 }
 
-virtual Base::FrameBuffer& Base::FrameBuffer::render(FrameBufferData const& target) const {
+Base::FrameBuffer const& Base::FrameBuffer::render(FrameBufferData const& target) const {
 	if (!exists()) return *this;
 	// Set target buffer
 	glBindFramebuffer(GL_FRAMEBUFFER, target.id);
@@ -159,7 +175,7 @@ virtual Base::FrameBuffer& Base::FrameBuffer::render(FrameBufferData const& targ
 	// Copy vertices to VBO
 	glBufferData(
 		GL_ARRAY_BUFFER,
-		RAW_VERTEX_BYTE_SIZE * 4,
+		sizeof(Vertex) * 4,
 		rect,
 		GL_STATIC_DRAW
 	);
@@ -174,8 +190,8 @@ virtual Base::FrameBuffer& Base::FrameBuffer::render(FrameBufferData const& targ
 	buffer.depth(30);
 	buffer.screen(31);
 	// Set camera's near and far plane
-	shader["near"](Scene::camera.zNear);
-	shader["far"](Scene::camera.zFar);
+	shader["near"](Global::camera.zNear);
+	shader["far"](Global::camera.zFar);
 	// Set texture locations
 	shader["depth"](30);
 	shader["screen"](31);
@@ -203,13 +219,13 @@ virtual Base::FrameBuffer& Base::FrameBuffer::render(FrameBufferData const& targ
 	return *this;
 }
 
-Base::FrameBuffer& Base::FrameBuffer::render(FrameBuffer& targetBuffer) const {
+Base::FrameBuffer const& Base::FrameBuffer::render(FrameBuffer& targetBuffer) const {
 	if (!exists()) return *this;
 	if (!targetBuffer.exists()) return *this;
 	return render(targetBuffer.toFrameBufferData());
 }
 
-Base::FrameBuffer& Base::FrameBuffer::disable() const override {
+Base::FrameBuffer const& Base::FrameBuffer::disable() const {
 	Base::DrawBuffer::disable();
 	return *this;
 }

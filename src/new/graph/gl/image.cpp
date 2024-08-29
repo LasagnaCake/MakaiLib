@@ -45,6 +45,7 @@ constexpr uint convert(ComponentType const& type) {
 		case ComponentType::CT_UINT:		return GL_UNSIGNED_INT;
 		case ComponentType::CT_INT:			return GL_INT;
 		case ComponentType::CT_FLOAT:		return GL_FLOAT;
+		case ComponentType::CT_UINT_24_8:	return GL_UNSIGNED_INT_24_8;
 	}
 }
 

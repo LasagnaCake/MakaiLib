@@ -40,22 +40,39 @@ namespace Makai::Graph {
 		void setArray(Vector4* const& values, usize const& count, usize const& offset = 0) const;
 
 		template <typename T>
-		void set(List<T> const& values, usize const& offset = 0) const;
+		void set(List<T> const& values, usize const& offset = 0) const {
+			this->offset = 0;
+			setArray((T*)values.data(), values.size(), offset);
+			this->offset = values.size();
+		}
 
 		template <typename T, usize S>
-		void set(Span<T, S> const& values, usize const& offset = 0) const;
+		void set(Span<T, S> const& values, usize const& offset = 0) const {
+			this->offset = 0;
+			setArray((T*)values.data(), values.size(), offset);
+			this->offset = values.size();
+		}
 
 		template <typename... Args>
 		void set(Args const&... args) const
-		requires (sizeof...(Args) > 1);
+		requires (sizeof...(Args) > 1) {
+			this->offset = 0;
+			usize off = 0;
+			(setSpecial(args, off), ...);
+			offset = off;
+		}
 
 		template <Type::Class T>
-		void forEach(List<T> const& values, Functor<void(T&, Uniform const&)> func) const;
+		void forEach(List<T> const& values, Functor<void(T&, Uniform const&)> func) const {
+			for (T& val: values) {
+				func(val, Uniform(name, id, location + offset+1));
+			}
+		}
 
-		template <typename T>			void operator()(T const& value)				{set(value);	}
-		template <typename... Args>		void operator()(Args const&... args)		{set(args...);	}
-		template <typename T>			void operator()(List<T> const& values)		{set(values);	}
-		template <typename T, usize S>	void operator()(Span<T, S> const& values)	{set(values);	}
+		template <typename T>			void operator()(T const& value) const			{set(value);	}
+		template <typename... Args>		void operator()(Args const&... args) const		{set(args...);	}
+		template <typename T>			void operator()(List<T> const& values) const	{set(values);	}
+		template <typename T, usize S>	void operator()(Span<T, S> const& values) const	{set(values);	}
 
 	private:
 		constexpr Uniform(
@@ -65,13 +82,22 @@ namespace Makai::Graph {
 		): name(_name), id(_id), location(_location) {}
 
 		template<typename T>
-		void setSpecial(T const& value, usize& offset) const;
+		void setSpecial(T const& value, usize& offset) const {
+			set(value, offset);
+			++offset;
+		}
 
 		template <typename T>
-		void setSpecial(List<T> const& values, usize& offset) const;
+		void setSpecial(List<T> const& values, usize& offset) const {
+			set(values, offset);
+			offset += this->offset;
+		}
 
 		template <typename T, usize S>
-		void setSpecial(Span<T, S> const& values, usize& offset) const;
+		void setSpecial(Span<T, S> const& values, usize& offset) const {
+			set(values, offset);
+			offset += this->offset;
+		}
 
 		uint getUniformArray(usize const& offset) const;
 

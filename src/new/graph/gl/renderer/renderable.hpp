@@ -121,7 +121,7 @@ namespace Makai::Graph {
 
 		void extendFromBinaryFile(String const& path);
 
-		inline void extendFromDefinitionFile(String const& path);
+		void extendFromDefinitionFile(String const& path);
 
 		void bake();
 

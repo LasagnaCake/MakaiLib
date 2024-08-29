@@ -35,7 +35,7 @@ namespace Makai::Graph {
 		~Shader();
 
 		/// Returns whether this object has a shader associated with it (i.e. "is created").
-		inline bool isCreated();
+		inline bool isCreated() const;
 
 		/// Creates a shader and associates it to the object. Returns false if already created.
 		bool create(String const& vertexCode, String const& fragmentCode);
@@ -56,22 +56,22 @@ namespace Makai::Graph {
 		void destroy();
 
 		/// Operator overload.
-		void operator()();
+		void operator()() const;
 
 		/// Enables the shader object.
-		void enable();
+		void enable() const;
 
 		/**
 		* The way to set uniforms.
 		* Done like this: SHADER.uniform(UNIFORM_NAME)(UNIFORM_VALUE);
 		*/
-		Uniform uniform(String const& name);
+		Uniform uniform(String const& name) const;
 
 		/**
 		* The way to set uniforms.
 		* Done like this: SHADER[UNIFORM_NAME](UNIFORM_VALUE);
 		*/
-		Uniform operator[](String const& name);
+		Uniform operator[](String const& name) const;
 
 		Shader& operator=(Shader const& other);
 

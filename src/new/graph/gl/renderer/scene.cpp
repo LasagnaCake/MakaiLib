@@ -3,7 +3,56 @@
 #include "../color.hpp"
 
 using namespace Makai::Graph;
-using Scene3D::BaseType;
+using BaseType = Scene3D::BaseType;
+namespace JSON = Makai::JSON;
+
+Vector2 fromJSONArrayV2(JSON::JSONData const& json, Vector2 const& defaultValue = 0) {
+	try {
+		if (json.isArray())
+			return Vector2(
+				json[0].get<float>(),
+				json[1].get<float>()
+			);
+		else if (json.isNumber())
+			return json.get<float>();
+		else return defaultValue;
+	} catch (std::exception const& e) {
+		return defaultValue;
+	}
+}
+
+Vector3 fromJSONArrayV3(JSON::JSONData const& json, Vector3 const& defaultValue = 0) {
+	try {
+		if (json.isArray())
+			return Vector3(
+				json[0].get<float>(),
+				json[1].get<float>(),
+				json[2].get<float>()
+			);
+		else if (json.isNumber())
+			return json.get<float>();
+		else return defaultValue;
+	} catch (std::exception const& e) {
+		return defaultValue;
+	}
+}
+
+Vector4 fromJSONArrayV4(JSON::JSONData const& json, Vector4 const& defaultValue = 0) {
+	try {
+		if (json.isArray())
+			return Vector4(
+				json[0].get<float>(),
+				json[1].get<float>(),
+				json[2].get<float>(),
+				json[3].get<float>()
+			);
+		else if (json.isNumber())
+			return json.get<float>();
+		else return defaultValue;
+	} catch (std::exception const& e) {
+		return defaultValue;
+	}
+}
 
 void Scene3D::draw() {
 	GlobalState state(camera, Matrix4x4(global), world);
@@ -11,12 +60,11 @@ void Scene3D::draw() {
 		obj->render();
 }
 
-Scene3D::Scene3D(Scene3D& other, usize const& layer, bool const& manual): BaseType(layer, manual) {
+Scene3D::Scene3D(Scene3D& other, usize const& layer, bool const& manual): Collection(layer, manual) {
 	extend(other);
 }
 
 void Scene3D::extend(Scene3D& other) {
-	if (!other) return;
 	for(auto& [name, obj]: other.objects) {
 		auto [_, nobj] = createObject(name);
 		bool wasBaked = obj->baked;
@@ -25,8 +73,8 @@ void Scene3D::extend(Scene3D& other) {
 		nobj->extend(obj->vertices, obj->vertexCount);
 		if(!wasBaked)
 			obj->unbake();
-		nobj->trans = obj.trans;
-		nobj->material = obj.material;
+		nobj->trans = obj->trans;
+		nobj->material = obj->material;
 		nobj->material.texture.image.makeUnique();
 		nobj->material.normalMap.image.makeUnique();
 		nobj->material.emission.image.makeUnique();
@@ -36,12 +84,12 @@ void Scene3D::extend(Scene3D& other) {
 	world	= other.world;
 }
 
-Scene3D::Scene3D(size_t layer, String const& path, bool manual): BaseScene(layer, manual) {
+Scene3D::Scene3D(usize const& layer, String const& path, bool manual): Collection(layer, manual) {
 	extendFromSceneFile(path);
 }
 
 void Scene3D::extendFromSceneFile(String const& path) {
-	extendFromDefinition(FileLoader::getJSON(path), FileSystem::getDirectoryFromPath(path));
+	extendFromDefinition(File::getJSONFile(path), FileSystem::getDirectoryFromPath(path));
 }
 
 void Scene3D::saveToSceneFile(
@@ -68,7 +116,7 @@ void Scene3D::saveToSceneFile(
 				integratedObjectBinaries,
 				integratedObjectTextures
 			);
-			objpaths.push_back({
+			objpaths.push_back(JSON::JSONType{
 				{"source", FileSystem::concatenatePath(objname, objname + ".mrod")},
 				{"type", "MROD"}
 			});
@@ -84,7 +132,7 @@ void Scene3D::saveToSceneFile(
 			}
 			if (!integratedObjectTextures) {
 				FileSystem::makeDirectory(FileSystem::concatenatePath(folderpath, "tx"));
-				auto& mdef = file["data"][objname]["material"];
+				auto mdef = file["data"][objname]["material"];
 				auto& mat = obj->material;
 				// Save image texture
 				mdef["texture"] = Material::saveImageEffect(obj->material.texture, folderpath, "tx/texture.tga");
@@ -96,7 +144,7 @@ void Scene3D::saveToSceneFile(
 				mdef["warp"] = Material::saveImageEffect(obj->material.warp, folderpath, "tx/warp.tga");
 				mdef["warp"]["channelX"] = mat.warp.channelX;
 				mdef["warp"]["channelY"] = mat.warp.channelY;
-				mdef["warp"]["trans"] = {
+				mdef["warp"]["trans"] = JSON::JSONType{
 					{"position",	{mat.warp.trans.position.x,	mat.warp.trans.position.y	}	},
 					{"rotation",	mat.warp.trans.rotation										},
 					{"scale",		{mat.warp.trans.scale.x,	mat.warp.trans.scale.y		}	}
@@ -120,49 +168,49 @@ void Scene3D::extendFromDefinition(
 	JSON::JSONData const& def,
 	String const& sourcepath
 ) {
-	if (def.contains("number") && def["version"].is_number()) {
+	if (def.has("version") && def["version"].isNumber()) {
 		// Do stuff for versions
-		switch (def["version"].get<size_t>()) {
+		switch (def["version"].get<usize>()) {
 			default:
 			case 0: extendFromDefinitionV0(def, sourcepath); break;
 		}
 	} else extendFromDefinitionV0(def, sourcepath);
 }
 
-void extendFromDefinitionV0(JSON::JSONData def, String const& sourcepath) {
+void Scene3D::extendFromDefinitionV0(JSON::JSONData def, String const& sourcepath) {
 	try {
-		Camera::Camera3D		cam;
+		Camera3D				cam;
 		Material::WorldMaterial	mat;
 		// Get camera data
 		{
-			auto& dcam = def["camera"];
+			auto dcam = def["camera"];
 			String camType = "DEFAULT";
 			if (dcam["type"].isString()) camType = dcam["type"].get<String>();
 			if (camType == "DEFAULT") {
-				Camera::Camera3D cam;
-				cam.eye		= VecMath::fromJSONArrayV3(dcam["eye"]);
-				cam.at		= VecMath::fromJSONArrayV3(dcam["at"]);
-				cam.up		= VecMath::fromJSONArrayV3(dcam["up"]);
-				if (dcam["relativeToEye"].isBoolean())
+				Camera3D cam;
+				cam.eye		= fromJSONArrayV3(dcam["eye"]);
+				cam.at		= fromJSONArrayV3(dcam["at"]);
+				cam.up		= fromJSONArrayV3(dcam["up"]);
+				if (dcam["relativeToEye"].isBool())
 					cam.relativeToEye	= dcam["relativeToEye"].get<bool>();
 				camera.fromCamera3D(cam);
 			} else if (camType == "GIMBAL") {
-				camera.position	= VecMath::fromJSONArrayV3(dcam["position"]);
-				camera.rotation	= VecMath::fromJSONArrayV3(dcam["rotation"]);
+				camera.position	= fromJSONArrayV3(dcam["position"]);
+				camera.rotation	= fromJSONArrayV3(dcam["rotation"]);
 			}
-			camera.aspect	= VecMath::fromJSONArrayV2(dcam["aspect"]);
+			camera.aspect	= fromJSONArrayV2(dcam["aspect"]);
 			camera.fov		= dcam["fov"].get<float>();
 			camera.zNear	= dcam["zNear"].get<float>();
 			camera.zFar		= dcam["zFar"].get<float>();
 			if (dcam["ortho"].isObject()) {
 				camera.ortho.strength	= dcam["ortho"]["strength"].get<float>();
-				camera.ortho.origin		= VecMath::fromJSONArrayV2(dcam["ortho"]["origin"]);
-				camera.ortho.size		= VecMath::fromJSONArrayV2(dcam["ortho"]["origin"]);
+				camera.ortho.origin		= fromJSONArrayV2(dcam["ortho"]["origin"]);
+				camera.ortho.size		= fromJSONArrayV2(dcam["ortho"]["origin"]);
 			}
 		}
 		// Get world data
 		{
-			auto& dmat = def["world"];
+			auto dmat = def["world"];
 			#define _SET_FOG_PROPERTY(FOG_TYPE)\
 				if (dmat[#FOG_TYPE].isObject()) {\
 					mat.FOG_TYPE.enabled	= dmat[#FOG_TYPE]["enabled"].get<bool>();\
@@ -183,7 +231,7 @@ void extendFromDefinitionV0(JSON::JSONData def, String const& sourcepath) {
 		// Get objects data
 		{
 			if (def["path"].isObject()) {
-				for(auto& obj: def["data"]["path"].get<List<JSONData>>()) {
+				for(auto& obj: def["data"]["path"].get<List<JSON::JSONType>>()) {
 					auto r = createObject(
 						FileSystem::getFileName(obj["source"].get<String>(), true)
 					).second;
@@ -194,8 +242,8 @@ void extendFromDefinitionV0(JSON::JSONData def, String const& sourcepath) {
 					}
 					r->bake();
 				}
-			} else if (def["data"].is_array()) {
-				for(auto& obj: def["data"].get<List<JSONData>>()) {
+			} else if (def["data"].isArray()) {
+				for(auto& obj: def["data"].get<List<JSON::JSONType>>()) {
 					auto r = createObject().second;
 					r->extendFromDefinition(
 						obj,
@@ -204,7 +252,7 @@ void extendFromDefinitionV0(JSON::JSONData def, String const& sourcepath) {
 					r->bake();
 				}
 			} else if (def["data"].isObject()) {
-				for(auto& [name, obj]: def["data"].items()) {
+				for(auto& [name, obj]: def["data"].json().items()) {
 					DEBUGLN("[[ ", name," ]]");
 					auto r = createObject(name).second;
 					r->extendFromDefinition(
@@ -227,18 +275,18 @@ void extendFromDefinitionV0(JSON::JSONData def, String const& sourcepath) {
 	}
 }
 
-JSON::JSONData getSceneDefinition(
+JSON::JSONData Scene3D::getSceneDefinition(
 	bool const& integratedObjects,
 	bool const& integratedObjectBinaries,
 	bool const& integratedObjectTextures
 ) {
-	JSONData def;
-	def["version"] = version;
+	JSON::JSONData def;
+	def["version"] = VERSION;
 	if (integratedObjects)
 		for (auto& [name, obj]: getObjects())
 			def["data"][name] = obj->getObjectDefinition("base64", integratedObjectBinaries, integratedObjectTextures);
-	Camera::Camera3D cam = camera;
-	def["camera"] = {
+	Camera3D cam = camera;
+	def["camera"] = JSON::JSONType{
 		{"eye",		{cam.eye.x, cam.eye.y, cam.eye.z}	},
 		{"at",		{cam.at.x, cam.at.y, cam.at.z}		},
 		{"up",		{cam.up.x, cam.up.y, cam.up.z}		},
@@ -261,7 +309,7 @@ JSON::JSONData getSceneDefinition(
 			{"stop", world.FOG_TYPE.stop},\
 			{"strength", world.FOG_TYPE.strength}\
 		}}
-	def["world"] = {
+	def["world"] = JSON::JSONType{
 		_FOG_JSON_VALUE(nearFog),
 		_FOG_JSON_VALUE(farFog),
 		{"ambient", {

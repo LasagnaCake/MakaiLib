@@ -112,7 +112,6 @@ namespace Makai::Graph {
 				return newName;
 			}
 
-		private:
 			DrawableBank objects;
 		};
 	}
@@ -124,7 +123,7 @@ namespace Makai::Graph {
 		using BaseType::Collection;
 
 		Material::WorldMaterial	world;
-		Camera3D				camera;
+		GimbalCamera3D			camera;
 
 		constexpr static usize VERSION = 0;
 

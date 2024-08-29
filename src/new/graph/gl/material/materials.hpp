@@ -35,7 +35,7 @@ namespace Makai::Graph::Material {
 		FillMode	fill		= FillMode::OFM_FILL;
 		ObjectDebugView	debug	= ObjectDebugView::ODV_NONE;
 
-		void use(Shader& shader);
+		void use(Shader const& shader) const;
 	};
 
 	struct BaseBufferMaterial {
@@ -66,7 +66,7 @@ namespace Makai::Graph::Material {
 		Effect::Noise		noise;
 		BufferDebugView	debug	= BufferDebugView::BDV_NONE;
 
-		void use(Shader& shader);
+		void use(Shader const& shader) const;
 	};
 
 	struct BaseWorldMaterial {};
@@ -76,7 +76,7 @@ namespace Makai::Graph::Material {
 		Effect::Fog		farFog;
 		Effect::Ambient	ambient;
 
-		void use(Shader& shader);
+		void use(Shader const& shader) const;
 	};
 
 	template<class T, class BASE>

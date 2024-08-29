@@ -49,7 +49,7 @@ GLenum convert(BlendEquation const& value) {
 	}
 }
 
-Blendable& Blendable::setBlendMode(usize const& drawBuffer = 0) {
+Blendable& Blendable::setBlendMode(usize const& drawBuffer = 0) const {
 	glBlendFuncSeparatei(
 		drawBuffer,
 		convert(blend.func.srcColor),
