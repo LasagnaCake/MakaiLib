@@ -60,7 +60,7 @@
 - [ ] Add [QOA](https://github.com/phoboslab/qoa/blob/master/qoa.h) support
 - [ ] Create `Label` class for fancy text support
 - - ( ) BBCode
-- - ( ) Custom text tags (defined via `[`*`chr-seq`*`:`*`text`*`]` - ex: `[*:abcde]`, `[_*:example]`, etc.)
+- - ( ) Custom text tags
 - - - See [Text Tags](../specifications/text-tags.md) for more info
 
 ### Major Refactor
