@@ -19,18 +19,18 @@ Spaces are ignored.
 
 `+` and `-` tags are $\frac{1}{4}$ of the size of the font size.
 
-|Tag|Usage|Can be Stacked?|Additional Info|
+|Tag|Usage|Can be Stacked?|Additional Information|
 |:-:|:-|:-:|:-|
-|`b`|**bold**|Yes|
-|`i`|*italic*|Yes|
-|`u`|<ins>underline</ins>|No|
-|`s`|~~strikethrough~~|No|
-|`+`|<sup>superscript</sup>|Yes|
-|`-`|<sub>subscript</sub>|Yes|
-|`@[link]`|[links](https://www.youtube.com/watch?v=ihCc2MoLF9k)|No|
-|`@`|[links](https://www.youtube.com/watch?v=ihCc2MoLF9k)|No|Link shorthand, where `text` value is the link.|
-|`=`|JSON Value|No|</p>To be loaded from a JSON structure attached to the `Label`, with `text` being the key.</p><p>Tree structure is separated by periods.</p>|
-|`#[style]`|for (limited) text stylization|Yes|Most recent value set for parameter is used (CSS-style).|
+|`b`|**bold**|<span style="background-color:lightgreen;padding:0 5px;">Yes</span>|
+|`i`|*italic*|<span style="background-color:lightgreen;padding:0 5px;">Yes</span>|
+|`u`|<ins>underline</ins>|<span style="background-color:lightpink;padding:0 5px;">No</span>|
+|`s`|~~strikethrough~~|<span style="background-color:lightpink;padding:0 5px;">No</span>|
+|`+`|<sup>superscript</sup>|<span style="background-color:lightgreen;padding:0 5px;">Yes</span>|
+|`-`|<sub>subscript</sub>|<span style="background-color:lightgreen;padding:0 5px;">Yes</span>|
+|`@[link]`|[links](https://www.youtube.com/watch?v=ihCc2MoLF9k)|<span style="background-color:lightpink;padding:0 5px;">No</span>|
+|`@`|[links](https://www.youtube.com/watch?v=ihCc2MoLF9k)|<span style="background-color:lightpink;padding:0 5px;">No</span>|Link shorthand, where `text` value is the link.|
+|`=`|JSON Value|<span style="background-color:lightpink;padding:0 5px;">No</span>|</p>To be loaded from a JSON structure attached to the `Label`, with `text` being the key.</p><p>Tree structure is separated by periods.</p>|
+|`#[style]`|for (limited) text stylization|<span style="background-color:lightgreen;padding:0 5px;">Yes</span>|Most recent value set for parameter is used (CSS-style).|
 
 ### On the `#[style]` tag
 
