@@ -17,7 +17,7 @@
 
 Spaces are ignored.
 
-`+` and `-` tags are $\frac{1}{4}$ of the size of the font size.
+`+` and `-` tags are $\frac{1}{2}$ of the size of the font size.
 
 |Tag|Usage|Can be Stacked?|Additional Information|
 |:-:|:-|:-:|:-|
