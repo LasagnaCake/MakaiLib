@@ -19,22 +19,24 @@ Spaces are ignored.
 
 `+` and `-` tags are $\frac{1}{4}$ of the size of the font size.
 
-- `b` for **bold**
-- `i` for *italics*
-- `u` for <ins>underline</ins>
-- `s` for ~~strikethrough~~
-- `+` for <sup>superscript</sup>
-- `-` for <sub>subscript</sub>
-- `@[link]` for [links](https://www.youtube.com/watch?v=ihCc2MoLF9k)
-- - *`text`* is optional if this is tag included
-- `=` for inserting values
-- - To be loaded from a JSON structure attached to the `Label`, with `text` being the key
-- - - Tree structure is separated by periods
-- `#[style]` for (limited) text stylization
+|Tag|Usage|Can be Stacked?|Additional Info|
+|:-:|:-|:-:|:-|
+|`b`|**bold**|Yes|
+|`i`|*italic*|Yes|
+|`u`|<ins>underline</ins>|No|
+|`s`|~~strikethrough~~|No|
+|`+`|<sup>superscript</sup>|Yes|
+|`-`|<sub>subscript</sub>|Yes|
+|`@[link]`|[links](https://www.youtube.com/watch?v=ihCc2MoLF9k)|No|
+|`@`|[links](https://www.youtube.com/watch?v=ihCc2MoLF9k)|No|Link shorthand, where `text` value is the link.|
+|`=`|JSON Value|No|</p>To be loaded from a JSON structure attached to the `Label`, with `text` being the key.</p><p>Tree structure is separated by periods.</p>|
+|`#[style]`|for (limited) text stylization|Yes|Most recent value set for parameter is used (CSS-style).|
 
 ### On the `#[style]` tag
 
-`style` parameters are of the form `key=value`, and are separated via semicolons.
+`style` parameters are of the form `parameter=value`, and are separated via semicolons.
+
+Optionally, it can start with `@:`, and be a list of style names attached to the label. Each name must be separated by a semicolon.
 
 #### Available parameters
 
@@ -48,6 +50,7 @@ Spaces are ignored.
 |:-:|:-|
 |`[biu:abcdefg:]`|<ins>***abcdefg***</ins>|
 |`[+#[color=#f00]:colored text:]`|<span style="color:red"><sup>colored text</sup></span>|
+|`[@:http://example.com:]`|[http://example.com](http://example.com)|
 |`[@[http://example.com]::]`|[http://example.com](http://example.com)|
 |`[bi@[http://example.com]::]`|[***http://example.com***](http://example.com)|
 |`[bi@[http://example.com]:click me!:]`|[***click me!***](http://example.com)|
