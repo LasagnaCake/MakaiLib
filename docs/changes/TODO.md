@@ -58,21 +58,26 @@
 - - [ ] Linux
 - [ ] Add [QOI](https://github.com/phoboslab/qoi/blob/master/qoi.h) support
 - [ ] Add [QOA](https://github.com/phoboslab/qoa/blob/master/qoa.h) support
-- [ ] Create class for fancy text support
-- - [ ] BBCode
-- - [ ] Custom text decorators
-- - - `{*`**text**`*}` for **bold**
-- - - `{/`**text**`/}` for *italics*
-- - - `{_`**text**`_}` for <ins>underline</ins>
-- - - `{-`**text**`-}` for ~~strikethrough~~
-- - - `{^`**text**`^}` for <sup>superscript</sup>
-- - - `{&{`**link**`}`**text**`&}` for [links](https://www.youtube.com/watch?v=ihCc2MoLF9k)
-- - - - **text** is optional
-- - - `{@{`**style**`}`**text**`@}` for (limited) text stylization
-- - - - **style** parameters are of the form `key=value`, and are separated via semicolons
+- [ ] Create `Label` class for fancy text support
+- - ( ) BBCode
+- - ( ) Custom text tags (defined via `[`*`chr-seq`*`:`*`text`*`]` - ex: `[*:abcde]`, `[_*:example]`, etc.)
+- - - `*` for **bold**
+- - - `/` for *italics*
+- - - `+` for <ins>underline</ins>
+- - - `-` for ~~strikethrough~~
+- - - `^` for <sup>superscript</sup>
+- - - `_` for <sub>subscript</sub>
+- - - `@[link]` for [links](https://www.youtube.com/watch?v=ihCc2MoLF9k)
+- - - - *`text`* is optional if this is tag included
+- - - `=` for inserting values
+- - - - To be loaded from a JSON structure attached to the `Label`, with `text` being the key
+- - - `#[style]` for (limited) text stylization
+- - - - `style` parameters are of the form `key=value`, and are separated via semicolons
 - - - - Available parameters:
 - - - - - `color`: Takes in a hex color (ex: `#00f`, `#f045cf0f`, `#fc0d`) as value
-- - - "`{`" and "`}`" are escaped as "`{{`" and "`}}`"
+- - - - - `font`: Takes in an unsigned integer as a value
+- - - - - - To be used as an index into an array of fonts
+- - - "`[`" and "`]`" are escaped as "`[[`" and "`]]`"
 
 ### Major Refactor
 
