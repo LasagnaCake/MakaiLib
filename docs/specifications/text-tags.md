@@ -48,6 +48,7 @@ Spaces are ignored.
 |:-:|:-|
 |`[biu:abcdefg:]`|<ins>***abcdefg***</ins>|
 |`[+#[color=#f00]:colored text:]`|<span style="color:red"><sup>colored text</sup></span>|
+|`[@[http://example.com]::]`|[http://example.com](http://example.com)|
 |`[bi@[http://example.com]::]`|[***http://example.com***](http://example.com)|
 |`[bi@[http://example.com]:click me!:]`|[***click me!***](http://example.com)|
 |`[:text:]`|text|
