@@ -6,7 +6,7 @@
 
 ## Syntax
 
-`[`*`chr-seq`*`:`*`text`*`]`, where:
+`[`*`chr-seq`*`:`*`text`*`:]`, where:
 
 - *`chr-seq`*: A sequence of [tags](#Tags) (as detailed below) defining the style of the proceeding *`text`*.
 - *`text`*: A string of text.
@@ -46,12 +46,14 @@ Spaces are ignored.
 
 |Text Tag|Resulting Text|
 |:-:|:-|
-|`[biu:abcdefg]`|<ins>***abcdefg***</ins>|
-|`[+#[color=#f00]:colored text]`|<span style="color:red"><sup>colored text</sup></span>|
-|`[bi@[http://example.com]:]`|[***http://example.com***](http://example.com)|
-|`[bi@[http://example.com]:click me!]`|[***click me!***](http://example.com)|
-|`[:text]`|text|
-|`[::text]`|:text|
+|`[biu:abcdefg:]`|<ins>***abcdefg***</ins>|
+|`[+#[color=#f00]:colored text:]`|<span style="color:red"><sup>colored text</sup></span>|
+|`[bi@[http://example.com]::]`|[***http://example.com***](http://example.com)|
+|`[bi@[http://example.com]:click me!:]`|[***click me!***](http://example.com)|
+|`[:text:]`|text|
+|`[::text:]`|:text|
+|`[:text::]`|text:|
+|`[::text::]`|:text:|
 |`[text]`|\[text\]|
-|`[`*`any-chr-seq`*`:]`||
-|`[:]`||
+|`[`*`any-chr-seq`*`::]`||
+|`[::]`||
