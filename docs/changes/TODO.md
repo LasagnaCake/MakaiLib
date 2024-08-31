@@ -61,23 +61,7 @@
 - [ ] Create `Label` class for fancy text support
 - - ( ) BBCode
 - - ( ) Custom text tags (defined via `[`*`chr-seq`*`:`*`text`*`]` - ex: `[*:abcde]`, `[_*:example]`, etc.)
-- - - `*` for **bold**
-- - - `/` for *italics*
-- - - `+` for <ins>underline</ins>
-- - - `-` for ~~strikethrough~~
-- - - `^` for <sup>superscript</sup>
-- - - `_` for <sub>subscript</sub>
-- - - `@[link]` for [links](https://www.youtube.com/watch?v=ihCc2MoLF9k)
-- - - - *`text`* is optional if this is tag included
-- - - `=` for inserting values
-- - - - To be loaded from a JSON structure attached to the `Label`, with `text` being the key
-- - - `#[style]` for (limited) text stylization
-- - - - `style` parameters are of the form `key=value`, and are separated via semicolons
-- - - - Available parameters:
-- - - - - `color`: Takes in a hex color (ex: `#00f`, `#f045cf0f`, `#fc0d`) as value
-- - - - - `font`: Takes in an unsigned integer as a value
-- - - - - - To be used as an index into an array of fonts
-- - - "`[`" and "`]`" are escaped as "`[[`" and "`]]`"
+- - - See [Text Tags](../specifications/text-tags.md) for more info
 
 ### Major Refactor
 
