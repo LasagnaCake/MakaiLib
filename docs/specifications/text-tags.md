@@ -2,7 +2,7 @@
 
 ## Overview
 
-- Tags can be nested in eachother.
+- Tags can be nested within each other.
 
 ## Syntax
 
@@ -17,7 +17,7 @@
 
 Spaces are ignored.
 
-`+` and `-` tags are $$1/4$$ of the size of the font size.
+`+` and `-` tags are $\frac{1}{4}$ of the size of the font size.
 
 - `b` for **bold**
 - `i` for *italics*
@@ -29,6 +29,7 @@ Spaces are ignored.
 - - *`text`* is optional if this is tag included
 - `=` for inserting values
 - - To be loaded from a JSON structure attached to the `Label`, with `text` being the key
+- - - Tree structure is separated by periods
 - `#[style]` for (limited) text stylization
 
 ### On the `#[style]` tag
@@ -38,8 +39,7 @@ Spaces are ignored.
 #### Available parameters
 
 - `color`: Takes in a hex color (ex: `#00f`, `#f045cf0f`, `#fc0d`) as value
-- `font`: Takes in an unsigned integer as a value
-- - To be used as an index into an array of fonts
+- `font`: Takes in an unsigned integer as a value to be used as an index into an array of fonts
 
 
 ## Examples
