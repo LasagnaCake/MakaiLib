@@ -203,7 +203,8 @@ void main(void) {
 	if (imgTexture.enabled && color.a <= (fragColor.a * imgTexture.alphaClip))
 		discard;
 	if (normalMap.enabled) {
-		normal = texture(normalMap.image, calculatedFragUV).rgb;
+		vec4 tn = texture(normalMap.image, calculatedFragUV);
+		normal = tn.rgb * tn.a;
 		normal = normalize(normal * 2.0 - 1.0 + normal);  
 	}
 	color.xyz *= calculateLights(fragCoord3D, normal) * getShadingColor(fragCoord3D, normal);
