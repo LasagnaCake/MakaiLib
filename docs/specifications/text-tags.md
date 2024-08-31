@@ -11,7 +11,7 @@
 - *`chr-seq`*: A sequence of [tags](#Tags) (as detailed below) defining the style of the proceeding *`text`*.
 - *`text`*: A string of text.
 
-`[` and `]` are escaped as `[[` and `]]`, respectively.
+`[` and `]` can be escaped as `[[` and `]]`, respectively.
 
 ## Valid Tags
 
@@ -58,3 +58,7 @@ Spaces are ignored.
 |`[text]`|\[text\]|
 |`[`*`any-chr-seq`*`::]`||
 |`[::]`||
+|`[::]]`|:\]|
+|`[[::]`|\[:|
+|`[[::]]`|\[::\]|
+|`[:::]`|:|
