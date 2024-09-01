@@ -76,7 +76,7 @@ void DrawableObject::display(
 	usize const&		instances
 ) {
 	// Set blend mode
-	setBlendMode();
+	useBlendMode();
 	// Set point size, if applicable
 	if (pointSize)	glPointSize(*pointSize);
 	else			glEnable(GL_PROGRAM_POINT_SIZE);

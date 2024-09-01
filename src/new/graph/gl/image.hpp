@@ -4,6 +4,8 @@
 #include "../../ctl/ctl.hpp"
 
 namespace Makai::Graph {
+	struct Texture2D;
+
 	struct Image {
 		enum class ImageTarget {
 			IT_TEXTURE_2D
@@ -27,8 +29,8 @@ namespace Makai::Graph {
 
 		Image const& use(uchar const& texture = 0) const;
 
-		Image&			operator()(unsigned char texture = 0);
-		Image const&	operator()(unsigned char texture = 0) const;
+		Image&			operator()(uchar const& texture = 0);
+		Image const&	operator()(uchar const& texture = 0) const;
 
 		bool operator==(Image const& other) const;
 		Helper::PartialOrder operator<=>(Image const& other) const;
@@ -103,65 +105,85 @@ namespace Makai::Graph {
 		};
 
 		Image2D& create(
-			uint			width,
-			uint			height,
-			ComponentType	type			= ComponentType::CT_UBYTE,
-			ImageFormat		format			= ImageFormat::IF_RGBA,
-			FilterMode		magFilter		= FilterMode::FM_SMOOTH,
-			FilterMode		minFilter		= FilterMode::FM_SMS,
-			uchar*			data			= NULL,
-			uint			internalFormat	= 0
+			uint const&				width,
+			uint const&				height,
+			ComponentType const&	type			= ComponentType::CT_UBYTE,
+			ImageFormat const&		format			= ImageFormat::IF_RGBA,
+			FilterMode const&		magFilter		= FilterMode::FM_SMOOTH,
+			FilterMode const&		minFilter		= FilterMode::FM_SMS,
+			uchar* const&			data			= NULL,
+			uint const&				internalFormat	= 0
 		);
 
 		Image2D& make(
-			uint			width,
-			uint			height,
-			ComponentType	type			= ComponentType::CT_UBYTE,
-			ImageFormat		format			= ImageFormat::IF_RGBA,
-			FilterMode		magFilter		= FilterMode::FM_SMOOTH,
-			FilterMode		minFilter		= FilterMode::FM_SMS,
-			uchar*			data			= NULL,
-			uint			internalFormat	= 0
+			uint const&				width,
+			uint const&				height,
+			ComponentType const&	type			= ComponentType::CT_UBYTE,
+			ImageFormat const&		format			= ImageFormat::IF_RGBA,
+			FilterMode const&		magFilter		= FilterMode::FM_SMOOTH,
+			FilterMode const&		minFilter		= FilterMode::FM_SMS,
+			uchar* const&			data			= NULL,
+			uint const&				internalFormat	= 0
 		);
 
 		Attributes getAttributes();
 
 		ImageData getData() const;
 
-		Image2D&		saveToFile(String const& path, uint8 const& quality, ImageFileType type = ImageFileType::IFT_AUTO_DETECT);
-		Image2D const&	saveToFile(String const& path, uint8 const& quality, ImageFileType type = ImageFileType::IFT_AUTO_DETECT) const;
+		Image2D&		saveToFile(
+			String const&			path,
+			uint8 const&			quality,
+			ImageFileType const&	type = ImageFileType::IFT_AUTO_DETECT
+		);
 
-		Image2D&		saveToFile(String const& path, ImageFileType type = ImageFileType::IFT_AUTO_DETECT);
-		Image2D const&	saveToFile(String const& path, ImageFileType type = ImageFileType::IFT_AUTO_DETECT) const;
+		Image2D const&	saveToFile(
+			String const&			path,
+			uint8 const&			quality,
+			ImageFileType const&	type = ImageFileType::IFT_AUTO_DETECT
+		) const;
+
+		Image2D&		saveToFile(
+			String const&			path,
+			ImageFileType const&	type = ImageFileType::IFT_AUTO_DETECT
+		);
+
+		Image2D const&	saveToFile(
+			String const&			path,
+			ImageFileType const&	type = ImageFileType::IFT_AUTO_DETECT
+		) const;
 
 		[[nodiscard]]
 		static Image2D* newImage(
-			uint			width,
-			uint			height,
-			ComponentType	type			= ComponentType::CT_UBYTE,
-			ImageFormat		format			= ImageFormat::IF_RGBA,
-			FilterMode		magFilter		= FilterMode::FM_SMOOTH,
-			FilterMode		minFilter		= FilterMode::FM_SMS,
-			uchar*			data			= NULL,
-			uint			internalFormat	= 0,
-			ImageTarget		target			= ImageTarget::IT_TEXTURE_2D
+			uint const&				width,
+			uint const&				height,
+			ComponentType const&	type			= ComponentType::CT_UBYTE,
+			ImageFormat const&		format			= ImageFormat::IF_RGBA,
+			FilterMode const&		magFilter		= FilterMode::FM_SMOOTH,
+			FilterMode const&		minFilter		= FilterMode::FM_SMS,
+			uchar* const&			data			= NULL,
+			uint const&				internalFormat	= 0,
+			ImageTarget const&		target			= ImageTarget::IT_TEXTURE_2D
 		);
 
 		static Image2D* newImage(
-			Image2D*		image,
-			uint			width,
-			uint			height,
-			ComponentType	type			= ComponentType::CT_UBYTE,
-			ImageFormat		format			= ImageFormat::IF_RGBA,
-			FilterMode		magFilter		= FilterMode::FM_SMOOTH,
-			FilterMode		minFilter		= FilterMode::FM_SMS,
-			uchar*			data			= NULL,
-			uint			internalFormat	= 0,
-			ImageTarget		target			= ImageTarget::IT_TEXTURE_2D
+			Image2D* const&			image,
+			uint const&				width,
+			uint const&				height,
+			ComponentType const&	type			= ComponentType::CT_UBYTE,
+			ImageFormat const&		format			= ImageFormat::IF_RGBA,
+			FilterMode const&		magFilter		= FilterMode::FM_SMOOTH,
+			FilterMode const&		minFilter		= FilterMode::FM_SMS,
+			uchar* const&			data			= NULL,
+			uint const&				internalFormat	= 0,
+			ImageTarget const&		target			= ImageTarget::IT_TEXTURE_2D
 		);
 
 	private:
-		void saveImageToFile(String const& path, uint8 const& quality, ImageFileType type) const;
+		void saveImageToFile(
+			String const&			path,
+			uint8 const&			quality,
+			ImageFileType const&	type
+		) const;
 
 		friend class Texture2D;
 

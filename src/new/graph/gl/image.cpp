@@ -12,13 +12,11 @@
 
 using namespace Makai::Graph;
 
-using
-	Image2D::ImageFileType,
-	Image2D::ComponentType,
-	Image2D::ImageFormat,
-	Image2D::FilterMode,
-	Image::ImageTarget
-;
+using ImageFileType = Image2D::ImageFileType;
+using ComponentType = Image2D::ComponentType;
+using ImageFormat = Image2D::ImageFormat;
+using FilterMode = Image2D::FilterMode;
+using ImageTarget = Image::ImageTarget;
 
 constexpr uint convert(Image::ImageTarget const& target) {
 	switch (target) {
@@ -71,19 +69,19 @@ constexpr uint convert(FilterMode const& type) {
 	}
 }
 
-inline Image const& Image::bind(ImageTarget const& target = Image::ImageTarget::IT_TEXTURE_2D) const {
+Image const& Image::bind(ImageTarget const& target) const {
 	glBindTexture(convert(target), id);
 	return *this;
 }
 
-inline Image& Image::destroy() {
+Image& Image::destroy() {
 	if (!exists()) return *this;
 	glDeleteTextures(1, &id);
 	id = 0;
 	return *this;
 }
 
-inline Image& Image::create() {
+Image& Image::create() {
 	if (exists()) return *this;
 	glGenTextures(1, &id);
 	return *this;
@@ -93,61 +91,61 @@ Image& Image::make() {
 	return destroy().create();
 }
 
-inline static void Image::bind(ImageTarget const& target = Image::ImageTarget::IT_TEXTURE_2D) {
+static void Image::bind(ImageTarget const& target) {
 	glBindTexture(convert(target), 0);
 }
 
-inline Image& Image::use(uchar const& texture = 0) {
+Image& Image::use(uchar const& texture = 0) {
 	setTexture2D(texture, id);
 	return *this;
 }
 
-inline Image const& Image::use(uchar const& texture = 0) const {
+Image const& Image::use(uchar const& texture) const {
 	setTexture2D(texture, id);
 	return *this;
 }
 
-inline Image& Image::operator()(uchar const& texture = 0) {
+Image& Image::operator()(uchar const& texture) {
 	return use(texture);
 }
 
-inline Image const& Image::operator()(uchar const& texture = 0) const {
+Image const& Image::operator()(uchar const& texture) const {
 	return use(texture);
 }
 
-inline bool Image::operator==(Image const& other) const {
+bool Image::operator==(Image const& other) const {
 	return id == other.id;
 }
 
-inline Helper::PartialOrder Image::operator<=>(Image const& other) const {
+Helper::PartialOrder Image::operator<=>(Image const& other) const {
 	return id <=> other.id;
 }
 
-inline Image::operator unsigned int() const	{
+Image::operator unsigned int() const	{
 	return id;
 }
 
-inline unsigned int Image::getID() const {
+unsigned int Image::getID() const {
 	return id;
 }
 
-inline bool Image::exists() const {
+bool Image::exists() const {
 	return id != 0;
 }
 
-inline Image::operator bool() const {
+Image::operator bool() const {
 	return exists();
 }
 
 Image2D& Image2D::create(
-	uint			width,
-	uint			height,
-	ComponentType	type			= ComponentType::CT_UBYTE,
-	ImageFormat		format			= ImageFormat::IF_RGBA,
-	FilterMode		magFilter		= FilterMode::FM_SMOOTH,
-	FilterMode		minFilter		= FilterMode::FM_SMS,
-	uchar*			data			= NULL,
-	uint			internalFormat	= 0
+	uint const&				width,
+	uint const&				height,
+	ComponentType const&	type,
+	ImageFormat const&		format,
+	FilterMode const&		magFilter,
+	FilterMode const&		minFilter,
+	uchar* const&			data,
+	uint const&				internalFormat
 ) {
 	if (exists()) return *this;
 	if (!internalFormat)
@@ -157,14 +155,14 @@ Image2D& Image2D::create(
 }
 
 Image2D& Image2D::make(
-	uint			width,
-	uint			height,
-	ComponentType	type			= ComponentType::CT_UBYTE,
-	ImageFormat		format			= ImageFormat::IF_RGBA,
-	FilterMode		magFilter		= FilterMode::FM_SMOOTH,
-	FilterMode		minFilter		= FilterMode::FM_SMS,
-	uchar*			data			= NULL,
-	uint			internalFormat	= 0
+	uint const&				width,
+	uint const&				height,
+	ComponentType const&	type,
+	ImageFormat const&		format,
+	FilterMode const&		magFilter,
+	FilterMode const&		minFilter,
+	uchar* const&			data,
+	uint const&				internalFormat
 ) {
 	destroy();
 	return create(width, height, type, format, magFilter, minFilter, data, internalFormat);
@@ -213,50 +211,50 @@ ImageData Image2D::getData() const {
 	return imgdat;
 }
 
-Image2D const& Image2D::saveToFile(String const& path, uint8 const& quality, ImageFileType type = ImageFileType::IFT_AUTO_DETECT) const {
+Image2D const& Image2D::saveToFile(String const& path, uint8 const& quality, ImageFileType const& type) const {
 	saveImageToFile(path, quality, type);
 	return *this;
 }
 
-Image2D& Image2D::saveToFile(String const& path, uint8 const& quality, ImageFileType type = ImageFileType::IFT_AUTO_DETECT) {
+Image2D& Image2D::saveToFile(String const& path, uint8 const& quality, ImageFileType const& type) {
 	saveImageToFile(path, quality, type);
 	return *this;
 }
 
-Image2D& Image2D::saveToFile(String const& path, ImageFileType type = ImageFileType::IFT_AUTO_DETECT) {
+Image2D& Image2D::saveToFile(String const& path, ImageFileType const& type) {
 	return saveToFile(path, 50, type);
 }
 
-Image2D const& Image2D::saveToFile(String const& path, ImageFileType type = ImageFileType::IFT_AUTO_DETECT) const	{
+Image2D const& Image2D::saveToFile(String const& path, ImageFileType const& type) const	{
 	return saveToFile(path, 50, type);
 }
 
 static Image2D* Image2D::newImage(
-	uint			width,
-	uint			height,
-	ComponentType	type			= ComponentType::CT_UBYTE,
-	ImageFormat		format			= ImageFormat::IF_RGBA,
-	FilterMode		magFilter		= FilterMode::FM_SMOOTH,
-	FilterMode		minFilter		= FilterMode::FM_SMS,
-	uchar*			data			= NULL,
-	uint			internalFormat	= 0,
-	ImageTarget		target			= ImageTarget::IT_TEXTURE_2D
+	uint const&				width,
+	uint const&				height,
+	ComponentType const&	type,
+	ImageFormat const&		format,
+	FilterMode const&		magFilter,
+	FilterMode const&		minFilter,
+	uchar* const&			data,
+	uint const&				internalFormat,
+	ImageTargett const&		target
 ) {
 	Image2D* image = new Image2D();
 	return Image2D::newImage(image, width, height, type, format, format, minFilter, magFilter, data);
 }
 
 static Image2D* Image2D::newImage(
-	Image2D*		image,
-	uint			width,
-	uint			height,
-	ComponentType	type			= ComponentType::CT_UBYTE,
-	ImageFormat		format			= ImageFormat::IF_RGBA,
-	FilterMode		magFilter		= FilterMode::FM_SMOOTH,
-	FilterMode		minFilter		= FilterMode::FM_SMS,
-	uchar*			data			= NULL,
-	uint			internalFormat	= 0,
-	ImageTarget		target			= ImageTarget::IT_TEXTURE_2D
+	Image2D* const&			image,
+	uint const&				width,
+	uint const&				height,
+	ComponentType const&	type,
+	ImageFormat const&		format,
+	FilterMode const&		magFilter,
+	FilterMode const&		minFilter,
+	uchar* const&			data,
+	uint const&				internalFormat,
+	ImageTargett const&		target
 ) {
 	image->create();
 	image->bind(target);

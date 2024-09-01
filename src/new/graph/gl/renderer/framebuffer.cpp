@@ -169,7 +169,7 @@ Base::FrameBuffer& Base::FrameBuffer::render(FrameBufferData const& target) {
 	// Set target buffer
 	glBindFramebuffer(GL_FRAMEBUFFER, target.id);
 	// set blend func & equation data
-	setBlendMode();
+	useBlendMode();
 	// Set VBO as active
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	// Copy vertices to VBO

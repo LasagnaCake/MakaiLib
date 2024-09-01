@@ -1,6 +1,8 @@
 #ifndef MAKAILIB_GRAPH_BLEND_H
 #define MAKAILIB_GRAPH_BLEND_H
 
+#include "../../ctl/ctl.hpp"
+
 namespace Makai::Graph {
 	enum class BlendFunction {
 		BF_ZERO,
@@ -85,7 +87,7 @@ namespace Makai::Graph {
 		BlendData blend;
 
 	protected:
-		Blendable const& setBlendMode(usize const& drawBuffer = 0) const;
+		void useBlendMode(usize const& drawBuffer = 0) const;
 	};
 }
 

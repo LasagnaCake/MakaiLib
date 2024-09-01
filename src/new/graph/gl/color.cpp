@@ -1,5 +1,6 @@
-#include <stringstream>
+#include <sstream>
 
+#include "../../ctl/ctl.hpp"
 #include "color.hpp"
 
 using namespace Makai::Graph;
@@ -45,19 +46,19 @@ Vector4 Color::fromHexCodeString(String code) {
 	return fromHexCodeRGBA(toUInt32(code, 16));
 }
 
-Vector4 Color::fromJSON(JSON::JSONData const& json) {
+Vector4 Color::fromJSON(JSON::JSONData const& v) {
 	try {
-		if (json.isArray())
+		if (v.isArray())
 			return Vector4(
-				json[0].value<float>(0),
-				json[1].value<float>(0),
-				json[2].value<float>(0),
-				json[3].value<float>(1)
+				v[0].get<float>(0),
+				v[1].get<float>(0),
+				v[2].get<float>(0),
+				v[3].get<float>(1)
 			);
-		else if (json.isString())
-			return Color::fromHexCodeString(json.get<String>());
-		else if (json.isNumber())
-			return Vector4(json.value<float>(1));
+		else if (v.isString())
+			return Color::fromHexCodeString(v.get<String>());
+		else if (v.isNumber())
+			return Vector4(v.get<float>(1));
 	} catch (...) {
 		return Vector4(1);
 	}
