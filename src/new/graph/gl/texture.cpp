@@ -3,33 +3,36 @@
 #include <GLEW/include/GL/wglew.h>
 #include <GL/gl.h>
 
-#define STB_IMAGE_WRITE_IMPLEMENTATION
-#define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 #include <stb_image_write.h>
 
 #include "texture.hpp"
+#include "../../data/encdec.hpp"
+#include "../../file/get.hpp"
 
 using namespace Makai::Graph;
 
-using
-	Texture2D::WrapMode,
-	Texture2D::FilterMode,
-	Texture2D::ImageFileType,
-	Texture2D::ImageTarget
-;
+using WrapMode			= Texture2D::WrapMode;
+using FilterMode		= Image2D::FilterMode;
+using ImageFileType		= Image2D::ImageFileType;
+using ImageFormat		= Image2D::ImageFormat;
+using ComponentType		= Image2D::ComponentType;
+using ComponentLayout	= Image2D::ComponentLayout;
+using ImageTarget		= Image::ImageTarget;
 
 constexpr uint convert(WrapMode const& mode) {
 	switch (mode) {
-		case WrapMode::WM_REPEAT:		return GL_REPEAT;
-		case WrapMode::WM_CLAMP:		return GL_CLAMP_TO_EDGE;
-		case WrapMode::WM_MIRROR:		return GL_MIRRORED_REPEAT;
-		case WrapMode::WM_MIRROR_CLAMP:	return GL_MIRROR_CLAMP_TO_EDGE;
+		default:
+		case WrapMode::WM_REPEAT:			return GL_REPEAT;
+		case WrapMode::WM_CLAMP:			return GL_CLAMP_TO_EDGE;
+		case WrapMode::WM_MIRROR_REPEAT:	return GL_MIRRORED_REPEAT;
+		case WrapMode::WM_MIRROR_CLAMP:		return GL_MIRROR_CLAMP_TO_EDGE;
 	}
 }
 
 constexpr uint convert(FilterMode const& type) {
 	switch (type) {
+		default:
 		case FilterMode::FM_NEAREST:	return GL_NEAREST;
 		case FilterMode::FM_SMOOTH:		return GL_LINEAR;
 		case FilterMode::FM_NMN:		return GL_NEAREST_MIPMAP_NEAREST;
@@ -41,23 +44,23 @@ constexpr uint convert(FilterMode const& type) {
 
 uint createCopyBuffer() {
 	DEBUGLN("Creating copy buffer...");
-	unsigned int id = 0;
+	uint id = 0;
 	glGenFramebuffers(1, &id);
 	return id;
 }
 
 void copyTexture(
-	Image2D* src,
-	Image2D* dst,
-	unsigned int srcStartX,
-	unsigned int srcStartY,
-	unsigned int srcEndX,
-	unsigned int srcEndY,
-	unsigned int dstStartX,
-	unsigned int dstStartY,
-	unsigned int dstEndX,
-	unsigned int dstEndY,
-	ImageFilter filter = ImageFilter::IF_NEAREST
+	Image2D* const&		src,
+	Image2D* const&		dst,
+	uint const&			srcStartX,
+	uint const&			srcStartY,
+	uint const&			srcEndX,
+	uint const&			srcEndY,
+	uint const&			dstStartX,
+	uint const&			dstStartY,
+	uint const&			dstEndX,
+	uint const&			dstEndY,
+	FilterMode const&	filter = FilterMode::FM_NEAREST
 ) {
 	if (!src || !dst) return;
 	static uint const fb = createCopyBuffer();
@@ -86,22 +89,22 @@ void copyTexture(
 	glBlitFramebuffer(
 		srcStartX, srcStartY, srcEndX, srcEndY,
 		dstStartX, dstStartY, dstEndX, dstEndY,
-		GL_COLOR_BUFFER_BIT, filter
+		GL_COLOR_BUFFER_BIT, convert(filter)
 	);
 	DEBUGLN("Finalizing...");
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-static Texture2D Texture2D::fromJSON(JSON::JSONData const& img, String const& sourcepath = "") {
+Texture2D Texture2D::fromJSON(JSON::JSONData img, String const& sourcepath) {
 	Texture2D texture;
 	if (img["data"].isObject() && img["data"]["path"].isString() && !img["data"]["path"].get<String>().empty()) {
 		texture.create(FileSystem::concatenatePath(sourcepath, img["path"].get<String>()));
-		texture.setTextureFilterMode(
-			img.value<uint>("minFilter", GL_NEAREST_MIPMAP_NEAREST),
-			img.value<uint>("magFilter", GL_NEAREST)
+		texture.setFilterMode(
+			img["minFilter"].get<FilterMode>(FilterMode::FM_NMN),
+			img["magFilter"].get<FilterMode>(FilterMode::FM_NEAREST)
 		);
 	} else if (img["data"].isString() && !img["data"].get<String>().empty()) {
-		List<ubyte> data = decodeData(img["data"].get<String>(), img["encoding"]);
+		List<ubyte> data = Makai::Data::decode(img["data"].get<String>(), Makai::Data::fromString(img["encoding"]));
 		int w, h, nc;
 		uchar* imgdat = stbi_load_from_memory(
 			data.data(),
@@ -115,10 +118,10 @@ static Texture2D Texture2D::fromJSON(JSON::JSONData const& img, String const& so
 			texture.create(
 				w,
 				h,
-				GL_UNSIGNED_BYTE,
-				GL_RGBA,
-				img.value<uint>("minFilter", GL_NEAREST_MIPMAP_NEAREST),
-				img.value<uint>("magFilter", GL_NEAREST),
+				ComponentType::CT_UBYTE,
+				ImageFormat::IF_RGBA,
+				img["minFilter"].get<FilterMode>(FilterMode::FM_NMN),
+				img["magFilter"].get<FilterMode>(FilterMode::FM_NEAREST),
 				imgdat
 			);
 			stbi_image_free(imgdat);
@@ -135,14 +138,14 @@ static Texture2D Texture2D::fromJSON(JSON::JSONData const& img, String const& so
 }
 
 Texture2D::Texture2D(
-	uint			width,
-	uint			height,
-	ComponentType	type			= ComponentType::CT_UBYTE,
-	ImageFormat		format			= ImageFormat::IF_RGBA,
-	FilterMode		magFilter		= FilterMode::FM_SMOOTH,
-	FilterMode		minFilter		= FilterMode::FM_SMS,
-	uchar*			data			= NULL,
-	uint			internalFormat	= 0,
+	uint const&				width,
+	uint const&				height,
+	ComponentType const&	type,
+	ImageFormat const&		format,
+	FilterMode const&		magFilter,
+	FilterMode const&		minFilter,
+	uchar* const&			data,
+	ComponentLayout const&	layout
 ): Texture2D::Texture2D() {
 	create(
 		width,
@@ -152,14 +155,14 @@ Texture2D::Texture2D(
 		minFilter,
 		magFilter,
 		data,
-		internalFormat
+		layout
 	);
 }
 
 Texture2D::Texture2D(
 	String const& path,
-	FilterMode magFilter = FilterMode::FM_SMOOTH,
-	FilterMode minFilter = FilterMode::FM_SMS
+	FilterMode const& magFilter,
+	FilterMode const& minFilter
 ): Texture2D::Texture2D() {
 	create(path, minFilter, magFilter);
 }
@@ -177,32 +180,25 @@ Texture2D::Texture2D(
 }
 
 Texture2D::Texture2D(
-	Texture2D* const& other
-) {
-	if (other)
-		image = other->image;
-}
-
-Texture2D::Texture2D(
 	Texture2D const& other,
-	unsigned int startX,
-	unsigned int startY,
-	unsigned int endX,
-	unsigned int endY,
-	bool filter = false
+	uint const& startX,
+	uint const& startY,
+	uint const& endX,
+	uint const& endY,
+	bool const& filter
 ): Texture2D::Texture2D() {
 	create(other, startX, startY, endX, endY, filter);
 }
 
 Texture2D& Texture2D::create(
-	uint			width,
-	uint			height,
-	ComponentType	type			= ComponentType::CT_UBYTE,
-	ImageFormat		format			= ImageFormat::IF_RGBA,
-	FilterMode		magFilter		= FilterMode::FM_SMOOTH,
-	FilterMode		minFilter		= FilterMode::FM_SMS,
-	uchar*			data			= NULL,
-	uint			internalFormat	= 0,
+	uint const&				width,
+	uint const&				height,
+	ComponentType const&	type,
+	ImageFormat const&		format,
+	FilterMode const&		magFilter,
+	FilterMode const&		minFilter,
+	uchar* const&			data,
+	ComponentLayout const&	layout
 ) {
 	if (exists()) return *this;
 	if (!image)
@@ -211,10 +207,10 @@ Texture2D& Texture2D::create(
 			height,
 			type,
 			format,
-			internalFormat ? internalFormat : format,
 			minFilter,
 			magFilter,
-			data
+			data,
+			layout
 		);
 	else if (image && !image->exists())
 		Image2D::newImage(
@@ -223,10 +219,10 @@ Texture2D& Texture2D::create(
 			height,
 			type,
 			format,
-			internalFormat ? internalFormat : format,
 			minFilter,
 			magFilter,
-			data
+			data,
+			layout
 		);
 	setWrapMode();
 	return *this;
@@ -234,13 +230,13 @@ Texture2D& Texture2D::create(
 
 Texture2D& Texture2D::create(
 	String const& path,
-	FilterMode magFilter = FilterMode::FM_SMOOTH,
-	FilterMode minFilter = FilterMode::FM_SMS
+	FilterMode const& magFilter,
+	FilterMode const& minFilter
 ) {
 	if (exists()) return *this;
 	int imgWidth, imgHeight;
 	int nrChannels;
-	FileLoader::BinaryData imgdat = FileLoader::getBinaryFile(path);
+	List<ubyte> imgdat = File::getBinaryFile(path);
 	unsigned char* data = stbi_load_from_memory(imgdat.data(), imgdat.size(), &imgWidth, &imgHeight, &nrChannels, 4);
 	imgdat.clear();
 	if (data) {
@@ -275,7 +271,7 @@ Texture2D& Texture2D::create(
 		image.minFilter,
 		image.magFilter,
 		(unsigned char*)image.data.data(),
-		image.internalFormat
+		image.layout
 	);
 	return *this;
 }
@@ -290,14 +286,14 @@ Texture2D& Texture2D::create(
 
 Texture2D& Texture2D::create(
 	Texture2D const& other,
-	unsigned int startX,
-	unsigned int startY,
-	unsigned int endX,
-	unsigned int endY,
-	bool filter = false
+	uint const& startX,
+	uint const& startY,
+	uint const& endX,
+	uint const& endY,
+	bool const& filter
 ) {
 	if (exists()) return *this;
-	unsigned int w, h;
+	uint w, h;
 	w = Math::max(startX, endX) - Math::min(startX, endX);
 	h = Math::max(startY, endY) - Math::min(startY, endY);
 	create(
@@ -307,7 +303,7 @@ Texture2D& Texture2D::create(
 		other.image->attributes.minFilter,
 		other.image->attributes.magFilter,
 		NULL,
-		other.image->attributes.internalFormat
+		other.image->attributes.layout
 	);
 	copyFrom(other, startX, startY, endX, endY, filter);
 	return *this;
@@ -326,24 +322,24 @@ Texture2D& Texture2D::clear() {
 }
 
 Texture2D& Texture2D::make(
-	uint			width,
-	uint			height,
-	ComponentType	type			= ComponentType::CT_UBYTE,
-	ImageFormat		format			= ImageFormat::IF_RGBA,
-	FilterMode		magFilter		= FilterMode::FM_SMOOTH,
-	FilterMode		minFilter		= FilterMode::FM_SMS,
-	uchar*			data			= NULL,
-	uint			internalFormat	= 0,
+	uint const&				width,
+	uint const&				height,
+	ComponentType const&	type,
+	ImageFormat const&		format,
+	FilterMode const&		magFilter,
+	FilterMode const&		minFilter,
+	uchar* const&			data,
+	ComponentLayout const&	layout
 ) {
 	destroy();
-	create(width, height, type, format, magFilter, minFilter, data, internalFormat);
+	create(width, height, type, format, magFilter, minFilter, data, layout);
 	return *this;
 }
 
 Texture2D& Texture2D::make(
 	String const& path,
-	FilterMode magFilter = FilterMode::FM_SMOOTH,
-	FilterMode minFilter = FilterMode::FM_SMS
+	FilterMode const& magFilter,
+	FilterMode const& minFilter
 ) {
 	destroy();
 	create(path, minFilter, magFilter);
@@ -368,33 +364,33 @@ Texture2D& Texture2D::make(
 
 Texture2D& Texture2D::make(
 	Texture2D const& other,
-	unsigned int startX,
-	unsigned int startY,
-	unsigned int endX,
-	unsigned int endY,
-	bool filter = false
+	uint const& startX,
+	uint const& startY,
+	uint const& endX,
+	uint const& endY,
+	bool const& filter
 ) {
 	destroy();
 	create(other, startX, startY, endX, endY, filter);
 	return *this;
 }
 
-Texture2D& Texture2D::makeUnique(bool filter = false) {
+Texture2D& Texture2D::makeUnique(bool const& filter) {
 	if (!exists()) return *this;
 	Image2D* newImg = Image2D::newImage(
 		image->attributes.width,
 		image->attributes.height,
 		image->attributes.type,
 		image->attributes.format,
-		image->attributes.internalFormat,
 		image->attributes.minFilter,
-		image->attributes.magFilter
+		image->attributes.magFilter,
+		image->attributes.format
 	);
 	copyTexture(
 		(Image2D*)image, (Image2D*)newImg,
 		0, 0, image->attributes.width, image->attributes.height,
 		0, 0, image->attributes.width, image->attributes.height,
-		filter ? GL_LINEAR : GL_NEAREST
+		filter ? FilterMode::FM_SMOOTH : FilterMode::FM_NEAREST
 	);
 	image = newImg;
 	return *this;
@@ -402,18 +398,17 @@ Texture2D& Texture2D::makeUnique(bool filter = false) {
 
 Texture2D& Texture2D::operator=(Texture2D const& other)	{make(other); return *this;								}
 Texture2D& Texture2D::operator=(Texture2D&& other)		{make(other); return *this;								}
-Texture2D& Texture2D::operator=(Texture2D* other)		{if (other) make(*other); else destroy(); return *this;	}
 
-inline bool Texture2D::operator==(Texture2D const& other) const						{return *image == *other.image;		}
-inline Helper::PartialOrder Texture2D::operator<=>(Texture2D const& other) const	{return *image <=> *other.image;	}
+bool Texture2D::operator==(Texture2D const& other) const					{return *image == *other.image;		}
+Helper::PartialOrder Texture2D::operator<=>(Texture2D const& other) const	{return *image <=> *other.image;	}
 
 Texture2D& Texture2D::copyFrom(
 	Texture2D const& other,
-	unsigned int startX,
-	unsigned int startY,
-	unsigned int endX,
-	unsigned int endY,
-	bool filter = false
+	uint const& startX,
+	uint const& startY,
+	uint const& endX,
+	uint const& endY,
+	bool const& filter
 ) {
 	if (!exists()) return *this;
 	// Copy data
@@ -421,7 +416,7 @@ Texture2D& Texture2D::copyFrom(
 		(Image2D*)other.image, (Image2D*)image,
 		startX, startY, endX, endY,
 		0, 0, image->attributes.width, image->attributes.height,
-		filter ? GL_LINEAR : GL_NEAREST
+		filter ? FilterMode::FM_SMOOTH : FilterMode::FM_NEAREST
 	);
 	// Regenerate mipmaps
 	glBindTexture(GL_TEXTURE_2D, image->getID());
@@ -432,7 +427,7 @@ Texture2D& Texture2D::copyFrom(
 
 Texture2D& Texture2D::copyFrom(
 	Texture2D const& other,
-	bool filter = false
+	bool const& filter
 ) {
 	if (!exists()) return *this;
 	// Copy data
@@ -440,7 +435,7 @@ Texture2D& Texture2D::copyFrom(
 		(Image2D*)other.image, (Image2D*)image,
 		0, 0, other.image->attributes.width, other.image->attributes.height,
 		0, 0, image->attributes.width, image->attributes.height,
-		filter ? GL_LINEAR : GL_NEAREST
+		filter ? FilterMode::FM_SMOOTH : FilterMode::FM_NEAREST
 	);
 	// Regenerate mipmaps
 	glBindTexture(GL_TEXTURE_2D, image->getID());
@@ -461,14 +456,14 @@ Texture2D& Texture2D::setWrapMode(
 	return *this;
 }
 
-Texture2D& Texture2D::setWrapMode(Texture2D::WrapMode const& mode = Texture2D::WrapMode::WM_REPEAT) {
+Texture2D& Texture2D::setWrapMode(Texture2D::WrapMode const& mode) {
 	setWrapMode(mode, mode);
 	return *this;
 }
 
 Texture2D& Texture2D::setFilterMode(
-	FilterMode magFilter = FilterMode::FM_SMOOTH,
-	FilterMode minFilter = FilterMode::FM_SMS
+	FilterMode const& magFilter,
+	FilterMode const& minFilter
 ) {
 	if (!exists()) return *this;
 	glBindTexture(GL_TEXTURE_2D, image->getID());
@@ -480,37 +475,37 @@ Texture2D& Texture2D::setFilterMode(
 	return *this;
 }
 
-inline unsigned int Texture2D::minFilter() const {
+FilterMode Texture2D::minFilter() const {
 	return image->attributes.minFilter;
 }
 
-inline unsigned int Texture2D::magFilter() const {
+FilterMode Texture2D::magFilter() const {
 	return image->attributes.magFilter;
 }
 
-inline Image2D::Attributes Texture2D::attributes() const {
+Image2D::Attributes Texture2D::attributes() const {
 	return image->attributes;
 }
 
-Texture2D& Texture2D::enable(uchar const& texture = 0) {
-	image->use(texture);
+Texture2D& Texture2D::enable(uchar const& slot) {
+	image->use(slot);
 	return *this;
 }
 
-Texture2D const& Texture2D::enable(uchar const& texture = 0) const {
-	image->use(texture);
+Texture2D const& Texture2D::enable(uchar const& slot) const {
+	image->use(slot);
 	return *this;
 }
 
-Texture2D& Texture2D::operator()(uchar const& texture = 0) {
-	return enable(texture);
+Texture2D& Texture2D::operator()(uchar const& slot) {
+	return enable(slot);
 }
 
-Texture2D const& Texture2D::operator()(uchar const& texture = 0) const {
-	return enable(texture);
+Texture2D const& Texture2D::operator()(uchar const& slot) const {
+	return enable(slot);
 }
 
-inline unsigned int Texture2D::getID() const {
+uint Texture2D::getID() const {
 	if (!exists()) return 0;
 	return image->getID();
 }
@@ -522,7 +517,7 @@ Image2D::ImageData Texture2D::getData() const {
 Texture2D const& Texture2D::saveToFile(
 	String const& path,
 	uint8 const& quality,
-	ImageFileType const& type = ImageFileType::IFT_AUTO_DETECT
+	ImageFileType const& type
 ) const {
 	if (!exists()) return *this;
 	image->saveToFile(path, quality, type);
@@ -532,7 +527,7 @@ Texture2D const& Texture2D::saveToFile(
 Texture2D& Texture2D::saveToFile(
 	String const& path,
 	uint8 const& quality,
-	ImageFileType const& type = ImageFileType::IFT_AUTO_DETECT
+	ImageFileType const& type
 ) {
 	if (!exists()) return *this;
 	image->saveToFile(path, quality, type);
@@ -541,14 +536,14 @@ Texture2D& Texture2D::saveToFile(
 
 Texture2D const& Texture2D::saveToFile(
 	String const& path,
-	ImageFileType const& type = ImageFileType::IFT_AUTO_DETECT
+	ImageFileType const& type
 ) const {
 	return saveToFile(path, 50, type);
 }
 
 Texture2D& Texture2D::saveToFile(
 	String const& path,
-	ImageFileType const& type = ImageFileType::IFT_AUTO_DETECT
+	ImageFileType const& type
 ) {
 	return saveToFile(path, 50, type);
 }
@@ -557,6 +552,6 @@ bool Texture2D::exists() const {
 	return image.exists() && image->exists();
 }
 
-inline Texture2D::operator bool() const {
+Texture2D::operator bool() const {
 	return exists();
 }

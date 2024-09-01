@@ -15,7 +15,8 @@ namespace Makai::Graph {
 
 		~Image() {destroy();}
 
-		Image const& bind(ImageTarget const& target = ImageTarget::IT_TEXTURE_2D) const;
+		Image&			bind(ImageTarget const& target = ImageTarget::IT_TEXTURE_2D);
+		Image const&	bind(ImageTarget const& target = ImageTarget::IT_TEXTURE_2D) const;
 
 		Image& destroy();
 
@@ -25,24 +26,29 @@ namespace Makai::Graph {
 
 		static void unbind(ImageTarget const& target = ImageTarget::IT_TEXTURE_2D);
 
-		Image& use(uchar const& texture = 0);
+		Image&			use(uchar const& slot = 0);
+		Image const&	use(uchar const& slot = 0) const;
 
-		Image const& use(uchar const& texture = 0) const;
+		Image&			operator()(uchar const& slot = 0);
+		Image const&	operator()(uchar const& slot = 0) const;
 
-		Image&			operator()(uchar const& texture = 0);
-		Image const&	operator()(uchar const& texture = 0) const;
+		static void set(
+			uint const&			image,
+			uchar const&		slot,
+			ImageTarget const&	target = ImageTarget::IT_TEXTURE_2D
+		);
 
 		bool operator==(Image const& other) const;
 		Helper::PartialOrder operator<=>(Image const& other) const;
 
-		operator unsigned int() const;
-		unsigned int getID() const;
+		operator uint() const;
+		uint getID() const;
 
 		bool exists() const;
 		operator bool() const;
 
 	private:
-		unsigned int id = 0;
+		uint id = 0;
 	};
 
 	struct Image2D: public Image {
@@ -79,6 +85,16 @@ namespace Makai::Graph {
 			IF_RGBA,
 		};
 
+		enum class ComponentLayout {
+			CL_AUTO = -1,
+			CL_D,
+			CL_R,
+			CL_DS,
+			CL_RG,
+			CL_RGB,
+			CL_RGBA
+		};
+
 		enum class FilterMode {
 			FM_NEAREST,
 			FM_SMOOTH,
@@ -96,7 +112,7 @@ namespace Makai::Graph {
 			uint width, height;
 			ComponentType	type;
 			ImageFormat		format;
-			uint			internalFormat;
+			ComponentLayout	layout;
 			FilterMode		minFilter, magFilter;
 		};
 
@@ -107,23 +123,23 @@ namespace Makai::Graph {
 		Image2D& create(
 			uint const&				width,
 			uint const&				height,
-			ComponentType const&	type			= ComponentType::CT_UBYTE,
-			ImageFormat const&		format			= ImageFormat::IF_RGBA,
-			FilterMode const&		magFilter		= FilterMode::FM_SMOOTH,
-			FilterMode const&		minFilter		= FilterMode::FM_SMS,
-			uchar* const&			data			= NULL,
-			uint const&				internalFormat	= 0
+			ComponentType const&	type		= ComponentType::CT_UBYTE,
+			ImageFormat const&		format		= ImageFormat::IF_RGBA,
+			FilterMode const&		magFilter	= FilterMode::FM_SMOOTH,
+			FilterMode const&		minFilter	= FilterMode::FM_SMS,
+			uchar* const&			data		= NULL,
+			ComponentLayout const&	layout		= ComponentLayout::CL_AUTO
 		);
 
 		Image2D& make(
 			uint const&				width,
 			uint const&				height,
-			ComponentType const&	type			= ComponentType::CT_UBYTE,
-			ImageFormat const&		format			= ImageFormat::IF_RGBA,
-			FilterMode const&		magFilter		= FilterMode::FM_SMOOTH,
-			FilterMode const&		minFilter		= FilterMode::FM_SMS,
-			uchar* const&			data			= NULL,
-			uint const&				internalFormat	= 0
+			ComponentType const&	type		= ComponentType::CT_UBYTE,
+			ImageFormat const&		format		= ImageFormat::IF_RGBA,
+			FilterMode const&		magFilter	= FilterMode::FM_SMOOTH,
+			FilterMode const&		minFilter	= FilterMode::FM_SMS,
+			uchar* const&			data		= NULL,
+			ComponentLayout const&	layout		= ComponentLayout::CL_AUTO
 		);
 
 		Attributes getAttributes();
@@ -156,33 +172,33 @@ namespace Makai::Graph {
 		static Image2D* newImage(
 			uint const&				width,
 			uint const&				height,
-			ComponentType const&	type			= ComponentType::CT_UBYTE,
-			ImageFormat const&		format			= ImageFormat::IF_RGBA,
-			FilterMode const&		magFilter		= FilterMode::FM_SMOOTH,
-			FilterMode const&		minFilter		= FilterMode::FM_SMS,
-			uchar* const&			data			= NULL,
-			uint const&				internalFormat	= 0,
-			ImageTarget const&		target			= ImageTarget::IT_TEXTURE_2D
+			ComponentType const&	type		= ComponentType::CT_UBYTE,
+			ImageFormat const&		format		= ImageFormat::IF_RGBA,
+			FilterMode const&		magFilter	= FilterMode::FM_SMOOTH,
+			FilterMode const&		minFilter	= FilterMode::FM_SMS,
+			uchar* const&			data		= NULL,
+			ComponentLayout const&	layout		= ComponentLayout::CL_AUTO,
+			ImageTarget const&		target		= ImageTarget::IT_TEXTURE_2D
 		);
 
 		static Image2D* newImage(
 			Image2D* const&			image,
 			uint const&				width,
 			uint const&				height,
-			ComponentType const&	type			= ComponentType::CT_UBYTE,
-			ImageFormat const&		format			= ImageFormat::IF_RGBA,
-			FilterMode const&		magFilter		= FilterMode::FM_SMOOTH,
-			FilterMode const&		minFilter		= FilterMode::FM_SMS,
-			uchar* const&			data			= NULL,
-			uint const&				internalFormat	= 0,
-			ImageTarget const&		target			= ImageTarget::IT_TEXTURE_2D
+			ComponentType const&	type		= ComponentType::CT_UBYTE,
+			ImageFormat const&		format		= ImageFormat::IF_RGBA,
+			FilterMode const&		magFilter	= FilterMode::FM_SMOOTH,
+			FilterMode const&		minFilter	= FilterMode::FM_SMS,
+			uchar* const&			data		= NULL,
+			ComponentLayout const&	layout		= ComponentLayout::CL_AUTO,
+			ImageTarget const&		target		= ImageTarget::IT_TEXTURE_2D
 		);
 
 	private:
 		void saveImageToFile(
-			String const&			path,
-			uint8 const&			quality,
-			ImageFileType const&	type
+			String const&	path,
+			uint8 const&	quality,
+			ImageFileType	type
 		) const;
 
 		friend class Texture2D;

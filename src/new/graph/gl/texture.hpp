@@ -17,25 +17,25 @@ namespace Makai::Graph {
 			WM_MIRROR_CLAMP
 		};
 
-		static Texture2D fromJSON(JSON::JSONData const& img, String const& sourcepath = "");
+		static Texture2D fromJSON(JSON::JSONData img, String const& sourcepath = "");
 
 		Texture2D(): image(new Image2D()) {}
 
 		Texture2D(
-			uint			width,
-			uint			height,
-			Image2D::ComponentType	type		= Image2D::ComponentType::CT_UBYTE,
-			Image2D::ImageFormat	format		= Image2D::ImageFormat::IF_RGBA,
-			Image2D::FilterMode		magFilter	= Image2D::FilterMode::FM_SMOOTH,
-			Image2D::FilterMode		minFilter	= Image2D::FilterMode::FM_SMS,
-			uchar*			data				= NULL,
-			uint			internalFormat		= 0
+			uint const&						width,
+			uint const&						height,
+			Image2D::ComponentType const&	type		= Image2D::ComponentType::CT_UBYTE,
+			Image2D::ImageFormat const&		format		= Image2D::ImageFormat::IF_RGBA,
+			Image2D::FilterMode const&		magFilter	= Image2D::FilterMode::FM_SMOOTH,
+			Image2D::FilterMode const&		minFilter	= Image2D::FilterMode::FM_SMS,
+			uchar* const&					data		= NULL,
+			Image2D::ComponentLayout const&	layout		= Image2D::ComponentLayout::CL_AUTO
 		);
 
 		Texture2D(
 			String const& path,
-			Image2D::FilterMode magFilter = Image2D::FilterMode::FM_SMOOTH,
-			Image2D::FilterMode minFilter = Image2D::FilterMode::FM_SMS
+			Image2D::FilterMode const& magFilter = Image2D::FilterMode::FM_SMOOTH,
+			Image2D::FilterMode const& minFilter = Image2D::FilterMode::FM_SMS
 		);
 
 		Texture2D(
@@ -47,33 +47,29 @@ namespace Makai::Graph {
 		);
 
 		Texture2D(
-			Texture2D* const& other
-		);
-
-		Texture2D(
 			Texture2D const& other,
-			uint startX,
-			uint startY,
-			uint endX,
-			uint endY,
-			bool filter = false
+			uint const& startX,
+			uint const& startY,
+			uint const& endX,
+			uint const& endY,
+			bool const& filter = false
 		);
 
 		Texture2D& create(
-			uint			width,
-			uint			height,
-			Image2D::ComponentType	type		= Image2D::ComponentType::CT_UBYTE,
-			Image2D::ImageFormat	format		= Image2D::ImageFormat::IF_RGBA,
-			Image2D::FilterMode		magFilter	= Image2D::FilterMode::FM_SMOOTH,
-			Image2D::FilterMode		minFilter	= Image2D::FilterMode::FM_SMS,
-			uchar*			data				= NULL,
-			uint			internalFormat		= 0
+			uint const&						width,
+			uint const&						height,
+			Image2D::ComponentType const&	type		= Image2D::ComponentType::CT_UBYTE,
+			Image2D::ImageFormat const&		format		= Image2D::ImageFormat::IF_RGBA,
+			Image2D::FilterMode const&		magFilter	= Image2D::FilterMode::FM_SMOOTH,
+			Image2D::FilterMode const&		minFilter	= Image2D::FilterMode::FM_SMS,
+			uchar* const&					data		= NULL,
+			Image2D::ComponentLayout const&	layout		= Image2D::ComponentLayout::CL_AUTO
 		);
 
 		Texture2D& create(
-			String path,
-			Image2D::FilterMode magFilter = Image2D::FilterMode::FM_SMOOTH,
-			Image2D::FilterMode minFilter = Image2D::FilterMode::FM_SMS
+			String const& path,
+			Image2D::FilterMode const& magFilter = Image2D::FilterMode::FM_SMOOTH,
+			Image2D::FilterMode const& minFilter = Image2D::FilterMode::FM_SMS
 		);
 
 		Texture2D& create(
@@ -86,11 +82,11 @@ namespace Makai::Graph {
 
 		Texture2D& create(
 			Texture2D const& other,
-			uint startX,
-			uint startY,
-			uint endX,
-			uint endY,
-			bool filter = false
+			uint const& startX,
+			uint const& startY,
+			uint const& endX,
+			uint const& endY,
+			bool const& filter = false
 		);
 
 		Texture2D& destroy();
@@ -98,20 +94,20 @@ namespace Makai::Graph {
 		Texture2D& clear();
 
 		Texture2D& make(
-			uint			width,
-			uint			height,
-			Image2D::ComponentType	type		= Image2D::ComponentType::CT_UBYTE,
-			Image2D::ImageFormat	format		= Image2D::ImageFormat::IF_RGBA,
-			Image2D::FilterMode		magFilter	= Image2D::FilterMode::FM_SMOOTH,
-			Image2D::FilterMode		minFilter	= Image2D::FilterMode::FM_SMS,
-			uchar*			data				= NULL,
-			uint			internalFormat		= 0
+			uint const&						width,
+			uint const&						height,
+			Image2D::ComponentType const&	type		= Image2D::ComponentType::CT_UBYTE,
+			Image2D::ImageFormat const&		format		= Image2D::ImageFormat::IF_RGBA,
+			Image2D::FilterMode const&		magFilter	= Image2D::FilterMode::FM_SMOOTH,
+			Image2D::FilterMode const&		minFilter	= Image2D::FilterMode::FM_SMS,
+			uchar* const&					data		= NULL,
+			Image2D::ComponentLayout const&	layout		= Image2D::ComponentLayout::CL_AUTO
 		);
 
 		Texture2D& make(
-			String path,
-			Image2D::FilterMode magFilter = Image2D::FilterMode::FM_SMOOTH,
-			Image2D::FilterMode minFilter = Image2D::FilterMode::FM_SMS
+			String const& path,
+			Image2D::FilterMode const& magFilter = Image2D::FilterMode::FM_SMOOTH,
+			Image2D::FilterMode const& minFilter = Image2D::FilterMode::FM_SMS
 		);
 
 		Texture2D& make(
@@ -124,14 +120,14 @@ namespace Makai::Graph {
 
 		Texture2D& make(
 			Texture2D const& other,
-			uint startX,
-			uint startY,
-			uint endX,
-			uint endY,
-			bool filter = false
+			uint const& startX,
+			uint const& startY,
+			uint const& endX,
+			uint const& endY,
+			bool const& filter = false
 		);
 
-		Texture2D& makeUnique(bool filter = false);
+		Texture2D& makeUnique(bool const& filter = false);
 
 		Texture2D& operator=(Texture2D const& other);
 		Texture2D& operator=(Texture2D&& other);
@@ -141,16 +137,16 @@ namespace Makai::Graph {
 
 		Texture2D& copyFrom(
 			Texture2D const& other,
-			uint startX,
-			uint startY,
-			uint endX,
-			uint endY,
-			bool filter = false
+			uint const& startX,
+			uint const& startY,
+			uint const& endX,
+			uint const& endY,
+			bool const& filter = false
 		);
 
 		Texture2D& copyFrom(
 			Texture2D const& other,
-			bool filter = false
+			bool const& filter = false
 		);
 
 		Texture2D& setWrapMode(
@@ -161,8 +157,8 @@ namespace Makai::Graph {
 		Texture2D& setWrapMode(WrapMode const& mode = WrapMode::WM_REPEAT);
 
 		Texture2D& setFilterMode(
-			Image2D::FilterMode magFilter = Image2D::FilterMode::FM_SMOOTH,
-			Image2D::FilterMode minFilter = Image2D::FilterMode::FM_SMS
+			Image2D::FilterMode const& magFilter = Image2D::FilterMode::FM_SMOOTH,
+			Image2D::FilterMode const& minFilter = Image2D::FilterMode::FM_SMS
 		);
 
 		Image2D::FilterMode minFilter() const;
@@ -171,12 +167,12 @@ namespace Makai::Graph {
 
 		Image2D::Attributes attributes() const;
 
-		Texture2D& enable(uchar const& texture = 0);
+		Texture2D& enable(uchar const& slot = 0);
 
-		Texture2D const& enable(uchar const& texture = 0) const;
+		Texture2D const& enable(uchar const& slot = 0) const;
 
-		Texture2D&			operator()(uchar const& texture = 0);
-		Texture2D const&	operator()(uchar const& texture = 0) const;
+		Texture2D&			operator()(uchar const& slot = 0);
+		Texture2D const&	operator()(uchar const& slot = 0) const;
 
 		uint getID() const;
 

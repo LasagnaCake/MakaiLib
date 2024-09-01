@@ -59,7 +59,6 @@ Vector4 Color::fromJSON(JSON::JSONData const& v) {
 			return Color::fromHexCodeString(v.get<String>());
 		else if (v.isNumber())
 			return Vector4(v.get<float>(1));
-	} catch (...) {
-		return Vector4(1);
-	}
+	} catch (...) {}
+	return Vector4(1);
 }

@@ -3,8 +3,6 @@
 #include <GLEW/include/GL/wglew.h>
 #include <GL/gl.h>
 
-#define STB_IMAGE_WRITE_IMPLEMENTATION
-#define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 #include <stb_image_write.h>
 
@@ -12,16 +10,20 @@
 
 using namespace Makai::Graph;
 
-using ImageFileType = Image2D::ImageFileType;
-using ComponentType = Image2D::ComponentType;
-using ImageFormat = Image2D::ImageFormat;
-using FilterMode = Image2D::FilterMode;
-using ImageTarget = Image::ImageTarget;
+using ImageTarget		= Image::ImageTarget;
+using ImageFileType		= Image2D::ImageFileType;
+using ComponentType		= Image2D::ComponentType;
+using ComponentLayout	= Image2D::ComponentLayout;
+using ImageFormat		= Image2D::ImageFormat;
+using FilterMode		= Image2D::FilterMode;
+
+using ImageData			= Image2D::ImageData;
 
 constexpr uint convert(Image::ImageTarget const& target) {
 	switch (target) {
 		case Image::ImageTarget::IT_TEXTURE_2D: return GL_TEXTURE_2D;
 	}
+	return GL_FALSE;
 }
 
 constexpr ImageFileType fromFileExtension(String const& path) {
@@ -35,6 +37,7 @@ constexpr ImageFileType fromFileExtension(String const& path) {
 
 constexpr uint convert(ComponentType const& type) {
 	switch (type) {
+		default:
 		case ComponentType::CT_UBYTE:		return GL_UNSIGNED_BYTE;
 		case ComponentType::CT_BYTE:		return GL_BYTE;
 		case ComponentType::CT_USHORT:		return GL_UNSIGNED_SHORT;
@@ -54,12 +57,27 @@ constexpr uint convert(ImageFormat const& type) {
 		case ImageFormat::IF_DS:	return GL_DEPTH_STENCIL;
 		case ImageFormat::IF_RG:	return GL_RG;
 		case ImageFormat::IF_RGB:	return GL_RGB;
+		default:
 		case ImageFormat::IF_RGBA:	return GL_RGBA;
+	}
+}
+
+constexpr uint convert(ComponentLayout const& type) {
+	switch (type) {
+		default:
+		case ComponentLayout::CL_AUTO:	return 0;
+		case ComponentLayout::CL_D:		return GL_DEPTH_COMPONENT;
+		case ComponentLayout::CL_R:		return GL_RED;
+		case ComponentLayout::CL_DS:	return GL_DEPTH_STENCIL;
+		case ComponentLayout::CL_RG:	return GL_RG;
+		case ComponentLayout::CL_RGB:	return GL_RGB;
+		case ComponentLayout::CL_RGBA:	return GL_RGBA;
 	}
 }
 
 constexpr uint convert(FilterMode const& type) {
 	switch (type) {
+		default:
 		case FilterMode::FM_NEAREST:	return GL_NEAREST;
 		case FilterMode::FM_SMOOTH:		return GL_LINEAR;
 		case FilterMode::FM_NMN:		return GL_NEAREST_MIPMAP_NEAREST;
@@ -67,6 +85,11 @@ constexpr uint convert(FilterMode const& type) {
 		case FilterMode::FM_SMN:		return GL_LINEAR_MIPMAP_NEAREST;
 		case FilterMode::FM_SMS:		return GL_LINEAR_MIPMAP_LINEAR;
 	}
+}
+
+Image& Image::bind(ImageTarget const& target) {
+	glBindTexture(convert(target), id);
+	return *this;
 }
 
 Image const& Image::bind(ImageTarget const& target) const {
@@ -91,26 +114,31 @@ Image& Image::make() {
 	return destroy().create();
 }
 
-static void Image::bind(ImageTarget const& target) {
+void Image::unbind(ImageTarget const& target) {
 	glBindTexture(convert(target), 0);
 }
 
-Image& Image::use(uchar const& texture = 0) {
-	setTexture2D(texture, id);
+Image& Image::use(uchar const& slot) {
+	set(id, slot, ImageTarget::IT_TEXTURE_2D);
 	return *this;
 }
 
-Image const& Image::use(uchar const& texture) const {
-	setTexture2D(texture, id);
+Image const& Image::use(uchar const& slot) const {
+	set(id, slot, ImageTarget::IT_TEXTURE_2D);
 	return *this;
 }
 
-Image& Image::operator()(uchar const& texture) {
-	return use(texture);
+void Image::set(uint const& image, uchar const& slot, ImageTarget const& target) {
+	glActiveTexture(GL_TEXTURE0 + slot);
+	glBindTexture(convert(target), image);
 }
 
-Image const& Image::operator()(uchar const& texture) const {
-	return use(texture);
+Image& Image::operator()(uchar const& slot) {
+	return use(slot);
+}
+
+Image const& Image::operator()(uchar const& slot) const {
+	return use(slot);
 }
 
 bool Image::operator==(Image const& other) const {
@@ -121,11 +149,11 @@ Helper::PartialOrder Image::operator<=>(Image const& other) const {
 	return id <=> other.id;
 }
 
-Image::operator unsigned int() const	{
+Image::operator uint() const	{
 	return id;
 }
 
-unsigned int Image::getID() const {
+uint Image::getID() const {
 	return id;
 }
 
@@ -145,12 +173,10 @@ Image2D& Image2D::create(
 	FilterMode const&		magFilter,
 	FilterMode const&		minFilter,
 	uchar* const&			data,
-	uint const&				internalFormat
+	ComponentLayout const&	layout
 ) {
 	if (exists()) return *this;
-	if (!internalFormat)
-		internalFormat = (uint)format;
-	newImage(this, width, height, type, format, internalFormat, minFilter, magFilter, data);
+	newImage(this, width, height, type, format, minFilter, magFilter, data, layout);
 	return *this;
 }
 
@@ -162,26 +188,33 @@ Image2D& Image2D::make(
 	FilterMode const&		magFilter,
 	FilterMode const&		minFilter,
 	uchar* const&			data,
-	uint const&				internalFormat
+	ComponentLayout const&	layout
 ) {
 	destroy();
-	return create(width, height, type, format, magFilter, minFilter, data, internalFormat);
+	return create(width, height, type, format, magFilter, minFilter, data, layout);
 }
 
 ImageData Image2D::getData() const {
 	DEBUGLN("Getting image data...");
-	if (!exists()) return ImageData{0,0,0,0,0,0};
+	if (!exists()) return ImageData{
+		0, 0,
+		ComponentType::CT_BYTE,
+		ImageFormat::IF_RGBA,
+		ComponentLayout::CL_AUTO,
+		FilterMode::FM_NEAREST,
+		FilterMode::FM_NEAREST
+	};
 	size_t size = 0;
 	switch (attributes.type) {
 		default:
-		case ComponentFormat::CT_UBYTE:
-		case ComponentFormat::CT_BYTE:			size = 1;	break;
-		case ComponentFormat::CT_USHORT:
-		case ComponentFormat::CT_SHORT:
-		case ComponentFormat::CT_HALF_FLOAT:	size = 2;	break;
-		case ComponentFormat::CT_UINT:
-		case ComponentFormat::CT_INT:
-		case ComponentFormat::CT_FLOAT:			size = 4;	break;
+		case ComponentType::CT_UBYTE:
+		case ComponentType::CT_BYTE:		size = 1;	break;
+		case ComponentType::CT_USHORT:
+		case ComponentType::CT_SHORT:
+		case ComponentType::CT_HALF_FLOAT:	size = 2;	break;
+		case ComponentType::CT_UINT:
+		case ComponentType::CT_INT:
+		case ComponentType::CT_FLOAT:		size = 4;	break;
 	}
 	DEBUG("Image Size: ", size);
 	switch (attributes.format) {
@@ -204,7 +237,7 @@ ImageData Image2D::getData() const {
 	if (imgdat.data.empty()) throw Error::FailedAction("Somehow, the image data is empty.");
 	DEBUGLN("Extracting pixels...");
 	glBindTexture(GL_TEXTURE_2D, getID());
-	glGetTexImage(GL_TEXTURE_2D, 0, attributes.format, attributes.type, imgdat.data.data());
+	glGetTexImage(GL_TEXTURE_2D, 0, convert(attributes.format), convert(attributes.type), imgdat.data.data());
 	glBindTexture(GL_TEXTURE_2D, 0);
 	DEBUGLN("Done!");
 	DEBUGLN("Reserved: ", imgdat.data.size());
@@ -229,7 +262,7 @@ Image2D const& Image2D::saveToFile(String const& path, ImageFileType const& type
 	return saveToFile(path, 50, type);
 }
 
-static Image2D* Image2D::newImage(
+Image2D* Image2D::newImage(
 	uint const&				width,
 	uint const&				height,
 	ComponentType const&	type,
@@ -237,14 +270,14 @@ static Image2D* Image2D::newImage(
 	FilterMode const&		magFilter,
 	FilterMode const&		minFilter,
 	uchar* const&			data,
-	uint const&				internalFormat,
-	ImageTargett const&		target
+	ComponentLayout const&	layout,
+	ImageTarget const&		target
 ) {
 	Image2D* image = new Image2D();
-	return Image2D::newImage(image, width, height, type, format, format, minFilter, magFilter, data);
+	return Image2D::newImage(image, width, height, type, format, minFilter, magFilter, data, layout, target);
 }
 
-static Image2D* Image2D::newImage(
+Image2D* Image2D::newImage(
 	Image2D* const&			image,
 	uint const&				width,
 	uint const&				height,
@@ -253,9 +286,10 @@ static Image2D* Image2D::newImage(
 	FilterMode const&		magFilter,
 	FilterMode const&		minFilter,
 	uchar* const&			data,
-	uint const&				internalFormat,
-	ImageTargett const&		target
+	ComponentLayout const&	layout,
+	ImageTarget const&		target
 ) {
+	const auto tg = convert(target);
 	image->create();
 	image->bind(target);
 	image->attributes = {
@@ -263,29 +297,31 @@ static Image2D* Image2D::newImage(
 		height,
 		type,
 		format,
-		internalFormat,
+		layout,
 		minFilter,
 		magFilter
 	};
+	uint cl = convert(layout);
+	if (!cl) cl = convert(format);
 	// Bind image data
 	glTexImage2D(
-		target,
+		tg,
 		0,
-		internalFormat,
+		cl,
 		width,
 		height,
 		0,
-		format,
-		type,
+		convert(format),
+		convert(type),
 		data
 	);
 	// Set image wrapping & mipmaps
-	glTexParameteri(target, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(target, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glGenerateMipmap(target);
+	glTexParameteri(tg, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(tg, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glGenerateMipmap(tg);
 	// Set filtering
-	glTexParameteri(target, GL_TEXTURE_MIN_FILTER, minFilter);
-	glTexParameteri(target, GL_TEXTURE_MAG_FILTER, magFilter);
+	glTexParameteri(tg, GL_TEXTURE_MIN_FILTER, convert(minFilter));
+	glTexParameteri(tg, GL_TEXTURE_MAG_FILTER, convert(magFilter));
 	// Unbind image
 	Image::unbind(target);
 	// Return image
@@ -306,8 +342,8 @@ void Image2D::saveImageToFile(String const& path, uint8 const& quality, ImageFil
 		case ImageFormat::IF_RGBA:	channels = 4;	break;
 	}
 	int result;
-	if (type == FileType::IFT_AUTO_DETECT) type = fromFileExtension(path);
-	if (type == FileType::IFT_INVALID)
+	if (type == ImageFileType::IFT_AUTO_DETECT) type = fromFileExtension(path);
+	if (type == ImageFileType::IFT_INVALID)
 		throw Error::InvalidValue(
 			"Invalid file type of '." + Helper::splitStringAtLast(path, '.').second + "'!"
 			__FILE__,
@@ -317,10 +353,10 @@ void Image2D::saveImageToFile(String const& path, uint8 const& quality, ImageFil
 	#define IMAGE2D_STBIWRITE_PARAMS path.c_str(), imgdat.width, imgdat.height, channels, imgdat.data.data()
 	switch (type) {
 		default:
-		case FileType::IFT_TGA:	result = stbi_write_tga(IMAGE2D_STBIWRITE_PARAMS);			break;
-		case FileType::IFT_PNG:	result = stbi_write_png(IMAGE2D_STBIWRITE_PARAMS, 0);		break;
-		case FileType::IFT_JPG:	result = stbi_write_jpg(IMAGE2D_STBIWRITE_PARAMS, quality);	break;
-		case FileType::IFT_BMP:	result = stbi_write_bmp(IMAGE2D_STBIWRITE_PARAMS);			break;
+		case ImageFileType::IFT_TGA:	result = stbi_write_tga(IMAGE2D_STBIWRITE_PARAMS);			break;
+		case ImageFileType::IFT_PNG:	result = stbi_write_png(IMAGE2D_STBIWRITE_PARAMS, 0);		break;
+		case ImageFileType::IFT_JPG:	result = stbi_write_jpg(IMAGE2D_STBIWRITE_PARAMS, quality);	break;
+		case ImageFileType::IFT_BMP:	result = stbi_write_bmp(IMAGE2D_STBIWRITE_PARAMS);			break;
 	}
 	#undef IMAGE2D_STBIWRITE_PARAMS
 	if (!result) {

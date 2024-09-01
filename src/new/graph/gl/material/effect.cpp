@@ -11,8 +11,8 @@ JSON::JSONData Material::saveImageEffect(Material::Effect::Image& effect, String
 		effect.image.saveToFile(FileSystem::concatenatePath(folder, path));
 		def["image"] = JSON::Extern::JSONData{
 			{"path", path},
-			{"minFilter", effect.image.minFilter()},
-			{"magFilter", effect.image.magFilter()}
+			{"minFilter", (uint)effect.image.minFilter()},
+			{"magFilter", (uint)effect.image.magFilter()}
 		};
 	} else def["enabled"] = false;
 	return def;
