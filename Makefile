@@ -1,3 +1,6 @@
+CC	:= gcc
+CXX	:= g++
+
 define HELP_MESSAGE
 endef
 
@@ -16,11 +19,15 @@ LIBRARIES += lib/SDL2-2.0.10/lib/libSDL2main.a
 LIBRARIES += lib/SDL2-2.0.10/lib/libSDL2_mixer.dll.a
 LIBRARIES += lib/cryptopp/lib/libcryptopp.a
 LIBRARIES += lib/OpenGL/GLEW/lib/libglew32.dll.a
-LIBRARIES += $(WINGARBAGE) -lopengl32 -lgomp
+LIBRARIES += -lopengl32 -lgomp -lstdc++ -lgcc 
+LIBRARIES += $(WINGARBAGE)
 
 LINKER := @$(CXX)
+LINKER := @ld
 
-.PHONY: build-debug build-release link-debug link-release build-all link-all debug release all help
+CONFIG := -static #--static-libstdc++ --static-libgcc
+
+.PHONY: build-debug build-release link-debug link-release build-all link-all debug release copy-headers copy-o-debug copy-o-release all help
 .ONESHELL:
 .SHELLFLAGS = -ec
 
@@ -49,30 +56,49 @@ build-release:
 	@make debug
 	@cd ../..
 
-copy-includes:
+copy-headers:
 	@mkdir -p output/include
 	@cd src/new
 	@cp -r --parents **/*.hpp ../../output/include/
+	@cp -r --parents **/**/*.hpp ../../output/include/
+	@cp -r --parents **/**/**/*.hpp ../../output/include/
+	#@cp -r --parents **/**/**/**/*.hpp ../../output/include/
 	@cd ../..
 
 copy-o-debug:
 	@mkdir -p obj/debug
-	@cp src/new/**/*.debug.o obj/debug/
+	@cp -r src/new/**/*.debug.o obj/debug/
+	@cp -r src/new/**/**/*.debug.o obj/debug/
+	@cp -r src/new/**/**/**/*.debug.o obj/debug/
+	#@cp -r src/new/**/**/**/**/*.debug.o obj/debug/
 
 copy-o-release:
-	@mkdir -p obj/debug
-	@cp src/new/**/*.release.o obj/release/
+	@mkdir -p obj/release
+	@cp -r src/new/**/*.release.o obj/release/
+	@cp -r src/new/**/**/*.release.o obj/release/
+	@cp -r src/new/**/**/**/*.release.o obj/release/
+	#@cp -r src/new/**/**/**/**/*.release.o obj/release/
 
-link-debug: copy-includes copy-o-debug
+link-debug: copy-headers copy-o-debug
+	@echo "Creating lib folder..."
 	@mkdir -p output/lib
-	@ld -o obj/libmakai.debug.o obj/debug/*.debug.o --whole-archive $(LIBRARIES)
-	@ar ruvs output/lib/libmakai.debug.a obj/libmakai.debug.o
+	@echo "Building library..."
+	@ar rcvs output/lib/libmakai.debug.a obj/debug/*.debug.o
+	@echo "Adding exterals..."
+	@ar -M <makelib.debug.mri
+	@echo "Finalizing..."
 	@ranlib output/lib/libmakai.debug.a
+	@echo "Done!"
 	@echo 
 
-link-release: copy-includes copy-o-release
+link-release: copy-headers copy-o-release
+	@echo "Creating lib folder..."
 	@mkdir -p output/lib
-	@ld -o obj/libmakai.o obj/release/*.release.o $(LEAN) --whole-archive $(LIBRARIES)
-	@ar ruvs output/lib/libmakai.a obj/libmakai.o
+	@echo "Building library..."
+	@ar rcvs output/lib/libmakai.a obj/release/*.release.o
+	@echo "Adding exterals..."
+	@ar -M <makelib.release.mri
+	@echo "Finalizing..."
 	@ranlib output/lib/libmakai.a
+	@echo "Done!"
 	@echo 

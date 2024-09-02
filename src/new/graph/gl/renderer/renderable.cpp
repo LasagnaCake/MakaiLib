@@ -11,7 +11,7 @@ using namespace Material;
 
 namespace JSON = Makai::JSON;
 
-Vector2 fromJSONArrayV2(JSON::JSONData const& json, Vector2 const& defaultValue = 0) {
+inline Vector2 fromJSONArrayV2(JSON::JSONData const& json, Vector2 const& defaultValue = 0) {
 	try {
 		if (json.isArray())
 			return Vector2(
@@ -26,7 +26,7 @@ Vector2 fromJSONArrayV2(JSON::JSONData const& json, Vector2 const& defaultValue 
 	}
 }
 
-Vector3 fromJSONArrayV3(JSON::JSONData const& json, Vector3 const& defaultValue = 0) {
+inline Vector3 fromJSONArrayV3(JSON::JSONData const& json, Vector3 const& defaultValue = 0) {
 	try {
 		if (json.isArray())
 			return Vector3(
@@ -42,7 +42,7 @@ Vector3 fromJSONArrayV3(JSON::JSONData const& json, Vector3 const& defaultValue 
 	}
 }
 
-Vector4 fromJSONArrayV4(JSON::JSONData const& json, Vector4 const& defaultValue = 0) {
+inline Vector4 fromJSONArrayV4(JSON::JSONData const& json, Vector4 const& defaultValue = 0) {
 	try {
 		if (json.isArray())
 			return Vector4(
@@ -59,7 +59,7 @@ Vector4 fromJSONArrayV4(JSON::JSONData const& json, Vector4 const& defaultValue 
 	}
 }
 
-ObjectMaterial fromDefinition(JSON::JSONData def, String const& definitionFolder) {
+inline ObjectMaterial fromDefinition(JSON::JSONData def, String const& definitionFolder) {
 	ObjectMaterial mat;
 	Texture2D& texture		= mat.texture.image;
 	Texture2D& normalMap	= mat.normalMap.image;
@@ -162,7 +162,7 @@ ObjectMaterial fromDefinition(JSON::JSONData def, String const& definitionFolder
 	return mat;
 }
 
-JSON::JSONData toDefinition(
+inline JSON::JSONData toDefinition(
 	ObjectMaterial& mat,
 	String const& definitionFolder,
 	String const& texturesFolder,

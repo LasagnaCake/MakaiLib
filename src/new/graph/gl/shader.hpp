@@ -78,7 +78,9 @@ namespace Makai::Graph {
 		Shader& operator=(Shader const& other);
 
 		Shader& operator=(Shader&& other);
-	} defaultShader;
+
+		static Shader DEFAULT;
+	};
 }
 
 #endif // MAKAILIB_GRAPH_SHADER_H

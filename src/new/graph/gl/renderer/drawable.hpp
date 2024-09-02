@@ -50,7 +50,7 @@ namespace Makai::Graph {
 		virtual void draw() {}
 
 		Transform3D			trans;
-		Shader				shader		= defaultShader;
+		Shader				shader		= Shader::DEFAULT;
 		Nullable<float>		pointSize	= nullptr;
 		float				lineWidth	= 1.0;
 

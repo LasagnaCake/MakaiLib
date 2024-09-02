@@ -6,7 +6,7 @@ using namespace Makai::Graph;
 using BaseType = Scene3D::BaseType;
 namespace JSON = Makai::JSON;
 
-Vector2 fromJSONArrayV2(JSON::JSONData const& json, Vector2 const& defaultValue = 0) {
+inline Vector2 fromJSONArrayV2(JSON::JSONData const& json, Vector2 const& defaultValue = 0) {
 	try {
 		if (json.isArray())
 			return Vector2(
@@ -21,7 +21,7 @@ Vector2 fromJSONArrayV2(JSON::JSONData const& json, Vector2 const& defaultValue 
 	}
 }
 
-Vector3 fromJSONArrayV3(JSON::JSONData const& json, Vector3 const& defaultValue = 0) {
+inline Vector3 fromJSONArrayV3(JSON::JSONData const& json, Vector3 const& defaultValue = 0) {
 	try {
 		if (json.isArray())
 			return Vector3(
@@ -37,7 +37,7 @@ Vector3 fromJSONArrayV3(JSON::JSONData const& json, Vector3 const& defaultValue 
 	}
 }
 
-Vector4 fromJSONArrayV4(JSON::JSONData const& json, Vector4 const& defaultValue = 0) {
+inline Vector4 fromJSONArrayV4(JSON::JSONData const& json, Vector4 const& defaultValue = 0) {
 	try {
 		if (json.isArray())
 			return Vector4(

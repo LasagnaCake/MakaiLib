@@ -179,8 +179,7 @@ App::App (
 	framebuffer.shader.create(data);
 	layerbuffer.shader = framebuffer.shader;
 	// Create main shader
-	Makai::Graph::defaultShader.destroy();
-	Makai::Graph::defaultShader.create(SLF::getFile(mainShaderPath));
+	Makai::Graph::Shader::DEFAULT.make(SLF::getFile(mainShaderPath));
 	DEBUGLN(Entities::_ROOT ? "Root Exists!" : "Root does not exist!");
 	if (!Entities::_ROOT) {
 		DEBUGLN("Initializing root tree...");

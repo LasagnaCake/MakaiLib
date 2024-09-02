@@ -266,3 +266,5 @@ Shader& Shader::operator=(Shader&& other) {
 	instance = other.instance;
 	return *this;
 }
+
+Shader Shader::DEFAULT;
