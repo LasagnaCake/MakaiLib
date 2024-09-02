@@ -18,10 +18,6 @@ jobs:
       uses: rlalik/setup-cpp-compiler@master
       with:
         compiler: gcc-13.0.2
-    - name: Use the compilers
-      env:
-        CC: ${{ steps.install_cc.outputs.cc }}
-        CXX: ${{ steps.install_cc.outputs.cxx }}
     - name: Start
       run: echo "Starting build..."
     - name: make debug
