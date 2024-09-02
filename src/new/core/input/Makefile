@@ -35,30 +35,8 @@ endef
 all: debug release
 
 debug:
-	@echo ""
-	@echo "[--- START ---]"
-	$(GET_TIME)
-	
-	@echo "[1/2] compiling [$@]..."
-	$(COMPILER) $(DEBUGCOMPCFG) -c manager.cpp -o manager_debug.o
-
-	@echo "Done!"
-	
-	$(GET_TIME)
-	@echo "[--- END ---]"
-	@echo 
+	$(COMPILER) $(DEBUGCOMPCFG) -c manager.cpp -o manager.$@.o
 
 
 release:
-	@echo ""
-	@echo "[--- START ---]"
-	$(GET_TIME)
-	
-	@echo "[1/2] compiling [$@]..."
-	$(COMPILER) $(COMPCFG) -c manager.cpp -o manager.o
-
-	@echo "Done!"
-	
-	$(GET_TIME)
-	@echo "[--- END ---]"
-	@echo 
+	$(COMPILER) $(COMPCFG) -c manager.cpp -o manager.$@.o

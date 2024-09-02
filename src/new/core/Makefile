@@ -35,56 +35,22 @@ endef
 all: debug release
 
 debug:
-	@echo ""
-	@echo "[--- START ---]"
-	$(GET_TIME)
-	
-	@echo "[1/2] compiling [$@]..."
-	$(COMPILER) $(DEBUGCOMPCFG) -c app.cpp -o app_debug.o
-	$(COMPILER) $(DEBUGCOMPCFG) -c display.cpp -o display_debug.o
-	$(COMPILER) $(DEBUGCOMPCFG) -c dpi.cpp -o dpi_debug.o
-	$(COMPILER) $(DEBUGCOMPCFG) -c popup.cpp -o popup_debug.o
-
-	@echo ""
-	@echo "<subsystems>"
+	$(COMPILER) $(DEBUGCOMPCFG) -c app.cpp -o app.$@.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c display.cpp -o display.$@.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c dpi.cpp -o dpi.$@.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c popup.cpp -o popup.$@.o
 
 	@cd input
 	@make $@
 	@cd ..
-
-	@echo "</subsystems>"
-	@echo ""
-
-	@echo "Done!"
-	
-	$(GET_TIME)
-	@echo "[--- END ---]"
-	@echo 
 
 
 release:
-	@echo ""
-	@echo "[--- START ---]"
-	$(GET_TIME)
-	
-	@echo "[1/2] compiling [$@]..."
-	$(COMPILER) $(COMPCFG) -c app.cpp -o app.o
-	$(COMPILER) $(COMPCFG) -c display.cpp -o display.o
-	$(COMPILER) $(COMPCFG) -c dpi.cpp -o dpi.o
-	$(COMPILER) $(COMPCFG) -c popup.cpp -o popup.o
-
-	@echo ""
-	@echo "<subsystems>"
+	$(COMPILER) $(COMPCFG) -c app.cpp -o app.$@.o
+	$(COMPILER) $(COMPCFG) -c display.cpp -o display.$@.o
+	$(COMPILER) $(COMPCFG) -c dpi.cpp -o dpi.$@.o
+	$(COMPILER) $(COMPCFG) -c popup.cpp -o popup.$@.o
 
 	@cd input
 	@make $@
 	@cd ..
-
-	@echo "</subsystems>"
-	@echo ""
-
-	@echo "Done!"
-	
-	$(GET_TIME)
-	@echo "[--- END ---]"
-	@echo 

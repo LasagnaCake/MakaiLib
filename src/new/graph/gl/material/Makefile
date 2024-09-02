@@ -35,32 +35,10 @@ endef
 all: debug release
 
 debug:
-	@echo ""
-	@echo "[--- START ---]"
-	$(GET_TIME)
-	
-	@echo "[1/2] compiling [$@]..."
-	$(COMPILER) $(DEBUGCOMPCFG) -c effect.cpp -o effect_debug.o
-	$(COMPILER) $(DEBUGCOMPCFG) -c materials.cpp -o materials_debug.o
-
-	@echo "Done!"
-	
-	$(GET_TIME)
-	@echo "[--- END ---]"
-	@echo 
+	$(COMPILER) $(DEBUGCOMPCFG) -c effect.cpp -o effect.$@.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c materials.cpp -o materials.$@.o
 
 
 release:
-	@echo ""
-	@echo "[--- START ---]"
-	$(GET_TIME)
-	
-	@echo "[1/2] compiling [$@]..."
-	$(COMPILER) $(COMPCFG) -c effect.cpp -o effect.o
-	$(COMPILER) $(COMPCFG) -c materials.cpp -o materials.o
-
-	@echo "Done!"
-	
-	$(GET_TIME)
-	@echo "[--- END ---]"
-	@echo 
+	$(COMPILER) $(COMPCFG) -c effect.cpp -o effect.$@.o
+	$(COMPILER) $(COMPCFG) -c materials.cpp -o materials.$@.o

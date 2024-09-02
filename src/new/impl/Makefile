@@ -35,30 +35,8 @@ endef
 all: debug release
 
 debug:
-	@echo ""
-	@echo "[--- START ---]"
-	$(GET_TIME)
-	
-	@echo "[1/2] compiling [$@]..."
-	$(COMPILER) $(DEBUGCOMPCFG) -c stb.cpp -o stb_debug.o
-
-	@echo "Done!"
-	
-	$(GET_TIME)
-	@echo "[--- END ---]"
-	@echo 
+	$(COMPILER) $(DEBUGCOMPCFG) -c stb.cpp -o stb.$@.o
 
 
 release:
-	@echo ""
-	@echo "[--- START ---]"
-	$(GET_TIME)
-	
-	@echo "[1/2] compiling [$@]..."
-	$(COMPILER) $(COMPCFG) -c stb.cpp -o stb.o
-
-	@echo "Done!"
-	
-	$(GET_TIME)
-	@echo "[--- END ---]"
-	@echo 
+	$(COMPILER) $(COMPCFG) -c stb.cpp -o stb.$@.o

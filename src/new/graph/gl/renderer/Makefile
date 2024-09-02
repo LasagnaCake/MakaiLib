@@ -35,46 +35,24 @@ endef
 all: debug release
 
 debug:
-	@echo ""
-	@echo "[--- START ---]"
-	$(GET_TIME)
-	
-	@echo "[1/2] compiling [$@]..."
-	$(COMPILER) $(DEBUGCOMPCFG) -c mode.cpp -o mode_debug.o
-	$(COMPILER) $(DEBUGCOMPCFG) -c core.cpp -o core_debug.o
-	$(COMPILER) $(DEBUGCOMPCFG) -c drawable.cpp -o drawable_debug.o
-	$(COMPILER) $(DEBUGCOMPCFG) -c reference.cpp -o reference_debug.o
-	$(COMPILER) $(DEBUGCOMPCFG) -c renderable.cpp -o renderable_debug.o
-	$(COMPILER) $(DEBUGCOMPCFG) -c bar.cpp -o bar_debug.o
-	$(COMPILER) $(DEBUGCOMPCFG) -c text.cpp -o text_debug.o
-	$(COMPILER) $(DEBUGCOMPCFG) -c scene.cpp -o scene_debug.o
-	$(COMPILER) $(DEBUGCOMPCFG) -c framebuffer.cpp -o framebuffer_debug.o
-
-	@echo "Done!"
-	
-	$(GET_TIME)
-	@echo "[--- END ---]"
-	@echo 
+	$(COMPILER) $(DEBUGCOMPCFG) -c mode.cpp -o mode.$@.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c core.cpp -o core.$@.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c drawable.cpp -o drawable.$@.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c reference.cpp -o reference.$@.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c renderable.cpp -o renderable.$@.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c bar.cpp -o bar.$@.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c text.cpp -o text.$@.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c scene.cpp -o scene.$@.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c framebuffer.cpp -o framebuffer.$@.o
 
 
 release:
-	@echo ""
-	@echo "[--- START ---]"
-	$(GET_TIME)
-	
-	@echo "[1/2] compiling [$@]..."
-	$(COMPILER) $(COMPCFG) -c mode.cpp -o mode.o
+	$(COMPILER) $(COMPCFG) -c mode.cpp -o mode.$@.o
 	$(COMPILER) $(COMPCFG) -c core.cpp -o core.o
-	$(COMPILER) $(COMPCFG) -c drawable.cpp -o drawable.o
-	$(COMPILER) $(COMPCFG) -c reference.cpp -o reference.o
-	$(COMPILER) $(COMPCFG) -c renderable.cpp -o renderable.o
-	$(COMPILER) $(COMPCFG) -c bar.cpp -o bar.o
-	$(COMPILER) $(COMPCFG) -c text.cpp -o text.o
-	$(COMPILER) $(COMPCFG) -c scene.cpp -o scene.o
-	$(COMPILER) $(COMPCFG) -c framebuffer.cpp -o framebuffer.o
-
-	@echo "Done!"
-	
-	$(GET_TIME)
-	@echo "[--- END ---]"
-	@echo 
+	$(COMPILER) $(COMPCFG) -c drawable.cpp -o drawable.$@.o
+	$(COMPILER) $(COMPCFG) -c reference.cpp -o reference.$@.o
+	$(COMPILER) $(COMPCFG) -c renderable.cpp -o renderable.$@.o
+	$(COMPILER) $(COMPCFG) -c bar.cpp -o bar.$@.o
+	$(COMPILER) $(COMPCFG) -c text.cpp -o text.$@.o
+	$(COMPILER) $(COMPCFG) -c scene.cpp -o scene.$@.o
+	$(COMPILER) $(COMPCFG) -c framebuffer.cpp -o framebuffer.$@.o

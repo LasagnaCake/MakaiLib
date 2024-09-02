@@ -35,32 +35,10 @@ endef
 all: debug release
 
 debug:
-	@echo ""
-	@echo "[--- START ---]"
-	$(GET_TIME)
-	
-	@echo "[1/2] compiling [$@]..."
-	$(COMPILER) $(DEBUGCOMPCFG) -c encdec.cpp -o encdec_debug.o
-	$(COMPILER) -I$(ROOT)/lib/cryptopp/include $(DEBUGCOMPCFG) -c hash.cpp -o hash_debug.o
-
-	@echo "Done!"
-	
-	$(GET_TIME)
-	@echo "[--- END ---]"
-	@echo 
+	$(COMPILER) $(DEBUGCOMPCFG) -c encdec.cpp -o encdec.$@.o
+	$(COMPILER) -I$(ROOT)/lib/cryptopp/include $(DEBUGCOMPCFG) -c hash.cpp -o hash.$@.o
 
 
 release:
-	@echo ""
-	@echo "[--- START ---]"
-	$(GET_TIME)
-	
-	@echo "[1/2] compiling [$@]..."
-	$(COMPILER) $(COMPCFG) -c encdec.cpp -o encdec.o
-	$(COMPILER) -I$(ROOT)/lib/cryptopp/include $(COMPCFG) -c hash.cpp -o hash.o
-
-	@echo "Done!"
-	
-	$(GET_TIME)
-	@echo "[--- END ---]"
-	@echo 
+	$(COMPILER) $(COMPCFG) -c encdec.cpp -o encdec.$@.o
+	$(COMPILER) -I$(ROOT)/lib/cryptopp/include $(COMPCFG) -c hash.$@.cpp -o hash.$@.o

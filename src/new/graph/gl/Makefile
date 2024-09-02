@@ -35,22 +35,14 @@ endef
 all: debug release
 
 debug:
-	@echo ""
-	@echo "[--- START ---]"
-	$(GET_TIME)
+	$(COMPILER) $(DEBUGCOMPCFG) -c vertex.cpp -o vertex.$@.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c uniform.cpp -o uniform.$@.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c blend.cpp -o blend.$@.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c color.cpp -o color.$@.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c image.cpp -o image.$@.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c texture.cpp -o texture.$@.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c shader.cpp -o shader.$@.o
 	
-	@echo "[1/2] compiling [$@]..."
-	$(COMPILER) $(DEBUGCOMPCFG) -c vertex.cpp -o vertex_debug.o
-	$(COMPILER) $(DEBUGCOMPCFG) -c uniform.cpp -o uniform_debug.o
-	$(COMPILER) $(DEBUGCOMPCFG) -c blend.cpp -o blend_debug.o
-	$(COMPILER) $(DEBUGCOMPCFG) -c color.cpp -o color_debug.o
-	$(COMPILER) $(DEBUGCOMPCFG) -c image.cpp -o image_debug.o
-	$(COMPILER) $(DEBUGCOMPCFG) -c texture.cpp -o texture_debug.o
-	$(COMPILER) $(DEBUGCOMPCFG) -c shader.cpp -o shader_debug.o
-
-	@echo ""
-	@echo "<subsystems>"
-
 	@cd renderer
 	@make $@
 	@cd ..
@@ -58,34 +50,17 @@ debug:
 	@cd material
 	@make $@
 	@cd ..
-
-	@echo "</subsystems>"
-	@echo ""
-
-	@echo "Done!"
-	
-	$(GET_TIME)
-	@echo "[--- END ---]"
-	@echo 
 
 
 release:
-	@echo ""
-	@echo "[--- START ---]"
-	$(GET_TIME)
+	$(COMPILER) $(COMPCFG) -c vertex.cpp -o vertex.$@.o
+	$(COMPILER) $(COMPCFG) -c uniform.cpp -o uniform.$@.o
+	$(COMPILER) $(COMPCFG) -c blend.cpp -o blend.$@.o
+	$(COMPILER) $(COMPCFG) -c color.cpp -o color.$@.o
+	$(COMPILER) $(COMPCFG) -c image.cpp -o image.$@.o
+	$(COMPILER) $(COMPCFG) -c texture.cpp -o texture.$@.o
+	$(COMPILER) $(COMPCFG) -c shader.cpp -o shader.$@.o
 	
-	@echo "[1/2] compiling [$@]..."
-	$(COMPILER) $(COMPCFG) -c vertex.cpp -o vertex.o
-	$(COMPILER) $(COMPCFG) -c uniform.cpp -o uniform.o
-	$(COMPILER) $(COMPCFG) -c blend.cpp -o blend.o
-	$(COMPILER) $(COMPCFG) -c color.cpp -o color.o
-	$(COMPILER) $(COMPCFG) -c image.cpp -o image.o
-	$(COMPILER) $(COMPCFG) -c texture.cpp -o texture.o
-	$(COMPILER) $(COMPCFG) -c shader.cpp -o shader.o
-
-	@echo ""
-	@echo "<subsystems>"
-
 	@cd renderer
 	@make $@
 	@cd ..
@@ -93,12 +68,3 @@ release:
 	@cd material
 	@make $@
 	@cd ..
-
-	@echo "</subsystems>"
-	@echo ""
-
-	@echo "Done!"
-	
-	$(GET_TIME)
-	@echo "[--- END ---]"
-	@echo 

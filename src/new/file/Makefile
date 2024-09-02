@@ -31,34 +31,12 @@ endef
 all: debug release
 
 debug:
-	@echo ""
-	@echo "[--- START ---]"
-	$(GET_TIME)
-	
-	@echo "[1/2] compiling [$@]..."
-	$(COMPILER) $(DEBUGCOMPCFG) -c json.cpp -o json_debug.o
-	$(COMPILER) $(DEBUGCOMPCFG) -c slf.cpp -o slf_debug.o
-	$(COMPILER) $(DEBUGCOMPCFG) -c get.cpp -o get_debug.o
-
-	@echo "Done!"
-	
-	$(GET_TIME)
-	@echo "[--- END ---]"
-	@echo 
+	$(COMPILER) $(DEBUGCOMPCFG) -c json.cpp -o json.$@.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c slf.cpp -o slf.$@.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c get.cpp -o get.$@.o
 
 
 release:
-	@echo ""
-	@echo "[--- START ---]"
-	$(GET_TIME)
-	
-	@echo "[1/2] compiling [$@]..."
-	$(COMPILER) $(COMPCFG) -c json.cpp -o json.o
-	$(COMPILER) $(COMPCFG) -c slf.cpp -o slf.o
-	$(COMPILER) $(COMPCFG) -c get.cpp -o get.o
-
-	@echo "Done!"
-	
-	$(GET_TIME)
-	@echo "[--- END ---]"
-	@echo 
+	$(COMPILER) $(COMPCFG) -c json.cpp -o json.$@.o
+	$(COMPILER) $(COMPCFG) -c slf.cpp -o slf.$@.o
+	$(COMPILER) $(COMPCFG) -c get.cpp -o get.$@.o

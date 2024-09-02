@@ -25,8 +25,8 @@ LINKCFG	:= $(LINKER_CONFIG) -s -O3 $(LIBRARIES) $(LEAN)
 COMPILER	:= @$(CXX) $(INCLUDES)
 LINKER		:= @$(CXX)
 
-DEBUGEXTRAOBJS := $(ROOT)/src/new/tool/archive/archive_debug.o $(ROOT)/src/new/file/json_debug.o
-EXTRAOBJS := $(ROOT)/src/new/tool/archive/archive.o $(ROOT)/src/new/file/json.o
+DEBUGEXTRAOBJS := $(ROOT)/src/new/tool/archive/archive.debug.o $(ROOT)/src/new/file/json.debug.o
+EXTRAOBJS := $(ROOT)/src/new/tool/archive/archive.release.o $(ROOT)/src/new/file/json.release.o
 
 LIBNAME	:= archive
 
@@ -48,13 +48,13 @@ debug:
 	$(GET_TIME)
 	
 	@echo "[1/2] compiling [$@]..."
-	$(COMPILER) $(DEBUGCOMPCFG) -c arcpack.cpp -o arcpack_debug.o
-	$(COMPILER) $(DEBUGCOMPCFG) -c arcunpack.cpp -o arcunpack_debug.o
-	$(COMPILER) $(DEBUGCOMPCFG) -c arcgen.cpp -o arcgen_debug.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c arcpack.cpp -o arcpack.$@.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c arcunpack.cpp -o arcunpack.$@.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c arcgen.cpp -o arcgen.$@.o
 
-	$(LINKER) -o arcpack_debug.exe arcpack_debug.o $(DEBUGEXTRAOBJS) $(LINKCFG)
-	$(LINKER) -o arcunpack_debug.exe arcunpack_debug.o $(DEBUGEXTRAOBJS) $(LINKCFG)
-	$(LINKER) -o arcgen_debug.exe arcgen_debug.o $(DEBUGEXTRAOBJS) $(LINKCFG)
+	$(LINKER) -o arcpack.$@.exe arcpack.$@.o $(DEBUGEXTRAOBJS) $(LINKCFG)
+	$(LINKER) -o arcunpack.$@.exe arcunpack.$@.o $(DEBUGEXTRAOBJS) $(LINKCFG)
+	$(LINKER) -o arcgen.$@.exe arcgen.$@.o $(DEBUGEXTRAOBJS) $(LINKCFG)
 
 	@echo "Done!"
 	
@@ -69,13 +69,13 @@ release:
 	$(GET_TIME)
 	
 	@echo "[1/2] compiling [$@]..."
-	$(COMPILER) $(COMPCFG) -c arcpack.cpp -o arcpack.o
-	$(COMPILER) $(COMPCFG) -c arcunpack.cpp -o arcunpack.o
-	$(COMPILER) $(COMPCFG) -c arcgen.cpp -o arcgen.o
+	$(COMPILER) $(COMPCFG) -c arcpack.cpp -o arcpack.$@.o
+	$(COMPILER) $(COMPCFG) -c arcunpack.cpp -o arcunpack.$@.o
+	$(COMPILER) $(COMPCFG) -c arcgen.cpp -o arcgen.$@.o
 
-	$(LINKER) -o arcpack.exe $(EXTRAOBJS) arcpack.o $(LINKCFG)
-	$(LINKER) -o arcunpack.exe $(EXTRAOBJS) arcunpack.o $(LINKCFG)
-	$(LINKER) -o arcgen.exe $(EXTRAOBJS) arcgen.o  $(LINKCFG)
+	$(LINKER) -o arcpack.exe $(EXTRAOBJS) arcpack.$@.o $(LINKCFG)
+	$(LINKER) -o arcunpack.exe $(EXTRAOBJS) arcunpack.$@.o $(LINKCFG)
+	$(LINKER) -o arcgen.exe $(EXTRAOBJS) arcgen.$@.o  $(LINKCFG)
 
 	@echo "Done!"
 	

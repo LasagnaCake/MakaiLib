@@ -35,36 +35,14 @@ endef
 all: debug release
 
 debug:
-	@echo ""
-	@echo "[--- START ---]"
-	$(GET_TIME)
-	
-	@echo "[1/2] compiling [$@]..."
-	$(COMPILER) $(DEBUGCOMPCFG) -c core.cpp -o core_debug.o
-	$(COMPILER) $(DEBUGCOMPCFG) -c playable.cpp -o playable_debug.o
-	$(COMPILER) $(DEBUGCOMPCFG) -c music.cpp -o music_debug.o
-	$(COMPILER) $(DEBUGCOMPCFG) -c sound.cpp -o sound_debug.o
-
-	@echo "Done!"
-	
-	$(GET_TIME)
-	@echo "[--- END ---]"
-	@echo 
+	$(COMPILER) $(DEBUGCOMPCFG) -c core.cpp -o core.$@.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c playable.cpp -o playable.$@.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c music.cpp -o music.$@.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c sound.cpp -o sound.$@.o
 
 
 release:
-	@echo ""
-	@echo "[--- START ---]"
-	$(GET_TIME)
-	
-	@echo "[1/2] compiling [$@]..."
-	$(COMPILER) $(COMPCFG) -c core.cpp -o core.o
-	$(COMPILER) $(COMPCFG) -c playable.cpp -o playable.o
-	$(COMPILER) $(COMPCFG) -c music.cpp -o music.o
-	$(COMPILER) $(COMPCFG) -c sound.cpp -o sound.o
-
-	@echo "Done!"
-	
-	$(GET_TIME)
-	@echo "[--- END ---]"
-	@echo 
+	$(COMPILER) $(COMPCFG) -c core.cpp -o core.$@.o
+	$(COMPILER) $(COMPCFG) -c playable.cpp -o playable.$@.o
+	$(COMPILER) $(COMPCFG) -c music.cpp -o music.$@.o
+	$(COMPILER) $(COMPCFG) -c sound.cpp -o sound.$@.o
