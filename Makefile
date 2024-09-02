@@ -88,6 +88,7 @@ link-debug: copy-headers copy-o-debug
 	@ar -M <makelib.debug.mri
 	@echo "Finalizing..."
 	@ranlib output/lib/libmakai.debug.a
+	@rm -rf output/lib/st*
 	@echo "Done!"
 	@echo 
 
@@ -100,5 +101,6 @@ link-release: copy-headers copy-o-release
 	@ar -M <makelib.release.mri
 	@echo "Finalizing..."
 	@ranlib output/lib/libmakai.a
+	@rm -rf output/lib/st*
 	@echo "Done!"
 	@echo 
