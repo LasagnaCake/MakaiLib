@@ -12,13 +12,25 @@ all: debug release
 
 debug:
 	@echo ""
-	@echo "[--- START ---]"
+	@echo "[-------------------------------------]"
+	@echo "[-------------------------------------]"
+	@echo "[---!!!                         !!!---]"
+	@echo "[--!!!  Full compilation start!  !!!--]"
+	@echo "[---!!!                         !!!---]"
+	@echo "[-------------------------------------]"
+	@echo "[-------------------------------------]"
+	@echo ""
 	$(GET_TIME)
+	@echo ""
+	@echo "TYPE: $@"
+	@echo ""
+	@echo "[--- START ---]"
 	
 	@echo "[1/2] compiling [$@]..."
 
 	@echo ""
-	@echo "<subsystems>"
+	@echo "<systems>"
+	@echo ""
 
 	@cd impl
 	@make $@
@@ -48,13 +60,17 @@ debug:
 	@make $@
 	@cd ..
 
-	@echo "</subsystems>"
+	@echo ""
+	@echo "</systems>"
 	@echo ""
 
 	@echo "Done!"
 	
-	$(GET_TIME)
 	@echo "[--- END ---]"
+	@echo ""
+	@echo "TYPE: $@"
+	@echo ""
+	$(GET_TIME)
 	@echo ""
 	@echo "[------------------------------------]"
 	@echo "[------------------------------------]"
@@ -73,10 +89,25 @@ debug:
 
 release:
 	@echo ""
-	@echo "[--- START ---]"
+	@echo "[-------------------------------------]"
+	@echo "[-------------------------------------]"
+	@echo "[---!!!                         !!!---]"
+	@echo "[--!!!  Full compilation start!  !!!--]"
+	@echo "[---!!!                         !!!---]"
+	@echo "[-------------------------------------]"
+	@echo "[-------------------------------------]"
+	@echo ""
 	$(GET_TIME)
+	@echo ""
+	@echo "TYPE: $@"
+	@echo ""
+	@echo "[--- START ---]"
 	
 	@echo "[1/2] compiling [$@]..."
+
+	@echo ""
+	@echo "<systems>"
+	@echo ""
 
 	@cd impl
 	@make $@
@@ -106,10 +137,18 @@ release:
 	@make $@
 	@cd ..
 
+	@echo ""
+	@echo "</systems>"
+	@echo ""
+
 	@echo "Done!"
 	
-	$(GET_TIME)
+	
 	@echo "[--- END ---]"
+	@echo ""
+	@echo "TYPE: $@"
+	@echo ""
+	$(GET_TIME)
 	@echo ""
 	@echo "[------------------------------------]"
 	@echo "[------------------------------------]"
