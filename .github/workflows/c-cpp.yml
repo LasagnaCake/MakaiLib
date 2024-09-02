@@ -13,21 +13,12 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+    - name: Set up GCC
+      uses: egor-tensin/setup-gcc@v1
+      with:
+        version: 13.2.0-2
+        platform: x64
     - name: make debug
-      run: |
-        sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
-        sudo apt-get update -y
-        sudo apt-get install gcc-13 g++-13
-        make debug
-      env:
-       CC:   gcc-13
-       CXX:  g++-13
+      run: make debug
     - name: make release
-      run: |
-        sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
-        sudo apt-get update -y
-        sudo apt-get install gcc-13 g++-13
-        make debug
-      env:
-       CC:   gcc-13
-       CXX:  g++-13
+      run: make debug
