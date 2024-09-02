@@ -41,4 +41,4 @@ debug:
 
 release:
 	$(COMPILER) $(COMPCFG) -c encdec.cpp -o encdec.$@.o
-	$(COMPILER) -I$(ROOT)/lib/cryptopp/include $(COMPCFG) -c hash.$@.cpp -o hash.$@.o
+	$(COMPILER) -I$(ROOT)/lib/cryptopp/include $(COMPCFG) -c hash.cpp -o hash.$@.o
