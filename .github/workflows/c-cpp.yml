@@ -18,6 +18,10 @@ jobs:
       with:
         version: 13.2.0-2
         platform: x64
+    - name: Use compilers
+      env:
+        CC: ${{ steps.install_cc.outputs.cc }}
+        CXX: ${{ steps.install_cc.outputs.cxx }}
     - name: make debug
       run: make debug
     - name: make release
