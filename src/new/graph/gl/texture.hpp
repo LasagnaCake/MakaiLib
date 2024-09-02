@@ -21,6 +21,8 @@ namespace Makai::Graph {
 
 		Texture2D(): image(new Image2D()) {}
 
+		Texture2D(decltype(nullptr)): Texture2D() {}
+
 		Texture2D(
 			uint const&						width,
 			uint const&						height,
@@ -129,8 +131,9 @@ namespace Makai::Graph {
 
 		Texture2D& makeUnique(bool const& filter = false);
 
-		Texture2D& operator=(Texture2D const& other);
-		Texture2D& operator=(Texture2D&& other);
+		Texture2D&			operator=(Texture2D const& other);
+		Texture2D&			operator=(Texture2D&& other);
+		inline Texture2D&	operator=(decltype(nullptr)) {destroy(); return *this;}
 
 		bool operator==(Texture2D const& other) const;
 		Helper::PartialOrder operator<=>(Texture2D const& other) const;

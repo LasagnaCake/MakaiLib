@@ -8,10 +8,10 @@ void LinearBar::draw() {
 		length	= percent * size.x,
 		width	= size.y / 2
 	;
-	vertices[0]	= Vertex::from(Vector2(0, -width),		Vector2(0+uvShift,1) * uvScale);
-	vertices[1]	= Vertex::from(Vector2(0, +width),		Vector2(0+uvShift,0) * uvScale);
-	vertices[2]	= Vertex::from(Vector2(length, -width),	Vector2((dynamicUV ? percent : 1)+uvShift,1) * uvScale);
-	vertices[3]	= Vertex::from(Vector2(length, +width),	Vector2((dynamicUV ? percent : 1)+uvShift,0) * uvScale);
+	vertices[0]	= Vertex(Vector2(0, -width),		Vector2(0+uvShift,1) * uvScale							);
+	vertices[1]	= Vertex(Vector2(0, +width),		Vector2(0+uvShift,0) * uvScale							);
+	vertices[2]	= Vertex(Vector2(length, -width),	Vector2((dynamicUV ? percent : 1)+uvShift,1) * uvScale	);
+	vertices[3]	= Vertex(Vector2(length, +width),	Vector2((dynamicUV ? percent : 1)+uvShift,0) * uvScale	);
 	prepare();
 	material.use(shader);
 	display(
@@ -42,7 +42,7 @@ void RadialBar::update() {
 	// Progress bar percentage angle (in radians)
 	float fraction = TAU * Math::clamp(value/max, 0.0f, 1.0f);
 	// Set center to offset
-	Vertex::setPosition(vertices[0], offset.yx() * size);
+	vertices[0].position = (offset.yx() * size);
 	// For each surrounding vertex...
 	for SRANGE(i, 1, RADIAL_BAR_RESOLUTION + 2) {
 		// UV fraction, Positional fraction
@@ -59,10 +59,10 @@ void RadialBar::update() {
 		// Add angle offset to UV fraction
 		uvfrac += uvShift;
 		// Set vertex position
-		Vertex::setPosition(vertices[i], VecMath::angleV2(posfrac) * size);
+		vertices[i].position = (VecMath::angleV2(posfrac) * size);
 		// Set vertex UV
 		Vector2 uv = (((VecMath::angleV2(uvfrac + uvShift) / 2.0) + 0.5)) * uvScale;
 		uv.y = 1 - uv.y;
-		Vertex::setUV(vertices[i], uv);
+		vertices[i].uv = (uv);
 	}
 }

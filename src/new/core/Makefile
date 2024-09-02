@@ -45,6 +45,16 @@ debug:
 	$(COMPILER) $(DEBUGCOMPCFG) -c dpi.cpp -o dpi_debug.o
 	$(COMPILER) $(DEBUGCOMPCFG) -c popup.cpp -o popup_debug.o
 
+	@echo ""
+	@echo "<subsystems>"
+
+	@cd input
+	@make $@
+	@cd ..
+
+	@echo "</subsystems>"
+	@echo ""
+
 	@echo "Done!"
 	
 	$(GET_TIME)
@@ -62,6 +72,16 @@ release:
 	$(COMPILER) $(COMPCFG) -c display.cpp -o display.o
 	$(COMPILER) $(COMPCFG) -c dpi.cpp -o dpi.o
 	$(COMPILER) $(COMPCFG) -c popup.cpp -o popup.o
+
+	@echo ""
+	@echo "<subsystems>"
+
+	@cd input
+	@make $@
+	@cd ..
+
+	@echo "</subsystems>"
+	@echo ""
 
 	@echo "Done!"
 	

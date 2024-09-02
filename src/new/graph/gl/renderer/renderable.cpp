@@ -526,7 +526,7 @@ void Renderable::extendFromDefinitionV0(
 		vm = Vertex::defaultMap();
 		for (auto& c: components)
 			vm[c] = rawdata[component++];
-		vertices.push_back(Vertex::from(vm));
+		vertices.push_back(Vertex(vm));
 	}
 	// Check if data is OK
 	if (vertices.size() % 3 != 0)

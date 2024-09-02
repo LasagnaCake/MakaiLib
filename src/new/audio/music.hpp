@@ -32,12 +32,12 @@ namespace Makai::Audio {
 
 		inline Extern::Resource getSource();
 
-		static void update();
-		static void stop(usize const& fade = 0);
-		static void pause();
-		static void resume();
-		static void setVolume(schar const& volume);
-		static void getVolume(schar const& volume);
+		static void		update();
+		static void		stop(usize const& fade = 0);
+		static void		pause();
+		static void		resume();
+		static void		setVolume(schar const& volume);
+		static schar	getVolume();
 
 	protected:
 		void onCreate(Extern::Resource const& data) final override;

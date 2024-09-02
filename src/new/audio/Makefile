@@ -10,7 +10,7 @@ LINKER_CONFIG	:= -static-libstdc++ -static-libgcc -m64 -fms-extensions
 
 OPTIMIZATIONS	:= -fopenmp -openmp -ftree-parallelize-loops=128 -funswitch-loops -fpredictive-commoning -fgcse-after-reload -ftree-vectorize $(LEAN)
 
-INCLUDES := -I$(ROOT)/lib/stb
+INCLUDES := -I$(ROOT)/lib/SDL2-2.0.10/include
 
 DEBUGMODE := -DENABLE_DEBUG_OUTPUT_ -D_DEBUG_OUTPUT_ -DNDEBUG
 DEBUGCOMPCFG	:= $(COMPILER_CONFIG) -Wall -Wpedantic -Og -ggdb3 -fno-omit-frame-pointer $(DEBUGMODE)
@@ -40,7 +40,10 @@ debug:
 	$(GET_TIME)
 	
 	@echo "[1/2] compiling [$@]..."
-	$(COMPILER) $(DEBUGCOMPCFG) -c stb.cpp -o stb_debug.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c core.cpp -o core_debug.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c playable.cpp -o playable_debug.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c music.cpp -o music_debug.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c sound.cpp -o sound_debug.o
 
 	@echo "Done!"
 	
@@ -55,7 +58,10 @@ release:
 	$(GET_TIME)
 	
 	@echo "[1/2] compiling [$@]..."
-	$(COMPILER) $(COMPCFG) -c stb.cpp -o stb.o
+	$(COMPILER) $(COMPCFG) -c core.cpp -o core.o
+	$(COMPILER) $(COMPCFG) -c playable.cpp -o playable.o
+	$(COMPILER) $(COMPCFG) -c music.cpp -o music.o
+	$(COMPILER) $(COMPCFG) -c sound.cpp -o sound.o
 
 	@echo "Done!"
 	

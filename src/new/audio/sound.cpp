@@ -1,7 +1,7 @@
 #include "sound.hpp"
 
 #if (_WIN32 || _WIN64 || __WIN32__ || __WIN64__)
-#include <winuser.h>
+#include <windows.h>
 #define SDL_MAIN_HANDLED
 #endif
 #include <SDL2/SDL.h>
@@ -9,7 +9,11 @@
 
 using namespace Makai::Audio;
 
-void Sound::stopAll(usize const& fade = 0) {
+namespace Extern = Makai::Extern;
+
+#define sdlSource ((Mix_Chunk*)source)
+
+void Sound::stopAll(usize const& fade) {
 	if (fade)
 		Mix_FadeOutChannel(-1, fade);
 	else
@@ -33,38 +37,38 @@ schar Sound::getMasterVolume() {
 }
 
 void Sound::play(
-	int const&		loops		= 0,
-	size_t const&	fadeInTime	= 0,
-	bool const&		force		= false
+	int const&		loops,
+	size_t const&	fadeInTime,
+	bool const&		force
 ) {
 	if (!exists() || delay > 0) return;
 	if (active() && !force) return;
 	if (fadeInTime)
-		channel = Mix_FadeInChannel(active() ? channel : -1, source, loops, fadeInTime);
+		channel = Mix_FadeInChannel(active() ? channel : -1, sdlSource, loops, fadeInTime);
 	else
-		channel = Mix_PlayChannel(active() ? channel : -1, source, loops);
+		channel = Mix_PlayChannel(active() ? channel : -1, sdlSource, loops);
 }
 
 void Sound::playOnceThisFrame(
-	int const&		loops		= 0,
-	size_t const&	fadeInTime	= 0,
-	bool const&		force		= false
+	int const&		loops,
+	size_t const&	fadeInTime,
+	bool const&		force
 ) {
 	if (!exists() || delay > 0) return;
 	if (active() && !force) return;
 	if (!canPlayThisFrame) return;
 	canPlayThisFrame = false;
 	if (fadeInTime)
-		channel = Mix_FadeInChannel(getChannel(), source, loops, fadeInTime);
+		channel = Mix_FadeInChannel(getChannel(), sdlSource, loops, fadeInTime);
 	else
-		channel = Mix_PlayChannel(getChannel(), source, loops);
+		channel = Mix_PlayChannel(getChannel(), sdlSource, loops);
 }
 
 void Sound::playOnceAndWait(
-	int const&		loops		= 0,
-	size_t const&	fadeInTime	= 0,
-	bool const&		force		= false,
-	size_t const&	cycles		= 0
+	int const&		loops,
+	size_t const&	fadeInTime,
+	bool const&		force,
+	size_t const&	cycles
 ) {
 	if (!exists() || delay > 0) return;
 	if (active() && !force) return;
@@ -72,12 +76,12 @@ void Sound::playOnceAndWait(
 	canPlayThisFrame = false;
 	delay = cycles;
 	if (fadeInTime)
-		channel = Mix_FadeInChannel(getChannel(), source, loops, fadeInTime);
+		channel = Mix_FadeInChannel(getChannel(), sdlSource, loops, fadeInTime);
 	else
-		channel = Mix_PlayChannel(getChannel(), source, loops);
+		channel = Mix_PlayChannel(getChannel(), sdlSource, loops);
 }
 
-void Sound::stop(size_t const& fadeOutTime = 0) {
+void Sound::stop(size_t const& fadeOutTime) {
 	if (!exists()) return;
 	if (!active()) return;
 	if (fadeOutTime)
@@ -100,17 +104,17 @@ void Sound::resume() {
 
 void Sound::setVolume(uchar const& volume) {
 	if (!exists()) return;
-	Mix_VolumeChunk(source, volume);
+	Mix_VolumeChunk(sdlSource, volume);
 }
 
 int Sound::getVolume() {
 	if (!exists()) return -1;
-	return Mix_VolumeChunk(source, -1);
+	return Mix_VolumeChunk(sdlSource, -1);
 }
 
-void Sound::onCreate(Extern::Resource const& data) final override {
+void Sound::onCreate(Extern::Resource const& data) {
 	if (!isOpen()) throw Error::FailedAction("Failed to load file: Audio system is closed!");
-	source = Mix_LoadWAV_RW(data, true);
+	source = (Extern::Resource)Mix_LoadWAV_RW((SDL_RWops*)data, true);
 	if (!source)
 		throw Error::FailedAction(
 			"Could not load file!",
@@ -121,17 +125,17 @@ void Sound::onCreate(Extern::Resource const& data) final override {
 		);
 }
 
-void Sound::onDestroy() final override {
+void Sound::onDestroy() {
 	DEBUGLN("Destroying sound source...");
 	if (isOpen()) {
 		if (active())
 			Mix_HaltChannel(channel);
-		Mix_FreeChunk(source);
+		Mix_FreeChunk(sdlSource);
 	}
 	DEBUGLN("Sound source deleted!");
 }
 
-void Sound::onUpdate() final override {
+void Sound::onUpdate() {
 	canPlayThisFrame = true;
 	if (!active()) {
 		channel = -1;
@@ -149,6 +153,6 @@ bool Sound::active() {
 	if (channel == -1)	return false;
 	return (
 		Mix_Playing(channel)
-	&&	Mix_GetChunk(channel) == source
+	&&	Mix_GetChunk(channel) == sdlSource
 	);
 }

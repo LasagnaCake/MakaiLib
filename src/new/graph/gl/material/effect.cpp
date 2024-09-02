@@ -19,7 +19,7 @@ JSON::JSONData Material::saveImageEffect(Material::Effect::Image& effect, String
 }
 
 Material::Effect::Image Material::loadImageEffect(
-	JSON::JSONData& effect,
+	JSON::JSONData effect,
 	String const& sourcepath,
 	Texture2D& texture
 ) {

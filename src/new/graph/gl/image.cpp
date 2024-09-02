@@ -65,13 +65,15 @@ constexpr uint convert(ImageFormat const& type) {
 constexpr uint convert(ComponentLayout const& type) {
 	switch (type) {
 		default:
-		case ComponentLayout::CL_AUTO:	return 0;
-		case ComponentLayout::CL_D:		return GL_DEPTH_COMPONENT;
-		case ComponentLayout::CL_R:		return GL_RED;
-		case ComponentLayout::CL_DS:	return GL_DEPTH_STENCIL;
-		case ComponentLayout::CL_RG:	return GL_RG;
-		case ComponentLayout::CL_RGB:	return GL_RGB;
-		case ComponentLayout::CL_RGBA:	return GL_RGBA;
+		case ComponentLayout::CL_AUTO:		return 0;
+		case ComponentLayout::CL_D:			return GL_DEPTH_COMPONENT;
+		case ComponentLayout::CL_R:			return GL_RED;
+		case ComponentLayout::CL_DS:		return GL_DEPTH_STENCIL;
+		case ComponentLayout::CL_RG:		return GL_RG;
+		case ComponentLayout::CL_RGB:		return GL_RGB;
+		case ComponentLayout::CL_RGBA:		return GL_RGBA;
+		case ComponentLayout::CL_RGBA_16F:	return GL_RGBA16F;
+		case ComponentLayout::CL_D24_S8:	return GL_DEPTH24_STENCIL8;
 	}
 }
 

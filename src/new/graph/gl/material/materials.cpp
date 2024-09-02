@@ -3,7 +3,7 @@
 using namespace Makai::Graph;
 using namespace Material;
 
-void ObjectMaterial::use(Shader& shader) const {
+void ObjectMaterial::use(Shader const& shader) const {
 	// UV Data
 	shader["uvShift"](uvShift);
 	// Texture
@@ -63,7 +63,7 @@ void ObjectMaterial::use(Shader& shader) const {
 }
 
 // TODO: The rest of this rat's nest
-void BufferMaterial::use(Shader& shader) const {
+void BufferMaterial::use(Shader const& shader) const {
 	// Set UV data
 	shader["uvShift"](uvShift);
 	// Set color data
@@ -177,7 +177,7 @@ void BufferMaterial::use(Shader& shader) const {
 	shader["contrast"](contrast);
 }
 
-void WorldMaterial::use(Shader& shader) const {
+void WorldMaterial::use(Shader const& shader) const {
 	// Fog
 	if (farFog.enabled) {
 		shader["farFog.enabled"](

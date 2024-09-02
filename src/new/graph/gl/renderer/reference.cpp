@@ -6,11 +6,11 @@ using Makai::Graph::VertexFunction;
 
 inline void srpTransform(Vertex& vtx, Matrix4x4 const& tmat) {
 	// Position
-	Vector3 res = (tmat * Vector4(vtx.x, vtx.y, vtx.z, 1.0f)).toVector3();
-	Vertex::setPosition(vtx, res);
+	Vector3 res = (tmat * Vector4(vtx.position, 1.0f)).toVector3();
+	vtx.position = (res);
 	// Normal
-	res = (tmat * Vector4(vtx.nx, vtx.ny, vtx.nz, 1.0f)).toVector3();
-	Vertex::setNormal(vtx, res);
+	res = (tmat * Vector4(vtx.normal, 1.0f)).toVector3();
+	vtx.normal = (res);
 }
 
 inline void srpTransform(Vertex& vtx, Transform3D const& trans) {
@@ -53,10 +53,10 @@ PlaneRef* PlaneRef::setOrigin(
 	Vector3 const& blPos,
 	Vector3 const& brPos
 ) {
-	Vertex::setPosition(origin[0],	tlPos);
-	Vertex::setPosition(origin[1],	trPos);
-	Vertex::setPosition(origin[2],	blPos);
-	Vertex::setPosition(origin[3],	brPos);
+	origin[0].position = (tlPos);
+	origin[1].position = (trPos);
+	origin[2].position = (blPos);
+	origin[3].position = (brPos);
 	return this;
 }
 
@@ -76,10 +76,10 @@ PlaneRef* PlaneRef::setUV(
 		Vector2 const& blUV,
 		Vector2 const& brUV
 	) {
-	Vertex::setUV(origin[0],	tlUV);
-	Vertex::setUV(origin[1],	trUV);
-	Vertex::setUV(origin[2],	blUV);
-	Vertex::setUV(origin[3],	brUV);
+	origin[0].uv = (tlUV);
+	origin[1].uv = (trUV);
+	origin[2].uv = (blUV);
+	origin[3].uv = (brUV);
 	return this;
 }
 
@@ -89,10 +89,10 @@ PlaneRef* PlaneRef::setColor(
 		Vector4 const& blCol,
 		Vector4 const& brCol
 	) {
-	Vertex::setColor(origin[0],	tlCol);
-	Vertex::setColor(origin[1],	trCol);
-	Vertex::setColor(origin[2],	blCol);
-	Vertex::setColor(origin[3],	brCol);
+	origin[0].color = (tlCol);
+	origin[1].color = (trCol);
+	origin[2].color = (blCol);
+	origin[3].color = (brCol);
 	return this;
 }
 
@@ -107,10 +107,10 @@ PlaneRef* PlaneRef::setNormal(
 		Vector3 const& bln,
 		Vector3 const& brn
 	) {
-	Vertex::setNormal(origin[0],	tln);
-	Vertex::setNormal(origin[1],	trn);
-	Vertex::setNormal(origin[2],	bln);
-	Vertex::setNormal(origin[3],	brn);
+	origin[0].normal = (tln);
+	origin[1].normal = (trn);
+	origin[2].normal = (bln);
+	origin[3].normal = (brn);
 	return this;
 }
 
@@ -200,18 +200,18 @@ TriangleRef* TriangleRef::setOrigin(
 	Vector3 const& bPos,
 	Vector3 const& cPos
 ) {
-	Vertex::setPosition(origin[0],	aPos);
-	Vertex::setPosition(origin[1],	bPos);
-	Vertex::setPosition(origin[2],	cPos);
+	origin[0].position = (aPos);
+	origin[1].position = (bPos);
+	origin[2].position = (cPos);
 	return this;
 }
 
 /// Transforms the triangle's origin and normals by a given transform.
 TriangleRef* TriangleRef::setOrigin(Transform3D const& trans) {
 	Matrix4x4 tmat(trans);
-	srpTransform(origin[0],	tmat);
-	srpTransform(origin[1],	tmat);
-	srpTransform(origin[2],	tmat);
+	srpTransform(origin[0], tmat);
+	srpTransform(origin[1], tmat);
+	srpTransform(origin[2], tmat);
 	return this;
 }
 
@@ -220,9 +220,9 @@ TriangleRef* TriangleRef::setUV(
 	Vector2 const& bUV,
 	Vector2 const& cUV
 ) {
-	Vertex::setUV(origin[0],	aUV);
-	Vertex::setUV(origin[1],	bUV);
-	Vertex::setUV(origin[2],	cUV);
+	origin[0].uv = (aUV);
+	origin[1].uv = (bUV);
+	origin[2].uv = (cUV);
 	return this;
 }
 
@@ -231,9 +231,9 @@ TriangleRef* TriangleRef::setColor(
 	Vector4 const& bCol,
 	Vector4 const& cCol
 ) {
-	Vertex::setColor(origin[0],	aCol);
-	Vertex::setColor(origin[1],	bCol);
-	Vertex::setColor(origin[2],	cCol);
+	origin[0].color = (aCol);
+	origin[1].color = (bCol);
+	origin[2].color = (cCol);
 	return this;
 }
 
@@ -247,9 +247,9 @@ TriangleRef* TriangleRef::setNormal(
 	Vector3 const& bn,
 	Vector3 const& cn
 ) {
-	Vertex::setNormal(origin[0],	an);
-	Vertex::setNormal(origin[1],	bn);
-	Vertex::setNormal(origin[2],	cn);
+	origin[0].normal = (an);
+	origin[1].normal = (bn);
+	origin[2].normal = (cn);
 	return this;
 }
 

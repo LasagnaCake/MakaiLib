@@ -1,7 +1,7 @@
 #include "core.hpp"
 
 #if (_WIN32 || _WIN64 || __WIN32__ || __WIN64__)
-#include <winuser.h>
+#include <windows.h>
 #define SDL_MAIN_HANDLED
 #endif
 #include <SDL2/SDL.h>
@@ -14,21 +14,23 @@ void Makai::Audio::stopAll() {
 	Mix_HaltChannel(-1);
 }
 
-using Makai::Audio::Format;
+using Format	= Makai::Audio::Format;
+using Formats	= Makai::Audio::Formats;
 
-int getFlags(List<Format> const& formats) {
-	if (!formats) return;
+int getFlags(Formats const& formats) {
+	if (formats.empty()) return 0;
 	using enum Format;
 	int flags = 0;
-    while (Format f: formats) {
+    for (Format f: formats) {
 		switch(f) {
+			using enum Format;
 			case (AF_FLAC):		flags |= MIX_INIT_FLAC;		break;
 			case (AF_MOD):		flags |= MIX_INIT_MOD;		break;
 			case (AF_MP3):		flags |= MIX_INIT_MP3;		break;
 			case (AF_OGG):		flags |= MIX_INIT_OGG;		break;
-			case (AF_MID):		flags |= MIX_INIT_MID;		break;
+			case (AF_MIDI):		flags |= MIX_INIT_MID;		break;
 			case (AF_OPUS):		flags |= MIX_INIT_OPUS;		break;
-			case (AF_WAVPACK):	flags |= MIX_INIT_WAVPACK;	break;
+		//	case (AF_WAVPACK):	flags |= MIX_INIT_WAVPACK;	break;
 			default: break;
 		}
     }
@@ -36,9 +38,9 @@ int getFlags(List<Format> const& formats) {
 }
 
 void Makai::Audio::open(
-	List<Format> const&	formats,
-	uint const&			channels	= 2,
-	uint const&			audioTracks	= 16
+	Formats const&	formats,
+	uint const&		channels,
+	uint const&		audioTracks
 ) {
 	if (!Mix_Init(getFlags(formats))) {
 		throw Error::FailedAction(

@@ -88,8 +88,8 @@ namespace Makai::JSON {
 		bool isDiscarded() const;
 
 	private:
-		Extern::JSONData& cdata;
-		Extern::JSONData dummy;
+		Extern::JSONData const&	cdata;
+		Extern::JSONData		dummy;
 
 		String const name;
 	};

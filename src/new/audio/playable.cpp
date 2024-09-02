@@ -3,7 +3,7 @@
 #include "../file/get.hpp"
 
 #if (_WIN32 || _WIN64 || __WIN32__ || __WIN64__)
-#include <winuser.h>
+#include <windows.h>
 #define SDL_MAIN_HANDLED
 #endif
 #include <SDL2/SDL.h>
@@ -14,14 +14,14 @@ using namespace Makai::Audio;
 List<AudioCallback*> updateQueue;
 
 Playable::Playable() {
-	audioList.push_back(&yield);
+	updateQueue.push_back(&yield);
 }
 
 Playable::Playable(String const& path): Playable() {
 	create(path);
 }
 
-virtual Playable::~Playable() {
+Playable::~Playable() {
 	DEBUGLN("Deleting playable object...");
 	ERASE_IF(updateQueue, elem == &yield);
 	destroy();
@@ -38,10 +38,10 @@ void Playable::create(String const& path) {
 void Playable::destroy() {
 	if (!created) return;
 	onDestroy();
-	data.destroy();
+	data.clear();
 	created = false;
 };
 
-static void Playable::update() {
+void Playable::update() {
 	for(AudioCallback*& c : updateQueue) (*c)();
 }

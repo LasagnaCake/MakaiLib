@@ -1,6 +1,8 @@
 #ifndef MAKAILIB_AUDIO_CORE_H
 #define MAKAILIB_AUDIO_CORE_H
 
+#include "../ctl/ctl.hpp"
+
 namespace Makai::Audio {
 	void stopAll();
 
@@ -12,7 +14,7 @@ namespace Makai::Audio {
 		AF_FLAC,
 		AF_MOD,
 		AF_OPUS,
-		AF_WAVPACK,
+	//	AF_WAVPACK,
 		AF_MAX_FORMATS
 	};
 

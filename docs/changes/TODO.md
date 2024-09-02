@@ -62,6 +62,8 @@
 - - ( ) BBCode
 - - ( ) Custom text tags
 - - - See [Text Tags](../specifications/text-tags.md) for more info
+- [ ] Support for "Game DLLs"
+- - Having the game being separate from the executable, and stuff being loadable from a DLL
 
 ### Major Refactor
 

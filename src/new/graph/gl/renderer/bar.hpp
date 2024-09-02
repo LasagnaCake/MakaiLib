@@ -40,7 +40,7 @@ namespace Makai::Graph {
 		Vector2 offset		= Vector2(0);
 
 		RadialBar(size_t const& layer = 0, bool const& manual = false): DrawableObject(layer, manual) {
-			vertices[0].u = vertices[0].v = 0.5;
+			vertices[0].uv.u = vertices[0].uv.v = 0.5;
 		}
 
 		Material::ObjectMaterial material;

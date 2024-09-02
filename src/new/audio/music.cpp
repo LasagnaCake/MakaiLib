@@ -1,7 +1,7 @@
 #include "music.hpp"
 
 #if (_WIN32 || _WIN64 || __WIN32__ || __WIN64__)
-#include <winuser.h>
+#include <windows.h>
 #define SDL_MAIN_HANDLED
 #endif
 #include <SDL2/SDL.h>
@@ -9,23 +9,15 @@
 
 using namespace Makai::Audio;
 
-namespace {
-	Mix_Music*		current	= nullptr;
-	AudioCallback*	queued	= nullptr;
-}
+namespace Extern = Makai::Extern;
 
-void Music::update() {
-	if (!Mix_PlayingMusic()) {
-		current = nullptr;
-		if (queued) {
-			(*queued)();
-			queued = nullptr;
-		}
-	}
-}
+#define sdlSource ((Mix_Music*)source)
 
-void Music::stop(usize const& fade = 0) {
-	if (fadeOutTime)
+Mix_Music*		current	= nullptr;
+AudioCallback*	queued	= nullptr;
+
+void Music::stop(usize const& fade) {
+	if (fade)
 		Mix_FadeOutMusic(fade);
 	else
 		Mix_HaltMusic();
@@ -47,31 +39,31 @@ schar Music::getVolume() {
 	return Mix_VolumeMusic(-1);
 }
 
-virtual Music::~Music() final {
+Music::~Music() {
 	//destroy();
 }
 
-void Music::play(int const& loops = 0, usize const& fadeInTime = 0) {
+void Music::play(int const& loops, usize const& fadeInTime) {
 	if (!exists()) return;
 	this->loops = loops;
-	current	= source;
+	current	= sdlSource;
 	if (fadeInTime)
-		Mix_FadeInMusic(source, loops, fadeInTime);
+		Mix_FadeInMusic(sdlSource, loops, fadeInTime);
 	else
-		Mix_PlayMusic(source, loops);
+		Mix_PlayMusic(sdlSource, loops);
 }
 
 String Music::getTitle() {
-	return String(Mix_GetMusicTitle(source));
+	return String(Mix_GetMusicTitle(sdlSource));
 }
 
 Music::MetaData Music::getMetaData() {
 	const char* data;
 	return Music::MetaData {
-		(data = Mix_GetMusicTitleTag(source)) ? data : "???",
-		(data = Mix_GetMusicArtistTag(source)) ? data : "???",
-		(data = Mix_GetMusicAlbumTag(source)) ? data : "???",
-		(data = Mix_GetMusicCopyrightTag(source)) ? data : "???"
+		(data = Mix_GetMusicTitleTag(sdlSource)) ? data : "???",
+		(data = Mix_GetMusicArtistTag(sdlSource)) ? data : "???",
+		(data = Mix_GetMusicAlbumTag(sdlSource)) ? data : "???",
+		(data = Mix_GetMusicCopyrightTag(sdlSource)) ? data : "???"
 	};
 }
 
@@ -79,7 +71,7 @@ void Music::switchInto(usize const& fadeOutTime, usize const& fadeInTime) {
 	if (!exists()) return;
 	this->fadeInTime = fadeInTime;
 	queueMusic();
-	stopMusic(fadeOutTime);
+	stop(fadeOutTime);
 }
 
 void Music::switchInto(usize const& fadeOutTime, usize const& fadeInTime, int const& loops) {
@@ -87,7 +79,7 @@ void Music::switchInto(usize const& fadeOutTime, usize const& fadeInTime, int co
 	this->fadeInTime	= fadeInTime;
 	this->loops			= loops;
 	queueMusic();
-	stopMusic(fadeOutTime);
+	stop(fadeOutTime);
 }
 
 void Music::queueMusic() {
@@ -95,13 +87,13 @@ void Music::queueMusic() {
 	queued = &onQueue;
 }
 
-inline Extern::Resource Music::getSource() {
+Extern::Resource Music::getSource() {
 	return source;
 }
 
-void Music::onCreate(Extern::Resource const& data) final override {
+void Music::onCreate(Extern::Resource const& data) {
 	if (!isOpen()) throw Error::FailedAction("Failed to load file: Audio system is closed!");
-	source = Mix_LoadMUS_RW(data, true);
+	source = (Extern::Resource)Mix_LoadMUS_RW((SDL_RWops*)data, true);
 	if (!source)
 		throw Error::FailedAction(
 			"Could not load file!",
@@ -112,23 +104,23 @@ void Music::onCreate(Extern::Resource const& data) final override {
 		);
 }
 
-void Music::onDestroy() final override {
+void Music::onDestroy() {
 	DEBUGLN("Deleting music source...");
 	if (isOpen()) {
 		if (queued == &onQueue)
 			queued = nullptr;
-		if (Mix_PlayingMusic() && current == source)
+		if (Mix_PlayingMusic() && current == sdlSource)
 			Mix_HaltMusic();
-		Mix_FreeMusic(source);
+		Mix_FreeMusic(sdlSource);
 	}
 	DEBUGLN("Music source deleted!");
 }
 
-void Music::onUpdate() final override {
+void Music::onUpdate() {
 	if (current != source) return;
 }
 
-static void Music::update() {
+void Music::update() {
 	if (!Mix_PlayingMusic()) {
 		current = nullptr;
 		if (queued) {

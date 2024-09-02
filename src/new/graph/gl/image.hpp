@@ -86,13 +86,18 @@ namespace Makai::Graph {
 		};
 
 		enum class ComponentLayout {
+			/// Auto-detect components
 			CL_AUTO = -1,
+			/// Standard image components
 			CL_D,
 			CL_R,
 			CL_DS,
 			CL_RG,
 			CL_RGB,
-			CL_RGBA
+			CL_RGBA,
+			/// Specialized components
+			CL_RGBA_16F,
+			CL_D24_S8
 		};
 
 		enum class FilterMode {

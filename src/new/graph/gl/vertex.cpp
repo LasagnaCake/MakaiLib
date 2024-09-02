@@ -27,22 +27,26 @@ VertexMap Vertex::defaultMap() {
 	};
 }
 
-Vertex Vertex::from(VertexMap vm) {
-	return Vertex {
-		vm["x"],
-		vm["y"],
-		vm["z"],
-		vm["u"],
-		vm["v"],
-		vm["r"],
-		vm["g"],
-		vm["b"],
-		vm["a"],
-		vm["nx"],
-		vm["ny"],
-		vm["nz"]
-	};
+inline float getValue(VertexMap const& vmap, String const& value, float const& fallback) {
+	return vmap.contains(value) ? vmap.at(value) : fallback;
 }
+
+Vertex::Vertex(VertexMap const& vmap)
+	: Vertex(
+		getValue(vmap, "x",		0),
+		getValue(vmap, "y",		0),
+		getValue(vmap, "z",		0),
+		getValue(vmap, "u",		0),
+		getValue(vmap, "v",		0),
+		getValue(vmap, "r",		1),
+		getValue(vmap, "g",		1),
+		getValue(vmap, "b",		1),
+		getValue(vmap, "a",		1),
+		getValue(vmap, "nx",	0),
+		getValue(vmap, "ny",	0),
+		getValue(vmap, "nz",	0)
+	)
+{}
 
 void Vertex::setAttributes() {
 	// Position
@@ -51,7 +55,7 @@ void Vertex::setAttributes() {
 		3,
 		GL_FLOAT,
 		GL_FALSE,
-		sizeof(vertex),
+		sizeof(Vertex),
 		GET_GL_OFFSET(0)
 	);
 	// UV
@@ -60,7 +64,7 @@ void Vertex::setAttributes() {
 		2,
 		GL_FLOAT,
 		GL_FALSE,
-		sizeof(vertex),
+		sizeof(Vertex),
 		GET_GL_OFFSET(3)
 	);
 	// Color
@@ -69,7 +73,7 @@ void Vertex::setAttributes() {
 		4,
 		GL_FLOAT,
 		GL_FALSE,
-		sizeof(vertex),
+		sizeof(Vertex),
 		GET_GL_OFFSET(5)
 	);
 	// Normal
@@ -78,7 +82,7 @@ void Vertex::setAttributes() {
 		3,
 		GL_FLOAT,
 		GL_FALSE,
-		sizeof(vertex),
+		sizeof(Vertex),
 		GET_GL_OFFSET(8)
 	);
 }

@@ -89,7 +89,7 @@ Base::FrameBuffer& Base::FrameBuffer::create(uint const& width, uint const& heig
 		Image2D::FilterMode::FM_SMOOTH,
 		Image2D::FilterMode::FM_SMOOTH,
 		NULL,
-		GL_RGBA16F
+		Image2D::ComponentLayout::CL_RGBA_16F
 	);
 	glFramebufferTexture2D(
 		GL_FRAMEBUFFER,
@@ -106,7 +106,7 @@ Base::FrameBuffer& Base::FrameBuffer::create(uint const& width, uint const& heig
 		Image2D::FilterMode::FM_SMOOTH,
 		Image2D::FilterMode::FM_SMOOTH,
 		NULL,
-		GL_DEPTH24_STENCIL8
+		Image2D::ComponentLayout::CL_D24_S8
 	);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LESS);
 	glFramebufferTexture2D(

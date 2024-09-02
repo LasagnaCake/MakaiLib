@@ -84,7 +84,7 @@ Makai::JSON::JSONValue::JSONValue(Makai::JSON::Extern::JSONData const& data): JS
 
 Makai::JSON::JSONValue::JSONValue(Makai::JSON::JSONValue const& other): JSONValue(other.getName(), other.data) {}
 
-Makai::JSON::JSONValue::JSONValue(Makai::JSON::JSONView const& view): JSONValue(other.getName(), other.json()) {}
+Makai::JSON::JSONValue::JSONValue(Makai::JSON::JSONView const& view): JSONValue(view.getName(), view.json()) {}
 
 Makai::JSON::JSONValue& Makai::JSON::JSONValue::clear() {
 	data = Nlohmann::object();
