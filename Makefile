@@ -53,7 +53,7 @@ build-debug:
 
 build-release:
 	@cd src/new
-	@make debug
+	@make release
 	@cd ../..
 
 copy-headers:
