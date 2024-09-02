@@ -17,7 +17,7 @@ jobs:
       id: install_cc
       uses: rlalik/setup-cpp-compiler@master
       with:
-        compiler: latest
+        compiler: gcc-13.0.2
     - name: Use the compilers
       env:
         CC: ${{ steps.install_cc.outputs.cc }}
