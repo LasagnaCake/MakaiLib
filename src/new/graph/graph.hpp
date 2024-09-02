@@ -11,4 +11,4 @@
 #include "gl/graph.hpp"
 #endif
 
-#endif MAKAILIB_GRAPH_H
+#endif // MAKAILIB_GRAPH_H
