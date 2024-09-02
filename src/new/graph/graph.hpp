@@ -6,7 +6,7 @@ namespace Makai::Graph {
 		GA_OPENGL,
 		GA_VULKAN,
 		GA_DIRECT3D
-	}
+	};
 }
 
 #define MAKAILIB_USE_OPENGL (1)
