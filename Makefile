@@ -63,12 +63,14 @@ copy-o-debug:
 
 link-debug: copy-includes copy-o-debug
 	@mkdir -p output/lib
-	@ld -o output/lib/libmakai.debug.a obj/*.debug.o --whole-archive $(LIBRARIES)
+	@ld -o output/lib/libmakai.debug.o obj/*.debug.o --whole-archive $(LIBRARIES)
+	@ar ruvs output/lib/libmakai.debug.a output/lib/libmakai.debug.o
 	@ranlib output/lib/libmakai.debug.a
 	@echo 
 
 link-release: copy-includes copy-o-release
 	@mkdir -p output/lib
-	@ld -o output/lib/libmakai.debug.a obj/*.debug.o $(LEAN) --whole-archive $(LIBRARIES)
+	@ld -o output/lib/libmakai.o obj/*.release.o $(LEAN) --whole-archive $(LIBRARIES)
+	@ar ruvs output/lib/libmakai.a output/lib/libmakai.o
 	@ranlib output/lib/libmakai.a
 	@echo 
