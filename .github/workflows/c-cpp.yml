@@ -17,7 +17,7 @@ jobs:
       id: install_cc
       uses: rlalik/setup-cpp-compiler@master
       with:
-        compiler: gcc-13.0.2
+        compiler: gcc-13
     - name: Start
       run: echo "Starting build..."
     - name: make debug
