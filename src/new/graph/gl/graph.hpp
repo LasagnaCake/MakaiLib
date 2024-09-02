@@ -1,5 +1,5 @@
-#ifndef MAKAILIB_GRAPH_H
-#define MAKAILIB_GRAPH_H
+#ifndef MAKAILIB_GRAPH_GL_H
+#define MAKAILIB_GRAPH_GL_H
 
 #include "global.hpp"
 #include "camera.hpp"
@@ -15,4 +15,4 @@
 
 namespace MkGraph = Makai::Graph;
 
-#endif // MAKAILIB_GRAPH_H
+#endif // MAKAILIB_GRAPH_GL_H
