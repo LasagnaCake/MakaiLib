@@ -51,26 +51,28 @@ build-release:
 
 copy-includes:
 	@mkdir -p output/include
-	@cp -r -v "src/new/*.hpp" "output/include"
+	@cd src/new
+	@cp -r --parents **/*.hpp ../../output/include/
+	@cd ../..
 
 copy-o-debug:
-	@mkdir -p obj
-	@cp --parents `find -name \*.debug.o` obj
+	@mkdir -p obj/debug
+	@cp src/new/**/*.debug.o obj/debug/
 
-copy-o-debug:
-	@mkdir -p obj
-	@cp --parents `find -name \*.release.o` obj
+copy-o-release:
+	@mkdir -p obj/debug
+	@cp src/new/**/*.release.o obj/release/
 
 link-debug: copy-includes copy-o-debug
 	@mkdir -p output/lib
-	@ld -o output/lib/libmakai.debug.o obj/*.debug.o --whole-archive $(LIBRARIES)
-	@ar ruvs output/lib/libmakai.debug.a output/lib/libmakai.debug.o
+	@ld -o obj/libmakai.debug.o obj/debug/*.debug.o --whole-archive $(LIBRARIES)
+	@ar ruvs output/lib/libmakai.debug.a obj/libmakai.debug.o
 	@ranlib output/lib/libmakai.debug.a
 	@echo 
 
 link-release: copy-includes copy-o-release
 	@mkdir -p output/lib
-	@ld -o output/lib/libmakai.o obj/*.release.o $(LEAN) --whole-archive $(LIBRARIES)
-	@ar ruvs output/lib/libmakai.a output/lib/libmakai.o
+	@ld -o obj/libmakai.o obj/release/*.release.o $(LEAN) --whole-archive $(LIBRARIES)
+	@ar ruvs output/lib/libmakai.a obj/libmakai.o
 	@ranlib output/lib/libmakai.a
 	@echo 
