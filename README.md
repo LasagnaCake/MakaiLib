@@ -1,5 +1,7 @@
 # Makai Game Engine
 
+[![Core Library CI](https://github.com/LasagnaCake/MakaiLib/actions/workflows/core-lib.yml/badge.svg)](https://github.com/LasagnaCake/MakaiLib/actions/workflows/core-lib.yml)
+
 ## Table of contents
 
 - [Overview](#Overview)
