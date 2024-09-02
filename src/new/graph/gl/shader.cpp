@@ -9,7 +9,9 @@ using namespace Makai::Graph;
 
 namespace SLF = Makai::SLF;
 
-constexpr GLuint getGLShaderType(SLF::ShaderType const& type) {
+using ShaderType = SLF::ShaderType;
+
+constexpr GLuint getGLShaderType(ShaderType const& type) {
 	switch (type) {
 		default:
 		case ShaderType::ST_INVALID:	return GL_FALSE;
@@ -32,7 +34,7 @@ struct Shader::ShaderProgram {
 };
 
 /// Similar to create, but internal.
-void Shader::attach(String const& code, SLF::ShaderType const& shaderType) {
+void Shader::attach(String const& code, ShaderType const& shaderType) {
 	// Compile shaders
 	GLuint shader;
 	int success;
@@ -74,7 +76,7 @@ Shader::Shader(SLF::SLFData const& slfData) {
 	create(slfData);
 }
 
-Shader::Shader(String const& code, SLF::ShaderType const& shaderType) {
+Shader::Shader(String const& code, ShaderType const& shaderType) {
 	create(code, shaderType);
 }
 
@@ -100,10 +102,10 @@ bool Shader::create(String const& vertexCode, String const& fragmentCode) {
 	if (created) return false;
 	else created = true;
 	// Compile shaders
-	GLuint vertex, fragment;
+	GLuint vertex = 0, fragment = 0;
 	int success;
 	char infoLog[2048];
-	if (vertexCode != SHADER_NULL) {
+	if (vertexCode != "") {
 		const char* vShaderCode = vertexCode.c_str();
 		// Vertex Shader
 		vertex = glCreateShader(GL_VERTEX_SHADER);
@@ -117,7 +119,7 @@ bool Shader::create(String const& vertexCode, String const& fragmentCode) {
 		};
 	}
 	// similiar for Fragment Shader
-	if (fragmentCode != SHADER_NULL) {
+	if (fragmentCode != "") {
 		const char* fShaderCode = fragmentCode.c_str();
 		fragment = glCreateShader(GL_FRAGMENT_SHADER);
 		glShaderSource(fragment, 1, &fShaderCode, NULL);
@@ -154,14 +156,12 @@ bool Shader::create(SLF::SLFData const& slfData) {
 	String shaderPath = "";
 	String log = "";
 	String code;
-	GLuint type;
 	for (SLF::ShaderEntry const& shader: slfData.shaders) {
 		shaderPath = FileSystem::concatenatePath(dir, shader.path);
 		DEBUGLN(shaderPath);
-		code = getTextFile(shaderPath);
-		type = getGLShaderType(shader.type);
+		code = File::getTextFile(shaderPath);
 		try {
-			attach(code, type);
+			attach(code, shader.type);
 		} catch (Error::Error const& err) {
 			log += String("\n[[ Error on shader '") + shaderPath + "'! ]]:\n";
 			log += err.what();
@@ -174,7 +174,7 @@ bool Shader::create(SLF::SLFData const& slfData) {
 }
 
 /// Creates a shader from a given shader code, and a shader type  and associates it to the object. Returns false if already created.
-bool Shader::create(String const& code, GLuint const& shaderType) {
+bool Shader::create(String const& code, ShaderType const& shaderType) {
 	if (created) return false;
 	else created = true;
 	// Compile shaders
@@ -216,7 +216,7 @@ void Shader::make(SLF::SLFData const& slfData) {
 	create(slfData);
 }
 
-void Shader::make(String const& code, GLuint const& shaderType) {
+void Shader::make(String const& code, ShaderType const& shaderType) {
 	destroy();
 	create(code, shaderType);
 }

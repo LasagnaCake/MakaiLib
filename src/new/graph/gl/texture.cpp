@@ -384,7 +384,8 @@ Texture2D& Texture2D::makeUnique(bool const& filter) {
 		image->attributes.format,
 		image->attributes.minFilter,
 		image->attributes.magFilter,
-		image->attributes.format
+		NULL,
+		image->attributes.layout
 	);
 	copyTexture(
 		(Image2D*)image, (Image2D*)newImg,

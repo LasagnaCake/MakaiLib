@@ -67,6 +67,7 @@ namespace VecType {
 * [                 ]
 * [-----------------]
 */
+#pragma pack(1)
 class Vector2
 {
 	public:
@@ -416,7 +417,7 @@ class Vector2
 * [                 ]
 * [-----------------]
 */
-
+#pragma pack(1)
 class Vector3
 {
 	public:
@@ -829,6 +830,7 @@ class Vector3
 * [                 ]
 * [-----------------]
 */
+#pragma pack(1)
 class Vector4
 {
 	public:
@@ -1631,6 +1633,10 @@ using
 	VecMath::Transform3D,
 	VecMath::Transform
 ;
+
+static_assert(sizeof(Vector2) == (sizeof(float) * 2), "Vector2 has some size issues...");
+static_assert(sizeof(Vector3) == (sizeof(float) * 3), "Vector3 has some size issues...");
+static_assert(sizeof(Vector4) == (sizeof(float) * 4), "Vector4 has some size issues...");
 
 #pragma GCC diagnostic pop
 
