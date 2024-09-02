@@ -13,12 +13,12 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    - name: Set up GCC
-      uses: egor-tensin/setup-gcc@v1
+    - name: Install compiler
+      id: install_cc
+      uses: rlalik/setup-cpp-compiler@master
       with:
-        version: 13.2.0
-        platform: x64
-    - name: Use compilers
+        compiler: latest
+    - name: Use the compilers
       env:
         CC: ${{ steps.install_cc.outputs.cc }}
         CXX: ${{ steps.install_cc.outputs.cxx }}
@@ -26,5 +26,11 @@ jobs:
       run: echo "Starting build..."
     - name: make debug
       run: make debug
+      env:
+        CC: ${{ steps.install_cc.outputs.cc }}
+        CXX: ${{ steps.install_cc.outputs.cxx }}
     - name: make release
       run: make debug
+      env:
+        CC: ${{ steps.install_cc.outputs.cc }}
+        CXX: ${{ steps.install_cc.outputs.cxx }}
