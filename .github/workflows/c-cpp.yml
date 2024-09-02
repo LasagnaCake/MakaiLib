@@ -13,6 +13,11 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+    - name: prepend
+    - run: |
+        sudo apt update
+        sudo apt install gcc-10 g++-10
+      shell: bash
     - name: make debug
       run: make debug
       env:
