@@ -1,5 +1,5 @@
-#ifndef MAKAILIB_GRAPH_SELECT_H
-#define MAKAILIB_GRAPH_SELECT_H
+#ifndef MAKAILIB_GRAPH_H
+#define MAKAILIB_GRAPH_H
 
 #define MKGRAPH_OPENGL (1)
 
@@ -11,4 +11,4 @@
 #include "gl/graph.hpp"
 #endif
 
-#endif MAKAILIB_GRAPH_SELECT_H
+#endif MAKAILIB_GRAPH_H
