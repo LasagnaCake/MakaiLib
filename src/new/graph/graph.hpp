@@ -1,13 +1,22 @@
 #ifndef MAKAILIB_GRAPH_H
 #define MAKAILIB_GRAPH_H
 
-#define MKGRAPH_OPENGL (1)
+namespace Makai::Graph {
+	enum class GraphicalAPI {
+		GA_OPENGL,
+		GA_VULKAN,
+		GA_DIRECT3D
+	}
+}
 
-#ifndef MKGRAPH_GRAPHICAL_API
-#define MKGRAPH_GRAPHICAL_API MKGRAPH_OPENGL
+#define MAKAILIB_USE_OPENGL (1)
+
+#ifndef MAKAILIB_GRAPHICAL_API
+#define MAKAILIB_GRAPHICAL_API MAKAILIB_USE_OPENGL
 #endif
 
-#if MKGRAPH_GRAPHICAL_API == MKGRAPH_OPENGL
+#if (MAKAILIB_GRAPHICAL_API == MAKAILIB_USE_OPENGL)
+namespace Makai::Graph {constexpr GraphicalAPI API = GraphicalAPI::GA_OPENGL;}
 #include "gl/graph.hpp"
 #endif
 
