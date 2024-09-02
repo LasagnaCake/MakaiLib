@@ -9,7 +9,7 @@ on:
 jobs:
   build:
 
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     steps:
     - uses: actions/checkout@v4
@@ -18,7 +18,7 @@ jobs:
       uses: rlalik/setup-cpp-compiler@master
       with:
         compiler: gcc-13
-    - name: Start
+    - name: Start this nightmare
       run: echo "Starting build..."
     - name: make debug
       run: make debug
