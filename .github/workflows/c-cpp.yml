@@ -15,5 +15,11 @@ jobs:
     - uses: actions/checkout@v4
     - name: make debug
       run: make debug
+      env:
+       CC:   gcc-13
+       CXX:  g++-13
     - name: make release
       run: make release
+      env:
+       CC:   gcc-13
+       CXX:  g++-13
