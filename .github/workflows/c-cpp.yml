@@ -1,0 +1,19 @@
+name: C/C++ CI
+
+on:
+  push:
+    branches: [ "the-great-refactor" ]
+  pull_request:
+    branches: [ "the-great-refactor" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: make debug
+      run: make debug
+    - name: make release
+      run: make release
