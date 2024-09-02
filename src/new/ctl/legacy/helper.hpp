@@ -935,8 +935,8 @@ namespace System {
 		return (int)res;
 		#else
 		if (!args.empty())
-			return system(path + " " + prgArgs);
-		return system(path);
+			return system(path + String(" ") + prgArgs);
+		return system(path.c_str());
 		#endif
 	}
 
