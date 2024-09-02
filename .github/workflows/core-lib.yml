@@ -1,10 +1,14 @@
 name: Core Library CI
 
 on:
-  push:
-    branches: [ "the-great-refactor" ]
+  schedule:
+    - cron: '30 9 * * 1-5'
+#  push:
+#    branches: [ "the-great-refactor" ]
+#    paths: [ "**.hpp", "**.cpp", ".github/workflows", "Makefile" ]
   pull_request:
-    branches: [ "the-great-refactor" ]
+    types: [ "closed" ]
+    branches: [ "main" ]
 
 jobs:
   build:
