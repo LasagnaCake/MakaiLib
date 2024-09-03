@@ -59,6 +59,7 @@ build-release:
 copy-headers:
 	@mkdir -p output/include
 	@cd src/new
+	@cp -r --parents *.hpp ../../output/include/
 	@cp -r --parents **/*.hpp ../../output/include/
 	@cp -r --parents **/**/*.hpp ../../output/include/
 	@cp -r --parents **/**/**/*.hpp ../../output/include/
@@ -67,6 +68,7 @@ copy-headers:
 
 copy-o-debug:
 	@mkdir -p obj/debug
+	#@cp -r src/new/*.debug.o obj/debug/
 	@cp -r src/new/**/*.debug.o obj/debug/
 	@cp -r src/new/**/**/*.debug.o obj/debug/
 	@cp -r src/new/**/**/**/*.debug.o obj/debug/
@@ -74,6 +76,7 @@ copy-o-debug:
 
 copy-o-release:
 	@mkdir -p obj/release
+	#@cp -r src/new/*.release.o obj/release/
 	@cp -r src/new/**/*.release.o obj/release/
 	@cp -r src/new/**/**/*.release.o obj/release/
 	@cp -r src/new/**/**/**/*.release.o obj/release/
