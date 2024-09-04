@@ -6,6 +6,7 @@ on:
 #  push:
 #    branches: [ "the-great-refactor" ]
 #    paths: [ "**.hpp", "**.cpp", ".github/workflows", "Makefile" ]
+  workflow_dispatch:
   pull_request:
     types: [ "closed" ]
     branches: [ "main" ]
