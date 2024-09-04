@@ -14,7 +14,6 @@ export openmp
 endif
 
 prefix += .core
-export prefix
 
 OPTIMIZATIONS	:= $(USE_OPENMP) -funswitch-loops -fpredictive-commoning -fgcse-after-reload -ftree-vectorize $(LEAN)
 
@@ -49,7 +48,7 @@ debug:
 	$(COMPILER) $(DEBUGCOMPCFG) -c popup.cpp -o $(prefix).popup.$@.o
 
 	@cd input
-	@make $@
+	@make $@ prefix=$(prefix)
 	@cd ..
 
 
@@ -60,5 +59,5 @@ release:
 	$(COMPILER) $(COMPCFG) -c popup.cpp -o $(prefix).popup.$@.o
 
 	@cd input
-	@make $@
+	@make $@ prefix=$(prefix)
 	@cd ..
