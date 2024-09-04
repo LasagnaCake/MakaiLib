@@ -2,7 +2,7 @@ name: Core Library CI
 
 on:
 #  schedule:
-#    - cron: '30 9 * * 1-5'
+#    - cron: '30 9 * * 1'
 #  push:
 #    branches: [ "the-great-refactor" ]
 #    paths: [ "**.hpp", "**.cpp", ".github/workflows", "Makefile" ]
