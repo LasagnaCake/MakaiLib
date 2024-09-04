@@ -72,7 +72,7 @@ jobs:
           cd ..
       - uses: actions/upload-artifact@master
         with:
-          name: test-release
+          name: tests-debug
           path: tests/output/debug
 
   build-tests-release:
@@ -92,5 +92,5 @@ jobs:
           cd ..
       - uses: actions/upload-artifact@master
         with:
-          name: test-release
+          name: tests-release
           path: tests/output/release
