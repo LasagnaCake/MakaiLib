@@ -13,6 +13,9 @@ USE_OPENMP := -fopenmp -openmp -ftree-parallelize-loops=128
 export openmp
 endif
 
+prefix += .data
+export prefix
+
 OPTIMIZATIONS	:= $(USE_OPENMP) -funswitch-loops -fpredictive-commoning -fgcse-after-reload -ftree-vectorize $(LEAN)
 
 INCLUDES := -I$(ROOT)/lib/cppcodec-0.2
@@ -40,10 +43,10 @@ endef
 all: debug release
 
 debug:
-	$(COMPILER) $(DEBUGCOMPCFG) -c encdec.cpp -o data.encdec.$@.o
-	$(COMPILER) -I$(ROOT)/lib/cryptopp/include $(DEBUGCOMPCFG) -c hash.cpp -o data.hash.$@.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c encdec.cpp -o $(prefix).encdec.$@.o
+	$(COMPILER) -I$(ROOT)/lib/cryptopp/include $(DEBUGCOMPCFG) -c hash.cpp -o $(prefix).hash.$@.o
 
 
 release:
-	$(COMPILER) $(COMPCFG) -c encdec.cpp -o data.encdec.$@.o
-	$(COMPILER) -I$(ROOT)/lib/cryptopp/include $(COMPCFG) -c hash.cpp -o data.hash.$@.o
+	$(COMPILER) $(COMPCFG) -c encdec.cpp -o $(prefix).encdec.$@.o
+	$(COMPILER) -I$(ROOT)/lib/cryptopp/include $(COMPCFG) -c hash.cpp -o $(prefix).hash.$@.o
