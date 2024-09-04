@@ -12,7 +12,6 @@ export openmp
 endif
 
 prefix += .file
-export prefix
 
 OPTIMIZATIONS	:= $(USE_OPENMP) -funswitch-loops -fpredictive-commoning -fgcse-after-reload -ftree-vectorize $(LEAN)
 
