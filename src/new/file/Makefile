@@ -44,6 +44,6 @@ debug:
 
 
 release:
-	$(COMPILER) $(COMPCFG) -c json.cpp -o file.json.$@.o
-	$(COMPILER) $(COMPCFG) -c slf.cpp -o file.slf.$@.o
-	$(COMPILER) $(COMPCFG) -c get.cpp -o file.get.$@.o
+	$(COMPILER) $(COMPCFG) -c json.cpp -o $(prefix).json.$@.o
+	$(COMPILER) $(COMPCFG) -c slf.cpp -o $(prefix).slf.$@.o
+	$(COMPILER) $(COMPCFG) -c get.cpp -o $(prefix).get.$@.o
