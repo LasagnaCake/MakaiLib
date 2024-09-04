@@ -8,7 +8,7 @@ ifdef openmp
 export openmp
 endif
 
-prefix := makai
+prefix := .makai
 export prefix
 
 .PHONY: debug release all
