@@ -28,7 +28,6 @@ COMPILER	:= @$(CXX) $(INCLUDES)
 LINKER		:= @$(CXX)
 
 prefix += .mat
-export prefix
 
 define GET_TIME
 @printf "\nTime: "
