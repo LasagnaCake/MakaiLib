@@ -1,8 +1,8 @@
 name: Core Library CI
 
 on:
-#  schedule:
-#    - cron: '30 9 * * 1'
+  schedule:
+    - cron: '30 9 * * 1'
   push:
     branches: [ "the-great-refactor" ]
   workflow_dispatch:
@@ -34,6 +34,10 @@ jobs:
       env:
         CC: ${{ steps.install_cc.outputs.cc }}
         CXX: ${{ steps.install_cc.outputs.cxx }}
+    - uses: actions/upload-artifact@master
+      with:
+        name: lib-debug
+        path: output
 
   build-core-lib-release:
     name: Build Core Library (RELEASE)
@@ -46,6 +50,10 @@ jobs:
       env:
         CC: ${{ steps.install_cc.outputs.cc }}
         CXX: ${{ steps.install_cc.outputs.cxx }}
+    - uses: actions/upload-artifact@master
+      with:
+        name: lib-release
+        path: output
         
   build-tests-debug:
     name: Build Tests (DEBUG)
@@ -53,6 +61,10 @@ jobs:
     needs: [build-core-lib-debug]
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/download-artifact@master
+        with:
+          name: lib-debug
+          path: output
       - name: make tests
         run: |
           cd tests
@@ -64,6 +76,10 @@ jobs:
     needs: [build-core-lib-release]
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/download-artifact@master
+        with:
+          name: lib-release
+          path: output
       - name: make tests
         run: |
           cd tests
