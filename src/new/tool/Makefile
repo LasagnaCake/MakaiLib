@@ -8,9 +8,8 @@ ifdef openmp
 export openmp
 endif
 
-ifdef prefix
+prefix += .tool
 export prefix
-endif
 
 .PHONY: debug release all
 .ONESHELL:
