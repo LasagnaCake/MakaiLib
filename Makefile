@@ -64,6 +64,7 @@ copy-headers:
 	@cp -r --parents **/**/*.hpp ../../output/include/
 	@cp -r --parents **/**/**/*.hpp ../../output/include/
 	#@cp -r --parents **/**/**/**/*.hpp ../../output/include/
+	@cp -r --parents ctl/* ../../output/include/
 	@cd ../..
 
 copy-o-debug:
