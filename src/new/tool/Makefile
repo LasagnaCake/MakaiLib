@@ -8,7 +8,7 @@ ifdef openmp
 export openmp
 endif
 
-override prefix += .tool
+override prefix+=.tool
 
 .PHONY: debug release all
 .ONESHELL:
