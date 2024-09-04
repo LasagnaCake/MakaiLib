@@ -35,8 +35,8 @@ endef
 all: debug release
 
 debug:
-	$(COMPILER) $(DEBUGCOMPCFG) -c effect.cpp -o effect.$@.o
-	$(COMPILER) $(DEBUGCOMPCFG) -c materials.cpp -o materials.$@.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c effect.cpp -o effect.gl.$@.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c materials.cpp -o materials.gl.$@.o
 
 
 release:
