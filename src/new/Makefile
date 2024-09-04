@@ -8,7 +8,7 @@ ifdef openmp
 export openmp
 endif
 
-prefix += .makai
+override prefix += .makai
 
 .PHONY: debug release all
 .ONESHELL:
