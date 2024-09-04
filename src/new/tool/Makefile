@@ -8,6 +8,10 @@ ifdef openmp
 export openmp
 endif
 
+ifdef prefix
+export prefix
+endif
+
 .PHONY: debug release all
 .ONESHELL:
 .SHELLFLAGS = -ec
