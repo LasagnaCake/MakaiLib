@@ -9,7 +9,6 @@ export openmp
 endif
 
 prefix := .makai
-export prefix
 
 .PHONY: debug release all
 .ONESHELL:
@@ -40,31 +39,31 @@ debug:
 	@echo ""
 
 	@cd impl
-	@make $@
+	@make $@ prefix=$(prefix)
 	@cd ..
 
 	@cd tool
-	@make $@
+	@make $@ prefix=$(prefix)
 	@cd ..
 
 	@cd file
-	@make $@
+	@make $@ prefix=$(prefix)
 	@cd ..
 
 	@cd data
-	@make $@
+	@make $@ prefix=$(prefix)
 	@cd ..
 
 	@cd audio
-	@make $@
+	@make $@ prefix=$(prefix)
 	@cd ..
 
 	@cd graph/gl
-	@make $@
+	@make $@ prefix=$(prefix)
 	@cd ../..
 
 	@cd core
-	@make $@
+	@make $@ prefix=$(prefix)
 	@cd ..
 
 	@echo ""
@@ -112,31 +111,31 @@ release:
 	@echo ""
 
 	@cd impl
-	@make $@
+	@make $@ prefix=$(prefix)
 	@cd ..
 
 	@cd tool
-	@make $@
+	@make $@ prefix=$(prefix)
 	@cd ..
 
 	@cd file
-	@make $@
+	@make $@ prefix=$(prefix)
 	@cd ..
 
 	@cd data
-	@make $@
+	@make $@ prefix=$(prefix)
 	@cd ..
 
 	@cd audio
-	@make $@
+	@make $@ prefix=$(prefix)
 	@cd ..
 
 	@cd graph/gl
-	@make $@
+	@make $@ prefix=$(prefix)
 	@cd ../..
 
 	@cd core
-	@make $@
+	@make $@ prefix=$(prefix)
 	@cd ..
 
 	@echo ""
