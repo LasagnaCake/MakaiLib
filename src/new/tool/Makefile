@@ -18,11 +18,11 @@ all: debug release
 
 debug:
 	@cd archive
-	@make $@ prefix=$(prefix)
+	@make $@ prefix="$(prefix)"
 	@cd ..
 
 
 release:
 	@cd archive
-	@make $@ prefix=$(prefix)
+	@make $@ prefix="$(prefix)"
 	@cd ..
