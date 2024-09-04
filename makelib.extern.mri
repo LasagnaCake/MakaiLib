@@ -1,8 +1,8 @@
 create obj/extern/extern.3p.a
-addlib obj/extern/e3p.sdl.a
-addlib obj/extern/e3p.sdl-net.a
-addlib obj/extern/e3p.sdl-mixer.a
-addlib obj/extern/e3p.glew.a
-addlib obj/extern/e3p.cryptopp.a
+addlib obj/extern/lib.3p.sdl.a
+addlib obj/extern/lib.3p.sdl-net.a
+addlib obj/extern/lib.3p.sdl-mixer.a
+addlib obj/extern/lib.3p.glew.a
+addlib obj/extern/lib.3p.cryptopp.a
 save
 end
