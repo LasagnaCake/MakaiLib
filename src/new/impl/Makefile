@@ -35,8 +35,8 @@ endef
 all: debug release
 
 debug:
-	$(COMPILER) $(DEBUGCOMPCFG) -c stb.cpp -o stb.$@.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c stb.cpp -o impl.stb.$@.o
 
 
 release:
-	$(COMPILER) $(COMPCFG) -c stb.cpp -o stb.$@.o
+	$(COMPILER) $(COMPCFG) -c stb.cpp -o impl.stb.$@.o

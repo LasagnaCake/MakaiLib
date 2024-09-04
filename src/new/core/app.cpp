@@ -20,11 +20,11 @@
 #include "../file/slf.hpp"
 #include "app.hpp"
 
-void setFrontFace(bool const& clockwise = true) {
+inline void setFrontFace(bool const& clockwise = true) {
 	glFrontFace(clockwise ? GL_CW : GL_CCW);
 }
 
-void clearColorBuffer(Vector4 const& color) {
+inline void clearColorBuffer(Vector4 const& color) {
 	glClearColor(color.r, color.g, color.b, color.a);
 	glClear(GL_COLOR_BUFFER_BIT);
 }
@@ -186,6 +186,10 @@ App::App (
 		Entities::init();
 	}
 	DEBUGLN("All core systems initialized!");
+}
+
+App::~App() {
+	terminate();
 }
 
 void App::setGLDebug(bool const& state) {

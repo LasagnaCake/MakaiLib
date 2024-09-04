@@ -35,10 +35,10 @@ endef
 all: debug release
 
 debug:
-	$(COMPILER) $(DEBUGCOMPCFG) -c encdec.cpp -o encdec.$@.o
-	$(COMPILER) -I$(ROOT)/lib/cryptopp/include $(DEBUGCOMPCFG) -c hash.cpp -o hash.$@.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c encdec.cpp -o data.encdec.$@.o
+	$(COMPILER) -I$(ROOT)/lib/cryptopp/include $(DEBUGCOMPCFG) -c hash.cpp -o data.hash.$@.o
 
 
 release:
-	$(COMPILER) $(COMPCFG) -c encdec.cpp -o encdec.$@.o
-	$(COMPILER) -I$(ROOT)/lib/cryptopp/include $(COMPCFG) -c hash.cpp -o hash.$@.o
+	$(COMPILER) $(COMPCFG) -c encdec.cpp -o data.encdec.$@.o
+	$(COMPILER) -I$(ROOT)/lib/cryptopp/include $(COMPCFG) -c hash.cpp -o data.hash.$@.o

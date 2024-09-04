@@ -31,12 +31,12 @@ endef
 all: debug release
 
 debug:
-	$(COMPILER) $(DEBUGCOMPCFG) -c json.cpp -o json.$@.o
-	$(COMPILER) $(DEBUGCOMPCFG) -c slf.cpp -o slf.$@.o
-	$(COMPILER) $(DEBUGCOMPCFG) -c get.cpp -o get.$@.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c json.cpp -o file.json.$@.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c slf.cpp -o file.slf.$@.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c get.cpp -o file.get.$@.o
 
 
 release:
-	$(COMPILER) $(COMPCFG) -c json.cpp -o json.$@.o
-	$(COMPILER) $(COMPCFG) -c slf.cpp -o slf.$@.o
-	$(COMPILER) $(COMPCFG) -c get.cpp -o get.$@.o
+	$(COMPILER) $(COMPCFG) -c json.cpp -o file.json.$@.o
+	$(COMPILER) $(COMPCFG) -c slf.cpp -o file.slf.$@.o
+	$(COMPILER) $(COMPCFG) -c get.cpp -o file.get.$@.o

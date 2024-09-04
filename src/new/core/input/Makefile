@@ -35,8 +35,8 @@ endef
 all: debug release
 
 debug:
-	$(COMPILER) $(DEBUGCOMPCFG) -c manager.cpp -o manager.$@.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c manager.cpp -o core.input.manager.$@.o
 
 
 release:
-	$(COMPILER) $(COMPCFG) -c manager.cpp -o manager.$@.o
+	$(COMPILER) $(COMPCFG) -c manager.cpp -o core.input.manager.$@.o

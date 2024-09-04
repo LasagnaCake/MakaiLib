@@ -35,10 +35,10 @@ endef
 all: debug release
 
 debug:
-	$(COMPILER) $(DEBUGCOMPCFG) -c app.cpp -o app.$@.o
-	$(COMPILER) $(DEBUGCOMPCFG) -c display.cpp -o display.$@.o
-	$(COMPILER) $(DEBUGCOMPCFG) -c dpi.cpp -o dpi.$@.o
-	$(COMPILER) $(DEBUGCOMPCFG) -c popup.cpp -o popup.$@.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c app.cpp -o core.app.$@.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c display.cpp -o core.display.$@.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c dpi.cpp -o core.dpi.$@.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c popup.cpp -o core.popup.$@.o
 
 	@cd input
 	@make $@
@@ -46,10 +46,10 @@ debug:
 
 
 release:
-	$(COMPILER) $(COMPCFG) -c app.cpp -o app.$@.o
-	$(COMPILER) $(COMPCFG) -c display.cpp -o display.$@.o
-	$(COMPILER) $(COMPCFG) -c dpi.cpp -o dpi.$@.o
-	$(COMPILER) $(COMPCFG) -c popup.cpp -o popup.$@.o
+	$(COMPILER) $(COMPCFG) -c app.cpp -o core.app.$@.o
+	$(COMPILER) $(COMPCFG) -c display.cpp -o core.display.$@.o
+	$(COMPILER) $(COMPCFG) -c dpi.cpp -o core.dpi.$@.o
+	$(COMPILER) $(COMPCFG) -c popup.cpp -o core.popup.$@.o
 
 	@cd input
 	@make $@

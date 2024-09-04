@@ -35,10 +35,10 @@ endef
 all: debug release
 
 debug:
-	$(COMPILER) $(DEBUGCOMPCFG) -c effect.cpp -o effect.gl.$@.o
-	$(COMPILER) $(DEBUGCOMPCFG) -c materials.cpp -o materials.gl.$@.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c effect.cpp -o graph.gl.mat.effect.gl.$@.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c materials.cpp -o graph.gl.mat.materials.gl.$@.o
 
 
 release:
-	$(COMPILER) $(COMPCFG) -c effect.cpp -o effect.$@.o
-	$(COMPILER) $(COMPCFG) -c materials.cpp -o materials.$@.o
+	$(COMPILER) $(COMPCFG) -c effect.cpp -o graph.gl.mat.effect.$@.o
+	$(COMPILER) $(COMPCFG) -c materials.cpp -o graph.gl.mat.materials.$@.o

@@ -25,8 +25,8 @@ LINKCFG	:= $(LINKER_CONFIG) -s -O3 $(LIBRARIES) $(LEAN)
 COMPILER	:= @$(CXX) $(INCLUDES)
 LINKER		:= @$(CXX)
 
-DEBUGEXTRAOBJS := $(ROOT)/src/new/tool/archive/archive.debug.o $(ROOT)/src/new/file/json.debug.o
-EXTRAOBJS := $(ROOT)/src/new/tool/archive/archive.release.o $(ROOT)/src/new/file/json.release.o
+DEBUGEXTRAOBJS := $(ROOT)/src/new/tool/archive/tool.archive.debug.o $(ROOT)/src/new/file/file.json.debug.o
+EXTRAOBJS := $(ROOT)/src/new/tool/archive/tool.archive.release.o $(ROOT)/src/new/file/file.json.release.o
 
 LIBNAME	:= archive
 

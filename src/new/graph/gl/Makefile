@@ -35,13 +35,13 @@ endef
 all: debug release
 
 debug:
-	$(COMPILER) $(DEBUGCOMPCFG) -c vertex.cpp -o vertex.gl.$@.o
-	$(COMPILER) $(DEBUGCOMPCFG) -c uniform.cpp -o uniform.gl.$@.o
-	$(COMPILER) $(DEBUGCOMPCFG) -c blend.cpp -o blend.gl.$@.o
-	$(COMPILER) $(DEBUGCOMPCFG) -c color.cpp -o color.gl.$@.o
-	$(COMPILER) $(DEBUGCOMPCFG) -c image.cpp -o image.gl.$@.o
-	$(COMPILER) $(DEBUGCOMPCFG) -c texture.cpp -o texture.gl.$@.o
-	$(COMPILER) $(DEBUGCOMPCFG) -c shader.cpp -o shader.gl.$@.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c vertex.cpp -o graph.gl.vertex.$@.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c uniform.cpp -o graph.gl.uniform.$@.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c blend.cpp -o graph.gl.blend.$@.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c color.cpp -o graph.gl.color.$@.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c image.cpp -o graph.gl.image.$@.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c texture.cpp -o graph.gl.texture.$@.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c shader.cpp -o graph.gl.shader.$@.o
 	
 	@cd renderer
 	@make $@
@@ -53,13 +53,13 @@ debug:
 
 
 release:
-	$(COMPILER) $(COMPCFG) -c vertex.cpp -o vertex.gl.$@.o
-	$(COMPILER) $(COMPCFG) -c uniform.cpp -o uniform.gl.$@.o
-	$(COMPILER) $(COMPCFG) -c blend.cpp -o blend.gl.$@.o
-	$(COMPILER) $(COMPCFG) -c color.cpp -o color.gl.$@.o
-	$(COMPILER) $(COMPCFG) -c image.cpp -o image.gl.$@.o
-	$(COMPILER) $(COMPCFG) -c texture.cpp -o texture.gl.$@.o
-	$(COMPILER) $(COMPCFG) -c shader.cpp -o shader.gl.$@.o
+	$(COMPILER) $(COMPCFG) -c vertex.cpp -o graph.gl.vertex.$@.o
+	$(COMPILER) $(COMPCFG) -c uniform.cpp -o graph.gl.uniform.$@.o
+	$(COMPILER) $(COMPCFG) -c blend.cpp -o graph.gl.blend.$@.o
+	$(COMPILER) $(COMPCFG) -c color.cpp -o graph.gl.color.$@.o
+	$(COMPILER) $(COMPCFG) -c image.cpp -o graph.gl.image.$@.o
+	$(COMPILER) $(COMPCFG) -c texture.cpp -o graph.gl.texture.$@.o
+	$(COMPILER) $(COMPCFG) -c shader.cpp -o graph.gl.shader.$@.o
 	
 	@cd renderer
 	@make $@

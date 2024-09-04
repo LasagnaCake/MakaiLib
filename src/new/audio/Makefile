@@ -35,14 +35,14 @@ endef
 all: debug release
 
 debug:
-	$(COMPILER) $(DEBUGCOMPCFG) -c core.cpp -o core.$@.o
-	$(COMPILER) $(DEBUGCOMPCFG) -c playable.cpp -o playable.$@.o
-	$(COMPILER) $(DEBUGCOMPCFG) -c music.cpp -o music.$@.o
-	$(COMPILER) $(DEBUGCOMPCFG) -c sound.cpp -o sound.$@.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c core.cpp -o audio.core.$@.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c playable.cpp -o audio.playable.$@.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c music.cpp -o audio.music.$@.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c sound.cpp -o audio.sound.$@.o
 
 
 release:
-	$(COMPILER) $(COMPCFG) -c core.cpp -o core.$@.o
-	$(COMPILER) $(COMPCFG) -c playable.cpp -o playable.$@.o
-	$(COMPILER) $(COMPCFG) -c music.cpp -o music.$@.o
-	$(COMPILER) $(COMPCFG) -c sound.cpp -o sound.$@.o
+	$(COMPILER) $(COMPCFG) -c core.cpp -o audio.core.$@.o
+	$(COMPILER) $(COMPCFG) -c playable.cpp -o audio.playable.$@.o
+	$(COMPILER) $(COMPCFG) -c music.cpp -o audio.music.$@.o
+	$(COMPILER) $(COMPCFG) -c sound.cpp -o audio.sound.$@.o

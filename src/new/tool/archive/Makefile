@@ -27,8 +27,6 @@ LINKER		:= @$(CXX)
 
 EXTRAOBJS := ../../file/json.o
 
-LIBNAME	:= archive
-
 define GET_TIME
 @printf "\nTime: "
 @date +\"%H:%M:%S\"
@@ -42,8 +40,8 @@ endef
 all: debug release
 
 debug:
-	$(COMPILER) $(DEBUGCOMPCFG) -c $(LIBNAME).cpp -o $(LIBNAME).$@.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c archive.cpp -o tool.archive.$@.o
 
 
 release:
-	$(COMPILER) $(COMPCFG) -c $(LIBNAME).cpp -o $(LIBNAME).$@.o
+	$(COMPILER) $(COMPCFG) -c archive.cpp -o tool.archive$@.o
