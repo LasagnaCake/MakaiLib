@@ -9,5 +9,5 @@ all: debug release
 debug:
 	$(CXX) -o compilation.$@.exe compilation.cpp $(COMPILER_CONFIG) ../output/lib/libmakai.debug.a $(DEBUGMODE)
 
-debug:
+release:
 	$(CXX) -o compilation.exe compilation.cpp $(COMPILER_CONFIG) ../output/lib/libmakai.a -mwindows
