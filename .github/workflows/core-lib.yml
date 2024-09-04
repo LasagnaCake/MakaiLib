@@ -69,6 +69,11 @@ jobs:
         run: |
           cd tests
           make debug
+          cd ..
+      - uses: actions/upload-artifact@master
+        with:
+          name: test-release
+          path: tests/output/debug
 
   build-tests-release:
     name: Build Tests (RELEASE)
@@ -84,3 +89,8 @@ jobs:
         run: |
           cd tests
           make release
+          cd ..
+      - uses: actions/upload-artifact@master
+        with:
+          name: test-release
+          path: tests/output/release
