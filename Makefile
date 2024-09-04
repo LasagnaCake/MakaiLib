@@ -11,6 +11,7 @@ define GET_TIME
 endef
 
 prefix := lib
+pfx := $(strip $(prefix))
 
 LEAN := -static -s
 
@@ -55,12 +56,12 @@ release: build-release up-release $(CREATE_E3P) link-release
 
 build-debug:
 	@cd src/new
-	@make debug prefix=$(prefix)
+	@make debug prefix=$(pfx)
 	@cd ../..
 
 build-release:
 	@cd src/new
-	@make release prefix=$(prefix)
+	@make release prefix=$(pfx)
 	@cd ../..
 
 copy-headers:
