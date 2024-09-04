@@ -13,6 +13,9 @@ USE_OPENMP := -fopenmp -openmp -ftree-parallelize-loops=128
 export openmp
 endif
 
+prefix += .core
+export prefix
+
 OPTIMIZATIONS	:= $(USE_OPENMP) -funswitch-loops -fpredictive-commoning -fgcse-after-reload -ftree-vectorize $(LEAN)
 
 INCLUDES := -I$(ROOT)/lib/SDL2-2.0.10/include -I$(ROOT)/lib/OpenGL
@@ -40,10 +43,10 @@ endef
 all: debug release
 
 debug:
-	$(COMPILER) $(DEBUGCOMPCFG) -c app.cpp -o core.app.$@.o
-	$(COMPILER) $(DEBUGCOMPCFG) -c display.cpp -o core.display.$@.o
-	$(COMPILER) $(DEBUGCOMPCFG) -c dpi.cpp -o core.dpi.$@.o
-	$(COMPILER) $(DEBUGCOMPCFG) -c popup.cpp -o core.popup.$@.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c app.cpp -o $(prefix).app.$@.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c display.cpp -o $(prefix).display.$@.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c dpi.cpp -o $(prefix).dpi.$@.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c popup.cpp -o $(prefix).popup.$@.o
 
 	@cd input
 	@make $@
@@ -51,10 +54,10 @@ debug:
 
 
 release:
-	$(COMPILER) $(COMPCFG) -c app.cpp -o core.app.$@.o
-	$(COMPILER) $(COMPCFG) -c display.cpp -o core.display.$@.o
-	$(COMPILER) $(COMPCFG) -c dpi.cpp -o core.dpi.$@.o
-	$(COMPILER) $(COMPCFG) -c popup.cpp -o core.popup.$@.o
+	$(COMPILER) $(COMPCFG) -c app.cpp -o $(prefix).app.$@.o
+	$(COMPILER) $(COMPCFG) -c display.cpp -o $(prefix).display.$@.o
+	$(COMPILER) $(COMPCFG) -c dpi.cpp -o $(prefix).dpi.$@.o
+	$(COMPILER) $(COMPCFG) -c popup.cpp -o $(prefix).popup.$@.o
 
 	@cd input
 	@make $@
