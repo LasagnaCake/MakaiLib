@@ -36,9 +36,11 @@ export HELP_MESSAGE
 help:
 	@echo "$$HELP_MESSAGE"
 
-all: build-all link-all
+all: build-all up-all link-all
 
 build-all: build-debug build-release
+
+up-all: up-debug up-release
 
 link-all: link-debug link-release
 
@@ -57,6 +59,7 @@ build-release:
 	@cd ../..
 
 copy-headers:
+	@echo "Copying headers..."
 	@mkdir -p output/include
 	@cd src/new
 	@cp -r --parents *.hpp ../../output/include/
@@ -68,6 +71,7 @@ copy-headers:
 	@cd ../..
 
 copy-o-debug:
+	@echo "Copying objects..."
 	@mkdir -p obj/debug
 	#@cp -r src/new/*.debug.o obj/debug/
 	@cp -r src/new/**/*.debug.o obj/debug/
@@ -76,6 +80,7 @@ copy-o-debug:
 	#@cp -r src/new/**/**/**/**/*.debug.o obj/debug/
 
 copy-o-release:
+	@echo "Copying objects..."
 	@mkdir -p obj/release
 	#@cp -r src/new/*.release.o obj/release/
 	@cp -r src/new/**/*.release.o obj/release/
@@ -83,8 +88,15 @@ copy-o-release:
 	@cp -r src/new/**/**/**/*.release.o obj/release/
 	#@cp -r src/new/**/**/**/**/*.release.o obj/release/
 
-link-debug: copy-headers copy-o-debug
+up-debug: copy-headers copy-o-debug
+	@echo "File copy done!"
+
+up-release: copy-headers copy-o-release
+	@echo "File copy done!"
+
+link-debug:
 	@echo "Creating lib folder..."
+	@rm -rf output/lib/libmakai.debug.a
 	@mkdir -p output/lib
 	@echo "Building library..."
 	@ar rcvs output/lib/libmakai.debug.a obj/debug/*.debug.o
@@ -96,8 +108,9 @@ link-debug: copy-headers copy-o-debug
 	@echo "Done!"
 	@echo 
 
-link-release: copy-headers copy-o-release
+link-release:
 	@echo "Creating lib folder..."
+	@rm -rf output/lib/libmakai.a
 	@mkdir -p output/lib
 	@echo "Building library..."
 	@ar rcvs output/lib/libmakai.a obj/release/*.release.o
