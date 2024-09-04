@@ -55,12 +55,12 @@ release: build-release up-release $(CREATE_E3P) link-release
 
 build-debug:
 	@cd src/new
-	@make debug prefix=$(prefix)
+	@make debug prefix="$(prefix)"
 	@cd ../..
 
 build-release:
 	@cd src/new
-	@make release prefix=$(prefix)
+	@make release prefix="$(prefix)"
 	@cd ../..
 
 copy-headers:
