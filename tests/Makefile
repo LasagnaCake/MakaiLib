@@ -7,7 +7,7 @@ DEBUGMODE		:= -D_DEBUG_OUTPUT_
 all: debug release
 
 debug:
-	$(CXX) -o compilation.$@.exe -c compilation.cpp $(COMPILER_CONFIG) ../output/lib/libmakai.debug.a $(DEBUGMODE)
+	$(CXX) -o compilation.$@.exe compilation.cpp $(COMPILER_CONFIG) ../output/lib/libmakai.debug.a $(DEBUGMODE)
 
 debug:
-	$(CXX) -o compilation.exe -c compilation.cpp $(COMPILER_CONFIG) ../output/lib/libmakai.a -mwindows
+	$(CXX) -o compilation.exe compilation.cpp $(COMPILER_CONFIG) ../output/lib/libmakai.a -mwindows
