@@ -13,6 +13,9 @@ USE_OPENMP := -fopenmp -openmp -ftree-parallelize-loops=128
 export openmp
 endif
 
+prefix += graph.gl
+export prefix
+
 OPTIMIZATIONS	:= $(USE_OPENMP) -funswitch-loops -fpredictive-commoning -fgcse-after-reload -ftree-vectorize $(LEAN)
 
 INCLUDES := -I$(ROOT)/lib/SDL2-2.0.10/include -I$(ROOT)/lib/OpenGL -I$(ROOT)/lib/stb
@@ -40,13 +43,13 @@ endef
 all: debug release
 
 debug:
-	$(COMPILER) $(DEBUGCOMPCFG) -c vertex.cpp -o graph.gl.vertex.$@.o
-	$(COMPILER) $(DEBUGCOMPCFG) -c uniform.cpp -o graph.gl.uniform.$@.o
-	$(COMPILER) $(DEBUGCOMPCFG) -c blend.cpp -o graph.gl.blend.$@.o
-	$(COMPILER) $(DEBUGCOMPCFG) -c color.cpp -o graph.gl.color.$@.o
-	$(COMPILER) $(DEBUGCOMPCFG) -c image.cpp -o graph.gl.image.$@.o
-	$(COMPILER) $(DEBUGCOMPCFG) -c texture.cpp -o graph.gl.texture.$@.o
-	$(COMPILER) $(DEBUGCOMPCFG) -c shader.cpp -o graph.gl.shader.$@.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c vertex.cpp -o $(prefix).vertex.$@.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c uniform.cpp -o $(prefix).uniform.$@.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c blend.cpp -o $(prefix).blend.$@.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c color.cpp -o $(prefix).color.$@.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c image.cpp -o $(prefix).image.$@.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c texture.cpp -o $(prefix).texture.$@.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c shader.cpp -o $(prefix).shader.$@.o
 	
 	@cd renderer
 	@make $@
@@ -58,13 +61,13 @@ debug:
 
 
 release:
-	$(COMPILER) $(COMPCFG) -c vertex.cpp -o graph.gl.vertex.$@.o
-	$(COMPILER) $(COMPCFG) -c uniform.cpp -o graph.gl.uniform.$@.o
-	$(COMPILER) $(COMPCFG) -c blend.cpp -o graph.gl.blend.$@.o
-	$(COMPILER) $(COMPCFG) -c color.cpp -o graph.gl.color.$@.o
-	$(COMPILER) $(COMPCFG) -c image.cpp -o graph.gl.image.$@.o
-	$(COMPILER) $(COMPCFG) -c texture.cpp -o graph.gl.texture.$@.o
-	$(COMPILER) $(COMPCFG) -c shader.cpp -o graph.gl.shader.$@.o
+	$(COMPILER) $(COMPCFG) -c vertex.cpp -o $(prefix).vertex.$@.o
+	$(COMPILER) $(COMPCFG) -c uniform.cpp -o $(prefix).uniform.$@.o
+	$(COMPILER) $(COMPCFG) -c blend.cpp -o $(prefix).blend.$@.o
+	$(COMPILER) $(COMPCFG) -c color.cpp -o $(prefix).color.$@.o
+	$(COMPILER) $(COMPCFG) -c image.cpp -o $(prefix).image.$@.o
+	$(COMPILER) $(COMPCFG) -c texture.cpp -o $(prefix).texture.$@.o
+	$(COMPILER) $(COMPCFG) -c shader.cpp -o $(prefix).shader.$@.o
 	
 	@cd renderer
 	@make $@
