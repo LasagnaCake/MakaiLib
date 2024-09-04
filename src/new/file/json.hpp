@@ -57,14 +57,13 @@ namespace Makai::JSON {
 
 		template<class T>
 		inline JSONView& operator=(T const& value)
-		requires (
-			!Type::Convertible<T, JSONView>
-		) {
+		requires (!Type::Convertible<T, JSONView>) {
 			view() = value;
 			return (*this);
 		}
 
-		template<typename T> operator T() const;
+		template<typename T> operator T() const requires(Type::Constructible<T>)	{return get<T>(T());	}
+		template<typename T> operator T() const requires(!Type::Constructible<T>)	{return get<T>();		}
 
 		String getName() const;
 

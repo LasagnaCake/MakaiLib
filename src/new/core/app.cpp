@@ -412,6 +412,14 @@ Vector2 App::getWindowScale() {
 	return Vector2(ws.x / ws.y, 1);
 }
 
+Graph::FrameBufferData App::toFrameBufferData() {
+	Graph::FrameBufferData self;
+	self.id		= 0;
+	self.width	= width;
+	self.height	= height;
+	return self;
+}
+
 void App::queueScreenCopy(Graph::Texture2D target) {
 	screenQueue.push_back(target);
 }

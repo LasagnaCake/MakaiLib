@@ -51,11 +51,6 @@ Decay::AsType<Extern::JSONData> Makai::JSON::JSONView::json() const {
 	return view();
 }
 
-template<typename T>
-Makai::JSON::JSONView::operator T() const {
-	return get<T>(T());
-}
-
 String Makai::JSON::JSONView::getName() const {return name;}
 
 String Makai::JSON::JSONView::toString(int const& indent, char const& ch) const {

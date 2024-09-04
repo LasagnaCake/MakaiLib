@@ -45,3 +45,7 @@ void Playable::destroy() {
 void Playable::update() {
 	for(AudioCallback*& c : updateQueue) (*c)();
 }
+
+bool Playable::exists() {
+	return created;
+}

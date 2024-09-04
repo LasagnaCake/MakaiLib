@@ -44,9 +44,9 @@ up-all: up-debug up-release
 
 link-all: link-debug link-release
 
-debug: build-debug link-debug
+debug: build-debug up-debug link-debug
 
-release: build-release link-release
+release: build-release up-release link-release
 
 build-debug:
 	@cd src/new
