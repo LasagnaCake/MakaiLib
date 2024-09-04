@@ -48,7 +48,7 @@ debug:
 	$(COMPILER) $(DEBUGCOMPCFG) -c popup.cpp -o $(prefix).popup.$@.o
 
 	@cd input
-	@make $@ prefix=$(prefix)
+	@make $@ prefix="$(prefix)"
 	@cd ..
 
 
@@ -59,5 +59,5 @@ release:
 	$(COMPILER) $(COMPCFG) -c popup.cpp -o $(prefix).popup.$@.o
 
 	@cd input
-	@make $@ prefix=$(prefix)
+	@make $@ prefix="$(prefix)"
 	@cd ..
