@@ -127,19 +127,21 @@ link-release:
 	@echo "Done!"
 	@echo 
 
+THIRD_PARTY_PREFIX := lib.3p
+
 define addname
 	@echo "Renaming [$(strip $(1))]..."
-	@for file in *.o; do mv $$file e3p.$(strip $(1)).$$file; done
+	@for file in *.o; do mv $$file $(THIRD_PARTY_PREFIX).$(strip $(1)).$$file; done
 endef
 
 define repack
 	@echo "Repacking [$(strip $(1))]..."
 	@cd $(strip $(1))
-	@ar rcvs ../e3p.$(strip $(1)).a *.o
+	@ar rcvs ../$(THIRD_PARTY_PREFIX).$(strip $(1)).a *.o
 	@cd ..
 endef
 
-rp-glew-part = @ar rcvs ../e3p.glew.a e3p.glew.d00$(strip $(1))*.o
+rp-glew-part = @ar rcvs ../$(THIRD_PARTY_PREFIX).glew.a $(THIRD_PARTY_PREFIX).glew.d00$(strip $(1))*.o
 
 define rp-glew-pack10
 	$(call rp-glew-part, $(strip $(1))0)
@@ -190,7 +192,7 @@ extract-extern:
 rename-sdl-mixer:
 	@cd obj/extern/sdl-mixer
 	@echo "Renaming [sdl-mixer]..."
-	@for file in SDL2_mixer_dll_*.o; do mv -- "$$file" "e3p.sdl-mixer.$${file##*_}"; done
+	@for file in SDL2_mixer_dll_*.o; do mv -- "$$file" "$(THIRD_PARTY_PREFIX).sdl-mixer.$${file##*_}"; done
 
 rename-extern:
 	@echo "Renaming objects..."
@@ -201,7 +203,7 @@ rename-extern:
 	$(call addname, sdl-net)
 	@cd ../sdl-mixer
 	@echo "Renaming [sdl-mixer]..."
-	@for file in SDL2_mixer_dll_*.o; do mv -- "$$file" "e3p.sdl-mixer.$${file##*_}"; done
+	@for file in SDL2_mixer_dll_*.o; do mv -- "$$file" "$(THIRD_PARTY_PREFIX).sdl-mixer.$${file##*_}"; done
 	@cd ../glew
 	$(call addname, glew)
 	@cd ../cryptopp
