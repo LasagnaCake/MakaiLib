@@ -11,7 +11,6 @@ define GET_TIME
 endef
 
 prefix := lib
-export prefix
 
 LEAN := -static -s
 
@@ -26,8 +25,6 @@ GLEW		:= lib/OpenGL/GLEW/lib/libglew32.dll.a
 ifeq ($(wildcard obj/extern/extern.3p.a),)
 CREATE_E3P := link-extern
 endif
-
-D := $
 
 CONFIG := -static #--static-libstdc++ --static-libgcc
 
@@ -58,12 +55,12 @@ release: build-release up-release $(CREATE_E3P) link-release
 
 build-debug:
 	@cd src/new
-	@make debug
+	@make debug prefix=$(prefix)
 	@cd ../..
 
 build-release:
 	@cd src/new
-	@make release
+	@make release prefix=$(prefix)
 	@cd ../..
 
 copy-headers:
