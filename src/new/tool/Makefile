@@ -9,7 +9,6 @@ export openmp
 endif
 
 prefix += .tool
-export prefix
 
 .PHONY: debug release all
 .ONESHELL:
@@ -19,11 +18,11 @@ all: debug release
 
 debug:
 	@cd archive
-	@make $@
+	@make $@ prefix=$(prefix)
 	@cd ..
 
 
 release:
 	@cd archive
-	@make $@
+	@make $@ prefix=$(prefix)
 	@cd ..
