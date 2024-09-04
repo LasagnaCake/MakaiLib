@@ -13,6 +13,10 @@ USE_OPENMP := -fopenmp -openmp -ftree-parallelize-loops=128
 export openmp
 endif
 
+ifdef prefix
+export prefix
+endif
+
 OPTIMIZATIONS	:= $(USE_OPENMP) -funswitch-loops -fpredictive-commoning -fgcse-after-reload -ftree-vectorize $(LEAN)
 
 WINGARBAGE	:= -lole32 -loleaut32 -limm32 -lwinmm -lversion -lpowrprof -lcomdlg32 -lsetupapi -lgdi32
@@ -45,8 +49,8 @@ endef
 all: debug release
 
 debug:
-	$(COMPILER) $(DEBUGCOMPCFG) -c archive.cpp -o tool.archive.$@.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c archive.cpp -o $(prefix).tool.archive.$@.o
 
 
 release:
-	$(COMPILER) $(COMPCFG) -c archive.cpp -o tool.archive.$@.o
+	$(COMPILER) $(COMPCFG) -c archive.cpp -o $(prefix).tool.archive.$@.o
