@@ -8,7 +8,7 @@ ifdef openmp
 export openmp
 endif
 
-override prefix+=.makai
+override prefix := $(strip $(prefix)).makai
 
 .PHONY: debug release all
 .ONESHELL:
