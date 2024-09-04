@@ -51,11 +51,11 @@ debug:
 	$(COMPILER) $(DEBUGCOMPCFG) -c shader.cpp -o $(prefix).shader.$@.o
 	
 	@cd renderer
-	@make $@ prefix=$(prefix)
+	@make $@ prefix="$(prefix)"
 	@cd ..
 
 	@cd material
-	@make $@ prefix=$(prefix)
+	@make $@ prefix="$(prefix)"
 	@cd ..
 
 
@@ -69,9 +69,9 @@ release:
 	$(COMPILER) $(COMPCFG) -c shader.cpp -o $(prefix).shader.$@.o
 	
 	@cd renderer
-	@make $@ prefix=$(prefix)
+	@make $@ prefix="$(prefix)"
 	@cd ..
 
 	@cd material
-	@make $@ prefix=$(prefix)
+	@make $@ prefix="$(prefix)"
 	@cd ..
