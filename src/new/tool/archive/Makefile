@@ -49,4 +49,4 @@ debug:
 
 
 release:
-	$(COMPILER) $(COMPCFG) -c archive.cpp -o tool.archive$@.o
+	$(COMPILER) $(COMPCFG) -c archive.cpp -o tool.archive.$@.o
