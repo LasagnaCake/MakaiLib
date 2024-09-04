@@ -28,7 +28,7 @@ ifdef openmp
 export openmp
 endif
 
-.PHONY: build-debug build-release link-debug link-release build-all link-all debug release copy-headers copy-o-debug copy-o-release all help
+.PHONY: build-debug build-release up-debug up-release link-debug link-release build-all up-all link-all debug release copy-headers copy-o-debug copy-o-release all help
 .ONESHELL:
 .SHELLFLAGS = -ec
 
