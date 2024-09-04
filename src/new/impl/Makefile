@@ -13,6 +13,10 @@ USE_OPENMP := -fopenmp -openmp -ftree-parallelize-loops=128
 export openmp
 endif
 
+ifdef prefix
+export prefix
+endif
+
 OPTIMIZATIONS	:= $(USE_OPENMP) -funswitch-loops -fpredictive-commoning -fgcse-after-reload -ftree-vectorize $(LEAN)
 
 INCLUDES := -I$(ROOT)/lib/stb
@@ -40,8 +44,8 @@ endef
 all: debug release
 
 debug:
-	$(COMPILER) $(DEBUGCOMPCFG) -c stb.cpp -o impl.stb.$@.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c stb.cpp -o $(prefix).impl.stb.$@.o
 
 
 release:
-	$(COMPILER) $(COMPCFG) -c stb.cpp -o impl.stb.$@.o
+	$(COMPILER) $(COMPCFG) -c stb.cpp -o $(prefix).impl.stb.$@.o
