@@ -20,3 +20,4 @@ wxmsw32u_core_gcc1220_x64.dll
 res/data/
 *.256.h
 output/*
+tests/output/*
