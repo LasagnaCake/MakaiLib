@@ -12,20 +12,21 @@ endef
 
 LEAN := -static -s
 
-WINGARBAGE := -lole32 -loleaut32 -limm32 -lwinmm -lversion -lpowrprof -lcomdlg32 -lsetupapi -lgdi32
+#WINGARBAGE := -lole32 -loleaut32 -limm32 -lwinmm -lversion -lpowrprof -lcomdlg32 -lsetupapi -lgdi32
 
-LIBRARIES := lib/SDL2-2.0.10/lib/libSDL2.dll.a
-LIBRARIES += lib/SDL2-2.0.10/lib/libSDL2main.a
-LIBRARIES += lib/SDL2-2.0.10/lib/libSDL2_mixer.dll.a
-LIBRARIES += lib/cryptopp/lib/libcryptopp.a
-LIBRARIES += lib/OpenGL/GLEW/lib/libglew32.dll.a
-LIBRARIES += -lopengl32 -lgomp -lstdc++ -lgcc 
-LIBRARIES += $(WINGARBAGE)
-
-LINKER := @$(CXX)
-LINKER := @ld
+#LIBRARIES := lib/SDL2-2.0.10/lib/libSDL2.dll.a
+#LIBRARIES += lib/SDL2-2.0.10/lib/libSDL2main.a
+#LIBRARIES += lib/SDL2-2.0.10/lib/libSDL2_mixer.dll.a
+#LIBRARIES += lib/cryptopp/lib/libcryptopp.a
+#LIBRARIES += lib/OpenGL/GLEW/lib/libglew32.dll.a
+#LIBRARIES += -lopengl32 -lgomp -lstdc++ -lgcc 
+#LIBRARIES += $(WINGARBAGE)
 
 CONFIG := -static #--static-libstdc++ --static-libgcc
+
+ifdef openmp
+export openmp
+endif
 
 .PHONY: build-debug build-release link-debug link-release build-all link-all debug release copy-headers copy-o-debug copy-o-release all help
 .ONESHELL:

@@ -6,9 +6,14 @@ LEAN := -static -s
 COMPILER_CONFIG	:= -fexpensive-optimizations -m64 -std=gnu++20 -fconcepts -fcoroutines -fms-extensions
 LINKER_CONFIG	:= -static-libstdc++ -static-libgcc -m64 -fms-extensions
 
-OPTIMIZATIONS	:= -fopenmp -openmp -ftree-parallelize-loops=128 -funswitch-loops -fpredictive-commoning -fgcse-after-reload -ftree-vectorize $(LEAN)
+ifdef openmp
+USE_OPENMP := -fopenmp -openmp -ftree-parallelize-loops=128
+export openmp
+endif
 
-DEBUGMODE := -DENABLE_DEBUG_OUTPUT_ -D_DEBUG_OUTPUT_ -DNDEBUG
+OPTIMIZATIONS	:= $(USE_OPENMP) -funswitch-loops -fpredictive-commoning -fgcse-after-reload -ftree-vectorize $(LEAN)
+
+DEBUGMODE := -DMAKAILIB_DEBUG -DCTL_DEBUG -DNDEBUG
 DEBUGCOMPCFG	:= $(COMPILER_CONFIG) -Wall -Wpedantic -Og -ggdb3 -fno-omit-frame-pointer $(DEBUGMODE)
 DEBUGLINKCFG	:= $(LINKER_CONFIG) -Og $(LIBRARIES)
 

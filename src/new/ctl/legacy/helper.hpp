@@ -1,9 +1,9 @@
 #ifndef HELPING_HAND_H
 #define HELPING_HAND_H
 
-#ifdef ENABLE_DEBUG_OUTPUT_
+#ifdef CTL_DEBUG
 #include <iostream>
-#endif
+#endif // CTL_DEBUG
 #include <syncstream>
 #include <string>
 #include <vector>
@@ -21,9 +21,9 @@
 #include <unordered_map>
 #include <thread>
 #include <regex>
-#ifdef _USE_CPP20_FORMAT_
+#ifdef CTL_USE_CPP20_FORMAT
 #include <format>
-#endif // _USE_CPP20_FORMAT_
+#endif // CTL_USE_CPP20_FORMAT
 #include "conceptual.hpp"
 #include "definitions.hpp"
 #include "ctl/ctypes.hpp"
@@ -444,7 +444,7 @@ namespace Helper {
 		return (result);
 	}
 
-	#ifdef ENABLE_DEBUG_OUTPUT_
+	#ifdef CTL_DEBUG
 	template<typename... Args>
 	constexpr void print(Args... args) {
 		Fold::strins(std::cout, args...);
@@ -464,7 +464,7 @@ namespace Helper {
 	constexpr void syncprintln(Args... args) {
 		syncprint(args..., "\n");
 	}
-	#endif // ENABLE_DEBUG_OUTPUT_
+	#endif // CTL_DEBUG
 
 	template<typename T, typename... Args>
 	constexpr List<T> toList(Args const&... args)
@@ -519,7 +519,7 @@ namespace Helper {
 	typedef std::wregex				WideRegex;
 }
 
-#ifdef ENABLE_DEBUG_OUTPUT_
+#ifdef CTL_DEBUG
 #ifndef DEBUG
 #define DEBUG(...)		Helper::print(__VA_ARGS__)
 #endif // DEBUG
@@ -545,7 +545,7 @@ namespace Helper {
 #ifndef SYNCDEBUGLN
 #define SYNCDEBUGLN(...)
 #endif // SYNCDEBUGLN
-#endif // ENABLE_DEBUG_OUTPUT_
+#endif // CTL_DEBUG
 
 using Helper::String;
 using Helper::WideString;

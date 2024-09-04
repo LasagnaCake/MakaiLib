@@ -4,6 +4,10 @@ define GET_TIME
 @echo ""
 endef
 
+ifdef openmp
+export openmp
+endif
+
 .PHONY: debug release all
 .ONESHELL:
 .SHELLFLAGS = -ec

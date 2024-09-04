@@ -1,9 +1,9 @@
 #include <makai.hpp>
 
 int main() {
-	#ifdef _DEBUG_OUTPUT_
+	#ifdef MAKAILIB_DEBUG
 	DEBUGLN("Compilation test passed");
-	#endif // _DEBUG_OUTPUT_
+	#endif // MAKAILIB_DEBUG
 	Makai::Popup::showDialog("Passed", "Compilation test passed");
 	return 0;
 }

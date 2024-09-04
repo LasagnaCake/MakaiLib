@@ -2,7 +2,7 @@
 
 #include "../tool/archive/archive.hpp"
 
-#if !(defined(_DEBUG_OUTPUT_) || defined(_ARCHIVE_SYSTEM_DISABLED_))
+#if !(defined(MAKAILIB_DEBUG) || defined(MAKAILIB_ARCHIVE_DISABLED))
 #define _IMPL_ARCHIVE_
 #endif
 

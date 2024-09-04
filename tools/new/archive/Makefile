@@ -8,14 +8,19 @@ LEAN := -static -s
 COMPILER_CONFIG	:= -fexpensive-optimizations -m64 -std=gnu++20 -fcoroutines -fms-extensions
 LINKER_CONFIG	:= -static-libstdc++ -static-libgcc -m64 -fms-extensions
 
-OPTIMIZATIONS	:= -fopenmp -openmp -ftree-parallelize-loops=128 -funswitch-loops -fpredictive-commoning -fgcse-after-reload -ftree-vectorize $(LEAN)
+ifdef openmp
+USE_OPENMP := -fopenmp -openmp -ftree-parallelize-loops=128
+export openmp
+endif
+
+OPTIMIZATIONS	:= $(USE_OPENMP) -funswitch-loops -fpredictive-commoning -fgcse-after-reload -ftree-vectorize $(LEAN)
 
 WINGARBAGE	:= -lole32 -loleaut32 -limm32 -lwinmm -lversion -lpowrprof -lcomdlg32 -lsetupapi -lgdi32
 
 INCLUDES	:= -I$(ROOT)/lib/cryptopp/include -I$(ROOT)/lib/cppcodec-0.2 -I$(ROOT)/src/new/tool/archive
-LIBRARIES	:= $(WINGARBAGE) $(ROOT)/lib/cryptopp/lib/libcryptopp.a -lopengl32 -lgomp
+LIBRARIES	:= $(WINGARBAGE) $(ROOT)/lib/cryptopp/lib/libcryptopp.a
 
-DEBUGMODE := -DENABLE_DEBUG_OUTPUT_ -D_DEBUG_OUTPUT_ -DNDEBUG
+DEBUGMODE := -DMAKAILIB_DEBUG -DCTL_DEBUG -DNDEBUG
 DEBUGCOMPCFG	:= $(COMPILER_CONFIG) -Wall -Wpedantic -Og -ggdb3 -fno-omit-frame-pointer $(DEBUGMODE)
 DEBUGLINKCFG	:= $(LINKER_CONFIG) -Og $(LIBRARIES) -lgcc -lstdc++
 
@@ -25,8 +30,8 @@ LINKCFG	:= $(LINKER_CONFIG) -s -O3 $(LIBRARIES) $(LEAN)
 COMPILER	:= @$(CXX) $(INCLUDES)
 LINKER		:= @$(CXX)
 
-DEBUGEXTRAOBJS := $(ROOT)/src/new/tool/archive/tool.archive.debug.o $(ROOT)/src/new/file/file.json.debug.o
-EXTRAOBJS := $(ROOT)/src/new/tool/archive/tool.archive.release.o $(ROOT)/src/new/file/file.json.release.o
+DEBUGEXTRAOBJS := $(ROOT)/output/lib/libmakai.debug.a
+EXTRAOBJS := $(ROOT)/output/lib/libmakai.a
 
 LIBNAME	:= archive
 
