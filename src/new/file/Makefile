@@ -11,6 +11,9 @@ USE_OPENMP := -fopenmp -openmp -ftree-parallelize-loops=128
 export openmp
 endif
 
+prefix += .file
+export prefix
+
 OPTIMIZATIONS	:= $(USE_OPENMP) -funswitch-loops -fpredictive-commoning -fgcse-after-reload -ftree-vectorize $(LEAN)
 
 DEBUGMODE := -DMAKAILIB_DEBUG -DCTL_DEBUG -DNDEBUG
@@ -36,9 +39,9 @@ endef
 all: debug release
 
 debug:
-	$(COMPILER) $(DEBUGCOMPCFG) -c json.cpp -o file.json.$@.o
-	$(COMPILER) $(DEBUGCOMPCFG) -c slf.cpp -o file.slf.$@.o
-	$(COMPILER) $(DEBUGCOMPCFG) -c get.cpp -o file.get.$@.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c json.cpp -o $(prefix).json.$@.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c slf.cpp -o $(prefix).slf.$@.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c get.cpp -o $(prefix).get.$@.o
 
 
 release:
