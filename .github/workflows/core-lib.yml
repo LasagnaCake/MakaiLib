@@ -28,6 +28,7 @@ jobs:
     runs-on: windows-2022
     needs: install-gcc13
     steps:
+    - uses: actions/checkout@v4
     - name: make debug
       run: make debug
       env:
@@ -39,6 +40,7 @@ jobs:
     runs-on: windows-2022
     needs: install-gcc13
     steps:
+    - uses: actions/checkout@v4
     - name: make release
       run: make release
       env:
@@ -50,6 +52,7 @@ jobs:
     runs-on: windows-2022
     needs: [build-core-lib-debug]
     steps:
+      - uses: actions/checkout@v4
       - name: make tests
         run: |
           cd tests
@@ -60,6 +63,7 @@ jobs:
     runs-on: windows-2022
     needs: [build-core-lib-release]
     steps:
+      - uses: actions/checkout@v4
       - name: make tests
         run: |
           cd tests
