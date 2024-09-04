@@ -13,6 +13,9 @@ USE_OPENMP := -fopenmp -openmp -ftree-parallelize-loops=128
 export openmp
 endif
 
+prefix += .input
+export prefix
+
 OPTIMIZATIONS	:= $(USE_OPENMP) -funswitch-loops -fpredictive-commoning -fgcse-after-reload -ftree-vectorize $(LEAN)
 
 INCLUDES := -I$(ROOT)/lib/SDL2-2.0.10/include
@@ -40,8 +43,8 @@ endef
 all: debug release
 
 debug:
-	$(COMPILER) $(DEBUGCOMPCFG) -c manager.cpp -o core.input.manager.$@.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c manager.cpp -o $(prefix).manager.$@.o
 
 
 release:
-	$(COMPILER) $(COMPCFG) -c manager.cpp -o core.input.manager.$@.o
+	$(COMPILER) $(COMPCFG) -c manager.cpp -o $(prefix).manager.$@.o
