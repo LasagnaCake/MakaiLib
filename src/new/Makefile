@@ -39,31 +39,31 @@ debug:
 	@echo ""
 
 	@cd impl
-	@make $@ prefix=$(prefix)
+	@make $@ prefix="$(prefix)"
 	@cd ..
 
 	@cd tool
-	@make $@ prefix=$(prefix)
+	@make $@ prefix="$(prefix)"
 	@cd ..
 
 	@cd file
-	@make $@ prefix=$(prefix)
+	@make $@ prefix="$(prefix)"
 	@cd ..
 
 	@cd data
-	@make $@ prefix=$(prefix)
+	@make $@ prefix="$(prefix)"
 	@cd ..
 
 	@cd audio
-	@make $@ prefix=$(prefix)
+	@make $@ prefix="$(prefix)"
 	@cd ..
 
 	@cd graph/gl
-	@make $@ prefix=$(prefix)
+	@make $@ prefix="$(prefix)"
 	@cd ../..
 
 	@cd core
-	@make $@ prefix=$(prefix)
+	@make $@ prefix="$(prefix)"
 	@cd ..
 
 	@echo ""
@@ -111,31 +111,31 @@ release:
 	@echo ""
 
 	@cd impl
-	@make $@ prefix=$(prefix)
+	@make $@ prefix="$(prefix)"
 	@cd ..
 
 	@cd tool
-	@make $@ prefix=$(prefix)
+	@make $@ prefix="$(prefix)"
 	@cd ..
 
 	@cd file
-	@make $@ prefix=$(prefix)
+	@make $@ prefix="$(prefix)"
 	@cd ..
 
 	@cd data
-	@make $@ prefix=$(prefix)
+	@make $@ prefix="$(prefix)"
 	@cd ..
 
 	@cd audio
-	@make $@ prefix=$(prefix)
+	@make $@ prefix="$(prefix)"
 	@cd ..
 
 	@cd graph/gl
-	@make $@ prefix=$(prefix)
+	@make $@ prefix="$(prefix)"
 	@cd ../..
 
 	@cd core
-	@make $@ prefix=$(prefix)
+	@make $@ prefix="$(prefix)"
 	@cd ..
 
 	@echo ""
