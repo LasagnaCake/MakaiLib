@@ -14,7 +14,6 @@ export openmp
 endif
 
 prefix += .graph.gl
-export prefix
 
 OPTIMIZATIONS	:= $(USE_OPENMP) -funswitch-loops -fpredictive-commoning -fgcse-after-reload -ftree-vectorize $(LEAN)
 
@@ -52,11 +51,11 @@ debug:
 	$(COMPILER) $(DEBUGCOMPCFG) -c shader.cpp -o $(prefix).shader.$@.o
 	
 	@cd renderer
-	@make $@
+	@make $@ prefix=$(prefix)
 	@cd ..
 
 	@cd material
-	@make $@
+	@make $@ prefix=$(prefix)
 	@cd ..
 
 
@@ -70,9 +69,9 @@ release:
 	$(COMPILER) $(COMPCFG) -c shader.cpp -o $(prefix).shader.$@.o
 	
 	@cd renderer
-	@make $@
+	@make $@ prefix=$(prefix)
 	@cd ..
 
 	@cd material
-	@make $@
+	@make $@ prefix=$(prefix)
 	@cd ..
