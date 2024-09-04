@@ -1,0 +1,7 @@
+create output/lib/libmakai.extern.a
+addlib lib/SDL2-2.0.10/lib/libSDL2_mixer.dll.a
+addlib lib/SDL2-2.0.10/lib/libSDL2_net.dll.a
+addlib lib/SDL2-2.0.10/lib/libSDL2.dll.a
+*addlib lib/OpenGL/GLEW/lib/libglew32.dll.a
+save
+end

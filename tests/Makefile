@@ -4,7 +4,10 @@ CXX	:= g++
 COMPILER_CONFIG	:= -m64 -std=gnu++20 -fms-extensions -I../output/include
 DEBUGMODE := -DMAKAILIB_DEBUG
 
-LIBREQS		:= -static-libstdc++ -static-libgcc
+LIBREQS		:= -static-libstdc++ -static-libgcc ../output/lib/libmakai.extern.a
+#LIBREQS		+= ../lib/SDL2-2.0.10/lib/libSDL2_mixer.dll.a
+#LIBREQS		+= ../lib/SDL2-2.0.10/lib/libSDL2_net.dll.a
+#LIBREQS		+= ../lib/SDL2-2.0.10/lib/libSDL2.dll.a
 GRAPHREQS	:= -lopengl32
 WINREQS		:= -lole32 -loleaut32 -limm32 -lwinmm -lversion -lpowrprof -lcomdlg32 -lsetupapi -lgdi32
 
@@ -19,7 +22,7 @@ dotest = \
 case = $(if $(findstring $(strip $(2)),$(strip $(1))),$(3))
 
 params = \
-	$(call case, $(1), 01,)\
+	$(call case, $(1), 01,$(LIBREQS))\
 	$(call case, $(1), 02,$(LIBREQS) $(GRAPHREQS))\
 
 define mktest

@@ -28,7 +28,7 @@ ifdef openmp
 export openmp
 endif
 
-.PHONY: build-debug build-release up-debug up-release link-debug link-release build-all up-all link-all debug release copy-headers copy-o-debug copy-o-release all help
+.PHONY: build-debug build-release up-debug up-release link-debug link-release build-all up-all link-all debug release copy-headers copy-o-debug copy-o-release all help link-extern
 .ONESHELL:
 .SHELLFLAGS = -ec
 
@@ -41,13 +41,13 @@ all: build-all up-all link-all
 
 build-all: build-debug build-release
 
-up-all: up-debug up-release
+up-all: copy-headers copy-o-debug copy-o-release
 
-link-all: link-debug link-release
+link-all: link-extern link-debug link-release
 
-debug: build-debug up-debug link-debug
+debug: build-debug up-debug link-extern link-debug
 
-release: build-release up-release link-release
+release: build-release up-release link-extern link-release
 
 build-debug:
 	@cd src/new
@@ -101,7 +101,7 @@ link-debug:
 	@mkdir -p output/lib
 	@echo "Building library..."
 	@ar rcvs output/lib/libmakai.debug.a obj/debug/*.debug.o
-	@echo "Adding exterals..."
+	@echo "Adding externals..."
 	@ar -M <makelib.debug.mri
 	@echo "Finalizing..."
 	@ranlib output/lib/libmakai.debug.a
@@ -115,10 +115,22 @@ link-release:
 	@mkdir -p output/lib
 	@echo "Building library..."
 	@ar rcvs output/lib/libmakai.a obj/release/*.release.o
-	@echo "Adding exterals..."
+	@echo "Adding externals..."
 	@ar -M <makelib.release.mri
 	@echo "Finalizing..."
 	@ranlib output/lib/libmakai.a
+	@rm -rf output/lib/st*
+	@echo "Done!"
+	@echo 
+
+link-extern:
+	@echo "Creating lib folder..."
+	@rm -rf output/lib/libmakai.extern.a
+	@mkdir -p output/lib
+	@echo "Building extern..."
+	@ar -M <makelib.extern.mri
+	@echo "Finalizing..."
+	@ranlib output/lib/libmakai.extern.a
 	@rm -rf output/lib/st*
 	@echo "Done!"
 	@echo 
