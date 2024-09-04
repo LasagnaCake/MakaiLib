@@ -27,6 +27,9 @@ LINKCFG	:= $(LINKER_CONFIG) -O3 $(LIBRARIES) $(LEAN)
 COMPILER	:= @$(CXX) $(INCLUDES)
 LINKER		:= @$(CXX)
 
+prefix += .mat
+export prefix
+
 define GET_TIME
 @printf "\nTime: "
 @date +\"%H:%M:%S\"
@@ -40,10 +43,10 @@ endef
 all: debug release
 
 debug:
-	$(COMPILER) $(DEBUGCOMPCFG) -c effect.cpp -o graph.gl.mat.effect.gl.$@.o
-	$(COMPILER) $(DEBUGCOMPCFG) -c materials.cpp -o graph.gl.mat.materials.gl.$@.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c effect.cpp -o $(prefix).effect.gl.$@.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c materials.cpp -o $(prefix).materials.gl.$@.o
 
 
 release:
-	$(COMPILER) $(COMPCFG) -c effect.cpp -o graph.gl.mat.effect.$@.o
-	$(COMPILER) $(COMPCFG) -c materials.cpp -o graph.gl.mat.materials.$@.o
+	$(COMPILER) $(COMPCFG) -c effect.cpp -o $(prefix).effect.$@.o
+	$(COMPILER) $(COMPCFG) -c materials.cpp -o $(prefix).materials.$@.o
