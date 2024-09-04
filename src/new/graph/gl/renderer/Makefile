@@ -13,6 +13,9 @@ USE_OPENMP := -fopenmp -openmp -ftree-parallelize-loops=128
 export openmp
 endif
 
+prefix += rd
+export prefix
+
 OPTIMIZATIONS	:= $(USE_OPENMP) -funswitch-loops -fpredictive-commoning -fgcse-after-reload -ftree-vectorize $(LEAN)
 
 INCLUDES := -I$(ROOT)/lib/SDL2-2.0.10/include -I$(ROOT)/lib/OpenGL
@@ -40,24 +43,24 @@ endef
 all: debug release
 
 debug:
-	$(COMPILER) $(DEBUGCOMPCFG) -c mode.cpp -o graph.gl.rd.mode.$@.o
-	$(COMPILER) $(DEBUGCOMPCFG) -c core.cpp -o graph.gl.rd.core.$@.o
-	$(COMPILER) $(DEBUGCOMPCFG) -c drawable.cpp -o graph.gl.rd.drawable.$@.o
-	$(COMPILER) $(DEBUGCOMPCFG) -c reference.cpp -o graph.gl.rd.reference.$@.o
-	$(COMPILER) $(DEBUGCOMPCFG) -c renderable.cpp -o graph.gl.rd.renderable.$@.o
-	$(COMPILER) $(DEBUGCOMPCFG) -c bar.cpp -o graph.gl.rd.bar.$@.o
-	$(COMPILER) $(DEBUGCOMPCFG) -c text.cpp -o graph.gl.rd.text.$@.o
-	$(COMPILER) $(DEBUGCOMPCFG) -c scene.cpp -o graph.gl.rd.scene.$@.o
-	$(COMPILER) $(DEBUGCOMPCFG) -c framebuffer.cpp -o graph.gl.rd.framebuffer.$@.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c mode.cpp -o $(prefix).mode.$@.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c core.cpp -o $(prefix).core.$@.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c drawable.cpp -o $(prefix).drawable.$@.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c reference.cpp -o $(prefix).reference.$@.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c renderable.cpp -o $(prefix).renderable.$@.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c bar.cpp -o $(prefix).bar.$@.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c text.cpp -o $(prefix).text.$@.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c scene.cpp -o $(prefix).scene.$@.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c framebuffer.cpp -o $(prefix).framebuffer.$@.o
 
 
 release:
-	$(COMPILER) $(COMPCFG) -c mode.cpp -o graph.gl.rd.mode.$@.o
-	$(COMPILER) $(COMPCFG) -c core.cpp -o graph.gl.rd.core.$@.o
-	$(COMPILER) $(COMPCFG) -c drawable.cpp -o graph.gl.rd.drawable.$@.o
-	$(COMPILER) $(COMPCFG) -c reference.cpp -o graph.gl.rd.reference.$@.o
-	$(COMPILER) $(COMPCFG) -c renderable.cpp -o graph.gl.rd.renderable.$@.o
-	$(COMPILER) $(COMPCFG) -c bar.cpp -o graph.gl.rd.bar.$@.o
-	$(COMPILER) $(COMPCFG) -c text.cpp -o graph.gl.rd.text.$@.o
-	$(COMPILER) $(COMPCFG) -c scene.cpp -o graph.gl.rd.scene.$@.o
-	$(COMPILER) $(COMPCFG) -c framebuffer.cpp -o graph.gl.rd.framebuffer.$@.o
+	$(COMPILER) $(COMPCFG) -c mode.cpp -o $(prefix).mode.$@.o
+	$(COMPILER) $(COMPCFG) -c core.cpp -o $(prefix).core.$@.o
+	$(COMPILER) $(COMPCFG) -c drawable.cpp -o $(prefix).drawable.$@.o
+	$(COMPILER) $(COMPCFG) -c reference.cpp -o $(prefix).reference.$@.o
+	$(COMPILER) $(COMPCFG) -c renderable.cpp -o $(prefix).renderable.$@.o
+	$(COMPILER) $(COMPCFG) -c bar.cpp -o $(prefix).bar.$@.o
+	$(COMPILER) $(COMPCFG) -c text.cpp -o $(prefix).text.$@.o
+	$(COMPILER) $(COMPCFG) -c scene.cpp -o $(prefix).scene.$@.o
+	$(COMPILER) $(COMPCFG) -c framebuffer.cpp -o $(prefix).framebuffer.$@.o
