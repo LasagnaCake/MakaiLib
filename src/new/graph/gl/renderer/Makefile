@@ -35,24 +35,24 @@ endef
 all: debug release
 
 debug:
-	$(COMPILER) $(DEBUGCOMPCFG) -c mode.cpp -o mode.$@.o
-	$(COMPILER) $(DEBUGCOMPCFG) -c core.cpp -o core.$@.o
-	$(COMPILER) $(DEBUGCOMPCFG) -c drawable.cpp -o drawable.$@.o
-	$(COMPILER) $(DEBUGCOMPCFG) -c reference.cpp -o reference.$@.o
-	$(COMPILER) $(DEBUGCOMPCFG) -c renderable.cpp -o renderable.$@.o
-	$(COMPILER) $(DEBUGCOMPCFG) -c bar.cpp -o bar.$@.o
-	$(COMPILER) $(DEBUGCOMPCFG) -c text.cpp -o text.$@.o
-	$(COMPILER) $(DEBUGCOMPCFG) -c scene.cpp -o scene.$@.o
-	$(COMPILER) $(DEBUGCOMPCFG) -c framebuffer.cpp -o framebuffer.$@.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c mode.cpp -o mode.gl.$@.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c core.cpp -o core.gl.$@.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c drawable.cpp -o drawable.gl.$@.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c reference.cpp -o reference.gl.$@.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c renderable.cpp -o renderable.gl.$@.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c bar.cpp -o bar.gl.$@.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c text.cpp -o text.gl.$@.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c scene.cpp -o scene.gl.$@.o
+	$(COMPILER) $(DEBUGCOMPCFG) -c framebuffer.cpp -o framebuffer.gl.$@.o
 
 
 release:
-	$(COMPILER) $(COMPCFG) -c mode.cpp -o mode.$@.o
-	$(COMPILER) $(COMPCFG) -c core.cpp -o core.o
-	$(COMPILER) $(COMPCFG) -c drawable.cpp -o drawable.$@.o
-	$(COMPILER) $(COMPCFG) -c reference.cpp -o reference.$@.o
-	$(COMPILER) $(COMPCFG) -c renderable.cpp -o renderable.$@.o
-	$(COMPILER) $(COMPCFG) -c bar.cpp -o bar.$@.o
-	$(COMPILER) $(COMPCFG) -c text.cpp -o text.$@.o
-	$(COMPILER) $(COMPCFG) -c scene.cpp -o scene.$@.o
-	$(COMPILER) $(COMPCFG) -c framebuffer.cpp -o framebuffer.$@.o
+	$(COMPILER) $(COMPCFG) -c mode.cpp -o mode.gl.$@.o
+	$(COMPILER) $(COMPCFG) -c core.cpp -o core.gl.$@.o
+	$(COMPILER) $(COMPCFG) -c drawable.cpp -o drawable.gl.$@.o
+	$(COMPILER) $(COMPCFG) -c reference.cpp -o reference.gl.$@.o
+	$(COMPILER) $(COMPCFG) -c renderable.cpp -o renderable.gl.$@.o
+	$(COMPILER) $(COMPCFG) -c bar.cpp -o bar.gl.$@.o
+	$(COMPILER) $(COMPCFG) -c text.cpp -o text.gl.$@.o
+	$(COMPILER) $(COMPCFG) -c scene.cpp -o scene.gl.$@.o
+	$(COMPILER) $(COMPCFG) -c framebuffer.cpp -o framebuffer.gl.$@.o
