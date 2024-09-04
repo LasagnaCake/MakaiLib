@@ -10,6 +10,9 @@ define GET_TIME
 @echo ""
 endef
 
+prefix := lib
+export prefix
+
 LEAN := -static -s
 
 #WINGARBAGE := -lole32 -loleaut32 -limm32 -lwinmm -lversion -lpowrprof -lcomdlg32 -lsetupapi -lgdi32
