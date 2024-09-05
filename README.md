@@ -18,7 +18,7 @@
 
 Formerly a C++20 header-only game engine.
 
-Now, it's a 3D application engine, built on top of SDL2 & OpenGL.
+Now, it's a C++20 3D application engine, built on top of SDL2 & OpenGL.
 The game engine part is getting refactored into a separate extension.
 
 Now upgraded from spaghetti code to penne rigattoni code.
