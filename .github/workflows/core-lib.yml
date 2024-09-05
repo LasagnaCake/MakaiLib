@@ -1,7 +1,6 @@
 name: Core Library CI
 
 on:
-  branches: [ "!legacy-system" ]
   schedule:
     - cron: '30 9 * * 1'
 #  push:
