@@ -17,8 +17,6 @@
 - - - - Would also be the fastest, but more complicated on the end-user
 - - - - This one would also play nicely without messing the current rendering pipeline too much
 - - It is now up to the developer to figure out when to render their own layers, or to just just leave it like the old system
-- [ ] Implement a framebuffer push-pop stack system, perhaps?
-- - On second thought, this might be a stupid idea. Or not
 - [x] Replace `.ini`-based savefile system with a different format
 - - Using JSON
 - [x] GUI system
@@ -59,6 +57,12 @@
 - - [ ] Linux
 - [ ] Add [QOI](https://github.com/phoboslab/qoi/blob/master/qoi.h) support
 - [ ] Add [QOA](https://github.com/phoboslab/qoa/blob/master/qoa.h) support
+- [ ] Create `Label` class for fancy text support
+- - ( ) BBCode
+- - ( ) Custom text tags
+- - - See [Text Tags](../specifications/text-tags.md) for more info
+- [ ] Support for "Game DLLs"
+- - Having the game being separate from the executable, and stuff being loadable from a DLL
 
 ### Major Refactor
 
