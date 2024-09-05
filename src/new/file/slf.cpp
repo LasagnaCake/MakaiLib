@@ -52,7 +52,7 @@ SLFData Makai::SLF::parse(String const& slf, String const& srcFolder) {
 	// Get file location
 	String dir = FileSystem::getDirectoryFromPath(srcFolder);
 	// Initialize type specifier here
-	ShaderType type = "";
+	ShaderType type = ShaderType::ST_INVALID;
 	// Remove specifier for processing
 	content = regexReplace(content, "^[<](.*)[>]", "");
 	// Process file
