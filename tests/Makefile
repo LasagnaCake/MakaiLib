@@ -24,6 +24,7 @@ case = $(if $(findstring $(strip $(2)),$(strip $(1))),$(3))
 params = \
 	$(call case, $(1), 01,$(LIBREQS))\
 	$(call case, $(1), 02,$(LIBREQS) $(GRAPHREQS))\
+	$(call case, $(1), 03,$(LIBREQS) $(GRAPHREQS))\
 
 define mktest
 	@echo "$(strip $(2))"
@@ -34,6 +35,7 @@ ifndef t
 define tests
 	$(call mktest, $(1), 01.compilation)
 	$(call mktest, $(1), 02.app)
+	$(call mktest, $(1), 03.graphics)
 endef
 else
 define tests

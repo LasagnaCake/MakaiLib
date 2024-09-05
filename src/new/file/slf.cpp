@@ -44,29 +44,32 @@ constexpr bool isValidShaderExtension(String const& path) {
 	return isValidShaderType(fromFilePath(path));
 }
 
-SLFData Makai::SLF::loadFile(String const& path) {
-	// Try and get the file
-	String content = FileLoader::loadTextFile(path);
+SLFData Makai::SLF::parse(String const& slf, String const& srcFolder) {
+	String content = slf;
 	// Remove comments and empty lines
 	content = regexReplace(content, "(:[<]([\\s\\S]*?)[>]:)|(::([\\s\\S]*?)(\\n|\\r|\\r\\n))", "");
 	content = regexReplace(content, "((\\n|\\r|\\r\\n)+)", "|");
 	// Get file location
-	String dir = FileSystem::getDirectoryFromPath(path);
-	// Get file specifier, if any
-	ShaderType type = fromFileExtension(
-		regexReplace(
-			regexFindFirst(content, "^[<](.*)[>]"),
-			"<|>",
-			""
-		)
-	);
+	String dir = FileSystem::getDirectoryFromPath(srcFolder);
+	// Initialize type specifier here
+	ShaderType type = "";
 	// Remove specifier for processing
 	content = regexReplace(content, "^[<](.*)[>]", "");
 	// Process file
 	SLFData result{dir};
 	for (String shader: Helper::splitString(content, '|')) {
+		// If line is a type specifier, try and get it
+		String tt = regexFindFirst(shader, "^[<](.*)[>]");
+		if (!tt.empty()) {
+			type = fromFileExtension(
+				regexReplace(tt, "<|>", "")
+			);
+			continue;
+		}
+		// If type is a valid shader type, use it instead of deducing
 		if (isValidShaderType(type))
 			result.shaders.push_back(ShaderEntry{shader, type});
+		// Else, try and deduce it from shader file extension
 		else {
 			ShaderType st = fromFilePath(shader);
 			if (!isValidShaderType(st)) {
@@ -79,7 +82,7 @@ SLFData Makai::SLF::loadFile(String const& path) {
 					__FILE__,
 					::toString(__LINE__),
 					"SLF::parseFile",
-					::toString("File extension is '", FileSystem::getFileExtension(path), "'")
+					::toString("File extension is '", FileSystem::getFileExtension(shader), "'")
 				);
 			}
 			result.shaders.push_back(ShaderEntry{shader, st});
@@ -89,47 +92,12 @@ SLFData Makai::SLF::loadFile(String const& path) {
 	return result;
 }
 
+SLFData Makai::SLF::loadFile(String const& path) {
+	// Try and get the file
+	return Makai::SLF::parse(FileLoader::loadTextFile(path), path);
+}
+
 SLFData Makai::SLF::getFile(String const& path) {
 	// Try and get the file
-	String content = Makai::File::getTextFile(path);
-	// Remove comments and empty lines
-	content = regexReplace(content, "(:[<]([\\s\\S]*?)[>]:)|(::([\\s\\S]*?)(\\n|\\r|\\r\\n))", "");
-	content = regexReplace(content, "((\\n|\\r|\\r\\n)+)", "|");
-	// Get file location
-	String dir = FileSystem::getDirectoryFromPath(path);
-	// Get file specifier, if any
-	ShaderType type = fromFileExtension(
-		regexReplace(
-			regexFindFirst(content, "^[<](.*)[>]"),
-			"<|>",
-			""
-		)
-	);
-	// Remove specifier for processing
-	content = regexReplace(content, "^[<](.*)[>]", "");
-	// Process file
-	SLFData result{dir};
-	for (String shader: Helper::splitString(content, '|')) {
-		if (isValidShaderType(type))
-			result.shaders.push_back(ShaderEntry{shader, type});
-		else {
-			ShaderType st = fromFilePath(shader);
-			if (!isValidShaderType(st)) {
-				throw Error::InvalidValue(
-					::toString(
-						"Invalid shader type for shader'",
-						FileSystem::concatenatePath(dir, shader),
-						"'!"
-					),
-					__FILE__,
-					::toString(__LINE__),
-					"SLF::parseFile",
-					::toString("File extension is '", FileSystem::getFileExtension(path), "'")
-				);
-			}
-			result.shaders.push_back(ShaderEntry{shader, st});
-		}
-	}
-	// Return result
-	return result;
+	return Makai::SLF::parse(Makai::File::getTextFile(path), path);
 }

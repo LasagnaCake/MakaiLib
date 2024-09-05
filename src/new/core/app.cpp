@@ -67,9 +67,7 @@ App::App (
 	unsigned int const& height,
 	String const& windowTitle,
 	bool const& fullscreen,
-	Makai::Audio::Formats const& formats,
-	String const& bufferShaderPath,
-	String const& mainShaderPath
+	Makai::Audio::Formats const& formats
 ) {
 	// If there is another app open, throw error
 	if (mainApp)
@@ -173,19 +171,24 @@ App::App (
 	// Create layer buffer
 	layerbuffer.create(width, height);
 	framebuffer();
-	// Create buffer shaders
-	DEBUGLN("Creating shaders...");
-	SLF::SLFData data = SLF::getFile(bufferShaderPath);
-	framebuffer.shader.create(data);
-	layerbuffer.shader = framebuffer.shader;
-	// Create main shader
-	Makai::Graph::Shader::DEFAULT.make(SLF::getFile(mainShaderPath));
 	DEBUGLN(Entities::_ROOT ? "Root Exists!" : "Root does not exist!");
 	if (!Entities::_ROOT) {
 		DEBUGLN("Initializing root tree...");
 		Entities::init();
 	}
 	DEBUGLN("All core systems initialized!");
+}
+
+void App::loadShaders(SLF::SLFData const& main, SLF::SLFData const& buffer) {
+	// Create buffer shaders
+	DEBUGLN("Creating shaders...");
+	DEBUGLN("> Making framebuffer & layerbuffer shader");
+	framebuffer.shader.create(buffer);
+	layerbuffer.shader = framebuffer.shader;
+	// Create main shader
+	DEBUGLN("> Making default shader");
+	Makai::Graph::Shader::DEFAULT.make(main);
+	DEBUGLN("Done!");
 }
 
 App::~App() {

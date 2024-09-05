@@ -5,7 +5,11 @@ struct TestApp: Makai::App {
 };
 
 int main() {
-	TestApp app;
-	app.run();
+	try {
+		TestApp app;
+		app.run();
+	} catch (std::runtime_error const& e) {
+		Makai::Popup::showError(e.what());
+	}
 	return 0;
 }

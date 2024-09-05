@@ -19,9 +19,7 @@ namespace Makai {
 			unsigned int const& height,
 			String const& windowTitle,
 			bool const& fullscreen = false,
-			Audio::Formats const& formats = {Audio::Format::AF_OGG, Audio::Format::AF_MP3},
-			String const& bufferShaderPath = "shaders/framebuffer/compose.slf",
-			String const& mainShaderPath = "shaders/base/base.slf"
+			Audio::Formats const& formats = {Audio::Format::AF_OGG, Audio::Format::AF_MP3}
 		);
 
 		virtual ~App();
@@ -34,6 +32,9 @@ namespace Makai {
 
 		/// Sets the program fullscreen.
 		void setFullscreen(bool const& state = false);
+
+		/// Loads the program's shaders from SLF files.
+		void loadShaders(SLF::SLFData const& main, SLF::SLFData const& buffer);
 
 		/// Runs the program.
 		void run();

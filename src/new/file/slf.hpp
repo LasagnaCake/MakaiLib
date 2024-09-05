@@ -25,6 +25,7 @@ namespace Makai::SLF {
 		List<ShaderEntry>	shaders;
 	};
 
+	SLFData parse(String const& slf, String const& srcFolder);
 	SLFData loadFile(String const& path);
 	SLFData getFile(String const& path);
 }
