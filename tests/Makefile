@@ -11,12 +11,12 @@ LIBREQS		:= -static-libstdc++ -static-libgcc
 GRAPHREQS	:= -lopengl32
 WINREQS		:= -lole32 -loleaut32 -limm32 -lwinmm -lversion -lpowrprof -lcomdlg32 -lsetupapi -lgdi32
 
-testcmd = @$(CXX) -o output/$(1)/test.$(2).$(1).exe test.$(2).cpp $(COMPILER_CONFIG) ../output/lib/$(3) -static
+testcmd = @$(CXX) -o output/$(1)/test.$(2).$(1).exe test.$(2).cpp $(COMPILER_CONFIG) ../output/lib/$(3)
 
 dotest = \
 	$(if $(findstring debug,$(1)),\
 		$(call testcmd,$(strip $(1)),$(strip $(2)),libmakai.$(strip $(1)).a) $(DEBUGMODE),\
-		$(call testcmd,$(strip $(1)),$(strip $(2)),libmakai.a) -mwindows -s\
+		$(call testcmd,$(strip $(1)),$(strip $(2)),libmakai.a) -mwindows -static -s\
 	)
 
 case = $(if $(findstring $(strip $(2)),$(strip $(1))),$(3))

@@ -61,7 +61,7 @@ namespace FileLoader {
 			file.read((char*)&data[0], fileSize);
 			file.close();
 			return data;
-		} catch (runtime_error const& e) {
+		} catch (std::exception const& e) {
 			fileLoadError(path, e.what());
 		}
 		return BinaryData();
@@ -72,22 +72,23 @@ namespace FileLoader {
 		// The file and its contents
 		String content;
 		ifstream file;
+		usize i = 0;
 		// Ensure directory exists
 		assertFileExists(path);
 		// Ensure ifstream object can throw exceptions
 		file.exceptions(ifstream::failbit | ifstream::badbit);
 		try {
 			// Open file
-			file.open(path);
-			stringstream stream;
-			// Read file’s buffer contents into streams
-			stream << file.rdbuf();
+			file.open(path);		++i;
+			stringstream stream;	++i;
+			// Read file’s buffer contents into stringstream
+			stream << file.rdbuf();	++i;
 			// Close file handler
-			file.close();
+			file.close();			++i;
 			// Convert stream into string
-			content = stream.str();
-		} catch (runtime_error const& e) {
-			fileLoadError(path, e.what());
+			content = stream.str();	++i;
+		} catch (std::exception const& e) {
+			fileLoadError(path, String(e.what()) + toString("\n\nOperation: [", i, "]"));
 		}
 		// Return contents
 		return content;
@@ -100,25 +101,7 @@ namespace FileLoader {
 	*/
 	inline CSVData loadCSVFile(String const& path, char delimiter = ',') {
 		// The file and its contents
-		String content;
-		ifstream file;
-		// Ensure directory exists
-		assertFileExists(path);
-		// Ensure ifstream object can throw exceptions
-		file.exceptions(ifstream::failbit | ifstream::badbit);
-		try {
-			// Open file
-			file.open(path);
-			stringstream stream;
-			// Read file’s buffer contents into streams
-			stream << file.rdbuf();
-			// Close file handler
-			file.close();
-			// Convert stream into string
-			content = stream.str();
-		} catch (runtime_error const& e) {
-			fileLoadError(path, e.what());
-		}
+		String content = loadTextFile(path);
 		// Get values
 		CSVData csvs;
 		istringstream cData(content);
@@ -136,7 +119,7 @@ namespace FileLoader {
 	template <typename T>
 	inline void saveBinaryFile(String const& path, T* data, size_t size) {
 		FileSystem::makeDirectory(FileSystem::getDirectoryFromPath(path));
-		ofstream file(path.c_str() , ios::binary);
+		ofstream file(path.c_str(), ios::binary);
 		// Ensure ifstream object can throw exceptions
 		file.exceptions(ofstream::failbit | ofstream::badbit);
 		// Try and save data
@@ -144,7 +127,7 @@ namespace FileLoader {
 			file.write((char*)data, size * sizeof(T));
 			file.flush();
 			file.close();
-		} catch (runtime_error const& e) {
+		} catch (std::exception const& e) {
 			fileSaveError(path, e.what());
 		}
 	}
@@ -167,7 +150,7 @@ namespace FileLoader {
 			file.write(text.data(), text.size());
 			file.flush();
 			file.close();
-		} catch (runtime_error const& e) {
+		} catch (std::exception const& e) {
 			fileSaveError(path, e.what());
 		}
 	}

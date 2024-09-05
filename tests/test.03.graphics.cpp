@@ -3,10 +3,15 @@
 struct TestApp: Makai::App {
 	TestApp(): Makai::App(600, 400, "Test 03", false) {
 		DEBUGLN("Shader loading BEGIN");
-		loadShaders(
-			Makai::SLF::loadFile("shaders/base/base.slf"),
-			Makai::SLF::loadFile("shaders/framebuffer/compose.slf")
-		);
+		try {
+			loadShaders(
+				Makai::SLF::loadFile("shaders/base/base.slf"),
+				Makai::SLF::loadFile("shaders/framebuffer/compose.slf")
+			);
+		} catch (std::exception const& e) {
+			Makai::Popup::showError(e.what());
+			close();
+		}
 	}
 };
 
@@ -14,7 +19,7 @@ int main() {
 	try {
 		TestApp app;
 		app.run();
-	} catch (std::runtime_error const& e) {
+	} catch (std::exception const& e) {
 		Makai::Popup::showError(e.what());
 	}
 	return 0;
