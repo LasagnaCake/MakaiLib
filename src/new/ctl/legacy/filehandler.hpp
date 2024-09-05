@@ -45,14 +45,14 @@ namespace FileLoader {
 
 	/// Loads a binary file as an array;
 	inline BinaryData loadBinaryFile(String const& path) {
-		// The file
-		ifstream file;
-		// Ensure ifstream object can throw exceptions
-		file.exceptions(ifstream::failbit | ifstream::badbit);
 		// Ensure directory exists
 		assertFileExists(path);
 		// Try and load binary
 		try {
+			// The file
+			ifstream file;
+			// Ensure ifstream object can throw exceptions
+			file.exceptions(ifstream::failbit | ifstream::badbit);
 			// Preallocate data
 			size_t fileSize = filesystem::file_size(path);
 			BinaryData data(fileSize);
@@ -69,26 +69,25 @@ namespace FileLoader {
 
 	/// Loads a text file as a string.
 	inline String loadTextFile(String const& path) {
-		// The file and its contents
-		String content;
-		ifstream file;
-		usize i = 0;
 		// Ensure directory exists
 		assertFileExists(path);
-		// Ensure ifstream object can throw exceptions
-		file.exceptions(ifstream::failbit | ifstream::badbit);
 		try {
+			// The file and its contents
+			String content;
+			ifstream file;
+			// Ensure ifstream object can throw exceptions
+			file.exceptions(ifstream::failbit | ifstream::badbit);
 			// Open file
-			file.open(path);		++i;
-			stringstream stream;	++i;
+			file.open(path);
+			stringstream stream;
 			// Read file’s buffer contents into stringstream
-			stream << file.rdbuf();	++i;
+			stream << file.rdbuf();
 			// Close file handler
-			file.close();			++i;
+			file.close();
 			// Convert stream into string
-			content = stream.str();	++i;
+			content = stream.str();
 		} catch (std::exception const& e) {
-			fileLoadError(path, String(e.what()) + toString("\n\nOperation: [", i, "]"));
+			fileLoadError(path, e.what());
 		}
 		// Return contents
 		return content;
@@ -119,11 +118,12 @@ namespace FileLoader {
 	template <typename T>
 	inline void saveBinaryFile(String const& path, T* data, size_t size) {
 		FileSystem::makeDirectory(FileSystem::getDirectoryFromPath(path));
-		ofstream file(path.c_str(), ios::binary);
-		// Ensure ifstream object can throw exceptions
-		file.exceptions(ofstream::failbit | ofstream::badbit);
 		// Try and save data
 		try {
+			ofstream file(path.c_str(), ios::binary);
+			// Ensure ifstream object can throw exceptions
+			file.exceptions(ofstream::failbit | ofstream::badbit);
+			// Write data to file
 			file.write((char*)data, size * sizeof(T));
 			file.flush();
 			file.close();
@@ -142,11 +142,12 @@ namespace FileLoader {
 	/// Saves an string as a text file (Non-destructive).
 	inline void saveTextFile(String const& path, String const& text) {
 		FileSystem::makeDirectory(FileSystem::getDirectoryFromPath(path));
-		ofstream file(path.c_str(), ios::trunc);
-		// Ensure ifstream object can throw exceptions
-		file.exceptions(ofstream::failbit | ofstream::badbit);
 		// Try and save data
 		try {
+			ofstream file(path.c_str(), ios::trunc);
+			// Ensure ifstream object can throw exceptions
+			file.exceptions(ofstream::failbit | ofstream::badbit);
+			// Write data to file
 			file.write(text.data(), text.size());
 			file.flush();
 			file.close();
