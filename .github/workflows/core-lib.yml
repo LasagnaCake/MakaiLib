@@ -1,15 +1,16 @@
 name: Core Library CI
 
 on:
+  branches: [ "!legacy-system" ]
   schedule:
     - cron: '30 9 * * 1'
 #  push:
-#    branches: [ "the-great-refactor" ]
+#    branches: [ "!legacy-system" ]
   workflow_dispatch:
   workflow_call:
 #  pull_request:
 #    types: [ "closed" ]
-#    branches: [ "main" ]
+#    branches: [ "!legacy-system" ]
 
 jobs:
   install-gcc13:
