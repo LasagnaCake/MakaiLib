@@ -245,4 +245,29 @@ void main(void) {
 	//DepthValue = length(fragCoord3D);
 
 	//FragColor = vec4(fragColor.x, 1, 1.1-(fragDistance/50.0), 1) * albedo;
+} = applyGradient(color);
+
+	if (nearFog.enabled) color = applyNearFog(color);
+
+	if (farFog.enabled) color = applyFarFog(color);
+
+	if (emission.enabled) {
+		vec4	emitColor	= texture(emission.image, calculatedFragUV) * fragColor;
+		float	emitFactor	= rgb2hsl(emitColor.rgb).z * emitColor.a;
+		color.rgb = mix(color.rgb, emitColor.rgb, emitFactor * emission.strength);
+	}
+
+	FragColor = color;
+
+	if (debugView > 0) {
+		switch(debugView) {
+			case 1: FragColor = vec4(fragNormal / 2 + 0.5, 1); break;
+			default: break;
+		}
+	}
+
+	//gl_FragDepth = length(fragCoord3D);
+	//DepthValue = length(fragCoord3D);
+
+	//FragColor = vec4(fragColor.x, 1, 1.1-(fragDistance/50.0), 1) * albedo;
 }

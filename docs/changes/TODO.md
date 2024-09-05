@@ -17,8 +17,6 @@
 - - - - Would also be the fastest, but more complicated on the end-user
 - - - - This one would also play nicely without messing the current rendering pipeline too much
 - - It is now up to the developer to figure out when to render their own layers, or to just just leave it like the old system
-- [ ] Implement a framebuffer push-pop stack system, perhaps?
-- - On second thought, this might be a stupid idea. Or not
 - [x] Replace `.ini`-based savefile system with a different format
 - - Using JSON
 - [x] GUI system
@@ -45,6 +43,7 @@
 - - Could also implement support for Squirrel/LUA/AngelScript
 - - Or C# even, this one might be the more feasible option
 - - - This one sounds enticing
+- - What about [SWIG](https://www.swig.org/)?
 
 ### Future
 
