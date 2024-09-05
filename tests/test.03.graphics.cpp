@@ -8,7 +8,7 @@ struct TestApp: Makai::App {
 				Makai::SLF::loadFile("shaders/base/base.slf"),
 				Makai::SLF::loadFile("shaders/framebuffer/compose.slf")
 			);
-		} catch (std::exception const& e) {
+		} catch (Error::Error const& e) {
 			Makai::Popup::showError(e.what());
 			close();
 		}
@@ -19,7 +19,7 @@ int main() {
 	try {
 		TestApp app;
 		app.run();
-	} catch (std::exception const& e) {
+	} catch (Error::Error const& e) {
 		Makai::Popup::showError(e.what());
 	}
 	return 0;
