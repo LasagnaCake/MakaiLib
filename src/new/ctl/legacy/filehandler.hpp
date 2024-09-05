@@ -86,11 +86,13 @@ namespace FileLoader {
 			file.close();
 			// Convert stream into string
 			content = stream.str();
+			// Return contents
+			return content;
 		} catch (std::exception const& e) {
 			fileLoadError(path, e.what());
 		}
 		// Return contents
-		return content;
+		return "";
 	}
 
 	typedef StringList CSVData;
