@@ -205,7 +205,15 @@ void App::setFullscreen(bool const& state) {
 	SDL_SetWindowFullscreen(sdlWindow, state);
 }
 
+inline bool isAppClosing(App::AppState const& state) {
+	return
+		state == App::AppState::AS_CLOSING
+	||	state == App::AppState::AS_INVALID
+	;
+}
+
 void App::run() {
+	if (isAppClosing(state)) return finalize();
 	state = App::AppState::AS_OPENING;
 	// The timer process
 	auto timerFunc	= [&](float delta)-> void {
@@ -236,6 +244,8 @@ void App::run() {
 	size_t cycleTicks = SDL_GetTicks() + cycleDelta * 1000.0;
 	// Refresh mouse capture stuff
 	input.refreshCapture();
+	// If app is should close, do so
+	if (isAppClosing(state)) return finalize();
 	// Change app state
 	state = App::AppState::AS_RUNNING;
 	// While program is running...;
@@ -323,7 +333,6 @@ void App::run() {
 		#endif
 	}
 	// Terminate program
-	DEBUGLN("\nClosing incoherent program...");
 	finalize();
 }
 
@@ -411,6 +420,7 @@ void App::pushLayerToFrame() {pushToFrame = true;}
 void App::finalize() {
 	if (state != App::AppState::AS_CLOSING)
 		return;
+	DEBUGLN("\nClosing incoherent program...");
 	// Call final function
 	onClose();
 	// Remove window from input manager
@@ -520,7 +530,7 @@ void App::copyScreenToQueued() {
 	}
 }
 
-bool App::shouldClose() {
+bool App::closeButtonPressed() {
 	SDL_Event ev;
 	SDL_PollEvent(&ev);
 	return ev.type == SDL_QUIT;

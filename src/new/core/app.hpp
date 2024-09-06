@@ -44,7 +44,7 @@ namespace Makai {
 		virtual ~App();
 
 		/// Returns whether the user pressed the close button.
-		static bool shouldClose();
+		static bool closeButtonPressed();
 
 		/// Sets the window's title.
 		void setWindowTitle(String const& title);
