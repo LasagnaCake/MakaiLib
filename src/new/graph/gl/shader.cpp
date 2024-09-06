@@ -27,9 +27,10 @@ constexpr GLuint getGLShaderType(ShaderType const& type) {
 
 struct Shader::ShaderProgram {
 	ShaderProgram()		{}
-	ShaderProgram(bool)	{id = glCreateProgram();	}
-	~ShaderProgram()	{glDeleteProgram(id);		}
-	void create() {if (id == 0) id = glCreateProgram();}
+	ShaderProgram(bool)	{create();	}
+	~ShaderProgram()	{destroy();	}
+	void create()	{if (id == 0) id = glCreateProgram();	}
+	void destroy()	{if (id != 0) id = glDeleteProgram(id);	}
 	GLuint id = 0;
 };
 
