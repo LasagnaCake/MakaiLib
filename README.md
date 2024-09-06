@@ -63,9 +63,10 @@ For the old system, se the `legacy-system` branch.
 
 ### Building from scratch
 
-1. Clone the repository (or just download it)
-2. Enter the repository via command line (whichever has GCC)
-3. Run `make all`
+1. Clone the repository (or just download it);
+2. Enter the repository via command line (whichever has GCC);
+3. Run `make all`;
+4. Done! The result is located in the generated `output/` folder.
 
 ### Note
 
