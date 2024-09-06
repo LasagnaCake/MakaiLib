@@ -192,7 +192,7 @@ void App::loadShaders(SLF::SLFData const& main, SLF::SLFData const& buffer) {
 }
 
 App::~App() {
-	terminate();
+	finalize();
 }
 
 void App::setGLDebug(bool const& state) {
