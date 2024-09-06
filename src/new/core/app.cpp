@@ -325,7 +325,7 @@ void App::run() {
 	}
 	// Terminate program
 	DEBUGLN("\nClosing incoherent program...");
-	terminate();
+	finalize();
 }
 
 void App::close() {
@@ -435,13 +435,13 @@ void App::skipDrawingThisLayer() {skipLayer = true;}
 
 void App::pushLayerToFrame() {pushToFrame = true;}
 
-void App::terminate() {
+void App::finalize() {
 	// Call final function
 	onClose();
 	// Remove window from input manager
 	Makai::Input::Manager::clearTargetWindow(window);
 	Entities::_ROOT->destroyChildren();
-	// Close YSE
+	// Close sound system
 	DEBUGLN("Closing sound system...");
 	Makai::Audio::close();
 	DEBUGLN("Sound system closed!");
