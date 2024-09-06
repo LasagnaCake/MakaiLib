@@ -63,12 +63,12 @@ void setGLAttribute(SDL_GLattr const& a, int const& v) {
 App* mainApp = nullptr;
 
 App::App (
-	unsigned int const& width,
-	unsigned int const& height,
-	String const& windowTitle,
-	bool const& fullscreen,
-	Makai::Audio::Formats const& formats
-) {
+	unsigned int const&	width,
+	unsigned int const&	height,
+	String const&		windowTitle,
+	bool const&			fullscreen,
+	AudioConfig const&	audio
+): state(App::AppState::AS_CLOSED) {
 	// If there is another app open, throw error
 	if (mainApp)
 		throw Error::DuplicateValue(
@@ -97,11 +97,7 @@ App::App (
 	DEBUGLN("Started!");
 	// Initialize YSE
 	DEBUGLN("Starting Audio System...");
-	{
-		using Makai::Audio::Formats;
-		using enum Makai::Audio::Format;
-		Makai::Audio::open(formats, 2, 16);
-	}
+	Makai::Audio::open(audio.formats, audio.channels, audio.tracks);
 	DEBUGLN("Started!");
 	// Create window and make active
 	DEBUGLN("Creating window...");
@@ -193,6 +189,8 @@ void App::loadShaders(SLF::SLFData const& main, SLF::SLFData const& buffer) {
 
 App::~App() {
 	finalize();
+	if (mainApp == this)
+		mainApp = nullptr;
 }
 
 void App::setGLDebug(bool const& state) {
@@ -208,6 +206,7 @@ void App::setFullscreen(bool const& state) {
 }
 
 void App::run() {
+	state = App::AppState::AS_OPENING;
 	// The timer process
 	auto timerFunc	= [&](float delta)-> void {
 		Tweening::Tweener::process(1.0);
@@ -223,8 +222,6 @@ void App::run() {
 	// Clear screen
 	clearColorBuffer(color);
 	glClear(GL_DEPTH_BUFFER_BIT);
-	// Render reserved layer
-	renderReservedLayer();
 	// Render simple frame
 	SDL_GL_SwapWindow(sdlWindow);
 	// Call on open function
@@ -239,14 +236,16 @@ void App::run() {
 	size_t cycleTicks = SDL_GetTicks() + cycleDelta * 1000.0;
 	// Refresh mouse capture stuff
 	input.refreshCapture();
-	// While program is running...
-	while(shouldRun) {
+	// Change app state
+	state = App::AppState::AS_RUNNING;
+	// While program is running...;
+	while(state == App::AppState::AS_RUNNING) {
 		// Poll events and check if should close
 		while (SDL_PollEvent(&event)) {
 			switch (event.type) {
 				case SDL_QUIT: {
 					DEBUGLN("SDL Event: EXIT");
-					shouldRun = false;
+					state = App::AppState::AS_CLOSING;
 				} break;
 				case SDL_WINDOWEVENT: {
 					DEBUGLN("SDL Event: WINDOW EVENT");
@@ -329,11 +328,15 @@ void App::run() {
 }
 
 void App::close() {
-	shouldRun = false;
+	state = App::AppState::AS_CLOSING;
 }
 
 bool App::running() {
-	return (shouldRun);
+	return (state != App::AppState::AS_CLOSED);
+}
+
+App::AppState App::getState() {
+	return (state);
 }
 
 void App::setWindowSize(Vector2 const& size) {}
@@ -356,36 +359,6 @@ size_t App::getCycleRate() {
 
 size_t App::getFrameRate() {
 	return frameRate;
-}
-
-void App::renderReservedLayer() {
-	clearColorBuffer(color);
-	glClear(GL_DEPTH_BUFFER_BIT);
-	//framebuffer().clearBuffers();
-	Graph::Renderer::renderLayer(NumberLimit<usize>::HIGHEST);
-	//framebuffer.render(toFrameBufferData());
-	SDL_GL_SwapWindow(sdlWindow);
-	// Clear target depth buffer
-	framebuffer();
-	// Enable layer buffer
-	layerbuffer();
-	// Reset layerbuffer's positions
-	layerbuffer.trans	= VecMath::Transform3D();
-	layerbuffer.uv		= VecMath::Transform3D();
-	// Call onLayerDrawBegin function
-	onReservedLayerDrawBegin();
-	// Clear buffers
-	layerbuffer.clearBuffers();
-	// Call onLayerDrawBegin function
-	onPostReservedLayerClear();
-	// Render layer
-	Graph::Renderer::renderLayer(NumberLimit<usize>::HIGHEST);
-	// Call onPreLayerDraw function
-	onPreReservedLayerDraw();
-	// Render layer buffer
-	layerbuffer.render(framebuffer);
-	// Call onLayerDrawEnd function
-	onReservedLayerDrawEnd();
 }
 
 void App::setGLFlag(usize const& flag, bool const& state) {
@@ -436,6 +409,8 @@ void App::skipDrawingThisLayer() {skipLayer = true;}
 void App::pushLayerToFrame() {pushToFrame = true;}
 
 void App::finalize() {
+	if (state != App::AppState::AS_CLOSING)
+		return;
 	// Call final function
 	onClose();
 	// Remove window from input manager
@@ -458,6 +433,7 @@ void App::finalize() {
 	SDL_Quit();
 	DEBUGLN("SDL ended!");
 	//exit(0);
+	state = App::AppState::AS_CLOSED;
 }
 
 void App::render() {

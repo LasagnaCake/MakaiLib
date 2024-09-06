@@ -11,16 +11,35 @@
 using namespace Makai;
 
 namespace Makai {
+	struct AudioConfig {
+		Audio::Formats const& formats = {
+			Audio::Format::AF_OGG,
+			Audio::Format::AF_MP3
+		};
+		uint
+			channels = 2,
+			tracks = 16
+		;
+	};
+
 	struct App {
 	public:
 		/// Initializes the program.
 		App (
-			unsigned int const& width,
-			unsigned int const& height,
-			String const& windowTitle,
-			bool const& fullscreen = false,
-			Audio::Formats const& formats = {Audio::Format::AF_OGG, Audio::Format::AF_MP3}
+			unsigned int const&	width,
+			unsigned int const&	height,
+			String const&		windowTitle,
+			bool const&			fullscreen	= false,
+			AudioConfig const&	audio		= {}
 		);
+
+		enum AppState {
+			AS_INVALID = -1,
+			AS_CLOSED,
+			AS_OPENING,
+			AS_RUNNING,
+			AS_CLOSING,
+		};
 
 		virtual ~App();
 
@@ -45,6 +64,9 @@ namespace Makai {
 		/// Returns whether the program is currently running.
 		bool running();
 
+		/// Returns the program's current state.
+		AppState getState();
+
 		/// Sets the program's window size.
 		void setWindowSize(Vector2 const& size);
 
@@ -57,10 +79,6 @@ namespace Makai {
 		usize getCycleRate();
 		/// Gets the current cycle rate.
 		usize getFrameRate();
-
-		/// Renders the reserved layer.
-		[[deprecated]]
-		void renderReservedLayer();
 
 		/// Sets an OpenGL flag.
 		static void setGLFlag(usize const& flag, bool const& state = true);
@@ -95,21 +113,6 @@ namespace Makai {
 		virtual void onPreFrameDraw()	{}
 		/// Happens after the screen is rendered, after the frame buffer is drawn to the screen.
 		virtual void onDrawEnd()		{}
-
-		/// Reserved Layer only.
-
-		/// Gets called when the program begins rendering the reserved layer, before the the layer buffer is cleared.
-		[[deprecated]]
-		virtual void onReservedLayerDrawBegin()	{}
-		/// Gets called when the program begins rendering the reserved layer, after the the layer buffer is cleared.
-		[[deprecated]]
-		virtual void onPostReservedLayerClear()	{}
-		/// Gets called when the program ends rendering the reserved layer, before the layer buffer is drawn to the screen.
-		[[deprecated]]
-		virtual void onPreReservedLayerDraw()	{}
-		/// Gets called when the program ends rendering the reserved layer, after the layer buffer is drawn to the screen.
-		[[deprecated]]
-		virtual void onReservedLayerDrawEnd()	{}
 
 		/// Gets called every frame, along all other logic.
 		virtual void onLogicFrame(float delta)	{}
@@ -194,7 +197,7 @@ namespace Makai {
 		usize cycle = 0;
 
 		/// Current execution state.
-		bool shouldRun = true;
+		AppState state = AppState::AS_CLOSED;
 
 		/// The program's window.
 		Extern::Resource window;

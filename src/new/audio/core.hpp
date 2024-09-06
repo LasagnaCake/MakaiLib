@@ -22,6 +22,8 @@ namespace Makai::Audio {
 
 	void open(Formats const& formats, uint const& channels = 2, uint const& audioTracks = 16);
 
+	void restart(Formats const& formats, uint const& channels = 2, uint const& audioTracks = 16);
+
 	void close();
 
 	bool isOpen();

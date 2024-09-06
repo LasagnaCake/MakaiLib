@@ -42,6 +42,7 @@ void Makai::Audio::open(
 	uint const&		channels,
 	uint const&		audioTracks
 ) {
+	if (audioOpen) return;
 	if (!Mix_Init(getFlags(formats))) {
 		throw Error::FailedAction(
 			"Unable to open audio system!",
@@ -72,11 +73,21 @@ void Makai::Audio::open(
 	audioOpen = true;
 }
 
+void Makai::Audio::restart(
+	Formats const&	formats,
+	uint const&		channels,
+	uint const&		audioTracks
+) {
+	Makai::Audio::close();
+	Makai::Audio::open(formats, channels, audioTracks);
+}
+
 void Makai::Audio::close() {
+	if (!audioOpen) return;
 	stopAll();
-	audioOpen = false;
 	Mix_CloseAudio();
 	Mix_Quit();
+	audioOpen = false;
 }
 
 bool Makai::Audio::isOpen() {
