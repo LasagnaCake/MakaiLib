@@ -22,8 +22,8 @@ SDLMIXER	:= lib/SDL2-2.0.10/lib/libSDL2_mixer.dll.a
 CRYPTOPP	:= lib/cryptopp/lib/libcryptopp.a
 GLEW		:= lib/OpenGL/GLEW/lib/libglew32.dll.a
 
-ifeq ($(wildcard obj/extern/extern.3p.a),)
-CREATE_E3P := link-extern
+ifeq (,$(wildcard obj/extern/extern.3p.a))
+CREATE_LIB_3P := link-extern
 endif
 
 CONFIG := -static #--static-libstdc++ --static-libgcc
@@ -47,11 +47,11 @@ build-all: build-debug build-release
 
 up-all: copy-headers copy-o-debug copy-o-release
 
-link-all: $(CREATE_E3P) link-debug link-release
+link-all: $(CREATE_LIB_3P) link-debug link-release
 
-debug: build-debug up-debug $(CREATE_E3P) link-debug
+debug: build-debug up-debug $(CREATE_LIB_3P) link-debug
 
-release: build-release up-release $(CREATE_E3P) link-release
+release: build-release up-release $(CREATE_LIB_3P) link-release
 
 build-debug:
 	@cd src/new
