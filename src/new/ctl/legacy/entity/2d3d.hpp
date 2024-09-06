@@ -49,7 +49,7 @@ namespace Entities {
 			Entity* par = getParent();
 			// If unparented, or parent is root, return own position
 			if (!par) return position;
-			if (par->getName() == ENTITY_ROOT_NAME) return position;
+			if (par->getName() == Entity::ROOT_NAME) return position;
 			// Try getting parent's global position
 			if (par->getCoreClass() == "Entity2D") {
 				Entity2D* parent2D = (Entity2D*)par;
@@ -70,7 +70,7 @@ namespace Entities {
 			Entity* par = getParent();
 			// If unparented, or parent is root, return own rotation
 			if (!par) return rotation;
-			if (par->getName() == ENTITY_ROOT_NAME) return rotation;
+			if (par->getName() == Entity::ROOT_NAME) return rotation;
 			// Try getting parent's global rotation
 			if (par->getCoreClass() == "Entity2D") {
 				Entity2D* parent2D = (Entity2D*)par;
@@ -88,7 +88,7 @@ namespace Entities {
 			Entity* par = getParent();
 			// If unparented, or parent is root, return own scale
 			if (!par) return scale;
-			if (par->getName() == ENTITY_ROOT_NAME) return scale;
+			if (par->getName() == Entity::ROOT_NAME) return scale;
 			// Try getting parent's global scale
 			if (par->getCoreClass() == "Entity2D") {
 				Entity2D* parent2D = (Entity2D*)par;
@@ -149,7 +149,7 @@ namespace Entities {
 			Entity* par = getParent();
 			// If unparented, or parent is root, return own position
 			if (!par) return position;
-			if (par->getName() == ENTITY_ROOT_NAME) return position;
+			if (par->getName() == Entity::ROOT_NAME) return position;
 			// Try getting parent's global position
 			if (par->getCoreClass() == "Entity3D") {
 				Entity3D* parent3D = (Entity3D*)par;
@@ -170,7 +170,7 @@ namespace Entities {
 			Entity* par = getParent();
 			// If unparented, or parent is root, return own rotation
 			if (!par) return rotation;
-			if (par->getName() == ENTITY_ROOT_NAME) return rotation;
+			if (par->getName() == Entity::ROOT_NAME) return rotation;
 			// Try getting parent's global rotation
 			if (par->getCoreClass() == "Entity3D") {
 				Entity3D* parent3D = (Entity3D*)par;
@@ -188,7 +188,7 @@ namespace Entities {
 			Entity* par = getParent();
 			// If unparented, or parent is root, return own scale
 			if (!par) return scale;
-			if (par->getName() == ENTITY_ROOT_NAME) return scale;
+			if (par->getName() == Entity::ROOT_NAME) return scale;
 			// Try getting parent's global scale
 			if (par->getCoreClass() == "Entity3D") {
 				Entity3D* parent3D = (Entity3D*)par;

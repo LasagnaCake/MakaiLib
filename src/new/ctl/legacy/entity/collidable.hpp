@@ -20,7 +20,9 @@ namespace Entities {
 	}
 
 	/// Collision Layers (used for collision detection).
-	static EntityGroup collisionLayers;
+	struct Collidable {
+		static typename Entity::EntityGroup collisionLayers;
+	};
 
 	#define CT2D_CASE(TYPE, RESULT) if (obj->getCoreClass() == TYPE) return CT2D_##RESULT
 	inline CollisionType2D getCollisionType2D(Entity* const& obj) {
@@ -45,7 +47,7 @@ namespace Entities {
 	*****************************
 	*/
 	template<CollisionType T>
-	class AreaCollision2D : public Entity2D {
+	class AreaCollision2D : public Entity2D, public Collidable {
 	public:
 		typedef T DataType;
 

@@ -79,7 +79,7 @@ App::App (
 			"Having two apps open is forbidden!"
 		);
 	else mainApp = this;
-	DEBUGLN(Entities::_ROOT == nullptr);
+	DEBUGLN(Entity::ROOT == nullptr);
 	// Save window resolution
 	this->width = width;
 	this->height = height;
@@ -171,10 +171,10 @@ App::App (
 	// Create layer buffer
 	layerbuffer.create(width, height);
 	framebuffer();
-	DEBUGLN(Entities::_ROOT ? "Root Exists!" : "Root does not exist!");
-	if (!Entities::_ROOT) {
+	DEBUGLN(Entity::ROOT ? "Root Exists!" : "Root does not exist!");
+	if (!Entity::ROOT) {
 		DEBUGLN("Initializing root tree...");
-		Entities::init();
+		Entity::init();
 	}
 	DEBUGLN("All core systems initialized!");
 }
@@ -217,8 +217,8 @@ void App::run() {
 	auto logicFunc	= [&](float delta)-> void {
 		onLogicFrame(delta);
 		taskers.yield(1.0);
-		if (Entities::_ROOT)
-			Entities::_ROOT->yield(delta);
+		if (Entity::ROOT)
+			Entity::ROOT->yield(delta);
 	};
 	// Clear screen
 	clearColorBuffer(color);
@@ -282,7 +282,7 @@ void App::run() {
 			// Do normal logic-related stuff
 			logicFunc(cycleDelta * speed);
 			// Destroy queued entities
-			Entities::destroyQueued();
+			Entity::destroyQueued();
 			#endif // FRAME_DEPENDENT_PROCESS
 		}
 		#endif
@@ -297,7 +297,7 @@ void App::run() {
 			// Do normal logic-related stuff
 			logicFunc(frameDelta);
 			// Destroy queued entities
-			Entities::destroyQueued();
+			Entity::destroyQueued();
 			#endif // FRAME_DEPENDENT_PROCESS
 			// Render screen
 			render();
@@ -318,7 +318,7 @@ void App::run() {
 			// Do normal logic-related stuff
 			logicFunc(cycleDelta * speed);
 			// Destroy queued entities
-			Entities::destroyQueued();
+			Entity::destroyQueued();
 			#endif // FRAME_DEPENDENT_PROCESS
 		}
 		#endif
@@ -439,8 +439,11 @@ void App::finalize() {
 	// Call final function
 	onClose();
 	// Remove window from input manager
+	DEBUGLN("Detaching target window...");
 	Makai::Input::Manager::clearTargetWindow(window);
-	Entities::_ROOT->destroyChildren();
+	DEBUGLN("Clearing root entity...");
+	if (Entity::ROOT)
+		Entity::ROOT->destroyChildren();
 	// Close sound system
 	DEBUGLN("Closing sound system...");
 	Makai::Audio::close();
