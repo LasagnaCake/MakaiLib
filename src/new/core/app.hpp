@@ -180,7 +180,7 @@ namespace Makai {
 		unsigned int width, height;
 
 		/// Properly finishes program execution.
-		void terminate();
+		void finalize();
 
 		/// Draws the window.
 		void render();
