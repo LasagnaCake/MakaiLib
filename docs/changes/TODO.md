@@ -1,7 +1,7 @@
 ## TODO
 
 ### Current
-- [ ] Ditch GLEW for some other library
+- [ ] Ditch GLEW for some other library ([some options](https://www.khronos.org/opengl/wiki/OpenGL_Loading_Library))
 - - ( ) GLAD
 - - ( ) GL3W
 - - ( ) GLBinding
