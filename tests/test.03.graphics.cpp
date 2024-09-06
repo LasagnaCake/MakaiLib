@@ -11,8 +11,8 @@ struct TestApp: Makai::App {
 };
 
 int main() {
-	TestApp app;
 	try {
+		TestApp app;
 		app.run();
 	} catch (Error::Error const& e) {
 		Makai::Popup::showError(e.what());
