@@ -81,7 +81,7 @@ Since a version of (most of) them are bundled[^1], including your own version of
 | OpenGL     | Graphics backend                                    | No |
 | SDL2_Mixer | Audio backend                                       | Yes (Lib file) |
 | SDL2_Net   | Networking Backend                                  | Yes (Lib file) |
-| stb_image  | Image loading                                       | Yes (Lib file) |
+| stb_image  | Image loading                                       | Yes (Implementation file - `src/new/impl/`) |
 | cute_c2    | Collision                                           | Yes (Header-only, modified) |
 | nlohmann::jsoncpp   | Multiple things                                     | Yes (Header-only) |
 | cppcodec   | Data encoding & decoding                            | Only used internally, not required |
