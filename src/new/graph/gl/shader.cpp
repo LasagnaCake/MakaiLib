@@ -30,7 +30,7 @@ struct Shader::ShaderProgram {
 	ShaderProgram(bool)	{create();	}
 	~ShaderProgram()	{destroy();	}
 	void create()	{if (id == 0) id = glCreateProgram();	}
-	void destroy()	{if (id != 0) glDeleteProgram(id);	}
+	void destroy()	{if (id != 0) glDeleteProgram(id);		}
 	GLuint id = 0;
 };
 
