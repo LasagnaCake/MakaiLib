@@ -338,7 +338,7 @@ bool App::running() {
 
 void App::setWindowSize(Vector2 const& size) {}
 
-App* getOpenApp() {
+App* Makai::getOpenApp() {
 	return mainApp;
 }
 
