@@ -4,6 +4,7 @@
 - [ ] Ditch GLEW for some other library
 - - ( ) GLAD
 - - ( ) GL3W
+- - ( ) GLBinding
 - [ ] Add initializer lists wherever possible
 - [ ] Add HSL (Hue-Saturation-Luminosity) & BC (Brightness-Contrast) to buffer mask effect
 - [x] Separate `itembox` and `grazebox`
