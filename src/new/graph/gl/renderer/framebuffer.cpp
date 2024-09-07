@@ -115,10 +115,10 @@ Base::FrameBuffer& Base::FrameBuffer::create(uint const& width, uint const& heig
 		0
 	);
 	// Setup display rectangle
-	rect[0] = {-1, +1, 0, 0, 1};
-	rect[1] = {+1, +1, 0, 1, 1};
-	rect[2] = {-1, -1, 0, 0, 0};
-	rect[3] = {+1, -1, 0, 1, 0};
+	rect[0] = Vertex(-1, +1, 0, 0, 1);
+	rect[1] = Vertex(+1, +1, 0, 1, 1);
+	rect[2] = Vertex(-1, -1, 0, 0, 0);
+	rect[3] = Vertex(+1, -1, 0, 1, 0);
 	// Create buffers
 	glGenVertexArrays(1, &vao);
 	glGenBuffers(1, &vbo);

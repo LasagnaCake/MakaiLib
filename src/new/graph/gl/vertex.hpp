@@ -33,20 +33,6 @@ namespace Makai::Graph {
 
 		Vertex(VertexMap const& vm);
 
-		constexpr Vertex(Arguments<float> const& args) {
-			if(args.size() == 0) return;
-			usize i =
-				args.size() > COMPONENT_COUNT
-			?	COMPONENT_COUNT
-			:	args.size()
-			;
-			float* component = &position.x;
-			for (float v: args) {
-				component[--i] = v;
-				if (!i) break;
-			}
-		}
-
 		constexpr Vertex(
 			float const& x,
 			float const& y	= 0,
