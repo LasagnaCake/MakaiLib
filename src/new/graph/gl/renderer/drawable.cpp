@@ -102,7 +102,8 @@ void DrawableObject::display(
 	// Set fill mode
 	setFillMode(fill);
 	// Draw object to screen
-	glDrawArraysInstanced(getGLDisplayMode(mode), 0, count, instances);
+	if (instances)	glDrawArraysInstanced(getGLDisplayMode(mode), 0, count, instances);
+	else			glDrawArrays(getGLDisplayMode(mode), 0, count);
 	// Disable culling
 	setCullMode(CullMode::OCM_NONE);
 	// Disable attributes

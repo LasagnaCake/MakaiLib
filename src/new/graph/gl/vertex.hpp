@@ -71,6 +71,8 @@ namespace Makai::Graph {
 		Vertex verts[3];
 	};
 
+	static_assert(sizeof(Triangle) == (sizeof(Vertex) * 3), "Triangle size is off...");
+
 	constexpr Vertex INITIAL_VERTEX = Vertex();
 }
 
