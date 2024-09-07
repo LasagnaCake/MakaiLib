@@ -14,6 +14,8 @@ struct TestApp: Makai::App {
 		Makai::Graph::Vertex(-1, -1, -1, 0, 0, 1, 1, 1, 1, -1, -1, -1)	// 7
 	};
 
+	Makai::Graph::Camera3D& camera = Makai::Graph::Global::camera;
+
 	virtual ~TestApp() {}
 
 	TestApp(): Makai::App(600, 400, "Test 03", false) {
@@ -22,11 +24,10 @@ struct TestApp: Makai::App {
 			Makai::SLF::loadFile("shaders/base/base.slf"),
 			Makai::SLF::loadFile("shaders/framebuffer/compose.slf")
 		);
-		Makai::Graph::Camera3D& cam = Makai::Graph::Global::camera;
-		cam.eye				= Vec3(0, 0, -1);
-		cam.at				= Vec3(0, 0, 0);
-		cam.zFar			= 1000;
-		cam.relativeToEye	= true;
+		camera.eye				= Vec3(0, 0, -1);
+		camera.at				= Vec3(0, 0, 0);
+		camera.zFar				= 1000;
+		camera.relativeToEye	= true;
 	}
 
 	void onOpen() override {
@@ -57,14 +58,14 @@ struct TestApp: Makai::App {
 	void onLogicFrame(float delta) {
 		getFrameBuffer().material.background = Makai::Graph::Color::MAGENTA * (sin(getCurrentFrame() / 180.0) / 2 + .5);
 		Makai::Graph::Camera3D& cam = Makai::Graph::Global::camera;
-		if (input.isButtonDown(Makai::Input::KeyCode::KC_UP))		cam.eye.z += 1 / 60.0;
-		if (input.isButtonDown(Makai::Input::KeyCode::KC_DOWN))		cam.eye.z -= 1 / 60.0;
-		if (input.isButtonDown(Makai::Input::KeyCode::KC_LEFT))		cam.eye.x += 1 / 60.0;
-		if (input.isButtonDown(Makai::Input::KeyCode::KC_RIGHT))	cam.eye.x -= 1 / 60.0;
+		if (input.isButtonDown(Makai::Input::KeyCode::KC_UP))		{DEBUGLN("Up!");	cam.eye.z += 1 / 60.0;}
+		if (input.isButtonDown(Makai::Input::KeyCode::KC_DOWN))		{DEBUGLN("Down!");	cam.eye.z -= 1 / 60.0;}
+		if (input.isButtonDown(Makai::Input::KeyCode::KC_LEFT))		{DEBUGLN("Left!");	cam.eye.x -= 1 / 60.0;}
+		if (input.isButtonDown(Makai::Input::KeyCode::KC_RIGHT))	{DEBUGLN("Right!");	cam.eye.x += 1 / 60.0;}
 		cube.trans.rotation += Vec3(
 			HPI / 60.0,
 			HPI / 90.0,
-			HPI / 120.0
+			HPI / 45.0
 		);
 		cube.trans.position = VecMath::angleV3(getCurrentFrame() / 180.0, VecMath::Axis::POS_Y);
 	}
