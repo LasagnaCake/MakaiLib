@@ -44,7 +44,7 @@ namespace Makai::Graph {
 		template<ShapeRefType T>
 		[[nodiscard]]
 		T* createReference() {
-			constexpr usize count = T::COUNT;
+			constexpr usize count = T::SIZE;
 			if (locked) throw Error::InvalidAction("Renderable object is locked!");
 			Triangle* tris[count] = {nullptr};
 			// Create triangles
@@ -81,7 +81,7 @@ namespace Makai::Graph {
 		void removeReference(T* const& ref) {
 			if (!ref) return;
 			if (locked) return;
-			constexpr usize count = T::COUNT;
+			constexpr usize count = T::SIZE;
 			auto tris = ref->getBoundTriangles();
 			if (!triangles.empty()) std::erase_if(
 				triangles,
