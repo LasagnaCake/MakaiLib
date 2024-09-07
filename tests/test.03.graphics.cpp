@@ -36,6 +36,7 @@ struct TestApp: Makai::App {
 
 	void onOpen() override {
 		cube.setRenderLayer(0);
+		cube.material.shaded = true;
 		cube.triangles = {
 			// Face +X
 			new Makai::Graph::Triangle{{vertices[0], vertices[1], vertices[2]}},
