@@ -186,7 +186,7 @@ void App::loadShaders(SLF::SLFData const& main, SLF::SLFData const& buffer) {
 	layerbuffer.shader = framebuffer.shader;
 	// Create main shader
 	DEBUGLN("> Making default shader");
-	Makai::Graph::Shader::DEFAULT.make(main);
+	Makai::Graph::Shader::DEFAULT.create(main);
 	DEBUGLN("Done!");
 }
 

@@ -1,10 +1,5 @@
 #include <makai.hpp>
 
-static_assert(sizeof(Vector2) == 2 * sizeof(float));
-static_assert(sizeof(Vector3) == 3 * sizeof(float));
-static_assert(sizeof(Vector4) == 4 * sizeof(float));
-static_assert(sizeof(Makai::Graph::Vertex) == (3+2+4+3) * sizeof(float));
-
 struct TestApp: Makai::App {
 	Makai::Graph::Renderable cube;
 

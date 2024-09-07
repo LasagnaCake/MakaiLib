@@ -99,11 +99,12 @@ void DrawableObject::display(
 	Vertex::enableAttributes();
 	// Set face culling
 	setCullMode(culling);
-	// Set fill mode
-	setFillMode(fill);
-	// Draw object to screen
-	if (instances)	glDrawArraysInstanced(getGLDisplayMode(mode), 0, count, instances);
-	else			glDrawArrays(getGLDisplayMode(mode), 0, count);
+	// Set fill mode (if none, exit)
+	if (setFillMode(fill)) {
+		// Draw object to screen
+		if (instances)	glDrawArraysInstanced(getGLDisplayMode(mode), 0, count, instances);
+		else			glDrawArrays(getGLDisplayMode(mode), 0, count);
+	}
 	// Disable culling
 	setCullMode(CullMode::OCM_NONE);
 	// Disable attributes

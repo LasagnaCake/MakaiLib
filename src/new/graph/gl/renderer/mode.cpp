@@ -19,7 +19,12 @@ uint convert(DisplayMode const& mode) {
 		case DisplayMode::ODM_TRI_ADJ:			return GL_TRIANGLES_ADJACENCY;
 		case DisplayMode::ODM_TRI_STRIP_ADJ:	return GL_TRIANGLE_STRIP_ADJACENCY;
 		case DisplayMode::ODM_PATCHES:			return GL_PATCHES;
-		default:								return GL_FALSE;
+		default: throw Error::InvalidValue(
+			"Invalid / Unsupported display mode!",
+			__FILE__,
+			toString(__LINE__),
+			"Makai::Graph::getGLDisplayMode"
+		);
 	}
 }
 
