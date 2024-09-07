@@ -52,7 +52,7 @@ namespace FileLoader {
 			// The file
 			ifstream file;
 			// Ensure ifstream object can throw exceptions
-			file.exceptions(ifstream::failbit | ifstream::badbit);
+			file.exceptions(ifstream::failbit | ifstream::badbit);	// This line errors
 			// Preallocate data
 			size_t fileSize = filesystem::file_size(path);
 			BinaryData data(fileSize);
@@ -76,7 +76,7 @@ namespace FileLoader {
 			String content;
 			ifstream file;
 			// Ensure ifstream object can throw exceptions
-			file.exceptions(ifstream::failbit | ifstream::badbit);
+			file.exceptions(ifstream::failbit | ifstream::badbit);	// This line errors
 			// Open file
 			file.open(path);
 			stringstream stream;
