@@ -19,10 +19,11 @@ SDL_Event pollEvents() {
 constexpr SDL_Scancode convert(KeyCode const& key) {
 	int16 code = (int16)(key);
 	switch (key) {
-		case KeyCode::KC_MODE:			code += 16;
+		case KeyCode::KC_MODE:			code += 26;
 		case KeyCode::KC_LEFT_CTRL:		code += 3;
+		case KeyCode::KC_KEYPAD_00:		code += 12;
 		case KeyCode::KC_KEYPAD_COMMA:	code += 4;
-		case KeyCode::KC_A:				code += 4;
+		case KeyCode::KC_A:				code += 3;
 		default:						code += 1;
 	}
 	return (SDL_Scancode)code;
@@ -31,10 +32,11 @@ constexpr SDL_Scancode convert(KeyCode const& key) {
 constexpr KeyCode convert(SDL_Scancode const& key) {
 	int16 code = (int16)(key);
 	switch (key) {
-		case SDL_SCANCODE_MODE:		code -= 16;
+		case SDL_SCANCODE_MODE:		code -= 26;
 		case SDL_SCANCODE_LCTRL:	code -= 3;
+		case SDL_SCANCODE_KP_00:	code -= 12;
 		case SDL_SCANCODE_KP_COMMA:	code -= 4;
-		case SDL_SCANCODE_A:		code -= 4;
+		case SDL_SCANCODE_A:		code -= 3;
 		default:					code -= 1;
 	}
 	return (KeyCode)code;
