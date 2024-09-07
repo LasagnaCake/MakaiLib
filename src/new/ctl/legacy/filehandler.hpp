@@ -51,8 +51,8 @@ namespace FileLoader {
 		try {
 			// The file
 			ifstream file;
-			// Ensure ifstream object can throw exceptions
-			file.exceptions(ifstream::failbit | ifstream::badbit);	// This line errors
+			// Ensure ifstream object can throw exceptions (nevermind, then)
+			// file.exceptions(ifstream::failbit | ifstream::badbit);	// This line errors
 			// Preallocate data
 			size_t fileSize = filesystem::file_size(path);
 			BinaryData data(fileSize);
@@ -75,8 +75,8 @@ namespace FileLoader {
 			// The file and its contents
 			String content;
 			ifstream file;
-			// Ensure ifstream object can throw exceptions
-			file.exceptions(ifstream::failbit | ifstream::badbit);	// This line errors
+			// Ensure ifstream object can throw exceptions (nevermind, then)
+			// file.exceptions(ifstream::failbit | ifstream::badbit);	// This line errors
 			// Open file
 			file.open(path);
 			stringstream stream;
