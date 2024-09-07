@@ -71,8 +71,10 @@ namespace Makai::Graph {
 
 		template <typename T>			inline void operator()(T const& value) const			{set(value);	}
 		template <typename... Args>		inline void operator()(Args const&... args) const		{set(args...);	}
-		template <typename T>			inline void operator()(List<T> const& values) const	{set(values);	}
+		template <typename T>			inline void operator()(List<T> const& values) const		{set(values);	}
 		template <typename T, usize S>	inline void operator()(Span<T, S> const& values) const	{set(values);	}
+
+		Uniform operator[](String const& member) const;
 
 	private:
 		constexpr Uniform(

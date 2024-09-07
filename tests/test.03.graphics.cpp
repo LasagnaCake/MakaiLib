@@ -23,10 +23,10 @@ struct TestApp: Makai::App {
 			Makai::SLF::loadFile("shaders/framebuffer/compose.slf")
 		);
 		Makai::Graph::Camera3D& cam = Makai::Graph::Global::camera;
-		cam.eye		= Vec3(0, 0, -1);
-		cam.at		= Vec3(0, 0, 0);
-		cam.zFar	= 1000;
-		cam.relativeToEye = true;
+		cam.eye				= Vec3(0, 0, -1);
+		cam.at				= Vec3(0, 0, 0);
+		cam.zFar			= 1000;
+		cam.relativeToEye	= true;
 	}
 
 	void onOpen() override {
@@ -55,7 +55,7 @@ struct TestApp: Makai::App {
 	}
 
 	void onLogicFrame(float delta) {
-		getFrameBuffer().material.background = Makai::Graph::Color::PURPLE * (sin(getCurrentFrame() / 180.0) / 2 + .5);
+		getFrameBuffer().material.background = Makai::Graph::Color::MAGENTA * (sin(getCurrentFrame() / 180.0) / 2 + .5);
 		Makai::Graph::Camera3D& cam = Makai::Graph::Global::camera;
 		if (input.isButtonDown(Makai::Input::KeyCode::KC_UP))		cam.eye.z += 1 / 60.0;
 		if (input.isButtonDown(Makai::Input::KeyCode::KC_DOWN))		cam.eye.z -= 1 / 60.0;
@@ -66,6 +66,7 @@ struct TestApp: Makai::App {
 			HPI / 90.0,
 			HPI / 120.0
 		);
+		cube.trans.position = VecMath::angleV3(getCurrentFrame() / 180.0, VecMath::Axis::POS_Y);
 	}
 };
 

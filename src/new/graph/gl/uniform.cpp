@@ -113,3 +113,7 @@ uint Uniform::getUniform() const {
 uint Uniform::getUniform(String const& append) const {
 	return glGetUniformLocation(id, (name + append).c_str());
 }
+
+Uniform Uniform::operator[](String const& member) const {
+	return Uniform(name + "." + member, id);
+}
