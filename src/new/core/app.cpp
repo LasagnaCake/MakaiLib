@@ -2,9 +2,8 @@
 #define AUDIO_SAMPLE_FRAMES 2048
 #endif // AUDIO_SAMPLE_FRAMES
 
-#define GLEW_STATIC
-#include <GLEW/include/GL/glew.h>
-#include <GLEW/include/GL/wglew.h>
+#include <glapi.hpp>
+#include <GL/gl3w.h>
 #include <GL/gl.h>
 
 #if (_WIN32 || _WIN64 || __WIN32__ || __WIN64__)
@@ -131,20 +130,24 @@ App::App (
 	SDL_GL_CreateContext(sdlWindow);
 	Makai::Input::Manager::setTargetWindow(window);
 	DEBUGLN("Created!");
-	DEBUGLN("Starting GLEW...");
-	// Try and initialize GLEW
-	GLenum glewStatus = glewInit();
-	if (glewStatus != GLEW_OK) {
+	DEBUGLN("Starting GL3W...");
+	// Try and initialize GL3W
+	auto status = gl3wInit();
+	if (status != GL3W_OK) {
 		throw Error::FailedAction(
-			"Failed to initialize GLEW!",
+			"Failed to initialize GL3W!",
 			__FILE__,
 			toString(__LINE__),
-			"App::constructor",
-			(const char*)glewGetErrorString(glewStatus)
+			"App::constructor"
 		);
 	}
-	if (!GLEW_VERSION_4_2) {
-		throw Error::Other("Your computer does not support OpenGL 4.2+!");
+	if (!gl3wIsSupported(4, 2)) {
+		throw Error::Other(
+			"Your computer does not support OpenGL 4.2!",
+			__FILE__,
+			toString(__LINE__),
+			"App::constructor"
+		);
 	}
 	DEBUGLN("Started!");
 	// Create default shader

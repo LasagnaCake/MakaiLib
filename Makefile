@@ -141,52 +141,17 @@ define repack
 	@cd ..
 endef
 
-rp-glew-part = @ar rcvs ../$(THIRD_PARTY_PREFIX).glew.a $(THIRD_PARTY_PREFIX).glew.d00$(strip $(1))*.o
-
-define rp-glew-pack10
-	$(call rp-glew-part, $(strip $(1))0)
-	$(call rp-glew-part, $(strip $(1))1)
-	$(call rp-glew-part, $(strip $(1))2)
-	$(call rp-glew-part, $(strip $(1))3)
-	$(call rp-glew-part, $(strip $(1))4)
-	$(call rp-glew-part, $(strip $(1))5)
-	$(call rp-glew-part, $(strip $(1))6)
-	$(call rp-glew-part, $(strip $(1))7)
-	$(call rp-glew-part, $(strip $(1))8)
-	$(call rp-glew-part, $(strip $(1))9)
-endef
-
-define repack-glew
-	@echo "Repacking [glew]..."
-	@cd glew
-	$(call rp-glew-pack10, 0)
-	$(call rp-glew-pack10, 1)
-	$(call rp-glew-pack10, 2)
-	$(call rp-glew-part, 30)
-	$(call rp-glew-part, 31)
-	$(call rp-glew-part, 32)
-	$(call rp-glew-part, 33)
-	$(call rp-glew-part, 34)
-	$(call rp-glew-part, 35)
-	$(call rp-glew-part, 36)
-	$(call rp-glew-part, 37)
-	$(call rp-glew-part, 38)
-	@cd ..
-endef
-
 extract-extern:
 	@echo "Creating lib folder..."
 	@rm -rf obj/extern
 	@mkdir -p obj/extern/sdl
 	@mkdir -p obj/extern/sdl-net
 	@mkdir -p obj/extern/sdl-mixer
-	@mkdir -p obj/extern/glew
 	@mkdir -p obj/extern/cryptopp
 	@echo "Extracting objects..."
 	@ar x $(SDL) --output "obj/extern/sdl"
 	@ar x $(SDLNET) --output "obj/extern/sdl-net"
 	@ar x $(SDLMIXER) --output "obj/extern/sdl-mixer"
-	@ar x $(GLEW) --output "obj/extern/glew"
 	@ar x $(CRYPTOPP) --output "obj/extern/cryptopp"
 
 rename-sdl-mixer:
@@ -204,8 +169,6 @@ rename-extern:
 	@cd ../sdl-mixer
 	@echo "Renaming [sdl-mixer]..."
 	@for file in SDL2_mixer_dll_*.o; do mv -- "$$file" "$(THIRD_PARTY_PREFIX).sdl-mixer.$${file##*_}"; done
-	@cd ../glew
-	$(call addname, glew)
 	@cd ../cryptopp
 	$(call addname, cryptopp)
 	@cd ../../..
@@ -216,7 +179,6 @@ repack-extern:
 	$(call repack, sdl)
 	$(call repack, sdl-net)
 	$(call repack, sdl-mixer)
-	$(repack-glew)
 	$(call repack, cryptopp)
 	@cd ../..
 

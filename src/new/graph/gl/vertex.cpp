@@ -1,6 +1,4 @@
-#define GLEW_STATIC
-#include <GLEW/include/GL/glew.h>
-#include <GLEW/include/GL/wglew.h>
+#include <GL/gl3w.h>
 #include <GL/gl.h>
 
 #define GET_GL_POINTER(start, offset) (void*)((start) + (offset) * sizeof(float))

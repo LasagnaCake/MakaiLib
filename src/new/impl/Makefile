@@ -5,6 +5,7 @@ LEAN := -static -s
 
 ROOT	:= ../../..
 
+C_COMPCFG		:= -fexpensive-optimizations -m64 -fms-extensions
 COMPILER_CONFIG	:= -fexpensive-optimizations -m64 -std=gnu++20 -fconcepts -fcoroutines -fms-extensions
 LINKER_CONFIG	:= -static-libstdc++ -static-libgcc -m64 -fms-extensions
 
@@ -26,6 +27,9 @@ DEBUGLINKCFG	:= $(LINKER_CONFIG) -Og $(LIBRARIES)
 COMPCFG	:= $(COMPILER_CONFIG) -O3 $(OPTIMIZATIONS)
 LINKCFG	:= $(LINKER_CONFIG) -O3 $(LIBRARIES) $(LEAN)
 
+DEBUGCOMPCFG_C	:= $(C_COMPCFG) -Wall -Wpedantic -Og -ggdb3 -fno-omit-frame-pointer $(DEBUGMODE)
+COMPCFG_C		:= $(C_COMPCFG) -O3 $(OPTIMIZATIONS)
+
 COMPILER	:= @$(CXX) $(INCLUDES)
 LINKER		:= @$(CXX)
 
@@ -43,7 +47,9 @@ all: debug release
 
 debug:
 	$(COMPILER) $(DEBUGCOMPCFG) -c stb.cpp -o $(prefix).stb.$@.o
+	$(CC) -I$(ROOT)/lib/OpenGL/GL3W/include $(DEBUGCOMPCFG_C) -c gl3w.c -o $(prefix).gl3w.$@.o
 
 
 release:
 	$(COMPILER) $(COMPCFG) -c stb.cpp -o $(prefix).stb.$@.o
+	$(CC) -I$(ROOT)/lib/OpenGL/GL3W/include $(COMPCFG_C) -c gl3w.c -o $(prefix).gl3w.$@.o
