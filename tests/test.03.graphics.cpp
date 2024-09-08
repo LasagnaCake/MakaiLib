@@ -58,10 +58,10 @@ struct TestApp: Makai::App {
 	void onLogicFrame(float delta) {
 		getFrameBuffer().material.background = Makai::Graph::Color::MAGENTA * (sin(getCurrentFrame() / 180.0) / 2 + .5);
 		Makai::Graph::Camera3D& cam = Makai::Graph::Global::camera;
-		if (input.isButtonDown(Makai::Input::KeyCode::KC_UP))		{DEBUGLN("Up!");	cam.eye.z += 1 / 60.0;}
-		if (input.isButtonDown(Makai::Input::KeyCode::KC_DOWN))		{DEBUGLN("Down!");	cam.eye.z -= 1 / 60.0;}
-		if (input.isButtonDown(Makai::Input::KeyCode::KC_LEFT))		{DEBUGLN("Left!");	cam.eye.x -= 1 / 60.0;}
-		if (input.isButtonDown(Makai::Input::KeyCode::KC_RIGHT))	{DEBUGLN("Right!");	cam.eye.x += 1 / 60.0;}
+		if (input.isButtonDown(Makai::Input::KeyCode::KC_W))	{DEBUGLN("Up!");	cam.eye.z += 1 / 60.0;}
+		if (input.isButtonDown(Makai::Input::KeyCode::KC_S))	{DEBUGLN("Down!");	cam.eye.z -= 1 / 60.0;}
+		if (input.isButtonDown(Makai::Input::KeyCode::KC_A))	{DEBUGLN("Left!");	cam.eye.x -= 1 / 60.0;}
+		if (input.isButtonDown(Makai::Input::KeyCode::KC_D))	{DEBUGLN("Right!");	cam.eye.x += 1 / 60.0;}
 		cube.trans.rotation += Vec3(
 			HPI / 60.0,
 			HPI / 90.0,
