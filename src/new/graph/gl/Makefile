@@ -42,6 +42,7 @@ endef
 all: debug release
 
 debug:
+	$(COMPILER) $(DEBUGCOMPCFG) -c global.cpp -o $(prefix).global.$@.o
 	$(COMPILER) $(DEBUGCOMPCFG) -c vertex.cpp -o $(prefix).vertex.$@.o
 	$(COMPILER) $(DEBUGCOMPCFG) -c uniform.cpp -o $(prefix).uniform.$@.o
 	$(COMPILER) $(DEBUGCOMPCFG) -c blend.cpp -o $(prefix).blend.$@.o
@@ -60,6 +61,7 @@ debug:
 
 
 release:
+	$(COMPILER) $(COMPCFG) -c global.cpp -o $(prefix).global.$@.o
 	$(COMPILER) $(COMPCFG) -c vertex.cpp -o $(prefix).vertex.$@.o
 	$(COMPILER) $(COMPCFG) -c uniform.cpp -o $(prefix).uniform.$@.o
 	$(COMPILER) $(COMPCFG) -c blend.cpp -o $(prefix).blend.$@.o

@@ -8,11 +8,11 @@
 namespace Makai::Graph {
 	#pragma GCC diagnostic push
 	#pragma GCC diagnostic ignored "-Wpedantic"
-	namespace Global {
-		static Matrix4x4				space = Matrix4x4::identity();
+	struct Global {
+		static Matrix4x4				space;
 		static Camera3D					camera;
 		static Material::WorldMaterial	world;
-	}
+	};
 	#pragma GCC diagnostic pop
 
 	struct GlobalState {

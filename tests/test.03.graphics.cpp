@@ -51,7 +51,7 @@ struct TestApp: Makai::App {
 			new Makai::Graph::Triangle{{vertices[2], vertices[4], vertices[6]}},
 			// Face -Z
 			new Makai::Graph::Triangle{{vertices[1], vertices[3], vertices[5]}},
-			new Makai::Graph::Triangle{{vertices[3], vertices[5], vertices[7]}},
+			new Makai::Graph::Triangle{{vertices[3], vertices[5], vertices[7]}}
 		};
 	}
 
