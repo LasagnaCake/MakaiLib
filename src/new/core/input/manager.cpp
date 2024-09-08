@@ -80,7 +80,7 @@ void Manager::update() {
 		// Jankify
 		SDL_Scancode	button	= (SDL_Scancode)(i);
 		KeyCode			code	= convert(button);
-		// if (!isValidKey(button)) return;
+		if (!isValidKey(button)) continue;
 		// Get previous key state
 		usize buttonState = 0;
 		if (buffer[code]) buttonState = buffer[code];
