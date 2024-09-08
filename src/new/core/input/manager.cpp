@@ -18,29 +18,51 @@ SDL_Event pollEvents() {
 
 constexpr SDL_Scancode convert(KeyCode const& key) {
 	int16 code = (int16)(key);
-	switch (key) {
-		case KeyCode::KC_MODE:			code += 26;
-		case KeyCode::KC_LEFT_CTRL:		code += 3;
-		case KeyCode::KC_KEYPAD_00:		code += 12;
-		case KeyCode::KC_KEYPAD_COMMA:	code += 4;
-		case KeyCode::KC_A:				code += 3;
-		default:						code += 1;
-	}
+	++code;
+	if (key >= KeyCode::KC_A)				code += 3;
+	if (key >= KeyCode::KC_KEYPAD_COMMA)	code += 4;
+	if (key >= KeyCode::KC_KEYPAD_00)		code += 11;
+	if (key >= KeyCode::KC_LEFT_CTRL)		code += 2;
+	if (key >= KeyCode::KC_MODE)			code += 25;
 	return (SDL_Scancode)code;
 }
 
 constexpr KeyCode convert(SDL_Scancode const& key) {
 	int16 code = (int16)(key);
-	switch (key) {
-		case SDL_SCANCODE_MODE:		code -= 26;
-		case SDL_SCANCODE_LCTRL:	code -= 3;
-		case SDL_SCANCODE_KP_00:	code -= 12;
-		case SDL_SCANCODE_KP_COMMA:	code -= 4;
-		case SDL_SCANCODE_A:		code -= 3;
-		default:					code -= 1;
-	}
+	--code;
+	if (key >= SDL_SCANCODE_A)			code -= 3;
+	if (key >= SDL_SCANCODE_KP_COMMA)	code -= 4;
+	if (key >= SDL_SCANCODE_KP_00)		code -= 11;
+	if (key >= SDL_SCANCODE_LCTRL)		code -= 2;
+	if (key >= SDL_SCANCODE_MODE)		code -= 25;
 	return (KeyCode)code;
 }
+
+constexpr bool isValidKey(SDL_Scancode const& code) {
+	int16 value = (int16)(code);
+	// This is awful.
+	if (value < 4)					return false;
+	if (value > 129 && value < 133)	return false;
+	if (value > 164 && value < 176)	return false;
+	if (value > 221 && value < 224)	return false;
+	if (value > 221 && value < 224)	return false;
+	if (value > 231 && value < 257)	return false;
+	return true;
+}
+
+#define RECIPROCATE(KC, SC) static_assert((convert(KC) == (SC))); static_assert((convert(SC) == (KC)))
+
+RECIPROCATE(KeyCode::KC_UNKNOWN,		SDL_SCANCODE_UNKNOWN	);
+RECIPROCATE(KeyCode::KC_A,				SDL_SCANCODE_A			);
+RECIPROCATE(KeyCode::KC_KEYPAD_COMMA,	SDL_SCANCODE_KP_COMMA	);
+RECIPROCATE(KeyCode::KC_KEYPAD_00,		SDL_SCANCODE_KP_00		);
+RECIPROCATE(KeyCode::KC_LEFT_CTRL,		SDL_SCANCODE_LCTRL		);
+RECIPROCATE(KeyCode::KC_MODE,			SDL_SCANCODE_MODE		);
+
+RECIPROCATE(KeyCode::KC_UP,		SDL_SCANCODE_UP		);
+RECIPROCATE(KeyCode::KC_DOWN,	SDL_SCANCODE_DOWN	);
+RECIPROCATE(KeyCode::KC_LEFT,	SDL_SCANCODE_LEFT	);
+RECIPROCATE(KeyCode::KC_RIGHT,	SDL_SCANCODE_RIGHT	);
 
 constexpr SDL_GameControllerButton convert(JoyCode const& btn) {
 	return (SDL_GameControllerButton)btn;
@@ -58,6 +80,7 @@ void Manager::update() {
 		// Jankify
 		SDL_Scancode	button	= (SDL_Scancode)(i);
 		KeyCode			code	= convert(button);
+		// if (!isValidKey(button)) return;
 		// Get previous key state
 		usize buttonState = 0;
 		if (buffer[code]) buttonState = buffer[code];
