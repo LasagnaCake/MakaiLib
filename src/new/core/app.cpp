@@ -163,7 +163,7 @@ App::App (
 	// Setup camera
 	DEBUGLN("Setting starting camera...");
 	Graph::Global::camera.aspect	= Vector2(width, height);
-	Graph::Global::camera.fov		= Math::radians(45.0f);
+	Graph::Global::camera.fov		= 45deg;
 	DEBUGLN("creating default framebuffer...");
 	// Create framebuffer
 	framebuffer.create(width, height);
