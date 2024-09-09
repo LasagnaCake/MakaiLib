@@ -19,12 +19,10 @@ struct TestApp: Makai::App {
 	virtual ~TestApp() {}
 
 	TestApp(): Makai::App(600, 400, "Test 03", false) {
-		DEBUGLN("Shader loading BEGIN");
 		loadShaders(
 			Makai::SLF::loadFile("shaders/base/base.slf"),
 			Makai::SLF::loadFile("shaders/framebuffer/compose.slf")
 		);
-		//camera = Makai::Graph::Camera3D::from2D(64, Vec2(4.0, 3.0) / 3.0);
 		camera.eye				= Vec3(0, 1, -2);
 		camera.at				= Vec3(0, 0, 0);
 		camera.zFar				= 1000;
@@ -55,7 +53,6 @@ struct TestApp: Makai::App {
 			new Makai::Graph::Triangle{{vertices[3], vertices[5], vertices[7]}}
 		};
 		cube.shader = Makai::Graph::Shader::DEFAULT;
-		//setGLDebug(true);
 	}
 
 	void onLogicFrame(float delta) {
@@ -63,16 +60,11 @@ struct TestApp: Makai::App {
 			close();
 		getFrameBuffer().material.background = Makai::Graph::Color::MAGENTA * (sin(getCurrentFrame() / 180.0) / 2 + .5);
 		Makai::Graph::Camera3D& cam = Makai::Graph::Global::camera;
-		if (input.isButtonDown(Makai::Input::KeyCode::KC_W))	{DEBUGLN("Up!");	cam.eye.z += 1 / 60.0;}
-		if (input.isButtonDown(Makai::Input::KeyCode::KC_S))	{DEBUGLN("Down!");	cam.eye.z -= 1 / 60.0;}
-		if (input.isButtonDown(Makai::Input::KeyCode::KC_A))	{DEBUGLN("Left!");	cam.eye.x -= 1 / 60.0;}
-		if (input.isButtonDown(Makai::Input::KeyCode::KC_D))	{DEBUGLN("Right!");	cam.eye.x += 1 / 60.0;}
 		cube.trans.rotation += Vec3(
 			HPI / 60.0,
 			HPI / 90.0,
 			HPI / 45.0
 		);
-		//cube.trans.position = VecMath::angleV3(getCurrentFrame() / 180.0, VecMath::Axis::POS_Y);
 	}
 };
 
