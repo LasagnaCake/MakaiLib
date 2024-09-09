@@ -14,16 +14,16 @@ int Popup::showDialog(
 	StringList const& options,
 	PopupType const& type
 ) {
-	size_t buttonCount = options.size();
+	usize buttonCount = options.size();
 	SDL_MessageBoxButtonData* buttons = new SDL_MessageBoxButtonData[options.size()];
-	size_t idx = buttonCount - 1;
+	usize idx = buttonCount - 1;
 	for (usize i = 0; i < options.size(); ++i) {
 		buttons[i] = SDL_MessageBoxButtonData {
 			0,
 			idx,
 			options[idx].c_str()
 		};
-		idx--;
+		(int)(idx--);
 	}
 	uint32 flags = 0;
 	switch (type) {

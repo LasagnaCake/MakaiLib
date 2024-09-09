@@ -7,4 +7,6 @@
 #include "music.hpp"
 #include "update.hpp"
 
+namespace MkAudio = Makai::Audio;
+
 #endif // MAKAILIB_AUDIO_H

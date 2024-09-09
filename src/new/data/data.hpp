@@ -4,4 +4,6 @@
 #include "encdec.hpp"
 #include "hash.hpp"
 
+namespace MkData = Makai::Data;
+
 #endif // MAKAILIB_DATA_H

@@ -3,4 +3,6 @@
 
 #include "archive/archive.hpp"
 
+namespace MkTool = Makai::Tool;
+
 #endif // MAKAILIB_TOOL_H

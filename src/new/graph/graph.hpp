@@ -20,4 +20,6 @@ namespace Makai::Graph {constexpr GraphicalAPI API = GraphicalAPI::GA_OPENGL;}
 #include "gl/graph.hpp"
 #endif
 
+namespace MkGraph = Makai::Graph;
+
 #endif // MAKAILIB_GRAPH_H

@@ -24,6 +24,7 @@ struct TestApp: Makai::App {
 			Makai::SLF::loadFile("shaders/base/base.slf"),
 			Makai::SLF::loadFile("shaders/framebuffer/compose.slf")
 		);
+		//camera = Makai::Graph::Camera3D::from2D(64, Vec2(4.0, 3.0) / 3.0);
 		camera.eye				= Vec3(0, 1, -2);
 		camera.at				= Vec3(0, 0, 0);
 		camera.zFar				= 1000;
@@ -58,6 +59,8 @@ struct TestApp: Makai::App {
 	}
 
 	void onLogicFrame(float delta) {
+		if (input.isButtonJustPressed(Makai::Input::KeyCode::KC_ESCAPE))
+			close();
 		getFrameBuffer().material.background = Makai::Graph::Color::MAGENTA * (sin(getCurrentFrame() / 180.0) / 2 + .5);
 		Makai::Graph::Camera3D& cam = Makai::Graph::Global::camera;
 		if (input.isButtonDown(Makai::Input::KeyCode::KC_W))	{DEBUGLN("Up!");	cam.eye.z += 1 / 60.0;}
