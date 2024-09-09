@@ -122,5 +122,6 @@ void DrawableObject::prepare() {
 	// Set transformation matrices
 	shader["vertMatrix"](Global::camera.projection() * cameraWorldActor);
 	shader["normalsMatrix"](cameraWorldActor.transposed().inverted());
-	Global::world.use(shader);
+	// Could it be this?
+	//Global::world.use(shader);
 }
