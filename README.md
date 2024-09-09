@@ -79,6 +79,7 @@ Since a version of (most of) them are bundled[^1], including your own version of
 |:----------:|-----------------------------------------------------|:-:|
 | SDL2       | Window & Input handling                             | Yes (Lib file[^3]) |
 | GL3W | OpenGL Wrangling | Yes ("Implementation" file[^6]) |
+| GLAD | OpenGL Wrangling | Yes ("Implementation" file[^6]) |
 | OpenGL     | Graphics backend                                    | No |
 | SDL2_Mixer | Audio backend                                       | Yes (Lib file[^3]) |
 | SDL2_Net   | Networking Backend                                  | Yes (Lib file[^3]) |
@@ -106,4 +107,4 @@ See [TODO](docs/changes/TODO.md)
 
 [^5]: `inline`d EVERYTHING.
 
-[^6]: A copy of `gl3w.c` is located in the `src/new/impl/` folder, and is compiled when all other program parts are.
+[^6]: A copy of the source file is located in the `src/new/impl/` folder, and is compiled when all other program parts are.
