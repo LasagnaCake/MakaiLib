@@ -266,4 +266,4 @@ Shader& Shader::operator=(Shader&& other) {
 	return *this;
 }
 
-Shader Shader::DEFAULT;
+Shader Shader::DEFAULT = Shader();
