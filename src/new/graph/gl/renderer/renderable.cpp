@@ -375,6 +375,8 @@ void Renderable::saveToDefinitionFile(
 	FileLoader::saveTextFile(folder + "/" + name + ".mrod", contents);
 }
 
+//#define POS(v) "[", (v).position.x, ", ", (v).position.y, ", ", (v).position.z, "]"
+
 void Renderable::copyVertices() {
 	// If no triangles exist, return
 	if (!triangles.size()) return;
@@ -391,8 +393,9 @@ void Renderable::copyVertices() {
 	for (auto& t: triangles) {
 		// Check if not null
 		if (!t) continue;
-		// Oh, hey, C! haven't seen you in a while!
-		*(Triangle*)&vertices[i] = (*t);
+		vertices[i]		= t->verts[0];
+		vertices[i+1]	= t->verts[1];
+		vertices[i+2]	= t->verts[2];
 		i += 3;
 	}
 	// De-transform references (if applicable)

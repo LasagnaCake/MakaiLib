@@ -24,7 +24,7 @@ struct TestApp: Makai::App {
 			Makai::SLF::loadFile("shaders/base/base.slf"),
 			Makai::SLF::loadFile("shaders/framebuffer/compose.slf")
 		);
-		camera.eye				= Vec3(0, 0, -1);
+		camera.eye				= Vec3(0, 1, -2);
 		camera.at				= Vec3(0, 0, 0);
 		camera.zFar				= 1000;
 		camera.relativeToEye	= true;
@@ -53,6 +53,7 @@ struct TestApp: Makai::App {
 			new Makai::Graph::Triangle{{vertices[1], vertices[3], vertices[5]}},
 			new Makai::Graph::Triangle{{vertices[3], vertices[5], vertices[7]}}
 		};
+		//setGLDebug(true);
 	}
 
 	void onLogicFrame(float delta) {

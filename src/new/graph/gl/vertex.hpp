@@ -60,12 +60,17 @@ namespace Makai::Graph {
 			Vector3 const& normal	= 0
 		):	BaseType{position, uv, color, normal} {}
 
+		constexpr Vertex(
+			Vertex const& other
+		):	Vertex(other.position, other.uv, other.color, other.normal) {}
+
 		static void setAttributes();
 		static void enableAttributes();
 		static void disableAttributes();
 	};
 
 	static_assert(sizeof(Vertex) == sizeof(Base::BasicVertex), "Vertex size is off...");
+	static_assert(sizeof(Vertex) == (sizeof(float) * (3+2+4+3)), "Vertex size is off...");
 
 	struct Triangle {
 		Vertex verts[3];
