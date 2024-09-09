@@ -34,7 +34,7 @@ namespace Makai::Graph {
 	};
 
 	struct BlendMode {
-		struct FunctionSetting {
+		struct FunctionOption {
 			BlendFunction
 				srcColor = BlendFunction::BF_SRC_ALPHA,
 				dstColor = BlendFunction::BF_ONE_MINUS_SRC_ALPHA,
@@ -42,7 +42,7 @@ namespace Makai::Graph {
 				dstAlpha = BlendFunction::BF_ONE
 			;
 		} func = {};
-		struct EquationSetting {
+		struct EquationOption {
 			BlendEquation
 				color = BlendEquation::BE_ADD,
 				alpha = BlendEquation::BE_ADD
