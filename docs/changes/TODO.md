@@ -1,6 +1,8 @@
 ## TODO
 
 ### Current
+- [ ] Recompile CryptoPP with `CRYPTOPP_DISABLE_ASM` enabled
+- - Just so CI stops failing
 - [x] Ditch GLEW for some other library ([some options](https://www.khronos.org/opengl/wiki/OpenGL_Loading_Library))
 - - It now supports both GLAD & GL3W
 - [ ] Add initializer lists wherever possible
