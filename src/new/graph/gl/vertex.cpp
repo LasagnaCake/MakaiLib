@@ -81,7 +81,7 @@ void Vertex::setAttributes() {
 		GL_FLOAT,
 		GL_FALSE,
 		sizeof(Vertex),
-		GET_GL_OFFSET(8)
+		GET_GL_OFFSET(9)
 	);
 }
 
