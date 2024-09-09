@@ -1,6 +1,7 @@
 #ifndef MAKAILIB_GRAPH_GL_H
 #define MAKAILIB_GRAPH_GL_H
 
+#include "core.hpp"
 #include "global.hpp"
 #include "camera.hpp"
 #include "color.hpp"

@@ -2,9 +2,7 @@
 #define AUDIO_SAMPLE_FRAMES 2048
 #endif // AUDIO_SAMPLE_FRAMES
 
-#include <glapi.hpp>
-#include <GL/gl3w.h>
-#include <GL/gl.h>
+#include "../graph/gl/glapi.cpp"
 
 #if (_WIN32 || _WIN64 || __WIN32__ || __WIN64__)
 #include <windows.h>
@@ -130,23 +128,16 @@ App::App (
 	SDL_GL_CreateContext(sdlWindow);
 	Makai::Input::Manager::setTargetWindow(window);
 	DEBUGLN("Created!");
-	DEBUGLN("Starting GL3W...");
-	// Try and initialize GL3W
-	auto status = gl3wInit();
-	if (status != GL3W_OK) {
-		throw Error::FailedAction(
-			"Failed to initialize GL3W!",
-			__FILE__,
-			toString(__LINE__),
-			"App::constructor"
-		);
-	}
-	if (!gl3wIsSupported(4, 2)) {
+	DEBUGLN("Starting graphical API...");
+	// Try and initialize graphical API
+	Makai::Graph::API::open();
+	if (!Makai::Graph::API::hasRequiredVersion()) {
 		throw Error::Other(
-			"Your computer does not support OpenGL 4.2!",
+			"Your computer does not support the required graphical API version!",
 			__FILE__,
 			toString(__LINE__),
-			"App::constructor"
+			"App::constructor",
+			"Required version: " + Makai::Graph::API::versionString()
 		);
 	}
 	DEBUGLN("Started!");
@@ -158,7 +149,6 @@ App::App (
 	glDebugMessageCallback(glAPIMessageCallback, 0);
 	// This keeps the alpha from shitting itself
 	setGLFlag(GL_BLEND);
-	setGLFlag(GL_ALPHA_TEST);
 	setGLFlag(GL_DEPTH_TEST);
 	// Setup camera
 	DEBUGLN("Setting starting camera...");

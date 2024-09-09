@@ -13,11 +13,18 @@ USE_OPENMP := -fopenmp -openmp -ftree-parallelize-loops=128
 export openmp
 endif
 
+lower = $(shell echo $(1) | tr A-Z a-z)
+upper = $(shell echo $(1) | tr a-z A-Z)
+
+ifndef gl-loader
+gl-loader := glad
+endif
+
 override prefix := $(strip $(prefix)).gl
 
 OPTIMIZATIONS	:= $(USE_OPENMP) -funswitch-loops -fpredictive-commoning -fgcse-after-reload -ftree-vectorize $(LEAN)
 
-INCLUDES := -I$(ROOT)/lib/SDL2-2.0.10/include -I$(ROOT)/lib/OpenGL -I$(ROOT)/lib/OpenGL/GL3W/include -I$(ROOT)/lib/stb
+INCLUDES := -I$(ROOT)/lib/SDL2-2.0.10/include -I$(ROOT)/lib/OpenGL -I$(ROOT)/lib/OpenGL/$(call upper,$(gl-loader))/include -I$(ROOT)/lib/stb
 
 DEBUGMODE := -DMAKAILIB_DEBUG -DCTL_DEBUG -DNDEBUG
 DEBUGCOMPCFG	:= $(COMPILER_CONFIG) -Wall -Wpedantic -Og -ggdb3 -fno-omit-frame-pointer $(DEBUGMODE)
@@ -42,6 +49,7 @@ endef
 all: debug release
 
 debug:
+	$(COMPILER) $(DEBUGCOMPCFG) -c core.cpp -o $(prefix).core.$@.o
 	$(COMPILER) $(DEBUGCOMPCFG) -c global.cpp -o $(prefix).global.$@.o
 	$(COMPILER) $(DEBUGCOMPCFG) -c vertex.cpp -o $(prefix).vertex.$@.o
 	$(COMPILER) $(DEBUGCOMPCFG) -c uniform.cpp -o $(prefix).uniform.$@.o
@@ -61,6 +69,7 @@ debug:
 
 
 release:
+	$(COMPILER) $(COMPCFG) -c core.cpp -o $(prefix).core.$@.o
 	$(COMPILER) $(COMPCFG) -c global.cpp -o $(prefix).global.$@.o
 	$(COMPILER) $(COMPCFG) -c vertex.cpp -o $(prefix).vertex.$@.o
 	$(COMPILER) $(COMPCFG) -c uniform.cpp -o $(prefix).uniform.$@.o

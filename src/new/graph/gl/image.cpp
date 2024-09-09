@@ -1,5 +1,4 @@
-#include <GL/gl3w.h>
-#include <GL/gl.h>
+#include "glapi.cpp"
 
 #include <stb_image.h>
 #include <stb_image_write.h>

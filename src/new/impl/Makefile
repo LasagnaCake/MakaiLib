@@ -21,17 +21,34 @@ OPTIMIZATIONS	:= $(USE_OPENMP) -funswitch-loops -fpredictive-commoning -fgcse-af
 INCLUDES := -I$(ROOT)/lib/stb
 
 DEBUGMODE := -DMAKAILIB_DEBUG -DCTL_DEBUG -DNDEBUG
-DEBUGCOMPCFG	:= $(COMPILER_CONFIG) -Wall -Wpedantic -Og -ggdb3 -fno-omit-frame-pointer $(DEBUGMODE)
+DEBUGCOMPCFG	:= $(COMPILER_CONFIG) -Wall -Og -ggdb3 -fno-omit-frame-pointer $(DEBUGMODE)
 DEBUGLINKCFG	:= $(LINKER_CONFIG) -Og $(LIBRARIES)
 
 COMPCFG	:= $(COMPILER_CONFIG) -O3 $(OPTIMIZATIONS)
 LINKCFG	:= $(LINKER_CONFIG) -O3 $(LIBRARIES) $(LEAN)
 
-DEBUGCOMPCFG_C	:= $(C_COMPCFG) -Wall -Wpedantic -Og -ggdb3 -fno-omit-frame-pointer $(DEBUGMODE)
+DEBUGCOMPCFG_C	:= $(C_COMPCFG) -Wall -Og -ggdb3 -fno-omit-frame-pointer $(DEBUGMODE)
 COMPCFG_C		:= $(C_COMPCFG) -O3 $(OPTIMIZATIONS)
 
 COMPILER	:= @$(CXX) $(INCLUDES)
 LINKER		:= @$(CXX)
+
+lower = $(shell echo $(1) | tr A-Z a-z)
+upper = $(shell echo $(1) | tr a-z A-Z)
+
+ifdef gl-loader
+ifeq ($(gl-loader),glew)
+MAKE_GLOADER_D	:= @:
+MAKE_GLOADER	:= @:
+else
+MAKE_GLOADER_D	= $(CC) -I$(ROOT)/lib/OpenGL/$(call upper,$(gl-loader))/include $(DEBUGCOMPCFG_C) -c $(gl-loader).c -o $(prefix).$(gl-loader).$@.o
+MAKE_GLOADER	= $(CC) -I$(ROOT)/lib/OpenGL/$(call upper,$(gl-loader))/include $(COMPCFG_C) -c $(gl-loader).c -o $(prefix).$(gl-loader).$@.o
+endif
+else
+gl-loader := glad
+MAKE_GLOADER_D	= $(CC) -I$(ROOT)/lib/OpenGL/$(call upper,$(gl-loader))/include $(DEBUGCOMPCFG_C) -c $(gl-loader).c -o $(prefix).$(gl-loader).$@.o
+MAKE_GLOADER	= $(CC) -I$(ROOT)/lib/OpenGL/$(call upper,$(gl-loader))/include $(COMPCFG_C) -c $(gl-loader).c -o $(prefix).$(gl-loader).$@.o
+endif
 
 define GET_TIME
 @printf "\nTime: "
@@ -46,10 +63,10 @@ endef
 all: debug release
 
 debug:
-	$(COMPILER) $(DEBUGCOMPCFG) -c stb.cpp -o $(prefix).stb.$@.o
-	$(CC) -I$(ROOT)/lib/OpenGL/GL3W/include $(DEBUGCOMPCFG_C) -c gl3w.c -o $(prefix).gl3w.$@.o
+	$(COMPILER) $(DEBUGCOMPCFG) -Wpedantic -c stb.cpp -o $(prefix).stb.$@.o
+	$(MAKE_GLOADER_D)
 
 
 release:
 	$(COMPILER) $(COMPCFG) -c stb.cpp -o $(prefix).stb.$@.o
-	$(CC) -I$(ROOT)/lib/OpenGL/GL3W/include $(COMPCFG_C) -c gl3w.c -o $(prefix).gl3w.$@.o
+	$(MAKE_GLOADER)

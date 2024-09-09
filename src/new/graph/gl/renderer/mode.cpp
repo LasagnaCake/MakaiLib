@@ -1,7 +1,6 @@
 #include "mode.hpp"
 
-#include <GL/gl3w.h>
-#include <GL/gl.h>
+#include "../glapi.cpp"
 
 using namespace Makai::Graph;
 
