@@ -69,7 +69,7 @@ struct TestApp: Makai::App {
 			HPI / 90.0,
 			HPI / 45.0
 		);
-		cube.trans.position = VecMath::angleV3(getCurrentFrame() / 180.0, VecMath::Axis::POS_Y);
+		//cube.trans.position = VecMath::angleV3(getCurrentFrame() / 180.0, VecMath::Axis::POS_Y);
 	}
 };
 
