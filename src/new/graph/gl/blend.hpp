@@ -33,8 +33,8 @@ namespace Makai::Graph {
 		BE_MAX
 	};
 
-	struct BlendData {
-		struct BlendFunctionData {
+	struct BlendMode {
+		struct FunctionSetting {
 			BlendFunction
 				srcColor = BlendFunction::BF_SRC_ALPHA,
 				dstColor = BlendFunction::BF_ONE_MINUS_SRC_ALPHA,
@@ -42,7 +42,7 @@ namespace Makai::Graph {
 				dstAlpha = BlendFunction::BF_ONE
 			;
 		} func = {};
-		struct BlendEquationData {
+		struct EquationSetting {
 			BlendEquation
 				color = BlendEquation::BE_ADD,
 				alpha = BlendEquation::BE_ADD
@@ -84,7 +84,7 @@ namespace Makai::Graph {
 			return *this;
 		}
 
-		BlendData blend;
+		BlendMode blend;
 
 	protected:
 		void useBlendMode(usize const& drawBuffer = 0) const;
