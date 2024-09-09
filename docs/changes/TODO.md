@@ -1,10 +1,8 @@
 ## TODO
 
 ### Current
-- [ ] Ditch GLEW for some other library ([some options](https://www.khronos.org/opengl/wiki/OpenGL_Loading_Library))
-- - ( ) GLAD
-- - ( ) GL3W
-- - ( ) GLBinding
+- [x] Ditch GLEW for some other library ([some options](https://www.khronos.org/opengl/wiki/OpenGL_Loading_Library))
+- - It now supports both GLAD & GL3W
 - [ ] Add initializer lists wherever possible
 - [ ] Add HSL (Hue-Saturation-Luminosity) & BC (Brightness-Contrast) to buffer mask effect
 - [x] Separate `itembox` and `grazebox`
