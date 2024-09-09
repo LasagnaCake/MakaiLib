@@ -8,5 +8,8 @@
 > Fullscreen does not work properly
 
 [ Code-specific ]
-> Automatic tweens & timers are no longer working
+Fixed? > Automatic tweens & timers are no longer working
 > If there is stutter while playing, Audio::Sound object may lose sound forever
+
+[ Unknown ]
+> Objects are not being rendered to screen
