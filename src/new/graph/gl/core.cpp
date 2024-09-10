@@ -10,6 +10,7 @@ constexpr GLenum convert(Facility const& facility) {
 		case Facility::GAF_BLEND:		return GL_BLEND;
 		case Facility::GAF_DEBUG:		return GL_DEBUG_OUTPUT;
 	}
+	return 0;
 }
 
 bool opened = false;
