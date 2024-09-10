@@ -14,6 +14,7 @@ namespace Makai::Graph::API {
 		GAF_DEPTH_TEST,
 		GAF_BLEND,
 		GAF_DEBUG
+
 	};
 
 	void toggle(Facility const& fac, bool const& state);
@@ -26,7 +27,8 @@ namespace Makai::Graph::API {
 
 	enum class Buffer {
 		GAB_COLOR,
-		GAB_DEPTH
+		GAB_DEPTH,
+		GAB_STENCIL
 	};
 
 	void clear(Buffer const& buffer);

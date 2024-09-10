@@ -76,8 +76,9 @@ void Makai::Graph::API::toggle(Facility const& fac, bool const& state) {
 
 void Makai::Graph::API::clear(Buffer const& buffer) {
 	switch (buffer) {
-		case Buffer::GAB_COLOR: glClear(GL_COLOR_BUFFER_BIT);
-		case Buffer::GAB_DEPTH: glClear(GL_DEPTH_BUFFER_BIT);
+		case Buffer::GAB_COLOR:		glClear(GL_COLOR_BUFFER_BIT);
+		case Buffer::GAB_DEPTH:		glClear(GL_DEPTH_BUFFER_BIT);
+		case Buffer::GAB_STENCIL:	glClear(GL_STENCIL_BUFFER_BIT);
 	}
 }
 
