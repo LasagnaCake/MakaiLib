@@ -18,8 +18,9 @@ namespace Makai::Graph::API {
 
 	void toggle(Facility const& fac, bool const& state);
 
-	template<Facility... Facilities>
-	void toggle(bool const& state, Facilities const&... facs) {
+	template<typename... Args>
+	void toggle(bool const& state, Args const&... facs)
+	requires (... && Type::Equal<Args, Facility>) {
 		(..., setFlag(facs, state));
 	}
 
@@ -30,8 +31,9 @@ namespace Makai::Graph::API {
 
 	void clear(Buffer const& buffer);
 
-	template<Buffer... Buffers>
-	void clear(Buffers const&... buffers) {
+	template<typename... Args>
+	void clear(Args const&... buffers)
+	requires (... && Type::Equal<Args, Buffer>) {
 		(..., clear(buffers));
 	}
 
