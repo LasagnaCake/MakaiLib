@@ -60,12 +60,12 @@ struct TestApp: Makai::App {
 		if (input.isButtonJustPressed(Makai::Input::KeyCode::KC_ESCAPE))
 			close();
 		getFrameBuffer().material.background = Makai::Graph::Color::MAGENTA * (sin(getCurrentFrame() / 180.0) / 2 + .5);
-		Makai::Graph::Camera3D& cam = Makai::Graph::Global::camera;
-		cube.trans.rotation += Vec3(
+		//Makai::Graph::Camera3D& cam = Makai::Graph::Global::camera;
+		/*cube.trans.rotation += Vec3(
 			HPI / 60.0,
 			HPI / 90.0,
 			HPI / 45.0
-		);
+		);*/
 	}
 };
 

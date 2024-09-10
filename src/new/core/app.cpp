@@ -431,11 +431,6 @@ void App::render() {
 				// Enable layer buffer
 				layerbuffer();
 			}
-			// Clear depth buffer
-			//layerbuffer.clearDepthBuffer();
-			// Reset layerbuffer's positions
-			layerbuffer.trans	= VecMath::Transform3D();
-			layerbuffer.uv		= VecMath::Transform3D();
 			// Call onLayerDrawBegin function
 			onLayerDrawBegin(layer);
 			// Skip layer if applicable
@@ -460,6 +455,8 @@ void App::render() {
 	}
 	// If last layer wasn't rendered, do so
 	if (!pushToFrame) layerbuffer.render(framebuffer);
+	// Set clear for next frame
+	pushToFrame = true;
 	// Call pre frame drawing function
 	onPreFrameDraw();
 	// Render frame buffer
