@@ -41,13 +41,13 @@ ifeq ($(gl-loader),glew)
 MAKE_GLOADER_D	:= @:
 MAKE_GLOADER	:= @:
 else
-MAKE_GLOADER_D	= $(CC) -I$(ROOT)/lib/OpenGL/$(call upper,$(gl-loader))/include $(DEBUGCOMPCFG_C) -c $(gl-loader).c -o $(prefix).$(gl-loader).$@.o
-MAKE_GLOADER	= $(CC) -I$(ROOT)/lib/OpenGL/$(call upper,$(gl-loader))/include $(COMPCFG_C) -c $(gl-loader).c -o $(prefix).$(gl-loader).$@.o
+MAKE_GLOADER_D	= $(CC) -I$(ROOT)/lib/OpenGL/$(call upper,$(gl-loader))/include $(DEBUGCOMPCFG_C) -c $(gl-loader).c -o $(prefix).glapi.$@.o
+MAKE_GLOADER	= $(CC) -I$(ROOT)/lib/OpenGL/$(call upper,$(gl-loader))/include $(COMPCFG_C) -c $(gl-loader).c -o $(prefix).glapi.$@.o
 endif
 else
 gl-loader := glad
-MAKE_GLOADER_D	= $(CC) -I$(ROOT)/lib/OpenGL/$(call upper,$(gl-loader))/include $(DEBUGCOMPCFG_C) -c $(gl-loader).c -o $(prefix).$(gl-loader).$@.o
-MAKE_GLOADER	= $(CC) -I$(ROOT)/lib/OpenGL/$(call upper,$(gl-loader))/include $(COMPCFG_C) -c $(gl-loader).c -o $(prefix).$(gl-loader).$@.o
+MAKE_GLOADER_D	= $(CC) -I$(ROOT)/lib/OpenGL/$(call upper,$(gl-loader))/include $(DEBUGCOMPCFG_C) -c $(gl-loader).c -o $(prefix).glapi.$@.o
+MAKE_GLOADER	= $(CC) -I$(ROOT)/lib/OpenGL/$(call upper,$(gl-loader))/include $(COMPCFG_C) -c $(gl-loader).c -o $(prefix).glapi.$@.o
 endif
 
 define GET_TIME

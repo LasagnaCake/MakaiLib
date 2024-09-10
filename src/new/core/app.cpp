@@ -2,7 +2,7 @@
 #define AUDIO_SAMPLE_FRAMES 2048
 #endif // AUDIO_SAMPLE_FRAMES
 
-#include "../graph/gl/glapi.cpp"
+//#include "../graph/gl/glapi.cpp"
 
 #if (_WIN32 || _WIN64 || __WIN32__ || __WIN64__)
 #include <windows.h>
@@ -17,34 +17,7 @@
 #include "../file/slf.hpp"
 #include "app.hpp"
 
-inline void setFrontFace(bool const& clockwise = true) {
-	glFrontFace(clockwise ? GL_CW : GL_CCW);
-}
-
-inline void clearColorBuffer(Vector4 const& color) {
-	glClearColor(color.r, color.g, color.b, color.a);
-	glClear(GL_COLOR_BUFFER_BIT);
-}
-
 using namespace Makai;
-
-void GLAPIENTRY glAPIMessageCallback(
-	GLenum source,
-	GLenum type,
-	GLuint id,
-	GLenum severity,
-	GLsizei length,
-	const GLchar* message,
-	const void* userParam
-) {
-	DEBUGLN(
-		"[GL CALLBACK"
-		, String(type == GL_DEBUG_TYPE_ERROR ? " (GL ERROR)" : "")	, "] "
-		, "Type: "		, type				, ", "
-		, "Severity: "	, severity			, ", "
-		, "Message: "	, String(message)	, ", "
-	);
-}
 
 void setGLAttribute(SDL_GLattr const& a, int const& v) {
 	if (SDL_GL_SetAttribute(a, v))
@@ -141,15 +114,11 @@ App::App (
 		);
 	}
 	DEBUGLN("Started!");
-	// Create default shader
-	/*DEBUGLN("Creating default shader...");
-	Shader::defaultShader.create();
-	DEBUGLN("Created!");*/
-	//glViewport(0, 0, width, height);
-	glDebugMessageCallback(glAPIMessageCallback, 0);
-	// This keeps the alpha from shitting itself
-	setGLFlag(GL_BLEND);
-	setGLFlag(GL_DEPTH_TEST);
+	// Toggle depth test & blend
+	{
+		using enum Makai::Graph::API::Facility;
+		Makai::Graph::API::toggle(true, GAF_DEPTH_TEST, GAF_BLEND);
+	}
 	// Setup camera
 	DEBUGLN("Setting starting camera...");
 	Graph::Global::camera.aspect	= Vector2(width, height);
@@ -186,8 +155,8 @@ App::~App() {
 		mainApp = nullptr;
 }
 
-void App::setGLDebug(bool const& state) {
-	setGLFlag(GL_DEBUG_OUTPUT, state);
+void App::setAPIDebug(bool const& state) {
+	Makai::Graph::API::toggle(Makai::Graph::API::Facility::API_DEBUG, state);
 }
 
 void App::setWindowTitle(String const& title) {
@@ -221,8 +190,8 @@ void App::run() {
 			Entity::ROOT->yield(delta);
 	};
 	// Clear screen
-	clearColorBuffer(color);
-	glClear(GL_DEPTH_BUFFER_BIT);
+	Makai::Graph::API::setClearColor(color);
+	Makai::Graph::API::clear(Makai::Graph::API::Buffer::GAB_COLOR);
 	// Render simple frame
 	SDL_GL_SwapWindow(sdlWindow);
 	// Call on open function
@@ -363,16 +332,6 @@ size_t App::getFrameRate() {
 	return frameRate;
 }
 
-void App::setGLFlag(usize const& flag, bool const& state) {
-	if (state) glEnable(flag);
-	else glDisable(flag);
-}
-
-void App::setGLValue(usize const& flag, int const& value, bool const& state) {
-	if (state) glEnablei(flag, value);
-	else glDisablei(flag, value);
-}
-
 Graph::FrameBuffer& App::getFrameBuffer() {
 	return framebuffer;
 }
@@ -439,12 +398,17 @@ void App::finalize() {
 	state = App::AppState::AS_CLOSED;
 }
 
+inline void setDepthTest(bool const& state) {
+	Makai::Graph::API::toggle(Makai::Graph::API::Facility::GAF_DEPTH_TEST, state);
+}
+
 void App::render() {
 	// Clear screen
-	clearColorBuffer(color);
-	glClear(GL_DEPTH_BUFFER_BIT);
+	Makai::Graph::API::setClearColor(color);
+	Makai::Graph::API::clear(Makai::Graph::API::Buffer::GAB_COLOR);
+	Makai::Graph::API::clear(Makai::Graph::API::Buffer::GAB_DEPTH);
 	// Enable depth testing
-	setGLFlag(GL_DEPTH_TEST, true);
+	setDepthTest(true);
 	// Enable frame buffer
 	framebuffer();
 	// Call rendering start function
@@ -452,7 +416,7 @@ void App::render() {
 	// Clear frame buffer
 	framebuffer.clearBuffers();
 	// Set frontface order
-	setFrontFace(true);
+	Makai::Graph::API::setFrontFace(true);
 	// Call post frame clearing function
 	onPostFrameClear();
 	// Enable layer buffer
@@ -509,7 +473,7 @@ void App::render() {
 	// Call rendering end function
 	onDrawEnd();
 	// Disable depth testing
-	setGLFlag(GL_DEPTH_TEST, false);
+	setDepthTest(false);
 	// Display window
 	SDL_GL_SwapWindow(sdlWindow);
 }
