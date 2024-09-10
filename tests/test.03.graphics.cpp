@@ -53,6 +53,7 @@ struct TestApp: Makai::App {
 			new Makai::Graph::Triangle{{vertices[3], vertices[5], vertices[7]}}
 		};
 		cube.shader = Makai::Graph::Shader::DEFAULT;
+		// Makai::Graph::API::toggle(Makai::Graph::API::Facility::API_DEBUG, state);
 	}
 
 	void onLogicFrame(float delta) {

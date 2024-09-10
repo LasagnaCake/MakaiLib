@@ -155,10 +155,6 @@ App::~App() {
 		mainApp = nullptr;
 }
 
-void App::setAPIDebug(bool const& state) {
-	Makai::Graph::API::toggle(Makai::Graph::API::Facility::API_DEBUG, state);
-}
-
 void App::setWindowTitle(String const& title) {
 	SDL_SetWindowTitle(sdlWindow, title.c_str());
 }

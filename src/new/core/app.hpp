@@ -80,11 +80,6 @@ namespace Makai {
 		/// Gets the current cycle rate.
 		usize getFrameRate();
 
-		/// Sets an OpenGL flag.
-		static void setGLFlag(usize const& flag, bool const& state = true);
-		/// Sets an OpenGL value.
-		static void setGLValue(usize const& flag, int const& value, bool const& state = true);
-
 		Graph::FrameBuffer& getFrameBuffer();
 		Graph::FrameBuffer& getLayerBuffer();
 
@@ -158,9 +153,6 @@ namespace Makai {
 
 		/// The program's notification handler.
 		Event::Notifier notifier;
-
-		/// Enables/disables OpenGL debug logs.
-		void setGLDebug(bool const& state = false);
 
 	protected:
 		Graph::FrameBufferData toFrameBufferData();

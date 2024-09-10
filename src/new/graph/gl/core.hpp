@@ -21,7 +21,7 @@ namespace Makai::Graph::API {
 	template<typename... Args>
 	void toggle(bool const& state, Args const&... facs)
 	requires (... && Type::Equal<Args, Facility>) {
-		(..., setFlag(facs, state));
+		(..., toggle(facs, state));
 	}
 
 	enum class Buffer {

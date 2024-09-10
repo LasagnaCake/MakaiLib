@@ -13,18 +13,11 @@ USE_OPENMP := -fopenmp -openmp -ftree-parallelize-loops=128
 export openmp
 endif
 
-lower = $(shell echo $(1) | tr A-Z a-z)
-upper = $(shell echo $(1) | tr a-z A-Z)
-
-ifndef gl-loader
-gl-loader := glad
-endif
-
 override prefix := $(strip $(prefix)).core
 
 OPTIMIZATIONS	:= $(USE_OPENMP) -funswitch-loops -fpredictive-commoning -fgcse-after-reload -ftree-vectorize $(LEAN)
 
-INCLUDES := -I$(ROOT)/lib/SDL2-2.0.10/include -I$(ROOT)/lib/OpenGL -I$(ROOT)/lib/OpenGL/$(call upper,$(gl-loader))/include
+INCLUDES := -I$(ROOT)/lib/SDL2-2.0.10/include
 
 DEBUGMODE := -DMAKAILIB_DEBUG -DCTL_DEBUG -DNDEBUG
 DEBUGCOMPCFG	:= $(COMPILER_CONFIG) -Wall -Wpedantic -Og -ggdb3 -fno-omit-frame-pointer $(DEBUGMODE)
