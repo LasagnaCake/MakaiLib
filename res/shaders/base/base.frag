@@ -98,13 +98,13 @@ uniform float	contrast	= 1;
 // [ DEBUG MODE ]
 uniform uint	debugView	= 0;
 
-uniform AmbientData		ambient;
-uniform LightEffect		lights;
-uniform ShadingEffect	shade;
-uniform FogEffect		farFog;
-uniform FogEffect		nearFog;
-uniform NegativeEffect	negative;
-uniform GradientEffect	gradient;
+uniform AmbientData		ambient		= AmbientData(vec3(1), 1);
+uniform LightEffect		lights		= LightEffect(false);
+uniform ShadingEffect	shade		= ShadingEffect(false, 0.5, vec3(0, 1, 0));
+uniform FogEffect		farFog		= FogEffect(false, 0, 1, 1, vec4(1));
+uniform FogEffect		nearFog		= FogEffect(false, 0, 1, 1, vec4(1));
+uniform NegativeEffect	negative	= NegativeEffect(false, 1);
+uniform GradientEffect	gradient	= GradientEffect(false, -1, vec4(0), vec4(1), false);
 
 uniform TextureEffect	imgTexture;
 uniform NormalMapEffect	normalMap;

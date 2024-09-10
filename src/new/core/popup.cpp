@@ -20,10 +20,10 @@ int Popup::showDialog(
 	for (usize i = 0; i < options.size(); ++i) {
 		buttons[i] = SDL_MessageBoxButtonData {
 			0,
-			idx,
+			(int)idx,
 			options[idx].c_str()
 		};
-		(int)(idx--);
+		--idx;
 	}
 	uint32 flags = 0;
 	switch (type) {

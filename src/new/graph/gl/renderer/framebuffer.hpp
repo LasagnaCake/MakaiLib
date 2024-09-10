@@ -103,7 +103,7 @@ namespace Makai::Graph {
 			/// The framebuffer's screen Vertex Unit space. Usually the inverse of the camera's orthographic size.
 			Vector2 screenVUSpace = 1;
 			/// The framebuffer's blend function & equation setting.
-			BlendData blend;
+			BlendMode blend;
 
 		protected:
 			Vector4 clearColor = Color::CLEAR;
