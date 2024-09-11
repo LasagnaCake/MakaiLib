@@ -29,7 +29,7 @@ Spaces are ignored.
 |`-`|<sub>subscript</sub>|<span style="background-color:lightgreen;padding:0 5px;">Yes</span>|
 |`@[link]`|[links](https://www.youtube.com/watch?v=ihCc2MoLF9k)|<span style="background-color:lightpink;padding:0 5px;">No</span>|
 |`@`|[links](https://www.youtube.com/watch?v=ihCc2MoLF9k)|<span style="background-color:lightpink;padding:0 5px;">No</span>|Link shorthand, where `text` value is the link.|
-|`=`|JSON Value|<span style="background-color:lightpink;padding:0 5px;">No</span>|</p>To be loaded from a JSON structure attached to a JSON database attached to the `Label`, with `text` being the key.</p><p>Tree structure is separated by periods.</p>|
+|`$`|JSON Value|<span style="background-color:lightpink;padding:0 5px;">No</span>|</p>To be loaded from a JSON structure attached to a JSON database attached to the `Label`, with `text` being the key.</p><p>Tree structure is separated by periods.</p>|
 |`#[style]`|for (limited) text stylization|<span style="background-color:lightgreen;padding:0 5px;">Yes</span>|Most recent value set for parameter is used (CSS-style).|
 
 ### On the `#[style]` tag
@@ -40,7 +40,7 @@ Optionally, it can contain parameters in the form of `@class`, that takes no val
 
 Every parameter must be separated via semicolons.
 
-To use a JSON value, do it as `=[key]`, with `key` following the same principles as the `=` tag.
+To use a JSON value, do it as `$[key]`, with `key` following the same principles as the `=` tag.
 
 #### Available Parameters
 
