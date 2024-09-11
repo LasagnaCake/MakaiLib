@@ -59,10 +59,12 @@ Optionally, it can start with `@:`, and be a list of style names attached to the
 |`[:text::]`|text:|
 |`[::text::]`|:text:|
 |`[text]`|\[text\]|
-|`[`*`any-chr-seq`*`::]`||
+|`[`*`any-chr-seq`[^1]*`::]`||
 |`[::]`||
 |`[::]]`|:\]|
 |`[[::]`|\[::]|
 |`[[::]]`|\[::\]|
 |`[:[[::]`|\[:|
 |`[:::]`|:|
+
+[^1]: Except links (`@`).
