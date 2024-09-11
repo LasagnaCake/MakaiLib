@@ -40,7 +40,7 @@ Optionally, it can contain parameters in the form of `@class`, that takes no val
 
 Every parameter must be separated via semicolons.
 
-To use a JSON value
+To use a JSON value, do it as `=[key]`, with `key` following the same principles as the `=` tag.
 
 #### Available Parameters
 
