@@ -23,13 +23,13 @@ struct TestApp: Makai::App {
 			Makai::SLF::loadFile("shaders/base/base.slf"),
 			Makai::SLF::loadFile("shaders/framebuffer/compose.slf")
 		);
+	}
+
+	void onOpen() override {
 		camera.eye				= Vec3(0, 1, -2);
 		camera.at				= Vec3(0, 0, 0);
 		camera.zFar				= 1000;
 		camera.relativeToEye	= true;
-	}
-
-	void onOpen() override {
 		cube.setRenderLayer(0);
 		cube.material.shaded = true;
 		cube.triangles = {
