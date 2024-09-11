@@ -29,7 +29,7 @@ Spaces are ignored.
 |`-`|<sub>subscript</sub>|<span style="background-color:lightgreen;padding:0 5px;">Yes</span>|
 |`@[link]`|[links](https://www.youtube.com/watch?v=ihCc2MoLF9k)|<span style="background-color:lightpink;padding:0 5px;">No</span>|
 |`@`|[links](https://www.youtube.com/watch?v=ihCc2MoLF9k)|<span style="background-color:lightpink;padding:0 5px;">No</span>|Link shorthand, where `text` value is the link.|
-|`=`|JSON Value|<span style="background-color:lightpink;padding:0 5px;">No</span>|</p>To be loaded from a JSON structure attached to the `Label`, with `text` being the key.</p><p>Tree structure is separated by periods.</p>|
+|`=`|JSON Value|<span style="background-color:lightpink;padding:0 5px;">No</span>|</p>To be loaded from a JSON structure attached to a JSON database attached to the `Label`, with `text` being the key.</p><p>Tree structure is separated by periods.</p>|
 |`#[style]`|for (limited) text stylization|<span style="background-color:lightgreen;padding:0 5px;">Yes</span>|Most recent value set for parameter is used (CSS-style).|
 
 ### On the `#[style]` tag
@@ -40,26 +40,29 @@ Optionally, it can contain parameters in the form of `@class`, that takes no val
 
 Every parameter must be separated via semicolons.
 
+To use a JSON value
+
 #### Available Parameters
 
 |Name|Usage|Value Types|Function|
 |:-:|:-|:-|:-:|
-|`color`|`color:<COLOR>`|`<COLOR>`: string or name|Sets the text color.|
-|`font`|`font:<FONT>`|`<FONT>`: string|Sets the text to a font attached to a font database.|
-|`animate`|`animate:<NAMES>,...`|`<NAMES>`: string or name|Sets the text to a specific animation. Can be a built-in one, or a user-defined one.<br/>|
+|`color`|`color:COLOR`|`COLOR`: string or name|Sets the text color.|
+|`font`|`font:FONT`|`FONT`: string|Sets the text to a font attached to a font database.|
+|`animate`|`animate:NAMES,...`|`NAMES`: string or name|<p>Sets the text to a specific animation.</p><p>Can be a built-in one, or a user-defined one.</p>|
 
 ##### Available Built-in Animations
 
 |Name|Input|Input Types|Function|Infinite|
 |:-:|:-|:-|:-:|:-:|
-|`shake`|`shake:<I>`|`<I>`: float|Displaces the text randomly, from its starting position, at an intensity `I`.|Yes|
+|`shake`|`shake:I`|`I`: float|Displaces the text randomly, from its starting position, at an intensity `I`.|Yes|
 
 ## Examples
 
 |Text Tag|Resulting Text|
 |:-:|:-|
 |`[biu:abcdefg:]`|<ins>***abcdefg***</ins>|
-|`[+#[color=#f00]:colored text:]`|<span style="color:red"><sup>colored text</sup></span>|
+|`[+#[color:#f00]:colored text:]`|<span style="color:red"><sup>colored text</sup></span>|
+|`[+#[color:red]:colored text:]`|<span style="color:red"><sup>colored text</sup></span>|
 |`[@:http://example.com:]`|[http://example.com](http://example.com)|
 |`[@[http://example.com]::]`|[http://example.com](http://example.com)|
 |`[bi@[http://example.com]::]`|[***http://example.com***](http://example.com)|
