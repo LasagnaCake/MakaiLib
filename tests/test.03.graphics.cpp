@@ -3,6 +3,8 @@
 struct TestApp: Makai::App {
 	Makai::Graph::Renderable cube;
 
+	Makai::Graph::Camera3D& camera = Makai::Graph::Global::camera;
+
 	Makai::Graph::Vertex const vertices[8] = {
 		Makai::Graph::Vertex(+1, +1, +1, 0, 0, 1, 1, 1, 1, +1, +1, +1),	// 0
 		Makai::Graph::Vertex(+1, +1, -1, 0, 0, 1, 1, 1, 1, +1, +1, -1),	// 1
