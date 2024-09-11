@@ -21,8 +21,6 @@ Formerly a C++20 header-only game engine.
 Now, it's a C++20 3D application engine, built on top of SDL2 & OpenGL.
 The game engine part is getting refactored into a separate extension.
 
-Now upgraded from spaghetti code to penne rigattoni code.
-
 ## Supported operating systems
 
 - 64-bit Windows
@@ -33,7 +31,8 @@ No plans to support 32-bit systems.
 
 ### Windows
 
-**WARNING: This library does not support clang/LLVM!**
+> [!important]
+> **This library does not support clang/LLVM!**
 
 - GCC via MinGW (MSYS (Recommended), Cygwin, TDM-GCC) 
 - Make
@@ -49,7 +48,7 @@ In a single line: pacman -S mingw-w64-x86_64-toolchain make
 
 ### GCC toolchain version
 
-> [!warning]
+> [!important]
 > Your GCC toolchain **must be version 13, preferably 13.2.0-2!**
 
 To ensure that it is the correct version, run the following command:
