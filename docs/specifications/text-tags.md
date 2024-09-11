@@ -34,15 +34,25 @@ Spaces are ignored.
 
 ### On the `#[style]` tag
 
-`style` parameters are of the form `parameter=value`, and are separated via semicolons.
+`style` parameters are of the form `parameter:value`. For multiple values, each value is separated via a comma.
 
-Optionally, it can start with `@:`, and be a list of style names attached to the label. Each name must be separated by a semicolon.
+Optionally, it can contain parameters in the form of `@class`, that takes no value. This denotes a style class to be used.
 
-#### Available parameters
+Every parameter must be separated via semicolons.
 
-- `color`: Takes in a hex color (ex: `#00f`, `#f045cf0f`, `#fc0d`) as value
-- `font`: Takes in an unsigned integer as a value to be used as an index into an array of fonts
+#### Available Parameters
 
+|Name|Usage|Value Types|Function|
+|:-:|:-|:-|:-:|
+|`color`|`color:<COLOR>`|`<COLOR>`: string or name|Sets the text color.|
+|`font`|`font:<FONT>`|`<FONT>`: string|Sets the text to a font attached to a font database.|
+|`animate`|`animate:<NAMES>,...`|`<NAMES>`: string or name|Sets the text to a specific animation. Can be a built-in one, or a user-defined one.<br/>|
+
+##### Available Built-in Animations
+
+|Name|Input|Input Types|Function|Infinite|
+|:-:|:-|:-|:-:|:-:|
+|`shake`|`shake:<I>`|`<I>`: float|Displaces the text randomly, from its starting position, at an intensity `I`.|Yes|
 
 ## Examples
 
