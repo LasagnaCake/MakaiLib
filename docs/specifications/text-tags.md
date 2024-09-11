@@ -61,8 +61,8 @@ To use a JSON value
 |Text Tag|Resulting Text|
 |:-:|:-|
 |`[biu:abcdefg:]`|<ins>***abcdefg***</ins>|
-|`[+#[color:#f00]:colored text:]`|<span style="color:red"><sup>colored text</sup></span>|
-|`[+#[color:red]:colored text:]`|<span style="color:red"><sup>colored text</sup></span>|
+|`[#[color:#f00]:colored text:]`|<span style="color:red">colored text</span>|
+|`[#[color:red]:colored text:]`|<span style="color:red">colored text</span>|
 |`[@:http://example.com:]`|[http://example.com](http://example.com)|
 |`[@[http://example.com]::]`|[http://example.com](http://example.com)|
 |`[bi@[http://example.com]::]`|[***http://example.com***](http://example.com)|
