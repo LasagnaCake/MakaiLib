@@ -15,6 +15,23 @@ constexpr GLenum convert(Facility const& facility) {
 
 bool opened = false;
 
+inline String glDebugSource(GLenum const& source) {
+	switch (source) {
+		case GL_BUFFER:				return "BUFFER";
+		case GL_SHADER:				return "SHADER";
+		case GL_PROGRAM:			return "PROGRAM";
+		case GL_VERTEX_ARRAY:		return "VERTEX ARRAY";
+		case GL_QUERY:				return "QUERY";
+		case GL_PROGRAM_PIPELINE:	return "PROGRAM PIPELINE";
+		case GL_TRANSFORM_FEEDBACK:	return "TRANSFORM FEEDBACK";
+		case GL_SAMPLER:			return "SAMPLER";
+		case GL_TEXTURE:			return "TEXTURE";
+		case GL_RENDERBUFFER:		return "RENDER BUFFER";
+		case GL_FRAMEBUFFER:		return "FRAME BUFFER";
+		default: return "UNKNOWN";
+	}
+}
+
 inline String glDebugSeverity(GLenum const& severity) {
 	switch (severity) {
 		case GL_DEBUG_SEVERITY_LOW:				return "LOW";
@@ -51,6 +68,7 @@ void GLAPIENTRY glAPIMessageCallback(
 ) {
 	DEBUGLN(
 		"<api>\n"
+		, "Source: "	, glDebugSource(source)		, "\n"
 		, "Type: "		, glDebugType(type)			, "\n"
 		, "Severity: "	, glDebugSeverity(severity)	, "\n"
 		, "Message: "	, String(message)			, "\n"
