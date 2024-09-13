@@ -55,7 +55,7 @@ inline Vector4 fromJSONArrayV4(JSON::JSONData const& json, Vector4 const& defaul
 }
 
 void Scene3D::draw() {
-	GlobalState state(camera, Matrix4x4(global), world);
+	GlobalState state(camera, Matrix4x4(space), world);
 	for(auto& [_, obj]: objects)
 		obj->render();
 }
