@@ -208,6 +208,14 @@ void Scene3D::extendFromDefinitionV0(JSON::JSONData def, String const& sourcepat
 				camera.ortho.size		= fromJSONArrayV2(dcam["ortho"]["origin"]);
 			}
 		}
+		// Get space data
+		{
+			if (def["space"].isObject()) {
+				space.position	= fromJSONArrayV3(def["space"]["position"],	0);
+				space.rotation	= fromJSONArrayV3(def["space"]["rotation"],	0);
+				space.scale		= fromJSONArrayV3(def["space"]["scale"],	0);
+			}
+		}
 		// Get world data
 		{
 			auto dmat = def["world"];
