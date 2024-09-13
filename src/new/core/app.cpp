@@ -65,7 +65,7 @@ App::App (
 		);
 	}
 	DEBUGLN("Started!");
-	// Initialize YSE
+	// Initialize sound system
 	DEBUGLN("Starting Audio System...");
 	Makai::Audio::open(audio.formats, audio.channels, audio.tracks);
 	DEBUGLN("Started!");
