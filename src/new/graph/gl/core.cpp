@@ -15,6 +15,31 @@ constexpr GLenum convert(Facility const& facility) {
 
 bool opened = false;
 
+inline String glDebugSeverity(GLenum const& severity) {
+	switch (severity) {
+		case GL_DEBUG_SEVERITY_LOW:				return "LOW";
+		case GL_DEBUG_SEVERITY_MEDIUM:			return "MEDIUM";
+		case GL_DEBUG_SEVERITY_HIGH:			return "HIGH";
+		case GL_DEBUG_SEVERITY_NOTIFICATION:	return "NOTIFICATION";
+		default: return "UNKNOWN";
+	}
+}
+
+inline String glDebugType(GLenum const& type) {
+	switch (type) {
+		case GL_DEBUG_TYPE_ERROR:				return "ERROR";
+		case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR:	return "DEPRECATED BEHAVIOR";
+		case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:	return "UNDEFINED BEHAVIOR";
+		case GL_DEBUG_TYPE_PORTABILITY:			return "PORTABILITY";
+		case GL_DEBUG_TYPE_PERFORMANCE:			return "PERFORMANCE";
+		case GL_DEBUG_TYPE_MARKER:				return "MARKER";
+		case GL_DEBUG_TYPE_PUSH_GROUP:			return "PUSH GROUP";
+		case GL_DEBUG_TYPE_POP_GROUP:			return "POP GROUP";
+		case GL_DEBUG_TYPE_OTHER:				return "OTHER";
+		default: return "UNKNOWN";
+	}
+}
+
 void GLAPIENTRY glAPIMessageCallback(
 	GLenum source,
 	GLenum type,
@@ -25,11 +50,11 @@ void GLAPIENTRY glAPIMessageCallback(
 	const void* userParam
 ) {
 	DEBUGLN(
-		"[GL CALLBACK"
-		, String(type == GL_DEBUG_TYPE_ERROR ? " (GL ERROR)" : "")	, "] "
-		, "Type: "		, type				, ", "
-		, "Severity: "	, severity			, ", "
-		, "Message: "	, String(message)	, ""
+		"<api>\n"
+		, "Type: "		, glDebugType(type)			, "\n"
+		, "Severity: "	, glDebugSeverity(severity)	, "\n"
+		, "Message: "	, String(message)			, "\n"
+		, "</api>"
 	);
 }
 
@@ -54,6 +79,8 @@ void Makai::Graph::API::open() {
 	#endif
 	opened = true;
 	glDebugMessageCallback(glAPIMessageCallback, 0);
+	glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, NULL, GL_FALSE);
+	glDebugMessageControl(GL_DONT_CARE, GL_DEBUG_TYPE_ERROR, GL_DONT_CARE, 0, NULL, GL_TRUE);
 }
 
 bool Makai::Graph::API::hasRequiredVersion() {
