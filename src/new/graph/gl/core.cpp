@@ -17,17 +17,11 @@ bool opened = false;
 
 inline String glDebugSource(GLenum const& source) {
 	switch (source) {
-		case GL_BUFFER:				return "BUFFER";
-		case GL_SHADER:				return "SHADER";
-		case GL_PROGRAM:			return "PROGRAM";
-		case GL_VERTEX_ARRAY:		return "VERTEX ARRAY";
-		case GL_QUERY:				return "QUERY";
-		case GL_PROGRAM_PIPELINE:	return "PROGRAM PIPELINE";
-		case GL_TRANSFORM_FEEDBACK:	return "TRANSFORM FEEDBACK";
-		case GL_SAMPLER:			return "SAMPLER";
-		case GL_TEXTURE:			return "TEXTURE";
-		case GL_RENDERBUFFER:		return "RENDER BUFFER";
-		case GL_FRAMEBUFFER:		return "FRAME BUFFER";
+		case GL_DEBUG_SOURCE_API:				return "API";
+		case GL_DEBUG_SOURCE_WINDOW_SYSTEM:		return "WINDOW SYSTEM";
+		case GL_DEBUG_SOURCE_SHADER_COMPILER:	return "SHADER COMPILER";
+		case GL_DEBUG_SOURCE_THIRD_PARTY:		return "THIRD PARTY";
+		case GL_DEBUG_SOURCE_APPLICATION:		return "APPLICATION";
 		default: return "UNKNOWN";
 	}
 }

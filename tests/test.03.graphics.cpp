@@ -52,6 +52,7 @@ struct TestApp: Makai::App {
 			new Makai::Graph::Triangle{{vertices[1], vertices[3], vertices[5]}},
 			new Makai::Graph::Triangle{{vertices[3], vertices[5], vertices[7]}}
 		};
+		Makai::Graph::API::toggle(Makai::Graph::API::Facility::GAF_DEBUG, true);
 	}
 
 	void onLogicFrame(float delta) {
