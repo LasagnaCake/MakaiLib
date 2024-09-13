@@ -12,7 +12,9 @@
 namespace Makai::Graph {
 	class Drawable {
 	public:
-		Drawable(usize const& layer = 0, bool const& manual = false);
+		Drawable(bool const& manual = false);
+
+		Drawable(bool const& manual, usize const& layer = 0);
 
 		virtual ~Drawable();
 
