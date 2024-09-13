@@ -5,6 +5,7 @@
 
 namespace Makai::Graph {
 	class Drawable;
+
 	struct Renderer {
 		using Callback = const Event::Signal;
 
