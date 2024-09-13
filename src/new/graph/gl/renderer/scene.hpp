@@ -24,7 +24,7 @@ namespace Makai::Graph {
 				destroy();
 			}
 
-			VecMath::Transform3D	global;
+			VecMath::Transform3D	space;
 
 			void destroy() {
 				auto objs = objects;
