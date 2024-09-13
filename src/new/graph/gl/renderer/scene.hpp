@@ -46,7 +46,7 @@ namespace Makai::Graph {
 				DrawableType* r = nullptr;
 				if (name.empty())	name = validateName("unnamed");
 				else				name = validateName(name);
-				objects[name] = (r = new DrawableType(0, true));
+				objects[name] = (r = new DrawableType(true));
 				return DrawableEntry{name, r};
 			}
 
