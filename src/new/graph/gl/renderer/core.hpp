@@ -4,6 +4,7 @@
 #include "../../../ctl/ctl.hpp"
 
 namespace Makai::Graph {
+	class Drawable;
 	struct Renderer {
 		using Callback = const Event::Signal;
 
