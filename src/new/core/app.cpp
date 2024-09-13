@@ -110,7 +110,7 @@ App::App (
 			__FILE__,
 			toString(__LINE__),
 			"App::constructor",
-			"Required version: " + Makai::Graph::API::versionString()
+			"Required version: " + Makai::Graph::API::name()
 		);
 	}
 	DEBUGLN("Started!");
