@@ -305,12 +305,13 @@ If data gets saved in a separate file:
 "scene": {
 	// Required
 	"camera": {/* See Components:Camera3D:Layout */}, // Scene's camera
-	"world": {/* See WorldMaterial:Layout */}, // Scene's WorldMaterial
 	"path": [{
 		"source": "", // Object file source relative to file
 		"type": "MROD" // Object file type
 	}] // Paths to objects
 	// Optional
+	"space": {/* See Components:Transform3D:Layout */}, // Scene's 3D transform
+	"world": {/* See WorldMaterial:Layout */}, // Scene's WorldMaterial
 	"version": 0 // The scene definition version
 }
 ```
@@ -322,12 +323,13 @@ If data is to be integrated in the file:
 "scene": {
 	// Required
 	"camera": {/*See Components:Camera3D:Layout */}, // Scene's camera
-	"world": {/* See WorldMaterial:Layout */}, // Scene's WorldMaterial
 	// Option 1:
 	"data": [{/* See [Renderable Object]:Layout */}...] // List of object definitions
 	// Option 2:
 	"data": {"name": {/* [See Renderable Object]:Layout */}...} // Named objects
 	// Optional
+	"space": {/* See Components:Transform3D:Layout */}, // Scene's 3D transform
+	"world": {/* See WorldMaterial:Layout */}, // Scene's WorldMaterial
 	"version": 0 // The scene definition version
 }
 ```
