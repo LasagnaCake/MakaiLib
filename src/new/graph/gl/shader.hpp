@@ -5,6 +5,7 @@
 #include "../../ctl/ctl.hpp"
 
 #include "uniform.hpp"
+#include "core.hpp"
 
 namespace Makai::Graph {
 	using ShaderType = SLF::ShaderType;

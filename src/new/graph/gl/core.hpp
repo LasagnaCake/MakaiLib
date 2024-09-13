@@ -4,6 +4,26 @@
 #include "../../ctl/ctl.hpp"
 
 namespace Makai::Graph::API {
+	namespace Debug {
+		struct Context {
+			Context(String const& name);
+			~Context();
+
+			void append(String const& message);
+
+			String getMessage();
+
+			String report();
+		private:
+			String message;
+			String const name;
+			String const indent;
+		};
+
+		void addEntry(String const& type);
+		void addEntry(String const& type, String const& value);
+	}
+
 	void open();
 
 	bool hasRequiredVersion();
@@ -38,6 +58,9 @@ namespace Makai::Graph::API {
 	requires (... && Type::Equal<Args, Buffer>) {
 		(..., clear(buffers));
 	}
+
+	void beginRender();
+	void endRender();
 
 	void setClearColor(Vector4 const& color);
 

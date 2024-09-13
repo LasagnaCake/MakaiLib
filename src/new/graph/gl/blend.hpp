@@ -2,6 +2,7 @@
 #define MAKAILIB_GRAPH_BLEND_H
 
 #include "../../ctl/ctl.hpp"
+#include "core.hpp"
 
 namespace Makai::Graph {
 	enum class BlendFunction {

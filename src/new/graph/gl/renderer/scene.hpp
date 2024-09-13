@@ -116,7 +116,7 @@ namespace Makai::Graph {
 		};
 	}
 
-	class Scene3D: public Base::Collection<Renderable> {
+	class Scene: public Base::Collection<Renderable> {
 	public:
 		using BaseType = Base::Collection<Renderable>;
 
@@ -127,9 +127,9 @@ namespace Makai::Graph {
 
 		constexpr static usize VERSION = 0;
 
-		Scene3D(Scene3D& other, usize const& layer, bool const& manual = false);
+		Scene(Scene& other, usize const& layer, bool const& manual = false);
 
-		Scene3D(usize const& layer, String const& path, bool manual = false);
+		Scene(usize const& layer, String const& path, bool manual = false);
 
 		void extendFromSceneFile(String const& path);
 
@@ -143,7 +143,7 @@ namespace Makai::Graph {
 
 		);
 
-		void extend(Scene3D& other);
+		void extend(Scene& other);
 
 	private:
 		void draw() override;

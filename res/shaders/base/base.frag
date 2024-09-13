@@ -186,6 +186,9 @@ vec4 applyBrightnessAndContrast(vec4 color) {
 }
 
 void main(void) {
+	FragColor = vec4(1);
+	return;
+
 	vec4 color;
 	vec2 calculatedFragUV = fragUV;
 	vec3 normal = fragNormal;

@@ -29,7 +29,6 @@ struct TestApp: Makai::App {
 		camera.eye				= Vec3(0, 1, -2);
 		camera.at				= Vec3(0, 0, 0);
 		camera.zFar				= 1000;
-		camera.relativeToEye	= true;
 		cube.setRenderLayer(0);
 		cube.material.shaded = true;
 		cube.triangles = {
@@ -52,10 +51,11 @@ struct TestApp: Makai::App {
 			new Makai::Graph::Triangle{{vertices[1], vertices[3], vertices[5]}},
 			new Makai::Graph::Triangle{{vertices[3], vertices[5], vertices[7]}}
 		};
-		Makai::Graph::API::toggle(Makai::Graph::API::Facility::GAF_DEBUG, true);
+		//Makai::Graph::API::toggle(Makai::Graph::API::Facility::GAF_DEBUG, true);
 	}
 
 	void onLogicFrame(float delta) {
+		camera.eye = VecMath::angleV3((getCurrentFrame() / 180.0) * TAU, VecMath::Axis::POS_Y) + Vec3::UP();
 		if (input.isButtonJustPressed(Makai::Input::KeyCode::KC_ESCAPE))
 			close();
 		getFrameBuffer().material.background = Makai::Graph::Color::MAGENTA * (sin(getCurrentFrame() / 180.0) / 2 + .5);

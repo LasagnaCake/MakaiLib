@@ -2,6 +2,7 @@
 #define MAKAILIB_GRAPH_RENDERER_CORE_H
 
 #include "../../../ctl/ctl.hpp"
+#include "../core.hpp"
 
 namespace Makai::Graph {
 	class Drawable;

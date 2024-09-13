@@ -9,7 +9,7 @@
 #include "../vertex.hpp"
 
 namespace Makai::Graph {
-	class Scene3D;
+	class Scene;
 
 	class Renderable: public DrawableObject {
 	public:
@@ -143,7 +143,7 @@ namespace Makai::Graph {
 		List<Triangle*> triangles;
 
 	private:
-		friend class Scene3D;
+		friend class Scene;
 
 		Vertex* vertices = nullptr;
 

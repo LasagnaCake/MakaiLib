@@ -114,6 +114,9 @@ Image& Image::make() {
 }
 
 void Image::unbind(ImageTarget const& target) {
+	#ifdef MAKAILIB_DEBUG
+	API::Debug::Context ctx("Image::unbind");
+	#endif // MAKAILIB_DEBUG
 	glBindTexture(convert(target), 0);
 }
 
@@ -128,6 +131,9 @@ Image const& Image::use(uchar const& slot) const {
 }
 
 void Image::set(uint const& image, uchar const& slot, ImageTarget const& target) {
+	#ifdef MAKAILIB_DEBUG
+	API::Debug::Context ctx("Image::set");
+	#endif // MAKAILIB_DEBUG
 	glActiveTexture(GL_TEXTURE0 + slot);
 	glBindTexture(convert(target), image);
 }
@@ -194,6 +200,9 @@ Image2D& Image2D::make(
 }
 
 ImageData Image2D::getData() const {
+	#ifdef MAKAILIB_DEBUG
+	API::Debug::Context ctx("Image2D::getData");
+	#endif // MAKAILIB_DEBUG
 	DEBUGLN("Getting image data...");
 	if (!exists()) return ImageData{
 		0, 0,
@@ -288,6 +297,9 @@ Image2D* Image2D::newImage(
 	ComponentLayout const&	layout,
 	ImageTarget const&		target
 ) {
+	#ifdef MAKAILIB_DEBUG
+	API::Debug::Context ctx("Image2D::newImage");
+	#endif // MAKAILIB_DEBUG
 	const auto tg = convert(target);
 	image->create();
 	image->bind(target);

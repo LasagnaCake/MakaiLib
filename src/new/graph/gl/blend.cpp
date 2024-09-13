@@ -47,6 +47,9 @@ GLenum convert(BlendEquation const& value) {
 }
 
 void Blendable::useBlendMode(usize const& drawBuffer) const {
+	#ifdef MAKAILIB_DEBUG
+	API::Debug::Context("Blendable::useBlendMode");
+	#endif // MAKAILIB_DEBUG
 	glBlendFuncSeparatei(
 		drawBuffer,
 		convert(blend.func.srcColor),

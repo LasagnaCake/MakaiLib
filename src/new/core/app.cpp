@@ -399,6 +399,8 @@ inline void setDepthTest(bool const& state) {
 }
 
 void App::render() {
+	// Initialize render
+	Makai::Graph::API::beginRender();
 	// Clear screen
 	Makai::Graph::API::setClearColor(color);
 	Makai::Graph::API::clear(Makai::Graph::API::Buffer::GAB_COLOR);
@@ -467,6 +469,8 @@ void App::render() {
 	onDrawEnd();
 	// Disable depth testing
 	setDepthTest(false);
+	// Finalize render
+	Makai::Graph::API::endRender();
 	// Display window
 	SDL_GL_SwapWindow(sdlWindow);
 }

@@ -76,6 +76,9 @@ void DrawableObject::display(
 	DisplayMode const&	mode,
 	usize const&		instances
 ) {
+	#ifdef MAKAILIB_DEBUG
+	API::Debug::Context ctx("DrawableObject::display");
+	#endif // MAKAILIB_DEBUG
 	// Set blend mode
 	useBlendMode();
 	// Set point size, if applicable
@@ -119,6 +122,9 @@ void DrawableObject::display(
 }
 
 void DrawableObject::prepare() {
+	#ifdef MAKAILIB_DEBUG
+	API::Debug::Context ctx("DrawableObject::prepare");
+	#endif // MAKAILIB_DEBUG
 	// Render with object's shader
 	shader();
 	// Get transformation matrices

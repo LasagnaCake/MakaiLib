@@ -402,6 +402,9 @@ void Renderable::copyVertices() {
 }
 
 void Renderable::draw() {
+	#ifdef MAKAILIB_DEBUG
+	API::Debug::Context ctx("Renderable::draw");
+	#endif // MAKAILIB_DEBUG
 	// If object's vertices are not "baked" (i.e. finalized), copy them
 	if (!baked && !locked) copyVertices();
 	// If no vertices, return

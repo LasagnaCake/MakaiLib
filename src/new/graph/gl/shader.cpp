@@ -229,11 +229,14 @@ void Shader::destroy() {
 
 /// Operator overload.
 void Shader::operator()() const {
-	glUseProgram(instance->id);
+	enable();
 }
 
 /// Enables the shader object.
 void Shader::enable() const {
+	#ifdef MAKAILIB_DEBUG
+	API::Debug::Context ctx("Shader::enable");
+	#endif // MAKAILIB_DEBUG
 	glUseProgram(instance->id);
 }
 
@@ -242,7 +245,10 @@ void Shader::enable() const {
 * Done like this: SHADER.uniform(UNIFORM_NAME)(UNIFORM_VALUE);
 */
 Uniform Shader::uniform(String const& name) const {
-	glUseProgram(instance->id);
+	#ifdef MAKAILIB_DEBUG
+	API::Debug::Context ctx("Shader::uniform");
+	#endif // MAKAILIB_DEBUG
+	enable();
 	Uniform su(name, instance->id);
 	return su;
 }

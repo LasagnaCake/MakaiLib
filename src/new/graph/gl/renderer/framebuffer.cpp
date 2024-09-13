@@ -162,6 +162,7 @@ Base::FrameBuffer& Base::FrameBuffer::clearDepthBuffer() {
 }
 
 Base::FrameBuffer& Base::FrameBuffer::render(FrameBufferData const& target) {
+	API::Debug::Context ctx("FrameBuffer::render");
 	if (!exists()) return *this;
 	// Set target buffer
 	glBindFramebuffer(GL_FRAMEBUFFER, target.id);

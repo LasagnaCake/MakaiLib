@@ -3,7 +3,7 @@
 #include "../color.hpp"
 
 using namespace Makai::Graph;
-using BaseType = Scene3D::BaseType;
+using BaseType = Scene::BaseType;
 namespace JSON = Makai::JSON;
 
 inline Vector2 fromJSONArrayV2(JSON::JSONData const& json, Vector2 const& defaultValue = 0) {
@@ -54,17 +54,20 @@ inline Vector4 fromJSONArrayV4(JSON::JSONData const& json, Vector4 const& defaul
 	}
 }
 
-void Scene3D::draw() {
+void Scene::draw() {
+	#ifdef MAKAILIB_DEBUG
+	API::Debug::Context ctx("Scene::draw");
+	#endif // MAKAILIB_DEBUG
 	GlobalState state(camera, Matrix4x4(space), world);
 	for(auto& [_, obj]: objects)
 		obj->render();
 }
 
-Scene3D::Scene3D(Scene3D& other, usize const& layer, bool const& manual): Collection(layer, manual) {
+Scene::Scene(Scene& other, usize const& layer, bool const& manual): Collection(layer, manual) {
 	extend(other);
 }
 
-void Scene3D::extend(Scene3D& other) {
+void Scene::extend(Scene& other) {
 	for(auto& [name, obj]: other.objects) {
 		auto [_, nobj] = createObject(name);
 		bool wasBaked = obj->baked;
@@ -84,15 +87,15 @@ void Scene3D::extend(Scene3D& other) {
 	world	= other.world;
 }
 
-Scene3D::Scene3D(usize const& layer, String const& path, bool manual): Collection(layer, manual) {
+Scene::Scene(usize const& layer, String const& path, bool manual): Collection(layer, manual) {
 	extendFromSceneFile(path);
 }
 
-void Scene3D::extendFromSceneFile(String const& path) {
+void Scene::extendFromSceneFile(String const& path) {
 	extendFromDefinition(File::getJSONFile(path), FileSystem::getDirectoryFromPath(path));
 }
 
-void Scene3D::saveToSceneFile(
+void Scene::saveToSceneFile(
 	String const& folder,
 	String const& name,
 	bool const& integratedObjects,
@@ -164,7 +167,7 @@ void Scene3D::saveToSceneFile(
 	FileLoader::saveTextFile(FileSystem::concatenatePath(folder, name) + ".msd", contents);
 }
 
-void Scene3D::extendFromDefinition(
+void Scene::extendFromDefinition(
 	JSON::JSONData const& def,
 	String const& sourcepath
 ) {
@@ -177,7 +180,7 @@ void Scene3D::extendFromDefinition(
 	} else extendFromDefinitionV0(def, sourcepath);
 }
 
-void Scene3D::extendFromDefinitionV0(JSON::JSONData def, String const& sourcepath) {
+void Scene::extendFromDefinitionV0(JSON::JSONData def, String const& sourcepath) {
 	try {
 		Camera3D				cam;
 		Material::WorldMaterial	mat;
@@ -283,7 +286,7 @@ void Scene3D::extendFromDefinitionV0(JSON::JSONData def, String const& sourcepat
 	}
 }
 
-JSON::JSONData Scene3D::getSceneDefinition(
+JSON::JSONData Scene::getSceneDefinition(
 	bool const& integratedObjects,
 	bool const& integratedObjectBinaries,
 	bool const& integratedObjectTextures
