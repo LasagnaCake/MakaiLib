@@ -65,7 +65,7 @@ bool Makai::Graph::API::hasRequiredVersion() {
 	#endif
 }
 
-String Makai::Graph::API::versionString() {
+String Makai::Graph::API::name() {
 	return "OpenGL 4.2";
 }
 
