@@ -8,7 +8,7 @@ namespace Makai::Graph::API {
 
 	bool hasRequiredVersion();
 
-	String versionString();
+	String name();
 
 	enum class Facility {
 		GAF_DEPTH_TEST,
