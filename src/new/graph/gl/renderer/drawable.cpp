@@ -6,9 +6,13 @@ using namespace Makai::Graph;
 
 void Drawable::doRender() {if (active) draw();}
 
-Drawable::Drawable(usize const& layer, bool const& manual) {
+Drawable::Drawable(bool const& manual, usize const& layer) {
 	if(!manual) setAuto(layer);
 	manualMode = manual;
+}
+
+
+Drawable::Drawable(bool const& manual): Drawable(manual, 0) {
 }
 
 Drawable::~Drawable() {
