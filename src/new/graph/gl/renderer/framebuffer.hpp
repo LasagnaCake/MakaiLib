@@ -78,7 +78,7 @@ namespace Makai::Graph {
 
 			FrameBuffer& enable() override;
 
-			FrameBufferData toFrameBufferData();
+			FrameBufferData data();
 
 			FrameBuffer& clearBuffers();
 
@@ -137,7 +137,7 @@ namespace Makai::Graph {
 		FrameBuffer& render(FrameBuffer& targetBuffer) {
 			if (!exists()) return *this;
 			if (!targetBuffer.exists()) return *this;
-			return render(targetBuffer.toFrameBufferData());
+			return render(targetBuffer.data());
 		}
 	};
 }

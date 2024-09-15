@@ -324,4 +324,9 @@ void Makai::Graph::API::endRender() {
 		renderContext.destroy();
 	}
 	#endif // MAKAILIB_DEBUG
+	useMainBuffer();
+}
+
+void Makai::Graph::API::useMainBuffer() {
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }

@@ -137,7 +137,7 @@ Base::FrameBuffer& Base::FrameBuffer::enable() {
 	return *this;
 }
 
-FrameBufferData Base::FrameBuffer::toFrameBufferData() {
+FrameBufferData Base::FrameBuffer::data() {
 	if (!exists())
 		return FrameBufferData{};
 	return FrameBufferData{

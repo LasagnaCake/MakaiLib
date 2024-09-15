@@ -65,6 +65,8 @@ namespace Makai::Graph::API {
 	void setClearColor(Vector4 const& color);
 
 	void setFrontFace(bool const& clockwise = true);
+
+	void useMainBuffer();
 }
 
 #endif // MAKAILIB_GRAPH_CORE_H

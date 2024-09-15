@@ -403,23 +403,25 @@ void App::render() {
 	Makai::Graph::API::beginRender();
 	// Clear screen
 	Makai::Graph::API::setClearColor(color);
-	Makai::Graph::API::clear(Makai::Graph::API::Buffer::GAB_COLOR);
-	Makai::Graph::API::clear(Makai::Graph::API::Buffer::GAB_DEPTH);
+	Makai::Graph::API::clear(
+		Makai::Graph::API::Buffer::GAB_COLOR,
+		Makai::Graph::API::Buffer::GAB_DEPTH
+	);
 	// Enable depth testing
 	setDepthTest(true);
 	// Enable frame buffer
-	framebuffer();
+//	framebuffer();
 	// Call rendering start function
 	onDrawBegin();
 	// Clear frame buffer
-	framebuffer.clearBuffers();
+//	framebuffer.clearBuffers();
 	// Set frontface order
 	Makai::Graph::API::setFrontFace(true);
 	// Call post frame clearing function
 	onPostFrameClear();
 	// Enable layer buffer
-	layerbuffer();
-	layerbuffer.clearBuffers();
+//	layerbuffer();
+//	layerbuffer.clearBuffers();
 	// Draw objects
 	auto rLayers = Graph::Renderer::getLayers();
 	for (auto layer : rLayers) {
@@ -427,19 +429,19 @@ void App::render() {
 			// Clear layer skip flag
 			skipLayer = false;
 			// If previous layer was pushed to framebuffer...
-			if (pushToFrame) {
+/*			if (pushToFrame) {
 				// Clear target depth buffer
 				framebuffer();
 				// Enable layer buffer
 				layerbuffer();
-			}
+			}*/
 			// Call onLayerDrawBegin function
 			onLayerDrawBegin(layer);
 			// Skip layer if applicable
 			if (!skipLayer) {
 				// Clear buffers
-				if (pushToFrame)	layerbuffer.clearBuffers();
-				else				layerbuffer.clearDepthBuffer();
+//				if (pushToFrame)	layerbuffer.clearBuffers();
+//				else				layerbuffer.clearDepthBuffer();
 				// Call onLayerDrawBegin function
 				onPostLayerClear(layer);
 				// Render layer
@@ -449,20 +451,20 @@ void App::render() {
 				// Call onPreLayerDraw function
 				onPreLayerDraw(layer);
 				// Render layer buffer
-				if (pushToFrame) layerbuffer.render(framebuffer);
+//				if (pushToFrame) layerbuffer.render(framebuffer);
 			}
 			// Call onLayerDrawEnd function
 			onLayerDrawEnd(layer);
 		}
 	}
 	// If last layer wasn't rendered, do so
-	if (!pushToFrame) layerbuffer.render(framebuffer);
+//	if (!pushToFrame) layerbuffer.render(framebuffer);
 	// Set clear for next frame
 	pushToFrame = true;
 	// Call pre frame drawing function
 	onPreFrameDraw();
 	// Render frame buffer
-	framebuffer.render(toFrameBufferData());
+//	framebuffer.render(toFrameBufferData());
 	// Copy screen to queued textures
 	copyScreenToQueued();
 	// Call rendering end function
@@ -477,7 +479,7 @@ void App::render() {
 
 void App::copyScreenToQueued() {
 	if (!screenQueue.empty()) {
-		auto screen = framebuffer.toFrameBufferData().screen;
+		auto screen = framebuffer.data().screen;
 		for (Graph::Texture2D target: screenQueue)
 			target.make(screen);
 		screenQueue.clear();

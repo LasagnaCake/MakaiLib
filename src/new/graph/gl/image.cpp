@@ -154,7 +154,7 @@ Helper::PartialOrder Image::operator<=>(Image const& other) const {
 	return id <=> other.id;
 }
 
-Image::operator uint() const	{
+Image::operator uint() const {
 	return id;
 }
 
