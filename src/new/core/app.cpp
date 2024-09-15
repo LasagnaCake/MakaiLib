@@ -439,8 +439,8 @@ void App::render() {
 	onPostFrameClear();
 	// Enable layer buffer
 	#ifndef MAKAILIB_DO_NOT_USE_BUFFERS
-//	layerbuffer();
-//	layerbuffer.clearBuffers();
+	layerbuffer();
+	layerbuffer.clearBuffers();
 	#endif // MAKAILIB_DO_NOT_USE_BUFFERS
 	// Draw objects
 	auto rLayers = Graph::Renderer::getLayers();
@@ -452,9 +452,9 @@ void App::render() {
 			#ifndef MAKAILIB_DO_NOT_USE_BUFFERS
 			if (pushToFrame) {
 				// Clear target depth buffer
-//				framebuffer();
+				framebuffer();
 				// Enable layer buffer
-//				layerbuffer();
+				layerbuffer();
 			}
 			#endif // MAKAILIB_DO_NOT_USE_BUFFERS
 			// Call onLayerDrawBegin function
@@ -463,9 +463,8 @@ void App::render() {
 			if (!skipLayer) {
 				// Clear buffers
 				#ifndef MAKAILIB_DO_NOT_USE_BUFFERS
-//				if (pushToFrame)	layerbuffer.clearBuffers();
-//				else				layerbuffer.clearDepthBuffer();
-				Makai::Graph::API::clear(Makai::Graph::API::Buffer::GAB_DEPTH);
+				if (pushToFrame)	layerbuffer.clearBuffers();
+				else				layerbuffer.clearDepthBuffer();
 				#else
 				Makai::Graph::API::clear(Makai::Graph::API::Buffer::GAB_DEPTH);
 				#endif
@@ -479,7 +478,7 @@ void App::render() {
 				onPreLayerDraw(layer);
 				// Render layer buffer
 				#ifndef MAKAILIB_DO_NOT_USE_BUFFERS
-//				if (pushToFrame) layerbuffer.render(framebuffer);
+				if (pushToFrame) layerbuffer.render(framebuffer);
 				#endif // MAKAILIB_DO_NOT_USE_BUFFERS
 			}
 			// Call onLayerDrawEnd function
@@ -488,7 +487,7 @@ void App::render() {
 	}
 	// If last layer wasn't rendered, do so
 	#ifndef MAKAILIB_DO_NOT_USE_BUFFERS
-//	if (!pushToFrame) layerbuffer.render(framebuffer);
+	if (!pushToFrame) layerbuffer.render(framebuffer);
 	#endif // MAKAILIB_DO_NOT_USE_BUFFERS
 	// Set clear for next frame
 	pushToFrame = true;
