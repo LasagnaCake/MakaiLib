@@ -168,7 +168,9 @@ Base::FrameBuffer& Base::FrameBuffer::clearDepthBuffer() {
 }
 
 Base::FrameBuffer& Base::FrameBuffer::render(FrameBufferData const& target) {
+	#ifdef MAKAILIB_DEBUG
 	API::Debug::Context ctx("FrameBuffer::render");
+	#endif // MAKAILIB_DEBUG
 	if (!exists()) return *this;
 	// Set target buffer
 	glBindFramebuffer(GL_FRAMEBUFFER, target.id);

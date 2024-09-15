@@ -125,7 +125,13 @@ void Debug::Context::append(String const& msg) {
 	#endif // MAKAILIB_DEBUG
 }
 
-Debug::Context::Context(String const& name): message(""), name(name), indent(DebugStack::indent) {
+Debug::Context::Context(String const& name):
+	message(""),
+	name(name)
+	#ifdef MAKAILIB_DEBUG
+	,indent(DebugStack::indent)
+	#endif // MAKAILIB_DEBUG
+{
 	#ifdef MAKAILIB_DEBUG
 	if (!apiDebug) return;
 	getContextErrors();

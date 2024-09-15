@@ -12,7 +12,9 @@ namespace ImageSlot {
 }
 
 void ObjectMaterial::use(Shader const& shader) const {
+	#ifdef MAKAILIB_DEBUG
 	API::Debug::Context ctx("ObjectMaterial::use");
+	#endif // MAKAILIB_DEBUG
 	// UV Data
 	shader["uvShift"](uvShift);
 	// Texture
@@ -73,7 +75,9 @@ void ObjectMaterial::use(Shader const& shader) const {
 
 // TODO: The rest of this rat's nest
 void BufferMaterial::use(Shader const& shader) const {
+	#ifdef MAKAILIB_DEBUG
 	API::Debug::Context ctx("BufferMaterial::use");
+	#endif // MAKAILIB_DEBUG
 	// Set UV data
 	shader["uvShift"](uvShift);
 	// Set color data
@@ -188,7 +192,9 @@ void BufferMaterial::use(Shader const& shader) const {
 }
 
 void WorldMaterial::use(Shader const& shader) const {
+	#ifdef MAKAILIB_DEBUG
 	API::Debug::Context ctx("WorldMaterial::use");
+	#endif // MAKAILIB_DEBUG
 	// Fog
 	if (farFog.enabled) {
 		shader["farFog.enabled"](
