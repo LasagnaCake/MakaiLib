@@ -11,5 +11,5 @@
 Fixed? > Automatic tweens & timers are no longer working
 > If there is stutter while playing, Audio::Sound object may lose sound forever
 
-[ Unknown ]
-> Framebuffer's clearColor is affecting FB's albedo
+[ Shader ]
+> Shading direction flips when rotating object
