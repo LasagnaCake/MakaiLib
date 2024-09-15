@@ -45,13 +45,15 @@ namespace Makai::Graph {
 		struct EquationOption {
 			BlendEquation
 				color = BlendEquation::BE_ADD,
-				alpha = BlendEquation::BE_ADD
+				alpha = BlendEquation::BE_MAX
 			;
 		} eq = {};
 	};
 
 	struct Blendable {
-		constexpr Blendable() = default;
+		inline static BlendMode DEFAULT_MODE = {};
+
+		Blendable(): blend(DEFAULT_MODE) {}
 
 		constexpr Blendable(BlendMode const& blend): blend(blend) {}
 

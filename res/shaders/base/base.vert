@@ -7,7 +7,6 @@
 precision mediump float;
 
 uniform mat4 vertMatrix;
-
 uniform mat4 normalsMatrix;
 
 layout (location = 0) in vec3 vertPos;
@@ -15,6 +14,12 @@ layout (location = 1) in vec2 vertUV;
 layout (location = 2) in vec4 vertColor;
 layout (location = 3) in vec3 vertNormal;
 //layout (location = 4) in uint vertFlags;
+
+struct Transform3D {
+	vec2	position;
+	float	rotation;
+	vec2	scale;
+};
 
 out vec3 fragCoord3D;
 out vec2 fragUV;
@@ -27,12 +32,6 @@ out vec2 warpUV;
 //out vec3 fragShadeColor;
 
 uniform vec2	uvShift	= vec2(0);
-
-struct Transform3D {
-	vec2	position;
-	float	rotation;
-	vec2	scale;
-};
 
 uniform Transform3D warpTrans;
 

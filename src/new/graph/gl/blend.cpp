@@ -4,6 +4,18 @@
 
 using namespace Makai::Graph;
 
+/*BlendMode Blendable::DEFAULT_MODE = {
+	{
+		BlendFunction::BF_SRC_ALPHA
+		BlendFunction::BF_ONE_MINUS_SRC_ALPHA
+		BlendFunction::BF_SRC_ALPHA_SATURATE
+		BlendFunction::BF_ONE
+	},{
+		BlendEquation::BE_ADD
+		BlendEquation::BE_MAX
+	}
+};*/
+
 GLenum convert(BlendFunction const& value) {
 	using enum BlendFunction;
 	switch (value) {
