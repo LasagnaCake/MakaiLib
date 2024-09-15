@@ -3,6 +3,11 @@
 #include "framebuffer.hpp"
 #include "../global.hpp"
 
+namespace ImageSlot {
+	constexpr uint8 SCREEN	= 30;
+	constexpr uint8 DEPTH	= 31;
+}
+
 using namespace Makai::Graph;
 
 Base::DrawBuffer::DrawBuffer(uint const& width, uint const& height) {
@@ -185,14 +190,14 @@ Base::FrameBuffer& Base::FrameBuffer::render(FrameBufferData const& target) {
 	// Activate shader
 	shader();
 	// Set shader textures
-	buffer.depth(30);
-	buffer.screen(31);
+	buffer.depth(ImageSlot::DEPTH);
+	buffer.screen(ImageSlot::SCREEN);
 	// Set camera's near and far plane
 	shader["near"](Global::camera.zNear);
 	shader["far"](Global::camera.zFar);
 	// Set texture locations
-	shader["depth"](30);
-	shader["screen"](31);
+	shader["depth"](ImageSlot::DEPTH);
+	shader["screen"](ImageSlot::SCREEN);
 	// Set transformation matrix
 	shader["posMatrix"](Matrix4x4(trans));
 	shader["uvMatrix"](Matrix4x4(uv));

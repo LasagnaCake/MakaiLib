@@ -27,11 +27,11 @@ namespace Makai::Graph {
 
 		static void unbind(ImageTarget const& target = ImageTarget::IT_TEXTURE_2D);
 
-		Image&			use(uchar const& slot = 0);
-		Image const&	use(uchar const& slot = 0) const;
+		Image&			use(uchar const& slot = 0, ImageTarget const& target = ImageTarget::IT_TEXTURE_2D);
+		Image const&	use(uchar const& slot = 0, ImageTarget const& target = ImageTarget::IT_TEXTURE_2D) const;
 
-		Image&			operator()(uchar const& slot = 0);
-		Image const&	operator()(uchar const& slot = 0) const;
+		Image&			operator()(uchar const& slot = 0, ImageTarget const& target = ImageTarget::IT_TEXTURE_2D);
+		Image const&	operator()(uchar const& slot = 0, ImageTarget const& target = ImageTarget::IT_TEXTURE_2D) const;
 
 		static void set(
 			uint const&			image,

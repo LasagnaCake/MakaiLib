@@ -3,29 +3,37 @@
 using namespace Makai::Graph;
 using namespace Material;
 
+namespace ImageSlot {
+	constexpr uint8 TEXTURE		= 0;
+	constexpr uint8 EMISSION	= 1;
+	constexpr uint8 NORMAL_MAP	= 2;
+	constexpr uint8 WARP		= 3;
+	constexpr uint8 MASK		= 4;
+}
+
 void ObjectMaterial::use(Shader const& shader) const {
 	API::Debug::Context ctx("ObjectMaterial::use");
 	// UV Data
 	shader["uvShift"](uvShift);
 	// Texture
 	if (texture.image && texture.enabled && texture.image.exists()) {
-		shader["imgTexture.enabled"](true, 0, texture.alphaClip);
-		texture.image.enable(0);
+		shader["imgTexture.enabled"](true, ImageSlot::TEXTURE, texture.alphaClip);
+		texture.image.enable(ImageSlot::TEXTURE);
 	} else shader["imgTexture.enabled"](false);
 	// Emission Texture
 	if (emission.image && emission.enabled && emission.image.exists()) {
-		shader["emission.enabled"](true, 1, emission.strength);
-		emission.image.enable(1);
+		shader["emission.enabled"](true, ImageSlot::EMISSION, emission.strength);
+		emission.image.enable(ImageSlot::EMISSION);
 	} else shader["emission.enabled"](false);
 	// Normal Map Texture
 	if (normalMap.image && normalMap.enabled && normalMap.image.exists()) {
-		shader["normalMap.enabled"](true, 2, normalMap.strength);
-		normalMap.image.enable(2);
+		shader["normalMap.enabled"](true, ImageSlot::NORMAL_MAP, normalMap.strength);
+		normalMap.image.enable(ImageSlot::NORMAL_MAP);
 	} else shader["normalMap.enabled"](false);
 	// Texture warping
 	if (warp.image && warp.enabled && warp.image.exists()) {
-		shader["warp.enabled"](true, 8, warp.channelX, warp.channelY);
-		warp.image.enable(8);
+		shader["warp.enabled"](true, ImageSlot::WARP, warp.channelX, warp.channelY);
+		warp.image.enable(ImageSlot::WARP);
 		shader["warpTrans.position"](
 			warp.trans.position,
 			warp.trans.rotation,
@@ -74,8 +82,8 @@ void BufferMaterial::use(Shader const& shader) const {
 	// Set mask data
 	if (mask.enabled && mask.image && mask.image.exists()) {
 		shader["useMask"](true);
-		shader["mask"](9);
-		mask.image.enable(9);
+		shader["mask"](ImageSlot::MASK);
+		mask.image.enable(ImageSlot::MASK);
 		shader["invertMask"](mask.invert);
 		shader["relativeMask"](mask.relative);
 		shader["maskShift"](mask.trans.position);
@@ -87,8 +95,8 @@ void BufferMaterial::use(Shader const& shader) const {
 	// Set texture warping data
 	if (warp.image && warp.enabled && warp.image.exists()) {
 		shader["useWarp"](true);
-		shader["warpTexture"](8);
-		warp.image.enable(8);
+		shader["warpTexture"](ImageSlot::WARP);
+		warp.image.enable(ImageSlot::WARP);
 		shader["warpChannelX"](warp.channelX);
 		shader["warpChannelY"](warp.channelY);
 	} else shader["useWarp"](false);

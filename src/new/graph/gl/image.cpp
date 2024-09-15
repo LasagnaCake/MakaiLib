@@ -120,13 +120,13 @@ void Image::unbind(ImageTarget const& target) {
 	glBindTexture(convert(target), 0);
 }
 
-Image& Image::use(uchar const& slot) {
-	set(id, slot, ImageTarget::IT_TEXTURE_2D);
+Image& Image::use(uchar const& slot, ImageTarget const& target) {
+	set(id, slot, target);
 	return *this;
 }
 
-Image const& Image::use(uchar const& slot) const {
-	set(id, slot, ImageTarget::IT_TEXTURE_2D);
+Image const& Image::use(uchar const& slot, ImageTarget const& target) const {
+	set(id, slot, target);
 	return *this;
 }
 
@@ -138,11 +138,11 @@ void Image::set(uint const& image, uchar const& slot, ImageTarget const& target)
 	glBindTexture(convert(target), image);
 }
 
-Image& Image::operator()(uchar const& slot) {
+Image& Image::operator()(uchar const& slot, ImageTarget const& target) {
 	return use(slot);
 }
 
-Image const& Image::operator()(uchar const& slot) const {
+Image const& Image::operator()(uchar const& slot, ImageTarget const& target) const {
 	return use(slot);
 }
 
