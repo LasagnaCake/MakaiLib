@@ -25,7 +25,7 @@ struct TestApp: Makai::App {
 			Makai::SLF::loadFile("shaders/framebuffer/compose.slf")
 		);
 		cube.material.culling = Makai::Graph::CullMode::OCM_FRONT;
-		cube.material.shaded = true;
+		//cube.material.shaded = true;
 		cube.trans.scale = .5;
 		cube.triangles = {
 			// Face +X
@@ -61,11 +61,13 @@ struct TestApp: Makai::App {
 		if (input.isButtonJustPressed(Makai::Input::KeyCode::KC_ESCAPE))
 			close();
 		getFrameBuffer().material.background = Makai::Graph::Color::WHITE * (sin(getCurrentFrame() / 180.0) / 2 + .5);
-		/*cube.trans.rotation += Vec3(
+		#ifndef MANUAL_ROTATION
+		cube.trans.rotation += Vec3(
 			HPI / 60.0,
 			HPI / 90.0,
 			HPI / 45.0
-		);*/
+		) / 2.0;
+		#else
 		cube.trans.rotation.x += (
 			input.isButtonDown(Makai::Input::KeyCode::KC_UP)
 			- input.isButtonDown(Makai::Input::KeyCode::KC_DOWN)
@@ -74,6 +76,7 @@ struct TestApp: Makai::App {
 			input.isButtonDown(Makai::Input::KeyCode::KC_LEFT)
 			- input.isButtonDown(Makai::Input::KeyCode::KC_RIGHT)
 		) / 60.0;
+		#endif // MANUAL_ROTATION
 	}
 };
 
