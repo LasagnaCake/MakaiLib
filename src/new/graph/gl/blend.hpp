@@ -46,7 +46,7 @@ namespace Makai::Graph {
 		struct EquationOption {
 			BlendEquation
 				color = BlendEquation::BE_ADD,
-				alpha = BlendEquation::BE_ADD
+				alpha = BlendEquation::BE_MAX
 			;
 		} eq = {};
 	};
