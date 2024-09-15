@@ -24,7 +24,7 @@ namespace Makai {
 
 	struct App {
 	public:
-		/// Initializes the program.
+		/// Initializes the application.
 		App (
 			unsigned int const&	width,
 			unsigned int const&	height,
@@ -49,26 +49,31 @@ namespace Makai {
 		/// Sets the window's title.
 		void setWindowTitle(String const& title);
 
-		/// Sets the program fullscreen.
+		/// Sets the application fullscreen.
 		void setFullscreen(bool const& state = false);
 
-		/// Loads the program's shaders from SLF files.
+		/// Loads the application's shaders from SLF files.
 		void loadShaders(SLF::SLFData const& main, SLF::SLFData const& buffer);
 
-		/// Runs the program.
+		/// Runs the application.
 		void run();
 
-		/// Closes the program.
+		/// Closes the application.
 		void close();
 
-		/// Returns whether the program is currently running.
+		/// Returns whether the application is currently running.
 		bool running();
 
-		/// Returns the program's current state.
+		/// Returns the application's current state.
 		AppState getState();
 
-		/// Sets the program's window size.
+		/// Sets the application's window size.
 		void setWindowSize(Vector2 const& size);
+
+		/// Set the application window's opacity.
+		void setWindowOpacity(float const& opacity = 1);
+
+		void enableTransparentWindowBackground();
 
 		/// Gets the current frame.
 		usize getCurrentFrame();
@@ -87,22 +92,22 @@ namespace Makai {
 
 		Vector2 getWindowScale();
 
-		/// Gets called when the program is opened.
+		/// Gets called when the application is opened.
 		virtual void onOpen() {}
 
-		/// Gets called whenever the program is rendering to the screen.
+		/// Gets called whenever the application is rendering to the screen.
 
 		/// Happens before the screen is rendered, before the frame buffer is cleared.
 		virtual void onDrawBegin()		{}
 		/// Happens before the screen is rendered, after the frame buffer is cleared.
 		virtual void onPostFrameClear()	{}
-		/// Gets called when the program begins rendering a layer, before the the layer buffer is cleared.
+		/// Gets called when the application begins rendering a layer, before the the layer buffer is cleared.
 		virtual void onLayerDrawBegin(usize const& layerID)	{}
-		/// Gets called when the program begins rendering a layer, after the the layer buffer is cleared.
+		/// Gets called when the application begins rendering a layer, after the the layer buffer is cleared.
 		virtual void onPostLayerClear(usize const& layerID)	{}
-		/// Gets called when the program ends rendering a layer, before the layer buffer is drawn to the screen.
+		/// Gets called when the application ends rendering a layer, before the layer buffer is drawn to the screen.
 		virtual void onPreLayerDraw(usize const& layerID)	{pushLayerToFrame();}
-		/// Gets called when the program ends rendering a layer, after the layer buffer is drawn to the screen.
+		/// Gets called when the application ends rendering a layer, after the layer buffer is drawn to the screen.
 		virtual void onLayerDrawEnd(usize const& layerID)	{}
 		/// Happens after the screen is rendered, before the frame buffer is drawn to the screen.
 		virtual void onPreFrameDraw()	{}
@@ -112,7 +117,7 @@ namespace Makai {
 		/// Gets called every frame, along all other logic.
 		virtual void onLogicFrame(float delta)	{}
 
-		/// Gets called when the program is closing. Happens before Window is terminated.
+		/// Gets called when the application is closing. Happens before Window is terminated.
 		virtual void onClose()	{}
 
 		/// Queues a texture to recieve a copy of the screen.
@@ -133,25 +138,25 @@ namespace Makai {
 		*/
 		void pushLayerToFrame();
 
-		/// The window's clear color.
-		Vector4 color = Graph::Color::BLACK;
+		/// The window's background color.
+		Vector4 background = Graph::Color::BLACK;
 
-		/// The program's input manager.
+		/// The application's input manager.
 		Input::Manager input;
 
-		/// The program's maximum framerate.
+		/// The application's maximum framerate.
 		float maxFrameRate = 30.0;
 
-		/// The program's maximum "cycles per second" count.
+		/// The application's maximum "cycles per second" count.
 		float maxCycleRate = 60.0;
 
-		/// The program's speed scale.
+		/// The application's speed scale.
 		float speed = 1.0f;
 
-		/// The program's taskers.
+		/// The application's taskers.
 		Tasking::MultiTasker taskers;
 
-		/// The program's notification handler.
+		/// The application's notification handler.
 		Event::Notifier notifier;
 
 	protected:
@@ -167,14 +172,14 @@ namespace Makai {
 
 		List<Graph::Texture2D> screenQueue;
 
-		/// The program's main framebuffer.
+		/// The application's main framebuffer.
 		Graph::FrameBuffer framebuffer;
 		Graph::FrameBuffer layerbuffer;
 
 		/// The window's resolution.
 		unsigned int width, height;
 
-		/// Properly finishes program execution.
+		/// Properly finishes application execution.
 		void finalize();
 
 		/// Draws the window.
@@ -191,7 +196,7 @@ namespace Makai {
 		/// Current execution state.
 		AppState state = AppState::AS_CLOSED;
 
-		/// The program's window.
+		/// The application's window.
 		Extern::Resource window;
 	};
 

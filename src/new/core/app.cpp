@@ -9,6 +9,7 @@
 #define SDL_MAIN_HANDLED
 #endif
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_syswm.h>
 
 #include <SDL2/SDL_mixer.h>
 
@@ -186,7 +187,7 @@ void App::run() {
 			Entity::ROOT->yield(delta);
 	};
 	// Clear screen
-	Makai::Graph::API::setClearColor(color);
+	Makai::Graph::API::setClearColor(background);
 	Makai::Graph::API::clear(Makai::Graph::API::Buffer::GAB_COLOR);
 	// Render simple frame
 	SDL_GL_SwapWindow(sdlWindow);
@@ -361,6 +362,19 @@ void App::unqueueScreenCopy(Graph::Texture2D target) {
 	ERASE_IF(screenQueue, elem == target);
 }
 
+void App::setWindowOpacity(float const& opacity) {
+	SDL_SetWindowOpacity(sdlWindow, opacity);
+}
+
+void App::enableTransparentWindowBackground() {
+	SDL_SysWMinfo wmInfo;
+    SDL_VERSION(&wmInfo.version);
+    SDL_GetWindowWMInfo(sdlWindow, &wmInfo);
+    HWND hWnd = wmInfo.info.win.window;
+	SetWindowLong(hWnd, GWL_EXSTYLE, GetWindowLong(hWnd, GWL_EXSTYLE) | WS_EX_LAYERED);
+	SetLayeredWindowAttributes(hWnd, RGB(0,0,0), 0, LWA_ALPHA);
+}
+
 void App::skipDrawingThisLayer() {skipLayer = true;}
 
 void App::pushLayerToFrame() {pushToFrame = true;}
@@ -402,7 +416,7 @@ void App::render() {
 	// Initialize render
 	Makai::Graph::API::beginRender();
 	// Clear screen
-	Makai::Graph::API::setClearColor(color);
+	Makai::Graph::API::setClearColor(background);
 	Makai::Graph::API::clear(
 		Makai::Graph::API::Buffer::GAB_COLOR,
 		Makai::Graph::API::Buffer::GAB_DEPTH
@@ -497,14 +511,14 @@ void App::render() {
 }
 
 void App::copyScreenToQueued() {
-	#ifndef MAKAILIB_DO_NOT_USE_BUFFERS
 	if (!screenQueue.empty()) {
+		#ifndef MAKAILIB_DO_NOT_USE_BUFFERS
 		auto screen = framebuffer.data().screen;
 		for (Graph::Texture2D target: screenQueue)
 			target.make(screen);
+		#endif // MAKAILIB_DO_NOT_USE_BUFFERS
 		screenQueue.clear();
 	}
-	#endif // MAKAILIB_DO_NOT_USE_BUFFERS
 }
 
 bool App::closeButtonPressed() {

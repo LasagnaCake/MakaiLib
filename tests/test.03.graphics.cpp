@@ -19,6 +19,7 @@ struct TestApp: Makai::App {
 	virtual ~TestApp() {}
 
 	TestApp(): Makai::App(600, 400, "Test 03", false) {
+		//enableTransparentWindowBackground();
 		loadShaders(
 			Makai::SLF::loadFile("shaders/base/base.slf"),
 			Makai::SLF::loadFile("shaders/framebuffer/compose.slf")

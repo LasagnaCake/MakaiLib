@@ -156,13 +156,14 @@ Base::FrameBuffer& Base::FrameBuffer::clearBuffers() {
 }
 
 Base::FrameBuffer& Base::FrameBuffer::clearColorBuffer() {
+	// Why does this line cause a problem?
 	API::setClearColor(clearColor);
-	glClear(GL_COLOR_BUFFER_BIT);
+	API::clear(API::Buffer::GAB_COLOR);
 	return *this;
 }
 
 Base::FrameBuffer& Base::FrameBuffer::clearDepthBuffer() {
-	glClear(GL_DEPTH_BUFFER_BIT);
+	API::clear(API::Buffer::GAB_DEPTH);
 	return *this;
 }
 
