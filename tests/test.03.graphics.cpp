@@ -26,11 +26,12 @@ struct TestApp: Makai::App {
 	}
 
 	void onOpen() override {
-		camera.eye				= Vec3(0, 1, -2);
+		camera.eye				= Vec3(0, 2, -3);
 		camera.at				= Vec3(0, 0, 0);
 		camera.zFar				= 1000;
 		cube.setRenderLayer(0);
 		cube.material.shaded = true;
+		cube.trans.scale = .5;
 		cube.triangles = {
 			// Face +X
 			new Makai::Graph::Triangle{{vertices[0], vertices[1], vertices[2]}},
@@ -55,15 +56,14 @@ struct TestApp: Makai::App {
 	}
 
 	void onLogicFrame(float delta) {
-		camera.eye = VecMath::angleV3((getCurrentFrame() / 180.0) * TAU, VecMath::Axis::POS_Y) + Vec3::UP();
 		if (input.isButtonJustPressed(Makai::Input::KeyCode::KC_ESCAPE))
 			close();
 		getFrameBuffer().material.background = Makai::Graph::Color::MAGENTA * (sin(getCurrentFrame() / 180.0) / 2 + .5);
-		/*cube.trans.rotation += Vec3(
+		cube.trans.rotation += Vec3(
 			HPI / 60.0,
 			HPI / 90.0,
 			HPI / 45.0
-		);*/
+		);
 	}
 };
 
