@@ -64,8 +64,8 @@ struct TestApp: Makai::App {
 		#ifndef MANUAL_ROTATION
 		cube.trans.rotation += Vec3(
 			HPI / 60.0,
-			HPI / 90.0,
-			HPI / 45.0
+			HPI / 90.0/*,
+			HPI / 45.0*/
 		) / 2.0;
 		#else
 		cube.trans.rotation.x += (
