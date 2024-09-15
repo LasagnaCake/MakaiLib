@@ -410,18 +410,24 @@ void App::render() {
 	// Enable depth testing
 	setDepthTest(true);
 	// Enable frame buffer
-//	framebuffer();
+	#ifndef MAKAILIB_DO_NOT_USE_BUFFERS
+	framebuffer();
+	#endif // MAKAILIB_DO_NOT_USE_BUFFERS
 	// Call rendering start function
 	onDrawBegin();
 	// Clear frame buffer
-//	framebuffer.clearBuffers();
+	#ifndef MAKAILIB_DO_NOT_USE_BUFFERS
+	framebuffer.clearBuffers();
+	#endif // MAKAILIB_DO_NOT_USE_BUFFERS
 	// Set frontface order
 	Makai::Graph::API::setFrontFace(true);
 	// Call post frame clearing function
 	onPostFrameClear();
 	// Enable layer buffer
+	#ifndef MAKAILIB_DO_NOT_USE_BUFFERS
 //	layerbuffer();
 //	layerbuffer.clearBuffers();
+	#endif // MAKAILIB_DO_NOT_USE_BUFFERS
 	// Draw objects
 	auto rLayers = Graph::Renderer::getLayers();
 	for (auto layer : rLayers) {
@@ -429,19 +435,26 @@ void App::render() {
 			// Clear layer skip flag
 			skipLayer = false;
 			// If previous layer was pushed to framebuffer...
-/*			if (pushToFrame) {
+			#ifndef MAKAILIB_DO_NOT_USE_BUFFERS
+			if (pushToFrame) {
 				// Clear target depth buffer
-				framebuffer();
+//				framebuffer();
 				// Enable layer buffer
-				layerbuffer();
-			}*/
+//				layerbuffer();
+			}
+			#endif // MAKAILIB_DO_NOT_USE_BUFFERS
 			// Call onLayerDrawBegin function
 			onLayerDrawBegin(layer);
 			// Skip layer if applicable
 			if (!skipLayer) {
 				// Clear buffers
+				#ifndef MAKAILIB_DO_NOT_USE_BUFFERS
 //				if (pushToFrame)	layerbuffer.clearBuffers();
 //				else				layerbuffer.clearDepthBuffer();
+				Makai::Graph::API::clear(Makai::Graph::API::Buffer::GAB_DEPTH);
+				#else
+				Makai::Graph::API::clear(Makai::Graph::API::Buffer::GAB_DEPTH);
+				#endif
 				// Call onLayerDrawBegin function
 				onPostLayerClear(layer);
 				// Render layer
@@ -451,20 +464,26 @@ void App::render() {
 				// Call onPreLayerDraw function
 				onPreLayerDraw(layer);
 				// Render layer buffer
+				#ifndef MAKAILIB_DO_NOT_USE_BUFFERS
 //				if (pushToFrame) layerbuffer.render(framebuffer);
+				#endif // MAKAILIB_DO_NOT_USE_BUFFERS
 			}
 			// Call onLayerDrawEnd function
 			onLayerDrawEnd(layer);
 		}
 	}
 	// If last layer wasn't rendered, do so
+	#ifndef MAKAILIB_DO_NOT_USE_BUFFERS
 //	if (!pushToFrame) layerbuffer.render(framebuffer);
+	#endif // MAKAILIB_DO_NOT_USE_BUFFERS
 	// Set clear for next frame
 	pushToFrame = true;
 	// Call pre frame drawing function
 	onPreFrameDraw();
 	// Render frame buffer
-//	framebuffer.render(toFrameBufferData());
+	#ifndef MAKAILIB_DO_NOT_USE_BUFFERS
+	framebuffer.render(toFrameBufferData());
+	#endif // MAKAILIB_DO_NOT_USE_BUFFERS
 	// Copy screen to queued textures
 	copyScreenToQueued();
 	// Call rendering end function
@@ -478,12 +497,14 @@ void App::render() {
 }
 
 void App::copyScreenToQueued() {
+	#ifndef MAKAILIB_DO_NOT_USE_BUFFERS
 	if (!screenQueue.empty()) {
 		auto screen = framebuffer.data().screen;
 		for (Graph::Texture2D target: screenQueue)
 			target.make(screen);
 		screenQueue.clear();
 	}
+	#endif // MAKAILIB_DO_NOT_USE_BUFFERS
 }
 
 bool App::closeButtonPressed() {

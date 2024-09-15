@@ -156,7 +156,7 @@ Base::FrameBuffer& Base::FrameBuffer::clearBuffers() {
 }
 
 Base::FrameBuffer& Base::FrameBuffer::clearColorBuffer() {
-	glClearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
+	API::setClearColor(clearColor);
 	glClear(GL_COLOR_BUFFER_BIT);
 	return *this;
 }
@@ -225,7 +225,7 @@ Base::FrameBuffer& Base::FrameBuffer::render(FrameBufferData const& target) {
 Base::FrameBuffer& Base::FrameBuffer::render(FrameBuffer& targetBuffer) {
 	if (!exists()) return *this;
 	if (!targetBuffer.exists()) return *this;
-	return render(targetBuffer.toFrameBufferData());
+	return render(targetBuffer.data());
 }
 
 Base::FrameBuffer& Base::FrameBuffer::disable() {

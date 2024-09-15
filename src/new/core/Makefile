@@ -5,7 +5,12 @@ LEAN := -static -s
 
 ROOT	:= ../../..
 
-COMPILER_CONFIG	:= -fexpensive-optimizations -m64 -std=gnu++20 -fconcepts -fcoroutines -fms-extensions
+ifdef no-buffers
+NO_BUFFERS := -DMAKAILIB_DO_NOT_USE_BUFFERS
+export no-buffers
+endif
+
+COMPILER_CONFIG	:= -fexpensive-optimizations -m64 -std=gnu++20 -fconcepts -fcoroutines -fms-extensions $(NO_BUFFERS)
 LINKER_CONFIG	:= -static-libstdc++ -static-libgcc -m64 -fms-extensions
 
 ifdef openmp
