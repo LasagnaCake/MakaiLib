@@ -60,7 +60,7 @@ namespace Makai::Graph {
 
 		class FrameBuffer: public DrawBuffer, public Blendable {
 		public:
-			FrameBuffer() {}
+			FrameBuffer(): Blendable() {}
 
 			FrameBuffer(
 				uint const& width,

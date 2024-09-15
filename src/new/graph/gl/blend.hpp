@@ -20,8 +20,7 @@ namespace Makai::Graph {
 		BF_CONST_COLOR,
 		BF_ONE_MINUS_CONST_COLOR,
 		BF_CONST_ALPHA,
-		BF_ONE_MINUS_CONST_ALPHA,
-		BF_ALPHA_SATURATE
+		BF_ONE_MINUS_CONST_ALPHA
 	};
 
 	enum class BlendEquation {
@@ -29,7 +28,7 @@ namespace Makai::Graph {
 		BE_ONE,
 		BE_ADD,
 		BE_SUB,
-		BE_REVERSE_SUB,
+		BE_REV_SUB,
 		BE_MIN,
 		BE_MAX
 	};
@@ -39,19 +38,23 @@ namespace Makai::Graph {
 			BlendFunction
 				srcColor = BlendFunction::BF_SRC_ALPHA,
 				dstColor = BlendFunction::BF_ONE_MINUS_SRC_ALPHA,
-				srcAlpha = BlendFunction::BF_ZERO,
+				srcAlpha = BlendFunction::BF_SRC_ALPHA_SATURATE,
 				dstAlpha = BlendFunction::BF_ONE
 			;
 		} func = {};
 		struct EquationOption {
 			BlendEquation
 				color = BlendEquation::BE_ADD,
-				alpha = BlendEquation::BE_MAX
+				alpha = BlendEquation::BE_ADD
 			;
 		} eq = {};
 	};
 
 	struct Blendable {
+		constexpr Blendable() = default;
+
+		constexpr Blendable(BlendMode const& blend): blend(blend) {}
+
 		constexpr Blendable& setBlendFunction(
 			BlendFunction const& srcColor,
 			BlendFunction const& dstColor,

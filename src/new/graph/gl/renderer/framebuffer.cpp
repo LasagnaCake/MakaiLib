@@ -61,7 +61,7 @@ uint Base::DrawBuffer::getID() const		{return id;		}
 Base::FrameBuffer::FrameBuffer(
 	unsigned int const& width,
 	unsigned int const& height
-) {
+): FrameBuffer() {
 	create(width, height);
 }
 

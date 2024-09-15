@@ -56,7 +56,7 @@ Drawable& Drawable::removeFromRenderLayer(usize const& renderLayer) {
 	return *this;
 }
 
-DrawableObject::DrawableObject(usize const& layer, bool const& manual): Drawable(layer, manual) {
+DrawableObject::DrawableObject(usize const& layer, bool const& manual): Drawable(layer, manual), Blendable() {
 	DEBUGLN("Drawable object created!");
 	glGenVertexArrays(1, &vao);
 	glGenBuffers(1, &vbo);
