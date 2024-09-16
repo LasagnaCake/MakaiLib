@@ -130,6 +130,8 @@ Debug::Context::Context(String const& name):
 	name(name)
 	#ifdef MAKAILIB_DEBUG
 	,indent(DebugStack::indent)
+	#else
+	,indent("")
 	#endif // MAKAILIB_DEBUG
 {
 	#ifdef MAKAILIB_DEBUG
@@ -315,7 +317,9 @@ void Makai::Graph::API::setFrontFace(bool const& clockwise) {
 	glFrontFace(clockwise ? GL_CW : GL_CCW);
 }
 
+#ifdef MAKAILIB_DEBUG
 Instance<Debug::Context> renderContext = nullptr;
+#endif // MAKAILIB_DEBUG
 
 void Makai::Graph::API::beginRender() {
 	#ifdef MAKAILIB_DEBUG
