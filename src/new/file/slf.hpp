@@ -30,4 +30,11 @@ namespace Makai::SLF {
 	SLFData getFile(String const& path);
 }
 
+namespace MkSLF = Makai::SLF;
+
+namespace Makai::File {
+	inline SLF::SLFData loadSLF(String const& path)	{return SLF::loadFile(path);	}
+	inline SLF::SLFData getSLF(String const& path)	{return SLF::getFile(path);		}
+}
+
 #endif // MAKAILIB_FILE_SLF

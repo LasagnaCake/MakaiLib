@@ -1,11 +1,14 @@
 #ifndef MAKAILIB_TOOL_ARCHIVE_H
 #define MAKAILIB_TOOL_ARCHIVE_H
 
+#include <fstream>
+
 #include "../../ctl/ctl.hpp"
+#include "../../file/get.hpp"
 #include "../../file/json.hpp"
 
 namespace Makai::Tool::Arch {
-	using BinaryData = FileLoader::BinaryData;
+	using BinaryData = File::BinaryData;
 
 	enum class EncryptionMethod: uint64 {
 		AEM_NONE,

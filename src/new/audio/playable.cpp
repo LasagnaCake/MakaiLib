@@ -30,7 +30,7 @@ Playable::~Playable() {
 
 void Playable::create(String const& path) {
 	if (created) return;
-	data = Makai::File::getBinaryFile(path);
+	data = Makai::File::getBinary(path);
 	onCreate(SDL_RWFromConstMem(data.data(), data.size()));
 	created = true;
 };

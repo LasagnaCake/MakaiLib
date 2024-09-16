@@ -26,6 +26,6 @@
 #include "legacy/collisions.hpp"
 #include "legacy/entity/entity.hpp"
 #include "legacy/obfuscator.hpp"
-#include "legacy/filehandler.hpp"
+//#include "legacy/filehandler.hpp"
 
 #endif // CTL_INCLUDE_ALL_H

@@ -233,7 +233,7 @@ Texture2D& Texture2D::create(
 	if (exists()) return *this;
 	int imgWidth, imgHeight;
 	int nrChannels;
-	List<ubyte> imgdat = File::getBinaryFile(path);
+	List<ubyte> imgdat = File::getBinary(path);
 	unsigned char* data = stbi_load_from_memory(imgdat.data(), imgdat.size(), &imgWidth, &imgHeight, &nrChannels, 4);
 	imgdat.clear();
 	if (data) {

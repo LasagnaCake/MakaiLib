@@ -157,7 +157,7 @@ bool Shader::create(SLF::SLFData const& slfData) {
 	for (SLF::ShaderEntry const& shader: slfData.shaders) {
 		shaderPath = FileSystem::concatenatePath(dir, shader.path);
 		DEBUGLN(shaderPath);
-		code = File::getTextFile(shaderPath);
+		code = File::getText(shaderPath);
 		try {
 			attach(code, shader.type);
 		} catch (Error::Error const& err) {

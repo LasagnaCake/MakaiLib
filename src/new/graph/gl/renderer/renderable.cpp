@@ -301,15 +301,15 @@ void Renderable::extend(List<Renderable*> const& parts) {
 }
 
 void Renderable::extendFromBinaryFile(String const& path) {
-	auto data = File::getBinaryFile(path);
-	if (!data.size()) throw FileLoader::FileLoadError("File does not exist or is empty! (" + path + ")!");
+	auto data = File::getBinary(path);
+	if (!data.size()) throw File::FileLoadError("File does not exist or is empty! (" + path + ")!");
 	extend((Vertex*)&data[0], data.size() / sizeof(Vertex));
 	DEBUG("Vertices: ");
 	DEBUGLN(data.size() / sizeof(Vertex));
 }
 
 void Renderable::extendFromDefinitionFile(String const& path) {
-	extendFromDefinition(File::getJSONFile(path), FileSystem::getDirectoryFromPath(path));
+	extendFromDefinition(File::getJSON(path), FileSystem::getDirectoryFromPath(path));
 }
 
 void Renderable::bake() {
@@ -342,7 +342,7 @@ void Renderable::clearData() {
 
 void Renderable::saveToBinaryFile(String const& path) {
 	bake();
-	FileLoader::saveBinaryFile(path, vertices, vertexCount);
+	File::saveBinary(path, vertices, vertexCount);
 }
 
 void Renderable::saveToDefinitionFile(
@@ -363,7 +363,7 @@ void Renderable::saveToDefinitionFile(
 	JSON::JSONData file = getObjectDefinition("base64", integratedBinary, integratedTextures);
 	// If binary is in a different location, save there
 	if (!integratedBinary) {
-		FileLoader::saveBinaryFile(binpath, vertices, vertexCount);
+		File::saveBinary(binpath, vertices, vertexCount);
 		file["mesh"]["data"] = JSON::JSONType{{"path", name + ".mesh"}};
 	}
 	// Get material data
@@ -371,7 +371,7 @@ void Renderable::saveToDefinitionFile(
 	// convert to text
 	auto contents = file.toString(pretty ? 1 : -1);
 	// Save definition file
-	FileLoader::saveTextFile(folder + "/" + name + ".mrod", contents);
+	File::saveText(folder + "/" + name + ".mrod", contents);
 }
 
 //#define POS(v) "[", (v).position.x, ", ", (v).position.y, ", ", (v).position.z, "]"
@@ -452,7 +452,7 @@ void Renderable::extendFromDefinitionV0(
 			String encoding	= mesh["encoding"].get<String>();
 			vdata			= Data::decode(data.get<String>(), Data::fromString(encoding));
 		} else if (data.isObject()) {
-			vdata			= File::getBinaryFile(FileSystem::concatenatePath(sourcepath, data["path"].get<String>()));
+			vdata			= File::getBinary(FileSystem::concatenatePath(sourcepath, data["path"].get<String>()));
 		}
 		componentData		= mesh["components"].get<String>();
 	} catch (std::exception const& e) {

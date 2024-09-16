@@ -2,6 +2,7 @@
 #define MAKAILIB_GRAPH_IMAGE_H
 
 #include "../../ctl/ctl.hpp"
+#include "../../file/file.hpp"
 #include "core.hpp"
 
 namespace Makai::Graph {

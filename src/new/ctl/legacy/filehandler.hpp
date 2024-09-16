@@ -52,7 +52,9 @@ namespace FileLoader {
 			// The file
 			ifstream file;
 			// Ensure ifstream object can throw exceptions (nevermind, then)
-			// file.exceptions(ifstream::failbit | ifstream::badbit);	// This line errors
+			#ifndef CTL_FILEHANDLER_NO_EXCEPTIONS
+			file.exceptions(ifstream::failbit | ifstream::badbit);	// This line errors
+			#endif // CTL_FILEHANDLER_NO_EXCEPTIONS
 			// Preallocate data
 			size_t fileSize = filesystem::file_size(path);
 			BinaryData data(fileSize);
@@ -76,7 +78,9 @@ namespace FileLoader {
 			String content;
 			ifstream file;
 			// Ensure ifstream object can throw exceptions (nevermind, then)
-			// file.exceptions(ifstream::failbit | ifstream::badbit);	// This line errors
+			#ifndef CTL_FILEHANDLER_NO_EXCEPTIONS
+			file.exceptions(ifstream::failbit | ifstream::badbit);	// This line errors
+			#endif // CTL_FILEHANDLER_NO_EXCEPTIONS
 			// Open file
 			file.open(path);
 			stringstream stream;
@@ -109,7 +113,7 @@ namespace FileLoader {
 		String s;
 		while (getline(cData, s, delimiter)) {
 			// Remove invalid lines
-			if(s.size() > 3)
+			if(!s.empty())
 				csvs.push_back(s);
 		}
 		// Return contents
@@ -123,8 +127,10 @@ namespace FileLoader {
 		// Try and save data
 		try {
 			ofstream file(path.c_str(), ios::binary);
-			// Ensure ifstream object can throw exceptions
+			// Ensure ofstream object can throw exceptions
+			#ifndef CTL_FILEHANDLER_NO_EXCEPTIONS
 			file.exceptions(ofstream::failbit | ofstream::badbit);
+			#endif // CTL_FILEHANDLER_NO_EXCEPTIONS
 			// Write data to file
 			file.write((char*)data, size * sizeof(T));
 			file.flush();
@@ -147,8 +153,10 @@ namespace FileLoader {
 		// Try and save data
 		try {
 			ofstream file(path.c_str(), ios::trunc);
-			// Ensure ifstream object can throw exceptions
+			// Ensure ofstream object can throw exceptions
+			#ifndef CTL_FILEHANDLER_NO_EXCEPTIONS
 			file.exceptions(ofstream::failbit | ofstream::badbit);
+			#endif // CTL_FILEHANDLER_NO_EXCEPTIONS
 			// Write data to file
 			file.write(text.data(), text.size());
 			file.flush();

@@ -2,15 +2,18 @@
 #define MAKAILIB_FILE_GET_H
 
 #include "../ctl/ctl.hpp"
-#include "json.hpp"
 
 namespace Makai::File {
 	// Until this puzzle is figured, this shall do
 	#pragma GCC diagnostic push
 	#pragma GCC diagnostic ignored "-Wreturn-type"
 
-	using BinaryData	= FileLoader::BinaryData;
-	using CSVData		= FileLoader::CSVData;
+	DEFINE_ERROR_TYPE(FileLoadError);
+	DEFINE_ERROR_TYPE(FileSaveError);
+
+	using BinaryData	= List<ubyte>;
+	using CSVData		= StringList;
+	using ByteSpan		= Span<ubyte>;
 
 	void attachArchive(String const& path, String const& password = "");
 
@@ -18,21 +21,47 @@ namespace Makai::File {
 
 	[[gnu::destructor]] void detachArchive();
 
-	String loadTextFileFromArchive(String const& path);
+	String loadText(String const& path);
+	void saveText(String const& path, String const& text);
 
-	BinaryData loadBinaryFileFromArchive(String const& path);
+	BinaryData loadBinary(String const& path);
+	void saveBinary(String const& path, ByteSpan const& data);
+	void saveBinary(String const& path, BinaryData const& data);
 
-	CSVData loadCSVFileFromArchive(String const& path, char const& delimiter = ',');
+	template<Type::NonVoid T>
+	inline void saveBinary(String const& path, T* const& data, usize const& count) {
+		saveBinary(path, ByteSpan((ubyte*)data, count * sizeof(T)));
+	}
 
-	JSON::JSONData loadJSONFileFromArchive(String const& path);
+	template<Type::NonVoid T>
+	inline void saveBinary(String const& path, Span<T> const& data) {
+		saveBinary(path, data.data(), data.size());
+	}
 
-	String getTextFile(String const& path);
+	template<Type::NonVoid T>
+	inline void saveBinary(String const& path, List<T> const& data) {
+		saveBinary(path, data.data(), data.size());
+	}
 
-	BinaryData getBinaryFile(String const& path);
+	template<Type::NonVoid T>
+	inline void saveBinary(String const& path, T const& data) {
+		saveBinary(path, ByteSpan(&data, sizeof(T)));
+	}
 
-	CSVData getCSVFile(String const& path, char const& delimiter = ',');
+	CSVData loadCSV(String const& path, char const& delimiter = ',');
+	//CSVData saveCSV(String const& path, CSVData const& data, char const& delimiter = ',');
 
-	JSON::JSONData getJSONFile(String const& path);
+	String loadTextFromArchive(String const& path);
+
+	BinaryData loadBinaryFromArchive(String const& path);
+
+	CSVData loadCSVFromArchive(String const& path, char const& delimiter = ',');
+
+	String getText(String const& path);
+
+	BinaryData getBinary(String const& path);
+
+	CSVData getCSV(String const& path, char const& delimiter = ',');
 
 	#pragma GCC diagnostic pop
 }

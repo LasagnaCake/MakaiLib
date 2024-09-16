@@ -165,7 +165,7 @@ namespace Helper {
 	/*template<typename T>
 	using Nullable = optional<T>;*/
 
-	template<typename T, size_t LEN>
+	template<typename T, size_t LEN = std::dynamic_extent>
 	using Span = span<T, LEN>;
 
 	template<typename... Types>

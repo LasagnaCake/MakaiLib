@@ -2,13 +2,15 @@
 
 #include "../tool/archive/archive.hpp"
 
+#include <fstream>
+#include <sstream>
+#include <filesystem>
+
 #if !(defined(MAKAILIB_DEBUG) || defined(MAKAILIB_ARCHIVE_DISABLED))
 #define _IMPL_ARCHIVE_
 #endif
 
 using Makai::Tool::Arch::FileArchive;
-
-using namespace FileLoader;
 
 #ifdef _IMPL_ARCHIVE_
 enum class ArchiveState {
@@ -22,6 +24,26 @@ Error::ErrorPointer	arcfail			= nullptr;
 #endif
 
 using Makai::File::BinaryData;
+
+[[noreturn]] inline void fileLoadError(String const& path, String const& reason) {
+	throw Makai::File::FileLoadError(
+		"Could not load file '" + path + "'!",
+		__FILE__,
+		"unspecified",
+		"unspecified",
+		reason
+	);
+}
+
+[[noreturn]] inline void fileSaveError(String const& path, String const& reason) {
+	throw Makai::File::FileLoadError(
+		"Could not save file '" + path + "'!",
+		__FILE__,
+		"unspecified",
+		"unspecified",
+		reason
+	);
+}
 
 // Until this puzzle is figured, this shall do
 #pragma GCC diagnostic push
@@ -70,7 +92,7 @@ bool Makai::File::isArchiveAttached() {
 void assertArchive(String const& path) {
 	if (arcfail) Error::rethrow(arcfail);
 	if (!Makai::File::isArchiveAttached())
-		fileLoadError(path, "Archive is not attached!", "fileloader.hpp");
+		fileLoadError(path, "Archive is not attached!");
 }
 
 [[noreturn]] void fileGetError(String const& path, String const& fe, String const& ae) {
@@ -80,13 +102,126 @@ void assertArchive(String const& path) {
 			"\nMultiple possibilities!\n\n",
 			"[[ FOLDER ]]\n", fe, "\n",
 			"[[ ARCHIVE ]]\n", ae, "\n"
-		),
-		"fileloader.hpp"
+		)
 	);
 }
 #endif
 
-String Makai::File::loadTextFileFromArchive(String const& path) {
+inline void assertFileExists(String const& path) {
+	if (!FileSystem::exists(path))
+		fileLoadError(path, toString("File or directory '", path, "' does not exist!"));
+}
+
+String Makai::File::loadText(String const& path) {
+	// Ensure directory exists
+	assertFileExists(path);
+	try {
+		// The file and its contents
+		String content;
+		std::ifstream file;
+		// Ensure ifstream object can throw exceptions (nevermind, then)
+		#ifndef CTL_FILEHANDLER_NO_EXCEPTIONS
+		file.exceptions(std::ifstream::failbit | std::ifstream::badbit);	// This line errors
+		#endif // CTL_FILEHANDLER_NO_EXCEPTIONS
+		// Open file
+		file.open(path);
+		std::stringstream stream;
+		// Read file’s buffer contents into stringstream
+		stream << file.rdbuf();
+		// Close file handler
+		file.close();
+		// Convert stream into string
+		content = stream.str();
+		// Return contents
+		return content;
+	} catch (std::exception const& e) {
+		fileLoadError(path, e.what());
+	}
+	// Return contents
+	return "";
+}
+
+BinaryData Makai::File::loadBinary(String const& path) {
+	// Ensure directory exists
+	assertFileExists(path);
+	// Try and load binary
+	try {
+		// The file
+		std::ifstream file;
+		// Ensure ifstream object can throw exceptions (nevermind, then)
+		#ifndef CTL_FILEHANDLER_NO_EXCEPTIONS
+		file.exceptions(std::ifstream::failbit | std::ifstream::badbit);	// This line errors
+		#endif // CTL_FILEHANDLER_NO_EXCEPTIONS
+		// Preallocate data
+		size_t fileSize = std::filesystem::file_size(path);
+		BinaryData data(fileSize);
+		// Open and read file
+		file.open(path, std::ios::binary);
+		file.read((char*)&data[0], fileSize);
+		file.close();
+		return data;
+	} catch (std::exception const& e) {
+		fileLoadError(path, e.what());
+	}
+	return BinaryData();
+}
+
+Makai::File::CSVData Makai::File::loadCSV(String const& path, char const& delimiter) {
+	// The file and its contents
+	String content = Makai::File::loadText(path);
+	// Get values
+	Makai::File::CSVData csvs;
+	std::istringstream cData(content);
+	String s;
+	while (std::getline(cData, s, delimiter))
+		// Remove invalid lines
+		if(!s.empty())
+			csvs.push_back(s);
+	// Return contents
+	return csvs;
+}
+
+void Makai::File::saveBinary(String const& path, Makai::File::ByteSpan const& data) {
+	FileSystem::makeDirectory(FileSystem::getDirectoryFromPath(path));
+	// Try and save data
+	try {
+		std::ofstream file(path.c_str(), std::ios::binary);
+		// Ensure ofstream object can throw exceptions
+		#ifndef CTL_FILEHANDLER_NO_EXCEPTIONS
+		file.exceptions(std::ofstream::failbit | std::ofstream::badbit);
+		#endif // CTL_FILEHANDLER_NO_EXCEPTIONS
+		// Write data to file
+		file.write((char*)data.data(), data.size());
+		file.flush();
+		file.close();
+	} catch (std::exception const& e) {
+		fileSaveError(path, e.what());
+	}
+}
+
+void Makai::File::saveBinary(String const& path, BinaryData const& data) {
+	Makai::File::saveBinary(path, Makai::File::ByteSpan((ubyte*)data.data(), data.size()));
+}
+
+void Makai::File::saveText(String const& path, String const& text) {
+	FileSystem::makeDirectory(FileSystem::getDirectoryFromPath(path));
+	// Try and save data
+	try {
+		std::ofstream file(path.c_str(), std::ios::trunc);
+		// Ensure ofstream object can throw exceptions
+		#ifndef CTL_FILEHANDLER_NO_EXCEPTIONS
+		file.exceptions(std::ofstream::failbit | std::ofstream::badbit);
+		#endif // CTL_FILEHANDLER_NO_EXCEPTIONS
+		// Write data to file
+		file.write(text.data(), text.size());
+		file.flush();
+		file.close();
+	} catch (std::exception const& e) {
+		fileSaveError(path, e.what());
+	}
+}
+
+String Makai::File::loadTextFromArchive(String const& path) {
 	#ifdef _IMPL_ARCHIVE_
 	assertArchive(path);
 	return arc.getTextFile(FileSystem::getChildPath(path));
@@ -95,7 +230,7 @@ String Makai::File::loadTextFileFromArchive(String const& path) {
 	#endif
 }
 
-BinaryData Makai::File::loadBinaryFileFromArchive(String const& path) {
+BinaryData Makai::File::loadBinaryFromArchive(String const& path) {
 	#ifdef _IMPL_ARCHIVE_
 	assertArchive(path);
 	return arc.getBinaryFile(FileSystem::getChildPath(path));
@@ -104,7 +239,7 @@ BinaryData Makai::File::loadBinaryFileFromArchive(String const& path) {
 	#endif
 }
 
-CSVData Makai::File::loadCSVFileFromArchive(String const& path, char const& delimiter) {
+Makai::File::CSVData Makai::File::loadCSVFromArchive(String const& path, char const& delimiter) {
 	#ifdef _IMPL_ARCHIVE_
 	assertArchive(path);
 	return Helper::splitString(arc.getTextFile(FileSystem::getChildPath(path)), delimiter);
@@ -113,120 +248,84 @@ CSVData Makai::File::loadCSVFileFromArchive(String const& path, char const& deli
 	#endif
 }
 
-Makai::JSON::JSONData Makai::File::loadJSONFileFromArchive(String const& path) {
-	#ifdef _IMPL_ARCHIVE_
-	assertArchive(path);
-	return Makai::JSON::parseJSON(arc.getTextFile(FileSystem::getChildPath(path)));
-	#else
-	fileLoadError(path, "Archive functionality disabled!");
-	#endif
-}
-
-String Makai::File::getTextFile(String const& path) {
+String Makai::File::getText(String const& path) {
 	#ifdef _IMPL_ARCHIVE_
 	String res;
 	if (isArchiveAttached())
 		try {
 			DEBUGLN("[ARC] Loading text file...");
-			res = Makai::File::loadTextFileFromArchive(path);
+			res = Makai::File::loadTextFromArchive(path);
 		} catch (FileLoadError const& ae) {
 			try {
 				DEBUGLN("[FLD-2] Loading text file...");
-				res = loadTextFile(path);
+				res = Makai::File::loadText(path);
 			} catch (FileLoadError const& fe) {
 				fileGetError(path, fe.summary(), ae.summary());
 			}
 		}
 	else try {
 		DEBUGLN("[FLD-1] Loading text file...");
-		res = loadTextFile(path);
+		res = Makai::File::loadText(path);
 	} catch (FileLoadError const& e) {
 		fileGetError(path, e.summary(), "Archive not attached!");
 	}
 	return res;
 	#else
-	return loadTextFile(path);
+	return Makai::File::loadText(path);
 	#endif
 }
 
-BinaryData Makai::File::getBinaryFile(String const& path) {
+BinaryData Makai::File::getBinary(String const& path) {
 	#ifdef _IMPL_ARCHIVE_
 	BinaryData res;
 	if (isArchiveAttached())
 		try {
 			DEBUGLN("[ARC] Loading binary file...");
-			res = Makai::File::loadBinaryFileFromArchive(path);
+			res = Makai::File::loadBinaryFromArchive(path);
 		} catch (FileLoadError const& ae) {
 			try {
 				DEBUGLN("[FLD-2] Loading binary file...");
-				res = loadBinaryFile(path);
+				res = Makai::File::loadBinary(path);
 			} catch (FileLoadError const& fe) {
 				fileGetError(path, fe.summary(), ae.summary());
 			}
 		}
 	else try {
 		DEBUGLN("[FLD-1] Loading binary file...");
-		res = loadBinaryFile(path);
+		res = Makai::File::loadBinary(path);
 	} catch (FileLoadError const& e) {
 		fileGetError(path, e.summary(), "Archive not attached!");
 	}
 	return res;
 	#else
-	return loadBinaryFile(path);
+	return Makai::File::loadBinary(path);
 	#endif
 }
 
-CSVData Makai::File::getCSVFile(String const& path, char const& delimiter) {
+Makai::File::CSVData Makai::File::getCSV(String const& path, char const& delimiter) {
 	#ifdef _IMPL_ARCHIVE_
 	CSVData res;
 	if (isArchiveAttached())
 		try {
 			DEBUGLN("[ARC] Loading CSV file...");
-			res = Makai::File::loadCSVFileFromArchive(path);
+			res = Makai::File::loadCSVFromArchive(path);
 		} catch (FileLoadError const& ae) {
 			try {
 				DEBUGLN("[FLD-2] Loading CSV file...");
-				res = loadCSVFile(path);
+				res = Makai::File::loadCSV(path);
 			} catch (FileLoadError const& fe) {
 				fileGetError(path, fe.summary(), ae.summary());
 			}
 		}
 	else try {
 		DEBUGLN("[FLD-1] Loading CSV file...");
-		res = loadCSVFile(path);
+		res = Makai::File::loadCSV(path);
 	} catch (FileLoadError const& e) {
 		fileGetError(path, e.summary(), "Archive not attached!");
 	}
 	return res;
 	#else
-	return loadCSVFile(path);
-	#endif
-}
-
-Makai::JSON::JSONData Makai::File::getJSONFile(String const& path) {
-	#ifdef _IMPL_ARCHIVE_
-	Makai::JSON::JSONData res(FileSystem::getFileName(path));
-	if (isArchiveAttached())
-		try {
-			DEBUGLN("[ARC] Loading JSON file...");
-			res = Makai::File::loadJSONFileFromArchive(path);
-		} catch (FileLoadError const& ae) {
-			try {
-				DEBUGLN("[FLD-2] Loading JSON file...");
-				res = Makai::JSON::loadFile(path);
-			} catch (FileLoadError const& fe) {
-				fileGetError(path, fe.summary(), ae.summary());
-			}
-		}
-	else try {
-		DEBUGLN("[FLD-1] Loading JSON file...");
-		res = Makai::JSON::loadFile(path);
-	} catch (FileLoadError const& e) {
-		fileGetError(path, e.summary(), "Archive not attached!");
-	}
-	return res;
-	#else
-	return Makai::JSON::loadFile(path);
+	return Makai::File::loadCSV(path);
 	#endif
 }
 

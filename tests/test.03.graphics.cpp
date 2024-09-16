@@ -20,12 +20,12 @@ struct TestApp: Makai::App {
 	virtual ~TestApp() {}
 
 	TestApp(): Makai::App(600, 400, "Test 03", false) {
-		//Makai::Popup::showDialog("BOOTING UP 1...", "Starting application...");
+		DEBUGLN("Loading shaders...");
 		loadShaders(
-			Makai::SLF::loadFile("shaders/base/base.slf"),
-			Makai::SLF::loadFile("shaders/framebuffer/compose.slf")
+			Makai::File::loadSLF("shaders/base/base.slf"),
+			Makai::File::loadSLF("shaders/framebuffer/compose.slf")
 		);
-		//Makai::Popup::showDialog("BOOTING UP 2...", "Starting application...");
+		DEBUGLN("Creating cube...");
 		cube.material.culling = Makai::Graph::CullMode::OCM_FRONT;
 		//cube.material.shaded = true;
 		cube.trans.scale = .5;
@@ -49,6 +49,7 @@ struct TestApp: Makai::App {
 			new Makai::Graph::Triangle{{vertices[1], vertices[3], vertices[5]}},
 			new Makai::Graph::Triangle{{vertices[7], vertices[5], vertices[3]}}
 		};
+		DEBUGLN("Done!");
 	}
 
 	void onOpen() override {
@@ -83,6 +84,8 @@ struct TestApp: Makai::App {
 };
 
 int main() {
+	Makai::Popup::showDialog("Starting...", "Starting application,\nplease wait warmly...");
+	DEBUGLN("Starting application...");
 	try {
 		TestApp app;
 		app.run();

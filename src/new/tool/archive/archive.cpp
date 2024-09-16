@@ -4,7 +4,11 @@
 #include <cryptopp/sha3.h>
 #include <cppcodec/base64_rfc4648.hpp>
 #include <cppcodec/base32_rfc4648.hpp>
+
 #include <algorithm>
+#include <fstream>
+#include <sstream>
+#include <filesystem>
 
 #include "archive.hpp"
 
@@ -22,7 +26,7 @@
 
 namespace fs = std::filesystem;
 using namespace CryptoPP;
-namespace File = FileLoader;
+namespace File = Makai::File;
 using File::BinaryData;
 
 namespace Arch = Makai::Tool::Arch;
@@ -308,7 +312,7 @@ void Arch::pack(
 		// Get current stream position as file location
 		locations[i] = file.tellp();
 		// Read file
-		File::BinaryData contents = File::loadBinaryFile(f);
+		File::BinaryData contents = File::loadBinary(f);
 		// Prepare header
 		FileHeader fheader;
 		fheader.uncSize = contents.size();				// Uncompressed file size
@@ -630,7 +634,7 @@ void Arch::FileArchive::unpackLayer(JSONData const& layer, String const& path) {
 		);
 		BinaryData contents = getBinaryFile(data);
 		FileSystem::makeDirectory(FileSystem::getDirectoryFromPath(filepath));
-		File::saveBinaryFile(filepath, contents);
+		File::saveBinary(filepath, contents);
 	}
 }
 
@@ -823,7 +827,13 @@ BinaryData Arch::loadEncryptedBinaryFile(String const& path, String const& passw
 	}
 	// Check if single-file archive
 	if (!(header.flags & Flags::SINGLE_FILE_ARCHIVE_BIT))
-		File::fileLoadError(path, "File is not a single-file archive!", __FILE__);
+		File::FileLoadError(
+			"Failed to load '" + path + "'!",
+			__FILE__,
+			toString(__LINE__),
+			"Arch::loadEncryptedBinaryFile",
+			"File is not a single-file archive!"
+		);
 	// Get file header
 	FileHeader fh;
 	archive.read((char*)&fh, header.fileHeaderSize);
@@ -845,14 +855,32 @@ BinaryData Arch::loadEncryptedBinaryFile(String const& path, String const& passw
 			header.level
 		);
 		if (fd.size() != fh.uncSize)
-			File::fileLoadError(path, "Uncompressed size doesn't match!", __FILE__);
+			File::FileLoadError(
+				"Failed to load '" + path + "'!",
+				__FILE__,
+				toString(__LINE__),
+				"Arch::loadEncryptedBinaryFile",
+				"Uncompressed size doesn't match!"
+			);
 		if ((header.flags & Flags::SHOULD_CHECK_CRC_BIT) && !true) // CRC currently not working
-			File::fileLoadError(path, "CRC check failed!", __FILE__);
+			File::FileLoadError(
+				"Failed to load '" + path + "'!",
+				__FILE__,
+				toString(__LINE__),
+				"Arch::loadEncryptedBinaryFile",
+				"CRC check failed!"
+			);
 	}
 	// Return file
 	return fd;
 } catch (std::runtime_error const& e) {
-	File::fileLoadError(path, e.what(), __FILE__);
+	throw File::FileLoadError(
+		"Failed to load '" + path + "'!",
+		__FILE__,
+		toString(__LINE__),
+		"Arch::loadEncryptedBinaryFile",
+		e.what()
+	);
 }
 
 String Arch::loadEncryptedTextFile(String const& path, String const& password) {

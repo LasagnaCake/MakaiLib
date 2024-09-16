@@ -90,7 +90,7 @@ Makai::JSON::JSONValue Makai::JSON::object(String const& name) {return JSONValue
 
 Makai::JSON::JSONValue Makai::JSON::array(String const& name) {return JSONValue(name, Nlohmann::array());}
 
-Makai::JSON::JSONData Makai::JSON::parseJSON(String const& json) try {
+Makai::JSON::JSONData Makai::JSON::parse(String const& json) try {
 	return Extern::JSONData::parse(json);
 } catch (Nlohmann::exception const& e) {
 	throw Error::FailedAction(
@@ -104,5 +104,9 @@ Makai::JSON::JSONData Makai::JSON::parseJSON(String const& json) try {
 }
 
 Makai::JSON::JSONData Makai::JSON::loadFile(String const& path) {
-	return Makai::JSON::parseJSON(FileLoader::loadTextFile(path));
+	return Makai::JSON::parse(Makai::File::loadText(path));
+}
+
+Makai::JSON::JSONData Makai::JSON::getFile(String const& path) {
+	return Makai::JSON::parse(Makai::File::getText(path));
 }

@@ -371,7 +371,7 @@ void Image2D::saveImageToFile(String const& path, uint8 const& quality, ImageFil
 	}
 	#undef IMAGE2D_STBIWRITE_PARAMS
 	if (!result) {
-		throw FileLoader::FileSaveError(
+		throw Makai::File::FileSaveError(
 			"Could not save image file!",
 			__FILE__,
 			toString(__LINE__),

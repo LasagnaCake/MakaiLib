@@ -4,6 +4,7 @@
 #define JSON_NO_IO
 #include "_lib/nlohmann/json.hpp"
 #include "../ctl/ctl.hpp"
+#include "get.hpp"
 
 namespace Makai::JSON {
 	namespace Extern {
@@ -118,8 +119,16 @@ namespace Makai::JSON {
 
 	using JSONData = JSONValue;
 
-	JSONData parseJSON(String const& data);
+	JSONData parse(String const& data);
 	JSONData loadFile(String const& path);
+	JSONData getFile(String const& path);
+}
+
+namespace MkJSON = Makai::JSON;
+
+namespace Makai::File {
+	inline JSON::JSONData loadJSON(String const& path)	{return JSON::loadFile(path);	}
+	inline JSON::JSONData getJSON(String const& path)	{return JSON::getFile(path);	}
 }
 
 #endif // MAKAILIB_FILE_JSON_H

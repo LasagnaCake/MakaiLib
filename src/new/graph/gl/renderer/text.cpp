@@ -61,7 +61,7 @@ FontFace::FontFace(FontData const& font): FontFace() {
 }
 
 FontFace::FontFace(String const& path): FontFace() {
-	JSON::JSONData tx	= File::getJSONFile(path);
+	JSON::JSONData tx	= File::getJSON(path);
 	instance->image		= Texture2D::fromJSON(tx["image"], FileSystem::getDirectoryFromPath(path));
 	instance->size		= fromJSONArrayV2(tx["size"], 16);
 	instance->spacing	= fromJSONArrayV2(tx["spacing"], 1);

@@ -92,7 +92,7 @@ Scene::Scene(usize const& layer, String const& path, bool manual): Collection(la
 }
 
 void Scene::extendFromSceneFile(String const& path) {
-	extendFromDefinition(File::getJSONFile(path), FileSystem::getDirectoryFromPath(path));
+	extendFromDefinition(File::getJSON(path), FileSystem::getDirectoryFromPath(path));
 }
 
 void Scene::saveToSceneFile(
@@ -128,7 +128,7 @@ void Scene::saveToSceneFile(
 				bool wasBaked = obj->baked;
 				if (!wasBaked)
 					obj->bake();
-				FileLoader::saveBinaryFile(FileSystem::concatenatePath(folderpath, objname + ".mesh"), obj->vertices, obj->vertexCount);
+				File::saveBinary(FileSystem::concatenatePath(folderpath, objname + ".mesh"), obj->vertices, obj->vertexCount);
 				file["mesh"]["data"] = {{"path", objname + ".mesh"}};
 				if (!wasBaked)
 					obj->unbake();
@@ -164,7 +164,7 @@ void Scene::saveToSceneFile(
 	// convert to text
 	auto contents = file.toString(pretty ? 1 : -1);
 	// Save definition file
-	FileLoader::saveTextFile(FileSystem::concatenatePath(folder, name) + ".msd", contents);
+	File::saveText(FileSystem::concatenatePath(folder, name) + ".msd", contents);
 }
 
 void Scene::extendFromDefinition(

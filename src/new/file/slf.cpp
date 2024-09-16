@@ -94,10 +94,10 @@ SLFData Makai::SLF::parse(String const& slf, String const& srcFolder) {
 
 SLFData Makai::SLF::loadFile(String const& path) {
 	// Try and get the file
-	return Makai::SLF::parse(FileLoader::loadTextFile(path), path);
+	return Makai::SLF::parse(Makai::File::loadText(path), path);
 }
 
 SLFData Makai::SLF::getFile(String const& path) {
 	// Try and get the file
-	return Makai::SLF::parse(Makai::File::getTextFile(path), path);
+	return Makai::SLF::parse(Makai::File::getText(path), path);
 }
