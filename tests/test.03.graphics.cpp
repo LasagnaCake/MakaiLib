@@ -82,6 +82,7 @@ struct TestApp: Makai::App {
 };
 
 int main() {
+	Makai::Popup::show("BOOTING UP...", "Starting application...");
 	try {
 		TestApp app;
 		app.run();
