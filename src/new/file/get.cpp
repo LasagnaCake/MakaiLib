@@ -114,34 +114,28 @@ inline void assertFileExists(String const& path) {
 
 inline void setExceptionMask(std::ios& stream) {
 	#ifndef MAKAILIB_FILE_GET_NO_EXCEPTIONS
-	//stream.exceptions(std::ios::failbit | std::ios::badbit);
+	stream.exceptions(std::ios::failbit | std::ios::badbit);
 	//stream.exceptions(std::ios::badbit);
-	stream.exceptions(std::ios::failbit);
+	//stream.exceptions(std::ios::failbit);
 	#endif
 }
 
 String Makai::File::loadText(String const& path) {
 	// Ensure directory exists
 	assertFileExists(path);
-	// The file
-	std::ifstream file;
 	try {
+		// Try and open the file
+		std::ifstream file(path);
+		if (!file) fileLoadError(path, "Mysterious error");
 		// Ensure ifstream object can throw exceptions
 		setExceptionMask(file);
-		// The file and its contents
-		String content;
-		// Open file
-		file.open(path);
-		if (!file) fileLoadError(path, "Mysterious error");
 		std::stringstream stream;
-		// Read file’s buffer contents into stringstream
+		// Read file's contents into stringstream
 		stream << file.rdbuf();
 		// Close file handler
 		file.close();
-		// Convert stream into string
-		content = stream.str();
-		// Return contents
-		return content;
+		// Return string
+		return stream.str();
 	} catch (std::exception const& e) {
 		fileLoadError(path, e.what());
 	}
@@ -152,20 +146,19 @@ String Makai::File::loadText(String const& path) {
 BinaryData Makai::File::loadBinary(String const& path) {
 	// Ensure directory exists
 	assertFileExists(path);
-	// The file
-	std::ifstream file;
-	// Try and load binary
 	try {
+		// Try and open the file
+		std::ifstream file(path);
+		if (!file) fileLoadError(path, "Mysterious error");
 		// Ensure ifstream object can throw exceptions
 		setExceptionMask(file);
 		// Preallocate data
 		size_t fileSize = std::filesystem::file_size(path);
 		BinaryData data(fileSize);
-		// Open and read file
-		file.open(path, std::ios::binary);
-		if (!file) fileLoadError(path, "Mysterious error");
+		// Read & close file
 		file.read((char*)&data[0], fileSize);
 		file.close();
+		// Return data
 		return data;
 	} catch (std::exception const& e) {
 		fileLoadError(path, e.what());
