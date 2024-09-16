@@ -112,18 +112,19 @@ inline void assertFileExists(String const& path) {
 		fileLoadError(path, toString("File or directory '", path, "' does not exist!"));
 }
 
-#define IFSTREAM_EXCEPTIONS /*std::ifstream::failbit |*/ std::ifstream::badbit
-#define OFSTREAM_EXCEPTIONS /*std::ifstream::failbit |*/ std::ofstream::badbit
+#define IFSTREAM_EXCEPTIONS std::ifstream::failbit /*| std::ifstream::badbit*/
+#define OFSTREAM_EXCEPTIONS std::ifstream::failbit /*| std::ofstream::badbit*/
 
 String Makai::File::loadText(String const& path) {
 	// Ensure directory exists
 	assertFileExists(path);
+	// The file
 	std::ifstream file;
-	// Ensure ifstream object can throw exceptions (nevermind, then)
-	#ifndef MAKAILIB_FILE_GET_NO_EXCEPTIONS
-	file.exceptions(IFSTREAM_EXCEPTIONS);	// This line errors
-	#endif // MAKAILIB_FILE_GET_NO_EXCEPTIONS
 	try {
+		// Ensure ifstream object can throw exceptions (nevermind, then)
+		#ifndef MAKAILIB_FILE_GET_NO_EXCEPTIONS
+		file.exceptions(IFSTREAM_EXCEPTIONS);	// This line errors
+		#endif // MAKAILIB_FILE_GET_NO_EXCEPTIONS
 		// The file and its contents
 		String content;
 		// Open file
@@ -147,10 +148,10 @@ String Makai::File::loadText(String const& path) {
 BinaryData Makai::File::loadBinary(String const& path) {
 	// Ensure directory exists
 	assertFileExists(path);
+	// The file
+	std::ifstream file;
 	// Try and load binary
 	try {
-		// The file
-		std::ifstream file;
 		// Ensure ifstream object can throw exceptions (nevermind, then)
 		#ifndef MAKAILIB_FILE_GET_NO_EXCEPTIONS
 		file.exceptions(IFSTREAM_EXCEPTIONS);	// This line errors
