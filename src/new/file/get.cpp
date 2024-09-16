@@ -14,7 +14,7 @@ using namespace FileLoader;
 enum class ArchiveState {
 	FAS_CLOSED,
 	FAS_LOADING,
-	FAS_OPE
+	FAS_OPEN
 } state = ArchiveState::FAS_CLOSED;
 
 FileArchive 		arc;
