@@ -124,12 +124,12 @@ namespace Async {
 		Nullable<T> await() {
 			if (!ready())
 				thread->join();
-			return data;
+			return value();
 		}
 
 		Nullable<T> value() {
-			if (ready())
-				return data;
+			if (ready() && data())
+				return *data;
 			return nullptr;
 		}
 
@@ -140,10 +140,10 @@ namespace Async {
 		constexpr Promise(Promise const& other): Promise(other.data, other.thread) {}
 
 	private:
-		constexpr Promise(Atomic<Nullable<T>>& v, Handle<Thread> const& t): data(v), thread(t) {}
+		constexpr Promise(Handle<Nullable<T>> const& v, Handle<Thread> const& t): data(v), thread(t) {}
 
-		Handle<Thread>			thread;
-		Atomic<Nullable<T>>&	data;
+		Handle<Thread>		thread;
+		Handle<Nullable<T>>	data;
 
 		template<typename F> friend class Task;
 	};
@@ -232,8 +232,8 @@ namespace Async {
 			return result->value();
 		}
 
-		PromiseType getPromise() requires Type::Different<R, void>	{return Promise(*result, executor);	}
-		PromiseType getPromise() requires Type::Equal<R, void>		{return Promise(executor);			}
+		PromiseType getPromise() requires Type::Different<R, void>	{return Promise(result.asWeak(), executor);	}
+		PromiseType getPromise() requires Type::Equal<R, void>		{return Promise(executor);					}
 
 		bool running() const {
 			return executor() && executor->joinable();
