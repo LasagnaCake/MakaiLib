@@ -116,6 +116,22 @@ inline void setExceptionMask(std::ios& stream) {
 	#endif
 }
 
+/*
+// If all else fails, the horrors
+template<class T>
+inline void readFile(String const& path, T& buf) {
+	FILE* file = fopen(path.c_str(), "rb");
+	if (!file)							fileLoadError(path, "File open error");
+	if (fseek(file, 0, SEEK_END))		fileLoadError(path, "File seek error");
+	ssize sz;
+	if ((sz = ftell(file)) == -1)		fileLoadError(path, "File tell error");
+	if (fseek(file, 0, SEEK_SET))		fileLoadError(path, "File rewind error");
+	buf.reserve(sz);
+	if (fread(buf.data(), sz, 1, file))	fileLoadError(path, "File read error");
+	if (fclose(file))					fileLoadError(path, "File close error");
+}
+*/
+
 // If this doesn't work, will try clearing exceptions before setting them
 // Might also check rdstate before setting exceptions
 String Makai::File::loadText(String const& path) {
