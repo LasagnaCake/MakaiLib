@@ -84,8 +84,6 @@ struct TestApp: Makai::App {
 };
 
 int main() {
-	Makai::Popup::showDialog("Starting...", "Starting application,\nplease wait warmly...");
-	DEBUGLN("Starting application...");
 	try {
 		TestApp app;
 		app.run();
