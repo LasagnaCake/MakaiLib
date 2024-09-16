@@ -8,6 +8,8 @@ int main() {
 	try {
 		TestApp app;
 		app.run();
+	} catch (Error::Error const& e) {
+		Makai::Popup::showError(e.what());
 	} catch (std::runtime_error const& e) {
 		Makai::Popup::showError(e.what());
 	}

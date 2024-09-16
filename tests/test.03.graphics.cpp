@@ -20,11 +20,12 @@ struct TestApp: Makai::App {
 	virtual ~TestApp() {}
 
 	TestApp(): Makai::App(600, 400, "Test 03", false) {
-		//enableTransparentWindowBackground();
+		//Makai::Popup::showDialog("BOOTING UP 1...", "Starting application...");
 		loadShaders(
 			Makai::SLF::loadFile("shaders/base/base.slf"),
 			Makai::SLF::loadFile("shaders/framebuffer/compose.slf")
 		);
+		//Makai::Popup::showDialog("BOOTING UP 2...", "Starting application...");
 		cube.material.culling = Makai::Graph::CullMode::OCM_FRONT;
 		//cube.material.shaded = true;
 		cube.trans.scale = .5;
@@ -82,11 +83,12 @@ struct TestApp: Makai::App {
 };
 
 int main() {
-	Makai::Popup::show("BOOTING UP...", "Starting application...");
 	try {
 		TestApp app;
 		app.run();
 	} catch (Error::Error const& e) {
+		Makai::Popup::showError(e.what());
+	} catch (std::runtime_error const& e) {
 		Makai::Popup::showError(e.what());
 	}
 	return 0;
