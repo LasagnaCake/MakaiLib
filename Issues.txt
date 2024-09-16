@@ -13,3 +13,6 @@ Fixed? > Automatic tweens & timers are no longer working
 
 [ Shader ]
 > Shading direction flips when rotating object
+
+[ Unknown ]
+> Nothing works when compiling for release (tests 02 and further don't work)
