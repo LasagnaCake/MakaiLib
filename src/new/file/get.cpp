@@ -120,6 +120,8 @@ inline void setExceptionMask(std::ios& stream) {
 	#endif
 }
 
+// If this doesn't work, will try clearing exceptions before setting them
+// Might also check rdstate before setting exceptions
 String Makai::File::loadText(String const& path) {
 	// Ensure directory exists
 	assertFileExists(path);
@@ -129,8 +131,8 @@ String Makai::File::loadText(String const& path) {
 		if (!file) fileLoadError(path, "Mysterious error");
 		// Ensure ifstream object can throw exceptions
 		setExceptionMask(file);
-		std::stringstream stream;
 		// Read file's contents into stringstream
+		std::stringstream stream;
 		stream << file.rdbuf();
 		// Close file handler
 		file.close();
