@@ -11,7 +11,12 @@ using Makai::Tool::Arch::FileArchive;
 using namespace FileLoader;
 
 #ifdef _IMPL_ARCHIVE_
-bool				loadingArchive	= false;
+enum class ArchiveState {
+	FAS_CLOSED,
+	FAS_LOADING,
+	FAS_OPE
+} state = ArchiveState::FAS_CLOSED;
+
 FileArchive 		arc;
 Error::ErrorPointer	arcfail			= nullptr;
 #endif
@@ -28,12 +33,14 @@ using Makai::File::BinaryData;
 void Makai::File::attachArchive(String const& path, String const& password) {
 	#ifdef _IMPL_ARCHIVE_
 	DEBUGLN("Attaching archive...");
-	if (loadingArchive)
+	if (state == ArchiveState::FAS_LOADING)
 		fileLoadError(path, "Other archive is being loaded!");
 	try {
 		arcfail = nullptr;
+		state = ArchiveState::FAS_LOADING;
 		arc.close();
 		arc.open(path, password);
+		state = ArchiveState::FAS_OPEN;
 		DEBUGLN("Archive Attached!");
 	} catch (...) {
 		DEBUGLN("Archive attachment failed!");
@@ -44,7 +51,7 @@ void Makai::File::attachArchive(String const& path, String const& password) {
 
 bool Makai::File::isArchiveAttached() {
 	#ifdef _IMPL_ARCHIVE_
-	return arc.isOpen();
+	return state == ArchiveState::FAS_OPEN;
 	#else
 	return false;
 	#endif
@@ -54,6 +61,7 @@ bool Makai::File::isArchiveAttached() {
 	#ifdef _IMPL_ARCHIVE_
 	DEBUGLN("Detaching archive...");
 	arc.close();
+	state = ArchiveState::FAS_CLOSED;
 	DEBUGLN("Archive detached!");
 	#endif
 }
