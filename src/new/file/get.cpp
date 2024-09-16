@@ -45,10 +45,6 @@ using Makai::File::BinaryData;
 	);
 }
 
-// Until this puzzle is figured, this shall do
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wreturn-type"
-
 /*#undef _ARCHIVE_SYSTEM_DISABLED_
 #define _ARCHIVE_SYSTEM_DISABLED_*/
 
@@ -328,5 +324,3 @@ Makai::File::CSVData Makai::File::getCSV(String const& path, char const& delimit
 	return Makai::File::loadCSV(path);
 	#endif
 }
-
-#pragma GCC diagnostic pop
