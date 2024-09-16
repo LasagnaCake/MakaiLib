@@ -18,7 +18,7 @@ NOCMD := -mwindows
 dotest = \
 	$(if $(findstring debug,$(1)),\
 		$(call testcmd,$(strip $(1)),$(strip $(2)),libmakai.$(strip $(1)).a) $(DEBUGMODE),\
-		$(call testcmd,$(strip $(1)),$(strip $(2)),libmakai.a) -static -s $(DEBUGMODE)\
+		$(call testcmd,$(strip $(1)),$(strip $(2)),libmakai.a) -static -s $(NOCMD)\
 	)
 
 case = $(if $(findstring $(strip $(2)),$(strip $(1))),$(3))
