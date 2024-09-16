@@ -16,7 +16,7 @@ override prefix := $(strip $(prefix)).file
 OPTIMIZATIONS	:= $(USE_OPENMP) -funswitch-loops -fpredictive-commoning -fgcse-after-reload -ftree-vectorize $(LEAN)
 
 DEBUGMODE := -DMAKAILIB_DEBUG -DCTL_DEBUG -DNDEBUG
-DEBUGCOMPCFG	:= $(COMPILER_CONFIG) -Wall -Wpedantic -Og -ggdb3 -fno-omit-frame-pointer $(DEBUGMODE)
+DEBUGCOMPCFG	:= $(COMPILER_CONFIG) -Wall -Wpedantic -Og -ggdb3 -fno-omit-frame-pointer -DCTL_FILEHANDLER_NO_EXCEPTIONS $(DEBUGMODE)
 DEBUGLINKCFG	:= $(LINKER_CONFIG) -Og $(LIBRARIES)
 
 ifdef debug-release
@@ -24,8 +24,10 @@ RELEASEMODE := $(DEBUGMODE)
 export debug-release
 endif
 
-COMPCFG	:= $(COMPILER_CONFIG) -O3 $(OPTIMIZATIONS) -DCTL_FILEHANDLER_NO_EXCEPTIONS $(RELEASEMODE)
-LINKCFG	:= $(LINKER_CONFIG) -O3 $(LIBRARIES) $(LEAN)
+export o?=3
+
+COMPCFG	:= $(COMPILER_CONFIG) -O$(o) $(OPTIMIZATIONS) $(RELEASEMODE)
+LINKCFG	:= $(LINKER_CONFIG) -O$(o) $(LIBRARIES) $(LEAN)
 
 COMPILER	:= @$(CXX) $(INCLUDES)
 LINKER		:= @$(CXX)

@@ -36,6 +36,12 @@ ifdef no-buffers
 export no-buffers
 endif
 
+ifdef debug-release
+export debug-release
+endif
+
+export o?=3
+
 .PHONY: build-debug build-release up-debug up-release link-debug link-release build-all up-all link-all debug release copy-headers copy-o-debug copy-o-release all help link-extern
 .ONESHELL:
 .SHELLFLAGS = -ec

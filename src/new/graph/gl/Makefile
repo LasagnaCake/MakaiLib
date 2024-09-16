@@ -20,7 +20,7 @@ ifndef gl-loader
 gl-loader := glad
 endif
 
-override prefix := $(strip $(prefix)).gl
+override prefix := $(strip $(prefix)).graph.gl
 
 OPTIMIZATIONS	:= $(USE_OPENMP) -funswitch-loops -fpredictive-commoning -fgcse-after-reload -ftree-vectorize $(LEAN)
 
@@ -35,8 +35,10 @@ RELEASEMODE := $(DEBUGMODE)
 export debug-release
 endif
 
-COMPCFG	:= $(COMPILER_CONFIG) -O3 $(OPTIMIZATIONS) $(RELEASEMODE)
-LINKCFG	:= $(LINKER_CONFIG) -O3 $(LIBRARIES) $(LEAN)
+export o?=3
+
+COMPCFG	:= $(COMPILER_CONFIG) -O$(o) $(OPTIMIZATIONS) $(RELEASEMODE)
+LINKCFG	:= $(LINKER_CONFIG) -O$(o) $(LIBRARIES) $(LEAN)
 
 COMPILER	:= @$(CXX) $(INCLUDES)
 LINKER		:= @$(CXX)

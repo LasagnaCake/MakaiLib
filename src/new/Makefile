@@ -12,6 +12,8 @@ ifdef debug-release
 export debug-release
 endif
 
+export o?=3
+
 override prefix := $(strip $(prefix)).makai
 
 .PHONY: debug release all
