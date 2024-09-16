@@ -112,17 +112,20 @@ inline void assertFileExists(String const& path) {
 		fileLoadError(path, toString("File or directory '", path, "' does not exist!"));
 }
 
+#define IFSTREAM_EXCEPTIONS /*std::ifstream::failbit |*/ std::ifstream::badbit
+#define OFSTREAM_EXCEPTIONS /*std::ifstream::failbit |*/ std::ofstream::badbit
+
 String Makai::File::loadText(String const& path) {
 	// Ensure directory exists
 	assertFileExists(path);
+	std::ifstream file;
+	// Ensure ifstream object can throw exceptions (nevermind, then)
+	#ifndef MAKAILIB_FILE_GET_NO_EXCEPTIONS
+	file.exceptions(IFSTREAM_EXCEPTIONS);	// This line errors
+	#endif // MAKAILIB_FILE_GET_NO_EXCEPTIONS
 	try {
 		// The file and its contents
 		String content;
-		std::ifstream file;
-		// Ensure ifstream object can throw exceptions (nevermind, then)
-		#ifndef CTL_FILEHANDLER_NO_EXCEPTIONS
-		file.exceptions(std::ifstream::failbit | std::ifstream::badbit);	// This line errors
-		#endif // CTL_FILEHANDLER_NO_EXCEPTIONS
 		// Open file
 		file.open(path);
 		std::stringstream stream;
@@ -149,9 +152,9 @@ BinaryData Makai::File::loadBinary(String const& path) {
 		// The file
 		std::ifstream file;
 		// Ensure ifstream object can throw exceptions (nevermind, then)
-		#ifndef CTL_FILEHANDLER_NO_EXCEPTIONS
-		file.exceptions(std::ifstream::failbit | std::ifstream::badbit);	// This line errors
-		#endif // CTL_FILEHANDLER_NO_EXCEPTIONS
+		#ifndef MAKAILIB_FILE_GET_NO_EXCEPTIONS
+		file.exceptions(IFSTREAM_EXCEPTIONS);	// This line errors
+		#endif // MAKAILIB_FILE_GET_NO_EXCEPTIONS
 		// Preallocate data
 		size_t fileSize = std::filesystem::file_size(path);
 		BinaryData data(fileSize);
@@ -187,9 +190,9 @@ void Makai::File::saveBinary(String const& path, Makai::File::ByteSpan const& da
 	try {
 		std::ofstream file(path.c_str(), std::ios::binary);
 		// Ensure ofstream object can throw exceptions
-		#ifndef CTL_FILEHANDLER_NO_EXCEPTIONS
-		file.exceptions(std::ofstream::failbit | std::ofstream::badbit);
-		#endif // CTL_FILEHANDLER_NO_EXCEPTIONS
+		#ifndef MAKAILIB_FILE_GET_NO_EXCEPTIONS
+		file.exceptions(OFSTREAM_EXCEPTIONS);
+		#endif // MAKAILIB_FILE_GET_NO_EXCEPTIONS
 		// Write data to file
 		file.write((char*)data.data(), data.size());
 		file.flush();
@@ -209,9 +212,9 @@ void Makai::File::saveText(String const& path, String const& text) {
 	try {
 		std::ofstream file(path.c_str(), std::ios::trunc);
 		// Ensure ofstream object can throw exceptions
-		#ifndef CTL_FILEHANDLER_NO_EXCEPTIONS
-		file.exceptions(std::ofstream::failbit | std::ofstream::badbit);
-		#endif // CTL_FILEHANDLER_NO_EXCEPTIONS
+		#ifndef MAKAILIB_FILE_GET_NO_EXCEPTIONS
+		file.exceptions(OFSTREAM_EXCEPTIONS);
+		#endif // MAKAILIB_FILE_GET_NO_EXCEPTIONS
 		// Write data to file
 		file.write(text.data(), text.size());
 		file.flush();
