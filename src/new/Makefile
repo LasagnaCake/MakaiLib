@@ -8,6 +8,10 @@ ifdef openmp
 export openmp
 endif
 
+ifdef debug-release
+export debug-release
+endif
+
 override prefix := $(strip $(prefix)).makai
 
 .PHONY: debug release all
