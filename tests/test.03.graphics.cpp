@@ -6,6 +6,7 @@ struct TestApp: Makai::App {
 	Makai::Graph::Camera3D& camera = Makai::Graph::Global::camera;
 
 	Makai::Graph::Vertex const vertices[8] = {
+		//					  X,  Y,  Z, U, V, R, G, B, A, NX, NY, NZ
 		Makai::Graph::Vertex(+1, +1, +1, 0, 0, 1, 1, 1, 1, +1, +1, +1),	// 0
 		Makai::Graph::Vertex(+1, +1, -1, 0, 0, 1, 1, 0, 1, +1, +1, -1),	// 1
 		Makai::Graph::Vertex(+1, -1, +1, 0, 0, 1, 0, 1, 1, +1, -1, +1),	// 2
