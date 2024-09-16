@@ -129,6 +129,7 @@ String Makai::File::loadText(String const& path) {
 		String content;
 		// Open file
 		file.open(path);
+		if (!file) fileLoadError(path, "Mysterious error");
 		std::stringstream stream;
 		// Read file’s buffer contents into stringstream
 		stream << file.rdbuf();
@@ -161,6 +162,7 @@ BinaryData Makai::File::loadBinary(String const& path) {
 		BinaryData data(fileSize);
 		// Open and read file
 		file.open(path, std::ios::binary);
+		if (!file) fileLoadError(path, "Mysterious error");
 		file.read((char*)&data[0], fileSize);
 		file.close();
 		return data;
@@ -190,6 +192,7 @@ void Makai::File::saveBinary(String const& path, Makai::File::ByteSpan const& da
 	// Try and save data
 	try {
 		std::ofstream file(path.c_str(), std::ios::binary);
+		if (!file) fileLoadError(path, "Mysterious error");
 		// Ensure ofstream object can throw exceptions
 		#ifndef MAKAILIB_FILE_GET_NO_EXCEPTIONS
 		file.exceptions(OFSTREAM_EXCEPTIONS);
@@ -212,6 +215,7 @@ void Makai::File::saveText(String const& path, String const& text) {
 	// Try and save data
 	try {
 		std::ofstream file(path.c_str(), std::ios::trunc);
+		if (!file) fileLoadError(path, "Mysterious error");
 		// Ensure ofstream object can throw exceptions
 		#ifndef MAKAILIB_FILE_GET_NO_EXCEPTIONS
 		file.exceptions(OFSTREAM_EXCEPTIONS);
