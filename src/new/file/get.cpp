@@ -7,12 +7,12 @@
 #include <filesystem>
 
 #if !(defined(MAKAILIB_DEBUG) || defined(MAKAILIB_ARCHIVE_DISABLED))
-#define _IMPL_ARCHIVE_
+#define IMPL_ARCHIVE_
 #endif
 
 using Makai::Tool::Arch::FileArchive;
 
-#ifdef _IMPL_ARCHIVE_
+#ifdef IMPL_ARCHIVE_
 enum class ArchiveState {
 	FAS_CLOSED,
 	FAS_LOADING,
@@ -53,7 +53,7 @@ using Makai::File::BinaryData;
 #define _ARCHIVE_SYSTEM_DISABLED_*/
 
 void Makai::File::attachArchive(String const& path, String const& password) {
-	#ifdef _IMPL_ARCHIVE_
+	#ifdef IMPL_ARCHIVE_
 	DEBUGLN("Attaching archive...");
 	if (state == ArchiveState::FAS_LOADING)
 		fileLoadError(path, "Other archive is being loaded!");
@@ -72,7 +72,7 @@ void Makai::File::attachArchive(String const& path, String const& password) {
 }
 
 bool Makai::File::isArchiveAttached() {
-	#ifdef _IMPL_ARCHIVE_
+	#ifdef IMPL_ARCHIVE_
 	return state == ArchiveState::FAS_OPEN;
 	#else
 	return false;
@@ -80,7 +80,7 @@ bool Makai::File::isArchiveAttached() {
 }
 
 [[gnu::destructor]] void Makai::File::detachArchive() {
-	#ifdef _IMPL_ARCHIVE_
+	#ifdef IMPL_ARCHIVE_
 	DEBUGLN("Detaching archive...");
 	arc.close();
 	state = ArchiveState::FAS_CLOSED;
@@ -88,7 +88,7 @@ bool Makai::File::isArchiveAttached() {
 	#endif
 }
 
-#ifdef _IMPL_ARCHIVE_
+#ifdef IMPL_ARCHIVE_
 void assertArchive(String const& path) {
 	if (arcfail) Error::rethrow(arcfail);
 	if (!Makai::File::isArchiveAttached())
@@ -112,8 +112,13 @@ inline void assertFileExists(String const& path) {
 		fileLoadError(path, toString("File or directory '", path, "' does not exist!"));
 }
 
-#define IFSTREAM_EXCEPTIONS std::ifstream::failbit /*| std::ifstream::badbit*/
-#define OFSTREAM_EXCEPTIONS std::ifstream::failbit /*| std::ofstream::badbit*/
+inline void setExceptionMask(std::ios& stream) {
+	#ifndef MAKAILIB_FILE_GET_NO_EXCEPTIONS
+	//stream.exceptions(std::ios::failbit | std::ios::badbit);
+	//stream.exceptions(std::ios::badbit);
+	stream.exceptions(std::ios::failbit);
+	#endif
+}
 
 String Makai::File::loadText(String const& path) {
 	// Ensure directory exists
@@ -121,17 +126,15 @@ String Makai::File::loadText(String const& path) {
 	// The file
 	std::ifstream file;
 	try {
-		// Ensure ifstream object can throw exceptions (nevermind, then)
-		#ifndef MAKAILIB_FILE_GET_NO_EXCEPTIONS
-		file.exceptions(IFSTREAM_EXCEPTIONS);	// This line errors
-		#endif // MAKAILIB_FILE_GET_NO_EXCEPTIONS
+		// Ensure ifstream object can throw exceptions
+		setExceptionMask(file);
 		// The file and its contents
 		String content;
 		// Open file
 		file.open(path);
 		if (!file) fileLoadError(path, "Mysterious error");
 		std::stringstream stream;
-		// Read file’s buffer contents into stringstream
+		// Read fileâ€™s buffer contents into stringstream
 		stream << file.rdbuf();
 		// Close file handler
 		file.close();
@@ -153,10 +156,8 @@ BinaryData Makai::File::loadBinary(String const& path) {
 	std::ifstream file;
 	// Try and load binary
 	try {
-		// Ensure ifstream object can throw exceptions (nevermind, then)
-		#ifndef MAKAILIB_FILE_GET_NO_EXCEPTIONS
-		file.exceptions(IFSTREAM_EXCEPTIONS);	// This line errors
-		#endif // MAKAILIB_FILE_GET_NO_EXCEPTIONS
+		// Ensure ifstream object can throw exceptions
+		setExceptionMask(file);
 		// Preallocate data
 		size_t fileSize = std::filesystem::file_size(path);
 		BinaryData data(fileSize);
@@ -194,9 +195,7 @@ void Makai::File::saveBinary(String const& path, Makai::File::ByteSpan const& da
 		std::ofstream file(path.c_str(), std::ios::binary);
 		if (!file) fileLoadError(path, "Mysterious error");
 		// Ensure ofstream object can throw exceptions
-		#ifndef MAKAILIB_FILE_GET_NO_EXCEPTIONS
-		file.exceptions(OFSTREAM_EXCEPTIONS);
-		#endif // MAKAILIB_FILE_GET_NO_EXCEPTIONS
+		setExceptionMask(file);
 		// Write data to file
 		file.write((char*)data.data(), data.size());
 		file.flush();
@@ -217,9 +216,7 @@ void Makai::File::saveText(String const& path, String const& text) {
 		std::ofstream file(path.c_str(), std::ios::trunc);
 		if (!file) fileLoadError(path, "Mysterious error");
 		// Ensure ofstream object can throw exceptions
-		#ifndef MAKAILIB_FILE_GET_NO_EXCEPTIONS
-		file.exceptions(OFSTREAM_EXCEPTIONS);
-		#endif // MAKAILIB_FILE_GET_NO_EXCEPTIONS
+		setExceptionMask(file);
 		// Write data to file
 		file.write(text.data(), text.size());
 		file.flush();
@@ -230,7 +227,7 @@ void Makai::File::saveText(String const& path, String const& text) {
 }
 
 String Makai::File::loadTextFromArchive(String const& path) {
-	#ifdef _IMPL_ARCHIVE_
+	#ifdef IMPL_ARCHIVE_
 	assertArchive(path);
 	return arc.getTextFile(FileSystem::getChildPath(path));
 	#else
@@ -239,7 +236,7 @@ String Makai::File::loadTextFromArchive(String const& path) {
 }
 
 BinaryData Makai::File::loadBinaryFromArchive(String const& path) {
-	#ifdef _IMPL_ARCHIVE_
+	#ifdef IMPL_ARCHIVE_
 	assertArchive(path);
 	return arc.getBinaryFile(FileSystem::getChildPath(path));
 	#else
@@ -248,7 +245,7 @@ BinaryData Makai::File::loadBinaryFromArchive(String const& path) {
 }
 
 Makai::File::CSVData Makai::File::loadCSVFromArchive(String const& path, char const& delimiter) {
-	#ifdef _IMPL_ARCHIVE_
+	#ifdef IMPL_ARCHIVE_
 	assertArchive(path);
 	return Helper::splitString(arc.getTextFile(FileSystem::getChildPath(path)), delimiter);
 	#else
@@ -257,7 +254,7 @@ Makai::File::CSVData Makai::File::loadCSVFromArchive(String const& path, char co
 }
 
 String Makai::File::getText(String const& path) {
-	#ifdef _IMPL_ARCHIVE_
+	#ifdef IMPL_ARCHIVE_
 	String res;
 	if (isArchiveAttached())
 		try {
@@ -284,7 +281,7 @@ String Makai::File::getText(String const& path) {
 }
 
 BinaryData Makai::File::getBinary(String const& path) {
-	#ifdef _IMPL_ARCHIVE_
+	#ifdef IMPL_ARCHIVE_
 	BinaryData res;
 	if (isArchiveAttached())
 		try {
@@ -311,7 +308,7 @@ BinaryData Makai::File::getBinary(String const& path) {
 }
 
 Makai::File::CSVData Makai::File::getCSV(String const& path, char const& delimiter) {
-	#ifdef _IMPL_ARCHIVE_
+	#ifdef IMPL_ARCHIVE_
 	CSVData res;
 	if (isArchiveAttached())
 		try {
