@@ -6,6 +6,8 @@
 #include <sstream>
 #include <filesystem>
 
+#define IMPL_ARCHIVE_
+
 #if !(defined(MAKAILIB_DEBUG) || defined(MAKAILIB_ARCHIVE_DISABLED))
 #define IMPL_ARCHIVE_
 #endif
@@ -17,15 +19,24 @@ enum class ArchiveState {
 	FAS_CLOSED,
 	FAS_LOADING,
 	FAS_OPEN
-} state = ArchiveState::FAS_CLOSED;
+};
 
-FileArchive 		arc;
-Error::ErrorPointer	arcfail			= nullptr;
+ArchiveState& state() {
+	static ArchiveState s = ArchiveState::FAS_CLOSED;
+	return s;
+}
+
+FileArchive& archive() {
+	static Instance<FileArchive> arc = new FileArchive();
+	return *arc;
+}
+
+Error::ErrorPointer	arcfail	= nullptr;
 #endif
 
 using Makai::File::BinaryData;
 
-[[noreturn]] inline void fileLoadError(String const& path, String const& reason) {
+[[noreturn]] void fileLoadError(String const& path, String const& reason) {
 	throw Makai::File::FileLoadError(
 		"Could not load file '" + path + "'!",
 		__FILE__,
@@ -35,7 +46,7 @@ using Makai::File::BinaryData;
 	);
 }
 
-[[noreturn]] inline void fileSaveError(String const& path, String const& reason) {
+[[noreturn]] void fileSaveError(String const& path, String const& reason) {
 	throw Makai::File::FileLoadError(
 		"Could not save file '" + path + "'!",
 		__FILE__,
@@ -45,20 +56,17 @@ using Makai::File::BinaryData;
 	);
 }
 
-/*#undef _ARCHIVE_SYSTEM_DISABLED_
-#define _ARCHIVE_SYSTEM_DISABLED_*/
-
 void Makai::File::attachArchive(String const& path, String const& password) {
 	#ifdef IMPL_ARCHIVE_
 	DEBUGLN("Attaching archive...");
-	if (state == ArchiveState::FAS_LOADING)
+	if (state() == ArchiveState::FAS_LOADING)
 		fileLoadError(path, "Other archive is being loaded!");
 	try {
 		arcfail = nullptr;
-		state = ArchiveState::FAS_LOADING;
-		arc.close();
-		arc.open(path, password);
-		state = ArchiveState::FAS_OPEN;
+		state() = ArchiveState::FAS_LOADING;
+		archive().close();
+		archive().open(path, password);
+		state() = ArchiveState::FAS_OPEN;
 		DEBUGLN("Archive Attached!");
 	} catch (...) {
 		DEBUGLN("Archive attachment failed!");
@@ -69,7 +77,7 @@ void Makai::File::attachArchive(String const& path, String const& password) {
 
 bool Makai::File::isArchiveAttached() {
 	#ifdef IMPL_ARCHIVE_
-	return state == ArchiveState::FAS_OPEN;
+	return state() == ArchiveState::FAS_OPEN;
 	#else
 	return false;
 	#endif
@@ -78,8 +86,8 @@ bool Makai::File::isArchiveAttached() {
 [[gnu::destructor]] void Makai::File::detachArchive() {
 	#ifdef IMPL_ARCHIVE_
 	DEBUGLN("Detaching archive...");
-	arc.close();
-	state = ArchiveState::FAS_CLOSED;
+	archive().close();
+	state() = ArchiveState::FAS_CLOSED;
 	DEBUGLN("Archive detached!");
 	#endif
 }
@@ -103,14 +111,14 @@ void assertArchive(String const& path) {
 }
 #endif
 
-inline void assertFileExists(String const& path) {
+void assertFileExists(String const& path) {
 	if (!FileSystem::exists(path))
 		fileLoadError(path, toString("File or directory '", path, "' does not exist!"));
 }
 
-inline void setExceptionMask(std::ios& stream) {
+void setExceptionMask(std::ios& stream) {
 	#ifndef MAKAILIB_FILE_GET_NO_EXCEPTIONS
-	stream.exceptions(std::ios::failbit | std::ios::badbit);
+	//stream.exceptions(std::ios::failbit | std::ios::badbit);
 	//stream.exceptions(std::ios::badbit);
 	//stream.exceptions(std::ios::failbit);
 	#endif
@@ -119,7 +127,7 @@ inline void setExceptionMask(std::ios& stream) {
 /*
 // If all else fails, the horrors
 template<class T>
-inline void readFile(String const& path, T& buf) {
+void readFile(String const& path, T& buf) {
 	FILE* file = fopen(path.c_str(), "rb");
 	if (!file)							fileLoadError(path, "File open error");
 	if (fseek(file, 0, SEEK_END))		fileLoadError(path, "File seek error");
@@ -167,10 +175,11 @@ BinaryData Makai::File::loadBinary(String const& path) {
 		// Ensure ifstream object can throw exceptions
 		setExceptionMask(file);
 		// Preallocate data
-		size_t fileSize = std::filesystem::file_size(path);
-		BinaryData data(fileSize);
+		file.seekg(file.end);
+		BinaryData data(file.tellg());
+		file.seekg(file.beg);
 		// Read & close file
-		file.read((char*)&data[0], fileSize);
+		file.read((char*)&data[0], data.size());
 		file.close();
 		// Return data
 		return data;
@@ -236,7 +245,7 @@ void Makai::File::saveText(String const& path, String const& text) {
 String Makai::File::loadTextFromArchive(String const& path) {
 	#ifdef IMPL_ARCHIVE_
 	assertArchive(path);
-	return arc.getTextFile(FileSystem::getChildPath(path));
+	return archive().getTextFile(FileSystem::getChildPath(path));
 	#else
 	fileLoadError(path, "Archive functionality disabled!");
 	#endif
@@ -245,7 +254,7 @@ String Makai::File::loadTextFromArchive(String const& path) {
 BinaryData Makai::File::loadBinaryFromArchive(String const& path) {
 	#ifdef IMPL_ARCHIVE_
 	assertArchive(path);
-	return arc.getBinaryFile(FileSystem::getChildPath(path));
+	return archive().getBinaryFile(FileSystem::getChildPath(path));
 	#else
 	fileLoadError(path, "Archive functionality disabled!");
 	#endif
@@ -254,7 +263,7 @@ BinaryData Makai::File::loadBinaryFromArchive(String const& path) {
 Makai::File::CSVData Makai::File::loadCSVFromArchive(String const& path, char const& delimiter) {
 	#ifdef IMPL_ARCHIVE_
 	assertArchive(path);
-	return Helper::splitString(arc.getTextFile(FileSystem::getChildPath(path)), delimiter);
+	return Helper::splitString(loadTextFromArchive(path), delimiter);
 	#else
 	fileLoadError(path, "Archive functionality disabled!");
 	#endif

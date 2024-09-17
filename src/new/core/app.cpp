@@ -50,7 +50,7 @@ App::App (
 			"Having two apps open is forbidden!"
 		);
 	else mainApp = this;
-	DEBUGLN(Entity::ROOT == nullptr);
+	DEBUGLN("Starting app...");
 	// Save window resolution
 	this->width = width;
 	this->height = height;
