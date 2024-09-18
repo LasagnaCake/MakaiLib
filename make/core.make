@@ -32,14 +32,19 @@ else
 export RELEASEMODE := $(LEAN)
 endif
 
+#export ROOT := $(CURDIR)/..
+
+export path ="$(strip $(1))"
+
 GL_LOADER_FLAG := -DMAKAILIB_GL_LOADER=MAKAILIB_USE_$(call upper,$(gl-loader))
 
-export INC_GL_LOADER	= -I$(ROOT)/lib/OpenGL/$(call upper,$(gl-loader))/include $(GL_LOADER_FLAG)
-export INC_SDL			= -I$(ROOT)/lib/SDL2-2.0.10/include
-export INC_OPENGL		= -I$(ROOT)/lib/OpenGL
-export INC_STB			= -I$(ROOT)/lib/stb
-export INC_CPPCODEC		= -I$(ROOT)/lib/cppcodec-0.2
-export INC_CRYPTOPP		= -I$(ROOT)/lib/cryptopp/include
+export libpath = -I$(call path, $(ROOT)/lib/$(strip $(1)))
+
+export INC_SDL			= $(call libpath, SDL2-2.0.10/include)
+export INC_OPENGL		= $(call libpath, OpenGL/$(call upper,$(gl-loader))/include) $(GL_LOADER_FLAG)
+export INC_STB			= $(call libpath, stb)
+export INC_CPPCODEC		= $(call libpath, cppcodec-0.2)
+export INC_CRYPTOPP		= $(call libpath, cryptopp/include)
 
 DEBUG_CONFIG	:= $(COMPILER_CONFIG) -Wall -Wpedantic -Og -ggdb3 -fno-omit-frame-pointer $(DEBUGMODE)
 RELEASE_CONFIG	:= $(COMPILER_CONFIG) -O$(o) $(OPTIMIZATIONS) $(RELEASEMODE)

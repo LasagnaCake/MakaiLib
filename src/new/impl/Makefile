@@ -5,28 +5,12 @@ INCLUDES := $(INC_STB)
 
 override prefix := $(call concat, $(prefix), impl)
 
-DEBUGCOMPCFG_C	:= $(C_COMPCFG) -Wall -Og -ggdb3 -fno-omit-frame-pointer $(DEBUGMODE)
-C_COMPCFG	:= -fexpensive-optimizations -m64 -fms-extensions
-COMPCFG_C	:= $(C_COMPCFG) -O$(o) $(OPTIMIZATIONS)
+CONFIG_C			:= -fexpensive-optimizations -m64 -fms-extensions
+DEBUG_CONFIG_C		:= $(CONFIG_C) -Wall -Og -ggdb3 -fno-omit-frame-pointer $(DEBUGMODE)
+RELEASE_CONFIG_C	:= $(CONFIG_C) -O$(o) $(RELEASEMODE)
 
-COMPILER	:= @$(CXX) $(INCLUDES)
-
-lower = $(shell echo $(1) | tr A-Z a-z)
-upper = $(shell echo $(1) | tr a-z A-Z)
-
-ifdef gl-loader
-ifeq ($(gl-loader),glew)
-MAKE_GLOADER_D	:= @:
-MAKE_GLOADER	:= @:
-else
-MAKE_GLOADER_D	= $(CC) -I$(ROOT)/lib/OpenGL/$(call upper,$(gl-loader))/include $(DEBUGCOMPCFG_C) -c $(gl-loader).c -o $(prefix).glapi.$@.o
-MAKE_GLOADER	= $(CC) -I$(ROOT)/lib/OpenGL/$(call upper,$(gl-loader))/include $(COMPCFG_C) -c $(gl-loader).c -o $(prefix).glapi.$@.o
-endif
-else
-gl-loader := glad
-MAKE_GLOADER_D	= $(CC) -I$(ROOT)/lib/OpenGL/$(call upper,$(gl-loader))/include $(DEBUGCOMPCFG_C) -c $(gl-loader).c -o $(prefix).glapi.$@.o
-MAKE_GLOADER	= $(CC) -I$(ROOT)/lib/OpenGL/$(call upper,$(gl-loader))/include $(COMPCFG_C) -c $(gl-loader).c -o $(prefix).glapi.$@.o
-endif
+MAKE_GLOADER_D	= $(CC) $(INC_OPENGL) $(DEBUG_CONFIG_C) -c $(gl-loader).c -o $(prefix).glapi.$@.o
+MAKE_GLOADER	= $(CC) $(INC_OPENGL) $(RELEASE_CONFIG_C) -c $(gl-loader).c -o $(prefix).glapi.$@.o
 
 .PHONY: debug release all
 .ONESHELL:

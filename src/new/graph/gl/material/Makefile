@@ -3,7 +3,7 @@ include $(ROOT)/make/core.make
 
 override prefix := $(call concat, $(prefix), mat)
 
-INCLUDES := $(INC_SDL) $(INC_OPENGL) $(INC_GL_LOADER)
+INCLUDES := $(INC_SDL) $(INC_OPENGL)
 
 all: debug release
 

@@ -1,6 +1,8 @@
 CC	:= gcc
 CXX	:= g++
 
+LEAN := -static -s
+
 COMPILER_CONFIG	:= -m64 -std=gnu++20 -fms-extensions -I../output/include
 DEBUGMODE := -DMAKAILIB_DEBUG
 
@@ -15,13 +17,13 @@ NOCMD := -mwindows
 ifdef debug-release
 RELEASEMODE := $(DEBUGMODE)
 else
-RELEASEMODE := $(NOCMD)
+RELEASEMODE := $(NOCMD) $(LEAN)
 endif
 
 dotest = \
 	$(if $(findstring debug,$(1)),\
 		$(call testcmd,$(strip $(1)),$(strip $(2)),libmakai.$(strip $(1)).a) $(DEBUGMODE),\
-		$(call testcmd,$(strip $(1)),$(strip $(2)),libmakai.a) -static -s $(RELEASEMODE)\
+		$(call testcmd,$(strip $(1)),$(strip $(2)),libmakai.a) $(RELEASEMODE)\
 	)
 
 case = $(if $(findstring $(strip $(2)),$(strip $(1))),$(3))
