@@ -1,53 +1,10 @@
-CC 	?= gcc
-CXX ?= g++
-
-LEAN := -static -s
-
 ROOT	:= ../../../../..
 
-COMPILER_CONFIG	:= -fexpensive-optimizations -m64 -std=gnu++20 -fconcepts -fcoroutines -fms-extensions
-LINKER_CONFIG	:= -static-libstdc++ -static-libgcc -m64 -fms-extensions
+include $(ROOT)/commons.make
 
-ifdef openmp
-USE_OPENMP := -fopenmp -openmp -ftree-parallelize-loops=128
-export openmp
-endif
+override prefix := $(call concat, $(prefix), rd)
 
-lower = $(shell echo $(1) | tr A-Z a-z)
-upper = $(shell echo $(1) | tr a-z A-Z)
-
-ifndef gl-loader
-gl-loader := glad
-endif
-
-override prefix := $(strip $(prefix)).rd
-
-OPTIMIZATIONS	:= $(USE_OPENMP) -funswitch-loops -fpredictive-commoning -fgcse-after-reload -ftree-vectorize $(LEAN)
-
-INCLUDES := -I$(ROOT)/lib/SDL2-2.0.10/include -I$(ROOT)/lib/OpenGL -I$(ROOT)/lib/OpenGL/$(call upper,$(gl-loader))/include
-
-DEBUGMODE := -DMAKAILIB_DEBUG -DCTL_DEBUG -DNDEBUG
-DEBUGCOMPCFG	:= $(COMPILER_CONFIG) -Wall -Wpedantic -Og -ggdb3 -fno-omit-frame-pointer $(DEBUGMODE)
-DEBUGLINKCFG	:= $(LINKER_CONFIG) -Og $(LIBRARIES)
-
-ifdef debug-release
-RELEASEMODE := $(DEBUGMODE)
-export debug-release
-endif
-
-export o?=3
-
-COMPCFG	:= $(COMPILER_CONFIG) -O$(o) $(OPTIMIZATIONS) $(RELEASEMODE)
-LINKCFG	:= $(LINKER_CONFIG) -O$(o) $(LIBRARIES) $(LEAN)
-
-COMPILER	:= @$(CXX) $(INCLUDES)
-LINKER		:= @$(CXX)
-
-define GET_TIME
-@printf "\nTime: "
-@date +\"%H:%M:%S\"
-@echo ""
-endef
+INCLUDES := $(INC_SDL) $(INC_STB) $(INC_OPENGL) $(INC_GL_LOADER)
 
 .PHONY: debug release all
 .ONESHELL:
@@ -56,24 +13,23 @@ endef
 all: debug release
 
 debug:
-	$(COMPILER) $(DEBUGCOMPCFG) -c mode.cpp -o $(prefix).mode.$@.o
-	$(COMPILER) $(DEBUGCOMPCFG) -c core.cpp -o $(prefix).core.$@.o
-	$(COMPILER) $(DEBUGCOMPCFG) -c drawable.cpp -o $(prefix).drawable.$@.o
-	$(COMPILER) $(DEBUGCOMPCFG) -c reference.cpp -o $(prefix).reference.$@.o
-	$(COMPILER) $(DEBUGCOMPCFG) -c renderable.cpp -o $(prefix).renderable.$@.o
-	$(COMPILER) $(DEBUGCOMPCFG) -c bar.cpp -o $(prefix).bar.$@.o
-	$(COMPILER) $(DEBUGCOMPCFG) -c text.cpp -o $(prefix).text.$@.o
-	$(COMPILER) $(DEBUGCOMPCFG) -c scene.cpp -o $(prefix).scene.$@.o
-	$(COMPILER) $(DEBUGCOMPCFG) -c framebuffer.cpp -o $(prefix).framebuffer.$@.o
-
+	$(call compile, mode)
+	$(call compile, core)
+	$(call compile, drawable)
+	$(call compile, reference)
+	$(call compile, renderable)
+	$(call compile, bar)
+	$(call compile, text)
+	$(call compile, scene)
+	$(call compile, framebuffer)
 
 release:
-	$(COMPILER) $(COMPCFG) -c mode.cpp -o $(prefix).mode.$@.o
-	$(COMPILER) $(COMPCFG) -c core.cpp -o $(prefix).core.$@.o
-	$(COMPILER) $(COMPCFG) -c drawable.cpp -o $(prefix).drawable.$@.o
-	$(COMPILER) $(COMPCFG) -c reference.cpp -o $(prefix).reference.$@.o
-	$(COMPILER) $(COMPCFG) -c renderable.cpp -o $(prefix).renderable.$@.o
-	$(COMPILER) $(COMPCFG) -c bar.cpp -o $(prefix).bar.$@.o
-	$(COMPILER) $(COMPCFG) -c text.cpp -o $(prefix).text.$@.o
-	$(COMPILER) $(COMPCFG) -c scene.cpp -o $(prefix).scene.$@.o
-	$(COMPILER) $(COMPCFG) -c framebuffer.cpp -o $(prefix).framebuffer.$@.o
+	$(call compile, mode)
+	$(call compile, core)
+	$(call compile, drawable)
+	$(call compile, reference)
+	$(call compile, renderable)
+	$(call compile, bar)
+	$(call compile, text)
+	$(call compile, scene)
+	$(call compile, framebuffer)
