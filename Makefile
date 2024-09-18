@@ -1,6 +1,3 @@
-CC	:= gcc
-CXX	:= g++
-
 define HELP_MESSAGE
 endef
 
@@ -11,8 +8,6 @@ define GET_TIME
 endef
 
 prefix:=lib
-
-LEAN := -static -s
 
 #WINGARBAGE := -lole32 -loleaut32 -limm32 -lwinmm -lversion -lpowrprof -lcomdlg32 -lsetupapi -lgdi32
 
