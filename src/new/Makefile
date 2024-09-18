@@ -2,12 +2,6 @@ include ../../commons.make
 
 override prefix := $(call concat, $(prefix), makai)
 
-define GET_TIME
-@printf "\nTime: "
-@date +\"%H:%M:%S\"
-@echo ""
-endef
-
 .PHONY: debug release all
 .ONESHELL:
 .SHELLFLAGS = -ec
@@ -36,33 +30,13 @@ debug:
 	@echo "<systems>"
 	@echo ""
 
-	@cd impl
-	@make $@ prefix="$(prefix)"
-	@cd ..
-
-	@cd tool
-	@make $@ prefix="$(prefix)"
-	@cd ..
-
-	@cd file
-	@make $@ prefix="$(prefix)"
-	@cd ..
-
-	@cd data
-	@make $@ prefix="$(prefix)"
-	@cd ..
-
-	@cd audio
-	@make $@ prefix="$(prefix)"
-	@cd ..
-
-	@cd graph/gl
-	@make $@ prefix="$(prefix)"
-	@cd ../..
-
-	@cd core
-	@make $@ prefix="$(prefix)"
-	@cd ..
+	$(call submake, impl)
+	$(call submake, tool)
+	$(call submake, file)
+	$(call submake, data)
+	$(call submake, audio)
+	$(call submake, graph/gl)
+	$(call submake, core)
 
 	@echo ""
 	@echo "</systems>"
@@ -108,33 +82,13 @@ release:
 	@echo "<systems>"
 	@echo ""
 
-	@cd impl
-	@make $@ prefix="$(prefix)"
-	@cd ..
-
-	@cd tool
-	@make $@ prefix="$(prefix)"
-	@cd ..
-
-	@cd file
-	@make $@ prefix="$(prefix)"
-	@cd ..
-
-	@cd data
-	@make $@ prefix="$(prefix)"
-	@cd ..
-
-	@cd audio
-	@make $@ prefix="$(prefix)"
-	@cd ..
-
-	@cd graph/gl
-	@make $@ prefix="$(prefix)"
-	@cd ../..
-
-	@cd core
-	@make $@ prefix="$(prefix)"
-	@cd ..
+	$(call submake, impl)
+	$(call submake, tool)
+	$(call submake, file)
+	$(call submake, data)
+	$(call submake, audio)
+	$(call submake, graph/gl)
+	$(call submake, core)
 
 	@echo ""
 	@echo "</systems>"
