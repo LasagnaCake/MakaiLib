@@ -3,6 +3,9 @@ import globals.make
 CC	?= gcc
 CXX	?= g++
 
+lower = $(shell echo $(1) | tr A-Z a-z)
+upper = $(shell echo $(1) | tr a-z A-Z)
+
 concat = $(strip $(1)).$(strip $(2))
 
 LEAN := -static -s
@@ -31,9 +34,6 @@ COMPILER = @$(CXX) $(INCLUDES)
 compile-release	= $(COMPILER) $(DEBUG_CONFIG) -c $(1).cpp -o $(prefix).$(1).$@.o
 compile-debug	= $(COMPILER) $(RELEASE_CONFIG) -c $(1).cpp -o $(prefix).$(1).$@.o
 
-export compile-release
-export compile-debug
-
 compile = \
 	$(if $(findstring debug,$@),\
 		$(call compile-debug, $(1)),\
@@ -45,3 +45,11 @@ define GET_TIME
 @date +\"%H:%M:%S\"
 @echo ""
 endef
+
+export compile
+export upper
+export lower
+export concat
+export DEBUGMODE
+export CC
+export CXX
