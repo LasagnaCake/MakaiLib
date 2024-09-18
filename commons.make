@@ -68,7 +68,16 @@ define GET_TIME
 @echo ""
 endef
 
+define submake-impl
+@cd $(1)
+@make $@ prefix="$(strip $(2))"
+@cd ..
+endef
+
+submake = $(call submake-impl, $(1), $(prefix))
+
 export compile
+export submake
 export upper
 export lower
 export concat
