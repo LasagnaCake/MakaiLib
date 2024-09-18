@@ -15,12 +15,8 @@ override prefix := $(call concat, $(prefix), tool)
 all: debug release
 
 debug:
-	@cd archive
-	@make $@ prefix="$(prefix)"
-	@cd ..
+	$(call submake, archive)
 
 
 release:
-	@cd archive
-	@make $@ prefix="$(prefix)"
-	@cd ..
+	$(call submake, archive)
