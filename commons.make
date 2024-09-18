@@ -41,7 +41,7 @@ INC_SDL			= -I$(ROOT)/lib/SDL2-2.0.10/include
 INC_OPENGL		= -I$(ROOT)/lib/OpenGL
 INC_STB			= -I$(ROOT)/lib/stb
 INC_CPPCODEC	= -I$(ROOT)/lib/cppcodec-0.2
-INC_CRYPTOPP	= -I$(ROOT)
+INC_CRYPTOPP	= -I$(ROOT)/lib/cryptopp/include
 
 DEBUG_CONFIG	:= $(COMPILER_CONFIG) -O$(o) $(OPTIMIZATIONS) $(RELEASEMODE)
 RELEASE_CONFIG	:= $(COMPILER_CONFIG) -Wall -Wpedantic -Og -ggdb3 -fno-omit-frame-pointer $(DEBUGMODE)
