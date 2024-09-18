@@ -1,6 +1,6 @@
 include ../../commons.make
 
-override prefix := $(call concat $(prefix), makai)
+override prefix := $(call concat, $(prefix), makai)
 
 define GET_TIME
 @printf "\nTime: "
