@@ -6,7 +6,7 @@ define GET_TIME
 @echo ""
 endef
 
-override prefix := $(call concat $(prefix), tool)
+override prefix := $(call concat, $(prefix), tool)
 
 .PHONY: debug release all
 .ONESHELL:
