@@ -4,7 +4,7 @@ include $(ROOT)/commons.make
 
 override prefix := $(call concat, $(prefix), data)
 
-INCLUDES := $(INC_CPPCODEC)
+INCLUDES := $(INC_CPPCODEC) $(INC_CRYPTOPP)
 
 .PHONY: debug release all
 .ONESHELL:
