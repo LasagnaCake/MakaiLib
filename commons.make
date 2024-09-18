@@ -34,7 +34,7 @@ else
 export gl-loader := glad
 endif
 
-LIB_GL_LOADER := lib/OpenGL/$(call upper,$(gl-loader))/include
+GL_LOADER := lib/OpenGL/$(call upper,$(gl-loader))/include
 
 DEBUG_CONFIG	:= $(COMPILER_CONFIG) -O$(o) $(OPTIMIZATIONS) $(RELEASEMODE)
 RELEASE_CONFIG	:= $(COMPILER_CONFIG) -Wall -Wpedantic -Og -ggdb3 -fno-omit-frame-pointer $(DEBUGMODE)
@@ -63,5 +63,5 @@ export concat
 export DEBUGMODE
 export CC
 export CXX
-export LIB_GL_LOADER
+export GL_LOADER
 export GET_TIME
