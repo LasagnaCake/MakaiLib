@@ -41,13 +41,13 @@ export INC_STB			= -I$(ROOT)/lib/stb
 export INC_CPPCODEC		= -I$(ROOT)/lib/cppcodec-0.2
 export INC_CRYPTOPP		= -I$(ROOT)/lib/cryptopp/include
 
-RELEASE_CONFIG	:= $(COMPILER_CONFIG) -O$(o) $(OPTIMIZATIONS) $(RELEASEMODE)
 DEBUG_CONFIG	:= $(COMPILER_CONFIG) -Wall -Wpedantic -Og -ggdb3 -fno-omit-frame-pointer $(DEBUGMODE)
+RELEASE_CONFIG	:= $(COMPILER_CONFIG) -O$(o) $(OPTIMIZATIONS) $(RELEASEMODE)
 
 COMPILER = @$(CXX) $(INCLUDES)
 
-compile-release	= $(COMPILER) $(DEBUG_CONFIG) -c $(strip $(1)).cpp -o $(prefix).$(strip $(1)).$@.o
-compile-debug	= $(COMPILER) $(RELEASE_CONFIG) -c $(strip $(1)).cpp -o $(prefix).$(strip $(1)).$@.o
+compile-debug	= $(COMPILER) $(DEBUG_CONFIG) -c $(strip $(1)).cpp -o $(prefix).$(strip $(1)).$@.o
+compile-release	= $(COMPILER) $(RELEASE_CONFIG) -c $(strip $(1)).cpp -o $(prefix).$(strip $(1)).$@.o
 
 export compile = \
 	$(if $(findstring debug,$@),\
