@@ -22,7 +22,7 @@ ifdef no-buffers
 export NO_BUFFERS := -DMAKAILIB_DO_NOT_USE_BUFFERS
 endif
 
-OPTIMIZATIONS	:= $(USE_OPENMP) -funswitch-loops -fpredictive-commoning -fgcse-after-reload -ftree-vectorize
+OPTIMIZATIONS	:= $(USE_OPENMP) # -funswitch-loops -fpredictive-commoning -fgcse-after-reload -ftree-vectorize
 
 export DEBUGMODE	:= -DMAKAILIB_DEBUG -DCTL_DEBUG -DNDEBUG
 
@@ -46,19 +46,22 @@ export INC_STB			= $(call libpath, stb)
 export INC_CPPCODEC		= $(call libpath, cppcodec-0.2)
 export INC_CRYPTOPP		= $(call libpath, cryptopp/include)
 
-DEBUG_CONFIG	:= $(COMPILER_CONFIG) -Wall -Wpedantic -Og -ggdb3 -fno-omit-frame-pointer $(DEBUGMODE)
-RELEASE_CONFIG	:= $(COMPILER_CONFIG) -O$(o) $(OPTIMIZATIONS) $(RELEASEMODE)
+DEBUG_CONFIG		:= $(COMPILER_CONFIG) -Wall -Wpedantic -Og -ggdb3 -fno-omit-frame-pointer $(DEBUGMODE)
+RELEASE_CONFIG_BASE	:= $(COMPILER_CONFIG) $(OPTIMIZATIONS) $(RELEASEMODE)
+RELEASE_CONFIG		:= $(RELEASE_CONFIG_BASE) -O$(o)
 
 COMPILER = @$(CXX) $(INCLUDES)
 
-compile-debug	= $(COMPILER) $(DEBUG_CONFIG) -c $(strip $(1)).cpp -o $(prefix).$(strip $(1)).$@.o
-compile-release	= $(COMPILER) $(RELEASE_CONFIG) -c $(strip $(1)).cpp -o $(prefix).$(strip $(1)).$@.o
+compile-debug	= $(COMPILER) $(DEBUG_CONFIG_BASE) -O$(strip $(2)) -c $(strip $(1)).cpp -o $(prefix).$(strip $(1)).$@.o
+compile-release	= $(COMPILER) $(RELEASE_CONFIG_BASE) -O$(strip $(2)) -c $(strip $(1)).cpp -o $(prefix).$(strip $(1)).$@.o
 
-export compile = \
+export compile-with-o = \
 	$(if $(findstring debug,$@),\
-		$(call compile-debug, $(1)),\
-		$(call compile-release, $(1))\
+		$(call compile-debug, $(1), $(2)),\
+		$(call compile-release, $(1), $(2))\
 	)
+
+export compile = $(call compile-with-o, $(1), $(o))
 
 define GET_TIME
 @printf "\nTime: "
