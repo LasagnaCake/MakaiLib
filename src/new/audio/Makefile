@@ -2,6 +2,8 @@ ROOT	:= ../../..
 
 include $(ROOT)/commons.make
 
+override prefix := $(call concat, $(prefix), audio)
+
 INCLUDES := $(INC_SDL)
 
 .PHONY: debug release all
