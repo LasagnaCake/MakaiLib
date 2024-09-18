@@ -3,7 +3,7 @@ INCLUDES := -I$(ROOT)/lib/stb
 
 include $(ROOT)/commons.make
 
-override prefix := $(concat, $(prefix), impl)
+override prefix := $(call concat, $(prefix), impl)
 
 DEBUGCOMPCFG_C	:= $(C_COMPCFG) -Wall -Og -ggdb3 -fno-omit-frame-pointer $(DEBUGMODE)
 C_COMPCFG	:= -fexpensive-optimizations -m64 -fms-extensions
