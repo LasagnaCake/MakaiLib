@@ -33,3 +33,9 @@ compile-debug	= $(COMPILER) $(RELEASE_CONFIG) -c $(1).cpp -o $(2).$(1).$@.o
 
 export compile-release
 export compile-debug
+
+define GET_TIME
+@printf "\nTime: "
+@date +\"%H:%M:%S\"
+@echo ""
+endef
