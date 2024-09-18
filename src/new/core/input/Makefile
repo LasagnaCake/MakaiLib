@@ -1,46 +1,10 @@
-CC 	?= gcc
-CXX ?= g++
-
-LEAN := -static -s
-
 ROOT	:= ../../../..
 
-COMPILER_CONFIG	:= -fexpensive-optimizations -m64 -std=gnu++20 -fconcepts -fcoroutines -fms-extensions
-LINKER_CONFIG	:= -static-libstdc++ -static-libgcc -m64 -fms-extensions
+include $(ROOT)/commons.make
 
-ifdef openmp
-USE_OPENMP := -fopenmp -openmp -ftree-parallelize-loops=128
-export openmp
-endif
+override prefix := $(call concat, $(prefix), in)
 
-override prefix := $(strip $(prefix)).input
-
-OPTIMIZATIONS	:= $(USE_OPENMP) -funswitch-loops -fpredictive-commoning -fgcse-after-reload -ftree-vectorize $(LEAN)
-
-INCLUDES := -I$(ROOT)/lib/SDL2-2.0.10/include
-
-DEBUGMODE := -DMAKAILIB_DEBUG -DCTL_DEBUG -DNDEBUG
-DEBUGCOMPCFG	:= $(COMPILER_CONFIG) -Wall -Wpedantic -Og -ggdb3 -fno-omit-frame-pointer $(DEBUGMODE)
-DEBUGLINKCFG	:= $(LINKER_CONFIG) -Og $(LIBRARIES)
-
-ifdef debug-release
-RELEASEMODE := $(DEBUGMODE)
-export debug-release
-endif
-
-export o?=3
-
-COMPCFG	:= $(COMPILER_CONFIG) -O$(o) $(OPTIMIZATIONS) $(RELEASEMODE)
-LINKCFG	:= $(LINKER_CONFIG) -O$(o) $(LIBRARIES) $(LEAN)
-
-COMPILER	:= @$(CXX) $(INCLUDES)
-LINKER		:= @$(CXX)
-
-define GET_TIME
-@printf "\nTime: "
-@date +\"%H:%M:%S\"
-@echo ""
-endef
+INCLUDES := $(INC_SDL)
 
 .PHONY: debug release all
 .ONESHELL:
@@ -49,8 +13,7 @@ endef
 all: debug release
 
 debug:
-	$(COMPILER) $(DEBUGCOMPCFG) -c manager.cpp -o $(prefix).manager.$@.o
-
+	$(call compile, manager)
 
 release:
-	$(COMPILER) $(COMPCFG) -c manager.cpp -o $(prefix).manager.$@.o
+	$(call compile, manager)
