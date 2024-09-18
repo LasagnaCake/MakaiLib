@@ -17,6 +17,11 @@ USE_OPENMP := -fopenmp -openmp -ftree-parallelize-loops=128
 export openmp
 endif
 
+ifdef no-buffers
+NO_BUFFERS := -DMAKAILIB_DO_NOT_USE_BUFFERS
+export no-buffers
+endif
+
 OPTIMIZATIONS	:= $(USE_OPENMP) -funswitch-loops -fpredictive-commoning -fgcse-after-reload -ftree-vectorize
 
 DEBUGMODE		:= -DMAKAILIB_DEBUG -DCTL_DEBUG -DNDEBUG
@@ -78,3 +83,4 @@ export INC_SDL
 export INC_STB
 export INC_CPPCODEC
 export INC_CRYPTOPP
+export NO_BUFFERS
