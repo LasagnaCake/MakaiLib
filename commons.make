@@ -46,8 +46,8 @@ RELEASE_CONFIG	:= $(COMPILER_CONFIG) -Wall -Wpedantic -Og -ggdb3 -fno-omit-frame
 
 COMPILER = @$(CXX) $(INCLUDES)
 
-compile-release	= $(COMPILER) $(DEBUG_CONFIG) -c $(1).cpp -o $(prefix).$(1).$@.o
-compile-debug	= $(COMPILER) $(RELEASE_CONFIG) -c $(1).cpp -o $(prefix).$(1).$@.o
+compile-release	= $(COMPILER) $(DEBUG_CONFIG) -c $(strip $(1)).cpp -o $(prefix).$(strip $(1)).$@.o
+compile-debug	= $(COMPILER) $(RELEASE_CONFIG) -c $(strip $(1)).cpp -o $(prefix).$(strip $(1)).$@.o
 
 compile = \
 	$(if $(findstring debug,$@),\
