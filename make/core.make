@@ -1,12 +1,14 @@
 sinclude options.make
 
+export space := 
+
 export CC	?= gcc
 export CXX	?= g++
 
-export lower = $(shell echo $(1) | tr A-Z a-z)
-export upper = $(shell echo $(1) | tr a-z A-Z)
+export lower =$(shell echo $(1) | tr A-Z a-z)
+export upper =$(shell echo $(1) | tr a-z A-Z)
 
-export concat = $(strip $(1)).$(strip $(2))
+export concat =$(strip $(1)).$(strip $(2))
 
 export LEAN := -static -s
 
@@ -60,10 +62,12 @@ define GET_TIME
 endef
 export GET_TIME
 
+export leave = $(subst $(space),,$(filter ../,$(subst /, ../ ,$(strip $(1)))))
+
 define submake-impl
 @cd $(1)
 @make $@ prefix="$(strip $(2))"
-@cd ..
+@cd $(call leave, $(1))..
 endef
 
 export submake = $(call submake-impl, $(1), $(prefix))
