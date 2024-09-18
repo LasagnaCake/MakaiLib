@@ -3,7 +3,7 @@ import globals.make
 CC 	?= gcc
 CXX ?= g++
 
-concat := $(strip $(1)).$(strip $(2))
+concat = $(strip $(1)).$(strip $(2))
 
 LEAN := -static -s
 
