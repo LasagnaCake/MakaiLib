@@ -6,7 +6,7 @@ include $(ROOT)/commons.make
 
 override prefix := $(call concat, $(prefix), graph.gl)
 
-INCLUDES := -I$(ROOT)/lib/SDL2-2.0.10/include -I$(ROOT)/lib/OpenGL -I$(ROOT)/$(LIB_GL_LOADER) -I$(ROOT)/lib/stb
+INCLUDES := -I$(ROOT)/lib/SDL2-2.0.10/include -I$(ROOT)/lib/OpenGL -I$(ROOT)/$(GL_LOADER) -I$(ROOT)/lib/stb
 
 .PHONY: debug release all
 .ONESHELL:
