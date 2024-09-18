@@ -34,6 +34,12 @@ compile-debug	= $(COMPILER) $(RELEASE_CONFIG) -c $(1).cpp -o $(prefix).$(1).$@.o
 export compile-release
 export compile-debug
 
+compile = \
+	$(if $(findstring debug,$@),\
+		$(call compile-debug, $(1)),\
+		$(call compile-release, $(1))\
+	)
+
 define GET_TIME
 @printf "\nTime: "
 @date +\"%H:%M:%S\"
