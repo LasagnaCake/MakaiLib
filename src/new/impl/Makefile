@@ -1,4 +1,3 @@
-
 ROOT	:= ../../..
 INCLUDES := -I$(ROOT)/lib/stb
 
