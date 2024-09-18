@@ -6,7 +6,7 @@ include $(ROOT)/commons.make
 
 override prefix := $(call concat, $(prefix), graph.gl)
 
-INCLUDES := $(INC_SDL) $(INC_STB) $(INC_OPENGL) $(INC_GL_LOADER) $(GL_LOADER_FLAG)
+INCLUDES := $(INC_SDL) $(INC_STB) $(INC_OPENGL) $(INC_GL_LOADER)
 
 .PHONY: debug release all
 .ONESHELL:
