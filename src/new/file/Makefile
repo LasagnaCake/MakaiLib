@@ -9,12 +9,14 @@ override prefix := $(call concat, $(prefix), file)
 
 all: debug release
 
+# compile-get = $(call compile-with-o, get, 1)
+
 debug:
 	$(call compile, json)
 	$(call compile, slf)
-	$(call compile-with-o, get, 1)
+	$(call compile, get)
 
 release:
 	$(call compile, json)
 	$(call compile, slf)
-	$(call compile-with-o, get, 1)
+	$(call compile, get)
