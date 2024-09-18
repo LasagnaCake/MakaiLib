@@ -24,15 +24,9 @@ debug:
 	$(call compile, image)
 	$(call compile, texture)
 	$(call compile, shader)
-	
-	@cd renderer
-	@make $@ prefix="$(prefix)"
-	@cd ..
 
-	@cd material
-	@make $@ prefix="$(prefix)"
-	@cd ..
-
+	$(call submake, renderer)
+	$(call submake, material)
 
 release:
 	$(call compile, core)
@@ -44,11 +38,6 @@ release:
 	$(call compile, image)
 	$(call compile, texture)
 	$(call compile, shader)
-	
-	@cd renderer
-	@make $@ prefix="$(prefix)"
-	@cd ..
 
-	@cd material
-	@make $@ prefix="$(prefix)"
-	@cd ..
+	$(call submake, renderer)
+	$(call submake, material)
