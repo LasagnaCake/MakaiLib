@@ -1,7 +1,7 @@
 import globals.make
 
-CC 	?= gcc
-CXX ?= g++
+CC	?= gcc
+CXX	?= g++
 
 concat = $(strip $(1)).$(strip $(2))
 
