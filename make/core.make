@@ -15,7 +15,7 @@ export LEAN := -static -s
 COMPILER_CONFIG	:= -fexpensive-optimizations -m64 -std=gnu++20 -fconcepts -fcoroutines -fms-extensions
 
 ifdef openmp
-export USE_OPENMP := -fopenmp -openmp -ftree-parallelize-loops=128
+export USE_OPENMP := -fopenmp -openmp -ftree-parallelize-loops=$(omp-threads)
 endif
 
 ifdef no-buffers
