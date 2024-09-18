@@ -18,9 +18,7 @@ debug:
 	$(call compile, dpi)
 	$(call compile, popup)
 
-	@cd input
-	@make $@ prefix="$(prefix)"
-	@cd ..
+	$(call submake, input)
 
 
 release:
@@ -29,6 +27,4 @@ release:
 	$(call compile, dpi)
 	$(call compile, popup)
 
-	@cd input
-	@make $@ prefix="$(prefix)"
-	@cd ..
+	$(call submake, input)
