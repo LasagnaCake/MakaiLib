@@ -1,4 +1,4 @@
-import ../../commons.make
+include ../../commons.make
 
 define GET_TIME
 @printf "\nTime: "
