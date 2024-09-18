@@ -1,20 +1,12 @@
+import ../../commons.make
+
 define GET_TIME
 @printf "\nTime: "
 @date +\"%H:%M:%S\"
 @echo ""
 endef
 
-ifdef openmp
-export openmp
-endif
-
-ifdef debug-release
-export debug-release
-endif
-
-export o?=3
-
-override prefix := $(strip $(prefix)).makai
+override prefix := $(call concat $(prefix), makai)
 
 .PHONY: debug release all
 .ONESHELL:
