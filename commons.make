@@ -1,3 +1,5 @@
+import globals.make
+
 CC 	?= gcc
 CXX ?= g++
 
@@ -9,7 +11,6 @@ COMPILER_CONFIG	:= -fexpensive-optimizations -m64 -std=gnu++20 -fconcepts -fcoro
 
 ifdef openmp
 USE_OPENMP := -fopenmp -openmp -ftree-parallelize-loops=128
-export openmp
 endif
 
 OPTIMIZATIONS	:= $(USE_OPENMP) -funswitch-loops -fpredictive-commoning -fgcse-after-reload -ftree-vectorize
@@ -18,12 +19,9 @@ DEBUGMODE		:= -DMAKAILIB_DEBUG -DCTL_DEBUG -DNDEBUG
 
 ifdef debug-release
 RELEASEMODE := $(DEBUGMODE)
-export debug-release
 else
 RELEASEMODE := $(LEAN)
 endif
-
-export o?=3
 
 DEBUG_CONFIG	:= $(COMPILER_CONFIG) -O$(o) $(OPTIMIZATIONS) $(RELEASEMODE)
 RELEASE_CONFIG	:= $(COMPILER_CONFIG) -Wall -Wpedantic -Og -ggdb3 -fno-omit-frame-pointer $(DEBUGMODE)
