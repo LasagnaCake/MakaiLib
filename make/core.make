@@ -41,8 +41,8 @@ export INC_STB			= -I$(ROOT)/lib/stb
 export INC_CPPCODEC		= -I$(ROOT)/lib/cppcodec-0.2
 export INC_CRYPTOPP		= -I$(ROOT)/lib/cryptopp/include
 
-DEBUG_CONFIG	:= $(COMPILER_CONFIG) -O$(o) $(OPTIMIZATIONS) $(RELEASEMODE)
-RELEASE_CONFIG	:= $(COMPILER_CONFIG) -Wall -Wpedantic -Og -ggdb3 -fno-omit-frame-pointer $(DEBUGMODE)
+RELEASE_CONFIG	:= $(COMPILER_CONFIG) -O$(o) $(OPTIMIZATIONS) $(RELEASEMODE)
+DEBUG_CONFIG	:= $(COMPILER_CONFIG) -Wall -Wpedantic -Og -ggdb3 -fno-omit-frame-pointer $(DEBUGMODE)
 
 COMPILER = @$(CXX) $(INCLUDES)
 
