@@ -7,8 +7,8 @@ import ../../../../commons.make
 all: debug release
 
 debug:
-	$(COMPILER) $(DEBUGCOMPCFG) -c archive.cpp -o $(prefix).archive.$@.o
+	$(call compile, archive)
 
 
 release:
-	$(COMPILER) $(COMPCFG) -c archive.cpp -o $(prefix).archive.$@.o
+	$(call compile, archive)
