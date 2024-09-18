@@ -148,16 +148,32 @@ String Makai::File::loadText(String const& path) {
 	try {
 		// Try and open the file
 		std::ifstream file(path);
-		if (!file) fileLoadError(path, "Mysterious error");
+		if (!file) fileLoadError(path, "Mysterious error 1");
 		// Ensure ifstream object can throw exceptions
 		setExceptionMask(file);
-		// Read file's contents into stringstream
+		/*// Read file's contents into stringstream
 		std::stringstream stream;
 		stream << file.rdbuf();
 		// Close file handler
 		file.close();
-		// Return string
-		return stream.str();
+		// Try and get contents
+		String content = "";
+		if (stream) stream >> content;	// This line segfaults
+		else fileLoadError(path, "Mysterious error 2");
+		// Return contents
+		return content;*/
+		// Preallocate data
+		DEBUGLN("Getting file size...");
+		usize const fsize = std::filesystem::file_size(path);
+		DEBUGLN("File size:", fsize, "B (", fsize/1024, "KB)");
+		DEBUGLN("Preallocating...");
+		String data(fsize, '\0');
+		// Read & close file
+		DEBUGLN("Reading file..");
+		file.read((char*)&data[0], fsize);
+		file.close();
+		DEBUGLN("Returning contents...");
+		return data;
 	} catch (std::exception const& e) {
 		fileLoadError(path, e.what());
 	}
