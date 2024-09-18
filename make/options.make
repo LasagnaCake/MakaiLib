@@ -16,4 +16,10 @@ else
 export gl-loader:=glad
 endif
 
+ifdef omp-threads
+export omp-threads
+else
+export omp-threads:=128
+endif
+
 export o?=3
