@@ -175,11 +175,10 @@ BinaryData Makai::File::loadBinary(String const& path) {
 		// Ensure ifstream object can throw exceptions
 		setExceptionMask(file);
 		// Preallocate data
-		file.seekg(file.end);
-		BinaryData data(file.tellg());
-		file.seekg(file.beg);
+		usize const fsize = std::filesystem::file_size(path);
+		BinaryData data(fsize);
 		// Read & close file
-		file.read((char*)&data[0], data.size());
+		file.read((char*)&data[0], fsize);
 		file.close();
 		// Return data
 		return data;
