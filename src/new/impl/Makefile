@@ -1,7 +1,7 @@
 ROOT	:= ../../..
 INCLUDES := -I$(ROOT)/lib/stb
 
-include ../../../commons.make
+include $(ROOT)/commons.make
 
 override prefix := $(concat, $(prefix), impl)
 
