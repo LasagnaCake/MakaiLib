@@ -15,6 +15,9 @@ testcmd = @$(CXX) -o output/$(1)/test.$(2).$(1).exe test.$(2).cpp $(COMPILER_CON
 
 NOCMD := -mwindows
 
+lower = $(shell echo $(1) | tr A-Z a-z)
+upper = $(shell echo $(1) | tr a-z A-Z)
+
 dotest = \
 	$(if $(findstring debug,$(1)),\
 		$(call testcmd,$(strip $(1)),$(strip $(2)),libmakai.$(strip $(1)).a) $(DEBUGMODE),\
