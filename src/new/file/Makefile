@@ -1,6 +1,5 @@
 ROOT := ../../..
-
-include $(ROOT)/commons.make
+include $(ROOT)/make/core.make
 
 override prefix := $(call concat, $(prefix), file)
 

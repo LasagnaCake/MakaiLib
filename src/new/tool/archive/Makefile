@@ -1,4 +1,7 @@
-import ../../../../commons.make
+ROOT := ../../../..
+include $(ROOT)/make/core.make
+
+INCLUDES := $(INC_CRYPTOPP) $(INC_CPPCODEC)
 
 .PHONY: debug release all
 .ONESHELL:

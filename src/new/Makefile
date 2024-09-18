@@ -1,4 +1,5 @@
-include ../../commons.make
+ROOT :=../..
+include $(ROOT)/make/core.make
 
 override prefix := $(call concat, $(prefix), makai)
 

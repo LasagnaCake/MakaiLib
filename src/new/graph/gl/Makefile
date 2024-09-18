@@ -1,8 +1,5 @@
-LEAN := -static -s
-
-ROOT	:= ../../../..
-
-include $(ROOT)/commons.make
+ROOT := ../../../..
+include $(ROOT)/make/core.make
 
 override prefix := $(call concat, $(prefix), graph.gl)
 

@@ -1,4 +1,5 @@
-include ../../../commons.make
+ROOT := ../../..
+include $(ROOT)/make/core.make
 
 define GET_TIME
 @printf "\nTime: "
