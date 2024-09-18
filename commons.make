@@ -31,15 +31,15 @@ endif
 ifdef gl-loader
 export gl-loader
 else
-export gl-loader := glad
+export gl-loader:=glad
 endif
 
-INC_GL_LOADER	= -I$(ROOT)/lib/OpenGL/$(call upper,$(gl-loader))/include
+GL_LOADER_FLAG := -DMAKAILIB_GL_LOADER=MAKAILIB_USE_$(call upper,$(gl-loader))
+
+INC_GL_LOADER	= -I$(ROOT)/lib/OpenGL/$(call upper,$(gl-loader))/include $(GL_LOADER_FLAG)
 INC_SDL			= -I$(ROOT)/lib/SDL2-2.0.10/include
 INC_OPENGL		= -I$(ROOT)/lib/OpenGL
 INC_STB			= -I$(ROOT)/lib/stb
-
-GL_LOADER_FLAG := -DMAKAILIB_GL_LOADER=MAKAILIB_USE_$(call upper,$(gl-loader))
 
 DEBUG_CONFIG	:= $(COMPILER_CONFIG) -O$(o) $(OPTIMIZATIONS) $(RELEASEMODE)
 RELEASE_CONFIG	:= $(COMPILER_CONFIG) -Wall -Wpedantic -Og -ggdb3 -fno-omit-frame-pointer $(DEBUGMODE)
