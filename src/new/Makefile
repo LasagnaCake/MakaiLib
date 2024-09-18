@@ -1,12 +1,12 @@
 include ../../commons.make
 
+override prefix := $(call concat $(prefix), makai)
+
 define GET_TIME
 @printf "\nTime: "
 @date +\"%H:%M:%S\"
 @echo ""
 endef
-
-override prefix := $(call concat $(prefix), makai)
 
 .PHONY: debug release all
 .ONESHELL:
