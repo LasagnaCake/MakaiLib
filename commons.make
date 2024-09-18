@@ -39,6 +39,8 @@ INC_SDL			= -I$(ROOT)/lib/SDL2-2.0.10/include
 INC_OPENGL		= -I$(ROOT)/lib/OpenGL
 INC_STB			= -I$(ROOT)/lib/stb
 
+GL_LOADER_FLAG := -DMAKAILIB_GL_LOADER=MAKAILIB_USE_$(call upper,$(gl-loader))
+
 DEBUG_CONFIG	:= $(COMPILER_CONFIG) -O$(o) $(OPTIMIZATIONS) $(RELEASEMODE)
 RELEASE_CONFIG	:= $(COMPILER_CONFIG) -Wall -Wpedantic -Og -ggdb3 -fno-omit-frame-pointer $(DEBUGMODE)
 
@@ -68,3 +70,8 @@ export CC
 export CXX
 export GL_LOADER
 export GET_TIME
+export INC_GL_LOADER
+export INC_OPENGL
+export INC_SDL
+export INC_STB
+export GL_LOADER_FLAG
