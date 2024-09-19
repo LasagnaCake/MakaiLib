@@ -45,12 +45,14 @@ constexpr bool isValidShaderExtension(String const& path) {
 }
 
 SLFData Makai::SLF::parse(String const& slf, String const& srcFolder) {
+	DEBUGLN("Parsing SLF file...");
 	String content = slf;
 	// Remove comments and empty lines
 	content = regexReplace(content, "(:[<]([\\s\\S]*?)[>]:)|(::([\\s\\S]*?)(\\n|\\r|\\r\\n))", "");
 	content = regexReplace(content, "((\\n|\\r|\\r\\n)+)", "|");
 	// Get file location
 	String dir = FileSystem::getDirectoryFromPath(srcFolder);
+	DEBUGLN("Directory: ", dir);
 	// Initialize type specifier here
 	ShaderType type = ShaderType::ST_INVALID;
 	// Remove specifier for processing
@@ -58,6 +60,7 @@ SLFData Makai::SLF::parse(String const& slf, String const& srcFolder) {
 	// Process file
 	SLFData result{dir};
 	for (String shader: Helper::splitString(content, '|')) {
+		DEBUGLN("Line: ", shader);
 		// If line is a type specifier, try and get it
 		String tt = regexFindFirst(shader, "^[<](.*)[>]");
 		if (!tt.empty()) {
