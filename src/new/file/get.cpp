@@ -144,18 +144,21 @@ String Makai::File::loadText(String const& path) {
 	// Ensure directory exists
 	assertFileExists(path);
 	try {
-		// Try and open the file
-		std::ifstream file(path);
-		if (!file) fileLoadError(path, "Mysterious error");
+		// The file and its contents
+		String content;
+		std::ifstream file;
 		// Ensure ifstream object can throw exceptions
 		setExceptionMask(file);
-		// Read file's contents
+		// Open file
+		file.open(path);
 		std::stringstream stream;
+		// Read file’s buffer contents into stringstream
 		stream << file.rdbuf();
-		String content = stream.str();
+		// Convert stream into string
+		content = stream.str();
 		// Close file handler
 		file.close();
-		// Return string
+		// Return contents
 		return content;
 	} catch (std::exception const& e) {
 		fileLoadError(path, e.what());
