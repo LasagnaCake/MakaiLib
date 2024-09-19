@@ -14,9 +14,9 @@ all: debug release
 debug:
 	$(call compile, json)
 	$(call compile, slf)
-	$(call compile, get)
+	$(call compile-with-o, get, g)
 
 release:
 	$(call compile, json)
 	$(call compile, slf)
-	$(call compile, get)
+	$(call compile-with-o, get, g)
