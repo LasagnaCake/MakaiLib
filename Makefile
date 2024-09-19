@@ -47,14 +47,10 @@ debug: build-debug up-debug $(CREATE_LIB_3P) link-debug
 release: build-release up-release $(CREATE_LIB_3P) link-release
 
 build-debug:
-	@cd src/new
-	@make debug prefix="$(prefix)"
-	@cd ../..
+	@make -C"src/new" debug prefix="$(prefix)"
 
 build-release:
-	@cd src/new
-	@make release prefix="$(prefix)"
-	@cd ../..
+	@make -C"src/new" release prefix="$(prefix)"
 
 copy-headers:
 	@echo "Copying headers..."
