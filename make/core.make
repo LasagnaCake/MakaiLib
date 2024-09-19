@@ -72,6 +72,11 @@ export GET_TIME
 
 export leave = $(subst $(space),,$(filter ../,$(subst /, ../ ,$(strip $(1)))))
 
-submake-impl = @make --directory="$(1)" $@ prefix="$(strip $(2))"
+submake-impl = @make -C$(call path, $(1)) $@ prefix="$(strip $(2))"
+#define submake-impl
+#@cd $(1)
+#@make $@ prefix="$(strip $(2))"
+#@cd $(call leave, $(1))..
+#endef
 
 export submake = $(call submake-impl, $(1), $(prefix))
