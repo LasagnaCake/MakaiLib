@@ -46,14 +46,14 @@ export INC_STB			= $(call libpath, stb)
 export INC_CPPCODEC		= $(call libpath, cppcodec-0.2)
 export INC_CRYPTOPP		= $(call libpath, cryptopp/include)
 
-DEBUG_CONFIG_BASE	= $(COMPILER_CONFIG) -Wall -Wpedantic -Og -ggdb3 -fno-omit-frame-pointer $(DEBUGMODE)
+DEBUG_CONFIG_BASE	= $(COMPILER_CONFIG) -Wall -Wpedantic -Og -g -ggdb3 -fno-omit-frame-pointer $(DEBUGMODE)
 DEBUG_CONFIG		= $(DEBUG_CONFIG_BASE)
 RELEASE_CONFIG_BASE	= $(COMPILER_CONFIG) $(OPTIMIZATIONS) $(RELEASEMODE)
 RELEASE_CONFIG		= $(RELEASE_CONFIG_BASE) -O$(o)
 
 COMPILER = @$(CXX) $(INCLUDES)
 
-compile-debug	= $(COMPILER) $(DEBUG_CONFIG_BASE) -O$(strip $(2)) -c $(strip $(1)).cpp -o $(prefix).$(strip $(1)).$@.o
+compile-debug	= $(COMPILER) $(DEBUG_CONFIG_BASE) -c $(strip $(1)).cpp -o $(prefix).$(strip $(1)).$@.o
 compile-release	= $(COMPILER) $(RELEASE_CONFIG_BASE) -O$(strip $(2)) -c $(strip $(1)).cpp -o $(prefix).$(strip $(1)).$@.o
 
 export compile-with-o = \
