@@ -12,7 +12,7 @@ export concat =$(strip $(1)).$(strip $(2))
 
 export LEAN := -static -s
 
-COMPILER_CONFIG	:= -m64 -std=gnu++20 -fconcepts -fcoroutines -fms-extensions -fexpensive-optimizations
+COMPILER_CONFIG	:= -m64 -std=gnu++20 -fconcepts -fcoroutines -fms-extensions
 
 ifdef openmp
 export USE_OPENMP := -fopenmp -openmp -ftree-parallelize-loops=$(omp-threads)
@@ -22,7 +22,7 @@ ifdef no-buffers
 export NO_BUFFERS := -DMAKAILIB_DO_NOT_USE_BUFFERS
 endif
 
-OPTIMIZATIONS	:= $(USE_OPENMP) -funswitch-loops -fpredictive-commoning -fgcse-after-reload -ftree-vectorize
+OPTIMIZATIONS	:= $(USE_OPENMP) -funswitch-loops -fpredictive-commoning -fgcse-after-reload -ftree-vectorize -fexpensive-optimizations
 
 export DEBUGMODE	:= -DMAKAILIB_DEBUG -DCTL_DEBUG -DNDEBUG
 
@@ -46,9 +46,10 @@ export INC_STB			= $(call libpath, stb)
 export INC_CPPCODEC		= $(call libpath, cppcodec-0.2)
 export INC_CRYPTOPP		= $(call libpath, cryptopp/include)
 
-DEBUG_CONFIG		:= $(COMPILER_CONFIG) -Wall -Wpedantic -Og -ggdb3 -fno-omit-frame-pointer $(DEBUGMODE)
-RELEASE_CONFIG_BASE	:= $(COMPILER_CONFIG) $(OPTIMIZATIONS) $(RELEASEMODE)
-RELEASE_CONFIG		:= $(RELEASE_CONFIG_BASE) -O$(o)
+DEBUG_CONFIG_BASE	= $(COMPILER_CONFIG) -Wall -Wpedantic -Og -ggdb3 -fno-omit-frame-pointer $(DEBUGMODE)
+DEBUG_CONFIG		= $(DEBUG_CONFIG_BASE)
+RELEASE_CONFIG_BASE	= $(COMPILER_CONFIG) $(OPTIMIZATIONS) $(RELEASEMODE)
+RELEASE_CONFIG		= $(RELEASE_CONFIG_BASE) -O$(o)
 
 COMPILER = @$(CXX) $(INCLUDES)
 
