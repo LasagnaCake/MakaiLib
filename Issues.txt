@@ -12,7 +12,7 @@ Fixed? > Automatic tweens & timers are no longer working
 > If there is stutter while playing, Audio::Sound object may lose sound forever
 
 [ Shader ]
-> Shading direction flips when rotating object
+> Shading direction flips when rotating object (Somethin relating to normals)
 
 [ Unknown ]
 > Nothing works when compiling for release (tests 02 and further don't work)
