@@ -16,3 +16,6 @@ Fixed? > Automatic tweens & timers are no longer working
 
 [ Unknown ]
 > Nothing works when compiling for release (tests 02 and further don't work)
+	> https://stackoverflow.com/questions/79004859/segmentation-fault-when-reading-file-from-disk-on-gcc-with-optimization-level-a
+	> As someone on StackOverflow pointed out (see comment), it most likely is heap corruption. Hooray.
+	> Time to figure out which LOVELY function is causing it.
