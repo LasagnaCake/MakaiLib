@@ -4,6 +4,8 @@
 #include "transform.hpp"
 #include "../cmath.hpp"
 
+CTL_NAMESPACE_BEGIN
+
 // atoi implementation based off of https://stackoverflow.com/a/59537554
 namespace _AtoiImpl {
 	template<ASCIIType T>
@@ -133,8 +135,8 @@ constexpr bool atof(T const* const& str, usize size, F& out) {
 	}
 	// Create new string without separator
 	T* ns = new T[size-1];
-	memcpy(ns, str, sep-1);
-	memcpy(ns+sep-1, str+sep, size-sep);
+	MX::memcpy(ns, str, sep-1);
+	MX::memcpy(ns+sep-1, str+sep, size-sep);
 	// Try and convert resulting integer string
 	if (!atoi<usize>(ns, size-1, ival))
 		return false;
@@ -191,7 +193,7 @@ constexpr ssize itoa(I val, T* const& buf, usize const& bufSize, I const& base =
 	for(; val && (i-offset); --i, val /= base)
 		buf[i] = "0123456789abcdef"[val % base];
 	// Move stuff around to beginning of buffer
-	memcpy(buf+offset, buf+offset+i, bufSize-i);
+	MX::memcpy(buf+offset, buf+offset+i, bufSize-i);
 	// Return full size of number string
 	return offset+i+1;
 }
@@ -216,5 +218,7 @@ constexpr ssize ftoa(F val, T* const& buf, usize const& bufSize, usize const& pr
 	// Return full size of number string
 	return lhs+rhs+1;
 }
+
+CTL_NAMESPACE_END
 
 #endif // CTL_ALGORITHM_ATOI_H

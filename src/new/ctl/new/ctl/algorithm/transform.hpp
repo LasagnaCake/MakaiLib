@@ -3,8 +3,6 @@
 
 #include "../namespace.hpp"
 
-CTL_NAMESPACE_BEGIN
-
 namespace Type {
 	template<class T>
 	concept Character =
@@ -21,6 +19,8 @@ namespace Type {
 	||	Type::Equal<T, wchar_t>
 	;
 }
+
+CTL_NAMESPACE_BEGIN
 
 template<Type::Character T>
 constexpr T toLower(T const& c) {

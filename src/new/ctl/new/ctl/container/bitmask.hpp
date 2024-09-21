@@ -4,20 +4,22 @@
 #include "../templates.hpp"
 #include "../typetraits/traits.hpp"
 
-template<Type::Integer TData, size_t S, bool I = true>
+CTL_NAMESPACE_BEGIN
+
+template<Type::Integer TData, usize S, bool I = true>
 struct BitMask:
 	Typed<TData>,
 	SelfIdentified<BitMask<TData, S, I>> {
 	constexpr static usize SIZE = S;
 	constexpr static bool INITIAL_STATE = I;
 
-	typedef Typed<TData> Typed;
-	using typename Typed::DataType;
+	using Typed = Typed<TData>;
+	typedef SelfIdentified = SelfIdentified<BitMask<DataType, S, I>>;
 
-	typedef SelfIdentified<BitMask<DataType, S, I>> SelfIdentified;
+	using typename Typed::DataType;
 	using typename SelfIdentified::SelfType;
 
-	typedef Decay::AsType<DataType[SIZE]>	MaskType;
+	using MaskType = Decay::AsType<DataType[SIZE]>;
 
 	constexpr static DataType ALL_ENABLED = TypeInfo<DataType>::HIGHEST;
 
@@ -76,5 +78,7 @@ struct BitMask:
 
 	MaskType mask = {INITIAL_STATE ? ALL_ENABLED : 0};
 };
+
+CTL_NAMESPACE_END
 
 #endif // CTL_CONTAINER_BITMASK_H

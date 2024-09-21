@@ -97,13 +97,13 @@ namespace Type {
 		template<typename T>	struct IsVoid:			FalseType	{};
 		template<>				struct IsVoid<void>:	TrueType	{};
 
-		template<class T>					struct IsAutoArray:			FalseType	{};
-		template<class T>					struct IsAutoArray<T[]>:	TrueType	{};
+		template<class T>			struct IsAutoArray:			FalseType	{};
+		template<class T>			struct IsAutoArray<T[]>:	TrueType	{};
 
-		template<class T>					struct IsFixedArray:		FalseType	{};
-		template<class T, std::size_t N>	struct IsFixedArray<T[N]>:	TrueType	{};
+		template<class T>			struct IsFixedArray:		FalseType	{};
+		template<class T, usize N>	struct IsFixedArray<T[N]>:	TrueType	{};
 
-		template<typename T>				struct IsArray:				TrueType::Or<IsAutoArray<T>, IsFixedArray<T>>	{};
+		template<typename T>		struct IsArray:				TrueType::Or<IsAutoArray<T>, IsFixedArray<T>>	{};
 
 		template<typename T>	struct IsNullPointer:			FalseType	{};
 		template<>				struct IsNullPointer<nulltype>:	TrueType	{};
@@ -228,7 +228,7 @@ namespace Type {
 	concept Reference = LeftReference<T> || Temporary<T>;
 
 	template <typename T>
-	concept Numerable = Convertible<size_t, T>;
+	concept Numerable = Convertible<usize, T>;
 
 	template<typename T>
 	concept Enumerator = Impl::IsEnumerator<T>::value;

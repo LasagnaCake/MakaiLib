@@ -5,31 +5,114 @@
 #include "../templates.hpp"
 #include "../typetraits/traits.hpp"
 #include "../namespace.hpp"
+#include "error.hpp"
 #include "iterator.hpp"
 
 CTL_NAMESPACE_BEGIN
 
-constexpr usize DYNAMIC = -1;
+enum class ExtentType {
+	CET_AUTO,
+	CET_STATIC,
+	CET_DYNAMIC
+};
 
-template<class TData, usize S = DYNAMIC, Type::Integer TIndex = usize>
+constexpr usize DYNAMIC_SIZE = -1;
+
+template<class TData, usize S = DYNAMIC_SIZE, Type::Integer TIndex = usize, ExtentType EXTENT = ExtentType::CET_AUTO>
 struct Span:
 	Iteratable<TData, TIndex> {
 
-	constexpr Span() {}
+	using Iteratable = Iteratable<TData, TIndex>;
 
-	constexpr Span(PointerType const& data): data(data) {
+	using
+		Iteratable::IndexType,
+		Iteratable::SizeType
+	;
+
+	using
+		Iteratable::DataType,
+		Iteratable::ReferenceType,
+		Iteratable::ConstantType,
+		Iteratable::ConstReferenceType
+	;
+
+	consteval static bool isStatic() {
+		return (S != DYNAMIC_SIZE || EXTENT == ExtentType::CET_DYNAMIC);
 	}
 
-	constexpr Span(PointerType const& data, SizeType const& size): data(data), count(size) {
+	consteval static bool isDynamic() {
+		return (S == DYNAMIC_SIZE || EXTENT == ExtentType::CET_STATIC);
 	}
 
-	constexpr DataType& operator[](IndexType index) const {
+	constexpr Span() noexcept: data(nullptr), count(0) {}
+
+	explicit (isDynamic())
+	constexpr Span(PointerType const& data): data(data) {}
+
+	explicit (isDynamic())
+	constexpr Span(IteratorType const& begin): data(begin) {}
+
+	explicit (isStatic())
+	constexpr Span(PointerType const& data, SizeType const& size): data(data), count(size) {}
+
+	explicit (isStatic())
+	constexpr Span(IteratorType const& begin, IteratorType const& end): data(begin), count(end - begin) {}
+
+	constexpr ReferenceType operator[](IndexType index) {
+		assertExists();
 		wrapBounds(index, count);
+		return data[index];
 	}
+
+	constexpr ConstReferenceType operator[](IndexType index) const {
+		assertExists();
+		wrapBounds(index, count);
+		return data[index];
+	}
+
+	constexpr DataType at(IndexType index) const {
+		assertExists();
+		wrapBounds(index, count);
+		return data[index];
+	}
+
+	constexpr PointerType		data()			{return contents;	}
+	constexpr ConstPointerType	data() const	{return contents;	}
+
+	constexpr IteratorType		begin()			{return contents;		}
+	constexpr IteratorType		end()			{return contents+count;	}
+	constexpr ConstIteratorType	begin() const	{return contents;		}
+	constexpr ConstIteratorType	end() const		{return contents+count;	}
+
+	constexpr ReverseIteratorType		rbegin()		{return contents+count;	}
+	constexpr ReverseIteratorType		rend()			{return contents;		}
+	constexpr ConstReverseIteratorType	rbegin() const	{return contents+count;	}
+	constexpr ConstReverseIteratorType	rend() const	{return contents;		}
+
+	constexpr PointerType		cbegin()		{return contents;		}
+	constexpr PointerType		cend()			{return contents+count;	}
+	constexpr ConstPointerType	cbegin() const	{return contents;		}
+	constexpr ConstPointerType	cend() const	{return contents+count;	}
+
+	constexpr ReferenceType			front()			{return contents[0];		}
+	constexpr ReferenceType 		back()			{return contents[count-1];	}
+	constexpr ConstReferenceType	front() const	{return contents[0];		}
+	constexpr ConstReferenceType	back() const	{return contents[count-1];	}
+
+	constexpr PointerType size()	{return count;		}
+	constexpr PointerType empty()	{return count == 0;	}
 
 private:
-	DataType*	data	= nullptr;
-	usize		count	= S;
+	constexpr void assertExists() {
+		if (!(contents && count))
+			throw Error::NonexistentValue(
+				"No data was bound to this span!",
+				__FILE__
+			);
+	}
+
+	DataType*	contents	= nullptr;
+	usize		count		= S;
 };
 
 CTL_NAMESPACE_END

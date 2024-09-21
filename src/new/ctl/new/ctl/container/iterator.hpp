@@ -10,7 +10,7 @@
 
 CTL_NAMESPACE_BEGIN
 
-template<class TData, bool REVERSE = false, Type::Integer TIndex = size_t>
+template<class TData, bool REVERSE = false, Type::Integer TIndex = usize>
 struct Iterator: Typed<TData>, Indexed<TIndex>, Ordered, SelfIdentified<TData, REVERSE, TIndex> {
 public:
 	using Typed				= Typed<TData>;
@@ -88,10 +88,10 @@ private:
 	PointerType iterand = nullptr;
 };
 
-template<class TData>
-using ForwardIterator = Iterator<TData, false>;
-template<class TData>
-using ReverseIterator = Iterator<TData, true>;
+template<class TData, Type::Integer TIndex = usize>
+using ForwardIterator = Iterator<TData, false, TIndex>;
+template<class TData, Type::Integer TIndex = usize>
+using ReverseIterator = Iterator<TData, true, TIndex>;
 
 template<class T>
 concept IteratorType = requires {
@@ -102,13 +102,23 @@ concept IteratorType = requires {
 
 template<class TData, Type::Integer TIndex>
 struct Iteratable: Typed<TData>, Indexed<TIndex> {
-	using IndexType	= Indexed<TIndex>::IndexType;
-	using SizeType	= Indexed<TIndex>::IndexType;
+	using Indexed	= Indexed<TIndex>;
+	using Typed		= Typed<TData>;
 
-	typedef Iterator<DataType, false, SizeType>		IteratorType;
-	typedef Iterator<ConstantType, false, SizeType>	ConstIteratorType;
-	typedef Iterator<DataType, true, SizeType>		ReverseIteratorType;
-	typedef Iterator<ConstantType, true, SizeType>	ConstReverseIteratorType;
+	using
+		Typed::DataType,
+		Typed::ConstantType
+	;
+
+	using
+		Indexed::IndexType,
+		Indexed::SizeType
+	;
+
+	typedef ForwardIterator<DataType, SizeType>		IteratorType;
+	typedef ForwardIterator<ConstantType, SizeType>	ConstIteratorType;
+	typedef ReverseIterator<DataType, SizeType>		ReverseIteratorType;
+	typedef ReverseIterator<ConstantType, SizeType>	ConstReverseIteratorType;
 
 protected:
 	constexpr static void wrapBounds(IndexType& index, SizeType const& count) {

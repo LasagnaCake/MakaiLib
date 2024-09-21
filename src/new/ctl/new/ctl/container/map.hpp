@@ -7,19 +7,45 @@
 #include "../algorithm/hash.hpp"
 #include "pair.hpp"
 
-template<class TKey, class TValue, Type::Integer TIndex = size_t, class TPair = Pair<TKey, TValue>>
+template<class TKey, class TValue, template<class TKey, class TValue> class TPair = Pair>
+struct Collected {
+	typedef Typed<TKey>			Key;
+	typedef Typed<TValue>		Value;
+
+	typedef TKey				KeyType;
+	typedef TValue				ValueType;
+	typedef TPair<TKey, TValue>	PairType;
+};
+
+template<class TKey, class TValue, Type::Integer TIndex = usize, class TPair = KeyValuePair<TKey, TValue>>
 struct OrderedMap:
 	List<TPair<TKey, TValue>, TIndex>,
 	Collected<TKey, TValue, TPair>,
-	SelfIdentified<OrderedMap<TKey, TValue, TIndex, TPair>>
+	SelfIdentified<OrderedMap<TKey, TValue, TIndex, TPair>>,
+	Derived<List<TPair<TKey, TValue>, TIndex>>,
+
 requires (
 	Type::Comparable::Threeway<TKey, TKey>
 &&	PairType<TPair>
 ) {
 public:
-	using List<PairType>::List;
+	using Derived			= Derived<List<TPair<TKey, TValue>, TIndex>>;
+	using Collected			= Collected<TKey, TValue, TPair>;
+	using SelfIdentified	= SelfIdentified<OrderedMap<TKey, TValue, TIndex, TPair>>;
 
-	constexpr Value::ReferenceType at(KeyType const& key) {
+	using BaseType = typename Derived::Bases::FirstType;
+
+	using
+		typename Collected::KeyType,
+		typename Collected::ValueType,
+		typename Collected::PairType
+	;
+
+	using SelfIdentified::SelfType;
+
+	using BaseType::BaseType;
+
+	constexpr typename ValueType& at(KeyType const& key) {
 		if (empty()) return pushBack({key}).back().value;
 		PairType* start = cbegin();
 		while(start != cend()) {
@@ -52,7 +78,7 @@ public:
 private:
 };
 
-template<class TKey, class TValue, Type::Integer TIndex = size_t, class TPair = Pair<TKey, TValue>, class THasher = Hasher>
+template<class TKey, class TValue, Type::Integer TIndex = usize, class TPair = Pair<TKey, TValue>, class THasher = Hasher>
 struct HashMap:
 	List<TPair<TKey, TValue>, TIndex>,
 	Collected<TKey, TValue, TPair>,

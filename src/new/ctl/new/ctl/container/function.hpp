@@ -38,6 +38,12 @@ class Function<TReturn(TArgs...)>:
 	Argumented<TArgs...>,
 	Functional<TReturn(TArgs...)> {
 private:
+	using Functional		= Functional<TReturn(TArgs...)>;
+	using SelfIdentified	= SelfIdentified<Function<TReturn, TArgs...>>;
+	using Typed				= Typed<TReturn>;
+	using Returnable		= Returnable<TReturn>;
+	using Argumented		= Argumented<TArgs...>;
+
 	Impl::Partial::Function<ReturnType, TArgs...>* func{nullptr};
 
 	template<typename TFunction>
@@ -136,9 +142,9 @@ public:
 	constexpr Helper::PartialOrder operator<=>(Functor const& other) const {return id <=> other.id;}
 
 private:
-	WrapperType				func;
-	size_t					id		= 0;
-	inline static size_t	count	= 0;
+	WrapperType			func;
+	usize				id		= 0;
+	inline static usize	count	= 0;
 };
 
 CTL_NAMESPACE_END

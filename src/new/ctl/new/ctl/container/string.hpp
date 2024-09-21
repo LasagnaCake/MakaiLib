@@ -19,6 +19,34 @@ struct BaseString:
 	Derived<List<TChar, TIndex>>,
 	StringLiterable<TChar> {
 public:
+	using Iteratable		= Iteratable<TData, TIndex>;
+	using SelfIdentified	= SelfIdentified<TData, REVERSE, TIndex>;
+	using Derived			= Derived<List<TChar, TIndex>>;
+
+	using BaseType	= typename Derived::Types::FirstType;
+
+	using
+		typename BaseType::DataType,
+		typename BaseType::PointerType,
+		typename BaseType::ReferenceType,
+		typename BaseType::ConstReferenceType,
+		typename BaseType::ArgumentListType
+	;
+
+	using
+		typename BaseType::IndexType,
+		typename BaseType::SizeType
+	;
+
+	using
+		typename BaseType::IteratorType,
+		typename BaseType::ReverseIteratorType
+	;
+
+	using
+		typename SelfIdentified::SelfType
+	;
+
 	// Stream types
 	typedef std::basic_ostream<DataType>	OutputStreamType;
 	typedef std::basic_istream<DataType>	InputStreamType;
@@ -33,7 +61,7 @@ public:
 		SizeType len = 0;
 		while (v[len++] != '\0' && len != maxSize);
 		reserve(len);
-		memcpy(v, cbegin(), len * sizeof(DataType));
+		MX::memcpy(v, cbegin(), len * sizeof(DataType));
 	}
 
 	template<class... Args>
@@ -45,7 +73,7 @@ public:
 	template<SizeType S>
 	constexpr BaseString(const DataType (const& v)[S]) {
 		reserve(S);
-		memcpy(v, cbegin(), S * sizeof(DataType));
+		MX::memcpy(v, cbegin(), S * sizeof(DataType));
 	}
 
 	constexpr OutputStreamType const& operator<<(OutputStreamType& o) const	{o << cstr(); return out;}
@@ -115,7 +143,7 @@ public:
 		if (nullTerminated()) return cbegin();
 		strbuflen = size() + 1;
 		strbuf = new DataType[strbuflen];
-		memcpy(strbuf, cbegin(), size());
+		MX::memcpy(strbuf, cbegin(), size());
 		strbuf[size()] = '\0';
 		return strbuf;
 	}
@@ -194,7 +222,7 @@ public:
 	constexpr BaseStaticString(const DataType* const& str) {
 		SizeType len = 0;
 		while (v[len++] != '\0' && len != MAX_SIZE);
-		memcpy(str, cbegin(), (len < length ? len : length) * sizeof(DataType));
+		MX::memcpy(str, cbegin(), (len < length ? len : length) * sizeof(DataType));
 	}
 
 	template<IndexType BEGIN, SizeType N = length>
@@ -202,7 +230,7 @@ public:
 		constexpr SizeType start	= wrapAround(BEGIN);
 		constexpr SizeType stop		= ((start + N) < length) ? start + N : length;
 		BaseStaticString<stop - start + 1, TChar, TIndex> result('\0');
-		memcpy(cbegin() + begin, result(), stop - start);
+		MX::memcpy(cbegin() + begin, result(), stop - start);
 		return result;
 	}
 

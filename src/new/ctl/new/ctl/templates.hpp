@@ -4,7 +4,10 @@
 #include <initializer_list>
 #include "ctypes.hpp"
 #include "typeinfo.hpp"
+#include "namespace.hpp"
 #include "typetraits/traits.hpp"
+
+CTL_NAMESPACE_BEGIN
 
 template<class TSelf>
 struct SelfIdentified {
@@ -121,5 +124,7 @@ template<typename T>
 struct StringLiterable {
 	typedef StringLiteralType T const*;
 };
+
+CTL_NAMESPACE_END
 
 #endif // CTL_CLASS_TEMPLATES_H

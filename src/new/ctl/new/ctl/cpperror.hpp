@@ -20,12 +20,12 @@ public:
 	using SelfIdentified	= SelfIdentified<Exception>;
 
 	using
-		DataType			= typename Typed::DataType,
-		ConstReferenceType	= typename Typed::ConstReferenceType
+		typename Typed::DataType,
+		typename Typed::ConstReferenceType
 	;
 
 	using
-		SelfType	= typename SelfIdentified::SelfType
+		typename SelfIdentified::SelfType
 	;
 
 	char const* const message;
@@ -90,7 +90,7 @@ public:
 
 	using
 		BaseType			= typename Derived::Bases::FirstType,
-		StringLiteralType	= typename StringLiterable::StringLiteralType;
+		typename StringLiterable::StringLiteralType
 	;
 
 	const DataType type;

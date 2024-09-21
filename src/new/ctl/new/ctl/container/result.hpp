@@ -6,6 +6,8 @@
 #include "nullable.hpp"
 #include "function.hpp"
 
+CTL_NAMESPACE_BEGIN
+
 template<typename TData, typename TError>
 class Result:
 public SelfIdentitied<Result<TData, TError>>,
@@ -56,5 +58,7 @@ private:
 	ResultWrapper	result;
 	ResultState		state;
 };
+
+CTL_NAMESPACE_END
 
 #endif // CTL_CONTAINER_RESULT_H

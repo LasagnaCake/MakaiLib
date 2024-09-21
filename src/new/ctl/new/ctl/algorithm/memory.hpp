@@ -14,6 +14,8 @@
 
 // One day... one day these will work without builtins...
 
+CTL_NAMESPACE_BEGIN
+
 // MX: Mem* eXtensions (memcpy, memmove, memcmp, memset...)
 namespace MX {
 	typedef uint8* Address;
@@ -115,5 +117,7 @@ namespace MX {
 		return memzero((Address)dst, sizeof(T));
 	}
 }
+
+CTL_NAMESPACE_END
 
 #endif // CTL_ALGORITHM_MEMORY_H

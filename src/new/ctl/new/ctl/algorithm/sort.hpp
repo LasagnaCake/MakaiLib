@@ -10,12 +10,13 @@ namespace Type {
 	concept Sortable = Comparable::Threeway<T, T> && Comparable::Equals<T, T>;
 }
 
+CTL_NAMESPACE_BEGIN
+
 template <class T>
 concept SortableIterator =
 	IteratorType<T>
 &&	Sortable<typename T::DataType>
 ;
-
 
 namespace Sorting {
 	template<Type::Sortable T>
@@ -45,8 +46,8 @@ namespace Sorting {
 			*left	= new T[szLeft]
 			*right	= new T[szRight]
 		;
-		memcpy(left, arr, szLeft);
-		memcpy(right, arr+szLeft, szRight);
+		MX::memcpy(left, arr, szLeft);
+		MX::memcpy(right, arr+szLeft, szRight);
 		mergeSort(left, szLeft);
 		mergeSort(lright, szRight);
 		usize
@@ -84,8 +85,8 @@ namespace Sorting {
 				*left = new T[szLeft]
 				*right = new T[szRight]
 			;
-			memcpy(left, arr, szLeft);
-			memcpy(right, arr+szLeft, szRight);
+			MX::memcpy(left, arr, szLeft);
+			MX::memcpy(right, arr+szLeft, szRight);
 			usize
 				i = 0,
 				j = 0,
@@ -157,5 +158,7 @@ template <SortableIterator T>
 constexpr void sort(T const& begin, T const& end) {
 	Sorting::vivoSort(&*begin, end - begin);
 }
+
+CTL_NAMESPACE_END
 
 #endif // CTL_ALGORITHM_FUNCTIONS_H

@@ -1,9 +1,12 @@
 #ifndef CTL_CONTAINER_NULLABLE_H
 #define CTL_CONTAINER_NULLABLE_H
 
+#include "../namespace.hpp"
 #include "../templates.hpp"
 #include "../typetraits/traits.hpp"
 #include "error.hpp"
+
+CTL_NAMESPACE_BEGIN
 
 template<class TData> class Nullable;
 
@@ -104,5 +107,7 @@ private:
 	DataType data;
 	bool isSet = false;
 };
+
+CTL_NAMESPACE_END
 
 #endif // CTL_CONTAINER_NULLABLE_H

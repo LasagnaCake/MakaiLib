@@ -22,25 +22,29 @@ public:
 	using SelfIdentified	= SelfIdentified<TData, REVERSE, TIndex>;
 
 	using
-		DataType			= typename Iteratable::DataType,
-		PointerType			= typename Iteratable::PointerType,
-		ReferenceType		= typename Iteratable::ReferenceType,
-		ConstReferenceType	= typename Iteratable::ConstReferenceType
-		ArgumentListType	= typename Iteratable::ArgumentListType
+		typename Iteratable::DataType,
+		typename Iteratable::ConstantType,
+		typename Iteratable::PointerType,
+		typename Iteratable::ConstPointerType,
+		typename Iteratable::ReferenceType,
+		typename Iteratable::ConstReferenceType
+		typename Iteratable::ArgumentListType
 	;
 
 	using
-		IndexType	= typename Iteratable::IndexType,
-		SizeType	= typename Iteratable::SizeType
+		typename Iteratable::IndexType,
+		typename Iteratable::SizeType
 	;
 
 	using
-		IteratorType		= typename Iteratable::IteratorType,
-		ReverseIteratorType	= typename Iteratable::ReverseIteratorType
+		typename Iteratable::IteratorType,
+		typename Iteratable::ConstIteratorType,
+		typename Iteratable::ReverseIteratorType
+		typename Iteratable::ConstReverseIteratorType
 	;
 
 	using
-		SelfType	= typename SelfIdentified::SelfType
+		typename SelfIdentified::SelfType
 	;
 
 	constexpr List() {invoke(1);}
@@ -52,7 +56,7 @@ public:
 	constexpr List(SizeType const& size, DataType const& fill) {
 		invoke(size);
 		for (usize i = 0; i < size; ++i)
-			data[i] = fill;
+			contents[i] = fill;
 		count = size;
 	}
 
@@ -64,27 +68,27 @@ public:
 	template<SizeType COUNT>
 	constexpr List(DataType const(& values)[COUNT]) {
 		invoke(size);
-		copy(values, data, COUNT);
+		copy(values, contents, COUNT);
 		count = COUNT;
 	}
 
 	constexpr List(SelfType const& other) {
 		invoke(other.maximum);
-		copy(other.data, data, other.count);
+		copy(other.contents, contents, other.count);
 		count = other.count;
 	}
 
 	constexpr List(SelfType&& other) {
-		maximum		= move(other.maximum);
-		data		= move(other.data);
-		count		= move(other.count);
-		magnitude	= move(other.magnitude);
-		other.data	= nullptr;
+		maximum			= move(other.maximum);
+		contents		= move(other.contents);
+		count			= move(other.count);
+		magnitude		= move(other.magnitude);
+		other.contents	= nullptr;
 	}
 
 	constexpr List(IteratorType const& begin, IteratorType const& end) {
 		invoke(end - begin);
-		copy(begin, data, end - begin);
+		copy(begin, contents, end - begin);
 		count = end - begin;
 	}
 
@@ -95,17 +99,17 @@ public:
 		count = end - begin;
 	}
 
-	constexpr ~List() {if (data) delete[] data;}
+	constexpr ~List() {if (contents) delete[] contents;}
 
 	constexpr SelfType& pushBack(DataType const& value) {
 		if (count >= maximum)
 			increase();
-		data[count++] = value;
+		contents[count++] = value;
 		return *this;
 	}
 
 	constexpr DataType popBack() {
-		DataType value = data[count];
+		DataType value = contents[count];
 		count--;
 		return value;
 	}
@@ -115,8 +119,8 @@ public:
 		wrapBounds(index, count);
 		SizeType span = count - index;
 		if (count >= maximum) increase();
-		copy(&data[index], &data[index+1], span);
-		data[index] = value;
+		copy(&contents[index], &contents[index+1], span);
+		contents[index] = value;
 		++count;
 		return *this;
 	}
@@ -126,8 +130,8 @@ public:
 		wrapBounds(index, count);
 		while ((count + other.count) < maximum)
 			increase();
-		copy(&data[index], &data[index+other.count], other.count);
-		copy(other.data, &data[index], other.count);
+		copy(&contents[index], &contents[index+other.count], other.count);
+		copy(other.contents, &contents[index], other.count);
 		count += other.count;
 		return *this;
 	}
@@ -151,12 +155,12 @@ public:
 
 	constexpr SelfType& resize(SizeType const& newSize) {
 		DataType* newData = new T[newSize];
-		if (data) {
-			copy(data, newData, count);
-			delete[] data;
+		if (contents) {
+			copy(contents, newData, count);
+			delete[] contents;
 		}
 		maximum = newSize;
-		data = newData;
+		contents = newData;
 		if (count > newSize)
 			count = newSize;
 		recalculateMagnitude();
@@ -171,7 +175,7 @@ public:
 	constexpr SelfType& reserve(SizeType const& count, DataType const& fill) {
 		reserve(count);
 		for (SizeType i = 0; i < count; ++i);
-			data[i] = fill;
+			contents[i] = fill;
 		this->count = count;
 		return *this;
 	}
@@ -179,7 +183,7 @@ public:
 	constexpr SelfType& resize(SizeType const& newSize, DataType const& fill) {
 		resize(newSize);
 		for (SizeType i = 0; i < count; ++i);
-			data[i] = fill;
+			contents[i] = fill;
 		this->count = count;
 		return *this;
 	}
@@ -237,7 +241,7 @@ public:
 	) {
 		IndexType pivot = count / 2, index = pivot;
 		while (pivot != 0) {
-			switch (data[index] <=> value) {
+			switch (contents[index] <=> value) {
 				case OrderType::EQUAL:		return index;
 				case OrderType::GREATER:	index -= (pivot /= 2);	break;
 				case OrderType::LESS:		index += (pivot /= 2);	break;
@@ -249,7 +253,7 @@ public:
 
 	constexpr SelfType& remove(IndexType const& index) {
 		assertIsInBounds(index);
-		copy(&data[index], &data[index-1], count-index);
+		copy(&contents[index], &contents[index-1], count-index);
 	}
 
 	constexpr SelfType& erase(IndexType const& index) {
@@ -287,7 +291,7 @@ public:
 
 	constexpr SelfType& appendBack(SelfType const& other) {
 		expand(other.count);
-		copy(other.data, data + other.count, other.count);
+		copy(other.contents, contents + other.count, other.count);
 		return *this;
 	}
 
@@ -310,49 +314,52 @@ public:
 	template<SizeType COUNT>
 	constexpr SelfType& appendBack(DataType const(& values)[COUNT]) {
 		expand(other.count);
-		copy(values, data + other.count, COUNT);
+		copy(values, contents + other.count, COUNT);
 		return *this;
 	}
 
 	constexpr SelfType& clear() {count = 0;}
 
 	constexpr SelfType& dispose() {
-		if (data) delete[] data;
+		if (contents) delete[] contents;
 		count = 0;
-		data = nullptr;
+		contents = nullptr;
 		recalculateMagnitude();
 	}
 
-	constexpr IteratorType		begin()			{return data;		}
-	constexpr IteratorType		end()			{return data+count;	}
-	constexpr ConstIteratorType	begin() const	{return data;		}
-	constexpr ConstIteratorType	end() const		{return data+count;	}
+	constexpr PointerType		data()			{return contents;	}
+	constexpr ConstPointerType	data() const	{return contents;	}
 
-	constexpr ReverseIteratorType		rbegin()		{return data+count;	}
-	constexpr ReverseIteratorType		rend()			{return data;		}
-	constexpr ConstReverseIteratorType	rbegin() const	{return data+count;	}
-	constexpr ConstReverseIteratorType	rend() const	{return data;		}
+	constexpr IteratorType		begin()			{return contents;		}
+	constexpr IteratorType		end()			{return contents+count;	}
+	constexpr ConstIteratorType	begin() const	{return contents;		}
+	constexpr ConstIteratorType	end() const		{return contents+count;	}
 
-	constexpr PointerType		cbegin()		{return data;		}
-	constexpr PointerType		cend()			{return data+count;	}
-	constexpr ConstPointerType	cbegin() const	{return data;		}
-	constexpr ConstPointerType	cend() const	{return data+count;	}
+	constexpr ReverseIteratorType		rbegin()		{return contents+count;	}
+	constexpr ReverseIteratorType		rend()			{return contents;		}
+	constexpr ConstReverseIteratorType	rbegin() const	{return contents+count;	}
+	constexpr ConstReverseIteratorType	rend() const	{return contents;		}
 
-	constexpr ReferenceType			front()			{return data[0];		}
-	constexpr ReferenceType 		back()			{return data[count-1];	}
-	constexpr ConstReferenceType	front() const	{return data[0];		}
-	constexpr ConstReferenceType	back() const	{return data[count-1];	}
+	constexpr PointerType		cbegin()		{return contents;		}
+	constexpr PointerType		cend()			{return contents+count;	}
+	constexpr ConstPointerType	cbegin() const	{return contents;		}
+	constexpr ConstPointerType	cend() const	{return contents+count;	}
+
+	constexpr ReferenceType			front()			{return contents[0];		}
+	constexpr ReferenceType 		back()			{return contents[count-1];	}
+	constexpr ConstReferenceType	front() const	{return contents[0];		}
+	constexpr ConstReferenceType	back() const	{return contents[count-1];	}
 
 	constexpr ReferenceType at(IndexType index) {
 		assertIsInBounds(index);
 		wrapBounds(index, count);
-		return data[index];
+		return contents[index];
 	}
 
 	constexpr ConstReferenceType at(IndexType index) const {
 		assertIsInBounds(index);
 		wrapBounds(index, count);
-		return data[index];
+		return contents[index];
 	}
 
 	constexpr ReferenceType			operator[](IndexType const& index)			{return at(index);}
@@ -388,7 +395,7 @@ public:
 		while (result) {
 			if (i == count || i == other.count)
 				return count == other.count;
-			result = data[i] == other.data[i];
+			result = contents[i] == other.contents[i];
 			++i;
 		}
 		return result;
@@ -401,7 +408,7 @@ public:
 		while (result == OrderType::EQUAL) {
 			if (i == count || i == other.count)
 				return count <=> other.count;
-			result = data[i] <=> other.data[i];
+			result = contents[i] <=> other.contents[i];
 			++i;
 		}
 		return result;
@@ -415,7 +422,7 @@ public:
 			min		= (count < other.count ? count : other.count)
 		;
 		for (SizeType i = 0; i < max; ++i)
-			if (data[i] != other.data[i]) ++diff;
+			if (contents[i] != other.contents[i]) ++diff;
 		return diff + (max - min);
 	}
 
@@ -505,12 +512,12 @@ public:
 
 private:
 	constexpr static void copy(DataType* src, DataType* dst, SizeType count) {
-		memcpy<DataType>(dst, src, count);
+		MX::memcpy<DataType>(dst, src, count);
 	};
 
 	constexpr SelfType& invoke(SizeType const& size) {
-		if (data) delete[] data;
-		data = new T[size];
+		if (contents) delete[] contents;
+		contents = new T[size];
 		maximum = size;
 		recalculateMagnitude();
 		return *this;
@@ -570,314 +577,7 @@ private:
 	SizeType	magnitude	= 1;
 	SizeType	maximum		= 0;
 	SizeType	count		= 0;
-	DataType*	data		= nullptr;
-};
-
-template<class TData, Type::Integer TIndex = usize>
-class LinkedList: Typed<TData>, Indexed<TIndex>, SelfIdentified<List<TData, TIndex>> {
-public:
-	struct Node {
-		DataType	value		= nullptr;
-		Node*		previous	= nullptr;
-		Node*		next		= nullptr;
-
-		constexpr bool operator==(DataType const& other) const
-		requires Type::Comparable::Equals<DataType, DataType> {
-			return value == other;
-		}
-
-		constexpr OrderType operator<=>(DataType const& other) const
-		requires Type::Comparable::Threeway<DataType, DataType> {
-			return value <=> other;
-		}
-	};
-
-	template<bool REVERSE = false>
-	class NodeIterator: public Iterator<Node, REVERSE, SizeType> {
-	public:
-		constexpr NodeIterator() {}
-
-		constexpr NodeIterator(PointerType const& value): node(value)	{}
-		constexpr NodeIterator(PointerType&& value): node(move(value))	{}
-
-		constexpr NodeIterator(NodeIterator const& other): node(other.node)		{}
-		constexpr NodeIterator(NodeIterator&& other): node(move(other.node))	{}
-
-		constexpr ReferenceType operator*()	{return node->data;		}
-		constexpr PointerType operator->()	{return &node->data;	}
-
-		constexpr ReferenceType operator*() const	{return node->data;		}
-		constexpr PointerType operator->() const	{return &node->data;	}
-
-		NodeIterator& operator++()		{step(); return *this;								}
-		NodeIterator operator++(int)	{NodeIterator copy = *this; ++(*this); return copy;	}
-
-		constexpr operator PointerType() const			{return &node->data;	}
-		constexpr operator ReferenceType()				{return node->data;		}
-		constexpr operator ConstReferenceType() const	{return node->data;		}
-
-		constexpr bool operator==(NodeIterator const& other) const {return node == other.node;	}
-
-	private:
-		constexpr void step() {
-			if constexpr (REVERSE)	node = node->previous;
-			else					node = node->next;
-		}
-
-		Node* node = nullptr;
-	};
-
-	// Iterators
-	typedef NodeIterator<false>	IteratorType;
-	typedef NodeIterator<false>	ConstIteratorType;
-	typedef NodeIterator<true>	ReverseIteratorType;
-	typedef NodeIterator<true>	ConstReverseIteratorType;
-
-	constexpr LinkedList() {}
-
-	constexpr LinkedList(SelfType const& other) {
-		for (DataType const& v: other)
-			pushBack(v);
-	}
-
-	constexpr LinkedList(ArgumentListType const& other) {
-		for (DataType const& v: other)
-			pushBack(v);
-	}
-
-	constexpr LinkedList(SelfType&& other) {
-		for (DataType const& v: other)
-			pushBack(v);
-	}
-
-	constexpr LinkedList(SizeType const& size, DataType const& fill) {
-		for (SizeType i = 0; i < size; ++i)
-			pushBack(fill);
-	}
-
-	constexpr LinkedList(ArgumentListType const& values) {
-		invoke(values.size());
-		for (DataType& v: values)
-			pushBack(v);
-	}
-
-	template<SizeType COUNT>
-	constexpr LinkedList(DataType(const& values)[COUNT]) {
-		for (SizeType i = 0; i < COUNT; ++i)
-			pushBack(values[i]);
-	}
-
-	constexpr LinkedList(IteratorType const& begin, IteratorType const& end) {
-		for (IteratorType i = begin; i != end; ++i)
-			pushBack(i);
-	}
-
-	constexpr LinkedList(ReverseIteratorType const& begin, ReverseIteratorType const& end) {
-		for (IteratorType i = begin; i != end; ++i)
-			pushBack(i);
-	}
-
-	constexpr ~LinkedList() {
-		while (!empty()) popBack();
-	}
-
-	constexpr SelfType& pushBack(DataType const& value) {
-		assertNotAtItsLimit();
-		Node* newTail = new Node{value};
-		if (tail) {
-			tail->next = newTail;
-			newTail->previous = tail;
-		}
-		tail = newTail;
-		if (!head)
-			head = newTail;
-		count++;
-		return *this;
-	}
-
-	constexpr SelfType& pushFront(DataType const& value) {
-		assertNotAtItsLimit();
-		Node* newHead = new Node{value};
-		if (head) {
-			head->previous = newHead;
-			newHead->next = head;
-		}
-		head = newHead;
-		if (!tail)
-			tail = newHead;
-		count++;
-		return *this;
-	}
-
-	constexpr DataType popBack() {
-		if (empty()) emptyContainerError();
-		DataType value = tail->value;
-		Node* newTail = tail->previous;
-		if (tail->previous)
-			tail->previous->next = nullptr;
-		if (head == tail)
-			head = newTail;
-		delete tail;
-		tail = newTail;
-		count--;
-		return value;
-	}
-
-	constexpr DataType popFront() {
-		if (empty()) emptyContainerError();
-		DataType value = head->value;
-		Node* newHead = head->next;
-		if (head->next)
-			head->next->previous = nullptr;
-		if (tail == head)
-			tail = newHead;
-		delete head;
-		head = newHead;
-		count--;
-		return value;
-	}
-
-	constexpr SelfType& insert(DataType const& value, IndexType index) {
-		assertIsInBounds(index);
-		wrapBounds(index, count);
-		Node* current = head;
-		for (SizeType i = 0; i < index; ++i)
-			current = current->next;
-		Node* newCurrent = new Node{data, current->previous, current};
-		newCurrent->next = current;
-		current->previous = newCurrent;
-		return *this;
-	}
-
-	constexpr ReferenceType at(IndexType index) {
-		wrapBounds(index, count);
-		assertIsInBounds(index);
-		Node* current = head;
-		for (SizeType i = 0; i < index; ++i)
-			current = current->next;
-		return current->value;
-	}
-
-	constexpr ConstReferenceType at(IndexType index) const {
-		wrapBounds(index, count);
-		assertIsInBounds(index);
-		Node* current = head;
-		for (SizeType i = 0; i < index; ++i)
-			current = current->next;
-		return current->value;
-	}
-
-	constexpr ReferenceType operator[](IndexType const& index)				{return at(index);}
-	constexpr ConstReferenceType operator[](IndexType const& index) const	{return at(index);}
-
-	constexpr SizeType size() const		{return count;		}
-	constexpr SizeType empty() const	{return count == 0;	}
-
-	constexpr IteratorType		begin()			{return head;		}
-	constexpr IteratorType		end()			{return nullptr;	}
-	constexpr ConstIteratorType	begin() const	{return head;		}
-	constexpr ConstIteratorType	end() const		{return nullptr;	}
-
-	constexpr ReverseIteratorType		rbegin()		{return head;		}
-	constexpr ReverseIteratorType		rend()			{return nullptr;	}
-	constexpr ConstReverseIteratorType	rbegin() const	{return head;		}
-	constexpr ConstReverseIteratorType	rend() const	{return nullptr;	}
-
-	constexpr ReferenceType			front()			{return head->data;	}
-	constexpr ReferenceType 		back()			{return tail->data;	}
-	constexpr ConstReferenceType	front() const	{return head->data;	}
-	constexpr ConstReferenceType	back() const	{return tail->data;	}
-
-	constexpr bool operator==(SelfType const& other) const
-	requires Type::Comparable::Equals<DataType, DataType> {
-		return equals(other);
-	}
-
-	constexpr OrderType operator<=>(SelfType const& other) const
-	requires Type::Comparable::Threeway<DataType, DataType> {
-		return compare(other);
-	}
-
-	constexpr bool equals(SelfType const& other) const
-	requires Type::Comparable::Equals<DataType, DataType> {
-		bool result = true;
-		IndexType i = 0;
-		Node* s = head;
-		Node* o = other.head;
-		while (result) {
-			if (i == count || i == other.count)
-				return count == other.count;
-			result = s->data == o->data;
-			s = s->next;
-			o = o->next;
-			++i;
-		}
-		return result;
-	}
-
-	constexpr OrderType compare(SelfType const& other) const
-	requires Type::Comparable::Threeway<DataType, DataType> {
-		OrderType result = OrderType::EQUAL;
-		IndexType i = 0;
-		Node* s = head;
-		Node* o = other.head;
-		while (result == OrderType::EQUAL) {
-			if (i == count || i == other.count)
-				return count <=> other.count;
-			result = s->data <=> o->data;
-			s = s->next;
-			o = o->next;
-			++i;
-		}
-		return result;
-	}
-
-	constexpr SizeType disparity(SelfType const& other) const
-	requires Type::Comparable::NotEquals<DataType, DataType> {
-		SizeType
-			diff	= 0,
-			max		= (count > other.count ? count : other.count),
-			min		= (count < other.count ? count : other.count)
-		;
-		Node* s = head;
-		Node* o = other.head;
-		for (SizeType i = 0; i < min; ++i) {
-			if (s->data != o->data) ++diff;
-			s = s->next;
-			o = o->next;
-		}
-		return diff + (max - min);
-	}
-
-private:
-	void assertIsInBounds(IndexType const& index) {
-		if (index > count-1) outOfBoundsError(index);
-	}
-
-	void assertNotAtItsLimit() {
-		if (count >= highest) atItsLimitError();
-	}
-
-	[[noreturn]] constexpr void invalidSizeError(SizeType const& size) {
-		throw Exception("Invalid list size!");
-	}
-
-	[[noreturn]] constexpr void atItsLimitError() {
-		throw Exception("Maximum list capacity reached!");
-	}
-
-	[[noreturn]] constexpr void outOfBoundsError(IndexType const& index) {
-		throw Exception("Array is out of bounds!");
-	}
-
-	[[noreturn]] constexpr void emptyError() {
-		throw Exception("Container is empty!");
-	}
-
-	SizeType count = 0;
-
-	Node* head = nullptr;
-	Node* tail = nullptr;
+	DataType*	contents	= nullptr;
 };
 
 typedef List<uint8> BinaryData;

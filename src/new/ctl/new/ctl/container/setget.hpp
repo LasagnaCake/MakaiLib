@@ -3,6 +3,8 @@
 
 #include "function.hpp"
 
+CTL_NAMESPACE_BEGIN
+
 template<typename TData>
 struct Setter:
 	SelfIdentified<Setter<TData>>,
@@ -75,5 +77,7 @@ public:
 	constexpr SelfType& set(DataType const& value)			{Setter::set(value); return *this;	}
 	constexpr SelfType& operator=(DataType const& value)	{return set(value);					}
 };
+
+CTL_NAMESPACE_END
 
 #endif // CTL_CONTAINER_SETGET_H
