@@ -1,7 +1,272 @@
 #ifndef HELPING_HAND_H
 #define HELPING_HAND_H
 
+#ifdef CTL_DEBUG
+#include <iostream>
+#endif // CTL_DEBUG
+#include <syncstream>
+#include <string>
+#include <vector>
+#include <list>
+#include <filesystem>
+#include <locale>
+#include <codecvt>
+#include <any>
+#include <variant>
+#include <optional>
+#include <span>
+#include <cctype>
+#include <tuple>
+#include <map>
+#include <unordered_map>
+#include <thread>
+#include <regex>
+#ifdef CTL_USE_CPP20_FORMAT
+#include <format>
+#endif // CTL_USE_CPP20_FORMAT
+#include "conceptual.hpp"
+#include "definitions.hpp"
+#include "ctl/ctypes.hpp"
+#include "errors.hpp"
+
+namespace std {
+	constexpr std::string	to_string(std::string const& s)		{return s;	}
+	constexpr std::wstring	to_wstring(std::wstring const& ws)	{return ws;	}
+
+	template<typename T>
+	constexpr std::string	to_string(T const& val)	requires Type::Convertible<T, string>	{return static_cast<string>(val);	}
+	template<typename T>
+	constexpr std::wstring	to_wstring(T const& val) requires Type::Convertible<T, wstring>	{return static_cast<wstring>(val);	}
+
+	constexpr std::string	to_string(char const& c)	{return string() + c;	}
+	constexpr std::wstring	to_wstring(wchar const& wc)	{return wstring() + wc;	}
+}
+
+namespace Fold {
+	template<typename... Args>
+	constexpr bool land(Args const&... args) {
+		return (... && args);
+	}
+
+	template<typename... Args>
+	constexpr bool lor(Args const&... args) {
+		return (... || args);
+	}
+
+	template<typename T, typename... Args>
+	constexpr T band(Args const&... args) {
+		return (... & args);
+	}
+
+	template<typename T, typename... Args>
+	constexpr T bor(Args const&... args) {
+		return (... | args);
+	}
+
+	template<typename T, typename... Args>
+	constexpr T bxor(Args const&... args) {
+		return (... ^ args);
+	}
+
+	template<typename T, typename... Args>
+	constexpr T add(Args const&... args) {
+		return (... + args);
+	}
+
+	template<typename T, typename... Args>
+	constexpr T sub(Args const&... args) {
+		return (... - args);
+	}
+
+	template<typename T, typename... Args>
+	constexpr T mul(Args const&... args) {
+		return (... * args);
+	}
+
+	template<typename T, typename... Args>
+	constexpr T div(Args const&... args) {
+		return (... / args);
+	}
+
+	template<typename T, typename... Args>
+	constexpr T& strins(T& stream, Args const&... args) {
+		(stream << ... << args);
+		return stream;
+	}
+
+	template<typename T, typename... Args>
+	constexpr T avg(Args const&... args) {
+		return (add(args...)) / sizeof...(Args);
+	}
+}
+
 namespace Helper {
+	namespace {
+		using
+			std::vector,
+			std::list,
+			std::map,
+			std::unordered_map,
+			std::string,
+			std::wstring,
+			std::initializer_list,
+			std::pair,
+			std::function,
+			std::variant,
+			std::optional,
+			std::span,
+			std::tuple
+			;
+	}
+
+	typedef string String;
+
+	typedef wstring WideString;
+
+	template<typename T>
+	using Arguments = initializer_list<T>;
+
+	template<typename T>
+	using List = vector<T>;
+
+	template<typename T>
+	using LinkedList = list<T>;
+
+	template<typename K, typename V>
+	using HashMap = unordered_map<K, V>;
+
+	template<typename K, typename V>
+	using SortedMap = map<K, V>;
+
+	template<typename A, typename B>
+	using Pair = pair<A, B>;
+
+	template<typename T>
+	using Entry = Pair<String, T>;
+
+	template<typename T>
+	using Dictionary = HashMap<String, T>;
+
+	template<typename T>
+	using SortedDictionary = SortedMap<String, T>;
+
+	template<typename T>
+	using Function = function<T>;
+
+	template<typename T>
+	using Operation = Function<T(T const&)>;
+
+	template<typename T>
+	using Procedure = Function<void(T)>;
+
+	template<typename... Types>
+	using Poly = variant<Types...>;
+
+	/*template<typename T>
+	using Nullable = optional<T>;*/
+
+	template<typename T, size_t LEN = std::dynamic_extent>
+	using Span = span<T, LEN>;
+
+	template<typename... Types>
+	using Tuple = tuple<Types...>;
+
+	#pragma GCC diagnostic push
+	#pragma GCC diagnostic ignored "-Wunused-variable"
+	struct Discard {
+		template<typename T>constexpr T&& operator=(T&& v)				{return v;}
+		template<typename T>constexpr T const& operator=(T const& v)	{return v;}
+	} static _;
+	#pragma GCC diagnostic pop
+
+	typedef std::strong_ordering	StrongOrder;
+	typedef std::weak_ordering		WeakOrder;
+	typedef std::partial_ordering	PartialOrder;
+
+	typedef List<String>			StringList;
+	typedef Arguments<String>		StringArguments;
+	typedef Pair<String, String>	StringPair;
+
+	typedef std::thread			Thread;
+
+	template<typename T, typename T2>
+	constexpr List<T> convertList(List<T2> const& source) {
+		List<T> res;
+		res.reserve(source.size());
+		for EACH(i, source)
+			res.push_back((T)i);
+		return res;
+	}
+
+	template<typename T, typename T2>
+	constexpr List<T> getKeys(HashMap<T, T2> const& lst) {
+		List<T> keys;
+		keys.reserve(lst.size());
+		for (auto i = lst.begin(); i != lst.end(); i++) {
+			keys.push_back(i->first);
+		}
+		return keys;
+	}
+
+	template<typename T, typename T2>
+	constexpr List<T2> getValues(HashMap<T, T2> const& lst) {
+		List<T2> values;
+		values.reserve(lst.size());
+		for (auto i = lst.begin(); i != lst.end(); i++) {
+			values.push_back(i->second);
+		}
+		return values;
+	}
+
+	template<typename T, typename T2>
+	constexpr List<T> getKeys(SortedMap<T, T2> const& lst) {
+		List<T> keys;
+		keys.reserve(lst.size());
+		for (auto i = lst.begin(); i != lst.end(); i++) {
+			keys.push_back(i->first);
+		}
+		return keys;
+	}
+
+	template<typename T, typename T2>
+	constexpr List<T2> getValues(SortedMap<T, T2> const& lst) {
+		List<T2> values;
+		values.reserve(lst.size());
+		for (auto i = lst.begin(); i != lst.end(); i++) {
+			values.push_back(i->second);
+		}
+		return values;
+	}
+	// If you're using a compiler that supports it, please enable it.
+	// God fucking dammit, MSYS2.
+	#ifdef _USE_CPP20_FORMAT_
+	template<Type::Number T>
+	String floatString(T const& val, size_t const& precision) {
+		return std::format(std::format("{{:.{}f}}", precision), val);
+	}
+	#else
+	template<Type::Number T>
+	inline String floatString(T const& val, size_t const& precision) {
+		if (!precision)
+			return std::to_string((long long)val);
+		std::stringstream ss;
+		Fold::strins(
+			ss,
+			std::fixed,
+			std::setprecision(precision),
+			val
+		);
+		return ss.str();
+	}
+	#endif // _USE_CPP20_FORMAT_
+
+	template<Type::Number T>
+	using NumberFormat = Pair<T, size_t>;
+
+	template<Type::Number T>
+	inline String floatString(NumberFormat<T> const& fmt) {
+		return floatString(fmt->first, fmt->second);
+	}
 
 	constexpr String padString(String str, char const& chr, size_t const& width, bool const& left = true) {
 		size_t const strsz = str.size();
@@ -92,6 +357,72 @@ namespace Helper {
 		return data;
 	}
 
+	constexpr String replace(String str, char const& c, char const& nc) {
+		for (char& sc: str)
+			if (sc == c) sc = nc;
+		return str;
+	}
+
+	constexpr String replace(String str, List<char> const& chars, char const& nc) {
+		for (char const& c: chars)
+			str = replace(str, c, nc);
+		return str;
+	}
+
+	constexpr String replace(String str, Arguments<char> const& chars, char const& nc) {
+		for (char const& c: chars)
+			str = replace(str, c, nc);
+		return str;
+	}
+
+	struct CharacterReplacement {
+		List<char>	targets;
+		char		replacement;
+	};
+
+	constexpr String replace(String str, CharacterReplacement const& rep) {
+		for (char const& c: rep.targets)
+			str = replace(str, c, rep.replacement);
+		return str;
+	}
+
+	constexpr String replace(String str, List<CharacterReplacement> const& reps) {
+		for (CharacterReplacement const& rep: reps)
+			str = replace (str, rep);
+		return str;
+	}
+
+	constexpr String replace(String str, Arguments<CharacterReplacement> const& reps) {
+		for (CharacterReplacement const& rep: reps)
+			str = replace (str, rep);
+		return str;
+	}
+
+	template<typename T>
+	using Enumerated = HashMap<size_t, T>;
+
+	template<typename T>
+	constexpr Enumerated<T> enumerate(List<T> const& lst) {
+		Enumerated<T> res;
+		size_t i = 0;
+		for(auto& elem: lst)
+			res[i++] = elem;
+		return res;
+	}
+
+	template<typename T, typename... Args>
+	constexpr Enumerated<T> enumerate(Args... args)
+	requires (... && Type::Constructible<T, Args>) {
+		Enumerated<T> res;
+		size_t i = 0;
+		((res[i++] = args), ...);
+		return res;
+	}
+
+	constexpr bool isHexString(String const& str) {
+		return std::all_of(str.begin(), str.end(), [](unsigned char const& c)->bool{return std::isxdigit(c);});
+	}
+
 	template<typename T>
 	constexpr void byteCopy(T& from, T& to) {
 		memcpy(&from, &to, sizeof(T));
@@ -112,6 +443,28 @@ namespace Helper {
 			if ((data >> i) & 1) result |= (T(1) << (BIT_WIDTH-1-i));
 		return (result);
 	}
+
+	#ifdef CTL_DEBUG
+	template<typename... Args>
+	constexpr void print(Args... args) {
+		Fold::strins(std::cout, args...);
+	}
+
+	template<typename... Args>
+	constexpr void println(Args... args) {
+		print(args..., "\n");
+	}
+
+	template<typename... Args>
+	constexpr void syncprint(Args... args) {
+		Fold::strins(std::osyncstream(std::cout), args...);
+	}
+
+	template<typename... Args>
+	constexpr void syncprintln(Args... args) {
+		syncprint(args..., "\n");
+	}
+	#endif // CTL_DEBUG
 
 	template<typename T, typename... Args>
 	constexpr List<T> toList(Args const&... args)
@@ -165,6 +518,34 @@ namespace Helper {
 	typedef std::regex				Regex;
 	typedef std::wregex				WideRegex;
 }
+
+#ifdef CTL_DEBUG
+#ifndef DEBUG
+#define DEBUG(...)		Helper::print(__VA_ARGS__)
+#endif // DEBUG
+#ifndef DEBUGLN
+#define DEBUGLN(...)	Helper::println(__VA_ARGS__)
+#endif // DEBUGLN
+#ifndef SYNCDEBUG
+#define SYNCDEBUG(...)		Helper::syncprint(__VA_ARGS__)
+#endif // SYNCDEBUG
+#ifndef SYNCDEBUGLN
+#define SYNCDEBUGLN(...)	Helper::syncprintln(__VA_ARGS__)
+#endif // SYNCDEBUGLN
+#else
+#ifndef DEBUG
+#define DEBUG(...)
+#endif // DEBUG
+#ifndef DEBUGLN
+#define DEBUGLN(...)
+#endif // DEBUGLN
+#ifndef SYNCDEBUG
+#define SYNCDEBUG(...)
+#endif // SYNCDEBUG
+#ifndef SYNCDEBUGLN
+#define SYNCDEBUGLN(...)
+#endif // SYNCDEBUGLN
+#endif // CTL_DEBUG
 
 using Helper::String;
 using Helper::WideString;

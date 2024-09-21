@@ -124,12 +124,17 @@ App::App (
 	DEBUGLN("Setting starting camera...");
 	Graph::Global::camera.aspect	= Vector2(width, height);
 	Graph::Global::camera.fov		= 45deg;
-	DEBUGLN("creating framebuffers...");
+	DEBUGLN("creating default framebuffer...");
 	// Create framebuffer
 	framebuffer.create(width, height);
 	// Create layer buffer
 	layerbuffer.create(width, height);
 	framebuffer();
+	DEBUGLN(Entity::ROOT ? "Root Exists!" : "Root does not exist!");
+	if (!Entity::ROOT) {
+		DEBUGLN("Initializing root tree...");
+		Entity::init();
+	}
 	DEBUGLN("All core systems initialized!");
 }
 
@@ -178,6 +183,8 @@ void App::run() {
 	auto logicFunc	= [&](float delta)-> void {
 		onLogicFrame(delta);
 		taskers.yield(1.0);
+		if (Entity::ROOT)
+			Entity::ROOT->yield(delta);
 	};
 	// Clear screen
 	Makai::Graph::API::setClearColor(background);
