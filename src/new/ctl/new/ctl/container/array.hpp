@@ -24,21 +24,23 @@ public:
 
 	typedef Decay::AsType<DataType[SIZE]> ArrayType;
 
-	static_assert(N <= maxSize, "Array size must not be bigger than highest SizeType!");
+	static_assert(N <= MAX_SIZE, "Array size must not be bigger than highest SizeType!");
 
 	constexpr Array() requires(Type::Constructible<DataType>)	{for (auto& e: data) e = DataType();	}
 	constexpr Array(ArrayType const& data)						{memcpy(arr, data, SIZE);				}
 	constexpr Array(DataType const& v)							{for (auto& e: data) e = v;				}
 
-	constexpr DataType& operator[](TIndex const& index) {
+	constexpr DataType& operator[](IndexType index) {
 		if (index >= SIZE)
-			throw BasicError("Index is bigger than array size!");
+			throw Exception("Index is bigger than array size!");
+		wrapBounds(index, SIZE);
 		return data[index];
 	}
 
-	constexpr DataType operator[](TIndex const& index) const {
+	constexpr DataType operator[](IndexType index) const {
 		if (index >= SIZE)
-			throw BasicError("Index is bigger than array size!");
+			throw Exception("Index is bigger than array size!");
+		wrapBounds(index, SIZE);
 		return data[index];
 	}
 
@@ -66,7 +68,7 @@ public:
 	constexpr ConstReferenceType	back() const	{return data[SIZE-1];	}
 
 private:
-	ArrayType data = {0};
+	ArrayType data;
 };
 
 namespace Impl {

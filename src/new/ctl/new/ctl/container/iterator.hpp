@@ -5,6 +5,7 @@
 #include "../order.hpp"
 #include "../ctypes.hpp"
 #include "../templates.hpp"
+#include "../cpperror.hpp"
 #include "../typetraits/traits.hpp"
 
 CTL_NAMESPACE_BEGIN
@@ -101,10 +102,22 @@ concept IteratorType = requires {
 
 template<class TData, Type::Integer TIndex>
 struct Iteratable: Typed<TData>, Indexed<TIndex> {
+	using IndexType	= Indexed<TIndex>::IndexType;
+	using SizeType	= Indexed<TIndex>::IndexType;
+
 	typedef Iterator<DataType, false, SizeType>		IteratorType;
 	typedef Iterator<ConstantType, false, SizeType>	ConstIteratorType;
 	typedef Iterator<DataType, true, SizeType>		ReverseIteratorType;
 	typedef Iterator<ConstantType, true, SizeType>	ConstReverseIteratorType;
+
+protected:
+	constexpr static void wrapBounds(IndexType& index, SizeType const& count) {
+		while (index < 0) index += count;
+	}
+
+	[[noreturn]] constexpr static void outOfBoundsError() {
+		throw Exception("Index is bigger than array size!");
+	}
 }
 
 CTL_NAMESPACE_END

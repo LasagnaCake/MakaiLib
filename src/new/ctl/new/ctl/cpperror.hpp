@@ -6,13 +6,13 @@
 
 CTL_NAMESPACE_BEGIN
 
-class BasicError:
-	SelfIdentified<BasicError>,
+struct Exception:
+	SelfIdentified<Exception>,
 	Typed<const char*>,
 	StringLiterable<char> {
 public:
 	using Typed				= Typed<const char*>;
-	using SelfIdentified	= SelfIdentified<BasicError>;
+	using SelfIdentified	= SelfIdentified<Exception>;
 
 	using
 		DataType			= typename Typed::DataType,
@@ -25,11 +25,28 @@ public:
 
 	char const* const message;
 
-	constexpr BasicError(ConstReferenceType _message) noexcept: message(_message) {}
+	constexpr Exception(ConstReferenceType _message) noexcept: message(_message), parent(ex) {
+		ex = this;
+	}
 
-	constexpr BasicError(SelfType const& other) noexcept: BasicError(other.message) {}
+	constexpr Exception(SelfType const& other) noexcept: Exception(other.message) {}
 
 	constexpr char const* what() const noexcept {return message;}
+
+	constexpr static Exception* current()	{return ex;		}
+	constexpr static Exception* previous()	{return parent;	}
+
+	constexpr bool isDetailed()	{return detailed;	}
+	constexpr bool isSimple()	{return !detailed;	}
+
+private:
+	Exception* const prev		= nullptr;
+
+	inline static Exception* ex	= nullptr;
+
+	bool detailed = false;
+
+	template <class TString> friend class DetailedError;
 };
 
 template<typename T>
@@ -47,16 +64,16 @@ concept ErrorStringType =
 ;
 
 template <ErrorStringType TString>
-class DetailedError:
-	public BasicError,
-	public Derived<BasicError>,
-	public Typed<TString>,
-	public SelfIdentified<DetailedError<TString>>,
+struct DetailedException:
+	Exception,
+	Derived<Exception>,
+	Typed<TString>,
+	SelfIdentified<DetailedException<TString>>,
 	StringLiterable<char> {
 public:
 	using Typed				= Typed<TString>;
-	using Derived			= Derived<BasicError>;
-	using SelfIdentified	= SelfIdentified<DetailedError<TString>>;
+	using Derived			= Derived<Exception>;
+	using SelfIdentified	= SelfIdentified<DetailedException<TString>>;
 	using StringLiterable	= StringLiterable<char>;
 
 	using
@@ -69,7 +86,7 @@ public:
 	;
 
 	using
-		ParentType			= typename Derived::Bases::FirstType,
+		BaseType			= typename Derived::Bases::FirstType,
 		StringLiteralType	= typename StringLiterable::StringLiteralType;
 	;
 
@@ -81,8 +98,8 @@ public:
 	const DataType info;
 	const DataType callerInfo;
 
-	constexpr DetailedError(
-		ConstReferenceType type			= "Error",
+	constexpr DetailedException(
+		ConstReferenceType type			= "Unknown",
 		ConstReferenceType message		= "none",
 		ConstReferenceType file			= "unspecified",
 		ConstReferenceType line			= "unspecified",
@@ -90,7 +107,8 @@ public:
 		ConstReferenceType info			= "none",
 		ConstReferenceType callerInfo	= "none"
 	) noexcept:
-		BasicError((const char*)message),
+		BaseType((const char*)message),
+		detailed(true),
 		type(type),
 		message(message),
 		file(file),
@@ -100,8 +118,8 @@ public:
 		callerInfo(callerInfo)
 	{sumbuf = summary();}
 
-	constexpr DetailedError(SelfType const& other) noexcept:
-		DetailedError(
+	constexpr DetailedException(SelfType const& other) noexcept:
+		SelfType(
 			other.type,
 			other.message,
 			other.file,
@@ -112,8 +130,28 @@ public:
 		)
 	{}
 
+	constexpr DetailedException(
+		BaseType const& other,
+		ConstReferenceType type			= "Unknown",
+		ConstReferenceType file			= "unspecified",
+		ConstReferenceType line			= "unspecified",
+		ConstReferenceType caller		= "unspecified",
+		ConstReferenceType info			= "none",
+		ConstReferenceType callerInfo	= "none"
+	) noexcept:
+		DetailedException(
+			type,
+			other.what(),
+			file,
+			line,
+			caller,
+			info,
+			callerInfo
+		)
+	{}
+
 	constexpr DataType report() const noexcept {
-		return (
+		DataType rep = (
 			"!!! AN ERROR HAS OCCURRED !!!\n\n"
 			"<error>\n\n"
 		+	type + ": " + message + "\n\n"
@@ -122,8 +160,12 @@ public:
 			"Line: " + line + "\n"
 			"\n[General Information]\n" + info + "\n"
 			"\n[Caller Information]\n" + callerInfo + "\n"
-			"\n</error>"
 		);
+		if (prev) rep +=
+			"<parent>\n\n"
+		+	(*(SelfType*)previous()).report()
+		+	"\n</parent>"
+		;
 	}
 
 	constexpr DataType summary() const noexcept {

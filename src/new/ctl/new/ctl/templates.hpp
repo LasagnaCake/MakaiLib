@@ -41,7 +41,7 @@ struct Indexed {
 	typedef AsUnsigned<TIndex>	SizeType;
 	typedef AsSigned<SizeType>	IndexType;
 
-	constexpr static SizeType maxSize = TypeInfo<SizeType>::highest;
+	constexpr static SizeType MAX_SIZE = TypeInfo<SizeType>::highest;
 };
 
 template <usize N, typename... T>

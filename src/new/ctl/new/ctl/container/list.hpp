@@ -112,7 +112,7 @@ public:
 
 	constexpr SelfType& insert(DataType const& value, IndexType index) {
 		assertIsInBounds(index);
-		while (index < 0) index += count;
+		wrapBounds(index, count);
 		SizeType span = count - index;
 		if (count >= maximum) increase();
 		copy(&data[index], &data[index+1], span);
@@ -123,7 +123,7 @@ public:
 
 	constexpr SelfType& insert(SelfType const& other, IndexType index) {
 		assertIsInBounds(index);
-		while (index < 0) index += count;
+		wrapBounds(index, count);
 		while ((count + other.count) < maximum)
 			increase();
 		copy(&data[index], &data[index+other.count], other.count);
@@ -345,13 +345,13 @@ public:
 
 	constexpr ReferenceType at(IndexType index) {
 		assertIsInBounds(index);
-		while (index < 0) index += count;
+		wrapBounds(index, count);
 		return data[index];
 	}
 
 	constexpr ConstReferenceType at(IndexType index) const {
 		assertIsInBounds(index);
-		while (index < 0) index += count;
+		wrapBounds(index, count);
 		return data[index];
 	}
 
@@ -552,19 +552,19 @@ private:
 	}
 
 	[[noreturn]] constexpr void invalidSizeError(SizeType const& size) {
-		throw BasicError("Invalid list size!");
+		throw Exception("Invalid list size!");
 	}
 
 	[[noreturn]] constexpr void atItsLimitError() {
-		throw BasicError("Maximum list capacity reached!");
+		throw Exception("Maximum list capacity reached!");
 	}
 
 	[[noreturn]] constexpr void outOfBoundsError(IndexType const& index) {
-		throw BasicError("Array is out of bounds!");
+		throw Exception("Array is out of bounds!");
 	}
 
 	[[noreturn]] constexpr void emptyError() {
-		throw BasicError("Container is empty!");
+		throw Exception("Container is empty!");
 	}
 
 	SizeType	magnitude	= 1;
@@ -739,7 +739,7 @@ public:
 
 	constexpr SelfType& insert(DataType const& value, IndexType index) {
 		assertIsInBounds(index);
-		while (index < 0) index += count;
+		wrapBounds(index, count);
 		Node* current = head;
 		for (SizeType i = 0; i < index; ++i)
 			current = current->next;
@@ -750,7 +750,7 @@ public:
 	}
 
 	constexpr ReferenceType at(IndexType index) {
-		while (index < 0) index += count;
+		wrapBounds(index, count);
 		assertIsInBounds(index);
 		Node* current = head;
 		for (SizeType i = 0; i < index; ++i)
@@ -759,7 +759,7 @@ public:
 	}
 
 	constexpr ConstReferenceType at(IndexType index) const {
-		while (index < 0) index += count;
+		wrapBounds(index, count);
 		assertIsInBounds(index);
 		Node* current = head;
 		for (SizeType i = 0; i < index; ++i)
@@ -859,19 +859,19 @@ private:
 	}
 
 	[[noreturn]] constexpr void invalidSizeError(SizeType const& size) {
-		throw BasicError("Invalid list size!");
+		throw Exception("Invalid list size!");
 	}
 
 	[[noreturn]] constexpr void atItsLimitError() {
-		throw BasicError("Maximum list capacity reached!");
+		throw Exception("Maximum list capacity reached!");
 	}
 
 	[[noreturn]] constexpr void outOfBoundsError(IndexType const& index) {
-		throw BasicError("Array is out of bounds!");
+		throw Exception("Array is out of bounds!");
 	}
 
 	[[noreturn]] constexpr void emptyError() {
-		throw BasicError("Container is empty!");
+		throw Exception("Container is empty!");
 	}
 
 	SizeType count = 0;
