@@ -6,7 +6,12 @@
 
 CTL_NAMESPACE_BEGIN
 
+struct Failure {};
+
+struct CatastrophicFailure: Failure {};
+
 struct Exception:
+	Failure,
 	SelfIdentified<Exception>,
 	Typed<const char*>,
 	StringLiterable<char> {
@@ -25,7 +30,7 @@ public:
 
 	char const* const message;
 
-	constexpr Exception(ConstReferenceType _message) noexcept: message(_message), parent(ex) {
+	constexpr Exception(ConstReferenceType _message) noexcept: message(_message), prev(ex) {
 		ex = this;
 	}
 
@@ -33,11 +38,11 @@ public:
 
 	constexpr char const* what() const noexcept {return message;}
 
-	constexpr static Exception* current()	{return ex;		}
-	constexpr static Exception* previous()	{return parent;	}
+	constexpr static Exception* current() noexcept	{return ex;		}
+	constexpr static Exception* previous() noexcept	{return parent;	}
 
-	constexpr bool isDetailed()	{return detailed;	}
-	constexpr bool isSimple()	{return !detailed;	}
+	constexpr bool isDetailed() noexcept	{return detailed;	}
+	constexpr bool isSimple() noexcept		{return !detailed;	}
 
 private:
 	Exception* const prev		= nullptr;
