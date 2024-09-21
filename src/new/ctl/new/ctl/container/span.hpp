@@ -10,15 +10,15 @@
 
 CTL_NAMESPACE_BEGIN
 
-enum class ExtentType {
-	CET_AUTO,
-	CET_STATIC,
-	CET_DYNAMIC
+enum class ExtentSize {
+	CES_AUTO,
+	CES_STATIC,
+	CES_DYNAMIC
 };
 
 constexpr usize DYNAMIC_SIZE = -1;
 
-template<class TData, usize S = DYNAMIC_SIZE, Type::Integer TIndex = usize, ExtentType EXTENT = ExtentType::CET_AUTO>
+template<class TData, usize S = DYNAMIC_SIZE, Type::Integer TIndex = usize, ExtentSize EXTENT = ExtentSize::CES_AUTO>
 struct Span:
 	Iteratable<TData, TIndex> {
 
@@ -37,26 +37,22 @@ struct Span:
 	;
 
 	consteval static bool isStatic() {
-		return (S != DYNAMIC_SIZE || EXTENT == ExtentType::CET_DYNAMIC);
+		return (S != DYNAMIC_SIZE || EXTENT == ExtentSize::CES_DYNAMIC);
 	}
 
 	consteval static bool isDynamic() {
-		return (S == DYNAMIC_SIZE || EXTENT == ExtentType::CET_STATIC);
+		return (S == DYNAMIC_SIZE || EXTENT == ExtentSize::CES_STATIC);
 	}
 
 	constexpr Span() noexcept: data(nullptr), count(0) {}
 
-	explicit (isDynamic())
-	constexpr Span(PointerType const& data): data(data) {}
+	constexpr Span(Span const& other) noexcept = default;
 
-	explicit (isDynamic())
-	constexpr Span(IteratorType const& begin): data(begin) {}
+	explicit (isDynamic())	constexpr Span(PointerType const& data): data(data)													{}
+	explicit (isDynamic())	constexpr Span(IteratorType const& begin): data(begin)												{}
 
-	explicit (isStatic())
-	constexpr Span(PointerType const& data, SizeType const& size): data(data), count(size) {}
-
-	explicit (isStatic())
-	constexpr Span(IteratorType const& begin, IteratorType const& end): data(begin), count(end - begin) {}
+	explicit (isStatic())	constexpr Span(PointerType const& data, SizeType const& size): data(data), count(size)				{}
+	explicit (isStatic())	constexpr Span(IteratorType const& begin, IteratorType const& end): data(begin), count(end - begin)	{}
 
 	constexpr ReferenceType operator[](IndexType index) {
 		assertExists();
