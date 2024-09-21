@@ -2,16 +2,16 @@
 #define CTL_CONTAINER_NULLABLE_H
 
 #include "../templates.hpp"
+#include "../typetraits/traits.hpp"
 #include "error.hpp"
 
 template<class TData> class Nullable;
 
 template<> class Nullable<void>:
+	public Typed<void>,
 	public SelfIdentitied<Nullable<void>>,
 	public Nulled {
 public:
-	typedef void DataType;
-
 	constexpr Nullable() noexcept			{}
 	constexpr Nullable(NullType) noexcept	{}
 
@@ -23,7 +23,9 @@ public:
 	constexpr Nullable& operator=(Nullable<void> const& other)	{return *this;	}
 	constexpr Nullable& operator=(Nullable<void>&& other)		{return *this;	}
 
-	constexpr bool operator==(NullType) const	{return true;	}
+	constexpr bool operator==(NullType) const						{return true;	}
+	constexpr bool operator==(Nullable<void> const& other) const	{return true;	}
+	constexpr bool operator==(Nullable<void>&& other) const			{return true;	}
 
 	constexpr ~Nullable() {}
 };
@@ -35,12 +37,12 @@ class Nullable<TData>:
 	public Nulled,
 	public Defaultable<TData, TData()> {
 public:
-	constexpr Nullable() noexcept										{}
-	constexpr Nullable(NullType) noexcept								{}
-	constexpr Nullable(DataType const& value): isSet(true)				{data = value;}
-	constexpr Nullable(DataType&& value): isSet(true)					{data = std::move(value);}
-	constexpr Nullable(Nullable const& other): isSet(other.isSet)		{if (other.isSet) data = other.data;}
-	constexpr Nullable(Nullable&& other): isSet(std::move(other.isSet))	{if (other.isSet) data = std::move(other.data);}
+	constexpr Nullable() noexcept									{											}
+	constexpr Nullable(NullType) noexcept							{											}
+	constexpr Nullable(DataType const& value): isSet(true)			{data = value;								}
+	constexpr Nullable(DataType&& value): isSet(true)				{data = move(value);						}
+	constexpr Nullable(Nullable const& other): isSet(other.isSet)	{if (other.isSet) data = other.data;		}
+	constexpr Nullable(Nullable&& other): isSet(move(other.isSet))	{if (other.isSet) data = move(other.data);	}
 
 	constexpr ~Nullable() {}
 
@@ -68,9 +70,9 @@ public:
 
 	constexpr Nullable& operator()(Operation<DataType> const& op) {return then();}
 
-	constexpr Nullable& operator=(DataType const& value)	{data = value; isSet = true; return *this;				}
-	constexpr Nullable& operator=(DataType&& value)			{data = std::move(value); isSet = true; return *this;	}
-	constexpr Nullable& operator=(NullType)					{isSet = false; return *this;							}
+	constexpr Nullable& operator=(DataType const& value)	{data = value; isSet = true; return *this;			}
+	constexpr Nullable& operator=(DataType&& value)			{data = move(value); isSet = true; return *this;	}
+	constexpr Nullable& operator=(NullType)					{isSet = false; return *this;						}
 
 	constexpr bool operator==(Nullable const& other) const	{if (isSet) return other == data; return false;}
 	constexpr bool operator==(DataType const& value) const	{if (isSet) return data == value; return false;}
@@ -84,8 +86,8 @@ public:
 	}
 
 	constexpr Nullable& operator=(Nullable<T>&& other) {
-		if (other.isSet) data = std::move(other.data);
-		isSet = std::move(other.isSet);
+		if (other.isSet) data = move(other.data);
+		isSet = move(other.isSet);
 		return *this;
 	}
 

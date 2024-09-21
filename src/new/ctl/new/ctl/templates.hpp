@@ -90,7 +90,7 @@ struct Nulled {
 
 template<class T, auto V>
 struct Defaultable {
-	constexpr T defaultValue() {return V;}
+	constexpr static T defaultValue() {return V;}
 };
 
 template<class TReturn>

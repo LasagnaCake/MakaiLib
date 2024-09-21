@@ -36,7 +36,7 @@ public:
 
 	constexpr Exception(SelfType const& other) noexcept: Exception(other.message) {}
 
-	constexpr char const* what() const noexcept {return message;}
+	constexpr virtual char const* what() const noexcept {return message;}
 
 	constexpr static Exception* current() noexcept	{return ex;		}
 	constexpr static Exception* previous() noexcept	{return parent;	}
@@ -48,8 +48,6 @@ private:
 	Exception* const prev		= nullptr;
 
 	inline static Exception* ex	= nullptr;
-
-	bool detailed = false;
 
 	template <class TString> friend class DetailedError;
 };
@@ -156,7 +154,7 @@ public:
 	{}
 
 	constexpr DataType report() const noexcept {
-		DataType rep = (
+		DataType result = (
 			"!!! AN ERROR HAS OCCURRED !!!\n\n"
 			"<error>\n\n"
 		+	type + ": " + message + "\n\n"
@@ -166,18 +164,24 @@ public:
 			"\n[General Information]\n" + info + "\n"
 			"\n[Caller Information]\n" + callerInfo + "\n"
 		);
-		if (prev) rep +=
-			"<parent>\n\n"
-		+	(*(SelfType*)previous()).report()
-		+	"\n</parent>"
-		;
+		if (previous()) {
+			result += "\n<stack>";
+			result += previous()->what();
+			result += "</stack>";
+		}
+		result += "\n</error>";
+		return result;
 	}
 
 	constexpr DataType summary() const noexcept {
-		return (type + ": " + message + (!info.empty() ? ("\n" + info) : ""));
+		return
+			(type + ": " + message + (!info.empty() ? ("\n" + info) : ""))
+			+ "> "
+			+ DataType(previous()->what())
+		;
 	}
 
-	constexpr StringLiteralType what() const noexcept {
+	constexpr StringLiteralType what() const noexcept override {
 		return (StringLiteralType)sumbuf;
 	}
 
