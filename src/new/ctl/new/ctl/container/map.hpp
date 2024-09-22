@@ -45,16 +45,6 @@ public:
 
 	using BaseType::BaseType;
 
-	constexpr typename ValueType& at(KeyType const& key) {
-		if (empty()) return pushBack({key}).back().value;
-		PairType* start = cbegin();
-		while(start != cend()) {
-			if (start->key == key) return start->value;
-			++start;
-		}
-		return pushBack({key}).back().value;
-	}
-
 	constexpr ValueType at(KeyType const& key) const {
 		if (empty()) return ValueType();
 		PairType* start = cbegin();
@@ -65,6 +55,18 @@ public:
 		return ValueType();
 	}
 
+	constexpr ReferenceType	operator[](KeyType const& index) {
+		if (empty()) return pushBack({key}).back().value;
+		PairType* start = cbegin();
+		while(start != cend()) {
+			if (start->key == key) return start->value;
+			++start;
+		}
+		return pushBack({key}).back().value;
+	}
+
+	constexpr ValueType operator[](KeyType const& index) const	{return at(index);}
+
 	constexpr bool contains(KeyType const& key) const {
 		if (empty()) return false;
 		for(ValueType& e: (*this))
@@ -72,12 +74,10 @@ public:
 		return false;
 	}
 
-	constexpr ReferenceType	operator[](KeyType const& index)		{return at(index);}
-	constexpr ValueType		operator[](KeyType const& index) const	{return at(index);}
-
 private:
 };
 
+/*
 template<class TKey, class TValue, Type::Integer TIndex = usize, class TPair = Pair<TKey, TValue>, class THasher = Hasher>
 struct HashMap:
 	List<TPair<TKey, TValue>, TIndex>,
@@ -90,5 +90,6 @@ requires (
 ) {
 
 }
+*/
 
 #endif // CTL_CONTAINER_MAP_H

@@ -350,20 +350,20 @@ public:
 	constexpr ConstReferenceType	front() const	{return contents[0];		}
 	constexpr ConstReferenceType	back() const	{return contents[count-1];	}
 
-	constexpr ReferenceType at(IndexType index) {
+
+	constexpr ValueType at(IndexType index) const {
 		assertIsInBounds(index);
 		wrapBounds(index, count);
 		return contents[index];
 	}
 
-	constexpr ConstReferenceType at(IndexType index) const {
+	constexpr ReferenceType	operator[](IndexType const& index) {
 		assertIsInBounds(index);
 		wrapBounds(index, count);
 		return contents[index];
 	}
 
-	constexpr ReferenceType			operator[](IndexType const& index)			{return at(index);}
-	constexpr ConstReferenceType	operator[](IndexType const& index) const	{return at(index);}
+	constexpr ValueType operator[](IndexType const& index) const {return at(index);}
 
 	constexpr SizeType size() const		{return count;		}
 	constexpr SizeType capacity() const	{return maximum;	}
