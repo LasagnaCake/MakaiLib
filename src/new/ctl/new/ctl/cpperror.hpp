@@ -2,6 +2,7 @@
 #define CTL_CPPERROR_H
 
 #include "namespace.hpp"
+#include "staticvalue.hpp"
 #include "templates.hpp"
 
 CTL_NAMESPACE_BEGIN
@@ -9,6 +10,14 @@ CTL_NAMESPACE_BEGIN
 struct Failure {};
 
 struct CatastrophicFailure: Failure {};
+
+struct Exception;
+
+namespace Base {
+	class CurrentException: private StaticValue<Exception*, nullptr> {
+		friend class ::Exception;
+	};
+}
 
 struct Exception:
 	Failure,
@@ -47,7 +56,7 @@ public:
 private:
 	Exception* const prev		= nullptr;
 
-	inline static Exception* ex	= nullptr;
+	Base::CurrentException ex	= nullptr;
 
 	template <class TString> friend class DetailedError;
 };

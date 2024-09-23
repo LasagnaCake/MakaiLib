@@ -5,6 +5,7 @@
 #include "../typetraits/traits.hpp"
 #include "../container/error.hpp"
 #include "nullable.hpp"
+#include "../staticvalue.hpp"
 
 // Function implementation based off of: https://stackoverflow.com/a/61191826
 
@@ -28,10 +29,18 @@ namespace Impl {
 	};
 }
 
+namespace Base {
+	class FunctorID: private StaticValue<usize, 0> {
+		constexpr usize operator++(int) {return ++value;}
+
+		template <typename T> friend class ::Functor;
+	};
+}
+
 template<typename T> struct Function;
 
 template<typename TReturn, typename... TArgs>
-class Function<TReturn(TArgs...)>:
+struct Function<TReturn(TArgs...)>:
 	Typed<TReturn>,
 	SelfIdentified<Function<TReturn, TArgs...>>,
 	Returnable<TReturn>,
@@ -43,6 +52,8 @@ private:
 	using Typed				= Typed<TReturn>;
 	using Returnable		= Returnable<TReturn>;
 	using Argumented		= Argumented<TArgs...>;
+
+	using SelfIdentified::SelfType;
 
 	Impl::Partial::Function<ReturnType, TArgs...>* func{nullptr};
 
@@ -111,12 +122,13 @@ public:
 template<typename T> class Functor;
 
 template<typename TReturn, typename... TArgs>
-class Functor<TReturn(TArgs...)>:
+struct Functor<TReturn(TArgs...)>:
 	Typed<TReturn>,
 	SelfIdentified<Functor<TReturn, TArgs...>>,
 	Returnable<TReturn>,
 	Argumented<TArgs...>,
-	Functional<TReturn(TArgs...)> {
+	Functional<TReturn(TArgs...)>,
+	private FunctorIDBank {
 private:
 public:
 	typedef Function<FunctionType>	WrapperType;
@@ -144,7 +156,7 @@ public:
 private:
 	WrapperType			func;
 	usize				id		= 0;
-	inline static usize	count	= 0;
+	Base::FunctorID		count;
 };
 
 CTL_NAMESPACE_END
