@@ -65,8 +65,8 @@ struct TestApp: Makai::App {
 	}
 
 	void onOpen() override {
-		camera.eye	= Vec3(0, 2, -3);
-		camera.at	= Vec3(0, -2, 3);
+		camera.eye	= Vec3(0, 0, -3);
+		//camera.at	= Vec3(0, -2, 3);
 		camera.zFar	= 1000;
 		getFrameBuffer().material.background = Makai::Graph::Color::GRAY;
 		//Makai::Graph::API::toggle(Makai::Graph::API::Facility::GAF_DEBUG, true);
@@ -79,6 +79,8 @@ struct TestApp: Makai::App {
 
 	float framerate[MAX_FRCOUNT];
 
+	Vec3 crot = 0;
+
 	void onLogicFrame(float delta) {
 		if (frcount < MAX_FRCOUNT)
 			framerate[frcount++] = 1000.0 / getFrameDelta();
@@ -89,17 +91,40 @@ struct TestApp: Makai::App {
 			fravg = Math::clamp<float>(fravg, 0, maxFrameRate);
 			DEBUGLN("Framerate: ", Helper::floatString(Math::round(fravg, 2), 2));
 			frcount = 0;
+			DEBUGLN(crot.y);
 		}
 		if (input.isButtonJustPressed(Makai::Input::KeyCode::KC_ESCAPE))
 			close();
 		camera.eye.z += (
-			input.isButtonDown(Makai::Input::KeyCode::KC_UP)
-			- input.isButtonDown(Makai::Input::KeyCode::KC_DOWN)
+			input.isButtonDown(Makai::Input::KeyCode::KC_W)
+			- input.isButtonDown(Makai::Input::KeyCode::KC_S)
 		) / 30.0;
 		camera.eye.x += (
-			input.isButtonDown(Makai::Input::KeyCode::KC_LEFT)
-			- input.isButtonDown(Makai::Input::KeyCode::KC_RIGHT)
+			input.isButtonDown(Makai::Input::KeyCode::KC_A)
+			- input.isButtonDown(Makai::Input::KeyCode::KC_D)
 		) / 30.0;
+		camera.eye.y -= (
+			input.isButtonDown(Makai::Input::KeyCode::KC_LEFT_SHIFT)
+			- input.isButtonDown(Makai::Input::KeyCode::KC_SPACE)
+		) / 30.0;
+		crot += Vec3(
+			(
+				input.isButtonDown(Makai::Input::KeyCode::KC_UP)
+				- input.isButtonDown(Makai::Input::KeyCode::KC_DOWN)
+			) / 60.0,
+			(
+				input.isButtonDown(Makai::Input::KeyCode::KC_RIGHT)
+				- input.isButtonDown(Makai::Input::KeyCode::KC_LEFT)
+			) / 60.0
+		);
+		crot.x = Math::clamp<float>(crot.x, -2, 2);
+		camera.at = Vec3(
+			sin(crot.y),
+			crot.x,
+			cos(crot.y)
+		);
+		//camera.at = VecMath::angleV3(crot, VecMath::Axis::POS_Z);
+		//camera.at = Vec3(0, 0, 1);
 	}
 };
 
