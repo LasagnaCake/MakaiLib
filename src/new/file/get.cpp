@@ -6,11 +6,11 @@
 #include <sstream>
 #include <filesystem>
 
+#define IMPL_ARCHIVE_
+
 #if !(defined(MAKAILIB_DEBUG) || defined(MAKAILIB_ARCHIVE_DISABLED))
 #define IMPL_ARCHIVE_
 #endif
-
-#undef IMPL_ARCHIVE_
 
 using Makai::Tool::Arch::FileArchive;
 
