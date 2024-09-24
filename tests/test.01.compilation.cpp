@@ -1,4 +1,4 @@
-#include <makai.hpp>
+#include <makai/makai.hpp>
 
 int main() {
 	#ifdef MAKAILIB_DEBUG

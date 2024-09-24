@@ -1,4 +1,4 @@
-#include <makai.hpp>
+#include <makai/makai.hpp>
 
 struct TestApp: Makai::App {
 	Makai::Graph::Renderable cube;
