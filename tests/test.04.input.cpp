@@ -36,7 +36,7 @@ struct TestApp: Makai::App {
 				cubes[idx].material.culling = Makai::Graph::CullMode::OCM_FRONT;
 				DEBUGLN("Cube [", idx,"]");
 				//cubes[idx].material.shaded = true;
-				cubes[idx].trans.scale = .25;
+				cubes[idx].trans.scale = .125;
 				cubes[idx].triangles = {
 					// Face +X
 					new Makai::Graph::Triangle{{vertices[2], vertices[1], vertices[0]}},
@@ -57,7 +57,8 @@ struct TestApp: Makai::App {
 					new Makai::Graph::Triangle{{vertices[1], vertices[3], vertices[5]}},
 					new Makai::Graph::Triangle{{vertices[7], vertices[5], vertices[3]}}
 				};
-				cubes[idx].trans.position = Vec3(j-off, 0, i-off) * 2;
+				cubes[idx].trans.position = Vec3(j-off, 0, i-off) * 1;
+				cubes[idx].trans.rotation = Vec3((float(i)/cubeGrid)*TAU, (float(j)/cubeGrid)*TAU);
 				cubes[idx].setRenderLayer(0);
 			}
 		DEBUGLN("Done!");
