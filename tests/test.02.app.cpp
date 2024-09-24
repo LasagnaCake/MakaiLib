@@ -1,4 +1,4 @@
-#include <makai.hpp>
+#include <makai/makai.hpp>
 
 struct TestApp: Makai::App {
 	TestApp(): Makai::App(600, 400, "Test 02", false) {}
