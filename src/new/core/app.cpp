@@ -196,18 +196,18 @@ void App::run() {
 	// SDL's events
 	SDL_Event event;
 	// Delta time
-	float frameDelta = 1.0/maxFrameRate;
-	float cycleDelta = 1.0/maxCycleRate;
+	float frameRate = 1.0/maxFrameRate;
+	float cycleRate = 1.0/maxCycleRate;
 	// Last time of execution
-	size_t frameTicks = SDL_GetTicks() + frameDelta * 1000.0;
-	size_t cycleTicks = SDL_GetTicks() + cycleDelta * 1000.0;
+	usize frameTicks = SDL_GetTicks() + frameRate * 1000.0;
+	usize cycleTicks = SDL_GetTicks() + cycleRate * 1000.0;
 	// Refresh mouse capture stuff
 	input.refreshCapture();
 	// If app is should close, do so
 	if (isAppClosing(state)) return finalize();
 	// Change app state
 	state = App::AppState::AS_RUNNING;
-	// While program is running...;
+	// While program is running...
 	while(state == App::AppState::AS_RUNNING) {
 		// Poll events and check if should close
 		while (SDL_PollEvent(&event)) {
@@ -227,15 +227,15 @@ void App::run() {
 				} break;
 			}
 		}
-		// Get deltas
-		frameDelta	= 1.0/maxFrameRate;
-		cycleDelta	= 1.0/maxCycleRate;
 		// Get rates
-		cycleRate = SDL_GetTicks() - cycleTicks;
-		frameRate = SDL_GetTicks() - frameTicks;
+		cycleRate	= 1.0/maxFrameRate;
+		cycleRate	= 1.0/maxCycleRate;
+		// Get deltas
+		cycleDelta = SDL_GetTicks() - cycleTicks;
+		frameDelta = SDL_GetTicks() - frameTicks;
 		// If should process, then do so
 		#ifndef MAKAILIB_PROCESS_RENDER_BEFORE_LOGIC
-		if (cycleRate > (cycleDelta * 1000.0 - 1)) {
+		if (cycleDelta > (cycleRate * 1000.0 - 1)) {
 			// Update audio system
 			Audio::updateAll();
 			// Update input manager
@@ -245,16 +245,16 @@ void App::run() {
 			// Increment cycle counter
 			cycle++;
 			// Do timer-related stuff
-			timerFunc(cycleDelta * speed);
+			timerFunc(cycleRate * speed);
 			#ifndef MAKAILIB_FRAME_DEPENDENT_PROCESS
 			// Do normal logic-related stuff
-			logicFunc(cycleDelta * speed);
+			logicFunc(cycleRate * speed);
 			// Destroy queued entities
 			Entity::destroyQueued();
 			#endif // FRAME_DEPENDENT_PROCESS
 		}
 		#endif
-		if (frameRate > (frameDelta * 1000 - 1)) {
+		if (frameDelta > (frameRate * 1000 - 1)) {
 			// Get current time
 			frameTicks = SDL_GetTicks();
 			// increment frame counter
@@ -263,7 +263,7 @@ void App::run() {
 			// TODO: Audio System
 			#ifdef MAKAILIB_FRAME_DEPENDENT_PROCESS
 			// Do normal logic-related stuff
-			logicFunc(frameDelta);
+			logicFunc(frameRate);
 			// Destroy queued entities
 			Entity::destroyQueued();
 			#endif // FRAME_DEPENDENT_PROCESS
@@ -271,7 +271,7 @@ void App::run() {
 			render();
 		}
 		#ifdef MAKAILIB_PROCESS_RENDER_BEFORE_LOGIC
-		if (cycleRate > (cycleDelta * 1000.0 - 1)) {
+		if (cycleDelta > (cycleDelta * 1000.0 - 1)) {
 			// Update audio system
 			Audio::updateAudioSystem();
 			// Update input manager
@@ -309,24 +309,24 @@ App::AppState App::getState() {
 
 void App::setWindowSize(Vector2 const& size) {}
 
-App* Makai::getOpenApp() {
+App* Makai::App::current() {
 	return mainApp;
 }
 
-size_t App::getCurrentFrame() {
+usize App::getCurrentFrame() {
 	return frame;
 }
 
-size_t App::getCurrentCycle() {
+usize App::getCurrentCycle() {
 	return cycle;
 }
 
-size_t App::getCycleRate() {
-	return cycleRate;
+usize App::getCycleDelta() {
+	return cycleDelta;
 }
 
-size_t App::getFrameRate() {
-	return frameRate;
+usize App::getFrameDelta() {
+	return frameDelta;
 }
 
 Graph::FrameBuffer& App::getFrameBuffer() {

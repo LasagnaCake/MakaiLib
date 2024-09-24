@@ -55,6 +55,9 @@ namespace Makai {
 		/// Loads the application's shaders from SLF files.
 		void loadShaders(SLF::SLFData const& main, SLF::SLFData const& buffer);
 
+		/// Returns the currently-opened app. Returns null if no app is open.
+		App* current();
+
 		/// Runs the application.
 		void run();
 
@@ -80,10 +83,10 @@ namespace Makai {
 		/// Gets the current cycle.
 		usize getCurrentCycle();
 
-		/// Gets the current cycle rate.
-		usize getCycleRate();
-		/// Gets the current cycle rate.
-		usize getFrameRate();
+		/// Gets the current cycle delta, in milliseconds.
+		usize getCycleDelta();
+		/// Gets the current frame delta, in milliseconds.
+		usize getFrameDelta();
 
 		Graph::FrameBuffer& getFrameBuffer();
 		Graph::FrameBuffer& getLayerBuffer();
@@ -163,7 +166,7 @@ namespace Makai {
 		Graph::FrameBufferData toFrameBufferData();
 
 	private:
-		usize cycleRate = 0, frameRate = 0;
+		usize frameDelta = 0, cycleDelta = 0;
 
 		bool
 			skipLayer	= false,
@@ -199,9 +202,6 @@ namespace Makai {
 		/// The application's window.
 		Extern::Resource window;
 	};
-
-	/// Returns the currently-opened app. Returns null if no app is open.
-	App* getOpenApp();
 }
 
 #endif // MAKAILIB_CORE_APP_H

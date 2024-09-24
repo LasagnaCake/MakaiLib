@@ -1,7 +1,7 @@
 #include <makai/makai.hpp>
 
 struct TestApp: Makai::App {
-	constexpr static usize cubeGrid		= 5;
+	constexpr static usize cubeGrid		= 8;
 	constexpr static usize cubeCount	= cubeGrid*cubeGrid;
 
 	Makai::Graph::Renderable cubes[cubeCount];
@@ -57,7 +57,7 @@ struct TestApp: Makai::App {
 					new Makai::Graph::Triangle{{vertices[1], vertices[3], vertices[5]}},
 					new Makai::Graph::Triangle{{vertices[7], vertices[5], vertices[3]}}
 				};
-				cubes[idx].trans.position = Vec3(j-off, 0, i-off) * 1;
+				cubes[idx].trans.position = Vec3(j-off, 0, i-off) * .5;
 				cubes[idx].trans.rotation = Vec3((float(i)/cubeGrid)*TAU, (float(j)/cubeGrid)*TAU);
 				cubes[idx].setRenderLayer(0);
 			}
@@ -73,7 +73,23 @@ struct TestApp: Makai::App {
 		camera.relativeToEye = true;
 	}
 
+	constexpr static usize MAX_FRCOUNT = 10;
+
+	usize frcount = 0;
+
+	float framerate[MAX_FRCOUNT];
+
 	void onLogicFrame(float delta) {
+		if (frcount < MAX_FRCOUNT)
+			framerate[frcount++] = 1000.0 / getFrameDelta();
+		else {
+			float fravg = 0;
+			for(float& f: framerate) fravg += f;
+			fravg *= (1.0 / (float)MAX_FRCOUNT);
+			fravg = Math::clamp<float>(fravg, 0, maxFrameRate);
+			DEBUGLN("Framerate: ", Helper::floatString(Math::round(fravg, 2), 2));
+			frcount = 0;
+		}
 		if (input.isButtonJustPressed(Makai::Input::KeyCode::KC_ESCAPE))
 			close();
 		camera.eye.z += (
@@ -90,6 +106,7 @@ struct TestApp: Makai::App {
 int main() {
 	try {
 		TestApp app;
+		app.maxFrameRate = 60.0;
 		app.run();
 	} catch (Error::Error const& e) {
 		Makai::Popup::showError(e.what());
