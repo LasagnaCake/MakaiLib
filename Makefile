@@ -54,14 +54,14 @@ build-release:
 
 copy-headers:
 	@echo "Copying headers..."
-	@mkdir -p output/include
+	@mkdir -p output/include/makai
 	@cd src/new
-	@cp -r --parents *.hpp ../../output/include/
-	@cp -r --parents **/*.hpp ../../output/include/
-	@cp -r --parents **/**/*.hpp ../../output/include/
-	@cp -r --parents **/**/**/*.hpp ../../output/include/
-	#@cp -r --parents **/**/**/**/*.hpp ../../output/include/
-	@cp -r --parents ctl/* ../../output/include/
+	@cp -r --parents *.hpp ../../output/include/makai/
+	@cp -r --parents **/*.hpp ../../output/include/makai/
+	@cp -r --parents **/**/*.hpp ../../output/include/makai/
+	@cp -r --parents **/**/**/*.hpp ../../output/include/makai/
+	#@cp -r --parents **/**/**/**/*.hpp ../../output/include/makai/
+	@cp -r --parents ctl/* ../../output/include/makai/
 	@cd ../..
 
 copy-o-debug:
