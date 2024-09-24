@@ -32,7 +32,7 @@ No plans to support 32-bit systems.
 ### Windows
 
 > [!important]
-> **This library does not support clang/LLVM!**
+> **This library does not currently support clang/LLVM!**
 
 > [!caution]
 > **This library (and applications using it) currently can only be compiled with optimization level `-Og` and below!**
