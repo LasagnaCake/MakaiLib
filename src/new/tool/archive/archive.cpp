@@ -265,138 +265,140 @@ void Arch::pack(
 		EncryptionMethod const& enc,
 		CompressionMethod const& comp,
 		uint8 const& complvl
-) try {
-	// Hash the password
-	String passhash = hashPassword(password);
-	_ARCDEBUGLN("FOLDER: ", folderPath, "\nARCHIVE: ", archivePath);
-	// Get file structure
-	_ARCDEBUGLN("Getting file structure...");
-	JSONData dir;
-	StringList files;
-	JSONData tree = dir["tree"];
-	tree = getStructure(fs::path(folderPath), files, fs::path(folderPath).stem().string());
-	_ARCDEBUGLN("\n", dir.dump(2, ' ', false, Nlohmann::error_handler_t::replace), "\n");
-	// Populate with temporary values
-	List<uint64> locations(files.size(), 0);
-	// Open file
-	std::ofstream file(archivePath, std::ios::binary | std::ios::trunc);
-	file.exceptions(std::ofstream::badbit | std::ofstream::failbit);
-	// Populate header
-	_ARCDEBUGLN("Creating header...\n");
-	// Headers
-	ArchiveHeader	header;
-	// Set main header params
-	header.version		= ARCHIVE_VERSION;		// file format version
-	header.minVersion	= ARCHIVE_MIN_VERSION;	// file format minimum version
-	header.encryption	= (uint16)enc;			// encryption mode
-	header.compression	= (uint16)comp;			// compression mode
-	header.level		= complvl;				// compression level
-	/*header.flags =
-		Flags::SHOULD_CHECK_CRC_BIT				// Do CRC step
-	;*/
-	_ARCDEBUGLN("             HEADER SIZE: ", (uint64)header.headerSize,		"B"	);
-	_ARCDEBUGLN("        FILE HEADER SIZE: ", (uint64)header.fileHeaderSize,	"B"	);
-	_ARCDEBUGLN("   DIRECTORY HEADER SIZE: ", (uint64)header.dirHeaderSize,		"B"	);
-	_ARCDEBUGLN("     FILE FORMAT VERSION: ", (uint64)header.version				);
-	_ARCDEBUGLN(" FILE FORMAT MIN VERSION: ", (uint64)header.minVersion				);
-	_ARCDEBUGLN("         ENCRYPTION MODE: ", (uint64)header.encryption				);
-	_ARCDEBUGLN("        COMPRESSION MODE: ", (uint64)header.compression			);
-	_ARCDEBUGLN("       COMPRESSION LEVEL: ", (uint64)header.level					);
-	_ARCDEBUGLN("\nDirectory structure layout:");
-	_ARCDEBUGLN("       FILE COUNT: ", files.size()			);
-	// Write main header first pass
-	file.write((char*)&header, header.headerSize);
-	// Write file info
-	_ARCDEBUGLN("\nWriting files...\n");
-	for (auto const& [i, f]: Helper::enumerate(files)) {
-		// Get current stream position as file location
-		locations[i] = file.tellp();
-		// Read file
-		File::BinaryData contents = File::loadBinary(f);
-		// Prepare header
-		FileHeader fheader;
-		fheader.uncSize = contents.size();				// Uncompressed file size
-		// Generate block
-		generateBlock(fheader.block);					// Encryption block
-		// Process file
-		if (!contents.empty()) {
-			contents = compress(
-				contents,
-				comp,
-				complvl
-			);
-			_ARCDEBUGLN("Before encryption: ", contents.size());
-			contents = encrypt(
-				contents,
-				passhash,
-				enc,
-				fheader.block
-			);
-			_ARCDEBUGLN("After encryption: ", contents.size());
-		}
-		fheader.compSize	= contents.size();	// Compressed file size
-		fheader.crc			= 0					// CRC (currently not working)
-		// Debug info
-		_ARCDEBUGLN("'", files[i], "':");
-		_ARCDEBUGLN("          FILE INDEX: ", i						);
-		_ARCDEBUGLN("       FILE LOCATION: ", locations[i]		, " (", encoded(locations[i]), ")");
-		_ARCDEBUGLN("   UNCOMPRESSED SIZE: ", fheader.uncSize,	"B"	);
-		_ARCDEBUGLN("     COMPRESSED SIZE: ", fheader.compSize,	"B"	);
-		_ARCDEBUGLN("               CRC32: ", fheader.crc,		"\n"	);
-		// Copy header & file data
-		file.write((char*)&fheader, header.fileHeaderSize);
-		file.write((char*)contents.data(), contents.size());
-	}
-	// Populate file tree
-	populateTree(tree, locations);
-	// Process directory structure
-	_ARCDEBUGLN("\nWriting directory structure...\n");
-	_ARCDEBUGLN("\n", dir.dump(2, ' ', false, Nlohmann::error_handler_t::replace), "\n");
-	{
-		// Directory header
-		DirectoryHeader	dheader;
-		// Generate header block
-		generateBlock(dheader.block);
-		// Get directory info
-		String dirInfo = dir.dump(-1, ' ', false, Nlohmann::error_handler_t::replace);
-		// Compress & encrypt directory info
-		BinaryData pdi = BinaryData(dirInfo.begin(), dirInfo.end());
-		pdi = compress(pdi, comp, complvl);
-		pdi = encrypt(pdi, passhash, enc, dheader.block);
+) {
+	try {
+		// Hash the password
+		String passhash = hashPassword(password);
+		_ARCDEBUGLN("FOLDER: ", folderPath, "\nARCHIVE: ", archivePath);
+		// Get file structure
+		_ARCDEBUGLN("Getting file structure...");
+		JSONData dir;
+		StringList files;
+		JSONData tree = dir["tree"];
+		tree = getStructure(fs::path(folderPath), files, fs::path(folderPath).stem().string());
+		_ARCDEBUGLN("\n", dir.dump(2, ' ', false, Nlohmann::error_handler_t::replace), "\n");
+		// Populate with temporary values
+		List<uint64> locations(files.size(), 0);
+		// Open file
+		std::ofstream file(archivePath, std::ios::binary | std::ios::trunc);
+		file.exceptions(std::ofstream::badbit | std::ofstream::failbit);
 		// Populate header
-		dheader.compSize	= pdi.size();
-		dheader.uncSize		= dirInfo.size();
-		// Get directory header location
-		header.dirHeaderLoc = file.tellp();
-		// Debug info
-		_ARCDEBUGLN("  DIRECTORY INFO LOCATION: ", header.dirHeaderLoc		);
-		_ARCDEBUGLN("        UNCOMPRESSED SIZE: ", dheader.uncSize,		"B"	);
-		_ARCDEBUGLN("          COMPRESSED SIZE: ", dheader.compSize,	"B"	);
-		// Write header & directory info
-		file.write((char*)&dheader, header.dirHeaderSize);
-		file.write((char*)pdi.data(), pdi.size());
-		// Write main header second pass
-		file.seekp(0);
+		_ARCDEBUGLN("Creating header...\n");
+		// Headers
+		ArchiveHeader	header;
+		// Set main header params
+		header.version		= ARCHIVE_VERSION;		// file format version
+		header.minVersion	= ARCHIVE_MIN_VERSION;	// file format minimum version
+		header.encryption	= (uint16)enc;			// encryption mode
+		header.compression	= (uint16)comp;			// compression mode
+		header.level		= complvl;				// compression level
+		/*header.flags =
+			Flags::SHOULD_CHECK_CRC_BIT				// Do CRC step
+		;*/
+		_ARCDEBUGLN("             HEADER SIZE: ", (uint64)header.headerSize,		"B"	);
+		_ARCDEBUGLN("        FILE HEADER SIZE: ", (uint64)header.fileHeaderSize,	"B"	);
+		_ARCDEBUGLN("   DIRECTORY HEADER SIZE: ", (uint64)header.dirHeaderSize,		"B"	);
+		_ARCDEBUGLN("     FILE FORMAT VERSION: ", (uint64)header.version				);
+		_ARCDEBUGLN(" FILE FORMAT MIN VERSION: ", (uint64)header.minVersion				);
+		_ARCDEBUGLN("         ENCRYPTION MODE: ", (uint64)header.encryption				);
+		_ARCDEBUGLN("        COMPRESSION MODE: ", (uint64)header.compression			);
+		_ARCDEBUGLN("       COMPRESSION LEVEL: ", (uint64)header.level					);
+		_ARCDEBUGLN("\nDirectory structure layout:");
+		_ARCDEBUGLN("       FILE COUNT: ", files.size()			);
+		// Write main header first pass
 		file.write((char*)&header, header.headerSize);
+		// Write file info
+		_ARCDEBUGLN("\nWriting files...\n");
+		for (auto const& [i, f]: Helper::enumerate(files)) {
+			// Get current stream position as file location
+			locations[i] = file.tellp();
+			// Read file
+			File::BinaryData contents = File::loadBinary(f);
+			// Prepare header
+			FileHeader fheader;
+			fheader.uncSize = contents.size();				// Uncompressed file size
+			// Generate block
+			generateBlock(fheader.block);					// Encryption block
+			// Process file
+			if (!contents.empty()) {
+				contents = compress(
+					contents,
+					comp,
+					complvl
+				);
+				_ARCDEBUGLN("Before encryption: ", contents.size());
+				contents = encrypt(
+					contents,
+					passhash,
+					enc,
+					fheader.block
+				);
+				_ARCDEBUGLN("After encryption: ", contents.size());
+			}
+			fheader.compSize	= contents.size();	// Compressed file size
+			fheader.crc			= 0					// CRC (currently not working)
+			// Debug info
+			_ARCDEBUGLN("'", files[i], "':");
+			_ARCDEBUGLN("          FILE INDEX: ", i						);
+			_ARCDEBUGLN("       FILE LOCATION: ", locations[i]		, " (", encoded(locations[i]), ")");
+			_ARCDEBUGLN("   UNCOMPRESSED SIZE: ", fheader.uncSize,	"B"	);
+			_ARCDEBUGLN("     COMPRESSED SIZE: ", fheader.compSize,	"B"	);
+			_ARCDEBUGLN("               CRC32: ", fheader.crc,		"\n"	);
+			// Copy header & file data
+			file.write((char*)&fheader, header.fileHeaderSize);
+			file.write((char*)contents.data(), contents.size());
+		}
+		// Populate file tree
+		populateTree(tree, locations);
+		// Process directory structure
+		_ARCDEBUGLN("\nWriting directory structure...\n");
+		_ARCDEBUGLN("\n", dir.dump(2, ' ', false, Nlohmann::error_handler_t::replace), "\n");
+		{
+			// Directory header
+			DirectoryHeader	dheader;
+			// Generate header block
+			generateBlock(dheader.block);
+			// Get directory info
+			String dirInfo = dir.dump(-1, ' ', false, Nlohmann::error_handler_t::replace);
+			// Compress & encrypt directory info
+			BinaryData pdi = BinaryData(dirInfo.begin(), dirInfo.end());
+			pdi = compress(pdi, comp, complvl);
+			pdi = encrypt(pdi, passhash, enc, dheader.block);
+			// Populate header
+			dheader.compSize	= pdi.size();
+			dheader.uncSize		= dirInfo.size();
+			// Get directory header location
+			header.dirHeaderLoc = file.tellp();
+			// Debug info
+			_ARCDEBUGLN("  DIRECTORY INFO LOCATION: ", header.dirHeaderLoc		);
+			_ARCDEBUGLN("        UNCOMPRESSED SIZE: ", dheader.uncSize,		"B"	);
+			_ARCDEBUGLN("          COMPRESSED SIZE: ", dheader.compSize,	"B"	);
+			// Write header & directory info
+			file.write((char*)&dheader, header.dirHeaderSize);
+			file.write((char*)pdi.data(), pdi.size());
+			// Write main header second pass
+			file.seekp(0);
+			file.write((char*)&header, header.headerSize);
+		}
+		// Close file
+		file.flush();
+		file.close();
+		_ARCDEBUGLN("\nDone!");
+		_ARCDEBUGLN("Please run [arcgen \"YOUR_PASSWORD_HERE\"] to generate the hash to use in your game.");
+	#ifdef ARCSYS_APPLICATION_
+	} catch (Error::Error const& e) {
+		_ARCDEBUGLN(e.report());
+		_ARCEXIT;
+	} catch (std::runtime_error const& e) {
+		_ARCDEBUGLN("ERROR: ", e.what());
+		_ARCEXIT;
 	}
-	// Close file
-	file.flush();
-	file.close();
-	_ARCDEBUGLN("\nDone!");
-	_ARCDEBUGLN("Please run [arcgen \"YOUR_PASSWORD_HERE\"] to generate the hash to use in your game.");
-#ifdef ARCSYS_APPLICATION_
-} catch (Error::Error const& e) {
-	_ARCDEBUGLN(e.report());
-	_ARCEXIT;
-} catch (std::runtime_error const& e) {
-	_ARCDEBUGLN("ERROR: ", e.what());
-	_ARCEXIT;
+	#else
+	} catch (std::runtime_error const& e) {
+		throw File::FileLoadError(e.what(), __FILE__, toString(__LINE__), "Arch::pack");
+	}
+	#endif // ARCSYS_APPLICATION_
 }
-#else
-} catch (std::runtime_error const& e) {
-	throw File::FileLoadError(e.what(), __FILE__, toString(__LINE__), "Arch::pack");
-}
-#endif // ARCSYS_APPLICATION_
 
 [[noreturn]] void notOpenError() {
 	throw File::FileLoadError(

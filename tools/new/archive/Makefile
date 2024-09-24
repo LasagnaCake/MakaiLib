@@ -19,12 +19,12 @@ OPTIMIZATIONS	:= $(USE_OPENMP) -funswitch-loops -fpredictive-commoning -fgcse-af
 
 WINGARBAGE	:= -lole32 -loleaut32 -limm32 -lwinmm -lversion -lpowrprof -lcomdlg32 -lsetupapi -lgdi32
 
-INCLUDES	:= -I$(ROOT)/lib/cryptopp/include -I$(ROOT)/lib/cppcodec-0.2 -I$(ROOT)/src/new/tool/archive
-LIBRARIES	:= $(WINGARBAGE) $(ROOT)/lib/cryptopp/lib/libcryptopp.a
+INCLUDES	:= -I$(ROOT)/lib/cryptopp/include -I$(ROOT)/lib/cppcodec-0.2 -I$(ROOT)/output/include
+LIBRARIES	:= $(WINGARBAGE)
 
 DEBUGMODE		:= -DMAKAILIB_DEBUG -DCTL_DEBUG -DNDEBUG
 DEBUGCOMPCFG	:= $(COMPILER_CONFIG) -Wall -Wpedantic -Og -ggdb3 -fno-omit-frame-pointer $(DEBUGMODE)
-DEBUGLINKCFG	:= $(LINKER_CONFIG) -Og $(LIBRARIES) -lgcc -lstdc++
+DEBUGLINKCFG	:= $(LINKER_CONFIG) -Og $(LIBRARIES)
 
 COMPCFG	:= $(COMPILER_CONFIG) -O$(o) $(OPTIMIZATIONS) $(DEBUGMODE)
 LINKCFG	:= $(LINKER_CONFIG) -s -O$(o) $(LIBRARIES) $(LEAN)
@@ -33,7 +33,7 @@ COMPILER	:= @$(CXX) $(INCLUDES)
 LINKER		:= @$(CXX)
 
 DEBUGEXTRAOBJS := $(ROOT)/output/lib/libmakai.debug.a
-EXTRAOBJS := $(ROOT)/output/lib/libmakai.a
+EXTRAOBJS := $(ROOT)/output/lib/libmakai.debug.a
 
 LIBNAME	:= archive
 
@@ -80,9 +80,9 @@ release:
 	$(COMPILER) $(COMPCFG) -c arcunpack.cpp -o arcunpack.$@.o
 	$(COMPILER) $(COMPCFG) -c arcgen.cpp -o arcgen.$@.o
 
-	$(LINKER) -o arcpack.exe $(EXTRAOBJS) arcpack.$@.o $(LINKCFG)
-	$(LINKER) -o arcunpack.exe $(EXTRAOBJS) arcunpack.$@.o $(LINKCFG)
-	$(LINKER) -o arcgen.exe $(EXTRAOBJS) arcgen.$@.o  $(LINKCFG)
+	$(LINKER) -o arcpack.exe arcpack.$@.o $(EXTRAOBJS) $(LINKCFG)
+	$(LINKER) -o arcunpack.exe arcunpack.$@.o $(EXTRAOBJS) $(LINKCFG)
+	$(LINKER) -o arcgen.exe arcgen.$@.o $(EXTRAOBJS)  $(LINKCFG)
 
 	@echo "Done!"
 	

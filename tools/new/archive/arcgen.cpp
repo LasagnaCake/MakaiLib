@@ -1,6 +1,6 @@
 #define ARCSYS_APPLICATION_
 
-#include <archive.hpp>
+#include <makai/tool/archive/archive.hpp>
 
 String escape(char const& c) {
 	switch (c) {
@@ -35,7 +35,7 @@ int main(int argc, char** argv) {
 			keyfile += std::string("\\x")+(code.size()<2?"0":"")+code;
 		}
 		keyfile += "\");";
-		FileLoader::saveTextFile("key.256.h", keyfile);
+		Makai::File::saveText("key.256.h", keyfile);
 		DEBUGLN("Key generated!");
 	}
 	return 0;
