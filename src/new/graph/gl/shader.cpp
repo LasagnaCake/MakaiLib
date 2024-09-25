@@ -139,7 +139,7 @@ bool Shader::create(String const& vertexCode, String const& fragmentCode) {
 	glGetProgramiv(instance->id, GL_LINK_STATUS, &success);
 	if (!success) {
 		glGetProgramInfoLog(instance->id, 2048, NULL, infoLog);
-		throw Error::FailedAction(String("Could not link shader program!\n") + infoLog + "\n\n\n Program:" + vertexCode + "\n\n\n" + fragmentCode);
+		throw Error::FailedAction(String("Could not link shader program!\n") + infoLog);
 	}
 	// Delete shaders
 	if (vertex)		glDeleteShader(vertex);
@@ -201,7 +201,7 @@ bool Shader::create(String const& code, ShaderType const& shaderType) {
 	glGetProgramiv(instance->id, GL_LINK_STATUS, &success);
 	if (!success) {
 		glGetProgramInfoLog(instance->id, 2048, NULL, infoLog);
-		throw Error::FailedAction(String("Could not link shader program!\n") + infoLog + "\n\n\n Program:" + code);
+		throw Error::FailedAction(String("Could not link shader program!\n") + infoLog);
 	}
 	glDeleteShader(shader);
 	return true;
