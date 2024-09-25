@@ -1,4 +1,4 @@
-#include "glapi.cpp"
+#include "glapiloader.cc"
 
 #include "core.hpp"
 

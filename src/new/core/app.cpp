@@ -2,7 +2,7 @@
 #define AUDIO_SAMPLE_FRAMES 2048
 #endif // AUDIO_SAMPLE_FRAMES
 
-//#include "../graph/gl/glapi.cpp"
+//#include "../graph/gl/glapiloader.cc"
 
 #if (_WIN32 || _WIN64 || __WIN32__ || __WIN64__)
 #include <windows.h>
@@ -148,6 +148,18 @@ void App::loadShaders(SLF::SLFData const& main, SLF::SLFData const& buffer) {
 	DEBUGLN("> Making default shader");
 	Makai::Graph::Shader::DEFAULT.create(main);
 	DEBUGLN("Done!");
+}
+
+void App::loadDefaultShaders() {
+	framebuffer.shader.create(
+		Makai::Graph::Shader::Program::DEFAULT_FRAMEBUFFER_VERT,
+		Makai::Graph::Shader::Program::DEFAULT_FRAMEBUFFER_FRAG
+	);
+	layerbuffer.shader = framebuffer.shader;
+	Makai::Graph::Shader::DEFAULT.create(
+		Makai::Graph::Shader::Program::DEFAULT_MAIN_VERT,
+		Makai::Graph::Shader::Program::DEFAULT_MAIN_FRAG
+	);
 }
 
 App::~App() {

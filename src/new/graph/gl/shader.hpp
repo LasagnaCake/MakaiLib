@@ -35,6 +35,13 @@ namespace Makai::Graph {
 
 		Shader(Shader&& other);
 
+		struct Program {
+			static String const DEFAULT_MAIN_VERT;
+			static String const DEFAULT_MAIN_FRAG;
+			static String const DEFAULT_FRAMEBUFFER_VERT;
+			static String const DEFAULT_FRAMEBUFFER_FRAG;
+		};
+
 		~Shader();
 
 		/// Returns whether this object has a shader associated with it (i.e. "is created").
@@ -80,6 +87,7 @@ namespace Makai::Graph {
 
 		Shader& operator=(Shader&& other);
 
+		/// The default shader for (most) 3D objects.
 		static Shader DEFAULT;
 	};
 }

@@ -1,4 +1,4 @@
-#include "glapi.cpp"
+#include "glapiloader.cc"
 
 #define GET_GL_POINTER(start, offset) (void*)((start) + (offset) * sizeof(float))
 #define GET_GL_OFFSET(offset) (void*)((offset) * sizeof(float))

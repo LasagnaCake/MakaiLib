@@ -18,6 +18,7 @@ namespace Makai::SLF {
 	struct ShaderEntry {
 		String		path;
 		ShaderType	type;
+		String		code = "";
 	};
 
 	struct SLFData {
@@ -25,9 +26,9 @@ namespace Makai::SLF {
 		List<ShaderEntry>	shaders;
 	};
 
-	SLFData parse(String const& slf, String const& srcFolder);
-	SLFData loadFile(String const& path);
-	SLFData getFile(String const& path);
+	SLFData parse(String const& slf, String const& srcFolder, bool const& pathOnly = true);
+	SLFData loadFile(String const& path, bool const& pathOnly = true);
+	SLFData getFile(String const& path, bool const& pathOnly = true);
 }
 
 namespace MkSLF = Makai::SLF;

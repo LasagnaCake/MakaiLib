@@ -24,10 +24,7 @@ struct TestApp: Makai::App {
 
 	TestApp(): Makai::App(600, 400, "Test 03", false) {
 		DEBUGLN("Loading shaders...");
-		loadShaders(
-			Makai::File::loadSLF("shaders/base/base.slf"),
-			Makai::File::loadSLF("shaders/framebuffer/compose.slf")
-		);
+		loadDefaultShaders();
 		DEBUGLN("Creating cubes...");
 		for (usize j = 0; j < cubeGrid; ++j)
 			for (usize i = 0; i < cubeGrid; ++i) {

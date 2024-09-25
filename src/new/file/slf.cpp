@@ -44,7 +44,7 @@ constexpr bool isValidShaderExtension(String const& path) {
 	return isValidShaderType(fromFilePath(path));
 }
 
-SLFData Makai::SLF::parse(String const& slf, String const& srcFolder) {
+SLFData Makai::SLF::parse(String const& slf, String const& srcFolder, bool const& pathOnly) {
 	DEBUGLN("Parsing SLF file...");
 	String content = slf;
 	// Remove comments and empty lines
@@ -90,17 +90,19 @@ SLFData Makai::SLF::parse(String const& slf, String const& srcFolder) {
 			}
 			result.shaders.push_back(ShaderEntry{shader, st});
 		}
+		if (!pathOnly)
+			result.shaders.back().code = Makai::File::getText(result.shaders.back().path);
 	}
 	// Return result
 	return result;
 }
 
-SLFData Makai::SLF::loadFile(String const& path) {
+SLFData Makai::SLF::loadFile(String const& path, bool const& pathOnly) {
 	// Try and get the file
 	return Makai::SLF::parse(Makai::File::loadText(path), path);
 }
 
-SLFData Makai::SLF::getFile(String const& path) {
+SLFData Makai::SLF::getFile(String const& path, bool const& pathOnly) {
 	// Try and get the file
 	return Makai::SLF::parse(Makai::File::getText(path), path);
 }

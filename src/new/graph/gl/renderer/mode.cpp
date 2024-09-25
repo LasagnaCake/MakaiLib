@@ -1,6 +1,6 @@
 #include "mode.hpp"
 
-#include "../glapi.cpp"
+#include "../glapiloader.cc"
 
 using namespace Makai::Graph;
 

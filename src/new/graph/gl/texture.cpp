@@ -1,4 +1,4 @@
-#include "glapi.cpp"
+#include "glapiloader.cc"
 
 #include <stb_image.h>
 #include <stb_image_write.h>

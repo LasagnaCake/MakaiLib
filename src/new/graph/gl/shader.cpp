@@ -1,4 +1,4 @@
-#include "glapi.cpp"
+#include "glapiloader.cc"
 
 #include "shader.hpp"
 
@@ -157,7 +157,10 @@ bool Shader::create(SLF::SLFData const& slfData) {
 	for (SLF::ShaderEntry const& shader: slfData.shaders) {
 		shaderPath = FileSystem::concatenatePath(dir, shader.path);
 		DEBUGLN(shaderPath);
-		code = File::getText(shaderPath);
+		if (shader.code.empty())
+			code = File::getText(shaderPath);
+		else
+			code = shader.code;
 		try {
 			attach(code, shader.type);
 		} catch (Error::Error const& err) {
@@ -272,3 +275,11 @@ Shader& Shader::operator=(Shader&& other) {
 }
 
 Shader Shader::DEFAULT = Shader();
+
+#include "shadercode/object.cc"
+#include "shadercode/framebuffer.cc"
+
+String const Shader::Program::DEFAULT_MAIN_VERT			= DEFAULT_OBJECT_VERT;
+String const Shader::Program::DEFAULT_MAIN_FRAG			= DEFAULT_OBJECT_FRAG;
+String const Shader::Program::DEFAULT_FRAMEBUFFER_VERT	= DEFAULT_FRAMEBUFFER_VERT;
+String const Shader::Program::DEFAULT_FRAMEBUFFER_FRAG	= DEFAULT_FRAMEBUFFER_FRAG;

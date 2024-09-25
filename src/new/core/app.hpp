@@ -55,6 +55,9 @@ namespace Makai {
 		/// Loads the application's shaders from SLF files.
 		void loadShaders(SLF::SLFData const& main, SLF::SLFData const& buffer);
 
+		/// Loads the application's default shaders.
+		void loadDefaultShaders();
+
 		/// Returns the currently-opened app. Returns null if no app is open.
 		App* current();
 

@@ -1,3 +1,6 @@
+#ifndef MAKAILIB_GRAPH_GLAPILOADER_CC
+#define MAKAILIB_GRAPH_GLAPILOADER_CC
+
 #define MAKAILIB_USE_GL3W 1
 #define MAKAILIB_USE_GLAD 2
 
@@ -17,3 +20,5 @@
 	#include <SDL2/SDL.h>
 #endif
 #include <GL/gl.h>
+
+#endif // MAKAILIB_GRAPH_GLAPILOADER_CC
