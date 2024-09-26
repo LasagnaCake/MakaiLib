@@ -17,12 +17,18 @@
 			<xs:extension base="ease-settings">
 				<xs:sequence  maxOccurs="1">
 					<xs:element name="cast" type="cast" />
-					<xs:element name="sequences" type="sequences" />
+					<xs:element name="commands" type="commands" />
 					<xs:element name="dialog" type="dialog" minOccurs="1" />
 				</xs:sequence>
 				<xs:attribute name="name" type="xs:string" use="required" />
 			</xs:extension>
 		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="commands">
+		<xs:sequence>
+			<xs:element name="command" type="command" />
+		</xs:sequence>
 	</xs:complexType>
 	
 	<xs:complexType name="cast">
@@ -45,7 +51,7 @@
 		<xs:choice>
 			<xs:element name="line" type="line" />
 			<xs:element name="action" type="action" />
-			<xs:element name="sequence" type="sequence-ref" />
+			<xs:element name="command" type="command-ref" />
 		</xs:choice>
 	</xs:group>
 	
@@ -55,7 +61,7 @@
 		<xs:anyAttribute/>
 	</xs:complexType>
 	
-	<xs:complexType name="sequence">
+	<xs:complexType name="command">
 		<xs:sequence maxOccurs="unbounded">
 			<xs:element name="action" type="action" />
 		</xs:sequence>
@@ -63,13 +69,7 @@
 		<xs:attribute name="blocking" type="xs:boolean" default="true" />
 	</xs:complexType>
 
-	<xs:complexType name="sequences">
-		<xs:sequence>
-			<xs:element name="sequence" type="sequence" />
-		</xs:sequence>
-	</xs:complexType>
-
-	<xs:complexType name="sequence-ref">
+	<xs:complexType name="command-ref">
 		<xs:attribute name="name" type="xs:string" use="required" />
 	</xs:complexType>
 	
