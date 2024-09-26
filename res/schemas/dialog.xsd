@@ -47,8 +47,8 @@
 
 	<xs:group name="actor-emote-set">
 		<xs:sequence>
-			<xs:element name="actor" type="actor-ref" minOccurs="0" maxOccurs="unbounded"/>
-			<xs:element name="emote" type="named-position" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="actor" type="actor-ref" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="emote" type="named-position" minOccurs="0" maxOccurs="unbounded" />
 		</xs:sequence>
 	</xs:group>
 
