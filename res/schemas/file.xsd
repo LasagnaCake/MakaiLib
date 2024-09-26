@@ -20,6 +20,7 @@
 		<xs:simpleContent>
 			<xs:extension base="xs:base64Binary">
 				<xs:attribute name="zip" type="file-compression" default="0" />
+				<xs:attribute name="type" type="xs:string" use="required"/>
 			</xs:extension>
 		</xs:simpleContent>
 	</xs:complexType>
