@@ -8,14 +8,21 @@
 	<xs:include schemaLocation="vec.xsd" />
 	<xs:include schemaLocation="conditional.xsd" />
 	<xs:include schemaLocation="spritesheet.xsd" />
+	<xs:include schemaLocation="color.xsd" />
+	<xs:include schemaLocation="easing.xsd" />
 
 	<xs:element name="scene" type="scene" />
 	
 	<xs:complexType name="scene">
-		<xs:all>
-			<xs:element name="cast" type="cast" />
-			<xs:element name="dialog" type="dialog" />
-		</xs:all>
+		<xs:complexContent>
+			<xs:extension base="ease-settings">
+				<xs:sequence  maxOccurs="1">
+					<xs:element name="cast" type="cast" />
+					<xs:element name="dialog" type="dialog" minOccurs="1" />
+				</xs:sequence>
+				<xs:attribute name="name" type="xs:string" use="required"/>
+			</xs:extension>
+		</xs:complexContent>
 	</xs:complexType>
 	
 	<xs:complexType name="cast">
@@ -25,9 +32,13 @@
 	</xs:complexType>
 	
 	<xs:complexType name="dialog">
-		<xs:sequence minOccurs="0" maxOccurs="unbounded">
-			<xs:group ref="dialog-or-action" />
-		</xs:sequence>
+		<xs:complexContent>
+			<xs:extension base="ease-settings">
+				<xs:sequence minOccurs="0">
+					<xs:group ref="dialog-or-action" maxOccurs="unbounded" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
 	</xs:complexType>
 
 	<xs:group name="dialog-or-action">	
@@ -38,11 +49,15 @@
 	</xs:group>
 	
 	<xs:complexType name="line">
-		<xs:sequence>
-			<xs:group ref="actor-emote-set" maxOccurs="unbounded"/>
-			<xs:element name="title" type="colored-text" maxOccurs="1" />
-			<xs:element name="content" type="colored-text" maxOccurs="1" />
-		</xs:sequence>
+		<xs:complexContent>
+			<xs:extension base="ease-settings">	
+				<xs:sequence>
+					<xs:group ref="actor-emote-set" maxOccurs="unbounded" />
+					<xs:element name="title" type="colored-text" maxOccurs="1" />
+					<xs:element name="content" type="colored-text" maxOccurs="1" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
 	</xs:complexType>
 
 	<xs:group name="actor-emote-set">
@@ -55,7 +70,7 @@
 	<xs:complexType name="colored-text">
 		<xs:simpleContent>
 			<xs:extension base="xs:string">
-				<xs:attribute name="color" type="xs:string" default="#FFF" />
+				<xs:attribute ref="color" />
 			</xs:extension>
 		</xs:simpleContent>
 	</xs:complexType>
@@ -73,15 +88,13 @@
 		</xs:sequence>
 		<xs:attribute name="name" type="xs:string" use="required" />
 		<xs:attribute name="face" type="xs:string" use="required" />
-	</xs:complexType>
-
-	<xs:complexType name="ease">
-		<xs:attribute name="mode" type="xs:string" default="" />
-		<xs:attribute name="type" type="xs:string" default="" />
+		<xs:attribute name="tint" type="hex-color" default="fff" />
+		<xs:attribute name="state" type="actor-state" default="auto" />
 	</xs:complexType>
 	
 	<xs:complexType name="action" mixed="true">
 		<xs:attribute name="do" type="xs:string" use="required" />
+		<xs:attribute name="sequential" type="xs:boolean" default="false" />
 		<xs:anyAttribute/>
 	</xs:complexType>
 	
@@ -108,4 +121,20 @@
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
+
+	<xs:complexType name="ease-settings">
+		<xs:sequence minOccurs="0">
+			<xs:element name="ease" type="ease" maxOccurs="1" />
+		</xs:sequence>
+		<xs:attribute name="autoplay" type="xs:boolean" default="false" />
+		<xs:attribute name="duration" type="xs:long" default="-1" />
+	</xs:complexType>
+
+	<xs:simpleType name="actor-state">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="auto" />
+			<xs:enumeration value="leaving" />
+			<xs:enumeration value="entering" />
+		</xs:restriction>
+	</xs:simpleType>
 </xs:schema>

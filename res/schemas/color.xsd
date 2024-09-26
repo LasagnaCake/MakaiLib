@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<xs:schema
+	xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	targetNamespace="https://www.w3schools.com"
+	xmlns="https://www.w3schools.com"
+	elementFormDefault="qualified"
+>
+	<xs:include schemaLocation="vec.xsd" />
+	<xs:include schemaLocation="string.xsd" />
+
+	<xs:simpleType name="hex-color">
+		<xs:restriction base="hex-string">
+			<xs:minLength value="3" />
+			<xs:maxLength value="8" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:complexType name="color">
+		<xs:choice>
+			<xs:element name="code" type="hex-color" />
+			<xs:element name="value" type="vec4" />
+		</xs:choice>
+	</xs:complexType>
+
+	<xs:attribute name="color" type="hex-color" default="fff" />
+</xs:schema>

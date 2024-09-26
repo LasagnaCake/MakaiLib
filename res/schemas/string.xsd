@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<xs:schema
+	xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	targetNamespace="https://www.w3schools.com"
+	xmlns="https://www.w3schools.com"
+	elementFormDefault="qualified"
+>
+	<xs:simpleType name="hex-string">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="([0-9]|[a-f]|[A-F])*"></xs:pattern>
+		</xs:restriction>
+	</xs:simpleType>
+</xs:schema>
