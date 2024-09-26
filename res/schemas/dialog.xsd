@@ -7,6 +7,7 @@
 >
 	<xs:include schemaLocation="vec.xsd" />
 	<xs:include schemaLocation="conditional.xsd" />
+	<xs:include schemaLocation="spritesheet.xsd" />
 
 	<xs:element name="scene" type="scene" />
 	
@@ -25,20 +26,31 @@
 	
 	<xs:complexType name="dialog">
 		<xs:sequence minOccurs="0" maxOccurs="unbounded">
-			<xs:choice>
-				<xs:element name="line" type="line" />
-				<xs:element name="action" type="action" />
-			</xs:choice>
+			<xs:group ref="dialog-or-action" />
 		</xs:sequence>
 	</xs:complexType>
+
+	<xs:group name="dialog-or-action">	
+		<xs:choice>
+			<xs:element name="line" type="line" />
+			<xs:element name="action" type="action" />
+		</xs:choice>
+	</xs:group>
 	
 	<xs:complexType name="line">
 		<xs:sequence>
-			<xs:element name="cast" type="cast-ref" maxOccurs="1" />
+			<xs:group ref="actor-emote-set" maxOccurs="unbounded"/>
 			<xs:element name="title" type="colored-text" maxOccurs="1" />
 			<xs:element name="content" type="colored-text" maxOccurs="1" />
 		</xs:sequence>
 	</xs:complexType>
+
+	<xs:group name="actor-emote-set">
+		<xs:sequence>
+			<xs:element name="actor" type="actor-ref" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="emote" type="named-position" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:group>
 
 	<xs:complexType name="colored-text">
 		<xs:simpleContent>
@@ -57,7 +69,7 @@
 	<xs:complexType name="actor-ref">
 		<xs:sequence minOccurs="0">
 			<xs:element name="ease" type="ease" maxOccurs="1" />
-			<xs:element name="emote" type="position" maxOccurs="unbounded" />
+			<xs:element name="emote" type="named-position" maxOccurs="unbounded" />
 		</xs:sequence>
 		<xs:attribute name="name" type="xs:string" use="required" />
 		<xs:attribute name="face" type="xs:string" use="required" />
@@ -75,13 +87,21 @@
 	
 	<xs:complexType name="actor">
 		<xs:all>
+			<xs:element name="positions" type="actor-positions" minOccurs="1" />
+			<xs:element name="sprite" type="spritesheet" />
+		</xs:all>
+		<xs:attribute name="name" type="xs:string" use="required" />
+	</xs:complexType>
+
+	<xs:complexType name="actor-positions">
+		<xs:all>
 			<xs:element name="out" type="vec2" />
 			<xs:element name="talk" type="vec2" />
 			<xs:element name="rest" type="vec2" />
 		</xs:all>
 	</xs:complexType>
 	
-	<xs:complexType name="position">
+	<xs:complexType name="named-position">
 		<xs:complexContent>
 			<xs:extension base="vec2">	
 				<xs:attribute name="type" type="xs:string" use="required" />

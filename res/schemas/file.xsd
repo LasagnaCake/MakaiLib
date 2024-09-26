@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<xs:schema
+	xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	targetNamespace="https://www.w3schools.com"
+	xmlns="https://www.w3schools.com"
+	elementFormDefault="qualified"
+>
+	<xs:complexType name="file">
+		<xs:choice minOccurs="1">
+			<xs:element name="path" type="file-path"/>
+			<xs:element name="data" type="file-pack"/>
+		</xs:choice>
+	</xs:complexType>
+
+	<xs:complexType name="file-path">
+		<xs:attribute name="src" type="xs:string" use="required"/>
+	</xs:complexType>
+
+	<xs:complexType name="file-pack">
+		<xs:simpleContent>
+			<xs:extension base="xs:base64Binary">
+				<xs:attribute name="zip" type="file-compression" default="0" />
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+
+	<xs:simpleType name="file-compression">
+		<xs:restriction base="xs:unsignedByte">
+			<xs:minInclusive value="0" />
+			<xs:maxInclusive value="9" />
+		</xs:restriction>
+	</xs:simpleType>
+</xs:schema>

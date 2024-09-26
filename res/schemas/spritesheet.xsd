@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<xs:schema
+	xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	targetNamespace="https://www.w3schools.com"
+	xmlns="https://www.w3schools.com"
+	elementFormDefault="qualified"
+>
+	<xs:include schemaLocation="vec.xsd" />
+	<xs:include schemaLocation="file.xsd" />
+
+	<xs:complexType name="spritesheet">
+		<xs:all>
+			<xs:element name="image" type="file" minOccurs="1" />
+			<xs:element name="size" type="vec2" minOccurs="1" />
+		</xs:all>
+	</xs:complexType>
+</xs:schema>
