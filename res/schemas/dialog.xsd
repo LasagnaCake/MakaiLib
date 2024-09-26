@@ -11,10 +11,10 @@
 	<xs:element name="scene" type="scene" />
 	
 	<xs:complexType name="scene">
-		<xs:sequence>
-			<xs:element name="cast" type="cast" maxOccurs="1" />
-			<xs:element name="dialog" type="dialog" maxOccurs="1" />
-		</xs:sequence>
+		<xs:all>
+			<xs:element name="cast" type="cast" />
+			<xs:element name="dialog" type="dialog" />
+		</xs:all>
 	</xs:complexType>
 	
 	<xs:complexType name="cast">
@@ -55,9 +55,9 @@
 	</xs:complexType>
 	
 	<xs:complexType name="actor-ref">
-		<xs:sequence minOccurs="0" maxOccurs="unbounded">
-			<xs:element name="ease" type="ease" />
-			<xs:element name="emote" type="emote" />
+		<xs:sequence minOccurs="0">
+			<xs:element name="ease" type="ease" maxOccurs="1" />
+			<xs:element name="emote" type="position" maxOccurs="unbounded" />
 		</xs:sequence>
 		<xs:attribute name="name" type="xs:string" use="required" />
 		<xs:attribute name="face" type="xs:string" use="required" />
@@ -73,13 +73,6 @@
 		<xs:anyAttribute/>
 	</xs:complexType>
 	
-	<xs:complexType name="emote">
-		<xs:all>
-			<xs:element name="at" type="vec2" minOccurs="1" />
-		</xs:all>
-		<xs:attribute name="type" type="xs:string" use="required" />
-	</xs:complexType>
-	
 	<xs:complexType name="actor">
 		<xs:all>
 			<xs:element name="out" type="vec2" />
@@ -90,8 +83,8 @@
 	
 	<xs:complexType name="position">
 		<xs:complexContent>
-			<xs:extension base="vec2">
-				<xs:attribute name="type" type="xs:string" />
+			<xs:extension base="vec2">	
+				<xs:attribute name="type" type="xs:string" use="required" />
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
