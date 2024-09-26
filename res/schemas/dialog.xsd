@@ -6,7 +6,6 @@
 	elementFormDefault="qualified"
 >
 	<xs:include schemaLocation="vec.xsd" />
-	<xs:include schemaLocation="conditional.xsd" />
 	<xs:include schemaLocation="spritesheet.xsd" />
 	<xs:include schemaLocation="color.xsd" />
 	<xs:include schemaLocation="easing.xsd" />
@@ -18,9 +17,10 @@
 			<xs:extension base="ease-settings">
 				<xs:sequence  maxOccurs="1">
 					<xs:element name="cast" type="cast" />
+					<xs:element name="sequences" type="sequences" />
 					<xs:element name="dialog" type="dialog" minOccurs="1" />
 				</xs:sequence>
-				<xs:attribute name="name" type="xs:string" use="required"/>
+				<xs:attribute name="name" type="xs:string" use="required" />
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
@@ -35,18 +35,43 @@
 		<xs:complexContent>
 			<xs:extension base="ease-settings">
 				<xs:sequence minOccurs="0">
-					<xs:group ref="dialog-or-action" maxOccurs="unbounded" />
+					<xs:group ref="event" maxOccurs="unbounded" />
 				</xs:sequence>
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
 
-	<xs:group name="dialog-or-action">	
+	<xs:group name="event">	
 		<xs:choice>
 			<xs:element name="line" type="line" />
 			<xs:element name="action" type="action" />
+			<xs:element name="sequence" type="sequence-ref" />
 		</xs:choice>
 	</xs:group>
+	
+	<xs:complexType name="action" mixed="true">
+		<xs:attribute name="do" type="xs:string" use="required" />
+		<xs:attribute name="wait" type="xs:unsignedLong" default="0" />
+		<xs:anyAttribute/>
+	</xs:complexType>
+	
+	<xs:complexType name="sequence">
+		<xs:sequence maxOccurs="unbounded">
+			<xs:element name="action" type="action" />
+		</xs:sequence>
+		<xs:attribute name="name" type="xs:string" use="required" />
+		<xs:attribute name="blocking" type="xs:boolean" default="true" />
+	</xs:complexType>
+
+	<xs:complexType name="sequences">
+		<xs:sequence>
+			<xs:element name="sequence" type="sequence" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="sequence-ref">
+		<xs:attribute name="name" type="xs:string" use="required" />
+	</xs:complexType>
 	
 	<xs:complexType name="line">
 		<xs:complexContent>
@@ -90,12 +115,6 @@
 		<xs:attribute name="face" type="xs:string" use="required" />
 		<xs:attribute name="tint" type="hex-color" default="fff" />
 		<xs:attribute name="state" type="actor-state" default="auto" />
-	</xs:complexType>
-	
-	<xs:complexType name="action" mixed="true">
-		<xs:attribute name="do" type="xs:string" use="required" />
-		<xs:attribute name="sequential" type="xs:boolean" default="false" />
-		<xs:anyAttribute/>
 	</xs:complexType>
 	
 	<xs:complexType name="actor">
