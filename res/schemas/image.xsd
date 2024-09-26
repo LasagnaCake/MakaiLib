@@ -6,9 +6,15 @@
 >
 	<xs:include schemaLocation="file.xsd" />
 
+	<xs:complexType name="image">
+		<xs:complexContent>
+			<xs:extension base="file" />
+		</xs:complexContent>
+	</xs:complexType>
+
 	<xs:complexType name="texture">
 		<xs:complexContent>
-			<xs:extension base="file">
+			<xs:extension base="image">
 				<xs:sequence>
 					<xs:element name="filter" type="texture-filter-mode" />
 				</xs:sequence>
