@@ -6,11 +6,11 @@
 	elementFormDefault="qualified"
 >
 	<xs:include schemaLocation="vec.xsd" />
-	<xs:include schemaLocation="file.xsd" />
+	<xs:include schemaLocation="image.xsd" />
 
 	<xs:complexType name="spritesheet">
 		<xs:all>
-			<xs:element name="image" type="file" minOccurs="1" />
+			<xs:element name="image" type="image" minOccurs="1" />
 			<xs:element name="size" type="vec2" minOccurs="1" />
 		</xs:all>
 	</xs:complexType>
