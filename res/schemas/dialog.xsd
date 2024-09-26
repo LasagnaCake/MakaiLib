@@ -5,106 +5,93 @@
 	xmlns="https://www.w3schools.com"
 	elementFormDefault="qualified"
 >
-	<xs:element name="scene" type="scene"/>
+	<xs:include schemaLocation="vec.xsd" />
+	<xs:include schemaLocation="conditional.xsd" />
+
+	<xs:element name="scene" type="scene" />
 	
 	<xs:complexType name="scene">
 		<xs:sequence>
-			<xs:element name="cast" type="cast" maxOccurs="1"/>
-			<xs:element name="dialog" type="dialog" maxOccurs="1"/>
+			<xs:element name="cast" type="cast" maxOccurs="1" />
+			<xs:element name="dialog" type="dialog" maxOccurs="1" />
 		</xs:sequence>
 	</xs:complexType>
 	
 	<xs:complexType name="cast">
 		<xs:sequence minOccurs="0" maxOccurs="unbounded">
-			<xs:element name="actor" type="actor"/>
+			<xs:element name="actor" type="actor" />
 		</xs:sequence>
 	</xs:complexType>
 	
 	<xs:complexType name="dialog">
 		<xs:sequence minOccurs="0" maxOccurs="unbounded">
 			<xs:choice>
-				<xs:element name="say" type="line"/>
-				<xs:element name="do" type="action"/>
+				<xs:element name="line" type="line" />
+				<xs:element name="action" type="action" />
 			</xs:choice>
 		</xs:sequence>
 	</xs:complexType>
 	
 	<xs:complexType name="line">
 		<xs:sequence>
-			<xs:element name="cast" type="cast-ref" maxOccurs="1"/>
-			<xs:element name="title" type="xs:string" maxOccurs="1">
-				<xs:attribute name="color" type="xs:string" default="#FFF"/>
-			</xs:element>
-			<xs:element name="content" type="xs:string" maxOccurs="1">
-				<xs:attribute name="color" type="xs:string" default="#FFF"/>
-			</xs:element>
+			<xs:element name="cast" type="cast-ref" maxOccurs="1" />
+			<xs:element name="title" type="colored-text" maxOccurs="1" />
+			<xs:element name="content" type="colored-text" maxOccurs="1" />
 		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="colored-text">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="color" type="xs:string" default="#FFF" />
+			</xs:extension>
+		</xs:simpleContent>
 	</xs:complexType>
 	
 	<xs:complexType name="cast-ref">
 		<xs:sequence>
-			<xs:element name="actor" type="actor-ref" maxOccurs="unbounded"/>
+			<xs:element name="actor" type="actor-ref" maxOccurs="unbounded" />
 		</xs:sequence>
 	</xs:complexType>
 	
 	<xs:complexType name="actor-ref">
-		<xs:complexContent>
-			<xs:attribute name="name" type="xs:string"/>
-		</xs:complexContent>
-	</xs:complexType>
-	
-	<!--
-	<xs:complexType name="action">
 		<xs:sequence minOccurs="0" maxOccurs="unbounded">
-			<xs:element name="do" type="do"/>
+			<xs:element name="ease" type="ease" />
+			<xs:element name="emote" type="emote" />
 		</xs:sequence>
+		<xs:attribute name="name" type="xs:string" use="required" />
+		<xs:attribute name="face" type="xs:string" use="required" />
 	</xs:complexType>
-	-->
+
+	<xs:complexType name="ease">
+		<xs:attribute name="mode" type="xs:string" default="" />
+		<xs:attribute name="type" type="xs:string" default="" />
+	</xs:complexType>
 	
 	<xs:complexType name="action" mixed="true">
-		<xs:attribute name="action" type="xs:string"/>
-		<xs:sequence minOccurs="0" maxOccurs="unbounded">
-			<xs:any minOccurs="0" maxOccurs="unbounded"/>
-		</xs:sequence>
+		<xs:attribute name="do" type="xs:string" use="required" />
 		<xs:anyAttribute/>
 	</xs:complexType>
 	
+	<xs:complexType name="emote">
+		<xs:all>
+			<xs:element name="at" type="vec2" minOccurs="1" />
+		</xs:all>
+		<xs:attribute name="type" type="xs:string" use="required" />
+	</xs:complexType>
+	
 	<xs:complexType name="actor">
-		<xs:sequence>
-			<xs:element name="out" type="vec2" minOccurs="1" maxOccurs="1"/>
-			<xs:element name="talk" type="vec2" minOccurs="1" maxOccurs="1"/>
-			<xs:element name="rest" type="vec2" minOccurs="1" maxOccurs="1"/>
-		</xs:sequence>
-	</xs:sequence>
-	
-	<xs:complexType name="vec2">
-		<xs:complexContent>
-			<xs:attribute name="x" type="xs:float"/>
-			<xs:attribute name="y" type="xs:float"/>
-		</xs:complexContent>
-	</xs:complexType>
-	
-	<xs:complexType name="vec3">
-		<xs:complexContent>
-			<xs:attribute name="x" type="xs:float"/>
-			<xs:attribute name="y" type="xs:float"/>
-			<xs:attribute name="z" type="xs:float"/>
-		</xs:complexContent>
-	</xs:complexType>
-	
-	<xs:complexType name="vec4">
-		<xs:complexContent>
-			<xs:attribute name="x" type="xs:float"/>
-			<xs:attribute name="y" type="xs:float"/>
-			<xs:attribute name="z" type="xs:float"/>
-			<xs:attribute name="w" type="xs:float"/>
-		</xs:complexContent>
+		<xs:all>
+			<xs:element name="out" type="vec2" />
+			<xs:element name="talk" type="vec2" />
+			<xs:element name="rest" type="vec2" />
+		</xs:all>
 	</xs:complexType>
 	
 	<xs:complexType name="position">
 		<xs:complexContent>
 			<xs:extension base="vec2">
-				<xs:attribute name="type" type="xs:string"/>
+				<xs:attribute name="type" type="xs:string" />
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>

@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<xs:schema
+	xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	targetNamespace="https://www.w3schools.com"
+	xmlns="https://www.w3schools.com"
+	elementFormDefault="qualified"
+>
+	<xs:complexType name="any" mixed="true">
+		<xs:sequence>
+			<xs:any maxOccurs="unbounded" />
+		</xs:sequence>
+		<xs:anyAttribute />
+	</xs:complexType>
+
+	<xs:complexType name="any-content" mixed="true">
+		<xs:sequence>
+			<xs:any maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="any-attributes">
+		<xs:anyAttribute />
+	</xs:complexType>
+</xs:schema>

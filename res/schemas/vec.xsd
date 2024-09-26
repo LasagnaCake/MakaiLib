@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<xs:schema
+	xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	targetNamespace="https://www.w3schools.com"
+	xmlns="https://www.w3schools.com"
+	elementFormDefault="qualified"
+>
+	<xs:complexType name="vec2">
+		<xs:attribute name="x" type="xs:float" default="0"/>
+		<xs:attribute name="y" type="xs:float" default="0"/>
+	</xs:complexType>
+	
+	<xs:complexType name="vec3">
+		<xs:complexContent>
+			<xs:extension base="vec2">
+				<xs:attribute name="z" type="xs:float" default="0"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+	<xs:complexType name="vec4">
+		<xs:complexContent>
+			<xs:extension base="vec3">
+				<xs:attribute name="w" type="xs:float" default="0"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+	<xs:complexType name="color">
+		<xs:complexContent>
+			<xs:extension base="vec4">
+				<xs:attribute name="value" type="xs:string" default="#FFF"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+</xs:schema>
