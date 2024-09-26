@@ -58,9 +58,8 @@ If image is to be embedded in the file:
 	"data": "", // Image file data, as encoded string
 	"encoding": "" // Image file data's encoding
 	// Optional
-	// TODO: Change these to be its own enums
-	"minFilter": 0, // See GL's GL_TEXTURE_MIN_FILTER
-	"magFilter": 0  // See GL's GL_TEXTURE_MAG_FILTER
+	"minFilter": 0, // See Makai::Texture2D::FilterMode
+	"magFilter": 0  // See Makai::Texture2D::FilterMode
 }
 ```
 
@@ -73,9 +72,8 @@ If image is to be saved in a separate file:
 		"path": "" // Path to image file, relative to definition file
 	},
 	// Optional
-	// TODO: Change these to be its own enums
-	"minFilter": 0, // See GL's GL_TEXTURE_MIN_FILTER
-	"magFilter": 0  // See GL's GL_TEXTURE_MAG_FILTER
+	"minFilter": 0, // See Makai::Texture2D::FilterMode
+	"magFilter": 0  // See Makai::Texture2D::FilterMode
 }
 ```
 
