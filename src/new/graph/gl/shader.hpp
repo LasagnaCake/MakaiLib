@@ -38,8 +38,8 @@ namespace Makai::Graph {
 		struct Program {
 			static String const DEFAULT_MAIN_VERT;
 			static String const DEFAULT_MAIN_FRAG;
-			static String const DEFAULT_FRAMEBUFFER_VERT;
-			static String const DEFAULT_FRAMEBUFFER_FRAG;
+			static String const DEFAULT_BUFFER_VERT;
+			static String const DEFAULT_BUFFER_FRAG;
 		};
 
 		~Shader();

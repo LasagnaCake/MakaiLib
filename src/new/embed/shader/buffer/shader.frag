@@ -1,71 +1,3 @@
-#ifndef MAKAILIB_GRAPH_SHADERCODE_FRAMEBUFFER_CC
-#define MAKAILIB_GRAPH_SHADERCODE_FRAMEBUFFER_CC
-
-#include "declare.cc"
-
-SHADER_BEGIN(DEFAULT_FRAMEBUFFER_VERT)
-R"GLShaderCode(
-
-#version 420 core
-
-#pragma optimize(on)
-
-precision mediump float;
-
-layout (location = 0) in vec3 vertPos;
-layout (location = 1) in vec2 vertUV;
-layout (location = 2) in vec4 vertColor;
-
-out vec2 fragUV;
-out vec2 maskUV;
-out vec4 fragColor;
-out vec2 screenScale;
-out vec2 screenVUSpace;
-
-uniform vec2 uvShift	= vec2(0);
-
-uniform vec2 resolution	= vec2(0);
-
-uniform mat4 posMatrix;
-uniform mat4 uvMatrix;
-
-out vec2 warpUV;
-
-uniform float warpRotate	= 0;
-uniform vec2 warpScale		= vec2(1);
-uniform vec2 warpOffset		= vec2(0);
-
-// [ ALPHA MASK ]
-uniform bool	relativeMask	= false;
-uniform vec2	maskShift		= vec2(0);
-uniform vec2	maskScale		= vec2(1);
-uniform float	maskRotate		= 0;
-
-void main()
-{
-	vec4 vertex = posMatrix * vec4(vertPos, 1.0);
-	maskUV += maskShift;
-	maskUV = vertUV * maskScale;
-	maskUV.x = maskUV.x * cos(maskRotate) - maskUV.y * sin(maskRotate);
-	maskUV.y = maskUV.x * sin(maskRotate) + maskUV.y * cos(maskRotate);
-	if (relativeMask)
-		maskUV += uvShift;
-	fragUV = ((uvMatrix * vec4(vertUV - 0.5, 0, 1.0)).xy + 0.5 + uvShift);
-	fragColor = vertColor;
-	gl_Position = vertex;
-	screenScale = vec2(resolution.x/resolution.y, 1);
-	vec2 warp = vertUV;
-	warp.x = warp.x * cos(warpRotate) - warp.y * sin(warpRotate);
-	warp.y = warp.x * sin(warpRotate) + warp.y * cos(warpRotate);
-	warpUV = (warp * warpScale) + warpOffset;
-}
-
-)GLShaderCode"
-SHADER_END
-
-SHADER_BEGIN(DEFAULT_FRAMEBUFFER_FRAG)
-R"GLShaderCode(
-
 #version 420 core
 
 #pragma optimize(on)
@@ -499,7 +431,7 @@ vec4 applyNoise(vec4 color, vec2 uv) {
 }
 
 void main() {
-	// Screen wave
+	// Screen wave	
 	vec2 wave = vec2(0);
 	if (useWave) {
 		wave = (fragUV.yx * waveFrequency) * TAU + waveShift;
@@ -559,7 +491,7 @@ void main() {
 	if (color.w <= 0) discard;
 
 	color = applyHSL(color);
-
+	
 	color = applyBrightnessAndContrast(color);
 
 	FragColor = mix(color, vec4(polarWarpColor.xyz, polarWarpColor.w * color.w), pfac * polarWarpTintStrength);
@@ -571,8 +503,3 @@ void main() {
 		}
 	}
 }
-
-)GLShaderCode"
-SHADER_END
-
-#endif // MAKAILIB_GRAPH_SHADERCODE_FRAMEBUFFER_CC

@@ -78,3 +78,7 @@ export leave = $(subst $(space),,$(filter ../,$(subst /, ../ ,$(strip $(1)))))
 submake-impl = @make -C$(call path, $(1)) $@ prefix="$(strip $(2))"
 
 export submake = $(call submake-impl, $(1), $(prefix))
+
+export submake-any-impl = @make -C$(call path, $(1)) prefix="$(strip $(2))"
+
+export submake-any = $(call submake-any-impl, $(1), $(prefix))

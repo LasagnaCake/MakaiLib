@@ -31,6 +31,7 @@ debug:
 	@echo "<systems>"
 	@echo ""
 
+	$(call submake-any, embed)
 	$(call submake, impl)
 	$(call submake, tool)
 	$(call submake, file)
@@ -83,6 +84,7 @@ release:
 	@echo "<systems>"
 	@echo ""
 
+	$(call submake-any, embed)
 	$(call submake, impl)
 	$(call submake, tool)
 	$(call submake, file)

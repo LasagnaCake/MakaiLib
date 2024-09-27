@@ -33,6 +33,9 @@ struct Shader::ShaderProgram {
 
 /// Similar to create, but internal.
 void Shader::attach(String const& code, ShaderType const& shaderType) {
+	DEBUGLN("<shader>");
+	DEBUGLN(code);
+	DEBUGLN("</shader>");
 	// Compile shaders
 	GLuint shader;
 	int success;
@@ -59,7 +62,6 @@ void Shader::attach(String const& code, ShaderType const& shaderType) {
 		throw Error::FailedAction(String("Could not link shader program!\n") + infoLog);
 	}
 	glDeleteShader(shader);
-	created = true;
 }
 
 Shader::Shader() {
@@ -98,52 +100,9 @@ inline bool Shader::isCreated() const {
 /// Creates a shader and associates it to the object. Returns false if already created.
 bool Shader::create(String const& vertexCode, String const& fragmentCode) {
 	if (created) return false;
-	else created = true;
-	// Compile shaders
-	GLuint vertex = 0, fragment = 0;
-	int success;
-	char infoLog[2048];
-	if (vertexCode != "") {
-		const char* vShaderCode = vertexCode.c_str();
-		// Vertex Shader
-		vertex = glCreateShader(GL_VERTEX_SHADER);
-		glShaderSource(vertex, 1, &vShaderCode, NULL);
-		glCompileShader(vertex);
-		// Log compile errors if any
-		glGetShaderiv(vertex, GL_COMPILE_STATUS, &success);
-		if (!success) {
-			glGetShaderInfoLog(vertex, 2048, NULL, infoLog);
-			throw Error::FailedAction(String("Could not compile Vertex Shader!\n") + infoLog);
-		};
-	}
-	// similiar for Fragment Shader
-	if (fragmentCode != "") {
-		const char* fShaderCode = fragmentCode.c_str();
-		fragment = glCreateShader(GL_FRAGMENT_SHADER);
-		glShaderSource(fragment, 1, &fShaderCode, NULL);
-		glCompileShader(fragment);
-
-		// Log compile errors if any
-		glGetShaderiv(fragment, GL_COMPILE_STATUS, &success);
-		if (!success) {
-			glGetShaderInfoLog(fragment, 2048, NULL, infoLog);
-			throw Error::FailedAction(String("Could not compile Fragment Shader!\n") + infoLog);
-		}
-	}
-	// Shader Program
-	instance->create();
-	if (vertex)		glAttachShader(instance->id, vertex);
-	if (fragment)	glAttachShader(instance->id, fragment);
-	glLinkProgram(instance->id);
-	// Log linking errors if any
-	glGetProgramiv(instance->id, GL_LINK_STATUS, &success);
-	if (!success) {
-		glGetProgramInfoLog(instance->id, 2048, NULL, infoLog);
-		throw Error::FailedAction(String("Could not link shader program!\n") + infoLog);
-	}
-	// Delete shaders
-	if (vertex)		glDeleteShader(vertex);
-	if (fragment)	glDeleteShader(fragment);
+	created = true;
+	attach(vertexCode, ShaderType::ST_VERTEX);
+	attach(fragmentCode, ShaderType::ST_FRAGMENT);
 	return true;
 }
 
@@ -177,33 +136,8 @@ bool Shader::create(SLF::SLFData const& slfData) {
 /// Creates a shader from a given shader code, and a shader type  and associates it to the object. Returns false if already created.
 bool Shader::create(String const& code, ShaderType const& shaderType) {
 	if (created) return false;
-	else created = true;
-	// Compile shaders
-	GLuint shader;
-	int success;
-	char infoLog[2048];
-	const char* shaderCode = code.c_str();
-	// Vertex Shader
-	shader = glCreateShader(getGLShaderType(shaderType));
-	glShaderSource(shader, 1, &shaderCode, NULL);
-	glCompileShader(shader);
-	// Log compile errors if any
-	glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
-	if (!success) {
-		glGetShaderInfoLog(shader, 2048, NULL, infoLog);
-		throw Error::FailedAction(String("Could not compile Shader!\n") + infoLog);
-	};
-	// Shader Program
-	instance->create();
-	glAttachShader(instance->id, shader);
-	glLinkProgram(instance->id);
-	// Log linking errors if any
-	glGetProgramiv(instance->id, GL_LINK_STATUS, &success);
-	if (!success) {
-		glGetProgramInfoLog(instance->id, 2048, NULL, infoLog);
-		throw Error::FailedAction(String("Could not link shader program!\n") + infoLog);
-	}
-	glDeleteShader(shader);
+	attach(code, shaderType);
+	created = true;
 	return true;
 }
 
@@ -276,10 +210,17 @@ Shader& Shader::operator=(Shader&& other) {
 
 Shader Shader::DEFAULT = Shader();
 
-#include "shadercode/object.cc"
-#include "shadercode/framebuffer.cc"
+extern char _binary_buffer_shader_vert_start[];
+extern char _binary_buffer_shader_frag_start[];
+extern char _binary_main_shader_vert_start[];
+extern char _binary_main_shader_frag_start[];
 
-String const Shader::Program::DEFAULT_MAIN_VERT			= DEFAULT_OBJECT_VERT;
-String const Shader::Program::DEFAULT_MAIN_FRAG			= DEFAULT_OBJECT_FRAG;
-String const Shader::Program::DEFAULT_FRAMEBUFFER_VERT	= DEFAULT_FRAMEBUFFER_VERT;
-String const Shader::Program::DEFAULT_FRAMEBUFFER_FRAG	= DEFAULT_FRAMEBUFFER_FRAG;
+extern char* _binary_buffer_shader_vert_end;
+extern char* _binary_buffer_shader_frag_end;
+extern char* _binary_main_shader_vert_end;
+extern char* _binary_main_shader_frag_end;
+
+String const Shader::Program::DEFAULT_MAIN_VERT		= String(_binary_main_shader_vert_start, _binary_main_shader_vert_end);
+String const Shader::Program::DEFAULT_MAIN_FRAG		= String(_binary_main_shader_frag_start, _binary_main_shader_frag_end);
+String const Shader::Program::DEFAULT_BUFFER_VERT	= String(_binary_buffer_shader_vert_start, _binary_buffer_shader_vert_end);
+String const Shader::Program::DEFAULT_BUFFER_FRAG	= String(_binary_buffer_shader_frag_start, _binary_buffer_shader_frag_end);

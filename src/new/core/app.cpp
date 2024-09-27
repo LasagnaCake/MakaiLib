@@ -152,8 +152,8 @@ void App::loadShaders(SLF::SLFData const& main, SLF::SLFData const& buffer) {
 
 void App::loadDefaultShaders() {
 	framebuffer.shader.create(
-		Makai::Graph::Shader::Program::DEFAULT_FRAMEBUFFER_VERT,
-		Makai::Graph::Shader::Program::DEFAULT_FRAMEBUFFER_FRAG
+		Makai::Graph::Shader::Program::DEFAULT_BUFFER_VERT,
+		Makai::Graph::Shader::Program::DEFAULT_BUFFER_FRAG
 	);
 	layerbuffer.shader = framebuffer.shader;
 	Makai::Graph::Shader::DEFAULT.create(
