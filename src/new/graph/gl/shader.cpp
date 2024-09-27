@@ -33,9 +33,6 @@ struct Shader::ShaderProgram {
 
 /// Similar to create, but internal.
 void Shader::attach(String const& code, ShaderType const& shaderType) {
-	DEBUGLN("<shader>");
-	DEBUGLN(code);
-	DEBUGLN("</shader>");
 	// Compile shaders
 	GLuint shader;
 	int success;
@@ -210,17 +207,17 @@ Shader& Shader::operator=(Shader&& other) {
 
 Shader Shader::DEFAULT = Shader();
 
-extern char _binary_buffer_shader_vert_start[];
-extern char _binary_buffer_shader_frag_start[];
-extern char _binary_main_shader_vert_start[];
-extern char _binary_main_shader_frag_start[];
+extern char mkEmbed_MainShaderVert[];
+extern char mkEmbed_MainShaderFrag[];
+extern char mkEmbed_BufferShaderVert[];
+extern char mkEmbed_BufferShaderFrag[];
 
-extern char* _binary_buffer_shader_vert_end;
-extern char* _binary_buffer_shader_frag_end;
-extern char* _binary_main_shader_vert_end;
-extern char* _binary_main_shader_frag_end;
+extern int mkEmbed_MainShaderVertSize;
+extern int mkEmbed_MainShaderFragSize;
+extern int mkEmbed_BufferShaderVertSize;
+extern int mkEmbed_BufferShaderFragSize;
 
-String const Shader::Program::DEFAULT_MAIN_VERT		= String(_binary_main_shader_vert_start, _binary_main_shader_vert_end);
-String const Shader::Program::DEFAULT_MAIN_FRAG		= String(_binary_main_shader_frag_start, _binary_main_shader_frag_end);
-String const Shader::Program::DEFAULT_BUFFER_VERT	= String(_binary_buffer_shader_vert_start, _binary_buffer_shader_vert_end);
-String const Shader::Program::DEFAULT_BUFFER_FRAG	= String(_binary_buffer_shader_frag_start, _binary_buffer_shader_frag_end);
+String const Shader::Program::DEFAULT_MAIN_VERT		= String(mkEmbed_MainShaderVert, mkEmbed_MainShaderVertSize);
+String const Shader::Program::DEFAULT_MAIN_FRAG		= String(mkEmbed_MainShaderFrag, mkEmbed_MainShaderFragSize);
+String const Shader::Program::DEFAULT_BUFFER_VERT	= String(mkEmbed_BufferShaderVert, mkEmbed_BufferShaderVertSize);
+String const Shader::Program::DEFAULT_BUFFER_FRAG	= String(mkEmbed_BufferShaderFrag, mkEmbed_BufferShaderFragSize);
