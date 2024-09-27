@@ -212,12 +212,12 @@ extern char mkEmbed_MainShaderFrag[];
 extern char mkEmbed_BufferShaderVert[];
 extern char mkEmbed_BufferShaderFrag[];
 
-extern int mkEmbed_MainShaderVertSize;
-extern int mkEmbed_MainShaderFragSize;
-extern int mkEmbed_BufferShaderVertSize;
-extern int mkEmbed_BufferShaderFragSize;
+extern int mkEmbed_MainShaderVert_Size;
+extern int mkEmbed_MainShaderFrag_Size;
+extern int mkEmbed_BufferShaderVert_Size;
+extern int mkEmbed_BufferShaderFrag_Size;
 
-String const Shader::Program::DEFAULT_MAIN_VERT		= String(mkEmbed_MainShaderVert, mkEmbed_MainShaderVertSize);
-String const Shader::Program::DEFAULT_MAIN_FRAG		= String(mkEmbed_MainShaderFrag, mkEmbed_MainShaderFragSize);
-String const Shader::Program::DEFAULT_BUFFER_VERT	= String(mkEmbed_BufferShaderVert, mkEmbed_BufferShaderVertSize);
-String const Shader::Program::DEFAULT_BUFFER_FRAG	= String(mkEmbed_BufferShaderFrag, mkEmbed_BufferShaderFragSize);
+String const Shader::Program::DEFAULT_MAIN_VERT		= String(mkEmbed_MainShaderVert, mkEmbed_MainShaderVert_Size);
+String const Shader::Program::DEFAULT_MAIN_FRAG		= String(mkEmbed_MainShaderFrag, mkEmbed_MainShaderFrag_Size);
+String const Shader::Program::DEFAULT_BUFFER_VERT	= String(mkEmbed_BufferShaderVert, mkEmbed_BufferShaderVert_Size);
+String const Shader::Program::DEFAULT_BUFFER_FRAG	= String(mkEmbed_BufferShaderFrag, mkEmbed_BufferShaderFrag_Size);
