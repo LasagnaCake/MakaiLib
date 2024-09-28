@@ -189,10 +189,11 @@ BinaryData Makai::File::loadBinary(String const& path) {
 		// Get file size
 		usize const fsize = std::filesystem::file_size(path);
 		// Try and open the file
-		std::ifstream file(path);
-		if (!file) fileLoadError(path, "Mysterious error");
+		std::ifstream file;
 		// Ensure ifstream object can throw exceptions
 		setExceptionMask(file);
+		// Open file
+		file.open(path);
 		// Preallocate data
 		BinaryData data(fsize);
 		// Read & close file
