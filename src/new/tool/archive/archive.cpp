@@ -406,7 +406,7 @@ void Arch::pack(
 	);
 }
 
-[[noreturn]] void singleFileArchiveError(String const& file) {
+[[noreturn]] void singleFileArchiveError() {
 	throw File::FileLoadError(
 		"Archive is not a multi-file archive!",
 		__FILE__
@@ -455,18 +455,18 @@ void Arch::pack(
 	);
 }
 
-Arch::FileArchive::FileArchive(String const& path, String const& password) {open(path, password);}
+Arch::FileArchive::FileArchive(DataBuffer& buffer, String const& password) {open(buffer, password);}
 
 Arch::FileArchive::~FileArchive() {close();}
 
-FileArchive& Arch::FileArchive::open(String const& path, String const& password) try {
+FileArchive& Arch::FileArchive::open(DataBuffer& buffer, String const& password) try {
 	if (streamOpen) return *this;
+	// Set archive
+	archive.rdbuf(&buffer);
 	// Set password
 	pass = password;
 	// Set exceptions
 	archive.exceptions(std::ifstream::badbit | std::ifstream::failbit);
-	// Open file
-	archive.open(path, std::ios::binary | std::ios::in);
 	// Read header
 	size_t hs = 0;
 	archive.read((char*)&hs, sizeof(uint64));
@@ -474,7 +474,7 @@ FileArchive& Arch::FileArchive::open(String const& path, String const& password)
 	archive.read((char*)&header, hs);
 	// check if file is archive
 	if (header.flags & Flags::SINGLE_FILE_ARCHIVE_BIT)
-		singleFileArchiveError(path);
+		singleFileArchiveError();
 	if (!header.dirHeaderLoc)
 		directoryTreeError();
 	// Read directory tree info
@@ -488,7 +488,6 @@ FileArchive& Arch::FileArchive::open(String const& path, String const& password)
 
 FileArchive& Arch::FileArchive::close() try {
 	if (!streamOpen) return *this;
-	archive.close();
 	streamOpen = false;
 	return *this;
 } catch (std::runtime_error const& e) {
@@ -739,7 +738,10 @@ void unpackV1(
 	String const& password = ""
 ) try {
 	_ARCDEBUGLN("\nOpening archive...\n");
-	FileArchive arc(archivePath, hashPassword(password));
+	FileBuffer buffer;
+	buffer.open(archivePath, std::ios::in | std::ios::binary);
+	FileArchive arc(buffer, hashPassword(password));
+	buffer.close();
 	_ARCDEBUGLN("\nExtracting data...\n");
 	arc.unpackTo(folderPath);
 #ifdef ARCSYS_APPLICATION_
@@ -762,7 +764,10 @@ void unpackV0(
 	String const& password = ""
 ) try {
 	_ARCDEBUGLN("\nOpening archive...\n");
-	FileArchive arc(archivePath, password);
+	FileBuffer buffer;
+	buffer.open(archivePath, std::ios::in | std::ios::binary);
+	FileArchive arc(buffer, password);
+	buffer.close();
 	_ARCDEBUGLN("\nExtracting data...\n");
 	arc.unpackTo(folderPath);
 #ifdef ARCSYS_APPLICATION_

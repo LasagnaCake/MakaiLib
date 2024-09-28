@@ -15,6 +15,7 @@ namespace Makai::File {
 	using CSVData		= StringList;
 	using ByteSpan		= Span<ubyte>;
 
+	void attachArchive(DataBuffer& buffer, String const& password = "");
 	void attachArchive(String const& path, String const& password = "");
 
 	bool isArchiveAttached();

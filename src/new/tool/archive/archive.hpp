@@ -118,11 +118,11 @@ namespace Makai::Tool::Arch {
 
 		FileArchive() {}
 
-		FileArchive(String const& path, String const& password = "");
+		FileArchive(DataBuffer& buffer, String const& password = "");
 
 		~FileArchive();
 
-		FileArchive& open(String const& path, String const& password);
+		FileArchive& open(DataBuffer& buffer, String const& password);
 
 		FileArchive& close();
 
@@ -160,7 +160,7 @@ namespace Makai::Tool::Arch {
 
 		bool					streamOpen	= false;
 		String					pass;
-		std::ifstream			archive;
+		DataStream				archive		= DataStream(nullptr);
 		ArchiveHeader			header;
 		JSON::Extern::JSONData	fstruct;
 	};

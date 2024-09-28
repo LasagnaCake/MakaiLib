@@ -27,8 +27,8 @@ ArchiveState& state() {
 }
 
 FileArchive& archive() {
-	static Instance<FileArchive> arc = new FileArchive();
-	return *arc;
+	static FileArchive arc;
+	return arc;
 }
 
 Error::ErrorPointer	arcfail	= nullptr;
@@ -56,16 +56,36 @@ using Makai::File::BinaryData;
 	);
 }
 
-void Makai::File::attachArchive(String const& path, String const& password) {
+void assertFileExists(String const& path) {
+	if (!FileSystem::exists(path))
+		fileLoadError(path, toString("File or directory '", path, "' does not exist!"));
+}
+
+void Makai::File::attachArchive(String const& path, String const& password) try {
+	assertFileExists(path);
+	static FileBuffer buffer;
+	if (buffer.is_open()) buffer.close();
+	buffer.open(path, std::ios::in | std::ios::binary);
+	Makai::File::attachArchive(buffer, password);
+} catch (std::runtime_error const& e) {
+	fileLoadError(path, e.what());
+}
+
+void Makai::File::attachArchive(DataBuffer& buffer, String const& password) {
 	#ifdef IMPL_ARCHIVE_
 	DEBUGLN("Attaching archive...");
 	if (state() == ArchiveState::FAS_LOADING)
-		fileLoadError(path, "Other archive is being loaded!");
+		throw Error::FailedAction(
+			"Other archive is being loaded!",
+			__FILE__,
+			toString(__LINE__),
+			"Makai::File::attachArchive"
+		);
 	try {
 		arcfail = nullptr;
 		state() = ArchiveState::FAS_LOADING;
 		archive().close();
-		archive().open(path, password);
+		archive().open(buffer, password);
 		state() = ArchiveState::FAS_OPEN;
 		DEBUGLN("Archive Attached!");
 	} catch (...) {
@@ -110,11 +130,6 @@ void assertArchive(String const& path) {
 	);
 }
 #endif
-
-void assertFileExists(String const& path) {
-	if (!FileSystem::exists(path))
-		fileLoadError(path, toString("File or directory '", path, "' does not exist!"));
-}
 
 void setExceptionMask(std::ios& stream) {
 	#ifndef MAKAILIB_FILE_GET_NO_EXCEPTIONS
