@@ -189,6 +189,33 @@ namespace Helper {
 
 	typedef std::thread			Thread;
 
+	typedef std::streambuf		DataBuffer;
+	typedef std::filebuf		FileBuffer;
+	typedef std::stringbuf		StringBuffer;
+
+	struct MemoryBuffer: public DataBuffer {
+		MemoryBuffer(char* const& data, usize const& size) {
+			setg(data, data, data + size);
+			setp(data, data + size);
+		}
+	};
+
+	typedef std::fstream	FileStream;
+	typedef std::iostream	DataStream;
+
+	template<class T>
+	struct BaseMemoryStream: public T {
+		MemoryBuffer buffer;
+
+		BaseMemoryStream(char* const& data, usize const& size):
+			buffer(data, size),
+			T(buffer) {}
+	};
+
+	typedef BaseMemoryStream<std::istream>	MemoryIStream;
+	typedef BaseMemoryStream<std::ostream>	MemoryOStream;
+	typedef BaseMemoryStream<DataStream>	MemoryStream;
+
 	template<typename T, typename T2>
 	constexpr List<T> convertList(List<T2> const& source) {
 		List<T> res;
@@ -570,6 +597,12 @@ using Helper::Poly;
 using Helper::Regex;
 using Helper::Span;
 using Helper::Thread;
+using Helper::DataBuffer;
+using Helper::FileBuffer;
+using Helper::MemoryBuffer;
+using Helper::DataStream;
+using Helper::FileStream;
+using Helper::MemoryStream;
 
 using Helper::_;
 
