@@ -23,7 +23,7 @@ namespace Decay {
 };
 
 template<typename T> constexpr AsTemporary<T>		forward(AsNonReference<T>&& v)	{return static_cast<T&&>(v);					}
-template<typename T> constexpr AsNonReference<T>&&	move(T&& v)						{return static_cast<AsNonReference<T>&&>(v);	}
+template<typename T> constexpr AsNonReference<T>&&	move(T&& v) noexcept			{return static_cast<AsNonReference<T>&&>(v);	}
 
 template<class TDst, class TSrc>
 #ifndef _DO_NOT_USE_BUILTINS_
