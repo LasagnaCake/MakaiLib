@@ -159,9 +159,6 @@ namespace Makai {
 		/// The application's speed scale.
 		float speed = 1.0f;
 
-		/// The application's taskers.
-		Tasking::MultiTasker taskers;
-
 		/// The application's notification handler.
 		Event::Notifier notifier;
 

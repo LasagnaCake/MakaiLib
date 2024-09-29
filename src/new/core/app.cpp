@@ -130,11 +130,6 @@ App::App (
 	// Create layer buffer
 	layerbuffer.create(width, height);
 	framebuffer();
-	DEBUGLN(Entity::ROOT ? "Root Exists!" : "Root does not exist!");
-	if (!Entity::ROOT) {
-		DEBUGLN("Initializing root tree...");
-		Entity::init();
-	}
 	DEBUGLN("All core systems initialized!");
 }
 
@@ -194,9 +189,6 @@ void App::run() {
 	// The logical process
 	auto logicFunc	= [&](float delta)-> void {
 		onLogicFrame(delta);
-		taskers.yield(1.0);
-		if (Entity::ROOT)
-			Entity::ROOT->yield(delta);
 	};
 	// Clear screen
 	Makai::Graph::API::setClearColor(background);
@@ -261,8 +253,6 @@ void App::run() {
 			#ifndef MAKAILIB_FRAME_DEPENDENT_PROCESS
 			// Do normal logic-related stuff
 			logicFunc(cycleRate * speed);
-			// Destroy queued entities
-			Entity::destroyQueued();
 			#endif // FRAME_DEPENDENT_PROCESS
 		}
 		#endif
@@ -276,8 +266,6 @@ void App::run() {
 			#ifdef MAKAILIB_FRAME_DEPENDENT_PROCESS
 			// Do normal logic-related stuff
 			logicFunc(frameRate);
-			// Destroy queued entities
-			Entity::destroyQueued();
 			#endif // FRAME_DEPENDENT_PROCESS
 			// Render screen
 			render();
@@ -297,8 +285,6 @@ void App::run() {
 			#ifndef MAKAILIB_FRAME_DEPENDENT_PROCESS
 			// Do normal logic-related stuff
 			logicFunc(cycleDelta * speed);
-			// Destroy queued entities
-			Entity::destroyQueued();
 			#endif // FRAME_DEPENDENT_PROCESS
 		}
 		#endif
@@ -400,9 +386,6 @@ void App::finalize() {
 	// Remove window from input manager
 	DEBUGLN("Detaching target window...");
 	Makai::Input::Manager::clearTargetWindow(window);
-	DEBUGLN("Clearing root entity...");
-	if (Entity::ROOT)
-		Entity::ROOT->destroyChildren();
 	// Close sound system
 	DEBUGLN("Closing sound system...");
 	Makai::Audio::close();
