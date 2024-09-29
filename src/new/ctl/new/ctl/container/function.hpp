@@ -3,7 +3,7 @@
 
 #include "../templates.hpp"
 #include "../typetraits/traits.hpp"
-#include "../container/error.hpp"
+#include "../cpperror.hpp"
 #include "nullable.hpp"
 #include "../staticvalue.hpp"
 
@@ -75,12 +75,7 @@ private:
 	}
 
 	[[noreturn]] void badCallError() {
-		throw Error::InvalidCall(
-			"No function was assigned!",
-			__FILE__,
-			"unspecified",
-			"Function::invoke"
-		);
+		throw Exception("No function assigned!");
 	}
 
 public:

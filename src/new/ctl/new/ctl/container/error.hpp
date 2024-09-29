@@ -7,7 +7,7 @@
 CTL_NAMESPACE_BEGIN
 
 namespace Error {
-	typedef DetailedException<String> Generic;
+	using Generic = DetailedException<String>;
 
 	#define DEFINE_ERROR_TYPE(NAME)\
 		struct NAME: public Generic {\

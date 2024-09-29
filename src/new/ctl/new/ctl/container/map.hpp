@@ -2,10 +2,14 @@
 #define CTL_CONTAINER_MAP_H
 
 #include "list.hpp"
+#include "string.hpp"
+#include "../namespace.hpp"
 #include "../templates.hpp"
 #include "../typetraits/traits.hpp"
 #include "../algorithm/hash.hpp"
 #include "pair.hpp"
+
+CTL_NAMESPACE_BEGIN
 
 template<class TKey, class TValue, template<class TKey, class TValue> class TPair = Pair>
 struct Collected {
@@ -77,6 +81,9 @@ public:
 private:
 };
 
+template<class T>
+using OrderedDictionary = OrderedMap<String, T>;
+
 /*
 template<class TKey, class TValue, Type::Integer TIndex = usize, class TPair = Pair<TKey, TValue>, class THasher = Hasher>
 struct HashMap:
@@ -91,5 +98,13 @@ requires (
 
 }
 */
+
+template<class TKey, class TValue>
+using Map			= OrderedMap<TKey, TValue>;
+
+template<class T>
+using Dictionary	= OrderedDictionary<T>;
+
+CTL_NAMESPACE_END
 
 #endif // CTL_CONTAINER_MAP_H
