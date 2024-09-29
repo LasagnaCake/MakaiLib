@@ -1,0 +1,10 @@
+#ifndef CTL_CONTAINER_SET_H
+#define CTL_CONTAINER_SET_H
+
+#include "../templates.hpp"
+
+CTL_NAMESPACE_BEGIN
+
+CTL_NAMESPACE_END
+
+#endif // CTL_CONTAINER_SET_H
