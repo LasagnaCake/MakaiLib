@@ -8,12 +8,12 @@ CTL_NAMESPACE_BEGIN
 
 namespace Format {
 	enum class Justify {
-		EFJ_LEFT,
-		EFJ_RIGHT,
-		EFJ_CENTER
+		CFJ_LEFT,
+		CFJ_RIGHT,
+		CFJ_CENTER
 	};
 
-	constexpr String pad(String str, char const& chr, usize const& width, Justify const& just = Justify::EFJ_LEFT) {
+	constexpr String pad(String str, char const& chr, usize const& width, Justify const& just = Justify::CFJ_LEFT) {
 		if(width > str.size()) {
 			switch (just) {
 				case Justify::EFJ_LEFT:		str.insert(0, width - str.size(), chr);				break;
@@ -29,7 +29,7 @@ namespace Format {
 						),
 						chr,
 						rhs,
-						Justify::EFJ_RIGHT
+						Justify::CFJ_RIGHT
 					);
 				break;
 			}
