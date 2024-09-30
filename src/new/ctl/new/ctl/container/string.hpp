@@ -235,6 +235,7 @@ constexpr BaseString<C, S> toString(F const& val, usize const& precision = 16) {
 template<usize N, CharacterType TChar, Type::Integer TIndex = usize>
 struct BaseStaticString:
 	Array<N, TChar, TIndex>,
+	StringLiterable<TChar>,
 	SelfIdentified<BaseStaticString<N, TChar, TIndex>>,
 	Derived<Array<N, TChar, TIndex>> {
 private:
@@ -244,7 +245,25 @@ private:
 	}
 
 public:
-	constexpr BaseStaticString(const DataType* const& str) {
+	using Derived			= Derrived<Array<N, TChar, TIndex>>;
+	using SelfIdentified	= SelfIdentified<BaseStaticString<N, TChar, TIndex>>;
+	using StringLiterable	= StringLiterable<TChar>;
+
+	using BaseType = Derived::Bases::FirstType;
+
+	using
+		SelfIdentified::SelfType
+	;
+
+	using
+		BaseType::DataType,
+		BaseType::ConstPointerType,
+		BaseType::SizeType,
+	;
+
+	using StringLiterable::StringLiteralType;
+
+	constexpr BaseStaticString(ConstPointerType const& str) {
 		SizeType len = 0;
 		while (v[len++] != '\0' && len != MAX_SIZE);
 		MX::memcpy(str, cbegin(), (len < length ? len : length) * sizeof(DataType));
@@ -259,7 +278,7 @@ public:
 		return result;
 	}
 
-	constexpr ConstPointerType cstr() const {
+	constexpr StringLiteralType cstr() const {
 		return cbegin();
 	}
 
