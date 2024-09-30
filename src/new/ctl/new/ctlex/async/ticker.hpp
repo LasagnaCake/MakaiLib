@@ -7,7 +7,8 @@
 CTL_EX_NAMESPACE_BEGIN
 
 class Ticker: public SelfIdentified<Ticker> {
-	typedef Instance<Atomic<usize>> CounterInstance;
+	using Counter = Atomic<usize>;
+	using CounterInstance = Instance<Counter>;
 
 public:
 	class Waiter: public SelfIdentified<Waiter>, Base::Async::Yieldable {
@@ -29,25 +30,36 @@ public:
 
 		friend class Ticker;
 	};
-
 	Ticker() {}
+
+	~Ticker() {
+		for(CounterInstance* counter: counters)
+			delete counter;
+	}
 
 	void yield() {
 		usize i = 0;
-		for (CounterInstance& counter: counters) {
-			if (counter.count() < 2)		counters.erase(counters.find(counter));
+		for (CounterInstance* counter: counters) {
+			if (counter.count() < 2) {
+				delete counter;
+				counters.erase(counters.find(counter));
+			}
 			else if (counter->value() > 0)	(*counter)--;
 			++i;
 		}
 	}
 
 	Waiter getWaiter() {
-		counters.push_back(new Atomic<usize>());
+		counters.pushBack(createCounter());
 		return Waiter(counters.back());
 	}
 
 private:
-	List<CounterReference*> counters;
+	static CounterInstance* createCounter() {
+		return new CounterInstance(new Counter());
+	}
+
+	List<CounterInstance*> counters;
 };
 
 CTL_EX_NAMESPACE_END
