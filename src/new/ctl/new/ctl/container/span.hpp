@@ -111,6 +111,9 @@ private:
 	usize		count		= S;
 };
 
+template<usize S = DYNAMIC_SIZE, Type::Integer TIndex = usize, ExtentSize EXTENT = ExtentSize::CES_AUTO>
+using ByteSpan = Span<uint8, S, TIndex, EXTENT>;
+
 CTL_NAMESPACE_END
 
 #endif // CTL_CONTAINER_SPAN_H

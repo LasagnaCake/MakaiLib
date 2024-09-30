@@ -151,6 +151,10 @@ public:
 		return insert(SelfType(values), index);
 	}
 
+	constexpr SelfType& insert(DataType const& data, SizeType const& count, IndexType const& index) {
+		return insert(SelfType(data, count), index);
+	}
+
 	constexpr SelfType& reserve(SizeType const& count) {
 		while (count > maximum)
 			increase();
@@ -517,6 +521,40 @@ public:
 		}
 	}
 
+	constexpr List<SelfType, IndexType> splitAtFirst(DataType const& sep) const {
+		List<SelfType, IndexType> res;
+		ssize idx = find(sep);
+		if (idx < 0)
+			return res.pushBack(*this);
+		return res.pushBack({sliced(0, idx), sliced(idx, count)});
+	}
+
+	constexpr List<SelfType, IndexType> splitAtFirst(List<DataType> const& seps) const {
+		List<SelfType, IndexType> res;
+		ssize idx = -1;
+		for(DataType const& sep: seps) {
+			ssize i = find(sep);
+			if (i > -1 && i < idx)
+				idx = i;
+		}
+		if (idx < 0)
+			return res.pushBack(*this);
+		return res.pushBack({sliced(0, idx), sliced(idx, count)});
+	}
+
+	constexpr List<SelfType, IndexType> splitAtFirst(ArgumentListType const& seps) const {
+		List<SelfType, IndexType> res;
+		ssize idx = -1;
+		for(DataType const& sep: seps) {
+			ssize i = find(sep);
+			if (i > -1 && i < idx)
+				idx = i;
+		}
+		if (idx < 0)
+			return res.pushBack(*this);
+		return res.pushBack({sliced(0, idx), sliced(idx, count)});
+	}
+
 	constexpr bool tight() const {return count == maximum;}
 
 private:
@@ -589,7 +627,8 @@ private:
 	DataType*	contents	= nullptr;
 };
 
-typedef List<uint8> BinaryData;
+template <Type::Integer TIndex = usize>
+using BinaryData = List<uint8, TIndex>;
 
 CTL_NAMESPACE_BEGIN
 

@@ -70,6 +70,7 @@ struct InvalidValueException:		Exception {using Exception::Exception;};
 struct NonexistentValueException:	Exception {using Exception::Exception;};
 struct InvalidConversionException:	Exception {using Exception::Exception;};
 struct InvalidCastException:		Exception {using Exception::Exception;};
+struct FailedActionException:		Exception {using Exception::Exception;};
 
 template<typename T>
 concept ErrorStringType =

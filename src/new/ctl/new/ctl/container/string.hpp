@@ -7,9 +7,12 @@
 
 #include "list.hpp"
 #include "array.hpp"
+#include "pair.hpp"
 #include "arguments.hpp"
 #include "../typeinfo.hpp"
 #include "../cpperror.hpp"
+#include "../io/stream.hpp"
+#include "../algorithm/aton.hpp"
 
 CTL_NAMESPACE_BEGIN
 
@@ -18,11 +21,13 @@ struct BaseString:
 	List<TChar, TIndex>,
 	SelfIdentified<BaseString<T, TIndex>>,
 	Derived<List<TChar, TIndex>>,
-	StringLiterable<TChar> {
+	StringLiterable<TChar>,
+	Streamable<TChar> {
 public:
 	using Iteratable		= Iteratable<TData, TIndex>;
 	using SelfIdentified	= SelfIdentified<TData, REVERSE, TIndex>;
 	using Derived			= Derived<List<TChar, TIndex>>;
+	using Streamable		= Streamable<TChar>;
 
 	using BaseType	= typename Derived::Types::FirstType;
 
@@ -48,9 +53,10 @@ public:
 		typename SelfIdentified::SelfType
 	;
 
-	// Stream types
-	typedef std::basic_ostream<DataType>	OutputStreamType;
-	typedef std::basic_istream<DataType>	InputStreamType;
+	using
+		typename Streamable::InputStreamType,
+		typename Streamable::OutputStreamType
+	;
 
 	using BaseType::BaseType;
 
@@ -161,13 +167,31 @@ public:
 	constexpr SelfType upper() const {return template transformed<toUpper>();}
 
 	template<Type::Integer T>
-	constexpr static T toInt(SelfType const& str) {
+	constexpr static T toNumber(SelfType const& str) {
 		return atoi<T>(str.cstr(), str.size());
 	}
 
 	template<Type::Real T>
-	constexpr static T toFloat(SelfType const& str) {
+	constexpr static T toNumber(SelfType const& str) {
 		return atof<T>(str.cstr(), str.size());
+	}
+
+	template<Type::Integer T>
+	constexpr static SelfType fromNumber(T const& val, T const& base = 0) {
+		SelfType result(64, '\0');
+		ssize sz = itoa<T>(val, str.data(), 64, base);
+		if (sz < 0) throw FailedActionException("Integer-to-String conversion failure!");
+		result.resize(sz);
+		return result;
+	}
+
+	template<Type::Real T>
+	constexpr static SelfType fromNumber(T const& val, usize const& precision = sizeof(T)*2) {
+		SelfType result(64, '\0');
+		ssize sz = ftoa<T>(val, str.data(), 64, precision);
+		if (sz < 0) throw FailedActionException("Float-to-String conversion failure!");
+		result.resize(sz);
+		return result;
 	}
 
 private:
@@ -243,6 +267,41 @@ public:
 		return BaseString<TChar, TIndex>(begin(), end());
 	}
 }
+
+template<Type::Number T>
+constexpr String toString(T const& value) {
+	return String::fromNumber<T>(value);
+}
+
+template<class T>
+constexpr String toString(T const& value)
+requires (Type::Convertible<T, String>) {
+	return (value);
+}
+
+template<class T>
+constexpr String toString(T const& value)
+requires (T t) {
+	requires T::toString;
+	{t.toString()} -> Type::Equal<String>;
+} {
+	return value.toString();
+}
+
+template<class T>
+concept StringConvertible = requires (T t) {
+	{toString(t)} -> Type::Equal<String>;
+};
+
+template<StringConvertible T, class... Args>
+constexpr String toString(T const& first, Args const&... args)
+	requires (... && StringConvertible<Args>) {
+	return String::fromNumber<T>(value);
+}
+
+typedef List<String>			StringList;
+typedef Arguments<String>		StringArguments;
+typedef Pair<String, String>	StringPair;
 
 typedef BaseStaticString<char>		StaticString;
 typedef BaseStaticString<wchar_t>	StaticWideString;

@@ -3,6 +3,7 @@
 
 #include "transform.hpp"
 #include "../cmath.hpp"
+#include "../namespace.hpp"
 
 CTL_NAMESPACE_BEGIN
 
@@ -199,7 +200,7 @@ constexpr ssize itoa(I val, T* const& buf, usize const& bufSize, I const& base =
 }
 
 template<Type::Real F, ASCIIType T>
-constexpr ssize ftoa(F val, T* const& buf, usize const& bufSize, usize const& precision = sizeof(F)*4) {
+constexpr ssize ftoa(F val, T* const& buf, usize const& bufSize, usize const& precision = sizeof(F)*2) {
 	// Get amount of zeroes to add to number
 	usize zeroes = pow<F>(10, precision);
 	// Get whole part of number
