@@ -43,7 +43,7 @@ struct Arguments:
 		while (index < 0)
 			index += length;
 		if (index > (length-1))
-			throw Exception("Argument index is out of bounds!");
+			throw OutOfBoundsException("Argument index is out of bounds!");
 		return start[index];
 	}
 
@@ -51,7 +51,7 @@ struct Arguments:
 		while (index < 0)
 			index += length;
 		if (index > (length-1))
-			throw Exception("Argument index is out of bounds!");
+			throw OutOfBoundsException("Argument index is out of bounds!");
 		return start[index];
 	}
 

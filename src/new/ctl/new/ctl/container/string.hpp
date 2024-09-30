@@ -175,7 +175,7 @@ private:
 	usize mutable		strbuflen	= 0;
 
 	[[noreturn]] void invalidNumberError(String const& v) {
-		throw Exception("Not a valid number!");
+		throw InvalidValueException("Not a valid number!");
 	}
 
 	void assertIsInBounds(IndexType const& index) {
@@ -183,7 +183,7 @@ private:
 	}
 
 	[[noreturn]] constexpr void outOfBoundsError(IndexType const& index) {
-		throw Exception("Index is out of bounds!");
+		throw OutOfBoundsException("Index is out of bounds!");
 	}
 };
 
@@ -195,7 +195,7 @@ constexpr BaseString<C, S> toString(I const& val, usize const& base = 10) {
 	BaseString<C, S> result(64, '\0');
 	ssize i = itoa(val, result.cbegin(), result.size(), base);
 	if (i == -1)
-		throw Exception("Failed to convert number!");
+		throw InvalidConversionException("Failed to convert number!");
 	return result.reserve(i);
 }
 
@@ -204,7 +204,7 @@ constexpr BaseString<C, S> toString(F const& val, usize const& precision = 16) {
 	BaseString<C, S> result(64, '\0');
 	ssize i = ftoa(val, result.cbegin(), result.size(), base);
 	if (i == -1)
-		throw Exception("Failed to convert number!");
+		throw InvalidConversionException("Failed to convert number!");
 	return result.reserve(i);
 }
 

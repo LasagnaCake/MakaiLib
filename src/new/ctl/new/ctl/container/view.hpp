@@ -26,11 +26,16 @@ public:
 		typename SelfIdentified::SelfType
 	;
 
-	constexpr DataView(ReferenceType _data):	data(_data)			{}
-	constexpr DataView(SelfType const& other):	data(other.data)	{}
-	constexpr DataView(SelfType&& other):		data(other.data)	{}
+	using OperationType = Function<DataType(ConstReferenceType)>;
+
+	constexpr View(ReferenceType _data):	data(_data)			{}
+	constexpr View(SelfType const& other):	data(other.data)	{}
+	constexpr View(SelfType&& other):		data(other.data)	{}
 
 	constexpr SelfType& operator=(T const& val) {data = val; return (*this);}
+
+	constexpr DataView& modify(OperationType const& op)		{data = op(data); return (*this);	}
+	constexpr DataView& operator()(OperationType const& op)	{return modify(op);					}
 
 	constexpr operator DataType() const	{return value();	}
 	constexpr operator DataType()		{return value();	}

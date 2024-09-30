@@ -277,8 +277,8 @@ class Vector2
 
 		// Other overloads
 
-		constexpr float& operator[](size_t const& pos)		{if (pos > 1) return data[0]; return data[pos];}
-		constexpr float operator[](size_t const& pos) const	{if (pos > 1) return data[0]; return data[pos];}
+		constexpr float& operator[](usize const& pos)		{if (pos > 1) return data[0]; return data[pos];}
+		constexpr float operator[](usize const& pos) const	{if (pos > 1) return data[0]; return data[pos];}
 
 		constexpr float* operator*() {return data;};
 
@@ -650,8 +650,8 @@ class Vector3
 
 		constexpr float* operator*() {return data;};
 
-		constexpr float& operator[](size_t const& pos)		{if (pos > 2) return data[0]; return data[pos];}
-		constexpr float operator[](size_t const& pos) const	{if (pos > 2) return data[0]; return data[pos];}
+		constexpr float& operator[](usize const& pos)		{if (pos > 2) return data[0]; return data[pos];}
+		constexpr float operator[](usize const& pos) const	{if (pos > 2) return data[0]; return data[pos];}
 
 		// Extra functions
 
@@ -1070,8 +1070,8 @@ class Vector4
 
 		constexpr float* operator*() {return data;};
 
-		constexpr float& operator[](size_t const& pos)		{if (pos > 3) return data[0]; return data[pos];}
-		constexpr float operator[](size_t const& pos) const	{if (pos > 3) return data[0]; return data[pos];}
+		constexpr float& operator[](usize const& pos)		{if (pos > 3) return data[0]; return data[pos];}
+		constexpr float operator[](usize const& pos) const	{if (pos > 3) return data[0]; return data[pos];}
 
 		// Extra functions
 
@@ -1223,7 +1223,7 @@ struct Transform {
 using Transform2D = Transform<Vector2, float, Vector2>;
 using Transform3D = Transform<Vector3, Vector3, Vector3>;
 
-enum class Axis: size_t {
+enum class Axis: usize {
 	POS_X,
 	POS_Y,
 	POS_Z,
@@ -1380,7 +1380,7 @@ constexpr Vector2 srpTransform(Vector2 vec, Vector2 const& pos, float const& rot
 
 /// Transforms a given set of 3D Vectors by a given position rotation and scale.
 constexpr List<Vector3> srpTransform(List<Vector3> vec, Vector3 const& pos, Vector3 const& rot, Vector3 const& scale = Vector3(1.0)) {
-	for (size_t i = 0; i < vec.size(); i++) {
+	for (usize i = 0; i < vec.size(); i++) {
 		vec[i] = srpTransform(vec[i], pos, rot, scale);
 	}
 	return vec;
@@ -1388,7 +1388,7 @@ constexpr List<Vector3> srpTransform(List<Vector3> vec, Vector3 const& pos, Vect
 
 /// Transforms a given set of 2D Vectors by a given position, rotation and scale.
 constexpr List<Vector2> srpTransform(List<Vector2> vec, Vector2 const& pos, float const& rot, Vector2 const& scale = Vector2(1.0)) {
-	for (size_t i = 0; i < vec.size(); i++) {
+	for (usize i = 0; i < vec.size(); i++) {
 		vec[i] = srpTransform(vec[i], pos, rot, scale);
 	}
 	return vec;

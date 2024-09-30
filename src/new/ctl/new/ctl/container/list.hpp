@@ -270,7 +270,7 @@ public:
 		return *this;
 	}
 
-	constexpr SelfType& removeIf(Functor<bool(DataType const&)> const& predicate) {
+	constexpr SelfType& removeIf(Function<bool(DataType const&)> const& predicate) {
 		auto const start = begin();
 		for(auto i = begin(); i != end(); ++i) {
 			if (predicate(*i))
@@ -279,7 +279,7 @@ public:
 		return *this;
 	}
 
-	constexpr SelfType& eraseIf(Functor<bool(DataType const&)> const& predicate) {
+	constexpr SelfType& eraseIf(Function<bool(DataType const&)> const& predicate) {
 		SizeType removed = 0;
 		auto const start = begin();
 		for(auto i = begin(); i != end(); ++i) {
@@ -568,19 +568,19 @@ private:
 	}
 
 	[[noreturn]] constexpr void invalidSizeError(SizeType const& size) {
-		throw Exception("Invalid list size!");
+		throw InvalidValueException("Invalid list size!");
 	}
 
 	[[noreturn]] constexpr void atItsLimitError() {
-		throw Exception("Maximum list capacity reached!");
+		throw MaximumSizeFailure("Maximum list capacity reached!");
 	}
 
 	[[noreturn]] constexpr void outOfBoundsError(IndexType const& index) {
-		throw Exception("Array is out of bounds!");
+		throw OutOfBoundsException("Array is out of bounds!");
 	}
 
 	[[noreturn]] constexpr void emptyError() {
-		throw Exception("Container is empty!");
+		throw NonexistentValueException("Container is empty!");
 	}
 
 	SizeType	magnitude	= 1;

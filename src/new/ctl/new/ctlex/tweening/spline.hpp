@@ -37,7 +37,7 @@ namespace Spline {
 				points.push_back(p);
 		}
 
-		template<size_t N>
+		template<usize N>
 		constexpr Linear(T const(& ps)[N]) {
 			points.resize(N);
 			for (T& p: ps)
@@ -47,21 +47,21 @@ namespace Spline {
 		constexpr T interpolate(float by) final {
 			by = Math::clamp<float>(by, 0, 1);
 			if (by == 1.0) return points.end();
-			size_t curp = Math::floor(by * points.size());
+			usize curp = Math::floor(by * points.size());
 			return Math::lerp(points[curp], points[curp+1], by);
 		}
 	};
 
 	namespace Bezier {
-		template<Math::Operatable T, size_t N>
+		template<Math::Operatable T, usize N>
 		struct Section {
 			T points[N];
 		};
 
-		template<Math::Operatable T, size_t N>
+		template<Math::Operatable T, usize N>
 		using SectionList = List<Section<T, N>>;
 
-		template<Math::Operatable T, size_t N>
+		template<Math::Operatable T, usize N>
 		class Spline: public Splinoid<T> {
 		public:
 			constexpr Spline() {}
@@ -76,7 +76,7 @@ namespace Spline {
 					sections.push_back(s);
 			}
 
-			template <size_t P>
+			template <usize P>
 			constexpr Spline(T const(& points)[P][N]) {
 				sections.resize(P);
 				for SRANGE(i, 0, P) {
@@ -87,7 +87,7 @@ namespace Spline {
 				}
 			}
 
-			template <size_t P>
+			template <usize P>
 			constexpr Spline(T const(& points)[P]) {
 				static_assert(P % N == 0, "Point count is not a multiple of N!");
 				sections.resize(P/N);
@@ -104,19 +104,19 @@ namespace Spline {
 			constexpr T interpolate(float by) final {
 				by = Math::clamp<float>(by, 0, 1);
 				if (by == 1.0) return sections.end()[0];
-				size_t sec = Math::floor(by * sections.size());
+				usize sec = Math::floor(by * sections.size());
 				return lerpSection(sections[sec], sections[sec+1].points[0], by);
 			}
 
 		private:
-			template<size_t S>
+			template<usize S>
 			constexpr T lerpSection(Section<T, S> const& sec, T const& end, float const& by) {
 				if constexpr(S < 2)
 					return Math::lerp(sec.points[0], end, T(by));
 				else {
 					Section<T, S-1> res;
 					T newEnd = Math::lerp(sec.points[S-1], end, T(by));
-					for (size_t i = 0; i < S-2; i++)
+					for (usize i = 0; i < S-2; i++)
 						res.points[i] = Math::lerp(sec.points[S], sec.points[S+1], T(by));
 					return lerpSection(res, newEnd, by);
 				}
@@ -154,7 +154,7 @@ namespace Spline {
 					sections.push_back(s);
 			}
 
-			template <size_t P>
+			template <usize P>
 			constexpr Spline(T const(& points)[P][2]) {
 				sections.resize(P);
 				for SRANGE(i, 0, P) {
@@ -167,7 +167,7 @@ namespace Spline {
 				}
 			}
 
-			template<size_t P>
+			template<usize P>
 			constexpr Spline(T const(& points)[P]) {
 				sections.resize(P/2);
 				static_assert(P % 2 == 0, "Point count is not a multiple of 2!");
@@ -186,7 +186,7 @@ namespace Spline {
 			constexpr T interpolate(float by) final {
 				by = Math::clamp<float>(by, 0, 1);
 				if (by == 1.0) return sections.end().position;
-				size_t sec = Math::floor(by * sections.size());
+				usize sec = Math::floor(by * sections.size());
 				return lerpSection(sections[sec], sections[sec+1], by);
 			}
 

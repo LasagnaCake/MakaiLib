@@ -126,7 +126,7 @@ protected:
 	}
 
 	[[noreturn]] constexpr static void outOfBoundsError() {
-		throw Exception("Index is bigger than array size!");
+		throw OutOfBoundsException("Index is bigger than array size!");
 	}
 }
 

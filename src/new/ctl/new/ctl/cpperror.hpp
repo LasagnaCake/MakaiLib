@@ -11,6 +11,9 @@ struct Failure {};
 
 struct CatastrophicFailure: Failure {};
 
+struct AllocationFailure:	CatastrophicFailure {};
+struct MaximumSizeFailure:	CatastrophicFailure {};
+
 struct Exception;
 
 namespace Base {
@@ -60,6 +63,13 @@ private:
 
 	template <class TString> friend class DetailedError;
 };
+
+struct OutOfRangeException:			Exception {using Exception::Exception;};
+struct BadCallException:			Exception {using Exception::Exception;};
+struct InvalidValueException:		Exception {using Exception::Exception;};
+struct NonexistentValueException:	Exception {using Exception::Exception;};
+struct InvalidConversionException:	Exception {using Exception::Exception;};
+struct InvalidCastException:		Exception {using Exception::Exception;};
 
 template<typename T>
 concept ErrorStringType =

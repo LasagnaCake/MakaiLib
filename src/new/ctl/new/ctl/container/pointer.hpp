@@ -5,7 +5,8 @@
 #include "../templates.hpp"
 #include "../ctypes.hpp"
 #include "../typetraits/traits.hpp"
-#include "../container/error.hpp"
+#include "error.hpp"
+#include "function.hpp"
 #include "map.hpp"
 
 CTL_NAMESPACE_BEGIN
@@ -63,6 +64,8 @@ public:
 
 	using OtherType = NewPointerType<!WEAK>;
 
+	using OperationType = Function<DataType(ConstReferenceType)>;
+
 	constexpr Pointer() {}
 
 	constexpr Pointer(NewPointerType<false>&& other)		{CTL_PTR_ASSERT_STRONG_MOVE;	bind(other.ref);}
@@ -75,7 +78,7 @@ public:
 
 	constexpr ~Pointer() {unbind();}
 
-	constexpr size_t count() {
+	constexpr usize count() {
 		if (!exists()) return 0;
 		return database[ref].count;
 	}
@@ -140,6 +143,9 @@ public:
 	constexpr explicit operator PointerType()				{return getPointer();		}
 
 	constexpr operator bool() const	{return exists();	}
+
+	constexpr Pointer& modify(OperationType const& op)		{T& ref = *getPointer(); ref = op(ref); return (*this);	}
+	constexpr Pointer& operator()(OperationType const& op)	{return modify(op);										}
 
 	constexpr bool operator!() const	{return	!exists();			}
 

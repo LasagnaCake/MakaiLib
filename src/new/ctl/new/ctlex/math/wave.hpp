@@ -9,7 +9,7 @@ CTL_EX_NAMESPACE_BEGIN
 
 namespace Math::Wave {
 	template<Math::Operatable T = float>
-	using WaveFunction = Function<T(T const&, size_t const&)>;
+	using WaveFunction = Function<T(T const&, usize const&)>;
 
 	namespace {
 		using
@@ -22,7 +22,7 @@ namespace Math::Wave {
 		;
 	}
 
-	#define WAVE_FUNCTION(NAME) template<Math::Operatable T = float> constexpr T NAME(T const& t, size_t const& lod = 8)
+	#define WAVE_FUNCTION(NAME) template<Math::Operatable T = float> constexpr T NAME(T const& t, usize const& lod = 8)
 
 	WAVE_FUNCTION(square)	{return sin(t) < 0 ? T(-1) : T(+1);	}
 
@@ -41,7 +41,7 @@ namespace Math::Wave {
 	namespace Binary {
 		#define BINARY_WAVE_FUNCTION(NAME)\
 			template<Math::Operatable T>\
-			constexpr T NAME(T const& t, size_t const& lod) {\
+			constexpr T NAME(T const& t, usize const& lod) {\
 				return (T)round<T>(::Wave::NAME(t) * lod) / lod;\
 			}
 
@@ -61,7 +61,7 @@ namespace Math::Wave {
 
 namespace Math::Noise {
 	template<typename T = float>
-	using NoiseFunction = Function<T(T const&, size_t const&)>;
+	using NoiseFunction = Function<T(T const&, usize const&)>;
 
 	namespace {
 		using
@@ -70,7 +70,7 @@ namespace Math::Noise {
 		;
 	}
 
-	#define NOISE_FUNCTION(NAME) template<Math::Operatable T = float> constexpr T NAME(T const& t, size_t const& seed = 8)
+	#define NOISE_FUNCTION(NAME) template<Math::Operatable T = float> constexpr T NAME(T const& t, usize const& seed = 8)
 
 	NOISE_FUNCTION(simple) {
 		return fract<T>(sin(t * Math::mod((seed+sizeof(T)) / 12.9898, 78.233) * 43758.5453));

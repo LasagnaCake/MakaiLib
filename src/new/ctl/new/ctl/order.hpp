@@ -3,8 +3,11 @@
 
 #include <compare>
 
+#include "namespace.hpp"
 #include "typeinfo.hpp"
 #include "templates.hpp"
+
+CTL_NAMESPACE_BEGIN
 
 enum class StandardOrder: int {
 	LESS = -1,
@@ -23,5 +26,7 @@ struct ValueOrder: public std::partial_ordering {
 struct Ordered {
 	typedef ValueOrder OrderType;
 };
+
+CTL_NAMESPACE_END
 
 #endif // CTL_TYPE_ORDER_H

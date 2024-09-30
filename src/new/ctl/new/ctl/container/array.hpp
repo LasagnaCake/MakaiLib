@@ -32,14 +32,14 @@ public:
 
 	constexpr DataType& operator[](IndexType index) {
 		if (index >= SIZE)
-			throw Exception("Index is bigger than array size!");
+			throw OutOfBoundsException("Index is bigger than array size!");
 		wrapBounds(index, SIZE);
 		return data[index];
 	}
 
 	constexpr DataType operator[](IndexType index) const {
 		if (index >= SIZE)
-			throw Exception("Index is bigger than array size!");
+			throw OutOfBoundsException("Index is bigger than array size!");
 		wrapBounds(index, SIZE);
 		return data[index];
 	}

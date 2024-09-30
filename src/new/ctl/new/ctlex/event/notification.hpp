@@ -2,7 +2,7 @@
 #define CTL_EX_EVENT_NOTIFICATION_H
 
 #include "../ctl/exnamespace.hpp"
-#include "../ctl/container/function.hpp"
+#include "../ctl/container/functor.hpp"
 #include "../ctl/container/string.hpp"
 #include "../ctl/container/map.hpp"
 #include "../ctl/container/arguments.hpp"
@@ -15,7 +15,7 @@ public:
 
 	typedef List<SignalType>				SignalList;
 	typedef Arguments<SignalType>			SignalArguments;
-	typedef Functor<void()>					SignalWrapper;
+	typedef SignalType						SignalWrapper;
 	typedef Dictionary<List<SignalWrapper>>	SignalDatabase;
 
 	Notifier() {}

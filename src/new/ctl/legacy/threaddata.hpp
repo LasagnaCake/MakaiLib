@@ -222,12 +222,6 @@ namespace Threaded {
 		ScopeLock(T& mutex): BaseLock<T>(mutex)	{this->mutex.capture();}
 		~ScopeLock()							{this->mutex.release();}
 	};
-
-	template <Viewable T>
-	using AtomicView = DataView<Atomic<T>>;
-
-	template <Viewable... Args>
-	using AtomicTuple = Tuple<Atomic<Args>...>;
 }
 
 #endif // THREADED_DATA_MANIPULATION_H

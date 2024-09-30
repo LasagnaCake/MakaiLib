@@ -209,7 +209,7 @@ public:
 		return *this;
 	}
 
-	constexpr SelfType& removeIf(Functor<bool(PairType const&)> const& predicate) {
+	constexpr SelfType& removeIf(Function<bool(PairType const&)> const& predicate) {
 		BaseType::removeIf(predicate);
 		return *this;
 	}
@@ -221,7 +221,7 @@ public:
 		return *this;
 	}
 
-	constexpr SelfType& eraseIf(Functor<bool(PairType const&)> const& predicate) {
+	constexpr SelfType& eraseIf(Function<bool(PairType const&)> const& predicate) {
 		BaseType::eraseIf(predicate);
 		return *this;
 	}

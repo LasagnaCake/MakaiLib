@@ -9,10 +9,10 @@ namespace Type::Matrix {
 	template <typename T1, typename T2>
 	concept Compatitble = Math::Operatable<T2> && Type::Convertible<T2, T1>;
 
-	template <size_t R, size_t C>
+	template <usize R, usize C>
 	concept ValidTransform3D = (R == 4) && (R == C);
 
-	template <size_t R, size_t C>
+	template <usize R, usize C>
 	concept ValidTransform2D = (R == 3) && (R == C);
 }
 
@@ -27,11 +27,11 @@ namespace Math {
 * [                     ]
 * [---------------------]
 */
-template<size_t R, size_t C, Math::Operatable T>
+template<usize R, usize C, Math::Operatable T>
 class Matrix {
 public:
-	constexpr static size_t ROWS	= R;
-	constexpr static size_t COLUMNS	= C;
+	constexpr static usize ROWS	= R;
+	constexpr static usize COLUMNS	= C;
 
 	typedef T	DataType;
 
@@ -42,70 +42,70 @@ public:
 	constexpr Matrix() {}
 
 	constexpr Matrix(T const& v) {
-		size_t const start = Math::min(C, R);
-		for (size_t i = 0; i < start; i++)
+		usize const start = Math::min(C, R);
+		for (usize i = 0; i < start; i++)
 			data[start-1-i][start-1-i] = v;
 	}
 
 	constexpr Matrix(T const(& v)[1]) {
-		for (size_t i = 0; i < C; i++)
-			for (size_t j = 0; j < R; j++)
+		for (usize i = 0; i < C; i++)
+			for (usize j = 0; j < R; j++)
 				data[i][j] = v[0];
 	}
 
 	constexpr Matrix(T const(& v)[R][C]) {
-		for (size_t i = 0; i < C; i++)
-			for (size_t j = 0; j < R; j++)
+		for (usize i = 0; i < C; i++)
+			for (usize j = 0; j < R; j++)
 				data[i][j] = v[j][i];
 	}
 
 	constexpr Matrix(T const(& v)[R*C]) {
 		T hack[R][C];
-		for (size_t i = 0; i < R*C; i++)
+		for (usize i = 0; i < R*C; i++)
 			((T*)hack)[i] = v[i];
-		for (size_t i = 0; i < C; i++)
-			for (size_t j = 0; j < R; j++)
+		for (usize i = 0; i < C; i++)
+			for (usize j = 0; j < R; j++)
 				data[i][j] = hack[j][i];
 	}
 
 	constexpr Matrix(const T(&v)[C])
 	requires (C > 1) {
-		for (size_t i = 0; i < C; i++)
-			for (size_t j = 0; j < R; j++)
+		for (usize i = 0; i < C; i++)
+			for (usize j = 0; j < R; j++)
 				data[i][j] = v[i];
 	}
 
 	template<Type::Matrix::Compatitble<T> T2>
 	constexpr Matrix(T2 const(& v)[1]) {
 		T rv = T(v[0]);
-		size_t const start = Math::min(C, R);
-		for (size_t i = 0; i < C; i++)
-			for (size_t j = 0; j < R; j++)
+		usize const start = Math::min(C, R);
+		for (usize i = 0; i < C; i++)
+			for (usize j = 0; j < R; j++)
 				data[i][j] = rv;
 	}
 
 	template<Type::Matrix::Compatitble<T> T2>
 	constexpr Matrix(T2 const(& v)[R][C]) {
-		for (size_t i = 0; i < C; i++)
-			for (size_t j = 0; j < R; j++)
+		for (usize i = 0; i < C; i++)
+			for (usize j = 0; j < R; j++)
 				data[i][j] = T(v[j][i]);
 	}
 
 	template<Type::Matrix::Compatitble<T> T2>
 	constexpr Matrix(T2 const(& v)[R*C]) {
 		T2 hack[R][C];
-		for (size_t i = 0; i < R*C; i++)
+		for (usize i = 0; i < R*C; i++)
 			((T2*)hack)[i] = v[i];
-		for (size_t i = 0; i < C; i++)
-			for (size_t j = 0; j < R; j++)
+		for (usize i = 0; i < C; i++)
+			for (usize j = 0; j < R; j++)
 				data[i][j] = T(hack[j][i]);
 	}
 
 	template<Type::Matrix::Compatitble<T> T2>
 	constexpr Matrix(const T2(&v)[C])
 	requires (C > 1) {
-		for (size_t i = 0; i < C; i++)
-			for (size_t j = 0; j < R; j++)
+		for (usize i = 0; i < C; i++)
+			for (usize j = 0; j < R; j++)
 				data[i][j] = T(v[i]);
 	}
 
@@ -170,23 +170,23 @@ public:
 	}
 
 	constexpr Matrix(Matrix<R, C, T> const& other) {
-		for (size_t i = 0; i < C; i++)
-			for (size_t j = 0; j < R; j++)
+		for (usize i = 0; i < C; i++)
+			for (usize j = 0; j < R; j++)
 				data[i][j] = other.data[i][j];
 	}
 
 	template <typename T2>
 	constexpr Matrix(Matrix<R, C, T2> const& other) {
-		for (size_t i = 0; i < C; i++)
-			for (size_t j = 0; j < R; j++)
+		for (usize i = 0; i < C; i++)
+			for (usize j = 0; j < R; j++)
 				data[i][j] = T(other.data[i][j]);
 	}
 
 	constexpr ~Matrix() {}
 
 	constexpr Matrix<R, C, T>& fill(T const& v) {
-		for (size_t i = 0; i < C; i++)
-			for (size_t j = 0; j < R; j++)
+		for (usize i = 0; i < C; i++)
+			for (usize j = 0; j < R; j++)
 				data[i][j] = v;
 		return *this;
 	}
@@ -194,8 +194,8 @@ public:
 	/// Gets the transposed matrix.
 	constexpr Matrix<C, R, T> transposed() const {
 		Matrix<C, R, T> res;
-		for (size_t i = 0; i < C; i++)
-			for (size_t j = 0; j < R; j++)
+		for (usize i = 0; i < C; i++)
+			for (usize j = 0; j < R; j++)
 				res[j][i] = data[i][j];
 		return res;
 	}
@@ -220,7 +220,7 @@ public:
 	constexpr static Matrix<R, C, T> mirror() requires (R == C) {
 		static_assert(C == R, "Matrix is not a square matrix!");
 		Matrix<R, C, T> res(0);
-		for(size_t i = 0; i < R; i++)
+		for(usize i = 0; i < R; i++)
 			res.data[(R-1)-i][i] = 1;
 		return res;
 	}
@@ -372,8 +372,8 @@ public:
 	constexpr Matrix<R, C, T> cofactors() const requires (R == C) {
 		static_assert(C == R, "Matrix is not a square matrix!");
 		Matrix<R, C, T> res;
-		for (size_t i = 0; i < R; i++)
-			for (size_t j = 0; j < C; j++)
+		for (usize i = 0; i < R; i++)
+			for (usize j = 0; j < C; j++)
 				res[i][j] = cofactor(i, j);
 		return res;
 	}
@@ -392,7 +392,7 @@ public:
 		);
 		else {
 			T res = 0;
-			for (size_t i = 0; i < R; i++) {
+			for (usize i = 0; i < R; i++) {
 				if (data[i][0] == 0) continue;
 				res += data[i][0] * cofactor(i, 0);
 			}
@@ -400,14 +400,14 @@ public:
 		}
 	}
 
-	constexpr Matrix<R-1, C-1, T> truncated(size_t const& row, size_t const& col) const {
+	constexpr Matrix<R-1, C-1, T> truncated(usize const& row, usize const& col) const {
 		static_assert(R > 1 && C > 1, "Cannot truncate a 1-dimensional matrix!");
 		Matrix<R-1, C-1, T> res;
 		int ro = 0, co = 0;
-		for (size_t i = 0; i < C; i++) {
+		for (usize i = 0; i < C; i++) {
 			ro = 0;
 			if (i == col) {co--; continue;}
-			for (size_t j = 0; j < R; j++) {
+			for (usize j = 0; j < R; j++) {
 				if (j == row) {ro--; continue;}
 				res[i+co][j+ro] = data[i][j];
 			}
@@ -415,26 +415,26 @@ public:
 		return res;
 	}
 
-	template<size_t RF = 1, size_t CF = 1>
-	constexpr Matrix<R-RF, C-CF, T> shrunkBy(size_t const& rowStart = 0, size_t const& colStart = 0) const {
+	template<usize RF = 1, usize CF = 1>
+	constexpr Matrix<R-RF, C-CF, T> shrunkBy(usize const& rowStart = 0, usize const& colStart = 0) const {
 		static_assert(R > 1 && C > 1, "Cannot shrink a 1-dimensional matrix!");
 		static_assert(RF > R && CF > C, "Shrinking factor(s) are bigger than the matrix!");
 		static_assert(rowStart < (R-RF) && colStart < (C-CF), "Row/Column starts cannot be bigger than the shrunk matrix!");
 		if (rowStart < (R-RF) && colStart < (C-CF)) Matrix<R-RF, C-CF, T>(0);
 		Matrix<R-RF, C-CF, T> res;
-		for (size_t i = 0; i < C-CF; i++)
-			for (size_t j = 0; j < R-RF; j++)
+		for (usize i = 0; i < C-CF; i++)
+			for (usize j = 0; j < R-RF; j++)
 				res[i][j] = data[i+colStart][j+rowStart];
 		return res;
 	}
 
-	template<size_t RF = 1, size_t CF = 1>
-	constexpr Matrix<R+RF, C+CF, T> expandedBy(size_t const& rowStart = 0, size_t const& colStart = 0) const {
+	template<usize RF = 1, usize CF = 1>
+	constexpr Matrix<R+RF, C+CF, T> expandedBy(usize const& rowStart = 0, usize const& colStart = 0) const {
 		static_assert(rowStart < RF && colStart < CF, "Row/Column starts cannot be bigger than the expansion factor!");
 		if (rowStart < (RF) && colStart < (CF)) return Matrix<R+RF, C+CF, T>(0);
 		Matrix<R+RF, C+CF, T> res;
-		for (size_t i = 0; i < C; i++)
-			for (size_t j = 0; j < R; j++)
+		for (usize i = 0; i < C; i++)
+			for (usize j = 0; j < R; j++)
 				res[i+colStart][j+rowStart] = data[i][j];
 		return res;
 	}
@@ -445,16 +445,16 @@ public:
 
 	constexpr Matrix<R, C, T> operator+(T const& val) const {
 		Matrix<R, C, T> res;
-		for (size_t i = 0; i < C; i++)
-			for (size_t j = 0; j < R; j++)
+		for (usize i = 0; i < C; i++)
+			for (usize j = 0; j < R; j++)
 				res[j][i] = data[i][j] + val;
 		return res;
 	}
 
 	constexpr Matrix<R, C, T> operator+(Matrix<R, C, T> const& mat) const {
 		Matrix<R, C, T> res;
-		for (size_t i = 0; i < C; i++)
-			for (size_t j = 0; j < R; j++)
+		for (usize i = 0; i < C; i++)
+			for (usize j = 0; j < R; j++)
 				res[j][i] = data[i][j] + mat.data[i][j];
 		return res;
 	}
@@ -476,24 +476,24 @@ public:
 
 	constexpr Matrix<R, C, T> operator-() const {
 		Matrix<R, C, T> res;
-		for (size_t i = 0; i < C; i++)
-			for (size_t j = 0; j < R; j++)
+		for (usize i = 0; i < C; i++)
+			for (usize j = 0; j < R; j++)
 				res[j][i] = -data[i][j];
 		return res;
 	}
 
 	constexpr Matrix<R, C, T> operator-(T const& val) const {
 		Matrix<R, C, T> res;
-		for (size_t i = 0; i < C; i++)
-			for (size_t j = 0; j < R; j++)
+		for (usize i = 0; i < C; i++)
+			for (usize j = 0; j < R; j++)
 				res[j][i] = data[i][j] - val;
 		return res;
 	}
 
 	constexpr Matrix<R, C, T> operator-(Matrix<R, C, T> const& mat) const {
 		Matrix<R, C, T> res;
-		for (size_t i = 0; i < C; i++)
-			for (size_t j = 0; j < R; j++)
+		for (usize i = 0; i < C; i++)
+			for (usize j = 0; j < R; j++)
 				res[j][i] = data[i][j] - mat.data[i][j];
 		return res;
 	}
@@ -515,19 +515,19 @@ public:
 
 	constexpr Matrix<R, C, T> operator*(T const& val) const {
 		Matrix<R, C, T> res;
-		for (size_t i = 0; i < C; i++)
-			for (size_t j = 0; j < R; j++)
+		for (usize i = 0; i < C; i++)
+			for (usize j = 0; j < R; j++)
 				res[j][i] = data[i][j] * val;
 		return res;
 	}
 
-	template<size_t C2>
+	template<usize C2>
 	constexpr Matrix<R, C2, T> operator*(Matrix<C, C2, T> const& mat) const {
 		Matrix<R, C2, T> res;
-		for (size_t i = 0; i < R; i++)
-			for (size_t j = 0; j < C2; j++) {
+		for (usize i = 0; i < R; i++)
+			for (usize j = 0; j < C2; j++) {
 				res.data[j][i] = 0;
-				for (size_t k = 0; k < C; k++)
+				for (usize k = 0; k < C; k++)
 					res.data[j][i] += data[k][i] * mat.data[j][k];
 			}
 		return res;
@@ -555,13 +555,13 @@ public:
 
 	constexpr Matrix<R, C, T> operator/(T const& val) const {
 		Matrix<R, C, T> res;
-		for (size_t i = 0; i < C; i++)
-			for (size_t j = 0; j < R; j++)
+		for (usize i = 0; i < C; i++)
+			for (usize j = 0; j < R; j++)
 				res[j][i] = data[i][j] / val;
 		return res;
 	}
 
-	template<size_t C2>
+	template<usize C2>
 	constexpr Matrix<R, C2, T> operator/(Matrix<C, C2, T> const& mat) const {
 		return (*this) * mat.inverted();
 	}
@@ -569,27 +569,27 @@ public:
 	/// Assignment operator overloading.
 
 	constexpr Matrix<R, C, T>& operator=(T const(& v)[R][C]) {
-		for (size_t i = 0; i < C; i++) {
-			for (size_t j = 0; j < R; j++)
+		for (usize i = 0; i < C; i++) {
+			for (usize j = 0; j < R; j++)
 				data[i][j] = T(v[i][j]);
 		}
 	}
 
 	constexpr Matrix<R, C, T>& operator=(T const(& v)[R*C]) {
-		for (size_t i = 0; i < R*C; i++)
+		for (usize i = 0; i < R*C; i++)
 			((T*)data)[i] = T(v[i]);
 	}
 
 	constexpr Matrix<R, C, T>& operator+=(T const& val) {
-		for (size_t i = 0; i < C; i++)
-			for (size_t j = 0; j < R; j++)
+		for (usize i = 0; i < C; i++)
+			for (usize j = 0; j < R; j++)
 				data[i][j] += val;
 		return *this;
 	}
 
 	constexpr Matrix<R, C, T>& operator+=(Matrix<R, C, T> const& mat) {
-		for (size_t i = 0; i < C; i++)
-			for (size_t j = 0; j < R; j++)
+		for (usize i = 0; i < C; i++)
+			for (usize j = 0; j < R; j++)
 				data[i][j] += mat.data[i][j];
 		return *this;
 	}
@@ -610,15 +610,15 @@ public:
 	}
 
 	constexpr Matrix<R, C, T>& operator-=(T const& val) {
-		for (size_t i = 0; i < C; i++)
-			for (size_t j = 0; j < R; j++)
+		for (usize i = 0; i < C; i++)
+			for (usize j = 0; j < R; j++)
 				data[i][j] -= val;
 		return *this;
 	}
 
 	constexpr Matrix<R, C, T>& operator-=(Matrix<R, C, T> const& mat) {
-		for (size_t i = 0; i < C; i++)
-			for (size_t j = 0; j < R; j++)
+		for (usize i = 0; i < C; i++)
+			for (usize j = 0; j < R; j++)
 				data[i][j] -= mat.data[i][j];
 		return *this;
 	}
@@ -639,8 +639,8 @@ public:
 	}
 
 	constexpr Matrix<R, C, T>& operator*=(T const& val) {
-		for (size_t i = 0; i < C; i++)
-			for (size_t j = 0; j < R; j++)
+		for (usize i = 0; i < C; i++)
+			for (usize j = 0; j < R; j++)
 				data[i][j] *= val;
 		return *this;
 	}
@@ -658,13 +658,13 @@ public:
 	}
 
 	constexpr Matrix<R, C, T>& operator/=(T const& val) {
-		for (size_t i = 0; i < R; i++)
-			for (size_t j = 0; j < C; j++)
+		for (usize i = 0; i < R; i++)
+			for (usize j = 0; j < C; j++)
 				data[i][j] /= val;
 		return *this;
 	}
 
-	template<size_t C2>
+	template<usize C2>
 	constexpr Matrix<R, C, T>& operator/=(Matrix<R, C2, T> const& mat)
 	requires (R == C) {
 		(*this) = (*this) / mat;
@@ -673,8 +673,8 @@ public:
 
 	/// Other operator overloadings.
 
-	constexpr Span<T, R> operator[](size_t const& idx)				{return Span{data[idx]};	}
-	constexpr Span<const T, R> operator[](size_t const& idx) const	{return Span{data[idx]};	}
+	constexpr Span<T, R> operator[](usize const& idx)				{return Span{data[idx]};	}
+	constexpr Span<const T, R> operator[](usize const& idx) const	{return Span{data[idx]};	}
 
 	constexpr T* begin()	{return &data[0][0];		}
 	constexpr T* end()		{return &data[C-1][R-1];	}
@@ -879,7 +879,7 @@ public:
 		) {
 			// Get right-hand side of the equation
 			Vector4 rhs;
-			for (size_t i = 0; i < 4; i++)
+			for (usize i = 0; i < 4; i++)
 				rhs.data[i] = local.data[i][3];
 			Matrix<R, C, T> tipMatrix = pMatrix.inverted().transposed();
 			perspective = tipMatrix * Matrix<4, 1, T>(rhs);
@@ -902,8 +902,8 @@ public:
 		local.data[3][2] = T(0);
 		// Isolate scale & shear
 		Vector3 row[3];
-		for (size_t i = 0; i < 3; i++)
-			for (size_t j = 0; i < 3; i++)
+		for (usize i = 0; i < 3; i++)
+			for (usize j = 0; i < 3; i++)
 				row[i][j] = local.data[i][j];
 		// Compute X scale & normalize first row
 		result.scale.x = row[0].length();
@@ -927,7 +927,7 @@ public:
 		skew.x /= result.scale.z;
 		// Check for coordinate flip
 		if (row[0].mixProd(row[1], row[2]) < 0)
-			for (size_t i = 0; i < 3; i++) {
+			for (usize i = 0; i < 3; i++) {
 				result.scale[i] *= T(-1);
 				row[i] *= T(-1);
 			}
@@ -951,19 +951,19 @@ public:
 		return decompose(_p, _s);
 	}
 
-	constexpr T cofactor(size_t const& row, size_t const& col) const {
+	constexpr T cofactor(usize const& row, usize const& col) const {
 		return ((((row + col) % 2) == 0) ? T(+1) : T(-1)) * truncated(row, col).determinant();
 	}
 
 private:
-	template<size_t R2, size_t C2, Math::Operatable T2> friend class Matrix;
+	template<usize R2, usize C2, Math::Operatable T2> friend class Matrix;
 	template<typename T2> friend Matrix<4, 4, T2> translate(Matrix<4, 4, T2>, Vector3 const&);
 	/// The matrix's data.
 	T data[C][R] = {};
 };
 
 // Template matrices
-template <size_t R, size_t C, Math::Operatable T> using Mat = Matrix<R, C, T>;
+template <usize R, usize C, Math::Operatable T> using Mat = Matrix<R, C, T>;
 
 template <Math::Operatable T> using TMat2x1 = Matrix<2, 1, T>;
 template <Math::Operatable T> using TMat3x1 = Matrix<3, 1, T>;
@@ -1328,8 +1328,8 @@ concept ValidMatrix = requires {
 template <ValidMatrix T>
 constexpr T lerp(T const& from, T const& to, typename T::DataType const& by) {
 	T result(0);
-	for (size_t i = 0; i < T::COLUMNS; i++)
-		for (size_t j = 0; j < T::ROWS; j++)
+	for (usize i = 0; i < T::COLUMNS; i++)
+		for (usize j = 0; j < T::ROWS; j++)
 			result[i][j] = Math::lerp<typename T::DataType>(from[i][j], to[i][j], by);
 	return result;
 }
@@ -1337,8 +1337,8 @@ constexpr T lerp(T const& from, T const& to, typename T::DataType const& by) {
 template <ValidMatrix T>
 constexpr T lerp(T const& from, T const& to, T const& by) {
 	T result(0);
-	for (size_t i = 0; i < T::COLUMNS; i++)
-		for (size_t j = 0; j < T::ROWS; j++)
+	for (usize i = 0; i < T::COLUMNS; i++)
+		for (usize j = 0; j < T::ROWS; j++)
 			result[i][j] = Math::lerp<typename T::DataType>(from[i][j], to[i][j], by[i][j]);
 	return result;
 }
