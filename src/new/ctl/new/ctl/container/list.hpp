@@ -523,7 +523,7 @@ public:
 
 	constexpr List<SelfType, IndexType> splitAtFirst(DataType const& sep) const {
 		List<SelfType, IndexType> res;
-		ssize idx = find(sep);
+		IndexType idx = find(sep);
 		if (idx < 0)
 			return res.pushBack(*this);
 		return res.pushBack({sliced(0, idx), sliced(idx, count)});
@@ -531,9 +531,9 @@ public:
 
 	constexpr List<SelfType, IndexType> splitAtFirst(List<DataType> const& seps) const {
 		List<SelfType, IndexType> res;
-		ssize idx = -1;
+		IndexType idx = -1;
 		for(DataType const& sep: seps) {
-			ssize i = find(sep);
+			IndexType i = find(sep);
 			if (i > -1 && i < idx)
 				idx = i;
 		}
@@ -544,10 +544,44 @@ public:
 
 	constexpr List<SelfType, IndexType> splitAtFirst(ArgumentListType const& seps) const {
 		List<SelfType, IndexType> res;
-		ssize idx = -1;
+		IndexType idx = -1;
 		for(DataType const& sep: seps) {
-			ssize i = find(sep);
+			IndexType i = find(sep);
 			if (i > -1 && i < idx)
+				idx = i;
+		}
+		if (idx < 0)
+			return res.pushBack(*this);
+		return res.pushBack({sliced(0, idx), sliced(idx, count)});
+	}
+
+	constexpr List<SelfType, IndexType> splitAtLast(DataType const& sep) const {
+		List<SelfType, IndexType> res;
+		IndexType idx = rfind(sep);
+		if (idx < 0)
+			return res.pushBack(*this);
+		return res.pushBack({sliced(0, idx), sliced(idx, count)});
+	}
+
+	constexpr List<SelfType, IndexType> splitAtLast(List<DataType> const& seps) const {
+		List<SelfType, IndexType> res;
+		IndexType idx = -1;
+		for(DataType const& sep: seps) {
+			IndexType i = rfind(sep);
+			if (i > -1 && i > idx)
+				idx = i;
+		}
+		if (idx < 0)
+			return res.pushBack(*this);
+		return res.pushBack({sliced(0, idx), sliced(idx, count)});
+	}
+
+	constexpr List<SelfType, IndexType> splitAtLast(ArgumentListType const& seps) const {
+		List<SelfType, IndexType> res;
+		IndexType idx = -1;
+		for(DataType const& sep: seps) {
+			IndexType i = rfind(sep);
+			if (i > -1 && i > idx)
 				idx = i;
 		}
 		if (idx < 0)
