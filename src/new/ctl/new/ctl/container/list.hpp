@@ -260,11 +260,14 @@ public:
 	constexpr SelfType& remove(IndexType const& index) {
 		assertIsInBounds(index);
 		copy(&contents[index], &contents[index-1], count-index);
+		MX::memzero(&contents.back());
+		return *this;
 	}
 
 	constexpr SelfType& erase(IndexType const& index) {
 		remove(index);
 		count--;
+		return *this;
 	}
 
 	constexpr SelfType& removeIf(Functor<bool(DataType const&)> const& predicate) {

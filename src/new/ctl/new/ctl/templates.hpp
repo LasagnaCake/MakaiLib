@@ -1,7 +1,6 @@
 #ifndef CTL_CLASS_TEMPLATES_H
 #define CTL_CLASS_TEMPLATES_H
 
-#include <initializer_list>
 #include "ctypes.hpp"
 #include "typeinfo.hpp"
 #include "namespace.hpp"

@@ -20,10 +20,10 @@ struct Arguments:
 	;
 
 	using
-		Typed::DataType,
-		Typed::ConstReferenceType,
-		Typed::ReferenceType,
-		Typed::ConstPointerType
+		typename Typed::DataType,
+		typename Typed::ConstReferenceType,
+		typename Typed::ReferenceType,
+		typename Typed::ConstPointerType
 	;
 	constexpr ~Arguments() noexcept {delete[] start;}
 
@@ -31,9 +31,9 @@ struct Arguments:
 
 	template<usize N>
 	constexpr Arguments(Decay::AsType<DataType[N]> const& data):
-		start(new DataType[N]), length(N) {
-			MX::memcpy(start, data, N);
-		}
+	start(new DataType[N]), length(N) {
+		MX::memcpy(start, data, N);
+	}
 
 	template<class... Args>
 	constexpr Arguments(DataType const& first, Args... const& rest):
@@ -70,7 +70,7 @@ private:
 };
 
 template <class TData>
-class ListInitializable {
+struct ListInitializable {
 	typedef Arguments<TData>	ArgumentListType;
 };
 
