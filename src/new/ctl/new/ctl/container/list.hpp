@@ -16,10 +16,12 @@ template<class TData, Type::Integer TIndex = usize>
 struct List:
 	Iteratable<TData, TIndex>,
 	SelfIdentified<List<TData, TIndex>>,
+	ListInitializable<TData>,
 	Ordered {
 public:
 	using Iteratable		= Iteratable<TData, TIndex>;
 	using SelfIdentified	= SelfIdentified<TData, REVERSE, TIndex>;
+	using ListInitializable	= ListInitializable<TData>;
 
 	using
 		typename Iteratable::DataType,
@@ -45,6 +47,10 @@ public:
 
 	using
 		typename SelfIdentified::SelfType
+	;
+
+	using
+		typename ListInitializable::ArgumentListType
 	;
 
 	constexpr List() {invoke(1);}

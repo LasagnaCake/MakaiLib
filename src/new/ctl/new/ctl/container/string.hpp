@@ -7,6 +7,7 @@
 
 #include "list.hpp"
 #include "array.hpp"
+#include "arguments.hpp"
 #include "../typeinfo.hpp"
 #include "../cpperror.hpp"
 
@@ -71,9 +72,9 @@ public:
 	}
 
 	template<SizeType S>
-	constexpr BaseString(const DataType (const& v)[S]) {
+	constexpr BaseString(Decay::AsType<const DataType[S]> const& v) {
 		reserve(S);
-		MX::memcpy(v, cbegin(), S * sizeof(DataType));
+		MX::memcpy(v, cbegin(), S);
 	}
 
 	constexpr OutputStreamType const& operator<<(OutputStreamType& o) const	{o << cstr(); return out;}

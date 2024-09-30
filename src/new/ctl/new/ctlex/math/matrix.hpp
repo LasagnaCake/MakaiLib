@@ -1,7 +1,7 @@
 #ifndef CTL_EX_MATH_MATRIX_H
 #define CTL_EX_MATH_MATRIX_H
 
-#include "../vector.hpp"
+#include "vector.hpp"
 #include "../../ctl/exnamespace.hpp"
 #include "../../ctl/math/core.hpp"
 

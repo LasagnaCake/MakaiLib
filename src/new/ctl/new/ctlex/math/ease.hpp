@@ -1,9 +1,9 @@
 #ifndef CTL_EX_MATH_EASE_H
 #define CTL_EX_MATH_EASE_H
 
-#include "../ctl/exnamespace.hpp"
-#include "../../container/string.hpp"
-#include "../../container/function.hpp"
+#include "../../ctl/exnamespace.hpp"
+#include "../../ctl/container/string.hpp"
+#include "../../ctl/container/function.hpp"
 
 CTL_EX_NAMESPACE_BEGIN
 
@@ -14,7 +14,7 @@ CTL_EX_NAMESPACE_BEGIN
 // Taken from https://easings.net
 namespace Math::Ease {
 	/// Easing function template
-	typedef Operation<float> EaseMode;
+	typedef Function<float(float const&)> Mode;
 	#define EASE_FUN(NAME) constexpr float NAME(float const& x)
 	EASE_FUN(linear) {return x;}
 

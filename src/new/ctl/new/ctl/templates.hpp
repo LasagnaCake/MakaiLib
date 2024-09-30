@@ -17,14 +17,13 @@ struct SelfIdentified {
 
 template<class TData>
 struct Typed {
-	typedef TData							DataType;
-	typedef DataType const					ConstantType;
-	typedef DataType&						ReferenceType;
-	typedef DataType&&						TemporaryType;
-	typedef ConstantType&					ConstReferenceType;
-	typedef std::initializer_list<DataType>	ArgumentListType;
-	typedef DataType*						PointerType;
-	typedef const DataType*					ConstPointerType;
+	typedef TData				DataType;
+	typedef DataType const		ConstantType;
+	typedef DataType&			ReferenceType;
+	typedef DataType&&			TemporaryType;
+	typedef ConstantType&		ConstReferenceType;
+	typedef DataType*			PointerType;
+	typedef const DataType*		ConstPointerType;
 };
 
 template<class TKey>
