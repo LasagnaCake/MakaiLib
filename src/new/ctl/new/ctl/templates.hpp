@@ -22,7 +22,7 @@ struct Typed {
 	typedef DataType&&			TemporaryType;
 	typedef ConstantType&		ConstReferenceType;
 	typedef DataType*			PointerType;
-	typedef const DataType*		ConstPointerType;
+	typedef DataType const*		ConstPointerType;
 };
 
 template<class TKey>
