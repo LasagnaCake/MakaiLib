@@ -20,6 +20,24 @@ struct Array:
 	Ordered {
 private:
 public:
+	using Iteratable		= Iteratable<TData, TIndex>;
+	using SelfIdentified	= SelfIdentified<Array<N, TData, TIndex>>;
+
+	using
+		Iteratable::IteratorType,
+		Iteratable::ReverseIteratorType,
+		Iteratable::ConstIteratorType,
+		Iteratable::ConstReverseIteratorType,
+		Iteratable::SizeType,
+		Iteratable::IndexType,
+		Iteratable::DataType,
+		Iteratable::ConstantType,
+		Iteratable::PointerType,
+		Iteratable::ConstPointerType,
+		Iteratable::ReferenceType
+		Iteratable::ConstReferenceType,
+	;
+
 	constexpr SizeType SIZE = N;
 
 	typedef Decay::AsType<DataType[SIZE]> ArrayType;
@@ -28,16 +46,16 @@ public:
 
 	constexpr Array() requires(Type::Constructible<DataType>)	{for (auto& e: data) e = DataType();	}
 	constexpr Array(ArrayType const& data)						{MX::memcpy(arr, data, SIZE);			}
-	constexpr Array(DataType const& v)							{for (auto& e: data) e = v;				}
+	constexpr Array(ConstReferenceType v)						{for (auto& e: data) e = v;				}
 
-	constexpr DataType& operator[](IndexType index) {
+	constexpr ReferenceType operator[](IndexType index) {
 		if (index >= SIZE)
 			throw OutOfBoundsException("Index is bigger than array size!");
 		wrapBounds(index, SIZE);
 		return data[index];
 	}
 
-	constexpr DataType operator[](IndexType index) const {
+	constexpr ConstReferenceType operator[](IndexType index) const {
 		if (index >= SIZE)
 			throw OutOfBoundsException("Index is bigger than array size!");
 		wrapBounds(index, SIZE);
