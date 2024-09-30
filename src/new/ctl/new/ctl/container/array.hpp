@@ -62,8 +62,8 @@ public:
 		return data[index];
 	}
 
-	constexpr bool empty()	const {return SIZE;}
-	constexpr bool size()	const {return SIZE;}
+	constexpr bool empty()		const {return SIZE;}
+	constexpr SizeType size()	const {return SIZE;}
 
 	constexpr IteratorType		begin()			{return data;		}
 	constexpr IteratorType		end()			{return data+SIZE;	}
