@@ -83,6 +83,21 @@ public:
 		MX::memcpy(v, cbegin(), S);
 	}
 
+	template <class T> SelfType&					replace(T const& rep)				{return BaseType::replace(rep);			}
+	template <class T> SelfType						replaced(T const& rep) const		{return BaseType::replaced(rep);		}
+	template <class T> List<SelfType, IndexType>	split(T const& sep) const			{return BaseType::split(sep);			}
+	template <class T> List<SelfType, IndexType>	splitAtFirst(T const& sep) const	{return BaseType::splitAtFirst(sep);	}
+	template <class T> List<SelfType, IndexType>	splitAtLast(T const& sep) const		{return BaseType::splitAtLast(sep);		}
+
+	constexpr DataType join(typename DataType::DataType const& sep) const
+	requires requires {
+		typename DataType::DataType;
+		typename DataType::SizeType;
+		Type::Equal<DataType, List<DataType::DataType, DataType::SizeType>>
+	} {
+		return BaseType::join(sep);
+	}
+
 	constexpr OutputStreamType const& operator<<(OutputStreamType& o) const	{o << cstr(); return out;}
 	constexpr OutputStreamType& operator<<(OutputStreamType& o)				{o << cstr(); return out;}
 
@@ -94,10 +109,10 @@ public:
 	constexpr SelfType operator+(DataType const& value) const	{return SelfType(*this).pushBack(value);	}
 	constexpr SelfType operator+(SelfType const& other) const	{return (*this) + other;					}
 
-	constexpr SelfType operator+(const DataType* const& str) const		{return (*this) + String(str);}
+	constexpr SelfType operator+(StringLiteralType const& str) const	{return (*this) + String(str);}
 	constexpr SelfType operator+(const DataType (const& str)[S]) const	{return (*this) + String(str);}
 
-	constexpr SelfType operator+(const DataType* const& str, SelfType const& self) const		{return String(str) + self;}
+	constexpr SelfType operator+(StringLiteralType const& str, SelfType const& self) const		{return String(str) + self;}
 	constexpr SelfType operator+(const DataType (const& str)[S], SelfType const& self) const	{return String(str) + self;}
 
 	constexpr SelfType& operator+=(DataType const& value)			{return pushBack(value);	}

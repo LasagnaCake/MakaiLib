@@ -439,6 +439,7 @@ public:
 		return diff + (max - min);
 	}
 
+	/*
 	constexpr SelfType operator+(DataType(const& values)[COUNT]) const {
 		SelfType result(*this);
 		return result.appendBack(values);
@@ -476,6 +477,7 @@ public:
 	constexpr SelfType& operator*=(SizeType const& times) {
 		*this = (*this) * times;
 	}
+	*/
 
 	constexpr List<SelfType, IndexType> split(DataType const& sep) const {
 		List<SelfType, IndexType> res;
@@ -588,6 +590,63 @@ public:
 			return res.pushBack(*this);
 		return res.pushBack({sliced(0, idx), sliced(idx, count)});
 	}
+
+	constexpr DataType join(typename DataType::DataType const& sep) const
+	requires requires {
+		typename DataType::DataType;
+		typename DataType::SizeType;
+		Type::Equal<DataType, List<DataType::DataType, DataType::SizeType>>
+	} {
+		DataType result = front();
+		for (SizeType i = 1; i < count; ++i) {
+			result.pushBack(sep);
+			result.appendBack(contents[i]);
+		}
+		return result;
+	}
+
+	constexpr SelfType& replace(DataType const& val, DataType const& rep) {
+		for (DataType& v: *this)
+			if (v == val) v = rep;
+		return *this;
+	}
+
+	constexpr SelfType& replace(SelfType const& values, DataType const& rep) {
+		for (DataType const& val: values)
+			replace(val, rep);
+		return *this;
+	}
+
+	constexpr SelfType& replace(ArgumentListType const& values, DataType const& rep) {
+		for (DataType const& val: values)
+			replace(val, rep);
+		return *this;
+	}
+
+	struct Replacement {
+		SelfType	targets;
+		DataType	replacement;
+	};
+
+	constexpr SelfType& replace(Replacement const& rep) {
+		replace(rep.targets, rep.replacement)
+		return *this;
+	}
+
+	constexpr SelfType& replace(List<Replacement, SizeType> const& reps) {
+		for (Replacement const& rep: reps)
+			replace(rep);
+		return *this;
+	}
+
+	constexpr SelfType& replace(Arguments<Replacement, SizeType> const& reps) {
+		for (Replacement const& rep: reps)
+			replace(rep);
+		return *this;
+	}
+
+	template<typename T>
+	constexpr SelfType replaced(T  const& rep) const {return SelfType(*this).replace(rep);}
 
 	constexpr bool tight() const {return count == maximum;}
 
