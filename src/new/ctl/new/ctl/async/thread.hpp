@@ -57,7 +57,7 @@ struct Thread: private std::thread {
 		std::this_thread::yield();
 	}
 
-	template<class T = Time::Millis>
+	template<class T = OS::Time::Millis>
 	static void wait(usize const& time) {
 		std::this_thread::sleep_for<T>(time);
 	}

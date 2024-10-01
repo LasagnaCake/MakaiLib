@@ -18,7 +18,7 @@ private:
 	using RealDist = std::uniform_real_distribution<T>;
 
 	// The current seed
-	inline static usize	seed = Time::Clock::sinceEpoch<Time::Millis>();
+	inline static usize	seed = OS::Time::Clock::sinceEpoch<OS::Time::Millis>();
 	// The random number generator engine used
 	inline static Engine engine{seed};
 	// Default distributions
@@ -78,7 +78,7 @@ public:
 
 	/// Gets a seed based on the current clock's time, and a random number.
 	static usize generateNewSeed() {
-		return Time::sinceEpoch<Time::Millis>() ^ !(integer() << 0x2F);
+		return OS::Time::sinceEpoch<OS::Time::Millis>() ^ !(integer() << 0x2F);
 	}
 }
 

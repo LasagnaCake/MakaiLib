@@ -49,6 +49,15 @@ constexpr void reverse(T* const& arr, usize const& sz) noexcept {
 		swap(arr[i], arr[sz-1-i]);
 }
 
+template<Type::Integer T>
+constexpr T reflect(T const& data) {
+	T result = 0;
+	constexpr usize BIT_WIDTH = sizeof(T) * 8;
+	for (usize i = 0; i < BIT_WIDTH; i++)
+		if ((data >> i) & 1) result |= (T(1) << (BIT_WIDTH-1-i));
+	return (result);
+}
+
 CTL_NAMESPACE_END
 
 #endif // CTL_ALGORITHM_TRANSFORM_H

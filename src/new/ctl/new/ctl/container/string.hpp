@@ -13,6 +13,8 @@
 #include "../cpperror.hpp"
 #include "../io/stream.hpp"
 #include "../algorithm/aton.hpp"
+#include "../algorithm/transform.hpp"
+#include "../algorithm/validate.hpp"
 
 CTL_NAMESPACE_BEGIN
 
@@ -98,8 +100,15 @@ public:
 		return BaseType::join(sep);
 	}
 
-	constexpr OutputStreamType const& operator<<(OutputStreamType& o) const	{o << cstr(); return out;}
-	constexpr OutputStreamType& operator<<(OutputStreamType& o)				{o << cstr(); return out;}
+	constexpr OutputStreamType const& operator<<(OutputStreamType& o) const	{o << cstr(); return o;}
+	constexpr OutputStreamType& operator<<(OutputStreamType& o)				{o << cstr(); return o;}
+
+	constexpr InputStreamType& operator>>(InputStreamType& i, SelfType& str) {
+		DataType buf[32];
+		while(i.getline(buf, 32))
+			str.appendBack(buf, i.gcount());
+		return i;
+	}
 
 	constexpr SelfType const& operator<<(SelfType& other) const	{other.appendBack(*this); return *this;}
 	constexpr SelfType& operator<<(SelfType& other)				{other.appendBack(*this); return *this;}
@@ -170,16 +179,32 @@ public:
 		return strbuf;
 	}
 
-	template<Decay::AsType<char(char const&)> F>
-	constexpr SelfType transformed() {
-		SelfType result = *this;
-		for(DataType& c: result);
-			c = F(c);
+	constexpr SelfType lower() const {return transformed(toLower);}
+	constexpr SelfType upper() const {return transformed(toUpper);}
+
+	constexpr bool isHex() const {return validate(isHexChar);}
+
+	constexpr BaseString<char, SizeType> toString() const
+	requires Type::Equal<DataType, wchar> {
+		BaseString<char, SizeType> result;
+		for (DataType const& c: *this)
+			result.pushBack(char(c));
 		return result;
 	}
 
-	constexpr SelfType lower() const {return template transformed<toLower>();}
-	constexpr SelfType upper() const {return template transformed<toUpper>();}
+	constexpr SelfType toString() const
+	requires Type::Equal<DataType, char> {return *this;}
+
+	constexpr BaseString<wchar, SizeType> toWideString() const
+	requires Type::Equal<DataType, char> {
+		BaseString<wchar, SizeType> result;
+		for (DataType const& c: *this)
+			result.pushBack(wchar(c));
+		return result;
+	}
+
+	constexpr SelfType toWideString() const
+	requires Type::Equal<DataType, wchar> {return *this}
 
 	template<Type::Integer T>
 	constexpr static T toNumber(SelfType const& str) {
@@ -239,9 +264,9 @@ constexpr BaseString<C, S> toString(I const& val, usize const& base = 10) {
 }
 
 template<Type::Float F, CharacterType C = char, Type::Integer S = usize>
-constexpr BaseString<C, S> toString(F const& val, usize const& precision = 16) {
-	BaseString<C, S> result(64, '\0');
-	ssize i = ftoa(val, result.cbegin(), result.size(), base);
+constexpr BaseString<C, S> toString(F const& val, usize const& precision = sizeof(F) * 2) {
+	BaseString<C, S> result(precision * 4, '\0');
+	ssize i = ftoa(val, result.cbegin(), result.size(), precision);
 	if (i == -1)
 		throw InvalidConversionException("Failed to convert number!");
 	return result.reserve(i);
@@ -301,36 +326,6 @@ public:
 		return BaseString<TChar, TIndex>(begin(), end());
 	}
 }
-
-template<Type::Number T>
-constexpr String toString(T const& value) {
-	return String::fromNumber<T>(value);
-}
-
-template<class T>
-constexpr String toString(T const& value)
-requires (Type::Convertible<T, String>) {
-	return (value);
-}
-
-template<class T>
-constexpr String toString(T const& value)
-requires (T t) {
-	requires T::toString;
-	{t.toString()} -> Type::Equal<String>;
-} {
-	return value.toString();
-}
-
-template<class T>
-concept StringConvertible = requires (T t) {
-	{toString(t)} -> Type::Equal<String>;
-};
-
-template<StringConvertible T, class... Args>
-constexpr String toString(T const& first, Args const&... args)
-	requires (... && StringConvertible<Args>) {
-	return String::fromNumber<T>(value);
 }
 
 typedef List<String>			StringList;

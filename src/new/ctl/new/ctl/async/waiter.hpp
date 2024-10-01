@@ -11,7 +11,7 @@ CTL_NAMESPACE_BEGIN
 DEFINE_ERROR_TYPE(OccupiedError);
 
 struct Waiter {
-	template<class T = Time::Millis>
+	template<class T = OS::Time::Millis>
 	static void wait(usize const& time) {
 		Thread::wait<T>(time);
 	}

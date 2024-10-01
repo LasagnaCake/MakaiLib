@@ -1,6 +1,8 @@
 #ifndef CTL_CONTAINER_ITERATOR_H
 #define CTL_CONTAINER_ITERATOR_H
 
+#include <iterator>
+
 #include "../namespace.hpp"
 #include "../order.hpp"
 #include "../ctypes.hpp"
@@ -13,6 +15,14 @@ CTL_NAMESPACE_BEGIN
 template<class TData, bool REVERSE = false, Type::Integer TIndex = usize>
 struct Iterator: Typed<TData>, Indexed<TIndex>, Ordered, SelfIdentified<TData, REVERSE, TIndex> {
 public:
+	static_assert(
+		Type::PostDecrementable<TData>
+	&&	Type::PostIncrementable<TData>
+	&&	Type::PreDecrementable<TData>
+	&&	Type::PreIncrementable<TData>
+	, "Type is not a valid iteratable type!"
+	);
+
 	using Typed				= Typed<TData>;
 	using Indexed			= Indexed<TIndex>;
 	using Ordered			= Ordered;
@@ -38,24 +48,29 @@ public:
 
 	constexpr Iterator() {}
 
-	constexpr Iterator(PointerType const& value): iterand(value)	{}
-	constexpr Iterator(PointerType&& value): iterand(move(value))	{}
+	constexpr explicit(REVERSE) Iterator(DataType const& value): iterand(value)	{}
+	constexpr explicit(REVERSE) Iterator(DataType&& value): iterand(move(value))	{}
 
-	constexpr Iterator(Iterator const& other): iterand(other.iterand)	{}
-	constexpr Iterator(Iterator&& other): iterand(move(other.iterand))	{}
+	constexpr explicit(REVERSE) Iterator(Iterator const& other): iterand(other.iterand)		{}
+	constexpr explicit(REVERSE) Iterator(Iterator&& other): iterand(move(other.iterand))	{}
 
-	constexpr ReferenceType operator*()	{return *iterand;	}
-	constexpr PointerType operator->()	{return iterand;	}
+	constexpr Iterator(std::iterator<DataType> const& other) requires (!REVERSE): iterand(other.base())			{}
+	constexpr Iterator(std::reverse_iterator<DataType> const& other) requires (REVERSE): iterand(other.base())	{}
 
-	constexpr ReferenceType operator*() const	{return *iterand;	}
-	constexpr PointerType operator->() const	{return iterand;	}
+	constexpr DataType base() const {return base;}
+
+	constexpr ReferenceType operator*()	{return *iter();	}
+	constexpr DataType operator->()		{return iter();	}
+
+	constexpr ConstReferenceType operator*() const	{return *iter();	}
+	constexpr ConstantType operator->() const		{return iter();	}
 
 	Iterator& operator++()		{step(); return *this;							}
 	Iterator operator++(int)	{Iterator copy = *this; ++(*this); return copy;	}
 
-	constexpr operator PointerType() const			{return iterand;	}
-	constexpr operator ReferenceType()				{return *iterand;	}
-	constexpr operator ConstReferenceType() const	{return *iterand;	}
+	constexpr operator PointerType() const			{return iter();		}
+	constexpr operator ReferenceType()				{return *iter();	}
+	constexpr operator ConstReferenceType() const	{return *iter();	}
 
 	constexpr bool operator==(Iterator const& other) const			{return iterand == other.iterand;	}
 	constexpr OrderType operator<=>(Iterator const& other) const	{return compare(other.iterand);		}
@@ -64,28 +79,36 @@ public:
 	constexpr Iterator operator-(IndexType const& value) const	{return offset<REVERSE>(value);				}
 	constexpr Iterator operator+(IndexType const& value) const	{return offset<REVERSE>(value);				}
 
+	constexpr operator std::iterator<DataType>() const requires(!REVERSE)			{return iterand;}
+	constexpr operator std::reverse_iterator<DataType>() const requires(!REVERSE)	{return iterand;}
 private:
+	constexpr DataType iter() {
+		DataType it = iterand;
+		if constexpr (REVERSE)	return --it;
+		else					return it;
+	}
+
 	constexpr void step() {
 		if constexpr (REVERSE)	--iterand;
 		else					++iterand;
 	}
 
-	constexpr OrderType compare(PointerType const& other) const {
+	constexpr OrderType compare(DataType const& other) const {
 		if constexpr (REVERSE)	return other <=> iterand;
 		else					return iterand <=> other;
 	}
 
-	constexpr PointerType difference(PointerType const& other) const {
+	constexpr DataType difference(DataType const& other) const {
 		if constexpr (REVERSE)	return other - iterand;
 		else					return iterand - other;
 	}
 
-	constexpr PointerType offset(IndexType const& value) const {
+	constexpr DataType offset(IndexType const& value) const {
 		if constexpr (REVERSE)	return iterand + value;
 		else					return iterand - value;
 	}
 
-	PointerType iterand = nullptr;
+	DataType iterand = nullptr;
 };
 
 template<class TData, Type::Integer TIndex = usize>
@@ -108,6 +131,8 @@ struct Iteratable: Typed<TData>, Indexed<TIndex> {
 	using
 		Typed::DataType,
 		Typed::ConstantType
+		Typed::PointerType,
+		Typed::ConstPointerType
 	;
 
 	using
@@ -115,10 +140,10 @@ struct Iteratable: Typed<TData>, Indexed<TIndex> {
 		Indexed::SizeType
 	;
 
-	typedef ForwardIterator<DataType, SizeType>		IteratorType;
-	typedef ForwardIterator<ConstantType, SizeType>	ConstIteratorType;
-	typedef ReverseIterator<DataType, SizeType>		ReverseIteratorType;
-	typedef ReverseIterator<ConstantType, SizeType>	ConstReverseIteratorType;
+	typedef ForwardIterator<PointerType, SizeType>		IteratorType;
+	typedef ForwardIterator<ConstPointerType, SizeType>	ConstIteratorType;
+	typedef ReverseIterator<PointerType, SizeType>		ReverseIteratorType;
+	typedef ReverseIterator<ConstPointerType, SizeType>	ConstReverseIteratorType;
 
 protected:
 	constexpr static void wrapBounds(IndexType& index, SizeType const& count) {

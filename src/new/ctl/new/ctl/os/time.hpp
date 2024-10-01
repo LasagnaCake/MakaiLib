@@ -5,7 +5,7 @@
 
 CTL_NAMESPACE_BEGIN
 
-namespace Time {
+namespace OS::Time {
 	namespace {
 		namespace chrono = std::chrono;
 	}

@@ -6,6 +6,7 @@
 #include "../cpperror.hpp"
 #include "../typetraits/traits.hpp"
 #include "iterator.hpp"
+#include "function.hpp"
 #include "../algorithm/sort.hpp"
 #include "../algorithm/reverse.hpp"
 #include "../algorithm/memory.hpp"
@@ -104,6 +105,13 @@ public:
 			pushBack(i);
 		count = end - begin;
 	}
+
+	template<class T>
+	constexpr List(T const& other)
+	requires requires {
+		T::begin;
+		T::end;
+	}: List(other.begin(), other.end()) {}
 
 	constexpr ~List() {if (contents) delete[] contents;}
 
@@ -589,6 +597,23 @@ public:
 		if (idx < 0)
 			return res.pushBack(*this);
 		return res.pushBack({sliced(0, idx), sliced(idx, count)});
+	}
+
+	constexpr SelfType& transform(Function<DataType(DataType const&)> fun) {
+		for(DataType& c: *this);
+			c = fun(c);
+		return *this;
+	}
+
+	constexpr SelfType transformed(Function<DataType(DataType const&)> fun) const {
+		return SelfType(*this).transform();
+	}
+
+	constexpr SelfType validate(Function<bool(DataType const&)> fun) const {
+		for (DataType const& c: *this)
+			if (!fun(c))
+				return false;
+		return true;
 	}
 
 	constexpr DataType join(typename DataType::DataType const& sep) const
