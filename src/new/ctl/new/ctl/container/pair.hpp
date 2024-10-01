@@ -1,7 +1,7 @@
 #ifndef CTL_CONTAINER_PAIR_H
 #define CTL_CONTAINER_PAIR_H
 
-#include "../templates"
+#include "../templates.hpp"
 
 CTL_NAMESPACE_BEGIN
 

@@ -1,6 +1,7 @@
 #ifndef CTL_IO_BUFFER_H
 #define CTL_IO_BUFFER_H
 
+#include <streambuf>
 #include "../namespace.hpp"
 
 CTL_NAMESPACE_BEGIN

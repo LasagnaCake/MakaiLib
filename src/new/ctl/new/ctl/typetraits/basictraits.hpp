@@ -3,7 +3,7 @@
 
 #include "../ctypes.hpp"
 #include "converter.hpp"
-#include "metaprogramming.hpp"
+#include "../meta/logic.hpp"
 
 namespace Type {
 	namespace Impl {

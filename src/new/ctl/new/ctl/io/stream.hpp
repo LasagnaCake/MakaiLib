@@ -1,7 +1,8 @@
 #ifndef CTL_IO_STREAM_H
 #define CTL_IO_STREAM_H
 
-#include <stream>
+#include <istream>
+#include <ostream>
 #include "../namespace.hpp"
 #include "buffer.hpp"
 
@@ -20,7 +21,7 @@ struct MemoryStream: DataStream {
 
 	MemoryStream(char* const& data, usize const& size):
 		buffer(data, size),
-		DataStream(buffer) {}
+		DataStream(&buffer) {}
 };
 
 template<class TData>

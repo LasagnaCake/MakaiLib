@@ -1,7 +1,7 @@
 #ifndef CTL_EX_EVENT_PLAYABLE_H
 #define CTL_EX_EVENT_PLAYABLE_H
 
-#include "../ctl/exnamespace.hpp"
+#include "../../ctl/exnamespace.hpp"
 
 CTL_EX_NAMESPACE_BEGIN
 

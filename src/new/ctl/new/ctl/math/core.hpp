@@ -189,13 +189,6 @@ namespace Math {
 	template<Type::Number T = float> constexpr T abcos(T const& val) {return abs(cos(val));}
 	template<Type::Number T = float> constexpr T abtan(T const& val) {return abs(tan(val));}
 
-	constexpr usize digitCount(usize const& number) {return toString(number).size();}
-
-	constexpr unsigned char digit(usize const& val, unsigned char const& digit) {
-		String vstr = toString(val);
-		return vstr[(vstr.size()-1) - digit] - '0';
-	}
-
 	/// Reflects a given angle A in relation to a surface along angle S.
 	constexpr float reflect(float const& a, float const& s) {
 		return (2.0 * s) - a;
@@ -205,15 +198,7 @@ namespace Math {
 	constexpr inline Function<T(T const&)> getInterpolationFunction(T const& from, T const& to) {
 		return [=](T const& by) -> T {return (T)lerp(from, to, by);};
 	}
-
-	inline float dbToVolume(float const& db) {
-		return powf(10.0f, 0.5f * db);
-	}
-
-	constexpr inline float volumeToDb(float const& volume) {
-		return 20.0f * log10f(volume);
-	}
-
+	
 	template<Type::Integer T = int>
 	constexpr inline usize uipow2(T const& val, usize const& power) {
 		return val << power;

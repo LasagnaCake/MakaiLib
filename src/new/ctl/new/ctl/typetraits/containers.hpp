@@ -2,6 +2,7 @@
 #define CTL_TYPETRAITS_CONTAINERS_H
 
 #include "../ctypes.hpp"
+#include "typecontainer.hpp"
 
 template <class...>
 using VoidType = void;
@@ -34,7 +35,5 @@ template<usize V> struct SizeConstant: ValueConstant<usize, V> {};
 
 struct TrueType:	BooleanConstant<true>	{};
 struct FalseType:	BooleanConstant<false>	{};
-
-template<class T> struct TypeContainer {typedef T Type;};
 
 #endif // CTL_TYPETRAITS_CONTAINERS_H
