@@ -1,5 +1,5 @@
-#ifndef CTL_TYPETRAITS_METAPROGRAMMING_H
-#define CTL_TYPETRAITS_METAPROGRAMMING_H
+#ifndef CTL_META_LOGIC_H
+#define CTL_META_LOGIC_H
 
 namespace Meta {
 	namespace Impl {
@@ -17,4 +17,4 @@ namespace Meta {
 	using DualType = Impl::DualType<COND, True, False>::type;
 }
 
-#endif // CTL_TYPETRAITS_METAPROGRAMMING_H
+#endif // CTL_META_LOGIC_H

@@ -1,5 +1,9 @@
-#ifndef CTL_MATH_H
-#define CTL_MATH_H
+#ifndef CTL_CMATH_H
+#define CTL_CMATH_H
+
+#include "namespace.hpp"
+
+CTL_NAMESPACE_BEGIN
 
 template<Type::Real F>
 constexpr F pow(F const& value, F const& power) {
@@ -11,4 +15,6 @@ constexpr F pow(F const& value, F const& power) {
 		return __builtin_powd(val, power);
 }
 
-#endif // CTL_MATH_H
+CTL_NAMESPACE_END
+
+#endif // CTL_CMATH_H

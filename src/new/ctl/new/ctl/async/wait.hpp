@@ -10,22 +10,22 @@ CTL_NAMESPACE_BEGIN
 
 DEFINE_ERROR_TYPE(OccupiedError);
 
-struct Waiter {
+namespace Async {
 	template<class T = OS::Time::Millis>
-	static void wait(usize const& time) {
+	inline void wait(usize const& time) {
 		Thread::wait<T>(time);
 	}
 
-	static void wait(Atomic<bool>& condition) {
-		while (condition.value()) yieldThread();
+	inline void wait(Atomic<bool>& condition) {
+		while (condition.value()) Thread::yield();
 	}
 
-	static void wait(Atomic<Trigger<>>& predicate) {
-		while (predicate.value()()) yieldThread();
+	inline void wait(Atomic<Trigger<>>& predicate) {
+		while (predicate.value()()) Thread::yield();
 	}
 
-	static void wait(Trigger<> const& predicate) {
-		while (predicate()) yieldThread();
+	inline void wait(Trigger<> const& predicate) {
+		while (predicate()) Thread::yield();
 	}
 };
 
