@@ -30,9 +30,9 @@ struct OrderedMap:
 public:
 	static_assert(Type::Comparable::Threeway<TKey, TKey>, "Cannot form a map whithout an orderable key!");
 
-	using Derived			= Derived<List<KeyValuePair<TKey, TValue>, TIndex>>;
-	using Collected			= Collected<TKey, TValue, KeyValuePair>;
-	using SelfIdentified	= SelfIdentified<OrderedMap<TKey, TValue, TIndex>>;
+	using Derived			= ::CTL::Derived<List<KeyValuePair<TKey, TValue>, TIndex>>;
+	using Collected			= ::CTL::Collected<TKey, TValue, KeyValuePair>;
+	using SelfIdentified	= ::CTL::SelfIdentified<OrderedMap<TKey, TValue, TIndex>>;
 
 	using BaseType = typename Derived::Bases::FirstType;
 
@@ -99,9 +99,9 @@ struct SimpleMap:
 public:
 	static_assert(Type::Comparable::Threeway<TKey, TKey>, "Cannot form a map whithout an orderable key!");
 
-	using Derived			= Derived<List<KeyValuePair<TKey, TValue>, TIndex>>;
-	using Collected			= Collected<TKey, TValue, KeyValuePair>;
-	using SelfIdentified	= SelfIdentified<OrderedMap<TKey, TValue, TIndex>>;
+	using Derived			= ::CTL::Derived<List<KeyValuePair<TKey, TValue>, TIndex>>;
+	using Collected			= ::CTL::Collected<TKey, TValue, KeyValuePair>;
+	using SelfIdentified	= ::CTL::SelfIdentified<SimpleMap<TKey, TValue, TIndex>>;
 
 	using BaseType = typename Derived::Bases::FirstType;
 
@@ -119,6 +119,13 @@ public:
 		typename BaseType::IndexType,
 		typename BaseType::IteratorType,
 		typename BaseType::ReverseIteratorType
+	;
+
+	using typename BaseType::OrderType;
+
+	using
+		typename BaseType::PredicateType,
+		typename BaseType::CompareType
 	;
 
 	using
@@ -139,6 +146,7 @@ public:
 		BaseType::rend,
 		BaseType::sort,
 		BaseType::size,
+		BaseType::filtered,
 		BaseType::capacity,
 		BaseType::empty
 	;
@@ -147,29 +155,48 @@ public:
 
 	constexpr SimpleMap(SizeType const& size): BaseType(size) {}
 
-	constexpr SimpleMap(SizeType const& size, DataType const& fill): BaseType(size, fill) {}
-
-	constexpr SimpleMap(ArgumentListType const& values): BaseType(values) {sort();}
+	constexpr SimpleMap(ArgumentListType const& values): BaseType(values) {
+		filter(UNIQUE_VALUES).sort();
+	}
 
 	template<SizeType N>
-	constexpr SimpleMap(DataType const(& values)[N]): BaseType<N>(values) {sort();}
+	constexpr SimpleMap(Decay::AsType<PairType[N]> const& values): BaseType(values, N) {
+		filter(UNIQUE_VALUES).sort();
+	}
 
-	constexpr SimpleMap(BaseType const& other): BaseType(other) {sort();}
+	constexpr SimpleMap(BaseType const& other): BaseType(other) {
+		filter(UNIQUE_VALUES).sort();
+	}
 
-	constexpr SimpleMap(BaseType&& other): BaseType(move(other)) {sort();}
+	constexpr SimpleMap(BaseType&& other): BaseType(move(other)) {
+		filter(UNIQUE_VALUES).sort();
+	}
 
 	constexpr SimpleMap(SelfType const& other): BaseType(other) {}
 
 	constexpr SimpleMap(SelfType&& other): BaseType(move(other)) {}
 
-	constexpr SimpleMap(IteratorType const& begin, IteratorType const& end): BaseType(begin, end) {sort();}
+	constexpr SimpleMap(IteratorType const& begin, IteratorType const& end): BaseType(begin, end) {
+		filter(UNIQUE_VALUES).sort();
+	}
 
-	constexpr SimpleMap(ReverseIteratorType const& begin, ReverseIteratorType const& end): BaseType(begin, end) {sort();}
+	constexpr SimpleMap(ReverseIteratorType const& begin, ReverseIteratorType const& end): BaseType(begin, end) {
+		filter(UNIQUE_VALUES).sort();
+	}
 
-	constexpr ValueType at(KeyType const& key) const {
+	constexpr ValueType at(KeyType const& key) const
+	requires (Type::Constructible<ValueType>) {
 		if (empty()) return pushBack({key}).back().value;
-		IndexType i = find(index);
+		IndexType i = find(key);
 		if (i == -1)	return ValueType();
+		else			return data()[i].value;
+	}
+
+	constexpr ValueType at(KeyType const& key) const
+	requires (!Type::Constructible<ValueType>) {
+		if (empty()) return pushBack({key}).back().value;
+		IndexType i = find(key);
+		if (i == -1)	throw OutOfBoundsException("Key does not exist!");
 		else			return data()[i].value;
 	}
 
@@ -177,14 +204,14 @@ public:
 		if (empty()) return pushBack({key}).back().value;
 		IndexType i = find(key);
 		if (i == -1) {
-			pushBack({key}).sort();
+			BaseType::pushBack({key}).sort();
 			return data()[find(key)].value;
 		} else return data()[i].value;
 	}
 
-	constexpr IndexType find(KeyType const& value) const {
+	constexpr IndexType find(KeyType const& key) const {
 		if (empty()) return -1;
-		IndexType pivot = count / 2, index = pivot;
+		IndexType pivot = size() / 2, index = pivot;
 		while (pivot != 0) {
 			switch (data()[index].key <=> key) {
 				case OrderType::EQUAL:		return index;
@@ -196,7 +223,7 @@ public:
 		return -1;
 	}
 
-	constexpr ValueType operator[](KeyType const& index) const	{return at(index);}
+	constexpr ValueType operator[](KeyType const& index) const {return at(index);}
 
 	constexpr bool contains(KeyType const& key) const {
 		if (empty()) return false;
@@ -210,8 +237,13 @@ public:
 		return *this;
 	}
 
-	constexpr SelfType& removeIf(Function<bool(PairType const&)> const& predicate) {
+	constexpr SelfType& removeIf(PredicateType const& predicate) {
 		BaseType::removeIf(predicate);
+		return *this;
+	}
+
+	constexpr SelfType& removeIfNot(PredicateType const& predicate) {
+		BaseType::removeIfNot(predicate);
 		return *this;
 	}
 
@@ -222,48 +254,56 @@ public:
 		return *this;
 	}
 
-	constexpr SelfType& eraseIf(Function<bool(PairType const&)> const& predicate) {
+	constexpr SelfType& eraseIf(PredicateType const& predicate) {
 		BaseType::eraseIf(predicate);
 		return *this;
 	}
 
+	constexpr SelfType& eraseIfNot(PredicateType const& predicate) {
+		BaseType::eraseIfNot(predicate);
+		return *this;
+	}
+
 	constexpr SelfType& insert(PairType const& pair) {
-		BaseType::pushBack(pair).sort();
+		if (!contains(pair.key))
+			BaseType::pushBack(pair).sort();
 		return *this;
 	}
 
 	constexpr SelfType& append(SelfType const& other) {
-		BaseType::appendBack(other).sort();
+		BaseType::appendBack(other.filtered(NOT_IN_MAP)).sort();
 		return *this;
 	}
 
 	constexpr SelfType& append(ArgumentListType const& values) {
-		BaseType::appendBack(values).sort();
+		BaseType::appendBack(SelfType(values).filtered(NOT_IN_MAP)).sort();
 		return *this;
 	}
 
-	constexpr SelfType& append(SizeType const& count, DataType const& fill) {
-		BaseType::appendBack(count, fill).sort();
+	constexpr SelfType& append(SizeType const& count, PairType const& fill) {
+		BaseType::appendBack(SelfType(count, fill).filtered(NOT_IN_MAP)).sort();
 		return *this;
 	}
 
 	constexpr SelfType& append(IteratorType const& begin, IteratorType const& end) {
-		BaseType::appendBack(begin, end).sort();
+		BaseType::appendBack(SelfType(begin, end).filtered(NOT_IN_MAP)).sort();
 		return *this;
 	}
 
 	constexpr SelfType& append(ReverseIteratorType const& begin, ReverseIteratorType const& end) {
-		BaseType::appendBack(begin, end).sort();
+		BaseType::appendBack(SelfType(begin, end).filtered(NOT_IN_MAP)).sort();
 		return *this;
 	}
 
 	template<SizeType S>
-	constexpr SelfType& append(DataType const(& values)[S]) {
-		BaseType::appendBack<S>(values).sort();
+	constexpr SelfType& append(Decay::AsType<PairType[S]> const& values) {
+		BaseType::appendBack(SelfType(values, S).filtered(NOT_IN_MAP)).sort();
 		return *this;
 	}
 
 private:
+	constexpr static CompareType const	UNIQUE_VALUES	= [](PairType const& a, PairType const& b){return a.key != b.key;};
+	PredicateType const					NOT_IN_MAP		= [this](PairType const& pair){return !contains(pair.key);};
 };
 
 /*

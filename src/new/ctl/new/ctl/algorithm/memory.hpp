@@ -117,6 +117,26 @@ namespace MX {
 	constexpr T* memzero(T* const& dst) {
 		return memzero((Address)dst, sizeof(T));
 	}
+
+	template<Type::NonVoid T>
+	constexpr T* malloc(usize const& sz) {
+		return (T*)__builtin_malloc(sz * sizeof(T));
+	}
+
+	template<Type::NonVoid T>
+	constexpr T* malloc() {
+		return (T*)__builtin_malloc(sizeof(T));
+	}
+
+	template<Type::NonVoid T>
+	constexpr void free(T* const& mem, usize const& sz) {
+		return __builtin_free(mem, sz * sizeof(T));
+	}
+
+	template<Type::NonVoid T>
+	constexpr void free(T* const& mem) {
+		return __builtin_free(mem, sizeof(T));
+	}
 }
 
 CTL_NAMESPACE_END

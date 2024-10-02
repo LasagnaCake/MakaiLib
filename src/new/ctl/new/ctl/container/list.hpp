@@ -54,6 +54,9 @@ public:
 		typename ListInitializable::ArgumentListType
 	;
 
+	using PredicateType	= Function<bool(ConstReferenceType)>;
+	using CompareType	= Function<bool(ConstReferenceType, ConstReferenceType)>;
+
 	constexpr List() {invoke(1);}
 
 	constexpr List(SizeType const& size) {
@@ -113,7 +116,7 @@ public:
 		T::end;
 	}: List(other.begin(), other.end()) {}
 
-	constexpr ~List() {if (contents) delete[] contents;}
+	constexpr ~List() {if (contents) dump();}
 
 	constexpr SelfType& pushBack(DataType const& value) {
 		if (count >= maximum)
@@ -172,10 +175,10 @@ public:
 	}
 
 	constexpr SelfType& resize(SizeType const& newSize) {
-		DataType* newData = new DataType[newSize];
+		DataType* newData = memcreate(newSize);
 		if (contents) {
 			copy(contents, newData, count);
-			delete[] contents;
+			free(contents, maximum);
 		}
 		maximum = newSize;
 		contents = newData;
@@ -282,21 +285,47 @@ public:
 		return *this;
 	}
 
-	constexpr SelfType& removeIf(Function<bool(DataType const&)> const& predicate) {
+	constexpr SelfType& removeIf(PredicateType const& predicate) {
 		auto const start = begin();
-		for(auto i = begin(); i != end(); ++i) {
-			if (predicate(*i))
+		for(auto i = begin(); i != end(); ++i)
+			if (predicate(*i)) {
 				remove(i-start);
-		}
+				--i;
+			}
 		return *this;
 	}
 
-	constexpr SelfType& eraseIf(Function<bool(DataType const&)> const& predicate) {
+	constexpr SelfType& removeIfNot(PredicateType const& predicate) {
+		auto const start = begin();
+		for(auto i = begin(); i != end(); ++i)
+			if (!predicate(*i)) {
+				remove(i-start);
+				--i;
+			}
+		return *this;
+	}
+
+	constexpr SelfType& eraseIf(PredicateType const& predicate) {
 		SizeType removed = 0;
 		auto const start = begin();
 		for(auto i = begin(); i != end(); ++i) {
 			if (predicate(*i)) {
 				remove(i-start);
+				--i;
+				removed++;
+			}
+		}
+		count -= removed;
+		return *this;
+	}
+
+	constexpr SelfType& eraseIfNot(PredicateType const& predicate) {
+		SizeType removed = 0;
+		auto const start = begin();
+		for(auto i = begin(); i != end(); ++i) {
+			if (!predicate(*i)) {
+				remove(i-start);
+				--i;
 				removed++;
 			}
 		}
@@ -342,7 +371,7 @@ public:
 	constexpr SelfType& clear() {count = 0;}
 
 	constexpr SelfType& dispose() {
-		if (contents) delete[] contents;
+		if (contents) dump();
 		count = 0;
 		contents = nullptr;
 		recalculateMagnitude();
@@ -609,11 +638,33 @@ public:
 		return SelfType(*this).transform();
 	}
 
-	constexpr SelfType validate(Function<bool(DataType const&)> fun) const {
+	constexpr bool validate(PredicateType const& cond) const {
 		for (DataType const& c: *this)
-			if (!fun(c))
+			if (!cond(c))
 				return false;
 		return true;
+	}
+
+	constexpr SelfType filtered(PredicateType const& filter) const {
+		return SelfType(*this).eraseIfNot(filter);
+	}
+
+	constexpr SelfType filtered(CompareType const& compare) {
+		SelfType result;
+		for (SizeType i = 0; i < count; ++i) {
+			bool miss = false;
+			for(SizeType j = count - 1; j >= 0; --j) {
+				if (i == j) break;
+				if (miss = !compare(contents[i], contents[j]))
+					break;
+			}
+			if (!miss) result.pushBack(contents[i]);
+		}
+		return result;
+	}
+
+	constexpr SelfType uniques() {
+		return filtered([](ConstReferenceType a, ConstReferenceType b){return a == b;});
 	}
 
 	template <Type::Equal<DataType> T>
@@ -684,13 +735,29 @@ public:
 	constexpr bool tight() const {return count == maximum;}
 
 private:
+	constexpr void dump() {
+		memdestroy(contents, maximum);
+		contents = nullptr;
+		maximum = 0;
+	}
+
+	constexpr static void memdestroy(PointerType const& p, SizeType const& sz) {
+		for (auto i = p; i != (p+sz); ++i)
+			delete i;
+		MX::free<DataType>(p, sz);
+	}
+
+	constexpr static DataType* memcreate(SizeType const& sz) {
+		return MX::malloc<DataType>(sz);
+	}
+
 	constexpr static void copy(DataType* src, DataType* dst, SizeType count) {
 		MX::memcpy<DataType>(dst, src, count);
 	};
 
 	constexpr SelfType& invoke(SizeType const& size) {
-		if (contents) delete[] contents;
-		contents = new DataType[size];
+		if (contents) dump();
+		contents = memcreate(size);
 		maximum = size;
 		recalculateMagnitude();
 		return *this;

@@ -20,8 +20,8 @@ struct Pair:
 	Ordered,
 	SelfIdentified<Pair<TA, TB>>,
 	Pairable<TA, TB> {
-	using SelfIdentified	= SelfIdentified<Pair<TA, TB>>;
-	using Pairable			= Pairable<TA, TB>;
+	using SelfIdentified	= ::CTL::SelfIdentified<Pair<TA, TB>>;
+	using Pairable			= ::CTL::Pairable<TA, TB>;
 
 	using
 		typename SelfIdentified::SelfType
@@ -38,7 +38,7 @@ struct Pair:
 	AType a;
 	BType b;
 
-	constexpr Pair()	{}
+	constexpr Pair() = default;
 
 	constexpr Pair(AType const& a, BType const& b):	a(a), b(b)				{}
 	constexpr Pair(SelfType const& other):			a(other.a), b(other.b)	{}
@@ -65,8 +65,8 @@ struct KeyValuePair:
 	Ordered,
 	SelfIdentified<KeyValuePair<TKey, TValue>>,
 	Pairable<TKey, TValue> {
-	using SelfIdentified	= SelfIdentified<Pair<TKey, TValue>>;
-	using Pairable			= Pairable<TKey, TValue>;
+	using SelfIdentified	= ::CTL::SelfIdentified<KeyValuePair<TKey, TValue>>;
+	using Pairable			= ::CTL::Pairable<TKey, TValue>;
 
 	using
 		typename SelfIdentified::SelfType
@@ -83,11 +83,11 @@ struct KeyValuePair:
 	AType	key;
 	BType	value;
 
-	constexpr KeyValuePair()	{}
+	constexpr KeyValuePair() = default;
 
 	constexpr KeyValuePair(AType const& k, BType const& v):	key(k), value(v)						{}
 	constexpr KeyValuePair(PairType const& other):			KeyValuePair(other.a, other.b)			{}
-	constexpr KeyValuePair(SelfType const& other):			KeyValuePair(other.key, other.value)	{}
+	//constexpr KeyValuePair(SelfType const& other):			KeyValuePair(other.key, other.value)	{}
 
 	constexpr OrderType operator<=>(SelfType const& other) requires (
 		Type::Comparable::Threeway<AType, AType>
@@ -108,8 +108,8 @@ struct LeftRightPair:
 	Ordered,
 	SelfIdentified<LeftRightPair<TLeft, TRight>>,
 	Pairable<TLeft, TRight> {
-	using SelfIdentified	= SelfIdentified<Pair<TLeft, TRight>>;
-	using Pairable			= Pairable<TLeft, TRight>;
+	using SelfIdentified	= ::CTL::SelfIdentified<LeftRightPair<TLeft, TRight>>;
+	using Pairable			= ::CTL::Pairable<TLeft, TRight>;
 
 	using
 		typename SelfIdentified::SelfType
@@ -136,11 +136,11 @@ struct LeftRightPair:
 		return order;
 	}
 
-	constexpr LeftRightPair()	{}
+	constexpr LeftRightPair() = default;
 
 	constexpr LeftRightPair(AType const& l, BType const& r):	left(l), right(r)						{}
 	constexpr LeftRightPair(PairType const& other):				LeftRightPair(other.a, other.b)			{}
-	constexpr LeftRightPair(SelfType const& other):				LeftRightPair(other.left, other.right)	{}
+	//constexpr LeftRightPair(SelfType const& other):				LeftRightPair(other.left, other.right)	{}
 
 	constexpr PairType pair() const		{return PairType(left, right);	}
 	constexpr operator PairType() const	{return pair();					}
@@ -151,8 +151,8 @@ struct FirstSecondPair:
 	Ordered,
 	SelfIdentified<FirstSecondPair<T1, T2>>,
 	Pairable<T1, T2> {
-	using SelfIdentified	= SelfIdentified<Pair<T1, T2>>;
-	using Pairable			= Pairable<T1, T2>;
+	using SelfIdentified	= ::CTL::SelfIdentified<FirstSecondPair<T1, T2>>;
+	using Pairable			= ::CTL::Pairable<T1, T2>;
 
 	using
 		typename SelfIdentified::SelfType
@@ -179,11 +179,11 @@ struct FirstSecondPair:
 		return order;
 	}
 
-	constexpr FirstSecondPair()	{}
+	constexpr FirstSecondPair() = default;
 
 	constexpr FirstSecondPair(AType const& v1, BType const& v2):	first(v1), second(v2)						{}
 	constexpr FirstSecondPair(PairType const& other):				FirstSecondPair(other.a, other.b)			{}
-	constexpr FirstSecondPair(SelfType const& other):				FirstSecondPair(other.first, other.second)	{}
+	//constexpr FirstSecondPair(SelfType const& other):				FirstSecondPair(other.first, other.second)	{}
 
 	constexpr PairType pair() const		{return PairType(first, second);	}
 	constexpr operator PairType() const	{return pair();						}

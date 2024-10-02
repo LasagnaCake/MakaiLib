@@ -46,8 +46,8 @@ class Nullable<TData>:
 	public Defaultable<TData, TData()>,
 	public Ordered {
 public:
-	using typename Typed<TData>::DataType;
-	using typename SelfIdentitied<Nullable<TData>>::DataType;
+	using typename ::CTL::Typed<TData>::DataType;
+	using typename ::CTL::SelfIdentitied<Nullable<TData>>::DataType;
 
 	constexpr Nullable() noexcept									{											}
 	constexpr Nullable(NullType) noexcept							{											}

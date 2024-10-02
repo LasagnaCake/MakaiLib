@@ -17,7 +17,11 @@ namespace Base {
 	struct ReferenceCounter {
 		struct ReferenceData {
 			bool	exists	= false;
-			int64	count	= 0;
+			ssize	count	= 0;
+
+			constexpr ReferenceData() = default;
+
+			constexpr ReferenceData(bool const& exists, int64 const& count = 0): exists(exists), count(count) {}
 		};
 
 		typedef Map<void*, ReferenceData> ReferenceBank;
@@ -38,15 +42,15 @@ class Pointer:
 	private Base::ReferenceCounter,
 	Derived<Base::ReferenceCounter>,
 	Typed<T>,
-	SelfIdentified<T, WEAK>
+	SelfIdentified<Pointer<T, WEAK>>
 {
 public:
 	constexpr static bool WEAK = W;
 
 	using ReferenceCounter::isBound;
 
-	using Typed				= Typed<T>;
-	using SelfIdentified	= SelfIdentified<T, WEAK>;
+	using Typed				= ::CTL::Typed<T>;
+	using SelfIdentified	= ::CTL::SelfIdentified<Pointer<T, WEAK>>;
 
 	using
 		typename Typed::DataType,
