@@ -10,6 +10,7 @@
 */
 
 #include "../ctypes.hpp"
+#include "../namespace.hpp"
 #include "../typetraits/traits.hpp"
 
 // One day... one day these will work without builtins...

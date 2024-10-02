@@ -2,6 +2,9 @@
 #define CTL_TYPETRAITS_SIGNEDNESS_H
 
 #include "typecontainer.hpp"
+#include "../namespace.hpp"
+
+CTL_NAMESPACE_BEGIN
 
 template<class T> struct UnsignedType;
 template<class T> struct SignedType;
@@ -32,5 +35,7 @@ template<>	struct SignedType<unsigned long long>:		TypeContainer<long long>			{}
 
 template<class T> using AsUnsigned	= typename UnsignedType<T>::Type;
 template<class T> using AsSigned	= typename SignedType<T>::Type;
+
+CTL_NAMESPACE_END
 
 #endif // CTL_TYPETRAITS_SIGNEDNESS_H

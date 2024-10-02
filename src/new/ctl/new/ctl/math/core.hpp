@@ -285,25 +285,25 @@ constexpr float		operator ""F(unsigned long long v)	{return v;	}
 constexpr double	operator ""d(unsigned long long v)	{return v;	}
 constexpr double	operator ""D(unsigned long long v)	{return v;	}
 // "Degrees to Radians" literal conversion
-constexpr float			operator ""degf(long double d)			{return Math::radians<float>(d);		}
-constexpr float			operator ""degf(unsigned long long d)	{return Math::radians<float>(d);		}
-constexpr double		operator ""degd(long double d)			{return Math::radians<double>(d);		}
-constexpr double		operator ""degd(unsigned long long d)	{return Math::radians<double>(d);		}
-constexpr long double	operator ""degld(long double d)			{return Math::radians<long double>(d);	}
-constexpr long double	operator ""degld(unsigned long long d)	{return Math::radians<long double>(d);	}
-constexpr float			operator ""deg(long double d)			{return Math::radians<float>(d);		}
-constexpr float			operator ""deg(unsigned long long d)	{return Math::radians<float>(d);		}
+constexpr float			operator ""degf(long double d)			{return CTL::Math::radians<float>(d);		}
+constexpr float			operator ""degf(unsigned long long d)	{return CTL::Math::radians<float>(d);		}
+constexpr double		operator ""degd(long double d)			{return CTL::Math::radians<double>(d);		}
+constexpr double		operator ""degd(unsigned long long d)	{return CTL::Math::radians<double>(d);		}
+constexpr long double	operator ""degld(long double d)			{return CTL::Math::radians<long double>(d);	}
+constexpr long double	operator ""degld(unsigned long long d)	{return CTL::Math::radians<long double>(d);	}
+constexpr float			operator ""deg(long double d)			{return CTL::Math::radians<float>(d);		}
+constexpr float			operator ""deg(unsigned long long d)	{return CTL::Math::radians<float>(d);		}
 // "Radians to Degrees" literal conversion
-#ifdef _INCLUDE_RADIAN_CONVERSION_LITERALS_
-constexpr float			operator ""radf(long double r)			{return Math::degrees<float>(r);		}
-constexpr float			operator ""radf(unsigned long long r)	{return Math::degrees<float>(r);		}
-constexpr double		operator ""radd(long double r)			{return Math::degrees<double>(r);		}
-constexpr double		operator ""radd(unsigned long long r)	{return Math::degrees<double>(r);		}
-constexpr long double	operator ""radld(long double r)			{return Math::degrees<long double>(r);	}
-constexpr long double	operator ""radld(unsigned long long r)	{return Math::degrees<long double>(r);	}
-constexpr float			operator ""rad(long double r)			{return Math::degrees<float>(r);		}
-constexpr float			operator ""rad(unsigned long long r)	{return Math::degrees<float>(r);		}
-#endif // _INCLUDE_RADIAN_CONVERSION_LITERALS_
+#ifdef CTL_INCLUDE_RADIAN_CONVERSION_LITERALS
+constexpr float			operator ""radf(long double r)			{return CTL::Math::degrees<float>(r);		}
+constexpr float			operator ""radf(unsigned long long r)	{return CTL::Math::degrees<float>(r);		}
+constexpr double		operator ""radd(long double r)			{return CTL::Math::degrees<double>(r);		}
+constexpr double		operator ""radd(unsigned long long r)	{return CTL::Math::degrees<double>(r);		}
+constexpr long double	operator ""radld(long double r)			{return CTL::Math::degrees<long double>(r);	}
+constexpr long double	operator ""radld(unsigned long long r)	{return CTL::Math::degrees<long double>(r);	}
+constexpr float			operator ""rad(long double r)			{return CTL::Math::degrees<float>(r);		}
+constexpr float			operator ""rad(unsigned long long r)	{return CTL::Math::degrees<float>(r);		}
+#endif // CTL_INCLUDE_RADIAN_CONVERSION_LITERALS
 #pragma GCC diagnostic pop
 
 #endif // CTL_MATH_CORE_H

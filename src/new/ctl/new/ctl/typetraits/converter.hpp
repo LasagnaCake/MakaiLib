@@ -4,6 +4,9 @@
 #include "../ctypes.hpp"
 #include "containers.hpp"
 #include "signedness.hpp"
+#include "../namespace.hpp"
+
+CTL_NAMESPACE_BEGIN
 
 template<class T> struct NonReferenceType:		TypeContainer<T> {};
 template<class T> struct NonReferenceType<T&>:	TypeContainer<T> {};
@@ -89,5 +92,7 @@ template<class T, class... Args>	struct ReturnType<T(Args...)>:	TypeContainer<T>
 template<class T> using AsReturn = typename ReturnType<T>::Type;
 
 template<typename T> AsTemporary<T> declval();
+
+CTL_NAMESPACE_END
 
 #endif // CTL_TYPETRAITS_CONVERTER_H

@@ -16,17 +16,15 @@ struct MaximumSizeFailure:	CatastrophicFailure {};
 
 struct Exception;
 
-namespace Base {
-	class CurrentException: private StaticValue<Exception*, nullptr> {
-		friend class ::Exception;
-	};
-}
+struct Exceptionable:
+	SelfIdentified<Exception>,
+	Typed<const char*>,
+	StringLiterable<char>  
+{}
 
 struct Exception:
 	Failure,
-	SelfIdentified<Exception>,
-	Typed<const char*>,
-	StringLiterable<char> {
+	Exceptionable {
 public:
 	using Typed				= Typed<const char*>;
 	using SelfIdentified	= SelfIdentified<Exception>;
@@ -42,7 +40,7 @@ public:
 
 	char const* const message;
 
-	constexpr Exception(ConstReferenceType _message) noexcept: message(_message), prev(ex) {
+	constexpr Exception(ConstReferenceType message) noexcept: message(message), prev(ex) {
 		ex = this;
 	}
 
@@ -51,15 +49,12 @@ public:
 	constexpr virtual char const* what() const noexcept {return message;}
 
 	constexpr static Exception* current() noexcept	{return ex;		}
-	constexpr static Exception* previous() noexcept	{return parent;	}
-
-	constexpr bool isDetailed() noexcept	{return detailed;	}
-	constexpr bool isSimple() noexcept		{return !detailed;	}
+	constexpr Exception* previous() noexcept		{return prev;	}
 
 private:
 	Exception* const prev		= nullptr;
 
-	Base::CurrentException ex	= nullptr;
+	inline static Exception* ex	= nullptr;
 
 	template <class TString> friend class DetailedError;
 };
@@ -80,10 +75,14 @@ concept ErrorStringType =
 &&	Type::Addable<T, const char*>
 &&	Type::Addable<const char*, T>
 &&	Type::Convertible<T, const char*>
+&&	Type::Addable<T, const char*>
+&&	Type::Addable<const char*, T>
+&&	Type::Addable<T, T>
 &&	requires (T a, const char* b) {
-		{a + a} -> Type::Convertible<T>;
-		{a + b} -> Type::Convertible<T>;
-		{b + a} -> Type::Convertible<T>;
+		{a + a} -> Type::Equal<T>;
+		{a + b} -> Type::Equal<T>;
+		{b + a} -> Type::Equal<T>;
+		{a += b} -> Type::Equal<T>;
 	}
 ;
 
@@ -101,16 +100,19 @@ public:
 	using StringLiterable	= StringLiterable<char>;
 
 	using
-		DataType			= typename Typed::DataType,
-		ConstReferenceType	= typename Typed::ConstReferenceType
+		typename Typed::DataType,
+		typename Typed::ConstReferenceType
 	;
 
 	using
-		SelfType	= typename SelfIdentified::SelfType
+		typename SelfIdentified::SelfType
 	;
 
 	using
-		BaseType			= typename Derived::Bases::FirstType,
+		BaseType = typename Derived::Bases::FirstType
+	;
+
+	using
 		typename StringLiterable::StringLiteralType
 	;
 

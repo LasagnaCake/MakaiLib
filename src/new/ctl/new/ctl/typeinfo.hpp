@@ -2,7 +2,11 @@
 #define CTL_TYPE_INFO_H
 
 #include "typetraits/traits.hpp"
+#include "namespace.hpp"
 #include <typeinfo>
+#include <cxxabi.h>
+
+CTL_NAMESPACE_BEGIN
 
 template<class T>
 struct TypeInfo {
@@ -44,4 +48,7 @@ template<> struct NumberLimit<uint64>:	ValueLimit<uint64,	0xFFFFFFFFFFFFFFFF,	1,
 
 template<Type::Integer T>
 struct TypeInfo<T>: NumberLimit<T> {};
+
+CTL_NAMESPACE_END
+
 #endif // CTL_TYPE_INFO_H

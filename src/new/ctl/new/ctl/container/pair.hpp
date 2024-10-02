@@ -24,13 +24,13 @@ struct Pair:
 	using Pairable			= Pairable<TA, TB>;
 
 	using
-		SelfIdentified::SelfType
+		typename SelfIdentified::SelfType
 	;
 
 	using
-		Pairable::AType,
-		Pairable::BType,
-		Pairable::PairType
+		typename Pairable::AType,
+		typename Pairable::BType,
+		typename Pairable::PairType
 	;
 
 	AType a;
@@ -56,7 +56,7 @@ struct Pair:
 
 	template<Type::Constructible<AType, BType> TPair>
 	constexpr operator TPair() const	{return pair<TPair>();	}
-}
+};
 
 template<typename TKey, typename TValue>
 struct KeyValuePair:
@@ -67,13 +67,13 @@ struct KeyValuePair:
 	using Pairable			= Pairable<TKey, TValue>;
 
 	using
-		SelfIdentified::SelfType
+		typename SelfIdentified::SelfType
 	;
 
 	using
-		Pairable::AType,
-		Pairable::BType,
-		Pairable::PairType
+		typename Pairable::AType,
+		typename Pairable::BType,
+		typename Pairable::PairType
 	;
 
 	AType	key;
@@ -98,13 +98,13 @@ struct LeftRightPair:
 	using Pairable			= Pairable<TLeft, TRight>;
 
 	using
-		SelfIdentified::SelfType
+		typename SelfIdentified::SelfType
 	;
 
 	using
-		Pairable::AType,
-		Pairable::BType,
-		Pairable::PairType
+		typename Pairable::AType,
+		typename Pairable::BType,
+		typename Pairable::PairType
 	;
 
 	AType	left;
@@ -129,13 +129,13 @@ struct FirstSecondPair:
 	using Pairable			= Pairable<T1, T2>;
 
 	using
-		SelfIdentified::SelfType
+		typename SelfIdentified::SelfType
 	;
 
 	using
-		Pairable::AType,
-		Pairable::BType,
-		Pairable::PairType
+		typename Pairable::AType,
+		typename Pairable::BType,
+		typename Pairable::PairType
 	;
 
 	AType	first;

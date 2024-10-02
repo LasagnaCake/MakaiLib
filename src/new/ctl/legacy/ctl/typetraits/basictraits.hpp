@@ -1,6 +1,8 @@
 #ifndef CTL_TYPETRAITS_BASIC_TRAITS_H
 #define CTL_TYPETRAITS_BASIC_TRAITS_H
 
+#include <typeinfo>
+
 #include "../ctypes.hpp"
 #include "converter.hpp"
 #include "metaprogramming.hpp"

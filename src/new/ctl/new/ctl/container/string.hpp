@@ -254,7 +254,7 @@ private:
 typedef BaseString<char>	String;
 typedef BaseString<wchar_t>	WideString;
 
-template<Type::Integer I, CharacterType C = char, Type::Integer S = usize>
+template<Type::Integer I, Type::ASCII C = char, Type::Integer S = usize>
 constexpr BaseString<C, S> toString(I const& val, usize const& base = 10) {
 	BaseString<C, S> result(64, '\0');
 	ssize i = itoa(val, result.cbegin(), result.size(), base);
@@ -263,7 +263,7 @@ constexpr BaseString<C, S> toString(I const& val, usize const& base = 10) {
 	return result.reserve(i);
 }
 
-template<Type::Float F, CharacterType C = char, Type::Integer S = usize>
+template<Type::Real F, Type::ASCII C = char, Type::Integer S = usize>
 constexpr BaseString<C, S> toString(F const& val, usize const& precision = sizeof(F) * 2) {
 	BaseString<C, S> result(precision * 4, '\0');
 	ssize i = ftoa(val, result.cbegin(), result.size(), precision);
@@ -272,7 +272,7 @@ constexpr BaseString<C, S> toString(F const& val, usize const& precision = sizeo
 	return result.reserve(i);
 }
 
-template<usize N, CharacterType TChar, Type::Integer TIndex = usize>
+template<usize N, Type::ASCII TChar, Type::Integer TIndex = usize>
 struct BaseStaticString:
 	Array<N, TChar, TIndex>,
 	StringLiterable<TChar>,
@@ -292,18 +292,18 @@ public:
 	using BaseType = Derived::Bases::FirstType;
 
 	using
-		SelfIdentified::SelfType
+		typename SelfIdentified::SelfType
 	;
 
 	using
-		BaseType::DataType,
-		BaseType::ConstPointerType,
-		BaseType::SizeType,
+		typename BaseType::DataType,
+		typename BaseType::ConstPointerType,
+		typename BaseType::SizeType,
 	;
 
 	using StringLiterable::StringLiteralType;
 
-	constexpr BaseStaticString(ConstPointerType const& str) {
+	constexpr BaseStaticString(StringLiteralType const& str) {
 		SizeType len = 0;
 		while (v[len++] != '\0' && len != MAX_SIZE);
 		MX::memcpy(str, cbegin(), (len < length ? len : length) * sizeof(DataType));

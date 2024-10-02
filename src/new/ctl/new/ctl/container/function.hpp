@@ -22,7 +22,7 @@ namespace Impl {
 	template <typename TFunction, typename TReturn, typename... TArgs>
 	class Function: Partial::Function<TReturn, TArgs...> {
 		TFunction func;
-		constexpr TReturn invoke(TArgs... args) const override {return func(forward<Args>(args)...);}
+		constexpr TReturn invoke(TArgs... args) const override {return func(forward<TArgs>(args)...);}
 		constexpr Function(TFunction&& _func):func(_func) {}
 	};
 }
@@ -42,6 +42,14 @@ private:
 	using Typed				= Typed<TReturn>;
 	using Returnable		= Returnable<TReturn>;
 	using Argumented		= Argumented<TArgs...>;
+
+	using
+		typename SelfIdentified::SelfType
+	;
+
+	using
+		typename Returnable::ReturnType
+	;
 
 	using SelfIdentified::SelfType;
 

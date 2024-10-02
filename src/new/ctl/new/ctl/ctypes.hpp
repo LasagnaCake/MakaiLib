@@ -2,8 +2,6 @@
 #define CTL_EXTENDED_TYPES_H
 
 #include <ctype.h>
-#include <unistd.h>
-#include "signedness.hpp"
 
 #if		INTPTR_MAX == INT64_MAX
 #define CPU_ARCH (64)
@@ -77,8 +75,21 @@ typedef uword	word;
 typedef udword	dword;
 typedef uqword	qword;
 
-typedef AsUnsigned<size_t>	usize;
-typedef AsSigned<size_t>	ssize;
+#if CPU_ARCH == 64
+typedef uint64	usize;
+typedef int64	ssize;
+#elif CPU_ARCH == 32
+typedef uint16	usize;
+typedef int16	ssize;
+#elif CPU_ARCH == 16
+typedef uint16	usize;
+typedef int16	ssize;
+#elif CPU_ARCH == 8
+typedef uint8	usize;
+typedef int8	ssize;
+#endif
+
+static_assert(sizeof(usize) == sizeof(size_t), "Size mismatch!");
 
 #if defined(__x86_64__) || defined(_M_X64) || defined(i386) || defined(__i386__) || defined(__i386) || defined(_M_IX86)
 #define CPU_X86

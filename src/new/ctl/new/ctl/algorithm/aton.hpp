@@ -4,12 +4,13 @@
 #include "transform.hpp"
 #include "../cmath.hpp"
 #include "../namespace.hpp"
+#include "../typetraits/decay.hpp"
 
 CTL_NAMESPACE_BEGIN
 
 // atoi implementation based off of https://stackoverflow.com/a/59537554
 namespace _AtoiImpl {
-	template<ASCIIType T>
+	template<Type::ASCII T>
 	constexpr ssize toDigit(T c) {
 		c = toLower(c);
 		if (c >= 'a')
@@ -17,18 +18,18 @@ namespace _AtoiImpl {
 		return c - '0';
 	}
 
-	template<ASCIIType T>
-	constexpr ssize isDigitInBase(T const& c, usize const& base) {
-		uint8 const v = toDigit(c);
-		return 0 <= digit && digit < base;
+	template<Type::ASCII T>
+	constexpr bool isDigitInBase(T const& c, usize const& base) {
+		ssize const v = toDigit(c);
+		return 0 <= v && v < base;
 	}
 
-	template<ASCIIType T>
+	template<Type::ASCII T>
 	constexpr bool isSign(T const& c) {
 		return c == '-' || c == '+';
 	}
 
-	template<ASCIIType T>
+	template<Type::ASCII T>
 	constexpr int8 getSignAndConsume(T*& c) {
 		switch (c[0]) {
 			case '-':	++c; return -1;
@@ -39,11 +40,11 @@ namespace _AtoiImpl {
 
 	template<Type::Integer T>
 	constexpr T shiftAndAppend(T& val, T const& base, T const& digit) {
-		value *= base;
-		value += digit;
+		val *= base;
+		val += digit;
 	}
 
-	template<Type::Integral I, ASCIIType T>
+	template<Type::Integer I, Type::ASCII T>
 	constexpr I toInteger(T const* str, usize const& size, usize const& base) {
 		I res = 0;
 		for (usize i = 0; i < size; ++i)
@@ -51,7 +52,7 @@ namespace _AtoiImpl {
 		return value;
 	}
 
-	template<ASCIIType T>
+	template<Type::ASCII T>
 	constexpr usize getBaseAndConsume(T const*& c) {
 		if (c[0] == '0') {
 			++c;
@@ -68,7 +69,7 @@ namespace _AtoiImpl {
 		return 10;
 	}
 
-	template<ASCIIType T>
+	template<Type::ASCII T>
 	constexpr bool isInBase(T const* str, usize const& size, usize const& base) {
 		for (usize i = 0; i < size; ++i)
 			if(!isDigitInBase(str[i], base))
@@ -77,7 +78,7 @@ namespace _AtoiImpl {
 	}
 }
 
-template<Type::Integer I, ASCIIType T>
+template<Type::Integer I, Type::ASCII T>
 constexpr bool atoi(T const* const& str, usize size, I& out) {
 	// Copy string pointer
 	T const* s = str;
@@ -108,13 +109,13 @@ constexpr bool atoi(T const* const& str, usize size, I& out) {
 	return true;
 }
 
-template<Type::Integer I, ASCIIType T, usize S>
-constexpr bool atoi(const T(const& str)[S], I& out) {
+template<Type::Integer I, Type::ASCII T, usize S>
+constexpr bool atoi(Decay::AsType<const T[S]> const& str, I& out) {
 	static_assert(S, "String cannot be empty!");
 	return atoi<I>(str, S - 1, out);
 }
 
-template<Type::Real F, ASCIIType T>
+template<Type::Real F, Type::ASCII T>
 constexpr bool atof(T const* const& str, usize size, F& out) {
 	// If character is appended to the end, exclude it
 	if (
@@ -147,14 +148,14 @@ constexpr bool atof(T const* const& str, usize size, F& out) {
 	return true;
 }
 
-template<Type::Real F, ASCIIType T, usize S>
-constexpr bool atof(const T(const& str)[S], F& out) {
+template<Type::Real F, Type::ASCII T, usize S>
+constexpr bool atof(Decay::AsType<const T[S]> const& str, F& out) {
 	static_assert(S, "String cannot be empty!");
 	return atof<F>(str, S - 1, out);
 }
 
 // Based off of https://stackoverflow.com/a/3987783
-template<Type::Integer I, ASCIIType T>
+template<Type::Integer I, Type::ASCII T>
 constexpr ssize itoa(I val, T* const& buf, usize const& bufSize, I const& base = 10){
 	// If empty buffer, or buffer is too small for a non-decimal base
 	if ((!bufSize) || (bufSize < 4 && base != 10))
@@ -199,7 +200,7 @@ constexpr ssize itoa(I val, T* const& buf, usize const& bufSize, I const& base =
 	return offset+i+1;
 }
 
-template<Type::Real F, ASCIIType T>
+template<Type::Real F, Type::ASCII T>
 constexpr ssize ftoa(F val, T* const& buf, usize const& bufSize, usize const& precision = sizeof(F)*2) {
 	// Get amount of zeroes to add to number
 	usize zeroes = pow<F>(10, precision);

@@ -5,12 +5,10 @@
 #include "memory.hpp"
 #include "transform.hpp"
 
-namespace Type {
-	template <class T>
-	concept Sortable = Comparable::Threeway<T, T> && Comparable::Equals<T, T>;
-}
-
 CTL_NAMESPACE_BEGIN
+
+template <class T>
+concept Sortable = Type::Comparable::Threeway<T, T> && Type::Comparable::Equals<T, T>;
 
 template <class T>
 concept SortableIterator =
@@ -19,18 +17,18 @@ concept SortableIterator =
 ;
 
 namespace Sorting {
-	template<Type::Sortable T>
+	template<Sortable T>
 	constexpr void insertionSort(T* const& arr, usize const& sz) {
 		for (usize i = 1; i < sz; ++i) {
 			usize j = i-1;
 			while(j-- > 0 && arr[j+1] < arr[j])
 				if (arr[j+1] < arr[j])
-					swap(arr[j], arr[j+1])
+					swap(arr[j], arr[j+1]);
 		}
 	}
 
 	// Based off of https://www.geeksforgeeks.org/merge-sort/
-	template<Type::Sortable T>
+	template<Sortable T>
 	constexpr void mergeSort(T* const& arr, usize const& sz) {
 		if (sz == 1) return;
 		if (sz == 2) {
@@ -43,7 +41,7 @@ namespace Sorting {
 			szLeft	= szRight + (sz%2==0 ? 0 : 1)
 		;
 		T
-			*left	= new T[szLeft]
+			*left	= new T[szLeft],
 			*right	= new T[szRight]
 		;
 		MX::memcpy(left, arr, szLeft);
@@ -69,7 +67,7 @@ namespace Sorting {
 	}
 
 	namespace Partial {
-		template<Type::Sortable T>
+		template<Sortable T>
 		constexpr void mergeSort(T* const& arr, usize const& sz) {
 			if (sz == 1) return;
 			if (sz == 2) {
@@ -107,7 +105,7 @@ namespace Sorting {
 	}
 
 	// Based off of Tim Sort, with minor changes
-	template<Type::Sortable T>
+	template<Sortable T>
 	constexpr void vivoSort(T* const& arr, usize const& sz) {
 		if (sz < 2) return;
 		if (sz == 2) {

@@ -144,7 +144,7 @@ constexpr BaseString<C, S> toString(I const& val, usize const& base = 10) {
 	return result.reserve(i);
 }
 
-template<Type::Float F, CharacterType C = char, Type::Integer S = size_t>
+template<Type::Real F, CharacterType C = char, Type::Integer S = size_t>
 constexpr BaseString<C, S> toString(F const& val, usize const& precision = 16) {
 	BaseString<C, S> result(64, '\0');
 	ssize i = ftoa(val, result.cbegin(), result.size(), base);

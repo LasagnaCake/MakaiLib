@@ -4,6 +4,9 @@
 #include "converter.hpp"
 #include "basictraits.hpp"
 #include "../algorithm/memory.hpp"
+#include "../namespace.hpp"
+
+CTL_NAMESPACE_BEGIN
 
 namespace Decay {
 	template<class T>
@@ -29,7 +32,7 @@ template<class TDst, class TSrc>
 #ifndef CTL_DO_NOT_USE_BUILTINS
 constexpr
 #endif // CTL_DO_NOT_USE_BUILTINS
-bitcast(TSrc const& v) noexcept {
+TDst bitcast(TSrc const& v) noexcept {
 	static_assert(sizeof(TDst) == sizeof(TSrc), "Sizes of source and target type must match!");
 	#ifdef CTL_DO_NOT_USE_BUILTINS
 	TDst r;
@@ -39,5 +42,7 @@ bitcast(TSrc const& v) noexcept {
 	return __builtin_bit_cast(TDst, v);
 	#endif // CTL_DO_NOT_USE_BUILTINS
 }
+
+CTL_NAMESPACE_END
 
 #endif // CTL_TYPETRAITS_DECAY_H

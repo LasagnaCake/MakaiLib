@@ -7,7 +7,7 @@ struct Hasher {
 	template <Type::Integer T>
 	constexpr static usize hash(T const& value)		{return value;					}
 
-	template <Type::Float T>
+	template <Type::Real T>
 	constexpr static usize hash(T const& value)		{return *((uint32*)(&value));	}
 
 	template <class T>

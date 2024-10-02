@@ -1,9 +1,14 @@
-#ifndef CTL_TYPETRAITS_BASIC_TRAITS_H
-#define CTL_TYPETRAITS_BASIC_TRAITS_H
+#ifndef CTL_TYPETRAITS_BASICTRAITS_H
+#define CTL_TYPETRAITS_BASICTRAITS_H
+
+#include <typeinfo>
 
 #include "../ctypes.hpp"
 #include "converter.hpp"
 #include "../meta/logic.hpp"
+#include "../namespace.hpp"
+
+CTL_NAMESPACE_BEGIN
 
 namespace Type {
 	namespace Impl {
@@ -172,6 +177,9 @@ namespace Type {
 
 	template<typename T>
 	concept Real = Impl::IsReal<T>::value;
+
+	template<typename T>
+	concept Float = Real<T>;
 
 	template<typename T>
 	concept Number = Integer<T> || Real<T>;
@@ -493,6 +501,23 @@ namespace Type {
 
 	template <class T>
 	concept Defined = isDefined<T>;
+
+	template<class T>
+	concept Character =
+		Type::Equal<T, char>
+	||	Type::Equal<T, wchar_t>
+	||	Type::Equal<T, char16_t>
+	||	Type::Equal<T, char32_t>
+	||	Type::Equal<T, char8_t>
+	;
+
+	template<class T>
+	concept ASCII =
+		Type::Equal<T, char>
+	||	Type::Equal<T, wchar_t>
+	;
 }
+
+CTL_NAMESPACE_END
 
 #endif // CTL_TYPETRAITS_TRAITS_H

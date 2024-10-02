@@ -10,14 +10,6 @@ CTL_NAMESPACE_BEGIN
 
 template<typename T> class Functor;
 
-namespace Base {
-	class FunctorID: private StaticValue<usize, 0> {
-		constexpr static usize operator++(int) {return ++value;}
-
-		template <typename T> friend class CTL::Functor;
-	};
-}
-
 template<typename TReturn, typename... TArgs>
 struct Functor<TReturn(TArgs...)>:
 	Typed<TReturn>,
@@ -56,11 +48,11 @@ public:
 	constexpr SelfType& operator=(BaseType const& f)		{BaseType::operator=(f); id = ++count; return *this;		}
 	constexpr SelfType& operator=(SelfType const& other)	{BaseType::operator=(other); id = other.id; return *this;	}
 
-	constexpr Nullable<ReturnType> evoke(TArgs... args) const requires (PROCEDURE)		{if (id) return BaseType::operator()(args...); return nullptr;	}
-	constexpr Nullable<ReturnType> operator()(TArgs... args) const requires (PROCEDURE)	{return evoke(args...);											}
+	constexpr Nullable<ReturnType> evoke(TArgs... args) const requires (PROCEDURE)		{if (id) return BaseType::operator()(forward<TArgs>(args)...); return nullptr;	}
+	constexpr Nullable<ReturnType> operator()(TArgs... args) const requires (PROCEDURE)	{return evoke(forward<TArgs>(args)...);											}
 
-	constexpr void evoke(TArgs... args) const requires (!PROCEDURE)			{if (id) BaseType::operator()(args...);	}
-	constexpr void operator()(TArgs... args) const requires (!PROCEDURE)	{evoke(args...);						}
+	constexpr void evoke(TArgs... args) const requires (!PROCEDURE)			{if (id) BaseType::operator()(forward<TArgs>(args)...);	}
+	constexpr void operator()(TArgs... args) const requires (!PROCEDURE)	{evoke(forward<TArgs>(args)...);						}
 
 	constexpr operator bool() const {return id;}
 
@@ -71,7 +63,7 @@ public:
 private:
 	WrapperType			func;
 	usize				id = 0;
-	Base::FunctorID		count;
+	inline static usize	count;
 };
 
 template<class T>						using Procedure	= Functor<void(T)>;

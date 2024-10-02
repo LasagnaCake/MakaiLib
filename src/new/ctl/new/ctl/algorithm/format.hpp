@@ -3,6 +3,7 @@
 
 #include "../namespace.hpp"
 #include "../container/string.hpp"
+#include "../typetraits/traits.hpp"
 
 CTL_NAMESPACE_BEGIN
 
@@ -25,7 +26,7 @@ namespace Format {
 							str,
 							chr,
 							lhs,
-							Justify::EFJ_LEFT
+							Justify::CFJ_LEFT
 						),
 						chr,
 						rhs,
@@ -37,7 +38,7 @@ namespace Format {
 		return str;
 	}
 
-	template <Type::Float T>
+	template <Type::Real T>
 	constexpr String prettify(T const& num, usize const& precision, usize const& leading) {
 		return pad(String::fromNumber<T>(val, precision), '0', leading);
 	}

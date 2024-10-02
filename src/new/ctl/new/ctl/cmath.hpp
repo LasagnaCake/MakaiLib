@@ -8,11 +8,11 @@ CTL_NAMESPACE_BEGIN
 template<Type::Real F>
 constexpr F pow(F const& value, F const& power) {
 	if constexpr (Type::Equal<F, float>)
-		return __builtin_powf(val, power);
+		return __builtin_powf(value, power);
 	else if constexpr (Type::Equal<F, double>)
-		return __builtin_pow(val, power);
+		return __builtin_pow(value, power);
 	else
-		return __builtin_powd(val, power);
+		return __builtin_powd(value, power);
 }
 
 CTL_NAMESPACE_END

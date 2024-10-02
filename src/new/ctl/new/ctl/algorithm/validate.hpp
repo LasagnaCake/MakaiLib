@@ -7,7 +7,7 @@
 
 CTL_NAMESPACE_BEGIN
 
-template<Type::Character TChar>
+template<Type::ASCII TChar>
 constexpr bool isHexChar(TChar const& c) {
 	if (c >= '0' && c <= '9') return true;
 	if (c >= 'A' && c <= 'F') return true;

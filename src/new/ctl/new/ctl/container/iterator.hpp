@@ -12,8 +12,12 @@
 
 CTL_NAMESPACE_BEGIN
 
-template<class TData, bool REVERSE = false, Type::Integer TIndex = usize>
-struct Iterator: Typed<TData>, Indexed<TIndex>, Ordered, SelfIdentified<TData, REVERSE, TIndex> {
+template<class TData, bool R = false, Type::Integer TIndex = usize>
+struct Iterator:
+	Typed<TData>,
+	Indexed<TIndex>,
+	Ordered,
+	SelfIdentified<Iterator<TData, R, TIndex>> {
 public:
 	static_assert(
 		Type::PostDecrementable<TData>
@@ -23,25 +27,28 @@ public:
 	, "Type is not a valid iteratable type!"
 	);
 
+	constexpr static bool REVERSE = R;
+
 	using Typed				= Typed<TData>;
 	using Indexed			= Indexed<TIndex>;
 	using Ordered			= Ordered;
-	using SelfIdentified	= SelfIdentified<TData, REVERSE, TIndex>;
+	using SelfIdentified	= SelfIdentified<Iterator<TData, REVERSE, TIndex>>;
 
 	using
-		DataType			= typename Typed::DataType,
-		PointerType			= typename Typed::PointerType,
-		ReferenceType		= typename Typed::ReferenceType,
-		ConstReferenceType	= typename Typed::ConstReferenceType
+		typename Typed::DataType,
+		typename Typed::PointerType,
+		typename Typed::ReferenceType,
+		typename Typed::ConstantType,
+		typename Typed::ConstReferenceType
 	;
 
 	using
-		IndexType	= typename Indexed::IndexType,
-		SizeType	= typename Indexed::SizeType
+		typename Indexed::IndexType,
+		typename Indexed::SizeType
 	;
 
 	using
-		SelfType	= typename SelfIdentified::SelfType
+		typename SelfIdentified::SelfType
 	;
 
 	using typename Ordered::OrderType;
@@ -54,7 +61,7 @@ public:
 	constexpr explicit(REVERSE) Iterator(Iterator const& other): iterand(other.iterand)		{}
 	constexpr explicit(REVERSE) Iterator(Iterator&& other): iterand(move(other.iterand))	{}
 
-	constexpr Iterator(std::iterator<DataType> const& other) requires (!REVERSE): iterand(other.base())			{}
+	constexpr Iterator(std::forward_iterator<DataType> const& other) requires (!REVERSE): iterand(other.base())			{}
 	constexpr Iterator(std::reverse_iterator<DataType> const& other) requires (REVERSE): iterand(other.base())	{}
 
 	constexpr DataType base() const {return base;}
@@ -79,7 +86,7 @@ public:
 	constexpr Iterator operator-(IndexType const& value) const	{return offset<REVERSE>(value);				}
 	constexpr Iterator operator+(IndexType const& value) const	{return offset<REVERSE>(value);				}
 
-	constexpr operator std::iterator<DataType>() const requires(!REVERSE)			{return iterand;}
+	constexpr operator std::forward_iterator<DataType>() const requires(!REVERSE)			{return iterand;}
 	constexpr operator std::reverse_iterator<DataType>() const requires(!REVERSE)	{return iterand;}
 private:
 	constexpr DataType iter() {
@@ -120,8 +127,8 @@ template<class T>
 concept IteratorType = requires {
 	typename T::SizeType;
 	typename T::IndexType;
-	typename T::DataType;
-} && Type::Derived<T, Iterator<typename T::DataType, typename T::IndexType>>;
+	{T::REVERSE} -> Type::Equal<bool>;
+} && Type::Derived<T, Iterator<typename T::DataType, T::REVERSE, typename T::IndexType>>;
 
 template<class TData, Type::Integer TIndex>
 struct Iteratable: Typed<TData>, Indexed<TIndex> {
@@ -129,15 +136,15 @@ struct Iteratable: Typed<TData>, Indexed<TIndex> {
 	using Typed		= Typed<TData>;
 
 	using
-		Typed::DataType,
-		Typed::ConstantType
-		Typed::PointerType,
-		Typed::ConstPointerType
+		typename Typed::DataType,
+		typename Typed::ConstantType,
+		typename Typed::PointerType,
+		typename Typed::ConstPointerType
 	;
 
 	using
-		Indexed::IndexType,
-		Indexed::SizeType
+		typename Indexed::IndexType,
+		typename Indexed::SizeType
 	;
 
 	typedef ForwardIterator<PointerType, SizeType>		IteratorType;
@@ -153,7 +160,7 @@ protected:
 	[[noreturn]] constexpr static void outOfBoundsError() {
 		throw OutOfBoundsException("Index is bigger than array size!");
 	}
-}
+};
 
 CTL_NAMESPACE_END
 

@@ -23,8 +23,8 @@ struct Hasher {
 
 template<class TValue, class THasher>
 concept Hashable = requires (TValue v) {
-	{THasher::hash(v);} -> Type::Equal<usize>;
-}
+	{THasher::hash(v)} -> Type::Equal<usize>;
+};
 
 CTL_NAMESPACE_END
 
