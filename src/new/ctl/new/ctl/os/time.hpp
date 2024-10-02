@@ -24,7 +24,7 @@ namespace OS::Time {
 	class Clock {
 	private:
 		typedef chrono::system_clock SysClock;
-		inline static const auto start = Clock::now();
+		inline static const auto start = SysClock::now();
 	public:
 
 		/// Gets the current time, since the epoch (Jan 1st, 1970).

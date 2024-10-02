@@ -9,11 +9,11 @@
 CTL_NAMESPACE_BEGIN
 
 struct Thread: private std::thread {
-	Thread() noexcept:					thread()									{}
-	Thread(Thread&& other) noexcept:	thread(move(other)), stop(move(other.stop))	{}
+	Thread() noexcept:					thread(), exect(*this)							{}
+	Thread(Thread&& other) noexcept:	thread(move(other)), exect(move(other.exect))	{}
 	Thread(Thread const& other)			= delete;
 
-	~Thread() {stop.requestStop();}
+	~Thread() {exect.requestStop();}
 
 	using Handle	= Handle<Thread>;
 	using Instance	= Instance<Thread>;
@@ -39,9 +39,14 @@ struct Thread: private std::thread {
 	};
 
 	struct ID: private std::thread::id {
-		using id::operator==;
-		using id::operator<=>;
-		friend class Thread;
+	private:
+		using BaseType = std::thread::id;
+		ID(): BaseType() {}
+		ID(BaseType&& other): BaseType(move(other)) {}
+		friend class ::CTL::Thread;
+		template<class T>
+		friend T operator<=>(ID const&, ID const&);
+		friend bool operator==(ID const&, ID const&);
 	};
 
 	template<class F, class... Args>
@@ -72,7 +77,7 @@ struct Thread: private std::thread {
 		return *this;
 	}
 
-	ExcecutionToken& token() {return excec;}
+	ExcecutionToken& token() {return exect;}
 
 	bool running() const {
 		return thread::joinable();
@@ -81,14 +86,23 @@ struct Thread: private std::thread {
 	operator bool() const {return running();}
 
 private:
-	ExcecutionToken excec;
+	ExcecutionToken exect;
 };
+
+template<class T>
+T operator<=>(Thread::ID const& a, Thread::ID const& b) {
+	return a <=> b;
+}
+
+bool operator==(Thread::ID const& a, Thread::ID const& b) {
+	return a == b;
+}
 
 namespace Base::Async {
 	struct Yieldable {
 	protected:
-		static void asyncYield() noexcept const {
-			yield();
+		static void asyncYield() noexcept {
+			Thread::yield();
 		}
 	};
 }

@@ -1,8 +1,6 @@
 #ifndef CTL_CONTAINER_STRING_H
 #define CTL_CONTAINER_STRING_H
 
-#include <istream>
-#include <ostream>
 #include <stdlib.h>
 
 #include "list.hpp"
