@@ -172,9 +172,7 @@ struct Iteratable: Typed<TData>, Indexed<TIndex> {
 		typename Indexed::SizeType
 	;
 
-	using
-		Indexed::MAX_SIZE
-	;
+	using Indexed::MAX_SIZE;
 
 	typedef ForwardIterator<PointerType, SizeType>		IteratorType;
 	typedef ForwardIterator<ConstPointerType, SizeType>	ConstIteratorType;

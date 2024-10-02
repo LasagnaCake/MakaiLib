@@ -40,12 +40,12 @@ namespace Format {
 
 	template <Type::Real T>
 	constexpr String prettify(T const& num, usize const& precision, usize const& leading) {
-		return pad(String::fromNumber<T>(val, precision), '0', leading);
+		return pad(String::fromNumber<T>(num, precision), '0', leading);
 	}
 
 	template <Type::Integer T>
 	constexpr String prettify(T const& num, usize const& precision, usize const& leading) {
-		return prettify<floatmax>(val, precision, leading);
+		return prettify<floatmax>(num, precision, leading);
 	}
 }
 

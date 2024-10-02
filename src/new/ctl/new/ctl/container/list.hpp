@@ -31,8 +31,7 @@ public:
 		typename Iteratable::PointerType,
 		typename Iteratable::ConstPointerType,
 		typename Iteratable::ReferenceType,
-		typename Iteratable::ConstReferenceType,
-		typename Iteratable::ArgumentListType
+		typename Iteratable::ConstReferenceType
 	;
 
 	using
@@ -617,8 +616,10 @@ public:
 		return true;
 	}
 
-	constexpr DataType join(typename DataType::DataType const& sep) const
+	template <Type::Equal<DataType> T>
+	constexpr DataType join(typename T::DataType const& sep) const
 	requires requires {
+		requires Type::Class<DataType>;
 		typename DataType::DataType;
 		typename DataType::SizeType;
 		requires Type::Equal<

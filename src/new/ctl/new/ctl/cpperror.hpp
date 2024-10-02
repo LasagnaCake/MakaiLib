@@ -34,8 +34,6 @@ public:
 		typename SelfIdentified::SelfType
 	;
 
-	char const* const message;
-
 	constexpr Exception(ConstReferenceType message) noexcept: message(message), prev(ex) {
 		ex = this;
 	}
@@ -48,6 +46,8 @@ public:
 	constexpr Exception* previous() const noexcept	{return prev;	}
 
 private:
+	char const* const message;
+
 	Exception* const prev		= nullptr;
 	inline static Exception* ex	= nullptr;
 
@@ -63,21 +63,41 @@ struct InvalidCastException:		Exception {using Exception::Exception;};
 struct FailedActionException:		Exception {using Exception::Exception;};
 struct MissingStreamException:		Exception {using Exception::Exception;};
 
+namespace {
+	template<Type::Convertible<char const*> T>
+	constexpr const char* cstring(T const& value) {
+		return (const char*)value;
+	}
+
+	template<class T>
+	constexpr const char* cstring(T const& value)
+	requires requires (T t) {
+		{t.cstr()} -> Type::Convertible<const char*>;
+	} {
+		return value.cstr();
+	}
+
+	template<class T>
+	constexpr const char* cstring(T const& value)
+	requires requires (T t) {
+		{t.c_str()} -> Type::Convertible<const char*>;
+	} {
+		return value.c_str;
+	}
+}
+
 template<typename T>
 concept ErrorStringType =
 	Type::Constructible<T, const char*>
+&&	(Type::Constructible<T, T const&> || Type::Constructible<T, T>)
 &&	Type::Addable<T, T>
 &&	Type::Addable<T, const char*>
 &&	Type::Addable<const char*, T>
-&&	Type::Convertible<T, const char*>
-&&	Type::Addable<T, const char*>
-&&	Type::Addable<const char*, T>
-&&	Type::Addable<T, T>
 &&	requires (T a, const char* b) {
+		{cstring(a)};
 		{a + a} -> Type::Equal<T>;
 		{a + b} -> Type::Equal<T>;
 		{b + a} -> Type::Equal<T>;
-		{a += b} -> Type::Equal<T>;
 	}
 ;
 
@@ -86,13 +106,11 @@ struct DetailedException:
 	Exception,
 	Derived<Exception>,
 	Typed<TString>,
-	SelfIdentified<DetailedException<TString>>,
-	StringLiterable<char> {
+	SelfIdentified<DetailedException<TString>> {
 public:
 	using Typed				= ::CTL::Typed<TString>;
 	using Derived			= ::CTL::Derived<Exception>;
 	using SelfIdentified	= ::CTL::SelfIdentified<DetailedException<TString>>;
-	using StringLiterable	= ::CTL::StringLiterable<char>;
 
 	using
 		typename Typed::DataType,
@@ -108,7 +126,7 @@ public:
 	;
 
 	using
-		typename StringLiterable::StringLiteralType
+		typename BaseType::StringLiteralType
 	;
 
 	const DataType type;
@@ -128,7 +146,7 @@ public:
 		ConstReferenceType info			= "none",
 		ConstReferenceType callerInfo	= "none"
 	) noexcept:
-		BaseType((const char*)message),
+		BaseType(cstring(message)),
 		type(type),
 		message(message),
 		file(file),
@@ -151,6 +169,7 @@ public:
 	{}
 
 	constexpr DetailedException(
+		bool,
 		BaseType const& other,
 		ConstReferenceType type			= "Unknown",
 		ConstReferenceType file			= "unspecified",
@@ -182,9 +201,11 @@ public:
 			"\n[Caller Information]\n" + callerInfo + "\n"
 		);
 		if (previous()) {
-			result += "\n<stack>";
-			result += previous()->what();
-			result += "</stack>";
+			result = result
+			+	"\n<stack>"
+			+	previous()->what()
+			+	"</stack>"
+			;
 		}
 		result += "\n</error>";
 		return result;
@@ -201,7 +222,7 @@ public:
 	}
 
 	constexpr StringLiteralType what() const noexcept override {
-		return (StringLiteralType)sumbuf;
+		return cstring(sumbuf);
 	}
 
 private:

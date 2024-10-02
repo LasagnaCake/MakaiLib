@@ -12,13 +12,23 @@ namespace Error {
 	#define DEFINE_ERROR_TYPE(NAME)\
 		struct NAME: public Generic {\
 			NAME (\
-				string const& message		= "none",\
-				string const& file			= "unspecified",\
-				string const& line			= "unspecified",\
-				string const& caller		= "unspecified",\
-				string const& info			= "none",\
-				string const& callerInfo	= "none"\
+				String const& message		= "none",\
+				String const& file			= "unspecified",\
+				String const& line			= "unspecified",\
+				String const& caller		= "unspecified",\
+				String const& info			= "none",\
+				String const& callerInfo	= "none"\
 			): Generic (#NAME, message, file, line, caller, info, callerInfo) {}\
+			\
+			NAME (\
+				bool,\
+				Exception const& other,\
+				String const& file			= "unspecified",\
+				String const& line			= "unspecified",\
+				String const& caller		= "unspecified",\
+				String const& info			= "none",\
+				String const& callerInfo	= "none"\
+			): Generic (true, other, #NAME, file, line, caller, info, callerInfo) {}\
 		}
 
 	// "Invalid X" errors
@@ -52,8 +62,10 @@ namespace Error {
 	template<Type::Derived<Generic> T>
 	[[noreturn]] constexpr void rethrow(T* const& err) {if (err) throw T(&err);}
 
+	template<Type::Derived<Generic> T>
 	[[noreturn]] constexpr void rethrow(Exception const& err) {throw T(err);}
 
+	template<Type::Derived<Generic> T>
 	[[noreturn]] constexpr void rethrow(Exception* const& err) {throw T(&err);}
 }
 

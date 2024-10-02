@@ -11,7 +11,7 @@
 
 CTL_NAMESPACE_BEGIN
 
-template<class TKey, class TValue, template<class TKey, class TValue> class TPair = Pair>
+template<class TKey, class TValue, template <class TPairKey, class TPairValue> class TPair = Pair>
 struct Collected {
 	typedef Typed<TKey>			Key;
 	typedef Typed<TValue>		Value;
@@ -21,20 +21,18 @@ struct Collected {
 	typedef TPair<TKey, TValue>	PairType;
 };
 
-template<class TKey, class TValue, Type::Integer TIndex = usize, class TPair = KeyValuePair<TKey, TValue>>
+template<class TKey, class TValue, Type::Integer TIndex = usize>
 struct OrderedMap:
-	List<TPair<TKey, TValue>, TIndex>,
-	Collected<TKey, TValue, TPair>,
-	SelfIdentified<OrderedMap<TKey, TValue, TIndex, TPair>>,
-	Derived<List<TPair<TKey, TValue>, TIndex>>
-requires (
-	Type::Comparable::Threeway<TKey, TKey>
-&&	PairType<TPair>
-) {
+	List<KeyValuePair<TKey, TValue>, TIndex>,
+	Collected<TKey, TValue, KeyValuePair>,
+	SelfIdentified<OrderedMap<TKey, TValue, TIndex>>,
+	Derived<List<KeyValuePair<TKey, TValue>, TIndex>> {
 public:
-	using Derived			= Derived<List<TPair<TKey, TValue>, TIndex>>;
-	using Collected			= Collected<TKey, TValue, TPair>;
-	using SelfIdentified	= SelfIdentified<OrderedMap<TKey, TValue, TIndex, TPair>>;
+	static_assert(Type::Comparable::Threeway<TKey, TKey>, "Cannot form a map whithout an orderable key!");
+
+	using Derived			= Derived<List<KeyValuePair<TKey, TValue>, TIndex>>;
+	using Collected			= Collected<TKey, TValue, KeyValuePair>;
+	using SelfIdentified	= SelfIdentified<OrderedMap<TKey, TValue, TIndex>>;
 
 	using BaseType = typename Derived::Bases::FirstType;
 
@@ -52,7 +50,13 @@ public:
 		typename BaseType::IndexType
 	;
 
-	using BaseType::BaseType;
+	using
+		BaseType::BaseType,
+		BaseType::empty,
+		BaseType::size,
+		BaseType::cbegin,
+		BaseType::cend
+	;
 
 	constexpr ValueType at(KeyType const& key) const {
 		if (empty()) return ValueType();
@@ -64,7 +68,7 @@ public:
 		return ValueType();
 	}
 
-	constexpr ValueType& operator[](KeyType const& index) {
+	constexpr ValueType& operator[](KeyType const& key) {
 		if (empty()) return pushBack({key}).back().value;
 		PairType* start = cbegin();
 		while(start != cend()) {
@@ -74,7 +78,7 @@ public:
 		return pushBack({key}).back().value;
 	}
 
-	constexpr ValueType operator[](KeyType const& index) const	{return at(index);}
+	constexpr ValueType operator[](KeyType const& key) const	{return at(key);}
 
 	constexpr bool contains(KeyType const& key) const {
 		if (empty()) return false;
@@ -86,20 +90,18 @@ public:
 private:
 };
 
-template<class TKey, class TValue, Type::Integer TIndex = usize, class TPair = KeyValuePair<TKey, TValue>>
+template<class TKey, class TValue, Type::Integer TIndex = usize>
 struct SimpleMap:
-	Collected<TKey, TValue, TPair>,
-	Derived<List<TPair<TKey, TValue>, TIndex>>,
-	SelfIdentified<SimpleMap<TKey, TValue, TIndex, TPair>>,
-	private List<TPair<TKey, TValue>, TIndex>
-requires (
-	Type::Comparable::Threeway<TKey, TKey>
-&&	PairType<TPair>
-) {
+	Collected<TKey, TValue, KeyValuePair>,
+	Derived<List<KeyValuePair<TKey, TValue>, TIndex>>,
+	SelfIdentified<SimpleMap<TKey, TValue, TIndex>>,
+	private List<KeyValuePair<TKey, TValue>, TIndex> {
 public:
-	using Derived			= Derived<List<TPair<TKey, TValue>, TIndex>>;
-	using Collected			= Collected<TKey, TValue, TPair>;
-	using SelfIdentified	= SelfIdentified<OrderedMap<TKey, TValue, TIndex, TPair>>;
+	static_assert(Type::Comparable::Threeway<TKey, TKey>, "Cannot form a map whithout an orderable key!");
+
+	using Derived			= Derived<List<KeyValuePair<TKey, TValue>, TIndex>>;
+	using Collected			= Collected<TKey, TValue, KeyValuePair>;
+	using SelfIdentified	= SelfIdentified<OrderedMap<TKey, TValue, TIndex>>;
 
 	using BaseType = typename Derived::Bases::FirstType;
 
@@ -120,7 +122,6 @@ public:
 	;
 
 	using
-		BaseType::~BaseType,
 		BaseType::tighten,
 		BaseType::clear,
 		BaseType::dispose,

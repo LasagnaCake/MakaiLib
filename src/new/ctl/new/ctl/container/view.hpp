@@ -34,8 +34,8 @@ public:
 
 	constexpr SelfType& operator=(T const& val) {data = val; return (*this);}
 
-	constexpr DataView& modify(OperationType const& op)		{data = op(data); return (*this);	}
-	constexpr DataView& operator()(OperationType const& op)	{return modify(op);					}
+	constexpr SelfType& modify(OperationType const& op)		{data = op(data); return (*this);	}
+	constexpr SelfType& operator()(OperationType const& op)	{return modify(op);					}
 
 	constexpr operator DataType() const	{return value();	}
 	constexpr operator DataType()		{return value();	}

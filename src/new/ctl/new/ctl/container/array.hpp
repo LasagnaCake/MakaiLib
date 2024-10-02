@@ -41,11 +41,12 @@ public:
 
 	using 
 		typename Iteratable::SizeType,
-		typename Iteratable::IndexType,
-		Iteratable::MAX_SIZE
+		typename Iteratable::IndexType
 	;
 
-	constexpr static SizeType SIZE		= N;
+	using Iteratable::MAX_SIZE;
+
+	constexpr static SizeType SIZE = N;
 
 	typedef Decay::AsType<DataType[SIZE]> ArrayType;
 

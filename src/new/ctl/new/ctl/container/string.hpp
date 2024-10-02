@@ -33,7 +33,7 @@ public:
 	using Streamable		= ::CTL::Streamable<TChar>;
 	using StringLiterable	= ::CTL::StringLiterable<TChar>;
 
-	using BaseType	= typename Derived::Types::FirstType;
+	using BaseType	= typename Derived::Bases::FirstType;
 
 	using
 		typename BaseType::DataType,
@@ -47,9 +47,10 @@ public:
 
 	using
 		typename BaseType::IndexType,
-		typename BaseType::SizeType,
-		BaseType::MAX_SIZE
+		typename BaseType::SizeType
 	;
+
+	using BaseType::MAX_SIZE;
 
 	using
 		typename BaseType::IteratorType,
@@ -85,11 +86,13 @@ public:
 		BaseType::back,
 		BaseType::insert,
 		BaseType::transformed,
+		BaseType::validate,
 		BaseType::size,
 		BaseType::empty,
 		BaseType::find,
 		BaseType::rfind,
 		BaseType::bsearch,
+		BaseType::join,
 		BaseType::capacity
 	;
 
@@ -99,7 +102,7 @@ public:
 
 	constexpr BaseString(const DataType* const& v) {
 		SizeType len = 0;
-		while (v[len++] != '\0' && len != MAX_SIZE);
+		while (v[len++] != '\0' && len <= MAX_SIZE);
 		reserve(len);
 		MX::memcpy(data(), v, len * sizeof(DataType));
 	}
@@ -121,20 +124,6 @@ public:
 	template <class T> List<SelfType, IndexType>	split(T const& sep) const			{return BaseType::split(sep);			}
 	template <class T> List<SelfType, IndexType>	splitAtFirst(T const& sep) const	{return BaseType::splitAtFirst(sep);	}
 	template <class T> List<SelfType, IndexType>	splitAtLast(T const& sep) const		{return BaseType::splitAtLast(sep);		}
-
-	constexpr DataType join(typename DataType::DataType const& sep) const
-	requires requires {
-		typename DataType::DataType;
-		typename DataType::SizeType;
-		requires Type::Equal<
-			DataType, List<
-				typename DataType::DataType,
-				typename DataType::SizeType
-			>
-		>;
-	} {
-		return BaseType::join(sep);
-	}
 
 	constexpr OutputStreamType const& operator<<(OutputStreamType& o) const	{o << cstr(); return o;}
 	constexpr OutputStreamType& operator<<(OutputStreamType& o)				{o << cstr(); return o;}
@@ -164,7 +153,7 @@ public:
 
 	constexpr SelfType& operator+=(DataType const& value)				{return pushBack(value);	}
 	constexpr SelfType& operator+=(SelfType const& other)				{return appendBack(other);	}
-	constexpr SelfType& operator+=(const DataType* const& str)			{return appendBack(str);	}
+	constexpr SelfType& operator+=(StringLiteralType const& str)		{return appendBack(str);	}
 	template<SizeType S>
 	constexpr SelfType& operator+=(Decay::AsType<ConstantType[S]> str)	{return appendBack(str);	}
 
@@ -243,12 +232,12 @@ public:
 	}
 
 	constexpr SelfType toWideString() const
-	requires Type::Equal<DataType, wchar> {return *this}
+	requires Type::Equal<DataType, wchar> {return *this;}
 
 	template<Type::Integer T>
-	constexpr static T toNumber(SelfType const& str) {
+	constexpr static T toNumber(SelfType const& str, T const& base = 0) {
 		T val;
-		if (!atoi<T>(str.data(), str.size(), val))
+		if (!atoi<T>(str.data(), str.size(), val, base))
 			throw FailedActionException("String-to-Integer conversion failure!");
 		return val;
 	}
@@ -263,8 +252,8 @@ public:
 
 	template<Type::Integer T>
 	constexpr static SelfType fromNumber(T const& val, T const& base = 0) {
-		SelfType result(64, '\0');
-		ssize sz = itoa<T>(val, str.data(), 64, base);
+		SelfType result(sizeof(T)*4, '\0');
+		ssize sz = itoa<T>(val, result.data(), result.size(), base);
 		if (sz < 0) throw FailedActionException("Integer-to-String conversion failure!");
 		result.resize(sz);
 		return result;
@@ -272,8 +261,8 @@ public:
 
 	template<Type::Real T>
 	constexpr static SelfType fromNumber(T const& val, usize const& precision = sizeof(T)*2) {
-		SelfType result(64, '\0');
-		ssize sz = ftoa<T>(val, str.data(), 64, precision);
+		SelfType result(sizeof(T)*4, '\0');
+		ssize sz = ftoa<T>(val, result.data(), result.size(), precision);
 		if (sz < 0) throw FailedActionException("Float-to-String conversion failure!");
 		result.resize(sz);
 		return result;
@@ -351,14 +340,8 @@ struct BaseStaticString:
 	StringLiterable<TChar>,
 	SelfIdentified<BaseStaticString<N, TChar, TIndex>>,
 	Derived<Array<N, TChar, TIndex>> {
-private:
-	constexpr static wrapAround(IndexType value) {
-		while (value < 0) index += length;
-		return value;
-	}
-
 public:
-	using Derived			= Derrived<Array<N, TChar, TIndex>>;
+	using Derived			= Derived<Array<N, TChar, TIndex>>;
 	using SelfIdentified	= SelfIdentified<BaseStaticString<N, TChar, TIndex>>;
 	using StringLiterable	= StringLiterable<TChar>;
 
@@ -372,27 +355,48 @@ public:
 		typename BaseType::DataType,
 		typename BaseType::ConstPointerType,
 		typename BaseType::SizeType,
+		typename BaseType::IndexType
 	;
 
-	using StringLiterable::StringLiteralType;
+	using
+		BaseType::BaseType,
+		BaseType::data,
+		BaseType::cbegin,
+		BaseType::cend,
+		BaseType::begin,
+		BaseType::end,
+		BaseType::rbegin,
+		BaseType::rend
+	;
 
-	constexpr BaseStaticString(StringLiteralType const& str) {
-		SizeType len = 0;
-		while (v[len++] != '\0' && len != MAX_SIZE);
-		MX::memcpy(str, cbegin(), (len < length ? len : length) * sizeof(DataType));
+	using BaseType::SIZE, BaseType::MAX_SIZE;
+
+	using typename StringLiterable::StringLiteralType;
+
+private:
+	constexpr static IndexType wrapAround(IndexType value) {
+		while (value < 0) value += SIZE;
+		return value;
 	}
 
-	template<IndexType BEGIN, SizeType N = length>
+public:
+	constexpr BaseStaticString(StringLiteralType const& str) {
+		SizeType len = 0;
+		while (str[len++] != '\0' && len <= MAX_SIZE);
+		MX::memcpy(str, data(), (len < SIZE ? len : SIZE));
+	}
+
+	template<IndexType BEGIN, SizeType S = SIZE>
 	constexpr auto substring() const {
 		constexpr SizeType start	= wrapAround(BEGIN);
-		constexpr SizeType stop		= ((start + N) < length) ? start + N : length;
+		constexpr SizeType stop		= ((start + S) < SIZE) ? start + S : SIZE;
 		BaseStaticString<stop - start + 1, TChar, TIndex> result('\0');
-		MX::memcpy(cbegin() + begin, result(), stop - start);
+		MX::memcpy(result.data(), data() + start, stop - start);
 		return result;
 	}
 
 	constexpr StringLiteralType cstr() const {
-		return cbegin();
+		return data();
 	}
 
 	constexpr BaseString<TChar, TIndex> toString() const {

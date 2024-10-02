@@ -9,103 +9,106 @@
 CTL_NAMESPACE_BEGIN
 
 // atoi implementation based off of https://stackoverflow.com/a/59537554
-namespace _AtoiImpl {
-	template<Type::ASCII T>
-	constexpr ssize toDigit(T c) {
-		c = toLower(c);
-		if (c >= 'a')
-			return c - 'a' + 10;
-		return c - '0';
-	}
-
-	template<Type::ASCII T>
-	constexpr bool isDigitInBase(T const& c, usize const& base) {
-		ssize const v = toDigit(c);
-		return 0 <= v && v < base;
-	}
-
-	template<Type::ASCII T>
-	constexpr bool isSign(T const& c) {
-		return c == '-' || c == '+';
-	}
-
-	template<Type::ASCII T>
-	constexpr int8 getSignAndConsume(T*& c) {
-		switch (c[0]) {
-			case '-':	++c; return -1;
-			case '+':	++c;
-			default:	return +1;
+namespace Impl {
+	namespace A2I {
+		template<Type::ASCII T>
+		constexpr ssize toDigit(T c) {
+			c = toLower(c);
+			if (c >= 'a')
+				return c - 'a' + 10;
+			return c - '0';
 		}
-	}
 
-	template<Type::Integer T>
-	constexpr T shiftAndAppend(T& val, T const& base, T const& digit) {
-		val *= base;
-		val += digit;
-	}
+		template<Type::ASCII T>
+		constexpr bool isDigitInBase(T const& c, usize const& base) {
+			ssize const v = toDigit(c);
+			return 0 <= v && v < base;
+		}
 
-	template<Type::Integer I, Type::ASCII T>
-	constexpr I toInteger(T const* str, usize const& size, usize const& base) {
-		I res = 0;
-		for (usize i = 0; i < size; ++i)
-			shiftAndAppend(res, base, toDigit(str[i]));
-		return res;
-	}
+		template<Type::ASCII T>
+		constexpr bool isSign(T const& c) {
+			return c == '-' || c == '+';
+		}
 
-	template<Type::ASCII T>
-	constexpr usize getBaseAndConsume(T const*& c) {
-		if (c[0] == '0') {
-			++c;
+		template<Type::ASCII T>
+		constexpr int8 getSignAndConsume(T*& c) {
 			switch (c[0]) {
-				case 'y':	++c; return 32;
-				case 'x':	++c; return 16;
-				case 'q':	++c; return 4;
-				case 'b':	++c; return 2;
-				case 'd':	++c; return 10;
-				case 'o':	++c;
-				default:	return 8;
+				case '-':	++c; return -1;
+				case '+':	++c;
+				default:	return +1;
 			}
 		}
-		return 10;
-	}
 
-	template<Type::ASCII T>
-	constexpr bool isInBase(T const* str, usize const& size, usize const& base) {
-		for (usize i = 0; i < size; ++i)
-			if(!isDigitInBase(str[i], base))
-				return false;
-		return true;
+		template<Type::Integer T>
+		constexpr T shiftAndAppend(T& val, T const& base, T const& digit) {
+			val *= base;
+			val += digit;
+		}
+
+		template<Type::Integer I, Type::ASCII T>
+		constexpr I toInteger(T const* str, usize const& size, usize const& base) {
+			I res = 0;
+			for (usize i = 0; i < size; ++i)
+				shiftAndAppend(res, base, toDigit(str[i]));
+			return res;
+		}
+
+		template<Type::ASCII T>
+		constexpr usize getBaseAndConsume(T const*& c, usize const& base) {
+			if (c[0] == '0') {
+				++c;
+				switch (c[0]) {
+					case 'y':	++c; return base ? base : 32;
+					case 'x':	++c; return base ? base : 16;
+					case 'q':	++c; return base ? base : 4;
+					case 'b':	++c; return base ? base : 2;
+					case 'd':	++c; return base ? base : 10;
+					case 'o':	++c;
+					default:	return base ? base : 8;
+				}
+			}
+			return 10;
+		}
+
+		template<Type::ASCII T>
+		constexpr bool isInBase(T const* str, usize const& size, usize const& base) {
+			for (usize i = 0; i < size; ++i)
+				if(!isDigitInBase(str[i], base))
+					return false;
+			return true;
+		}
 	}
 }
 
 template<Type::Integer I, Type::ASCII T>
-constexpr bool atoi(T const* const& str, usize size, I& out) {
+constexpr bool atoi(T const* const& str, usize size, I& out, usize base = 0) {
 	// Copy string pointer
 	T const* s = str;
 	// If string is size 1, try and convert digit
 	if (size == 1) {
-		if (isDigitInBase(str[0], 10)) return toDigit(str[0]);
+		if (Impl::A2I::isDigitInBase(str[0], base))
+			return Impl::A2I::toDigit(str[0]);
 		else return false;
 	}
-	// If size is 2, first character is a sign, and is in base 10, convert number to digit
+	// If size is 2, first character is a sign, and is in base, convert number to digit
 	if (
 		size == 2
-	&&	_AtoiImpl::isSign(str[0])
-	&&	isDigitInBase(str[1], 10)
-	) return getSignAndConsume(s) * toDigit(s[0]);
+	&&	Impl::A2I::isSign(str[0])
+	&&	Impl::A2I::isDigitInBase(str[1], base)
+	) return Impl::A2I::getSignAndConsume(s, base) * Impl::A2I::toDigit(s[0]);
 	// Try and get sign of number
-	ssize sign = _AtoiImpl::getSignAndConsume(s);
+	ssize sign = Impl::A2I::getSignAndConsume(s, base);
 	if (size < s-str) return false;
 	// Try and get base of number
-	ssize base = _AtoiImpl::getBaseAndConsume(s);
+	base = Impl::A2I::getBaseAndConsume(s, base);
 	if (size < s-str) return false;
 	// Remove difference from size
 	size -= s-str;
 	// Check if number is in its intended base
-	if (!_AtoiImpl::isInBase(s, size, base))
+	if (!Impl::A2I::isInBase(s, size, base))
 		return false;
 	// Convert number to int and return
-	out = sign * _AtoiImpl::toInteger<I>(s, size, base);
+	out = sign * Impl::A2I::toInteger<I>(s, size, base);
 	return true;
 }
 
