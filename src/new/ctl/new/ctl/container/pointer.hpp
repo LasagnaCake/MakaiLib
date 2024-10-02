@@ -36,14 +36,14 @@ namespace Base {
 #define CTL_PTR_ASSERT_STRONG_MOVE	static_assert(!WEAK,	"It is forbidden to move construct a weak pointer from a strong pointer!")
 #define CTL_PTR_ASSERT_STRONG		static_assert(!WEAK,	"It is forbidden to implicitly convert a strong pointer to a weak pointer!")
 #define CTL_PTR_ASSERT_WEAK			static_assert(WEAK,		"It is forbidden to implicitly convert a weak pointer to a strong pointer!")
-#define CTL_PTR_IF_STRONG			if constexpr(!weak)
+#define CTL_PTR_IF_STRONG			if constexpr(!WEAK)
 template <Pointable T, bool W>
 class Pointer:
 	private Base::ReferenceCounter,
 	Derived<Base::ReferenceCounter>,
 	Typed<T>,
-	SelfIdentified<Pointer<T, WEAK>>
-{
+	SelfIdentified<Pointer<T, W>>,
+	Ordered {
 public:
 	constexpr static bool WEAK = W;
 
@@ -54,13 +54,19 @@ public:
 
 	using
 		typename Typed::DataType,
-		typename Typed::PointerType,
+		typename Typed::ConstantType,
 		typename Typed::ReferenceType,
-		typename Typed::ConstReferenceType
+		typename Typed::ConstReferenceType,
+		typename Typed::PointerType,
+		typename Typed::ConstPointerType
 	;
 
 	using
 		typename SelfIdentified::SelfType
+	;
+
+	using
+		typename Ordered::OrderType
 	;
 
 	template<bool NW>
@@ -139,7 +145,7 @@ public:
 	constexpr PointerType const operator&() const	{return getPointer();}
 
 	template<Pointable TNew>
-	constexpr Pointer<TNew, weak>	castedTo() const	{return	(TNew*)getPointer();	}
+	constexpr Pointer<TNew, WEAK>	castedTo() const	{return	(TNew*)getPointer();	}
 	constexpr Pointer<T, true>		asWeak() const		{return	getPointer();			}
 	constexpr T*					raw() const			{return	getPointer();			}
 
@@ -153,11 +159,11 @@ public:
 
 	constexpr bool operator!() const	{return	!exists();			}
 
-	constexpr bool operator==(PointerType const& obj) const						{return	ref == obj;			}
-	constexpr Helper::PartialOrder operator<=>(PointerType const& obj) const	{return	ref <=> obj;		}
+	constexpr bool operator==(PointerType const& obj) const			{return	ref == obj;			}
+	constexpr OrderType operator<=>(PointerType const& obj) const	{return	ref <=> obj;		}
 
-	constexpr bool operator==(SelfType const& other) const					{return ref == other.ref;	}
-	constexpr Helper::PartialOrder operator<=>(SelfType const& other) const	{return ref <=> other.ref;	}
+	constexpr bool operator==(SelfType const& other) const			{return ref == other.ref;	}
+	constexpr OrderType operator<=>(SelfType const& other) const	{return ref <=> other.ref;	}
 
 	constexpr SelfType& operator=(PointerType const& obj)	{bind(obj); return (*this);					}
 	constexpr SelfType& operator=(SelfType const& other)	{bind(other.ref); return (*this);			}
@@ -176,8 +182,8 @@ public:
 	constexpr ReferenceType operator*() const		{return value();		}
 
 private:
-	friend class SelfType;
-	friend class OtherType;
+	friend SelfType;
+	friend OtherType;
 
 	using ReferenceCounter::database;
 
@@ -196,7 +202,7 @@ private:
 	[[noreturn]]
 	inline void nullPointerError() const {
 		throw Error::NullPointer(
-			toString("Pointer reference of type '", NAMEOF(typeid(T)), "' does not exist!"),
+			toString("Pointer reference of type '", TypeInfo<T>::name(), "' does not exist!"),
 			__FILE__,
 			"unspecified",
 			"Pointer",
