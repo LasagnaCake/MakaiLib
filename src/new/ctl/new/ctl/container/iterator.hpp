@@ -73,11 +73,11 @@ public:
 
 	constexpr Iterator() {}
 
-	constexpr explicit(REVERSE) Iterator(PointerType const& value): iterand(value)	{}
-	constexpr explicit(REVERSE) Iterator(PointerType&& value): iterand(move(value))	{}
+	constexpr explicit(REVERSE) Iterator(PointerType const& value): iterand(value)			{}
+	constexpr explicit(REVERSE) Iterator(PointerType&& value): iterand(CTL::move(value))	{}
 
-	constexpr explicit(REVERSE) Iterator(Iterator const& other): iterand(other.iterand)		{}
-	constexpr explicit(REVERSE) Iterator(Iterator&& other): iterand(move(other.iterand))	{}
+	constexpr explicit(REVERSE) Iterator(Iterator const& other): iterand(other.iterand)			{}
+	constexpr explicit(REVERSE) Iterator(Iterator&& other): iterand(CTL::move(other.iterand))	{}
 
 	constexpr PointerType base() const {return iterand;}
 

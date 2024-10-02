@@ -43,9 +43,9 @@ public:
 	}
 
 	constexpr Task(SelfType&& other):
-	executor(move(other.executor)),
-	result(move(other.result)),
-	target(move(other.target)) {
+	executor(CTL::move(other.executor)),
+	result(CTL::move(other.result)),
+	target(CTL::move(other.target)) {
 	}
 
 	constexpr Task(FunctorType const& f): target(f)							{				}

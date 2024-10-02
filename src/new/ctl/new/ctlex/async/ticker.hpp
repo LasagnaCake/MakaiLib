@@ -12,8 +12,8 @@ class Ticker: public SelfIdentified<Ticker> {
 
 public:
 	class Waiter: public SelfIdentified<Waiter>, Base::Async::Yieldable {
-		constexpr Waiter(Waiter const& other): counter(other.counter)	{}
-		constexpr Waiter(Waiter&& other): counter(move(other.counter))	{}
+		constexpr Waiter(Waiter const& other): counter(other.counter)		{}
+		constexpr Waiter(Waiter&& other): counter(CTL::move(other.counter))	{}
 
 		constexpr ~Waiter() {counter.unbind();}
 

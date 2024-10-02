@@ -89,10 +89,10 @@ public:
 	}
 
 	constexpr List(SelfType&& other) {
-		maximum			= move(other.maximum);
-		contents		= move(other.contents);
-		count			= move(other.count);
-		magnitude		= move(other.magnitude);
+		maximum			= CTL::move(other.maximum);
+		contents		= CTL::move(other.contents);
+		count			= CTL::move(other.count);
+		magnitude		= CTL::move(other.magnitude);
 		other.contents	= nullptr;
 	}
 

@@ -168,13 +168,13 @@ public:
 		filter(UNIQUE_VALUES).sort();
 	}
 
-	constexpr SimpleMap(BaseType&& other): BaseType(move(other)) {
+	constexpr SimpleMap(BaseType&& other): BaseType(CTL::move(other)) {
 		filter(UNIQUE_VALUES).sort();
 	}
 
 	constexpr SimpleMap(SelfType const& other): BaseType(other) {}
 
-	constexpr SimpleMap(SelfType&& other): BaseType(move(other)) {}
+	constexpr SimpleMap(SelfType&& other): BaseType(CTL::move(other)) {}
 
 	constexpr SimpleMap(IteratorType const& begin, IteratorType const& end): BaseType(begin, end) {
 		filter(UNIQUE_VALUES).sort();

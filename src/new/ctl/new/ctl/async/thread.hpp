@@ -9,8 +9,8 @@
 CTL_NAMESPACE_BEGIN
 
 struct Thread: private std::thread {
-	Thread() noexcept:					thread(), exect(*this)							{}
-	Thread(Thread&& other) noexcept:	thread(move(other)), exect(move(other.exect))	{}
+	Thread() noexcept:					thread(), exect(*this)									{}
+	Thread(Thread&& other) noexcept:	thread(CTL::move(other)), exect(CTL::move(other.exect))	{}
 	Thread(Thread const& other)			= delete;
 
 	~Thread() {exect.requestStop();}
@@ -42,7 +42,7 @@ struct Thread: private std::thread {
 	private:
 		using BaseType = std::thread::id;
 		ID(): BaseType() {}
-		ID(BaseType&& other): BaseType(move(other)) {}
+		ID(BaseType&& other): BaseType(CTL::move(other)) {}
 		friend class ::CTL::Thread;
 		template<class T>
 		friend T operator<=>(ID const&, ID const&);

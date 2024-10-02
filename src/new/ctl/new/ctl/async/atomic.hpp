@@ -38,9 +38,9 @@ public:
 
 	using OperationType = Function<DataType(ConstReferenceType)>;
 
-	constexpr Atomic() noexcept										{}
-	constexpr Atomic(ConstReferenceType _data): data(_data)			{}
-	constexpr Atomic(TemporaryType _data):		data(move(_data))	{}
+	constexpr Atomic() noexcept											{}
+	constexpr Atomic(ConstReferenceType _data): data(_data)				{}
+	constexpr Atomic(TemporaryType _data):		data(CTL::move(_data))	{}
 
 	inline bool isLocked() const {return locked;}
 

@@ -49,12 +49,12 @@ public:
 	using typename ::CTL::Typed<TData>::DataType;
 	using typename ::CTL::SelfIdentitied<Nullable<TData>>::DataType;
 
-	constexpr Nullable() noexcept									{											}
-	constexpr Nullable(NullType) noexcept							{											}
-	constexpr Nullable(DataType const& value): isSet(true)			{data = value;								}
-	constexpr Nullable(DataType&& value): isSet(true)				{data = move(value);						}
-	constexpr Nullable(SelfType const& other): isSet(other.isSet)	{if (other.isSet) data = other.data;		}
-	constexpr Nullable(SelfType&& other): isSet(move(other.isSet))	{if (other.isSet) data = move(other.data);	}
+	constexpr Nullable() noexcept										{												}
+	constexpr Nullable(NullType) noexcept								{												}
+	constexpr Nullable(DataType const& value): isSet(true)				{data = value;									}
+	constexpr Nullable(DataType&& value): isSet(true)					{data = CTL::move(value);						}
+	constexpr Nullable(SelfType const& other): isSet(other.isSet)		{if (other.isSet) data = other.data;			}
+	constexpr Nullable(SelfType&& other): isSet(CTL::move(other.isSet))	{if (other.isSet) data = CTL::move(other.data);	}
 
 	constexpr ~Nullable() {}
 

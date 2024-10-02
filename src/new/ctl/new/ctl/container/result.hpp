@@ -30,12 +30,12 @@ public:
 
 	typedef TError  ErrorType;
 
-	constexpr Result(SelfType const& other)		{result = other.result; state = other.state;				}
-	constexpr Result(SelfType&& other) 			{result = move(other.result); state = move(other.state);	}
-	constexpr Result(ConstReferenceType value)	{result.value = value; state = ResultState::RS_OK;			}
-	constexpr Result(TemporaryType value)		{result.value = move(value); state = ResultState::RS_OK;	}
-	constexpr Result(ErrorType const& value)	{result.error = error; state = ResultState::RS_ERROR;		}
-	constexpr Result(ErrorType&& value)			{result.error = move(error); state = ResultState::RS_ERROR;	}
+	constexpr Result(SelfType const& other)		{result = other.result; state = other.state;						}
+	constexpr Result(SelfType&& other) 			{result = CTL::move(other.result); state = CTL::move(other.state);	}
+	constexpr Result(ConstReferenceType value)	{result.value = value; state = ResultState::RS_OK;					}
+	constexpr Result(TemporaryType value)		{result.value = CTL::move(value); state = ResultState::RS_OK;		}
+	constexpr Result(ErrorType const& value)	{result.error = error; state = ResultState::RS_ERROR;				}
+	constexpr Result(ErrorType&& value)			{result.error = CTL::move(error); state = ResultState::RS_ERROR;	}
 
 	constexpr SelfType& then(Procedure<ConstReferenceType> const& proc)  				{if (ok()) proc(result.value); return *this;	}
 	constexpr SelfType const& then(Procedure<ConstReferenceType> const& proc) const 	{if (ok()) proc(result.value); return *this;	}
@@ -43,10 +43,10 @@ public:
 	constexpr SelfType& onError(Procedure<ErrorType const&> const& proc)				{if (!ok()) proc(result.error); return *this;	}
 	constexpr SelfType const& onError(Procedure<ErrorType const&> const& proc) const	{if (!ok()) proc(result.error); return *this;	}
 
-	constexpr SelfType& operator=(DataType const& value)	{result.value = value; state = ResultState::RS_OK; return *this;			}
-	constexpr SelfType& operator=(DataType&& value)			{result.value = move(value); state = ResultState::RS_OK; return *this;		}
-	constexpr SelfType& operator=(ErrorType const& error)	{result.error = error; state = ResultState::RS_ERROR; return *this;			}
-	constexpr SelfType& operator=(ErrorType&& error)		{result.error = move(error); state = ResultState::RS_ERROR; return *this;	}
+	constexpr SelfType& operator=(DataType const& value)	{result.value = value; state = ResultState::RS_OK; return *this;				}
+	constexpr SelfType& operator=(DataType&& value)			{result.value = CTL::move(value); state = ResultState::RS_OK; return *this;		}
+	constexpr SelfType& operator=(ErrorType const& error)	{result.error = error; state = ResultState::RS_ERROR; return *this;				}
+	constexpr SelfType& operator=(ErrorType&& error)		{result.error = CTL::move(error); state = ResultState::RS_ERROR; return *this;	}
 
 	constexpr bool operator==(DataType const& value) const	{if (!ok()) return false; return result.value == value;	}
 	constexpr bool operator==(ErrorType const& value) const	{if (ok()) return false; return result.error == error;	}

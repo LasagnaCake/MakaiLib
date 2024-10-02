@@ -60,7 +60,7 @@ private:
 		TArgs...
 	>
 	makeCallable(TFunction&& f) {
-		return new Impl::Function(move(f));
+		return new Impl::Function(CTL::move(f));
 	}
 
 	template<typename TFunction>
