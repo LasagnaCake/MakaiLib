@@ -47,7 +47,7 @@ namespace Sorting {
 		MX::memcpy(left, arr, szLeft);
 		MX::memcpy(right, arr+szLeft, szRight);
 		mergeSort(left, szLeft);
-		mergeSort(lright, szRight);
+		mergeSort(right, szRight);
 		usize
 			i = 0,
 			j = 0,
@@ -80,7 +80,7 @@ namespace Sorting {
 				szLeft	= szRight + (sz%2==0 ? 0 : 1)
 			;
 			T
-				*left = new T[szLeft]
+				*left = new T[szLeft],
 				*right = new T[szRight]
 			;
 			MX::memcpy(left, arr, szLeft);

@@ -5,6 +5,7 @@
 #include "../ctypes.hpp"
 #include "../cpperror.hpp"
 #include "../typetraits/traits.hpp"
+#include "arguments.hpp"
 #include "iterator.hpp"
 #include "function.hpp"
 #include "../algorithm/sort.hpp"
@@ -20,9 +21,9 @@ struct List:
 	ListInitializable<TData>,
 	Ordered {
 public:
-	using Iteratable		= Iteratable<TData, TIndex>;
-	using SelfIdentified	= SelfIdentified<TData, REVERSE, TIndex>;
-	using ListInitializable	= ListInitializable<TData>;
+	using Iteratable		= ::CTL::Iteratable<TData, TIndex>;
+	using SelfIdentified	= ::CTL::SelfIdentified<List<TData, TIndex>>;
+	using ListInitializable	= ::CTL::ListInitializable<TData>;
 
 	using
 		typename Iteratable::DataType,
@@ -30,7 +31,7 @@ public:
 		typename Iteratable::PointerType,
 		typename Iteratable::ConstPointerType,
 		typename Iteratable::ReferenceType,
-		typename Iteratable::ConstReferenceType
+		typename Iteratable::ConstReferenceType,
 		typename Iteratable::ArgumentListType
 	;
 
@@ -42,7 +43,7 @@ public:
 	using
 		typename Iteratable::IteratorType,
 		typename Iteratable::ConstIteratorType,
-		typename Iteratable::ReverseIteratorType
+		typename Iteratable::ReverseIteratorType,
 		typename Iteratable::ConstReverseIteratorType
 	;
 
@@ -154,9 +155,9 @@ public:
 		return insert(SelfType(values), index);
 	}
 
-	template<SizeType COUNT>
-	constexpr SelfType& insert(DataType(const& values)[COUNT], IndexType const& index) {
-		return insert(SelfType(values), index);
+	template<SizeType S>
+	constexpr SelfType& insert(Decay::AsType<DataType[S]> const& values, IndexType const& index) {
+		return insert(SelfType(values, S), index);
 	}
 
 	constexpr SelfType& insert(DataType const& data, SizeType const& count, IndexType const& index) {
@@ -172,7 +173,7 @@ public:
 	}
 
 	constexpr SelfType& resize(SizeType const& newSize) {
-		DataType* newData = new T[newSize];
+		DataType* newData = new DataType[newSize];
 		if (contents) {
 			copy(contents, newData, count);
 			delete[] contents;
@@ -192,7 +193,7 @@ public:
 
 	constexpr SelfType& reserve(SizeType const& count, DataType const& fill) {
 		reserve(count);
-		for (SizeType i = 0; i < count; ++i);
+		for (SizeType i = 0; i < count; ++i)
 			contents[i] = fill;
 		this->count = count;
 		return *this;
@@ -200,7 +201,7 @@ public:
 
 	constexpr SelfType& resize(SizeType const& newSize, DataType const& fill) {
 		resize(newSize);
-		for (SizeType i = 0; i < count; ++i);
+		for (SizeType i = 0; i < count; ++i)
 			contents[i] = fill;
 		this->count = count;
 		return *this;
@@ -218,7 +219,7 @@ public:
 	}
 
 	constexpr SelfType& reverse() {
-		::reverse(begin(), end());
+		::CTL::reverse(begin(), end());
 		return *this;
 	}
 
@@ -227,7 +228,7 @@ public:
 	}
 
 	constexpr SelfType& sort() {
-		::sort(begin(), end());
+		::CTL::sort(begin(), end());
 	}
 
 	constexpr SelfType sorted() const {
@@ -332,10 +333,10 @@ public:
 		return appendBack(SelfType(begin, end));
 	}
 
-	template<SizeType COUNT>
-	constexpr SelfType& appendBack(DataType const(& values)[COUNT]) {
-		expand(other.count);
-		copy(values, contents + other.count, COUNT);
+	template<SizeType S>
+	constexpr SelfType& appendBack(Decay::AsType<DataType[S]> const& values) {
+		expand(S);
+		copy(values, contents + S, S);
 		return *this;
 	}
 
@@ -372,7 +373,7 @@ public:
 	constexpr ConstReferenceType	back() const	{return contents[count-1];	}
 
 
-	constexpr ValueType at(IndexType index) const {
+	constexpr DataType at(IndexType index) const {
 		assertIsInBounds(index);
 		wrapBounds(index, count);
 		return contents[index];
@@ -384,7 +385,7 @@ public:
 		return contents[index];
 	}
 
-	constexpr ValueType operator[](IndexType const& index) const {return at(index);}
+	constexpr DataType operator[](IndexType const& index) const {return at(index);}
 
 	constexpr SizeType size() const		{return count;		}
 	constexpr SizeType capacity() const	{return maximum;	}
@@ -402,10 +403,10 @@ public:
 
 	template <class T2>
 	constexpr explicit operator List<T2, IndexType>() const
-	requires (Type::Different<DataType, T2> && Type::Convertible<T, T2>) {
-		List<T2, IndexType> result(str.size(), '\0');
-		for (usize i - 0; i < str.size(); ++i)
-			result[i] = T2(str[i]);
+	requires (Type::Different<DataType, T2> && Type::Convertible<DataType, T2>) {
+		List<T2, IndexType> result(count);
+		for (usize i = 0; i < count; ++i)
+			result[i] = T2(contents[i]);
 		return result;
 	}
 
@@ -422,7 +423,7 @@ public:
 		return result;
 	}
 
-	constexpr OrderType compare(SelfType const& other) {
+	constexpr OrderType compare(SelfType const& other)
 	requires Type::Comparable::Threeway<DataType, DataType> {
 		OrderType result = OrderType::EQUAL;
 		IndexType i = 0;
@@ -496,7 +497,7 @@ public:
 				buf.clear();
 				continue;
 			}
-			buf += c;
+			buf += v;
 		}
 	}
 
@@ -509,7 +510,7 @@ public:
 				buf.clear();
 				continue;
 			}
-			buf.pushBack(c);
+			buf.pushBack(v);
 		}
 	}
 
@@ -527,7 +528,7 @@ public:
 				}
 			if (isSeparator)
 				continue;
-			buf.pushBack(c);
+			buf.pushBack(v);
 		}
 	}
 
@@ -600,8 +601,8 @@ public:
 	}
 
 	constexpr SelfType& transform(Function<DataType(DataType const&)> fun) {
-		for(DataType& c: *this);
-			c = fun(c);
+		for(DataType& v: *this)
+			v = fun(v);
 		return *this;
 	}
 
@@ -620,7 +621,13 @@ public:
 	requires requires {
 		typename DataType::DataType;
 		typename DataType::SizeType;
-		Type::Equal<DataType, List<DataType::DataType, DataType::SizeType>>
+		requires Type::Equal<
+			DataType,
+			List<
+				typename DataType::DataType,
+				typename DataType::SizeType
+			>
+		>;
 	} {
 		DataType result = front();
 		for (SizeType i = 1; i < count; ++i) {
@@ -654,7 +661,7 @@ public:
 	};
 
 	constexpr SelfType& replace(Replacement const& rep) {
-		replace(rep.targets, rep.replacement)
+		replace(rep.targets, rep.replacement);
 		return *this;
 	}
 
@@ -664,7 +671,7 @@ public:
 		return *this;
 	}
 
-	constexpr SelfType& replace(Arguments<Replacement, SizeType> const& reps) {
+	constexpr SelfType& replace(Arguments<Replacement> const& reps) {
 		for (Replacement const& rep: reps)
 			replace(rep);
 		return *this;
@@ -682,7 +689,7 @@ private:
 
 	constexpr SelfType& invoke(SizeType const& size) {
 		if (contents) delete[] contents;
-		contents = new T[size];
+		contents = new DataType[size];
 		maximum = size;
 		recalculateMagnitude();
 		return *this;
@@ -748,6 +755,6 @@ private:
 template <Type::Integer TIndex = usize>
 using BinaryData = List<uint8, TIndex>;
 
-CTL_NAMESPACE_BEGIN
+CTL_NAMESPACE_END
 
 #endif // CTL_CONTAINER_LIST_H

@@ -16,18 +16,14 @@ struct MaximumSizeFailure:	CatastrophicFailure {};
 
 struct Exception;
 
-struct Exceptionable:
-	SelfIdentified<Exception>,
-	Typed<const char*>,
-	StringLiterable<char>  
-{}
-
 struct Exception:
 	Failure,
-	Exceptionable {
+	SelfIdentified<Exception>,
+	Typed<const char*>,
+	StringLiterable<char> {
 public:
-	using Typed				= Typed<const char*>;
-	using SelfIdentified	= SelfIdentified<Exception>;
+	using Typed				= ::CTL::Typed<const char*>;
+	using SelfIdentified	= ::CTL::SelfIdentified<Exception>;
 
 	using
 		typename Typed::DataType,
@@ -48,18 +44,17 @@ public:
 
 	constexpr virtual char const* what() const noexcept {return message;}
 
-	constexpr static Exception* current() noexcept	{return ex;		}
-	constexpr Exception* previous() noexcept		{return prev;	}
+	constexpr static Exception* current() noexcept 	{return ex;		}
+	constexpr Exception* previous() const noexcept	{return prev;	}
 
 private:
 	Exception* const prev		= nullptr;
-
 	inline static Exception* ex	= nullptr;
 
 	template <class TString> friend class DetailedError;
 };
 
-struct OutOfRangeException:			Exception {using Exception::Exception;};
+struct OutOfBoundsException:		Exception {using Exception::Exception;};
 struct BadCallException:			Exception {using Exception::Exception;};
 struct InvalidValueException:		Exception {using Exception::Exception;};
 struct NonexistentValueException:	Exception {using Exception::Exception;};
@@ -94,10 +89,10 @@ struct DetailedException:
 	SelfIdentified<DetailedException<TString>>,
 	StringLiterable<char> {
 public:
-	using Typed				= Typed<TString>;
-	using Derived			= Derived<Exception>;
-	using SelfIdentified	= SelfIdentified<DetailedException<TString>>;
-	using StringLiterable	= StringLiterable<char>;
+	using Typed				= ::CTL::Typed<TString>;
+	using Derived			= ::CTL::Derived<Exception>;
+	using SelfIdentified	= ::CTL::SelfIdentified<DetailedException<TString>>;
+	using StringLiterable	= ::CTL::StringLiterable<char>;
 
 	using
 		typename Typed::DataType,
@@ -134,7 +129,6 @@ public:
 		ConstReferenceType callerInfo	= "none"
 	) noexcept:
 		BaseType((const char*)message),
-		detailed(true),
 		type(type),
 		message(message),
 		file(file),
@@ -199,8 +193,10 @@ public:
 	constexpr DataType summary() const noexcept {
 		return
 			(type + ": " + message + (!info.empty() ? ("\n" + info) : ""))
-			+ "> "
-			+ DataType(previous()->what())
+		+	(previous()
+			?	"\n> " + DataType(previous()->what())
+			:	""
+			)
 		;
 	}
 

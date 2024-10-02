@@ -15,27 +15,31 @@
 #include "../algorithm/aton.hpp"
 #include "../algorithm/transform.hpp"
 #include "../algorithm/validate.hpp"
+#include "../typetraits/traits.hpp"
 
 CTL_NAMESPACE_BEGIN
 
 template<Type::ASCII TChar, Type::Integer TIndex = usize>
 struct BaseString:
 	List<TChar, TIndex>,
-	SelfIdentified<BaseString<T, TIndex>>,
+	SelfIdentified<BaseString<TChar, TIndex>>,
 	Derived<List<TChar, TIndex>>,
 	StringLiterable<TChar>,
 	Streamable<TChar> {
 public:
-	using Iteratable		= Iteratable<TData, TIndex>;
-	using SelfIdentified	= SelfIdentified<TData, REVERSE, TIndex>;
-	using Derived			= Derived<List<TChar, TIndex>>;
-	using Streamable		= Streamable<TChar>;
+	using Iteratable		= ::CTL::Iteratable<TChar, TIndex>;
+	using SelfIdentified	= ::CTL::SelfIdentified<BaseString<TChar, TIndex>>;
+	using Derived			= ::CTL::Derived<List<TChar, TIndex>>;
+	using Streamable		= ::CTL::Streamable<TChar>;
+	using StringLiterable	= ::CTL::StringLiterable<TChar>;
 
 	using BaseType	= typename Derived::Types::FirstType;
 
 	using
 		typename BaseType::DataType,
+		typename BaseType::ConstantType,
 		typename BaseType::PointerType,
+		typename BaseType::ConstPointerType,
 		typename BaseType::ReferenceType,
 		typename BaseType::ConstReferenceType,
 		typename BaseType::ArgumentListType
@@ -43,7 +47,8 @@ public:
 
 	using
 		typename BaseType::IndexType,
-		typename BaseType::SizeType
+		typename BaseType::SizeType,
+		BaseType::MAX_SIZE
 	;
 
 	using
@@ -56,11 +61,37 @@ public:
 	;
 
 	using
+		typename StringLiterable::StringLiteralType
+	;
+
+	using
 		typename Streamable::InputStreamType,
 		typename Streamable::OutputStreamType
 	;
 
-	using BaseType::BaseType;
+	using
+		BaseType::BaseType,
+		BaseType::data,
+		BaseType::cbegin,
+		BaseType::cend,
+		BaseType::begin,
+		BaseType::end,
+		BaseType::rbegin,
+		BaseType::rend,
+		BaseType::pushBack,
+		BaseType::popBack,
+		BaseType::appendBack,
+		BaseType::front,
+		BaseType::back,
+		BaseType::insert,
+		BaseType::transformed,
+		BaseType::size,
+		BaseType::empty,
+		BaseType::find,
+		BaseType::rfind,
+		BaseType::bsearch,
+		BaseType::capacity
+	;
 
 	constexpr BaseString() {}
 
@@ -68,19 +99,19 @@ public:
 
 	constexpr BaseString(const DataType* const& v) {
 		SizeType len = 0;
-		while (v[len++] != '\0' && len != maxSize);
+		while (v[len++] != '\0' && len != MAX_SIZE);
 		reserve(len);
-		MX::memcpy(v, cbegin(), len * sizeof(DataType));
+		MX::memcpy(data(), v, len * sizeof(DataType));
 	}
 
 	template<class... Args>
-	constexpr BaseString(Args... const& args)
+	constexpr BaseString(Args const&... args)
 	requires (... && Type::Equal<Args, SelfType>) {
 		(*this) += (... + args);
 	}
 
 	template<SizeType S>
-	constexpr BaseString(Decay::AsType<const DataType[S]> const& v) {
+	constexpr BaseString(Decay::AsType<ConstantType[S]> const& v) {
 		reserve(S);
 		MX::memcpy(v, cbegin(), S);
 	}
@@ -95,7 +126,12 @@ public:
 	requires requires {
 		typename DataType::DataType;
 		typename DataType::SizeType;
-		Type::Equal<DataType, List<DataType::DataType, DataType::SizeType>>
+		requires Type::Equal<
+			DataType, List<
+				typename DataType::DataType,
+				typename DataType::SizeType
+			>
+		>;
 	} {
 		return BaseType::join(sep);
 	}
@@ -103,11 +139,15 @@ public:
 	constexpr OutputStreamType const& operator<<(OutputStreamType& o) const	{o << cstr(); return o;}
 	constexpr OutputStreamType& operator<<(OutputStreamType& o)				{o << cstr(); return o;}
 
-	constexpr InputStreamType& operator>>(InputStreamType& i, SelfType& str) {
+	constexpr InputStreamType& readFrom(InputStreamType& i, DataType const& stop) {
 		DataType buf[32];
-		while(i.getline(buf, 32))
-			str.appendBack(buf, i.gcount());
+		while(i.getline(buf, 32, stop))
+			appendBack(buf, i.gcount());
 		return i;
+	}
+	
+	constexpr InputStreamType& readFrom(InputStreamType& i) {
+		return readFromStream(i, '\0');
 	}
 
 	constexpr SelfType const& operator<<(SelfType& other) const	{other.appendBack(*this); return *this;}
@@ -118,20 +158,19 @@ public:
 	constexpr SelfType operator+(DataType const& value) const	{return SelfType(*this).pushBack(value);	}
 	constexpr SelfType operator+(SelfType const& other) const	{return (*this) + other;					}
 
-	constexpr SelfType operator+(StringLiteralType const& str) const	{return (*this) + String(str);}
-	constexpr SelfType operator+(const DataType (const& str)[S]) const	{return (*this) + String(str);}
+	constexpr SelfType operator+(StringLiteralType const& str) const				{return (*this) + String(str);}
+	template<SizeType S>
+	constexpr SelfType operator+(Decay::AsType<ConstantType[S]> const& str) const	{return (*this) + String(str);}
 
-	constexpr SelfType operator+(StringLiteralType const& str, SelfType const& self) const		{return String(str) + self;}
-	constexpr SelfType operator+(const DataType (const& str)[S], SelfType const& self) const	{return String(str) + self;}
-
-	constexpr SelfType& operator+=(DataType const& value)			{return pushBack(value);	}
-	constexpr SelfType& operator+=(SelfType const& other)			{return appendBack(other);	}
-	constexpr SelfType& operator+=(const DataType* const& str)		{return appendBack(str);	}
-	constexpr SelfType& operator+=(const DataType (const& str)[S])	{return appendBack(str);	}
+	constexpr SelfType& operator+=(DataType const& value)				{return pushBack(value);	}
+	constexpr SelfType& operator+=(SelfType const& other)				{return appendBack(other);	}
+	constexpr SelfType& operator+=(const DataType* const& str)			{return appendBack(str);	}
+	template<SizeType S>
+	constexpr SelfType& operator+=(Decay::AsType<ConstantType[S]> str)	{return appendBack(str);	}
 
 	constexpr SelfType operator*(SizeType const& times) const {
 		SelfType result(size() * times);
-		for (SizeType i = 0, i < times, ++i)
+		for (SizeType i = 0; i < times; ++i)
 			result += (*this);
 		return result;
 	}
@@ -145,9 +184,9 @@ public:
 	template <Type::ASCII C>
 	constexpr operator BaseString<C, IndexType>() const
 	requires Type::Different<DataType, C> {
-		BaseString<C, IndexType> result(str.size(), '\0');
-		for (SizeType i = 0; i < str.size(); ++i)
-			result[i] = str[i];
+		BaseString<C, IndexType> result(size(), '\0');
+		for (SizeType i = 0; i < size(); ++i)
+			result[i] = data()[i];
 		return result;
 	}
 
@@ -208,12 +247,18 @@ public:
 
 	template<Type::Integer T>
 	constexpr static T toNumber(SelfType const& str) {
-		return atoi<T>(str.cstr(), str.size());
+		T val;
+		if (!atoi<T>(str.data(), str.size(), val))
+			throw FailedActionException("String-to-Integer conversion failure!");
+		return val;
 	}
 
 	template<Type::Real T>
 	constexpr static T toNumber(SelfType const& str) {
-		return atof<T>(str.cstr(), str.size());
+		T val;
+		if (!atof<T>(str.data(), str.size(), val))
+			throw FailedActionException("String-to-Float conversion failure!");
+		return val;
 	}
 
 	template<Type::Integer T>
@@ -238,7 +283,7 @@ private:
 	PointerType mutable	strbuf		= nullptr;
 	usize mutable		strbuflen	= 0;
 
-	[[noreturn]] void invalidNumberError(String const& v) {
+	[[noreturn]] void invalidNumberError(StringLiteralType const& v) {
 		throw InvalidValueException("Not a valid number!");
 	}
 
@@ -250,6 +295,34 @@ private:
 		throw OutOfBoundsException("Index is out of bounds!");
 	}
 };
+
+template<Type::ASCII TChar, Type::Integer TIndex = usize>
+constexpr typename BaseString<TChar, TIndex>::InputStreamType& operator>>(
+	typename BaseString<TChar, TIndex>::InputStreamType& stream,
+	BaseString<TChar, TIndex>& string
+) {
+	return string.readFrom(stream);
+}
+
+
+
+template<Type::ASCII TChar, Type::Integer TIndex = usize>
+constexpr BaseString<TChar, TIndex>
+operator+(
+	typename BaseString<TChar, TIndex>::StringLiteralType const& str,
+	BaseString<TChar, TIndex> const& self
+) {
+	return String(str) + self;
+}
+
+template<Type::ASCII TChar, Type::Integer TIndex = usize, AsUnsigned<TIndex> S>
+constexpr BaseString<TChar, TIndex>
+operator+(
+	Decay::AsType<typename BaseString<TChar, TIndex>::ConstantType[S]> const& str,
+	BaseString<TChar, TIndex> const& self
+) {
+	return String(str) + self;
+}
 
 typedef BaseString<char>	String;
 typedef BaseString<wchar_t>	WideString;
@@ -325,15 +398,14 @@ public:
 	constexpr BaseString<TChar, TIndex> toString() const {
 		return BaseString<TChar, TIndex>(begin(), end());
 	}
-}
-}
+};
 
 typedef List<String>			StringList;
 typedef Arguments<String>		StringArguments;
 typedef Pair<String, String>	StringPair;
 
-typedef BaseStaticString<char>		StaticString;
-typedef BaseStaticString<wchar_t>	StaticWideString;
+template<usize N> using StaticString		= BaseStaticString<N, char>;
+template<usize N> using StaticWideString	= BaseStaticString<N, wchar_t>;
 
 CTL_NAMESPACE_END
 

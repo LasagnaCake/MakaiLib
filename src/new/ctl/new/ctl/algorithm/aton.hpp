@@ -49,7 +49,7 @@ namespace _AtoiImpl {
 		I res = 0;
 		for (usize i = 0; i < size; ++i)
 			shiftAndAppend(res, base, toDigit(str[i]));
-		return value;
+		return res;
 	}
 
 	template<Type::ASCII T>

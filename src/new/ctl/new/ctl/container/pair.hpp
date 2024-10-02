@@ -33,6 +33,8 @@ struct Pair:
 		typename Pairable::PairType
 	;
 
+	using typename Ordered::OrderType;
+
 	AType a;
 	BType b;
 
@@ -41,12 +43,12 @@ struct Pair:
 	constexpr Pair(AType const& a, BType const& b):	a(a), b(b)				{}
 	constexpr Pair(SelfType const& other):			a(other.a), b(other.b)	{}
 
-	constexpr operator<=>(SelfType const& other) requires (
+	constexpr OrderType operator<=>(SelfType const& other) requires (
 		Type::Comparable::Threeway<AType, AType>
 	&&	Type::Comparable::Threeway<BType, BType>
 	) {
-		ValueOrder order = a <=> other.a;
-		if (order == ValueOrder::EQUAL)
+		OrderType order = a <=> other.a;
+		if (order == OrderType::EQUAL)
 			return b <=> other.b;
 		return order;
 	}
@@ -76,6 +78,8 @@ struct KeyValuePair:
 		typename Pairable::PairType
 	;
 
+	using typename Ordered::OrderType;
+
 	AType	key;
 	BType	value;
 
@@ -84,6 +88,16 @@ struct KeyValuePair:
 	constexpr KeyValuePair(AType const& k, BType const& v):	key(k), value(v)						{}
 	constexpr KeyValuePair(PairType const& other):			KeyValuePair(other.a, other.b)			{}
 	constexpr KeyValuePair(SelfType const& other):			KeyValuePair(other.key, other.value)	{}
+
+	constexpr OrderType operator<=>(SelfType const& other) requires (
+		Type::Comparable::Threeway<AType, AType>
+	&&	Type::Comparable::Threeway<BType, BType>
+	) {
+		OrderType order = key <=> other.key;
+		if (order == OrderType::EQUAL)
+			return value <=> other.value;
+		return order;
+	}
 
 	constexpr PairType pair() const		{return PairType(key, value);	}
 	constexpr operator PairType() const	{return pair();					}
@@ -107,8 +121,20 @@ struct LeftRightPair:
 		typename Pairable::PairType
 	;
 
+	using typename Ordered::OrderType;
+
 	AType	left;
 	BType	right;
+
+	constexpr OrderType operator<=>(SelfType const& other) requires (
+		Type::Comparable::Threeway<AType, AType>
+	&&	Type::Comparable::Threeway<BType, BType>
+	) {
+		OrderType order = left <=> other.left;
+		if (order == OrderType::EQUAL)
+			return right <=> other.right;
+		return order;
+	}
 
 	constexpr LeftRightPair()	{}
 
@@ -138,8 +164,20 @@ struct FirstSecondPair:
 		typename Pairable::PairType
 	;
 
+	using typename Ordered::OrderType;
+
 	AType	first;
 	BType	second;
+
+	constexpr OrderType operator<=>(SelfType const& other) requires (
+		Type::Comparable::Threeway<AType, AType>
+	&&	Type::Comparable::Threeway<BType, BType>
+	) {
+		OrderType order = first <=> other.first;
+		if (order == OrderType::EQUAL)
+			return second <=> other.second;
+		return order;
+	}
 
 	constexpr FirstSecondPair()	{}
 

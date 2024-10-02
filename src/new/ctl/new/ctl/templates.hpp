@@ -42,7 +42,7 @@ struct Indexed {
 	typedef AsUnsigned<TIndex>	SizeType;
 	typedef AsSigned<SizeType>	IndexType;
 
-	constexpr static SizeType MAX_SIZE = TypeInfo<SizeType>::highest;
+	constexpr static SizeType MAX_SIZE = TypeInfo<SizeType>::HIGHEST;
 };
 
 template <usize N, typename... T>
@@ -120,7 +120,7 @@ struct Throwable {
 
 template<typename T>
 struct StringLiterable {
-	typedef StringLiteralType T const*;
+	typedef T const* StringLiteralType;
 };
 
 CTL_NAMESPACE_END

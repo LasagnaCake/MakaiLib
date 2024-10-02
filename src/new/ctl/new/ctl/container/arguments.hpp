@@ -12,8 +12,8 @@ template <class T>
 struct Arguments:
 	Typed<T>,
 	SelfIdentified<Arguments<T>> {
-	using Typed				= Typed<T>;
-	using SelfIdentified	= SelfIdentified<Arguments<T>>;
+	using Typed				= CTL::Typed<T>;
+	using SelfIdentified	= CTL::SelfIdentified<Arguments<T>>;
 
 	using
 		typename SelfIdentified::SelfType
@@ -21,6 +21,7 @@ struct Arguments:
 
 	using
 		typename Typed::DataType,
+		typename Typed::PointerType,
 		typename Typed::ConstReferenceType,
 		typename Typed::ReferenceType,
 		typename Typed::ConstPointerType
@@ -36,7 +37,7 @@ struct Arguments:
 	}
 
 	template<class... Args>
-	constexpr Arguments(DataType const& first, Args... const& rest):
+	constexpr Arguments(DataType const& first, Args const&... rest):
 		start(new DataType[sizeof...(Args) + 1]{first, rest...}), length(sizeof...(Args) + 1) {}
 
 	constexpr ReferenceType operator[](ssize index) {
@@ -65,8 +66,8 @@ struct Arguments:
     constexpr usize empty() const noexcept	{return length == 0;	}
 
 private:
-	T*		start;
-	usize	length;
+	PointerType		start;
+	usize			length;
 };
 
 template <class TData>

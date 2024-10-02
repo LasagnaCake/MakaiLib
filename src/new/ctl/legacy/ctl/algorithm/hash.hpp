@@ -2,6 +2,10 @@
 #define CTL_ALGORITHM_HASH_H
 
 #include "../ctypes.hpp"
+#include "../namespace.hpp"
+#include "../typetraits/traits.hpp"
+
+CTL_NAMESPACE_BEGIN
 
 struct Hasher {
 	template <Type::Integer T>
@@ -16,7 +20,9 @@ struct Hasher {
 
 template<class TValue, class THasher>
 concept Hashable = requires (TValue v) {
-	{THasher::hash(v);} -> Type::Equal<usize>;
-}
+	{THasher::hash(v)} -> Type::Equal<usize>;
+};
+
+CTL_NAMESPACE_END
 
 #endif // CTL_ALGORITHM_HASH_H

@@ -14,7 +14,7 @@ namespace Impl {
 		template <typename TReturn, typename... TArgs>
 		struct Function {
 			constexpr virtual TReturn invoke(TArgs...) const		= 0;
-			constexpr TReturn operator()(TArgs... args) const		{return invoke(forward<Args>(args)...);}
+			constexpr TReturn operator()(TArgs... args) const		{return invoke(forward<TArgs>(args)...);}
 			constexpr virtual ~Function()							= default;
 		};
 	}
@@ -37,11 +37,11 @@ struct Function<TReturn(TArgs...)>:
 	Argumented<TArgs...>,
 	Functional<TReturn(TArgs...)> {
 private:
-	using Functional		= Functional<TReturn(TArgs...)>;
-	using SelfIdentified	= SelfIdentified<Function<TReturn, TArgs...>>;
-	using Typed				= Typed<TReturn>;
-	using Returnable		= Returnable<TReturn>;
-	using Argumented		= Argumented<TArgs...>;
+	using Functional		= ::CTL::Functional<TReturn(TArgs...)>;
+	using SelfIdentified	= ::CTL::SelfIdentified<Function<TReturn, TArgs...>>;
+	using Typed				= ::CTL::Typed<TReturn>;
+	using Returnable		= ::CTL::Returnable<TReturn>;
+	using Argumented		= ::CTL::Argumented<TArgs...>;
 
 	using
 		typename SelfIdentified::SelfType
@@ -50,8 +50,6 @@ private:
 	using
 		typename Returnable::ReturnType
 	;
-
-	using SelfIdentified::SelfType;
 
 	Impl::Partial::Function<ReturnType, TArgs...>* func{nullptr};
 

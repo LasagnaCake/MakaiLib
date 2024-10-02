@@ -20,32 +20,39 @@ struct Array:
 	Ordered {
 private:
 public:
-	using Iteratable		= Iteratable<TData, TIndex>;
-	using SelfIdentified	= SelfIdentified<Array<N, TData, TIndex>>;
+	using Iteratable		= ::CTL::Iteratable<TData, TIndex>;
+	using SelfIdentified	= ::CTL::SelfIdentified<Array<N, TData, TIndex>>;
 
 	using
-		Iteratable::IteratorType,
-		Iteratable::ReverseIteratorType,
-		Iteratable::ConstIteratorType,
-		Iteratable::ConstReverseIteratorType,
-		Iteratable::SizeType,
-		Iteratable::IndexType,
-		Iteratable::DataType,
-		Iteratable::ConstantType,
-		Iteratable::PointerType,
-		Iteratable::ConstPointerType,
-		Iteratable::ReferenceType
-		Iteratable::ConstReferenceType,
+		typename Iteratable::IteratorType,
+		typename Iteratable::ReverseIteratorType,
+		typename Iteratable::ConstIteratorType,
+		typename Iteratable::ConstReverseIteratorType
 	;
 
-	constexpr SizeType SIZE = N;
+	using
+		typename Iteratable::DataType,
+		typename Iteratable::ConstantType,
+		typename Iteratable::PointerType,
+		typename Iteratable::ConstPointerType,
+		typename Iteratable::ReferenceType,
+		typename Iteratable::ConstReferenceType
+	;
+
+	using 
+		typename Iteratable::SizeType,
+		typename Iteratable::IndexType,
+		Iteratable::MAX_SIZE
+	;
+
+	constexpr static SizeType SIZE		= N;
 
 	typedef Decay::AsType<DataType[SIZE]> ArrayType;
 
 	static_assert(N <= MAX_SIZE, "Array size must not be bigger than highest SizeType!");
 
 	constexpr Array() requires(Type::Constructible<DataType>)	{for (auto& e: data) e = DataType();	}
-	constexpr Array(ArrayType const& data)						{MX::memcpy(arr, data, SIZE);			}
+	constexpr Array(ArrayType const& arr)						{MX::memcpy(data, arr, SIZE);			}
 	constexpr Array(ConstReferenceType v)						{for (auto& e: data) e = v;				}
 
 	constexpr ReferenceType operator[](IndexType index) {
@@ -102,6 +109,6 @@ namespace Impl {
 template<typename T, Type::Integer TIndex = usize>
 using FromCArray = Impl::FromCArray<T, TIndex>::Type;
 
-CTL_NAMESPACE_BEGIN
+CTL_NAMESPACE_END
 
 #endif // CTL_CONTAINER_ARRAY_H
