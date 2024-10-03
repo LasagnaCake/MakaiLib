@@ -10,37 +10,37 @@ CTL_NAMESPACE_BEGIN
 
 template<class TSelf>
 struct SelfIdentified {
-	typedef TSelf SelfType;
-	typedef TypeInfo<TSelf> Self;
+	using SelfType	= TSelf;
+	using Self		= TypeInfo<TSelf>;
 };
 
 template<class TData>
 struct Typed {
-	typedef TData				DataType;
-	typedef DataType const		ConstantType;
-	typedef DataType&			ReferenceType;
-	typedef DataType&&			TemporaryType;
-	typedef ConstantType&		ConstReferenceType;
-	typedef DataType*			PointerType;
-	typedef DataType const*		ConstPointerType;
+	using DataType				= TData;
+	using ConstantType			= DataType const;
+	using ReferenceType			= DataType&;
+	using TemporaryType			= DataType&&;
+	using ConstReferenceType	= ConstantType&;
+	using PointerType			= DataType*;
+	using ConstPointerType		= DataType const*;
 };
 
 template<class TKey>
 struct Keyed {
-	typedef Typed<TKey>	Key;
-	typedef TKey		KeyType;
+	using Key		= Typed<TKey>;
+	using KeyType	= TKey;
 };
 
 template<class TValue>
 struct Valued {
-	typedef Typed<TValue>	Value;
-	typedef TValue			ValueType;
+	using Value		= Typed<TValue>;
+	using ValueType	= TValue;
 };
 
 template<Type::Integer TIndex>
 struct Indexed {
-	typedef AsUnsigned<TIndex>	SizeType;
-	typedef AsSigned<SizeType>	IndexType;
+	using SizeType	= AsUnsigned<TIndex>;
+	using IndexType	= AsSigned<SizeType>;
 
 	constexpr static SizeType MAX_SIZE = TypeInfo<SizeType>::HIGHEST;
 };
@@ -50,11 +50,11 @@ struct NthInPack;
 
 template <typename T, typename... Types>
 struct NthInPack<0, T, Types...> {
-    typedef T Type;
+    using Type = T;
 };
 template <usize N, typename T, typename... Types>
 struct NthInPack<N, T, Types...> {
-    typedef typename NthInPack<N-1, Types...>::Type Type;
+    using Type = typename NthInPack<N-1, Types...>::Type;
 };
 
 template<usize N, typename... Types>
@@ -69,24 +69,31 @@ using LastType = typename NthInPack<sizeof...(Types)-1, Types...>::Type;
 template<class... T>
 struct PackInfo: Decay::Pack<T...> {
 	template<usize N> using	Types = NthType<N, T...>;
-	typedef FirstType<T...>	FirstType;
-	typedef LastType<T...>	LastType;
+	using FirstType	= FirstType<T...>;
+	using LastType	= LastType<T...>;
 
 	constexpr static usize COUNT = sizeof...(T);
 };
-
 template<class... BaseTypes>
-struct Derived {
-	typedef PackInfo<BaseTypes...> Bases;
+struct Derived;
+
+template<class TBase>
+struct Derived<TBase> {
+	using BaseType = TBase;
+};
+
+template<class FirstBase, class... BaseTypes>
+struct Derived<FirstBase, BaseTypes...> {
+	using Bases = PackInfo<BaseTypes...>;
 };
 
 template<class... Types>
 struct Polyglot {
-	typedef PackInfo<Types...> DataTypes;
+	using DataTypes = PackInfo<Types...>;
 };
 
 struct Nulled {
-	typedef nulltype NullType;
+	using NullType = nulltype;
 };
 
 template<class T>
@@ -96,13 +103,13 @@ struct Defaultable {
 
 template<class TReturn>
 struct Returnable {
-	typedef Typed<TReturn>	Return;
-	typedef TReturn			ReturnType;
+	using Return		= Typed<TReturn>;
+	using ReturnType	= TReturn;
 };
 
 template<class... Types>
 struct Argumented {
-	typedef PackInfo<Types...>	ArgumentTypes;
+	using ArgumentTypes = PackInfo<Types...>;
 };
 
 template<class TFunction>
@@ -110,17 +117,17 @@ struct Functional {};
 
 template<class TReturn, class... TArguments>
 struct Functional<TReturn(TArguments...)> {
-	typedef Decay::AsType<TReturn(TArguments...)> FunctionType;
+	using FunctionType = Decay::AsType<TReturn(TArguments...)>;
 };
 
 template<class... Types>
 struct Throwable {
-	typedef PackInfo<Types...>  Errors;
+	using Exceptions = PackInfo<Types...>;
 };
 
 template<typename T>
 struct StringLiterable {
-	typedef T const* StringLiteralType;
+	using StringLiteralType = typename Typed<T>::ConstPointerType;
 };
 
 CTL_NAMESPACE_END

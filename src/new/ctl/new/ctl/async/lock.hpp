@@ -8,12 +8,14 @@
 
 CTL_NAMESPACE_BEGIN
 
-template<Type::Derived<Mutex> T = Mutex>
+template<Type::Derived<Mutex> TMutex = Mutex>
 class BaseLock:
-	public Typed<T>,
-	public SelfIdentified<BaseLock<T>> {
+	public Typed<TMutex>,
+	public SelfIdentified<BaseLock<TMutex>> {
 public:
-	using typename Typed<T>::ReferenceType;
+	using Typed	= ::CTL::Typed<TMutex>;
+
+	using typename Typed::ReferenceType;
 
 	BaseLock(ReferenceType mutex): mutex(mutex) {}
 
@@ -21,20 +23,23 @@ protected:
 	ReferenceType mutex;
 };
 
-template<Type::Derived<Mutex> T = Mutex>
+template<Type::Derived<Mutex> TMutex = Mutex>
 class ScopeLock:
-	public BaseLock<T>,
-	public Derived<BaseLock<T>>,
-	public SelfIdentified<ScopeLock<T>>{
+	public BaseLock<TMutex>,
+	public Derived<BaseLock<TMutex>>,
+	public SelfIdentified<ScopeLock<TMutex>> {
 public:
-	using Derived = typename Derived<BaseLock<T>>;
+	using Derived = ::CTL::Derived<BaseLock<TMutex>>;
 
-	using BaseType = typename Derived::Bases::FirstType;
+	using typename Derived::BaseType;
 
 	using typename BaseType::ReferenceType;
 
 	ScopeLock(ReferenceType mutex): BaseType(mutex)	{mutex.capture();}
 	~ScopeLock()									{mutex.release();}
+	
+protected:
+	using BaseType::mutex;
 };
 
 CTL_NAMESPACE_END

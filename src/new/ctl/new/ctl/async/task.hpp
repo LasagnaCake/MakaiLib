@@ -12,13 +12,13 @@ class Task;
 
 template<typename R, typename... Args>
 class Task<R(Args...)>:
-	Functional<Promise<R>(Thread, Thread::ExecutionToken, Args...)>,
+	Functional<Promise<R>(Thread::ExecutionToken, Args...)>,
 	Returnable<Promise<R>>,
 	Argumented<Args...>,
 	SelfIdentified<Tast<R, Args...>> {
 public:
-	using Functional = Returnable<Promise<R>(Args...)>;
-	using Returnable = Returnable<Promise<R>>;
+	using Functional = ::CTL::Functional<Promise<R>(Thread::ExcecutionToken, Args...)>;
+	using Returnable = ::CTL::Returnable<Promise<R>>;
 
 	using
 		Functional::FunctionType
@@ -67,9 +67,9 @@ public:
 			.unbind()
 			.bind(
 				new Thread(
-					[this, ...args = forward<Args>(args)] (ExecutionTokenType& stop) {
+					[this, ...args = forward<Args>(args)] (ExecutionTokenType& exect) {
 						result = nullptr;
-						result = target.value()(args...);
+						result = target.value()(exect, args...);
 					}
 				)
 			);

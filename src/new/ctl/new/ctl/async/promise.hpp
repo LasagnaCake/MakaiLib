@@ -16,17 +16,18 @@ template<class T>
 class Promise;
 
 template<> class Promise<void>:
-	Typed<void>,
-	SelfIdentified<Promis<Void>> {
-	void await() {if (!ready()) thread->join();				}
-	bool ready() {return !(thread() && thread->joinable());	}
+	SelfIdentified<Promise<void>> {
+	using DataType = void;
+
+	void await() {if (!ready()) thread->join();	}
+	bool ready() {return !(thread && *thread);	}
 
 	constexpr Promise(Promise const& other): Promise(other.thread) {}
 
 private:
 	constexpr Promise(Handle<Thread> const& t): thread(t) {}
 
-	Handle<Thread> thread;
+	Thread::Handle thread;
 
 	template<typename F> friend class Task;
 };
@@ -39,11 +40,11 @@ public:
 	using SelfIdentified	= SelfIdentified<Promise<T>>;
 
 	using
-		Typed::DataType
+		typename Typed::DataType
 	;
 
 	using
-		SelfIdentified::SelfType
+		typename SelfIdentified::SelfType
 	;
 
 	using NullableType	= Nullable<DataType>;
@@ -62,7 +63,7 @@ public:
 	}
 
 	bool ready() {
-		return !(thread() && thread->joinable());
+		return !(thread && *thread);
 	}
 
 	constexpr Promise(SelfType const& other): Promise(other.data, other.thread) {}

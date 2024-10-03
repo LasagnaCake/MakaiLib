@@ -34,7 +34,7 @@ public:
 	using Collected			= ::CTL::Collected<TKey, TValue, KeyValuePair>;
 	using SelfIdentified	= ::CTL::SelfIdentified<OrderedMap<TKey, TValue, TIndex>>;
 
-	using BaseType = typename Derived::Bases::FirstType;
+	using typename Derived::BaseType;
 
 	using
 		typename Collected::KeyType,
@@ -103,7 +103,7 @@ public:
 	using Collected			= ::CTL::Collected<TKey, TValue, KeyValuePair>;
 	using SelfIdentified	= ::CTL::SelfIdentified<SimpleMap<TKey, TValue, TIndex>>;
 
-	using BaseType = typename Derived::Bases::FirstType;
+	using typename Derived::BaseType;
 
 	using
 		typename Collected::KeyType,

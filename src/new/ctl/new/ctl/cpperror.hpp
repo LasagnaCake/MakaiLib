@@ -122,7 +122,7 @@ public:
 	;
 
 	using
-		BaseType = typename Derived::Bases::FirstType
+		typename Derived::BaseType
 	;
 
 	using

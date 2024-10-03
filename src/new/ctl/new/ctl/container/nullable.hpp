@@ -66,7 +66,10 @@ public:
 	using typename SelfIdentified::SelfType;
 
 	using Nulled::NullType;
-	using Ordered::OrderType;
+	using 
+		Ordered::OrderType, 
+		Ordered::Order
+	;
 
 	using OperationType	= Function<DataType(DataType const&)>;
 	using ProcedureType	= Function<void(DataType const&)>;
@@ -153,7 +156,7 @@ private:
 	bool isSet = false;
 
 	template<class T>
-	friend constexpr Nullable<T> operator<=>(typename Nullable<T>::DataType const&, Nullable<T> const&)
+	friend constexpr Nullable<T> operator<=>(typename Nullable<T>::DataType const&, Nullable<T> const&);
 };
 
 template<class TData>
@@ -162,8 +165,8 @@ requires Type::Comparable::Threeway<
 	typename Nullable<TData>::DataType,
 	typename Nullable<TData>::DataType
 >	{
-	if (!self.isSet) return Order::LESS;
-	return data <=> self.value;
+	if (!self.isSet) return Nullable<TData>::Order::LESS;
+	return value <=> self.data;
 }
 
 CTL_NAMESPACE_END

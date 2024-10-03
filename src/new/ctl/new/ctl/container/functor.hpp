@@ -12,6 +12,7 @@ template<typename T> class Functor;
 
 template<typename TReturn, typename... TArgs>
 struct Functor<TReturn(TArgs...)>:
+	Ordered,
 	Typed<TReturn>,
 	SelfIdentified<Functor<TReturn, TArgs...>>,
 	Returnable<TReturn>,
@@ -28,14 +29,19 @@ public:
 	using Functional		= Functional<TReturn(TArgs...)>;
 	using Derived			= Derived<Function<TReturn(TArgs...)>>;
 
-	using BaseType = typename Derived::Bases::FirstType;
+	using typename Derived::BaseType;
 
 	using
-		SelfIdentified::SelfType
+		typename SelfIdentified::SelfType
 	;
 
 	using
-		Returnable::ReturnType
+		typename Returnable::ReturnType
+	;
+
+	using
+		typename Ordered::OrderType,
+		typename Ordered::Order
 	;
 
 	constexpr static bool PROCEDURE = Type::Different<ReturnType, void>;
@@ -58,7 +64,7 @@ public:
 
 	constexpr bool operator==(SelfType const& other) const {return id == other.id;}
 
-	constexpr Helper::PartialOrder operator<=>(SelfType const& other) const {return id <=> other.id;}
+	constexpr OrderType operator<=>(SelfType const& other) const {return id <=> other.id;}
 
 private:
 	WrapperType			func;

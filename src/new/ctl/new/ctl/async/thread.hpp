@@ -8,12 +8,22 @@
 
 CTL_NAMESPACE_BEGIN
 
-struct Thread: private std::thread {
-	using BaseType = std::thread;
+struct Thread:
+	public SelfIdentified<Thread>,
+	public Derived<std::thread>,
+	private std::thread {
+	using SelfIdentified	= ::CTL::SelfIdentified<Thread>;
+	using Derived			= ::CTL::Derived<std::thread>;
+
+	using typename Derived::BaseType;
+
+	using typename SelfIdentified::SelfType;
+
+	using BaseType::swap;
 
 	Thread() noexcept:					BaseType(), exect(*this)									{}
-	Thread(Thread&& other) noexcept:	BaseType(CTL::move(other)), exect(CTL::move(other.exect))	{}
-	Thread(Thread const& other)			= delete;
+	Thread(SelfType&& other) noexcept:	BaseType(CTL::move(other)), exect(CTL::move(other.exect))	{}
+	Thread(SelfType const& other)		= delete;
 
 	~Thread() {exect.requestStop();}
 
@@ -40,14 +50,26 @@ struct Thread: private std::thread {
 		Thread&	source;
 	};
 
-	struct ID: private std::thread::id {
+	struct ID:
+		private std::thread::id,
+		public ::CTL::Ordered,
+		public ::CTL::Derived<std::thread::id> {
 	private:
-		using BaseType = std::thread::id;
+		using Derived = ::CTL::Derived<std::thread::id>;
+
+		using typename Derived::BaseType;
+
+	public:
+		BaseType const& base() const {return (*this);}
 		ID(): BaseType() {}
+
+		OrderType operator<=>(ID const& other) const	{return base() <=> other.base();	}
+		bool operator==(ID const& other) const			{return base() == other.base();		}
+
+	private:
 		ID(BaseType&& other): BaseType(CTL::move(other)) {}
+
 		friend class ::CTL::Thread;
-		friend std::strong_ordering operator<=>(ID const&, ID const&);
-		friend bool operator==(ID const&, ID const&);
 	};
 
 	template<class F, class... Args>
@@ -68,12 +90,12 @@ struct Thread: private std::thread {
 		std::this_thread::sleep_for<T>(time);
 	}
 
-	Thread& join() {
+	SelfType& join() {
 		thread::join();
 		return *this;
 	}
 
-	Thread& detach() {
+	SelfType& detach() {
 		thread::detach();
 		return *this;
 	}
@@ -89,14 +111,6 @@ struct Thread: private std::thread {
 private:
 	ExcecutionToken exect;
 };
-
-std::strong_ordering operator<=>(Thread::ID const& a, Thread::ID const& b) {
-	return a <=> b;
-}
-
-bool operator==(Thread::ID const& a, Thread::ID const& b) {
-	return a == b;
-}
 
 namespace Base::Async {
 	struct Yieldable {

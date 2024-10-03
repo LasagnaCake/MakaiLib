@@ -31,7 +31,7 @@ public:
 		typename SelfIdentified::SelfType
 	;
 
-	using BaseType = typename Derived::Bases::FirstType;
+	using typename Derived::BaseType;
 
 	using MutexType = BaseType;
 

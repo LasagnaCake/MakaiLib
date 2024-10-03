@@ -31,7 +31,7 @@ public:
 	using Streamable		= ::CTL::Streamable<TChar>;
 	using StringLiterable	= ::CTL::StringLiterable<TChar>;
 
-	using BaseType	= typename Derived::Bases::FirstType;
+	using typename Derived::BaseType;
 
 	using
 		typename BaseType::DataType,
@@ -325,7 +325,7 @@ public:
 	using SelfIdentified	= SelfIdentified<BaseStaticString<N, TChar, TIndex>>;
 	using StringLiterable	= StringLiterable<TChar>;
 
-	using BaseType = Derived::Bases::FirstType;
+	using typename Derived::BaseType;
 
 	using
 		typename SelfIdentified::SelfType

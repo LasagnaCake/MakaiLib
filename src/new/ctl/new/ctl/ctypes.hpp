@@ -79,8 +79,8 @@ typedef uqword	qword;
 typedef uint64	usize;
 typedef int64	ssize;
 #elif CPU_ARCH == 32
-typedef uint16	usize;
-typedef int16	ssize;
+typedef uint32	usize;
+typedef int32	ssize;
 #elif CPU_ARCH == 16
 typedef uint16	usize;
 typedef int16	ssize;

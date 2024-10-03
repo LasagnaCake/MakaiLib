@@ -22,7 +22,7 @@ public:
 		typename SelfIdentified::SelfType
 	;
 
-	using BaseType = Derived::Bases::FirstType;
+	using typename Derived::BaseType;
 
 	Mutex() {}
 
@@ -49,24 +49,36 @@ public:
 
 	SelfType& wait() {
 		if (!isCurrentOwner())
-			while(isCaptured())
+			while(captured())
 				asyncYield();
 		return *this;
 	}
 
-	bool isCaptured() const							{return current.value().exists();		}
-	bool isOwnedBy(Thread::ID const& thread) const	{return current == thread;				}
-	bool isCurrentOwner() const						{return current == Thread::current();	}
+	bool captured() const							{return current.value().exists();	}
+	bool ownedBy(Thread::ID const& id) const		{return equals(id);					}
+	bool isCurrentOwner() const						{return equals(Thread::current());	}
 
-	bool operator==(Thread::ID const& thread)		{return isOwnedBy(thread);	}
-	OrderType operator<=>(Thread::ID const& thread)	{return current <=> thread;	}
+	bool operator==(Thread::ID const& id) const			{return ownedBy(id);	}
+	OrderType operator<=>(Thread::ID const& id) const	{return compare(id);	}
 
-	constexpr operator bool() {return isCaptured();}
+	operator bool() {return captured();}
 
-	//const Nullable<Thread::ID> getCurrentOwner() const	{return current.value();	}
-	Nullable<Thread::ID> getCurrentOwner()					{return current.value();	}
+	//const Nullable<Thread::ID> currentOwner() const	{return current.value();	}
+	Nullable<Thread::ID> currentOwner()					{return current.value();	}
 
 private:
+	bool equals(Thread::ID const& id) const {
+		if (captured())
+			return current.value().value() == id;
+		return false;
+	}
+
+	OrderType compare(Thread::ID const& id)	const {
+		if (captured())
+			return current.value().value() <=> id;
+		return Order::LESS;
+	}
+
 	Atomic<Nullable<Thread::ID>> current;
 };
 
