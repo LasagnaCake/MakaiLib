@@ -3,10 +3,13 @@
 
 #include "../../ctl/exnamespace.hpp"
 #include "../../ctl/math/core.hpp"
+#include "../../ctl/order.hpp"
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wpedantic"
 #pragma GCC diagnostic ignored "-Wunknown-pragmas"
+
+CTL_NAMESPACE_BEGIN
 
 namespace Type::Vector {
 	template<typename T>
@@ -59,6 +62,8 @@ namespace Type::Vector {
 	concept Vectorable = Type::Equal<T, float> || ValidVector<T>;
 }
 
+CTL_NAMESPACE_END
+
 CTL_EX_NAMESPACE_BEGIN
 
 namespace Math {
@@ -71,8 +76,7 @@ namespace Math {
 * [-----------------]
 */
 #pragma pack(1)
-class Vector2
-{
+class Vector2: Ordered {
 	public:
 		/// The vector's position.
 		union {
@@ -244,8 +248,6 @@ class Vector2
 
 		/// Comparison operators
 
-		typedef Helper::PartialOrder OrderType;
-
 		constexpr bool operator==(Vector2 const& other) const {
 			return (
 				x == other.x
@@ -254,8 +256,8 @@ class Vector2
 		}
 
 		constexpr OrderType operator<=>(Vector2 const& other) const {
-			OrderType result = OrderType::equivalent;
-			if ((result = x <=> other.x) != OrderType::equivalent) return result;
+			OrderType result = Order::EQUAL;
+			if ((result = x <=> other.x) != Order::EQUAL) return result;
 			return y <=> other.y;
 		}
 
@@ -413,8 +415,7 @@ class Vector2
 * [-----------------]
 */
 #pragma pack(1)
-class Vector3
-{
+class Vector3: Ordered {
 	public:
 		/// The vector's position.
 		union {
@@ -610,8 +611,6 @@ class Vector3
 
 		/// Comparison operators
 
-		typedef Helper::PartialOrder OrderType;
-
 		constexpr bool operator==(Vector3 const& other) const {
 			return (
 				x == other.x
@@ -621,9 +620,9 @@ class Vector3
 		}
 
 		constexpr OrderType operator<=>(Vector3 const& other) const {
-			OrderType result = OrderType::equivalent;
-			if ((result = x <=> other.x) != OrderType::equivalent) return result;
-			if ((result = y <=> other.y) != OrderType::equivalent) return result;
+			OrderType result = Order::EQUAL;
+			if ((result = x <=> other.x) != Order::EQUAL) return result;
+			if ((result = y <=> other.y) != Order::EQUAL) return result;
 			return z <=> other.z;
 		}
 
@@ -812,8 +811,7 @@ class Vector3
 * [-----------------]
 */
 #pragma pack(1)
-class Vector4
-{
+class Vector4: Ordered {
 	public:
 		/// The vector's position.
 		union {
@@ -1028,8 +1026,6 @@ class Vector4
 
 		/// Comparison operators
 
-		typedef Helper::PartialOrder OrderType;
-
 		constexpr bool operator==(Vector4 const& other) const {
 			return (
 				x == other.x
@@ -1040,10 +1036,10 @@ class Vector4
 		}
 
 		constexpr OrderType operator<=>(Vector4 const& other) const {
-			OrderType result = OrderType::equivalent;
-			if ((result = x <=> other.x) != OrderType::equivalent) return result;
-			if ((result = y <=> other.y) != OrderType::equivalent) return result;
-			if ((result = z <=> other.z) != OrderType::equivalent) return result;
+			OrderType result = Order::EQUAL;
+			if ((result = x <=> other.x) != Order::EQUAL) return result;
+			if ((result = y <=> other.y) != Order::EQUAL) return result;
+			if ((result = z <=> other.z) != Order::EQUAL) return result;
 			return w <=> other.w;
 		}
 
@@ -1496,22 +1492,22 @@ constexpr float squaredDistanceTo(Vector4 const& a, Vector4 const& b) {
 
 /// Linearly interpolates two vectors by a certain amount.
 constexpr Vector2 angleLerp(Vector2 const& from, Vector2 const& to, Vector2 const& by) {
-	Vector2 dist = (to - from) % Math::tau;
-	dist = ((dist * 2.0) % Math::tau) - dist;
+	Vector2 dist = (to - from) % TAU;
+	dist = ((dist * 2.0) % TAU) - dist;
 	return from + dist * by;
 }
 
 /// Linearly interpolates two vectors by a certain amount.
 constexpr Vector3 angleLerp(Vector3 const& from, Vector3 const& to, Vector3 const& by) {
-	Vector3 dist = (to - from) % Math::tau;
-	dist = ((dist * 2.0) % Math::tau) - dist;
+	Vector3 dist = (to - from) % TAU;
+	dist = ((dist * 2.0) % TAU) - dist;
 	return from + dist * by;
 }
 
 /// Linearly interpolates two vectors by a certain amount.
 constexpr Vector4 angleLerp(Vector4 const& from, Vector4 const& to, Vector4 const& by) {
-	Vector4 dist = (to - from) % Math::tau;
-	dist = ((dist * 2.0) % Math::tau) - dist;
+	Vector4 dist = (to - from) % TAU;
+	dist = ((dist * 2.0) % TAU) - dist;
 	return from + dist * by;
 }
 

@@ -9,8 +9,10 @@
 CTL_NAMESPACE_BEGIN
 
 struct Thread: private std::thread {
-	Thread() noexcept:					thread(), exect(*this)									{}
-	Thread(Thread&& other) noexcept:	thread(CTL::move(other)), exect(CTL::move(other.exect))	{}
+	using BaseType = std::thread;
+
+	Thread() noexcept:					BaseType(), exect(*this)									{}
+	Thread(Thread&& other) noexcept:	BaseType(CTL::move(other)), exect(CTL::move(other.exect))	{}
 	Thread(Thread const& other)			= delete;
 
 	~Thread() {exect.requestStop();}
@@ -44,14 +46,13 @@ struct Thread: private std::thread {
 		ID(): BaseType() {}
 		ID(BaseType&& other): BaseType(CTL::move(other)) {}
 		friend class ::CTL::Thread;
-		template<class T>
-		friend T operator<=>(ID const&, ID const&);
+		friend std::strong_ordering operator<=>(ID const&, ID const&);
 		friend bool operator==(ID const&, ID const&);
 	};
 
 	template<class F, class... Args>
 	explicit Thread(F&& f, Args&&... args):
-		thread<F, ExecutionToken&, Args...>(forward(f), excec, forward(args)...) {
+		BaseType(forward(f), exect, forward(args)...) {
 	}
 
 	static ID current() noexcept {
@@ -89,8 +90,7 @@ private:
 	ExcecutionToken exect;
 };
 
-template<class T>
-T operator<=>(Thread::ID const& a, Thread::ID const& b) {
+std::strong_ordering operator<=>(Thread::ID const& a, Thread::ID const& b) {
 	return a <=> b;
 }
 

@@ -16,15 +16,20 @@ enum class StandardOrder: int {
 	UNORDERED = int(1 << (sizeof(int) *8) - 1)
 };
 
-struct ValueOrder: public std::partial_ordering {
-	constexpr static auto LESS		= std::partial_ordering::less;
-	constexpr static auto EQUAL		= std::partial_ordering::equivalent;
-	constexpr static auto GREATER	= std::partial_ordering::greater;
-	constexpr static auto UNORDERED	= std::partial_ordering::unordered;
-};
+namespace Base {
+	struct Order {
+		constexpr static auto LESS		= std::partial_ordering::less;
+		constexpr static auto EQUAL		= std::partial_ordering::equivalent;
+		constexpr static auto GREATER	= std::partial_ordering::greater;
+		constexpr static auto UNORDERED	= std::partial_ordering::unordered;
+	};
+}
+
+struct ValueOrder: Base::Order {};
 
 struct Ordered {
-	typedef ValueOrder OrderType;
+	typedef decltype(ValueOrder::LESS) OrderType;
+	using Order = ValueOrder;
 };
 
 CTL_NAMESPACE_END

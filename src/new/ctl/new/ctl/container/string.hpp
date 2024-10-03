@@ -314,24 +314,6 @@ operator+(
 typedef BaseString<char>	String;
 typedef BaseString<wchar_t>	WideString;
 
-template<Type::Integer I, Type::ASCII C = char, Type::Integer S = usize>
-constexpr BaseString<C, S> toString(I const& val, usize const& base = 10) {
-	BaseString<C, S> result(64, '\0');
-	ssize i = itoa(val, result.cbegin(), result.size(), base);
-	if (i == -1)
-		throw InvalidConversionException("Failed to convert number!");
-	return result.reserve(i);
-}
-
-template<Type::Real F, Type::ASCII C = char, Type::Integer S = usize>
-constexpr BaseString<C, S> toString(F const& val, usize const& precision = sizeof(F) * 2) {
-	BaseString<C, S> result(precision * 4, '\0');
-	ssize i = ftoa(val, result.cbegin(), result.size(), precision);
-	if (i == -1)
-		throw InvalidConversionException("Failed to convert number!");
-	return result.reserve(i);
-}
-
 template<usize N, Type::ASCII TChar, Type::Integer TIndex = usize>
 struct BaseStaticString:
 	Array<N, TChar, TIndex>,

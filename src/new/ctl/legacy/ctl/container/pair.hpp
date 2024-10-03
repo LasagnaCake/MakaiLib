@@ -25,8 +25,8 @@ struct Pair:
 		Type::Comparable::Threeway<AType, AType>
 	&&	Type::Comparable::Threeway<BType, BType>
 	) {
-		ValueOrder order = a <=> other.a;
-		if (order == ValueOrder::EQUAL)
+		OrderType order = a <=> other.a;
+		if (order == OrderType::EQUAL)
 			return b <=> other.b;
 		return order;
 	}
@@ -36,7 +36,7 @@ struct Pair:
 	
 	template<Type::Constructible<AType, BType> TPair>
 	constexpr operator TPair() const	{return pair<TPair>();	}
-}
+};
 
 template<typename TKey, typename TValue>
 struct KeyValuePair:

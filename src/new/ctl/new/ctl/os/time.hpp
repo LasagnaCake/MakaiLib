@@ -38,7 +38,7 @@ namespace OS::Time {
 		constexpr static usize sinceStart() {
 			return chrono::duration_cast<T>(SysClock::now() - start).count();
 		}
-	}
+	};
 }
 
 CTL_NAMESPACE_END

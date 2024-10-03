@@ -48,7 +48,7 @@ struct Pair:
 	&&	Type::Comparable::Threeway<BType, BType>
 	) {
 		OrderType order = a <=> other.a;
-		if (order == OrderType::EQUAL)
+		if (order == Order::EQUAL)
 			return b <=> other.b;
 		return order;
 	}
@@ -94,7 +94,7 @@ struct KeyValuePair:
 	&&	Type::Comparable::Threeway<BType, BType>
 	) {
 		OrderType order = key <=> other.key;
-		if (order == OrderType::EQUAL)
+		if (order == Order::EQUAL)
 			return value <=> other.value;
 		return order;
 	}
@@ -131,7 +131,7 @@ struct LeftRightPair:
 	&&	Type::Comparable::Threeway<BType, BType>
 	) {
 		OrderType order = left <=> other.left;
-		if (order == OrderType::EQUAL)
+		if (order == Order::EQUAL)
 			return right <=> other.right;
 		return order;
 	}
@@ -174,7 +174,7 @@ struct FirstSecondPair:
 	&&	Type::Comparable::Threeway<BType, BType>
 	) {
 		OrderType order = first <=> other.first;
-		if (order == OrderType::EQUAL)
+		if (order == Order::EQUAL)
 			return second <=> other.second;
 		return order;
 	}

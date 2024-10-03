@@ -263,10 +263,10 @@ public:
 		IndexType pivot = count / 2, index = pivot;
 		while (pivot != 0) {
 			switch (contents[index] <=> value) {
-				case OrderType::EQUAL:		return index;
-				case OrderType::GREATER:	index -= (pivot /= 2);	break;
-				case OrderType::LESS:		index += (pivot /= 2);	break;
-				case OrderType::UNORDERED:	return -1;
+				case Order::EQUAL:		return index;
+				case Order::GREATER:	index -= (pivot /= 2);	break;
+				case Order::LESS:		index += (pivot /= 2);	break;
+				case Order::UNORDERED:	return -1;
 			}
 		}
 		return -1;
@@ -453,9 +453,9 @@ public:
 
 	constexpr OrderType compare(SelfType const& other)
 	requires Type::Comparable::Threeway<DataType, DataType> {
-		OrderType result = OrderType::EQUAL;
+		OrderType result = Order::EQUAL;
 		IndexType i = 0;
-		while (result == OrderType::EQUAL) {
+		while (result == Order::EQUAL) {
 			if (i == count || i == other.count)
 				return count <=> other.count;
 			result = contents[i] <=> other.contents[i];

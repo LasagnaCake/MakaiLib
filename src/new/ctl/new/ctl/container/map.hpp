@@ -121,7 +121,10 @@ public:
 		typename BaseType::ReverseIteratorType
 	;
 
-	using typename BaseType::OrderType;
+	using
+		typename BaseType::OrderType,
+		typename BaseType::Order
+	;
 
 	using
 		typename BaseType::PredicateType,
@@ -214,10 +217,10 @@ public:
 		IndexType pivot = size() / 2, index = pivot;
 		while (pivot != 0) {
 			switch (data()[index].key <=> key) {
-				case OrderType::EQUAL:		return index;
-				case OrderType::GREATER:	index -= (pivot /= 2);	break;
-				case OrderType::LESS:		index += (pivot /= 2);	break;
-				case OrderType::UNORDERED:	return -1;
+				case Order::EQUAL:		return index;
+				case Order::GREATER:	index -= (pivot /= 2);	break;
+				case Order::LESS:		index += (pivot /= 2);	break;
+				case Order::UNORDERED:	return -1;
 			}
 		}
 		return -1;

@@ -126,7 +126,7 @@ namespace Sorting {
 		for (usize run = ((hibit >> 4) > 4 ? (hibit >> 4) : 4); run < sz; run <<= 1) {
 			for (usize i = 1; i < sz; ++i) {
 				currentOrder = arr[i] <=> arr[i-1];
-				if (currentOrder != prevOrder && currentOrder != ValueOrder::EQUAL) {
+				if (currentOrder != prevOrder && currentOrder != Ordered::Order::EQUAL) {
 					if (j < run) {
 						j = (offset+j > sz) ? (sz-offset) : j;
 						Partial::mergeSort(arr+offset, j);
@@ -138,7 +138,7 @@ namespace Sorting {
 					if (i < sz)
 						prevOrder = currentOrder = arr[i+1] <=> arr[i];
 				} else ++j;
-				if (currentOrder != ValueOrder::EQUAL)
+				if (currentOrder != Ordered::Order::EQUAL)
 					prevOrder = currentOrder;
 			}
 			if (j == sz) {

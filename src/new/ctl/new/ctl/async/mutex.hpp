@@ -10,12 +10,13 @@
 CTL_NAMESPACE_BEGIN
 
 class Mutex:
-	Base::Yieldable,
+	Base::Async::Yieldable,
 	SelfIdentified<Mutex>,
-	Derived<Base::Yieldable> {
+	Derived<Base::Async::Yieldable>,
+	Ordered {
 public:
 	using SelfIdentified	= SelfIdentified<Mutex>;
-	using Derived			= Derived<Base::Yieldable>;
+	using Derived			= Derived<Base::Async::Yieldable>;
 
 	using
 		typename SelfIdentified::SelfType
@@ -26,7 +27,7 @@ public:
 	Mutex() {}
 
 	SelfType& capture()	{
-		Thread::id const thisThread = currentThreadID();
+		Thread::ID const thisThread = Thread::current();
 		if (!isCurrentOwner())
 			wait();
 		current = thisThread;
@@ -34,7 +35,7 @@ public:
 	}
 
 	bool tryCapture() {
-		Thread::id const thisThread = currentThreadID();
+		Thread::ID const thisThread = Thread::current();
 		if (!isCurrentOwner()) return false;
 		current = thisThread;
 		return true;
@@ -49,13 +50,13 @@ public:
 	SelfType& wait() {
 		if (!isCurrentOwner())
 			while(isCaptured())
-				yield();
+				asyncYield();
 		return *this;
 	}
 
 	bool isCaptured() const							{return current.value().exists();		}
 	bool isOwnedBy(Thread::ID const& thread) const	{return current == thread;				}
-	bool isCurrentOwner() const						{return current == currentThreadID();	}
+	bool isCurrentOwner() const						{return current == Thread::current();	}
 
 	bool operator==(Thread::ID const& thread)		{return isOwnedBy(thread);	}
 	OrderType operator<=>(Thread::ID const& thread)	{return current <=> thread;	}

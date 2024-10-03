@@ -89,9 +89,9 @@ struct Nulled {
 	typedef nulltype NullType;
 };
 
-template<class T, auto V>
+template<class T>
 struct Defaultable {
-	constexpr static T defaultValue() {return V;}
+	constexpr static T defaultValue() {return T();}
 };
 
 template<class TReturn>
