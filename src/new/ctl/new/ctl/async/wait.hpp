@@ -8,7 +8,9 @@
 
 CTL_NAMESPACE_BEGIN
 
-DEFINE_ERROR_TYPE(OccupiedError);
+namespace Error {
+	DEFINE_ERROR_TYPE(Occupied);
+}
 
 namespace Async {
 	template<class T = OS::Time::Millis>

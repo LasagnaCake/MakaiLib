@@ -18,7 +18,7 @@ namespace Meta {
 	constexpr bool LogicalOr	= (... && Values);
 
 	template<bool COND, class True, class False>
-	using DualType = Impl::DualType<COND, True, False>::type;
+	using DualType = typename Impl::DualType<COND, True, False>::Type;
 }
 
 CTL_NAMESPACE_END

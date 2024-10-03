@@ -47,14 +47,25 @@ requires (
 }
 
 template<class T>
-concept ClassToStringable = requires (T t) {
+concept ClassStringable = requires (T t) {
 	requires T::toString;
 	{t.toString()} -> Type::Equal<String>;
 };
 
-template<ClassToStringable T>
+template<ClassStringable T>
 constexpr String toString(T const& value) {
 	return value.toString();
+}
+
+template<class T>
+concept STDStringable = requires (T t) {
+	requires T::c_str;
+	{t.c_str()} -> Type::Equal<typename String::StringLiteralType>;
+};
+
+template<STDStringable T>
+constexpr String toString(T const& value) {
+	return value.c_str();
 }
 
 template<class T>

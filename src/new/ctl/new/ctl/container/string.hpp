@@ -91,7 +91,12 @@ public:
 		BaseType::rfind,
 		BaseType::bsearch,
 		BaseType::join,
-		BaseType::capacity
+		BaseType::capacity,
+		BaseType::operator=,
+		BaseType::replace,
+		BaseType::split,
+		BaseType::splitAtFirst,
+		BaseType::splitAtLast
 	;
 
 	constexpr BaseString() {}
@@ -116,12 +121,6 @@ public:
 		reserve(S);
 		MX::memcpy(v, cbegin(), S);
 	}
-
-	template <class T> SelfType&					replace(T const& rep)				{return BaseType::replace(rep);			}
-	template <class T> SelfType						replaced(T const& rep) const		{return BaseType::replaced(rep);		}
-	template <class T> List<SelfType, IndexType>	split(T const& sep) const			{return BaseType::split(sep);			}
-	template <class T> List<SelfType, IndexType>	splitAtFirst(T const& sep) const	{return BaseType::splitAtFirst(sep);	}
-	template <class T> List<SelfType, IndexType>	splitAtLast(T const& sep) const		{return BaseType::splitAtLast(sep);		}
 
 	constexpr OutputStreamType const& operator<<(OutputStreamType& o) const	{o << cstr(); return o;}
 	constexpr OutputStreamType& operator<<(OutputStreamType& o)				{o << cstr(); return o;}

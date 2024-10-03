@@ -117,7 +117,7 @@ struct Functional {};
 
 template<class TReturn, class... TArguments>
 struct Functional<TReturn(TArguments...)> {
-	using FunctionType = Decay::AsType<TReturn(TArguments...)>;
+	using FunctionType = Decay::AsFunction<TReturn(TArguments...)>;
 };
 
 template<class... Types>

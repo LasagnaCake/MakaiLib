@@ -8,13 +8,13 @@
 
 CTL_NAMESPACE_BEGIN
 
-template<typename T> class Functor;
+template<typename TFunction> class Functor;
 
 template<typename TReturn, typename... TArgs>
 struct Functor<TReturn(TArgs...)>:
 	Ordered,
 	Typed<TReturn>,
-	SelfIdentified<Functor<TReturn, TArgs...>>,
+	SelfIdentified<Functor<TReturn(TArgs...)>>,
 	Returnable<TReturn>,
 	Argumented<TArgs...>,
 	Functional<TReturn(TArgs...)>,
@@ -23,7 +23,7 @@ struct Functor<TReturn(TArgs...)>:
 private:
 public:
 	using Typed				= Typed<TReturn>;
-	using SelfIdentified	= SelfIdentified<Functor<TReturn, TArgs...>>;
+	using SelfIdentified	= SelfIdentified<Functor<TReturn(TArgs...)>>;
 	using Returnable		= Returnable<TReturn>;
 	using Argumented		= Argumented<TArgs...>;
 	using Functional		= Functional<TReturn(TArgs...)>;
@@ -67,19 +67,24 @@ public:
 	constexpr OrderType operator<=>(SelfType const& other) const {return id <=> other.id;}
 
 private:
-	WrapperType			func;
 	usize				id = 0;
 	inline static usize	count;
 };
 
-template<class T>						using Procedure	= Functor<void(T)>;
-template<class T, class T2 = T const&>	using Operation	= Functor<T2(T)>;
+template<class T>
+using Procedure		= Functor<void(T)>;
+
+template<class T, class T2 = T const&>
+using Operation		= Functor<T(T2)>;
+
+template<class T>
+using Acquisition	= Functor<T()>;
 
 template<class T = void>
 using Signal	= Procedure<T>;
 
 template<class T = void>
-using Trigger	= Functor<bool(T)>;
+using Trigger	= Acquisition<bool>;
 
 CTL_NAMESPACE_END
 

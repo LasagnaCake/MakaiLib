@@ -9,6 +9,7 @@
 	https://github.com/gcc-mirror/gcc/blob/master/libgcc/memset.c
 */
 
+#include "../cppfailure.hpp"
 #include "../ctypes.hpp"
 #include "../namespace.hpp"
 #include "../typetraits/traits.hpp"
@@ -33,7 +34,7 @@ namespace MX {
 
 	template<Type::NonVoid T>
 	constexpr T* memcpy(T* const& dst, T* const& src, usize const& count) {
-		return memcpy((Address)dst, (Address)src, count * sizeof(T));
+		return (T*)memcpy((Address)dst, (Address)src, count * sizeof(T));
 	}
 
 	template<Type::NonVoid T>
@@ -120,22 +121,19 @@ namespace MX {
 
 	template<Type::NonVoid T>
 	constexpr T* malloc(usize const& sz) {
-		return (T*)__builtin_malloc(sz * sizeof(T));
+		auto* m = __builtin_malloc(sz * sizeof(T));
+		if (!m) throw AllocationFailure();
+		return (T*)m;
 	}
 
 	template<Type::NonVoid T>
 	constexpr T* malloc() {
-		return (T*)__builtin_malloc(sizeof(T));
-	}
-
-	template<Type::NonVoid T>
-	constexpr void free(T* const& mem, usize const& sz) {
-		return __builtin_free(mem, sz * sizeof(T));
+		return (T*)malloc<T>(1);
 	}
 
 	template<Type::NonVoid T>
 	constexpr void free(T* const& mem) {
-		return __builtin_free(mem, sizeof(T));
+		return __builtin_free(mem);
 	}
 }
 

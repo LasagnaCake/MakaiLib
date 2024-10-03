@@ -30,15 +30,15 @@ struct Thread:
 	using Handle	= Handle<Thread>;
 	using Instance	= Instance<Thread>;
 
-	struct ExcecutionToken {
-		constexpr ExcecutionToken(Thread& source):				stop(false), source(source)				{}
-		constexpr ExcecutionToken(ExcecutionToken&& other):		stop(other.stop), source(other.source)	{}
-		constexpr ExcecutionToken(ExcecutionToken const& other)	= delete;
+	struct ExecutionToken {
+		constexpr ExecutionToken(Thread& source):				stop(false), source(source)				{}
+		constexpr ExecutionToken(ExecutionToken&& other):		stop(other.stop), source(other.source)	{}
+		constexpr ExecutionToken(ExecutionToken const& other)	= delete;
 
 		constexpr bool shouldStop() const	{return stop;			}
 		constexpr operator bool() const		{return shouldStop();	}
 
-		constexpr ExcecutionToken& requestStop() {
+		constexpr ExecutionToken& requestStop() {
 			stop = true;
 			return *this;
 		}
@@ -100,7 +100,7 @@ struct Thread:
 		return *this;
 	}
 
-	ExcecutionToken& token() {return exect;}
+	ExecutionToken& token() {return exect;}
 
 	bool running() const {
 		return thread::joinable();
@@ -109,7 +109,7 @@ struct Thread:
 	operator bool() const {return running();}
 
 private:
-	ExcecutionToken exect;
+	ExecutionToken exect;
 };
 
 namespace Base::Async {

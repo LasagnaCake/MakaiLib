@@ -15,17 +15,22 @@ class Task<R(Args...)>:
 	Functional<Promise<R>(Thread::ExecutionToken, Args...)>,
 	Returnable<Promise<R>>,
 	Argumented<Args...>,
-	SelfIdentified<Tast<R, Args...>> {
+	SelfIdentified<Task<R, Args...>> {
 public:
-	using Functional = ::CTL::Functional<Promise<R>(Thread::ExcecutionToken, Args...)>;
-	using Returnable = ::CTL::Returnable<Promise<R>>;
+	using Functional		= ::CTL::Functional<Promise<R>(Thread::ExecutionToken&, Args...)>;
+	using Returnable		= ::CTL::Returnable<Promise<R>>;
+	using SelfIdentified	= ::CTL::SelfIdentified<Task<R, Args...>>;
 
 	using
-		Functional::FunctionType
+		typename Functional::FunctionType
 	;
 
 	using
-		Returnable::ReturnType
+		typename Returnable::ReturnType
+	;
+	
+	using
+		typename SelfIdentified::SelfType
 	;
 
 	using ExecutionTokenType = Thread::ExecutionToken;
@@ -98,9 +103,10 @@ public:
 		return result;
 	}
 
-	void await() requires Type::Equal<ReturnType, void> {
+	SelfType& await() requires Type::Equal<ReturnType, void> {
 		if (running())
 			executor->join();
+		return *this;
 	}
 
 	NullableType value() requires Type::Different<ReturnType, void> {
@@ -116,7 +122,7 @@ public:
 		return executor() && executor->joinable();
 	}
 
-	Task& stop() {
+	SelfType& stop() {
 		executor.destroy();
 		return *this;
 	}

@@ -72,7 +72,7 @@ public:
 
 	constexpr List(ArgumentListType const& values) {
 		invoke(values.size());
-		for (DataType& v: values) pushBack(v);
+		for (DataType const& v: values) pushBack(v);
 	}
 
 	template<SizeType COUNT>
@@ -178,7 +178,7 @@ public:
 		DataType* newData = memcreate(newSize);
 		if (contents) {
 			copy(contents, newData, count);
-			free(contents, maximum);
+			dump();
 		}
 		maximum = newSize;
 		contents = newData;
@@ -729,8 +729,16 @@ public:
 		return *this;
 	}
 
+	constexpr SelfType replaced(DataType const& val, DataType const& rep) const				{return SelfType(*this).replace(val, rep);		}
+	constexpr SelfType replaced(SelfType const& values, DataType const& rep) const			{return SelfType(*this).replace(values, rep);	}
+	constexpr SelfType replaced(ArgumentListType const& values, DataType const& rep) const	{return SelfType(*this).replace(values, rep);	}
+
+	constexpr SelfType replaced(Replacement const& rep) const					{return SelfType(*this).replace(rep);	}
+	constexpr SelfType replaced(List<Replacement, SizeType> const& reps) const	{return SelfType(*this).replace(reps);	}
+	constexpr SelfType replaced(Arguments<Replacement> const& reps) const		{return SelfType(*this).replace(reps);	}
+
 	template<typename T>
-	constexpr SelfType replaced(T  const& rep) const {return SelfType(*this).replace(rep);}
+	constexpr SelfType replaced(T const& rep) const {return SelfType(*this).replace(rep);}
 
 	constexpr bool tight() const {return count == maximum;}
 
@@ -744,7 +752,7 @@ private:
 	constexpr static void memdestroy(PointerType const& p, SizeType const& sz) {
 		for (auto i = p; i != (p+sz); ++i)
 			delete i;
-		MX::free<DataType>(p, sz);
+		MX::free<DataType>(p);
 	}
 
 	constexpr static DataType* memcreate(SizeType const& sz) {
@@ -803,7 +811,7 @@ private:
 	}
 
 	[[noreturn]] constexpr void atItsLimitError() {
-		throw MaximumSizeFailure("Maximum list capacity reached!");
+		throw MaximumSizeFailure();
 	}
 
 	[[noreturn]] constexpr void outOfBoundsError(IndexType const& index) {

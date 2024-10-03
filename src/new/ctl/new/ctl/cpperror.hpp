@@ -4,15 +4,9 @@
 #include "namespace.hpp"
 #include "staticvalue.hpp"
 #include "templates.hpp"
+#include "cppfailure.hpp"
 
 CTL_NAMESPACE_BEGIN
-
-struct Failure {};
-
-struct CatastrophicFailure: Failure {};
-
-struct AllocationFailure:	CatastrophicFailure {};
-struct MaximumSizeFailure:	CatastrophicFailure {};
 
 struct Exception;
 

@@ -72,7 +72,7 @@ namespace Error {
 CTL_NAMESPACE_END
 
 #define DEFINE_ERROR_TYPE(NAME)\
-	struct NAME: public CTL::Error::Generic {\
+	struct NAME: public ::CTL::Error::Generic {\
 		NAME (\
 			CTL::String const& message		= "none",\
 			CTL::String const& file			= "unspecified",\
