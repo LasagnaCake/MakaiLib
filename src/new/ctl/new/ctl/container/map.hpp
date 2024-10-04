@@ -138,7 +138,7 @@ public:
 		IndexType i = find(key);
 		if (i == -1) {
 			BaseType::pushBack({key}).sort();
-			return data()[find(key)].value;
+			return data()[bsearch(key)].value;
 		} else return data()[i].value;
 	}
 
