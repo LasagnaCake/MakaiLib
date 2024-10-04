@@ -300,7 +300,8 @@ public:
 
 	template<class T>
 	constexpr SelfType& operator=(T const& arg) const			{BaseType::operator=(arg); return *this;	}
-	constexpr SelfType& operator=(SelfType const& other) const	{BaseType::operator=(other); return *this;	}
+	constexpr SelfType& operator=(SelfType const& other) const		{BaseType::operator=(other); return *this;	}
+	constexpr SelfType& operator=(StringLiteralType const& other) const	{return *this = SelfType(other);		}
 
 	constexpr SelfType const& operator<<(SelfType& other) const	{other.appendBack(*this); return *this;}
 	constexpr SelfType& operator<<(SelfType& other)				{other.appendBack(*this); return *this;}
