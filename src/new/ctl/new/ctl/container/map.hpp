@@ -18,9 +18,9 @@ struct BaseSimpleMap:
 	SelfIdentified<SimpleMap<TKey, TValue, TIndex>>,
 	private List<KeyValuePair<TKey, TValue>, TIndex> {
 public:
-	static_assert(Type::Comparable::Threeway<TKey, TKey>, "Cannot form a map whithout an orderable key!");
-
 	constexpr static bool SORTED = isSorted;
+
+	static_assert(SORTED && Type::Comparable::Threeway<TKey, TKey>, "Cannot form a sortable map whithout an orderable key!");
 
 	using Derived			= ::CTL::Derived<List<KeyValuePair<TKey, TValue>, TIndex>>;
 	using Collected			= ::CTL::Collected<TKey, TValue, KeyValuePair>;
