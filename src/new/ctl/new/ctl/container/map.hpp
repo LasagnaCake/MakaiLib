@@ -11,14 +11,14 @@
 
 CTL_NAMESPACE_BEGIN
 
-template<class TKey, class TValue, Type::Integer TIndex = usize, bool isSorted = true>
+template<class TKey, class TValue, Type::Integer TIndex = usize, bool AUTO_SORTED = true>
 struct BaseSimpleMap:
 	Collected<TKey, TValue, KeyValuePair>,
 	Derived<List<KeyValuePair<TKey, TValue>, TIndex>>,
 	SelfIdentified<SimpleMap<TKey, TValue, TIndex>>,
 	private List<KeyValuePair<TKey, TValue>, TIndex> {
 public:
-	constexpr static bool SORTED = isSorted;
+	constexpr static bool IS_SORTED = AUTO_SORTED;
 
 	static_assert(SORTED && Type::Comparable::Threeway<TKey, TKey>, "Cannot form a sortable map whithout an orderable key!");
 
