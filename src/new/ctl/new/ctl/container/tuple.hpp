@@ -35,7 +35,7 @@ namespace Impl {
 		using typename Polyglot::DataTypes;
 
 		template<usize INDEX>
-		constexpr DataTypes::Types<INDEX>& get()
+		constexpr auto& get()
 		requires (INDEX < DataTypes::COUNT) {
 			return get<INDEX>(*this);
 		}
@@ -44,12 +44,6 @@ namespace Impl {
 		constexpr static T1& get(TuplePack<N1, T1, Types1...>& tup)
 		requires (N1 < TuplePack<N1, T1, Types1...>::DataTypes::COUNT) {
 			return tup.TupleItem<N1, T1>::value;
-		}
-
-		template<usize I>
-		constexpr static T1& get()
-		requires (I < TuplePack<N, T, Types...>::DataTypes::COUNT) {
-			return TupleItem<I, T>::value;
 		}
 	};
 

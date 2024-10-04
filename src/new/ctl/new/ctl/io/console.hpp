@@ -31,10 +31,6 @@ struct Console {
 		print(args..., "\n");
 	}
 
-	static void flush() {
-		print(std::endl);
-	}
-
 	template<typename... Args>
 	static void syncprint(Args... args) {
 		Fold::strins(std::osyncstream(out), args...);
@@ -45,8 +41,8 @@ struct Console {
 		syncprint(args..., "\n");
 	}
 
-	static void syncflush() {
-		syncprint(std::endl);
+	static void flush() {
+		out.flush();
 	}
 
 	template<class T>

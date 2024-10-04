@@ -65,10 +65,10 @@ public:
 
 	using typename Ordered::OrderType;
 
-	using STLForwardIterator	= std::common_iterator<PointerType, PointerType>;
+	using STLForwardIterator	= PointerType;
 	using STLReverseIterator	= std::reverse_iterator<PointerType>;
 
-	using STLConstForwardIterator	= std::common_iterator<ConstPointerType, ConstPointerType>;
+	using STLConstForwardIterator	= ConstPointerType;
 	using STLConstReverseIterator	= std::reverse_iterator<ConstPointerType>;
 
 	constexpr Iterator() {}
@@ -104,9 +104,9 @@ public:
 	constexpr Iterator operator-(IndexType const& value) const	{return offset<REVERSE>(value);				}
 	constexpr Iterator operator+(IndexType const& value) const	{return offset<REVERSE>(value);				}
 
-	constexpr operator STLForwardIterator() requires(!REVERSE)				{return iterand;}
+	//constexpr operator STLForwardIterator() requires(!REVERSE)				{return iterand;}
 	constexpr operator STLReverseIterator() requires(REVERSE)				{return iterand;}
-	constexpr operator STLConstForwardIterator() const requires(!REVERSE)	{return iterand;}
+	//constexpr operator STLConstForwardIterator() const requires(!REVERSE)	{return iterand;}
 	constexpr operator STLConstReverseIterator() const requires(REVERSE)	{return iterand;}
 private:
 	constexpr PointerType iter() {

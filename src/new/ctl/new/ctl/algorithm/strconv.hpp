@@ -48,7 +48,6 @@ requires (
 
 template<class T>
 concept ClassStringable = requires (T t) {
-	requires T::toString;
 	{t.toString()} -> Type::Equal<String>;
 };
 
@@ -59,7 +58,6 @@ constexpr String toString(T const& value) {
 
 template<class T>
 concept STDStringable = requires (T t) {
-	requires T::c_str;
 	{t.c_str()} -> Type::Equal<typename String::StringLiteralType>;
 };
 

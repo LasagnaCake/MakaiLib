@@ -103,7 +103,7 @@ namespace Math {
 	template<Type::Number T = float>
 	constexpr T floor(T const& val, int const& decimals) {
 		// Get rounding factor
-		T zeros = pow(10, decimals);
+		T zeros = pow<floatmax>(10, decimals);
 		// Floor it
 		return (T)(::floor(val * zeros) / zeros);
 	}
@@ -116,7 +116,7 @@ namespace Math {
 	template<Type::Number T = float>
 	constexpr T ceil(T const& val, int const& decimals) {
 		// Get rounding factor
-		T zeros = pow(10, decimals);
+		T zeros = pow<floatmax>(10, decimals);
 		// Ceil it
 		return (T)(::ceil(val * zeros) / zeros);
 	}
@@ -130,7 +130,7 @@ namespace Math {
 	template<Type::Number T = float>
 	constexpr T round(T const& val, int const& decimals) {
 		// Get rounding factor
-		T zeros = pow(10, decimals);
+		T zeros = pow<floatmax>(10, decimals);
 		// Add 1/2 & floor it
 		return (T)(::floor((val + 0.5) * zeros) / zeros);
 	}

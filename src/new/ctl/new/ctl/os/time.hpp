@@ -1,6 +1,7 @@
 #ifndef CTL_OS_TIME_H
 #define CTL_OS_TIME_H
 
+#include <chrono>
 #include "../namespace.hpp"
 
 CTL_NAMESPACE_BEGIN

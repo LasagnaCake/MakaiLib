@@ -17,16 +17,16 @@ private:
 	template<typename T>
 	using RealDist = std::uniform_real_distribution<T>;
 
+	template <Type::Number T>
+	using Distribution = Meta::DualType<Type::Integer<T>, IntDist<T>, RealDist<T>>;
+
 	// The current seed
 	inline static usize	seed = OS::Time::Clock::sinceEpoch<OS::Time::Millis>();
 	// The random number generator engine used
 	inline static Engine engine{seed};
 	// Default distributions
-	inline static IntDist<usize>	longDist(0, NumberLimit<usize>::HIGHEST);
-	inline static RealDist<double>	realDist(0.0, 1.0);
-
-	template <Type::Number T>
-	using Distribution = Meta::DualType<Type::Integer<T>, IntDist<T>, RealDist<T>>;
+	inline static Distribution<usize>	longDist = Distribution<usize>(0, NumberLimit<usize>::HIGHEST);
+	inline static Distribution<double>	realDist = Distribution<double>(0.0, 1.0);
 public:
 
 	/// Returns a random double between 0 and 1.
@@ -67,20 +67,20 @@ public:
 
 	/// Sets the random number generator's seed.
 	static void setSeed(usize const& seed) {
-		engine = RandomEngine{seed};
-		this->seed = seed;
+		engine = Engine{seed};
+		Random::seed = seed;
 	}
 
-	/// Sets the random number generator's seed.
+	/// Gets the random number generator's current seed.
 	static usize getSeed() {
 		return seed;
 	}
 
 	/// Gets a seed based on the current clock's time, and a random number.
 	static usize generateNewSeed() {
-		return OS::Time::sinceEpoch<OS::Time::Millis>() ^ !(integer() << 0x2F);
+		return OS::Time::Clock::sinceEpoch<OS::Time::Millis>() ^ !(integer() << 0x2F);
 	}
-}
+};
 
 CTL_NAMESPACE_END
 

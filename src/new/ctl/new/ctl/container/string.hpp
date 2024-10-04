@@ -77,12 +77,8 @@ public:
 		BaseType::end,
 		BaseType::rbegin,
 		BaseType::rend,
-		BaseType::pushBack,
-		BaseType::popBack,
-		BaseType::appendBack,
 		BaseType::front,
 		BaseType::back,
-		BaseType::insert,
 		BaseType::transformed,
 		BaseType::validate,
 		BaseType::size,
@@ -90,13 +86,15 @@ public:
 		BaseType::find,
 		BaseType::rfind,
 		BaseType::bsearch,
-		BaseType::join,
 		BaseType::capacity,
-		BaseType::operator=,
-		BaseType::replace,
 		BaseType::split,
 		BaseType::splitAtFirst,
-		BaseType::splitAtLast
+		BaseType::splitAtLast,
+		BaseType::replace,
+		BaseType::replaced,
+		BaseType::appendBack,
+		BaseType::pushBack,
+		BaseType::popBack
 	;
 
 	constexpr BaseString() {}
@@ -108,6 +106,15 @@ public:
 		while (v[len++] != '\0' && len <= MAX_SIZE);
 		reserve(len);
 		MX::memcpy(data(), v, len * sizeof(DataType));
+	}
+
+	template<class T>
+	constexpr BaseString(T const& other)
+	requires requires (T t) {
+		{t.begin()} -> Type::Equal<IteratorType>;
+		{t.end()} -> Type::Equal<IteratorType>;
+	}:
+		BaseType(other.begin(), other.end()) {
 	}
 
 	template<class... Args>
@@ -135,6 +142,10 @@ public:
 	constexpr InputStreamType& readFrom(InputStreamType& i) {
 		return readFromStream(i, '\0');
 	}
+
+	template<class T>
+	constexpr SelfType& operator=(T const& arg) const			{BaseType::operator=(arg); return *this;	}
+	constexpr SelfType& operator=(SelfType const& other) const	{BaseType::operator=(other); return *this;	}
 
 	constexpr SelfType const& operator<<(SelfType& other) const	{other.appendBack(*this); return *this;}
 	constexpr SelfType& operator<<(SelfType& other)				{other.appendBack(*this); return *this;}

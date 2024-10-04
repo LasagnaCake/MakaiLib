@@ -111,10 +111,22 @@ public:
 
 	template<class T>
 	constexpr List(T const& other)
-	requires requires {
-		T::begin;
-		T::end;
+	requires requires (T t) {
+		{t.begin()} -> Type::Equal<IteratorType>;
+		{t.end()} -> Type::Equal<IteratorType>;
 	}: List(other.begin(), other.end()) {}
+
+	template<class T>
+	constexpr List(List<T, SizeType> const& other)
+	requires requires (T t) {
+		{t.begin()} -> Type::Equal<IteratorType>;
+		{t.end()} -> Type::Equal<IteratorType>;
+		requires Type::Constructible<DataType, IteratorType, IteratorType>;
+	} {
+		invoke(other.size());
+		for (auto& v: other)
+			pushBack(DataType(v.begin(), v.end()));
+	}
 
 	constexpr ~List() {if (contents) dump();}
 
@@ -529,7 +541,7 @@ public:
 		}
 	}
 
-	constexpr List<SelfType, IndexType> split(List const& seps) const {
+	constexpr List<SelfType, IndexType> split(SelfType const& seps) const {
 		List<SelfType, IndexType> res;
 		SelfType buf;
 		for (DataType& v : *this) {
@@ -542,7 +554,7 @@ public:
 		}
 	}
 
-	constexpr List<SelfType, IndexType> split(ArgumentListType const& seps) const {
+	/*constexpr List<SelfType, IndexType> split(ArgumentListType const& seps) const {
 		List<SelfType, IndexType> res;
 		SelfType buf;
 		for (DataType& v : *this) {
@@ -558,7 +570,7 @@ public:
 				continue;
 			buf.pushBack(v);
 		}
-	}
+	}*/
 
 	constexpr List<SelfType, IndexType> splitAtFirst(DataType const& sep) const {
 		List<SelfType, IndexType> res;
@@ -581,7 +593,7 @@ public:
 		return res.pushBack({sliced(0, idx), sliced(idx, count)});
 	}
 
-	constexpr List<SelfType, IndexType> splitAtFirst(ArgumentListType const& seps) const {
+	/*constexpr List<SelfType, IndexType> splitAtFirst(ArgumentListType const& seps) const {
 		List<SelfType, IndexType> res;
 		IndexType idx = -1;
 		for(DataType const& sep: seps) {
@@ -592,7 +604,7 @@ public:
 		if (idx < 0)
 			return res.pushBack(*this);
 		return res.pushBack({sliced(0, idx), sliced(idx, count)});
-	}
+	}*/
 
 	constexpr List<SelfType, IndexType> splitAtLast(DataType const& sep) const {
 		List<SelfType, IndexType> res;
@@ -615,7 +627,7 @@ public:
 		return res.pushBack({sliced(0, idx), sliced(idx, count)});
 	}
 
-	constexpr List<SelfType, IndexType> splitAtLast(ArgumentListType const& seps) const {
+	/*constexpr List<SelfType, IndexType> splitAtLast(ArgumentListType const& seps) const {
 		List<SelfType, IndexType> res;
 		IndexType idx = -1;
 		for(DataType const& sep: seps) {
@@ -626,7 +638,7 @@ public:
 		if (idx < 0)
 			return res.pushBack(*this);
 		return res.pushBack({sliced(0, idx), sliced(idx, count)});
-	}
+	}*/
 
 	constexpr SelfType& transform(Function<DataType(DataType const&)> fun) {
 		for(DataType& v: *this)
@@ -701,11 +713,11 @@ public:
 		return *this;
 	}
 
-	constexpr SelfType& replace(ArgumentListType const& values, DataType const& rep) {
+	/*constexpr SelfType& replace(ArgumentListType const& values, DataType const& rep) {
 		for (DataType const& val: values)
 			replace(val, rep);
 		return *this;
-	}
+	}*/
 
 	struct Replacement {
 		SelfType	targets;
@@ -723,22 +735,19 @@ public:
 		return *this;
 	}
 
-	constexpr SelfType& replace(Arguments<Replacement> const& reps) {
+	/*constexpr SelfType& replace(Arguments<Replacement> const& reps) {
 		for (Replacement const& rep: reps)
 			replace(rep);
 		return *this;
-	}
+	}*/
 
 	constexpr SelfType replaced(DataType const& val, DataType const& rep) const				{return SelfType(*this).replace(val, rep);		}
 	constexpr SelfType replaced(SelfType const& values, DataType const& rep) const			{return SelfType(*this).replace(values, rep);	}
-	constexpr SelfType replaced(ArgumentListType const& values, DataType const& rep) const	{return SelfType(*this).replace(values, rep);	}
+	//constexpr SelfType replaced(ArgumentListType const& values, DataType const& rep) const	{return SelfType(*this).replace(values, rep);	}
 
 	constexpr SelfType replaced(Replacement const& rep) const					{return SelfType(*this).replace(rep);	}
 	constexpr SelfType replaced(List<Replacement, SizeType> const& reps) const	{return SelfType(*this).replace(reps);	}
-	constexpr SelfType replaced(Arguments<Replacement> const& reps) const		{return SelfType(*this).replace(reps);	}
-
-	template<typename T>
-	constexpr SelfType replaced(T const& rep) const {return SelfType(*this).replace(rep);}
+	//constexpr SelfType replaced(Arguments<Replacement> const& reps) const		{return SelfType(*this).replace(reps);	}
 
 	constexpr bool tight() const {return count == maximum;}
 
