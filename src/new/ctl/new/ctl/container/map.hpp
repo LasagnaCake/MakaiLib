@@ -11,93 +11,16 @@
 
 CTL_NAMESPACE_BEGIN
 
-template<class TKey, class TValue, template <class TPairKey, class TPairValue> class TPair = Pair>
-struct Collected {
-	typedef Typed<TKey>			Key;
-	typedef Typed<TValue>		Value;
-
-	typedef TKey				KeyType;
-	typedef TValue				ValueType;
-	typedef TPair<TKey, TValue>	PairType;
-};
-
-template<class TKey, class TValue, Type::Integer TIndex = usize>
-struct OrderedMap:
-	List<KeyValuePair<TKey, TValue>, TIndex>,
-	Collected<TKey, TValue, KeyValuePair>,
-	SelfIdentified<OrderedMap<TKey, TValue, TIndex>>,
-	Derived<List<KeyValuePair<TKey, TValue>, TIndex>> {
-public:
-	static_assert(Type::Comparable::Threeway<TKey, TKey>, "Cannot form a map whithout an orderable key!");
-
-	using Derived			= ::CTL::Derived<List<KeyValuePair<TKey, TValue>, TIndex>>;
-	using Collected			= ::CTL::Collected<TKey, TValue, KeyValuePair>;
-	using SelfIdentified	= ::CTL::SelfIdentified<OrderedMap<TKey, TValue, TIndex>>;
-
-	using typename Derived::BaseType;
-
-	using
-		typename Collected::KeyType,
-		typename Collected::ValueType,
-		typename Collected::PairType
-	;
-
-	using typename SelfIdentified::SelfType;
-
-	using
-		typename BaseType::ArgumentListType,
-		typename BaseType::SizeType,
-		typename BaseType::IndexType
-	;
-
-	using
-		BaseType::BaseType,
-		BaseType::empty,
-		BaseType::size,
-		BaseType::cbegin,
-		BaseType::cend
-	;
-
-	constexpr ValueType at(KeyType const& key) const {
-		if (empty()) return ValueType();
-		PairType* start = cbegin();
-		while(start != cend()) {
-			if (start->key == key) return start->value;
-			++start;
-		}
-		return ValueType();
-	}
-
-	constexpr ValueType& operator[](KeyType const& key) {
-		if (empty()) return pushBack({key}).back().value;
-		PairType* start = cbegin();
-		while(start != cend()) {
-			if (start->key == key) return start->value;
-			++start;
-		}
-		return pushBack({key}).back().value;
-	}
-
-	constexpr ValueType operator[](KeyType const& key) const	{return at(key);}
-
-	constexpr bool contains(KeyType const& key) const {
-		if (empty()) return false;
-		for(ValueType& e: (*this))
-			if (e.key == key) return true;
-		return false;
-	}
-
-private:
-};
-
-template<class TKey, class TValue, Type::Integer TIndex = usize>
-struct SimpleMap:
+template<class TKey, class TValue, Type::Integer TIndex = usize, bool isSorted = true>
+struct BaseSimpleMap:
 	Collected<TKey, TValue, KeyValuePair>,
 	Derived<List<KeyValuePair<TKey, TValue>, TIndex>>,
 	SelfIdentified<SimpleMap<TKey, TValue, TIndex>>,
 	private List<KeyValuePair<TKey, TValue>, TIndex> {
 public:
 	static_assert(Type::Comparable::Threeway<TKey, TKey>, "Cannot form a map whithout an orderable key!");
+
+	constexpr static bool SORTED = isSorted;
 
 	using Derived			= ::CTL::Derived<List<KeyValuePair<TKey, TValue>, TIndex>>;
 	using Collected			= ::CTL::Collected<TKey, TValue, KeyValuePair>;
@@ -154,37 +77,43 @@ public:
 		BaseType::empty
 	;
 
-	constexpr SimpleMap(): BaseType() {}
+	constexpr BaseSimpleMap(): BaseType() {}
 
-	constexpr SimpleMap(SizeType const& size): BaseType(size) {}
+	constexpr BaseSimpleMap(SizeType const& size): BaseType(size) {}
 
-	constexpr SimpleMap(ArgumentListType const& values): BaseType(values) {
-		filter(UNIQUE_VALUES).sort();
+	constexpr BaseSimpleMap(ArgumentListType const& values): BaseType(values) {
+		filter(UNIQUE_VALUES);
+		update();
 	}
 
 	template<SizeType N>
-	constexpr explicit SimpleMap(Decay::AsType<PairType[N]> const& values): BaseType(values, N) {
-		filter(UNIQUE_VALUES).sort();
+	constexpr explicit BaseSimpleMap(Decay::AsType<PairType[N]> const& values): BaseType(values, N) {
+		filter(UNIQUE_VALUES);
+		update();
 	}
 
-	constexpr SimpleMap(BaseType const& other): BaseType(other) {
-		filter(UNIQUE_VALUES).sort();
+	constexpr BaseSimpleMap(BaseType const& other): BaseType(other) {
+		filter(UNIQUE_VALUES);
+		update();
 	}
 
-	constexpr SimpleMap(BaseType&& other): BaseType(CTL::move(other)) {
-		filter(UNIQUE_VALUES).sort();
+	constexpr BaseSimpleMap(BaseType&& other): BaseType(CTL::move(other)) {
+		filter(UNIQUE_VALUES);
+		update();
 	}
 
-	constexpr SimpleMap(SelfType const& other): BaseType(other) {}
+	constexpr BaseSimpleMap(SelfType const& other): BaseType(other) {}
 
-	constexpr SimpleMap(SelfType&& other): BaseType(CTL::move(other)) {}
+	constexpr BaseSimpleMap(SelfType&& other): BaseType(CTL::move(other)) {}
 
-	constexpr SimpleMap(IteratorType const& begin, IteratorType const& end): BaseType(begin, end) {
-		filter(UNIQUE_VALUES).sort();
+	constexpr BaseSimpleMap(IteratorType const& begin, IteratorType const& end): BaseType(begin, end) {
+		filter(UNIQUE_VALUES);
+		update();
 	}
 
-	constexpr SimpleMap(ReverseIteratorType const& begin, ReverseIteratorType const& end): BaseType(begin, end) {
-		filter(UNIQUE_VALUES).sort();
+	constexpr BaseSimpleMap(ReverseIteratorType const& begin, ReverseIteratorType const& end): BaseType(begin, end) {
+		filter(UNIQUE_VALUES);
+		update();
 	}
 
 	constexpr ValueType at(KeyType const& key) const
@@ -274,39 +203,48 @@ public:
 	}
 
 	constexpr SelfType& append(SelfType const& other) {
-		BaseType::appendBack(other.filtered(NOT_IN_MAP)).sort();
+		BaseType::appendBack(other.filtered(NOT_IN_MAP));
+		update();
 		return *this;
 	}
 
 	constexpr SelfType& append(ArgumentListType const& values) {
-		BaseType::appendBack(SelfType(values).filtered(NOT_IN_MAP)).sort();
+		BaseType::appendBack(SelfType(values).filtered(NOT_IN_MAP));
+		update();
 		return *this;
 	}
 
 	constexpr SelfType& append(SizeType const& count, PairType const& fill) {
-		BaseType::appendBack(SelfType(count, fill).filtered(NOT_IN_MAP)).sort();
+		BaseType::appendBack(SelfType(count, fill).filtered(NOT_IN_MAP));
+		update();
 		return *this;
 	}
 
 	constexpr SelfType& append(IteratorType const& begin, IteratorType const& end) {
-		BaseType::appendBack(SelfType(begin, end).filtered(NOT_IN_MAP)).sort();
+		BaseType::appendBack(SelfType(begin, end).filtered(NOT_IN_MAP));
+		update();
 		return *this;
 	}
 
 	constexpr SelfType& append(ReverseIteratorType const& begin, ReverseIteratorType const& end) {
-		BaseType::appendBack(SelfType(begin, end).filtered(NOT_IN_MAP)).sort();
+		BaseType::appendBack(SelfType(begin, end).filtered(NOT_IN_MAP));
+		update();
 		return *this;
 	}
 
 	template<SizeType S>
 	constexpr SelfType& append(Decay::AsType<PairType[S]> const& values) {
-		BaseType::appendBack(SelfType(values, S).filtered(NOT_IN_MAP)).sort();
+		BaseType::appendBack(SelfType(values, S).filtered(NOT_IN_MAP));
+		update();
 		return *this;
 	}
 
 private:
 	constexpr static CompareType const	UNIQUE_VALUES	= [](PairType const& a, PairType const& b){return a.key != b.key;};
 	PredicateType const					NOT_IN_MAP		= [this](PairType const& pair){return !contains(pair.key);};
+
+	void update() requires (SORTED)		{sort();	}
+	void update() requires (!SORTED)	{			}
 };
 
 /*
@@ -324,8 +262,14 @@ requires (
 }
 */
 
-template<class TKey, class TValue>
-using Map	= SimpleMap<TKey, TValue>;
+template<class TKey, class TValue, Type::Integer TIndex = usize>
+using OrderedMap	= BaseSimpleMap<TKey, TValue, TIndex, false>;
+
+template<class TKey, class TValue, Type::Integer TIndex = usize>
+using SimpleMap		= BaseSimpleMap<TKey, TValue, TIndex, true>;
+
+template<class TKey, class TValue, Type::Integer TIndex = usize>
+using Map	= SimpleMap<TKey, TValue, TIndex>;
 
 CTL_NAMESPACE_END
 
