@@ -72,6 +72,7 @@ public:
 		BaseType::rend,
 		BaseType::sort,
 		BaseType::size,
+		BaseType::filter,
 		BaseType::filtered,
 		BaseType::capacity,
 		BaseType::empty
