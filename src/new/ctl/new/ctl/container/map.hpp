@@ -135,7 +135,7 @@ public:
 
 	constexpr ValueType& operator[](KeyType const& key) {
 		if (empty()) return pushBack({key}).back().value;
-		IndexType i = find(key);
+		IndexType i = bsearch(key);
 		if (i == -1) {
 			BaseType::pushBack({key}).sort();
 			return data()[bsearch(key)].value;
