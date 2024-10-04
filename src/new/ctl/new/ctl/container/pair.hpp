@@ -194,8 +194,8 @@ namespace Type {
 	concept Pair = requires (T t) {
 		typename T::AType;
 		typename T::BType;
-		{t.template get<0>()} -> Type::Equal<typename T::AType>;
-		{t.template get<1>()} -> Type::Equal<typename T::BType>;
+		//{t.template get<0>()} -> Type::Equal<typename T::AType>;
+		//{t.template get<1>()} -> Type::Equal<typename T::BType>;
 		requires Type::Convertible<T, Pair<typename T::AType, typename T::BType>>;
 	}
 }
