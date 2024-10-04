@@ -83,7 +83,7 @@ public:
 	constexpr BaseSimpleMap(SizeType const& size): BaseType(size) {}
 
 	constexpr BaseSimpleMap(ArgumentListType const& values): BaseType(values) {
-		filter(UNIQUE_VALUES);
+		clean();
 		update();
 	}
 
