@@ -243,7 +243,7 @@ private:
 	constexpr static CompareType const	UNIQUE_VALUES	= [](PairType const& a, PairType const& b){return a.key != b.key;};
 	PredicateType const					NOT_IN_MAP		= [this](PairType const& pair){return !contains(pair.key);};
 
-	constexpr void update() requires (SORTED)		{sort();	}
+	constexpr void update() requires (SORTED)	{sort();	}
 	constexpr void update() requires (!SORTED)	{			}
 };
 
