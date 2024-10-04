@@ -678,7 +678,7 @@ public:
 	}
 
 	constexpr SelfType uniques() {
-		return filtered([](ConstReferenceType a, ConstReferenceType b){return a == b;});
+		return filtered([](ConstReferenceType a, ConstReferenceType b){return a != b;});
 	}
 
 	template <Type::Equal<DataType> T>
