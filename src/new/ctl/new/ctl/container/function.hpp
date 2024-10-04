@@ -36,7 +36,7 @@ struct Function<TReturn(TArgs...)>:
 	Returnable<TReturn>,
 	Argumented<TArgs...>,
 	Functional<TReturn(TArgs...)> {
-private:
+public:
 	using Functional		= ::CTL::Functional<TReturn(TArgs...)>;
 	using SelfIdentified	= ::CTL::SelfIdentified<Function<TReturn(TArgs...)>>;
 	using Typed				= ::CTL::Typed<TReturn>;
@@ -51,6 +51,7 @@ private:
 		typename Returnable::ReturnType
 	;
 
+private:
 	Impl::Partial::Function<ReturnType, TArgs...>* func{nullptr};
 
 	template<typename TFunction>

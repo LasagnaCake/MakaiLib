@@ -25,15 +25,21 @@ struct Span:
 	using Iteratable = Iteratable<TData, TIndex>;
 
 	using
-		Iteratable::IndexType,
-		Iteratable::SizeType
+		typename Iteratable::IteratorType,
+		typename Iteratable::ConstIteratorType,
+		typename Iteratable::ReverseIteratorType,
+		typename Iteratable::ConstReverseIteratorType,
+		typename Iteratable::IndexType,
+		typename Iteratable::SizeType
 	;
 
 	using
-		Iteratable::DataType,
-		Iteratable::ReferenceType,
-		Iteratable::ConstantType,
-		Iteratable::ConstReferenceType
+		typename Iteratable::DataType,
+		typename Iteratable::ReferenceType,
+		typename Iteratable::PointerType,
+		typename Iteratable::ConstPointerType,
+		typename Iteratable::ConstantType,
+		typename Iteratable::ConstReferenceType
 	;
 
 	consteval static bool isStatic() {
@@ -44,15 +50,15 @@ struct Span:
 		return (S == DYNAMIC_SIZE || EXTENT == ExtentSize::CES_STATIC);
 	}
 
-	constexpr Span() noexcept: data(nullptr), count(0) {}
+	constexpr Span() noexcept: contents(nullptr), count(0) {}
 
 	constexpr Span(Span const& other) noexcept = default;
 
-	explicit (isDynamic())	constexpr Span(PointerType const& data): data(data)													{}
-	explicit (isDynamic())	constexpr Span(IteratorType const& begin): data(begin)												{}
+	explicit (isDynamic())	constexpr Span(PointerType const& data): contents(data)													{}
+	explicit (isDynamic())	constexpr Span(IteratorType const& begin): contents(begin)												{}
 
-	explicit (isStatic())	constexpr Span(PointerType const& data, SizeType const& size): data(data), count(size)				{}
-	explicit (isStatic())	constexpr Span(IteratorType const& begin, IteratorType const& end): data(begin), count(end - begin)	{}
+	explicit (isStatic())	constexpr Span(PointerType const& data, SizeType const& size): contents(data), count(size)				{}
+	explicit (isStatic())	constexpr Span(IteratorType const& begin, IteratorType const& end): contents(begin), count(end - begin)	{}
 
 	constexpr ReferenceType operator[](IndexType index) {
 		assertExists();
@@ -95,8 +101,8 @@ struct Span:
 	constexpr ConstReferenceType	front() const	{return contents[0];		}
 	constexpr ConstReferenceType	back() const	{return contents[count-1];	}
 
-	constexpr PointerType size()	{return count;		}
-	constexpr PointerType empty()	{return count == 0;	}
+	constexpr SizeType size() const	{return count;		}
+	constexpr bool empty() const	{return count == 0;	}
 
 private:
 	constexpr void assertExists() {

@@ -76,7 +76,7 @@ public:
 	}
 
 	template<SizeType COUNT>
-	constexpr List(DataType const(& values)[COUNT]) {
+	constexpr explicit List(Decay::AsType<DataType[COUNT]> const& values) {
 		invoke(size);
 		copy(values, contents, COUNT);
 		count = COUNT;

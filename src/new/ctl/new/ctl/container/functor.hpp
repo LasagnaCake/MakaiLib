@@ -22,12 +22,8 @@ struct Functor<TReturn(TArgs...)>:
 	private Function<TReturn(TArgs...)> {
 private:
 public:
-	using Typed				= Typed<TReturn>;
-	using SelfIdentified	= SelfIdentified<Functor<TReturn(TArgs...)>>;
-	using Returnable		= Returnable<TReturn>;
-	using Argumented		= Argumented<TArgs...>;
-	using Functional		= Functional<TReturn(TArgs...)>;
-	using Derived			= Derived<Function<TReturn(TArgs...)>>;
+	using SelfIdentified	= ::CTL::SelfIdentified<Functor<TReturn(TArgs...)>>;
+	using Derived			= ::CTL::Derived<Function<TReturn(TArgs...)>>;
 
 	using typename Derived::BaseType;
 
@@ -36,7 +32,7 @@ public:
 	;
 
 	using
-		typename Returnable::ReturnType
+		typename BaseType::ReturnType
 	;
 
 	using

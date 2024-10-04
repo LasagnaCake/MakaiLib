@@ -163,7 +163,7 @@ public:
 	}
 
 	template<SizeType N>
-	constexpr SimpleMap(Decay::AsType<PairType[N]> const& values): BaseType(values, N) {
+	constexpr explicit SimpleMap(Decay::AsType<PairType[N]> const& values): BaseType(values, N) {
 		filter(UNIQUE_VALUES).sort();
 	}
 

@@ -10,12 +10,12 @@ CTL_NAMESPACE_BEGIN
 
 template<typename TData, typename TError>
 class Result:
-public SelfIdentitied<Result<TData, TError>>,
+public SelfIdentified<Result<TData, TError>>,
 public Typed<TData>,
-public Defaultable<TData, TData()> {
+public Defaultable<TData> {
 public:
 	using Typed				= Typed<TData>;
-	using SelfIdentified	= SelfIdentitied<Result<TData, TError>>;
+	using SelfIdentified	= SelfIdentified<Result<TData, TError>>;
 
 	using
 		typename Typed::DataType,

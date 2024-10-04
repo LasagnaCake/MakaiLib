@@ -11,21 +11,25 @@ struct Setter:
 	Typed<TData> {
 private:
 public:
-	typedef Typed<TData> Typed;
-	using typename Typed::DataType;
+	using Typed				= ::CTL::Typed<TData>;
+	using SelfIdentified	= ::CTL::SelfIdentified<Setter<TData>>;
 
-	typedef SelfIdentified<BitMask<DataType, S, I>> SelfIdentified;
+	using
+		typename Typed::DataType,
+		typename Typed::ConstReferenceType
+	;
+
 	using typename SelfIdentified::SelfType;
 
-	typedef Function<void(DataType)>  SetterFunction;
+	using SetterFunction = Function<void(DataType const&)>;
 
 	constexpr Setter(SetterFunction&& func):		setter(CTL::move(func))	{}
 	constexpr Setter(SetterFunction const& func):	setter(func)			{}
 	constexpr Setter(SelfType&& other)		= delete;
 	constexpr Setter(SelfType const& other)	= delete;
 
-	constexpr SelfType& set(DataType const& value)			{setter(value); return *this;	}
-	constexpr SelfType& operator=(DataType const& value)	{return set(value);				}
+	constexpr SelfType& set(ConstReferenceType value)		{setter(value); return *this;	}
+	constexpr SelfType& operator=(ConstReferenceType value)	{return set(value);				}
 
 protected:
 	SetterFunction const setter;
@@ -38,21 +42,22 @@ struct Getter:
 	Typed<TData> {
 private:
 public:
-	typedef Typed<TData> Typed;
+	using Typed				= ::CTL::Typed<TData>;
+	using SelfIdentified	= ::CTL::SelfIdentified<Getter<TData>>;
+
 	using typename Typed::DataType;
 
-	typedef SelfIdentified<BitMask<DataType, S, I>> SelfIdentified;
 	using typename SelfIdentified::SelfType;
 
-	typedef Function<DataType()> GetterFunction;
+	using GetterFunction = Function<DataType()>;
 
 	constexpr Getter(GetterFunction&& func):		getter(CTL::move(func))	{}
 	constexpr Getter(GetterFunction const& func):	getter(func)			{}
 	constexpr Getter(SelfType&& other)		= delete;
 	constexpr Getter(SelfType const& other)	= delete;
 
-	constexpr DataType operator DataType() const {return getter(value);	}
-	constexpr DataType operator DataType() const {return get(value);	}
+	constexpr DataType get() const		{return getter();	}
+	constexpr operator DataType() const	{return get();		}
 
 protected:
 	GetterFunction const getter;
@@ -64,9 +69,27 @@ struct SetGet:
 	Setter<TData>,
 	Getter<TData>,
 	SelfIdentified<SetGet<TData>>,
-	Typed<TData> {
+	Typed<TData>,
+	Derived<Setter<TData>, Getter<TData>> {
 private:
 public:
+	using Setter			= ::CTL::Setter<TData>;
+	using Getter			= ::CTL::Getter<TData>;
+	using SelfIdentified	= ::CTL::SelfIdentified<SetGet<TData>>;
+
+	static_assert(Type::Equal<typename Setter::DataType, typename Getter::DataType>);
+
+	using typename Setter::SetterFunction;
+
+	using typename Getter::GetterFunction;
+
+	using typename SelfIdentified::SelfType;
+
+	using
+		typename Setter::DataType,
+		typename Setter::ConstReferenceType
+	;
+
 	constexpr SetGet(SetterFunction&& set, GetterFunction&& get):			Setter(CTL::move(set)), Getter(CTL::move(get))	{}
 	constexpr SetGet(SetterFunction&& set, GetterFunction const& get):		Setter(CTL::move(set)), Getter(get)				{}
 	constexpr SetGet(SetterFunction	const& set, GetterFunction&& get):		Setter(set), Getter(CTL::move(get))				{}
@@ -74,8 +97,11 @@ public:
 	constexpr SetGet(SelfType&& other)		= delete;
 	constexpr SetGet(SelfType const& other)	= delete;
 
-	constexpr SelfType& set(DataType const& value)			{Setter::set(value); return *this;	}
-	constexpr SelfType& operator=(DataType const& value)	{return set(value);					}
+	constexpr SelfType& set(ConstReferenceType value)		{Setter::set(value); return *this;	}
+	constexpr SelfType& operator=(ConstReferenceType value)	{return set(value);					}
+
+	constexpr DataType get() const		{return Getter::get();	}
+	constexpr operator DataType() const	{return get();			}
 };
 
 CTL_NAMESPACE_END

@@ -13,8 +13,8 @@ struct BitMask:
 	constexpr static usize SIZE = S;
 	constexpr static bool INITIAL_STATE = I;
 
-	using Typed = Typed<TData>;
-	typedef SelfIdentified = SelfIdentified<BitMask<DataType, S, I>>;
+	using Typed				= ::CTL::Typed<TData>;
+	using SelfIdentified	= ::CTL::SelfIdentified<BitMask<TData, S, I>>;
 
 	using typename Typed::DataType;
 	using typename SelfIdentified::SelfType;
@@ -26,12 +26,12 @@ struct BitMask:
 	constexpr BitMask() {}
 
 	constexpr BitMask(bool const& state) {
-		for SRANGE(i, 0, SIZE)
+		for (usize i = 0; i < SIZE; ++i)
 			mask[i] =  (state ? ALL_ENABLED : 0);
 	}
 
 	constexpr BitMask(MaskType const& mask) {
-		for SRANGE(i, 0, SIZE)
+		for (usize i = 0; i < SIZE; ++i)
 			this->mask[i] = mask[i];
 	}
 
@@ -39,35 +39,35 @@ struct BitMask:
 
 	constexpr DataType reduce() const {
 		DataType result{1};
-		for SRANGE(i, 0, SIZE)
+		for (usize i = 0; i < SIZE; ++i)
 			result &= mask[i];
 		return result;
 	}
 
 	constexpr DataType overlap() const {
 		DataType result{0};
-		for SRANGE(i, 0, SIZE)
+		for (usize i = 0; i < SIZE; ++i)
 			result |= mask[i];
 		return result;
 	}
 
 	constexpr SelfType match(SelfType const& other) const {
 		SelfType result;
-		for SRANGE(i, 0, SIZE)
+		for (usize i = 0; i < SIZE; ++i)
 			result.mask[i] = other.mask[i] & mask[i];
 		return result;
 	}
 
 	constexpr SelfType join(SelfType const& other) const {
 		SelfType result;
-		for SRANGE(i, 0, SIZE)
+		for (usize i = 0; i < SIZE; ++i)
 			result.mask[i] = other.mask[i] | mask[i];
 		return result;
 	}
 
 	constexpr SelfType exclude(SelfType const& other) const {
 		SelfType result;
-		for SRANGE(i, 0, SIZE)
+		for (usize i = 0; i < SIZE; ++i)
 			result.mask[i] = other.mask[i] ^ mask[i];
 		return result;
 	}
