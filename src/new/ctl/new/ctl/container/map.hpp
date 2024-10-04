@@ -89,17 +89,17 @@ public:
 
 	template<SizeType N>
 	constexpr explicit BaseSimpleMap(Decay::AsType<PairType[N]> const& values): BaseType(values, N) {
-		filter(UNIQUE_VALUES);
+		clean();
 		update();
 	}
 
 	constexpr BaseSimpleMap(BaseType const& other): BaseType(other) {
-		filter(UNIQUE_VALUES);
+		clean();
 		update();
 	}
 
 	constexpr BaseSimpleMap(BaseType&& other): BaseType(CTL::move(other)) {
-		filter(UNIQUE_VALUES);
+		clean();
 		update();
 	}
 
@@ -108,12 +108,12 @@ public:
 	constexpr BaseSimpleMap(SelfType&& other): BaseType(CTL::move(other)) {}
 
 	constexpr BaseSimpleMap(IteratorType const& begin, IteratorType const& end): BaseType(begin, end) {
-		filter(UNIQUE_VALUES);
+		clean();
 		update();
 	}
 
 	constexpr BaseSimpleMap(ReverseIteratorType const& begin, ReverseIteratorType const& end): BaseType(begin, end) {
-		filter(UNIQUE_VALUES);
+		clean();
 		update();
 	}
 
@@ -244,8 +244,10 @@ private:
 	constexpr static CompareType const	UNIQUE_VALUES	= [](PairType const& a, PairType const& b){return a.key != b.key;};
 	PredicateType const					NOT_IN_MAP		= [this](PairType const& pair){return !contains(pair.key);};
 
-	constexpr void update() requires (SORTED)	{sort();	}
-	constexpr void update() requires (!SORTED)	{			}
+	constexpr void update() requires (IS_SORTED)	{sort();	}
+	constexpr void update() requires (!IS_SORTED)	{			}
+
+	constexpr void clean() {filter(UNIQUE_VALUES);}
 };
 
 /*
