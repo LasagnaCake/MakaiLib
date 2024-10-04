@@ -528,6 +528,8 @@ public:
 	}
 	*/
 
+	// TODO: append templates to split* & replace* functions
+
 	constexpr List<SelfType, IndexType> split(DataType const& sep) const {
 		List<SelfType, IndexType> res;
 		SelfType buf;
