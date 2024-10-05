@@ -85,15 +85,15 @@ public:
 	Iterator& operator--()		{rstep(); return *this;							}
 	Iterator operator--(int)	{Iterator copy = *this; rstep(); return copy;	}
 
-	constexpr operator PointerType() const			{return iter();		}
-	constexpr operator ReferenceType()				{return *iter();	}
-	constexpr operator ConstReferenceType() const	{return *iter();	}
+	constexpr operator PointerType() const					{return iter();		}
+	constexpr explicit operator ReferenceType()				{return *iter();	}
+	constexpr explicit operator ConstReferenceType() const	{return *iter();	}
 
 	constexpr bool operator==(Iterator const& other) const			{return iterand == other.iterand;	}
 	constexpr OrderType operator<=>(Iterator const& other) const	{return compare(other.iterand);		}
 
 	constexpr IndexType operator-(Iterator const& other) const	{return difference(other.iterand);	}
-	constexpr Iterator operator-(IndexType const& value) const	{return offset(value);				}
+	constexpr Iterator operator-(IndexType const& value) const	{return offset(-value);				}
 	constexpr Iterator operator+(IndexType const& value) const	{return offset(value);				}
 
 	//constexpr operator STLForwardIterator() requires(!REVERSE)				{return iterand;}

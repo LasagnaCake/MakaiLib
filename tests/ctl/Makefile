@@ -3,8 +3,10 @@ CXX	:= g++
 
 LEAN := -static -s
 
-COMPILER_CONFIG	:= -m64 -std=gnu++20 -fms-extensions -I../output/include
-DEBUGMODE := -DMAKAILIB_DEBUG
+ROOT := ../..
+
+COMPILER_CONFIG	:= -m64 -std=gnu++20 -fms-extensions -I$(ROOT)/src/new/ctl/new
+DEBUGMODE := -DCTL_CONSOLE_OUT -fconcepts-diagnostics-depth=4 -Wpedantic
 
 LIBREQS		:= -static-libstdc++ -static-libgcc
 GRAPHREQS	:= -lopengl32
@@ -12,9 +14,9 @@ WINREQS		:= -lole32 -loleaut32 -limm32 -lwinmm -lversion -lpowrprof -lcomdlg32 -
 
 o?=3
 
-testcmd = @$(CXX) -O$(o) -o output/$(1)/test.$(2).$(1).exe test.$(2).cpp $(COMPILER_CONFIG) ../output/lib/$(3)
+testcmd = @$(CXX) -O$(o) -o output/$(1)/test.$(2).$(1).exe test.$(2).cpp $(COMPILER_CONFIG)
 
-NOCMD := -mwindows
+#NOCMD := -mwindows
 
 ifdef debug-release
 RELEASEMODE := $(DEBUGMODE)
@@ -24,17 +26,17 @@ endif
 
 dotest = \
 	$(if $(findstring debug,$(1)),\
-		$(call testcmd,$(strip $(1)),$(strip $(2)),libmakai.$(strip $(1)).a) $(DEBUGMODE),\
-		$(call testcmd,$(strip $(1)),$(strip $(2)),libmakai.a) $(RELEASEMODE)\
+		$(call testcmd,$(strip $(1)),$(strip $(2))) $(DEBUGMODE),\
+		$(call testcmd,$(strip $(1)),$(strip $(2))) $(RELEASEMODE)\
 	)
 
 case = $(if $(findstring $(strip $(2)),$(strip $(1))),$(3))
 
 params = \
 	$(call case, $(1), 01,$(LIBREQS))\
-	$(call case, $(1), 02,$(LIBREQS) $(GRAPHREQS))\
-	$(call case, $(1), 03,$(LIBREQS) $(GRAPHREQS))\
-	$(call case, $(1), 04,$(LIBREQS) $(GRAPHREQS))\
+	$(call case, $(1), 02,$(LIBREQS))\
+	$(call case, $(1), 03,$(LIBREQS))\
+	$(call case, $(1), 04,$(LIBREQS))\
 
 define mktest
 	@echo "$(strip $(2))"
@@ -44,9 +46,6 @@ endef
 ifndef t
 define tests
 	$(call mktest, $(1), 01.compilation)
-	$(call mktest, $(1), 02.app)
-	$(call mktest, $(1), 03.graphics)
-	$(call mktest, $(1), 04.input)
 endef
 else
 define tests

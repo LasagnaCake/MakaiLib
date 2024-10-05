@@ -657,6 +657,7 @@ private:
 			}
 		}
 		magnitude = 0;
+		return *this;
 	}
 
 	constexpr SelfType& increase() {

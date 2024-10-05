@@ -10,7 +10,7 @@ CTL_EX_NAMESPACE_BEGIN
 template<class _ = void, Type::Number TDelta = usize>
 class Periodic {
 public:
-	using EventWrapper	= Procedure<TDelta>;
+	using EventWrapper	= Function<void(TDelta const&)>;
 	using EventList		= List<EventWrapper const*>;
 
 	/// Empty constructor.
