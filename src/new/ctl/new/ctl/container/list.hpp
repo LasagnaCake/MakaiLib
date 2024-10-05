@@ -300,24 +300,22 @@ public:
 	constexpr SizeType removeIf(PredicateType const& predicate) {
 		SizeType removed = 0;
 		auto const start = begin();
-		for(auto i = begin(); i != end(); ++i)
+		for(auto i = begin(); i != end();)
 			if (predicate(*i)) {
-				remove(i-start);
-				--i;
+				remove(i-start+1);
 				removed++;
-			}
+			} else ++i;
 		return removed;
 	}
 
 	constexpr SizeType removeIfNot(PredicateType const& predicate) {
 		SizeType removed = 0;
 		auto const start = begin();
-		for(auto i = begin(); i != end(); ++i)
+		for(auto i = begin(); i != end();)
 			if (!predicate(*i)) {
-				remove(i-start);
-				--i;
+				remove(i-start+1);
 				removed++;
-			}
+			} else ++i;
 		return removed;
 	}
 

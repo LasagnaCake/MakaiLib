@@ -79,22 +79,22 @@ public:
 	constexpr ConstReferenceType operator*() const	{return *iter();	}
 	constexpr ConstantType operator->() const		{return iter();		}
 
-	Iterator& operator++()		{step(); return *this;							}
-	Iterator operator++(int)	{Iterator copy = *this; step(); return copy;	}
+	SelfType& operator++()		{step(); return *this;							}
+	SelfType operator++(int)	{SelfType copy = *this; step(); return copy;	}
 
-	Iterator& operator--()		{rstep(); return *this;							}
-	Iterator operator--(int)	{Iterator copy = *this; rstep(); return copy;	}
+	SelfType& operator--()		{rstep(); return *this;							}
+	SelfType operator--(int)	{SelfType copy = *this; rstep(); return copy;	}
 
 	constexpr operator PointerType() const					{return iter();		}
 	constexpr explicit operator ReferenceType()				{return *iter();	}
 	constexpr explicit operator ConstReferenceType() const	{return *iter();	}
 
-	constexpr bool operator==(Iterator const& other) const			{return iterand == other.iterand;	}
-	constexpr OrderType operator<=>(Iterator const& other) const	{return compare(other.iterand);		}
+	constexpr bool operator==(SelfType const& other) const			{return iterand == other.iterand;	}
+	constexpr OrderType operator<=>(SelfType const& other) const	{return compare(other.iterand);		}
 
-	constexpr IndexType operator-(Iterator const& other) const	{return difference(other.iterand);	}
-	constexpr Iterator operator-(IndexType const& value) const	{return offset(-value);				}
-	constexpr Iterator operator+(IndexType const& value) const	{return offset(value);				}
+	constexpr IndexType operator-(SelfType const& other) const	{return difference(other.iterand);	}
+	constexpr SelfType operator-(IndexType const& value) const	{return offset(-value);				}
+	constexpr SelfType operator+(IndexType const& value) const	{return offset(value);				}
 
 	//constexpr operator STLForwardIterator() requires(!REVERSE)				{return iterand;}
 	constexpr operator STLReverseIterator() requires(REVERSE)				{return iterand;}
@@ -103,7 +103,7 @@ public:
 private:
 	constexpr PointerType iter() const {
 		PointerType it = iterand;
-		if constexpr (REVERSE)	return --it;
+		if constexpr (REVERSE)	return it-1;
 		else					return it;
 	}
 
