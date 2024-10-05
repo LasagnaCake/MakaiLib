@@ -46,6 +46,7 @@ endef
 ifndef t
 define tests
 	$(call mktest, $(1), 01.compilation)
+	$(call mktest, $(1), 02.list)
 endef
 else
 define tests

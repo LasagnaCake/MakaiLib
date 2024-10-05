@@ -73,6 +73,10 @@ CTL_NAMESPACE_END
 #define SYNCDEBUG(...)		CTL::Console::syncprint(__VA_ARGS__)
 #define SYNCDEBUGLN(...)	CTL::Console::syncprintln(__VA_ARGS__)
 #else
+#define DEBUG(...)
+#define DEBUGLN(...)
+#define SYNCDEBUG(...)
+#define SYNCDEBUGLN(...)
 #endif // CTL_CONSOLE_OUT
 
 #endif // CTL_IO_CONSOLE_H

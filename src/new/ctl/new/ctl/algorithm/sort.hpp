@@ -121,7 +121,7 @@ namespace Sorting {
 			offset	= 0
 		;
 		usize const hibit = highBit(sz);
-		auto
+		typename Ordered::OrderType
 			prevOrder = arr[1] <=> arr[0],
 			currentOrder = prevOrder
 		;

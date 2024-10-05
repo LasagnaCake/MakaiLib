@@ -2,6 +2,6 @@
 #include <ctlex/ctlex.hpp>
 
 int main() {
-	CTL::Console::println("Compilation test passed!");
+	DEBUGLN("Compilation test passed!");
 	return 0;
 }

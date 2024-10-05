@@ -126,6 +126,7 @@ namespace MX {
 
 	template<Type::NonVoid T>
 	constexpr T* malloc(usize const& sz) {
+		if (!sz) throw AllocationFailure();
 		auto* m = __builtin_malloc(sz * sizeof(T));
 		if (!m) throw AllocationFailure();
 		return (T*)m;
@@ -134,6 +135,14 @@ namespace MX {
 	template<Type::NonVoid T>
 	constexpr T* malloc() {
 		return (T*)malloc<T>(1);
+	}
+
+	template<Type::NonVoid T>
+	constexpr T* realloc(T* const& ptr, usize const& sz) {
+		if (!sz || !ptr) throw AllocationFailure();
+		auto* m = __builtin_realloc(ptr, sz * sizeof(T));
+		if (!m) throw AllocationFailure();
+		return (T*)m;
 	}
 
 	template<Type::NonVoid T>

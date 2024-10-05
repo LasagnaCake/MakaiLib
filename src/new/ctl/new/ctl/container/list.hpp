@@ -75,11 +75,11 @@ public:
 		for (DataType const& v: values) pushBack(v);
 	}
 
-	template<SizeType COUNT>
-	constexpr explicit List(Decay::AsType<DataType[COUNT]> const& values) {
-		invoke(size);
-		copy(values, contents, COUNT);
-		count = COUNT;
+	template<SizeType S>
+	constexpr explicit List(Decay::AsType<DataType[S]> const& values) {
+		invoke(S);
+		copy(values, contents, S);
+		count = S;
 	}
 
 	constexpr List(SelfType const& other) {
@@ -157,8 +157,7 @@ public:
 	constexpr SelfType& insert(SelfType const& other, IndexType index) {
 		assertIsInBounds(index);
 		wrapBounds(index, count);
-		while ((count + other.count) < maximum)
-			increase();
+		reserve(count + other.count);
 		copy(&contents[index], &contents[index+other.count], other.count);
 		copy(other.contents, &contents[index], other.count);
 		count += other.count;
@@ -171,7 +170,7 @@ public:
 
 	template<SizeType S>
 	constexpr SelfType& insert(Decay::AsType<DataType[S]> const& values, IndexType const& index) {
-		return insert(SelfType(values, S), index);
+		return insert(SelfType(values, values + S), index);
 	}
 
 	constexpr SelfType& insert(DataType const& data, SizeType const& count, IndexType const& index) {
@@ -187,13 +186,9 @@ public:
 	}
 
 	constexpr SelfType& resize(SizeType const& newSize) {
-		DataType* newData = memcreate(newSize);
-		if (contents) {
-			copy(contents, newData, count);
-			dump();
-		}
+		if (contents)	memresize(contents, newSize);
+		else			contents = memcreate(newSize);
 		maximum = newSize;
-		contents = newData;
 		if (count > newSize)
 			count = newSize;
 		recalculateMagnitude();
@@ -302,51 +297,37 @@ public:
 		return *this;
 	}
 
-	constexpr SelfType& removeIf(PredicateType const& predicate) {
-		auto const start = begin();
-		for(auto i = begin(); i != end(); ++i)
-			if (predicate(*i)) {
-				remove(i-start);
-				--i;
-			}
-		return *this;
-	}
-
-	constexpr SelfType& removeIfNot(PredicateType const& predicate) {
-		auto const start = begin();
-		for(auto i = begin(); i != end(); ++i)
-			if (!predicate(*i)) {
-				remove(i-start);
-				--i;
-			}
-		return *this;
-	}
-
-	constexpr SelfType& eraseIf(PredicateType const& predicate) {
+	constexpr SizeType removeIf(PredicateType const& predicate) {
 		SizeType removed = 0;
 		auto const start = begin();
-		for(auto i = begin(); i != end(); ++i) {
+		for(auto i = begin(); i != end(); ++i)
 			if (predicate(*i)) {
 				remove(i-start);
 				--i;
 				removed++;
 			}
-		}
-		count -= removed;
+		return removed;
+	}
+
+	constexpr SizeType removeIfNot(PredicateType const& predicate) {
+		SizeType removed = 0;
+		auto const start = begin();
+		for(auto i = begin(); i != end(); ++i)
+			if (!predicate(*i)) {
+				remove(i-start);
+				--i;
+				removed++;
+			}
+		return removed;
+	}
+
+	constexpr SelfType& eraseIf(PredicateType const& predicate) {
+		count -= removeIf(predicate);
 		return *this;
 	}
 
 	constexpr SelfType& eraseIfNot(PredicateType const& predicate) {
-		SizeType removed = 0;
-		auto const start = begin();
-		for(auto i = begin(); i != end(); ++i) {
-			if (!predicate(*i)) {
-				remove(i-start);
-				--i;
-				removed++;
-			}
-		}
-		count -= removed;
+		count -= removeIfNot(predicate);
 		return *this;
 	}
 
@@ -358,7 +339,8 @@ public:
 
 	constexpr SelfType& appendBack(SelfType const& other) {
 		expand(other.count);
-		copy(other.contents, contents + other.count, other.count);
+		copy(other.contents, contents + count, other.count);
+		count += other.count;
 		return *this;
 	}
 
@@ -381,7 +363,8 @@ public:
 	template<SizeType S>
 	constexpr SelfType& appendBack(Decay::AsType<DataType[S]> const& values) {
 		expand(S);
-		copy(values, contents + S, S);
+		copy(values, contents + count, S);
+		count += S;
 		return *this;
 	}
 
@@ -630,13 +613,17 @@ private:
 		return MX::malloc<DataType>(sz);
 	}
 
+	constexpr static void memresize(DataType* const& data, SizeType const& sz) {
+		MX::realloc<DataType>(data, sz);
+	}
+
 	constexpr static void copy(ConstantType* src, DataType* dst, SizeType count) {
 		MX::memcpy<DataType>(dst, src, count);
 	};
 
 	constexpr SelfType& invoke(SizeType const& size) {
-		if (contents) dump();
-		contents = memcreate(size);
+		if (contents)	memresize(contents, size);
+		else			contents = memcreate(size);
 		maximum = size;
 		recalculateMagnitude();
 		return *this;
@@ -651,7 +638,7 @@ private:
 		SizeType const order = (sizeof(SizeType) * 8)-1;
 		for (SizeType i = 1; i <= order; ++i) {
 			magnitude = 1 << order - i;
-			if ((maximum >> order) & 1) {
+			if ((maximum >> (order - i)) & 1) {
 				magnitude <<= 1;
 				return *this;
 			}
@@ -667,7 +654,7 @@ private:
 	}
 
 	constexpr SelfType& grow(SizeType const& count) {
-		if (SizeType(this->count + count) < count)
+		if (SizeType(this->count + count) < this->count)
 			atItsLimitError();
 		SizeType const newSize = this->count + count;
 		resize(newSize);

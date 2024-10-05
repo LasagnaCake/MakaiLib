@@ -21,17 +21,18 @@ struct Arguments:
 
 	using
 		typename Typed::DataType,
+		typename Typed::ConstantType,
 		typename Typed::PointerType,
-		typename Typed::ConstReferenceType,
+		typename Typed::ConstPointerType,
 		typename Typed::ReferenceType,
-		typename Typed::ConstPointerType
+		typename Typed::ConstReferenceType
 	;
 	constexpr ~Arguments() noexcept {delete[] start;}
 
-	constexpr Arguments()noexcept : start(nullptr), length(0) {}
+	constexpr Arguments() noexcept: start(nullptr), length(0) {}
 
 	template<usize N>
-	constexpr Arguments(Decay::AsType<DataType[N]> const& data):
+	constexpr Arguments(Decay::AsType<ConstantType[N]> const& data):
 	start(new DataType[N]), length(N) {
 		MX::memcpy(start, data, N);
 	}
@@ -66,6 +67,11 @@ struct Arguments:
     constexpr usize empty() const noexcept	{return length == 0;	}
 
 private:
+	constexpr Arguments(ConstPointerType data, usize size):
+	start(new DataType[size]), length(size) {
+		MX::memcpy(start, data, size);
+	}
+
 	PointerType		start;
 	usize			length;
 };
