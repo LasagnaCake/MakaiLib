@@ -54,7 +54,7 @@ public:
 		typename BaseType::ReverseIteratorType
 	;
 
-	static_assert(SORTED && Type::Comparable::Threeway<KeyType, KeyType>, "Cannot form a sortable map whithout an orderable key!");
+	static_assert(SORTED && Sortable<KeyType>, "Cannot form a sortable map whithout an sortable key!");
 	static_assert(SORTED && Sortable<PairType>);
 
 	using
@@ -160,7 +160,7 @@ public:
 		if (empty()) return -1;
 		IndexType pivot = size() / 2, index = pivot;
 		while (pivot != 0) {
-			switch (data()[index].key <=> key) {
+			switch (OrderType(data()[index].key <=> key)) {
 				case Order::EQUAL:		return index;
 				case Order::GREATER:	index -= (pivot /= 2);	break;
 				case Order::LESS:		index += (pivot /= 2);	break;

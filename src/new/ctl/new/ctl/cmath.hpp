@@ -12,7 +12,7 @@ constexpr F pow(F const& value, F const& power) {
 	else if constexpr (Type::Equal<F, double>)
 		return __builtin_pow(value, power);
 	else
-		return __builtin_powd(value, power);
+		return __builtin_powl(value, power);
 }
 
 CTL_NAMESPACE_END

@@ -46,6 +46,26 @@ struct ValueOrder {
 		else if (value > 0)		val = StandardOrder::EQUAL;
 	}
 
+	constexpr StandardOrder operator<=>(ValueOrder const& other) {
+		return  ValueOrder(val <=> other.val);
+	}
+
+	constexpr StandardOrder operator<=>(StandardOrder const& order) {
+		return  ValueOrder(val <=> order);
+	}
+
+	template<Type::Convertible<StandardOrder> T>
+	constexpr StandardOrder operator<=>(T const& value)
+	requires Type::Different<T, ValueOrder> {
+		return  *this <=> (StandardOrder)value;
+	}
+
+	template<Type::Convertible<ValueOrder> T>
+	constexpr StandardOrder operator<=>(T const& value)
+	requires Type::Different<T, ValueOrder> {
+		return  *this <=> ValueOrder(value);
+	}
+
 	constexpr operator StandardOrder()	{return order();	}
 	constexpr StandardOrder order()		{return val;		}
 

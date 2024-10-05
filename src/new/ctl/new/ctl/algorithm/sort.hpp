@@ -156,7 +156,7 @@ namespace Sorting {
 
 template <SortableIterator T>
 constexpr void sort(T const& begin, T const& end) {
-	Sorting::vivoSort(begin, end - begin);
+	Sorting::vivoSort(begin.base(), end - begin);
 }
 
 template <Sortable T>

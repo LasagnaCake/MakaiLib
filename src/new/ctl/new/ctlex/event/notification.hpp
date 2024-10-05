@@ -76,7 +76,7 @@ public:
 	Notifier& unsubscribe(String const& signal) {
 		if (db.contains(signal)) {
 			auto& al = added[signal];
-			db[signal].eraseIf([&] (SignalWrapper& elem) {return al.find(elem);});
+			db[signal].eraseIf([&] (auto const& elem) {return al.find(elem);});
 		}
 		added[signal].clear();
 		return *this;
@@ -106,7 +106,7 @@ public:
 			if (!added.contains(name))
 				continue;
 			auto& al = added[name];
-			lst.eraseIf([&] (SignalWrapper& elem) {return al.find(elem);});
+			lst.eraseIf([&] (auto const& elem) {return al.find(elem);});
 		}
 		added.clear();
 		return *this;

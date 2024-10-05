@@ -20,10 +20,10 @@ namespace Impl {
 	}
 
 	template <typename TFunction, typename TReturn, typename... TArgs>
-	class Function: Partial::Function<TReturn, TArgs...> {
+	struct Function: Partial::Function<TReturn, TArgs...> {
 		TFunction func;
 		constexpr TReturn invoke(TArgs... args) const override {return func(args...);}
-		constexpr Function(TFunction&& _func):func(_func) {}
+		constexpr Function(TFunction&& func): func(func) {}
 	};
 }
 
@@ -46,6 +46,10 @@ public:
 	;
 
 	using
+		typename Functional::FunctionType
+	;
+
+	using
 		typename Returnable::ReturnType
 	;
 
@@ -53,23 +57,23 @@ private:
 	Impl::Partial::Function<ReturnType, TArgs...>* func{nullptr};
 
 	template<typename TFunction>
-	constexpr static Impl::Function<
-		Decay::AsArgument<TFunction>,
-		TReturn,
-		TArgs...
-	>
+	using Callable = Impl::Function<Decay::AsArgument<TFunction>, TReturn, TArgs...>;
+
+	template<typename TFunction>
+	constexpr static Callable<TFunction>*
 	makeCallable(TFunction&& f) {
-		return new Impl::Function(CTL::move(f));
+		return new Callable<TFunction>(CTL::move(f));
 	}
 
 	template<typename TFunction>
-	constexpr static Impl::Function<
-		Decay::AsArgument<TFunction>,
-		TReturn,
-		TArgs...
-	>
+	constexpr static Callable<TFunction>*
 	makeCallable(TFunction const& f) {
-		return new Impl::Function(f);
+		return new Callable<TFunction>(f);
+	}
+
+	constexpr void assign(SelfType const& other) {
+		if (!other.func) return;
+		func = makeCallable(((Callable<FunctionType>*)other.func)->func);
 	}
 
 	constexpr void destroy() {
@@ -77,7 +81,7 @@ private:
 		func = nullptr;
 	}
 
-	[[noreturn]] void badCallError() {
+	[[noreturn]] static void badCallError() {
 		throw BadCallException("No function assigned!");
 	}
 
@@ -94,12 +98,15 @@ public:
     constexpr ~Function() {destroy();}
 
 	template<typename TFunction>
-    constexpr SelfType& operator=(TFunction&& f)		{destroy(); func = makeCallable(f); return *this;					}
+    constexpr SelfType& operator=(TFunction&& f)
+	requires (!Type::Derived<TFunction, SelfType>)		{destroy(); func = makeCallable(f); return *this;					}
     template<typename TFunction>
-    constexpr SelfType& operator=(TFunction const& f)	{destroy(); func = makeCallable(f); return *this;					}
+    constexpr SelfType& operator=(TFunction const& f)
+	requires (!Type::Derived<TFunction, SelfType>)		{destroy(); func = makeCallable(f); return *this;					}
     constexpr SelfType& operator=(SelfType&& f)			{destroy(); func = move(f.func); f.func = nullptr; return *this;	}
-    constexpr SelfType& operator=(SelfType const& f)	{destroy(); return operator=(f.func->func);							}
+    constexpr SelfType& operator=(SelfType const& f)	{destroy(); assign(f); return *this;								}
 
+    constexpr Function() {}
 
     template<typename TFunction>
     constexpr Function(TFunction&& f)		{operator=(f);	}

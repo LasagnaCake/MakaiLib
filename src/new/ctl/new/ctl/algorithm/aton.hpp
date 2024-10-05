@@ -2,6 +2,7 @@
 #define CTL_ALGORITHM_ATOI_H
 
 #include "transform.hpp"
+#include "memory.hpp"
 #include "../cmath.hpp"
 #include "../namespace.hpp"
 #include "../typetraits/decay.hpp"
@@ -31,7 +32,7 @@ namespace Impl {
 		}
 
 		template<Type::ASCII T>
-		constexpr int8 getSignAndConsume(T*& c) {
+		constexpr int8 getSignAndConsume(T const*& c) {
 			switch (c[0]) {
 				case '-':	++c; return -1;
 				case '+':	++c;
@@ -40,21 +41,22 @@ namespace Impl {
 		}
 
 		template<Type::Integer T>
-		constexpr T shiftAndAppend(T& val, T const& base, T const& digit) {
+		constexpr T& shiftAndAppend(T& val, T const& base, T const& digit) {
 			val *= base;
 			val += digit;
+			return val;
 		}
 
 		template<Type::Integer I, Type::ASCII T>
 		constexpr I toInteger(T const* str, usize const& size, usize const& base) {
 			I res = 0;
 			for (usize i = 0; i < size; ++i)
-				shiftAndAppend(res, base, toDigit(str[i]));
+				shiftAndAppend<I>(res, base, toDigit(str[i]));
 			return res;
 		}
 
 		template<Type::ASCII T>
-		constexpr usize getBaseAndConsume(T const*& c, usize const& base) {
+		constexpr ssize getBaseAndConsume(T const*& c, usize const& base) {
 			if (c[0] == '0') {
 				++c;
 				switch (c[0]) {
@@ -95,9 +97,9 @@ constexpr bool atoi(T const* const& str, usize size, I& out, usize base = 0) {
 		size == 2
 	&&	Impl::A2I::isSign(str[0])
 	&&	Impl::A2I::isDigitInBase(str[1], base)
-	) return Impl::A2I::getSignAndConsume(s, base) * Impl::A2I::toDigit(s[0]);
+	) return Impl::A2I::getSignAndConsume(s) * Impl::A2I::toDigit(s[0]);
 	// Try and get sign of number
-	ssize sign = Impl::A2I::getSignAndConsume(s, base);
+	ssize sign = Impl::A2I::getSignAndConsume(s);
 	if (size < s-str) return false;
 	// Try and get base of number
 	base = Impl::A2I::getBaseAndConsume(s, base);
@@ -164,7 +166,7 @@ constexpr ssize itoa(I val, T* const& buf, usize const& bufSize, I const& base =
 	if ((!bufSize) || (bufSize < 4 && base != 10))
 		return -1;
 	// Clear buffer
-	memset(buf, 0, bufSize);
+	MX::memset(buf, 0, bufSize);
 	// Get stating points
 	usize
 		offset = 0,

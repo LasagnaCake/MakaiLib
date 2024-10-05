@@ -245,6 +245,7 @@ public:
 	requires Sortable<DataType> {
 		static_assert(SortableIterator<IteratorType>);
 		::CTL::sort(begin(), end());
+		return *this;
 	}
 
 	constexpr SelfType sorted() const
@@ -278,7 +279,7 @@ public:
 	) {
 		IndexType pivot = count / 2, index = pivot;
 		while (pivot != 0) {
-			switch (contents[index] <=> value) {
+			switch (OrderType(contents[index] <=> value)) {
 				case Order::EQUAL:		return index;
 				case Order::GREATER:	index -= (pivot /= 2);	break;
 				case Order::LESS:		index += (pivot /= 2);	break;
@@ -291,7 +292,7 @@ public:
 	constexpr SelfType& remove(IndexType const& index) {
 		assertIsInBounds(index);
 		copy(&contents[index], &contents[index-1], count-index);
-		MX::memzero(&contents.back());
+		MX::memzero(&back());
 		return *this;
 	}
 
@@ -352,7 +353,7 @@ public:
 	constexpr SelfType sliced(IndexType const& start, SizeType const& count) const {
 		IndexType const stop = start + count;
 		assertIsInBounds(start);
-		return SelfType(begin() + start, begin() + (stop < this->count ? stop : this->count-1));
+		return SelfType(begin() + start, begin() + (stop < count ? stop : count-1));
 	}
 
 	constexpr SelfType& appendBack(SelfType const& other) {
@@ -408,10 +409,10 @@ public:
 	constexpr ConstIteratorType	begin() const	{return contents;		}
 	constexpr ConstIteratorType	end() const		{return contents+count;	}
 
-	constexpr ReverseIteratorType		rbegin()		{return contents+count;	}
-	constexpr ReverseIteratorType		rend()			{return contents;		}
-	constexpr ConstReverseIteratorType	rbegin() const	{return contents+count;	}
-	constexpr ConstReverseIteratorType	rend() const	{return contents;		}
+	constexpr ReverseIteratorType		rbegin()		{return ReverseIteratorType(contents+count);		}
+	constexpr ReverseIteratorType		rend()			{return ReverseIteratorType(contents);				}
+	constexpr ConstReverseIteratorType	rbegin() const	{return ConstReverseIteratorType(contents+count);	}
+	constexpr ConstReverseIteratorType	rend() const	{return ConstReverseIteratorType(contents);			}
 
 	constexpr PointerType		cbegin()		{return contents;		}
 	constexpr PointerType		cend()			{return contents+count;	}
@@ -474,7 +475,7 @@ public:
 		return result;
 	}
 
-	constexpr OrderType compare(SelfType const& other)
+	constexpr OrderType compare(SelfType const& other) const
 	requires Type::Comparable::Threeway<DataType, DataType> {
 		OrderType result = Order::EQUAL;
 		IndexType i = 0;
@@ -629,7 +630,7 @@ private:
 		return MX::malloc<DataType>(sz);
 	}
 
-	constexpr static void copy(DataType* src, DataType* dst, SizeType count) {
+	constexpr static void copy(ConstantType* src, DataType* dst, SizeType count) {
 		MX::memcpy<DataType>(dst, src, count);
 	};
 
@@ -672,23 +673,23 @@ private:
 		return *this;
 	}
 
-	void assertIsInBounds(IndexType const& index) {
+	void assertIsInBounds(IndexType const& index) const {
 		if (index > count-1) outOfBoundsError(index);
 	}
 
-	[[noreturn]] constexpr void invalidSizeError(SizeType const& size) {
+	[[noreturn]] constexpr static void invalidSizeError(SizeType const& size) {
 		throw InvalidValueException("Invalid list size!");
 	}
 
-	[[noreturn]] constexpr void atItsLimitError() {
+	[[noreturn]] constexpr static void atItsLimitError() {
 		throw MaximumSizeFailure();
 	}
 
-	[[noreturn]] constexpr void outOfBoundsError(IndexType const& index) {
+	[[noreturn]] constexpr static void outOfBoundsError(IndexType const& index) {
 		throw OutOfBoundsException("Array is out of bounds!");
 	}
 
-	[[noreturn]] constexpr void emptyError() {
+	[[noreturn]] constexpr static void emptyError() {
 		throw NonexistentValueException("Container is empty!");
 	}
 

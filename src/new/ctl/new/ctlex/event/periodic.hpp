@@ -29,7 +29,7 @@ public:
 	void setManual() {
 		if (manual) return;
 		if (!events.empty())
-			std::erase_if(events, [&](auto& e){return e == &update;});
+			events.eraseIf([&](auto const& e){return e == &update;});
 		manual = true;
 	}
 
@@ -41,7 +41,7 @@ public:
 
 	virtual ~Periodic() {
 		if (!manual && !events.empty())
-			events.eraseIf([&](auto& e){return e == &update;});
+			events.eraseIf([&](auto const& e){return e == &update;});
 	}
 
 	virtual void onUpdate(usize const& delta) = 0;

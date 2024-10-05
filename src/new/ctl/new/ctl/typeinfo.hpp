@@ -23,7 +23,7 @@ struct TypeInfo {
 	constexpr static const char* name()		{return abi::__cxa_demangle(id->name(),0,0,NULL);}
 
 private:
-	constexpr static const std::type_info* id = typeid(T);
+	constexpr static const std::type_info* id = &typeid(T);
 };
 
 template<class T, auto H, auto S, auto L>

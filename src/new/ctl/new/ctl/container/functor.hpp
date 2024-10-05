@@ -16,22 +16,24 @@ struct Functor<TReturn(TArgs...)>:
 	SelfIdentified<Functor<TReturn(TArgs...)>>,
 	Returnable<TReturn>,
 	Argumented<TArgs...>,
-	Functional<TReturn(TArgs...)>,
-	Derived<Function<TReturn(TArgs...)>>,
-	private Function<TReturn(TArgs...)> {
+	Functional<TReturn(TArgs...)> {
 private:
 public:
 	using SelfIdentified	= ::CTL::SelfIdentified<Functor<TReturn(TArgs...)>>;
-	using Derived			= ::CTL::Derived<Function<TReturn(TArgs...)>>;
-
-	using typename Derived::BaseType;
+	using Returnable		= ::CTL::Returnable<TReturn>;
+	using Argumented		= ::CTL::Argumented<TArgs...>;
+	using Functional		= ::CTL::Functional<TReturn(TArgs...)>;
 
 	using
 		typename SelfIdentified::SelfType
 	;
 
 	using
-		typename BaseType::ReturnType
+		typename Returnable::ReturnType
+	;
+
+	using
+		typename Functional::FunctionType
 	;
 
 	using
@@ -39,21 +41,22 @@ public:
 		typename Ordered::Order
 	;
 
+	using WrapperType = Function<FunctionType>;
+
 	constexpr static bool PROCEDURE = Type::Different<ReturnType, void>;
 
 	constexpr Functor(): id(0) {}
+	constexpr Functor(WrapperType const& f): func(f), id(++count)				{}
+	constexpr Functor(SelfType const& other): func(other.func), id(other.id)	{}
 
-	constexpr Functor(BaseType const& f): BaseType(f), id(++count)			{}
-	constexpr Functor(SelfType const& other): BaseType(other), id(other.id)	{}
+	constexpr SelfType& operator=(WrapperType const& f)		{func = f; id = ++count; return *this;				}
+	constexpr SelfType& operator=(SelfType const& other)	{func = other.func; id = other.id; return *this;	}
 
-	constexpr SelfType& operator=(BaseType const& f)		{BaseType::operator=(f); id = ++count; return *this;		}
-	constexpr SelfType& operator=(SelfType const& other)	{BaseType::operator=(other); id = other.id; return *this;	}
+	constexpr Nullable<ReturnType> evoke(TArgs... args) const requires (PROCEDURE)		{if (id) return func(args...); return nullptr;	}
+	constexpr Nullable<ReturnType> operator()(TArgs... args) const requires (PROCEDURE)	{return evoke(args...);							}
 
-	constexpr Nullable<ReturnType> evoke(TArgs... args) const requires (PROCEDURE)		{if (id) return BaseType::operator()(args...); return nullptr;	}
-	constexpr Nullable<ReturnType> operator()(TArgs... args) const requires (PROCEDURE)	{return evoke(args...);											}
-
-	constexpr void evoke(TArgs... args) const requires (!PROCEDURE)			{if (id) BaseType::operator()(args...);	}
-	constexpr void operator()(TArgs... args) const requires (!PROCEDURE)	{evoke(args...);						}
+	constexpr void evoke(TArgs... args) const requires (!PROCEDURE)			{if (id) func(args...);	}
+	constexpr void operator()(TArgs... args) const requires (!PROCEDURE)	{evoke(args...);		}
 
 	constexpr operator bool() const {return id;}
 
@@ -62,6 +65,7 @@ public:
 	constexpr OrderType operator<=>(SelfType const& other) const {return id <=> other.id;}
 
 private:
+	WrapperType			func;
 	usize				id = 0;
 	inline static usize	count;
 };

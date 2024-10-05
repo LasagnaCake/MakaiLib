@@ -24,23 +24,15 @@ struct STLIteratorCompatible {
 
 template<class TData, bool R = false, Type::Integer TIndex = usize>
 struct Iterator:
-	//STLIteratorCompatible<TDat, R, TIndex>,
-	Typed<AsNonPointer<TData>>,
+	//STLIteratorCompatible<TData, R, TIndex>,
+	Typed<TData>,
 	Indexed<TIndex>,
 	Ordered,
 	SelfIdentified<Iterator<TData, R, TIndex>> {
 public:
-	static_assert(
-		Type::PostDecrementable<TData>
-	&&	Type::PostIncrementable<TData>
-	&&	Type::PreDecrementable<TData>
-	&&	Type::PreIncrementable<TData>
-	, "Type is not a valid iteratable type!"
-	);
-
 	constexpr static bool REVERSE = R;
 
-	using Typed				= ::CTL::Typed<AsNonPointer<TData>>;
+	using Typed				= ::CTL::Typed<TData>;
 	using Indexed			= ::CTL::Indexed<TIndex>;
 	using Ordered			= ::CTL::Ordered;
 	using SelfIdentified	= ::CTL::SelfIdentified<Iterator<TData, REVERSE, TIndex>>;
@@ -76,8 +68,8 @@ public:
 	constexpr explicit(REVERSE) Iterator(PointerType const& value): iterand(value)			{}
 	constexpr explicit(REVERSE) Iterator(PointerType&& value): iterand(CTL::move(value))	{}
 
-	constexpr explicit(REVERSE) Iterator(Iterator const& other): iterand(other.iterand)			{}
-	constexpr explicit(REVERSE) Iterator(Iterator&& other): iterand(CTL::move(other.iterand))	{}
+	constexpr Iterator(SelfType const& other): iterand(other.iterand)		{}
+	constexpr Iterator(SelfType&& other): iterand(CTL::move(other.iterand))	{}
 
 	constexpr PointerType base() const {return iterand;}
 
@@ -109,7 +101,7 @@ public:
 	//constexpr operator STLConstForwardIterator() const requires(!REVERSE)	{return iterand;}
 	constexpr operator STLConstReverseIterator() const requires(REVERSE)	{return iterand;}
 private:
-	constexpr PointerType iter() {
+	constexpr PointerType iter() const {
 		PointerType it = iterand;
 		if constexpr (REVERSE)	return --it;
 		else					return it;
@@ -178,10 +170,10 @@ struct Iteratable: Typed<TData>, Indexed<TIndex> {
 
 	using Indexed::MAX_SIZE;
 
-	typedef ForwardIterator<PointerType, SizeType>		IteratorType;
-	typedef ForwardIterator<ConstPointerType, SizeType>	ConstIteratorType;
-	typedef ReverseIterator<PointerType, SizeType>		ReverseIteratorType;
-	typedef ReverseIterator<ConstPointerType, SizeType>	ConstReverseIteratorType;
+	typedef ForwardIterator<DataType, SizeType>		IteratorType;
+	typedef ForwardIterator<ConstantType, SizeType>	ConstIteratorType;
+	typedef ReverseIterator<DataType, SizeType>		ReverseIteratorType;
+	typedef ReverseIterator<ConstantType, SizeType>	ConstReverseIteratorType;
 
 protected:
 	constexpr static void wrapBounds(IndexType& index, SizeType const& count) {

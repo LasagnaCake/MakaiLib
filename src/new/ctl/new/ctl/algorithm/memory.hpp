@@ -22,7 +22,7 @@ CTL_NAMESPACE_BEGIN
 namespace MX {
 	typedef uint8* Address;
 
-	constexpr void* memcpy(void* const& dst, const void* const& src, usize size) {
+	constexpr void* memcpy(void* const& dst, void const* const& src, usize size) {
 		#ifdef CTL_DO_NOT_USE_BUILTINS
 		Address s = (Address)src, d = (Address)dst;
 		if (size == 1) *d = *s;
@@ -33,16 +33,16 @@ namespace MX {
 	}
 
 	template<Type::NonVoid T>
-	constexpr T* memcpy(T* const& dst, T* const& src, usize const& count) {
-		return (T*)memcpy((Address)dst, (Address)src, count * sizeof(T));
+	constexpr T* memcpy(T* const& dst, T const* const& src, usize const& count) {
+		return (T*)memcpy((void*)dst, (void*)src, count * sizeof(T));
 	}
 
 	template<Type::NonVoid T>
-	constexpr T* memcpy(T* const& dst, T* const& src) {
-		return memcpy((Address)dst, (Address)src, sizeof(T));
+	constexpr T* memcpy(T* const& dst, T const* const& src) {
+		return (T*)memcpy((void*)dst, (void*)src, sizeof(T));
 	}
 
-	constexpr void* memmove(void* const& dst, const void* const& src, usize size) {
+	constexpr void* memmove(void* const& dst, void const* const& src, usize size) {
 		#ifdef CTL_DO_NOT_USE_BUILTINS
 		Address d = (Address)dst, s = (Address)src;
 		if (d < s)
@@ -60,16 +60,16 @@ namespace MX {
 	}
 
 	template<Type::NonVoid T>
-	constexpr T* memmove(T* const& dst, T* const& src, usize const& count) {
-		return memmove((Address)dst, (Address)src, count * sizeof(T));
+	constexpr T* memmove(T* const& dst, T const* const& src, usize const& count) {
+		return (T*)memmove((void*)dst, (void*)src, count * sizeof(T));
 	}
 
 	template<Type::NonVoid T>
-	constexpr T* memmove(T* const& dst, T* const& src) {
-		return memmove((Address)dst, (Address)src, sizeof(T));
+	constexpr T* memmove(T* const& dst, T const* const& src) {
+		return (T*)memmove((void*)dst, (void*)src, sizeof(T));
 	}
 
-	constexpr int memcmp(void* const& a, void* const& b, usize size) {
+	constexpr int memcmp(void const* const& a, void const* const& b, usize size) {
 		#ifdef CTL_DO_NOT_USE_BUILTINS
 		Address s1 = (Address)a, s2 = (Address)b;
 		while (size-- > 0)
@@ -81,8 +81,13 @@ namespace MX {
 	}
 
 	template<Type::NonVoid T>
-	constexpr int memcmp(T* const& a, T* const& b, usize const& count) {
-		return memcmp((Address)a, (Address)b, count * sizeof(T));
+	constexpr int memcmp(T const* const& a, T const* const& b, usize const& count) {
+		return memcmp((void*)a, (void*)b, count * sizeof(T));
+	}
+
+	template<Type::NonVoid T>
+	constexpr int memcmp(T const* const& a, T const* const& b) {
+		return memcmp(a, b, 1);
 	}
 
 	constexpr void* memset(void* const& dst, int const& val, usize size) {
@@ -97,12 +102,12 @@ namespace MX {
 
 	template<Type::NonVoid T>
 	constexpr T* memset(T* const& dst, int const& val, usize const& count) {
-		return memset((Address)dst, val, count * sizeof(T));
+		return (T*)memset((void*)dst, val, count * sizeof(T));
 	}
 
 	template<Type::NonVoid T>
 	constexpr T* memset(T* const& dst, int const& val) {
-		return memset((Address)dst, val, sizeof(T));
+		return (T*)memset((void*)dst, val, sizeof(T));
 	}
 
 	constexpr void* memzero(void* const& dst, usize const& size) {
@@ -111,12 +116,12 @@ namespace MX {
 
 	template<Type::NonVoid T>
 	constexpr T* memzero(T* const& dst, usize const& size) {
-		return memset(dst, 0, size * sizeof(usize));
+		return (T*)memzero((void*)dst, size * sizeof(T));
 	}
 
 	template<Type::NonVoid T>
 	constexpr T* memzero(T* const& dst) {
-		return memzero((Address)dst, sizeof(T));
+		return (T*)memzero((void*)dst, sizeof(T));
 	}
 
 	template<Type::NonVoid T>

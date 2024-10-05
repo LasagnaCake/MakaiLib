@@ -107,9 +107,9 @@ public:
 
 	constexpr SelfType& operator()(OperationType const& op) {return then(op);}
 
-	constexpr SelfType& operator=(DataType const& value)	{data = value; isSet = true; return *this;			}
-	constexpr SelfType& operator=(DataType&& value)			{data = move(value); isSet = true; return *this;	}
-	constexpr SelfType& operator=(NullType)					{isSet = false; return *this;						}
+	constexpr SelfType& operator=(DataType const& value)	{data = value; isSet = true; return *this;				}
+	constexpr SelfType& operator=(DataType&& value)			{data = CTL::move(value); isSet = true; return *this;	}
+	constexpr SelfType& operator=(NullType)					{isSet = false; return *this;							}
 
 	constexpr bool operator==(SelfType const& other) const	{if (isSet) return other == data; return false;}
 	constexpr bool operator==(DataType const& value) const	{if (isSet) return data == value; return false;}
@@ -137,8 +137,8 @@ public:
 	}
 
 	constexpr SelfType& operator=(SelfType&& other) {
-		if (other.isSet) data = move(other.data);
-		isSet = move(other.isSet);
+		if (other.isSet) data = CTL::move(other.data);
+		isSet = CTL::move(other.isSet);
 		return *this;
 	}
 

@@ -44,7 +44,7 @@ struct Pair:
 	constexpr Pair(AType const& a, BType const& b):	a(a), b(b)				{}
 	constexpr Pair(SelfType const& other):			a(other.a), b(other.b)	{}
 
-	constexpr OrderType operator<=>(SelfType const& other) requires (
+	constexpr OrderType operator<=>(SelfType const& other) const requires (
 		Type::Comparable::Threeway<AType, AType>
 	&&	Type::Comparable::Threeway<BType, BType>
 	) {
@@ -54,12 +54,18 @@ struct Pair:
 		return order;
 	}
 
-	constexpr OrderType operator<=>(SelfType const& other)
-	requires (
+	constexpr OrderType operator<=>(SelfType const& other) const requires (
 		Type::Comparable::Threeway<AType, AType>
 	&&	!Type::Comparable::Threeway<BType, BType>
 	) {
 		return a <=> other.a;
+	}
+
+	constexpr OrderType operator<=>(SelfType const& other) const requires (
+		!Type::Comparable::Threeway<AType, AType>
+	&&	Type::Comparable::Threeway<BType, BType>
+	) {
+		return b <=> other.b;
 	}
 
 	template<Type::Constructible<AType, BType> TPair>
@@ -99,7 +105,7 @@ struct KeyValuePair:
 	constexpr KeyValuePair(PairType const& other):			KeyValuePair(other.a, other.b)			{}
 //	constexpr KeyValuePair(SelfType const& other):			KeyValuePair(other.key, other.value)	{}
 
-	constexpr OrderType operator<=>(SelfType const& other) requires (
+	constexpr OrderType operator<=>(SelfType const& other) const requires (
 		Type::Comparable::Threeway<AType, AType>
 	&&	Type::Comparable::Threeway<BType, BType>
 	) {
@@ -109,12 +115,18 @@ struct KeyValuePair:
 		return order;
 	}
 
-	constexpr OrderType operator<=>(SelfType const& other)
-	requires (
+	constexpr OrderType operator<=>(SelfType const& other) const requires (
 		Type::Comparable::Threeway<AType, AType>
 	&&	!Type::Comparable::Threeway<BType, BType>
 	) {
 		return key <=> other.key;
+	}
+
+	constexpr OrderType operator<=>(SelfType const& other) const requires (
+		!Type::Comparable::Threeway<AType, AType>
+	&&	Type::Comparable::Threeway<BType, BType>
+	) {
+		return value <=> other.value;
 	}
 
 	constexpr PairType pair() const		{return PairType(key, value);	}
@@ -144,7 +156,7 @@ struct LeftRightPair:
 	AType	left;
 	BType	right;
 
-	constexpr OrderType operator<=>(SelfType const& other) requires (
+	constexpr OrderType operator<=>(SelfType const& other) const requires (
 		Type::Comparable::Threeway<AType, AType>
 	&&	Type::Comparable::Threeway<BType, BType>
 	) {
@@ -154,12 +166,18 @@ struct LeftRightPair:
 		return order;
 	}
 
-	constexpr OrderType operator<=>(SelfType const& other)
-	requires (
+	constexpr OrderType operator<=>(SelfType const& other) const requires (
 		Type::Comparable::Threeway<AType, AType>
 	&&	!Type::Comparable::Threeway<BType, BType>
 	) {
 		return left <=> other.left;
+	}
+
+	constexpr OrderType operator<=>(SelfType const& other) const requires (
+		!Type::Comparable::Threeway<AType, AType>
+	&&	Type::Comparable::Threeway<BType, BType>
+	) {
+		return right <=> other.right;
 	}
 
 	constexpr LeftRightPair() = default;
@@ -196,7 +214,7 @@ struct FirstSecondPair:
 	AType	first;
 	BType	second;
 
-	constexpr OrderType operator<=>(SelfType const& other) requires (
+	constexpr OrderType operator<=>(SelfType const& other) const requires (
 		Type::Comparable::Threeway<AType, AType>
 	&&	Type::Comparable::Threeway<BType, BType>
 	) {
@@ -206,12 +224,18 @@ struct FirstSecondPair:
 		return order;
 	}
 
-	constexpr OrderType operator<=>(SelfType const& other)
-	requires (
+	constexpr OrderType operator<=>(SelfType const& other) const requires (
 		Type::Comparable::Threeway<AType, AType>
 	&&	!Type::Comparable::Threeway<BType, BType>
 	) {
 		return first <=> other.first;
+	}
+
+	constexpr OrderType operator<=>(SelfType const& other) const requires (
+		!Type::Comparable::Threeway<AType, AType>
+	&&	Type::Comparable::Threeway<BType, BType>
+	) {
+		return second <=> other.second;
 	}
 
 	constexpr FirstSecondPair() = default;
@@ -224,6 +248,11 @@ struct FirstSecondPair:
 	constexpr PairType pair() const		{return PairType(first, second);	}
 	constexpr operator PairType() const	{return pair();						}
 };
+
+static_assert(Type::Comparable::Threeway<Pair<int, int>, Pair<int, int>>);
+static_assert(Type::Comparable::Threeway<KeyValuePair<int, int>, KeyValuePair<int, int>>);
+static_assert(Type::Comparable::Threeway<LeftRightPair<int, int>, LeftRightPair<int, int>>);
+static_assert(Type::Comparable::Threeway<FirstSecondPair<int, int>, FirstSecondPair<int, int>>);
 
 namespace Type {
 	template<class T>
