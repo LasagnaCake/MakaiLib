@@ -66,8 +66,9 @@ struct ValueOrder {
 		return  *this <=> ValueOrder(value);
 	}
 
-	constexpr operator StandardOrder()	{return order();	}
-	constexpr StandardOrder order()		{return val;		}
+	constexpr operator std::partial_ordering()	{return (int)val;	}
+	constexpr operator StandardOrder()			{return order();	}
+	constexpr StandardOrder order()				{return val;		}
 
 private:
 	StandardOrder val = StandardOrder::UNORDERED;
