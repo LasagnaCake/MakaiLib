@@ -31,7 +31,7 @@ namespace OS {
 	}
 
 	inline int launch(String const& path, String const& directory = "", StringList args = StringList()) {
-		if (!FileSystem::exists(path))
+		if (!FS::exists(path))
 			throw Error::InvalidValue(
 				"File [" + path + "] does not exist!",
 				__FILE__,
@@ -43,23 +43,23 @@ namespace OS {
 		if (!args.empty())
 			for (String const& arg: args)
 				prgArgs += sanitizedArgument(arg) + " ";
-		prgArgs = sanitized(path) + (args.empty() ? "" : (" " + prgArgs));
+		prgArgs = sanitizedArgument(path) + (args.empty() ? "" : (" " + prgArgs));
 		// This is a nightmare, but the other option pops up a command prompt.
-		STARTUPINFO sInfo;
+		STARTUPINFOA sInfo;
 		PROCESS_INFORMATION pInfo;
 		memset(&sInfo, 0, sizeof(sInfo));
 		sInfo.cb = sizeof(sInfo);
 		memset(&pInfo, 0, sizeof(pInfo));
-		auto proc = CreateProcess(
-			path.cstr(),
+		auto proc = CreateProcessA(
+			(LPCSTR)path.cstr(),
 			(LPSTR)prgArgs.cstr(),
 			NULL,
 			NULL,
 			FALSE,
 			0,
 			NULL,
-			directory.empty() ? NULL : directory.cstr(),
-			&sInfo,
+			(LPCSTR)directory.empty() ? NULL : directory.cstr(),
+			(LPSTARTUPINFOA)&sInfo,
 			&pInfo
 		);
 		if (!proc) throw Error::FailedAction(toString("could not find '", path,"!"));
@@ -81,14 +81,14 @@ namespace OS {
 
 	inline String openFileDialog(String filter = "All\0*.*\0") {
 		#if (_WIN32 || _WIN64 || __WIN32__ || __WIN64__) && !defined(_NO_WINDOWS_PLEASE_)
-		OPENFILENAME ofn;
+		OPENFILENAMEA ofn;
 		char szFile[260] = {0};
 		memset(&ofn, 0, sizeof(ofn));
 		ofn.lStructSize = sizeof(ofn);
 		ofn.hwndOwner = NULL;
-		ofn.lpstrFile = szFile;
+		ofn.lpstrFile = (LPSTR)szFile;
 		ofn.nMaxFile = sizeof(szFile);
-		ofn.lpstrFilter = filter.c_str();
+		ofn.lpstrFilter = (LPSTR)filter.cstr();
 		ofn.nFilterIndex = 1;
 		ofn.lpstrFileTitle = NULL;
 		ofn.nMaxFileTitle = 0;
@@ -100,22 +100,22 @@ namespace OS {
 		|	OFN_NOCHANGEDIR
 		|	OFN_EXPLORER
 		;
-		if (GetOpenFileName(&ofn))
-			return String(ofn.lpstrFile);
+		if (GetOpenFileNameA(&ofn))
+			return String((cstr)ofn.lpstrFile);
 		#endif
 		return "";
 	}
 
 	inline String saveFileDialog(String filter = "All\0*.*\0") {
 		#if (_WIN32 || _WIN64 || __WIN32__ || __WIN64__) && !defined(_NO_WINDOWS_PLEASE_)
-		OPENFILENAME ofn;
+		OPENFILENAMEA ofn;
 		char szFile[260] = {0};
 		memset(&ofn, 0, sizeof(ofn));
 		ofn.lStructSize = sizeof(ofn);
 		ofn.hwndOwner = NULL;
-		ofn.lpstrFile = szFile;
+		ofn.lpstrFile = (LPSTR)szFile;
 		ofn.nMaxFile = sizeof(szFile);
-		ofn.lpstrFilter = filter.c_str();
+		ofn.lpstrFilter = (LPSTR)filter.cstr();
 		ofn.nFilterIndex = 1;
 		ofn.lpstrFileTitle = NULL;
 		ofn.nMaxFileTitle = 0;
@@ -127,8 +127,8 @@ namespace OS {
 		|	OFN_NOCHANGEDIR
 		|	OFN_EXPLORER
 		;
-		if (GetSaveFileName(&ofn))
-			return String(ofn.lpstrFile);
+		if (GetSaveFileNameA(&ofn))
+			return String((cstr)ofn.lpstrFile);
 		#endif
 		return "";
 	}

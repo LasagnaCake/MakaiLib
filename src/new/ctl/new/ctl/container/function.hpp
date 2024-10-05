@@ -31,7 +31,6 @@ template<typename T> struct Function;
 
 template<typename TReturn, typename... TArgs>
 struct Function<TReturn(TArgs...)>:
-	Typed<TReturn>,
 	SelfIdentified<Function<TReturn(TArgs...)>>,
 	Returnable<TReturn>,
 	Argumented<TArgs...>,
@@ -39,7 +38,6 @@ struct Function<TReturn(TArgs...)>:
 public:
 	using Functional		= ::CTL::Functional<TReturn(TArgs...)>;
 	using SelfIdentified	= ::CTL::SelfIdentified<Function<TReturn(TArgs...)>>;
-	using Typed				= ::CTL::Typed<TReturn>;
 	using Returnable		= ::CTL::Returnable<TReturn>;
 	using Argumented		= ::CTL::Argumented<TArgs...>;
 

@@ -11,20 +11,32 @@
 
 CTL_NAMESPACE_BEGIN
 
-template<class TKey, class TValue, Type::Integer TIndex = usize, bool AUTO_SORTED = true>
+template<class TKey, class TValue, template <class TPairKey, class TPairValue> class TPair = Pair>
+struct Collected {
+	static_assert(Type::Pair<TPair<TKey, TValue>>, "Type is not a valid pair type!");
+
+	typedef Typed<TKey>			Key;
+	typedef Typed<TValue>		Value;
+
+	typedef TKey				KeyType;
+	typedef TValue				ValueType;
+	typedef TPair<TKey, TValue>	PairType;
+};
+
+template<class TKey, class TValue, Type::Integer TIndex = usize, bool SORT = true>
 struct BaseSimpleMap:
 	Collected<TKey, TValue, KeyValuePair>,
 	Derived<List<KeyValuePair<TKey, TValue>, TIndex>>,
-	SelfIdentified<SimpleMap<TKey, TValue, TIndex>>,
+	SelfIdentified<BaseSimpleMap<TKey, TValue, TIndex, SORT>>,
 	private List<KeyValuePair<TKey, TValue>, TIndex> {
 public:
-	constexpr static bool IS_SORTED = AUTO_SORTED;
+	constexpr static bool SORTED = SORT;
 
 	static_assert(SORTED && Type::Comparable::Threeway<TKey, TKey>, "Cannot form a sortable map whithout an orderable key!");
 
 	using Derived			= ::CTL::Derived<List<KeyValuePair<TKey, TValue>, TIndex>>;
 	using Collected			= ::CTL::Collected<TKey, TValue, KeyValuePair>;
-	using SelfIdentified	= ::CTL::SelfIdentified<SimpleMap<TKey, TValue, TIndex>>;
+	using SelfIdentified	= ::CTL::SelfIdentified<BaseSimpleMap<TKey, TValue, TIndex, SORTED>>;
 
 	using typename Derived::BaseType;
 
@@ -119,30 +131,31 @@ public:
 
 	constexpr ValueType at(KeyType const& key) const
 	requires (Type::Constructible<ValueType>) {
-		if (empty()) return pushBack({key}).back().value;
-		IndexType i = find(key);
+		if (empty()) return ValueType();
+		IndexType i = search(key);
 		if (i == -1)	return ValueType();
 		else			return data()[i].value;
 	}
 
 	constexpr ValueType at(KeyType const& key) const
 	requires (!Type::Constructible<ValueType>) {
-		if (empty()) return pushBack({key}).back().value;
-		IndexType i = find(key);
+		if (empty()) throw OutOfBoundsException("Key does not exist!");
+		IndexType i = search(key);
 		if (i == -1)	throw OutOfBoundsException("Key does not exist!");
 		else			return data()[i].value;
 	}
 
 	constexpr ValueType& operator[](KeyType const& key) {
-		if (empty()) return pushBack({key}).back().value;
-		IndexType i = bsearch(key);
+		if (empty()) return BaseType::pushBack(PairType(key)).back().value;
+		IndexType i = search(key);
 		if (i == -1) {
-			BaseType::pushBack({key}).sort();
-			return data()[bsearch(key)].value;
+			BaseType::pushBack(PairType(key)).sort();
+			return data()[search(key)].value;
 		} else return data()[i].value;
 	}
 
-	constexpr IndexType find(KeyType const& key) const {
+	constexpr IndexType search(KeyType const& key) const
+	requires (SORTED) {
 		if (empty()) return -1;
 		IndexType pivot = size() / 2, index = pivot;
 		while (pivot != 0) {
@@ -153,6 +166,14 @@ public:
 				case Order::UNORDERED:	return -1;
 			}
 		}
+		return -1;
+	}
+
+	constexpr IndexType search(KeyType const& key) const
+	requires (!SORTED) {
+		for (usize i = 0; i < size(); ++i)
+			if (data()[i].key == key)
+				return i;
 		return -1;
 	}
 
@@ -244,8 +265,8 @@ private:
 	constexpr static CompareType const	UNIQUE_VALUES	= [](PairType const& a, PairType const& b){return a.key != b.key;};
 	PredicateType const					NOT_IN_MAP		= [this](PairType const& pair){return !contains(pair.key);};
 
-	constexpr void update() requires (IS_SORTED)	{sort();	}
-	constexpr void update() requires (!IS_SORTED)	{			}
+	constexpr void update() requires (SORTED)	{sort();	}
+	constexpr void update() requires (!SORTED)	{			}
 
 	constexpr void clean() {filter(UNIQUE_VALUES);}
 };

@@ -13,7 +13,6 @@ template<typename TFunction> class Functor;
 template<typename TReturn, typename... TArgs>
 struct Functor<TReturn(TArgs...)>:
 	Ordered,
-	Typed<TReturn>,
 	SelfIdentified<Functor<TReturn(TArgs...)>>,
 	Returnable<TReturn>,
 	Argumented<TArgs...>,
@@ -67,8 +66,8 @@ private:
 	inline static usize	count;
 };
 
-template<class T>
-using Procedure		= Functor<void(T)>;
+template<class... Args>
+using Procedure		= Functor<void(Args...)>;
 
 template<class T, class T2 = T const&>
 using Operation		= Functor<T(T2)>;
@@ -76,8 +75,8 @@ using Operation		= Functor<T(T2)>;
 template<class T>
 using Acquisition	= Functor<T()>;
 
-template<class T = void>
-using Signal	= Procedure<T>;
+template<class... Args>
+using Signal	= Procedure<Args...>;
 
 template<class T = void>
 using Trigger	= Acquisition<bool>;

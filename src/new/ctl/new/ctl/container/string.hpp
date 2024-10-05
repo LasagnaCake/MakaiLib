@@ -70,6 +70,10 @@ public:
 
 	using
 		BaseType::BaseType,
+		BaseType::reserve,
+		BaseType::resize,
+		BaseType::tight,
+		BaseType::tighten,
 		BaseType::data,
 		BaseType::cbegin,
 		BaseType::cend,
@@ -141,7 +145,7 @@ public:
 		IndexType idx = find(sep);
 		if (idx < 0)
 			return res.pushBack(*this);
-		return res.pushBack({sliced(0, idx), sliced(idx, count)});
+		return res.pushBack({sliced(0, idx), sliced(idx, size())});
 	}
 
 	constexpr List<SelfType, IndexType> splitAtFirst(List<DataType> const& seps) const {
@@ -154,7 +158,7 @@ public:
 		}
 		if (idx < 0)
 			return res.pushBack(*this);
-		return res.pushBack({sliced(0, idx), sliced(idx, count)});
+		return res.pushBack({sliced(0, idx), sliced(idx, size())});
 	}
 
 	/*constexpr List<SelfType, IndexType> splitAtFirst(ArgumentListType const& seps) const {
@@ -167,7 +171,7 @@ public:
 		}
 		if (idx < 0)
 			return res.pushBack(*this);
-		return res.pushBack({sliced(0, idx), sliced(idx, count)});
+		return res.pushBack({sliced(0, idx), sliced(idx, size())});
 	}*/
 
 	constexpr List<SelfType, IndexType> splitAtLast(DataType const& sep) const {
@@ -175,7 +179,7 @@ public:
 		IndexType idx = rfind(sep);
 		if (idx < 0)
 			return res.pushBack(*this);
-		return res.pushBack({sliced(0, idx), sliced(idx, count)});
+		return res.pushBack({sliced(0, idx), sliced(idx, size())});
 	}
 
 	constexpr List<SelfType, IndexType> splitAtLast(List<DataType> const& seps) const {
@@ -188,7 +192,7 @@ public:
 		}
 		if (idx < 0)
 			return res.pushBack(*this);
-		return res.pushBack({sliced(0, idx), sliced(idx, count)});
+		return res.pushBack({sliced(0, idx), sliced(idx, size())});
 	}
 
 	/*constexpr List<SelfType, IndexType> splitAtLast(ArgumentListType const& seps) const {
@@ -201,7 +205,7 @@ public:
 		}
 		if (idx < 0)
 			return res.pushBack(*this);
-		return res.pushBack({sliced(0, idx), sliced(idx, count)});
+		return res.pushBack({sliced(0, idx), sliced(idx, size())});
 	}*/
 	
 	constexpr SelfType& replace(DataType const& val, DataType const& rep) {

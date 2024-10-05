@@ -8,41 +8,59 @@
 CTL_NAMESPACE_BEGIN
 
 namespace Regex {
+	namespace {
+		inline std::string stdstr(String const& expr) {
+			return std::string(expr.cstr());
+		}
+
+		inline String ctlstr(std::string const& expr) {
+			return String(expr.c_str());
+		}
+
+		inline std::regex makeRegex(String const& expr) {
+			return std::regex(stdstr(expr));
+		}
+	}
+
 	inline String replace(String const& str, String const& expr, String const& fmt) {
-		return std::regex_replace(str, makeRegex(expr), fmt).c_str();
+		return std::regex_replace(stdstr(str), makeRegex(expr), stdstr(fmt)).c_str();
 	}
 
 	inline bool contains(String const& str, String const& expr) {
 		std::smatch rm;
-		return std::regex_search(str, rm, makeRegex(expr));
+		auto cs = stdstr(str);
+		return std::regex_search(cs, rm, makeRegex(expr));
 	}
 
 	inline bool matches(String const& str, String const& expr) {
 		std::smatch rm;
-		return std::regex_match(str, rm, makeRegex(expr));
+		auto cs = stdstr(str);
+		return std::regex_match(cs, rm, makeRegex(expr));
 	}
 
 	struct Match {
-		usize	position;
+		ssize	position;
 		String	match;
 	};
 
-	inline List<String> find(String const& str, String const& expr) {
+	inline List<Match> find(String const& str, String const& expr) {
 		std::smatch rm;
-		List<String> result;
-		std::regex_search(str, rm, makeRegex(expr));
+		List<Match> result;
+		auto cs = stdstr(str);
+		std::regex_search(cs, rm, makeRegex(expr));
 		for (usize i = 1; i < rm.size()-1; ++i)
-			result.pushBack({
+			result.pushBack(Match{
 				rm.position(i),
-				rm[i].str().c_str()
+				ctlstr(rm[i].str())
 			});
 		return result;
 	}
 
-	inline String findFirst(String const& str, String const& expr) {
+	inline Match findFirst(String const& str, String const& expr) {
 		std::smatch rm;
-		std::regex_search(str, rm, makeRegex(expr));
-		return rm[1].str().c_str();
+		auto cs = stdstr(str);
+		std::regex_search(cs, rm, makeRegex(expr));
+		return Match{rm.position(1), ctlstr(rm[1].str())};
 	}
 }
 

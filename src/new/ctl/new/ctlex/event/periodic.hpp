@@ -1,7 +1,7 @@
 #ifndef CTL_EX_EVENT_PERIODIC_H
 #define CTL_EX_EVENT_PERIODIC_H
 
-#include "../../ctl/namespace.hpp"
+#include "../../ctl/exnamespace.hpp"
 #include "../../ctl/container/list.hpp"
 #include "../../ctl/container/function.hpp"
 
@@ -16,12 +16,11 @@ public:
 	/// Empty constructor.
 	Periodic(bool const& manual = false): manual(manual) {
 		if (!manual)
-			events.pushBack(&doYield);
+			events.pushBack(&update);
 	}
 
 	/// Yields all available non-manual periodic events.
 	static void process(TDelta const& delta = 1) {
-		// Loop through timers and step them
 		if (events.size())
 			for(EventWrapper const* func : events)
 				(*func)(delta);
@@ -29,22 +28,20 @@ public:
 
 	void setManual() {
 		if (manual) return;
-		// Loop through tween calls and delete if matches
 		if (!events.empty())
-			std::erase_if(events, [&](auto& e){return e == &doYield;});
+			std::erase_if(events, [&](auto& e){return e == &update;});
 		manual = true;
 	}
 
 	void setAutomatic() {
 		if (!manual) return;
-		events.push_back(&doYield);
+		events.push_back(&update);
 		manual = false;
 	}
 
-	virtual ~PeriodicEvent() {
-		// Loop through tween calls and delete if matches
+	virtual ~Periodic() {
 		if (!manual && !events.empty())
-			events.eraseIf([&](auto& e){return e == &doYield;});
+			events.eraseIf([&](auto& e){return e == &update;});
 	}
 
 	virtual void onUpdate(usize const& delta) = 0;

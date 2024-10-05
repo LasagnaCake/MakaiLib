@@ -40,18 +40,18 @@ public:
 	void yield() {
 		usize i = 0;
 		for (CounterInstance* counter: counters) {
-			if (counter.count() < 2) {
+			if (counter->count() < 2) {
 				delete counter;
 				counters.erase(counters.find(counter));
 			}
-			else if (counter->value() > 0)	(*counter)--;
+			else if (counter->value().value() > 0)	(**counter)--;
 			++i;
 		}
 	}
 
 	Waiter getWaiter() {
 		counters.pushBack(createCounter());
-		return Waiter(counters.back());
+		return Waiter(*counters.back());
 	}
 
 private:

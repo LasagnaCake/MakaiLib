@@ -231,51 +231,51 @@ namespace Math {
 CTL_NAMESPACE_END
 
 #ifndef SQRT2
-#define SQRT2 CTL::Math::sqrt2
+#define SQRT2 (::CTL::Math::sqrt2)
 #endif // SQRT2
 
 #ifndef HSQRT2
-#define HSQRT2 CTL::Math::hsqrt2
+#define HSQRT2 (::CTL::Math::hsqrt2)
 #endif // HSQRT2
 
 #ifndef LN2
-#define LN2 CTL::Math::ln2
+#define LN2 (::CTL::Math::ln2)
 #endif // LN2
 
 #ifndef PI
-#define PI Math::pi
+#define PI (::CTL::Math::pi)
 #endif // PI
 
 #ifndef HPI
-#define HPI CTL::Math::hpi
+#define HPI (::CTL::Math::hpi)
 #endif // HPI
 
 #ifndef QPI
-#define QPI CTL::Math::qpi
+#define QPI (::CTL::Math::qpi)
 #endif // HPI
 
 #ifndef TAU
-#define TAU CTL::Math::tau
+#define TAU (::CTL::Math::tau)
 #endif // TAU
 
 #ifndef EULER
-#define EULER CTL::Math::euler
+#define EULER (::CTL::Math::euler)
 #endif // EULER
 
 #ifndef PHI
-#define PHI CTL::Math::phi
+#define PHI (::CTL::Math::phi)
 #endif // PHI
 
 #ifndef DEGRAD
-#define DEGRAD Math::degrad
+#define DEGRAD (::CTL::Math::degrad)
 #endif // DEGRAD
 
 #ifndef MARIBEL
-#define MARIBEL CTL::Math::maribel
+#define MARIBEL (::CTL::Math::maribel)
 #endif // MARIBEL
 
 #ifndef TAUPHI
-#define TAUPHI CTL::Math::tauphi
+#define TAUPHI (::CTL::Math::tauphi)
 #endif // TAUPHI
 
 #pragma GCC diagnostic push

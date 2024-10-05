@@ -88,7 +88,7 @@ public:
 
 	constexpr ~Pointer() {unbind();}
 
-	constexpr usize count() {
+	constexpr ssize count() const {
 		if (!exists()) return 0;
 		return database[ref].count;
 	}
@@ -106,7 +106,7 @@ public:
 	constexpr SelfType& unbind() {
 		if (!exists()) return (*this);
 		CTL_PTR_IF_STRONG {
-			if ((database[(void*)ref].count-1 < 1))
+			if ((count()-1 < 1))
 				return destroy();
 			else database[(void*)ref].count--;
 		}
@@ -135,9 +135,11 @@ public:
 
 	constexpr bool exists() const {
 		if (ref == nullptr) return false;
-		CTL_PTR_IF_STRONG	return (database[(void*)ref].count > 0);
+		CTL_PTR_IF_STRONG	return (count() > 0);
 		else				return (database[(void*)ref].exists);
 	}
+
+	constexpr ssize unique() const	{return count() == 1;}
 
 	constexpr bool operator()() const	{return exists();}
 

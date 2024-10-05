@@ -40,6 +40,7 @@ struct Pair:
 
 	constexpr Pair() = default;
 
+	constexpr Pair(AType const& a):					a(a)					{}
 	constexpr Pair(AType const& a, BType const& b):	a(a), b(b)				{}
 	constexpr Pair(SelfType const& other):			a(other.a), b(other.b)	{}
 
@@ -85,9 +86,10 @@ struct KeyValuePair:
 
 	constexpr KeyValuePair() = default;
 
+	constexpr KeyValuePair(AType const& k):					key(k)									{}
 	constexpr KeyValuePair(AType const& k, BType const& v):	key(k), value(v)						{}
 	constexpr KeyValuePair(PairType const& other):			KeyValuePair(other.a, other.b)			{}
-	//constexpr KeyValuePair(SelfType const& other):			KeyValuePair(other.key, other.value)	{}
+//	constexpr KeyValuePair(SelfType const& other):			KeyValuePair(other.key, other.value)	{}
 
 	constexpr OrderType operator<=>(SelfType const& other) requires (
 		Type::Comparable::Threeway<AType, AType>
@@ -138,9 +140,10 @@ struct LeftRightPair:
 
 	constexpr LeftRightPair() = default;
 
+	constexpr LeftRightPair(AType const& l):					left(l)									{}
 	constexpr LeftRightPair(AType const& l, BType const& r):	left(l), right(r)						{}
 	constexpr LeftRightPair(PairType const& other):				LeftRightPair(other.a, other.b)			{}
-	//constexpr LeftRightPair(SelfType const& other):				LeftRightPair(other.left, other.right)	{}
+//	constexpr LeftRightPair(SelfType const& other):				LeftRightPair(other.left, other.right)	{}
 
 	constexpr PairType pair() const		{return PairType(left, right);	}
 	constexpr operator PairType() const	{return pair();					}
@@ -181,9 +184,10 @@ struct FirstSecondPair:
 
 	constexpr FirstSecondPair() = default;
 
+	constexpr FirstSecondPair(AType const& v1):						first(v1)									{}
 	constexpr FirstSecondPair(AType const& v1, BType const& v2):	first(v1), second(v2)						{}
 	constexpr FirstSecondPair(PairType const& other):				FirstSecondPair(other.a, other.b)			{}
-	//constexpr FirstSecondPair(SelfType const& other):				FirstSecondPair(other.first, other.second)	{}
+//	constexpr FirstSecondPair(SelfType const& other):				FirstSecondPair(other.first, other.second)	{}
 
 	constexpr PairType pair() const		{return PairType(first, second);	}
 	constexpr operator PairType() const	{return pair();						}
@@ -196,8 +200,8 @@ namespace Type {
 		typename T::BType;
 		//{t.template get<0>()} -> Type::Equal<typename T::AType>;
 		//{t.template get<1>()} -> Type::Equal<typename T::BType>;
-		requires Type::Convertible<T, Pair<typename T::AType, typename T::BType>>;
-	}
+		requires Type::Convertible<T, ::CTL::Pair<typename T::AType, typename T::BType>>;
+	};
 }
 
 CTL_NAMESPACE_END

@@ -66,16 +66,18 @@ constexpr String toString(T const& value) {
 	return value.c_str();
 }
 
+template<class... Args>
+constexpr String toString(Args const&... args) {
+	return (... + toString(args));
+}
+
 template<class T>
 concept StringConvertible = requires (T t) {
 	{toString(t)} -> Type::Equal<String>;
 };
 
-template<StringConvertible T, class... Args>
-constexpr String toString(T const& first, Args const&... args)
-	requires (... && StringConvertible<Args>) {
-	return (... + toString(args));
-}
+constexpr String toString(cstr const& value)	{return value;}
+constexpr String toString(String const& value)	{return value;}
 
 template<class... Args>
 constexpr WideString toWideString(Args const&... args)

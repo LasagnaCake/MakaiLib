@@ -106,6 +106,9 @@ typedef uintmax	uint256 __attribute__((vector_size(32)));
 typedef uintmax	uint512 __attribute__((vector_size(64)));
 #endif
 
+typedef char const*		cstr;
+typedef wchar const*	cwstr;
+
 typedef decltype(nullptr) nulltype;
 
 #endif // CTL_EXTENDED_TYPES_H

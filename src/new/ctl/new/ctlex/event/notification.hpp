@@ -5,6 +5,7 @@
 #include "../../ctl/container/functor.hpp"
 #include "../../ctl/container/string.hpp"
 #include "../../ctl/container/map.hpp"
+#include "../../ctl/container/dictionary.hpp"
 #include "../../ctl/container/arguments.hpp"
 
 CTL_EX_NAMESPACE_BEGIN
@@ -20,7 +21,7 @@ public:
 
 	Notifier() {}
 
-	Notifier(String const& signal, Signal const& action)				{subscribe(signal, action);		}
+	Notifier(String const& signal, SignalType const& action)			{subscribe(signal, action);		}
 	Notifier(String const& signal, SignalList const& actions)			{subscribe(signal, actions);	}
 	Notifier(String const& signal, SignalArguments const& actions)		{subscribe(signal, actions);	}
 
@@ -32,24 +33,24 @@ public:
 		unsubscribeFromAll();
 	}
 
-	Notifier& subscribe(String const& signal, Signal const& action) {
-		added[signal].push_back(action);
-		db[signal].push_back(action);
+	Notifier& subscribe(String const& signal, SignalType const& action) {
+		added[signal].pushBack(action);
+		db[signal].pushBack(action);
 		return *this;
 	}
 
 	Notifier& subscribe(String const& signal, SignalList const& actions) {
-		for (Signal const& a: actions) {
-			added[signal].push_back(a);
-			db[signal].push_back(a);
+		for (SignalType const& a: actions) {
+			added[signal].pushBack(a);
+			db[signal].pushBack(a);
 		}
 		return *this;
 	}
 
 	Notifier& subscribe(String const& signal, SignalArguments const& actions) {
-		for (Signal const& a: actions) {
-			added[signal].push_back(a);
-			db[signal].push_back(a);
+		for (SignalType const& a: actions) {
+			added[signal].pushBack(a);
+			db[signal].pushBack(a);
 		}
 		return *this;
 	}
@@ -75,12 +76,7 @@ public:
 	Notifier& unsubscribe(String const& signal) {
 		if (db.contains(signal)) {
 			auto& al = added[signal];
-			std::erase_if(
-				db[signal],
-				[&] (SignalWrapper& elem) {
-					return std::find(al.begin(), al.end(), elem) != al.end();
-				}
-			);
+			db[signal].eraseIf([&] (SignalWrapper& elem) {return al.find(elem);});
 		}
 		added[signal].clear();
 		return *this;
@@ -110,12 +106,7 @@ public:
 			if (!added.contains(name))
 				continue;
 			auto& al = added[name];
-			std::erase_if(
-				lst,
-				[&] (SignalWrapper& elem) {
-					return std::find(al.begin(), al.end(), elem) != al.end();
-				}
-			);
+			lst.eraseIf([&] (SignalWrapper& elem) {return al.find(elem);});
 		}
 		added.clear();
 		return *this;

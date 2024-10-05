@@ -18,7 +18,7 @@ public:
 	using PeriodicTimer::PeriodicTimer;
 
 	/// The signal to be fired.
-	Signal<> onSignal = []{};
+	Signal<> onSignal;
 
 	/// Whether the current Timer is paused / completed.
 	bool paused	= false;

@@ -419,7 +419,7 @@ public:
 		return contents[index];
 	}
 
-	constexpr ReferenceType	operator[](IndexType const& index) {
+	constexpr ReferenceType	operator[](IndexType index) {
 		assertIsInBounds(index);
 		wrapBounds(index, count);
 		return contents[index];
@@ -545,6 +545,14 @@ public:
 		return true;
 	}
 
+	constexpr SelfType filter(PredicateType const& filter) const {
+		return eraseIfNot(filter);
+	}
+
+	constexpr SelfType filter(CompareType const& compare) {
+		return *this = filtered(compare);
+	}
+
 	constexpr SelfType filtered(PredicateType const& filter) const {
 		return SelfType(*this).eraseIfNot(filter);
 	}
@@ -592,6 +600,8 @@ public:
 	constexpr bool tight() const {return count == maximum;}
 
 private:
+	using Iteratable::wrapBounds;
+
 	constexpr void dump() {
 		memdestroy(contents, maximum);
 		contents = nullptr;
