@@ -76,7 +76,7 @@ concept StringConvertible = requires (T t) {
 	{toString(t)} -> Type::Equal<String>;
 };
 
-constexpr String toString(cstr const& value)	{return value;}
+constexpr String toString(cstring const& value)	{return value;}
 constexpr String toString(String const& value)	{return value;}
 
 template<class... Args>

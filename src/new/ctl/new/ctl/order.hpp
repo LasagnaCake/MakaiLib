@@ -13,7 +13,7 @@ enum class StandardOrder: int {
 	LESS = -1,
 	EQUAL,
 	GREATER,
-	UNORDERED = int(1 << (sizeof(int) *8) - 1)
+	UNORDERED
 };
 
 namespace Base {
@@ -25,11 +25,37 @@ namespace Base {
 	};
 }
 
-struct ValueOrder: Base::Order {};
+struct ValueOrder {
+	constexpr ValueOrder(StandardOrder const& value): val(value) {}
+
+	constexpr ValueOrder(std::partial_ordering const& value) {
+		if (value < 0)			val = StandardOrder::LESS;
+		else if (value == 0)	val = StandardOrder::GREATER;
+		else if (value > 0)		val = StandardOrder::EQUAL;
+	}
+
+	constexpr ValueOrder(std::strong_ordering const& value) {
+		if (value < 0)			val = StandardOrder::LESS;
+		else if (value == 0)	val = StandardOrder::GREATER;
+		else if (value > 0)		val = StandardOrder::EQUAL;
+	}
+
+	constexpr ValueOrder(std::weak_ordering const& value) {
+		if (value < 0)			val = StandardOrder::LESS;
+		else if (value == 0)	val = StandardOrder::GREATER;
+		else if (value > 0)		val = StandardOrder::EQUAL;
+	}
+
+	constexpr operator StandardOrder()	{return order();	}
+	constexpr StandardOrder order()		{return val;		}
+
+private:
+	StandardOrder val = StandardOrder::UNORDERED;
+};
 
 struct Ordered {
-	typedef decltype(ValueOrder::LESS) OrderType;
-	using Order = ValueOrder;
+	typedef ValueOrder OrderType;
+	using Order = StandardOrder;
 };
 
 CTL_NAMESPACE_END

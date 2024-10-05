@@ -49,11 +49,11 @@ public:
 	constexpr SelfType& operator=(BaseType const& f)		{BaseType::operator=(f); id = ++count; return *this;		}
 	constexpr SelfType& operator=(SelfType const& other)	{BaseType::operator=(other); id = other.id; return *this;	}
 
-	constexpr Nullable<ReturnType> evoke(TArgs... args) const requires (PROCEDURE)		{if (id) return BaseType::operator()(forward<TArgs>(args)...); return nullptr;	}
-	constexpr Nullable<ReturnType> operator()(TArgs... args) const requires (PROCEDURE)	{return evoke(forward<TArgs>(args)...);											}
+	constexpr Nullable<ReturnType> evoke(TArgs... args) const requires (PROCEDURE)		{if (id) return BaseType::operator()(args...); return nullptr;	}
+	constexpr Nullable<ReturnType> operator()(TArgs... args) const requires (PROCEDURE)	{return evoke(args...);											}
 
-	constexpr void evoke(TArgs... args) const requires (!PROCEDURE)			{if (id) BaseType::operator()(forward<TArgs>(args)...);	}
-	constexpr void operator()(TArgs... args) const requires (!PROCEDURE)	{evoke(forward<TArgs>(args)...);						}
+	constexpr void evoke(TArgs... args) const requires (!PROCEDURE)			{if (id) BaseType::operator()(args...);	}
+	constexpr void operator()(TArgs... args) const requires (!PROCEDURE)	{evoke(args...);						}
 
 	constexpr operator bool() const {return id;}
 

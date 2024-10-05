@@ -101,7 +101,7 @@ namespace OS {
 		|	OFN_EXPLORER
 		;
 		if (GetOpenFileNameA(&ofn))
-			return String((cstr)ofn.lpstrFile);
+			return String((cstring)ofn.lpstrFile);
 		#endif
 		return "";
 	}
@@ -128,7 +128,7 @@ namespace OS {
 		|	OFN_EXPLORER
 		;
 		if (GetSaveFileNameA(&ofn))
-			return String((cstr)ofn.lpstrFile);
+			return String((cstring)ofn.lpstrFile);
 		#endif
 		return "";
 	}

@@ -106,8 +106,8 @@ typedef uintmax	uint256 __attribute__((vector_size(32)));
 typedef uintmax	uint512 __attribute__((vector_size(64)));
 #endif
 
-typedef char const*		cstr;
-typedef wchar const*	cwstr;
+typedef char const*		cstring;
+typedef wchar const*	cwstring;
 
 typedef decltype(nullptr) nulltype;
 

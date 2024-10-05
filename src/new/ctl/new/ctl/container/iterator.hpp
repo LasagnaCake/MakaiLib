@@ -100,9 +100,9 @@ public:
 	constexpr bool operator==(Iterator const& other) const			{return iterand == other.iterand;	}
 	constexpr OrderType operator<=>(Iterator const& other) const	{return compare(other.iterand);		}
 
-	constexpr IndexType operator-(Iterator const& other) const	{return difference<REVERSE>(other.iterand);	}
-	constexpr Iterator operator-(IndexType const& value) const	{return offset<REVERSE>(value);				}
-	constexpr Iterator operator+(IndexType const& value) const	{return offset<REVERSE>(value);				}
+	constexpr IndexType operator-(Iterator const& other) const	{return difference(other.iterand);	}
+	constexpr Iterator operator-(IndexType const& value) const	{return offset(value);				}
+	constexpr Iterator operator+(IndexType const& value) const	{return offset(value);				}
 
 	//constexpr operator STLForwardIterator() requires(!REVERSE)				{return iterand;}
 	constexpr operator STLReverseIterator() requires(REVERSE)				{return iterand;}
@@ -150,10 +150,14 @@ using ReverseIterator = Iterator<TData, true, TIndex>;
 
 template<class T>
 concept IteratorType = requires {
+	typename T::DataType;
 	typename T::SizeType;
-	typename T::IndexType;
-	{T::REVERSE} -> Type::Equal<bool>;
-} && Type::Derived<T, Iterator<typename T::DataType, T::REVERSE, typename T::IndexType>>;
+} && (
+	Type::Derived<T, Iterator<typename T::DataType, true, typename T::SizeType>>
+||	Type::Derived<T, Iterator<typename T::DataType, false, typename T::SizeType>>
+);
+
+static_assert(IteratorType<Iterator<int>>);
 
 template<class TData, Type::Integer TIndex>
 struct Iteratable: Typed<TData>, Indexed<TIndex> {

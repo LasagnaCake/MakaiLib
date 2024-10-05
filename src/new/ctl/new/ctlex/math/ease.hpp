@@ -4,6 +4,7 @@
 #include "../../ctl/exnamespace.hpp"
 #include "../../ctl/container/string.hpp"
 #include "../../ctl/container/function.hpp"
+#include "../../ctl/math/core.hpp"
 
 CTL_EX_NAMESPACE_BEGIN
 
@@ -185,7 +186,7 @@ namespace Math::Ease {
 	#undef MODE_CASE
 	#undef CASE_FUN
 
-	inline EaseMode custom(EaseFunction const& in, EaseFunction const& out) {
+	inline Mode custom(EaseFunction const& in, EaseFunction const& out) {
 		return [=] (float const& x) {
 			if (x < 0.5)
 				return in(x * 2.0) / 2.0;
@@ -193,7 +194,7 @@ namespace Math::Ease {
 		};
 	}
 
-	inline EaseMode custom(EaseMode const& in, EaseMode const& out) {
+	inline Mode custom(Mode const& in, Mode const& out) {
 		return [=] (float const& x) {
 			if (x < 0.5)
 				return in(x * 2.0) / 2.0;

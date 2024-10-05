@@ -78,6 +78,8 @@ namespace Math {
 #pragma pack(1)
 class Vector2: Ordered {
 	public:
+		using Ordered::OrderType, Ordered::Order;
+
 		/// The vector's position.
 		union {
 			struct {float x, y;		};
@@ -92,7 +94,7 @@ class Vector2: Ordered {
 		constexpr Vector2(float v):
 			x(v), y(v) {}
 
-		constexpr Vector2(float const& x, float const& y = 0.0):
+		constexpr Vector2(float const& x, float const& y):
 			x(x), y(y) {}
 
 		constexpr Vector2(Vector2 const& vec):
@@ -349,7 +351,7 @@ class Vector2: Ordered {
 
 		/// Gets the vector's angle.
 		constexpr float angle() const {
-			return atan2(x, y) - Math::hpi;
+			return atan2(x, y) - HPI;
 		}
 
 		/// Gets the vector's angle to another vector.
@@ -367,15 +369,15 @@ class Vector2: Ordered {
 
 		/// Clamps the vector between two values.
 		constexpr void clamp(Vector2 const& min, Vector2 const& max) {
-			x = Math::clamp(x, min.x, max.x);
-			y = Math::clamp(y, min.y, max.y);
+			x = ::CTL::Math::clamp(x, min.x, max.x);
+			y = ::CTL::Math::clamp(y, min.y, max.y);
 		}
 
 		/// Returns the vector clamped between two values.
 		constexpr Vector2 clamped(Vector2 const& min, Vector2 const& max) const {
 			return Vector2(
-				Math::clamp(x, min.x, max.x),
-				Math::clamp(y, min.y, max.y)
+				::CTL::Math::clamp(x, min.x, max.x),
+				::CTL::Math::clamp(y, min.y, max.y)
 			);
 		}
 
@@ -417,6 +419,8 @@ class Vector2: Ordered {
 #pragma pack(1)
 class Vector3: Ordered {
 	public:
+		using Ordered::OrderType, Ordered::Order;
+		
 		/// The vector's position.
 		union {
 			struct {float x, y, z;		};
@@ -666,12 +670,12 @@ class Vector3: Ordered {
 
 		/// Gets the smallest of the vector's components.
 		constexpr float min() const {
-			return Math::min(Math::min(x, y), z);
+			return ::CTL::Math::min(::CTL::Math::min(x, y), z);
 		}
 
 		/// Gets the biggest of the vector's components.
 		constexpr float max() const {
-			return Math::max(Math::max(x, y), z);
+			return ::CTL::Math::max(::CTL::Math::max(x, y), z);
 		}
 
 		/// Gets the vector's length (distance to origin).
@@ -736,17 +740,17 @@ class Vector3: Ordered {
 
 		/// Clamps the vector between two values.
 		constexpr void clamp(Vector3 const& min, Vector3 const& max) {
-			x = Math::clamp(x, min.x, max.x);
-			y = Math::clamp(y, min.y, max.y);
-			z = Math::clamp(z, min.z, max.z);
+			x = ::CTL::Math::clamp(x, min.x, max.x);
+			y = ::CTL::Math::clamp(y, min.y, max.y);
+			z = ::CTL::Math::clamp(z, min.z, max.z);
 		}
 
 		/// Returns the vector clamped between two values.
 		constexpr Vector3 clamped(Vector3 const& min, Vector3 const& max) const {
 			return Vector3(
-				Math::clamp(x, min.x, max.x),
-				Math::clamp(y, min.y, max.y),
-				Math::clamp(z, min.z, max.z)
+				::CTL::Math::clamp(x, min.x, max.x),
+				::CTL::Math::clamp(y, min.y, max.y),
+				::CTL::Math::clamp(z, min.z, max.z)
 			);
 		}
 
@@ -813,6 +817,8 @@ class Vector3: Ordered {
 #pragma pack(1)
 class Vector4: Ordered {
 	public:
+		using Ordered::OrderType, Ordered::Order;
+
 		/// The vector's position.
 		union {
 			struct {float x, y, z, w;		};
@@ -1083,12 +1089,12 @@ class Vector4: Ordered {
 
 		/// Gets the smallest of the vector's components.
 		constexpr float min() const {
-			return Math::min(Math::min(Math::min(x, y), z), w);
+			return ::CTL::Math::min(::CTL::Math::min(::CTL::Math::min(x, y), z), w);
 		}
 
 		/// Gets the biggest of the vector's components.
 		constexpr float max() const {
-			return Math::max(Math::max(Math::max(x, y), z), w);
+			return ::CTL::Math::max(::CTL::Math::max(::CTL::Math::max(x, y), z), w);
 		}
 
 		/// Gets the vector's length (distance to origin).
@@ -1137,19 +1143,19 @@ class Vector4: Ordered {
 
 		/// Clamps the vector between two values.
 		constexpr void clamp(Vector4 const& min, Vector4 const& max) {
-			x = Math::clamp(x, min.x, max.x);
-			y = Math::clamp(y, min.y, max.y);
-			z = Math::clamp(z, min.z, max.z);
-			z = Math::clamp(w, min.w, max.w);
+			x = ::CTL::Math::clamp(x, min.x, max.x);
+			y = ::CTL::Math::clamp(y, min.y, max.y);
+			z = ::CTL::Math::clamp(z, min.z, max.z);
+			z = ::CTL::Math::clamp(w, min.w, max.w);
 		}
 
 		/// Returns the vector clamped between two values.
 		constexpr Vector4 clamped(Vector4 const& min, Vector4 const& max) const {
 			return Vector4(
-				Math::clamp(x, min.x, max.x),
-				Math::clamp(y, min.y, max.y),
-				Math::clamp(z, min.z, max.z),
-				Math::clamp(w, min.w, max.w)
+				::CTL::Math::clamp(x, min.x, max.x),
+				::CTL::Math::clamp(y, min.y, max.y),
+				::CTL::Math::clamp(z, min.z, max.z),
+				::CTL::Math::clamp(w, min.w, max.w)
 			);
 		}
 

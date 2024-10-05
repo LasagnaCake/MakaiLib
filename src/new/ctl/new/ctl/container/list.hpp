@@ -95,14 +95,14 @@ public:
 		magnitude		= CTL::move(other.magnitude);
 		other.contents	= nullptr;
 	}
-
-	constexpr List(IteratorType const& begin, IteratorType const& end) {
+	
+	constexpr List(ConstIteratorType const& begin, ConstIteratorType const& end) {
 		invoke(end - begin);
 		copy(begin, contents, end - begin);
 		count = end - begin;
 	}
 
-	constexpr List(ReverseIteratorType const& begin, ReverseIteratorType const& end) {
+	constexpr List(ConstReverseIteratorType const& begin, ConstReverseIteratorType const& end) {
 		invoke(end - begin);
 		for (IteratorType i = begin; i != end; ++i)
 			pushBack(i);
@@ -241,11 +241,15 @@ public:
 		return SelfType(*this).reverse();
 	}
 
-	constexpr SelfType& sort() {
+	constexpr SelfType& sort()
+	requires Sortable<DataType> {
+		static_assert(SortableIterator<IteratorType>);
 		::CTL::sort(begin(), end());
 	}
 
-	constexpr SelfType sorted() const {
+	constexpr SelfType sorted() const
+	requires Sortable<DataType> {
+		static_assert(SortableIterator<IteratorType>);
 		return SelfType(*this).sort();
 	}
 
@@ -380,13 +384,20 @@ public:
 		return *this;
 	}
 
-	constexpr SelfType& clear() {count = 0;}
+	constexpr SelfType& clear() {count = 0; return *this;}
 
 	constexpr SelfType& dispose() {
 		if (contents) dump();
 		count = 0;
 		contents = nullptr;
 		recalculateMagnitude();
+	}
+
+	constexpr SelfType& operator=(SelfType const& other) {
+		clear();
+		reserve(other.count);
+		appendBack(other);
+		return *this;
 	}
 
 	constexpr PointerType		data()			{return contents;	}

@@ -32,8 +32,6 @@ struct BaseSimpleMap:
 public:
 	constexpr static bool SORTED = SORT;
 
-	static_assert(SORTED && Type::Comparable::Threeway<TKey, TKey>, "Cannot form a sortable map whithout an orderable key!");
-
 	using Derived			= ::CTL::Derived<List<KeyValuePair<TKey, TValue>, TIndex>>;
 	using Collected			= ::CTL::Collected<TKey, TValue, KeyValuePair>;
 	using SelfIdentified	= ::CTL::SelfIdentified<BaseSimpleMap<TKey, TValue, TIndex, SORTED>>;
@@ -55,6 +53,9 @@ public:
 		typename BaseType::IteratorType,
 		typename BaseType::ReverseIteratorType
 	;
+
+	static_assert(SORTED && Type::Comparable::Threeway<KeyType, KeyType>, "Cannot form a sortable map whithout an orderable key!");
+	static_assert(SORTED && Sortable<PairType>);
 
 	using
 		typename BaseType::OrderType,
@@ -181,7 +182,7 @@ public:
 
 	constexpr bool contains(KeyType const& key) const {
 		if (empty()) return false;
-		return find(key) != -1;
+		return search(key) != -1;
 	}
 
 	constexpr SelfType& remove(KeyType const& key) {
@@ -202,7 +203,7 @@ public:
 	}
 
 	constexpr SelfType& erase(KeyType const& key) {
-		IndexType i = find(key);
+		IndexType i = search(key);
 		if (i == -1) return *this;
 		BaseType::erase(i);
 		return *this;

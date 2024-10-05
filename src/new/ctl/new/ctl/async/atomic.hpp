@@ -55,7 +55,7 @@ public:
 
 	inline SelfType& operator=(TemporaryType val) {
 		capture();
-		data = move(val);
+		data = CTL::move(val);
 		release();
 		return *this;
 	}

@@ -5,7 +5,9 @@
 #include "../../ctl/exnamespace.hpp"
 #include "../../ctl/math/core.hpp"
 
-namespace Type::Matrix {
+CTL_NAMESPACE_BEGIN
+
+namespace Type::Ex::Matrix {
 	template <typename T1, typename T2>
 	concept Compatitble = Math::Operatable<T2> && Type::Convertible<T2, T1>;
 
@@ -15,6 +17,8 @@ namespace Type::Matrix {
 	template <usize R, usize C>
 	concept ValidTransform2D = (R == 3) && (R == C);
 }
+
+CTL_NAMESPACE_END
 
 CTL_EX_NAMESPACE_BEGIN
 
@@ -27,7 +31,7 @@ namespace Math {
 * [                     ]
 * [---------------------]
 */
-template<usize R, usize C, Math::Operatable T>
+template<usize R, usize C, ::CTL::Math::Operatable T>
 class Matrix {
 public:
 	constexpr static usize ROWS	= R;
@@ -42,7 +46,7 @@ public:
 	constexpr Matrix() {}
 
 	constexpr Matrix(T const& v) {
-		usize const start = Math::min(C, R);
+		usize const start = ::CTL::Math::min(C, R);
 		for (usize i = 0; i < start; i++)
 			data[start-1-i][start-1-i] = v;
 	}
@@ -75,23 +79,23 @@ public:
 				data[i][j] = v[i];
 	}
 
-	template<Type::Matrix::Compatitble<T> T2>
+	template<::CTL::Type::Ex::Matrix::Compatitble<T> T2>
 	constexpr Matrix(T2 const(& v)[1]) {
 		T rv = T(v[0]);
-		usize const start = Math::min(C, R);
+		usize const start = ::CTL::Math::min(C, R);
 		for (usize i = 0; i < C; i++)
 			for (usize j = 0; j < R; j++)
 				data[i][j] = rv;
 	}
 
-	template<Type::Matrix::Compatitble<T> T2>
+	template<::CTL::Type::Ex::Matrix::Compatitble<T> T2>
 	constexpr Matrix(T2 const(& v)[R][C]) {
 		for (usize i = 0; i < C; i++)
 			for (usize j = 0; j < R; j++)
 				data[i][j] = T(v[j][i]);
 	}
 
-	template<Type::Matrix::Compatitble<T> T2>
+	template<::CTL::Type::Ex::Matrix::Compatitble<T> T2>
 	constexpr Matrix(T2 const(& v)[R*C]) {
 		T2 hack[R][C];
 		for (usize i = 0; i < R*C; i++)
@@ -101,7 +105,7 @@ public:
 				data[i][j] = T(hack[j][i]);
 	}
 
-	template<Type::Matrix::Compatitble<T> T2>
+	template<::CTL::Type::Ex::Matrix::Compatitble<T> T2>
 	constexpr Matrix(const T2(&v)[C])
 	requires (C > 1) {
 		for (usize i = 0; i < C; i++)
@@ -134,12 +138,12 @@ public:
 	}
 
 	constexpr Matrix(Transform3D const& trans)
-	requires Type::Matrix::ValidTransform3D<R, C> {
+	requires ::CTL::Type::Ex::Matrix::ValidTransform3D<R, C> {
 		compose(trans);
 	}
 
 	constexpr Matrix(Transform2D const& trans)
-	requires Type::Matrix::ValidTransform2D<R, C> {
+	requires ::CTL::Type::Ex::Matrix::ValidTransform2D<R, C> {
 		*this = identity().transform(trans);
 	}
 
@@ -147,7 +151,7 @@ public:
 		Vector3 const& pos,
 		Vector3 const& rot,
 		Vector3 const& scale
-	) requires Type::Matrix::ValidTransform3D<R, C> {
+	) requires ::CTL::Type::Ex::Matrix::ValidTransform3D<R, C> {
 		compose(pos, rot, scale);
 	}
 
@@ -155,7 +159,7 @@ public:
 		Transform3D const& trans,
 		Vector4 const& perspective,
 		Vector3 const& skew
-	) requires Type::Matrix::ValidTransform3D<R, C> {
+	) requires ::CTL::Type::Ex::Matrix::ValidTransform3D<R, C> {
 		compose(trans, perspective, skew);
 	}
 
@@ -165,7 +169,7 @@ public:
 		Vector3 const& scale,
 		Vector4 const& perspective,
 		Vector3 const& skew
-	) requires Type::Matrix::ValidTransform3D<R, C> {
+	) requires ::CTL::Type::Ex::Matrix::ValidTransform3D<R, C> {
 		compose(pos, rot, scale, perspective, skew);
 	}
 
@@ -312,13 +316,15 @@ public:
 		return *this;
 	}
 
-	constexpr Matrix<4, 4, T> translated(Vector3 const& vec) const requires Type::Matrix::ValidTransform3D<R, C> {
+	constexpr Matrix<4, 4, T> translated(Vector3 const& vec) const
+	requires ::CTL::Type::Ex::Matrix::ValidTransform3D<R, C> {
 		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
 		return Matrix<4, 4, T>(data).translate(vec);
 	}
 
 	// https://github.com/g-truc/glm/blob/master/glm/ext/matrix_transform.inl
-	constexpr Matrix<4, 4, T>& translate(Vector3 const& vec) requires Type::Matrix::ValidTransform3D<R, C> {
+	constexpr Matrix<4, 4, T>& translate(Vector3 const& vec)
+	requires ::CTL::Type::Ex::Matrix::ValidTransform3D<R, C> {
 		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
 		Vector4 calc =
 			(Vector4(data[0]) * vec[0])
@@ -334,20 +340,23 @@ public:
 	}
 
 	template<EulerFunction EULER_FUNC = Matrix::fromEulerYXZ>
-	constexpr Matrix<4, 4, T> rotated(Vector3 const& vec) const requires Type::Matrix::ValidTransform3D<R, C> {
+	constexpr Matrix<4, 4, T> rotated(Vector3 const& vec) const
+	requires ::CTL::Type::Ex::Matrix::ValidTransform3D<R, C> {
 		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
 		return (*this) * EULER_FUNC(vec);
 	}
 
 	template<EulerFunction EULER_FUNC = Matrix::fromEulerYXZ>
-	constexpr Matrix<4, 4, T>& rotate(Vector3 const& vec) requires Type::Matrix::ValidTransform3D<R, C> {
+	constexpr Matrix<4, 4, T>& rotate(Vector3 const& vec)
+	requires ::CTL::Type::Ex::Matrix::ValidTransform3D<R, C> {
 		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
 		(*this) *= EULER_FUNC(vec);
 		return (*this);
 	}
 
 	// https://github.com/g-truc/glm/blob/master/glm/ext/matrix_transform.inl
-	constexpr Matrix<4, 4, T> scaled(Vector3 const& vec) const requires Type::Matrix::ValidTransform3D<R, C> {
+	constexpr Matrix<4, 4, T> scaled(Vector3 const& vec) const
+	requires ::CTL::Type::Ex::Matrix::ValidTransform3D<R, C> {
 		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
 		Vector4 result[4];
 		result[0] = Vector4(data[0]) * vec[0];
@@ -363,7 +372,8 @@ public:
 	}
 
 	// https://github.com/g-truc/glm/blob/master/glm/ext/matrix_transform.inl
-	constexpr Matrix<4, 4, T>& scale(Vector3 const& vec) requires Type::Matrix::ValidTransform3D<R, C> {
+	constexpr Matrix<4, 4, T>& scale(Vector3 const& vec)
+	requires ::CTL::Type::Ex::Matrix::ValidTransform3D<R, C> {
 		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
 		*this = scaled(vec);
 		return (*this);
@@ -548,7 +558,8 @@ public:
 		return (*this) * Matrix<R, 1, T>(vec);
 	}
 
-	constexpr Matrix<R, C, T> operator*(Transform3D const& trans) const requires Type::Matrix::ValidTransform3D<R, C>  {
+	constexpr Matrix<R, C, T> operator*(Transform3D const& trans) const
+	requires ::CTL::Type::Ex::Matrix::ValidTransform3D<R, C>  {
 		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
 		return (*this) * Matrix<R, C, T>(trans);
 	}
@@ -652,7 +663,7 @@ public:
 	}
 
 	constexpr Matrix<R, C, T> operator*=(Transform3D const& trans)
-	requires Type::Matrix::ValidTransform3D<R, C> {
+	requires ::CTL::Type::Ex::Matrix::ValidTransform3D<R, C> {
 		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
 		return (*this) *= Matrix<R, C, T>(trans);
 	}
@@ -673,8 +684,8 @@ public:
 
 	/// Other operator overloadings.
 
-	constexpr Span<T, R> operator[](usize const& idx)				{return Span{data[idx]};	}
-	constexpr Span<const T, R> operator[](usize const& idx) const	{return Span{data[idx]};	}
+	constexpr Span<T, R> operator[](usize const& idx)				{return Span<T, R>(data[idx]);			}
+	constexpr Span<const T, R> operator[](usize const& idx) const	{return Span<const T, R>(data[idx]);	}
 
 	constexpr T* begin()	{return &data[0][0];		}
 	constexpr T* end()		{return &data[C-1][R-1];	}
@@ -682,7 +693,7 @@ public:
 	constexpr const T* begin() const	{return &data[0][0];		}
 	constexpr const T* end() const		{return &data[C-1][R-1];	}
 
-	template <Type::Matrix::Compatitble<T> T2>
+	template <::CTL::Type::Ex::Matrix::Compatitble<T> T2>
 	constexpr operator Matrix<R, C, T2>() const {return Matrix<R, C, T2>(data);}
 
 	constexpr operator Vector2() const {return toVector2();}
@@ -716,7 +727,7 @@ public:
 		Vector3 const& position,
 		Vector3 const& rotation,
 		Vector3 const& scale
-	) const requires Type::Matrix::ValidTransform3D<R, C> {
+	) const requires ::CTL::Type::Ex::Matrix::ValidTransform3D<R, C> {
 		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
 		// Transform
 		return translated(position).template rotated<EULER_FUNC>(rotation).scaled(scale);
@@ -724,14 +735,14 @@ public:
 
 	template<EulerFunction EULER_FUNC = Matrix::fromEulerYXZ>
 	constexpr Matrix<R, C, T>& transformed(Transform3D const& trans)
-	const requires Type::Matrix::ValidTransform3D<R, C> {
+	const requires ::CTL::Type::Ex::Matrix::ValidTransform3D<R, C> {
 		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
 		return transformed<EULER_FUNC>(trans.position, trans.rotation, trans.scale);
 	}
 
 	template<EulerFunction EULER_FUNC = Matrix::fromEulerYXZ>
 	constexpr Matrix<R, C, T>& transformed(Transform2D const& trans)
-	const requires Type::Matrix::ValidTransform2D<R, C> {
+	const requires ::CTL::Type::Ex::Matrix::ValidTransform2D<R, C> {
 		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
 		return Matrix(*this).transform(trans);
 	}
@@ -741,7 +752,7 @@ public:
 		Vector3 const& position,
 		Vector3 const& rotation,
 		Vector3 const& scale
-	) requires Type::Matrix::ValidTransform3D<R, C> {
+	) requires ::CTL::Type::Ex::Matrix::ValidTransform3D<R, C> {
 		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
 		// Transform
 		return translate(position).template rotate<EULER_FUNC>(rotation).scale(scale);
@@ -749,13 +760,13 @@ public:
 
 	template<EulerFunction EULER_FUNC = Matrix::fromEulerYXZ>
 	constexpr Matrix<R, C, T>& transform(Transform3D const& trans)
-	requires Type::Matrix::ValidTransform3D<R, C> {
+	requires ::CTL::Type::Ex::Matrix::ValidTransform3D<R, C> {
 		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
 		return transform<EULER_FUNC>(trans.position, trans.rotation, trans.scale);
 	}
 
 	constexpr Matrix<R, C, T>& transform(Transform2D const& trans)
-	requires Type::Matrix::ValidTransform2D<R, C> {
+	requires ::CTL::Type::Ex::Matrix::ValidTransform2D<R, C> {
 		static_assert(R == 3, "Matrix is not a valid representation of a 3D transform!");
 		Matrix<R, C, T>
 			pos		= Matrix::identity(),
@@ -783,7 +794,7 @@ public:
 		Vector3 const& position,
 		Vector3 const& rotation,
 		Vector3 const& scale
-	) requires Type::Matrix::ValidTransform3D<R, C> {
+	) requires ::CTL::Type::Ex::Matrix::ValidTransform3D<R, C> {
 		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
 		// Fill & Transform
 		(*this) = Matrix(1);
@@ -791,7 +802,8 @@ public:
 	}
 
 	template<EulerFunction EULER_FUNC = Matrix::fromEulerYXZ>
-	constexpr Matrix<R, C, T>& compose(Transform3D const& trans) requires Type::Matrix::ValidTransform3D<R, C> {
+	constexpr Matrix<R, C, T>& compose(Transform3D const& trans)
+	requires ::CTL::Type::Ex::Matrix::ValidTransform3D<R, C> {
 		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
 		return compose<EULER_FUNC>(trans.position, trans.rotation, trans.scale);
 	}
@@ -804,7 +816,7 @@ public:
 		Vector3 const& scale,
 		Vector4 const& perspective,
 		Vector3 const& skew
-	) requires Type::Matrix::ValidTransform3D<R, C> {
+	) requires ::CTL::Type::Ex::Matrix::ValidTransform3D<R, C> {
 		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
 		Matrix<4, 4, T> result(Matrix<4, 4, T>(1));
 		// Apply perspective
@@ -843,7 +855,7 @@ public:
 		Transform3D const&	trans,
 		Vector4 const&				perspective,
 		Vector3 const&				skew
-	) requires Type::Matrix::ValidTransform3D<R, C> {
+	) requires ::CTL::Type::Ex::Matrix::ValidTransform3D<R, C> {
 		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
 		return compose<EULER_FUNC>(trans.position, trans.rotation, trans.scale, perspective, skew);
 	}
@@ -853,7 +865,7 @@ public:
 	constexpr Transform3D decompose(
 			Vector4& perspective,
 			Vector3& skew
-		) const requires Type::Matrix::ValidTransform3D<R, C> {
+		) const requires ::CTL::Type::Ex::Matrix::ValidTransform3D<R, C> {
 		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
 		Transform3D result;
 		// if identity value is 0, return
@@ -945,7 +957,8 @@ public:
 	}
 
 	[[gnu::unavailable("Not working as intended!")]]
-	constexpr Transform3D decompose() const requires Type::Matrix::ValidTransform3D<R, C> {
+	constexpr Transform3D decompose() const
+	requires ::CTL::Type::Ex::Matrix::ValidTransform3D<R, C> {
 		Vector4 _p;
 		Vector3 _s;
 		return decompose(_p, _s);
@@ -956,34 +969,34 @@ public:
 	}
 
 private:
-	template<usize R2, usize C2, Math::Operatable T2> friend class Matrix;
+	template<usize R2, usize C2, ::CTL::Math::Operatable T2> friend class Matrix;
 	template<typename T2> friend Matrix<4, 4, T2> translate(Matrix<4, 4, T2>, Vector3 const&);
 	/// The matrix's data.
 	T data[C][R] = {};
 };
 
 // Template matrices
-template <usize R, usize C, Math::Operatable T> using Mat = Matrix<R, C, T>;
+template <usize R, usize C, ::CTL::Math::Operatable T> using Mat = Matrix<R, C, T>;
 
-template <Math::Operatable T> using TMat2x1 = Matrix<2, 1, T>;
-template <Math::Operatable T> using TMat3x1 = Matrix<3, 1, T>;
-template <Math::Operatable T> using TMat4x1 = Matrix<4, 1, T>;
+template <::CTL::Math::Operatable T> using TMat2x1 = Matrix<2, 1, T>;
+template <::CTL::Math::Operatable T> using TMat3x1 = Matrix<3, 1, T>;
+template <::CTL::Math::Operatable T> using TMat4x1 = Matrix<4, 1, T>;
 
-template <Math::Operatable T> using TMat2x2 = Matrix<2, 2, T>;
-template <Math::Operatable T> using TMat3x2 = Matrix<3, 2, T>;
-template <Math::Operatable T> using TMat4x2 = Matrix<4, 2, T>;
+template <::CTL::Math::Operatable T> using TMat2x2 = Matrix<2, 2, T>;
+template <::CTL::Math::Operatable T> using TMat3x2 = Matrix<3, 2, T>;
+template <::CTL::Math::Operatable T> using TMat4x2 = Matrix<4, 2, T>;
 
-template <Math::Operatable T> using TMat2x3 = Matrix<2, 3, T>;
-template <Math::Operatable T> using TMat3x3 = Matrix<3, 3, T>;
-template <Math::Operatable T> using TMat4x3 = Matrix<4, 3, T>;
+template <::CTL::Math::Operatable T> using TMat2x3 = Matrix<2, 3, T>;
+template <::CTL::Math::Operatable T> using TMat3x3 = Matrix<3, 3, T>;
+template <::CTL::Math::Operatable T> using TMat4x3 = Matrix<4, 3, T>;
 
-template <Math::Operatable T> using TMat2x4 = Matrix<2, 4, T>;
-template <Math::Operatable T> using TMat3x4 = Matrix<3, 4, T>;
-template <Math::Operatable T> using TMat4x4 = Matrix<4, 4, T>;
+template <::CTL::Math::Operatable T> using TMat2x4 = Matrix<2, 4, T>;
+template <::CTL::Math::Operatable T> using TMat3x4 = Matrix<3, 4, T>;
+template <::CTL::Math::Operatable T> using TMat4x4 = Matrix<4, 4, T>;
 
-template <Math::Operatable T> using TMat2 = TMat2x2<T>;
-template <Math::Operatable T> using TMat3 = TMat3x3<T>;
-template <Math::Operatable T> using TMat4 = TMat4x4<T>;
+template <::CTL::Math::Operatable T> using TMat2 = TMat2x2<T>;
+template <::CTL::Math::Operatable T> using TMat3 = TMat3x3<T>;
+template <::CTL::Math::Operatable T> using TMat4 = TMat4x4<T>;
 
 // Float matrices
 typedef TMat2x1<float> Matrix2x1;
@@ -1175,7 +1188,7 @@ constexpr Matrix4x4 lookAt(Vector3 const& eye, Vector3 const& at, Vector3 const&
 }
 
 // https://github.com/g-truc/glm/blob/master/glm/ext/matrix_clip_space.inl
-template<Math::Operatable T>
+template<::CTL::Math::Operatable T>
 constexpr Matrix<4, 4, T> ortho(
 	T const& left,
 	T const& right,
@@ -1195,7 +1208,7 @@ constexpr Matrix<4, 4, T> ortho(
 }
 
 // https://github.com/g-truc/glm/blob/master/glm/ext/matrix_clip_space.inl
-template<Math::Operatable T>
+template<::CTL::Math::Operatable T>
 constexpr Matrix<4, 4, T> infiniteOrtho(
 	T const& left,
 	T const& right,
@@ -1212,7 +1225,7 @@ constexpr Matrix<4, 4, T> infiniteOrtho(
 }
 
 // https://github.com/g-truc/glm/blob/master/glm/ext/matrix_clip_space.inl
-template<Math::Operatable T>
+template<::CTL::Math::Operatable T>
 constexpr Matrix<4, 4, T> frustum(
 	T const& left,
 	T const& right,
@@ -1233,7 +1246,7 @@ constexpr Matrix<4, 4, T> frustum(
 }
 
 // https://github.com/g-truc/glm/blob/master/glm/ext/matrix_clip_space.inl
-template<Math::Operatable T>
+template<::CTL::Math::Operatable T>
 constexpr Matrix<4, 4, T> perspective(
 	T const& fovy,
 	T const& aspect,
@@ -1251,7 +1264,7 @@ constexpr Matrix<4, 4, T> perspective(
 }
 
 // https://github.com/g-truc/glm/blob/master/glm/ext/matrix_clip_space.inl
-template<Math::Operatable T>
+template<::CTL::Math::Operatable T>
 constexpr Matrix<4, 4, T> perspectiveFOV(
 	T const& fov,
 	T const& width,
@@ -1272,7 +1285,7 @@ constexpr Matrix<4, 4, T> perspectiveFOV(
 }
 
 // https://github.com/g-truc/glm/blob/master/glm/ext/matrix_clip_space.inl
-template<Math::Operatable T>
+template<::CTL::Math::Operatable T>
 constexpr Matrix<4, 4, T> infinitePerspective(
 	T const& fovy,
 	T const& aspect,
@@ -1293,7 +1306,7 @@ constexpr Matrix<4, 4, T> infinitePerspective(
 }
 
 // https://github.com/g-truc/glm/blob/master/glm/gtx/euler_angles.inl
-template<Math::Operatable T>
+template<::CTL::Math::Operatable T>
 constexpr Vector3 getEulerAnglesYXZ(Matrix<4, 4, T> const& mat) {
 	float T1 = atan2(mat[2][0], mat[2][2]);
 	float C2 = sqrt(mat[0][1]*mat[0][1] + mat[1][1]*mat[1][1]);
@@ -1305,7 +1318,7 @@ constexpr Vector3 getEulerAnglesYXZ(Matrix<4, 4, T> const& mat) {
 }
 
 // https://github.com/g-truc/glm/blob/master/glm/gtx/euler_angles.inl
-template<Math::Operatable T>
+template<::CTL::Math::Operatable T>
 constexpr Vector3 getEulerAnglesXYZ(Matrix<4, 4, T> const& mat) {
 	float T1 = atan2(mat[2][1], mat[2][2]);
 	float C2 = sqrt(mat[0][0]*mat[0][0] + mat[1][0]*mat[1][0]);
@@ -1330,7 +1343,7 @@ constexpr T lerp(T const& from, T const& to, typename T::DataType const& by) {
 	T result(0);
 	for (usize i = 0; i < T::COLUMNS; i++)
 		for (usize j = 0; j < T::ROWS; j++)
-			result[i][j] = Math::lerp<typename T::DataType>(from[i][j], to[i][j], by);
+			result[i][j] = ::CTL::Math::lerp<typename T::DataType>(from[i][j], to[i][j], by);
 	return result;
 }
 
@@ -1339,7 +1352,7 @@ constexpr T lerp(T const& from, T const& to, T const& by) {
 	T result(0);
 	for (usize i = 0; i < T::COLUMNS; i++)
 		for (usize j = 0; j < T::ROWS; j++)
-			result[i][j] = Math::lerp<typename T::DataType>(from[i][j], to[i][j], by[i][j]);
+			result[i][j] = ::CTL::Math::lerp<typename T::DataType>(from[i][j], to[i][j], by[i][j]);
 	return result;
 }
 

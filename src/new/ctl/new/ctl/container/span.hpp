@@ -22,7 +22,7 @@ template<class TData, usize S = DYNAMIC_SIZE, Type::Integer TIndex = usize, Exte
 struct Span:
 	Iteratable<TData, TIndex> {
 
-	using Iteratable = Iteratable<TData, TIndex>;
+	using Iteratable = ::CTL::Iteratable<TData, TIndex>;
 
 	using
 		typename Iteratable::IteratorType,
@@ -63,19 +63,19 @@ struct Span:
 	constexpr ReferenceType operator[](IndexType index) {
 		assertExists();
 		wrapBounds(index, count);
-		return data[index];
+		return contents[index];
 	}
 
 	constexpr ConstReferenceType operator[](IndexType index) const {
 		assertExists();
 		wrapBounds(index, count);
-		return data[index];
+		return contents[index];
 	}
 
 	constexpr DataType at(IndexType index) const {
 		assertExists();
 		wrapBounds(index, count);
-		return data[index];
+		return contents[index];
 	}
 
 	constexpr PointerType		data()			{return contents;	}
@@ -112,6 +112,8 @@ private:
 				__FILE__
 			);
 	}
+
+	using Iteratable::wrapBounds;
 
 	DataType*	contents	= nullptr;
 	usize		count		= S;

@@ -4,6 +4,7 @@
 #include "../../ctl/exnamespace.hpp"
 #include "../../ctl/container/arguments.hpp"
 #include "../../ctl/container/list.hpp"
+#include "../../ctl/container/functor.hpp"
 #include "../math/ease.hpp"
 #include "../event/timer.hpp"
 
@@ -15,12 +16,12 @@ CTL_EX_NAMESPACE_BEGIN
 		from a single floating-point value.
 */
 template <typename T>
-concept Tweenable = Math::Operatable<T> && Type::Constructible<T, float>;
+concept Tweenable = ::CTL::Math::Operatable<T> && ::CTL::Type::Constructible<T, float>;
 
 template <Tweenable T = float>
 class Tween;
 
-typedef Event::PeriodicEvent<Tween<>> PeriodicTween;
+typedef Periodic<Tween<>> PeriodicTween;
 
 struct Stepable {
 	virtual usize		getStep()					{return step;	}
@@ -35,7 +36,7 @@ struct PlayableTween: Playable {
 	virtual PlayableTween& conclude()	{return *this;	}
 	virtual PlayableTween& halt()		{return *this;	}
 
-	Signal<> onCompleted = Event::DEF_SIGNAL;
+	::CTL::Signal<> onCompleted;
 
 private:
 	virtual PlayableTween& stop()		{return *this;	}
@@ -51,17 +52,15 @@ private:
 template <Tweenable T>
 class Tween:
 	public PeriodicTween,
-	public Playable,
+	public PlayableTween,
 	public Stepable {
 public:
 	typedef T DataType;
 
-	using
-		PeriodicTween::PeriodicTween
-	;
+	using PeriodicTween::PeriodicTween;
 
 	/// The tween's easing function.
-	Ease::Mode easeMode = Ease::linear;
+	Math::Ease::Mode easeMode = Math::Ease::linear;
 
 	/// The tween's starting value.
 	T from;
@@ -70,7 +69,7 @@ public:
 	T to;
 
 	/// Targetless Constructor.
-	Tween(T const& from, T const& to, usize const& step, Ease::EaseMode const& easeMode, bool const& manual = false)
+	Tween(T const& from, T const& to, usize const& step, Math::Ease::Mode const& easeMode, bool const& manual = false)
 	: PeriodicTween(manual) {
 		setInterpolation(from, to, step, easeMode);
 	}
@@ -96,8 +95,6 @@ public:
 
 	/// Calculates (and if targeted, applies) a step.
 	void onUpdate(usize const& delta) override final {
-		// If target pointer is null, point to default var
-		if (!target) target = &defaultVar;
 		// If paused, return
 		if (paused) return;
 		// If not finished...
@@ -121,21 +118,7 @@ public:
 	}
 
 	/// Sets the interpolation.
-	Tween<T>& setInterpolation(T const& from, T const& to, usize const& step, Ease::EaseMode const& easeMode) {
-		isFinished = false;
-		this->step = 0;
-		this->from = from;
-		this->to = to;
-		stop = step;
-		value = from;
-		this->easeMode = easeMode;
-		factor = 0.0f;
-		return *this;
-	}
-
-	/// Sets the interpolation with a target.
-	Tween<T>& setInterpolation(T const& from, T const& to, usize const& step, Ease::EaseMode const& easeMode) {
-		target = targetVar;
+	Tween<T>& setInterpolation(T const& from, T const& to, usize const& step, Math::Ease::Mode const& easeMode) {
 		isFinished = false;
 		this->step = 0;
 		this->from = from;
@@ -178,7 +161,7 @@ public:
 	/// Sets the current tween step.
 	Tween<T>& setStep(usize const& step) override final {
 		this->step = step > stop ? stop : step;
-		yield();
+		onUpdate();
 		return *this;
 	}
 
@@ -190,7 +173,6 @@ public:
 
 	/// Halts the tween's execution, and sets it to its end value.
 	Tween<T>& conclude() override final {
-		*target = to;
 		step = stop;
 		factor = 1.0f;
 		isFinished = true;
@@ -225,7 +207,7 @@ public:
 private:
 	using
 		Stepable::step,
-		Playable::isFinished
+		PlayableTween::isFinished
 	;
 
 	T current;
@@ -245,9 +227,9 @@ struct StageData {
 	/// The amount of steps to take.
 	usize step;
 	/// The easing function to use.
-	Ease::Mode ease				= Ease::linear;
+	Math::Ease::Mode ease	= Math::Ease::linear;
 	/// Action to do when this stage is concluded.
-	Event::Signal onCompleted	= Event::DEF_SIGNAL;
+	::CTL::Signal<> onCompleted;
 };
 
 struct Stageable: Stepable {
@@ -264,7 +246,7 @@ private:
 template<Tweenable T = float>
 class TweenChain:
 	public PeriodicTween,
-	public Playable,
+	public PlayableTween,
 	public Stageable {
 public:
 	typedef T DataType;
@@ -272,12 +254,6 @@ public:
 	typedef StageData<DataType>	Stage;
 	typedef List<Stage>			StageList;
 	typedef Arguments<Stage>	StageArguments;
-
-	using
-		PeriodicTween::PeriodicTween
-	;
-
-	Event::Signal onCompleted = Event::DEF_SIGNAL;
 
 	bool paused = false;
 
@@ -292,8 +268,6 @@ public:
 	}
 
 	void onUpdate(usize const& delta) override final {
-		// If target pointer is null, point to default var
-		if (!target) target = &defaultVar;
 		// If paused, return
 		if (paused) return;
 		// If not finished...
@@ -337,14 +311,14 @@ public:
 	/// Sets the current tween step.
 	TweenChain& setStep(usize const& step) override final {
 		this->step = (step-1) > current.step ? current.step : (step-1);
-		yield();
+		onUpdate();
 		return *this;
 	}
 
 	/// Sets the current tween stage.
 	TweenChain& setStage(usize const& stage) override final {
 		this->stage = stage >= stages.size() ? stages.size() : stage;
-		yield();
+		onUpdate();
 		return *this;
 	}
 
@@ -401,10 +375,9 @@ public:
 
 private:
 	using
-		Targetable<T>::defaultVar,
 		Stageable::step,
 		Stageable::stage,
-		Playable::isFinished
+		PlayableTween::isFinished
 	;
 
 	Stage current;

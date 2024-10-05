@@ -54,6 +54,14 @@ struct Pair:
 		return order;
 	}
 
+	constexpr OrderType operator<=>(SelfType const& other)
+	requires (
+		Type::Comparable::Threeway<AType, AType>
+	&&	!Type::Comparable::Threeway<BType, BType>
+	) {
+		return a <=> other.a;
+	}
+
 	template<Type::Constructible<AType, BType> TPair>
 	constexpr TPair pair() const		{return TPair(a, b);	}
 
@@ -101,6 +109,14 @@ struct KeyValuePair:
 		return order;
 	}
 
+	constexpr OrderType operator<=>(SelfType const& other)
+	requires (
+		Type::Comparable::Threeway<AType, AType>
+	&&	!Type::Comparable::Threeway<BType, BType>
+	) {
+		return key <=> other.key;
+	}
+
 	constexpr PairType pair() const		{return PairType(key, value);	}
 	constexpr operator PairType() const	{return pair();					}
 };
@@ -136,6 +152,14 @@ struct LeftRightPair:
 		if (order == Order::EQUAL)
 			return right <=> other.right;
 		return order;
+	}
+
+	constexpr OrderType operator<=>(SelfType const& other)
+	requires (
+		Type::Comparable::Threeway<AType, AType>
+	&&	!Type::Comparable::Threeway<BType, BType>
+	) {
+		return left <=> other.left;
 	}
 
 	constexpr LeftRightPair() = default;
@@ -180,6 +204,14 @@ struct FirstSecondPair:
 		if (order == Order::EQUAL)
 			return second <=> other.second;
 		return order;
+	}
+
+	constexpr OrderType operator<=>(SelfType const& other)
+	requires (
+		Type::Comparable::Threeway<AType, AType>
+	&&	!Type::Comparable::Threeway<BType, BType>
+	) {
+		return first <=> other.first;
 	}
 
 	constexpr FirstSecondPair() = default;

@@ -59,12 +59,12 @@ struct MissingStreamException:		Exception {using Exception::Exception;};
 
 namespace {
 	template<Type::Convertible<char const*> T>
-	constexpr const char* cstring(T const& value) {
+	constexpr const char* strlit(T const& value) {
 		return (const char*)value;
 	}
 
 	template<class T>
-	constexpr const char* cstring(T const& value)
+	constexpr const char* strlit(T const& value)
 	requires requires (T t) {
 		{t.cstr()} -> Type::Convertible<const char*>;
 	} {
@@ -72,7 +72,7 @@ namespace {
 	}
 
 	template<class T>
-	constexpr const char* cstring(T const& value)
+	constexpr const char* strlit(T const& value)
 	requires requires (T t) {
 		{t.c_str()} -> Type::Convertible<const char*>;
 	} {
@@ -88,7 +88,7 @@ concept ErrorStringType =
 &&	Type::Addable<T, const char*>
 &&	Type::Addable<const char*, T>
 &&	requires (T a, const char* b) {
-		{cstring(a)};
+		{strlit(a)};
 		{a + a} -> Type::Equal<T>;
 		{a + b} -> Type::Equal<T>;
 		{b + a} -> Type::Equal<T>;
@@ -140,7 +140,7 @@ public:
 		ConstReferenceType info			= "none",
 		ConstReferenceType callerInfo	= "none"
 	) noexcept:
-		BaseType(cstring(message)),
+		BaseType(strlit(message)),
 		type(type),
 		message(message),
 		file(file),
@@ -216,7 +216,7 @@ public:
 	}
 
 	constexpr StringLiteralType what() const noexcept override {
-		return cstring(sumbuf);
+		return strlit(sumbuf);
 	}
 
 private:

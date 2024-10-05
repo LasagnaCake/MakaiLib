@@ -131,31 +131,55 @@ namespace OS::FS {
 
 	struct FileTree {
 		struct Entry {
+			constexpr Entry() {}
+
 			constexpr Entry(String const& name, String const& path):
-				name(name),
-				path(path) {}
+				ename(name),
+				epath(path) {}
 
 			constexpr Entry(String const& name, String const& path, List<Entry>	children):
-				name(name),
-				path(path),
+				ename(name),
+				epath(path),
 				children(children),
 				folder(true) {}
 
 			constexpr Entry(Entry const& other):
-				name(other.name),
-				path(other.path),
+				ename(other.ename),
+				epath(other.epath),
 				children(other.children),
 				folder(other.folder) {}
+			
+			constexpr Entry(Entry&& other):
+				ename(CTL::move(other.ename)),
+				epath(CTL::move(other.epath)),
+				children(CTL::move(other.children)),
+				folder(CTL::move(other.folder)) {}
 
-			constexpr Entry& forEach(Operation<Entry> const& op) {
+			constexpr Entry& forEach(Function<void(Entry&)> const& op) {
 				for (Entry& e: children)
 					op(e);
 				return *this;
 			}
 
-			constexpr Entry const& forEach(Operation<Entry> const& op) const {
+			constexpr Entry const& forEach(Function<void(Entry const&)> const& op) const {
 				for (Entry const& e: children)
 					op(e);
+				return *this;
+			}
+
+			constexpr Entry& operator=(Entry const& other) {
+				ename		= other.ename;
+				epath		= other.epath;
+				folder		= other.folder;
+				children	= other.children;
+				return *this;
+			}
+
+			constexpr Entry& operator=(Entry&& other) {
+				ename		= CTL::move(other.ename);
+				epath		= CTL::move(other.epath);
+				folder		= CTL::move(other.folder);
+				children	= CTL::move(other.children);
 				return *this;
 			}
 
@@ -170,11 +194,11 @@ namespace OS::FS {
 			constexpr auto cend() const		{return children.cend();	}
 
 			constexpr StringList getAllFiles() const {
-				if (!folder) return StringList{path};
+				if (!folder) return StringList{epath};
 				StringList files;
 				for (Entry const& e: children) {
 					if (!e.folder)
-						files.pushBack(e.path);
+						files.pushBack(e.epath);
 					else {
 						StringList subfiles = e.getAllFiles();
 						files.appendBack(subfiles);
@@ -186,16 +210,19 @@ namespace OS::FS {
 			constexpr List<Entry> getChildren() const {return children;}
 
 			constexpr operator List<Entry>() const	{return getChildren();	}
-			constexpr operator String() const		{return path;			}
+			constexpr operator String() const		{return epath;			}
 
 			constexpr bool isFolder() const {return folder;}
 
-			String const name;
-			String const path;
+			constexpr String name() const {return ename;}
+			constexpr String path() const {return epath;}
 
 		private:
+			String ename;
+			String epath;
+
 			List<Entry>	children	= List<Entry>();
-			bool const	folder		= false;
+			bool		folder		= false;
 		};
 
 		FileTree(String const& path): tree(getStructure(path)) {}

@@ -33,6 +33,8 @@ public:
 
 	using typename Derived::BaseType;
 
+	using typename BaseType::OrderType;
+
 	using
 		typename BaseType::DataType,
 		typename BaseType::ConstantType,
@@ -70,6 +72,8 @@ public:
 
 	using
 		BaseType::BaseType,
+		BaseType::sliced,
+		BaseType::clear,
 		BaseType::reserve,
 		BaseType::resize,
 		BaseType::tight,
@@ -145,7 +149,7 @@ public:
 		IndexType idx = find(sep);
 		if (idx < 0)
 			return res.pushBack(*this);
-		return res.pushBack({sliced(0, idx), sliced(idx, size())});
+		return res.appendBack({sliced(0, idx), sliced(idx, size())});
 	}
 
 	constexpr List<SelfType, IndexType> splitAtFirst(List<DataType> const& seps) const {
@@ -158,7 +162,7 @@ public:
 		}
 		if (idx < 0)
 			return res.pushBack(*this);
-		return res.pushBack({sliced(0, idx), sliced(idx, size())});
+		return res.appendBack({sliced(0, idx), sliced(idx, size())});
 	}
 
 	/*constexpr List<SelfType, IndexType> splitAtFirst(ArgumentListType const& seps) const {
@@ -171,7 +175,7 @@ public:
 		}
 		if (idx < 0)
 			return res.pushBack(*this);
-		return res.pushBack({sliced(0, idx), sliced(idx, size())});
+		return res.appendBack({sliced(0, idx), sliced(idx, size())});
 	}*/
 
 	constexpr List<SelfType, IndexType> splitAtLast(DataType const& sep) const {
@@ -179,7 +183,7 @@ public:
 		IndexType idx = rfind(sep);
 		if (idx < 0)
 			return res.pushBack(*this);
-		return res.pushBack({sliced(0, idx), sliced(idx, size())});
+		return res.appendBack({sliced(0, idx), sliced(idx, size())});
 	}
 
 	constexpr List<SelfType, IndexType> splitAtLast(List<DataType> const& seps) const {
@@ -192,7 +196,7 @@ public:
 		}
 		if (idx < 0)
 			return res.pushBack(*this);
-		return res.pushBack({sliced(0, idx), sliced(idx, size())});
+		return res.appendBack({sliced(0, idx), sliced(idx, size())});
 	}
 
 	/*constexpr List<SelfType, IndexType> splitAtLast(ArgumentListType const& seps) const {
@@ -205,7 +209,7 @@ public:
 		}
 		if (idx < 0)
 			return res.pushBack(*this);
-		return res.pushBack({sliced(0, idx), sliced(idx, size())});
+		return res.appendBack({sliced(0, idx), sliced(idx, size())});
 	}*/
 	
 	constexpr SelfType& replace(DataType const& val, DataType const& rep) {
@@ -303,9 +307,8 @@ public:
 	}
 
 	template<class T>
-	constexpr SelfType& operator=(T const& arg) const			{BaseType::operator=(arg); return *this;	}
-	constexpr SelfType& operator=(SelfType const& other) const		{BaseType::operator=(other); return *this;	}
-	constexpr SelfType& operator=(StringLiteralType const& other) const	{return *this = SelfType(other);		}
+	constexpr SelfType& operator=(T const& arg)						{BaseType::operator=(arg); return *this;	}
+	constexpr SelfType& operator=(StringLiteralType const& other)	{return *this = SelfType(other);			}
 
 	constexpr SelfType const& operator<<(SelfType& other) const	{other.appendBack(*this); return *this;}
 	constexpr SelfType& operator<<(SelfType& other)				{other.appendBack(*this); return *this;}
@@ -315,15 +318,15 @@ public:
 	constexpr SelfType operator+(DataType const& value) const	{return SelfType(*this).pushBack(value);	}
 	constexpr SelfType operator+(SelfType const& other) const	{return (*this) + other;					}
 
-	constexpr SelfType operator+(StringLiteralType const& str) const				{return (*this) + String(str);}
+	constexpr SelfType operator+(StringLiteralType const& str) const				{return (*this) + SelfType(str);}
 	template<SizeType S>
-	constexpr SelfType operator+(Decay::AsType<ConstantType[S]> const& str) const	{return (*this) + String(str);}
+	constexpr SelfType operator+(Decay::AsType<ConstantType[S]> const& str) const	{return (*this) + SelfType(str);}
 
-	constexpr SelfType& operator+=(DataType const& value)				{return pushBack(value);	}
-	constexpr SelfType& operator+=(SelfType const& other)				{return appendBack(other);	}
-	constexpr SelfType& operator+=(StringLiteralType const& str)		{return appendBack(str);	}
+	constexpr SelfType& operator+=(DataType const& value)				{pushBack(value); return *this;		}
+	constexpr SelfType& operator+=(SelfType const& other)				{appendBack(other); return *this;	}
+	constexpr SelfType& operator+=(StringLiteralType const& str)		{appendBack(str); return *this;		}
 	template<SizeType S>
-	constexpr SelfType& operator+=(Decay::AsType<ConstantType[S]> str)	{return appendBack(str);	}
+	constexpr SelfType& operator+=(Decay::AsType<ConstantType[S]> str)	{appendBack(str); return *this;		}
 
 	constexpr SelfType operator*(SizeType const& times) const {
 		SelfType result(size() * times);
@@ -333,8 +336,20 @@ public:
 	}
 
 	constexpr SelfType& operator*=(SizeType const& times) {
-		*this = (*this) * times;
+		SelfType copy = *this;
+		for (SizeType i = 0; i < times; ++i)
+			appendBack(copy);
+		return *this;
 	}
+
+	template<SizeType S>
+	constexpr bool operator==(Decay::AsType<ConstantType[S]> const& str) const	{return *this == SelfType(str);			}
+	constexpr bool operator==(StringLiteralType const& str) const				{return *this == SelfType(str);			}
+	constexpr bool operator==(SelfType const& other) const						{return BaseType::operator==(other);	}
+	template<SizeType S>
+	constexpr OrderType operator<=>(Decay::AsType<ConstantType[S]> const& str) const	{return *this <=> SelfType(str);		}
+	constexpr OrderType operator<=>(StringLiteralType const& str) const					{return *this <=> SelfType(str);		}
+	constexpr OrderType operator<=>(SelfType const& other) const						{return BaseType::operator<=>(other);	}
 
 	constexpr explicit operator const char*() const {return cstr();}
 
@@ -469,7 +484,7 @@ operator+(
 	typename BaseString<TChar, TIndex>::StringLiteralType const& str,
 	BaseString<TChar, TIndex> const& self
 ) {
-	return String(str) + self;
+	return BaseString<TChar, TIndex>(str) + self;
 }
 
 template<Type::ASCII TChar, Type::Integer TIndex = usize, AsUnsigned<TIndex> S>
@@ -478,7 +493,7 @@ operator+(
 	Decay::AsType<typename BaseString<TChar, TIndex>::ConstantType[S]> const& str,
 	BaseString<TChar, TIndex> const& self
 ) {
-	return String(str) + self;
+	return BaseString<TChar, TIndex>(str) + self;
 }
 
 typedef BaseString<char>	String;

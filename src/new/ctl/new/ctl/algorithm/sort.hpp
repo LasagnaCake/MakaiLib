@@ -8,13 +8,15 @@
 CTL_NAMESPACE_BEGIN
 
 template <class T>
-concept Sortable = Type::Comparable::Threeway<T, T> && Type::Comparable::Equals<T, T>;
+concept Sortable = Type::Comparable::Threeway<T, T>;
 
 template <class T>
 concept SortableIterator =
 	IteratorType<T>
 &&	Sortable<typename T::DataType>
 ;
+
+static_assert(SortableIterator<Iterator<int>>);
 
 namespace Sorting {
 	template<Sortable T>
@@ -154,7 +156,12 @@ namespace Sorting {
 
 template <SortableIterator T>
 constexpr void sort(T const& begin, T const& end) {
-	Sorting::vivoSort(&*begin, end - begin);
+	Sorting::vivoSort(begin, end - begin);
+}
+
+template <Sortable T>
+constexpr void sort(T* const& begin, T* const& end) {
+	Sorting::vivoSort(begin, end - begin);
 }
 
 CTL_NAMESPACE_END

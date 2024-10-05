@@ -14,7 +14,7 @@ namespace Impl {
 		template <typename TReturn, typename... TArgs>
 		struct Function {
 			constexpr virtual TReturn invoke(TArgs...) const		= 0;
-			constexpr TReturn operator()(TArgs... args) const		{return invoke(forward<TArgs>(args)...);}
+			constexpr TReturn operator()(TArgs... args) const		{return invoke(args...);}
 			constexpr virtual ~Function()							= default;
 		};
 	}
@@ -22,7 +22,7 @@ namespace Impl {
 	template <typename TFunction, typename TReturn, typename... TArgs>
 	class Function: Partial::Function<TReturn, TArgs...> {
 		TFunction func;
-		constexpr TReturn invoke(TArgs... args) const override {return func(forward<TArgs>(args)...);}
+		constexpr TReturn invoke(TArgs... args) const override {return func(args...);}
 		constexpr Function(TFunction&& _func):func(_func) {}
 	};
 }
@@ -84,11 +84,11 @@ private:
 public:
 	constexpr ReturnType invoke(TArgs... args) const {
 		if (!func) badCallError();
-        return func->invoke(forward<TArgs>(args)...);
+        return func->invoke(args...);
     }
 
     constexpr ReturnType operator()(TArgs... args) const {
-        return invoke(forward<TArgs>(args)...);
+        return invoke(args...);
     }
 
     constexpr ~Function() {destroy();}

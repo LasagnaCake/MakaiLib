@@ -115,7 +115,7 @@ constexpr bool atoi(T const* const& str, usize size, I& out, usize base = 0) {
 template<Type::Integer I, Type::ASCII T, usize S>
 constexpr bool atoi(Decay::AsType<const T[S]> const& str, I& out) {
 	static_assert(S, "String cannot be empty!");
-	return atoi<I>(str, S - 1, out);
+	return ::CTL::atoi<I>(str, S - 1, out);
 }
 
 template<Type::Real F, Type::ASCII T>
@@ -143,7 +143,7 @@ constexpr bool atof(T const* const& str, usize size, F& out) {
 	MX::memcpy(ns, str, sep-1);
 	MX::memcpy(ns+sep-1, str+sep, size-sep);
 	// Try and convert resulting integer string
-	if (!atoi<usize>(ns, size-1, ival))
+	if (!::CTL::atoi<ssize>(ns, size-1, ival))
 		return false;
 	delete[] ns;
 	// Convert integer to string by "reverse scientific notation" and return
@@ -154,7 +154,7 @@ constexpr bool atof(T const* const& str, usize size, F& out) {
 template<Type::Real F, Type::ASCII T, usize S>
 constexpr bool atof(Decay::AsType<const T[S]> const& str, F& out) {
 	static_assert(S, "String cannot be empty!");
-	return atof<F>(str, S - 1, out);
+	return ::CTL::atof<F>(str, S - 1, out);
 }
 
 // Based off of https://stackoverflow.com/a/3987783
@@ -213,13 +213,13 @@ constexpr ssize ftoa(F val, T* const& buf, usize const& bufSize, usize const& pr
 	usize frac = (val * zeroes) - (whole * zeroes);
 	ssize lhs = 0, rhs = 0;
 	// Fill in whole part of number to string, return if error
-	if (lhs = itoa<ssize>(whole, buf, bufSize)) return -1;
+	if (lhs = ::CTL::itoa<ssize>(whole, buf, bufSize)) return -1;
 	// Check if buffer is not full, else append comma and re-check
 	if (lhs >= bufSize) return lhs;
 	buf[lhs++] = '.';
 	if (lhs >= bufSize) return lhs;
 	// Fill in fractional part, returning if error
-	if (rhs = itoa<ssize>(frac, buf+lhs, bufSize-lhs)) return -1;
+	if (rhs = ::CTL::itoa<ssize>(frac, buf+lhs, bufSize-lhs)) return -1;
 	// Return full size of number string
 	return lhs+rhs+1;
 }

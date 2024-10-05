@@ -10,6 +10,10 @@ CTL_EX_NAMESPACE_BEGIN
 
 namespace Ex = ::CTL::Ex;
 
+namespace {
+	using namespace ::CTL;
+}
+
 CTL_EX_NAMESPACE_END
 
 #endif // CTL_EX_NAMESPACE_H

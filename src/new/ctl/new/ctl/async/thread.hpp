@@ -21,8 +21,8 @@ struct Thread:
 
 	using BaseType::swap;
 
-	Thread() noexcept:					BaseType(), exect(*this)									{}
-	Thread(SelfType&& other) noexcept:	BaseType(CTL::move(other)), exect(CTL::move(other.exect))	{}
+	Thread() noexcept:					BaseType(), exect(*this)												{}
+	Thread(SelfType&& other) noexcept:	BaseType((BaseType&&)CTL::move(other)), exect(CTL::move(other.exect))	{}
 	Thread(SelfType const& other)		= delete;
 
 	~Thread() {exect.requestStop();}
@@ -30,15 +30,15 @@ struct Thread:
 	using Handle	= Handle<Thread>;
 	using Instance	= Instance<Thread>;
 
-	struct ExecutionToken {
-		constexpr ExecutionToken(Thread& source):				stop(false), source(source)				{}
-		constexpr ExecutionToken(ExecutionToken&& other):		stop(other.stop), source(other.source)	{}
-		constexpr ExecutionToken(ExecutionToken const& other)	= delete;
+	struct ExecutionSource {
+		constexpr ExecutionSource(Thread& source):				stop(false), source(source)				{}
+		constexpr ExecutionSource(ExecutionSource&& other):		stop(other.stop), source(other.source)	{}
+		constexpr ExecutionSource(ExecutionSource const& other)	= delete;
 
 		constexpr bool shouldStop() const	{return stop;			}
 		constexpr operator bool() const		{return shouldStop();	}
 
-		constexpr ExecutionToken& requestStop() {
+		constexpr ExecutionSource& requestStop() {
 			stop = true;
 			return *this;
 		}
@@ -48,6 +48,19 @@ struct Thread:
 	private:
 		bool	stop;
 		Thread&	source;
+	};
+
+	struct ExecutionToken {
+		constexpr ExecutionToken(ExecutionSource*&& source):		source(source)	{}
+		constexpr ExecutionToken(ExecutionSource& source):			source(&source)	{}
+		constexpr ExecutionToken(ExecutionSource* const& source)	= delete;
+		constexpr ExecutionToken(ExecutionSource&& source)			= delete;
+
+		constexpr ExecutionSource* operator->()	{return source;		}
+		constexpr ExecutionSource& operator*()	{return *source;	}
+
+	private:
+		ExecutionSource* const source;
 	};
 
 	struct ID:
@@ -63,8 +76,8 @@ struct Thread:
 		BaseType const& base() const {return (*this);}
 		ID(): BaseType() {}
 
-		OrderType operator<=>(ID const& other) const	{return base() <=> other.base();	}
-		bool operator==(ID const& other) const			{return base() == other.base();		}
+		OrderType operator<=>(ID const& other) const	{return OrderType(base() <=> other.base());	}
+		bool operator==(ID const& other) const			{return base() == other.base();				}
 
 	private:
 		ID(BaseType&& other): BaseType(CTL::move(other)) {}
@@ -74,7 +87,7 @@ struct Thread:
 
 	template<class F, class... Args>
 	explicit Thread(F&& f, Args&&... args):
-		BaseType(forward(f), exect, forward(args)...) {
+		BaseType(forward(f), token(), forward(args)...) {
 	}
 
 	static ID current() noexcept {
@@ -100,7 +113,8 @@ struct Thread:
 		return *this;
 	}
 
-	ExecutionToken& token() {return exect;}
+	ExecutionToken token()		{return exect;}
+	ExecutionSource& source()	{return exect;}
 
 	bool running() const {
 		return thread::joinable();
@@ -109,7 +123,7 @@ struct Thread:
 	operator bool() const {return running();}
 
 private:
-	ExecutionToken exect;
+	ExecutionSource exect;
 };
 
 namespace Base::Async {
