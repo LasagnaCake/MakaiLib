@@ -138,16 +138,16 @@ namespace MX {
 	}
 
 	template<Type::NonVoid T>
-	constexpr T* realloc(T* const& ptr, usize const& sz) {
-		if (!sz || !ptr) throw AllocationFailure();
-		auto* m = __builtin_realloc(ptr, sz * sizeof(T));
+	constexpr T* realloc(T* const& mem, usize const& sz) {
+		if (!sz || !mem) return mem;
+		auto* m = __builtin_realloc(mem, sz * sizeof(T));
 		if (!m) throw AllocationFailure();
 		return (T*)m;
 	}
 
 	template<Type::NonVoid T>
 	constexpr void free(T* const& mem) {
-		return __builtin_free(mem);
+		if (mem) return __builtin_free(mem);
 	}
 }
 
