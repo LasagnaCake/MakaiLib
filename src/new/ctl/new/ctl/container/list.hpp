@@ -179,8 +179,6 @@ public:
 	constexpr SelfType& reserve(SizeType const& count) {
 		while (count > maximum)
 			increase();
-		/*if (count > newCount)
-			count = newCount;*/
 		return *this;
 	}
 
@@ -195,6 +193,7 @@ public:
 	}
 
 	constexpr SelfType& expand(SizeType const& count) {
+		if (!count) return *this;
 		reserve(this->count + count);
 		return *this;
 	}
@@ -267,11 +266,10 @@ public:
 	}
 
 	constexpr IndexType bsearch(DataType const& value) const
-	requires (
-		Type::Comparable::Threeway<DataType, DataType>
-	&&	Type::Comparable::Equals<DataType, DataType>
-	) {
+	requires (Type::Comparable::Threeway<DataType, DataType>) {
 		IndexType pivot = count / 2, index = pivot;
+		if (OrderType(front() <=> value) == Order::EQUAL) return 0;
+		if (OrderType(back() <=> value) == Order::EQUAL) return size() - 1;
 		while (pivot != 0) {
 			switch (OrderType(contents[index] <=> value)) {
 				case Order::EQUAL:		return index;

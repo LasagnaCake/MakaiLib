@@ -79,6 +79,8 @@ public:
 		BaseType::compare,
 		BaseType::disparity,
 		BaseType::data,
+		BaseType::front,
+		BaseType::back,
 		BaseType::begin,
 		BaseType::end,
 		BaseType::cbegin,
@@ -160,6 +162,8 @@ public:
 	constexpr IndexType search(KeyType const& key) const
 	requires (SORTED) {
 		if (empty()) return -1;
+		if (OrderType(front().key <=> key) == Order::EQUAL) return 0;
+		if (OrderType(back().key <=> key) == Order::EQUAL) return size() - 1;
 		IndexType pivot = size() / 2, index = pivot;
 		while (pivot != 0) {
 			switch (OrderType(data()[index].key <=> key)) {
@@ -185,7 +189,8 @@ public:
 	template<class T>
 	constexpr SelfType& operator=(T const& value) {clear(); return append(value);}
 
-	constexpr SelfType& operator=(SelfType const& other) {clear(); return append(other);}
+	constexpr SelfType& operator=(SelfType const& other)	{BaseType::operator=(other); return *this;				}
+	constexpr SelfType& operator=(SelfType&& other)			{BaseType::operator=(CTL::move(other)); return *this;	}
 
 	constexpr bool contains(KeyType const& key) const {
 		if (empty()) return false;
@@ -194,7 +199,7 @@ public:
 
 	constexpr SelfType& remove(KeyType const& key) {
 		IndexType i = find(key);
-		if (i == -1) return *this;
+		if (i == -1) return *	this;
 		BaseType::remove(i);
 		return *this;
 	}
@@ -264,7 +269,7 @@ public:
 
 	template<SizeType S>
 	constexpr SelfType& append(Decay::AsType<PairType[S]> const& values) {
-		BaseType::appendBack(SelfType(values, S).filtered(NOT_IN_MAP));
+		BaseType::appendBack(SelfType(values).filtered(NOT_IN_MAP));
 		update();
 		return *this;
 	}

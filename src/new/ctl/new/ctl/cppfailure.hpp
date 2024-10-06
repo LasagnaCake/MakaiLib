@@ -2,12 +2,14 @@
 #define CTL_CPPFAILURE_H
 
 #include "namespace.hpp"
+#include "ctypes.hpp"
 #include <stdexcept>
 
 CTL_NAMESPACE_BEGIN
 
 struct Crash {};
 
+template<usize I>
 struct DebugCrash: Crash {};
 
 struct Failure {
