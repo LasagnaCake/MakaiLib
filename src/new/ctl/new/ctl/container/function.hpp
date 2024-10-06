@@ -1,7 +1,6 @@
 #ifndef CTL_CONTAINER_FUNCTION_H
 #define CTL_CONTAINER_FUNCTION_H
 
-#include <memory>
 #include "../templates.hpp"
 #include "../typetraits/traits.hpp"
 #include "../cpperror.hpp"
@@ -25,6 +24,8 @@ namespace Impl {
 		TFunction func;
 		constexpr TReturn invoke(TArgs... args) const override {return func(args...);}
 		constexpr Function(TFunction&& func): func(func) {}
+
+		constexpr ~Function() {}
 	};
 }
 
@@ -55,9 +56,7 @@ public:
 	;
 
 private:
-	using ImplementationType = Impl::Partial::Function<ReturnType, TArgs...>;
-
-	ImplementationType* func{nullptr};
+	Impl::Partial::Function<ReturnType, TArgs...>* func{nullptr};
 
 	template<typename TFunction>
 	using Callable = Impl::Function<Decay::AsArgument<TFunction>, TReturn, TArgs...>;
@@ -65,13 +64,13 @@ private:
 	template<typename TFunction>
 	constexpr static Callable<TFunction>*
 	makeCallable(TFunction&& f) {
-		return MX::construct<Callable<TFunction>>(CTL::move(f));
+		return new Callable<TFunction>(CTL::move(f));
 	}
 
 	template<typename TFunction>
 	constexpr static Callable<TFunction>*
 	makeCallable(TFunction const& f) {
-		return MX::construct<Callable<TFunction>>(f);
+		return new Callable<TFunction>(f);
 	}
 
 	constexpr void assign(SelfType const& other) {

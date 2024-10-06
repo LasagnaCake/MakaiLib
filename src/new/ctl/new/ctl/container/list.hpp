@@ -296,7 +296,8 @@ public:
 		return *this;
 	}
 
-	constexpr SizeType removeIf(PredicateType const& predicate) {
+	template<class TPredicate>
+	constexpr SizeType removeIf(TPredicate const& predicate) {
 		SizeType removed = 0;
 		auto const start = begin();
 		for(auto i = begin(); i != end();)
@@ -307,7 +308,8 @@ public:
 		return removed;
 	}
 
-	constexpr SizeType removeIfNot(PredicateType const& predicate) {
+	template<class TPredicate>
+	constexpr SizeType removeIfNot(TPredicate const& predicate) {
 		SizeType removed = 0;
 		auto const start = begin();
 		for(auto i = begin(); i != end();)
@@ -318,12 +320,14 @@ public:
 		return removed;
 	}
 
-	constexpr SelfType& eraseIf(PredicateType const& predicate) {
+	template<class TPredicate>
+	constexpr SelfType& eraseIf(TPredicate const& predicate) {
 		count -= removeIf(predicate);
 		return *this;
 	}
 
-	constexpr SelfType& eraseIfNot(PredicateType const& predicate) {
+	template<class TPredicate>
+	constexpr SelfType& eraseIfNot(TPredicate const& predicate) {
 		count -= removeIfNot(predicate);
 		return *this;
 	}
@@ -522,36 +526,55 @@ public:
 	}
 	*/
 
-	constexpr SelfType& transform(Function<DataType(DataType const&)> fun) {
+	template <class TProcedure>
+	constexpr SelfType& transform(TProcedure const& fun) {
 		for(DataType& v: *this)
 			v = fun(v);
 		return *this;
 	}
 
-	constexpr SelfType transformed(Function<DataType(DataType const&)> fun) const {
+	template<class TProcedure>
+	constexpr SelfType transformed(TProcedure const& fun) const {
 		return SelfType(*this).transform();
 	}
 
-	constexpr bool validate(PredicateType const& cond) const {
+	template<class TPredicate>
+	constexpr bool validate(TPredicate const& cond) const {
 		for (DataType const& c: *this)
 			if (!cond(c))
 				return false;
 		return true;
 	}
 
-	constexpr SelfType filter(PredicateType const& filter) const {
+	template<class TPredicate>
+	constexpr SelfType filter(TPredicate const& filter) const
+	requires requires (TPredicate f, DataType v) {
+		{f(v)} -> Type::Equal<bool>;
+	} {
 		return eraseIfNot(filter);
 	}
 
-	constexpr SelfType filter(CompareType const& compare) {
+	template<class TCompare>
+	constexpr SelfType filter(TCompare const& compare)
+	requires requires (TCompare f, DataType a, DataType b) {
+		{f(a, b)} -> Type::Equal<bool>;
+	} {
 		return *this = filtered(compare);
 	}
 
-	constexpr SelfType filtered(PredicateType const& filter) const {
+	template<class TPredicate>
+	constexpr SelfType filtered(TPredicate const& filter) const
+	requires requires (TPredicate f, DataType v) {
+		{f(v)} -> Type::Equal<bool>;
+	} {
 		return SelfType(*this).eraseIfNot(filter);
 	}
 
-	constexpr SelfType filtered(CompareType const& compare) {
+	template<class TCompare>
+	constexpr SelfType filtered(TCompare const& compare)
+	requires requires (TCompare f, DataType a, DataType b) {
+		{f(a, b)} -> Type::Equal<bool>;
+	} {
 		SelfType result;
 		for (SizeType i = 0; i < count; ++i) {
 			bool miss = false;

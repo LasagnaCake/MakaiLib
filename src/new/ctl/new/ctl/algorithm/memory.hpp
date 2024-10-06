@@ -168,16 +168,6 @@ namespace MX {
 		if (mem) return __builtin_free(mem);
 	}
 
-	template<Type::NonVoid T, class... Args>
-	constexpr T* construct(Args... args) {
-		T* val = malloc<T>();
-		T dummy(forward<Args>(args)...);
-		memcpy(val, &dummy);
-		//(val->*(&T::T))(forward<Args>(args)...);
-		//val = new(val) T(forward<Args>(args)...);
-		return val;
-	}
-
 	template<Type::NonVoid T>
 	constexpr void destruct(T* const& val) {
 		if (!val) return;

@@ -11,6 +11,8 @@
 
 CTL_NAMESPACE_BEGIN
 
+#define NOT_IN_MAP [this](PairType const& p) -> bool {return notInMap(p);}
+
 template<class TKey, class TValue, template <class TPairKey, class TPairValue> class TPair = Pair>
 struct Collected {
 	static_assert(Type::Pair<TPair<TKey, TValue>>, "Type is not a valid pair type!");
@@ -183,6 +185,8 @@ public:
 	template<class T>
 	constexpr SelfType& operator=(T const& value) {clear(); return append(value);}
 
+	constexpr SelfType& operator=(SelfType const& other) {clear(); return append(other);}
+
 	constexpr bool contains(KeyType const& key) const {
 		if (empty()) return false;
 		return search(key) != -1;
@@ -266,14 +270,27 @@ public:
 	}
 
 private:
-	constexpr static CompareType const	UNIQUE_VALUES	= [](PairType const& a, PairType const& b){return a.key != b.key;};
-	PredicateType const					NOT_IN_MAP		= [this](PairType const& pair){return !contains(pair.key);};
+	/*
+	constexpr static CompareType UNIQUE_VALUES(PairType const& a, PairType const& b) {
+		return a.key != b.key;
+	}
+	//*/
+
+	//*
+	constexpr static auto const	UNIQUE_VALUES	= [](PairType const& a, PairType const& b){return a.key != b.key;};
+	
+	constexpr bool notInMap(PairType const& pair) const {
+		return !contains(pair.key);
+	}
+	//*/
 
 	constexpr void update() requires (SORTED)	{sort();	}
 	constexpr void update() requires (!SORTED)	{			}
 
 	constexpr void clean() {filter(UNIQUE_VALUES);}
 };
+
+#undef NOT_IN_MAP
 
 /*
 template<class TKey, class TValue, Type::Integer TIndex = usize, class TPair = Pair<TKey, TValue>, class THasher = Hasher>
