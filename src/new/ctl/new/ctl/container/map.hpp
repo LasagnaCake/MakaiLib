@@ -179,6 +179,27 @@ public:
 		return -1;
 	}
 
+	constexpr List<KeyType, SizeType> keys() const {
+		List<KeyType, SizeType> result;
+		for (auto& i: *this)
+			result.pushBack(i.key);
+		return result;
+	}
+
+	constexpr List<KeyType, SizeType> values() const {
+		List<KeyType, SizeType> result;
+		for (auto& i: *this)
+			result.pushBack(i.key);
+		return result;
+	}
+
+	constexpr List<PairType, SizeType> items() const {
+		List<PairType, SizeType> result;
+		for (auto& i: *this)
+			result.pushBack(i);
+		return result;
+	}
+
 	constexpr IndexType search(KeyType const& key) const
 	requires (!SORTED) {
 		for (usize i = 0; i < size(); ++i)
