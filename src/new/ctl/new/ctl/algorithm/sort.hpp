@@ -46,8 +46,8 @@ namespace Sorting {
 			*left	= new T[szLeft],
 			*right	= new T[szRight]
 		;
-		MX::memcpy(left, arr, szLeft);
-		MX::memcpy(right, arr+szLeft, szRight);
+		MX::memmove(left, arr, szLeft);
+		MX::memmove(right, arr+szLeft, szRight);
 		mergeSort(left, szLeft);
 		mergeSort(right, szRight);
 		usize
@@ -85,8 +85,8 @@ namespace Sorting {
 				*left = new T[szLeft],
 				*right = new T[szRight]
 			;
-			MX::memcpy(left, arr, szLeft);
-			MX::memcpy(right, arr+szLeft, szRight);
+			MX::memmove(left, arr, szLeft);
+			MX::memmove(right, arr+szLeft, szRight);
 			usize
 				i = 0,
 				j = 0,
@@ -156,12 +156,12 @@ namespace Sorting {
 
 template <SortableIterator T>
 constexpr void sort(T const& begin, T const& end) {
-	Sorting::vivoSort(begin.base(), end - begin);
+	Sorting::insertionSort(begin.base(), end - begin + 1);
 }
 
 template <Sortable T>
 constexpr void sort(T* const& begin, T* const& end) {
-	Sorting::vivoSort(begin, end - begin);
+	Sorting::insertionSort(begin, end - begin + 1);
 }
 
 CTL_NAMESPACE_END

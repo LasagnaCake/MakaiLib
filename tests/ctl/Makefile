@@ -5,7 +5,7 @@ LEAN := -static -s
 
 ROOT := ../..
 
-COMPILER_CONFIG	:= -m64 -std=gnu++20 -fms-extensions -I$(ROOT)/src/new/ctl/new
+COMPILER_CONFIG	:= -m64 -std=gnu++23 -fms-extensions -I$(ROOT)/src/new/ctl/new
 DEBUGMODE := -DCTL_CONSOLE_OUT -fconcepts-diagnostics-depth=4 -Wpedantic
 
 LIBREQS		:= -static-libstdc++ -static-libgcc
@@ -47,6 +47,7 @@ ifndef t
 define tests
 	$(call mktest, $(1), 01.compilation)
 	$(call mktest, $(1), 02.list)
+	$(call mktest, $(1), 03.map)
 endef
 else
 define tests

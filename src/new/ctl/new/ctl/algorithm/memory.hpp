@@ -22,7 +22,7 @@ CTL_NAMESPACE_BEGIN
 namespace MX {
 	typedef uint8* Address;
 
-	constexpr void* memcpy(void* const& dst, void const* const& src, usize size) {
+	constexpr pointer memcpy(pointer const& dst, void const* const& src, usize size) {
 		#ifdef CTL_DO_NOT_USE_BUILTINS
 		Address s = (Address)src, d = (Address)dst;
 		if (size == 1) *d = *s;
@@ -34,15 +34,15 @@ namespace MX {
 
 	template<Type::NonVoid T>
 	constexpr T* memcpy(T* const& dst, T const* const& src, usize const& count) {
-		return (T*)memcpy((void*)dst, (void*)src, count * sizeof(T));
+		return (T*)memcpy((pointer)dst, (pointer)src, count * sizeof(T));
 	}
 
 	template<Type::NonVoid T>
 	constexpr T* memcpy(T* const& dst, T const* const& src) {
-		return (T*)memcpy((void*)dst, (void*)src, sizeof(T));
+		return (T*)memcpy((pointer)dst, (pointer)src, sizeof(T));
 	}
 
-	constexpr void* memmove(void* const& dst, void const* const& src, usize size) {
+	constexpr pointer memmove(pointer const& dst, void const* const& src, usize size) {
 		#ifdef CTL_DO_NOT_USE_BUILTINS
 		Address d = (Address)dst, s = (Address)src;
 		if (d < s)
@@ -61,12 +61,12 @@ namespace MX {
 
 	template<Type::NonVoid T>
 	constexpr T* memmove(T* const& dst, T const* const& src, usize const& count) {
-		return (T*)memmove((void*)dst, (void*)src, count * sizeof(T));
+		return (T*)memmove((pointer)dst, (pointer)src, count * sizeof(T));
 	}
 
 	template<Type::NonVoid T>
 	constexpr T* memmove(T* const& dst, T const* const& src) {
-		return (T*)memmove((void*)dst, (void*)src, sizeof(T));
+		return (T*)memmove((pointer)dst, (pointer)src, sizeof(T));
 	}
 
 	constexpr int memcmp(void const* const& a, void const* const& b, usize size) {
@@ -82,7 +82,7 @@ namespace MX {
 
 	template<Type::NonVoid T>
 	constexpr int memcmp(T const* const& a, T const* const& b, usize const& count) {
-		return memcmp((void*)a, (void*)b, count * sizeof(T));
+		return memcmp((pointer)a, (pointer)b, count * sizeof(T));
 	}
 
 	template<Type::NonVoid T>
@@ -90,7 +90,7 @@ namespace MX {
 		return memcmp(a, b, 1);
 	}
 
-	constexpr void* memset(void* const& dst, int const& val, usize size) {
+	constexpr pointer memset(pointer const& dst, int const& val, usize size) {
 		#ifdef CTL_DO_NOT_USE_BUILTINS
 		Address d = (Address)dst;
 		while (size-- > 0)
@@ -102,26 +102,33 @@ namespace MX {
 
 	template<Type::NonVoid T>
 	constexpr T* memset(T* const& dst, int const& val, usize const& count) {
-		return (T*)memset((void*)dst, val, count * sizeof(T));
+		return (T*)memset((pointer)dst, val, count * sizeof(T));
 	}
 
 	template<Type::NonVoid T>
 	constexpr T* memset(T* const& dst, int const& val) {
-		return (T*)memset((void*)dst, val, sizeof(T));
+		return (T*)memset((pointer)dst, val, sizeof(T));
 	}
 
-	constexpr void* memzero(void* const& dst, usize const& size) {
+	constexpr pointer memzero(pointer const& dst, usize const& size) {
 		return memset(dst, 0, size);
 	}
 
 	template<Type::NonVoid T>
 	constexpr T* memzero(T* const& dst, usize const& size) {
-		return (T*)memzero((void*)dst, size * sizeof(T));
+		return (T*)memzero((pointer)dst, size * sizeof(T));
 	}
 
 	template<Type::NonVoid T>
 	constexpr T* memzero(T* const& dst) {
-		return (T*)memzero((void*)dst, sizeof(T));
+		return (T*)memzero((pointer)dst, sizeof(T));
+	}
+	
+	constexpr pointer malloc(usize const& sz) {
+		if (!sz) throw AllocationFailure();
+		auto* m = __builtin_malloc(sz);
+		if (!m) throw AllocationFailure();
+		return m;
 	}
 
 	template<Type::NonVoid T>
@@ -137,6 +144,13 @@ namespace MX {
 		return (T*)malloc<T>(1);
 	}
 
+	constexpr pointer realloc(pointer const& mem, usize const& sz) {
+		if (!sz || !mem) return mem;
+		auto* m = __builtin_realloc(mem, sz);
+		if (!m) throw AllocationFailure();
+		return m;
+	}
+
 	template<Type::NonVoid T>
 	constexpr T* realloc(T* const& mem, usize const& sz) {
 		if (!sz || !mem) return mem;
@@ -145,12 +159,38 @@ namespace MX {
 		return (T*)m;
 	}
 
+	constexpr void free(pointer const& mem) {
+		if (mem) return __builtin_free(mem);
+	}
+
 	template<Type::NonVoid T>
 	constexpr void free(T* const& mem) {
 		if (mem) return __builtin_free(mem);
 	}
+
+	template<Type::NonVoid T, class... Args>
+	constexpr T* construct(Args... args) {
+		T* val = malloc<T>();
+		T dummy(forward<Args>(args)...);
+		memcpy(val, &dummy);
+		//(val->*(&T::T))(forward<Args>(args)...);
+		//val = new(val) T(forward<Args>(args)...);
+		return val;
+	}
+
+	template<Type::NonVoid T>
+	constexpr void destruct(T* const& val) {
+		if (!val) return;
+		val->~T();
+	}
 }
 
 CTL_NAMESPACE_END
+//*
+pointer operator new(usize sz) noexcept(false)		{return CTL::MX::malloc(sz);	}
+pointer operator new[](usize sz) noexcept(false)	{return CTL::MX::malloc(sz);	}
 
+void operator delete(pointer mem) noexcept(false)	{return CTL::MX::free(mem);		}
+void operator delete[](pointer mem) noexcept(false)	{return CTL::MX::free(mem);		}
+//*/
 #endif // CTL_ALGORITHM_MEMORY_H

@@ -227,7 +227,7 @@ public:
 	}
 
 	constexpr SelfType& reverse() {
-		::CTL::reverse(begin(), end());
+		::CTL::reverse(contents, count);
 		return *this;
 	}
 
@@ -368,10 +368,9 @@ public:
 	constexpr SelfType& clear() {count = 0; return *this;}
 
 	constexpr SelfType& dispose() {
-		if (contents) dump();
-		count		= 0;
-		contents	= nullptr;
+		dump();
 		recalculateMagnitude();
+		return *this;
 	}
 
 	constexpr SelfType& operator=(SelfType const& other) {
@@ -602,12 +601,13 @@ private:
 		memdestroy(contents, maximum);
 		contents	= nullptr;
 		maximum		= 0;
+		count		= 0;
 	}
 
 	constexpr static void memdestroy(PointerType const& p, SizeType const& sz) {
 		for (auto i = p; i != (p+sz); ++i)
-			i->~DataType();
-		//MX::free<DataType>(p);
+			MX::destruct(i);
+		MX::free<DataType>(p);
 	}
 
 	constexpr static DataType* memcreate(SizeType const& sz) {

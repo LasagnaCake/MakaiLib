@@ -27,7 +27,10 @@ int main() {
 	lst.eraseIf([](auto e){return e > 10;});	printList(lst);
 	lst.reserve(48);							printList(lst);
 	lst.insert({-5, 9, 9, 8, 9, -20}, 2);		printList(lst);
+	lst = lst.uniques();						printList(lst);
 	lst.reverse();								printList(lst);
 	lst.sort();									printList(lst);
 	lst.clear();								printList(lst);
+	lst.dispose();								printList(lst);
+	DEBUGLN("List test passed!");
 }

@@ -101,7 +101,7 @@ public:
 	}
 
 	template<SizeType N>
-	constexpr explicit BaseSimpleMap(Decay::AsType<PairType[N]> const& values): BaseType(values, N) {
+	constexpr explicit BaseSimpleMap(Decay::AsType<PairType[N]> const& values): BaseType(values) {
 		clean();
 		update();
 	}
@@ -179,6 +179,9 @@ public:
 	}
 
 	constexpr ValueType operator[](KeyType const& index) const {return at(index);}
+
+	template<class T>
+	constexpr SelfType& operator=(T const& value) {clear(); return append(value);}
 
 	constexpr bool contains(KeyType const& key) const {
 		if (empty()) return false;
