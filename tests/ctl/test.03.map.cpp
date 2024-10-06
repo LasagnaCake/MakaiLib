@@ -1,7 +1,7 @@
 #include <ctl/ctl.hpp>
 #include <ctlex/ctlex.hpp>
 
-using CTL::Map;
+using CTL::Map, CTL::List;
 
 template<typename T>
 void print(List<T> const& lst) {
