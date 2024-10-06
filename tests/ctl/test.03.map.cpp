@@ -4,18 +4,23 @@
 using CTL::Map;
 
 template<typename K, typename V>
-void print(Map<K, V> const& mp) {
+void print(Map<K, V> const& m) {
 	DEBUG(
 		"S: ",
-		mp.size(),
+		m.size(),
 		", C: ",
-		mp.capacity(),
+		m.capacity(),
 		", K: [ "
 	);
-	for (auto& i: mp) {
+	for (auto& i: m) {
 		DEBUG("[", i.key, " ", i.value, "] ");
 	}
 	DEBUGLN("];");
+}
+
+template<typename K, typename V>
+void print(Map<K, V> const& m, K const& k) {
+	CTL::Console::println("K: ", k, ", L: ", m.search(k), ", V: ", m[k]);
 }
 
 int main() {
@@ -42,11 +47,11 @@ int main() {
 	print(mp);
 	mp[33] = 28;
 	print(mp);
-	CTL::Console::println("K", -2, ", L: ", mp.search(-2), ", V: ", mp[-2]);
-	CTL::Console::println("K", -9, ", L: ", mp.search(-9), ", V: ", mp[-9]);
-	CTL::Console::println("K", -4, ", L: ", mp.search(-4), ", V: ", mp[-4]);
-	CTL::Console::println("K", 2, ", L: ", mp.search(2), ", V: ", mp[2]);
-	print(mp);
+	print(mp, -2);
+	print(mp, -9);
+	print(mp, -29);
+	print(mp, -4);
+	print(mp, 448);
 	mp.append({{75, 25}, {88, 98}, {29, 0}, {0, -255}, {33, 33}});
 	print(mp);
 	DEBUGLN("Map test passed!");

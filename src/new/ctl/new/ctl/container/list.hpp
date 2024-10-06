@@ -267,14 +267,18 @@ public:
 
 	constexpr IndexType bsearch(DataType const& value) const
 	requires (Type::Comparable::Threeway<DataType, DataType>) {
-		IndexType pivot = count / 2, index = pivot;
+		if (empty()) return -1;
 		if (OrderType(front() <=> value) == Order::EQUAL) return 0;
 		if (OrderType(back() <=> value) == Order::EQUAL) return size() - 1;
-		while (pivot != 0) {
-			switch (OrderType(contents[index] <=> value)) {
-				case Order::EQUAL:		return index;
-				case Order::GREATER:	index -= (pivot /= 2);	break;
-				case Order::LESS:		index += (pivot /= 2);	break;
+		IndexType lo = 0, hi = size() - 1, i = -1;
+		SizeType loop = 0;
+		while (hi >= lo & loop < size()) {
+			i = lo + (hi - lo) / 2;
+			switch(OrderType(value <=> *(cbegin() + i))) {
+				case Order::LESS:		hi = i-1; break;
+				case Order::EQUAL:		return i;
+				case Order::GREATER:	lo = i+1; break;
+				default:
 				case Order::UNORDERED:	return -1;
 			}
 		}

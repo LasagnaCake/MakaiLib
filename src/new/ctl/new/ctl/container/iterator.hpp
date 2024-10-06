@@ -74,10 +74,10 @@ public:
 	constexpr PointerType base() const {return iterand;}
 
 	constexpr ReferenceType operator*()	{return *iter();	}
-	constexpr DataType operator->()		{return iter();		}
+	constexpr PointerType operator->()	{return iter();		}
 
 	constexpr ConstReferenceType operator*() const	{return *iter();	}
-	constexpr ConstantType operator->() const		{return iter();		}
+	constexpr ConstPointerType operator->() const	{return iter();		}
 
 	SelfType& operator++()		{step(); return *this;							}
 	SelfType operator++(int)	{SelfType copy = *this; step(); return copy;	}
@@ -101,7 +101,13 @@ public:
 	//constexpr operator STLConstForwardIterator() const requires(!REVERSE)	{return iterand;}
 	constexpr operator STLConstReverseIterator() const requires(REVERSE)	{return iterand;}
 private:
-	constexpr PointerType iter() const {
+	constexpr ConstPointerType iter() const {
+		ConstPointerType it = iterand;
+		if constexpr (REVERSE)	return it-1;
+		else					return it;
+	}
+
+	constexpr PointerType iter() {
 		PointerType it = iterand;
 		if constexpr (REVERSE)	return it-1;
 		else					return it;
@@ -117,17 +123,22 @@ private:
 		else					--iterand;
 	}
 
-	constexpr PointerType compare(PointerType const& other) const {
+	constexpr OrderType compare(ConstPointerType const& other) const {
 		if constexpr (REVERSE)	return other <=> iterand;
 		else					return iterand <=> other;
 	}
 
-	constexpr IndexType difference(PointerType const& other) const {
+	constexpr IndexType difference(ConstPointerType const& other) const {
 		if constexpr (REVERSE)	return other - iterand;
 		else					return iterand - other;
 	}
 
-	constexpr PointerType offset(IndexType const& value) const {
+	constexpr ConstPointerType offset(IndexType const& value) const {
+		if constexpr (REVERSE)	return iterand + value;
+		else					return iterand - value;
+	}
+
+	constexpr PointerType offset(IndexType const& value) {
 		if constexpr (REVERSE)	return iterand + value;
 		else					return iterand - value;
 	}

@@ -139,7 +139,7 @@ public:
 		if (empty()) return ValueType();
 		IndexType i = search(key);
 		if (i == -1)	return ValueType();
-		else			return data()[i].value;
+		else			return (data() + i)->value;
 	}
 
 	constexpr ValueType at(KeyType const& key) const
@@ -147,7 +147,7 @@ public:
 		if (empty()) throw OutOfBoundsException("Key does not exist!");
 		IndexType i = search(key);
 		if (i == -1)	throw OutOfBoundsException("Key does not exist!");
-		else			return data()[i].value;
+		else			return (data() + i)->value;
 	}
 
 	constexpr ValueType& operator[](KeyType const& key) {
@@ -155,8 +155,8 @@ public:
 		IndexType i = search(key);
 		if (i == -1) {
 			BaseType::pushBack(PairType(key)).sort();
-			return data()[search(key)].value;
-		} else return data()[i].value;
+			return (data() + search(key))->value;
+		} else return (data() + i)->value;
 	}
 
 	constexpr IndexType search(KeyType const& key) const
@@ -164,12 +164,15 @@ public:
 		if (empty()) return -1;
 		if (OrderType(front().key <=> key) == Order::EQUAL) return 0;
 		if (OrderType(back().key <=> key) == Order::EQUAL) return size() - 1;
-		IndexType pivot = size() / 2, index = pivot;
-		while (pivot != 0) {
-			switch (OrderType(data()[index].key <=> key)) {
-				case Order::EQUAL:		return index;
-				case Order::GREATER:	index -= (pivot /= 2);	break;
-				case Order::LESS:		index += (pivot /= 2);	break;
+		IndexType lo = 0, hi = size() - 1, i = -1;
+		SizeType loop = 0;
+		while (hi >= lo & loop < size()) {
+			i = lo + (hi - lo) / 2;
+			switch(OrderType(key <=> (cbegin() + i)->key)) {
+				case Order::LESS:		hi = i-1; break;
+				case Order::EQUAL:		return i;
+				case Order::GREATER:	lo = i+1; break;
+				default:
 				case Order::UNORDERED:	return -1;
 			}
 		}
