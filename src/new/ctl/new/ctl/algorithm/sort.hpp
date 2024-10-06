@@ -30,6 +30,7 @@ namespace Sorting {
 	}
 
 	// Based off of https://www.geeksforgeeks.org/merge-sort/
+	// TODO: fix this
 	template<Sortable T>
 	constexpr void mergeSort(T* const& arr, usize const& sz) {
 		if (sz == 1) return;
@@ -69,6 +70,7 @@ namespace Sorting {
 	}
 
 	namespace Partial {
+		// TODO: fix this
 		template<Sortable T>
 		constexpr void mergeSort(T* const& arr, usize const& sz) {
 			if (sz == 1) return;
@@ -107,6 +109,7 @@ namespace Sorting {
 	}
 
 	// Based off of Tim Sort, with minor changes
+	// TODO: fix this
 	template<Sortable T>
 	constexpr void vivoSort(T* const& arr, usize const& sz) {
 		if (sz < 2) return;
@@ -134,6 +137,7 @@ namespace Sorting {
 						Partial::mergeSort(arr+offset, j);
 					} else if (arr[offset] < arr[offset+j])
 						reverse(arr+offset, j);
+					else Partial::mergeSort(arr+offset, j);
 					offset += j;
 					j = 1;
 					++i;
