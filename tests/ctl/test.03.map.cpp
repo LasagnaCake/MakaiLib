@@ -3,6 +3,21 @@
 
 using CTL::Map;
 
+template<typename T>
+void print(List<T> const& lst) {
+	DEBUG(
+		"S: ",
+		lst.size(),
+		", C: ",
+		lst.capacity(),
+		", I: [ "
+	);
+	for (auto& i: lst) {
+		DEBUG(i, " ");
+	}
+	DEBUGLN("];");
+}
+
 template<typename K, typename V>
 void print(Map<K, V> const& m) {
 	DEBUG(
@@ -54,6 +69,8 @@ int main() {
 	print(mp, 448);
 	mp.append({{75, 25}, {88, 98}, {29, 0}, {0, -255}, {33, 33}});
 	print(mp);
+	print(mp.keys());
+	print(mp.values());
 	DEBUGLN("Map test passed!");
 	return 0;
 }
