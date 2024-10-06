@@ -2,23 +2,33 @@
 #define CTL_CPPFAILURE_H
 
 #include "namespace.hpp"
+#include <stdexcept>
 
 CTL_NAMESPACE_BEGIN
 
+struct Crash {};
+
+struct DebugCrash: Crash {};
+
 struct Failure {
-	constexpr virtual char const* what() const noexcept {return "Something happened!";}
+	virtual char const* what() const noexcept {return "Something happened!";}
 };
 
-struct CatastrophicFailure: Failure {
-	constexpr virtual char const* what() const noexcept {return "Something REALLY bad happened!";}
+struct CatastrophicFailure: Failure, Crash {
+	virtual char const* what() const noexcept {return "Something REALLY bad happened!";}
 };
 
-struct AllocationFailure:	CatastrophicFailure {
-	constexpr virtual char const* what() const noexcept {return "Memory allocation failed!";}
+struct AllocationFailure: CatastrophicFailure {
+	virtual char const* what() const noexcept {return "Memory allocation failed!";}
 };
-struct MaximumSizeFailure:	CatastrophicFailure {
-	constexpr virtual char const* what() const noexcept {return "Maximum size reached!";}
+
+struct MaximumSizeFailure: CatastrophicFailure {
+	virtual char const* what() const noexcept {return "Maximum size reached!";}
 };
+
+void panic() {
+	throw Crash();
+}
 
 CTL_NAMESPACE_END
 

@@ -28,16 +28,16 @@ public:
 		typename SelfIdentified::SelfType
 	;
 
-	constexpr Exception(ConstReferenceType message) noexcept: message(message), prev(ex) {
+	Exception(ConstReferenceType message) noexcept: message(message), prev(ex) {
 		ex = this;
 	}
 
-	constexpr Exception(SelfType const& other) noexcept: Exception(other.message) {}
+	Exception(SelfType const& other) noexcept: Exception(other.message) {}
 
-	constexpr virtual char const* what() const noexcept {return message;}
+	virtual char const* what() const noexcept {return message;}
 
-	constexpr static Exception* current() noexcept 	{return ex;		}
-	constexpr Exception* previous() const noexcept	{return prev;	}
+	static Exception* current() noexcept 	{return ex;		}
+	Exception* previous() const noexcept	{return prev;	}
 
 private:
 	char const* const message;
@@ -131,7 +131,7 @@ public:
 	const DataType info;
 	const DataType callerInfo;
 
-	constexpr DetailedException(
+	DetailedException(
 		ConstReferenceType type			= "Unknown",
 		ConstReferenceType message		= "none",
 		ConstReferenceType file			= "unspecified",
@@ -150,7 +150,7 @@ public:
 		callerInfo(callerInfo)
 	{sumbuf = summary();}
 
-	constexpr DetailedException(SelfType const& other) noexcept:
+	DetailedException(SelfType const& other) noexcept:
 		SelfType(
 			other.type,
 			other.message,
@@ -162,7 +162,7 @@ public:
 		)
 	{}
 
-	constexpr DetailedException(
+	DetailedException(
 		bool,
 		BaseType const& other,
 		ConstReferenceType type			= "Unknown",
@@ -183,7 +183,7 @@ public:
 		)
 	{}
 
-	constexpr DataType report() const noexcept {
+	DataType report() const noexcept {
 		DataType result = (
 			"!!! AN ERROR HAS OCCURRED !!!\n\n"
 			"<error>\n\n"
@@ -205,7 +205,7 @@ public:
 		return result;
 	}
 
-	constexpr DataType summary() const noexcept {
+	DataType summary() const noexcept {
 		return
 			(type + ": " + message + (!info.empty() ? ("\n" + info) : ""))
 		+	(previous()
@@ -215,7 +215,7 @@ public:
 		;
 	}
 
-	constexpr StringLiteralType what() const noexcept override {
+	StringLiteralType what() const noexcept override {
 		return strlit(sumbuf);
 	}
 

@@ -5,7 +5,13 @@ using CTL::List;
 
 template<typename T>
 void printList(List<T> const& lst) {
-	DEBUG("List items: [ ");
+	DEBUG(
+		"S: ",
+		lst.size(),
+		", C: ",
+		lst.capacity(),
+		", I: [ "
+	);
 	for (auto& i: lst) {
 		DEBUG(i, " ");
 	}
@@ -18,7 +24,8 @@ int main() {
 	lst.pushBack(69);							printList(lst);
 	lst.appendBack({4, 420, 8});				printList(lst);
 	lst.popBack();								printList(lst);
-	lst.removeIf([](auto e){return e > 10;});	printList(lst);
+	lst.eraseIf([](auto e){return e > 10;});	printList(lst);
+	lst.reserve(48);							printList(lst);
 	lst.insert({-5, 9, 9, 8, 9, -20}, 2);		printList(lst);
 	lst.reverse();								printList(lst);
 	lst.sort();									printList(lst);

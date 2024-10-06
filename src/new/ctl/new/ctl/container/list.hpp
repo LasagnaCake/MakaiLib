@@ -76,7 +76,7 @@ public:
 	}
 
 	template<SizeType S>
-	constexpr explicit List(Decay::AsType<DataType[S]> const& values) {
+	constexpr explicit List(Decay::AsType<ConstantType[S]> const& values) {
 		invoke(S);
 		copy(values, contents, S);
 		count = S;
@@ -128,7 +128,7 @@ public:
 			pushBack(DataType(v.begin(), v.end()));
 	}
 
-	constexpr ~List() {if (contents) dump();}
+	constexpr ~List() {dump();}
 
 	constexpr SelfType& pushBack(DataType const& value) {
 		if (count >= maximum)
@@ -146,9 +146,8 @@ public:
 	constexpr SelfType& insert(DataType const& value, IndexType index) {
 		assertIsInBounds(index);
 		wrapBounds(index, count);
-		SizeType span = count - index;
 		if (count >= maximum) increase();
-		copy(&contents[index], &contents[index+1], span);
+		copy(&contents[index], &contents[index+1], count - index);
 		contents[index] = value;
 		++count;
 		return *this;
@@ -157,31 +156,31 @@ public:
 	constexpr SelfType& insert(SelfType const& other, IndexType index) {
 		assertIsInBounds(index);
 		wrapBounds(index, count);
-		reserve(count + other.count);
-		copy(&contents[index], &contents[index+other.count], other.count);
+		expand(other.count);
+		copy(&contents[index], &contents[index+other.count], count - index);
 		copy(other.contents, &contents[index], other.count);
 		count += other.count;
 		return *this;
 	}
 
 	constexpr SelfType& insert(ArgumentListType const& values, IndexType const& index) {
-		return insert(SelfType(values), index);
+		return insert(SelfType(values, values + count), index);
 	}
 
 	template<SizeType S>
-	constexpr SelfType& insert(Decay::AsType<DataType[S]> const& values, IndexType const& index) {
-		return insert(SelfType(values, values + S), index);
+	constexpr SelfType& insert(Decay::AsType<ConstantType[S]> const& values, IndexType const& index) {
+		return insert(SelfType(values), index);
 	}
 
-	constexpr SelfType& insert(DataType const& data, SizeType const& count, IndexType const& index) {
-		return insert(SelfType(data, count), index);
+	constexpr SelfType& insert(DataType const& value, SizeType const& count, IndexType const& index) {
+		return insert(SelfType(value, count), index);
 	}
 
 	constexpr SelfType& reserve(SizeType const& count) {
 		while (count > maximum)
 			increase();
-		if (this->count > count)
-			this->count = count;
+		/*if (count > newCount)
+			count = newCount;*/
 		return *this;
 	}
 
@@ -216,7 +215,7 @@ public:
 		return *this;
 	}
 
-	constexpr SelfType& expand(SizeType const& count, DataType const& fill) {
+	constexpr SelfType& expand(SizeType count, DataType const& fill) {
 		expand(this->count + count);
 		while (count-- > 0) pushBack(fill);
 		return *this;
@@ -370,15 +369,18 @@ public:
 
 	constexpr SelfType& dispose() {
 		if (contents) dump();
-		count = 0;
-		contents = nullptr;
+		count		= 0;
+		contents	= nullptr;
 		recalculateMagnitude();
 	}
 
 	constexpr SelfType& operator=(SelfType const& other) {
-		clear();
-		reserve(other.count);
-		appendBack(other);
+		if (contents)	memresize(contents, other.count);
+		else			contents = memcreate(other.count);
+		copy(other.contents, contents, other.count);
+		maximum		= other.maximum;
+		count		= other.count;
+		magnitude	= other.magnitude;
 		return *this;
 	}
 
@@ -596,15 +598,16 @@ private:
 	using Iteratable::wrapBounds;
 
 	constexpr void dump() {
+		if (!contents) return;
 		memdestroy(contents, maximum);
-		contents = nullptr;
-		maximum = 0;
+		contents	= nullptr;
+		maximum		= 0;
 	}
 
 	constexpr static void memdestroy(PointerType const& p, SizeType const& sz) {
 		for (auto i = p; i != (p+sz); ++i)
-			delete i;
-		MX::free<DataType>(p);
+			i->~DataType();
+		//MX::free<DataType>(p);
 	}
 
 	constexpr static DataType* memcreate(SizeType const& sz) {
@@ -616,7 +619,7 @@ private:
 	}
 
 	constexpr static void copy(ConstantType* src, DataType* dst, SizeType count) {
-		MX::memcpy<DataType>(dst, src, count);
+		MX::memmove<DataType>(dst, src, count);
 	};
 
 	constexpr SelfType& invoke(SizeType const& size) {
