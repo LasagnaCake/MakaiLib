@@ -145,7 +145,7 @@ namespace MX {
 	}
 
 	constexpr pointer realloc(pointer const& mem, usize const& sz) {
-		if (!sz || !mem) return mem;
+		if (!sz) return mem;
 		auto* m = __builtin_realloc(mem, sz);
 		if (!m) throw AllocationFailure();
 		return m;
@@ -153,7 +153,7 @@ namespace MX {
 
 	template<Type::NonVoid T>
 	constexpr T* realloc(T* const& mem, usize const& sz) {
-		if (!sz || !mem) return mem;
+		if (!sz) return mem;
 		auto* m = __builtin_realloc(mem, sz * sizeof(T));
 		if (!m) throw AllocationFailure();
 		return (T*)m;

@@ -1,7 +1,7 @@
 #include <ctl/ctl.hpp>
 #include <ctlex/ctlex.hpp>
 
-using CTL::Map, CTL::List;
+using CTL::Map, CTL::List, CTL::KeyValuePair;
 
 template<typename T>
 void print(List<T> const& lst) {
@@ -34,12 +34,31 @@ void print(Map<K, V> const& m) {
 }
 
 template<typename K, typename V>
+void print(List<KeyValuePair<K, V>> const& m) {
+	DEBUG(
+		"S: ",
+		m.size(),
+		", C: ",
+		m.capacity(),
+		", K: [ "
+	);
+	for (auto& i: m) {
+		DEBUG("[", i.key, " ", i.value, "] ");
+	}
+	DEBUGLN("];");
+}
+
+template<typename K, typename V>
 void print(Map<K, V> const& m, K const& k) {
-	CTL::Console::println("K: ", k, ", L: ", m.search(k), ", V: ", m[k]);
+	auto r = m.search(k);
+	if (r != -1)
+		CTL::Console::println("K: ", k, ", L: ", r, ", V: ", m[k]);
+	else
+		CTL::Console::println("K: ", k, ", L: ", r);
 }
 
 int main() {
-	Map<int, int> mp = Map<int, int>({
+	Map<int, int> mp({
 		{0, 1},
 		{1, 2},
 		{4, 5},
@@ -53,11 +72,19 @@ int main() {
 	print(mp);
 	mp = Map<int, int>({
 		{2, -32},
-		{29, -32},
-		{-4, -32},
-		{448, -32},
-		{-9, -32},
-		{-2, -32}
+		{29, -31},
+		{-4, -30},
+		{448, -29},
+		{448, -28},
+		{448, -27},
+		{448, -26},
+		{448, -25},
+		{448, -24},
+		{448, -23},
+		{448, -22},
+		{448, -21},
+		{-9, -20},
+		{-2, -19}
 	});
 	print(mp);
 	mp[33] = 28;
@@ -71,6 +98,7 @@ int main() {
 	print(mp);
 	print(mp.keys());
 	print(mp.values());
+	print(mp.items());
 	DEBUGLN("Map test passed!");
 	return 0;
 }

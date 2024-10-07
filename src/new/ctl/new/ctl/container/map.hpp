@@ -210,9 +210,6 @@ public:
 
 	constexpr ValueType operator[](KeyType const& index) const {return at(index);}
 
-	template<class T>
-	constexpr SelfType& operator=(T const& value) {clear(); return append(value);}
-
 	constexpr SelfType& operator=(SelfType const& other)	{BaseType::operator=(other); return *this;				}
 	constexpr SelfType& operator=(SelfType&& other)			{BaseType::operator=(CTL::move(other)); return *this;	}
 
@@ -268,34 +265,24 @@ public:
 	}
 
 	constexpr SelfType& append(ArgumentListType const& values) {
-		BaseType::appendBack(SelfType(values).filtered(NOT_IN_MAP));
-		update();
-		return *this;
+		return append(SelfType(values));
 	}
 
 	constexpr SelfType& append(SizeType const& count, PairType const& fill) {
-		BaseType::appendBack(SelfType(count, fill).filtered(NOT_IN_MAP));
-		update();
-		return *this;
+		return append(SelfType(count, fill));
 	}
 
 	constexpr SelfType& append(IteratorType const& begin, IteratorType const& end) {
-		BaseType::appendBack(SelfType(begin, end).filtered(NOT_IN_MAP));
-		update();
-		return *this;
+		return append(SelfType(begin, end));
 	}
 
 	constexpr SelfType& append(ReverseIteratorType const& begin, ReverseIteratorType const& end) {
-		BaseType::appendBack(SelfType(begin, end).filtered(NOT_IN_MAP));
-		update();
-		return *this;
+		return append(SelfType(begin, end));
 	}
 
 	template<SizeType S>
 	constexpr SelfType& append(Decay::AsType<PairType[S]> const& values) {
-		BaseType::appendBack(SelfType(values).filtered(NOT_IN_MAP));
-		update();
-		return *this;
+		return append(SelfType(values));
 	}
 
 private:

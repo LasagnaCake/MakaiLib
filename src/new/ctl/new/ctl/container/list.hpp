@@ -97,13 +97,13 @@ public:
 	}
 	
 	constexpr List(ConstIteratorType const& begin, ConstIteratorType const& end) {
-		invoke(end - begin);
+		invoke(end - begin + 1);
 		copy(begin, contents, end - begin);
 		count = end - begin;
 	}
 
 	constexpr List(ConstReverseIteratorType const& begin, ConstReverseIteratorType const& end) {
-		invoke(end - begin);
+		invoke(end - begin + 1);
 		for (IteratorType i = begin; i != end; ++i)
 			pushBack(i);
 		count = end - begin;
@@ -177,7 +177,7 @@ public:
 	}
 
 	constexpr SelfType& reserve(SizeType const& count) {
-		while (count > maximum)
+		while (count >= maximum)
 			increase();
 		return *this;
 	}
@@ -380,12 +380,18 @@ public:
 	}
 
 	constexpr SelfType& operator=(SelfType const& other) {
-		if (contents)	memresize(contents, other.count);
-		else			contents = memcreate(other.count);
+		resize(other.count);
 		copy(other.contents, contents, other.count);
-		maximum		= other.maximum;
-		count		= other.count;
-		magnitude	= other.magnitude;
+		count = other.count;
+		return *this;
+	}
+
+	constexpr SelfType& operator=(SelfType&& other) {
+		maximum			= CTL::move(other.maximum);
+		contents		= CTL::move(other.contents);
+		count			= CTL::move(other.count);
+		magnitude		= CTL::move(other.magnitude);
+		other.contents	= nullptr;
 		return *this;
 	}
 
@@ -639,8 +645,8 @@ private:
 		return MX::malloc<DataType>(sz);
 	}
 
-	constexpr static void memresize(DataType* const& data, SizeType const& sz) {
-		MX::realloc<DataType>(data, sz);
+	constexpr static void memresize(DataType*& data, SizeType const& sz) {
+		data = MX::realloc<DataType>(data, sz);
 	}
 
 	constexpr static void copy(ConstantType* src, DataType* dst, SizeType count) {
