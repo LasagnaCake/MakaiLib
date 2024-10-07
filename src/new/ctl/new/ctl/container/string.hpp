@@ -186,6 +186,9 @@ public:
 		}
 	}*/
 
+	constexpr SelfType sliced(IndexType const& start)							{return BaseType::sliced(start);		}
+	constexpr SelfType sliced(IndexType const& start, SizeType const& count)	{return BaseType::sliced(start, count);	}
+
 	// TODO: Fix splitAt* functions
 
 	constexpr List<SelfType, IndexType> splitAtFirst(DataType const& sep) const {
