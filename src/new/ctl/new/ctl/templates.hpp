@@ -43,6 +43,8 @@ struct Indexed {
 	using IndexType	= AsSigned<SizeType>;
 
 	constexpr static SizeType MAX_SIZE = TypeInfo<SizeType>::HIGHEST;
+
+	static_assert(IndexType(-1) == -1);
 };
 
 template <usize N, typename... T>

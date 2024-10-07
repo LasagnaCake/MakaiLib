@@ -72,7 +72,6 @@ public:
 
 	using
 		BaseType::BaseType,
-		BaseType::sliced,
 		BaseType::clear,
 		BaseType::reserve,
 		BaseType::resize,
@@ -186,16 +185,20 @@ public:
 		}
 	}*/
 
-	constexpr SelfType sliced(IndexType const& start)							{return BaseType::sliced(start);		}
-	constexpr SelfType sliced(IndexType const& start, SizeType const& count)	{return BaseType::sliced(start, count);	}
+	constexpr SelfType sliced(IndexType const& start) const							{return BaseType::sliced(start);		}
+	constexpr SelfType sliced(IndexType const& start, SizeType const& count) const	{return BaseType::sliced(start, count);	}
 
 	// TODO: Fix splitAt* functions
 
 	constexpr List<SelfType, IndexType> splitAtFirst(DataType const& sep) const {
 		List<SelfType, IndexType> res;
 		IndexType idx = find(sep);
-		if (idx < 0) res.pushBack(*this);
-		else res.appendBack({sliced(0, idx), sliced(idx)});
+		if (idx < 0)
+			res.pushBack(*this);
+		else {
+			res.pushBack(sliced(0, idx-1));
+			res.pushBack(sliced(idx+1));
+		}
 		return res;
 	}
 
@@ -207,8 +210,12 @@ public:
 			if (i > -1 && i < idx)
 				idx = i;
 		}
-		if (idx < 0) res.pushBack(*this);
-		else res.appendBack({sliced(0, idx), sliced(idx)});
+		if (idx < 0)
+			res.pushBack(*this);
+		else {
+			res.pushBack(sliced(0, idx-1));
+			res.pushBack(sliced(idx+1));
+		}
 		return res;
 	}
 
@@ -221,15 +228,23 @@ public:
 				idx = i;
 		}
 		if (idx < 0)
-			return res.pushBack(*this);
-		return res.appendBack({sliced(0, idx), sliced(idx)});
+			res.pushBack(*this);
+		else {
+			res.pushBack(sliced(0, idx-1));
+			res.pushBack(sliced(idx+1));
+		}
+		return res;
 	}*/
 
 	constexpr List<SelfType, IndexType> splitAtLast(DataType const& sep) const {
 		List<SelfType, IndexType> res;
 		IndexType idx = rfind(sep);
-		if (idx < 0) res.pushBack(*this);
-		else res.appendBack({sliced(0, idx), sliced(idx)});
+		if (idx < 0)
+			res.pushBack(*this);
+		else {
+			res.pushBack(sliced(0, idx-1));
+			res.pushBack(sliced(idx+1));
+		}
 		return res;
 	}
 
@@ -241,8 +256,12 @@ public:
 			if (i > -1 && i > idx)
 				idx = i;
 		}
-		if (idx < 0) res.pushBack(*this);
-		else res.appendBack({sliced(0, idx), sliced(idx)});
+		if (idx < 0)
+			res.pushBack(*this);
+		else {
+			res.pushBack(sliced(0, idx-1));
+			res.pushBack(sliced(idx+1));
+		}
 		return res;
 	}
 
@@ -255,8 +274,12 @@ public:
 				idx = i;
 		}
 		if (idx < 0)
-			return res.pushBack(*this);
-		return res.appendBack({sliced(0, idx), sliced(idx)});
+			res.pushBack(*this);
+		else {
+			res.pushBack(sliced(0, idx-1));
+			res.pushBack(sliced(idx+1));
+		}
+		return res;
 	}*/
 	
 	constexpr SelfType& replace(DataType const& val, DataType const& rep) {

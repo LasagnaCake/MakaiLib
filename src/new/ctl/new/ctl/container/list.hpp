@@ -335,18 +335,20 @@ public:
 	}
 
 	constexpr SelfType sliced(IndexType start) const {
+		if (IndexType(count) < start) return SelfType();
 		assertIsInBounds(start);
-		wrapBounds(start, this->count);
+		wrapBounds(start, count);
 		return SelfType(cbegin() + start, cend());
 	}
 
-	constexpr SelfType sliced(IndexType start, SizeType const& count) const {
+	constexpr SelfType sliced(IndexType start, IndexType stop) const {
+		if (IndexType(count) < start) return SelfType();
 		assertIsInBounds(start);
-		wrapBounds(start, this->count);
-		if (count < (this->count - start)) {	
-			IndexType const stop = start + count;
-			return SelfType(cbegin() + start, cbegin() + stop);
-		} else return sliced(start);
+		wrapBounds(start, count);
+		if (IndexType(count) < stop) return sliced(start);
+		wrapBounds(stop, count);
+		if (stop < start) return SelfType();
+		return SelfType(cbegin() + start, cbegin() + stop + 1);
 	}
 
 	constexpr SelfType& appendBack(SelfType const& other) {
