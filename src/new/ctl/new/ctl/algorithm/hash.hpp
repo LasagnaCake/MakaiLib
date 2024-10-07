@@ -7,7 +7,7 @@
 
 CTL_NAMESPACE_BEGIN
 
-namespace Hash {
+namespace Impl::Hash {
 	// Based off of https://github.com/gcc-mirror/gcc/blob/master/libstdc%2B%2B-v3/libsupc%2B%2B/hash_bytes.cc
 	namespace Simple {
 		constexpr usize hash(const void* data, usize sz, usize seed) {
