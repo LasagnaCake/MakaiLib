@@ -137,7 +137,6 @@ namespace Sorting {
 						Partial::mergeSort(arr+offset, j);
 					} else if (arr[offset] < arr[offset+j])
 						reverse(arr+offset, j);
-					else Partial::mergeSort(arr+offset, j);
 					offset += j;
 					j = 1;
 					++i;
