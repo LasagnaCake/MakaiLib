@@ -186,10 +186,10 @@ public:
 		return result;
 	}
 
-	constexpr List<KeyType, SizeType> values() const {
-		List<KeyType, SizeType> result;
+	constexpr List<ValueType, SizeType> values() const {
+		List<ValueType, SizeType> result;
 		for (auto& i: *this)
-			result.pushBack(i.key);
+			result.pushBack(i.value);
 		return result;
 	}
 

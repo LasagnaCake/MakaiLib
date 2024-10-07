@@ -173,6 +173,15 @@ namespace MX {
 		if (!val) return;
 		val->~T();
 	}
+
+	constexpr pointer resize(pointer& mem, usize const& sz) {
+		return mem = realloc(mem, sz);
+	}
+
+	template<Type::NonVoid T>
+	constexpr T* resize(T*& mem, usize const& sz) {
+		return mem = realloc<T>(mem, sz);
+	}
 }
 
 CTL_NAMESPACE_END

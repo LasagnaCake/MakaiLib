@@ -10,7 +10,7 @@ void print(List<T> const& lst) {
 		lst.size(),
 		", C: ",
 		lst.capacity(),
-		", I: [ "
+		", E: [ "
 	);
 	for (auto& i: lst) {
 		DEBUG(i, " ");
@@ -25,7 +25,7 @@ void print(Map<K, V> const& m) {
 		m.size(),
 		", C: ",
 		m.capacity(),
-		", K: [ "
+		", I: [ "
 	);
 	for (auto& i: m) {
 		DEBUG("[", i.key, " ", i.value, "] ");
@@ -40,7 +40,7 @@ void print(List<KeyValuePair<K, V>> const& m) {
 		m.size(),
 		", C: ",
 		m.capacity(),
-		", K: [ "
+		", P: [ "
 	);
 	for (auto& i: m) {
 		DEBUG("[", i.key, " ", i.value, "] ");
@@ -99,6 +99,8 @@ int main() {
 	print(mp.keys());
 	print(mp.values());
 	print(mp.items());
+	mp.clear();		print(mp);
+	mp.dispose();	print(mp);
 	DEBUGLN("Map test passed!");
 	return 0;
 }
