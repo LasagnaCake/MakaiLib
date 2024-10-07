@@ -32,6 +32,8 @@ int main() {
 	lst.sort();									print(lst);
 	lst = List<int>({20, -64, -20, 20, 0, -1, 17, -5, 1, 28, 34, 6, 4, -1, 1, -4, 57, 8, -19, 19, 8});
 	print(lst);
+	lst = lst.sliced(3, 8);						print(lst);
+	lst = lst.sliced(1, -1);					print(lst);
 	lst.clear();								print(lst);
 	lst.dispose();								print(lst);
 	DEBUGLN("List test passed!");

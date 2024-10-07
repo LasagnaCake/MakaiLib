@@ -48,6 +48,7 @@ define tests
 	$(call mktest, $(1), 01.compilation)
 	$(call mktest, $(1), 02.list)
 	$(call mktest, $(1), 03.map)
+	$(call mktest, $(1), 04.string)
 endef
 else
 define tests

@@ -100,176 +100,22 @@ public:
 		BaseType::popBack
 	;
 
-	constexpr List<SelfType, IndexType> split(DataType const& sep) const {
-		List<SelfType, IndexType> res;
-		SelfType buf;
-		for (DataType& v : *this) {
-			if (v == sep) {
-				res.pushBack(buf);
-				buf.clear();
-				continue;
-			}
-			buf += v;
-		}
-	}
+	constexpr BaseString(): BaseType() {}
 
-	constexpr List<SelfType, IndexType> split(SelfType const& seps) const {
-		List<SelfType, IndexType> res;
-		SelfType buf;
-		for (DataType& v : *this) {
-			if (seps.find(v)) {
-				res.pushBack(buf);
-				buf.clear();
-				continue;
-			}
-			buf.pushBack(v);
-		}
-	}
+	constexpr ~BaseString() {if (strbuf) MX::free(strbuf);}
 
-	/*constexpr List<SelfType, IndexType> split(ArgumentListType const& seps) const {
-		List<SelfType, IndexType> res;
-		SelfType buf;
-		for (DataType& v : *this) {
-			bool isSeparator = false;
-			for (DataType& s: seps)
-				if (v == s) {
-					res.pushBack(buf);
-					buf.clear();
-					isSeparator = true;
-					break;
-				}
-			if (isSeparator)
-				continue;
-			buf.pushBack(v);
-		}
-	}*/
-
-	constexpr List<SelfType, IndexType> splitAtFirst(DataType const& sep) const {
-		List<SelfType, IndexType> res;
-		IndexType idx = find(sep);
-		if (idx < 0)
-			return res.pushBack(*this);
-		return res.appendBack({sliced(0, idx), sliced(idx, size())});
-	}
-
-	constexpr List<SelfType, IndexType> splitAtFirst(List<DataType> const& seps) const {
-		List<SelfType, IndexType> res;
-		IndexType idx = -1;
-		for(DataType const& sep: seps) {
-			IndexType i = find(sep);
-			if (i > -1 && i < idx)
-				idx = i;
-		}
-		if (idx < 0)
-			return res.pushBack(*this);
-		return res.appendBack({sliced(0, idx), sliced(idx, size())});
-	}
-
-	/*constexpr List<SelfType, IndexType> splitAtFirst(ArgumentListType const& seps) const {
-		List<SelfType, IndexType> res;
-		IndexType idx = -1;
-		for(DataType const& sep: seps) {
-			IndexType i = find(sep);
-			if (i > -1 && i < idx)
-				idx = i;
-		}
-		if (idx < 0)
-			return res.pushBack(*this);
-		return res.appendBack({sliced(0, idx), sliced(idx, size())});
-	}*/
-
-	constexpr List<SelfType, IndexType> splitAtLast(DataType const& sep) const {
-		List<SelfType, IndexType> res;
-		IndexType idx = rfind(sep);
-		if (idx < 0)
-			return res.pushBack(*this);
-		return res.appendBack({sliced(0, idx), sliced(idx, size())});
-	}
-
-	constexpr List<SelfType, IndexType> splitAtLast(List<DataType> const& seps) const {
-		List<SelfType, IndexType> res;
-		IndexType idx = -1;
-		for(DataType const& sep: seps) {
-			IndexType i = rfind(sep);
-			if (i > -1 && i > idx)
-				idx = i;
-		}
-		if (idx < 0)
-			return res.pushBack(*this);
-		return res.appendBack({sliced(0, idx), sliced(idx, size())});
-	}
-
-	/*constexpr List<SelfType, IndexType> splitAtLast(ArgumentListType const& seps) const {
-		List<SelfType, IndexType> res;
-		IndexType idx = -1;
-		for(DataType const& sep: seps) {
-			IndexType i = rfind(sep);
-			if (i > -1 && i > idx)
-				idx = i;
-		}
-		if (idx < 0)
-			return res.pushBack(*this);
-		return res.appendBack({sliced(0, idx), sliced(idx, size())});
-	}*/
-	
-	constexpr SelfType& replace(DataType const& val, DataType const& rep) {
-		for (DataType& v: *this)
-			if (v == val) v = rep;
-		return *this;
-	}
-
-	constexpr SelfType& replace(SelfType const& values, DataType const& rep) {
-		for (DataType const& val: values)
-			replace(val, rep);
-		return *this;
-	}
-
-	/*constexpr SelfType& replace(ArgumentListType const& values, DataType const& rep) {
-		for (DataType const& val: values)
-			replace(val, rep);
-		return *this;
-	}*/
-
-	struct Replacement {
-		SelfType	targets;
-		DataType	replacement;
-	};
-
-	constexpr SelfType& replace(Replacement const& rep) {
-		replace(rep.targets, rep.replacement);
-		return *this;
-	}
-
-	constexpr SelfType& replace(List<Replacement, SizeType> const& reps) {
-		for (Replacement const& rep: reps)
-			replace(rep);
-		return *this;
-	}
-
-	/*constexpr SelfType& replace(Arguments<Replacement> const& reps) {
-		for (Replacement const& rep: reps)
-			replace(rep);
-		return *this;
-	}*/
-
-	constexpr SelfType replaced(DataType const& val, DataType const& rep) const				{return SelfType(*this).replace(val, rep);		}
-	constexpr SelfType replaced(SelfType const& values, DataType const& rep) const			{return SelfType(*this).replace(values, rep);	}
-//	constexpr SelfType replaced(ArgumentListType const& values, DataType const& rep) const	{return SelfType(*this).replace(values, rep);	}
-
-	constexpr SelfType replaced(Replacement const& rep) const					{return SelfType(*this).replace(rep);	}
-	constexpr SelfType replaced(List<Replacement, SizeType> const& reps) const	{return SelfType(*this).replace(reps);	}
-//	constexpr SelfType replaced(Arguments<Replacement> const& reps) const		{return SelfType(*this).replace(reps);	}
-
-	constexpr BaseString() {}
-
-	constexpr ~BaseString() {if (strbuf) delete[] strbuf;}
-
-	constexpr BaseString(const DataType* const& v) {
+	constexpr BaseString(StringLiteralType const& v) {
 		SizeType len = 0;
 		while (v[len++] != '\0' && len <= MAX_SIZE);
 		reserve(len);
-		MX::memcpy(data(), v, len * sizeof(DataType));
+		appendBack(BaseType(v, v+len-1));
 	}
+
+	constexpr BaseString(BaseType const& other):	BaseType(other)				{}
+	constexpr BaseString(BaseType&& other):			BaseType(CTL::move(other))	{}
+
+	constexpr BaseString(SelfType const& other):	BaseType(other)				{}
+	constexpr BaseString(SelfType&& other):			BaseType(CTL::move(other))	{}
 
 	template<class T>
 	constexpr BaseString(T const& other)
@@ -292,8 +138,177 @@ public:
 		MX::memcpy(v, cbegin(), S);
 	}
 
-	constexpr OutputStreamType const& operator<<(OutputStreamType& o) const	{o << cstr(); return o;}
-	constexpr OutputStreamType& operator<<(OutputStreamType& o)				{o << cstr(); return o;}
+	constexpr List<SelfType, IndexType> split(DataType const& sep) const {
+		List<SelfType, IndexType> res;
+		SelfType buf;
+		for (ConstReferenceType v : *this) {
+			if (v == sep) {
+				res.pushBack(buf);
+				buf.clear();
+				continue;
+			}
+			buf += v;
+		}
+		if (res.empty()) res.pushBack(*this);
+		return res;
+	}
+
+	constexpr List<SelfType, IndexType> split(BaseType const& seps) const {
+		List<SelfType, IndexType> res;
+		SelfType buf;
+		for (ConstReferenceType v : *this) {
+			if (seps.find(v)) {
+				res.pushBack(buf);
+				buf.clear();
+				continue;
+			}
+			if (res.empty()) res.pushBack(*this);
+			buf.pushBack(v);
+		}
+		return res;
+	}
+
+	/*constexpr List<SelfType, IndexType> split(ArgumentListType const& seps) const {
+		List<SelfType, IndexType> res;
+		SelfType buf;
+		for (ConstReferenceType v : *this) {
+			bool isSeparator = false;
+			for (DataType& s: seps)
+				if (v == s) {
+					res.pushBack(buf);
+					buf.clear();
+					isSeparator = true;
+					break;
+				}
+			if (isSeparator)
+				continue;
+			buf.pushBack(v);
+		}
+	}*/
+
+	// TODO: Fix splitAt* functions
+
+	constexpr List<SelfType, IndexType> splitAtFirst(DataType const& sep) const {
+		List<SelfType, IndexType> res;
+		IndexType idx = find(sep);
+		if (idx < 0) res.pushBack(*this);
+		else res.appendBack({sliced(0, idx), sliced(idx)});
+		return res;
+	}
+
+	constexpr List<SelfType, IndexType> splitAtFirst(BaseType const& seps) const {
+		List<SelfType, IndexType> res;
+		IndexType idx = -1;
+		for(ConstReferenceType sep: seps) {
+			IndexType i = find(sep);
+			if (i > -1 && i < idx)
+				idx = i;
+		}
+		if (idx < 0) res.pushBack(*this);
+		else res.appendBack({sliced(0, idx), sliced(idx)});
+		return res;
+	}
+
+	/*constexpr List<SelfType, IndexType> splitAtFirst(ArgumentListType const& seps) const {
+		List<SelfType, IndexType> res;
+		IndexType idx = -1;
+		for(ConstReferenceType sep: seps) {
+			IndexType i = find(sep);
+			if (i > -1 && i < idx)
+				idx = i;
+		}
+		if (idx < 0)
+			return res.pushBack(*this);
+		return res.appendBack({sliced(0, idx), sliced(idx)});
+	}*/
+
+	constexpr List<SelfType, IndexType> splitAtLast(DataType const& sep) const {
+		List<SelfType, IndexType> res;
+		IndexType idx = rfind(sep);
+		if (idx < 0) res.pushBack(*this);
+		else res.appendBack({sliced(0, idx), sliced(idx)});
+		return res;
+	}
+
+	constexpr List<SelfType, IndexType> splitAtLast(BaseType const& seps) const {
+		List<SelfType, IndexType> res;
+		IndexType idx = -1;
+		for(ConstReferenceType sep: seps) {
+			IndexType i = rfind(sep);
+			if (i > -1 && i > idx)
+				idx = i;
+		}
+		if (idx < 0) res.pushBack(*this);
+		else res.appendBack({sliced(0, idx), sliced(idx)});
+		return res;
+	}
+
+	/*constexpr List<SelfType, IndexType> splitAtLast(ArgumentListType const& seps) const {
+		List<SelfType, IndexType> res;
+		IndexType idx = -1;
+		for(ConstReferenceType sep: seps) {
+			IndexType i = rfind(sep);
+			if (i > -1 && i > idx)
+				idx = i;
+		}
+		if (idx < 0)
+			return res.pushBack(*this);
+		return res.appendBack({sliced(0, idx), sliced(idx)});
+	}*/
+	
+	constexpr SelfType& replace(DataType const& val, DataType const& rep) {
+		for (DataType& v: *this)
+			if (v == val) v = rep;
+		return *this;
+	}
+
+	constexpr SelfType& replace(BaseType const& values, DataType const& rep) {
+		for (DataType const& val: values)
+			replace(val, rep);
+		return *this;
+	}
+
+	/*constexpr SelfType& replace(ArgumentListType const& values, DataType const& rep) {
+		for (DataType const& val: values)
+			replace(val, rep);
+		return *this;
+	}*/
+
+	struct Replacement {
+		BaseType	targets;
+		DataType	replacement;
+	};
+
+	constexpr SelfType& replace(Replacement const& rep) {
+		replace(rep.targets, rep.replacement);
+		return *this;
+	}
+
+	constexpr SelfType& replace(List<Replacement, SizeType> const& reps) {
+		for (Replacement const& rep: reps)
+			replace(rep);
+		return *this;
+	}
+
+	/*constexpr SelfType& replace(Arguments<Replacement> const& reps) {
+		for (Replacement const& rep: reps)
+			replace(rep);
+		return *this;
+	}*/
+
+	constexpr SelfType replaced(DataType const& val, DataType const& rep) const				{return SelfType(*this).replace(val, rep);		}
+	constexpr SelfType replaced(BaseType const& values, DataType const& rep) const			{return SelfType(*this).replace(values, rep);	}
+//	constexpr SelfType replaced(ArgumentListType const& values, DataType const& rep) const	{return SelfType(*this).replace(values, rep);	}
+
+	constexpr SelfType replaced(Replacement const& rep) const					{return SelfType(*this).replace(rep);	}
+	constexpr SelfType replaced(List<Replacement, SizeType> const& reps) const	{return SelfType(*this).replace(reps);	}
+//	constexpr SelfType replaced(Arguments<Replacement> const& reps) const		{return SelfType(*this).replace(reps);	}
+
+	constexpr OutputStreamType& operator<<(OutputStreamType& o) const	{if (!empty()) o << cstr(); return o;}
+	constexpr OutputStreamType& operator<<(OutputStreamType& o)			{if (!empty()) o << cstr(); return o;}
+
+	friend constexpr OutputStreamType& operator<<(OutputStreamType& o, SelfType& self)			{if (!self.empty()) o << self.cstr(); return o;}
+	friend constexpr OutputStreamType& operator<<(OutputStreamType& o, SelfType const& self)	{if (!self.empty()) o << self.cstr(); return o;}
 
 	constexpr InputStreamType& readFrom(InputStreamType& i, DataType const& stop) {
 		DataType buf[32];
@@ -306,9 +321,9 @@ public:
 		return readFromStream(i, '\0');
 	}
 
-	template<class T>
-	constexpr SelfType& operator=(T const& arg)						{BaseType::operator=(arg); return *this;	}
-	constexpr SelfType& operator=(StringLiteralType const& other)	{return *this = SelfType(other);			}
+	constexpr SelfType& operator=(SelfType const& other)			{BaseType::operator=(other); return *this;				}
+	constexpr SelfType& operator=(SelfType&& other)					{BaseType::operator=(CTL::move(other)); return *this;	}
+	constexpr SelfType& operator=(StringLiteralType const& other)	{BaseType::operator=(SelfType(other)); return *this;	}
 
 	constexpr SelfType const& operator<<(SelfType& other) const	{other.appendBack(*this); return *this;}
 	constexpr SelfType& operator<<(SelfType& other)				{other.appendBack(*this); return *this;}
@@ -316,15 +331,21 @@ public:
 	constexpr SelfType& operator>>(SelfType const& other)	{appendBack(other); return other;}
 
 	constexpr SelfType operator+(DataType const& value) const	{return SelfType(*this).pushBack(value);	}
-	constexpr SelfType operator+(SelfType const& other) const	{return (*this) + other;					}
+	constexpr SelfType operator+(SelfType const& other) const	{return SelfType(*this).appendBack(other);	}
 
 	constexpr SelfType operator+(StringLiteralType const& str) const				{return (*this) + SelfType(str);}
 	template<SizeType S>
 	constexpr SelfType operator+(Decay::AsType<ConstantType[S]> const& str) const	{return (*this) + SelfType(str);}
 
-	constexpr SelfType& operator+=(DataType const& value)				{pushBack(value); return *this;		}
-	constexpr SelfType& operator+=(SelfType const& other)				{appendBack(other); return *this;	}
-	constexpr SelfType& operator+=(StringLiteralType const& str)		{appendBack(str); return *this;		}
+	friend constexpr SelfType operator+(DataType const& value, SelfType const& self)	{return SelfType().pushBack(value) + self;	}
+
+	friend constexpr SelfType operator+(StringLiteralType const& str, SelfType const& self)					{return SelfType(str) + (self);}
+	template<SizeType S>
+	friend constexpr SelfType operator+(Decay::AsType<ConstantType[S]> const& str, SelfType const& self)	{return SelfType(str) + (self);}
+
+	constexpr SelfType& operator+=(DataType const& value)				{pushBack(value); return *this;				}
+	constexpr SelfType& operator+=(SelfType const& other)				{appendBack(other); return *this;			}
+	constexpr SelfType& operator+=(StringLiteralType const& str)		{appendBack(SelfType(str)); return *this;	}
 	template<SizeType S>
 	constexpr SelfType& operator+=(Decay::AsType<ConstantType[S]> str)	{appendBack(str); return *this;		}
 
@@ -369,23 +390,12 @@ public:
 	}
 
 	constexpr bool nullTerminated() const {return back() == '\0';}
-
-	constexpr SelfType& terminateString() {
-		if (!nullTerminated()) pushBack('\0');
-		return *this;
-	}
-
-	constexpr StringLiteralType cstr() {
-		terminateString();
-		return data();
-	}
-
+	
 	constexpr StringLiteralType cstr() const {
-		if (strbuf) delete[] strbuf;
 		if (nullTerminated()) return cbegin();
 		strbuflen = size() + 1;
-		strbuf = new DataType[strbuflen];
-		MX::memcpy(strbuf, cbegin(), size());
+		strbuf = MX::realloc<DataType>(strbuf, strbuflen);
+		MX::memcpy<DataType>(strbuf, cbegin(), size());
 		strbuf[size()] = '\0';
 		return strbuf;
 	}
