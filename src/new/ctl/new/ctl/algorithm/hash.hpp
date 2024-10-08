@@ -11,10 +11,11 @@ namespace Impl::Hash {
 	// Based off of https://github.com/gcc-mirror/gcc/blob/master/libstdc%2B%2B-v3/libsupc%2B%2B/hash_bytes.cc
 	namespace Simple {
 		constexpr usize hash(const void* data, usize sz, usize seed) {
-			const char* byte = reinterpret_cast<const char*>(data);
+			const char* byte = static_cast<const char*>(data);
 			for (; sz; --sz)
-				seed = (seed * 131) + *byte++;
-			return hash;
+				seed *= 131;
+				seed += *byte++;
+			return seed;
 		}
 	}
 	
@@ -39,8 +40,8 @@ namespace Impl::Hash {
 		constexpr usize hash(void const* const& data, usize sz, usize seed = offset()) {
 			const char* byte = static_cast<const char*>(data);
 			for (; sz; --sz) {
-				hash ^= static_cast<usize>(*byte++);
-				hash *= prime();
+				seed ^= static_cast<usize>(*byte++);
+				seed *= prime();
 			}
 			return seed;
 		}
@@ -68,19 +69,18 @@ namespace Impl::Hash {
 			h ^= h >> v2;
 		}
 		
-		constexpr usize hash(const void* data, usize sz, usize seed = 0)
-		requires (sizeof(usize) == sizeof(uint64)) {
+		constexpr usize hash64(const void* data, usize sz, usize seed = 0) {
 			constexpr usize	m = 0xc6a4a7935bd1e995ull;
 			constexpr int	r = 47;
 			usize s		= sz;
 			usize hash	= seed;
-			const usize* d1 = (usize const*)data;
-			const usize* end = data + (sz/8);
+			const usize* d1 = static_cast<usize const*>(data);
+			const usize* end = d1 + (sz/8);
 			while(data != end) {
-				usize k = *data++;
+				usize k = *d1++;
 				mix(hash, k, m, r);
 			}
-			const byte* d2 = (const byte*)d1;
+			const byte* d2 = static_cast<const byte*>(data);
 			usize t = 0;
 			switch(sz & 7) {
 			case 7:		t ^= static_cast<usize>(d2[6]) << 48;
@@ -98,13 +98,12 @@ namespace Impl::Hash {
 			return hash;
 		} 
 		
-		constexpr usize hash(const void* data, usize sz, usize seed = 0)
-		requires (sizeof(usize) == sizeof(usize)) {
+		constexpr usize hash32(const void* data, usize sz, usize seed = 0) {
 			constexpr usize	m = 0x5bd1e995;
 			constexpr int	r = 24;
 			usize s		= sz;
 			usize hash	= seed;
-			const byte* dt = (const byte*)data;
+			const byte* dt = static_cast<const byte*>(data);
 			while(sz >= 4){
 				usize k = *(usize*)dt;
 				mix(hash, k, m, r);
@@ -125,11 +124,13 @@ namespace Impl::Hash {
 		}
 	}
 	
-	constexpr usize hash(const void* data, usize sz, usize seed = 0)
-	requires (sizeof(usize) >= sizeof(uint32))	{return Murmur2::hash(data, sz, seed);}
-	
-	constexpr usize hash(const void* data, usize sz, usize seed = 0)
-	requires (sizeof(usize) < sizeof(uint32))	{return Simple::hash(data, sz, seed);}
+	constexpr usize hash(const void* data, usize sz, usize seed = 0) {
+		if constexpr (sizeof(usize) == sizeof(uint64))	
+			return Murmur2::hash64(data, sz, seed);
+		else if constexpr (sizeof(usize) == sizeof(uint32))
+			return Murmur2::hash32(data, sz, seed);
+		else return Simple::hash(data, sz, seed);
+	}
 }
 
 struct Hasher {
@@ -142,7 +143,7 @@ struct Hasher {
 	constexpr static usize hash(cstring const& str) {
 		cstring s = str;
 		while (*s++);
-		return Hash::hash(str, s - str, s - str);
+		return Impl::Hash::hash(str, s - str, s - str);
 	}
 
 	template <class T>
@@ -153,7 +154,7 @@ struct Hasher {
 		{t.begin()};
 		{t.end()};
 	} {
-		return Hash::hash(t.begin(), t.end() - t.begin(), t.end() - t.begin());
+		return Impl::Hash::hash(value.begin(), value.end() - value.begin(), value.end() - value.begin());
 	}
 
 	template <class T>
@@ -161,7 +162,7 @@ struct Hasher {
 		{t.cbegin()};
 		{t.cend()};
 	} {
-		return Hash::hash(t.cbegin(), t.cend() - t.cbegin(), t.cend() - t.cbegin());
+		return Impl::Hash::hash(value.cbegin(), value.cend() - value.cbegin(), value.cend() - value.cbegin());
 	}
 
 	template <class T>
@@ -169,7 +170,7 @@ struct Hasher {
 		{t.data()};
 		{t.size()};
 	} {
-		return Hash::hash(t.data(), t.size(), t.size());
+		return Impl::Hash::hash(value.data(), value.size(), value.size());
 	}
 
 	template <class T>
