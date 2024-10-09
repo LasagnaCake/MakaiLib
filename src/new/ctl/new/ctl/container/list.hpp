@@ -566,35 +566,23 @@ public:
 		return true;
 	}
 
-	template<class TPredicate>
-	constexpr SelfType filter(TPredicate const& filter) const
-	requires requires (TPredicate f, DataType v) {
-		{f(v)} -> Type::Equal<bool>;
-	} {
+	template<Type::Functional<bool(DataType const&)> TPredicate>
+	constexpr SelfType filter(TPredicate const& filter) const {
 		return eraseIfNot(filter);
 	}
 
-	template<class TCompare>
-	constexpr SelfType filter(TCompare const& compare)
-	requires requires (TCompare f, DataType a, DataType b) {
-		{f(a, b)} -> Type::Equal<bool>;
-	} {
+	template<Type::Functional<bool(DataType const&, DataType const&)> TCompare>
+	constexpr SelfType filter(TCompare const& compare) {
 		return *this = filtered(compare);
 	}
 
-	template<class TPredicate>
-	constexpr SelfType filtered(TPredicate const& filter) const
-	requires requires (TPredicate f, DataType v) {
-		{f(v)} -> Type::Equal<bool>;
-	} {
+	template<Type::Functional<bool(DataType const&)> TPredicate>
+	constexpr SelfType filtered(TPredicate const& filter) const {
 		return SelfType(*this).eraseIfNot(filter);
 	}
 
-	template<class TCompare>
-	constexpr SelfType filtered(TCompare const& compare)
-	requires requires (TCompare f, DataType a, DataType b) {
-		{f(a, b)} -> Type::Equal<bool>;
-	} {
+	template<Type::Functional<bool(DataType const&, DataType const&)> TCompare>
+	constexpr SelfType filtered(TCompare const& compare) {
 		SelfType result;
 		for (SizeType i = 0; i < count; ++i) {
 			bool miss = false;

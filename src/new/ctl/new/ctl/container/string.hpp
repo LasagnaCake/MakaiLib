@@ -429,6 +429,7 @@ public:
 
 	constexpr bool isHex() const {return validate(isHexChar);}
 
+	// Most likely wrong
 	constexpr BaseString<char, SizeType> toString() const
 	requires Type::Equal<DataType, wchar> {
 		BaseString<char, SizeType> result;
@@ -440,6 +441,7 @@ public:
 	constexpr SelfType toString() const
 	requires Type::Equal<DataType, char> {return *this;}
 
+	// Most likely wrong
 	constexpr BaseString<wchar, SizeType> toWideString() const
 	requires Type::Equal<DataType, char> {
 		BaseString<wchar, SizeType> result;

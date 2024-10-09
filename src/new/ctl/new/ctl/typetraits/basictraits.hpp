@@ -74,6 +74,9 @@ namespace Type {
 		template<typename A, typename B>	struct IsEqual:			FalseType	{};
 		template<typename T>				struct IsEqual<T, T>:	TrueType	{};
 
+		template<typename A, typename B>
+		concept Equal = IsEqual<A, B>::value;
+
 		template<typename T>	struct IsConstant:			FalseType 	{};
 		template<typename T>	struct IsConstant<T const>:	TrueType	{};
 
@@ -152,10 +155,20 @@ namespace Type {
 		struct IsNothrowConvertible<T, To>: TrueType {};
 
 		template<typename T, typename... Args>	struct IsConstructible:	Partial::IsConstructible<VoidType<>, T, Args...>	{};
+
+		template<class TFunction, typename F>
+		struct IsFunctional;
+
+		template<class TFunction, typename TReturn, typename... TArgs>
+		struct IsFunctional<TFunction, TReturn(TArgs...)>: BooleanConstant<
+			requires (TFunction func, TArgs... args) {
+				{func(args...)} -> Equal<TReturn>;
+			}
+		> {};
 	}
 
 	template<typename A, typename B>
-	concept Equal = Impl::IsEqual<A, B>::value;
+	concept Equal = Impl::Equal<A, B>;
 
 	template<typename A, typename B>
 	concept Different = !Equal<A, B>;
@@ -516,6 +529,9 @@ namespace Type {
 		Type::Equal<T, char>
 	||	Type::Equal<T, wchar_t>
 	;
+
+	template<class T, typename F>
+	concept Functional = Impl::IsFunctional<T, F>::value;
 }
 
 CTL_NAMESPACE_END
