@@ -89,10 +89,10 @@ public:
 	}
 
 	constexpr List(SelfType&& other) {
-		maximum			= CTL::move(other.maximum);
-		contents		= CTL::move(other.contents);
-		count			= CTL::move(other.count);
-		magnitude		= CTL::move(other.magnitude);
+		maximum			= ::CTL::move(other.maximum);
+		contents		= ::CTL::move(other.contents);
+		count			= ::CTL::move(other.count);
+		magnitude		= ::CTL::move(other.magnitude);
 		other.contents	= nullptr;
 	}
 	
@@ -133,7 +133,16 @@ public:
 	constexpr SelfType& pushBack(DataType const& value) {
 		if (count >= maximum)
 			increase();
+		// This line crashes with classes & structs (String, specifficaly)
 		contents[count++] = value;
+		return *this;
+	}
+
+	constexpr SelfType& pushBack(DataType&& value) {
+		if (count >= maximum)
+			increase();
+		// This line crashes with classes & structs (String, specifficaly)
+		contents[count++] = ::CTL::move(value);
 		return *this;
 	}
 
@@ -183,7 +192,7 @@ public:
 	}
 
 	constexpr SelfType& resize(SizeType const& newSize) {
-		if (contents)	memresize(contents, newSize);
+		if (contents)	memresize(contents, newSize, maximum);
 		else			contents = memcreate(newSize);
 		maximum = newSize;
 		if (count > newSize)
@@ -647,8 +656,10 @@ private:
 	}
 
 	constexpr static void memdestroy(PointerType const& p, SizeType const& sz) {
-		for (auto i = p; i != (p+sz); ++i)
-			MX::destruct(i);
+		if constexpr (!Type::Primitive<DataType>) {
+			for (auto i = p; i != (p+sz); ++i)
+				MX::destruct(i);
+		}
 		MX::free<DataType>(p);
 	}
 
@@ -656,16 +667,32 @@ private:
 		return MX::malloc<DataType>(sz);
 	}
 
-	constexpr static void memresize(DataType*& data, SizeType const& sz) {
-		data = MX::realloc<DataType>(data, sz);
+	constexpr static void memresize(DataType*& data, SizeType const& sz, SizeType const& oldsz) {
+		if constexpr(Type::Primitive<DataType>)
+			data = MX::realloc<DataType>(data, sz);
+		else {
+			DataType* ndata = MX::malloc<DataType>(sz);
+			copy(data, ndata, oldsz < sz ? oldsz : sz);
+			memdestroy(data, sz);
+			data = ndata;
+		}
 	}
 
 	constexpr static void copy(ConstantType* src, DataType* dst, SizeType count) {
-		MX::memmove<DataType>(dst, src, count);
+		if constexpr (Type::Primitive<DataType>)
+			MX::memmove<DataType>(dst, src, count);
+		else {
+			if (dst > src)
+				for (usize i = 0; i < count; ++i)
+					dst[i] = src[i];
+			else for (usize i = count-1; i >= 0; --i)
+				dst[i] = src[i];
+		}
+		
 	};
 
 	constexpr SelfType& invoke(SizeType const& size) {
-		if (contents)	memresize(contents, size);
+		if (contents)	memresize(contents, size, maximum);
 		else			contents = memcreate(size);
 		maximum = size;
 		recalculateMagnitude();

@@ -35,6 +35,7 @@ int main() {
 	str = "Henlo.";						print(str);
 	str += " You?";						print(str);
 	str = "O! " + str;					print(str);
+	print(str.sliced(2, -3));
 	auto sp = str.splitAtFirst(' ');	print(sp);
 	sp = str.splitAtLast(' ');			print(sp);
 	sp = str.split(' ');				print(sp);

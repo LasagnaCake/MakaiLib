@@ -188,8 +188,6 @@ public:
 	constexpr SelfType sliced(IndexType const& start) const							{return BaseType::sliced(start);		}
 	constexpr SelfType sliced(IndexType const& start, SizeType const& count) const	{return BaseType::sliced(start, count);	}
 
-	// TODO: Fix splitAt* functions
-
 	constexpr List<SelfType, IndexType> splitAtFirst(DataType const& sep) const {
 		List<SelfType, IndexType> res;
 		IndexType idx = find(sep);
@@ -412,7 +410,7 @@ public:
 	SelfType substring(IndexType const& start, SizeType const& length) const {
 		IndexType const stop = start + length;
 		assertIsInBounds(start);
-		return String(begin() + start, begin() + (stop < size() ? stop : size()));
+		return sliced(start, stop);
 	}
 
 	constexpr bool nullTerminated() const {return back() == '\0';}
