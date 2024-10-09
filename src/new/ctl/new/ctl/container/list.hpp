@@ -134,8 +134,8 @@ public:
 		if (count >= maximum)
 			increase();
 		// This line crashes with classes & structs (String class, specifficaly)
-		contents[count++] = value;
-		//MX::construct(contents+(count++), value);
+		//contents[count++] = value;
+		MX::construct(contents+(count++), value);
 		return *this;
 	}
 
@@ -150,8 +150,8 @@ public:
 		wrapBounds(index, count);
 		if (count >= maximum) increase();
 		copy(&contents[index], &contents[index+1], count - index);
-		contents[index] = value;
-		//MX::construct(contents+index, value);
+		//contents[index] = value;
+		MX::construct(contents+index, value);
 		++count;
 		return *this;
 	}
