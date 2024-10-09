@@ -188,6 +188,36 @@ namespace MX {
 	constexpr T* resize(T*& mem, usize const& sz) {
 		return mem = realloc<T>(mem, sz);
 	}
+
+	template<Type::NonVoid T>
+	constexpr T* objcopy(T* dst, T const* src, usize sz) {
+		T* start = dst;
+		try {
+			if (dst < src) {
+				while (sz--) {
+					//*(dst++) = *(src++);
+					MX::construct(dst++, *src++);
+				}
+			}
+			else {
+				dst += sz;
+				src += sz;
+				start = dst;
+				while (sz--) {
+					//*(--dst) = *(--src);
+					MX::construct(--dst, *--src);
+				}
+			}
+		} catch (...) {
+			if (dst < src)
+				for (;dst != start; --dst)
+					MX::destruct(dst);
+			else
+				for (;dst != start; ++dst)
+					MX::destruct(dst);
+		}
+		return dst;
+	}
 }
 
 CTL_NAMESPACE_END

@@ -134,7 +134,8 @@ public:
 		if (count >= maximum)
 			increase();
 		// This line crashes with classes & structs (String class, specifficaly)
-		MX::construct(contents+(count++), value);
+		contents[count++] = value;
+		//MX::construct(contents+(count++), value);
 		return *this;
 	}
 
@@ -149,7 +150,8 @@ public:
 		wrapBounds(index, count);
 		if (count >= maximum) increase();
 		copy(&contents[index], &contents[index+1], count - index);
-		MX::construct(contents+index, value);
+		contents[index] = value;
+		//MX::construct(contents+index, value);
 		++count;
 		return *this;
 	}
@@ -661,19 +663,7 @@ private:
 	constexpr static void copy(ConstantType* src, DataType* dst, SizeType count) {
 		if constexpr (Type::Primitive<DataType>)
 			MX::memmove<DataType>(dst, src, count);
-		else {
-			DataType* c = dst;
-			try {
-				if (dst > src)
-					for (usize i = 0; i < count; ++i, ++c)
-						MX::construct(dst+i, *(src+i));
-				else for (usize i = count-1; i >= 0; --i, ++c)
-					MX::construct(dst+i, *(src+i));
-			} catch (...) {
-				for (;dst != c; ++dst)
-					MX::destruct(dst);
-			}
-		}
+		else MX::objcopy<DataType>(dst, src, count);
 	}
 
 	constexpr SelfType& invoke(SizeType const& size) {
