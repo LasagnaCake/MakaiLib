@@ -28,6 +28,10 @@ struct MaximumSizeFailure: CatastrophicFailure {
 	virtual char const* what() const noexcept {return "Maximum size reached!";}
 };
 
+struct ConstructionFailure: CatastrophicFailure {
+	virtual char const* what() const noexcept {return "Failed to construct type!";}
+};
+
 void panic() {
 	throw Crash();
 }

@@ -2,6 +2,7 @@
 #define CTL_ALGORITHM_BITWISE_H
 
 #include "../ctypes.hpp"
+#include "../namespace.hpp"
 
 CTL_NAMESPACE_BEGIN
 

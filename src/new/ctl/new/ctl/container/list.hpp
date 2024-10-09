@@ -133,16 +133,8 @@ public:
 	constexpr SelfType& pushBack(DataType const& value) {
 		if (count >= maximum)
 			increase();
-		// This line crashes with classes & structs (String, specifficaly)
-		contents[count++] = value;
-		return *this;
-	}
-
-	constexpr SelfType& pushBack(DataType&& value) {
-		if (count >= maximum)
-			increase();
-		// This line crashes with classes & structs (String, specifficaly)
-		contents[count++] = ::CTL::move(value);
+		// This line crashes with classes & structs (String class, specifficaly)
+		MX::construct(contents+(count++), value);
 		return *this;
 	}
 
@@ -157,7 +149,7 @@ public:
 		wrapBounds(index, count);
 		if (count >= maximum) increase();
 		copy(&contents[index], &contents[index+1], count - index);
-		contents[index] = value;
+		MX::construct(contents+index, value);
 		++count;
 		return *this;
 	}
@@ -682,14 +674,19 @@ private:
 		if constexpr (Type::Primitive<DataType>)
 			MX::memmove<DataType>(dst, src, count);
 		else {
-			if (dst > src)
-				for (usize i = 0; i < count; ++i)
-					dst[i] = src[i];
-			else for (usize i = count-1; i >= 0; --i)
-				dst[i] = src[i];
+			DataType* c = dst;
+			try {
+				if (dst > src)
+					for (usize i = 0; i < count; ++i, ++c)
+						MX::construct(dst+i, *(src+i));
+				else for (usize i = count-1; i >= 0; --i, ++c)
+					MX::construct(dst+i, *(src+i));
+			} catch (...) {
+				for (;dst != c; ++dst)
+					MX::destruct(dst);
+			}
 		}
-		
-	};
+	}
 
 	constexpr SelfType& invoke(SizeType const& size) {
 		if (contents)	memresize(contents, size, maximum);

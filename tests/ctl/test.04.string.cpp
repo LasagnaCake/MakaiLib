@@ -36,6 +36,8 @@ int main() {
 	str += " You?";						print(str);
 	str = "O! " + str;					print(str);
 	print(str.sliced(2, -3));
+	str = String("Impedance. Voltage. Current.");
+	print(str);
 	auto sp = str.splitAtFirst(' ');	print(sp);
 	sp = str.splitAtLast(' ');			print(sp);
 	sp = str.split(' ');				print(sp);

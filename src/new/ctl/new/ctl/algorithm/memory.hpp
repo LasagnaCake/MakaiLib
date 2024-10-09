@@ -174,6 +174,12 @@ namespace MX {
 		val->~T();
 	}
 
+	template<Type::NonVoid T, typename... Args>
+	constexpr void construct(T* const& mem, Args... args) {
+		if (!mem) throw ConstructionFailure();
+		::new (static_cast<void*>(mem)) T(args...);
+	}
+
 	constexpr pointer resize(pointer& mem, usize const& sz) {
 		return mem = realloc(mem, sz);
 	}
