@@ -133,8 +133,6 @@ public:
 	constexpr SelfType& pushBack(DataType const& value) {
 		if (count >= maximum)
 			increase();
-		// This line crashes with classes & structs (String class, specifficaly)
-		//contents[count++] = value;
 		MX::construct(contents+(count++), value);
 		return *this;
 	}
@@ -151,7 +149,6 @@ public:
 		wrapBounds(index, count);
 		if (count >= maximum) increase();
 		copy(&contents[index], &contents[index+1], count - index);
-		//contents[index] = value;
 		MX::construct(contents+index, value);
 		++count;
 		return *this;
@@ -265,7 +262,7 @@ public:
 		auto const start = rbegin(), stop = rend();
 		for (auto i = start; i != stop; ++i)
 			if ((*i) == value)
-				return i-start;
+				return count-(i-start);
 		return -1;
 	}
 
@@ -359,7 +356,7 @@ public:
 		List<SelfType, IndexType> res;
 		assertIsInBounds(res);
 		wrapBounds(index, count);
-		res.pushBack(sliced(0, index-1));
+		res.pushBack(sliced(0, index));
 		res.pushBack(sliced(index+1));
 		return res;
 	}

@@ -149,6 +149,7 @@ public:
 			}
 			buf += v;
 		}
+		res.pushBack(buf);
 		if (res.empty()) res.pushBack(*this);
 		return res;
 	}
@@ -162,34 +163,16 @@ public:
 				buf.clear();
 				continue;
 			}
-			if (res.empty()) res.pushBack(*this);
 			buf.pushBack(v);
 		}
+		res.pushBack(buf);
+		if (res.empty()) res.pushBack(*this);
 		return res;
 	}
 
-	/*constexpr List<SelfType, IndexType> split(ArgumentListType const& seps) const {
-		List<SelfType, IndexType> res;
-		SelfType buf;
-		for (ConstReferenceType v : *this) {
-			bool isSeparator = false;
-			for (DataType& s: seps)
-				if (v == s) {
-					res.pushBack(buf);
-					buf.clear();
-					isSeparator = true;
-					break;
-				}
-			if (isSeparator)
-				continue;
-			buf.pushBack(v);
-		}
-	}*/
-
 	constexpr List<SelfType, IndexType> divide(IndexType index) const {
 		List<SelfType, IndexType> res;
-		res.pushBack(sliced(0, index-1));
-		// Issue is here, due to pushBack not working correctly
+		res.pushBack(sliced(0, index));
 		res.pushBack(sliced(index+1));
 		return res;
 	}
@@ -200,10 +183,10 @@ public:
 	constexpr List<SelfType, IndexType> splitAtFirst(DataType const& sep) const {
 		List<SelfType, IndexType> res;
 		IndexType idx = find(sep);
-		if (idx < 0)
-			res.pushBack(*this);
+		if (idx < 0)	res.pushBack(*this);
 		else {
-			res = divide(idx);
+			res.pushBack(sliced(0, idx-1));
+			res.pushBack(sliced(idx+1));
 		}
 		return res;
 	}
@@ -216,37 +199,21 @@ public:
 			if (i > -1 && i < idx)
 				idx = i;
 		}
-		if (idx < 0)
-			res.pushBack(*this);
+		if (idx < 0)	res.pushBack(*this);
 		else {
-			res = divide(idx);
+			res.pushBack(sliced(0, idx-1));
+			res.pushBack(sliced(idx+1));
 		}
 		return res;
 	}
 
-	/*constexpr List<SelfType, IndexType> splitAtFirst(ArgumentListType const& seps) const {
-		List<SelfType, IndexType> res;
-		IndexType idx = -1;
-		for(ConstReferenceType sep: seps) {
-			IndexType i = find(sep);
-			if (i > -1 && i < idx)
-				idx = i;
-		}
-		if (idx < 0)
-			res.pushBack(*this);
-		else {
-			res = divide(idx);
-		}
-		return res;
-	}*/
-
 	constexpr List<SelfType, IndexType> splitAtLast(DataType const& sep) const {
 		List<SelfType, IndexType> res;
 		IndexType idx = rfind(sep);
-		if (idx < 0)
-			res.pushBack(*this);
+		if (idx < 0)	res.pushBack(*this);
 		else {
-			res = divide(idx);
+			res.pushBack(sliced(0, idx-1));
+			res.pushBack(sliced(idx+1));
 		}
 		return res;
 	}
@@ -259,29 +226,13 @@ public:
 			if (i > -1 && i > idx)
 				idx = i;
 		}
-		if (idx < 0)
-			res.pushBack(*this);
+		if (idx < 0)	res.pushBack(*this);
 		else {
-			res = divide(idx);
+			res.pushBack(sliced(0, idx-1));
+			res.pushBack(sliced(idx+1));
 		}
 		return res;
 	}
-
-	/*constexpr List<SelfType, IndexType> splitAtLast(ArgumentListType const& seps) const {
-		List<SelfType, IndexType> res;
-		IndexType idx = -1;
-		for(ConstReferenceType sep: seps) {
-			IndexType i = rfind(sep);
-			if (i > -1 && i > idx)
-				idx = i;
-		}
-		if (idx < 0)
-			res.pushBack(*this);
-		else {
-			res = divide(idx);
-		}
-		return res;
-	}*/
 	
 	constexpr SelfType& replace(DataType const& val, DataType const& rep) {
 		for (DataType& v: *this)
@@ -294,12 +245,6 @@ public:
 			replace(val, rep);
 		return *this;
 	}
-
-	/*constexpr SelfType& replace(ArgumentListType const& values, DataType const& rep) {
-		for (DataType const& val: values)
-			replace(val, rep);
-		return *this;
-	}*/
 
 	struct Replacement {
 		BaseType	targets;
@@ -316,12 +261,6 @@ public:
 			replace(rep);
 		return *this;
 	}
-
-	/*constexpr SelfType& replace(Arguments<Replacement> const& reps) {
-		for (Replacement const& rep: reps)
-			replace(rep);
-		return *this;
-	}*/
 
 	constexpr SelfType replaced(DataType const& val, DataType const& rep) const				{return SelfType(*this).replace(val, rep);		}
 	constexpr SelfType replaced(BaseType const& values, DataType const& rep) const			{return SelfType(*this).replace(values, rep);	}
