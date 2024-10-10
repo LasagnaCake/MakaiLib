@@ -2,6 +2,7 @@
 #define CTL_CONTAINER_STRING_H
 
 #include <stdlib.h>
+#include <iostream>
 
 #include "list.hpp"
 #include "array.hpp"
@@ -185,6 +186,14 @@ public:
 		}
 	}*/
 
+	constexpr List<SelfType, IndexType> divide(IndexType index) const {
+		List<SelfType, IndexType> res;
+		res.pushBack(sliced(0, index-1));
+		// Issue is here, due to pushBack not working correctly
+		res.pushBack(sliced(index+1));
+		return res;
+	}
+
 	constexpr SelfType sliced(IndexType const& start) const							{return BaseType::sliced(start);		}
 	constexpr SelfType sliced(IndexType const& start, SizeType const& count) const	{return BaseType::sliced(start, count);	}
 
@@ -194,8 +203,7 @@ public:
 		if (idx < 0)
 			res.pushBack(*this);
 		else {
-			res.pushBack(sliced(0, idx-1));
-			res.pushBack(sliced(idx+1));
+			res = divide(idx);
 		}
 		return res;
 	}
@@ -211,8 +219,7 @@ public:
 		if (idx < 0)
 			res.pushBack(*this);
 		else {
-			res.pushBack(sliced(0, idx-1));
-			res.pushBack(sliced(idx+1));
+			res = divide(idx);
 		}
 		return res;
 	}
@@ -228,8 +235,7 @@ public:
 		if (idx < 0)
 			res.pushBack(*this);
 		else {
-			res.pushBack(sliced(0, idx-1));
-			res.pushBack(sliced(idx+1));
+			res = divide(idx);
 		}
 		return res;
 	}*/
@@ -240,8 +246,7 @@ public:
 		if (idx < 0)
 			res.pushBack(*this);
 		else {
-			res.pushBack(sliced(0, idx-1));
-			res.pushBack(sliced(idx+1));
+			res = divide(idx);
 		}
 		return res;
 	}
@@ -257,8 +262,7 @@ public:
 		if (idx < 0)
 			res.pushBack(*this);
 		else {
-			res.pushBack(sliced(0, idx-1));
-			res.pushBack(sliced(idx+1));
+			res = divide(idx);
 		}
 		return res;
 	}
@@ -274,8 +278,7 @@ public:
 		if (idx < 0)
 			res.pushBack(*this);
 		else {
-			res.pushBack(sliced(0, idx-1));
-			res.pushBack(sliced(idx+1));
+			res = divide(idx);
 		}
 		return res;
 	}*/

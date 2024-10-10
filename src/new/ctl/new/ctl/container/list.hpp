@@ -354,6 +354,15 @@ public:
 		return SelfType(cbegin() + start, cbegin() + stop + 1);
 	}
 
+	constexpr List<SelfType, IndexType> divide(IndexType index) const {
+		List<SelfType, IndexType> res;
+		assertIsInBounds(res);
+		wrapBounds(index, count);
+		res.pushBack(sliced(0, index-1));
+		res.pushBack(sliced(index+1));
+		return res;
+	}
+
 	constexpr SelfType& appendBack(SelfType const& other) {
 		expand(other.count);
 		copy(other.contents, contents + count, other.count);
@@ -641,8 +650,7 @@ private:
 		if constexpr (!Type::Primitive<DataType>) {
 			for (auto i = p; i != (p+sz); ++i)
 				MX::destruct(i);
-		}
-		MX::free<DataType>(p);
+		} else MX::free<DataType>(p);
 	}
 
 	constexpr static DataType* memcreate(SizeType const& sz) {
