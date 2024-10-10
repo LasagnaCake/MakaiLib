@@ -136,6 +136,7 @@ namespace MX {
 		if (!sz) throw AllocationFailure();
 		auto* m = __builtin_malloc(sz * sizeof(T));
 		if (!m) throw AllocationFailure();
+		//memzero(m, sz);
 		return (T*)m;
 	}
 

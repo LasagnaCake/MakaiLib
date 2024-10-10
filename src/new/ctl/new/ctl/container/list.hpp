@@ -140,8 +140,9 @@ public:
 	}
 
 	constexpr DataType popBack() {
-		DataType value = contents[count];
+		DataType value = back();
 		count--;
+		if (count) MX::destruct<DataType>(contents+count);
 		return value;
 	}
 
@@ -186,7 +187,7 @@ public:
 	}
 
 	constexpr SelfType& resize(SizeType const& newSize) {
-		if (contents)	memresize(contents, newSize, maximum);
+		if (contents)	memresize(contents, newSize, maximum, count);
 		else			contents = memcreate(newSize);
 		maximum = newSize;
 		if (count > newSize)
@@ -291,7 +292,7 @@ public:
 	constexpr SelfType& remove(IndexType const& index) {
 		assertIsInBounds(index);
 		copy(&contents[index], &contents[index-1], count-index);
-		MX::memzero(&back());
+		MX::destruct(contents+count-1);
 		return *this;
 	}
 
@@ -640,7 +641,7 @@ private:
 
 	constexpr void dump() {
 		if (!contents) return;
-		memdestroy(contents, maximum);
+		memdestroy(contents, count);
 		contents	= nullptr;
 		maximum		= 0;
 		count		= 0;
@@ -650,20 +651,21 @@ private:
 		if constexpr (!Type::Primitive<DataType>) {
 			for (auto i = p; i != (p+sz); ++i)
 				MX::destruct(i);
-		} else MX::free<DataType>(p);
+		}
+		MX::free<DataType>(p);
 	}
 
 	constexpr static DataType* memcreate(SizeType const& sz) {
 		return MX::malloc<DataType>(sz);
 	}
 
-	constexpr static void memresize(DataType*& data, SizeType const& sz, SizeType const& oldsz) {
+	constexpr static void memresize(DataType*& data, SizeType const& sz, SizeType const& oldsz, SizeType const& count) {
 		if constexpr(Type::Primitive<DataType>)
 			data = MX::realloc<DataType>(data, sz);
 		else {
 			DataType* ndata = MX::malloc<DataType>(sz);
-			copy(data, ndata, oldsz < sz ? oldsz : sz);
-			memdestroy(data, sz);
+			copy(data, ndata, count < sz ? count : sz);
+			memdestroy(data, count);
 			data = ndata;
 		}
 	}
@@ -675,7 +677,7 @@ private:
 	}
 
 	constexpr SelfType& invoke(SizeType const& size) {
-		if (contents)	memresize(contents, size, maximum);
+		if (contents)	memresize(contents, size, maximum, count);
 		else			contents = memcreate(size);
 		maximum = size;
 		recalculateMagnitude();
