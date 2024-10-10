@@ -262,7 +262,7 @@ public:
 		auto const start = rbegin(), stop = rend();
 		for (auto i = start; i != stop; ++i)
 			if ((*i) == value)
-				return count-(i-start);
+				return count-(i-start)-1;
 		return -1;
 	}
 
