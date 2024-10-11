@@ -401,6 +401,7 @@ public:
 	}
 
 	constexpr SelfType& operator=(SelfType const& other) {
+		memdestruct(contents, count);
 		resize(other.count);
 		copy(other.contents, contents, other.count);
 		count = other.count;
@@ -408,6 +409,7 @@ public:
 	}
 
 	constexpr SelfType& operator=(SelfType&& other) {
+		memdestroy(contents, count);
 		maximum			= CTL::move(other.maximum);
 		contents		= CTL::move(other.contents);
 		count			= CTL::move(other.count);
@@ -644,11 +646,15 @@ private:
 		count		= 0;
 	}
 
-	constexpr static void memdestroy(PointerType const& p, SizeType const& sz) {
+	constexpr static void memdestruct(PointerType const& p, SizeType const& sz) {
 		if constexpr (!Type::Primitive<DataType>) {
 			for (auto i = p; i != (p+sz); ++i)
 				MX::destruct(i);
 		}
+	}
+
+	constexpr static void memdestroy(PointerType const& p, SizeType const& sz) {
+		memdestruct(p, sz);
 		MX::free<DataType>(p);
 	}
 
