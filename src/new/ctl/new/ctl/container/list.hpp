@@ -318,11 +318,12 @@ public:
 	constexpr SizeType removeIfNot(TPredicate const& predicate) {
 		SizeType removed = 0;
 		auto const start = begin();
-		for(auto i = begin(); i != end();)
+		for(auto i = start; i != end() && removed < count;) {
 			if (!predicate(*i)) {
 				remove(i-start+1);
 				removed++;
 			} else ++i;
+		}
 		return removed;
 	}
 

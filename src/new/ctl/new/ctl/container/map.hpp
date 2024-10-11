@@ -179,6 +179,17 @@ public:
 		return -1;
 	}
 
+	constexpr IndexType search(KeyType const& key) const
+	requires (!SORTED) {
+		usize i = 0;
+		for (auto& e: *this) {
+			if (e.key == key)
+				return i;
+			++i;
+		}
+		return -1;
+	}
+
 	constexpr List<KeyType, SizeType> keys() const {
 		List<KeyType, SizeType> result;
 		for (auto& i: *this)
@@ -198,14 +209,6 @@ public:
 		for (auto& i: *this)
 			result.pushBack(i);
 		return result;
-	}
-
-	constexpr IndexType search(KeyType const& key) const
-	requires (!SORTED) {
-		for (usize i = 0; i < size(); ++i)
-			if (data()[i].key == key)
-				return i;
-		return -1;
 	}
 
 	constexpr ValueType operator[](KeyType const& index) const {return at(index);}
@@ -259,7 +262,8 @@ public:
 	}
 
 	constexpr SelfType& append(SelfType const& other) {
-		BaseType::appendBack(other.filtered(NOT_IN_MAP));
+		BaseType::appendBack(other);
+		clean();
 		update();
 		return *this;
 	}
