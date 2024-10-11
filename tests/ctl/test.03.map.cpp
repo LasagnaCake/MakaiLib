@@ -1,7 +1,14 @@
 #include <ctl/ctl.hpp>
 #include <ctlex/ctlex.hpp>
 
-using CTL::Map, CTL::List, CTL::KeyValuePair;
+using
+	CTL::BaseSimpleMap,
+	CTL::OrderedMap,
+	CTL::SimpleMap,
+	CTL::List,
+	CTL::KeyValuePair,
+	CTL::TypeInfo
+;
 
 template<typename T>
 void print(List<T> const& lst) {
@@ -18,8 +25,8 @@ void print(List<T> const& lst) {
 	DEBUGLN("];");
 }
 
-template<typename K, typename V>
-void print(Map<K, V> const& m) {
+template<typename K, typename V, typename I, bool S>
+void print(BaseSimpleMap<K, V, I, S> const& m) {
 	DEBUG(
 		"S: ",
 		m.size(),
@@ -48,8 +55,8 @@ void print(List<KeyValuePair<K, V>> const& m) {
 	DEBUGLN("];");
 }
 
-template<typename K, typename V>
-void print(Map<K, V> const& m, K const& k) {
+template<typename K, typename V, typename I, bool S>
+void print(BaseSimpleMap<K, V, I, S> const& m, K const& k) {
 	auto r = m.search(k);
 	if (r != -1)
 		CTL::Console::println("K: ", k, ", L: ", r, ", V: ", m[k]);
@@ -57,8 +64,11 @@ void print(Map<K, V> const& m, K const& k) {
 		CTL::Console::println("K: ", k, ", L: ", r);
 }
 
-int main() {
-	Map<int, int> mp({
+template<template<typename K, typename V> class TMap = SimpleMap>
+void testMap() {
+	using MapType = TMap<int, int>;
+	DEBUGLN("<", TypeInfo<MapType>::name(), ">");
+	MapType mp({
 		{0, 1},
 		{1, 2},
 		{4, 5},
@@ -70,7 +80,7 @@ int main() {
 		{-5, -4}
 	});
 	print(mp);
-	mp = Map<int, int>({
+	mp = MapType({
 		{2, -32},
 		{29, -31},
 		{-4, -30},
@@ -101,6 +111,12 @@ int main() {
 	print(mp.items());
 	mp.clear();		print(mp);
 	mp.dispose();	print(mp);
+	DEBUGLN("</", TypeInfo<MapType>::name(), ">");
+}
+
+int main() {
+	testMap<SimpleMap>();
+	testMap<OrderedMap>();
 	DEBUGLN("Map test passed!");
 	return 0;
 }
