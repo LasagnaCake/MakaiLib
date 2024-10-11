@@ -56,8 +56,8 @@ public:
 		typename BaseType::ReverseIteratorType
 	;
 
-	static_assert(SORTED && Sortable<KeyType>, "Cannot form a sortable map whithout an sortable key!");
-	static_assert(SORTED && Sortable<PairType>);
+	static_assert(!SORTED || Sortable<KeyType>, "Cannot form a sortable map whithout an sortable key!");
+	static_assert(!SORTED || Sortable<PairType>, "Cannot form a sortable map whithout an sortable pair type!");
 
 	using
 		typename BaseType::OrderType,
