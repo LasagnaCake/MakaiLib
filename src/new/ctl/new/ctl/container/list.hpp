@@ -201,23 +201,26 @@ public:
 
 	constexpr SelfType& reserve(SizeType const& count, DataType const& fill) {
 		reserve(count);
-		for (SizeType i = 0; i < count; ++i)
-			contents[i] = fill;
+		if (count > this->count)
+			for (SizeType i = this->count; i < count; ++i)
+				contents[i] = fill;
 		this->count = count;
 		return *this;
 	}
 
 	constexpr SelfType& resize(SizeType const& newSize, DataType const& fill) {
 		resize(newSize);
-		for (SizeType i = 0; i < count; ++i)
-			contents[i] = fill;
-		this->count = count;
+		if (newSize > count)
+			for (SizeType i = newSize; i < count; ++i)
+				contents[i] = fill;
+		count = newSize;
 		return *this;
 	}
 
 	constexpr SelfType& expand(SizeType count, DataType const& fill) {
 		expand(this->count + count);
 		while (count-- > 0) pushBack(fill);
+		this->count += count;
 		return *this;
 	}
 
