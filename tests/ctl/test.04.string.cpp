@@ -30,17 +30,27 @@ void print(List<String> const& strs) {
 	);
 }
 
-int main() {
+void testString() {
 	String str;							print(str);
 	str = "Henlo.";						print(str);
 	str += " You?";						print(str);
 	str = "O! " + str;					print(str);
 	print(str.sliced(2, -3));
+	str.sort();							print(str);
 	str = String("Impedance. Voltage. Current.");
 	print(str);
 	auto sp = str.splitAtFirst(' ');	print(sp);
 	sp = str.splitAtLast(' ');			print(sp);
 	sp = str.split(' ');				print(sp);
+	// This causes a crash
+	sp = sp.sort();						print(sp);
+}
+
+void testStringMap() {
+}
+
+int main() {
+	testString();
 	DEBUGLN("String test passed!");
 	return 0;
 }
