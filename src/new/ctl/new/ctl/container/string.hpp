@@ -111,6 +111,12 @@ public:
 		appendBack(BaseType(v, v+len-1));
 	}
 
+	template<SizeType S>
+	constexpr BaseString(Decay::AsType<ConstantType[S]> const& v) {
+		reserve(S);
+		MX::memcpy(v, cbegin(), S-1);
+	}
+
 	constexpr BaseString(BaseType const& other):	BaseType(other)				{}
 	constexpr BaseString(BaseType&& other):			BaseType(CTL::move(other))	{}
 
@@ -132,14 +138,8 @@ public:
 		(*this) += (... + args);
 	}
 
-	template<SizeType S>
-	constexpr BaseString(Decay::AsType<ConstantType[S]> const& v) {
-		reserve(S);
-		MX::memcpy(v, cbegin(), S);
-	}
-
-	constexpr List<SelfType, IndexType> split(DataType const& sep) const {
-		List<SelfType, IndexType> res;
+	constexpr List<SelfType, SizeType> split(DataType const& sep) const {
+		List<SelfType, SizeType> res;
 		SelfType buf;
 		for (ConstReferenceType v : *this) {
 			if (v == sep) {
@@ -154,8 +154,8 @@ public:
 		return res;
 	}
 
-	constexpr List<SelfType, IndexType> split(BaseType const& seps) const {
-		List<SelfType, IndexType> res;
+	constexpr List<SelfType, SizeType> split(BaseType const& seps) const {
+		List<SelfType, SizeType> res;
 		SelfType buf;
 		for (ConstReferenceType v : *this) {
 			if (seps.find(v)) {
@@ -170,8 +170,8 @@ public:
 		return res;
 	}
 
-	constexpr List<SelfType, IndexType> divide(IndexType index) const {
-		List<SelfType, IndexType> res;
+	constexpr List<SelfType, SizeType> divide(IndexType index) const {
+		List<SelfType, SizeType> res;
 		res.pushBack(sliced(0, index));
 		res.pushBack(sliced(index+1));
 		return res;
@@ -180,8 +180,8 @@ public:
 	constexpr SelfType sliced(IndexType const& start) const							{return BaseType::sliced(start);		}
 	constexpr SelfType sliced(IndexType const& start, SizeType const& count) const	{return BaseType::sliced(start, count);	}
 
-	constexpr List<SelfType, IndexType> splitAtFirst(DataType const& sep) const {
-		List<SelfType, IndexType> res;
+	constexpr List<SelfType, SizeType> splitAtFirst(DataType const& sep) const {
+		List<SelfType, SizeType> res;
 		IndexType idx = find(sep);
 		if (idx < 0)	res.pushBack(*this);
 		else {
@@ -191,8 +191,8 @@ public:
 		return res;
 	}
 
-	constexpr List<SelfType, IndexType> splitAtFirst(BaseType const& seps) const {
-		List<SelfType, IndexType> res;
+	constexpr List<SelfType, SizeType> splitAtFirst(BaseType const& seps) const {
+		List<SelfType, SizeType> res;
 		IndexType idx = -1;
 		for(ConstReferenceType sep: seps) {
 			IndexType i = find(sep);
@@ -207,8 +207,8 @@ public:
 		return res;
 	}
 
-	constexpr List<SelfType, IndexType> splitAtLast(DataType const& sep) const {
-		List<SelfType, IndexType> res;
+	constexpr List<SelfType, SizeType> splitAtLast(DataType const& sep) const {
+		List<SelfType, SizeType> res;
 		IndexType idx = rfind(sep);
 		if (idx < 0)	res.pushBack(*this);
 		else {
@@ -218,8 +218,8 @@ public:
 		return res;
 	}
 
-	constexpr List<SelfType, IndexType> splitAtLast(BaseType const& seps) const {
-		List<SelfType, IndexType> res;
+	constexpr List<SelfType, SizeType> splitAtLast(BaseType const& seps) const {
+		List<SelfType, SizeType> res;
 		IndexType idx = -1;
 		for(ConstReferenceType sep: seps) {
 			IndexType i = rfind(sep);
@@ -427,6 +427,12 @@ public:
 		if (sz < 0) throw FailedActionException("Float-to-String conversion failure!");
 		result.resize(sz);
 		return result;
+	}
+
+	friend constexpr void swap(SelfType& a, SelfType& b) noexcept {
+		swap<BaseType>(a, b);
+		swap(a.strbuf, b.strbuf);
+		swap(a.strbuflen, b.strbuflen);
 	}
 
 private:

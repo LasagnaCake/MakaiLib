@@ -47,8 +47,8 @@ namespace Sorting {
 			*left	= new T[szLeft],
 			*right	= new T[szRight]
 		;
-		MX::memmove(left, arr, szLeft);
-		MX::memmove(right, arr+szLeft, szRight);
+		MX::objcopy(left, arr, szLeft);
+		MX::objcopy(right, arr+szLeft, szRight);
 		mergeSort(left, szLeft);
 		mergeSort(right, szRight);
 		usize
@@ -87,8 +87,8 @@ namespace Sorting {
 				*left = new T[szLeft],
 				*right = new T[szRight]
 			;
-			MX::memmove(left, arr, szLeft);
-			MX::memmove(right, arr+szLeft, szRight);
+			MX::objcopy(left, arr, szLeft);
+			MX::objcopy(right, arr+szLeft, szRight);
 			usize
 				i = 0,
 				j = 0,

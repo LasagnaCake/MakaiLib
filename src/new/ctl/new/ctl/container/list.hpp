@@ -356,8 +356,8 @@ public:
 		return SelfType(cbegin() + start, cbegin() + stop + 1);
 	}
 
-	constexpr List<SelfType, IndexType> divide(IndexType index) const {
-		List<SelfType, IndexType> res;
+	constexpr List<SelfType, SizeType> divide(IndexType index) const {
+		List<SelfType, SizeType> res;
 		assertIsInBounds(res);
 		wrapBounds(index, count);
 		res.pushBack(sliced(0, index));
@@ -475,9 +475,9 @@ public:
 	}
 
 	template <class T2>
-	constexpr explicit operator List<T2, IndexType>() const
+	constexpr explicit operator List<T2, SizeType>() const
 	requires (Type::Different<DataType, T2> && Type::Convertible<DataType, T2>) {
-		List<T2, IndexType> result(count);
+		List<T2, SizeType> result(count);
 		for (usize i = 0; i < count; ++i)
 			result[i] = T2(contents[i]);
 		return result;
@@ -638,6 +638,13 @@ public:
 	}
 
 	constexpr bool tight() const {return count == maximum;}
+
+	friend constexpr void swap(SelfType& a, SelfType& b) noexcept {
+		swap(a.contents, b.contents);
+		swap(a.maximum, b.maximum);
+		swap(a.count, b.count);
+		swap(a.magnitude, b.magnitude);
+	}
 
 private:
 	using Iteratable::wrapBounds;
