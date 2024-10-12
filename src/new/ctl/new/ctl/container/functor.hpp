@@ -70,19 +70,19 @@ private:
 	inline static usize	count;
 };
 
-template<class... Args>
+template<typename... Args>
 using Procedure		= Functor<void(Args...)>;
 
-template<class T, class T2 = T const&>
+template<typename T, typename T2 = T const&>
 using Operation		= Functor<T(T2)>;
 
-template<class T>
+template<typename T>
 using Acquisition	= Functor<T()>;
 
-template<class... Args>
+template<typename... Args>
 using Signal	= Procedure<Args...>;
 
-template<class T = void>
+template<typename T = void>
 using Trigger	= Acquisition<bool>;
 
 CTL_NAMESPACE_END
