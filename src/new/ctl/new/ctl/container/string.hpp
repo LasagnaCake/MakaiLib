@@ -316,13 +316,15 @@ public:
 	constexpr SelfType& operator+=(Decay::AsType<ConstantType[S]> str)	{appendBack(str); return *this;		}
 
 	constexpr SelfType operator*(SizeType const& times) const {
+		if (!times) return SelfType();
 		SelfType result(size() * times);
 		for (SizeType i = 0; i < times; ++i)
-			result += (*this);
+			result.appendBack(*this);
 		return result;
 	}
 
 	constexpr SelfType& operator*=(SizeType const& times) {
+		if (!times) return *this;
 		SelfType copy = *this;
 		for (SizeType i = 0; i < times; ++i)
 			appendBack(copy);
