@@ -14,7 +14,7 @@ WINREQS		:= -lole32 -loleaut32 -limm32 -lwinmm -lversion -lpowrprof -lcomdlg32 -
 
 o?=3
 
-testcmd = @$(CXX) -O$(o) -o output/$(1)/test.$(2).$(1).exe test.$(2).cpp $(COMPILER_CONFIG)
+testcmd = @$(CXX) -O$(o) -o output/$(1)/test.$(2).$(1).exe test.$(2).*.cpp $(COMPILER_CONFIG)
 
 #NOCMD := -mwindows
 
@@ -38,6 +38,7 @@ params = \
 	$(call case, $(1), 03,$(LIBREQS))\
 	$(call case, $(1), 04,$(LIBREQS))\
 	$(call case, $(1), 05,$(LIBREQS))\
+	$(call case, $(1), 06,$(LIBREQS))\
 
 define mktest
 	@echo "$(strip $(2))"
@@ -46,11 +47,12 @@ endef
 
 ifndef t
 define tests
-	$(call mktest, $(1), 01.compilation)
-	$(call mktest, $(1), 02.list)
-	$(call mktest, $(1), 03.map)
-	$(call mktest, $(1), 04.string)
-	$(call mktest, $(1), 05.function)
+	$(call mktest, $(1), 01)
+	$(call mktest, $(1), 02)
+	$(call mktest, $(1), 03)
+	$(call mktest, $(1), 04)
+	$(call mktest, $(1), 05)
+	$(call mktest, $(1), 06)
 endef
 else
 define tests

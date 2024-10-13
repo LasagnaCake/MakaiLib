@@ -14,7 +14,7 @@ WINREQS		:= -lole32 -loleaut32 -limm32 -lwinmm -lversion -lpowrprof -lcomdlg32 -
 
 o?=3
 
-testcmd = @$(CXX) -O$(o) -o output/$(1)/test.$(2).$(1).exe test.$(2).cpp $(COMPILER_CONFIG) $(ROOT)/output/lib/$(3)
+testcmd = @$(CXX) -O$(o) -o output/$(1)/test.$(2).$(1).exe test.$(2).*.cpp $(COMPILER_CONFIG) $(ROOT)/output/lib/$(3)
 
 NOCMD := -mwindows
 
@@ -45,10 +45,10 @@ endef
 
 ifndef t
 define tests
-	$(call mktest, $(1), 01.compilation)
-	$(call mktest, $(1), 02.app)
-	$(call mktest, $(1), 03.graphics)
-	$(call mktest, $(1), 04.input)
+	$(call mktest, $(1), 01)
+	$(call mktest, $(1), 02)
+	$(call mktest, $(1), 03)
+	$(call mktest, $(1), 04)
 endef
 else
 define tests
