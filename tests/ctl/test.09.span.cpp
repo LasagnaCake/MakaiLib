@@ -7,6 +7,7 @@ void testSpan() {
 }
 
 int main() {
+	testSpan();
 	DEBUGLN("Span test passed!");
 	return 0;
 }
