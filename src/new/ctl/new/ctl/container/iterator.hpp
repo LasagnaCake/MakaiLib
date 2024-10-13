@@ -85,9 +85,7 @@ public:
 	SelfType& operator--()		{rstep(); return *this;							}
 	SelfType operator--(int)	{SelfType copy = *this; rstep(); return copy;	}
 
-	constexpr operator PointerType() const					{return iter();		}
-	constexpr explicit operator ReferenceType()				{return *iter();	}
-	constexpr explicit operator ConstReferenceType() const	{return *iter();	}
+	constexpr operator PointerType() const		{return iter();	}
 
 	constexpr bool operator==(SelfType const& other) const			{return iterand == other.iterand;	}
 	constexpr OrderType operator<=>(SelfType const& other) const	{return compare(other.iterand);		}
@@ -101,13 +99,7 @@ public:
 	//constexpr operator STLConstForwardIterator() const requires(!REVERSE)	{return iterand;}
 	constexpr operator STLConstReverseIterator() const requires(REVERSE)	{return iterand;}
 private:
-	constexpr ConstPointerType iter() const {
-		ConstPointerType it = iterand;
-		if constexpr (REVERSE)	return it-1;
-		else					return it;
-	}
-
-	constexpr PointerType iter() {
+	constexpr PointerType iter() const {
 		PointerType it = iterand;
 		if constexpr (REVERSE)	return it-1;
 		else					return it;
