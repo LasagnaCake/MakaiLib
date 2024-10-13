@@ -137,7 +137,7 @@ public:
 	constexpr bool exists() const {
 		//if (!ref)			return false;
 		CTL_PTR_IF_STRONG	return ref && (database[(void*)ref].count > 0);
-		// BUG: returns true even if exists is set to false
+		// BUG: returns true even if exists is set to false (because it is somehow set to true???)
 		else				return ref && (database[(void*)ref].exists);
 	}
 
