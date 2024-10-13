@@ -39,14 +39,17 @@ namespace Format {
 	}
 
 	template <Type::Real T>
-	constexpr String prettify(T const& num, usize const& precision, usize const& leading) {
+	constexpr String prettify(T const& num, usize const& precision, usize const& minlead) {
 		String strnum = String::fromNumber<T>(num, precision);
-		return pad(strnum, '0', strnum.size() + leading);
+		usize lead	= strnum.size() + minlead;
+		ssize dot	= strnum.find('.');
+		if (dot > -1) lead -= dot;
+		return pad(strnum, '0', lead);
 	}
 
 	template <Type::Integer T>
-	constexpr String prettify(T const& num, usize const& precision, usize const& leading) {
-		return prettify<floatmax>(num, precision, leading);
+	constexpr String prettify(T const& num, usize const& precision, usize const& minlead) {
+		return prettify<floatmax>(num, precision, minlead);
 	}
 }
 
