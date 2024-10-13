@@ -118,10 +118,8 @@ public:
 
 	constexpr SelfType& destroy() {
 		CTL_PTR_IF_STRONG {
-			if (!exists()) return (*this);
-			database[(void*)ref] = {false, 0};
 			delete ref;
-			ref = nullptr;
+			release();
 		}
 		return (*this);
 	}
@@ -129,16 +127,17 @@ public:
 	constexpr SelfType& release() {
 		CTL_PTR_IF_STRONG {
 			if (!exists()) return (*this);
-			database[(void*)ref] = {false, 0};
+			database[(void*)ref].exists	= false;
+			database[(void*)ref].count	= 0;
 			ref = nullptr;
 		}
 		return (*this);
 	}
 
 	constexpr bool exists() const {
-		if (ref == nullptr) return false;
-		CTL_PTR_IF_STRONG	return (count() > 0);
-		else				return (database[(void*)ref].exists);
+		//if (!ref)			return false;
+		CTL_PTR_IF_STRONG	return ref && (database[(void*)ref].count > 0);
+		else				return ref && (database[(void*)ref].exists);
 	}
 
 	constexpr ssize unique() const	{return count() == 1;}
@@ -149,9 +148,10 @@ public:
 	constexpr PointerType const operator&() const	{return getPointer();}
 
 	template<Pointable TNew>
-	constexpr Pointer<TNew, WEAK>	castedTo() const	{return	(TNew*)getPointer();	}
-	constexpr Pointer<T, true>		asWeak() const		{return	getPointer();			}
-	constexpr T*					raw() const			{return	getPointer();			}
+	constexpr Pointer<TNew, WEAK>		castedTo() const	{return	(TNew*)getPointer();	}
+	constexpr Pointer<DataType, true>	asWeak() const		{return	getPointer();			}
+	constexpr PointerType				raw() const			{return	getPointer();			}
+	//constexpr ConstPointerType		raw() const			{return	getPointer();			}
 
 	constexpr explicit operator PointerType const() const	{return getPointer();		}
 	constexpr explicit operator PointerType()				{return getPointer();		}
@@ -171,7 +171,7 @@ public:
 
 	constexpr SelfType& operator=(PointerType const& obj)	{bind(obj); return (*this);					}
 	constexpr SelfType& operator=(SelfType const& other)	{bind(other.ref); return (*this);			}
-	constexpr SelfType& operator=(DataType const& v) const	{*getPointer() = v; return (*this);			}
+//	constexpr SelfType& operator=(DataType const& v) const	{*getPointer() = v; return (*this);			}
 //	constexpr SelfType& operator=(DataType const& v) const	{if (exists()) *ref = v; return (*this);	}
 
 	constexpr ReferenceType value() const {
@@ -198,7 +198,7 @@ private:
 		return (ref);
 	}
 
-	constexpr ConstPointerType getPointer() const	{
+	constexpr PointerType getPointer() const	{
 		if (!exists()) nullPointerError();
 		return (ref);
 	}
