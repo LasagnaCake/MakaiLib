@@ -2,7 +2,6 @@
 #define CTL_CONTAINER_STRING_H
 
 #include <stdlib.h>
-#include <iostream>
 
 #include "list.hpp"
 #include "array.hpp"
@@ -414,7 +413,7 @@ public:
 	}
 
 	template<Type::Integer T>
-	constexpr static SelfType fromNumber(T const& val, T const& base = 0) {
+	constexpr static SelfType fromNumber(T const& val, T const& base = 10) {
 		SelfType result(sizeof(T)*4, '\0');
 		ssize sz = itoa<T>(val, result.data(), result.size(), base);
 		if (sz < 0) throw FailedActionException("Integer-to-String conversion failure!");

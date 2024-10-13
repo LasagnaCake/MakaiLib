@@ -129,10 +129,26 @@ void testStringMap() {
 	DEBUGLN("</", TypeInfo<MapType>::name(), ">");
 }
 
+void testStringConversion() {
+	DEBUGLN("N2S:\t", String::fromNumber<int>(465));
+	DEBUGLN("N2S:\t", String::fromNumber<int>(-465));
+	DEBUGLN("N2S:\t", String::fromNumber<float>(46.15));
+	DEBUGLN("N2S:\t", String::fromNumber<float>(-46.15));
+	DEBUGLN("S2N:\t", String::toNumber<int>("465"));
+	DEBUGLN("S2N:\t", String::toNumber<int>("-465"));
+	DEBUGLN("S2N:\t", String::toNumber<float>("46.15"));
+	DEBUGLN("S2N:\t", String::toNumber<float>("-46.15"));
+	DEBUGLN("S2N2S:\t", String::fromNumber<int>(String::toNumber<int>("465")));
+	DEBUGLN("S2N2S:\t", String::fromNumber<int>(String::toNumber<int>("-465")));
+	DEBUGLN("S2N2S:\t", String::fromNumber<float>(String::toNumber<float>("46.15")));
+	DEBUGLN("S2N2S:\t", String::fromNumber<float>(String::toNumber<float>("-46.15")));
+}
+
 int main() {
 	testString();
 	testStringMap<SimpleMap>();
 	testStringMap<OrderedMap>();
+	testStringConversion();
 	DEBUGLN("String test passed!");
 	return 0;
 }
