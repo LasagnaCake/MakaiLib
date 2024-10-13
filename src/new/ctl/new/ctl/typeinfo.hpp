@@ -2,29 +2,32 @@
 #define CTL_TYPE_INFO_H
 
 #include "typetraits/traits.hpp"
+#include "meta/logic.hpp"
 #include "namespace.hpp"
 #include <typeinfo>
 #include <cxxabi.h>
 
 CTL_NAMESPACE_BEGIN
 
-template<class T>
-struct TypeInfo {
-	typedef T	DataType;
+namespace Base {
+	template<class T>
+	struct TypeInfo {
+		typedef T	DataType;
 
-	constexpr static usize SIZE		= sizeof(T);
-	constexpr static usize BIT_SIZE	= SIZE * 8;
+		constexpr static usize SIZE		= sizeof(T);
+		constexpr static usize BIT_SIZE	= SIZE * 8;
 
-	constexpr TypeInfo() {}
+		constexpr TypeInfo() {}
 
-	constexpr bool operator==(TypeInfo const& other) {return id->hash_code() == other.id->hash_code();}
+		constexpr bool operator==(TypeInfo const& other) {return id->hash_code() == other.id->hash_code();}
 
-	constexpr static const char* rawName()	{return id->name();}
-	constexpr static const char* name()		{return abi::__cxa_demangle(id->name(),0,0,NULL);}
+		constexpr static const char* rawName()	{return id->name();}
+		constexpr static const char* name()		{return abi::__cxa_demangle(id->name(),0,0,NULL);}
 
-private:
-	constexpr static const std::type_info* id = &typeid(T);
-};
+	private:
+		constexpr static const std::type_info* id = &typeid(T);
+	};
+}
 
 template<class T, auto H, auto S, auto L>
 struct ValueLimit {
@@ -46,8 +49,22 @@ template<> struct NumberLimit<uint16>:	ValueLimit<uint16,	0xFFFF,				1,	0					>	
 template<> struct NumberLimit<uint32>:	ValueLimit<uint32,	0xFFFFFFFF,			1,	0					>	{};
 template<> struct NumberLimit<uint64>:	ValueLimit<uint64,	0xFFFFFFFFFFFFFFFF,	1,	0					>	{};
 
+template<> struct NumberLimit<int>: NumberLimit<Meta::DualType<sizeof(int) == sizeof(int32), int32, int16>> {};
+
+template<typename T>
+struct TypeInfo;
+
 template<Type::Integer T>
-struct TypeInfo<T>: NumberLimit<T> {};
+struct TypeInfo<T>: NumberLimit<T>, Base::TypeInfo<T> {};
+
+template<Type::Float T>
+struct TypeInfo<T>: Base::TypeInfo<T> {};
+
+template<Type::Enumerator T>
+struct TypeInfo<T>: NumberLimit<ssize>, Base::TypeInfo<T> {};
+
+template<Type::Class T>
+struct TypeInfo<T>: Base::TypeInfo<T> {};
 
 CTL_NAMESPACE_END
 
