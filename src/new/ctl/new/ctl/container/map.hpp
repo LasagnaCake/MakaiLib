@@ -268,8 +268,6 @@ public:
 		return *this;
 	}
 
-	// TODO: Fix append causing infinite loop on UNSORTED map
-
 	constexpr SelfType& append(ArgumentListType const& values) {
 		return append(SelfType(values));
 	}
