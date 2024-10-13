@@ -31,6 +31,7 @@ template<class T>
 void f4(Instance<T> p1, Instance<T> const& p2, Instance<T> p3) {
 	print<T>(p2);
 	p1.destroy();
+	// V should be "Oops!", it's not
 	print<T>(p3);
 }
 
@@ -41,6 +42,7 @@ void testIntPointer() {
 	f3(ptr, ptr, ptr);
 	print<int>(ptr);
 	f4(ptr, ptr, ptr);
+	// V should be "Oops!", it's not
 	print<int>(ptr);
 }
 
