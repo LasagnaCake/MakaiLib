@@ -15,13 +15,12 @@ namespace Format {
 	};
 
 	constexpr String pad(String str, char const& chr, usize const& width, Justify const& just = Justify::CFJ_LEFT) {
-		if (width < str.size()) return str;
 		if(width > str.size()) {
 			switch (just) {
 				case Justify::CFJ_LEFT:		str.insert(chr, width - str.size(), 0);		break;
 				case Justify::CFJ_RIGHT:	str.appendBack(width - str.size(), chr);	break;
 				case Justify::CFJ_CENTER:
-					usize lhs = width/2 + (width % 2), rhs = width/2;
+					usize lhs = usize((float(width) * 0.75) + 0.5);
 					return pad(
 						pad(
 							str,
@@ -30,7 +29,7 @@ namespace Format {
 							Justify::CFJ_LEFT
 						),
 						chr,
-						rhs,
+						width,
 						Justify::CFJ_RIGHT
 					);
 				break;

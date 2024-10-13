@@ -215,8 +215,7 @@ public:
 
 	constexpr SelfType& expand(SizeType count, DataType const& fill) {
 		expand(this->count + count);
-		while (count-- >= 0) pushBack(fill);
-		this->count += count;
+		while (count-- > 0) pushBack(fill);
 		return *this;
 	}
 
