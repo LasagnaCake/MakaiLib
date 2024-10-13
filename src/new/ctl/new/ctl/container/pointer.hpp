@@ -80,11 +80,11 @@ public:
 
 	constexpr Pointer() {}
 
-	constexpr Pointer(NewPointerType<false>&& other)		{CTL_PTR_ASSERT_STRONG_MOVE;	bind(other.ref);}
-	constexpr Pointer(NewPointerType<true>&& other)			{CTL_PTR_ASSERT_WEAK;			bind(other.ref);}
+	constexpr Pointer(NewPointerType<false>&& other)		{CTL_PTR_ASSERT_STRONG_MOVE;	bind(other);}
+	constexpr Pointer(NewPointerType<true>&& other)			{CTL_PTR_ASSERT_WEAK;			bind(other);}
 
-	constexpr Pointer(NewPointerType<false> const& other)	{								bind(other.ref);}
-	constexpr Pointer(NewPointerType<true> const& other)	{CTL_PTR_ASSERT_WEAK;			bind(other.ref);}
+	constexpr Pointer(NewPointerType<false> const& other)	{								bind(other);}
+	constexpr Pointer(NewPointerType<true> const& other)	{CTL_PTR_ASSERT_WEAK;			bind(other);}
 
 	constexpr Pointer(PointerType const& obj) {bind(obj);}
 
@@ -98,10 +98,25 @@ public:
 	constexpr SelfType& bind(PointerType const& obj) {
 		if (ref == obj) return (*this);
 		unbind();
-		if (obj == nullptr) return (*this);
-		ref = obj;
-		database[(void*)obj].exists = true;
-		CTL_PTR_IF_STRONG database[(void*)obj].count++;
+		if (!obj) return (*this);
+		attach(obj);
+		return (*this);
+	}
+
+	constexpr SelfType& bind(SelfType const& ptr) {
+		if (ref == ptr) return (*this);
+		unbind();
+		if (!ptr) return (*this);
+		attach(ptr.ref);
+		return (*this);
+	}
+
+	constexpr SelfType& bind(OtherType const& ptr) {
+		CTL_PTR_ASSERT_WEAK;
+		if (ref == ptr) return (*this);
+		unbind();
+		if (!ptr) return (*this);
+		attach(ptr.ref);
 		return (*this);
 	}
 
@@ -127,17 +142,16 @@ public:
 	constexpr SelfType& release() {
 		CTL_PTR_IF_STRONG {
 			if (!exists()) return (*this);
-			database[(void*)ref].exists	= false;
-			database[(void*)ref].count	= 0;
+			database[(void*)ref] = {false, 0};
 			ref = nullptr;
 		}
 		return (*this);
 	}
 
 	constexpr bool exists() const {
-		//if (!ref)			return false;
+	//	if (!ref)			return false;
 		CTL_PTR_IF_STRONG	return ref && (database[(void*)ref].count > 0);
-		// BUG: returns true even if exists is set to false (because it is somehow set to true???)
+	//	BUG: returns true even if exists is set to false (because it is somehow set to true???)
 		else				return ref && (database[(void*)ref].exists);
 	}
 
@@ -145,17 +159,18 @@ public:
 
 	constexpr bool operator()() const	{return exists();}
 
-	constexpr PointerType operator&()				{return getPointer();}
-	constexpr PointerType const operator&() const	{return getPointer();}
+//	constexpr PointerType operator&()		{return raw();}
+	constexpr PointerType operator&() const	{return raw();}
 
 	template<Pointable TNew>
-	constexpr Pointer<TNew, WEAK>		castedTo() const	{return	(TNew*)getPointer();	}
-	constexpr Pointer<DataType, true>	asWeak() const		{return	getPointer();			}
-	constexpr PointerType				raw() const			{return	getPointer();			}
-	//constexpr ConstPointerType		raw() const			{return	getPointer();			}
+	constexpr Pointer<TNew, WEAK>		castedTo() const	{return	static_cast<TNew*>(raw());			}
+	constexpr Pointer<DataType, true>	asWeak() const		{return	raw();								}
+	constexpr PointerType				raw() const			{return	exists() ? getPointer() : nullptr;	}
+//	constexpr PointerType				raw() const			{return	getPointer();						}
+//	constexpr ConstPointerType			raw() const			{return	getPointer();						}
 
-	constexpr explicit operator PointerType const() const	{return getPointer();		}
-	constexpr explicit operator PointerType()				{return getPointer();		}
+	constexpr explicit operator PointerType const() const	{return raw();		}
+	constexpr explicit operator PointerType()				{return raw();		}
 
 	constexpr operator bool() const	{return exists();	}
 
@@ -187,6 +202,13 @@ public:
 	constexpr ReferenceType operator*() const		{return value();		}
 
 private:
+	void attach(PointerType const& p) {
+		if (!p) return;
+		ref = p;
+		database[(void*)p].exists = true;
+		CTL_PTR_IF_STRONG database[(void*)p].count++;
+	}
+
 	friend SelfType;
 	friend OtherType;
 
