@@ -164,17 +164,13 @@ public:
 		return *this;
 	}
 
-	constexpr SelfType& insert(ArgumentListType const& values, IndexType const& index) {
-		return insert(SelfType(values, values + count), index);
-	}
-
 	template<SizeType S>
 	constexpr SelfType& insert(Decay::AsType<ConstantType[S]> const& values, IndexType const& index) {
 		return insert(SelfType(values), index);
 	}
 
 	constexpr SelfType& insert(DataType const& value, SizeType const& count, IndexType const& index) {
-		return insert(SelfType(value, count), index);
+		return insert(SelfType(count, value), index);
 	}
 
 	constexpr SelfType& reserve(SizeType const& count) {
@@ -219,7 +215,7 @@ public:
 
 	constexpr SelfType& expand(SizeType count, DataType const& fill) {
 		expand(this->count + count);
-		while (count-- > 0) pushBack(fill);
+		while (count-- >= 0) pushBack(fill);
 		this->count += count;
 		return *this;
 	}
@@ -731,7 +727,7 @@ private:
 	}
 
 	void assertIsInBounds(IndexType const& index) const {
-		if (index > count-1) outOfBoundsError(index);
+		if (index > IndexType(count-1)) outOfBoundsError(index);
 	}
 
 	[[noreturn]] constexpr static void invalidSizeError(SizeType const& size) {

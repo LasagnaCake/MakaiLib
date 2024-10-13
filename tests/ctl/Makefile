@@ -40,6 +40,7 @@ params = \
 	$(call case, $(1), 05,$(LIBREQS))\
 	$(call case, $(1), 06,$(LIBREQS))\
 	$(call case, $(1), 07,$(LIBREQS))\
+	$(call case, $(1), 08,$(LIBREQS))\
 
 define mktest
 	@echo "$(strip $(2))"
@@ -55,6 +56,7 @@ define tests
 	$(call mktest, $(1), 05.function)
 	$(call mktest, $(1), 06.pointer)
 	$(call mktest, $(1), 07.nullable)
+	$(call mktest, $(1), 08.format)
 endef
 else
 define tests

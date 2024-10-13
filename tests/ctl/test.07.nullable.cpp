@@ -9,9 +9,14 @@ void print(Nullable<T> const& p) {
 	else	DEBUGLN("Oops!");
 }
 
-int main() {
+void testNullable() {
 	Nullable<String> maybe;		print(maybe);
 	maybe = "Quantifiable?";	print(maybe);
 	maybe = nullptr;			print(maybe);
+}
+
+int main() {
+	testNullable();
+	DEBUGLN("Nullable test passed!");
 	return 0;
 }

@@ -54,5 +54,6 @@ void testIntPointer() {
 
 int main() {
 	testIntPointer();
+	DEBUGLN("Pointer test passed!");
 	return 0;
 }

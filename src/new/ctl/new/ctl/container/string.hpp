@@ -113,7 +113,7 @@ public:
 	template<SizeType S>
 	constexpr BaseString(Decay::AsType<ConstantType[S]> const& v) {
 		reserve(S);
-		MX::memcpy(v, cbegin(), S-1);
+		MX::memcpy<DataType>(cbegin(), v, S);
 	}
 
 	constexpr BaseString(BaseType const& other):	BaseType(other)				{}
@@ -314,16 +314,18 @@ public:
 	template<SizeType S>
 	constexpr SelfType& operator+=(Decay::AsType<ConstantType[S]> str)	{appendBack(str); return *this;		}
 
-	constexpr SelfType operator*(SizeType const& times) const {
-		if (!times) return SelfType();
+	constexpr SelfType operator*(IndexType const& times) const {
+		if (times < 1) return SelfType();
+		if (times == 1) return *this;
 		SelfType result(size() * times);
 		for (SizeType i = 0; i < times; ++i)
 			result.appendBack(*this);
 		return result;
 	}
 
-	constexpr SelfType& operator*=(SizeType const& times) {
-		if (!times) return *this;
+	constexpr SelfType& operator*=(IndexType const& times) {
+		if (times < 1) return SelfType();
+		if (times == 1) return *this;
 		SelfType copy = *this;
 		for (SizeType i = 0; i < times; ++i)
 			appendBack(copy);

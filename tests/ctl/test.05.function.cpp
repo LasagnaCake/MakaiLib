@@ -39,5 +39,6 @@ void testFunction() {
 
 int main() {
 	testFunction();
+	DEBUGLN("Function test passed!");
 	return 0;
 }

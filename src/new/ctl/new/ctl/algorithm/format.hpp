@@ -15,10 +15,11 @@ namespace Format {
 	};
 
 	constexpr String pad(String str, char const& chr, usize const& width, Justify const& just = Justify::CFJ_LEFT) {
+		if (width < str.size()) return str;
 		if(width > str.size()) {
 			switch (just) {
-				case Justify::CFJ_LEFT:		str.insert(chr, 0, width - str.size());				break;
-				case Justify::CFJ_RIGHT:	str.insert(chr, str.size()-1, width - str.size());	break;
+				case Justify::CFJ_LEFT:		str.insert(chr, width - str.size(), 0);		break;
+				case Justify::CFJ_RIGHT:	str.appendBack(width - str.size(), chr);	break;
 				case Justify::CFJ_CENTER:
 					usize lhs = width/2 + (width % 2), rhs = width/2;
 					return pad(
@@ -40,7 +41,8 @@ namespace Format {
 
 	template <Type::Real T>
 	constexpr String prettify(T const& num, usize const& precision, usize const& leading) {
-		return pad(String::fromNumber<T>(num, precision), '0', leading);
+		String strnum = String::fromNumber<T>(num, precision);
+		return pad(strnum, '0', strnum.size() + leading);
 	}
 
 	template <Type::Integer T>
