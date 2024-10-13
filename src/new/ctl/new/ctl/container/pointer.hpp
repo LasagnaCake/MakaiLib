@@ -3,8 +3,10 @@
 
 #include "../namespace.hpp"
 #include "../templates.hpp"
+#include "../typeinfo.hpp"
 #include "../ctypes.hpp"
 #include "../typetraits/traits.hpp"
+#include "../algorithm/strconv.hpp"
 #include "error.hpp"
 #include "function.hpp"
 #include "map.hpp"
