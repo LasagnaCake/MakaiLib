@@ -28,7 +28,7 @@ public:
 
 	using OperationType = Function<DataType(ConstReferenceType)>;
 
-	constexpr View(ReferenceType _data):	data(_data)			{}
+	constexpr View(ReferenceType data):	data(data)				{}
 	constexpr View(SelfType const& other):	data(other.data)	{}
 	constexpr View(SelfType&& other):		data(other.data)	{}
 
