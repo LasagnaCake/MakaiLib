@@ -80,7 +80,7 @@ CTL_NAMESPACE_END
 			CTL::String const& caller		= "unspecified",\
 			CTL::String const& info			= "none",\
 			CTL::String const& callerInfo	= "none"\
-		): Generic (#NAME, message, file, line, caller, info, callerInfo) {}\
+		): ::CTL::Error::Generic (#NAME, message, file, line, caller, info, callerInfo) {}\
 	}
 
 #endif // CTL_CUSTOM_RUNTIME_ERRORS_H

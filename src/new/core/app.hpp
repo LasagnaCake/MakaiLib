@@ -8,8 +8,6 @@
 #include "../graph/graph.hpp"
 #include "../audio/audio.hpp"
 
-using namespace Makai;
-
 namespace Makai {
 	struct AudioConfig {
 		Audio::Formats const& formats = {
@@ -74,7 +72,7 @@ namespace Makai {
 		AppState getState();
 
 		/// Sets the application's window size.
-		void setWindowSize(Vector2 const& size);
+		void setWindowSize(Math::Vector2 const& size);
 
 		/// Set the application window's opacity.
 		void setWindowOpacity(float const& opacity = 1);
@@ -94,9 +92,9 @@ namespace Makai {
 		Graph::FrameBuffer& getFrameBuffer();
 		Graph::FrameBuffer& getLayerBuffer();
 
-		Vector2 getWindowSize();
+		Math::Vector2 getWindowSize();
 
-		Vector2 getWindowScale();
+		Math::Vector2 getWindowScale();
 
 		/// Gets called when the application is opened.
 		virtual void onOpen() {}
@@ -145,7 +143,7 @@ namespace Makai {
 		void pushLayerToFrame();
 
 		/// The window's background color.
-		Vector4 background = Graph::Color::BLACK;
+		Math::Vector4 background = Graph::Color::BLACK;
 
 		/// The application's input manager.
 		Input::Manager input;
@@ -160,7 +158,7 @@ namespace Makai {
 		float speed = 1.0f;
 
 		/// The application's notification handler.
-		Event::Notifier notifier;
+		Notifier notifier;
 
 	protected:
 		Graph::FrameBufferData toFrameBufferData();

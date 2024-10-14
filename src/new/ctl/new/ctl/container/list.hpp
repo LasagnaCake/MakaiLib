@@ -74,6 +74,12 @@ public:
 		invoke(values.size());
 		for (DataType const& v: values) pushBack(v);
 	}
+	
+	template<typename... Args>
+	constexpr List(Args const&... args) {
+		invoke(sizeof...(Args));
+		(..., pushBack(args));
+	}
 
 	template<SizeType S>
 	constexpr explicit List(Decay::AsType<ConstantType[S]> const& values) {

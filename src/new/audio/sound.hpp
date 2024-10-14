@@ -1,6 +1,8 @@
 #ifndef MAKAILIB_AUDIO_SOUND_H
 #define MAKAILIB_AUDIO_SOUND_H
 
+#include "../compat/ctl.hpp"
+
 #include "core.hpp"
 #include "playable.hpp"
 

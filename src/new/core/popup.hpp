@@ -1,7 +1,7 @@
 #ifndef MAKAI_CORE_POPUP_H
 #define MAKAI_CORE_POPUP_H
 
-#include "../ctl/ctl.hpp"
+#include "../compat/ctl.hpp"
 
 namespace Makai::Popup {
 	namespace Option {

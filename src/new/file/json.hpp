@@ -3,7 +3,7 @@
 
 #define JSON_NO_IO
 #include "_lib/nlohmann/json.hpp"
-#include "../ctl/ctl.hpp"
+#include "../compat/ctl.hpp"
 #include "get.hpp"
 
 namespace Makai::JSON {
@@ -14,7 +14,7 @@ namespace Makai::JSON {
 
 	using JSONType = Extern::JSONData;
 
-	class JSONView: public DataView<Extern::JSONData> {
+	class JSONView: public View<Extern::JSONData> {
 	public:
 		JSONView(Extern::JSONData& _data, String const& _name = "<anonymous>");
 		JSONView(Extern::JSONData const& _data, String const& _name = "<anonymous>");

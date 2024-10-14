@@ -4,6 +4,10 @@
 #include "core.hpp"
 #include "playable.hpp"
 
+namespace Makai {
+	using namespace CTL;
+}
+
 namespace Makai::Audio {
 	class Music: public Playable {
 	public:
@@ -50,7 +54,7 @@ namespace Makai::Audio {
 		usize	fadeInTime	= 0;
 		int		loops		= 0;
 
-		AudioCallback onQueue = SIGNAL {play(loops, fadeInTime);};
+		AudioCallback onQueue = [&] {play(loops, fadeInTime);};
 
 		Extern::Resource source = NULL;
 	};

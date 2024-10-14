@@ -1,6 +1,8 @@
 #ifndef MAKAILIB_CORE_DISPLAY_H
 #define MAKAILIB_CORE_DISPLAY_H
 
+#include "../compat/ctl.hpp"
+
 #include "../ctl/ctl.hpp"
 
 namespace Makai {
@@ -10,7 +12,7 @@ namespace Makai {
 	};
 
 	/// Returns the window size of the selected display.
-	Vector2 getDisplaySize(usize const& display = 0);
+	Math::Vector2 getDisplaySize(usize const& display = 0);
 }
 
 #endif // MAKAILIB_CORE_DISPLAY_H

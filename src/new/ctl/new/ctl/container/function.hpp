@@ -118,6 +118,21 @@ public:
     constexpr Function(SelfType const& f)	{operator=(f);	}
 };
 
+template<typename... Args>
+using Procedure		= Function<void(Args...)>;
+
+template<typename T, typename T2 = T const&>
+using Operation		= Function<T(T2)>;
+
+template<typename T>
+using Acquisition	= Function<T()>;
+
+template<typename... Args>
+using Signal	= Procedure<Args...>;
+
+template<typename T = void>
+using Trigger	= Acquisition<bool>;
+
 CTL_NAMESPACE_END
 
 #endif // CTL_CONTAINER_FUNCTION_H

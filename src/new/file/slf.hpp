@@ -1,7 +1,7 @@
 #ifndef MAKAILIB_FILE_SLF_H
 #define MAKAILIB_FILE_SLF_H
 
-#include "../ctl/ctl.hpp"
+#include "../compat/ctl.hpp"
 #include "get.hpp"
 
 namespace Makai::SLF {

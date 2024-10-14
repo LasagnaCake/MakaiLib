@@ -1,14 +1,15 @@
 #ifndef MAKAILIB_AUDIO_PLAYABLE_H
 #define MAKAILIB_AUDIO_PLAYABLE_H
 
-#include "../ctl/ctl.hpp"
+#include "../compat/ctl.hpp"
+
 #include "../core/extern.hpp"
 #include "../data/encdec.hpp"
 
 namespace Makai::Audio {
 	class Playable {
 	public:
-		using Callback = const Event::Signal;
+		using Callback = const Signal<>;
 
 		Playable();
 
@@ -33,9 +34,9 @@ namespace Makai::Audio {
 		virtual void onUpdate()								{}
 
 	private:
-		Callback yield = SIGNAL {this->onUpdate();};
+		Callback yield = [&] {this->onUpdate();};
 
-		Data::BinaryData data;
+		BinaryData<> data;
 
 		bool created = false;
 	};
