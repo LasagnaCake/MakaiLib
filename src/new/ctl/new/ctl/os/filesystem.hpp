@@ -63,6 +63,25 @@ namespace OS::FS {
 		(makeDirectory(toString(args)), ...);
 	}
 
+	inline void remove(String const& dir) {
+		fs::remove_all(dir.cstr());
+	}
+
+	inline void remove(StringList const& dirs) {
+		for (auto& d: dirs)
+			remove(d);
+	}
+	
+	inline void remove(StringArguments const& dirs) {
+		for (auto& d: dirs)
+			remove(d);
+	}
+
+	template <typename... Args>
+	inline void remove(Args const&... args) {
+		(remove(toString(args)), ...);
+	}
+
 	constexpr String concatenate(String const& root, String const& path) {
 		if (root.empty()) return path;
 		String res = root;
@@ -83,6 +102,13 @@ namespace OS::FS {
 		for(auto& path: paths) {
 			if (!path.empty()) res = concatenate(res, path);
 		}
+		return res;
+	}
+
+	template<typename... Args>
+	constexpr String concatenate(String const& root, String const& path, Args const&... args) {
+		String res = concatenate(root, path);
+		(..., res.appendBack("/" + toString(args)));
 		return res;
 	}
 

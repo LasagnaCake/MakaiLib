@@ -50,6 +50,7 @@ define tests
 	$(call mktest, $(1), 07.nullable)
 	$(call mktest, $(1), 08.format)
 	$(call mktest, $(1), 09.span)
+	$(call mktest, $(1), 10.view)
 endef
 else
 define tests
