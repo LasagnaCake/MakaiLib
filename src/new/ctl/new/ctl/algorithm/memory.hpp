@@ -176,9 +176,15 @@ namespace MX {
 	}
 
 	template<Type::NonVoid T, typename... Args>
-	constexpr void construct(T* const& mem, Args... args) {
+	constexpr T* construct(T* const& mem, Args... args) {
 		if (!mem) throw ConstructionFailure();
 		::new (static_cast<void*>(mem)) T(args...);
+		return mem;
+	}
+
+	template<Type::NonVoid T, typename... Args>
+	constexpr T* create(Args... args) {
+		return construct<T>(malloc<T>(), args...);
 	}
 
 	constexpr pointer resize(pointer& mem, usize const& sz) {

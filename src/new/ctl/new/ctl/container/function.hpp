@@ -64,13 +64,13 @@ private:
 	template<typename TFunction>
 	constexpr static Callable<TFunction>*
 	makeCallable(TFunction&& f) {
-		return new Callable<TFunction>(CTL::move(f));
+		return ::new Callable<TFunction>(CTL::move(f));
 	}
 
 	template<typename TFunction>
 	constexpr static Callable<TFunction>*
 	makeCallable(TFunction const& f) {
-		return new Callable<TFunction>(f);
+		return ::new Callable<TFunction>(f);
 	}
 
 	constexpr void assign(SelfType const& other) {

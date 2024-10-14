@@ -51,6 +51,8 @@ define tests
 	$(call mktest, $(1), 08.format)
 	$(call mktest, $(1), 09.span)
 	$(call mktest, $(1), 10.view)
+	$(call mktest, $(1), 11.filesystem)
+	$(call mktest, $(1), 12.regex)
 endef
 else
 define tests
