@@ -32,8 +32,8 @@ namespace Makai::JSON {
 					"Parameter '" + name + "' is not of type '"
 					+ NAMEOF(typeid(T)) + "'!",
 					__FILE__,
-					::toString(__LINE__),
-					::toString("get<", NAMEOF(typeid(T)), ">"),
+					CTL::toString(__LINE__),
+					CTL::toString("get<", NAMEOF(typeid(T)), ">"),
 					e.what()
 				);
 			}
