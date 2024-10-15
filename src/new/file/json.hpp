@@ -9,7 +9,7 @@
 namespace Makai::JSON {
 	namespace Extern {
 		using Nlohmann = nlohmann::json;
-		using JSONData = nlohmann::ordered_json;
+		using JSONData = nlohmann::basic_json<Map, List, String, bool, ssize, usize, float>;
 	}
 
 	using JSONType = Extern::JSONData;
