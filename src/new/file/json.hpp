@@ -16,8 +16,8 @@ namespace Makai::JSON {
 
 	class JSONView: public View<Extern::JSONData> {
 	public:
-		JSONView(Extern::JSONData& _data, String const& _name = "<anonymous>");
-		JSONView(Extern::JSONData const& _data, String const& _name = "<anonymous>");
+		JSONView(Extern::JSONData& data, String const& name = "<anonymous>");
+		JSONView(Extern::JSONData const& data, String const& name = "<anonymous>");
 		JSONView(JSONView const& other);
 		JSONView(JSONView&& other);
 
