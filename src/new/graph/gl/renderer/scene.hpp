@@ -15,7 +15,7 @@ namespace Makai::Graph {
 		public:
 			using DrawableType = TDraw;
 
-			using DrawableEntry	= Pair<String, DrawableType*>;
+			using DrawableEntry	= KeyValuePair<String, DrawableType*>;
 			using DrawableBank	= SortedDictionary<DrawableType*>;
 
 			Collection(usize const& layer = 0, bool const& manual = false): Drawable(layer, manual) {}

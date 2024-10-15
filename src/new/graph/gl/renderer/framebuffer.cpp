@@ -8,7 +8,7 @@ namespace ImageSlot {
 	constexpr uint8 DEPTH	= 31;
 }
 
-using namespace Makai::Graph;
+using namespace Makai; using namespace Makai::Graph;
 
 Base::DrawBuffer::DrawBuffer(uint const& width, uint const& height) {
 	create(width, height);

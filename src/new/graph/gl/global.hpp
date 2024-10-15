@@ -1,7 +1,7 @@
 #ifndef MAKAILIB_GRAPH_GLOBAL_H
 #define MAKAILIB_GRAPH_GLOBAL_H
 
-#include "../../ctl/ctl.hpp"
+#include "../../compat/ctl.hpp"
 #include "camera.hpp"
 #include "material/material.hpp"
 

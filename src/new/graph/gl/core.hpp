@@ -1,7 +1,7 @@
 #ifndef MAKAILIB_GRAPH_CORE_H
 #define MAKAILIB_GRAPH_CORE_H
 
-#include "../../ctl/ctl.hpp"
+#include "../../compat/ctl.hpp"
 
 namespace Makai::Graph::API {
 	namespace Debug {

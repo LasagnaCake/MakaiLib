@@ -5,7 +5,7 @@
 
 #include "image.hpp"
 
-using namespace Makai::Graph;
+using namespace Makai; using namespace Makai::Graph;
 
 using ImageTarget		= Image::ImageTarget;
 using ImageFileType		= Image2D::ImageFileType;

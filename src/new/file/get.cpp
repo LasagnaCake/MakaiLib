@@ -12,6 +12,7 @@
 #define IMPL_ARCHIVE_
 #endif
 
+using namespace Makai;
 using Makai::Tool::Arch::FileArchive;
 
 #ifdef IMPL_ARCHIVE_
@@ -30,11 +31,7 @@ FileArchive& archive() {
 	static FileArchive arc;
 	return arc;
 }
-
-Error::ErrorPointer	arcfail	= nullptr;
 #endif
-
-using Makai::File::BinaryData;
 
 [[noreturn]] void fileLoadError(String const& path, String const& reason) {
 	throw Makai::File::FileLoadError(
@@ -57,7 +54,7 @@ using Makai::File::BinaryData;
 }
 
 void assertFileExists(String const& path) {
-	if (!FileSystem::exists(path))
+	if (!OS::FS::exists(path))
 		fileLoadError(path, toString("File or directory '", path, "' does not exist!"));
 }
 
@@ -82,7 +79,6 @@ void Makai::File::attachArchive(DataBuffer& buffer, String const& password) {
 			"Makai::File::attachArchive"
 		);
 	try {
-		arcfail = nullptr;
 		state() = ArchiveState::FAS_LOADING;
 		archive().close();
 		archive().open(buffer, password);
@@ -90,7 +86,6 @@ void Makai::File::attachArchive(DataBuffer& buffer, String const& password) {
 		DEBUGLN("Archive Attached!");
 	} catch (...) {
 		DEBUGLN("Archive attachment failed!");
-		arcfail = Error::current();
 	}
 	#endif
 }
@@ -167,10 +162,10 @@ String Makai::File::loadText(String const& path) {
 		// Open file
 		file.open(path);
 		std::stringstream stream;
-		// Read file’s buffer contents into stringstream
+		// Read file's buffer contents into stringstream
 		stream << file.rdbuf();
 		// Convert stream into string
-		content = stream.str();
+		content = stream.str().c_str();
 		// Close file handler
 		file.close();
 		// Return contents
@@ -182,7 +177,7 @@ String Makai::File::loadText(String const& path) {
 	return "";
 }
 
-BinaryData Makai::File::loadBinary(String const& path) {
+BinaryData<> Makai::File::loadBinary(String const& path) {
 	// Ensure directory exists
 	assertFileExists(path);
 	try {
@@ -195,9 +190,9 @@ BinaryData Makai::File::loadBinary(String const& path) {
 		// Open file
 		file.open(path);
 		// Preallocate data
-		BinaryData data(fsize);
+		BinaryData<> data(fsize, 0);
 		// Read & close file
-		file.read((char*)&data[0], fsize);
+		file.read((char*)data.data(), fsize);
 		file.close();
 		// Return data
 		return data;
@@ -222,8 +217,8 @@ Makai::File::CSVData Makai::File::loadCSV(String const& path, char const& delimi
 	return csvs;
 }
 
-void Makai::File::saveBinary(String const& path, Makai::File::ByteSpan const& data) {
-	FileSystem::makeDirectory(FileSystem::getDirectoryFromPath(path));
+void Makai::File::saveBinary(String const& path, Makai::File::ByteSpan<> const& data) {
+	OS::FS::makeDirectory(OS::FS::getDirectoryFromPath(path));
 	// Try and save data
 	try {
 		std::ofstream file(path.c_str(), std::ios::binary);
@@ -239,12 +234,12 @@ void Makai::File::saveBinary(String const& path, Makai::File::ByteSpan const& da
 	}
 }
 
-void Makai::File::saveBinary(String const& path, BinaryData const& data) {
-	Makai::File::saveBinary(path, Makai::File::ByteSpan((ubyte*)data.data(), data.size()));
+void Makai::File::saveBinary(String const& path, BinaryData<> const& data) {
+	Makai::File::saveBinary(path, ByteSpan<>((ubyte*)data.data(), data.size()));
 }
 
 void Makai::File::saveText(String const& path, String const& text) {
-	FileSystem::makeDirectory(FileSystem::getDirectoryFromPath(path));
+	OS::FS::makeDirectory(OS::FS::getDirectoryFromPath(path));
 	// Try and save data
 	try {
 		std::ofstream file(path.c_str(), std::ios::trunc);
@@ -263,7 +258,7 @@ void Makai::File::saveText(String const& path, String const& text) {
 String Makai::File::loadTextFromArchive(String const& path) {
 	#ifdef IMPL_ARCHIVE_
 	assertArchive(path);
-	return archive().getTextFile(FileSystem::getChildPath(path));
+	return archive().getTextFile(OS::FS::getChildPath(path));
 	#else
 	fileLoadError(path, "Archive functionality disabled!");
 	#endif
@@ -272,7 +267,7 @@ String Makai::File::loadTextFromArchive(String const& path) {
 BinaryData Makai::File::loadBinaryFromArchive(String const& path) {
 	#ifdef IMPL_ARCHIVE_
 	assertArchive(path);
-	return archive().getBinaryFile(FileSystem::getChildPath(path));
+	return archive().getBinaryFile(OS::FS::getChildPath(path));
 	#else
 	fileLoadError(path, "Archive functionality disabled!");
 	#endif
@@ -314,7 +309,7 @@ String Makai::File::getText(String const& path) {
 	#endif
 }
 
-BinaryData Makai::File::getBinary(String const& path) {
+BinaryData<> Makai::File::getBinary(String const& path) {
 	#ifdef IMPL_ARCHIVE_
 	BinaryData res;
 	if (isArchiveAttached())

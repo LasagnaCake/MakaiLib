@@ -5,7 +5,7 @@
 
 #include "vertex.hpp"
 
-using namespace Makai::Graph;
+using namespace Makai; using namespace Makai::Graph;
 
 VertexMap Vertex::defaultMap() {
 	return VertexMap{

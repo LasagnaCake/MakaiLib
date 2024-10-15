@@ -170,7 +170,7 @@ namespace Makai::Tool::Arch {
 	void saveEncryptedBinaryFile(
 		String const&				path,
 		T* const&					data,
-		size_t const&				size,
+		usize const&				size,
 		String const&				password	= "",
 		EncryptionMethod const&		enc			= EncryptionMethod::AEM_AES256,
 		CompressionMethod const&	comp		= CompressionMethod::ACM_ZIP,

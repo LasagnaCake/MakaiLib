@@ -102,6 +102,21 @@ public:
 		magnitude		= ::CTL::move(other.magnitude);
 		other.contents	= nullptr;
 	}
+
+	template<Type::Convertible<DataType> T2>
+	constexpr List(ForwardIterator<T2 const> const& begin, ForwardIterator<T2 const> const& end) {
+		invoke(end - begin + 1);
+		copy(begin, contents, end - begin);
+		count = end - begin;
+	}
+
+	template<Type::Convertible<DataType> T2>
+	constexpr List(ReverseIterator<T2 const> const& begin, ReverseIterator<T2 const> const& end) {
+		invoke(end - begin + 1);
+		for (auto i = begin; i != end; ++i)
+			pushBack(*i);
+		count = end - begin;
+	}
 	
 	constexpr List(ConstIteratorType const& begin, ConstIteratorType const& end) {
 		invoke(end - begin + 1);
@@ -111,8 +126,8 @@ public:
 
 	constexpr List(ConstReverseIteratorType const& begin, ConstReverseIteratorType const& end) {
 		invoke(end - begin + 1);
-		for (IteratorType i = begin; i != end; ++i)
-			pushBack(i);
+		for (auto i = begin; i != end; ++i)
+			pushBack(*i);
 		count = end - begin;
 	}
 

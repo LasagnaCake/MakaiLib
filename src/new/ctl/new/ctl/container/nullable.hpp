@@ -142,7 +142,7 @@ public:
 		return *this;
 	}
 
-	constexpr DataType operator *() const {
+	constexpr DataType operator*() const {
 		return value();
 	}
 

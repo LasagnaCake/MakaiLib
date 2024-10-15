@@ -72,7 +72,7 @@ namespace Makai {
 		AppState getState();
 
 		/// Sets the application's window size.
-		void setWindowSize(Math::Vector2 const& size);
+		void setWindowSize(Vector2 const& size);
 
 		/// Set the application window's opacity.
 		void setWindowOpacity(float const& opacity = 1);
@@ -92,9 +92,9 @@ namespace Makai {
 		Graph::FrameBuffer& getFrameBuffer();
 		Graph::FrameBuffer& getLayerBuffer();
 
-		Math::Vector2 getWindowSize();
+		Vector2 getWindowSize();
 
-		Math::Vector2 getWindowScale();
+		Vector2 getWindowScale();
 
 		/// Gets called when the application is opened.
 		virtual void onOpen() {}
@@ -143,7 +143,7 @@ namespace Makai {
 		void pushLayerToFrame();
 
 		/// The window's background color.
-		Math::Vector4 background = Graph::Color::BLACK;
+		Vector4 background = Graph::Color::BLACK;
 
 		/// The application's input manager.
 		Input::Manager input;

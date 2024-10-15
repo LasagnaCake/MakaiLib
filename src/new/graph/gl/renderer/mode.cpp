@@ -2,7 +2,8 @@
 
 #include "../glapiloader.cc"
 
-using namespace Makai::Graph;
+using namespace Makai;
+using namespace Makai; using namespace Makai::Graph;
 
 uint convert(DisplayMode const& mode) {
 	switch (mode) {

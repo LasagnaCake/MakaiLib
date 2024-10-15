@@ -73,7 +73,7 @@ App::App (
 	// Create window and make active
 	DEBUGLN("Creating window...");
 	window = (Extern::Resource)SDL_CreateWindow(
-		windowTitle.c_str(),
+		windowTitle.cstr(),
 		SDL_WINDOWPOS_CENTERED,
 		SDL_WINDOWPOS_CENTERED,
 		width,
@@ -164,7 +164,7 @@ App::~App() {
 }
 
 void App::setWindowTitle(String const& title) {
-	SDL_SetWindowTitle(sdlWindow, title.c_str());
+	SDL_SetWindowTitle(sdlWindow, title.cstr());
 }
 
 void App::setFullscreen(bool const& state) {
@@ -183,8 +183,8 @@ void App::run() {
 	state = App::AppState::AS_OPENING;
 	// The timer process
 	auto timerFunc	= [&](float delta)-> void {
-		Tweening::Tweener::process(1.0);
-		Event::Timeable::process(1.0);
+		PeriodicTween::process(1.0);
+		PeriodicTimer::process(1.0);
 	};
 	// The logical process
 	auto logicFunc	= [&](float delta)-> void {
@@ -353,11 +353,11 @@ Graph::FrameBufferData App::toFrameBufferData() {
 }
 
 void App::queueScreenCopy(Graph::Texture2D target) {
-	screenQueue.push_back(target);
+	screenQueue.pushBack(target);
 }
 
 void App::unqueueScreenCopy(Graph::Texture2D target) {
-	ERASE_IF(screenQueue, elem == target);
+	screenQueue.eraseIf([&] (auto e) {return e == target;});
 }
 
 void App::setWindowOpacity(float const& opacity) {
@@ -438,9 +438,8 @@ void App::render() {
 	layerbuffer.clearBuffers();
 	#endif // MAKAILIB_DO_NOT_USE_BUFFERS
 	// Draw objects
-	auto rLayers = Graph::Renderer::getLayers();
-	for (auto layer : rLayers) {
-		if (!Graph::Renderer::isLayerEmpty(layer)) {
+	for (auto layer: Graph::Renderer::layers) {
+		if (!layer.value.empty()) {
 			// Clear layer skip flag
 			skipLayer = false;
 			// If previous layer was pushed to framebuffer...
@@ -453,7 +452,7 @@ void App::render() {
 			}
 			#endif // MAKAILIB_DO_NOT_USE_BUFFERS
 			// Call onLayerDrawBegin function
-			onLayerDrawBegin(layer);
+			onLayerDrawBegin(layer.key);
 			// Skip layer if applicable
 			if (!skipLayer) {
 				// Clear buffers
@@ -464,20 +463,20 @@ void App::render() {
 				Makai::Graph::API::clear(Makai::Graph::API::Buffer::GAB_DEPTH);
 				#endif
 				// Call onLayerDrawBegin function
-				onPostLayerClear(layer);
+				onPostLayerClear(layer.key);
 				// Render layer
-				Graph::Renderer::renderLayer(layer);
+				Makai::Graph::Renderer::renderLayer(layer.value);
 				// Clear layer push flag
 				pushToFrame = false;
 				// Call onPreLayerDraw function
-				onPreLayerDraw(layer);
+				onPreLayerDraw(layer.key);
 				// Render layer buffer
 				#ifndef MAKAILIB_DO_NOT_USE_BUFFERS
 				if (pushToFrame) layerbuffer.render(framebuffer);
 				#endif // MAKAILIB_DO_NOT_USE_BUFFERS
 			}
 			// Call onLayerDrawEnd function
-			onLayerDrawEnd(layer);
+			onLayerDrawEnd(layer.key);
 		}
 	}
 	// If last layer wasn't rendered, do so

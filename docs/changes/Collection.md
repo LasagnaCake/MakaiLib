@@ -57,7 +57,7 @@ These are:
 - - `to*()` → globally
 - - `regex*()` → `CTL::Regex` drop `regex` prefix
 - - `Time::*` → `CTL::Time`
-- - `FileSystem::*` → `CTL::FS`
+- - `OS::FS::*` → `CTL::FS`
 - - `Fold::*` → `CTL::Meta`
 - - `System::*` → `CTL::OS`
 - - `print*` → `CTL::IO`

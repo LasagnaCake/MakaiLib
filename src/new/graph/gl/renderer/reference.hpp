@@ -1,7 +1,7 @@
 #ifndef MAKAILIB_GRAPH_RENDERER_REFERENCE_H
 #define MAKAILIB_GRAPH_RENDERER_REFERENCE_H
 
-#include "../../../ctl/ctl.hpp"
+#include "../../../compat/ctl.hpp"
 
 #include "../vertex.hpp"
 #include "../color.hpp"
@@ -17,8 +17,8 @@ namespace Makai::Graph {
 		virtual ~Empty()	{onDestroy = onUnbind = []{};	}
 		friend class Renderable;
 	private:
-		Event::Signal onDestroy;
-		Event::Signal onUnbind;
+		Signal<> onDestroy;
+		Signal<> onUnbind;
 	};
 
 	#pragma GCC diagnostic push

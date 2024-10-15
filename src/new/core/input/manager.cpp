@@ -8,7 +8,7 @@
 
 #define sdlWindow ((SDL_Window*)window)
 
-using namespace Makai::Input;
+using namespace Makai; using namespace Makai::Input;
 
 SDL_Event pollEvents() {
 	SDL_Event ev;

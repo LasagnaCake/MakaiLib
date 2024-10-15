@@ -1,7 +1,7 @@
 #ifndef MAKAILIB_GRAPH_RENDERER_TEXT_H
 #define MAKAILIB_GRAPH_RENDERER_TEXT_H
 
-#include "../../../ctl/ctl.hpp"
+#include "../../../compat/ctl.hpp"
 #include "../texture.hpp"
 #include "drawable.hpp"
 

@@ -1,7 +1,7 @@
 #include "slf.hpp"
 
 namespace File = Makai::File;
-using namespace Makai::SLF;
+using namespace Makai; using namespace Makai::SLF;
 using namespace File;
 
 constexpr String toFileExtension(ShaderType const& type) {
@@ -30,7 +30,7 @@ constexpr ShaderType fromFileExtension(String const& str) {
 
 constexpr ShaderType fromFilePath(String const& path) {
 	return fromFileExtension(
-		FileSystem::getFileExtension(
+		OS::FS::getFileExtension(
 			Helper::toLower(path)
 		)
 	);
@@ -51,7 +51,7 @@ SLFData Makai::SLF::parse(String const& slf, String const& srcFolder, bool const
 	content = regexReplace(content, "(:[<]([\\s\\S]*?)[>]:)|(::([\\s\\S]*?)(\\n|\\r|\\r\\n))", "");
 	content = regexReplace(content, "((\\n|\\r|\\r\\n)+)", "|");
 	// Get file location
-	String dir = FileSystem::getDirectoryFromPath(srcFolder);
+	String dir = OS::FS::getDirectoryFromPath(srcFolder);
 	DEBUGLN("Directory: ", dir);
 	// Initialize type specifier here
 	ShaderType type = ShaderType::ST_INVALID;
@@ -79,13 +79,13 @@ SLFData Makai::SLF::parse(String const& slf, String const& srcFolder, bool const
 				throw Error::InvalidValue(
 					::toString(
 						"Invalid shader type for shader'",
-						FileSystem::concatenatePath(dir, shader),
+						OS::FS::concatenate(dir, shader),
 						"'!"
 					),
 					__FILE__,
 					::toString(__LINE__),
 					"SLF::parseFile",
-					::toString("File extension is '", FileSystem::getFileExtension(shader), "'")
+					::toString("File extension is '", OS::FS::getFileExtension(shader), "'")
 				);
 			}
 			result.shaders.push_back(ShaderEntry{shader, st});

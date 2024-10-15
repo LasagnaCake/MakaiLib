@@ -314,7 +314,7 @@ namespace ArcSys {
 		if (!tree.is_object())
 			throw Error::FailedAction("file tree is not a JSON object!");
 		for (auto& [name, data]: tree.items()) {
-			String path = FileSystem::concatenatePath(root, name);
+			String path = OS::FS::concatenate(root, name);
 			if (data.is_string()) data = path;
 			else if (data.is_object()) populateTree(data, path);
 			else throw Error::FailedAction("Invalid data type in file tree!");
@@ -694,15 +694,15 @@ namespace ArcSys {
 			}
 			std::random_shuffle(files.begin(), files.end());
 			for (auto& [name, data]: files) {
-				String filepath = FileSystem::concatenatePath(path, data);
+				String filepath = OS::FS::concatenate(path, data);
 				_ARCDEBUGLN(path, " + ", data, " = ", filepath);
 				_ARCDEBUGLN(
 					"'", name, "': ",
 					filepath,
-					" (dir: ", FileSystem::getDirectoryFromPath(filepath), ")"
+					" (dir: ", OS::FS::getDirectoryFromPath(filepath), ")"
 				);
 				BinaryData contents = getBinaryFile(data);
-				FileSystem::makeDirectory(FileSystem::getDirectoryFromPath(filepath));
+				OS::FS::makeDirectory(OS::FS::getDirectoryFromPath(filepath));
 				FileLoader::saveBinaryFile(filepath, contents);
 			}
 		}

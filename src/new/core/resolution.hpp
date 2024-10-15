@@ -4,8 +4,8 @@
 #include "../compat/ctl.hpp"
 
 namespace Makai::Resolution {
-	#define MAKAILIB_RESOLUTION(W, H) KeyValuePair<String, Math::Vector2>{#W" : "#H , Vector2(W, H)}
-	const List<KeyValuePair<String, Math::Vector2>> set4x3 = {
+	#define MAKAILIB_RESOLUTION(W, H) KeyValuePair<String, Vector2>{#W" : "#H , Vector2(W, H)}
+	const List<KeyValuePair<String, Vector2>> set4x3 = {
 		MAKAILIB_RESOLUTION(480, 320),
 		MAKAILIB_RESOLUTION(640, 480),
 		MAKAILIB_RESOLUTION(860, 640),
@@ -14,7 +14,7 @@ namespace Makai::Resolution {
 		MAKAILIB_RESOLUTION(1600, 1200)
 	};
 
-	const List<KeyValuePair<String, Math::Vector2>> set16x9 = {
+	const List<KeyValuePair<String, Vector2>> set16x9 = {
 		MAKAILIB_RESOLUTION(640, 360),
 		MAKAILIB_RESOLUTION(854, 480),
 		MAKAILIB_RESOLUTION(1280, 720),

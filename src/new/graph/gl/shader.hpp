@@ -2,7 +2,7 @@
 #define MAKAILIB_GRAPH_SHADER_H
 
 #include "../../file/file.hpp"
-#include "../../ctl/ctl.hpp"
+#include "../../compat/ctl.hpp"
 
 #include "uniform.hpp"
 #include "core.hpp"

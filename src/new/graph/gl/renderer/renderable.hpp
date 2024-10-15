@@ -50,7 +50,7 @@ namespace Makai::Graph {
 			// Create triangles
 			for SRANGE(i, 0, count) {
 				tris[i] = new Triangle();
-				triangles.push_back(tris[i]);
+				triangles.pushBack(tris[i]);
 			}
 			// Create shape
 			T* shape = new T(tris);
@@ -83,11 +83,13 @@ namespace Makai::Graph {
 			if (locked) return;
 			constexpr usize count = T::SIZE;
 			auto tris = ref->getBoundTriangles();
-			if (!triangles.empty()) std::erase_if(
-				triangles,
-				[=](Triangle* e){
-					for SRANGE(i, 0, count)
-						if (e == tris[i]) {delete tris[i]; return true;}
+			triangles.eraseIf(
+				[=] (Triangle* e) {
+					for (usize i = 0; i < count; ++i)
+						if (e == tris[i]) {
+							delete tris[i];
+							return true;
+						}
 					return false;
 				}
 			);
@@ -106,7 +108,7 @@ namespace Makai::Graph {
 			if (!ref) return;
 			if (locked) return;
 			auto& rs = references.shape;
-			ERASE_IF(rs, elem == (ShapeRef<0>*)ref);
+			rs.eraseIf([&] (auto& e) {e == (ShapeRef<0>*)ref});
 			delete ref;
 		}
 

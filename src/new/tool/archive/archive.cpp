@@ -27,7 +27,8 @@
 namespace fs = std::filesystem;
 using namespace CryptoPP;
 namespace File = Makai::File;
-using File::BinaryData;
+
+using namespace Makai;
 
 namespace Arch = Makai::Tool::Arch;
 using namespace Arch;
@@ -36,16 +37,16 @@ using Nlohmann = nlohmann::json;
 using Makai::JSON::Extern::JSONData;
 
 String encoded(uint64 const& v) {
-	BinaryData data(8, 0);
-	for SRANGE(i, 0, 8) data[i] = uint8((v >> (8 * i)) & 0xFF);
+	BinaryData<> data(8, 0);
+	for (usize i = 0; i < 8; ++i) data[i] = uint8((v >> (8 * i)) & 0xFF);
 	return cppcodec::base64_rfc4648::encode(data);
 }
 
 uint64 decoded(String const& v) {
-	BinaryData data = cppcodec::base64_rfc4648::decode(v);
-	size_t result = 0;
-	for (auto [i, b]: Helper::enumerate(data))
-		result |= (uint64(b) << (8 * i));
+	BinaryData<> data = cppcodec::base64_rfc4648::decode(v);
+	usize result = 0;
+	for (usize i = 0; i < data.size(); ++i)
+		result |= (uint64(data[i]) << (8 * i));
 	return result;
 }
 
@@ -71,8 +72,8 @@ String Arch::hashPassword(String const& str) {
 }
 
 template<class T>
-BinaryData cbcTransform(
-	BinaryData const&		data,
+BinaryData<> cbcTransform(
+	BinaryData<><> const&		data,
 	String					password	= "",
 	uint8* const&			block		= nullptr
 ) try {
@@ -96,7 +97,7 @@ BinaryData cbcTransform(
 		)
 	);
 	delete[] iv;
-	return BinaryData(result.begin(), result.end());
+	return BinaryData<><>(result.begin(), result.end());
 } catch (Exception const& e) {
 	throw Error::FailedAction(
 		e.what()
@@ -114,8 +115,8 @@ T* getFlator(String& result, uint8 const& level) {
 }
 
 template<class T>
-BinaryData flate(
-	BinaryData	const&			data,
+BinaryData<><> flate(
+	BinaryData<><>	const&			data,
 	CompressionMethod const&	method	= CompressionMethod::ACM_ZIP,
 	uint8 const&				level	= 9
 ) try {
@@ -131,7 +132,7 @@ BinaryData flate(
 			);
 		}
 	}
-	return BinaryData(result.begin(), result.end());
+	return BinaryData<><>(result.begin(), result.end());
 } catch (Exception const& e) {
 	throw Error::FailedAction(
 		e.what()
@@ -139,8 +140,8 @@ BinaryData flate(
 }
 
 template<typename T>
-BinaryData cbcEncrypt(
-	BinaryData const&		data,
+BinaryData<><> cbcEncrypt(
+	BinaryData<><> const&		data,
 	String const&			password	= "",
 	uint8* const&			block		= nullptr
 ) {
@@ -148,16 +149,16 @@ BinaryData cbcEncrypt(
 }
 
 template<typename T>
-BinaryData cbcDecrypt(
-	BinaryData const&		data,
+BinaryData<><> cbcDecrypt(
+	BinaryData<><> const&		data,
 	String const&			password	= "",
 	uint8* const&			block		= nullptr
 ) {
 	return cbcTransform<typename CBC_Mode<T>::Decryption>(data, password, block);
 }
 
-BinaryData Arch::encrypt(
-	BinaryData const&		data,
+BinaryData<><> Arch::encrypt(
+	BinaryData<><> const&		data,
 	String const&			password,
 	EncryptionMethod const&	method,
 	uint8* const&			block
@@ -170,8 +171,8 @@ BinaryData Arch::encrypt(
 	return data;
 }
 
-BinaryData Arch::decrypt(
-	BinaryData const&		data,
+BinaryData<><> Arch::decrypt(
+	BinaryData<><> const&		data,
 	String const&			password,
 	EncryptionMethod const&	method,
 	uint8* const&			block
@@ -184,16 +185,16 @@ BinaryData Arch::decrypt(
 	return data;
 }
 
-BinaryData Arch::compress(
-	BinaryData	const&			data,
+BinaryData<><> Arch::compress(
+	BinaryData<><>	const&			data,
 	CompressionMethod const&	method,
 	uint8 const&				level
 ) {
 	return flate<Deflator>(data, method, level);
 }
 
-BinaryData Arch::decompress(
-	BinaryData	const&			data,
+BinaryData<><> Arch::decompress(
+	BinaryData<><>	const&			data,
 	CompressionMethod const&	method,
 	uint8 const&				level
 ) {
@@ -233,17 +234,17 @@ void populateTree(JSONData& tree, String const& root = "") {
 	if (!tree.is_object())
 		throw Error::FailedAction("file tree is not a JSON object!");
 	for (auto& [name, data]: tree.items()) {
-		String path = FileSystem::concatenatePath(root, name);
+		String path = OS::FS::concatenate(root, name);
 		if (data.is_string()) data = path;
 		else if (data.is_object()) populateTree(data, path);
 		else throw Error::FailedAction("Invalid data type in file tree!");
 	}
 }
 
-size_t populateTree(JSONData& tree, List<uint64> const& values, size_t const& start = 0) {
+usize populateTree(JSONData& tree, List<uint64> const& values, usize const& start = 0) {
 	if (!tree.is_object())
 		throw Error::FailedAction("file tree is not a JSON object!");
-	size_t idx = start;
+	usize idx = start;
 	for (auto& [name, data]: tree.items()) {
 		if (data.is_string()) data = encoded(values[idx++]);
 		else if (data.is_object()) idx = populateTree(data, values, idx);
@@ -313,7 +314,7 @@ void Arch::pack(
 			// Get current stream position as file location
 			locations[i] = file.tellp();
 			// Read file
-			File::BinaryData contents = File::loadBinary(f);
+			File::BinaryData<><> contents = File::loadBinary(f);
 			// Prepare header
 			FileHeader fheader;
 			fheader.uncSize = contents.size();				// Uncompressed file size
@@ -361,7 +362,7 @@ void Arch::pack(
 			// Get directory info
 			String dirInfo = dir.dump(-1, ' ', false, Nlohmann::error_handler_t::replace);
 			// Compress & encrypt directory info
-			BinaryData pdi = BinaryData(dirInfo.begin(), dirInfo.end());
+			BinaryData<><> pdi = BinaryData<><>(dirInfo.begin(), dirInfo.end());
 			pdi = compress(pdi, comp, complvl);
 			pdi = encrypt(pdi, passhash, enc, dheader.block);
 			// Populate header
@@ -468,7 +469,7 @@ FileArchive& Arch::FileArchive::open(DataBuffer& buffer, String const& password)
 	// Set exceptions
 	archive.exceptions(std::ifstream::badbit | std::ifstream::failbit);
 	// Read header
-	size_t hs = 0;
+	usize hs = 0;
 	archive.read((char*)&hs, sizeof(uint64));
 	archive.seekg(0);
 	archive.read((char*)&header, hs);
@@ -509,7 +510,7 @@ String Arch::FileArchive::getTextFile(String const& path) try {
 	);
 }
 
-BinaryData Arch::FileArchive::getBinaryFile(String const& path) try {
+BinaryData<><> Arch::FileArchive::getBinaryFile(String const& path) try {
 	assertOpen();
 	FileEntry fe = getFileEntry(path);
 	processFileEntry(fe);
@@ -539,7 +540,7 @@ ArchiveHeader Arch::FileArchive::getHeader(String const& path) {
 	// Open file
 	af.open(path, std::ios::binary | std::ios::in);
 	// Read header
-	size_t hs = 0;
+	usize hs = 0;
 	af.read((char*)&hs, sizeof(uint64));
 	af.seekg(0);
 	af.read((char*)&ah, hs);
@@ -576,7 +577,7 @@ void Arch::FileArchive::parseFileTree() {
 		_ARCDEBUGLN("  DIRECTORY INFO LOCATION: ", header.dirHeaderLoc		);
 		_ARCDEBUGLN("        UNCOMPRESSED SIZE: ", dh.uncSize,			"B"	);
 		_ARCDEBUGLN("          COMPRESSED SIZE: ", dh.compSize,			"B"	);
-		BinaryData pfs(dh.compSize, 0);
+		BinaryData<><> pfs(dh.compSize, 0);
 		archive.read((char*)pfs.data(), pfs.size());
 		archive.seekg(0);
 		demangleData(pfs, dh.block);
@@ -598,7 +599,7 @@ void Arch::FileArchive::parseFileTree() {
 	_ARCDEBUGLN("File Structure:\n", fstruct.dump(2, ' ', false, Nlohmann::error_handler_t::replace), "\n");
 }
 
-void Arch::FileArchive::demangleData(BinaryData& data, uint8* const& block) const {
+void Arch::FileArchive::demangleData(BinaryData<><>& data, uint8* const& block) const {
 	_ARCDEBUGLN("Before decryption: ", data.size());
 	data = decrypt(
 		data,
@@ -626,21 +627,21 @@ void Arch::FileArchive::unpackLayer(JSONData const& layer, String const& path) {
 	}
 	std::random_shuffle(files.begin(), files.end());
 	for (auto& [name, data]: files) {
-		String filepath = FileSystem::concatenatePath(path, data);
+		String filepath = OS::FS::concatenate(path, data);
 		_ARCDEBUGLN(path, " + ", data, " = ", filepath);
 		_ARCDEBUGLN(
 			"'", name, "': ",
 			filepath,
-			" (dir: ", FileSystem::getDirectoryFromPath(filepath), ")"
+			" (dir: ", OS::FS::getDirectoryFromPath(filepath), ")"
 		);
-		BinaryData contents = getBinaryFile(data);
-		FileSystem::makeDirectory(FileSystem::getDirectoryFromPath(filepath));
+		BinaryData<><> contents = getBinaryFile(data);
+		OS::FS::makeDirectory(OS::FS::getDirectoryFromPath(filepath));
 		File::saveBinary(filepath, contents);
 	}
 }
 
 void Arch::FileArchive::processFileEntry(FileEntry& entry) const {
-	BinaryData data = entry.data;
+	BinaryData<><> data = entry.data;
 	if (entry.header.uncSize == 0) return;
 	demangleData(data, entry.header.block);
 	if (data.size() != entry.header.uncSize)
@@ -675,8 +676,8 @@ Arch::FileArchive::FileEntry Arch::FileArchive::getFileEntry(String const& path)
 	);
 }
 
-BinaryData Arch::FileArchive::getFileEntryData(uint64 const& index, FileHeader const& fh) try {
-	BinaryData fd(fh.compSize, 0);
+BinaryData<><> Arch::FileArchive::getFileEntryData(uint64 const& index, FileHeader const& fh) try {
+	BinaryData<><> fd(fh.compSize, 0);
 	auto lp = archive.tellg();
 	archive.seekg(index + header.fileHeaderSize);
 	archive.read((char*)fd.data(), fh.compSize);
@@ -818,7 +819,7 @@ void Arch::unpack(
 }
 #endif // ARCSYS_APPLICATION_
 
-BinaryData Arch::loadEncryptedBinaryFile(String const& path, String const& password) try {
+BinaryData<><> Arch::loadEncryptedBinaryFile(String const& path, String const& password) try {
 	std::ifstream archive;
 	// Set exceptions
 	archive.exceptions(std::ifstream::badbit | std::ifstream::failbit);
@@ -845,11 +846,11 @@ BinaryData Arch::loadEncryptedBinaryFile(String const& path, String const& passw
 	FileHeader fh;
 	archive.read((char*)&fh, header.fileHeaderSize);
 	// Get file data
-	BinaryData fd(fh.compSize, 0);
+	BinaryData<> fd(fh.compSize, 0);
 	archive.read((char*)fd.data(), fh.compSize);
 	// Extract file contents
 	{
-		if (fh.uncSize == 0) return BinaryData();
+		if (fh.uncSize == 0) return BinaryData<>();
 		fd = decrypt(
 			fd,
 			password,
@@ -891,7 +892,7 @@ BinaryData Arch::loadEncryptedBinaryFile(String const& path, String const& passw
 }
 
 String Arch::loadEncryptedTextFile(String const& path, String const& password) {
-	BinaryData fd = loadEncryptedBinaryFile(path, password);
+	BinaryData<> fd = loadEncryptedBinaryFile(path, password);
 	return String(fd.begin(), fd.end());
 }
 
@@ -899,7 +900,7 @@ template<typename T>
 void Arch::saveEncryptedBinaryFile(
 	String const&				path,
 	T* const&					data,
-	size_t const&				size,
+	usize const&				size,
 	String const&				password,
 	EncryptionMethod const&		enc,
 	CompressionMethod const&	comp,
@@ -925,8 +926,8 @@ void Arch::saveEncryptedBinaryFile(
 	file.write((char*)&header, header.headerSize);
 	// Write file info
 	{
-		size_t uncSize = (size*sizeof(T));
-		BinaryData contents(data, data + uncSize);
+		usize uncSize = (size*sizeof(T));
+		BinaryData<> contents(data, data + uncSize);
 		// Prepare header
 		FileHeader fheader;
 		fheader.uncSize = uncSize;		// Uncompressed file size
@@ -959,7 +960,7 @@ void Arch::saveEncryptedBinaryFile(
 
 void Arch::saveEncryptedTextFile(
 	String const&				path,
-	BinaryData const&			data,
+	BinaryData<> const&			data,
 	String const&				password,
 	EncryptionMethod const&		enc,
 	CompressionMethod const&	comp,

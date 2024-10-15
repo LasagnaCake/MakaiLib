@@ -12,7 +12,6 @@ CTL_EX_NAMESPACE_BEGIN
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wsequence-point"
 
-// Taken from https://easings.net
 namespace Math::Ease {
 	/// Easing function template
 	typedef Function<float(float const&)> Mode;
@@ -20,7 +19,8 @@ namespace Math::Ease {
 	EASE_FUN(linear) {return x;}
 
 	using EaseFunction = decltype(linear);
-
+	
+	// Taken from https://easings.net
 	/// In easing functions
 	namespace In {
 		EASE_FUN(linear)	{return x;}
@@ -55,6 +55,8 @@ namespace Math::Ease {
 			return 1.0 - (n1 * (cx -= 2.625 / d1) * cx + 0.984375);
 		}
 	}
+
+	// Taken from https://easings.net
 	/// Out easing functions
 	namespace Out {
 		EASE_FUN(linear)	{return x;}

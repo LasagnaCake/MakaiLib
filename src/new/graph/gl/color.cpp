@@ -3,7 +3,7 @@
 #include "../../ctl/ctl.hpp"
 #include "color.hpp"
 
-using namespace Makai::Graph;
+using namespace Makai; using namespace Makai::Graph;
 
 using namespace Color;
 

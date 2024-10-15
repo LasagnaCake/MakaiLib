@@ -7,7 +7,7 @@
 #include "../../data/encdec.hpp"
 #include "../../file/get.hpp"
 
-using namespace Makai::Graph;
+using namespace Makai; using namespace Makai::Graph;
 
 using WrapMode			= Texture2D::WrapMode;
 using FilterMode		= Image2D::FilterMode;
@@ -95,7 +95,7 @@ void copyTexture(
 Texture2D Texture2D::fromJSON(JSON::JSONData img, String const& sourcepath) {
 	Texture2D texture;
 	if (img["data"].isObject() && img["data"]["path"].isString() && !img["data"]["path"].get<String>().empty()) {
-		texture.create(FileSystem::concatenatePath(sourcepath, img["path"].get<String>()));
+		texture.create(OS::FS::concatenate(sourcepath, img["path"].get<String>()));
 		texture.setFilterMode(
 			img["minFilter"].get<FilterMode>(FilterMode::FM_NMN),
 			img["magFilter"].get<FilterMode>(FilterMode::FM_NEAREST)

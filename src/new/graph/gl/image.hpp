@@ -1,7 +1,7 @@
 #ifndef MAKAILIB_GRAPH_IMAGE_H
 #define MAKAILIB_GRAPH_IMAGE_H
 
-#include "../../ctl/ctl.hpp"
+#include "../../compat/ctl.hpp"
 #include "../../file/file.hpp"
 #include "core.hpp"
 
@@ -41,7 +41,7 @@ namespace Makai::Graph {
 		);
 
 		bool operator==(Image const& other) const;
-		Helper::PartialOrder operator<=>(Image const& other) const;
+		ValueOrder operator<=>(Image const& other) const;
 
 		operator uint() const;
 		uint getID() const;

@@ -1,7 +1,7 @@
 #ifndef MAKAILIB_GRAPH_UNIFORM_H
 #define MAKAILIB_GRAPH_UNIFORM_H
 
-#include "../../ctl/ctl.hpp"
+#include "../../compat/ctl.hpp"
 #include "core.hpp"
 
 namespace Makai::Graph {

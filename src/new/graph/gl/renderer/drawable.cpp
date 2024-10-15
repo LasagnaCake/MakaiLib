@@ -2,7 +2,7 @@
 
 #include "drawable.hpp"
 
-using namespace Makai::Graph;
+using namespace Makai; using namespace Makai::Graph;
 
 void Drawable::doRender() {if (active) draw();}
 
@@ -31,27 +31,27 @@ Drawable& Drawable::setManual() {
 
 Drawable& Drawable::setAuto(usize const& renderLayer) {
 	if(manualMode)
-		Renderer::layers.addObject(&render, renderLayer);
+		Renderer::layers.add(&render, renderLayer);
 	manualMode = false;
 	return *this;
 }
 
 Drawable& Drawable::setRenderLayer(usize const& renderLayer) {
 	Renderer::layers.removeFromAll(&render);
-	Renderer::layers.addObject(&render, renderLayer);
+	Renderer::layers.add(&render, renderLayer);
 	manualMode = false;
 	return *this;
 }
 
 Drawable& Drawable::addToRenderLayer(usize const& renderLayer) {
-	Renderer::layers.addObject(&render, renderLayer);
+	Renderer::layers.add(&render, renderLayer);
 	manualMode = false;
 	return *this;
 }
 
 Drawable& Drawable::removeFromRenderLayer(usize const& renderLayer) {
-	Renderer::layers.removeFromGroup(&render, renderLayer);
-	if (!Renderer::layers.getGroups(&render).size())
+	Renderer::layers.remove(&render, renderLayer);
+	if (!Renderer::layers.get(&render).size())
 		manualMode = true;
 	return *this;
 }

@@ -2,7 +2,7 @@
 
 #include "core.hpp"
 
-using namespace Makai::Graph::API;
+using namespace Makai; using namespace Makai::Graph::API;
 
 constexpr GLenum API_DEBUG_MODE = GL_DEBUG_OUTPUT_SYNCHRONOUS_ARB;
 

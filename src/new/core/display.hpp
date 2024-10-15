@@ -3,8 +3,6 @@
 
 #include "../compat/ctl.hpp"
 
-#include "../ctl/ctl.hpp"
-
 namespace Makai {
 	/// A position on the screen.
 	struct ScreenPosition {
@@ -12,7 +10,7 @@ namespace Makai {
 	};
 
 	/// Returns the window size of the selected display.
-	Math::Vector2 getDisplaySize(usize const& display = 0);
+	Vector2 getDisplaySize(usize const& display = 0);
 }
 
 #endif // MAKAILIB_CORE_DISPLAY_H

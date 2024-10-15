@@ -2,7 +2,7 @@
 
 #include "shader.hpp"
 
-using namespace Makai::Graph;
+using namespace Makai; using namespace Makai::Graph;
 
 namespace SLF = Makai::SLF;
 
@@ -111,7 +111,7 @@ bool Shader::create(SLF::SLFData const& slfData) {
 	String log = "";
 	String code;
 	for (SLF::ShaderEntry const& shader: slfData.shaders) {
-		shaderPath = FileSystem::concatenatePath(dir, shader.path);
+		shaderPath = OS::FS::concatenate(dir, shader.path);
 		DEBUGLN(shaderPath);
 		if (shader.code.empty())
 			code = File::getText(shaderPath);

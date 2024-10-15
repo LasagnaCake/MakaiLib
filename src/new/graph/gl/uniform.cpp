@@ -2,7 +2,7 @@
 
 #include "uniform.hpp"
 
-using namespace Makai::Graph;
+using namespace Makai; using namespace Makai::Graph;
 
 Uniform::Uniform(String const& _name, uint const& _id):
 	name(_name),
