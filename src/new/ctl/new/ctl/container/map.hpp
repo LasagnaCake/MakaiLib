@@ -110,6 +110,14 @@ public:
 		update();
 	}
 
+	template<typename... Args>
+	constexpr BaseSympleMap(Args const&... args)
+	requires (... && Type::Convertible<Args, PairType>)
+	: BaseType(args...) {
+		clean();
+		update();
+	}
+
 	constexpr BaseSimpleMap(BaseType const& other): BaseType(other) {
 		clean();
 		update();
