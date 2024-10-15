@@ -76,7 +76,8 @@ public:
 	}
 	
 	template<typename... Args>
-	constexpr List(Args const&... args) {
+	constexpr List(Args const&... args)
+	requires (... && Type::Convertible<Args, DataType>) {
 		invoke(sizeof...(Args));
 		(..., pushBack(args));
 	}
