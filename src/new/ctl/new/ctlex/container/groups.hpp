@@ -13,11 +13,11 @@ struct Groups:
 	::CTL::Iteratable<KeyValuePair<TIdentifier, TData>, TIndex>,
 	::CTL::SelfIdentified<Groups<TData, TIdentifier, TIndex>> {
 public:
-	static_assert(Type::Comparable::Threeway<TIdentifier>, "Identifier must be comparable!");
+	static_assert(Type::Comparable::Threeway<TIdentifier, TIdentifier>, "Identifier must be comparable!");
 
 	using Collected			= ::CTL::Collected<TIdentifier, TData>;
 	using Iteratable		= ::CTL::Iteratable<KeyValuePair<TIdentifier, TData>, TIndex>;
-	using SelfIdentified	= ::CTL::SelfIdentified<Group<TData, TIdentifier, TIndex>>;
+	using SelfIdentified	= ::CTL::SelfIdentified<Groups<TData, TIdentifier, TIndex>>;
 
 	using
 		typename Collected::KeyType,
@@ -61,14 +61,14 @@ public:
 
 	constexpr SelfType& remove(ValueType const& obj, KeyType const& groupID) {
 		GroupType& gp = get(groupID);
-		gp.remove(gp.find(obj));
+		gp.erase(gp.find(obj));
 		return *this;
 	}
 
 	constexpr SelfType& removeFromAll(ValueType const& obj) {
-		IDListType gs = withObject(e);
+		IDListType gs = withObject(obj);
 		for (auto group: gs)
-			remove(e, grp);
+			remove(obj, group);
 		return *this;
 	}
 

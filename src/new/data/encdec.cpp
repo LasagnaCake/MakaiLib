@@ -7,7 +7,7 @@ using namespace Makai;
 
 using namespace Data;
 
-BinaryData Data::decode(String const& data, EncodingType const& encoding) try {
+BinaryData<> Data::decode(String const& data, EncodingType const& encoding) try {
 	switch (encoding) {
 		case EncodingType::ET_BASE32: return cppcodec::base32_rfc4648::decode(data);
 		case EncodingType::ET_BASE64: return cppcodec::base64_rfc4648::decode(data);
@@ -28,7 +28,7 @@ BinaryData Data::decode(String const& data, EncodingType const& encoding) try {
 	);
 }
 
-String Data::encode(BinaryData const& data, EncodingType const& encoding) try {
+String Data::encode(BinaryData<> const& data, EncodingType const& encoding) try {
 	switch (encoding) {
 		case EncodingType::ET_BASE32: return cppcodec::base32_rfc4648::encode(data);
 		case EncodingType::ET_BASE64: return cppcodec::base64_rfc4648::encode(data);

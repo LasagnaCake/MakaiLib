@@ -60,7 +60,7 @@ namespace OS::FS {
 
 	template <typename... Args>
 	inline void makeDirectory(Args const&... args) {
-		(makeDirectory(toString(args)), ...);
+		(makeDirectory(args), ...);
 	}
 
 	inline void remove(String const& dir) {
@@ -134,7 +134,7 @@ namespace OS::FS {
 	}*/
 
 	inline String getFileName(String const& path, bool removeExtension = false) {
-		return toString(removeExtension ? fs::path(path.cstr()).stem().string() : fs::path(path.cstr()).filename().string());
+		return String(removeExtension ? fs::path(path.cstr()).stem().string() : fs::path(path.cstr()).filename().string());
 	}
 
 	constexpr String parentDirectory(String const& path) {
@@ -145,7 +145,7 @@ namespace OS::FS {
 	}
 
 	inline String directoryFromPath(String const& path) {
-		return toString(fs::path(path.cstr()).remove_filename().string());
+		return String(fs::path(path.cstr()).remove_filename().string());
 	}
 
 	constexpr String childPath(String const& path) {
@@ -264,7 +264,7 @@ namespace OS::FS {
 				throw Error::InvalidValue("Path does not exist!");
 			if (!isDirectory(path)) return Entry(getFileName(path), path);
 			return Entry(
-				toString(fs::path(path.cstr()).stem().string()),
+				String(fs::path(path.cstr()).stem().string()),
 				path,
 				getFolderContents(path)
 			);
@@ -274,7 +274,7 @@ namespace OS::FS {
 			if (!isDirectory(folder)) return List<Entry>();
 			List<Entry> entries;
 			for (auto const& e: fs::directory_iterator(folder.cstr())) {
-				String name = toString((e.is_directory()) ? e.path().stem().string() : e.path().filename().string());
+				String name = String((e.is_directory()) ? e.path().stem().string() : e.path().filename().string());
 				String path = concatenate(folder, name);
 				if (e.is_directory())
 					entries.pushBack(Entry(name, path, getFolderContents(path)));

@@ -486,15 +486,15 @@ operator+(
 typedef BaseString<char>	String;
 typedef BaseString<wchar_t>	WideString;
 
-template<usize N, Type::ASCII TChar, Type::Integer TIndex = usize>
+template<Type::ASCII TChar, usize N, Type::Integer TIndex = usize>
 struct BaseStaticString:
-	Array<N, TChar, TIndex>,
+	Array<TChar, N, TIndex>,
 	StringLiterable<TChar>,
-	SelfIdentified<BaseStaticString<N, TChar, TIndex>>,
-	Derived<Array<N, TChar, TIndex>> {
+	SelfIdentified<BaseStaticString<TChar, N, TIndex>>,
+	Derived<Array<TChar, N, TIndex>> {
 public:
-	using Derived			= Derived<Array<N, TChar, TIndex>>;
-	using SelfIdentified	= SelfIdentified<BaseStaticString<N, TChar, TIndex>>;
+	using Derived			= Derived<Array<TChar, N, TIndex>>;
+	using SelfIdentified	= SelfIdentified<BaseStaticString<TChar, N, TIndex>>;
 	using StringLiterable	= StringLiterable<TChar>;
 
 	using typename Derived::BaseType;
@@ -542,7 +542,7 @@ public:
 	constexpr auto substring() const {
 		constexpr SizeType start	= wrapAround(BEGIN);
 		constexpr SizeType stop		= ((start + S) < SIZE) ? start + S : SIZE;
-		BaseStaticString<stop - start + 1, TChar, TIndex> result('\0');
+		BaseStaticString<TChar, stop - start + 1, TIndex> result('\0');
 		MX::memcpy(result.data(), data() + start, stop - start);
 		return result;
 	}
@@ -560,8 +560,8 @@ typedef List<String>			StringList;
 typedef Arguments<String>		StringArguments;
 typedef Pair<String, String>	StringPair;
 
-template<usize N> using StaticString		= BaseStaticString<N, char>;
-template<usize N> using StaticWideString	= BaseStaticString<N, wchar_t>;
+template<usize N> using StaticString		= BaseStaticString<char,	N>;
+template<usize N> using StaticWideString	= BaseStaticString<wchar_t,	N>;
 
 CTL_NAMESPACE_END
 

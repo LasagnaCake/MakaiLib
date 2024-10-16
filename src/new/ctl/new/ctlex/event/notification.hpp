@@ -12,11 +12,10 @@ CTL_EX_NAMESPACE_BEGIN
 
 class Notifier {
 public:
-	typedef Signal<>	SignalType;
-
+	typedef Signal<>						SignalType;
 	typedef List<SignalType>				SignalList;
 	typedef Arguments<SignalType>			SignalArguments;
-	typedef SignalType						SignalWrapper;
+	typedef Functor<void()>					SignalWrapper;
 	typedef Dictionary<List<SignalWrapper>>	SignalDatabase;
 
 	Notifier() {}
@@ -76,7 +75,7 @@ public:
 	Notifier& unsubscribe(String const& signal) {
 		if (db.contains(signal)) {
 			auto& al = added[signal];
-			db[signal].eraseIf([&] (auto const& elem) {return al.find(elem);});
+			db[signal].eraseIf([&] (auto const& elem) {return al.find(elem) != -1;});
 		}
 		added[signal].clear();
 		return *this;
@@ -106,7 +105,7 @@ public:
 			if (!added.contains(name))
 				continue;
 			auto& al = added[name];
-			lst.eraseIf([&] (auto const& elem) {return al.find(elem);});
+			lst.eraseIf([&] (auto const& elem) {return al.find(elem) != -1;});
 		}
 		added.clear();
 		return *this;

@@ -111,7 +111,7 @@ public:
 	}
 
 	template<typename... Args>
-	constexpr BaseSympleMap(Args const&... args)
+	constexpr BaseSimpleMap(Args const&... args)
 	requires (... && Type::Convertible<Args, PairType>)
 	: BaseType(args...) {
 		clean();

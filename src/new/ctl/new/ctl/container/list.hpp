@@ -134,16 +134,25 @@ public:
 	template<class T>
 	constexpr List(T const& other)
 	requires requires (T t) {
-		{t.begin()} -> Type::Equal<IteratorType>;
-		{t.end()} -> Type::Equal<IteratorType>;
+		{t.begin()} -> Type::Convertible<IteratorType>;
+		{t.end()} -> Type::Convertible<IteratorType>;
+		requires !Type::Constructible<T, ConstIteratorType, ConstIteratorType>;
 	}: List(other.begin(), other.end()) {}
+
+	template<class T>
+	constexpr explicit List(T const& other)
+	requires requires (T t) {
+		{t.data()} -> Type::Convertible<PointerType>;
+		{t.size()} -> Type::Convertible<SizeType>;
+		requires !Type::Constructible<T, ConstIteratorType, ConstIteratorType>;
+	}: List(other.data(), other.data() + other.size()) {}
 
 	template<class T>
 	constexpr List(List<T, SizeType> const& other)
 	requires requires (T t) {
 		{t.begin()} -> Type::Equal<IteratorType>;
 		{t.end()} -> Type::Equal<IteratorType>;
-		requires Type::Constructible<DataType, IteratorType, IteratorType>;
+		requires Type::Constructible<DataType, ConstIteratorType, ConstIteratorType>;
 	} {
 		invoke(other.size());
 		for (auto& v: other)

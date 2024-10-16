@@ -41,7 +41,7 @@ template<class T>
 constexpr String toString(T const& value)
 requires (
 	Type::Convertible<T, String>
-&&	!Type::Number<T>
+&&	Type::Class<T>
 ) {
 	return String(value);
 }

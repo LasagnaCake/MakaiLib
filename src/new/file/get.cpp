@@ -199,7 +199,7 @@ BinaryData<> Makai::File::loadBinary(String const& path) {
 	} catch (std::exception const& e) {
 		fileLoadError(path, e.what());
 	}
-	return BinaryData();
+	return BinaryData<>();
 }
 
 Makai::File::CSVData Makai::File::loadCSV(String const& path, char const& delimiter) {
@@ -264,7 +264,7 @@ String Makai::File::loadTextFromArchive(String const& path) {
 	#endif
 }
 
-BinaryData Makai::File::loadBinaryFromArchive(String const& path) {
+BinaryData<> Makai::File::loadBinaryFromArchive(String const& path) {
 	#ifdef IMPL_ARCHIVE_
 	assertArchive(path);
 	return archive().getBinaryFile(OS::FS::getChildPath(path));
@@ -311,7 +311,7 @@ String Makai::File::getText(String const& path) {
 
 BinaryData<> Makai::File::getBinary(String const& path) {
 	#ifdef IMPL_ARCHIVE_
-	BinaryData res;
+	BinaryData<> res;
 	if (isArchiveAttached())
 		try {
 			DEBUGLN("[ARC] Loading binary file...");

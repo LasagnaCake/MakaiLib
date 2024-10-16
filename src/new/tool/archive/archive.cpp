@@ -740,7 +740,7 @@ void unpackV1(
 ) try {
 	_ARCDEBUGLN("\nOpening archive...\n");
 	FileBuffer buffer;
-	buffer.open(archivePath, std::ios::in | std::ios::binary);
+	buffer.open(archivePath.cstr(), std::ios::in | std::ios::binary);
 	FileArchive arc(buffer, hashPassword(password));
 	buffer.close();
 	_ARCDEBUGLN("\nExtracting data...\n");
@@ -766,7 +766,7 @@ void unpackV0(
 ) try {
 	_ARCDEBUGLN("\nOpening archive...\n");
 	FileBuffer buffer;
-	buffer.open(archivePath, std::ios::in | std::ios::binary);
+	buffer.open(archivePath.cstr(), std::ios::in | std::ios::binary);
 	FileArchive arc(buffer, password);
 	buffer.close();
 	_ARCDEBUGLN("\nExtracting data...\n");
@@ -819,12 +819,12 @@ void Arch::unpack(
 }
 #endif // ARCSYS_APPLICATION_
 
-BinaryData<><> Arch::loadEncryptedBinaryFile(String const& path, String const& password) try {
+BinaryData<> Arch::loadEncryptedBinaryFile(String const& path, String const& password) try {
 	std::ifstream archive;
 	// Set exceptions
 	archive.exceptions(std::ifstream::badbit | std::ifstream::failbit);
 	// Open file
-	archive.open(path, std::ios::binary | std::ios::in);
+	archive.open(path.cstr(), std::ios::binary | std::ios::in);
 	// Get archive header
 	ArchiveHeader header;
 	{
