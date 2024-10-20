@@ -10,7 +10,7 @@
 #include "function.hpp"
 #include "../algorithm/sort.hpp"
 #include "../algorithm/reverse.hpp"
-#include "../algorithm/memory.hpp"
+#include "../memory/memory.hpp"
 
 CTL_NAMESPACE_BEGIN
 
@@ -322,10 +322,28 @@ public:
 		return *this;
 	}
 
-	constexpr SelfType& erase(IndexType const& index) {
-		remove(index);
-		count--;
-		return *this;
+	constexpr SizeType removeLike(DataType const& value)
+	requires Type::Comparable::Equals<DataType, DataType> {
+		SizeType removed = 0;
+		auto const start = begin();
+		for(auto i = begin(); i != end();)
+			if (*i == value) {
+				remove(i-start+1);
+				removed++;
+			} else ++i;
+		return removed;
+	}
+
+	constexpr SizeType removeUnlike(DataType const& value)
+	requires Type::Comparable::Equals<DataType, DataType> {
+		SizeType removed = 0;
+		auto const start = begin();
+		for(auto i = begin(); i != end();)
+			if (*i != value) {
+				remove(i-start+1);
+				removed++;
+			} else ++i;
+		return removed;
 	}
 
 	template<class TPredicate>
@@ -351,6 +369,22 @@ public:
 			} else ++i;
 		}
 		return removed;
+	}
+
+	constexpr SelfType& erase(IndexType const& index) {
+		remove(index);
+		count--;
+		return *this;
+	}
+
+	constexpr SelfType& eraseLike(DataType const& value) {
+		count -= removeLike(value);
+		return *this;
+	}
+
+	constexpr SelfType& eraseUnlike(DataType const& value) {
+		count -= removeUnlike(value);
+		return *this;
 	}
 
 	template<class TPredicate>

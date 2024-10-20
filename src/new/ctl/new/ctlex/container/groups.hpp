@@ -19,20 +19,24 @@ public:
 	using Iteratable		= ::CTL::Iteratable<KeyValuePair<TIdentifier, TData>, TIndex>;
 	using SelfIdentified	= ::CTL::SelfIdentified<Groups<TData, TIdentifier, TIndex>>;
 
-	using
+	using CollectionType	= Map<
 		typename Collected::KeyType,
 		typename Collected::ValueType,
-		typename Collected::PairType
-	;
+		typename Iteratable::SizeType
+	>;
+
+	using KeyType	= typename CollectionType::KeyType;
+	using ValueType	= typename CollectionType::ValueType;
+	using PairType	= typename CollectionType::PairType;
 
 	using
-		typename Iteratable::SizeType
+		SizeType = typename CollectionType::SizeType
 	;
 
 	using typename SelfIdentified::SelfType;
 
-	using GroupType		= List<ValueType, SizeType>;
-	using IDListType	= List<KeyType, SizeType>;
+	using GroupType				= List<ValueType, SizeType>;
+	using IdentifierListType	= List<KeyType, SizeType>;
 
 	constexpr GroupType& get(KeyType const& id) {
 		if (!g.contains(id))
@@ -45,7 +49,7 @@ public:
 	}
 
 	constexpr GroupType& withObject(KeyType const& obj) {
-		IDListType gs;
+		IdentifierListType gs;
 		try {
 			for (auto const& group: g)
 				if (group.value.find(obj))
@@ -61,12 +65,12 @@ public:
 
 	constexpr SelfType& remove(ValueType const& obj, KeyType const& groupID) {
 		GroupType& gp = get(groupID);
-		gp.erase(gp.find(obj));
+		gp.eraseLike(obj);
 		return *this;
 	}
 
 	constexpr SelfType& removeFromAll(ValueType const& obj) {
-		IDListType gs = withObject(obj);
+		IdentifierListType gs = withObject(obj);
 		for (auto group: gs)
 			remove(obj, group);
 		return *this;
@@ -81,7 +85,7 @@ public:
 		return g[groupID].find(obj) != -1;
 	}
 
-	constexpr IDListType all() const {
+	constexpr IdentifierListType all() const {
 		return g.keys();
 	}
 
@@ -100,7 +104,7 @@ public:
 	constexpr auto rend() const		{return g.rend();	}
 
 private:
-	Map<KeyType, GroupType> g;
+	CollectionType g;
 };
 
 CTL_EX_NAMESPACE_END

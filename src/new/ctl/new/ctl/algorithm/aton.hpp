@@ -2,7 +2,7 @@
 #define CTL_ALGORITHM_ATOI_H
 
 #include "transform.hpp"
-#include "memory.hpp"
+#include "../memory/memory.hpp"
 #include "../cmath.hpp"
 #include "../namespace.hpp"
 #include "../typetraits/decay.hpp"

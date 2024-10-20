@@ -125,10 +125,19 @@ public:
 	template<class T>
 	constexpr BaseString(T const& other)
 	requires requires (T t) {
-		{t.begin()} -> Type::Equal<IteratorType>;
-		{t.end()} -> Type::Equal<IteratorType>;
+		{t.begin()} -> Type::Convertible<IteratorType>;
+		{t.end()} -> Type::Convertible<IteratorType>;
 	}:
 		BaseType(other.begin(), other.end()) {
+	}
+
+	template<class T>
+	constexpr explicit BaseString(T const& other)
+	requires requires (T t) {
+		{t.data()} -> Type::Convertible<PointerType>;
+		{t.size()} -> Type::Convertible<SizeType>;
+	}:
+		BaseType(other.data(), other.data() + other.size()) {
 	}
 
 	template<class... Args>
@@ -562,6 +571,14 @@ typedef Pair<String, String>	StringPair;
 
 template<usize N> using StaticString		= BaseStaticString<char,	N>;
 template<usize N> using StaticWideString	= BaseStaticString<wchar_t,	N>;
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wliteral-suffix"
+constexpr String operator "" s		(cstring cstr, usize sz)	{return String(cstr, cstr + sz -1);					}
+constexpr String operator "" s		(cwstring cstr, usize sz)	{return WideString(cstr, cstr + sz -1).toString();	}
+constexpr WideString operator "" ws	(cstring cstr, usize sz)	{return String(cstr, cstr + sz -1).toWideString();	}
+constexpr WideString operator "" ws	(cwstring cstr, usize sz)	{return WideString(cstr, cstr + sz -1);				}
+#pragma GCC diagnostic pop
 
 CTL_NAMESPACE_END
 

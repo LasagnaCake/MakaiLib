@@ -2,7 +2,7 @@
 #define CTL_ALGORITHM_SORTING_H
 
 #include "../container/iterator.hpp"
-#include "memory.hpp"
+#include "../memory/memory.hpp"
 #include "transform.hpp"
 
 CTL_NAMESPACE_BEGIN

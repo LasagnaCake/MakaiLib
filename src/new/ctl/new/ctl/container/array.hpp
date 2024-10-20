@@ -9,7 +9,7 @@
 #include "iterator.hpp"
 #include "../algorithm/sort.hpp"
 #include "../algorithm/reverse.hpp"
-#include "../algorithm/memory.hpp"
+#include "../memory/memory.hpp"
 
 CTL_NAMESPACE_BEGIN
 

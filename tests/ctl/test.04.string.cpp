@@ -8,7 +8,8 @@ using
 	CTL::SimpleMap,
 	CTL::List,
 	CTL::KeyValuePair,
-	CTL::TypeInfo
+	CTL::TypeInfo,
+	CTL::operator ""s
 ;
 
 void print(String const& str) {
@@ -85,7 +86,7 @@ void testString() {
 	str = "O! " + str;					print(str);
 	print(str.sliced(2, -3));
 	str.sort();							print(str);
-	str = String("Impedance. Voltage. Current.");
+	str = "Impedance. Voltage. Current."s;
 	print(str);
 	auto sp = str.splitAtFirst(' ');	print(sp);
 	sp = str.splitAtLast(' ');			print(sp);

@@ -4,6 +4,7 @@
 #include "../ctypes.hpp"
 #include "../namespace.hpp"
 #include "../typetraits/traits.hpp"
+#include "../typetraits/cast.hpp"
 
 CTL_NAMESPACE_BEGIN
 

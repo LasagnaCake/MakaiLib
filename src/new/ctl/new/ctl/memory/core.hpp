@@ -1,5 +1,5 @@
-#ifndef CTL_ALGORITHM_MEMORY_H
-#define CTL_ALGORITHM_MEMORY_H
+#ifndef CTL_MEMORY_CORE_H
+#define CTL_MEMORY_CORE_H
 
 /*
 	Functions are based off of:
@@ -235,4 +235,4 @@ pointer operator new[](usize sz) noexcept(false)	{return CTL::MX::malloc(sz);	}
 void operator delete(pointer mem) noexcept(false)	{return CTL::MX::free(mem);		}
 void operator delete[](pointer mem) noexcept(false)	{return CTL::MX::free(mem);		}
 //*/
-#endif // CTL_ALGORITHM_MEMORY_H
+#endif // CTL_MEMORY_CORE_H
