@@ -248,7 +248,7 @@ Texture2D& Texture2D::create(
 		);
 		stbi_image_free(data);
 	} else {
-		throw Error::FailedAction(String("Could not load image file '") + path + "'!\n\n" + stbi_failure_reason());
+		throw Error::FailedAction("Could not load image file '"s + path + "'!\n\n" + stbi_failure_reason());
 	}
 	return *this;
 }

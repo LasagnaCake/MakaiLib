@@ -39,11 +39,11 @@ using Makai::JSON::Extern::JSONData;
 String encoded(uint64 const& v) {
 	BinaryData<> data(8, 0);
 	for (usize i = 0; i < 8; ++i) data[i] = uint8((v >> (8 * i)) & 0xFF);
-	return cppcodec::base64_rfc4648::encode(data);
+	return cppcodec::base64_rfc4648::encode<String>(data);
 }
 
 uint64 decoded(String const& v) {
-	BinaryData<> data = cppcodec::base64_rfc4648::decode(v);
+	BinaryData<> data = cppcodec::base64_rfc4648::decode<BinaryData<>>(v);
 	usize result = 0;
 	for (usize i = 0; i < data.size(); ++i)
 		result |= (uint64(data[i]) << (8 * i));
@@ -62,7 +62,7 @@ String hash(String const& str) {
 
 constexpr String Arch::truncate(String const& str) {
 	String result(str.size()/2, ' ');
-	for SRANGE(i, 0, str.size()/2)
+	for (usize i = 0; i < str.size()/2; ++i)
 		result[i] = (str[i*2] ^ str[i*2+1]);
 	return result;
 }
@@ -73,7 +73,7 @@ String Arch::hashPassword(String const& str) {
 
 template<class T>
 BinaryData<> cbcTransform(
-	BinaryData<><> const&		data,
+	BinaryData<> const&		data,
 	String					password	= "",
 	uint8* const&			block		= nullptr
 ) try {
@@ -93,11 +93,11 @@ BinaryData<> cbcTransform(
 		true,
 		new StreamTransformationFilter(
 			tf,
-			new StringSink(result)
+			new StringSink<String>(result)
 		)
 	);
 	delete[] iv;
-	return BinaryData<><>(result.begin(), result.end());
+	return BinaryData<>(result.begin(), result.end());
 } catch (Exception const& e) {
 	throw Error::FailedAction(
 		e.what()
@@ -115,8 +115,8 @@ T* getFlator(String& result, uint8 const& level) {
 }
 
 template<class T>
-BinaryData<><> flate(
-	BinaryData<><>	const&			data,
+BinaryData<> flate(
+	BinaryData<>	const&		data,
 	CompressionMethod const&	method	= CompressionMethod::ACM_ZIP,
 	uint8 const&				level	= 9
 ) try {
@@ -132,7 +132,7 @@ BinaryData<><> flate(
 			);
 		}
 	}
-	return BinaryData<><>(result.begin(), result.end());
+	return BinaryData<>(result.begin(), result.end());
 } catch (Exception const& e) {
 	throw Error::FailedAction(
 		e.what()
@@ -140,8 +140,8 @@ BinaryData<><> flate(
 }
 
 template<typename T>
-BinaryData<><> cbcEncrypt(
-	BinaryData<><> const&		data,
+BinaryData<> cbcEncrypt(
+	BinaryData<> const&		data,
 	String const&			password	= "",
 	uint8* const&			block		= nullptr
 ) {
@@ -149,16 +149,16 @@ BinaryData<><> cbcEncrypt(
 }
 
 template<typename T>
-BinaryData<><> cbcDecrypt(
-	BinaryData<><> const&		data,
+BinaryData<> cbcDecrypt(
+	BinaryData<> const&		data,
 	String const&			password	= "",
 	uint8* const&			block		= nullptr
 ) {
 	return cbcTransform<typename CBC_Mode<T>::Decryption>(data, password, block);
 }
 
-BinaryData<><> Arch::encrypt(
-	BinaryData<><> const&		data,
+BinaryData<> Arch::encrypt(
+	BinaryData<> const&		data,
 	String const&			password,
 	EncryptionMethod const&	method,
 	uint8* const&			block
@@ -171,8 +171,8 @@ BinaryData<><> Arch::encrypt(
 	return data;
 }
 
-BinaryData<><> Arch::decrypt(
-	BinaryData<><> const&		data,
+BinaryData<> Arch::decrypt(
+	BinaryData<> const&		data,
 	String const&			password,
 	EncryptionMethod const&	method,
 	uint8* const&			block
@@ -185,16 +185,16 @@ BinaryData<><> Arch::decrypt(
 	return data;
 }
 
-BinaryData<><> Arch::compress(
-	BinaryData<><>	const&			data,
+BinaryData<> Arch::compress(
+	BinaryData<>	const&			data,
 	CompressionMethod const&	method,
 	uint8 const&				level
 ) {
 	return flate<Deflator>(data, method, level);
 }
 
-BinaryData<><> Arch::decompress(
-	BinaryData<><>	const&			data,
+BinaryData<> Arch::decompress(
+	BinaryData<>	const&			data,
 	CompressionMethod const&	method,
 	uint8 const&				level
 ) {
@@ -205,14 +205,14 @@ JSONData getStructure(fs::path const& path, StringList& files, String const& roo
 	JSONData dir = Nlohmann::object();
 	for (auto const& e : fs::directory_iterator(path)) {
 		if (e.is_directory()) {
-			String dirname = e.path().stem().string();
+			String dirname = String(e.path().stem().string());
 			dir[dirname] = getStructure(e, files, root + "/" + dirname);
 		}
 		else {
-			String filename = e.path().filename().string();
+			String filename = String(e.path().filename().string());
 			String filepath = root + "/" + filename;
 			dir[filename] = filepath;
-			files.push_back(filepath);
+			files.pushBack(filepath);
 		}
 	}
 	return dir;
@@ -222,10 +222,10 @@ StringList getFileInfo(JSONData const& filestruct) {
 	StringList res;
 	for (auto& [name, data]: filestruct.items()) {
 		if (data.is_string())
-			res.push_back(data);
+			res.pushBack(data.get<String>());
 		else if (data.is_object() && !data.empty())
 			for (String& s: getFileInfo(data))
-				res.push_back(s);
+				res.pushBack(s);
 	}
 	return res;
 }
@@ -255,8 +255,8 @@ usize populateTree(JSONData& tree, List<uint64> const& values, usize const& star
 
 void generateBlock(uint8 const(& block)[16]) {
 	uint64* b = (uint64*)block;
-	b[0] = Math::Random::integer();
-	b[1] = Math::Random::integer();
+	b[0] = CTL::Random::integer();
+	b[1] = CTL::Random::integer();
 }
 
 void Arch::pack(
@@ -276,12 +276,12 @@ void Arch::pack(
 		JSONData dir;
 		StringList files;
 		JSONData tree = dir["tree"];
-		tree = getStructure(fs::path(folderPath), files, fs::path(folderPath).stem().string());
+		tree = getStructure(String(fs::path(folderPath.cstr()).string()), files, String(fs::path(folderPath.cstr()).stem().string()));
 		_ARCDEBUGLN("\n", dir.dump(2, ' ', false, Nlohmann::error_handler_t::replace), "\n");
 		// Populate with temporary values
 		List<uint64> locations(files.size(), 0);
 		// Open file
-		std::ofstream file(archivePath, std::ios::binary | std::ios::trunc);
+		std::ofstream file(archivePath.cstr(), std::ios::binary | std::ios::trunc);
 		file.exceptions(std::ofstream::badbit | std::ofstream::failbit);
 		// Populate header
 		_ARCDEBUGLN("Creating header...\n");
@@ -310,11 +310,12 @@ void Arch::pack(
 		file.write((char*)&header, header.headerSize);
 		// Write file info
 		_ARCDEBUGLN("\nWriting files...\n");
-		for (auto const& [i, f]: Helper::enumerate(files)) {
+		usize i = 0;
+		for (auto const& f: files) {
 			// Get current stream position as file location
 			locations[i] = file.tellp();
 			// Read file
-			File::BinaryData<><> contents = File::loadBinary(f);
+			BinaryData<> contents = File::loadBinary(f);
 			// Prepare header
 			FileHeader fheader;
 			fheader.uncSize = contents.size();				// Uncompressed file size
@@ -348,6 +349,7 @@ void Arch::pack(
 			// Copy header & file data
 			file.write((char*)&fheader, header.fileHeaderSize);
 			file.write((char*)contents.data(), contents.size());
+			++i;
 		}
 		// Populate file tree
 		populateTree(tree, locations);
@@ -362,7 +364,7 @@ void Arch::pack(
 			// Get directory info
 			String dirInfo = dir.dump(-1, ' ', false, Nlohmann::error_handler_t::replace);
 			// Compress & encrypt directory info
-			BinaryData<><> pdi = BinaryData<><>(dirInfo.begin(), dirInfo.end());
+			BinaryData<> pdi = BinaryData<>(dirInfo);
 			pdi = compress(pdi, comp, complvl);
 			pdi = encrypt(pdi, passhash, enc, dheader.block);
 			// Populate header
@@ -499,7 +501,7 @@ String Arch::FileArchive::getTextFile(String const& path) try {
 	assertOpen();
 	FileEntry fe = getFileEntry(path);
 	processFileEntry(fe);
-	return String(fe.data.begin(), fe.data.end());
+	return String(List<char>(fe.data));
 } catch (Error::FailedAction const& e) {
 	throw File::FileLoadError(
 		"could not load file '" + path + "'!",
@@ -510,7 +512,7 @@ String Arch::FileArchive::getTextFile(String const& path) try {
 	);
 }
 
-BinaryData<><> Arch::FileArchive::getBinaryFile(String const& path) try {
+BinaryData<> Arch::FileArchive::getBinaryFile(String const& path) try {
 	assertOpen();
 	FileEntry fe = getFileEntry(path);
 	processFileEntry(fe);
@@ -538,7 +540,7 @@ ArchiveHeader Arch::FileArchive::getHeader(String const& path) {
 	// Set exceptions
 	af.exceptions(std::ifstream::badbit | std::ifstream::failbit);
 	// Open file
-	af.open(path, std::ios::binary | std::ios::in);
+	af.open(path.cstr(), std::ios::binary | std::ios::in);
 	// Read header
 	usize hs = 0;
 	af.read((char*)&hs, sizeof(uint64));
@@ -577,11 +579,11 @@ void Arch::FileArchive::parseFileTree() {
 		_ARCDEBUGLN("  DIRECTORY INFO LOCATION: ", header.dirHeaderLoc		);
 		_ARCDEBUGLN("        UNCOMPRESSED SIZE: ", dh.uncSize,			"B"	);
 		_ARCDEBUGLN("          COMPRESSED SIZE: ", dh.compSize,			"B"	);
-		BinaryData<><> pfs(dh.compSize, 0);
+		BinaryData<> pfs(dh.compSize, 0);
 		archive.read((char*)pfs.data(), pfs.size());
 		archive.seekg(0);
 		demangleData(pfs, dh.block);
-		fs = String(pfs.begin(), pfs.end());
+		fs = String(List<char>(pfs));
 		if (fs.size() != dh.uncSize) directoryTreeError();
 		break;
 	}
@@ -599,7 +601,7 @@ void Arch::FileArchive::parseFileTree() {
 	_ARCDEBUGLN("File Structure:\n", fstruct.dump(2, ' ', false, Nlohmann::error_handler_t::replace), "\n");
 }
 
-void Arch::FileArchive::demangleData(BinaryData<><>& data, uint8* const& block) const {
+void Arch::FileArchive::demangleData(BinaryData<>& data, uint8* const& block) const {
 	_ARCDEBUGLN("Before decryption: ", data.size());
 	data = decrypt(
 		data,
@@ -619,9 +621,9 @@ void Arch::FileArchive::demangleData(BinaryData<><>& data, uint8* const& block) 
 
 void Arch::FileArchive::unpackLayer(JSONData const& layer, String const& path) {
 	assertOpen();
-	List<Entry<String>> files;
+	List<KeyValuePair<String, String>> files;
 	for (auto& [name, data]: layer.items()) {
-		if (data.is_string()) files.push_back(Entry<String>(name, data));
+		if (data.is_string()) files.pushBack(KeyValuePair<String, String>(name, data));
 		else if (data.is_object()) unpackLayer(data, path);
 		else directoryTreeError();
 	}
@@ -632,16 +634,16 @@ void Arch::FileArchive::unpackLayer(JSONData const& layer, String const& path) {
 		_ARCDEBUGLN(
 			"'", name, "': ",
 			filepath,
-			" (dir: ", OS::FS::getDirectoryFromPath(filepath), ")"
+			" (dir: ", OS::FS::getPathDirectory(filepath), ")"
 		);
-		BinaryData<><> contents = getBinaryFile(data);
-		OS::FS::makeDirectory(OS::FS::getDirectoryFromPath(filepath));
+		BinaryData<> contents = getBinaryFile(data);
+		OS::FS::makeDirectory(OS::FS::getPathDirectory(filepath));
 		File::saveBinary(filepath, contents);
 	}
 }
 
 void Arch::FileArchive::processFileEntry(FileEntry& entry) const {
-	BinaryData<><> data = entry.data;
+	BinaryData<> data = entry.data;
 	if (entry.header.uncSize == 0) return;
 	demangleData(data, entry.header.block);
 	if (data.size() != entry.header.uncSize)
@@ -655,7 +657,7 @@ Arch::FileArchive::FileEntry Arch::FileArchive::getFileEntry(String const& path)
 	if (!fstruct["tree"].is_object())
 		directoryTreeError();
 	_ARCDEBUGLN("Getting file entry location...");
-	uint64		idx	= getFileEntryLocation(Helper::toLower(path), path);
+	uint64		idx	= getFileEntryLocation(path.lower(), path);
 	_ARCDEBUGLN("ENTRY LOCATION: ", idx);
 	_ARCDEBUGLN("Getting file entry header...");
 	FileHeader	fh	= getFileEntryHeader(idx);
@@ -676,15 +678,15 @@ Arch::FileArchive::FileEntry Arch::FileArchive::getFileEntry(String const& path)
 	);
 }
 
-BinaryData<><> Arch::FileArchive::getFileEntryData(uint64 const& index, FileHeader const& fh) try {
-	BinaryData<><> fd(fh.compSize, 0);
+BinaryData<> Arch::FileArchive::getFileEntryData(uint64 const& index, FileHeader const& fh) try {
+	BinaryData<> fd(fh.compSize, 0);
 	auto lp = archive.tellg();
 	archive.seekg(index + header.fileHeaderSize);
 	archive.read((char*)fd.data(), fh.compSize);
 	archive.seekg(lp);
 	return fd;
 } catch (std::ios_base::failure const& e) {
-	throw std::runtime_error(String("Failed at getting file entry data: ") + String(e.what()));
+	throw Error::FailedAction("Failed at getting file entry data: "s + String(e.what()));
 }
 
 FileHeader Arch::FileArchive::getFileEntryHeader(uint64 const& index) try {
@@ -695,29 +697,28 @@ FileHeader Arch::FileArchive::getFileEntryHeader(uint64 const& index) try {
 	archive.seekg(lp);
 	return fh;
 } catch (std::ios_base::failure const& e) {
-	throw std::runtime_error(String("Failed at getting file entry header: ") + String(e.what()));
+	throw Error::FailedAction("Failed at getting file entry header: "s + String(e.what()));
 }
 
 uint64 Arch::FileArchive::getFileEntryLocation(String const& path, String const& origpath) try {
 	List<JSONData> stack;
 	JSONData entry = fstruct["tree"];
 	// Loop through path and get entry location
-	for (String fld: Helper::splitString(path, {'\\', '/'})) {
+	for (String fld: path.split({'\\', '/'})) {
 		if (fld == "..") {
 			if (stack.empty())
 				outOfArchiveBoundsError(origpath);
-			entry = stack.back();
-			stack.pop_back();
+			entry = stack.popBack();
 			continue;
 		} else if (entry.is_object()) {
 			for (auto [k, v]: entry.items())
-				if (Helper::toLower(k) == fld) {
-					stack.push_back(entry);
+				if (k.lower() == fld) {
+					stack.pushBack(entry);
 					entry = v;
 					break;
 				}
-		} else if (entry.is_string() && Helper::toLower(entry) == fld)
-			return decoded(entry);
+		} else if (entry.is_string() && entry.get<String>().lower() == fld)
+			return decoded(entry.get<String>());
 		else doesNotExistError(fld);
 	}
 	// Try and get entry location
@@ -893,7 +894,7 @@ BinaryData<> Arch::loadEncryptedBinaryFile(String const& path, String const& pas
 
 String Arch::loadEncryptedTextFile(String const& path, String const& password) {
 	BinaryData<> fd = loadEncryptedBinaryFile(path, password);
-	return String(fd.begin(), fd.end());
+	return String(List<char>(fd));
 }
 
 template<typename T>

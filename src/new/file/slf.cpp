@@ -30,9 +30,7 @@ constexpr ShaderType fromFileExtension(String const& str) {
 
 constexpr ShaderType fromFilePath(String const& path) {
 	return fromFileExtension(
-		OS::FS::getFileExtension(
-			Helper::toLower(path)
-		)
+		OS::FS::fileExtension(path.lower())
 	);
 }
 
@@ -48,47 +46,47 @@ SLFData Makai::SLF::parse(String const& slf, String const& srcFolder, bool const
 	DEBUGLN("Parsing SLF file...");
 	String content = slf;
 	// Remove comments and empty lines
-	content = regexReplace(content, "(:[<]([\\s\\S]*?)[>]:)|(::([\\s\\S]*?)(\\n|\\r|\\r\\n))", "");
-	content = regexReplace(content, "((\\n|\\r|\\r\\n)+)", "|");
+	content = Regex::replace(content, "(:[<]([\\s\\S]*?)[>]:)|(::([\\s\\S]*?)(\\n|\\r|\\r\\n))", "");
+	content = Regex::replace(content, "((\\n|\\r|\\r\\n)+)", "|");
 	// Get file location
-	String dir = OS::FS::getDirectoryFromPath(srcFolder);
+	String dir = OS::FS::getPathDirectory(srcFolder);
 	DEBUGLN("Directory: ", dir);
 	// Initialize type specifier here
 	ShaderType type = ShaderType::ST_INVALID;
 	// Remove specifier for processing
-	content = regexReplace(content, "^[<](.*)[>]", "");
+	content = Regex::replace(content, "^[<](.*)[>]", "");
 	// Process file
 	SLFData result{dir};
-	for (String shader: Helper::splitString(content, '|')) {
+	for (String shader: content.split('|')) {
 		DEBUGLN("Line: ", shader);
 		// If line is a type specifier, try and get it
-		String tt = regexFindFirst(shader, "^[<](.*)[>]");
+		String tt = Regex::findFirst(shader, "^[<](.*)[>]").match;
 		if (!tt.empty()) {
 			type = fromFileExtension(
-				regexReplace(tt, "<|>", "")
+				Regex::replace(tt, "<|>", "")
 			);
 			continue;
 		}
 		// If type is a valid shader type, use it instead of deducing
 		if (isValidShaderType(type))
-			result.shaders.push_back(ShaderEntry{shader, type});
+			result.shaders.pushBack(ShaderEntry{shader, type});
 		// Else, try and deduce it from shader file extension
 		else {
 			ShaderType st = fromFilePath(shader);
 			if (!isValidShaderType(st)) {
 				throw Error::InvalidValue(
-					::toString(
+					CTL::toString(
 						"Invalid shader type for shader'",
 						OS::FS::concatenate(dir, shader),
 						"'!"
 					),
 					__FILE__,
-					::toString(__LINE__),
+					CTL::toString(__LINE__),
 					"SLF::parseFile",
-					::toString("File extension is '", OS::FS::getFileExtension(shader), "'")
+					CTL::toString("File extension is '", OS::FS::fileExtension(shader), "'")
 				);
 			}
-			result.shaders.push_back(ShaderEntry{shader, st});
+			result.shaders.pushBack(ShaderEntry{shader, st});
 		}
 		if (!pathOnly)
 			result.shaders.back().code = Makai::File::getText(result.shaders.back().path);

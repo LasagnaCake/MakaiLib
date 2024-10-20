@@ -7,9 +7,47 @@
 #include "get.hpp"
 
 namespace Makai::JSON {
+	namespace Compat {
+		template<class TIter, class... TArgs>
+		struct IteratorAdaptor: TIter {
+			using iterator_category	= std::bidirectional_iterator_tag;
+			using value_type		= typename TIter::DataType;
+			using difference_type	= typename TIter::IndexType;
+			using pointer			= typename TIter::PointerType;
+			using reference			= typename TIter::ReferenceType;
+		};
+
+		template<class TKey, class TValue, class... TArgs>
+		struct MapAdaptor: Map<TKey, TValue> {
+			using key_compare	= std::equal_to<TKey>;
+			using key_type		= typename Map<TKey, TValue>::KeyType;
+			using value_type	= typename Map<TKey, TValue>::ValueType;
+			using iterator		= typename Map<TKey, TValue>::IteratorType;
+		};
+
+		template<template <typename...> class TClass, typename... TArgs>
+		struct STDAdaptor: TClass<TArgs...> {
+			using value_type	= typename TClass<TArgs...>::DataType;
+			using iterator		= typename TClass<TArgs...>::IteratorType;
+		};
+
+		template<typename TData, typename... TArgs>
+		using ListAdaptor = STDAdaptor<List, TData>;
+
+		using StringAdaptor = STDAdaptor<BaseString, char>;
+	}
+
 	namespace Extern {
 		using Nlohmann = nlohmann::json;
-		using JSONData = nlohmann::basic_json<Map, List, String, bool, ssize, usize, float>;
+		using JSONData = nlohmann::basic_json<
+			Compat::MapAdaptor,
+			Compat::ListAdaptor,
+			Compat::StringAdaptor,
+			bool,
+			ssize,
+			usize,
+			float
+		>;
 	}
 
 	using JSONType = Extern::JSONData;
@@ -30,10 +68,10 @@ namespace Makai::JSON {
 			} catch (Extern::Nlohmann::exception const& e) {
 				throw Error::FailedAction(
 					"Parameter '" + name + "' is not of type '"
-					+ NAMEOF(typeid(T)) + "'!",
+					+ TypeInfo<T>::name() + "'!",
 					__FILE__,
 					CTL::toString(__LINE__),
-					CTL::toString("get<", NAMEOF(typeid(T)), ">"),
+					CTL::toString("get<", TypeInfo<T>::name(), ">"),
 					e.what()
 				);
 			}

@@ -17,7 +17,7 @@ namespace Makai::Graph {
 
 		static void renderLayer(usize const& layer);
 
-		static typename Layers::IDListType getLayers() {
+		static typename Layers::IdentifierListType getLayers() {
 			return layers.all();
 		}
 

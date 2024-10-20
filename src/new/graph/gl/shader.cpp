@@ -46,7 +46,7 @@ void Shader::attach(String const& code, ShaderType const& shaderType) {
 	glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
 	if (!success) {
 		glGetShaderInfoLog(shader, 2048, NULL, infoLog);
-		throw Error::FailedAction(String("Could not compile Shader!\n") + infoLog);
+		throw Error::FailedAction("Could not compile Shader!\n"s + infoLog);
 	};
 	// Shader Program
 	instance->create();
@@ -56,7 +56,7 @@ void Shader::attach(String const& code, ShaderType const& shaderType) {
 	glGetProgramiv(instance->id, GL_LINK_STATUS, &success);
 	if (!success) {
 		glGetProgramInfoLog(instance->id, 2048, NULL, infoLog);
-		throw Error::FailedAction(String("Could not link shader program!\n") + infoLog);
+		throw Error::FailedAction("Could not link shader program!\n"s + infoLog);
 	}
 	glDeleteShader(shader);
 }
@@ -120,7 +120,7 @@ bool Shader::create(SLF::SLFData const& slfData) {
 		try {
 			attach(code, shader.type);
 		} catch (Error::Error const& err) {
-			log += String("\n[[ Error on shader '") + shaderPath + "'! ]]:\n";
+			log += "\n[[ Error on shader '"s + shaderPath + "'! ]]:\n";
 			log += err.what();
 		}
 	}
