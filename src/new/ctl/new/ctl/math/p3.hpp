@@ -6,18 +6,15 @@
 CTL_NAMESPACE_BEGIN
 
 /**
-* Returns the polar radius of a point along the edges of a N-sided
-* polygon of "size" S (the shape's circumradius) at a given angle THETA,
-* rotated by angle A.
-* Name: Polar Polygon Point -> PPP -> p3
-*/
-
-/*
-	Based off of the formula from https://www.desmos.com/calculator/hghrnwbcdh
-	(Archive) https://web.archive.org/web/20240209160635/https://www.desmos.com/calculator/hghrnwbcdh
+	Returns the polar radius of a point along the edges of a
+	N-sided polygon of "size" S (the shape's circumradius)
+	at a given angle THETA, rotated by angle A.
+	Name: Polar Polygon Point -> PPP -> p3
 */
 namespace Math::P3 {
 	/// Precise version. Better results, but more computationally intensive.
+	/// Based off of the formula from https://www.desmos.com/calculator/hghrnwbcdh
+	/// (Archive) https://web.archive.org/web/20240209160635/https://www.desmos.com/calculator/hghrnwbcdh
 	constexpr float precise(
 		float const& theta,
 		float const& sides,

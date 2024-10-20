@@ -13,9 +13,10 @@ namespace Impl::Hash {
 	namespace Simple {
 		constexpr usize hash(const void* data, usize sz, usize seed) {
 			const char* byte = static_cast<const char*>(data);
-			for (; sz; --sz)
+			for (; sz; --sz) {
 				seed *= 131;
 				seed += *byte++;
+			}
 			return seed;
 		}
 	}
