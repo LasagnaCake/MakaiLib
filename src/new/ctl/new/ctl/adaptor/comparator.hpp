@@ -19,17 +19,27 @@ struct Comparator<A, B>: Ordered {
 	constexpr static OrderType compare(A const& a, B const& b) {
 		return a <=> b;
 	}
+
+	constexpr static bool equals(A const& a, B const& b)
+	requires Type::Comparable::Equals<A, B> {
+		return a == b;
+	}
 };
 
+namespace {
+	template<class A, class B>
+	concept NonStandardThreeway = (
+		!Type::Comparable::Threeway<A, B>
+	&&	(
+			Type::Comparable::Lesser<A, B>
+		||	Type::Comparable::Greater<A, B>
+		)
+	&&	Type::Comparable::Equals<A, B>
+	);	
+}
+
 template <class A, class B>
-requires (
-	!Type::Comparable::Threeway<A, B>
-&&	(
-		Type::Comparable::Lesser<A, B>
-	||	Type::Comparable::Greater<A, B>
-	)
-&&	Type::Comparable::Equals<A, B>
-)
+requires (NonStandardThreeway<A, B>)
 struct Comparator<A, B>: Ordered {
 	using typename Ordered::OrderType;
 
@@ -45,6 +55,11 @@ struct Comparator<A, B>: Ordered {
 		if (a > b)	return Order::GREATER;
 		if (a == b)	return Order::EQUAL;
 		return Order::LESS;
+	}
+
+	constexpr static bool equals(A const& a, B const& b)
+	requires Type::Comparable::Equals<A, B> {
+		return a == b;
 	}
 };
 
