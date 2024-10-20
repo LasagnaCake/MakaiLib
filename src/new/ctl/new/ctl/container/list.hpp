@@ -10,6 +10,7 @@
 #include "function.hpp"
 #include "../algorithm/sort.hpp"
 #include "../algorithm/reverse.hpp"
+#include "../adaptor/comparator.hpp"
 #include "../memory/memory.hpp"
 
 CTL_NAMESPACE_BEGIN
@@ -56,6 +57,8 @@ public:
 
 	using PredicateType	= Function<bool(ConstReferenceType)>;
 	using CompareType	= Function<bool(ConstReferenceType, ConstReferenceType)>;
+
+	using ComparatorType = SimpleComparator<DataType>;
 
 	constexpr List() {invoke(1);}
 
@@ -278,33 +281,33 @@ public:
 	}
 
 	constexpr IndexType find(DataType const& value) const
-	requires Type::Comparable::Equals<DataType, DataType> {
+	requires Type::Comparator::Equals<DataType, DataType> {
 		auto const start = begin(), stop = end();
 		for (auto i = start; i != stop; ++i)
-			if ((*i) == value)
+			if (ComparatorType::equals(*i, value))
 				return i-start;
 		return -1;
 	}
 
 	constexpr IndexType rfind(DataType const& value) const
-	requires Type::Comparable::Equals<DataType, DataType> {
+	requires Type::Comparator::Equals<DataType, DataType> {
 		auto const start = rbegin(), stop = rend();
 		for (auto i = start; i != stop; ++i)
-			if ((*i) == value)
+			if (ComparatorType::equals(*i, value))
 				return count-(i-start)-1;
 		return -1;
 	}
 
 	constexpr IndexType bsearch(DataType const& value) const
-	requires (Type::Comparable::Threeway<DataType, DataType>) {
+	requires (Type::Comparator::Threeway<DataType, DataType>) {
 		if (empty()) return -1;
-		if (OrderType(front() <=> value) == Order::EQUAL) return 0;
-		if (OrderType(back() <=> value) == Order::EQUAL) return size() - 1;
+		if (ComparatorType::equals(front(), value)) return 0;
+		if (ComparatorType::equals(back(), value)) return size() - 1;
 		IndexType lo = 0, hi = size() - 1, i = -1;
 		SizeType loop = 0;
 		while (hi >= lo & loop < size()) {
 			i = lo + (hi - lo) / 2;
-			switch(OrderType(value <=> *(cbegin() + i))) {
+			switch(ComparatorType::compare(value, *(cbegin() + i))) {
 				case Order::LESS:		hi = i-1; break;
 				case Order::EQUAL:		return i;
 				case Order::GREATER:	lo = i+1; break;
@@ -323,11 +326,11 @@ public:
 	}
 
 	constexpr SizeType removeLike(DataType const& value)
-	requires Type::Comparable::Equals<DataType, DataType> {
+	requires Type::Comparator::Equals<DataType, DataType> {
 		SizeType removed = 0;
 		auto const start = begin();
 		for(auto i = begin(); i != end();)
-			if (*i == value) {
+			if (ComparatorType::equals(*i, value)) {
 				remove(i-start+1);
 				removed++;
 			} else ++i;
@@ -335,11 +338,11 @@ public:
 	}
 
 	constexpr SizeType removeUnlike(DataType const& value)
-	requires Type::Comparable::Equals<DataType, DataType> {
+	requires Type::Comparator::Equals<DataType, DataType> {
 		SizeType removed = 0;
 		auto const start = begin();
 		for(auto i = begin(); i != end();)
-			if (*i != value) {
+			if (!ComparatorType::equals(*i, value)) {
 				remove(i-start+1);
 				removed++;
 			} else ++i;
@@ -525,12 +528,12 @@ public:
 	constexpr SizeType empty() const	{return count == 0;	}
 
 	constexpr bool operator==(SelfType const& other) const
-	requires Type::Comparable::Equals<DataType, DataType> {
+	requires Type::Comparator::Equals<DataType, DataType> {
 		return equals(other);
 	}
 
 	constexpr OrderType operator<=>(SelfType const& other) const
-	requires Type::Comparable::Threeway<DataType, DataType> {
+	requires Type::Comparator::Threeway<DataType, DataType> {
 		return compare(other);
 	}
 
@@ -544,40 +547,40 @@ public:
 	}
 
 	constexpr SizeType equals(SelfType const& other) const
-	requires Type::Comparable::Equals<DataType, DataType> {
+	requires Type::Comparator::Equals<DataType, DataType> {
 		bool result = true;
 		IndexType i = 0;
 		while (result) {
 			if (i == count || i == other.count)
 				return count == other.count;
-			result = contents[i] == other.contents[i];
+			result = ComparatorType::equals(contents[i], other.contents[i]);
 			++i;
 		}
 		return result;
 	}
 
 	constexpr OrderType compare(SelfType const& other) const
-	requires Type::Comparable::Threeway<DataType, DataType> {
+	requires Type::Comparator::Threeway<DataType, DataType> {
 		OrderType result = Order::EQUAL;
 		IndexType i = 0;
 		while (result == Order::EQUAL) {
 			if (i == count || i == other.count)
 				return count <=> other.count;
-			result = contents[i] <=> other.contents[i];
+			result = ComparatorType::compare(contents[i], other.contents[i]);
 			++i;
 		}
 		return result;
 	}
 
 	constexpr SizeType disparity(SelfType const& other) const
-	requires Type::Comparable::NotEquals<DataType, DataType> {
+	requires Type::Comparator::Equals<DataType, DataType> {
 		SizeType
 			diff	= 0,
 			max		= (count > other.count ? count : other.count),
 			min		= (count < other.count ? count : other.count)
 		;
 		for (SizeType i = 0; i < max; ++i)
-			if (contents[i] != other.contents[i]) ++diff;
+			if (!ComparatorType::equals(contents[i], other.contents[i])) ++diff;
 		return diff + (max - min);
 	}
 

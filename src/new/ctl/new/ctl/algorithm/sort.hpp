@@ -3,12 +3,13 @@
 
 #include "../container/iterator.hpp"
 #include "../memory/memory.hpp"
+#include "../adaptor/comparator.hpp"
 #include "transform.hpp"
 
 CTL_NAMESPACE_BEGIN
 
 template <class T>
-concept Sortable = Type::Comparable::Threeway<T, T>;
+concept Sortable = Type::Comparator::Threeway<T, T>;
 
 template <class T>
 concept SortableIterator =
@@ -23,7 +24,7 @@ namespace Sorting {
 	constexpr void insertionSort(T* const& arr, usize const& sz) {
 		for (usize i = 1; i < sz; ++i) {
 			usize j = i-1;
-			while(j-- > 0 && arr[j+1] < arr[j])
+			while(j-- > 0 && SimpleComparator<T>::lesser(arr[j+1], arr[j]))
 				if (arr[j+1] < arr[j])
 					swap(arr[j], arr[j+1]);
 		}
@@ -35,7 +36,7 @@ namespace Sorting {
 	constexpr void mergeSort(T* const& arr, usize const& sz) {
 		if (sz == 1) return;
 		if (sz == 2) {
-			if (arr[0] > arr[1])
+			if (SimpleComparator<T>::greater(arr[0], arr[1]))
 				swap(arr[0], arr[1]);
 			return;
 		}
@@ -57,7 +58,7 @@ namespace Sorting {
 			k = szLeft
 		;
 		while (i < szLeft && j < szRight) {
-			if (left[i] <= right[j])
+			if (SimpleComparator<T>::lesserEquals(left[i], right[j]))
 				arr[k] = left[i++];
 			else
 				arr[k] = right[j++];
@@ -75,7 +76,7 @@ namespace Sorting {
 		constexpr void mergeSort(T* const& arr, usize const& sz) {
 			if (sz == 1) return;
 			if (sz == 2) {
-				if (arr[0] > arr[1])
+				if (SimpleComparator<T>::greater(arr[0], arr[1]))
 					swap(arr[0], arr[1]);
 				return;
 			}
@@ -95,7 +96,7 @@ namespace Sorting {
 				k = szLeft
 			;
 			while (i < szLeft && j < szRight) {
-				if (left[i] <= right[j])
+				if (SimpleComparator<T>::lesserEquals(left[i], right[j]))
 					arr[k] = left[i++];
 				else
 					arr[k] = right[j++];
@@ -125,33 +126,33 @@ namespace Sorting {
 		;
 		usize const hibit = highBit(sz);
 		typename Ordered::OrderType
-			prevOrder = arr[1] <=> arr[0],
+			prevOrder = SimpleComparator<T>::compare(arr[1], arr[0]),
 			currentOrder = prevOrder
 		;
 		for (usize run = ((hibit >> 4) > 4 ? (hibit >> 4) : 4); run < sz; run <<= 1) {
 			for (usize i = 1; i < sz; ++i) {
-				currentOrder = arr[i] <=> arr[i-1];
+				currentOrder = SimpleComparator<T>::compare(arr[i], arr[i-1]);
 				if (currentOrder != prevOrder && currentOrder != Ordered::Order::EQUAL) {
 					if (j < run) {
 						j = (offset+j > sz) ? (sz-offset) : j;
 						Partial::mergeSort(arr+offset, j);
-					} else if (arr[offset] < arr[offset+j])
+					} else if (SimpleComparator<T>::lesser(arr[offset], arr[offset+j]))
 						reverse(arr+offset, j);
 					offset += j;
 					j = 1;
 					++i;
 					if (i < sz)
-						prevOrder = currentOrder = arr[i+1] <=> arr[i];
+						prevOrder = currentOrder = SimpleComparator<T>::compare(arr[i+1], arr[i]);
 				} else ++j;
 				if (currentOrder != Ordered::Order::EQUAL)
 					prevOrder = currentOrder;
 			}
 			if (j == sz) {
-				if (arr[0] > arr[sz-1])
+				if (SimpleComparator<T>::greater(arr[0], arr[sz-1]))
 					reverse(arr, sz);
 				return;
 			}
-			currentOrder = prevOrder = arr[1] <=> arr[0];
+			currentOrder = prevOrder = SimpleComparator<T>::compare(arr[1], arr[0]);
 			offset = 0;
 		}
 	}

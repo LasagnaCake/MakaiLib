@@ -322,15 +322,14 @@ private:
 
 /*
 template<class TKey, class TValue, Type::Integer TIndex = usize, class TPair = Pair<TKey, TValue>, class THasher = Hasher>
-struct HashMap:
-	List<TPair<TKey, TValue>, TIndex>,
-	Collected<TKey, TValue, TPair>,
-	SelfIdentified<HashMap<TKey, TValue, TIndex, TPair>>
 requires (
-	Type::Comparable::Threeway<TKey, TKey>
+	Type::Comparator::Threeway<TKey, TKey>
 &&	PairType<TPair>
 &&	Hashable<TKey, THasher>
-) {
+) struct HashMap:
+	List<TPair<TKey, TValue>, TIndex>,
+	Collected<TKey, TValue, TPair>,
+	SelfIdentified<HashMap<TKey, TValue, TIndex, TPair>> {
 
 }
 */

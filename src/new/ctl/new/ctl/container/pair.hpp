@@ -241,10 +241,10 @@ struct FirstSecondPair:
 	constexpr operator PairType() const	{return pair();						}
 };
 
-static_assert(Type::Comparable::Threeway<Pair<int, int>, Pair<int, int>>);
-static_assert(Type::Comparable::Threeway<KeyValuePair<int, int>, KeyValuePair<int, int>>);
-static_assert(Type::Comparable::Threeway<LeftRightPair<int, int>, LeftRightPair<int, int>>);
-static_assert(Type::Comparable::Threeway<FirstSecondPair<int, int>, FirstSecondPair<int, int>>);
+static_assert(Type::Comparator::Threeway<Pair<int, int>, Pair<int, int>>);
+static_assert(Type::Comparator::Threeway<KeyValuePair<int, int>, KeyValuePair<int, int>>);
+static_assert(Type::Comparator::Threeway<LeftRightPair<int, int>, LeftRightPair<int, int>>);
+static_assert(Type::Comparator::Threeway<FirstSecondPair<int, int>, FirstSecondPair<int, int>>);
 
 namespace Type {
 	template<class T>
