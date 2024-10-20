@@ -9,7 +9,7 @@
 namespace Makai::JSON {
 	namespace Compat {
 		template<class TIter, class... TArgs>
-		struct IteratorAdaptor: TIter {
+		struct IteratorAdaptor: public TIter {
 			using iterator_category	= std::bidirectional_iterator_tag;
 			using value_type		= typename TIter::DataType;
 			using difference_type	= typename TIter::IndexType;
@@ -17,22 +17,45 @@ namespace Makai::JSON {
 			using reference			= typename TIter::ReferenceType;
 		};
 
-		template<class TKey, class TValue, class... TArgs>
-		struct MapAdaptor: Map<TKey, TValue> {
-			using key_compare	= std::equal_to<TKey>;
-			using key_type		= typename Map<TKey, TValue>::KeyType;
-			using value_type	= typename Map<TKey, TValue>::ValueType;
-			using iterator		= typename Map<TKey, TValue>::IteratorType;
+		template<template <typename...> class TClass, typename... TArgs>
+		struct STDAdaptor: public TClass<TArgs...> {
+			using ClassType = TClass<TArgs...>;
+			using value_type		= typename ClassType::DataType;
+			using reference			= typename ClassType::ReferenceType;
+			using const_reference	= typename ClassType::ConstReferenceType;
+			using pointer			= typename ClassType::PointerType;
+			using const_pointer		= typename ClassType::ConstPointerType;
+			using size_type			= typename ClassType::SizeType;
+			using difference_type	= typename ClassType::IndexType;
+			using iterator			= IteratorAdaptor<typename ClassType::IteratorType>;
+			using const_iterator	= IteratorAdaptor<typename ClassType::ConstIteratorType>;
+			using value_compare		= std::equal_to<value_type>;
 		};
 
-		template<template <typename...> class TClass, typename... TArgs>
-		struct STDAdaptor: TClass<TArgs...> {
-			using value_type	= typename TClass<TArgs...>::DataType;
-			using iterator		= typename TClass<TArgs...>::IteratorType;
+		template<template <class, class> class TMap, class TKey, class TValue, class... TArgs>
+		struct MapAdaptor: public TMap<TKey, TValue> {
+			using MapType = TMap<TKey, TValue>;
+			using key_type			= typename MapType::KeyType;
+			using mapped_type		= typename MapType::ValueType;
+			using value_type		= typename MapType::PairType;
+			using reference			= value_type&;
+			using const_reference	= value_type const&;
+			using pointer			= value_type*;
+			using const_pointer		= value_type const*;
+			using size_type			= typename MapType::SizeType;
+			using difference_type	= typename MapType::IndexType;
+			using iterator			= IteratorAdaptor<typename MapType::IteratorType>;
+			using const_iterator	= IteratorAdaptor<typename MapType::ConstIteratorType>;
+			using key_compare		= std::less<key_type>;
+			using mapped_compare	= std::equal_to<mapped_type>;
+			using value_compare		= std::equal_to<value_type>;
 		};
 
 		template<typename TData, typename... TArgs>
 		using ListAdaptor = STDAdaptor<List, TData>;
+
+		template<typename TKey, typename TValue, typename... TArgs>
+		using OrderedMapAdaptor = MapAdaptor<OrderedMap, TKey, TValue>;
 
 		using StringAdaptor = STDAdaptor<BaseString, char>;
 	}
@@ -40,13 +63,13 @@ namespace Makai::JSON {
 	namespace Extern {
 		using Nlohmann = nlohmann::json;
 		using JSONData = nlohmann::basic_json<
-			Compat::MapAdaptor,
+			Compat::OrderedMapAdaptor,
 			Compat::ListAdaptor,
 			Compat::StringAdaptor,
 			bool,
 			ssize,
 			usize,
-			float
+			double
 		>;
 	}
 

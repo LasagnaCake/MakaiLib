@@ -17,10 +17,10 @@ CTL_NAMESPACE_BEGIN
 
 template<class TData, Type::Integer TIndex = usize>
 struct List:
-	Iteratable<TData, TIndex>,
-	SelfIdentified<List<TData, TIndex>>,
-	ListInitializable<TData>,
-	Ordered {
+	public Iteratable<TData, TIndex>,
+	public SelfIdentified<List<TData, TIndex>>,
+	public ListInitializable<TData>,
+	public Ordered {
 public:
 	using Iteratable		= ::CTL::Iteratable<TData, TIndex>;
 	using SelfIdentified	= ::CTL::SelfIdentified<List<TData, TIndex>>;

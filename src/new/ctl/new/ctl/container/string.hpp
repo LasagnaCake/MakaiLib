@@ -19,11 +19,11 @@ CTL_NAMESPACE_BEGIN
 
 template<Type::ASCII TChar, Type::Integer TIndex = usize>
 struct BaseString:
-	List<TChar, TIndex>,
-	SelfIdentified<BaseString<TChar, TIndex>>,
-	Derived<List<TChar, TIndex>>,
-	StringLiterable<TChar>,
-	Streamable<TChar> {
+	public List<TChar, TIndex>,
+	public SelfIdentified<BaseString<TChar, TIndex>>,
+	public Derived<List<TChar, TIndex>>,
+	public StringLiterable<TChar>,
+	public Streamable<TChar> {
 public:
 	using Iteratable		= ::CTL::Iteratable<TChar, TIndex>;
 	using SelfIdentified	= ::CTL::SelfIdentified<BaseString<TChar, TIndex>>;

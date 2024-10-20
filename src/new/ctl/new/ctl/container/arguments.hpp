@@ -33,13 +33,13 @@ struct Arguments:
 
 	template<usize N>
 	constexpr Arguments(Decay::AsType<ConstantType[N]> const& data):
-	start(new DataType[N]), length(N) {
+	start(::new DataType[N]), length(N) {
 		MX::memcpy(start, data, N);
 	}
 
 	template<class... Args>
 	constexpr Arguments(DataType const& first, Args const&... rest):
-		start(new DataType[sizeof...(Args) + 1]{first, rest...}), length(sizeof...(Args) + 1) {}
+		start(::new DataType[sizeof...(Args) + 1]{first, rest...}), length(sizeof...(Args) + 1) {}
 
 	constexpr ReferenceType operator[](ssize index) {
 		while (index < 0)

@@ -53,7 +53,9 @@ public:
 		typename BaseType::SizeType,
 		typename BaseType::IndexType,
 		typename BaseType::IteratorType,
-		typename BaseType::ReverseIteratorType
+		typename BaseType::ReverseIteratorType,
+		typename BaseType::ConstIteratorType,
+		typename BaseType::ConstReverseIteratorType
 	;
 
 	static_assert(!SORTED || Sortable<KeyType>, "Cannot form a sortable map whithout an sortable key!");
