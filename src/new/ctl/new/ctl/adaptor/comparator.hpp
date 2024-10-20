@@ -13,57 +13,47 @@ struct Comparator;
 
 namespace {
 	template<class A, class B>
-	concept NonStandardThreewayWithEquals = (
-		!Type::Comparable::Threeway<A, B>
-	&&	Type::Comparable::Equals<A, B>
-	&& (
-		Type::Comparable::Lesser<A, B>
-	||	Type::Comparable::Greater<A, B>
-	)
-	);
-
-	template<class A, class B>
-	concept NonStandardThreewayWithoutEquals = (
-		!Type::Comparable::Threeway<A, B>
-	&&	!Type::Comparable::Equals<A, B>
-	&&	Type::Comparable::Lesser<A, B>
-	&&	Type::Comparable::Greater<A, B>
-	);
-
-	template<class A, class B>
-	concept NonStandardThreeway = NonStandardThreewayWithEquals<A, B> || NonStandardThreewayWithoutEquals<A, B>;
-
-	template<class A, class B>
-	concept AnyThreeway = Type::Comparable::Threeway<A, B> || NonStandardThreeway<A, B>;
-
-	template<class A, class B>
 	concept FullHouseThreeway =
-		NonStandardThreeway<A, B>
+		!Type::Comparable::Threeway<A, B>
+	&&	Type::Comparable::Greater<A, B>
 	&&	Type::Comparable::Equals<A, B>
 	&&	Type::Comparable::Lesser<A, B>
-	&&	Type::Comparable::Greater<A, B>
 	;
 
 	template<class A, class B>
 	concept GreaterLesserThreeway =
-		NonStandardThreewayWithoutEquals<A, B>
-	&&	Type::Comparable::Lesser<A, B>
+		!Type::Comparable::Threeway<A, B>
 	&&	Type::Comparable::Greater<A, B>
+	&&	!Type::Comparable::Equals<A, B>
+	&&	Type::Comparable::Lesser<A, B>
 	;
 
 	template<class A, class B>
 	concept GreaterEqualsThreeway =
-		NonStandardThreewayWithEquals<A, B>
+		!Type::Comparable::Threeway<A, B>
 	&&	Type::Comparable::Greater<A, B>
 	&&	Type::Comparable::Equals<A, B>
+	&&	!Type::Comparable::Lesser<A, B>
 	;
 
 	template<class A, class B>
 	concept LesserEqualsThreeway =
-		NonStandardThreewayWithEquals<A, B>
-	&&	Type::Comparable::Lesser<A, B>
+		!Type::Comparable::Threeway<A, B>
+	&&	!Type::Comparable::Greater<A, B>
 	&&	Type::Comparable::Equals<A, B>
+	&&	Type::Comparable::Lesser<A, B>
 	;
+
+	template<class A, class B>
+	concept NonStandardThreeway =
+		FullHouseThreeway<A, B>
+	||	GreaterLesserThreeway<A, B>
+	||	LesserEqualsThreeway<A, B>
+	||	GreaterEqualsThreeway<A, B>
+	;
+
+	template<class A, class B>
+	concept AnyThreeway = Type::Comparable::Threeway<A, B> || NonStandardThreeway<A, B>;
 }
 
 template <class A, class B>
