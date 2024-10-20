@@ -1,7 +1,9 @@
 #include <ctl/ctl.hpp>
 #include <ctlex/ctlex.hpp>
 
-using CTL::Function, CTL::String, CTL::operator ""s;
+using CTL::Function, CTL::String;
+
+using namespace CTL::Literals::Text;
 
 bool isPowerOf2(int x) {
     return x > 0 && !(x & (x-1));

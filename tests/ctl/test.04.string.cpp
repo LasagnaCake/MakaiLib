@@ -8,9 +8,10 @@ using
 	CTL::SimpleMap,
 	CTL::List,
 	CTL::KeyValuePair,
-	CTL::TypeInfo,
-	CTL::operator ""s
+	CTL::TypeInfo
 ;
+
+using namespace CTL::Literals::Text;
 
 void print(String const& str) {
 	DEBUGLN(

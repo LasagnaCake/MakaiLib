@@ -287,6 +287,8 @@ constexpr double	operator ""D(unsigned long long v)	{return v;	}
 
 CTL_NAMESPACE_BEGIN
 
+namespace Literals::Math {
+
 // "Degrees to Radians" literal conversion
 constexpr float			operator ""degf(long double d)			{return CTL::Math::radians<float>(d);		}
 constexpr float			operator ""degf(unsigned long long d)	{return CTL::Math::radians<float>(d);		}
@@ -307,6 +309,8 @@ constexpr long double	operator ""radld(unsigned long long r)	{return CTL::Math::
 constexpr float			operator ""rad(long double r)			{return CTL::Math::degrees<float>(r);		}
 constexpr float			operator ""rad(unsigned long long r)	{return CTL::Math::degrees<float>(r);		}
 #endif // CTL_INCLUDE_RADIAN_CONVERSION_LITERALS
+
+}
 
 CTL_NAMESPACE_END
 

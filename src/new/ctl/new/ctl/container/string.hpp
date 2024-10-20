@@ -574,10 +574,12 @@ template<usize N> using StaticWideString	= BaseStaticString<wchar_t,	N>;
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wliteral-suffix"
-constexpr String operator "" s		(cstring cstr, usize sz)	{return String(cstr, cstr + sz -1);					}
-constexpr String operator "" s		(cwstring cstr, usize sz)	{return WideString(cstr, cstr + sz -1).toString();	}
-constexpr WideString operator "" ws	(cstring cstr, usize sz)	{return String(cstr, cstr + sz -1).toWideString();	}
-constexpr WideString operator "" ws	(cwstring cstr, usize sz)	{return WideString(cstr, cstr + sz -1);				}
+namespace Literals::Text {
+	constexpr String operator "" s		(cstring cstr, usize sz)	{return String(cstr, cstr + sz);				}
+	constexpr String operator "" s		(cwstring cstr, usize sz)	{return WideString(cstr, cstr + sz).toString();	}
+	constexpr WideString operator "" ws	(cstring cstr, usize sz)	{return String(cstr, cstr + sz).toWideString();	}
+	constexpr WideString operator "" ws	(cwstring cstr, usize sz)	{return WideString(cstr, cstr + sz);			}
+}
 #pragma GCC diagnostic pop
 
 CTL_NAMESPACE_END
