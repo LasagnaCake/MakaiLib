@@ -11,7 +11,7 @@ CTL_NAMESPACE_BEGIN
 template <class A, class B>
 struct Comparator;
 
-namespace {
+namespace Type::Comparable::NonStandard {
 	template<class A, class B>
 	concept FullHouseThreeway =
 		!Type::Comparable::Threeway<A, B>
@@ -45,19 +45,24 @@ namespace {
 	;
 
 	template<class A, class B>
-	concept NonStandardThreeway =
+	concept Threeway =
 		FullHouseThreeway<A, B>
 	||	GreaterLesserThreeway<A, B>
 	||	LesserEqualsThreeway<A, B>
 	||	GreaterEqualsThreeway<A, B>
 	;
+}
 
+namespace Type::Comparable {
 	template<class A, class B>
-	concept AnyThreeway = Type::Comparable::Threeway<A, B> || NonStandardThreeway<A, B>;
+	concept AnyThreeway =
+		Type::Comparable::Threeway<A, B>
+	||	Type::Comparable::NonStandard::Threeway<A, B>
+	;
 }
 
 template <class A, class B>
-requires AnyThreeway<A, B>
+requires Type::Comparable::AnyThreeway<A, B>
 struct Comparator<A, B>: Ordered {
 	using typename Ordered::OrderType;
 
@@ -67,7 +72,7 @@ struct Comparator<A, B>: Ordered {
 	}
 
 	constexpr static OrderType compare(A const& a, B const& b)
-	requires FullHouseThreeway<A, B> {
+	requires Type::Comparable::NonStandard::FullHouseThreeway<A, B> {
 		if (a < b)	return Order::LESS;
 		if (a == b)	return Order::EQUAL;
 		if (a > b)	return Order::GREATER;
@@ -75,21 +80,21 @@ struct Comparator<A, B>: Ordered {
 	}
 
 	constexpr static OrderType compare(A const& a, B const& b)
-	requires GreaterLesserThreeway<A, B> {
+	requires Type::Comparable::NonStandard::GreaterLesserThreeway<A, B> {
 		if (a < b)	return Order::LESS;
 		if (a > b)	return Order::GREATER;
 		return Order::EQUAL;
 	}
 
 	constexpr static OrderType compare(A const& a, B const& b)
-	requires LesserEqualsThreeway<A, B> {
+	requires Type::Comparable::NonStandard::LesserEqualsThreeway<A, B> {
 		if (a < b)	return Order::LESS;
 		if (a == b)	return Order::EQUAL;
 		return Order::GREATER;
 	}
 
 	constexpr static OrderType compare(A const& a, B const& b)
-	requires GreaterEqualsThreeway<A, B> {
+	requires Type::Comparable::NonStandard::GreaterEqualsThreeway<A, B> {
 		if (a > b)	return Order::GREATER;
 		if (a == b)	return Order::EQUAL;
 		return Order::LESS;
