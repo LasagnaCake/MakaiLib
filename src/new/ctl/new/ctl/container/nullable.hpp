@@ -6,7 +6,7 @@
 #include "../order.hpp"
 #include "../typetraits/traits.hpp"
 #include "../algorithm/strconv.hpp"
-#include "../adaptor/comparator.hpp"
+#include "../adapter/comparator.hpp"
 #include "error.hpp"
 
 CTL_NAMESPACE_BEGIN

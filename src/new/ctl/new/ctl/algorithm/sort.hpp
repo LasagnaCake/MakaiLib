@@ -3,7 +3,7 @@
 
 #include "../container/iterator.hpp"
 #include "../memory/memory.hpp"
-#include "../adaptor/comparator.hpp"
+#include "../adapter/comparator.hpp"
 #include "transform.hpp"
 
 CTL_NAMESPACE_BEGIN

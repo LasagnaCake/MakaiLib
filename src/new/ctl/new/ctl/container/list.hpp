@@ -10,7 +10,7 @@
 #include "function.hpp"
 #include "../algorithm/sort.hpp"
 #include "../algorithm/reverse.hpp"
-#include "../adaptor/comparator.hpp"
+#include "../adapter/comparator.hpp"
 #include "../memory/memory.hpp"
 
 CTL_NAMESPACE_BEGIN

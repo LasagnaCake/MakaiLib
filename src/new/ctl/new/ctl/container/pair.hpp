@@ -2,7 +2,7 @@
 #define CTL_CONTAINER_PAIR_H
 
 #include "../templates.hpp"
-#include "../adaptor/comparator.hpp"
+#include "../adapter/comparator.hpp"
 #include "../meta/logic.hpp"
 
 CTL_NAMESPACE_BEGIN

@@ -6,7 +6,7 @@
 #include "../templates.hpp"
 #include "../container/function.hpp"
 #include "../container/view.hpp"
-#include "../adaptor/comparator.hpp"
+#include "../adapter/comparator.hpp"
 #include "thread.hpp"
 
 CTL_NAMESPACE_BEGIN
