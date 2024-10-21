@@ -33,8 +33,14 @@ inline float64	toFloat64(String s)		{return toDouble(s);		}
 inline float128	toFloat128(String s)	{return toLongDouble(s);	}
 
 template<Type::Number T>
-constexpr String toString(T const& value) {
+constexpr String toString(T const& value)
+requires Type::Different<T, bool> {
 	return String::fromNumber<T>(value);
+}
+
+template<Type::Equal<bool> T>
+constexpr String toString(T const& value) {
+	return String::fromNumber<uint8>(value);
 }
 
 template<class T>

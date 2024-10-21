@@ -69,8 +69,8 @@ struct HeapAllocator {
 template<typename TData = void, template <class> class TAlloc = HeapAllocator>
 requires Type::Allocator<TAlloc, TData>
 struct MemorySlice {
-	constexpr MemorySlice()							{				}
-	constexpr MemorySlice(usize const& sz)			{invoke(sz);	}
+	constexpr MemorySlice()					{				}
+	constexpr MemorySlice(usize const& sz)	{invoke(sz);	}
 
 	constexpr MemorySlice(MemorySlice const& other)	{
 		invoke(other.length);

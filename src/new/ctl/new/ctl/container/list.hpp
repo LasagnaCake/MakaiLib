@@ -305,7 +305,7 @@ public:
 		if (ComparatorType::equals(back(), value)) return size() - 1;
 		IndexType lo = 0, hi = size() - 1, i = -1;
 		SizeType loop = 0;
-		while (hi >= lo & loop < size()) {
+		while (hi >= lo && loop < size()) {
 			i = lo + (hi - lo) / 2;
 			switch(ComparatorType::compare(value, *(cbegin() + i))) {
 				case Order::LESS:		hi = i-1; break;
@@ -549,7 +549,7 @@ public:
 	constexpr SizeType equals(SelfType const& other) const
 	requires Type::Comparator::Equals<DataType, DataType> {
 		bool result = true;
-		IndexType i = 0;
+		SizeType i = 0;
 		while (result) {
 			if (i == count || i == other.count)
 				return count == other.count;
@@ -562,7 +562,7 @@ public:
 	constexpr OrderType compare(SelfType const& other) const
 	requires Type::Comparator::Threeway<DataType, DataType> {
 		OrderType result = Order::EQUAL;
-		IndexType i = 0;
+		SizeType i = 0;
 		while (result == Order::EQUAL) {
 			if (i == count || i == other.count)
 				return count <=> other.count;
@@ -666,7 +666,7 @@ public:
 			bool miss = false;
 			for(SizeType j = count - 1; j >= 0; --j) {
 				if (i == j) break;
-				if (miss = !compare(contents[i], contents[j]))
+				if ((miss = !compare(contents[i], contents[j])))
 					break;
 			}
 			if (!miss) result.pushBack(contents[i]);
@@ -769,7 +769,7 @@ private:
 		magnitude = 0;
 		SizeType const order = (sizeof(SizeType) * 8)-1;
 		for (SizeType i = 1; i <= order; ++i) {
-			magnitude = 1 << order - i;
+			magnitude = 1 << (order - i);
 			if ((maximum >> (order - i)) & 1) {
 				magnitude <<= 1;
 				return *this;

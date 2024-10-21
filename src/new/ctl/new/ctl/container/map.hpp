@@ -176,7 +176,7 @@ public:
 		if (OrderType(back().key <=> key) == Order::EQUAL) return size() - 1;
 		IndexType lo = 0, hi = size() - 1, i = -1;
 		SizeType loop = 0;
-		while (hi >= lo & loop < size()) {
+		while (hi >= lo && loop < size()) {
 			i = lo + (hi - lo) / 2;
 			switch(OrderType(key <=> (cbegin() + i)->key)) {
 				case Order::LESS:		hi = i-1; break;

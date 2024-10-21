@@ -20,8 +20,8 @@ struct MemoryStream: DataStream {
 	MemoryBuffer buffer;
 
 	MemoryStream(char* const& data, usize const& size):
-		buffer(data, size),
-		DataStream(&buffer) {}
+		DataStream(&buffer),
+		buffer(data, size) {}
 };
 
 template<class TData>

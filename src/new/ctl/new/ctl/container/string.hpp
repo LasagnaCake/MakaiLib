@@ -407,10 +407,15 @@ public:
 	constexpr SelfType toWideString() const
 	requires Type::Equal<DataType, wchar> {return *this;}
 
+	constexpr static bool toNumber(SelfType const& str) {
+		return toNumber<uint8>(str);
+	}
+
 	template<Type::Integer T>
-	constexpr static T toNumber(SelfType const& str, T const& base = 0) {
+	constexpr static T toNumber(SelfType const& str, T const& base = 0) 
+	requires Type::Different<T, bool> {
 		T val;
-		if (!atoi<T>(str.data(), str.size(), val, base))
+		if (!atoi<T, DataType>(str.data(), str.size(), val, base))
 			throw FailedActionException("String-to-Integer conversion failure!");
 		return val;
 	}
@@ -418,15 +423,20 @@ public:
 	template<Type::Real T>
 	constexpr static T toNumber(SelfType const& str) {
 		T val;
-		if (!atof<T>(str.data(), str.size(), val))
+		if (!atof<T, DataType>(str.data(), str.size(), val))
 			throw FailedActionException("String-to-Float conversion failure!");
 		return val;
 	}
 
+	constexpr static SelfType fromNumber(bool const& val) {
+		return fromNumber<uint8>(val);
+	}
+
 	template<Type::Integer T>
-	constexpr static SelfType fromNumber(T const& val, T const& base = 10) {
+	constexpr static SelfType fromNumber(T const& val, T const& base = 10)
+	requires Type::Different<T, bool> {
 		SelfType result(sizeof(T)*4, '\0');
-		ssize sz = itoa<T>(val, result.data(), result.size(), base);
+		ssize sz = itoa<T, DataType>(val, result.data(), result.size(), base);
 		if (sz < 0) throw FailedActionException("Integer-to-String conversion failure!");
 		result.resize(sz);
 		return result;
@@ -435,7 +445,7 @@ public:
 	template<Type::Real T>
 	constexpr static SelfType fromNumber(T const& val, usize const& precision = sizeof(T)*2) {
 		SelfType result(sizeof(T)*4, '\0');
-		ssize sz = ftoa<T>(val, result.data(), result.size(), precision);
+		ssize sz = ftoa<T, DataType>(val, result.data(), result.size(), precision);
 		if (sz < 0) throw FailedActionException("Float-to-String conversion failure!");
 		result.resize(sz);
 		return result;
