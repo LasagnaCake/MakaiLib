@@ -7,7 +7,7 @@
 #include "../regex/core.hpp"
 #include "filesystem.hpp"
 
-#if (_WIN32 || _WIN64 || __WIN32__ || __WIN64__) && !defined(_NO_WINDOWS_PLEASE_)
+#if (_WIN32 || _WIN64 || __WIN32__ || __WIN64__) && !defined(CTL_NO_WINDOWS_PLEASE)
 #include <windows.h>
 #include <winapifamily.h>
 #include <commdlg.h>
@@ -20,7 +20,7 @@ CTL_NAMESPACE_BEGIN
 namespace OS {
 	inline String sanitizedArgument(String arg) {
 		arg = Regex::replace(arg, "\\\\+", "\\\\");
-		#if (_WIN32 || _WIN64 || __WIN32__ || __WIN64__) && !defined(_NO_WINDOWS_PLEASE_)
+		#if (_WIN32 || _WIN64 || __WIN32__ || __WIN64__) && !defined(CTL_NO_WINDOWS_PLEASE)
 		arg = Regex::replace(arg, "\\\\+\"", "\\\"");
 		return "\"" + arg + "\"";
 		#else
@@ -38,7 +38,7 @@ namespace OS {
 				toString(__LINE__),
 				"CTL::OS::launch"
 			);
-		#if (_WIN32 || _WIN64 || __WIN32__ || __WIN64__) && !defined(_NO_WINDOWS_PLEASE_)
+		#if (_WIN32 || _WIN64 || __WIN32__ || __WIN64__) && !defined(CTL_NO_WINDOWS_PLEASE)
 		String prgArgs = "";
 		if (!args.empty())
 			for (String const& arg: args)
@@ -80,7 +80,7 @@ namespace OS {
 	}
 
 	inline String openFileDialog(String filter = "All\0*.*\0") {
-		#if (_WIN32 || _WIN64 || __WIN32__ || __WIN64__) && !defined(_NO_WINDOWS_PLEASE_)
+		#if (_WIN32 || _WIN64 || __WIN32__ || __WIN64__) && !defined(CTL_NO_WINDOWS_PLEASE)
 		OPENFILENAMEA ofn;
 		char szFile[260] = {0};
 		memset(&ofn, 0, sizeof(ofn));
@@ -107,7 +107,7 @@ namespace OS {
 	}
 
 	inline String saveFileDialog(String filter = "All\0*.*\0") {
-		#if (_WIN32 || _WIN64 || __WIN32__ || __WIN64__) && !defined(_NO_WINDOWS_PLEASE_)
+		#if (_WIN32 || _WIN64 || __WIN32__ || __WIN64__) && !defined(CTL_NO_WINDOWS_PLEASE)
 		OPENFILENAMEA ofn;
 		char szFile[260] = {0};
 		memset(&ofn, 0, sizeof(ofn));
