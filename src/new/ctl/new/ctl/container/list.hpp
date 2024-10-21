@@ -15,16 +15,22 @@
 
 CTL_NAMESPACE_BEGIN
 
-template<class TData, Type::Integer TIndex = usize>
+template<
+	class TData,
+	Type::Integer TIndex = usize,
+	template <class> class TAlloc = HeapAllocator
+>
 struct List:
-	public Iteratable<TData, TIndex>,
-	public SelfIdentified<List<TData, TIndex>>,
-	public ListInitializable<TData>,
-	public Ordered {
+	Iteratable<TData, TIndex>,
+	SelfIdentified<List<TData, TIndex>>,
+	ListInitializable<TData>,
+	Allocatable<TAlloc, TData>,
+	Ordered {
 public:
 	using Iteratable		= ::CTL::Iteratable<TData, TIndex>;
 	using SelfIdentified	= ::CTL::SelfIdentified<List<TData, TIndex>>;
 	using ListInitializable	= ::CTL::ListInitializable<TData>;
+	using Allocatable		= ::CTL::Allocatable<TAlloc, TData>;
 
 	using
 		typename Iteratable::DataType,
@@ -53,6 +59,10 @@ public:
 
 	using
 		typename ListInitializable::ArgumentListType
+	;
+
+	using
+		typename Allocatable::AllocatorType
 	;
 
 	using PredicateType	= Function<bool(ConstReferenceType)>;
@@ -702,6 +712,8 @@ public:
 
 	constexpr bool tight() const {return count == maximum;}
 
+	constexpr AllocatorType& allocator() {return alloc;}
+
 	friend constexpr void swap(SelfType& a, SelfType& b) noexcept {
 		swap(a.contents, b.contents);
 		swap(a.maximum, b.maximum);
@@ -727,20 +739,20 @@ private:
 		}
 	}
 
-	constexpr static void memdestroy(PointerType const& p, SizeType const& sz) {
+	constexpr void memdestroy(PointerType const& p, SizeType const& sz) {
 		memdestruct(p, sz);
-		MX::free<DataType>(p);
+		alloc.deallocate(p);
 	}
 
-	constexpr static DataType* memcreate(SizeType const& sz) {
-		return MX::malloc<DataType>(sz);
+	constexpr DataType* memcreate(SizeType const& sz) {
+		return alloc.allocate(sz);
 	}
 
-	constexpr static void memresize(DataType*& data, SizeType const& sz, SizeType const& oldsz, SizeType const& count) {
+	constexpr void memresize(DataType*& data, SizeType const& sz, SizeType const& oldsz, SizeType const& count) {
 		if constexpr(Type::Primitive<DataType>)
-			data = MX::realloc<DataType>(data, sz);
+			alloc.resize(data, sz);
 		else {
-			DataType* ndata = MX::malloc<DataType>(sz);
+			DataType* ndata = alloc.allocate(sz);
 			copy(data, ndata, count < sz ? count : sz);
 			memdestroy(data, count);
 			data = ndata;
@@ -813,10 +825,12 @@ private:
 		throw NonexistentValueException("Container is empty!");
 	}
 
-	SizeType	magnitude	= 1;
-	SizeType	maximum		= 0;
-	SizeType	count		= 0;
-	DataType*	contents	= nullptr;
+	SizeType		magnitude	= 1;
+	SizeType		maximum		= 0;
+	SizeType		count		= 0;
+	DataType*		contents	= nullptr;
+
+	AllocatorType	alloc;
 };
 
 template <Type::Integer TIndex = usize>

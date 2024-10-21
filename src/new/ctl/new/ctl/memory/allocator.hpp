@@ -12,7 +12,7 @@ namespace Type {
 	template<template <class> class T, class TData>
 	concept Allocator = requires (T<TData> t, usize sz, TData* p) {
 		{t.allocate(sz)}	-> Type::Equal<TData*>	;
-		{t.deallocate(sz)}	-> Type::Equal<void>	;
+		{t.deallocate(p)}	-> Type::Equal<void>	;
 		{t.resize(p, sz)}	-> Type::Equal<void>	;
 		{t.resized(p, sz)}	-> Type::Equal<TData*>	;
 	};
@@ -66,9 +66,18 @@ struct HeapAllocator {
 	}
 };
 
-template<typename TData = void, template <class> class TAlloc = HeapAllocator>
+template<template <class> class TAlloc, class TData>
 requires Type::Allocator<TAlloc, TData>
-struct MemorySlice {
+struct Allocatable {
+	using AllocatorType = TAlloc<TData>;
+};
+
+template<typename TData = void, template <class> class TAlloc = HeapAllocator>
+struct MemorySlice: Allocatable<TAlloc, TData> {
+	using Allocatable		= ::CTL::Allocatable<TAlloc, TData>;
+
+	using typename Allocatable::AllocatorType;
+
 	constexpr MemorySlice()					{				}
 	constexpr MemorySlice(usize const& sz)	{invoke(sz);	}
 
@@ -103,7 +112,7 @@ protected:
 	}
 
 private:
-	TAlloc<TData>	alloc;
+	AllocatorType	alloc;
 	TData*			contents	= nullptr;
 	usize			length		= 0;
 };

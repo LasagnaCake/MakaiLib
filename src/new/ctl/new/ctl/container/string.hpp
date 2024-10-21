@@ -17,9 +17,13 @@
 
 CTL_NAMESPACE_BEGIN
 
-template<Type::ASCII TChar, Type::Integer TIndex = usize>
+template<
+	Type::ASCII TChar,
+	Type::Integer TIndex = usize,
+	template <class> class TAlloc = HeapAllocator
+>
 struct BaseString:
-	public List<TChar, TIndex>,
+	public List<TChar, TIndex, TAlloc>,
 	public SelfIdentified<BaseString<TChar, TIndex>>,
 	public Derived<List<TChar, TIndex>>,
 	public StringLiterable<TChar>,
@@ -58,6 +62,10 @@ public:
 	;
 
 	using
+		typename BaseType::AllocatorType
+	;
+
+	using
 		typename SelfIdentified::SelfType
 	;
 
@@ -72,6 +80,7 @@ public:
 
 	using
 		BaseType::BaseType,
+		BaseType::allocator,
 		BaseType::clear,
 		BaseType::reserve,
 		BaseType::resize,
@@ -101,7 +110,7 @@ public:
 
 	constexpr BaseString(): BaseType() {}
 
-	constexpr ~BaseString() {if (strbuf) MX::free(strbuf);}
+	constexpr ~BaseString() {if (strbuf) allocator().deallocate(strbuf);}
 
 	constexpr BaseString(StringLiteralType const& v) {
 		SizeType len = 0;
@@ -191,7 +200,7 @@ public:
 	constexpr List<SelfType, SizeType> splitAtFirst(DataType const& sep) const {
 		List<SelfType, SizeType> res;
 		IndexType idx = find(sep);
-		if (idx < 0)	res.pushBack(*this);
+		if (idx < 0) res.pushBack(*this);
 		else {
 			res.pushBack(sliced(0, idx-1));
 			res.pushBack(sliced(idx+1));
@@ -218,7 +227,7 @@ public:
 	constexpr List<SelfType, SizeType> splitAtLast(DataType const& sep) const {
 		List<SelfType, SizeType> res;
 		IndexType idx = rfind(sep);
-		if (idx < 0)	res.pushBack(*this);
+		if (idx < 0) res.pushBack(*this);
 		else {
 			res.pushBack(sliced(0, idx-1));
 			res.pushBack(sliced(idx+1));
@@ -234,7 +243,7 @@ public:
 			if (i > -1 && i > idx)
 				idx = i;
 		}
-		if (idx < 0)	res.pushBack(*this);
+		if (idx < 0) res.pushBack(*this);
 		else {
 			res.pushBack(sliced(0, idx-1));
 			res.pushBack(sliced(idx+1));
@@ -372,7 +381,7 @@ public:
 	constexpr StringLiteralType cstr() const {
 		if (nullTerminated()) return cbegin();
 		strbuflen = size() + 1;
-		strbuf = MX::realloc<DataType>(strbuf, strbuflen);
+		strbufalloc.resize(strbuf, strbuflen);
 		MX::memcpy<DataType>(strbuf, cbegin(), size());
 		strbuf[size()] = '\0';
 		return strbuf;
@@ -459,8 +468,9 @@ public:
 	}
 
 private:
-	PointerType mutable	strbuf		= nullptr;
-	usize mutable		strbuflen	= 0;
+	PointerType mutable		strbuf			= nullptr;
+	usize mutable			strbuflen		= 0;
+	AllocatorType mutable	strbufalloc;
 
 	[[noreturn]] void invalidNumberError(StringLiteralType const& v) {
 		throw InvalidValueException("Not a valid number!");

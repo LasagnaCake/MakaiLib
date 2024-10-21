@@ -7,13 +7,20 @@
 
 CTL_NAMESPACE_BEGIN
 
+namespace Type {
+	template<class T>
+	concept Pair = requires (T t) {
+		typename T::AType;
+		typename T::BType;
+		{t.getA()} -> Type::EqualOrConst<typename T::AType&>;
+		{t.getB()} -> Type::EqualOrConst<typename T::BType&>;
+	};
+}
+
 template<typename TA, typename TB> struct Pair;
 
-template<class TPair>
-requires requires {
-	typename TPair::AType;
-	typename TPair::BType;
-} struct PairComparator: Ordered {
+template<Type::Pair TPair>
+struct PairComparator: Ordered {
 	using PairType = TPair;
 
 	using AType = typename TPair::AType;
@@ -21,15 +28,8 @@ requires requires {
 
 	using typename Ordered::OrderType;
 
-	constexpr static bool COMPARABLE_A =
-		Type::Comparator::Comparable<AType, AType>
-	&&	requires (PairType p) {{p.getA()};}
-	;
-
-	constexpr static bool COMPARABLE_B =
-		Type::Comparator::Comparable<BType, BType>
-	&&	requires (PairType p) {{p.getB()};}
-	;
+	constexpr static bool COMPARABLE_A = Type::Comparator::Comparable<AType, AType>;
+	constexpr static bool COMPARABLE_B = Type::Comparator::Comparable<BType, BType>;
 
 	constexpr static bool IS_COMPARABLE = COMPARABLE_A || COMPARABLE_B;
 
@@ -88,9 +88,11 @@ struct Pair:
 
 	constexpr Pair() = default;
 
-	constexpr Pair(AType const& a):					a(a)					{}
-	constexpr Pair(AType const& a, BType const& b):	a(a), b(b)				{}
-	constexpr Pair(SelfType const& other):			a(other.a), b(other.b)	{}
+	constexpr Pair(AType const& a):					a(a)								{}
+	constexpr Pair(AType const& a, BType const& b):	a(a), b(b)							{}
+	constexpr Pair(SelfType const& other):			a(other.a), b(other.b)				{}
+	template<Type::Pair T>
+	constexpr Pair(T const& other):					a(other.getA()), b(other.getB())	{}
 
 	constexpr OrderType operator<=>(SelfType const& other) const
 	requires (PairComparator<SelfType>::IS_COMPARABLE) {
@@ -150,7 +152,7 @@ struct KeyValuePair:
 	constexpr BType const& getB() const	{return value;	}
 
 	constexpr PairType pair() const		{return PairType(key, value);	}
-	constexpr operator PairType() const	{return pair();					}
+//	constexpr operator PairType() const	{return pair();					}
 };
 
 template<typename TLeft, typename TRight>
@@ -194,7 +196,7 @@ struct LeftRightPair:
 //	constexpr LeftRightPair(SelfType const& other):				LeftRightPair(other.left, other.right)	{}
 
 	constexpr PairType pair() const		{return PairType(left, right);	}
-	constexpr operator PairType() const	{return pair();					}
+//	constexpr operator PairType() const	{return pair();					}
 };
 
 template<typename T1, typename T2>
@@ -238,24 +240,13 @@ struct FirstSecondPair:
 //	constexpr FirstSecondPair(SelfType const& other):				FirstSecondPair(other.first, other.second)	{}
 
 	constexpr PairType pair() const		{return PairType(first, second);	}
-	constexpr operator PairType() const	{return pair();						}
+//	constexpr operator PairType() const	{return pair();						}
 };
 
 static_assert(Type::Comparator::Threeway<Pair<int, int>, Pair<int, int>>);
 static_assert(Type::Comparator::Threeway<KeyValuePair<int, int>, KeyValuePair<int, int>>);
 static_assert(Type::Comparator::Threeway<LeftRightPair<int, int>, LeftRightPair<int, int>>);
 static_assert(Type::Comparator::Threeway<FirstSecondPair<int, int>, FirstSecondPair<int, int>>);
-
-namespace Type {
-	template<class T>
-	concept Pair = requires (T t) {
-		typename T::AType;
-		typename T::BType;
-		{t.getA()} -> Type::EqualOrConst<typename T::AType&>;
-		{t.getB()} -> Type::EqualOrConst<typename T::BType&>;
-		requires Type::Convertible<T, ::CTL::Pair<typename T::AType, typename T::BType>>;
-	};
-}
 
 CTL_NAMESPACE_END
 

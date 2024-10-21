@@ -25,12 +25,18 @@ struct Collected {
 	typedef TPair<TKey, TValue>	PairType;
 };
 
-template<class TKey, class TValue, Type::Integer TIndex = usize, bool SORT = true>
+template<
+	class TKey,
+	class TValue,
+	Type::Integer TIndex = usize,
+	bool SORT = true,
+	template <class> class TAlloc = HeapAllocator
+>
 struct BaseSimpleMap:
 	Collected<TKey, TValue, KeyValuePair>,
 	Derived<List<KeyValuePair<TKey, TValue>, TIndex>>,
 	SelfIdentified<BaseSimpleMap<TKey, TValue, TIndex, SORT>>,
-	private List<KeyValuePair<TKey, TValue>, TIndex> {
+	private List<KeyValuePair<TKey, TValue>, TIndex, TAlloc> {
 public:
 	constexpr static bool SORTED = SORT;
 
@@ -94,6 +100,7 @@ public:
 		BaseType::filter,
 		BaseType::filtered,
 		BaseType::capacity,
+		BaseType::allocator,
 		BaseType::empty
 	;
 
