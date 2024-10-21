@@ -95,7 +95,7 @@ BinaryData<> cbcTransform(
 		true,
 		new StreamTransformationFilter(
 			tf,
-			new StringSink<std::string_view>(result.toSTL())
+			new StringSinkTemplate<String>(result)
 		)
 	);
 	delete[] iv;
