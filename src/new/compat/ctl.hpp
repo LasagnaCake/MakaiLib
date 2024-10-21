@@ -24,6 +24,7 @@ namespace Makai {
     using Math::Mat3;
     using Math::Transform2D;
     using Math::Transform3D;
+	using namespace Literals::Math;
 }
 
 #endif // MAKAILIB_COMPAT_CTL_H
