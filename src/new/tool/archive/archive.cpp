@@ -79,7 +79,7 @@ BinaryData<> cbcTransform(
 	String					password	= "",
 	uint8* const&			block		= nullptr
 ) try {
-	String result;
+	std::string result;
 	T tf;
 	uint8* iv = new uint8[16];
 	if (iv != nullptr)	memcpy(iv, block, 16);
@@ -88,18 +88,18 @@ BinaryData<> cbcTransform(
 		password += " ";
 	if (password.size() > 32)
 		password = password.substring(0, 32);
-	tf.SetKeyWithIV((uint8*)password.data(), password.length(), iv, 16);
+	tf.SetKeyWithIV((uint8*)password.data(), password.size(), iv, 16);
 	StringSource ss(
 		data.data(),
 		data.size(),
 		true,
 		new StreamTransformationFilter(
 			tf,
-			new StringSinkTemplate<String>(result)
+			new StringSink(result)
 		)
 	);
 	delete[] iv;
-	return BinaryData<>(result.begin(), result.end());
+	return BinaryData<>(result.data(), result.data() + result.size());
 } catch (std::exception const& e) {
 	throw Error::FailedAction(
 		e.what()
@@ -111,12 +111,12 @@ BinaryData<> cbcTransform(
 }
 
 template<Type::Equal<Deflator> T>
-T* getFlator(String& result, uint8 const& level) {
+T* getFlator(std::string& result, uint8 const& level) {
 	return new T(new StringSink(result), level);
 }
 
 template<Type::Equal<Inflator> T>
-T* getFlator(String& result, uint8 const& level) {
+T* getFlator(std::string& result, uint8 const& level) {
 	return new T(new StringSink(result));
 }
 
@@ -126,7 +126,7 @@ BinaryData<> flate(
 	CompressionMethod const&	method	= CompressionMethod::ACM_ZIP,
 	uint8 const&				level	= 9
 ) try {
-	String result;
+	std::string result;
 	switch (method) {
 	case CompressionMethod::ACM_NONE: return data;
 	case CompressionMethod::ACM_ZIP: {
@@ -138,8 +138,12 @@ BinaryData<> flate(
 			);
 		}
 	}
-	return BinaryData<>(result.begin(), result.end());
-} catch (Exception const& e) {
+	return BinaryData<>(result.data(), result.data() + result.size());
+} catch (std::exception const& e) {
+	throw Error::FailedAction(
+		e.what()
+	);
+} catch (CTL::Exception const& e) {
 	throw Error::FailedAction(
 		e.what()
 	);
@@ -240,7 +244,7 @@ void populateTree(JSONData& tree, String const& root = "") {
 	if (!tree.is_object())
 		throw Error::FailedAction("file tree is not a JSON object!");
 	for (auto& [name, data]: tree.items()) {
-		String path = OS::FS::concatenate(root, name);
+		String path = OS::FS::concatenate(root, String(name));
 		if (data.is_string()) data = path;
 		else if (data.is_object()) populateTree(data, path);
 		else throw Error::FailedAction("Invalid data type in file tree!");
@@ -633,7 +637,6 @@ void Arch::FileArchive::unpackLayer(JSONData const& layer, String const& path) {
 		else if (data.is_object()) unpackLayer(data, path);
 		else directoryTreeError();
 	}
-	std::random_shuffle(files.begin(), files.end());
 	for (auto& [name, data]: files) {
 		String filepath = OS::FS::concatenate(path, data);
 		_ARCDEBUGLN(path, " + ", data, " = ", filepath);
