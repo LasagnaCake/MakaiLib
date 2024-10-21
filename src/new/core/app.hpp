@@ -1,7 +1,7 @@
 #ifndef MAKAILIB_CORE_APP_H
 #define MAKAILIB_CORE_APP_H
 
-#include "../ctl/ctl.hpp"
+#include "../compat/ctl.hpp"
 
 #include "extern.hpp"
 #include "input/manager.hpp"
