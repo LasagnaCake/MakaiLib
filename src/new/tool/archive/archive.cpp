@@ -12,6 +12,8 @@
 
 #include "archive.hpp"
 
+using namespace CTL::Literals::Text;
+
 // Legacy stuff, TODO: Remove this later
 #ifdef ARCSYS_APPLICATION_
 #define _ARCDEBUG(...)		DEBUG(__VA_ARGS__)
@@ -85,7 +87,7 @@ BinaryData<> cbcTransform(
 	while (password.size() < tf.MaxKeyLength())
 		password += " ";
 	if (password.size() > 32)
-		password = password.substr(0, 32);
+		password = password.substring(0, 32);
 	tf.SetKeyWithIV((uint8*)password.data(), password.length(), iv, 16);
 	StringSource ss(
 		data.data(),
@@ -93,12 +95,16 @@ BinaryData<> cbcTransform(
 		true,
 		new StreamTransformationFilter(
 			tf,
-			new StringSink<String>(result)
+			new StringSink<std::string_view>(result.toSTL())
 		)
 	);
 	delete[] iv;
 	return BinaryData<>(result.begin(), result.end());
-} catch (Exception const& e) {
+} catch (std::exception const& e) {
+	throw Error::FailedAction(
+		e.what()
+	);
+} catch (CTL::Exception const& e) {
 	throw Error::FailedAction(
 		e.what()
 	);
@@ -128,7 +134,7 @@ BinaryData<> flate(
 				data.data(),
 				data.size(),
 				true,
-				getFlator<T>(result, Math::clamp<uint8>(level, 0, 9))
+				getFlator<T>(result, Makai::Math::clamp<uint8>(level, 0, 9))
 			);
 		}
 	}
@@ -222,7 +228,7 @@ StringList getFileInfo(JSONData const& filestruct) {
 	StringList res;
 	for (auto& [name, data]: filestruct.items()) {
 		if (data.is_string())
-			res.pushBack(data.get<String>());
+			res.pushBack(data.get<std::string>());
 		else if (data.is_object() && !data.empty())
 			for (String& s: getFileInfo(data))
 				res.pushBack(s);
@@ -276,7 +282,7 @@ void Arch::pack(
 		JSONData dir;
 		StringList files;
 		JSONData tree = dir["tree"];
-		tree = getStructure(String(fs::path(folderPath.cstr()).string()), files, String(fs::path(folderPath.cstr()).stem().string()));
+		tree = getStructure(fs::path(folderPath.toSTL()), files, String(fs::path(folderPath.toSTL()).stem().string()));
 		_ARCDEBUGLN("\n", dir.dump(2, ' ', false, Nlohmann::error_handler_t::replace), "\n");
 		// Populate with temporary values
 		List<uint64> locations(files.size(), 0);
@@ -623,7 +629,7 @@ void Arch::FileArchive::unpackLayer(JSONData const& layer, String const& path) {
 	assertOpen();
 	List<KeyValuePair<String, String>> files;
 	for (auto& [name, data]: layer.items()) {
-		if (data.is_string()) files.pushBack(KeyValuePair<String, String>(name, data));
+		if (data.is_string()) files.pushBack(KeyValuePair<String, String>(name, data.get<std::string>()));
 		else if (data.is_object()) unpackLayer(data, path);
 		else directoryTreeError();
 	}
@@ -712,18 +718,18 @@ uint64 Arch::FileArchive::getFileEntryLocation(String const& path, String const&
 			continue;
 		} else if (entry.is_object()) {
 			for (auto [k, v]: entry.items())
-				if (k.lower() == fld) {
+				if (String(k).lower() == fld) {
 					stack.pushBack(entry);
 					entry = v;
 					break;
 				}
-		} else if (entry.is_string() && entry.get<String>().lower() == fld)
-			return decoded(entry.get<String>());
+		} else if (entry.is_string() && String(entry.get<std::string>()).lower() == fld)
+			return decoded(entry.get<std::string>());
 		else doesNotExistError(fld);
 	}
 	// Try and get entry location
 	if (entry.is_string())
-		return decoded(entry.get<String>());
+		return decoded(entry.get<std::string>());
 	else notAFileError(origpath);
 } catch (Nlohmann::exception const& e) {
 	doesNotExistError(origpath);
