@@ -15,6 +15,16 @@ constexpr bool isHexChar(TChar const& c) {
 	return false;
 }
 
+template <Type::ASCII TChar>
+constexpr bool isNullOrSpaceChar(TChar const& c) {
+	return (
+		c == '\0'
+	||	c == ' '
+	||	c == '\t'
+//	||	c == '\n'
+	);
+}
+
 CTL_NAMESPACE_END
 
 #endif // CTL_ALGORITHM_VALIDATE_H

@@ -42,7 +42,7 @@ namespace OS::FS {
 	}
 
 	inline void makeDirectory(String const& dir) {
-		if (dir.empty()) return;
+		if (dir.isNullOrSpaces()) return;
 		if (!isDirectory(dir) || !exists(dir)) {
 			fs::create_directories(dir.cstr());
 		}
@@ -59,8 +59,9 @@ namespace OS::FS {
 	}
 
 	template <typename... Args>
-	inline void makeDirectory(Args const&... args) {
-		(makeDirectory(args), ...);
+	inline void makeDirectory(Args const&... args)
+	requires (sizeof...(Args) > 1) {
+		(..., makeDirectory(toString(args)));
 	}
 
 	inline void remove(String const& dir) {

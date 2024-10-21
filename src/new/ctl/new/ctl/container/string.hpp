@@ -326,8 +326,8 @@ public:
 	constexpr SelfType operator*(IndexType const& times) const {
 		if (times < 1) return SelfType();
 		if (times == 1) return *this;
-		SelfType result(size() * times);
-		for (SizeType i = 0; i < times; ++i)
+		SelfType result(size() * usize(times));
+		for (SizeType i = 0; i < usize(times); ++i)
 			result.appendBack(*this);
 		return result;
 	}
@@ -378,10 +378,11 @@ public:
 		return strbuf;
 	}
 
-	constexpr SelfType lower() const {return transformed(toLower);}
-	constexpr SelfType upper() const {return transformed(toUpper);}
+	constexpr SelfType lower() const {return transformed(toLower<BaseType>);}
+	constexpr SelfType upper() const {return transformed(toUpper<BaseType>);}
 
-	constexpr bool isHex() const {return validate(isHexChar);}
+	constexpr bool isHex() const			{return validate(isHexChar<DataType>);			}
+	constexpr bool isNullOrSpaces() const	{return validate(isNullOrSpaceChar<DataType>);	}
 
 	// Most likely wrong
 	constexpr BaseString<char, SizeType> toString() const
@@ -414,7 +415,7 @@ public:
 	template<Type::Integer T>
 	constexpr static T toNumber(SelfType const& str, T const& base = 0) 
 	requires Type::Different<T, bool> {
-		T val;
+		T val = T();
 		if (!atoi<T, DataType>(str.data(), str.size(), val, base))
 			throw FailedActionException("String-to-Integer conversion failure!");
 		return val;
@@ -422,7 +423,7 @@ public:
 
 	template<Type::Real T>
 	constexpr static T toNumber(SelfType const& str) {
-		T val;
+		T val = T();
 		if (!atof<T, DataType>(str.data(), str.size(), val))
 			throw FailedActionException("String-to-Float conversion failure!");
 		return val;

@@ -232,9 +232,9 @@ constexpr ssize ftoa(F val, T* buf, usize bufSize, usize const& precision = size
 	// Fill in whole part of number to string, return if error
 	if ((lhs = ::CTL::itoa<ssize>(whole, buf, bufSize)) == -1) return -1;
 	// Check if buffer is not full, else append comma and re-check
-	if (lhs >= bufSize) return lhs;
+	if (usize(lhs) >= bufSize) return lhs;
 	buf[lhs++] = '.';
-	if (lhs >= bufSize) return lhs;
+	if (usize(lhs) >= bufSize) return lhs;
 	// Fill in fractional part, returning if error
 	if ((rhs = ::CTL::itoa<ssize>(frac, buf+lhs, bufSize-lhs)) == -1) return -1;
 	// Return full size of number string

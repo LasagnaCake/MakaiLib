@@ -3,7 +3,11 @@
 
 #include "../namespace.hpp"
 #include "../container/string.hpp"
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmismatched-new-delete"
 #include <regex>
+#pragma GCC diagnostic pop
 
 CTL_NAMESPACE_BEGIN
 
