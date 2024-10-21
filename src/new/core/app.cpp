@@ -307,7 +307,7 @@ App::AppState App::getState() {
 
 void App::setWindowSize(Vector2 const& size) {}
 
-App* Makai::App::current() {
+App* App::current() {
 	return mainApp;
 }
 

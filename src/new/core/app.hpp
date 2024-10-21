@@ -57,7 +57,7 @@ namespace Makai {
 		void loadDefaultShaders();
 
 		/// Returns the currently-opened app. Returns null if no app is open.
-		App* current();
+		static App* current();
 
 		/// Runs the application.
 		void run();
