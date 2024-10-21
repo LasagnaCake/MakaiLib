@@ -82,7 +82,7 @@ namespace Makai::JSON {
 
 		Extern::JSONData json() const;
 
-		template<typename T>
+		template<Type::Primitive T>
 		inline T get() const {
 			try {
 				return view().get<T>();
@@ -98,11 +98,43 @@ namespace Makai::JSON {
 			}
 		}
 
-		template<typename T>
+		template <Type::Equal<String> T>
+		inline String get() {
+			try {
+				return view().get<std::string>();
+			} catch (Extern::Nlohmann::exception const& e) {
+				throw Error::FailedAction(
+					"Parameter '" + name + "' is not of type '"
+					+ TypeInfo<T>::name() + "'!",
+					__FILE__,
+					CTL::toString(__LINE__),
+					CTL::toString("get<", TypeInfo<T>::name(), ">"),
+					e.what()
+				);
+			}
+		}
+
+		template <Type::Container::List T>
+		inline String get() {
+			try {
+				return view().get<std::vector<typename T::DataType>>();
+			} catch (Extern::Nlohmann::exception const& e) {
+				throw Error::FailedAction(
+					"Parameter '" + name + "' is not of type '"
+					+ TypeInfo<T>::name() + "'!",
+					__FILE__,
+					CTL::toString(__LINE__),
+					CTL::toString("get<", TypeInfo<T>::name(), ">"),
+					e.what()
+				);
+			}
+		}
+
+		template<Type::Primitive T>
 		inline T get(T const& fallback) const {
 			try {
-				return view().get<T>();
-			} catch (Extern::Nlohmann::exception const& e) {
+				return get<T>();
+			} catch (Error::FailedAction const& e) {
 				return fallback;
 			}
 		}

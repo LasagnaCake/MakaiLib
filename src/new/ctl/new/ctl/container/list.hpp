@@ -836,6 +836,21 @@ private:
 template <Type::Integer TIndex = usize>
 using BinaryData = List<uint8, TIndex>;
 
+namespace Type::Container {
+	namespace Impl {
+		template<class T>
+		struct IsList;
+
+		template<template <class, class, template <class> class> class T0, class T1, class T2, template <class> class T3>
+		struct IsList<T0<T1, T2, T3>>: BooleanConstant<Type::Equal<T0<T1, T2, T3>, ::CTL::List<T1, T2, T3>>> {};
+	}
+
+	template<class T>
+	concept List = Impl::IsList<T>::value;
+}
+
+static_assert(Type::Container::List<List<int>>);
+
 CTL_NAMESPACE_END
 
 #endif // CTL_CONTAINER_LIST_H

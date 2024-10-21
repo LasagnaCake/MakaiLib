@@ -69,7 +69,9 @@ struct HeapAllocator {
 template<template <class> class TAlloc, class TData>
 requires Type::Allocator<TAlloc, TData>
 struct Allocatable {
-	using AllocatorType = TAlloc<TData>;
+	using AllocatorType			= TAlloc<TData>;
+	template<class T = TData>
+	using AllocatorTemplateType	= TAlloc<T>;
 };
 
 template<typename TData = void, template <class> class TAlloc = HeapAllocator>
