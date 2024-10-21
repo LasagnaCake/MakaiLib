@@ -19,7 +19,7 @@ namespace OS::FS {
 		PS_WINDOWS	= '\\'
 	};
 
-	#if (_WIN32 || _WIN64 || __WIN32__ || __WIN64__) && !defined(_NO_WINDOWS_PLEASE_)
+	#if (_WIN32 || _WIN64 || __WIN32__ || __WIN64__) && !defined(CTL_NO_WINDOWS_PLEASE)
 	constexpr PathSeparator SEPARATOR = PathSeparator::PS_WINDOWS;
 	#else
 	constexpr PathSeparator SEPARATOR = PathSeparator::PS_POSIX;
