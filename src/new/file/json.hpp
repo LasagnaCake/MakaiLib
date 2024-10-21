@@ -34,12 +34,6 @@ namespace Makai::JSON {
 			using ClassType::ClassType;
 		};
 
-		template<template <typename...> class TClass, typename... TArgs>
-		struct STDAdaptor: public ClassAdaptor<TClass<TArgs...>, TArgs...> {
-			using BaseType = ClassAdaptor<TClass<TArgs...>, TArgs...>;
-			using BaseType::BaseType;
-		};
-
 		template<template <class, class> class TMap, class TKey, class TValue, class... TArgs>
 		struct MapAdaptor: public TMap<TKey, TValue> {
 			using MapType = TMap<TKey, TValue>;
@@ -64,9 +58,9 @@ namespace Makai::JSON {
 		using Proxy = T;
 
 		template<typename TData, typename... TArgs>
-		using ListAdaptor = STDAdaptor<List, TData>;
+		using ListAdaptor = ClassAdaptor<List<TData>, TData>;
 
-		template<typename TKey, typename TValue, typename... TArgs>
+		template<typename TKey, typename TValue, class, class>
 		using OrderedMapAdaptor = MapAdaptor<OrderedMap, TKey, TValue>;
 
 		using StringAdaptor = ClassAdaptor<String>;
@@ -74,15 +68,7 @@ namespace Makai::JSON {
 
 	namespace Extern {
 		using Nlohmann = nlohmann::json;
-		using JSONData = nlohmann::basic_json<
-			Compat::OrderedMapAdaptor,
-			Compat::ListAdaptor,
-			Compat::StringAdaptor,
-			bool,
-			ssize,
-			usize,
-			double
-		>;
+		using JSONData = nlohmann::ordered_json;
 	}
 
 	using JSONType = Extern::JSONData;
@@ -143,7 +129,7 @@ namespace Makai::JSON {
 
 		String toString(int const& indent = -1, char const& ch = '\t') const;
 
-		inline bool has(String const& key) const {return view().contains(key); }
+		inline bool has(String const& key) const {return view().contains(key.toSTL()); }
 
 		inline operator Extern::JSONData() {return view();}
 

@@ -643,7 +643,7 @@ public:
 
 	template<class TProcedure>
 	constexpr SelfType transformed(TProcedure const& fun) const {
-		return SelfType(*this).transform();
+		return SelfType(*this).transform(fun);
 	}
 
 	template<class TPredicate>

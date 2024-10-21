@@ -14,7 +14,7 @@ namespace Impl {
 	namespace A2I {
 		template<Type::ASCII T>
 		constexpr ssize toDigit(T c) {
-			c = toLower(c);
+			c = toLowerChar(c);
 			if (c >= 'a')
 				return c - 'a' + 10;
 			return c - '0';
@@ -130,8 +130,8 @@ template<Type::Real F, Type::ASCII T>
 constexpr bool atof(T const* const& str, usize size, F& out) {
 	// If character is appended to the end, exclude it
 	if (
-		toLower(str[size-1]) == 'f'
-	||	toLower(str[size-1]) == 'd'
+		toLowerChar(str[size-1]) == 'f'
+	||	toLowerChar(str[size-1]) == 'd'
 	) --size;
 	// Find separator character
 	usize sep = 0;

@@ -2,6 +2,8 @@
 #define CTL_CONTAINER_STRING_H
 
 #include <stdlib.h>
+#include <string_view>
+#include <string>
 
 #include "list.hpp"
 #include "array.hpp"
@@ -77,6 +79,8 @@ public:
 		typename Streamable::InputStreamType,
 		typename Streamable::OutputStreamType
 	;
+
+	using STLAdaptorType = std::basic_string_view<DataType>;
 
 	using
 		BaseType::BaseType,
@@ -154,6 +158,9 @@ public:
 	requires (... && Type::Equal<Args, SelfType>) {
 		(*this) += (... + args);
 	}
+
+	constexpr BaseString(STLAdaptorType const& str):				BaseType(str.data(), str.data() + str.size())	{}
+	constexpr BaseString(std::basic_string<DataType> const& str):	BaseType(str.data(), str.data() + str.size())	{}
 
 	constexpr List<SelfType, SizeType> split(DataType const& sep) const {
 		List<SelfType, SizeType> res;
@@ -387,11 +394,11 @@ public:
 		return strbuf;
 	}
 
-	constexpr SelfType lower() const {return transformed(toLower<BaseType>);}
-	constexpr SelfType upper() const {return transformed(toUpper<BaseType>);}
+	constexpr SelfType lower() const {return transformed(toLowerImpl);	}
+	constexpr SelfType upper() const {return transformed(toUpperImpl);	}
 
-	constexpr bool isHex() const			{return validate(isHexChar<DataType>);			}
-	constexpr bool isNullOrSpaces() const	{return validate(isNullOrSpaceChar<DataType>);	}
+	constexpr bool isHex() const			{return validate(isHexImpl);			}
+	constexpr bool isNullOrSpaces() const	{return validate(isNullOrSpaceImpl);	}
 
 	// Most likely wrong
 	constexpr BaseString<char, SizeType> toString() const
@@ -467,7 +474,15 @@ public:
 		swap(a.strbuflen, b.strbuflen);
 	}
 
+	constexpr STLAdaptorType toSTL() const		{return std::basic_string<DataType>(cbegin(), cend());	}
+	constexpr operator STLAdaptorType() const	{return toSTL();										}
+
 private:
+	constexpr static DataType toLowerImpl(DataType const& c)	{return toLowerChar<DataType>(c);		}
+	constexpr static DataType toUpperImpl(DataType const& c)	{return toUpperChar<DataType>(c);		}
+	constexpr static bool isHexImpl(DataType const& c)			{return isHexChar<DataType>(c);			}
+	constexpr static bool isNullOrSpaceImpl(DataType const& c)	{return isNullOrSpaceChar<DataType>(c);	}
+
 	PointerType mutable		strbuf			= nullptr;
 	usize mutable			strbuflen		= 0;
 	AllocatorType mutable	strbufalloc;
