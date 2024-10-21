@@ -99,7 +99,7 @@ BinaryData<> cbcTransform(
 		)
 	);
 	delete[] iv;
-	return BinaryData<>(result.data(), result.data() + result.size());
+	return BinaryData<>((uint8*)result.data(), (uint8*)result.data() + result.size());
 } catch (std::exception const& e) {
 	throw Error::FailedAction(
 		e.what()
@@ -138,7 +138,7 @@ BinaryData<> flate(
 			);
 		}
 	}
-	return BinaryData<>(result.data(), result.data() + result.size());
+	return BinaryData<>((uint8*)result.data(), (uint8*)result.data() + result.size());
 } catch (std::exception const& e) {
 	throw Error::FailedAction(
 		e.what()
@@ -196,7 +196,7 @@ BinaryData<> Arch::decrypt(
 }
 
 BinaryData<> Arch::compress(
-	BinaryData<>	const&			data,
+	BinaryData<>	const&		data,
 	CompressionMethod const&	method,
 	uint8 const&				level
 ) {
@@ -204,7 +204,7 @@ BinaryData<> Arch::compress(
 }
 
 BinaryData<> Arch::decompress(
-	BinaryData<>	const&			data,
+	BinaryData<>	const&		data,
 	CompressionMethod const&	method,
 	uint8 const&				level
 ) {
@@ -598,7 +598,7 @@ void Arch::FileArchive::parseFileTree() {
 		break;
 	}
 	try {
-		fstruct = Nlohmann::parse(fs);
+		fstruct = Nlohmann::parse(fs.toSTL());
 	} catch (Nlohmann::exception const& e) {
 		throw File::FileLoadError(
 			"Invalid or corrupted file structure!",
@@ -919,7 +919,7 @@ void Arch::saveEncryptedBinaryFile(
 	if (enc != EncryptionMethod::AEM_NONE && password.empty())
 		throw Error::InvalidValue("Missing password for encrypted file!");
 	// Open file
-	std::ofstream file(path, std::ios::binary | std::ios::trunc);
+	std::ofstream file(path.cstr(), std::ios::binary | std::ios::trunc);
 	file.exceptions(std::ofstream::badbit | std::ofstream::failbit);
 	// Header
 	ArchiveHeader header;
@@ -937,7 +937,7 @@ void Arch::saveEncryptedBinaryFile(
 	// Write file info
 	{
 		usize uncSize = (size*sizeof(T));
-		BinaryData<> contents(data, data + uncSize);
+		BinaryData<> contents((uint8*)data, ((uint8*)data) + uncSize);
 		// Prepare header
 		FileHeader fheader;
 		fheader.uncSize = uncSize;		// Uncompressed file size

@@ -487,15 +487,15 @@ private:
 	usize mutable			strbuflen		= 0;
 	AllocatorType mutable	strbufalloc;
 
-	[[noreturn]] void invalidNumberError(StringLiteralType const& v) {
+	[[noreturn]] void invalidNumberError(StringLiteralType const& v) const {
 		throw InvalidValueException("Not a valid number!");
 	}
 
-	void assertIsInBounds(IndexType const& index) {
-		if (index > size()-1) outOfBoundsError(index);
+	void assertIsInBounds(IndexType const& index) const {
+		if (index >= 0 && usize(index) > size()-1) outOfBoundsError(index);
 	}
 
-	[[noreturn]] constexpr void outOfBoundsError(IndexType const& index) {
+	[[noreturn]] constexpr void outOfBoundsError(IndexType const& index) const {
 		throw OutOfBoundsException("Index is out of bounds!");
 	}
 };
