@@ -9,112 +9,66 @@
 CTL_NAMESPACE_BEGIN
 
 namespace Type {
-	template<class T>
-	concept BasicAllocator = requires (T t, usize sz, pointer p) {
-		{t.allocate(sz)}	-> Type::Equal<pointer>	;
+	template<template <class> class T, class TData>
+	concept Allocator = requires (T<TData> t, usize sz, TData* p) {
+		{t.allocate(sz)}	-> Type::Equal<TData*>	;
 		{t.deallocate(sz)}	-> Type::Equal<void>	;
 		{t.resize(p, sz)}	-> Type::Equal<void>	;
-		{t.resized(p, sz)}	-> Type::Equal<pointer>	;
-	};
-
-	template<class T, class TData>
-	concept ValueAllocator = requires (T t, usize sz, TData* p) {
-		requires BasicAllocator<T>;
-		{t.template allocate<TData>(sz)}	-> Type::Equal<TData*>	;
-		{t.template deallocate<TData>(sz)}	-> Type::Equal<void>	;
-		{t.template resize<TData>(p, sz)}	-> Type::Equal<void>	;
-		{t.template resized<TData>(p, sz)}	-> Type::Equal<TData*>	;
+		{t.resized(p, sz)}	-> Type::Equal<TData*>	;
 	};
 }
 
+template<class T>
 struct HeapAllocator {
-	constexpr pointer allocate(usize const& sz) {
+	constexpr pointer allocate(usize const& sz)
+	requires Type::Void<T> {
 		return MX::malloc(sz);
 	}
 
-	template<typename T>
-	constexpr T* allocate(usize const& sz) {
+	constexpr T* allocate(usize const& sz)
+	requires Type::NonVoid<T> {
 		return MX::malloc<T>(sz);
 	}
 
-	template<typename T>
-	constexpr T* allocate() {
+	constexpr T* allocate()
+	requires Type::NonVoid<T> {
 		return MX::malloc<T>();
 	}
 
-	constexpr void deallocate(pointer const& mem) {
+	constexpr void deallocate(pointer const& mem)
+	requires Type::Void<T> {
 		return MX::free(mem);
 	}
 
-	template<typename T>
-	constexpr void deallocate(T* const& mem) {
+	constexpr void deallocate(T* const& mem)
+	requires Type::NonVoid<T> {
 		return MX::free<T>(mem);
 	}
 
-	constexpr void resize(pointer& mem, usize const& sz) {
+	constexpr void resize(pointer& mem, usize const& sz)
+	requires Type::Void<T> {
 		mem = MX::realloc(mem, sz);
 	}
 
-	template<typename T>
-	constexpr void resize(T*& mem, usize const& sz) {
+	constexpr void resize(T*& mem, usize const& sz)
+	requires Type::NonVoid<T> {
 		mem = MX::realloc<T>(mem, sz);
 	}
 
-	constexpr pointer resized(pointer const& mem, usize const& sz) {
+	constexpr pointer resized(pointer const& mem, usize const& sz)
+	requires Type::Void<T> {
 		return MX::realloc(mem, sz);
 	}
 
-	template<typename T>
-	constexpr T* resized(T* const& mem, usize const& sz) {
+	constexpr T* resized(T* const& mem, usize const& sz)
+	requires Type::NonVoid<T> {
 		return MX::realloc<T>(mem, sz);
 	}
 };
 
-template<typename TData = void, Type::BasicAllocator TAlloc = HeapAllocator>
-struct MemorySlice;
-
-template<Type::BasicAllocator TAlloc>
-struct MemorySlice<void, TAlloc> {
-	constexpr MemorySlice()					{				}
-	constexpr MemorySlice(usize const& sz)	{invoke(sz);	}
-
-	constexpr MemorySlice(MemorySlice const& other)	{
-		contents = alloc.allocate(other.legth);
-		length = other.length;	
-		MX::memcpy(contents, other.contents, length);
-	}
-
-	constexpr MemorySlice(MemorySlice&& other):
-		contents(::CTL::move(other.contents)),
-		length(::CTL::move(other.length)) {other.contents = nullptr;}
-
-	constexpr ~MemorySlice() {free();}
-
-	constexpr usize size()		{return length;		}
-	constexpr pointer data()	{return contents;	}
-
-protected:
-	constexpr void invoke(usize const& sz) {
-		if (!contents) contents = alloc.allocate(sz);
-		else alloc.resize(contents, sz);
-		length = sz;
-	}
-
-	constexpr void free() {
-		if (!contents) return;
-		alloc.deallocate(contents);
-		contents	= nullptr;
-		length		= 0;
-	}
-
-private:
-	TAlloc	alloc;
-	pointer	contents	= nullptr;
-	usize	length		= 0;
-};
-
-template<Type::NonVoid TData, Type::BasicAllocator TAlloc>
-struct MemorySlice<TData, TAlloc> {
+template<typename TData = void, template <class> class TAlloc = HeapAllocator>
+requires Type::Allocator<TAlloc, TData>
+struct MemorySlice {
 	constexpr MemorySlice()							{				}
 	constexpr MemorySlice(usize const& sz)			{invoke(sz);	}
 
@@ -136,8 +90,8 @@ struct MemorySlice<TData, TAlloc> {
 
 protected:
 	constexpr void invoke(usize const& sz) {
-		if (!contents) contents = static_cast<TData*>(alloc.allocate(sz * sizeof(TData)));
-		else alloc.resize((pointer)contents, sz * sizeof(TData));
+		if (!contents) contents = alloc.allocate(sz);
+		else alloc.resize(contents, sz);
 		length = sz;
 	}
 
@@ -149,9 +103,9 @@ protected:
 	}
 
 private:
-	TAlloc	alloc;
-	TData*	contents	= nullptr;
-	usize	length		= 0;
+	TAlloc<TData>	alloc;
+	TData*			contents	= nullptr;
+	usize			length		= 0;
 };
 
 CTL_NAMESPACE_END

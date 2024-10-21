@@ -12,7 +12,7 @@ export concat =$(strip $(1)).$(strip $(2))
 
 export LEAN := -static -s
 
-COMPILER_CONFIG	:= -m64 -std=gnu++20 -fconcepts -fcoroutines -fms-extensions
+COMPILER_CONFIG	:= -m64 -std=gnu++20 -fconcepts -fconcepts-diagnostics-depth=4 -fcoroutines -fms-extensions
 
 ifdef openmp
 export USE_OPENMP := -fopenmp -openmp -ftree-parallelize-loops=$(omp-threads)

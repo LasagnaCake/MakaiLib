@@ -532,6 +532,12 @@ namespace Type {
 
 	template<class T, typename F>
 	concept Functional = Impl::IsFunctional<T, F>::value;
+
+	template<class T, typename... Args>
+	concept OneOf = (... || Equal<T, Args>);
+
+	template<class T, typename T2>
+	concept EqualOrConst = OneOf<T, T2, T2 const>;
 }
 
 CTL_NAMESPACE_END
