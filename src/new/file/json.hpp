@@ -82,11 +82,10 @@ namespace Makai::JSON {
 
 		Extern::JSONData json() const;
 
-		template<Type::Primitive T>
+		template<typename T>
 		inline T get() const {
-			try {
-				return view().get<T>();
-			} catch (Extern::Nlohmann::exception const& e) {
+			T result;
+			if (!tryGet<T>(result))
 				throw Error::FailedAction(
 					"Parameter '" + name + "' is not of type '"
 					+ TypeInfo<T>::name() + "'!",
@@ -95,48 +94,15 @@ namespace Makai::JSON {
 					CTL::toString("get<", TypeInfo<T>::name(), ">"),
 					e.what()
 				);
-			}
-		}
-
-		template <Type::Equal<String> T>
-		inline String get() {
-			try {
-				return view().get<std::string>();
-			} catch (Extern::Nlohmann::exception const& e) {
-				throw Error::FailedAction(
-					"Parameter '" + name + "' is not of type '"
-					+ TypeInfo<T>::name() + "'!",
-					__FILE__,
-					CTL::toString(__LINE__),
-					CTL::toString("get<", TypeInfo<T>::name(), ">"),
-					e.what()
-				);
-			}
-		}
-
-		template <Type::Container::List T>
-		inline String get() {
-			try {
-				return view().get<std::vector<typename T::DataType>>();
-			} catch (Extern::Nlohmann::exception const& e) {
-				throw Error::FailedAction(
-					"Parameter '" + name + "' is not of type '"
-					+ TypeInfo<T>::name() + "'!",
-					__FILE__,
-					CTL::toString(__LINE__),
-					CTL::toString("get<", TypeInfo<T>::name(), ">"),
-					e.what()
-				);
-			}
+			return result;
 		}
 
 		template<Type::Primitive T>
 		inline T get(T const& fallback) const {
-			try {
-				return get<T>();
-			} catch (Error::FailedAction const& e) {
+			T result;
+			if (!tryGet<T>(result))
 				return fallback;
-			}
+			return result;
 		}
 
 		JSONView operator[](String const& key);
@@ -144,6 +110,8 @@ namespace Makai::JSON {
 
 		JSONView operator[](size_t const& index);
 		const JSONView operator[](size_t const& index) const;
+
+		inline usize size() const {return view().size();}
 
 		JSONView& operator=(JSONView const& v);
 
@@ -177,6 +145,42 @@ namespace Makai::JSON {
 		bool isPrimitive() const;
 		bool isStructured() const;
 		bool isDiscarded() const;
+
+		template<Type::Primitive T>
+		inline bool tryGet(T& out) const try {
+			out = view().get<T>();
+			return true;
+		} catch (Extern::Nlohmann::exception const& e) {
+			return false;
+		}
+
+		template <Type::Equal<String> T>
+		inline bool tryGet(T& out) const try {
+			out = view().get<std::string>();
+			return true;
+		} catch (Extern::Nlohmann::exception const& e) {
+			return false;
+		}
+
+		template <Type::Container::List T>
+		inline bool tryGet(T& out)
+		requires Type::Different<typename T::DataType, String>
+		try {
+			out = T(view().get<std::vector<typename T::DataType>>());
+			return true;
+		} catch (Extern::Nlohmann::exception const& e) {
+			return false;
+		}
+
+		template <Type::Container::List T>
+		inline bool tryGet(T& out)
+		requires Type::Equal<typename T::DataType, String>
+		try {
+			out = T(view().get<std::vector<std::string>>());
+			return true;
+		} catch (Extern::Nlohmann::exception const& e) {
+			return false;
+		}
 
 	private:
 		Extern::JSONData const&	cdata;
