@@ -117,14 +117,14 @@ public:
 	}
 
 	template<Type::Convertible<DataType> T2>
-	constexpr List(ForwardIterator<T2 const> const& begin, ForwardIterator<T2 const> const& end) {
+	constexpr explicit List(ForwardIterator<T2 const> const& begin, ForwardIterator<T2 const> const& end) {
 		invoke(end - begin + 1);
 		copy(begin, contents, end - begin);
 		count = end - begin;
 	}
 
 	template<Type::Convertible<DataType> T2>
-	constexpr List(ReverseIterator<T2 const> const& begin, ReverseIterator<T2 const> const& end) {
+	constexpr explicit List(ReverseIterator<T2 const> const& begin, ReverseIterator<T2 const> const& end) {
 		invoke(end - begin + 1);
 		for (auto i = begin; i != end; ++i)
 			pushBack(*i);
@@ -155,7 +155,7 @@ public:
 	template<class T>
 	constexpr explicit List(T const& other)
 	requires requires (T t) {
-		{t.data()} -> Type::Convertible<PointerType>;
+		{*t.data()} -> Type::Convertible<DataType>;
 		{t.size()} -> Type::Convertible<SizeType>;
 		requires !Type::Constructible<T, ConstIteratorType, ConstIteratorType>;
 	}: List(other.data(), other.data() + other.size()) {}

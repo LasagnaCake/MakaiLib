@@ -3,6 +3,7 @@
 
 #include "typetraits/traits.hpp"
 #include "meta/logic.hpp"
+#include "meta/enumtype.hpp"
 #include "namespace.hpp"
 #include <typeinfo>
 #include <cxxabi.h>
@@ -11,15 +12,17 @@ CTL_NAMESPACE_BEGIN
 
 namespace Base {
 	template<class T>
-	struct TypeInfo {
+	struct BasicInfo {
 		typedef T	DataType;
 
 		constexpr static usize SIZE		= sizeof(T);
 		constexpr static usize BIT_SIZE	= SIZE * 8;
 
-		constexpr TypeInfo() {}
+		constexpr BasicInfo() {}
+		constexpr BasicInfo(BasicInfo const& other)	= delete;
+		constexpr BasicInfo(BasicInfo&& other)		= delete;
 
-		constexpr bool operator==(TypeInfo const& other) {return id->hash_code() == other.id->hash_code();}
+		constexpr bool operator==(BasicInfo const& other) {return id->hash_code() == other.id->hash_code();}
 
 		constexpr static const char* rawName()	{return id->name();}
 		constexpr static const char* name()		{return abi::__cxa_demangle(id->name(),0,0,NULL);}
@@ -55,16 +58,16 @@ template<typename T>
 struct TypeInfo;
 
 template<Type::Integer T>
-struct TypeInfo<T>: NumberLimit<T>, Base::TypeInfo<T> {};
+struct TypeInfo<T>: NumberLimit<T>, Base::BasicInfo<T> {};
 
 template<Type::Float T>
-struct TypeInfo<T>: Base::TypeInfo<T> {};
+struct TypeInfo<T>: Base::BasicInfo<T> {};
 
 template<Type::Enumerator T>
-struct TypeInfo<T>: NumberLimit<ssize>, Base::TypeInfo<T> {};
+struct TypeInfo<T>: NumberLimit<Meta::EnumType<T>>, Base::BasicInfo<T> {};
 
 template<Type::Class T>
-struct TypeInfo<T>: Base::TypeInfo<T> {};
+struct TypeInfo<T>: Base::BasicInfo<T> {};
 
 CTL_NAMESPACE_END
 
