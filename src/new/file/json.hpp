@@ -182,8 +182,8 @@ namespace Makai::JSON {
 			out = T(view().get<std::vector<std::string>>());
 			return true;
 		} catch (Extern::Nlohmann::exception const& e) {
-			return false;
 			ex = &e;
+			return false;
 		}
 
 	private:
