@@ -4,12 +4,12 @@
 #include "../compat/ctl.hpp"
 
 #include "core.hpp"
-#include "playable.hpp"
+#include "source.hpp"
 
 namespace Makai::Audio {
-	class Sound: public Playable {
+	class Sound: public Source {
 	public:
-		using Playable::Playable;
+		using Source::Source;
 
 		virtual ~Sound() final;
 

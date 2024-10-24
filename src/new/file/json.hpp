@@ -92,7 +92,7 @@ namespace Makai::JSON {
 					__FILE__,
 					CTL::toString(__LINE__),
 					CTL::toString("get<", TypeInfo<T>::name(), ">"),
-					ex->what()
+					err
 				);
 			return result;
 		}
@@ -151,8 +151,8 @@ namespace Makai::JSON {
 			out = view().get<T>();
 			return true;
 		} catch (Extern::Nlohmann::exception const& e) {
+			err = e.what();
 			return false;
-			ex = &e;
 		}
 
 		template <Type::Equal<String> T>
@@ -160,8 +160,8 @@ namespace Makai::JSON {
 			out = view().get<std::string>();
 			return true;
 		} catch (Extern::Nlohmann::exception const& e) {
+			err = e.what();
 			return false;
-			ex = &e;
 		}
 
 		template <Type::Container::List T>
@@ -171,8 +171,8 @@ namespace Makai::JSON {
 			out = T(view().get<std::vector<typename T::DataType>>());
 			return true;
 		} catch (Extern::Nlohmann::exception const& e) {
+			err = e.what();
 			return false;
-			ex = &e;
 		}
 
 		template <Type::Container::List T>
@@ -182,7 +182,7 @@ namespace Makai::JSON {
 			out = T(view().get<std::vector<std::string>>());
 			return true;
 		} catch (Extern::Nlohmann::exception const& e) {
-			ex = &e;
+			err = e.what();
 			return false;
 		}
 
@@ -190,7 +190,7 @@ namespace Makai::JSON {
 		Extern::JSONData const&	cdata;
 		Extern::JSONData		dummy;
 
-		std::exception_ptr ex = nullptr;
+		String err = "";
 
 		String const name;
 	};

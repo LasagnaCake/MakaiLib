@@ -2,14 +2,14 @@
 #define MAKAILIB_AUDIO_MUSIC_H
 
 #include "core.hpp"
-#include "playable.hpp"
+#include "source.hpp"
 
 namespace Makai {
 	using namespace CTL;
 }
 
 namespace Makai::Audio {
-	class Music: public Playable {
+	class Music: public Source {
 	public:
 		struct MetaData {
 			String	title;
@@ -18,7 +18,7 @@ namespace Makai::Audio {
 			String	copyright;
 		};
 
-		using Playable::Playable;
+		using Source::Source;
 
 		virtual ~Music() final;
 

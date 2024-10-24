@@ -13,39 +13,39 @@ using namespace Makai; using namespace Makai::Audio;
 
 List<AudioCallback*> updateQueue;
 
-Playable::Playable() {
+Source::Source() {
 	updateQueue.push_back(&yield);
 }
 
-Playable::Playable(String const& path): Playable() {
+Source::Source(String const& path): Source() {
 	create(path);
 }
 
-Playable::~Playable() {
+Source::~Source() {
 	DEBUGLN("Deleting playable object...");
 	ERASE_IF(updateQueue, elem == &yield);
 	destroy();
 	DEBUGLN("Object deleted!");
 }
 
-void Playable::create(String const& path) {
+void Source::create(String const& path) {
 	if (created) return;
 	data = Makai::File::getBinary(path);
 	onCreate(SDL_RWFromConstMem(data.data(), data.size()));
 	created = true;
 };
 
-void Playable::destroy() {
+void Source::destroy() {
 	if (!created) return;
 	onDestroy();
 	data.clear();
 	created = false;
 };
 
-void Playable::update() {
+void Source::update() {
 	for(AudioCallback*& c : updateQueue) (*c)();
 }
 
-bool Playable::exists() {
+bool Source::exists() {
 	return created;
 }

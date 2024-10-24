@@ -7,15 +7,15 @@
 #include "../data/encdec.hpp"
 
 namespace Makai::Audio {
-	class Playable {
+	class Source {
 	public:
 		using Callback = const Signal<>;
 
-		Playable();
+		Source();
 
-		Playable(String const& path);
+		Source(String const& path);
 
-		virtual ~Playable();
+		virtual ~Source();
 
 		void create(String const& path);
 
@@ -41,7 +41,7 @@ namespace Makai::Audio {
 		bool created = false;
 	};
 
-	using AudioCallback = typename Playable::Callback;
+	using AudioCallback = typename Source::Callback;
 }
 
 #endif // MAKAILIB_AUDIO_PLAYABLE_H
