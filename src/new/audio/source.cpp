@@ -14,7 +14,7 @@ using namespace Makai; using namespace Makai::Audio;
 List<AudioCallback*> updateQueue;
 
 Source::Source() {
-	updateQueue.push_back(&yield);
+	updateQueue.pushBack(&yield);
 }
 
 Source::Source(String const& path): Source() {
@@ -23,7 +23,7 @@ Source::Source(String const& path): Source() {
 
 Source::~Source() {
 	DEBUGLN("Deleting playable object...");
-	ERASE_IF(updateQueue, elem == &yield);
+	updateQueue.eraseLike(&yield);
 	destroy();
 	DEBUGLN("Object deleted!");
 }
