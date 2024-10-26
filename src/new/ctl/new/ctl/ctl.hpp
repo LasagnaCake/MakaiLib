@@ -6,6 +6,7 @@
 #include "container/container.hpp"
 #include "io/io.hpp"
 #include "math/math.hpp"
+#include "random/random.hpp"
 #include "meta/meta.hpp"
 #include "os/os.hpp"
 #include "regex/regex.hpp"

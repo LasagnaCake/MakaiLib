@@ -39,7 +39,7 @@ using namespace Arch;
 using Nlohmann = nlohmann::json;
 using Makai::JSON::Extern::JSONData;
 
-CTL::Random::SecureEngine rng;
+CTL::Random::Engine::Secure rng;
 
 String encoded(uint64 const& v) {
 	BinaryData<> data(8, 0);

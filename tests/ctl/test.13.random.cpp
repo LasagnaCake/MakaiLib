@@ -3,7 +3,7 @@
 
 void testPseudoRandom() {
 	DEBUGLN("Testing pseudo-random...");
-	CTL::Random::PseudoGenerator rng;
+	CTL::Random::SimpleGenerator rng;
 	DEBUGLN(rng.number<usize>());
 	DEBUGLN(rng.number<float>());
 	DEBUGLN(rng.number<int>(0, 10));
