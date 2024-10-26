@@ -10,7 +10,7 @@ DEBUGMODE := -DMAKAILIB_DEBUG -fconcepts-diagnostics-depth=4 -Wall -Wpedantic
 
 LIBREQS		:= -static-libstdc++ -static-libgcc
 GRAPHREQS	:= -lopengl32
-WINREQS		:= -lole32 -loleaut32 -limm32 -lwinmm -lversion -lpowrprof -lcomdlg32 -lsetupapi -lgdi32
+WINREQS		:= -lole32 -loleaut32 -limm32 -lwinmm -lversion -lpowrprof -lcomdlg32 -lsetupapi -lgdi32 -lbcrypt
 
 o?=3
 

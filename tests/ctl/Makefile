@@ -10,7 +10,7 @@ DEBUGMODE := -DCTL_CONSOLE_OUT -fconcepts-diagnostics-depth=4 -Wall -Wpedantic
 
 LIBREQS		:= -static-libstdc++ -static-libgcc
 GRAPHREQS	:= -lopengl32
-WINREQS		:= -lole32 -loleaut32 -limm32 -lwinmm -lversion -lpowrprof -lcomdlg32 -lsetupapi -lgdi32
+WINREQS		:= -lole32 -loleaut32 -limm32 -lwinmm -lversion -lpowrprof -lcomdlg32 -lsetupapi -lgdi32 -lbcrypt
 
 o?=3
 
@@ -32,7 +32,7 @@ dotest = \
 
 case = $(if $(findstring $(strip $(2)),$(strip $(1))),$(3))
 
-params = $(LIBREQS)
+params = $(LIBREQS) $(WINREQS)
 
 define mktest
 	@echo "$(strip $(2))"
@@ -53,6 +53,7 @@ define tests
 	$(call mktest, $(1), 10.view)
 	$(call mktest, $(1), 11.filesystem)
 	$(call mktest, $(1), 12.regex)
+	$(call mktest, $(1), 13.random)
 endef
 else
 define tests

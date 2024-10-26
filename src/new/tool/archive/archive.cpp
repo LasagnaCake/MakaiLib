@@ -2,6 +2,7 @@
 #include <cryptopp/zlib.h>
 #include <cryptopp/modes.h>
 #include <cryptopp/sha3.h>
+#include <cryptopp/randpool.h>
 #include <cppcodec/base64_rfc4648.hpp>
 #include <cppcodec/base32_rfc4648.hpp>
 
@@ -37,6 +38,8 @@ using namespace Arch;
 
 using Nlohmann = nlohmann::json;
 using Makai::JSON::Extern::JSONData;
+
+CTL::Random::SecureEngine rng;
 
 String encoded(uint64 const& v) {
 	BinaryData<> data(8, 0);
@@ -265,8 +268,8 @@ usize populateTree(JSONData& tree, List<uint64> const& values, usize const& star
 
 void generateBlock(uint8 const(& block)[16]) {
 	uint64* b = (uint64*)block;
-	b[0] = CTL::Random::integer();
-	b[1] = CTL::Random::integer();
+	b[0] = rng.next();
+	b[1] = rng.next();
 }
 
 void Arch::pack(
