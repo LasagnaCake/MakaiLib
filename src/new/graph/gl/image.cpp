@@ -24,7 +24,8 @@ constexpr uint convert(Image::ImageTarget const& target) {
 }
 
 constexpr ImageFileType fromFileExtension(String const& path) {
-	String ext = Helper::toLower(Helper::splitStringAtLast(path, '.').second);
+	String ext;
+	auto sp = path.splitAtLast('.').back().lower();
 	if (ext == "png")					return ImageFileType::IFT_PNG;
 	if (ext == "jpg" || ext == "jpeg")	return ImageFileType::IFT_JPG;
 	if (ext == "tga")					return ImageFileType::IFT_TGA;
@@ -150,7 +151,7 @@ bool Image::operator==(Image const& other) const {
 	return id == other.id;
 }
 
-Helper::PartialOrder Image::operator<=>(Image const& other) const {
+CTL::ValueOrder Image::operator<=>(Image const& other) const {
 	return id <=> other.id;
 }
 
@@ -356,12 +357,12 @@ void Image2D::saveImageToFile(String const& path, uint8 const& quality, ImageFil
 	if (type == ImageFileType::IFT_AUTO_DETECT) type = fromFileExtension(path);
 	if (type == ImageFileType::IFT_INVALID)
 		throw Error::InvalidValue(
-			"Invalid file type of '." + Helper::splitStringAtLast(path, '.').second + "'!"
+			"Invalid file type of '." + path.splitAtLast('.').back() + "'!"
 			__FILE__,
 			toString(__LINE__),
 			"Image2D::saveToFile"
 		);
-	#define IMAGE2D_STBIWRITE_PARAMS path.c_str(), imgdat.width, imgdat.height, channels, imgdat.data.data()
+	#define IMAGE2D_STBIWRITE_PARAMS path.cstr(), imgdat.width, imgdat.height, channels, imgdat.data.data()
 	switch (type) {
 		default:
 		case ImageFileType::IFT_TGA:	result = stbi_write_tga(IMAGE2D_STBIWRITE_PARAMS);			break;

@@ -48,7 +48,7 @@ namespace Makai::Graph {
 			if (locked) throw Error::InvalidAction("Renderable object is locked!");
 			Triangle* tris[count] = {nullptr};
 			// Create triangles
-			for SRANGE(i, 0, count) {
+			for (usize i = 0; i < count; ++i) {
 				tris[i] = new Triangle();
 				triangles.pushBack(tris[i]);
 			}
@@ -58,7 +58,7 @@ namespace Makai::Graph {
 			shape->onDestroy =	[this, shape](){this->removeReference<T>(shape);};
 			shape->onUnbind =	[this, shape](){this->unbindReference<T>(shape);};
 			// Add to reference list
-			references.shape.push_back((ShapeRef<0>*)shape);
+			references.shape.pushBack((ShapeRef<0>*)shape);
 			// return shape
 			return shape;
 		}
@@ -108,7 +108,7 @@ namespace Makai::Graph {
 			if (!ref) return;
 			if (locked) return;
 			auto& rs = references.shape;
-			rs.eraseIf([&] (auto& e) {e == (ShapeRef<0>*)ref});
+			rs.eraseIf([&] (auto& e) {e == (ShapeRef<0>*)ref;});
 			delete ref;
 		}
 

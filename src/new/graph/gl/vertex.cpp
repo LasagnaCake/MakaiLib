@@ -8,7 +8,8 @@
 using namespace Makai; using namespace Makai::Graph;
 
 VertexMap Vertex::defaultMap() {
-	return VertexMap{
+	using namespace Literals::Text;
+	return VertexMap({
 		{"x", 0},
 		{"y", 0},
 		{"z", 0},
@@ -21,7 +22,7 @@ VertexMap Vertex::defaultMap() {
 		{"nx", 0},
 		{"ny", 0},
 		{"nz", 0},
-	};
+	});
 }
 
 inline float getValue(VertexMap const& vmap, String const& value, float const& fallback) {

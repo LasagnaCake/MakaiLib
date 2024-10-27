@@ -86,7 +86,7 @@ struct TestApp: Makai::App {
 			for(float& f: framerate) fravg += f;
 			fravg *= (1.0 / (float)MAX_FRCOUNT);
 			fravg = Math::clamp<float>(fravg, 0, maxFrameRate);
-			DEBUGLN("Framerate: ", Helper::floatString(Math::round(fravg, 2), 2));
+			DEBUGLN("Framerate: ", Format::prettify(Math::round(fravg, 2), 2, 0));
 			frcount = 0;
 			DEBUGLN(crot.y);
 		}
@@ -130,9 +130,7 @@ int main() {
 		TestApp app;
 		app.maxFrameRate = 60.0;
 		app.run();
-	} catch (Error::Error const& e) {
-		Makai::Popup::showError(e.what());
-	} catch (std::runtime_error const& e) {
+	} catch (Makai::Error::Generic const& e) {
 		Makai::Popup::showError(e.what());
 	}
 	return 0;

@@ -72,6 +72,8 @@ namespace Makai::JSON {
 	}
 
 	using JSONType = Extern::JSONData;
+	
+	struct JSONValue;
 
 	class JSONView: public View<Extern::JSONData> {
 	public:
@@ -82,7 +84,7 @@ namespace Makai::JSON {
 
 		Extern::JSONData json() const;
 
-		template<typename T>
+		template<class T>
 		inline T get() const {
 			T result;
 			if (!tryGet<T>(result))
@@ -97,7 +99,7 @@ namespace Makai::JSON {
 			return result;
 		}
 
-		template<Type::Primitive T>
+		template<class T>
 		inline T get(T const& fallback) const {
 			T result;
 			if (!tryGet<T>(result))
@@ -108,8 +110,8 @@ namespace Makai::JSON {
 		JSONView operator[](String const& key);
 		const JSONView operator[](String const& key) const;
 
-		JSONView operator[](size_t const& index);
-		const JSONView operator[](size_t const& index) const;
+		JSONView operator[](usize const& index);
+		const JSONView operator[](usize const& index) const;
 
 		inline usize size() const {return view().size();}
 
@@ -122,8 +124,7 @@ namespace Makai::JSON {
 			return (*this);
 		}
 
-		template<typename T> operator T() const requires(Type::Constructible<T>)	{return get<T>(T());	}
-		template<typename T> operator T() const requires(!Type::Constructible<T>)	{return get<T>();		}
+		template<typename T> operator T() const {return get<T>();}
 
 		String getName() const;
 
@@ -155,6 +156,15 @@ namespace Makai::JSON {
 			return false;
 		}
 
+		template<Type::Enumerator T>
+		inline bool tryGet(T& out) const try {
+			out = view().get<T>();
+			return true;
+		} catch (Extern::Nlohmann::exception const& e) {
+			err = e.what();
+			return false;
+		}
+
 		template <Type::Equal<String> T>
 		inline bool tryGet(T& out) const try {
 			out = view().get<std::string>();
@@ -166,8 +176,11 @@ namespace Makai::JSON {
 
 		template <Type::Container::List T>
 		inline bool tryGet(T& out) const
-		requires Type::Different<typename T::DataType, String>
-		try {
+		requires (
+			Type::Different<typename T::DataType, String>
+		&&	Type::Different<typename T::DataType, JSONView>
+		&&	Type::Different<typename T::DataType, JSONValue>
+		) try {
 			out = T(view().get<std::vector<typename T::DataType>>());
 			return true;
 		} catch (Extern::Nlohmann::exception const& e) {
@@ -190,7 +203,7 @@ namespace Makai::JSON {
 		Extern::JSONData const&	cdata;
 		Extern::JSONData		dummy;
 
-		String err = "";
+		mutable String err = "";
 
 		String const name;
 	};
@@ -205,6 +218,47 @@ namespace Makai::JSON {
 		JSONValue(JSONView const& view);
 
 		JSONValue(JSONValue const& other);
+
+		template <Type::Container::List T>
+		inline bool tryGet(T& out) const
+		requires Type::Equal<typename T::DataType, JSONValue>
+		try {
+			out = T(view().get<std::vector<Extern::JSONData>>());
+			return true;
+		} catch (Extern::Nlohmann::exception const& e) {
+			err = e.what();
+			return false;
+		}
+
+		template <Type::Container::SimpleMap T>
+		inline bool tryGet(T& out) const
+		requires (
+			Type::Equal<typename T::KeyType, String>
+		&&	Type::Equal<typename T::ValueType, JSONValue>
+		) try {
+			T res;
+			for (auto [k, v]: view().items())
+				res[k] = v;
+			return true;
+		} catch (Extern::Nlohmann::exception const& e) {
+			err = e.what();
+			return false;
+		}
+
+		template <Type::Container::SimpleMap T>
+		inline bool tryGet(T& out) const
+		requires (
+			Type::Equal<typename T::KeyType, String>
+		&&	Type::Different<typename T::ValueType, JSONValue>
+		) try {
+			T res;
+			for (auto [k, v]: view().items())
+				res[k] = v.get<typename T::ValueType>();
+			return true;
+		} catch (Extern::Nlohmann::exception const& e) {
+			err = e.what();
+			return false;
+		}
 
 		JSONValue& clear();
 

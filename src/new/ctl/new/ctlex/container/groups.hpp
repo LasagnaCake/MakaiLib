@@ -9,9 +9,9 @@ CTL_EX_NAMESPACE_BEGIN
 
 template<class TData, class TIdentifier = usize, Type::Integer TIndex = usize>
 struct Groups:
-	::CTL::Collected<TIdentifier, TData, KeyValuePair>
-	::CTL::Iteratable<KeyValuePair<TIdentifier, TData>, TIndex>,
-	::CTL::SelfIdentified<Groups<TData, TIdentifier, TIndex>> {
+	Collected<TIdentifier, TData, KeyValuePair>,
+	Iteratable<KeyValuePair<TIdentifier, TData>, TIndex>,
+	SelfIdentified<Groups<TData, TIdentifier, TIndex>> {
 public:
 	static_assert(Type::Comparator::Threeway<TIdentifier, TIdentifier>, "Identifier must be comparable!");
 
@@ -19,24 +19,20 @@ public:
 	using Iteratable		= ::CTL::Iteratable<KeyValuePair<TIdentifier, TData>, TIndex>;
 	using SelfIdentified	= ::CTL::SelfIdentified<Groups<TData, TIdentifier, TIndex>>;
 
-	using CollectionType	= Map<
-		typename Collected::KeyType,
-		typename Collected::ValueType,
-		typename Iteratable::SizeType
-	>;
-
-	using KeyType	= typename CollectionType::KeyType;
-	using ValueType	= typename CollectionType::ValueType;
-	using PairType	= typename CollectionType::PairType;
+	using KeyType	= Collected::KeyType;
+	using ValueType	= Collected::ValueType;
+	using PairType	= Collected::PairType;
 
 	using
-		SizeType = typename CollectionType::SizeType
+		SizeType = Iteratable::SizeType
 	;
-
-	using typename SelfIdentified::SelfType;
 
 	using GroupType				= List<ValueType, SizeType>;
 	using IdentifierListType	= List<KeyType, SizeType>;
+
+	using CollectionType = Map<KeyType, GroupType, SizeType>;
+
+	using typename SelfIdentified::SelfType;
 
 	constexpr GroupType& get(KeyType const& id) {
 		if (!g.contains(id))
@@ -48,7 +44,7 @@ public:
 		return get(id);
 	}
 
-	constexpr GroupType& withObject(KeyType const& obj) {
+	constexpr IdentifierListType withObject(ValueType const& obj) {
 		IdentifierListType gs;
 		try {
 			for (auto const& group: g)

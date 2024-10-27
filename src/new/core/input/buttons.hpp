@@ -1,7 +1,7 @@
 #ifndef MAKAILIB_CORE_INPUT_BUTTONS_H
 #define MAKAILIB_CORE_INPUT_BUTTONS_H
 
-#include "../../ctl/ctl.hpp"
+#include "../../compat/ctl.hpp"
 
 namespace Makai::Input {
 	enum class KeyCode {
@@ -187,7 +187,7 @@ namespace Makai::Input {
 
 	using ButtonList = List<Button>;
 
-	using ButtonMap = HashMap<String, ButtonList>;
+	using ButtonMap = Map<String, ButtonList>;
 }
 
 #endif // MAKAILIB_CORE_INPUT_BUTTONS_H

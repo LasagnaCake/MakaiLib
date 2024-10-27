@@ -6,27 +6,27 @@
 
 CTL_NAMESPACE_BEGIN
 
-constexpr int		toInt(String const& s)				{return String::toNumber<int>(s);		}
-constexpr long		toLong(String const& s)				{return String::toNumber<long>(s);		}
-constexpr llong		toLongLong(String const& s)			{return String::toNumber<llong>(s);		}
+constexpr int		toInt(String const& s, uint8 const& base = 0)				{return String::toNumber<int>(s, base);		}
+constexpr long		toLong(String const& s, uint8 const& base = 0)				{return String::toNumber<long>(s, base);	}
+constexpr llong		toLongLong(String const& s, uint8 const& base = 0)			{return String::toNumber<llong>(s, base);	}
 
-constexpr uint		toUnsignedInt(String const& s)		{return String::toNumber<uint>(s);		}
-constexpr ulong		toUnsignedLong(String const& s)		{return String::toNumber<ulong>(s);		}
-constexpr ullong	toUnsignedLongLong(String const& s)	{return String::toNumber<ullong>(s);	}
+constexpr uint		toUnsignedInt(String const& s, uint8 const& base = 0)		{return String::toNumber<uint>(s, base);	}
+constexpr ulong		toUnsignedLong(String const& s, uint8 const& base = 0)		{return String::toNumber<ulong>(s, base);	}
+constexpr ullong	toUnsignedLongLong(String const& s, uint8 const& base = 0)	{return String::toNumber<ullong>(s, base);	}
 
 constexpr float		toFloat(String const& s)		{return String::toNumber<float>(s);		}
 constexpr double	toDouble(String const& s)		{return String::toNumber<double>(s);	}
 constexpr ldouble	toLongDouble(String const& s)	{return String::toNumber<ldouble>(s);	}
 
-inline int8		toInt8(String const& s)		{return String::toNumber<int8>(s);		}
-inline int16	toInt16(String const& s)	{return String::toNumber<int16>(s);		}
-inline int32	toInt32(String const& s)	{return String::toNumber<int32>(s);		}
-inline int64	toInt64(String const& s)	{return String::toNumber<int64>(s);		}
+inline int8		toInt8(String const& s, uint8 const& base = 0)		{return String::toNumber<int8>(s, base);	}
+inline int16	toInt16(String const& s, uint8 const& base = 0)		{return String::toNumber<int16>(s, base);	}
+inline int32	toInt32(String const& s, uint8 const& base = 0)		{return String::toNumber<int32>(s, base);	}
+inline int64	toInt64(String const& s, uint8 const& base = 0)		{return String::toNumber<int64>(s, base);	}
 
-inline uint8	toUInt8(String const& s)	{return String::toNumber<uint8>(s);		}
-inline uint16	toUInt16(String const& s)	{return String::toNumber<uint16>(s);	}
-inline uint32	toUInt32(String const& s)	{return String::toNumber<uint32>(s);	}
-inline uint64	toUInt64(String const& s)	{return String::toNumber<uint64>(s);	}
+inline uint8	toUInt8(String const& s, uint8 const& base = 0)		{return String::toNumber<uint8>(s, base);	}
+inline uint16	toUInt16(String const& s, uint16 const& base = 0)	{return String::toNumber<uint16>(s, base);	}
+inline uint32	toUInt32(String const& s, uint32 const& base = 0)	{return String::toNumber<uint32>(s, base);	}
+inline uint64	toUInt64(String const& s, uint64 const& base = 0)	{return String::toNumber<uint64>(s, base);	}
 
 inline float32	toFloat32(String s)		{return toFloat(s);			}
 inline float64	toFloat64(String s)		{return toDouble(s);		}

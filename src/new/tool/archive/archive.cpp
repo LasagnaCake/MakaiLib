@@ -402,7 +402,7 @@ void Arch::pack(
 		_ARCDEBUGLN("\nDone!");
 		_ARCDEBUGLN("Please run [arcgen \"YOUR_PASSWORD_HERE\"] to generate the hash to use in your game.");
 	#ifdef ARCSYS_APPLICATION_
-	} catch (Error::Error const& e) {
+	} catch (Error::Generic const& e) {
 		_ARCDEBUGLN(e.report());
 		_ARCEXIT;
 	} catch (std::runtime_error const& e) {
@@ -759,7 +759,7 @@ void unpackV1(
 	_ARCDEBUGLN("\nExtracting data...\n");
 	arc.unpackTo(folderPath);
 #ifdef ARCSYS_APPLICATION_
-} catch (Error::Error const& e) {
+} catch (Error::Generic const& e) {
 	_ARCDEBUGLN(e.report());
 	_ARCEXIT;
 } catch (std::runtime_error const& e) {
@@ -785,7 +785,7 @@ void unpackV0(
 	_ARCDEBUGLN("\nExtracting data...\n");
 	arc.unpackTo(folderPath);
 #ifdef ARCSYS_APPLICATION_
-} catch (Error::Error const& e) {
+} catch (Error::Generic const& e) {
 	_ARCDEBUGLN(e.report());
 	_ARCEXIT;
 } catch (std::runtime_error const& e) {
@@ -819,7 +819,7 @@ void Arch::unpack(
 		);
 	}
 #ifdef ARCSYS_APPLICATION_
-} catch (Error::Error const& e) {
+} catch (Error::Generic const& e) {
 	_ARCDEBUGLN(e.report());
 	_ARCEXIT;
 } catch (std::runtime_error const& e) {

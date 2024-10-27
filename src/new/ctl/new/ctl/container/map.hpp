@@ -329,6 +329,30 @@ private:
 
 #undef NOT_IN_MAP
 
+namespace Type::Container {
+	namespace Impl {
+		template<class T>
+		struct IsSimpleMap;
+
+		template<
+			template <class, class, class, bool, template <class> class> class T0,
+			class T1,
+			class T2,
+			class T3,
+			bool B4,
+			template <class> class T5
+		>
+		struct IsSimpleMap<T0<T1, T2, T3, B4, T5>>:
+			BooleanConstant<
+				Type::Equal<T0<T1, T2, T3, B4, T5>,
+				::CTL::BaseSimpleMap<T1, T2, T3, B4, T5>
+			>> {};
+	}
+
+	template<class T>
+	concept SimpleMap = Impl::IsSimpleMap<T>::value;
+}
+
 /*
 template<class TKey, class TValue, Type::Integer TIndex = usize, class TPair = Pair<TKey, TValue>, class THasher = Hasher>
 requires (

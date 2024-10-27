@@ -202,7 +202,7 @@ public:
 	}
 
 	constexpr SelfType sliced(IndexType const& start) const							{return BaseType::sliced(start);		}
-	constexpr SelfType sliced(IndexType const& start, SizeType const& count) const	{return BaseType::sliced(start, count);	}
+	constexpr SelfType sliced(IndexType const& start, IndexType const& stop) const	{return BaseType::sliced(start, stop);	}
 
 	constexpr List<SelfType, SizeType> splitAtFirst(DataType const& sep) const {
 		List<SelfType, SizeType> res;
@@ -377,10 +377,14 @@ public:
 		return result;
 	}
 
-	SelfType substring(IndexType const& start, SizeType const& length) const {
-		IndexType const stop = start + length;
+	SelfType substring(IndexType const& start) const {
+		return sliced(start);
+	}
+
+	SelfType substring(IndexType start, SizeType const& length) const {
 		assertIsInBounds(start);
-		return sliced(start, stop);
+		while (start < 0) start += size();
+		return sliced(start, start + length);
 	}
 
 	constexpr bool nullTerminated() const {return back() == '\0';}

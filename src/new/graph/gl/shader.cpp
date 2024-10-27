@@ -8,6 +8,8 @@ namespace SLF = Makai::SLF;
 
 using ShaderType = SLF::ShaderType;
 
+using namespace Literals::Text;
+
 constexpr GLuint getGLShaderType(ShaderType const& type) {
 	switch (type) {
 		default:
@@ -37,7 +39,7 @@ void Shader::attach(String const& code, ShaderType const& shaderType) {
 	GLuint shader;
 	int success;
 	char infoLog[2048];
-	const char* shaderCode = code.c_str();
+	const char* shaderCode = code.cstr();
 	// Vertex Shader
 	shader = glCreateShader(getGLShaderType(shaderType));
 	glShaderSource(shader, 1, &shaderCode, NULL);
@@ -119,7 +121,7 @@ bool Shader::create(SLF::SLFData const& slfData) {
 			code = shader.code;
 		try {
 			attach(code, shader.type);
-		} catch (Error::Error const& err) {
+		} catch (Error::Generic const& err) {
 			log += "\n[[ Error on shader '"s + shaderPath + "'! ]]:\n";
 			log += err.what();
 		}

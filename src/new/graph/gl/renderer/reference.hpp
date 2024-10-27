@@ -30,7 +30,7 @@ namespace Makai::Graph {
 		using Triangles = Span<Triangle*, SIZE>;
 
 		ShapeRef(Triangle* const(& tris)[SIZE]) {
-			for SRANGE(i, 0, SIZE)
+			for (usize i = 0; i < SIZE; ++i)
 				this->tris[i] = tris[i];
 		}
 
@@ -47,8 +47,8 @@ namespace Makai::Graph {
 		virtual ShapeRef* transform()	= 0;
 
 		virtual void forEachVertex(VertexFunction const& f) {
-			for SRANGE(i, 0, SIZE)
-				for SRANGE(j, 0, 3)
+			for (usize i = 0; i < SIZE; ++i)
+				for (usize j = 0; j < 3; ++j)
 					f(((Vertex*)tris[i])[j]);
 		}
 

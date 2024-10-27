@@ -104,16 +104,14 @@ struct DebugStack {
 	}
 
 	static void push(Debug::Context* const& ctx) {
-		contexts.push_back(ctx);
+		contexts.pushBack(ctx);
 		indent += "  ";
 	}
 
 	static Debug::Context* pop() {
 		if (contexts.empty()) return nullptr;
-		Debug::Context* ctx = contexts.back();
-		indent = indent.substr(2);
-		contexts.pop_back();
-		return ctx;
+		indent = indent.substring(2);
+		return contexts.popBack();
 	}
 };
 #endif // MAKAILIB_DEBUG
@@ -139,7 +137,7 @@ Debug::Context::Context(String const& name):
 	getContextErrors();
 	message += indent + ("<api:context name=\"" + name + "\">\n");
 	DebugStack::push(this);
-	glPushDebugGroup(GL_DEBUG_SOURCE_APPLICATION, glMessageID++, -1, name.c_str());
+	glPushDebugGroup(GL_DEBUG_SOURCE_APPLICATION, glMessageID++, -1, name.cstr());
 	#endif // MAKAILIB_DEBUG_MODE
 }
 

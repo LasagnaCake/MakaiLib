@@ -51,7 +51,7 @@ Drawable& Drawable::addToRenderLayer(usize const& renderLayer) {
 
 Drawable& Drawable::removeFromRenderLayer(usize const& renderLayer) {
 	Renderer::layers.remove(&render, renderLayer);
-	if (!Renderer::layers.get(&render).size())
+	if (Renderer::layers.withObject(&render).empty())
 		manualMode = true;
 	return *this;
 }

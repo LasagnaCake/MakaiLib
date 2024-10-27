@@ -126,12 +126,12 @@ namespace OS::FS {
 	}
 
 	constexpr String fileExtension(String const& path) {
-		return path.splitAtLast('.')[1];
+		return path.splitAtLast('.').back();
 	}
 
 	/*constexpr String fileName(String const& path, bool const& removeExtension = false) {
-		String result = path.splitAtLast({'\\', '/'})[1];
-		return (removeExtension ? result.splitAtLast('.')[0] ? result);
+		String result = path.splitAtLast({'\\', '/'}).back();
+		return (removeExtension ? result.splitAtLast('.').front() ? result);
 	}*/
 
 	inline String getFileName(String const& path, bool removeExtension = false) {
@@ -140,8 +140,8 @@ namespace OS::FS {
 
 	constexpr String parentDirectory(String const& path) {
 		StringList splitPath = path.splitAtFirst({'\\', '/'});
-		if (splitPath.size() != 1)
-			return splitPath[0];
+		if (splitPath.size() > 1)
+			return splitPath.front();
 		return "";
 	}
 
@@ -151,9 +151,9 @@ namespace OS::FS {
 
 	constexpr String childPath(String const& path) {
 		StringList dirs = path.splitAtFirst({'\\', '/'});
-		if (dirs.size() == 1)
-			return path;
-		return dirs[1];
+		if (dirs.size() > 1)
+			return dirs.back();
+		return "";
 	}
 
 	struct FileTree {

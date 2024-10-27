@@ -13,12 +13,12 @@ all: debug release
 
 debug:
 	$(call compile, core)
-	$(call compile, playable)
+	$(call compile, source)
 	$(call compile, music)
 	$(call compile, sound)
 
 release:
 	$(call compile, core)
-	$(call compile, playable)
+	$(call compile, source)
 	$(call compile, music)
 	$(call compile, sound)

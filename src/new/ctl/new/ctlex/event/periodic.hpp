@@ -35,7 +35,7 @@ public:
 
 	void setAutomatic() {
 		if (!manual) return;
-		events.push_back(&update);
+		events.pushBack(&update);
 		manual = false;
 	}
 

@@ -137,7 +137,7 @@ void setExceptionMask(std::ios& stream) {
 // If all else fails, the horrors
 template<class T>
 void readFile(String const& path, T& buf) {
-	FILE* file = fopen(path.c_str(), "rb");
+	FILE* file = fopen(path.cstr(), "rb");
 	if (!file)							fileLoadError(path, "File open error");
 	if (fseek(file, 0, SEEK_END))		fileLoadError(path, "File seek error");
 	ssize sz;
@@ -164,7 +164,7 @@ String Makai::File::loadText(String const& path) {
 		// Read file's buffer contents into stringstream
 		stream << file.rdbuf();
 		// Convert stream into string
-		content = stream.str().c_str();
+		content = stream.str();
 		// Close file handler
 		file.close();
 		// Return contents

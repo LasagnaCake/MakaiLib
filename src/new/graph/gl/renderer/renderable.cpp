@@ -310,7 +310,7 @@ void Renderable::extendFromBinaryFile(String const& path) {
 }
 
 void Renderable::extendFromDefinitionFile(String const& path) {
-	extendFromDefinition(File::getJSON(path), OS::FS::getDirectoryFromPath(path));
+	extendFromDefinition(File::getJSON(path), OS::FS::getPathDirectory(path));
 }
 
 void Renderable::bake() {

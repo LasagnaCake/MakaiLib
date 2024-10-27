@@ -4,7 +4,7 @@
 #endif
 #include <SDL2/SDL.h>
 
-#include "input.hpp"
+#include "manager.hpp"
 
 #define sdlWindow ((SDL_Window*)window)
 
@@ -257,7 +257,7 @@ List<KeyboardButton> getKeyboardButtonsDown() {
 	buttons.reserve(buffer.size());
 	for (auto [b, d] : buffer)
 		if (isButtonDown(b))
-			buttons.push_back(b);
+			buttons.pushBack(b);
 	return buttons;
 }
 
@@ -267,7 +267,7 @@ List<KeyboardButton> getKeyboardButtonsJustPressed() {
 	buttons.reserve(buffer.size());
 	for (auto [b, d] : buffer)
 		if (isButtonJustPressed(b))
-			buttons.push_back(b);
+			buttons.pushBack(b);
 	return buttons;
 }
 
@@ -277,7 +277,7 @@ List<KeyboardButton> getKeyboardButtonsJustReleased() {
 	buttons.reserve(buffer.size());
 	for (auto [b, d] : buffer)
 		if (isButtonJustReleased(b))
-			buttons.push_back(b);
+			buttons.pushBack(b);
 	return buttons;
 }
 
@@ -286,7 +286,7 @@ List<KeyboardButton> getKeyboardButtonsChanged() {
 	List<KeyboardButton> buttons;
 	for (auto [b, d] : buffer)
 		if (isButtonChanged(b))
-			buttons.push_back(b);
+			buttons.pushBack(b);
 	return buttons;
 }
 
@@ -296,7 +296,7 @@ List<KeyboardButton> getKeyboardButtonsHeld() {
 	buttons.reserve(buffer.size());
 	for (auto [b, d] : buffer)
 		if (isButtonHeld(b))
-			buttons.push_back(b);
+			buttons.pushBack(b);
 	return buttons;
 }
 */
@@ -393,7 +393,7 @@ StringList Manager::getNamesForButton(Button const& button) {
 	for (auto& [name, buttons]: binds) {
 		for (Button& btn: buttons) {
 			if (button == btn) {
-				names.push_back(name);
+				names.pushBack(name);
 				break;
 			}
 		}
@@ -406,10 +406,10 @@ List<Button> Manager::getButtonsDown() {
 	buttons.reserve(buffer.size() + mouse.buffer.size());
 	for (auto [b, d] : buffer)
 		if (isButtonDown(b))
-			buttons.push_back(b);
+			buttons.pushBack(b);
 	for (auto [b, d] : mouse.buffer)
 		if (isButtonDown(b))
-			buttons.push_back(b);
+			buttons.pushBack(b);
 	return buttons;
 }
 
@@ -418,10 +418,10 @@ List<Button> Manager::getButtonsJustPressed() {
 	buttons.reserve(buffer.size() + mouse.buffer.size());
 	for (auto [b, d] : buffer)
 		if (isButtonJustPressed(b))
-			buttons.push_back(b);
+			buttons.pushBack(b);
 	for (auto [b, d] : mouse.buffer)
 		if (isButtonJustPressed(b))
-			buttons.push_back(b);
+			buttons.pushBack(b);
 	return buttons;
 }
 
@@ -430,10 +430,10 @@ List<Button> Manager::getButtonsJustReleased() {
 	buttons.reserve(buffer.size() + mouse.buffer.size());
 	for (auto [b, d] : buffer)
 		if (isButtonJustReleased(b))
-			buttons.push_back(b);
+			buttons.pushBack(b);
 	for (auto [b, d] : mouse.buffer)
 		if (isButtonJustReleased(b))
-			buttons.push_back(b);
+			buttons.pushBack(b);
 	return buttons;
 }
 
@@ -442,10 +442,10 @@ List<Button> Manager::getButtonsChanged() {
 	buttons.reserve(buffer.size() + mouse.buffer.size());
 	for (auto [b, d] : buffer)
 		if (hasButtonChanged(b))
-			buttons.push_back(b);
+			buttons.pushBack(b);
 	for (auto [b, d] : mouse.buffer)
 		if (hasButtonChanged(b))
-			buttons.push_back(b);
+			buttons.pushBack(b);
 	return buttons;
 }
 
@@ -454,10 +454,10 @@ List<Button> Manager::getButtonsHeld() {
 	buttons.reserve(buffer.size() + mouse.buffer.size());
 	for (auto [b, d] : buffer)
 		if (isButtonHeld(b))
-			buttons.push_back(b);
+			buttons.pushBack(b);
 	for (auto [b, d] : mouse.buffer)
 		if (isButtonHeld(b))
-			buttons.push_back(b);
+			buttons.pushBack(b);
 	return buttons;
 }
 

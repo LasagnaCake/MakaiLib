@@ -62,7 +62,7 @@ FontFace::FontFace(FontData const& font): FontFace() {
 
 FontFace::FontFace(String const& path): FontFace() {
 	JSON::JSONData tx	= File::getJSON(path);
-	instance->image		= Texture2D::fromJSON(tx["image"], OS::FS::getDirectoryFromPath(path));
+	instance->image		= Texture2D::fromJSON(tx["image"], OS::FS::getPathDirectory(path));
 	instance->size		= fromJSONArrayV2(tx["size"], 16);
 	instance->spacing	= fromJSONArrayV2(tx["spacing"], 1);
 }
@@ -106,16 +106,16 @@ List<float> getTextLineStarts(TextData const& text, FontData const& font, List<s
 	switch (text.lineWrap) {
 	case LineWrap::LW_CHARACTER: {
 			// Separate text by newline characters
-			StringList	lines = Helper::splitString(text.content, '\n');
+			StringList	lines = text.content.split('\n');
 			// Calculate starting points
 			for (String& l : lines) {
 				size_t lineSize		= l.size();
 				size_t lastLineSize	= lineSize % (text.rect.h+1);
 				if (lineSize > text.rect.h) {
 					for (size_t i = 0; i < (lineSize - lastLineSize) / text.rect.h; i++)
-						result.push_back(0);
+						result.pushBack(0);
 				}
-				result.push_back(
+				result.pushBack(
 					((float)text.rect.h - (float)lastLineSize)
 				*	(text.spacing.x + font.spacing.x)
 				*	text.textAlign.x
@@ -131,7 +131,7 @@ List<float> getTextLineStarts(TextData const& text, FontData const& font, List<s
 	case LineWrap::LW_FULL_WORD:
 	case LineWrap::LW_HYPHEN_WORD: {
 			for (size_t const& lb: breaks) {
-				result.push_back(
+				result.pushBack(
 					((float)text.rect.h - (float)lb)
 				*	(text.spacing.x + font.spacing.x)
 				*	text.textAlign.x
@@ -164,7 +164,7 @@ constexpr List<size_t> calculateIndices(StringList const& words, TextRect const&
 	;
 	for (String const& w: words) {
 		if ((ls + sc + w.size()) > (rect.h-1)) {
-			indices.push_back(ls + sc - 1);
+			indices.pushBack(ls + sc - 1);
 			ls = w.size();
 			sc = 1;
 		} else {
@@ -172,7 +172,7 @@ constexpr List<size_t> calculateIndices(StringList const& words, TextRect const&
 			sc++;
 		}
 	}
-	indices.push_back(ls + sc - 1);*/
+	indices.pushBack(ls + sc - 1);*/
 	size_t
 		lastBreak	= 0,
 		curWord		= 0
@@ -180,17 +180,17 @@ constexpr List<size_t> calculateIndices(StringList const& words, TextRect const&
 	for (String const& word: words) {
 		for (char const& c: word) {
 			if (c == '\n') {
-				indices.push_back(curWord+lastBreak-1);
+				indices.pushBack(curWord+lastBreak-1);
 				lastBreak = 0;
 			} else if ((lastBreak + (++curWord)) > (rect.h-1)) {
-				indices.push_back(lastBreak-1);
+				indices.pushBack(lastBreak-1);
 				lastBreak = 0;
 			}
 		}
 		lastBreak += ++curWord;
 		curWord = 0;
 	}
-	indices.push_back(lastBreak-1);
+	indices.pushBack(lastBreak-1);
 	return indices;
 }
 
@@ -201,20 +201,14 @@ List<size_t> getTextLineWrapIndices(TextData& text) {
 		break;
 	case LineWrap::LW_HYPHEN_WORD: {
 			indices = calculateIndices(
-				Helper::splitString(
-					text.content,
-					{' ', '~', '\t', '-'}
-				),
+				text.content.split({' ', '~', '\t', '-'}),
 				text.rect
 			);
 		}
 		break;
 	case LineWrap::LW_FULL_WORD: {
 			indices = calculateIndices(
-				Helper::splitString(
-					text.content,
-					{' ', '~', '\t'}
-				),
+				text.content.split({' ', '~', '\t'}),
 				text.rect
 			);
 		}
@@ -318,12 +312,12 @@ void Label::update() {
 			(uv + Vector2(1,1)) / font->size,
 		};
 		// Nightmare
-		vertices.push_back(Vertex(pos[0], uv[0]));
-		vertices.push_back(Vertex(pos[1], uv[1]));
-		vertices.push_back(Vertex(pos[2], uv[2]));
-		vertices.push_back(Vertex(pos[1], uv[1]));
-		vertices.push_back(Vertex(pos[2], uv[2]));
-		vertices.push_back(Vertex(pos[3], uv[3]));
+		vertices.pushBack(Vertex(pos[0], uv[0]));
+		vertices.pushBack(Vertex(pos[1], uv[1]));
+		vertices.pushBack(Vertex(pos[2], uv[2]));
+		vertices.pushBack(Vertex(pos[1], uv[1]));
+		vertices.pushBack(Vertex(pos[2], uv[2]));
+		vertices.pushBack(Vertex(pos[3], uv[3]));
 		// Increment cursor
 		cursor.x += text.spacing.x + font->spacing.x;
 		chrRect.h++;

@@ -144,6 +144,8 @@ public:
 		count = end - begin;
 	}
 
+	constexpr List(ConstPointerType const& start, SizeType const& size): List(start, start + size) {}
+
 	template<class T>
 	constexpr List(T const& other)
 	requires requires (T t) {
@@ -158,7 +160,7 @@ public:
 		{*t.data()} -> Type::Convertible<DataType>;
 		{t.size()} -> Type::Convertible<SizeType>;
 		requires !Type::Constructible<T, ConstIteratorType, ConstIteratorType>;
-	}: List(other.data(), other.data() + other.size()) {}
+	}: List(other.data(), other.size()) {}
 
 	template<class T>
 	constexpr List(List<T, SizeType> const& other)
