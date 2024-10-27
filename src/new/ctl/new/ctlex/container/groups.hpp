@@ -45,18 +45,13 @@ public:
 	}
 
 	constexpr IdentifierListType withObject(ValueType const& obj) {
-		if (group.empty()) return IdentifierListType();
+		if (g.empty()) return IdentifierListType();
 		IdentifierListType gs;
 		try {
-			DEBUGLN("Finding groups with object...");
 			for (auto const& group: g)
 				if (group.value.find(obj) != -1)
 					gs.pushBack(group.key);
-			DEBUGLN("Success");
-		} catch(...) {
-			DEBUGLN("Error");
-		}
-		DEBUGLN("Found ", gs.size(), " instances");
+		} catch(...) {}
 		return gs;
 	}
 
@@ -66,16 +61,17 @@ public:
 	}
 
 	constexpr SelfType& remove(ValueType const& obj, KeyType const& groupID) {
+		DEBUGLN("Finding object group...");
 		GroupType& gp = get(groupID);
+		DEBUGLN("Removing object...");
 		gp.eraseLike(obj);
+		DEBUGLN("Done!");
 		return *this;
 	}
 
 	constexpr SelfType& removeFromAll(ValueType const& obj) {
-		DEBUGLN("Getting object's groups...");
 		IdentifierListType gs = withObject(obj);
 		if (gs.empty()) return *this;
-		DEBUGLN("Removing object from group...");
 		for (auto group: gs)
 			remove(obj, group);
 		return *this;

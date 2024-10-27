@@ -358,21 +358,22 @@ public:
 	constexpr SelfType& remove(IndexType index) {
 		assertIsInBounds(index);
 		wrapBounds(index, count);
-		copy(&contents[index], &contents[index-1], count-index);
-		MX::destruct(contents+count-1);
-		return *this;
+		return squash(index);
 	}
 
 	constexpr SizeType removeLike(DataType const& value)
 	requires Type::Comparator::Equals<DataType, DataType> {
 		if (empty()) return 0;
 		SizeType removed = 0;
+		SizeType const ocount = count;
 		auto const start = begin();
-		for(auto i = begin(); i != end();)
+		for(auto i = begin(); i < end();)
 			if (ComparatorType::equals(*i, value)) {
-				remove(i-start+1);
-				removed++;
+				squash(i-start);
+				++removed;
+				--count;
 			} else ++i;
+		count = ocount;
 		return removed;
 	}
 
@@ -380,12 +381,15 @@ public:
 	requires Type::Comparator::Equals<DataType, DataType> {
 		if (empty()) return 0;
 		SizeType removed = 0;
+		SizeType const ocount = count;
 		auto const start = begin();
-		for(auto i = begin(); i != end();)
+		for(auto i = begin(); i < end();)
 			if (!ComparatorType::equals(*i, value)) {
-				remove(i-start+1);
-				removed++;
+				squash(i-start);
+				++removed;
+				--count;
 			} else ++i;
+		count = ocount;
 		return removed;
 	}
 
@@ -393,12 +397,15 @@ public:
 	constexpr SizeType removeIf(TPredicate const& predicate) {
 		if (empty()) return 0;
 		SizeType removed = 0;
+		SizeType const ocount = count;
 		auto const start = begin();
-		for(auto i = begin(); i != end();)
+		for(auto i = begin(); i < end();)
 			if (predicate(*i)) {
-				remove(i-start+1);
-				removed++;
+				squash(i-start);
+				++removed;
+				--count;
 			} else ++i;
+		count = ocount;
 		return removed;
 	}
 
@@ -406,13 +413,15 @@ public:
 	constexpr SizeType removeIfNot(TPredicate const& predicate) {
 		if (empty()) return 0;
 		SizeType removed = 0;
+		SizeType const ocount = count;
 		auto const start = begin();
-		for(auto i = start; i != end() && removed < count;) {
+		for(auto i = start; i < end();)
 			if (!predicate(*i)) {
-				remove(i-start+1);
-				removed++;
+				squash(i-start);
+				++removed;
+				--count;
 			} else ++i;
-		}
+		count = ocount;
 		return removed;
 	}
 
@@ -756,6 +765,14 @@ public:
 
 private:
 	using Iteratable::wrapBounds;
+
+	constexpr SelfType& squash(SizeType const& i) {
+		if (!count) return *this;
+		if (count > 1 && i < count-1)
+			copy(contents + i + 1, contents + i, count-i-1);
+		MX::destruct(contents+count-1);
+		return *this;
+	}
 
 	constexpr void dump() {
 		if (!contents) return;

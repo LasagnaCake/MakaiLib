@@ -240,7 +240,7 @@ public:
 
 	constexpr SelfType& remove(KeyType const& key) {
 		IndexType i = find(key);
-		if (i == -1) return *	this;
+		if (i == -1) return *this;
 		BaseType::remove(i);
 		return *this;
 	}
