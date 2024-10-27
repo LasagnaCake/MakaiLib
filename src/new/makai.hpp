@@ -2,7 +2,7 @@
 #define MAKAILIB_H
 
 #ifdef MAKAILIB_DEBUG
-#define CTL_DEBUG
+#define CTL_CONSOLE_OUT
 #define NDEBUG
 #endif
 

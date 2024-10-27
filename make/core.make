@@ -24,7 +24,7 @@ endif
 
 OPTIMIZATIONS	:= $(USE_OPENMP) -funswitch-loops -fpredictive-commoning -fgcse-after-reload -ftree-vectorize -fexpensive-optimizations
 
-export DEBUGMODE	:= -DMAKAILIB_DEBUG -DCTL_DEBUG -DNDEBUG
+export DEBUGMODE	:= -DMAKAILIB_DEBUG -DCTL_CONSOLE_OUT -DNDEBUG
 
 ifdef debug-release
 export RELEASEMODE := $(DEBUGMODE)

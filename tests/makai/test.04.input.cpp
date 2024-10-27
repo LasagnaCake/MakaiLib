@@ -86,7 +86,7 @@ struct TestApp: Makai::App {
 			for(float& f: framerate) fravg += f;
 			fravg *= (1.0 / (float)MAX_FRCOUNT);
 			fravg = Makai::Math::clamp<float>(fravg, 0, maxFrameRate);
-			DEBUGLN("Framerate: ", Format::prettify(Math::round(fravg, 2), 2, 0));
+			DEBUGLN("Framerate: ", Makai::Format::prettify(Makai::Math::round(fravg, 2), 2, 0));
 			frcount = 0;
 			DEBUGLN(crot.y);
 		}

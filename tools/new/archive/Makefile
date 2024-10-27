@@ -22,7 +22,7 @@ WINGARBAGE	:= -lole32 -loleaut32 -limm32 -lwinmm -lversion -lpowrprof -lcomdlg32
 INCLUDES	:= -I$(ROOT)/lib/cryptopp/include -I$(ROOT)/lib/cppcodec-0.2 -I$(ROOT)/output/include
 LIBRARIES	:= $(WINGARBAGE)
 
-DEBUGMODE		:= -DMAKAILIB_DEBUG -DCTL_DEBUG -DNDEBUG
+DEBUGMODE		:= -DMAKAILIB_DEBUG -DCTL_CONSOLE_OUT -DNDEBUG
 DEBUGCOMPCFG	:= $(COMPILER_CONFIG) -Wall -Wpedantic -Og -ggdb3 -fno-omit-frame-pointer $(DEBUGMODE)
 DEBUGLINKCFG	:= $(LINKER_CONFIG) -Og $(LIBRARIES)
 

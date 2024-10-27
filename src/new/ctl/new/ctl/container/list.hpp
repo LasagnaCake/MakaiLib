@@ -317,6 +317,7 @@ public:
 
 	constexpr IndexType find(DataType const& value) const
 	requires Type::Comparator::Equals<DataType, DataType> {
+		if (empty()) return -1;
 		auto const start = begin(), stop = end();
 		for (auto i = start; i != stop; ++i)
 			if (ComparatorType::equals(*i, value))
@@ -326,6 +327,7 @@ public:
 
 	constexpr IndexType rfind(DataType const& value) const
 	requires Type::Comparator::Equals<DataType, DataType> {
+		if (empty()) return -1;
 		auto const start = rbegin(), stop = rend();
 		for (auto i = start; i != stop; ++i)
 			if (ComparatorType::equals(*i, value))
@@ -353,8 +355,9 @@ public:
 		return -1;
 	}
 
-	constexpr SelfType& remove(IndexType const& index) {
+	constexpr SelfType& remove(IndexType index) {
 		assertIsInBounds(index);
+		wrapBounds(index, count);
 		copy(&contents[index], &contents[index-1], count-index);
 		MX::destruct(contents+count-1);
 		return *this;
@@ -362,6 +365,7 @@ public:
 
 	constexpr SizeType removeLike(DataType const& value)
 	requires Type::Comparator::Equals<DataType, DataType> {
+		if (empty()) return 0;
 		SizeType removed = 0;
 		auto const start = begin();
 		for(auto i = begin(); i != end();)
@@ -374,6 +378,7 @@ public:
 
 	constexpr SizeType removeUnlike(DataType const& value)
 	requires Type::Comparator::Equals<DataType, DataType> {
+		if (empty()) return 0;
 		SizeType removed = 0;
 		auto const start = begin();
 		for(auto i = begin(); i != end();)
@@ -386,6 +391,7 @@ public:
 
 	template<class TPredicate>
 	constexpr SizeType removeIf(TPredicate const& predicate) {
+		if (empty()) return 0;
 		SizeType removed = 0;
 		auto const start = begin();
 		for(auto i = begin(); i != end();)
@@ -398,6 +404,7 @@ public:
 
 	template<class TPredicate>
 	constexpr SizeType removeIfNot(TPredicate const& predicate) {
+		if (empty()) return 0;
 		SizeType removed = 0;
 		auto const start = begin();
 		for(auto i = start; i != end() && removed < count;) {
@@ -410,6 +417,7 @@ public:
 	}
 
 	constexpr SelfType& erase(IndexType const& index) {
+		if (empty()) return 0;
 		remove(index);
 		count--;
 		return *this;
