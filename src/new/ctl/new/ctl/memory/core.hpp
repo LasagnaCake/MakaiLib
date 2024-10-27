@@ -229,10 +229,10 @@ namespace MX {
 
 CTL_NAMESPACE_END
 //*
-pointer operator new(usize sz) noexcept(false)		{return CTL::MX::malloc(sz);	}
-pointer operator new[](usize sz) noexcept(false)	{return CTL::MX::malloc(sz);	}
+inline pointer operator new(usize sz) noexcept(false)		{return CTL::MX::malloc(sz);	}
+inline pointer operator new[](usize sz) noexcept(false)		{return CTL::MX::malloc(sz);	}
 
-void operator delete(pointer mem) noexcept(false)	{return CTL::MX::free(mem);		}
-void operator delete[](pointer mem) noexcept(false)	{return CTL::MX::free(mem);		}
+inline void operator delete(pointer mem) noexcept(false)	{return CTL::MX::free(mem);		}
+inline void operator delete[](pointer mem) noexcept(false)	{return CTL::MX::free(mem);		}
 //*/
 #endif // CTL_MEMORY_CORE_H

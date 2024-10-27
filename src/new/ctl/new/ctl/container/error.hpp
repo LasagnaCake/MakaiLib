@@ -54,19 +54,19 @@ namespace Error {
 
 	typedef Exception* ErrorPointer;
 
-	ErrorPointer current() {return Exception::current();}
+	inline ErrorPointer current() {return Exception::current();}
 
 	template<Type::Derived<Generic> T>
-	[[noreturn]] void rethrow(T const& err) {throw T(err);}
+	[[noreturn]] inline void rethrow(T const& err) {throw T(err);}
 
 	template<Type::Derived<Generic> T>
-	[[noreturn]] void rethrow(T* const& err) {if (err) throw T(&err);}
+	[[noreturn]] inline void rethrow(T* const& err) {if (err) throw T(&err);}
 
 	template<Type::Derived<Generic> T>
-	[[noreturn]] void rethrow(Exception const& err) {throw T(err);}
+	[[noreturn]] inline void rethrow(Exception const& err) {throw T(err);}
 
 	template<Type::Derived<Generic> T>
-	[[noreturn]] void rethrow(Exception* const& err) {throw T(&err);}
+	[[noreturn]] inline void rethrow(Exception* const& err) {throw T(&err);}
 }
 
 CTL_NAMESPACE_END

@@ -32,11 +32,11 @@ dotest = \
 
 case = $(if $(findstring $(strip $(2)),$(strip $(1))),$(3))
 
-params = \
-	$(call case, $(1), 01,$(LIBREQS))\
-	$(call case, $(1), 02,$(LIBREQS) $(GRAPHREQS))\
-	$(call case, $(1), 03,$(LIBREQS) $(GRAPHREQS))\
-	$(call case, $(1), 04,$(LIBREQS) $(GRAPHREQS))\
+params = $(WINREQS) $(LIBREQS) \
+	$(call case, $(1), 01,)\
+	$(call case, $(1), 02,$(GRAPHREQS))\
+	$(call case, $(1), 03,$(GRAPHREQS))\
+	$(call case, $(1), 04,$(GRAPHREQS))\
 
 define mktest
 	@echo "$(strip $(2))"
