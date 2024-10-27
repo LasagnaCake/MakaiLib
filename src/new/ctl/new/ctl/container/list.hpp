@@ -20,6 +20,26 @@ template<
 	Type::Integer TIndex = usize,
 	template <class> class TAlloc = HeapAllocator
 >
+struct List;
+
+namespace Type::Container {
+	namespace Impl {
+		template<class T>
+		struct IsList;
+
+		template<template <class, class, template <class> class> class T0, class T1, class T2, template <class> class T3>
+		struct IsList<T0<T1, T2, T3>>: BooleanConstant<Type::Equal<T0<T1, T2, T3>, ::CTL::List<T1, T2, T3>>> {};
+	}
+
+	template<class T>
+	concept List = Impl::IsList<T>::value;
+}
+
+template<
+	class TData,
+	Type::Integer TIndex,
+	template <class> class TAlloc
+>
 struct List:
 	Iteratable<TData, TIndex>,
 	SelfIdentified<List<TData, TIndex>>,
@@ -147,11 +167,12 @@ public:
 	constexpr List(ConstPointerType const& start, SizeType const& size): List(start, start + size) {}
 
 	template<class T>
-	constexpr List(T const& other)
+	constexpr explicit List(T const& other)
 	requires requires (T t) {
 		{t.begin()} -> Type::Convertible<IteratorType>;
 		{t.end()} -> Type::Convertible<IteratorType>;
 		requires !Type::Constructible<T, ConstIteratorType, ConstIteratorType>;
+		requires !Type::Subclass<T, SelfType>;
 	}: List(other.begin(), other.end()) {}
 
 	template<class T>
@@ -160,14 +181,16 @@ public:
 		{*t.data()} -> Type::Convertible<DataType>;
 		{t.size()} -> Type::Convertible<SizeType>;
 		requires !Type::Constructible<T, ConstIteratorType, ConstIteratorType>;
+		requires !Type::Container::List<T>;
 	}: List(other.data(), other.size()) {}
 
 	template<class T>
-	constexpr List(List<T, SizeType> const& other)
+	constexpr explicit List(List<T, SizeType> const& other)
 	requires requires (T t) {
 		{t.begin()} -> Type::Equal<IteratorType>;
 		{t.end()} -> Type::Equal<IteratorType>;
 		requires Type::Constructible<DataType, ConstIteratorType, ConstIteratorType>;
+		requires !Type::Subclass<T, SelfType>;
 	} {
 		invoke(other.size());
 		for (auto& v: other)
@@ -837,19 +860,6 @@ private:
 
 template <Type::Integer TIndex = usize>
 using BinaryData = List<uint8, TIndex>;
-
-namespace Type::Container {
-	namespace Impl {
-		template<class T>
-		struct IsList;
-
-		template<template <class, class, template <class> class> class T0, class T1, class T2, template <class> class T3>
-		struct IsList<T0<T1, T2, T3>>: BooleanConstant<Type::Equal<T0<T1, T2, T3>, ::CTL::List<T1, T2, T3>>> {};
-	}
-
-	template<class T>
-	concept List = Impl::IsList<T>::value;
-}
 
 static_assert(Type::Container::List<List<int>>);
 

@@ -245,12 +245,12 @@ void Scene::extendFromDefinitionV0(JSON::JSONData def, String const& sourcepath)
 			if (def["path"].isObject()) {
 				for(auto& obj: def["data"]["path"].get<List<JSON::JSONType>>()) {
 					auto r = createObject(
-						OS::FS::getFileName(obj["source"].get<String>(), true)
+						OS::FS::getFileName(obj["source"].get<std::string>(), true)
 					).value;
-					if (obj["type"].get<String>() == "MROD")
-						r->extendFromDefinitionFile(obj["source"].get<String>());
-					if (obj["type"].get<String>() == "MESH" || obj["type"].get<String>() == "MSBO") {
-						r->extendFromBinaryFile(obj["source"].get<String>());
+					if (obj["type"].get<std::string>() == "MROD")
+						r->extendFromDefinitionFile(obj["source"].get<std::string>());
+					if (obj["type"].get<std::string>() == "MESH" || obj["type"].get<std::string>() == "MSBO") {
+						r->extendFromBinaryFile(obj["source"].get<std::string>());
 					}
 					r->bake();
 				}
@@ -259,7 +259,7 @@ void Scene::extendFromDefinitionV0(JSON::JSONData def, String const& sourcepath)
 					auto r = createObject().value;
 					r->extendFromDefinition(
 						obj,
-						OS::FS::concatenate(sourcepath, obj)
+						OS::FS::concatenate(sourcepath, String(obj.get<std::string>()))
 					);
 					r->bake();
 				}
@@ -269,7 +269,7 @@ void Scene::extendFromDefinitionV0(JSON::JSONData def, String const& sourcepath)
 					auto r = createObject(name).value;
 					r->extendFromDefinition(
 						obj,
-						OS::FS::concatenate(sourcepath, name)
+						OS::FS::concatenate(sourcepath, String(name))
 					);
 					r->bake();
 				}
@@ -316,7 +316,7 @@ JSON::JSONData Scene::getSceneDefinition(
 	#define _FOG_JSON_VALUE(FOG_TYPE)\
 		{#FOG_TYPE, {\
 			{"enabled", world.FOG_TYPE.enabled},\
-			{"color", Color::toHexCodeString(world.FOG_TYPE.color, false, true)},\
+			{"color", Color::toHexCodeString(world.FOG_TYPE.color, false, true).std()},\
 			{"start", world.FOG_TYPE.start},\
 			{"stop", world.FOG_TYPE.stop},\
 			{"strength", world.FOG_TYPE.strength}\
@@ -325,7 +325,7 @@ JSON::JSONData Scene::getSceneDefinition(
 		_FOG_JSON_VALUE(nearFog),
 		_FOG_JSON_VALUE(farFog),
 		{"ambient", {
-			{"color", Color::toHexCodeString(world.ambient.color, true, true)},
+			{"color", Color::toHexCodeString(world.ambient.color, true, true).std()},
 			{"strength", world.ambient.strength}
 		}}
 	};

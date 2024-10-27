@@ -7,65 +7,6 @@
 #include "get.hpp"
 
 namespace Makai::JSON {
-	namespace Compat {
-		template<class TIter, class... TArgs>
-		struct IteratorAdaptor: public TIter {
-			using iterator_category	= std::bidirectional_iterator_tag;
-			using value_type		= typename TIter::DataType;
-			using difference_type	= typename TIter::IndexType;
-			using pointer			= typename TIter::PointerType;
-			using reference			= typename TIter::ReferenceType;
-			using TIter::TIter;
-		};
-
-		template<class TClass, typename... TArgs>
-		struct ClassAdaptor: public TClass {
-			using ClassType = TClass;
-			using value_type		= typename ClassType::DataType;
-			using reference			= typename ClassType::ReferenceType;
-			using const_reference	= typename ClassType::ConstReferenceType;
-			using pointer			= typename ClassType::PointerType;
-			using const_pointer		= typename ClassType::ConstPointerType;
-			using size_type			= typename ClassType::SizeType;
-			using difference_type	= typename ClassType::IndexType;
-			using iterator			= IteratorAdaptor<typename ClassType::IteratorType>;
-			using const_iterator	= IteratorAdaptor<typename ClassType::ConstIteratorType>;
-			using value_compare		= std::equal_to<value_type>;
-			using ClassType::ClassType;
-		};
-
-		template<template <class, class> class TMap, class TKey, class TValue, class... TArgs>
-		struct MapAdaptor: public TMap<TKey, TValue> {
-			using MapType = TMap<TKey, TValue>;
-			using key_type			= typename MapType::KeyType;
-			using mapped_type		= typename MapType::ValueType;
-			using value_type		= typename MapType::PairType;
-			using reference			= value_type&;
-			using const_reference	= value_type const&;
-			using pointer			= value_type*;
-			using const_pointer		= value_type const*;
-			using size_type			= typename MapType::SizeType;
-			using difference_type	= typename MapType::IndexType;
-			using iterator			= IteratorAdaptor<typename MapType::IteratorType>;
-			using const_iterator	= IteratorAdaptor<typename MapType::ConstIteratorType>;
-			using key_compare		= std::less<key_type>;
-			using mapped_compare	= std::equal_to<mapped_type>;
-			using value_compare		= std::equal_to<value_type>;
-			using MapType::MapType;
-		};
-
-		template<class T, typename... TArgs>
-		using Proxy = T;
-
-		template<typename TData, typename... TArgs>
-		using ListAdaptor = ClassAdaptor<List<TData>, TData>;
-
-		template<typename TKey, typename TValue, class, class>
-		using OrderedMapAdaptor = MapAdaptor<OrderedMap, TKey, TValue>;
-
-		using StringAdaptor = ClassAdaptor<String>;
-	}
-
 	namespace Extern {
 		using Nlohmann = nlohmann::json;
 		using JSONData = nlohmann::ordered_json;
@@ -148,8 +89,9 @@ namespace Makai::JSON {
 		bool isDiscarded() const;
 
 		template<Type::Primitive T>
-		inline bool tryGet(T& out) const try {
+		bool tryGet(T& out) const try {
 			out = view().get<T>();
+			err = "";
 			return true;
 		} catch (Extern::Nlohmann::exception const& e) {
 			err = e.what();
@@ -157,8 +99,9 @@ namespace Makai::JSON {
 		}
 
 		template<Type::Enumerator T>
-		inline bool tryGet(T& out) const try {
+		bool tryGet(T& out) const try {
 			out = view().get<T>();
+			err = "";
 			return true;
 		} catch (Extern::Nlohmann::exception const& e) {
 			err = e.what();
@@ -166,8 +109,9 @@ namespace Makai::JSON {
 		}
 
 		template <Type::Equal<String> T>
-		inline bool tryGet(T& out) const try {
+		bool tryGet(T& out) const try {
 			out = view().get<std::string>();
+			err = "";
 			return true;
 		} catch (Extern::Nlohmann::exception const& e) {
 			err = e.what();
@@ -175,13 +119,14 @@ namespace Makai::JSON {
 		}
 
 		template <Type::Container::List T>
-		inline bool tryGet(T& out) const
+		bool tryGet(T& out) const
 		requires (
 			Type::Different<typename T::DataType, String>
 		&&	Type::Different<typename T::DataType, JSONView>
 		&&	Type::Different<typename T::DataType, JSONValue>
 		) try {
 			out = T(view().get<std::vector<typename T::DataType>>());
+			err = "";
 			return true;
 		} catch (Extern::Nlohmann::exception const& e) {
 			err = e.what();
@@ -189,15 +134,18 @@ namespace Makai::JSON {
 		}
 
 		template <Type::Container::List T>
-		inline bool tryGet(T& out) const
+		bool tryGet(T& out) const
 		requires Type::Equal<typename T::DataType, String>
 		try {
 			out = T(view().get<std::vector<std::string>>());
+			err = "";
 			return true;
 		} catch (Extern::Nlohmann::exception const& e) {
 			err = e.what();
 			return false;
 		}
+
+		String error() {return err;}
 
 	private:
 		Extern::JSONData const&	cdata;
@@ -206,6 +154,8 @@ namespace Makai::JSON {
 		mutable String err = "";
 
 		String const name;
+
+		friend class JSONValue;
 	};
 
 	struct JSONValue: public JSONView {
@@ -220,10 +170,11 @@ namespace Makai::JSON {
 		JSONValue(JSONValue const& other);
 
 		template <Type::Container::List T>
-		inline bool tryGet(T& out) const
+		bool tryGet(T& out) const
 		requires Type::Equal<typename T::DataType, JSONValue>
 		try {
 			out = T(view().get<std::vector<Extern::JSONData>>());
+			err = "";
 			return true;
 		} catch (Extern::Nlohmann::exception const& e) {
 			err = e.what();
@@ -231,7 +182,7 @@ namespace Makai::JSON {
 		}
 
 		template <Type::Container::SimpleMap T>
-		inline bool tryGet(T& out) const
+		bool tryGet(T& out) const
 		requires (
 			Type::Equal<typename T::KeyType, String>
 		&&	Type::Equal<typename T::ValueType, JSONValue>
@@ -239,6 +190,7 @@ namespace Makai::JSON {
 			T res;
 			for (auto [k, v]: view().items())
 				res[k] = v;
+			err = "";
 			return true;
 		} catch (Extern::Nlohmann::exception const& e) {
 			err = e.what();
@@ -246,7 +198,7 @@ namespace Makai::JSON {
 		}
 
 		template <Type::Container::SimpleMap T>
-		inline bool tryGet(T& out) const
+		bool tryGet(T& out) const
 		requires (
 			Type::Equal<typename T::KeyType, String>
 		&&	Type::Different<typename T::ValueType, JSONValue>
@@ -254,11 +206,15 @@ namespace Makai::JSON {
 			T res;
 			for (auto [k, v]: view().items())
 				res[k] = v.get<typename T::ValueType>();
+			err = "";
 			return true;
 		} catch (Extern::Nlohmann::exception const& e) {
 			err = e.what();
 			return false;
 		}
+
+		template<class T> T get() const						{return JSONView::get<T>();			}
+		template<class T> T get(T const& fallback) const	{return JSONView::get<T>(fallback);	}
 
 		JSONValue& clear();
 
