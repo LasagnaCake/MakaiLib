@@ -17,12 +17,12 @@ Makai::JSON::JSONView::JSONView(Extern::JSONData const& _data, String const& _na
 Makai::JSON::JSONView Makai::JSON::JSONView::operator[](String const& key) {
 	if (isNull()) view() = Nlohmann::object();
 	else if (!isObject()) throw Error::InvalidAction("Parameter '" + name + "' is not an object!");
-	return Makai::JSON::JSONView(view()[key.toSTL()], name + "/" + key);
+	return Makai::JSON::JSONView(view()[key.stdView()], name + "/" + key);
 }
 
 const Makai::JSON::JSONView Makai::JSON::JSONView::operator[](String const& key) const {
 	if (!isObject()) throw Error::InvalidAction("Parameter '" + name + "' is not an object!");
-	return Makai::JSON::JSONView(cdata[key.toSTL()], name + "/" + key);
+	return Makai::JSON::JSONView(cdata[key.stdView()], name + "/" + key);
 }
 
 Makai::JSON::JSONView Makai::JSON::JSONView::operator[](usize const& index) {
@@ -91,7 +91,7 @@ Makai::JSON::JSONValue Makai::JSON::object(String const& name) {return JSONValue
 Makai::JSON::JSONValue Makai::JSON::array(String const& name) {return JSONValue(name, Nlohmann::array());}
 
 Makai::JSON::JSONData Makai::JSON::parse(String const& json) try {
-	return Extern::JSONData::parse(json.toSTL());
+	return Extern::JSONData::parse(json.stdView());
 } catch (Nlohmann::exception const& e) {
 	throw Error::FailedAction(
 		"Failed at parsing JSON!",

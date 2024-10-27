@@ -93,7 +93,7 @@ Scene::Scene(usize const& layer, String const& path, bool manual): Collection(la
 }
 
 void Scene::extendFromSceneFile(String const& path) {
-	extendFromDefinition(File::getJSON(path), OS::FS::getDirectoryFromPath(path));
+	extendFromDefinition(File::getJSON(path), OS::FS::getPathDirectory(path));
 }
 
 void Scene::saveToSceneFile(
@@ -121,7 +121,7 @@ void Scene::saveToSceneFile(
 				integratedObjectTextures
 			);
 			objpaths.pushBack(JSON::JSONType{
-				{"source", OS::FS::concatenate(objname, objname + ".mrod")},
+				{"source", OS::FS::concatenate(objname, objname + ".mrod").std()},
 				{"type", "MROD"}
 			});
 		} else {
@@ -130,13 +130,13 @@ void Scene::saveToSceneFile(
 				if (!wasBaked)
 					obj->bake();
 				File::saveBinary(OS::FS::concatenate(folderpath, objname + ".mesh"), obj->vertices, obj->vertexCount);
-				file["mesh"]["data"] = {{"path", objname + ".mesh"}};
+				file["mesh"]["data"] = {{"path", objname.std() + ".mesh"}};
 				if (!wasBaked)
 					obj->unbake();
 			}
 			if (!integratedObjectTextures) {
 				OS::FS::makeDirectory(OS::FS::concatenate(folderpath, "tx"));
-				auto mdef = file["data"][objname]["material"];
+				auto mdef = file["data"][objname.std()]["material"];
 				auto& mat = obj->material;
 				// Save image texture
 				mdef["texture"] = Material::saveImageEffect(obj->material.texture, folderpath, "tx/texture.tga");

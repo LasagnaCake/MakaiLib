@@ -130,7 +130,7 @@ namespace Makai::JSON {
 
 		String toString(int const& indent = -1, char const& ch = '\t') const;
 
-		inline bool has(String const& key) const {return view().contains(key.toSTL()); }
+		inline bool has(String const& key) const {return view().contains(key.stdView()); }
 
 		inline operator Extern::JSONData() {return view();}
 

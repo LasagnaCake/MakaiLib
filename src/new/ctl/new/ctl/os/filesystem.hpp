@@ -26,11 +26,11 @@ namespace OS::FS {
 	#endif
 
 	inline bool exists(String const& path) {
-		return fs::exists(path.toSTL());
+		return fs::exists(path.stdView());
 	}
 
 	inline bool isDirectory(String const& dir) {
-		return fs::is_directory(dir.toSTL());
+		return fs::is_directory(dir.stdView());
 	}
 
 	constexpr String standardize(String const& path, PathSeparator const& sep) {
@@ -44,7 +44,7 @@ namespace OS::FS {
 	inline void makeDirectory(String const& dir) {
 		if (dir.isNullOrSpaces()) return;
 		if (!isDirectory(dir) || !exists(dir)) {
-			fs::create_directories(dir.toSTL());
+			fs::create_directories(dir.stdView());
 		}
 	}
 
@@ -65,7 +65,7 @@ namespace OS::FS {
 	}
 
 	inline void remove(String const& dir) {
-		fs::remove_all(dir.toSTL());
+		fs::remove_all(dir.stdView());
 	}
 
 	inline void remove(StringList const& dirs) {
@@ -135,7 +135,7 @@ namespace OS::FS {
 	}*/
 
 	inline String getFileName(String const& path, bool removeExtension = false) {
-		return String(removeExtension ? fs::path(path.toSTL()).stem().string() : fs::path(path.toSTL()).filename().string());
+		return String(removeExtension ? fs::path(path.stdView()).stem().string() : fs::path(path.stdView()).filename().string());
 	}
 
 	constexpr String parentDirectory(String const& path) {
@@ -146,7 +146,7 @@ namespace OS::FS {
 	}
 
 	inline String directoryFromPath(String const& path) {
-		return String(fs::path(path.toSTL()).remove_filename().string());
+		return String(fs::path(path.stdView()).remove_filename().string());
 	}
 
 	constexpr String childPath(String const& path) {
@@ -265,7 +265,7 @@ namespace OS::FS {
 				throw Error::InvalidValue("Path does not exist!");
 			if (!isDirectory(path)) return Entry(getFileName(path), path);
 			return Entry(
-				String(fs::path(path.toSTL()).stem().string()),
+				String(fs::path(path.stdView()).stem().string()),
 				path,
 				getFolderContents(path)
 			);
@@ -274,7 +274,7 @@ namespace OS::FS {
 		static inline List<Entry> getFolderContents(String const& folder) {
 			if (!isDirectory(folder)) return List<Entry>();
 			List<Entry> entries;
-			for (auto const& e: fs::directory_iterator(folder.toSTL())) {
+			for (auto const& e: fs::directory_iterator(folder.stdView())) {
 				String name = String((e.is_directory()) ? e.path().stem().string() : e.path().filename().string());
 				String path = concatenate(folder, name);
 				if (e.is_directory())

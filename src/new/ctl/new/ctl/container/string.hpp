@@ -80,7 +80,8 @@ public:
 		typename Streamable::OutputStreamType
 	;
 
-	using STLAdaptorType = std::basic_string_view<DataType>;
+	using STDViewType	= std::basic_string_view<DataType>;
+	using STDStringType	= std::basic_string<DataType>;
 
 	using
 		BaseType::BaseType,
@@ -159,8 +160,8 @@ public:
 		(*this) += (... + args);
 	}
 
-	constexpr BaseString(STLAdaptorType const& str):				BaseType(str.data(), str.data() + str.size())	{}
-	constexpr BaseString(std::basic_string<DataType> const& str):	BaseType(str.data(), str.data() + str.size())	{}
+	constexpr BaseString(STDViewType const& str):	BaseType(str.data(), str.data() + str.size())	{}
+	constexpr BaseString(STDStringType const& str):	BaseType(str.data(), str.data() + str.size())	{}
 
 	constexpr List<SelfType, SizeType> split(DataType const& sep) const {
 		List<SelfType, SizeType> res;
@@ -478,8 +479,9 @@ public:
 		swap(a.strbuflen, b.strbuflen);
 	}
 
-	constexpr STLAdaptorType toSTL() const		{return std::basic_string<DataType>(cbegin(), cend());	}
-	constexpr operator STLAdaptorType() const	{return toSTL();										}
+	constexpr STDViewType stdView() const		{return STDViewType(cbegin(), cend());		}
+	constexpr STDStringType std() const			{return STDStringType(cbegin(), cend());	}
+	constexpr operator STDStringType() const	{return std();								}
 
 private:
 	constexpr static DataType toLowerImpl(DataType const& c)	{return toLowerChar<DataType>(c);		}

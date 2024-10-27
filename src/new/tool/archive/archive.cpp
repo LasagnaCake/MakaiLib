@@ -289,7 +289,7 @@ void Arch::pack(
 		JSONData dir;
 		StringList files;
 		JSONData tree = dir["tree"];
-		tree = getStructure(fs::path(folderPath.toSTL()), files, String(fs::path(folderPath.toSTL()).stem().string()));
+		tree = getStructure(fs::path(folderPath.stdView()), files, String(fs::path(folderPath.stdView()).stem().string()));
 		_ARCDEBUGLN("\n", dir.dump(2, ' ', false, Nlohmann::error_handler_t::replace), "\n");
 		// Populate with temporary values
 		List<uint64> locations(files.size(), 0);
@@ -601,7 +601,7 @@ void Arch::FileArchive::parseFileTree() {
 		break;
 	}
 	try {
-		fstruct = Nlohmann::parse(fs.toSTL());
+		fstruct = Nlohmann::parse(fs.stdView());
 	} catch (Nlohmann::exception const& e) {
 		throw File::FileLoadError(
 			"Invalid or corrupted file structure!",

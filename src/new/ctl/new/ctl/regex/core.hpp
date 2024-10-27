@@ -14,11 +14,11 @@ CTL_NAMESPACE_BEGIN
 namespace Regex {
 	namespace {
 		inline std::string stdstr(String const& expr) {
-			return std::string(expr.toSTL());
+			return expr.std();
 		}
 
 		inline String ctlstr(std::string const& expr) {
-			return String(expr.c_str());
+			return String(expr);
 		}
 
 		inline std::regex makeRegex(String const& expr) {
