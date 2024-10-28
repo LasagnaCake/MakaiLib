@@ -1,21 +1,25 @@
-#ifndef COLLISION_COLLISION2D_WITHIN_BOUNDS_H
-#define COLLISION_COLLISION2D_WITHIN_BOUNDS_H
+#ifndef CTL_EX_COLLISION_COLLISION2D_WITHINBOUNDS_H
+#define CTL_EX_COLLISION_COLLISION2D_WITHINBOUNDS_H
 
 #include "bounds.hpp"
 
-namespace Collision2D {
+CTL_EX_NAMESPACE_BEGIN
+
+namespace Collision::C2D {
 	namespace {
 		using
-			VecMath::angleTo,
-			VecMath::center,
-			VecMath::Transform2D
+			Math::angleTo,
+			Math::center,
+			Math::Transform2D,
+			Math::Vector2,
+			Math::angleV2
 		;
 	}
 
 	constexpr float getRadius(Vector2 const& radius, float const& angle) {
 		return
-			(Math::absin(angle) * radius.x)
-		+	(Math::abcos(angle) * radius.y)
+			(CTL::Math::absin(angle) * radius.x)
+		+	(CTL::Math::abcos(angle) * radius.y)
 		;
 	}
 
@@ -41,7 +45,7 @@ namespace Collision2D {
 		// If too distant, return
 		if (distance > area.length + area.width.max()) return false;
 		// Get ray position to check
-		Vector2 rayPosition = VecMath::angleV2(area.rotation) * distance + area.position;
+		Vector2 rayPosition = angleV2(area.rotation) * distance + area.position;
 		// Check collision
 		Circle target(rayPosition, area.width);
 		return withinBounds(a, target);
@@ -107,7 +111,7 @@ namespace Collision2D {
 		// If too distant, return
 		if (distance > b.length + b.width.max() + a.radius.max()) return false;
 		// Get ray position to check
-		Vector2 rayPosition = VecMath::angleV2(b.angle) * distance + b.position;
+		Vector2 rayPosition = angleV2(b.angle) * distance + b.position;
 		// Check collision
 		Circle target(rayPosition, b.width, b.angle + b.rotation);
 		return withinBounds(a, target);
@@ -124,7 +128,7 @@ namespace Collision2D {
 		// If too distant, return
 		if (distance > a.length + b.length + a.width.max() + b.width.max()) return false;
 		// Get ray position to check
-		Vector2 rayPosition = VecMath::angleV2(b.angle) * distance + b.position;
+		Vector2 rayPosition = angleV2(b.angle) * distance + b.position;
 		// Check collision
 		Circle target(rayPosition, b.width, b.angle + b.rotation);
 		return withinBounds(target, a);
@@ -276,4 +280,6 @@ namespace Collision2D {
 	}
 }
 
-#endif // COLLISION_COLLISION2D_WITHIN_BOUNDS_H
+CTL_EX_NAMESPACE_END
+
+#endif // CTL_EX_COLLISION_COLLISION2D_WITHINBOUNDS_H

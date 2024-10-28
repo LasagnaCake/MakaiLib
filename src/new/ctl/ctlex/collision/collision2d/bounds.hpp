@@ -1,16 +1,18 @@
-#ifndef COLLISION_COLLISION2D_BOUNDS_H
-#define COLLISION_COLLISION2D_BOUNDS_H
+#ifndef CTL_EX_COLLISION_COLLISION2D_BOUNDS_H
+#define CTL_EX_COLLISION_COLLISION2D_BOUNDS_H
 
-#include "../../ctl/container/bitmask.hpp"
-#include "../../vectorn.hpp"
-#include "../../helper.hpp"
+#include "../../../ctl/ctl.hpp"
+#include "../../math/vector.hpp"
 
-namespace Collision2D {
+CTL_EX_NAMESPACE_BEGIN
+
+namespace Collision::C2D {
 	namespace {
 		using
-			VecMath::angleTo,
-			VecMath::center,
-			VecMath::Transform2D
+			Math::angleTo,
+			Math::center,
+			Math::Transform2D,
+			Math::Vector2
 		;
 	}
 
@@ -151,7 +153,10 @@ namespace Collision2D {
 	struct Shape<0>: Follows<Ray> {
 		constexpr static usize SIZE = 0;
 
-		typedef Decay::AsType<Vector2[0]> PointArray;
+		#pragma GCC diagnostic push
+		#pragma GCC diagnostic ignored "-Wpedantic"
+		using PointArray = Decay::AsType<Vector2[0]>;
+		#pragma GCC diagnostic pop
 
 		constexpr ~Shape() {
 			if (points) delete[] points;
@@ -162,7 +167,7 @@ namespace Collision2D {
 		constexpr Shape(usize const& size):
 			points(new Vector2[size]),
 			count(size) {
-			for SRANGE(i, 0, count)
+			for (usize i = 0; i < count; ++i)
 				points[i] = 0;
 		}
 
@@ -172,7 +177,7 @@ namespace Collision2D {
 			Decay::AsType<Vector2[S]> const& points
 		): Shape(S) {
 			this->trans = trans;
-			for SRANGE(i, 0, count)
+			for (usize i = 0; i < count; ++i)
 				this->points[i] = points[i];
 		}
 
@@ -182,7 +187,7 @@ namespace Collision2D {
 			usize const& size
 		): Shape(size) {
 			this->trans = trans;
-			for SRANGE(i, 0, count)
+			for (usize i = 0; i < count; ++i)
 				this->points[i] = points[i];
 		}
 
@@ -231,7 +236,7 @@ namespace Collision2D {
 			PointArray const& points
 		): trans(trans) {
 			this->trans = trans;
-			for SRANGE(i, 0, SIZE)
+			for (usize i = 0; i < SIZE; ++i)
 				this->points[i] = points[i];
 		}
 		constexpr operator Figure() const {return Figure(trans, data(), size());}
@@ -253,7 +258,8 @@ namespace Collision2D {
 			Vector2* const& points,
 			usize const& size
 		): trans(trans) {
-			for SRANGE(i, 0, (size < SIZE) ? size : SIZE)
+			const usize sz = (size < SIZE) ? size : SIZE;
+			for (usize i = 0; i < sz; ++i)
 				this->points[i] = points[i];
 		}
 
@@ -357,4 +363,6 @@ namespace Collision2D {
 	};
 }
 
-#endif // COLLISION_COLLISION2D_BOUNDS_H
+CTL_EX_NAMESPACE_END
+
+#endif // CTL_EX_COLLISION_COLLISION2D_BOUNDS_H

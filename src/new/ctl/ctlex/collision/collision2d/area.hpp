@@ -1,25 +1,28 @@
-#ifndef COLLISION_COLLISION2D_AREA_H
-#define COLLISION_COLLISION2D_AREA_H
+#ifndef CTL_EX_COLLISION_COLLISION2D_AREA_H
+#define CTL_EX_COLLISION_COLLISION2D_AREA_H
 
 #include "bounds.hpp"
 #include "withinbounds.hpp"
 
-namespace Collision2D {
+CTL_EX_NAMESPACE_BEGIN
+
+namespace Collision::C2D {
 	namespace {
 		using
-			VecMath::angleTo,
-			VecMath::center,
-			VecMath::Transform2D
+			Math::angleTo,
+			Math::center,
+			Math::Transform2D,
+			Math::Vector2
 		;
 	}
 
 	typedef BitMask<uint16, 4> LayerMask;
 
 	enum class Direction {
-		CD_NONE,
-		CD_FORWARDS,
-		CD_BACKWARDS,
-		CD_BOTH
+		CD_NONE			= 0b00,
+		CD_FORWARDS		= 0b01,
+		CD_BACKWARDS	= 0b10,
+		CD_BOTH			= 0b11
 	};
 
 	constexpr Direction asDirection(bool const& forwards, bool const& backwards) {
@@ -63,4 +66,6 @@ namespace Collision2D {
 	};
 }
 
-#endif // COLLISION_COLLISION2D_AREA_H
+CTL_EX_NAMESPACE_END
+
+#endif // CTL_EX_COLLISION_COLLISION2D_AREA_H

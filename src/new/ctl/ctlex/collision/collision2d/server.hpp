@@ -1,16 +1,16 @@
-#ifndef COLLISION_COLLISION2D_SERVER_H
-#define COLLISION_COLLISION2D_SERVER_H
+#ifndef CTL_EX_COLLISION_COLLISION2D_SERVER_H
+#define CTL_EX_COLLISION_COLLISION2D_SERVER_H
 
 #include "area.hpp"
-#include "../../definitions.hpp"
-#include "../../referential.hpp"
 
-namespace Collision2D {
+CTL_EX_NAMESPACE_BEGIN
+
+namespace Collision::C2D {
 	namespace {
 		using
-			VecMath::angleTo,
-			VecMath::center,
-			VecMath::Transform2D
+			Math::angleTo,
+			Math::center,
+			Math::Transform2D
 		;
 	}
 
@@ -49,7 +49,7 @@ namespace Collision2D {
 			CollisionEvent onCollision = []{};
 
 		private:
-			template<usize> friend class ::Collision2D::CollisionServer;
+			template<usize> friend class CollisionServer;
 
 			CollisionServer* parent;
 		};
@@ -85,20 +85,20 @@ namespace Collision2D {
 
 		static void process() {
 			usize const stop = colliders.size();
-			for SRANGE(start, 1, stop) {
+			for (usize start = 1; start < stop; ++start) {
 				Collider* c = colliders[start-1];
-				for SRANGE(i, start, stop)
+				for (usize i = start; i < stop; ++i)
 					c->handleCollision(colliders[start]);
 			}
 		}
 
 	private:
 		constexpr static void bind(Collider* const& collider) {
-			colliders.push_back(collider);
+			colliders.pushBack(collider);
 		}
 
 		constexpr static void unbind(Collider* const& collider) {
-			ERASE_IF(colliders, elem == collider);
+			colliders.eraseLike(collider);
 		}
 
 		friend class Collider;
@@ -109,4 +109,6 @@ namespace Collision2D {
 	typedef CollisionServer<0> GlobalServer;
 }
 
-#endif // COLLISION_COLLISION2D_SERVER_H
+CTL_EX_NAMESPACE_END
+
+#endif // CTL_EX_COLLISION_COLLISION2D_SERVER_H
