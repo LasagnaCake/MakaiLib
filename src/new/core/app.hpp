@@ -75,7 +75,7 @@ namespace Makai {
 		bool running();
 
 		/// Returns the application's current state.
-		AppState getState();
+		AppState appState();
 
 		/// Sets the application's window size.
 		void setWindowSize(Vector2 const& size);

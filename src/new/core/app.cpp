@@ -302,7 +302,7 @@ bool App::running() {
 	return (state != App::AppState::AS_CLOSED);
 }
 
-App::AppState App::getState() {
+App::AppState App::appState() {
 	return (state);
 }
 
