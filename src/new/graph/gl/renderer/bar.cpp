@@ -1,6 +1,6 @@
 #include "bar.hpp"
 
-using namespace Makai::Graph;
+using namespace Makai; using namespace Makai::Graph;
 
 void LinearBar::draw() {
 	float percent = Math::clamp((value / max), 0.0f, 1.0f);
@@ -44,7 +44,7 @@ void RadialBar::update() {
 	// Set center to offset
 	vertices[0].position = (offset.yx() * size);
 	// For each surrounding vertex...
-	for SRANGE(i, 1, RADIAL_BAR_RESOLUTION + 2) {
+	for (usize i = 1; i < RADIAL_BAR_RESOLUTION + 2; ++i) {
 		// UV fraction, Positional fraction
 		float uvfrac, posfrac;
 		// Get current vertex's fraction
@@ -59,9 +59,9 @@ void RadialBar::update() {
 		// Add angle offset to UV fraction
 		uvfrac += uvShift;
 		// Set vertex position
-		vertices[i].position = (VecMath::angleV2(posfrac) * size);
+		vertices[i].position = (Math::angleV2(posfrac) * size);
 		// Set vertex UV
-		Vector2 uv = (((VecMath::angleV2(uvfrac + uvShift) / 2.0) + 0.5)) * uvScale;
+		Vector2 uv = (((Math::angleV2(uvfrac + uvShift) / 2.0) + 0.5)) * uvScale;
 		uv.y = 1 - uv.y;
 		vertices[i].uv = (uv);
 	}

@@ -40,6 +40,10 @@ namespace OS::Time {
 			return chrono::duration_cast<T>(SysClock::now() - start).count();
 		}
 	};
+
+	inline usize time() {
+		return Clock::sinceEpoch<Millis>();
+	}
 }
 
 CTL_NAMESPACE_END

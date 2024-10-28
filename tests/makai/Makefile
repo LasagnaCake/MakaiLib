@@ -6,11 +6,11 @@ LEAN := -static -s
 ROOT := ../..
 
 COMPILER_CONFIG	:= -m64 -std=gnu++20 -fms-extensions -I$(ROOT)/output/include
-DEBUGMODE := -DMAKAILIB_DEBUG -fconcepts-diagnostics-depth=4 -Wpedantic
+DEBUGMODE := -DMAKAILIB_DEBUG -fconcepts-diagnostics-depth=4 -Wall -Wpedantic
 
 LIBREQS		:= -static-libstdc++ -static-libgcc
 GRAPHREQS	:= -lopengl32
-WINREQS		:= -lole32 -loleaut32 -limm32 -lwinmm -lversion -lpowrprof -lcomdlg32 -lsetupapi -lgdi32
+WINREQS		:= -lole32 -loleaut32 -limm32 -lwinmm -lversion -lpowrprof -lcomdlg32 -lsetupapi -lgdi32 -lbcrypt
 
 o?=3
 
@@ -32,11 +32,11 @@ dotest = \
 
 case = $(if $(findstring $(strip $(2)),$(strip $(1))),$(3))
 
-params = \
-	$(call case, $(1), 01,$(LIBREQS))\
-	$(call case, $(1), 02,$(LIBREQS) $(GRAPHREQS))\
-	$(call case, $(1), 03,$(LIBREQS) $(GRAPHREQS))\
-	$(call case, $(1), 04,$(LIBREQS) $(GRAPHREQS))\
+params = $(WINREQS) $(LIBREQS) \
+	$(call case, $(1), 01,)\
+	$(call case, $(1), 02,$(GRAPHREQS))\
+	$(call case, $(1), 03,$(GRAPHREQS))\
+	$(call case, $(1), 04,$(GRAPHREQS))\
 
 define mktest
 	@echo "$(strip $(2))"

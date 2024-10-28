@@ -21,7 +21,7 @@ concept Tweenable = ::CTL::Math::Operatable<T> && ::CTL::Type::Constructible<T, 
 template <Tweenable T = float>
 class Tween;
 
-typedef Periodic<Tween<>> PeriodicTween;
+using PeriodicTween = Periodic<Tween<>>;
 
 struct Stepable {
 	virtual usize		getStep()					{return step;	}

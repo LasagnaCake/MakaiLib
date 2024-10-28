@@ -21,7 +21,7 @@ int Popup::showDialog(
 		buttons[i] = SDL_MessageBoxButtonData {
 			0,
 			(int)idx,
-			options[idx].c_str()
+			options[idx].cstr()
 		};
 		--idx;
 	}
@@ -34,8 +34,8 @@ int Popup::showDialog(
 	const SDL_MessageBoxData messageBoxData = {
 		flags,					/* .flags */
 		NULL,					/* .window */
-		title.c_str(),			/* .title */
-		text.c_str(),			/* .message */
+		title.cstr(),			/* .title */
+		text.cstr(),			/* .message */
 		(int)options.size(),	/* .numbuttons */
 		buttons,				/* .buttons */
 		NULL
@@ -45,7 +45,7 @@ int Popup::showDialog(
 		throw Error::FailedAction(
 			"Failed to show popup!",
 			__FILE__,
-			toString(__LINE__),
+			CTL::toString(__LINE__),
 			"show",
 			SDL_GetError()
 		);

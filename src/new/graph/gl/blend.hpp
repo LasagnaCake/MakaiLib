@@ -1,7 +1,7 @@
 #ifndef MAKAILIB_GRAPH_BLEND_H
 #define MAKAILIB_GRAPH_BLEND_H
 
-#include "../../ctl/ctl.hpp"
+#include "../../compat/ctl.hpp"
 #include "core.hpp"
 
 namespace Makai::Graph {

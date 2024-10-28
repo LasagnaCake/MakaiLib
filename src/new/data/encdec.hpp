@@ -1,7 +1,7 @@
 #ifndef MAKAILIB_DATA_ENCDEC_H
 #define MAKAILIB_DATA_ENCDEC_H
 
-#include "../ctl/ctl.hpp"
+#include "../compat/ctl.hpp"
 
 namespace Makai::Data {
 	enum class EncodingType {
@@ -10,11 +10,9 @@ namespace Makai::Data {
 		ET_BASE64
 	};
 
-	using BinaryData = List<ubyte>;
+	BinaryData<> decode(String const& data, EncodingType const& type);
 
-	BinaryData decode(String const& data, EncodingType const& type);
-
-	String encode(BinaryData const& data, EncodingType const& type);
+	String encode(BinaryData<> const& data, EncodingType const& type);
 
 	String			toString(EncodingType const& type);
 	EncodingType	fromString(String const& type);

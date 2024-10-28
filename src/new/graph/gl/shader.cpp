@@ -2,11 +2,13 @@
 
 #include "shader.hpp"
 
-using namespace Makai::Graph;
+using namespace Makai; using namespace Makai::Graph;
 
 namespace SLF = Makai::SLF;
 
 using ShaderType = SLF::ShaderType;
+
+using namespace Literals::Text;
 
 constexpr GLuint getGLShaderType(ShaderType const& type) {
 	switch (type) {
@@ -37,7 +39,7 @@ void Shader::attach(String const& code, ShaderType const& shaderType) {
 	GLuint shader;
 	int success;
 	char infoLog[2048];
-	const char* shaderCode = code.c_str();
+	const char* shaderCode = code.cstr();
 	// Vertex Shader
 	shader = glCreateShader(getGLShaderType(shaderType));
 	glShaderSource(shader, 1, &shaderCode, NULL);
@@ -46,7 +48,7 @@ void Shader::attach(String const& code, ShaderType const& shaderType) {
 	glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
 	if (!success) {
 		glGetShaderInfoLog(shader, 2048, NULL, infoLog);
-		throw Error::FailedAction(String("Could not compile Shader!\n") + infoLog);
+		throw Error::FailedAction("Could not compile Shader!\n"s + infoLog);
 	};
 	// Shader Program
 	instance->create();
@@ -56,7 +58,7 @@ void Shader::attach(String const& code, ShaderType const& shaderType) {
 	glGetProgramiv(instance->id, GL_LINK_STATUS, &success);
 	if (!success) {
 		glGetProgramInfoLog(instance->id, 2048, NULL, infoLog);
-		throw Error::FailedAction(String("Could not link shader program!\n") + infoLog);
+		throw Error::FailedAction("Could not link shader program!\n"s + infoLog);
 	}
 	glDeleteShader(shader);
 }
@@ -111,7 +113,7 @@ bool Shader::create(SLF::SLFData const& slfData) {
 	String log = "";
 	String code;
 	for (SLF::ShaderEntry const& shader: slfData.shaders) {
-		shaderPath = FileSystem::concatenatePath(dir, shader.path);
+		shaderPath = OS::FS::concatenate(dir, shader.path);
 		DEBUGLN(shaderPath);
 		if (shader.code.empty())
 			code = File::getText(shaderPath);
@@ -119,8 +121,8 @@ bool Shader::create(SLF::SLFData const& slfData) {
 			code = shader.code;
 		try {
 			attach(code, shader.type);
-		} catch (Error::Error const& err) {
-			log += String("\n[[ Error on shader '") + shaderPath + "'! ]]:\n";
+		} catch (Error::Generic const& err) {
+			log += "\n[[ Error on shader '"s + shaderPath + "'! ]]:\n";
 			log += err.what();
 		}
 	}

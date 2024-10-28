@@ -9,6 +9,9 @@
 
 CTL_NAMESPACE_BEGIN
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmismatched-new-delete"
+
 namespace Impl {
 	namespace Partial {
 		template <typename TReturn, typename... TArgs>
@@ -25,7 +28,7 @@ namespace Impl {
 		constexpr TReturn invoke(TArgs... args) const override {return func(args...);}
 		constexpr Function(TFunction&& func): func(func) {}
 
-		constexpr ~Function() {}
+		constexpr virtual ~Function() {}
 	};
 }
 
@@ -117,6 +120,23 @@ public:
     constexpr Function(SelfType&& f)		{operator=(f);	}
     constexpr Function(SelfType const& f)	{operator=(f);	}
 };
+
+template<typename... Args>
+using Procedure		= Function<void(Args...)>;
+
+template<typename T, typename T2 = T const&>
+using Operation		= Function<T(T2)>;
+
+template<typename T>
+using Acquisition	= Function<T()>;
+
+template<typename... Args>
+using Signal	= Procedure<Args...>;
+
+template<typename T = void>
+using Trigger	= Acquisition<bool>;
+
+#pragma GCC diagnostic pop
 
 CTL_NAMESPACE_END
 

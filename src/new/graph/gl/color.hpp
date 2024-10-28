@@ -1,7 +1,7 @@
 #ifndef MAKAILIB_GRAPH_COLOR_H
 #define MAKAILIB_GRAPH_COLOR_H
 
-#include "../../ctl/ctl.hpp"
+#include "../../compat/ctl.hpp"
 #include "../../file/json.hpp"
 
 namespace Makai::Graph::Color {
@@ -129,7 +129,7 @@ namespace Makai::Graph::Color {
 		uint32 hci = (toRGB ? toHexCodeRGB(color) : toHexCodeRGBA(color));
 		const uint8 hclen{toRGB ? uint8(6u) : uint8(8u)};
 		uint8 nib{};
-		for SRANGE(i, 0, hclen) {
+		for (usize i = 0; i < hclen; ++i) {
 			nib = hci >> ((hclen - 1) - i) * 4;
 			code += (char)(
 				((nib & 0xF) < 0xA)

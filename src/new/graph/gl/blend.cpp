@@ -2,7 +2,7 @@
 
 #include "blend.hpp"
 
-using namespace Makai::Graph;
+using namespace Makai; using namespace Makai::Graph;
 
 /*BlendMode Blendable::DEFAULT_MODE = {
 	{

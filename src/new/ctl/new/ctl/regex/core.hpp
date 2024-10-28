@@ -3,18 +3,22 @@
 
 #include "../namespace.hpp"
 #include "../container/string.hpp"
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmismatched-new-delete"
 #include <regex>
+#pragma GCC diagnostic pop
 
 CTL_NAMESPACE_BEGIN
 
 namespace Regex {
 	namespace {
 		inline std::string stdstr(String const& expr) {
-			return std::string(expr.cstr());
+			return expr.std();
 		}
 
 		inline String ctlstr(std::string const& expr) {
-			return String(expr.c_str());
+			return String(expr);
 		}
 
 		inline std::regex makeRegex(String const& expr) {

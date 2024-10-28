@@ -19,18 +19,18 @@ namespace OS::FS {
 		PS_WINDOWS	= '\\'
 	};
 
-	#if (_WIN32 || _WIN64 || __WIN32__ || __WIN64__) && !defined(_NO_WINDOWS_PLEASE_)
+	#if (_WIN32 || _WIN64 || __WIN32__ || __WIN64__) && !defined(CTL_NO_WINDOWS_PLEASE)
 	constexpr PathSeparator SEPARATOR = PathSeparator::PS_WINDOWS;
 	#else
 	constexpr PathSeparator SEPARATOR = PathSeparator::PS_POSIX;
 	#endif
 
 	inline bool exists(String const& path) {
-		return fs::exists(path.cstr());
+		return fs::exists(path.std());
 	}
 
 	inline bool isDirectory(String const& dir) {
-		return fs::is_directory(dir.cstr());
+		return fs::is_directory(dir.std());
 	}
 
 	constexpr String standardize(String const& path, PathSeparator const& sep) {
@@ -42,9 +42,9 @@ namespace OS::FS {
 	}
 
 	inline void makeDirectory(String const& dir) {
-		if (dir.empty()) return;
+		if (dir.isNullOrSpaces()) return;
 		if (!isDirectory(dir) || !exists(dir)) {
-			fs::create_directories(dir.cstr());
+			fs::create_directories(dir.std());
 		}
 	}
 
@@ -59,12 +59,13 @@ namespace OS::FS {
 	}
 
 	template <typename... Args>
-	inline void makeDirectory(Args const&... args) {
-		(makeDirectory(toString(args)), ...);
+	inline void makeDirectory(Args const&... args)
+	requires (sizeof...(Args) > 1) {
+		(..., makeDirectory(toString(args)));
 	}
 
 	inline void remove(String const& dir) {
-		fs::remove_all(dir.cstr());
+		fs::remove_all(dir.std());
 	}
 
 	inline void remove(StringList const& dirs) {
@@ -112,8 +113,8 @@ namespace OS::FS {
 		return res;
 	}
 
-	namespace {
-		constexpr String getPathDirectory(String const& s) {
+	namespace Impl {
+		constexpr String pathDirectory(String const& s) {
 			if (s.empty()) return "";
 			return (s[0] == '/' ? "" : "/") + s;
 		}
@@ -121,38 +122,41 @@ namespace OS::FS {
 
 	template <typename... Args>
 	constexpr String concatenate(String const& root, Args const&... paths) {
-		return root + (... + getPathDirectory(toString(paths)));
+		return root + (... + Impl::pathDirectory(toString(paths)));
 	}
 
 	constexpr String fileExtension(String const& path) {
-		return path.splitAtLast('.')[1];
+		return path.splitAtLast('.').back();
 	}
 
 	/*constexpr String fileName(String const& path, bool const& removeExtension = false) {
-		String result = path.splitAtLast({'\\', '/'})[1];
-		return (removeExtension ? result.splitAtLast('.')[0] ? result);
+		String result = path.splitAtLast({'\\', '/'}).back();
+		return (removeExtension ? result.splitAtLast('.').front() ? result);
 	}*/
 
-	inline String getFileName(String const& path, bool removeExtension = false) {
-		return toString(removeExtension ? fs::path(path.cstr()).stem().string() : fs::path(path.cstr()).filename().string());
+	inline String fileName(String const& path, bool removeExtension = false) {
+		return String(removeExtension ? fs::path(path.std()).stem().string() : fs::path(path.std()).filename().string());
 	}
 
 	constexpr String parentDirectory(String const& path) {
 		StringList splitPath = path.splitAtFirst({'\\', '/'});
-		if (splitPath.size() != 1)
-			return splitPath[0];
+		if (splitPath.size() > 1)
+			return splitPath.front();
 		return "";
 	}
 
 	inline String directoryFromPath(String const& path) {
-		return toString(fs::path(path.cstr()).remove_filename().string());
+		/*auto const split = path.splitAtLast({'\\', '/'});
+		if (split.size() < 2) return "";
+		return split.front();*/
+		return String(fs::path(path.std()).remove_filename().string());
 	}
 
 	constexpr String childPath(String const& path) {
 		StringList dirs = path.splitAtFirst({'\\', '/'});
-		if (dirs.size() == 1)
-			return path;
-		return dirs[1];
+		if (dirs.size() > 1)
+			return dirs.back();
+		return "";
 	}
 
 	struct FileTree {
@@ -262,9 +266,9 @@ namespace OS::FS {
 		static inline Entry getStructure(String const& path) {
 			if (!exists(path))
 				throw Error::InvalidValue("Path does not exist!");
-			if (!isDirectory(path)) return Entry(getFileName(path), path);
+			if (!isDirectory(path)) return Entry(fileName(path), path);
 			return Entry(
-				toString(fs::path(path.cstr()).stem().string()),
+				String(fs::path(path.std()).stem().string()),
 				path,
 				getFolderContents(path)
 			);
@@ -273,8 +277,8 @@ namespace OS::FS {
 		static inline List<Entry> getFolderContents(String const& folder) {
 			if (!isDirectory(folder)) return List<Entry>();
 			List<Entry> entries;
-			for (auto const& e: fs::directory_iterator(folder.cstr())) {
-				String name = toString((e.is_directory()) ? e.path().stem().string() : e.path().filename().string());
+			for (auto const& e: fs::directory_iterator(folder.std())) {
+				String name = String((e.is_directory()) ? e.path().stem().string() : e.path().filename().string());
 				String path = concatenate(folder, name);
 				if (e.is_directory())
 					entries.pushBack(Entry(name, path, getFolderContents(path)));

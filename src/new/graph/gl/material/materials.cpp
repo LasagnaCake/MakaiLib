@@ -1,6 +1,6 @@
 #include "materials.hpp"
 
-using namespace Makai::Graph;
+using namespace Makai; using namespace Makai::Graph;
 using namespace Material;
 
 namespace ImageSlot {

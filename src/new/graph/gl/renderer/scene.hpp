@@ -15,8 +15,8 @@ namespace Makai::Graph {
 		public:
 			using DrawableType = TDraw;
 
-			using DrawableEntry	= Pair<String, DrawableType*>;
-			using DrawableBank	= SortedDictionary<DrawableType*>;
+			using DrawableEntry	= KeyValuePair<String, DrawableType*>;
+			using DrawableBank	= Dictionary<DrawableType*>;
 
 			Collection(usize const& layer = 0, bool const& manual = false): Drawable(layer, manual) {}
 
@@ -24,7 +24,7 @@ namespace Makai::Graph {
 				destroy();
 			}
 
-			VecMath::Transform3D	space;
+			Transform3D	space;
 
 			void destroy() {
 				auto objs = objects;
@@ -90,7 +90,7 @@ namespace Makai::Graph {
 			}
 
 			static bool isValidName(String const& name) {
-				return !regexContains(name, "([\\cA-\\cZ]|[ \\t\"\\\\/?*<>:|])");
+				return !Regex::contains(name, "([\\cA-\\cZ]|[ \\t\"\\\\/?*<>:|])");
 			}
 
 		protected:

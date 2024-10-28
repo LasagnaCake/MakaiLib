@@ -42,7 +42,7 @@ public:
 		for (CounterInstance* counter: counters) {
 			if (counter->count() < 2) {
 				delete counter;
-				counters.erase(counters.find(counter));
+				counters.eraseLike(counter);
 			}
 			else if (counter->value().value() > 0)	(**counter)--;
 			++i;

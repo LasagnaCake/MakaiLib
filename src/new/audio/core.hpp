@@ -1,7 +1,7 @@
 #ifndef MAKAILIB_AUDIO_CORE_H
 #define MAKAILIB_AUDIO_CORE_H
 
-#include "../ctl/ctl.hpp"
+#include "../compat/ctl.hpp"
 
 namespace Makai::Audio {
 	void stopAll();

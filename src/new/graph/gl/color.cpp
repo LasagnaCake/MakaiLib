@@ -3,13 +3,13 @@
 #include "../../ctl/ctl.hpp"
 #include "color.hpp"
 
-using namespace Makai::Graph;
+using namespace Makai; using namespace Makai::Graph;
 
 using namespace Color;
 
 Vector4 Color::fromHexCodeString(String code) {
 	// Remove hex markers if necessary
-	code = regexReplace(code, "(#|0x)", "");
+	code = Regex::replace(code, "(#|0x)", "");
 	// Check if color exists
 	if (code.empty())
 		throw Error::InvalidValue(
@@ -20,7 +20,7 @@ Vector4 Color::fromHexCodeString(String code) {
 			"Make sure the color values are correct!"
 		);
 	// Check if color value is valid
-	if (code.size() < 3 || code.size() > 8 || !Helper::isHexString(code))
+	if (code.size() < 3 || code.size() > 8 || !code.isHex())
 		throw Error::InvalidValue(
 			"Invalid color value \"#"+ code +"\"!",
 			__FILE__,

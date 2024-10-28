@@ -32,7 +32,7 @@ struct ConstructionFailure: CatastrophicFailure {
 	virtual char const* what() const noexcept {return "Failed to construct type!";}
 };
 
-void panic() {
+inline void panic() {
 	throw Crash();
 }
 

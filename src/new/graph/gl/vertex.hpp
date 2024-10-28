@@ -1,10 +1,10 @@
 #ifndef MAKAILIB_GRAPH_VERTEX_H
 #define MAKAILIB_GRAPH_VERTEX_H
 
-#include "../../ctl/ctl.hpp"
+#include "../../compat/ctl.hpp"
 
 namespace Makai::Graph {
-	using VertexMap = HashMap<String, float>;
+	using VertexMap = Map<String, float>;
 
 	namespace Base {
 		#pragma pack(1)

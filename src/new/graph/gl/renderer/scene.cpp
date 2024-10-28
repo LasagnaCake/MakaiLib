@@ -2,7 +2,8 @@
 
 #include "../color.hpp"
 
-using namespace Makai::Graph;
+using namespace Makai;
+using namespace Makai; using namespace Makai::Graph;
 using BaseType = Scene::BaseType;
 namespace JSON = Makai::JSON;
 
@@ -92,7 +93,7 @@ Scene::Scene(usize const& layer, String const& path, bool manual): Collection(la
 }
 
 void Scene::extendFromSceneFile(String const& path) {
-	extendFromDefinition(File::getJSON(path), FileSystem::getDirectoryFromPath(path));
+	extendFromDefinition(File::getJSON(path), OS::FS::directoryFromPath(path));
 }
 
 void Scene::saveToSceneFile(
@@ -106,21 +107,21 @@ void Scene::saveToSceneFile(
 ) {
 	JSON::JSONData file = getSceneDefinition(integratedObjects, integratedObjectBinaries, integratedObjectTextures);
 	List<JSON::JSONData> objpaths;
-	FileSystem::makeDirectory(folder);
+	OS::FS::makeDirectory(folder);
 	for (auto& [objname, obj]: getObjects()) {
-		String folderpath	= FileSystem::concatenatePath(folder, objname);
-		String objpath		= FileSystem::concatenatePath(folder, objname);
+		String folderpath	= OS::FS::concatenate(folder, objname);
+		String objpath		= OS::FS::concatenate(folder, objname);
 		if (!integratedObjects) {
-			FileSystem::makeDirectory(folderpath);
+			OS::FS::makeDirectory(folderpath);
 			obj->saveToDefinitionFile(
-				FileSystem::concatenatePath(folder, objname),
+				OS::FS::concatenate(folder, objname),
 				objname,
 				"tx",
 				integratedObjectBinaries,
 				integratedObjectTextures
 			);
-			objpaths.push_back(JSON::JSONType{
-				{"source", FileSystem::concatenatePath(objname, objname + ".mrod")},
+			objpaths.pushBack(JSON::JSONType{
+				{"source", OS::FS::concatenate(objname, objname + ".mrod").std()},
 				{"type", "MROD"}
 			});
 		} else {
@@ -128,14 +129,14 @@ void Scene::saveToSceneFile(
 				bool wasBaked = obj->baked;
 				if (!wasBaked)
 					obj->bake();
-				File::saveBinary(FileSystem::concatenatePath(folderpath, objname + ".mesh"), obj->vertices, obj->vertexCount);
-				file["mesh"]["data"] = {{"path", objname + ".mesh"}};
+				File::saveBinary(OS::FS::concatenate(folderpath, objname + ".mesh"), obj->vertices, obj->vertexCount);
+				file["mesh"]["data"] = {{"path", objname.std() + ".mesh"}};
 				if (!wasBaked)
 					obj->unbake();
 			}
 			if (!integratedObjectTextures) {
-				FileSystem::makeDirectory(FileSystem::concatenatePath(folderpath, "tx"));
-				auto mdef = file["data"][objname]["material"];
+				OS::FS::makeDirectory(OS::FS::concatenate(folderpath, "tx"));
+				auto mdef = file["data"][objname.std()]["material"];
 				auto& mat = obj->material;
 				// Save image texture
 				mdef["texture"] = Material::saveImageEffect(obj->material.texture, folderpath, "tx/texture.tga");
@@ -164,7 +165,7 @@ void Scene::saveToSceneFile(
 	// convert to text
 	auto contents = file.toString(pretty ? 1 : -1);
 	// Save definition file
-	File::saveText(FileSystem::concatenatePath(folder, name) + ".msd", contents);
+	File::saveText(OS::FS::concatenate(folder, name) + ".msd", contents);
 }
 
 void Scene::extendFromDefinition(
@@ -244,31 +245,31 @@ void Scene::extendFromDefinitionV0(JSON::JSONData def, String const& sourcepath)
 			if (def["path"].isObject()) {
 				for(auto& obj: def["data"]["path"].get<List<JSON::JSONType>>()) {
 					auto r = createObject(
-						FileSystem::getFileName(obj["source"].get<String>(), true)
-					).second;
-					if (obj["type"].get<String>() == "MROD")
-						r->extendFromDefinitionFile(obj["source"].get<String>());
-					if (obj["type"].get<String>() == "MESH" || obj["type"].get<String>() == "MSBO") {
-						r->extendFromBinaryFile(obj["source"].get<String>());
+						OS::FS::fileName(obj["source"].get<std::string>(), true)
+					).value;
+					if (obj["type"].get<std::string>() == "MROD")
+						r->extendFromDefinitionFile(obj["source"].get<std::string>());
+					if (obj["type"].get<std::string>() == "MESH" || obj["type"].get<std::string>() == "MSBO") {
+						r->extendFromBinaryFile(obj["source"].get<std::string>());
 					}
 					r->bake();
 				}
 			} else if (def["data"].isArray()) {
 				for(auto& obj: def["data"].get<List<JSON::JSONType>>()) {
-					auto r = createObject().second;
+					auto r = createObject().value;
 					r->extendFromDefinition(
 						obj,
-						FileSystem::concatenatePath(sourcepath, obj)
+						OS::FS::concatenate(sourcepath, String(obj.get<std::string>()))
 					);
 					r->bake();
 				}
 			} else if (def["data"].isObject()) {
 				for(auto& [name, obj]: def["data"].json().items()) {
 					DEBUGLN("[[ ", name," ]]");
-					auto r = createObject(name).second;
+					auto r = createObject(name).value;
 					r->extendFromDefinition(
 						obj,
-						FileSystem::concatenatePath(sourcepath, name)
+						OS::FS::concatenate(sourcepath, String(name))
 					);
 					r->bake();
 				}
@@ -315,7 +316,7 @@ JSON::JSONData Scene::getSceneDefinition(
 	#define _FOG_JSON_VALUE(FOG_TYPE)\
 		{#FOG_TYPE, {\
 			{"enabled", world.FOG_TYPE.enabled},\
-			{"color", Color::toHexCodeString(world.FOG_TYPE.color, false, true)},\
+			{"color", Color::toHexCodeString(world.FOG_TYPE.color, false, true).std()},\
 			{"start", world.FOG_TYPE.start},\
 			{"stop", world.FOG_TYPE.stop},\
 			{"strength", world.FOG_TYPE.strength}\
@@ -324,7 +325,7 @@ JSON::JSONData Scene::getSceneDefinition(
 		_FOG_JSON_VALUE(nearFog),
 		_FOG_JSON_VALUE(farFog),
 		{"ambient", {
-			{"color", Color::toHexCodeString(world.ambient.color, true, true)},
+			{"color", Color::toHexCodeString(world.ambient.color, true, true).std()},
 			{"strength", world.ambient.strength}
 		}}
 	};

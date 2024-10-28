@@ -1,7 +1,7 @@
 #ifndef MAKAILIB_GRAPH_MODE_H
 #define MAKAILIB_GRAPH_MODE_H
 
-#include "../../../ctl/ctl.hpp"
+#include "../../../compat/ctl.hpp"
 
 namespace Makai::Graph {
 	enum class CullMode {

@@ -2,7 +2,8 @@
 
 #include "renderable.hpp"
 
-using namespace Makai::Graph;
+using namespace Makai;
+using namespace Makai; using namespace Makai::Graph;
 
 using namespace Material;
 
@@ -140,7 +141,7 @@ inline ObjectMaterial fromDefinition(JSON::JSONData def, String const& definitio
 		if (dmat["instances"].isArray()) {
 			mat.instances.clear();
 			for(auto& inst: dmat["instances"].json())
-				mat.instances.push_back(fromJSONArrayV3(inst));
+				mat.instances.pushBack(fromJSONArrayV3(inst));
 		}
 		// Set culling, fill & view
 		if (dmat["culling"].isNumber())	mat.culling	= (CullMode)dmat["culling"].get<unsigned int>();
@@ -275,7 +276,7 @@ void Renderable::extend(Vertex* const& vertices, usize const& size) {
 	triangles.resize(triangles.size() + (size / 3));
 	if (this->vertices)
 		delete[] this->vertices;
-	for RANGE(i, 0, size, 3) {
+	for (usize i = 0; i < size; i += 3) {
 		triangles[arrEnd + (i / 3)] = (
 			new Triangle{
 				vertices[i],
@@ -309,7 +310,7 @@ void Renderable::extendFromBinaryFile(String const& path) {
 }
 
 void Renderable::extendFromDefinitionFile(String const& path) {
-	extendFromDefinition(File::getJSON(path), FileSystem::getDirectoryFromPath(path));
+	extendFromDefinition(File::getJSON(path), OS::FS::directoryFromPath(path));
 }
 
 void Renderable::bake() {
@@ -358,7 +359,7 @@ void Renderable::saveToDefinitionFile(
 	String binpath		= folder + "/" + name + ".mesh";
 	DEBUGLN(binpath);
 	DEBUGLN(folder + "/" + name + ".mrod");
-	FileSystem::makeDirectory(FileSystem::concatenatePath(folder, texturesFolder));
+	OS::FS::makeDirectory(OS::FS::concatenate(folder, texturesFolder));
 	// Get object definition
 	JSON::JSONData file = getObjectDefinition("base64", integratedBinary, integratedTextures);
 	// If binary is in a different location, save there
@@ -452,7 +453,7 @@ void Renderable::extendFromDefinitionV0(
 			String encoding	= mesh["encoding"].get<String>();
 			vdata			= Data::decode(data.get<String>(), Data::fromString(encoding));
 		} else if (data.isObject()) {
-			vdata			= File::getBinary(FileSystem::concatenatePath(sourcepath, data["path"].get<String>()));
+			vdata			= File::getBinary(OS::FS::concatenate(sourcepath, data["path"].get<String>()));
 		}
 		componentData		= mesh["components"].get<String>();
 	} catch (std::exception const& e) {
@@ -481,7 +482,7 @@ void Renderable::extendFromDefinitionV0(
 	// Vertex map
 	VertexMap vm;
 	// Component list in order they appear
-	List<String> components = Helper::splitString(componentData, ',');
+	List<String> components = componentData.split(',');
 	// Check if valid component data
 	{
 		String indexes = "";
@@ -529,7 +530,7 @@ void Renderable::extendFromDefinitionV0(
 		vm = Vertex::defaultMap();
 		for (auto& c: components)
 			vm[c] = rawdata[component++];
-		vertices.push_back(Vertex(vm));
+		vertices.pushBack(Vertex(vm));
 	}
 	// Check if data is OK
 	if (vertices.size() % 3 != 0)
@@ -637,7 +638,7 @@ JSON::JSONData Renderable::getObjectDefinition(
 	if (integratedBinary) {
 		// Allocate data buffer
 		ubyte* vertEnd = (ubyte*)(&vertices[vertexCount-1]);
-		Data::BinaryData data((ubyte*)vertices, (ubyte*)(vertEnd + sizeof(Vertex)));
+		BinaryData<> data((ubyte*)vertices, (ubyte*)(vertEnd + sizeof(Vertex)));
 		// Save mesh data
 		def["mesh"]["data"]		= Data::encode(data, Data::fromString(encoding));
 		def["mesh"]["encoding"]	= encoding;

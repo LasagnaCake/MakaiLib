@@ -1,7 +1,7 @@
 #ifndef MAKAILIB_GRAPH_RENDERER_DRAWABLE_H
 #define MAKAILIB_GRAPH_RENDERER_DRAWABLE_H
 
-#include "../../../ctl/ctl.hpp"
+#include "../../../compat/ctl.hpp"
 #include "../material/material.hpp"
 #include "../blend.hpp"
 #include "../vertex.hpp"
@@ -29,7 +29,7 @@ namespace Makai::Graph {
 		Drawable& removeFromRenderLayer(usize const& renderLayer);
 
 		/// Renders the object to the screen.
-		RenderCallback render = SIGNAL {doRender();};
+		RenderCallback render = [&] {doRender();};
 
 		bool active	= true;
 

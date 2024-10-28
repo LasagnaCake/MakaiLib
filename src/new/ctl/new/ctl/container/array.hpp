@@ -9,19 +9,19 @@
 #include "iterator.hpp"
 #include "../algorithm/sort.hpp"
 #include "../algorithm/reverse.hpp"
-#include "../algorithm/memory.hpp"
+#include "../memory/memory.hpp"
 
 CTL_NAMESPACE_BEGIN
 
-template<usize N, class TData, Type::Integer TIndex = usize>
+template<class TData, usize N, Type::Integer TIndex = usize>
 struct Array:
 	Iteratable<TData, TIndex>,
-	SelfIdentified<Array<N, TData, TIndex>>,
+	SelfIdentified<Array<TData, N, TIndex>>,
 	Ordered {
 private:
 public:
 	using Iteratable		= ::CTL::Iteratable<TData, TIndex>;
-	using SelfIdentified	= ::CTL::SelfIdentified<Array<N, TData, TIndex>>;
+	using SelfIdentified	= ::CTL::SelfIdentified<Array<TData, N, TIndex>>;
 
 	using
 		typename Iteratable::IteratorType,
@@ -103,7 +103,7 @@ namespace Impl {
 
 	template<usize N, class TData, Type::Integer TIndex>
 	struct FromCArray<TData[N], TIndex> {
-		typedef Array<N, TData, TIndex> Type;
+		typedef Array<TData, N, TIndex> Type;
 	};
 }
 

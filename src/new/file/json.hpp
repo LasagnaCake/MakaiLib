@@ -3,7 +3,7 @@
 
 #define JSON_NO_IO
 #include "_lib/nlohmann/json.hpp"
-#include "../ctl/ctl.hpp"
+#include "../compat/ctl.hpp"
 #include "get.hpp"
 
 namespace Makai::JSON {
@@ -13,46 +13,48 @@ namespace Makai::JSON {
 	}
 
 	using JSONType = Extern::JSONData;
+	
+	struct JSONValue;
 
-	class JSONView: public DataView<Extern::JSONData> {
+	class JSONView: public View<Extern::JSONData> {
 	public:
-		JSONView(Extern::JSONData& _data, String const& _name = "<anonymous>");
-		JSONView(Extern::JSONData const& _data, String const& _name = "<anonymous>");
+		JSONView(Extern::JSONData& data, String const& name = "<anonymous>");
+		JSONView(Extern::JSONData const& data, String const& name = "<anonymous>");
 		JSONView(JSONView const& other);
 		JSONView(JSONView&& other);
 
 		Extern::JSONData json() const;
 
-		template<typename T>
+		template<class T>
 		inline T get() const {
-			try {
-				return view().get<T>();
-			} catch (Extern::Nlohmann::exception const& e) {
+			T result;
+			if (!tryGet<T>(result))
 				throw Error::FailedAction(
 					"Parameter '" + name + "' is not of type '"
-					+ NAMEOF(typeid(T)) + "'!",
+					+ TypeInfo<T>::name() + "'!",
 					__FILE__,
-					::toString(__LINE__),
-					::toString("get<", NAMEOF(typeid(T)), ">"),
-					e.what()
+					CTL::toString(__LINE__),
+					CTL::toString("get<", TypeInfo<T>::name(), ">"),
+					err
 				);
-			}
+			return result;
 		}
 
-		template<typename T>
+		template<class T>
 		inline T get(T const& fallback) const {
-			try {
-				return view().get<T>();
-			} catch (Extern::Nlohmann::exception const& e) {
+			T result;
+			if (!tryGet<T>(result))
 				return fallback;
-			}
+			return result;
 		}
 
 		JSONView operator[](String const& key);
 		const JSONView operator[](String const& key) const;
 
-		JSONView operator[](size_t const& index);
-		const JSONView operator[](size_t const& index) const;
+		JSONView operator[](usize const& index);
+		const JSONView operator[](usize const& index) const;
+
+		inline usize size() const {return view().size();}
 
 		JSONView& operator=(JSONView const& v);
 
@@ -63,14 +65,13 @@ namespace Makai::JSON {
 			return (*this);
 		}
 
-		template<typename T> operator T() const requires(Type::Constructible<T>)	{return get<T>(T());	}
-		template<typename T> operator T() const requires(!Type::Constructible<T>)	{return get<T>();		}
+		template<typename T> operator T() const {return get<T>();}
 
 		String getName() const;
 
 		String toString(int const& indent = -1, char const& ch = '\t') const;
 
-		inline bool has(String const& key) const {return view().contains(key); }
+		inline bool has(String const& key) const {return view().contains(key.stdView()); }
 
 		inline operator Extern::JSONData() {return view();}
 
@@ -87,11 +88,74 @@ namespace Makai::JSON {
 		bool isStructured() const;
 		bool isDiscarded() const;
 
+		template<Type::Primitive T>
+		bool tryGet(T& out) const try {
+			out = view().get<T>();
+			err = "";
+			return true;
+		} catch (Extern::Nlohmann::exception const& e) {
+			err = e.what();
+			return false;
+		}
+
+		template<Type::Enumerator T>
+		bool tryGet(T& out) const try {
+			out = view().get<T>();
+			err = "";
+			return true;
+		} catch (Extern::Nlohmann::exception const& e) {
+			err = e.what();
+			return false;
+		}
+
+		template <Type::Equal<String> T>
+		bool tryGet(T& out) const try {
+			out = view().get<std::string>();
+			err = "";
+			return true;
+		} catch (Extern::Nlohmann::exception const& e) {
+			err = e.what();
+			return false;
+		}
+
+		template <Type::Container::List T>
+		bool tryGet(T& out) const
+		requires (
+			Type::Different<typename T::DataType, String>
+		&&	Type::Different<typename T::DataType, JSONView>
+		&&	Type::Different<typename T::DataType, JSONValue>
+		) try {
+			out = T(view().get<std::vector<typename T::DataType>>());
+			err = "";
+			return true;
+		} catch (Extern::Nlohmann::exception const& e) {
+			err = e.what();
+			return false;
+		}
+
+		template <Type::Container::List T>
+		bool tryGet(T& out) const
+		requires Type::Equal<typename T::DataType, String>
+		try {
+			out = T(view().get<std::vector<std::string>>());
+			err = "";
+			return true;
+		} catch (Extern::Nlohmann::exception const& e) {
+			err = e.what();
+			return false;
+		}
+
+		String error() {return err;}
+
 	private:
 		Extern::JSONData const&	cdata;
 		Extern::JSONData		dummy;
 
+		mutable String err = "";
+
 		String const name;
+
+		friend class JSONValue;
 	};
 
 	struct JSONValue: public JSONView {
@@ -104,6 +168,53 @@ namespace Makai::JSON {
 		JSONValue(JSONView const& view);
 
 		JSONValue(JSONValue const& other);
+
+		template <Type::Container::List T>
+		bool tryGet(T& out) const
+		requires Type::Equal<typename T::DataType, JSONValue>
+		try {
+			out = T(view().get<std::vector<Extern::JSONData>>());
+			err = "";
+			return true;
+		} catch (Extern::Nlohmann::exception const& e) {
+			err = e.what();
+			return false;
+		}
+
+		template <Type::Container::SimpleMap T>
+		bool tryGet(T& out) const
+		requires (
+			Type::Equal<typename T::KeyType, String>
+		&&	Type::Equal<typename T::ValueType, JSONValue>
+		) try {
+			T res;
+			for (auto [k, v]: view().items())
+				res[k] = v;
+			err = "";
+			return true;
+		} catch (Extern::Nlohmann::exception const& e) {
+			err = e.what();
+			return false;
+		}
+
+		template <Type::Container::SimpleMap T>
+		bool tryGet(T& out) const
+		requires (
+			Type::Equal<typename T::KeyType, String>
+		&&	Type::Different<typename T::ValueType, JSONValue>
+		) try {
+			T res;
+			for (auto [k, v]: view().items())
+				res[k] = v.get<typename T::ValueType>();
+			err = "";
+			return true;
+		} catch (Extern::Nlohmann::exception const& e) {
+			err = e.what();
+			return false;
+		}
+
+		template<class T> T get() const						{return JSONView::get<T>();			}
+		template<class T> T get(T const& fallback) const	{return JSONView::get<T>(fallback);	}
 
 		JSONValue& clear();
 

@@ -5,7 +5,7 @@
 #include "bitwise.hpp"
 #include "format.hpp"
 #include "hash.hpp"
-#include "memory.hpp"
+#include "../memory/memory.hpp"
 #include "reverse.hpp"
 #include "sort.hpp"
 #include "strconv.hpp"

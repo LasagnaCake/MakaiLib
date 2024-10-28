@@ -8,24 +8,24 @@ namespace ImageSlot {
 	constexpr uint8 DEPTH	= 31;
 }
 
-using namespace Makai::Graph;
+using namespace Makai; using namespace Makai::Graph;
 
-Base::DrawBuffer::DrawBuffer(uint const& width, uint const& height) {
+Graph::Base::DrawBuffer::DrawBuffer(uint const& width, uint const& height) {
 	create(width, height);
 }
 
-Base::DrawBuffer::~DrawBuffer() {
+Graph::Base::DrawBuffer::~DrawBuffer() {
 	destroy();
 }
 
-Base::DrawBuffer& Base::DrawBuffer::destroy() {
+Graph::Base::DrawBuffer& Graph::Base::DrawBuffer::destroy() {
 	if (!created) return *this;
 	else created = false;
 	glDeleteFramebuffers(1, &id);
 	return *this;
 }
 
-Base::DrawBuffer& Base::DrawBuffer::create(uint const& width, uint const& height) {
+Graph::Base::DrawBuffer& Graph::Base::DrawBuffer::create(uint const& width, uint const& height) {
 	if (created) return *this;
 	else created = true;
 	glGenFramebuffers(1, &id);
@@ -36,40 +36,40 @@ Base::DrawBuffer& Base::DrawBuffer::create(uint const& width, uint const& height
 	return *this;
 }
 
-Base::DrawBuffer& Base::DrawBuffer::enable() {
+Graph::Base::DrawBuffer& Graph::Base::DrawBuffer::enable() {
 	if (!created) return *this;
 	glBindFramebuffer(GL_FRAMEBUFFER, id);
 	return *this;
 }
 
-Base::DrawBuffer& Base::DrawBuffer::operator()() {
+Graph::Base::DrawBuffer& Graph::Base::DrawBuffer::operator()() {
 	return enable();
 }
 
-Base::DrawBuffer& Base::DrawBuffer::disable() {
+Graph::Base::DrawBuffer& Graph::Base::DrawBuffer::disable() {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	return *this;
 }
 
-bool Base::DrawBuffer::exists() const	{return created;}
+bool Graph::Base::DrawBuffer::exists() const	{return created;}
 
-uint Base::DrawBuffer::getWidth() const		{return width;	}
-uint Base::DrawBuffer::getHeight() const	{return height;	}
-uint Base::DrawBuffer::getID() const		{return id;		}
+uint Graph::Base::DrawBuffer::getWidth() const	{return width;	}
+uint Graph::Base::DrawBuffer::getHeight() const	{return height;	}
+uint Graph::Base::DrawBuffer::getID() const		{return id;		}
 
 
-Base::FrameBuffer::FrameBuffer(
+Graph::Base::FrameBuffer::FrameBuffer(
 	unsigned int const& width,
 	unsigned int const& height
 ): FrameBuffer() {
 	create(width, height);
 }
 
-Base::FrameBuffer::~FrameBuffer() {
+Graph::Base::FrameBuffer::~FrameBuffer() {
 	destroy();
 }
 
-Base::FrameBuffer& Base::FrameBuffer::destroy() {
+Graph::Base::FrameBuffer& Graph::Base::FrameBuffer::destroy() {
 	if (!exists()) return *this;
 	buffer.screen.destroy();
 	buffer.depth.destroy();
@@ -79,7 +79,7 @@ Base::FrameBuffer& Base::FrameBuffer::destroy() {
 	return *this;
 }
 
-Base::FrameBuffer& Base::FrameBuffer::create(uint const& width, uint const& height) {
+Graph::Base::FrameBuffer& Graph::Base::FrameBuffer::create(uint const& width, uint const& height) {
 	if (exists()) return *this;
 	Base::DrawBuffer::create(width, height);
 	glBindFramebuffer(GL_FRAMEBUFFER, getID());
@@ -130,14 +130,14 @@ Base::FrameBuffer& Base::FrameBuffer::create(uint const& width, uint const& heig
 	return *this;
 }
 
-Base::FrameBuffer& Base::FrameBuffer::enable() {
+Graph::Base::FrameBuffer& Graph::Base::FrameBuffer::enable() {
 	if (!exists()) return *this;
 	Base::DrawBuffer::enable();
 	this->clearDepthBuffer();
 	return *this;
 }
 
-FrameBufferData Base::FrameBuffer::data() {
+FrameBufferData Graph::Base::FrameBuffer::data() {
 	if (!exists())
 		return FrameBufferData{};
 	return FrameBufferData{
@@ -149,25 +149,25 @@ FrameBufferData Base::FrameBuffer::data() {
 	};
 }
 
-Base::FrameBuffer& Base::FrameBuffer::clearBuffers() {
+Graph::Base::FrameBuffer& Graph::Base::FrameBuffer::clearBuffers() {
 	this->clearColorBuffer();
 	this->clearDepthBuffer();
 	return *this;
 }
 
-Base::FrameBuffer& Base::FrameBuffer::clearColorBuffer() {
+Graph::Base::FrameBuffer& Graph::Base::FrameBuffer::clearColorBuffer() {
 	// Why does this line cause a problem?
 	API::setClearColor(clearColor);
 	API::clear(API::Buffer::GAB_COLOR);
 	return *this;
 }
 
-Base::FrameBuffer& Base::FrameBuffer::clearDepthBuffer() {
+Graph::Base::FrameBuffer& Graph::Base::FrameBuffer::clearDepthBuffer() {
 	API::clear(API::Buffer::GAB_DEPTH);
 	return *this;
 }
 
-Base::FrameBuffer& Base::FrameBuffer::render(FrameBufferData const& target) {
+Graph::Base::FrameBuffer& Graph::Base::FrameBuffer::render(FrameBufferData const& target) {
 	#ifdef MAKAILIB_DEBUG
 	API::Debug::Context ctx("FrameBuffer::render");
 	#endif // MAKAILIB_DEBUG
@@ -225,13 +225,13 @@ Base::FrameBuffer& Base::FrameBuffer::render(FrameBufferData const& target) {
 	return *this;
 }
 
-Base::FrameBuffer& Base::FrameBuffer::render(FrameBuffer& targetBuffer) {
+Graph::Base::FrameBuffer& Graph::Base::FrameBuffer::render(FrameBuffer& targetBuffer) {
 	if (!exists()) return *this;
 	if (!targetBuffer.exists()) return *this;
 	return render(targetBuffer.data());
 }
 
-Base::FrameBuffer& Base::FrameBuffer::disable() {
+Graph::Base::FrameBuffer& Graph::Base::FrameBuffer::disable() {
 	Base::DrawBuffer::disable();
 	return *this;
 }

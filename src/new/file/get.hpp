@@ -1,7 +1,7 @@
 #ifndef MAKAILIB_FILE_GET_H
 #define MAKAILIB_FILE_GET_H
 
-#include "../ctl/ctl.hpp"
+#include "../compat/ctl.hpp"
 
 namespace Makai::File {
 	// Until this puzzle is figured, this shall do
@@ -11,9 +11,7 @@ namespace Makai::File {
 	DEFINE_ERROR_TYPE(FileLoadError);
 	DEFINE_ERROR_TYPE(FileSaveError);
 
-	using BinaryData	= List<ubyte>;
 	using CSVData		= StringList;
-	using ByteSpan		= Span<ubyte>;
 
 	void attachArchive(DataBuffer& buffer, String const& password = "");
 	void attachArchive(String const& path, String const& password = "");
@@ -25,9 +23,9 @@ namespace Makai::File {
 	String loadText(String const& path);
 	void saveText(String const& path, String const& text);
 
-	BinaryData loadBinary(String const& path);
-	void saveBinary(String const& path, ByteSpan const& data);
-	void saveBinary(String const& path, BinaryData const& data);
+	BinaryData<> loadBinary(String const& path);
+	void saveBinary(String const& path, ByteSpan<> const& data);
+	void saveBinary(String const& path, BinaryData<> const& data);
 
 	template<Type::NonVoid T>
 	inline void saveBinary(String const& path, T* const& data, usize const& count) {
@@ -54,13 +52,13 @@ namespace Makai::File {
 
 	String loadTextFromArchive(String const& path);
 
-	BinaryData loadBinaryFromArchive(String const& path);
+	BinaryData<> loadBinaryFromArchive(String const& path);
 
 	CSVData loadCSVFromArchive(String const& path, char const& delimiter = ',');
 
 	String getText(String const& path);
 
-	BinaryData getBinary(String const& path);
+	BinaryData<> getBinary(String const& path);
 
 	CSVData getCSV(String const& path, char const& delimiter = ',');
 

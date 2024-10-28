@@ -248,11 +248,11 @@ struct ObfuscatedString: Obfuscator<String> {
 
 	constexpr virtual ~ObfuscatedString() {}
 
-	DataType deobfuscated() const final {
-		DataType result;
+	String deobfuscated() const final {
+		String result;
 		uint8 off = 0;
 		for(uint8 c : data.demangled())
-			result.push_back(off += c);
+			result.pushBack(off += c);
 		return result;
 	}
 

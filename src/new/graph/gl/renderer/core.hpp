@@ -1,28 +1,37 @@
 #ifndef MAKAILIB_GRAPH_RENDERER_CORE_H
 #define MAKAILIB_GRAPH_RENDERER_CORE_H
 
-#include "../../../ctl/ctl.hpp"
+#include "../../../compat/ctl.hpp"
 #include "../core.hpp"
+
+namespace Makai {
+	struct App;
+}
 
 namespace Makai::Graph {
 	class Drawable;
 
 	struct Renderer {
-		using Callback = const Event::Signal;
+		using Callback	= const Signal<>;
+		using Layers	= Groups<Callback*>;
 
 		static void renderLayer(usize const& layer);
 
-		static List<usize> getLayers() {
-			return layers.getAllGroups();
+		static typename Layers::IdentifierListType getLayers() {
+			return layers.all();
 		}
 
 		static bool isLayerEmpty(usize const& layer) {
-			return layers[layer].empty();
+			return layers.get(layer).empty();
 		}
 
 	private:
-		inline static Group::Group<Renderer::Callback*> layers;
+		inline static Layers layers;
+
+		static void renderLayer(typename Layers::GroupType const& layer);
+
 		friend class Drawable;
+		friend class ::Makai::App;
 	};
 
 	using RenderCallback = typename Renderer::Callback;

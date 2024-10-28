@@ -7,7 +7,7 @@
 #include "../../data/encdec.hpp"
 #include "../../file/get.hpp"
 
-using namespace Makai::Graph;
+using namespace Makai; using namespace Makai::Graph;
 
 using WrapMode			= Texture2D::WrapMode;
 using FilterMode		= Image2D::FilterMode;
@@ -95,13 +95,13 @@ void copyTexture(
 Texture2D Texture2D::fromJSON(JSON::JSONData img, String const& sourcepath) {
 	Texture2D texture;
 	if (img["data"].isObject() && img["data"]["path"].isString() && !img["data"]["path"].get<String>().empty()) {
-		texture.create(FileSystem::concatenatePath(sourcepath, img["path"].get<String>()));
+		texture.create(OS::FS::concatenate(sourcepath, img["path"].get<String>()));
 		texture.setFilterMode(
 			img["minFilter"].get<FilterMode>(FilterMode::FM_NMN),
 			img["magFilter"].get<FilterMode>(FilterMode::FM_NEAREST)
 		);
 	} else if (img["data"].isString() && !img["data"].get<String>().empty()) {
-		List<ubyte> data = Makai::Data::decode(img["data"].get<String>(), Makai::Data::fromString(img["encoding"]));
+		List<ubyte> data = Makai::Data::decode(img["data"].get<String>(), Makai::Data::fromString((String)img["encoding"]));
 		int w, h, nc;
 		uchar* imgdat = stbi_load_from_memory(
 			data.data(),
@@ -248,7 +248,7 @@ Texture2D& Texture2D::create(
 		);
 		stbi_image_free(data);
 	} else {
-		throw Error::FailedAction(String("Could not load image file '") + path + "'!\n\n" + stbi_failure_reason());
+		throw Error::FailedAction("Could not load image file '" + path + "'!\n\n" + stbi_failure_reason());
 	}
 	return *this;
 }
@@ -397,8 +397,8 @@ Texture2D& Texture2D::makeUnique(bool const& filter) {
 Texture2D& Texture2D::operator=(Texture2D const& other)	{make(other); return *this;								}
 Texture2D& Texture2D::operator=(Texture2D&& other)		{make(other); return *this;								}
 
-bool Texture2D::operator==(Texture2D const& other) const					{return *image == *other.image;		}
-Helper::PartialOrder Texture2D::operator<=>(Texture2D const& other) const	{return *image <=> *other.image;	}
+bool Texture2D::operator==(Texture2D const& other) const		{return *image == *other.image;		}
+ValueOrder Texture2D::operator<=>(Texture2D const& other) const	{return *image <=> *other.image;	}
 
 Texture2D& Texture2D::copyFrom(
 	Texture2D const& other,

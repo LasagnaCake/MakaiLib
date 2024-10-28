@@ -2,10 +2,58 @@
 #define CTL_CONTAINER_PAIR_H
 
 #include "../templates.hpp"
+#include "../adapter/comparator.hpp"
+#include "../meta/logic.hpp"
 
 CTL_NAMESPACE_BEGIN
 
+namespace Type {
+	template<class T>
+	concept Pair = requires (T t) {
+		typename T::AType;
+		typename T::BType;
+		{t.getA()} -> Type::EqualOrConst<typename T::AType&>;
+		{t.getB()} -> Type::EqualOrConst<typename T::BType&>;
+	};
+}
+
 template<typename TA, typename TB> struct Pair;
+
+template<Type::Pair TPair>
+struct PairComparator: Ordered {
+	using PairType = TPair;
+
+	using AType = typename TPair::AType;
+	using BType = typename TPair::BType;
+
+	using typename Ordered::OrderType;
+
+	constexpr static bool COMPARABLE_A = Type::Comparator::Comparable<AType, AType>;
+	constexpr static bool COMPARABLE_B = Type::Comparator::Comparable<BType, BType>;
+
+	constexpr static bool IS_COMPARABLE = COMPARABLE_A || COMPARABLE_B;
+
+	using AComparator	= Meta::DualType<COMPARABLE_A, Comparator<AType, AType>, void>;
+	using BComparator	= Meta::DualType<COMPARABLE_B, Comparator<BType, BType>, void>;
+
+	constexpr static OrderType compare(PairType const& a, PairType const& b)
+	requires (COMPARABLE_A && COMPARABLE_B) {
+		OrderType order = AComparator::compare(a.getA(), b.getA());
+		if (order == Order::EQUAL)
+			return BComparator::compare(a.getB(), b.getB());
+		return order;
+	}
+
+	constexpr static OrderType compare(PairType const& a, PairType const& b)
+	requires (COMPARABLE_A && !COMPARABLE_B) {
+		return AComparator::compare(a.getA(), b.getA());
+	}
+
+	constexpr static OrderType compare(PairType const& a, PairType const& b)
+	requires (!COMPARABLE_A && COMPARABLE_B) {
+		return BComparator::compare(a.getB(), b.getB());
+	}
+};
 
 template<typename TA, typename TB>
 struct Pairable {
@@ -40,33 +88,21 @@ struct Pair:
 
 	constexpr Pair() = default;
 
-	constexpr Pair(AType const& a):					a(a)					{}
-	constexpr Pair(AType const& a, BType const& b):	a(a), b(b)				{}
-	constexpr Pair(SelfType const& other):			a(other.a), b(other.b)	{}
+	constexpr Pair(AType const& a):					a(a)								{}
+	constexpr Pair(AType const& a, BType const& b):	a(a), b(b)							{}
+	constexpr Pair(SelfType const& other):			a(other.a), b(other.b)				{}
+	template<Type::Pair T>
+	constexpr Pair(T const& other):					a(other.getA()), b(other.getB())	{}
 
-	constexpr OrderType operator<=>(SelfType const& other) const requires (
-		Type::Comparable::Threeway<AType, AType>
-	&&	Type::Comparable::Threeway<BType, BType>
-	) {
-		OrderType order = a <=> other.a;
-		if (order == Order::EQUAL)
-			return b <=> other.b;
-		return order;
+	constexpr OrderType operator<=>(SelfType const& other) const
+	requires (PairComparator<SelfType>::IS_COMPARABLE) {
+		return PairComparator<SelfType>::compare(*this, other);
 	}
 
-	constexpr OrderType operator<=>(SelfType const& other) const requires (
-		Type::Comparable::Threeway<AType, AType>
-	&&	!Type::Comparable::Threeway<BType, BType>
-	) {
-		return a <=> other.a;
-	}
-
-	constexpr OrderType operator<=>(SelfType const& other) const requires (
-		!Type::Comparable::Threeway<AType, AType>
-	&&	Type::Comparable::Threeway<BType, BType>
-	) {
-		return b <=> other.b;
-	}
+	constexpr AType& getA()				{return a;	}
+	constexpr BType& getB()				{return b;	}
+	constexpr AType const& getA() const	{return a;	}
+	constexpr BType const& getB() const	{return b;	}
 
 	template<Type::Constructible<AType, BType> TPair>
 	constexpr TPair pair() const		{return TPair(a, b);	}
@@ -105,32 +141,18 @@ struct KeyValuePair:
 	constexpr KeyValuePair(PairType const& other):			KeyValuePair(other.a, other.b)			{}
 //	constexpr KeyValuePair(SelfType const& other):			KeyValuePair(other.key, other.value)	{}
 
-	constexpr OrderType operator<=>(SelfType const& other) const requires (
-		Type::Comparable::Threeway<AType, AType>
-	&&	Type::Comparable::Threeway<BType, BType>
-	) {
-		OrderType order = key <=> other.key;
-		if (order == Order::EQUAL)
-			return value <=> other.value;
-		return order;
+	constexpr OrderType operator<=>(SelfType const& other) const
+	requires (PairComparator<SelfType>::IS_COMPARABLE) {
+		return PairComparator<SelfType>::compare(*this, other);
 	}
 
-	constexpr OrderType operator<=>(SelfType const& other) const requires (
-		Type::Comparable::Threeway<AType, AType>
-	&&	!Type::Comparable::Threeway<BType, BType>
-	) {
-		return key <=> other.key;
-	}
-
-	constexpr OrderType operator<=>(SelfType const& other) const requires (
-		!Type::Comparable::Threeway<AType, AType>
-	&&	Type::Comparable::Threeway<BType, BType>
-	) {
-		return value <=> other.value;
-	}
+	constexpr AType& getA()				{return key;	}
+	constexpr BType& getB()				{return value;	}
+	constexpr AType const& getA() const	{return key;	}
+	constexpr BType const& getB() const	{return value;	}
 
 	constexpr PairType pair() const		{return PairType(key, value);	}
-	constexpr operator PairType() const	{return pair();					}
+//	constexpr operator PairType() const	{return pair();					}
 };
 
 template<typename TLeft, typename TRight>
@@ -156,29 +178,15 @@ struct LeftRightPair:
 	AType	left;
 	BType	right;
 
-	constexpr OrderType operator<=>(SelfType const& other) const requires (
-		Type::Comparable::Threeway<AType, AType>
-	&&	Type::Comparable::Threeway<BType, BType>
-	) {
-		OrderType order = left <=> other.left;
-		if (order == Order::EQUAL)
-			return right <=> other.right;
-		return order;
+	constexpr OrderType operator<=>(SelfType const& other) const
+	requires (PairComparator<SelfType>::IS_COMPARABLE) {
+		return PairComparator<SelfType>::compare(*this, other);
 	}
 
-	constexpr OrderType operator<=>(SelfType const& other) const requires (
-		Type::Comparable::Threeway<AType, AType>
-	&&	!Type::Comparable::Threeway<BType, BType>
-	) {
-		return left <=> other.left;
-	}
-
-	constexpr OrderType operator<=>(SelfType const& other) const requires (
-		!Type::Comparable::Threeway<AType, AType>
-	&&	Type::Comparable::Threeway<BType, BType>
-	) {
-		return right <=> other.right;
-	}
+	constexpr AType& getA()				{return left;	}
+	constexpr BType& getB()				{return right;	}
+	constexpr AType const& getA() const	{return left;	}
+	constexpr BType const& getB() const	{return right;	}
 
 	constexpr LeftRightPair() = default;
 
@@ -188,7 +196,7 @@ struct LeftRightPair:
 //	constexpr LeftRightPair(SelfType const& other):				LeftRightPair(other.left, other.right)	{}
 
 	constexpr PairType pair() const		{return PairType(left, right);	}
-	constexpr operator PairType() const	{return pair();					}
+//	constexpr operator PairType() const	{return pair();					}
 };
 
 template<typename T1, typename T2>
@@ -214,29 +222,15 @@ struct FirstSecondPair:
 	AType	first;
 	BType	second;
 
-	constexpr OrderType operator<=>(SelfType const& other) const requires (
-		Type::Comparable::Threeway<AType, AType>
-	&&	Type::Comparable::Threeway<BType, BType>
-	) {
-		OrderType order = first <=> other.first;
-		if (order == Order::EQUAL)
-			return second <=> other.second;
-		return order;
+	constexpr OrderType operator<=>(SelfType const& other) const
+	requires (PairComparator<SelfType>::IS_COMPARABLE) {
+		return PairComparator<SelfType>::compare(*this, other);
 	}
 
-	constexpr OrderType operator<=>(SelfType const& other) const requires (
-		Type::Comparable::Threeway<AType, AType>
-	&&	!Type::Comparable::Threeway<BType, BType>
-	) {
-		return first <=> other.first;
-	}
-
-	constexpr OrderType operator<=>(SelfType const& other) const requires (
-		!Type::Comparable::Threeway<AType, AType>
-	&&	Type::Comparable::Threeway<BType, BType>
-	) {
-		return second <=> other.second;
-	}
+	constexpr AType& getA()				{return first;	}
+	constexpr BType& getB()				{return second;	}
+	constexpr AType const& getA() const	{return first;	}
+	constexpr BType const& getB() const	{return second;	}
 
 	constexpr FirstSecondPair() = default;
 
@@ -246,24 +240,13 @@ struct FirstSecondPair:
 //	constexpr FirstSecondPair(SelfType const& other):				FirstSecondPair(other.first, other.second)	{}
 
 	constexpr PairType pair() const		{return PairType(first, second);	}
-	constexpr operator PairType() const	{return pair();						}
+//	constexpr operator PairType() const	{return pair();						}
 };
 
-static_assert(Type::Comparable::Threeway<Pair<int, int>, Pair<int, int>>);
-static_assert(Type::Comparable::Threeway<KeyValuePair<int, int>, KeyValuePair<int, int>>);
-static_assert(Type::Comparable::Threeway<LeftRightPair<int, int>, LeftRightPair<int, int>>);
-static_assert(Type::Comparable::Threeway<FirstSecondPair<int, int>, FirstSecondPair<int, int>>);
-
-namespace Type {
-	template<class T>
-	concept Pair = requires (T t) {
-		typename T::AType;
-		typename T::BType;
-		//{t.template get<0>()} -> Type::Equal<typename T::AType>;
-		//{t.template get<1>()} -> Type::Equal<typename T::BType>;
-		requires Type::Convertible<T, ::CTL::Pair<typename T::AType, typename T::BType>>;
-	};
-}
+static_assert(Type::Comparator::Threeway<Pair<int, int>, Pair<int, int>>);
+static_assert(Type::Comparator::Threeway<KeyValuePair<int, int>, KeyValuePair<int, int>>);
+static_assert(Type::Comparator::Threeway<LeftRightPair<int, int>, LeftRightPair<int, int>>);
+static_assert(Type::Comparator::Threeway<FirstSecondPair<int, int>, FirstSecondPair<int, int>>);
 
 CTL_NAMESPACE_END
 

@@ -2,14 +2,11 @@
 #define MAKAILIB_TOOL_ARCHIVE_H
 
 #include <fstream>
-
-#include "../../ctl/ctl.hpp"
+#include "../../compat/ctl.hpp"
 #include "../../file/get.hpp"
 #include "../../file/json.hpp"
 
 namespace Makai::Tool::Arch {
-	using BinaryData = File::BinaryData;
-
 	enum class EncryptionMethod: uint64 {
 		AEM_NONE,
 		AEM_AES256,
@@ -24,28 +21,28 @@ namespace Makai::Tool::Arch {
 
 	String hashPassword(String const& str);
 
-	BinaryData encrypt(
-		BinaryData const&		data,
+	BinaryData<> encrypt(
+		BinaryData<> const&		data,
 		String const&			password	= "",
 		EncryptionMethod const&	method		= EncryptionMethod::AEM_AES256,
 		uint8* const&			block		= nullptr
 	);
 
-	BinaryData decrypt(
-		BinaryData const&		data,
+	BinaryData<> decrypt(
+		BinaryData<> const&		data,
 		String const&			password	= "",
 		EncryptionMethod const&	method		= EncryptionMethod::AEM_AES256,
 		uint8* const&			block		= nullptr
 	);
 
-	BinaryData compress(
-		BinaryData	const&			data,
+	BinaryData<> compress(
+		BinaryData<>	const&		data,
 		CompressionMethod const&	method	= CompressionMethod::ACM_ZIP,
 		uint8 const&				level	= 9
 	);
 
-	BinaryData decompress(
-		BinaryData	const&			data,
+	BinaryData<> decompress(
+		BinaryData<>	const&		data,
 		CompressionMethod const&	method	= CompressionMethod::ACM_ZIP,
 		uint8 const&				level	= 9
 	);
@@ -108,7 +105,7 @@ namespace Makai::Tool::Arch {
 			uint64 const	index;
 			String const	path;
 			FileHeader		header;
-			BinaryData		data;
+			BinaryData<>	data;
 		};
 
 		struct ArchiveVersion {
@@ -128,7 +125,7 @@ namespace Makai::Tool::Arch {
 
 		String getTextFile(String const& path);
 
-		BinaryData getBinaryFile(String const& path);
+		BinaryData<> getBinaryFile(String const& path);
 
 		JSON::JSONData getFileTree(String const& root = "") const;
 
@@ -142,7 +139,7 @@ namespace Makai::Tool::Arch {
 
 		void parseFileTree();
 
-		void demangleData(BinaryData& data, uint8* const& block) const;
+		void demangleData(BinaryData<>& data, uint8* const& block) const;
 
 		void unpackLayer(JSON::Extern::JSONData const& layer, String const& path);
 
@@ -150,7 +147,7 @@ namespace Makai::Tool::Arch {
 
 		FileEntry getFileEntry(String const& path);
 
-		BinaryData getFileEntryData(uint64 const& index, FileHeader const& fh);
+		BinaryData<> getFileEntryData(uint64 const& index, FileHeader const& fh);
 
 		FileHeader getFileEntryHeader(uint64 const& index);
 
@@ -167,13 +164,13 @@ namespace Makai::Tool::Arch {
 
 	String loadEncryptedTextFile(String const& path, String const& password = "");
 
-	BinaryData loadEncryptedBinaryFile(String const& path, String const& password = "");
+	BinaryData<> loadEncryptedBinaryFile(String const& path, String const& password = "");
 
 	template<typename T>
 	void saveEncryptedBinaryFile(
 		String const&				path,
 		T* const&					data,
-		size_t const&				size,
+		usize const&				size,
 		String const&				password	= "",
 		EncryptionMethod const&		enc			= EncryptionMethod::AEM_AES256,
 		CompressionMethod const&	comp		= CompressionMethod::ACM_ZIP,
@@ -182,7 +179,7 @@ namespace Makai::Tool::Arch {
 
 	void saveEncryptedTextFile(
 		String const&				path,
-		BinaryData const&			data,
+		BinaryData<> const&			data,
 		String const&				password	= "",
 		EncryptionMethod const&		enc			= EncryptionMethod::AEM_AES256,
 		CompressionMethod const&	comp		= CompressionMethod::ACM_ZIP,

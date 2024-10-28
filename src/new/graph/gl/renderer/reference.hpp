@@ -1,7 +1,7 @@
 #ifndef MAKAILIB_GRAPH_RENDERER_REFERENCE_H
 #define MAKAILIB_GRAPH_RENDERER_REFERENCE_H
 
-#include "../../../ctl/ctl.hpp"
+#include "../../../compat/ctl.hpp"
 
 #include "../vertex.hpp"
 #include "../color.hpp"
@@ -17,8 +17,8 @@ namespace Makai::Graph {
 		virtual ~Empty()	{onDestroy = onUnbind = []{};	}
 		friend class Renderable;
 	private:
-		Event::Signal onDestroy;
-		Event::Signal onUnbind;
+		Signal<> onDestroy;
+		Signal<> onUnbind;
 	};
 
 	#pragma GCC diagnostic push
@@ -30,7 +30,7 @@ namespace Makai::Graph {
 		using Triangles = Span<Triangle*, SIZE>;
 
 		ShapeRef(Triangle* const(& tris)[SIZE]) {
-			for SRANGE(i, 0, SIZE)
+			for (usize i = 0; i < SIZE; ++i)
 				this->tris[i] = tris[i];
 		}
 
@@ -47,8 +47,8 @@ namespace Makai::Graph {
 		virtual ShapeRef* transform()	= 0;
 
 		virtual void forEachVertex(VertexFunction const& f) {
-			for SRANGE(i, 0, SIZE)
-				for SRANGE(j, 0, 3)
+			for (usize i = 0; i < SIZE; ++i)
+				for (usize j = 0; j < 3; ++j)
 					f(((Vertex*)tris[i])[j]);
 		}
 

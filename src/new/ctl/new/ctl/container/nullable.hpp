@@ -6,6 +6,7 @@
 #include "../order.hpp"
 #include "../typetraits/traits.hpp"
 #include "../algorithm/strconv.hpp"
+#include "../adapter/comparator.hpp"
 #include "error.hpp"
 
 CTL_NAMESPACE_BEGIN
@@ -111,23 +112,35 @@ public:
 	constexpr SelfType& operator=(DataType&& value)			{data = CTL::move(value); isSet = true; return *this;	}
 	constexpr SelfType& operator=(NullType)					{isSet = false; return *this;							}
 
-	constexpr bool operator==(SelfType const& other) const	{if (isSet) return other == data; return false;}
-	constexpr bool operator==(DataType const& value) const	{if (isSet) return data == value; return false;}
-	constexpr bool operator==(DataType&& value) const		{if (isSet) return data == value; return false;}
-	constexpr bool operator==(NullType) const				{return !isSet;}
+	constexpr bool operator==(SelfType const& other) const
+	requires Type::Comparator::Equals<DataType, DataType> {
+		if (!isSet && !other.isSet)
+			return true;
+		if (isSet && other.isSet)
+			return SimpleComparator<DataType>::equals(data, other.data);
+		return false;
+	}
+	constexpr bool operator==(DataType const& value) const
+	requires Type::Comparator::Equals<DataType, DataType> {
+		if (isSet)
+			return SimpleComparator<DataType>::equals(data, value);
+		return false;
+	}
+	
+	constexpr bool operator==(NullType) const {return !isSet;}
 
 	constexpr OrderType operator<=>(SelfType const& other) const
-	requires Type::Comparable::Threeway<DataType, DataType>	{
+	requires Type::Comparator::Threeway<DataType, DataType>	{
 		if (!other.isSet && !isSet)	return Order::EQUAL;
 		if (other.isSet && !isSet)	return Order::LESS;
 		if (!other.isSet && isSet)	return Order::GREATER;
-		return data <=> other;
+		return SimpleComparator<DataType>::compare(data, other);
 	}
 
 	constexpr OrderType operator<=>(DataType const& value) const
-	requires Type::Comparable::Threeway<DataType, DataType>	{
+	requires Type::Comparator::Threeway<DataType, DataType>	{
 		if (!isSet)	return Order::LESS;
-		return data <=> value;
+		return SimpleComparator<DataType>::compare(data, value);
 	}
 
 	constexpr SelfType& operator=(SelfType const& other) {
@@ -142,7 +155,7 @@ public:
 		return *this;
 	}
 
-	constexpr DataType operator *() const {
+	constexpr DataType operator*() const {
 		return value();
 	}
 
@@ -161,12 +174,12 @@ private:
 
 template<class TData>
 constexpr Nullable<TData> operator<=>(typename Nullable<TData>::DataType const& value, Nullable<TData> const& self)
-requires Type::Comparable::Threeway<
+requires Type::Comparator::Threeway<
 	typename Nullable<TData>::DataType,
 	typename Nullable<TData>::DataType
 >	{
 	if (!self.isSet) return Nullable<TData>::Order::LESS;
-	return value <=> self.data;
+	return SimpleComparator<TData>::compare(value, self.data);
 }
 
 CTL_NAMESPACE_END

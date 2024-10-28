@@ -50,8 +50,8 @@ struct TestApp: Makai::App {
 	}
 
 	void onOpen() override {
-		camera.eye	= Vec3(0, 2, -3);
-		camera.at	= Vec3(0, 0, 0);
+		camera.eye	= Makai::Vec3(0, 2, -3);
+		camera.at	= Makai::Vec3(0, 0, 0);
 		camera.zFar	= 1000;
 		cube.setRenderLayer(0);
 		//Makai::Graph::API::toggle(Makai::Graph::API::Facility::GAF_DEBUG, true);
@@ -62,7 +62,7 @@ struct TestApp: Makai::App {
 			close();
 		getFrameBuffer().material.background = Makai::Graph::Color::WHITE * (sin(getCurrentFrame() / 180.0) / 2 + .5);
 		#ifndef MANUAL_ROTATION
-		cube.trans.rotation += Vec3(
+		cube.trans.rotation += Makai::Vec3(
 			HPI / 60.0,
 			HPI / 90.0/*,
 			HPI / 45.0*/
@@ -84,9 +84,7 @@ int main() {
 	try {
 		TestApp app;
 		app.run();
-	} catch (Error::Error const& e) {
-		Makai::Popup::showError(e.what());
-	} catch (std::runtime_error const& e) {
+	} catch (Makai::Error::Generic const& e) {
 		Makai::Popup::showError(e.what());
 	}
 	return 0;

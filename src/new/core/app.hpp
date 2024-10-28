@@ -1,14 +1,12 @@
 #ifndef MAKAILIB_CORE_APP_H
 #define MAKAILIB_CORE_APP_H
 
-#include "../ctl/ctl.hpp"
+#include "../compat/ctl.hpp"
 
 #include "extern.hpp"
 #include "input/manager.hpp"
 #include "../graph/graph.hpp"
 #include "../audio/audio.hpp"
-
-using namespace Makai;
 
 namespace Makai {
 	struct AudioConfig {
@@ -59,7 +57,7 @@ namespace Makai {
 		void loadDefaultShaders();
 
 		/// Returns the currently-opened app. Returns null if no app is open.
-		App* current();
+		static App* current();
 
 		/// Runs the application.
 		void run();
@@ -160,7 +158,7 @@ namespace Makai {
 		float speed = 1.0f;
 
 		/// The application's notification handler.
-		Event::Notifier notifier;
+		Notifier notifier;
 
 	protected:
 		Graph::FrameBufferData toFrameBufferData();

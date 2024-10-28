@@ -52,13 +52,15 @@ public:
 		return data;
 	}
 
-	inline bool operator==(DataType const& other) const	{return value() == other;			}
-	inline bool operator==(Box const& other) const		{return value() == other.value();	}
+	inline bool operator==(DataType const& other) const
+	requires Type::Comparator::Equals<DataType, DataType>	{return SimpleComparator<T>::equals(value(), other);			}
+	inline bool operator==(Box const& other) const
+	requires Type::Comparator::Equals<DataType, DataType>	{return SimpleComparator<T>::equals(value(), other.value());	}
 
 	inline OrderType operator<=>(T const& other) const
-	requires Type::Comparable::Threeway<DataType, DataType> {return value() <=> other;			}
+	requires Type::Comparator::Threeway<DataType, DataType>	{return SimpleComparator<T>::compare(value(), other);			}
 	inline OrderType operator<=>(Box const& other) const
-	requires Type::Comparable::Threeway<DataType, DataType> {return value() <=> other.value();	}
+	requires Type::Comparator::Threeway<DataType, DataType>	{return SimpleComparator<T>::compare(value(), other.value());	}
 
 	SelfType& operator++() requires Type::PreIncrementable<DataType>									{this->wait(); ++data;					}
 	DataType operator++(int) requires Type::PostIncrementable<DataType>									{this->wait(); T v = data++; return v;	}

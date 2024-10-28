@@ -1,7 +1,7 @@
 #ifndef MAKAILIB_GRAPH_CAMERA_H
 #define MAKAILIB_GRAPH_CAMERA_H
 
-#include "../../ctl/ctl.hpp"
+#include "../../compat/ctl.hpp"
 
 namespace Makai::Graph {
 	struct OrthographicData {
@@ -11,7 +11,7 @@ namespace Makai::Graph {
 	};
 
 	constexpr Matrix4x4 asMatrix(OrthographicData const& data, float const& zNear, float const& zFar) {
-		return MatMath::ortho(
+		return Math::ortho(
 			data.origin.x,
 			data.size.x,
 			data.size.y,
@@ -37,7 +37,7 @@ namespace Makai::Graph {
 			Vector3 camAt = at;
 			if (relativeToEye)
 				camAt += eye;
-			return MatMath::lookAt(
+			return Math::lookAt(
 				eye,
 				camAt,
 				up
@@ -46,14 +46,14 @@ namespace Makai::Graph {
 
 		constexpr Matrix4x4 projection() const {
 			if (ortho.strength == 0.0)
-				return MatMath::perspective(
+				return Math::perspective(
 					fov,
 					aspect.tangent(),
 					zNear,
 					zFar
 				);
 			if (ortho.strength == 1.0)
-				return MatMath::ortho(
+				return Math::ortho(
 					ortho.origin.x,
 					ortho.size.x,
 					ortho.size.y,
@@ -61,7 +61,7 @@ namespace Makai::Graph {
 					zNear,
 					zFar
 				);
-			Matrix4x4 om = MatMath::ortho(
+			Matrix4x4 om = Math::ortho(
 				ortho.origin.x,
 				ortho.size.x,
 				ortho.size.y,
@@ -69,13 +69,13 @@ namespace Makai::Graph {
 				zNear,
 				zFar
 			);
-			Matrix4x4 pm = MatMath::perspective(
+			Matrix4x4 pm = Math::perspective(
 				fov,
 				aspect.tangent(),
 				zNear,
 				zFar
 			);
-			return MatMath::lerp<Matrix4x4>(pm, om, ortho.strength);
+			return Math::lerp<Matrix4x4>(pm, om, ortho.strength);
 		}
 
 		constexpr static Camera3D from2D(Vector2 const& size) {
@@ -127,7 +127,7 @@ namespace Makai::Graph {
 		}
 
 		constexpr GimbalCamera3D& fromCamera3D(Camera3D const& cam) {
-			auto crot	= MatMath::getEulerAnglesYXZ(cam.matrix());
+			auto crot	= Math::getEulerAnglesYXZ(cam.matrix());
 			position	= cam.eye;
 			rotation	= Vector3(crot.x, crot.y, crot.z);
 			aspect		= cam.aspect;

@@ -2,12 +2,12 @@
 
 #include "uniform.hpp"
 
-using namespace Makai::Graph;
+using namespace Makai; using namespace Makai::Graph;
 
 Uniform::Uniform(String const& _name, uint const& _id):
 	name(_name),
 	id(_id),
-	location(glGetUniformLocation(_id, _name.c_str()))
+	location(glGetUniformLocation(_id, _name.cstr()))
 {}
 
 void Uniform::set(bool const& value, usize const& offset) const {
@@ -82,21 +82,21 @@ void Uniform::setArray(float* const& values, usize const& count, usize const& of
 
 void Uniform::setArray(Vector2* const& values, usize const& count, usize const& offset) const {
 	this->offset = 0;
-	for SRANGE(i, 0, count)
+	for (usize i = 0; i < count; ++i)
 		glUniform2f(getUniformArray(i) + offset, values[i].x, values[i].y);
 	this->offset = count;
 }
 
 void Uniform::setArray(Vector3* const& values, usize const& count, usize const& offset) const {
 	this->offset = 0;
-	for SRANGE(i, 0, count)
+	for (usize i = 0; i < count; ++i)
 		glUniform3f(getUniformArray(i)+ offset, values[i].x, values[i].y, values[i].z);
 	this->offset = count;
 }
 
 void Uniform::setArray(Vector4* const& values, usize const& count, usize const& offset) const {
 	this->offset = 0;
-	for SRANGE(i, 0, count)
+	for (usize i = 0; i < count; ++i)
 		glUniform4f(getUniformArray(i)+ offset, values[i].x, values[i].y, values[i].z, values[i].w);
 	this->offset = count;
 }
@@ -110,7 +110,7 @@ uint Uniform::getUniform() const {
 }
 
 uint Uniform::getUniform(String const& append) const {
-	return glGetUniformLocation(id, (name + append).c_str());
+	return glGetUniformLocation(id, (name + append).cstr());
 }
 
 Uniform Uniform::operator[](String const& member) const {

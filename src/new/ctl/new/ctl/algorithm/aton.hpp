@@ -2,7 +2,7 @@
 #define CTL_ALGORITHM_ATOI_H
 
 #include "transform.hpp"
-#include "memory.hpp"
+#include "../memory/memory.hpp"
 #include "../cmath.hpp"
 #include "../namespace.hpp"
 #include "../typetraits/decay.hpp"
@@ -14,7 +14,7 @@ namespace Impl {
 	namespace A2I {
 		template<Type::ASCII T>
 		constexpr ssize toDigit(T c) {
-			c = toLower(c);
+			c = toLowerChar(c);
 			if (c >= 'a')
 				return c - 'a' + 10;
 			return c - '0';
@@ -24,7 +24,7 @@ namespace Impl {
 		constexpr bool isDigitInBase(T const& c, usize const& base) {
 			if (c == '.') return true;
 			ssize const v = toDigit(c);
-			return 0 <= v && v < base;
+			return 0 <= v && v < ssize(base);
 		}
 
 		template<Type::ASCII T>
@@ -100,13 +100,16 @@ constexpr bool atoi(T const* const& str, usize size, I& out, usize base = 0) {
 		size == 2
 	&&	Impl::A2I::isSign(str[0])
 	&&	Impl::A2I::isDigitInBase(str[1], base)
-	) return Impl::A2I::getSignAndConsume(s) * Impl::A2I::toDigit(s[0]);
+	) {
+		out = Impl::A2I::getSignAndConsume<T>(s) * Impl::A2I::toDigit<T>(s[0]);
+		return true;
+	}
 	// Try and get sign of number
 	ssize sign = Impl::A2I::getSignAndConsume(s);
-	if (size < s-str) return false;
+	if (ssize(size) < s-str) return false;
 	// Try and get base of number
 	base = Impl::A2I::getBaseAndConsume(s, base);
-	if (size < s-str) return false;
+	if (ssize(size) < s-str) return false;
 	// Remove difference from size
 	size -= s-str;
 	// Check if number is in its intended base
@@ -120,15 +123,15 @@ constexpr bool atoi(T const* const& str, usize size, I& out, usize base = 0) {
 template<Type::Integer I, Type::ASCII T, usize S>
 constexpr bool atoi(Decay::AsType<const T[S]> const& str, I& out) {
 	static_assert(S-1 > 0, "String cannot be empty!");
-	return ::CTL::atoi<I>(str, S - 1, out);
+	return ::CTL::atoi<I, T>(str, S - 1, out);
 }
 
 template<Type::Real F, Type::ASCII T>
 constexpr bool atof(T const* const& str, usize size, F& out) {
 	// If character is appended to the end, exclude it
 	if (
-		toLower(str[size-1]) == 'f'
-	||	toLower(str[size-1]) == 'd'
+		toLowerChar(str[size-1]) == 'f'
+	||	toLowerChar(str[size-1]) == 'd'
 	) --size;
 	// Find separator character
 	usize sep = 0;
@@ -159,7 +162,7 @@ constexpr bool atof(T const* const& str, usize size, F& out) {
 template<Type::Real F, Type::ASCII T, usize S>
 constexpr bool atof(Decay::AsType<const T[S]> const& str, F& out) {
 	static_assert(S-1 > 0, "String cannot be empty!");
-	return ::CTL::atof<F>(str, S - 1, out);
+	return ::CTL::atof<F, T>(str, S - 1, out);
 }
 
 // Based off of https://stackoverflow.com/a/3987783
@@ -229,9 +232,9 @@ constexpr ssize ftoa(F val, T* buf, usize bufSize, usize const& precision = size
 	// Fill in whole part of number to string, return if error
 	if ((lhs = ::CTL::itoa<ssize>(whole, buf, bufSize)) == -1) return -1;
 	// Check if buffer is not full, else append comma and re-check
-	if (lhs >= bufSize) return lhs;
+	if (usize(lhs) >= bufSize) return lhs;
 	buf[lhs++] = '.';
-	if (lhs >= bufSize) return lhs;
+	if (usize(lhs) >= bufSize) return lhs;
 	// Fill in fractional part, returning if error
 	if ((rhs = ::CTL::itoa<ssize>(frac, buf+lhs, bufSize-lhs)) == -1) return -1;
 	// Return full size of number string

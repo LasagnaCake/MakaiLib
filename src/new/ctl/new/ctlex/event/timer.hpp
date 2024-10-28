@@ -34,12 +34,12 @@ public:
 
 	/// Delay + repeat constructor.
 	Timer(float const& delay, bool const& repeat = false, bool const& manual = false)
-	: PeriodicTimer(manual), delay(delay), repeat(repeat) {
+	: PeriodicTimer(manual), repeat(repeat), delay(delay) {
 	}
 
 	/// Signal + delay + repeat constructor.
 	Timer(Signal<> const& onSignal, usize const& delay = 1, bool const& repeat = false, bool const& manual = false)
-	: PeriodicTimer(manual), delay(delay), repeat(repeat), onSignal(onSignal) {
+	: PeriodicTimer(manual), onSignal(onSignal), repeat(repeat), delay(delay) {
 	}
 
 	/// Copy constructor.

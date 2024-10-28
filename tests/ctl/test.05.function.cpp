@@ -3,6 +3,8 @@
 
 using CTL::Function, CTL::String;
 
+using namespace CTL::Literals::Text;
+
 bool isPowerOf2(int x) {
     return x > 0 && !(x & (x-1));
 }
@@ -17,14 +19,14 @@ void testFunction() {
 	for(usize i = 1; i <= 10; ++i)
 		DEBUGLN("f3: ", i, " -> ", f3(i));
 	DEBUGLN("f4 {");
-	DEBUGLN("+---+---", String("--------") * 10, "+");
+	DEBUGLN("+---+---", "--------"s * 10, "+");
 	DEBUG("| x |");
 	for(usize i = 2; i <= 11; ++i)
 		DEBUG("\t", i);
 	DEBUGLN("\t|");
-	DEBUGLN("+---+---", String("--------") * 10, "+");
+	DEBUGLN("+---+---", "--------"s * 10, "+");
 	for(usize i = 2; i <= 16; ++i) {
-		DEBUG("|", i, String(" ") * ((i<10) ? 1 : 0), " |");
+		DEBUG("|", i, " "s * ((i<10) ? 1 : 0), " |");
 		for(usize j = 2; j <= 11; ++j) {
 			if (isPowerOf2(f4(i, j)))
 				DEBUG("\033[7;5m");
@@ -33,7 +35,7 @@ void testFunction() {
 		}
 		DEBUGLN("\033[0m\t|");
 	}
-	DEBUGLN("+---+---", String("--------") * 10, "+");
+	DEBUGLN("+---+---", "--------"s * 10, "+");
 	DEBUGLN("}");
 }
 

@@ -10,20 +10,47 @@
 #include "function.hpp"
 #include "../algorithm/sort.hpp"
 #include "../algorithm/reverse.hpp"
-#include "../algorithm/memory.hpp"
+#include "../adapter/comparator.hpp"
+#include "../memory/memory.hpp"
 
 CTL_NAMESPACE_BEGIN
 
-template<class TData, Type::Integer TIndex = usize>
+template<
+	class TData,
+	Type::Integer TIndex = usize,
+	template <class> class TAlloc = HeapAllocator
+>
+struct List;
+
+namespace Type::Container {
+	namespace Impl {
+		template<class T>
+		struct IsList;
+
+		template<template <class, class, template <class> class> class T0, class T1, class T2, template <class> class T3>
+		struct IsList<T0<T1, T2, T3>>: BooleanConstant<Type::Equal<T0<T1, T2, T3>, ::CTL::List<T1, T2, T3>>> {};
+	}
+
+	template<class T>
+	concept List = Impl::IsList<T>::value;
+}
+
+template<
+	class TData,
+	Type::Integer TIndex,
+	template <class> class TAlloc
+>
 struct List:
 	Iteratable<TData, TIndex>,
 	SelfIdentified<List<TData, TIndex>>,
 	ListInitializable<TData>,
+	Allocatable<TAlloc, TData>,
 	Ordered {
 public:
 	using Iteratable		= ::CTL::Iteratable<TData, TIndex>;
 	using SelfIdentified	= ::CTL::SelfIdentified<List<TData, TIndex>>;
 	using ListInitializable	= ::CTL::ListInitializable<TData>;
+	using Allocatable		= ::CTL::Allocatable<TAlloc, TData>;
 
 	using
 		typename Iteratable::DataType,
@@ -54,8 +81,14 @@ public:
 		typename ListInitializable::ArgumentListType
 	;
 
+	using
+		typename Allocatable::AllocatorType
+	;
+
 	using PredicateType	= Function<bool(ConstReferenceType)>;
 	using CompareType	= Function<bool(ConstReferenceType, ConstReferenceType)>;
+
+	using ComparatorType = SimpleComparator<DataType>;
 
 	constexpr List() {invoke(1);}
 
@@ -73,6 +106,13 @@ public:
 	constexpr List(ArgumentListType const& values) {
 		invoke(values.size());
 		for (DataType const& v: values) pushBack(v);
+	}
+	
+	template<typename... Args>
+	constexpr List(Args const&... args)
+	requires (... && Type::Convertible<Args, DataType>) {
+		invoke(sizeof...(Args));
+		(..., pushBack(args));
 	}
 
 	template<SizeType S>
@@ -95,6 +135,21 @@ public:
 		magnitude		= ::CTL::move(other.magnitude);
 		other.contents	= nullptr;
 	}
+
+	template<Type::Convertible<DataType> T2>
+	constexpr explicit List(ForwardIterator<T2 const> const& begin, ForwardIterator<T2 const> const& end) {
+		invoke(end - begin + 1);
+		copy(begin, contents, end - begin);
+		count = end - begin;
+	}
+
+	template<Type::Convertible<DataType> T2>
+	constexpr explicit List(ReverseIterator<T2 const> const& begin, ReverseIterator<T2 const> const& end) {
+		invoke(end - begin + 1);
+		for (auto i = begin; i != end; ++i)
+			pushBack(*i);
+		count = end - begin;
+	}
 	
 	constexpr List(ConstIteratorType const& begin, ConstIteratorType const& end) {
 		invoke(end - begin + 1);
@@ -104,24 +159,38 @@ public:
 
 	constexpr List(ConstReverseIteratorType const& begin, ConstReverseIteratorType const& end) {
 		invoke(end - begin + 1);
-		for (IteratorType i = begin; i != end; ++i)
-			pushBack(i);
+		for (auto i = begin; i != end; ++i)
+			pushBack(*i);
 		count = end - begin;
 	}
 
+	constexpr List(ConstPointerType const& start, SizeType const& size): List(start, start + size) {}
+
 	template<class T>
-	constexpr List(T const& other)
+	constexpr explicit List(T const& other)
 	requires requires (T t) {
-		{t.begin()} -> Type::Equal<IteratorType>;
-		{t.end()} -> Type::Equal<IteratorType>;
+		{t.begin()} -> Type::Convertible<IteratorType>;
+		{t.end()} -> Type::Convertible<IteratorType>;
+		requires !Type::Constructible<T, ConstIteratorType, ConstIteratorType>;
+		requires !Type::Subclass<T, SelfType>;
 	}: List(other.begin(), other.end()) {}
 
 	template<class T>
-	constexpr List(List<T, SizeType> const& other)
+	constexpr explicit List(T const& other)
+	requires requires (T t) {
+		{*t.data()} -> Type::Convertible<DataType>;
+		{t.size()} -> Type::Convertible<SizeType>;
+		requires !Type::Constructible<T, ConstIteratorType, ConstIteratorType>;
+		requires !Type::Container::List<T>;
+	}: List(other.data(), other.size()) {}
+
+	template<class T>
+	constexpr explicit List(List<T, SizeType> const& other)
 	requires requires (T t) {
 		{t.begin()} -> Type::Equal<IteratorType>;
 		{t.end()} -> Type::Equal<IteratorType>;
-		requires Type::Constructible<DataType, IteratorType, IteratorType>;
+		requires Type::Constructible<DataType, ConstIteratorType, ConstIteratorType>;
+		requires !Type::Subclass<T, SelfType>;
 	} {
 		invoke(other.size());
 		for (auto& v: other)
@@ -247,33 +316,35 @@ public:
 	}
 
 	constexpr IndexType find(DataType const& value) const
-	requires Type::Comparable::Equals<DataType, DataType> {
+	requires Type::Comparator::Equals<DataType, DataType> {
+		if (empty()) return -1;
 		auto const start = begin(), stop = end();
 		for (auto i = start; i != stop; ++i)
-			if ((*i) == value)
+			if (ComparatorType::equals(*i, value))
 				return i-start;
 		return -1;
 	}
 
 	constexpr IndexType rfind(DataType const& value) const
-	requires Type::Comparable::Equals<DataType, DataType> {
+	requires Type::Comparator::Equals<DataType, DataType> {
+		if (empty()) return -1;
 		auto const start = rbegin(), stop = rend();
 		for (auto i = start; i != stop; ++i)
-			if ((*i) == value)
+			if (ComparatorType::equals(*i, value))
 				return count-(i-start)-1;
 		return -1;
 	}
 
 	constexpr IndexType bsearch(DataType const& value) const
-	requires (Type::Comparable::Threeway<DataType, DataType>) {
+	requires (Type::Comparator::Threeway<DataType, DataType>) {
 		if (empty()) return -1;
-		if (OrderType(front() <=> value) == Order::EQUAL) return 0;
-		if (OrderType(back() <=> value) == Order::EQUAL) return size() - 1;
+		if (ComparatorType::equals(front(), value)) return 0;
+		if (ComparatorType::equals(back(), value)) return size() - 1;
 		IndexType lo = 0, hi = size() - 1, i = -1;
 		SizeType loop = 0;
-		while (hi >= lo & loop < size()) {
+		while (hi >= lo && loop < size()) {
 			i = lo + (hi - lo) / 2;
-			switch(OrderType(value <=> *(cbegin() + i))) {
+			switch(ComparatorType::compare(value, *(cbegin() + i))) {
 				case Order::LESS:		hi = i-1; break;
 				case Order::EQUAL:		return i;
 				case Order::GREATER:	lo = i+1; break;
@@ -284,42 +355,91 @@ public:
 		return -1;
 	}
 
-	constexpr SelfType& remove(IndexType const& index) {
+	constexpr SelfType& remove(IndexType index) {
 		assertIsInBounds(index);
-		copy(&contents[index], &contents[index-1], count-index);
-		MX::destruct(contents+count-1);
-		return *this;
+		wrapBounds(index, count);
+		return squash(index);
 	}
 
-	constexpr SelfType& erase(IndexType const& index) {
-		remove(index);
-		count--;
-		return *this;
+	constexpr SizeType removeLike(DataType const& value)
+	requires Type::Comparator::Equals<DataType, DataType> {
+		if (empty()) return 0;
+		SizeType removed = 0;
+		SizeType const ocount = count;
+		auto const start = begin();
+		for(auto i = begin(); i < end();)
+			if (ComparatorType::equals(*i, value)) {
+				squash(i-start);
+				++removed;
+				--count;
+			} else ++i;
+		count = ocount;
+		return removed;
+	}
+
+	constexpr SizeType removeUnlike(DataType const& value)
+	requires Type::Comparator::Equals<DataType, DataType> {
+		if (empty()) return 0;
+		SizeType removed = 0;
+		SizeType const ocount = count;
+		auto const start = begin();
+		for(auto i = begin(); i < end();)
+			if (!ComparatorType::equals(*i, value)) {
+				squash(i-start);
+				++removed;
+				--count;
+			} else ++i;
+		count = ocount;
+		return removed;
 	}
 
 	template<class TPredicate>
 	constexpr SizeType removeIf(TPredicate const& predicate) {
+		if (empty()) return 0;
 		SizeType removed = 0;
+		SizeType const ocount = count;
 		auto const start = begin();
-		for(auto i = begin(); i != end();)
+		for(auto i = begin(); i < end();)
 			if (predicate(*i)) {
-				remove(i-start+1);
-				removed++;
+				squash(i-start);
+				++removed;
+				--count;
 			} else ++i;
+		count = ocount;
 		return removed;
 	}
 
 	template<class TPredicate>
 	constexpr SizeType removeIfNot(TPredicate const& predicate) {
+		if (empty()) return 0;
 		SizeType removed = 0;
+		SizeType const ocount = count;
 		auto const start = begin();
-		for(auto i = start; i != end() && removed < count;) {
+		for(auto i = start; i < end();)
 			if (!predicate(*i)) {
-				remove(i-start+1);
-				removed++;
+				squash(i-start);
+				++removed;
+				--count;
 			} else ++i;
-		}
+		count = ocount;
 		return removed;
+	}
+
+	constexpr SelfType& erase(IndexType const& index) {
+		if (empty()) return 0;
+		remove(index);
+		count--;
+		return *this;
+	}
+
+	constexpr SelfType& eraseLike(DataType const& value) {
+		count -= removeLike(value);
+		return *this;
+	}
+
+	constexpr SelfType& eraseUnlike(DataType const& value) {
+		count -= removeUnlike(value);
+		return *this;
 	}
 
 	template<class TPredicate>
@@ -460,12 +580,12 @@ public:
 	constexpr SizeType empty() const	{return count == 0;	}
 
 	constexpr bool operator==(SelfType const& other) const
-	requires Type::Comparable::Equals<DataType, DataType> {
+	requires Type::Comparator::Equals<DataType, DataType> {
 		return equals(other);
 	}
 
 	constexpr OrderType operator<=>(SelfType const& other) const
-	requires Type::Comparable::Threeway<DataType, DataType> {
+	requires Type::Comparator::Threeway<DataType, DataType> {
 		return compare(other);
 	}
 
@@ -479,40 +599,40 @@ public:
 	}
 
 	constexpr SizeType equals(SelfType const& other) const
-	requires Type::Comparable::Equals<DataType, DataType> {
+	requires Type::Comparator::Equals<DataType, DataType> {
 		bool result = true;
-		IndexType i = 0;
+		SizeType i = 0;
 		while (result) {
 			if (i == count || i == other.count)
 				return count == other.count;
-			result = contents[i] == other.contents[i];
+			result = ComparatorType::equals(contents[i], other.contents[i]);
 			++i;
 		}
 		return result;
 	}
 
 	constexpr OrderType compare(SelfType const& other) const
-	requires Type::Comparable::Threeway<DataType, DataType> {
+	requires Type::Comparator::Threeway<DataType, DataType> {
 		OrderType result = Order::EQUAL;
-		IndexType i = 0;
+		SizeType i = 0;
 		while (result == Order::EQUAL) {
 			if (i == count || i == other.count)
 				return count <=> other.count;
-			result = contents[i] <=> other.contents[i];
+			result = ComparatorType::compare(contents[i], other.contents[i]);
 			++i;
 		}
 		return result;
 	}
 
 	constexpr SizeType disparity(SelfType const& other) const
-	requires Type::Comparable::NotEquals<DataType, DataType> {
+	requires Type::Comparator::Equals<DataType, DataType> {
 		SizeType
 			diff	= 0,
 			max		= (count > other.count ? count : other.count),
 			min		= (count < other.count ? count : other.count)
 		;
 		for (SizeType i = 0; i < max; ++i)
-			if (contents[i] != other.contents[i]) ++diff;
+			if (!ComparatorType::equals(contents[i], other.contents[i])) ++diff;
 		return diff + (max - min);
 	}
 
@@ -565,7 +685,7 @@ public:
 
 	template<class TProcedure>
 	constexpr SelfType transformed(TProcedure const& fun) const {
-		return SelfType(*this).transform();
+		return SelfType(*this).transform(fun);
 	}
 
 	template<class TPredicate>
@@ -598,7 +718,7 @@ public:
 			bool miss = false;
 			for(SizeType j = count - 1; j >= 0; --j) {
 				if (i == j) break;
-				if (miss = !compare(contents[i], contents[j]))
+				if ((miss = !compare(contents[i], contents[j])))
 					break;
 			}
 			if (!miss) result.pushBack(contents[i]);
@@ -634,6 +754,8 @@ public:
 
 	constexpr bool tight() const {return count == maximum;}
 
+	constexpr AllocatorType& allocator() {return alloc;}
+
 	friend constexpr void swap(SelfType& a, SelfType& b) noexcept {
 		swap(a.contents, b.contents);
 		swap(a.maximum, b.maximum);
@@ -643,6 +765,14 @@ public:
 
 private:
 	using Iteratable::wrapBounds;
+
+	constexpr SelfType& squash(SizeType const& i) {
+		if (!count) return *this;
+		if (count > 1 && i < count-1)
+			copy(contents + i + 1, contents + i, count-i-1);
+		MX::destruct(contents+count-1);
+		return *this;
+	}
 
 	constexpr void dump() {
 		if (!contents) return;
@@ -659,20 +789,20 @@ private:
 		}
 	}
 
-	constexpr static void memdestroy(PointerType const& p, SizeType const& sz) {
+	constexpr void memdestroy(PointerType const& p, SizeType const& sz) {
 		memdestruct(p, sz);
-		MX::free<DataType>(p);
+		alloc.deallocate(p);
 	}
 
-	constexpr static DataType* memcreate(SizeType const& sz) {
-		return MX::malloc<DataType>(sz);
+	constexpr DataType* memcreate(SizeType const& sz) {
+		return alloc.allocate(sz);
 	}
 
-	constexpr static void memresize(DataType*& data, SizeType const& sz, SizeType const& oldsz, SizeType const& count) {
+	constexpr void memresize(DataType*& data, SizeType const& sz, SizeType const& oldsz, SizeType const& count) {
 		if constexpr(Type::Primitive<DataType>)
-			data = MX::realloc<DataType>(data, sz);
+			alloc.resize(data, sz);
 		else {
-			DataType* ndata = MX::malloc<DataType>(sz);
+			DataType* ndata = alloc.allocate(sz);
 			copy(data, ndata, count < sz ? count : sz);
 			memdestroy(data, count);
 			data = ndata;
@@ -701,7 +831,7 @@ private:
 		magnitude = 0;
 		SizeType const order = (sizeof(SizeType) * 8)-1;
 		for (SizeType i = 1; i <= order; ++i) {
-			magnitude = 1 << order - i;
+			magnitude = 1 << (order - i);
 			if ((maximum >> (order - i)) & 1) {
 				magnitude <<= 1;
 				return *this;
@@ -745,14 +875,18 @@ private:
 		throw NonexistentValueException("Container is empty!");
 	}
 
-	SizeType	magnitude	= 1;
-	SizeType	maximum		= 0;
-	SizeType	count		= 0;
-	DataType*	contents	= nullptr;
+	SizeType		magnitude	= 1;
+	SizeType		maximum		= 0;
+	SizeType		count		= 0;
+	DataType*		contents	= nullptr;
+
+	AllocatorType	alloc;
 };
 
 template <Type::Integer TIndex = usize>
 using BinaryData = List<uint8, TIndex>;
+
+static_assert(Type::Container::List<List<int>>);
 
 CTL_NAMESPACE_END
 

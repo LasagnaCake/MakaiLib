@@ -4,12 +4,12 @@ using Nlohmann = Makai::JSON::Extern::Nlohmann;
 
 namespace Extern = Makai::JSON::Extern;
 
-Makai::JSON::JSONView::JSONView(Extern::JSONData& _data, String const& _name): DataView(_data), cdata(_data), name(_name)	{}
-Makai::JSON::JSONView::JSONView(JSONView const& other): DataView(other), cdata(other.view()), name(other.name)				{}
-Makai::JSON::JSONView::JSONView(JSONView&& other): DataView(other), cdata(other.view()), name(other.name)					{}
+Makai::JSON::JSONView::JSONView(Extern::JSONData& _data, String const& _name): View(_data), cdata(_data), name(_name)	{}
+Makai::JSON::JSONView::JSONView(JSONView const& other): View(other), cdata(other.view()), name(other.name)				{}
+Makai::JSON::JSONView::JSONView(JSONView&& other): View(other), cdata(other.view()), name(other.name)					{}
 
 Makai::JSON::JSONView::JSONView(Extern::JSONData const& _data, String const& _name):
-	DataView(dummy),
+	View(dummy),
 	cdata(_data),
 	dummy(_data),
 	name(_name) {}
@@ -17,23 +17,23 @@ Makai::JSON::JSONView::JSONView(Extern::JSONData const& _data, String const& _na
 Makai::JSON::JSONView Makai::JSON::JSONView::operator[](String const& key) {
 	if (isNull()) view() = Nlohmann::object();
 	else if (!isObject()) throw Error::InvalidAction("Parameter '" + name + "' is not an object!");
-	return Makai::JSON::JSONView(view()[key], name + "/" + key);
+	return Makai::JSON::JSONView(view()[key.stdView()], name + "/" + key);
 }
 
 const Makai::JSON::JSONView Makai::JSON::JSONView::operator[](String const& key) const {
 	if (!isObject()) throw Error::InvalidAction("Parameter '" + name + "' is not an object!");
-	return Makai::JSON::JSONView(cdata[key], name + "/" + key);
+	return Makai::JSON::JSONView(cdata[key.stdView()], name + "/" + key);
 }
 
-Makai::JSON::JSONView Makai::JSON::JSONView::operator[](size_t const& index) {
+Makai::JSON::JSONView Makai::JSON::JSONView::operator[](usize const& index) {
 	if (isNull()) view() = Nlohmann::array();
 	else if (!isArray()) throw Error::InvalidAction("Parameter '" + name + "' is not an array!");
-	return Makai::JSON::JSONView(view()[index], ::toString(name, "[", index, "]"));
+	return Makai::JSON::JSONView(view()[index], CTL::toString(name, "[", index, "]"));
 }
 
-const Makai::JSON::JSONView Makai::JSON::JSONView::operator[](size_t const& index) const {
+const Makai::JSON::JSONView Makai::JSON::JSONView::operator[](usize const& index) const {
 	if (!isArray()) throw Error::InvalidAction("Parameter '" + name + "' is not an array!");
-	return Makai::JSON::JSONView(cdata[index], ::toString(name, "[", index, "]"));
+	return Makai::JSON::JSONView(cdata[index], CTL::toString(name, "[", index, "]"));
 }
 
 /*template<typename T>
@@ -47,13 +47,13 @@ Makai::JSON::JSONView& Makai::JSON::JSONView::operator=(Makai::JSON::JSONView co
 	return (*this);
 }
 
-Decay::AsType<Extern::JSONData> Makai::JSON::JSONView::json() const {
+CTL::Decay::AsType<Extern::JSONData> Makai::JSON::JSONView::json() const {
 	return view();
 }
 
-String Makai::JSON::JSONView::getName() const {return name;}
+CTL::String Makai::JSON::JSONView::getName() const {return name;}
 
-String Makai::JSON::JSONView::toString(int const& indent, char const& ch) const {
+CTL::String Makai::JSON::JSONView::toString(int const& indent, char const& ch) const {
 	return view().dump(indent, ch, false, Nlohmann::error_handler_t::replace);
 }
 
@@ -91,12 +91,12 @@ Makai::JSON::JSONValue Makai::JSON::object(String const& name) {return JSONValue
 Makai::JSON::JSONValue Makai::JSON::array(String const& name) {return JSONValue(name, Nlohmann::array());}
 
 Makai::JSON::JSONData Makai::JSON::parse(String const& json) try {
-	return Extern::JSONData::parse(json);
+	return Extern::JSONData::parse(json.stdView());
 } catch (Nlohmann::exception const& e) {
 	throw Error::FailedAction(
 		"Failed at parsing JSON!",
 		__FILE__,
-		::toString(__LINE__),
+		CTL::toString(__LINE__),
 		"parseJSON",
 		e.what(),
 		"Please check to see if values are correct!"

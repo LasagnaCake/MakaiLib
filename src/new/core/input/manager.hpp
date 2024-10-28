@@ -2,6 +2,7 @@
 #define MAKAI_CORE_INPUT_MANAGER_H
 
 #include "buttons.hpp"
+#include "../../compat/ctl.hpp"
 #include "../extern.hpp"
 #include "../display.hpp"
 
@@ -25,8 +26,8 @@ namespace Makai::Input {
 	* WARNING: Controller input is currently unimplemented!
 	*/
 	class Manager {
-		using KeyBuffer			= HashMap<KeyCode, usize>;
-		using MouseButtonBuffer	= HashMap<MouseCode, usize>;
+		using KeyBuffer			= Map<KeyCode, usize>;
+		using MouseButtonBuffer	= Map<MouseCode, usize>;
 
 		struct MouseBuffer {
 			MouseState global;

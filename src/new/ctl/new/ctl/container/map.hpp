@@ -25,12 +25,18 @@ struct Collected {
 	typedef TPair<TKey, TValue>	PairType;
 };
 
-template<class TKey, class TValue, Type::Integer TIndex = usize, bool SORT = true>
+template<
+	class TKey,
+	class TValue,
+	Type::Integer TIndex = usize,
+	bool SORT = true,
+	template <class> class TAlloc = HeapAllocator
+>
 struct BaseSimpleMap:
 	Collected<TKey, TValue, KeyValuePair>,
 	Derived<List<KeyValuePair<TKey, TValue>, TIndex>>,
 	SelfIdentified<BaseSimpleMap<TKey, TValue, TIndex, SORT>>,
-	private List<KeyValuePair<TKey, TValue>, TIndex> {
+	private List<KeyValuePair<TKey, TValue>, TIndex, TAlloc> {
 public:
 	constexpr static bool SORTED = SORT;
 
@@ -53,7 +59,9 @@ public:
 		typename BaseType::SizeType,
 		typename BaseType::IndexType,
 		typename BaseType::IteratorType,
-		typename BaseType::ReverseIteratorType
+		typename BaseType::ReverseIteratorType,
+		typename BaseType::ConstIteratorType,
+		typename BaseType::ConstReverseIteratorType
 	;
 
 	static_assert(!SORTED || Sortable<KeyType>, "Cannot form a sortable map whithout an sortable key!");
@@ -92,6 +100,7 @@ public:
 		BaseType::filter,
 		BaseType::filtered,
 		BaseType::capacity,
+		BaseType::allocator,
 		BaseType::empty
 	;
 
@@ -106,6 +115,14 @@ public:
 
 	template<SizeType N>
 	constexpr explicit BaseSimpleMap(Decay::AsType<PairType[N]> const& values): BaseType(values) {
+		clean();
+		update();
+	}
+
+	template<typename... Args>
+	constexpr BaseSimpleMap(Args const&... args)
+	requires (... && Type::Convertible<Args, PairType>)
+	: BaseType(args...) {
 		clean();
 		update();
 	}
@@ -166,7 +183,7 @@ public:
 		if (OrderType(back().key <=> key) == Order::EQUAL) return size() - 1;
 		IndexType lo = 0, hi = size() - 1, i = -1;
 		SizeType loop = 0;
-		while (hi >= lo & loop < size()) {
+		while (hi >= lo && loop < size()) {
 			i = lo + (hi - lo) / 2;
 			switch(OrderType(key <=> (cbegin() + i)->key)) {
 				case Order::LESS:		hi = i-1; break;
@@ -223,7 +240,7 @@ public:
 
 	constexpr SelfType& remove(KeyType const& key) {
 		IndexType i = find(key);
-		if (i == -1) return *	this;
+		if (i == -1) return *this;
 		BaseType::remove(i);
 		return *this;
 	}
@@ -312,17 +329,40 @@ private:
 
 #undef NOT_IN_MAP
 
+namespace Type::Container {
+	namespace Impl {
+		template<class T>
+		struct IsSimpleMap;
+
+		template<
+			template <class, class, class, bool, template <class> class> class T0,
+			class T1,
+			class T2,
+			class T3,
+			bool B4,
+			template <class> class T5
+		>
+		struct IsSimpleMap<T0<T1, T2, T3, B4, T5>>:
+			BooleanConstant<
+				Type::Equal<T0<T1, T2, T3, B4, T5>,
+				::CTL::BaseSimpleMap<T1, T2, T3, B4, T5>
+			>> {};
+	}
+
+	template<class T>
+	concept SimpleMap = Impl::IsSimpleMap<T>::value;
+}
+
 /*
 template<class TKey, class TValue, Type::Integer TIndex = usize, class TPair = Pair<TKey, TValue>, class THasher = Hasher>
-struct HashMap:
-	List<TPair<TKey, TValue>, TIndex>,
-	Collected<TKey, TValue, TPair>,
-	SelfIdentified<HashMap<TKey, TValue, TIndex, TPair>>
 requires (
-	Type::Comparable::Threeway<TKey, TKey>
+	Type::Comparator::Threeway<TKey, TKey>
 &&	PairType<TPair>
 &&	Hashable<TKey, THasher>
-) {
+) struct HashMap:
+	List<TPair<TKey, TValue>, TIndex>,
+	Collected<TKey, TValue, TPair>,
+	SelfIdentified<HashMap<TKey, TValue, TIndex, TPair>> {
 
 }
 */

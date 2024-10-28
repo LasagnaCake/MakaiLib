@@ -1,6 +1,6 @@
 #include "effect.hpp"
 
-using namespace Makai::Graph;
+using namespace Makai; using namespace Makai::Graph;
 
 namespace JSON = Makai::JSON;
 
@@ -8,7 +8,7 @@ JSON::JSONData Material::saveImageEffect(Material::Effect::Image& effect, String
 	JSON::JSONData def;
 	def["enabled"] = effect.enabled;
 	if (effect.image && effect.image.exists()) {
-		effect.image.saveToFile(FileSystem::concatenatePath(folder, path));
+		effect.image.saveToFile(OS::FS::concatenate(folder, path));
 		def["image"] = JSON::Extern::JSONData{
 			{"path", path},
 			{"minFilter", (uint)effect.image.minFilter()},

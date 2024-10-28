@@ -1,7 +1,7 @@
 #ifndef MAKAILIB_CORE_DISPLAY_H
 #define MAKAILIB_CORE_DISPLAY_H
 
-#include "../ctl/ctl.hpp"
+#include "../compat/ctl.hpp"
 
 namespace Makai {
 	/// A position on the screen.

@@ -70,21 +70,6 @@ private:
 	inline static usize	count;
 };
 
-template<typename... Args>
-using Procedure		= Functor<void(Args...)>;
-
-template<typename T, typename T2 = T const&>
-using Operation		= Functor<T(T2)>;
-
-template<typename T>
-using Acquisition	= Functor<T()>;
-
-template<typename... Args>
-using Signal	= Procedure<Args...>;
-
-template<typename T = void>
-using Trigger	= Acquisition<bool>;
-
 CTL_NAMESPACE_END
 
 #endif // CTL_CONTAINER_FUNCTOR_H

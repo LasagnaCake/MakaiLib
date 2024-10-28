@@ -1,7 +1,7 @@
 #ifndef MAKAILIB_GRAPH_TEXTURE_H
 #define MAKAILIB_GRAPH_TEXTURE_H
 
-#include "../../ctl/ctl.hpp"
+#include "../../compat/ctl.hpp"
 #include "../../file/json.hpp"
 #include "image.hpp"
 
@@ -136,7 +136,7 @@ namespace Makai::Graph {
 		inline Texture2D&	operator=(decltype(nullptr)) {destroy(); return *this;}
 
 		bool operator==(Texture2D const& other) const;
-		Helper::PartialOrder operator<=>(Texture2D const& other) const;
+		ValueOrder operator<=>(Texture2D const& other) const;
 
 		Texture2D& copyFrom(
 			Texture2D const& other,

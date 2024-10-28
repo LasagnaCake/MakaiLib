@@ -1,6 +1,7 @@
 #include "reference.hpp"
 
-using namespace Makai::Graph;
+using namespace Makai;
+using namespace Makai; using namespace Makai::Graph;
 
 using Makai::Graph::VertexFunction;
 

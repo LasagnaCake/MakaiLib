@@ -54,16 +54,16 @@ struct TestApp: Makai::App {
 					new Makai::Graph::Triangle{{vertices[1], vertices[3], vertices[5]}},
 					new Makai::Graph::Triangle{{vertices[7], vertices[5], vertices[3]}}
 				};
-				cubes[idx].trans.position = Vec3(j-off, 0, i-off) * .5;
-				cubes[idx].trans.rotation = Vec3((float(i)/cubeGrid)*TAU, (float(j)/cubeGrid)*TAU);
+				cubes[idx].trans.position = Makai::Vec3(j-off, 0, i-off) * .5;
+				cubes[idx].trans.rotation = Makai::Vec3((float(i)/cubeGrid)*TAU, (float(j)/cubeGrid)*TAU);
 				cubes[idx].setRenderLayer(0);
 			}
 		DEBUGLN("Done!");
 	}
 
 	void onOpen() override {
-		camera.eye	= Vec3(0, 0, -3);
-		//camera.at	= Vec3(0, -2, 3);
+		camera.eye	= Makai::Vec3(0, 0, -3);
+		//camera.at	= Makai::Vec3(0, -2, 3);
 		camera.zFar	= 1000;
 		getFrameBuffer().material.background = Makai::Graph::Color::GRAY;
 		//Makai::Graph::API::toggle(Makai::Graph::API::Facility::GAF_DEBUG, true);
@@ -76,7 +76,7 @@ struct TestApp: Makai::App {
 
 	float framerate[MAX_FRCOUNT];
 
-	Vec3 crot = 0;
+	Makai::Vec3 crot = 0;
 
 	void onLogicFrame(float delta) {
 		if (frcount < MAX_FRCOUNT)
@@ -85,8 +85,8 @@ struct TestApp: Makai::App {
 			float fravg = 0;
 			for(float& f: framerate) fravg += f;
 			fravg *= (1.0 / (float)MAX_FRCOUNT);
-			fravg = Math::clamp<float>(fravg, 0, maxFrameRate);
-			DEBUGLN("Framerate: ", Helper::floatString(Math::round(fravg, 2), 2));
+			fravg = Makai::Math::clamp<float>(fravg, 0, maxFrameRate);
+			DEBUGLN("Framerate: ", Makai::Format::prettify(Makai::Math::round(fravg, 2), 2, 0));
 			frcount = 0;
 			DEBUGLN(crot.y);
 		}
@@ -104,7 +104,7 @@ struct TestApp: Makai::App {
 			input.isButtonDown(Makai::Input::KeyCode::KC_LEFT_SHIFT)
 			- input.isButtonDown(Makai::Input::KeyCode::KC_SPACE)
 		) / 30.0;
-		crot += Vec3(
+		crot += Makai::Vec3(
 			(
 				input.isButtonDown(Makai::Input::KeyCode::KC_UP)
 				- input.isButtonDown(Makai::Input::KeyCode::KC_DOWN)
@@ -114,13 +114,13 @@ struct TestApp: Makai::App {
 				- input.isButtonDown(Makai::Input::KeyCode::KC_LEFT)
 			) / 60.0
 		);
-		crot.x = Math::clamp<float>(crot.x, -2, 2);
-		camera.at = Vec3(
+		crot.x = Makai::Math::clamp<float>(crot.x, -2, 2);
+		camera.at = Makai::Vec3(
 			sin(crot.y),
 			crot.x,
 			cos(crot.y)
 		);
-		//camera.at = VecMath::angleV3(crot, VecMath::Axis::POS_Z);
+		//camera.at = Makai::Math::angleV3(crot, Makai::Math::Axis::POS_Z);
 		//camera.at = Vec3(0, 0, 1);
 	}
 };
@@ -130,9 +130,7 @@ int main() {
 		TestApp app;
 		app.maxFrameRate = 60.0;
 		app.run();
-	} catch (Error::Error const& e) {
-		Makai::Popup::showError(e.what());
-	} catch (std::runtime_error const& e) {
+	} catch (Makai::Error::Generic const& e) {
 		Makai::Popup::showError(e.what());
 	}
 	return 0;

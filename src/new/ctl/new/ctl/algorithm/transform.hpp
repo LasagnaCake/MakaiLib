@@ -7,14 +7,14 @@
 CTL_NAMESPACE_BEGIN
 
 template<Type::ASCII T>
-constexpr T toLower(T const& c) {
+constexpr T toLowerChar(T const& c) noexcept {
 	if (c >= 'A' && c <= 'Z')
 		return c - ('a' - 'A');
 	return c;
 }
 
 template<Type::ASCII T>
-constexpr T toUpper(T const& c) noexcept {
+constexpr T toUpperChar(T const& c) noexcept {
 	if (c >= 'a' && c <= 'z')
 		return c + ('a' - 'A');
 	return c;

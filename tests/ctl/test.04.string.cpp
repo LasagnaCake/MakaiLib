@@ -11,6 +11,8 @@ using
 	CTL::TypeInfo
 ;
 
+using namespace CTL::Literals::Text;
+
 void print(String const& str) {
 	DEBUGLN(
 		"S: ",
@@ -85,7 +87,7 @@ void testString() {
 	str = "O! " + str;					print(str);
 	print(str.sliced(2, -3));
 	str.sort();							print(str);
-	str = String("Impedance. Voltage. Current.");
+	str = "Impedance. Voltage. Current."s;
 	print(str);
 	auto sp = str.splitAtFirst(' ');	print(sp);
 	sp = str.splitAtLast(' ');			print(sp);

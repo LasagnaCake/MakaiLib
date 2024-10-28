@@ -6,6 +6,7 @@
 #include "../templates.hpp"
 #include "../container/function.hpp"
 #include "../container/view.hpp"
+#include "../adapter/comparator.hpp"
 #include "thread.hpp"
 
 CTL_NAMESPACE_BEGIN
@@ -83,14 +84,14 @@ public:
 	}
 
 	inline bool operator==(T const& other) const
-	requires Type::Comparable::Equals<DataType, DataType>	{return value() == other;			}
+	requires Type::Comparator::Equals<DataType, DataType>	{return SimpleComparator<T>::equals(value(), other);			}
 	inline bool operator==(Atomic const& other) const
-	requires Type::Comparable::Equals<DataType, DataType>	{return value() == other.value();	}
+	requires Type::Comparator::Equals<DataType, DataType>	{return SimpleComparator<T>::equals(value(), other.value());	}
 
 	inline OrderType operator<=>(T const& other) const
-	requires Type::Comparable::Threeway<DataType, DataType>	{return value() <=> other;			}
+	requires Type::Comparator::Threeway<DataType, DataType>	{return SimpleComparator<T>::compare(value(), other);			}
 	inline OrderType operator<=>(Atomic const& other) const
-	requires Type::Comparable::Threeway<DataType, DataType>	{return value() <=> other.value();	}
+	requires Type::Comparator::Threeway<DataType, DataType>	{return SimpleComparator<T>::compare(value(), other.value());	}
 
 	SelfType& operator++() requires Type::PreIncrementable<DataType>									{capture(); ++data; return release();					}
 	DataType operator++(int) requires Type::PostIncrementable<DataType>									{capture(); DataType v = data++; release(); return v;	}
