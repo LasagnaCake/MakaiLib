@@ -189,6 +189,7 @@ void App::run() {
 	// The logical process
 	auto logicFunc	= [&](float delta)-> void {
 		onLogicFrame(delta);
+		Updateable::process(delta);
 	};
 	// Clear screen
 	Makai::Graph::API::setClearColor(background);

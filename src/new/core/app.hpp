@@ -20,6 +20,12 @@ namespace Makai {
 		;
 	};
 
+	struct App;
+
+	struct Updateable: CTL::Ex::Periodic<App> {
+		virtual void onUpdate(usize const& delta) = 0;
+	};
+
 	struct App {
 	public:
 		/// Initializes the application.
