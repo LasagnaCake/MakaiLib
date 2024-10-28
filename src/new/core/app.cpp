@@ -39,7 +39,7 @@ App::App (
 	String const&		windowTitle,
 	bool const&			fullscreen,
 	AudioConfig const&	audio
-): state(App::AppState::AS_CLOSED) {
+): appState(App::AppState::AS_CLOSED) {
 	// If there is another app open, throw error
 	if (mainApp)
 		throw Error::DuplicateValue(
@@ -179,8 +179,8 @@ inline bool isAppClosing(App::AppState const& state) {
 }
 
 void App::run() {
-	if (isAppClosing(state)) return finalize();
-	state = App::AppState::AS_OPENING;
+	if (isAppClosing(appState)) return finalize();
+	appState = App::AppState::AS_OPENING;
 	// The timer process
 	auto timerFunc	= [&](float delta)-> void {
 		PeriodicTween::process(1.0);
@@ -209,17 +209,17 @@ void App::run() {
 	// Refresh mouse capture stuff
 	input.refreshCapture();
 	// If app is should close, do so
-	if (isAppClosing(state)) return finalize();
+	if (isAppClosing(appState)) return finalize();
 	// Change app state
-	state = App::AppState::AS_RUNNING;
+	appState = App::AppState::AS_RUNNING;
 	// While program is running...
-	while(state == App::AppState::AS_RUNNING) {
+	while(appState == App::AppState::AS_RUNNING) {
 		// Poll events and check if should close
 		while (SDL_PollEvent(&event)) {
 			switch (event.type) {
 				case SDL_QUIT: {
 					DEBUGLN("SDL Event: EXIT");
-					state = App::AppState::AS_CLOSING;
+					appState = App::AppState::AS_CLOSING;
 				} break;
 				case SDL_WINDOWEVENT: {
 					DEBUGLN("SDL Event: WINDOW EVENT");
@@ -295,15 +295,15 @@ void App::run() {
 }
 
 void App::close() {
-	state = App::AppState::AS_CLOSING;
+	appState = App::AppState::AS_CLOSING;
 }
 
 bool App::running() {
-	return (state != App::AppState::AS_CLOSED);
+	return (appState != App::AppState::AS_CLOSED);
 }
 
-App::AppState App::appState() {
-	return (state);
+App::AppState App::state() {
+	return (appState);
 }
 
 void App::setWindowSize(Vector2 const& size) {}
@@ -379,7 +379,7 @@ void App::skipDrawingThisLayer() {skipLayer = true;}
 void App::pushLayerToFrame() {pushToFrame = true;}
 
 void App::finalize() {
-	if (state != App::AppState::AS_CLOSING)
+	if (appState != App::AppState::AS_CLOSING)
 		return;
 	DEBUGLN("\nClosing incoherent program...");
 	// Call final function
@@ -401,7 +401,7 @@ void App::finalize() {
 	SDL_Quit();
 	DEBUGLN("SDL ended!");
 	//exit(0);
-	state = App::AppState::AS_CLOSED;
+	appState = App::AppState::AS_CLOSED;
 }
 
 inline void setDepthTest(bool const& state) {

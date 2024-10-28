@@ -75,7 +75,7 @@ namespace Makai {
 		bool running();
 
 		/// Returns the application's current state.
-		AppState appState();
+		AppState state();
 
 		/// Sets the application's window size.
 		void setWindowSize(Vector2 const& size);
@@ -201,7 +201,7 @@ namespace Makai {
 		usize cycle = 0;
 
 		/// Current execution state.
-		AppState state = AppState::AS_CLOSED;
+		AppState appState = AppState::AS_CLOSED;
 
 		/// The application's window.
 		Extern::Resource window;
