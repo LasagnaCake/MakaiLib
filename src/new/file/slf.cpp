@@ -44,13 +44,14 @@ constexpr bool isValidShaderExtension(String const& path) {
 
 SLFData Makai::SLF::parse(String const& slf, String const& srcFolder, bool const& pathOnly) {
 	DEBUGLN("Parsing SLF file...");
+	// Get file location
+	String dir = OS::FS::directoryFromPath(srcFolder);
+	DEBUGLN("Directory: ", dir);
+	// Parse content
 	String content = slf;
 	// Remove comments and empty lines
 	content = Regex::replace(content, "(:[<]([\\s\\S]*?)[>]:)|(::([\\s\\S]*?)(\\n|\\r|\\r\\n))", "");
 	content = Regex::replace(content, "((\\n|\\r|\\r\\n)+)", "|");
-	// Get file location
-	String dir = OS::FS::getPathDirectory(srcFolder);
-	DEBUGLN("Directory: ", dir);
 	// Initialize type specifier here
 	ShaderType type = ShaderType::ST_INVALID;
 	// Remove specifier for processing
@@ -97,10 +98,10 @@ SLFData Makai::SLF::parse(String const& slf, String const& srcFolder, bool const
 
 SLFData Makai::SLF::loadFile(String const& path, bool const& pathOnly) {
 	// Try and get the file
-	return Makai::SLF::parse(Makai::File::loadText(path), path);
+	return Makai::SLF::parse(Makai::File::loadText(path), path, pathOnly);
 }
 
 SLFData Makai::SLF::getFile(String const& path, bool const& pathOnly) {
 	// Try and get the file
-	return Makai::SLF::parse(Makai::File::getText(path), path);
+	return Makai::SLF::parse(Makai::File::getText(path), path, pathOnly);
 }

@@ -155,7 +155,7 @@ String Makai::File::loadText(String const& path) {
 	try {
 		// The file and its contents
 		String content;
-		std::ifstream file;
+		std::ifstream file;		// This line SEGFAULTS on init() for -o1 and above
 		// Ensure ifstream object can throw exceptions
 		setExceptionMask(file);
 		// Open file
@@ -164,7 +164,7 @@ String Makai::File::loadText(String const& path) {
 		// Read file's buffer contents into stringstream
 		stream << file.rdbuf();
 		// Convert stream into string
-		content = stream.str();
+		content = String(stream.str());
 		// Close file handler
 		file.close();
 		// Return contents
@@ -209,7 +209,7 @@ Makai::File::CSVData Makai::File::loadCSV(String const& path, char const& delimi
 }
 
 void Makai::File::saveBinary(String const& path, CTL::ByteSpan<> const& data) {
-	OS::FS::makeDirectory(OS::FS::getPathDirectory(path));
+	OS::FS::makeDirectory(OS::FS::directoryFromPath(path));
 	// Try and save data
 	try {
 		std::ofstream file(path.cstr(), std::ios::binary);
@@ -230,7 +230,7 @@ void Makai::File::saveBinary(String const& path, BinaryData<> const& data) {
 }
 
 void Makai::File::saveText(String const& path, String const& text) {
-	OS::FS::makeDirectory(OS::FS::getPathDirectory(path));
+	OS::FS::makeDirectory(OS::FS::directoryFromPath(path));
 	// Try and save data
 	try {
 		std::ofstream file(path.cstr(), std::ios::trunc);

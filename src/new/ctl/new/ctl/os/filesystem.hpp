@@ -26,11 +26,11 @@ namespace OS::FS {
 	#endif
 
 	inline bool exists(String const& path) {
-		return fs::exists(path.stdView());
+		return fs::exists(path.std());
 	}
 
 	inline bool isDirectory(String const& dir) {
-		return fs::is_directory(dir.stdView());
+		return fs::is_directory(dir.std());
 	}
 
 	constexpr String standardize(String const& path, PathSeparator const& sep) {
@@ -44,7 +44,7 @@ namespace OS::FS {
 	inline void makeDirectory(String const& dir) {
 		if (dir.isNullOrSpaces()) return;
 		if (!isDirectory(dir) || !exists(dir)) {
-			fs::create_directories(dir.stdView());
+			fs::create_directories(dir.std());
 		}
 	}
 
@@ -65,7 +65,7 @@ namespace OS::FS {
 	}
 
 	inline void remove(String const& dir) {
-		fs::remove_all(dir.stdView());
+		fs::remove_all(dir.std());
 	}
 
 	inline void remove(StringList const& dirs) {
@@ -113,8 +113,8 @@ namespace OS::FS {
 		return res;
 	}
 
-	namespace {
-		constexpr String getPathDirectory(String const& s) {
+	namespace Impl {
+		constexpr String pathDirectory(String const& s) {
 			if (s.empty()) return "";
 			return (s[0] == '/' ? "" : "/") + s;
 		}
@@ -122,7 +122,7 @@ namespace OS::FS {
 
 	template <typename... Args>
 	constexpr String concatenate(String const& root, Args const&... paths) {
-		return root + (... + getPathDirectory(toString(paths)));
+		return root + (... + Impl::pathDirectory(toString(paths)));
 	}
 
 	constexpr String fileExtension(String const& path) {
@@ -134,8 +134,8 @@ namespace OS::FS {
 		return (removeExtension ? result.splitAtLast('.').front() ? result);
 	}*/
 
-	inline String getFileName(String const& path, bool removeExtension = false) {
-		return String(removeExtension ? fs::path(path.stdView()).stem().string() : fs::path(path.stdView()).filename().string());
+	inline String fileName(String const& path, bool removeExtension = false) {
+		return String(removeExtension ? fs::path(path.std()).stem().string() : fs::path(path.std()).filename().string());
 	}
 
 	constexpr String parentDirectory(String const& path) {
@@ -146,7 +146,10 @@ namespace OS::FS {
 	}
 
 	inline String directoryFromPath(String const& path) {
-		return String(fs::path(path.stdView()).remove_filename().string());
+		/*auto const split = path.splitAtLast({'\\', '/'});
+		if (split.size() < 2) return "";
+		return split.front();*/
+		return String(fs::path(path.std()).remove_filename().string());
 	}
 
 	constexpr String childPath(String const& path) {
@@ -263,9 +266,9 @@ namespace OS::FS {
 		static inline Entry getStructure(String const& path) {
 			if (!exists(path))
 				throw Error::InvalidValue("Path does not exist!");
-			if (!isDirectory(path)) return Entry(getFileName(path), path);
+			if (!isDirectory(path)) return Entry(fileName(path), path);
 			return Entry(
-				String(fs::path(path.stdView()).stem().string()),
+				String(fs::path(path.std()).stem().string()),
 				path,
 				getFolderContents(path)
 			);
@@ -274,7 +277,7 @@ namespace OS::FS {
 		static inline List<Entry> getFolderContents(String const& folder) {
 			if (!isDirectory(folder)) return List<Entry>();
 			List<Entry> entries;
-			for (auto const& e: fs::directory_iterator(folder.stdView())) {
+			for (auto const& e: fs::directory_iterator(folder.std())) {
 				String name = String((e.is_directory()) ? e.path().stem().string() : e.path().filename().string());
 				String path = concatenate(folder, name);
 				if (e.is_directory())

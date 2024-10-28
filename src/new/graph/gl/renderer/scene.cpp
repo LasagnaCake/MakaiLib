@@ -93,7 +93,7 @@ Scene::Scene(usize const& layer, String const& path, bool manual): Collection(la
 }
 
 void Scene::extendFromSceneFile(String const& path) {
-	extendFromDefinition(File::getJSON(path), OS::FS::getPathDirectory(path));
+	extendFromDefinition(File::getJSON(path), OS::FS::directoryFromPath(path));
 }
 
 void Scene::saveToSceneFile(
@@ -245,7 +245,7 @@ void Scene::extendFromDefinitionV0(JSON::JSONData def, String const& sourcepath)
 			if (def["path"].isObject()) {
 				for(auto& obj: def["data"]["path"].get<List<JSON::JSONType>>()) {
 					auto r = createObject(
-						OS::FS::getFileName(obj["source"].get<std::string>(), true)
+						OS::FS::fileName(obj["source"].get<std::string>(), true)
 					).value;
 					if (obj["type"].get<std::string>() == "MROD")
 						r->extendFromDefinitionFile(obj["source"].get<std::string>());
