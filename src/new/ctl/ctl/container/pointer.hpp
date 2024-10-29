@@ -13,6 +13,9 @@
 
 CTL_NAMESPACE_BEGIN
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmismatched-new-delete"
+
 template <typename T> concept Pointable = Type::Safe<T>;
 
 namespace Base {
@@ -253,6 +256,8 @@ using Instance	= StrongPointer<T>;
 
 template<Pointable T>
 using Handle	= WeakPointer<T>;
+
+#pragma GCC diagnostic pop
 
 CTL_NAMESPACE_END
 

@@ -15,6 +15,7 @@
 
 CTL_NAMESPACE_BEGIN
 
+
 template<
 	class TData,
 	Type::Integer TIndex = usize,
@@ -35,6 +36,10 @@ namespace Type::Container {
 	concept List = Impl::IsList<T>::value;
 }
 
+/// @brief Dynamic array of objects.
+/// @tparam TData Element type.
+/// @tparam TIndex Index type.
+/// @tparam TAlloc<T> Allocator type.
 template<
 	class TData,
 	Type::Integer TIndex,
@@ -90,12 +95,18 @@ public:
 
 	using ComparatorType = SimpleComparator<DataType>;
 
+	/// Empty constructor.
 	constexpr List() {invoke(1);}
 
+	/// @brief Constructs a `List` with a preallocated capacity.
+	/// @param size Size to preallocate.
 	constexpr List(SizeType const& size) {
 		invoke(size);
 	}
 
+	/// @brief Constructs a `List` of a given size and a given fill.
+	/// @param size Size to allocate.
+	/// @param fill Value to set for elements.
 	constexpr List(SizeType const& size, DataType const& fill) {
 		invoke(size);
 		for (usize i = 0; i < size; ++i)
@@ -103,11 +114,16 @@ public:
 		count = size;
 	}
 
+	/// @brief Constructs a `List` with a given argument list.
+	/// @param values Values to add to `List`.
 	constexpr List(ArgumentListType const& values) {
 		invoke(values.size());
 		for (DataType const& v: values) pushBack(v);
 	}
 	
+	/// @brief Constructs a `List` with a parameter pack.
+	/// @tparam ...Args Parameter pack.
+	/// @param ...args Pack elements.
 	template<typename... Args>
 	constexpr List(Args const&... args)
 	requires (... && Type::Convertible<Args, DataType>) {
@@ -115,6 +131,9 @@ public:
 		(..., pushBack(args));
 	}
 
+	/// @brief Constructs a `List` from a fixed array of elements.
+	/// @tparam S Size of array.
+	/// @param values Elements to add to `List`.
 	template<SizeType S>
 	constexpr explicit List(Decay::AsType<ConstantType[S]> const& values) {
 		invoke(S);
@@ -122,12 +141,16 @@ public:
 		count = S;
 	}
 
+	/// @brief Copy constructor.
+	/// @param other Other `List`.
 	constexpr List(SelfType const& other) {
 		invoke(other.maximum);
 		copy(other.contents, contents, other.count);
 		count = other.count;
 	}
 
+	/// @brief Move constructor.
+	/// @param other Other `List`.
 	constexpr List(SelfType&& other) {
 		maximum			= ::CTL::move(other.maximum);
 		contents		= ::CTL::move(other.contents);
@@ -136,27 +159,43 @@ public:
 		other.contents	= nullptr;
 	}
 
+	/// @brief Constructs a `List` from a range of values.
+	/// @tparam T2 Type of object the iterator points to (different than `List`'s own data type).
+	/// @param begin Iterator to beginning of range.
+	/// @param end Iterator to end of range.
 	template<Type::Convertible<DataType> T2>
-	constexpr explicit List(ForwardIterator<T2 const> const& begin, ForwardIterator<T2 const> const& end) {
+	constexpr explicit List(ForwardIterator<T2 const> const& begin, ForwardIterator<T2 const> const& end)
+	requires Type::Different<T2, DataType> {
 		invoke(end - begin + 1);
 		copy(begin, contents, end - begin);
 		count = end - begin;
 	}
 
+	/// @brief Constructs a `List` from a range of values.
+	/// @tparam T2 Type of object the iterator points to (different than `List`'s own data type).
+	/// @param begin Reverse iterator to beginning of range.
+	/// @param end Reverse iterator to end of range.
 	template<Type::Convertible<DataType> T2>
-	constexpr explicit List(ReverseIterator<T2 const> const& begin, ReverseIterator<T2 const> const& end) {
+	constexpr explicit List(ReverseIterator<T2 const> const& begin, ReverseIterator<T2 const> const& end)
+	requires Type::Different<T2, DataType> {
 		invoke(end - begin + 1);
 		for (auto i = begin; i != end; ++i)
 			pushBack(*i);
 		count = end - begin;
 	}
 	
+	/// @brief Constructs a `List` from a range of values.
+	/// @param begin Iterator to beginning of range.
+	/// @param end Iterator to end of range.
 	constexpr List(ConstIteratorType const& begin, ConstIteratorType const& end) {
 		invoke(end - begin + 1);
 		copy(begin, contents, end - begin);
 		count = end - begin;
 	}
 
+	/// @brief Constructs a `List` from a range of values.
+	/// @param begin Reverse iterator to beginning of range.
+	/// @param end Reverse iterator to end of range.
 	constexpr List(ConstReverseIteratorType const& begin, ConstReverseIteratorType const& end) {
 		invoke(end - begin + 1);
 		for (auto i = begin; i != end; ++i)
@@ -164,8 +203,14 @@ public:
 		count = end - begin;
 	}
 
+	/// @brief Constructs a `List` from a "C-style array".
+	/// @param start Start of data.
+	/// @param size Size of data.
 	constexpr List(ConstPointerType const& start, SizeType const& size): List(start, start + size) {}
 
+	/// @brief Constructs a `List`, from an object of (non-subclass) type T, that possesses iteration capabilities.
+	/// @tparam T Type.
+	/// @param other Object to copy data from.
 	template<class T>
 	constexpr explicit List(T const& other)
 	requires requires (T t) {
@@ -175,6 +220,9 @@ public:
 		requires !Type::Subclass<T, SelfType>;
 	}: List(other.begin(), other.end()) {}
 
+	/// @brief Constructs a `List`, from an object of (non-list) type T, that possesses some form of data storage.
+	/// @tparam T Type.
+	/// @param other Object to copy data from
 	template<class T>
 	constexpr explicit List(T const& other)
 	requires requires (T t) {
@@ -184,6 +232,9 @@ public:
 		requires !Type::Container::List<T>;
 	}: List(other.data(), other.size()) {}
 
+	/// @brief Constructs a `List` from a list of iteratable objects.
+	/// @tparam T Object type of `List`.
+	/// @param other Object to copy data from.
 	template<class T>
 	constexpr explicit List(List<T, SizeType> const& other)
 	requires requires (T t) {
@@ -197,8 +248,12 @@ public:
 			pushBack(DataType(v.begin(), v.end()));
 	}
 
+	/// Destructor.
 	constexpr ~List() {dump();}
 
+	/// @brief Adds a new element to the end of the `List`. 
+	/// @param value Element to add.
+	/// @return Reference to self.
 	constexpr SelfType& pushBack(DataType const& value) {
 		if (count >= maximum)
 			increase();
@@ -206,6 +261,9 @@ public:
 		return *this;
 	}
 
+	/// @brief Removes an element from the end of the `List`.
+	/// @return Value of the element removed.
+	/// @throw `OutOfBoundsException`
 	constexpr DataType popBack() {
 		DataType value = back();
 		count--;
@@ -213,6 +271,12 @@ public:
 		return value;
 	}
 
+	/// @brief Inserts an element at a specified index in the `List`.
+	/// @param value Value of the element to insert.
+	/// @param index Index of which to insert in.
+	/// @return Reference to self.
+	/// @throw `OutOfBoundsException`
+	/// @note If index is negative, it will be interpreted as starting from the end of the `List`.
 	constexpr SelfType& insert(DataType const& value, IndexType index) {
 		assertIsInBounds(index);
 		wrapBounds(index, count);
@@ -223,6 +287,12 @@ public:
 		return *this;
 	}
 
+	/// @brief Inserts a `List` of elements at a specified index in the `List`.
+	/// @param other `List` to insert.
+	/// @param index Index of which to insert in.
+	/// @return Reference to self.
+	/// @throw `OutOfBoundsException`
+	/// @note If index is negative, it will be interpreted as starting from the end of the `List`.
 	constexpr SelfType& insert(SelfType const& other, IndexType index) {
 		assertIsInBounds(index);
 		wrapBounds(index, count);
@@ -233,21 +303,47 @@ public:
 		return *this;
 	}
 
+	/// @brief Inserts a fixed array of elements at a specified index in the `List`.
+	/// @tparam S Size of fixed array.
+	/// @param values Array of element to insert.
+	/// @param index Index of which to insert in.
+	/// @return Reference to self.
+	/// @throw `OutOfBoundsException`
+	/// @note If index is negative, it will be interpreted as starting from the end of the `List`.
 	template<SizeType S>
 	constexpr SelfType& insert(Decay::AsType<ConstantType[S]> const& values, IndexType const& index) {
 		return insert(SelfType(values), index);
 	}
 
+	/// @brief Inserts a given value, a given amount of times, at a specified index in the `List`.
+	/// @param value Value to be inserted.
+	/// @param count Amount of times to insert the element.
+	/// @param index Index of which to insert in.
+	/// @return Reference to self.
+	/// @throw `OutOfBoundsException`
+	/// @note If index is negative, it will be interpreted as starting from the end of the `List`.
 	constexpr SelfType& insert(DataType const& value, SizeType const& count, IndexType const& index) {
 		return insert(SelfType(count, value), index);
 	}
 
+	/// @brief Ensures the `List` can hold AT LEAST a given capacity.
+	/// @param count Minimum size of the `List`.
+	/// @return Reference to self.
+	/// @note
+	///		This guarantees the capacity will be AT LEAST `count`,
+	/// 	but does not guarantee the capacity will be EXACTLY `count`.
+	/// @note For that, use `resize`.
 	constexpr SelfType& reserve(SizeType const& count) {
 		while (count >= maximum)
 			increase();
 		return *this;
 	}
 
+	/// @brief Resizes the `List`, so the capacity is of a given size.
+	/// @param newSize New `List` size.
+	/// @return Reference to self.
+	/// @note This guarantees the capacity will be EXACTLY of `newSize`.
+	/// @note If you need the capacity to be AT LEAST `newSize`, use `reserve`.
 	constexpr SelfType& resize(SizeType const& newSize) {
 		if (contents)	memresize(contents, newSize, maximum, count);
 		else			contents = memcreate(newSize);
@@ -258,21 +354,47 @@ public:
 		return *this;
 	}
 
+	/// @brief Expands the `List`, such that it can hold AT LEAST `size()` + `count`.
+	/// @param count Count to increase by.
+	/// @return Reference to self.
 	constexpr SelfType& expand(SizeType const& count) {
 		if (!count) return *this;
 		reserve(this->count + count);
 		return *this;
 	}
 
+	/// @brief
+	///		Ensures the `List` can hold AT LEAST a given capacity.
+	/// @param count Minimum size of the `List`.
+	/// @param fill Value to use as fill.
+	/// @return Reference to self.
+	/// @note
+	///		If current size is smaller,
+	///		then it fills the extra space added with the given `fill`,
+	///		up to `count`, and sets current size to it.
+	/// @note
+	///		This guarantees the capacity will be AT LEAST `count`,
+	/// 	but does not guarantee the capacity will be EXACTLY `count`.
+	/// @note For that, use `resize`.
 	constexpr SelfType& reserve(SizeType const& count, DataType const& fill) {
 		reserve(count);
-		if (count > this->count)
+		if (count > this->count) {
 			for (SizeType i = this->count; i < count; ++i)
 				contents[i] = fill;
-		this->count = count;
+			this->count = count;
+		}
 		return *this;
 	}
 
+	/// @brief Resizes the `List`, so the capacity is of a given size, then sets current size to it.
+	/// @param newSize New `List` size.
+	/// @param fill Value to use as fill.
+	/// @return Reference to self.
+	///	@note
+	///		If current size is smaller,
+	///		then it fills the extra space added with the given `fill`.
+	/// @note This guarantees the capacity will be EXACTLY of `newSize`.
+	/// @note If you need the capacity to be AT LEAST `newSize`, use `reserve`.
 	constexpr SelfType& resize(SizeType const& newSize, DataType const& fill) {
 		resize(newSize);
 		if (newSize > count)
@@ -282,26 +404,44 @@ public:
 		return *this;
 	}
 
+	/// @brief
+	///		Expands the `List`, such that it can hold AT LEAST the current size,
+	///		plus a given `count`.
+	/// @param count Count to increase by.
+	/// @param fill Value to use as fill.
+	/// @return Reference to self.
+	///	@note
+	///		If current size is smaller,
+	///		then it fills the extra space added with the given `fill`.
 	constexpr SelfType& expand(SizeType count, DataType const& fill) {
 		expand(this->count + count);
 		while (count-- > 0) pushBack(fill);
 		return *this;
 	}
-
+	
+	/// @brief Ensures the current capacity is EXACTLY the current size.
+	/// @return Reference to self. 
 	constexpr SelfType& tighten() {
 		resize(count);
 		return *this;
 	}
 
+	/// @brief Reverses the `List`.
+	/// @return Reference to self.
 	constexpr SelfType& reverse() {
 		::CTL::reverse(contents, count);
 		return *this;
 	}
 
+	/// @brief Returns a reversed copy of the `List`.
+	/// @return A reversed copy of the `List`.
 	constexpr SelfType reversed() const {
 		return SelfType(*this).reverse();
 	}
 
+	/// @brief Sorts the current `List`.
+	/// @return Reference to self.
+	/// @note This function only exists if the object type is a sortable type.
 	constexpr SelfType& sort()
 	requires Sortable<DataType> {
 		static_assert(SortableIterator<IteratorType>);
@@ -309,12 +449,18 @@ public:
 		return *this;
 	}
 
+	/// @brief Returns a sorted copy of the `List`.
+	/// @return Sorted copy of the `List`.
+	/// @note This function only exists if the object type is a sortable type.
 	constexpr SelfType sorted() const
 	requires Sortable<DataType> {
 		static_assert(SortableIterator<IteratorType>);
 		return SelfType(*this).sort();
 	}
 
+	/// @brief Finds the the position of the first element that matches a value.
+	/// @param value Value to search for.
+	/// @return The index of the value, or -1 if not found.
 	constexpr IndexType find(DataType const& value) const
 	requires Type::Comparator::Equals<DataType, DataType> {
 		if (empty()) return -1;
@@ -325,6 +471,9 @@ public:
 		return -1;
 	}
 
+	/// @brief Finds the the position of the last element that matches a value.
+	/// @param value Value to search for.
+	/// @return The index of the value, or -1 if not found.
 	constexpr IndexType rfind(DataType const& value) const
 	requires Type::Comparator::Equals<DataType, DataType> {
 		if (empty()) return -1;
@@ -335,6 +484,10 @@ public:
 		return -1;
 	}
 
+	/// @brief Performs a binary search to find the index of an element that matches a value.
+	/// @param value Value to search for.
+	/// @return The index of the value, or -1 if not found.
+	/// @note Requires the array to be sorted.
 	constexpr IndexType bsearch(DataType const& value) const
 	requires (Type::Comparator::Threeway<DataType, DataType>) {
 		if (empty()) return -1;
@@ -355,12 +508,25 @@ public:
 		return -1;
 	}
 
+	/// @brief Removes an element at a given index.
+	/// @param index Index of the element to remove.
+	/// @return Reference to self.
+	/// @throw `OutOfBoundsException`
+	/// @note
+	///		Does not resize `List`, merely moves it to the end, and destructs it.
+	///		If you need the `List` size to change, use `erase`.
 	constexpr SelfType& remove(IndexType index) {
 		assertIsInBounds(index);
 		wrapBounds(index, count);
 		return squash(index);
 	}
 
+	/// @brief Removes elements that match a given value.
+	/// @param value Value to match.
+	/// @return Count of elements removed.
+	/// @note
+	///		Does not resize `List`, merely moves it to the end, and destructs it.
+	///		If you need the `List` size to change, use `erase`.
 	constexpr SizeType removeLike(DataType const& value)
 	requires Type::Comparator::Equals<DataType, DataType> {
 		if (empty()) return 0;
@@ -377,6 +543,12 @@ public:
 		return removed;
 	}
 
+	/// @brief Removes elements that do not match a given value.
+	/// @param value Value to match.
+	/// @return Count of elements removed.
+	/// @note
+	///		Does not resize `List`, merely moves it to the end, and destructs it.
+	///		If you need the `List` size to change, use `erase`. 
 	constexpr SizeType removeUnlike(DataType const& value)
 	requires Type::Comparator::Equals<DataType, DataType> {
 		if (empty()) return 0;
@@ -393,6 +565,13 @@ public:
 		return removed;
 	}
 
+	/// @brief Removes elements that match a given predicate.
+	/// @tparam TPredicate Predicate type.
+	/// @param predicate Predicate to use as check.
+	/// @return Count of objects elements.
+	/// @note
+	///		Does not resize `List`, merely moves it to the end, and destructs it.
+	///		If you need the `List` size to change, use `erase`. 
 	template<class TPredicate>
 	constexpr SizeType removeIf(TPredicate const& predicate) {
 		if (empty()) return 0;
@@ -409,6 +588,13 @@ public:
 		return removed;
 	}
 
+	/// @brief Removes elements that do not match a given predicate.
+	/// @tparam TPredicate Predicate type.
+	/// @param predicate Predicate to use as check.
+	/// @return Count of objects elements.
+	/// @note
+	///		Does not resize `List`, merely moves it to the end, and destructs it.
+	///		If you need the `List` size to change, use `erase`. 
 	template<class TPredicate>
 	constexpr SizeType removeIfNot(TPredicate const& predicate) {
 		if (empty()) return 0;
@@ -425,6 +611,13 @@ public:
 		return removed;
 	}
 
+	/// @brief Erases an element at a given index.
+	/// @param index Index of the element to erase.
+	/// @return Reference to self.
+	/// @throw `OutOfBoundsException`
+	/// @note
+	///		Resizes the `List`.
+	///		If you need the `List` size to remain the same, use `remove`. 
 	constexpr SelfType& erase(IndexType const& index) {
 		if (empty()) return 0;
 		remove(index);
@@ -432,28 +625,57 @@ public:
 		return *this;
 	}
 
+	/// @brief Erases elements that match a given value.
+	/// @param value Value to match.
+	/// @return Count of elements removed.
+	/// @note
+	///		Resizes the `List`.
+	///		If you need the `List` size to remain the same, use `remove`. 
 	constexpr SelfType& eraseLike(DataType const& value) {
 		count -= removeLike(value);
 		return *this;
 	}
 
+	/// @brief Erases elements that do not a given value.
+	/// @param value Value to match.
+	/// @return Count of elements removed.
+	/// @note
+	///		Resizes the `List`.
+	///		If you need the `List` size to remain the same, use `remove`.
 	constexpr SelfType& eraseUnlike(DataType const& value) {
 		count -= removeUnlike(value);
 		return *this;
 	}
 
+	/// @brief Erases elements that match a given predicate.
+	/// @tparam TPredicate Predicate type.
+	/// @param predicate Predicate to use as check.
+	/// @note
+	///		Resizes the `List`.
+	///		If you need the `List` size to remain the same, use `remove`.
 	template<class TPredicate>
 	constexpr SelfType& eraseIf(TPredicate const& predicate) {
 		count -= removeIf(predicate);
 		return *this;
 	}
 
+	/// @brief Erases elements that do not match a given predicate.
+	/// @tparam TPredicate Predicate type.
+	/// @param predicate Predicate to use as check.
+	/// @note
+	///		Resizes the `List`.
+	///		If you need the `List` size to remain the same, use `remove`.
 	template<class TPredicate>
 	constexpr SelfType& eraseIfNot(TPredicate const& predicate) {
 		count -= removeIfNot(predicate);
 		return *this;
 	}
 
+	/// @brief Returns a `List` containing all elements starting from a given index.
+	/// @param start Starting index to copy from.
+	/// @return `List` containing elements starting from the given `start`.
+	/// @throw `OutOfBoundsException`
+	/// @note If index is negative, it will be interpreted as starting from the end of the `List`.
 	constexpr SelfType sliced(IndexType start) const {
 		if (IndexType(count) < start) return SelfType();
 		assertIsInBounds(start);
@@ -461,6 +683,12 @@ public:
 		return SelfType(cbegin() + start, cend());
 	}
 
+	/// @brief Returns a `List` containing all elements located between two indices.
+	/// @param start Starting index to copy from.
+	/// @param stop End index to stop copying from.
+	/// @return `List` containing elements between `start` and `stop`.
+	/// @throw `OutOfBoundsException`
+	/// @note If index is negative, it will be interpreted as starting from the end of the `List`.
 	constexpr SelfType sliced(IndexType start, IndexType stop) const {
 		if (IndexType(count) < start) return SelfType();
 		assertIsInBounds(start);
@@ -471,6 +699,11 @@ public:
 		return SelfType(cbegin() + start, cbegin() + stop + 1);
 	}
 
+	/// @brief Returns the current `List`, divided at a given index.
+	/// @param index The index to use as pivot.
+	/// @return A `List` containing the two halves of this `List`.
+	/// @throw `OutOfBoundsException`
+	/// @note If index is negative, it will be interpreted as starting from the end of the `List`.
 	constexpr List<SelfType, SizeType> divide(IndexType index) const {
 		List<SelfType, SizeType> res;
 		assertIsInBounds(res);
@@ -480,6 +713,9 @@ public:
 		return res;
 	}
 
+	/// @brief Appends another `List` to the end of the `List`.
+	/// @param other List to copy contents from.
+	/// @return Reference to self.
 	constexpr SelfType& appendBack(SelfType const& other) {
 		expand(other.count);
 		copy(other.contents, contents + count, other.count);
@@ -487,22 +723,41 @@ public:
 		return *this;
 	}
 
+	/// @brief Appends a list of elements to the end of the `List`.
+	/// @param values List of elements to append.
+	/// @return Reference to self.
 	constexpr SelfType& appendBack(ArgumentListType const& values) {
 		return appendBack(SelfType(values));
 	}
 
+	/// @brief Appends a quantity of elements of a given value to the end of the `List`.
+	/// @param count Amount of elements to append.
+	/// @param fill Value of the elements.
+	/// @return Reference to self.
 	constexpr SelfType& appendBack(SizeType const& count, DataType const& fill) {
 		return expand(count, fill);
 	}
 
+	/// @brief Appends a range of elements to the end of the `List`.
+	/// @param begin Iterator to beginning of range.
+	/// @param end Iterator pointing to end of range.
+	/// @return Reference to self.
 	constexpr SelfType& appendBack(IteratorType const& begin, IteratorType const& end) {
 		return appendBack(SelfType(begin, end));
 	}
 
+	/// @brief Appends a range of elements to the end of the `List`.
+	/// @param begin Reverse iterator to beginning of range.
+	/// @param end Reverse iterator pointing to end of range.
+	/// @return Reference to self.
 	constexpr SelfType& appendBack(ReverseIteratorType const& begin, ReverseIteratorType const& end) {
 		return appendBack(SelfType(begin, end));
 	}
 
+	/// @brief Appends a fixed array of elements to the end of the `List`.
+	/// @tparam S Size of the array.
+	/// @param values Array of elements to append.
+	/// @return Reference to self.
 	template<SizeType S>
 	constexpr SelfType& appendBack(Decay::AsType<DataType[S]> const& values) {
 		expand(S);
@@ -511,14 +766,29 @@ public:
 		return *this;
 	}
 
-	constexpr SelfType& clear() {count = 0; return *this;}
+	/// @brief Clears the `List`.
+	/// @return Reference to self.
+	/// @note
+	///		Does not free the underlying array held by the `List`.
+	///		To actually free the underlying array, call `dispose`. 
+	constexpr SelfType& clear() {
+		memdestroy(contents, count);
+		count = 0;
+		return *this;
+	}
 
+	/// @brief Frees the underlying array held by the `List`.
+	/// @return Reference to self.
+	/// @note To not free the underlying array, call `clear`. 
 	constexpr SelfType& dispose() {
 		dump();
 		recalculateMagnitude();
 		return *this;
 	}
 
+	/// @brief Copy assignment operator.
+	/// @param other Other `List`.
+	/// @return Reference to self.
 	constexpr SelfType& operator=(SelfType const& other) {
 		memdestruct(contents, count);
 		resize(other.count);
@@ -527,6 +797,9 @@ public:
 		return *this;
 	}
 
+	/// @brief Move assignment operator.
+	/// @param other Other `List`.
+	/// @return Reference to self.
 	constexpr SelfType& operator=(SelfType&& other) {
 		memdestroy(contents, count);
 		maximum			= CTL::move(other.maximum);
@@ -537,58 +810,134 @@ public:
 		return *this;
 	}
 
+	/// @brief Returns a pointer to the underlying array.
+	/// @return Pointer to the underlying array.
 	constexpr PointerType		data()			{return contents;	}
+	/// @brief Returns a pointer to the underlying array.
+	/// @return Pointer to the underlying array.
 	constexpr ConstPointerType	data() const	{return contents;	}
 
+	/// @brief Returns an iterator to the beginning of the `List`.
+	/// @return Iterator to the beginning of the `List`.
 	constexpr IteratorType		begin()			{return contents;		}
+	/// @brief Returns an iterator to the end of the `List`.
+	/// @return Iterator to the end of the `List`.
 	constexpr IteratorType		end()			{return contents+count;	}
+	/// @brief Returns an iterator to the beginning of the `List`.
+	/// @return Iterator to the beginning of the `List`.
 	constexpr ConstIteratorType	begin() const	{return contents;		}
+	/// @brief Returns an iterator to the end of the `List`.
+	/// @return Iterator to the end of the `List`.
 	constexpr ConstIteratorType	end() const		{return contents+count;	}
 
+	/// @brief Returns a reverse iterator to the beginning of the `List`.
+	/// @return Reverse iterator to the beginning of the `List`.
 	constexpr ReverseIteratorType		rbegin()		{return ReverseIteratorType(contents+count);		}
+	/// @brief Returns a reverse iterator to the end of the `List`.
+	/// @return Reverse iterator to the end of the `List`.
 	constexpr ReverseIteratorType		rend()			{return ReverseIteratorType(contents);				}
+	/// @brief Returns a reverse iterator to the beginning of the `List`.
+	/// @return Reverse iterator to the beginning of the `List`.
 	constexpr ConstReverseIteratorType	rbegin() const	{return ConstReverseIteratorType(contents+count);	}
+	/// @brief Returns a reverse iterator to the end of the `List`.
+	/// @return Reverse iterator to the end of the `List`.
 	constexpr ConstReverseIteratorType	rend() const	{return ConstReverseIteratorType(contents);			}
 
+	/// @brief Returns a pointer to the beginning of the `List`.
+	/// @return Pointer to the beginning of the `List`.
 	constexpr PointerType		cbegin()		{return contents;		}
+	/// @brief Returns a pointer to the end of the `List`.
+	/// @return Pointer to the end of the `List`.
 	constexpr PointerType		cend()			{return contents+count;	}
+	/// @brief Returns a pointer to the beginning of the `List`.
+	/// @return Pointer to the beginning of the `List`.
 	constexpr ConstPointerType	cbegin() const	{return contents;		}
+	/// @brief Returns a pointer to the end of the `List`.
+	/// @return Pointer to the end of the `List`.
 	constexpr ConstPointerType	cend() const	{return contents+count;	}
+	
+	/// @brief Returns the value of the first element.
+	/// @return Reference to the first element.
+	/// @throw `OutOfBoundsException`.
+	constexpr ReferenceType		front()			{return at(0);			}
+	/// @brief Returns the value of the last element.
+	/// @return Reference to the last element.
+	/// @throw `OutOfBoundsException`.
+	constexpr ReferenceType 	back()			{return at(count-1);	}
+	/// @brief Returns the value of the first element.
+	/// @return Value of the first element.
+	/// @throw `OutOfBoundsException`.
+	constexpr DataType			front() const	{return at(0);			}
+	/// @brief Returns the value of the last element.
+	/// @return Value of the last element.
+	/// @throw `OutOfBoundsException`.
+	constexpr DataType			back() const	{return at(count-1);	}
 
-	constexpr ReferenceType			front()			{return contents[0];		}
-	constexpr ReferenceType 		back()			{return contents[count-1];	}
-	constexpr ConstReferenceType	front() const	{return contents[0];		}
-	constexpr ConstReferenceType	back() const	{return contents[count-1];	}
+	/// @brief Returns the value of the element at a given index.
+	/// @param index Index of the element.
+	/// @return Reference to the element.
+	/// @throw `OutOfBoundsException`
+	constexpr DataType& at(IndexType index) {
+		if (!count) emptyError();
+		assertIsInBounds(index);
+		wrapBounds(index, count);
+		return contents[index];
+	}
 
-
+	/// @brief Returns the value of the element at a given index.
+	/// @param index Index of the element.
+	/// @return Value of the element.
+	/// @throw `OutOfBoundsException`
 	constexpr DataType at(IndexType index) const {
+		if (!count) emptyError();
 		assertIsInBounds(index);
 		wrapBounds(index, count);
 		return contents[index];
 	}
 
-	constexpr ReferenceType	operator[](IndexType index) {
-		assertIsInBounds(index);
-		wrapBounds(index, count);
-		return contents[index];
-	}
+	/// @brief Returns the value of the element at a given index.
+	/// @param index Index of the element.
+	/// @return Reference to the element.
+	/// @throw `OutOfBoundsException`
+	constexpr ReferenceType	operator[](IndexType index)			{return at(index);}
+	/// @brief Returns the value of the element at a given index.
+	/// @param index Index of the element.
+	/// @return Value of the element.
+	/// @throw `OutOfBoundsException`
+	constexpr DataType operator[](IndexType const& index) const	{return at(index);}
 
-	constexpr DataType operator[](IndexType const& index) const {return at(index);}
-
+	/// @brief Returns the current element count.
+	/// @return Element count.
 	constexpr SizeType size() const		{return count;		}
+	/// @brief Returns the current size of the underlying array.
+	/// @return Size of the underlying array.
 	constexpr SizeType capacity() const	{return maximum;	}
+	/// @brief Returns whether the array is empty.
+	/// @return Whether the array is empty.
 	constexpr SizeType empty() const	{return count == 0;	}
 
+	/// @brief Equality operator.
+	/// @param other Other `List` to compare with.
+	/// @return Whether they're equal.
+	/// @note Requires element type to be equally comparable.
+	/// @sa Comparator::equals()
 	constexpr bool operator==(SelfType const& other) const
 	requires Type::Comparator::Equals<DataType, DataType> {
 		return equals(other);
 	}
 
+	/// @brief Three-way comparison operator.
+	/// @param other Other `List` to compare with.
+	/// @return The order between both `List`s.
+	/// @note Requires element type to be three-way comparable.
+	/// @sa Comparator::compare()
 	constexpr OrderType operator<=>(SelfType const& other) const
 	requires Type::Comparator::Threeway<DataType, DataType> {
 		return compare(other);
 	}
 
+	/// @brief Converts the `List` of an element type to a different `List` of a new element type.
+	/// @tparam T2 New type.
 	template <class T2>
 	constexpr explicit operator List<T2, SizeType>() const
 	requires (Type::Different<DataType, T2> && Type::Convertible<DataType, T2>) {
@@ -598,6 +947,11 @@ public:
 		return result;
 	}
 
+	/// @brief Returns whether it is equal to another `List`.
+	/// @param other Other `List` to compare with.
+	/// @return Whether they're equal.
+	/// @note Requires element type to be equally comparable.
+	/// @sa Comparator::equals()
 	constexpr SizeType equals(SelfType const& other) const
 	requires Type::Comparator::Equals<DataType, DataType> {
 		bool result = true;
@@ -611,6 +965,11 @@ public:
 		return result;
 	}
 
+	/// @brief Returns the result of a three-way comparison with another `List`.
+	/// @param other Other `List` to compare with.
+	/// @return The order between both `List`s.
+	/// @note Requires element type to be three-way comparable.
+	/// @sa Comparator::compare()
 	constexpr OrderType compare(SelfType const& other) const
 	requires Type::Comparator::Threeway<DataType, DataType> {
 		OrderType result = Order::EQUAL;
@@ -624,6 +983,12 @@ public:
 		return result;
 	}
 
+	/// @brief How different it is from another `List`.
+	/// @param other Other `List` to compare with.
+	/// @return How different it is.
+	/// @note
+	///		Compares elements with equivalent positions.
+	///		Returns the amount of different elements, plus the size difference.
 	constexpr SizeType disparity(SelfType const& other) const
 	requires Type::Comparator::Equals<DataType, DataType> {
 		SizeType
@@ -636,46 +1001,10 @@ public:
 		return diff + (max - min);
 	}
 
-	/*
-	constexpr SelfType operator+(DataType(const& values)[COUNT]) const {
-		SelfType result(*this);
-		return result.appendBack(values);
-	}
-
-	constexpr SelfType operator+(SelfType const& other) const {
-		SelfType result(*this);
-		return result.appendBack(other);
-	}
-
-	constexpr SelfType operator+(DataType const& value) const {
-		SelfType result(*this);
-		return result.pushBack(value);
-	}
-
-	constexpr SelfType& operator+=(DataType(const& values)[COUNT]) {
-		return appendBack(values);
-	}
-
-	constexpr SelfType& operator+=(SelfType const& other) {
-		return appendBack(other);
-	}
-
-	constexpr SelfType& operator+=(DataType const& value) {
-		return pushBack(value);
-	}
-
-	constexpr SelfType operator*(SizeType const& times) const {
-		SelfType result(count * times);
-		for (SizeType i = 0 i < times, ++i)
-			result += (*this);
-		return result;
-	}
-
-	constexpr SelfType& operator*=(SizeType const& times) {
-		*this = (*this) * times;
-	}
-	*/
-
+	/// @brief Apllies a procedure to all elements of the `List`.
+	/// @tparam TProcedure Procedure type.
+	/// @param fun Procedure to apply.
+	/// @return Reference to self.
 	template <class TProcedure>
 	constexpr SelfType& transform(TProcedure const& fun) {
 		for(DataType& v: *this)
@@ -683,11 +1012,19 @@ public:
 		return *this;
 	}
 
+	/// @brief Returns a `List` of `transform`ed elements.
+	/// @tparam TProcedure Procedure type.
+	/// @param fun Procedure to apply.
+	/// @return List of transformed elements.
 	template<class TProcedure>
 	constexpr SelfType transformed(TProcedure const& fun) const {
 		return SelfType(*this).transform(fun);
 	}
 
+	/// @brief Returns whether all elements match a given predicate.
+	/// @tparam TPredicate Predicate type.
+	/// @param cond Predicate to match.
+	/// @return Whether all elements match.
 	template<class TPredicate>
 	constexpr bool validate(TPredicate const& cond) const {
 		for (DataType const& c: *this)
@@ -696,23 +1033,39 @@ public:
 		return true;
 	}
 
+	/// @brief Removes all elements that do not match a given predicate.
+	/// @tparam TPredicate Predicate type.
+	/// @param filter Predicate to match.
+	/// @return Reference to self.
 	template<Type::Functional<bool(DataType const&)> TPredicate>
-	constexpr SelfType filter(TPredicate const& filter) const {
+	constexpr SelfType& filter(TPredicate const& filter) {
 		return eraseIfNot(filter);
 	}
 
+	/// @brief Removes all elements that fail a given comparison.
+	/// @tparam TCompare Compare type.
+	/// @param compare Comparison to make.
+	/// @return Reference to self.
 	template<Type::Functional<bool(DataType const&, DataType const&)> TCompare>
-	constexpr SelfType filter(TCompare const& compare) {
+	constexpr SelfType& filter(TCompare const& compare) {
 		return *this = filtered(compare);
 	}
 
+	/// @brief Returns a `filter`ed `List` of elements.
+	/// @tparam TPredicate Predicate type.
+	/// @param filter Predicate to match.
+	/// @return `filter`ed `List` of elements.
 	template<Type::Functional<bool(DataType const&)> TPredicate>
 	constexpr SelfType filtered(TPredicate const& filter) const {
 		return SelfType(*this).eraseIfNot(filter);
 	}
 
+	/// @brief Returns a `filter`ed `List` of elements.
+	/// @tparam TCompare Compare type.
+	/// @param compare Comparison to make.
+	/// @return `filter`ed `List` of elements.
 	template<Type::Functional<bool(DataType const&, DataType const&)> TCompare>
-	constexpr SelfType filtered(TCompare const& compare) {
+	constexpr SelfType filtered(TCompare const& compare) const {
 		SelfType result;
 		for (SizeType i = 0; i < count; ++i) {
 			bool miss = false;
@@ -726,14 +1079,20 @@ public:
 		return result;
 	}
 
+	/// @brief Returns a `List` of all unique elements.
+	/// @return `List` of unique elements.
 	constexpr SelfType uniques() {
 		return filtered([](ConstReferenceType a, ConstReferenceType b){return a != b;});
 	}
 
+	/// @brief Joins a `List` of `List`s with a given separator between them.
+	/// @tparam T Element type.
+	/// @param sep Separator value.
+	/// @return Resulting joined `List`.
 	template <Type::Equal<DataType> T>
 	constexpr DataType join(typename T::DataType const& sep) const
 	requires requires {
-		requires Type::Class<DataType>;
+		requires Type::Container::List<DataType>;
 		typename DataType::DataType;
 		typename DataType::SizeType;
 		requires Type::Equal<
@@ -752,10 +1111,17 @@ public:
 		return result;
 	}
 
+	/// @brief Returns whether the current size matches the current capacity.
+	/// @return Whether the current size matches the current capacity.
 	constexpr bool tight() const {return count == maximum;}
 
+	/// @brief Returns the associated allocator.
+	/// @return `List` allocator.
 	constexpr AllocatorType& allocator() {return alloc;}
 
+	/// @brief `swap` algorithm for `List`.
+	/// @param a `List` of elements.
+	/// @param b `List` of elements.
 	friend constexpr void swap(SelfType& a, SelfType& b) noexcept {
 		swap(a.contents, b.contents);
 		swap(a.maximum, b.maximum);
@@ -856,10 +1222,10 @@ private:
 	}
 
 	void assertIsInBounds(IndexType const& index) const {
-		if (index > IndexType(count-1)) outOfBoundsError(index);
+		if (index > IndexType(count-1)) outOfBoundsError();
 	}
 
-	[[noreturn]] constexpr static void invalidSizeError(SizeType const& size) {
+	[[noreturn]] constexpr static void invalidSizeError() {
 		throw InvalidValueException("Invalid list size!");
 	}
 
@@ -867,24 +1233,31 @@ private:
 		throw MaximumSizeFailure();
 	}
 
-	[[noreturn]] constexpr static void outOfBoundsError(IndexType const& index) {
-		throw OutOfBoundsException("Array is out of bounds!");
+	[[noreturn]] constexpr static void outOfBoundsError() {
+		throw OutOfBoundsException("Index is out of bounds!");
 	}
 
 	[[noreturn]] constexpr static void emptyError() {
-		throw NonexistentValueException("Container is empty!");
+		throw OutOfBoundsException("Container is empty!");
 	}
 
+	/// @brief Next underlying array size.
 	SizeType		magnitude	= 1;
+	/// @brief True underlying array size.
 	SizeType		maximum		= 0;
+	/// @brief Element count.
 	SizeType		count		= 0;
+	/// @brief Underlying array.
 	DataType*		contents	= nullptr;
 
 	AllocatorType	alloc;
 };
 
-template <Type::Integer TIndex = usize>
-using BinaryData = List<uint8, TIndex>;
+/// @brief `List` analog for dynamic array of bytes.
+/// @tparam TIndex Index type. 
+/// @tparam TAlloc<class> Allocator type.
+template <Type::Integer TIndex = usize, template <class> class TAlloc = HeapAllocator>
+using BinaryData = List<uint8, TIndex, TAlloc>;
 
 static_assert(Type::Container::List<List<int>>);
 

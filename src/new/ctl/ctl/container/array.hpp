@@ -13,6 +13,10 @@
 
 CTL_NAMESPACE_BEGIN
 
+/// @brief Static array of objects.
+/// @tparam TData Element type.
+/// @tparam N Array size.
+/// @tparam TIndex Index type.
 template<class TData, usize N, Type::Integer TIndex = usize>
 struct Array:
 	Iteratable<TData, TIndex>,
@@ -46,55 +50,112 @@ public:
 
 	using Iteratable::MAX_SIZE;
 
+	/// @brief `Array` size.
 	constexpr static SizeType SIZE = N;
 
+	/// @brief Underlying array type.
 	typedef Decay::AsType<DataType[SIZE]> ArrayType;
 
 	static_assert(N <= MAX_SIZE, "Array size must not be bigger than highest SizeType!");
 
-	constexpr Array() requires(Type::Constructible<DataType>)	{for (auto& e: data) e = DataType();	}
-	constexpr Array(ArrayType const& arr)						{MX::memcpy(data, arr, SIZE);			}
-	constexpr Array(ConstReferenceType v)						{for (auto& e: data) e = v;				}
+	/// @brief Empty constructor.
+	constexpr Array() requires(Type::Constructible<DataType>)	{for (auto& e: contents) e = DataType();	}
+	/// @brief Fixed array constructor.
+	/// @param arr Array to initialize with.
+	constexpr Array(ArrayType const& arr)						{copy(arr, contents, SIZE);					}
+	/// @brief Fill constructor.
+	/// @brief v Value to fill with.
+	constexpr Array(ConstReferenceType v)						{for (auto& e: data) e = v;					}
 
+	/// @brief Returns the element at the given index.
+	/// @param index Index of the element.
+	/// @return Reference to the element.
+	/// @throw `OutOfBoundsException`
 	constexpr ReferenceType operator[](IndexType index) {
-		if (index >= SIZE)
+		if (index >= SIZE || SIZE == 0)
 			throw OutOfBoundsException("Index is bigger than array size!");
 		wrapBounds(index, SIZE);
-		return data[index];
+		return contents[index];
 	}
 
+	/// @brief Returns the element at the given index.
+	/// @param index Index of the element.
+	/// @return Const reference to the element.
+	/// @throw `OutOfBoundsException`
 	constexpr ConstReferenceType operator[](IndexType index) const {
-		if (index >= SIZE)
+		if (index >= SIZE || SIZE == 0)
 			throw OutOfBoundsException("Index is bigger than array size!");
 		wrapBounds(index, SIZE);
-		return data[index];
+		return contents[index];
 	}
+	
+	/// @brief Returns the `Array` size.
+	/// @return Size of the `Array`.
+	constexpr SizeType size()	const {return SIZE;		}
+	/// @brief Returns a pointer to the uderlying array.
+	/// @return Pointer to the uderlying array.
+	constexpr SizeType data()	const {return contents;	}
 
-	constexpr bool empty()		const {return SIZE;}
-	constexpr SizeType size()	const {return SIZE;}
+	/// @brief Returns an iterator to the beginning of the `Array`.
+	/// @return Iterator to the beginning of the `Array`.
+	constexpr IteratorType		begin()			{return contents;		}
+	/// @brief Returns an iterator to the end of the `Array`.
+	/// @return Iterator to the end of the `Array`.
+	constexpr IteratorType		end()			{return contents+SIZE;	}
+	/// @brief Returns an iterator to the beginning of the `Array`.
+	/// @return Iterator to the beginning of the `Array`.
+	constexpr ConstIteratorType	begin() const	{return contents;		}
+	/// @brief Returns an iterator to the end of the `Array`.
+	/// @return Iterator to the end of the `Array`.
+	constexpr ConstIteratorType	end() const		{return contents+SIZE;	}
 
-	constexpr IteratorType		begin()			{return data;		}
-	constexpr IteratorType		end()			{return data+SIZE;	}
-	constexpr ConstIteratorType	begin() const	{return data;		}
-	constexpr ConstIteratorType	end() const		{return data+SIZE;	}
+	/// @brief Returns a reverse iterator to the beginning of the `Array`.
+	/// @return Reverse iterator to the beginning of the `Array`.
+	constexpr ReverseIteratorType		rbegin()		{return contents+SIZE;	}
+	/// @brief Returns a reverse iterator to the end of the `Array`.
+	/// @return Reverse iterator to the end of the `Array`.
+	constexpr ReverseIteratorType		rend()			{return contents;		}
+	/// @brief Returns a reverse iterator to the beginning of the `Array`.
+	/// @return Reverse iterator to the beginning of the `Array`.
+	constexpr ConstReverseIteratorType	rbegin() const	{return contents+SIZE;	}
+	/// @brief Returns a reverse iterator to the end of the `Array`.
+	/// @return Reverse iterator to the end of the `Array`.
+	constexpr ConstReverseIteratorType	rend() const	{return contents;		}
 
-	constexpr ReverseIteratorType		rbegin()		{return data+SIZE;	}
-	constexpr ReverseIteratorType		rend()			{return data;		}
-	constexpr ConstReverseIteratorType	rbegin() const	{return data+SIZE;	}
-	constexpr ConstReverseIteratorType	rend() const	{return data;		}
+	/// @brief Returns a pointer to the beginning of the `Array`.
+	/// @return Pointer to the beginning of the `Array`.
+	constexpr PointerType		cbegin()		{return contents;		}
+	/// @brief Returns a pointer to the end of the `Array`.
+	/// @return Pointer to the end of the `Array`.
+	constexpr PointerType		cend()			{return contents+SIZE;	}
+	/// @brief Returns a pointer to the beginning of the `Array`.
+	/// @return Pointer to the beginning of the `Array`.
+	constexpr ConstPointerType	cbegin() const	{return contents;		}
+	/// @brief Returns a pointer to the end of the `Array`.
+	/// @return Pointer to the end of the `Array`.
+	constexpr ConstPointerType	cend() const	{return contents+SIZE;	}
 
-	constexpr PointerType		cbegin()		{return data;		}
-	constexpr PointerType		cend()			{return data+SIZE;	}
-	constexpr ConstPointerType	cbegin() const	{return data;		}
-	constexpr ConstPointerType	cend() const	{return data+SIZE;	}
-
-	constexpr ReferenceType			front()			{return data[0];		}
-	constexpr ReferenceType 		back()			{return data[SIZE-1];	}
-	constexpr ConstReferenceType	front() const	{return data[0];		}
-	constexpr ConstReferenceType	back() const	{return data[SIZE-1];	}
+	/// @brief Returns the first element.
+	/// @return Reference to the first element.
+	constexpr ReferenceType			front()			{return contents[0];		}
+	/// @brief Returns the last element.
+	/// @return Reference to the last element.
+	constexpr ReferenceType 		back()			{return contents[SIZE-1];	}
+	/// @brief Returns the first element.
+	/// @return Const reference to the first element.
+	constexpr ConstReferenceType	front() const	{return contents[0];		}
+	/// @brief Returns the last element.
+	/// @return Const reference to the last element.
+	constexpr ConstReferenceType	back() const	{return contents[SIZE-1];	}
 
 private:
-	ArrayType data;
+	constexpr static void copy(ConstantType* src, DataType* dst, SizeType count) {
+		if constexpr (Type::Primitive<DataType>)
+			MX::memmove<DataType>(dst, src, count);
+		else MX::objcopy<DataType>(dst, src, count);
+	}
+
+	ArrayType contents;
 };
 
 namespace Impl {

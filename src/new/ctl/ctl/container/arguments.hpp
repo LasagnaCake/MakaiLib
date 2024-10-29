@@ -8,6 +8,8 @@
 
 CTL_NAMESPACE_BEGIN
 
+/// @brief Argument list.
+/// @tparam T Argument type.
 template <class T>
 struct Arguments:
 	Typed<T>,
@@ -27,20 +29,34 @@ struct Arguments:
 		typename Typed::ReferenceType,
 		typename Typed::ConstReferenceType
 	;
+
+	/// @brief Destructor.
 	constexpr ~Arguments() noexcept {delete[] start;}
 
+	/// @brief Empty constructor.
 	constexpr Arguments() noexcept: start(nullptr), length(0) {}
 
+	/// @brief Constructs the argument list with a fixed array of arguments.
+	/// @tparam N Array size.
+	/// @param data Fixed array of arguments to use.
 	template<usize N>
 	constexpr Arguments(Decay::AsType<ConstantType[N]> const& data):
 	start(::new DataType[N]), length(N) {
 		MX::memcpy(start, data, N);
 	}
 
+	/// @brief Constructs the argument list with a given parameter pack.
+	/// @tparam ...Args Parameter pack.
+	/// @param first First item on pack.
+	/// @param ...rest Other pack elements.
 	template<class... Args>
 	constexpr Arguments(DataType const& first, Args const&... rest):
 		start(::new DataType[sizeof...(Args) + 1]{first, rest...}), length(sizeof...(Args) + 1) {}
 
+	/// @brief Gets the argument at the specified index.
+	/// @param index Argument index.
+	/// @return Reference to argument.
+	/// @throw `OutOfBoundsException`
 	constexpr ReferenceType operator[](ssize index) {
 		while (index < 0)
 			index += length;
@@ -49,6 +65,10 @@ struct Arguments:
 		return start[index];
 	}
 
+	/// @brief Gets the argument at the specified index.
+	/// @param index Argument index.
+	/// @return Const reference to argument.
+	/// @throw `OutOfBoundsException`
 	constexpr ConstReferenceType operator[](ssize index) const {
 		while (index < 0)
 			index += length;
@@ -57,22 +77,37 @@ struct Arguments:
 		return start[index];
 	}
 
+	/// @brief Copy assignment operator (deleted). 
 	Arguments& operator=(Arguments&&)		= delete;
-    Arguments& operator=(Arguments const&)	= delete;
+	/// @brief Move assignment operator (deleted).
+	Arguments& operator=(Arguments const&)	= delete;
 
-    constexpr ConstPointerType begin() const noexcept	{return start;			}
-    constexpr ConstPointerType end() const noexcept		{return start + length;	}
+	/// @brief Gets a pointer to the beginning of the argument list.
+	/// @return Pointer to the beginning of the argument list.
+	constexpr ConstPointerType begin() const noexcept	{return start;			}
+	/// @brief Gets a pointer to the end of the argument list.
+	/// @return Pointer to the end of the argument list.
+	constexpr ConstPointerType end() const noexcept		{return start + length;	}
 
-    constexpr usize size() const noexcept	{return length;			}
-    constexpr usize empty() const noexcept	{return length == 0;	}
+	/// @brief Returns the size of the argument list.
+	/// @return Argument list size.
+	constexpr usize size() const noexcept	{return length;			}
+	/// @brief Returns whether the argument list is empty.
+	/// @return Whether the argument list is empty.
+	constexpr usize empty() const noexcept	{return length == 0;	}
 
 private:
+	/// @brief "C-style array" constructor.
+	/// @param data Pointer to beginning of array.
+	/// @param size Array size.
 	constexpr Arguments(ConstPointerType data, usize size):
 	start(new DataType[size]), length(size) {
 		MX::memcpy(start, data, size);
 	}
 
+	/// @brief Start of the argument list.
 	PointerType		start;
+	/// @brief Length of the argument list.
 	usize			length;
 };
 
