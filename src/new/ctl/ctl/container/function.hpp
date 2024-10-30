@@ -97,7 +97,7 @@ public:
 	/// @brief Invokes the function bound to it.
 	/// @param ...args Function arguments.
 	/// @return Result of the function.
-	/// @throw `BadCallException`
+	/// @throw BadCallException When there is no function assigned.
 	constexpr ReturnType invoke(TArgs... args) const {
 		if (!func) badCallError();
         return func->invoke(args...);
@@ -106,7 +106,7 @@ public:
 	/// @brief Invokes the function bound to it.
 	/// @param ...args Function arguments.
 	/// @return Result of the function.
-	/// @throw `BadCallException`
+	/// @throw BadCallException When there is no function assigned.
     constexpr ReturnType operator()(TArgs... args) const {
         return invoke(args...);
     }

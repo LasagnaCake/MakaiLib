@@ -70,7 +70,7 @@ public:
 	/// @brief Returns the element at the given index.
 	/// @param index Index of the element.
 	/// @return Reference to the element.
-	/// @throw `OutOfBoundsException`
+	/// @throw OutOfBoundsException When index is bigger than `Array` size.
 	constexpr ReferenceType operator[](IndexType index) {
 		if (index >= SIZE || SIZE == 0)
 			throw OutOfBoundsException("Index is bigger than array size!");
@@ -81,7 +81,7 @@ public:
 	/// @brief Returns the element at the given index.
 	/// @param index Index of the element.
 	/// @return Const reference to the element.
-	/// @throw `OutOfBoundsException`
+	/// @throw OutOfBoundsException When index is bigger than `Array` size.
 	constexpr ConstReferenceType operator[](IndexType index) const {
 		if (index >= SIZE || SIZE == 0)
 			throw OutOfBoundsException("Index is bigger than array size!");

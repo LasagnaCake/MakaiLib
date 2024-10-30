@@ -22,8 +22,7 @@ struct BitMask:
 	/// @brief Bit size of mask element.
 	constexpr static usize ELEMENT_BIT_SIZE = (sizeof(TData) * 8);
 	/// @brief Initial state of the underlying bit mask.
-	/// @note `true` = all bits set.
-	/// @note `false` = all bits unset.
+	/// @note `true` = all bits set. `false` = all bits unset.
 	constexpr static bool INITIAL_STATE = I;
 
 	using Typed				= ::CTL::Typed<TData>;
@@ -139,7 +138,7 @@ struct BitMask:
 	/// @brief Returns the state of a bit at a given index.
 	/// @param index Index of the bit.
 	/// @return Whether the bit is set or not.
-	/// @throw `OutOfBoundsException`
+	/// @throw OutOfBoundsException When index is bigger than max possible bit range.
 	constexpr bool operator[](ssize index) {
 		if (index >= BYTE_SIZE * 8) throw OutOfBoundsException("Index is bigger than possible bit range!");
 		while (index < 0) index += BYTE_SIZE * 8;

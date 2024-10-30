@@ -263,7 +263,7 @@ public:
 
 	/// @brief Removes an element from the end of the `List`.
 	/// @return Value of the element removed.
-	/// @throw `OutOfBoundsException`
+	/// @throw OutOfBoundsException when `List` is empty.
 	constexpr DataType popBack() {
 		DataType value = back();
 		count--;
@@ -275,7 +275,7 @@ public:
 	/// @param value Value of the element to insert.
 	/// @param index Index of which to insert in.
 	/// @return Reference to self.
-	/// @throw `OutOfBoundsException`
+	/// @throw OutOfBoundsException when index is bigger than `List` size.
 	/// @note If index is negative, it will be interpreted as starting from the end of the `List`.
 	constexpr SelfType& insert(DataType const& value, IndexType index) {
 		assertIsInBounds(index);
@@ -291,7 +291,7 @@ public:
 	/// @param other `List` to insert.
 	/// @param index Index of which to insert in.
 	/// @return Reference to self.
-	/// @throw `OutOfBoundsException`
+	/// @throw OutOfBoundsException when index is bigger than `List` size.
 	/// @note If index is negative, it will be interpreted as starting from the end of the `List`.
 	constexpr SelfType& insert(SelfType const& other, IndexType index) {
 		assertIsInBounds(index);
@@ -308,7 +308,7 @@ public:
 	/// @param values Array of element to insert.
 	/// @param index Index of which to insert in.
 	/// @return Reference to self.
-	/// @throw `OutOfBoundsException`
+	/// @throw OutOfBoundsException when index is bigger than `List` size.
 	/// @note If index is negative, it will be interpreted as starting from the end of the `List`.
 	template<SizeType S>
 	constexpr SelfType& insert(Decay::AsType<ConstantType[S]> const& values, IndexType const& index) {
@@ -320,7 +320,7 @@ public:
 	/// @param count Amount of times to insert the element.
 	/// @param index Index of which to insert in.
 	/// @return Reference to self.
-	/// @throw `OutOfBoundsException`
+	/// @throw OutOfBoundsException when index is bigger than `List` size.
 	/// @note If index is negative, it will be interpreted as starting from the end of the `List`.
 	constexpr SelfType& insert(DataType const& value, SizeType const& count, IndexType const& index) {
 		return insert(SelfType(count, value), index);
@@ -332,7 +332,7 @@ public:
 	/// @note
 	///		This guarantees the capacity will be AT LEAST `count`,
 	/// 	but does not guarantee the capacity will be EXACTLY `count`.
-	/// @note For that, use `resize`.
+	///		For that, use `resize`.
 	constexpr SelfType& reserve(SizeType const& count) {
 		while (count >= maximum)
 			increase();
@@ -342,8 +342,9 @@ public:
 	/// @brief Resizes the `List`, so the capacity is of a given size.
 	/// @param newSize New `List` size.
 	/// @return Reference to self.
-	/// @note This guarantees the capacity will be EXACTLY of `newSize`.
-	/// @note If you need the capacity to be AT LEAST `newSize`, use `reserve`.
+	/// @note
+	///		This guarantees the capacity will be EXACTLY of `newSize`.
+	/// 	If you need the capacity to be AT LEAST `newSize`, use `reserve`.
 	constexpr SelfType& resize(SizeType const& newSize) {
 		if (contents)	memresize(contents, newSize, maximum, count);
 		else			contents = memcreate(newSize);
@@ -375,7 +376,7 @@ public:
 	/// @note
 	///		This guarantees the capacity will be AT LEAST `count`,
 	/// 	but does not guarantee the capacity will be EXACTLY `count`.
-	/// @note For that, use `resize`.
+	///		For that, use `resize`.
 	constexpr SelfType& reserve(SizeType const& count, DataType const& fill) {
 		reserve(count);
 		if (count > this->count) {
@@ -393,8 +394,9 @@ public:
 	///	@note
 	///		If current size is smaller,
 	///		then it fills the extra space added with the given `fill`.
-	/// @note This guarantees the capacity will be EXACTLY of `newSize`.
-	/// @note If you need the capacity to be AT LEAST `newSize`, use `reserve`.
+	/// @note
+	///		This guarantees the capacity will be EXACTLY of `newSize`.
+	///		If you need the capacity to be AT LEAST `newSize`, use `reserve`.
 	constexpr SelfType& resize(SizeType const& newSize, DataType const& fill) {
 		resize(newSize);
 		if (newSize > count)
@@ -511,7 +513,7 @@ public:
 	/// @brief Removes an element at a given index.
 	/// @param index Index of the element to remove.
 	/// @return Reference to self.
-	/// @throw `OutOfBoundsException`
+	/// @throw OutOfBoundsException when index is bigger than `List` size.
 	/// @note
 	///		Does not resize `List`, merely moves it to the end, and destructs it.
 	///		If you need the `List` size to change, use `erase`.
@@ -614,7 +616,7 @@ public:
 	/// @brief Erases an element at a given index.
 	/// @param index Index of the element to erase.
 	/// @return Reference to self.
-	/// @throw `OutOfBoundsException`
+	/// @throw OutOfBoundsException when index is bigger than `List` size.
 	/// @note
 	///		Resizes the `List`.
 	///		If you need the `List` size to remain the same, use `remove`. 
@@ -674,7 +676,7 @@ public:
 	/// @brief Returns a `List` containing all elements starting from a given index.
 	/// @param start Starting index to copy from.
 	/// @return `List` containing elements starting from the given `start`.
-	/// @throw `OutOfBoundsException`
+	/// @throw OutOfBoundsException when index is bigger than `List` size.
 	/// @note If index is negative, it will be interpreted as starting from the end of the `List`.
 	constexpr SelfType sliced(IndexType start) const {
 		if (IndexType(count) < start) return SelfType();
@@ -687,7 +689,7 @@ public:
 	/// @param start Starting index to copy from.
 	/// @param stop End index to stop copying from.
 	/// @return `List` containing elements between `start` and `stop`.
-	/// @throw `OutOfBoundsException`
+	/// @throw OutOfBoundsException when index is bigger than `List` size.
 	/// @note If index is negative, it will be interpreted as starting from the end of the `List`.
 	constexpr SelfType sliced(IndexType start, IndexType stop) const {
 		if (IndexType(count) < start) return SelfType();
@@ -702,7 +704,7 @@ public:
 	/// @brief Returns the current `List`, divided at a given index.
 	/// @param index The index to use as pivot.
 	/// @return A `List` containing the two halves of this `List`.
-	/// @throw `OutOfBoundsException`
+	/// @throw OutOfBoundsException when index is bigger than `List` size.
 	/// @note If index is negative, it will be interpreted as starting from the end of the `List`.
 	constexpr List<SelfType, SizeType> divide(IndexType index) const {
 		List<SelfType, SizeType> res;
@@ -858,25 +860,25 @@ public:
 	
 	/// @brief Returns the value of the first element.
 	/// @return Reference to the first element.
-	/// @throw `OutOfBoundsException`.
+	/// @throw OutOfBoundsException when `List` is empty.
 	constexpr ReferenceType		front()			{return at(0);			}
 	/// @brief Returns the value of the last element.
 	/// @return Reference to the last element.
-	/// @throw `OutOfBoundsException`.
+	/// @throw OutOfBoundsException when `List` is empty.
 	constexpr ReferenceType 	back()			{return at(count-1);	}
 	/// @brief Returns the value of the first element.
 	/// @return Value of the first element.
-	/// @throw `OutOfBoundsException`.
+	/// @throw OutOfBoundsException when `List` is empty.
 	constexpr DataType			front() const	{return at(0);			}
 	/// @brief Returns the value of the last element.
 	/// @return Value of the last element.
-	/// @throw `OutOfBoundsException`.
+	/// @throw OutOfBoundsException when `List` is empty.
 	constexpr DataType			back() const	{return at(count-1);	}
 
 	/// @brief Returns the value of the element at a given index.
 	/// @param index Index of the element.
 	/// @return Reference to the element.
-	/// @throw `OutOfBoundsException`
+	/// @throw OutOfBoundsException when `List` is empty.
 	constexpr DataType& at(IndexType index) {
 		if (!count) emptyError();
 		assertIsInBounds(index);
@@ -887,7 +889,7 @@ public:
 	/// @brief Returns the value of the element at a given index.
 	/// @param index Index of the element.
 	/// @return Value of the element.
-	/// @throw `OutOfBoundsException`
+	/// @throw OutOfBoundsException when index is bigger than `List` size.
 	constexpr DataType at(IndexType index) const {
 		if (!count) emptyError();
 		assertIsInBounds(index);
@@ -898,12 +900,12 @@ public:
 	/// @brief Returns the value of the element at a given index.
 	/// @param index Index of the element.
 	/// @return Reference to the element.
-	/// @throw `OutOfBoundsException`
+	/// @throw OutOfBoundsException when index is bigger than `List` size.
 	constexpr ReferenceType	operator[](IndexType index)			{return at(index);}
 	/// @brief Returns the value of the element at a given index.
 	/// @param index Index of the element.
 	/// @return Value of the element.
-	/// @throw `OutOfBoundsException`
+	/// @throw OutOfBoundsException when index is bigger than `List` size.
 	constexpr DataType operator[](IndexType const& index) const	{return at(index);}
 
 	/// @brief Returns the current element count.
