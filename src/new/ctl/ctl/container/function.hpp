@@ -34,6 +34,9 @@ namespace Impl {
 
 template<typename T> struct Function;
 
+/// @brief Function/Lambda wrapper.
+/// @tparam TReturn Function return type.
+/// @tparam ...TArgs Function arguments.
 template<typename TReturn, typename... TArgs>
 struct Function<TReturn(TArgs...)>:
 	SelfIdentified<Function<TReturn(TArgs...)>>,
@@ -91,15 +94,24 @@ private:
 	}
 
 public:
+	/// @brief Invokes the function bound to it.
+	/// @param ...args Function arguments.
+	/// @return Result of the function.
+	/// @throw `BadCallException`
 	constexpr ReturnType invoke(TArgs... args) const {
 		if (!func) badCallError();
         return func->invoke(args...);
     }
 
+	/// @brief Invokes the function bound to it.
+	/// @param ...args Function arguments.
+	/// @return Result of the function.
+	/// @throw `BadCallException`
     constexpr ReturnType operator()(TArgs... args) const {
         return invoke(args...);
     }
 
+	/// @brief Destructor.
     constexpr ~Function() {destroy();}
 
 	template<typename TFunction>

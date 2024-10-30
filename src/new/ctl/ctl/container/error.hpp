@@ -6,7 +6,9 @@
 
 CTL_NAMESPACE_BEGIN
 
+/// @brief Detailed error namespace.
 namespace Error {
+	/// @brief Basic error type.
 	using Generic = DetailedException<String>;
 
 	#define DEFINE_ERROR_TYPE(NAME)\
@@ -52,25 +54,42 @@ namespace Error {
 
 	#undef DEFINE_ERROR_TYPE
 
+	/// @brief Pointer to an exception.
 	typedef Exception* ErrorPointer;
 
+	/// @brief Returns a pointer to the current exception.
+	/// @return Pointer to the current exception. 
 	inline ErrorPointer current() {return Exception::current();}
 
+	/// @brief Re-throws an error.
+	/// @tparam T Error type.
+	/// @param err Error to re-throw.
 	template<Type::Derived<Generic> T>
 	[[noreturn]] inline void rethrow(T const& err) {throw T(err);}
 
+	/// @brief Re-throws an error.
+	/// @tparam T Error type.
+	/// @param err Pointer to error to re-throw.
 	template<Type::Derived<Generic> T>
-	[[noreturn]] inline void rethrow(T* const& err) {if (err) throw T(&err);}
-
+	[[noreturn]] inline void rethrow(T* const& err) {if (err) throw T(*err);}
+	
+	/// @brief Re-throws an `Exception` as an error.
+	/// @tparam T Error type.
+	/// @param err `Exception` to re-throw.
 	template<Type::Derived<Generic> T>
 	[[noreturn]] inline void rethrow(Exception const& err) {throw T(err);}
 
+	/// @brief Re-throws an `Exception` as an error.
+	/// @tparam T Error type.
+	/// @param err Pointer to `Exception` to re-throw. 
 	template<Type::Derived<Generic> T>
-	[[noreturn]] inline void rethrow(Exception* const& err) {throw T(&err);}
+	[[noreturn]] inline void rethrow(Exception* const& err) {throw T(*err);}
 }
 
 CTL_NAMESPACE_END
 
+/// @brief Defines a custom error type.
+/// @param NAME Class name.
 #define DEFINE_ERROR_TYPE(NAME)\
 	struct NAME: public ::CTL::Error::Generic {\
 		NAME (\
