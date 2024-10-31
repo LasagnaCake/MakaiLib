@@ -8,19 +8,21 @@
 
 CTL_NAMESPACE_BEGIN
 
-template <class T>
-concept Sortable = Type::Comparator::Threeway<T, T>;
+namespace Type::Algorithm {
+	template <class T>
+	concept Sortable = Type::Comparator::Threeway<T, T>;
 
-template <class T>
-concept SortableIterator =
-	IteratorType<T>
-&&	Sortable<typename T::DataType>
-;
+	template <class T>
+	concept SortableIterator =
+		Type::Container::Iterator<T>
+	&&	Sortable<typename T::DataType>
+	;
 
-static_assert(SortableIterator<Iterator<int>>);
+	static_assert(SortableIterator<Iterator<int>>);
+}
 
 namespace Sorting {
-	template<Sortable T>
+	template<Type::Algorithm::Sortable T>
 	constexpr void insertionSort(T* const& arr, usize const& sz) {
 		for (usize i = 1; i < sz; ++i) {
 			usize j = i-1;
@@ -32,7 +34,7 @@ namespace Sorting {
 
 	// Based off of https://www.geeksforgeeks.org/merge-sort/
 	// TODO: fix this
-	template<Sortable T>
+	template<Type::Algorithm::Sortable T>
 	constexpr void mergeSort(T* const& arr, usize const& sz) {
 		if (sz == 1) return;
 		if (sz == 2) {
@@ -72,7 +74,7 @@ namespace Sorting {
 
 	namespace Partial {
 		// TODO: fix this
-		template<Sortable T>
+		template<Type::Algorithm::Sortable T>
 		constexpr void mergeSort(T* const& arr, usize const& sz) {
 			if (sz == 1) return;
 			if (sz == 2) {
@@ -111,11 +113,11 @@ namespace Sorting {
 
 	// Based off of Tim Sort, with minor changes
 	// TODO: fix this
-	template<Sortable T>
+	template<Type::Algorithm::Sortable T>
 	constexpr void vivoSort(T* const& arr, usize const& sz) {
 		if (sz < 2) return;
 		if (sz == 2) {
-			if (arr[0] > arr[1])
+			if (SimpleComparator<T>::lesser(arr[0], arr[1]))
 				swap(arr[0], arr[1]);
 			return;
 		}
@@ -158,12 +160,12 @@ namespace Sorting {
 	}
 }
 
-template <SortableIterator T>
+template <Type::Algorithm::SortableIterator T>
 constexpr void sort(T const& begin, T const& end) {
-	Sorting::insertionSort(begin.base(), end - begin + 1);
+	Sorting::insertionSort(begin.raw(), end - begin + 1);
 }
 
-template <Sortable T>
+template <Type::Algorithm::Sortable T>
 constexpr void sort(T* const& begin, T* const& end) {
 	Sorting::insertionSort(begin, end - begin + 1);
 }

@@ -9,13 +9,15 @@
 CTL_NAMESPACE_BEGIN
 
 namespace Type {
-	template<template <class> class T, class TData>
-	concept Allocator = requires (T<TData> t, usize sz, TData* p) {
-		{t.allocate(sz)}	-> Type::Equal<TData*>	;
-		{t.deallocate(p)}	-> Type::Equal<void>	;
-		{t.resize(p, sz)}	-> Type::Equal<void>	;
-		{t.resized(p, sz)}	-> Type::Equal<TData*>	;
-	};
+	namespace Memory {
+		template<template <class> class T, class TData>
+		concept Allocator = requires (T<TData> t, usize sz, TData* p) {
+			{t.allocate(sz)}	-> Type::Equal<TData*>	;
+			{t.deallocate(p)}	-> Type::Equal<void>	;
+			{t.resize(p, sz)}	-> Type::Equal<void>	;
+			{t.resized(p, sz)}	-> Type::Equal<TData*>	;
+		};
+	}
 }
 
 template<class T>
@@ -67,7 +69,7 @@ struct HeapAllocator {
 };
 
 template<template <class> class TAlloc, class TData>
-requires Type::Allocator<TAlloc, TData>
+requires Type::Memory::Allocator<TAlloc, TData>
 struct Allocatable {
 	using AllocatorType			= TAlloc<TData>;
 	template<class T = TData>

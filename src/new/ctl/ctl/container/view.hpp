@@ -8,9 +8,11 @@
 
 CTL_NAMESPACE_BEGIN
 
-template <typename T> concept Viewable = Type::Safe<T>;
+namespace Type::Container {
+	template <typename T> concept Viewable = Safe<T>;
+}
 
-template<Viewable T>
+template<Type::Container::Viewable T>
 class View: Typed<T>, SelfIdentified<View<T>> {
 public:
 	using Typed				= Typed<T>;

@@ -179,10 +179,12 @@ struct Hasher {
 	constexpr static usize hash(T const& value);
 };
 
-template<class TValue, class THasher>
-concept Hashable = requires (TValue v) {
-	{THasher::hash(v)} -> Type::Equal<usize>;
-};
+namespace Type::Algorithm {
+	template<class TValue, class THasher>
+	concept Hashable = requires (TValue v) {
+		{THasher::hash(v)} -> Type::Equal<usize>;
+	};
+}
 
 CTL_NAMESPACE_END
 

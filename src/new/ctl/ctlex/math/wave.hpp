@@ -14,7 +14,7 @@ namespace Math::Wave {
 			::CTL::Math::abcos,
 			::CTL::Math::ramp,
 			::CTL::Math::round,
-			::CTL::Math::Operatable,
+			::CTL::Type::Math::Operatable,
 			::CTL::Math::fract
 		;
 	}
@@ -63,7 +63,7 @@ namespace Math::Noise {
 	namespace {
 		using
 			::CTL::Math::fract,
-			::CTL::Math::Operatable
+			::CTL::Type::Math::Operatable
 		;
 	}
 

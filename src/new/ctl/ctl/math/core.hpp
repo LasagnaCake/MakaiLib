@@ -12,14 +12,17 @@
 
 CTL_NAMESPACE_BEGIN
 
+namespace Type::Math {
+	template <typename T>
+	concept Operatable = Mutable<T> && Arithmetic<T, T>;
+}
+
 namespace Math {
 	/**
 	* An 'Operatable' type is defined as:
 	*	a)	A 'Mutable' type that can be operated on, with basic arithmetic
 			expressions (+, -, *, /), with another value of the same type.
 	*/
-	template <typename T>
-	concept Operatable = Type::Mutable<T> && Type::Arithmetic<T, T>;
 
 	/// Math Constants.
 	constexpr const double	sqrt2		= 1.4142135623730950488016887242;
@@ -39,7 +42,7 @@ namespace Math {
 	constexpr const double	phi			= 1.6180339887498948482045868343;
 	constexpr const double	tauphi		= tau / phi;
 
-	template<Operatable T = float>
+	template<Type::Math::Operatable T = float>
 	constexpr T sign(T const& val)
 	requires (
 		Type::Comparable::All<T, T>
@@ -48,35 +51,35 @@ namespace Math {
 		return (val < 0 ? -1 : (val > 0 ? +1 : 0));
 	}
 
-	template<Operatable T = float>
+	template<Type::Math::Operatable T = float>
 	constexpr T min(T const& a, T const& b)
 	requires Type::Comparable::Lesser<T, T> {
 		return ((a < b) ? a : b);
 	}
 
-	template<Operatable T = float>
+	template<Type::Math::Operatable T = float>
 	constexpr T max(T const& a, T const& b)
 	requires Type::Comparable::Greater<T, T> {
 		return ((a > b) ? a : b);
 	}
 
-	template<Operatable T = float>
+	template<Type::Math::Operatable T = float>
 	constexpr T clamp(T const& a, T const& min, T const& max)
 	requires Type::Comparable::All<T, T> {
 		return ((a < min) ? min : ((a > max) ? max : a));
 	}
 
-	template<Operatable T = float>
+	template<Type::Math::Operatable T = float>
 	constexpr T radians(T const& deg) requires Type::Arithmetic<T, float> {
 		return (T)(deg / degrad);
 	}
 
-	template<Operatable T = float>
+	template<Type::Math::Operatable T = float>
 	constexpr T degrees(T const& rad) requires Type::Arithmetic<T, float> {
 		return (T)(rad * degrad);
 	}
 
-	template<Operatable T = float>
+	template<Type::Math::Operatable T = float>
 	constexpr T lerp(T const& from, T const& to, T const& by) {
 		return (T)(from + by * (to - from));
 	}
@@ -194,7 +197,7 @@ namespace Math {
 		return (2.0 * s) - a;
 	}
 
-	template<Operatable T>
+	template<Type::Math::Operatable T>
 	constexpr inline Function<T(T const&)> getInterpolationFunction(T const& from, T const& to) {
 		return [=](T const& by) -> T {return (T)lerp(from, to, by);};
 	}

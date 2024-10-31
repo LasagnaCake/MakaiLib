@@ -9,42 +9,42 @@
 #pragma GCC diagnostic ignored "-Wpedantic"
 #pragma GCC diagnostic ignored "-Wunknown-pragmas"
 
-CTL_NAMESPACE_BEGIN
+CTL_EX_NAMESPACE_BEGIN
 
-namespace Type::Vector {
+namespace Type::Math::Vector {
 	template<typename T>
-	concept ValidBase = requires {
-		requires	Type::Arithmetic<T, T>;
-		requires	Type::Arithmetic<T, float>;
-		requires	Type::HasModulo<T, T>;
-		requires	Type::HasModulo<T, float>;
-		requires	Type::Constructible<T, float>;
+	concept Base = requires {
+		requires	CTL::Type::Arithmetic<T, T>;
+		requires	CTL::Type::Arithmetic<T, float>;
+		requires	CTL::Type::HasModulo<T, T>;
+		requires	CTL::Type::HasModulo<T, float>;
+		requires	CTL::Type::Constructible<T, float>;
 	};
 
 	template<typename T>
-	concept ValidVec2 = requires {
-		requires	ValidBase<T>;
-		requires	Type::Constructible<T, float, float>;
+	concept Vector2 = requires {
+		requires	Base<T>;
+		requires	CTL::Type::Constructible<T, float, float>;
 		T::x;
 		T::y;
 	};
 
 	template<typename T>
-	concept ValidVec3 = requires {
-		requires	ValidBase<T>;
-		requires	Type::Constructible<T, float, float>;
-		requires	Type::Constructible<T, float, float, float>;
+	concept Vector3 = requires {
+		requires	Base<T>;
+		requires	CTL::Type::Constructible<T, float, float>;
+		requires	CTL::Type::Constructible<T, float, float, float>;
 		T::x;
 		T::y;
 		T::z;
 	};
 
 	template<typename T>
-	concept ValidVec4 = requires {
-		requires	ValidBase<T>;
-		requires	Type::Constructible<T, float, float>;
-		requires	Type::Constructible<T, float, float, float>;
-		requires	Type::Constructible<T, float, float, float, float>;
+	concept Vector4 = requires {
+		requires	Base<T>;
+		requires	CTL::Type::Constructible<T, float, float>;
+		requires	CTL::Type::Constructible<T, float, float, float>;
+		requires	CTL::Type::Constructible<T, float, float, float, float>;
 		T::x;
 		T::y;
 		T::z;
@@ -52,29 +52,18 @@ namespace Type::Vector {
 	};
 
 	template<typename T>
-	concept ValidVector =
-		ValidVec2<T>
-	||	ValidVec3<T>
-	||	ValidVec4<T>
+	concept Vector =
+		Vector2<T>
+	||	Vector3<T>
+	||	Vector4<T>
 	;
 
 	template<typename T>
-	concept Vectorable = Type::Equal<T, float> || ValidVector<T>;
+	concept Vectorable = CTL::Type::Equal<T, float> || Vector<T>;
 }
-
-CTL_NAMESPACE_END
-
-CTL_EX_NAMESPACE_BEGIN
 
 namespace Math {
 
-/**
-* [-----------------]
-* [                 ]
-* [  Vector2 Class  ]
-* [                 ]
-* [-----------------]
-*/
 #pragma pack(1)
 class Vector2: Ordered {
 	public:
@@ -265,7 +254,7 @@ class Vector2: Ordered {
 
 		template <typename T>
 		constexpr OrderType operator<=>(T const& val) const
-		requires Type::Convertible<T, float> {
+		requires CTL::Type::Convertible<T, float> {
 			return *this <=> Vector2(val);
 		}
 
@@ -409,13 +398,6 @@ class Vector2: Ordered {
 		}
 };
 
-/**
-* [-----------------]
-* [                 ]
-* [  Vector3 Class  ]
-* [                 ]
-* [-----------------]
-*/
 #pragma pack(1)
 class Vector3: Ordered {
 	public:
@@ -632,7 +614,7 @@ class Vector3: Ordered {
 
 		template <typename T>
 		constexpr OrderType operator<=>(T const& val) const
-		requires Type::Convertible<T, float> {
+		requires CTL::Type::Convertible<T, float> {
 			return *this <=> Vector3(val);
 		}
 
@@ -807,13 +789,6 @@ class Vector3: Ordered {
 		}
 };
 
-/**
-* [-----------------]
-* [                 ]
-* [  Vector4 Class  ]
-* [                 ]
-* [-----------------]
-*/
 #pragma pack(1)
 class Vector4: Ordered {
 	public:
@@ -1051,7 +1026,7 @@ class Vector4: Ordered {
 
 		template <typename T>
 		constexpr OrderType operator<=>(T const& val) const
-		requires Type::Convertible<T, float> {
+		requires CTL::Type::Convertible<T, float> {
 			return *this <=> Vector4(val);
 		}
 
@@ -1196,9 +1171,9 @@ typedef Vector3 Vec3;
 typedef Vector4 Vec4;
 
 template <
-	Type::Vector::ValidVector	TPosition,
-	Type::Vector::Vectorable	TRotation	= TPosition,
-	Type::Vector::ValidVector	TScale		= TPosition
+	Type::Math::Vector::Vector		TPosition,
+	Type::Math::Vector::Vectorable	TRotation	= TPosition,
+	Type::Math::Vector::Vector		TScale		= TPosition
 >
 struct Transform {
 	typedef TPosition	PositionType;

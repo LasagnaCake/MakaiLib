@@ -80,22 +80,24 @@ namespace {
 	}
 }
 
-template<typename T>
-concept ErrorStringType =
-	Type::Constructible<T, const char*>
-&&	(Type::Constructible<T, T const&> || Type::Constructible<T, T>)
-&&	Type::Addable<T, T>
-&&	Type::Addable<T, const char*>
-&&	Type::Addable<const char*, T>
-&&	requires (T a, const char* b) {
-		{strlit(a)};
-		{a + a} -> Type::Equal<T>;
-		{a + b} -> Type::Equal<T>;
-		{b + a} -> Type::Equal<T>;
-	}
-;
+namespace Type::Error {
+	template<typename T>
+	concept ErrorStringType =
+		Type::Constructible<T, const char*>
+	&&	(Type::Constructible<T, T const&> || Type::Constructible<T, T>)
+	&&	Type::Addable<T, T>
+	&&	Type::Addable<T, const char*>
+	&&	Type::Addable<const char*, T>
+	&&	requires (T a, const char* b) {
+			{strlit(a)};
+			{a + a} -> Type::Equal<T>;
+			{a + b} -> Type::Equal<T>;
+			{b + a} -> Type::Equal<T>;
+		}
+	;
+}
 
-template <ErrorStringType TString>
+template <Type::Error::ErrorStringType TString>
 struct DetailedException:
 	Exception,
 	Derived<Exception>,

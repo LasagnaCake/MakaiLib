@@ -7,6 +7,22 @@
 CTL_EX_NAMESPACE_BEGIN
 
 namespace Collision::C2D {
+	template<size_t UUID> struct Bounds;
+
+	template<usize S> struct Shape;
+}
+
+namespace Type::Collision::C2D {
+	template<class T>
+	concept Collidable = CTL::Type::Subclass<T, Ex::Collision::C2D::Bounds<T::ID>>;
+	
+	template<class T>
+	concept Shape = requires {
+		T::SIZE;
+	} && ::CTL::Type::Equal<T, CTL::Ex::Collision::C2D::Shape<T::SIZE>>;
+}
+
+namespace Collision::C2D {
 	namespace {
 		using
 			Math::angleTo,
@@ -26,13 +42,10 @@ namespace Collision::C2D {
 		constexpr ~Bounds()	{}
 	};
 
-	template<class T>
-	concept Collidable = Type::Subclass<T, Bounds<T::ID>>;
-
 	template<typename T>
 	struct FollowingType;
 
-	template<Collidable T>
+	template<Ex::Type::Collision::C2D::Collidable T>
 	struct FollowingType<T> {
 		typedef Bounds<T::Next::ID> Type;
 	};
@@ -144,8 +157,6 @@ namespace Collision::C2D {
 		float length = 1;
 		float angle = 0;
 	};
-
-	template<usize S> struct Shape;
 
 	typedef Shape<0> Figure;
 
@@ -273,11 +284,6 @@ namespace Collision::C2D {
 		PointArray points = {0};
 	};
 
-	template<class T>
-	concept ValidShape = requires {
-		T::SIZE;
-	} && Type::Equal<T, Shape<T::SIZE>>;
-
 	typedef Shape<3> Triangle;
 	typedef Shape<4> Quad;
 
@@ -337,7 +343,7 @@ namespace Collision::C2D {
 	struct CollisionShape {
 		constexpr CollisionShape(): shape(CollisionType::CT_NULL) {}
 
-		template<Collidable T>
+		template<Ex::Type::Collision::C2D::Collidable T>
 		constexpr CollisionShape(T const& bounds): data(bounds), shape((CollisionType)T::ID) {}
 
 		constexpr ~CollisionShape()	{}
@@ -345,14 +351,14 @@ namespace Collision::C2D {
 		constexpr CollisionData const& value() const	{return data;	}
 		constexpr CollisionType type() const			{return shape;	}
 
-		template<Type::Equal<Box> T>		constexpr Box		asType() const	{return data.box;			}
-		template<Type::Equal<Circle> T>		constexpr Circle	asType() const	{return data.circle;		}
-		template<Type::Equal<Capsule> T>	constexpr Capsule	asType() const	{return data.capsule;		}
-		template<Type::Equal<Ray> T>		constexpr Ray		asType() const	{return data.ray;			}
-		template<Type::Equal<Polygon> T>	constexpr Polygon	asType() const	{return data.polygon;		}
-		template<ValidShape T>				constexpr T			asType() const	{return data.shape;			}
+		template<CTL::Type::Equal<Box> T>			constexpr Box		asType() const	{return data.box;			}
+		template<CTL::Type::Equal<Circle> T>		constexpr Circle	asType() const	{return data.circle;		}
+		template<CTL::Type::Equal<Capsule> T>		constexpr Capsule	asType() const	{return data.capsule;		}
+		template<CTL::Type::Equal<Ray> T>			constexpr Ray		asType() const	{return data.ray;			}
+		template<CTL::Type::Equal<Polygon> T>		constexpr Polygon	asType() const	{return data.polygon;		}
+		template<Ex::Type::Collision::C2D::Shape T>	constexpr T			asType() const	{return data.shape;			}
 
-		template<Collidable T>
+		template<Ex::Type::Collision::C2D::Collidable T>
 		constexpr explicit operator T() const	{return asType<T>();	}
 
 	private:

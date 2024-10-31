@@ -10,15 +10,20 @@
 CTL_EX_NAMESPACE_BEGIN
 
 namespace Spline {
-	template<::CTL::Math::Operatable T>
+	template<CTL::Type::Math::Operatable T>
 	struct Splinoid {
 		typedef T DataType;
 
 		constexpr virtual T interpolate(float const& by) = 0;
 	};
+}
 
+namespace Type::Spline {
 	template<class T>
-	concept SplineType = Type::Subclass<T, Splinoid<typename T::DataType>>;
+	concept Spline = CTL::Type::Subclass<T, Ex::Spline::Splinoid<typename T::DataType>>;
+}
+
+namespace Spline {
 
 	template<class T>
 	class Linear: public Splinoid<T> {
@@ -53,15 +58,15 @@ namespace Spline {
 	};
 
 	namespace Bezier {
-		template<::CTL::Math::Operatable T, usize N>
+		template<CTL::Type::Math::Operatable T, usize N>
 		struct Section {
 			T points[N];
 		};
 
-		template<::CTL::Math::Operatable T, usize N>
+		template<CTL::Type::Math::Operatable T, usize N>
 		using SectionList = List<Section<T, N>>;
 
-		template<::CTL::Math::Operatable T, usize N>
+		template<CTL::Type::Math::Operatable T, usize N>
 		class Spline: public Splinoid<T> {
 		public:
 			constexpr Spline() {}
@@ -123,14 +128,14 @@ namespace Spline {
 			}
 		};
 
-		template<::CTL::Math::Operatable T> using Quadratic	= Spline<T, 2>;
-		template<::CTL::Math::Operatable T> using Cubic		= Spline<T, 3>;
-		template<::CTL::Math::Operatable T> using Quartic	= Spline<T, 4>;
-		template<::CTL::Math::Operatable T> using Quintic	= Spline<T, 5>;
+		template<CTL::Type::Math::Operatable T> using Quadratic	= Spline<T, 2>;
+		template<CTL::Type::Math::Operatable T> using Cubic		= Spline<T, 3>;
+		template<CTL::Type::Math::Operatable T> using Quartic	= Spline<T, 4>;
+		template<CTL::Type::Math::Operatable T> using Quintic	= Spline<T, 5>;
 	}
 
 	namespace Hermite {
-		template<::CTL::Math::Operatable T>
+		template<CTL::Type::Math::Operatable T>
 		struct Section {
 			T position;
 			T velocity;
@@ -139,7 +144,7 @@ namespace Spline {
 		template<typename T>
 		using SectionList = List<Section<T>>;
 
-		template<::CTL::Math::Operatable T>
+		template<CTL::Type::Math::Operatable T>
 		class Spline: public Splinoid<T> {
 		public:
 			constexpr Spline() {}

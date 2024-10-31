@@ -445,8 +445,8 @@ public:
 	/// @return Reference to self.
 	/// @note This function only exists if the object type is a sortable type.
 	constexpr SelfType& sort()
-	requires Sortable<DataType> {
-		static_assert(SortableIterator<IteratorType>);
+	requires Type::Algorithm::Sortable<DataType> {
+		static_assert(Type::Algorithm::SortableIterator<IteratorType>);
 		::CTL::sort(begin(), end());
 		return *this;
 	}
@@ -455,8 +455,8 @@ public:
 	/// @return Sorted copy of the `List`.
 	/// @note This function only exists if the object type is a sortable type.
 	constexpr SelfType sorted() const
-	requires Sortable<DataType> {
-		static_assert(SortableIterator<IteratorType>);
+	requires Type::Algorithm::Sortable<DataType> {
+		static_assert(Type::Algorithm::SortableIterator<IteratorType>);
 		return SelfType(*this).sort();
 	}
 
@@ -930,7 +930,7 @@ public:
 
 	/// @brief Three-way comparison operator.
 	/// @param other Other `List` to compare with.
-	/// @return The order between both `List`s.
+	/// @return Order between both `List`s.
 	/// @note Requires element type to be three-way comparable.
 	/// @sa Comparator::compare()
 	constexpr OrderType operator<=>(SelfType const& other) const
@@ -969,7 +969,7 @@ public:
 
 	/// @brief Returns the result of a three-way comparison with another `List`.
 	/// @param other Other `List` to compare with.
-	/// @return The order between both `List`s.
+	/// @return Order between both `List`s.
 	/// @note Requires element type to be three-way comparable.
 	/// @sa Comparator::compare()
 	constexpr OrderType compare(SelfType const& other) const

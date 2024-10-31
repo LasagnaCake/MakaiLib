@@ -15,7 +15,7 @@ CTL_NAMESPACE_BEGIN
 
 template<class TKey, class TValue, template <class TPairKey, class TPairValue> class TPair = Pair>
 struct Collected {
-	static_assert(Type::Pair<TPair<TKey, TValue>>, "Type is not a valid pair type!");
+	static_assert(Type::Container::Pair<TPair<TKey, TValue>>, "Type is not a valid pair type!");
 
 	typedef Typed<TKey>			Key;
 	typedef Typed<TValue>		Value;
@@ -64,8 +64,14 @@ public:
 		typename BaseType::ConstReverseIteratorType
 	;
 
-	static_assert(!SORTED || Sortable<KeyType>, "Cannot form a sortable map whithout an sortable key!");
-	static_assert(!SORTED || Sortable<PairType>, "Cannot form a sortable map whithout an sortable pair type!");
+	static_assert(
+		!SORTED || Type::Algorithm::Sortable<KeyType>, 
+		"Cannot form a sortable map whithout an sortable key!"
+	);
+	static_assert(
+		!SORTED || Type::Algorithm::Sortable<PairType>, 
+		"Cannot form a sortable map whithout an sortable pair type!"
+	);
 
 	using
 		typename BaseType::OrderType,

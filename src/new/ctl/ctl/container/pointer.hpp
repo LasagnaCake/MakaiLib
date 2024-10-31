@@ -16,7 +16,9 @@ CTL_NAMESPACE_BEGIN
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wmismatched-new-delete"
 
-template <typename T> concept Pointable = Type::Safe<T>;
+namespace Type::Container {
+	template <typename T> concept Pointable = Safe<T>;
+}
 
 namespace Base {
 	struct ReferenceCounter {
@@ -42,7 +44,7 @@ namespace Base {
 #define CTL_PTR_ASSERT_STRONG		static_assert(!WEAK,	"It is forbidden to implicitly convert a strong pointer to a weak pointer!")
 #define CTL_PTR_ASSERT_WEAK			static_assert(WEAK,		"It is forbidden to implicitly convert a weak pointer to a strong pointer!")
 #define CTL_PTR_IF_STRONG			if constexpr(!WEAK)
-template <Pointable T, bool W>
+template <Type::Container::Pointable T, bool W>
 class Pointer:
 	private Base::ReferenceCounter,
 	Derived<Base::ReferenceCounter>,
@@ -165,7 +167,7 @@ public:
 //	constexpr PointerType operator&()		{return raw();}
 	constexpr PointerType operator&() const	{return raw();}
 
-	template<Pointable TNew>
+	template<Type::Container::Pointable TNew>
 	constexpr Pointer<TNew, WEAK>		castedTo() const	{return	static_cast<TNew*>(raw());			}
 	constexpr Pointer<DataType, true>	asWeak() const		{return	raw();								}
 	constexpr PointerType				raw() const			{return	exists() ? getPointer() : nullptr;	}
@@ -245,16 +247,16 @@ private:
 #undef CTL_PTR_ASSERT_WEAK
 #undef CTL_PTR_IF_STRONG
 
-template <Pointable T>
+template <Type::Container::Pointable T>
 using WeakPointer	= Pointer<T, true>;
 
-template <Pointable T>
+template <Type::Container::Pointable T>
 using StrongPointer	= Pointer<T, false>;
 
-template<Pointable T>
+template<Type::Container::Pointable T>
 using Instance	= StrongPointer<T>;
 
-template<Pointable T>
+template<Type::Container::Pointable T>
 using Handle	= WeakPointer<T>;
 
 #pragma GCC diagnostic pop

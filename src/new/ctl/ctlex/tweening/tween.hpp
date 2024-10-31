@@ -15,10 +15,12 @@ CTL_EX_NAMESPACE_BEGIN
 *	a)	An 'Operatable' type that can be constructed
 		from a single floating-point value.
 */
-template <typename T>
-concept Tweenable = ::CTL::Math::Operatable<T> && ::CTL::Type::Constructible<T, float>;
+namespace Type::Tween {
+	template <typename T>
+	concept Tweenable = CTL::Type::Math::Operatable<T> && CTL::Type::Constructible<T, float>;
+}
 
-template <Tweenable T = float>
+template <Type::Tween::Tweenable T = float>
 class Tween;
 
 using PeriodicTween = Periodic<Tween<>>;
@@ -42,14 +44,7 @@ private:
 	virtual PlayableTween& stop()		{return *this;	}
 };
 
-/**
-*****************
-*               *
-*  Tween Class  *
-*               *
-*****************
-*/
-template <Tweenable T>
+template <Type::Tween::Tweenable T>
 class Tween:
 	public PeriodicTween,
 	public PlayableTween,
@@ -218,7 +213,7 @@ private:
 	usize stop;
 };
 
-template<Tweenable T = float>
+template<Type::Tween::Tweenable T = float>
 struct StageData {
 	typedef T DataType;
 
@@ -243,7 +238,7 @@ private:
 	virtual Stageable&	setStepCount(usize const&)	{return *this;	}
 };
 
-template<Tweenable T = float>
+template<Type::Tween::Tweenable T = float>
 class TweenChain:
 	public PeriodicTween,
 	public PlayableTween,

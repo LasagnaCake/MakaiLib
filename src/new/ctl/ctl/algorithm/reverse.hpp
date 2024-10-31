@@ -5,7 +5,7 @@
 
 CTL_NAMESPACE_BEGIN
 
-template<IteratorType T>
+template<Type::Container::Iterator T>
 void reverse(T const& begin, T const& end) {
 	for (usize i = 0; i < usize(begin - end); ++i) {
 		typename T::DataType tmp = *(begin + i);

@@ -217,39 +217,39 @@ namespace Collision::C2D {
 
 	// Flipped Functions
 
-	template<Collidable T>
+	template<Ex::Type::Collision::C2D::Collidable T>
 	constexpr bool withinBounds(Circle const& a, T const& b) {
 		return withinBounds(b, a);
 	}
 
-	template<Collidable T>
+	template<Ex::Type::Collision::C2D::Collidable T>
 	constexpr bool withinBounds(Box const& a, T const& b) {
 		return withinBounds(b, a);
 	}
 
-	template<Collidable T>
+	template<Ex::Type::Collision::C2D::Collidable T>
 	constexpr bool withinBounds(Capsule const& a, T const& b) {
 		return withinBounds(b, a);
 	}
 
-	template<Collidable T>
+	template<Ex::Type::Collision::C2D::Collidable T>
 	constexpr bool withinBounds(Ray const& a, T const& b) {
 		return withinBounds(b, a);
 	}
 
-	template<Collidable B>
+	template<Ex::Type::Collision::C2D::Collidable B>
 	constexpr bool withinBounds(Figure const& a, B const& b) {
 		return withinBounds(b, a);
 	}
 
-	template<Collidable T>
+	template<Ex::Type::Collision::C2D::Collidable T>
 	constexpr bool withinBounds(Polygon const& a, T const& b) {
 		return withinBounds(b, a);
 	}
 
 	// CollisionShape
 
-	template<Collidable T>
+	template<Ex::Type::Collision::C2D::Collidable T>
 	constexpr bool withinBounds(CollisionShape const& a, T const& b) {
 		switch (a.type()) {
 			case CollisionType::CT_NULL:	return false;
@@ -262,7 +262,7 @@ namespace Collision::C2D {
 		}
 	}
 
-	template<Collidable T>
+	template<Ex::Type::Collision::C2D::Collidable T>
 	constexpr bool withinBounds(T const& a, CollisionShape const& b) {
 		return withinBounds(b, a);
 	}

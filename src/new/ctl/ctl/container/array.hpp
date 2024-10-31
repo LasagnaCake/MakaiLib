@@ -47,6 +47,12 @@ public:
 		typename Iteratable::SizeType,
 		typename Iteratable::IndexType
 	;
+	
+	using 
+		typename SelfIdentified::SelfType
+	;
+
+	using ComparatorType = SimpleComparator<DataType>;
 
 	using Iteratable::MAX_SIZE;
 
@@ -59,13 +65,13 @@ public:
 	static_assert(N <= MAX_SIZE, "Array size must not be bigger than highest SizeType!");
 
 	/// @brief Empty constructor.
-	constexpr Array() requires(Type::Constructible<DataType>)	{for (auto& e: contents) e = DataType();	}
+	constexpr Array()	{}
 	/// @brief Fixed array constructor.
 	/// @param arr Array to initialize with.
-	constexpr Array(ArrayType const& arr)						{copy(arr, contents, SIZE);					}
+	constexpr Array(ArrayType const& arr)	{copy(arr, contents, SIZE);	}
 	/// @brief Fill constructor.
 	/// @brief v Value to fill with.
-	constexpr Array(ConstReferenceType v)						{for (auto& e: data) e = v;					}
+	constexpr Array(ConstReferenceType v)	{for (auto& e: data) e = v;	}
 
 	/// @brief Returns the element at the given index.
 	/// @param index Index of the element.
@@ -87,6 +93,54 @@ public:
 			throw OutOfBoundsException("Index is bigger than array size!");
 		wrapBounds(index, SIZE);
 		return contents[index];
+	}
+
+	/// @brief Equality operator.
+	/// @param other Other `Array` to compare with.
+	/// @return Whether they're equal.
+	/// @note Requires element type to be equally comparable.
+	/// @sa Comparator::equals()
+	constexpr bool operator==(SelfType const& other) const
+	requires Type::Comparator::Equals<DataType, DataType> {
+		return equals(other);
+	}
+
+	/// @brief Three-way comparison operator.
+	/// @param other Other `Array` to compare with.
+	/// @return Order between both `Array`s.
+	/// @note Requires element type to be three-way comparable.
+	/// @sa Comparator::compare()
+	constexpr OrderType operator<=>(SelfType const& other) const
+	requires Type::Comparator::Threeway<DataType, DataType> {
+		return compare(other);
+	}
+
+	/// @brief Returns whether it is equal to another `Array`.
+	/// @param other Other `Array` to compare with.
+	/// @return Whether they're equal.
+	/// @note Requires element type to be equally comparable.
+	/// @sa Comparator::equals()
+	constexpr SizeType equals(SelfType const& other) const
+	requires Type::Comparator::Equals<DataType, DataType> {
+		bool result = true;
+		for (SizeType i = 0; i < SIZE; ++i)
+			result = ComparatorType::equals(contents[i], other.contents[i]);
+		return result;
+	}
+
+	/// @brief Returns the result of a three-way comparison with another `Array`.
+	/// @param other Other `Array` to compare with.
+	/// @return Order between both `Array`s.
+	/// @note Requires element type to be three-way comparable.
+	/// @sa Comparator::compare()
+	constexpr OrderType compare(SelfType const& other) const
+	requires Type::Comparator::Threeway<DataType, DataType> {
+		OrderType result = Order::EQUAL;
+		for (SizeType i = 0; i < SIZE; ++i) {
+			result = ComparatorType::equals(contents[i], other.contents[i]);
+			if (result != Order::EQUAL) break;
+		}
+		return result;
 	}
 	
 	/// @brief Returns the `Array` size.

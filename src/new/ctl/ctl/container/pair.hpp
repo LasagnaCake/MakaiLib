@@ -7,19 +7,20 @@
 
 CTL_NAMESPACE_BEGIN
 
-namespace Type {
+namespace Type::Container {
 	template<class T>
 	concept Pair = requires (T t) {
 		typename T::AType;
 		typename T::BType;
-		{t.getA()} -> Type::EqualOrConst<typename T::AType&>;
-		{t.getB()} -> Type::EqualOrConst<typename T::BType&>;
+		{t.getA()} -> EqualOrConst<typename T::AType&>;
+		{t.getB()} -> EqualOrConst<typename T::BType&>;
+		requires Constructible<T, typename T::AType, typename T::BType>;
 	};
 }
 
 template<typename TA, typename TB> struct Pair;
 
-template<Type::Pair TPair>
+template<Type::Container::Pair TPair>
 struct PairComparator: Ordered {
 	using PairType = TPair;
 
@@ -91,7 +92,7 @@ struct Pair:
 	constexpr Pair(AType const& a):					a(a)								{}
 	constexpr Pair(AType const& a, BType const& b):	a(a), b(b)							{}
 	constexpr Pair(SelfType const& other):			a(other.a), b(other.b)				{}
-	template<Type::Pair T>
+	template<Type::Container::Pair T>
 	constexpr Pair(T const& other):					a(other.getA()), b(other.getB())	{}
 
 	constexpr OrderType operator<=>(SelfType const& other) const

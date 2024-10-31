@@ -52,30 +52,36 @@ requires (
 	return String(value);
 }
 
-template<class T>
-concept ClassStringable = requires (T t) {
-	{t.toString()} -> Type::Equal<String>;
-};
+namespace Type::Conversion {
+	template<class T>
+	concept ClassStringable = requires (T t) {
+		{t.toString()} -> Type::Equal<String>;
+	};
+}
 
-template<ClassStringable T>
+template<Type::Conversion::ClassStringable T>
 constexpr String toString(T const& value) {
 	return value.toString();
 }
 
-template<class T>
-concept STDStringable = requires (T t) {
-	{t.c_str()} -> Type::Equal<typename String::StringLiteralType>;
-};
+namespace Type::Conversion {
+	template<class T>
+	concept STDStringable = requires (T t) {
+		{t.c_str()} -> Type::Equal<typename String::StringLiteralType>;
+	};
+}
 
-template<STDStringable T>
+template<Type::Conversion::STDStringable T>
 constexpr String toString(T const& value) {
 	return value.c_str();
 }
 
-template<class T>
-concept StringConvertible = requires (T t) {
-	{toString(t)} -> Type::Equal<String>;
-};
+namespace Type::Conversion {
+	template<class T>
+	concept StringConvertible = requires (T t) {
+		{toString(t)} -> Type::Equal<String>;
+	};
+}
 
 constexpr String toString(cstring const& value)	{return value;}
 constexpr String toString(String const& value)	{return value;}
@@ -93,7 +99,7 @@ requires (sizeof...(Args) > 1) {
 
 template<class... Args>
 constexpr WideString toWideString(Args const&... args)
-requires (... && StringConvertible<Args>) {
+requires (... && Type::Conversion::StringConvertible<Args>) {
 	return toString(args...).toWideString();
 }
 

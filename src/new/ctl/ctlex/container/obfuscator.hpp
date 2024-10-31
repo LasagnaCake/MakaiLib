@@ -1,6 +1,7 @@
 #ifndef CTL_EX_CONTAINER_OBFUSCATOR_H
 #define CTL_EX_CONTAINER_OBFUSCATOR_H
 
+#include "../../ctl/ctl.hpp"
 #include "../../ctl/exnamespace.hpp"
 
 CTL_EX_NAMESPACE_BEGIN
@@ -10,6 +11,17 @@ using CArray = Decay::AsType<T[S]>;
 
 template<usize S>
 using FixedCString = CArray<const char, S>;
+
+namespace Type::Container {
+	template<typename T, usize S>
+	concept StringObfuscator =
+		::CTL::Type::Constructible<T>
+	&&	::CTL::Type::Constructible<T, FixedCString<S> const&>
+	&&	requires (T t) {
+			{t.demangled()} -> ::CTL::Type::Equal<String>;
+		}
+	;
+}
 
 template<typename TData>
 struct Obfuscator {
@@ -229,20 +241,14 @@ MangledString<S> makeMangled(FixedCString<S> const& str) {
 	return MangledString<S>(str);
 }
 
-template<typename T, usize S>
-concept StringContainer =
-	Type::Constructible<T>
-&&	Type::Constructible<T, FixedCString<S> const&>
-&&	requires (T t) {
-		{t.demangled()} -> Type::Equal<String>;
-	}
-;
-
 template <usize N, template<usize> class TContainer = MangledString>
 struct ObfuscatedString: Obfuscator<String> {
 	constexpr static usize SIZE = N+1;
 
-	static_assert(StringContainer<TContainer<SIZE>, SIZE>, "Container is not a valid string container!");
+	static_assert(
+		Type::Container::StringObfuscator<TContainer<SIZE>, SIZE>,
+		"Container is not a valid string obfuscator!"
+	);
 
 	constexpr ObfuscatedString(FixedCString<SIZE> const& str): data(decompose(str)) {}
 
