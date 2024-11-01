@@ -774,7 +774,7 @@ public:
 	///		Does not free the underlying array held by the `List`.
 	///		To actually free the underlying array, call `dispose`. 
 	constexpr SelfType& clear() {
-		memdestroy(contents, count);
+		memdestruct(contents, count);
 		count = 0;
 		return *this;
 	}
@@ -1143,7 +1143,6 @@ private:
 	}
 
 	constexpr void dump() {
-		if (!contents) return;
 		memdestroy(contents, count);
 		contents	= nullptr;
 		maximum		= 0;
@@ -1151,6 +1150,7 @@ private:
 	}
 
 	constexpr static void memdestruct(PointerType const& p, SizeType const& sz) {
+		if (!sz) return;
 		if constexpr (!Type::Primitive<DataType>) {
 			for (auto i = p; i != (p+sz); ++i)
 				MX::destruct(i);
@@ -1158,6 +1158,7 @@ private:
 	}
 
 	constexpr void memdestroy(PointerType const& p, SizeType const& sz) {
+		if (!p) return;
 		memdestruct(p, sz);
 		alloc.deallocate(p);
 	}
