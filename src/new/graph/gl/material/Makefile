@@ -9,8 +9,8 @@ all: debug release
 
 debug:
 	$(call compile, effect)
-	$(call compile, materials)
+	$(call compile, core)
 
 release:
 	$(call compile, effect)
-	$(call compile, materials)
+	$(call compile, core)

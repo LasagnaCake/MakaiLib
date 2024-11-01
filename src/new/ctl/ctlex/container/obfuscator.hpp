@@ -12,7 +12,7 @@ using CArray = Decay::AsType<T[S]>;
 template<usize S>
 using FixedCString = CArray<const char, S>;
 
-namespace Type::Container {
+namespace Type::Ex::Container {
 	template<typename T, usize S>
 	concept StringObfuscator =
 		::CTL::Type::Constructible<T>
@@ -246,7 +246,7 @@ struct ObfuscatedString: Obfuscator<String> {
 	constexpr static usize SIZE = N+1;
 
 	static_assert(
-		Type::Container::StringObfuscator<TContainer<SIZE>, SIZE>,
+		Type::Ex::Container::StringObfuscator<TContainer<SIZE>, SIZE>,
 		"Container is not a valid string obfuscator!"
 	);
 

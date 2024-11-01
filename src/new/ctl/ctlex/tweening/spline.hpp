@@ -18,9 +18,9 @@ namespace Spline {
 	};
 }
 
-namespace Type::Spline {
+namespace Type::Ex::Spline {
 	template<class T>
-	concept Spline = CTL::Type::Subclass<T, Ex::Spline::Splinoid<typename T::DataType>>;
+	concept Spline = CTL::Type::Subclass<T, CTL::Ex::Spline::Splinoid<typename T::DataType>>;
 }
 
 namespace Spline {

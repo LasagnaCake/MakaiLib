@@ -7,7 +7,7 @@
 
 namespace Makai::Graph {
 	template<class T>
-	concept CameraType = Type::Convertible<T, Camera3D>;
+	concept CameraType = Makai::Type::Convertible<T, Camera3D>;
 
 	namespace Base {
 		template<DrawableObjectType TDraw>

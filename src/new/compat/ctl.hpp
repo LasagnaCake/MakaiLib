@@ -10,6 +10,11 @@ namespace Makai {
 		using namespace CTL::Ex::Math;
 		using namespace CTL::Math;
 	}
+	namespace Type {
+		using namespace CTL::Ex::Type;
+		using namespace CTL::Type;
+	}
+	namespace Type = Type;
     using Math::Vector2;
     using Math::Vector3;
     using Math::Vector4;

@@ -2,7 +2,7 @@
 #define MAKAILIB_GRAPH_MATERIAL_MATERIALS_H
 
 #include "../../../file/json.hpp"
-#include "../../../ctl/ctl.hpp"
+#include "../../../compat/ctl.hpp"
 #include "effect.hpp"
 #include "debug.hpp"
 #include "../color.hpp"
@@ -11,11 +11,17 @@
 
 namespace Makai::Graph::Material {
 
-	struct BaseObjectMaterial {
-		Vector4	color = Color::WHITE;
+	struct ShaderMaterial {
+		virtual void use(Shader const& shader) const = 0;
 	};
 
-	struct ObjectMaterial: BaseObjectMaterial {
+	struct BaseObjectMaterial: ShaderMaterial {
+		Vector4	color = Color::WHITE;
+
+		//virtual void use(Shader& shader) const = 0;
+	};
+
+	struct ObjectMaterial final: BaseObjectMaterial {
 		bool shaded			= false;
 		bool illuminated	= false;
 		float			hue			= 0;
@@ -35,14 +41,16 @@ namespace Makai::Graph::Material {
 		FillMode	fill		= FillMode::OFM_FILL;
 		ObjectDebugView	debug	= ObjectDebugView::ODV_NONE;
 
-		void use(Shader const& shader) const;
+		void use(Shader const& shader) const override final;
 	};
 
-	struct BaseBufferMaterial {
+	struct BaseBufferMaterial: ShaderMaterial {
 		Vector4 background = Color::NONE;
+
+		//virtual void use(Shader& shader) const = 0;
 	};
 
-	struct BufferMaterial: BaseBufferMaterial {
+	struct BufferMaterial final: BaseBufferMaterial {
 		Vector4
 			color	= Color::WHITE,
 			accent	= Color::NONE
@@ -66,25 +74,24 @@ namespace Makai::Graph::Material {
 		Effect::Noise		noise;
 		BufferDebugView	debug	= BufferDebugView::BDV_NONE;
 
-		void use(Shader const& shader) const;
+		void use(Shader const& shader) const override final;
 	};
 
-	struct BaseWorldMaterial {};
+	struct BaseWorldMaterial: ShaderMaterial {
+		//virtual void use(Shader& shader) const = 0;
+	};
 
-	struct WorldMaterial: BaseWorldMaterial {
+	struct WorldMaterial final: BaseWorldMaterial {
 		Effect::Fog		nearFog;
 		Effect::Fog		farFog;
 		Effect::Ambient	ambient;
 
-		void use(Shader const& shader) const;
+		void use(Shader const& shader) const override final;
 	};
 
 	template<class T, class BASE>
 	concept ValidMaterial =
-		Type::Subclass<T, BASE>
-	&&	requires (Shader& s, T& mat) {
-			mat.use(s);
-		}
+		Makai::Type::Subclass<T, BASE>
 	;
 
 	template<class T> concept ValidObjectMaterial	= ValidMaterial<T, BaseObjectMaterial>;

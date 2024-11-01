@@ -202,18 +202,18 @@ namespace Makai::Graph {
 	};
 
 	template<class T>
-	concept NotEmpty	= Type::Different<T, Empty>;
+	concept NotEmpty	= Makai::Type::Different<T, Empty>;
 
 	template<class T>
 	concept ShapeRefType	= requires {
 		T::SIZE;
-	} && Type::Derived<T, ShapeRef<T::SIZE>> && NotEmpty<T>;
+	} && Makai::Type::Derived<T, ShapeRef<T::SIZE>> && NotEmpty<T>;
 
 	template<class T>
-	concept PlaneRefType	= Type::Derived<T, PlaneRef> && NotEmpty<T>;
+	concept PlaneRefType	= Makai::Type::Derived<T, PlaneRef> && NotEmpty<T>;
 
 	template<class T>
-	concept TriangleRefType	= Type::Derived<T, TriangleRef> && NotEmpty<T>;
+	concept TriangleRefType	= Makai::Type::Derived<T, TriangleRef> && NotEmpty<T>;
 }
 
 #endif // MAKAILIB_GRAPH_RENDERER_REFERENCE_H

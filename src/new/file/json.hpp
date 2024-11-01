@@ -60,7 +60,7 @@ namespace Makai::JSON {
 
 		template<class T>
 		inline JSONView& operator=(T const& value)
-		requires (!Type::Convertible<T, JSONView>) {
+		requires (!Makai::Type::Convertible<T, JSONView>) {
 			view() = value;
 			return (*this);
 		}
@@ -88,7 +88,7 @@ namespace Makai::JSON {
 		bool isStructured() const;
 		bool isDiscarded() const;
 
-		template<Type::Primitive T>
+		template<Makai::Type::Primitive T>
 		bool tryGet(T& out) const try {
 			out = view().get<T>();
 			err = "";
@@ -98,7 +98,7 @@ namespace Makai::JSON {
 			return false;
 		}
 
-		template<Type::Enumerator T>
+		template<Makai::Type::Enumerator T>
 		bool tryGet(T& out) const try {
 			out = view().get<T>();
 			err = "";
@@ -108,7 +108,7 @@ namespace Makai::JSON {
 			return false;
 		}
 
-		template <Type::Equal<String> T>
+		template <Makai::Type::Equal<String> T>
 		bool tryGet(T& out) const try {
 			out = view().get<std::string>();
 			err = "";
@@ -118,12 +118,12 @@ namespace Makai::JSON {
 			return false;
 		}
 
-		template <Type::Container::List T>
+		template <Makai::Type::Container::List T>
 		bool tryGet(T& out) const
 		requires (
-			Type::Different<typename T::DataType, String>
-		&&	Type::Different<typename T::DataType, JSONView>
-		&&	Type::Different<typename T::DataType, JSONValue>
+			Makai::Type::Different<typename T::DataType, String>
+		&&	Makai::Type::Different<typename T::DataType, JSONView>
+		&&	Makai::Type::Different<typename T::DataType, JSONValue>
 		) try {
 			out = T(view().get<std::vector<typename T::DataType>>());
 			err = "";
@@ -133,9 +133,9 @@ namespace Makai::JSON {
 			return false;
 		}
 
-		template <Type::Container::List T>
+		template <Makai::Type::Container::List T>
 		bool tryGet(T& out) const
-		requires Type::Equal<typename T::DataType, String>
+		requires Makai::Type::Equal<typename T::DataType, String>
 		try {
 			out = T(view().get<std::vector<std::string>>());
 			err = "";
@@ -169,9 +169,9 @@ namespace Makai::JSON {
 
 		JSONValue(JSONValue const& other);
 
-		template <Type::Container::List T>
+		template <Makai::Type::Container::List T>
 		bool tryGet(T& out) const
-		requires Type::Equal<typename T::DataType, JSONValue>
+		requires Makai::Type::Equal<typename T::DataType, JSONValue>
 		try {
 			out = T(view().get<std::vector<Extern::JSONData>>());
 			err = "";
@@ -181,11 +181,11 @@ namespace Makai::JSON {
 			return false;
 		}
 
-		template <Type::Container::SimpleMap T>
+		template <Makai::Type::Container::SimpleMap T>
 		bool tryGet(T& out) const
 		requires (
-			Type::Equal<typename T::KeyType, String>
-		&&	Type::Equal<typename T::ValueType, JSONValue>
+			Makai::Type::Equal<typename T::KeyType, String>
+		&&	Makai::Type::Equal<typename T::ValueType, JSONValue>
 		) try {
 			T res;
 			for (auto [k, v]: view().items())
@@ -197,11 +197,11 @@ namespace Makai::JSON {
 			return false;
 		}
 
-		template <Type::Container::SimpleMap T>
+		template <Makai::Type::Container::SimpleMap T>
 		bool tryGet(T& out) const
 		requires (
-			Type::Equal<typename T::KeyType, String>
-		&&	Type::Different<typename T::ValueType, JSONValue>
+			Makai::Type::Equal<typename T::KeyType, String>
+		&&	Makai::Type::Different<typename T::ValueType, JSONValue>
 		) try {
 			T res;
 			for (auto [k, v]: view().items())

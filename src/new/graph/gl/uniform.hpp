@@ -63,7 +63,7 @@ namespace Makai::Graph {
 			offset = off;
 		}
 
-		template <Type::Class T>
+		template <Makai::Type::Class T>
 		inline void forEach(List<T> const& values, Functor<void(T&, Uniform const&)> func) const {
 			for (T& val: values) {
 				func(val, Uniform(name, id, location + offset+1));

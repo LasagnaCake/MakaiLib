@@ -11,7 +11,7 @@
 
 CTL_EX_NAMESPACE_BEGIN
 
-namespace Type::Math::Vector {
+namespace Type::Ex::Math::Vector {
 	template<typename T>
 	concept Base = requires {
 		requires	CTL::Type::Arithmetic<T, T>;
@@ -1171,9 +1171,9 @@ typedef Vector3 Vec3;
 typedef Vector4 Vec4;
 
 template <
-	Type::Math::Vector::Vector		TPosition,
-	Type::Math::Vector::Vectorable	TRotation	= TPosition,
-	Type::Math::Vector::Vector		TScale		= TPosition
+	Type::Ex::Math::Vector::Vector		TPosition,
+	Type::Ex::Math::Vector::Vectorable	TRotation	= TPosition,
+	Type::Ex::Math::Vector::Vector		TScale		= TPosition
 >
 struct Transform {
 	typedef TPosition	PositionType;

@@ -113,12 +113,12 @@ BinaryData<> cbcTransform(
 	);
 }
 
-template<Type::Equal<Deflator> T>
+template<Makai::Type::Equal<Deflator> T>
 T* getFlator(std::string& result, uint8 const& level) {
 	return new T(new StringSink(result), level);
 }
 
-template<Type::Equal<Inflator> T>
+template<Makai::Type::Equal<Inflator> T>
 T* getFlator(std::string& result, uint8 const& level) {
 	return new T(new StringSink(result));
 }

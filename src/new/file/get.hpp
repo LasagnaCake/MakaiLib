@@ -27,22 +27,22 @@ namespace Makai::File {
 	void saveBinary(String const& path, ByteSpan<> const& data);
 	void saveBinary(String const& path, BinaryData<> const& data);
 
-	template<Type::NonVoid T>
+	template<Makai::Type::NonVoid T>
 	inline void saveBinary(String const& path, T* const& data, usize const& count) {
 		saveBinary(path, ByteSpan((ubyte*)data, count * sizeof(T)));
 	}
 
-	template<Type::NonVoid T>
+	template<Makai::Type::NonVoid T>
 	inline void saveBinary(String const& path, Span<T> const& data) {
 		saveBinary(path, data.data(), data.size());
 	}
 
-	template<Type::NonVoid T>
+	template<Makai::Type::NonVoid T>
 	inline void saveBinary(String const& path, List<T> const& data) {
 		saveBinary(path, data.data(), data.size());
 	}
 
-	template<Type::NonVoid T>
+	template<Makai::Type::NonVoid T>
 	inline void saveBinary(String const& path, T const& data) {
 		saveBinary(path, ByteSpan(&data, sizeof(T)));
 	}

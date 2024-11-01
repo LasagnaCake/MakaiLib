@@ -3,7 +3,7 @@
 
 #include "debug.hpp"
 #include "effect.hpp"
-#include "materials.hpp"
+#include "core.hpp"
 
 namespace MkMaterial = Makai::Graph::Material;
 

@@ -13,7 +13,7 @@ struct Groups:
 	Iteratable<KeyValuePair<TIdentifier, TData>, TIndex>,
 	SelfIdentified<Groups<TData, TIdentifier, TIndex>> {
 public:
-	static_assert(CTL::Type::Comparator::Threeway<TIdentifier, TIdentifier>, "Identifier must be comparable!");
+	static_assert(Type::Comparator::Threeway<TIdentifier, TIdentifier>, "Identifier must be comparable!");
 
 	using Collected			= ::CTL::Collected<TIdentifier, TData>;
 	using Iteratable		= ::CTL::Iteratable<KeyValuePair<TIdentifier, TData>, TIndex>;

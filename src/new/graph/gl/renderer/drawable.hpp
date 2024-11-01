@@ -72,7 +72,7 @@ namespace Makai::Graph {
 	};
 
 	template<class T>
-	concept DrawableObjectType = Type::Subclass<T, DrawableObject>;
+	concept DrawableObjectType = Makai::Type::Subclass<T, DrawableObject>;
 }
 
 #endif // MAKAILIB_GRAPH_RENDERER_DRAWABLE_H

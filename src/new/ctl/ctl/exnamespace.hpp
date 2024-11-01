@@ -14,6 +14,10 @@ namespace {
 	using namespace ::CTL;
 }
 
+namespace Type {
+	using namespace ::CTL::Type;
+}
+
 CTL_EX_NAMESPACE_END
 
 #endif // CTL_EX_NAMESPACE_H

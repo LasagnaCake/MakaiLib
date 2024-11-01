@@ -7,7 +7,7 @@
 
 CTL_EX_NAMESPACE_BEGIN
 
-template<class _ = void, Type::Number TDelta = usize>
+template<class _ = void, CTL::Type::Number TDelta = usize>
 class Periodic {
 public:
 	using EventWrapper	= Function<void(TDelta const&)>;

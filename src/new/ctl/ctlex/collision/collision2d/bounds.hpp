@@ -12,9 +12,9 @@ namespace Collision::C2D {
 	template<usize S> struct Shape;
 }
 
-namespace Type::Collision::C2D {
+namespace Type::Ex::Collision::C2D {
 	template<class T>
-	concept Collidable = CTL::Type::Subclass<T, Ex::Collision::C2D::Bounds<T::ID>>;
+	concept Collidable = CTL::Type::Subclass<T, CTL::Ex::Collision::C2D::Bounds<T::ID>>;
 	
 	template<class T>
 	concept Shape = requires {
@@ -45,7 +45,7 @@ namespace Collision::C2D {
 	template<typename T>
 	struct FollowingType;
 
-	template<Ex::Type::Collision::C2D::Collidable T>
+	template<Type::Ex::Collision::C2D::Collidable T>
 	struct FollowingType<T> {
 		typedef Bounds<T::Next::ID> Type;
 	};
@@ -343,7 +343,7 @@ namespace Collision::C2D {
 	struct CollisionShape {
 		constexpr CollisionShape(): shape(CollisionType::CT_NULL) {}
 
-		template<Ex::Type::Collision::C2D::Collidable T>
+		template<Type::Ex::Collision::C2D::Collidable T>
 		constexpr CollisionShape(T const& bounds): data(bounds), shape((CollisionType)T::ID) {}
 
 		constexpr ~CollisionShape()	{}
@@ -356,9 +356,9 @@ namespace Collision::C2D {
 		template<CTL::Type::Equal<Capsule> T>		constexpr Capsule	asType() const	{return data.capsule;		}
 		template<CTL::Type::Equal<Ray> T>			constexpr Ray		asType() const	{return data.ray;			}
 		template<CTL::Type::Equal<Polygon> T>		constexpr Polygon	asType() const	{return data.polygon;		}
-		template<Ex::Type::Collision::C2D::Shape T>	constexpr T			asType() const	{return data.shape;			}
+		template<Type::Ex::Collision::C2D::Shape T>	constexpr T			asType() const	{return data.shape;			}
 
-		template<Ex::Type::Collision::C2D::Collidable T>
+		template<Type::Ex::Collision::C2D::Collidable T>
 		constexpr explicit operator T() const	{return asType<T>();	}
 
 	private:

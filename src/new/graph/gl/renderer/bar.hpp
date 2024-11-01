@@ -20,7 +20,7 @@ namespace Makai::Graph {
 	}
 
 	template<class T>
-	concept BarType = CTL::Type::Subclass<T, Base::Progressbar> && CTL::Type::Subclass<T, Drawable>;
+	concept BarType = Makai::Type::Subclass<T, Base::Progressbar> && Makai::Type::Subclass<T, Drawable>;
 
 	class LinearBar: public DrawableObject, public Base::Progressbar {
 	public:
