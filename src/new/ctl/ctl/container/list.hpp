@@ -1150,7 +1150,7 @@ private:
 	}
 
 	constexpr static void memdestruct(PointerType const& p, SizeType const& sz) {
-		if (!sz) return;
+		if (!(sz && p)) return;
 		if constexpr (!Type::Primitive<DataType>) {
 			for (auto i = p; i != (p+sz); ++i)
 				MX::destruct(i);
@@ -1158,7 +1158,7 @@ private:
 	}
 
 	constexpr void memdestroy(PointerType const& p, SizeType const& sz) {
-		if (!p) return;
+		if (!(sz && p)) return;
 		memdestruct(p, sz);
 		alloc.deallocate(p);
 	}
