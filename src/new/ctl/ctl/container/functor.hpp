@@ -98,7 +98,7 @@ public:
 	/// @return Whether they're equal.
 	constexpr bool operator==(SelfType const& other) const {return id == other.id;}
 
-	/// @brief Three-way comparison operator.
+	/// @brief Threeway comparison operator.
 	/// @param other Other `Functor` to compare with.
 	/// @return Order between both `Functor`s.
 	constexpr OrderType operator<=>(SelfType const& other) const {return id <=> other.id;}

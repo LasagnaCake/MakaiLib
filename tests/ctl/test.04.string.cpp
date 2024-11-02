@@ -114,7 +114,7 @@ void testStringMap() {
 	printMap(mp, "Grape");
 	printMap(mp, "Pineapple");
 	printMap(mp, "Avocado");
-	mp.append({
+	mp.insert({
 		{"Kiwi", "Kiwi"},
 		{"Banana", "Alguma-fruta"},
 		{"Banana", "Sei-la"},

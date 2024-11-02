@@ -104,7 +104,7 @@ void testMap() {
 	print(mp, -29);
 	print(mp, -4);
 	print(mp, 448);
-	mp.append({{75, 25}, {-9, 98}, {29, 0}, {0, -255}, {33, 33}});
+	mp.insert({{75, 25}, {-9, 98}, {29, 0}, {0, -255}, {33, 33}});
 	print(mp);
 	print(mp.keys());
 	print(mp.values());

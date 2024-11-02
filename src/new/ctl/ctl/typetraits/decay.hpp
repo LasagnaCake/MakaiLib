@@ -9,7 +9,9 @@
 
 CTL_NAMESPACE_BEGIN
 
+/// @brief Type decay operations namespace.
 namespace Decay {
+	/// @brief Decays type as if it was a function argument passed by value.
 	template<class T>
 	using AsArgument = Meta::DualType<
         Type::Array<AsNonReference<T>>,
@@ -21,10 +23,15 @@ namespace Decay {
         >
     >;
 
+	/// @brief Decays type to itself.
+	/// @note Used so certain types, like const references to C-style arrays, become valid declarations.
+	/// @example Decay::AsType<int[32]> const& a; // Instead of: int (const& a)[32].
 	template<class T> using AsType = T;
 
+    /// @brief Decays type parameter pack to nothingness.
     template<class... Types> struct Pack {};
 
+	/// @brief Type decay implementations.
 	namespace Impl {
 		template<class F>
 		struct FunctionDecayType;
@@ -47,13 +54,24 @@ namespace Decay {
 		struct FunctionType<R(Args...)>: TypeContainer<R(Args...)> {};
 	}
 
+	/// @brief Decays function type to a C++ function, like removing `void` from function parameter.
 	template<typename F>
 	using AsFunction = typename Impl::FunctionType<F>::Type;
 };
 
 static_assert(Type::Equal<Decay::AsFunction<bool(void)>, bool()>, "Something's not correct...");
 
+/// @brief Forwards references as either references or temporaries, depending on where it is being passed to.
+/// @param v Value to decay.
+/// @return Value as either a reference or temporary.
+template<typename T> constexpr AsTemporary<T>		forward(AsNonReference<T>& v)	{return static_cast<T&&>(v);					}
+/// @brief Ensures temporary can only be passed as a temporary.
+/// @param v Value to decay.
+/// @return Value as a temporary.
 template<typename T> constexpr AsTemporary<T>		forward(AsNonReference<T>&& v)	{return static_cast<T&&>(v);					}
+/// @brief Ensures value passed can safely be moved.
+/// @param v Value to move.
+/// @return Value as a temporary.
 template<typename T> constexpr AsNonReference<T>&&	move(T&& v)						{return static_cast<AsNonReference<T>&&>(v);	}
 
 CTL_NAMESPACE_END

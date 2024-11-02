@@ -87,7 +87,7 @@ struct MemorySlice: Allocatable<TAlloc, TData> {
 
 	constexpr MemorySlice(MemorySlice const& other)	{
 		invoke(other.length);
-		if constexpr(Type::Primitive<TData>)
+		if constexpr(Type::Standard<TData>)
 			MX::memcpy<TData>(contents, other.contents, length);
 		else MX::objcopy<TData>(contents, other.contents, length);
 	}

@@ -105,7 +105,7 @@ public:
 		return equals(other);
 	}
 
-	/// @brief Three-way comparison operator.
+	/// @brief Threeway comparison operator.
 	/// @param other Other `Array` to compare with.
 	/// @return Order between both `Array`s.
 	/// @note Requires element type to be three-way comparable.
@@ -204,7 +204,7 @@ public:
 
 private:
 	constexpr static void copy(ConstantType* src, DataType* dst, SizeType count) {
-		if constexpr (Type::Primitive<DataType>)
+		if constexpr (Type::Standard<DataType>)
 			MX::memmove<DataType>(dst, src, count);
 		else MX::objcopy<DataType>(dst, src, count);
 	}

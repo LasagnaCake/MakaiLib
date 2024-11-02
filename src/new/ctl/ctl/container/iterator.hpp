@@ -79,10 +79,10 @@ public:
 	constexpr explicit(REVERSE) Iterator(PointerType&& value): iterand(CTL::move(value))	{}
 
 	/// @brief Copy constructor.
-	/// @param other New `Iterator`.
+	/// @param other `Iterator` to copy from.
 	constexpr Iterator(SelfType const& other): iterand(other.iterand)		{}
 	/// @brief Move constructor.
-	/// @param other Other `Iterator`.
+	/// @param other `Iterator` to move from.
 	constexpr Iterator(SelfType&& other): iterand(CTL::move(other.iterand))	{}
 
 	/// @brief Returns the underlying pointer.
@@ -124,7 +124,7 @@ public:
 	/// @param other Other `Iterator` to compare with.
 	/// @return Whether they're equal.
 	constexpr bool operator==(SelfType const& other) const			{return iterand == other.iterand;	}
-	/// @brief Three-way comparison operator.
+	/// @brief Threeway comparison operator.
 	/// @param other Other `Iterator` to compare with.
 	/// @return Order between both `Iterator`s.
 	constexpr OrderType operator<=>(SelfType const& other) const	{return compare(other.iterand);		}
@@ -198,7 +198,9 @@ using ForwardIterator = Iterator<TData, false, TIndex>;
 template<class TData, Type::Integer TIndex = usize>
 using ReverseIterator = Iterator<TData, true, TIndex>;
 
+/// @brief Container-specific type constraints.
 namespace Type::Container {
+	/// @brief Type must be a valid iterator type.
 	template<class T>
 	concept Iterator = requires {
 		typename T::DataType;
@@ -211,6 +213,9 @@ namespace Type::Container {
 
 static_assert(Type::Container::Iterator<Iterator<int>>);
 
+/// @brief Tags the deriving class as iteratable.
+/// @tparam TData Element type.
+/// @tparam TIndex Index type.
 template<class TData, Type::Integer TIndex>
 struct Iteratable: Typed<TData>, Indexed<TIndex> {
 	using Indexed	= ::CTL::Indexed<TIndex>;
@@ -230,18 +235,27 @@ struct Iteratable: Typed<TData>, Indexed<TIndex> {
 
 	using Indexed::MAX_SIZE;
 
+	/// @brief Forward iterator type.
 	typedef ForwardIterator<DataType, SizeType>		IteratorType;
+	/// @brief Constant forward iterator type.
 	typedef ForwardIterator<ConstantType, SizeType>	ConstIteratorType;
+	/// @brief Reverse iterator type.
 	typedef ReverseIterator<DataType, SizeType>		ReverseIteratorType;
+	/// @brief Constant reverse iterator type.
 	typedef ReverseIterator<ConstantType, SizeType>	ConstReverseIteratorType;
 
 protected:
-	constexpr static void wrapBounds(IndexType& index, SizeType const& count) {
-		while (index < 0) index += count;
+	/// @brief Ensures a given index, when negative, is between the bounds of the iteratable class.
+	/// @param index Index to wrap.
+	/// @param count Size of the iteratable range.
+	constexpr static void wrapBounds(IndexType& index, SizeType const& size) {
+		while (index < 0) index += size;
 	}
 
+	/// @brief Throws an OutOfBoundsException when called.
+	/// @throw OutOfBoundsException When called.
 	[[noreturn]] constexpr static void outOfBoundsError() {
-		throw OutOfBoundsException("Index is bigger than array size!");
+		throw OutOfBoundsException("Index is bigger than iteratable size!");
 	}
 };
 

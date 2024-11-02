@@ -134,11 +134,11 @@ public:
     constexpr SelfType& operator=(TFunction const& f)
 	requires (!Type::Derived<TFunction, SelfType>)		{destroy(); func = makeCallable(f); return *this;					}
     /// @brief Move assignment operator.
-    /// @param f New `Function` object.
+    /// @param f `Function` to move from.
     /// @return Reference to self.
     constexpr SelfType& operator=(SelfType&& f)			{destroy(); func = move(f.func); f.func = nullptr; return *this;	}
     /// @brief Copy assignment operator.
-    /// @param f Other `Function` object.
+    /// @param f `Function` to copy from.
     /// @return Reference to self.
     constexpr SelfType& operator=(SelfType const& f)	{destroy(); assign(f); return *this;								}
 

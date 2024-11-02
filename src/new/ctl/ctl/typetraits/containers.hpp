@@ -6,16 +6,22 @@
 
 CTL_NAMESPACE_BEGIN
 
+/// @brief Void type. Always decays to `void`.
 template <class...>
 using VoidType = void;
 
-template<class T, auto V> struct ValueConstant {
+/// @brief Compile-time value constant.
+/// @tparam T Type of value.
+/// @tparam V Value to assign.
+template<class T, T V> struct ValueConstant {
 	typedef T DataType;
 
 	constexpr static DataType value = V;
 };
 
+/// @brief Typetraits type constraints.
 namespace Type::Trait {
+	/// @brief Type must hold a compile-time value constant.
 	template<class C>
 	concept ValueConstant =
 		requires {
@@ -25,6 +31,8 @@ namespace Type::Trait {
 	;
 }
 
+/// @brief Compile-time boolean constant.
+/// @tparam V Value to assign.
 template<bool V> struct BooleanConstant: ValueConstant<bool, V> {
 		template <typename... Args>
 		requires (... && Type::Trait::ValueConstant<Args>)
@@ -35,9 +43,13 @@ template<bool V> struct BooleanConstant: ValueConstant<bool, V> {
 		struct Or: BooleanConstant<(... || Args::value)> {};
 };
 
+/// @brief Compile-time size type constant.
+/// @tparam V Value to assign.
 template<usize V> struct SizeConstant: ValueConstant<usize, V> {};
 
+/// @brief Compile-time true type.
 struct TrueType:	BooleanConstant<true>	{};
+/// @brief Compile-time false type.
 struct FalseType:	BooleanConstant<false>	{};
 
 CTL_NAMESPACE_END

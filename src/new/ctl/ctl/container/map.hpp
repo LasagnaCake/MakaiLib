@@ -13,18 +13,28 @@ CTL_NAMESPACE_BEGIN
 
 #define NOT_IN_MAP [this](PairType const& p) -> bool {return notInMap(p);}
 
+/// @brief Tags the deriving class as a collection of key-value pairs.
+/// @tparam TKey Key type.
+/// @tparam TValue Value type.
+/// @tparam TPair<class, class> Pair type.
 template<class TKey, class TValue, template <class TPairKey, class TPairValue> class TPair = Pair>
 struct Collected {
 	static_assert(Type::Container::Pair<TPair<TKey, TValue>>, "Type is not a valid pair type!");
 
-	typedef Typed<TKey>			Key;
-	typedef Typed<TValue>		Value;
-
+	/// @brief Key type.
 	typedef TKey				KeyType;
+	/// @brief Value type.
 	typedef TValue				ValueType;
+	/// @brief Pair type.
 	typedef TPair<TKey, TValue>	PairType;
 };
 
+/// @brief Associative container comprised of key-value pairs.
+/// @tparam TKey Key type.
+/// @tparam TValue Value type.
+/// @tparam TIndex Index type for underlying storage.
+/// @tparam SORT Whether the container is sorted by default.
+/// @param TAlloc<class> Allocator type.
 template<
 	class TKey,
 	class TValue,
@@ -38,6 +48,7 @@ struct BaseSimpleMap:
 	SelfIdentified<BaseSimpleMap<TKey, TValue, TIndex, SORT>>,
 	private List<KeyValuePair<TKey, TValue>, TIndex, TAlloc> {
 public:
+	/// @brief Whether the container is sorted by default.
 	constexpr static bool SORTED = SORT;
 
 	using Derived			= ::CTL::Derived<List<KeyValuePair<TKey, TValue>, TIndex>>;
@@ -110,21 +121,40 @@ public:
 		BaseType::empty
 	;
 
+	/// @brief Empty constructor.
 	constexpr BaseSimpleMap(): BaseType() {}
 
+	/// @brief Constructs the container with a preallocated capacity.
+	/// @param size Size to allocate.
 	constexpr BaseSimpleMap(SizeType const& size): BaseType(size) {}
 
+	/// @brief Constructs the container from a set of key-value pairs.
+	/// @param values Pairs to add.
+	/// @note
+	///		After insertion, the container filters itself and removes duplicates keys.
+	///		Most recent key-value pair is kept.
 	constexpr BaseSimpleMap(ArgumentListType const& values): BaseType(values) {
 		clean();
 		update();
 	}
 
+	/// @brief Constructs the container form a set of key-value pairs.
+	/// @param values Pairs to add.
+	/// @note
+	///		After insertion, the container filters itself and removes duplicates keys.
+	///		Most recent key-value pair is kept.
 	template<SizeType N>
 	constexpr explicit BaseSimpleMap(Decay::AsType<PairType[N]> const& values): BaseType(values) {
 		clean();
 		update();
 	}
 
+	/// @brief Constructs the container form a set of key-value pairs.
+	/// @tparam Args... Argument types.
+	/// @param args... Pairs to add.
+	/// @note
+	///		After insertion, the container filters itself and removes duplicates keys.
+	///		Most recent key-value pair is kept.
 	template<typename... Args>
 	constexpr BaseSimpleMap(Args const&... args)
 	requires (... && Type::Convertible<Args, PairType>)
@@ -133,46 +163,64 @@ public:
 		update();
 	}
 
+	/// @brief Constructs the container form a `List` of key-value pairs.
+	/// @param other `List` of key-value pairs to copy from.
+	/// @note
+	///		After insertion, the container filters itself and removes duplicates keys.
+	///		Most recent key-value pair is kept.
 	constexpr BaseSimpleMap(BaseType const& other): BaseType(other) {
 		clean();
 		update();
 	}
 
+	/// @brief Constructs the container form a `List` of key-value pairs.
+	/// @param other `List` of key-value pairs to construct from.
+	/// @note
+	///		After insertion, the container filters itself and removes duplicates keys.
+	///		Most recent key-value pair is kept.
 	constexpr BaseSimpleMap(BaseType&& other): BaseType(CTL::move(other)) {
 		clean();
 		update();
 	}
 
+	/// @brief Constructs the container from another of the same type.
+	/// @param other Container to copy from.
 	constexpr BaseSimpleMap(SelfType const& other): BaseType(other) {}
 
+	/// @brief Constructs the container from another of the same type.
+	/// @param other Container to move from.
 	constexpr BaseSimpleMap(SelfType&& other): BaseType(CTL::move(other)) {}
 
+	/// @brief Constructs the container from a range of key-value pairs.
+	/// @param begin Iterator to beginning of range.
+	/// @param end Iterator to end of range.
 	constexpr BaseSimpleMap(IteratorType const& begin, IteratorType const& end): BaseType(begin, end) {
 		clean();
 		update();
 	}
 
+	/// @brief Constructs the container from a range of key-value pairs.
+	/// @param begin Reverse iterator to beginning of range.
+	/// @param end Reverse iterator to end of range.
 	constexpr BaseSimpleMap(ReverseIteratorType const& begin, ReverseIteratorType const& end): BaseType(begin, end) {
 		clean();
 		update();
 	}
 
-	constexpr ValueType at(KeyType const& key) const
-	requires (Type::Constructible<ValueType>) {
-		if (empty()) return ValueType();
-		IndexType i = search(key);
-		if (i == -1)	return ValueType();
-		else			return (data() + i)->value;
-	}
-
-	constexpr ValueType at(KeyType const& key) const
-	requires (!Type::Constructible<ValueType>) {
+	/// @brief Gets the value of the element that matches the given key.
+	/// @param key Key to look for.
+	/// @return Value of the element.
+	/// @throw OutOfBoundsException When key does not exist.
+	constexpr ValueType at(KeyType const& key) const {
 		if (empty()) throw OutOfBoundsException("Key does not exist!");
 		IndexType i = search(key);
 		if (i == -1)	throw OutOfBoundsException("Key does not exist!");
 		else			return (data() + i)->value;
 	}
 
+	/// @brief Allows access to the value of the element that matches the given key. Creates one if key doesn't exist.
+	/// @param key Key to look for.
+	/// @return Reference to element's value.
 	constexpr ValueType& operator[](KeyType const& key) {
 		if (empty()) return BaseType::pushBack(PairType(key)).back().value;
 		IndexType i = search(key);
@@ -182,6 +230,9 @@ public:
 		} else return (data() + i)->value;
 	}
 
+	/// @brief Searches for the index of a given key. If key doesn't exist, returns -1.
+	/// @param key Key to look for.
+	/// @return Index of key, or -1 if not found.
 	constexpr IndexType search(KeyType const& key) const
 	requires (SORTED) {
 		if (empty()) return -1;
@@ -202,6 +253,9 @@ public:
 		return -1;
 	}
 
+	/// @brief Searches for the index of a given key. If key doesn't exist, returns -1.
+	/// @param key Key to look for.
+	/// @return Index of key, or -1 if not found.
 	constexpr IndexType search(KeyType const& key) const
 	requires (!SORTED) {
 		usize i = 0;
@@ -213,6 +267,8 @@ public:
 		return -1;
 	}
 
+	/// @brief Returns all keys in the container.
+	/// @return `List` of keys.
 	constexpr List<KeyType, SizeType> keys() const {
 		List<KeyType, SizeType> result;
 		for (auto& i: *this)
@@ -220,6 +276,8 @@ public:
 		return result;
 	}
 
+	/// @brief Returns all values in the container.
+	/// @return `List` of values.
 	constexpr List<ValueType, SizeType> values() const {
 		List<ValueType, SizeType> result;
 		for (auto& i: *this)
@@ -227,6 +285,8 @@ public:
 		return result;
 	}
 
+	/// @brief Returns all key-value pairs in the container.
+	/// @return `List` of key-value pairs.
 	constexpr List<PairType, SizeType> items() const {
 		List<PairType, SizeType> result;
 		for (auto& i: *this)
@@ -234,33 +294,32 @@ public:
 		return result;
 	}
 
+	/// @brief Gets the value of the element that matches the given key.
+	/// @param key Key to look for.
+	/// @return Value of the element.
+	/// @throw OutOfBoundsException When key does not exist.
 	constexpr ValueType operator[](KeyType const& index) const {return at(index);}
 
+	/// @brief Copy assignment operator.
+	/// @param other Container to copy from.
+	/// @return Reference to self.
 	constexpr SelfType& operator=(SelfType const& other)	{BaseType::operator=(other); return *this;				}
+	/// @brief Copy assignment operator.
+	/// @param other Container to move from.
+	/// @return Reference to self.
 	constexpr SelfType& operator=(SelfType&& other)			{BaseType::operator=(CTL::move(other)); return *this;	}
 
+	/// @brief Returns whether key exists in container.
+	/// @param key Key to search for.
+	/// @return Whether key exists.
 	constexpr bool contains(KeyType const& key) const {
 		if (empty()) return false;
 		return search(key) != -1;
 	}
 
-	constexpr SelfType& remove(KeyType const& key) {
-		IndexType i = find(key);
-		if (i == -1) return *this;
-		BaseType::remove(i);
-		return *this;
-	}
-
-	constexpr SelfType& removeIf(PredicateType const& predicate) {
-		BaseType::removeIf(predicate);
-		return *this;
-	}
-
-	constexpr SelfType& removeIfNot(PredicateType const& predicate) {
-		BaseType::removeIfNot(predicate);
-		return *this;
-	}
-
+	/// @brief Erases an element that matches the given key.
+	/// @param key Key to search for.
+	/// @return Reference to self.
 	constexpr SelfType& erase(KeyType const& key) {
 		IndexType i = search(key);
 		if (i == -1) return *this;
@@ -268,22 +327,37 @@ public:
 		return *this;
 	}
 
+	/// @brief Erases elements that match a given predicate.
+	/// @param predicate Predicate to use as check.
+	/// @return Reference to self.
 	constexpr SelfType& eraseIf(PredicateType const& predicate) {
 		BaseType::eraseIf(predicate);
 		return *this;
 	}
 
+	/// @brief Erases elements that do not match a given predicate.
+	/// @param predicate Predicate to use as check.
+	/// @return Reference to self.
 	constexpr SelfType& eraseIfNot(PredicateType const& predicate) {
 		BaseType::eraseIfNot(predicate);
 		return *this;
 	}
 
+	/// @brief Inserts a key-value pair into the container, if key does not exist.
+	/// @param pair Key-value pair to insert.
+	/// @return Reference to self.
 	constexpr SelfType& insert(PairType const& pair) {
 		if (!contains(pair.key))
 			BaseType::pushBack(pair).sort();
 		return *this;
 	}
 
+	/// @brief Adds another's items container to this one.
+	/// @param other Container to copy from.
+	/// @return Reference to self.
+	/// @note
+	///		After appending, the container filters itself and removes duplicates keys.
+	///		Most recent key-value pair is kept.
 	constexpr SelfType& append(SelfType const& other) {
 		BaseType::appendBack(other);
 		clean();
@@ -291,24 +365,42 @@ public:
 		return *this;
 	}
 
-	constexpr SelfType& append(ArgumentListType const& values) {
+	/// @brief Adds a set of key-value pairs to the container.
+	/// @param values Pairs to add.
+	/// @return Reference to self.
+	///		After appending, the container filters itself and removes duplicates keys.
+	///		Most recent key-value pair is kept.
+	constexpr SelfType& insert(ArgumentListType const& values) {
 		return append(SelfType(values));
 	}
 
-	constexpr SelfType& append(SizeType const& count, PairType const& fill) {
-		return append(SelfType(count, fill));
-	}
-
-	constexpr SelfType& append(IteratorType const& begin, IteratorType const& end) {
+	/// @brief Adds a range of key-value pairs to the container.
+	/// @param begin Iterator to beginning of range.
+	/// @param end Iterator to end of range.
+	/// @return Reference to self.
+	/// @note
+	///		After appending, the container filters itself and removes duplicates keys.
+	///		Most recent key-value pair is kept.
+	constexpr SelfType& insert(IteratorType const& begin, IteratorType const& end) {
 		return append(SelfType(begin, end));
 	}
 
-	constexpr SelfType& append(ReverseIteratorType const& begin, ReverseIteratorType const& end) {
+	/// @brief Adds a range of key-value pairs to the container.
+	/// @param begin Reverse iterator to beginning of range.
+	/// @param end Reverse iterator to end of range.
+	/// @return Reference to self.
+	/// @note
+	///		After appending, the container filters itself and removes duplicates keys.
+	///		Most recent key-value pair is kept.
+	constexpr SelfType& insert(ReverseIteratorType const& begin, ReverseIteratorType const& end) {
 		return append(SelfType(begin, end));
 	}
 
+	/// @brief Adds a set of key-value pairs to the container.
+	/// @param values Pairs to add.
+	/// @return Reference to self.
 	template<SizeType S>
-	constexpr SelfType& append(Decay::AsType<PairType[S]> const& values) {
+	constexpr SelfType& insert(Decay::AsType<PairType[S]> const& values) {
 		return append(SelfType(values));
 	}
 
@@ -335,7 +427,9 @@ private:
 
 #undef NOT_IN_MAP
 
+/// @brief Container-specific type constraints.
 namespace Type::Container {
+	/// @brief Implementation of type constraints.
 	namespace Impl {
 		template<class T>
 		struct IsSimpleMap;
@@ -355,6 +449,7 @@ namespace Type::Container {
 			>> {};
 	}
 
+	/// @brief Type must be `BaseSimpleMap`.
 	template<class T>
 	concept SimpleMap = Impl::IsSimpleMap<T>::value;
 }
@@ -373,12 +468,25 @@ requires (
 }
 */
 
+/// @brief `BaseSimpleMap` analog for an unsorted map that remembers order of insertion.
+/// @tparam TKey Key type.
+/// @tparam TValue Value type.
+/// @tparam TIndex Index type.
 template<class TKey, class TValue, Type::Integer TIndex = usize>
 using OrderedMap	= BaseSimpleMap<TKey, TValue, TIndex, false>;
 
+/// @brief `BaseSimpleMap` analog for a sorted map.
+/// @tparam TKey Key type.
+/// @tparam TValue Value type.
+/// @tparam TIndex Index type.
 template<class TKey, class TValue, Type::Integer TIndex = usize>
 using SimpleMap		= BaseSimpleMap<TKey, TValue, TIndex, true>;
 
+
+/// @brief Analog for a key-value associative container.
+/// @tparam TKey Key type.
+/// @tparam TValue Value type.
+/// @tparam TIndex Index type.
 template<class TKey, class TValue, Type::Integer TIndex = usize>
 using Map	= SimpleMap<TKey, TValue, TIndex>;
 

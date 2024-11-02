@@ -10,8 +10,11 @@
 
 CTL_NAMESPACE_BEGIN
 
+/// @brief Type constraints.
 namespace Type {
+	/// @brief Implementation of type constraints.
 	namespace Impl {
+		/// @brief Pieces used in implementations.
 		namespace Partial {
 			template<typename T>	struct IsPointer:			FalseType	{};
 			template<typename T>	struct IsPointer<T*>:		TrueType	{};
@@ -69,6 +72,16 @@ namespace Type {
 			template <class T, class... Args>			struct IsConstructible<
 				VoidType<decltype(::new T(declval<Args>()...))
 			>, T, Args...> : TrueType {};
+			
+			template<class Lambda, int=(Lambda{}(), 0)>
+			constexpr bool isConstexpr(Lambda)	{return true;	}
+			constexpr bool isConstexpr(...)		{return false;	}
+
+			template<typename T, typename = void>
+			constexpr bool isDefined = false;
+
+			template<typename T>
+			constexpr bool isDefined<T, decltype(typeid(T), void())> = true;
 		}
 
 		template<typename A, typename B>	struct IsEqual:			FalseType	{};
@@ -136,6 +149,8 @@ namespace Type {
 			IsClass<Base>::value && IsClass<T>::value
 		&&	decltype(Partial::isDerived<T, Base>(0))::value
 		>	{};
+
+		// cppreference
 		template<class T, class To> struct IsConvertible:	BooleanConstant<
 			(
 				decltype(Partial::isReturnable<To>(0))::value
@@ -165,196 +180,262 @@ namespace Type {
 				{func(args...)} -> Equal<TReturn>;
 			}
 		> {};
+
+		template <class T> struct IsCompileTimeable: BooleanConstant<Partial::isConstexpr([]{return T();})>	{};
+
+		template <class T> struct IsDefined: BooleanConstant<Partial::isDefined<T>>	{};
+
+		template <template <class...> class T, class... Types>
+		struct IsValid: T<Types...> {};
 	}
 
+	/// @brief Both types must be equal.
 	template<typename A, typename B>
 	concept Equal = Impl::Equal<A, B>;
 
+	/// @brief Both types must NOT be equal.
 	template<typename A, typename B>
 	concept Different = !Equal<A, B>;
 
+	/// @brief `T` must be able to be (implicitly) convertible to `To`.
 	template<typename T, typename To>
 	concept Convertible = Impl::IsConvertible<T, To>::value;
 
+	/// @brief `T` must be able to be (implicitly) convertible to `To`, and must not throw. 
 	template<typename T, typename To>
 	concept NothrowConvertible = Impl::IsNothrowConvertible<T, To>::value;
 
+	/// @brief Type must be constant.
 	template<typename T>
 	concept Constant = Impl::IsConstant<T>::value;
 
+	/// @brief Type must be volatile.
 	template<typename T>
 	concept Volatile = Impl::IsVolatile<T>::value;
 
+	/// @brief Type must be an integer.
 	template<typename T>
 	concept Integer = Impl::IsInteger<T>::value;
 
+	/// @brief Type must be a floating-point number.
 	template<typename T>
 	concept Real = Impl::IsReal<T>::value;
 
+	/// @brief Type must be a floating-point number.
 	template<typename T>
 	concept Float = Real<T>;
 
+	/// @brief Type must be a number.
 	template<typename T>
 	concept Number = Integer<T> || Real<T>;
 
+	/// @brief Type must be a C-style array of deduced size.
 	template<typename T>
-	concept AutoArray = Impl::IsArray<T>::value;
+	concept AutoArray = Impl::IsAutoArray<T>::value;
 
+	/// @brief Type must be a C-style array of fixed size.
 	template<typename T>
-	concept FixedArray = Impl::IsArray<T>::value;
+	concept FixedArray = Impl::IsFixedArray<T>::value;
 
+	/// @brief Type must be a C-style array.
 	template<typename T>
 	concept Array = Impl::IsArray<T>::value;
 
+	/// @brief Type must be void.
 	template<typename T>
 	concept Void = Impl::IsVoid<T>::value;
 
+	/// @brief Type must not be void.
 	template <typename T>
 	concept NonVoid = !Void<T>;
 
+	/// @brief Type must be `nulltype`.
 	template<typename T>
 	concept Null = Impl::IsNullPointer<T>::value;
 
+	/// @brief Type must not be `nulltype`.
 	template<typename T>
 	concept NonNull = !Null<T>;
 
+	/// @brief Type must be unsigned.
 	template<typename T>
 	concept Unsigned = Impl::IsUnsigned<T>::value;
 
+	/// @brief Type must be signed.
 	template<typename T>
 	concept Signed = Impl::IsSigned<T>::value;
 
+	/// @brief Type must be a signed integer.
 	template<typename T>
 	concept SignedInteger = Signed<T> && Integer<T>;
 
+	/// @brief Type must be an unsigned integer.
 	template<typename T>
 	concept UnsignedInteger = Unsigned<T> && Integer<T>;
 
+	/// @brief Type must be a function.
 	template<typename T>
 	concept Function = Impl::IsFunction<T>::value;
 
+	/// @brief Type must be a pointer.
 	template<typename T>
 	concept Pointer = Impl::IsPointer<T>::value;
 
+	/// @brief Type must be a pointer to a member of a `class` or `struct`.
 	template<typename T>
 	concept MemberPointer = Impl::IsMemberPointer<T>::value;
 
+	/// @brief Type must be an lvalue reference (common reference - `&`).
 	template<typename T>
 	concept LeftReference = Impl::IsLeftReference<T>::value;
 
+	/// @brief Type must be an rvalue reference (temporary reference - `&&`)
 	template<typename T>
 	concept Temporary = Impl::IsTemporary<T>::value;
 
+	/// @brief Type must be a reference of some kind.
 	template<typename T>
 	concept Reference = LeftReference<T> || Temporary<T>;
 
+	/// @brief Type must be convertible from a number type.
 	template <typename T>
 	concept Numerable = Convertible<usize, T>;
 
+	/// @brief Type must be an `enum`.
 	template<typename T>
 	concept Enumerator = Impl::IsEnumerator<T>::value;
 
+	/// @brief Type must be an `union`.
 	template<typename T>
 	concept Union = Impl::IsUnion<T>::value;
 
+	/// @brief Type must be a `class` or `struct`.
 	template<typename T>
 	concept Class = Impl::IsClass<T>::value;
 
-	template <typename T>
-	concept NumerableEnum = Enumerator<T> && Numerable<T>;
-
-	template <typename T>
-	concept StandardEnum = Enumerator<T> && !Numerable<T>;
-
+	/// @brief Type must be a subclass of (or is) `Base`.
 	template<typename T, typename Base>
 	concept Derived	= Impl::IsDerived<T, Base>::value;
 
+	/// @brief Type must be a subclass of (or is) `Base`.
 	template<typename T, typename Base>
 	concept Subclass = Derived<T, Base> && Different<T, Base>;
 
+	/// @brief Type must be a standard type (Every type but `class`es, `struct`s or `union`s).
 	template <typename T>
-	concept Primitive = !(Class<T> || Union<T> || StandardEnum<T>);
+	concept Standard = !(Class<T> || Union<T>);
 
+	/// @brief Type must be a "primitive" type (Standard types, excluding `enum`s).
+	template <typename T>
+	concept Primitive = Standard<T> && !Enumerator<T>;
+
+	/// @brief Type must be a fundamental type (Number, `void` or `nulltype`).
 	template <typename T>
 	concept Fundamental = Number<T> || Void<T> || Null<T>;
 
+	/// @brief Type must not be a standard type.
 	template <typename T>
-	concept Derivable = !Primitive<T>;
+	concept Derivable = !Standard<T>;
 
+	/// @brief Type must be a scalar type (Number, pointer, member pointer or `nulltype`).
 	template<typename T>
-	concept Scalar = Integer<T> || Real<T> || Pointer<T> || MemberPointer<T> || Null<T>;
+	concept Scalar = Number<T> || Pointer<T> || MemberPointer<T> || Null<T>;
 
+	/// @brief Type must be constructible from `Args`.
 	template <class T, typename... Args>
 	concept Constructible = Impl::IsConstructible<T, Args...>::value;
 
+	/// @brief `A + B` must be a valid operation.
 	template <typename A, typename B>
 	concept Addable = requires (A a, B b) {a + b;};
 
+	/// @brief `A - B` must be a valid operation.
 	template <typename A, typename B>
 	concept Subtractable = requires (A a, B b) {a - b;};
 
+	/// @brief `A * B` must be a valid operation.
 	template <typename A, typename B>
 	concept Multipliable = requires (A a, B b) {a * b;};
 
+	/// @brief `A / B` must be a valid operation.
 	template <typename A, typename B>
 	concept Dividable = requires (A a, B b) {a / b;};
 
+	/// @brief `A % B` must be a valid operation.
 	template <typename A, typename B>
 	concept Modulable = requires (A a, B b) {a % b;};
 
+	/// @brief `A += B` must be a valid operation.
 	template <typename A, typename B>
 	concept AddAssignable = requires (A a, B b) {a += b;};
 
+	/// @brief `A -= B` must be a valid operation.
 	template <typename A, typename B>
 	concept SubAssignable = requires (A a, B b) {a -= b;};
 
+	/// @brief `A *= B` must be a valid operation.
 	template <typename A, typename B>
 	concept MulAssignable = requires (A a, B b) {a *= b;};
 
+	/// @brief `A /= B` must be a valid operation.
 	template <typename A, typename B>
 	concept DivAssignable = requires (A a, B b) {a /= b;};
 
+	/// @brief `A %= B` must be a valid operation.
 	template <typename A, typename B>
 	concept ModAssignable = requires (A a, B b) {a %= b;};
 
+	/// @brief `T++` must be a valid operation.
 	template <typename T>
 	concept PostIncrementable = requires (T t) {t++;};
 
+	/// @brief `T--` must be a valid operation.
 	template <typename T>
 	concept PostDecrementable = requires (T t) {t--;};
 
+	/// @brief `++T` must be a valid operation.
 	template <typename T>
 	concept PreIncrementable = requires (T t) {++t;};
 
+	/// @brief `--T` must be a valid operation.
 	template <typename T>
 	concept PreDecrementable = requires (T t) {--t;};
 
+	/// @brief Bitwise operations type constraints.
 	namespace Bitwise {
+		/// @brief `A & B` must be a valid operation.
 		template <typename A, typename B>
 		concept Andable = requires (A a, B b) {a & b;};
 
+		/// @brief `A | B` must be a valid operation.
 		template <typename A, typename B>
 		concept Orable = requires (A a, B b) {a | b;};
 
+		/// @brief `A ^ B` must be a valid operation.
 		template <typename A, typename B>
 		concept Xorable = requires (A a, B b) {a ^ b;};
-
+		
+		/// @brief `A & B`, `A | B`, and `A ^ B` must be valid operations.
 		template <typename A, typename B>
 		concept Expressionable =
 			Andable<A, B>
 		&&	Orable<A, B>
 		&&	Xorable<A, B>
 		;
-
+		
+		/// @brief `A &= B` must be a valid operation.
 		template <typename A, typename B>
 		concept AndAssignable = requires (A a, B b) {a &= b;};
 
+		/// @brief `A |= B` must be a valid operation.
 		template <typename A, typename B>
 		concept OrAssignable = requires (A a, B b) {a |= b;};
 
+		/// @brief `A ^= B` must be a valid operation.
 		template <typename A, typename B>
 		concept XorAssignable = requires (A a, B b) {a ^= b;};
 
+		/// @brief `A &= B`, `A |= B` and `A ^= B` must be valid operations.
 		template <typename A, typename B>
 		concept Assignable =
 			AndAssignable<A, B>
@@ -362,9 +443,14 @@ namespace Type {
 		&&	XorAssignable<A, B>
 		;
 
+		/// @brief `~T` must be a valid operation.
 		template <typename T>
 		concept Negatable = requires (T t) {~t;};
 
+		/// @brief
+		///		All bitwise operations (with `A` in the left-hand side)
+		///		must be valid, and both must be negatable.
+		/// @note Operations: `A & B`, `A | B`, `A ^ B`, `A &= B`, `A |= B`, `A ^= B`, `~A` and `~B`.
 		template<typename A, typename B>
 		concept All =
 			Expressionable<A, B>
@@ -374,16 +460,24 @@ namespace Type {
 		;
 	}
 
+	/// @brief Logical operations type constraints.
 	namespace Logical {
+		/// @brief `A && B` must be a valid operation.
 		template <typename A, typename B>
 		concept Andable = requires (A a, B b) {a && b;};
 
+		/// @brief `A || B` must be a valid operation.
 		template <typename A, typename B>
 		concept Orable = requires (A a, B b) {a || b;};
 
+		/// @brief `!T` must be a valid operation.
 		template <typename T>
 		concept Negatable = requires (T t) {!t;};
-
+		
+		/// @brief
+		///		All logical operations (with `A` in the left-hand side)
+		///		must be valid, and both must be negatable.
+		/// @note Operations: `A && B`, `A || B`, `!A` and `!B`.
 		template <typename A, typename B>
 		concept All =
 			Andable<A, B>
@@ -393,28 +487,43 @@ namespace Type {
 		;
 	}
 
+	/// @brief Comparison operators type constraints.
 	namespace Comparable {
+		/// @brief `A == B` must be a valid operation.
 		template <typename A, typename B>
 		concept Equals = requires (A a, B b) {a == b;};
 
+		/// @brief `A != B` must be a valid operation.
 		template <typename A, typename B>
 		concept NotEquals = requires (A a, B b) {a != b;};
 
+		/// @brief `A < B` must be a valid operation.
 		template <typename A, typename B>
 		concept Lesser = requires (A a, B b) {a < b;};
 
+		/// @brief `A > B` must be a valid operation.
 		template <typename A, typename B>
 		concept Greater = requires (A a, B b) {a > b;};
 
+		/// @brief `A <= B` must be a valid operation.
 		template <typename A, typename B>
 		concept LesserEquals = requires (A a, B b) {a <= b;};
 
+		/// @brief `A >= B` must be a valid operation.
 		template <typename A, typename B>
 		concept GreaterEquals = requires (A a, B b) {a >= b;};
 
+		/// @brief `A <=> B` must be a valid operation.
 		template <typename A, typename B>
 		concept Threeway = requires (A a, B b) {a <=> b;};
 
+		/// @brief
+		///		All comparison operations (with `A` in the left-hand side),
+		///		except threeway comparison, must be valid.
+		/// @note
+		///		Operations: `A == B`, `A != B`, `A < B`, `A > B`, `A <= B` and `A >= B`.
+		///		If threeway comparison is implemented, all (except `==` and `!=`)
+		///		are implicitly valid.
 		template <typename A, typename B>
 		concept All =
 			Equals<A, B>
@@ -426,29 +535,39 @@ namespace Type {
 		;
 	}
 
+	/// @brief Stream operations type constraints.
 	namespace Stream {
+		/// @brief `A << B` must be a valid operation.
 		template <typename A, typename B>
 		concept Insertible = requires (A a, B b) {a << b;};
 
+		/// @brief `A >> B` must be a valid operation.
 		template <typename A, typename B>
 		concept Extractible = requires (A a, B b) {a >> b;};
 
+		/// @brief `A << B` and `A >> B` must be valid operations.
 		template <typename A, typename B>
 		concept Expressionable = Insertible<A, B> && Extractible<A, B>;
-
+		
+		/// @brief `A <<= B` must be a valid operation.
 		template <typename A, typename B>
 		concept InsAssignable = requires (A a, B b) {a <<= b;};
 
+		/// @brief `A >>= B` must be a valid operation.
 		template <typename A, typename B>
 		concept ExtAssignable = requires (A a, B b) {a >>= b;};
-
+		
+		/// @brief `A <<= B` and `A >>= B` must be valid operations.
 		template <typename A, typename B>
 		concept Assignable = InsAssignable<A, B> && ExtAssignable<A, B>;
 
+		/// @brief All stream operations (with `A` in the left-hand side) must be valid.
+		/// @note Operations: `A << B`, `A >> B`, `A <<= B` and `A >>= B`.
 		template <typename A, typename B>
 		concept All = Expressionable<A, B> && Assignable<A, B>;
 	}
 
+	/// @brief `A + B`, `A - B`, `A * B` and `A / B` must be valid operations.
 	template <typename A, typename B>
 	concept Calculable =
 			Addable<A, B>
@@ -457,6 +576,7 @@ namespace Type {
 		&&	Dividable<A, B>
 	;
 
+	/// @brief `A += B`, `A -= B`, `A *= B` and `A /= B` must be valid operations.
 	template <typename A, typename B>
 	concept CalcAssignable =
 			AddAssignable<A, B>
@@ -465,19 +585,24 @@ namespace Type {
 		&&	DivAssignable<A, B>
 	;
 
+	/// @brief
+	///		All basic arithmetic operations (with `A` in the left-hand side),
+	///		except modulo, must be valid.
 	template <typename A, typename B>
 	concept Arithmetic = Calculable<A, B> && CalcAssignable<A, B>;
 
+	/// @brief `A % B` and `A %= B` must be valid operations.
 	template <typename A, typename B>
 	concept HasModulo = Modulable<A, B> && ModAssignable<A, B>;
 
 	/**
-	* A 'Safe' type must not be:
+	* A "Safe" type must not be:
 	*	1)	A pointer (null or non-null),
 	*	2)	A reference,
 	*	3)	A function, or
-	*	4)	Void
-	* Ergo, a 'raw value' type.
+	*	4)	`void`
+	*
+	* Ergo, a "raw value" type.
 	*/
 	template <typename T>
 	concept Safe = !(
@@ -488,33 +613,23 @@ namespace Type {
 		||	Null<T>
 	);
 
+	/// @brief Type must be a safe type, and a C-style array.
 	template <typename T>
 	concept SafeArray = Array<T> && Safe<T>;
 
-	/**
-	* A 'Mutable' is a 'Safe' type that isn't an array or constant.
-	*/
+	/// @brief Type must be a safe type, and not be an array, or constant.
 	template <typename T>
 	concept Mutable = Safe<T> && !(Array<T> || Constant<T>);
 
-	namespace {
-		template<class Lambda, int=(Lambda{}(), 0)>
-		constexpr bool isConstexpr(Lambda)	{return true;	}
-		constexpr bool isConstexpr(...)		{return false;	}
-
-		template<typename T, typename = void>
-		constexpr bool isDefined = false;
-
-		template<typename T>
-		constexpr bool isDefined<T, decltype(typeid(T), void())> = true;
-	}
-
+	/// @brief Type must be usable in a compile-time expression.
 	template <typename T>
-	concept CompileTimeable = isConstexpr([]{return T();});
+	concept CompileTimeable = Impl::IsCompileTimeable<T>::value;
 
+	/// @brief Type must be complete.
 	template <class T>
-	concept Defined = isDefined<T>;
+	concept Defined = Impl::IsDefined<T>::value;
 
+	/// @brief Type must represent a character of text.
 	template<class T>
 	concept Character =
 		Type::Equal<T, char>
@@ -524,20 +639,28 @@ namespace Type {
 	||	Type::Equal<T, char8_t>
 	;
 
+	/// @brief Type must represent an ASCII character.
 	template<class T>
 	concept ASCII =
 		Type::Equal<T, char>
 	||	Type::Equal<T, wchar_t>
 	;
 
+	/// @brief Type must be callable, and must behave like a function `F`.
 	template<class T, typename F>
 	concept Functional = Impl::IsFunctional<T, F>::value;
 
-	template<class T, typename... Args>
-	concept OneOf = (... || Equal<T, Args>);
+	/// @brief Type must be one of a series of `Types`.
+	template<class T, typename... Types>
+	concept OneOf = (... || Equal<T, Types>);
 
+	/// @brief Type must be equal to `T2` or `T2 const`.
 	template<class T, typename T2>
-	concept EqualOrConst = OneOf<T, T2, T2 const>;
+	concept EqualOrConst = OneOf<T, AsNonConst<T2>, AsNonConst<T2> const>;
+
+	/// @brief Constraint class `T` must be true when given a series of `Types`.
+	template<template <class...> class T, class... Types>
+	concept Valid = Impl::IsValid<T, Types...>::value;
 }
 
 CTL_NAMESPACE_END

@@ -5,6 +5,7 @@
 
 CTL_NAMESPACE_BEGIN
 
+/// @brief Contains a singe `Type` of type `T`. Used in type conversions.
 template<class T> struct TypeContainer {using Type = T;};
 
 CTL_NAMESPACE_END

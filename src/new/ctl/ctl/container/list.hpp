@@ -23,7 +23,9 @@ template<
 >
 struct List;
 
+/// @brief Container-specific type constraints.
 namespace Type::Container {
+	/// @brief Implementation of type constraints.
 	namespace Impl {
 		template<class T>
 		struct IsList;
@@ -32,6 +34,7 @@ namespace Type::Container {
 		struct IsList<T0<T1, T2, T3>>: BooleanConstant<Type::Equal<T0<T1, T2, T3>, ::CTL::List<T1, T2, T3>>> {};
 	}
 
+	/// Type must be `List`.
 	template<class T>
 	concept List = Impl::IsList<T>::value;
 }
@@ -39,7 +42,7 @@ namespace Type::Container {
 /// @brief Dynamic array of objects.
 /// @tparam TData Element type.
 /// @tparam TIndex Index type.
-/// @tparam TAlloc<T> Allocator type.
+/// @tparam TAlloc<class> Allocator type.
 template<
 	class TData,
 	Type::Integer TIndex,
@@ -142,7 +145,7 @@ public:
 	}
 
 	/// @brief Copy constructor.
-	/// @param other Other `List`.
+	/// @param other `List` to copy from.
 	constexpr List(SelfType const& other) {
 		invoke(other.maximum);
 		copy(other.contents, contents, other.count);
@@ -150,7 +153,7 @@ public:
 	}
 
 	/// @brief Move constructor.
-	/// @param other Other `List`.
+	/// @param other `List` to move from.
 	constexpr List(SelfType&& other) {
 		maximum			= ::CTL::move(other.maximum);
 		contents		= ::CTL::move(other.contents);
@@ -928,7 +931,7 @@ public:
 		return equals(other);
 	}
 
-	/// @brief Three-way comparison operator.
+	/// @brief Threeway comparison operator.
 	/// @param other Other `List` to compare with.
 	/// @return Order between both `List`s.
 	/// @note Requires element type to be three-way comparable.
@@ -1151,7 +1154,7 @@ private:
 
 	constexpr static void memdestruct(PointerType const& p, SizeType const& sz) {
 		if (!(sz && p)) return;
-		if constexpr (!Type::Primitive<DataType>) {
+		if constexpr (!Type::Standard<DataType>) {
 			for (auto i = p; i != (p+sz); ++i)
 				MX::destruct(i);
 		}
@@ -1168,7 +1171,7 @@ private:
 	}
 
 	constexpr void memresize(DataType*& data, SizeType const& sz, SizeType const& oldsz, SizeType const& count) {
-		if constexpr(Type::Primitive<DataType>)
+		if constexpr(Type::Standard<DataType>)
 			alloc.resize(data, sz);
 		else {
 			DataType* ndata = alloc.allocate(sz);
@@ -1179,7 +1182,7 @@ private:
 	}
 
 	constexpr static void copy(ConstantType* src, DataType* dst, SizeType count) {
-		if constexpr (Type::Primitive<DataType>)
+		if constexpr (Type::Standard<DataType>)
 			MX::memmove<DataType>(dst, src, count);
 		else MX::objcopy<DataType>(dst, src, count);
 	}

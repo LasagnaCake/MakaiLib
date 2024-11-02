@@ -9,6 +9,12 @@
 
 CTL_NAMESPACE_BEGIN
 
+/// @brief Bit-cast implementation.
+/// @tparam TDst Destination type.
+/// @tparam TSrc Source type.
+/// @param v Value to cast.
+/// @return Value casted as `TDst`.
+/// @note Size of `TDst` and `TSrc` must be equivalent.
 template<class TDst, class TSrc>
 #ifndef CTL_DO_NOT_USE_BUILTINS
 constexpr
