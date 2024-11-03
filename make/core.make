@@ -2,8 +2,8 @@ sinclude options.make
 
 export space := 
 
-export CC	?= gcc
-export CXX	?= g++
+#export CC	?= gcc
+#export CXX	?= g++
 
 export lower =$(shell echo $(1) | tr A-Z a-z)
 export upper =$(shell echo $(1) | tr a-z A-Z)

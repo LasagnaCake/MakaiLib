@@ -37,8 +37,10 @@ public:
 	constexpr Result(ErrorType const& value)	{result.error = error; state = ResultState::RS_ERROR;				}
 	constexpr Result(ErrorType&& value)			{result.error = CTL::move(error); state = ResultState::RS_ERROR;	}
 
-	constexpr SelfType& then(Procedure<ConstReferenceType> const& proc)  				{if (ok()) proc(result.value); return *this;	}
-	constexpr SelfType const& then(Procedure<ConstReferenceType> const& proc) const 	{if (ok()) proc(result.value); return *this;	}
+	template<Type::Functional<void(ConstReferenceType)> TFunction>
+	constexpr SelfType& then(TFunction const& proc)  				{if (ok()) proc(result.value); return *this;	}
+	template<Type::Functional<void(ConstReferenceType)> TFunction>
+	constexpr SelfType const& then(TFunction const& proc) const 	{if (ok()) proc(result.value); return *this;	}
 
 	constexpr SelfType& onError(Procedure<ErrorType const&> const& proc)				{if (!ok()) proc(result.error); return *this;	}
 	constexpr SelfType const& onError(Procedure<ErrorType const&> const& proc) const	{if (!ok()) proc(result.error); return *this;	}
@@ -55,12 +57,16 @@ public:
 	constexpr operator bool() const		{return ok();							}
 	constexpr bool operator()() const	{return ok();							}
 
-	constexpr SelfType& operator()(Procedure<DataType const&> const& proc)				{return then(proc);		}
-	constexpr SelfType const& operator()(Procedure<DataType const&> const& proc) const	{return then(proc);		}
+	template<Type::Functional<void(ConstReferenceType)> TFunction>
+	constexpr SelfType& operator()(TFunction const& proc)				{return then(proc);		}
+	template<Type::Functional<void(ConstReferenceType)> TFunction>
+	constexpr SelfType const& operator()(TFunction const& proc) const	{return then(proc);		}
 
 
-	constexpr SelfType& operator()(Procedure<ErrorType const&> const& proc)				{return onError(proc);	}
-	constexpr SelfType const& operator()(Procedure<ErrorType const&> const& proc) const	{return onError(proc);	}
+	template<Type::Functional<void(ErrorType const&)> TFunction>
+	constexpr SelfType& operator()(TFunction const& proc)				{return onError(proc);	}
+	template<Type::Functional<void(ErrorType const&)> TFunction>
+	constexpr SelfType const& operator()(TFunction const& proc) const	{return onError(proc);	}
 
 	constexpr Nullable<DataType>	value() const {return ok() ? result.value : nullptr;	}
 	constexpr Nullable<ErrorType>	error() const {return !ok() ? result.error : nullptr;	}

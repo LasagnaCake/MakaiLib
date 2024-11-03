@@ -248,7 +248,7 @@ public:
 	/// @return Reference to self.
 	constexpr SelfType& clear() {
 		if (isSet)
-			data = DataType();
+			data = defaultValue();
 		isSet = false;
 		return *this;
 	}
@@ -335,7 +335,9 @@ public:
 	}
 
 private:
+	/// @brief Underlying data type.
 	DataType data;
+	/// @brief Whether there is data being stored.
 	bool isSet = false;
 };
 
