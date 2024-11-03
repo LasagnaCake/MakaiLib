@@ -1,10 +1,4 @@
-[ Compiler-specific ]
-> ctl/ctlex/container/vector.hpp throws error when compiling on GCC 14 and above
-	> error: accessing 'Vector*::<unnamed union>::<anonymous>' member instead of initialized 'Vector*::<unnamed union>::data' member in constant expression
-		> The code should compile in -std=gnu++20 (since the standard allows different union member access), but isn't for some reason
-		> Since it compiles on version 13, it's stuck on it for now
-
-[ Library-specific ]
+[ Library-specific(?) ]
 > Fullscreen does not work properly
 
 [ Code-specific ]

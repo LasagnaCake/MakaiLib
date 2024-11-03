@@ -264,7 +264,8 @@ void Scene::extendFromDefinitionV0(JSON::JSONData def, String const& sourcepath)
 					r->bake();
 				}
 			} else if (def["data"].isObject()) {
-				for(auto& [name, obj]: def["data"].json().items()) {
+				auto objs = def["data"].json().items();
+				for(auto& [name, obj]: objs) {
 					DEBUGLN("[[ ", name," ]]");
 					auto r = createObject(name).value;
 					r->extendFromDefinition(

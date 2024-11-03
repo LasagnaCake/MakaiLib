@@ -37,8 +37,10 @@ No plans to support 32-bit systems.
 > [!caution]
 > **This library currently can only be compiled with optimization level `-Og` and below!**
 
-- GCC via MinGW (MSYS (Recommended), Cygwin, TDM-GCC) 
+- GCC (12+) via MinGW (MSYS (Recommended), Cygwin, TDM-GCC) 
 - Make
+
+#### Installing GCC via MSYS2
 
 If using MSYS, all of them must be installed via pacman:
 
@@ -48,19 +50,6 @@ For make: pacman -S make
 
 In a single line: pacman -S mingw-w64-x86_64-toolchain make
 ```
-
-### GCC toolchain version
-
-> [!important]
-> Your GCC toolchain **must be version 13, preferably 13.2.0-2!**
-
-To ensure that it is the correct version, run the following command:
-
-```
-pacman -U -d https://repo.msys2.org/mingw/mingw64/mingw-w64-x86_64-gcc-libs-13.2.0-2-any.pkg.tar.zst ; pacman -U -d https://repo.msys2.org/mingw/mingw64/mingw-w64-x86_64-gcc-13.2.0-2-any.pkg.tar.zst
-```
-
-For more information as to why, see [Issues.txt](Issues.txt).
 
 ## How to use
 
