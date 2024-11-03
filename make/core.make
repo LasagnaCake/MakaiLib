@@ -4,6 +4,7 @@ export space :=
 
 #export CC	?= gcc
 #export CXX	?= g++
+export LD	?= ld
 
 export lower =$(shell echo $(1) | tr A-Z a-z)
 export upper =$(shell echo $(1) | tr a-z A-Z)

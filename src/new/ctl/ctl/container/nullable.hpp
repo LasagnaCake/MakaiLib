@@ -83,6 +83,7 @@ class Nullable<TData>:
 public:
 	using Typed				= ::CTL::Typed<TData>;
 	using SelfIdentified	= ::CTL::SelfIdentified<Nullable<TData>>;
+	using Defaultable		= ::CTL::Defaultable<TData>;
 
 	using typename
 		Typed::DataType,
@@ -94,7 +95,10 @@ public:
 
 	using typename SelfIdentified::SelfType;
 
-	using Nulled::NullType;
+	using typename Nulled::NullType;
+
+	using Defaultable::defaultvalue;
+
 	using 
 		Ordered::OrderType, 
 		Ordered::Order
