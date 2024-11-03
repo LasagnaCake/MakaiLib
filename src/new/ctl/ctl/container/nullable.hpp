@@ -97,7 +97,7 @@ public:
 
 	using typename Nulled::NullType;
 
-	using Defaultable::defaultvalue;
+	using Defaultable::defaultValue;
 
 	using 
 		Ordered::OrderType, 
