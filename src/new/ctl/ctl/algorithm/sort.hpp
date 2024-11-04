@@ -112,7 +112,7 @@ namespace Sorting {
 	}
 
 	// Based off of Tim Sort, with minor changes
-	// TODO: fix this
+	// TODO: fix this (`mergeSort` not working, so must start by fixing that first)
 	template<Type::Algorithm::Sortable T>
 	constexpr void vivoSort(T* const& arr, usize const& sz) {
 		if (sz < 2) return;
