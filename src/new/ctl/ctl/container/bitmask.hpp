@@ -138,7 +138,7 @@ struct BitMask:
 	/// @brief Returns the state of a bit at a given index.
 	/// @param index Index of the bit.
 	/// @return Whether the bit is set or not.
-	/// @throw OutOfBoundsException When index is bigger than max possible bit range.
+	/// @throw OutOfBoundsException when index is bigger than max possible bit range.
 	constexpr bool operator[](ssize index) {
 		if (index >= BYTE_SIZE * 8) throw OutOfBoundsException("Index is bigger than possible bit range!");
 		while (index < 0) index += BYTE_SIZE * 8;

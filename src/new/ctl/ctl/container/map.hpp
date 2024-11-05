@@ -210,7 +210,7 @@ public:
 	/// @brief Gets the value of the element that matches the given key.
 	/// @param key Key to look for.
 	/// @return Value of the element.
-	/// @throw OutOfBoundsException When key does not exist.
+	/// @throw OutOfBoundsException when key does not exist.
 	constexpr ValueType at(KeyType const& key) const {
 		if (empty()) throw OutOfBoundsException("Key does not exist!");
 		IndexType i = search(key);
@@ -297,7 +297,7 @@ public:
 	/// @brief Gets the value of the element that matches the given key.
 	/// @param key Key to look for.
 	/// @return Value of the element.
-	/// @throw OutOfBoundsException When key does not exist.
+	/// @throw OutOfBoundsException when key does not exist.
 	constexpr ValueType operator[](KeyType const& index) const {return at(index);}
 
 	/// @brief Copy assignment operator.

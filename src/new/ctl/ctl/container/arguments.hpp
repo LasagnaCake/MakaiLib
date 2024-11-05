@@ -56,7 +56,7 @@ struct Arguments:
 	/// @brief Gets the argument at the specified index.
 	/// @param index Argument index.
 	/// @return Reference to argument.
-	/// @throw OutOfBoundsException When index is bigger than argument count.
+	/// @throw OutOfBoundsException when index is bigger than argument count.
 	constexpr ReferenceType operator[](ssize index) {
 		while (index < 0)
 			index += length;
@@ -68,7 +68,7 @@ struct Arguments:
 	/// @brief Gets the argument at the specified index.
 	/// @param index Argument index.
 	/// @return Const reference to argument.
-	/// @throw OutOfBoundsException When index is bigger than argument count.
+	/// @throw OutOfBoundsException when index is bigger than argument count.
 	constexpr ConstReferenceType operator[](ssize index) const {
 		while (index < 0)
 			index += length;

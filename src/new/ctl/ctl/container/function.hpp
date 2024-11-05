@@ -102,7 +102,7 @@ public:
 	/// @brief Invokes the callable bound to it.
 	/// @param ...args Argument types.
 	/// @return Result of the call.
-	/// @throw BadCallException When there is no callable bound.
+	/// @throw BadCallException when there is no callable bound.
 	constexpr ReturnType invoke(TArgs... args) const {
 		if (!func) badCallError();
         return func->invoke(args...);
@@ -111,7 +111,7 @@ public:
 	/// @brief Invokes the callable bound to it.
 	/// @param ...args Argument types.
 	/// @return Result of the call.
-	/// @throw BadCallException When there is no callable bound.
+	/// @throw BadCallException when there is no callable bound.
     constexpr ReturnType operator()(TArgs... args) const {
         return invoke(args...);
     }

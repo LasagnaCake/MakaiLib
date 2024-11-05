@@ -253,7 +253,7 @@ protected:
 	}
 
 	/// @brief Throws an OutOfBoundsException when called.
-	/// @throw OutOfBoundsException When called.
+	/// @throw OutOfBoundsException when called.
 	[[noreturn]] constexpr static void outOfBoundsError() {
 		throw OutOfBoundsException("Index is bigger than iteratable size!");
 	}
