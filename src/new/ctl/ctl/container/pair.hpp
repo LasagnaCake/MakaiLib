@@ -130,6 +130,9 @@ struct Pair:
 	/// @brief Copy constructor.
 	/// @param other `Pair` to copy from.
 	constexpr Pair(SelfType const& other):			a(other.a), b(other.b)				{}
+	/// @brief Copy constructor (pair-like).
+	/// @tparam T Pair-like type.
+	/// @param other Pair-like object to copy from.
 	template<Type::Container::Pair T>
 	constexpr Pair(T const& other):					a(other.getA()), b(other.getB())	{}
 
