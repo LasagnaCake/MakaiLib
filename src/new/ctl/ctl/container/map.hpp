@@ -19,7 +19,7 @@ CTL_NAMESPACE_BEGIN
 /// @tparam TPair<class, class> Pair type.
 template<class TKey, class TValue, template <class TPairKey, class TPairValue> class TPair = Pair>
 struct Collected {
-	static_assert(Type::Container::Pair<TPair<TKey, TValue>>, "Type is not a valid pair type!");
+	static_assert(Type::Container::PairLike<TPair<TKey, TValue>>, "Type is not a valid pair type!");
 
 	/// @brief Key type.
 	typedef TKey				KeyType;

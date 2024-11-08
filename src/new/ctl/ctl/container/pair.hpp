@@ -11,7 +11,7 @@ CTL_NAMESPACE_BEGIN
 namespace Type::Container {
 	/// @brief Type must be a valid pair type.
 	template<class T>
-	concept Pair = requires (T t) {
+	concept PairLike = requires (T t) {
 		typename T::AType;
 		typename T::BType;
 		{t.getA()} -> EqualOrConst<typename T::AType&>;
@@ -23,7 +23,7 @@ namespace Type::Container {
 template<typename TA, typename TB> struct Pair;
 
 /// @brief Custom comparator implementation for a pair-type.
-template<Type::Container::Pair TPair>
+template<Type::Container::PairLike TPair>
 struct PairComparator: Ordered {
 	/// @brief Pair type.
 	using PairType = TPair;
@@ -113,9 +113,9 @@ struct Pair:
 
 	using typename Ordered::OrderType;
 
-	/// @brief "A" value.
+	/// @brief "A".
 	AType a;
-	/// @brief "B" value.
+	/// @brief "B".
 	BType b;
 
 	/// @brief Empty constructor.
@@ -133,26 +133,46 @@ struct Pair:
 	/// @brief Copy constructor (pair-like).
 	/// @tparam T Pair-like type.
 	/// @param other Pair-like object to copy from.
-	template<Type::Container::Pair T>
+	template<Type::Container::PairLike T>
 	constexpr Pair(T const& other):					a(other.getA()), b(other.getB())	{}
 
+	/// @brief Threeway comparison operator.
+	/// @param other Other `Pair` to compare with.
+	/// @return Order between objects.
 	constexpr OrderType operator<=>(SelfType const& other) const
 	requires (PairComparator<SelfType>::IS_COMPARABLE) {
 		return PairComparator<SelfType>::compare(*this, other);
 	}
 
+	/// @brief Returns `a`.
+	/// @return Reference to `a`.
 	constexpr AType& getA()				{return a;	}
+	/// @brief Returns `b`.
+	/// @return Reference to `b`.
 	constexpr BType& getB()				{return b;	}
+	/// @brief Returns `a`.
+	/// @return Const reference to `a`.
 	constexpr AType const& getA() const	{return a;	}
+	/// @brief Returns `a`.
+	/// @return Const reference to `a`.
 	constexpr BType const& getB() const	{return b;	}
 
+	/// @brief Converts the object to another pair-esque type.
+	/// @tparam TPair Pair-esque type.
+	/// @return Pair-esque object.
 	template<Type::Constructible<AType, BType> TPair>
 	constexpr TPair pair() const		{return TPair(a, b);	}
 
+	/// @brief Converts the object to another pair-esque type.
+	/// @tparam TPair Pair-esque type.
+	/// @return Pair-esque object.
 	template<Type::Constructible<AType, BType> TPair>
 	constexpr operator TPair() const	{return pair<TPair>();	}
 };
 
+/// @brief Key-Value pair.
+/// @tparam TKey Key type.
+/// @tparam TValue Value type.
 template<typename TKey, typename TValue>
 struct KeyValuePair:
 	Ordered,
@@ -173,26 +193,49 @@ struct KeyValuePair:
 
 	using typename Ordered::OrderType;
 
+	/// @brief Key.
 	AType	key;
+	/// @brief Value.
 	BType	value;
 
+	/// @brief Empty constructor.
 	constexpr KeyValuePair() = default;
 
+	/// @brief Constructs only the key.
+	/// @param k Value of key.
 	constexpr KeyValuePair(AType const& k):					key(k)									{}
+	/// @brief Constructs both key and value.
+	/// @param k Value of `key`.
+	/// @param v Value of `value`.
 	constexpr KeyValuePair(AType const& k, BType const& v):	key(k), value(v)						{}
+	/// @brief Copy constructor (Pair-like).
+	/// @param other Other pair-like object.
 	constexpr KeyValuePair(PairType const& other):			KeyValuePair(other.a, other.b)			{}
 //	constexpr KeyValuePair(SelfType const& other):			KeyValuePair(other.key, other.value)	{}
 
+	/// @brief Threeway comparison operator.
+	/// @param other Other `KeyValuePair` to compare with.
+	/// @return Order between objects.
 	constexpr OrderType operator<=>(SelfType const& other) const
 	requires (PairComparator<SelfType>::IS_COMPARABLE) {
 		return PairComparator<SelfType>::compare(*this, other);
 	}
 
+	/// @brief Returns `key`.
+	/// @return Reference to `key`.
 	constexpr AType& getA()				{return key;	}
+	/// @brief Returns `value`.
+	/// @return Reference to `value`.
 	constexpr BType& getB()				{return value;	}
+	/// @brief Returns `key`.
+	/// @return Const reference to `key`.
 	constexpr AType const& getA() const	{return key;	}
+	/// @brief Returns `value`.
+	/// @return Const reference to `value`.
 	constexpr BType const& getB() const	{return value;	}
 
+	/// @brief Converts the object to a `Pair`.
+	/// @return Object as `Pair`.
 	constexpr PairType pair() const		{return PairType(key, value);	}
 //	constexpr operator PairType() const	{return pair();					}
 };
