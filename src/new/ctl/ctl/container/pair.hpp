@@ -7,6 +7,9 @@
 
 CTL_NAMESPACE_BEGIN
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
+
 /// @brief Container-specific type constraints.
 namespace Type::Container {
 	/// @brief Type must be a valid pair type.
@@ -113,9 +116,9 @@ struct Pair:
 
 	using typename Ordered::OrderType;
 
-	/// @brief "A".
+	/// @brief "A" value.
 	AType a;
-	/// @brief "B".
+	/// @brief "B" value.
 	BType b;
 
 	/// @brief Empty constructor.
@@ -210,8 +213,10 @@ struct KeyValuePair:
 	constexpr KeyValuePair(AType const& k, BType const& v):	key(k), value(v)						{}
 	/// @brief Copy constructor (Pair-like).
 	/// @param other Other pair-like object.
-	constexpr KeyValuePair(PairType const& other):			KeyValuePair(other.a, other.b)			{}
-//	constexpr KeyValuePair(SelfType const& other):			KeyValuePair(other.key, other.value)	{}
+	constexpr explicit KeyValuePair(PairType const& other):	KeyValuePair(other.a, other.b)			{}
+	/// @brief Copy constructor (`KeyValuePair`).
+	/// @param other Other `KeyValuePair`.
+	constexpr KeyValuePair(SelfType const& other):			KeyValuePair(other.key, other.value)	{}
 
 	/// @brief Threeway comparison operator.
 	/// @param other Other `KeyValuePair` to compare with.
@@ -237,9 +242,14 @@ struct KeyValuePair:
 	/// @brief Converts the object to a `Pair`.
 	/// @return Object as `Pair`.
 	constexpr PairType pair() const		{return PairType(key, value);	}
-//	constexpr operator PairType() const	{return pair();					}
+	/// @brief Converts the object to a `Pair`.
+	/// @return Object as `Pair`.
+	constexpr operator PairType() const	{return pair();					}
 };
 
+/// @brief Left-Right pair.
+/// @tparam TLeft Left type.
+/// @tparam TRight Right type.
 template<typename TLeft, typename TRight>
 struct LeftRightPair:
 	Ordered,
@@ -260,30 +270,60 @@ struct LeftRightPair:
 
 	using typename Ordered::OrderType;
 
+	/// @brief Left side.
 	AType	left;
+	/// @brief Right side.
 	BType	right;
-
+	
+	/// @brief Threeway comparison operator.
+	/// @param other Other `LeftRightPair` to compare with.
+	/// @return Order between objects.
 	constexpr OrderType operator<=>(SelfType const& other) const
 	requires (PairComparator<SelfType>::IS_COMPARABLE) {
 		return PairComparator<SelfType>::compare(*this, other);
 	}
 
+	/// @brief Returns `left`.
+	/// @return Reference to `left`.
 	constexpr AType& getA()				{return left;	}
+	/// @brief Returns `right`.
+	/// @return Reference to `right`.
 	constexpr BType& getB()				{return right;	}
+	/// @brief Returns `left`.
+	/// @return Const reference to `left`.
 	constexpr AType const& getA() const	{return left;	}
+	/// @brief Returns `right`.
+	/// @return Const reference to `right`.
 	constexpr BType const& getB() const	{return right;	}
 
+	/// @brief Empty constructor.
 	constexpr LeftRightPair() = default;
-
+	
+	/// @brief Constructs only the left side.
+	/// @param l Value of the left side.
 	constexpr LeftRightPair(AType const& l):					left(l)									{}
+	/// @brief Constructs both the left and right sides.
+	/// @param l Value of the left side.
+	/// @param r Value of the right side.
 	constexpr LeftRightPair(AType const& l, BType const& r):	left(l), right(r)						{}
-	constexpr LeftRightPair(PairType const& other):				LeftRightPair(other.a, other.b)			{}
-//	constexpr LeftRightPair(SelfType const& other):				LeftRightPair(other.left, other.right)	{}
+	/// @brief Copy constructor (Pair-like).
+	/// @param other Other pair-like object.
+	constexpr explicit LeftRightPair(PairType const& other):	LeftRightPair(other.a, other.b)			{}
+	/// @brief Copy constructor (`LeftRightPair`).
+	/// @param other Other `LeftRightPair`.
+	constexpr LeftRightPair(SelfType const& other):				LeftRightPair(other.left, other.right)	{}
 
+	/// @brief Converts the object to a `Pair`.
+	/// @return Object as `Pair`.
 	constexpr PairType pair() const		{return PairType(left, right);	}
-//	constexpr operator PairType() const	{return pair();					}
+	/// @brief Converts the object to a `Pair`.
+	/// @return Object as `Pair`.
+	constexpr operator PairType() const	{return pair();					}
 };
 
+/// @brief First-Second (STL-like) pair.
+/// @tparam T1 First type.
+/// @tparam T2 Second type.
 template<typename T1, typename T2>
 struct FirstSecondPair:
 	Ordered,
@@ -304,34 +344,63 @@ struct FirstSecondPair:
 
 	using typename Ordered::OrderType;
 
+	/// @brief First value.
 	AType	first;
+	/// @brief Second value.
 	BType	second;
 
+	/// @brief Threeway comparison operator.
+	/// @param other Other `FirstSecondPair` to compare with.
+	/// @return Order between objects.
 	constexpr OrderType operator<=>(SelfType const& other) const
 	requires (PairComparator<SelfType>::IS_COMPARABLE) {
 		return PairComparator<SelfType>::compare(*this, other);
 	}
 
+	/// @brief Returns `first`.
+	/// @return Reference to `first`.
 	constexpr AType& getA()				{return first;	}
+	/// @brief Returns `second`.
+	/// @return Reference to `second`.
 	constexpr BType& getB()				{return second;	}
+	/// @brief Returns `first`.
+	/// @return Const reference to `first`.
 	constexpr AType const& getA() const	{return first;	}
+	/// @brief Returns `second`.
+	/// @return Const reference to `second`.
 	constexpr BType const& getB() const	{return second;	}
 
+	/// @brief Empty constructor.
 	constexpr FirstSecondPair() = default;
 
+	/// @brief Constructs only the first value.
+	/// @param v1 First value.
 	constexpr FirstSecondPair(AType const& v1):						first(v1)									{}
+	/// @brief Constructs both first and second values.
+	/// @param v1 First value.
+	/// @param v2 Second value.
 	constexpr FirstSecondPair(AType const& v1, BType const& v2):	first(v1), second(v2)						{}
-	constexpr FirstSecondPair(PairType const& other):				FirstSecondPair(other.a, other.b)			{}
-//	constexpr FirstSecondPair(SelfType const& other):				FirstSecondPair(other.first, other.second)	{}
+	/// @brief Copy constructor (Pair-like).
+	/// @param other Other pair-like object.
+	constexpr explicit FirstSecondPair(PairType const& other):		FirstSecondPair(other.a, other.b)			{}
+	/// @brief Copy constructor (`FirstSecondPair`).
+	/// @param other Other `FirstSecondPair`.
+	constexpr FirstSecondPair(SelfType const& other):				FirstSecondPair(other.first, other.second)	{}
 
+	/// @brief Converts the object to a `Pair`.
+	/// @return Object as `Pair`.
 	constexpr PairType pair() const		{return PairType(first, second);	}
-//	constexpr operator PairType() const	{return pair();						}
+	/// @brief Converts the object to a `Pair`.
+	/// @return Object as `Pair`.
+	constexpr operator PairType() const	{return pair();						}
 };
 
 static_assert(Type::Comparator::Threeway<Pair<int, int>, Pair<int, int>>);
 static_assert(Type::Comparator::Threeway<KeyValuePair<int, int>, KeyValuePair<int, int>>);
 static_assert(Type::Comparator::Threeway<LeftRightPair<int, int>, LeftRightPair<int, int>>);
 static_assert(Type::Comparator::Threeway<FirstSecondPair<int, int>, FirstSecondPair<int, int>>);
+
+#pragma GCC diagnostic pop
 
 CTL_NAMESPACE_END
 

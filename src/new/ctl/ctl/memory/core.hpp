@@ -384,10 +384,11 @@ namespace MX {
 	/// @param count Count of elements to clear.
 	/// @return Pointer to destination.
 	template<Type::NonVoid T>
-	constexpr T* objclear(T* mem, usize sz) {
+	constexpr T* objclear(T* const& mem, usize sz) {
+		T* m = mem;
 		while (sz--)
-			destruct<T>(mem++);
-		return dst;
+			destruct<T>(m++);
+		return mem;
 	}
 }
 
