@@ -16,27 +16,42 @@ CTL_NAMESPACE_BEGIN
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wmismatched-new-delete"
 
+/// @brief Container-specific type constraints.
 namespace Type::Container {
+	/// Type must be a pointable type.
 	template <typename T> concept Pointable = Safe<T>;
 }
 
 namespace Base {
+	/// @brief Reference counter.
+	/// @tparam T Reference type.
+	template <class T>
 	struct ReferenceCounter {
-		struct ReferenceData {
+		/// @brief Reference data.
+		struct Reference {
+			/// @brief Whether the reference exists.
 			bool	exists	= false;
+			/// @brief How many references are being held.
 			ssize	count	= 0;
 
-			constexpr ReferenceData() = default;
+			/// @brief Empty constructor.
+			constexpr Reference() = default;
 
-			constexpr ReferenceData(bool const& exists, int64 const& count = 0): exists(exists), count(count) {}
+			/// @brief Basic constructor. 
+			constexpr Reference(bool const& exists, int64 const& count = 0): exists(exists), count(count) {}
 		};
 
-		typedef Map<void*, ReferenceData> ReferenceBank;
+		/// @brief Underlying database type.
+		using Database = Map<T, Reference>;
 
-		inline static bool isBound(void* const& ptr) {return database.contains(ptr);}
+		/// @brief Checks whether the reference is bound.
+		/// @param ptr Reference to check.
+		/// @return Whether it is bound.
+		inline static bool isBound(T const& ptr) {return database.contains(ptr);}
 
 	protected:
-		inline static ReferenceBank database;
+		/// @brief Underlying reference database.
+		inline static Database database;
 	};
 }
 
@@ -44,14 +59,33 @@ namespace Base {
 #define CTL_PTR_ASSERT_STRONG		static_assert(!WEAK,	"It is forbidden to implicitly convert a strong pointer to a weak pointer!")
 #define CTL_PTR_ASSERT_WEAK			static_assert(WEAK,		"It is forbidden to implicitly convert a weak pointer to a strong pointer!")
 #define CTL_PTR_IF_STRONG			if constexpr(!WEAK)
+/// @brief Smart pointer, with automatic reference counting.
+/// @tparam T Type of data pointed to.
+/// @tparam W Whether the given `Pointer` is weak.
+/// @note
+///		Differences between strong and weak pointers:
+/// @note
+///		- Weak pointer:
+///			Only points to some object in memory, and does not take ownership of it.
+///			Does not affect the reference counter.
+/// @note
+///		- Strong pointer:
+///			Takes full ownership of the object pointed to it, and can destroy (delete) it.
+///			Will throw if object is no longer usable, either via releasing the pointer to it,
+///			or when another strong pointer destroys it.
+///			Changes the reference counter when an object is bound, unbound, destroyed, etc.
+/// @note
+///			Both types will throw if object is no longer usable,
+///			either via releasing the pointer to it, or when a strong pointer destroys it.
 template <Type::Container::Pointable T, bool W>
 class Pointer:
-	private Base::ReferenceCounter,
-	Derived<Base::ReferenceCounter>,
+	private Base::ReferenceCounter<void*>,
+	Derived<Base::ReferenceCounter<void*>>,
 	Typed<T>,
 	SelfIdentified<Pointer<T, W>>,
 	Ordered {
 public:
+	/// @brief Whether the pointer is a strong or weak pointer.
 	constexpr static bool WEAK = W;
 
 	using ReferenceCounter::isBound;
@@ -76,30 +110,48 @@ public:
 		typename Ordered::OrderType
 	;
 
+	/// @brief New smart pointer type.
+	/// @tparam NW Whether the pointer is weak.
 	template<bool NW>
 	using NewPointerType = Pointer<DataType, NW>;
 
+	/// @brief Opposite smart pointer type.
 	using OtherType = NewPointerType<!WEAK>;
 
-	using OperationType = Function<DataType(ConstReferenceType)>;
-
+	/// @brief Empty constructor.
 	constexpr Pointer() {}
-
+	
+	/// @brief Move constructor (strong pointer).
+	/// @param other Strong pointer to bind.
 	constexpr Pointer(NewPointerType<false>&& other)		{CTL_PTR_ASSERT_STRONG_MOVE;	bind(other);}
+	/// @brief Move constructor (weak pointer).
+	/// @param other Weak pointer to bind.
 	constexpr Pointer(NewPointerType<true>&& other)			{CTL_PTR_ASSERT_WEAK;			bind(other);}
 
+	/// @brief Copy constructor (strong pointer).
+	/// @param other Strong pointer to bind.
 	constexpr Pointer(NewPointerType<false> const& other)	{								bind(other);}
+	/// @brief Move constructor (weak pointer).
+	/// @param other Weak pointer to bind.
 	constexpr Pointer(NewPointerType<true> const& other)	{CTL_PTR_ASSERT_WEAK;			bind(other);}
 
+	/// @brief Copy constructor (raw pointer).
+	/// @param obj Pointer to bind.
 	constexpr Pointer(PointerType const& obj) {bind(obj);}
 
+	/// @brief Destructor.
 	constexpr ~Pointer() {unbind();}
 
+	/// @brief Returns the ammount of references holding the current object.
+	/// @return Reference count.
 	constexpr ssize count() const {
 		if (!exists()) return 0;
 		return database[ref].count;
 	}
 
+	/// @brief Sets the pointer as a reference to an object.
+	/// @param obj Object to reference.
+	/// @return Reference to self.
 	constexpr SelfType& bind(PointerType const& obj) {
 		if (ref == obj) return (*this);
 		unbind();
@@ -108,6 +160,9 @@ public:
 		return (*this);
 	}
 
+	/// @brief Sets the pointer as a reference to an object.
+	/// @param ptr Object to reference.
+	/// @return Reference to self.
 	constexpr SelfType& bind(SelfType const& ptr) {
 		if (ref == ptr) return (*this);
 		unbind();
@@ -116,6 +171,9 @@ public:
 		return (*this);
 	}
 
+	/// @brief Sets the pointer as a reference to an object.
+	/// @param ptr Object to reference.
+	/// @return Reference to self.
 	constexpr SelfType& bind(OtherType const& ptr) {
 		CTL_PTR_ASSERT_WEAK;
 		if (ref == ptr) return (*this);
@@ -124,7 +182,9 @@ public:
 		attach(ptr.ref);
 		return (*this);
 	}
-
+	
+	/// @brief Removes the pointer as a reference to a bound object.
+	/// @return Reference to self.
 	constexpr SelfType& unbind() {
 		if (!exists()) return (*this);
 		CTL_PTR_IF_STRONG {
@@ -136,51 +196,84 @@ public:
 		return (*this);
 	}
 
-	constexpr SelfType& destroy() {
-		CTL_PTR_IF_STRONG {
-			delete ref;
-			release();
-		}
+	/// @brief Destroys (deletes) the bound object.
+	/// @return Reference to self.
+	constexpr SelfType& destroy() requires (!WEAK) {
+		delete ref;
+		release();
 		return (*this);
 	}
 
-	constexpr SelfType& release() {
-		CTL_PTR_IF_STRONG {
-			if (!exists()) return (*this);
-			database[(void*)ref] = {false, 0};
-			ref = nullptr;
-		}
+	/// @brief Detaches the bound object from the reference system.
+	/// @return Reference to self.
+	/// @note Requires smart pointer type to be strong.
+	constexpr SelfType& release() requires (!WEAK) {
+		if (!exists())
+			detach(ref);
 		return (*this);
 	}
 
+	/// @brief Detaches a given object from the reference system.
+	/// @param ptr Object to detach.
+	/// @note Requires smart pointer type to be strong.
+	constexpr static void detach(PointerType const& ptr)
+	requires (!WEAK) {
+		if (isBound(ptr))
+			database[(void*)ptr] = {false, 0};
+	}
+
+	/// @brief Returns whether the object exists.
+	/// @return Whether the object exists.
 	constexpr bool exists() const {
-	//	if (!ref)			return false;
 		CTL_PTR_IF_STRONG	return ref && (database[(void*)ref].count > 0);
-	//	BUG: returns true even if exists is set to false (because it is somehow set to true???)
 		else				return ref && (database[(void*)ref].exists);
 	}
 
-	constexpr ssize unique() const	{return count() == 1;}
-
-	constexpr bool operator()() const	{return exists();}
+	/// @brief Returns whether this pointer is the sole owner of the bound object.
+	/// @return Whether this pointer is the sole owner of the bound object.
+	/// @note Requires smart pointer type to be strong.
+	constexpr bool unique() const requires (!WEAK) {return count() == 1;}
+	
+	/// @brief Returns whether the object exists.
+	/// @return Whether the object exists.
+	constexpr bool operator()() const {return exists();}
 
 //	constexpr PointerType operator&()		{return raw();}
-	constexpr PointerType operator&() const	{return raw();}
+	/// @brief Returns a raw pointer to the bound object.
+	/// @return Raw pointer to bound object.
+	constexpr PointerType operator&() const {return raw();}
 
+	/// @brief Casts the smart pointer to point to a new type.
+	/// @tparam New object type.
+	/// @return Smart pointer to new object type.
 	template<Type::Container::Pointable TNew>
-	constexpr Pointer<TNew, WEAK>		castedTo() const	{return	static_cast<TNew*>(raw());			}
-	constexpr Pointer<DataType, true>	asWeak() const		{return	raw();								}
-	constexpr PointerType				raw() const			{return	exists() ? getPointer() : nullptr;	}
-//	constexpr PointerType				raw() const			{return	getPointer();						}
-//	constexpr ConstPointerType			raw() const			{return	getPointer();						}
+	constexpr Pointer<TNew, WEAK>		as() const		{return	static_cast<TNew*>(raw());			}
+	/// @brief Returns a weak pointer to the bound object.
+	/// @return Weak pointer to object.
+	constexpr Pointer<DataType, true>	asWeak() const	{return	raw();								}
+	/// @brief Returns a raw pointer to the bound object.
+	/// @return Raw pointer to bound object.
+	constexpr PointerType				raw() const		{return	exists() ? getPointer() : nullptr;	}
+//	constexpr PointerType				raw() const		{return	getPointer();						}
+//	constexpr ConstPointerType			raw() const		{return	getPointer();						}
+	
+	/// @brief Returns a raw pointer to the bound object.
+	/// @return Raw pointer to bound object.
+	/// @note Conversion is explicit if smart pointer type is strong.
+	constexpr explicit(!WEAK) operator PointerType const() const	{return raw();		}
+	/// @brief Returns a raw pointer to the bound object.
+	/// @return Raw pointer to bound object.
+	/// @note Conversion is explicit if smart pointer type is strong.
+	constexpr explicit(!WEAK) operator PointerType()				{return raw();		}
 
-	constexpr explicit operator PointerType const() const	{return raw();		}
-	constexpr explicit operator PointerType()				{return raw();		}
-
+	/// @brief Returns whether the object exists.
+	/// @return Whether the object exists.
 	constexpr operator bool() const	{return exists();	}
 
-	constexpr Pointer& modify(OperationType const& op)		{T& ref = *getPointer(); ref = op(ref); return (*this);	}
-	constexpr Pointer& operator()(OperationType const& op)	{return modify(op);										}
+	template<Type::Functional<DataType(ConstReferenceType)> TFunction>
+	constexpr Pointer& modify(TFunction const& op)		{T& ref = *getPointer(); ref = op(ref); return (*this);	}
+	template<Type::Functional<DataType(ConstReferenceType)> TFunction>
+	constexpr Pointer& operator()(TFunction const& op)	{return modify(op);										}
 
 	constexpr bool operator!() const	{return	!exists();			}
 
