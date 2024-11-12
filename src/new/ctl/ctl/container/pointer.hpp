@@ -266,8 +266,8 @@ public:
 	/// @note Conversion is explicit if smart pointer type is strong.
 	constexpr explicit(!WEAK) operator PointerType()				{return raw();		}
 
-	/// @brief Returns whether the object exists.
-	/// @return Whether the object exists.
+	/// @brief Returns whether the bound object exists.
+	/// @return Whether the bound object exists.
 	constexpr operator bool() const	{return exists();	}
 
 	template<Type::Functional<DataType(ConstReferenceType)> TFunction>
@@ -275,8 +275,10 @@ public:
 	template<Type::Functional<DataType(ConstReferenceType)> TFunction>
 	constexpr Pointer& operator()(TFunction const& op)	{return modify(op);										}
 
+	/// @brief Returns whether the bound object doesn't exist.
+	/// @return Whether the bound object doesn't exist.
 	constexpr bool operator!() const	{return	!exists();			}
-
+	
 	constexpr bool operator==(PointerType const& obj) const			{return	ref == obj;			}
 	constexpr OrderType operator<=>(PointerType const& obj) const	{return	ref <=> obj;		}
 
