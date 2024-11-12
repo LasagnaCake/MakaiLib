@@ -6,7 +6,7 @@
 CTL_NAMESPACE_BEGIN
 
 namespace Base {
-	template <class T, T V>
+	template <class P, class T, T V>
 	struct StaticValue {
 		constexpr static T INITIAL_VALUE = V;
 
