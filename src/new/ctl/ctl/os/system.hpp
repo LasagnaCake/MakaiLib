@@ -18,16 +18,18 @@
 CTL_NAMESPACE_BEGIN
 
 namespace OS {
-	inline String sanitizedArgument(String arg) {
-		arg = Regex::replace(arg, "\\\\+", "\\\\");
-		#if (_WIN32 || _WIN64 || __WIN32__ || __WIN64__) && !defined(CTL_NO_WINDOWS_PLEASE)
-		arg = Regex::replace(arg, "\\\\+\"", "\\\"");
-		return "\"" + arg + "\"";
-		#else
-		arg = Regex::replace(arg, "\\\\+'", "\\'");
-		arg = Regex::replace(arg, "'", "\\'");
-		return "'" + arg + "'";
-		#endif
+	namespace {
+		inline String sanitizedArgument(String arg) {
+			arg = Regex::replace(arg, "\\\\+", "\\\\");
+			#if (_WIN32 || _WIN64 || __WIN32__ || __WIN64__) && !defined(CTL_NO_WINDOWS_PLEASE)
+			arg = Regex::replace(arg, "\\\\+\"", "\\\"");
+			return "\"" + arg + "\"";
+			#else
+			arg = Regex::replace(arg, "\\\\+'", "\\'");
+			arg = Regex::replace(arg, "'", "\\'");
+			return "'" + arg + "'";
+			#endif
+		}
 	}
 
 	inline int launch(String const& path, String const& directory = "", StringList args = StringList()) {
@@ -77,60 +79,6 @@ namespace OS {
 		prgArgs.pushBack(NULL);
 		return execv(path.cstr(), prgArgs.data());
 		#endif
-	}
-
-	inline String openFileDialog(String filter = "All\0*.*\0") {
-		#if (_WIN32 || _WIN64 || __WIN32__ || __WIN64__) && !defined(CTL_NO_WINDOWS_PLEASE)
-		OPENFILENAMEA ofn;
-		char szFile[260] = {0};
-		memset(&ofn, 0, sizeof(ofn));
-		ofn.lStructSize = sizeof(ofn);
-		ofn.hwndOwner = NULL;
-		ofn.lpstrFile = (LPSTR)szFile;
-		ofn.nMaxFile = sizeof(szFile);
-		ofn.lpstrFilter = (LPSTR)filter.cstr();
-		ofn.nFilterIndex = 1;
-		ofn.lpstrFileTitle = NULL;
-		ofn.nMaxFileTitle = 0;
-		ofn.lpstrInitialDir = NULL;
-		ofn.Flags =
-			OFN_PATHMUSTEXIST
-		|	OFN_FILEMUSTEXIST
-		|	OFN_NONETWORKBUTTON
-		|	OFN_NOCHANGEDIR
-		|	OFN_EXPLORER
-		;
-		if (GetOpenFileNameA(&ofn))
-			return String((cstring)ofn.lpstrFile);
-		#endif
-		return "";
-	}
-
-	inline String saveFileDialog(String filter = "All\0*.*\0") {
-		#if (_WIN32 || _WIN64 || __WIN32__ || __WIN64__) && !defined(CTL_NO_WINDOWS_PLEASE)
-		OPENFILENAMEA ofn;
-		char szFile[260] = {0};
-		memset(&ofn, 0, sizeof(ofn));
-		ofn.lStructSize = sizeof(ofn);
-		ofn.hwndOwner = NULL;
-		ofn.lpstrFile = (LPSTR)szFile;
-		ofn.nMaxFile = sizeof(szFile);
-		ofn.lpstrFilter = (LPSTR)filter.cstr();
-		ofn.nFilterIndex = 1;
-		ofn.lpstrFileTitle = NULL;
-		ofn.nMaxFileTitle = 0;
-		ofn.lpstrInitialDir = NULL;
-		ofn.Flags =
-			OFN_PATHMUSTEXIST
-		|	OFN_OVERWRITEPROMPT
-		|	OFN_NONETWORKBUTTON
-		|	OFN_NOCHANGEDIR
-		|	OFN_EXPLORER
-		;
-		if (GetSaveFileNameA(&ofn))
-			return String((cstring)ofn.lpstrFile);
-		#endif
-		return "";
 	}
 }
 

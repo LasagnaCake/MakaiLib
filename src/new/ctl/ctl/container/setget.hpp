@@ -5,6 +5,9 @@
 
 CTL_NAMESPACE_BEGIN
 
+/// @brief Setter function wrapper.
+/// @tparam TData Data type to wrap a setter function for.
+/// @details Wraps a setter function, such that it behaves like an assignment operator.
 template<typename TData>
 struct Setter:
 	SelfIdentified<Setter<TData>>,
@@ -22,9 +25,10 @@ public:
 	using typename SelfIdentified::SelfType;
 
 	using SetterFunction = Function<void(DataType const&)>;
-
+	
 	constexpr Setter(SetterFunction&& func):		setter(CTL::move(func))	{}
 	constexpr Setter(SetterFunction const& func):	setter(func)			{}
+
 	constexpr Setter(SelfType&& other)		= delete;
 	constexpr Setter(SelfType const& other)	= delete;
 
@@ -36,6 +40,9 @@ protected:
 private:
 };
 
+/// @brief Setter function wrapper.
+/// @tparam TData Data type to wrap a getter function for.
+/// @details Wraps a geter function, such that it behaves like a conventional value acquisition.
 template<typename TData>
 struct Getter:
 	SelfIdentified<Getter<TData>>,
@@ -64,6 +71,9 @@ protected:
 private:
 };
 
+/// @brief Setter function wrapper.
+/// @tparam TData Data type to wrap both a setter and a getter function for.
+/// @details Wraps a setter and a getter function, such that it behaves like a `Setter` and a `Getter`.
 template<typename TData>
 struct SetGet:
 	Setter<TData>,

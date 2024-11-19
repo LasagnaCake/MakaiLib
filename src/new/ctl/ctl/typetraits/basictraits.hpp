@@ -599,9 +599,13 @@ namespace Type {
 	* @brief Type must be a "safe" type.
 	*
 	* A "safe" type must not be:
+	*
 	*	1. A pointer (null or non-null).
+	*
 	*	2. A reference.
+	*
 	*	3. A function.
+	*
 	*	4. `void`.
 	*
 	* Ergo, a "raw value" type.

@@ -279,26 +279,54 @@ public:
 	/// @return Whether the bound object doesn't exist.
 	constexpr bool operator!() const	{return	!exists();			}
 	
+	/// @brief Equality comparison operator (raw pointer).
+	/// @param obj Raw pointer to compare to.
+	/// @return Whether they're equal.
 	constexpr bool operator==(PointerType const& obj) const			{return	ref == obj;			}
+	/// @brief Threeway comparison operator (raw pointer).
+	/// @param obj Raw pointer to compare to.
+	/// @return Order between objects.
 	constexpr OrderType operator<=>(PointerType const& obj) const	{return	ref <=> obj;		}
-
+	
+	/// @brief Equality comparison operator (`Pointer`).
+	/// @param obj `Pointer` to compare to.
+	/// @return Whether they're equal.
 	constexpr bool operator==(SelfType const& other) const			{return ref == other.ref;	}
+	/// @brief Threeway comparison operator (`Pointer`).
+	/// @param obj `Pointer` to compare to.
+	/// @return Order between objects.
 	constexpr OrderType operator<=>(SelfType const& other) const	{return ref <=> other.ref;	}
 
+	/// @brief Assignment operator.
+	/// @param obj Object to reference.
+	/// @return Reference to self.
 	constexpr SelfType& operator=(PointerType const& obj)	{bind(obj); return (*this);					}
+	/// @brief Assignment operator.
+	/// @param obj Object to reference.
+	/// @return Reference to self.
 	constexpr SelfType& operator=(SelfType const& other)	{bind(other.ref); return (*this);			}
 //	constexpr SelfType& operator=(DataType const& v) const	{*getPointer() = v; return (*this);			}
 //	constexpr SelfType& operator=(DataType const& v) const	{if (exists()) *ref = v; return (*this);	}
 
+	/// @brief Returns the value pointed to.
+	/// @return Reference to object being pointed to.
 	constexpr ReferenceType value() const {
 		if (!exists()) nullPointerError();
 		return (*ref);
 	}
 
+	/// @brief Returns the value pointed to.
+	/// @return Value being pointed to.
 	constexpr explicit operator DataType() const	{return value();		}
 
+	/// @brief Pointer member access operator.
+	/// @return Underlying pointer.
 	constexpr PointerType operator->()				{return getPointer();	}
+	/// @brief Pointer member access operator.
+	/// @return Underlying pointer.
 	constexpr PointerType const operator->() const	{return getPointer();	}
+	/// @brief Dereference operator.
+	/// @return Reference to underlying object.
 	constexpr ReferenceType operator*() const		{return value();		}
 
 private:
@@ -314,14 +342,15 @@ private:
 
 	using ReferenceCounter::database;
 
+	/// @brief Pointer to referenced object.
 	PointerType ref = nullptr;
 
-	constexpr PointerType getPointer()	{
+	constexpr PointerType getPointer() {
 		if (!exists()) nullPointerError();
 		return (ref);
 	}
 
-	constexpr PointerType getPointer() const	{
+	constexpr PointerType getPointer() const {
 		if (!exists()) nullPointerError();
 		return (ref);
 	}
@@ -342,15 +371,23 @@ private:
 #undef CTL_PTR_ASSERT_WEAK
 #undef CTL_PTR_IF_STRONG
 
+/// @brief `Pointer` analog for a weak pointer.
+/// @tparam T Type of data pointed to.
 template <Type::Container::Pointable T>
 using WeakPointer	= Pointer<T, true>;
 
+/// @brief `Pointer` analog for a strong pointer.
+/// @tparam T Type of data pointed to.
 template <Type::Container::Pointable T>
 using StrongPointer	= Pointer<T, false>;
 
+/// @brief `StrongPointer` analog for a managed instance of an object.
+/// @tparam T Type of data pointed to.
 template<Type::Container::Pointable T>
 using Instance	= StrongPointer<T>;
 
+/// @brief `WeakPointer` analog for a handle to an object.
+/// @tparam T Type of data pointed to.
 template<Type::Container::Pointable T>
 using Handle	= WeakPointer<T>;
 
