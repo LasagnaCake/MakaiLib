@@ -123,7 +123,7 @@ public:
 	/// @param error Error value to compare.
 	/// @return Whether `Result` is equal to it.
 	/// @note Requires error type to not be implicitly convertible to result type.
-	constexpr bool operator==(ErrorType const& error) requires (!IMPLICIT) const	{if (ok()) return false; return result.error == error;			}
+	constexpr bool operator==(ErrorType const& error) const requires (!IMPLICIT)	{if (ok()) return false; return result.error == error;			}
 	/// @brief Equality comparison operator (`Result`).
 	/// @param other Other `Result` to compare.
 	/// @return Whether objects are equal.

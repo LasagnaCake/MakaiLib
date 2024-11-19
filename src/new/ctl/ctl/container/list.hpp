@@ -196,7 +196,7 @@ public:
 		count = end - begin;
 	}
 
-	/// @brief Constructs a `List` from a range of values.
+	/// @brief Constructs a `List` from a range of elements.
 	/// @param begin Reverse iterator to beginning of range.
 	/// @param end Reverse iterator to end of range.
 	constexpr List(ConstReverseIteratorType const& begin, ConstReverseIteratorType const& end) {
@@ -206,9 +206,9 @@ public:
 		count = end - begin;
 	}
 
-	/// @brief Constructs a `List` from a "C-style array".
-	/// @param start Start of data.
-	/// @param size Size of data.
+	/// @brief Constructs a `List` from a "c-style" range of elements.
+	/// @param start Start of range.
+	/// @param size Size of range.
 	constexpr List(ConstPointerType const& start, SizeType const& size): List(start, start + size) {}
 
 	/// @brief Constructs a `List`, from an object of (non-subclass) type T, that possesses iteration capabilities.

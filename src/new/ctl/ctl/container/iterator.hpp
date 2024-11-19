@@ -209,6 +209,20 @@ namespace Type::Container {
 		Derived<T, ::CTL::Iterator<typename T::DataType, true, typename T::SizeType>>
 	||	Derived<T, ::CTL::Iterator<typename T::DataType, false, typename T::SizeType>>
 	);
+
+	/// @brief Type must have both `begin()` and `end()` functions that returns `TIterator`.
+	template<class T, class TIterator>
+	concept Ranged = requires (T t) {
+		{t.begin()} -> Type::Equal<TIterator>;
+		{t.end()} -> Type::Equal<TIterator>;
+	};
+
+	/// @brief Type must have both `data()` and `size()` functions.
+	template<class T>
+	concept Bounded = requires (T t) {
+		{t.data()} -> Type::Pointer;
+		{t.size()} -> Type::Integer;
+	};
 }
 
 static_assert(Type::Container::Iterator<Iterator<int>>);

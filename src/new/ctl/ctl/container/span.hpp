@@ -5,24 +5,37 @@
 #include "../templates.hpp"
 #include "../typetraits/traits.hpp"
 #include "../namespace.hpp"
-#include "error.hpp"
+#include "../cpperror.hpp"
 #include "iterator.hpp"
 
 CTL_NAMESPACE_BEGIN
 
+/// @brief Span extent size deduction.
 enum class ExtentSize {
 	CES_AUTO,
 	CES_STATIC,
 	CES_DYNAMIC
 };
 
+template<class TData, usize S = DYNAMIC_SIZE, Type::Integer TIndex = usize, ExtentSize EXTENT = ExtentSize::CES_AUTO>
+struct Span;
+
+/// @brief Integer value representing dynamic size.
 constexpr usize DYNAMIC_SIZE = -1;
 
-template<class TData, usize S = DYNAMIC_SIZE, Type::Integer TIndex = usize, ExtentSize EXTENT = ExtentSize::CES_AUTO>
+/// @brief Fixed-size, or variable-size, view of an array of elements.
+/// @tparam TData Element type.
+/// @tparam S Array size.
+/// @tparam TIndex Index size.
+/// @tparam EXTENT Extent size deduction.
+/// @note Even if `S` is specified, the actual `Span` size is not guaranteed to be `S`.
+template<class TData, usize S, Type::Integer TIndex, ExtentSize EXTENT>
 struct Span:
-	Iteratable<TData, TIndex> {
+	Iteratable<TData, TIndex>,
+	SelfIdentified<Span<TData, S, TIndex, EXTENT>> {
 
-	using Iteratable = ::CTL::Iteratable<TData, TIndex>;
+	using Iteratable		= ::CTL::Iteratable<TData, TIndex>;
+	using SelfIdentified	= ::CTL::SelfIdentified<Span<TData, S, TIndex, EXTENT>>;
 
 	using
 		typename Iteratable::IteratorType,
@@ -42,41 +55,87 @@ struct Span:
 		typename Iteratable::ConstReferenceType
 	;
 
-	consteval static bool isStatic() {
-		return (S != DYNAMIC_SIZE || EXTENT == ExtentSize::CES_DYNAMIC);
-	}
+	using typename SelfIdentified::SelfType;
 
-	consteval static bool isDynamic() {
-		return (S == DYNAMIC_SIZE || EXTENT == ExtentSize::CES_STATIC);
-	}
+	consteval static bool STATIC	= (S != DYNAMIC_SIZE || EXTENT == ExtentSize::CES_STATIC);
+	consteval static bool DYNAMIC	= (S == DYNAMIC_SIZE && EXTENT != ExtentSize::CES_STATIC);
 
+	/// @brief Empty constructor.
 	constexpr Span() noexcept: contents(nullptr), count(0) {}
 
-	constexpr Span(Span const& other) noexcept = default;
+	/// @brief Copy constructor (`Span`).
+	/// @param other Other `Span` to copy from.
+	constexpr Span(SelfType const& other) noexcept: contents(other.contents), count(other.count)					{}
+	/// @brief Move constructor (`Span`).
+	/// @param other Other `Span` to move.
+	constexpr Span(SelfType&& other) noexcept: contents(CTL::move(other.contents)), count(CTL::move(other.count))	{}
 
-	explicit (isDynamic())	constexpr Span(PointerType const& data): contents(data)													{}
-	explicit (isDynamic())	constexpr Span(IteratorType const& begin): contents(begin)												{}
+	/// @brief Constructs a `Span` from a pointer to a range of elements.
+	/// @param data Elements to view.
+	/// @note Becomes explicit if span is dymamic.
+	constexpr explicit(DYNAMIC) Span(PointerType const& data): contents(data)													{}
+	/// @brief Constructs a `Span` from an iterator to the beginning of a range of elements.
+	/// @param data Elements to view.
+	/// @note Becomes explicit if span is dymamic.
+	constexpr explicit(DYNAMIC) Span(IteratorType const& begin): contents(begin)												{}
 
-	explicit (isStatic())	constexpr Span(PointerType const& data, SizeType const& size): contents(data), count(size)				{}
-	explicit (isStatic())	constexpr Span(IteratorType const& begin, IteratorType const& end): contents(begin), count(end - begin)	{}
+	/// @brief Constructs a `Span` from a "c-style" range of elements.
+	/// @param data Start of range.
+	/// @param size Size of range.
+	/// @note Becomes explicit if span is static.
+	constexpr explicit(STATIC) Span(PointerType const& data, SizeType const& size): contents(data), count(size)					{}
+	/// @brief Constructs a `Span` from a range of elements.
+	/// @param begin Iterator to beginning of range.
+	/// @param end Iterator to end of range.
+	/// @note Becomes explicit if span is static.
+	constexpr explicit(STATIC) Span(IteratorType const& begin, IteratorType const& end): contents(begin), count(end - begin)	{}
 
-	constexpr ReferenceType operator[](IndexType index) {
+	/// @brief Constructs a `Span` from a range type.
+	/// @tparam T Ranged object type.
+	/// @param other Object to view from.
+	template<Type::Container::Ranged<IteratorType> T>
+	constexpr explicit Span(T const& other): Span(other.begin(), other.end())	{}
+	/// @brief Constructs a `Span` from a bounded type.
+	/// @tparam T Bounded object type.
+	/// @param other Object to view from.
+	template<Type::Container::Bounded T>
+	constexpr explicit Span(T const& other): Span(other.data(), other.size())	{}
+
+	/// @brief Returns the value of the element at a given index.
+	/// @param index Index of the element.
+	/// @return Reference to the element.
+	/// @throw OutOfBoundsException when index is bigger than `Span` size.
+	/// @throw NonexistentValueException when no range is bound, or range is empty.
+	constexpr ReferenceType at(IndexType index) {
 		assertExists();
 		wrapBounds(index, count);
 		return contents[index];
 	}
 
-	constexpr ConstReferenceType operator[](IndexType index) const {
+	/// @brief Returns the value of the element at a given index.
+	/// @param index Index of the element.
+	/// @return Const reference to the element.
+	/// @throw OutOfBoundsException when index is bigger than `Span` size.
+	/// @throw NonexistentValueException when no range is bound, or range is empty
+	constexpr ConstReferenceType at(IndexType index) const {
 		assertExists();
 		wrapBounds(index, count);
 		return contents[index];
 	}
 
-	constexpr DataType at(IndexType index) const {
-		assertExists();
-		wrapBounds(index, count);
-		return contents[index];
-	}
+	/// @brief Returns the value of the element at a given index.
+	/// @param index Index of the element.
+	/// @return Reference to the element.
+	/// @throw OutOfBoundsException when index is bigger than `Span` size.
+	/// @throw NonexistentValueException when no range is bound, or range is empty.
+	constexpr ReferenceType operator[](IndexType index)				{return at(index);	}
+
+	/// @brief Returns the value of the element at a given index.
+	/// @param index Index of the element.
+	/// @return Const reference to the element.
+	/// @throw OutOfBoundsException when index is bigger than `Span` size.
+	/// @throw NonexistentValueException when no range is bound, or range is empty
+	constexpr ConstReferenceType operator[](IndexType index) const	{return at(index);	}
 
 	constexpr PointerType		data()			{return contents;	}
 	constexpr ConstPointerType	data() const	{return contents;	}
@@ -104,13 +163,66 @@ struct Span:
 	constexpr SizeType size() const	{return count;		}
 	constexpr bool empty() const	{return count == 0;	}
 
+	/// @brief Equality operator.
+	/// @param other Other `Span` to compare with.
+	/// @return Whether they're equal.
+	/// @note Requires element type to be equally comparable.
+	/// @sa Comparator::equals()
+	constexpr bool operator==(SelfType const& other) const
+	requires Type::Comparator::Equals<DataType, DataType> {
+		return equals(other);
+	}
+
+	/// @brief Threeway comparison operator.
+	/// @param other Other `Span` to compare with.
+	/// @return Order between both `Span`s.
+	/// @note Requires element type to be three-way comparable.
+	/// @sa Comparator::compare()
+	constexpr OrderType operator<=>(SelfType const& other) const
+	requires Type::Comparator::Threeway<DataType, DataType> {
+		return compare(other);
+	}
+
+	/// @brief Returns whether it is equal to another `Span`.
+	/// @param other Other `Span` to compare with.
+	/// @return Whether they're equal.
+	/// @note Requires element type to be equally comparable.
+	/// @sa Comparator::equals()
+	constexpr SizeType equals(SelfType const& other) const
+	requires Type::Comparator::Equals<DataType, DataType> {
+		bool result = true;
+		SizeType i = 0;
+		while (result) {
+			if (i == count || i == other.count)
+				return count == other.count;
+			result = ComparatorType::equals(contents[i], other.contents[i]);
+			++i;
+		}
+		return result;
+	}
+
+	/// @brief Returns the result of a three-way comparison with another `Span`.
+	/// @param other Other `Span` to compare with.
+	/// @return Order between both `Span`s.
+	/// @note Requires element type to be three-way comparable.
+	/// @sa Comparator::compare()
+	constexpr OrderType compare(SelfType const& other) const
+	requires Type::Comparator::Threeway<DataType, DataType> {
+		OrderType result = Order::EQUAL;
+		SizeType i = 0;
+		while (result == Order::EQUAL) {
+			if (i == count || i == other.count)
+				return count <=> other.count;
+			result = ComparatorType::compare(contents[i], other.contents[i]);
+			++i;
+		}
+	}
+	
+
 private:
 	constexpr void assertExists() {
 		if (!(contents && count))
-			throw Error::NonexistentValue(
-				"No data was bound to this span!",
-				__FILE__
-			);
+			throw NonexistentValueException("No element range bound to span!");
 	}
 
 	using Iteratable::wrapBounds;
