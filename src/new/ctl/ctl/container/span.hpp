@@ -17,11 +17,11 @@ enum class ExtentSize {
 	CES_DYNAMIC
 };
 
-template<class TData, usize S = DYNAMIC_SIZE, Type::Integer TIndex = usize, ExtentSize EXTENT = ExtentSize::CES_AUTO>
-struct Span;
-
 /// @brief Integer value representing dynamic size.
 constexpr usize DYNAMIC_SIZE = -1;
+
+template<class TData, usize S = DYNAMIC_SIZE, Type::Integer TIndex = usize, ExtentSize EXTENT = ExtentSize::CES_AUTO>
+struct Span;
 
 /// @brief Fixed-size, or variable-size, view of an array of elements.
 /// @tparam TData Element type.
@@ -32,7 +32,8 @@ constexpr usize DYNAMIC_SIZE = -1;
 template<class TData, usize S, Type::Integer TIndex, ExtentSize EXTENT>
 struct Span:
 	Iteratable<TData, TIndex>,
-	SelfIdentified<Span<TData, S, TIndex, EXTENT>> {
+	SelfIdentified<Span<TData, S, TIndex, EXTENT>>,
+	Ordered {
 
 	using Iteratable		= ::CTL::Iteratable<TData, TIndex>;
 	using SelfIdentified	= ::CTL::SelfIdentified<Span<TData, S, TIndex, EXTENT>>;
@@ -57,8 +58,12 @@ struct Span:
 
 	using typename SelfIdentified::SelfType;
 
-	consteval static bool STATIC	= (S != DYNAMIC_SIZE || EXTENT == ExtentSize::CES_STATIC);
-	consteval static bool DYNAMIC	= (S == DYNAMIC_SIZE && EXTENT != ExtentSize::CES_STATIC);
+	using Ordered::OrderType;
+
+	constexpr static bool STATIC	= (S != DYNAMIC_SIZE || EXTENT == ExtentSize::CES_STATIC);
+	constexpr static bool DYNAMIC	= (S == DYNAMIC_SIZE && EXTENT != ExtentSize::CES_STATIC);
+
+	using ComparatorType = SimpleComparator<DataType>;
 
 	/// @brief Empty constructor.
 	constexpr Span() noexcept: contents(nullptr), count(0) {}
