@@ -29,7 +29,7 @@ namespace Impl {
 		/// @brief Returns whether the given character is in the specified base.
 		/// @tparam T Character type.
 		/// @param c Character to check.
-		/// @param base Base to check.
+		/// @param base Base to check against.
 		/// @return Whether it is in the given base.
 		template<Type::ASCII T>
 		constexpr bool isDigitInBase(T const& c, usize const& base) {
@@ -61,6 +61,12 @@ namespace Impl {
 			}
 		}
 		
+		/// @brief Shifts a value by a given base, and appends another value to it.
+		/// @tparam T Integer type.
+		/// @param val Target to append to. 
+		/// @param base Base to shift by.
+		/// @param digit Value to append.
+		/// @return Reference to target.
 		template<Type::Integer T>
 		constexpr T& shiftAndAppend(T& val, T const& base, T const& digit) {
 			val *= base;
@@ -68,6 +74,13 @@ namespace Impl {
 			return val;
 		}
 
+		/// @brief Converts a string of charaters to an integer.
+		/// @tparam I Integer type.
+		/// @tparam T Character type.
+		/// @param str String to convert.
+		/// @param size Size of string.
+		/// @param base Base of number.
+		/// @return Resulting integer in the given base.
 		template<Type::Integer I, Type::ASCII T>
 		constexpr I toInteger(T const* str, usize const& size, usize const& base) {
 			I res = 0;
@@ -78,6 +91,11 @@ namespace Impl {
 			return res;
 		}
 
+		/// @brief Returns the base of the character at the given pointer, then increments said pointer.
+		/// @tparam T Character type.
+		/// @param c Pointer to character to check.
+		/// @param base Base override. Will be returned instead if it is not zero.
+		/// @return Base of the character identifier. If no match is found, returns 8.
 		template<Type::ASCII T>
 		constexpr ssize getBaseAndConsume(T const*& c, usize const& base) {
 			if (c[0] == '0') {
@@ -86,6 +104,7 @@ namespace Impl {
 					case 'y':	++c; return base ? base : 32;
 					case 'x':	++c; return base ? base : 16;
 					case 'q':	++c; return base ? base : 4;
+					case 't':	++c; return base ? base : 3;
 					case 'b':	++c; return base ? base : 2;
 					case 'd':	++c; return base ? base : 10;
 					case 'o':	++c;
@@ -94,7 +113,13 @@ namespace Impl {
 			}
 			return 10;
 		}
-
+		
+		/// @brief Returns whether the given string is in the specified base.
+		/// @tparam T Character type.
+		/// @param str string to check.
+		/// @param size Size of string to check.
+		/// @param base Base to check against.
+		/// @return Whether it is in the given base.
 		template<Type::ASCII T>
 		constexpr bool isInBase(T const* str, usize const& size, usize const& base) {
 			for (usize i = 0; i < size; ++i)
@@ -105,6 +130,30 @@ namespace Impl {
 	}
 }
 
+/// @brief Converts a string of characters to an integer.
+/// @tparam I Integer type.
+/// @tparam T Character type.
+/// @param str String to convert.
+/// @param size Size of string to convert.
+/// @param out Output of the conversion.
+/// @param base Base to convert from. If zero, then base is deduced.
+/// @return Whether the operation was successful.
+/// @note
+///		Valid base prefixes:
+///		
+///		- `0b`:			Binary.
+///		
+///		- `0t`:			Trinary.
+///		
+///		- `0q`:			Quaternary.
+///		
+///		- `0`, `0o`:	Octal.
+///		
+///		- `0d`:			Decimal.
+///		
+///		- `0x`:			Hexadecimal.
+///		
+///		- `0y`:			Duotrigesimal.
 template<Type::Integer I, Type::ASCII T>
 constexpr bool atoi(T const* const& str, usize size, I& out, usize base = 0) {
 	// Copy string pointer
@@ -140,12 +189,43 @@ constexpr bool atoi(T const* const& str, usize size, I& out, usize base = 0) {
 	return true;
 }
 
+/// @brief Converts a fixed array of characters to an integer.
+/// @tparam I Integer type.
+/// @tparam T Character type.
+/// @tparam S Array size.
+/// @param str String to convert.
+/// @param out Output of the conversion.
+/// @param base Base to convert from. If zero, then base is deduced.
+/// @return Whether the operation was successful.
+/// @note
+///		Valid base prefixes:
+///		
+///		- `0b`:			Binary.
+///		
+///		- `0t`:			Trinary.
+///		
+///		- `0q`:			Quaternary.
+///		
+///		- `0`, `0o`:	Octal.
+///		
+///		- `0d`:			Decimal.
+///		
+///		- `0x`:			Hexadecimal.
+///		
+///		- `0y`:			Duotrigesimal.
 template<Type::Integer I, Type::ASCII T, usize S>
-constexpr bool atoi(Decay::AsType<const T[S]> const& str, I& out) {
+constexpr bool atoi(Decay::AsType<const T[S]> const& str, I& out, usize const& base = 0) {
 	static_assert(S-1 > 0, "String cannot be empty!");
-	return ::CTL::atoi<I, T>(str, S - 1, out);
+	return ::CTL::atoi<I, T>(str, S - 1, out, base);
 }
 
+/// @brief Converts a string of characters into a floating point number.
+/// @tparam F Floating point type.
+/// @tparam T Character type.
+/// @param str String to convert.
+/// @param size Size of string to convert.
+/// @param out Output of the conversion.
+/// @return Whether the operation was successful.
 template<Type::Real F, Type::ASCII T>
 constexpr bool atof(T const* const& str, usize size, F& out) {
 	// If character is appended to the end, exclude it
@@ -179,6 +259,13 @@ constexpr bool atof(T const* const& str, usize size, F& out) {
 	return true;
 }
 
+/// @brief Converts a fixed array of characters into a floating point number.
+/// @tparam F Floating point type.
+/// @tparam T Character type.
+/// @tparam S Array size.
+/// @param str String to convert.
+/// @param out Output of the conversion.
+/// @return Whether the operation was successful.
 template<Type::Real F, Type::ASCII T, usize S>
 constexpr bool atof(Decay::AsType<const T[S]> const& str, F& out) {
 	static_assert(S-1 > 0, "String cannot be empty!");
@@ -186,6 +273,15 @@ constexpr bool atof(Decay::AsType<const T[S]> const& str, F& out) {
 }
 
 // Based off of https://stackoverflow.com/a/3987783
+
+/// @brief Converts an integer into a string of characters.
+/// @tparam I Integer type.
+/// @tparam T Character type.
+/// @param val Integer to convert.
+/// @param buf Output string buffer of the conversion.
+/// @param bufSize String buffer size.
+/// @param base Base to convert to. By default, it is base 10.
+/// @return Size of resulting number string.
 template<Type::Integer I, Type::ASCII T>
 constexpr ssize itoa(I val, T* const& buf, usize const& bufSize, I const& base = 10) {
 	// Digits
@@ -234,6 +330,24 @@ constexpr ssize itoa(I val, T* const& buf, usize const& bufSize, I const& base =
 	return (bufSize - i - 2 + offset);
 }
 
+/// @brief Converts a floating point number into a string of characters.
+/// @tparam F Floating point type.
+/// @tparam T Character type.
+/// @param val Floating point number to convert.
+/// @param buf Output string buffer of the conversion.
+/// @param bufSize String buffer size.
+/// @param
+///		precision Amount of decimal spaces to include.
+///		By default, it is equal to double the byte size of the floating point type.
+/// @return Size of resulting number string.
+/// @note
+///		Default value of `precision` for:
+///
+///		- `float`s: 8 decimal spaces.
+///
+///		- `double`s: 16 decimal spaces.
+///
+///		- `long double`s: 32 decimal spaces.
 template<Type::Real F, Type::ASCII T>
 constexpr ssize ftoa(F val, T* buf, usize bufSize, usize const& precision = sizeof(F)*2) {
 	// Get amount of zeroes to add to number

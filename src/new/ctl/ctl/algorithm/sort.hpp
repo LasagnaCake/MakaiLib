@@ -8,6 +8,7 @@
 
 CTL_NAMESPACE_BEGIN
 
+/// @brief Algorithm-specific type constraints.
 namespace Type::Algorithm {
 	template <class T>
 	concept Sortable = Type::Comparator::Threeway<T, T>;

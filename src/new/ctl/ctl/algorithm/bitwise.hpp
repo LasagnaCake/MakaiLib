@@ -6,6 +6,9 @@
 
 CTL_NAMESPACE_BEGIN
 
+/// @brief Returns the bit width of a given number.
+/// @param n Number.
+/// @return Bit width of the number.
 constexpr usize bitWidth(usize n) {
 	if (!n) return 0;
 	usize r = 1;
@@ -13,6 +16,9 @@ constexpr usize bitWidth(usize n) {
 	return r;
 }
 
+/// @brief Returns the highest bit set in a given number.
+/// @param n Number.
+/// @return Highest bit set.
 constexpr usize highBit(usize n) {
 	return 1 << (bitWidth(n)-1);
 }

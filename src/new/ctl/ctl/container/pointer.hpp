@@ -145,7 +145,7 @@ public:
 	/// @brief Destructor.
 	constexpr ~Pointer() {unbind();}
 
-	/// @brief Returns the ammount of references holding the current object.
+	/// @brief Returns the amount of references holding the current object.
 	/// @return Reference count.
 	constexpr ssize count() const {
 		if (!exists()) return 0;
