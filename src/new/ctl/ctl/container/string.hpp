@@ -513,17 +513,41 @@ public:
 		return *this;
 	}
 	
+	/// @brief Equality comparison operator (char array).
+	/// @tparam S Array size.
+	/// @param str Array to compare with.
+	/// @return Whether they're equal.
 	template<SizeType S>
 	constexpr bool operator==(Decay::AsType<ConstantType[S]> const& str) const	{return *this == SelfType(str);			}
+	/// @brief Equality comparison operator (string literal).
+	/// @param str String literal to compare with.
+	/// @return Whether they're equal.
 	constexpr bool operator==(StringLiteralType const& str) const				{return *this == SelfType(str);			}
+	/// @brief Equality comparison operator (`BaseString`).
+	/// @param str `BaseString` to compare with.
+	/// @return Whether they're equal.
 	constexpr bool operator==(SelfType const& other) const						{return BaseType::operator==(other);	}
+	/// @brief Threeway comparison operator (char array).
+	/// @tparam S Array size.
+	/// @param str Char array to compare with.
+	/// @return Order between objects.
 	template<SizeType S>
 	constexpr OrderType operator<=>(Decay::AsType<ConstantType[S]> const& str) const	{return *this <=> SelfType(str);		}
+	/// @brief Threeway comparison operator (string literal).
+	/// @param str String literal to compare with.
+	/// @return Order between objects.
 	constexpr OrderType operator<=>(StringLiteralType const& str) const					{return *this <=> SelfType(str);		}
+	/// @brief Threeway comparison operator (`BaseString`).
+	/// @param str `BaseString` to compare with.
+	/// @return Order between objects.
 	constexpr OrderType operator<=>(SelfType const& other) const						{return BaseType::operator<=>(other);	}
 
+	/// @brief Returns this string as a "C-style" string.
 	constexpr explicit operator const char*() const {return cstr();}
 
+	/// @brief Converts the `BaseString` to a `BaseString` of a different character type.
+	/// @tparam C Character type.
+	/// @note Character type must be different from this `BaseString`'s character type.
 	template <Type::ASCII C>
 	constexpr operator BaseString<C, IndexType>() const
 	requires Type::Different<DataType, C> {
@@ -532,7 +556,7 @@ public:
 			result[i] = data()[i];
 		return result;
 	}
-
+	
 	SelfType substring(IndexType const& start) const {
 		return sliced(start);
 	}

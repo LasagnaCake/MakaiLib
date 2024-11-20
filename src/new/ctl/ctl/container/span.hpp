@@ -84,7 +84,7 @@ struct Span:
 	/// @note Becomes explicit if span is dymamic.
 	constexpr explicit(DYNAMIC) Span(IteratorType const& begin): contents(begin)												{}
 
-	/// @brief Constructs a `Span` from a "c-style" span of elements.
+	/// @brief Constructs a `Span` from a "C-style" span of elements.
 	/// @param data Start of span.
 	/// @param size Size of span.
 	/// @note Becomes explicit if span is static.

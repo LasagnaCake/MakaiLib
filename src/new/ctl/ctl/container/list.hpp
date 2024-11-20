@@ -206,7 +206,7 @@ public:
 		count = end - begin;
 	}
 
-	/// @brief Constructs a `List` from a "c-style" range of elements.
+	/// @brief Constructs a `List` from a "C-style" range of elements.
 	/// @param start Start of range.
 	/// @param size Size of range.
 	constexpr List(ConstPointerType const& start, SizeType const& size): List(start, start + size) {}
