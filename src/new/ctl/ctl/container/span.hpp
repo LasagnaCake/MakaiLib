@@ -23,9 +23,9 @@ constexpr usize DYNAMIC_SIZE = -1;
 template<class TData, usize S = DYNAMIC_SIZE, Type::Integer TIndex = usize, ExtentSize EXTENT = ExtentSize::CES_AUTO>
 struct Span;
 
-/// @brief Fixed-size, or variable-size, view of an array of elements.
+/// @brief Fixed-size, or variable-size, view of a span of elements.
 /// @tparam TData Element type.
-/// @tparam S Array size.
+/// @tparam S Span size.
 /// @tparam TIndex Index size.
 /// @tparam EXTENT Extent size deduction.
 /// @note Even if `S` is specified, the actual `Span` size is not guaranteed to be `S`.
@@ -79,38 +79,38 @@ struct Span:
 	/// @param data Elements to view.
 	/// @note Becomes explicit if span is dymamic.
 	constexpr explicit(DYNAMIC) Span(PointerType const& data): contents(data)													{}
-	/// @brief Constructs a `Span` from an iterator to the beginning of a range of elements.
+	/// @brief Constructs a `Span` from an iterator to the beginning of a span of elements.
 	/// @param data Elements to view.
 	/// @note Becomes explicit if span is dymamic.
 	constexpr explicit(DYNAMIC) Span(IteratorType const& begin): contents(begin)												{}
 
-	/// @brief Constructs a `Span` from a "c-style" range of elements.
-	/// @param data Start of range.
-	/// @param size Size of range.
+	/// @brief Constructs a `Span` from a "c-style" span of elements.
+	/// @param data Start of span.
+	/// @param size Size of span.
 	/// @note Becomes explicit if span is static.
 	constexpr explicit(STATIC) Span(PointerType const& data, SizeType const& size): contents(data), count(size)					{}
-	/// @brief Constructs a `Span` from a range of elements.
-	/// @param begin Iterator to beginning of range.
-	/// @param end Iterator to end of range.
+	/// @brief Constructs a `Span` from a span of elements.
+	/// @param begin Iterator to beginning of span.
+	/// @param end Iterator to end of span.
 	/// @note Becomes explicit if span is static.
 	constexpr explicit(STATIC) Span(IteratorType const& begin, IteratorType const& end): contents(begin), count(end - begin)	{}
 
-	/// @brief Constructs a `Span` from a range type.
+	/// @brief Constructs a `Span` from a ranged object.
 	/// @tparam T Ranged object type.
 	/// @param other Object to view from.
 	template<Type::Container::Ranged<IteratorType> T>
 	constexpr explicit Span(T const& other): Span(other.begin(), other.end())	{}
-	/// @brief Constructs a `Span` from a bounded type.
+	/// @brief Constructs a `Span` from a bounded object.
 	/// @tparam T Bounded object type.
 	/// @param other Object to view from.
-	template<Type::Container::Bounded T>
+	template<Type::Container::Bounded<PointerType, SizeType> T>
 	constexpr explicit Span(T const& other): Span(other.data(), other.size())	{}
 
 	/// @brief Returns the value of the element at a given index.
 	/// @param index Index of the element.
 	/// @return Reference to the element.
 	/// @throw OutOfBoundsException when index is bigger than `Span` size.
-	/// @throw NonexistentValueException when no range is bound, or range is empty.
+	/// @throw NonexistentValueException when no span is bound, or `Span` is empty.
 	constexpr ReferenceType at(IndexType index) {
 		assertExists();
 		wrapBounds(index, count);
@@ -121,7 +121,7 @@ struct Span:
 	/// @param index Index of the element.
 	/// @return Const reference to the element.
 	/// @throw OutOfBoundsException when index is bigger than `Span` size.
-	/// @throw NonexistentValueException when no range is bound, or range is empty
+	/// @throw NonexistentValueException when no span is bound, or `Span` is empty.
 	constexpr ConstReferenceType at(IndexType index) const {
 		assertExists();
 		wrapBounds(index, count);
@@ -132,38 +132,79 @@ struct Span:
 	/// @param index Index of the element.
 	/// @return Reference to the element.
 	/// @throw OutOfBoundsException when index is bigger than `Span` size.
-	/// @throw NonexistentValueException when no range is bound, or range is empty.
+	/// @throw NonexistentValueException when no span is bound, or `Span` is empty.
 	constexpr ReferenceType operator[](IndexType index)				{return at(index);	}
 
 	/// @brief Returns the value of the element at a given index.
 	/// @param index Index of the element.
 	/// @return Const reference to the element.
 	/// @throw OutOfBoundsException when index is bigger than `Span` size.
-	/// @throw NonexistentValueException when no range is bound, or range is empty
+	/// @throw NonexistentValueException when no span is bound, or `Span` is empty.
 	constexpr ConstReferenceType operator[](IndexType index) const	{return at(index);	}
 
+	/// @brief Returns a pointer to the beginning of the span.
+	/// @return Pointer to beginning of span.
 	constexpr PointerType		data()			{return contents;	}
+	/// @brief Returns a pointer to the beginning of the span.
+	/// @return Pointer to beginning of span.
 	constexpr ConstPointerType	data() const	{return contents;	}
 
+
+	/// @brief Returns an iterator to the beginning of the `Span`.
+	/// @return Iterator to the beginning of the `Span`.
 	constexpr IteratorType		begin()			{return contents;		}
+	/// @brief Returns an iterator to the end of the `Span`.
+	/// @return Iterator to the end of the `Span`.
 	constexpr IteratorType		end()			{return contents+count;	}
+	/// @brief Returns an iterator to the beginning of the `Span`.
+	/// @return Iterator to the beginning of the `Span`.
 	constexpr ConstIteratorType	begin() const	{return contents;		}
+	/// @brief Returns an iterator to the end of the `Span`.
+	/// @return Iterator to the end of the `Span`.
 	constexpr ConstIteratorType	end() const		{return contents+count;	}
 
-	constexpr ReverseIteratorType		rbegin()		{return contents+count;	}
-	constexpr ReverseIteratorType		rend()			{return contents;		}
-	constexpr ConstReverseIteratorType	rbegin() const	{return contents+count;	}
-	constexpr ConstReverseIteratorType	rend() const	{return contents;		}
+	/// @brief Returns a reverse iterator to the beginning of the `Span`.
+	/// @return Reverse iterator to the beginning of the `Span`.
+	constexpr ReverseIteratorType		rbegin()		{return ReverseIteratorType(contents+count);		}
+	/// @brief Returns a reverse iterator to the end of the `Span`.
+	/// @return Reverse iterator to the end of the `Span`.
+	constexpr ReverseIteratorType		rend()			{return ReverseIteratorType(contents);				}
+	/// @brief Returns a reverse iterator to the beginning of the `Span`.
+	/// @return Reverse iterator to the beginning of the `Span`.
+	constexpr ConstReverseIteratorType	rbegin() const	{return ConstReverseIteratorType(contents+count);	}
+	/// @brief Returns a reverse iterator to the end of the `Span`.
+	/// @return Reverse iterator to the end of the `Span`.
+	constexpr ConstReverseIteratorType	rend() const	{return ConstReverseIteratorType(contents);			}
 
+	/// @brief Returns a pointer to the beginning of the `Span`.
+	/// @return Pointer to the beginning of the `Span`.
 	constexpr PointerType		cbegin()		{return contents;		}
+	/// @brief Returns a pointer to the end of the `Span`.
+	/// @return Pointer to the end of the `Span`.
 	constexpr PointerType		cend()			{return contents+count;	}
+	/// @brief Returns a pointer to the beginning of the `Span`.
+	/// @return Pointer to the beginning of the `Span`.
 	constexpr ConstPointerType	cbegin() const	{return contents;		}
+	/// @brief Returns a pointer to the end of the `Span`.
+	/// @return Pointer to the end of the `Span`.
 	constexpr ConstPointerType	cend() const	{return contents+count;	}
-
-	constexpr ReferenceType			front()			{return contents[0];		}
-	constexpr ReferenceType 		back()			{return contents[count-1];	}
-	constexpr ConstReferenceType	front() const	{return contents[0];		}
-	constexpr ConstReferenceType	back() const	{return contents[count-1];	}
+	
+	/// @brief Returns the value of the first element.
+	/// @return Reference to the first element.
+	/// @throw NonexistentValueException when no span is bound, or `Span` is empty.
+	constexpr ReferenceType		front()			{return at(0);			}
+	/// @brief Returns the value of the last element.
+	/// @return Reference to the last element.
+	/// @throw NonexistentValueException when no span is bound, or `Span` is empty.
+	constexpr ReferenceType 	back()			{return at(count-1);	}
+	/// @brief Returns the value of the first element.
+	/// @return Value of the first element.
+	/// @throw NonexistentValueException when no span is bound, or `Span` is empty.
+	constexpr DataType			front() const	{return at(0);			}
+	/// @brief Returns the value of the last element.
+	/// @return Value of the last element.
+	/// @throw NonexistentValueException when no span is bound, or `Span` is empty.
+	constexpr DataType			back() const	{return at(count-1);	}
 
 	constexpr SizeType size() const	{return count;		}
 	constexpr bool empty() const	{return count == 0;	}
@@ -236,6 +277,10 @@ private:
 	usize		count		= S;
 };
 
+/// @brief `Span` analog for a viewable set of bytes.
+/// @tparam S Span size.
+/// @tparam TIndex Index type.
+/// @tparam EXTENT Extent size deduction.
 template<usize S = DYNAMIC_SIZE, Type::Integer TIndex = usize, ExtentSize EXTENT = ExtentSize::CES_AUTO>
 using ByteSpan = Span<uint8, S, TIndex, EXTENT>;
 

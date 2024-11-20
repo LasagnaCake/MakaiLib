@@ -8,7 +8,7 @@
 
 CTL_NAMESPACE_BEGIN
 
-/// @brief Type conversion implementations.
+/// @brief General implementations.
 namespace Impl {
 	template<class T> struct NonReferenceType:		TypeContainer<T> {};
 	template<class T> struct NonReferenceType<T&>:	TypeContainer<T> {};

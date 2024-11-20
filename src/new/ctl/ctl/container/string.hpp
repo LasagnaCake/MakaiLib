@@ -19,6 +19,10 @@
 
 CTL_NAMESPACE_BEGIN
 
+/// @brief Dynamic string of characters.
+/// @tparam TChar Character type.
+/// @tparam TIndex Index type.
+/// @tparam TAlloc<class> Allocator type.
 template<
 	Type::ASCII TChar,
 	Type::Integer TIndex = usize,
@@ -80,7 +84,9 @@ public:
 		typename Streamable::OutputStreamType
 	;
 
+	/// @brief STL library view analog.
 	using STDViewType	= std::basic_string_view<DataType>;
+	/// @brief STL library string analog.
 	using STDStringType	= std::basic_string<DataType>;
 
 	using
@@ -113,10 +119,14 @@ public:
 		BaseType::popBack
 	;
 
+	/// @brief Empty constructor.
 	constexpr BaseString(): BaseType() {}
 
+	/// @brief Destructor.
 	constexpr ~BaseString() {if (strbuf) allocator().deallocate(strbuf);}
-
+	
+	/// @brief Constructs the `BaseString` from a string literal.
+	/// @param v String literal to copy from.
 	constexpr BaseString(StringLiteralType const& v) {
 		SizeType len = 0;
 		while (v[len++] != '\0' && len <= MAX_SIZE);
@@ -124,45 +134,60 @@ public:
 		appendBack(BaseType(v, v+len-1));
 	}
 
+	/// @brief Constructs the `BaseString` from an array of characters.
+	/// @tparam S Array size.
+	/// @param v Array to copy from.
 	template<SizeType S>
 	constexpr BaseString(Decay::AsType<ConstantType[S]> const& v) {
 		reserve(S);
 		MX::memcpy<DataType>(cbegin(), v, S);
 	}
 
+	/// @brief Copy constructor (char `List`).
+	/// @param other Char `List` to copy from.
 	constexpr BaseString(BaseType const& other):	BaseType(other)				{}
+	/// @brief Move constructor (char `List`).
+	/// @param other Char `List` to move.
 	constexpr BaseString(BaseType&& other):			BaseType(CTL::move(other))	{}
 
+	/// @brief Copy constructor (`BaseString`).
+	/// @param other `BaseString` to copy from.
 	constexpr BaseString(SelfType const& other):	BaseType(other)				{}
+	/// @brief Move constructor (`BaseString`).
+	/// @param other `BaseString` to move.
 	constexpr BaseString(SelfType&& other):			BaseType(CTL::move(other))	{}
 
-	template<class T>
-	constexpr BaseString(T const& other)
-	requires requires (T t) {
-		{t.begin()} -> Type::Convertible<IteratorType>;
-		{t.end()} -> Type::Convertible<IteratorType>;
-	}:
-		BaseType(other.begin(), other.end()) {
-	}
+	/// @brief Constructs the `BaseString` from a ranged object.
+	/// @tparam T Ranged type. 
+	/// @param other Object to copy from.
+	template<Type::Container::Ranged<IteratorType> T>
+	constexpr BaseString(T const& other): BaseType(other.begin(), other.end()) {}
 
-	template<class T>
-	constexpr explicit BaseString(T const& other)
-	requires requires (T t) {
-		{t.data()} -> Type::Convertible<PointerType>;
-		{t.size()} -> Type::Convertible<SizeType>;
-	}:
-		BaseType(other.data(), other.data() + other.size()) {
-	}
+	/// @brief Constructs the `BaseString` from a bounded object.
+	/// @tparam T Bounded type. 
+	/// @param other Object to copy from.
+	template<Type::Container::Bounded<PointerType, SizeType> T>
+	constexpr explicit BaseString(T const& other):BaseType(other.data(), other.data() + other.size()) {}
 
+	/// @brief Constructs the `BaseString` from a series of arguments.
+	/// @tparam ...Args Argument types.
+	/// @param ...args Arguments.
 	template<class... Args>
 	constexpr BaseString(Args const&... args)
 	requires (... && Type::Equal<Args, SelfType>) {
 		(*this) += (... + args);
 	}
 
+	/// @brief Constructos a string from a STL view analog.
+	/// @param str View to copy from.
 	constexpr BaseString(STDViewType const& str):	BaseType(str.data(), str.data() + str.size())	{}
+	/// @brief Constructos a string from a STL string analog.
+	/// @param str View to copy from.
 	constexpr BaseString(STDStringType const& str):	BaseType(str.data(), str.data() + str.size())	{}
 
+	/// @brief Splits the string by a separator.
+	/// @param sep Separator.
+	/// @return List of split strings.
 	constexpr List<SelfType, SizeType> split(DataType const& sep) const {
 		List<SelfType, SizeType> res;
 		SelfType buf;
@@ -178,7 +203,10 @@ public:
 		if (res.empty()) res.pushBack(*this);
 		return res;
 	}
-
+	
+	/// @brief Splits the string by a series of separators.
+	/// @param seps Separators.
+	/// @return List of split strings.
 	constexpr List<SelfType, SizeType> split(BaseType const& seps) const {
 		List<SelfType, SizeType> res;
 		SelfType buf;
@@ -194,7 +222,10 @@ public:
 		if (res.empty()) res.pushBack(*this);
 		return res;
 	}
-
+	
+	/// @brief Splits the string at a given index.
+	/// @param index Pivot index.
+	/// @return List of split strings.
 	constexpr List<SelfType, SizeType> divide(IndexType index) const {
 		List<SelfType, SizeType> res;
 		res.pushBack(sliced(0, index));
@@ -202,9 +233,19 @@ public:
 		return res;
 	}
 
+	/// @brief Returns a substring, starting at a given point.
+	/// @param start Start of new string.
+	/// @return Resulting substring.
 	constexpr SelfType sliced(IndexType const& start) const							{return BaseType::sliced(start);		}
+	/// @brief Returns a substring, from between `start` and `stop`.
+	/// @param start Start of new string.
+	/// @param stop End of new string.
+	/// @return Resulting substring.
 	constexpr SelfType sliced(IndexType const& start, IndexType const& stop) const	{return BaseType::sliced(start, stop);	}
-
+	
+	/// @brief Splits the string at the first character that matches the separator.
+	/// @param sep Separator.
+	/// @return List of split strings.
 	constexpr List<SelfType, SizeType> splitAtFirst(DataType const& sep) const {
 		List<SelfType, SizeType> res;
 		IndexType idx = find(sep);
@@ -216,6 +257,9 @@ public:
 		return res;
 	}
 
+	/// @brief Splits the string at the first character that matches one of the separators.
+	/// @param seps Separators.
+	/// @return List of split strings.
 	constexpr List<SelfType, SizeType> splitAtFirst(BaseType const& seps) const {
 		List<SelfType, SizeType> res;
 		IndexType idx = -1;
@@ -232,6 +276,9 @@ public:
 		return res;
 	}
 
+	/// @brief Splits the string at the last character that matches the separator.
+	/// @param sep Separator.
+	/// @return List of split strings.
 	constexpr List<SelfType, SizeType> splitAtLast(DataType const& sep) const {
 		List<SelfType, SizeType> res;
 		IndexType idx = rfind(sep);
@@ -243,6 +290,9 @@ public:
 		return res;
 	}
 
+	/// @brief Splits the string at the last character that matches one of the separators.
+	/// @param seps Separators.
+	/// @return List of split strings.
 	constexpr List<SelfType, SizeType> splitAtLast(BaseType const& seps) const {
 		List<SelfType, SizeType> res;
 		IndexType idx = -1;
@@ -259,48 +309,87 @@ public:
 		return res;
 	}
 	
+	/// @brief Replaces any character that matches, with the replacement.
+	/// @param val Character to match.
+	/// @param rep Replacement.
+	/// @return Reference to self.
 	constexpr SelfType& replace(DataType const& val, DataType const& rep) {
 		for (DataType& v: *this)
 			if (v == val) v = rep;
 		return *this;
 	}
 
+	/// @brief Replaces any character that matches the set, with the replacement.
+	/// @param values Characters to match.
+	/// @param rep Replacement.
+	/// @return Reference to self.
 	constexpr SelfType& replace(BaseType const& values, DataType const& rep) {
 		for (DataType const& val: values)
 			replace(val, rep);
 		return *this;
 	}
 
+	/// @brief Character replacement rule.
 	struct Replacement {
+		/// @brief Characters to replace.
 		BaseType	targets;
+		/// @brief Character to replace with.
 		DataType	replacement;
 	};
 
+	/// @brief Replaces characters, acoording to a given replacement rule.
+	/// @param rep Replacement rule.
+	/// @return Reference to self.
 	constexpr SelfType& replace(Replacement const& rep) {
 		replace(rep.targets, rep.replacement);
 		return *this;
 	}
 
+	/// @brief Replaces characters, acoording to a given list of rules.
+	/// @param reps Replacement rules.
+	/// @return Reference to self.
 	constexpr SelfType& replace(List<Replacement, SizeType> const& reps) {
 		for (Replacement const& rep: reps)
 			replace(rep);
 		return *this;
 	}
 
+	/// @brief Returns a string with any character that matches replaced.
+	/// @param val Character to match.
+	/// @param rep Replacement.
+	/// @return Resulting string.
 	constexpr SelfType replaced(DataType const& val, DataType const& rep) const				{return SelfType(*this).replace(val, rep);		}
+	/// @brief Returns a string with any character that matches replaced.
+	/// @param values Characters to match.
+	/// @param rep Replacement.
+	/// @return Resulting string.
 	constexpr SelfType replaced(BaseType const& values, DataType const& rep) const			{return SelfType(*this).replace(values, rep);	}
 //	constexpr SelfType replaced(ArgumentListType const& values, DataType const& rep) const	{return SelfType(*this).replace(values, rep);	}
 
+	/// @brief Returns a string with any rule that matches replaced.
+	/// @param rep Replacement rule.
+	/// @return Resulting string.
 	constexpr SelfType replaced(Replacement const& rep) const					{return SelfType(*this).replace(rep);	}
+	/// @brief Returns a string with any rule that matches replaced.
+	/// @param reps Replacement rules.
+	/// @return Resulting string.
 	constexpr SelfType replaced(List<Replacement, SizeType> const& reps) const	{return SelfType(*this).replace(reps);	}
 //	constexpr SelfType replaced(Arguments<Replacement> const& reps) const		{return SelfType(*this).replace(reps);	}
 
+	/// @brief Stream insertion operator.
 	constexpr OutputStreamType& operator<<(OutputStreamType& o) const	{if (!empty()) o << cstr(); return o;}
+	/// @brief Stream insertion operator.
 	constexpr OutputStreamType& operator<<(OutputStreamType& o)			{if (!empty()) o << cstr(); return o;}
-
+	
+	/// @brief Stream insertion operator.
 	friend constexpr OutputStreamType& operator<<(OutputStreamType& o, SelfType& self)			{if (!self.empty()) o << self.cstr(); return o;}
+	/// @brief Stream insertion operator.
 	friend constexpr OutputStreamType& operator<<(OutputStreamType& o, SelfType const& self)	{if (!self.empty()) o << self.cstr(); return o;}
 
+	/// @brief Reads from an input stream until a character is reached.
+	/// @param i Input stream.
+	/// @param stop Stop character.
+	/// @return Input stream.
 	constexpr InputStreamType& readFrom(InputStreamType& i, DataType const& stop) {
 		DataType buf[32];
 		while(i.getline(buf, 32, stop))
@@ -308,38 +397,101 @@ public:
 		return i;
 	}
 	
+	/// @brief Reads from an input stream until a null character is reached.
+	/// @param i Input stream.
+	/// @return Input stream.
 	constexpr InputStreamType& readFrom(InputStreamType& i) {
 		return readFromStream(i, '\0');
 	}
 
+	/// @brief Copy assignment operator (`BaseString`).
+	/// @param other `BaseString` to copy from.
+	/// @return Reference to self.
 	constexpr SelfType& operator=(SelfType const& other)			{BaseType::operator=(other); return *this;				}
+	/// @brief Move assignment operator (`BaseString`).
+	/// @param other `BaseString` to move.
+	/// @return Reference to self.
 	constexpr SelfType& operator=(SelfType&& other)					{BaseType::operator=(CTL::move(other)); return *this;	}
+	/// @brief Copy assignment operator (string literal).
+	/// @param other String literal to copy from.
+	/// @return Reference to self.
 	constexpr SelfType& operator=(StringLiteralType const& other)	{BaseType::operator=(SelfType(other)); return *this;	}
 
+	/// @brief Insertion operator (`BaseString`).
+	/// @param other `Basestring` to insert into.
+	/// @return Const reference to self.
 	constexpr SelfType const& operator<<(SelfType& other) const	{other.appendBack(*this); return *this;}
+	/// @brief Insertion operator (`BaseString`).
+	/// @param other `Basestring` to insert into.
+	/// @return Reference to self.
 	constexpr SelfType& operator<<(SelfType& other)				{other.appendBack(*this); return *this;}
 
+	/// @brief Extraction operator (`BaseString`).
+	/// @param other `Basestring` to extract from.
+	/// @return Reference to self.
 	constexpr SelfType& operator>>(SelfType const& other)	{appendBack(other); return other;}
 
+	/// @brief String concatenation operator (character).
+	/// @param value Character to concatenate.
+	/// @return Resulting concatenated string.
 	constexpr SelfType operator+(DataType const& value) const	{return SelfType(*this).pushBack(value);	}
+	/// @brief String concatenation operator (`BaseString`).
+	/// @param value `BaseString` to concatenate.
+	/// @return Resulting concatenated string.
 	constexpr SelfType operator+(SelfType const& other) const	{return SelfType(*this).appendBack(other);	}
 
+	/// @brief String concatenation operator (string literal).
+	/// @param value String literal to concatenate.
+	/// @return Resulting concatenated string.
 	constexpr SelfType operator+(StringLiteralType const& str) const				{return (*this) + SelfType(str);}
+	/// @brief String concatenation operator (char array).
+	/// @tparam S Array size.
+	/// @param value Char array to concatenate.
+	/// @return Resulting concatenated string.
 	template<SizeType S>
 	constexpr SelfType operator+(Decay::AsType<ConstantType[S]> const& str) const	{return (*this) + SelfType(str);}
 
+	/// @brief String concatenation operator (character).
+	/// @param value Character to concatenate.
+	/// @param self `BaseString` to concatenate with.
+	/// @return Resulting concatenated string.
 	friend constexpr SelfType operator+(DataType const& value, SelfType const& self)	{return SelfType().pushBack(value) + self;	}
 
+	/// @brief String concatenation operator (string literal).
+	/// @param value String literal to concatenate.
+	/// @param self `BaseString` to concatenate with.
+	/// @return Resulting concatenated string.
 	friend constexpr SelfType operator+(StringLiteralType const& str, SelfType const& self)					{return SelfType(str) + (self);}
+	/// @brief String concatenation operator (char array).
+	/// @tparam S Array size.
+	/// @param value Char array to concatenate.
+	/// @param self `BaseString` to concatenate with.
+	/// @return Resulting concatenated string.
 	template<SizeType S>
 	friend constexpr SelfType operator+(Decay::AsType<ConstantType[S]> const& str, SelfType const& self)	{return SelfType(str) + (self);}
-
+	
+	/// @brief String appending operator (character).
+	/// @param value Caracter to append.
+	/// @return Reference to self.
 	constexpr SelfType& operator+=(DataType const& value)				{pushBack(value); return *this;				}
+	/// @brief String appending operator (`BaseString`).
+	/// @param value `BaseString` to append.
+	/// @return Reference to self.
 	constexpr SelfType& operator+=(SelfType const& other)				{appendBack(other); return *this;			}
+	/// @brief String appending operator (string literal).
+	/// @param value String literal to append.
+	/// @return Reference to self.
 	constexpr SelfType& operator+=(StringLiteralType const& str)		{appendBack(SelfType(str)); return *this;	}
+	/// @brief String appending operator (char array).
+	/// @tparam S Array size.
+	/// @param value Char array to append.
+	/// @return Reference to self.
 	template<SizeType S>
-	constexpr SelfType& operator+=(Decay::AsType<ConstantType[S]> str)	{appendBack(str); return *this;		}
+	constexpr SelfType& operator+=(Decay::AsType<ConstantType[S]> str)	{appendBack(str); return *this;				}
 
+	/// @brief Returns a string, repeated a given amount of times.
+	/// @param times Amount of times to repeat.
+	/// @return Resulting string.
 	constexpr SelfType operator*(IndexType const& times) const {
 		if (times < 1) return SelfType();
 		if (times == 1) return *this;
@@ -349,6 +501,9 @@ public:
 		return result;
 	}
 
+	/// @brief Repeats the string a given amount of times.
+	/// @param times Amount of times to repeat.
+	/// @return Reference to self.
 	constexpr SelfType& operator*=(IndexType const& times) {
 		if (times < 1) return SelfType();
 		if (times == 1) return *this;
@@ -357,7 +512,7 @@ public:
 			appendBack(copy);
 		return *this;
 	}
-
+	
 	template<SizeType S>
 	constexpr bool operator==(Decay::AsType<ConstantType[S]> const& str) const	{return *this == SelfType(str);			}
 	constexpr bool operator==(StringLiteralType const& str) const				{return *this == SelfType(str);			}

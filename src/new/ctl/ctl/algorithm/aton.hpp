@@ -10,8 +10,14 @@
 CTL_NAMESPACE_BEGIN
 
 // atoi implementation based off of https://stackoverflow.com/a/59537554
+/// @brief General implementations.
 namespace Impl {
+	/// @brief Array-to-integer implementation.
 	namespace A2I {
+		/// @brief Converts a character to number.
+		/// @tparam T Character type.
+		/// @param c Character to convert.
+		/// @return Character as number.
 		template<Type::ASCII T>
 		constexpr ssize toDigit(T c) {
 			c = toLowerChar(c);
@@ -20,6 +26,11 @@ namespace Impl {
 			return c - '0';
 		}
 
+		/// @brief Returns whether the given character is in the specified base.
+		/// @tparam T Character type.
+		/// @param c Character to check.
+		/// @param base Base to check.
+		/// @return Whether it is in the given base.
 		template<Type::ASCII T>
 		constexpr bool isDigitInBase(T const& c, usize const& base) {
 			if (c == '.') return true;
@@ -27,11 +38,20 @@ namespace Impl {
 			return 0 <= v && v < ssize(base);
 		}
 
+		/// @brief Returns whether the given character is a numeric sign (`+` or `-`).
+		/// @tparam T Character type.
+		/// @param c Character to check.
+		/// @return Whether the character is a numeric sign.
 		template<Type::ASCII T>
 		constexpr bool isSign(T const& c) {
 			return c == '-' || c == '+';
 		}
 
+		/// @brief Returns the signedness of the character at the given pointer, then increments said pointer.
+		/// @tparam T Character type.
+		/// @param c Pointer to character to check.
+		/// @return Signedness of character. -1 if character is `-`, +1 otherwise.
+		/// @note Only advances the pointer if character is a numeric sign.
 		template<Type::ASCII T>
 		constexpr int8 getSignAndConsume(T const*& c) {
 			switch (c[0]) {
@@ -40,7 +60,7 @@ namespace Impl {
 				default:	return +1;
 			}
 		}
-
+		
 		template<Type::Integer T>
 		constexpr T& shiftAndAppend(T& val, T const& base, T const& digit) {
 			val *= base;

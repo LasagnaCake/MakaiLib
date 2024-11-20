@@ -93,8 +93,8 @@ public:
 		typename Allocatable::AllocatorType
 	;
 
-	using PredicateType	= Function<bool(ConstReferenceType)>;
-	using CompareType	= Function<bool(ConstReferenceType, ConstReferenceType)>;
+	using PredicateType	= Decay::AsFunction<bool(ConstReferenceType)>;
+	using CompareType	= Decay::AsFunction<bool(ConstReferenceType, ConstReferenceType)>;
 
 	using ComparatorType = SimpleComparator<DataType>;
 
@@ -211,38 +211,32 @@ public:
 	/// @param size Size of range.
 	constexpr List(ConstPointerType const& start, SizeType const& size): List(start, start + size) {}
 
-	/// @brief Constructs a `List`, from an object of (non-subclass) type T, that possesses iteration capabilities.
-	/// @tparam T Type.
-	/// @param other Object to copy data from.
-	template<class T>
+	/// @brief Constructs a `List`, from a ranged object of (non-subclass) type T.
+	/// @tparam T Ranged type.
+	/// @param other Object to copy from.
+	template<Type::Container::Ranged<IteratorType> T>
 	constexpr explicit List(T const& other)
 	requires requires (T t) {
-		{t.begin()} -> Type::Convertible<IteratorType>;
-		{t.end()} -> Type::Convertible<IteratorType>;
 		requires !Type::Constructible<T, ConstIteratorType, ConstIteratorType>;
 		requires !Type::Subclass<T, SelfType>;
 	}: List(other.begin(), other.end()) {}
 
-	/// @brief Constructs a `List`, from an object of (non-list) type T, that possesses some form of data storage.
-	/// @tparam T Type.
-	/// @param other Object to copy data from
-	template<class T>
+	/// @brief Constructs a `List`, from a bounded object of (non-list) type T.
+	/// @tparam T Ranged type.
+	/// @param other Object to copy from.
+	template<Type::Container::Bounded<PointerType, SizeType> T>
 	constexpr explicit List(T const& other)
 	requires requires (T t) {
-		{*t.data()} -> Type::Convertible<DataType>;
-		{t.size()} -> Type::Convertible<SizeType>;
 		requires !Type::Constructible<T, ConstIteratorType, ConstIteratorType>;
 		requires !Type::Container::List<T>;
 	}: List(other.data(), other.size()) {}
 
-	/// @brief Constructs a `List` from a list of iteratable objects.
+	/// @brief Constructs a `List` from a list of ranged objects.
 	/// @tparam T Object type of `List`.
-	/// @param other Object to copy data from.
+	/// @param other `List` to copy from.
 	template<class T>
 	constexpr explicit List(List<T, SizeType> const& other)
 	requires requires (T t) {
-		{t.begin()} -> Type::Equal<IteratorType>;
-		{t.end()} -> Type::Equal<IteratorType>;
 		requires Type::Constructible<DataType, ConstIteratorType, ConstIteratorType>;
 		requires !Type::Subclass<T, SelfType>;
 	} {
@@ -1042,7 +1036,7 @@ public:
 	/// @tparam TPredicate Predicate type.
 	/// @param filter Predicate to match.
 	/// @return Reference to self.
-	template<Type::Functional<bool(DataType const&)> TPredicate>
+	template<Type::Functional<PredicateType> TPredicate>
 	constexpr SelfType& filter(TPredicate const& filter) {
 		return eraseIfNot(filter);
 	}
@@ -1051,7 +1045,7 @@ public:
 	/// @tparam TCompare Compare type.
 	/// @param compare Comparison to make.
 	/// @return Reference to self.
-	template<Type::Functional<bool(DataType const&, DataType const&)> TCompare>
+	template<Type::Functional<CompareType> TCompare>
 	constexpr SelfType& filter(TCompare const& compare) {
 		return *this = filtered(compare);
 	}
@@ -1060,7 +1054,7 @@ public:
 	/// @tparam TPredicate Predicate type.
 	/// @param filter Predicate to match.
 	/// @return `filter`ed `List` of elements.
-	template<Type::Functional<bool(DataType const&)> TPredicate>
+	template<Type::Functional<PredicateType> TPredicate>
 	constexpr SelfType filtered(TPredicate const& filter) const {
 		return SelfType(*this).eraseIfNot(filter);
 	}
@@ -1069,7 +1063,7 @@ public:
 	/// @tparam TCompare Compare type.
 	/// @param compare Comparison to make.
 	/// @return `filter`ed `List` of elements.
-	template<Type::Functional<bool(DataType const&, DataType const&)> TCompare>
+	template<Type::Functional<CompareType> TCompare>
 	constexpr SelfType filtered(TCompare const& compare) const {
 		SelfType result;
 		for (SizeType i = 0; i < count; ++i) {

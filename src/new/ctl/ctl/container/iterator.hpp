@@ -217,11 +217,26 @@ namespace Type::Container {
 		{t.end()} -> Type::Equal<TIterator>;
 	};
 
-	/// @brief Type must have both `data()` and `size()` functions.
-	template<class T>
+	/// @brief Type must have both `data()` and `size()` functions, that return `TPointer` and `TSize`, respectively.
+	template<class T, class TPointer, class TSize>
 	concept Bounded = requires (T t) {
-		{t.data()} -> Type::Pointer;
-		{t.size()} -> Type::Integer;
+		{t.data()} -> Type::Equal<TPointer>;
+		{t.size()} -> Type::Equal<TSize>;
+	};
+
+	/**
+	 * @brief Type must fullfill the following requirements:
+	 * 
+	 * 1. Have both `data()` and `size()` functions.
+	 * 
+	 * 2. The result of dereferencing the result of `data()` must be convertible to `TData`.
+	 * 
+	 * 3. The result of `size()` must be convertible to `TSize`.
+	*/
+	template<class T, class TData, class TSize>
+	concept FuzzilyBounded = requires (T t) {
+		{*t.data()} -> Type::Convertible<TData>;
+		{t.size()} -> Type::Convertible<TSize>;
 	};
 }
 

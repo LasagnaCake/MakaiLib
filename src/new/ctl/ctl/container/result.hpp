@@ -32,7 +32,10 @@ public:
 		typename SelfIdentified::SelfType
 	;
 
-	typedef TError  ErrorType;
+	using ErrorType = TError;
+
+	using ErrorFunctionType = Decay::AsFunction<void(ErrorType const&)>;
+	using ValueFunctionType = Decay::AsFunction<void(ConstReferenceType)>;
 
 	/// @brief Whether `TError` can be implicitly convertible to `TData`.
 	constexpr static bool IMPLICIT = Type::Convertible<TError, TData>;
@@ -63,14 +66,14 @@ public:
 	/// @param proc Callable to run.
 	/// @return Reference to self.
 	/// @note `TFunction` must accept a const reference to the value type, and return void.
-	template<Type::Functional<void(ConstReferenceType)> TFunction>
+	template<Type::Functional<ValueFunctionType> TFunction>
 	constexpr SelfType& then(TFunction const& proc)  				{if (ok()) proc(result.value); return *this;	}
 	/// @brief Runs the passed callable if there is a value.
 	/// @tparam TFunction Callable type.
 	/// @param proc Callable to run.
 	/// @return Reference to self.
 	/// @note `TFunction` must accept a const reference to the value type, and return void.
-	template<Type::Functional<void(ConstReferenceType)> TFunction>
+	template<Type::Functional<ValueFunctionType> TFunction>
 	constexpr SelfType const& then(TFunction const& proc) const 	{if (ok()) proc(result.value); return *this;	}
 
 	/// @brief Runs the passed callable if there is an error.
@@ -78,14 +81,14 @@ public:
 	/// @param proc Callable to run.
 	/// @return Reference to self.
 	/// @note `TFunction` must accept a const reference to the error type, and return void.
-	template<Type::Functional<void(ErrorType const&)> TFunction>
+	template<Type::Functional<ErrorFunctionType> TFunction>
 	constexpr SelfType& onError(TFunction const& proc)				{if (!ok()) proc(result.error); return *this;	}
 	/// @brief Runs the passed callable if there is an error.
 	/// @tparam TFunction Callable type.
 	/// @param proc Callable to run.
 	/// @return Reference to self.
 	/// @note `TFunction` must accept a const reference to the error type, and return void.
-	template<Type::Functional<void(ErrorType const&)> TFunction>
+	template<Type::Functional<ErrorFunctionType> TFunction>
 	constexpr SelfType const& onError(TFunction const& proc) const	{if (!ok()) proc(result.error); return *this;	}
 
 	/// @brief Copy assignment operator (value).
@@ -144,14 +147,14 @@ public:
 	/// @param proc Callable to run.
 	/// @return Reference to self.
 	/// @note `TFunction` must accept a const reference to the value type, and return void.
-	template<Type::Functional<void(ConstReferenceType)> TFunction>
+	template<Type::Functional<ValueFunctionType> TFunction>
 	constexpr SelfType& operator()(TFunction const& proc)				{return then(proc);		}
 	/// @brief Runs the passed callable if there is a value.
 	/// @tparam TFunction Callable type.
 	/// @param proc Callable to run.
 	/// @return Reference to self.
 	/// @note `TFunction` must accept a const reference to the value type, and return void.
-	template<Type::Functional<void(ConstReferenceType)> TFunction>
+	template<Type::Functional<ValueFunctionType> TFunction>
 	constexpr SelfType const& operator()(TFunction const& proc) const	{return then(proc);		}
 
 	/// @brief Runs the passed callable if there is an error.
@@ -160,7 +163,7 @@ public:
 	/// @return Reference to self.
 	/// @note `TFunction` must accept a const reference to the error type, and return void.
 	/// @note Requires error type to not be implicitly convertible to result type.
-	template<Type::Functional<void(ErrorType const&)> TFunction>
+	template<Type::Functional<ErrorFunctionType> TFunction>
 	constexpr SelfType& operator()(TFunction const& proc)				
 	requires (!IMPLICIT) {return onError(proc);	}
 	/// @brief Runs the passed callable if there is an error.
@@ -169,7 +172,7 @@ public:
 	/// @return Reference to self.
 	/// @note `TFunction` must accept a const reference to the error type, and return void.
 	/// @note Requires error type to not be implicitly convertible to result type.
-	template<Type::Functional<void(ErrorType const&)> TFunction>
+	template<Type::Functional<ErrorFunctionType> TFunction>
 	constexpr SelfType const& operator()(TFunction const& proc) const	
 	requires (!IMPLICIT) {return onError(proc);	}
 

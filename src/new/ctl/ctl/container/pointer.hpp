@@ -118,6 +118,9 @@ public:
 	/// @brief Opposite smart pointer type.
 	using OtherType = NewPointerType<!WEAK>;
 
+	/// @brief Operation type.
+	using OperationType = Decay::AsFunction<DataType(ConstReferenceType)>;
+
 	/// @brief Empty constructor.
 	constexpr Pointer() {}
 	
@@ -270,9 +273,9 @@ public:
 	/// @return Whether the bound object exists.
 	constexpr operator bool() const	{return exists();	}
 
-	template<Type::Functional<DataType(ConstReferenceType)> TFunction>
+	template<Type::Functional<OperationType> TFunction>
 	constexpr Pointer& modify(TFunction const& op)		{T& ref = *getPointer(); ref = op(ref); return (*this);	}
-	template<Type::Functional<DataType(ConstReferenceType)> TFunction>
+	template<Type::Functional<OperationType> TFunction>
 	constexpr Pointer& operator()(TFunction const& op)	{return modify(op);										}
 
 	/// @brief Returns whether the bound object doesn't exist.

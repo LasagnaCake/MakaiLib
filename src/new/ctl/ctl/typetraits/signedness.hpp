@@ -6,7 +6,7 @@
 
 CTL_NAMESPACE_BEGIN
 
-/// @brief Type conversion implementations.
+/// @brief General implementations.
 namespace Impl {
 	template<class T> struct UnsignedType;
 	template<class T> struct SignedType;
@@ -36,7 +36,11 @@ namespace Impl {
 	template<>	struct SignedType<unsigned long long>:		TypeContainer<long long>			{};
 }
 
+/// @brief Returns the type as an unsigned type.
+/// @tparam T Type to make unsigned.
 template<class T> using AsUnsigned	= typename Impl::UnsignedType<T>::Type;
+/// @brief Returns the type as an signed type.
+/// @tparam T Type to make signed.
 template<class T> using AsSigned	= typename Impl::SignedType<T>::Type;
 
 CTL_NAMESPACE_END

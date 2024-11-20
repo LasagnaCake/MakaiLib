@@ -105,9 +105,9 @@ public:
 	;
 
 	/// @brief Operation type.
-	using OperationType	= Function<DataType(DataType const&)>;
+	using OperationType	= Decay::AsFunction<DataType(DataType const&)>;
 	/// @brief Procedure type.
-	using ProcedureType	= Function<void(DataType const&)>;
+	using ProcedureType	= Decay::AsFunction<void(DataType const&)>;
 
 	/// @brief Empty constructor.
 	constexpr Nullable() noexcept										{												}
@@ -158,7 +158,7 @@ public:
 	/// @tparam TFunction Operation type.
 	/// @param op Operation to apply.
 	/// @return Reference to self.
-	template<Type::Functional<DataType(DataType const&)> TFunction>
+	template<Type::Functional<OperationType> TFunction>
 	constexpr SelfType& then(TFunction const& op) {if (isSet) data = op(data); return *this;}
 
 	/// @brief Returns whether there is a stored value.
@@ -175,7 +175,7 @@ public:
 	/// @tparam TFunction Operation type.
 	/// @param op Operation to apply.
 	/// @return Reference to self.
-	template<Type::Functional<DataType(DataType const&)> TFunction>
+	template<Type::Functional<OperationType> TFunction>
 	constexpr SelfType& operator()(TFunction const& op) {return then(op);}
 
 	/// @brief Copy assignment operator (value).
