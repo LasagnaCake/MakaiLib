@@ -192,7 +192,7 @@ struct Hasher {
 
 	/// @brief Generates the hash for a given range of elements.
 	/// @tparam T Element type.
-	/// @param data Pointer to range to hash.
+	/// @param data Pointer to beginning of range.
 	/// @param size Size of range.
 	/// @return Resulting hash.
 	template<class T>

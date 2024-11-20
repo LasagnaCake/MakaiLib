@@ -6,6 +6,10 @@
 
 CTL_NAMESPACE_BEGIN
 
+/// @brief String-to-integer conversion.
+/// @param s String to convert.
+/// @param base Base of number string. Will be used, if not zero.
+/// @return Resulting number.
 constexpr int		toInt(String const& s, uint8 const& base = 0)				{return String::toNumber<int>(s, base);		}
 constexpr long		toLong(String const& s, uint8 const& base = 0)				{return String::toNumber<long>(s, base);	}
 constexpr llong		toLongLong(String const& s, uint8 const& base = 0)			{return String::toNumber<llong>(s, base);	}

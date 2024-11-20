@@ -10,9 +10,11 @@ CTL_NAMESPACE_BEGIN
 
 /// @brief Algorithm-specific type constraints.
 namespace Type::Algorithm {
+	/// @brief Type must be able to be sorted.
 	template <class T>
 	concept Sortable = Type::Comparator::Threeway<T, T>;
 
+	/// @brief Type must be an iterator, and its iterand must be sortable.
 	template <class T>
 	concept SortableIterator =
 		Type::Container::Iterator<T>
@@ -22,7 +24,12 @@ namespace Type::Algorithm {
 	static_assert(SortableIterator<Iterator<int>>);
 }
 
+/// @brief Sorting algorithm implementations.
 namespace Sorting {
+	/// @brief Sorts the given range of elements using insertion sort.
+	/// @tparam T Element type.
+	/// @param arr Pointer to beginning of range.
+	/// @param sz Size of range.
 	template<Type::Algorithm::Sortable T>
 	constexpr void insertionSort(T* const& arr, usize const& sz) {
 		for (usize i = 1; i < sz; ++i) {
@@ -35,6 +42,10 @@ namespace Sorting {
 
 	// Based off of https://www.geeksforgeeks.org/merge-sort/
 	// TODO: fix this
+	/// @brief Sorts the given range of elements using merge sort.
+	/// @tparam T Element type.
+	/// @param arr Pointer to beginning of range.
+	/// @param sz Size of range.
 	template<Type::Algorithm::Sortable T>
 	constexpr void mergeSort(T* const& arr, usize const& sz) {
 		if (sz == 1) return;
@@ -114,6 +125,10 @@ namespace Sorting {
 
 	// Based off of Tim Sort, with minor changes
 	// TODO: fix this (`mergeSort` not working, so must start by fixing that first)
+	/// @brief Sorts the given range of elements using a modified version of TimSort.
+	/// @tparam T Element type.
+	/// @param arr Pointer to beginning of range.
+	/// @param sz Size of range.
 	template<Type::Algorithm::Sortable T>
 	constexpr void vivoSort(T* const& arr, usize const& sz) {
 		if (sz < 2) return;
@@ -161,11 +176,19 @@ namespace Sorting {
 	}
 }
 
+/// @brief Sorts a given range of elements.
+/// @tparam T Iterator type.
+/// @param begin Iterator to beginning of range.
+/// @param end Iterator to end of range.
 template <Type::Algorithm::SortableIterator T>
 constexpr void sort(T const& begin, T const& end) {
 	Sorting::insertionSort(begin.raw(), end - begin + 1);
 }
 
+/// @brief Sorts a given range of elements.
+/// @tparam T Element type.
+/// @param begin Pointer to beginning of range.
+/// @param end Pointer to end of range.
 template <Type::Algorithm::Sortable T>
 constexpr void sort(T* const& begin, T* const& end) {
 	Sorting::insertionSort(begin, end - begin + 1);
