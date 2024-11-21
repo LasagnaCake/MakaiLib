@@ -9,7 +9,9 @@
 CTL_NAMESPACE_BEGIN
 
 namespace Type {
+	/// @brief Memory-specific type constraints.
 	namespace Memory {
+		/// @brief Type must be a valid allocator for `TData`.
 		template<template <class> class T, class TData>
 		concept Allocator = requires (T<TData> t, usize sz, TData* p) {
 			{t.allocate(sz)}	-> Type::Equal<TData*>	;
@@ -20,6 +22,8 @@ namespace Type {
 	}
 }
 
+/// @brief Default allocator. Allocates from the heap, as the name implies.
+/// @tparam T Type to handle allocation for.
 template<class T>
 struct HeapAllocator {
 	constexpr pointer allocate(usize const& sz)

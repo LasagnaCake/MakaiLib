@@ -13,8 +13,16 @@ CTL_NAMESPACE_BEGIN
 */
 namespace Math::P3 {
 	/// Precise version. Better results, but more computationally intensive.
-	/// Based off of the formula from https://www.desmos.com/calculator/hghrnwbcdh
-	/// (Archive) https://web.archive.org/web/20240209160635/https://www.desmos.com/calculator/hghrnwbcdh
+	/// @brief Precise version. Better results, but more computationally intensive.
+	/// @param theta Angle to calculate.
+	/// @param sides Polygon side count.
+	/// @param size Polygon size.
+	/// @param angle Rotation of the polygon.
+	/// @return Radius at the given angle.
+	/// @note 
+	///		Based off of the formula from https://www.desmos.com/calculator/hghrnwbcdh .
+	///
+	///		(Archive) https://web.archive.org/web/20240209160635/https://www.desmos.com/calculator/hghrnwbcdh .
 	constexpr float precise(
 		float const& theta,
 		float const& sides,
@@ -26,7 +34,12 @@ namespace Math::P3 {
 		return constant / cos((2.0 / sides) * asin(cos(shape)));
 	}
 
-	/// General version. Not as accurate, but still good for general use.
+	/// @brief General version. Not as accurate, but still good for general use.
+	/// @param theta Angle to calculate.
+	/// @param sides Polygon side count.
+	/// @param size Polygon size.
+	/// @param angle Rotation of the polygon.
+	/// @return Radius at the given angle.
 	constexpr float general(
 		float const& theta,
 		float const& sides,
@@ -38,7 +51,12 @@ namespace Math::P3 {
 		return size - constant * abcos(shape);
 	}
 
-	/// Fast version. Least accurate, but computationally fast.
+	/// @brief Fast version. Least accurate, but computationally fast.
+	/// @param theta Angle to calculate.
+	/// @param sides Polygon side count.
+	/// @param size Polygon size.
+	/// @param angle Rotation of the polygon.
+	/// @return Radius at the given angle.
 	constexpr float fast(
 		float const& theta,
 		float const& sides,

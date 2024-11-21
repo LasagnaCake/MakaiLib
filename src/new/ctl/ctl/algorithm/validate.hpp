@@ -7,6 +7,10 @@
 
 CTL_NAMESPACE_BEGIN
 
+/// @brief Returns whether the given character is a hex character.
+/// @tparam TChar Character type.
+/// @param c Character to check.
+/// @return Whether it is a hex character.
 template<Type::ASCII TChar>
 constexpr bool isHexChar(TChar const& c) noexcept {
 	if (c >= '0' && c <= '9') return true;
@@ -15,6 +19,10 @@ constexpr bool isHexChar(TChar const& c) noexcept {
 	return false;
 }
 
+/// @brief Returns whether the given character is a null or whitespace character.
+/// @tparam TChar Character type.
+/// @param c Character to check.
+/// @return Whether it is a null or whitespace character.
 template <Type::ASCII TChar>
 constexpr bool isNullOrSpaceChar(TChar const& c) noexcept {
 	return (

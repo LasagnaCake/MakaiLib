@@ -921,7 +921,7 @@ template<usize N> using StaticWideString	= BaseStaticString<wchar_t,	N>;
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wliteral-suffix"
-/// @brief `BaseString` literals.
+/// @brief String literals.
 namespace Literals::Text {
 	/// @brief CTL `String` literal.
 	constexpr String operator "" s		(cstring cstr, usize sz)	{return String(cstr, cstr + sz);				}

@@ -2,6 +2,7 @@
 #define CTL_ALGORITHM_REVERSE_H
 
 #include "../container/iterator.hpp"
+#include "transform.hpp"
 
 CTL_NAMESPACE_BEGIN
 
@@ -11,11 +12,7 @@ CTL_NAMESPACE_BEGIN
 /// @param end Iterator to end of range.
 template<Type::Container::Iterator T>
 void reverse(T const& begin, T const& end) {
-	for (usize i = 0; i < usize(begin - end); ++i) {
-		typename T::DataType tmp = *(begin + i);
-		*(begin + i) = *(end - i);
-		*(end - i) = tmp;
-	}
+	return reverse(begin.raw(), end - begin);
 }
 
 CTL_NAMESPACE_END
