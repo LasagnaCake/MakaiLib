@@ -21,12 +21,19 @@ namespace Meta {
 		};
 	}
 
+	/// @brief Returns the Nth type in a series of types.
+	/// @tparam ...Types Types.
+	/// @tparam N Type to locate.
 	template<usize N, typename... Types>
 	using NthType = typename Impl::NthInPack<N, Types...>::Type;
 
+	/// @brief Returns the first type in a series of types.
+	/// @tparam ...Types Types.
 	template<typename... Types>
 	using FirstType = typename Impl::NthInPack<0, Types...>::Type;
 
+	/// @brief Returns the last type in a series of types.
+	/// @tparam ...Types Types.
 	template<typename... Types>
 	using LastType = typename Impl::NthInPack<sizeof...(Types)-1, Types...>::Type;
 }

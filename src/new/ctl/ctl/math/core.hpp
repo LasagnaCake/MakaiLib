@@ -394,7 +394,7 @@ namespace Math {
 	constexpr T factorial(T val) {
 		if (val < 2) return val;
 		T res = val;
-		else while (--val) res *= val;
+		while (--val) res *= val;
 		return res;
 	}
 }
@@ -467,10 +467,6 @@ CTL_NAMESPACE_END
 constexpr float			operator ""f(unsigned long long v)	{return v;	}
 /// @brief Custom floating point literal.
 constexpr float			operator ""F(unsigned long long v)	{return v;	}
-/// @brief Custom double precision point literal.
-constexpr double		operator ""d(unsigned long long v)	{return v;	}
-/// @brief Custom double precision point literal.
-constexpr double		operator ""D(unsigned long long v)	{return v;	}
 /// @brief Custom double precision point literal.
 constexpr double		operator ""d(unsigned long long v)	{return v;	}
 /// @brief Custom double precision point literal.

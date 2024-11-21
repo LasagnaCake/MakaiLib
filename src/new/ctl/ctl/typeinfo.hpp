@@ -3,7 +3,7 @@
 
 #include "typetraits/traits.hpp"
 #include "meta/logic.hpp"
-#include "meta/enumtype.hpp"
+#include "typetraits/enum.hpp"
 #include "namespace.hpp"
 #include <typeinfo>
 #include <cxxabi.h>
@@ -68,7 +68,7 @@ template<Type::Float T>
 struct TypeInfo<T>: Base::BasicInfo<T> {};
 
 template<Type::Enumerator T>
-struct TypeInfo<T>: NumberLimit<Meta::EnumType<T>>, Base::BasicInfo<T> {};
+struct TypeInfo<T>: NumberLimit<Decay::Enum::AsInteger<T>>, Base::BasicInfo<T> {};
 
 template<Type::Class T>
 struct TypeInfo<T>: Base::BasicInfo<T> {};

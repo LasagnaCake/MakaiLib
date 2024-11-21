@@ -9,38 +9,58 @@
 
 CTL_NAMESPACE_BEGIN
 
+/// @brief Filesystem-related operations.
 namespace OS::FS {
 	namespace {
 		namespace fs = std::filesystem;
 	}
 
+	/// @brief Directory path separator.
 	enum class PathSeparator: char {
 		PS_POSIX	= '/',
 		PS_WINDOWS	= '\\'
 	};
 
 	#if (_WIN32 || _WIN64 || __WIN32__ || __WIN64__) && !defined(CTL_NO_WINDOWS_PLEASE)
+	/// @brief Path separator that the system uses.
 	constexpr PathSeparator SEPARATOR = PathSeparator::PS_WINDOWS;
 	#else
+	/// @brief Path separator that the system uses.
 	constexpr PathSeparator SEPARATOR = PathSeparator::PS_POSIX;
 	#endif
 
+	/// @brief Checks to see if the specified path exists.
+	/// @param path Path to check.
+	/// @return Whether the path exists.
 	inline bool exists(String const& path) {
 		return fs::exists(path.std());
 	}
 
+	/// @brief Checks to see if the specified path is a directory.
+	/// @param dir Path to check.
+	/// @return Whether the path is a directory.
 	inline bool isDirectory(String const& dir) {
 		return fs::is_directory(dir.std());
 	}
 
+	/// @brief Replaces all path separator characters with the specified path separator.
+	/// @param path Path to standardize.
+	/// @param sep Separator to use.
+	/// @return Standardized path.
 	constexpr String standardize(String const& path, PathSeparator const& sep) {
 		return path.replaced({'\\','/'}, (char)sep);
 	}
 
+	/// @brief Replaces all path separator characters with the OS's path separator.
+	/// @param path Path to standardize.
+	/// @param sep Separator to use.
+	/// @return Standardized path.
 	constexpr String standardize(String const& path) {
 		return standardize(path, SEPARATOR);
 	}
 
+	/// @brief Creates a directory, while also creating its parents, if they don't exist.
+	/// @param dir Directory to make.
 	inline void makeDirectory(String const& dir) {
 		if (dir.isNullOrSpaces()) return;
 		if (!isDirectory(dir) || !exists(dir)) {
@@ -48,41 +68,61 @@ namespace OS::FS {
 		}
 	}
 
+	/// @brief Creates a series of directories, while also creating their parents, if they don't exist.
+	/// @param dirs Directories to make.
 	inline void makeDirectory(StringList const& dirs) {
 		for (auto& d: dirs)
 			makeDirectory(d);
 	}
 
+	/// @brief Creates a series of directories, while also creating their parents, if they don't exist.
+	/// @param dirs Directories to make.
 	inline void makeDirectory(StringArguments const& dirs) {
 		for (auto& d: dirs)
 			makeDirectory(d);
 	}
 
+	/// @brief Creates a series of directories, while also creating their parents, if they don't exist.
+	/// @tparam ...Args Argument types.
+	/// @param ...args Directories to make.
 	template <typename... Args>
 	inline void makeDirectory(Args const&... args)
 	requires (sizeof...(Args) > 1) {
 		(..., makeDirectory(toString(args)));
 	}
 
-	inline void remove(String const& dir) {
-		fs::remove_all(dir.std());
+	/// @brief Deletes a file/directory. If it is a directory, it also deletes its contents.
+	/// @param path Element to delete.
+	inline void remove(String const& path) {
+		fs::remove_all(path.std());
 	}
 
-	inline void remove(StringList const& dirs) {
-		for (auto& d: dirs)
+	/// @brief Deletes a series of files/directories. If it is a directory, it also deletes its contents.
+	/// @param paths Elements to delete.
+	inline void remove(StringList const& paths) {
+		for (auto& d: paths)
 			remove(d);
 	}
 	
-	inline void remove(StringArguments const& dirs) {
-		for (auto& d: dirs)
+	/// @brief Deletes a series of files/directories. If it is a directory, it also deletes its contents.
+	/// @param paths Elements to delete.
+	inline void remove(StringArguments const& paths) {
+		for (auto& d: paths)
 			remove(d);
 	}
 
+	/// @brief Deletes a series of files/directories. If it is a directory, it also deletes its contents.
+	/// @tparam ...Args Argument types.
+	/// @param ...args Elements to delete.
 	template <typename... Args>
 	inline void remove(Args const&... args) {
 		(remove(toString(args)), ...);
 	}
 
+	/// @brief Concatenates a two paths together.
+	/// @param root Path to concatenate.
+	/// @param path Path to concatenate with.
+	/// @return Concatenated path.
 	constexpr String concatenate(String const& root, String const& path) {
 		if (root.empty()) return path;
 		String res = root;
@@ -90,6 +130,10 @@ namespace OS::FS {
 		return res;
 	}
 
+	/// @brief Sequentially concatenates a series of paths together.
+	/// @param root Path to concatenate.
+	/// @param path Paths to concatenate with.
+	/// @return Concatenated path.
 	constexpr String concatenate(String const& root, StringList const& paths) {
 		String res = root;
 		for(auto& path: paths) {
@@ -98,6 +142,10 @@ namespace OS::FS {
 		return res;
 	}
 
+	/// @brief Sequentially concatenates a series of paths together.
+	/// @param root Path to concatenate.
+	/// @param path Paths to concatenate with.
+	/// @return Concatenated path.
 	constexpr String concatenate(String const& root, StringArguments const& paths) {
 		String res = root;
 		for(auto& path: paths) {
@@ -106,6 +154,12 @@ namespace OS::FS {
 		return res;
 	}
 
+	/// @brief Sequentially concatenates a series of paths together.
+	/// @tparam ...Args Argument types.
+	/// @param root Path to concatenate.
+	/// @param path First path to concatenate with.
+	/// @param ...args Subsequent paths to concatenate with.
+	/// @return Concatenated path.
 	template<typename... Args>
 	constexpr String concatenate(String const& root, String const& path, Args const&... args) {
 		String res = concatenate(root, path);
@@ -113,6 +167,7 @@ namespace OS::FS {
 		return res;
 	}
 
+	/// @brief Filesystem implementations.
 	namespace Impl {
 		constexpr String pathDirectory(String const& s) {
 			if (s.empty()) return "";
@@ -120,13 +175,22 @@ namespace OS::FS {
 		}
 	}
 
+	/// @brief Sequentially concatenates a series of paths together.
+	/// @tparam ...Args Argument types.
+	/// @param root Path to concatenate.
+	/// @param ...paths paths to concatenate with.
+	/// @return Concatenated path.
 	template <typename... Args>
 	constexpr String concatenate(String const& root, Args const&... paths) {
 		return root + (... + Impl::pathDirectory(toString(paths)));
 	}
 
+	/// @brief Returns the file extension.
+	/// @param path Path to get from.
+	/// @return File extension.
 	constexpr String fileExtension(String const& path) {
-		return path.splitAtLast('.').back();
+		auto sp = path.splitAtLast('.');
+		return sp.size() > 1 ? sp.back() : "";
 	}
 
 	/*constexpr String fileName(String const& path, bool const& removeExtension = false) {
@@ -134,10 +198,17 @@ namespace OS::FS {
 		return (removeExtension ? result.splitAtLast('.').front() ? result);
 	}*/
 
+	/// @brief Returns the directory of the file pointed by the path.
+	/// @param path Path to get from.
+	/// @param removeExtension Whether to remove the file extension.
+	/// @return File name.
 	inline String fileName(String const& path, bool removeExtension = false) {
 		return String(removeExtension ? fs::path(path.std()).stem().string() : fs::path(path.std()).filename().string());
 	}
 
+	/// @brief Returns the parent directory of a given path.
+	/// @param path Path to get from.
+	/// @return Parent directory.
 	constexpr String parentDirectory(String const& path) {
 		StringList splitPath = path.splitAtFirst({'\\', '/'});
 		if (splitPath.size() > 1)
@@ -145,6 +216,9 @@ namespace OS::FS {
 		return "";
 	}
 
+	/// @brief Returns the directory of the file pointed by the path.
+	/// @param path Path to get from.
+	/// @return File directory.
 	inline String directoryFromPath(String const& path) {
 		/*auto const split = path.splitAtLast({'\\', '/'});
 		if (split.size() < 2) return "";
@@ -152,6 +226,9 @@ namespace OS::FS {
 		return String(fs::path(path.std()).remove_filename().string());
 	}
 
+	/// @brief Returns the path without the parent directory.
+	/// @param path Path to get from.
+	/// @return Child path.
 	constexpr String childPath(String const& path) {
 		StringList dirs = path.splitAtFirst({'\\', '/'});
 		if (dirs.size() > 1)
@@ -159,7 +236,9 @@ namespace OS::FS {
 		return "";
 	}
 
+	/// @brief Directory file tree.
 	struct FileTree {
+		/// @brief File tree entry.
 		struct Entry {
 			constexpr Entry() {}
 
@@ -246,6 +325,8 @@ namespace OS::FS {
 
 			constexpr String name() const {return ename;}
 			constexpr String path() const {return epath;}
+
+			constexpr usize empty() const {return children.empty();	}
 
 		private:
 			String ename;
