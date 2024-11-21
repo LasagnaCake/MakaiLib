@@ -6,47 +6,156 @@
 
 CTL_NAMESPACE_BEGIN
 
-/// @brief String-to-integer conversion.
+/// @brief String-to-`int` conversion.
 /// @param s String to convert.
-/// @param base Base of number string. Will be used, if not zero.
+/// @param base Base of number string. Will be used, if non-zero.
 /// @return Resulting number.
+/// @throw FailedActionException if conversion fails.
 constexpr int		toInt(String const& s, uint8 const& base = 0)				{return String::toNumber<int>(s, base);		}
+/// @brief String-to-`long` conversion.
+/// @param s String to convert.
+/// @param base Base of number string. Will be used, if non-zero.
+/// @return Resulting number.
+/// @throw FailedActionException if conversion fails.
 constexpr long		toLong(String const& s, uint8 const& base = 0)				{return String::toNumber<long>(s, base);	}
+/// @brief String-to-`long long` conversion.
+/// @param s String to convert.
+/// @param base Base of number string. Will be used, if non-zero.
+/// @return Resulting number.
+/// @throw FailedActionException if conversion fails.
 constexpr llong		toLongLong(String const& s, uint8 const& base = 0)			{return String::toNumber<llong>(s, base);	}
 
+/// @brief String-to-`unsigned int` conversion.
+/// @param s String to convert.
+/// @param base Base of number string. Will be used, if non-zero.
+/// @return Resulting number.
+/// @throw FailedActionException if conversion fails.
 constexpr uint		toUnsignedInt(String const& s, uint8 const& base = 0)		{return String::toNumber<uint>(s, base);	}
+/// @brief String-to-`unsigned long` conversion.
+/// @param s String to convert.
+/// @param base Base of number string. Will be used, if non-zero.
+/// @return Resulting number.
+/// @throw FailedActionException if conversion fails.
 constexpr ulong		toUnsignedLong(String const& s, uint8 const& base = 0)		{return String::toNumber<ulong>(s, base);	}
+/// @brief String-to-`unsigned long long` conversion.
+/// @param s String to convert.
+/// @param base Base of number string. Will be used, if non-zero.
+/// @return Resulting number.
+/// @throw FailedActionException if conversion fails.
 constexpr ullong	toUnsignedLongLong(String const& s, uint8 const& base = 0)	{return String::toNumber<ullong>(s, base);	}
 
+/// @brief String-to-`float` conversion.
+/// @param s String to convert.
+/// @return Resulting number.
+/// @throw FailedActionException if conversion fails.
 constexpr float		toFloat(String const& s)		{return String::toNumber<float>(s);		}
+/// @brief String-to-`double` conversion.
+/// @param s String to convert.
+/// @return Resulting number.
+/// @throw FailedActionException if conversion fails.
 constexpr double	toDouble(String const& s)		{return String::toNumber<double>(s);	}
+/// @brief String-to-`long double` conversion.
+/// @param s String to convert.
+/// @return Resulting number.
+/// @throw FailedActionException if conversion fails.
 constexpr ldouble	toLongDouble(String const& s)	{return String::toNumber<ldouble>(s);	}
 
+/// @brief String-to-`int8` conversion.
+/// @param s String to convert.
+/// @param base Base of number string. Will be used, if non-zero.
+/// @return Resulting number.
+/// @throw FailedActionException if conversion fails.
 inline int8		toInt8(String const& s, uint8 const& base = 0)		{return String::toNumber<int8>(s, base);	}
+/// @brief String-to-`int16` conversion.
+/// @param s String to convert.
+/// @param base Base of number string. Will be used, if non-zero.
+/// @return Resulting number.
+/// @throw FailedActionException if conversion fails.
 inline int16	toInt16(String const& s, uint8 const& base = 0)		{return String::toNumber<int16>(s, base);	}
+/// @brief String-to-`int32` conversion.
+/// @param s String to convert.
+/// @param base Base of number string. Will be used, if non-zero.
+/// @return Resulting number.
+/// @throw FailedActionException if conversion fails.
 inline int32	toInt32(String const& s, uint8 const& base = 0)		{return String::toNumber<int32>(s, base);	}
+/// @brief String-to-`int64` conversion.
+/// @param s String to convert.
+/// @param base Base of number string. Will be used, if non-zero.
+/// @return Resulting number.
+/// @throw FailedActionException if conversion fails.
 inline int64	toInt64(String const& s, uint8 const& base = 0)		{return String::toNumber<int64>(s, base);	}
 
+/// @brief String-to-`uint8` conversion.
+/// @param s String to convert.
+/// @param base Base of number string. Will be used, if non-zero.
+/// @return Resulting number.
+/// @throw FailedActionException if conversion fails.
 inline uint8	toUInt8(String const& s, uint8 const& base = 0)		{return String::toNumber<uint8>(s, base);	}
+/// @brief String-to-`uint16` conversion.
+/// @param s String to convert.
+/// @param base Base of number string. Will be used, if non-zero.
+/// @return Resulting number.
+/// @throw FailedActionException if conversion fails.
 inline uint16	toUInt16(String const& s, uint16 const& base = 0)	{return String::toNumber<uint16>(s, base);	}
+/// @brief String-to-`uint32` conversion.
+/// @param s String to convert.
+/// @param base Base of number string. Will be used, if non-zero.
+/// @return Resulting number.
+/// @throw FailedActionException if conversion fails.
 inline uint32	toUInt32(String const& s, uint32 const& base = 0)	{return String::toNumber<uint32>(s, base);	}
+/// @brief String-to-`uint64` conversion.
+/// @param s String to convert.
+/// @param base Base of number string. Will be used, if non-zero.
+/// @return Resulting number.
+/// @throw FailedActionException if conversion fails.
 inline uint64	toUInt64(String const& s, uint64 const& base = 0)	{return String::toNumber<uint64>(s, base);	}
 
+/// @brief String-to-`float32` conversion.
+/// @param s String to convert.
+/// @return Resulting number.
+/// @throw FailedActionException if conversion fails.
 inline float32	toFloat32(String s)		{return toFloat(s);			}
+/// @brief String-to-`float64` conversion.
+/// @param s String to convert.
+/// @return Resulting number.
+/// @throw FailedActionException if conversion fails.
 inline float64	toFloat64(String s)		{return toDouble(s);		}
+/// @brief String-to-`float128` conversion.
+/// @param s String to convert.
+/// @return Resulting number.
+/// @throw FailedActionException if conversion fails.
 inline float128	toFloat128(String s)	{return toLongDouble(s);	}
 
+/// @brief String-to-`bool` conversion.
+/// @param s String to convert.
+/// @return Resulting value.
+/// @throw FailedActionException if conversion fails.
+inline float128	toBool(String s)	{return String::toNumber<bool>(s);	}
+
+/// @brief Number-to-string conversion.
+/// @tparam T Number type.
+/// @param value Value to convert.
+/// @return Resulting string.
 template<Type::Number T>
 constexpr String toString(T const& value)
 requires Type::Different<T, bool> {
 	return String::fromNumber<T>(value);
 }
 
+/// @brief Boolean-to-string conversion.
+/// @tparam T Boolean type (`bool`).
+/// @param value Value to convert.
+/// @return Resulting string.
 template<Type::Equal<bool> T>
 constexpr String toString(T const& value) {
-	return String::fromNumber<uint8>(value);
+	return String::fromNumber<bool>(value);
 }
 
+/// @brief Class-to-string conversion.
+/// @tparam T Class type.
+/// @param value Value to convert.
+/// @return Resulting string.
+/// @note Requires type to be implicitly convertible to string.
 template<class T>
 constexpr String toString(T const& value)
 requires (
@@ -56,51 +165,89 @@ requires (
 	return String(value);
 }
 
+/// @brief Conversion-specific type traits.
 namespace Type::Conversion {
+	/// @brief Class must have a `toString()` function.
 	template<class T>
 	concept ClassStringable = requires (T t) {
 		{t.toString()} -> Type::Equal<String>;
 	};
 }
 
+/// @brief Class-to-string conversion.
+/// @tparam T Class type.
+/// @param value Value to convert.
+/// @return Resulting string.
+/// @note Requires type to have a `toString()` function.
 template<Type::Conversion::ClassStringable T>
 constexpr String toString(T const& value) {
 	return value.toString();
 }
 
 namespace Type::Conversion {
+	/// @brief Type must be convertible to a "C-style" string via a `c_str()` function.
 	template<class T>
 	concept STDStringable = requires (T t) {
-		{t.c_str()} -> Type::Equal<typename String::StringLiteralType>;
+		{t.c_str()} -> Type::Equal<typename String::CStringType>;
 	};
 }
 
+/// @brief Class-to-string conversion.
+/// @tparam T Class type.
+/// @param value Value to convert.
+/// @return Resulting string.
+/// @note Requires type to be convertible to a "C-style" string via a `c_str()` function.
 template<Type::Conversion::STDStringable T>
 constexpr String toString(T const& value) {
 	return value.c_str();
 }
 
 namespace Type::Conversion {
+	/// @brief Type must be convertible to string in some form.
 	template<class T>
 	concept StringConvertible = requires (T t) {
 		{toString(t)} -> Type::Equal<String>;
 	};
 }
 
-constexpr String toString(cstring const& value)	{return value;}
-constexpr String toString(String const& value)	{return value;}
+/// @brief null-terminated string conversion.
+/// @param value String to convert.
+/// @return Resulting string.
+constexpr String toString(cstring const& value)						{return String(value);			}
+/// @brief "C-style" string conversion.
+/// @param value String to convert.
+/// @param size Size of string to convert.
+/// @return Resulting string.
+constexpr String toString(cstring const& value, usize const& size)	{return String(value, size);	}
+/// @brief string-to-string conversion (returns passed string).
+/// @param value String to convert.
+/// @return Passed string.
+constexpr String toString(String const& value)						{return value;					}
 
+/// @brief Char array conversion.
+/// @tparam T Character type.
+/// @tparam N Array size.
+/// @param value Character array to convert.
+/// @return Resulting string.
 template<Type::ASCII T, usize N>
 constexpr String toString(Decay::AsType<T[N]> const& value) {
 	return String(value);
 }
 
+/// @brief String conversion with multiple values.
+/// @tparam ...Args Argument types.
+/// @param ...args Values to convert.
+/// @return All values as strings, concatenated sequentially into a single string.
 template<class... Args>
 constexpr String toString(Args const&... args)
 requires (sizeof...(Args) > 1) {
 	return (... + toString(args));
 }
 
+/// @brief Wide string conversion with multiple values.
+/// @tparam ...Args Argument types.
+/// @param ...args Values to convert.
+/// @return All values as strings, concatenated sequentially into a single wide string.
 template<class... Args>
 constexpr WideString toWideString(Args const&... args)
 requires (... && Type::Conversion::StringConvertible<Args>) {

@@ -1026,6 +1026,7 @@ public:
 	/// @return Whether all elements match.
 	template<class TPredicate>
 	constexpr bool validate(TPredicate const& cond) const {
+		if (!count) return false;
 		for (DataType const& c: *this)
 			if (!cond(c))
 				return false;
@@ -1119,8 +1120,8 @@ public:
 	constexpr AllocatorType& allocator() {return alloc;}
 
 	/// @brief `swap` algorithm for `List`.
-	/// @param a `List` of elements.
-	/// @param b `List` of elements.
+	/// @param a `List` to swap.
+	/// @param b `List` to swap with.
 	friend constexpr void swap(SelfType& a, SelfType& b) noexcept {
 		swap(a.contents, b.contents);
 		swap(a.maximum, b.maximum);

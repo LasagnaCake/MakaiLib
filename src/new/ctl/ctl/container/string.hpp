@@ -32,14 +32,14 @@ struct BaseString:
 	public List<TChar, TIndex, TAlloc>,
 	public SelfIdentified<BaseString<TChar, TIndex>>,
 	public Derived<List<TChar, TIndex>>,
-	public StringLiterable<TChar>,
+	public CStringable<TChar>,
 	public Streamable<TChar> {
 public:
 	using Iteratable		= ::CTL::Iteratable<TChar, TIndex>;
 	using SelfIdentified	= ::CTL::SelfIdentified<BaseString<TChar, TIndex>>;
 	using Derived			= ::CTL::Derived<List<TChar, TIndex>>;
 	using Streamable		= ::CTL::Streamable<TChar>;
-	using StringLiterable	= ::CTL::StringLiterable<TChar>;
+	using CStringable	= ::CTL::CStringable<TChar>;
 
 	using typename Derived::BaseType;
 
@@ -76,7 +76,7 @@ public:
 	;
 
 	using
-		typename StringLiterable::StringLiteralType
+		typename CStringable::CStringType
 	;
 
 	using
@@ -125,9 +125,9 @@ public:
 	/// @brief Destructor.
 	constexpr ~BaseString() {if (strbuf) allocator().deallocate(strbuf);}
 	
-	/// @brief Constructs the `BaseString` from a string literal.
-	/// @param v String literal to copy from.
-	constexpr BaseString(StringLiteralType const& v) {
+	/// @brief Constructs the `BaseString` from a null-terminated strin.
+	/// @param v String to copy from.
+	constexpr BaseString(CStringType const& v) {
 		SizeType len = 0;
 		while (v[len++] != '\0' && len <= MAX_SIZE);
 		reserve(len);
@@ -178,10 +178,10 @@ public:
 		(*this) += (... + args);
 	}
 
-	/// @brief Constructos a string from a STL view analog.
+	/// @brief Constructos the `BaseString` from a STL view analog.
 	/// @param str View to copy from.
 	constexpr BaseString(STDViewType const& str):	BaseType(str.data(), str.data() + str.size())	{}
-	/// @brief Constructos a string from a STL string analog.
+	/// @brief Constructos the `BaseString` from a STL string analog.
 	/// @param str View to copy from.
 	constexpr BaseString(STDStringType const& str):	BaseType(str.data(), str.data() + str.size())	{}
 
@@ -412,10 +412,10 @@ public:
 	/// @param other `BaseString` to move.
 	/// @return Reference to self.
 	constexpr SelfType& operator=(SelfType&& other)					{BaseType::operator=(CTL::move(other)); return *this;	}
-	/// @brief Copy assignment operator (string literal).
-	/// @param other String literal to copy from.
+	/// @brief Copy assignment operator (null-terminated string).
+	/// @param other String to copy from.
 	/// @return Reference to self.
-	constexpr SelfType& operator=(StringLiteralType const& other)	{BaseType::operator=(SelfType(other)); return *this;	}
+	constexpr SelfType& operator=(CStringType const& other)	{BaseType::operator=(SelfType(other)); return *this;	}
 
 	/// @brief Insertion operator (`BaseString`).
 	/// @param other `Basestring` to insert into.
@@ -440,10 +440,10 @@ public:
 	/// @return Resulting concatenated string.
 	constexpr SelfType operator+(SelfType const& other) const	{return SelfType(*this).appendBack(other);	}
 
-	/// @brief String concatenation operator (string literal).
-	/// @param value String literal to concatenate.
+	/// @brief String concatenation operator (null-terminated string).
+	/// @param value String to concatenate.
 	/// @return Resulting concatenated string.
-	constexpr SelfType operator+(StringLiteralType const& str) const				{return (*this) + SelfType(str);}
+	constexpr SelfType operator+(CStringType const& str) const				{return (*this) + SelfType(str);}
 	/// @brief String concatenation operator (char array).
 	/// @tparam S Array size.
 	/// @param value Char array to concatenate.
@@ -457,11 +457,11 @@ public:
 	/// @return Resulting concatenated string.
 	friend constexpr SelfType operator+(DataType const& value, SelfType const& self)	{return SelfType().pushBack(value) + self;	}
 
-	/// @brief String concatenation operator (string literal).
-	/// @param value String literal to concatenate.
+	/// @brief String concatenation operator (null-terminated string).
+	/// @param value String to concatenate.
 	/// @param self `BaseString` to concatenate with.
 	/// @return Resulting concatenated string.
-	friend constexpr SelfType operator+(StringLiteralType const& str, SelfType const& self)					{return SelfType(str) + (self);}
+	friend constexpr SelfType operator+(CStringType const& str, SelfType const& self)					{return SelfType(str) + (self);}
 	/// @brief String concatenation operator (char array).
 	/// @tparam S Array size.
 	/// @param value Char array to concatenate.
@@ -478,10 +478,10 @@ public:
 	/// @param value `BaseString` to append.
 	/// @return Reference to self.
 	constexpr SelfType& operator+=(SelfType const& other)				{appendBack(other); return *this;			}
-	/// @brief String appending operator (string literal).
-	/// @param value String literal to append.
+	/// @brief String appending operator (null-terminated string).
+	/// @param value String to append.
 	/// @return Reference to self.
-	constexpr SelfType& operator+=(StringLiteralType const& str)		{appendBack(SelfType(str)); return *this;	}
+	constexpr SelfType& operator+=(CStringType const& str)		{appendBack(SelfType(str)); return *this;	}
 	/// @brief String appending operator (char array).
 	/// @tparam S Array size.
 	/// @param value Char array to append.
@@ -519,10 +519,10 @@ public:
 	/// @return Whether they're equal.
 	template<SizeType S>
 	constexpr bool operator==(Decay::AsType<ConstantType[S]> const& str) const	{return *this == SelfType(str);			}
-	/// @brief Equality comparison operator (string literal).
-	/// @param str String literal to compare with.
+	/// @brief Equality comparison operator (null-terminated string).
+	/// @param str String to compare with.
 	/// @return Whether they're equal.
-	constexpr bool operator==(StringLiteralType const& str) const				{return *this == SelfType(str);			}
+	constexpr bool operator==(CStringType const& str) const				{return *this == SelfType(str);			}
 	/// @brief Equality comparison operator (`BaseString`).
 	/// @param str `BaseString` to compare with.
 	/// @return Whether they're equal.
@@ -533,10 +533,10 @@ public:
 	/// @return Order between objects.
 	template<SizeType S>
 	constexpr OrderType operator<=>(Decay::AsType<ConstantType[S]> const& str) const	{return *this <=> SelfType(str);		}
-	/// @brief Threeway comparison operator (string literal).
-	/// @param str String literal to compare with.
+	/// @brief Threeway comparison operator (null-terminated string).
+	/// @param str String to compare with.
 	/// @return Order between objects.
-	constexpr OrderType operator<=>(StringLiteralType const& str) const					{return *this <=> SelfType(str);		}
+	constexpr OrderType operator<=>(CStringType const& str) const					{return *this <=> SelfType(str);		}
 	/// @brief Threeway comparison operator (`BaseString`).
 	/// @param str `BaseString` to compare with.
 	/// @return Order between objects.
@@ -557,19 +557,30 @@ public:
 		return result;
 	}
 	
+	/// @brief Returns a substring, starting at a given point.
+	/// @param start Start of new string.
+	/// @return Resulting substring.
 	SelfType substring(IndexType const& start) const {
 		return sliced(start);
 	}
 
+	/// @brief Returns a substring, starting at a given point, and going for a given size.
+	/// @param start Start of new string.
+	/// @param length Length of new string.
+	/// @return Resulting substring.
 	SelfType substring(IndexType start, SizeType const& length) const {
 		assertIsInBounds(start);
 		while (start < 0) start += size();
 		return sliced(start, start + length);
 	}
 
+	/// @brief Returns whether the last character is a null character.
+	/// @return Whether the last character is a null character.
 	constexpr bool nullTerminated() const {return back() == '\0';}
 	
-	constexpr StringLiteralType cstr() const {
+	/// @brief Returns the string as a "c-style" string.
+	/// @return Pointer to beginning of the "c-style" string.
+	constexpr CStringType cstr() const {
 		if (nullTerminated()) return cbegin();
 		strbuflen = size() + 1;
 		strbufalloc.resize(strbuf, strbuflen);
@@ -578,13 +589,23 @@ public:
 		return strbuf;
 	}
 
+	/// @brief Returns the string as lowercase.
+	/// @return Lowercase string.
 	constexpr SelfType lower() const {return transformed(toLowerImpl);	}
+	/// @brief Returns the string as uppercase.
+	/// @return Uppercase string.
 	constexpr SelfType upper() const {return transformed(toUpperImpl);	}
 
+	/// @brief Returns whether the string represents a hex value.
+	/// @return Whether the string represents a hex value.
 	constexpr bool isHex() const			{return validate(isHexImpl);			}
+	/// @brief Returns whether the string is composed fully of null or whitespace characters.
+	/// @return Whether the string is null or entirely whitespace.
 	constexpr bool isNullOrSpaces() const	{return validate(isNullOrSpaceImpl);	}
 
 	// Most likely wrong
+	/// @brief Converts the string to a `char` string.
+	/// @return String as `char` string.
 	constexpr BaseString<char, SizeType> toString() const
 	requires Type::Equal<DataType, wchar> {
 		BaseString<char, SizeType> result;
@@ -593,10 +614,14 @@ public:
 		return result;
 	}
 
+	/// @brief Converts the string to a `char` string.
+	/// @return String as `char` string.
 	constexpr SelfType toString() const
 	requires Type::Equal<DataType, char> {return *this;}
 
 	// Most likely wrong
+	/// @brief Converts the string to a `wchar` string.
+	/// @return String as `wchar` string.
 	constexpr BaseString<wchar, SizeType> toWideString() const
 	requires Type::Equal<DataType, char> {
 		BaseString<wchar, SizeType> result;
@@ -605,13 +630,28 @@ public:
 		return result;
 	}
 
+	/// @brief Converts the string to a `wchar` string.
+	/// @return String as `wchar` string.
 	constexpr SelfType toWideString() const
 	requires Type::Equal<DataType, wchar> {return *this;}
-
-	constexpr static bool toNumber(SelfType const& str) {
+	
+	/// @brief String-to-boolean conversion.
+	///@tparam T Boolean type (`bool`).
+	/// @param str String to convert.
+	/// @return Converted value as a boolean.
+	template<Type::Equal<bool> T>
+	constexpr static T toNumber(SelfType const& str) {
+		if (str == "true") return true;
+		if (str == "false") return false;
 		return toNumber<uint8>(str);
 	}
 
+	/// @brief String-to-integer conversion.
+	///@tparam T Integer type.
+	/// @param str String to convert.
+	/// @param base Base of the string. Will be used, if non-zero.
+	/// @return Converted value as number.
+	/// @throw FailedActionException if conversion fails.
 	template<Type::Integer T>
 	constexpr static T toNumber(SelfType const& str, T const& base = 0) 
 	requires Type::Different<T, bool> {
@@ -620,7 +660,12 @@ public:
 			throw FailedActionException("String-to-Integer conversion failure!");
 		return val;
 	}
-
+	
+	/// @brief String-to-float conversion.
+	///@tparam T Floating point type.
+	/// @param str String to convert.
+	/// @return Converted value as number.
+	/// @throw FailedActionException if conversion fails.
 	template<Type::Real T>
 	constexpr static T toNumber(SelfType const& str) {
 		T val = T();
@@ -629,10 +674,23 @@ public:
 		return val;
 	}
 
-	constexpr static SelfType fromNumber(bool const& val) {
-		return fromNumber<uint8>(val);
+	/// @brief Boolean-to-string conversion.
+	///@tparam T Boolean type (`bool`).
+	/// @param val Value to convert.
+	/// @param text Whether to convert as text ("true" or "false"), or a number (0 or 1).
+	/// @return Converted value as string.
+	template<Type::Equal<bool> T>
+	constexpr static SelfType fromNumber(T const& val, bool const text = false) {
+		if (text) return val ? "true" : "false";
+		return val ? "1" : "0";
 	}
 
+	/// @brief Integer-to-string conversion.
+	/// @tparam T Integer type.
+	/// @param val Value to convert.
+	/// @param base Base to convert as. By default, it is base 10.
+	/// @return Converted value as string.
+	/// @throw FailedActionException if conversion fails.
 	template<Type::Integer T>
 	constexpr static SelfType fromNumber(T const& val, T const& base = 10)
 	requires Type::Different<T, bool> {
@@ -643,6 +701,22 @@ public:
 		return result;
 	}
 
+	/// @brief Floating-point-to-string conversion.
+	/// @tparam T Floating point type.
+	/// @param val Value to convert.
+	/// @param
+	///		precision Amount of decimal spaces to include.
+	///		By default, it is equal to double the byte size of the floating point type.
+	/// @return Converted value as string.
+	/// @throw FailedActionException if conversion fails.
+	/// @note
+	///		Default value of `precision` for:
+	///
+	///		- `float`s: 8 decimal spaces.
+	///
+	///		- `double`s: 16 decimal spaces.
+	///
+	///		- `long double`s: 32 decimal spaces.
 	template<Type::Real T>
 	constexpr static SelfType fromNumber(T const& val, usize const& precision = sizeof(T)*2) {
 		SelfType result(sizeof(T)*4, '\0');
@@ -652,14 +726,23 @@ public:
 		return result;
 	}
 
+	/// @brief Swap algorithm for `BaseString`.
+	/// @param a `BaseString` to swap.
+	/// @param b `BaseString` to swap with.
 	friend constexpr void swap(SelfType& a, SelfType& b) noexcept {
 		swap<BaseType>(a, b);
 		swap(a.strbuf, b.strbuf);
 		swap(a.strbuflen, b.strbuflen);
 	}
 
+	/// @brief Returns an STL view for the string.
+	/// @return STL view for the string.
 	constexpr STDViewType stdView() const		{return STDViewType(cbegin(), cend());		}
+	/// @brief Returns the string as an STL string.
+	/// @return String as an STL string.
 	constexpr STDStringType std() const			{return STDStringType(cbegin(), cend());	}
+	/// @brief Returns the string as an STL string.
+	/// @return String as an STL string.
 	constexpr operator STDStringType() const	{return std();								}
 
 private:
@@ -668,11 +751,14 @@ private:
 	constexpr static bool isHexImpl(DataType const& c)			{return isHexChar<DataType>(c);			}
 	constexpr static bool isNullOrSpaceImpl(DataType const& c)	{return isNullOrSpaceChar<DataType>(c);	}
 
+	/// @brief Buffer containing the "C-style" string.
 	PointerType mutable		strbuf			= nullptr;
+	/// @brief Size of the "C-style" string buffer.
 	usize mutable			strbuflen		= 0;
+	/// @brief Allocator for the "C-style" string buffer.
 	AllocatorType mutable	strbufalloc;
 
-	[[noreturn]] void invalidNumberError(StringLiteralType const& v) const {
+	[[noreturn]] void invalidNumberError(CStringType const& v) const {
 		throw InvalidValueException("Not a valid number!");
 	}
 
@@ -685,6 +771,12 @@ private:
 	}
 };
 
+/// @brief Stream extraction operator overloading.
+/// @tparam TChar Character type.
+/// @tparam TIndex Index type.
+/// @param stream Stream to extract from.
+/// @param string `BaseString` to extract to.
+/// @return Input stream.
 template<Type::ASCII TChar, Type::Integer TIndex = usize>
 constexpr typename BaseString<TChar, TIndex>::InputStreamType& operator>>(
 	typename BaseString<TChar, TIndex>::InputStreamType& stream,
@@ -693,17 +785,28 @@ constexpr typename BaseString<TChar, TIndex>::InputStreamType& operator>>(
 	return string.readFrom(stream);
 }
 
-
-
+/// @brief String concatenation operator.
+/// @tparam TChar Character type.
+/// @tparam TIndex Index type.
+/// @param str String to append.
+/// @param self `BaseString` to append to.
+/// @return Resulting concatenated string.
 template<Type::ASCII TChar, Type::Integer TIndex = usize>
 constexpr BaseString<TChar, TIndex>
 operator+(
-	typename BaseString<TChar, TIndex>::StringLiteralType const& str,
+	typename BaseString<TChar, TIndex>::CStringType const& str,
 	BaseString<TChar, TIndex> const& self
 ) {
 	return BaseString<TChar, TIndex>(str) + self;
 }
 
+/// @brief String concatenation operator.
+/// @tparam TChar Character type.
+/// @tparam TIndex Index type.
+/// @tparam S Array size.
+/// @param str Char array to append.
+/// @param self `BaseString` to append to.
+/// @return Resulting concatenated string.
 template<Type::ASCII TChar, Type::Integer TIndex = usize, AsUnsigned<TIndex> S>
 constexpr BaseString<TChar, TIndex>
 operator+(
@@ -713,19 +816,25 @@ operator+(
 	return BaseString<TChar, TIndex>(str) + self;
 }
 
+/// `BaseString` analog for a `char` string.
 typedef BaseString<char>	String;
+/// `BaseString` analog for a `wchar` string.
 typedef BaseString<wchar_t>	WideString;
 
+/// @brief Static string of characters.
+/// @tparam TChar Character type.
+/// @tparam N String size.
+/// @tparam TIndex Index type.
 template<Type::ASCII TChar, usize N, Type::Integer TIndex = usize>
 struct BaseStaticString:
 	Array<TChar, N, TIndex>,
-	StringLiterable<TChar>,
+	CStringable<TChar>,
 	SelfIdentified<BaseStaticString<TChar, N, TIndex>>,
 	Derived<Array<TChar, N, TIndex>> {
 public:
 	using Derived			= Derived<Array<TChar, N, TIndex>>;
 	using SelfIdentified	= SelfIdentified<BaseStaticString<TChar, N, TIndex>>;
-	using StringLiterable	= StringLiterable<TChar>;
+	using CStringable	= CStringable<TChar>;
 
 	using typename Derived::BaseType;
 
@@ -753,7 +862,7 @@ public:
 
 	using BaseType::SIZE, BaseType::MAX_SIZE;
 
-	using typename StringLiterable::StringLiteralType;
+	using typename CStringable::CStringType;
 
 private:
 	constexpr static IndexType wrapAround(IndexType value) {
@@ -762,12 +871,18 @@ private:
 	}
 
 public:
-	constexpr BaseStaticString(StringLiteralType const& str) {
+	/// @brief Constructs the `BaseStaticString` from a null-terminated string.
+	/// @param str String to copy from.
+	constexpr BaseStaticString(CStringType const& str) {
 		SizeType len = 0;
 		while (str[len++] != '\0' && len <= MAX_SIZE);
 		MX::memcpy(str, data(), (len < SIZE ? len : SIZE));
 	}
 
+	/// @brief Returns a static substring, starting at a given point, and going for a given size.
+	/// @tparam BEGIN Start of new string.
+	/// @tparam S Length of new string.
+	/// @return Resulting substring.
 	template<IndexType BEGIN, SizeType S = SIZE>
 	constexpr auto substring() const {
 		constexpr SizeType start	= wrapAround(BEGIN);
@@ -777,28 +892,44 @@ public:
 		return result;
 	}
 
-	constexpr StringLiteralType cstr() const {
+	/// @brief Returns the static string as a "c-style" string.
+	/// @return Static string as a "c-style" string.
+	constexpr CStringType cstr() const {
 		return data();
 	}
 
+	/// @brief Returns the static string as a dynamic string.
+	/// @return Static string as dynamic string.
 	constexpr BaseString<TChar, TIndex> toString() const {
 		return BaseString<TChar, TIndex>(begin(), end());
 	}
 };
 
+/// @brief List of strings.
 typedef List<String>			StringList;
+/// @brief String arguments.
 typedef Arguments<String>		StringArguments;
+/// @brief Pair of strings.
 typedef Pair<String, String>	StringPair;
 
+/// @brief `BaseStaticString` analog for a `char` static string.
+/// @tparam N Static string size.
 template<usize N> using StaticString		= BaseStaticString<char,	N>;
+/// @brief `BaseStaticString` analog for a `wchar` static string.
+/// @tparam N Static string size.
 template<usize N> using StaticWideString	= BaseStaticString<wchar_t,	N>;
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wliteral-suffix"
+/// @brief `BaseString` literals.
 namespace Literals::Text {
+	/// @brief CTL `String` literal.
 	constexpr String operator "" s		(cstring cstr, usize sz)	{return String(cstr, cstr + sz);				}
+	/// @brief CTL `String` literal.
 	constexpr String operator "" s		(cwstring cstr, usize sz)	{return WideString(cstr, cstr + sz).toString();	}
+	/// @brief CTL `WideString` literal.
 	constexpr WideString operator "" ws	(cstring cstr, usize sz)	{return String(cstr, cstr + sz).toWideString();	}
+	/// @brief CTL `WideString` literal.
 	constexpr WideString operator "" ws	(cwstring cstr, usize sz)	{return WideString(cstr, cstr + sz);			}
 }
 #pragma GCC diagnostic pop

@@ -19,7 +19,10 @@ template<class T, T V> struct ValueConstant {
 	constexpr static DataType value = V;
 };
 
-/// @brief Typetraits type constraints.
+/// @brief Type constraints.
+namespace Type {}
+
+/// @brief Trait-specific type constraints.
 namespace Type::Trait {
 	/// @brief Type must hold a compile-time value constant.
 	template<class C>

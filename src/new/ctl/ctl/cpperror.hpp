@@ -14,7 +14,7 @@ struct Exception:
 	Failure,
 	SelfIdentified<Exception>,
 	Typed<const char*>,
-	StringLiterable<char> {
+	CStringable<char> {
 public:
 	using Typed				= ::CTL::Typed<const char*>;
 	using SelfIdentified	= ::CTL::SelfIdentified<Exception>;
@@ -122,7 +122,7 @@ public:
 	;
 
 	using
-		typename BaseType::StringLiteralType
+		typename BaseType::CStringType
 	;
 
 	const DataType type;
@@ -217,7 +217,7 @@ public:
 		;
 	}
 
-	StringLiteralType what() const noexcept override {
+	CStringType what() const noexcept override {
 		return strlit(sumbuf);
 	}
 

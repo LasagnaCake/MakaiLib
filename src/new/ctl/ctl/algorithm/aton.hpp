@@ -311,6 +311,7 @@ constexpr ssize itoa(I val, T* const& buf, usize const& bufSize, I const& base =
 		buf[offset++] = '0';
 		switch (base) {
 			case 2:		buf[offset] = 'b'; ++offset; break;
+			case 3:		buf[offset] = 't'; ++offset; break;
 			case 4:		buf[offset] = 'q'; ++offset; break;
 			case 16:	buf[offset] = 'x'; ++offset; break;
 			case 32:	buf[offset] = 'y'; ++offset; break;

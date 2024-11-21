@@ -140,11 +140,11 @@ struct Functional<TReturn(TArguments...)> {
 	using FunctionType = Decay::AsFunction<TReturn(TArguments...)>;
 };
 
-/// @brief Tags the class as being able to be converted to a string literal, in some capacity.
+/// @brief Tags the class as being able to be converted to a "C-style" string, in some capacity.
 /// @tparam T Character type.
 template<Type::ASCII T>
-struct StringLiterable {
-	using StringLiteralType = typename Typed<T>::ConstPointerType;
+struct CStringable {
+	using CStringType = typename Typed<T>::ConstPointerType;
 };
 
 CTL_NAMESPACE_END
