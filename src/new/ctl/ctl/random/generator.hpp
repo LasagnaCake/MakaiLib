@@ -6,81 +6,118 @@
 
 CTL_NAMESPACE_BEGIN
 
+/// @brief Random number generation.
 namespace Random {
 
+/// @brief Base classes.
 namespace Base {
 	template<class T>
 	struct Generator;
 
+	/// @brief Cryptographically insecure random number generator.
+	/// @tparam TEngine Random number engine type.
 	template <Type::Subclass<SimpleEngine> TEngine>
 	struct Generator<TEngine> {
+		/// @brief Random number engine type.
 		using EngineType = TEngine;
 
+		/// @brief Whether the random number generator is ecure.
 		constexpr static bool SECURE = false;
 
+		/// @brief Empty constructor.
 		Generator(): engine()				{}
+		/// @brief Constructs the generator from a seed.
+		/// @param seed Seed to use.
 		Generator(usize const& seed)		{engine.setSeed(seed);						}
+		/// @brief Copy constructor.
+		/// @param other `Generator` to copy from.
 		Generator(Generator const& other) 	{engine.setSeed(other.engine.getSeed());	}
+		/// @brief Move constructor.
+		/// @param other `Generator` to move.
 		Generator(Generator&& other)		= default;
 
-		/// Returns a random double between 0 and 1.
+		/// @brief Returns a random floating point number between 0 and 1.
+		/// @tparam T Floating point type.
+		/// @return Random number.
 		template<Type::Real T = float>
 		T real() {
 			return static_cast<T>(engine.next()) / static_cast<T>(NumberLimit<usize>::HIGHEST);
 		}
 
-		/// Returns a random integer between 0 and highest usize.
+		/// @brief Returns a random integer between lowest and highest value the integer can hold.
+		/// @tparam T Integer type.
+		/// @return Random number.
 		template<Type::Integer T = ssize>
 		T integer() {
 			return engine.next();
 		}
 
-		/// Sets the random number generator's seed.
+		/// @brief Sets the random number generator's seed.
+		/// @param seed Seed to use.
 		void setSeed(usize const& seed) {
 			engine.setSeed(seed);
 		}
 
-		/// Gets the random number generator's current seed.
+		/// @brief Gets the random number generator's current seed.
+		/// @return Current seed.
 		usize getSeed() {
 			return engine.getSeed();
 		}
 
-		/// Gets a seed based on the current clock's time, and a random number.
+		/// @brief Gets a seed based on the current clock's time, and a random number.
+		/// @return New seed.
 		usize generateNewSeed() {
 			return OS::Time::now() ^ !(integer() << 0x2F);
 		}
 		
 	protected:
+		/// @brief Underlying engine used.
 		EngineType engine;
 	};
 
+	/// @brief Cryptographically secure random number generator.
+	/// @tparam TEngine Random number engine type.
 	template <Type::Subclass<SecureEngine> TEngine>
 	struct Generator<TEngine> {
+		/// @brief Random number engine type.
 		using EngineType = TEngine;
 
+		/// @brief Whether the random number generator is ecure.
 		constexpr static bool SECURE = true;
 
+		/// @brief Empty constructor.
 		Generator(): engine()							{}
 
+		/// @brief Copy constructor (deleted).
 		Generator(Generator const& other)				= delete;
+		/// @brief Move constructor.
+		/// @param other `Generator` to move.
 		Generator(Generator&& other)					= default;
 
+		/// @brief Copy assignment operator (deleted).
 		Generator& operator=(Generator const& other)	= delete;
+		/// @brief Move constructor.
+		/// @param other `Generator` to move.
 		Generator& operator=(Generator&& other)			= default;
 
-		/// Returns a random double between 0 and 1.
+		/// @brief Returns a random floating point number between 0 and 1.
+		/// @tparam T Floating point type.
+		/// @return Random number.
 		template<Type::Real T = float>
 		T real() {
 			return static_cast<T>(engine.next()) / static_cast<T>(NumberLimit<usize>::HIGHEST);
 		}
 
-		/// Returns a random integer between 0 and highest usize.
+		/// @brief Returns a random integer between lowest and highest value the integer can hold.
+		/// @tparam T Integer type.
+		/// @return Random number.
 		template<Type::Integer T = ssize>
 		T integer() {
 			return engine.next();
 		}
 		
 	protected:
+		/// @brief Underlying engine used.
 		EngineType engine;
 	};
 }
@@ -89,41 +126,70 @@ template <class TEngine>
 struct BaseGenerator: Base::Generator<TEngine> {
 	using
 		Base::Generator<TEngine>::Generator,
-		Base::Generator<TEngine>::engine,
 		Base::Generator<TEngine>::real,
 		Base::Generator<TEngine>::integer
 	;
 
-	/// Returns a random double between the given values.
+	/// @brief Returns a random floating point number between the given range.
+	/// @tparam T Floating point type.
+	/// @param min Lowest value.
+	/// @param max Highest value.
+	/// @return Random number.
 	template<Type::Real T = float>
 	T real(T const& min, T const& max) {
 		if (min > max) return real<T>(max, min);
 		return real<T>() * (max - min) + min;
 	}
 
-	/// Returns a random integer between the given values.
+	/// @brief Returns a random integer between the given range.
+	/// @tparam T Integer type.
+	/// @param min Lowest value.
+	/// @param max Highest value.
+	/// @return Random number.
 	template<Type::Integer T = ssize>
 	T integer(T const& min, T const& max) {
 		if (min > max) return integer<T>(max, min);
-		return (integer<T>() % (max - min)) + min;
+		return (integer<AsUnsigned<T>>() % (max - min)) + min;
 	}
 
+	/// @brief Returns a random integer between lowest and highest value the integer can hold.
+	/// @tparam T Integer type.
+	/// @return Random number.
 	template<Type::Integer T = ssize>
 	T number()								{return integer<T>();			}
 
+	/// @brief Returns a random floating point number between 0 and 1.
+	/// @tparam T Floating point type.
+	/// @return Random number.
 	template<Type::Real T = float>
 	T number() 								{return real<T>();				}
 
+	/// @brief Returns a random integer between the given range.
+	/// @tparam T Integer type.
+	/// @param min Lowest value.
+	/// @param max Highest value.
+	/// @return Random number.
 	template<Type::Integer T = ssize>
 	T number(T const& min, T const& max)	{return integer<T>(min, max);	}
 
+	/// @brief Returns a random floating point number between the given range.
+	/// @tparam T Floating point type.
+	/// @param min Lowest value.
+	/// @param max Highest value.
+	/// @return Random number.
 	template<Type::Real T = float>
 	T number(T const& min, T const& max)	{return real<T>(min, max);		}
+
+protected:
+	using Base::Generator<TEngine>::engine;
 };
 
+/// @brief Basic random number generator.
 using SimpleGenerator = BaseGenerator<Engine::Mersenne>;
+/// @brief Cryptographically secure random number generator.
 using SecureGenerator = BaseGenerator<Engine::Secure>;
 
+/// @brief Basic random number generator.
 using Generator = SimpleGenerator;
 
 }

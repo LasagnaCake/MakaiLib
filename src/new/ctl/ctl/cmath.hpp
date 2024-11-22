@@ -2,6 +2,7 @@
 #define CTL_CMATH_H
 
 #include "namespace.hpp"
+#include "typetraits/traits.hpp"
 
 CTL_NAMESPACE_BEGIN
 

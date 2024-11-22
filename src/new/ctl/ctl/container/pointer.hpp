@@ -22,6 +22,7 @@ namespace Type::Container {
 	template <typename T> concept Pointable = Safe<T>;
 }
 
+/// @brief Base classes for other classes.
 namespace Base {
 	/// @brief Reference counter.
 	/// @tparam T Reference type.
