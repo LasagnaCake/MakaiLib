@@ -7,9 +7,14 @@
 
 CTL_NAMESPACE_BEGIN
 
+/// @brief Asynchronous function.
+/// @tparam F Function type.
 template<class F>
 class Task;
 
+/// @brief Asynchronous function wrapper.
+/// @tparam R Return type.
+/// @tparam ...Args Argument types.
 template<typename R, typename... Args>
 class Task<R(Args...)>:
 	Functional<Promise<R>(Thread::ExecutionToken, Args...)>,
@@ -33,20 +38,29 @@ public:
 		typename SelfIdentified::SelfType
 	;
 
+	/// @brief Thread execution token type.
 	using ExecutionTokenType = Thread::ExecutionToken;
 
+	/// @brief Function wrapper type.
 	using FunctorType	= Functor<FunctionType>;
+	/// @brief Promise type.
 	using PromiseType	= Promise<ReturnType>;
+	/// @brief Nullable result type.
 	using NullableType	= Nullable<ReturnType>;
 
+	/// @brief Empty constructor.
 	constexpr Task() {}
 
+	/// @brief Copy constructor.
+	/// @param other `Task` to copy from.
 	constexpr Task(SelfType const& other):
 	executor(other.executor),
 	result(other.result),
 	target(other.target) {
 	}
 
+	/// @brief Move constructor.
+	/// @param other `Task` to move.
 	constexpr Task(SelfType&& other):
 	executor(CTL::move(other.executor)),
 	result(CTL::move(other.result)),

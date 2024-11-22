@@ -129,14 +129,14 @@ public:
 	/// @param other Value to compare with.
 	/// @return Whether they're equal.
 	/// @note Requires value type to be equally comparable.
-	/// @sa Comparator::equals()
+	/// @sa Comparator::equals().
 	inline bool operator==(T const& other) const
 	requires Type::Comparator::Equals<DataType, DataType>	{return SimpleComparator<T>::equals(value(), other);			}
 	/// @brief Safely compares values.
 	/// @param other Value to compare with.
 	/// @return Whether they're equal.
 	/// @note Requires value type to be equally comparable.
-	/// @sa Comparator::equals()
+	/// @sa Comparator::equals().
 	inline bool operator==(Atomic const& other) const
 	requires Type::Comparator::Equals<DataType, DataType>	{return SimpleComparator<T>::equals(value(), other.value());	}
 
@@ -144,14 +144,14 @@ public:
 	/// @param other Value to compare with.
 	/// @return Order between values.
 	/// @note Requires value type to be threeway comparable.
-	/// @sa Comparator::compare()
+	/// @sa Comparator::compare().
 	inline OrderType operator<=>(T const& other) const
 	requires Type::Comparator::Threeway<DataType, DataType>	{return SimpleComparator<T>::compare(value(), other);			}
 	/// @brief Safely performs a threeway comparison.
 	/// @param other Atomic to compare with.
 	/// @return Order between values.
 	/// @note Requires value type to be threeway comparable.
-	/// @sa Comparator::compare()
+	/// @sa Comparator::compare().
 	inline OrderType operator<=>(Atomic const& other) const
 	requires Type::Comparator::Threeway<DataType, DataType>	{return SimpleComparator<T>::compare(value(), other.value());	}
 
