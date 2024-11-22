@@ -184,7 +184,7 @@ protected:
 	using Base::Generator<TEngine>::engine;
 };
 
-/// @brief Basic random number generator.
+/// @brief Pseudo-random number generator.
 using SimpleGenerator = BaseGenerator<Engine::Mersenne>;
 /// @brief Cryptographically secure random number generator.
 using SecureGenerator = BaseGenerator<Engine::Secure>;
