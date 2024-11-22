@@ -47,6 +47,8 @@
 - - Or C# even, this one might be the more feasible option
 - - - This one sounds enticing
 - - What about [SWIG](https://www.swig.org/)?
+- [ ] Shader modules
+- - Something akin to [this](https://stackoverflow.com/a/10465461)
 
 ### Future
 

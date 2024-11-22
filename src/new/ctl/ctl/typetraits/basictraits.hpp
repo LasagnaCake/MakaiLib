@@ -313,7 +313,7 @@ namespace Type {
 	template<typename T>
 	concept Class = Impl::IsClass<T>::value;
 
-	/// @brief Type must be a subclass of (or is) `Base`.
+	/// @brief Type must be `Base` or a subclass of it.
 	template<typename T, typename Base>
 	concept Derived	= Impl::IsDerived<T, Base>::value;
 

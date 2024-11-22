@@ -290,7 +290,7 @@ public:
 	/// @brief Threeway comparison operator.
 	/// @param other `Nullable` to compare with.
 	/// @return Order between both `Nullable`s.
-	/// @note Requires value type to be three-way comparable.
+	/// @note Requires value type to be threeway comparable.
 	/// @sa Comparator::compare()
 	constexpr OrderType operator<=>(SelfType const& other) const
 	requires Type::Comparator::Threeway<DataType, DataType>	{
@@ -303,7 +303,7 @@ public:
 	/// @brief Threeway comparison operator.
 	/// @param value Value to compare with.
 	/// @return Order between the stored value and `value`.
-	/// @note Requires value type to be three-way comparable.
+	/// @note Requires value type to be threeway comparable.
 	/// @sa Comparator::compare()
 	constexpr OrderType operator<=>(DataType const& value) const
 	requires Type::Comparator::Threeway<DataType, DataType>	{
@@ -315,7 +315,7 @@ public:
 	/// @param value Value to compare.
 	/// @param self `Nullable` to compare with.
 	/// @return Order between the stored value and `value`.
-	/// @note Requires value type to be three-way comparable.
+	/// @note Requires value type to be threeway comparable.
 	/// @sa Comparator::compare()
 	friend constexpr OrderType operator<=>(DataType const& value, SelfType const& self)
 	requires Type::Comparator::Threeway<DataType, DataType>	{

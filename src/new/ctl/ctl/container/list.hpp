@@ -928,7 +928,7 @@ public:
 	/// @brief Threeway comparison operator.
 	/// @param other Other `List` to compare with.
 	/// @return Order between both `List`s.
-	/// @note Requires element type to be three-way comparable.
+	/// @note Requires element type to be threeway comparable.
 	/// @sa Comparator::compare()
 	constexpr OrderType operator<=>(SelfType const& other) const
 	requires Type::Comparator::Threeway<DataType, DataType> {
@@ -964,10 +964,10 @@ public:
 		return result;
 	}
 
-	/// @brief Returns the result of a three-way comparison with another `List`.
+	/// @brief Returns the result of a threeway comparison with another `List`.
 	/// @param other Other `List` to compare with.
 	/// @return Order between both `List`s.
-	/// @note Requires element type to be three-way comparable.
+	/// @note Requires element type to be threeway comparable.
 	/// @sa Comparator::compare()
 	constexpr OrderType compare(SelfType const& other) const
 	requires Type::Comparator::Threeway<DataType, DataType> {

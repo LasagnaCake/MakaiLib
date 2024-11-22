@@ -8,6 +8,15 @@
 
 CTL_NAMESPACE_BEGIN
 
+/// @brief Thread-safe value container.
+/// @tparam T Value type.
+/// @tparam M Mutex type.
+/// @note
+///		This class is to be used together with a mutex lock.
+/// @note
+///		If you need a simpler way to store thread-safe data,
+///		without worrying about handling ownership,
+///		use an `Atomic` instead.
 template<class T, Type::Derived<Mutex> M = Mutex>
 class Box:
 	public M,
