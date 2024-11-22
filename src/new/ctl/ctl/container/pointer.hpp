@@ -16,6 +16,8 @@ CTL_NAMESPACE_BEGIN
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wmismatched-new-delete"
 
+// TODO: make this thread-safe
+
 /// @brief Container-specific type constraints.
 namespace Type::Container {
 	/// Type must be a pointable type.

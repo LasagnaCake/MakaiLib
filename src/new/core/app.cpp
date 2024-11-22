@@ -242,7 +242,7 @@ void App::run() {
 		#ifndef MAKAILIB_PROCESS_RENDER_BEFORE_LOGIC
 		if (cycleDelta > (cycleRate * 1000.0 - 1)) {
 			// Update audio system
-			Audio::updateAll();
+			// Audio::updateAll();
 			// Update input manager
 			input.update();
 			// Get current time
@@ -263,7 +263,7 @@ void App::run() {
 			// increment frame counter
 			frame++;
 			// Update audio system
-			// TODO: Audio System
+			Audio::updateAll();
 			#ifdef MAKAILIB_FRAME_DEPENDENT_PROCESS
 			// Do normal logic-related stuff
 			logicFunc(frameRate);
@@ -274,7 +274,7 @@ void App::run() {
 		#ifdef MAKAILIB_PROCESS_RENDER_BEFORE_LOGIC
 		if (cycleDelta > (cycleDelta * 1000.0 - 1)) {
 			// Update audio system
-			Audio::updateAudioSystem();
+			// Audio::updateAll();
 			// Update input manager
 			input.update();
 			// Get current time

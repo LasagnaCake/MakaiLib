@@ -3,11 +3,11 @@
 
 #include <thread>
 #include "../namespace.hpp"
-#include "../container/pointer.hpp"
 #include "../os/time.hpp"
 
 CTL_NAMESPACE_BEGIN
 
+/// @brief Execution thread.
 struct Thread:
 	public SelfIdentified<Thread>,
 	public Derived<std::thread>,
@@ -21,14 +21,12 @@ struct Thread:
 
 	using BaseType::swap;
 
+	/// @brief Empty constructor.
 	Thread() noexcept:					BaseType(), exect(*this)												{}
 	Thread(SelfType&& other) noexcept:	BaseType((BaseType&&)CTL::move(other)), exect(CTL::move(other.exect))	{}
 	Thread(SelfType const& other)		= delete;
 
 	~Thread() {exect.requestStop();}
-
-	using Handle	= Handle<Thread>;
-	using Instance	= Instance<Thread>;
 
 	struct ExecutionSource {
 		constexpr ExecutionSource(Thread& source):				stop(false), source(source)				{}

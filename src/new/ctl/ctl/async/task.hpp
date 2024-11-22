@@ -67,11 +67,27 @@ public:
 	target(CTL::move(other.target)) {
 	}
 
-	constexpr Task(FunctorType const& f): target(f)							{				}
-	constexpr Task(FunctorType const& f, Args... args): SelfType(f)			{run(args...);	}
-	constexpr Task(SelfType const& other, Args... args): SelfType(other)	{run(args...);	}
-	constexpr Task(SelfType&& other, Args... args): SelfType(other)			{run(args...);	}
+	/// @brief Binds a function to run asynchronously.
+	/// @param f Function to bind.
+	/// @note Only exists if function takes any number of arguments.
+	constexpr Task(FunctorType const& f) requires (sizeof...(Args)): target(f)	{				}
+	/// @brief Binds a function and runs it asynchronously.
+	/// @param f Function to bind.
+	/// @param ...args Values to pass to function.
+	constexpr Task(FunctorType const& f, Args... args): SelfType(f)				{run(args...);	}
+	/// @brief Binds and starts a task, if not already running.
+	/// @param other Task to bind.
+	/// @param ...args Values to pass to task.
+	constexpr Task(SelfType const& other, Args... args): SelfType(other)		{run(args...);	}
+	/// @brief Binds and starts a task, if not already running.
+	/// @param other Task to bind.
+	/// @param ...args Values to pass to task.
+	constexpr Task(SelfType&& other, Args... args): SelfType(other)				{run(args...);	}
 
+	/// @brief Binds and runs a function asynchronously, if not already running.
+	/// @param f Function to bind.
+	/// @param ...args Values to pass to function.
+	/// @return Promise to result.
 	PromiseType invoke(FunctorType const& f, Args... args) {
 		if (running())
 			return getPromise();
@@ -79,7 +95,10 @@ public:
 		return run(args...);
 	}
 
-	PromiseType run(Args... args) requires Type::Different<ReturnType, void> {
+	/// @brief Runs the bound function asynchronously, if not already running. If no function is bound, does nothing.
+	/// @param ...args Values to pass to function.
+	/// @return Promise to result.
+	PromiseType run(Args... args) requires Type::NonVoid<ReturnType> {
 		if (!running()) {
 			rebindResult();
 			executor
@@ -96,7 +115,10 @@ public:
 		return getPromise();
 	}
 
-	PromiseType run(Args... args) requires Type::Equal<ReturnType, void> {
+	/// @brief Runs the bound function asynchronously, if not already running. If no function is bound, does nothing.
+	/// @param ...args Values to pass to function.
+	/// @return Promise to result.
+	PromiseType run(Args... args) requires Type::Void<ReturnType> {
 		if (!running()) {
 			rebindResult();
 			executor
@@ -111,45 +133,65 @@ public:
 		return getPromise();
 	}
 
-	NullableType await() requires Type::Different<ReturnType, void> {
+	/// @brief Waits for the function to finish.
+	/// @return Result of the function, or null.
+	NullableType await() requires Type::NonVoid<ReturnType> {
 		if (running())
 			executor->join();
 		return result;
 	}
 
-	SelfType& await() requires Type::Equal<ReturnType, void> {
+	/// @brief Waits for the function to finish.
+	/// @return Reference to self.
+	SelfType& await() requires Type::Void<ReturnType> {
 		if (running())
 			executor->join();
 		return *this;
 	}
 
-	NullableType value() requires Type::Different<ReturnType, void> {
+	/// @brief Returns the result of the function. If function is not yet finished, returns null.
+	/// @return Result of the function, or null if not finished.
+	NullableType value() requires Type::NonVoid<ReturnType> {
 		if (running())
 			return nullptr;
 		return result->value();
 	}
 
-	PromiseType getPromise() requires Type::Different<ReturnType, void>	{return Promise(result.asWeak(), executor);	}
-	PromiseType getPromise() requires Type::Equal<ReturnType, void>		{return Promise(executor);					}
+	/// @brief Returns a promise to the result.
+	/// @return Promise to the result.
+	PromiseType getPromise() requires Type::NonVoid<ReturnType>	{return Promise(result.asWeak(), executor);	}
+	/// @brief Returns a promise to the result.
+	/// @return Promise to the result.
+	PromiseType getPromise() requires Type::Void<ReturnType>	{return Promise(executor);					}
 
+	/// @brief Returns whether the function is still running.
+	/// @return Whether the function is still running.
 	bool running() const {
 		return executor() && executor->joinable();
 	}
 
-	SelfType& stop() {
-		executor.destroy();
+	/// @brief Stops the running function.
+	/// @param kindly Whether to kindly request for the function to stop, or just terminate it forcibly.
+	/// @return Reference to self.
+	SelfType& stop(bool const& kindly = false) {
+		if (kindly)
+			executor->source().requestStop();
+		else executor.destroy();
 		return *this;
 	}
 
-private:
 
+private:
 	void rebindResult() {
 		result.unbind().bind(new Atomic<NullableType>());
 	}
 
+	/// @brief Result of the function.
 	Instance<Atomic<NullableType>>	result = new Atomic<NullableType>();
+	/// @brief Underlying function to run.
 	Atomic<FunctorType>				target;
-	Thread::Instance				executor;
+	/// @brief Thread to run the function in.
+	Instance<Thread>				executor;
 };
 
 CTL_NAMESPACE_END

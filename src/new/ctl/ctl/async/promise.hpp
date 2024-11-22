@@ -39,7 +39,7 @@ private:
 	constexpr Promise(Handle<Thread> const& t): thread(t) {}
 
 	/// @brief Bound thread.
-	Thread::Handle thread;
+	Handle<Thread> thread;
 
 	template<typename F> friend class Task;
 };
@@ -97,10 +97,10 @@ private:
 	/// @brief Binds a promise to a thread.
 	/// @param v Handle to result's location.
 	/// @param t Thread to bind to.
-	constexpr Promise(HandleType const& v, Thread::Handle const& t): data(v), thread(t) {}
+	constexpr Promise(HandleType const& v, Handle<Thread> const& t): data(v), thread(t) {}
 
 	/// @brief Bound thread.
-	Thread::Handle	thread;
+	Handle<Thread>	thread;
 	/// @brief Location of the result.
 	HandleType		data;
 
