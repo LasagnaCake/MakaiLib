@@ -17,6 +17,7 @@
 
 CTL_NAMESPACE_BEGIN
 
+/// @brief Operating system (and related) operations.
 namespace OS {
 	namespace {
 		inline String sanitizedArgument(String arg) {
