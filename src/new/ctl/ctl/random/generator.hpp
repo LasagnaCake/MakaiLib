@@ -14,7 +14,7 @@ namespace Base {
 	template<class T>
 	struct Generator;
 
-	/// @brief Cryptographically insecure random number generator.
+	/// @brief Pseudo-random number generator.
 	/// @tparam TEngine Random number engine type.
 	template <Type::Subclass<SimpleEngine> TEngine>
 	struct Generator<TEngine> {

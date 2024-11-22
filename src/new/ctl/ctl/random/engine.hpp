@@ -15,7 +15,7 @@
 
 CTL_NAMESPACE_BEGIN
 
-/// @brief Randomness procedures.
+/// @brief Random number generation.
 namespace Random {
 
 /// @brief Base classes for other classes.
@@ -29,7 +29,7 @@ namespace Base {
 		virtual ~Engine() {}
 	};
 
-	/// @brief Cryptographically insecure random number engine interface.
+	/// @brief Pseudo-random number engine interface.
 	struct SimpleEngine: Engine {
 		constexpr static bool SECURE = false;
 		/// @brief Generates a new random number.
