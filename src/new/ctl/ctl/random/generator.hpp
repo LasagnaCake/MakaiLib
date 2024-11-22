@@ -47,7 +47,7 @@ namespace Base {
 
 		/// Gets a seed based on the current clock's time, and a random number.
 		usize generateNewSeed() {
-			return OS::Time::time() ^ !(integer() << 0x2F);
+			return OS::Time::now() ^ !(integer() << 0x2F);
 		}
 		
 	protected:

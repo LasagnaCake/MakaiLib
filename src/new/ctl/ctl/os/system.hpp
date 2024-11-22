@@ -33,6 +33,12 @@ namespace OS {
 		}
 	}
 
+	/// @brief Runs an executable in the same thread.
+	/// @param path Path to executable.
+	/// @param directory Directory to run in. By default, it is the same directory as the executable.
+	/// @param args Arguments to pass to executable. By default, it is empty.
+	/// @return Exit code of the executable.
+	/// @note Running the program in a separate directory is currently only supported on Windows.
 	inline int launch(String const& path, String const& directory = "", StringList args = StringList()) {
 		if (!FS::exists(path))
 			throw Error::InvalidValue(

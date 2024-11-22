@@ -11,6 +11,8 @@
 
 #include "../math/math.hpp"
 #include "../os/time.hpp"
+#include "../typeinfo.hpp"
+#include "../meta/logic.hpp"
 
 CTL_NAMESPACE_BEGIN
 
@@ -49,7 +51,7 @@ namespace Engine {
 		InternalEngine engine;
 	public:
 		Mersenne(usize const& seed):	seed(seed), engine(seed)	{}
-		Mersenne():						Mersenne(OS::Time::time())	{}
+		Mersenne():						Mersenne(OS::Time::now())	{}
 
 		Mersenne(Mersenne const& other)				= default;
 		Mersenne(Mersenne&& other)					= default;
