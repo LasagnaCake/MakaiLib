@@ -10,6 +10,7 @@ CTL_NAMESPACE_BEGIN
 
 struct Exception;
 
+/// @brief Basic exception.
 struct Exception:
 	Failure,
 	SelfIdentified<Exception>,
@@ -28,33 +29,54 @@ public:
 		typename SelfIdentified::SelfType
 	;
 
+	/// @brief Constructs an exception with an associated message.
+	/// @param message Exception message.
 	Exception(ConstReferenceType message) noexcept: message(message), prev(ex) {
 		ex = this;
 	}
 
+	/// @brief Copy constructor.
+	/// @param other `Exception` to copy from.
 	Exception(SelfType const& other) noexcept: Exception(other.message) {}
 
+	/// @brief Returns the exception's message.
+	/// @return Message.
 	virtual char const* what() const noexcept {return message;}
 
+	/// @brief Returns the current exception.
+	/// @return Current exception.
 	static Exception* current() noexcept 	{return ex;		}
+	/// @brief Returns the previous exception.
+	/// @return Previous exception.
 	Exception* previous() const noexcept	{return prev;	}
 
 private:
+	/// @brief Message.
 	char const* const message;
 
+	/// @brief Previous exception.
 	Exception* const prev		= nullptr;
+	/// @brief Current exception.
 	inline static Exception* ex	= nullptr;
-
+	 
 	template <class TString> friend class DetailedError;
 };
 
+/// @brief Out-of-bounds index.
 struct OutOfBoundsException:		Exception {using Exception::Exception;};
+/// @brief Bad function call.
 struct BadCallException:			Exception {using Exception::Exception;};
+/// @brief Invalid value.
 struct InvalidValueException:		Exception {using Exception::Exception;};
+/// @brief Nonexistent value.
 struct NonexistentValueException:	Exception {using Exception::Exception;};
+/// @brief Invalid type conversion.
 struct InvalidConversionException:	Exception {using Exception::Exception;};
+/// @brief Invalid type cast.
 struct InvalidCastException:		Exception {using Exception::Exception;};
+/// @brief Failed action.
 struct FailedActionException:		Exception {using Exception::Exception;};
+/// @brief Missing stream.
 struct MissingStreamException:		Exception {using Exception::Exception;};
 
 namespace {
@@ -80,7 +102,9 @@ namespace {
 	}
 }
 
+/// @brief Error-specific type constraints.
 namespace Type::Error {
+	/// @brief Type must be a valid string type.
 	template<typename T>
 	concept ErrorStringType =
 		Type::Constructible<T, const char*>
@@ -97,6 +121,8 @@ namespace Type::Error {
 	;
 }
 
+/// @brief Detailed exception.
+/// @tparam TString String type.
 template <Type::Error::ErrorStringType TString>
 struct DetailedException:
 	Exception,
@@ -125,14 +151,29 @@ public:
 		typename BaseType::CStringType
 	;
 
+	/// @brief Type of the exception.
 	const DataType type;
+	/// @brief Exception message.
 	const DataType message;
+	/// @brief File it was thrown in.
 	const DataType file;
+	/// @brief Line it was thrown in.
 	const DataType line;
+	/// @brief Caller that threw it.
 	const DataType caller;
+	/// @brief Information about the exception.
 	const DataType info;
+	/// @brief Information about the caller's exception.
 	const DataType callerInfo;
 
+	/// @brief Constructs the exception.
+	/// @param type Type of the exception.
+	/// @param message Exception message.
+	/// @param file File it was thrown in.
+	/// @param line Line it was thrown in
+	/// @param caller Caller that threw it.
+	/// @param info Information about the exception.
+	/// @param callerInfo Information about the caller's exception.
 	DetailedException(
 		ConstReferenceType type			= "Unknown",
 		ConstReferenceType message		= "none",
@@ -152,6 +193,8 @@ public:
 		callerInfo(callerInfo)
 	{sumbuf = summary();}
 
+	/// @brief Copy constructor.
+	/// @param other `DetailedException` to copy from.
 	DetailedException(SelfType const& other) noexcept:
 		SelfType(
 			other.type,
@@ -164,6 +207,15 @@ public:
 		)
 	{}
 
+	/// @brief Constructs the exception, based off of another.
+	/// @param . Ignored. Necessary to avoid constructor conflicts.
+	/// @param other `DetailedException` to extend from.
+	/// @param type Type of the exception.
+	/// @param file File it was thrown in.
+	/// @param line Line it was thrown in
+	/// @param caller Caller that threw it.
+	/// @param info Information about the exception.
+	/// @param callerInfo Information about the caller's exception.
 	DetailedException(
 		bool,
 		BaseType const& other,
@@ -185,6 +237,8 @@ public:
 		)
 	{}
 
+	/// @brief Generates a detailed report of the exception.
+	/// @return Detailed report.
 	DataType report() const noexcept {
 		DataType result = (
 			"!!! AN ERROR HAS OCCURRED !!!\n\n"
@@ -207,6 +261,8 @@ public:
 		return result;
 	}
 
+	/// @brief Generates a summary of the exception.
+	/// @return Summary.
 	DataType summary() const noexcept {
 		return
 			(type + ": " + message + (!info.empty() ? ("\n" + info) : ""))
@@ -217,11 +273,14 @@ public:
 		;
 	}
 
+	/// @brief Returns a summary of the exception.
+	/// @return Summary. 
 	CStringType what() const noexcept override {
 		return strlit(sumbuf);
 	}
 
 private:
+	/// @brief Summary of the exception.
 	DataType sumbuf = "";
 };
 
