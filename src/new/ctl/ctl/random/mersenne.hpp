@@ -8,6 +8,8 @@
 
 CTL_NAMESPACE_BEGIN
 
+// Thanks, Wikipedia!
+
 /// @brief Random number engine implelementations.
 namespace Random::Engine::Impl {
 	/// @brief Base mersenne twister implementation.
