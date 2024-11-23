@@ -6,22 +6,22 @@
 
 CTL_EX_NAMESPACE_BEGIN
 
+/// @brief Collision facilities.
+namespace Collision {}
+
+/// @brief Two-dimensional collision.
 namespace Collision::C2D {
-	template<size_t UUID> struct Bounds;
-
-	template<usize S> struct Shape;
+	template<size_t UUID> struct Bounded;
 }
 
+/// @brief Two-dimensional collision type constraints.
 namespace Type::Ex::Collision::C2D {
+	/// @brief Type must be a valid collision bound.
 	template<class T>
-	concept Collidable = CTL::Type::Subclass<T, CTL::Ex::Collision::C2D::Bounds<T::ID>>;
-	
-	template<class T>
-	concept Shape = requires {
-		T::SIZE;
-	} && ::CTL::Type::Equal<T, CTL::Ex::Collision::C2D::Shape<T::SIZE>>;
+	concept Collidable = CTL::Type::Subclass<T, CTL::Ex::Collision::C2D::Bounded<T::ID>>;
 }
 
+/// @brief Two-dimensional collision.
 namespace Collision::C2D {
 	namespace {
 		using
@@ -32,55 +32,86 @@ namespace Collision::C2D {
 		;
 	}
 
+	/// @brief Tas the deriving class as a bounding area of some form.
 	template<size_t UUID>
-	struct Bounds {
+	struct Bounded {
+		/// @brief ID of the bounding area.
 		constexpr static size_t ID = UUID;
-		typedef Bounds<ID - 1> Previous;
-		typedef Bounds<ID + 1> Next;
+		/// @brief ID of the bounding area that postceding it.
+		typedef Bounded<ID - 1> Previous;
+		/// @brief ID of the bounding area that precedes it.
+		typedef Bounded<ID + 1> Next;
 
-		constexpr Bounds()	{}
-		constexpr ~Bounds()	{}
+		/// @brief Empty constructor.
+		constexpr Bounded()		{}
+		/// @brief Empty destructor.
+		constexpr ~Bounded()	{}
 	};
 
+	/// @brief Implementations.
+	namespace Impl {
+		template<typename T>
+		struct FollowingType;
+
+		template<Type::Ex::Collision::C2D::Collidable T>
+		struct FollowingType<T> {
+			typedef Bounded<T::Next::ID> Type;
+		};
+
+		template<>
+		struct FollowingType<void> {
+			typedef Bounded<0> Type;
+		};
+	}
+
+	/// @brief Declares the bounds as postceding another bounds.
 	template<typename T>
-	struct FollowingType;
+	using Follows = typename Impl::FollowingType<T>::Type;
 
-	template<Type::Ex::Collision::C2D::Collidable T>
-	struct FollowingType<T> {
-		typedef Bounds<T::Next::ID> Type;
-	};
-
-	template<>
-	struct FollowingType<void> {
-		typedef Bounds<0> Type;
-	};
-
-	template<typename T>
-	using Follows = typename FollowingType<T>::Type;
-
+	/// @brief Box bounds.
 	struct Box: Follows<void> {
-		using Bounds::Bounds;
-
+		using Bounded::Bounded;
+		
+		/// @brief Constructs a box bound.
+		/// @param position Position.
+		/// @param size Size.
 		constexpr Box(
-			Vector2 const& min,
-			Vector2 const& max
+			Vector2 const& position,
+			Vector2 const& size
 		):
-			min(min),
-			max(max) {}
+			position(position),
+			size(size) {}
 
-		constexpr Box(Box const& other):
-			Box(
-				other.min,
-				other.max
-			) {}
+		/// @brief Copy constructor (defaulted).
+		constexpr Box(Box const& other)	= default;
+		/// @brief Move constructor (defaulted).
+		constexpr Box(Box&& other)		= default;
+		
+		/// @brief Returns the top-left corner of the box.
+		/// @return Top-left corner.
+		constexpr Vector2 min() const {return position - size;}
+		/// @brief Returns the bottom-right corner of the box.
+		/// @return Bottom-right corner.
+		constexpr Vector2 max() const {return position + size;}
 
-		Vector2 min;
-		Vector2 max;
+		/// @brief Box position.
+		Vector2 position;
+		/// @brief Box size.
+		Vector2 size;
 	};
 
+	/// @brief "Circle" bounds.
+	/// @details
+	///		Not truly a circle - actually an ellipse.
+	///
+	///		Though, a circle is also technically an ellipse with equal major and minor axes.
 	struct Circle: Follows<Box> {
-		using Bounds::Bounds;
+		using Bounded::Bounded;
 
+		/// @brief Constructs a "circle" bound.
+		/// @param position Position.
+		/// @param radius Radius. By default, it is 1.
+		/// @param rotation Rotation. By default, it is 0.
 		constexpr Circle(
 			Vector2 const& position,
 			Vector2 const& radius = 1,
@@ -90,21 +121,49 @@ namespace Collision::C2D {
 			radius(radius),
 			rotation(rotation) {}
 
-		constexpr Circle(Circle const& other):
-			Circle(
-				other.position,
-				other.radius,
-				other.rotation
-			) {}
+		/// @brief Copy constructor (defaulted).
+		constexpr Circle(Circle const& other)	= default;
+		/// @brief Move constructor (defaulted).
+		constexpr Circle(Circle&& other)		= default;
 
+		/// @brief Returns the circle's radius at a given angle.
+		/// @param angle Angle to get the radius for.
+		/// @return Radius at the given angle.
+		constexpr float radiusAt(float const& angle) const {
+			return
+				(CTL::Math::absin(angle) * radius.x)
+			+	(CTL::Math::abcos(angle) * radius.y)
+			;
+		}
+
+		/// @brief Circle position.
 		Vector2 position;
+		/// @brief Circle radius.
 		Vector2 radius = 1;
+		/// @brief Circle rotation.
 		float rotation = 0;
 	};
 
+	/// @brief "Capsule" bounds.
+	/// @details
+	///		This one is a bit complex.
+	///
+	///		This is a "stadium-like" ("2D-capsule-like") shape.
+	///	
+	///		It would be best described as the "convex hull between two ellipsess of the same angle".
+	///		
+	///		Also, the ellipses do not rotate with the shape.
+	///		Their angles are separate from the capsule's own angle.
+	/// @link https://en.wikipedia.org/wiki/Stadium_(geometry)
 	struct Capsule: Follows<Circle> {
-		using Bounds::Bounds;
+		using Bounded::Bounded;
 
+		/// @brief Constructs a capsule bound.
+		/// @param position Position.
+		/// @param width Width. By default, it is 1.
+		/// @param length Length. By default, it is 0.
+		/// @param angle Rotation. By default, it is 0.
+		/// @param rotation Cap rotation. By default, it is 0.
 		constexpr Capsule(
 			Vector2 const& position,
 			Vector2 const& width = 1,
@@ -118,25 +177,31 @@ namespace Collision::C2D {
 			angle(angle),
 			rotation(rotation) {}
 
-		constexpr Capsule(Capsule const& other):
-			Capsule(
-				other.position,
-				other.width,
-				other.length,
-				other.angle,
-				other.rotation
-			) {}
+		/// @brief Copy constructor (defaulted).
+		constexpr Capsule(Capsule const& other)	= default;
+		/// @brief Move constructor (defaulted).
+		constexpr Capsule(Capsule&& other)		= default;
 
+		/// @brief Capsule position.
 		Vector2 position;
+		/// @brief Capsule width.
 		Vector2 width = 1;
+		/// @brief Capsule length.
 		float length = 1;
+		/// @brief Capsule rotation.
 		float angle = 0;
+		/// @brief Capsule cap rotation.
 		float rotation = 0;
 	};
 
+	/// @brief Raycast bounds.
 	struct Ray: Follows<Capsule> {
-		using Bounds::Bounds;
+		using Bounded::Bounded;
 
+		/// @brief Constructs a raycast bound.
+		/// @param position Position.
+		/// @param length Length.
+		/// @param angle Angle.
 		constexpr Ray(
 			Vector2 const& position,
 			float const& length = 1,
@@ -146,41 +211,26 @@ namespace Collision::C2D {
 			length(length),
 			angle(angle) {}
 
-		constexpr Ray(Ray const& other):
-			Ray(
-				other.position,
-				other.length,
-				other.angle
-			) {}
+		/// @brief Copy constructor (defaulted).
+		constexpr Ray(Ray const& other)	= default;
+		/// @brief Move constructor (defaulted).
+		constexpr Ray(Ray&& other)		= default;
 
+		/// @brief Ray position.
 		Vector2 position;
+		/// @brief Ray length.
 		float length = 1;
+		/// @brief Ray angle.
 		float angle = 0;
 	};
 
-	typedef Shape<0> Figure;
-
-	template<>
-	struct Shape<0>: Follows<Ray> {
-		constexpr static usize SIZE = 0;
-
-		#pragma GCC diagnostic push
-		#pragma GCC diagnostic ignored "-Wpedantic"
-		using PointArray = Decay::AsType<Vector2[0]>;
-		#pragma GCC diagnostic pop
-
-		constexpr ~Shape() {
-			if (points) delete[] points;
-		}
-
+	/// @brief Convex shape with dynamic vertex count.
+	struct Shape: Follows<Ray> {
 		constexpr Shape(): points(nullptr), count(0) {}
 
 		constexpr Shape(usize const& size):
-			points(new Vector2[size]),
-			count(size) {
-			for (usize i = 0; i < count; ++i)
-				points[i] = 0;
-		}
+			points(new Vector2[size]{0}),
+			count(size) {}
 
 		template<usize S>
 		constexpr Shape(
@@ -194,27 +244,31 @@ namespace Collision::C2D {
 
 		constexpr Shape(
 			Transform2D const& trans,
-			Vector2* const& points,
-			usize const& size
-		): Shape(size) {
+			Span<Vector2> const& points
+		): Shape(points.size()) {
 			this->trans = trans;
 			for (usize i = 0; i < count; ++i)
 				this->points[i] = points[i];
 		}
 
-		template<usize S>
-		constexpr Shape(Shape<S> const& other):
+		constexpr Shape(Shape const& other):
 			Shape(
 				other.trans,
-				other.points,
-				other.size()
+				{other.points, other.count}
 			) {}
 
-		template<usize S>
-		constexpr operator Shape<S>() const {return Figure(data(), size());}
+		constexpr Shape(Shape&& other):
+			Shape(
+				other.trans,
+				{other.points, other.count}
+			) {}
+
+		constexpr ~Shape() {
+			if (points) delete[] points;
+		}
 
 		constexpr Vector2* data() const	{return points;	}
-		constexpr usize size() const	{return SIZE;	}
+		constexpr usize	size() const	{return count;	}
 
 		constexpr Vector2* cbegin() const	{return data();				}
 		constexpr Vector2* cend() const		{return data() + size();	}
@@ -225,84 +279,23 @@ namespace Collision::C2D {
 		Transform2D trans;
 
 	private:
-		Vector2* points = nullptr;
-
-		usize count = 0;
+		Vector2*	points	= nullptr;
+		usize		count	= 0;
 	};
 
-	template<usize S>
-	struct Shape: Follows<Ray> {
-		static_assert(S > 0);
-
-		constexpr static usize SIZE = S;
-
-		typedef Decay::AsType<Vector2[SIZE]> PointArray;
-
-		constexpr ~Shape() {}
-
-		constexpr Shape() {}
-
-		constexpr Shape(
-			Transform2D const& trans,
-			PointArray const& points
-		): trans(trans) {
-			this->trans = trans;
-			for (usize i = 0; i < SIZE; ++i)
-				this->points[i] = points[i];
-		}
-		constexpr operator Figure() const {return Figure(trans, data(), size());}
-
-		constexpr Vector2* data() const	{return points;	}
-		constexpr usize size() const	{return SIZE;	}
-
-		constexpr Vector2* cbegin() const	{return data();				}
-		constexpr Vector2* cend() const		{return data() + size();	}
-
-		constexpr Vector2* begin() const	{return cbegin();			}
-		constexpr Vector2* end() const		{return cend;				}
-
-		Transform2D trans;
-
-	private:
-		constexpr Shape(
-			Transform2D const& trans,
-			Vector2* const& points,
-			usize const& size
-		): trans(trans) {
-			const usize sz = (size < SIZE) ? size : SIZE;
-			for (usize i = 0; i < sz; ++i)
-				this->points[i] = points[i];
-		}
-
-		constexpr Shape(Figure const& other):
-			Shape(
-				other.trans,
-				other.points,
-				other.size()
-			) {}
-
-		PointArray points = {0};
-	};
-
-	typedef Shape<3> Triangle;
-	typedef Shape<4> Quad;
-
-	struct Polygon: Follows<Figure> {
+	struct Polygon: Follows<Shape> {
 		constexpr Polygon(
 			Transform2D const& trans,
-			List<Triangle> const& triangles
+			List<Shape> const& pieces
 		):
 			trans(trans),
-			triangles(triangles) {}
+			pieces(pieces) {}
 
-		constexpr Polygon(Polygon const& other):
-			Polygon(
-				other.trans,
-				other.triangles
-			) {}
+		constexpr Polygon(Polygon const& other)	= default;
+		constexpr Polygon(Polygon&& other)		= default;
 
 		Transform2D trans;
-		List<Triangle> triangles;
+		List<Shape> pieces;
 	};
 
 	union CollisionData {
@@ -310,7 +303,7 @@ namespace Collision::C2D {
 		Circle	circle;
 		Capsule	capsule;
 		Ray		ray;
-		Figure	shape;
+		Shape	shape;
 		Polygon	polygon;
 
 		constexpr CollisionData()	{}
@@ -319,12 +312,12 @@ namespace Collision::C2D {
 		constexpr CollisionData(Circle const& value):	circle(value)	{}
 		constexpr CollisionData(Capsule const& value):	capsule(value)	{}
 		constexpr CollisionData(Ray const& value):		ray(value)		{}
-		constexpr CollisionData(Figure const& value):	shape(value)	{}
+		constexpr CollisionData(Shape const& value):	shape(value)	{}
 		constexpr CollisionData(Polygon const& value):	polygon(value)	{}
 
 		constexpr CollisionData(CollisionData const& value) {
 			// Trivially-predictable nightmares...
-			MX::memcpy((void*)this, (void*)&value, sizeof(CollisionData));
+			MX::memmove((void*)this, (void*)&value, sizeof(CollisionData));
 		}
 
 		constexpr ~CollisionData()	{}
@@ -336,9 +329,20 @@ namespace Collision::C2D {
 		CT_CIRCLE	= Circle::ID,
 		CT_CAPSULE	= Capsule::ID,
 		CT_RAY		= Ray::ID,
-		CT_SHAPE	= Figure::ID,
+		CT_SHAPE	= Shape::ID,
 		CT_POLYGON	= Polygon::ID
 	};
+
+	template<usize ID>
+	using Bounds = CTL::Meta::NthType<
+		ID,
+		Box,
+		Circle,
+		Capsule,
+		Ray,
+		Figure,
+		Polygon
+	>;
 
 	struct CollisionShape {
 		constexpr CollisionShape(): shape(CollisionType::CT_NULL) {}
@@ -348,15 +352,15 @@ namespace Collision::C2D {
 
 		constexpr ~CollisionShape()	{}
 
-		constexpr CollisionData const& value() const	{return data;	}
-		constexpr CollisionType type() const			{return shape;	}
+		constexpr CollisionData value() const	{return data;	}
+		constexpr CollisionType type() const	{return shape;	}
 
 		template<CTL::Type::Equal<Box> T>			constexpr Box		asType() const	{return data.box;			}
 		template<CTL::Type::Equal<Circle> T>		constexpr Circle	asType() const	{return data.circle;		}
 		template<CTL::Type::Equal<Capsule> T>		constexpr Capsule	asType() const	{return data.capsule;		}
 		template<CTL::Type::Equal<Ray> T>			constexpr Ray		asType() const	{return data.ray;			}
 		template<CTL::Type::Equal<Polygon> T>		constexpr Polygon	asType() const	{return data.polygon;		}
-		template<Type::Ex::Collision::C2D::Shape T>	constexpr T			asType() const	{return data.shape;			}
+		template<CTL::Type::Equal<Shape> T>			constexpr Shape		asType() const	{return data.shape;			}
 
 		template<Type::Ex::Collision::C2D::Collidable T>
 		constexpr explicit operator T() const	{return asType<T>();	}

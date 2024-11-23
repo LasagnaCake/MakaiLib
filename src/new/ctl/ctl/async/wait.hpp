@@ -12,7 +12,7 @@ namespace Error {
 	DEFINE_ERROR_TYPE(Occupied);
 }
 
-/// @brief Asynchronous operations.
+/// @brief Asynchronous facilities.
 namespace Async {
 	/// @brief Sleeps the thread it is called in, for a specific amount of time.
 	/// @tparam T Time unit.

@@ -9,7 +9,7 @@
 
 CTL_NAMESPACE_BEGIN
 
-/// @brief Type decay operations.
+/// @brief Type decay facilities.
 namespace Decay {
 	/// @brief Decays type as if it was a function argument passed by value.
 	template<class T>

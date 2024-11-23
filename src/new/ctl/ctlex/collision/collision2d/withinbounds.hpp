@@ -16,29 +16,35 @@ namespace Collision::C2D {
 		;
 	}
 
-	constexpr float getRadius(Vector2 const& radius, float const& angle) {
-		return
-			(CTL::Math::absin(angle) * radius.x)
-		+	(CTL::Math::abcos(angle) * radius.y)
-		;
-	}
-
+	/// @brief Point-to-Box bounds detection.
+	/// @param point Point to check.
+	/// @param area Bounds to check against.
+	/// @return Whether bounds overlap.
 	constexpr bool withinBounds(Vector2 const& point, Box const& area) {
+		Decay::AsType<Vector2 const> amin = area.min(), amax = area.max();
 		return (
-			( area.min.x < point.x) && (point.x < area.max.x)
+			( amin.x < point.x) && (point.x < amax.x)
 		) && (
-			( area.min.y < point.y) && (point.y < area.max.y)
+			( amin.y < point.y) && (point.y < amax.y)
 		);
 	}
 
+	/// @brief Point-to-Circle bounds detection.
+	/// @param point Point to check.
+	/// @param area Bounds to check against.
+	/// @return Whether bounds overlap.
 	constexpr bool withinBounds(Vector2 const& point, Circle const& area) {
 		// Calculate circle stretch
 		float angle		= point.angleTo(area.position);
-		float radius	= getRadius(area.radius, angle + area.rotation);
+		float radius	= area.radiusAt(angle + area.rotation);
 		// Check collision
 		return point.distanceTo(area.position) < (radius);
 	}
 
+	/// @brief Point-to-Capsule bounds detection.
+	/// @param point Point to check.
+	/// @param area Bounds to check against.
+	/// @return Whether bounds overlap.
 	constexpr bool withinBounds(Vector2 const& a, Capsule const& area) {
 		// Get distance between targets
 		float distance = a.distanceTo(area.position);
@@ -51,16 +57,31 @@ namespace Collision::C2D {
 		return withinBounds(a, target);
 	}
 
+	/// @brief Point-to-Ray bounds detection.
+	/// @param point Point to check.
+	/// @param area Bounds to check against.
+	/// @return Whether bounds overlap.
+	/// @warning Currently unimplemented.
 	[[gnu::warning("Unimplemented!")]]
 	constexpr bool withinBounds(Vector2 const& a, Ray const& b) {
 		return false;
 	}
 
+	/// @brief Point-to-Figure bounds detection.
+	/// @param point Point to check.
+	/// @param area Bounds to check against.
+	/// @return Whether bounds overlap.
+	/// @warning Currently unimplemented.
 	[[gnu::warning("Unimplemented!")]]
 	constexpr bool withinBounds(Vector2 const& a, Figure const& b) {
 		return false;
 	}
 
+	/// @brief Point-to-Polygon bounds detection.
+	/// @param point Point to check.
+	/// @param area Bounds to check against.
+	/// @return Whether bounds overlap.
+	/// @warning Currently unimplemented.
 	[[gnu::warning("Unimplemented!")]]
 	constexpr bool withinBounds(Vector2 const& a, Polygon const& b) {
 		return false;
@@ -69,42 +90,62 @@ namespace Collision::C2D {
 	// Shape to Shape collision detection code
 
 	// Circle
-
+	
+	/// @brief Circle-to-Circle bounds detection.
+	/// @param a Bounds to check.
+	/// @param b Bounds to check against.
+	/// @return Whether bounds overlap.
 	constexpr bool withinBounds(Circle const& a, Circle const& b) {
 		// Calculate circle stretches
 		float angle		= a.position.angleTo(b.position);
-		float radiusA	= getRadius(a.radius, angle + a.rotation);
-		float radiusB	= getRadius(b.radius, angle + b.rotation);
+		float radiusA	= a.radiusAt(angle + a.rotation);
+		float radiusB	= b.radiusAt(angle + b.rotation);
 		// Check collision
 		return a.position.distanceTo(b.position) < (radiusA + radiusB);
 	}
 
 	// Box
 
+	/// @brief Box-to-Box bounds detection.
+	/// @param a Bounds to check.
+	/// @param b Bounds to check against.
+	/// @return Whether bounds overlap.
 	constexpr bool withinBounds(Box const& a, Box const& b) {
+		Decay::AsType<Vector2 const>
+			amin = a.min(), amax = a.max(),
+			bmin = b.min(), bmax = b.max()
+		;
 		// Get overlap on X
 		bool overlapX = (
-			(b.min.x < a.min.x) && (a.min.x < b.max.x)
+			(bmin.x < amin.x) && (amin.x < bmax.x)
 		) || (
-			(b.min.x < a.max.x) && (a.max.x < b.max.x)
+			(bmin.x < amax.x) && (amax.x < bmax.x)
 		);
 		// Get overlap on Y
 		bool overlapY = (
-			(b.min.y < a.min.y) && (a.min.y < b.max.y)
+			(bmin.y < amin.y) && (amin.y < bmax.y)
 		) || (
-			(b.min.y < a.max.y) && (a.max.y < b.max.y)
+			(bmin.y < amax.y) && (amax.y < bmax.y)
 		);
 		// Return if both axis overlap (i.e. collision)
 		return overlapX && overlapY;
 	}
 
-	[[gnu::warning("Unimplemented!")]]
+	/// @brief Circle-to-Box bounds detection.
+	/// @param a Bounds to check.
+	/// @param b Bounds to check against.
+	/// @return Whether bounds overlap.
 	constexpr bool withinBounds(Circle const& a, Box const& b) {
-		return false;
+		Vector2 pos = a.position.clamped(b.min(), b.max());
+		return withinBounds(pos, a);
 	}
 
 	// Capsule
 
+	/// @brief Circle-to-Capsule bounds detection.
+	/// @param a Bounds to check.
+	/// @param b Bounds to check against.
+	/// @return Whether bounds overlap.
 	constexpr bool withinBounds(Circle const& a, Capsule const& b) {
 		// Get distance between targets
 		float distance = a.position.distanceTo(b.position);
@@ -117,11 +158,19 @@ namespace Collision::C2D {
 		return withinBounds(a, target);
 	}
 
-	[[gnu::warning("Unimplemented!")]]
+	/// @brief Box-to-Capsule bounds detection.
+	/// @param a Bounds to check.
+	/// @param b Bounds to check against.
+	/// @return Whether bounds overlap.
 	constexpr bool withinBounds(Box const& a, Capsule const& b) {
-		return false;
+		Vector2 pos = b.position.clamped(a.min(), a.max());
+		return withinBounds(pos, b);
 	}
 
+	/// @brief Capsule-to-Capsule bounds detection.
+	/// @param a Bounds to check.
+	/// @param b Bounds to check against.
+	/// @return Whether bounds overlap.
 	constexpr bool withinBounds(Capsule const& a, Capsule const& b) {
 		// Get distance between targets
 		float distance = a.position.distanceTo(b.position);
@@ -136,21 +185,41 @@ namespace Collision::C2D {
 
 	// Ray
 
+	/// @brief Box-to-Ray bounds detection.
+	/// @param a Bounds to check.
+	/// @param b Bounds to check against.
+	/// @return Whether bounds overlap.
+	/// @warning Currently unimplemented.
 	[[gnu::warning("Unimplemented!")]]
 	constexpr bool withinBounds(Box const& a, Ray const& b) {
 		return false;
 	}
 
+	/// @brief Circle-to-Ray bounds detection.
+	/// @param a Bounds to check.
+	/// @param b Bounds to check against.
+	/// @return Whether bounds overlap.
+	/// @warning Currently unimplemented.
 	[[gnu::warning("Unimplemented!")]]
 	constexpr bool withinBounds(Circle const& a, Ray const& b) {
 		return false;
 	}
 
+	/// @brief Capsule-to-Ray bounds detection.
+	/// @param a Bounds to check.
+	/// @param b Bounds to check against.
+	/// @return Whether bounds overlap.
+	/// @warning Currently unimplemented.
 	[[gnu::warning("Unimplemented!")]]
 	constexpr bool withinBounds(Capsule const& a, Ray const& b) {
 		return false;
 	}
 
+	/// @brief Ray-to-Ray bounds detection.
+	/// @param a Bounds to check.
+	/// @param b Bounds to check against.
+	/// @return Whether bounds overlap.
+	/// @warning Currently unimplemented.
 	[[gnu::warning("Unimplemented!")]]
 	constexpr bool withinBounds(Ray const& a, Ray const& b) {
 		return false;
@@ -158,26 +227,51 @@ namespace Collision::C2D {
 
 	// Shape
 
+	/// @brief Box-to-Figure bounds detection.
+	/// @param a Bounds to check.
+	/// @param b Bounds to check against.
+	/// @return Whether bounds overlap.
+	/// @warning Currently unimplemented.
 	[[gnu::warning("Unimplemented!")]]
 	constexpr bool withinBounds(Box const& a, Figure const& b) {
 		return false;
 	}
 
+	/// @brief Circle-to-Figure bounds detection.
+	/// @param a Bounds to check.
+	/// @param b Bounds to check against.
+	/// @return Whether bounds overlap.
+	/// @warning Currently unimplemented.
 	[[gnu::warning("Unimplemented!")]]
 	constexpr bool withinBounds(Circle const& a, Figure const& b) {
 		return false;
 	}
 
+	/// @brief Capsule-to-Figure bounds detection.
+	/// @param a Bounds to check.
+	/// @param b Bounds to check against.
+	/// @return Whether bounds overlap.
+	/// @warning Currently unimplemented.
 	[[gnu::warning("Unimplemented!")]]
 	constexpr bool withinBounds(Capsule const& a, Figure const& b) {
 		return false;
 	}
 
+	/// @brief Ray-to-Figure bounds detection.
+	/// @param a Bounds to check.
+	/// @param b Bounds to check against.
+	/// @return Whether bounds overlap.
+	/// @warning Currently unimplemented.
 	[[gnu::warning("Unimplemented!")]]
 	constexpr bool withinBounds(Ray const& a, Figure const& b) {
 		return false;
 	}
 
+	/// @brief Figure-to-Figure bounds detection.
+	/// @param a Bounds to check.
+	/// @param b Bounds to check against.
+	/// @return Whether bounds overlap.
+	/// @warning Currently unimplemented.
 	[[gnu::warning("Unimplemented!")]]
 	constexpr bool withinBounds(Figure const& a, Figure const& b) {
 		return false;
@@ -185,31 +279,61 @@ namespace Collision::C2D {
 
 	// Polygon
 
+	/// @brief Box-to-Polygon bounds detection.
+	/// @param a Bounds to check.
+	/// @param b Bounds to check against.
+	/// @return Whether bounds overlap.
+	/// @warning Currently unimplemented.
 	[[gnu::warning("Unimplemented!")]]
 	constexpr bool withinBounds(Box const& a, Polygon const& b) {
 		return false;
 	}
 
+	/// @brief Circle-to-Polygon bounds detection.
+	/// @param a Bounds to check.
+	/// @param b Bounds to check against.
+	/// @return Whether bounds overlap.
+	/// @warning Currently unimplemented.
 	[[gnu::warning("Unimplemented!")]]
 	constexpr bool withinBounds(Circle const& a, Polygon const& b) {
 		return false;
 	}
 
+	/// @brief Capsule-to-Polygon bounds detection.
+	/// @param a Bounds to check.
+	/// @param b Bounds to check against.
+	/// @return Whether bounds overlap.
+	/// @warning Currently unimplemented.
 	[[gnu::warning("Unimplemented!")]]
 	constexpr bool withinBounds(Capsule const& a, Polygon const& b) {
 		return false;
 	}
 
+	/// @brief Ray-to-Polygon bounds detection.
+	/// @param a Bounds to check.
+	/// @param b Bounds to check against.
+	/// @return Whether bounds overlap.
+	/// @warning Currently unimplemented.
 	[[gnu::warning("Unimplemented!")]]
 	constexpr bool withinBounds(Ray const& a, Polygon const& b) {
 		return false;
 	}
 
+	/// @brief Figure-to-Polygon bounds detection.
+	/// @param a Bounds to check.
+	/// @param b Bounds to check against.
+	/// @return Whether bounds overlap.
+	/// @warning Currently unimplemented.
 	[[gnu::warning("Unimplemented!")]]
 	constexpr bool withinBounds(Figure const& a, Polygon const& b) {
 		return false;
 	}
 
+	/// @brief Polygon-to-Polygon bounds detection.
+	/// @param a Bounds to check.
+	/// @param b Bounds to check against.
+	/// @return Whether bounds overlap.
+	/// @warning Currently unimplemented.
 	[[gnu::warning("Unimplemented!")]]
 	constexpr bool withinBounds(Polygon const& a, Polygon const& b) {
 		return false;
@@ -217,38 +341,90 @@ namespace Collision::C2D {
 
 	// Flipped Functions
 
+	/// @brief Point-to-Bounds bounds detection.
+	/// @tparam T Bounds type.
+	/// @param area Bounds to check.
+	/// @param point Point to check against.
+	/// @return Depending on the shape, may be potentially unimplemented.
+	template<Type::Ex::Collision::C2D::Collidable T>
+	constexpr bool withinBounds(T const& area, Vector2 const& point) {
+		return withinBounds(point, area);
+	}
+
+	/// @brief Circle-to-Bounds bounds detection.
+	/// @tparam T Bounds type.
+	/// @param a Bounds to check.
+	/// @param b Bounds to check against.
+	/// @return Whether bounds overlap.
+	/// @return Depending on the shape, may be potentially unimplemented.
 	template<Type::Ex::Collision::C2D::Collidable T>
 	constexpr bool withinBounds(Circle const& a, T const& b) {
 		return withinBounds(b, a);
 	}
 
+	/// @brief Box-to-Bounds bounds detection.
+	/// @tparam T Bounds type.
+	/// @param a Bounds to check.
+	/// @param b Bounds to check against.
+	/// @return Whether bounds overlap.
+	/// @return Depending on the shape, may be potentially unimplemented.
 	template<Type::Ex::Collision::C2D::Collidable T>
 	constexpr bool withinBounds(Box const& a, T const& b) {
 		return withinBounds(b, a);
 	}
 
+	/// @brief Capsule-to-Bounds bounds detection.
+	/// @tparam T Bounds type.
+	/// @param a Bounds to check.
+	/// @param b Bounds to check against.
+	/// @return Whether bounds overlap.
+	/// @return Depending on the shape, may be potentially unimplemented.
 	template<Type::Ex::Collision::C2D::Collidable T>
 	constexpr bool withinBounds(Capsule const& a, T const& b) {
 		return withinBounds(b, a);
 	}
 
+	/// @brief Ray-to-Bounds bounds detection.
+	/// @tparam T Bounds type.
+	/// @param a Bounds to check.
+	/// @param b Bounds to check against.
+	/// @return Whether bounds overlap.
+	/// @return Depending on the shape, may be potentially unimplemented.
 	template<Type::Ex::Collision::C2D::Collidable T>
 	constexpr bool withinBounds(Ray const& a, T const& b) {
 		return withinBounds(b, a);
 	}
 
+	/// @brief Figure-to-Bounds bounds detection.
+	/// @tparam T Bounds type.
+	/// @param a Bounds to check.
+	/// @param b Bounds to check against.
+	/// @return Whether bounds overlap.
+	/// @return Depending on the shape, may be potentially unimplemented.
 	template<Type::Ex::Collision::C2D::Collidable B>
 	constexpr bool withinBounds(Figure const& a, B const& b) {
 		return withinBounds(b, a);
 	}
 
+	/// @brief Polygon-to-Bounds bounds detection.
+	/// @tparam T Bounds type.
+	/// @param a Bounds to check.
+	/// @param b Bounds to check against.
+	/// @return Whether bounds overlap.
+	/// @return Depending on the shape, may be potentially unimplemented.
 	template<Type::Ex::Collision::C2D::Collidable T>
 	constexpr bool withinBounds(Polygon const& a, T const& b) {
 		return withinBounds(b, a);
 	}
 
 	// CollisionShape
-
+	
+	/// @brief Shape-to-Bounds bounds detection.
+	/// @tparam T Bounds type.
+	/// @param a Shape to check.
+	/// @param b Bounds to check against.
+	/// @return Whether bounds overlap.
+	/// @return Depending on the shape, may be potentially unimplemented.
 	template<Type::Ex::Collision::C2D::Collidable T>
 	constexpr bool withinBounds(CollisionShape const& a, T const& b) {
 		switch (a.type()) {
@@ -262,11 +438,22 @@ namespace Collision::C2D {
 		}
 	}
 
+	/// @brief Bounds-to-Shape bounds detection.
+	/// @tparam T Bounds type.
+	/// @param a Bounds to check.
+	/// @param b Shape to check against.
+	/// @return Whether bounds overlap.
+	/// @return Depending on the shape, may be potentially unimplemented.
 	template<Type::Ex::Collision::C2D::Collidable T>
 	constexpr bool withinBounds(T const& a, CollisionShape const& b) {
 		return withinBounds(b, a);
 	}
 
+	/// @brief Shape-to-Shape bounds detection.
+	/// @param a Shape to check.
+	/// @param b Shape to check against.
+	/// @return Whether bounds overlap.
+	/// @return Depending on the shape, may be potentially unimplemented.
 	constexpr bool withinBounds(CollisionShape const& a, CollisionShape const& b) {
 		switch (a.type()) {
 			case CollisionType::CT_NULL:	return false;

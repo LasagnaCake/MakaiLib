@@ -7,7 +7,7 @@
 
 CTL_NAMESPACE_BEGIN
 
-/// @brief Time-related operations.
+/// @brief Time-related facilities.
 namespace OS::Time {
 	namespace {
 		namespace chrono = std::chrono;

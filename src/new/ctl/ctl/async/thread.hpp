@@ -190,7 +190,7 @@ private:
 	ExecutionSource exect;
 };
 
-/// @brief Asynchronous operations.
+/// @brief Asynchronous facilities.
 namespace Async {}
 
 /// @brief Base classes.

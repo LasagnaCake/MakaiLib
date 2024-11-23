@@ -9,7 +9,7 @@
 
 CTL_NAMESPACE_BEGIN
 
-/// @brief Enum-specific decay operations.
+/// @brief Enum-specific decay facilities.
 namespace Decay::Enum {
 	/// @brief Decays an enum type to a signed integer type of equal size.
 	/// @tparam T Enum type.
@@ -25,6 +25,15 @@ namespace Decay::Enum {
 	/// @tparam T Enum type.
 	template<Type::Enumerator T>
 	using AsInteger = Meta::DualType<Type::Signed<T>, AsSignedInteger<T>, AsUnsignedInteger<T>>;
+}
+
+/// @brief Casts the enum to an integer type of equivalent size and signedness.
+/// @tparam T Enum type.
+/// @param e Value to cast.
+/// @return Value as equivalent integer type.
+template<Type::Enumerator T>
+constexpr Decay::Enum::AsInteger<T> enumcast(T const& e) {
+	return static_cast<Decay::Enum::AsInteger<T>>(e);
 }
 
 CTL_NAMESPACE_END

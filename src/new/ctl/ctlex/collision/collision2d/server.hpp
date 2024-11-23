@@ -5,6 +5,7 @@
 
 CTL_EX_NAMESPACE_BEGIN
 
+/// @brief Two-dimensional collision.
 namespace Collision::C2D {
 	namespace {
 		using

@@ -9,7 +9,7 @@
 
 CTL_NAMESPACE_BEGIN
 
-/// @brief Filesystem-related operations.
+/// @brief Filesystem-related facilities.
 namespace OS::FS {
 	namespace {
 		namespace fs = std::filesystem;
