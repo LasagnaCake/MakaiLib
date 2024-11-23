@@ -70,19 +70,19 @@ public:
 	/// @brief Binds a function to run asynchronously.
 	/// @param f Function to bind.
 	/// @note Only exists if function takes any number of arguments.
-	constexpr Task(FunctorType const& f) requires (sizeof...(Args)): target(f)	{				}
+	constexpr Task(FunctorType const& f) requires (sizeof...(Args) > 0): target(f)	{				}
 	/// @brief Binds a function and runs it asynchronously.
 	/// @param f Function to bind.
 	/// @param ...args Values to pass to function.
-	constexpr Task(FunctorType const& f, Args... args): SelfType(f)				{run(args...);	}
+	constexpr Task(FunctorType const& f, Args... args): SelfType(f)					{run(args...);	}
 	/// @brief Binds and starts a task, if not already running.
 	/// @param other Task to bind.
 	/// @param ...args Values to pass to task.
-	constexpr Task(SelfType const& other, Args... args): SelfType(other)		{run(args...);	}
+	constexpr Task(SelfType const& other, Args... args): SelfType(other)			{run(args...);	}
 	/// @brief Binds and starts a task, if not already running.
 	/// @param other Task to bind.
 	/// @param ...args Values to pass to task.
-	constexpr Task(SelfType&& other, Args... args): SelfType(other)				{run(args...);	}
+	constexpr Task(SelfType&& other, Args... args): SelfType(other)					{run(args...);	}
 
 	/// @brief Binds and runs a function asynchronously, if not already running.
 	/// @param f Function to bind.
@@ -98,14 +98,14 @@ public:
 	/// @brief Runs the bound function asynchronously, if not already running. If no function is bound, does nothing.
 	/// @param ...args Values to pass to function.
 	/// @return Promise to result.
-	PromiseType run(Args... args) requires Type::NonVoid<ReturnType> {
+	PromiseType run(Args&&... args) requires Type::NonVoid<ReturnType> {
 		if (!running()) {
 			rebindResult();
 			executor
 			.unbind()
 			.bind(
 				new Thread(
-					[this, ...args = forward<Args>(args)] (ExecutionTokenType& exect) {
+					[this, ...args = args] (ExecutionTokenType& exect) {
 						result = nullptr;
 						result = target.value()(exect, args...);
 					}

@@ -75,11 +75,17 @@ public:
 	/// @brief Invokes the callable bound to it. If no callable was attached, returns `nullptr`.
 	/// @param ...args Argument types.
 	/// @return Result of the call, or `nullptr` if no callable was attached.
-	constexpr Nullable<ReturnType> invoke(TArgs... args) const requires (PROCEDURE)		{if (id) return func(args...); return nullptr;	}
+	constexpr Nullable<ReturnType> invoke(TArgs... args) const requires (PROCEDURE) {
+		if (id)
+			return func(args...);
+		return nullptr;
+	}
 	/// @brief Invokes the callable bound to it. If no callable was attached, returns `nullptr`.
 	/// @param ...args Argument types.
 	/// @return Result of the call, or `nullptr` if no callable was attached.
-	constexpr Nullable<ReturnType> operator()(TArgs... args) const requires (PROCEDURE)	{return invoke(args...);						}
+	constexpr Nullable<ReturnType> operator()(TArgs... args) const requires (PROCEDURE)	{
+		return invoke(args...);
+	}
 
 	/// @brief If it exists, invokes the callable bound to it.
 	/// @param ...args Argument types.

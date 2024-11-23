@@ -11,13 +11,13 @@ CTL_NAMESPACE_BEGIN
 
 /// @brief Mutex synchronization barrier.
 class Mutex:
-	Base::Async::Yieldable,
+	Async::Base::Yieldable,
 	SelfIdentified<Mutex>,
-	Derived<Base::Async::Yieldable>,
+	Derived<Async::Base::Yieldable>,
 	Ordered {
 public:
 	using SelfIdentified	= SelfIdentified<Mutex>;
-	using Derived			= Derived<Base::Async::Yieldable>;
+	using Derived			= Derived<Async::Base::Yieldable>;
 
 	using
 		typename SelfIdentified::SelfType

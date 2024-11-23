@@ -6,60 +6,52 @@
 
 CTL_EX_NAMESPACE_BEGIN
 
+/// @brief Thread timer.
 class Ticker: public SelfIdentified<Ticker> {
 	using Counter = Atomic<usize>;
-	using CounterInstance = Instance<Counter>;
 
 public:
-	class Waiter: public SelfIdentified<Waiter>, Base::Async::Yieldable {
-		constexpr Waiter(Waiter const& other): counter(other.counter)		{}
-		constexpr Waiter(Waiter&& other): counter(CTL::move(other.counter))	{}
+	/// @brief Thread timer waiter.
+	class Waiter: public SelfIdentified<Waiter>, Async::Base::Yieldable {
+		/// @brief Copy constructor.
+		/// @param other Waiter to copy from.
+		constexpr Waiter(Waiter const& other): counter(other.counter)	{}
+		/// @brief Copy constructor.
+		/// @param other Waiter to move.
+		constexpr Waiter(Waiter&& other): counter(other.counter)		{}
 
-		constexpr ~Waiter() {counter.unbind();}
+		/// @brief Destructor.
+		constexpr ~Waiter() {}
 
+		/// @brief Sleeps the thread it is called in for a given amount of ticks.
+		/// @param ticks Amount of ticks to wait for.
 		void wait(usize const& ticks) {
-			(*counter) = ticks;
-			while (counter && counter->value() > 0) asyncYield();
+			usize delay = counter;
+			while (counter.value() < (delay + ticks)) asyncYield();
 		}
 
 	private:
+		constexpr Waiter(Counter& counter): counter(counter)	{}
 
-		constexpr Waiter(CounterInstance const& _counter): counter(_counter)	{}
-
-		CounterInstance counter;
+		/// @brief Counter bound to the waiter.
+		Counter& counter;
 
 		friend class Ticker;
 	};
-	Ticker() {}
 
-	~Ticker() {
-		for(CounterInstance* counter: counters)
-			delete counter;
-	}
+	/// @brief Empty constructor.
+	Ticker()	{}
+	/// @brief Destructor.
+	~Ticker()	{}
 
-	void yield() {
-		usize i = 0;
-		for (CounterInstance* counter: counters) {
-			if (counter->count() < 2) {
-				delete counter;
-				counters.eraseLike(counter);
-			}
-			else if (counter->value().value() > 0)	(**counter)--;
-			++i;
-		}
-	}
-
-	Waiter getWaiter() {
-		counters.pushBack(createCounter());
-		return Waiter(*counters.back());
-	}
+	/// @brief Yields the ticker.
+	void yield()	{++counter;					}
+	/// @brief Creates a waiter for the ticker.
+	Waiter waiter()	{return Waiter(counter);	}
 
 private:
-	static CounterInstance* createCounter() {
-		return new CounterInstance(new Counter());
-	}
-
-	List<CounterInstance*> counters;
+	/// Underlying counter.
+	Counter counter{0};
 };
 
 CTL_EX_NAMESPACE_END

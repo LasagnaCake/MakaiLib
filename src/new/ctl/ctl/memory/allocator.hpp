@@ -174,12 +174,15 @@ struct MemorySlice:
 	constexpr PointerType data()	{return contents;						}
 
 protected:
+	/// @brief Allocates (or resizes) the memory slice.
+	/// @param sz Element count.
 	constexpr void invoke(usize const& sz) {
 		if (!contents) contents = alloc.allocate(sz);
 		else alloc.resize(contents, sz);
 		length = sz;
 	}
 
+	/// @brief Frees the memory managed by the slice.
 	constexpr void free() {
 		if (!contents) return;
 		alloc.deallocate((pointer)contents);

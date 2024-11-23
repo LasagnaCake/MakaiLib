@@ -24,18 +24,20 @@ CTL_NAMESPACE_BEGIN
 ///		Use a `Box` instead.
 template <class T>
 class Atomic:
-	Base::Async::Yieldable,
+	Async::Base::Yieldable,
 	Typed<T>,
 	SelfIdentified<Atomic<T>>,
-	Derived<Base::Async::Yieldable>,
+	Derived<Async::Base::Yieldable>,
 	Ordered {
 public:
 	using Typed				= Typed<T>;
 	using SelfIdentified	= SelfIdentified<Atomic<T>>;
-	using Derived			= Derived<Base::Async::Yieldable>;
+	using Derived			= Derived<Async::Base::Yieldable>;
 
 	using
 		typename Typed::DataType,
+		typename Typed::ConstantType,
+		typename Typed::ReferenceType,
 		typename Typed::TemporaryType,
 		typename Typed::ConstReferenceType
 	;
@@ -58,7 +60,7 @@ public:
 	constexpr Atomic() noexcept											{}
 	/// @brief Copy constructor.
 	/// @param data Value to copy from.
-	constexpr Atomic(ConstReferenceType data): data(data)				{}
+	constexpr Atomic(ConstReferenceType data):	data(data)				{}
 	/// @brief Move constructor.
 	/// @param data Value to move.
 	constexpr Atomic(TemporaryType data):		data(CTL::move(data))	{}
@@ -213,8 +215,11 @@ public:
 	SelfType& operator>>=(DataType const& v) requires Type::Stream::ExtAssignable<DataType, DataType>	{capture(); data >>= v; return release();				}
 
 private:
-	inline void capture() const {return acquireLock();	}
-	inline void release() const {return releaseLock();	}
+	inline SelfType& capture()	{acquireLock(); return *this;	}
+	inline SelfType& release()	{releaseLock(); return *this;	}
+
+	inline void capture() const	{acquireLock();					}
+	inline void release() const	{releaseLock();					}
 
 	inline void acquireLock() const {
 		do {

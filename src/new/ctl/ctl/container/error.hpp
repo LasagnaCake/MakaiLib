@@ -6,7 +6,7 @@
 
 CTL_NAMESPACE_BEGIN
 
-/// @brief Detailed error namespace.
+/// @brief Detailed errors.
 namespace Error {
 	/// @brief Basic error type.
 	using Generic = DetailedException<String>;

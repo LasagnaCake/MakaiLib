@@ -12,20 +12,30 @@ namespace Error {
 	DEFINE_ERROR_TYPE(Occupied);
 }
 
+/// @brief Asynchronous operations.
 namespace Async {
+	/// @brief Sleeps the thread it is called in, for a specific amount of time.
+	/// @tparam T Time unit.
+	/// @param time Time to sleep for.
 	template<class T = OS::Time::Millis>
 	inline void wait(usize const& time) {
 		Thread::wait<T>(time);
 	}
 
+	/// @brief Makes the thread it is called in wait for a condition to be met.
+	/// @param condition Condition to wait for.
 	inline void wait(Atomic<bool>& condition) {
 		while (condition.value()) Thread::yield();
 	}
 
+	/// @brief Makes the thread it is called in wait for a predicate function to be true.
+	/// @param predicate Condition to wait for.
 	inline void wait(Atomic<Trigger<>>& predicate) {
 		while (predicate.value()()) Thread::yield();
 	}
 
+	/// @brief Makes the thread it is called in wait for a predicate function to be true.
+	/// @param predicate Condition to wait for.
 	inline void wait(Trigger<> const& predicate) {
 		while (predicate()) Thread::yield();
 	}

@@ -24,18 +24,32 @@ public:
 
 	using typename SelfIdentified::SelfType;
 
+	/// @brief Setter function type.
 	using SetterFunction = Function<void(DataType const&)>;
 	
+	/// @brief Move constructor (function).
+	/// @brief Function to move.
 	constexpr Setter(SetterFunction&& func):		setter(CTL::move(func))	{}
+	/// @brief Copy constructor (function).
+	/// @brief Function to copy from.
 	constexpr Setter(SetterFunction const& func):	setter(func)			{}
 
+	/// @brief Move constructor (`Setter`) (deleted).
 	constexpr Setter(SelfType&& other)		= delete;
+	/// @brief Copy constructor (`Setter`) (deleted).
 	constexpr Setter(SelfType const& other)	= delete;
 
+	/// @brief Calls the setter function.
+	/// @param value Value to set.
+	/// @return Reference to self.
 	constexpr SelfType& set(ConstReferenceType value)		{setter(value); return *this;	}
+	/// @brief Calls the setter function.
+	/// @param value Value to set.
+	/// @return Reference to self.
 	constexpr SelfType& operator=(ConstReferenceType value)	{return set(value);				}
 
 protected:
+	/// @brief Underlying setter function.
 	SetterFunction const setter;
 private:
 };
@@ -58,15 +72,26 @@ public:
 
 	using GetterFunction = Function<DataType()>;
 
+	/// @brief Move constructor (function).
+	/// @brief Function to move.
 	constexpr Getter(GetterFunction&& func):		getter(CTL::move(func))	{}
+	/// @brief Copy constructor (function).
+	/// @brief Function to copy from.
 	constexpr Getter(GetterFunction const& func):	getter(func)			{}
+	/// @brief Move constructor (`Getter`) (deleted).
 	constexpr Getter(SelfType&& other)		= delete;
+	/// @brief Copy constructor (`Getter`) (deleted).
 	constexpr Getter(SelfType const& other)	= delete;
-
+	
+	/// @brief Calls the getter function.
+	/// @return Current value.
 	constexpr DataType get() const		{return getter();	}
+	/// @brief Calls the getter function.
+	/// @return Current value.
 	constexpr operator DataType() const	{return get();		}
 
 protected:
+	/// @brief Underlying getter function.
 	GetterFunction const getter;
 private:
 };
@@ -100,17 +125,41 @@ public:
 		typename Setter::ConstReferenceType
 	;
 
+	/// @brief Full move constructor (setter & getter functions).
+	/// @param set Setter function to move.
+	/// @param get Getter function to move.
 	constexpr SetGet(SetterFunction&& set, GetterFunction&& get):			Setter(CTL::move(set)), Getter(CTL::move(get))	{}
+	/// @brief Move & copy constructor (setter & getter functions).
+	/// @param set Setter function to move.
+	/// @param get Getter function to copy from.
 	constexpr SetGet(SetterFunction&& set, GetterFunction const& get):		Setter(CTL::move(set)), Getter(get)				{}
+	/// @brief Copy & move constructor (setter & getter functions).
+	/// @param set Setter function to copy from.
+	/// @param get Getter function to move.
 	constexpr SetGet(SetterFunction	const& set, GetterFunction&& get):		Setter(set), Getter(CTL::move(get))				{}
+	/// @brief Full copy constructor (setter & getter functions).
+	/// @param set Setter function to copy from.
+	/// @param get Getter function to copy from.
 	constexpr SetGet(SetterFunction const& set, GetterFunction const& get):	Setter(set), Getter(get)						{}
+	/// @brief Move constructor (`Getter`) (deleted).
 	constexpr SetGet(SelfType&& other)		= delete;
+	/// @brief Copy constructor (`Getter`) (deleted).
 	constexpr SetGet(SelfType const& other)	= delete;
 
+	/// @brief Calls the setter function.
+	/// @param value Value to set.
+	/// @return Reference to self.
 	constexpr SelfType& set(ConstReferenceType value)		{Setter::set(value); return *this;	}
+	/// @brief Calls the setter function.
+	/// @param value Value to set.
+	/// @return Reference to self.
 	constexpr SelfType& operator=(ConstReferenceType value)	{return set(value);					}
 
+	/// @brief Calls the getter function.
+	/// @return Current value.
 	constexpr DataType get() const		{return Getter::get();	}
+	/// @brief Calls the getter function.
+	/// @return Current value.
 	constexpr operator DataType() const	{return get();			}
 };
 
