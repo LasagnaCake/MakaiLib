@@ -279,22 +279,42 @@ namespace Collision::C2D {
 
 	/// @brief Bound-agnostic collision data.
 	union CollisionData {
+		/// @brief Box bound.
 		Box		box;
+		/// @brief Circle bound.
 		Circle	circle;
+		/// @brief Capsule bound.
 		Capsule	capsule;
+		/// @brief Ray bound.
 		Ray		ray;
+		/// @brief Shape bound.
 		Shape	shape;
+		/// @brief Polygon bound.
 		Polygon	polygon;
 
+		/// @brief Empty constructor.
 		constexpr CollisionData()	{}
 
+		/// @brief Constructs the data from a box bound.
+		/// @param value Bound to copy from.
 		constexpr CollisionData(Box const& value):		box(value)		{}
+		/// @brief Constructs the data from a circle bound.
+		/// @param value Bound to copy from.
 		constexpr CollisionData(Circle const& value):	circle(value)	{}
+		/// @brief Constructs the data from a capsule bound.
+		/// @param value Bound to copy from.
 		constexpr CollisionData(Capsule const& value):	capsule(value)	{}
+		/// @brief Constructs the data from a ray bound.
+		/// @param value Bound to copy from.
 		constexpr CollisionData(Ray const& value):		ray(value)		{}
+		/// @brief Constructs the data from a shape bound.
+		/// @param value Bound to copy from.
 		constexpr CollisionData(Shape const& value):	shape(value)	{}
+		/// @brief Constructs the data from a polygon bound.
+		/// @param value Bound to copy from.
 		constexpr CollisionData(Polygon const& value):	polygon(value)	{}
 
+		/// @brief Destructor.
 		constexpr ~CollisionData()	{}
 	};
 
@@ -333,7 +353,12 @@ namespace Collision::C2D {
 		template<Type::Ex::Collision::C2D::Collidable T>
 		constexpr CollisionShape(T const& bound): data(bound), shape((CollisionType)T::ID) {}
 
-		constexpr CollisionShape(CollisionShape const& other) = default;
+		/// @brief Copy constructor.
+		/// @param other `CollisionShape` to copy from.
+		constexpr CollisionShape(CollisionShape const& other): data(other.value()), shape(other.shape)	{}
+		/// @brief Move constructor.
+		/// @param other `CollisionShape` to move.
+		constexpr CollisionShape(CollisionShape&& other): data(other.value()), shape(other.shape)		{}
 
 		/// @brief Destructor.
 		constexpr ~CollisionShape()	{}
@@ -343,7 +368,13 @@ namespace Collision::C2D {
 		constexpr CollisionData value() const {
 			switch (shape) {
 				using enum CollisionType;
-				case CT_NULL:		throw InvalidValueException("No shape was bound!");
+				case CT_NULL:
+					throw Error::InvalidValue(
+						"No shape was bound!",
+						__FILE__,
+						toString(__LINE__),
+						"CollisionShape::value"
+					);
 				case CT_BOX:		return data.box;
 				case CT_CIRCLE:		return data.circle;
 				case CT_CAPSULE:	return data.capsule;
@@ -356,43 +387,47 @@ namespace Collision::C2D {
 		/// @return Collision bound type.
 		constexpr CollisionType type() const	{return shape;	}
 
-		/// @brief Returns the underlying collision data as a box bound.
+		/// @brief Returns the underlying collision data as a collision bound.
 		/// @tparam T Bound type.
 		/// @return Data as bound.
-		template<CTL::Type::Equal<Box> T>		constexpr Box		asType() const	{return data.box;			}
-		/// @brief Returns the underlying collision data as a circle bound.
-		/// @tparam T Bound type.
-		/// @return Data as bound.
-		template<CTL::Type::Equal<Circle> T>	constexpr Circle	asType() const	{return data.circle;		}
-		/// @brief Returns the underlying collision data as a capsule bound.
-		/// @tparam T Bound type.
-		/// @return Data as bound.
-		template<CTL::Type::Equal<Capsule> T>	constexpr Capsule	asType() const	{return data.capsule;		}
-		/// @brief Returns the underlying collision data as a ray bound.
-		/// @tparam T Bound type.
-		/// @return Data as bound.
-		template<CTL::Type::Equal<Ray> T>		constexpr Ray		asType() const	{return data.ray;			}
-		/// @brief Returns the underlying collision data as a shape bound.
-		/// @tparam T Bound type.
-		/// @return Data as bound.
-		template<CTL::Type::Equal<Shape> T>		constexpr Shape		asType() const	{return data.shape;			}
-		/// @brief Returns the underlying collision data as a polygon bound.
-		/// @tparam T Bound type.
-		/// @return Data as bound.
-		template<CTL::Type::Equal<Polygon> T>	constexpr Polygon	asType() const	{return data.polygon;		}
+		template <Type::Ex::Collision::C2D::Collidable T>
+		constexpr T as() const {
+			if (shape != (CollisionType)T::ID)
+				throw Error::InvalidType(
+					"Collision type doesn't match stored collision type!",
+					__FILE__,
+					toString(__LINE__),
+					toString("Requested type ID: ", T::ID, "\nStored type ID: ", enumcast(shape))
+				);
+			return asType<T>();
+		}
 
-		/// @brief Returns the underlying collision data as a bound.
-		/// @tparam T Bound type.
-		/// @return Data as bound.
-		template <class T> constexpr T asType() const;
-
-		/// @brief Returns the underlying collision data as a polygon bound.
+		/// @brief Returns the underlying collision data as a collision bound.
 		/// @tparam T Bound type.
 		/// @return Data as bound.
 		template<Type::Ex::Collision::C2D::Collidable T>
-		constexpr explicit operator T() const	{return asType<T>();	}
+		constexpr explicit operator T() const {return as<T>();}
 
 	private:
+		/// @brief Returns the underlying collision data as a box bound.
+		/// @return Data as bound.
+		template<CTL::Type::Equal<Box> T>		constexpr Box		asType() const	{return data.box;			}
+		/// @brief Returns the underlying collision data as a circle bound.
+		/// @return Data as bound.
+		template<CTL::Type::Equal<Circle> T>	constexpr Circle	asType() const	{return data.circle;		}
+		/// @brief Returns the underlying collision data as a capsule bound.
+		/// @return Data as bound.
+		template<CTL::Type::Equal<Capsule> T>	constexpr Capsule	asType() const	{return data.capsule;		}
+		/// @brief Returns the underlying collision data as a ray bound.
+		/// @return Data as bound.
+		template<CTL::Type::Equal<Ray> T>		constexpr Ray		asType() const	{return data.ray;			}
+		/// @brief Returns the underlying collision data as a shape bound.
+		/// @return Data as bound.
+		template<CTL::Type::Equal<Shape> T>		constexpr Shape		asType() const	{return data.shape;			}
+		/// @brief Returns the underlying collision data as a polygon bound.
+		/// @return Data as bound.
+		template<CTL::Type::Equal<Polygon> T>	constexpr Polygon	asType() const	{return data.polygon;		}
+
 		/// @brief Underlying collision data.
 		CollisionData	data;
 		/// @brief Underlying collision bound type.
