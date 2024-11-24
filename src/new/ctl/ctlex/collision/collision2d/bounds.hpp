@@ -64,11 +64,11 @@ namespace Collision::C2D {
 		};
 	}
 
-	/// @brief Declares the bounds as postceding another bounds.
+	/// @brief Declares the bound as postceding another bound.
 	template<typename T>
 	using Follows = typename Impl::FollowingType<T>::Type;
 
-	/// @brief Box bounds.
+	/// @brief Box bound.
 	struct Box: Follows<void> {
 		using Bounded::Bounded;
 		
@@ -100,7 +100,7 @@ namespace Collision::C2D {
 		Vector2 size;
 	};
 
-	/// @brief "Circle" bounds.
+	/// @brief "Circle" bound.
 	/// @details
 	///		Not truly a circle - actually an ellipse.
 	///
@@ -144,7 +144,7 @@ namespace Collision::C2D {
 		float rotation = 0;
 	};
 
-	/// @brief "Capsule" bounds.
+	/// @brief "Capsule" bound.
 	/// @details
 	///		This one is a bit complex.
 	///
@@ -194,7 +194,7 @@ namespace Collision::C2D {
 		float rotation = 0;
 	};
 
-	/// @brief Raycast bounds.
+	/// @brief Raycast bound.
 	struct Ray: Follows<Capsule> {
 		using Bounded::Bounded;
 
@@ -224,81 +224,41 @@ namespace Collision::C2D {
 		float angle = 0;
 	};
 
-	/// @brief Convex shape with dynamic vertex count.
+	/// @brief Convex shape bound with dynamic vertex count.
 	struct Shape: Follows<Ray> {
 		/// @brief Empty constructor.
-		constexpr Shape(): points(nullptr), count(0) {}
+		constexpr Shape() {}
 
 		/// @brief Allocates space for the shape's vertices.
 		/// @param size Vertex count.
-		constexpr Shape(usize const& size):
-			points(new Vector2[size]{0}),
-			count(size) {}
+		constexpr Shape(usize const& size): points(size) {}
 
-		/// @brief Constructs the shape from a tranform, and an array of points.
+		/// @brief Constructs the shape from an array of points.
 		/// @tparam S Array size.
 		/// @param trans Shape transform.
 		/// @param points Vertices.
 		template<usize S>
-		constexpr Shape(
-			Transform2D const& trans,
-			Decay::AsType<Vector2[S]> const& points
-		): Shape(S) {
-			this->trans = trans;
-			for (usize i = 0; i < count; ++i)
-				this->points[i] = points[i];
-		}
+		constexpr Shape(Decay::AsType<Vector2[S]> const& points): points(points)	{}
 
-		/// @brief Constructs the shape from a tranform, and a set of points.
+		/// @brief Constructs the shape from a set of points.
 		/// @param trans Shape transform.
 		/// @param points Vertices.
-		constexpr Shape(
-			Transform2D const& trans,
-			Span<Vector2> const& points
-		): Shape(points.size()) {
-			this->trans = trans;
-			for (usize i = 0; i < count; ++i)
-				this->points[i] = points[i];
-		}
+		constexpr Shape(Span<Vector2> const& points): points(points)				{}
 
-		/// @brief Copy constructor.
-		/// @param other `Shape` to copy from.
-		constexpr Shape(Shape const& other):
-			Shape(
-				other.trans,
-				{other.points, other.count}
-			) {}
-
-		/// @brief Move constructor.
-		/// @param other `Shape` to move.
-		constexpr Shape(Shape&& other):
-			Shape(
-				other.trans,
-				{other.points, other.count}
-			) {}
-
-		/// @brief Destructor.
-		constexpr ~Shape() {
-			if (points) delete[] points;
-		}
-
-		constexpr Vector2* data() const	{return points;	}
-		constexpr usize	size() const	{return count;	}
-
-		constexpr Vector2* cbegin() const	{return data();				}
-		constexpr Vector2* cend() const		{return data() + size();	}
-
-		constexpr Vector2* begin() const	{return cbegin();			}
-		constexpr Vector2* end() const		{return cend();				}
-
-		Transform2D trans;
-
-	private:
-		Vector2*	points	= nullptr;
-		usize		count	= 0;
+		/// @brief Copy constructor (defaulted).
+		constexpr Shape(Shape const& other)	= default;
+		/// @brief Move constructor (defaulted).
+		constexpr Shape(Shape&& other)		= default;
+		
+		/// @brief Shape vertices.
+		List<Vector2>	points;
 	};
 
+	/// @brief Bound formed from several `Shape`s.
 	struct Polygon: Follows<Shape> {
+		/// @brief Constructs a shape bound.
+		/// @param trans Polygon transform.
+		/// @param shapes Polygon pieces.
 		constexpr Polygon(
 			Transform2D const& trans,
 			List<Shape> const& shapes
@@ -306,13 +266,18 @@ namespace Collision::C2D {
 			trans(trans),
 			shapes(shapes) {}
 
+		/// @brief Copy constructor (defaulted).
 		constexpr Polygon(Polygon const& other)	= default;
+		/// @brief Move constructor (defaulted).
 		constexpr Polygon(Polygon&& other)		= default;
 
+		/// @brief Polygon transform.
 		Transform2D trans;
+		/// @brief Polygon pieces.
 		List<Shape> shapes;
 	};
 
+	/// @brief Bound-agnostic collision data.
 	union CollisionData {
 		Box		box;
 		Circle	circle;
@@ -330,14 +295,10 @@ namespace Collision::C2D {
 		constexpr CollisionData(Shape const& value):	shape(value)	{}
 		constexpr CollisionData(Polygon const& value):	polygon(value)	{}
 
-		constexpr CollisionData(CollisionData const& value) {
-			// Trivially-predictable nightmares...
-			MX::memmove((void*)this, (void*)&value, sizeof(CollisionData));
-		}
-
 		constexpr ~CollisionData()	{}
 	};
 
+	/// @brief Type of collison bound.
 	enum class CollisionType {
 		CT_NULL		= -1,
 		CT_BOX		= Box::ID,
@@ -348,6 +309,8 @@ namespace Collision::C2D {
 		CT_POLYGON	= Polygon::ID
 	};
 
+	/// @brief Gets a bound type by its ID.
+	/// @tparam ID 
 	template<usize ID>
 	using Bounds = CTL::Meta::NthType<
 		ID,
@@ -355,36 +318,85 @@ namespace Collision::C2D {
 		Circle,
 		Capsule,
 		Ray,
-		Figure,
+		Shape,
 		Polygon
 	>;
 
+	/// @brief Bound-agnostic collision shape.
 	struct CollisionShape {
+		/// @brief Empty constructor.
 		constexpr CollisionShape(): shape(CollisionType::CT_NULL) {}
 
+		/// @brief Constructs the collision shape from a bound.
+		/// @tparam T Bound type.
+		/// @param bound Bound to construct from.
 		template<Type::Ex::Collision::C2D::Collidable T>
-		constexpr CollisionShape(T const& bounds): data(bounds), shape((CollisionType)T::ID) {}
+		constexpr CollisionShape(T const& bound): data(bound), shape((CollisionType)T::ID) {}
 
+		constexpr CollisionShape(CollisionShape const& other) = default;
+
+		/// @brief Destructor.
 		constexpr ~CollisionShape()	{}
 
-		constexpr CollisionData value() const	{return data;	}
+		/// @brief Returns the underlying collision data.
+		/// @return Underlying collision data.
+		constexpr CollisionData value() const {
+			switch (shape) {
+				using enum CollisionType;
+				case CT_NULL:		throw InvalidValueException("No shape was bound!");
+				case CT_BOX:		return data.box;
+				case CT_CIRCLE:		return data.circle;
+				case CT_CAPSULE:	return data.capsule;
+				case CT_RAY:		return data.ray;
+				case CT_SHAPE:		return data.shape;
+				case CT_POLYGON:	return data.polygon;
+			}
+		}
+		/// @brief Returns the bound type of the collision data.
+		/// @return Collision bound type.
 		constexpr CollisionType type() const	{return shape;	}
 
-		template<CTL::Type::Equal<Box> T>			constexpr Box		asType() const	{return data.box;			}
-		template<CTL::Type::Equal<Circle> T>		constexpr Circle	asType() const	{return data.circle;		}
-		template<CTL::Type::Equal<Capsule> T>		constexpr Capsule	asType() const	{return data.capsule;		}
-		template<CTL::Type::Equal<Ray> T>			constexpr Ray		asType() const	{return data.ray;			}
-		template<CTL::Type::Equal<Polygon> T>		constexpr Polygon	asType() const	{return data.polygon;		}
-		template<CTL::Type::Equal<Shape> T>			constexpr Shape		asType() const	{return data.shape;			}
+		/// @brief Returns the underlying collision data as a box bound.
+		/// @tparam T Bound type.
+		/// @return Data as bound.
+		template<CTL::Type::Equal<Box> T>		constexpr Box		asType() const	{return data.box;			}
+		/// @brief Returns the underlying collision data as a circle bound.
+		/// @tparam T Bound type.
+		/// @return Data as bound.
+		template<CTL::Type::Equal<Circle> T>	constexpr Circle	asType() const	{return data.circle;		}
+		/// @brief Returns the underlying collision data as a capsule bound.
+		/// @tparam T Bound type.
+		/// @return Data as bound.
+		template<CTL::Type::Equal<Capsule> T>	constexpr Capsule	asType() const	{return data.capsule;		}
+		/// @brief Returns the underlying collision data as a ray bound.
+		/// @tparam T Bound type.
+		/// @return Data as bound.
+		template<CTL::Type::Equal<Ray> T>		constexpr Ray		asType() const	{return data.ray;			}
+		/// @brief Returns the underlying collision data as a shape bound.
+		/// @tparam T Bound type.
+		/// @return Data as bound.
+		template<CTL::Type::Equal<Shape> T>		constexpr Shape		asType() const	{return data.shape;			}
+		/// @brief Returns the underlying collision data as a polygon bound.
+		/// @tparam T Bound type.
+		/// @return Data as bound.
+		template<CTL::Type::Equal<Polygon> T>	constexpr Polygon	asType() const	{return data.polygon;		}
 
+		/// @brief Returns the underlying collision data as a bound.
+		/// @tparam T Bound type.
+		/// @return Data as bound.
+		template <class T> constexpr T asType() const;
+
+		/// @brief Returns the underlying collision data as a polygon bound.
+		/// @tparam T Bound type.
+		/// @return Data as bound.
 		template<Type::Ex::Collision::C2D::Collidable T>
 		constexpr explicit operator T() const	{return asType<T>();	}
 
 	private:
+		/// @brief Underlying collision data.
 		CollisionData	data;
+		/// @brief Underlying collision bound type.
 		CollisionType	shape;
-
-		constexpr CollisionShape(CollisionShape const& other): data(other.data), shape(other.shape) {}
 	};
 }
 

@@ -8,6 +8,7 @@
 #include "arguments.hpp"
 #include "iterator.hpp"
 #include "function.hpp"
+#include "span.hpp"
 #include "../algorithm/sort.hpp"
 #include "../algorithm/reverse.hpp"
 #include "../adapter/comparator.hpp"
@@ -214,10 +215,10 @@ public:
 	/// @brief Constructs a `List`, from a ranged object of (non-subclass) type T.
 	/// @tparam T Ranged type.
 	/// @param other Object to copy from.
-	template<Type::Container::Ranged<IteratorType> T>
+	template<Type::Container::Ranged<IteratorType, ConstIteratorType> T>
 	constexpr explicit List(T const& other)
-	requires requires (T t) {
-		requires !Type::Constructible<T, ConstIteratorType, ConstIteratorType>;
+	requires requires {
+//		requires !Type::Constructible<T, ConstIteratorType, ConstIteratorType>;
 		requires !Type::Subclass<T, SelfType>;
 	}: List(other.begin(), other.end()) {}
 
@@ -226,9 +227,10 @@ public:
 	/// @param other Object to copy from.
 	template<Type::Container::Bounded<PointerType, SizeType> T>
 	constexpr explicit List(T const& other)
-	requires requires (T t) {
-		requires !Type::Constructible<T, ConstIteratorType, ConstIteratorType>;
+	requires requires {
+//		requires !Type::Constructible<T, ConstIteratorType, ConstIteratorType>;
 		requires !Type::Container::List<T>;
+		requires !Type::Container::Ranged<T, IteratorType, ConstIteratorType>;
 	}: List(other.data(), other.size()) {}
 
 	/// @brief Constructs a `List` from a list of ranged objects.

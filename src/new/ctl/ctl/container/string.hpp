@@ -64,6 +64,7 @@ public:
 
 	using
 		typename BaseType::IteratorType,
+		typename BaseType::ConstIteratorType,
 		typename BaseType::ReverseIteratorType
 	;
 
@@ -160,7 +161,7 @@ public:
 	/// @brief Constructs the `BaseString` from a ranged object.
 	/// @tparam T Ranged type. 
 	/// @param other Object to copy from.
-	template<Type::Container::Ranged<IteratorType> T>
+	template<Type::Container::Ranged<IteratorType, ConstIteratorType> T>
 	constexpr BaseString(T const& other): BaseType(other.begin(), other.end()) {}
 
 	/// @brief Constructs the `BaseString` from a bounded object.

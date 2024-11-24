@@ -210,17 +210,17 @@ namespace Type::Container {
 	||	Derived<T, ::CTL::Iterator<typename T::DataType, false, typename T::SizeType>>
 	);
 
-	/// @brief Type must have both `begin()` and `end()` functions that returns `TIterator`.
-	template<class T, class TIterator>
+	/// @brief Type must have both `begin()` and `end()` functions that returns either `TIterator` or `TConstIterator`.
+	template<class T, class TIterator, class TIteratorConst>
 	concept Ranged = requires (T t) {
-		{t.begin()} -> Type::Equal<TIterator>;
-		{t.end()} -> Type::Equal<TIterator>;
+		{t.begin()} -> Type::OneOf<TIterator, TIteratorConst>;
+		{t.end()} -> Type::OneOf<TIterator, TIteratorConst>;
 	};
 
 	/// @brief Type must have both `data()` and `size()` functions, that return `TPointer` and `TSize`, respectively.
 	template<class T, class TPointer, class TSize>
 	concept Bounded = requires (T t) {
-		{t.data()} -> Type::Equal<TPointer>;
+		{t.data()} -> Type::EqualOrConst<TPointer>;
 		{t.size()} -> Type::Equal<TSize>;
 	};
 

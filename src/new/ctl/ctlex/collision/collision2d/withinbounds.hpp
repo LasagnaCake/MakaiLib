@@ -67,13 +67,13 @@ namespace Collision::C2D {
 		return false;
 	}
 
-	/// @brief Point-to-Figure bounds detection.
+	/// @brief Point-to-Shape bounds detection.
 	/// @param point Point to check.
 	/// @param area Bounds to check against.
 	/// @return Whether bounds overlap.
 	/// @warning Currently unimplemented.
 	[[gnu::warning("Unimplemented!")]]
-	constexpr bool withinBounds(Vector2 const& a, Figure const& b) {
+	constexpr bool withinBounds(Vector2 const& a, Shape const& b) {
 		return false;
 	}
 
@@ -227,53 +227,53 @@ namespace Collision::C2D {
 
 	// Shape
 
-	/// @brief Box-to-Figure bounds detection.
+	/// @brief Box-to-Shape bounds detection.
 	/// @param a Bounds to check.
 	/// @param b Bounds to check against.
 	/// @return Whether bounds overlap.
 	/// @warning Currently unimplemented.
 	[[gnu::warning("Unimplemented!")]]
-	constexpr bool withinBounds(Box const& a, Figure const& b) {
+	constexpr bool withinBounds(Box const& a, Shape const& b) {
 		return false;
 	}
 
-	/// @brief Circle-to-Figure bounds detection.
+	/// @brief Circle-to-Shape bounds detection.
 	/// @param a Bounds to check.
 	/// @param b Bounds to check against.
 	/// @return Whether bounds overlap.
 	/// @warning Currently unimplemented.
 	[[gnu::warning("Unimplemented!")]]
-	constexpr bool withinBounds(Circle const& a, Figure const& b) {
+	constexpr bool withinBounds(Circle const& a, Shape const& b) {
 		return false;
 	}
 
-	/// @brief Capsule-to-Figure bounds detection.
+	/// @brief Capsule-to-Shape bounds detection.
 	/// @param a Bounds to check.
 	/// @param b Bounds to check against.
 	/// @return Whether bounds overlap.
 	/// @warning Currently unimplemented.
 	[[gnu::warning("Unimplemented!")]]
-	constexpr bool withinBounds(Capsule const& a, Figure const& b) {
+	constexpr bool withinBounds(Capsule const& a, Shape const& b) {
 		return false;
 	}
 
-	/// @brief Ray-to-Figure bounds detection.
+	/// @brief Ray-to-Shape bounds detection.
 	/// @param a Bounds to check.
 	/// @param b Bounds to check against.
 	/// @return Whether bounds overlap.
 	/// @warning Currently unimplemented.
 	[[gnu::warning("Unimplemented!")]]
-	constexpr bool withinBounds(Ray const& a, Figure const& b) {
+	constexpr bool withinBounds(Ray const& a, Shape const& b) {
 		return false;
 	}
 
-	/// @brief Figure-to-Figure bounds detection.
+	/// @brief Shape-to-Shape bounds detection.
 	/// @param a Bounds to check.
 	/// @param b Bounds to check against.
 	/// @return Whether bounds overlap.
 	/// @warning Currently unimplemented.
 	[[gnu::warning("Unimplemented!")]]
-	constexpr bool withinBounds(Figure const& a, Figure const& b) {
+	constexpr bool withinBounds(Shape const& a, Shape const& b) {
 		return false;
 	}
 
@@ -319,13 +319,13 @@ namespace Collision::C2D {
 		return false;
 	}
 
-	/// @brief Figure-to-Polygon bounds detection.
+	/// @brief Shape-to-Polygon bounds detection.
 	/// @param a Bounds to check.
 	/// @param b Bounds to check against.
 	/// @return Whether bounds overlap.
 	/// @warning Currently unimplemented.
 	[[gnu::warning("Unimplemented!")]]
-	constexpr bool withinBounds(Figure const& a, Polygon const& b) {
+	constexpr bool withinBounds(Shape const& a, Polygon const& b) {
 		return false;
 	}
 
@@ -395,14 +395,14 @@ namespace Collision::C2D {
 		return withinBounds(b, a);
 	}
 
-	/// @brief Figure-to-Bounds bounds detection.
+	/// @brief Shape-to-Bounds bounds detection.
 	/// @tparam T Bounds type.
 	/// @param a Bounds to check.
 	/// @param b Bounds to check against.
 	/// @return Whether bounds overlap.
 	/// @return Depending on the shape, may be potentially unimplemented.
 	template<Type::Ex::Collision::C2D::Collidable B>
-	constexpr bool withinBounds(Figure const& a, B const& b) {
+	constexpr bool withinBounds(Shape const& a, B const& b) {
 		return withinBounds(b, a);
 	}
 
@@ -433,7 +433,7 @@ namespace Collision::C2D {
 			case CollisionType::CT_CIRCLE:	return withinBounds((Circle)a,	b);
 			case CollisionType::CT_CAPSULE:	return withinBounds((Capsule)a,	b);
 			case CollisionType::CT_RAY:		return withinBounds((Ray)a,		b);
-			case CollisionType::CT_SHAPE:	return withinBounds((Figure)a,	b);
+			case CollisionType::CT_SHAPE:	return withinBounds((Shape)a,	b);
 			case CollisionType::CT_POLYGON:	return withinBounds((Polygon)a,	b);
 		}
 	}
@@ -461,7 +461,7 @@ namespace Collision::C2D {
 			case CollisionType::CT_CIRCLE:	return withinBounds((Circle)a,	b);
 			case CollisionType::CT_CAPSULE:	return withinBounds((Capsule)a,	b);
 			case CollisionType::CT_RAY:		return withinBounds((Ray)a,		b);
-			case CollisionType::CT_SHAPE:	return withinBounds((Figure)a,	b);
+			case CollisionType::CT_SHAPE:	return withinBounds((Shape)a,	b);
 			case CollisionType::CT_POLYGON:	return withinBounds((Polygon)a,	b);
 		}
 	}
