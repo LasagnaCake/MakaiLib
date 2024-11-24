@@ -226,12 +226,19 @@ namespace Collision::C2D {
 
 	/// @brief Convex shape with dynamic vertex count.
 	struct Shape: Follows<Ray> {
+		/// @brief Empty constructor.
 		constexpr Shape(): points(nullptr), count(0) {}
 
+		/// @brief Allocates space for the shape's vertices.
+		/// @param size Vertex count.
 		constexpr Shape(usize const& size):
 			points(new Vector2[size]{0}),
 			count(size) {}
 
+		/// @brief Constructs the shape from a tranform, and an array of points.
+		/// @tparam S Array size.
+		/// @param trans Shape transform.
+		/// @param points Vertices.
 		template<usize S>
 		constexpr Shape(
 			Transform2D const& trans,
@@ -242,6 +249,9 @@ namespace Collision::C2D {
 				this->points[i] = points[i];
 		}
 
+		/// @brief Constructs the shape from a tranform, and a set of points.
+		/// @param trans Shape transform.
+		/// @param points Vertices.
 		constexpr Shape(
 			Transform2D const& trans,
 			Span<Vector2> const& points
@@ -251,18 +261,23 @@ namespace Collision::C2D {
 				this->points[i] = points[i];
 		}
 
+		/// @brief Copy constructor.
+		/// @param other `Shape` to copy from.
 		constexpr Shape(Shape const& other):
 			Shape(
 				other.trans,
 				{other.points, other.count}
 			) {}
 
+		/// @brief Move constructor.
+		/// @param other `Shape` to move.
 		constexpr Shape(Shape&& other):
 			Shape(
 				other.trans,
 				{other.points, other.count}
 			) {}
 
+		/// @brief Destructor.
 		constexpr ~Shape() {
 			if (points) delete[] points;
 		}
@@ -286,16 +301,16 @@ namespace Collision::C2D {
 	struct Polygon: Follows<Shape> {
 		constexpr Polygon(
 			Transform2D const& trans,
-			List<Shape> const& pieces
+			List<Shape> const& shapes
 		):
 			trans(trans),
-			pieces(pieces) {}
+			shapes(shapes) {}
 
 		constexpr Polygon(Polygon const& other)	= default;
 		constexpr Polygon(Polygon&& other)		= default;
 
 		Transform2D trans;
-		List<Shape> pieces;
+		List<Shape> shapes;
 	};
 
 	union CollisionData {
