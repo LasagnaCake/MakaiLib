@@ -6,13 +6,20 @@
 
 CTL_EX_NAMESPACE_BEGIN
 
+/// @brief Decays to a "C-style" fixed array.
+/// @tparam T Element type.
+/// @tparam S Array size.
 template<class T, usize S>
 using CArray = Decay::AsType<T[S]>;
 
+/// @brief Decays to a fixed-size "C-style" string.
+/// @tparam S String size.
 template<usize S>
 using FixedCString = CArray<const char, S>;
 
+/// @brief Container-related type constraints.
 namespace Type::Ex::Container {
+	/// @brief Type must be a valid static string obfuscator.
 	template<typename T, usize S>
 	concept StringObfuscator =
 		::CTL::Type::Constructible<T>
@@ -23,38 +30,70 @@ namespace Type::Ex::Container {
 	;
 }
 
+/// @brief Value obfuscator interface.
+/// @tparam TData Value type.
 template<typename TData>
-struct Obfuscator {
-	typedef TData DataType;
+struct Obfuscator: CTL::Typed<TData> {
+	using Typed = CTL::Typed<TData>;
 
+	using
+		typename Typed::DataType
+	;
+
+	/// @brief Destructor.
 	constexpr virtual ~Obfuscator() {}
 
+	/// @brief Returns the deobfuscated value.
+	/// @return Deobfuscated value.
+	/// @note Must be implemented in the derived classes.
 	virtual DataType deobfuscated() const = 0;
 
+	/// @brief Returns the deobfuscated value.
+	/// @return Deobfuscated value.
 	DataType operator()() const	{return deobfuscated();}
+	/// @brief Returns the deobfuscated value.
+	/// @return Deobfuscated value.
 	DataType operator*() const	{return deobfuscated();}
+	/// @brief Returns the deobfuscated value.
+	/// @return Deobfuscated value.
 	operator DataType() const 	{return deobfuscated();}
 };
 
+/// @brief Implementations.
 namespace Impl {
+	/// @brief Returns whether a number is a prime.
+	/// @param v Number to check.
+	/// @return Whether it is prime.
 	consteval bool isPrime(usize const& v) {
+		if (v == 0) return false;
 		for (usize i = 2; i < v; ++i)
 			if (v % i == 0)
 				return false;
 		return true;
 	}
 
-	consteval usize nearestPrime(usize const& v, bool exclueSelf = false) {
-		for (usize i = (exclueSelf ? (v-1) : v); i > 0; --i)
+	/// @brief Returns the nearest prime to a number, that is less than or equal to it.
+	/// @param v Number to get nearest prime.
+	/// @param excludeSelf Whether to exclude the number itself, if it is prime.
+	/// @return Nearest prime.
+	consteval usize nearestPrime(usize const& v, bool excludeSelf = false) {
+		if (v < 2) return excludeSelf ? v : 0;
+		for (usize i = (excludeSelf ? (v-1) : v); i > 0; --i)
 			if (isPrime(i))
 				return i;
 		return 0;
 	}
 
+	/// @brief Contains information on the primality of a number.
+	/// @tparam N Number to check.
 	template<usize N>
 	struct PrimeNumber {
-		constexpr static bool VALUE		= isPrime(N);
-		constexpr static usize NEAREST	= nearestPrime(N);
+		/// @brief Number.
+		constexpr static usize VALUE	= N;
+		/// @brief Whether it is prime.
+		constexpr static bool IS_PRIME	= isPrime(N);
+		/// @brief Nearest prime to it, excluding itself.
+		constexpr static usize NEAREST	= nearestPrime(N, true);
 	};
 }
 

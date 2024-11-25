@@ -27,6 +27,9 @@ namespace {
 /// @brief Type constraints.
 namespace Type {
 	using namespace ::CTL::Type;
+
+	/// @brief CTL extensions type constraints.
+	namespace Ex {}
 }
 
 CTL_EX_NAMESPACE_END
