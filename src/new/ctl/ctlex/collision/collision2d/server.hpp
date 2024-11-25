@@ -25,6 +25,8 @@ namespace Collision::C2D {
 		/// @brief Collision event signal. Gets called when a collision event occurs.
 		typedef Functor<void(Area&, Direction const&)> CollisionEvent;
 
+		/// @brief Other server collider type.
+		/// @tparam SI Server ID.
 		template<usize SI>
 		using ColliderType = typename CollisionServer<SI>::Collider;
 
