@@ -110,6 +110,16 @@ struct Thread:
 		/// @brief Empty constructor.
 		ID(): BaseType() {}
 
+		/// @brief Copy constructor (defaulted).
+		ID(ID const& other)	= default;
+		/// @brief Move constructor (defaulted).
+		ID(ID&& other)		= default;
+
+		/// @brief Copy assignment operator (defaulted).
+		constexpr ID& operator=(ID const& other)	= default;
+		/// @brief Move assignment operator (defaulted).
+		constexpr ID& operator=(ID&& other)			= default;
+
 		/// @brief Threeway comparison operator.
 		/// @param other `ID` to compare with.
 		/// @return Order between `ID`s.
@@ -122,7 +132,10 @@ struct Thread:
 	private:
 		/// @brief Move constructor.
 		/// @param other `std::thread::id` to move.
-		ID(BaseType&& other): BaseType(CTL::move(other)) {}
+		ID(BaseType&& other): BaseType(CTL::move(other))		{}
+		/// @brief Copy constructor.
+		/// @param other `std::thread::id` to copy from.
+		ID(BaseType const& other): BaseType(CTL::move(other))	{}
 
 		friend class ::CTL::Thread;
 	};

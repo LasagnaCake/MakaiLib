@@ -15,81 +15,115 @@ namespace Collision::C2D {
 		;
 	}
 
-	template<usize>
+	/// @brief Automatic collision handler.
+	/// @tparam Server ID.
+	template<usize I>
 	struct CollisionServer {
-		typedef Functor<void(Area&)> CollisionEvent;
+		/// @brief Server ID.
+		constexpr static usize ID = I;
 
+		/// @brief Collision event signal. Gets called when a collision event occurs.
+		typedef Functor<void(Area&, Direction const&)> CollisionEvent;
+
+		template<usize II>
+		using ColliderType = typename CollisionServer<II>::Collider;
+
+		/// @brief Server collision object.
 		struct Collider: Area {
+			/// @brief Destructor.
 			constexpr ~Collider() {
 				CollisionServer::unbind(this);
 			}
 
-			constexpr Collider() {}
-			constexpr Collider(Area const& other): Area{other} {}
+			using Instance	= Instance<Collider>;
+			using Handle	= Handle<Collider>;
 
+			/// @brief Copy constructor (deleted). 
 			constexpr Collider(Collider const& other)	= delete;
+			/// @brief Move constructor (deleted).
 			constexpr Collider(Collider&& other)		= delete;
 
-			constexpr void handleCollision(Collider const& other) {
+			/// @brief
+			///		Checks collision between objects,
+			///		and fires the appropriate collision events,
+			///		depending on its result.
+			/// @param other Collider to check against.
+			template<usize II>
+			constexpr void process(ColliderType<II> const& other) const {
 				switch(colliding(other)) {
+					using enum Direction;
 					default:
-					case Direction::CD_NONE: return;
-					case Direction::CD_FORWARDS:
-						other.onCollision(*this);
-					return;
-					case Direction::CD_BACKWARDS:
-						onCollision(other);
-					return;
-					case Direction::CD_BOTH:
-						other.onCollision(*this);
-						onCollision(other);
-					return;
+					case CD_NONE: break;
+					case CD_FORWARDS:
+						other.onCollision(*this, CD_FORWARDS);
+					break;
+					case CD_BACKWARDS:
+						onCollision(other, CD_BACKWARDS);
+					break;
+					case CD_BOTH:
+						other.onCollision(*this, CD_BOTH);
+						onCollision(other, CD_BOTH);
+					break;
 				}
 			}
 
+			/// @brief Event to fire on collision.
 			CollisionEvent onCollision = []{};
 
 		private:
-			template<usize> friend class CollisionServer;
+			/// @brief Empty constructor.
+			constexpr Collider()								{CollisionServer::bind(this);}
+			/// @brief Constructs the collider from a collision area.
+			/// @param other Collision area to construct from.
+			constexpr Collider(Area const& other): Area{other}	{CollisionServer::bind(this);}
 
-			CollisionServer* parent;
+			template<usize> friend class CollisionServer;
 		};
 
-		typedef Instance<Collider>	ColliderInstance;
-		typedef Handle<Collider>	ColliderHandle;
-
+		/// @brief Empty constructor.
 		constexpr CollisionServer() {}
 
-		constexpr static ColliderInstance createInstance() {
-			ColliderInstance instance = new Collider();
-			bind(instance);
+		/// @brief Creates a collider in the server.
+		/// @return Collider instance.
+		constexpr static Instance<Collider> newCollider() {
+			Instance<Collider> instance = new Collider();
 			return instance;
 		}
 
-		constexpr static ColliderInstance createInstance(Area const& shape) {
-			ColliderInstance instance = new Collider(shape);
-			bind(instance);
+		/// @brief Creates a collider in the server.
+		/// @param area Collision area to construct collider from.
+		/// @return Collider instance.
+		constexpr static Instance<Collider> newCollider(Area const& area) {
+			Instance<Collider> instance = new Collider(area);
 			return instance;
 		}
 
-		constexpr static void check(Collider const& area, LayerMask const& layers) {
+		/// @brief Handles collision between a given collider, and a set of layers.
+		/// @param area Collider to check.
+		/// @param layers Layers to check against.
+			template<usize II>
+		constexpr static void check(ColliderType<II> const& area, LayerMask const& layers) {
 			if (!area.affects.match(layers).overlap()|| !area.enabled) return;
 			for (Collider* c : colliders)
 				if (c->enabled && c->affectedBy.match(layers).overlap())
-					area.handleCollision(*c);
+					area.process(*c);
 		}
 
-		constexpr static void check(Collider const& area) {
+		/// @brief Handles for a given collider.
+		/// @param area Collider to check.
+			template<usize II>
+		constexpr static void check(ColliderType<II> const& area) {
 			for (Collider* c : colliders)
-				area.handleCollision(*c);
+				area.process(*c);
 		}
 
-		static void process() {
+		/// @brief Processes (and handles) collision for all colliders in the server.
+		constexpr static void process() {
 			usize const stop = colliders.size();
 			for (usize start = 1; start < stop; ++start) {
 				Collider* c = colliders[start-1];
 				for (usize i = start; i < stop; ++i)
-					c->handleCollision(colliders[start]);
+					c->process(colliders[start]);
 			}
 		}
 
@@ -104,10 +138,16 @@ namespace Collision::C2D {
 
 		friend class Collider;
 
+		/// @brief Server collider objects.
 		static List<Collider*> colliders;
-	};
 
-	typedef CollisionServer<0> GlobalServer;
+		void *operator new(usize);
+		void operator delete(pointer);
+		void *operator new[](usize);
+		void operator delete[](pointer);
+	};
+	/// @brief Default collision server.
+	using Server = CollisionServer<0>;
 }
 
 CTL_EX_NAMESPACE_END

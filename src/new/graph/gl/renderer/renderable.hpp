@@ -55,8 +55,8 @@ namespace Makai::Graph {
 			// Create shape
 			T* shape = new T(tris);
 			// Set destructor function
-			shape->onDestroy =	[this, shape](){this->removeReference<T>(shape);};
-			shape->onUnbind =	[this, shape](){this->unbindReference<T>(shape);};
+			shape->onDestroy	= [this, shape](){this->removeReference<T>(shape);};
+			shape->onUnbind		= [this, shape](){this->unbindReference<T>(shape);};
 			// Add to reference list
 			references.shape.pushBack((ShapeRef<0>*)shape);
 			// return shape

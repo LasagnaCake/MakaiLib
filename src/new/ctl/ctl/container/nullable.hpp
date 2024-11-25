@@ -78,12 +78,10 @@ class Nullable<TData>:
 	public SelfIdentified<Nullable<TData>>,
 	public Typed<TData>,
 	public Nulled,
-	public Defaultable<TData>,
 	public Ordered {
 public:
 	using Typed				= ::CTL::Typed<TData>;
 	using SelfIdentified	= ::CTL::SelfIdentified<Nullable<TData>>;
-	using Defaultable		= ::CTL::Defaultable<TData>;
 
 	using typename
 		Typed::DataType,
@@ -96,8 +94,6 @@ public:
 	using typename SelfIdentified::SelfType;
 
 	using typename Nulled::NullType;
-
-	using Defaultable::defaultValue;
 
 	using 
 		Ordered::OrderType, 
@@ -145,14 +141,7 @@ public:
 	/// @brief Returns the stored value, or a fallback.
 	/// @param fallback Fallback value.
 	/// @return Stored value, or `fallback` if not set.
-	constexpr DataType orElse(DataType const& fallback) const
-	requires (!Type::Constructible<DataType>) {return (isSet) ? data : fallback;}
-
-	/// @brief Returns the stored value, or a fallback.
-	/// @param fallback Fallback value.
-	/// @return Stored value, or `fallback` if not set.
-	constexpr DataType orElse(DataType const& fallback = DataType()) const
-	requires (Type::Constructible<DataType>) {return (isSet) ? data : fallback;}
+	constexpr DataType orElse(DataType const& fallback) const {return (isSet) ? data : fallback;}
 
 	/// @brief Applies an operation to the stored value, if it exists.
 	/// @tparam TFunction Operation type.
@@ -251,8 +240,8 @@ public:
 	/// @brief Clears the current stored value.
 	/// @return Reference to self.
 	constexpr SelfType& clear() {
-		if (isSet)
-			data = defaultValue();
+		if constexpr (Type::Constructible<DataType>)
+			data = DataType();
 		isSet = false;
 		return *this;
 	}
