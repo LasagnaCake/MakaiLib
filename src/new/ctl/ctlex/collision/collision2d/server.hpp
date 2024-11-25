@@ -25,8 +25,8 @@ namespace Collision::C2D {
 		/// @brief Collision event signal. Gets called when a collision event occurs.
 		typedef Functor<void(Area&, Direction const&)> CollisionEvent;
 
-		template<usize II>
-		using ColliderType = typename CollisionServer<II>::Collider;
+		template<usize SI>
+		using ColliderType = typename CollisionServer<SI>::Collider;
 
 		/// @brief Server collision object.
 		struct Collider: Area {
@@ -48,8 +48,8 @@ namespace Collision::C2D {
 			///		and fires the appropriate collision events,
 			///		depending on its result.
 			/// @param other Collider to check against.
-			template<usize II>
-			constexpr void process(ColliderType<II> const& other) const {
+			template<usize SI>
+			constexpr void process(ColliderType<SI> const& other) const {
 				switch(colliding(other)) {
 					using enum Direction;
 					default:
@@ -101,8 +101,8 @@ namespace Collision::C2D {
 		/// @brief Handles collision between a given collider, and a set of layers.
 		/// @param area Collider to check.
 		/// @param layers Layers to check against.
-			template<usize II>
-		constexpr static void check(ColliderType<II> const& area, LayerMask const& layers) {
+		template<usize SI>
+		constexpr static void check(ColliderType<SI> const& area, LayerMask const& layers) {
 			if (!area.affects.match(layers).overlap()|| !area.enabled) return;
 			for (Collider* c : colliders)
 				if (c->enabled && c->affectedBy.match(layers).overlap())
@@ -111,8 +111,8 @@ namespace Collision::C2D {
 
 		/// @brief Handles for a given collider.
 		/// @param area Collider to check.
-			template<usize II>
-		constexpr static void check(ColliderType<II> const& area) {
+		template<usize SI>
+		constexpr static void check(ColliderType<SI> const& area) {
 			for (Collider* c : colliders)
 				area.process(*c);
 		}
