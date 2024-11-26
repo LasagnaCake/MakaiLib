@@ -11,7 +11,6 @@ const CTL::String dostr = "Flowering Nights";
 
 int main() {
 	DEBUGLN("String: ", dostr);
-	DEBUGLN("Match: ", CTL::toString(str.deobfuscated() == (dostr + '\0')));
 	DEBUGLN("Mangled: ", strm.mangled());
 	DEBUGLN("Demangled: ", strm.demangled());
 	DEBUGLN("Deobfuscated: ", str.deobfuscated());
