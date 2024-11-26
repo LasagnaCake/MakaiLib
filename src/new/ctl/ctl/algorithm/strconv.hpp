@@ -138,8 +138,17 @@ inline float128	toBool(String s)	{return String::toNumber<bool>(s);	}
 /// @return Resulting string.
 template<Type::Number T>
 constexpr String toString(T const& value)
-requires Type::Different<T, bool> {
+requires (!(Type::Equal<T, bool> || Type::ASCII<T>)) {
 	return String::fromNumber<T>(value);
+}
+
+/// @brief Character-to-string conversion.
+/// @tparam T Character type (`char` or `wchar`).
+/// @param value Value to convert.
+/// @return Resulting string.
+template<Type::Equal<char> T>
+constexpr String toString(T const& value) {
+	return String() + value;
 }
 
 /// @brief Boolean-to-string conversion.
@@ -147,8 +156,8 @@ requires Type::Different<T, bool> {
 /// @param value Value to convert.
 /// @return Resulting string.
 template<Type::Equal<bool> T>
-constexpr String toString(T const& value) {
-	return String::fromNumber<bool>(value);
+constexpr String toString(T const& value, bool const& text = false) {
+	return String::fromNumber<bool>(value, text);
 }
 
 /// @brief Class-to-string conversion.

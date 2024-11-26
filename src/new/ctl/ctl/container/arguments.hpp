@@ -5,12 +5,14 @@
 #include "../ctypes.hpp"
 #include "../templates.hpp"
 #include "../cpperror.hpp"
+#include "../typeinfo.hpp"
 
 CTL_NAMESPACE_BEGIN
 
 /// @brief Argument list.
 /// @tparam T Argument type.
-template <class T>
+/// @tparam T Size limit.
+template <class T, usize L = NumberLimit<usize>::HIGHEST>
 struct Arguments:
 	Typed<T>,
 	SelfIdentified<Arguments<T>> {
@@ -40,8 +42,8 @@ struct Arguments:
 	/// @tparam N Array size.
 	/// @param data Fixed array of arguments to use.
 	template<usize N>
-	constexpr Arguments(Decay::AsType<ConstantType[N]> const& data):
-	start(::new DataType[N]), length(N) {
+	constexpr Arguments(Decay::AsType<ConstantType[N]> const& data)
+	requires (N <= L): start(::new DataType[N]), length(N) {
 		MX::memcpy(start, data, N);
 	}
 
@@ -50,7 +52,8 @@ struct Arguments:
 	/// @param first First item on pack.
 	/// @param ...rest Other pack elements.
 	template<class... Args>
-	constexpr Arguments(DataType const& first, Args const&... rest):
+	constexpr Arguments(DataType const& first, Args const&... rest)
+	requires (sizeof...(Args) <= L):
 		start(::new DataType[sizeof...(Args) + 1]{first, rest...}), length(sizeof...(Args) + 1) {}
 
 	/// @brief Gets the argument at the specified index.

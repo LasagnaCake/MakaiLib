@@ -15,6 +15,14 @@ constexpr usize bitWidth(usize n) {
 	while (n >>= 1) ++r;
 	return r;
 }
+/// @brief Returns the byte width of a given number.
+/// @param n Number.
+/// @return Byte width of the number.
+constexpr usize byteWidth(usize n) {
+	usize r = 1;
+	while (n >>= 8) ++r;
+	return r;
+}
 
 /// @brief Returns the highest bit set in a given number.
 /// @param n Number.

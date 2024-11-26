@@ -8,6 +8,7 @@
 #include "converter.hpp"
 #include "enum.hpp"
 #include "decay.hpp"
+#include "number.hpp"
 #include "traits.hpp"
 
 #endif // CTL_TYPETRAITS_H

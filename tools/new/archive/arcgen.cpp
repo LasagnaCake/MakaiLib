@@ -2,7 +2,7 @@
 
 #include <makai/tool/archive/archive.hpp>
 
-String escape(char const& c) {
+CTL::String escape(char const& c) {
 	switch (c) {
 		case '\'':	return "\\'";
 		case '\"':	return "\\\"";
@@ -15,9 +15,11 @@ String escape(char const& c) {
 		case '\r':	return "\\r";
 		case '\t':	return "\\t";
 		case '\v':	return "\\v";
-		default:	return toString(c);
+		default:	return CTL::toString(c);
 	}
 }
+
+CTL::Random::SecureGenerator srand;
 
 int main(int argc, char** argv) {
 	DEBUGLN("Starting...");
@@ -26,13 +28,20 @@ int main(int argc, char** argv) {
 			"\n\nHow to use ArcGen:\n\n"
 			"arcgen.exe \"YOUR_PASSWORD_HERE\""
 		);
+	usize sz = srand.number<usize>(32, 64);
 	else if (argc >= 2) {
-		String keyfile = "constexpr ObfuscatedString<32> const passkey = ObfuscatedString<32>(\"";
+		String keyfile = CTL::toString(
+			"consinit ObfuscatedStaticString<",
+			sz
+			,"> const passkey = ObfuscatedStaticString<",
+			sz
+			,">(\""
+		);
 		for (char& c: Makai::Tool::Arch::hashPassword(argv[1])) {
 			std::stringstream stream;
 			stream << std::hex << (unsigned int)(unsigned char)(c);
 			std::string code = stream.str();
-			keyfile += std::string("\\x")+(code.size()<2?"0":"")+code;
+			keyfile += CTL::String("\\x")+(code.size()<2?"0":"")+CTL::toString(code);
 		}
 		keyfile += "\");";
 		Makai::File::saveText("key.256.h", keyfile);
