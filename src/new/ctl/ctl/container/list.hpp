@@ -345,6 +345,7 @@ public:
 	///		This guarantees the capacity will be EXACTLY of `newSize`.
 	/// 	If you need the capacity to be AT LEAST `newSize`, use `reserve`.
 	constexpr SelfType& resize(SizeType const& newSize) {
+		if (!newSize) return clear();
 		if (contents)	memresize(contents, newSize, maximum, count);
 		else			contents = memcreate(newSize);
 		maximum = newSize;
@@ -397,6 +398,7 @@ public:
 	///		This guarantees the capacity will be EXACTLY of `newSize`.
 	///		If you need the capacity to be AT LEAST `newSize`, use `reserve`.
 	constexpr SelfType& resize(SizeType const& newSize, DataType const& fill) {
+		if (!newSize) return clear();
 		resize(newSize);
 		if (newSize > count)
 			for (SizeType i = newSize; i < count; ++i)

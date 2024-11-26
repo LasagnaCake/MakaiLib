@@ -518,6 +518,9 @@ MangledStaticString<S> makeMangled(FixedCString<S> const& str) {
 /// @tparam TContainer<usize> String mangler.
 template <usize N, template<usize> class TContainer = MangledStaticString>
 struct ObfuscatedStaticString: Obfuscator<String> {
+private:
+	using SizeType = Decay::Number::AsUnsigned<N>;
+public:
 	/// @brief String size.
 	constexpr static usize SIZE = N+1;
 
@@ -525,7 +528,10 @@ struct ObfuscatedStaticString: Obfuscator<String> {
 	/// @tparam CS String size.
 	/// @param str String to mangle.
 	template<usize CS>
-	constexpr ObfuscatedStaticString(FixedCString<CS> const& str): data(decompose(str)) {}
+	constexpr ObfuscatedStaticString(FixedCString<CS> const& str):
+		trueSize(Impl::shuffle<SizeType>(CS)),
+		data(decompose(str))
+	{}
 
 	/// @brief Destructor.
 	constexpr virtual ~ObfuscatedStaticString() {}
@@ -538,14 +544,19 @@ struct ObfuscatedStaticString: Obfuscator<String> {
 		String const dd = data.demangled();
 		for(uint8 c : dd)
 			result.pushBack(off += c);
-		return result;
+		return result.resize(isize());
 	}
 
 private:
 	typedef TContainer<SIZE> ContainerType;
 
+	/// @brief True size of the stored string.
+	SizeType trueSize;
+
 	/// @brief Underlying mangled string.
 	ContainerType data;
+
+	constexpr SizeType isize() const {return Impl::shuffle<SizeType>(trueSize);}
 
 	/// @brief Obfuscates a string.
 	/// @tparam TArray String container type.
@@ -553,7 +564,7 @@ private:
 	template<usize CS>
 	constexpr static ContainerType decompose(FixedCString<CS> const& str) {
 		static_assert(CS <= SIZE, "String must not be bigger than maximum size!");
-		Array<uint8, SIZE> result {'\0'};
+		Array<uint8, CS> result {'\0'};
 		uint8 off = 0;
 		for (usize i = 0; i < CS; ++i) {
 			result[i] = (str[i] - off);

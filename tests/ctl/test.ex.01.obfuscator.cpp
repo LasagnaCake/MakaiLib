@@ -10,10 +10,10 @@ Mangler		strm	= Mangler("Flowering Nights");
 const CTL::String dostr = "Flowering Nights";
 
 int main() {
-	DEBUGLN("String: ", dostr);
-	DEBUGLN("Mangled: ", strm.mangled());
-	DEBUGLN("Demangled: ", strm.demangled());
-	DEBUGLN("Deobfuscated: ", str.deobfuscated());
+	DEBUGLN("String: [", dostr, "]");
+	DEBUGLN("Mangled: [", strm.mangled().replace('\0', '*'), "]");
+	DEBUGLN("Demangled: [", strm.demangled().replace('\0', '*'), "]");
+	DEBUGLN("Deobfuscated: [", str.deobfuscated().replace('\0', '*'), "], size: ", str.deobfuscated().size());
 	DEBUGLN("Obfuscator test passed!");
 	return 0;
 }
