@@ -7,7 +7,7 @@ using Mangler		= CTL::Ex::MangledStaticString<64>;
 Obfuscator	str		= Obfuscator("Flowering Nights");
 Mangler		strm	= Mangler("Flowering Nights");
 
-const CTL::String dostr = "FloweringNight";
+const CTL::String dostr = "Flowering Nights";
 
 int main() {
 	DEBUGLN("String: ", dostr);
