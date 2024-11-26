@@ -116,9 +116,9 @@ struct Thread:
 		ID(ID&& other)		= default;
 
 		/// @brief Copy assignment operator (defaulted).
-		constexpr ID& operator=(ID const& other)	= default;
+		ID& operator=(ID const& other)	= default;
 		/// @brief Move assignment operator (defaulted).
-		constexpr ID& operator=(ID&& other)			= default;
+		ID& operator=(ID&& other)		= default;
 
 		/// @brief Threeway comparison operator.
 		/// @param other `ID` to compare with.

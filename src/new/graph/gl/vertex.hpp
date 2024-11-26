@@ -5,9 +5,9 @@
 
 namespace Makai::Graph {
 	using VertexMap = Map<String, float>;
+	#pragma pack(push, 1)
 
 	namespace Base {
-		#pragma pack(1)
 		struct BasicVertex {
 			Vector3 position	= 0;
 			Vector2 uv			= 0;
@@ -16,7 +16,6 @@ namespace Makai::Graph {
 		};
 	}
 
-	#pragma pack(1)
 	struct Vertex: public Base::BasicVertex {
 		using BaseType = Base::BasicVertex;
 
@@ -77,6 +76,7 @@ namespace Makai::Graph {
 	};
 
 	static_assert(sizeof(Triangle) == (sizeof(Vertex) * 3), "Triangle size is off...");
+	#pragma pack(pop)
 
 	constexpr Vertex INITIAL_VERTEX = Vertex();
 }

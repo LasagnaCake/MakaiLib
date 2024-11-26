@@ -6,7 +6,7 @@ LEAN := -static -s
 ROOT := ../..
 
 COMPILER_CONFIG	:= -m64 -std=gnu++20 -fms-extensions -I$(ROOT)/src/new/ctl
-DEBUGMODE := -DCTL_CONSOLE_OUT -fconcepts-diagnostics-depth=4 -Wall -Wpedantic
+DEBUGMODE := -DCTL_CONSOLE_OUT -Wall -Wpedantic
 
 LIBREQS		:= -static-libstdc++ -static-libgcc
 GRAPHREQS	:= -lopengl32

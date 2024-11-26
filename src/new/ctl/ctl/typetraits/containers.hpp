@@ -30,7 +30,7 @@ namespace Type::Trait {
 		requires {
 			typename C::DataType;
 			C::value;
-		} && (reinterpret_cast<typename C::DataType>(C::value) == ::CTL::ValueConstant<typename C::DataType, C::value>::value)
+		} && (C::value == ::CTL::ValueConstant<typename C::DataType, C::value>::value)
 	;
 }
 

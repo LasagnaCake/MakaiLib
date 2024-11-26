@@ -20,11 +20,11 @@ class Task<R(Args...)>:
 	Functional<Promise<R>(Thread::ExecutionToken, Args...)>,
 	Returnable<Promise<R>>,
 	Argumented<Args...>,
-	SelfIdentified<Task<R, Args...>> {
+	SelfIdentified<Task<R(Args...)>> {
 public:
 	using Functional		= ::CTL::Functional<Promise<R>(Thread::ExecutionToken&, Args...)>;
 	using Returnable		= ::CTL::Returnable<Promise<R>>;
-	using SelfIdentified	= ::CTL::SelfIdentified<Task<R, Args...>>;
+	using SelfIdentified	= ::CTL::SelfIdentified<Task<R(Args...)>>;
 
 	using
 		typename Functional::FunctionType
@@ -159,15 +159,15 @@ public:
 
 	/// @brief Returns a promise to the result.
 	/// @return Promise to the result.
-	PromiseType getPromise() requires Type::NonVoid<ReturnType>	{return Promise(result.asWeak(), executor);	}
+	PromiseType getPromise() requires Type::NonVoid<ReturnType>	{return PromiseType(result.asWeak(), executor);	}
 	/// @brief Returns a promise to the result.
 	/// @return Promise to the result.
-	PromiseType getPromise() requires Type::Void<ReturnType>	{return Promise(executor);					}
+	PromiseType getPromise() requires Type::Void<ReturnType>	{return PromiseType(executor);					}
 
 	/// @brief Returns whether the function is still running.
 	/// @return Whether the function is still running.
 	bool running() const {
-		return executor() && executor->joinable();
+		return executor() && executor->running();
 	}
 
 	/// @brief Stops the running function.

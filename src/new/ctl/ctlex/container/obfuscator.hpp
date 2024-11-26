@@ -238,7 +238,7 @@ namespace StaticStringMangler {
 
 		/// @brief Returns the mangled string.
 		/// @return Mangled string.
-		String mangled() const						{return (left.mangled() + right.mangled()).resize(isize());		}
+		String mangled() const						{return (left.mangled() + right.mangled());						}
 
 		/// @brief Returns the demangled string.
 		/// @return Demangled string.
@@ -417,7 +417,7 @@ namespace StaticStringMangler {
 
 		/// @brief Returns the mangled string.
 		/// @return Mangled string.
-		String mangled() const						{return (left.mangled() + right.mangled()).resize(isize());		}
+		String mangled() const						{return (left.mangled() + right.mangled());						}
 
 		/// @brief Returns the demangled string.
 		/// @return Demangled string.

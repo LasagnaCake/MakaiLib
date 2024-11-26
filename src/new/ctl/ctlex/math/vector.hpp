@@ -64,7 +64,7 @@ namespace Type::Ex::Math::Vector {
 
 namespace Math {
 
-#pragma pack(1)
+#pragma pack(push, 1)
 class Vector2: Ordered {
 	public:
 		using Ordered::OrderType, Ordered::Order;
@@ -398,7 +398,6 @@ class Vector2: Ordered {
 		}
 };
 
-#pragma pack(1)
 class Vector3: Ordered {
 	public:
 		using Ordered::OrderType, Ordered::Order;
@@ -789,7 +788,6 @@ class Vector3: Ordered {
 		}
 };
 
-#pragma pack(1)
 class Vector4: Ordered {
 	public:
 		using Ordered::OrderType, Ordered::Order;
@@ -1165,6 +1163,7 @@ class Vector4: Ordered {
 			return Vector4(xyz() / w, w);
 		}
 };
+#pragma pack(pop)
 
 typedef Vector2 Vec2;
 typedef Vector3 Vec3;

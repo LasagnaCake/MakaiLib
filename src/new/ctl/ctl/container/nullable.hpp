@@ -22,8 +22,8 @@ template<> class Nullable<void>:
 public:
 	using DataType = void;
 
-	using Nulled::NullType;
-	using Ordered::OrderType;
+	using typename Nulled::NullType;
+	using typename Ordered::OrderType;
 
 	/// @brief Empty constructor.
 	constexpr Nullable() noexcept			{}
@@ -83,12 +83,12 @@ public:
 	using Typed				= ::CTL::Typed<TData>;
 	using SelfIdentified	= ::CTL::SelfIdentified<Nullable<TData>>;
 
-	using typename
-		Typed::DataType,
-		Typed::ConstantType,
-		Typed::ReferenceType,
-		Typed::ConstReferenceType,
-		Typed::TemporaryType
+	using
+		typename Typed::DataType,
+		typename Typed::ConstantType,
+		typename Typed::ReferenceType,
+		typename Typed::ConstReferenceType,
+		typename Typed::TemporaryType
 	;
 
 	using typename SelfIdentified::SelfType;
@@ -96,8 +96,8 @@ public:
 	using typename Nulled::NullType;
 
 	using 
-		Ordered::OrderType, 
-		Ordered::Order
+		typename Ordered::OrderType, 
+		typename Ordered::Order
 	;
 
 	/// @brief Operation type.

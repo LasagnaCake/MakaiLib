@@ -47,7 +47,7 @@ namespace Makai::Tool::Arch {
 		uint8 const&				level	= 9
 	);
 
-	struct FileHeader {
+	struct [[gnu::packed]] FileHeader {
 		uint64	uncSize;
 		uint64	compSize;
 		uint32	crc			= 0;
@@ -55,18 +55,17 @@ namespace Makai::Tool::Arch {
 		// Put new things BELOW this line
 	};
 
-	struct DirectoryHeader {
+	struct [[gnu::packed]] DirectoryHeader {
 		uint64	uncSize;
 		uint64	compSize;
 		uint32	crc			= 0;
 		uint8	block[16]	= {0};
 	};
-
+	
 	constexpr uint64 ARCHIVE_VERSION		= 1;
 	constexpr uint64 ARCHIVE_MIN_VERSION	= 1;
 
-	#pragma pack(1)
-	struct ArchiveHeader {
+	struct [[gnu::packed]] ArchiveHeader {
 		uint64	const headerSize		= sizeof(ArchiveHeader);
 		uint64	const fileHeaderSize	= sizeof(FileHeader);
 		uint64	const dirHeaderSize		= sizeof(DirectoryHeader);
