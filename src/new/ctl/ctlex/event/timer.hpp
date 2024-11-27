@@ -19,47 +19,42 @@ class Timer:
 public:
 	using PeriodicTimer::PeriodicTimer;
 
-	/// The signal to be fired.
-	Signal<> onSignal;
-
-	/// Whether the current Timer is paused / completed.
+	/// @brief Whether the current Timer is paused / completed.
 	bool paused	= false;
 
-	/// Whether to repeatedly fire the signal, or just once.
+	/// @brief Whether to repeatedly fire the event.
 	bool repeat = false;
 
-	/// The delay until firing. the internal counter gets incremented until reaching it.
+	/// @brief Time between signal events.
 	usize delay = 0;
 
-	/// The amount of times to repeat for. If < 0, loops indefinitely.
+	/// @brief The amount of times to repeat for. If less than 0, loops indefinitely.
 	llong loopCount = -1;
 
-	/// Delay + repeat constructor.
-	Timer(float const delay, bool const repeat = false, bool const manual = false)
+	/// @brief Constructs the timer.
+	/// @param delay Time between signal events.
+	/// @param repeat Whether to repeatedly fire the event.
+	/// @param manual Whether the timer should be manually updated.
+	Timer(usize const delay, bool const repeat = false, bool const manual = false)
 	: PeriodicTimer(manual), repeat(repeat), delay(delay) {
 	}
 
-	/// Signal + delay + repeat constructor.
-	Timer(Signal<> const& onSignal, usize const delay = 1, bool const repeat = false, bool const manual = false)
-	: PeriodicTimer(manual), onSignal(onSignal), repeat(repeat), delay(delay) {
+	/// @brief Move constructor.
+	/// @param other `Timer` to move.
+	Timer(Timer&& other):
+	paused(CTL::move(other.paused)),
+	repeat(CTL::move(other.repeat)),
+	delay(CTL::move(other.delay)),
+	loopCount(CTL::move(other.loopCount)),
+	counter(CTL::move(other.counter)) {
+		isFinished = CTL::move(other.isFinished);
 	}
 
-	/// Copy constructor.
-	Timer(Timer& other)
-	: Timer(
-		other.onSignal,
-		other.delay,
-		other.repeat,
-		other.isManual()
-	) {
-		paused = other.paused;
-		loopCount = other.loopCount;
-		isFinished = other.isFinished;
-		counter = other.counter;
-		other.setManual();
-	}
+	/// @brief Copy constructor (deleted).
+	Timer(Timer const& other) = delete;
 
-	/// Yields a cycle.
+	/// @brief Yields a cycle.
+	/// @param delta Delta between cycles.
 	void onUpdate(usize delta) override final {
 		// If not paused or not finished...
 		if (!isFinished && !paused) {
@@ -70,7 +65,7 @@ public:
 				// Else, stop timer
 				else isFinished = true;
 				// Fire signal
-				onSignal();
+				onEvent();
 				// If loop count above zero, decrease it
 				if (loopCount > 0) loopCount--;
 			}
@@ -79,54 +74,64 @@ public:
 		}
 	}
 
+	/// @brief Virtual destructor.
 	virtual ~Timer() {}
 
-	/// Resets the Timer's counter to 0.
+	/// @brief Event to fire.
+	virtual void onEvent() = 0;
+
+	/// @brief Resets the internal counter to the start.
+	/// @return Reference to self.
 	Timer& reset() {
 		counter = 0;
 		return (*this);
 	}
 
-	/// Starts the timer from the beginning.
+	/// @brief Starts the timer from the beginning, with a given delay.
+	/// @brief time Time between signal events.
+	/// @return Reference to self.
 	Timer& start(usize const time) {
-		counter = 0;
 		delay = time;
-		isFinished = false;
-		return (*this);
+		return start();
 	}
 
-	/// Starts the timer from the beginning.
+	/// @brief Starts the timer from the beginning.
+	/// @return Reference to self.
 	Timer& start() override final {
 		counter = 0;
 		isFinished = false;
 		return (*this);
 	}
 
-	/// Stops the timer.
+	/// @brief Stops the timer.
+	/// @return Reference to self.
 	Timer& stop() override final {
 		isFinished = true;
 		return (*this);
 	}
 
-	/// Unpauses the timer.
+	/// @brief Unpauses the timer.
+	/// @return Reference to self.
 	Timer& play() override final {
 		paused = true;
 		return (*this);
 	}
 
-	/// Pauses the timer.
+	/// @brief Pauses the timer.
+	/// @return Reference to self.
 	Timer& pause() override final {
 		paused = false;
 		return (*this);
 	}
 
-	/// Gets the counter's current value.
+	/// @brief Returns the internal counter's current value.
+	/// @return Value of internal counter.
 	usize getCounter() const {
 		return counter;
 	}
 
 private:
-	/// The current yield cycle.
+	/// @brief Internal counter.
 	usize counter = 0;
 };
 
