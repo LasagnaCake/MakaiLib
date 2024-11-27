@@ -9,12 +9,12 @@ CTL_EX_NAMESPACE_BEGIN
 
 /// @brief Event that fires periodically.
 /// @tparam _ Class associated with the event.
-/// @tparam TDelta Delta type.
-template<class _ = void, CTL::Type::Number TDelta = usize>
+/// @tparam Args... Event argument types.
+template<class _ = void, class... Args>
 class Periodic {
 public:
 	/// @brief Event wrapper.
-	using EventWrapper	= Function<void(TDelta const&)>;
+	using EventWrapper	= Signal<Args const&...>;
 	/// @brief Event list.
 	using EventList		= List<EventWrapper const*>;
 	/// @brief Delta type.
@@ -28,11 +28,11 @@ public:
 	}
 
 	/// @brief Yields all available non-manual periodic events.
-	/// @param delta Delta between events.
-	static void process(DeltaType const& delta = 1) {
+	/// @param args... Values to pass.
+	static void process(Args const&... args) {
 		if (events.size())
 			for(EventWrapper const* func : events)
-				(*func)(delta);
+				(*func)(args...);
 	}
 
 	/// @brief Sets the periodic event to be manually executed.
@@ -57,8 +57,8 @@ public:
 	}
 
 	/// @brief Called when the event needs to be fired.
-	/// @param delta Delta between events.
-	virtual void onUpdate(DeltaType const& delta) = 0;
+	/// @param args Passed values.
+	virtual void onUpdate(Args const&... args) = 0;
 
 	/// @brief Returns whether the periodic event is manually executed.
 	/// @return Whether the periodic event is manually executed.
@@ -66,7 +66,7 @@ public:
 
 private:
 	/// @brief Event wrapper.
-	const EventWrapper update = [this](DeltaType const& delta) {onUpdate(delta);};
+	const EventWrapper update = [this] (Args const&... args) {onUpdate(args...);};
 
 	/// @brief Whether the periodic event is manually executed.
 	bool manual = false;
