@@ -58,7 +58,7 @@ public:
 	}
 
 	/// Yields a cycle.
-	void onUpdate(usize const& delta) override final {
+	void onUpdate(usize delta) override final {
 		// If not paused or not finished...
 		if (!isFinished && !paused) {
 			// If counter has reached target...

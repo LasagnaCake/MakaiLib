@@ -9,12 +9,12 @@ CTL_EX_NAMESPACE_BEGIN
 
 /// @brief Event that fires periodically.
 /// @tparam _ Class associated with the event.
-/// @tparam Args... Event argument types.
+/// @tparam ...Args Event argument types.
 template<class _ = void, class... Args>
 class Periodic {
 public:
 	/// @brief Event wrapper.
-	using EventWrapper	= Signal<Args const&...>;
+	using EventWrapper	= Signal<Args...>;
 	/// @brief Event list.
 	using EventList		= List<EventWrapper const*>;
 	/// @brief Delta type.
@@ -28,8 +28,8 @@ public:
 	}
 
 	/// @brief Yields all available non-manual periodic events.
-	/// @param args... Values to pass.
-	static void process(Args const&... args) {
+	/// @param ...args Values to pass.
+	static void process(Args... args) {
 		if (events.size())
 			for(EventWrapper const* func : events)
 				(*func)(args...);
@@ -57,8 +57,8 @@ public:
 	}
 
 	/// @brief Called when the event needs to be fired.
-	/// @param args Passed values.
-	virtual void onUpdate(Args const&... args) = 0;
+	/// @param ...args Passed values.
+	virtual void onUpdate(Args... args) = 0;
 
 	/// @brief Returns whether the periodic event is manually executed.
 	/// @return Whether the periodic event is manually executed.
@@ -66,7 +66,7 @@ public:
 
 private:
 	/// @brief Event wrapper.
-	const EventWrapper update = [this] (Args const&... args) {onUpdate(args...);};
+	const EventWrapper update = [this] (Args... args) {onUpdate(args...);};
 
 	/// @brief Whether the periodic event is manually executed.
 	bool manual = false;

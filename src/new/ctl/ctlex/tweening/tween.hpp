@@ -89,7 +89,7 @@ public:
 	virtual ~Tween() {}
 
 	/// Calculates (and if targeted, applies) a step.
-	void onUpdate(usize const& delta) override final {
+	void onUpdate(usize delta) override final {
 		// If paused, return
 		if (paused) return;
 		// If not finished...
@@ -262,7 +262,7 @@ public:
 		setInterpolation(stages);
 	}
 
-	void onUpdate(usize const& delta) override final {
+	void onUpdate(usize delta) override final {
 		// If paused, return
 		if (paused) return;
 		// If not finished...
