@@ -23,7 +23,7 @@ namespace Type::Ex::Tween {
 template <Type::Ex::Tween::Tweenable T = float>
 class Tween;
 
-using PeriodicTween = Periodic<Tween<>>;
+using PeriodicTween = Periodic<Tween<>, usize>;
 
 struct Stepable {
 	virtual usize		getStep()					{return step;	}

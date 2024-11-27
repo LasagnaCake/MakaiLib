@@ -183,8 +183,8 @@ void App::run() {
 	appState = App::AppState::AS_OPENING;
 	// The timer process
 	auto timerFunc	= [&](float delta)-> void {
-		PeriodicTween::process(1.0);
-		PeriodicTimer::process(1.0);
+		PeriodicTween::process(1);
+		PeriodicTimer::process(1);
 	};
 	// The logical process
 	auto logicFunc	= [&](float delta)-> void {
