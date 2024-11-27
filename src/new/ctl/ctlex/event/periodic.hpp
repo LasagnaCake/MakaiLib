@@ -11,14 +11,12 @@ CTL_EX_NAMESPACE_BEGIN
 /// @tparam _ Class associated with the event.
 /// @tparam ...Args Event argument types.
 template<class _ = void, class... Args>
-class Periodic {
+class Periodic: Argumented<Args...> {
 public:
 	/// @brief Event wrapper.
 	using EventWrapper	= Signal<Args...>;
 	/// @brief Event list.
 	using EventList		= List<EventWrapper const*>;
-	/// @brief Delta type.
-	using DeltaType		= TDelta;
 
 	/// @brief Constructs the periodic.
 	/// @param manual Whether the event is fired manually. By default, it is `false`.

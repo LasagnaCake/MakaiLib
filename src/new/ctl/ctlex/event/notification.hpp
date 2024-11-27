@@ -18,21 +18,21 @@ public:
 	/// @brief Message to pass for the sent notification.
 	struct Message {
 		virtual ~Message() {}
-	}
+	};
 
 	/// @brief Server ID.
 	constexpr static usize ID = I;
 
 	/// @brief Signal type.
-	typedef Signal<Message* const>				SignalType;
+	typedef Signal<Message* const>						SignalType;
 	/// @brief Signal list type.
-	typedef List<SignalType>					SignalList;
+	typedef List<SignalType>							SignalList;
 	/// @brief Signal arguments type.
-	typedef Arguments<SignalType>				SignalArguments;
+	typedef Arguments<SignalType>						SignalArguments;
 	/// @brief Signal wrapper type.
-	typedef Functor<SignalType::FunctionType>	SignalWrapper;
+	typedef Functor<typename SignalType::FunctionType>	SignalWrapper;
 	/// @brief Signal database type.
-	typedef Dictionary<List<SignalWrapper>>		SignalDatabase;
+	typedef Dictionary<List<SignalWrapper>>				SignalDatabase;
 
 	/// @brief Empty constructor.
 	NotificationServer() {}

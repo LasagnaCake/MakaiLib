@@ -27,8 +27,8 @@ using PeriodicTween = Periodic<Tween<>, usize>;
 
 struct Stepable {
 	virtual usize		getStep()					{return step;	}
-	virtual Stepable&	setStep(usize const)		{return *this;	}
-	virtual Stepable&	setStepCount(usize const)	{return *this;	}
+	virtual Stepable&	setStep(usize const)		= 0;
+	virtual Stepable&	setStepCount(usize const)	= 0;
 
 protected:
 	usize step = 0;
@@ -41,7 +41,7 @@ struct PlayableTween: Playable {
 	::CTL::Signal<> onCompleted;
 
 private:
-	virtual PlayableTween& stop()		{halt();}
+	virtual PlayableTween& stop()		{return halt();}
 };
 
 template <Type::Ex::Tween::Tweenable T>
