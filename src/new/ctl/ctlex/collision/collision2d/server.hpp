@@ -15,7 +15,7 @@ namespace Collision::C2D {
 		;
 	}
 
-	/// @brief Automatic collision handler.
+	/// @brief Collision server.
 	/// @tparam Server ID.
 	template<usize I>
 	struct CollisionServer {
