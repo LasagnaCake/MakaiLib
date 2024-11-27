@@ -7,12 +7,15 @@
 
 CTL_EX_NAMESPACE_BEGIN
 
+/// @brief Math extensions.
 namespace Math {
 	template<usize R, usize C, CTL::Type::Math::Operatable T>
 	class Matrix;
 }
 
+/// @brief Matrix-specific type constraints.
 namespace Type::Ex::Math::Matrix {
+	/// @brief Type must be a `Matrix`.
 	template <class T>
 	concept Matrix = requires {
 		T::ROWS;
@@ -22,51 +25,73 @@ namespace Type::Ex::Math::Matrix {
 	&&	CTL::Type::Equal<T, CTL::Ex::Math::Matrix<T::ROWS, T::COLUMNS, typename T::DataType>>
 	;
 
-	template <typename T1, typename T2>
-	concept Compatitble = CTL::Type::Math::Operatable<T2> && CTL::Type::Convertible<T2, T1>;
+	/// @brief Type must be operatable, and must be convertible to `TCompat`.
+	template <class T, class TCompat>
+	concept Compatitble = CTL::Type::Math::Operatable<TCompat> && CTL::Type::Convertible<T, TCompat>;
 
+	/// @brief Matrix must be a valid `Transform3D`.
 	template <usize R, usize C>
 	concept ValidTransform3D = (R == 4) && (R == C);
 
+	/// @brief Matrix must be a valid `Transform2D`.
 	template <usize R, usize C>
 	concept ValidTransform2D = (R == 3) && (R == C);
 }
 
+/// @brief Math extensions.
 namespace Math {
 
-template<usize R, usize C, CTL::Type::Math::Operatable T>
+/// @brief Mathematical matrix. Column-major.
+/// @tparam R Row count.
+/// @tparam C Column count.
+/// @tparam T Matrix element type.
+template<usize R, usize C, CTL::Type::Math::Operatable TData>
 class Matrix {
 public:
-	constexpr static usize ROWS	= R;
+	/// @brief Row count.
+	constexpr static usize ROWS		= R;
+	/// @brief Column count.
 	constexpr static usize COLUMNS	= C;
 
-	typedef T	DataType;
+	/// @brief Matrix element type.
+	using DataType	= TData;
 
-	static_assert(R != 0, "Matrix row size must not be zero!");
-	static_assert(C != 0, "Matrix column size must not be zero!");
+	template<class T = DataType>
+	using SingleElementType	= Decay::AsType<TData[1]>;
+	template<class T = DataType>
+	using MatrixType		= Decay::AsType<TData[R][C]>;
+	template<class T = DataType>
+	using ArrayType			= Decay::AsType<TData[R*C]>;
+	template<class T = DataType>
+	using SingleColumnType	= Decay::AsType<TData[C]>;
 
-	/// Constructors.
+	using SelfType	= Matrix<ROWS, COLUMNS, DataType>;
+
+	static_assert(R > 0, "Matrix row size must not be zero!");
+	static_assert(C > 0, "Matrix column size must not be zero!");
+
+	/// @brief Empty constructor.
 	constexpr Matrix() {}
 
-	constexpr Matrix(T const& v) {
+	constexpr Matrix(DataType const& v) {
 		usize const start = ::CTL::Math::min(C, R);
 		for (usize i = 0; i < start; i++)
 			data[start-1-i][start-1-i] = v;
 	}
 
-	constexpr Matrix(T const(& v)[1]) {
+	constexpr Matrix(SingleElementType<> const& v) {
 		for (usize i = 0; i < C; i++)
 			for (usize j = 0; j < R; j++)
 				data[i][j] = v[0];
 	}
 
-	constexpr Matrix(T const(& v)[R][C]) {
+	constexpr Matrix(MatrixType<> const& v) {
 		for (usize i = 0; i < C; i++)
 			for (usize j = 0; j < R; j++)
 				data[i][j] = v[j][i];
 	}
 
-	constexpr Matrix(T const(& v)[R*C]) {
+	constexpr Matrix(ArrayType<> const& v) {
 		T hack[R][C];
 		for (usize i = 0; i < R*C; i++)
 			((T*)hack)[i] = v[i];
@@ -75,45 +100,45 @@ public:
 				data[i][j] = hack[j][i];
 	}
 
-	constexpr Matrix(const T(&v)[C])
+	constexpr Matrix(SingleColumnType<> const& v)
 	requires (C > 1) {
 		for (usize i = 0; i < C; i++)
 			for (usize j = 0; j < R; j++)
 				data[i][j] = v[i];
 	}
 
-	template<Type::Ex::Math::Matrix::Compatitble<T> T2>
-	constexpr Matrix(T2 const(& v)[1]) {
-		T rv = T(v[0]);
+	template<Type::Ex::Math::Matrix::Compatitble<DataType> T2>
+	constexpr Matrix(SingleElementType<T2> const& v) {
+		DataType rv = DataType(v[0]);
 		usize const start = ::CTL::Math::min(C, R);
 		for (usize i = 0; i < C; i++)
 			for (usize j = 0; j < R; j++)
 				data[i][j] = rv;
 	}
 
-	template<Type::Ex::Math::Matrix::Compatitble<T> T2>
-	constexpr Matrix(T2 const(& v)[R][C]) {
+	template<Type::Ex::Math::Matrix::Compatitble<DataType> T2>
+	constexpr Matrix(MatrixType<T2> const& v) {
 		for (usize i = 0; i < C; i++)
 			for (usize j = 0; j < R; j++)
-				data[i][j] = T(v[j][i]);
+				data[i][j] = DataType(v[j][i]);
 	}
 
-	template<Type::Ex::Math::Matrix::Compatitble<T> T2>
-	constexpr Matrix(T2 const(& v)[R*C]) {
+	template<Type::Ex::Math::Matrix::Compatitble<DataType> T2>
+	constexpr Matrix(ArrayType<T2> const& v) {
 		T2 hack[R][C];
 		for (usize i = 0; i < R*C; i++)
 			((T2*)hack)[i] = v[i];
 		for (usize i = 0; i < C; i++)
 			for (usize j = 0; j < R; j++)
-				data[i][j] = T(hack[j][i]);
+				data[i][j] = DataType(hack[j][i]);
 	}
 
-	template<Type::Ex::Math::Matrix::Compatitble<T> T2>
-	constexpr Matrix(const T2(&v)[C])
+	template<Type::Ex::Math::Matrix::Compatitble<DataType> T2>
+	constexpr Matrix(SingleColumnType<T2> const& v)
 	requires (C > 1) {
 		for (usize i = 0; i < C; i++)
 			for (usize j = 0; j < R; j++)
-				data[i][j] = T(v[i]);
+				data[i][j] = DataType(v[i]);
 	}
 
 	constexpr Matrix(Vector2 const& vec) {
@@ -176,7 +201,7 @@ public:
 		compose(pos, rot, scale, perspective, skew);
 	}
 
-	constexpr Matrix(Matrix<R, C, T> const& other) {
+	constexpr Matrix(SelfType const& other) {
 		for (usize i = 0; i < C; i++)
 			for (usize j = 0; j < R; j++)
 				data[i][j] = other.data[i][j];
@@ -191,7 +216,7 @@ public:
 
 	constexpr ~Matrix() {}
 
-	constexpr Matrix<R, C, T>& fill(T const& v) {
+	constexpr SelfType& fill(DataType const& v) {
 		for (usize i = 0; i < C; i++)
 			for (usize j = 0; j < R; j++)
 				data[i][j] = v;
@@ -199,97 +224,97 @@ public:
 	}
 
 	/// Gets the transposed matrix.
-	constexpr Matrix<C, R, T> transposed() const {
-		Matrix<C, R, T> res;
+	constexpr Matrix<C, R, DataType> transposed() const {
+		Matrix<C, R, DataType> res;
 		for (usize i = 0; i < C; i++)
 			for (usize j = 0; j < R; j++)
 				res[j][i] = data[i][j];
 		return res;
 	}
 
-	constexpr Matrix<C, R, T>& transpose() requires (R == C) {
+	constexpr SelfType& transpose() requires (R == C) {
 		(*this) = transposed();
 		return *this;
 	}
 
-	constexpr static Matrix<R, C, T> identity() requires (R == C) {
+	constexpr static SelfType identity() requires (R == C) {
 		static_assert(C == R, "Matrix is not a square matrix!");
-		return Matrix<R, C, T>(1);
+		return SelfType(1);
 	}
 
-	constexpr static Matrix<R, C, T> prototype() requires (R == C) {
+	constexpr static SelfType prototype() requires (R == C) {
 		static_assert(C == R, "Matrix is not a square matrix!");
-		Matrix<R, C, T> res(0);
+		SelfType res(0);
 		res.data[R-1][C-1] = 1;
 		return res;
 	}
 
-	constexpr static Matrix<R, C, T> mirror() requires (R == C) {
+	constexpr static SelfType mirror() requires (R == C) {
 		static_assert(C == R, "Matrix is not a square matrix!");
-		Matrix<R, C, T> res(0);
+		SelfType res(0);
 		for(usize i = 0; i < R; i++)
 			res.data[(R-1)-i][i] = 1;
 		return res;
 	}
 
 	// https://github.com/g-truc/glm/blob/master/glm/gtx/euler_angles.inl
-	constexpr static Matrix<4, 4, T> fromEulerXYZ(Vector3 const& angle) {
+	constexpr static Matrix<4, 4, DataType> fromEulerXYZ(Vector3 const& angle) {
 		// Get sines and cosines
-		T c1 = cos(-angle.x);
-        T c2 = cos(-angle.y);
-        T c3 = cos(-angle.z);
-        T s1 = sin(-angle.x);
-        T s2 = sin(-angle.y);
-        T s3 = sin(-angle.z);
+		DataType c1 = cos(-angle.x);
+		DataType c2 = cos(-angle.y);
+		DataType c3 = cos(-angle.z);
+		DataType s1 = sin(-angle.x);
+		DataType s2 = sin(-angle.y);
+		DataType s3 = sin(-angle.z);
 		// Formulate matrix
-        Matrix<4, 4, T> result;
-        result[0][0] = c2 * c3;
-        result[0][1] =-c1 * s3 + s1 * s2 * c3;
-        result[0][2] = s1 * s3 + c1 * s2 * c3;
-        result[0][3] = T(0);
-        result[1][0] = c2 * s3;
-        result[1][1] = c1 * c3 + s1 * s2 * s3;
-        result[1][2] =-s1 * c3 + c1 * s2 * s3;
-        result[1][3] = T(0);
-        result[2][0] =-s2;
-        result[2][1] = s1 * c2;
-        result[2][2] = c1 * c2;
-        result[2][3] = T(0);
-        result[3][0] = T(0);
-        result[3][1] = T(0);
-        result[3][2] = T(0);
-        result[3][3] = T(1);
-        // Return result
-        return result;
+		Matrix<4, 4, DataType> result;
+		result[0][0] = c2 * c3;
+		result[0][1] =-c1 * s3 + s1 * s2 * c3;
+		result[0][2] = s1 * s3 + c1 * s2 * c3;
+		result[0][3] = DataType(0);
+		result[1][0] = c2 * s3;
+		result[1][1] = c1 * c3 + s1 * s2 * s3;
+		result[1][2] =-s1 * c3 + c1 * s2 * s3;
+		result[1][3] = DataType(0);
+		result[2][0] =-s2;
+		result[2][1] = s1 * c2;
+		result[2][2] = c1 * c2;
+		result[2][3] = DataType(0);
+		result[3][0] = DataType(0);
+		result[3][1] = DataType(0);
+		result[3][2] = DataType(0);
+		result[3][3] = DataType(1);
+		// Return result
+		return result;
 	}
 
 	// https://github.com/g-truc/glm/blob/master/glm/gtx/euler_angles.inl
-	constexpr static Matrix<4, 4, T> fromEulerYXZ(Vector3 const& angle) {
+	constexpr static Matrix<4, 4, DataType> fromEulerYXZ(Vector3 const& angle) {
 		// Get sines and cosines
-		T tmp_ch = cos(-angle.y);
-		T tmp_sh = sin(-angle.y);
-		T tmp_cp = cos(-angle.x);
-		T tmp_sp = sin(-angle.x);
-		T tmp_cb = cos(-angle.z);
-		T tmp_sb = sin(-angle.z);
+		DataType tmp_ch = cos(-angle.y);
+		DataType tmp_sh = sin(-angle.y);
+		DataType tmp_cp = cos(-angle.x);
+		DataType tmp_sp = sin(-angle.x);
+		DataType tmp_cb = cos(-angle.z);
+		DataType tmp_sb = sin(-angle.z);
 		// Compute matrix
-		Matrix<4, 4, T> result;
+		Matrix<4, 4, DataType> result;
 		result[0][0] = tmp_ch * tmp_cb + tmp_sh * tmp_sp * tmp_sb;
 		result[0][1] = tmp_sb * tmp_cp;
 		result[0][2] = -tmp_sh * tmp_cb + tmp_ch * tmp_sp * tmp_sb;
-		result[0][3] = T(0);
+		result[0][3] = DataType(0);
 		result[1][0] = -tmp_ch * tmp_sb + tmp_sh * tmp_sp * tmp_cb;
 		result[1][1] = tmp_cb * tmp_cp;
 		result[1][2] = tmp_sb * tmp_sh + tmp_ch * tmp_sp * tmp_cb;
-		result[1][3] = T(0);
+		result[1][3] = DataType(0);
 		result[2][0] = tmp_sh * tmp_cp;
 		result[2][1] = -tmp_sp;
 		result[2][2] = tmp_ch * tmp_cp;
-		result[2][3] = T(0);
-		result[3][0] = T(0);
-		result[3][1] = T(0);
-		result[3][2] = T(0);
-		result[3][3] = T(1);
+		result[2][3] = DataType(0);
+		result[3][0] = DataType(0);
+		result[3][1] = DataType(0);
+		result[3][2] = DataType(0);
+		result[3][3] = DataType(1);
 		// Return result
 		return result;
 	}
@@ -297,36 +322,36 @@ public:
 	// Euler function type
 	typedef decltype(fromEulerXYZ)	EulerFunction;
 
-	constexpr static Matrix<4, 4, T> fromTranslation(Vector3 const& vec) {
+	constexpr static Matrix<4, 4, DataType> fromTranslation(Vector3 const& vec) {
 		return Matrix(1).translated(vec);
 	}
 
-	constexpr static Matrix<4, 4, T> fromScale(Vector3 const& vec) {
+	constexpr static Matrix<4, 4, DataType> fromScale(Vector3 const& vec) {
 		return Matrix(1).scaled(vec);
 	}
 
-	constexpr Matrix<R, C, T> inverted() const requires (R == C) {
+	constexpr SelfType inverted() const requires (R == C) {
 		static_assert(C == R, "Matrix is not a square matrix!");
-		T det = determinant();
-		if (det == T(0)) return Matrix(1);
-		Matrix<R, C, T> res = cofactors().transposed() * (T(1) / det);
+		DataType det = determinant();
+		if (det == DataType(0)) return Matrix(1);
+		SelfType res = cofactors().transposed() * (DataType(1) / det);
 		return res;
 	}
 
-	constexpr Matrix<R, C, T>& invert() requires (R == C) {
+	constexpr SelfType& invert() requires (R == C) {
 		static_assert(C == R, "Matrix is not a square matrix!");
 		(*this) = inverted();
 		return *this;
 	}
 
-	constexpr Matrix<4, 4, T> translated(Vector3 const& vec) const
+	constexpr Matrix<4, 4, DataType> translated(Vector3 const& vec) const
 	requires Type::Ex::Math::Matrix::ValidTransform3D<R, C> {
 		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
-		return Matrix<4, 4, T>(data).translate(vec);
+		return Matrix<4, 4, DataType>(data).translate(vec);
 	}
 
 	// https://github.com/g-truc/glm/blob/master/glm/ext/matrix_transform.inl
-	constexpr Matrix<4, 4, T>& translate(Vector3 const& vec)
+	constexpr Matrix<4, 4, DataType>& translate(Vector3 const& vec)
 	requires Type::Ex::Math::Matrix::ValidTransform3D<R, C> {
 		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
 		Vector4 calc =
@@ -343,14 +368,14 @@ public:
 	}
 
 	template<EulerFunction EULER_FUNC = Matrix::fromEulerYXZ>
-	constexpr Matrix<4, 4, T> rotated(Vector3 const& vec) const
+	constexpr Matrix<4, 4, DataType> rotated(Vector3 const& vec) const
 	requires Type::Ex::Math::Matrix::ValidTransform3D<R, C> {
 		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
 		return (*this) * EULER_FUNC(vec);
 	}
 
 	template<EulerFunction EULER_FUNC = Matrix::fromEulerYXZ>
-	constexpr Matrix<4, 4, T>& rotate(Vector3 const& vec)
+	constexpr Matrix<4, 4, DataType>& rotate(Vector3 const& vec)
 	requires Type::Ex::Math::Matrix::ValidTransform3D<R, C> {
 		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
 		(*this) *= EULER_FUNC(vec);
@@ -358,7 +383,7 @@ public:
 	}
 
 	// https://github.com/g-truc/glm/blob/master/glm/ext/matrix_transform.inl
-	constexpr Matrix<4, 4, T> scaled(Vector3 const& vec) const
+	constexpr Matrix<4, 4, DataType> scaled(Vector3 const& vec) const
 	requires Type::Ex::Math::Matrix::ValidTransform3D<R, C> {
 		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
 		Vector4 result[4];
@@ -366,7 +391,7 @@ public:
 		result[1] = Vector4(data[1]) * vec[1];
 		result[2] = Vector4(data[2]) * vec[2];
 		result[3] = Vector4(data[3]);
-		return Matrix<4, 4, T>({
+		return Matrix<4, 4, DataType>({
 			result[0][0], result[1][0], result[2][0], result[3][0],
 			result[0][1], result[1][1], result[2][1], result[3][1],
 			result[0][2], result[1][2], result[2][2], result[3][2],
@@ -375,23 +400,23 @@ public:
 	}
 
 	// https://github.com/g-truc/glm/blob/master/glm/ext/matrix_transform.inl
-	constexpr Matrix<4, 4, T>& scale(Vector3 const& vec)
+	constexpr Matrix<4, 4, DataType>& scale(Vector3 const& vec)
 	requires Type::Ex::Math::Matrix::ValidTransform3D<R, C> {
 		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
 		*this = scaled(vec);
 		return (*this);
 	}
 
-	constexpr Matrix<R, C, T> cofactors() const requires (R == C) {
+	constexpr SelfType cofactors() const requires (R == C) {
 		static_assert(C == R, "Matrix is not a square matrix!");
-		Matrix<R, C, T> res;
+		SelfType res;
 		for (usize i = 0; i < R; i++)
 			for (usize j = 0; j < C; j++)
 				res[i][j] = cofactor(i, j);
 		return res;
 	}
 
-	constexpr T determinant() const requires (R == C) {
+	constexpr DataType determinant() const requires (R == C) {
 		static_assert(C == R, "Matrix is not a square matrix!");
 		if constexpr(C == 1)		return data[0][0];
 		else if constexpr(C == 2)	return data[0][0] * data[1][1] - data[1][0] * data[0][1];
@@ -404,7 +429,7 @@ public:
 		-	(data[1][0] * data[0][1] * data[2][2])
 		);
 		else {
-			T res = 0;
+			DataType res = 0;
 			for (usize i = 0; i < R; i++) {
 				if (data[i][0] == 0) continue;
 				res += data[i][0] * cofactor(i, 0);
@@ -413,9 +438,9 @@ public:
 		}
 	}
 
-	constexpr Matrix<R-1, C-1, T> truncated(usize const row, usize const col) const {
+	constexpr Matrix<R-1, C-1, DataType> truncated(usize const row, usize const col) const {
 		static_assert(R > 1 && C > 1, "Cannot truncate a 1-dimensional matrix!");
-		Matrix<R-1, C-1, T> res;
+		Matrix<R-1, C-1, DataType> res;
 		int ro = 0, co = 0;
 		for (usize i = 0; i < C; i++) {
 			ro = 0;
@@ -429,12 +454,12 @@ public:
 	}
 
 	template<usize RF = 1, usize CF = 1>
-	constexpr Matrix<R-RF, C-CF, T> shrunkBy(usize const rowStart = 0, usize const colStart = 0) const {
+	constexpr Matrix<R-RF, C-CF, DataType> shrunkBy(usize const rowStart = 0, usize const colStart = 0) const {
 		static_assert(R > 1 && C > 1, "Cannot shrink a 1-dimensional matrix!");
 		static_assert(RF > R && CF > C, "Shrinking factor(s) are bigger than the matrix!");
 		static_assert(rowStart < (R-RF) && colStart < (C-CF), "Row/Column starts cannot be bigger than the shrunk matrix!");
-		if (rowStart < (R-RF) && colStart < (C-CF)) Matrix<R-RF, C-CF, T>(0);
-		Matrix<R-RF, C-CF, T> res;
+		if (rowStart < (R-RF) && colStart < (C-CF)) Matrix<R-RF, C-CF, DataType>(0);
+		Matrix<R-RF, C-CF, DataType> res;
 		for (usize i = 0; i < C-CF; i++)
 			for (usize j = 0; j < R-RF; j++)
 				res[i][j] = data[i+colStart][j+rowStart];
@@ -442,10 +467,10 @@ public:
 	}
 
 	template<usize RF = 1, usize CF = 1>
-	constexpr Matrix<R+RF, C+CF, T> expandedBy(usize const rowStart = 0, usize const colStart = 0) const {
+	constexpr Matrix<R+RF, C+CF, DataType> expandedBy(usize const rowStart = 0, usize const colStart = 0) const {
 		static_assert(rowStart < RF && colStart < CF, "Row/Column starts cannot be bigger than the expansion factor!");
-		if (rowStart < (RF) && colStart < (CF)) return Matrix<R+RF, C+CF, T>(0);
-		Matrix<R+RF, C+CF, T> res;
+		if (rowStart < (RF) && colStart < (CF)) return Matrix<R+RF, C+CF, DataType>(0);
+		Matrix<R+RF, C+CF, DataType> res;
 		for (usize i = 0; i < C; i++)
 			for (usize j = 0; j < R; j++)
 				res[i+colStart][j+rowStart] = data[i][j];
@@ -454,80 +479,80 @@ public:
 
 	/// Arithmetic operator overloading.
 
-	constexpr Matrix<R, C, T> operator+() const {return *this;}
+	constexpr SelfType operator+() const {return *this;}
 
-	constexpr Matrix<R, C, T> operator+(T const& val) const {
-		Matrix<R, C, T> res;
+	constexpr SelfType operator+(DataType const& val) const {
+		SelfType res;
 		for (usize i = 0; i < C; i++)
 			for (usize j = 0; j < R; j++)
 				res[j][i] = data[i][j] + val;
 		return res;
 	}
 
-	constexpr Matrix<R, C, T> operator+(Matrix<R, C, T> const& mat) const {
-		Matrix<R, C, T> res;
+	constexpr SelfType operator+(SelfType const& mat) const {
+		SelfType res;
 		for (usize i = 0; i < C; i++)
 			for (usize j = 0; j < R; j++)
 				res[j][i] = data[i][j] + mat.data[i][j];
 		return res;
 	}
 
-	constexpr Matrix<R, C, T> operator+(Vector2 const& vec) const {
+	constexpr SelfType operator+(Vector2 const& vec) const {
 		static_assert(R == 2 && C == 1, "Matrix size is invalid!");
-		return (*this) + Matrix<R, C, T>(vec);
+		return (*this) + SelfType(vec);
 	}
 
-	constexpr Matrix<R, C, T> operator+(Vector3 const& vec) const {
+	constexpr SelfType operator+(Vector3 const& vec) const {
 		static_assert(R == 3 && C == 1, "Matrix size is invalid!");
-		return (*this) + Matrix<R, C, T>(vec);
+		return (*this) + SelfType(vec);
 	}
 
-	constexpr Matrix<R, C, T> operator+(Vector4 const& vec) const {
+	constexpr SelfType operator+(Vector4 const& vec) const {
 		static_assert(R == 4 && C == 1, "Matrix size is invalid!");
-		return (*this) + Matrix<R, C, T>(vec);
+		return (*this) + SelfType(vec);
 	}
 
-	constexpr Matrix<R, C, T> operator-() const {
-		Matrix<R, C, T> res;
+	constexpr SelfType operator-() const {
+		SelfType res;
 		for (usize i = 0; i < C; i++)
 			for (usize j = 0; j < R; j++)
 				res[j][i] = -data[i][j];
 		return res;
 	}
 
-	constexpr Matrix<R, C, T> operator-(T const& val) const {
-		Matrix<R, C, T> res;
+	constexpr SelfType operator-(DataType const& val) const {
+		SelfType res;
 		for (usize i = 0; i < C; i++)
 			for (usize j = 0; j < R; j++)
 				res[j][i] = data[i][j] - val;
 		return res;
 	}
 
-	constexpr Matrix<R, C, T> operator-(Matrix<R, C, T> const& mat) const {
-		Matrix<R, C, T> res;
+	constexpr SelfType operator-(SelfType const& mat) const {
+		SelfType res;
 		for (usize i = 0; i < C; i++)
 			for (usize j = 0; j < R; j++)
 				res[j][i] = data[i][j] - mat.data[i][j];
 		return res;
 	}
 
-	constexpr Matrix<R, C, T> operator-(Vector2 const& vec) const {
+	constexpr SelfType operator-(Vector2 const& vec) const {
 		static_assert(R == 2 && C == 1, "Matrix size is invalid!");
-		return (*this) - Matrix<R, C, T>(vec);
+		return (*this) - SelfType(vec);
 	}
 
-	constexpr Matrix<R, C, T> operator-(Vector3 const& vec) const {
+	constexpr SelfType operator-(Vector3 const& vec) const {
 		static_assert(R == 3 && C == 1, "Matrix size is invalid!");
-		return (*this) - Matrix<R, C, T>(vec);
+		return (*this) - SelfType(vec);
 	}
 
-	constexpr Matrix<R, C, T> operator-(Vector4 const& vec) const {
+	constexpr SelfType operator-(Vector4 const& vec) const {
 		static_assert(R == 4 && C == 1, "Matrix size is invalid!");
-		return (*this) - Matrix<R, C, T>(vec);
+		return (*this) - SelfType(vec);
 	}
 
-	constexpr Matrix<R, C, T> operator*(T const& val) const {
-		Matrix<R, C, T> res;
+	constexpr SelfType operator*(DataType const& val) const {
+		SelfType res;
 		for (usize i = 0; i < C; i++)
 			for (usize j = 0; j < R; j++)
 				res[j][i] = data[i][j] * val;
@@ -535,8 +560,8 @@ public:
 	}
 
 	template<usize C2>
-	constexpr Matrix<R, C2, T> operator*(Matrix<C, C2, T> const& mat) const {
-		Matrix<R, C2, T> res;
+	constexpr Matrix<R, C2, DataType> operator*(Matrix<C, C2, DataType> const& mat) const {
+		Matrix<R, C2, DataType> res;
 		for (usize i = 0; i < R; i++)
 			for (usize j = 0; j < C2; j++) {
 				res.data[j][i] = 0;
@@ -546,29 +571,29 @@ public:
 		return res;
 	}
 
-	constexpr Matrix<R, 1, T> operator*(Vector2 const& vec) const {
+	constexpr Matrix<R, 1, DataType> operator*(Vector2 const& vec) const {
 		static_assert(R == 2, "Matrix row count is invalid!");
-		return (*this) * Matrix<R, 1, T>(vec);
+		return (*this) * Matrix<R, 1, DataType>(vec);
 	}
 
-	constexpr Matrix<R, 1, T> operator*(Vector3 const& vec) const {
+	constexpr Matrix<R, 1, DataType> operator*(Vector3 const& vec) const {
 		static_assert(R == 3, "Matrix row count is invalid!");
-		return (*this) * Matrix<R, 1, T>(vec);
+		return (*this) * Matrix<R, 1, DataType>(vec);
 	}
 
-	constexpr Matrix<R, 1, T> operator*(Vector4 const& vec) const {
+	constexpr Matrix<R, 1, DataType> operator*(Vector4 const& vec) const {
 		static_assert(R == 4, "Matrix row count is invalid!");
-		return (*this) * Matrix<R, 1, T>(vec);
+		return (*this) * Matrix<R, 1, DataType>(vec);
 	}
 
-	constexpr Matrix<R, C, T> operator*(Transform3D const& trans) const
+	constexpr SelfType operator*(Transform3D const& trans) const
 	requires Type::Ex::Math::Matrix::ValidTransform3D<R, C>  {
 		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
-		return (*this) * Matrix<R, C, T>(trans);
+		return (*this) * SelfType(trans);
 	}
 
-	constexpr Matrix<R, C, T> operator/(T const& val) const {
-		Matrix<R, C, T> res;
+	constexpr SelfType operator/(DataType const& val) const {
+		SelfType res;
 		for (usize i = 0; i < C; i++)
 			for (usize j = 0; j < R; j++)
 				res[j][i] = data[i][j] / val;
@@ -576,102 +601,102 @@ public:
 	}
 
 	template<usize C2>
-	constexpr Matrix<R, C2, T> operator/(Matrix<C, C2, T> const& mat) const {
+	constexpr Matrix<R, C2, DataType> operator/(Matrix<C, C2, DataType> const& mat) const {
 		return (*this) * mat.inverted();
 	}
 
 	/// Assignment operator overloading.
 
-	constexpr Matrix<R, C, T>& operator=(T const(& v)[R][C]) {
+	constexpr SelfType& operator=(DataType const(& v)[R][C]) {
 		for (usize i = 0; i < C; i++) {
 			for (usize j = 0; j < R; j++)
-				data[i][j] = T(v[i][j]);
+				data[i][j] = DataType(v[i][j]);
 		}
 	}
 
-	constexpr Matrix<R, C, T>& operator=(T const(& v)[R*C]) {
+	constexpr SelfType& operator=(DataType const(& v)[R*C]) {
 		for (usize i = 0; i < R*C; i++)
-			((T*)data)[i] = T(v[i]);
+			((DataType*)data)[i] = DataType(v[i]);
 	}
 
-	constexpr Matrix<R, C, T>& operator+=(T const& val) {
+	constexpr SelfType& operator+=(DataType const& val) {
 		for (usize i = 0; i < C; i++)
 			for (usize j = 0; j < R; j++)
 				data[i][j] += val;
 		return *this;
 	}
 
-	constexpr Matrix<R, C, T>& operator+=(Matrix<R, C, T> const& mat) {
+	constexpr SelfType& operator+=(SelfType const& mat) {
 		for (usize i = 0; i < C; i++)
 			for (usize j = 0; j < R; j++)
 				data[i][j] += mat.data[i][j];
 		return *this;
 	}
 
-	constexpr Matrix<R, C, T> operator+=(Vector2 const& vec) {
+	constexpr SelfType operator+=(Vector2 const& vec) {
 		static_assert(R == 2 && C == 1, "Matrix size is invalid!");
-		return (*this) += Matrix<R, C, T>(vec);
+		return (*this) += SelfType(vec);
 	}
 
-	constexpr Matrix<R, C, T> operator+=(Vector3 const& vec) {
+	constexpr SelfType operator+=(Vector3 const& vec) {
 		static_assert(R == 3 && C == 1, "Matrix size is invalid!");
-		return (*this) += Matrix<R, C, T>(vec);
+		return (*this) += SelfType(vec);
 	}
 
-	constexpr Matrix<R, C, T> operator+=(Vector4 const& vec) {
+	constexpr SelfType operator+=(Vector4 const& vec) {
 		static_assert(R == 4 && C == 1, "Matrix size is invalid!");
-		return (*this) += Matrix<R, C, T>(vec);
+		return (*this) += SelfType(vec);
 	}
 
-	constexpr Matrix<R, C, T>& operator-=(T const& val) {
+	constexpr SelfType& operator-=(DataType const& val) {
 		for (usize i = 0; i < C; i++)
 			for (usize j = 0; j < R; j++)
 				data[i][j] -= val;
 		return *this;
 	}
 
-	constexpr Matrix<R, C, T>& operator-=(Matrix<R, C, T> const& mat) {
+	constexpr SelfType& operator-=(SelfType const& mat) {
 		for (usize i = 0; i < C; i++)
 			for (usize j = 0; j < R; j++)
 				data[i][j] -= mat.data[i][j];
 		return *this;
 	}
 
-	constexpr Matrix<R, C, T> operator-=(Vector2 const& vec) {
+	constexpr SelfType operator-=(Vector2 const& vec) {
 		static_assert(R == 2 && C == 1, "Matrix size is invalid!");
-		return (*this) -= Matrix<R, C, T>(vec);
+		return (*this) -= SelfType(vec);
 	}
 
-	constexpr Matrix<R, C, T> operator-=(Vector3 const& vec) {
+	constexpr SelfType operator-=(Vector3 const& vec) {
 		static_assert(R == 3 && C == 1, "Matrix size is invalid!");
-		return (*this) -= Matrix<R, C, T>(vec);
+		return (*this) -= SelfType(vec);
 	}
 
-	constexpr Matrix<R, C, T> operator-=(Vector4 const& vec) {
+	constexpr SelfType operator-=(Vector4 const& vec) {
 		static_assert(R == 4 && C == 1, "Matrix size is invalid!");
-		return (*this) -= Matrix<R, C, T>(vec);
+		return (*this) -= SelfType(vec);
 	}
 
-	constexpr Matrix<R, C, T>& operator*=(T const& val) {
+	constexpr SelfType& operator*=(DataType const& val) {
 		for (usize i = 0; i < C; i++)
 			for (usize j = 0; j < R; j++)
 				data[i][j] *= val;
 		return *this;
 	}
 
-	constexpr Matrix<R, C, T>& operator*=(Matrix<R, C, T> const& mat)
+	constexpr SelfType& operator*=(SelfType const& mat)
 	requires (R == C) {
 		(*this) = (*this) * mat;
 		return *this;
 	}
 
-	constexpr Matrix<R, C, T> operator*=(Transform3D const& trans)
+	constexpr SelfType operator*=(Transform3D const& trans)
 	requires Type::Ex::Math::Matrix::ValidTransform3D<R, C> {
 		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
-		return (*this) *= Matrix<R, C, T>(trans);
+		return (*this) *= SelfType(trans);
 	}
 
-	constexpr Matrix<R, C, T>& operator/=(T const& val) {
+	constexpr SelfType& operator/=(DataType const& val) {
 		for (usize i = 0; i < R; i++)
 			for (usize j = 0; j < C; j++)
 				data[i][j] /= val;
@@ -679,7 +704,7 @@ public:
 	}
 
 	template<usize C2>
-	constexpr Matrix<R, C, T>& operator/=(Matrix<R, C2, T> const& mat)
+	constexpr SelfType& operator/=(Matrix<R, C2, DataType> const& mat)
 	requires (R == C) {
 		(*this) = (*this) / mat;
 		return *this;
@@ -687,24 +712,24 @@ public:
 
 	/// Other operator overloadings.
 
-	constexpr Span<T, R> operator[](usize const idx)				{return Span<T, R>(data[idx]);			}
-	constexpr Span<const T, R> operator[](usize const idx) const	{return Span<const T, R>(data[idx]);	}
+	constexpr Span<DataType, R> operator[](usize const idx)				{return Span<DataType, R>(data[idx]);		}
+	constexpr Span<const DataType, R> operator[](usize const idx) const	{return Span<const DataType, R>(data[idx]);	}
 
-	constexpr T* begin()	{return &data[0][0];		}
-	constexpr T* end()		{return &data[C-1][R-1];	}
+	constexpr DataType* begin()	{return &data[0][0];		}
+	constexpr DataType* end()	{return &data[C-1][R-1];	}
 
-	constexpr const T* begin() const	{return &data[0][0];		}
-	constexpr const T* end() const		{return &data[C-1][R-1];	}
+	constexpr const DataType* begin() const	{return &data[0][0];		}
+	constexpr const DataType* end() const	{return &data[C-1][R-1];	}
 
-	template <Type::Ex::Math::Matrix::Compatitble<T> T2>
+	template <Type::Ex::Math::Matrix::Compatitble<DataType> T2>
 	constexpr operator Matrix<R, C, T2>() const {return Matrix<R, C, T2>(data);}
 
 	constexpr operator Vector2() const {return toVector2();}
 	constexpr operator Vector3() const {return toVector3();}
 	constexpr operator Vector4() const {return toVector4();}
 
-	constexpr explicit operator const T*() const	{return begin();	}
-	constexpr explicit operator T*()				{return begin();	}
+	constexpr explicit operator const DataType*() const	{return begin();	}
+	constexpr explicit operator DataType*()				{return begin();	}
 
 	/// Converters.
 
@@ -726,7 +751,7 @@ public:
 	}
 
 	template<EulerFunction EULER_FUNC = Matrix::fromEulerYXZ>
-	constexpr Matrix<R, C, T>& transformed(
+	constexpr SelfType& transformed(
 		Vector3 const& position,
 		Vector3 const& rotation,
 		Vector3 const& scale
@@ -737,21 +762,21 @@ public:
 	}
 
 	template<EulerFunction EULER_FUNC = Matrix::fromEulerYXZ>
-	constexpr Matrix<R, C, T>& transformed(Transform3D const& trans)
+	constexpr SelfType& transformed(Transform3D const& trans)
 	const requires Type::Ex::Math::Matrix::ValidTransform3D<R, C> {
 		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
 		return transformed<EULER_FUNC>(trans.position, trans.rotation, trans.scale);
 	}
 
 	template<EulerFunction EULER_FUNC = Matrix::fromEulerYXZ>
-	constexpr Matrix<R, C, T>& transformed(Transform2D const& trans)
+	constexpr SelfType& transformed(Transform2D const& trans)
 	const requires Type::Ex::Math::Matrix::ValidTransform2D<R, C> {
 		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
 		return Matrix(*this).transform(trans);
 	}
 
 	template<EulerFunction EULER_FUNC = Matrix::fromEulerYXZ>
-	constexpr Matrix<R, C, T>& transform(
+	constexpr SelfType& transform(
 		Vector3 const& position,
 		Vector3 const& rotation,
 		Vector3 const& scale
@@ -762,16 +787,16 @@ public:
 	}
 
 	template<EulerFunction EULER_FUNC = Matrix::fromEulerYXZ>
-	constexpr Matrix<R, C, T>& transform(Transform3D const& trans)
+	constexpr SelfType& transform(Transform3D const& trans)
 	requires Type::Ex::Math::Matrix::ValidTransform3D<R, C> {
 		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
 		return transform<EULER_FUNC>(trans.position, trans.rotation, trans.scale);
 	}
 
-	constexpr Matrix<R, C, T>& transform(Transform2D const& trans)
+	constexpr SelfType& transform(Transform2D const& trans)
 	requires Type::Ex::Math::Matrix::ValidTransform2D<R, C> {
 		static_assert(R == 3, "Matrix is not a valid representation of a 3D transform!");
-		Matrix<R, C, T>
+		SelfType
 			pos		= Matrix::identity(),
 			rot		= Matrix::identity(),
 			scale	= Matrix::identity()
@@ -793,7 +818,7 @@ public:
 	}
 
 	template<EulerFunction EULER_FUNC = Matrix::fromEulerYXZ>
-	constexpr Matrix<R, C, T>& compose(
+	constexpr SelfType& compose(
 		Vector3 const& position,
 		Vector3 const& rotation,
 		Vector3 const& scale
@@ -805,7 +830,7 @@ public:
 	}
 
 	template<EulerFunction EULER_FUNC = Matrix::fromEulerYXZ>
-	constexpr Matrix<R, C, T>& compose(Transform3D const& trans)
+	constexpr SelfType& compose(Transform3D const& trans)
 	requires Type::Ex::Math::Matrix::ValidTransform3D<R, C> {
 		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
 		return compose<EULER_FUNC>(trans.position, trans.rotation, trans.scale);
@@ -813,7 +838,7 @@ public:
 
 	// https://github.com/g-truc/glm/blob/master/glm/gtx/matrix_decompose.inl
 	template<EulerFunction EULER_FUNC = Matrix::fromEulerYXZ>
-	constexpr Matrix<R, C, T>& compose(
+	constexpr SelfType& compose(
 		Vector3 const& position,
 		Vector3 const& rotation,
 		Vector3 const& scale,
@@ -821,7 +846,7 @@ public:
 		Vector3 const& skew
 	) requires Type::Ex::Math::Matrix::ValidTransform3D<R, C> {
 		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
-		Matrix<4, 4, T> result(Matrix<4, 4, T>(1));
+		Matrix<4, 4, DataType> result(Matrix<4, 4, DataType>(1));
 		// Apply perspective
 		result.data[3][0] = perspective.x;
 		result.data[3][1] = perspective.y;
@@ -829,7 +854,7 @@ public:
 		result.data[3][3] = perspective.w;
 		// Translate & rotate
 		result.translate(position).template rotate<EULER_FUNC>(rotation);
-		Matrix<4, 4, T> tmp = Matrix<4, 4, T>(1);
+		Matrix<4, 4, DataType> tmp = Matrix<4, 4, DataType>(1);
 		// Skew
 		if (skew.x) {
 			tmp = 1;
@@ -854,7 +879,7 @@ public:
 	}
 
 	template<EulerFunction EULER_FUNC = Matrix::fromEulerYXZ>
-	constexpr Matrix<R, C, T>& compose(
+	constexpr SelfType& compose(
 		Transform3D const&	trans,
 		Vector4 const&				perspective,
 		Vector3 const&				skew
@@ -874,35 +899,35 @@ public:
 		// if identity value is 0, return
 		if (data[3][3] == 0) return Transform3D();
 		// Copy & normalize matrix
-		Matrix<R, C, T> local(data);
+		SelfType local(data);
 		local /= local.data[3][3];
 		// Copy normalized
-		Matrix<R, C, T> pMatrix(local);
+		SelfType pMatrix(local);
 		// Remove translation
 		pMatrix.data[0][3] =
 		pMatrix.data[1][3] =
-		pMatrix.data[2][3] = T(0);
-		pMatrix.data[3][3] = T(1);
+		pMatrix.data[2][3] = DataType(0);
+		pMatrix.data[3][3] = DataType(1);
 		// If perspective's determinant is zero, return
-		if (pMatrix.determinant() == T(0))
+		if (pMatrix.determinant() == DataType(0))
 			return Transform3D();
 		// Isolate perspective
 		if (
-			local.data[0][3] != T(0)
-		||	local.data[1][3] != T(0)
-		||	local.data[2][3] != T(0)
+			local.data[0][3] != DataType(0)
+		||	local.data[1][3] != DataType(0)
+		||	local.data[2][3] != DataType(0)
 		) {
 			// Get right-hand side of the equation
 			Vector4 rhs;
 			for (usize i = 0; i < 4; i++)
 				rhs.data[i] = local.data[i][3];
-			Matrix<R, C, T> tipMatrix = pMatrix.inverted().transposed();
-			perspective = tipMatrix * Matrix<4, 1, T>(rhs);
+			SelfType tipMatrix = pMatrix.inverted().transposed();
+			perspective = tipMatrix * Matrix<4, 1, DataType>(rhs);
 			// Clear perspective
 			local.data[0][3] =
 			local.data[1][3] =
-			local.data[2][3] = T(0);
-			local.data[3][3] = T(1);
+			local.data[2][3] = DataType(0);
+			local.data[3][3] = DataType(1);
 		} else {
 			perspective = Vector4(0, 0, 0, 1);
 		}
@@ -914,7 +939,7 @@ public:
 		);
 		local.data[3][0] =
 		local.data[3][1] =
-		local.data[3][2] = T(0);
+		local.data[3][2] = DataType(0);
 		// Isolate scale & shear
 		Vector3 row[3];
 		for (usize i = 0; i < 3; i++)
@@ -943,8 +968,8 @@ public:
 		// Check for coordinate flip
 		if (row[0].mixProd(row[1], row[2]) < 0)
 			for (usize i = 0; i < 3; i++) {
-				result.scale[i] *= T(-1);
-				row[i] *= T(-1);
+				result.scale[i] *= DataType(-1);
+				row[i] *= DataType(-1);
 			}
 		// Get euler angles
 		result.rotation.y = asin(-row[0][2]);
@@ -967,15 +992,15 @@ public:
 		return decompose(_p, _s);
 	}
 
-	constexpr T cofactor(usize const row, usize const col) const {
-		return ((((row + col) % 2) == 0) ? T(+1) : T(-1)) * truncated(row, col).determinant();
+	constexpr DataType cofactor(usize const row, usize const col) const {
+		return ((((row + col) % 2) == 0) ? DataType(+1) : DataType(-1)) * truncated(row, col).determinant();
 	}
 
 private:
 	template<usize R2, usize C2, CTL::Type::Math::Operatable T2> friend class Matrix;
 	template<typename T2> friend Matrix<4, 4, T2> translate(Matrix<4, 4, T2>, Vector3 const&);
 	/// The matrix's data.
-	T data[C][R] = {};
+	MatrixType<> data = {};
 };
 
 // Template matrices

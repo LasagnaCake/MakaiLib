@@ -30,9 +30,12 @@ namespace Type {
 
 	/// @brief CTL extensions type constraints.
 	namespace Ex {}
+
+	/// @brief Math extensions type constraints.
+	namespace Math{}
 }
 
-/// @brief CTL math extensions.
+/// @brief Math extensions.
 namespace Math{}
 
 CTL_EX_NAMESPACE_END
