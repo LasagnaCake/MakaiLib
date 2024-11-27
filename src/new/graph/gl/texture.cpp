@@ -47,8 +47,8 @@ uint createCopyBuffer() {
 }
 
 void copyTexture(
-	Image2D* const&		src,
-	Image2D* const&		dst,
+	Image2D* const		src,
+	Image2D* const		dst,
 	uint const			srcStartX,
 	uint const			srcStartY,
 	uint const			srcEndX,
@@ -141,7 +141,7 @@ Texture2D::Texture2D(
 	ImageFormat const&		format,
 	FilterMode const&		magFilter,
 	FilterMode const&		minFilter,
-	uchar* const&			data,
+	uchar* const			data,
 	ComponentLayout const&	layout
 ): Texture2D::Texture2D() {
 	create(
@@ -194,7 +194,7 @@ Texture2D& Texture2D::create(
 	ImageFormat const&		format,
 	FilterMode const&		magFilter,
 	FilterMode const&		minFilter,
-	uchar* const&			data,
+	uchar* const			data,
 	ComponentLayout const&	layout
 ) {
 	if (exists()) return *this;
@@ -325,7 +325,7 @@ Texture2D& Texture2D::make(
 	ImageFormat const&		format,
 	FilterMode const&		magFilter,
 	FilterMode const&		minFilter,
-	uchar* const&			data,
+	uchar* const			data,
 	ComponentLayout const&	layout
 ) {
 	destroy();

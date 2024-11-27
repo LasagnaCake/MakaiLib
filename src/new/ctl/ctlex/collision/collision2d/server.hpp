@@ -130,11 +130,11 @@ namespace Collision::C2D {
 		}
 
 	private:
-		constexpr static void bind(Collider* const& collider) {
+		constexpr static void bind(Collider* const collider) {
 			colliders.pushBack(collider);
 		}
 
-		constexpr static void unbind(Collider* const& collider) {
+		constexpr static void unbind(Collider* const collider) {
 			colliders.eraseLike(collider);
 		}
 

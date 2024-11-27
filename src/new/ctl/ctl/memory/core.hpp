@@ -28,7 +28,7 @@ namespace MX {
 	/// @param src Source.
 	/// @param size Size in bytes.
 	/// @return Pointer to destination.
-	constexpr pointer memcpy(pointer const& dst, void const* const& src, usize size) {
+	constexpr pointer memcpy(pointer const& dst, void const* const src, usize size) {
 		#ifdef CTL_DO_NOT_USE_BUILTINS
 		Address s = (Address)src, d = (Address)dst;
 		if (size == 1) *d = *s;
@@ -45,7 +45,7 @@ namespace MX {
 	/// @param count Count of elements to copy.
 	/// @return Pointer to destination.
 	template<Type::NonVoid T>
-	constexpr T* memcpy(T* const& dst, T const* const& src, usize const count) {
+	constexpr T* memcpy(T* const dst, T const* const src, usize const count) {
 		return (T*)memcpy((pointer)dst, (pointer)src, count * sizeof(T));
 	}
 
@@ -55,7 +55,7 @@ namespace MX {
 	/// @param src Source.
 	/// @return Pointer to destination.
 	template<Type::NonVoid T>
-	constexpr T* memcpy(T* const& dst, T const* const& src) {
+	constexpr T* memcpy(T* const dst, T const* const src) {
 		return (T*)memcpy((pointer)dst, (pointer)src, sizeof(T));
 	}
 
@@ -64,7 +64,7 @@ namespace MX {
 	/// @param src Source.
 	/// @param size Size in bytes.
 	/// @return Pointer to destination.
-	constexpr pointer memmove(pointer const& dst, void const* const& src, usize size) {
+	constexpr pointer memmove(pointer const& dst, void const* const src, usize size) {
 		#ifdef CTL_DO_NOT_USE_BUILTINS
 		Address d = (Address)dst, s = (Address)src;
 		if (d < s)
@@ -88,7 +88,7 @@ namespace MX {
 	/// @param count Count of elements to copy.
 	/// @return Pointer to destination.
 	template<Type::NonVoid T>
-	constexpr T* memmove(T* const& dst, T const* const& src, usize const count) {
+	constexpr T* memmove(T* const dst, T const* const src, usize const count) {
 		return (T*)memmove((pointer)dst, (pointer)src, count * sizeof(T));
 	}
 
@@ -98,7 +98,7 @@ namespace MX {
 	/// @param src Source.
 	/// @return Pointer to destination.
 	template<Type::NonVoid T>
-	constexpr T* memmove(T* const& dst, T const* const& src) {
+	constexpr T* memmove(T* const dst, T const* const src) {
 		return (T*)memmove((pointer)dst, (pointer)src, sizeof(T));
 	}
 
@@ -107,7 +107,7 @@ namespace MX {
 	/// @param b Data to compare with.
 	/// @param size Size in bytes.
 	/// @return Order between both spans of data.
-	constexpr int memcmp(void const* const& a, void const* const& b, usize size) {
+	constexpr int memcmp(void const* const a, void const* const b, usize size) {
 		#ifdef CTL_DO_NOT_USE_BUILTINS
 		Address s1 = (Address)a, s2 = (Address)b;
 		while (size-- > 0)
@@ -125,7 +125,7 @@ namespace MX {
 	/// @param count Count of elements to compare.
 	/// @return Order between both spans of data.
 	template<Type::NonVoid T>
-	constexpr int memcmp(T const* const& a, T const* const& b, usize const count) {
+	constexpr int memcmp(T const* const a, T const* const b, usize const count) {
 		return memcmp((pointer)a, (pointer)b, count * sizeof(T));
 	}
 
@@ -135,7 +135,7 @@ namespace MX {
 	/// @param b Data to compare with.
 	/// @return Order between both spans of data.
 	template<Type::NonVoid T>
-	constexpr int memcmp(T const* const& a, T const* const& b) {
+	constexpr int memcmp(T const* const a, T const* const b) {
 		return memcmp(a, b, 1);
 	}
 
@@ -161,7 +161,7 @@ namespace MX {
 	/// @param count Count of elements to set.
 	/// @return Pointer to data.
 	template<Type::NonVoid T>
-	constexpr T* memset(T* const& dst, int const val, usize const count) {
+	constexpr T* memset(T* const dst, int const val, usize const count) {
 		return (T*)memset((pointer)dst, val, count * sizeof(T));
 	}
 
@@ -171,7 +171,7 @@ namespace MX {
 	/// @param val Value to set each byte.
 	/// @return Pointer to data.
 	template<Type::NonVoid T>
-	constexpr T* memset(T* const& dst, int const val) {
+	constexpr T* memset(T* const dst, int const val) {
 		return (T*)memset((pointer)dst, val, sizeof(T));
 	}
 	
@@ -189,7 +189,7 @@ namespace MX {
 	/// @param count Count of elements to zero.
 	/// @return Pointer to data.
 	template<Type::NonVoid T>
-	constexpr T* memzero(T* const& dst, usize const count) {
+	constexpr T* memzero(T* const dst, usize const count) {
 		return (T*)memzero((pointer)dst, count * sizeof(T));
 	}
 
@@ -198,7 +198,7 @@ namespace MX {
 	/// @param dst Data to set.
 	/// @return Pointer to data.
 	template<Type::NonVoid T>
-	constexpr T* memzero(T* const& dst) {
+	constexpr T* memzero(T* const dst) {
 		return (T*)memzero((pointer)dst, sizeof(T));
 	}
 	
@@ -246,7 +246,7 @@ namespace MX {
 	/// @tparam T Type of data allocated.
 	/// @param mem Pointer to allocated memory.
 	template<Type::NonVoid T>
-	constexpr void free(T* const& mem) {
+	constexpr void free(T* const mem) {
 		if (mem) return __builtin_free((pointer)mem);
 	}
 
@@ -270,7 +270,7 @@ namespace MX {
 	/// @param sz New count of elements.
 	/// @return Pointer to new memory location.
 	template<Type::NonVoid T>
-	constexpr T* realloc(T* const& mem, usize const sz) {
+	constexpr T* realloc(T* const mem, usize const sz) {
 		if (!sz) {
 			free(mem);
 			return nullptr;
@@ -285,7 +285,7 @@ namespace MX {
 	/// @param val Object to destruct.
 	/// @note Does not delete the underlying memory.
 	template<Type::NonVoid T>
-	constexpr void destruct(T* const& val) {
+	constexpr void destruct(T* const val) {
 		if (!val) return;
 		val->~T();
 	}
@@ -297,7 +297,7 @@ namespace MX {
 	/// @param ...args Constructor arguments.
 	/// @return Pointer to constructed memory.
 	template<Type::NonVoid T, typename... Args>
-	constexpr T* construct(T* const& mem, Args... args) {
+	constexpr T* construct(T* const mem, Args... args) {
 		if (!mem) throw ConstructionFailure();
 		::new (static_cast<void*>(mem)) T(args...);
 		return mem;
@@ -310,7 +310,7 @@ namespace MX {
 	/// @param ...args Constructor arguments.
 	/// @return Pointer to reconstructed memory.
 	template<Type::NonVoid T, typename... Args>
-	constexpr void reconstruct(T* const& mem, Args... args) {
+	constexpr void reconstruct(T* const mem, Args... args) {
 		destruct(mem);
 		construct(mem, args...);
 	}
@@ -384,7 +384,7 @@ namespace MX {
 	/// @param count Count of elements to clear.
 	/// @return Pointer to destination.
 	template<Type::NonVoid T>
-	constexpr T* objclear(T* const& mem, usize sz) {
+	constexpr T* objclear(T* const mem, usize sz) {
 		T* m = mem;
 		while (sz--)
 			destruct<T>(m++);

@@ -155,7 +155,7 @@ namespace Impl {
 ///		
 ///		- `0y`:			Duotrigesimal.
 template<Type::Integer I, Type::ASCII T>
-constexpr bool atoi(T const* const& str, usize size, I& out, usize base = 0) {
+constexpr bool atoi(T const* const str, usize size, I& out, usize base = 0) {
 	// Copy string pointer
 	T const* s = str;
 	// If string is size 1, try and convert digit
@@ -227,7 +227,7 @@ constexpr bool atoi(Decay::AsType<const T[S]> const& str, I& out, usize const ba
 /// @param out Output of the conversion.
 /// @return Whether the operation was successful.
 template<Type::Real F, Type::ASCII T>
-constexpr bool atof(T const* const& str, usize size, F& out) {
+constexpr bool atof(T const* const str, usize size, F& out) {
 	// If character is appended to the end, exclude it
 	if (
 		toLowerChar(str[size-1]) == 'f'
@@ -283,7 +283,7 @@ constexpr bool atof(Decay::AsType<const T[S]> const& str, F& out) {
 /// @param base Base to convert to. By default, it is base 10.
 /// @return Size of resulting number string.
 template<Type::Integer I, Type::ASCII T>
-constexpr ssize itoa(I val, T* const& buf, usize const bufSize, I const& base = 10) {
+constexpr ssize itoa(I val, T* const buf, usize const bufSize, I const& base = 10) {
 	// Digits
 	cstring const digits = "0123456789abcdef""ghijklmnopqrstuv";
 	// If empty buffer, or buffer is too small for a non-decimal base

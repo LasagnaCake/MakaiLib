@@ -56,7 +56,7 @@ namespace Impl::Hash {
 		/// @param sz Size of data to hash.
 		/// @param seed Starting seed.
 		/// @return Resulting hash.
-		constexpr usize hash(void const* const& data, usize sz, usize seed = offset()) {
+		constexpr usize hash(void const* const data, usize sz, usize seed = offset()) {
 			const char* byte = static_cast<const char*>(data);
 			for (; sz; --sz) {
 				seed ^= static_cast<usize>(*byte++);
@@ -196,7 +196,7 @@ struct Hasher {
 	/// @param size Size of range.
 	/// @return Resulting hash.
 	template<class T>
-	constexpr static usize hash(T* const& data, usize const size) {
+	constexpr static usize hash(T* const data, usize const size) {
 		return Impl::Hash::hash(data, size, size);
 	}
 
@@ -215,7 +215,7 @@ struct Hasher {
 	/// @param value Pointer to hash.
 	/// @return Resulting hash.
 	template <class T>
-	constexpr static usize hash(T* const& value)		{return (usize)value;			}
+	constexpr static usize hash(T* const value)		{return (usize)value;			}
 
 	/// @brief Generates the hash for a given `enum`.
 	/// @tparam T `enum` type.

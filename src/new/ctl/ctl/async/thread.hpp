@@ -77,7 +77,7 @@ struct Thread:
 		/// @param source Source to bind to.
 		constexpr ExecutionToken(ExecutionSource& source):			source(&source)	{}
 		/// @brief Deleted. 
-		constexpr ExecutionToken(ExecutionSource* const& source)	= delete;
+		constexpr ExecutionToken(ExecutionSource* const source)	= delete;
 		/// @brief Deleted.
 		constexpr ExecutionToken(ExecutionSource&& source)			= delete;
 

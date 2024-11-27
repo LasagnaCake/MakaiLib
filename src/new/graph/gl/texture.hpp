@@ -30,7 +30,7 @@ namespace Makai::Graph {
 			Image2D::ImageFormat const&		format		= Image2D::ImageFormat::IF_RGBA,
 			Image2D::FilterMode const&		magFilter	= Image2D::FilterMode::FM_SMOOTH,
 			Image2D::FilterMode const&		minFilter	= Image2D::FilterMode::FM_SMS,
-			uchar* const&					data		= NULL,
+			uchar* const					data		= NULL,
 			Image2D::ComponentLayout const&	layout		= Image2D::ComponentLayout::CL_AUTO
 		);
 
@@ -64,7 +64,7 @@ namespace Makai::Graph {
 			Image2D::ImageFormat const&		format		= Image2D::ImageFormat::IF_RGBA,
 			Image2D::FilterMode const&		magFilter	= Image2D::FilterMode::FM_SMOOTH,
 			Image2D::FilterMode const&		minFilter	= Image2D::FilterMode::FM_SMS,
-			uchar* const&					data		= NULL,
+			uchar* const					data		= NULL,
 			Image2D::ComponentLayout const&	layout		= Image2D::ComponentLayout::CL_AUTO
 		);
 
@@ -102,7 +102,7 @@ namespace Makai::Graph {
 			Image2D::ImageFormat const&		format		= Image2D::ImageFormat::IF_RGBA,
 			Image2D::FilterMode const&		magFilter	= Image2D::FilterMode::FM_SMOOTH,
 			Image2D::FilterMode const&		minFilter	= Image2D::FilterMode::FM_SMS,
-			uchar* const&					data		= NULL,
+			uchar* const					data		= NULL,
 			Image2D::ComponentLayout const&	layout		= Image2D::ComponentLayout::CL_AUTO
 		);
 

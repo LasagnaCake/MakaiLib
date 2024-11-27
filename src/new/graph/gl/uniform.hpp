@@ -28,17 +28,17 @@ namespace Makai::Graph {
 
 		void set(Matrix4x4 const& value, usize const offset = 0) const;
 
-		void setArray(int* const& values, usize const count, usize const offset = 0) const;
+		void setArray(int* const values, usize const count, usize const offset = 0) const;
 
-		void setArray(uint* const& values, usize const count, usize const offset = 0) const;
+		void setArray(uint* const values, usize const count, usize const offset = 0) const;
 
-		void setArray(float* const& values, usize const count, usize const offset = 0) const;
+		void setArray(float* const values, usize const count, usize const offset = 0) const;
 
-		void setArray(Vector2* const& values, usize const count, usize const offset = 0) const;
+		void setArray(Vector2* const values, usize const count, usize const offset = 0) const;
 
-		void setArray(Vector3* const& values, usize const count, usize const offset = 0) const;
+		void setArray(Vector3* const values, usize const count, usize const offset = 0) const;
 
-		void setArray(Vector4* const& values, usize const count, usize const offset = 0) const;
+		void setArray(Vector4* const values, usize const count, usize const offset = 0) const;
 
 		template <typename T>
 		inline void set(List<T> const& values, usize const offset = 0) const {

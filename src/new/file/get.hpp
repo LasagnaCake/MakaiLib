@@ -28,7 +28,7 @@ namespace Makai::File {
 	void saveBinary(String const& path, BinaryData<> const& data);
 
 	template<Makai::Type::NonVoid T>
-	inline void saveBinary(String const& path, T* const& data, usize const count) {
+	inline void saveBinary(String const& path, T* const data, usize const count) {
 		saveBinary(path, ByteSpan((ubyte*)data, count * sizeof(T)));
 	}
 

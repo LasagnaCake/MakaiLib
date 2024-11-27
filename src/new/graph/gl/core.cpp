@@ -103,7 +103,7 @@ struct DebugStack {
 			contexts.back()->append(indent + message);
 	}
 
-	static void push(Debug::Context* const& ctx) {
+	static void push(Debug::Context* const ctx) {
 		contexts.pushBack(ctx);
 		indent += "  ";
 	}

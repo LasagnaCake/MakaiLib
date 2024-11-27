@@ -235,7 +235,7 @@ Renderable::Renderable(
 }
 
 Renderable::Renderable(
-	Vertex* const& vertices,
+	Vertex* const vertices,
 	usize const count,
 	usize const layer,
 	bool const manual
@@ -266,7 +266,7 @@ void Renderable::bakeAndLock() {
 	clearData();
 }
 
-void Renderable::extend(Vertex* const& vertices, usize const size) {
+void Renderable::extend(Vertex* const vertices, usize const size) {
 	if (locked) return;
 	if (vertices == nullptr || size == 0)
 		throw Error::InvalidValue("No vertices were provided!");

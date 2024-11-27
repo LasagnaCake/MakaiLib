@@ -80,7 +80,7 @@ template<class T>
 BinaryData<> cbcTransform(
 	BinaryData<> const&		data,
 	String					password	= "",
-	uint8* const&			block		= nullptr
+	uint8* const			block		= nullptr
 ) try {
 	std::string result;
 	T tf;
@@ -156,7 +156,7 @@ template<typename T>
 BinaryData<> cbcEncrypt(
 	BinaryData<> const&		data,
 	String const&			password	= "",
-	uint8* const&			block		= nullptr
+	uint8* const			block		= nullptr
 ) {
 	return cbcTransform<typename CBC_Mode<T>::Encryption>(data, password, block);
 }
@@ -165,7 +165,7 @@ template<typename T>
 BinaryData<> cbcDecrypt(
 	BinaryData<> const&		data,
 	String const&			password	= "",
-	uint8* const&			block		= nullptr
+	uint8* const			block		= nullptr
 ) {
 	return cbcTransform<typename CBC_Mode<T>::Decryption>(data, password, block);
 }
@@ -174,7 +174,7 @@ BinaryData<> Arch::encrypt(
 	BinaryData<> const&		data,
 	String const&			password,
 	EncryptionMethod const&	method,
-	uint8* const&			block
+	uint8* const			block
 ) {
 	switch (method) {
 		default: throw Error::InvalidValue("Invalid encryption method!");
@@ -188,7 +188,7 @@ BinaryData<> Arch::decrypt(
 	BinaryData<> const&		data,
 	String const&			password,
 	EncryptionMethod const&	method,
-	uint8* const&			block
+	uint8* const			block
 ) {
 	switch (method) {
 		default: throw Error::InvalidValue("Invalid decryption method!");
@@ -614,7 +614,7 @@ void Arch::FileArchive::parseFileTree() {
 	_ARCDEBUGLN("File Structure:\n", fstruct.dump(2, ' ', false, Nlohmann::error_handler_t::replace), "\n");
 }
 
-void Arch::FileArchive::demangleData(BinaryData<>& data, uint8* const& block) const {
+void Arch::FileArchive::demangleData(BinaryData<>& data, uint8* const block) const {
 	_ARCDEBUGLN("Before decryption: ", data.size());
 	data = decrypt(
 		data,
@@ -912,7 +912,7 @@ String Arch::loadEncryptedTextFile(String const& path, String const& password) {
 template<typename T>
 void Arch::saveEncryptedBinaryFile(
 	String const&				path,
-	T* const&					data,
+	T* const					data,
 	usize const				size,
 	String const&				password,
 	EncryptionMethod const&		enc,

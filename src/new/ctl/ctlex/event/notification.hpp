@@ -24,7 +24,7 @@ public:
 	constexpr static usize ID = I;
 
 	/// @brief Signal type.
-	typedef Signal<Message* const&>				SignalType;
+	typedef Signal<Message* const>				SignalType;
 	/// @brief Signal list type.
 	typedef List<SignalType>					SignalList;
 	/// @brief Signal arguments type.
@@ -183,7 +183,7 @@ public:
 	/// @brief Broadcasts a message to a signal.
 	/// @param signals Signal to broadcast.
 	/// @param msg Message to pass.
-	static void broadcast(String const& signal, Message* const& msg = nullptr) {
+	static void broadcast(String const& signal, Message* const msg = nullptr) {
 		if (db.contains(signal))
 			for (SignalWrapper& s: db[signal])
 				s(msg);
@@ -192,7 +192,7 @@ public:
 	/// @brief Broadcasts a message to a series of signals.
 	/// @param signals Signals to broadcast.
 	/// @param msg Message to pass.
-	static void broadcast(StringList const& signals, Message* const& msg = nullptr) {
+	static void broadcast(StringList const& signals, Message* const msg = nullptr) {
 		for (String const& s: signals)
 			broadcast(s, msg);
 	}
@@ -200,7 +200,7 @@ public:
 	/// @brief Broadcasts a message to a series of signals.
 	/// @param signals Signals to broadcast.
 	/// @param msg Message to pass
-	static void broadcast(StringArguments const& signals, Message* const& msg = nullptr) {
+	static void broadcast(StringArguments const& signals, Message* const msg = nullptr) {
 		for (String const& s: signals)
 			broadcast(s, msg);
 	}
@@ -216,7 +216,7 @@ public:
 	/// @param signals Signal to broadcast.
 	/// @param msg Message to pass.
 	/// @return Reference to self.
-	NotificationServer& operator()(String const& signal, Message* const& msg = nullptr) const {
+	NotificationServer& operator()(String const& signal, Message* const msg = nullptr) const {
 		broadcast(signal, msg);
 		return *this;
 	}
@@ -225,7 +225,7 @@ public:
 	/// @param signals Signals to broadcast.
 	/// @param msg Message to pass
 	/// @return Reference to self.
-	NotificationServer& operator()(StringList const& signals, Message* const& msg = nullptr) const {
+	NotificationServer& operator()(StringList const& signals, Message* const msg = nullptr) const {
 		broadcast(signals, msg);
 		return *this;
 	}
@@ -234,7 +234,7 @@ public:
 	/// @param signals Signals to broadcast.
 	/// @param msg Message to pass
 	/// @return Reference to self.
-	NotificationServer& operator()(StringArguments const& signals, Message* const& msg = nullptr) const {
+	NotificationServer& operator()(StringArguments const& signals, Message* const msg = nullptr) const {
 		broadcast(signals, msg);
 		return *this;
 	}

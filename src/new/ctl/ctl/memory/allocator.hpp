@@ -59,7 +59,7 @@ struct HeapAllocator {
 
 	/// @brief Deallocates allocated memory.
 	/// @param mem Pointer to allocated memory.
-	constexpr void deallocate(T* const& mem)
+	constexpr void deallocate(T* const mem)
 	requires Type::NonVoid<T> {
 		return MX::free<T>(mem);
 	}
@@ -93,7 +93,7 @@ struct HeapAllocator {
 	/// @param mem Memory to resize.
 	/// @param sz New element count.
 	/// @return Pointer to new memory location.
-	constexpr T* resized(T* const& mem, usize const sz)
+	constexpr T* resized(T* const mem, usize const sz)
 	requires Type::NonVoid<T> {
 		return MX::realloc<T>(mem, sz);
 	}

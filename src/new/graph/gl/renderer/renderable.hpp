@@ -26,7 +26,7 @@ namespace Makai::Graph {
 		);
 
 		Renderable(
-			Vertex* const& vertices,
+			Vertex* const vertices,
 			usize const count,
 			usize const layer = 0,
 			bool const manual = false
@@ -78,7 +78,7 @@ namespace Makai::Graph {
 		* It also deletes the reference.
 		*/
 		template <ShapeRefType T>
-		void removeReference(T* const& ref) {
+		void removeReference(T* const ref) {
 			if (!ref) return;
 			if (locked) return;
 			constexpr usize count = T::SIZE;
@@ -104,7 +104,7 @@ namespace Makai::Graph {
 		* It also deletes the reference.
 		*/
 		template <ShapeRefType T>
-		void unbindReference(T* const& ref) {
+		void unbindReference(T* const ref) {
 			if (!ref) return;
 			if (locked) return;
 			auto& rs = references.shape;
@@ -115,7 +115,7 @@ namespace Makai::Graph {
 		/// IRREVERSIBLE.
 		void bakeAndLock();
 
-		void extend(Vertex* const& vertices, usize const size);
+		void extend(Vertex* const vertices, usize const size);
 
 		void extend(Renderable& other);
 

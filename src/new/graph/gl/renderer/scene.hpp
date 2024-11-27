@@ -50,7 +50,7 @@ namespace Makai::Graph {
 				return DrawableEntry{name, r};
 			}
 
-			void deleteObject(DrawableType* const& obj) {
+			void deleteObject(DrawableType* const obj) {
 				if (obj)
 					for (auto& [k, v]: objects)
 						if (obj == v) {
@@ -70,7 +70,7 @@ namespace Makai::Graph {
 				return objects;
 			}
 
-			String getNameOfObject(DrawableType* const& obj) {
+			String getNameOfObject(DrawableType* const obj) {
 				String name = "";
 				if (obj)
 					for (auto& [k, v]: objects)

@@ -25,14 +25,14 @@ namespace Makai::Tool::Arch {
 		BinaryData<> const&		data,
 		String const&			password	= "",
 		EncryptionMethod const&	method		= EncryptionMethod::AEM_AES256,
-		uint8* const&			block		= nullptr
+		uint8* const			block		= nullptr
 	);
 
 	BinaryData<> decrypt(
 		BinaryData<> const&		data,
 		String const&			password	= "",
 		EncryptionMethod const&	method		= EncryptionMethod::AEM_AES256,
-		uint8* const&			block		= nullptr
+		uint8* const			block		= nullptr
 	);
 
 	BinaryData<> compress(
@@ -138,7 +138,7 @@ namespace Makai::Tool::Arch {
 
 		void parseFileTree();
 
-		void demangleData(BinaryData<>& data, uint8* const& block) const;
+		void demangleData(BinaryData<>& data, uint8* const block) const;
 
 		void unpackLayer(JSON::Extern::JSONData const& layer, String const& path);
 
@@ -168,7 +168,7 @@ namespace Makai::Tool::Arch {
 	template<typename T>
 	void saveEncryptedBinaryFile(
 		String const&				path,
-		T* const&					data,
+		T* const					data,
 		usize const				size,
 		String const&				password	= "",
 		EncryptionMethod const&		enc			= EncryptionMethod::AEM_AES256,

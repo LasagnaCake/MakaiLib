@@ -58,7 +58,7 @@ namespace Makai::Graph {
 
 	protected:
 		void display(
-			Vertex* const&		vertices,
+			Vertex* const		vertices,
 			usize const		count,
 			CullMode const&		culling,
 			FillMode const&		fill,
