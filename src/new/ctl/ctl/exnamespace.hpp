@@ -32,6 +32,9 @@ namespace Type {
 	namespace Ex {}
 }
 
+/// @brief CTL math extensions.
+namespace Math{}
+
 CTL_EX_NAMESPACE_END
 
 #endif // CTL_EX_NAMESPACE_H

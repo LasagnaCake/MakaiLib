@@ -12,16 +12,19 @@ CTL_EX_NAMESPACE_BEGIN
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wsequence-point"
 
+/// @brief Easing functions.
 namespace Math::Ease {
-	/// Easing function template
-	typedef Function<float(float const)> Mode;
+	/// @brief Easing function type.
+	using EaseFunction = Decay::AsFunction<float(float const)>;
+	/// @brief Easing function wrapper type.
+	typedef Function<EaseFunction> Mode;
+
 	#define EASE_FUN(NAME) constexpr float NAME(float const x)
 	EASE_FUN(linear) {return x;}
-
-	using EaseFunction = decltype(linear);
 	
 	// Taken from https://easings.net
-	/// In easing functions
+
+	/// @brief "In" easing functions.
 	namespace In {
 		EASE_FUN(linear)	{return x;}
 		EASE_FUN(sine)		{return 1.0 - cos((x * PI) / 2.0);}
@@ -57,7 +60,8 @@ namespace Math::Ease {
 	}
 
 	// Taken from https://easings.net
-	/// Out easing functions
+	
+	/// @brief "Out" easing functions.
 	namespace Out {
 		EASE_FUN(linear)	{return x;}
 		EASE_FUN(sine)		{return sin((x * PI) / 2.0);}
@@ -93,7 +97,7 @@ namespace Math::Ease {
 		}
 	}
 	#define COMPOSICALC(NAME, LHS, RHS) {return (x < 0.5) ? LHS::NAME(x*2.0)/2.0 : 0.5 + RHS::NAME(x*2.0 -1)/2.0;}
-	/// In-Out easing functions
+	/// @brief "In-Out" easing functions.
 	namespace InOut {
 		#define COMPOSITE_FUN(NAME) EASE_FUN(NAME) COMPOSICALC(NAME, In, Out)
 		EASE_FUN(linear) {return x;}
@@ -109,7 +113,7 @@ namespace Math::Ease {
 		COMPOSITE_FUN(bounce)
 		#undef COMPOSITE_FUN
 	}
-	/// Out-In easing functions
+	/// @brief "Out-In" easing functions.
 	namespace OutIn {
 		#define COMPOSITE_FUN(NAME) EASE_FUN(NAME) COMPOSICALC(NAME, Out, In)
 		EASE_FUN(linear) {return x;}
@@ -125,7 +129,7 @@ namespace Math::Ease {
 		COMPOSITE_FUN(bounce)
 		#undef COMPOSITE_FUN
 	}
-	/// In-In easing functions
+	/// @brief "In-In" easing functions.
 	namespace InIn {
 		#define COMPOSITE_FUN(NAME) EASE_FUN(NAME) COMPOSICALC(NAME, In, In)
 		EASE_FUN(linear) {return x;}
@@ -141,7 +145,7 @@ namespace Math::Ease {
 		COMPOSITE_FUN(bounce)
 		#undef COMPOSITE_FUN
 	}
-	/// Out-Out easing functions
+	/// @brief "Out-Out" easing functions.
 	namespace OutOut {
 		#define COMPOSITE_FUN(NAME) EASE_FUN(NAME) COMPOSICALC(NAME, Out, Out)
 		EASE_FUN(linear) {return x;}
@@ -175,6 +179,11 @@ namespace Math::Ease {
 			CASE_FUN(MODE, elastic);\
 			CASE_FUN(MODE, bounce);\
 		}
+	
+	/// @brief Returns the easing function mode by a given name set.
+	/// @param mode Mode name.
+	/// @param type Function type name.
+	/// @return Easing function.
 	inline EaseFunction& getMode(String const& mode, String const& type) {
 		if (type == "linear") return linear;
 		MODE_CASE("in", In)
@@ -187,7 +196,11 @@ namespace Math::Ease {
 	}
 	#undef MODE_CASE
 	#undef CASE_FUN
-
+	
+	/// @brief Creates a custom "In-Out" function from two other functions.
+	/// @param in "In" function.
+	/// @param out "Out" function.
+	/// @return Custom function.
 	inline Mode custom(EaseFunction const& in, EaseFunction const& out) {
 		return [=] (float const x) {
 			if (x < 0.5)
@@ -196,6 +209,10 @@ namespace Math::Ease {
 		};
 	}
 
+	/// @brief Creates a custom "In-Out" function from two other functions.
+	/// @param in "In" function.
+	/// @param out "Out" function.
+	/// @return Custom function.
 	inline Mode custom(Mode const& in, Mode const& out) {
 		return [=] (float const x) {
 			if (x < 0.5)
