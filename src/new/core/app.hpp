@@ -30,10 +30,10 @@ namespace Makai {
 	public:
 		/// Initializes the application.
 		App (
-			unsigned int const&	width,
-			unsigned int const&	height,
+			unsigned int const	width,
+			unsigned int const	height,
 			String const&		windowTitle,
-			bool const&			fullscreen	= false,
+			bool const			fullscreen	= false,
 			AudioConfig const&	audio		= {}
 		);
 
@@ -54,7 +54,7 @@ namespace Makai {
 		void setWindowTitle(String const& title);
 
 		/// Sets the application fullscreen.
-		void setFullscreen(bool const& state = false);
+		void setFullscreen(bool const state = false);
 
 		/// Loads the application's shaders from SLF files.
 		void loadShaders(SLF::SLFData const& main, SLF::SLFData const& buffer);
@@ -81,7 +81,7 @@ namespace Makai {
 		void setWindowSize(Vector2 const& size);
 
 		/// Set the application window's opacity.
-		void setWindowOpacity(float const& opacity = 1);
+		void setWindowOpacity(float const opacity = 1);
 
 		void enableTransparentWindowBackground();
 
@@ -112,13 +112,13 @@ namespace Makai {
 		/// Happens before the screen is rendered, after the frame buffer is cleared.
 		virtual void onPostFrameClear()	{}
 		/// Gets called when the application begins rendering a layer, before the the layer buffer is cleared.
-		virtual void onLayerDrawBegin(usize const& layerID)	{}
+		virtual void onLayerDrawBegin(usize const layerID)	{}
 		/// Gets called when the application begins rendering a layer, after the the layer buffer is cleared.
-		virtual void onPostLayerClear(usize const& layerID)	{}
+		virtual void onPostLayerClear(usize const layerID)	{}
 		/// Gets called when the application ends rendering a layer, before the layer buffer is drawn to the screen.
-		virtual void onPreLayerDraw(usize const& layerID)	{pushLayerToFrame();}
+		virtual void onPreLayerDraw(usize const layerID)	{pushLayerToFrame();}
 		/// Gets called when the application ends rendering a layer, after the layer buffer is drawn to the screen.
-		virtual void onLayerDrawEnd(usize const& layerID)	{}
+		virtual void onLayerDrawEnd(usize const layerID)	{}
 		/// Happens after the screen is rendered, before the frame buffer is drawn to the screen.
 		virtual void onPreFrameDraw()	{}
 		/// Happens after the screen is rendered, after the frame buffer is drawn to the screen.

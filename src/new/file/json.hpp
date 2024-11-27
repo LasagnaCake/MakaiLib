@@ -51,8 +51,8 @@ namespace Makai::JSON {
 		JSONView operator[](String const& key);
 		const JSONView operator[](String const& key) const;
 
-		JSONView operator[](usize const& index);
-		const JSONView operator[](usize const& index) const;
+		JSONView operator[](usize const index);
+		const JSONView operator[](usize const index) const;
 
 		inline usize size() const {return view().size();}
 
@@ -69,7 +69,7 @@ namespace Makai::JSON {
 
 		String getName() const;
 
-		String toString(int const& indent = -1, char const& ch = '\t') const;
+		String toString(int const indent = -1, char const ch = '\t') const;
 
 		inline bool has(String const& key) const {return view().contains(key.stdView()); }
 

@@ -201,7 +201,7 @@ BinaryData<> Makai::File::loadBinary(String const& path) {
 	return BinaryData<>();
 }
 
-Makai::File::CSVData Makai::File::loadCSV(String const& path, char const& delimiter) {
+Makai::File::CSVData Makai::File::loadCSV(String const& path, char const delimiter) {
 	// The file and its contents
 	String content = Makai::File::loadText(path);
 	// Get values
@@ -264,7 +264,7 @@ BinaryData<> Makai::File::loadBinaryFromArchive(String const& path) {
 	#endif
 }
 
-Makai::File::CSVData Makai::File::loadCSVFromArchive(String const& path, char const& delimiter) {
+Makai::File::CSVData Makai::File::loadCSVFromArchive(String const& path, char const delimiter) {
 	#ifdef IMPL_ARCHIVE_
 	assertArchive(path);
 	return loadTextFromArchive(path).split(delimiter);
@@ -327,7 +327,7 @@ BinaryData<> Makai::File::getBinary(String const& path) {
 	#endif
 }
 
-Makai::File::CSVData Makai::File::getCSV(String const& path, char const& delimiter) {
+Makai::File::CSVData Makai::File::getCSV(String const& path, char const delimiter) {
 	#ifdef IMPL_ARCHIVE_
 	CSVData res;
 	if (isArchiveAttached())

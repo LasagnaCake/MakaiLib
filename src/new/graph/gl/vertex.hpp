@@ -33,18 +33,18 @@ namespace Makai::Graph {
 		Vertex(VertexMap const& vm);
 
 		constexpr Vertex(
-			float const& x,
-			float const& y	= 0,
-			float const& z	= 0,
-			float const& u	= 0,
-			float const& v	= 0,
-			float const& r	= 1,
-			float const& g	= 1,
-			float const& b	= 1,
-			float const& a	= 1,
-			float const& nx	= 0,
-			float const& ny	= 0,
-			float const& nz	= 0
+			float const x,
+			float const y	= 0,
+			float const z	= 0,
+			float const u	= 0,
+			float const v	= 0,
+			float const r	= 1,
+			float const g	= 1,
+			float const b	= 1,
+			float const a	= 1,
+			float const nx	= 0,
+			float const ny	= 0,
+			float const nz	= 0
 		): Vertex(
 			Vector3(x, y, z),
 			Vector2(u, v),

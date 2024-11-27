@@ -2,7 +2,7 @@
 
 using namespace Makai; using namespace Makai::Graph;
 
-void Renderer::renderLayer(usize const& layer) {
+void Renderer::renderLayer(usize const layer) {
 	return renderLayer(layers[layer]);
 }
 

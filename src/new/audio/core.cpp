@@ -39,8 +39,8 @@ int getFlags(Formats const& formats) {
 
 void Makai::Audio::open(
 	Formats const&	formats,
-	uint const&		channels,
-	uint const&		audioTracks
+	uint const		channels,
+	uint const		audioTracks
 ) {
 	if (audioOpen) return;
 	if (!Mix_Init(getFlags(formats))) {
@@ -75,8 +75,8 @@ void Makai::Audio::open(
 
 void Makai::Audio::restart(
 	Formats const&	formats,
-	uint const&		channels,
-	uint const&		audioTracks
+	uint const		channels,
+	uint const		audioTracks
 ) {
 	Makai::Audio::close();
 	Makai::Audio::open(formats, channels, audioTracks);

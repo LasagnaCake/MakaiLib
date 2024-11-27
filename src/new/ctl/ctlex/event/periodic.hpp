@@ -22,7 +22,7 @@ public:
 
 	/// @brief Constructs the periodic.
 	/// @param manual Whether the event is fired manually. By default, it is `false`.
-	Periodic(bool const& manual = false): manual(manual) {
+	Periodic(bool const manual = false): manual(manual) {
 		if (!manual)
 			events.pushBack(&update);
 	}

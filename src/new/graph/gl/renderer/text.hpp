@@ -63,7 +63,7 @@ namespace Makai::Graph {
 
 	class Label: public DrawableObject {
 	public:
-		Label(size_t const& layer = 0, bool const& manual = false): DrawableObject(layer, manual) {}
+		Label(size_t const& layer = 0, bool const manual = false): DrawableObject(layer, manual) {}
 
 		virtual ~Label() {}
 

@@ -173,7 +173,7 @@ public:
 	/// @brief Stops the running function.
 	/// @param kindly Whether to kindly request for the function to stop, or just terminate it forcibly.
 	/// @return Reference to self.
-	SelfType& stop(bool const& kindly = false) {
+	SelfType& stop(bool const kindly = false) {
 		if (kindly)
 			executor->source().requestStop();
 		else executor.destroy();

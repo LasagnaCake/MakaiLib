@@ -178,7 +178,7 @@ constexpr List<size_t> calculateIndices(StringList const& words, TextRect const&
 		curWord		= 0
 	;
 	for (String const& word: words) {
-		for (char const& c: word) {
+		for (char const c: word) {
 			if (c == '\n') {
 				indices.pushBack(curWord+lastBreak-1);
 				lastBreak = 0;

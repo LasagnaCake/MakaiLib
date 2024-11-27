@@ -20,9 +20,9 @@ namespace Makai::Audio {
 
 	using Formats = List<Format>;
 
-	void open(Formats const& formats, uint const& channels = 2, uint const& audioTracks = 16);
+	void open(Formats const& formats, uint const channels = 2, uint const audioTracks = 16);
 
-	void restart(Formats const& formats, uint const& channels = 2, uint const& audioTracks = 16);
+	void restart(Formats const& formats, uint const channels = 2, uint const audioTracks = 16);
 
 	void close();
 

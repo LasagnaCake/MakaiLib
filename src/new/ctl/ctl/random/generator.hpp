@@ -28,7 +28,7 @@ namespace Base {
 		Generator(): engine()				{}
 		/// @brief Constructs the generator from a seed.
 		/// @param seed Seed to use.
-		Generator(usize const& seed)		{engine.setSeed(seed);						}
+		Generator(usize const seed)		{engine.setSeed(seed);						}
 		/// @brief Copy constructor.
 		/// @param other `Generator` to copy from.
 		Generator(Generator const& other) 	{engine.setSeed(other.engine.getSeed());	}
@@ -54,7 +54,7 @@ namespace Base {
 
 		/// @brief Sets the random number generator's seed.
 		/// @param seed Seed to use.
-		void setSeed(usize const& seed) {
+		void setSeed(usize const seed) {
 			engine.setSeed(seed);
 		}
 

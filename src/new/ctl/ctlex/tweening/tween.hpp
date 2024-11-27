@@ -27,21 +27,21 @@ using PeriodicTween = Periodic<Tween<>>;
 
 struct Stepable {
 	virtual usize		getStep()					{return step;	}
-	virtual Stepable&	setStep(usize const&)		{return *this;	}
-	virtual Stepable&	setStepCount(usize const&)	{return *this;	}
+	virtual Stepable&	setStep(usize const)		{return *this;	}
+	virtual Stepable&	setStepCount(usize const)	{return *this;	}
 
 protected:
 	usize step = 0;
 };
 
 struct PlayableTween: Playable {
-	virtual PlayableTween& conclude()	{return *this;	}
-	virtual PlayableTween& halt()		{return *this;	}
+	virtual PlayableTween& conclude()	= 0;
+	virtual PlayableTween& halt()		= 0;
 
 	::CTL::Signal<> onCompleted;
 
 private:
-	virtual PlayableTween& stop()		{return *this;	}
+	virtual PlayableTween& stop()		{halt();}
 };
 
 template <Type::Ex::Tween::Tweenable T>
@@ -64,7 +64,7 @@ public:
 	T to;
 
 	/// Targetless Constructor.
-	Tween(T const& from, T const& to, usize const& step, Math::Ease::Mode const& easeMode, bool const& manual = false)
+	Tween(T const& from, T const& to, usize const step, Math::Ease::Mode const& easeMode, bool const manual = false)
 	: PeriodicTween(manual) {
 		setInterpolation(from, to, step, easeMode);
 	}
@@ -113,7 +113,7 @@ public:
 	}
 
 	/// Sets the interpolation.
-	Tween<T>& setInterpolation(T const& from, T const& to, usize const& step, Math::Ease::Mode const& easeMode) {
+	Tween<T>& setInterpolation(T const& from, T const& to, usize const step, Math::Ease::Mode const& easeMode) {
 		isFinished = false;
 		this->step = 0;
 		this->from = from;
@@ -140,28 +140,28 @@ public:
 	}
 
 	/// Sets the interpolation to a new value, while maintaining the easing function.
-	Tween<T>& reinterpolateTo(T const& to, usize const& step) {
+	Tween<T>& reinterpolateTo(T const& to, usize const step) {
 		paused = false;
 		setInterpolation(value, to, step, easeMode);
 		return *this;
 	}
 
 	/// Sets the interpolation to a new value, while maintaining the easing dunction.
-	Tween<T>& reinterpolate(T const& from, T const& to, usize const& step) {
+	Tween<T>& reinterpolate(T const& from, T const& to, usize const step) {
 		paused = false;
 		setInterpolation(from, to, step, easeMode);
 		return *this;
 	}
 
 	/// Sets the current tween step.
-	Tween<T>& setStep(usize const& step) override final {
+	Tween<T>& setStep(usize const step) override final {
 		this->step = step > stop ? stop : step;
 		onUpdate();
 		return *this;
 	}
 
 	/// Sets the current tween step count.
-	Tween<T>& setStepCount(usize const& stop) override final {
+	Tween<T>& setStepCount(usize const stop) override final {
 		this->stop = stop;
 		return *this;
 	}
@@ -228,14 +228,14 @@ struct StageData {
 };
 
 struct Stageable: Stepable {
-	virtual Stageable&	setStage(usize const&)		{return *this;	}
+	virtual Stageable&	setStage(usize const)		{return *this;	}
 	virtual usize		getStage()					{return stage;	}
 
 protected:
 	usize stage = 0;
 
 private:
-	virtual Stageable&	setStepCount(usize const&)	{return *this;	}
+	virtual Stageable&	setStepCount(usize const)	{return *this;	}
 };
 
 template<Type::Ex::Tween::Tweenable T = float>
@@ -252,15 +252,17 @@ public:
 
 	bool paused = false;
 
-	TweenChain(StageList const& stages, bool const& manual = false)
+	TweenChain(StageList const& stages, bool const manual = false)
 	: PeriodicTween(manual) {
 		setInterpolation(stages);
 	}
 
-	TweenChain(StageArguments const& stages, bool const& manual = false)
+	TweenChain(StageArguments const& stages, bool const manual = false)
 	: PeriodicTween(manual) {
 		setInterpolation(stages);
 	}
+
+	virtual ~TweenChain() {}
 
 	void onUpdate(usize delta) override final {
 		// If paused, return
@@ -304,14 +306,14 @@ public:
 	}
 
 	/// Sets the current tween step.
-	TweenChain& setStep(usize const& step) override final {
+	TweenChain& setStep(usize const step) override final {
 		this->step = (step-1) > current.step ? current.step : (step-1);
 		onUpdate();
 		return *this;
 	}
 
 	/// Sets the current tween stage.
-	TweenChain& setStage(usize const& stage) override final {
+	TweenChain& setStage(usize const stage) override final {
 		this->stage = stage >= stages.size() ? stages.size() : stage;
 		onUpdate();
 		return *this;

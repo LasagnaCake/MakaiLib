@@ -30,7 +30,7 @@ struct HeapAllocator {
 	/// @brief Allocates memory on the heap.
 	/// @param sz Size of memory to allocate.
 	/// @return Pointer to allocated memory.
-	constexpr pointer allocate(usize const& sz)
+	constexpr pointer allocate(usize const sz)
 	requires Type::Void<T> {
 		return MX::malloc(sz);
 	}
@@ -38,7 +38,7 @@ struct HeapAllocator {
 	/// @brief Allocates space for elements on the heap.
 	/// @param sz Element count to allocate for.
 	/// @return Pointer to allocated memory.
-	constexpr T* allocate(usize const& sz)
+	constexpr T* allocate(usize const sz)
 	requires Type::NonVoid<T> {
 		return MX::malloc<T>(sz);
 	}
@@ -67,7 +67,7 @@ struct HeapAllocator {
 	/// @brief Resizes allocated memory.
 	/// @param mem Memory to resize.
 	/// @param sz New size.
-	constexpr void resize(pointer& mem, usize const& sz)
+	constexpr void resize(pointer& mem, usize const sz)
 	requires Type::Void<T> {
 		mem = MX::realloc(mem, sz);
 	}
@@ -75,7 +75,7 @@ struct HeapAllocator {
 	/// @brief Resizes allocated memory.
 	/// @param mem Memory to resize.
 	/// @param sz New element count.
-	constexpr void resize(T*& mem, usize const& sz)
+	constexpr void resize(T*& mem, usize const sz)
 	requires Type::NonVoid<T> {
 		mem = MX::realloc<T>(mem, sz);
 	}
@@ -84,7 +84,7 @@ struct HeapAllocator {
 	/// @param mem Memory to resize.
 	/// @param sz New size.
 	/// @return Pointer to new memory location.
-	constexpr pointer resized(pointer const& mem, usize const& sz)
+	constexpr pointer resized(pointer const& mem, usize const sz)
 	requires Type::Void<T> {
 		return MX::realloc(mem, sz);
 	}
@@ -93,7 +93,7 @@ struct HeapAllocator {
 	/// @param mem Memory to resize.
 	/// @param sz New element count.
 	/// @return Pointer to new memory location.
-	constexpr T* resized(T* const& mem, usize const& sz)
+	constexpr T* resized(T* const& mem, usize const sz)
 	requires Type::NonVoid<T> {
 		return MX::realloc<T>(mem, sz);
 	}
@@ -139,7 +139,7 @@ struct MemorySlice:
 	constexpr MemorySlice()					{				}
 	/// @brief Constructs the memory slice with space for a number of elements.
 	/// @param sz Element count to allocate for.
-	constexpr MemorySlice(usize const& sz)	{invoke(sz);	}
+	constexpr MemorySlice(usize const sz)	{invoke(sz);	}
 
 	/// @brief Copy constructor (`MemorySlice`).
 	/// @param other `MemorySlice` to copy from.
@@ -176,7 +176,7 @@ struct MemorySlice:
 protected:
 	/// @brief Allocates (or resizes) the memory slice.
 	/// @param sz Element count.
-	constexpr void invoke(usize const& sz) {
+	constexpr void invoke(usize const sz) {
 		if (!contents) contents = alloc.allocate(sz);
 		else alloc.resize(contents, sz);
 		length = sz;

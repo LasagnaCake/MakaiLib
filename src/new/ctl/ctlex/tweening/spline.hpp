@@ -14,7 +14,7 @@ namespace Spline {
 	struct Splinoid {
 		typedef T DataType;
 
-		constexpr virtual T interpolate(float const& by) = 0;
+		constexpr virtual T interpolate(float const by) = 0;
 	};
 }
 
@@ -115,7 +115,7 @@ namespace Spline {
 
 		private:
 			template<usize S>
-			constexpr T lerpSection(Section<T, S> const& sec, T const& end, float const& by) {
+			constexpr T lerpSection(Section<T, S> const& sec, T const& end, float const by) {
 				if constexpr(S < 2)
 					return ::CTL::Math::lerp(sec.points[0], end, T(by));
 				else {
@@ -196,7 +196,7 @@ namespace Spline {
 			}
 
 		private:
-			constexpr T lerpSection(Section<T> const& sec, Section<T> const& next, float const& by) {
+			constexpr T lerpSection(Section<T> const& sec, Section<T> const& next, float const by) {
 				T const pos[2] = {
 					sec.position + sec.velocity,
 					next.position - next.velocity

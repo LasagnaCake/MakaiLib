@@ -22,7 +22,7 @@ namespace Format {
 	/// @param just Direction to justify.
 	/// @return Padded string.
 	/// @note If `width <= str.size()`, then no modifications are applied.
-	constexpr String pad(String str, char const& chr, usize const& width, Justify const& just = Justify::CFJ_LEFT) {
+	constexpr String pad(String str, char const chr, usize const width, Justify const& just = Justify::CFJ_LEFT) {
 		if(width > str.size()) {
 			switch (just) {
 				case Justify::CFJ_LEFT:		str.insert(chr, width - str.size(), 0);		break;
@@ -53,7 +53,7 @@ namespace Format {
 	/// @param minlead Minimum amount of whole digits to have.
 	/// @return Resulting number string.
 	template <Type::Real T>
-	constexpr String prettify(T const& num, usize const& precision, usize const& minlead) {
+	constexpr String prettify(T const& num, usize const precision, usize const minlead) {
 		String strnum = String::fromNumber<T>(num, precision);
 		usize lead	= strnum.size() + minlead;
 		ssize dot	= strnum.find('.');
@@ -68,7 +68,7 @@ namespace Format {
 	/// @param minlead Minimum amount of whole digits to have.
 	/// @return Resulting number string.
 	template <Type::Integer T>
-	constexpr String prettify(T const& num, usize const& precision, usize const& minlead) {
+	constexpr String prettify(T const& num, usize const precision, usize const minlead) {
 		return prettify<floatmax>(num, precision, minlead);
 	}
 }

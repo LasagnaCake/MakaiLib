@@ -32,7 +32,7 @@ namespace Impl {
 		/// @param base Base to check against.
 		/// @return Whether it is in the given base.
 		template<Type::ASCII T>
-		constexpr bool isDigitInBase(T const& c, usize const& base) {
+		constexpr bool isDigitInBase(T const& c, usize const base) {
 			if (c == '.') return true;
 			ssize const v = toDigit(c);
 			return 0 <= v && v < ssize(base);
@@ -82,7 +82,7 @@ namespace Impl {
 		/// @param base Base of number.
 		/// @return Resulting integer in the given base.
 		template<Type::Integer I, Type::ASCII T>
-		constexpr I toInteger(T const* str, usize const& size, usize const& base) {
+		constexpr I toInteger(T const* str, usize const size, usize const base) {
 			I res = 0;
 			for (usize i = 0; i < size; ++i) {
 				if (str[i] == '.') break;
@@ -97,7 +97,7 @@ namespace Impl {
 		/// @param base Base override. Will be returned instead if it is not zero.
 		/// @return Base of the character identifier. If no match is found, returns 8.
 		template<Type::ASCII T>
-		constexpr ssize getBaseAndConsume(T const*& c, usize const& base) {
+		constexpr ssize getBaseAndConsume(T const*& c, usize const base) {
 			if (c[0] == '0') {
 				++c;
 				switch (c[0]) {
@@ -121,7 +121,7 @@ namespace Impl {
 		/// @param base Base to check against.
 		/// @return Whether it is in the given base.
 		template<Type::ASCII T>
-		constexpr bool isInBase(T const* str, usize const& size, usize const& base) {
+		constexpr bool isInBase(T const* str, usize const size, usize const base) {
 			for (usize i = 0; i < size; ++i)
 				if(!isDigitInBase(str[i], base))
 					return false;
@@ -214,7 +214,7 @@ constexpr bool atoi(T const* const& str, usize size, I& out, usize base = 0) {
 ///		
 ///		- `0y`:			Duotrigesimal.
 template<Type::Integer I, Type::ASCII T, usize S>
-constexpr bool atoi(Decay::AsType<const T[S]> const& str, I& out, usize const& base = 0) {
+constexpr bool atoi(Decay::AsType<const T[S]> const& str, I& out, usize const base = 0) {
 	static_assert(S-1 > 0, "String cannot be empty!");
 	return ::CTL::atoi<I, T>(str, S - 1, out, base);
 }
@@ -283,7 +283,7 @@ constexpr bool atof(Decay::AsType<const T[S]> const& str, F& out) {
 /// @param base Base to convert to. By default, it is base 10.
 /// @return Size of resulting number string.
 template<Type::Integer I, Type::ASCII T>
-constexpr ssize itoa(I val, T* const& buf, usize const& bufSize, I const& base = 10) {
+constexpr ssize itoa(I val, T* const& buf, usize const bufSize, I const& base = 10) {
 	// Digits
 	cstring const digits = "0123456789abcdef""ghijklmnopqrstuv";
 	// If empty buffer, or buffer is too small for a non-decimal base
@@ -350,7 +350,7 @@ constexpr ssize itoa(I val, T* const& buf, usize const& bufSize, I const& base =
 ///
 ///		- `long double`s: 32 decimal spaces.
 template<Type::Real F, Type::ASCII T>
-constexpr ssize ftoa(F val, T* buf, usize bufSize, usize const& precision = sizeof(F)*2) {
+constexpr ssize ftoa(F val, T* buf, usize bufSize, usize const precision = sizeof(F)*2) {
 	// Get amount of zeroes to add to number
 	usize zeroes = pow<F>(10, precision);
 	// If value is negative, append negative sign and invert value

@@ -2,7 +2,7 @@
 
 #include <makai/tool/archive/archive.hpp>
 
-CTL::String escape(char const& c) {
+CTL::String escape(char const c) {
 	switch (c) {
 		case '\'':	return "\\'";
 		case '\"':	return "\\\"";

@@ -266,7 +266,7 @@ inline String facilityName(Facility const& fac) {
 	return "";
 }
 
-void Makai::Graph::API::toggle(Facility const& fac, bool const& state) {
+void Makai::Graph::API::toggle(Facility const& fac, bool const state) {
 	#ifdef MAKAILIB_DEBUG
 	if (fac == Facility::GAF_DEBUG) {
 		apiDebug = state;
@@ -308,7 +308,7 @@ void Makai::Graph::API::setClearColor(Vector4 const& color) {
 	glClearColor(color.r, color.g, color.b, color.a);
 }
 
-void Makai::Graph::API::setFrontFace(bool const& clockwise) {
+void Makai::Graph::API::setFrontFace(bool const clockwise) {
 	#ifdef MAKAILIB_DEBUG
 	Debug::addEntry("API::setFrontFace", (clockwise ? "true" : "false"));
 	#endif // MAKAILIB_DEBUG

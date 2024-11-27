@@ -121,17 +121,17 @@ void Image::unbind(ImageTarget const& target) {
 	glBindTexture(convert(target), 0);
 }
 
-Image& Image::use(uchar const& slot, ImageTarget const& target) {
+Image& Image::use(uchar const slot, ImageTarget const& target) {
 	set(id, slot, target);
 	return *this;
 }
 
-Image const& Image::use(uchar const& slot, ImageTarget const& target) const {
+Image const& Image::use(uchar const slot, ImageTarget const& target) const {
 	set(id, slot, target);
 	return *this;
 }
 
-void Image::set(uint const& image, uchar const& slot, ImageTarget const& target) {
+void Image::set(uint const image, uchar const slot, ImageTarget const& target) {
 	#ifdef MAKAILIB_DEBUG
 	API::Debug::Context ctx("Image::set");
 	#endif // MAKAILIB_DEBUG
@@ -139,11 +139,11 @@ void Image::set(uint const& image, uchar const& slot, ImageTarget const& target)
 	glBindTexture(convert(target), image);
 }
 
-Image& Image::operator()(uchar const& slot, ImageTarget const& target) {
+Image& Image::operator()(uchar const slot, ImageTarget const& target) {
 	return use(slot);
 }
 
-Image const& Image::operator()(uchar const& slot, ImageTarget const& target) const {
+Image const& Image::operator()(uchar const slot, ImageTarget const& target) const {
 	return use(slot);
 }
 
@@ -172,8 +172,8 @@ Image::operator bool() const {
 }
 
 Image2D& Image2D::create(
-	uint const&				width,
-	uint const&				height,
+	uint const				width,
+	uint const				height,
 	ComponentType const&	type,
 	ImageFormat const&		format,
 	FilterMode const&		magFilter,
@@ -187,8 +187,8 @@ Image2D& Image2D::create(
 }
 
 Image2D& Image2D::make(
-	uint const&				width,
-	uint const&				height,
+	uint const				width,
+	uint const				height,
 	ComponentType const&	type,
 	ImageFormat const&		format,
 	FilterMode const&		magFilter,
@@ -253,12 +253,12 @@ ImageData Image2D::getData() const {
 	return imgdat;
 }
 
-Image2D const& Image2D::saveToFile(String const& path, uint8 const& quality, ImageFileType const& type) const {
+Image2D const& Image2D::saveToFile(String const& path, uint8 const quality, ImageFileType const& type) const {
 	saveImageToFile(path, quality, type);
 	return *this;
 }
 
-Image2D& Image2D::saveToFile(String const& path, uint8 const& quality, ImageFileType const& type) {
+Image2D& Image2D::saveToFile(String const& path, uint8 const quality, ImageFileType const& type) {
 	saveImageToFile(path, quality, type);
 	return *this;
 }
@@ -272,8 +272,8 @@ Image2D const& Image2D::saveToFile(String const& path, ImageFileType const& type
 }
 
 Image2D* Image2D::newImage(
-	uint const&				width,
-	uint const&				height,
+	uint const				width,
+	uint const				height,
 	ComponentType const&	type,
 	ImageFormat const&		format,
 	FilterMode const&		magFilter,
@@ -288,8 +288,8 @@ Image2D* Image2D::newImage(
 
 Image2D* Image2D::newImage(
 	Image2D* const&			image,
-	uint const&				width,
-	uint const&				height,
+	uint const				width,
+	uint const				height,
 	ComponentType const&	type,
 	ImageFormat const&		format,
 	FilterMode const&		magFilter,
@@ -340,7 +340,7 @@ Image2D* Image2D::newImage(
 	return image;
 }
 
-void Image2D::saveImageToFile(String const& path, uint8 const& quality, ImageFileType type) const {
+void Image2D::saveImageToFile(String const& path, uint8 const quality, ImageFileType type) const {
 	if (!exists()) return;
 	ImageData imgdat = getData();
 	uchar channels = 0;

@@ -25,13 +25,13 @@ const Makai::JSON::JSONView Makai::JSON::JSONView::operator[](String const& key)
 	return Makai::JSON::JSONView(cdata[key.stdView()], name + "/" + key);
 }
 
-Makai::JSON::JSONView Makai::JSON::JSONView::operator[](usize const& index) {
+Makai::JSON::JSONView Makai::JSON::JSONView::operator[](usize const index) {
 	if (isNull()) view() = Nlohmann::array();
 	else if (!isArray()) throw Error::InvalidAction("Parameter '" + name + "' is not an array!");
 	return Makai::JSON::JSONView(view()[index], CTL::toString(name, "[", index, "]"));
 }
 
-const Makai::JSON::JSONView Makai::JSON::JSONView::operator[](usize const& index) const {
+const Makai::JSON::JSONView Makai::JSON::JSONView::operator[](usize const index) const {
 	if (!isArray()) throw Error::InvalidAction("Parameter '" + name + "' is not an array!");
 	return Makai::JSON::JSONView(cdata[index], CTL::toString(name, "[", index, "]"));
 }
@@ -53,7 +53,7 @@ CTL::Decay::AsType<Extern::JSONData> Makai::JSON::JSONView::json() const {
 
 CTL::String Makai::JSON::JSONView::getName() const {return name;}
 
-CTL::String Makai::JSON::JSONView::toString(int const& indent, char const& ch) const {
+CTL::String Makai::JSON::JSONView::toString(int const indent, char const ch) const {
 	return view().dump(indent, ch, false, Nlohmann::error_handler_t::replace);
 }
 

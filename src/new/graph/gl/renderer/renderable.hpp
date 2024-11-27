@@ -15,27 +15,27 @@ namespace Makai::Graph {
 	public:
 		constexpr static usize VERSION = 0;
 
-		Renderable(usize const& layer = 0, bool const& manual = false);
+		Renderable(usize const layer = 0, bool const manual = false);
 
 		Material::ObjectMaterial material;
 
 		Renderable(
 			List<Triangle*> const& triangles,
-			usize const& layer = 0,
-			bool const& manual = false
+			usize const layer = 0,
+			bool const manual = false
 		);
 
 		Renderable(
 			Vertex* const& vertices,
-			usize const& count,
-			usize const& layer = 0,
-			bool const& manual = false
+			usize const count,
+			usize const layer = 0,
+			bool const manual = false
 		);
 
 		Renderable(
 			Renderable& other,
-			usize const& layer = 0,
-			bool const& manual = false
+			usize const layer = 0,
+			bool const manual = false
 		);
 
 		virtual ~Renderable();
@@ -65,7 +65,7 @@ namespace Makai::Graph {
 
 		/// Gets a reference bound to this object by index.
 		template <ShapeRefType T>
-		inline T* getReference(usize const& index) {
+		inline T* getReference(usize const index) {
 			if (locked) throw Error::InvalidAction("Renderable object is locked!");
 			return (T*)references.shape[index];
 		}
@@ -115,7 +115,7 @@ namespace Makai::Graph {
 		/// IRREVERSIBLE.
 		void bakeAndLock();
 
-		void extend(Vertex* const& vertices, usize const& size);
+		void extend(Vertex* const& vertices, usize const size);
 
 		void extend(Renderable& other);
 
@@ -137,9 +137,9 @@ namespace Makai::Graph {
 			String const& folder,
 			String const& name = "object",
 			String const& texturesFolder = "tx",
-			bool const& integratedBinary	= false,
-			bool const& integratedTextures	= false,
-			bool const& pretty = false
+			bool const integratedBinary	= false,
+			bool const integratedTextures	= false,
+			bool const pretty = false
 		);
 
 		List<Triangle*> triangles;
@@ -178,8 +178,8 @@ namespace Makai::Graph {
 
 		JSON::JSONData getObjectDefinition(
 			String const& encoding			= "base64",
-			bool const& integratedBinary	= true,
-			bool const& integratedTextures	= true
+			bool const integratedBinary	= true,
+			bool const integratedTextures	= true
 		);
 	};
 }

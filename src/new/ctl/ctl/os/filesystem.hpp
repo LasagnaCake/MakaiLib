@@ -193,7 +193,7 @@ namespace OS::FS {
 		return sp.size() > 1 ? sp.back() : "";
 	}
 
-	/*constexpr String fileName(String const& path, bool const& removeExtension = false) {
+	/*constexpr String fileName(String const& path, bool const removeExtension = false) {
 		String result = path.splitAtLast({'\\', '/'}).back();
 		return (removeExtension ? result.splitAtLast('.').front() ? result);
 	}*/

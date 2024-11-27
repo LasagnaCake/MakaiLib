@@ -12,21 +12,21 @@
 namespace Makai::Graph {
 	class Drawable {
 	public:
-		Drawable(bool const& manual = false);
+		Drawable(bool const manual = false);
 
-		Drawable(bool const& manual, usize const& layer);
+		Drawable(bool const manual, usize const layer);
 
 		virtual ~Drawable();
 
 		Drawable& setManual();
 
-		Drawable& setAuto(usize const& renderLayer);
+		Drawable& setAuto(usize const renderLayer);
 
-		Drawable& setRenderLayer(usize const& renderLayer);
+		Drawable& setRenderLayer(usize const renderLayer);
 
-		Drawable& addToRenderLayer(usize const& renderLayer);
+		Drawable& addToRenderLayer(usize const renderLayer);
 
-		Drawable& removeFromRenderLayer(usize const& renderLayer);
+		Drawable& removeFromRenderLayer(usize const renderLayer);
 
 		/// Renders the object to the screen.
 		RenderCallback render = [&] {doRender();};
@@ -45,7 +45,7 @@ namespace Makai::Graph {
 
 	class DrawableObject: public Drawable, public Blendable {
 	public:
-		DrawableObject(usize const& layer = 0, bool const& manual = false);
+		DrawableObject(usize const layer = 0, bool const manual = false);
 
 		virtual ~DrawableObject();
 
@@ -59,11 +59,11 @@ namespace Makai::Graph {
 	protected:
 		void display(
 			Vertex* const&		vertices,
-			usize const&		count,
+			usize const		count,
 			CullMode const&		culling,
 			FillMode const&		fill,
 			DisplayMode const&	mode		= DisplayMode::ODM_TRIS,
-			usize const&		instances	= 1
+			usize const		instances	= 1
 		);
 
 		void prepare();

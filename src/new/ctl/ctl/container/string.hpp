@@ -719,7 +719,7 @@ public:
 	///
 	///		- `long double`s: 32 decimal spaces.
 	template<Type::Real T>
-	constexpr static SelfType fromNumber(T const& val, usize const& precision = sizeof(T)*2) {
+	constexpr static SelfType fromNumber(T const& val, usize const precision = sizeof(T)*2) {
 		SelfType result(sizeof(T)*4, '\0');
 		ssize sz = ftoa<T, DataType>(val, result.data(), result.size(), precision);
 		if (sz < 0) throw FailedActionException("Float-to-String conversion failure!");

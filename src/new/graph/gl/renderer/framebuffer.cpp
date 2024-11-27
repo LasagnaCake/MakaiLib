@@ -10,7 +10,7 @@ namespace ImageSlot {
 
 using namespace Makai; using namespace Makai::Graph;
 
-Graph::Base::DrawBuffer::DrawBuffer(uint const& width, uint const& height) {
+Graph::Base::DrawBuffer::DrawBuffer(uint const width, uint const height) {
 	create(width, height);
 }
 
@@ -25,7 +25,7 @@ Graph::Base::DrawBuffer& Graph::Base::DrawBuffer::destroy() {
 	return *this;
 }
 
-Graph::Base::DrawBuffer& Graph::Base::DrawBuffer::create(uint const& width, uint const& height) {
+Graph::Base::DrawBuffer& Graph::Base::DrawBuffer::create(uint const width, uint const height) {
 	if (created) return *this;
 	else created = true;
 	glGenFramebuffers(1, &id);
@@ -59,8 +59,8 @@ uint Graph::Base::DrawBuffer::getID() const		{return id;		}
 
 
 Graph::Base::FrameBuffer::FrameBuffer(
-	unsigned int const& width,
-	unsigned int const& height
+	unsigned int const width,
+	unsigned int const height
 ): FrameBuffer() {
 	create(width, height);
 }
@@ -79,7 +79,7 @@ Graph::Base::FrameBuffer& Graph::Base::FrameBuffer::destroy() {
 	return *this;
 }
 
-Graph::Base::FrameBuffer& Graph::Base::FrameBuffer::create(uint const& width, uint const& height) {
+Graph::Base::FrameBuffer& Graph::Base::FrameBuffer::create(uint const width, uint const height) {
 	if (exists()) return *this;
 	Base::DrawBuffer::create(width, height);
 	glBindFramebuffer(GL_FRAMEBUFFER, getID());

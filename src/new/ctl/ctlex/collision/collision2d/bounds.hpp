@@ -129,7 +129,7 @@ namespace Collision::C2D {
 		/// @brief Returns the circle's radius at a given angle.
 		/// @param angle Angle to get the radius for.
 		/// @return Radius at the given angle.
-		constexpr float radiusAt(float const& angle) const {
+		constexpr float radiusAt(float const angle) const {
 			return
 				(CTL::Math::absin(angle) * radius.x)
 			+	(CTL::Math::abcos(angle) * radius.y)
@@ -167,9 +167,9 @@ namespace Collision::C2D {
 		constexpr Capsule(
 			Vector2 const& position,
 			Vector2 const& width = 1,
-			float const& length = 0,
-			float const& angle = 0,
-			float const& rotation = 0
+			float const length = 0,
+			float const angle = 0,
+			float const rotation = 0
 		):
 			position(position),
 			width(width),
@@ -204,8 +204,8 @@ namespace Collision::C2D {
 		/// @param angle Angle.
 		constexpr Ray(
 			Vector2 const& position,
-			float const& length = 1,
-			float const& angle = 0
+			float const length = 1,
+			float const angle = 0
 		):
 			position(position),
 			length(length),
@@ -231,7 +231,7 @@ namespace Collision::C2D {
 
 		/// @brief Allocates space for the shape's vertices.
 		/// @param size Vertex count.
-		constexpr Shape(usize const& size): points(size) {}
+		constexpr Shape(usize const size): points(size) {}
 
 		/// @brief Constructs the shape from an array of points.
 		/// @tparam S Array size.

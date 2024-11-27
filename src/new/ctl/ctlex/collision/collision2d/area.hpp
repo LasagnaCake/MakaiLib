@@ -38,7 +38,7 @@ namespace Collision::C2D {
 	/// @param forwards Result of a forwards collision event.
 	/// @param backwards Result of a backwards collision event.
 	/// @return Both events as a single `Direction`.
-	constexpr Direction asDirection(bool const& forwards, bool const& backwards) {
+	constexpr Direction asDirection(bool const forwards, bool const backwards) {
 		return Direction(
 			usize(forwards)
 		|	(usize(backwards) << 1)

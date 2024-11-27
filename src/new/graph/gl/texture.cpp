@@ -49,14 +49,14 @@ uint createCopyBuffer() {
 void copyTexture(
 	Image2D* const&		src,
 	Image2D* const&		dst,
-	uint const&			srcStartX,
-	uint const&			srcStartY,
-	uint const&			srcEndX,
-	uint const&			srcEndY,
-	uint const&			dstStartX,
-	uint const&			dstStartY,
-	uint const&			dstEndX,
-	uint const&			dstEndY,
+	uint const			srcStartX,
+	uint const			srcStartY,
+	uint const			srcEndX,
+	uint const			srcEndY,
+	uint const			dstStartX,
+	uint const			dstStartY,
+	uint const			dstEndX,
+	uint const			dstEndY,
 	FilterMode const&	filter = FilterMode::FM_NEAREST
 ) {
 	if (!src || !dst) return;
@@ -135,8 +135,8 @@ Texture2D Texture2D::fromJSON(JSON::JSONData img, String const& sourcepath) {
 }
 
 Texture2D::Texture2D(
-	uint const&				width,
-	uint const&				height,
+	uint const				width,
+	uint const				height,
 	ComponentType const&	type,
 	ImageFormat const&		format,
 	FilterMode const&		magFilter,
@@ -178,18 +178,18 @@ Texture2D::Texture2D(
 
 Texture2D::Texture2D(
 	Texture2D const& other,
-	uint const& startX,
-	uint const& startY,
-	uint const& endX,
-	uint const& endY,
-	bool const& filter
+	uint const startX,
+	uint const startY,
+	uint const endX,
+	uint const endY,
+	bool const filter
 ): Texture2D::Texture2D() {
 	create(other, startX, startY, endX, endY, filter);
 }
 
 Texture2D& Texture2D::create(
-	uint const&				width,
-	uint const&				height,
+	uint const				width,
+	uint const				height,
 	ComponentType const&	type,
 	ImageFormat const&		format,
 	FilterMode const&		magFilter,
@@ -283,11 +283,11 @@ Texture2D& Texture2D::create(
 
 Texture2D& Texture2D::create(
 	Texture2D const& other,
-	uint const& startX,
-	uint const& startY,
-	uint const& endX,
-	uint const& endY,
-	bool const& filter
+	uint const startX,
+	uint const startY,
+	uint const endX,
+	uint const endY,
+	bool const filter
 ) {
 	if (exists()) return *this;
 	uint w, h;
@@ -319,8 +319,8 @@ Texture2D& Texture2D::clear() {
 }
 
 Texture2D& Texture2D::make(
-	uint const&				width,
-	uint const&				height,
+	uint const				width,
+	uint const				height,
 	ComponentType const&	type,
 	ImageFormat const&		format,
 	FilterMode const&		magFilter,
@@ -361,18 +361,18 @@ Texture2D& Texture2D::make(
 
 Texture2D& Texture2D::make(
 	Texture2D const& other,
-	uint const& startX,
-	uint const& startY,
-	uint const& endX,
-	uint const& endY,
-	bool const& filter
+	uint const startX,
+	uint const startY,
+	uint const endX,
+	uint const endY,
+	bool const filter
 ) {
 	destroy();
 	create(other, startX, startY, endX, endY, filter);
 	return *this;
 }
 
-Texture2D& Texture2D::makeUnique(bool const& filter) {
+Texture2D& Texture2D::makeUnique(bool const filter) {
 	if (!exists()) return *this;
 	Image2D* newImg = Image2D::newImage(
 		image->attributes.width,
@@ -402,11 +402,11 @@ ValueOrder Texture2D::operator<=>(Texture2D const& other) const	{return *image <
 
 Texture2D& Texture2D::copyFrom(
 	Texture2D const& other,
-	uint const& startX,
-	uint const& startY,
-	uint const& endX,
-	uint const& endY,
-	bool const& filter
+	uint const startX,
+	uint const startY,
+	uint const endX,
+	uint const endY,
+	bool const filter
 ) {
 	if (!exists()) return *this;
 	// Copy data
@@ -425,7 +425,7 @@ Texture2D& Texture2D::copyFrom(
 
 Texture2D& Texture2D::copyFrom(
 	Texture2D const& other,
-	bool const& filter
+	bool const filter
 ) {
 	if (!exists()) return *this;
 	// Copy data
@@ -485,21 +485,21 @@ Image2D::Attributes Texture2D::attributes() const {
 	return image->attributes;
 }
 
-Texture2D& Texture2D::enable(uchar const& slot) {
+Texture2D& Texture2D::enable(uchar const slot) {
 	image->use(slot);
 	return *this;
 }
 
-Texture2D const& Texture2D::enable(uchar const& slot) const {
+Texture2D const& Texture2D::enable(uchar const slot) const {
 	image->use(slot);
 	return *this;
 }
 
-Texture2D& Texture2D::operator()(uchar const& slot) {
+Texture2D& Texture2D::operator()(uchar const slot) {
 	return enable(slot);
 }
 
-Texture2D const& Texture2D::operator()(uchar const& slot) const {
+Texture2D const& Texture2D::operator()(uchar const slot) const {
 	return enable(slot);
 }
 
@@ -514,7 +514,7 @@ Image2D::ImageData Texture2D::getData() const {
 
 Texture2D const& Texture2D::saveToFile(
 	String const& path,
-	uint8 const& quality,
+	uint8 const quality,
 	ImageFileType const& type
 ) const {
 	if (!exists()) return *this;
@@ -524,7 +524,7 @@ Texture2D const& Texture2D::saveToFile(
 
 Texture2D& Texture2D::saveToFile(
 	String const& path,
-	uint8 const& quality,
+	uint8 const quality,
 	ImageFileType const& type
 ) {
 	if (!exists()) return *this;

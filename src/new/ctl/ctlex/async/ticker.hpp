@@ -25,7 +25,7 @@ public:
 
 		/// @brief Sleeps the thread it is called in for a given amount of ticks.
 		/// @param ticks Amount of ticks to wait for.
-		void wait(usize const& ticks) {
+		void wait(usize const ticks) {
 			usize delay = counter;
 			while (counter.value() < (delay + ticks)) asyncYield();
 		}

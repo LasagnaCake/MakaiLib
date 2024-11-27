@@ -45,7 +45,7 @@ namespace MX {
 	/// @param count Count of elements to copy.
 	/// @return Pointer to destination.
 	template<Type::NonVoid T>
-	constexpr T* memcpy(T* const& dst, T const* const& src, usize const& count) {
+	constexpr T* memcpy(T* const& dst, T const* const& src, usize const count) {
 		return (T*)memcpy((pointer)dst, (pointer)src, count * sizeof(T));
 	}
 
@@ -88,7 +88,7 @@ namespace MX {
 	/// @param count Count of elements to copy.
 	/// @return Pointer to destination.
 	template<Type::NonVoid T>
-	constexpr T* memmove(T* const& dst, T const* const& src, usize const& count) {
+	constexpr T* memmove(T* const& dst, T const* const& src, usize const count) {
 		return (T*)memmove((pointer)dst, (pointer)src, count * sizeof(T));
 	}
 
@@ -125,7 +125,7 @@ namespace MX {
 	/// @param count Count of elements to compare.
 	/// @return Order between both spans of data.
 	template<Type::NonVoid T>
-	constexpr int memcmp(T const* const& a, T const* const& b, usize const& count) {
+	constexpr int memcmp(T const* const& a, T const* const& b, usize const count) {
 		return memcmp((pointer)a, (pointer)b, count * sizeof(T));
 	}
 
@@ -144,7 +144,7 @@ namespace MX {
 	/// @param val Value to set each byte.
 	/// @param size Size in bytes.
 	/// @return Pointer to data.
-	constexpr pointer memset(pointer const& dst, int const& val, usize size) {
+	constexpr pointer memset(pointer const& dst, int const val, usize size) {
 		#ifdef CTL_DO_NOT_USE_BUILTINS
 		Address d = (Address)dst;
 		while (size-- > 0)
@@ -161,7 +161,7 @@ namespace MX {
 	/// @param count Count of elements to set.
 	/// @return Pointer to data.
 	template<Type::NonVoid T>
-	constexpr T* memset(T* const& dst, int const& val, usize const& count) {
+	constexpr T* memset(T* const& dst, int const val, usize const count) {
 		return (T*)memset((pointer)dst, val, count * sizeof(T));
 	}
 
@@ -171,7 +171,7 @@ namespace MX {
 	/// @param val Value to set each byte.
 	/// @return Pointer to data.
 	template<Type::NonVoid T>
-	constexpr T* memset(T* const& dst, int const& val) {
+	constexpr T* memset(T* const& dst, int const val) {
 		return (T*)memset((pointer)dst, val, sizeof(T));
 	}
 	
@@ -179,7 +179,7 @@ namespace MX {
 	/// @param dst Data to set.
 	/// @param size Size in bytes.
 	/// @return Pointer to data.
-	constexpr pointer memzero(pointer const& dst, usize const& size) {
+	constexpr pointer memzero(pointer const& dst, usize const size) {
 		return memset(dst, 0, size);
 	}
 
@@ -189,7 +189,7 @@ namespace MX {
 	/// @param count Count of elements to zero.
 	/// @return Pointer to data.
 	template<Type::NonVoid T>
-	constexpr T* memzero(T* const& dst, usize const& count) {
+	constexpr T* memzero(T* const& dst, usize const count) {
 		return (T*)memzero((pointer)dst, count * sizeof(T));
 	}
 
@@ -206,7 +206,7 @@ namespace MX {
 	/// @param sz Byte size.
 	/// @return Pointer to start of allocated memory.
 	/// @throw AllocationFailure if size is zero, or memory allocation fails.
-	constexpr pointer malloc(usize const& sz) {
+	constexpr pointer malloc(usize const sz) {
 		if (!sz) throw AllocationFailure();
 		auto* m = __builtin_malloc(sz);
 		if (!m) throw AllocationFailure();
@@ -219,7 +219,7 @@ namespace MX {
 	/// @return Pointer to start of allocated memory.
 	/// @throw AllocationFailure if size is zero, or memory allocation fails.
 	template<Type::NonVoid T>
-	constexpr T* malloc(usize const& sz) {
+	constexpr T* malloc(usize const sz) {
 		if (!sz) throw AllocationFailure();
 		auto* m = __builtin_malloc(sz * sizeof(T));
 		if (!m) throw AllocationFailure();
@@ -254,7 +254,7 @@ namespace MX {
 	/// @param mem Memory to reallocate.
 	/// @param sz New size in bytes.
 	/// @return Pointer to new memory location.
-	constexpr pointer realloc(pointer const& mem, usize const& sz) {
+	constexpr pointer realloc(pointer const& mem, usize const sz) {
 		if (!sz) {
 			free(mem);
 			return nullptr;
@@ -270,7 +270,7 @@ namespace MX {
 	/// @param sz New count of elements.
 	/// @return Pointer to new memory location.
 	template<Type::NonVoid T>
-	constexpr T* realloc(T* const& mem, usize const& sz) {
+	constexpr T* realloc(T* const& mem, usize const sz) {
 		if (!sz) {
 			free(mem);
 			return nullptr;
@@ -328,7 +328,7 @@ namespace MX {
 	/// @brief Resizes memory allocated in the heap.
 	/// @param mem Memory to resize.
 	/// @param sz New size in bytes.
-	constexpr pointer resize(pointer& mem, usize const& sz) {
+	constexpr pointer resize(pointer& mem, usize const sz) {
 		return mem = realloc(mem, sz);
 	}
 
@@ -337,7 +337,7 @@ namespace MX {
 	/// @param mem Memory to resize.
 	/// @param sz New count of elements.
 	template<Type::NonVoid T>
-	constexpr T* resize(T*& mem, usize const& sz) {
+	constexpr T* resize(T*& mem, usize const sz) {
 		return mem = realloc<T>(mem, sz);
 	}
 

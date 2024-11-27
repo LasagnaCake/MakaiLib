@@ -18,7 +18,7 @@ namespace Async {
 	/// @tparam T Time unit.
 	/// @param time Time to sleep for.
 	template<class T = OS::Time::Millis>
-	inline void wait(usize const& time) {
+	inline void wait(usize const time) {
 		Thread::wait<T>(time);
 	}
 

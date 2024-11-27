@@ -20,7 +20,7 @@
 
 using namespace Makai;
 
-void setGLAttribute(SDL_GLattr const& a, int const& v) {
+void setGLAttribute(SDL_GLattr const a, int const v) {
 	if (SDL_GL_SetAttribute(a, v))
 		throw Error::FailedAction(
 			"Failed to set attribute!",
@@ -34,10 +34,10 @@ void setGLAttribute(SDL_GLattr const& a, int const& v) {
 App* mainApp = nullptr;
 
 App::App (
-	unsigned int const&	width,
-	unsigned int const&	height,
+	unsigned int const	width,
+	unsigned int const	height,
 	String const&		windowTitle,
-	bool const&			fullscreen,
+	bool const			fullscreen,
 	AudioConfig const&	audio
 ): appState(App::AppState::AS_CLOSED) {
 	// If there is another app open, throw error
@@ -167,11 +167,11 @@ void App::setWindowTitle(String const& title) {
 	SDL_SetWindowTitle(sdlWindow, title.cstr());
 }
 
-void App::setFullscreen(bool const& state) {
+void App::setFullscreen(bool const state) {
 	SDL_SetWindowFullscreen(sdlWindow, state);
 }
 
-inline bool isAppClosing(App::AppState const& state) {
+inline bool isAppClosing(App::AppState const state) {
 	return
 		state == App::AppState::AS_CLOSING
 	||	state == App::AppState::AS_INVALID
@@ -361,7 +361,7 @@ void App::unqueueScreenCopy(Graph::Texture2D target) {
 	screenQueue.eraseIf([&] (auto e) {return e == target;});
 }
 
-void App::setWindowOpacity(float const& opacity) {
+void App::setWindowOpacity(float const opacity) {
 	SDL_SetWindowOpacity(sdlWindow, opacity);
 }
 
@@ -404,7 +404,7 @@ void App::finalize() {
 	appState = App::AppState::AS_CLOSED;
 }
 
-inline void setDepthTest(bool const& state) {
+inline void setDepthTest(bool const state) {
 	Makai::Graph::API::toggle(Makai::Graph::API::Facility::GAF_DEPTH_TEST, state);
 }
 

@@ -38,13 +38,13 @@ namespace Makai::Tool::Arch {
 	BinaryData<> compress(
 		BinaryData<>	const&		data,
 		CompressionMethod const&	method	= CompressionMethod::ACM_ZIP,
-		uint8 const&				level	= 9
+		uint8 const				level	= 9
 	);
 
 	BinaryData<> decompress(
 		BinaryData<>	const&		data,
 		CompressionMethod const&	method	= CompressionMethod::ACM_ZIP,
-		uint8 const&				level	= 9
+		uint8 const				level	= 9
 	);
 
 	struct [[gnu::packed]] FileHeader {
@@ -90,7 +90,7 @@ namespace Makai::Tool::Arch {
 			String const& password = "",
 			EncryptionMethod const& enc = EncryptionMethod::AEM_AES256,
 			CompressionMethod const& comp = CompressionMethod::ACM_ZIP,
-			uint8 const& complvl = 9
+			uint8 const complvl = 9
 	);
 
 	void unpack(
@@ -146,9 +146,9 @@ namespace Makai::Tool::Arch {
 
 		FileEntry getFileEntry(String const& path);
 
-		BinaryData<> getFileEntryData(uint64 const& index, FileHeader const& fh);
+		BinaryData<> getFileEntryData(uint64 const index, FileHeader const& fh);
 
-		FileHeader getFileEntryHeader(uint64 const& index);
+		FileHeader getFileEntryHeader(uint64 const index);
 
 		uint64 getFileEntryLocation(String const& path, String const& origpath);
 
@@ -169,11 +169,11 @@ namespace Makai::Tool::Arch {
 	void saveEncryptedBinaryFile(
 		String const&				path,
 		T* const&					data,
-		usize const&				size,
+		usize const				size,
 		String const&				password	= "",
 		EncryptionMethod const&		enc			= EncryptionMethod::AEM_AES256,
 		CompressionMethod const&	comp		= CompressionMethod::ACM_ZIP,
-		uint8 const&				lvl			= 9
+		uint8 const				lvl			= 9
 	);
 
 	void saveEncryptedTextFile(
@@ -182,7 +182,7 @@ namespace Makai::Tool::Arch {
 		String const&				password	= "",
 		EncryptionMethod const&		enc			= EncryptionMethod::AEM_AES256,
 		CompressionMethod const&	comp		= CompressionMethod::ACM_ZIP,
-		uint8 const&				lvl			= 9
+		uint8 const				lvl			= 9
 	);
 
 	template<typename T>
@@ -192,7 +192,7 @@ namespace Makai::Tool::Arch {
 		String const&				password	= "",
 		EncryptionMethod const&		enc			= EncryptionMethod::AEM_AES256,
 		CompressionMethod const&	comp		= CompressionMethod::ACM_ZIP,
-		uint8 const&				lvl			= 9
+		uint8 const				lvl			= 9
 	);
 
 	void saveEncryptedTextFile(
@@ -201,7 +201,7 @@ namespace Makai::Tool::Arch {
 		String const&				password	= "",
 		EncryptionMethod const&		enc			= EncryptionMethod::AEM_AES256,
 		CompressionMethod const&	comp		= CompressionMethod::ACM_ZIP,
-		uint8 const&				lvl			= 9
+		uint8 const				lvl			= 9
 	);
 }
 

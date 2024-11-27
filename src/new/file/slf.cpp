@@ -42,7 +42,7 @@ constexpr bool isValidShaderExtension(String const& path) {
 	return isValidShaderType(fromFilePath(path));
 }
 
-SLFData Makai::SLF::parse(String const& slf, String const& srcFolder, bool const& pathOnly) {
+SLFData Makai::SLF::parse(String const& slf, String const& srcFolder, bool const pathOnly) {
 	DEBUGLN("Parsing SLF file...");
 	// Get file location
 	String dir = OS::FS::directoryFromPath(srcFolder);
@@ -96,12 +96,12 @@ SLFData Makai::SLF::parse(String const& slf, String const& srcFolder, bool const
 	return result;
 }
 
-SLFData Makai::SLF::loadFile(String const& path, bool const& pathOnly) {
+SLFData Makai::SLF::loadFile(String const& path, bool const pathOnly) {
 	// Try and get the file
 	return Makai::SLF::parse(Makai::File::loadText(path), path, pathOnly);
 }
 
-SLFData Makai::SLF::getFile(String const& path, bool const& pathOnly) {
+SLFData Makai::SLF::getFile(String const& path, bool const pathOnly) {
 	// Try and get the file
 	return Makai::SLF::parse(Makai::File::getText(path), path, pathOnly);
 }

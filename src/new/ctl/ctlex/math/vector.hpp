@@ -83,7 +83,7 @@ class Vector2: Ordered {
 		constexpr Vector2(float v):
 			x(v), y(v) {}
 
-		constexpr Vector2(float const& x, float const& y):
+		constexpr Vector2(float const x, float const y):
 			x(x), y(y) {}
 
 		constexpr Vector2(Vector2 const& vec):
@@ -183,56 +183,56 @@ class Vector2: Ordered {
 		}
 
 		/// Float operator overloading.
-		constexpr Vector2 operator+(float const& val) const {
+		constexpr Vector2 operator+(float const val) const {
 			return *this + Vector2(val);
 		}
 
-		constexpr Vector2 operator-(float const& val) const {
+		constexpr Vector2 operator-(float const val) const {
 			return *this - Vector2(val);
 		}
 
-		constexpr Vector2 operator*(float const& val) const {
+		constexpr Vector2 operator*(float const val) const {
 			return *this * Vector2(val);
 		}
 
-		constexpr Vector2 operator/(float const& val) const {
+		constexpr Vector2 operator/(float const val) const {
 			return *this / Vector2(val);
 		}
 
-		constexpr Vector2 operator%(float const& val) const {
+		constexpr Vector2 operator%(float const val) const {
 			return *this % Vector2(val);
 		}
 
-		constexpr Vector2 operator^(float const& val) const {
+		constexpr Vector2 operator^(float const val) const {
 			return *this ^ Vector2(val);
 		}
 
-		constexpr Vector2& operator+=(float const& val) {
+		constexpr Vector2& operator+=(float const val) {
 			*this += Vector2(val);
 			return *this;
 		}
 
-		constexpr Vector2& operator-=(float const& val) {
+		constexpr Vector2& operator-=(float const val) {
 			*this -= Vector2(val);
 			return *this;
 		}
 
-		constexpr Vector2& operator*=(float const& val) {
+		constexpr Vector2& operator*=(float const val) {
 			*this *= Vector2(val);
 			return *this;
 		}
 
-		constexpr Vector2& operator/=(float const& val) {
+		constexpr Vector2& operator/=(float const val) {
 			*this /= Vector2(val);
 			return *this;
 		}
 
-		constexpr Vector2& operator%=(float const& val) {
+		constexpr Vector2& operator%=(float const val) {
 			*this %= Vector2(val);
 			return *this;
 		}
 
-		constexpr Vector2& operator^=(float const& val) {
+		constexpr Vector2& operator^=(float const val) {
 			*this ^= Vector2(val);
 			return *this;
 		}
@@ -270,8 +270,8 @@ class Vector2: Ordered {
 
 		// Other overloads
 
-		constexpr float& operator[](usize const& pos)		{if (pos > 1) return data[0]; return data[pos];}
-		constexpr float operator[](usize const& pos) const	{if (pos > 1) return data[0]; return data[pos];}
+		constexpr float& operator[](usize const pos)		{if (pos > 1) return data[0]; return data[pos];}
+		constexpr float operator[](usize const pos) const	{if (pos > 1) return data[0]; return data[pos];}
 
 		constexpr float* operator*() {return data;};
 
@@ -418,7 +418,7 @@ class Vector3: Ordered {
 		constexpr Vector3(float v):
 			x(v), y(v), z(v) {}
 
-		constexpr Vector3(float const& x, float const& y, float const& z = 0.0):
+		constexpr Vector3(float const x, float const y, float const z = 0.0):
 			x(x), y(y), z(z) {}
 
 		constexpr Vector3(Vector3 const& vec):
@@ -540,56 +540,56 @@ class Vector3: Ordered {
 
 		/// Float operator overloading.
 
-		constexpr Vector3 operator+(float const& val) const {
+		constexpr Vector3 operator+(float const val) const {
 			return *this + Vector3(val);
 		}
 
-		constexpr Vector3 operator-(float const& val) const {
+		constexpr Vector3 operator-(float const val) const {
 			return *this - Vector3(val);
 		}
 
-		constexpr Vector3 operator*(float const& val) const {
+		constexpr Vector3 operator*(float const val) const {
 			return *this * Vector3(val);
 		}
 
-		constexpr Vector3 operator/(float const& val) const {
+		constexpr Vector3 operator/(float const val) const {
 			return *this / Vector3(val);
 		}
 
-		constexpr Vector3 operator%(float const& val) const {
+		constexpr Vector3 operator%(float const val) const {
 			return *this % Vector3(val);
 		}
 
-		constexpr Vector3 operator^(float const& val) const {
+		constexpr Vector3 operator^(float const val) const {
 			return *this ^ Vector3(val);
 		}
 
-		constexpr Vector3& operator+=(float const& val) {
+		constexpr Vector3& operator+=(float const val) {
 			*this += Vector3(val);
 			return *this;
 		}
 
-		constexpr Vector3& operator-=(float const& val) {
+		constexpr Vector3& operator-=(float const val) {
 			*this -= Vector3(val);
 			return *this;
 		}
 
-		constexpr Vector3& operator*=(float const& val) {
+		constexpr Vector3& operator*=(float const val) {
 			*this *= Vector3(val);
 			return *this;
 		}
 
-		constexpr Vector3& operator/=(float const& val) {
+		constexpr Vector3& operator/=(float const val) {
 			*this /= Vector3(val);
 			return *this;
 		}
 
-		constexpr Vector3& operator%=(float const& val) {
+		constexpr Vector3& operator%=(float const val) {
 			*this %= Vector3(val);
 			return *this;
 		}
 
-		constexpr Vector3& operator^=(float const& val) {
+		constexpr Vector3& operator^=(float const val) {
 			*this ^= Vector3(val);
 			return *this;
 		}
@@ -634,8 +634,8 @@ class Vector3: Ordered {
 
 		constexpr float* operator*() {return data;};
 
-		constexpr float& operator[](usize const& pos)		{if (pos > 2) return data[0]; return data[pos];}
-		constexpr float operator[](usize const& pos) const	{if (pos > 2) return data[0]; return data[pos];}
+		constexpr float& operator[](usize const pos)		{if (pos > 2) return data[0]; return data[pos];}
+		constexpr float operator[](usize const pos) const	{if (pos > 2) return data[0]; return data[pos];}
 
 		// Extra functions
 
@@ -808,7 +808,7 @@ class Vector4: Ordered {
 		constexpr Vector4(float v):
 			x(v), y(v), z(v), w(v) {}
 
-		constexpr Vector4(float const& x, float const& y, float const& z, float const& w = 0.0):
+		constexpr Vector4(float const x, float const y, float const z, float const w = 0.0):
 			x(x), y(y), z(z), w(w) {}
 
 		constexpr Vector4(Vector2 const& v1, Vector2 const& v2):
@@ -949,56 +949,56 @@ class Vector4: Ordered {
 
 		/// Float operator overloading.
 
-		constexpr Vector4 operator+(float const& val) const {
+		constexpr Vector4 operator+(float const val) const {
 			return *this + Vector4(val);
 		}
 
-		constexpr Vector4 operator-(float const& val) const {
+		constexpr Vector4 operator-(float const val) const {
 			return *this - Vector4(val);
 		}
 
-		constexpr Vector4 operator*(float const& val) const {
+		constexpr Vector4 operator*(float const val) const {
 			return *this * Vector4(val);
 		}
 
-		constexpr Vector4 operator/(float const& val) const {
+		constexpr Vector4 operator/(float const val) const {
 			return *this / Vector4(val);
 		}
 
-		constexpr Vector4 operator%(float const& val) const {
+		constexpr Vector4 operator%(float const val) const {
 			return *this % Vector4(val);
 		}
 
-		constexpr Vector4 operator^(float const& val) const {
+		constexpr Vector4 operator^(float const val) const {
 			return *this ^ Vector4(val);
 		}
 
-		constexpr Vector4& operator+=(float const& val) {
+		constexpr Vector4& operator+=(float const val) {
 			*this += Vector4(val);
 			return *this;
 		}
 
-		constexpr Vector4& operator-=(float const& val) {
+		constexpr Vector4& operator-=(float const val) {
 			*this -= Vector4(val);
 			return *this;
 		}
 
-		constexpr Vector4& operator*=(float const& val) {
+		constexpr Vector4& operator*=(float const val) {
 			*this *= Vector4(val);
 			return *this;
 		}
 
-		constexpr Vector4& operator/=(float const& val) {
+		constexpr Vector4& operator/=(float const val) {
 			*this /= Vector4(val);
 			return *this;
 		}
 
-		constexpr Vector4& operator^=(float const& val) {
+		constexpr Vector4& operator^=(float const val) {
 			*this ^= Vector4(val);
 			return *this;
 		}
 
-		constexpr Vector4& operator%=(float const& val) {
+		constexpr Vector4& operator%=(float const val) {
 			*this %= Vector4(val);
 			return *this;
 		}
@@ -1045,8 +1045,8 @@ class Vector4: Ordered {
 
 		constexpr float* operator*() {return data;};
 
-		constexpr float& operator[](usize const& pos)		{if (pos > 3) return data[0]; return data[pos];}
-		constexpr float operator[](usize const& pos) const	{if (pos > 3) return data[0]; return data[pos];}
+		constexpr float& operator[](usize const pos)		{if (pos > 3) return data[0]; return data[pos];}
+		constexpr float operator[](usize const pos) const	{if (pos > 3) return data[0]; return data[pos];}
 
 		// Extra functions
 
@@ -1211,7 +1211,7 @@ enum class Axis: usize {
 // Vector rotation
 
 /// Rotates a 2D Vector around the origin by a given angle.
-constexpr Vector2 rotateV2(Vector2 vec, float const& angle) {
+constexpr Vector2 rotateV2(Vector2 vec, float const angle) {
 	// Calculate the sine & cosine of the angle
 	float sinA = sin(angle);
 	float cosA = cos(angle);
@@ -1290,12 +1290,12 @@ constexpr Vector3 rotateV3(Vector3 const& vec, Vector2 const& angle, Axis const&
 // Angle-to-vector conversion
 
 /// Gets a 2D Vector of size 1 at a given angle relative to the origin.
-constexpr Vector2 angleV2(float const& angle) {
+constexpr Vector2 angleV2(float const angle) {
 	return Vector2(cos(angle), -sin(angle));
 }
 
 /// Gets a 3D Vector of size 1 at a given angle around one of the origin's axis.
-constexpr Vector3 angleV3(float const& angle, Axis const& axis = Axis::NEG_Z) {
+constexpr Vector3 angleV3(float const angle, Axis const& axis = Axis::NEG_Z) {
 	switch (axis) {
 	case Axis::POS_X:
 	case Axis::NEG_X:
@@ -1347,7 +1347,7 @@ constexpr Vector3 srpTransform(Vector3 vec, Vector3 const& pos, Vector3 const& r
 }
 
 /// Transforms a given 2D Vector by a given position, rotation and scale.
-constexpr Vector2 srpTransform(Vector2 vec, Vector2 const& pos, float const& rot, Vector2 const& scale = Vector2(1.0)) {
+constexpr Vector2 srpTransform(Vector2 vec, Vector2 const& pos, float const rot, Vector2 const& scale = Vector2(1.0)) {
 	vec *= scale;
 	vec = rotateV2(vec, rot);
 	vec += pos;
@@ -1363,7 +1363,7 @@ constexpr List<Vector3> srpTransform(List<Vector3> vec, Vector3 const& pos, Vect
 }
 
 /// Transforms a given set of 2D Vectors by a given position, rotation and scale.
-constexpr List<Vector2> srpTransform(List<Vector2> vec, Vector2 const& pos, float const& rot, Vector2 const& scale = Vector2(1.0)) {
+constexpr List<Vector2> srpTransform(List<Vector2> vec, Vector2 const& pos, float const rot, Vector2 const& scale = Vector2(1.0)) {
 	for (usize i = 0; i < vec.size(); i++) {
 		vec[i] = srpTransform(vec[i], pos, rot, scale);
 	}
@@ -1494,17 +1494,17 @@ constexpr Vector4 angleLerp(Vector4 const& from, Vector4 const& to, Vector4 cons
 // Vector linear angle interpolation (by float)
 
 /// Linearly interpolates two vectors by a certain amount.
-constexpr Vector2 angleLerp(Vector2 const& from, Vector2 const& to, float const& by) {
+constexpr Vector2 angleLerp(Vector2 const& from, Vector2 const& to, float const by) {
 	return angleLerp(from, to, Vector2(by));
 }
 
 /// Linearly interpolates two vectors by a certain amount.
-constexpr Vector3 angleLerp(Vector3 const& from, Vector3 const& to, float const& by) {
+constexpr Vector3 angleLerp(Vector3 const& from, Vector3 const& to, float const by) {
 	return angleLerp(from, to, Vector3(by));
 }
 
 /// Linearly interpolates two vectors by a certain amount.
-constexpr Vector4 angleLerp(Vector4 const& from, Vector4 const& to, float const& by) {
+constexpr Vector4 angleLerp(Vector4 const& from, Vector4 const& to, float const by) {
 	return angleLerp(from, to, Vector4(by));
 }
 

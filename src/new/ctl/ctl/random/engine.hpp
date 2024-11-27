@@ -40,7 +40,7 @@ namespace Base {
 		virtual usize getSeed() = 0;
 		/// @brief Sets the engine's current seed.
 		/// @param seed Current seed.
-		virtual void setSeed(usize const& seed) = 0;
+		virtual void setSeed(usize const seed) = 0;
 		/// @brief Virtual destructor.
 		virtual ~SimpleEngine() {}
 	};
@@ -68,7 +68,7 @@ namespace Engine {
 	public:
 		/// @brief Constructs the engine with a given seed.
 		/// @param seed Seed to use.
-		Mersenne(usize const& seed):	engine(seed)				{}
+		Mersenne(usize const seed):	engine(seed)				{}
 		/// @brief Constructs the engine with the seed being the current time.
 		Mersenne():						Mersenne(OS::Time::now())	{}
 
@@ -98,7 +98,7 @@ namespace Engine {
 		/// @brief Sets the engine's current seed.
 		/// @param seed Seed to use.
 		/// @return Reference to self.
-		virtual void setSeed(usize const& newSeed) final {
+		virtual void setSeed(usize const newSeed) final {
 			engine.setSeed(newSeed);
 		}
 

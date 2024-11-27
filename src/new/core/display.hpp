@@ -10,7 +10,7 @@ namespace Makai {
 	};
 
 	/// Returns the window size of the selected display.
-	Vector2 getDisplaySize(usize const& display = 0);
+	Vector2 getDisplaySize(usize const display = 0);
 }
 
 #endif // MAKAILIB_CORE_DISPLAY_H

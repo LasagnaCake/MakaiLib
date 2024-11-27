@@ -14,8 +14,8 @@ CTL_EX_NAMESPACE_BEGIN
 
 namespace Math::Ease {
 	/// Easing function template
-	typedef Function<float(float const&)> Mode;
-	#define EASE_FUN(NAME) constexpr float NAME(float const& x)
+	typedef Function<float(float const)> Mode;
+	#define EASE_FUN(NAME) constexpr float NAME(float const x)
 	EASE_FUN(linear) {return x;}
 
 	using EaseFunction = decltype(linear);
@@ -189,7 +189,7 @@ namespace Math::Ease {
 	#undef CASE_FUN
 
 	inline Mode custom(EaseFunction const& in, EaseFunction const& out) {
-		return [=] (float const& x) {
+		return [=] (float const x) {
 			if (x < 0.5)
 				return in(x * 2.0) / 2.0;
 			return 0.5 + out(x * 2.0 - 1) / 2.0;
@@ -197,7 +197,7 @@ namespace Math::Ease {
 	}
 
 	inline Mode custom(Mode const& in, Mode const& out) {
-		return [=] (float const& x) {
+		return [=] (float const x) {
 			if (x < 0.5)
 				return in(x * 2.0) / 2.0;
 			return 0.5 + out(x * 2.0 - 1) / 2.0;

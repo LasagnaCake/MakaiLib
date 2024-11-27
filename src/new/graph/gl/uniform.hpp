@@ -8,47 +8,47 @@ namespace Makai::Graph {
 	struct Uniform {
 		String const name;
 
-		Uniform(String const& name, uint const& id);
+		Uniform(String const& name, uint const id);
 
-		void set(bool const& value, usize const& offset = 0) const;
+		void set(bool const value, usize const offset = 0) const;
 
-		void set(int const& value, usize const& offset = 0) const;
+		void set(int const value, usize const offset = 0) const;
 
-		void set(uint const& value, usize const& offset = 0) const;
+		void set(uint const value, usize const offset = 0) const;
 
-		void set(float const& value, usize const& offset = 0) const;
+		void set(float const value, usize const offset = 0) const;
 
-		void set(Vector2 const& value, usize const& offset = 0) const;
+		void set(Vector2 const& value, usize const offset = 0) const;
 
-		void set(Vector3 const& value, usize const& offset = 0) const;
+		void set(Vector3 const& value, usize const offset = 0) const;
 
-		void set(Vector4 const& value, usize const& offset = 0) const;
+		void set(Vector4 const& value, usize const offset = 0) const;
 
-		void set(Matrix3x3 const& value, usize const& offset = 0) const;
+		void set(Matrix3x3 const& value, usize const offset = 0) const;
 
-		void set(Matrix4x4 const& value, usize const& offset = 0) const;
+		void set(Matrix4x4 const& value, usize const offset = 0) const;
 
-		void setArray(int* const& values, usize const& count, usize const& offset = 0) const;
+		void setArray(int* const& values, usize const count, usize const offset = 0) const;
 
-		void setArray(uint* const& values, usize const& count, usize const& offset = 0) const;
+		void setArray(uint* const& values, usize const count, usize const offset = 0) const;
 
-		void setArray(float* const& values, usize const& count, usize const& offset = 0) const;
+		void setArray(float* const& values, usize const count, usize const offset = 0) const;
 
-		void setArray(Vector2* const& values, usize const& count, usize const& offset = 0) const;
+		void setArray(Vector2* const& values, usize const count, usize const offset = 0) const;
 
-		void setArray(Vector3* const& values, usize const& count, usize const& offset = 0) const;
+		void setArray(Vector3* const& values, usize const count, usize const offset = 0) const;
 
-		void setArray(Vector4* const& values, usize const& count, usize const& offset = 0) const;
+		void setArray(Vector4* const& values, usize const count, usize const offset = 0) const;
 
 		template <typename T>
-		inline void set(List<T> const& values, usize const& offset = 0) const {
+		inline void set(List<T> const& values, usize const offset = 0) const {
 			this->offset = 0;
 			setArray((T*)values.data(), values.size(), offset);
 			this->offset = values.size();
 		}
 
 		template <typename T, usize S>
-		inline void set(Span<T, S> const& values, usize const& offset = 0) const {
+		inline void set(Span<T, S> const& values, usize const offset = 0) const {
 			this->offset = 0;
 			setArray((T*)values.data(), values.size(), offset);
 			this->offset = values.size();
@@ -80,8 +80,8 @@ namespace Makai::Graph {
 	private:
 		constexpr Uniform(
 			String  const& _name,
-			uint const& _id,
-			uint const& _location
+			uint const _id,
+			uint const _location
 		): name(_name), id(_id), location(_location) {}
 
 		template<typename T>
@@ -102,7 +102,7 @@ namespace Makai::Graph {
 			offset += this->offset;
 		}
 
-		uint getUniformArray(usize const& offset) const;
+		uint getUniformArray(usize const offset) const;
 
 		uint getUniform() const;
 

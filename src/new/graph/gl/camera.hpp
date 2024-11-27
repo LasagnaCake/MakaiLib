@@ -10,7 +10,7 @@ namespace Makai::Graph {
 		Vector2 size	= Vector2(1);
 	};
 
-	constexpr Matrix4x4 asMatrix(OrthographicData const& data, float const& zNear, float const& zFar) {
+	constexpr Matrix4x4 asMatrix(OrthographicData const& data, float const zNear, float const zFar) {
 		return Math::ortho(
 			data.origin.x,
 			data.size.x,
@@ -90,7 +90,7 @@ namespace Makai::Graph {
 			return camera;
 		}
 
-		constexpr static Camera3D from2D(float const& scale, Vector2 const& ratio) {
+		constexpr static Camera3D from2D(float const scale, Vector2 const& ratio) {
 			return Camera3D::from2D(ratio * scale);
 		}
 	};

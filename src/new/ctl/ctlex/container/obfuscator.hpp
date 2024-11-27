@@ -64,7 +64,7 @@ namespace Impl {
 	/// @brief Returns whether a number is a prime.
 	/// @param v Number to check.
 	/// @return Whether it is prime.
-	consteval bool isPrime(usize const& v) {
+	consteval bool isPrime(usize const v) {
 		if (v == 0) return false;
 		for (usize i = 2; i < v; ++i)
 			if (v % i == 0)
@@ -76,7 +76,7 @@ namespace Impl {
 	/// @param v Number to get nearest prime.
 	/// @param excludeSelf Whether to exclude the number itself, if it is prime.
 	/// @return Nearest prime.
-	consteval usize nearestPrime(usize const& v, bool excludeSelf = false) {
+	consteval usize nearestPrime(usize const v, bool excludeSelf = false) {
 		if (!v) return 0;
 		if (v < 2) return excludeSelf ? v-1 : v;
 		for (usize i = (excludeSelf ? (v-1) : v); i > 0; --i)

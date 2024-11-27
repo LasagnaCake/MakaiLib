@@ -22,25 +22,25 @@ namespace Makai::Audio {
 
 		virtual ~Music() final;
 
-		void play(int const& loops = 0, usize const& fadeInTime = 0);
+		void play(int const loops = 0, usize const fadeInTime = 0);
 
 		String getTitle();
 
 		MetaData getMetaData();
 
-		void switchInto(usize const& fadeOutTime, usize const& fadeInTime);
+		void switchInto(usize const fadeOutTime, usize const fadeInTime);
 
-		void switchInto(usize const& fadeOutTime, usize const& fadeInTime, int const& loops);
+		void switchInto(usize const fadeOutTime, usize const fadeInTime, int const loops);
 
 		void queueMusic();
 
 		inline Extern::Resource getSource();
 
 		static void		update();
-		static void		stop(usize const& fade = 0);
+		static void		stop(usize const fade = 0);
 		static void		pause();
 		static void		resume();
-		static void		setVolume(schar const& volume);
+		static void		setVolume(schar const volume);
 		static schar	getVolume();
 
 	protected:

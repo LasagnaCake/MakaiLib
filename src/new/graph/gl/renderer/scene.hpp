@@ -18,7 +18,7 @@ namespace Makai::Graph {
 			using DrawableEntry	= KeyValuePair<String, DrawableType*>;
 			using DrawableBank	= Dictionary<DrawableType*>;
 
-			Collection(usize const& layer = 0, bool const& manual = false): Drawable(layer, manual) {}
+			Collection(usize const layer = 0, bool const manual = false): Drawable(layer, manual) {}
 
 			virtual ~Collection() {
 				destroy();
@@ -127,19 +127,19 @@ namespace Makai::Graph {
 
 		constexpr static usize VERSION = 0;
 
-		Scene(Scene& other, usize const& layer, bool const& manual = false);
+		Scene(Scene& other, usize const layer, bool const manual = false);
 
-		Scene(usize const& layer, String const& path, bool manual = false);
+		Scene(usize const layer, String const& path, bool manual = false);
 
 		void extendFromSceneFile(String const& path);
 
 		void saveToSceneFile(
 			String const& folder,
 			String const& name,
-			bool const& integratedObjects			= false,
-			bool const& integratedObjectBinaries	= false,
-			bool const& integratedObjectTextures	= false,
-			bool const& pretty = false
+			bool const integratedObjects			= false,
+			bool const integratedObjectBinaries	= false,
+			bool const integratedObjectTextures	= false,
+			bool const pretty = false
 
 		);
 
@@ -153,9 +153,9 @@ namespace Makai::Graph {
 		void extendFromDefinitionV0(JSON::JSONData def, String const& sourcepath);
 
 		JSON::JSONData getSceneDefinition(
-			bool const& integratedObjects			= true,
-			bool const& integratedObjectBinaries	= true,
-			bool const& integratedObjectTextures	= true
+			bool const integratedObjects			= true,
+			bool const integratedObjectBinaries	= true,
+			bool const integratedObjectTextures	= true
 		);
 	};
 }

@@ -41,7 +41,7 @@ using Makai::JSON::Extern::JSONData;
 
 CTL::Random::Engine::Secure rng;
 
-String encoded(uint64 const& v) {
+String encoded(uint64 const v) {
 	BinaryData<> data(8, 0);
 	for (usize i = 0; i < 8; ++i) data[i] = uint8((v >> (8 * i)) & 0xFF);
 	return cppcodec::base64_rfc4648::encode<String>(data);
@@ -114,12 +114,12 @@ BinaryData<> cbcTransform(
 }
 
 template<Makai::Type::Equal<Deflator> T>
-T* getFlator(std::string& result, uint8 const& level) {
+T* getFlator(std::string& result, uint8 const level) {
 	return new T(new StringSink(result), level);
 }
 
 template<Makai::Type::Equal<Inflator> T>
-T* getFlator(std::string& result, uint8 const& level) {
+T* getFlator(std::string& result, uint8 const level) {
 	return new T(new StringSink(result));
 }
 
@@ -127,7 +127,7 @@ template<class T>
 BinaryData<> flate(
 	BinaryData<>	const&		data,
 	CompressionMethod const&	method	= CompressionMethod::ACM_ZIP,
-	uint8 const&				level	= 9
+	uint8 const				level	= 9
 ) try {
 	std::string result;
 	switch (method) {
@@ -201,7 +201,7 @@ BinaryData<> Arch::decrypt(
 BinaryData<> Arch::compress(
 	BinaryData<>	const&		data,
 	CompressionMethod const&	method,
-	uint8 const&				level
+	uint8 const				level
 ) {
 	return flate<Deflator>(data, method, level);
 }
@@ -209,7 +209,7 @@ BinaryData<> Arch::compress(
 BinaryData<> Arch::decompress(
 	BinaryData<>	const&		data,
 	CompressionMethod const&	method,
-	uint8 const&				level
+	uint8 const				level
 ) {
 	return flate<Inflator>(data, method, level);
 }
@@ -254,7 +254,7 @@ void populateTree(JSONData& tree, String const& root = "") {
 	}
 }
 
-usize populateTree(JSONData& tree, List<uint64> const& values, usize const& start = 0) {
+usize populateTree(JSONData& tree, List<uint64> const& values, usize const start = 0) {
 	if (!tree.is_object())
 		throw Error::FailedAction("file tree is not a JSON object!");
 	usize idx = start;
@@ -278,7 +278,7 @@ void Arch::pack(
 		String const& password,
 		EncryptionMethod const& enc,
 		CompressionMethod const& comp,
-		uint8 const& complvl
+		uint8 const complvl
 ) {
 	try {
 		// Hash the password
@@ -690,7 +690,7 @@ Arch::FileArchive::FileEntry Arch::FileArchive::getFileEntry(String const& path)
 	);
 }
 
-BinaryData<> Arch::FileArchive::getFileEntryData(uint64 const& index, FileHeader const& fh) try {
+BinaryData<> Arch::FileArchive::getFileEntryData(uint64 const index, FileHeader const& fh) try {
 	BinaryData<> fd(fh.compSize, 0);
 	auto lp = archive.tellg();
 	archive.seekg(index + header.fileHeaderSize);
@@ -701,7 +701,7 @@ BinaryData<> Arch::FileArchive::getFileEntryData(uint64 const& index, FileHeader
 	throw Error::FailedAction("Failed at getting file entry data: "s + String(e.what()));
 }
 
-FileHeader Arch::FileArchive::getFileEntryHeader(uint64 const& index) try {
+FileHeader Arch::FileArchive::getFileEntryHeader(uint64 const index) try {
 	FileHeader fh;
 	auto lp = archive.tellg();
 	archive.seekg(index);
@@ -913,11 +913,11 @@ template<typename T>
 void Arch::saveEncryptedBinaryFile(
 	String const&				path,
 	T* const&					data,
-	usize const&				size,
+	usize const				size,
 	String const&				password,
 	EncryptionMethod const&		enc,
 	CompressionMethod const&	comp,
-	uint8 const&				lvl
+	uint8 const				lvl
 ) {
 	if (enc != EncryptionMethod::AEM_NONE && password.empty())
 		throw Error::InvalidValue("Missing password for encrypted file!");
@@ -977,7 +977,7 @@ void Arch::saveEncryptedTextFile(
 	String const&				password,
 	EncryptionMethod const&		enc,
 	CompressionMethod const&	comp,
-	uint8 const&				lvl
+	uint8 const				lvl
 ) {
 	saveEncryptedBinaryFile(path, data.data(), data.size(), password, enc, comp, lvl);
 }
@@ -989,7 +989,7 @@ void Arch::saveEncryptedBinaryFile(
 	String const&				password,
 	EncryptionMethod const&		enc,
 	CompressionMethod const&	comp,
-	uint8 const&				lvl
+	uint8 const				lvl
 ) {
 	saveEncryptedBinaryFile<T>(path, data.data(), data.size(), password, enc, comp, lvl);
 }
@@ -1000,7 +1000,7 @@ void Arch::saveEncryptedTextFile(
 	String const&				password,
 	EncryptionMethod const&		enc,
 	CompressionMethod const&	comp,
-	uint8 const&				lvl
+	uint8 const				lvl
 ) {
 	saveEncryptedBinaryFile(path, data.data(), data.size(), password, enc, comp, lvl);
 }

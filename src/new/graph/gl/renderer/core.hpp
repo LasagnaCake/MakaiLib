@@ -15,13 +15,13 @@ namespace Makai::Graph {
 		using Callback	= const Signal<>;
 		using Layers	= Groups<Callback*>;
 
-		static void renderLayer(usize const& layer);
+		static void renderLayer(usize const layer);
 
 		static typename Layers::IdentifierListType getLayers() {
 			return layers.all();
 		}
 
-		static bool isLayerEmpty(usize const& layer) {
+		static bool isLayerEmpty(usize const layer) {
 			return layers.get(layer).empty();
 		}
 

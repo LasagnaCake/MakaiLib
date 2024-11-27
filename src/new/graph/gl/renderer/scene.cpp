@@ -64,7 +64,7 @@ void Scene::draw() {
 		obj->render();
 }
 
-Scene::Scene(Scene& other, usize const& layer, bool const& manual): Collection(layer, manual) {
+Scene::Scene(Scene& other, usize const layer, bool const manual): Collection(layer, manual) {
 	extend(other);
 }
 
@@ -88,7 +88,7 @@ void Scene::extend(Scene& other) {
 	world	= other.world;
 }
 
-Scene::Scene(usize const& layer, String const& path, bool manual): Collection(layer, manual) {
+Scene::Scene(usize const layer, String const& path, bool manual): Collection(layer, manual) {
 	extendFromSceneFile(path);
 }
 
@@ -99,10 +99,10 @@ void Scene::extendFromSceneFile(String const& path) {
 void Scene::saveToSceneFile(
 	String const& folder,
 	String const& name,
-	bool const& integratedObjects,
-	bool const& integratedObjectBinaries,
-	bool const& integratedObjectTextures,
-	bool const& pretty
+	bool const integratedObjects,
+	bool const integratedObjectBinaries,
+	bool const integratedObjectTextures,
+	bool const pretty
 
 ) {
 	JSON::JSONData file = getSceneDefinition(integratedObjects, integratedObjectBinaries, integratedObjectTextures);
@@ -289,9 +289,9 @@ void Scene::extendFromDefinitionV0(JSON::JSONData def, String const& sourcepath)
 }
 
 JSON::JSONData Scene::getSceneDefinition(
-	bool const& integratedObjects,
-	bool const& integratedObjectBinaries,
-	bool const& integratedObjectTextures
+	bool const integratedObjects,
+	bool const integratedObjectBinaries,
+	bool const integratedObjectTextures
 ) {
 	JSON::JSONData def;
 	def["version"] = VERSION;

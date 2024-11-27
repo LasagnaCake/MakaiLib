@@ -37,10 +37,10 @@ namespace Makai::Graph::API {
 
 	};
 
-	void toggle(Facility const& fac, bool const& state);
+	void toggle(Facility const& fac, bool const state);
 
 	template<typename... Args>
-	inline void toggle(bool const& state, Args const&... facs)
+	inline void toggle(bool const state, Args const&... facs)
 	requires (... && Makai::Type::Equal<Args, Facility>) {
 		(..., toggle(facs, state));
 	}
@@ -64,7 +64,7 @@ namespace Makai::Graph::API {
 
 	void setClearColor(Vector4 const& color);
 
-	void setFrontFace(bool const& clockwise = true);
+	void setFrontFace(bool const clockwise = true);
 
 	void useMainBuffer();
 }

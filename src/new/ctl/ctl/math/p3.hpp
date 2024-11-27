@@ -24,10 +24,10 @@ namespace Math::P3 {
 	///
 	///		(Archive) https://web.archive.org/web/20240209160635/https://www.desmos.com/calculator/hghrnwbcdh .
 	constexpr float precise(
-		float const& theta,
-		float const& sides,
-		float const& size	= 1,
-		float const& angle	= 0
+		float const theta,
+		float const sides,
+		float const size	= 1,
+		float const angle	= 0
 	) {
 		float const constant	= size * cos(pi / sides);
 		float const shape		= (sides / 2.0) * theta + angle;
@@ -41,10 +41,10 @@ namespace Math::P3 {
 	/// @param angle Rotation of the polygon.
 	/// @return Radius at the given angle.
 	constexpr float general(
-		float const& theta,
-		float const& sides,
-		float const& size	= 1,
-		float const& angle	= 0
+		float const theta,
+		float const sides,
+		float const size	= 1,
+		float const angle	= 0
 	) {
 		float const constant	= (size * sqrt3) / (sides * sqrt(sides));
 		float const shape		= (theta * sides + angle - hpi) / 2.0;
@@ -58,10 +58,10 @@ namespace Math::P3 {
 	/// @param angle Rotation of the polygon.
 	/// @return Radius at the given angle.
 	constexpr float fast(
-		float const& theta,
-		float const& sides,
-		float const& size	= 1,
-		float const& angle	= 0
+		float const theta,
+		float const sides,
+		float const size	= 1,
+		float const angle	= 0
 	) {
 		float const constant	= (size * sqrt2) / (sides * 2.0);
 		float const shape		= (theta * sides + angle - hpi) / 2.0;

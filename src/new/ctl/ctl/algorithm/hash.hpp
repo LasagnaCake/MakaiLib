@@ -70,7 +70,7 @@ namespace Impl::Hash {
 	/// @brief Murmur2 hash algorithm implementation.
 	namespace Murmur2 {
 		/// @brief Mixes a set of values.
-		constexpr void mix(usize& h, usize& k, usize const& m, int const& r) {
+		constexpr void mix(usize& h, usize& k, usize const m, int const r) {
 			k *= m;
 			k ^= k >> r;
 			k *= m;
@@ -79,14 +79,14 @@ namespace Impl::Hash {
 		}
 		
 		/// @brief Shuffles a set of values.
-		constexpr void shuffle(usize& h, usize const& m, usize const& v) {
+		constexpr void shuffle(usize& h, usize const m, usize const v) {
 			h ^= h >> v;
 			h *= m;
 			h ^= h >> v;
 		}
 		
 		/// @brief Shuffles a set of values.
-		constexpr void shuffle(usize& h, usize const& m, usize const& v1, usize const& v2) {
+		constexpr void shuffle(usize& h, usize const m, usize const v1, usize const v2) {
 			h ^= h >> v1;
 			h *= m;
 			h ^= h >> v2;
@@ -184,11 +184,11 @@ struct Hasher {
 	/// @brief Generates the hash for a given floating point number.
 	/// @param value Number to hash.
 	/// @return Resulting hash.
-	constexpr static usize hash(float const& value)		{return bitcast<uint32>(value);	}
+	constexpr static usize hash(float const value)		{return bitcast<uint32>(value);	}
 	/// @brief Generates the hash for a given floating point number.
 	/// @param value Number to hash.
 	/// @return Resulting hash.
-	constexpr static usize hash(double const& value)	{return bitcast<uint64>(value);	}
+	constexpr static usize hash(double const value)	{return bitcast<uint64>(value);	}
 
 	/// @brief Generates the hash for a given range of elements.
 	/// @tparam T Element type.
@@ -196,7 +196,7 @@ struct Hasher {
 	/// @param size Size of range.
 	/// @return Resulting hash.
 	template<class T>
-	constexpr static usize hash(T* const& data, usize const& size) {
+	constexpr static usize hash(T* const& data, usize const size) {
 		return Impl::Hash::hash(data, size, size);
 	}
 

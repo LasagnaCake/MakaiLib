@@ -28,7 +28,7 @@ namespace Makai::File {
 	void saveBinary(String const& path, BinaryData<> const& data);
 
 	template<Makai::Type::NonVoid T>
-	inline void saveBinary(String const& path, T* const& data, usize const& count) {
+	inline void saveBinary(String const& path, T* const& data, usize const count) {
 		saveBinary(path, ByteSpan((ubyte*)data, count * sizeof(T)));
 	}
 
@@ -47,20 +47,20 @@ namespace Makai::File {
 		saveBinary(path, ByteSpan(&data, sizeof(T)));
 	}
 
-	CSVData loadCSV(String const& path, char const& delimiter = ',');
-	//CSVData saveCSV(String const& path, CSVData const& data, char const& delimiter = ',');
+	CSVData loadCSV(String const& path, char const delimiter = ',');
+	//CSVData saveCSV(String const& path, CSVData const& data, char const delimiter = ',');
 
 	String loadTextFromArchive(String const& path);
 
 	BinaryData<> loadBinaryFromArchive(String const& path);
 
-	CSVData loadCSVFromArchive(String const& path, char const& delimiter = ',');
+	CSVData loadCSVFromArchive(String const& path, char const delimiter = ',');
 
 	String getText(String const& path);
 
 	BinaryData<> getBinary(String const& path);
 
-	CSVData getCSV(String const& path, char const& delimiter = ',');
+	CSVData getCSV(String const& path, char const delimiter = ',');
 
 	#pragma GCC diagnostic pop
 }

@@ -171,7 +171,7 @@ namespace Math {
 	/// @param decimals Decimal spaces to round down to.
 	/// @return Rounded value.
 	template<Type::Number T = float>
-	constexpr T floor(T const& val, ssize const& decimals) {
+	constexpr T floor(T const& val, ssize const decimals) {
 		// Get rounding factor
 		T zeros = pow<floatmax>(10, decimals);
 		// Floor it
@@ -193,7 +193,7 @@ namespace Math {
 	/// @param decimals Decimal spaces to round up to.
 	/// @return Rounded value.
 	template<Type::Number T = float>
-	constexpr T ceil(T const& val, int const& decimals) {
+	constexpr T ceil(T const& val, int const decimals) {
 		// Get rounding factor
 		T zeros = pow<floatmax>(10, decimals);
 		// Ceil it
@@ -216,7 +216,7 @@ namespace Math {
 	/// @param decimals Decimal spaces to round to.
 	/// @return Rounded value.
 	template<Type::Number T = float>
-	constexpr T round(T const& val, int const& decimals) {
+	constexpr T round(T const& val, int const decimals) {
 		// Get rounding factor
 		T zeros = pow<floatmax>(10, decimals);
 		// Add 1/2 & floor it
@@ -331,7 +331,7 @@ namespace Math {
 	/// @param a Angle to reflect.
 	/// @param s Surface angle.
 	/// @return Reflected angle.
-	constexpr float reflect(float const& a, float const& s) {
+	constexpr float reflect(float const a, float const s) {
 		return (2.0 * s) - a;
 	}
 
@@ -351,7 +351,7 @@ namespace Math {
 	/// @param power Power of two to multiply by.
 	/// @return Multiplied value.
 	template<Type::Integer T = int>
-	constexpr inline usize uipow2(T const& val, usize const& power) {
+	constexpr inline usize uipow2(T const& val, usize const power) {
 		return val << power;
 	}
 
@@ -361,7 +361,7 @@ namespace Math {
 	/// @param bit Bit to get.
 	/// @return Whether the bit is set.
 	template<Type::Integer T = int>
-	constexpr inline bool bit(T const& val, usize const& bit) {
+	constexpr inline bool bit(T const& val, usize const bit) {
 		return (val & (0x1 << bit));
 	}
 

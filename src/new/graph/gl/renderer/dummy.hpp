@@ -7,7 +7,7 @@ namespace Makai::Graph {
 	class Dummy: public Drawable {
 	public:
 		Dummy(Arguments<usize> const& layers) {
-			for (usize const& l : layers)
+			for (usize const l : layers)
 				addToRenderLayer(l);
 		}
 	};

@@ -27,8 +27,8 @@ namespace Makai::Graph {
 			DrawBuffer() {}
 
 			DrawBuffer(
-				uint const& width,
-				uint const& height
+				uint const width,
+				uint const height
 			);
 
 			virtual ~DrawBuffer();
@@ -36,8 +36,8 @@ namespace Makai::Graph {
 			virtual DrawBuffer& destroy();
 
 			virtual DrawBuffer& create(
-				uint const& width,
-				uint const& height
+				uint const width,
+				uint const height
 			);
 
 			virtual DrawBuffer& enable();
@@ -63,8 +63,8 @@ namespace Makai::Graph {
 			FrameBuffer(): Blendable() {}
 
 			FrameBuffer(
-				uint const& width,
-				uint const& height
+				uint const width,
+				uint const height
 			);
 
 			virtual ~FrameBuffer();
@@ -72,8 +72,8 @@ namespace Makai::Graph {
 			FrameBuffer& destroy() override;
 
 			FrameBuffer& create(
-				uint const& width,
-				uint const& height
+				uint const width,
+				uint const height
 			) override;
 
 			FrameBuffer& enable() override;

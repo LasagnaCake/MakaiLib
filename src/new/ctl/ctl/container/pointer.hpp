@@ -41,7 +41,7 @@ namespace Base {
 			constexpr Reference() = default;
 
 			/// @brief Basic constructor. 
-			constexpr Reference(bool const& exists, int64 const& count = 0): exists(exists), count(count) {}
+			constexpr Reference(bool const exists, int64 const count = 0): exists(exists), count(count) {}
 		};
 
 		/// @brief Underlying database type.

@@ -413,7 +413,7 @@ public:
 		}
 	}
 
-	constexpr Matrix<R-1, C-1, T> truncated(usize const& row, usize const& col) const {
+	constexpr Matrix<R-1, C-1, T> truncated(usize const row, usize const col) const {
 		static_assert(R > 1 && C > 1, "Cannot truncate a 1-dimensional matrix!");
 		Matrix<R-1, C-1, T> res;
 		int ro = 0, co = 0;
@@ -429,7 +429,7 @@ public:
 	}
 
 	template<usize RF = 1, usize CF = 1>
-	constexpr Matrix<R-RF, C-CF, T> shrunkBy(usize const& rowStart = 0, usize const& colStart = 0) const {
+	constexpr Matrix<R-RF, C-CF, T> shrunkBy(usize const rowStart = 0, usize const colStart = 0) const {
 		static_assert(R > 1 && C > 1, "Cannot shrink a 1-dimensional matrix!");
 		static_assert(RF > R && CF > C, "Shrinking factor(s) are bigger than the matrix!");
 		static_assert(rowStart < (R-RF) && colStart < (C-CF), "Row/Column starts cannot be bigger than the shrunk matrix!");
@@ -442,7 +442,7 @@ public:
 	}
 
 	template<usize RF = 1, usize CF = 1>
-	constexpr Matrix<R+RF, C+CF, T> expandedBy(usize const& rowStart = 0, usize const& colStart = 0) const {
+	constexpr Matrix<R+RF, C+CF, T> expandedBy(usize const rowStart = 0, usize const colStart = 0) const {
 		static_assert(rowStart < RF && colStart < CF, "Row/Column starts cannot be bigger than the expansion factor!");
 		if (rowStart < (RF) && colStart < (CF)) return Matrix<R+RF, C+CF, T>(0);
 		Matrix<R+RF, C+CF, T> res;
@@ -687,8 +687,8 @@ public:
 
 	/// Other operator overloadings.
 
-	constexpr Span<T, R> operator[](usize const& idx)				{return Span<T, R>(data[idx]);			}
-	constexpr Span<const T, R> operator[](usize const& idx) const	{return Span<const T, R>(data[idx]);	}
+	constexpr Span<T, R> operator[](usize const idx)				{return Span<T, R>(data[idx]);			}
+	constexpr Span<const T, R> operator[](usize const idx) const	{return Span<const T, R>(data[idx]);	}
 
 	constexpr T* begin()	{return &data[0][0];		}
 	constexpr T* end()		{return &data[C-1][R-1];	}
@@ -967,7 +967,7 @@ public:
 		return decompose(_p, _s);
 	}
 
-	constexpr T cofactor(usize const& row, usize const& col) const {
+	constexpr T cofactor(usize const row, usize const col) const {
 		return ((((row + col) % 2) == 0) ? T(+1) : T(-1)) * truncated(row, col).determinant();
 	}
 

@@ -165,7 +165,7 @@ struct Thread:
 	/// @tparam T Time unit.
 	/// @param time Time to sleep for.
 	template<class T = OS::Time::Millis>
-	static void wait(usize const& time) {
+	static void wait(usize const time) {
 		std::this_thread::sleep_for<T>(time);
 	}
 	

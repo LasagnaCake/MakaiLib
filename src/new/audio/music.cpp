@@ -16,7 +16,7 @@ namespace Extern = Makai::Extern;
 Mix_Music*		current	= nullptr;
 AudioCallback*	queued	= nullptr;
 
-void Music::stop(usize const& fade) {
+void Music::stop(usize const fade) {
 	if (fade)
 		Mix_FadeOutMusic(fade);
 	else
@@ -31,7 +31,7 @@ void Music::resume() {
 	Mix_ResumeMusic();
 }
 
-void Music::setVolume(schar const& volume) {
+void Music::setVolume(schar const volume) {
 	Mix_VolumeMusic(volume);
 }
 
@@ -43,7 +43,7 @@ Music::~Music() {
 	//destroy();
 }
 
-void Music::play(int const& loops, usize const& fadeInTime) {
+void Music::play(int const loops, usize const fadeInTime) {
 	if (!exists()) return;
 	this->loops = loops;
 	current	= sdlSource;
@@ -67,14 +67,14 @@ Music::MetaData Music::getMetaData() {
 	};
 }
 
-void Music::switchInto(usize const& fadeOutTime, usize const& fadeInTime) {
+void Music::switchInto(usize const fadeOutTime, usize const fadeInTime) {
 	if (!exists()) return;
 	this->fadeInTime = fadeInTime;
 	queueMusic();
 	stop(fadeOutTime);
 }
 
-void Music::switchInto(usize const& fadeOutTime, usize const& fadeInTime, int const& loops) {
+void Music::switchInto(usize const fadeOutTime, usize const fadeInTime, int const loops) {
 	if (!exists()) return;
 	this->fadeInTime	= fadeInTime;
 	this->loops			= loops;

@@ -25,7 +25,7 @@ VertexMap Vertex::defaultMap() {
 	});
 }
 
-inline float getValue(VertexMap const& vmap, String const& value, float const& fallback) {
+inline float getValue(VertexMap const& vmap, String const& value, float const fallback) {
 	return vmap.contains(value) ? vmap.at(value) : fallback;
 }
 

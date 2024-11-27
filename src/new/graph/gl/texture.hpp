@@ -24,8 +24,8 @@ namespace Makai::Graph {
 		Texture2D(decltype(nullptr)): Texture2D() {}
 
 		Texture2D(
-			uint const&						width,
-			uint const&						height,
+			uint const						width,
+			uint const						height,
 			Image2D::ComponentType const&	type		= Image2D::ComponentType::CT_UBYTE,
 			Image2D::ImageFormat const&		format		= Image2D::ImageFormat::IF_RGBA,
 			Image2D::FilterMode const&		magFilter	= Image2D::FilterMode::FM_SMOOTH,
@@ -50,16 +50,16 @@ namespace Makai::Graph {
 
 		Texture2D(
 			Texture2D const& other,
-			uint const& startX,
-			uint const& startY,
-			uint const& endX,
-			uint const& endY,
-			bool const& filter = false
+			uint const startX,
+			uint const startY,
+			uint const endX,
+			uint const endY,
+			bool const filter = false
 		);
 
 		Texture2D& create(
-			uint const&						width,
-			uint const&						height,
+			uint const						width,
+			uint const						height,
 			Image2D::ComponentType const&	type		= Image2D::ComponentType::CT_UBYTE,
 			Image2D::ImageFormat const&		format		= Image2D::ImageFormat::IF_RGBA,
 			Image2D::FilterMode const&		magFilter	= Image2D::FilterMode::FM_SMOOTH,
@@ -84,11 +84,11 @@ namespace Makai::Graph {
 
 		Texture2D& create(
 			Texture2D const& other,
-			uint const& startX,
-			uint const& startY,
-			uint const& endX,
-			uint const& endY,
-			bool const& filter = false
+			uint const startX,
+			uint const startY,
+			uint const endX,
+			uint const endY,
+			bool const filter = false
 		);
 
 		Texture2D& destroy();
@@ -96,8 +96,8 @@ namespace Makai::Graph {
 		Texture2D& clear();
 
 		Texture2D& make(
-			uint const&						width,
-			uint const&						height,
+			uint const						width,
+			uint const						height,
 			Image2D::ComponentType const&	type		= Image2D::ComponentType::CT_UBYTE,
 			Image2D::ImageFormat const&		format		= Image2D::ImageFormat::IF_RGBA,
 			Image2D::FilterMode const&		magFilter	= Image2D::FilterMode::FM_SMOOTH,
@@ -122,14 +122,14 @@ namespace Makai::Graph {
 
 		Texture2D& make(
 			Texture2D const& other,
-			uint const& startX,
-			uint const& startY,
-			uint const& endX,
-			uint const& endY,
-			bool const& filter = false
+			uint const startX,
+			uint const startY,
+			uint const endX,
+			uint const endY,
+			bool const filter = false
 		);
 
-		Texture2D& makeUnique(bool const& filter = false);
+		Texture2D& makeUnique(bool const filter = false);
 
 		Texture2D&			operator=(Texture2D const& other);
 		Texture2D&			operator=(Texture2D&& other);
@@ -140,16 +140,16 @@ namespace Makai::Graph {
 
 		Texture2D& copyFrom(
 			Texture2D const& other,
-			uint const& startX,
-			uint const& startY,
-			uint const& endX,
-			uint const& endY,
-			bool const& filter = false
+			uint const startX,
+			uint const startY,
+			uint const endX,
+			uint const endY,
+			bool const filter = false
 		);
 
 		Texture2D& copyFrom(
 			Texture2D const& other,
-			bool const& filter = false
+			bool const filter = false
 		);
 
 		Texture2D& setWrapMode(
@@ -170,12 +170,12 @@ namespace Makai::Graph {
 
 		Image2D::Attributes attributes() const;
 
-		Texture2D& enable(uchar const& slot = 0);
+		Texture2D& enable(uchar const slot = 0);
 
-		Texture2D const& enable(uchar const& slot = 0) const;
+		Texture2D const& enable(uchar const slot = 0) const;
 
-		Texture2D&			operator()(uchar const& slot = 0);
-		Texture2D const&	operator()(uchar const& slot = 0) const;
+		Texture2D&			operator()(uchar const slot = 0);
+		Texture2D const&	operator()(uchar const slot = 0) const;
 
 		uint getID() const;
 
@@ -183,13 +183,13 @@ namespace Makai::Graph {
 
 		Texture2D const& saveToFile(
 			String const& path,
-			uint8 const& quality,
+			uint8 const quality,
 			Image2D::ImageFileType const& type = Image2D::ImageFileType::IFT_AUTO_DETECT
 		) const;
 
 		Texture2D& saveToFile(
 			String const& path,
-			uint8 const& quality,
+			uint8 const quality,
 			Image2D::ImageFileType const& type = Image2D::ImageFileType::IFT_AUTO_DETECT
 		);
 

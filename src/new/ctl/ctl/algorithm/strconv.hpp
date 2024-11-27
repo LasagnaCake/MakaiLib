@@ -11,38 +11,38 @@ CTL_NAMESPACE_BEGIN
 /// @param base Base of number string. Will be used, if non-zero.
 /// @return Resulting number.
 /// @throw FailedActionException if conversion fails.
-constexpr int		toInt(String const& s, uint8 const& base = 0)				{return String::toNumber<int>(s, base);		}
+constexpr int		toInt(String const& s, uint8 const base = 0)				{return String::toNumber<int>(s, base);		}
 /// @brief String-to-`long` conversion.
 /// @param s String to convert.
 /// @param base Base of number string. Will be used, if non-zero.
 /// @return Resulting number.
 /// @throw FailedActionException if conversion fails.
-constexpr long		toLong(String const& s, uint8 const& base = 0)				{return String::toNumber<long>(s, base);	}
+constexpr long		toLong(String const& s, uint8 const base = 0)				{return String::toNumber<long>(s, base);	}
 /// @brief String-to-`long long` conversion.
 /// @param s String to convert.
 /// @param base Base of number string. Will be used, if non-zero.
 /// @return Resulting number.
 /// @throw FailedActionException if conversion fails.
-constexpr llong		toLongLong(String const& s, uint8 const& base = 0)			{return String::toNumber<llong>(s, base);	}
+constexpr llong		toLongLong(String const& s, uint8 const base = 0)			{return String::toNumber<llong>(s, base);	}
 
 /// @brief String-to-`unsigned int` conversion.
 /// @param s String to convert.
 /// @param base Base of number string. Will be used, if non-zero.
 /// @return Resulting number.
 /// @throw FailedActionException if conversion fails.
-constexpr uint		toUnsignedInt(String const& s, uint8 const& base = 0)		{return String::toNumber<uint>(s, base);	}
+constexpr uint		toUnsignedInt(String const& s, uint8 const base = 0)		{return String::toNumber<uint>(s, base);	}
 /// @brief String-to-`unsigned long` conversion.
 /// @param s String to convert.
 /// @param base Base of number string. Will be used, if non-zero.
 /// @return Resulting number.
 /// @throw FailedActionException if conversion fails.
-constexpr ulong		toUnsignedLong(String const& s, uint8 const& base = 0)		{return String::toNumber<ulong>(s, base);	}
+constexpr ulong		toUnsignedLong(String const& s, uint8 const base = 0)		{return String::toNumber<ulong>(s, base);	}
 /// @brief String-to-`unsigned long long` conversion.
 /// @param s String to convert.
 /// @param base Base of number string. Will be used, if non-zero.
 /// @return Resulting number.
 /// @throw FailedActionException if conversion fails.
-constexpr ullong	toUnsignedLongLong(String const& s, uint8 const& base = 0)	{return String::toNumber<ullong>(s, base);	}
+constexpr ullong	toUnsignedLongLong(String const& s, uint8 const base = 0)	{return String::toNumber<ullong>(s, base);	}
 
 /// @brief String-to-`float` conversion.
 /// @param s String to convert.
@@ -65,50 +65,50 @@ constexpr ldouble	toLongDouble(String const& s)	{return String::toNumber<ldouble
 /// @param base Base of number string. Will be used, if non-zero.
 /// @return Resulting number.
 /// @throw FailedActionException if conversion fails.
-inline int8		toInt8(String const& s, uint8 const& base = 0)		{return String::toNumber<int8>(s, base);	}
+inline int8		toInt8(String const& s, uint8 const base = 0)		{return String::toNumber<int8>(s, base);	}
 /// @brief String-to-`int16` conversion.
 /// @param s String to convert.
 /// @param base Base of number string. Will be used, if non-zero.
 /// @return Resulting number.
 /// @throw FailedActionException if conversion fails.
-inline int16	toInt16(String const& s, uint8 const& base = 0)		{return String::toNumber<int16>(s, base);	}
+inline int16	toInt16(String const& s, uint8 const base = 0)		{return String::toNumber<int16>(s, base);	}
 /// @brief String-to-`int32` conversion.
 /// @param s String to convert.
 /// @param base Base of number string. Will be used, if non-zero.
 /// @return Resulting number.
 /// @throw FailedActionException if conversion fails.
-inline int32	toInt32(String const& s, uint8 const& base = 0)		{return String::toNumber<int32>(s, base);	}
+inline int32	toInt32(String const& s, uint8 const base = 0)		{return String::toNumber<int32>(s, base);	}
 /// @brief String-to-`int64` conversion.
 /// @param s String to convert.
 /// @param base Base of number string. Will be used, if non-zero.
 /// @return Resulting number.
 /// @throw FailedActionException if conversion fails.
-inline int64	toInt64(String const& s, uint8 const& base = 0)		{return String::toNumber<int64>(s, base);	}
+inline int64	toInt64(String const& s, uint8 const base = 0)		{return String::toNumber<int64>(s, base);	}
 
 /// @brief String-to-`uint8` conversion.
 /// @param s String to convert.
 /// @param base Base of number string. Will be used, if non-zero.
 /// @return Resulting number.
 /// @throw FailedActionException if conversion fails.
-inline uint8	toUInt8(String const& s, uint8 const& base = 0)		{return String::toNumber<uint8>(s, base);	}
+inline uint8	toUInt8(String const& s, uint8 const base = 0)		{return String::toNumber<uint8>(s, base);	}
 /// @brief String-to-`uint16` conversion.
 /// @param s String to convert.
 /// @param base Base of number string. Will be used, if non-zero.
 /// @return Resulting number.
 /// @throw FailedActionException if conversion fails.
-inline uint16	toUInt16(String const& s, uint16 const& base = 0)	{return String::toNumber<uint16>(s, base);	}
+inline uint16	toUInt16(String const& s, uint16 const base = 0)	{return String::toNumber<uint16>(s, base);	}
 /// @brief String-to-`uint32` conversion.
 /// @param s String to convert.
 /// @param base Base of number string. Will be used, if non-zero.
 /// @return Resulting number.
 /// @throw FailedActionException if conversion fails.
-inline uint32	toUInt32(String const& s, uint32 const& base = 0)	{return String::toNumber<uint32>(s, base);	}
+inline uint32	toUInt32(String const& s, uint32 const base = 0)	{return String::toNumber<uint32>(s, base);	}
 /// @brief String-to-`uint64` conversion.
 /// @param s String to convert.
 /// @param base Base of number string. Will be used, if non-zero.
 /// @return Resulting number.
 /// @throw FailedActionException if conversion fails.
-inline uint64	toUInt64(String const& s, uint64 const& base = 0)	{return String::toNumber<uint64>(s, base);	}
+inline uint64	toUInt64(String const& s, uint64 const base = 0)	{return String::toNumber<uint64>(s, base);	}
 
 /// @brief String-to-`float32` conversion.
 /// @param s String to convert.
@@ -156,7 +156,7 @@ constexpr String toString(T const& value) {
 /// @param value Value to convert.
 /// @return Resulting string.
 template<Type::Equal<bool> T>
-constexpr String toString(T const& value, bool const& text = false) {
+constexpr String toString(T const& value, bool const text = false) {
 	return String::fromNumber<bool>(value, text);
 }
 
@@ -227,7 +227,7 @@ constexpr String toString(cstring const& value)						{return String(value);			}
 /// @param value String to convert.
 /// @param size Size of string to convert.
 /// @return Resulting string.
-constexpr String toString(cstring const& value, usize const& size)	{return String(value, size);	}
+constexpr String toString(cstring const& value, usize const size)	{return String(value, size);	}
 /// @brief string-to-string conversion (returns passed string).
 /// @param value String to convert.
 /// @return Passed string.

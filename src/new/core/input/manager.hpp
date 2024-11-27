@@ -57,10 +57,10 @@ namespace Makai::Input {
 		Vector2 getMouseDirection();
 
 		/// Enables/Disables mouse capturing on the "main window" (first program created).
-		static void setMouseCapturing(bool const& enabled = true, bool const& hideCursor = true);
+		static void setMouseCapturing(bool const enabled = true, bool const hideCursor = true);
 
 		/// Shows/Hides the cursor while in the window.
-		static void setCursorVisibility(bool const& enabled = true);
+		static void setCursorVisibility(bool const enabled = true);
 
 		/**
 		* Returns the button's state.

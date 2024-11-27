@@ -9,8 +9,10 @@ CTL_EX_NAMESPACE_BEGIN
 
 class Timer;
 
+/// @brief Timer-specific periodic event.
 using PeriodicTimer = Periodic<Timer, usize>;
 
+/// @brief Timer-based periodic event.
 class Timer:
 	public PeriodicTimer,
 	public Playable {
@@ -33,12 +35,12 @@ public:
 	llong loopCount = -1;
 
 	/// Delay + repeat constructor.
-	Timer(float const& delay, bool const& repeat = false, bool const& manual = false)
+	Timer(float const delay, bool const repeat = false, bool const manual = false)
 	: PeriodicTimer(manual), repeat(repeat), delay(delay) {
 	}
 
 	/// Signal + delay + repeat constructor.
-	Timer(Signal<> const& onSignal, usize const& delay = 1, bool const& repeat = false, bool const& manual = false)
+	Timer(Signal<> const& onSignal, usize const delay = 1, bool const repeat = false, bool const manual = false)
 	: PeriodicTimer(manual), onSignal(onSignal), repeat(repeat), delay(delay) {
 	}
 
@@ -77,6 +79,8 @@ public:
 		}
 	}
 
+	virtual ~Timer() {}
+
 	/// Resets the Timer's counter to 0.
 	Timer& reset() {
 		counter = 0;
@@ -84,7 +88,7 @@ public:
 	}
 
 	/// Starts the timer from the beginning.
-	Timer& start(usize const& time) {
+	Timer& start(usize const time) {
 		counter = 0;
 		delay = time;
 		isFinished = false;

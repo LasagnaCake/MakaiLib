@@ -28,15 +28,15 @@ namespace Makai::Graph {
 
 		static void unbind(ImageTarget const& target = ImageTarget::IT_TEXTURE_2D);
 
-		Image&			use(uchar const& slot = 0, ImageTarget const& target = ImageTarget::IT_TEXTURE_2D);
-		Image const&	use(uchar const& slot = 0, ImageTarget const& target = ImageTarget::IT_TEXTURE_2D) const;
+		Image&			use(uchar const slot = 0, ImageTarget const& target = ImageTarget::IT_TEXTURE_2D);
+		Image const&	use(uchar const slot = 0, ImageTarget const& target = ImageTarget::IT_TEXTURE_2D) const;
 
-		Image&			operator()(uchar const& slot = 0, ImageTarget const& target = ImageTarget::IT_TEXTURE_2D);
-		Image const&	operator()(uchar const& slot = 0, ImageTarget const& target = ImageTarget::IT_TEXTURE_2D) const;
+		Image&			operator()(uchar const slot = 0, ImageTarget const& target = ImageTarget::IT_TEXTURE_2D);
+		Image const&	operator()(uchar const slot = 0, ImageTarget const& target = ImageTarget::IT_TEXTURE_2D) const;
 
 		static void set(
-			uint const&			image,
-			uchar const&		slot,
+			uint const			image,
+			uchar const		slot,
 			ImageTarget const&	target = ImageTarget::IT_TEXTURE_2D
 		);
 
@@ -128,8 +128,8 @@ namespace Makai::Graph {
 		};
 
 		Image2D& create(
-			uint const&				width,
-			uint const&				height,
+			uint const				width,
+			uint const				height,
 			ComponentType const&	type		= ComponentType::CT_UBYTE,
 			ImageFormat const&		format		= ImageFormat::IF_RGBA,
 			FilterMode const&		magFilter	= FilterMode::FM_SMOOTH,
@@ -139,8 +139,8 @@ namespace Makai::Graph {
 		);
 
 		Image2D& make(
-			uint const&				width,
-			uint const&				height,
+			uint const				width,
+			uint const				height,
 			ComponentType const&	type		= ComponentType::CT_UBYTE,
 			ImageFormat const&		format		= ImageFormat::IF_RGBA,
 			FilterMode const&		magFilter	= FilterMode::FM_SMOOTH,
@@ -155,13 +155,13 @@ namespace Makai::Graph {
 
 		Image2D&		saveToFile(
 			String const&			path,
-			uint8 const&			quality,
+			uint8 const			quality,
 			ImageFileType const&	type = ImageFileType::IFT_AUTO_DETECT
 		);
 
 		Image2D const&	saveToFile(
 			String const&			path,
-			uint8 const&			quality,
+			uint8 const			quality,
 			ImageFileType const&	type = ImageFileType::IFT_AUTO_DETECT
 		) const;
 
@@ -177,8 +177,8 @@ namespace Makai::Graph {
 
 		[[nodiscard]]
 		static Image2D* newImage(
-			uint const&				width,
-			uint const&				height,
+			uint const				width,
+			uint const				height,
 			ComponentType const&	type		= ComponentType::CT_UBYTE,
 			ImageFormat const&		format		= ImageFormat::IF_RGBA,
 			FilterMode const&		magFilter	= FilterMode::FM_SMOOTH,
@@ -190,8 +190,8 @@ namespace Makai::Graph {
 
 		static Image2D* newImage(
 			Image2D* const&			image,
-			uint const&				width,
-			uint const&				height,
+			uint const				width,
+			uint const				height,
 			ComponentType const&	type		= ComponentType::CT_UBYTE,
 			ImageFormat const&		format		= ImageFormat::IF_RGBA,
 			FilterMode const&		magFilter	= FilterMode::FM_SMOOTH,
@@ -204,7 +204,7 @@ namespace Makai::Graph {
 	private:
 		void saveImageToFile(
 			String const&	path,
-			uint8 const&	quality,
+			uint8 const	quality,
 			ImageFileType	type
 		) const;
 

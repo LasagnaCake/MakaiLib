@@ -93,7 +93,7 @@ namespace Makai::Graph {
 		BlendMode blend;
 
 	protected:
-		void useBlendMode(usize const& drawBuffer = 0) const;
+		void useBlendMode(usize const drawBuffer = 0) const;
 	};
 }
 

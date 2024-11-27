@@ -222,31 +222,31 @@ inline JSON::JSONData toDefinition(
 	return def;
 }
 
-Renderable::Renderable(usize const& layer, bool const& manual):
+Renderable::Renderable(usize const layer, bool const manual):
 DrawableObject(layer, manual) {
 }
 
 Renderable::Renderable(
 	List<Triangle*> const& triangles,
-	usize const& layer,
-	bool const& manual
+	usize const layer,
+	bool const manual
 ): DrawableObject(layer, manual) {
 	this->triangles = triangles;
 }
 
 Renderable::Renderable(
 	Vertex* const& vertices,
-	usize const& count,
-	usize const& layer,
-	bool const& manual
+	usize const count,
+	usize const layer,
+	bool const manual
 ): DrawableObject(layer, manual) {
 	extend(vertices, count);
 }
 
 Renderable::Renderable(
 	Renderable& other,
-	usize const& layer,
-	bool const& manual
+	usize const layer,
+	bool const manual
 ): DrawableObject(layer, manual) {
 	extend(other);
 }
@@ -266,7 +266,7 @@ void Renderable::bakeAndLock() {
 	clearData();
 }
 
-void Renderable::extend(Vertex* const& vertices, usize const& size) {
+void Renderable::extend(Vertex* const& vertices, usize const size) {
 	if (locked) return;
 	if (vertices == nullptr || size == 0)
 		throw Error::InvalidValue("No vertices were provided!");
@@ -350,9 +350,9 @@ void Renderable::saveToDefinitionFile(
 	String const& folder,
 	String const& name,
 	String const& texturesFolder,
-	bool const& integratedBinary,
-	bool const& integratedTextures,
-	bool const& pretty
+	bool const integratedBinary,
+	bool const integratedTextures,
+	bool const pretty
 ) {
 	DEBUGLN("Saving object '" + name + "'...");
 	// Get paths
@@ -618,8 +618,8 @@ void Renderable::extendFromDefinitionV0(
 
 JSON::JSONData Renderable::getObjectDefinition(
 	String const& encoding,
-	bool const& integratedBinary,
-	bool const& integratedTextures
+	bool const integratedBinary,
+	bool const integratedTextures
 ) {
 	// Bake object
 	bool wasBaked = baked;

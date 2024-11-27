@@ -13,7 +13,7 @@ namespace Extern = Makai::Extern;
 
 #define sdlSource ((Mix_Chunk*)source)
 
-void Sound::stopAll(usize const& fade) {
+void Sound::stopAll(usize const fade) {
 	if (fade)
 		Mix_FadeOutChannel(-1, fade);
 	else
@@ -28,7 +28,7 @@ void Sound::resumeAll() {
 	Mix_Resume(-1);
 }
 
-void Sound::setMasterVolume(schar const& volume) {
+void Sound::setMasterVolume(schar const volume) {
 	Mix_Volume(-1, volume);
 }
 
@@ -37,9 +37,9 @@ schar Sound::getMasterVolume() {
 }
 
 void Sound::play(
-	int const&		loops,
-	size_t const&	fadeInTime,
-	bool const&		force
+	int const	loops,
+	usize const	fadeInTime,
+	bool const	force
 ) {
 	if (!exists() || delay > 0) return;
 	if (active() && !force) return;
@@ -50,9 +50,9 @@ void Sound::play(
 }
 
 void Sound::playOnceThisFrame(
-	int const&		loops,
-	size_t const&	fadeInTime,
-	bool const&		force
+	int const	loops,
+	usize const	fadeInTime,
+	bool const	force
 ) {
 	if (!exists() || delay > 0) return;
 	if (active() && !force) return;
@@ -65,10 +65,10 @@ void Sound::playOnceThisFrame(
 }
 
 void Sound::playOnceAndWait(
-	int const&		loops,
-	size_t const&	fadeInTime,
-	bool const&		force,
-	size_t const&	cycles
+	int const	loops,
+	usize const	fadeInTime,
+	bool const	force,
+	usize const	cycles
 ) {
 	if (!exists() || delay > 0) return;
 	if (active() && !force) return;
@@ -81,7 +81,7 @@ void Sound::playOnceAndWait(
 		channel = Mix_PlayChannel(getChannel(), sdlSource, loops);
 }
 
-void Sound::stop(size_t const& fadeOutTime) {
+void Sound::stop(usize const fadeOutTime) {
 	if (!exists()) return;
 	if (!active()) return;
 	if (fadeOutTime)
@@ -102,7 +102,7 @@ void Sound::resume() {
 	Mix_Resume(channel);
 }
 
-void Sound::setVolume(uchar const& volume) {
+void Sound::setVolume(uchar const volume) {
 	if (!exists()) return;
 	Mix_VolumeChunk(sdlSource, volume);
 }

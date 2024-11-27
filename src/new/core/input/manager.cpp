@@ -183,23 +183,23 @@ usize Manager::getLastJoyState(JoyCode const& button) {
 	return 0;
 }
 
-constexpr bool isStateDown(usize const& state) {
+constexpr bool isStateDown(usize const state) {
 	return state > 0;
 }
 
-constexpr bool isStateJustPressed(usize const& state) {
+constexpr bool isStateJustPressed(usize const state) {
 	return state == 1;
 }
 
-constexpr bool isStateJustReleased(usize const& state, bool const& justChanged) {
+constexpr bool isStateJustReleased(usize const state, bool const justChanged) {
 	return (justChanged && (state == 0));
 }
 
-constexpr bool isStateHeld(usize const& state, usize const& threshold) {
+constexpr bool isStateHeld(usize const state, usize const threshold) {
 	return state > threshold;
 }
 
-constexpr bool hasStateChanged(usize const& state, usize const& last) {
+constexpr bool hasStateChanged(usize const state, usize const last) {
 	return state != last;
 }
 /*
@@ -466,7 +466,7 @@ void Manager::refreshCapture() {
 	setMouseCapturing(mouseCaptured, !mouseVisible);
 }
 
-void Manager::setMouseCapturing(bool const& enabled, bool const& hideCursor) {
+void Manager::setMouseCapturing(bool const enabled, bool const hideCursor) {
 	if (!window) return;
 	SDL_SetWindowGrab(sdlWindow, enabled ? SDL_TRUE : SDL_FALSE);
 	SDL_SetRelativeMouseMode(enabled ? SDL_TRUE : SDL_FALSE);
@@ -474,7 +474,7 @@ void Manager::setMouseCapturing(bool const& enabled, bool const& hideCursor) {
 	mouseCaptured = enabled;
 }
 
-void Manager::setCursorVisibility(bool const& enabled) {
+void Manager::setCursorVisibility(bool const enabled) {
 	if (!window) return;
 	SDL_ShowCursor(enabled ? SDL_TRUE : SDL_FALSE);
 	mouseVisible = enabled;

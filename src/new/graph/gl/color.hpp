@@ -92,10 +92,10 @@ namespace Makai::Graph::Color {
 
 	Vector4 fromJSON(JSON::JSONData const& json);
 
-	constexpr uint32 toHexCodeRGB(uint32 const& color) {
+	constexpr uint32 toHexCodeRGB(uint32 const color) {
 		return color >> 8;
 	}
-	constexpr uint32 toHexCodeRGBA(uint32 const& color) {
+	constexpr uint32 toHexCodeRGBA(uint32 const color) {
 		return (color << 8) | 0xFF;
 	}
 
