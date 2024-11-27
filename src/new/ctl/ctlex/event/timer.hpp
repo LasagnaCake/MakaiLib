@@ -19,7 +19,7 @@ class Timer:
 public:
 	using PeriodicTimer::PeriodicTimer;
 
-	/// @brief Whether the current Timer is paused / completed.
+	/// @brief Whether the current Timer is paused.
 	bool paused	= false;
 
 	/// @brief Whether to repeatedly fire the event.
