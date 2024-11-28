@@ -21,10 +21,9 @@ namespace Math::Ease {
 
 	#define EASE_FUN(NAME) constexpr float NAME(float const x)
 	EASE_FUN(linear) {return x;}
-	
-	// Taken from https://easings.net
 
 	/// @brief "In" easing functions.
+	/// @note Taken from https://easings.net.
 	namespace In {
 		EASE_FUN(linear)	{return x;}
 		EASE_FUN(sine)		{return 1.0 - cos((x * PI) / 2.0);}
@@ -59,9 +58,8 @@ namespace Math::Ease {
 		}
 	}
 
-	// Taken from https://easings.net
-	
 	/// @brief "Out" easing functions.
+	/// @note Taken from https://easings.net.
 	namespace Out {
 		EASE_FUN(linear)	{return x;}
 		EASE_FUN(sine)		{return sin((x * PI) / 2.0);}
