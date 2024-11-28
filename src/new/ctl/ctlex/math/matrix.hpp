@@ -92,9 +92,9 @@ public:
 	}
 
 	constexpr Matrix(ArrayType<> const& v) {
-		T hack[R][C];
+		DataType hack[R][C];
 		for (usize i = 0; i < R*C; i++)
-			((T*)hack)[i] = v[i];
+			((DataType*)hack)[i] = v[i];
 		for (usize i = 0; i < C; i++)
 			for (usize j = 0; j < R; j++)
 				data[i][j] = hack[j][i];
@@ -211,7 +211,7 @@ public:
 	constexpr Matrix(Matrix<R, C, T2> const& other) {
 		for (usize i = 0; i < C; i++)
 			for (usize j = 0; j < R; j++)
-				data[i][j] = T(other.data[i][j]);
+				data[i][j] = DataType(other.data[i][j]);
 	}
 
 	constexpr ~Matrix() {}

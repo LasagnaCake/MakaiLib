@@ -59,10 +59,21 @@ public:
 	/// @brief Callable/wrapper constructor.
 	/// @param f Callable to bind.
 	constexpr Functor(WrapperType const& f): func(f), id(++count)				{}
+	/// @brief Callable/wrapper constructor.
+	/// @tparam TFunction function type.
+	/// @param f Callable to bind.
+	template<Type::Functional<FunctionType> TFunction>
+	constexpr Functor(TFunction const& f): func(f), id(++count)					{}
 	/// @brief Copy constructor.
 	/// @param f Other `Functor` object.
 	constexpr Functor(SelfType const& other): func(other.func), id(other.id)	{}
 	
+	/// @brief Callable/wrapper assignment operator.
+	/// @tparam TFunction function type.
+	/// @param f Callable to bind.
+	/// @return Reference to self.
+	template<Type::Functional<FunctionType> TFunction>
+	constexpr SelfType& operator=(TFunction const& f)		{func = f; id = ++count; return *this;				}
 	/// @brief Callable/wrapper assignment operator.
 	/// @param f Callable to bind.
 	/// @return Reference to self.
