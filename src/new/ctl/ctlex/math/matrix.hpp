@@ -333,8 +333,8 @@ public:
 		return res;
 	}
 
-	/// @brief Converts a set of 3D rotations into a rotation matrix.
-	/// @param angle Rotations to convert.
+	/// @brief Converts a 3D rotation into a rotation matrix.
+	/// @param angle Rotation to convert.
 	/// @return Rotation matrix.
 	/// @link https://github.com/g-truc/glm/blob/master/glm/gtx/euler_angles.inl
 	constexpr static Matrix<4, 4, DataType> fromEulerXYZ(Vector3 const& angle) {
@@ -367,8 +367,8 @@ public:
 		return result;
 	}
 
-	/// @brief Converts a set of 3D rotations into a rotation matrix.
-	/// @param angle Rotations to convert.
+	/// @brief Converts a 3D rotation into a rotation matrix.
+	/// @param angle Rotation to convert.
 	/// @return Rotation matrix.
 	/// @link https://github.com/g-truc/glm/blob/master/glm/gtx/euler_angles.inl
 	constexpr static Matrix<4, 4, DataType> fromEulerYXZ(Vector3 const& angle) {
@@ -404,15 +404,15 @@ public:
 	/// @brief Euler function type.
 	typedef decltype(fromEulerXYZ)	EulerFunction;
 
-	/// @brief Converts a set of 3D translations into a translation matrix.
-	/// @param vec Translations to convert.
+	/// @brief Converts a 3D translation into a translation matrix.
+	/// @param vec Translation to convert.
 	/// @return Translation matrix.
 	constexpr static Matrix<4, 4, DataType> fromTranslation(Vector3 const& vec) {
 		return Matrix(1).translated(vec);
 	}
 
-	/// @brief Converts a set of 3D scalings into a translation matrix.
-	/// @param vec Scalings to convert.
+	/// @brief Converts a 3D scaling into a translation matrix.
+	/// @param vec Scaling to convert.
 	/// @return Scaling matrix.
 	constexpr static Matrix<4, 4, DataType> fromScale(Vector3 const& vec) {
 		return Matrix(1).scaled(vec);
@@ -469,22 +469,36 @@ public:
 		return (*this);
 	}
 
-	template<EulerFunction EULER_FUNC = Matrix::fromEulerYXZ>
+	/// @brief Returns a rotated version of the matrix.
+	/// @tparam ANGLE_FUNC Angle conversion function.
+	/// @param vec Rotation to apply.
+	/// @return Rotated matrix.
+	/// @note Matrix must be a valid 3D transformation matrix.
+	template<EulerFunction ANGLE_FUNC = Matrix::fromEulerYXZ>
 	constexpr Matrix<4, 4, DataType> rotated(Vector3 const& vec) const
 	requires Type::Ex::Math::Matrix::ValidTransform3D<R, C> {
 		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
-		return (*this) * EULER_FUNC(vec);
+		return (*this) * ANGLE_FUNC(vec);
 	}
 
-	template<EulerFunction EULER_FUNC = Matrix::fromEulerYXZ>
+	/// @brief Rotates the matrix.
+	/// @tparam ANGLE_FUNC Angle conversion function.
+	/// @param vec Rotation to apply.
+	/// @return Reference to self.
+	/// @note Matrix must be a valid 3D transformation matrix.
+	template<EulerFunction ANGLE_FUNC = Matrix::fromEulerYXZ>
 	constexpr Matrix<4, 4, DataType>& rotate(Vector3 const& vec)
 	requires Type::Ex::Math::Matrix::ValidTransform3D<R, C> {
 		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
-		(*this) *= EULER_FUNC(vec);
+		(*this) *= ANGLE_FUNC(vec);
 		return (*this);
 	}
 
-	// https://github.com/g-truc/glm/blob/master/glm/ext/matrix_transform.inl
+	/// @brief Returns a scaled version of the matrix.
+	/// @param vec Scaling to apply.
+	/// @return Scaled matrix.
+	/// @note Matrix must be a valid 3D transformation matrix.
+	/// @link https://github.com/g-truc/glm/blob/master/glm/ext/matrix_transform.inl 
 	constexpr Matrix<4, 4, DataType> scaled(Vector3 const& vec) const
 	requires Type::Ex::Math::Matrix::ValidTransform3D<R, C> {
 		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
@@ -501,7 +515,11 @@ public:
 		});
 	}
 
-	// https://github.com/g-truc/glm/blob/master/glm/ext/matrix_transform.inl
+	/// @brief Scales the matrix.
+	/// @param vec Scaling to apply.
+	/// @return Reference to self.
+	/// @note Matrix must be a valid 3D transformation matrix.
+	/// @link https://github.com/g-truc/glm/blob/master/glm/ext/matrix_transform.inl 
 	constexpr Matrix<4, 4, DataType>& scale(Vector3 const& vec)
 	requires Type::Ex::Math::Matrix::ValidTransform3D<R, C> {
 		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
@@ -509,6 +527,8 @@ public:
 		return (*this);
 	}
 
+	/// @brief Returns the matrix's cofactors.
+	/// @return Matrix cofactors.
 	constexpr SelfType cofactors() const requires (R == C) {
 		static_assert(C == R, "Matrix is not a square matrix!");
 		SelfType res;
