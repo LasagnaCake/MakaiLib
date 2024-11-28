@@ -56,15 +56,24 @@ public:
 	/// @brief Matrix element type.
 	using DataType	= TData;
 
+	/// @brief Single element array type.
+	/// @tparam T Element type.
 	template<class T = DataType>
 	using SingleElementType	= Decay::AsType<TData[1]>;
+	/// @brief Matrix storage type.
+	/// @tparam T Element type.
 	template<class T = DataType>
 	using MatrixType		= Decay::AsType<TData[R][C]>;
+	/// @brief Value array type.
+	/// @tparam T Element type.
 	template<class T = DataType>
 	using ArrayType			= Decay::AsType<TData[R*C]>;
+	/// @brief Single matrix column type.
+	/// @tparam T Element type.
 	template<class T = DataType>
 	using SingleColumnType	= Decay::AsType<TData[C]>;
 
+	/// @brief Self type.
 	using SelfType	= Matrix<ROWS, COLUMNS, DataType>;
 
 	static_assert(R > 0, "Matrix row size must not be zero!");
@@ -73,24 +82,32 @@ public:
 	/// @brief Empty constructor.
 	constexpr Matrix() {}
 
+	/// @brief Constructs the matrix's main diagonal with a value.
+	/// @param v Value to use.
 	constexpr Matrix(DataType const& v) {
 		usize const start = ::CTL::Math::min(C, R);
 		for (usize i = 0; i < start; i++)
 			data[start-1-i][start-1-i] = v;
 	}
 
+	/// @brief Constructs the matrix's main diagonal with a value.
+	/// @param v Value to use.
 	constexpr Matrix(SingleElementType<> const& v) {
 		for (usize i = 0; i < C; i++)
 			for (usize j = 0; j < R; j++)
 				data[i][j] = v[0];
 	}
 
+	/// @brief Constructs the matrix with a series of values.
+	/// @param v Values to use.
 	constexpr Matrix(MatrixType<> const& v) {
 		for (usize i = 0; i < C; i++)
 			for (usize j = 0; j < R; j++)
 				data[i][j] = v[j][i];
 	}
 
+	/// @brief Constructs the matrix with a series of values.
+	/// @param v Values to use.
 	constexpr Matrix(ArrayType<> const& v) {
 		DataType hack[R][C];
 		for (usize i = 0; i < R*C; i++)
@@ -100,6 +117,8 @@ public:
 				data[i][j] = hack[j][i];
 	}
 
+	/// @brief Constructs the matrix's columns with a series of values.
+	/// @param v Values to use.
 	constexpr Matrix(SingleColumnType<> const& v)
 	requires (C > 1) {
 		for (usize i = 0; i < C; i++)
@@ -107,6 +126,9 @@ public:
 				data[i][j] = v[i];
 	}
 
+	/// @brief Constructs the matrix's main diagonal with a value.
+	/// @tparam T2 Value type.
+	/// @param v Value to use.
 	template<Type::Ex::Math::Matrix::Compatitble<DataType> T2>
 	constexpr Matrix(SingleElementType<T2> const& v) {
 		DataType rv = DataType(v[0]);
@@ -116,6 +138,9 @@ public:
 				data[i][j] = rv;
 	}
 
+	/// @brief Constructs the matrix with a series of values.
+	/// @tparam T2 Value type.
+	/// @param v Values to use.
 	template<Type::Ex::Math::Matrix::Compatitble<DataType> T2>
 	constexpr Matrix(MatrixType<T2> const& v) {
 		for (usize i = 0; i < C; i++)
@@ -123,6 +148,9 @@ public:
 				data[i][j] = DataType(v[j][i]);
 	}
 
+	/// @brief Constructs the matrix with a series of values.
+	/// @tparam T2 Value type.
+	/// @param v Values to use.
 	template<Type::Ex::Math::Matrix::Compatitble<DataType> T2>
 	constexpr Matrix(ArrayType<T2> const& v) {
 		T2 hack[R][C];
@@ -133,6 +161,9 @@ public:
 				data[i][j] = DataType(hack[j][i]);
 	}
 
+	/// @brief Constructs the matrix's columns with a series of values.
+	/// @tparam T2 Value type.
+	/// @param v Values to use.
 	template<Type::Ex::Math::Matrix::Compatitble<DataType> T2>
 	constexpr Matrix(SingleColumnType<T2> const& v)
 	requires (C > 1) {
@@ -141,6 +172,8 @@ public:
 				data[i][j] = DataType(v[i]);
 	}
 
+	/// @brief Constructs the matrix's main diagonal from a vector.
+	/// @param vec Vector to use.
 	constexpr Matrix(Vector2 const& vec) {
 		static_assert(R >= 2 && C >= 1, "Matrix is not a valid representation of a 2D vector!");
 		data[C-1][R-1] = 1;
@@ -148,6 +181,8 @@ public:
 		data[C-1][1] = vec.y;
 	}
 
+	/// @brief Constructs the matrix's main diagonal from a vector.
+	/// @param vec Vector to use.
 	constexpr Matrix(Vector3 const& vec) {
 		static_assert(R >= 3 && C >= 1, "Matrix is not a valid representation of a 3D vector!");
 		data[C-1][R-1] = 1;
@@ -156,6 +191,8 @@ public:
 		data[C-1][2] = vec.z;
 	}
 
+	/// @brief Constructs the matrix's main diagonal from a vector.
+	/// @param vec Vector to use.
 	constexpr Matrix(Vector4 const& vec) {
 		static_assert(R >= 4 && C >= 1, "Matrix is not a valid representation of a 4D vector!");
 		data[C-1][R-1] = 1;
@@ -165,16 +202,24 @@ public:
 		data[C-1][3] = vec.w;
 	}
 
+	/// @brief Constructs the matrix from a 3D transformation.
+	/// @param trans Transformation to use.
 	constexpr Matrix(Transform3D const& trans)
 	requires Type::Ex::Math::Matrix::ValidTransform3D<R, C> {
 		compose(trans);
 	}
 
+	/// @brief Constructs the matrix from a 2D transformation.
+	/// @param trans Transformation to use.
 	constexpr Matrix(Transform2D const& trans)
 	requires Type::Ex::Math::Matrix::ValidTransform2D<R, C> {
 		*this = identity().transform(trans);
 	}
 
+	/// @brief Constructs the matrix from a transformation.
+	/// @param pos Position.
+	/// @param rot Rotation.
+	/// @param scale Scale.
 	constexpr Matrix(
 		Vector3 const& pos,
 		Vector3 const& rot,
@@ -183,6 +228,10 @@ public:
 		compose(pos, rot, scale);
 	}
 
+	/// @brief Constructs the matrix from a transformation.
+	/// @param trans Transformation to use.
+	/// @param perspective Perspective.
+	/// @param skew Skew.
 	constexpr Matrix(
 		Transform3D const& trans,
 		Vector4 const& perspective,
@@ -191,6 +240,12 @@ public:
 		compose(trans, perspective, skew);
 	}
 
+	/// @brief Constructs the matrix from a transformation.
+	/// @param pos Position.
+	/// @param rot Rotation.
+	/// @param scale Scale.
+	/// @param perspective Perspective.
+	/// @param skew Skew.
 	constexpr Matrix(
 		Vector3 const& pos,
 		Vector3 const& rot,
@@ -201,12 +256,16 @@ public:
 		compose(pos, rot, scale, perspective, skew);
 	}
 
+	/// @brief Copy constructor (`Matrix`).
+	/// @param other `Matrix` to copy from.
 	constexpr Matrix(SelfType const& other) {
 		for (usize i = 0; i < C; i++)
 			for (usize j = 0; j < R; j++)
 				data[i][j] = other.data[i][j];
 	}
 
+	/// @brief Copy constructor (other `Matrix` type).
+	/// @param other `Matrix` to copy from.
 	template <typename T2>
 	constexpr Matrix(Matrix<R, C, T2> const& other) {
 		for (usize i = 0; i < C; i++)
@@ -214,8 +273,12 @@ public:
 				data[i][j] = DataType(other.data[i][j]);
 	}
 
+	/// @brief Destructor.
 	constexpr ~Matrix() {}
-
+	
+	/// @brief Fills all cells with a given value.
+	/// @param v Value to fill with.
+	/// @return Reference to self.
 	constexpr SelfType& fill(DataType const& v) {
 		for (usize i = 0; i < C; i++)
 			for (usize j = 0; j < R; j++)
@@ -223,7 +286,8 @@ public:
 		return *this;
 	}
 
-	/// Gets the transposed matrix.
+	/// @brief Returns the transposed version of the matrix.
+	/// @return Transposed matrix.
 	constexpr Matrix<C, R, DataType> transposed() const {
 		Matrix<C, R, DataType> res;
 		for (usize i = 0; i < C; i++)
@@ -232,16 +296,25 @@ public:
 		return res;
 	}
 
+	/// @brief Transposes the matrix.
+	/// @return Reference to self.
+	/// @note Requires matrix to be a square matrix.
 	constexpr SelfType& transpose() requires (R == C) {
 		(*this) = transposed();
 		return *this;
 	}
 
+	/// @brief Creates an identity matrix.
+	/// @return Identity matrix.
+	/// @note Requires matrix to be a square matrix.
 	constexpr static SelfType identity() requires (R == C) {
 		static_assert(C == R, "Matrix is not a square matrix!");
 		return SelfType(1);
 	}
 
+	/// @brief Creates a matrix, with its bottom-right corner cell set to 0.
+	/// @return Prototype matrix.
+	/// @note Requires matrix to be a square matrix.
 	constexpr static SelfType prototype() requires (R == C) {
 		static_assert(C == R, "Matrix is not a square matrix!");
 		SelfType res(0);
@@ -249,6 +322,9 @@ public:
 		return res;
 	}
 
+	/// @brief Creates a matrix with its secondary diagonal set to 1, and all other cells set to 0.
+	/// @return Mirror matrix.
+	/// @note Requires matrix to be a square matrix.
 	constexpr static SelfType mirror() requires (R == C) {
 		static_assert(C == R, "Matrix is not a square matrix!");
 		SelfType res(0);
@@ -257,7 +333,10 @@ public:
 		return res;
 	}
 
-	// https://github.com/g-truc/glm/blob/master/glm/gtx/euler_angles.inl
+	/// @brief Converts a set of 3D rotations into a rotation matrix.
+	/// @param angle Rotations to convert.
+	/// @return Rotation matrix.
+	/// @link https://github.com/g-truc/glm/blob/master/glm/gtx/euler_angles.inl
 	constexpr static Matrix<4, 4, DataType> fromEulerXYZ(Vector3 const& angle) {
 		// Get sines and cosines
 		DataType c1 = cos(-angle.x);
@@ -288,7 +367,10 @@ public:
 		return result;
 	}
 
-	// https://github.com/g-truc/glm/blob/master/glm/gtx/euler_angles.inl
+	/// @brief Converts a set of 3D rotations into a rotation matrix.
+	/// @param angle Rotations to convert.
+	/// @return Rotation matrix.
+	/// @link https://github.com/g-truc/glm/blob/master/glm/gtx/euler_angles.inl
 	constexpr static Matrix<4, 4, DataType> fromEulerYXZ(Vector3 const& angle) {
 		// Get sines and cosines
 		DataType tmp_ch = cos(-angle.y);
@@ -319,17 +401,26 @@ public:
 		return result;
 	}
 
-	// Euler function type
+	/// @brief Euler function type.
 	typedef decltype(fromEulerXYZ)	EulerFunction;
 
+	/// @brief Converts a set of 3D translations into a translation matrix.
+	/// @param vec Translations to convert.
+	/// @return Translation matrix.
 	constexpr static Matrix<4, 4, DataType> fromTranslation(Vector3 const& vec) {
 		return Matrix(1).translated(vec);
 	}
 
+	/// @brief Converts a set of 3D scalings into a translation matrix.
+	/// @param vec Scalings to convert.
+	/// @return Scaling matrix.
 	constexpr static Matrix<4, 4, DataType> fromScale(Vector3 const& vec) {
 		return Matrix(1).scaled(vec);
 	}
 
+	/// @brief Returns the inverted version of the matrix.
+	/// @return Inverted matrix.
+	/// @note Requires matrix to be a square matrix.
 	constexpr SelfType inverted() const requires (R == C) {
 		static_assert(C == R, "Matrix is not a square matrix!");
 		DataType det = determinant();
@@ -338,19 +429,30 @@ public:
 		return res;
 	}
 
+	/// @brief Inverts the matrix.
+	/// @return Reference to self.
+	/// @note Requires matrix to be a square matrix.
 	constexpr SelfType& invert() requires (R == C) {
 		static_assert(C == R, "Matrix is not a square matrix!");
 		(*this) = inverted();
 		return *this;
 	}
 
+	/// @brief Returns a translated version of the matrix.
+	/// @param vec Translation to apply.
+	/// @return Translated matrix.
+	/// @note Matrix must be a valid 3D transformation matrix.
 	constexpr Matrix<4, 4, DataType> translated(Vector3 const& vec) const
 	requires Type::Ex::Math::Matrix::ValidTransform3D<R, C> {
 		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
 		return Matrix<4, 4, DataType>(data).translate(vec);
 	}
 
-	// https://github.com/g-truc/glm/blob/master/glm/ext/matrix_transform.inl
+	/// @brief Translates the matrix.
+	/// @param vec Translation to apply.
+	/// @return Reference to self.
+	/// @note Matrix must be a valid 3D transformation matrix.
+	/// @link https://github.com/g-truc/glm/blob/master/glm/ext/matrix_transform.inl
 	constexpr Matrix<4, 4, DataType>& translate(Vector3 const& vec)
 	requires Type::Ex::Math::Matrix::ValidTransform3D<R, C> {
 		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
