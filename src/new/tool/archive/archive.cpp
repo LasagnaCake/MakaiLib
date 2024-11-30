@@ -85,8 +85,8 @@ BinaryData<> cbcTransform(
 	std::string result;
 	T tf;
 	uint8* iv = new uint8[16];
-	if (iv != nullptr)	memcpy(iv, block, 16);
-	else				memset(iv, 0, 16);
+	if (iv != nullptr)	MX::memcpy(iv, block, 16);
+	else				MX::memset(iv, 0, 16);
 	while (password.size() < tf.MaxKeyLength())
 		password += " ";
 	if (password.size() > 32)
@@ -266,7 +266,7 @@ usize populateTree(JSONData& tree, List<uint64> const& values, usize const start
 	return idx;
 }
 
-void generateBlock(uint8 const(& block)[16]) {
+void generateBlock(Decay::AsType<uint8[16]>& block) {
 	uint64* b = (uint64*)block;
 	b[0] = rng.next();
 	b[1] = rng.next();
