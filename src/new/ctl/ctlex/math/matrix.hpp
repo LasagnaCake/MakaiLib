@@ -528,7 +528,8 @@ public:
 	}
 
 	/// @brief Returns the matrix's cofactors.
-	/// @return Matrix cofactors.
+	/// @return Matrix's cofactors.
+	/// @note Matrix must be a square matrix.
 	constexpr SelfType cofactors() const requires (R == C) {
 		static_assert(C == R, "Matrix is not a square matrix!");
 		SelfType res;
@@ -538,6 +539,9 @@ public:
 		return res;
 	}
 
+	/// @brief Returns the determinant.
+	/// @return Matrix's determinant.
+	/// @note Matrix must be a square matrix.
 	constexpr DataType determinant() const requires (R == C) {
 		static_assert(C == R, "Matrix is not a square matrix!");
 		if constexpr(C == 1)		return data[0][0];
@@ -560,27 +564,40 @@ public:
 		}
 	}
 
+	/// @brief Returns the matrix, with both a given row and a given column removed.
+	/// @param row Row to remove.
+	/// @param col Column to remove.
+	/// @return Truncated matrix.
 	constexpr Matrix<R-1, C-1, DataType> truncated(usize const row, usize const col) const {
 		static_assert(R > 1 && C > 1, "Cannot truncate a 1-dimensional matrix!");
 		Matrix<R-1, C-1, DataType> res;
 		int ro = 0, co = 0;
 		for (usize i = 0; i < C; i++) {
 			ro = 0;
-			if (i == col) {co--; continue;}
+			if (i == col || i == (C-1)) {co--; continue;}
 			for (usize j = 0; j < R; j++) {
-				if (j == row) {ro--; continue;}
+				if (j == row || j == (R-1)) {ro--; continue;}
 				res[i+co][j+ro] = data[i][j];
 			}
 		}
 		return res;
 	}
-
+	
+	/// @brief Returns the matrix, with a set of rows and columns removed.
+	/// @tparam RF Row count to remove.
+	/// @tparam CF Column count to remove.
+	/// @param rowStart Row to start copying data from.
+	/// @param colStart Column to start copying data from.
+	/// @return
+	///		Shrunk matrix.
+	///		Returns a zero matrix
+	///		if `rowStart` is bigger than row count minus `RF`,
+	///		or if `columnStart` is bigger than column count minus `CF`.
 	template<usize RF = 1, usize CF = 1>
 	constexpr Matrix<R-RF, C-CF, DataType> shrunkBy(usize const rowStart = 0, usize const colStart = 0) const {
 		static_assert(R > 1 && C > 1, "Cannot shrink a 1-dimensional matrix!");
-		static_assert(RF > R && CF > C, "Shrinking factor(s) are bigger than the matrix!");
-		static_assert(rowStart < (R-RF) && colStart < (C-CF), "Row/Column starts cannot be bigger than the shrunk matrix!");
-		if (rowStart < (R-RF) && colStart < (C-CF)) Matrix<R-RF, C-CF, DataType>(0);
+		static_assert(RF >= R && CF >= C, "Shrinking factor(s) are bigger than the matrix!");
+		if (!(rowStart < (R-RF) && colStart < (C-CF))) Matrix<R-RF, C-CF, DataType>(0);
 		Matrix<R-RF, C-CF, DataType> res;
 		for (usize i = 0; i < C-CF; i++)
 			for (usize j = 0; j < R-RF; j++)
@@ -588,10 +605,20 @@ public:
 		return res;
 	}
 
+	/// @brief Returns the matrix, with an added set of rows and columns.
+	/// @tparam RF Row count to add.
+	/// @tparam CF Column count to add.
+	/// @param rowStart Row to start inserting data in the new matrix.
+	/// @param colStart Column to start inserting data in the new matrix.
+	/// @return Expanded matrix. 
+	/// @return
+	///		Shrunk matrix.
+	///		Returns a zero matrix
+	///		if `rowStart` is bigger than `RF`,
+	///		or if `columnStart` is bigger than `CF`.
 	template<usize RF = 1, usize CF = 1>
 	constexpr Matrix<R+RF, C+CF, DataType> expandedBy(usize const rowStart = 0, usize const colStart = 0) const {
-		static_assert(rowStart < RF && colStart < CF, "Row/Column starts cannot be bigger than the expansion factor!");
-		if (rowStart < (RF) && colStart < (CF)) return Matrix<R+RF, C+CF, DataType>(0);
+		if (!(rowStart < RF && colStart < CF)) return Matrix<R+RF, C+CF, DataType>(0);
 		Matrix<R+RF, C+CF, DataType> res;
 		for (usize i = 0; i < C; i++)
 			for (usize j = 0; j < R; j++)
@@ -599,10 +626,13 @@ public:
 		return res;
 	}
 
-	/// Arithmetic operator overloading.
-
+	/// @brief Unary plus operator.
+	/// @return Copy of self.
 	constexpr SelfType operator+() const {return *this;}
 
+	/// @brief Addition operator (value).
+	/// @param val Value to add to all cells.
+	/// @return Result of the operation.
 	constexpr SelfType operator+(DataType const& val) const {
 		SelfType res;
 		for (usize i = 0; i < C; i++)
@@ -611,6 +641,9 @@ public:
 		return res;
 	}
 
+	/// @brief Addition operator (`Matrix`).
+	/// @param mat `Matrix` to add.
+	/// @return Result of the operation.
 	constexpr SelfType operator+(SelfType const& mat) const {
 		SelfType res;
 		for (usize i = 0; i < C; i++)
@@ -619,21 +652,35 @@ public:
 		return res;
 	}
 
+	/// @brief Addition operator (`Vector2`)
+	/// @param vec Vector to add.
+	/// @return Result of the operation.
+	/// @brief Requires matrix to be 2 x 1.
 	constexpr SelfType operator+(Vector2 const& vec) const {
 		static_assert(R == 2 && C == 1, "Matrix size is invalid!");
 		return (*this) + SelfType(vec);
 	}
 
+	/// @brief Addition operator (`Vector3`)
+	/// @param vec Vector to add.
+	/// @return Result of the operation.
+	/// @brief Requires matrix to be 3 x 1.
 	constexpr SelfType operator+(Vector3 const& vec) const {
 		static_assert(R == 3 && C == 1, "Matrix size is invalid!");
 		return (*this) + SelfType(vec);
 	}
 
+	/// @brief Addition operator (`Vector4`)
+	/// @param vec Vector to add.
+	/// @return Result of the operation.
+	/// @brief Requires matrix to be 4 x 1.
 	constexpr SelfType operator+(Vector4 const& vec) const {
 		static_assert(R == 4 && C == 1, "Matrix size is invalid!");
 		return (*this) + SelfType(vec);
 	}
 
+	/// @brief Unary minus operator.
+	/// @return Negated matrix.
 	constexpr SelfType operator-() const {
 		SelfType res;
 		for (usize i = 0; i < C; i++)
@@ -642,6 +689,9 @@ public:
 		return res;
 	}
 
+	/// @brief Subtraction operator (value).
+	/// @param val Value to subtract from all cells.
+	/// @return Result of the operation.
 	constexpr SelfType operator-(DataType const& val) const {
 		SelfType res;
 		for (usize i = 0; i < C; i++)
@@ -650,6 +700,9 @@ public:
 		return res;
 	}
 
+	/// @brief Subtraction operator (`Matrix`).
+	/// @param mat `Matrix` to subtract.
+	/// @return Result of the operation.
 	constexpr SelfType operator-(SelfType const& mat) const {
 		SelfType res;
 		for (usize i = 0; i < C; i++)
@@ -658,21 +711,36 @@ public:
 		return res;
 	}
 
+	/// @brief Subtraction operator (`Vector2`)
+	/// @param vec Vector to subtract.
+	/// @return Result of the operation.
+	/// @brief Requires matrix to be 2 x 1.
 	constexpr SelfType operator-(Vector2 const& vec) const {
 		static_assert(R == 2 && C == 1, "Matrix size is invalid!");
 		return (*this) - SelfType(vec);
 	}
 
+	/// @brief Subtraction operator (`Vector3`)
+	/// @param vec Vector to subtract.
+	/// @return Result of the operation.
+	/// @brief Requires matrix to be 3 x 1.
 	constexpr SelfType operator-(Vector3 const& vec) const {
 		static_assert(R == 3 && C == 1, "Matrix size is invalid!");
 		return (*this) - SelfType(vec);
 	}
 
+	/// @brief Subtraction operator (`Vector4`)
+	/// @param vec Vector to subtract.
+	/// @return Result of the operation.
+	/// @brief Requires matrix to be 4 x 1.
 	constexpr SelfType operator-(Vector4 const& vec) const {
 		static_assert(R == 4 && C == 1, "Matrix size is invalid!");
 		return (*this) - SelfType(vec);
 	}
 
+	/// @brief Multiplication operator (value).
+	/// @param val Value to multiply to all cells.
+	/// @return Result of the operation.
 	constexpr SelfType operator*(DataType const& val) const {
 		SelfType res;
 		for (usize i = 0; i < C; i++)
@@ -681,6 +749,10 @@ public:
 		return res;
 	}
 
+	/// @brief 
+	/// @tparam C2 
+	/// @param mat 
+	/// @return 
 	template<usize C2>
 	constexpr Matrix<R, C2, DataType> operator*(Matrix<C, C2, DataType> const& mat) const {
 		Matrix<R, C2, DataType> res;
