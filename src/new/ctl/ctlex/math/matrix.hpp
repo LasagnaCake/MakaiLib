@@ -909,7 +909,7 @@ public:
 	/// @note Requires matrix to be 2 x 1.
 	constexpr SelfType& operator-=(Vector2 const& vec) {
 		static_assert(R == 2 && C == 1, "Matrix size is invalid!");
-		return (*this)& -= SelfType(vec);
+		return (*this) -= SelfType(vec);
 	}
 
 	/// @brief Subtraction assignment operator (`Vector3`).
@@ -918,7 +918,7 @@ public:
 	/// @note Requires matrix to be 3 x 1.
 	constexpr SelfType operator-=(Vector3 const& vec) {
 		static_assert(R == 3 && C == 1, "Matrix size is invalid!");
-		return (*this)& -= SelfType(vec);
+		return (*this) -= SelfType(vec);
 	}
 
 	/// @brief Subtraction assignment operator (`Vector4`).
