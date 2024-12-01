@@ -47,7 +47,14 @@ namespace Type::Ex::Math::Vector {
 
 	/// @brief Type must be a vector of some kind.
 	template<typename T>
-	concept Vectorable = CTL::Type::Number<T> || Vector<T>;
+	concept Vectorable =
+		CTL::Type::Number<T>
+	||	CTL::Type::OneOf<
+			T,
+			::CTL::Ex::Math::Vector2,
+			::CTL::Ex::Math::Vector3,
+			::CTL::Ex::Math::Vector4
+	>;
 
 	/// @brief Types must form a valid vector operation.
 	template<class A, class B>
@@ -63,8 +70,23 @@ namespace Type::Ex::Math::Vector {
 /// @brief Math extensions.
 namespace Math {
 
+// If you're wondering why operators are implemented like this,
+// I was too lazy to write documentation for each specialization.
+// (Also because otherwise the line count would be bigger
+// by around 300 lines :/)
+// But hey, at least it works!
+// Don't stare at it for too long, though. You'll start seeing
+// things that do not exist.
+
+/// @brief Math template metaprogramming facilities.
 namespace Meta {
-	template<class A, class B>
+	/// @brief Decays to a valid vector type.
+	/// @tparam A Possible type.
+	/// @tparam B Possible type.
+	template<
+		Type::Ex::Math::Vector::Vectorable A,
+		Type::Ex::Math::Vector::Operatable<A> B
+	>
 	using VectorType = CTL::Meta::DualType<Type::Number<B>, A, B>;
 }
 
