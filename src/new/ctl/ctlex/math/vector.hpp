@@ -11,46 +11,33 @@
 
 CTL_EX_NAMESPACE_BEGIN
 
-namespace Type::Ex::Math::Vector {
-	template<typename T>
-	concept Base = requires {
-		requires	CTL::Type::Arithmetic<T, T>;
-		requires	CTL::Type::Arithmetic<T, float>;
-		requires	CTL::Type::HasModulo<T, T>;
-		requires	CTL::Type::HasModulo<T, float>;
-		requires	CTL::Type::Constructible<T, float>;
-	};
+namespace Math {
+	class Vector2;
+	class Vector3;
+	class Vector4;
+}
 
+/// @brief Vector-specific type constraints.
+namespace Type::Ex::Math::Vector {
+	/// @brief Type must be a valid 2D vector.
 	template<typename T>
 	concept Vector2 = requires {
-		requires	Base<T>;
-		requires	CTL::Type::Constructible<T, float, float>;
-		T::x;
-		T::y;
+		requires	CTL::Type::Equal<T, ::CTL::Ex::Math::Vector2>;
 	};
 
+	/// @brief Type must be a valid 3D vector.
 	template<typename T>
 	concept Vector3 = requires {
-		requires	Base<T>;
-		requires	CTL::Type::Constructible<T, float, float>;
-		requires	CTL::Type::Constructible<T, float, float, float>;
-		T::x;
-		T::y;
-		T::z;
+		requires	CTL::Type::Equal<T, ::CTL::Ex::Math::Vector3>;
 	};
 
+	/// @brief Type must be a valid 4D vector.
 	template<typename T>
 	concept Vector4 = requires {
-		requires	Base<T>;
-		requires	CTL::Type::Constructible<T, float, float>;
-		requires	CTL::Type::Constructible<T, float, float, float>;
-		requires	CTL::Type::Constructible<T, float, float, float, float>;
-		T::x;
-		T::y;
-		T::z;
-		T::w;
+		requires	CTL::Type::Equal<T, ::CTL::Ex::Math::Vector4>;
 	};
 
+	/// @brief Type must be a valid vector.
 	template<typename T>
 	concept Vector =
 		Vector2<T>
@@ -58,18 +45,162 @@ namespace Type::Ex::Math::Vector {
 	||	Vector4<T>
 	;
 
+	/// @brief Type must be a vector of some kind.
 	template<typename T>
-	concept Vectorable = CTL::Type::Equal<T, float> || Vector<T>;
+	concept Vectorable = CTL::Type::Number<T> || Vector<T>;
+
+	/// @brief Types must form a valid vector operation.
+	template<class A, class B>
+	concept Operatable =
+		Vectorable<A>
+	&&	Vectorable<B>
+	&&	(
+			(Equal<A, B> && !Type::Number<A>)
+		||	Different<A, B>
+	);
 }
 
+/// @brief Math extensions.
 namespace Math {
 
+namespace Meta {
+	template<class A, class B>
+	using VectorType = CTL::Meta::DualType<Type::Number<B>, A, B>;
+}
+
+/// @brief Universal vector addition operator.
+/// @tparam A Left side type.
+/// @tparam B Right side type.
+/// @param a Left side of the operation.
+/// @param b Right side of the operation.
+/// @return Result of the operation.
+template<
+	Type::Ex::Math::Vector::Vectorable A,
+	Type::Ex::Math::Vector::Operatable<A> B
+>
+constexpr Meta::VectorType<A, B> operator+(A const& a, B const& b) {
+	if constexpr (Type::Number<A> || Type::Number<B>)
+		return Meta::VectorType<A, B>(a) + Meta::VectorType<A, B>(b);
+	else if constexpr (Type::Equal<A, Vector2>)
+		return A(a.x + b.x, a.y + b.y);
+	else if constexpr (Type::Equal<A, Vector3>)
+		return A(a.x + b.x, a.y + b.y, a.z + b.z);
+	else if constexpr (Type::Equal<A, Vector4>)
+		return A(a.x + b.x, a.y + b.y, a.z + b.z, a.w + b.w);
+}
+
+/// @brief Universal vector subtraction operator.
+/// @tparam A Left side type.
+/// @tparam B Right side type.
+/// @param a Left side of the operation.
+/// @param b Right side of the operation.
+/// @return Result of the operation.
+template<
+	Type::Ex::Math::Vector::Vectorable A,
+	Type::Ex::Math::Vector::Operatable<A> B
+>
+constexpr Meta::VectorType<A, B> operator-(A const& a, B const& b) {
+	if constexpr (Type::Number<A> || Type::Number<B>)
+		return Meta::VectorType<A, B>(a) - Meta::VectorType<A, B>(b);
+	else if constexpr (Type::Equal<A, Vector2>)
+		return A(a.x - b.x, a.y - b.y);
+	else if constexpr (Type::Equal<A, Vector3>)
+		return A(a.x - b.x, a.y - b.y, a.z - b.z);
+	else if constexpr (Type::Equal<A, Vector4>)
+		return A(a.x - b.x, a.y - b.y, a.z - b.z, a.w - b.w);
+}
+
+/// @brief Universal vector multiplication operator.
+/// @tparam A Left side type.
+/// @tparam B Right side type.
+/// @param a Left side of the operation.
+/// @param b Right side of the operation.
+/// @return Result of the operation.
+template<
+	Type::Ex::Math::Vector::Vectorable A,
+	Type::Ex::Math::Vector::Operatable<A> B
+>
+constexpr Meta::VectorType<A, B> operator*(A const& a, B const& b) {
+	if constexpr (Type::Number<A> || Type::Number<B>)
+		return Meta::VectorType<A, B>(a) * Meta::VectorType<A, B>(b);
+	else if constexpr (Type::Equal<A, Vector2>)
+		return A(a.x * b.x, a.y * b.y);
+	else if constexpr (Type::Equal<A, Vector3>)
+		return A(a.x * b.x, a.y * b.y, a.z * b.z);
+	else if constexpr (Type::Equal<A, Vector4>)
+		return A(a.x * b.x, a.y * b.y, a.z * b.z, a.w * b.w);
+}
+
+/// @brief Universal vector division operator.
+/// @tparam A Left side type.
+/// @tparam B Right side type.
+/// @param a Left side of the operation.
+/// @param b Right side of the operation.
+/// @return Result of the operation.
+template<
+	Type::Ex::Math::Vector::Vectorable A,
+	Type::Ex::Math::Vector::Operatable<A> B
+>
+constexpr Meta::VectorType<A, B> operator/(A const& a, B const& b) {
+	if constexpr (Type::Number<A> || Type::Number<B>)
+		return Meta::VectorType<A, B>(a) / Meta::VectorType<A, B>(b);
+	else if constexpr (Type::Equal<A, Vector2>)
+		return A(a.x / b.x, a.y / b.y);
+	else if constexpr (Type::Equal<A, Vector3>)
+		return A(a.x / b.x, a.y / b.y, a.z / b.z);
+	else if constexpr (Type::Equal<A, Vector4>)
+		return A(a.x / b.x, a.y / b.y, a.z / b.z, a.w / b.w);
+}
+
+/// @brief Universal vector division operator.
+/// @tparam A Left side type.
+/// @tparam B Right side type.
+/// @param a Left side of the operation.
+/// @param b Right side of the operation.
+/// @return Result of the operation.
+template<
+	Type::Ex::Math::Vector::Vectorable A,
+	Type::Ex::Math::Vector::Operatable<A> B
+>
+constexpr Meta::VectorType<A, B> operator%(A const& a, B const& b) {
+	if constexpr (Type::Number<A> || Type::Number<B>)
+		return Meta::VectorType<A, B>(a) % Meta::VectorType<A, B>(b);
+	else if constexpr (Type::Equal<A, Vector2>)
+		return A(fmod(a.x, b.x), fmod(a.y, b.y));
+	else if constexpr (Type::Equal<A, Vector3>)
+		return A(fmod(a.x, b.x), fmod(a.y, b.y), fmod(a.z, b.z));
+	else if constexpr (Type::Equal<A, Vector4>)
+		return A(fmod(a.x, b.x), fmod(a.y, b.y), fmod(a.z, b.z), fmod(a.w, b.w));
+}
+
+/// @brief Universal vector exponentiation operator.
+/// @tparam A Left side type.
+/// @tparam B Right side type.
+/// @param a Left side of the operation.
+/// @param b Right side of the operation.
+/// @return Result of the operation.
+template<
+	Type::Ex::Math::Vector::Vectorable A,
+	Type::Ex::Math::Vector::Operatable<A> B
+>
+constexpr Meta::VectorType<A, B> operator^(A const& a, B const& b) {
+	if constexpr (Type::Number<A> || Type::Number<B>)
+		return Meta::VectorType<A, B>(a) ^ Meta::VectorType<A, B>(b);
+	else if constexpr (Type::Equal<A, Vector2>)
+		return A(pow(a.x, b.x), pow(a.y, b.y));
+	else if constexpr (Type::Equal<A, Vector3>)
+		return A(pow(a.x, b.x), pow(a.y, b.y), pow(a.z, b.z));
+	else if constexpr (Type::Equal<A, Vector4>)
+		return A(pow(a.x, b.x), pow(a.y, b.y), pow(a.z, b.z), pow(a.w, b.w));
+}
+
 #pragma pack(push, 1)
+/// @brief Two-dimensional vector.
 class Vector2: Ordered {
 	public:
 		using Ordered::OrderType, Ordered::Order;
 
-		/// The vector's position.
+		/// @brief The vector's components.
 		union {
 			struct {float x, y;		};
 			struct {float nx, ny;	};
@@ -77,165 +208,51 @@ class Vector2: Ordered {
 			float data[2] = {0};
 		};
 
-		/// Consturctors.
+		/// @brief Empty constructor.
 		constexpr Vector2() {}
 
-		constexpr Vector2(float v):
+		/// @brief Constructs the vector's components with a starting value.
+		/// @param v Value to set.
+		constexpr Vector2(float const v):
 			x(v), y(v) {}
 
+		/// @brief Constructs the vector's components with a set of values.
+		/// @param x X component.
+		/// @param y Y component.
 		constexpr Vector2(float const x, float const y):
 			x(x), y(y) {}
 
+		/// @brief Copy constructor.
+		/// @param vec `Vector2` to copy from.
 		constexpr Vector2(Vector2 const& vec):
 			Vector2(vec.x, vec.y) {}
 
+		/// @brief Constructs the vector from an array of values.
+		/// @param data Values to construct from.
 		constexpr Vector2(Decay::AsType<float[2]> const& data):
 			Vector2(data[0], data[1]) {}
 
-		/// Destructor.
+		/// @brief Destructor.
 		constexpr ~Vector2() {}
 
-		/// Static values.
+		/// @brief Returns a zero vector.
+		/// @return Zero vector.
 		constexpr static Vector2 ZERO()		{return 0;					}
+		/// @brief Returns a "All-ones" vector.
+		/// @return One vector.
 		constexpr static Vector2 ONE()		{return 1;					}
+		/// @brief Returns a vector pointing towards positive X.
+		/// @return Vector pointing towards +X.
 		constexpr static Vector2 RIGHT()	{return Vector2(+1, +0);	}
+		/// @brief Returns a vector pointing towards negative X.
+		/// @return Vector pointing towards -X.
 		constexpr static Vector2 LEFT()		{return Vector2(-1, +0);	}
+		/// @brief Returns a vector pointing towards positive Y.
+		/// @return Vector pointing towards +Y.
 		constexpr static Vector2 UP()		{return Vector2(+0, +1);	}
+		/// @brief Returns a vector pointing towards negative Y.
+		/// @return Vector pointing towards -Y.
 		constexpr static Vector2 DOWN()		{return Vector2(+0, -1);	}
-
-		/// Vector operator overloading.
-		constexpr Vector2 operator+(Vector2 const& vec) const {
-			return Vector2(
-				x + vec.x,
-				y + vec.y
-			);
-		}
-
-		constexpr Vector2 operator-(Vector2 const& vec) const {
-			return Vector2(
-				x - vec.x,
-				y - vec.y
-			);
-		}
-
-		constexpr Vector2 operator*(Vector2 const& vec) const {
-			return Vector2(
-				x * vec.x,
-				y * vec.y
-			);
-		}
-
-		constexpr Vector2 operator/(Vector2 const& vec) const {
-			return Vector2(
-				x / vec.x,
-				y / vec.y
-			);
-		}
-
-		constexpr Vector2 operator%(Vector2 const& vec) const {
-			return Vector2(
-				fmod(x, vec.x),
-				fmod(y, vec.y)
-			);
-		}
-
-		constexpr Vector2 operator^(Vector2 const& vec) const {
-			return Vector2(
-				pow(x, vec.x),
-				pow(y, vec.y)
-			);
-		}
-
-		constexpr Vector2& operator+=(Vector2 const& vec) {
-			x += vec.x;
-			y += vec.y;
-			return *this;
-		}
-
-		constexpr Vector2& operator-=(Vector2 const& vec) {
-			x -= vec.x;
-			y -= vec.y;
-			return *this;
-		}
-
-		constexpr Vector2& operator*=(Vector2 const& vec) {
-			x *= vec.x;
-			y *= vec.y;
-			return *this;
-		}
-
-		constexpr Vector2& operator/=(Vector2 const& vec) {
-			x /= vec.x;
-			y /= vec.y;
-			return *this;
-		}
-
-		constexpr Vector2& operator%=(Vector2 const& vec) {
-			x = fmod(x, vec.x);
-			y = fmod(y, vec.y);
-			return *this;
-		}
-
-		constexpr Vector2& operator^=(Vector2 const& vec) {
-			x = fmod(x, vec.x);
-			y = fmod(y, vec.y);
-			return *this;
-		}
-
-		/// Float operator overloading.
-		constexpr Vector2 operator+(float const val) const {
-			return *this + Vector2(val);
-		}
-
-		constexpr Vector2 operator-(float const val) const {
-			return *this - Vector2(val);
-		}
-
-		constexpr Vector2 operator*(float const val) const {
-			return *this * Vector2(val);
-		}
-
-		constexpr Vector2 operator/(float const val) const {
-			return *this / Vector2(val);
-		}
-
-		constexpr Vector2 operator%(float const val) const {
-			return *this % Vector2(val);
-		}
-
-		constexpr Vector2 operator^(float const val) const {
-			return *this ^ Vector2(val);
-		}
-
-		constexpr Vector2& operator+=(float const val) {
-			*this += Vector2(val);
-			return *this;
-		}
-
-		constexpr Vector2& operator-=(float const val) {
-			*this -= Vector2(val);
-			return *this;
-		}
-
-		constexpr Vector2& operator*=(float const val) {
-			*this *= Vector2(val);
-			return *this;
-		}
-
-		constexpr Vector2& operator/=(float const val) {
-			*this /= Vector2(val);
-			return *this;
-		}
-
-		constexpr Vector2& operator%=(float const val) {
-			*this %= Vector2(val);
-			return *this;
-		}
-
-		constexpr Vector2& operator^=(float const val) {
-			*this ^= Vector2(val);
-			return *this;
-		}
 
 		/// Comparison operators
 
@@ -320,10 +337,7 @@ class Vector2: Ordered {
 
 		/// Normalizes the vector.
 		constexpr Vector2& normalize() {
-			if (*this != 0)
-				return *this /= length();
-			else
-				return *this;
+			return *this = normalized();
 		}
 
 		/// Gets the distance to another vector.
@@ -445,154 +459,6 @@ class Vector3: Ordered {
 		constexpr static Vector3 DOWN()		{return Vector2::DOWN();		}
 		constexpr static Vector3 BACK()		{return Vector3(+0, +0, +1);	}
 		constexpr static Vector3 FRONT()	{return Vector3(+0, +0, -1);	}
-
-		/// Vector operator overloading.
-
-		constexpr Vector3 operator+(Vector3 const& vec) const {
-			return Vector3(
-				x + vec.x,
-				y + vec.y,
-				z + vec.z
-			);
-		}
-
-		constexpr Vector3 operator-(Vector3 const& vec) const {
-			return Vector3(
-				x - vec.x,
-				y - vec.y,
-				z - vec.z
-			);
-		}
-
-		constexpr Vector3 operator*(Vector3 const& vec) const {
-			return Vector3(
-				x * vec.x,
-				y * vec.y,
-				z * vec.z
-			);
-		}
-
-		constexpr Vector3 operator/(Vector3 const& vec) const {
-			return Vector3(
-				x / vec.x,
-				y / vec.y,
-				z / vec.z
-			);
-		}
-
-		constexpr Vector3 operator%(Vector3 const& vec) const {
-			return Vector3(
-				fmod(x, vec.x),
-				fmod(y, vec.y),
-				fmod(z, vec.z)
-			);
-		}
-
-		constexpr Vector3 operator^(Vector3 const& vec) const {
-			return Vector3(
-				pow(x, vec.x),
-				pow(y, vec.y),
-				pow(z, vec.z)
-			);
-		}
-
-		constexpr Vector3& operator+=(Vector3 const& vec) {
-			x += vec.x;
-			y += vec.y;
-			z += vec.z;
-			return *this;
-		}
-
-		constexpr Vector3& operator-=(Vector3 const& vec) {
-			x -= vec.x;
-			y -= vec.y;
-			z -= vec.z;
-			return *this;
-		}
-
-		constexpr Vector3& operator*=(Vector3 const& vec) {
-			x *= vec.x;
-			y *= vec.y;
-			z *= vec.z;
-			return *this;
-		}
-
-		constexpr Vector3& operator/=(Vector3 const& vec) {
-			x /= vec.x;
-			y /= vec.y;
-			z /= vec.z;
-			return *this;
-		}
-
-		constexpr Vector3& operator%=(Vector3 const& vec) {
-			x = fmod(x, vec.x);
-			y = fmod(y, vec.y);
-			z = fmod(z, vec.z);
-			return *this;
-		}
-
-		constexpr Vector3& operator^=(Vector3 const& vec) {
-			x = pow(x, vec.x);
-			y = pow(y, vec.y);
-			z = pow(z, vec.z);
-			return *this;
-		}
-
-		/// Float operator overloading.
-
-		constexpr Vector3 operator+(float const val) const {
-			return *this + Vector3(val);
-		}
-
-		constexpr Vector3 operator-(float const val) const {
-			return *this - Vector3(val);
-		}
-
-		constexpr Vector3 operator*(float const val) const {
-			return *this * Vector3(val);
-		}
-
-		constexpr Vector3 operator/(float const val) const {
-			return *this / Vector3(val);
-		}
-
-		constexpr Vector3 operator%(float const val) const {
-			return *this % Vector3(val);
-		}
-
-		constexpr Vector3 operator^(float const val) const {
-			return *this ^ Vector3(val);
-		}
-
-		constexpr Vector3& operator+=(float const val) {
-			*this += Vector3(val);
-			return *this;
-		}
-
-		constexpr Vector3& operator-=(float const val) {
-			*this -= Vector3(val);
-			return *this;
-		}
-
-		constexpr Vector3& operator*=(float const val) {
-			*this *= Vector3(val);
-			return *this;
-		}
-
-		constexpr Vector3& operator/=(float const val) {
-			*this /= Vector3(val);
-			return *this;
-		}
-
-		constexpr Vector3& operator%=(float const val) {
-			*this %= Vector3(val);
-			return *this;
-		}
-
-		constexpr Vector3& operator^=(float const val) {
-			*this ^= Vector3(val);
-			return *this;
-		}
 
 		/// Comparison operators
 
@@ -843,167 +709,7 @@ class Vector4: Ordered {
 		constexpr static Vector4 FUTURE()	{return Vector4(+0, +0, +0, +1);	}
 		constexpr static Vector4 PAST()		{return Vector4(+0, +0, +0, -1);	}
 
-		/// Vector operator overloading.
-
-		constexpr Vector4 operator+(Vector4 const& vec) const {
-			return Vector4(
-				x + vec.x,
-				y + vec.y,
-				z + vec.z,
-				w + vec.w
-			);
-		}
-
-		constexpr Vector4 operator-(Vector4 const& vec) const {
-			return Vector4(
-				x - vec.x,
-				y - vec.y,
-				z - vec.z,
-				w - vec.w
-			);
-		}
-
-		constexpr Vector4 operator*(Vector4 const& vec) const {
-			return Vector4(
-				x * vec.x,
-				y * vec.y,
-				z * vec.z,
-				w * vec.w
-			);
-		}
-
-		constexpr Vector4 operator/(Vector4 const& vec) const {
-			return Vector4(
-				x / vec.x,
-				y / vec.y,
-				z / vec.z,
-				w / vec.w
-			);
-		}
-
-		constexpr Vector4 operator%(Vector4 const& vec) const {
-			return Vector4(
-				fmod(x, vec.x),
-				fmod(y, vec.y),
-				fmod(z, vec.z),
-				fmod(w, vec.w)
-			);
-		}
-
-		constexpr Vector4 operator^(Vector4 const& vec) const {
-			return Vector4(
-				pow(x, vec.x),
-				pow(y, vec.y),
-				pow(z, vec.z),
-				pow(w, vec.w)
-			);
-		}
-
-		constexpr Vector4& operator+=(Vector4 const& vec) {
-			x += vec.x;
-			y += vec.y;
-			z += vec.z;
-			w += vec.w;
-			return *this;
-		}
-
-		constexpr Vector4& operator-=(Vector4 const& vec) {
-			x -= vec.x;
-			y -= vec.y;
-			z -= vec.z;
-			w -= vec.w;
-			return *this;
-		}
-
-		constexpr Vector4& operator*=(Vector4 const& vec) {
-			x *= vec.x;
-			y *= vec.y;
-			z *= vec.z;
-			w *= vec.w;
-			return *this;
-		}
-
-		constexpr Vector4& operator/=(Vector4 const& vec) {
-			x /= vec.x;
-			y /= vec.y;
-			z /= vec.z;
-			w /= vec.w;
-			return *this;
-		}
-
-		constexpr Vector4& operator%=(Vector4 const& vec) {
-			x = fmod(x, vec.x);
-			y = fmod(y, vec.y);
-			z = fmod(z, vec.z);
-			w = fmod(w, vec.w);
-			return *this;
-		}
-
-		constexpr Vector4& operator^=(Vector4 const& vec) {
-			x = pow(x, vec.x);
-			y = pow(y, vec.y);
-			z = pow(z, vec.z);
-			w = pow(w, vec.w);
-			return *this;
-		}
-
-		/// Float operator overloading.
-
-		constexpr Vector4 operator+(float const val) const {
-			return *this + Vector4(val);
-		}
-
-		constexpr Vector4 operator-(float const val) const {
-			return *this - Vector4(val);
-		}
-
-		constexpr Vector4 operator*(float const val) const {
-			return *this * Vector4(val);
-		}
-
-		constexpr Vector4 operator/(float const val) const {
-			return *this / Vector4(val);
-		}
-
-		constexpr Vector4 operator%(float const val) const {
-			return *this % Vector4(val);
-		}
-
-		constexpr Vector4 operator^(float const val) const {
-			return *this ^ Vector4(val);
-		}
-
-		constexpr Vector4& operator+=(float const val) {
-			*this += Vector4(val);
-			return *this;
-		}
-
-		constexpr Vector4& operator-=(float const val) {
-			*this -= Vector4(val);
-			return *this;
-		}
-
-		constexpr Vector4& operator*=(float const val) {
-			*this *= Vector4(val);
-			return *this;
-		}
-
-		constexpr Vector4& operator/=(float const val) {
-			*this /= Vector4(val);
-			return *this;
-		}
-
-		constexpr Vector4& operator^=(float const val) {
-			*this ^= Vector4(val);
-			return *this;
-		}
-
-		constexpr Vector4& operator%=(float const val) {
-			*this %= Vector4(val);
-			return *this;
-		}
-
-		/// Comparison operators
+		/// Comparison operators.
 
 		constexpr bool operator==(Vector4 const& other) const {
 			return (
