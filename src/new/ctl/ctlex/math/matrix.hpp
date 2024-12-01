@@ -749,10 +749,10 @@ public:
 		return res;
 	}
 
-	/// @brief 
-	/// @tparam C2 
-	/// @param mat 
-	/// @return 
+	/// @brief Multiplication operator (`Matrix`)
+	/// @tparam C2 Column count of the matrix to multiply with.
+	/// @param mat Matrix to multiply.
+	/// @return Result of the operation.
 	template<usize C2>
 	constexpr Matrix<R, C2, DataType> operator*(Matrix<C, C2, DataType> const& mat) const {
 		Matrix<R, C2, DataType> res;
@@ -765,27 +765,46 @@ public:
 		return res;
 	}
 
+	/// @brief Multiplication operator (`Vector2`)
+	/// @param vec Vector to multiply.
+	/// @return Result of the operation.
+	/// @note Requires row count to be 2.
 	constexpr Matrix<R, 1, DataType> operator*(Vector2 const& vec) const {
 		static_assert(R == 2, "Matrix row count is invalid!");
 		return (*this) * Matrix<R, 1, DataType>(vec);
 	}
 
+	/// @brief Multiplication operator (`Vector3`)
+	/// @param vec Vector to multiply.
+	/// @return Result of the operation.
+	/// @note Requires row count to be 3.
 	constexpr Matrix<R, 1, DataType> operator*(Vector3 const& vec) const {
 		static_assert(R == 3, "Matrix row count is invalid!");
 		return (*this) * Matrix<R, 1, DataType>(vec);
 	}
 
+	/// @brief Multiplication operator (`Vector4`)
+	/// @param vec Vector to multiply.
+	/// @return Result of the operation.
+	/// @note Requires row count to be 4.
 	constexpr Matrix<R, 1, DataType> operator*(Vector4 const& vec) const {
 		static_assert(R == 4, "Matrix row count is invalid!");
 		return (*this) * Matrix<R, 1, DataType>(vec);
 	}
 
+	/// @brief Multiplication operator (`Transform3D`)
+	/// @param vec Vector to multiply.
+	/// @return Result of the operation.
+	/// @note Requires matrix to be a valid 3D transformation matrix.
 	constexpr SelfType operator*(Transform3D const& trans) const
 	requires Type::Ex::Math::Matrix::ValidTransform3D<R, C>  {
 		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
 		return (*this) * SelfType(trans);
 	}
 
+	/// @brief Division operator (value).
+	/// @param val Value to divide from all cells.
+	/// @return Result of the operation.
 	constexpr SelfType operator/(DataType const& val) const {
 		SelfType res;
 		for (usize i = 0; i < C; i++)
@@ -794,25 +813,32 @@ public:
 		return res;
 	}
 
-	template<usize C2>
+	/*template<usize C2>
 	constexpr Matrix<R, C2, DataType> operator/(Matrix<C, C2, DataType> const& mat) const {
 		return (*this) * mat.inverted();
-	}
+	}*/
 
-	/// Assignment operator overloading.
-
-	constexpr SelfType& operator=(DataType const(& v)[R][C]) {
+	/// @brief Assignment operator (matrix-like).
+	/// @param v Values to assign.
+	/// @return Reference to self.
+	constexpr SelfType& operator=(MatrixType<> const& v) {
 		for (usize i = 0; i < C; i++) {
 			for (usize j = 0; j < R; j++)
 				data[i][j] = DataType(v[i][j]);
 		}
 	}
 
-	constexpr SelfType& operator=(DataType const(& v)[R*C]) {
+	/// @brief Assignment operator (array of values).
+	/// @param v Values to assign.
+	/// @return Reference to self.
+	constexpr SelfType& operator=(ArrayType<> const& v) {
 		for (usize i = 0; i < R*C; i++)
 			((DataType*)data)[i] = DataType(v[i]);
 	}
 
+	/// @brief Addition assignment operator (value).
+	/// @param val Value to add to all cells.
+	/// @return Reference to self.
 	constexpr SelfType& operator+=(DataType const& val) {
 		for (usize i = 0; i < C; i++)
 			for (usize j = 0; j < R; j++)
@@ -820,6 +846,9 @@ public:
 		return *this;
 	}
 
+	/// @brief Addition assignment operator (`Matrix`).
+	/// @param mat Matrix to add.
+	/// @return Reference to self.
 	constexpr SelfType& operator+=(SelfType const& mat) {
 		for (usize i = 0; i < C; i++)
 			for (usize j = 0; j < R; j++)
@@ -827,21 +856,36 @@ public:
 		return *this;
 	}
 
-	constexpr SelfType operator+=(Vector2 const& vec) {
+	/// @brief Addition assignment operator (`Vector2`).
+	/// @param vec Vector to add.
+	/// @return Reference to self.
+	/// @note Requires matrix to be 2 x 1.
+	constexpr SelfType& operator+=(Vector2 const& vec) {
 		static_assert(R == 2 && C == 1, "Matrix size is invalid!");
 		return (*this) += SelfType(vec);
 	}
 
-	constexpr SelfType operator+=(Vector3 const& vec) {
+	/// @brief Addition assignment operator (`Vector3`).
+	/// @param vec Vector to add.
+	/// @return Reference to self.
+	/// @note Requires matrix to be 3 x 1.
+	constexpr SelfType& operator+=(Vector3 const& vec) {
 		static_assert(R == 3 && C == 1, "Matrix size is invalid!");
 		return (*this) += SelfType(vec);
 	}
 
-	constexpr SelfType operator+=(Vector4 const& vec) {
+	/// @brief Addition assignment operator (`Vector4`).
+	/// @param vec Vector to add.
+	/// @return Reference to self.
+	/// @note Requires matrix to be 4 x 1.
+	constexpr SelfType& operator+=(Vector4 const& vec) {
 		static_assert(R == 4 && C == 1, "Matrix size is invalid!");
 		return (*this) += SelfType(vec);
 	}
 
+	/// @brief Subtraction assignment operator (value).
+	/// @param val Value to subtract from all cells.
+	/// @return Reference to self.
 	constexpr SelfType& operator-=(DataType const& val) {
 		for (usize i = 0; i < C; i++)
 			for (usize j = 0; j < R; j++)
@@ -849,6 +893,9 @@ public:
 		return *this;
 	}
 
+	/// @brief Subtraction assignment operator (`Matrix`).
+	/// @param mat Matrix to subtract.
+	/// @return Reference to self.
 	constexpr SelfType& operator-=(SelfType const& mat) {
 		for (usize i = 0; i < C; i++)
 			for (usize j = 0; j < R; j++)
@@ -856,21 +903,36 @@ public:
 		return *this;
 	}
 
-	constexpr SelfType operator-=(Vector2 const& vec) {
+	/// @brief Subtraction assignment operator (`Vector2`).
+	/// @param vec Vector to subtract.
+	/// @return Reference to self.
+	/// @note Requires matrix to be 2 x 1.
+	constexpr SelfType& operator-=(Vector2 const& vec) {
 		static_assert(R == 2 && C == 1, "Matrix size is invalid!");
-		return (*this) -= SelfType(vec);
+		return (*this)& -= SelfType(vec);
 	}
 
+	/// @brief Subtraction assignment operator (`Vector3`).
+	/// @param vec Vector to subtract.
+	/// @return Reference to self.
+	/// @note Requires matrix to be 3 x 1.
 	constexpr SelfType operator-=(Vector3 const& vec) {
 		static_assert(R == 3 && C == 1, "Matrix size is invalid!");
-		return (*this) -= SelfType(vec);
+		return (*this)& -= SelfType(vec);
 	}
 
-	constexpr SelfType operator-=(Vector4 const& vec) {
+	/// @brief Subtraction assignment operator (`Vector4`).
+	/// @param vec Vector to subtract.
+	/// @return Reference to self.
+	/// @note Requires matrix to be 4 x 1.
+	constexpr SelfType& operator-=(Vector4 const& vec) {
 		static_assert(R == 4 && C == 1, "Matrix size is invalid!");
 		return (*this) -= SelfType(vec);
 	}
 
+	/// @brief Multiplication assignment operator (value).
+	/// @param val Value to mulitply to all cells.
+	/// @return Reference to self.
 	constexpr SelfType& operator*=(DataType const& val) {
 		for (usize i = 0; i < C; i++)
 			for (usize j = 0; j < R; j++)
@@ -878,18 +940,29 @@ public:
 		return *this;
 	}
 
+	/// @brief Multiplication assignment operator (`Matrix`).
+	/// @param mat Matrix to multiply.
+	/// @return Reference to self.
+	/// @note Requires a square matrix.
 	constexpr SelfType& operator*=(SelfType const& mat)
 	requires (R == C) {
 		(*this) = (*this) * mat;
 		return *this;
 	}
 
-	constexpr SelfType operator*=(Transform3D const& trans)
+	/// @brief Multiplication assignment operator (`Transform3D`).
+	/// @param trans Tranform to multiply.
+	/// @return Reference to self.
+	/// @note Requires matrix to be a valid 3D transformation matrix. 
+	constexpr SelfType& operator*=(Transform3D const& trans)
 	requires Type::Ex::Math::Matrix::ValidTransform3D<R, C> {
 		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
 		return (*this) *= SelfType(trans);
 	}
 
+	/// @brief Division assignment operator (value).
+	/// @param val Value to divide from all cells.
+	/// @return Reference to self.
 	constexpr SelfType& operator/=(DataType const& val) {
 		for (usize i = 0; i < R; i++)
 			for (usize j = 0; j < C; j++)
@@ -897,79 +970,148 @@ public:
 		return *this;
 	}
 
-	template<usize C2>
+	/*template<usize C2>
 	constexpr SelfType& operator/=(Matrix<R, C2, DataType> const& mat)
 	requires (R == C) {
 		(*this) = (*this) / mat;
 		return *this;
+	}*/
+
+	/// @brief Array subscription operator.
+	/// @param idx Index to match.
+	/// @return Row view.
+	/// @throws Error::InvalidValue if `idx` is bigger than column count.
+	constexpr Span<DataType, R> operator[](usize const idx)	{
+		if (idx > C)
+			throw Error::InvalidValue(
+				toString("Index of [", idx, "] is larger than column count of [",C,"]!"),
+				__FILE__,
+				toString(__LINE__)
+			);
+		return Span<DataType, R>(data[idx]);
 	}
 
-	/// Other operator overloadings.
+	
+	/// @brief Array subscription operator.
+	/// @param idx Index to match.
+	/// @return Row view.
+	/// @throws Error::InvalidValue if `idx` is bigger than column count.
+	constexpr Span<const DataType, R> operator[](usize const idx) const	{
+		if (idx > C)
+			throw Error::InvalidValue(
+				toString("Index of [", idx, "] is larger than column count of [",C,"]!"),
+				__FILE__,
+				toString(__LINE__)
+			);
+		return Span<const DataType, R>(data[idx]);
+	}
 
-	constexpr Span<DataType, R> operator[](usize const idx)				{return Span<DataType, R>(data[idx]);		}
-	constexpr Span<const DataType, R> operator[](usize const idx) const	{return Span<const DataType, R>(data[idx]);	}
+	/// @brief Returns an iterator to the beginning of the matrix.
+	/// @return Iterator to beginning of matrix.
+	constexpr Iterator<DataType> begin()	{return &data[0][0];		}
+	/// @brief Returns an iterator to the end of the matrix.
+	/// @return Iterator to end of matrix.
+	constexpr Iterator<DataType> end()		{return &data[C-1][R-1];	}
 
-	constexpr DataType* begin()	{return &data[0][0];		}
-	constexpr DataType* end()	{return &data[C-1][R-1];	}
+	/// @brief Returns an iterator to the beginning of the matrix.
+	/// @return Iterator to beginning of matrix.
+	constexpr Iterator<const DataType> begin() const	{return &data[0][0];		}
+	/// @brief Returns an iterator to the end of the matrix.
+	/// @return Iterator to end of matrix.
+	constexpr Iterator<const DataType> end() const		{return &data[C-1][R-1];	}
 
-	constexpr const DataType* begin() const	{return &data[0][0];		}
-	constexpr const DataType* end() const	{return &data[C-1][R-1];	}
-
+	/// @brief Converts the matrix to a matrix of different element type.
+	/// @tparam T2 Matrix element type.
 	template <Type::Ex::Math::Matrix::Compatitble<DataType> T2>
 	constexpr operator Matrix<R, C, T2>() const {return Matrix<R, C, T2>(data);}
 
+	/// @brief Converts the matrix to a `Vector2`.
 	constexpr operator Vector2() const {return toVector2();}
+	/// @brief Converts the matrix to a `Vector3`.
 	constexpr operator Vector3() const {return toVector3();}
+	/// @brief Converts the matrix to a `Vector4`.
 	constexpr operator Vector4() const {return toVector4();}
 
-	constexpr explicit operator const DataType*() const	{return begin();	}
-	constexpr explicit operator DataType*()				{return begin();	}
+	/// @brief Returns a pointer to the begginning of the matrix.
+	constexpr explicit operator const DataType*() const	{return data;	}
+	/// @brief Returns a pointer to the begginning of the matrix.
+	constexpr explicit operator DataType*()				{return data;	}
 
-	/// Converters.
-
+	/// @brief Return the last column of the matrix as a `Vector2`.
+	/// @return Last column.
+	/// @note Requires matrix row count to be at least 2.
 	constexpr Vector2 toVector2() const {
 		static_assert(R >= 2, "Matrix is not a valid representation of a 2D vector!");
 		if constexpr(R == 4) return Vector2(data[C-1][0], data[C-1][1]) / data[C-1][3];
 		else return Vector2(data[C-1][0], data[C-1][1]);
 	}
 
+	/// @brief Return the last column of the matrix as a `Vector3`.
+	/// @return Last column.
+	/// @note Requires matrix row count to be at least 3.
 	constexpr Vector3 toVector3() const {
 		static_assert(R >= 3, "Matrix is not a valid representation of a 3D vector!");
 		if constexpr(R == 4) return Vector3(data[C-1][0], data[C-1][1], data[C-1][2]) / data[C-1][3];
 		else return Vector3(data[C-1][0], data[C-1][1], data[C-1][2]);
 	}
 
+	/// @brief Return the last column of the matrix as a `Vector4`.
+	/// @return Last column.
+	/// @note Requires matrix row count to be at least 4.
 	constexpr Vector4 toVector4() const {
 		static_assert(R >= 4, "Matrix is not a valid representation of a 4D vector!");
 		return Vector4(data[C-1][0], data[C-1][1], data[C-1][2], data[C-1][3]);
 	}
 
-	template<EulerFunction EULER_FUNC = Matrix::fromEulerYXZ>
-	constexpr SelfType& transformed(
+	/// @brief Returns the matrix, transformed by a set of transformations.
+	/// @tparam ANGLE_FUNC Angle conversion function.
+	/// @param position Translation.
+	/// @param rotation Rotation.
+	/// @param scale Scaling.
+	/// @return Transformed matrix.
+	/// @note Requires matrix to be a valid 3D transformation matrix.
+	template<EulerFunction ANGLE_FUNC = Matrix::fromEulerYXZ>
+	constexpr SelfType transformed(
 		Vector3 const& position,
 		Vector3 const& rotation,
 		Vector3 const& scale
 	) const requires Type::Ex::Math::Matrix::ValidTransform3D<R, C> {
 		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
 		// Transform
-		return translated(position).template rotated<EULER_FUNC>(rotation).scaled(scale);
+		return translated(position).template rotated<ANGLE_FUNC>(rotation).scaled(scale);
 	}
 
-	template<EulerFunction EULER_FUNC = Matrix::fromEulerYXZ>
-	constexpr SelfType& transformed(Transform3D const& trans)
+	/// @brief Returns the matrix, transformed by a set of transformations.
+	/// @tparam ANGLE_FUNC Angle conversion function.
+	/// @param trans Transformation to apply.
+	/// @return Transformed matrix.
+	/// @note Requires matrix to be a valid 3D transformation matrix.
+	template<EulerFunction ANGLE_FUNC = Matrix::fromEulerYXZ>
+	constexpr SelfType transformed(Transform3D const& trans)
 	const requires Type::Ex::Math::Matrix::ValidTransform3D<R, C> {
 		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
-		return transformed<EULER_FUNC>(trans.position, trans.rotation, trans.scale);
+		return transformed<ANGLE_FUNC>(trans.position, trans.rotation, trans.scale);
 	}
 
-	template<EulerFunction EULER_FUNC = Matrix::fromEulerYXZ>
-	constexpr SelfType& transformed(Transform2D const& trans)
+	/// @brief Returns the matrix, transformed by a set of transformations.
+	/// @tparam ANGLE_FUNC Angle conversion function.
+	/// @param trans Transformation to apply.
+	/// @return Transformed matrix.
+	/// @note Requires matrix to be a valid 3D transformation matrix.
+	constexpr SelfType transformed(Transform2D const& trans)
 	const requires Type::Ex::Math::Matrix::ValidTransform2D<R, C> {
 		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
 		return Matrix(*this).transform(trans);
 	}
 
-	template<EulerFunction EULER_FUNC = Matrix::fromEulerYXZ>
+	/// @brief Transforms the matrix by a set of transformations.
+	/// @tparam ANGLE_FUNC Angle conversion function.
+	/// @param position Translation.
+	/// @param rotation Rotation.
+	/// @param scale Scaling.
+	/// @return Reference to self.
+	/// @note Requires matrix to be a valid 3D transformation matrix.
+	template<EulerFunction ANGLE_FUNC = Matrix::fromEulerYXZ>
 	constexpr SelfType& transform(
 		Vector3 const& position,
 		Vector3 const& rotation,
@@ -977,16 +1119,25 @@ public:
 	) requires Type::Ex::Math::Matrix::ValidTransform3D<R, C> {
 		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
 		// Transform
-		return translate(position).template rotate<EULER_FUNC>(rotation).scale(scale);
+		return translate(position).template rotate<ANGLE_FUNC>(rotation).scale(scale);
 	}
 
-	template<EulerFunction EULER_FUNC = Matrix::fromEulerYXZ>
+	/// @brief Transforms the matrix by a set of transformations.
+	/// @tparam ANGLE_FUNC Angle conversion function.
+	/// @param trans Transformation to apply.
+	/// @note Requires matrix to be a valid 3D transformation matrix.
+	template<EulerFunction ANGLE_FUNC = Matrix::fromEulerYXZ>
 	constexpr SelfType& transform(Transform3D const& trans)
 	requires Type::Ex::Math::Matrix::ValidTransform3D<R, C> {
 		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
-		return transform<EULER_FUNC>(trans.position, trans.rotation, trans.scale);
+		return transform<ANGLE_FUNC>(trans.position, trans.rotation, trans.scale);
 	}
 
+	/// @brief Transforms the matrix by a set of transformations.
+	/// @tparam ANGLE_FUNC Angle conversion function.
+	/// @param trans Transformation to apply.
+	/// @brief Requires matrix to be a valid 2D transformation matrix.
+	/// @note Requires matrix to be a valid 3D transformation matrix.
 	constexpr SelfType& transform(Transform2D const& trans)
 	requires Type::Ex::Math::Matrix::ValidTransform2D<R, C> {
 		static_assert(R == 3, "Matrix is not a valid representation of a 3D transform!");
@@ -1011,7 +1162,14 @@ public:
 		return *this;
 	}
 
-	template<EulerFunction EULER_FUNC = Matrix::fromEulerYXZ>
+	/// @brief Builds the matrix from a set of transforms.
+	/// @tparam ANGLE_FUNC Angle conversion function.
+	/// @param position Position.
+	/// @param rotation Rotation.
+	/// @param scale Scale.
+	/// @return Reference to self.
+	/// @note Requires matrix to be a valid 3D transformation matrix.
+	template<EulerFunction ANGLE_FUNC = Matrix::fromEulerYXZ>
 	constexpr SelfType& compose(
 		Vector3 const& position,
 		Vector3 const& rotation,
@@ -1020,18 +1178,32 @@ public:
 		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
 		// Fill & Transform
 		(*this) = Matrix(1);
-		return transform<EULER_FUNC>(position, rotation, scale);
+		return transform<ANGLE_FUNC>(position, rotation, scale);
 	}
 
-	template<EulerFunction EULER_FUNC = Matrix::fromEulerYXZ>
+	/// @brief Builds the matrix from a set of transforms.
+	/// @tparam ANGLE_FUNC Angle conversion function
+	/// @param trans Transformations to build from.
+	/// @return Reference to self.
+	/// @note Requires matrix to be a valid 3D transformation matrix.
+	template<EulerFunction ANGLE_FUNC = Matrix::fromEulerYXZ>
 	constexpr SelfType& compose(Transform3D const& trans)
 	requires Type::Ex::Math::Matrix::ValidTransform3D<R, C> {
 		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
-		return compose<EULER_FUNC>(trans.position, trans.rotation, trans.scale);
+		return compose<ANGLE_FUNC>(trans.position, trans.rotation, trans.scale);
 	}
 
-	// https://github.com/g-truc/glm/blob/master/glm/gtx/matrix_decompose.inl
-	template<EulerFunction EULER_FUNC = Matrix::fromEulerYXZ>
+	/// @brief Builds the matrix from a set of transformations.
+	/// @tparam ANGLE_FUNC Angle conversion function.
+	/// @param position Position.
+	/// @param rotation Rotation.
+	/// @param scale Scale.
+	/// @param perspective Perspective.
+	/// @param skew Skew.
+	/// @return Reference to self.
+	/// @link https://github.com/g-truc/glm/blob/master/glm/gtx/matrix_decompose.inl
+	/// @note Requires matrix to be a valid 3D transformation matrix.
+	template<EulerFunction ANGLE_FUNC = Matrix::fromEulerYXZ>
 	constexpr SelfType& compose(
 		Vector3 const& position,
 		Vector3 const& rotation,
@@ -1047,7 +1219,7 @@ public:
 		result.data[3][2] = perspective.z;
 		result.data[3][3] = perspective.w;
 		// Translate & rotate
-		result.translate(position).template rotate<EULER_FUNC>(rotation);
+		result.translate(position).template rotate<ANGLE_FUNC>(rotation);
 		Matrix<4, 4, DataType> tmp = Matrix<4, 4, DataType>(1);
 		// Skew
 		if (skew.x) {
@@ -1072,17 +1244,31 @@ public:
 		return *this;
 	}
 
-	template<EulerFunction EULER_FUNC = Matrix::fromEulerYXZ>
+	/// @brief Builds the matrix from a set of transformations.
+	/// @tparam ANGLE_FUNC Angle conversion function.
+	/// @param trans Transformations to build from.
+	/// @param perspective Perspective.
+	/// @param skew Skew.
+	/// @return Reference to self.
+	/// @link https://github.com/g-truc/glm/blob/master/glm/gtx/matrix_decompose.inl
+	/// @note Requires matrix to be a valid 3D transformation matrix.
+	template<EulerFunction ANGLE_FUNC = Matrix::fromEulerYXZ>
 	constexpr SelfType& compose(
 		Transform3D const&	trans,
-		Vector4 const&				perspective,
-		Vector3 const&				skew
+		Vector4 const&		perspective,
+		Vector3 const&		skew
 	) requires Type::Ex::Math::Matrix::ValidTransform3D<R, C> {
 		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
-		return compose<EULER_FUNC>(trans.position, trans.rotation, trans.scale, perspective, skew);
+		return compose<ANGLE_FUNC>(trans.position, trans.rotation, trans.scale, perspective, skew);
 	}
 
-	// https://opensource.apple.com/source/WebCore/WebCore-514/platform/graphics/transforms/TransformationMatrix.cpp
+	/// @brief Builds a 3D transform from the matrix.
+	/// @param perspective Perspective transformation output.
+	/// @param skew Skew transformation output.
+	/// @return 3D transformation.
+	/// @link https://opensource.apple.com/source/WebCore/WebCore-514/platform/graphics/transforms/TransformationMatrix.cpp 
+	/// @note Requires matrix to be a valid 3D transformation matrix.
+	/// @warning Doesn't currently work!
 	[[gnu::unavailable("Not working as intended!")]]
 	constexpr Transform3D decompose(
 			Vector4& perspective,
@@ -1178,6 +1364,10 @@ public:
 		return result;
 	}
 
+	/// @brief Builds a 3D transform from the matrix.
+	/// @return 3D transformation.
+	/// @note Requires matrix to be a valid 3D transformation matrix.
+	/// @warning Doesn't currently work!
 	[[gnu::unavailable("Not working as intended!")]]
 	constexpr Transform3D decompose() const
 	requires Type::Ex::Math::Matrix::ValidTransform3D<R, C> {
@@ -1186,6 +1376,10 @@ public:
 		return decompose(_p, _s);
 	}
 
+	/// @brief Returns the cofactor for a given cell.
+	/// @param row Cell row.
+	/// @param col Cell column.
+	/// @return Cell's cofactor.
 	constexpr DataType cofactor(usize const row, usize const col) const {
 		return ((((row + col) % 2) == 0) ? DataType(+1) : DataType(-1)) * truncated(row, col).determinant();
 	}
@@ -1197,198 +1391,348 @@ private:
 	MatrixType<> data = {};
 };
 
-// Template matrices
+/// @brief Template matrix shorthand.
+/// @tparam R Row count.
+/// @tparam C Column count.
+/// @tparam T Matrix element type.
 template <usize R, usize C, CTL::Type::Math::Operatable T> using Mat = Matrix<R, C, T>;
 
+/// @brief Template 2 x 1 matrix.
+/// @tparam T Matrix element type.
 template <CTL::Type::Math::Operatable T> using TMat2x1 = Matrix<2, 1, T>;
+/// @brief Template 3 x 1 matrix.
+/// @tparam T Matrix element type.
 template <CTL::Type::Math::Operatable T> using TMat3x1 = Matrix<3, 1, T>;
+/// @brief Template 4 x 1 matrix.
+/// @tparam T Matrix element type.
 template <CTL::Type::Math::Operatable T> using TMat4x1 = Matrix<4, 1, T>;
 
+/// @brief Template 2 x 2 matrix.
+/// @tparam T Matrix element type.
 template <CTL::Type::Math::Operatable T> using TMat2x2 = Matrix<2, 2, T>;
+/// @brief Template 3 x 2 matrix.
+/// @tparam T Matrix element type.
 template <CTL::Type::Math::Operatable T> using TMat3x2 = Matrix<3, 2, T>;
+/// @brief Template 4 x 2 matrix.
+/// @tparam T Matrix element type.
 template <CTL::Type::Math::Operatable T> using TMat4x2 = Matrix<4, 2, T>;
 
+/// @brief Template 2 x 3 matrix.
+/// @tparam T Matrix element type.
 template <CTL::Type::Math::Operatable T> using TMat2x3 = Matrix<2, 3, T>;
+/// @brief Template 3 x 3 matrix.
+/// @tparam T Matrix element type.
 template <CTL::Type::Math::Operatable T> using TMat3x3 = Matrix<3, 3, T>;
+/// @brief Template 4 x 3 matrix.
+/// @tparam T Matrix element type.
 template <CTL::Type::Math::Operatable T> using TMat4x3 = Matrix<4, 3, T>;
 
+/// @brief Template 2 x 4 matrix.
+/// @tparam T Matrix element type.
 template <CTL::Type::Math::Operatable T> using TMat2x4 = Matrix<2, 4, T>;
+/// @brief Template 3 x 4 matrix.
+/// @tparam T Matrix element type.
 template <CTL::Type::Math::Operatable T> using TMat3x4 = Matrix<3, 4, T>;
+/// @brief Template 4 x 4 matrix.
+/// @tparam T Matrix element type.
 template <CTL::Type::Math::Operatable T> using TMat4x4 = Matrix<4, 4, T>;
 
+/// @brief Template 2 x 2 matrix.
+/// @tparam T Matrix element type.
 template <CTL::Type::Math::Operatable T> using TMat2 = TMat2x2<T>;
+/// @brief Template 3 x 3 matrix.
+/// @tparam T Matrix element type.
 template <CTL::Type::Math::Operatable T> using TMat3 = TMat3x3<T>;
+/// @brief Template 4 x 4 matrix.
+/// @tparam T Matrix element type.
 template <CTL::Type::Math::Operatable T> using TMat4 = TMat4x4<T>;
 
-// Float matrices
+/// @brief 2 x 1 `float` matrix.
 typedef TMat2x1<float> Matrix2x1;
+/// @brief 3 x 1 `float` matrix.
 typedef TMat3x1<float> Matrix3x1;
+/// @brief 4 x 1 `float` matrix.
 typedef TMat4x1<float> Matrix4x1;
 
+/// @brief 2 x 2 `float` matrix.
 typedef TMat2x2<float> Matrix2x2;
+/// @brief 3 x 2 `float` matrix.
 typedef TMat3x2<float> Matrix3x2;
+/// @brief 4 x 2 `float` matrix.
 typedef TMat4x2<float> Matrix4x2;
 
+/// @brief 2 x 3 `float` matrix.
 typedef TMat2x3<float> Matrix2x3;
+/// @brief 3 x 3 `float` matrix.
 typedef TMat3x3<float> Matrix3x3;
+/// @brief 4 x 3 `float` matrix.
 typedef TMat4x3<float> Matrix4x3;
 
+/// @brief 2 x 4 `float` matrix.
 typedef TMat2x4<float> Matrix2x4;
+/// @brief 3 x 4 `float` matrix.
 typedef TMat3x4<float> Matrix3x4;
+/// @brief 4 x 4 `float` matrix.
 typedef TMat4x4<float> Matrix4x4;
 
+/// @brief 2 x 2 `float` matrix.
 typedef TMat2<float> Matrix2;
+/// @brief 3 x 3 `float` matrix.
 typedef TMat3<float> Matrix3;
+/// @brief 4 x 4 `float` matrix.
 typedef TMat4<float> Matrix4;
 
-// Double matrices
+/// @brief 2 x 1 `double` matrix.
 typedef TMat2x1<double> Matrix2x1d;
+/// @brief 3 x 1 `double` matrix.
 typedef TMat3x1<double> Matrix3x1d;
+/// @brief 4 x 1 `double` matrix.
 typedef TMat4x1<double> Matrix4x1d;
 
+/// @brief 2 x 2 `double` matrix.
 typedef TMat2x2<double> Matrix2x2d;
+/// @brief 3 x 2 `double` matrix.
 typedef TMat3x2<double> Matrix3x2d;
+/// @brief 4 x 2 `double` matrix.
 typedef TMat4x2<double> Matrix4x2d;
 
+/// @brief 2 x 3 `double` matrix.
 typedef TMat2x3<double> Matrix2x3d;
+/// @brief 3 x 3 `double` matrix.
 typedef TMat3x3<double> Matrix3x3d;
+/// @brief 4 x 3 `double` matrix.
 typedef TMat4x3<double> Matrix4x3d;
 
+/// @brief 2 x 4 `double` matrix.
 typedef TMat2x4<double> Matrix2x4d;
+/// @brief 3 x 4 `double` matrix.
 typedef TMat3x4<double> Matrix3x4d;
+/// @brief 4 x 4 `double` matrix.
 typedef TMat4x4<double> Matrix4x4d;
 
+/// @brief 2 x 2 `double` matrix.
 typedef TMat2<double> Matrix2d;
+/// @brief 3 x 3 `double` matrix.
 typedef TMat3<double> Matrix3d;
+/// @brief 4 x 4 `double` matrix.
 typedef TMat4<double> Matrix4d;
 
-// Long double matrices
+/// @brief 2 x 1 `long double` matrix.
 typedef TMat2x1<long double> Matrix2x1ld;
+/// @brief 3 x 1 `long double` matrix.
 typedef TMat3x1<long double> Matrix3x1ld;
+/// @brief 4 x 1 `long double` matrix.
 typedef TMat4x1<long double> Matrix4x1ld;
 
+/// @brief 2 x 2 `long double` matrix.
 typedef TMat2x2<long double> Matrix2x2ld;
+/// @brief 3 x 2 `long double` matrix.
 typedef TMat3x2<long double> Matrix3x2ld;
+/// @brief 4 x 2 `long double` matrix.
 typedef TMat4x2<long double> Matrix4x2ld;
 
+/// @brief 2 x 3 `long double` matrix.
 typedef TMat2x3<long double> Matrix2x3ld;
+/// @brief 3 x 3 `long double` matrix.
 typedef TMat3x3<long double> Matrix3x3ld;
+/// @brief 4 x 3 `long double` matrix.
 typedef TMat4x3<long double> Matrix4x3ld;
 
+/// @brief 2 x 4 `long double` matrix.
 typedef TMat2x4<long double> Matrix2x4ld;
+/// @brief 3 x 4 `long double` matrix.
 typedef TMat3x4<long double> Matrix3x4ld;
+/// @brief 4 x 4 `long double` matrix.
 typedef TMat4x4<long double> Matrix4x4ld;
 
+/// @brief 2 x 2 `long double` matrix.
 typedef TMat2<long double> Matrix2ld;
+/// @brief 3 x 3 `long double` matrix.
 typedef TMat3<long double> Matrix3ld;
+/// @brief 4 x 4 `long double` matrix.
 typedef TMat4<long double> Matrix4ld;
 
-// Integer matrices
+/// @brief 2 x 1 `int` matrix.
 typedef TMat2x1<int> Matrix2x1i;
+/// @brief 3 x 1 `int` matrix.
 typedef TMat3x1<int> Matrix3x1i;
+/// @brief 4 x 1 `int` matrix.
 typedef TMat4x1<int> Matrix4x1i;
 
+/// @brief 2 x 2 `int` matrix.
 typedef TMat2x2<int> Matrix2x2i;
+/// @brief 3 x 2 `int` matrix.
 typedef TMat3x2<int> Matrix3x2i;
+/// @brief 4 x 2 `int` matrix.
 typedef TMat4x2<int> Matrix4x2i;
 
+/// @brief 2 x 3 `int` matrix.
 typedef TMat2x3<int> Matrix2x3i;
+/// @brief 3 x 3 `int` matrix.
 typedef TMat3x3<int> Matrix3x3i;
+/// @brief 4 x 3 `int` matrix.
 typedef TMat4x3<int> Matrix4x3i;
 
+/// @brief 2 x 4 `int` matrix.
 typedef TMat2x4<int> Matrix2x4i;
+/// @brief 3 x 4 `int` matrix.
 typedef TMat3x4<int> Matrix3x4i;
+/// @brief 4 x 4 `int` matrix.
 typedef TMat4x4<int> Matrix4x4i;
 
+/// @brief 2 x 2 `int` matrix.
 typedef TMat2<int> Matrix2i;
+/// @brief 3 x 3 `int` matrix.
 typedef TMat3<int> Matrix3i;
+/// @brief 4 x 4 `int` matrix.
 typedef TMat4<int> Matrix4i;
 
-// Float shorthands
+/// @brief 2 x 1 `float` matrix.
 typedef Matrix2x1 Mat2x1;
+/// @brief 3 x 1 `float` matrix.
 typedef Matrix3x1 Mat3x1;
+/// @brief 4 x 1 `float` matrix.
 typedef Matrix4x1 Mat4x1;
 
+/// @brief 2 x 2 `float` matrix.
 typedef Matrix2x2 Mat2x2;
+/// @brief 3 x 2 `float` matrix.
 typedef Matrix3x2 Mat3x2;
+/// @brief 4 x 2 `float` matrix.
 typedef Matrix4x2 Mat4x2;
 
+/// @brief 2 x 3 `float` matrix.
 typedef Matrix2x3 Mat2x3;
+/// @brief 3 x 3 `float` matrix.
 typedef Matrix3x3 Mat3x3;
+/// @brief 4 x 3 `float` matrix.
 typedef Matrix4x3 Mat4x3;
 
+/// @brief 2 x 4 `float` matrix.
 typedef Matrix2x4 Mat2x4;
+/// @brief 3 x 4 `float` matrix.
 typedef Matrix3x4 Mat3x4;
+/// @brief 4 x 4 `float` matrix.
 typedef Matrix4x4 Mat4x4;
 
+/// @brief 2 x 2 `float` matrix.
 typedef Matrix2 Mat2;
+/// @brief 3 x 3 `float` matrix.
 typedef Matrix3 Mat3;
+/// @brief 4 x 4 `float` matrix.
 typedef Matrix4 Mat4;
 
-// Double shorthands
+/// @brief 2 x 1 `double` matrix.
 typedef Matrix2x1d Mat2x1d;
+/// @brief 3 x 1 `double` matrix.
 typedef Matrix3x1d Mat3x1d;
+/// @brief 4 x 1 `double` matrix.
 typedef Matrix4x1d Mat4x1d;
 
+/// @brief 2 x 2 `double` matrix.
 typedef Matrix2x2d Mat2x2d;
+/// @brief 3 x 2 `double` matrix.
 typedef Matrix3x2d Mat3x2d;
+/// @brief 4 x 2 `double` matrix.
 typedef Matrix4x2d Mat4x2d;
 
+/// @brief 2 x 3 `double` matrix.
 typedef Matrix2x3d Mat2x3d;
+/// @brief 3 x 3 `double` matrix.
 typedef Matrix3x3d Mat3x3d;
+/// @brief 4 x 3 `double` matrix.
 typedef Matrix4x3d Mat4x3d;
 
+/// @brief 2 x 4 `double` matrix.
 typedef Matrix2x4d Mat2x4d;
+/// @brief 3 x 4 `double` matrix.
 typedef Matrix3x4d Mat3x4d;
+/// @brief 4 x 4 `double` matrix.
 typedef Matrix4x4d Mat4x4d;
 
+/// @brief 2 x 2 `double` matrix.
 typedef Matrix2d Mat2d;
+/// @brief 3 x 3 `double` matrix.
 typedef Matrix3d Mat3d;
+/// @brief 4 x 4 `double` matrix.
 typedef Matrix4d Mat4d;
 
-//Long double shorthands
+/// @brief 2 x 1 `long double` matrix.
 typedef Matrix2x1ld Mat2x1ld;
+/// @brief 3 x 1 `long double` matrix.
 typedef Matrix3x1ld Mat3x1ld;
+/// @brief 4 x 1 `long double` matrix.
 typedef Matrix4x1ld Mat4x1ld;
 
+/// @brief 2 x 2 `long double` matrix.
 typedef Matrix2x2ld Mat2x2ld;
+/// @brief 3 x 2 `long double` matrix.
 typedef Matrix3x2ld Mat3x2ld;
+/// @brief 4 x 2 `long double` matrix.
 typedef Matrix4x2ld Mat4x2ld;
 
+/// @brief 2 x 3 `long double` matrix.
 typedef Matrix2x3ld Mat2x3ld;
+/// @brief 3 x 3 `long double` matrix.
 typedef Matrix3x3ld Mat3x3ld;
+/// @brief 4 x 3 `long double` matrix.
 typedef Matrix4x3ld Mat4x3ld;
 
+/// @brief 2 x 4 `long double` matrix.
 typedef Matrix2x4ld Mat2x4ld;
+/// @brief 3 x 4 `long double` matrix.
 typedef Matrix3x4ld Mat3x4ld;
+/// @brief 4 x 4 `long double` matrix.
 typedef Matrix4x4ld Mat4x4ld;
 
+/// @brief 2 x 2 `long double` matrix.
 typedef Matrix2ld Mat2ld;
+/// @brief 3 x 3 `long double` matrix.
 typedef Matrix3ld Mat3ld;
+/// @brief 4 x 4 `long double` matrix.
 typedef Matrix4ld Mat4ld;
 
-// Integer shorthands
+/// @brief 2 x 1 `int` matrix.
 typedef Matrix2x1i Mat2x1i;
+/// @brief 3 x 1 `int` matrix.
 typedef Matrix3x1i Mat3x1i;
+/// @brief 4 x 1 `int` matrix.
 typedef Matrix4x1i Mat4x1i;
 
+/// @brief 2 x 2 `int` matrix.
 typedef Matrix2x2i Mat2x2i;
+/// @brief 3 x 2 `int` matrix.
 typedef Matrix3x2i Mat3x2i;
+/// @brief 4 x 2 `int` matrix.
 typedef Matrix4x2i Mat4x2i;
 
+/// @brief 2 x 3 `int` matrix.
 typedef Matrix2x3i Mat2x3i;
+/// @brief 3 x 3 `int` matrix.
 typedef Matrix3x3i Mat3x3i;
+/// @brief 4 x 3 `int` matrix.
 typedef Matrix4x3i Mat4x3i;
 
+/// @brief 2 x 4 `int` matrix.
 typedef Matrix2x4i Mat2x4i;
+/// @brief 3 x 4 `int` matrix.
 typedef Matrix3x4i Mat3x4i;
+/// @brief 4 x 4 `int` matrix.
 typedef Matrix4x4i Mat4x4i;
 
+/// @brief 2 x 2 `int` matrix.
 typedef Matrix2i Mat2i;
+/// @brief 3 x 3 `int` matrix.
 typedef Matrix3i Mat3i;
+/// @brief 4 x 4 `int` matrix.
 typedef Matrix4i Mat4i;
 
-// https://github.com/g-truc/glm/blob/master/glm/ext/matrix_transform.inl
+/// @brief Creates a camera (view) matrix.
+/// @param eye Camera position.
+/// @param at Camera target.
+/// @param up Camera "up" direction.
+/// @return Resulting matrix.
+/// @link https://github.com/g-truc/glm/blob/master/glm/ext/matrix_transform.inl
 constexpr Matrix4x4 lookAt(Vector3 const& eye, Vector3 const& at, Vector3 const& up) {
 	Vector3 const f((at - eye).normalized());
 	Vector3 const s(f.crossProd(up).normalized());
@@ -1409,7 +1753,16 @@ constexpr Matrix4x4 lookAt(Vector3 const& eye, Vector3 const& at, Vector3 const&
 	return result;
 }
 
-// https://github.com/g-truc/glm/blob/master/glm/ext/matrix_clip_space.inl
+/// @brief Creates an orthographic projection matrix.
+/// @tparam T Matrix element type.
+/// @param left Leftmost edge of orthographic frustum.
+/// @param right Rightmost edge of orthographic frustum.
+/// @param bottom Bottommost edge of orthographic frustum.
+/// @param top Topmost edge of orthographic frustum.
+/// @param zNear Near clip plane.
+/// @param zFar Far clip plane.
+/// @return Resulting matrix.
+/// @link https://github.com/g-truc/glm/blob/master/glm/ext/matrix_clip_space.inl
 template<CTL::Type::Math::Operatable T>
 constexpr Matrix<4, 4, T> ortho(
 	T const& left,
@@ -1429,7 +1782,14 @@ constexpr Matrix<4, 4, T> ortho(
 	return result;
 }
 
-// https://github.com/g-truc/glm/blob/master/glm/ext/matrix_clip_space.inl
+/// @brief Creates an orthographic projection matrix.
+/// @tparam T Matrix element type.
+/// @param left Leftmost edge of orthographic frustum.
+/// @param right Rightmost edge of orthographic frustum.
+/// @param bottom Bottommost edge of orthographic frustum.
+/// @param top Topmost edge of orthographic frustum.
+/// @return Resulting matrix.
+/// @link https://github.com/g-truc/glm/blob/master/glm/ext/matrix_clip_space.inl
 template<CTL::Type::Math::Operatable T>
 constexpr Matrix<4, 4, T> infiniteOrtho(
 	T const& left,
@@ -1446,7 +1806,16 @@ constexpr Matrix<4, 4, T> infiniteOrtho(
 	return result;
 }
 
-// https://github.com/g-truc/glm/blob/master/glm/ext/matrix_clip_space.inl
+/// @brief Creates a generic view frustum projection matrix.
+/// @tparam T Matrix element type.
+/// @param left Leftmost edge of the frustum.
+/// @param right Rightmost edge of the frustum.
+/// @param bottom Bottommost edge of the frustum.
+/// @param top Topmost edge of the frustum.
+/// @param zNear Near clip plane.
+/// @param zFar Far clip plane.
+/// @return Resulting matrix.
+/// @link https://github.com/g-truc/glm/blob/master/glm/ext/matrix_clip_space.inl
 template<CTL::Type::Math::Operatable T>
 constexpr Matrix<4, 4, T> frustum(
 	T const& left,
@@ -1467,7 +1836,14 @@ constexpr Matrix<4, 4, T> frustum(
 	return result;
 }
 
-// https://github.com/g-truc/glm/blob/master/glm/ext/matrix_clip_space.inl
+/// @brief Creates a perspective projection matrix.
+/// @tparam T Matrix element type.
+/// @param fovy Field of view.
+/// @param aspect Aspect ratio (width/height).
+/// @param zNear Near clip plane.
+/// @param zFar Far clip plane.
+/// @return Resulting matrix.
+/// @link https://github.com/g-truc/glm/blob/master/glm/ext/matrix_clip_space.inl
 template<CTL::Type::Math::Operatable T>
 constexpr Matrix<4, 4, T> perspective(
 	T const& fovy,
@@ -1485,7 +1861,15 @@ constexpr Matrix<4, 4, T> perspective(
 	return result;
 }
 
-// https://github.com/g-truc/glm/blob/master/glm/ext/matrix_clip_space.inl
+/// @brief Creates a perspective projection matrix.
+/// @tparam T Matrix element type.
+/// @param fov Field of view.
+/// @param width Screen width.
+/// @param height Screen height.
+/// @param zNear Near clip plane.
+/// @param zFar Far clip plane.
+/// @return Resulting matrix.
+/// @link https://github.com/g-truc/glm/blob/master/glm/ext/matrix_clip_space.inl
 template<CTL::Type::Math::Operatable T>
 constexpr Matrix<4, 4, T> perspectiveFOV(
 	T const& fov,
@@ -1506,7 +1890,12 @@ constexpr Matrix<4, 4, T> perspectiveFOV(
 	return result;
 }
 
-// https://github.com/g-truc/glm/blob/master/glm/ext/matrix_clip_space.inl
+/// @brief Creates a perspective projection matrix.
+/// @tparam T Matrix element type.
+/// @param fovy Field of view.
+/// @param zNear Near clip plane.
+/// @return Resulting matrix.
+/// @link https://github.com/g-truc/glm/blob/master/glm/ext/matrix_clip_space.inl 
 template<CTL::Type::Math::Operatable T>
 constexpr Matrix<4, 4, T> infinitePerspective(
 	T const& fovy,
@@ -1527,7 +1916,11 @@ constexpr Matrix<4, 4, T> infinitePerspective(
 	return result;
 }
 
-// https://github.com/g-truc/glm/blob/master/glm/gtx/euler_angles.inl
+/// @brief Returns the euler angles for a matrix.
+/// @tparam T Matrix element type.
+/// @param mat Matrix to get euler angles from.
+/// @return Euler angles.
+/// @link https://github.com/g-truc/glm/blob/master/glm/gtx/euler_angles.inl
 template<CTL::Type::Math::Operatable T>
 constexpr Vector3 getEulerAnglesYXZ(Matrix<4, 4, T> const& mat) {
 	float T1 = atan2(mat[2][0], mat[2][2]);
@@ -1539,7 +1932,11 @@ constexpr Vector3 getEulerAnglesYXZ(Matrix<4, 4, T> const& mat) {
 	return Vector3(T1, T2, T3);
 }
 
-// https://github.com/g-truc/glm/blob/master/glm/gtx/euler_angles.inl
+/// @brief Returns the euler angles for a matrix.
+/// @tparam T Matrix element type.
+/// @param mat Matrix to get euler angles from.
+/// @return Euler angles.
+/// @link https://github.com/g-truc/glm/blob/master/glm/gtx/euler_angles.inl
 template<CTL::Type::Math::Operatable T>
 constexpr Vector3 getEulerAnglesXYZ(Matrix<4, 4, T> const& mat) {
 	float T1 = atan2(mat[2][1], mat[2][2]);
@@ -1551,6 +1948,12 @@ constexpr Vector3 getEulerAnglesXYZ(Matrix<4, 4, T> const& mat) {
 	return Vector3(T1, T2, T3);
 }
 
+/// @brief Interpolates between two matrices.
+/// @tparam T Matrix element type.
+/// @param from Start matrix.
+/// @param to End matrix.
+/// @param by Amount to interpolate by.
+/// @return Resulting matrix.
 template <Type::Ex::Math::Matrix::Matrix T>
 constexpr T lerp(T const& from, T const& to, typename T::DataType const& by) {
 	T result(0);
@@ -1560,6 +1963,12 @@ constexpr T lerp(T const& from, T const& to, typename T::DataType const& by) {
 	return result;
 }
 
+/// @brief Interpolates between two matrices.
+/// @tparam T Matrix element type.
+/// @param from Start matrix.
+/// @param to End matrix.
+/// @param by Amount to interpolate by.
+/// @return Resulting matrix.
 template <Type::Ex::Math::Matrix::Matrix T>
 constexpr T lerp(T const& from, T const& to, T const& by) {
 	T result(0);
