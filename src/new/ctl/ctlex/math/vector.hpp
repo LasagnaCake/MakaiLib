@@ -68,6 +68,35 @@ namespace Meta {
 	using VectorType = CTL::Meta::DualType<Type::Number<B>, A, B>;
 }
 
+/// @brief Universal vector unary plus operator.
+/// @tparam A Vector type.
+/// @param v Vector to operate on.
+/// @return Result of the operation.
+template<Type::Ex::Math::Vector::Vector T>
+constexpr T operator+(T const& v) {
+	if constexpr (Type::Equal<T, Vector2>)
+		return T(v.x, v.y);
+	else if constexpr (Type::Equal<T, Vector3>)
+		return T(v.x, v.y, v.z);
+	else if constexpr (Type::Equal<T, Vector4>)
+		return T(v.x, v.y, v.z, v.w);
+}
+
+/// @brief Universal vector unary minus operator.
+/// @tparam A Vector type.
+/// @param v Vector to operate on.
+/// @return Result of the operation.
+template<Type::Ex::Math::Vector::Vector T>
+constexpr T operator-(T const& v) {
+	if constexpr (Type::Equal<T, Vector2>)
+		return T(-v.x, -v.y);
+	else if constexpr (Type::Equal<T, Vector3>)
+		return T(-v.x, -v.y, -v.z);
+	else if constexpr (Type::Equal<T, Vector4>)
+		return T(-v.x, -v.y, -v.z, -v.w);
+}
+
+
 /// @brief Universal vector addition operator.
 /// @tparam A Left side type.
 /// @tparam B Right side type.
@@ -194,6 +223,135 @@ constexpr Meta::VectorType<A, B> operator^(A const& a, B const& b) {
 		return A(pow(a.x, b.x), pow(a.y, b.y), pow(a.z, b.z), pow(a.w, b.w));
 }
 
+/// @brief Universal vector addition assignment operator.
+/// @tparam A Left side type.
+/// @tparam B Right side type.
+/// @param a Left side of the operation.
+/// @param b Right side of the operation.
+/// @return Result of the operation.
+template<
+	Type::Ex::Math::Vector::Vector A,
+	Type::Ex::Math::Vector::Vectorable B
+>
+constexpr Meta::VectorType<A, B> operator+=(A& a, B const& b) {
+	return a = a + b;
+}
+
+/// @brief Universal vector subtraction assignment operator.
+/// @tparam A Left side type.
+/// @tparam B Right side type.
+/// @param a Left side of the operation.
+/// @param b Right side of the operation.
+/// @return Result of the operation.
+template<
+	Type::Ex::Math::Vector::Vector A,
+	Type::Ex::Math::Vector::Vectorable B
+>
+constexpr Meta::VectorType<A, B> operator-=(A& a, B const& b) {
+	return a = a - b;
+}
+
+/// @brief Universal vector multiplication assignment operator.
+/// @tparam A Left side type.
+/// @tparam B Right side type.
+/// @param a Left side of the operation.
+/// @param b Right side of the operation.
+/// @return Result of the operation.
+template<
+	Type::Ex::Math::Vector::Vector A,
+	Type::Ex::Math::Vector::Vectorable B
+>
+constexpr Meta::VectorType<A, B> operator*=(A& a, B const& b) {
+	return a = a /b;
+}
+
+/// @brief Universal vector division assignment operator.
+/// @tparam A Left side type.
+/// @tparam B Right side type.
+/// @param a Left side of the operation.
+/// @param b Right side of the operation.
+/// @return Result of the operation.
+template<
+	Type::Ex::Math::Vector::Vector A,
+	Type::Ex::Math::Vector::Vectorable B
+>
+constexpr Meta::VectorType<A, B> operator/=(A& a, B const& b) {
+	return a = a / b;
+}
+
+/// @brief Universal vector division assignment operator.
+/// @tparam A Left side type.
+/// @tparam B Right side type.
+/// @param a Left side of the operation.
+/// @param b Right side of the operation.
+/// @return Result of the operation.
+template<
+	Type::Ex::Math::Vector::Vector A,
+	Type::Ex::Math::Vector::Vectorable B
+>
+constexpr Meta::VectorType<A, B> operator%=(A& a, B const& b) {
+	return a = a % b;
+}
+
+/// @brief Universal vector exponentiation assignment operator.
+/// @tparam A Left side type.
+/// @tparam B Right side type.
+/// @param a Left side of the operation.
+/// @param b Right side of the operation.
+/// @return Result of the operation.
+template<
+	Type::Ex::Math::Vector::Vector A,
+	Type::Ex::Math::Vector::Vectorable B
+>
+constexpr Meta::VectorType<A, B> operator^=(A& a, B const& b) {
+	return a = a ^ b;
+}
+
+/// @brief Universal vector comparison operator.
+/// @tparam A Left side type.
+/// @tparam B Right side type.
+/// @param a Left side of the operation.
+/// @param b Right side of the operation.
+/// @return Result of the operation.
+template<
+	Type::Ex::Math::Vector::Vectorable A,
+	Type::Ex::Math::Vector::Operatable<A> B
+>
+constexpr bool operator==(A const& a, B const& b) {
+	if constexpr (Type::Number<A> || Type::Number<B>)
+		return Meta::VectorType<A, B>(a) == Meta::VectorType<A, B>(b);
+	else if constexpr (Type::Equal<A, Vector2>)
+		return a.x == b.x && a.y == b.y;
+	else if constexpr (Type::Equal<A, Vector3>)
+		return a.x == b.x && a.y == b.y && a.z == b.z;
+	else if constexpr (Type::Equal<A, Vector4>)
+		return a.x == b.x && a.y == b.y && a.z == b.z && a.w == b.w;
+}
+
+/// @brief Universal vector threeway comparison operator.
+/// @tparam A Left side type.
+/// @tparam B Right side type.
+/// @param a Left side of the operation.
+/// @param b Right side of the operation.
+/// @return Result of the operation.
+template<
+	Type::Ex::Math::Vector::Vectorable A,
+	Type::Ex::Math::Vector::Operatable<A> B
+>
+constexpr Meta::VectorType<A, B>::OrderType operator<=>(A const& a, B const& b) {
+	using Order = Meta::VectorType<A, B>::Order;
+	if constexpr (Type::Number<A> || Type::Number<B>)
+		return Meta::VectorType<A, B>(a) <=> Meta::VectorType<A, B>(b);
+	typename Meta::VectorType<A, B>::OrderType	ord = a.x <=> b.x;
+	if constexpr (Type::Equal<A, Vector2>)
+		if (ord == Order::EQUAL)				ord = a.y <=> b.y;
+	if constexpr (Type::Equal<A, Vector3>)
+		if (ord == Order::EQUAL)				ord = a.z <=> b.z;
+	if constexpr (Type::Equal<A, Vector4>)
+		if (ord == Order::EQUAL)				ord = a.w <=> b.w;
+	return ord;
+}
+
 #pragma pack(push, 1)
 /// @brief Two-dimensional vector.
 class Vector2: Ordered {
@@ -254,46 +412,8 @@ class Vector2: Ordered {
 		/// @return Vector pointing towards -Y.
 		constexpr static Vector2 DOWN()		{return Vector2(+0, -1);	}
 
-		/// Comparison operators
-
-		constexpr bool operator==(Vector2 const& other) const {
-			return (
-				x == other.x
-			&&	y == other.y
-			);
-		}
-
-		constexpr OrderType operator<=>(Vector2 const& other) const {
-			OrderType result = Order::EQUAL;
-			if ((result = x <=> other.x) != Order::EQUAL) return result;
-			return y <=> other.y;
-		}
-
-		template <typename T>
-		constexpr OrderType operator<=>(T const& val) const
-		requires CTL::Type::Convertible<T, float> {
-			return *this <=> Vector2(val);
-		}
-
-		/// Unary operators
-
-		constexpr Vector2 operator+() const {
-			return *this;
-		}
-
-		constexpr Vector2 operator-() const {
-			return *this * -1;
-		}
-
-		// Other overloads
-
 		constexpr float& operator[](usize const pos)		{if (pos > 1) return data[0]; return data[pos];}
 		constexpr float operator[](usize const pos) const	{if (pos > 1) return data[0]; return data[pos];}
-
-		constexpr float* operator*() {return data;};
-
-		constexpr explicit operator float*()				{return data;}
-		constexpr explicit operator const float*() const	{return data;}
 
 		// Extra functions
 
@@ -460,46 +580,6 @@ class Vector3: Ordered {
 		constexpr static Vector3 BACK()		{return Vector3(+0, +0, +1);	}
 		constexpr static Vector3 FRONT()	{return Vector3(+0, +0, -1);	}
 
-		/// Comparison operators
-
-		constexpr bool operator==(Vector3 const& other) const {
-			return (
-				x == other.x
-			&&	y == other.y
-			&&	z == other.z
-			);
-		}
-
-		constexpr OrderType operator<=>(Vector3 const& other) const {
-			OrderType result = Order::EQUAL;
-			if ((result = x <=> other.x) != Order::EQUAL) return result;
-			if ((result = y <=> other.y) != Order::EQUAL) return result;
-			return z <=> other.z;
-		}
-
-		template <typename T>
-		constexpr OrderType operator<=>(T const& val) const
-		requires CTL::Type::Convertible<T, float> {
-			return *this <=> Vector3(val);
-		}
-
-		/// Unary operators
-
-		constexpr Vector3 operator+() const {
-			return *this;
-		}
-
-		constexpr Vector3 operator-() const {
-			return *this * -1;
-		}
-
-		// Other overloads
-
-		constexpr explicit operator float*()				{return data;}
-		constexpr explicit operator const float*() const	{return data;}
-
-		constexpr float* operator*() {return data;};
-
 		constexpr float& operator[](usize const pos)		{if (pos > 2) return data[0]; return data[pos];}
 		constexpr float operator[](usize const pos) const	{if (pos > 2) return data[0]; return data[pos];}
 
@@ -561,10 +641,7 @@ class Vector3: Ordered {
 
 		/// Normalizes the vector.
 		constexpr Vector3& normalize() {
-			if (*this != 0)
-				return *this /= length();
-			else
-				return *this;
+			return *this = normalized();
 		}
 
 		/// Gets a normalized vector pointing towards another vector.
@@ -709,48 +786,6 @@ class Vector4: Ordered {
 		constexpr static Vector4 FUTURE()	{return Vector4(+0, +0, +0, +1);	}
 		constexpr static Vector4 PAST()		{return Vector4(+0, +0, +0, -1);	}
 
-		/// Comparison operators.
-
-		constexpr bool operator==(Vector4 const& other) const {
-			return (
-				x == other.x
-			&&	y == other.y
-			&&	z == other.z
-			&&	w == other.w
-			);
-		}
-
-		constexpr OrderType operator<=>(Vector4 const& other) const {
-			OrderType result = Order::EQUAL;
-			if ((result = x <=> other.x) != Order::EQUAL) return result;
-			if ((result = y <=> other.y) != Order::EQUAL) return result;
-			if ((result = z <=> other.z) != Order::EQUAL) return result;
-			return w <=> other.w;
-		}
-
-		template <typename T>
-		constexpr OrderType operator<=>(T const& val) const
-		requires CTL::Type::Convertible<T, float> {
-			return *this <=> Vector4(val);
-		}
-
-		/// Unary operators
-
-		constexpr Vector4 operator+() const {
-			return *this;
-		}
-
-		constexpr Vector4 operator-() const {
-			return *this * -1;
-		}
-
-		// Other overloads
-
-		constexpr explicit operator float*()				{return data;}
-		constexpr explicit operator const float*() const	{return data;}
-
-		constexpr float* operator*() {return data;};
-
 		constexpr float& operator[](usize const pos)		{if (pos > 3) return data[0]; return data[pos];}
 		constexpr float operator[](usize const pos) const	{if (pos > 3) return data[0]; return data[pos];}
 
@@ -796,10 +831,7 @@ class Vector4: Ordered {
 
 		/// Normalizes the vector.
 		constexpr Vector4& normalize() {
-			if (*this != 0)
-				return *this /= length();
-			else
-				return *this;
+			return *this = normalized();
 		}
 
 		/// Gets the distance to another vector.
