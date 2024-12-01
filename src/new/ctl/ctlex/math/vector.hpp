@@ -1120,7 +1120,7 @@ typedef Vector3 Vec3;
 /// @brief `Vector4` shorthand.
 typedef Vector4 Vec4;
 
-/// @brief Transformation.
+/// @brief Transformation representation.
 /// @tparam TPosition Position component.
 /// @tparam TRotation Rotation component.
 /// @tparam TScale Scaling component.
@@ -1143,22 +1143,34 @@ struct Transform {
 		rotation(0),
 		scale(1) {}
 
+	/// @brief Constructs the transform with a set of transforms.
+	/// @param position Position.
+	/// @param rotation Rotation.
+	/// @param scale Scaling.
 	constexpr Transform(PositionType const& position, RotationType const& rotation, ScaleType const& scale):
 		position(position),
 		rotation(rotation),
 		scale(scale) {}
 
+	/// @brief Returns a transform with no position and rotation, and a scaling of 1.
+	/// @return Identity transform.
 	constexpr static Transform identity() {return Transform(0, 0, 1);}
 
+	/// @brief Position transform.
 	TPosition	position	= TPosition(0);
+	/// @brief Rotation transform.
 	TRotation	rotation	= TRotation(0);
+	/// @brief Scaling transform.
 	TScale		scale		= TScale(1);
 };
 
+/// @brief Two-dimensional transformation.
 using Transform2D = Transform<Vector2, float, Vector2>;
+/// @brief Three-dimensional transformation.
 using Transform3D = Transform<Vector3, Vector3, Vector3>;
 
-enum class Axis: usize {
+/// @brief 3D rotation axis.
+enum class RotationAxis: usize {
 	POS_X,
 	POS_Y,
 	POS_Z,
@@ -1229,17 +1241,17 @@ constexpr Vector3 rotateV3(Vector3 vec, Vector3 const& angle) {
 * Rotates a given 3D Vector around two of the origin's axis by two respective angles.
 * The given axis is the axis to be excluded.
 */
-constexpr Vector3 rotateV3(Vector3 const& vec, Vector2 const& angle, Axis const& exclude = Axis::POS_X) {
+constexpr Vector3 rotateV3(Vector3 const& vec, Vector2 const& angle, RotationAxis const& exclude = RotationAxis::POS_X) {
 	switch (exclude) {
-	case Axis::POS_X:
-	case Axis::NEG_X:
+	case RotationAxis::POS_X:
+	case RotationAxis::NEG_X:
 		return rotateV3(vec, Vector3(0, angle.x, angle.y));
-	case Axis::POS_Y:
-	case Axis::NEG_Y:
+	case RotationAxis::POS_Y:
+	case RotationAxis::NEG_Y:
 	default:
 		return rotateV3(vec, Vector3(angle.x, 0, angle.y));
-	case Axis::POS_Z:
-	case Axis::NEG_Z:
+	case RotationAxis::POS_Z:
+	case RotationAxis::NEG_Z:
 		return rotateV3(vec, Vector3(angle.x, angle.y, 0));
 	}
 }
@@ -1254,36 +1266,36 @@ constexpr Vector2 angleV2(float const angle) {
 }
 
 /// Gets a 3D Vector of size 1 at a given angle around one of the origin's axis.
-constexpr Vector3 angleV3(float const angle, Axis const& axis = Axis::NEG_Z) {
+constexpr Vector3 angleV3(float const angle, RotationAxis const& axis = RotationAxis::NEG_Z) {
 	switch (axis) {
-	case Axis::POS_X:
-	case Axis::NEG_X:
+	case RotationAxis::POS_X:
+	case RotationAxis::NEG_X:
 		return Vector3(0, cos(angle), -sin(angle));
-	case Axis::POS_Y:
-	case Axis::NEG_Y:
+	case RotationAxis::POS_Y:
+	case RotationAxis::NEG_Y:
 		return Vector3(cos(angle), 0, -sin(angle));
 	default:
-	case Axis::POS_Z:
-	case Axis::NEG_Z:
+	case RotationAxis::POS_Z:
+	case RotationAxis::NEG_Z:
 		return Vector3(cos(angle), -sin(angle), 0);
 	}
 }
 
 /// Gets a 3D Vector of size 1, pointing towards a given axis, rotated at a given angle.
-constexpr Vector3 angleV3(Vector3 const& angle, Axis const& axis = Axis::NEG_Z) {
+constexpr Vector3 angleV3(Vector3 const& angle, RotationAxis const& axis = RotationAxis::NEG_Z) {
 	switch (axis) {
-	case Axis::POS_X:
+	case RotationAxis::POS_X:
 		return rotateV3(Vector3(+1,0,0), angle);
-	case Axis::NEG_X:
+	case RotationAxis::NEG_X:
 		return rotateV3(Vector3(-1,0,0), angle);
-	case Axis::POS_Y:
+	case RotationAxis::POS_Y:
 		return rotateV3(Vector3(0,+1,0), angle);
-	case Axis::NEG_Y:
+	case RotationAxis::NEG_Y:
 		return rotateV3(Vector3(0,-1,0), angle);
-	case Axis::POS_Z:
+	case RotationAxis::POS_Z:
 		return rotateV3(Vector3(0,0,+1), angle);
 	default:
-	case Axis::NEG_Z:
+	case RotationAxis::NEG_Z:
 		return rotateV3(Vector3(0,0,-1), angle);
 	}
 }

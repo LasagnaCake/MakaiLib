@@ -120,7 +120,7 @@ struct TestApp: Makai::App {
 			crot.x,
 			cos(crot.y)
 		);
-		//camera.at = Makai::Math::angleV3(crot, Makai::Math::Axis::POS_Z);
+		//camera.at = Makai::Math::angleV3(crot, Makai::Math::RotationAxis::POS_Z);
 		//camera.at = Vec3(0, 0, 1);
 	}
 };
