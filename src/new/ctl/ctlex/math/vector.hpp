@@ -358,7 +358,7 @@ class Vector2: Ordered {
 	public:
 		using Ordered::OrderType, Ordered::Order;
 
-		/// @brief The vector's components.
+		/// @brief Vector components.
 		union {
 			struct {float x, y;		};
 			struct {float nx, ny;	};
@@ -412,42 +412,53 @@ class Vector2: Ordered {
 		/// @return Vector pointing towards -Y.
 		constexpr static Vector2 DOWN()		{return Vector2(+0, -1);	}
 
+		/// @brief Gets a component at a given index.
+		/// @param pos Index of the component.
+		/// @return Reference to component.
 		constexpr float& operator[](usize const pos)		{if (pos > 1) return data[0]; return data[pos];}
+		/// @brief Gets a component at a given index.
+		/// @param pos Index of the component.
+		/// @return Value of the component.
 		constexpr float operator[](usize const pos) const	{if (pos > 1) return data[0]; return data[pos];}
 
-		// Extra functions
-
-		/// Gets the sum of the vector's components.
+		/// @brief Gets the sum of the vector's components.
+		/// @returns Sum of the vector's components.
 		constexpr float sum() const {
 			return x + y;
 		}
 
-		/// Gets the average of the vector's components.
+		/// @brief Gets the average of the vector's components.
+		/// @returns Average of the vector's components
 		constexpr float average() const {
 			return sum() / 2;
 		}
 
-		/// Gets the smallest of the vector's components.
+		/// @brief Gets the smallest of the vector's components.
+		/// @returns Smallest of the vector's components
 		constexpr float min() const {
 			return (x < y) ? x : y;
 		}
 
-		/// Gets the biggest of the vector's components.
+		/// @brief Gets the biggest of the vector's components.
+		/// @returns Biggest of the vector's components
 		constexpr float max() const {
 			return (x > y) ? x : y;
 		}
 
-		/// Gets the vector's length (distance to origin).
+		/// @brief Gets the vector's length.
+		/// @brief Length of vector.
 		constexpr float length() const {
 			return sqrt((x * x) + (y * y));
 		}
 
-		/// Gets the vector's length (distance to origin).
+		/// @brief Gets the vector's squared length.
+		/// @brief Length of vector.
 		constexpr float lengthSquared() const {
 			return ((x * x) + (y * y));
 		}
 
-		/// Gets the normalized vector.
+		/// @brief Gets the normalized vector.
+		/// @returns Normalized vector.	
 		constexpr Vector2 normalized() const {
 			if (*this != 0)
 				return *this / length();
@@ -455,48 +466,65 @@ class Vector2: Ordered {
 				return *this;
 		}
 
-		/// Normalizes the vector.
+		/// @brief Normalizes the vector.
+		/// @returns Reference to self.
 		constexpr Vector2& normalize() {
 			return *this = normalized();
 		}
 
-		/// Gets the distance to another vector.
+		/// @brief Gets the distance to another vector.
+		/// @param vec Vector to get distance to.
+		/// @return Distance between vectors.
 		constexpr float distanceTo(Vector2 const& vec) const {
 			Vector2 diff = vec - *this;
 			return diff.length();
 		}
 
-		/// Gets the distance to another vector.
+		/// @brief Gets the squared distance to another vector.
+		/// @param vec Vector to get distance to.
+		/// @return Distance between vectors.
 		constexpr float squaredDistanceTo(Vector2 const& vec) const {
 			Vector2 diff = vec - *this;
 			return diff.lengthSquared();
 		}
 
-		/// Gets the vector's angle.
+		/// @brief Gets the vector's angle.
+		/// @return Angle of vector.
 		constexpr float angle() const {
 			return atan2(x, y) - HPI;
 		}
 
-		/// Gets the vector's angle to another vector.
+		/// @brief Gets the vector's angle to another vector.
+		/// @param vec Vector to get angle to.
+		/// @return Angle to vector.
 		constexpr float angleTo(Vector2 const& vec) const {
 			Vector2 diff = vec - *this;
 			return diff.angle();
 		}
 
-		/// Gets a normalized vector pointing towards another vector.
+		/// @brief Gets a normalized vector pointing towards another vector.
+		/// @param vec Vector to get normal to.
+		/// @return Normal to vector.
 		constexpr Vector2 normalTo(Vector2 const& vec) const {
 			Vector2 diff = vec - *this;
 			return diff.normalized();
 		}
 
 
-		/// Clamps the vector between two values.
-		constexpr void clamp(Vector2 const& min, Vector2 const& max) {
+		/// @brief Clamps the vector between two values.
+		/// @param min Minimum.
+		/// @param max Maximum.
+		/// @return Reference to self.
+		constexpr Vector2& clamp(Vector2 const& min, Vector2 const& max) {
 			x = ::CTL::Math::clamp(x, min.x, max.x);
 			y = ::CTL::Math::clamp(y, min.y, max.y);
+			return *this;
 		}
 
-		/// Returns the vector clamped between two values.
+		/// @brief Returns the vector clamped between two values.
+		/// @param min Minimum.
+		/// @param max Maximum.
+		/// @return Clamped vector.
 		constexpr Vector2 clamped(Vector2 const& min, Vector2 const& max) const {
 			return Vector2(
 				::CTL::Math::clamp(x, min.x, max.x),
@@ -504,22 +532,29 @@ class Vector2: Ordered {
 			);
 		}
 
-		/// Gets the tangent of the vector.
+		/// @brief Gets the tangent of the vector.
+		/// @return Tangent of vector.
 		constexpr float tangent() const {
 			return x / y;
 		}
 
-		/// Returns the dot product with another vector.
+		/// @brief Returns the dot product with another vector.
+		/// @param vec Vector to get dot product with.
+		/// @return Dot product between vectors.
 		constexpr float dotProd(Vector2 const& vec) const {
 			Vector2 mult = (*this) * vec;
 			return mult.x + mult.y;
 		}
 
-		/// Returns the cross product with another vector.
+		/// @brief Returns the cross product with another vector.
+		/// @param vec Vector to get cross product with.
+		/// @return Cross product between vectors.
 		constexpr float crossProd(Vector2 const& vec) const {
 			return (x * vec.y) - (y * vec.x);
 		}
 
+		/// @brief Returns the absolute value of the vector.
+		/// @return Absolute vector.
 		constexpr Vector2 absolute() const {
 			return Vector2(
 				abs(x),
@@ -527,6 +562,8 @@ class Vector2: Ordered {
 			);
 		}
 
+		/// @brief Returns the vector in (Y, X) form.
+		/// @return Vector in (Y, X) form.
 		constexpr Vector2 yx() const {
 			return Vector2(y, x);
 		}
@@ -536,7 +573,7 @@ class Vector3: Ordered {
 	public:
 		using Ordered::OrderType, Ordered::Order;
 		
-		/// The vector's position.
+		/// @brief Vector components.
 		union {
 			struct {float x, y, z;		};
 			struct {float nx, ny, nz;	};
@@ -545,8 +582,7 @@ class Vector3: Ordered {
 			float data[3] = {0};
 		};
 
-		/// Constructors.
-
+		/// @brief Empty constructor.
 		constexpr Vector3() {}
 
 		constexpr Vector3(float v):
