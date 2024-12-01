@@ -1113,20 +1113,31 @@ class Vector4: Ordered {
 };
 #pragma pack(pop)
 
+/// @brief `Vector2` shorthand.
 typedef Vector2 Vec2;
+/// @brief `Vector3` shorthand.
 typedef Vector3 Vec3;
+/// @brief `Vector4` shorthand.
 typedef Vector4 Vec4;
 
+/// @brief Transformation.
+/// @tparam TPosition Position component.
+/// @tparam TRotation Rotation component.
+/// @tparam TScale Scaling component.
 template <
 	Type::Ex::Math::Vector::Vector		TPosition,
 	Type::Ex::Math::Vector::Vectorable	TRotation	= TPosition,
 	Type::Ex::Math::Vector::Vector		TScale		= TPosition
 >
 struct Transform {
+	/// @brief Position component type.
 	typedef TPosition	PositionType;
+	/// @brief Rotation component type.
 	typedef TRotation	RotationType;
+	/// @brief Scaling component type.
 	typedef TScale		ScaleType;
 
+	/// @brief Empty constructor.
 	constexpr Transform():
 		position(0),
 		rotation(0),
