@@ -1388,7 +1388,7 @@ private:
 	template<usize R2, usize C2, CTL::Type::Math::Operatable T2> friend class Matrix;
 	template<typename T2> friend Matrix<4, 4, T2> translate(Matrix<4, 4, T2>, Vector3 const&);
 	/// The matrix's data.
-	MatrixType<> data = {};
+	Decay::AsType<DataType[C][R]> data = {};
 };
 
 /// @brief Template matrix shorthand.
