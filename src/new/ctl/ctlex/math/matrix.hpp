@@ -1952,8 +1952,8 @@ constexpr Vector3 getEulerAnglesXYZ(Matrix<4, 4, T> const& mat) {
 /// @tparam T Matrix element type.
 /// @param from Start matrix.
 /// @param to End matrix.
-/// @param by Amount to interpolate by.
-/// @return Resulting matrix.
+/// @param by Interpolation factor.
+/// @return Interpolation between matrices.
 template <Type::Ex::Math::Matrix::Matrix T>
 constexpr T lerp(T const& from, T const& to, typename T::DataType const& by) {
 	T result(0);
@@ -1967,8 +1967,8 @@ constexpr T lerp(T const& from, T const& to, typename T::DataType const& by) {
 /// @tparam T Matrix element type.
 /// @param from Start matrix.
 /// @param to End matrix.
-/// @param by Amount to interpolate by.
-/// @return Resulting matrix.
+/// @param by Interpolation factor.
+/// @return Interpolation between matrices.
 template <Type::Ex::Math::Matrix::Matrix T>
 constexpr T lerp(T const& from, T const& to, T const& by) {
 	T result(0);

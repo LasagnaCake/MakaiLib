@@ -1179,9 +1179,10 @@ enum class RotationAxis: usize {
 	NEG_Z
 };
 
-// Vector rotation
-
-/// Rotates a 2D Vector around the origin by a given angle.
+/// @brief Rotates a 2D Vector around the origin by a given angle.
+/// @param vec Vector to rotate.
+/// @param angle Angle to rotate by.
+/// @return Rotated vector.
 constexpr Vector2 rotateV2(Vector2 vec, float const angle) {
 	// Calculate the sine & cosine of the angle
 	float sinA = sin(angle);
@@ -1193,7 +1194,10 @@ constexpr Vector2 rotateV2(Vector2 vec, float const angle) {
 	return vec;
 }
 
-/// Rotates a given 3D Vector around the origin's axis by given angles.
+/// @brief Rotates a given 3D Vector around the origin's axes by given angles.
+/// @param vec Vector to rotate.
+/// @param angle Angle to rotate by.
+/// @return Rotated vector.
 constexpr Vector3 rotateV3(Vector3 vec, Vector3 const& angle) {
 	/*
 	* Based off of 3D Rotation Matrices:
@@ -1237,10 +1241,11 @@ constexpr Vector3 rotateV3(Vector3 vec, Vector3 const& angle) {
 	return res;
 }
 
-/**
-* Rotates a given 3D Vector around two of the origin's axis by two respective angles.
-* The given axis is the axis to be excluded.
-*/
+/// @brief Rotates a given 3D Vector around two of the origin's axis by two respective angles.
+/// @param vec Vector to rotate.
+/// @param angle Angles to rotate by.
+/// @param exclude Axis to exclude in rotation. By default, it is the X axis.
+/// @return Rotated angle.
 constexpr Vector3 rotateV3(Vector3 const& vec, Vector2 const& angle, RotationAxis const& exclude = RotationAxis::POS_X) {
 	switch (exclude) {
 	case RotationAxis::POS_X:
@@ -1256,16 +1261,17 @@ constexpr Vector3 rotateV3(Vector3 const& vec, Vector2 const& angle, RotationAxi
 	}
 }
 
-// No fourth-dimensional rotation. I'd rather die.
-
-// Angle-to-vector conversion
-
-/// Gets a 2D Vector of size 1 at a given angle relative to the origin.
+/// @brief Gets a 2D normal at a given angle relative to the origin.
+/// @param angle Angle to get normal for.
+/// @return Normal to angle.
 constexpr Vector2 angleV2(float const angle) {
 	return Vector2(cos(angle), -sin(angle));
 }
 
-/// Gets a 3D Vector of size 1 at a given angle around one of the origin's axis.
+/// @brief Gets a 3D normal at a given angle around one of the origin's axis.
+/// @param angle Angle to get normal for.
+/// @param axis Axis to use as rotation pivot.
+/// @return Normal to angle.
 constexpr Vector3 angleV3(float const angle, RotationAxis const& axis = RotationAxis::NEG_Z) {
 	switch (axis) {
 	case RotationAxis::POS_X:
@@ -1281,7 +1287,10 @@ constexpr Vector3 angleV3(float const angle, RotationAxis const& axis = Rotation
 	}
 }
 
-/// Gets a 3D Vector of size 1, pointing towards a given axis, rotated at a given angle.
+/// @brief Gets a 3D nomal, pointing towards a given axis, rotated at a given angle.
+/// @param angle Angle to get normal for.
+/// @param axis Axis for starting normal to point towards.
+/// @return Normal to angle.
 constexpr Vector3 angleV3(Vector3 const& angle, RotationAxis const& axis = RotationAxis::NEG_Z) {
 	switch (axis) {
 	case RotationAxis::POS_X:
@@ -1300,16 +1309,14 @@ constexpr Vector3 angleV3(Vector3 const& angle, RotationAxis const& axis = Rotat
 	}
 }
 
-// Cross product
-
-/// Gets the cross product of two 3D Vectors.
-constexpr Vector3 crossProd(Vector3 const& a, Vector3 const& b) {
-	return a.crossProd(b);
-}
-
 // Scale-rotation-position transformation
 
-/// Transforms a given 3D Vector by a given position, rotation and scale.
+/// @brief Transforms a given vector by a given position, rotation and scale.
+/// @param vec Vector to transform.
+/// @param pos Position to transform by.
+/// @param rot Rotation to transform by.
+/// @param scale Scale to transform by.
+/// @return Transformed vector.
 constexpr Vector3 srpTransform(Vector3 vec, Vector3 const& pos, Vector3 const& rot, Vector3 const& scale = Vector3(1.0)) {
 	vec *= scale;
 	vec = rotateV3(vec, rot);
@@ -1317,7 +1324,12 @@ constexpr Vector3 srpTransform(Vector3 vec, Vector3 const& pos, Vector3 const& r
 	return vec;
 }
 
-/// Transforms a given 2D Vector by a given position, rotation and scale.
+/// @brief Transforms a given vector by a given position, rotation and scale.
+/// @param vec Vector to transform.
+/// @param pos Position to transform by.
+/// @param rot Rotation to transform by.
+/// @param scale Scale to transform by.
+/// @return Transformed vector.
 constexpr Vector2 srpTransform(Vector2 vec, Vector2 const& pos, float const rot, Vector2 const& scale = Vector2(1.0)) {
 	vec *= scale;
 	vec = rotateV2(vec, rot);
@@ -1325,7 +1337,12 @@ constexpr Vector2 srpTransform(Vector2 vec, Vector2 const& pos, float const rot,
 	return vec;
 }
 
-/// Transforms a given set of 3D Vectors by a given position rotation and scale.
+/// @brief Transforms a given set of vectors by a given position, rotation and scale.
+/// @param vec Vectors to transform.
+/// @param pos Position to transform by.
+/// @param rot Rotation to transform by.
+/// @param scale Scale to transform by.
+/// @return Transformed vectors.
 constexpr List<Vector3> srpTransform(List<Vector3> vec, Vector3 const& pos, Vector3 const& rot, Vector3 const& scale = Vector3(1.0)) {
 	for (usize i = 0; i < vec.size(); i++) {
 		vec[i] = srpTransform(vec[i], pos, rot, scale);
@@ -1333,7 +1350,12 @@ constexpr List<Vector3> srpTransform(List<Vector3> vec, Vector3 const& pos, Vect
 	return vec;
 }
 
-/// Transforms a given set of 2D Vectors by a given position, rotation and scale.
+/// @brief Transforms a given set of vectors by a given position, rotation and scale.
+/// @param vec Vectors to transform.
+/// @param pos Position to transform by.
+/// @param rot Rotation to transform by.
+/// @param scale Scale to transform by.
+/// @return Transformed vectors.
 constexpr List<Vector2> srpTransform(List<Vector2> vec, Vector2 const& pos, float const rot, Vector2 const& scale = Vector2(1.0)) {
 	for (usize i = 0; i < vec.size(); i++) {
 		vec[i] = srpTransform(vec[i], pos, rot, scale);
@@ -1341,166 +1363,40 @@ constexpr List<Vector2> srpTransform(List<Vector2> vec, Vector2 const& pos, floa
 	return vec;
 }
 
-// Dot product
-
-/// Gets the dot product between two vectors.
-constexpr float dotProd(Vector4 a, Vector4 const& b) {
-	return a.dotProd(b);
-}
-
-/// Gets the dot product between two vectors.
-constexpr float dotProd(Vector3 a, Vector3 const& b) {
-	return a.dotProd(b);
-}
-
-/// Gets the dot product between two vectors.
-constexpr float dotProd(Vector2 a, Vector2 const& b) {
-	return a.dotProd(b);
-}
-
-// Angle between Vectors calculation
-
-/// Gets the angle from the origin to a given Vector.
-constexpr float angleTo(Vector2 const& vec) {
-	return vec.angle();
-}
-
-/// Gets the angle from Vector A to Vector B.
-constexpr float angleTo(Vector2 const& a, Vector2 const& b) {
-	return a.angleTo(b);
-}
-
-/// Gets the angle from the origin to a given Vector.
-constexpr Vector3 angleTo(Vector3 const& vec) {
-	return vec.angle();
-}
-
-/// Gets the angle from Vector A to Vector B.
-constexpr Vector3 angleTo(Vector3 const& a, Vector3 const& b) {
-	return a.angleTo(b);
-}
-
-/// Gets the normal pointing from the origin towards a given Vector.
-constexpr Vector2 normalTo(Vector2 const& vec) {
-	return vec.normalized();
-}
-
-/// Gets the normal pointing from Vector A to Vector B.
-constexpr Vector2 normalTo(Vector2 const& a, Vector2 const& b) {
-	return a.normalTo(b);
-}
-
-/// Gets the normal pointing from the origin towards a given Vector.
-constexpr Vector3 normalTo(Vector3 const& vec) {
-	return vec.normalized();
-}
-
-/// Gets the normal pointing from Vector A to Vector B.
-constexpr Vector3 normalTo(Vector3 const& a, Vector3 const& b) {
-	return a.normalTo(b);
-}
-
-// Normal reflection
-
-/// Reflects a given normal in accordance to a surface normal.
+/// @brief Reflects a given normal in accordance to a surface normal.
+/// @param normal Normal to reflect.
+/// @param surface Surface to reflect by.
+/// @return Reflected vector.
 constexpr Vector2 reflect(Vector2 const& normal, Vector2 const& surface) {
-	return surface * (normal - 2.0 * dotProd(normal, surface));
+	return surface * (normal - 2.0 * normal.dotProd(surface));
 }
 
-// Distance between vectors calculation
-
-/// Gets the distance from Vector A to Vector B.
-constexpr float distanceTo(Vector2 const& a, Vector2 const& b) {
-	return a.distanceTo(b);
-}
-
-/// Gets the distance from Vector A to Vector B.
-constexpr float distanceTo(Vector3 const& a, Vector3 const& b) {
-	return a.distanceTo(b);
-}
-
-/// Gets the distance from Vector A to Vector B.
-constexpr float distanceTo(Vector4 const& a, Vector4 const& b) {
-	return a.distanceTo(b);
-}
-
-/// Gets the distance squared from Vector A to Vector B.
-constexpr float squaredDistanceTo(Vector2 const& a, Vector2 const& b) {
-	return a.squaredDistanceTo(b);
-}
-
-/// Gets the distance squared from Vector A to Vector B.
-constexpr float squaredDistanceTo(Vector3 const& a, Vector3 const& b) {
-	return a.squaredDistanceTo(b);
-}
-
-/// Gets the distance squared from Vector A to Vector B.
-constexpr float squaredDistanceTo(Vector4 const& a, Vector4 const& b) {
-	return a.squaredDistanceTo(b);
-}
-
-// Vector linear angle interpolation (by vector)
-
-/// Linearly interpolates two vectors by a certain amount.
-constexpr Vector2 angleLerp(Vector2 const& from, Vector2 const& to, Vector2 const& by) {
-	Vector2 dist = (to - from) % TAU;
+/// @brief Linearly interpolates two vectors by a certain amount.
+/// @tparam T Vector type.
+/// @tparam T2 Interpolation factor type.
+/// @param from Beginning vector.
+/// @param to End vector.
+/// @param by Interpolation factor.
+/// @return Interpolation between vectors.
+template<
+	Type::Ex::Math::Vector::Vector T,
+	Type::Ex::Math::Vector::Vectorable T2 = T
+>
+constexpr T angleLerp(T const& from, T const& to, T2 const& by) 
+requires (Type::Equal<T, T2> || Type::Number<T2>) {
+	T dist = (to - from) % TAU;
 	dist = ((dist * 2.0) % TAU) - dist;
 	return from + dist * by;
 }
 
-/// Linearly interpolates two vectors by a certain amount.
-constexpr Vector3 angleLerp(Vector3 const& from, Vector3 const& to, Vector3 const& by) {
-	Vector3 dist = (to - from) % TAU;
-	dist = ((dist * 2.0) % TAU) - dist;
-	return from + dist * by;
-}
-
-/// Linearly interpolates two vectors by a certain amount.
-constexpr Vector4 angleLerp(Vector4 const& from, Vector4 const& to, Vector4 const& by) {
-	Vector4 dist = (to - from) % TAU;
-	dist = ((dist * 2.0) % TAU) - dist;
-	return from + dist * by;
-}
-
-// Vector linear angle interpolation (by float)
-
-/// Linearly interpolates two vectors by a certain amount.
-constexpr Vector2 angleLerp(Vector2 const& from, Vector2 const& to, float const by) {
-	return angleLerp(from, to, Vector2(by));
-}
-
-/// Linearly interpolates two vectors by a certain amount.
-constexpr Vector3 angleLerp(Vector3 const& from, Vector3 const& to, float const by) {
-	return angleLerp(from, to, Vector3(by));
-}
-
-/// Linearly interpolates two vectors by a certain amount.
-constexpr Vector4 angleLerp(Vector4 const& from, Vector4 const& to, float const by) {
-	return angleLerp(from, to, Vector4(by));
-}
-
-/// Gets the "center" of a given set of points.
-constexpr Vector2 center(List<Vector2> const& points) {
-	Vector2 result;
-	for (Vector2 p: points)
-		result += p;
-	result /= points.size();
-	return result;
-}
-
-/// Gets the "center" of a given set of points.
-constexpr Vector3 center(List<Vector3> const& points) {
-	Vector3 result;
-	for (Vector3 p: points)
-		result += p;
-	result /= points.size();
-	return result;
-}
-
-/// Gets the "center" of a given set of points.
-constexpr Vector4 center(List<Vector4> const& points) {
-	Vector4 result;
-	for (Vector4 p: points)
+/// @brief Gets the "center" of a given set of points.
+/// @tparam T Vector type.
+/// @param points Points to get the center of.
+/// @return Center of points.
+template<Type::Ex::Math::Vector::Vector T>
+constexpr T center(List<T> const& points) {
+	T result;
+	for (T const& p: points)
 		result += p;
 	result /= points.size();
 	return result;
@@ -1510,6 +1406,10 @@ typedef List<Vector2> Points2D;
 typedef List<Vector3> Points3D;
 typedef List<Vector4> Points4D;
 
+/// @brief Transforms a given vector by a given set of transforms.
+/// @param vec Vector to transform.
+/// @param trans Transformation to apply.
+/// @return Transformed vector.
 constexpr Vector2 srpTransform(Vector2 const& vec, Transform2D const& trans) {
 	return srpTransform(
 		vec,
@@ -1519,6 +1419,10 @@ constexpr Vector2 srpTransform(Vector2 const& vec, Transform2D const& trans) {
 	);
 }
 
+/// @brief Transforms a given vector by a given set of transforms.
+/// @param vec Vector to transform.
+/// @param trans Transformation to apply.
+/// @return Transformed vector.
 constexpr Vector3 srpTransform(Vector3 const& vec, Transform3D const& trans) {
 	return srpTransform(
 		vec,

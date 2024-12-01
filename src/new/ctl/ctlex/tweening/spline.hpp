@@ -9,7 +9,10 @@
 
 CTL_EX_NAMESPACE_BEGIN
 
+/// @brief Spline facilities.
 namespace Spline {
+	/// @brief Spline interpolator interface.
+	/// @tparam T Value type.
 	template<CTL::Type::Math::Operatable T>
 	struct Splinoid {
 		typedef T DataType;
@@ -18,13 +21,16 @@ namespace Spline {
 	};
 }
 
+/// @brief Spline-specific type constraints.
 namespace Type::Ex::Spline {
 	template<class T>
 	concept Spline = CTL::Type::Subclass<T, CTL::Ex::Spline::Splinoid<typename T::DataType>>;
 }
 
+/// @brief Spline facilities.
 namespace Spline {
-
+	/// @brief Linear spline interpolator.
+	/// @tparam T Value type.
 	template<class T>
 	class Linear: public Splinoid<T> {
 	public:
