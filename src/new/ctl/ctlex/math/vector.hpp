@@ -70,13 +70,15 @@ namespace Type::Ex::Math::Vector {
 /// @brief Math extensions.
 namespace Math {
 
-// If you're wondering why operators are implemented like this,
-// I was too lazy to write documentation for each specialization.
-// (Also because otherwise the line count would be bigger
-// by around 300 lines :/)
-// But hey, at least it works!
-// Don't stare at it for too long, though. You'll start seeing
-// things that do not exist.
+/*
+	If you're wondering why operators are implemented like this,
+	I was too lazy to write documentation for each specialization.
+	(Also because otherwise the line count would be bigger :/)
+
+	But hey, at least it works!
+	Don't stare at it for too long, though. You'll start seeing
+	things that do not exist.
+*/
 
 /// @brief Math template metaprogramming facilities.
 namespace Meta {
@@ -415,22 +417,22 @@ class Vector2: Ordered {
 		/// @brief Destructor.
 		constexpr ~Vector2() {}
 
-		/// @brief Returns a zero vector.
-		/// @return Zero vector.
+		/// @brief Returns a "all-zeroes" vector.
+		/// @return "All-zeroes" vector.
 		constexpr static Vector2 ZERO()		{return 0;					}
-		/// @brief Returns a "All-ones" vector.
-		/// @return One vector.
+		/// @brief Returns an "all-ones" vector.
+		/// @return "All-ones" vector.
 		constexpr static Vector2 ONE()		{return 1;					}
-		/// @brief Returns a vector pointing towards positive X.
+		/// @brief Returns a vector pointing towards the positive X axis.
 		/// @return Vector pointing towards +X.
 		constexpr static Vector2 RIGHT()	{return Vector2(+1, +0);	}
-		/// @brief Returns a vector pointing towards negative X.
+		/// @brief Returns a vector pointing towards the negative X axis.
 		/// @return Vector pointing towards -X.
 		constexpr static Vector2 LEFT()		{return Vector2(-1, +0);	}
-		/// @brief Returns a vector pointing towards positive Y.
+		/// @brief Returns a vector pointing towards the positive Y axis.
 		/// @return Vector pointing towards +Y.
 		constexpr static Vector2 UP()		{return Vector2(+0, +1);	}
-		/// @brief Returns a vector pointing towards negative Y.
+		/// @brief Returns a vector pointing towards the negative Y axis.
 		/// @return Vector pointing towards -Y.
 		constexpr static Vector2 DOWN()		{return Vector2(+0, -1);	}
 
@@ -444,25 +446,25 @@ class Vector2: Ordered {
 		constexpr float operator[](usize const pos) const	{if (pos > 1) return data[0]; return data[pos];}
 
 		/// @brief Gets the sum of the vector's components.
-		/// @returns Sum of the vector's components.
+		/// @returns Sum of components.
 		constexpr float sum() const {
 			return x + y;
 		}
 
 		/// @brief Gets the average of the vector's components.
-		/// @returns Average of the vector's components
+		/// @returns Average of components.
 		constexpr float average() const {
 			return sum() / 2;
 		}
 
 		/// @brief Gets the smallest of the vector's components.
-		/// @returns Smallest of the vector's components
+		/// @returns Smallest of component.
 		constexpr float min() const {
 			return (x < y) ? x : y;
 		}
 
 		/// @brief Gets the biggest of the vector's components.
-		/// @returns Biggest of the vector's components
+		/// @returns Biggest component.
 		constexpr float max() const {
 			return (x > y) ? x : y;
 		}
@@ -474,7 +476,7 @@ class Vector2: Ordered {
 		}
 
 		/// @brief Gets the vector's squared length.
-		/// @brief Length of vector.
+		/// @brief Squared length of vector.
 		constexpr float lengthSquared() const {
 			return ((x * x) + (y * y));
 		}
@@ -524,7 +526,7 @@ class Vector2: Ordered {
 			return diff.angle();
 		}
 
-		/// @brief Gets a normalized vector pointing towards another vector.
+		/// @brief Gets a normal pointing towards another vector.
 		/// @param vec Vector to get normal to.
 		/// @return Normal to vector.
 		constexpr Vector2 normalTo(Vector2 const& vec) const {
@@ -591,6 +593,7 @@ class Vector2: Ordered {
 		}
 };
 
+/// @brief Three-dimensional vector.
 class Vector3: Ordered {
 	public:
 		using Ordered::OrderType, Ordered::Order;
@@ -607,73 +610,109 @@ class Vector3: Ordered {
 		/// @brief Empty constructor.
 		constexpr Vector3() {}
 
+		/// @brief Constructs the vector's components with a starting value.
+		/// @param v Value to set.
 		constexpr Vector3(float v):
 			x(v), y(v), z(v) {}
 
+		/// @brief Constructs the vector's components from a set of values.
+		/// @param x X component.
+		/// @param y Y component.
+		/// @param z Z component. By default, it is 0.
 		constexpr Vector3(float const x, float const y, float const z = 0.0):
 			x(x), y(y), z(z) {}
 
+		/// @brief Copy constructor.
+		/// @param vec `Vector3` to copy from.
 		constexpr Vector3(Vector3 const& vec):
 			Vector3(vec.x, vec.y, vec.z) {}
 
+		/// @brief Constructs the vector's components from a vector and a value.
+		/// @param vec Vector to use for X and Y components.
+		/// @param z Z component. By default, it is 0.
 		constexpr Vector3(Vector2 const& vec, float z = 0):
 			Vector3(vec.x, vec.y, z) {}
 
+		/// @brief Constructs the vector from an array of values.
+		/// @param data Values to construct from.
 		constexpr Vector3(Decay::AsType<float[3]> const& data):
 			Vector3(data[0], data[1], data[2]) {}
 
-
-		/// Destructor.
-
+		/// @brief Destructor.
 		constexpr ~Vector3() {}
 
-		/// Static values.
-
+		/// @brief Returns an "all-zeroes" vector.
+		/// @return "All-zeroes" vector.
 		constexpr static Vector3 ZERO()		{return 0;						}
+		/// @brief Returns an "all-ones" vector.
+		/// @return "All-ones" vector.
 		constexpr static Vector3 ONE()		{return 1;						}
+		/// @brief Returns a vector pointing towards the positive X axis.
+		/// @return Vector pointing towards +x.
 		constexpr static Vector3 RIGHT()	{return Vector2::RIGHT();		}
+		/// @brief Returns a vector pointing towards the negative X axis.
+		/// @return Vector pointing towards -x.
 		constexpr static Vector3 LEFT()		{return Vector2::LEFT();		}
+		/// @brief Returns a vector pointing towards the positive Y axis.
+		/// @return Vector pointing towards +Y.
 		constexpr static Vector3 UP()		{return Vector2::UP();			}
+		/// @brief Returns a vector pointing towards the negative Y axis.
+		/// @return Vector pointing towards -Y.
 		constexpr static Vector3 DOWN()		{return Vector2::DOWN();		}
+		/// @brief Returns a vector pointing towards the positive Z axis.
+		/// @return Vector pointing towards +Z.
 		constexpr static Vector3 BACK()		{return Vector3(+0, +0, +1);	}
+		/// @brief Returns a vector pointing towards the negative Z axis.
+		/// @return Vector pointing towards -Z.
 		constexpr static Vector3 FRONT()	{return Vector3(+0, +0, -1);	}
 
+		/// @brief Gets a component at a given index.
+		/// @param pos Index of the component.
+		/// @return Reference to component.
 		constexpr float& operator[](usize const pos)		{if (pos > 2) return data[0]; return data[pos];}
+		/// @brief Gets a component at a given index.
+		/// @param pos Index of the component.
+		/// @return Value of component.
 		constexpr float operator[](usize const pos) const	{if (pos > 2) return data[0]; return data[pos];}
 
-		// Extra functions
-
-		/// Gets the sum of the vector's components.
+		/// @brief Gets the sum of the vector's components.
+		/// @return Sum of components.
 		constexpr float sum() const {
 			return x + y + z;
 		}
 
-		/// Gets the average of the vector's components.
+		/// @brief Gets the average of the vector's components.
+		/// @return Average of components.
 		constexpr float average() const {
 			return sum() / 3;
 		}
 
-		/// Gets the smallest of the vector's components.
+		/// @brief Gets the smallest of the vector's components.
+		/// @return Smallest component.
 		constexpr float min() const {
 			return ::CTL::Math::min(::CTL::Math::min(x, y), z);
 		}
 
-		/// Gets the biggest of the vector's components.
+		/// @brief Gets the biggest of the vector's components.
+		/// @return Biggest component.
 		constexpr float max() const {
 			return ::CTL::Math::max(::CTL::Math::max(x, y), z);
 		}
 
-		/// Gets the vector's length (distance to origin).
+		/// @brief Gets the vector's length.
+		/// @return Length of vector.
 		constexpr float length() const {
 			return sqrt((x * x) + (y * y) + (z * z));
 		}
 
-		/// Gets the vector's length (distance to origin).
+		/// @brief Gets the vector's squared length.
+		/// @return Squared ength of vector.
 		constexpr float lengthSquared() const {
 			return ((x * x) + (y * y) + (z * z));
 		}
 
-		/// Gets the vector's angle.
+		/// @brief Gets the vector's angle.
+		/// @return Angle of vector.
 		constexpr Vector3 angle() const {
 			Vector3 res;
 			float mag = length();
@@ -683,13 +722,16 @@ class Vector3: Ordered {
 			return res;
 		}
 
-		/// Gets the vector's angle to another vector.
+		/// @brief Gets the vector's angle to another vector.
+		/// @param vec Vector to get angle to.
+		/// @return Angle to vector.
 		constexpr Vector3 angleTo(Vector3 const& vec) const {
 			Vector3 diff = vec - *this;
 			return diff.angle();
 		}
 
-		/// Gets the normalized vector.
+		/// @brief Gets the normalized vector.
+		/// @return Normalized vector.
 		constexpr Vector3 normalized() const {
 			if (*this != 0)
 				return *this / length();
@@ -697,37 +739,51 @@ class Vector3: Ordered {
 				return *this;
 		}
 
-		/// Normalizes the vector.
+		/// @brief Normalizes the vector.
+		/// @return Reference to self.
 		constexpr Vector3& normalize() {
 			return *this = normalized();
 		}
 
-		/// Gets a normalized vector pointing towards another vector.
+		/// @brief Gets a normal pointing towards another vector.
+		/// @param vec Vector to get normal to.
+		/// @return Normal to vector.
 		constexpr Vector3 normalTo(Vector3 const& vec) const {
 			Vector3 diff = vec - *this;
 			return diff.normalized();
 		}
 
-		/// Gets the distance to another vector.
+		/// @brief Gets the distance to another vector.
+		/// @param vec Vector to get distance to.
+		/// @return Distance to vector.
 		constexpr float distanceTo(Vector3 const& vec) const {
 			Vector3 diff = vec - *this;
 			return diff.length();
 		}
 
-		/// Gets the distance to another vector.
+		/// @brief Gets the squared distance to another vector.
+		/// @param vec Vector to get squared distance to.
+		/// @return Squared distance to vector.
 		constexpr float squaredDistanceTo(Vector3 const& vec) const {
 			Vector3 diff = vec - *this;
 			return diff.lengthSquared();
 		}
 
-		/// Clamps the vector between two values.
-		constexpr void clamp(Vector3 const& min, Vector3 const& max) {
+		/// @brief Clamps the vector between two values.
+		/// @param min Minimum.
+		/// @param max Maximum.
+		/// @return Reference to self.
+		constexpr Vector3& clamp(Vector3 const& min, Vector3 const& max) {
 			x = ::CTL::Math::clamp(x, min.x, max.x);
 			y = ::CTL::Math::clamp(y, min.y, max.y);
 			z = ::CTL::Math::clamp(z, min.z, max.z);
+			return *this;
 		}
 
-		/// Returns the vector clamped between two values.
+		/// @brief Returns the vector clamped between two values.
+		/// @param min Minimum.
+		/// @param max Maximum.
+		/// @return Clamped vector.
 		constexpr Vector3 clamped(Vector3 const& min, Vector3 const& max) const {
 			return Vector3(
 				::CTL::Math::clamp(x, min.x, max.x),
@@ -736,13 +792,17 @@ class Vector3: Ordered {
 			);
 		}
 
-		/// Returns the dot product with another vector.
+		/// @brief Returns the dot product with another vector.
+		/// @param vec Vector to get dot product with.
+		/// @return Dot product.
 		constexpr float dotProd(Vector3 const& vec) const {
 			Vector3 mult = (*this) * vec;
 			return mult.x + mult.y + mult.z;
 		}
 
-		/// Returns the cross product with another vector.
+		/// @brief Returns the cross product with another vector.
+		/// @param vec Vector to get cross product with.
+		/// @return Cross product.
 		constexpr Vector3 crossProd(Vector3 const& vec) const {
 			return Vector3(
 				(y * vec.z) - (z * vec.y),
@@ -751,35 +811,52 @@ class Vector3: Ordered {
 			);
 		}
 
-		/// Returns the mixed (scalar triple) product with two other vectors in the order of this->dotProd(a.crossProd(b))).
+		/// @brief Returns the mixed (scalar triple) product with two other vectors (`this` dot (`a` cross `b`)).
+		/// @param a Vector to get mixed product with.
+		/// @param b Vector to get mixed product with.
+		/// @return Mixed product.
 		constexpr float mixProd(Vector3 const& a, Vector3 const& b) const {
 			return dotProd(a.crossProd(b));
 		}
 
+		/// @brief Returns the X and Y components.
+		/// @return X and Y components.
 		constexpr Vector2 xy() const {
 			return Vector2(x, y);
 		}
 
+		/// @brief Returns the Y and Z components.
+		/// @return Y and Z components.
 		constexpr Vector2 yz() const {
 			return Vector2(x, y);
 		}
 
+		/// @brief Returns the X and Z components.
+		/// @return X and Z components.
 		constexpr Vector2 xz() const {
 			return Vector2(x, y);
 		}
 
+		/// @brief Returns the vector in (Z, Y, X) form.
+		/// @return Vector in (Z, Y, X) form.
 		constexpr Vector3 zyx() const {
 			return Vector3(z, y, x);
 		}
 
+		/// @brief Returns the vector in (X, Z, Y) form.
+		/// @return Vector in (X, Z, Y) form.
 		constexpr Vector3 xzy() const {
 			return Vector3(x, z, y);
 		}
 
+		/// @brief Returns the vector in (Y, Z, X) form.
+		/// @return Vector in (Y, Z, X) form.
 		constexpr Vector3 yzx() const {
 			return Vector3(y, z, x);
 		}
 
+		/// @brief Returns the absolute value of the vector.
+		/// @return Absolute vector.
 		constexpr Vector3 absolute() const {
 			return Vector3(
 				abs(x),
@@ -789,6 +866,7 @@ class Vector3: Ordered {
 		}
 };
 
+/// @brief Four-dimensional vector.
 class Vector4: Ordered {
 	public:
 		using Ordered::OrderType, Ordered::Order;
@@ -802,84 +880,132 @@ class Vector4: Ordered {
 			float data[4] = {0};
 		};
 
-		/// Constructors.
-
+		/// @brief Empty constructor.
 		constexpr Vector4() {}
 
+		/// @brief Constructs the vector's components with a starting value.
+		/// @param v Value to set.
 		constexpr Vector4(float v):
 			x(v), y(v), z(v), w(v) {}
 
+		/// @brief Constructs the vector's components from a set of values.
+		/// @param x X component.
+		/// @param y Y component.
+		/// @param z Z component.
+		/// @param w W component. By default, it is 0.
 		constexpr Vector4(float const x, float const y, float const z, float const w = 0.0):
 			x(x), y(y), z(z), w(w) {}
 
+		/// @brief Constructs the vector's components from a set of 2D vectors.
+		/// @param v1 Vector to use for X and Y components.
+		/// @param v2 Vector to use for Z and W components.
 		constexpr Vector4(Vector2 const& v1, Vector2 const& v2):
 			Vector4(v1.x, v1.y, v2.x, v2.y) {}
 
+		/// @brief Copy constructor.
+		/// @param vec `Vector4` to copy from.
 		constexpr Vector4(Vector4 const& vec):
 			Vector4(vec.x, vec.y, vec.z, vec.w) {}
 
+		/// @brief Constructs the vector's components from a vector and a value.
+		/// @param vec Vector to use for X, Y and Z components.
+		/// @param w W component. By default, it is 0.
 		constexpr Vector4(Vector3 const& vec, float w = 0):
 			Vector4(vec.x, vec.y, vec.z, w) {}
 
+		/// @brief Constructs the vector's components from a vector and a value.
+		/// @param vec Vector to use for X and Y components.
+		/// @param z Z component. By default, it is 0.
+		/// @param w W component. By default, it is 0.
 		constexpr Vector4(Vector2 const& vec, float z = 0, float w = 0):
 			Vector4(vec.x, vec.y, z, w) {}
 
+		/// @brief Constructs the vector from an array of values.
+		/// @param data Values to construct from.
 		constexpr Vector4(Decay::AsType<float[4]> const& data):
 			Vector4(data[0], data[1], data[2], data[3]) {}
 
-		/// Destructor.
-
+		/// @brief Destructor.
 		constexpr ~Vector4() {}
 
-		/// Static values.
-
+		/// @brief Returns an "all-zeroes" vector.
+		/// @return "All-zeroes" vector.
 		constexpr static Vector4 ZERO()		{return 0;							}
+		/// @brief Returns an "all-ones" vector.
+		/// @return "All-ones" vector.
 		constexpr static Vector4 ONE()		{return 1;							}
+		/// @brief Returns a vector pointing towards the positive X axis.
+		/// @return vector pointing towards +X.
 		constexpr static Vector4 RIGHT()	{return Vector2::RIGHT();			}
+		/// @brief Returns a vector pointing towards the negative X axis.
+		/// @return vector pointing towards -X.
 		constexpr static Vector4 LEFT()		{return Vector2::LEFT();			}
+		/// @brief Returns a vector pointing towards the positive Y axis.
+		/// @return vector pointing towards +Y.
 		constexpr static Vector4 UP()		{return Vector2::UP();				}
+		/// @brief Returns a vector pointing towards the negative Y axis.
+		/// @return vector pointing towards -Y.
 		constexpr static Vector4 DOWN()		{return Vector2::DOWN();			}
+		/// @brief Returns a vector pointing towards the positive Z axis.
+		/// @return vector pointing towards +Z.
 		constexpr static Vector4 BACK()		{return Vector3::BACK();			}
+		/// @brief Returns a vector pointing towards the negative Z axis.
+		/// @return vector pointing towards -Z.
 		constexpr static Vector4 FRONT()	{return Vector3::FRONT();			}
+		/// @brief Returns a vector pointing towards the positive W axis.
+		/// @return vector pointing towards +W.
 		constexpr static Vector4 FUTURE()	{return Vector4(+0, +0, +0, +1);	}
+		/// @brief Returns a vector pointing towards the negative W axis.
+		/// @return vector pointing towards -W.
 		constexpr static Vector4 PAST()		{return Vector4(+0, +0, +0, -1);	}
 
+		/// @brief Gets a component at a given index.
+		/// @param pos Index of the component.
+		/// @return Reference to component.
 		constexpr float& operator[](usize const pos)		{if (pos > 3) return data[0]; return data[pos];}
+		/// @brief Gets a component at a given index.
+		/// @param pos Index of the component.
+		/// @return Value of component.
 		constexpr float operator[](usize const pos) const	{if (pos > 3) return data[0]; return data[pos];}
 
-		// Extra functions
-
-		/// Gets the sum of the vector's components.
+		/// @brief Gets the sum of the vector's components.
+		/// @return Sum of components.
 		constexpr float sum() const {
 			return x + y + z + w;
 		}
 
-		/// Gets the average of the vector's components.
+		/// @brief Gets the average of the vector's components.
+		/// @return Average of components.
 		constexpr float average() const {
 			return sum() / 4;
 		}
 
-		/// Gets the smallest of the vector's components.
+		/// @brief Gets the smallest of the vector's components.
+		/// @return Smallest component.
 		constexpr float min() const {
 			return ::CTL::Math::min(::CTL::Math::min(::CTL::Math::min(x, y), z), w);
 		}
 
-		/// Gets the biggest of the vector's components.
+		/// @brief Gets the biggest of the vector's components.
+		/// @return Biggest component.
 		constexpr float max() const {
 			return ::CTL::Math::max(::CTL::Math::max(::CTL::Math::max(x, y), z), w);
 		}
 
-		/// Gets the vector's length (distance to origin).
+		/// @brief Gets the vector's length.
+		/// @return Length of vector.
 		constexpr float length() const {
 			return sqrt((x * x) + (y * y) + (z * z) + (w * w));
 		}
 
-		/// Gets the vector's length (distance to origin).
+		/// @brief Gets the vector's squared length.
+		/// @return Squared length of vector.
 		constexpr float lengthSquared() const {
 			return ((x * x) + (y * y) + (z * z) + (w * w));
 		}
 
-		/// Gets the normalized vector.
+		/// @brief Gets the normalized vector.
+		/// @return Normalized vector.
 		constexpr Vector4 normalized() const {
 			if (*this != 0)
 				return *this / length();
@@ -887,38 +1013,52 @@ class Vector4: Ordered {
 				return *this;
 		}
 
-		/// Normalizes the vector.
+		/// @brief Normalizes the vector.
+		/// @return Reference to self.
 		constexpr Vector4& normalize() {
 			return *this = normalized();
 		}
 
-		/// Gets the distance to another vector.
+		/// @brief Gets the distance to another vector.
+		/// @param vec Vector to get distance to.
+		/// @return Distance between vectors.
 		constexpr float distanceTo(Vector4 const& vec) const {
 			Vector4 diff = vec - *this;
 			return diff.length();
 		}
 
-		/// Gets the distance to another vector.
+		/// @brief Gets the squared distance to another vector.
+		/// @param vec Vector to get squared distance to.
+		/// @return Squared distance between vectors.
 		constexpr float squaredDistanceTo(Vector4 const& vec) const {
 			Vector4 diff = vec - *this;
 			return diff.lengthSquared();
 		}
 
-		/// Gets a normalized vector pointing towards another vector.
+		/// @brief Gets a normal pointing towards another vector.
+		/// @param vec Vector to get normal to.
+		/// @return Normal to vector.
 		constexpr Vector4 normalTo(Vector4 const& vec) const {
 			Vector4 diff = vec - *this;
 			return diff.normalized();
 		}
 
-		/// Clamps the vector between two values.
-		constexpr void clamp(Vector4 const& min, Vector4 const& max) {
+		/// @brief Clamps the vector between two values.
+		/// @param min Minimum.
+		/// @param max Maximum.
+		/// @return Reference to self.
+		constexpr Vector4& clamp(Vector4 const& min, Vector4 const& max) {
 			x = ::CTL::Math::clamp(x, min.x, max.x);
 			y = ::CTL::Math::clamp(y, min.y, max.y);
 			z = ::CTL::Math::clamp(z, min.z, max.z);
 			z = ::CTL::Math::clamp(w, min.w, max.w);
+			return *this;
 		}
 
-		/// Returns the vector clamped between two values.
+		/// @brief Returns the vector clamped between two values.
+		/// @param min Minimum.
+		/// @param max Maximum.
+		/// @return Clamped vector.
 		constexpr Vector4 clamped(Vector4 const& min, Vector4 const& max) const {
 			return Vector4(
 				::CTL::Math::clamp(x, min.x, max.x),
@@ -928,12 +1068,16 @@ class Vector4: Ordered {
 			);
 		}
 
-		/// Returns the dot product with another vector.
+		/// @brief Returns the dot product with another vector.
+		/// @param vec Vector to get dot product with.
+		/// @return Dot product.
 		constexpr float dotProd(Vector4 const& vec) const {
 			Vector4 mult = (*this) * vec;
 			return mult.x + mult.y + mult.z + mult.w;
 		}
 
+		/// @brief Returns the absolute value of the vector.
+		/// @return Absolute vector.
 		constexpr Vector4 absolute() const {
 			return Vector4(
 				abs(x),
@@ -943,18 +1087,26 @@ class Vector4: Ordered {
 			);
 		}
 
+		/// @brief Returns the X, Y and Z components.
+		/// @return X, Y and Z components.
 		constexpr Vector3 xyz() const {
 			return Vector3(x, y, z);
 		}
 
+		/// @brief Returns the vector in (W, Z, Y, X) form.
+		/// @return Vector in (W, Z, Y, X) form.
 		constexpr Vector4 wzyx() const {
 			return Vector4(w, z, y, x);
 		}
 
+		/// @brief Returns the vector in (W, X, Y, Z) form.
+		/// @return Vector in (W, X, Y, Z) form.
 		constexpr Vector4 wxyz() const {
 			return Vector4(w, x, y, z);
 		}
 
+		/// @brief Returns the vector compensated by the W value.
+		/// @return Compensated vector.
 		constexpr Vector4 compensated() const {
 			return Vector4(xyz() / w, w);
 		}
