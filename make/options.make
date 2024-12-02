@@ -22,4 +22,4 @@ else
 export omp-threads:=128
 endif
 
-export o?=g
+export o?=2

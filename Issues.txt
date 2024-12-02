@@ -9,7 +9,9 @@ Fixed? > Automatic tweens & timers are no longer working
 > Shading direction flips when rotating object (Somethin relating to normals)
 
 [ Unknown ]
-> Code breaks when compiling with any optimization that isn't -Og
+FIXED? > Code breaks when compiling with any optimization that isn't -Og
 	> [PAGE DELETED]
 	> As someone on StackOverflow pointed out, it most likely is heap corruption. Hooray.
 	> Time to figure out where it is causing it.
+	UPDATE:
+		> It's fixed somehow???

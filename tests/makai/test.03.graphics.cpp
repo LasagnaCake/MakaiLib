@@ -21,7 +21,10 @@ struct TestApp: Makai::App {
 
 	TestApp(): Makai::App(600, 400, "Test 03", false) {
 		DEBUGLN("Loading shaders...");
-		loadDefaultShaders();
+		loadShaders(
+			Makai::File::getSLF("shaders/base/base.slf"),
+			Makai::File::getSLF("shaders/framebuffer/compose.slf")
+		);
 		DEBUGLN("Creating cube...");
 		cube.material.culling = Makai::Graph::CullMode::OCM_FRONT;
 		//cube.material.shaded = true;

@@ -34,9 +34,6 @@ No plans to support 32-bit systems.
 > [!important]
 > **This library does not currently support clang/LLVM!**
 
-> [!caution]
-> **This library currently can only be compiled with optimization level `-Og` and below!**
-
 - GCC (12+) via MinGW (MSYS (Recommended), Cygwin, TDM-GCC) 
 - Make
 

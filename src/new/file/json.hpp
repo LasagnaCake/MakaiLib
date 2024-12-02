@@ -2,7 +2,10 @@
 #define MAKAILIB_FILE_JSON_H
 
 #define JSON_NO_IO
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
 #include "_lib/nlohmann/json.hpp"
+#pragma GCC diagnostic pop
 #include "../compat/ctl.hpp"
 #include "get.hpp"
 
