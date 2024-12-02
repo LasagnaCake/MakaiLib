@@ -286,7 +286,7 @@ template<
 	Type::Ex::Math::Vector::Vectorable B
 >
 constexpr Meta::VectorType<A, B> operator*=(A& a, B const& b) {
-	return a = a /b;
+	return a = a * b;
 }
 
 /// @brief Universal vector division assignment operator.

@@ -25,7 +25,6 @@ namespace Type::Ex::Collision::C2D {
 namespace Collision::C2D {
 	namespace {
 		using
-			Math::angleTo,
 			Math::center,
 			Math::Transform2D,
 			Math::Vector2

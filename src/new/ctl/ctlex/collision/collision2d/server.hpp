@@ -9,7 +9,6 @@ CTL_EX_NAMESPACE_BEGIN
 namespace Collision::C2D {
 	namespace {
 		using
-			Math::angleTo,
 			Math::center,
 			Math::Transform2D
 		;

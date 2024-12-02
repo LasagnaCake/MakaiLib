@@ -17,7 +17,7 @@ namespace Spline {
 	struct Splinoid {
 		typedef T DataType;
 
-		constexpr virtual T interpolate(float const by) = 0;
+		constexpr virtual T interpolate(float const by) const = 0;
 	};
 }
 
@@ -34,28 +34,38 @@ namespace Spline {
 	template<class T>
 	class Linear: public Splinoid<T> {
 	public:
+		/// @brief Points to interpolate between.
 		List<T> points;
 
+		/// @brief Empty constructor.
 		constexpr Linear() {}
 
-		constexpr Linear(List<T> const& ps) {
-			points = ps;
-		}
+		/// @brief Constructs the spline with a series of points.
+		/// @param ps Points to use.
+		constexpr Linear(List<T> const& ps): points(ps) {}
 
+		/// @brief Constructs the spline with a series of points.
+		/// @param ps Points to use.
 		constexpr Linear(Arguments<T> const& ps) {
 			points.resize(ps.size());
 			for (T& p: ps)
 				points.pushBack(p);
 		}
 
+		/// @brief Constructs the spline with an array of points.
+		/// @tparam N Array size.
+		/// @param ps Points to use.
 		template<usize N>
-		constexpr Linear(T const(& ps)[N]) {
+		constexpr Linear(Decay::AsType<T const[N]> const& ps) {
 			points.resize(N);
 			for (T& p: ps)
 				points.pushBack(p);
 		}
 
-		constexpr T interpolate(float by) final {
+		/// @brief Interpolates between the given points. 
+		/// @param by Interpolation factor.
+		/// @return Interpolated value.
+		constexpr T interpolate(float by) const final {
 			by = ::CTL::Math::clamp<float>(by, 0, 1);
 			if (by == 1.0) return points.end();
 			usize curp = ::CTL::Math::floor(by * points.size());
@@ -112,7 +122,10 @@ namespace Spline {
 
 			SectionList<T, N> sections;
 
-			constexpr T interpolate(float by) final {
+			/// @brief Interpolates between the given points. 
+			/// @param by Interpolation factor.
+			/// @return Interpolated value.
+			constexpr T interpolate(float by) const final {
 				by = ::CTL::Math::clamp<float>(by, 0, 1);
 				if (by == 1.0) return sections.end()[0];
 				usize sec = ::CTL::Math::floor(by * sections.size());
@@ -194,7 +207,10 @@ namespace Spline {
 
 			SectionList<T> sections;
 
-			constexpr T interpolate(float by) final {
+			/// @brief Interpolates between the given points. 
+			/// @param by Interpolation factor.
+			/// @return Interpolated value.
+			constexpr T interpolate(float by) const final {
 				by = ::CTL::Math::clamp<float>(by, 0, 1);
 				if (by == 1.0) return sections.end().position;
 				usize sec = ::CTL::Math::floor(by * sections.size());
