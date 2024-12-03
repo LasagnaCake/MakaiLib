@@ -73,6 +73,7 @@ namespace Spline {
 		}
 	};
 
+	/// @brief Bezier splines.
 	namespace Bezier {
 		template<CTL::Type::Math::Operatable T, usize N>
 		struct Section {
@@ -110,7 +111,7 @@ namespace Spline {
 
 			template <usize P>
 			constexpr Spline(T const(& points)[P]) {
-				static_assert(P % N == 0, "Point count is not a multiple of N!");
+				static_assert(P % N == 0, "Point count is not a multiple of section size!");
 				sections.resize(P/N);
 				for (usize i = 0; i < P; i += N) {
 					Section<T, N> sec;
