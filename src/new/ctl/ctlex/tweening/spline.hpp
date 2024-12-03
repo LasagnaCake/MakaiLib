@@ -136,7 +136,7 @@ namespace Spline {
 		private:
 			template<usize S>
 			constexpr T lerpSection(Section<T, S> const& sec, T const& end, float const by) {
-				if constexpr(S < 2)
+				if constexpr(S < 3)
 					return ::CTL::Math::lerp(sec.points[0], end, T(by));
 				else {
 					Section<T, S-1> res;
