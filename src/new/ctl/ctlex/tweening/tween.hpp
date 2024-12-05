@@ -276,7 +276,7 @@ private:
 
 	/// @brief Current value.
 	T current;
-	/// @brief Interpolation factor.
+	/// @brief Interpolation factor used for calculating the current value.
 	float factor = 1.0f;
 	/// @brief Amount of steps to be processed.
 	usize stop;
@@ -299,11 +299,18 @@ struct StageData {
 	::CTL::Signal<> onCompleted;
 };
 
+/// @brief Stageable tween interface.
 struct IStageable: IStepable {
-	virtual IStageable&	setStage(usize const)		{return *this;	}
+	/// @brief Sets the current stage. Must be implemented.
+	/// @param . Stage to set to.
+	/// @return Reference to self.
+	virtual IStageable&	setStage(usize const)		= 0;
+	/// @brief Returns the current stage.
+	/// @return Current stage.
 	virtual usize		getStage()					{return stage;	}
 
 protected:
+	/// @brief Current stage.
 	usize stage = 0;
 
 private:
