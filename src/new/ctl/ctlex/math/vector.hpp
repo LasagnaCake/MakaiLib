@@ -90,6 +90,19 @@ namespace Meta {
 		Type::Ex::Math::Vector::Operatable<A> B
 	>
 	using VectorType = CTL::Meta::DualType<Type::Number<B>, A, B>;
+
+	/// @brief Decays to the vector type with the most components.
+	/// @tparam A Possible type.
+	/// @tparam B Possible type.
+	template<
+		Type::Ex::Math::Vector::Vectorable A,
+		Type::Ex::Math::Vector::Vectorable B
+	>
+	using LargestVectorType = CTL::Meta::DualType<
+		sizeof(A) < sizeof(B),
+		VectorType<A, B>,
+		VectorType<B, A>
+	>;
 }
 
 /// @brief Universal vector unary plus operator.
@@ -132,8 +145,8 @@ template<
 	Type::Ex::Math::Vector::Operatable<A> B
 >
 constexpr Meta::VectorType<A, B> operator+(A const& a, B const& b) {
-	if constexpr (Type::Number<A> || Type::Number<B>)
-		return Meta::VectorType<A, B>(a) + Meta::VectorType<A, B>(b);
+	if constexpr (Type::Different<A, B>)
+		return Meta::LargestVectorType<A, B>(a) + Meta::LargestVectorType<A, B>(b);
 	else if constexpr (Type::Equal<A, Vector2>)
 		return A(a.x + b.x, a.y + b.y);
 	else if constexpr (Type::Equal<A, Vector3>)
@@ -153,8 +166,8 @@ template<
 	Type::Ex::Math::Vector::Operatable<A> B
 >
 constexpr Meta::VectorType<A, B> operator-(A const& a, B const& b) {
-	if constexpr (Type::Number<A> || Type::Number<B>)
-		return Meta::VectorType<A, B>(a) - Meta::VectorType<A, B>(b);
+	if constexpr (Type::Different<A, B>)
+		return Meta::LargestVectorType<A, B>(a) - Meta::LargestVectorType<A, B>(b);
 	else if constexpr (Type::Equal<A, Vector2>)
 		return A(a.x - b.x, a.y - b.y);
 	else if constexpr (Type::Equal<A, Vector3>)
@@ -174,8 +187,8 @@ template<
 	Type::Ex::Math::Vector::Operatable<A> B
 >
 constexpr Meta::VectorType<A, B> operator*(A const& a, B const& b) {
-	if constexpr (Type::Number<A> || Type::Number<B>)
-		return Meta::VectorType<A, B>(a) * Meta::VectorType<A, B>(b);
+	if constexpr (Type::Different<A, B>)
+		return Meta::LargestVectorType<A, B>(a) * Meta::LargestVectorType<A, B>(b);
 	else if constexpr (Type::Equal<A, Vector2>)
 		return A(a.x * b.x, a.y * b.y);
 	else if constexpr (Type::Equal<A, Vector3>)
@@ -195,8 +208,8 @@ template<
 	Type::Ex::Math::Vector::Operatable<A> B
 >
 constexpr Meta::VectorType<A, B> operator/(A const& a, B const& b) {
-	if constexpr (Type::Number<A> || Type::Number<B>)
-		return Meta::VectorType<A, B>(a) / Meta::VectorType<A, B>(b);
+	if constexpr (Type::Different<A, B>)
+		return Meta::LargestVectorType<A, B>(a) / Meta::LargestVectorType<A, B>(b);
 	else if constexpr (Type::Equal<A, Vector2>)
 		return A(a.x / b.x, a.y / b.y);
 	else if constexpr (Type::Equal<A, Vector3>)
@@ -205,7 +218,7 @@ constexpr Meta::VectorType<A, B> operator/(A const& a, B const& b) {
 		return A(a.x / b.x, a.y / b.y, a.z / b.z, a.w / b.w);
 }
 
-/// @brief Universal vector division operator.
+/// @brief Universal vector modulo operator.
 /// @tparam A Left side type.
 /// @tparam B Right side type.
 /// @param a Left side of the operation.
@@ -216,8 +229,8 @@ template<
 	Type::Ex::Math::Vector::Operatable<A> B
 >
 constexpr Meta::VectorType<A, B> operator%(A const& a, B const& b) {
-	if constexpr (Type::Number<A> || Type::Number<B>)
-		return Meta::VectorType<A, B>(a) % Meta::VectorType<A, B>(b);
+	if constexpr (Type::Different<A, B>)
+		return Meta::LargestVectorType<A, B>(a) % Meta::LargestVectorType<A, B>(b);
 	else if constexpr (Type::Equal<A, Vector2>)
 		return A(fmod(a.x, b.x), fmod(a.y, b.y));
 	else if constexpr (Type::Equal<A, Vector3>)
@@ -237,8 +250,8 @@ template<
 	Type::Ex::Math::Vector::Operatable<A> B
 >
 constexpr Meta::VectorType<A, B> operator^(A const& a, B const& b) {
-	if constexpr (Type::Number<A> || Type::Number<B>)
-		return Meta::VectorType<A, B>(a) ^ Meta::VectorType<A, B>(b);
+	if constexpr (Type::Different<A, B>)
+		return Meta::LargestVectorType<A, B>(a) ^ Meta::LargestVectorType<A, B>(b);
 	else if constexpr (Type::Equal<A, Vector2>)
 		return A(pow(a.x, b.x), pow(a.y, b.y));
 	else if constexpr (Type::Equal<A, Vector3>)
@@ -303,7 +316,7 @@ constexpr Meta::VectorType<A, B> operator/=(A& a, B const& b) {
 	return a = a / b;
 }
 
-/// @brief Universal vector division assignment operator.
+/// @brief Universal vector modulo assignment operator.
 /// @tparam A Left side type.
 /// @tparam B Right side type.
 /// @param a Left side of the operation.
@@ -342,8 +355,8 @@ template<
 	Type::Ex::Math::Vector::Operatable<A> B
 >
 constexpr bool operator==(A const& a, B const& b) {
-	if constexpr (Type::Number<A> || Type::Number<B>)
-		return Meta::VectorType<A, B>(a) == Meta::VectorType<A, B>(b);
+	if constexpr (Type::Different<A, B>)
+		return Meta::LargestVectorType<A, B>(a) == Meta::LargestVectorType<A, B>(b);
 	else if constexpr (Type::Equal<A, Vector2>)
 		return a.x == b.x && a.y == b.y;
 	else if constexpr (Type::Equal<A, Vector3>)
@@ -364,8 +377,8 @@ template<
 >
 constexpr Meta::VectorType<A, B>::OrderType operator<=>(A const& a, B const& b) {
 	using Order = Meta::VectorType<A, B>::Order;
-	if constexpr (Type::Number<A> || Type::Number<B>)
-		return Meta::VectorType<A, B>(a) <=> Meta::VectorType<A, B>(b);
+	if constexpr (Type::Different<A, B>)
+		return Meta::LargestVectorType<A, B>(a) <=> Meta::LargestVectorType<A, B>(b);
 	typename Meta::VectorType<A, B>::OrderType	ord = a.x <=> b.x;
 	if constexpr (Type::Equal<A, Vector2>)
 		if (ord == Order::EQUAL)				ord = a.y <=> b.y;
