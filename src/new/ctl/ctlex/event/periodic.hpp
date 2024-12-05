@@ -7,7 +7,7 @@
 
 CTL_EX_NAMESPACE_BEGIN
 
-/// @brief Event that fires periodically.
+/// @brief Interface for an event that fires periodically.
 /// @tparam _ Class associated with the event.
 /// @tparam ...Args Event argument types.
 template<class _ = void, class... Args>
@@ -54,7 +54,7 @@ public:
 			events.eraseIf([&](auto const& e){return e == &update;});
 	}
 
-	/// @brief Called when the event needs to be fired.
+	/// @brief Called when the event needs to be fired. Must be implemented.
 	/// @param ...args Passed values.
 	virtual void onUpdate(Args... args) = 0;
 

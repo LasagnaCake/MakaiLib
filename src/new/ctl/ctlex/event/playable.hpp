@@ -7,16 +7,16 @@ CTL_EX_NAMESPACE_BEGIN
 
 /// @brief Controllable event interface.
 struct Playable {
-	/// @brief Starts the event.
+	/// @brief Starts the event. Must be implemented.
 	/// @return Reference to self.
 	virtual Playable&	start()		= 0;
-	/// @brief Resumes the event.
+	/// @brief Resumes the event. Must be implemented.
 	/// @return Reference to self.
 	virtual Playable&	play()		= 0;
-	/// @brief Pauses the event.
+	/// @brief Pauses the event. Must be implemented.
 	/// @return Reference to self.
 	virtual Playable&	pause()		= 0;
-	/// @brief Stops the event.
+	/// @brief Stops the event. Must be implemented.
 	/// @return Reference to self.
 	virtual Playable&	stop()		= 0;
 	/// @brief Returns whether the event is finished being processed.

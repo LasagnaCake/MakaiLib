@@ -22,8 +22,8 @@ namespace Makai {
 
 	struct App;
 
-	struct Updateable: CTL::Ex::Periodic<App, usize> {
-		virtual void onUpdate(usize delta) = 0;
+	struct Updateable: CTL::Ex::Periodic<App, usize, App&> {
+		virtual void onUpdate(usize delta, App& app) = 0;
 	};
 
 	struct App {
@@ -63,7 +63,7 @@ namespace Makai {
 		void loadDefaultShaders();
 
 		/// Returns the currently-opened app. Returns null if no app is open.
-		static App* current();
+		static App& current();
 
 		/// Runs the application.
 		void run();

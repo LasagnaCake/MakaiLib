@@ -75,31 +75,48 @@ namespace Spline {
 
 	/// @brief Bezier splines.
 	namespace Bezier {
+		/// @brief Bezier spline section.
+		/// @tparam T Value type.
+		/// @tparam N Number of elements.
 		template<CTL::Type::Math::Operatable T, usize N>
 		struct Section {
 			T points[N];
 		};
 
+		/// @brief List of bezier sections.
+		/// @tparam T Section value type.
+		/// @tparam N Section size.
 		template<CTL::Type::Math::Operatable T, usize N>
 		using SectionList = List<Section<T, N>>;
 
+		/// @brief Bezier spline interpolator.
+		/// @tparam T Value type.
+		/// @tparam N Section size (spline type).
 		template<CTL::Type::Math::Operatable T, usize N>
 		class Spline: public Splinoid<T> {
 		public:
+			/// @brief Empty constructor.
 			constexpr Spline() {}
 
+			/// @brief Constructs the spline from a series of sections.
+			/// @param secs Sections to use.
 			constexpr Spline(SectionList<T, N> const& secs) {
 				sections = secs;
 			}
 
+			/// @brief Constructs the spline from a series of sections.
+			/// @param secs Sections to use.
 			constexpr Spline(Arguments<Section<T, N>> const& secs) {
 				sections.resize(secs.size());
 				for (Section<T, N>& s: secs)
 					sections.pushBack(s);
 			}
 
+			/// @brief Constructs the spline from an array of point groups.
+			/// @tparam P Array size.
+			/// @param points Points to use.
 			template <usize P>
-			constexpr Spline(T const(& points)[P][N]) {
+			constexpr Spline(Decay::AsType<T[P][N] const> const& points) {
 				sections.resize(P);
 				for (usize i = 0; i < P; ++i) {
 					Section<T, N> sec;
@@ -109,8 +126,12 @@ namespace Spline {
 				}
 			}
 
+			/// @brief Constructs the spline from an array of points.
+			/// @tparam P Array size.
+			/// @param points Points to use.
+			/// @note Requires point count to be a multiple of the section size.
 			template <usize P>
-			constexpr Spline(T const(& points)[P]) {
+			constexpr Spline(Decay::AsType<T const[P]> const& points) {
 				static_assert(P % N == 0, "Point count is not a multiple of section size!");
 				sections.resize(P/N);
 				for (usize i = 0; i < P; i += N) {
@@ -121,6 +142,7 @@ namespace Spline {
 				}
 			}
 
+			/// @brief Sections to interpolate between.
 			SectionList<T, N> sections;
 
 			/// @brief Interpolates between the given points. 
@@ -148,37 +170,60 @@ namespace Spline {
 			}
 		};
 
+		/// @brief `Spline` analog for quadratic bezier splines.
+		/// @tparam T Value type.
 		template<CTL::Type::Math::Operatable T> using Quadratic	= Spline<T, 2>;
+		/// @brief `Spline` analog for cubic bezier splines.
+		/// @tparam T Value type.
 		template<CTL::Type::Math::Operatable T> using Cubic		= Spline<T, 3>;
+		/// @brief `Spline` analog for quartic bezier splines.
+		/// @tparam T Value type.
 		template<CTL::Type::Math::Operatable T> using Quartic	= Spline<T, 4>;
+		/// @brief `Spline` analog for quintic bezier splines.
+		/// @tparam T Value type.
 		template<CTL::Type::Math::Operatable T> using Quintic	= Spline<T, 5>;
 	}
 
+	/// @brief Hermite splines.
 	namespace Hermite {
+		/// @brief Hermite spline section.
+		/// @tparam T Value type.
 		template<CTL::Type::Math::Operatable T>
 		struct Section {
 			T position;
 			T velocity;
 		};
 
+		/// @brief List of hermite sections.
+		/// @tparam T Value type.
 		template<typename T>
 		using SectionList = List<Section<T>>;
 
+		/// @brief Hermite spline interpolator.
+		/// @tparam T Value type.
 		template<CTL::Type::Math::Operatable T>
 		class Spline: public Splinoid<T> {
 		public:
+			/// @brief Empty constructor.
 			constexpr Spline() {}
 
+			/// @brief Constructs the spline from a series of sections.
+			/// @param secs Sections to use.
 			constexpr Spline(SectionList<T> const& secs) {
 				sections = secs;
 			}
 
+			/// @brief Constructs the spline from a series of sections.
+			/// @param secs Sections to use.
 			constexpr Spline(Arguments<Section<T>> const& secs) {
 				sections.resize(secs.size());
 				for (Section<T>& s: secs)
 					sections.pushBack(s);
 			}
 
+			/// @brief Constructs the spline from an array of point groups.
+			/// @tparam P Array size.
+			/// @param points Points to use.
 			template <usize P>
 			constexpr Spline(Decay::AsType<T const[P][2]> const& points) {
 				sections.resize(P);
@@ -192,8 +237,12 @@ namespace Spline {
 				}
 			}
 
+			/// @brief Constructs the spline from an array of points.
+			/// @tparam P Array size.
+			/// @param points Points to use.
+			/// @note Requires point count to be a multiple of 2.
 			template<usize P>
-			constexpr Spline(Decay::AsType<T[P]> const& points) {
+			constexpr Spline(Decay::AsType<T const[P]> const& points) {
 				sections.resize(P/2);
 				static_assert(P % 2 == 0, "Point count is not a multiple of 2!");
 				for (usize i = 0; i < P; i += 2) {
@@ -206,6 +255,7 @@ namespace Spline {
 				}
 			}
 
+			/// @brief Sections to interpolate between.
 			SectionList<T> sections;
 
 			/// @brief Interpolates between the given points. 

@@ -10,12 +10,9 @@
 
 CTL_EX_NAMESPACE_BEGIN
 
-/**
-* A 'Tweenable' type is defined as:
-*	a)	An 'Operatable' type that can be constructed
-		from a single floating-point value.
-*/
+/// @brief Tween-specific type constraints.
 namespace Type::Ex::Tween {
+	/// @brief Type must be operatable, and must be constructible from a single float.
 	template <typename T>
 	concept Tweenable = CTL::Type::Math::Operatable<T> && CTL::Type::Constructible<T, float>;
 }
@@ -23,54 +20,85 @@ namespace Type::Ex::Tween {
 template <Type::Ex::Tween::Tweenable T = float>
 class Tween;
 
-using PeriodicTween = Periodic<Tween<>, usize>;
+/// @brief Tween-specific periodic event.
+using TweenPeriodic = Periodic<Tween<>, usize>;
 
+/// @brief Stepable tween interface.
 struct Stepable {
+	/// @brief Returns the current step.
+	/// @return Current step.
 	virtual usize		getStep()					{return step;	}
+	/// @brief Sets the current step. Must be implemented.
+	/// @param . Step to set to.
+	/// @return Reference to self.
 	virtual Stepable&	setStep(usize const)		= 0;
+	/// @brief Sets the total step count. Must be implemented.
+	/// @param . Step count to set to.
+	/// @return Reference to self.
 	virtual Stepable&	setStepCount(usize const)	= 0;
 
 protected:
+	/// @brief Current step.
 	usize step = 0;
 };
 
-struct PlayableTween: Playable {
-	virtual PlayableTween& conclude()	= 0;
-	virtual PlayableTween& halt()		= 0;
+/// @brief Tween-specific playable event.
+struct TweenPlayable: Playable {
+	/// @brief Ends the tween's execution, and sets its value to the end value.
+	/// @return Reference to self.
+	virtual TweenPlayable& conclude()	= 0;
+	/// @brief Ends the tween's execution, while keeping its current value.
+	/// @return Reference to self.
+	virtual TweenPlayable& halt()		= 0;
 
+	/// @brief Signal to be fired upon completion.
 	::CTL::Signal<> onCompleted;
 
 private:
-	virtual PlayableTween& stop()		{return halt();}
+	virtual TweenPlayable& stop()		{return halt();}
 };
 
+/// @brief Periodic value interpolator.
+/// @tparam T Value type.
 template <Type::Ex::Tween::Tweenable T>
 class Tween:
-	public PeriodicTween,
-	public PlayableTween,
+	public TweenPeriodic,
+	public TweenPlayable,
+	public CTL::Interface::Value<T>,
 	public Stepable {
 public:
+	/// @brief Value type.
 	typedef T DataType;
 
-	using PeriodicTween::PeriodicTween;
+	using TweenPeriodic::TweenPeriodic;
 
-	/// The tween's easing function.
+	/// @brief Easing function to use.
 	Math::Ease::Mode easeMode = Math::Ease::linear;
-
-	/// The tween's starting value.
+	/// @brief Start value.
 	T from;
-
-	/// The tween's target value.
+	/// @brief End value.
 	T to;
 
-	/// Targetless Constructor.
-	Tween(T const& from, T const& to, usize const step, Math::Ease::Mode const& easeMode, bool const manual = false)
-	: PeriodicTween(manual) {
+	/// @brief Constructs the tween with a series of starting values..
+	/// @param from Start value.
+	/// @param to End value.
+	/// @param step Step count.
+	/// @param easeMode Ease function. By default, it is `Math::Ease::linear`.
+	/// @param manual Whether the tween is processed manually. By default, it is `false`.
+	Tween(
+		T const& from,
+		T const& to,
+		usize const step,
+		Math::Ease::Mode const& easeMode = Math::Ease::linear,
+		bool const manual = false
+	)
+	: TweenPeriodic(manual) {
 		setInterpolation(from, to, step, easeMode);
 	}
 
-	/// Copy constructor.
-	Tween(Tween& other)
+	/// @brief Move constructor.
+	/// @param other `Tween` to move.
+	Tween(Tween&& other)
 	: Tween(
 		other.from,
 		other.to,
@@ -85,10 +113,14 @@ public:
 		other.setManual();
 	}
 
-	/// Destructor.
+	/// @brief Copy constructor (deleted).
+	Tween(Tween const& other) = delete;
+
+	/// @brief Destructor.
 	virtual ~Tween() {}
 
-	/// Calculates (and if targeted, applies) a step.
+	/// @brief Processes a step.
+	/// @param delta Delta between steps.
 	void onUpdate(usize delta) override final {
 		// If paused, return
 		if (paused) return;
@@ -112,7 +144,12 @@ public:
 		}
 	}
 
-	/// Sets the interpolation.
+	/// @brief Sets the interpolation.
+	/// @param from Start value.
+	/// @param to End value.
+	/// @param step Step count.
+	/// @param easeMode Ease function.
+	/// @return Reference to self.
 	Tween<T>& setInterpolation(T const& from, T const& to, usize const step, Math::Ease::Mode const& easeMode) {
 		isFinished = false;
 		this->step = 0;
@@ -125,48 +162,75 @@ public:
 		return *this;
 	}
 
-	/// Sets the interpolation to a new value, while maintaining the easing function.
+	/// @brief
+	///		Sets the interpolation to a new value,
+	///		while maintaining the easing function.
+	///		Current value is used as start value.
+	/// @param to New end value.
+	/// @return Reference to self.
 	Tween<T>& reinterpolateTo(T const& to) {
 		paused = false;
 		setInterpolation(value, to, step, easeMode);
 		return *this;
 	}
 
-	/// Sets the interpolation to a new value, while maintaining the easing dunction.
+	/// @brief
+	///		Sets the interpolation to a new value,
+	///		while maintaining the easing function.
+	/// @param from New start value.
+	/// @param to New end value.
+	/// @return Reference to self.
 	Tween<T>& reinterpolate(T const& from, T const& to) {
 		paused = false;
 		setInterpolation(from, to, step, easeMode);
 		return *this;
 	}
 
-	/// Sets the interpolation to a new value, while maintaining the easing function.
+	/// @brief
+	///		Sets the interpolation to a new value,
+	///		while maintaining the easing function.
+	///		Current value is used as start value.
+	/// @param to New end value.
+	/// @param step New step count.
+	/// @return Reference to self.
 	Tween<T>& reinterpolateTo(T const& to, usize const step) {
 		paused = false;
 		setInterpolation(value, to, step, easeMode);
 		return *this;
 	}
 
-	/// Sets the interpolation to a new value, while maintaining the easing dunction.
+	/// @brief
+	///		Sets the interpolation to a new value,
+	///		while maintaining the easing function.
+	/// @param from New start value.
+	/// @param to New end value.
+	/// @param step New step count.
+	/// @return Reference to self.
 	Tween<T>& reinterpolate(T const& from, T const& to, usize const step) {
 		paused = false;
 		setInterpolation(from, to, step, easeMode);
 		return *this;
 	}
 
-	/// Sets the current tween step.
+	/// @brief Sets the current tween step.
+	/// @param step Step to set to.
+	/// @return Reference to self.
 	Tween<T>& setStep(usize const step) override final {
 		this->step = step > stop ? stop : step;
 		onUpdate();
 		return *this;
 	}
 
-	/// Sets the current tween step count.
+	/// @brief Sets the current tween step count.
+	/// @param stop Step count to set to.
+	/// @return Reference to self.
 	Tween<T>& setStepCount(usize const stop) override final {
 		this->stop = stop;
 		return *this;
 	}
 
-	/// Halts the tween's execution, and sets it to its end value.
+	/// @brief Ends the tween's execution, and sets its value to the end value.
+	/// @return Reference to self.
 	Tween<T>& conclude() override final {
 		step = stop;
 		factor = 1.0f;
@@ -174,7 +238,8 @@ public:
 		return *this;
 	}
 
-	/// Starts the tween with its current state.
+	/// @brief Resumes the tween.
+	/// @return Reference to self.
 	Tween<T>& play() override final {
 		factor = 1.0f;
 		paused = false;
@@ -182,48 +247,55 @@ public:
 		return *this;
 	}
 
-	/// Pauses the tween.
+	/// @brief Pauses the tween.
+	/// @return Reference to self.
 	Tween<T>& pause() override final {
 		paused = true;
 		return *this;
 	}
 
-	/// Halts the tween's execution.
+	/// @brief Ends the tween's execution, while keeping its current value.
+	/// @return Reference to self.
 	Tween<T>& halt() override final {
 		factor = 1.0f;
 		isFinished = true;
 		return *this;
 	}
 
-	T value() const {
+	/// @brief Returns the current value.
+	/// @return Current value.
+	T value() const override final {
 		return current;
 	}
 
 private:
 	using
 		Stepable::step,
-		PlayableTween::isFinished
+		TweenPlayable::isFinished
 	;
 
+	/// @brief Current value.
 	T current;
-
+	/// @brief Interpolation factor.
 	float factor = 1.0f;
-
-	/// The amount of steps to be executed.
+	/// @brief Amount of steps to be processed.
 	usize stop;
 };
 
+/// @brief Tween interpolation stage.
+/// @tparam T Value type.
 template<Type::Ex::Tween::Tweenable T = float>
 struct StageData {
 	typedef T DataType;
-
-	/// The starting & ending values.
-	DataType from, to;
-	/// The amount of steps to take.
+	/// @brief Start value.
+	DataType from;
+	/// @brief End value.
+	DataType to;
+	/// @brief Step count.
 	usize step;
-	/// The easing function to use.
+	/// @brief Ease function to use.
 	Math::Ease::Mode ease	= Math::Ease::linear;
-	/// Action to do when this stage is concluded.
+	/// @brief Action to do when this stage is finished.
 	::CTL::Signal<> onCompleted;
 };
 
@@ -241,7 +313,8 @@ private:
 template<Type::Ex::Tween::Tweenable T = float>
 class TweenChain:
 	public PeriodicTween,
-	public PlayableTween,
+	public TweenPlayable,
+	public CTL::Interface::Value<T>,
 	public Stageable {
 public:
 	typedef T DataType;
@@ -364,7 +437,7 @@ public:
 		return halt();
 	}
 
-	T value() const {
+	T value() const override final {
 		return currentValue;
 	}
 
@@ -374,7 +447,7 @@ private:
 	using
 		Stageable::step,
 		Stageable::stage,
-		PlayableTween::isFinished
+		TweenPlayable::isFinished
 	;
 
 	Stage current;

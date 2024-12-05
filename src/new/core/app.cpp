@@ -183,13 +183,13 @@ void App::run() {
 	appState = App::AppState::AS_OPENING;
 	// The timer process
 	auto timerFunc	= [&](float delta)-> void {
-		PeriodicTween::process(1);
-		PeriodicTimer::process(1);
+		TweenPeriodic::process(1);
+		TimerPeriodic::process(1);
 	};
 	// The logical process
 	auto logicFunc	= [&](float delta)-> void {
 		onLogicFrame(delta);
-		Updateable::process(delta);
+		Updateable::process(delta, *this);
 	};
 	// Clear screen
 	Makai::Graph::API::setClearColor(background);
@@ -272,7 +272,7 @@ void App::run() {
 			render();
 		}
 		#ifdef MAKAILIB_PROCESS_RENDER_BEFORE_LOGIC
-		if (cycleDelta > (cycleDelta * 1000.0 - 1)) {
+		if (cycleDelta > (cycleRate * 1000.0 - 1)) {
 			// Update audio system
 			// Audio::updateAll();
 			// Update input manager
@@ -282,10 +282,10 @@ void App::run() {
 			// Increment cycle counter
 			cycle++;
 			// Do timer-related stuff
-			timerFunc(cycleDelta * speed);
+			timerFunc(cycleRate * speed);
 			#ifndef MAKAILIB_FRAME_DEPENDENT_PROCESS
 			// Do normal logic-related stuff
-			logicFunc(cycleDelta * speed);
+			logicFunc(cycleRate * speed);
 			#endif // FRAME_DEPENDENT_PROCESS
 		}
 		#endif
@@ -308,8 +308,8 @@ App::AppState App::state() {
 
 void App::setWindowSize(Vector2 const& size) {}
 
-App* App::current() {
-	return mainApp;
+App& App::current() {
+	return *mainApp;
 }
 
 usize App::getCurrentFrame() {
