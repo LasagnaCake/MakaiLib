@@ -33,7 +33,7 @@ namespace Type::Ex::Container {
 /// @brief Value obfuscator interface.
 /// @tparam TData Value type.
 template<typename TData>
-struct Obfuscator: CTL::Typed<TData> {
+struct IObfuscator: CTL::Typed<TData> {
 	using Typed = CTL::Typed<TData>;
 
 	using
@@ -41,7 +41,7 @@ struct Obfuscator: CTL::Typed<TData> {
 	;
 
 	/// @brief Destructor.
-	constexpr virtual ~Obfuscator() {}
+	constexpr virtual ~IObfuscator() {}
 
 	/// @brief Returns the deobfuscated value.
 	/// @return Deobfuscated value.
@@ -517,7 +517,7 @@ MangledStaticString<S> makeMangled(FixedCString<S> const& str) {
 /// @tparam N String size.
 /// @tparam TContainer<usize> String mangler.
 template <usize N, template<usize> class TContainer = MangledStaticString>
-struct ObfuscatedStaticString: Obfuscator<String> {
+struct ObfuscatedStaticString: IObfuscator<String> {
 private:
 	using SizeType = Decay::Number::AsUnsigned<N>;
 public:

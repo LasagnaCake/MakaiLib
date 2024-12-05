@@ -9,7 +9,7 @@ namespace Makai {
 }
 
 namespace Makai::Audio {
-	class Music: public Source {
+	class Music: public ISource {
 	public:
 		struct MetaData {
 			String	title;
@@ -18,7 +18,7 @@ namespace Makai::Audio {
 			String	copyright;
 		};
 
-		using Source::Source;
+		using ISource::ISource;
 
 		virtual ~Music() final;
 

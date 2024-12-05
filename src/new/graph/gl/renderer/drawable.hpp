@@ -10,23 +10,23 @@
 #include "core.hpp"
 
 namespace Makai::Graph {
-	class Drawable {
+	class IDrawable {
 	public:
-		Drawable(bool const manual = false);
+		IDrawable(bool const manual = false);
 
-		Drawable(bool const manual, usize const layer);
+		IDrawable(bool const manual, usize const layer);
 
-		virtual ~Drawable();
+		virtual ~IDrawable();
 
-		Drawable& setManual();
+		IDrawable& setManual();
 
-		Drawable& setAuto(usize const renderLayer);
+		IDrawable& setAuto(usize const renderLayer);
 
-		Drawable& setRenderLayer(usize const renderLayer);
+		IDrawable& setRenderLayer(usize const renderLayer);
 
-		Drawable& addToRenderLayer(usize const renderLayer);
+		IDrawable& addToRenderLayer(usize const renderLayer);
 
-		Drawable& removeFromRenderLayer(usize const renderLayer);
+		IDrawable& removeFromRenderLayer(usize const renderLayer);
 
 		/// Renders the object to the screen.
 		RenderCallback render = [&] {doRender();};
@@ -43,13 +43,13 @@ namespace Makai::Graph {
 		bool manualMode = false;
 	};
 
-	class DrawableObject: public Drawable, public Blendable {
+	class IGLDrawable: public IDrawable, public IBlendable {
 	public:
-		DrawableObject(usize const layer = 0, bool const manual = false);
+		IGLDrawable(usize const layer = 0, bool const manual = false);
 
-		virtual ~DrawableObject();
+		virtual ~IGLDrawable();
 
-		virtual void draw() {}
+		virtual void draw() = 0;
 
 		Transform3D			trans;
 		Shader				shader		= Shader::DEFAULT;
@@ -59,11 +59,11 @@ namespace Makai::Graph {
 	protected:
 		void display(
 			Vertex* const		vertices,
-			usize const		count,
+			usize const			count,
 			CullMode const&		culling,
 			FillMode const&		fill,
 			DisplayMode const&	mode		= DisplayMode::ODM_TRIS,
-			usize const		instances	= 1
+			usize const			instances	= 1
 		);
 
 		void prepare();
@@ -72,7 +72,7 @@ namespace Makai::Graph {
 	};
 
 	template<class T>
-	concept DrawableObjectType = Makai::Type::Subclass<T, DrawableObject>;
+	concept DrawableObjectType = Makai::Type::Subclass<T, IGLDrawable>;
 }
 
 #endif // MAKAILIB_GRAPH_RENDERER_DRAWABLE_H

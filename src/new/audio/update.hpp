@@ -7,7 +7,7 @@
 namespace Makai::Audio {
 	inline void updateAll() {
 		Music::update();
-		Source::update();
+		ISource::update();
 	}
 }
 

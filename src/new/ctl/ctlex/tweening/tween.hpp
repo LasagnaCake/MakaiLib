@@ -20,8 +20,8 @@ namespace Type::Ex::Tween {
 template <Type::Ex::Tween::Tweenable T = float>
 class Tween;
 
-/// @brief Tween-specific periodic event.
-using TweenPeriodic = Periodic<Tween<>, usize>;
+/// @brief Tween-specific periodic event interface.
+using ITweenPeriodic = IPeriodic<Tween<>, usize>;
 
 /// @brief Stepable tween interface.
 struct Stepable {
@@ -62,15 +62,15 @@ private:
 /// @tparam T Value type.
 template <Type::Ex::Tween::Tweenable T>
 class Tween:
-	public TweenPeriodic,
+	public ITweenPeriodic,
 	public TweenPlayable,
-	public CTL::Interface::Value<T>,
+	public Interface::IValue<T>,
 	public Stepable {
 public:
 	/// @brief Value type.
 	typedef T DataType;
 
-	using TweenPeriodic::TweenPeriodic;
+	using ITweenPeriodic::ITweenPeriodic;
 
 	/// @brief Easing function to use.
 	Math::Ease::Mode easeMode = Math::Ease::linear;
@@ -92,7 +92,7 @@ public:
 		Math::Ease::Mode const& easeMode = Math::Ease::linear,
 		bool const manual = false
 	)
-	: TweenPeriodic(manual) {
+	: ITweenPeriodic(manual) {
 		setInterpolation(from, to, step, easeMode);
 	}
 
@@ -312,9 +312,9 @@ private:
 
 template<Type::Ex::Tween::Tweenable T = float>
 class TweenChain:
-	public PeriodicTween,
+	public ITweenPeriodic,
 	public TweenPlayable,
-	public CTL::Interface::Value<T>,
+	public Interface::IValue<T>,
 	public Stageable {
 public:
 	typedef T DataType;
@@ -326,12 +326,12 @@ public:
 	bool paused = false;
 
 	TweenChain(StageList const& stages, bool const manual = false)
-	: PeriodicTween(manual) {
+	: ITweenPeriodic(manual) {
 		setInterpolation(stages);
 	}
 
 	TweenChain(StageArguments const& stages, bool const manual = false)
-	: PeriodicTween(manual) {
+	: ITweenPeriodic(manual) {
 		setInterpolation(stages);
 	}
 

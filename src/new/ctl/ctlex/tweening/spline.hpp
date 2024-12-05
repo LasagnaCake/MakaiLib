@@ -116,7 +116,7 @@ namespace Spline {
 			/// @tparam P Array size.
 			/// @param points Points to use.
 			template <usize P>
-			constexpr Spline(Decay::AsType<T[P][N] const> const& points) {
+			constexpr Spline(Decay::AsType<T const[P][N]> const& points) {
 				sections.resize(P);
 				for (usize i = 0; i < P; ++i) {
 					Section<T, N> sec;

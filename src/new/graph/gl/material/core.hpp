@@ -11,17 +11,17 @@
 
 namespace Makai::Graph::Material {
 
-	struct ShaderMaterial {
+	struct IMaterial {
 		virtual void use(Shader const& shader) const = 0;
 	};
 
-	struct BaseObjectMaterial: ShaderMaterial {
+	struct IObjectMaterial: IMaterial {
 		Vector4	color = Color::WHITE;
 
 		//virtual void use(Shader& shader) const = 0;
 	};
 
-	struct ObjectMaterial final: BaseObjectMaterial {
+	struct ObjectMaterial final: IObjectMaterial {
 		bool shaded			= false;
 		bool illuminated	= false;
 		float			hue			= 0;
@@ -44,13 +44,13 @@ namespace Makai::Graph::Material {
 		void use(Shader const& shader) const override final;
 	};
 
-	struct BaseBufferMaterial: ShaderMaterial {
+	struct IBufferMaterial: IMaterial {
 		Vector4 background = Color::NONE;
 
 		//virtual void use(Shader& shader) const = 0;
 	};
 
-	struct BufferMaterial final: BaseBufferMaterial {
+	struct BufferMaterial final: IBufferMaterial {
 		Vector4
 			color	= Color::WHITE,
 			accent	= Color::NONE
@@ -77,11 +77,11 @@ namespace Makai::Graph::Material {
 		void use(Shader const& shader) const override final;
 	};
 
-	struct BaseWorldMaterial: ShaderMaterial {
+	struct IWorldMaterial: IMaterial {
 		//virtual void use(Shader& shader) const = 0;
 	};
 
-	struct WorldMaterial final: BaseWorldMaterial {
+	struct WorldMaterial final: IWorldMaterial {
 		Effect::Fog		nearFog;
 		Effect::Fog		farFog;
 		Effect::Ambient	ambient;
@@ -94,9 +94,9 @@ namespace Makai::Graph::Material {
 		Makai::Type::Subclass<T, BASE>
 	;
 
-	template<class T> concept ValidObjectMaterial	= ValidMaterial<T, BaseObjectMaterial>;
-	template<class T> concept ValidBufferMaterial	= ValidMaterial<T, BaseBufferMaterial>;
-	template<class T> concept ValidWorldMaterial	= ValidMaterial<T, BaseWorldMaterial>;
+	template<class T> concept ValidObjectMaterial	= ValidMaterial<T, IObjectMaterial>;
+	template<class T> concept ValidBufferMaterial	= ValidMaterial<T, IBufferMaterial>;
+	template<class T> concept ValidWorldMaterial	= ValidMaterial<T, IWorldMaterial>;
 }
 
 #endif // MAKAILIB_GRAPH_MATERIAL_MATERIALS_H

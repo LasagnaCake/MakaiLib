@@ -50,14 +50,14 @@ namespace Makai::Graph {
 		} eq = {};
 	};
 
-	struct Blendable {
+	struct IBlendable {
 		inline static BlendMode DEFAULT_MODE = {};
 
-		Blendable(): blend(DEFAULT_MODE) {}
+		IBlendable(): blend(DEFAULT_MODE) {}
 
-		constexpr Blendable(BlendMode const& blend): blend(blend) {}
+		constexpr IBlendable(BlendMode const& blend): blend(blend) {}
 
-		constexpr Blendable& setBlendFunction(
+		constexpr IBlendable& setBlendFunction(
 			BlendFunction const& srcColor,
 			BlendFunction const& dstColor,
 			BlendFunction const& srcAlpha,
@@ -67,7 +67,7 @@ namespace Makai::Graph {
 			return *this;
 		}
 
-		constexpr Blendable& setBlendFunction(
+		constexpr IBlendable& setBlendFunction(
 			BlendFunction const& src,
 			BlendFunction const& dst
 		) {
@@ -75,7 +75,7 @@ namespace Makai::Graph {
 			return *this;
 		}
 
-		constexpr Blendable& setBlendEquation(
+		constexpr IBlendable& setBlendEquation(
 			BlendEquation const& color,
 			BlendEquation const& alpha
 		) {
@@ -83,7 +83,7 @@ namespace Makai::Graph {
 			return *this;
 		}
 
-		constexpr Blendable& setBlendEquation(
+		constexpr IBlendable& setBlendEquation(
 			BlendEquation const& eq
 		) {
 			blend.eq = {eq, eq};

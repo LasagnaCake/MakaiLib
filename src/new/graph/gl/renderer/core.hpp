@@ -9,7 +9,7 @@ namespace Makai {
 }
 
 namespace Makai::Graph {
-	class Drawable;
+	class IDrawable;
 
 	struct Renderer {
 		using Callback	= const Signal<>;
@@ -30,7 +30,7 @@ namespace Makai::Graph {
 
 		static void renderLayer(typename Layers::GroupType const& layer);
 
-		friend class Drawable;
+		friend class IDrawable;
 		friend class ::Makai::App;
 	};
 

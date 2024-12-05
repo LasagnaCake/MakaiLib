@@ -20,11 +20,11 @@ namespace Makai::Graph {
 	}
 
 	template<class T>
-	concept BarType = Makai::Type::Subclass<T, Base::Progressbar> && Makai::Type::Subclass<T, Drawable>;
+	concept BarType = Makai::Type::Subclass<T, Base::Progressbar> && Makai::Type::Subclass<T, IDrawable>;
 
-	class LinearBar: public DrawableObject, public Base::Progressbar {
+	class LinearBar: public IGLDrawable, public Base::Progressbar {
 	public:
-		LinearBar(size_t const& layer = 0, bool const manual = false): DrawableObject(layer, manual) {}
+		LinearBar(size_t const& layer = 0, bool const manual = false): IGLDrawable(layer, manual) {}
 
 		Material::ObjectMaterial material;
 
@@ -34,12 +34,12 @@ namespace Makai::Graph {
 		void draw() override;
 	};
 
-	class RadialBar: public DrawableObject, public Base::Progressbar {
+	class RadialBar: public IGLDrawable, public Base::Progressbar {
 	public:
 		bool	centered	= false;
 		Vector2 offset		= Vector2(0);
 
-		RadialBar(size_t const& layer = 0, bool const manual = false): DrawableObject(layer, manual) {
+		RadialBar(size_t const& layer = 0, bool const manual = false): IGLDrawable(layer, manual) {
 			vertices[0].uv.u = vertices[0].uv.v = 0.5;
 		}
 

@@ -10,14 +10,14 @@ CTL_EX_NAMESPACE_BEGIN
 class Timer;
 
 /// @brief Timer-specific periodic event.
-using TimerPeriodic = Periodic<Timer, usize>;
+using ITimerPeriodic = IPeriodic<Timer, usize>;
 
 /// @brief Timer-based periodic event.
 class Timer:
-	public TimerPeriodic,
+	public ITimerPeriodic,
 	public Playable {
 public:
-	using TimerPeriodic::TimerPeriodic;
+	using ITimerPeriodic::ITimerPeriodic;
 
 	/// @brief Whether the current Timer is paused.
 	bool paused	= false;
@@ -36,7 +36,7 @@ public:
 	/// @param repeat Whether to repeatedly fire the event.
 	/// @param manual Whether the timer should be manually updated.
 	Timer(usize const delay, bool const repeat = false, bool const manual = false)
-	: TimerPeriodic(manual), repeat(repeat), delay(delay) {
+	: ITimerPeriodic(manual), repeat(repeat), delay(delay) {
 	}
 
 	/// @brief Move constructor.

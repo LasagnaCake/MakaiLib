@@ -11,7 +11,7 @@
 namespace Makai::Graph {
 	class Scene;
 
-	class Renderable: public DrawableObject {
+	class Renderable: public IGLDrawable {
 	public:
 		constexpr static usize VERSION = 0;
 

@@ -11,6 +11,7 @@
 #include "os/os.hpp"
 #include "regex/regex.hpp"
 #include "typetraits/typetraits.hpp"
+#include "interface/interface.hpp"
 #include "cmath.hpp"
 #include "cpperror.hpp"
 #include "ctypes.hpp"

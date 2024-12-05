@@ -4,72 +4,72 @@
 
 using namespace Makai; using namespace Makai::Graph;
 
-void Drawable::doRender() {if (active) draw();}
+void IDrawable::doRender() {if (active) draw();}
 
-Drawable::Drawable(bool const manual, usize const layer) {
+IDrawable::IDrawable(bool const manual, usize const layer) {
 	if(!manual) setAuto(layer);
 	manualMode = manual;
 }
 
 
-Drawable::Drawable(bool const manual): Drawable(manual, 0) {
+IDrawable::IDrawable(bool const manual): Drawable(manual, 0) {
 }
 
-Drawable::~Drawable() {
+IDrawable::~IDrawable() {
 	DEBUGLN("Removing from rendering layers...");
 	if(!manualMode)
 		Renderer::layers.removeFromAll(&render);
 	DEBUGLN("Finalizing...\n");
 }
 
-Drawable& Drawable::setManual() {
+IDrawable& IDrawable::setManual() {
 	if(!manualMode)
 		Renderer::layers.removeFromAll(&render);
 	manualMode = true;
 	return *this;
 }
 
-Drawable& Drawable::setAuto(usize const renderLayer) {
+IDrawable& IDrawable::setAuto(usize const renderLayer) {
 	if(manualMode)
 		Renderer::layers.add(&render, renderLayer);
 	manualMode = false;
 	return *this;
 }
 
-Drawable& Drawable::setRenderLayer(usize const renderLayer) {
+IDrawable& IDrawable::setRenderLayer(usize const renderLayer) {
 	Renderer::layers.removeFromAll(&render);
 	Renderer::layers.add(&render, renderLayer);
 	manualMode = false;
 	return *this;
 }
 
-Drawable& Drawable::addToRenderLayer(usize const renderLayer) {
+IDrawable& IDrawable::addToRenderLayer(usize const renderLayer) {
 	Renderer::layers.add(&render, renderLayer);
 	manualMode = false;
 	return *this;
 }
 
-Drawable& Drawable::removeFromRenderLayer(usize const renderLayer) {
+IDrawable& IDrawable::removeFromRenderLayer(usize const renderLayer) {
 	Renderer::layers.remove(&render, renderLayer);
 	if (Renderer::layers.withObject(&render).empty())
 		manualMode = true;
 	return *this;
 }
 
-DrawableObject::DrawableObject(usize const layer, bool const manual): Drawable(layer, manual), Blendable() {
+IGLDrawable::IGLDrawable(usize const layer, bool const manual): IDrawable(layer, manual), IBlendable() {
 	DEBUGLN("Creating drawable object...");
 	glGenVertexArrays(1, &vao);
 	glGenBuffers(1, &vbo);
 	DEBUGLN("Drawable object created!");
 }
 
-DrawableObject::~DrawableObject() {
+IGLDrawable::~IGLDrawable() {
 	DEBUGLN("Deleting buffers...");
 	glDeleteBuffers(1, &vbo);
 	glDeleteVertexArrays(1, &vao);
 }
 
-void DrawableObject::display(
+void IGLDrawable::display(
 	Vertex* const		vertices,
 	usize const		count,
 	CullMode const&		culling,
@@ -122,7 +122,7 @@ void DrawableObject::display(
 	glDisable(GL_PROGRAM_POINT_SIZE);
 }
 
-void DrawableObject::prepare() {
+void IGLDrawable::prepare() {
 	#ifdef MAKAILIB_DEBUG
 	API::Debug::Context ctx("DrawableObject::prepare");
 	#endif // MAKAILIB_DEBUG

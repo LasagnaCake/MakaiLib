@@ -183,13 +183,13 @@ void App::run() {
 	appState = App::AppState::AS_OPENING;
 	// The timer process
 	auto timerFunc	= [&](float delta)-> void {
-		TweenPeriodic::process(1);
-		TimerPeriodic::process(1);
+		ITweenPeriodic::process(1);
+		ITimerPeriodic::process(1);
 	};
 	// The logical process
 	auto logicFunc	= [&](float delta)-> void {
 		onLogicFrame(delta);
-		Updateable::process(delta, *this);
+		IUpdateable::process(delta, *this);
 	};
 	// Clear screen
 	Makai::Graph::API::setClearColor(background);

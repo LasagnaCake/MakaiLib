@@ -4,7 +4,7 @@
 
 using namespace Makai; using namespace Makai::Graph;
 
-/*BlendMode Blendable::DEFAULT_MODE = {
+/*BlendMode IBlendable::DEFAULT_MODE = {
 	{
 		BlendFunction::BF_SRC_ALPHA
 		BlendFunction::BF_ONE_MINUS_SRC_ALPHA
@@ -58,9 +58,9 @@ GLenum convert(BlendEquation const& value) {
 	}
 }
 
-void Blendable::useBlendMode(usize const drawBuffer) const {
+void IBlendable::useBlendMode(usize const drawBuffer) const {
 	#ifdef MAKAILIB_DEBUG
-	API::Debug::Context("Blendable::useBlendMode");
+	API::Debug::Context("IBlendable::useBlendMode");
 	#endif // MAKAILIB_DEBUG
 	glBlendFuncSeparatei(
 		drawBuffer,

@@ -16,15 +16,15 @@ template<usize I>
 class NotificationServer {
 public:
 	/// @brief Message to pass for the sent notification.
-	struct Message {
-		virtual ~Message() {}
+	struct IMessage {
+		virtual ~IMessage() {}
 	};
 
 	/// @brief Server ID.
 	constexpr static usize ID = I;
 
 	/// @brief Signal type.
-	typedef Signal<Message* const>						SignalType;
+	typedef Signal<IMessage const* const>				SignalType;
 	/// @brief Signal list type.
 	typedef List<SignalType>							SignalList;
 	/// @brief Signal arguments type.
@@ -183,7 +183,7 @@ public:
 	/// @brief Broadcasts a message to a signal.
 	/// @param signals Signal to broadcast.
 	/// @param msg Message to pass.
-	static void broadcast(String const& signal, Message* const msg = nullptr) {
+	static void broadcast(String const& signal, IMessage const* const msg = nullptr) {
 		if (db.contains(signal))
 			for (SignalWrapper& s: db[signal])
 				s(msg);
@@ -192,7 +192,7 @@ public:
 	/// @brief Broadcasts a message to a series of signals.
 	/// @param signals Signals to broadcast.
 	/// @param msg Message to pass.
-	static void broadcast(StringList const& signals, Message* const msg = nullptr) {
+	static void broadcast(StringList const& signals, IMessage const* const msg = nullptr) {
 		for (String const& s: signals)
 			broadcast(s, msg);
 	}
@@ -200,14 +200,14 @@ public:
 	/// @brief Broadcasts a message to a series of signals.
 	/// @param signals Signals to broadcast.
 	/// @param msg Message to pass
-	static void broadcast(StringArguments const& signals, Message* const msg = nullptr) {
+	static void broadcast(StringArguments const& signals, IMessage const* const msg = nullptr) {
 		for (String const& s: signals)
 			broadcast(s, msg);
 	}
 
 	/// @brief Broadcasts a series of notifications.
 	/// @param notifs Pairs of notifications and their messages.
-	static void broadcast(List<KeyValuePair<String, Message*>> const& notifs) {
+	static void broadcast(List<KeyValuePair<String, IMessage const*>> const& notifs) {
 		for (auto& [sig, msg]: notifs)
 			broadcast(sig, msg);
 	}
@@ -216,7 +216,7 @@ public:
 	/// @param signals Signal to broadcast.
 	/// @param msg Message to pass.
 	/// @return Reference to self.
-	NotificationServer& operator()(String const& signal, Message* const msg = nullptr) const {
+	NotificationServer& operator()(String const& signal, IMessage const* const msg = nullptr) const {
 		broadcast(signal, msg);
 		return *this;
 	}
@@ -225,7 +225,7 @@ public:
 	/// @param signals Signals to broadcast.
 	/// @param msg Message to pass
 	/// @return Reference to self.
-	NotificationServer& operator()(StringList const& signals, Message* const msg = nullptr) const {
+	NotificationServer& operator()(StringList const& signals, IMessage const* const msg = nullptr) const {
 		broadcast(signals, msg);
 		return *this;
 	}
@@ -234,7 +234,7 @@ public:
 	/// @param signals Signals to broadcast.
 	/// @param msg Message to pass
 	/// @return Reference to self.
-	NotificationServer& operator()(StringArguments const& signals, Message* const msg = nullptr) const {
+	NotificationServer& operator()(StringArguments const& signals, IMessage* const msg = nullptr) const {
 		broadcast(signals, msg);
 		return *this;
 	}
@@ -242,7 +242,7 @@ public:
 	/// @brief Broadcasts a series of notifications.
 	/// @param notifs Pairs of notifications and their message.
 	/// @return Reference to self.
-	NotificationServer& operator()(List<KeyValuePair<String, Message*>> const& notifs) const {
+	NotificationServer& operator()(List<KeyValuePair<String, IMessage const*>> const& notifs) const {
 		broadcast(notifs);
 		return *this;
 	}

@@ -21,16 +21,16 @@ namespace Random {
 /// @brief Base classes for other classes.
 namespace Base {
 	/// @brief Random number engine interface.
-	struct Engine {
+	struct IEngine {
 		/// @brief Generates a new random number.
 		/// @return Generated number.
 		virtual usize next() = 0;
 		/// @brief Virtual destructor.
-		virtual ~Engine() {}
+		virtual ~IEngine() {}
 	};
 
 	/// @brief Pseudo-random number engine interface.
-	struct SimpleEngine: Engine {
+	struct SimpleEngine: IEngine {
 		constexpr static bool SECURE = false;
 		/// @brief Generates a new random number.
 		/// @return Generated number.
@@ -46,7 +46,7 @@ namespace Base {
 	};
 
 	/// @brief Cryptographically secure random number engine interface.
-	struct SecureEngine: Engine {
+	struct SecureEngine: IEngine {
 		constexpr static bool SECURE = true;
 		/// @brief Generates a new random number.
 		/// @return Generated number.

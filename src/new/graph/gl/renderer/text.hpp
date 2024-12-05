@@ -61,9 +61,9 @@ namespace Makai::Graph {
 		LineWrap	lineWrap	= LineWrap::LW_CHARACTER;
 	};
 
-	class Label: public DrawableObject {
+	class Label: public IGLDrawable {
 	public:
-		Label(size_t const& layer = 0, bool const manual = false): DrawableObject(layer, manual) {}
+		Label(size_t const& layer = 0, bool const manual = false): IGLDrawable(layer, manual) {}
 
 		virtual ~Label() {}
 

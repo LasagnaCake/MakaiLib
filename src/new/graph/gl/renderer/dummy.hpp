@@ -4,7 +4,7 @@
 #include "drawable.hpp"
 
 namespace Makai::Graph {
-	class Dummy: public Drawable {
+	class Dummy: public IDrawable {
 	public:
 		Dummy(Arguments<usize> const& layers) {
 			for (usize const l : layers)

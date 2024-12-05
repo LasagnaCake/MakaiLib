@@ -10,7 +10,7 @@ namespace Interface {
 /// @brief Interface for a compile-time-able stored value.
 /// @tparam T Value type.
 template<class T>
-struct ConstValue {
+struct IConstValue {
 	/// @brief Returns the stored value.
 	/// @return Stored value.
 	constexpr virtual T value() const = 0;
@@ -19,7 +19,7 @@ struct ConstValue {
 /// @brief Interface for a stored value.
 /// @tparam T Value type.
 template<class T>
-struct Value {
+struct IValue {
 	/// @brief Returns the stored value.
 	/// @return Stored value.
 	virtual T value() const = 0;

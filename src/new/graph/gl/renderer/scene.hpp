@@ -11,14 +11,14 @@ namespace Makai::Graph {
 
 	namespace Base {
 		template<DrawableObjectType TDraw>
-		class Collection: public Drawable {
+		class Collection: public IDrawable {
 		public:
 			using DrawableType = TDraw;
 
 			using DrawableEntry	= KeyValuePair<String, DrawableType*>;
 			using DrawableBank	= Dictionary<DrawableType*>;
 
-			Collection(usize const layer = 0, bool const manual = false): Drawable(layer, manual) {}
+			Collection(usize const layer = 0, bool const manual = false): IDrawable(layer, manual) {}
 
 			virtual ~Collection() {
 				destroy();

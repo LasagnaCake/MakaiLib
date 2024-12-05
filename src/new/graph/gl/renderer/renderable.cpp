@@ -223,14 +223,14 @@ inline JSON::JSONData toDefinition(
 }
 
 Renderable::Renderable(usize const layer, bool const manual):
-DrawableObject(layer, manual) {
+IGLDrawable(layer, manual) {
 }
 
 Renderable::Renderable(
 	List<Triangle*> const& triangles,
 	usize const layer,
 	bool const manual
-): DrawableObject(layer, manual) {
+): IGLDrawable(layer, manual) {
 	this->triangles = triangles;
 }
 
@@ -239,7 +239,7 @@ Renderable::Renderable(
 	usize const count,
 	usize const layer,
 	bool const manual
-): DrawableObject(layer, manual) {
+): IGLDrawable(layer, manual) {
 	extend(vertices, count);
 }
 
@@ -247,7 +247,7 @@ Renderable::Renderable(
 	Renderable& other,
 	usize const layer,
 	bool const manual
-): DrawableObject(layer, manual) {
+): IGLDrawable(layer, manual) {
 	extend(other);
 }
 

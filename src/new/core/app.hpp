@@ -22,7 +22,7 @@ namespace Makai {
 
 	struct App;
 
-	struct Updateable: CTL::Ex::Periodic<App, usize, App&> {
+	struct IUpdateable: CTL::Ex::IPeriodic<App, usize, App&> {
 		virtual void onUpdate(usize delta, App& app) = 0;
 	};
 

@@ -7,9 +7,9 @@
 #include "source.hpp"
 
 namespace Makai::Audio {
-	class Sound: public Source {
+	class Sound: public ISource {
 	public:
-		using Source::Source;
+		using ISource::ISource;
 
 		virtual ~Sound() final;
 
