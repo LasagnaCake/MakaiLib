@@ -317,6 +317,8 @@ private:
 	virtual IStageable&	setStepCount(usize const)	{return *this;	}
 };
 
+/// @brief Periodic value interpolator, with multiple stages.
+/// @tparam T Value type.
 template<Type::Ex::Tween::Tweenable T = float>
 class TweenChain:
 	public ITweenPeriodic,
