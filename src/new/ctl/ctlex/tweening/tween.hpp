@@ -24,38 +24,38 @@ class Tween;
 using ITweenPeriodic = IPeriodic<Tween<>, usize>;
 
 /// @brief Stepable tween interface.
-struct Stepable {
+struct IStepable {
 	/// @brief Returns the current step.
 	/// @return Current step.
 	virtual usize		getStep()					{return step;	}
 	/// @brief Sets the current step. Must be implemented.
 	/// @param . Step to set to.
 	/// @return Reference to self.
-	virtual Stepable&	setStep(usize const)		= 0;
+	virtual IStepable&	setStep(usize const)		= 0;
 	/// @brief Sets the total step count. Must be implemented.
 	/// @param . Step count to set to.
 	/// @return Reference to self.
-	virtual Stepable&	setStepCount(usize const)	= 0;
+	virtual IStepable&	setStepCount(usize const)	= 0;
 
 protected:
 	/// @brief Current step.
 	usize step = 0;
 };
 
-/// @brief Tween-specific playable event.
-struct TweenPlayable: Playable {
+/// @brief Tween-specific playable event interface.
+struct ITweenPlayable: IPlayable {
 	/// @brief Ends the tween's execution, and sets its value to the end value.
 	/// @return Reference to self.
-	virtual TweenPlayable& conclude()	= 0;
+	virtual ITweenPlayable& conclude()	= 0;
 	/// @brief Ends the tween's execution, while keeping its current value.
 	/// @return Reference to self.
-	virtual TweenPlayable& halt()		= 0;
+	virtual ITweenPlayable& halt()		= 0;
 
 	/// @brief Signal to be fired upon completion.
 	::CTL::Signal<> onCompleted;
 
 private:
-	virtual TweenPlayable& stop()		{return halt();}
+	virtual ITweenPlayable& stop()		{return halt();}
 };
 
 /// @brief Periodic value interpolator.
@@ -63,9 +63,9 @@ private:
 template <Type::Ex::Tween::Tweenable T>
 class Tween:
 	public ITweenPeriodic,
-	public TweenPlayable,
-	public Interface::IValue<T>,
-	public Stepable {
+	public ITweenPlayable,
+	public IValue<T>,
+	public IStepable {
 public:
 	/// @brief Value type.
 	typedef T DataType;
@@ -270,8 +270,8 @@ public:
 
 private:
 	using
-		Stepable::step,
-		TweenPlayable::isFinished
+		IStepable::step,
+		ITweenPlayable::isFinished
 	;
 
 	/// @brief Current value.
@@ -299,23 +299,23 @@ struct StageData {
 	::CTL::Signal<> onCompleted;
 };
 
-struct Stageable: Stepable {
-	virtual Stageable&	setStage(usize const)		{return *this;	}
+struct IStageable: IStepable {
+	virtual IStageable&	setStage(usize const)		{return *this;	}
 	virtual usize		getStage()					{return stage;	}
 
 protected:
 	usize stage = 0;
 
 private:
-	virtual Stageable&	setStepCount(usize const)	{return *this;	}
+	virtual IStageable&	setStepCount(usize const)	{return *this;	}
 };
 
 template<Type::Ex::Tween::Tweenable T = float>
 class TweenChain:
 	public ITweenPeriodic,
-	public TweenPlayable,
-	public Interface::IValue<T>,
-	public Stageable {
+	public ITweenPlayable,
+	public IValue<T>,
+	public IStageable {
 public:
 	typedef T DataType;
 
@@ -445,9 +445,9 @@ public:
 
 private:
 	using
-		Stageable::step,
-		Stageable::stage,
-		TweenPlayable::isFinished
+		IStageable::step,
+		IStageable::stage,
+		ITweenPlayable::isFinished
 	;
 
 	Stage current;

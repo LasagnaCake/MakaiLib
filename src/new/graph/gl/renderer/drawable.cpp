@@ -12,7 +12,7 @@ IDrawable::IDrawable(bool const manual, usize const layer) {
 }
 
 
-IDrawable::IDrawable(bool const manual): Drawable(manual, 0) {
+IDrawable::IDrawable(bool const manual): IDrawable(manual, 0) {
 }
 
 IDrawable::~IDrawable() {

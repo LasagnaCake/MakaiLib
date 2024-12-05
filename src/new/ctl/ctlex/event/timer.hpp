@@ -15,7 +15,7 @@ using ITimerPeriodic = IPeriodic<Timer, usize>;
 /// @brief Timer-based periodic event.
 class Timer:
 	public ITimerPeriodic,
-	public Playable {
+	public IPlayable {
 public:
 	using ITimerPeriodic::ITimerPeriodic;
 

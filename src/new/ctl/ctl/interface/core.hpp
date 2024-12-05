@@ -5,8 +5,6 @@
 
 CTL_NAMESPACE_BEGIN
 
-namespace Interface {
-
 /// @brief Interface for a compile-time-able stored value.
 /// @tparam T Value type.
 template<class T>
@@ -24,8 +22,6 @@ struct IValue {
 	/// @return Stored value.
 	virtual T value() const = 0;
 };
-
-}
 
 CTL_NAMESPACE_END
 
