@@ -9,7 +9,9 @@
 #include "mode.hpp"
 #include "core.hpp"
 
+/// @brief Graphical facilities.
 namespace Makai::Graph {
+	/// @brief Drawable object interface.
 	class IDrawable {
 	public:
 		IDrawable(bool const manual = false);
@@ -43,6 +45,7 @@ namespace Makai::Graph {
 		bool manualMode = false;
 	};
 
+	/// @brief OpenGL drawable object interface.
 	class IGLDrawable: public IDrawable, public IBlendable {
 	public:
 		IGLDrawable(usize const layer = 0, bool const manual = false);

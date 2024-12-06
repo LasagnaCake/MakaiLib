@@ -309,8 +309,18 @@ namespace Makai::Graph::Material {
 		struct Ambient: ColorableRGB, Variable {};
 	}
 
+	/// @brief Saves an image effect.
+	/// @param effect Effect to save.
+	/// @param folder Folder to save to.
+	/// @param path Path to image effect.
+	/// @return JSON structure associated with the effect.
 	JSON::JSONData saveImageEffect(Effect::Image& effect, CTL::String const& folder, String const& path);
 
+	/// @brief Loads an image effect.
+	/// @param effect Effect to load.
+	/// @param sourcepath Folder of definition file.
+	/// @param texture Texture to load image into.
+	/// @return Image effect.
 	Effect::Image loadImageEffect(JSON::JSONData effect, CTL::String const& sourcepath, Texture2D& texture);
 }
 

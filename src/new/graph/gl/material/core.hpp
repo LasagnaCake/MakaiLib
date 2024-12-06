@@ -29,6 +29,7 @@ namespace Makai::Graph::Material {
 		virtual ~IObjectMaterial() {}
 	};
 
+	/// @brief Default object material.
 	struct ObjectMaterial final: IObjectMaterial {
 		/// @brief Whether the has directional shading.
 		bool shaded			= false;
@@ -84,6 +85,7 @@ namespace Makai::Graph::Material {
 		virtual ~IBufferMaterial() {}
 	};
 
+	/// @brief Default framebuffer material.
 	struct BufferMaterial final: IBufferMaterial {
 		Vector4
 			/// @brief Albedo tint.
@@ -142,6 +144,7 @@ namespace Makai::Graph::Material {
 		virtual ~IWorldMaterial() {}
 	};
 
+	/// @brief Default world material.
 	struct WorldMaterial final: IWorldMaterial {
 		/// @brief Near fog effect.
 		Effect::Fog		nearFog;

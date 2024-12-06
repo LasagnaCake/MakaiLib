@@ -111,11 +111,11 @@ namespace Makai::Graph {
 
 		void saveToDefinitionFile(
 			String const& folder,
-			String const& name = "object",
-			String const& texturesFolder = "tx",
-			bool const integratedBinary	= false,
+			String const& name				= "object",
+			String const& texturesFolder	= "tx",
+			bool const integratedBinary		= false,
 			bool const integratedTextures	= false,
-			bool const pretty = false
+			bool const pretty				= false
 		);
 
 		List<Triangle*> triangles;
@@ -156,7 +156,7 @@ namespace Makai::Graph {
 
 		JSON::JSONData getObjectDefinition(
 			String const& encoding			= "base64",
-			bool const integratedBinary	= true,
+			bool const integratedBinary		= true,
 			bool const integratedTextures	= true
 		);
 	};
