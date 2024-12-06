@@ -6,86 +6,109 @@
 #include "../texture.hpp"
 #include "../color.hpp"
 
+/// @brief Shader materials.
 namespace Makai::Graph::Material {
+	/// @brief Material effects.
 	namespace Effect {
+		/// @brief Effect components.
 		namespace Base {
 			struct Toggleable {
+				/// @brief Whether the effect is enabled.
 				bool enabled = false;
 			};
 
 			struct Limitable {
-				float
-					start	= 0.0,
-					stop	= 10.0;
+				/// @brief Starting point.
+				float start	= 0.0;
+				/// @brief Stopping point.
+				float stop	= 10.0;
 			};
 
 			struct Variable {
+				/// @brief Strength.
 				float	strength = 1;
 			};
 
 			struct Variable2D {
+				/// @brief Strength.
 				Vector2	strength = 1;
 			};
 
 			struct Variable3D {
+				/// @brief Strength.
 				Vector3	strength = 1;
 			};
 
 			struct Variable4D {
+				/// @brief Strength.
 				Vector4	strength = 1;
 			};
 
 			struct ColorableRGBA {
+				/// @brief Color.
 				Vector4	color = Color::WHITE;
 			};
 
 			struct ColorableRGB {
+				/// @brief Color.
 				Vector3	color = 1;
 			};
 
 			struct Imageable2D {
+				/// @brief Texture.
 				Texture2D image = nullptr;
 			};
 
 			struct Channelable {
+				/// @brief Color channel.
 				int channel = -1;
 			};
 
 			struct Transformable2D {
+				/// @brief Transform.
 				Transform2D trans;
 			};
 
 			struct Positionable2D {
+				/// @brief Position.
 				Vector2 position;
 			};
 
 			struct Invertible {
+				/// @brief Whether to invert the effect.
 				bool invert = false;
 			};
 
 			struct Tuneable {
-				float
-					frequency	= 0,
-					amplitude	= 0,
-					shift		= 0;
+				/// @brief Frequency.
+				float frequency	= 0;
+				/// @brief Amplitude.
+				float amplitude	= 0;
+				/// @brief Offset.
+				float shift		= 0;
 			};
 
 			struct Tuneable2D {
-				Vector2
-					frequency	= Vector2(0),
-					amplitude	= Vector2(0),
-					shift		= Vector2(0);
+				/// @brief Frequency.
+				Vector2 frequency	= Vector2::ZERO();
+				/// @brief Amplitude.
+				Vector2 amplitude	= Vector2::ZERO();
+				/// @brief Offset.
+				Vector2 shift		= Vector2::ZERO();
 			};
 
 			struct Sizeable {
+				/// @brief Size.
 				float size = 0;
 			};
 
 			struct Sizeable2D {
+				/// @brief Size.
 				Vector2 size = 0;
 			};
 
 			struct Countable {
+				/// @brief Count.
 				size_t count = 1;
 			};
 		}
@@ -94,6 +117,7 @@ namespace Makai::Graph::Material {
 			using namespace Base;
 		}
 
+		/// @brief Blend function to use in the effect.
 		enum class EffectBlendFunction: unsigned int {
 			EBF_ZERO = 0,
 			EBF_ONE,
@@ -103,6 +127,7 @@ namespace Makai::Graph::Material {
 			EBF_ONE_MINUS_DST,
 		};
 
+		/// @brief Blend equation to use in the effect.
 		enum class EffectBlendEquation: unsigned int {
 			EBE_ADD,
 			EBE_SUBTRACT,
@@ -120,6 +145,7 @@ namespace Makai::Graph::Material {
 			EBE_MIN,
 		};
 
+		/// @brief Blend source to use in the effect.
 		enum class EffectBlendSource: unsigned int {
 			EBS_ZERO,
 			EBS_ONE,
@@ -130,54 +156,76 @@ namespace Makai::Graph::Material {
 			EBS_SOLID_ALPHA,
 		};
 
+		/// @brief Effect blend mode.
 		struct EffectBlendMode {
+			/// @brief Blend source (left-hand side of the operation).
 			EffectBlendFunction source		= EffectBlendFunction::EBF_SRC;
+			/// @brief Blend destination (right-hand side of the operation).
 			EffectBlendFunction destination	= EffectBlendFunction::EBF_DST;
+			/// @brief Blend equation (operation to perform).
 			EffectBlendEquation equation	= EffectBlendEquation::EBE_MULTIPLY;
 		};
 
+		/// @brief Effect blend setting.
 		struct EffectBlendSetting {
+			/// @brief Color blend mode.
 			EffectBlendMode	color	= {EffectBlendFunction::EBF_ONE, EffectBlendFunction::EBF_DST, EffectBlendEquation::EBE_MULTIPLY};
+			/// @brief Alpha blend mode.
 			EffectBlendMode	alpha	= {EffectBlendFunction::EBF_SRC, EffectBlendFunction::EBF_ONE, EffectBlendEquation::EBE_MULTIPLY};
 		};
 
+		/// @brief Gradient effect.
 		struct Gradient: Toggleable, Channelable, Invertible {
-			Vector4
-				begin	= Color::BLACK,
-				end		= Color::WHITE;
+			/// @brief Starting color.
+			Vector4	begin	= Color::BLACK;
+			/// @brief End color.
+			Vector4	end		= Color::WHITE;
 		};
 
+		/// @brief Color inversion effect.
 		struct Negative: Toggleable, Variable {};
 
+		/// @brief Image effect.
 		struct Image: Toggleable, Imageable2D {};
 
+		/// @brief Displacement effect.
 		struct Warp: Image, Transformable2D {
-			unsigned int
-				channelX = 0,
-				channelY = 1;
+			/// @brief Color channel to use for horizontal displaement.
+			uint channelX = 0;
+			/// @brief Color channel to use for vertical displaement.
+			uint channelY = 1;
 		};
 
 		// Object Material Effects
-
+		
+		/// @brief Texture effect.
 		struct Texture: Image {
+			/// @brief Texture alpha clip.
 			float alphaClip = 0.1;
 		};
 
+		/// @brief Emmisive texture effect.
 		struct Emission: Image, Variable {
 		};
 
+		/// @brief Normal map effect.
 		struct NormalMap: Image, Variable {
 		};
 
 		// Buffer Material Effects
 
+		/// @brief Color channel mask effect.
 		struct Mask: Toggleable, Imageable2D, Transformable2D, Invertible {
+			/// @brief Mask albedo tint.
 			Vector4	albedo		= 1;
+			/// @brief Mask albedo accent.
 			Vector4	accent		= 0;
+			/// @brief Whether mask is relative to screen UV.
 			bool	relative	= false;
 		};
 
-		enum WaveShape: unsigned int {
+		/// @brief Wave shape.
+		enum class WaveShape: unsigned int {
 			WS_SQUARE = 0,
 			WS_SINE,
 			WS_BIN_SINE,
@@ -199,10 +247,13 @@ namespace Makai::Graph::Material {
 			WS_BIN_SIMPLE_NOISE,
 		};
 
+		/// @brief Screen wave effect.
 		struct Wave: Toggleable, Tuneable2D {
-			WaveShape	shape	= WS_SQUARE;
+			/// @brief Distortion shape.
+			WaveShape	shape	= WaveShape::WS_SQUARE;
 		};
 
+		/// @brief Rainbow effect.
 		struct Rainbow: Toggleable, Variable {
 			Vector2 frequency		= 0.0;
 			Vector2 shift			= 0.0;
@@ -211,36 +262,50 @@ namespace Makai::Graph::Material {
 			float	polarShift		= 0.0;
 		};
 
+		/// @brief Blur effect.
 		struct Blur: Toggleable, Variable2D {};
 
+		/// @brief Outline effect.
 		struct Outline: Toggleable, Sizeable2D, ColorableRGBA {
+			/// @brief Whether the alpha is relative to the edge's alpha.
 			bool relativeAlpha = true;
 		};
 
+		/// @brief Polar distortion effect.
 		struct PolarWarp: Toggleable, Sizeable, Positionable2D, Variable2D, ColorableRGBA {
+			/// @brief Polar tint strength.
 			float	tintStrength	= 1;
+			/// @brief Whether the distortion is fish-eye distortion.
 			bool	fishEye			= true;
 		};
 
+		/// @brief Noise function.
 		enum class NoiseType: unsigned int {
 			NT_NOISE_SIMPLE = 0,
 			NT_NOISE_GOLD,
 			NT_NOISE_SUPER
 		};
 
-		/// SRC = Pixel Color, DST = Noise
+		/// @brief Noise blend mode.
+		/// @note `SRC`: Pixel Color. `DST`: Noise.
 		struct NoiseBlendMode: EffectBlendSetting {};
 
+		/// @brief Noise effect.
 		struct Noise: Toggleable, Variable, Transformable2D {
+			/// @brief Noise seed.
 			float			seed	= 1;
+			/// @brief Noise function to use.
 			NoiseType		type	= NoiseType::NT_NOISE_SUPER;
+			/// @brief Blend mode.
 			NoiseBlendMode	blend;
 		};
 
 		// World Material Effects
 
+		/// @brief Fog effect.
 		struct Fog: Toggleable, Limitable, ColorableRGBA, Variable {};
 
+		/// @brief Ambient lighting effect.
 		struct Ambient: ColorableRGB, Variable {};
 	}
 
