@@ -43,31 +43,20 @@ namespace Makai::Graph {
 		/// Creates a reference and binds it to this object.
 		template<ShapeRefType T>
 		[[nodiscard]]
-		T* createReference() {
+		Instance<T> createReference() {
 			constexpr usize count = T::SIZE;
 			if (locked) throw Error::InvalidAction("Renderable object is locked!");
-			Triangle* tris[count] = {nullptr};
+			List<Triangle*> tris(count);
 			// Create triangles
-			for (usize i = 0; i < count; ++i) {
-				tris[i] = new Triangle();
-				triangles.pushBack(tris[i]);
-			}
+			for (Triangle*& t: tris)
+				t = new Triangle();
+			triangles.appendBack(tris);
 			// Create shape
-			T* shape = new T(tris);
-			// Set destructor function
-			shape->onDestroy	= [this, shape](){this->removeReference<T>(shape);};
-			shape->onUnbind		= [this, shape](){this->unbindReference<T>(shape);};
+			T* shape = new T(tris, *this);
 			// Add to reference list
-			references.shape.pushBack((ShapeRef<0>*)shape);
+			references.pushBack(shape);
 			// return shape
 			return shape;
-		}
-
-		/// Gets a reference bound to this object by index.
-		template <ShapeRefType T>
-		inline T* getReference(usize const index) {
-			if (locked) throw Error::InvalidAction("Renderable object is locked!");
-			return (T*)references.shape[index];
 		}
 
 		/**
@@ -78,22 +67,10 @@ namespace Makai::Graph {
 		* It also deletes the reference.
 		*/
 		template <ShapeRefType T>
-		void removeReference(T* const ref) {
+		void removeReference(Instance<T> const& ref) {
 			if (!ref) return;
 			if (locked) return;
-			constexpr usize count = T::SIZE;
-			auto tris = ref->getBoundTriangles();
-			triangles.eraseIf(
-				[=] (Triangle* e) {
-					for (usize i = 0; i < count; ++i)
-						if (e == tris[i]) {
-							delete tris[i];
-							return true;
-						}
-					return false;
-				}
-			);
-			unbindReference<T>(ref);
+			removeReference(*ref);
 		}
 
 		/**
@@ -104,12 +81,11 @@ namespace Makai::Graph {
 		* It also deletes the reference.
 		*/
 		template <ShapeRefType T>
-		void unbindReference(T* const ref) {
+		void unbindReference(Instance<T> const& ref) {
 			if (!ref) return;
 			if (locked) return;
-			auto& rs = references.shape;
-			rs.eraseIf([&] (auto& e) {e == (ShapeRef<0>*)ref;});
-			delete ref;
+			unbindReference(*ref);
+			ref.destroy();
 		}
 
 		/// IRREVERSIBLE.
@@ -145,7 +121,11 @@ namespace Makai::Graph {
 		List<Triangle*> triangles;
 
 	private:
+		void removeReference(IReference& ref);
+		void unbindReference(IReference& ref);
+
 		friend class Scene;
+		friend class IReference;
 
 		Vertex* vertices = nullptr;
 
@@ -159,9 +139,7 @@ namespace Makai::Graph {
 		void draw() override;
 
 		/// List of references linked to this object.
-		struct {
-			List<ShapeRef<0>*>	shape;
-		} references;
+		List<IReference*>	references;
 
 		/// The amount of vertices this object has.
 		usize vertexCount = 0;

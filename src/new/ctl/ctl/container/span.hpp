@@ -214,8 +214,62 @@ struct Span:
 	/// @throw NonexistentValueException when no span is bound, or `Span` is empty.
 	constexpr DataType			back() const	{return at(count-1);	}
 
+	/// @brief Returns the size of the span.
+	/// @return Span size.
 	constexpr SizeType size() const	{return count;		}
+	/// @brief Returns whether the span is empty.
+	/// @return Whether the span is empty.
 	constexpr bool empty() const	{return count == 0;	}
+
+	/// @brief Finds the the position of the first element that matches a value.
+	/// @param value Value to search for.
+	/// @return The index of the value, or -1 if not found.
+	constexpr IndexType find(DataType const& value) const
+	requires Type::Comparator::Equals<DataType, DataType> {
+		if (empty()) return -1;
+		auto const start = begin(), stop = end();
+		for (auto i = start; i != stop; ++i)
+			if (ComparatorType::equals(*i, value))
+				return i-start;
+		return -1;
+	}
+
+	/// @brief Finds the the position of the last element that matches a value.
+	/// @param value Value to search for.
+	/// @return The index of the value, or -1 if not found.
+	constexpr IndexType rfind(DataType const& value) const
+	requires Type::Comparator::Equals<DataType, DataType> {
+		if (empty()) return -1;
+		auto const start = rbegin(), stop = rend();
+		for (auto i = start; i != stop; ++i)
+			if (ComparatorType::equals(*i, value))
+				return count-(i-start)-1;
+		return -1;
+	}
+
+	/// @brief Performs a binary search to find the index of an element that matches a value.
+	/// @param value Value to search for.
+	/// @return The index of the value, or -1 if not found.
+	/// @note Requires the array to be sorted.
+	constexpr IndexType bsearch(DataType const& value) const
+	requires (Type::Comparator::Threeway<DataType, DataType>) {
+		if (empty()) return -1;
+		if (ComparatorType::equals(front(), value)) return 0;
+		if (ComparatorType::equals(back(), value)) return size() - 1;
+		IndexType lo = 0, hi = size() - 1, i = -1;
+		SizeType loop = 0;
+		while (hi >= lo && loop < size()) {
+			i = lo + (hi - lo) / 2;
+			switch(ComparatorType::compare(value, *(cbegin() + i))) {
+				case Order::LESS:		hi = i-1; break;
+				case Order::EQUAL:		return i;
+				case Order::GREATER:	lo = i+1; break;
+				default:
+				case Order::UNORDERED:	return -1;
+			}
+		}
+		return -1;
+	}
 
 	/// @brief Equality operator.
 	/// @param other Other `Span` to compare with.

@@ -19,8 +19,9 @@ inline void srpTransform(Vertex& vtx, Transform3D const& trans) {
 }
 
 PlaneRef::PlaneRef(
-	Triangle* const(& tris)[2]
-): ShapeRef<2>(tris) {
+	List<Triangle*> const& tris,
+	Renderable& parent
+): ShapeRef<2>(tris, parent) {
 	// Get vertices
 	this->tl	= &(tris[0]->verts[0]);
 	this->tr1	= &(tris[0]->verts[1]);
@@ -48,7 +49,7 @@ PlaneRef::PlaneRef(
 }
 
 /// Sets the plane's origin.
-PlaneRef* PlaneRef::setOrigin(
+Handle<PlaneRef> PlaneRef::setOrigin(
 	Vector3 const& tlPos,
 	Vector3 const& trPos,
 	Vector3 const& blPos,
@@ -62,7 +63,7 @@ PlaneRef* PlaneRef::setOrigin(
 }
 
 /// Transforms the plane's origin and normals by a given transform.
-PlaneRef* PlaneRef::setOrigin(Transform3D const& trans) {
+Handle<PlaneRef> PlaneRef::setOrigin(Transform3D const& trans) {
 	Matrix4x4 tmat(trans);
 	srpTransform(origin[0],	tmat);
 	srpTransform(origin[1],	tmat);
@@ -71,7 +72,7 @@ PlaneRef* PlaneRef::setOrigin(Transform3D const& trans) {
 	return this;
 }
 
-PlaneRef* PlaneRef::setUV(
+Handle<PlaneRef> PlaneRef::setUV(
 		Vector2 const& tlUV,
 		Vector2 const& trUV,
 		Vector2 const& blUV,
@@ -84,7 +85,7 @@ PlaneRef* PlaneRef::setUV(
 	return this;
 }
 
-PlaneRef* PlaneRef::setColor(
+Handle<PlaneRef> PlaneRef::setColor(
 		Vector4 const& tlCol,
 		Vector4 const& trCol,
 		Vector4 const& blCol,
@@ -97,12 +98,12 @@ PlaneRef* PlaneRef::setColor(
 	return this;
 }
 
-PlaneRef* PlaneRef::setColor(Vector4 const& col) {
+Handle<PlaneRef> PlaneRef::setColor(Vector4 const& col) {
 	setColor(col, col, col, col);
 	return this;
 }
 
-PlaneRef* PlaneRef::setNormal(
+Handle<PlaneRef> PlaneRef::setNormal(
 		Vector3 const& tln,
 		Vector3 const& trn,
 		Vector3 const& bln,
@@ -115,7 +116,7 @@ PlaneRef* PlaneRef::setNormal(
 	return this;
 }
 
-PlaneRef* PlaneRef::setNormal(
+Handle<PlaneRef> PlaneRef::setNormal(
 		Vector3 const& n
 	) {
 	setNormal(n, n, n, n);
@@ -123,7 +124,7 @@ PlaneRef* PlaneRef::setNormal(
 }
 
 /// Sets the plane to its original state (last state set with setPosition).
-PlaneRef* PlaneRef::reset() {
+Handle<IReference> PlaneRef::reset() {
 	// Set origin
 	*tl				= origin[0];
 	*tr1	= *tr2	= origin[1];
@@ -132,7 +133,7 @@ PlaneRef* PlaneRef::reset() {
 	return this;
 }
 
-PlaneRef* PlaneRef::transform() {
+Handle<IReference> PlaneRef::transform() {
 	onTransform();
 	if (!fixed) return this;
 	// Get transformation
@@ -172,8 +173,9 @@ void AnimatedPlaneRef::onTransform() {
 }
 
 TriangleRef::TriangleRef(
-	Triangle* const(& tris)[1]
-): ShapeRef<1>(tris) {
+	List<Triangle*> const& tris,
+	Renderable& parent
+): ShapeRef<1>(tris, parent) {
 	// Get vertices
 	this->a = &(tris[0]->verts[0]);
 	this->b = &(tris[0]->verts[1]);
@@ -196,7 +198,7 @@ TriangleRef::TriangleRef(
 }
 
 /// Sets the triangle's origin.
-TriangleRef* TriangleRef::setOrigin(
+Handle<TriangleRef> TriangleRef::setOrigin(
 	Vector3 const& aPos,
 	Vector3 const& bPos,
 	Vector3 const& cPos
@@ -208,7 +210,7 @@ TriangleRef* TriangleRef::setOrigin(
 }
 
 /// Transforms the triangle's origin and normals by a given transform.
-TriangleRef* TriangleRef::setOrigin(Transform3D const& trans) {
+Handle<TriangleRef> TriangleRef::setOrigin(Transform3D const& trans) {
 	Matrix4x4 tmat(trans);
 	srpTransform(origin[0], tmat);
 	srpTransform(origin[1], tmat);
@@ -216,7 +218,7 @@ TriangleRef* TriangleRef::setOrigin(Transform3D const& trans) {
 	return this;
 }
 
-TriangleRef* TriangleRef::setUV(
+Handle<TriangleRef> TriangleRef::setUV(
 	Vector2 const& aUV,
 	Vector2 const& bUV,
 	Vector2 const& cUV
@@ -227,7 +229,7 @@ TriangleRef* TriangleRef::setUV(
 	return this;
 }
 
-TriangleRef* TriangleRef::setColor(
+Handle<TriangleRef> TriangleRef::setColor(
 	Vector4 const& aCol,
 	Vector4 const& bCol,
 	Vector4 const& cCol
@@ -238,12 +240,12 @@ TriangleRef* TriangleRef::setColor(
 	return this;
 }
 
-TriangleRef* TriangleRef::setColor(Vector4 const& col) {
+Handle<TriangleRef> TriangleRef::setColor(Vector4 const& col) {
 	setColor(col, col, col);
 	return this;
 }
 
-TriangleRef* TriangleRef::setNormal(
+Handle<TriangleRef> TriangleRef::setNormal(
 	Vector3 const& an,
 	Vector3 const& bn,
 	Vector3 const& cn
@@ -254,20 +256,20 @@ TriangleRef* TriangleRef::setNormal(
 	return this;
 }
 
-TriangleRef* TriangleRef::setNormal(Vector3 const& n) {
+Handle<TriangleRef> TriangleRef::setNormal(Vector3 const& n) {
 	setNormal(n, n, n);
 	return this;
 }
 
 /// Sets the triangle to its original state (last state set with setPosition).
-TriangleRef* TriangleRef::reset() {
+Handle<IReference> TriangleRef::reset() {
 	*a = origin[0];
 	*b = origin[1];
 	*c = origin[2];
 	return this;
 }
 
-TriangleRef* TriangleRef::transform() {
+Handle<IReference> TriangleRef::transform() {
 	onTransform();
 	if (!fixed) return this;
 	// Get transformation

@@ -9,6 +9,14 @@ using namespace Material;
 
 namespace JSON = Makai::JSON;
 
+void IReference::destroy() {
+	parent.removeReference(*this);
+}
+
+void IReference::unbind() {
+	parent.unbindReference(*this);
+}
+
 inline Vector2 fromJSONArrayV2(JSON::JSONData const& json, Vector2 const& defaultValue = 0) {
 	try {
 		if (json.isArray())
@@ -331,14 +339,37 @@ void Renderable::unbake() {
 void Renderable::clearData() {
 	if (vertices && !locked)
 		delete [] vertices;
-	if (!references.shape.empty())
-		for (auto sr: references.shape)
-			delete sr;
-	references.shape.clear();
+	if (!references.empty())
+		for (auto ref: references) {
+			Instance<IReference> iref = ref;
+			iref.destroy();
+		}
+	references.clear();
 	if (!triangles.empty())
 		for (auto t: triangles)
 			delete t;
 	triangles.clear();
+}
+
+void Renderable::removeReference(IReference& ref)  {
+	if (locked) return;
+	if (references.find(&ref) == -1) return;
+	const auto tris = ref.getBoundTriangles();
+	triangles.eraseIf(
+		[=] (Triangle* e) {
+			if (tris.find(e) != -1) {
+				delete e;
+				return true;
+			}
+			return false;
+		}
+	);
+	unbindReference(ref);
+}
+
+void Renderable::unbindReference(IReference& ref)  {
+	if (locked) return;
+	references.eraseLike(&ref);
 }
 
 void Renderable::saveToBinaryFile(String const& path) {
@@ -381,7 +412,7 @@ void Renderable::copyVertices() {
 	// If no triangles exist, return
 	if (!triangles.size()) return;
 	// Transform references (if applicable)
-	for (auto& shape: references.shape)	shape->transform();
+	for (auto& shape: references)	shape->transform();
 	// Copy data to vertex buffer
 	// Get vertex count
 	vertexCount = triangles.size() * 3;
@@ -399,7 +430,7 @@ void Renderable::copyVertices() {
 		i += 3;
 	}
 	// De-transform references (if applicable)
-	for (auto& shape: references.shape)	shape->reset();
+	for (auto& shape: references)	shape->reset();
 }
 
 void Renderable::draw() {

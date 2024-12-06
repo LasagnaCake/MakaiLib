@@ -7,72 +7,78 @@
 #include "../color.hpp"
 
 namespace Makai::Graph {
-	using VertexFunction = Function<void(Vertex&)>;
-
 	class Renderable;
+	struct IReference;
 
-	struct Empty {
-		void destroy()		{onDestroy();					}
-		void unbind()		{onUnbind();					}
-		virtual ~Empty()	{onDestroy = onUnbind = []{};	}
-		friend class Renderable;
+	struct IReference {
+		IReference(List<Triangle*> const& triangles, Renderable& parent):
+			triangles(triangles),
+			parent(parent) {}
+
+		virtual ~IReference() {destroy();}
+
+		using Triangles = Span<Triangle* const>;
+
+		Triangles getBoundTriangles() {
+			return Triangles(triangles.begin(), triangles.end());
+		}
+
+		virtual Handle<IReference> reset()		= 0;
+		virtual Handle<IReference> transform()	= 0;
+		
+	protected:
+		List<Triangle*> const 	triangles;
+		Renderable& 			parent;
 	private:
-		Signal<> onDestroy;
-		Signal<> onUnbind;
+		void destroy();
+		void unbind();
 	};
+
+	using VertexFunction = Function<void(Vertex&)>;
 
 	#pragma GCC diagnostic push
 	#pragma GCC diagnostic ignored "-Wpedantic"
 	template<usize N>
-	struct ShapeRef: public Empty {
+	struct ShapeRef: public IReference {
 		constexpr static usize SIZE = N;
 
-		using Triangles = Span<Triangle*, SIZE>;
+		static_assert(N > 0, "Empty shapes are invalid!");
 
-		ShapeRef(Triangle* const(& tris)[SIZE]) {
-			for (usize i = 0; i < SIZE; ++i)
-				this->tris[i] = tris[i];
-		}
+		ShapeRef(
+			List<Triangle*> const& triangles,
+			Renderable& parent
+		): IReference(triangles, parent) {}
 
-		virtual ~ShapeRef() {
-			DEBUGLN("Deleting bound triangles (", SIZE, ")...");
-			delete[] tris;
-		};
-
-		Triangles getBoundTriangles() {
-			return Triangles(tris, SIZE);
-		}
-
-		virtual ShapeRef* reset()		= 0;
-		virtual ShapeRef* transform()	= 0;
+		virtual ~ShapeRef() {}
 
 		virtual void forEachVertex(VertexFunction const& f) {
 			for (usize i = 0; i < SIZE; ++i)
 				for (usize j = 0; j < 3; ++j)
-					f(((Vertex*)tris[i])[j]);
+					f(((Vertex*)triangles[i])[j]);
 		}
+
+		virtual Handle<IReference> reset()		= 0;
+		virtual Handle<IReference> transform()	= 0;
 
 		bool fixed		= true;
 		bool visible	= true;
 
 		Transform3D local;
-
-		friend class Makai::Graph::Renderable;
-	protected:
-		Triangle** tris = new Triangle*[SIZE](nullptr);
 	};
+
 	#pragma GCC diagnostic pop
 
 	class PlaneRef: public ShapeRef<2> {
 	public:
 		PlaneRef(
-			Triangle* const(& tris)[2]
+			List<Triangle*> const& triangles,
+			Renderable& parent
 		);
 
 		virtual ~PlaneRef() {}
 
 		/// Sets the plane's origin.
-		PlaneRef* setOrigin(
+		Handle<PlaneRef> setOrigin(
 			Vector3 const& tlPos = Vector3(-1, +1),
 			Vector3 const& trPos = Vector3(+1, +1),
 			Vector3 const& blPos = Vector3(-1, -1),
@@ -80,37 +86,37 @@ namespace Makai::Graph {
 		);
 
 		/// Transforms the plane's origin and normals by a given transform.
-		PlaneRef* setOrigin(Transform3D const& trans);
+		Handle<PlaneRef> setOrigin(Transform3D const& trans);
 
-		PlaneRef* setUV(
+		Handle<PlaneRef> setUV(
 			Vector2 const& tlUV,
 			Vector2 const& trUV,
 			Vector2 const& blUV,
 			Vector2 const& brUV
 		);
 
-		PlaneRef* setColor(
+		Handle<PlaneRef> setColor(
 			Vector4 const& tlCol,
 			Vector4 const& trCol,
 			Vector4 const& blCol,
 			Vector4 const& brCol
 		);
 
-		PlaneRef* setColor(Vector4 const& col = Color::WHITE);
+		Handle<PlaneRef> setColor(Vector4 const& col = Color::WHITE);
 
-		PlaneRef* setNormal(
+		Handle<PlaneRef> setNormal(
 			Vector3 const& tln,
 			Vector3 const& trn,
 			Vector3 const& bln,
 			Vector3 const& brn
 		);
 
-		PlaneRef* setNormal(Vector3 const& n);
+		Handle<PlaneRef> setNormal(Vector3 const& n);
 
 		/// Sets the plane to its original state (last state set with setPosition).
-		PlaneRef* reset() override final;
+		Handle<IReference> reset() override final;
 
-		PlaneRef* transform() override final;
+		Handle<IReference> transform() override final;
 
 		void forEachVertex(VertexFunction const& f) override final;
 
@@ -141,51 +147,52 @@ namespace Makai::Graph {
 	class TriangleRef: public ShapeRef<1> {
 	public:
 		TriangleRef(
-			Triangle* const(& tris)[1]
+			List<Triangle*> const& triangles,
+			Renderable& parent
 		);
 
 		virtual ~TriangleRef() {}
 
 		/// Sets the triangle's origin.
-		TriangleRef* setOrigin(
+		Handle<TriangleRef> setOrigin(
 			Vector3 const& aPos = Vector3(+0, +1),
 			Vector3 const& bPos = Vector3(-1, -1),
 			Vector3 const& cPos = Vector3(+1, -1)
 		);
 
 		/// Transforms the triangle's origin and normals by a given transform.
-		TriangleRef* setOrigin(Transform3D const& trans);
+		Handle<TriangleRef> setOrigin(Transform3D const& trans);
 
-		TriangleRef* setUV(
+		Handle<TriangleRef> setUV(
 			Vector2 const& aUV,
 			Vector2 const& bUV,
 			Vector2 const& cUV
 		);
 
-		TriangleRef* setColor(
+		Handle<TriangleRef> setColor(
 			Vector4 const& aCol,
 			Vector4 const& bCol,
 			Vector4 const& cCol
 		);
 
-		TriangleRef* setColor(
+		Handle<TriangleRef> setColor(
 			Vector4 const& col = Color::WHITE
 		);
 
-		TriangleRef* setNormal(
+		Handle<TriangleRef> setNormal(
 			Vector3 const& an,
 			Vector3 const& bn,
 			Vector3 const& cn
 		);
 
-		TriangleRef* setNormal(
+		Handle<TriangleRef> setNormal(
 			Vector3 const& n
 		);
 
 		/// Sets the triangle to its original state (last state set with setPosition).
-		TriangleRef* reset() override final;
+		Handle<IReference> reset() override final;
 
-		TriangleRef* transform() override final;
+		Handle<IReference> transform() override final;
 
 		virtual void forEachVertex(VertexFunction const& f) override final;
 
@@ -202,7 +209,7 @@ namespace Makai::Graph {
 	};
 
 	template<class T>
-	concept NotEmpty	= Makai::Type::Different<T, Empty>;
+	concept NotEmpty	= Makai::Type::Different<T, IReference>;
 
 	template<class T>
 	concept ShapeRefType	= requires {
