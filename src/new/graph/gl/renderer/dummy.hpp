@@ -6,10 +6,14 @@
 namespace Makai::Graph {
 	class Dummy: public IDrawable {
 	public:
+		/// @brief Constructs the dummy.
+		/// @param layers Layers to insert the dummy in.
 		Dummy(Arguments<usize> const& layers) {
 			for (usize const l : layers)
 				addToRenderLayer(l);
 		}
+
+		/// @brief Does nothing.
 		void draw() override final {};
 	};
 }

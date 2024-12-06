@@ -12,20 +12,35 @@
 namespace Makai::Graph {
 	class Scene;
 
+	/// @brief Renderable object.
 	class Renderable: public IGLDrawable {
 	public:
+		/// @brief Latest renderable object definition file version supported.
 		constexpr static usize VERSION = 0;
 
+		/// @brief Constructs the renderable object.
+		/// @param layer Layer to register the object to. By default, it is layer zero.
+		/// @param manual Whether the object is manually rendered. By default, it is `false`.
 		Renderable(usize const layer = 0, bool const manual = false);
 
+		/// @brief Shader material to use.
 		Material::ObjectMaterial material;
 
+		/// @brief Constructs the renderable.
+		/// @param triangles Triangles to use.
+		/// @param layer Layer to register the object to. By default, it is layer zero.
+		/// @param manual Whether the object is manually rendered. By default, it is `false`.
 		Renderable(
-			List<Triangle*> const& triangles,
+			List<Triangle*>&& triangles,
 			usize const layer = 0,
 			bool const manual = false
 		);
 
+		/// @brief Constructs the renderable.
+		/// @param vertices Vertices to construct from.
+		/// @param count Vertex count.
+		/// @param layer Layer to register the object to. By default, it is layer zero.
+		/// @param manual Whether the object is manually rendered. By default, it is `false`.
 		Renderable(
 			Vertex* const vertices,
 			usize const count,
@@ -33,15 +48,12 @@ namespace Makai::Graph {
 			bool const manual = false
 		);
 
-		Renderable(
-			Renderable& other,
-			usize const layer = 0,
-			bool const manual = false
-		);
-
+		/// @brief Destructor.
 		virtual ~Renderable();
 
-		/// Creates a reference and binds it to this object.
+		/// @brief Creates a shape reference bound to this object.
+		/// @tparam T Reference type.
+		/// @return Reference instance.
 		template<ShapeRefType T>
 		[[nodiscard]]
 		Instance<T> createReference() {
@@ -60,27 +72,26 @@ namespace Makai::Graph {
 			return shape;
 		}
 
-		/**
-		* Deletes a reference bound to this object.
-		*
-		* More specifically, it removes the reference
-		* and the triangles associated to it.
-		* It also deletes the reference.
-		*/
+		/// @brief
+		///		Destroys a reference and its associated triangles.
+		///		Will only execute if reference is associated with this object.
+		/// @tparam T Reference type.
+		/// @param ref Reference to remove.
+		/// @note If successful, also destroys the reference.
 		template <ShapeRefType T>
 		void removeReference(Instance<T> const& ref) {
 			if (!ref) return;
 			if (locked) return;
 			removeReference(*ref);
+			ref.destroy();
 		}
 
-		/**
-		* Unbinds a reference bound to this object.
-		*
-		* More specifically, it removes the reference,
-		* but keeps the triangles associated to it.
-		* It also deletes the reference.
-		*/
+		/// @brief
+		///		Destroys a reference while keeping its associated triangles.
+		///		Will only execute if reference is associated with this object.
+		/// @tparam T Reference type.
+		/// @param ref Reference to remove.
+		/// @note If successful, also destroys the reference.
 		template <ShapeRefType T>
 		void unbindReference(Instance<T> const& ref) {
 			if (!ref) return;
@@ -89,7 +100,7 @@ namespace Makai::Graph {
 			ref.destroy();
 		}
 
-		/// IRREVERSIBLE.
+		/// @brief IRREVERSIBLE. bakes and locks the object.
 		void bakeAndLock();
 
 		void extend(Vertex* const vertices, usize const size);
@@ -128,21 +139,22 @@ namespace Makai::Graph {
 		friend class Scene;
 		friend class IReference;
 
+		/// @brief Vertices used in rendering.
 		Vertex* vertices = nullptr;
 
-		bool
-			baked	= false,
-			locked	= false
-		;
+		/// @brief Whether the object has been baked.	
+		bool baked	= false;
+		/// @brief Whether the object is locked.
+		bool locked	= false;
 
 		void copyVertices();
 
 		void draw() override;
 
-		/// List of references linked to this object.
+		/// @brief References bound to this object.
 		List<IReference*>	references;
 
-		/// The amount of vertices this object has.
+		/// @brief Vertex count.
 		usize vertexCount = 0;
 
 		void extendFromDefinition(

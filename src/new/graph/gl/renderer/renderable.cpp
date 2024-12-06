@@ -235,7 +235,7 @@ IGLDrawable(layer, manual) {
 }
 
 Renderable::Renderable(
-	List<Triangle*> const& triangles,
+	List<Triangle*>&& triangles,
 	usize const layer,
 	bool const manual
 ): IGLDrawable(layer, manual) {
@@ -249,14 +249,6 @@ Renderable::Renderable(
 	bool const manual
 ): IGLDrawable(layer, manual) {
 	extend(vertices, count);
-}
-
-Renderable::Renderable(
-	Renderable& other,
-	usize const layer,
-	bool const manual
-): IGLDrawable(layer, manual) {
-	extend(other);
 }
 
 Renderable::~Renderable() {
