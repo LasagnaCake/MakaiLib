@@ -4,7 +4,7 @@
 
 using namespace Makai; using namespace Makai::Graph;
 
-void IDrawable::doRender() {if (active) draw();}
+void IDrawable::render() {if (active) draw();}
 
 IDrawable::IDrawable(bool const manual, usize const layer) {
 	if(!manual) setAuto(layer);
@@ -18,40 +18,40 @@ IDrawable::IDrawable(bool const manual): IDrawable(manual, 0) {
 IDrawable::~IDrawable() {
 	DEBUGLN("Removing from rendering layers...");
 	if(!manualMode)
-		Renderer::layers.removeFromAll(&render);
+		Renderer::layers.removeFromAll(&doRender);
 	DEBUGLN("Finalizing...\n");
 }
 
 IDrawable& IDrawable::setManual() {
 	if(!manualMode)
-		Renderer::layers.removeFromAll(&render);
+		Renderer::layers.removeFromAll(&doRender);
 	manualMode = true;
 	return *this;
 }
 
 IDrawable& IDrawable::setAuto(usize const renderLayer) {
 	if(manualMode)
-		Renderer::layers.add(&render, renderLayer);
+		Renderer::layers.add(&doRender, renderLayer);
 	manualMode = false;
 	return *this;
 }
 
 IDrawable& IDrawable::setRenderLayer(usize const renderLayer) {
-	Renderer::layers.removeFromAll(&render);
-	Renderer::layers.add(&render, renderLayer);
+	Renderer::layers.removeFromAll(&doRender);
+	Renderer::layers.add(&doRender, renderLayer);
 	manualMode = false;
 	return *this;
 }
 
 IDrawable& IDrawable::addToRenderLayer(usize const renderLayer) {
-	Renderer::layers.add(&render, renderLayer);
+	Renderer::layers.add(&doRender, renderLayer);
 	manualMode = false;
 	return *this;
 }
 
 IDrawable& IDrawable::removeFromRenderLayer(usize const renderLayer) {
-	Renderer::layers.remove(&render, renderLayer);
-	if (Renderer::layers.withObject(&render).empty())
+	Renderer::layers.remove(&doRender, renderLayer);
+	if (Renderer::layers.withObject(&doRender).empty())
 		manualMode = true;
 	return *this;
 }

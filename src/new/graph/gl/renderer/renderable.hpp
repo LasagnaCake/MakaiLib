@@ -8,6 +8,7 @@
 #include "../material/material.hpp"
 #include "../vertex.hpp"
 
+/// @brief Graphical facilities.
 namespace Makai::Graph {
 	class Scene;
 

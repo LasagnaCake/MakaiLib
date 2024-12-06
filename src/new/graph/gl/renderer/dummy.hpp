@@ -10,6 +10,7 @@ namespace Makai::Graph {
 			for (usize const l : layers)
 				addToRenderLayer(l);
 		}
+		void draw() override final {};
 	};
 }
 
