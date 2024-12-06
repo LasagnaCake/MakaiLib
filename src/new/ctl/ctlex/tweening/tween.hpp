@@ -79,7 +79,7 @@ public:
 	/// @brief End value.
 	T to;
 
-	/// @brief Constructs the tween with a series of starting values..
+	/// @brief Constructs the tween with a series of starting values.
 	/// @param from Start value.
 	/// @param to End value.
 	/// @param step Step count.
@@ -102,7 +102,7 @@ public:
 	: Tween(
 		other.from,
 		other.to,
-		other.step,
+		other.stop,
 		other.easeMode,
 		other.isManual()
 	) {
@@ -110,6 +110,8 @@ public:
 		onCompleted = other.onCompleted;
 		isFinished = other.isFinished;
 		factor = other.factor;
+		current = other.current;
+		step = other.step;
 		other.setManual();
 	}
 
@@ -293,10 +295,10 @@ struct StageData {
 	DataType to;
 	/// @brief Step count.
 	usize step;
-	/// @brief Ease function to use.
+	/// @brief Ease function to use. By default, it is `Math::Ease::linear`.
 	Math::Ease::Mode ease	= Math::Ease::linear;
-	/// @brief Action to do when this stage is finished.
-	::CTL::Signal<> onCompleted;
+	/// @brief Action to do when this stage is finished. By default, does nothing.
+	::CTL::Signal<> onCompleted = []{};
 };
 
 /// @brief Stageable tween interface.
@@ -326,26 +328,54 @@ class TweenChain:
 	public IValue<T>,
 	public IStageable {
 public:
+	/// @brief Value type.
 	typedef T DataType;
 
+	/// @brief Tween stage type.
 	typedef StageData<DataType>	Stage;
+	/// @brief Tween stage list type.
 	typedef List<Stage>			StageList;
+	/// @brief Tween stage argument list type.
 	typedef Arguments<Stage>	StageArguments;
 
-	bool paused = false;
+	using ITweenPeriodic::ITweenPeriodic;
 
+	/// @brief Constructs the tween with a set of stages.
+	/// @param stages Stages to interpolate between.
+	/// @param manual Whether the tween is processed manually. By default, it is `false`.
 	TweenChain(StageList const& stages, bool const manual = false)
 	: ITweenPeriodic(manual) {
 		setInterpolation(stages);
 	}
 
+	/// @brief Constructs the tween with a set of stages.
+	/// @param stages Stages to interpolate between.
+	/// @param manual Whether the tween is processed manually. By default, it is `false`.
 	TweenChain(StageArguments const& stages, bool const manual = false)
 	: ITweenPeriodic(manual) {
 		setInterpolation(stages);
 	}
 
-	virtual ~TweenChain() {}
+	/// @brief Move constructor.
+	/// @param other `TweenChain` to move.
+	TweenChain(TweenChain&& other): TweenChain(other.stages, other.isManual()) {
+		paused = other.paused;
+		isFinished = other.isFinished;
+		factor = other.factor;
+		current = other.current;
+		currentValue = other.currentValue;
+		stage = other.stage;
+		other.setManual();
+	}
 
+	/// @brief Copy constructor (deleted).
+	TweenChain(TweenChain const& other) = delete;
+
+	/// @brief Destructor.
+	virtual ~TweenChain() {}
+	
+	/// @brief Processes a step.
+	/// @param delta Delta between steps.
 	void onUpdate(usize delta) override final {
 		// If paused, return
 		if (paused) return;
@@ -378,40 +408,53 @@ public:
 		}
 	}
 
+	/// @brief Sets the interpolation.
+	/// @param stages Stages to interpolate between.
+	/// @return Reference to self.
 	TweenChain& setInterpolation(StageList const& stages) {
 		this->stages = stages;
 		return start();
 	}
 
+	/// @brief Sets the interpolation.
+	/// @param stages Stages to interpolate between.
+	/// @return Reference to self.
 	TweenChain& setInterpolation(StageArguments const& stages) {
 		return setInterpolation(StageList(stages));
 	}
 
-	/// Sets the current tween step.
+	/// @brief Sets the current tween step.
+	/// @param step Step to set to.
+	/// @return Reference to self.
 	TweenChain& setStep(usize const step) override final {
 		this->step = (step-1) > current.step ? current.step : (step-1);
 		onUpdate();
 		return *this;
 	}
 
-	/// Sets the current tween stage.
+	/// @brief Sets the current tween stage.
+	/// @param step Stage to set to.
+	/// @return Reference to self.
 	TweenChain& setStage(usize const stage) override final {
 		this->stage = stage >= stages.size() ? stages.size() : stage;
 		onUpdate();
 		return *this;
 	}
 
-	/// Gets the current tween stage number.
+	/// @brief Gets the current tween stage.
+	/// @return Current stage.
 	usize getStage() override final {
 		return stage;
 	}
 
-	/// Gets the current tween step number.
+	/// @brief Gets the current tween step in the stage.
+	/// @return Current step in stage.
 	usize getStep() override final {
 		return step;
 	}
 
-	/// Starts the tween with its current state.
+	/// @brief Resumes the tween.
+	/// @return Reference to self.
 	TweenChain& play() override final {
 		factor = 1.0f;
 		paused = false;
@@ -419,13 +462,15 @@ public:
 		return *this;
 	}
 
-	/// Pauses the tween.
+	/// @brief Pauses the tween.
+	/// @return Reference to self.
 	TweenChain& pause() override final {
 		paused = true;
 		return *this;
 	}
 
-	/// Starts the tween from the beginning.
+	/// @brief Starts the tween from the beginning.
+	/// @return Reference to self.
 	TweenChain& start() override final {
 		step = 0;
 		stage = 0;
@@ -433,23 +478,28 @@ public:
 		return play();
 	}
 
-	/// Halts the tween's execution.
+	/// @brief Ends the tween's execution, while keeping its current value.
+	/// @return Reference to self.
 	TweenChain& halt() override final {
 		factor = 1.0f;
 		isFinished = true;
 		return *this;
 	}
 
-	/// Halts the tween's execution, and sets it to its end value.
+	/// @brief Ends the tween's execution, and sets it value to the final stage's end value.
+	/// @return Reference to self.
 	TweenChain& conclude() override final {
 		step = stages.front().step;
 		return halt();
 	}
 
+	/// @brief Returns the current value.
+	/// @return Current value.
 	T value() const override final {
 		return currentValue;
 	}
 
+	/// @brief Stages to interpolate between.
 	StageList stages;
 
 private:
@@ -459,14 +509,15 @@ private:
 		ITweenPlayable::isFinished
 	;
 
+	/// @brief Current stage being processed.
 	Stage current;
 
+	/// @brief Current value.
 	T currentValue;
 
+	/// @brief Interpolation factor used for calculating the current value.
 	float factor = 1.0f;
 };
-
-#undef CASE_FUNC
 
 CTL_EX_NAMESPACE_END
 
