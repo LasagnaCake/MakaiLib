@@ -11,7 +11,7 @@ namespace Collision {}
 
 /// @brief Two-dimensional collision.
 namespace Collision::C2D {
-	template<size_t UUID> struct Bounded;
+	template<usize UUID> struct Bounded;
 }
 
 /// @brief Two-dimensional collision type constraints.
@@ -32,10 +32,10 @@ namespace Collision::C2D {
 	}
 
 	/// @brief Tas the deriving class as a bounding area of some form.
-	template<size_t UUID>
+	template<usize UUID>
 	struct Bounded {
 		/// @brief ID of the bounding area.
-		constexpr static size_t ID = UUID;
+		constexpr static usize ID = UUID;
 		/// @brief ID of the bounding area that postceding it.
 		typedef Bounded<ID - 1> Previous;
 		/// @brief ID of the bounding area that precedes it.

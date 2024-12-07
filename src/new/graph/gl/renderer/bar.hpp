@@ -24,7 +24,7 @@ namespace Makai::Graph {
 
 	class LinearBar: public IGLDrawable, public Base::Progressbar {
 	public:
-		LinearBar(size_t const& layer = 0, bool const manual = false): IGLDrawable(layer, manual) {}
+		LinearBar(usize const& layer = 0, bool const manual = false): IGLDrawable(layer, manual) {}
 
 		Material::ObjectMaterial material;
 
@@ -39,7 +39,7 @@ namespace Makai::Graph {
 		bool	centered	= false;
 		Vector2 offset		= Vector2(0);
 
-		RadialBar(size_t const& layer = 0, bool const manual = false): IGLDrawable(layer, manual) {
+		RadialBar(usize const& layer = 0, bool const manual = false): IGLDrawable(layer, manual) {
 			vertices[0].uv.u = vertices[0].uv.v = 0.5;
 		}
 

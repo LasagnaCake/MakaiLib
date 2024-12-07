@@ -101,7 +101,7 @@ constexpr bool isTextDataEqual(TextData const& a, TextData const& b) {
 	);
 }
 
-List<float> getTextLineStarts(TextData const& text, FontData const& font, List<size_t> const& breaks) {
+List<float> getTextLineStarts(TextData const& text, FontData const& font, List<usize> const& breaks) {
 	List<float> result;
 	switch (text.lineWrap) {
 	case LineWrap::LW_CHARACTER: {
@@ -109,10 +109,10 @@ List<float> getTextLineStarts(TextData const& text, FontData const& font, List<s
 			StringList	lines = text.content.split('\n');
 			// Calculate starting points
 			for (String& l : lines) {
-				size_t lineSize		= l.size();
-				size_t lastLineSize	= lineSize % (text.rect.h+1);
+				usize lineSize		= l.size();
+				usize lastLineSize	= lineSize % (text.rect.h+1);
 				if (lineSize > text.rect.h) {
-					for (size_t i = 0; i < (lineSize - lastLineSize) / text.rect.h; i++)
+					for (usize i = 0; i < (lineSize - lastLineSize) / text.rect.h; i++)
 						result.pushBack(0);
 				}
 				result.pushBack(
@@ -130,7 +130,7 @@ List<float> getTextLineStarts(TextData const& text, FontData const& font, List<s
 		}
 	case LineWrap::LW_FULL_WORD:
 	case LineWrap::LW_HYPHEN_WORD: {
-			for (size_t const& lb: breaks) {
+			for (usize const& lb: breaks) {
 				result.pushBack(
 					((float)text.rect.h - (float)lb)
 				*	(text.spacing.x + font.spacing.x)
@@ -156,9 +156,9 @@ Vector2 getTextRectStart(TextData const& text, FontData const& font) {
 	return rectPos;
 }
 
-constexpr List<size_t> calculateIndices(StringList const& words, TextRect const& rect) {
-	List<size_t> indices;
-	/*size_t
+constexpr List<usize> calculateIndices(StringList const& words, TextRect const& rect) {
+	List<usize> indices;
+	/*usize
 		ls = 0,
 		sc = 0
 	;
@@ -173,7 +173,7 @@ constexpr List<size_t> calculateIndices(StringList const& words, TextRect const&
 		}
 	}
 	indices.pushBack(ls + sc - 1);*/
-	size_t
+	usize
 		lastBreak	= 0,
 		curWord		= 0
 	;
@@ -194,8 +194,8 @@ constexpr List<size_t> calculateIndices(StringList const& words, TextRect const&
 	return indices;
 }
 
-List<size_t> getTextLineWrapIndices(TextData& text) {
-	List<size_t>	indices;
+List<usize> getTextLineWrapIndices(TextData& text) {
+	List<usize>	indices;
 	switch (text.lineWrap) {
 	case LineWrap::LW_CHARACTER:
 		break;
@@ -250,10 +250,10 @@ void Label::update() {
 	Vector2 uv;
 	unsigned char index;
 	// The lines' starting positions (if applicable)
-	List<size_t>	lineEnd = getTextLineWrapIndices(text);
+	List<usize>	lineEnd = getTextLineWrapIndices(text);
 	List<float>		lineStart = getTextLineStarts(text, *font, lineEnd);
 	cursor.x	= lineStart[0];
-	cursor.y 	= text.rect.v - Math::min<size_t>(lineEnd.size(), text.rect.v);
+	cursor.y 	= text.rect.v - Math::min<usize>(lineEnd.size(), text.rect.v);
 	cursor.y	*= (text.spacing.y + font->spacing.y) * -text.textAlign.y;
 	cursor -= rectStart * Vector2(1,-1);
 	// The current line and current character

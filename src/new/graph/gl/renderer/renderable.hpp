@@ -27,7 +27,7 @@ namespace Makai::Graph {
 		Material::ObjectMaterial material;
 
 		/// @brief Constructs the renderable.
-		/// @param triangles Triangles to use.
+		/// @param triangles Triangles to use. Takes ownership of them.
 		/// @param layer Layer to register the object to. By default, it is layer zero.
 		/// @param manual Whether the object is manually rendered. By default, it is `false`.
 		Renderable(
@@ -37,10 +37,11 @@ namespace Makai::Graph {
 		);
 
 		/// @brief Constructs the renderable.
-		/// @param vertices Vertices to construct from.
+		/// @param vertices Vertices to copy from.
 		/// @param count Vertex count.
 		/// @param layer Layer to register the object to. By default, it is layer zero.
 		/// @param manual Whether the object is manually rendered. By default, it is `false`.
+		/// @throw Error::InvalidValue if no vertices were passed, or vertex count is not a multiple of 3. 
 		Renderable(
 			Vertex* const vertices,
 			usize const count,
@@ -102,25 +103,59 @@ namespace Makai::Graph {
 
 		/// @brief IRREVERSIBLE. bakes and locks the object.
 		void bakeAndLock();
-
+		
+		/// @brief Extends the renderable with a series of vertices.
+		/// @param vertices Vertices to copy and extend from.
+		/// @param size Vertex count.
+		/// @throw Error::InvalidValue if no vertices were passed, or vertex count is not a multiple of 3. 
 		void extend(Vertex* const vertices, usize const size);
 
-		void extend(Renderable& other);
+		/// @brief Extends the renderable with another renderable.
+		/// @param other Renderable to copy and extend from.
+		void extend(Renderable const& other);
 
-		void extend(List<Renderable*> const& parts);
-
+		/// @brief Extends the renderable from a binary file.
+		/// @param path Path to file.
+		/// @throw Error::FailedAction If file size does not constitute a valid vertex set.
+		/// @throw Error::FileLoadError If file is empty.
 		void extendFromBinaryFile(String const& path);
 
+		/// @brief Extends the renderable from a renderable object definition file.
+		/// @param path Path to file.
+		/// @throw Error::FailedAction For any JSON-related error.
+		/// @throw Error::InvalidValue For any file-related eror.
 		void extendFromDefinitionFile(String const& path);
 
+		/// @brief Bakes the object.
+		/// @details
+		///		Pre-processes all references, and copies the triangles' vertices
+		///		To the internal buffer that is used when rendering.
+		///
+		///		Any reference transformation no longer affects the object.
+		///		In return, speeds up render time substantially.
+		///		
+		///		If you need speed, use this.
 		void bake();
 
+		/// @brief Unbakes the object.
 		void unbake();
 
+		/// @brief
+		///		Destroys all references and deletes all triangles associated with the object.
+		///		Also deletes the internal vertex buffer.
 		void clearData();
 
+		/// @brief Saves the object's triangles to a binary file.
+		/// @param path Path to file.
 		void saveToBinaryFile(String const& path);
 
+		/// @brief Saves the object to an renderable object definition file.
+		/// @param folder Folder to save the object in.
+		/// @param name Object name.
+		/// @param texturesFolder Folder to save textures in (if not integrated into file).
+		/// @param integratedBinary Whether to integrate the object's triangles into the file.
+		/// @param integratedTextures Whether to integrate the object's textures into the file.
+		/// @param pretty Whether to make the file "human-readable".
 		void saveToDefinitionFile(
 			String const& folder,
 			String const& name				= "object",
@@ -130,6 +165,7 @@ namespace Makai::Graph {
 			bool const pretty				= false
 		);
 
+		/// @brief Triangles bound to this object.
 		List<Triangle*> triangles;
 
 	private:

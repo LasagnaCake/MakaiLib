@@ -109,7 +109,7 @@ namespace Makai::Graph::Material {
 
 			struct Countable {
 				/// @brief Count.
-				size_t count = 1;
+				usize count = 1;
 			};
 		}
 

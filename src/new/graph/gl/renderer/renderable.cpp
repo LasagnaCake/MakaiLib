@@ -287,18 +287,10 @@ void Renderable::extend(Vertex* const vertices, usize const size) {
 	}
 }
 
-void Renderable::extend(Renderable& other) {
+void Renderable::extend(Renderable const& other) {
 	if (locked) return;
-	if (!other.baked) {
-		other.bake();
-		extend(other.vertices, other.vertexCount);
-		other.unbake();
-	} else extend(other.vertices, other.vertexCount);
-}
-
-void Renderable::extend(List<Renderable*> const& parts) {
-	for (Renderable* p: parts)
-		extend(*p);
+	for (auto& t: other.triangles)
+		triangles.pushBack(new Triangle(*t));
 }
 
 void Renderable::extendFromBinaryFile(String const& path) {

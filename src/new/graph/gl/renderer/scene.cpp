@@ -64,11 +64,7 @@ void Scene::draw() {
 		obj->render();
 }
 
-Scene::Scene(Scene& other, usize const layer, bool const manual): Collection(layer, manual) {
-	extend(other);
-}
-
-void Scene::extend(Scene& other) {
+void Scene::extend(Scene const& other) {
 	for(auto& [name, obj]: other.objects) {
 		auto [_, nobj] = createObject(name);
 		bool wasBaked = obj->baked;

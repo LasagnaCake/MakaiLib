@@ -213,7 +213,7 @@ ImageData Image2D::getData() const {
 		FilterMode::FM_NEAREST,
 		FilterMode::FM_NEAREST
 	};
-	size_t size = 0;
+	usize size = 0;
 	switch (attributes.type) {
 		default:
 		case ComponentType::CT_UBYTE:
