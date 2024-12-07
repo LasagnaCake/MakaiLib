@@ -4,12 +4,21 @@
 #include "../../compat/ctl.hpp"
 
 namespace Makai::Graph {
+	/// @brief Orthographic projection settings.
 	struct OrthographicData {
+		/// @brief Projection strength.
 		float strength	= 0;
+		/// @brief Orthographic origin.
 		Vector2 origin	= Vector2(0);
+		/// @brief Orthographic size.
 		Vector2 size	= Vector2(1);
 	};
 
+	/// @brief Converts an orthographic projection into a perspective matrix.
+	/// @param data Orthographic projection to convert.
+	/// @param zNear Near clip plane.
+	/// @param zFar Far clip plane.
+	/// @return Resulting matrix.
 	constexpr Matrix4x4 asMatrix(OrthographicData const& data, float const zNear, float const zFar) {
 		return Math::ortho(
 			data.origin.x,
@@ -20,7 +29,8 @@ namespace Makai::Graph {
 			zFar
 		);
 	}
-
+	
+	/// @brief 3D camera.
 	struct Camera3D {
 		Vector3 eye;
 		Vector3 at		= Vector3(0, 0, 1);
