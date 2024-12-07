@@ -2,13 +2,13 @@
 
 using namespace Makai; using namespace Makai::Graph;
 
-void Renderer::renderLayer(usize const layer) {
+void RenderServer::renderLayer(usize const layer) {
 	return renderLayer(layers[layer]);
 }
 
-void Renderer::renderLayer(typename Renderer::Layers::GroupType const& layer) {
+void RenderServer::renderLayer(typename RenderServer::Layers::GroupType const& layer) {
 	#ifdef MAKAILIB_DEBUG
-	API::Debug::Context ctx("Renderer::renderLayer");
+	API::Debug::Context ctx("RenderServer::renderLayer");
 	#endif // MAKAILIB_DEBUG
 	for (auto draw: layer)
 		(*draw)();

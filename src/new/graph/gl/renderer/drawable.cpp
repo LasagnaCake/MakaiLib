@@ -18,40 +18,40 @@ IDrawable::IDrawable(bool const manual): IDrawable(manual, 0) {
 IDrawable::~IDrawable() {
 	DEBUGLN("Removing from rendering layers...");
 	if(!manualMode)
-		Renderer::layers.removeFromAll(&doRender);
+		RenderServer::layers.removeFromAll(&doRender);
 	DEBUGLN("Finalizing...\n");
 }
 
 IDrawable& IDrawable::setManual() {
 	if(!manualMode)
-		Renderer::layers.removeFromAll(&doRender);
+		RenderServer::layers.removeFromAll(&doRender);
 	manualMode = true;
 	return *this;
 }
 
 IDrawable& IDrawable::setAuto(usize const renderLayer) {
 	if(manualMode)
-		Renderer::layers.add(&doRender, renderLayer);
+		RenderServer::layers.add(&doRender, renderLayer);
 	manualMode = false;
 	return *this;
 }
 
 IDrawable& IDrawable::setRenderLayer(usize const renderLayer) {
-	Renderer::layers.removeFromAll(&doRender);
-	Renderer::layers.add(&doRender, renderLayer);
+	RenderServer::layers.removeFromAll(&doRender);
+	RenderServer::layers.add(&doRender, renderLayer);
 	manualMode = false;
 	return *this;
 }
 
 IDrawable& IDrawable::addToRenderLayer(usize const renderLayer) {
-	Renderer::layers.add(&doRender, renderLayer);
+	RenderServer::layers.add(&doRender, renderLayer);
 	manualMode = false;
 	return *this;
 }
 
 IDrawable& IDrawable::removeFromRenderLayer(usize const renderLayer) {
-	Renderer::layers.remove(&doRender, renderLayer);
-	if (Renderer::layers.withObject(&doRender).empty())
+	RenderServer::layers.remove(&doRender, renderLayer);
+	if (RenderServer::layers.withObject(&doRender).empty())
 		manualMode = true;
 	return *this;
 }

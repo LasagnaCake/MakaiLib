@@ -84,7 +84,7 @@ namespace Makai::Graph {
 		LW_HYPHEN_WORD
 	};
 
-	/// @brief Label display data.
+	/// @brief Text display data.
 	struct TextData {
 		/// @brief Text to display.
 		String		content		= "Hello\nWorld!";
@@ -101,21 +101,31 @@ namespace Makai::Graph {
 		/// @brief Line wrapping mode.
 		LineWrap	lineWrap	= LineWrap::LW_CHARACTER;
 	};
-	
+
+	/// @brief Text display.
 	class Label: public IGLDrawable {
 	public:
+		/// @brief Constructs the label.
+		/// @param layer Layer to register the object to. By default, it is layer zero.
+		/// @param manual Whether the object is manually rendered. By default, it is `false`.
 		Label(usize const& layer = 0, bool const manual = false): IGLDrawable(layer, manual) {}
 
+		/// @brief Destructor.
 		virtual ~Label() {}
 
+		/// @brief Font face to use.
 		FontFace					font;
-		TextData					text;
+		/// @brief Text to display.
+		Instance<TextData>			text		= new TextData();
+		/// @brief Material to use. Texture effect gets ignored.
 		Material::ObjectMaterial	material;
 
 	private:
+		/// @brief Underlying display vertices.
 		List<Vertex> vertices;
 
-		TextData last = {"",{0,0}};
+		/// @brief Last text displayed.
+		Instance<TextData> last = new TextData{"",{0,0}};
 
 		void draw() override;
 

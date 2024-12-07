@@ -3,13 +3,16 @@
 
 #include "../../../compat/ctl.hpp"
 
+/// @brief Graphical facilities.
 namespace Makai::Graph {
+	/// @brief Face culling mode.
 	enum class CullMode {
 		OCM_NONE,
 		OCM_FRONT,
 		OCM_BACK,
 	};
 
+	/// @brief Face fill mode.
 	enum class FillMode {
 		OFM_NONE = -1,
 		OFM_FILL,
@@ -17,6 +20,7 @@ namespace Makai::Graph {
 		OFM_POINT,
 	};
 
+	/// @brief Graphical display mode.
 	enum class DisplayMode {
 		ODM_POINTS,
 		ODM_LINE_STRIP,
@@ -32,9 +36,17 @@ namespace Makai::Graph {
 		ODM_PATCHES
 	};
 
+	/// @brief Sets the current face culling mode.
+	/// @param mode Mode to use.
 	void setCullMode(CullMode const& mode = CullMode::OCM_NONE);
+	/// @brief Sets the current face fill mode.
+	/// @param mode Mode to use.
+	/// @brief Whether mode was `OFM_NONE`.
 	bool setFillMode(FillMode const& mode = FillMode::OFM_FILL);
 
+	/// @brief Gets the graphical display mode as the associated OpenGL enum value.
+	/// @param mode Mode to convert.
+	/// @return Mode as OpenGL enum value.
 	uint getGLDisplayMode(DisplayMode const& mode = DisplayMode::ODM_TRIS);
 }
 

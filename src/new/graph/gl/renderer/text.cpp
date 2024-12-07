@@ -88,19 +88,6 @@ FontData& FontFace::data() const {return *instance; }
 bool FontFace::exists() const	{return instance.exists() && instance->image.exists();	}
 FontFace::operator bool() const	{return exists();										}
 
-constexpr bool isTextDataEqual(TextData const& a, TextData const& b) {
-	return Fold::land(
-		a.content	== b.content
-	,	a.rect.h	== b.rect.h
-	,	a.rect.v	== b.rect.v
-	,	a.textAlign	== b.textAlign
-	,	a.rectAlign	== b.rectAlign
-	,	a.spacing	== b.spacing
-	,	a.maxChars	== b.maxChars
-	,	a.lineWrap	== b.lineWrap
-	);
-}
-
 List<float> getTextLineStarts(TextData const& text, FontData const& font, List<usize> const& breaks) {
 	List<float> result;
 	switch (text.lineWrap) {
@@ -219,7 +206,7 @@ List<usize> getTextLineWrapIndices(TextData& text) {
 
 void Label::draw() {
 	// If text changed, update label
-	if (!isTextDataEqual(text, last)) {
+	if (text != last) {
 		last = text;
 		update();
 	}
@@ -242,27 +229,29 @@ void Label::draw() {
 void Label::update() {
 	// Clear previous characters
 	vertices.clear();
+	// If no text is present, return
+	if (!text) return;
 	// The current character's position
 	Vector2		cursor;
 	TextRect	chrRect = {0,0};
-	Vector2		rectStart = getTextRectStart(text, *font);
+	Vector2		rectStart = getTextRectStart(*text, *font);
 	// The current character's top left UV index
 	Vector2 uv;
 	unsigned char index;
 	// The lines' starting positions (if applicable)
-	List<usize>	lineEnd = getTextLineWrapIndices(text);
-	List<float>		lineStart = getTextLineStarts(text, *font, lineEnd);
+	List<usize>	lineEnd = getTextLineWrapIndices(*text);
+	List<float>		lineStart = getTextLineStarts(*text, *font, lineEnd);
 	cursor.x	= lineStart[0];
-	cursor.y 	= text.rect.v - Math::min<usize>(lineEnd.size(), text.rect.v);
-	cursor.y	*= (text.spacing.y + font->spacing.y) * -text.textAlign.y;
+	cursor.y 	= text->rect.v - Math::min<usize>(lineEnd.size(), text->rect.v);
+	cursor.y	*= (text->spacing.y + font->spacing.y) * -text->textAlign.y;
 	cursor -= rectStart * Vector2(1,-1);
 	// The current line and current character
 	usize curLine = 0;
 	usize curChar = 0;
 	// Loop through each character and...
-	for (char c: text.content) {
+	for (char c: text->content) {
 		// Check if max characters hasn't been reached
-		if (text.maxChars == 0 || ((llong(curChar) > llong(text.maxChars-1)) && (text.maxChars > -1))) break;
+		if (text->maxChars == 0 || ((llong(curChar) > llong(text->maxChars-1)) && (text->maxChars > -1))) break;
 		else curChar++;
 		// Check if character is newline
 		bool
@@ -270,14 +259,14 @@ void Label::update() {
 			endOfWordLine = false
 		;
 		// Check if should break line
-		if (text.lineWrap != LineWrap::LW_CHARACTER && text.content.size() >= text.rect.h)
+		if (text->lineWrap != LineWrap::LW_CHARACTER && text->content.size() >= text->rect.h)
 			endOfWordLine = chrRect.h > lineEnd[curLine];
 		// If cursor has reached the rect's horizontal limit or newline, move to new line
-		if((chrRect.h >= text.rect.h) || newline || endOfWordLine) {
+		if((chrRect.h >= text->rect.h) || newline || endOfWordLine) {
 			// If cursor has reach the rect's vertical limit, break
-			if(chrRect.v >= text.rect.v) break;
+			if(chrRect.v >= text->rect.v) break;
 			cursor.x = (lineStart[++curLine]) - rectStart.x;
-			cursor.y -= (text.spacing.y + font->spacing.y) * 1.0;
+			cursor.y -= (text->spacing.y + font->spacing.y) * 1.0;
 			chrRect.h = 0;
 			chrRect.v++;
 			// If newline, move on to next character
@@ -287,7 +276,7 @@ void Label::update() {
 			}
 		}
 		// If cursor has reach the rect's vertical limit, break
-		if(chrRect.v >= text.rect.v) break;
+		if(chrRect.v >= text->rect.v) break;
 		// If character is a control character, skip
 		if (c < 0x20) continue;
 		// Get character index
@@ -319,7 +308,7 @@ void Label::update() {
 		vertices.pushBack(Vertex(pos[2], uv[2]));
 		vertices.pushBack(Vertex(pos[3], uv[3]));
 		// Increment cursor
-		cursor.x += text.spacing.x + font->spacing.x;
+		cursor.x += text->spacing.x + font->spacing.x;
 		chrRect.h++;
 	}
 }

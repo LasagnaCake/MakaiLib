@@ -47,6 +47,11 @@ namespace Makai::Graph {
 			this->offset = values.size();
 		}
 
+		template <Type::Enumerator T>
+		inline void set(T const value, usize const offset = 0) const {
+			set(Decay::AsInteger<T>(value), offset);
+		}
+
 		template <typename T, usize S>
 		inline void set(Span<T, S> const& values, usize const offset = 0) const {
 			this->offset = 0;

@@ -9,12 +9,23 @@
 #define RADIAL_BAR_RESOLUTION 12
 #endif // RADIAL_BAR_RESOLUTION
 
+/// @brief Graphical facilities.
 namespace Makai::Graph {
+	/// @brief Base classes.
 	namespace Base {
+		/// @brief Basic progressbar contents.
 		struct Progressbar {
-			float	uvShift = 0, value = 0, max = 100;
+			/// @brief Bar-dependent UV shift.
+			float uvShift	= 0;
+			/// @brief Current value.
+			float value		= 0;
+			/// @brief Maximum value.
+			float max		= 100;
+			/// @brief Size.
 			Vector2	size		= 1;
+			/// @brief UV scale.
 			Vector2	uvScale		= 1;
+			/// @brief Whether the UV should adapt to the bar's progress.
 			bool 	dynamicUV	= true;
 		};
 	}

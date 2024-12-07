@@ -439,7 +439,7 @@ void App::render() {
 	layerbuffer.clearBuffers();
 	#endif // MAKAILIB_DO_NOT_USE_BUFFERS
 	// Draw objects
-	for (auto layer: Graph::Renderer::layers) {
+	for (auto layer: Graph::RenderServer::layers) {
 		if (!layer.value.empty()) {
 			// Clear layer skip flag
 			skipLayer = false;
@@ -466,7 +466,7 @@ void App::render() {
 				// Call onLayerDrawBegin function
 				onPostLayerClear(layer.key);
 				// Render layer
-				Makai::Graph::Renderer::renderLayer(layer.value);
+				Makai::Graph::RenderServer::renderLayer(layer.value);
 				// Clear layer push flag
 				pushToFrame = false;
 				// Call onPreLayerDraw function
