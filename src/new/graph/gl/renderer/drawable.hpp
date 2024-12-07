@@ -67,7 +67,7 @@ namespace Makai::Graph {
 	};
 
 	/// @brief OpenGL drawable object interface.
-	class IGLDrawable: public IDrawable, public IBlendable {
+	class IGLDrawable: public IDrawable, public Blendable {
 	public:
 		/// @brief Constructs the drawable object.
 		/// @param layer Layer to register the object to.

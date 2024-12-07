@@ -56,7 +56,7 @@ IDrawable& IDrawable::removeFromRenderLayer(usize const renderLayer) {
 	return *this;
 }
 
-IGLDrawable::IGLDrawable(usize const layer, bool const manual): IDrawable(layer, manual), IBlendable() {
+IGLDrawable::IGLDrawable(usize const layer, bool const manual): IDrawable(layer, manual), Blendable() {
 	DEBUGLN("Creating drawable object...");
 	glGenVertexArrays(1, &vao);
 	glGenBuffers(1, &vbo);

@@ -4,7 +4,9 @@
 #include "../../compat/ctl.hpp"
 #include "core.hpp"
 
+/// @brief Graphical facilities.
 namespace Makai::Graph {
+	/// @brief Blend function.
 	enum class BlendFunction {
 		BF_ZERO,
 		BF_ONE,
@@ -23,6 +25,7 @@ namespace Makai::Graph {
 		BF_ONE_MINUS_CONST_ALPHA
 	};
 
+	/// @brief Blend equation.
 	enum class BlendEquation {
 		BE_ZERO,
 		BE_ONE,
@@ -33,31 +36,45 @@ namespace Makai::Graph {
 		BE_MAX
 	};
 
+	/// @brief Blend mode.
 	struct BlendMode {
+		/// @brief Blend function setting.
 		struct FunctionOption {
-			BlendFunction
-				srcColor = BlendFunction::BF_SRC_ALPHA,
-				dstColor = BlendFunction::BF_ONE_MINUS_SRC_ALPHA,
-				srcAlpha = BlendFunction::BF_SRC_ALPHA_SATURATE,
-				dstAlpha = BlendFunction::BF_ONE
-			;
-		} func = {};
+			/// @brief Blend function to use for the source color.
+			BlendFunction srcColor = BlendFunction::BF_SRC_ALPHA;
+			/// @brief Blend function to use for the destination color.
+			BlendFunction dstColor = BlendFunction::BF_ONE_MINUS_SRC_ALPHA;
+			/// @brief Blend function to use for the source alpha.
+			BlendFunction srcAlpha = BlendFunction::BF_SRC_ALPHA_SATURATE;
+			/// @brief Blend function to use for the destination alpha.
+			BlendFunction dstAlpha = BlendFunction::BF_ONE;
+		};
+		/// @brief Blend function to use.
+		FunctionOption func = {};
+		/// @brief Blend equation setting.
 		struct EquationOption {
-			BlendEquation
-				color = BlendEquation::BE_ADD,
-				alpha = BlendEquation::BE_MAX
-			;
-		} eq = {};
+			/// @brief Blend equation to use for the color.
+			BlendEquation color = BlendEquation::BE_ADD;
+			/// @brief Blend equation to use for the alpha.
+			BlendEquation alpha = BlendEquation::BE_MAX;
+		};
+		/// @brief Blend equation to use.
+		EquationOption eq = {};
 	};
 
-	struct IBlendable {
+	/// @brief Blendable object.
+	struct Blendable {
+		/// @brief Default blend mode.
 		inline static BlendMode DEFAULT_MODE = {};
 
-		IBlendable(): blend(DEFAULT_MODE) {}
+		/// @brief Empty constructor.
+		Blendable(): blend(DEFAULT_MODE) {}
 
-		constexpr IBlendable(BlendMode const& blend): blend(blend) {}
+		/// @brief Constructs the blendable with a given mode.
+		/// @param blend Blend mode to use.
+		constexpr Blendable(BlendMode const& blend): blend(blend) {}
 
-		constexpr IBlendable& setBlendFunction(
+		constexpr Blendable& setBlendFunction(
 			BlendFunction const& srcColor,
 			BlendFunction const& dstColor,
 			BlendFunction const& srcAlpha,
@@ -67,7 +84,7 @@ namespace Makai::Graph {
 			return *this;
 		}
 
-		constexpr IBlendable& setBlendFunction(
+		constexpr Blendable& setBlendFunction(
 			BlendFunction const& src,
 			BlendFunction const& dst
 		) {
@@ -75,7 +92,7 @@ namespace Makai::Graph {
 			return *this;
 		}
 
-		constexpr IBlendable& setBlendEquation(
+		constexpr Blendable& setBlendEquation(
 			BlendEquation const& color,
 			BlendEquation const& alpha
 		) {
@@ -83,7 +100,7 @@ namespace Makai::Graph {
 			return *this;
 		}
 
-		constexpr IBlendable& setBlendEquation(
+		constexpr Blendable& setBlendEquation(
 			BlendEquation const& eq
 		) {
 			blend.eq = {eq, eq};
