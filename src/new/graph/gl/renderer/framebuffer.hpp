@@ -8,6 +8,11 @@
 #include "../blend.hpp"
 #include "../material/material.hpp"
 
+/*
+	Every single time this code gets touched,
+	it becomes worse and worse.
+*/
+
 /// @brief Graphical facilities.
 namespace Makai::Graph {
 	/// @brief Base classes.
@@ -21,85 +26,85 @@ namespace Makai::Graph {
 			/// @brief Buffer height.
 			uint height	= 0;
 		};
+
+		/// @brief Basic screen buffer.
+		class Buffer: private BufferObject {
+		public:
+			/// @brief Empty constructor.
+			Buffer() {}
+
+			/// @brief Creates the buffer with a given width and height.
+			/// @param width Buffer width.
+			/// @param height Buffer height.
+			Buffer(
+				uint const width,
+				uint const height
+			);
+
+			/// @brief Destructor.
+			virtual ~Buffer();
+			
+			/// @brief Destroys the buffer.
+			/// @return Reference to self.
+			virtual Buffer& destroy();
+			
+			/// @brief Creates the buffer with a given width and height.
+			/// @param width Buffer width.
+			/// @param height Buffer height.
+			virtual Buffer& create(
+				uint const width,
+				uint const height
+			);
+			
+			/// @brief Renders the buffer to another buffer.
+			/// @param target Buffer to render to.
+			/// @return Reference to self.
+			Buffer& render(Buffer const& target);
+
+			/// @brief Renders the buffer to another buffer.
+			/// @param target Buffer to render to.
+			/// @return Reference to self.
+			virtual Buffer& renderTo(BufferObject const& target) = 0;
+
+			/// @brief Enables the buffer.
+			/// @return Reference to self.
+			virtual Buffer& enable();
+
+			/// @brief Enables the buffer.
+			/// @return Reference to self.
+			Buffer& operator()();
+
+			/// @brief Disables the buffer.
+			/// @return Reference to self.
+			virtual Buffer& disable();
+
+			/// @brief Returns whether the buffer exists.
+			/// @return Whether buffer exists.
+			bool exists() const;
+			
+			/// @brief Returns the buffer as a buffer object.
+			/// @return Buffer as buffer object.
+			BufferObject data() const;
+
+		protected:
+			/// @brief Returns the buffer's width.
+			/// @return Buffer width.
+			uint getWidth() const;
+			/// @brief Returns the buffer's height.
+			/// @return Buffer height.
+			uint getHeight() const;
+			/// @brief Returns the buffer's underlying API ID.
+			/// @return Underlying API ID.
+			uint getID() const;
+
+		private:
+			/// @brief Whether buffer exists.
+			bool created = false;
+		};
 	}
 
-	/// @brief Screen buffer interface.
-	class IBuffer: private Base::BufferObject {
-	public:
-		/// @brief Empty constructor.
-		IBuffer() {}
-
-		/// @brief Constructs the buffer with a given width and height.
-		/// @param width Buffer width.
-		/// @param height Buffer height.
-		IBuffer(
-			uint const width,
-			uint const height
-		);
-
-		/// @brief Destructor.
-		virtual ~IBuffer();
-		
-		/// @brief Destroys the buffer.
-		/// @return Reference to self.
-		virtual IBuffer& destroy();
-		
-		/// @brief Creates the buffer with a given width and height.
-		/// @param width Buffer width.
-		/// @param height Buffer height.
-		virtual IBuffer& create(
-			uint const width,
-			uint const height
-		);
-		
-		/// @brief Renders the buffer to another buffer.
-		/// @param target Buffer to render to.
-		/// @return Reference to self.
-		IBuffer& render(IBuffer const& target);
-
-		/// @brief Renders the buffer to another buffer.
-		/// @param target Buffer to render to.
-		/// @return Reference to self.
-		virtual IBuffer& renderTo(Base::BufferObject const& target) = 0;
-
-		/// @brief Enables the buffer.
-		/// @return Reference to self.
-		virtual IBuffer& enable();
-
-		/// @brief Enables the buffer.
-		/// @return Reference to self.
-		IBuffer& operator()();
-
-		/// @brief Disables the buffer.
-		/// @return Reference to self.
-		virtual IBuffer& disable();
-
-		/// @brief Returns whether the buffer exists.
-		/// @return Whether buffer exists.
-		bool exists() const;
-		
-		/// @brief Returns the buffer as a buffer object.
-		/// @return Buffer as buffer object.
-		Base::BufferObject data() const;
-
-	protected:
-		/// @brief Returns the buffer's width.
-		/// @return Buffer width.
-		uint getWidth() const;
-		/// @brief Returns the buffer's height.
-		/// @return Buffer height.
-		uint getHeight() const;
-		/// @brief Returns the buffer's underlying API ID.
-		/// @return Underlying API ID.
-		uint getID() const;
-
-	private:
-		/// @brief Whether buffer exists.
-		bool created = false;
-	};
-
 	/// @brief Basic frame buffer.
-	class DrawBuffer: public IBuffer, public Blendable {
+	class DrawBuffer: public Base::Buffer, public Blendable {
 	public:
 		/// @brief Empty constructor.
 		DrawBuffer(): Blendable() {}
@@ -115,8 +120,13 @@ namespace Makai::Graph {
 		/// @brief Destructor.
 		virtual ~DrawBuffer();
 
+		/// @brief Destroys the buffer.
+		/// @return Reference to self.
 		DrawBuffer& destroy() override;
 
+		/// @brief Creates the buffer with a given width and height.
+		/// @param width Buffer width.
+		/// @param height Buffer height.
 		DrawBuffer& create(
 			uint const width,
 			uint const height
