@@ -92,7 +92,7 @@ Shader::~Shader() {
 }
 
 /// Returns whether this object has a shader associated with it (i.e. "is created").
-inline bool Shader::isCreated() const {
+inline bool Shader::exists() const {
 	return created;
 }
 
@@ -127,7 +127,7 @@ bool Shader::create(SLF::SLFData const& slfData) {
 		}
 	}
 	if (!log.empty())
-		throw Error::FailedAction(log);
+		throw Error::FailedAction("Compilation failure!", __FILE__, toString(__LINE__), "Shader::create", log);
 	created = true;
 	return true;
 }

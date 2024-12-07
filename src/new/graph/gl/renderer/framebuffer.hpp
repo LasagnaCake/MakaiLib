@@ -103,7 +103,7 @@ namespace Makai::Graph {
 		};
 	}
 
-	/// @brief Basic frame buffer.
+	/// @brief Render operation buffer.
 	class DrawBuffer: public Base::Buffer, public Blendable {
 	public:
 		/// @brief Empty constructor.
@@ -132,52 +132,78 @@ namespace Makai::Graph {
 			uint const height
 		) override;
 
+		/// @brief Enables the buffer.
+		/// @return Reference to self.
 		DrawBuffer& enable() override;
 
+		/// @brief Clears both the color and the depth buffers.
+		/// @return Reference to self.
 		DrawBuffer& clearBuffers();
 
+		/// @brief Clears the color buffer.
+		/// @return Reference to self.
 		DrawBuffer& clearColorBuffer();
 
+		/// @brief Clears the depth buffer.
+		/// @return Reference to self.
 		DrawBuffer& clearDepthBuffer();
 
+		/// @brief Disables the buffer.
+		/// @return Reference to self.
 		DrawBuffer& disable() override;
 
-		/// The framebuffer's vertex transformation.
+		/// @brief Transfromation.
 		Transform3D trans;
-		/// The framebuffer's UV transformation.
+		/// @brief UV transformation.
 		Transform3D uv;
-		/// The framebuffer's shape.
+		/// @brief Buffer shape.
 		Vertex rect[4];
-		/// The framebuffer's rendering shader.
+		/// @brief Buffer shader.
 		Shader shader;
-		/// The framebuffer's screen Vertex Unit space. Usually the inverse of the camera's orthographic size.
+		/// @brief  Screen Vertex Unit space. Usually the inverse of the camera's orthographic size.
 		Vector2 screenVUSpace = 1;
-		/// The framebuffer's blend function & equation setting.
-		BlendMode blend;
 
+		/// @brief Returns the color buffer.
+		/// @return Color buffer.
 		Texture2D getScreenBuffer() const;
+		/// @brief Returns the depth buffer.
+		/// @return Depth buffer.
 		Texture2D getDepthBuffer() const;
 
+		/// @brief Renders the buffer to another buffer.
+		/// @param target Buffer to render to.
+		/// @return Reference to self.
 		DrawBuffer& renderTo(Base::BufferObject const& target) override;
 
 	protected:
+		/// @brief Buffer clear color.
 		Vector4 clearColor = Color::CLEAR;
 
 	private:
+		/// @brief Buffer storage objects.
 		struct {
+			/// @brief Color buffer.
 			Texture2D screen;
+			/// @brief Depth buffer.
 			Texture2D depth;
 		} buffer;
+		/// @brief Vertex array.
 		uint vao;
+		/// @brief Vertex buffer.
 		uint vbo;
 	};
 
+	/// @brief Frame buffer.
 	class FrameBuffer: public DrawBuffer {
 	public:
 		using DrawBuffer::DrawBuffer;
 
+		/// @brief Material to use.
 		Material::BufferMaterial material;
-	
+
+		/// @brief Renders the buffer to another buffer.
+		/// @param target Buffer to render to.
+		/// @return Reference to self.
 		FrameBuffer& renderTo(Base::BufferObject const& target) override final {
 			if (!exists()) return *this;
 			// Set material data
