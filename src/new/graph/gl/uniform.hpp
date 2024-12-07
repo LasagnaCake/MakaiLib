@@ -49,7 +49,7 @@ namespace Makai::Graph {
 
 		template <Type::Enumerator T>
 		inline void set(T const value, usize const offset = 0) const {
-			set(Decay::AsInteger<T>(value), offset);
+			set(CTL::enumcast(value), offset);
 		}
 
 		template <typename T, usize S>

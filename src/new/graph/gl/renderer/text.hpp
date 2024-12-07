@@ -121,7 +121,7 @@ namespace Makai::Graph {
 		Material::ObjectMaterial	material;
 
 	private:
-		/// @brief Underlying display vertices.
+		/// @brief Underlying vertices to render.
 		List<Vertex> vertices;
 
 		/// @brief Last text displayed.
