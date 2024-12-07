@@ -74,6 +74,12 @@ namespace Makai::Graph {
 		/// @param blend Blend mode to use.
 		constexpr Blendable(BlendMode const& blend): blend(blend) {}
 
+		/// @brief Sets the blend function to use.
+		/// @param srcColor Function to use for the source color.
+		/// @param dstColor Function to use for the destination color.
+		/// @param srcAlpha Function to use for the source alpha.
+		/// @param dstAlpha Function to use for the destination alpha.
+		/// @return Reference to self.
 		constexpr Blendable& setBlendFunction(
 			BlendFunction const& srcColor,
 			BlendFunction const& dstColor,
@@ -84,6 +90,10 @@ namespace Makai::Graph {
 			return *this;
 		}
 
+		/// @brief Sets the blend function to use.
+		/// @param src Function to use for the source.
+		/// @param dst Function to use for the destination.
+		/// @return Reference to self.
 		constexpr Blendable& setBlendFunction(
 			BlendFunction const& src,
 			BlendFunction const& dst
@@ -92,6 +102,10 @@ namespace Makai::Graph {
 			return *this;
 		}
 
+		/// @brief Sets the blend equation to use.
+		/// @param color Equation to use for the color.
+		/// @param alpha Equation to use for the alpha.
+		/// @return Reference to self.
 		constexpr Blendable& setBlendEquation(
 			BlendEquation const& color,
 			BlendEquation const& alpha
@@ -100,6 +114,9 @@ namespace Makai::Graph {
 			return *this;
 		}
 
+		/// @brief Sets the blend equation to use.
+		/// @param eq Equation to use.
+		/// @return Reference to self.
 		constexpr Blendable& setBlendEquation(
 			BlendEquation const& eq
 		) {
@@ -107,6 +124,7 @@ namespace Makai::Graph {
 			return *this;
 		}
 
+		/// @brief Blend mode to use.
 		BlendMode blend;
 
 	protected:
