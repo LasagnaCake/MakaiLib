@@ -39,7 +39,7 @@ namespace Makai::Graph {
 		float fov	= 2.0;
 		float zNear	= 0.01;
 		float zFar	= 100.0;
-		OrthographicData ortho;
+		OrthographicData	ortho;
 		/// Whether most points given (3D Perspective) are relative to the eye's position.
 		bool relativeToEye = false;
 
