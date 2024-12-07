@@ -3,6 +3,7 @@
 
 #include "../../compat/ctl.hpp"
 
+/// @brief Graphical facilities.
 namespace Makai::Graph {
 	/// @brief Orthographic projection settings.
 	struct OrthographicData {
@@ -29,21 +30,45 @@ namespace Makai::Graph {
 			zFar
 		);
 	}
+
+	struct ICamera {
+		/// @brief Returns the camera matrix. Must be implemented.
+		/// @return Camera matrix.
+		constexpr virtual Matrix4x4 matrix()		const = 0;
+		/// @brief Returns the projection matrix. Must be implemented.
+		/// @return Projection matrix.
+		constexpr virtual Matrix4x4 projection()	const = 0;
+
+		/// @brief Destructor.
+		constexpr virtual ~ICamera() {}
+	};
 	
 	/// @brief 3D camera.
-	struct Camera3D {
+	struct Camera3D: ICamera {
+		/// @brief Position.
 		Vector3 eye;
+		/// @brief View target.
 		Vector3 at		= Vector3(0, 0, 1);
+		/// @brief "Up" direction.
 		Vector3 up		= Vector3(0, 1, 0);
+		/// @brief Screen aspect ratio.
 		Vector2 aspect	= Vector2(4.0, 3.0);
+		/// @brief Field of view.
 		float fov	= 2.0;
+		/// @brief Near clip plane.
 		float zNear	= 0.01;
+		/// @brief Far clip plane.
 		float zFar	= 100.0;
+		/// @brief Orthographic setting.
 		OrthographicData	ortho;
-		/// Whether most points given (3D Perspective) are relative to the eye's position.
+		/// @brief Whether most points given (3D Perspective) are relative to the camera's position.
 		bool relativeToEye = false;
 
-		constexpr Matrix4x4 matrix() const {
+		constexpr virtual ~Camera3D() {}
+
+		/// @brief Returns the camera matrix.
+		/// @return Camera matrix.
+		constexpr Matrix4x4 matrix() const override final {
 			Vector3 camAt = at;
 			if (relativeToEye)
 				camAt += eye;
@@ -53,8 +78,10 @@ namespace Makai::Graph {
 				up
 			);
 		}
-
-		constexpr Matrix4x4 projection() const {
+		
+		/// @brief Returns the projection matrix.
+		/// @return Projection matrix.
+		constexpr Matrix4x4 projection() const override final {
 			if (ortho.strength == 0.0)
 				return Math::perspective(
 					fov,
@@ -88,6 +115,9 @@ namespace Makai::Graph {
 			return Math::lerp<Matrix4x4>(pm, om, ortho.strength);
 		}
 
+		/// @brief Creates a "2D" camera.
+		/// @param size Vector space size.
+		/// @return "2D" camera.
 		constexpr static Camera3D from2D(Vector2 const& size) {
 			Camera3D camera;
 			camera.eye				= Vec3(0, 0, -100);
@@ -100,42 +130,71 @@ namespace Makai::Graph {
 			return camera;
 		}
 
+		/// @brief Creates a "2D" camera.
+		/// @param size Vector space size.
+		/// @param raatio Aspect ratio.
+		/// @return "2D" camera.
 		constexpr static Camera3D from2D(float const scale, Vector2 const& ratio) {
 			return Camera3D::from2D(ratio * scale);
 		}
 	};
 
-	struct GimbalCamera3D {
+	/// @brief Rotateable 3D camera.
+	struct GimbalCamera3D: ICamera {
+		/// @brief Position.
 		Vector3 position;
+		/// @brief Rotation.
 		Vector3 rotation;
+		/// @brief Screen aspect ratio.
 		Vector2 aspect	= Vector2(4.0, 3.0);
+		/// @brief Field of view.
 		float fov	= 2.0;
+		/// @brief Near clip plane.
 		float zNear	= 0.01;
+		/// @brief Far clip plane.
 		float zFar	= 100.0;
-		OrthographicData ortho;
+		/// @brief Orthographic setting.
+		OrthographicData	ortho;
 
+		constexpr virtual ~GimbalCamera3D() {}
+
+		constexpr Matrix4x4 matrix() const override final {
+			return toCamera3D().matrix();
+		}
+
+		constexpr Matrix4x4 projection() const override final {
+			return toCamera3D().projection();
+		}
+
+		/// @brief Converts the camera to a 3D camera the engine can use.
+		/// @return 3D camera.
 		constexpr Camera3D toCamera3D() const {
 			Vector3 eye	= position;
 			Vector3 at	= Vector3(0, -1, 0);
 			Vector3 up	= Vector3(0, 0, 1);
 			Matrix4x4 const rmat = Matrix4x4::fromEulerYXZ(rotation);
-			return Camera3D{
-				eye,
-				rmat * Vector4(at, 1),
-				rmat * Vector4(up, 1),
-				aspect,
-				fov,
-				zNear,
-				zFar,
-				ortho,
-				true
-			};
+			Camera3D camera;
+			camera.eye				= eye;
+			camera.at				= rmat * Vector4(at, 1);
+			camera.up				= rmat * Vector4(up, 1);
+			camera.aspect			= aspect;
+			camera.fov				= fov;
+			camera.zNear			= zNear;
+			camera.zFar				= zFar;
+			camera.ortho			= ortho;
+			camera.relativeToEye	= true;
+			return camera;
 		}
 
+		/// @brief Converts the camera to a 3D camera the engine can use.
+		/// @return 3D camera.
 		constexpr operator Camera3D() const {
 			return toCamera3D();
 		}
 
+		/// @brief Constructs the camera from a `Camera3D`.
+		/// @param cam Camera to construct from.
+		/// @return Reference to self.
 		constexpr GimbalCamera3D& fromCamera3D(Camera3D const& cam) {
 			auto crot	= Math::getEulerAnglesYXZ(cam.matrix());
 			position	= cam.eye;
@@ -148,9 +207,11 @@ namespace Makai::Graph {
 			return (*this);
 		}
 
+		/// @brief Constructs the camera from a `Camera3D`.
+		/// @param cam Camera to construct from.
+		/// @return Reference to self.
 		constexpr GimbalCamera3D& operator=(Camera3D const& cam) {
-			fromCamera3D(cam);
-			return (*this);
+			return fromCamera3D(cam);
 		}
 	};
 }

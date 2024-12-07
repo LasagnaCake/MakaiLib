@@ -345,8 +345,8 @@ Vector2 App::getWindowScale() {
 	return Vector2(ws.x / ws.y, 1);
 }
 
-Graph::FrameBufferData App::toFrameBufferData() {
-	Graph::FrameBufferData self;
+Graph::Base::BufferObject App::toBufferObject() {
+	Graph::Base::BufferObject self;
 	self.id		= 0;
 	self.width	= width;
 	self.height	= height;
@@ -490,7 +490,7 @@ void App::render() {
 	onPreFrameDraw();
 	// Render frame buffer
 	#ifndef MAKAILIB_DO_NOT_USE_BUFFERS
-	framebuffer.render(toFrameBufferData());
+	framebuffer.renderTo(toBufferObject());
 	#endif // MAKAILIB_DO_NOT_USE_BUFFERS
 	// Copy screen to queued textures
 	copyScreenToQueued();
@@ -507,7 +507,7 @@ void App::render() {
 void App::copyScreenToQueued() {
 	if (!screenQueue.empty()) {
 		#ifndef MAKAILIB_DO_NOT_USE_BUFFERS
-		auto screen = framebuffer.data().screen;
+		auto screen = framebuffer.getScreenBuffer();
 		for (Graph::Texture2D target: screenQueue)
 			target.make(screen);
 		#endif // MAKAILIB_DO_NOT_USE_BUFFERS

@@ -167,7 +167,7 @@ namespace Makai {
 		Notifier notifier;
 
 	protected:
-		Graph::FrameBufferData toFrameBufferData();
+		Graph::Base::BufferObject toBufferObject();
 
 	private:
 		usize frameDelta = 0, cycleDelta = 0;

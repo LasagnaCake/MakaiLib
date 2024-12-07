@@ -10,22 +10,22 @@ namespace ImageSlot {
 
 using namespace Makai; using namespace Makai::Graph;
 
-Graph::Base::DrawBuffer::DrawBuffer(uint const width, uint const height) {
+Graph::IBuffer::IBuffer(uint const width, uint const height) {
 	create(width, height);
 }
 
-Graph::Base::DrawBuffer::~DrawBuffer() {
+Graph::IBuffer::~IBuffer() {
 	destroy();
 }
 
-Graph::Base::DrawBuffer& Graph::Base::DrawBuffer::destroy() {
+Graph::IBuffer& Graph::IBuffer::destroy() {
 	if (!created) return *this;
 	else created = false;
 	glDeleteFramebuffers(1, &id);
 	return *this;
 }
 
-Graph::Base::DrawBuffer& Graph::Base::DrawBuffer::create(uint const width, uint const height) {
+Graph::IBuffer& Graph::IBuffer::create(uint const width, uint const height) {
 	if (created) return *this;
 	else created = true;
 	glGenFramebuffers(1, &id);
@@ -36,52 +36,57 @@ Graph::Base::DrawBuffer& Graph::Base::DrawBuffer::create(uint const width, uint 
 	return *this;
 }
 
-Graph::Base::DrawBuffer& Graph::Base::DrawBuffer::enable() {
+Graph::IBuffer& Graph::IBuffer::enable() {
 	if (!created) return *this;
 	glBindFramebuffer(GL_FRAMEBUFFER, id);
 	return *this;
 }
 
-Graph::Base::DrawBuffer& Graph::Base::DrawBuffer::operator()() {
+Graph::IBuffer& Graph::IBuffer::operator()() {
 	return enable();
 }
 
-Graph::Base::DrawBuffer& Graph::Base::DrawBuffer::disable() {
+Graph::IBuffer& Graph::IBuffer::disable() {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	return *this;
 }
 
-bool Graph::Base::DrawBuffer::exists() const	{return created;}
+bool Graph::IBuffer::exists() const		{return created;}
 
-uint Graph::Base::DrawBuffer::getWidth() const	{return width;	}
-uint Graph::Base::DrawBuffer::getHeight() const	{return height;	}
-uint Graph::Base::DrawBuffer::getID() const		{return id;		}
+uint Graph::IBuffer::getWidth() const	{return width;	}
+uint Graph::IBuffer::getHeight() const	{return height;	}
+uint Graph::IBuffer::getID() const		{return id;		}
 
+Graph::IBuffer& Graph::IBuffer::render(IBuffer const& target) {
+	if (!exists()) return *this;
+	if (!target.exists()) return *this;
+	return renderTo(target.data());
+}
 
-Graph::Base::FrameBuffer::FrameBuffer(
+Graph::DrawBuffer::DrawBuffer(
 	unsigned int const width,
 	unsigned int const height
-): FrameBuffer() {
+): IBuffer() {
 	create(width, height);
 }
 
-Graph::Base::FrameBuffer::~FrameBuffer() {
+Graph::DrawBuffer::~DrawBuffer() {
 	destroy();
 }
 
-Graph::Base::FrameBuffer& Graph::Base::FrameBuffer::destroy() {
+Graph::DrawBuffer& Graph::DrawBuffer::destroy() {
 	if (!exists()) return *this;
 	buffer.screen.destroy();
 	buffer.depth.destroy();
 	glDeleteBuffers(1, &vbo);
 	glDeleteVertexArrays(1, &vao);
-	Base::DrawBuffer::destroy();
+	IBuffer::destroy();
 	return *this;
 }
 
-Graph::Base::FrameBuffer& Graph::Base::FrameBuffer::create(uint const width, uint const height) {
+Graph::DrawBuffer& Graph::DrawBuffer::create(uint const width, uint const height) {
 	if (exists()) return *this;
-	Base::DrawBuffer::create(width, height);
+	IBuffer::create(width, height);
 	glBindFramebuffer(GL_FRAMEBUFFER, getID());
 	buffer.screen.create(
 		width,
@@ -130,44 +135,38 @@ Graph::Base::FrameBuffer& Graph::Base::FrameBuffer::create(uint const width, uin
 	return *this;
 }
 
-Graph::Base::FrameBuffer& Graph::Base::FrameBuffer::enable() {
+Graph::DrawBuffer& Graph::DrawBuffer::enable() {
 	if (!exists()) return *this;
-	Base::DrawBuffer::enable();
+	IBuffer::enable();
 	this->clearDepthBuffer();
 	return *this;
 }
 
-FrameBufferData Graph::Base::FrameBuffer::data() {
+Graph::Base::BufferObject Graph::IBuffer::data() const {
 	if (!exists())
-		return FrameBufferData{};
-	return FrameBufferData{
-		getID(),
-		getWidth(),
-		getHeight(),
-		buffer.screen,
-		buffer.depth
-	};
+		return Base::BufferObject{};
+	return *this;
 }
 
-Graph::Base::FrameBuffer& Graph::Base::FrameBuffer::clearBuffers() {
+Graph::DrawBuffer& Graph::DrawBuffer::clearBuffers() {
 	this->clearColorBuffer();
 	this->clearDepthBuffer();
 	return *this;
 }
 
-Graph::Base::FrameBuffer& Graph::Base::FrameBuffer::clearColorBuffer() {
+Graph::DrawBuffer& Graph::DrawBuffer::clearColorBuffer() {
 	// Why does this line cause a problem?
 	API::setClearColor(clearColor);
 	API::clear(API::Buffer::GAB_COLOR);
 	return *this;
 }
 
-Graph::Base::FrameBuffer& Graph::Base::FrameBuffer::clearDepthBuffer() {
+Graph::DrawBuffer& Graph::DrawBuffer::clearDepthBuffer() {
 	API::clear(API::Buffer::GAB_DEPTH);
 	return *this;
 }
 
-Graph::Base::FrameBuffer& Graph::Base::FrameBuffer::render(FrameBufferData const& target) {
+Graph::DrawBuffer& Graph::DrawBuffer::renderTo(Graph::Base::BufferObject const& target) {
 	#ifdef MAKAILIB_DEBUG
 	API::Debug::Context ctx("FrameBuffer::render");
 	#endif // MAKAILIB_DEBUG
@@ -225,13 +224,14 @@ Graph::Base::FrameBuffer& Graph::Base::FrameBuffer::render(FrameBufferData const
 	return *this;
 }
 
-Graph::Base::FrameBuffer& Graph::Base::FrameBuffer::render(FrameBuffer& targetBuffer) {
-	if (!exists()) return *this;
-	if (!targetBuffer.exists()) return *this;
-	return render(targetBuffer.data());
+Graph::DrawBuffer& Graph::DrawBuffer::disable() {
+	IBuffer::disable();
+	return *this;
 }
 
-Graph::Base::FrameBuffer& Graph::Base::FrameBuffer::disable() {
-	Base::DrawBuffer::disable();
-	return *this;
+Graph::Texture2D Graph::DrawBuffer::getScreenBuffer() const {
+	return buffer.screen;
+}
+Graph::Texture2D Graph::DrawBuffer::getDepthBuffer() const {
+	return buffer.depth;
 }

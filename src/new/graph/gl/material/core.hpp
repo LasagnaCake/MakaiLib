@@ -17,7 +17,7 @@ namespace Makai::Graph::Material {
 		/// @param shader Shader to apply to.
 		virtual void use(Shader const& shader) const = 0;
 		/// @brief Destructor.
-		virtual ~IMaterial() {}
+		constexpr virtual ~IMaterial() {}
 	};
 
 	/// @brief Object material interface.
@@ -26,7 +26,7 @@ namespace Makai::Graph::Material {
 		Vector4	color = Color::WHITE;
 
 		/// @brief Destructor.
-		virtual ~IObjectMaterial() {}
+		constexpr virtual ~IObjectMaterial() {}
 	};
 
 	/// @brief Default object material.
@@ -73,7 +73,7 @@ namespace Makai::Graph::Material {
 		void use(Shader const& shader) const override final;
 
 		/// @brief Destructor.
-		virtual ~ObjectMaterial() {}
+		constexpr virtual ~ObjectMaterial() {}
 	};
 
 	/// @brief Framebuffer material interface.
@@ -82,7 +82,7 @@ namespace Makai::Graph::Material {
 		Vector4 background = Color::NONE;
 
 		/// @brief Destructor.
-		virtual ~IBufferMaterial() {}
+		constexpr virtual ~IBufferMaterial() {}
 	};
 
 	/// @brief Default framebuffer material.
@@ -135,13 +135,13 @@ namespace Makai::Graph::Material {
 		void use(Shader const& shader) const override final;
 
 		/// @brief Destructor.
-		virtual ~BufferMaterial() {}
+		constexpr virtual ~BufferMaterial() {}
 	};
 
 	/// @brief World material interface.
 	struct IWorldMaterial: IMaterial {
 		/// @brief Destructor.
-		virtual ~IWorldMaterial() {}
+		constexpr virtual ~IWorldMaterial() {}
 	};
 
 	/// @brief Default world material.
@@ -158,7 +158,7 @@ namespace Makai::Graph::Material {
 		void use(Shader const& shader) const override final;
 
 		/// @brief Destructor.
-		virtual ~WorldMaterial() {}
+		constexpr virtual ~WorldMaterial() {}
 	};
 
 	/// @brief Type must be a material of some kind.

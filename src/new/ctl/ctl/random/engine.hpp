@@ -70,7 +70,7 @@ namespace Engine {
 		/// @param seed Seed to use.
 		Mersenne(usize const seed):	engine(seed)				{}
 		/// @brief Constructs the engine with the seed being the current time.
-		Mersenne():						Mersenne(OS::Time::now())	{}
+		Mersenne():					Mersenne(OS::Time::now())	{}
 
 		/// @brief Copy constructor.
 		/// @param other `Mersenne` engine to copy from.
