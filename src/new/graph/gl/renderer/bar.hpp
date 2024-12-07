@@ -16,11 +16,11 @@ namespace Makai::Graph {
 		/// @brief Basic progressbar contents.
 		struct Progressbar {
 			/// @brief Bar-dependent UV shift.
-			float uvShift	= 0;
+			float uvShift		= 0;
 			/// @brief Current value.
-			float value		= 0;
+			float value			= 0;
 			/// @brief Maximum value.
-			float max		= 100;
+			float max			= 100;
 			/// @brief Size.
 			Vector2	size		= 1;
 			/// @brief UV scale.
@@ -31,7 +31,7 @@ namespace Makai::Graph {
 	}
 
 	template<class T>
-	concept BarType = Makai::Type::Subclass<T, Base::Progressbar> && Makai::Type::Subclass<T, IDrawable>;
+	concept BarType = Makai::Type::Subclass<T, Base::Progressbar> && Makai::Type::Subclass<T, IGLDrawable>;
 
 	class LinearBar: public IGLDrawable, public Base::Progressbar {
 	public:
@@ -66,9 +66,9 @@ namespace Makai::Graph {
 
 	template<BarType T = RadialBar>
 	struct LabeledBar {
-		using DataType = T;
-		DataType	bar;
-		Label		label;
+		using BarType = T;
+		BarType	bar;
+		Label	label;
 	};
 }
 
