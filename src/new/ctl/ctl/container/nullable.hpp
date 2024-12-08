@@ -246,7 +246,7 @@ public:
 		return *this;
 	}
 	
-	/// @brief Comparison operator.
+	/// @brief Equality comparison operator.
 	/// @param other `Nullable` to compare with.
 	/// @return Whether they're equal.
 	/// @note Requires element type to be equally comparable.
@@ -260,7 +260,7 @@ public:
 		return false;
 	}
 
-	/// @brief Comparison operator.
+	/// @brief Equality comparison operator.
 	/// @param value Value to compare with.
 	/// @return Whether the stored value is equal to `value`.
 	/// @note Requires element type to be equally comparable.
@@ -272,7 +272,7 @@ public:
 		return false;
 	}
 	
-	/// @brief Comparison operator.
+	/// @brief Equality comparison operator.
 	/// @return Whether the value is set.
 	constexpr bool operator==(NullType) const {return !exists();}
 

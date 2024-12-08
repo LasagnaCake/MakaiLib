@@ -155,7 +155,7 @@ CTL::ValueOrder Image::operator<=>(Image const& other) const {
 	return id <=> other.id;
 }
 
-Image::operator uint() const {
+explicit Image::operator uint() const {
 	return id;
 }
 
@@ -198,6 +198,10 @@ Image2D& Image2D::make(
 ) {
 	destroy();
 	return create(width, height, type, format, magFilter, minFilter, data, layout);
+}
+
+Image2D::Attributes Image2D::getAttributes() const {
+	return attributes;
 }
 
 ImageData Image2D::getData() const {
