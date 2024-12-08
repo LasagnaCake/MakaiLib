@@ -8,7 +8,9 @@ namespace Makai::Graph {
 		GA_DIRECT3D*/
 	};
 
-	GraphicalAPI getAPIUsed();
+	/// @brief Returns the underlying graphical API used.
+	/// @return Graphical API used.
+	GraphicalAPI getUsedAPI();
 }
 
 #include "gl/graph.hpp"

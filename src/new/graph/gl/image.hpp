@@ -5,6 +5,7 @@
 #include "../../file/file.hpp"
 #include "core.hpp"
 
+/// @brief Graphical facilites.
 namespace Makai::Graph {
 	struct Texture2D;
 

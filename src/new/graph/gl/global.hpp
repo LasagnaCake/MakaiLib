@@ -5,6 +5,7 @@
 #include "camera.hpp"
 #include "material/material.hpp"
 
+/// @brief Graphical facilites.
 namespace Makai::Graph {
 	#pragma GCC diagnostic push
 	#pragma GCC diagnostic ignored "-Wpedantic"

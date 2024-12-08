@@ -5,6 +5,7 @@
 #include "../../file/json.hpp"
 #include "image.hpp"
 
+/// @brief Graphical facilites.
 namespace Makai::Graph {
 	/// @brief Image container.
 	class Texture2D {

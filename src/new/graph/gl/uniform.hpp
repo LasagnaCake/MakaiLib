@@ -4,42 +4,119 @@
 #include "../../compat/ctl.hpp"
 #include "core.hpp"
 
+/// @brief Graphical facilites.
 namespace Makai::Graph {
+	/// @brief Shader uniform access interface.
 	struct Uniform {
+		/// @brief Uniform name.
 		String const name;
 
+		/// @brief Constructs the uniform.
+		/// @param name Uniform name.
+		/// @param id Shader ID.
 		Uniform(String const& name, uint const id);
 
+		/// @brief Sets the uniform.
+		/// @param value Value to set.
+		/// @param offset Uniform location offset. By default, it is zero.
+		/// @warning `offset` should NEVER be used directly!
 		void set(bool const value, usize const offset = 0) const;
 
+		/// @brief Sets the uniform.
+		/// @param value Value to set.
+		/// @param offset Uniform location offset. By default, it is zero.
+		/// @warning `offset` should NEVER be used directly!
 		void set(int const value, usize const offset = 0) const;
 
+		/// @brief Sets the uniform.
+		/// @param value Value to set.
+		/// @param offset Uniform location offset. By default, it is zero.
+		/// @warning `offset` should NEVER be used directly!
 		void set(uint const value, usize const offset = 0) const;
 
+		/// @brief Sets the uniform.
+		/// @param value Value to set.
+		/// @param offset Uniform location offset. By default, it is zero.
+		/// @warning `offset` should NEVER be used directly!
 		void set(float const value, usize const offset = 0) const;
 
+		/// @brief Sets the uniform.
+		/// @param value Value to set.
+		/// @param offset Uniform location offset. By default, it is zero.
+		/// @warning `offset` should NEVER be used directly!
 		void set(Vector2 const& value, usize const offset = 0) const;
 
+		/// @brief Sets the uniform.
+		/// @param value Value to set.
+		/// @param offset Uniform location offset. By default, it is zero.
+		/// @warning `offset` should NEVER be used directly!
 		void set(Vector3 const& value, usize const offset = 0) const;
 
+		/// @brief Sets the uniform.
+		/// @param value Value to set.
+		/// @param offset Uniform location offset. By default, it is zero.
+		/// @warning `offset` should NEVER be used directly!
 		void set(Vector4 const& value, usize const offset = 0) const;
 
+		/// @brief Sets the uniform.
+		/// @param value Value to set.
+		/// @param offset Uniform location offset. By default, it is zero.
+		/// @warning `offset` should NEVER be used directly!
 		void set(Matrix3x3 const& value, usize const offset = 0) const;
 
+		/// @brief Sets the uniform.
+		/// @param value Value to set.
+		/// @param offset Uniform location offset. By default, it is zero.
+		/// @warning `offset` should NEVER be used directly!
 		void set(Matrix4x4 const& value, usize const offset = 0) const;
 
+		/// @brief Sets the uniform.
+		/// @param values Values to set.
+		/// @param count Count of values to set.
+		/// @param offset Uniform location offset. By default, it is zero.
+		/// @warning `offset` should NEVER be used directly!
 		void setArray(int* const values, usize const count, usize const offset = 0) const;
 
+		/// @brief Sets the uniform.
+		/// @param values Values to set.
+		/// @param count Count of values to set.
+		/// @param offset Uniform location offset. By default, it is zero.
+		/// @warning `offset` should NEVER be used directly!
 		void setArray(uint* const values, usize const count, usize const offset = 0) const;
 
+		/// @brief Sets the uniform.
+		/// @param values Values to set.
+		/// @param count Count of values to set.
+		/// @param offset Uniform location offset. By default, it is zero.
+		/// @warning `offset` should NEVER be used directly!
 		void setArray(float* const values, usize const count, usize const offset = 0) const;
 
+		/// @brief Sets the uniform.
+		/// @param values Values to set.
+		/// @param count Count of values to set.
+		/// @param offset Uniform location offset. By default, it is zero.
+		/// @warning `offset` should NEVER be used directly!
 		void setArray(Vector2* const values, usize const count, usize const offset = 0) const;
 
+		/// @brief Sets the uniform.
+		/// @param values Values to set.
+		/// @param count Count of values to set.
+		/// @param offset Uniform location offset. By default, it is zero.
+		/// @warning `offset` should NEVER be used directly!
 		void setArray(Vector3* const values, usize const count, usize const offset = 0) const;
 
+		/// @brief Sets the uniform.
+		/// @param values Values to set.
+		/// @param count Count of values to set.
+		/// @param offset Uniform location offset. By default, it is zero.
+		/// @warning `offset` should NEVER be used directly!
 		void setArray(Vector4* const values, usize const count, usize const offset = 0) const;
 
+		/// @brief Sets the uniform.
+		/// @tparam T Element type.
+		/// @param values List of values to set.
+		/// @param offset Uniform location offset. By default, it is zero.
+		/// @warning `offset` should NEVER be used directly!
 		template <typename T>
 		inline void set(List<T> const& values, usize const offset = 0) const {
 			this->offset = 0;
@@ -47,18 +124,32 @@ namespace Makai::Graph {
 			this->offset = values.size();
 		}
 
+		/// @brief Sets the uniform.
+		/// @tparam T Enumerator type.
+		/// @param value Value to set.
+		/// @param offset Uniform location offset. By default, it is zero.
+		/// @warning `offset` should NEVER be used directly!
 		template <Type::Enumerator T>
 		inline void set(T const value, usize const offset = 0) const {
 			set(CTL::enumcast(value), offset);
 		}
 
-		template <typename T, usize S>
+		/// @brief Sets the uniform.
+		/// @tparam T Element type.
+		/// @tparam S Span size.
+		/// @param values Values to set.
+		/// @param offset Uniform location offset. By default, it is zero.
+		/// @warning `offset` should NEVER be used directly!
+		template <typename T, usize S = CTL::DYNAMIC_SIZE>
 		inline void set(Span<T, S> const& values, usize const offset = 0) const {
 			this->offset = 0;
 			setArray((T*)values.data(), values.size(), offset);
 			this->offset = values.size();
 		}
 
+		/// @brief Sets this uniform, and the ones that follow it.
+		/// @tparam ...Args Argument types.
+		/// @param ...args Values to set.
 		template <typename... Args>
 		inline void set(Args const&... args) const
 		requires (sizeof...(Args) > 1) {
@@ -68,18 +159,38 @@ namespace Makai::Graph {
 			offset = off;
 		}
 
+		/// @brief Processes a series of classes.
+		/// @tparam T Class type.
+		/// @param values Values to process.
+		/// @param func Process to execute.
 		template <Makai::Type::Class T>
-		inline void forEach(List<T> const& values, Functor<void(T&, Uniform const&)> func) const {
-			for (T& val: values) {
-				func(val, Uniform(name, id, location + offset+1));
-			}
+		inline void forEach(List<T> const& values, Functor<void(T const&, Uniform const&, usize const)> func) const {
+			usize i = 0;
+			for (T const& val: values)
+				func(val, Uniform(name, id, location + offset), i++);
 		}
-
+		
+		/// @brief Sets the uniform.
+		/// @tparam T Value type.
+		/// @param value Value to set.
 		template <typename T>			inline void operator()(T const& value) const			{set(value);	}
+		/// @brief Sets this uniform, and the ones that follow it.
+		/// @tparam ...Args Argument types.
+		/// @param ...args Values to set.
 		template <typename... Args>		inline void operator()(Args const&... args) const		{set(args...);	}
+		/// @brief Sets the uniform.
+		/// @tparam T Element type.
+		/// @param values List of values to set.
 		template <typename T>			inline void operator()(List<T> const& values) const		{set(values);	}
+		/// @brief Sets the uniform.
+		/// @tparam T Element type.
+		/// @tparam S Span size.
+		/// @param values Values to set.
 		template <typename T, usize S>	inline void operator()(Span<T, S> const& values) const	{set(values);	}
 
+		/// @brief Uniform member access operator.
+		/// @param member Member to get.
+		/// @return Uniform for member.
 		Uniform operator[](String const& member) const;
 
 	private:
@@ -113,9 +224,12 @@ namespace Makai::Graph {
 
 		uint getUniform(String const& append) const;
 
+		/// @brief Shader associated with the uniform.
 		uint const id;
+		/// @brief Uniform location.
 		intmax const location;
 
+		/// @brief Uniform location offset.
 		usize mutable offset;
 	};
 }
