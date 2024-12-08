@@ -8,11 +8,14 @@
 namespace Makai::Graph {
 	struct Texture2D;
 
+	/// @brief Basic image container.
 	struct Image {
+		/// @brief Image type.
 		enum class ImageTarget {
 			IT_TEXTURE_2D
 		};
 
+		/// @brief Empty constructor.
 		Image() {}
 
 		~Image() {destroy();}
@@ -36,7 +39,7 @@ namespace Makai::Graph {
 
 		static void set(
 			uint const			image,
-			uchar const		slot,
+			uchar const			slot,
 			ImageTarget const&	target = ImageTarget::IT_TEXTURE_2D
 		);
 

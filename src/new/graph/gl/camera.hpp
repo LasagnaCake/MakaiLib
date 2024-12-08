@@ -31,6 +31,7 @@ namespace Makai::Graph {
 		);
 	}
 
+	/// @brief Camera interface.
 	struct ICamera {
 		/// @brief Returns the camera matrix. Must be implemented.
 		/// @return Camera matrix.
