@@ -18,6 +18,7 @@ namespace Makai::Graph {
 		/// @brief Empty constructor.
 		Image() {}
 
+		/// @brief Destructor.
 		~Image() {destroy();}
 
 		Image&			bind(ImageTarget const& target = ImageTarget::IT_TEXTURE_2D);
