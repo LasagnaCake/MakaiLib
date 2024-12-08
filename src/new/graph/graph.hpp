@@ -2,6 +2,7 @@
 #define MAKAILIB_GRAPH_H
 
 namespace Makai::Graph {
+	/// @brief Underlying graphical API.
 	enum class GraphicalAPI {
 		GA_OPENGL/*,
 		GA_VULKAN,
