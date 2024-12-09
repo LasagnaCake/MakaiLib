@@ -3,8 +3,11 @@
 
 #include "../compat/ctl.hpp"
 
+/// @brief Makai core API.
 namespace Makai {
+	/// @brief Third-party APIs.
 	namespace Extern {
+		/// @brief Generic resource.
 		using Resource = pointer;
 	}
 }

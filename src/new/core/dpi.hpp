@@ -7,6 +7,7 @@
 #define WIN_ONLY_DPI_WARNING [[gnu::warning("DPI awareness is not supported on other platforms!")]]
 #endif // MAKAILIB_WINDOWS_8_OR_LATER
 
+/// @brief Makai core API.
 namespace Makai {
 	WIN_ONLY_DPI_WARNING
 	/// @brief Sets the program to be DPI aware.

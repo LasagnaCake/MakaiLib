@@ -3,6 +3,7 @@
 
 #include "../compat/ctl.hpp"
 
+/// @brief Makai core API.
 namespace Makai {
 	/// @brief Screen position.
 	struct ScreenPosition {
