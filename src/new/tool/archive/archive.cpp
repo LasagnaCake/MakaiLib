@@ -913,11 +913,11 @@ template<typename T>
 void Arch::saveEncryptedBinaryFile(
 	String const&				path,
 	T* const					data,
-	usize const				size,
+	usize const					size,
 	String const&				password,
 	EncryptionMethod const&		enc,
 	CompressionMethod const&	comp,
-	uint8 const				lvl
+	uint8 const					lvl
 ) {
 	if (enc != EncryptionMethod::AEM_NONE && password.empty())
 		throw Error::InvalidValue("Missing password for encrypted file!");
