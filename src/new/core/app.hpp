@@ -25,10 +25,13 @@ namespace Makai {
 
 	struct App;
 
+	/// @brief App-specific periodic event.
 	struct IUpdateable: CTL::Ex::IPeriodic<App, usize, App&> {
+		/// @brief Called every application cycle. Must be implemented.
 		virtual void onUpdate(usize delta, App& app) = 0;
 	};
 
+	/// @brief Main application class.
 	struct App {
 	public:
 		/// Initializes the application.
