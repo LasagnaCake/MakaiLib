@@ -259,12 +259,17 @@ void App::run() {
 		#endif
 		if (frameDelta > (frameRate * 1000 - 1)) {
 			// Get current time
+			#ifdef MAKAILIB_FRAME_DEPENDENT_PROCESS
+			cycleTicks =
+			#endif
 			frameTicks = SDL_GetTicks();
 			// increment frame counter
 			frame++;
 			// Update audio system
 			Audio::updateAll();
 			#ifdef MAKAILIB_FRAME_DEPENDENT_PROCESS
+			// Increment cycle counter
+			cycle++;
 			// Do normal logic-related stuff
 			logicFunc(frameRate);
 			#endif // FRAME_DEPENDENT_PROCESS
@@ -308,8 +313,8 @@ App::AppState App::state() {
 
 void App::setWindowSize(Vector2 const& size) {}
 
-App& App::current() {
-	return *mainApp;
+App* App::current() {
+	return mainApp;
 }
 
 usize App::getCurrentFrame() {

@@ -34,7 +34,12 @@ namespace Makai {
 	/// @brief Main application class.
 	struct App {
 	public:
-		/// Initializes the application.
+		/// @brief Initializes the application.
+		/// @param width Window width.
+		/// @param height Window height.
+		/// @param windowTitle Window title.
+		/// @param fullscreen Whether to open window in fullscreen.
+		/// @param audio Audio configuration.
 		App (
 			unsigned int const	width,
 			unsigned int const	height,
@@ -43,6 +48,7 @@ namespace Makai {
 			AudioConfig const&	audio		= {}
 		);
 
+		/// @brief Application state.
 		enum AppState {
 			AS_INVALID = -1,
 			AS_CLOSED,
@@ -51,165 +57,195 @@ namespace Makai {
 			AS_CLOSING,
 		};
 
+		/// @brief Destructor.
 		virtual ~App();
 
-		/// Returns whether the user pressed the close button.
+		/// @brief Returns whether the user pressed the close button.
 		static bool closeButtonPressed();
 
-		/// Sets the window's title.
+		/// @brief Sets the window's title.
+		/// @param title Title to set to.
 		void setWindowTitle(String const& title);
 
-		/// Sets the application fullscreen.
+		/// @brief Sets the application's fullscreen state.
+		/// @param state `true` = fullscreen, `false` = windowed.
 		void setFullscreen(bool const state = false);
 
-		/// Loads the application's shaders from SLF files.
+		/// @brief Loads the application's shaders from SLF data.
+		/// @param main Main object shader.
+		/// @param buffer Framebuffer shader.
 		void loadShaders(SLF::SLFData const& main, SLF::SLFData const& buffer);
 
-		/// Loads the application's default shaders.
+		/// @brief Loads the application's shaders from the default built-in shaders.
 		void loadDefaultShaders();
 
-		/// Returns the currently-opened app. Returns null if no app is open.
-		static App& current();
+		/// @brief Returns the current open app. Returns `nullptr` if no app is open.
+		/// @return Current open app, or `nullptr`.
+		static App* current();
 
-		/// Runs the application.
+		/// @brief Runs the application.
 		void run();
 
-		/// Closes the application.
+		/// @brief Closes the application.
 		void close();
 
-		/// Returns whether the application is currently running.
+		/// @brief Returns whether the application is currently running.
+		/// @return Whether application is running.
 		bool running();
 
-		/// Returns the application's current state.
+		/// @brief Returns the application's current state.
+		/// @return Current app state.
 		AppState state();
 
-		/// Sets the application's window size.
+		/// @brief Sets the application's window size.
+		/// @param size Size to set to.
 		void setWindowSize(Vector2 const& size);
 
-		/// Set the application window's opacity.
+		/// @brief Set the application window's opacity.
+		/// @param opacity Opacity to set to.
 		void setWindowOpacity(float const opacity = 1);
 
+		/// @brief Enables transparent window background in the application.
+		/// @warning Not sure if it actually works. SDL is kind of a pain in this.
 		void enableTransparentWindowBackground();
 
-		/// Gets the current frame.
+		/// @brief Returns the current frame.
+		/// @return Current frame.
 		usize getCurrentFrame();
-		/// Gets the current cycle.
+		/// @brief Returns the current cycle.
+		/// @return Current cycle.
 		usize getCurrentCycle();
 
-		/// Gets the current cycle delta, in milliseconds.
+		/// @brief Returns the current cycle delta, in milliseconds.
+		/// @return Cycle delta in milliseconds.
 		usize getCycleDelta();
-		/// Gets the current frame delta, in milliseconds.
+		/// @brief Returns the current frame delta, in milliseconds.
+		/// @return Fraame delta in milliseconds.
 		usize getFrameDelta();
 
+		/// @brief Returns the application's main framebuffer.
+		/// @return Main framebuffer.
 		Graph::FrameBuffer& getFrameBuffer();
+		/// @brief Returns the application's layer framebuffer.
+		/// @return layer framebuffer.
 		Graph::FrameBuffer& getLayerBuffer();
 
+		/// @brief Returns the application window's size.
+		/// @return Window size.
 		Vector2 getWindowSize();
 
+		/// @brief Returns the application window's aspect ratio.
+		/// @return Window aspect ratio.
 		Vector2 getWindowScale();
 
-		/// Gets called when the application is opened.
+		/// @brief Gets called when the application is opened.
 		virtual void onOpen() {}
 
-		/// Gets called whenever the application is rendering to the screen.
+		// Gets called whenever the application is rendering to the screen.
 
-		/// Happens before the screen is rendered, before the frame buffer is cleared.
+		/// @brief Happens before the screen is rendered, before the frame buffer is cleared.
 		virtual void onDrawBegin()		{}
-		/// Happens before the screen is rendered, after the frame buffer is cleared.
+		/// @brief Happens before the screen is rendered, after the frame buffer is cleared.
 		virtual void onPostFrameClear()	{}
-		/// Gets called when the application begins rendering a layer, before the the layer buffer is cleared.
+		/// @brief Gets called when the application begins rendering a layer, before the the layer buffer is cleared.
+		/// @param layerID Layer currently being processed.
 		virtual void onLayerDrawBegin(usize const layerID)	{}
-		/// Gets called when the application begins rendering a layer, after the the layer buffer is cleared.
+		/// @brief Gets called when the application begins rendering a layer, after the the layer buffer is cleared.
+		/// @param layerID Layer currently being processed.
 		virtual void onPostLayerClear(usize const layerID)	{}
-		/// Gets called when the application ends rendering a layer, before the layer buffer is drawn to the screen.
+		/// @brief Gets called when the application ends rendering a layer, before the layer buffer is drawn to the screen.
+		/// @param layerID Layer currently being processed.
 		virtual void onPreLayerDraw(usize const layerID)	{pushLayerToFrame();}
-		/// Gets called when the application ends rendering a layer, after the layer buffer is drawn to the screen.
+		/// @brief Gets called when the application ends rendering a layer, after the layer buffer is drawn to the screen.
+		/// @param layerID Layer currently being processed.
 		virtual void onLayerDrawEnd(usize const layerID)	{}
-		/// Happens after the screen is rendered, before the frame buffer is drawn to the screen.
+		/// @brief Happens after the screen is rendered, before the frame buffer is drawn to the screen.
 		virtual void onPreFrameDraw()	{}
-		/// Happens after the screen is rendered, after the frame buffer is drawn to the screen.
+		/// @brief Happens after the screen is rendered, after the frame buffer is drawn to the screen.
 		virtual void onDrawEnd()		{}
 
-		/// Gets called every frame, along all other logic.
+		/// @brief Gets called every frame, along all other logic.
+		/// @param delta Seconds between each cycle.
 		virtual void onLogicFrame(float delta)	{}
 
-		/// Gets called when the application is closing. Happens before Window is terminated.
+		/// @brief Gets called when the application is closing. Happens before window is terminated.
 		virtual void onClose()	{}
 
-		/// Queues a texture to recieve a copy of the screen.
+		/// @brief Queues a texture to recieve a copy of the screen.
+		/// @param target Texture to queue.
 		void queueScreenCopy(Graph::Texture2D target);
 
-		/// Removes a texture from the screen copy queue.
+		/// @brief Removes a texture from the screen copy queue.
+		/// @param target Texture to unqueue.
 		void unqueueScreenCopy(Graph::Texture2D target);
 
-		/**
-		Skips the drawing process of the current layer being drawn.
-		Can only be used during onLayerDrawBegin().
-		*/
+		/// @brief
+		///		Skips the drawing process of the current layer being drawn.
+		///		Can only be used during onLayerDrawBegin().
 		void skipDrawingThisLayer();
 
-		/**
-		Queues the current data in the layerbuffer to be pushed to the framebuffer.
-		Can only be used during onPreLayerDraw().
-		*/
+		/// @brief
+		///		Queues the current data in the layerbuffer to be pushed to the framebuffer.
+		///		Can only be used during onPreLayerDraw().
 		void pushLayerToFrame();
 
-		/// The window's background color.
+		/// @brief Application window background color.
 		Vector4 background = Graph::Color::BLACK;
 
-		/// The application's input manager.
+		/// @brief Input manager.
 		Input::Manager input;
 
-		/// The application's maximum framerate.
+		/// @brief Maximum frame rate.
 		float maxFrameRate = 30.0;
 
-		/// The application's maximum "cycles per second" count.
+		/// @brief Maximum cycle rate.
 		float maxCycleRate = 60.0;
 
-		/// The application's speed scale.
+		/// @brief Speed scale.
 		float speed = 1.0f;
 
-		/// The application's notification handler.
+		/// @brief Notification handler.
 		Notifier notifier;
 
 	protected:
 		Graph::Base::BufferObject toBufferObject();
 
 	private:
+		/// @brief Delta between processes in milliseconds.
 		usize frameDelta = 0, cycleDelta = 0;
 
-		bool
-			skipLayer	= false,
-			pushToFrame	= false
-		;
+		/// @brief Whether the current render layer should not be rendered.
+		bool skipLayer		= false;
+		/// @brief Whether the current render layer should be drawn to the framebuffer.
+		bool pushToFrame	= false;
 
+		/// @brief Screen queue.
 		List<Graph::Texture2D> screenQueue;
 
-		/// The application's main framebuffer.
+		/// @brief Main framebuffer.
 		Graph::FrameBuffer framebuffer;
+		/// @brief Layer framebuffer.
 		Graph::FrameBuffer layerbuffer;
 
-		/// The window's resolution.
+		/// @brief Window resolution.
 		unsigned int width, height;
 
-		/// Properly finishes application execution.
 		void finalize();
 
-		/// Draws the window.
 		void render();
 
 		void copyScreenToQueued();
 
-		/// Frame counter.
+		/// @brief Frame counter.
 		usize frame = 0;
 
-		/// Cycle counter.
+		/// @brief Cycle counter.
 		usize cycle = 0;
 
-		/// Current execution state.
+		/// @brief Current execution state.
 		AppState appState = AppState::AS_CLOSED;
 
-		/// The application's window.
+		/// @brief App window.
 		Extern::Resource window;
 	};
 }
