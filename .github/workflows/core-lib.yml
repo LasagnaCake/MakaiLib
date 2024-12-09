@@ -3,7 +3,6 @@ name: Core Library CI
 on:
   schedule:
     - cron: '30 9 * * 1'
-#    branches: [ "!legacy-system" ]
 #  push:
 #    branches: [ "!legacy-system" ]
   workflow_dispatch:
@@ -14,15 +13,19 @@ on:
 
 jobs:
   install-gcc13:
-    name: Install GCC-14
+    name: Install GCC-13
     runs-on: windows-2022
     steps:
-    - uses: actions/checkout@v4
-    - name: Set up GCC
-      uses: egor-tensin/setup-mingw@v2
+    - name: Setup Compiler
+      id: setup-compiler
+      uses: rlalik/setup-cpp-compiler@master
       with:
-        version: 14
-        platform: x64
+        compiler: gcc-latest
+
+    - name: Verify GCC Installation
+      run: |
+        gcc --version
+        g++ --version
 
   build-core-lib-debug:
     name: Build Core Library (DEBUG)
