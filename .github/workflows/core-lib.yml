@@ -30,17 +30,13 @@ jobs:
       env:
         CC: ${{ steps.gccx.outputs.cc }}
         CXX: ${{ steps.gccx.outputs.cxx }}
-        
+
   build-ctl-tests-debug:
     name: Build CTL Tests (DEBUG)
     runs-on: windows-2022
     needs: install-gcc
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/download-artifact@master
-        with:
-          name: lib-debug
-          path: output
       - name: make tests
         run: |
           cd tests/ctl
@@ -57,10 +53,6 @@ jobs:
     needs: install-gcc
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/download-artifact@master
-        with:
-          name: lib-release
-          path: output
       - name: make tests
         run: |
           cd tests/ctl
