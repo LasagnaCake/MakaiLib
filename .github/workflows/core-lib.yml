@@ -3,7 +3,7 @@ name: Core Library CI
 on:
   schedule:
     - cron: '30 9 * * 1'
-    branches: [ "!legacy-system" ]
+#    branches: [ "!legacy-system" ]
 #  push:
 #    branches: [ "!legacy-system" ]
   workflow_dispatch:
