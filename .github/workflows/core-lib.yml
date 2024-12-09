@@ -70,7 +70,7 @@ jobs:
           path: tests/ctl/output/release
 
   build-core-lib-debug:
-    name: Build Core Library (DEBUG)
+    name: Build Makai (DEBUG)
     runs-on: windows-2022
     needs: install-gcc
     steps:
@@ -86,7 +86,7 @@ jobs:
         path: output
 
   build-core-lib-release:
-    name: Build Core Library (RELEASE)
+    name: Build Makai (RELEASE)
     runs-on: windows-2022
     needs: install-gcc
     steps:
