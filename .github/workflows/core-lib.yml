@@ -42,6 +42,9 @@ jobs:
           cd tests/ctl
           make debug
           cd ../..
+        env:
+          CC: ${{ steps.gccx.outputs.cc }}
+          CXX: ${{ steps.gccx.outputs.cxx }}
       - uses: actions/upload-artifact@master
         with:
           name: tests-ctl-debug
@@ -58,6 +61,9 @@ jobs:
           cd tests/ctl
           make release
           cd ../..
+        env:
+          CC: ${{ steps.gccx.outputs.cc }}
+          CXX: ${{ steps.gccx.outputs.cxx }}
       - uses: actions/upload-artifact@master
         with:
           name: tests-ctl-release
