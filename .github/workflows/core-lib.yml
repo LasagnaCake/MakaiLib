@@ -44,7 +44,7 @@ jobs:
           cd ../..
       - uses: actions/upload-artifact@master
         with:
-          name: tests-debug
+          name: tests-ctl-debug
           path: tests/ctl/output/debug
 
   build-ctl-tests-release:
@@ -60,7 +60,7 @@ jobs:
           cd ../..
       - uses: actions/upload-artifact@master
         with:
-          name: tests-release
+          name: tests-ctl-release
           path: tests/ctl/output/release
 
   build-core-lib-debug:
@@ -112,7 +112,7 @@ jobs:
           cd ../..
       - uses: actions/upload-artifact@master
         with:
-          name: tests-debug
+          name: tests-api-debug
           path: tests/makai/output/debug
 
   build-lib-tests-release:
@@ -132,5 +132,5 @@ jobs:
           cd ../..
       - uses: actions/upload-artifact@master
         with:
-          name: tests-release
+          name: tests-api-release
           path: tests/makai/output/release
