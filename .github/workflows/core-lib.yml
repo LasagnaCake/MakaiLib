@@ -12,9 +12,29 @@ on:
 #    branches: [ "!legacy-system" ]
 
 jobs: 
+
+  install-gcc:
+    name: Install Latest GCC
+    runs-on: windows-2022
+    steps:
+    - name: Setup Compiler
+      id: gccx
+      uses: rlalik/setup-cpp-compiler@master
+      with:
+        compiler: gcc-latest
+
+    - name: Verify GCC Installation
+      run: |
+        gcc --version
+        g++ --version
+      env:
+        CC: ${{ steps.gccx.outputs.cc }}
+        CXX: ${{ steps.gccx.outputs.cxx }}
+        
   build-ctl-tests-debug:
     name: Build CTL Tests (DEBUG)
     runs-on: windows-2022
+    needs: install-gcc
     steps:
       - uses: actions/checkout@v4
       - uses: actions/download-artifact@master
@@ -34,6 +54,7 @@ jobs:
   build-ctl-tests-release:
     name: Build CTL Tests (RELEASE)
     runs-on: windows-2022
+    needs: install-gcc
     steps:
       - uses: actions/checkout@v4
       - uses: actions/download-artifact@master
@@ -49,24 +70,6 @@ jobs:
         with:
           name: tests-release
           path: tests/ctl/output/release
-
-  install-gcc:
-    name: Install Latest GCC
-    runs-on: windows-2022
-    steps:
-    - name: Setup Compiler
-      id: gccx
-      uses: rlalik/setup-cpp-compiler@master
-      with:
-        compiler: gcc-latest
-
-    - name: Verify GCC Installation
-      run: |
-        gcc --version
-        g++ --version
-      env:
-        CC: ${{ steps.gccx.outputs.cc }}
-        CXX: ${{ steps.gccx.outputs.cxx }}
 
   build-core-lib-debug:
     name: Build Core Library (DEBUG)
@@ -87,14 +90,14 @@ jobs:
   build-core-lib-release:
     name: Build Core Library (RELEASE)
     runs-on: windows-2022
-    needs: install-gcc13
+    needs: install-gcc
     steps:
     - uses: actions/checkout@v4
     - name: make release
       run: make release
       env:
-        CC: ${{ steps.install_cc.outputs.cc }}
-        CXX: ${{ steps.install_cc.outputs.cxx }}
+        CC: ${{ steps.gccx.outputs.cc }}
+        CXX: ${{ steps.gccx.outputs.cxx }}
     - uses: actions/upload-artifact@master
       with:
         name: lib-release
