@@ -9,6 +9,8 @@
 
 namespace Makai {
 	WIN_ONLY_DPI_WARNING
+	/// @brief Sets the program to be DPI aware.
+	/// @note Windows-only.
 	void setDPIAware();
 	#if (_WIN32 || _WIN64 || __WIN32__ || __WIN64__)
 	#ifndef MAKAILIB_WINDOWS_8_1_OR_LATER
@@ -17,6 +19,8 @@ namespace Makai {
 	#else
 	WIN_ONLY_DPI_WARNING
 	#endif // MAKAILIB_WINDOWS_8_OR_LATER
+	/// @brief Sets the program to be DPI unaware.
+	/// @note Windows-only. Not available for Windows 8.0 and earlier.
 	void setDPIUnaware();
 }
 
