@@ -344,7 +344,7 @@ namespace Makai::JSON {
 		) try {
 			T res;
 			for (auto [k, v]: view().items())
-				res[k] = v.get<typename T::ValueType>();
+				res[k] = v.template get<typename T::ValueType>();
 			err = "";
 			return true;
 		} catch (Extern::Nlohmann::exception const& e) {
