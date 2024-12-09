@@ -11,13 +11,51 @@ on:
 #    types: [ "closed" ]
 #    branches: [ "!legacy-system" ]
 
-jobs:
-  install-gcc13:
-    name: Install GCC-14
+jobs: 
+  build-lib-tests-debug:
+    name: Build CTL Tests (DEBUG)
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@master
+        with:
+          name: lib-debug
+          path: output
+      - name: make tests
+        run: |
+          cd tests/ctl
+          make debug
+          cd ../..
+      - uses: actions/upload-artifact@master
+        with:
+          name: tests-debug
+          path: tests/ctl/output/debug
+
+  build-lib-tests-release:
+    name: Build CTL Tests (RELEASE)
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@master
+        with:
+          name: lib-release
+          path: output
+      - name: make tests
+        run: |
+          cd tests/ctl
+          make release
+          cd ../..
+      - uses: actions/upload-artifact@master
+        with:
+          name: tests-release
+          path: tests/ctl/output/release
+
+  install-gcc:
+    name: Install Latest GCC
     runs-on: windows-2022
     steps:
     - name: Setup Compiler
-      id: setup-compiler
+      id: gccx
       uses: rlalik/setup-cpp-compiler@master
       with:
         compiler: gcc-latest
@@ -26,18 +64,21 @@ jobs:
       run: |
         gcc --version
         g++ --version
+      env:
+        CC: ${{ steps.gccx.outputs.cc }}
+        CXX: ${{ steps.gccx.outputs.cxx }}
 
   build-core-lib-debug:
     name: Build Core Library (DEBUG)
     runs-on: windows-2022
-    needs: install-gcc13
+    needs: install-gcc
     steps:
     - uses: actions/checkout@v4
     - name: make debug
       run: make debug
       env:
-        CC: ${{ steps.install_cc.outputs.cc }}
-        CXX: ${{ steps.install_cc.outputs.cxx }}
+        CC: ${{ steps.gccx.outputs.cc }}
+        CXX: ${{ steps.gccx.outputs.cxx }}
     - uses: actions/upload-artifact@master
       with:
         name: lib-debug
@@ -59,8 +100,8 @@ jobs:
         name: lib-release
         path: output
         
-  build-tests-debug:
-    name: Build Tests (DEBUG)
+  build-lib-tests-debug:
+    name: Build API Tests (DEBUG)
     runs-on: windows-2022
     needs: [build-core-lib-debug]
     steps:
@@ -71,16 +112,16 @@ jobs:
           path: output
       - name: make tests
         run: |
-          cd tests
+          cd tests/makai
           make debug
-          cd ..
+          cd ../..
       - uses: actions/upload-artifact@master
         with:
           name: tests-debug
-          path: tests/output/debug
+          path: tests/makai/output/debug
 
-  build-tests-release:
-    name: Build Tests (RELEASE)
+  build-lib-tests-release:
+    name: Build API Tests (RELEASE)
     runs-on: windows-2022
     needs: [build-core-lib-release]
     steps:
@@ -91,10 +132,10 @@ jobs:
           path: output
       - name: make tests
         run: |
-          cd tests
+          cd tests/makai
           make release
-          cd ..
+          cd ../..
       - uses: actions/upload-artifact@master
         with:
           name: tests-release
-          path: tests/output/release
+          path: tests/makai/output/release
