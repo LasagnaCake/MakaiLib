@@ -5,7 +5,7 @@
 
 /// @brief Makai core API.
 namespace Makai {
-	/// @brief Third-party APIs.
+	/// @brief Third-party API facilites.
 	namespace Extern {
 		/// @brief Generic resource.
 		using Resource = pointer;

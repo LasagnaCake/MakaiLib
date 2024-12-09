@@ -57,7 +57,7 @@ int Popup::showDialog(
 void Popup::showError(String const& what) {
 	//PlaySound("SystemExclamation", NULL, SND_ASYNC);
 	Popup::showDialog(
-		"ERROR!",
+		"Error!",
 		what,
 		Popup::Option::OK,
 		Popup::PopupType::PT_ERROR

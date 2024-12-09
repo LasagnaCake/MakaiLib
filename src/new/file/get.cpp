@@ -127,7 +127,7 @@ void assertArchive(String const& path) {
 
 void setExceptionMask(std::ios& stream) {
 	#ifndef MAKAILIB_FILE_GET_NO_EXCEPTIONS
-	//stream.exceptions(std::ios::failbit | std::ios::badbit);
+	stream.exceptions(std::ios::failbit | std::ios::badbit);
 	//stream.exceptions(std::ios::badbit);
 	//stream.exceptions(std::ios::failbit);
 	#endif

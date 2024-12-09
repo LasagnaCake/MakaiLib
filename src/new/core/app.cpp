@@ -294,6 +294,8 @@ void App::run() {
 			#endif // FRAME_DEPENDENT_PROCESS
 		}
 		#endif
+		if (!onAppClosureRequest())
+			appState = App::AppState::AS_RUNNING;
 	}
 	// Terminate program
 	finalize();

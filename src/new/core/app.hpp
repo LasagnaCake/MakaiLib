@@ -27,7 +27,7 @@ namespace Makai {
 
 	/// @brief App-specific periodic event.
 	struct IUpdateable: CTL::Ex::IPeriodic<App, usize, App&> {
-		/// @brief Called every application cycle. Must be implemented.
+		/// @brief Called every application logic cycle. Must be implemented.
 		virtual void onUpdate(usize delta, App& app) = 0;
 	};
 
@@ -49,7 +49,7 @@ namespace Makai {
 		);
 
 		/// @brief Application state.
-		enum AppState {
+		enum class AppState {
 			AS_INVALID = -1,
 			AS_CLOSED,
 			AS_OPENING,
@@ -112,11 +112,11 @@ namespace Makai {
 		/// @brief Returns the current frame.
 		/// @return Current frame.
 		usize getCurrentFrame();
-		/// @brief Returns the current cycle.
-		/// @return Current cycle.
+		/// @brief Returns the current logic cycle.
+		/// @return Current logic cycle.
 		usize getCurrentCycle();
 
-		/// @brief Returns the current cycle delta, in milliseconds.
+		/// @brief Returns the current logic cycle delta, in milliseconds.
 		/// @return Cycle delta in milliseconds.
 		usize getCycleDelta();
 		/// @brief Returns the current frame delta, in milliseconds.
@@ -165,8 +165,12 @@ namespace Makai {
 		virtual void onDrawEnd()		{}
 
 		/// @brief Gets called every frame, along all other logic.
-		/// @param delta Seconds between each cycle.
+		/// @param delta Seconds between each logic cycle.
 		virtual void onLogicFrame(float delta)	{}
+
+		/// @brief Gets called at the end of the processing cycle, when the application was requested to close.
+		/// @return Whether the application should close.
+		virtual bool onAppClosureRequest() {return true;}
 
 		/// @brief Gets called when the application is closing. Happens before window is terminated.
 		virtual void onClose()	{}
@@ -198,7 +202,7 @@ namespace Makai {
 		/// @brief Maximum frame rate.
 		float maxFrameRate = 30.0;
 
-		/// @brief Maximum cycle rate.
+		/// @brief Maximum logic cycle rate.
 		float maxCycleRate = 60.0;
 
 		/// @brief Speed scale.
@@ -239,7 +243,7 @@ namespace Makai {
 		/// @brief Frame counter.
 		usize frame = 0;
 
-		/// @brief Cycle counter.
+		/// @brief Logic cycle counter.
 		usize cycle = 0;
 
 		/// @brief Current execution state.
