@@ -7,13 +7,13 @@ LEAN = $(if $(findstring debug,$@),,-static -s)
 define embed
 	@cd main
 	@echo "Embedding main shaders..."
-	$(CC) -o main.vert.shader.o -c shader.vert.s $(LEAN)
-	$(CC) -o main.frag.shader.o -c shader.frag.s $(LEAN)
+	@$(CC) -o main.vert.shader.o -c shader.vert.s $(LEAN)
+	@$(CC) -o main.frag.shader.o -c shader.frag.s $(LEAN)
 	@cd ..
 	@cd buffer
 	@echo "Embedding buffer shaders..."
-	$(CC) -o buffer.vert.shader.o -c shader.vert.s $(LEAN)
-	$(CC) -o buffer.frag.shader.o -c shader.frag.s $(LEAN)
+	@$(CC) -o buffer.vert.shader.o -c shader.vert.s $(LEAN)
+	@$(CC) -o buffer.frag.shader.o -c shader.frag.s $(LEAN)
 	@cd ..
 	@echo "Packing $(strip $(1))..."
 	@$(LD) -r -o $(prefix).$@.$(strip $(1)).o **/*.shader.o $(LEAN)
