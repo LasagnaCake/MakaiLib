@@ -8,16 +8,19 @@
 #include "../graph/graph.hpp"
 #include "../audio/audio.hpp"
 
+/// @brief Makai core API.
 namespace Makai {
+	/// @brief Audio configuration.
 	struct AudioConfig {
+		/// @brief Audio formats to use.
 		Audio::Formats const& formats = {
 			Audio::Format::AF_OGG,
 			Audio::Format::AF_MP3
 		};
-		uint
-			channels = 2,
-			tracks = 16
-		;
+		/// @brief Number of output channels to use. 1 → mono, 2 → stereo, and so on.
+		uint channels	= 2;
+		/// @brief Number of audio (non-music) tracks to open.
+		uint tracks		= 16;
 	};
 
 	struct App;
