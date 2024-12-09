@@ -27,9 +27,9 @@ jobs:
       run: |
         gcc --version
         g++ --version
-      env:
-        CC: ${{ steps.gccx.outputs.cc }}
-        CXX: ${{ steps.gccx.outputs.cxx }}
+#      env:
+#        CC: ${{ steps.gccx.outputs.cc }}
+#        CXX: ${{ steps.gccx.outputs.cxx }}
 
   build-ctl-tests-debug:
     name: Build CTL Tests (DEBUG)
@@ -42,9 +42,9 @@ jobs:
           cd tests/ctl
           make debug
           cd ../..
-        env:
-          CC: ${{ steps.gccx.outputs.cc }}
-          CXX: ${{ steps.gccx.outputs.cxx }}
+#        env:
+#          CC: ${{ steps.gccx.outputs.cc }}
+#          CXX: ${{ steps.gccx.outputs.cxx }}
       - uses: actions/upload-artifact@master
         with:
           name: tests-ctl-debug
@@ -61,9 +61,9 @@ jobs:
           cd tests/ctl
           make release
           cd ../..
-        env:
-          CC: ${{ steps.gccx.outputs.cc }}
-          CXX: ${{ steps.gccx.outputs.cxx }}
+#        env:
+#          CC: ${{ steps.gccx.outputs.cc }}
+#          CXX: ${{ steps.gccx.outputs.cxx }}
       - uses: actions/upload-artifact@master
         with:
           name: tests-ctl-release
@@ -77,9 +77,9 @@ jobs:
     - uses: actions/checkout@v4
     - name: make debug
       run: make debug
-      env:
-        CC: ${{ steps.gccx.outputs.cc }}
-        CXX: ${{ steps.gccx.outputs.cxx }}
+#      env:
+#        CC: ${{ steps.gccx.outputs.cc }}
+#        CXX: ${{ steps.gccx.outputs.cxx }}
     - uses: actions/upload-artifact@master
       with:
         name: lib-debug
@@ -93,9 +93,9 @@ jobs:
     - uses: actions/checkout@v4
     - name: make release
       run: make release
-      env:
-        CC: ${{ steps.gccx.outputs.cc }}
-        CXX: ${{ steps.gccx.outputs.cxx }}
+#      env:
+#        CC: ${{ steps.gccx.outputs.cc }}
+#        CXX: ${{ steps.gccx.outputs.cxx }}
     - uses: actions/upload-artifact@master
       with:
         name: lib-release
