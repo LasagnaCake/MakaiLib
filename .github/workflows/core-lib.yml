@@ -12,7 +12,7 @@ on:
 #    branches: [ "!legacy-system" ]
 
 jobs: 
-  build-lib-tests-debug:
+  build-ctl-tests-debug:
     name: Build CTL Tests (DEBUG)
     runs-on: windows-2022
     steps:
@@ -31,7 +31,7 @@ jobs:
           name: tests-debug
           path: tests/ctl/output/debug
 
-  build-lib-tests-release:
+  build-ctl-tests-release:
     name: Build CTL Tests (RELEASE)
     runs-on: windows-2022
     steps:
