@@ -13,8 +13,8 @@ namespace Extern = Makai::Extern;
 
 #define sdlSource ((Mix_Music*)source)
 
-Mix_Music*		current	= nullptr;
-AudioCallback*	queued	= nullptr;
+Mix_Music*				current	= nullptr;
+AudioCallback const*	queued	= nullptr;
 
 void Music::stop(usize const fade) {
 	if (fade)
@@ -57,9 +57,9 @@ String Music::getTitle() {
 	return String(Mix_GetMusicTitle(sdlSource));
 }
 
-Music::MetaData Music::getMetaData() {
+Music::Metadata Music::getMetadata() {
 	const char* data;
-	return Music::MetaData {
+	return Music::Metadata {
 		(data = Mix_GetMusicTitleTag(sdlSource)) ? data : "???",
 		(data = Mix_GetMusicArtistTag(sdlSource)) ? data : "???",
 		(data = Mix_GetMusicAlbumTag(sdlSource)) ? data : "???",

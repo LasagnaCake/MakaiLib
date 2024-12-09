@@ -3,13 +3,16 @@
 
 #include "../ctl/ctl.hpp"
 
+/// @brief Makai core API.
 namespace Makai {
 	using namespace CTL;
 	using namespace CTL::Ex;
+	/// @brief Math facilities.
 	namespace Math {
 		using namespace CTL::Ex::Math;
 		using namespace CTL::Math;
 	}
+	/// @brief Type constraints.
 	namespace Type {
 		using namespace CTL::Ex::Type;
 		using namespace CTL::Type;

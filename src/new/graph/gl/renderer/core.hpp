@@ -4,7 +4,7 @@
 #include "../../../compat/ctl.hpp"
 #include "../core.hpp"
 
-/// @brief Makai core library.
+/// @brief Makai core API.
 namespace Makai {
 	struct App;
 }
