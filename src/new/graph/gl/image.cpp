@@ -155,7 +155,7 @@ CTL::ValueOrder Image::operator<=>(Image const& other) const {
 	return id <=> other.id;
 }
 
-explicit Image::operator uint() const {
+Image::operator uint() const {
 	return id;
 }
 
