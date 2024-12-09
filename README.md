@@ -82,7 +82,9 @@ Since a version of (most of) them are bundled[^1], including your own version of
 
 ## Documentation
 
-Currently VERY scarce. Some of the code is commented.
+The API is documented. Should be able to be generated via doxygen (TODO: figure out that).
+
+In the meantime, you can read the headers directly.
 
 ## TODO
 
