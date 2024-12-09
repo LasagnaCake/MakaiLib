@@ -571,7 +571,7 @@ private:
 			off = str[i];
 		}
 		return ContainerType(result);
-	};
+	}
 };
 
 CTL_EX_NAMESPACE_END
