@@ -1,60 +1,34 @@
 ## TODO
 
 ### Current
+- [ ] Generate documentation
+- - Code is documented via doxygen comments, so must figure out how to generate docs from that
+- [ ] Fix core library CI
+- - Problem: `gcc`/`g++` is missing, somehow???
 - [ ] Recompile CryptoPP with `CRYPTOPP_DISABLE_ASM` enabled
 - - Just so CI stops failing
-- [x] Ditch GLEW for some other library ([some options](https://www.khronos.org/opengl/wiki/OpenGL_Loading_Library))
-- - It now supports both GLAD & GL3W
 - [ ] Add initializer lists wherever possible
 - [ ] Add HSL (Hue-Saturation-Luminosity) & BC (Brightness-Contrast) to buffer mask effect
-- [x] Separate `itembox` and `grazebox`
-- [x] `data/` folder packing system
-- [x] "Optimize" GPU usage
-- - Instead of rendering every layer from the layerbuffer to the framebuffer, maybe implement sublayers?
-- - ( ) A: Group every X layers to be rendered by clearing the depth bit in-between layers
-- - - - Would play nicely with the sublayers in gamedata
-- - - - Would still be somewhat resource-intensive, but not as much
-- - (x) B: Create special functions to tell the system when to render the layerbuffer to the framebuffer
-- - - - Would be called in the `onPreLayerDraw` step
-- - - - Would also play nicely with the sublayers
-- - - - Would also be the fastest, but more complicated on the end-user
-- - - - This one would also play nicely without messing the current rendering pipeline too much
-- - It is now up to the developer to figure out when to render their own layers, or to just just leave it like the old system
-- [x] Replace `.ini`-based savefile system with a different format
-- - Using JSON
-- [x] GUI system
-- [x] Menu system
-- [x] Dialogue system
-- [ ] Curvy/Bent lasers
-- [ ] Bugs & Errors (see [Issues.txt](../../Issues.txt))
-- [ ] File format implementation (These need better names):
-- - For more info, see the [specifications](../specifications) folder
-- - [ ] Material configuration definitions
-- - - [x] ObjectMaterial
-- - - [x] WorldMaterial
-- - - [ ] BufferMaterial
-- - [x] Renderable object definition
-- - - [x] Mesh Parser
-- - - [x] Transform Parser
-- - - [x] Material Parser
-- - - - Requires ObjectMaterial definition
-- - [ ] Animation keyframes definition
-- - [ ] Danmaku stage layout definition
-- - - Possibly via combining 2nd & 3rd implementations
 - [ ] Embedded language (compiled (preferable, even if to bytecode), JIT or interpreted)
 - - Currently have an idea, don't know if it would be feasible
 - - Could also implement support for Squirrel/LUA/AngelScript
 - - Or C# even, this one might be the more feasible option
 - - - This one sounds enticing
 - - What about [SWIG](https://www.swig.org/)?
-- [ ] Shader modules
-- - Something akin to [this](https://stackoverflow.com/a/10465461)
+
+### Game extension stuff
+- [ ] Curvy/Bent lasers
+- [ ] Bugs & Errors (see [Issues.txt](../../Issues.txt))
+- [ ] File format implementation (These need better names):
+- - For more info, see the [specifications](../specifications) folder
+- - [ ] Animation keyframes definition
+- - [ ] Danmaku stage layout definition
+- - - Possibly via combining 2nd & 3rd implementations
+- [ ] Other game types
+- [ ] More "multi-purpose" game classes
 
 ### Future
 
-- [ ] Other game types
-- [ ] More "multi-purpose" game classes
-- [ ] Cleanup & polish [entity](../../src/collection/entity/entity.hpp) system
 - [ ] (Maybe) replace JSON to other specification
 - - For the *custom file formats*, that is
 - - See [File Format Alternatives Proposal](../../docs/changes/AltFormats.md) for more informaion
@@ -69,13 +43,9 @@
 - [ ] Support for "Game DLLs"
 - - Having the game being separate from the executable, and stuff being loadable from a DLL
 
-### Major Refactor
+### Other refactoring
 
-See [Major Refactor](Refactor.md)
-
-#### Under consideration
-
-- Rename stuff
+See [Refactor](Refactor.md).
 
 ### Very far future (may never happen)
 
