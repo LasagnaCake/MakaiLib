@@ -4,12 +4,15 @@
 #include "../compat/ctl.hpp"
 
 namespace Makai {
-	/// A position on the screen.
+	/// @brief Screen position.
 	struct ScreenPosition {
+		/// @brief Location.
 		int x, y;
 	};
 
-	/// Returns the window size of the selected display.
+	/// @brief Returns the size of the given display.
+	/// @param display Display to query size.
+	/// @return Display size.
 	Vector2 getDisplaySize(usize const display = 0);
 }
 
