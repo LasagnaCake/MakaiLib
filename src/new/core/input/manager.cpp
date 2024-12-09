@@ -474,7 +474,7 @@ void Manager::setMouseCapturing(bool const enabled, bool const hideCursor) {
 	mouseCaptured = enabled;
 }
 
-void Manager::setCursorVisibility(bool const enabled) {
+void Manager::setCursorVisibility(bool const visible) {
 	if (!window) return;
 	SDL_ShowCursor(enabled ? SDL_TRUE : SDL_FALSE);
 	mouseVisible = enabled;

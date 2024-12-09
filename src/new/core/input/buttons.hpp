@@ -3,7 +3,9 @@
 
 #include "../../compat/ctl.hpp"
 
+/// @brief User input facilities.
 namespace Makai::Input {
+	/// @brief Keyboard key code.
 	enum class KeyCode {
 		// Unknown
 		KC_UNKNOWN = -1,
@@ -120,6 +122,7 @@ namespace Makai::Input {
 		KC_MAX_KEYS = 512
 	};
 
+	/// @brief Controller button code.
 	enum class JoyCode {
 		// Unknown
 		JC_UNKNOWN = -1,
@@ -143,6 +146,7 @@ namespace Makai::Input {
 		JC_MAX_BUTTONS
 	};
 
+	/// @brief Mouse button code.
 	enum class MouseCode {
 		MC_UNKNOWN = -1,
 		MC_LEFT,
@@ -151,6 +155,7 @@ namespace Makai::Input {
 		MC_MAX_BUTTONS
 	};
 
+	/// @brief Button code union.
 	union ButtonCode {
 		KeyCode		key;
 		MouseCode	mouse;
@@ -158,26 +163,43 @@ namespace Makai::Input {
 		usize		value;
 	};
 
+	/// @brief Button code type.
 	enum class ButtonCodeType {
 		BCT_KEY,
 		BCT_MOUSE,
 		BCT_JOY
 	};
 
+	/// @brief Button data structure.
 	struct ButtonData {
+		/// @brief Button code.
 		ButtonCode		code;
+		/// @brief Button type.
 		ButtonCodeType	type;
 	};
 
+	/// @brief Input button.
 	struct Button: private ButtonData {
+		/// @brief Constructs the button from a keyboard key code.
 		constexpr Button(KeyCode const& _code)		{code.key = _code;		type = ButtonCodeType::BCT_KEY;		}
+		/// @brief Constructs the button from a mouse button code.
 		constexpr Button(MouseCode const& _code)	{code.mouse = _code;	type = ButtonCodeType::BCT_MOUSE;	}
+		/// @brief Constructs the button from a controller button code.
 		constexpr Button(JoyCode const& _code)		{code.joy = _code;		type = ButtonCodeType::BCT_JOY;		}
 
+		/// @brief Returns the button code.
+		/// @return Button code.
 		constexpr ButtonCode getCode() const 		{return code;	}
+		/// @brief Returns the button type.
+		/// @return Button tyoe.
 		constexpr ButtonCodeType getType() const 	{return type;	}
+		/// @brief Returns the button data.
+		/// @return Button data.
 		constexpr ButtonData data() const 			{return *this;	}
 
+		/// @brief Equality comparison operator.
+		/// @param other `Button` to compare with.
+		/// @return Whether they're equal.
 		constexpr bool operator==(Button const& other) const {
 			return type == other.type && code.value == other.code.value;
 		}
@@ -185,8 +207,10 @@ namespace Makai::Input {
 		friend class InputManager;
 	};
 
+	/// @brief Button list.
 	using ButtonList = List<Button>;
 
+	/// @brief Button bind map.
 	using ButtonMap = Map<String, ButtonList>;
 }
 

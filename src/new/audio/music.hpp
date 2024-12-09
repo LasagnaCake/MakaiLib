@@ -53,7 +53,9 @@ namespace Makai::Audio {
 		/// @return Underlying music source.
 		inline Extern::Resource getSource();
 
-		/// @brief Updates the music subsystem.
+		/// @brief
+		///		Updates the music subsystem.
+		///		Not required to call every cycle, as the program already handles it.
 		static void		update();
 		/// @brief Stops the currently playing music.
 		/// @param fade Fade-out time in milliseconds.

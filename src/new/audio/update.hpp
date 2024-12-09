@@ -4,8 +4,9 @@
 #include "sound.hpp"
 #include "music.hpp"
 
+/// @brief Audio facilities.
 namespace Makai::Audio {
-	/// @brief Updates all audio & music sources.
+	/// @brief Updates the audio & music subsystem.
 	inline void updateAll() {
 		Music::update();
 		ISource::update();

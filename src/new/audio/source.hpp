@@ -6,6 +6,7 @@
 #include "../core/extern.hpp"
 #include "../data/encdec.hpp"
 
+/// @brief Audio facilities.
 namespace Makai::Audio {
 	/// @brief Audio source interface.
 	class ISource {
@@ -38,7 +39,9 @@ namespace Makai::Audio {
 		/// @return Whether source exists.
 		bool exists();
 
-		/// @brief Updates all sources.
+		/// @brief
+		///		Updates the audio subsystem.
+		///		Not required to call every cycle, as the program already handles it.
 		static void update();
 
 	protected:
