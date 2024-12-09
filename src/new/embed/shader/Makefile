@@ -15,7 +15,9 @@ define embed
 	@$(CC) -o buffer.vert.shader.o -c shader.vert.s $(LEAN)
 	@$(CC) -o buffer.frag.shader.o -c shader.frag.s $(LEAN)
 	@cd ..
+	@echo "Packing..."
 	@$(LD) -r -o $(prefix).$@.$(strip $(1)).o **/*.shader.o $(LEAN)
+	@echo "Done!"
 endef
 
 .ONESHELL:
