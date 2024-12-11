@@ -192,6 +192,7 @@ BinaryData<> Makai::File::loadBinary(String const& path) {
 		// Preallocate data
 		BinaryData<> data(fsize, 0);
 		// Read & close file
+		// ERROR: basic_filebuf::xsgetn error reading the file: Invalid argument
 		file.read((char*)data.data(), fsize);
 		file.close();
 		// Return data
