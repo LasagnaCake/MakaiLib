@@ -37,6 +37,7 @@ params = $(WINREQS) $(LIBREQS) \
 	$(call case, $(1), 02,$(GRAPHREQS))\
 	$(call case, $(1), 03,$(GRAPHREQS))\
 	$(call case, $(1), 04,$(GRAPHREQS))\
+	$(call case, $(1), 05,$(GRAPHREQS))\
 
 define mktest
 	@echo "$(strip $(2))"
@@ -49,6 +50,7 @@ define tests
 	$(call mktest, $(1), 02.app)
 	$(call mktest, $(1), 03.graphics)
 	$(call mktest, $(1), 04.input)
+	$(call mktest, $(1), 05.text)
 endef
 else
 define tests
