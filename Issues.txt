@@ -9,5 +9,8 @@ Fixed? > Automatic tweens & timers are no longer working
 > Shading direction flips when rotating object (Somethin relating to normals)
 
 [ Unknown ]
-> Cannot load binary file
+> Cannot load binary files
 	> basic_filebuf::xsgetn error reading the file: Invalid argument
+> Segfault at app closure
+	> in CTL::Pointer::unbind FOR Makai::Graph::Image2D
+		> In ~FrameBuffer() → ~DrawBuffer() → ~Texture2D()
