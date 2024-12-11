@@ -8,6 +8,8 @@ struct TestApp: Makai::App {
 	
 	Makai::Graph::Label label;
 
+	Makai::Graph::Camera3D& camera = Makai::Graph::Global::camera;
+
 	virtual ~TestApp() {}
 
 	void onOpen() override {
@@ -20,13 +22,20 @@ struct TestApp: Makai::App {
 			return;
 		}
 		DEBUGLN("2...");
-		label.trans.position	= Makai::Math::Vec2(32, -32) * getWindowScale();
+		label.trans.position	= Makai::Math::Vec3(0, 0, -5);
 		label.text->textAlign	=
 		label.text->rectAlign	= Makai::Math::Vec2(.5);
 		DEBUGLN("3...");
-		label.text->content		= "Sexyman Acidosis ~ Whomst'd've!!!";
+		label.text->content		= "Sexyman Acidosis ~ Whomst'd've!!!\nNarcolepsy";
 		label.text->rect		= {40, 2};
-		DEBUGLN("4!");
+		DEBUGLN("4...");
+		camera.eye	= Makai::Vec3(0, 0, -3);
+		//camera.at	= Makai::Vec3(0, -2, 3);
+		camera.zFar	= 1000;
+		getFrameBuffer().material.background = Makai::Graph::Color::GRAY;
+		//Makai::Graph::API::toggle(Makai::Graph::API::Facility::GAF_DEBUG, true);
+		camera.relativeToEye = true;
+		DEBUGLN("Done!");
 	}
 
 	void onLogicFrame(float delta) {}
