@@ -417,7 +417,7 @@ public:
 	///		If current size is smaller,
 	///		then it fills the extra space added with the given `fill`.
 	constexpr SelfType& expand(SizeType count, DataType const& fill) {
-		expand(this->count + count);
+		expand(count);
 		while (count-- > 0) pushBack(fill);
 		return *this;
 	}
