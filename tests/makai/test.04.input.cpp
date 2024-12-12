@@ -78,7 +78,7 @@ struct TestApp: Makai::App {
 
 	Makai::Vec3 crot = 0;
 
-	void onLogicFrame(float delta) {
+	void onUpdate(float delta) {
 		if (frcount < MAX_FRCOUNT)
 			framerate[frcount++] = 1000.0 / getFrameDelta();
 		else {

@@ -164,9 +164,9 @@ namespace Makai {
 		/// @brief Happens after the screen is rendered, after the frame buffer is drawn to the screen.
 		virtual void onDrawEnd()		{}
 
-		/// @brief Gets called every frame, along all other logic.
+		/// @brief Gets called every logic cycle, along with all `IUpdateable`s.
 		/// @param delta Seconds between each logic cycle.
-		virtual void onLogicFrame(float delta)	{}
+		virtual void onUpdate(float delta)	{}
 
 		/// @brief Gets called at the end of the processing cycle, when the application was requested to close.
 		/// @return Whether the application should close.

@@ -61,7 +61,7 @@ struct TestApp: Makai::App {
 		//Makai::Graph::API::toggle(Makai::Graph::API::Facility::GAF_DEBUG, true);
 	}
 
-	void onLogicFrame(float delta) {
+	void onUpdate(float delta) {
 		if (input.isButtonJustPressed(Makai::Input::KeyCode::KC_ESCAPE))
 			close();
 		getFrameBuffer().material.background = Makai::Graph::Color::WHITE * (sin(getCurrentFrame() / 180.0) / 2 + .5);

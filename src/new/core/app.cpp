@@ -188,7 +188,7 @@ void App::run() {
 	};
 	// The logical process
 	auto logicFunc	= [&](float delta)-> void {
-		onLogicFrame(delta);
+		onUpdate(delta);
 		IUpdateable::process(delta, *this);
 	};
 	// Clear screen

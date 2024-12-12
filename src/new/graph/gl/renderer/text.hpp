@@ -15,6 +15,11 @@ namespace Makai::Graph {
 		usize h = 0;
 		/// @brief Line count.
 		usize v = 0;
+
+		/// @brief Comparison operator (defaulted).
+		constexpr bool operator==(TextRect const& other) const			= default;
+		/// @brief Threeway comparison operator (defaulted).
+		constexpr ValueOrder operator<=>(TextRect const& other) const	= default;
 	};
 
 	/// @brief Font face data.
@@ -100,6 +105,11 @@ namespace Makai::Graph {
 		long		maxChars	= -1;
 		/// @brief Line wrapping mode.
 		LineWrap	lineWrap	= LineWrap::LW_CHARACTER;
+
+		/// @brief Comparison operator (defaulted).
+		constexpr bool operator==(TextData const& other) const			= default;
+		/// @brief Threeway comparison operator (defaulted).
+		constexpr ValueOrder operator<=>(TextData const& other) const	= default;
 	};
 
 	/// @brief Text display.

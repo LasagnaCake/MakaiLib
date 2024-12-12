@@ -215,6 +215,13 @@ namespace Collision::C2D {
 		/// @brief Move constructor (defaulted).
 		constexpr Ray(Ray&& other)		= default;
 
+		/// @brief Gets a point in the line at a given distance.
+		/// @param distance Distance to line origin.
+		/// @return Point at distance.
+		constexpr Vector2 pointAt(float const distance) const {
+			return Math::angleV2(angle) * distance;
+		}
+
 		/// @brief Ray position.
 		Vector2 position;
 		/// @brief Ray length.

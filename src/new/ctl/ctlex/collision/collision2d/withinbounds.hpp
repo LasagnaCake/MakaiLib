@@ -48,7 +48,7 @@ namespace Collision::C2D {
 		// Get distance between targets
 		float distance = a.distanceTo(area.position);
 		// If too distant, return
-		if (distance > area.length + area.width.max()) return false;
+		if (distance > (area.length + area.width.max())) return false;
 		// Get ray position to check
 		Vector2 rayPosition = angleV2(area.rotation) * distance + area.position;
 		// Check collision
@@ -60,10 +60,10 @@ namespace Collision::C2D {
 	/// @param point Point to check.
 	/// @param area Bounds to check against.
 	/// @return Whether bounds overlap.
-	/// @warning Currently unimplemented.
-	[[gnu::warning("Unimplemented!")]]
 	constexpr bool withinBounds(Vector2 const& a, Ray const& b) {
-		return false;
+		float distance = b.position.distanceTo(a);
+		if (distance > b.length) return false;
+		return a == b.pointAt(distance);
 	}
 
 	/// @brief Point-to-Shape bounds detection.
@@ -149,7 +149,7 @@ namespace Collision::C2D {
 		// Get distance between targets
 		float distance = a.position.distanceTo(b.position);
 		// If too distant, return
-		if (distance > b.length + b.width.max() + a.radius.max()) return false;
+		if (distance > (b.length + b.width.max() + a.radius.max())) return false;
 		// Get ray position to check
 		Vector2 rayPosition = angleV2(b.angle) * distance + b.position;
 		// Check collision
@@ -174,7 +174,7 @@ namespace Collision::C2D {
 		// Get distance between targets
 		float distance = a.position.distanceTo(b.position);
 		// If too distant, return
-		if (distance > a.length + b.length + a.width.max() + b.width.max()) return false;
+		if (distance > (a.length + b.length + a.width.max() + b.width.max())) return false;
 		// Get ray position to check
 		Vector2 rayPosition = angleV2(b.angle) * distance + b.position;
 		// Check collision
@@ -188,40 +188,40 @@ namespace Collision::C2D {
 	/// @param a Bounds to check.
 	/// @param b Bounds to check against.
 	/// @return Whether bounds overlap.
-	/// @warning Currently unimplemented.
-	[[gnu::warning("Unimplemented!")]]
 	constexpr bool withinBounds(Box const& a, Ray const& b) {
-		return false;
+		float distance = b.position.distanceTo(a.position);
+		if (distance > a.size.max()) return false;
+		return withinBounds(b.pointAt(distance), a);
 	}
 
 	/// @brief Circle-to-Ray bounds detection.
 	/// @param a Bounds to check.
 	/// @param b Bounds to check against.
 	/// @return Whether bounds overlap.
-	/// @warning Currently unimplemented.
-	[[gnu::warning("Unimplemented!")]]
 	constexpr bool withinBounds(Circle const& a, Ray const& b) {
-		return false;
+		float distance = b.position.distanceTo(a.position);
+		if (distance > (a.radius.max() + b.length)) return false;
+		return withinBounds(b.pointAt(distance), a);
 	}
 
 	/// @brief Capsule-to-Ray bounds detection.
 	/// @param a Bounds to check.
 	/// @param b Bounds to check against.
 	/// @return Whether bounds overlap.
-	/// @warning Currently unimplemented.
-	[[gnu::warning("Unimplemented!")]]
 	constexpr bool withinBounds(Capsule const& a, Ray const& b) {
-		return false;
+		float distance = b.position.distanceTo(a.position);
+		if (distance > (a.length + a.width.max() + b.length)) return false;
+		return withinBounds(b.pointAt(distance), a);
 	}
 
 	/// @brief Ray-to-Ray bounds detection.
 	/// @param a Bounds to check.
 	/// @param b Bounds to check against.
 	/// @return Whether bounds overlap.
-	/// @warning Currently unimplemented.
-	[[gnu::warning("Unimplemented!")]]
 	constexpr bool withinBounds(Ray const& a, Ray const& b) {
-		return false;
+		float distance = b.position.distanceTo(a.position);
+		if (distance > (a.length + b.length)) return false;
+		return a.pointAt(distance) == b.pointAt(distance);
 	}
 
 	// Shape

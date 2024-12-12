@@ -15,30 +15,31 @@ struct TestApp: Makai::App {
 	void onOpen() override {
 		DEBUGLN("1...");
 		try {
-			label.font->image.create("../tests/makai/files/TestFontGrid-lotuscoder.png");
+			//label.font->image.create("../tests/makai/files/TestFontGrid-lotuscoder.png");
 		} catch (Makai::Error::Generic const& e) {
 			Makai::Popup::showError(e.what());
 			close();
 			return;
 		}
 		DEBUGLN("2...");
-		label.trans.position	= Makai::Math::Vec3(0, 0, -5);
+		label.trans.position	= Makai::Math::Vec3(0, 0, 0);
 		label.text->textAlign	=
 		label.text->rectAlign	= Makai::Math::Vec2(.5);
 		DEBUGLN("3...");
 		label.text->content		= "Sexyman Acidosis ~ Whomst'd've!!!\nNarcolepsy";
 		label.text->rect		= {40, 2};
 		DEBUGLN("4...");
-		camera.eye	= Makai::Vec3(0, 0, -3);
-		//camera.at	= Makai::Vec3(0, -2, 3);
+		camera.eye	= Makai::Vec3(0, 0, -1);
 		camera.zFar	= 1000;
 		getFrameBuffer().material.background = Makai::Graph::Color::GRAY;
 		//Makai::Graph::API::toggle(Makai::Graph::API::Facility::GAF_DEBUG, true);
-		camera.relativeToEye = true;
+		//camera.relativeToEye = true;
 		DEBUGLN("Done!");
 	}
 
-	void onLogicFrame(float delta) {}
+	void onUpdate(float delta) {
+		camera.eye	= Makai::Vec3(sin(getCurrentCycle()), 0, cos(getCurrentCycle()));
+	}
 };
 
 int main() {

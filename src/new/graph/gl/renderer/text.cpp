@@ -206,8 +206,8 @@ List<usize> getTextLineWrapIndices(TextData& text) {
 
 void Label::draw() {
 	// If text changed, update label
-	if (text != last) {
-		last = text;
+	if (*text != *last) {
+		*last = *text;
 		update();
 	}
 	// If no vertices, return
@@ -231,6 +231,7 @@ void Label::update() {
 	vertices.clear();
 	// If no text is present, return
 	if (!text) return;
+	if (text->content.empty()) return;
 	// The current character's position
 	Vector2		cursor;
 	TextRect	chrRect = {0,0};
