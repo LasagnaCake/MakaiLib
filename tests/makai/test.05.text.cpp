@@ -24,6 +24,8 @@ struct TestApp: Makai::App {
 		}
 		DEBUGLN("2...");
 		label.trans.position	= Makai::Math::Vec3(0, 0, 0);
+		label.trans.scale.x		= 0.66;
+		label.trans.scale		*= 0.4;
 		label.text->textAlign	= Makai::Math::Vec2(.5, 0);
 		label.text->rectAlign	= Makai::Math::Vec2(.5);
 		label.text->spacing.x	= -0.3;

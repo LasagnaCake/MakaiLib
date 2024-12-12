@@ -6,6 +6,11 @@
 
 /// @brief Graphical facilites.
 namespace Makai::Graph {
+	/// @brief Decays the enumerator type to a valid shader integer type.
+	/// @tparam T Enum type to decay.
+	template<Type::Enumerator T>
+	using ShaderEnum = Meta::DualType<Type::Unsigned<T>, uint, int>;
+
 	/// @brief Shader uniform access interface.
 	struct Uniform {
 		/// @brief Uniform name.
@@ -144,7 +149,7 @@ namespace Makai::Graph {
 		/// @warning `offset` should NEVER be used directly!
 		template <Type::Enumerator T>
 		inline void set(T const value, usize const offset = 0) const {
-			set(static_cast<Meta::DualType<Type::Unsigned<T>, uint, int>>(value), offset);
+			set(static_cast<ShaderEnum<T>>(value), offset);
 		}
 
 		/// @brief Sets the uniform.
