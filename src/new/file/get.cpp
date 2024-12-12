@@ -185,15 +185,14 @@ BinaryData<> Makai::File::loadBinary(String const& path) {
 		// Ensure ifstream object can throw exceptions
 		setExceptionMask(file);
 		// Open file
-		file.open(path.cstr(), std::ios::ate | std::ios::binary);
+		file.open(path.cstr(), /*std::ios::ate | */std::ios::binary);
 		// Get file size
-		usize const fsize = file.tellg();
-		file.seekg(0);
+		usize const fsize = std::filesystem::file_size(path.cstr());
+		//file.seekg(0);
 		// Preallocate data
-		BinaryData<> data(fsize);
-		data.appendBack(fsize, 0);
+		BinaryData<> data;
+		data.resize(fsize, 0);
 		// Read & close file
-		// ERROR: basic_filebuf::xsgetn error reading the file: Invalid argument
 		file.read((char*)data.data(), fsize);
 		file.close();
 		// Return data
