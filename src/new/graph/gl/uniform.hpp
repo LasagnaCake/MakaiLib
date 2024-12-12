@@ -151,8 +151,7 @@ namespace Makai::Graph {
 		/// @tparam ...Args Argument types.
 		/// @param ...args Values to set.
 		template <typename... Args>
-		inline void set(Args const&... args) const
-		requires (sizeof...(Args) > 1) {
+		inline void setSequence(Args const&... args) const {
 			this->offset = 0;
 			usize off = 0;
 			(setSpecial(args, off), ...);
@@ -173,20 +172,20 @@ namespace Makai::Graph {
 		/// @brief Sets the uniform.
 		/// @tparam T Value type.
 		/// @param value Value to set.
-		template <typename T>			inline void operator()(T const& value) const			{set(value);	}
+		template <typename T>			inline void operator()(T const& value) const			{set(value);			}
 		/// @brief Sets this uniform, and the ones that follow it.
 		/// @tparam ...Args Argument types.
 		/// @param ...args Values to set.
-		template <typename... Args>		inline void operator()(Args const&... args) const		{set(args...);	}
+		template <typename... Args>		inline void operator()(Args const&... args) const		{setSequence(args...);	}
 		/// @brief Sets the uniform.
 		/// @tparam T Element type.
 		/// @param values List of values to set.
-		template <typename T>			inline void operator()(List<T> const& values) const		{set(values);	}
+		template <typename T>			inline void operator()(List<T> const& values) const		{set(values);			}
 		/// @brief Sets the uniform.
 		/// @tparam T Element type.
 		/// @tparam S Span size.
 		/// @param values Values to set.
-		template <typename T, usize S>	inline void operator()(Span<T, S> const& values) const	{set(values);	}
+		template <typename T, usize S>	inline void operator()(Span<T, S> const& values) const	{set(values);			}
 
 		/// @brief Uniform member access operator.
 		/// @param member Member to get.
