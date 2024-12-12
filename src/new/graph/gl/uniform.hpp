@@ -44,6 +44,12 @@ namespace Makai::Graph {
 		/// @param value Value to set.
 		/// @param offset Uniform location offset. By default, it is zero.
 		/// @warning `offset` should NEVER be used directly!
+		void set(double const value, usize const offset = 0) const;
+
+		/// @brief Sets the uniform.
+		/// @param value Value to set.
+		/// @param offset Uniform location offset. By default, it is zero.
+		/// @warning `offset` should NEVER be used directly!
 		void set(Vector2 const& value, usize const offset = 0) const;
 
 		/// @brief Sets the uniform.
@@ -96,6 +102,13 @@ namespace Makai::Graph {
 		/// @param count Count of values to set.
 		/// @param offset Uniform location offset. By default, it is zero.
 		/// @warning `offset` should NEVER be used directly!
+		void setArray(double* const values, usize const count, usize const offset = 0) const;
+
+		/// @brief Sets the uniform.
+		/// @param values Values to set.
+		/// @param count Count of values to set.
+		/// @param offset Uniform location offset. By default, it is zero.
+		/// @warning `offset` should NEVER be used directly!
 		void setArray(Vector2* const values, usize const count, usize const offset = 0) const;
 
 		/// @brief Sets the uniform.
@@ -131,7 +144,7 @@ namespace Makai::Graph {
 		/// @warning `offset` should NEVER be used directly!
 		template <Type::Enumerator T>
 		inline void set(T const value, usize const offset = 0) const {
-			set(CTL::enumcast(value), offset);
+			set(static_cast<Meta::DualType<Type::Unsigned<T>, uint, int>>(value), offset);
 		}
 
 		/// @brief Sets the uniform.
@@ -172,7 +185,7 @@ namespace Makai::Graph {
 		/// @brief Sets the uniform.
 		/// @tparam T Value type.
 		/// @param value Value to set.
-		template <typename T>			inline void operator()(T const& value) const			{set(value);			}
+		template <typename T>			inline void operator()(T const& value) const			{setSequence(value);	}
 		/// @brief Sets this uniform, and the ones that follow it.
 		/// @tparam ...Args Argument types.
 		/// @param ...args Values to set.
@@ -180,12 +193,12 @@ namespace Makai::Graph {
 		/// @brief Sets the uniform.
 		/// @tparam T Element type.
 		/// @param values List of values to set.
-		template <typename T>			inline void operator()(List<T> const& values) const		{set(values);			}
+		template <typename T>			inline void operator()(List<T> const& values) const		{setSequence(values);	}
 		/// @brief Sets the uniform.
 		/// @tparam T Element type.
 		/// @tparam S Span size.
 		/// @param values Values to set.
-		template <typename T, usize S>	inline void operator()(Span<T, S> const& values) const	{set(values);			}
+		template <typename T, usize S>	inline void operator()(Span<T, S> const& values) const	{setSequence(values);	}
 
 		/// @brief Uniform member access operator.
 		/// @param member Member to get.

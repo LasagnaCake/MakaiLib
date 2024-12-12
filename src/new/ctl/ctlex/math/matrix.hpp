@@ -1032,11 +1032,6 @@ public:
 	/// @brief Converts the matrix to a `Vector4`.
 	constexpr operator Vector4() const {return toVector4();}
 
-	/// @brief Returns a pointer to the begginning of the matrix.
-	constexpr explicit operator const DataType*() const	{return data;	}
-	/// @brief Returns a pointer to the begginning of the matrix.
-	constexpr explicit operator DataType*()				{return data;	}
-
 	/// @brief Return the last column of the matrix as a `Vector2`.
 	/// @return Last column.
 	/// @note Requires matrix row count to be at least 2.

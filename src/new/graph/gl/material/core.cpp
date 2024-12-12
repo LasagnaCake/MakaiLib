@@ -70,7 +70,7 @@ void ObjectMaterial::use(Shader const& shader) const {
 	// Instance data
 	shader["instances"](instances);
 	// Debug data
-	shader["debugView"]((unsigned int)debug);
+	shader["debugView"](debug);
 }
 
 // TODO: The rest of this rat's nest
@@ -173,16 +173,16 @@ void BufferMaterial::use(Shader const& shader) const {
 		shader["noiseStrength"](noise.trans.scale);
 		shader["noiseScale"](noise.strength);
 		shader["noiseSeed"](noise.seed);
-		shader["noiseType"]((unsigned int)noise.type);
-		shader["noiseBlendSrcColorFunc"]((unsigned int)noise.blend.color.source);
-		shader["noiseBlendDstColorFunc"]((unsigned int)noise.blend.color.destination);
-		shader["noiseBlendColorEq"]((unsigned int)noise.blend.color.equation);
-		shader["noiseBlendSrcAlphaFunc"]((unsigned int)noise.blend.alpha.source);
-		shader["noiseBlendDstAlphaFunc"]((unsigned int)noise.blend.alpha.destination);
-		shader["noiseBlendAlphaEq"]((unsigned int)noise.blend.alpha.equation);
+		shader["noiseType"](noise.type);
+		shader["noiseBlendSrcColorFunc"](noise.blend.color.source);
+		shader["noiseBlendDstColorFunc"](noise.blend.color.destination);
+		shader["noiseBlendColorEq"](noise.blend.color.equation);
+		shader["noiseBlendSrcAlphaFunc"](noise.blend.alpha.source);
+		shader["noiseBlendDstAlphaFunc"](noise.blend.alpha.destination);
+		shader["noiseBlendAlphaEq"](noise.blend.alpha.equation);
 	} else shader["useNoise"](false);
 	// Set debug data
-	shader["debugView"]((unsigned int)debug);
+	shader["debugView"](debug);
 	// Set HSLBC data
 	shader["hue"](hue);
 	shader["saturation"](saturation);
