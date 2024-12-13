@@ -401,7 +401,7 @@ public:
 		if (!newSize) return clear();
 		resize(newSize);
 		if (newSize > count)
-			for (SizeType i = newSize; i < count; ++i)
+			for (SizeType i = count; i < newSize; ++i)
 				contents[i] = fill;
 		count = newSize;
 		return *this;

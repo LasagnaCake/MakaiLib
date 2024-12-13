@@ -18,7 +18,7 @@ void print(List<T> const& lst) {
 	DEBUGLN("];");
 }
 
-int main() {
+List<int> testList() {
 	List<int> lst;
 	print(lst);
 	lst.pushBack(69);							print(lst);
@@ -38,8 +38,18 @@ int main() {
 	lst.eraseLike(20);							print(lst);
 	lst = lst.sliced(3, 11);					print(lst);
 	lst = lst.sliced(1, -2);					print(lst);
-	lst.clear();								print(lst);
-	lst.dispose();								print(lst);
+	DEBUGLN("Exiting test function...");
+	return lst;
+}
+
+int main() {
 	DEBUGLN("List test passed!");
+	List<int> lst = testList();
+	print(lst);
+	lst = lst.sliced(3, 11);	print(lst);
+	lst = lst.sliced(1, -2);	print(lst);
+	lst.resize(10, 0);			print(lst);
+	lst.clear();				print(lst);
+	lst.dispose();				print(lst);
 	return 0;
 }

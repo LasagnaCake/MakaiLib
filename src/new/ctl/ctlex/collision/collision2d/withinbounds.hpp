@@ -62,7 +62,7 @@ namespace Collision::C2D {
 	/// @return Whether bounds overlap.
 	constexpr bool withinBounds(Vector2 const& a, Ray const& b) {
 		float distance = b.position.distanceTo(a);
-		if (distance > b.length) return false;
+		if (distance > b.direction.length()) return false;
 		return a == b.pointAt(distance);
 	}
 
@@ -200,7 +200,7 @@ namespace Collision::C2D {
 	/// @return Whether bounds overlap.
 	constexpr bool withinBounds(Circle const& a, Ray const& b) {
 		float distance = b.position.distanceTo(a.position);
-		if (distance > (a.radius.max() + b.length)) return false;
+		if (distance > (a.radius.max() + b.direction.length())) return false;
 		return withinBounds(b.pointAt(distance), a);
 	}
 
@@ -210,7 +210,7 @@ namespace Collision::C2D {
 	/// @return Whether bounds overlap.
 	constexpr bool withinBounds(Capsule const& a, Ray const& b) {
 		float distance = b.position.distanceTo(a.position);
-		if (distance > (a.length + a.width.max() + b.length)) return false;
+		if (distance > (a.length + a.width.max() + b.direction.length())) return false;
 		return withinBounds(b.pointAt(distance), a);
 	}
 
@@ -218,10 +218,21 @@ namespace Collision::C2D {
 	/// @param a Bounds to check.
 	/// @param b Bounds to check against.
 	/// @return Whether bounds overlap.
+	/// @note Based off of https://stackoverflow.com/a/63577437
 	constexpr bool withinBounds(Ray const& a, Ray const& b) {
-		float distance = b.position.distanceTo(a.position);
-		if (distance > (a.length + b.length)) return false;
-		return a.pointAt(distance) == b.pointAt(distance);
+		// If rays have the same origin, they are colliding
+		if (a.position == b.position) return true;
+		// If rays are parallel, they are not colliding
+		if (a.direction == b.direction) return false;
+		Vector2 const d = b.position - a.position;
+		float const det =
+			b.direction.x * a.direction.y
+		-	b.direction.y * a.direction.x
+		;
+		if (!det) return false;
+		float u = (d.y * b.direction.x - d.x * b.direction.y) / det;
+        float v = (d.y * a.direction.x - d.x * a.direction.y) / det;
+        return u >= 0 && v >= 0;
 	}
 
 	// Shape

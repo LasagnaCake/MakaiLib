@@ -336,7 +336,7 @@ public:
 	/// @brief Converts a 3D rotation into a rotation matrix.
 	/// @param angle Rotation to convert.
 	/// @return Rotation matrix.
-	/// @link https://github.com/g-truc/glm/blob/master/glm/gtx/euler_angles.inl
+	/// @note Based off of https://github.com/g-truc/glm/blob/master/glm/gtx/euler_angles.inl
 	constexpr static Matrix<4, 4, DataType> fromEulerXYZ(Vector3 const& angle) {
 		// Get sines and cosines
 		DataType c1 = cos(-angle.x);
@@ -370,7 +370,7 @@ public:
 	/// @brief Converts a 3D rotation into a rotation matrix.
 	/// @param angle Rotation to convert.
 	/// @return Rotation matrix.
-	/// @link https://github.com/g-truc/glm/blob/master/glm/gtx/euler_angles.inl
+	/// @note Based off of https://github.com/g-truc/glm/blob/master/glm/gtx/euler_angles.inl
 	constexpr static Matrix<4, 4, DataType> fromEulerYXZ(Vector3 const& angle) {
 		// Get sines and cosines
 		DataType tmp_ch = cos(-angle.y);
@@ -452,7 +452,7 @@ public:
 	/// @param vec Translation to apply.
 	/// @return Reference to self.
 	/// @note Matrix must be a valid 3D transformation matrix.
-	/// @link https://github.com/g-truc/glm/blob/master/glm/ext/matrix_transform.inl
+	/// @note Based off of https://github.com/g-truc/glm/blob/master/glm/ext/matrix_transform.inl
 	constexpr Matrix<4, 4, DataType>& translate(Vector3 const& vec)
 	requires Type::Ex::Math::Matrix::ValidTransform3D<R, C> {
 		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
@@ -498,7 +498,7 @@ public:
 	/// @param vec Scaling to apply.
 	/// @return Scaled matrix.
 	/// @note Matrix must be a valid 3D transformation matrix.
-	/// @link https://github.com/g-truc/glm/blob/master/glm/ext/matrix_transform.inl 
+	/// @note Based off of https://github.com/g-truc/glm/blob/master/glm/ext/matrix_transform.inl 
 	constexpr Matrix<4, 4, DataType> scaled(Vector3 const& vec) const
 	requires Type::Ex::Math::Matrix::ValidTransform3D<R, C> {
 		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
@@ -519,7 +519,7 @@ public:
 	/// @param vec Scaling to apply.
 	/// @return Reference to self.
 	/// @note Matrix must be a valid 3D transformation matrix.
-	/// @link https://github.com/g-truc/glm/blob/master/glm/ext/matrix_transform.inl 
+	/// @note Based off of https://github.com/g-truc/glm/blob/master/glm/ext/matrix_transform.inl 
 	constexpr Matrix<4, 4, DataType>& scale(Vector3 const& vec)
 	requires Type::Ex::Math::Matrix::ValidTransform3D<R, C> {
 		static_assert(R == 4, "Matrix is not a valid representation of a 3D transform!");
@@ -1196,7 +1196,7 @@ public:
 	/// @param perspective Perspective.
 	/// @param skew Skew.
 	/// @return Reference to self.
-	/// @link https://github.com/g-truc/glm/blob/master/glm/gtx/matrix_decompose.inl
+	/// @note Based off of https://github.com/g-truc/glm/blob/master/glm/gtx/matrix_decompose.inl
 	/// @note Requires matrix to be a valid 3D transformation matrix.
 	template<EulerFunction ANGLE_FUNC = Matrix::fromEulerYXZ>
 	constexpr SelfType& compose(
@@ -1245,7 +1245,7 @@ public:
 	/// @param perspective Perspective.
 	/// @param skew Skew.
 	/// @return Reference to self.
-	/// @link https://github.com/g-truc/glm/blob/master/glm/gtx/matrix_decompose.inl
+	/// @note Based off of https://github.com/g-truc/glm/blob/master/glm/gtx/matrix_decompose.inl
 	/// @note Requires matrix to be a valid 3D transformation matrix.
 	template<EulerFunction ANGLE_FUNC = Matrix::fromEulerYXZ>
 	constexpr SelfType& compose(
@@ -1261,7 +1261,7 @@ public:
 	/// @param perspective Perspective transformation output.
 	/// @param skew Skew transformation output.
 	/// @return 3D transformation.
-	/// @link https://opensource.apple.com/source/WebCore/WebCore-514/platform/graphics/transforms/TransformationMatrix.cpp 
+	/// @note Based off of https://opensource.apple.com/source/WebCore/WebCore-514/platform/graphics/transforms/TransformationMatrix.cpp 
 	/// @note Requires matrix to be a valid 3D transformation matrix.
 	/// @warning Doesn't currently work!
 	[[gnu::unavailable("Not working as intended!")]]
@@ -1727,7 +1727,7 @@ typedef Matrix4i Mat4i;
 /// @param at Camera target.
 /// @param up Camera "up" direction.
 /// @return Resulting matrix.
-/// @link https://github.com/g-truc/glm/blob/master/glm/ext/matrix_transform.inl
+/// @note Based off of https://github.com/g-truc/glm/blob/master/glm/ext/matrix_transform.inl
 constexpr Matrix4x4 lookAt(Vector3 const& eye, Vector3 const& at, Vector3 const& up) {
 	Vector3 const f((at - eye).normalized());
 	Vector3 const s(f.crossProd(up).normalized());
@@ -1757,7 +1757,7 @@ constexpr Matrix4x4 lookAt(Vector3 const& eye, Vector3 const& at, Vector3 const&
 /// @param zNear Near clip plane.
 /// @param zFar Far clip plane.
 /// @return Resulting matrix.
-/// @link https://github.com/g-truc/glm/blob/master/glm/ext/matrix_clip_space.inl
+/// @note Based off of https://github.com/g-truc/glm/blob/master/glm/ext/matrix_clip_space.inl
 template<CTL::Type::Math::Operatable T>
 constexpr Matrix<4, 4, T> ortho(
 	T const& left,
@@ -1784,7 +1784,7 @@ constexpr Matrix<4, 4, T> ortho(
 /// @param bottom Bottommost edge of orthographic frustum.
 /// @param top Topmost edge of orthographic frustum.
 /// @return Resulting matrix.
-/// @link https://github.com/g-truc/glm/blob/master/glm/ext/matrix_clip_space.inl
+/// @note Based off of https://github.com/g-truc/glm/blob/master/glm/ext/matrix_clip_space.inl
 template<CTL::Type::Math::Operatable T>
 constexpr Matrix<4, 4, T> infiniteOrtho(
 	T const& left,
@@ -1810,7 +1810,7 @@ constexpr Matrix<4, 4, T> infiniteOrtho(
 /// @param zNear Near clip plane.
 /// @param zFar Far clip plane.
 /// @return Resulting matrix.
-/// @link https://github.com/g-truc/glm/blob/master/glm/ext/matrix_clip_space.inl
+/// @note Based off of https://github.com/g-truc/glm/blob/master/glm/ext/matrix_clip_space.inl
 template<CTL::Type::Math::Operatable T>
 constexpr Matrix<4, 4, T> frustum(
 	T const& left,
@@ -1838,7 +1838,7 @@ constexpr Matrix<4, 4, T> frustum(
 /// @param zNear Near clip plane.
 /// @param zFar Far clip plane.
 /// @return Resulting matrix.
-/// @link https://github.com/g-truc/glm/blob/master/glm/ext/matrix_clip_space.inl
+/// @note Based off of https://github.com/g-truc/glm/blob/master/glm/ext/matrix_clip_space.inl
 template<CTL::Type::Math::Operatable T>
 constexpr Matrix<4, 4, T> perspective(
 	T const& fovy,
@@ -1864,7 +1864,7 @@ constexpr Matrix<4, 4, T> perspective(
 /// @param zNear Near clip plane.
 /// @param zFar Far clip plane.
 /// @return Resulting matrix.
-/// @link https://github.com/g-truc/glm/blob/master/glm/ext/matrix_clip_space.inl
+/// @note Based off of https://github.com/g-truc/glm/blob/master/glm/ext/matrix_clip_space.inl
 template<CTL::Type::Math::Operatable T>
 constexpr Matrix<4, 4, T> perspectiveFOV(
 	T const& fov,
@@ -1890,7 +1890,7 @@ constexpr Matrix<4, 4, T> perspectiveFOV(
 /// @param fovy Field of view.
 /// @param zNear Near clip plane.
 /// @return Resulting matrix.
-/// @link https://github.com/g-truc/glm/blob/master/glm/ext/matrix_clip_space.inl 
+/// @note Based off of https://github.com/g-truc/glm/blob/master/glm/ext/matrix_clip_space.inl 
 template<CTL::Type::Math::Operatable T>
 constexpr Matrix<4, 4, T> infinitePerspective(
 	T const& fovy,
@@ -1915,7 +1915,7 @@ constexpr Matrix<4, 4, T> infinitePerspective(
 /// @tparam T Matrix element type.
 /// @param mat Matrix to get euler angles from.
 /// @return Euler angles.
-/// @link https://github.com/g-truc/glm/blob/master/glm/gtx/euler_angles.inl
+/// @note Based off of https://github.com/g-truc/glm/blob/master/glm/gtx/euler_angles.inl
 template<CTL::Type::Math::Operatable T>
 constexpr Vector3 getEulerAnglesYXZ(Matrix<4, 4, T> const& mat) {
 	float T1 = atan2(mat[2][0], mat[2][2]);
@@ -1931,7 +1931,7 @@ constexpr Vector3 getEulerAnglesYXZ(Matrix<4, 4, T> const& mat) {
 /// @tparam T Matrix element type.
 /// @param mat Matrix to get euler angles from.
 /// @return Euler angles.
-/// @link https://github.com/g-truc/glm/blob/master/glm/gtx/euler_angles.inl
+/// @note Based off of https://github.com/g-truc/glm/blob/master/glm/gtx/euler_angles.inl
 template<CTL::Type::Math::Operatable T>
 constexpr Vector3 getEulerAnglesXYZ(Matrix<4, 4, T> const& mat) {
 	float T1 = atan2(mat[2][1], mat[2][2]);

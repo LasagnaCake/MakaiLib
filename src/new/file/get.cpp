@@ -193,7 +193,8 @@ BinaryData<> Makai::File::loadBinary(String const& path) {
 		BinaryData<> data;
 		data.resize(fsize, 0);
 		// Read & close file
-		file.read((char*)data.data(), fsize);
+		if(static_cast<std::streamsize>(fsize) != file.readsome((char*)data.data(), fsize))
+			fileLoadError(path, "Failure to read entire file!");
 		file.close();
 		// Return data
 		return data;

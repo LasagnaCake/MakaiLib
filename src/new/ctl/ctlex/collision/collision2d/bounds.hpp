@@ -153,7 +153,7 @@ namespace Collision::C2D {
 	///		
 	///		Also, the ellipses do not rotate with the shape.
 	///		Their angles are separate from the capsule's own angle.
-	/// @link https://en.wikipedia.org/wiki/Stadium_(geometry)
+	/// @note Based off of https://en.wikipedia.org/wiki/Stadium_(geometry)
 	struct Capsule: Follows<Circle> {
 		using Bounded::Bounded;
 
@@ -203,12 +203,10 @@ namespace Collision::C2D {
 		/// @param angle Angle.
 		constexpr Ray(
 			Vector2 const& position,
-			float const length = 1,
-			float const angle = 0
+			Vector2 const& direction
 		):
 			position(position),
-			length(length),
-			angle(angle) {}
+			direction(direction) {}
 
 		/// @brief Copy constructor (defaulted).
 		constexpr Ray(Ray const& other)	= default;
@@ -219,15 +217,13 @@ namespace Collision::C2D {
 		/// @param distance Distance to line origin.
 		/// @return Point at distance.
 		constexpr Vector2 pointAt(float const distance) const {
-			return Math::angleV2(angle) * distance;
+			return direction.normalized() * distance;
 		}
 
 		/// @brief Ray position.
 		Vector2 position;
-		/// @brief Ray length.
-		float length = 1;
-		/// @brief Ray angle.
-		float angle = 0;
+		/// @brief Ray direction.
+		Vector2 direction;
 	};
 
 	/// @brief Convex shape bound with dynamic vertex count.
