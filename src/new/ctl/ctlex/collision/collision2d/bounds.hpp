@@ -226,7 +226,7 @@ namespace Collision::C2D {
 		Vector2 direction;
 	};
 
-	/// @brief Shape bound with dynamic vertex count.
+	/// @brief Convex shape bound with dynamic vertex count.
 	struct Shape: Follows<Ray> {
 		/// @brief Empty constructor.
 		constexpr Shape() {}
