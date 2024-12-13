@@ -2,6 +2,7 @@
 #define CTL_EX_COLLISION_COLLISION2D_WITHINBOUNDS_H
 
 #include "bounds.hpp"
+#include "../gjk.hpp"
 
 CTL_EX_NAMESPACE_BEGIN
 
@@ -73,16 +74,6 @@ namespace Collision::C2D {
 	/// @warning Currently unimplemented.
 	[[gnu::warning("Unimplemented!")]]
 	constexpr bool withinBounds(Vector2 const& a, Shape const& b) {
-		return false;
-	}
-
-	/// @brief Point-to-Polygon bounds detection.
-	/// @param point Point to check.
-	/// @param area Bounds to check against.
-	/// @return Whether bounds overlap.
-	/// @warning Currently unimplemented.
-	[[gnu::warning("Unimplemented!")]]
-	constexpr bool withinBounds(Vector2 const& a, Polygon const& b) {
 		return false;
 	}
 
@@ -284,69 +275,7 @@ namespace Collision::C2D {
 	/// @warning Currently unimplemented.
 	[[gnu::warning("Unimplemented!")]]
 	constexpr bool withinBounds(Shape const& a, Shape const& b) {
-		return false;
-	}
-
-	// Polygon
-
-	/// @brief Box-to-Polygon bounds detection.
-	/// @param a Bounds to check.
-	/// @param b Bounds to check against.
-	/// @return Whether bounds overlap.
-	/// @warning Currently unimplemented.
-	[[gnu::warning("Unimplemented!")]]
-	constexpr bool withinBounds(Box const& a, Polygon const& b) {
-		return false;
-	}
-
-	/// @brief Circle-to-Polygon bounds detection.
-	/// @param a Bounds to check.
-	/// @param b Bounds to check against.
-	/// @return Whether bounds overlap.
-	/// @warning Currently unimplemented.
-	[[gnu::warning("Unimplemented!")]]
-	constexpr bool withinBounds(Circle const& a, Polygon const& b) {
-		return false;
-	}
-
-	/// @brief Capsule-to-Polygon bounds detection.
-	/// @param a Bounds to check.
-	/// @param b Bounds to check against.
-	/// @return Whether bounds overlap.
-	/// @warning Currently unimplemented.
-	[[gnu::warning("Unimplemented!")]]
-	constexpr bool withinBounds(Capsule const& a, Polygon const& b) {
-		return false;
-	}
-
-	/// @brief Ray-to-Polygon bounds detection.
-	/// @param a Bounds to check.
-	/// @param b Bounds to check against.
-	/// @return Whether bounds overlap.
-	/// @warning Currently unimplemented.
-	[[gnu::warning("Unimplemented!")]]
-	constexpr bool withinBounds(Ray const& a, Polygon const& b) {
-		return false;
-	}
-
-	/// @brief Shape-to-Polygon bounds detection.
-	/// @param a Bounds to check.
-	/// @param b Bounds to check against.
-	/// @return Whether bounds overlap.
-	/// @warning Currently unimplemented.
-	[[gnu::warning("Unimplemented!")]]
-	constexpr bool withinBounds(Shape const& a, Polygon const& b) {
-		return false;
-	}
-
-	/// @brief Polygon-to-Polygon bounds detection.
-	/// @param a Bounds to check.
-	/// @param b Bounds to check against.
-	/// @return Whether bounds overlap.
-	/// @warning Currently unimplemented.
-	[[gnu::warning("Unimplemented!")]]
-	constexpr bool withinBounds(Polygon const& a, Polygon const& b) {
-		return false;
+		return CTL::Ex::Collision::Impl::GJK::check<2>(a, b);
 	}
 
 	// Flipped Functions
@@ -416,17 +345,6 @@ namespace Collision::C2D {
 		return withinBounds(b, a);
 	}
 
-	/// @brief Polygon-to-Bounds bounds detection.
-	/// @tparam T Bounds type.
-	/// @param a Bounds to check.
-	/// @param b Bounds to check against.
-	/// @return Whether bounds overlap.
-	/// @return Depending on the shape, may be potentially unimplemented.
-	template<Type::Ex::Collision::C2D::Collidable T>
-	constexpr bool withinBounds(Polygon const& a, T const& b) {
-		return withinBounds(b, a);
-	}
-
 	// CollisionShape
 	
 	/// @brief Shape-to-Bounds bounds detection.
@@ -444,7 +362,6 @@ namespace Collision::C2D {
 			case CollisionType::CT_CAPSULE:	return withinBounds((Capsule)a,	b);
 			case CollisionType::CT_RAY:		return withinBounds((Ray)a,		b);
 			case CollisionType::CT_SHAPE:	return withinBounds((Shape)a,	b);
-			case CollisionType::CT_POLYGON:	return withinBounds((Polygon)a,	b);
 		}
 	}
 
@@ -472,7 +389,6 @@ namespace Collision::C2D {
 			case CollisionType::CT_CAPSULE:	return withinBounds((Capsule)a,	b);
 			case CollisionType::CT_RAY:		return withinBounds((Ray)a,		b);
 			case CollisionType::CT_SHAPE:	return withinBounds((Shape)a,	b);
-			case CollisionType::CT_POLYGON:	return withinBounds((Polygon)a,	b);
 		}
 	}
 }

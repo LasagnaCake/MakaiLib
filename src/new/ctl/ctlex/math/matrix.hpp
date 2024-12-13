@@ -1324,16 +1324,16 @@ public:
 		result.scale.x = row[0].length();
 		row[0].normalize();
 		// Compute XY shear factor & orthogonalize 2nd row to 1st
-		skew.z = row[0].dotProd(row[1]);
+		skew.z = row[0].dot(row[1]);
 		row[1] = (row[1] * 1.0) + (row[0] * -skew.z);
 		// Compute Y scale & normalize second row
 		result.scale.y = row[1].length();
 		row[1].normalize();
 		skew.z /= result.scale.y;
 		// Compute remaining shears & orthogonalize 3rd row
-		skew.y = row[0].dotProd(row[2]);
+		skew.y = row[0].dot(row[2]);
 		row[2] = (row[2] * 1.0) + (row[0] * -skew.y);
-		skew.x = row[1].dotProd(row[2]);
+		skew.x = row[1].dot(row[2]);
 		row[2] = (row[2] * 1.0) + (row[1] * -skew.x);
 		// Get Z scale & normalize third row
 		result.scale.z = row[2].length();
@@ -1341,7 +1341,7 @@ public:
 		skew.y /= result.scale.z;
 		skew.x /= result.scale.z;
 		// Check for coordinate flip
-		if (row[0].mixProd(row[1], row[2]) < 0)
+		if (row[0].mix(row[1], row[2]) < 0)
 			for (usize i = 0; i < 3; i++) {
 				result.scale[i] *= DataType(-1);
 				row[i] *= DataType(-1);
@@ -1730,8 +1730,8 @@ typedef Matrix4i Mat4i;
 /// @note Based off of https://github.com/g-truc/glm/blob/master/glm/ext/matrix_transform.inl
 constexpr Matrix4x4 lookAt(Vector3 const& eye, Vector3 const& at, Vector3 const& up) {
 	Vector3 const f((at - eye).normalized());
-	Vector3 const s(f.crossProd(up).normalized());
-	Vector3 const u(s.crossProd(f));
+	Vector3 const s(f.cross(up).normalized());
+	Vector3 const u(s.cross(f));
 	Matrix4x4 result(1);
 	result[0][0] = +s.x;
 	result[1][0] = +s.y;
@@ -1742,9 +1742,9 @@ constexpr Matrix4x4 lookAt(Vector3 const& eye, Vector3 const& at, Vector3 const&
 	result[0][2] = -f.x;
 	result[1][2] = -f.y;
 	result[2][2] = -f.z;
-	result[3][0] = -s.dotProd(eye);
-	result[3][1] = -u.dotProd(eye);
-	result[3][2] = +f.dotProd(eye);
+	result[3][0] = -s.dot(eye);
+	result[3][1] = -u.dot(eye);
+	result[3][2] = +f.dot(eye);
 	return result;
 }
 

@@ -578,7 +578,7 @@ class Vector2: Ordered {
 		/// @brief Returns the dot product with another vector.
 		/// @param vec Vector to get dot product with.
 		/// @return Dot product between vectors.
-		constexpr float dotProd(Vector2 const& vec) const {
+		constexpr float dot(Vector2 const& vec) const {
 			Vector2 mult = (*this) * vec;
 			return mult.x + mult.y;
 		}
@@ -586,7 +586,7 @@ class Vector2: Ordered {
 		/// @brief Returns the cross product with another vector.
 		/// @param vec Vector to get cross product with.
 		/// @return Cross product between vectors.
-		constexpr float crossProd(Vector2 const& vec) const {
+		constexpr float cross(Vector2 const& vec) const {
 			return (x * vec.y) - (y * vec.x);
 		}
 
@@ -808,7 +808,7 @@ class Vector3: Ordered {
 		/// @brief Returns the dot product with another vector.
 		/// @param vec Vector to get dot product with.
 		/// @return Dot product.
-		constexpr float dotProd(Vector3 const& vec) const {
+		constexpr float dot(Vector3 const& vec) const {
 			Vector3 mult = (*this) * vec;
 			return mult.x + mult.y + mult.z;
 		}
@@ -816,7 +816,7 @@ class Vector3: Ordered {
 		/// @brief Returns the cross product with another vector.
 		/// @param vec Vector to get cross product with.
 		/// @return Cross product.
-		constexpr Vector3 crossProd(Vector3 const& vec) const {
+		constexpr Vector3 cross(Vector3 const& vec) const {
 			return Vector3(
 				(y * vec.z) - (z * vec.y),
 				(z * vec.x) - (x * vec.z),
@@ -828,8 +828,8 @@ class Vector3: Ordered {
 		/// @param a Vector to get mixed product with.
 		/// @param b Vector to get mixed product with.
 		/// @return Mixed product.
-		constexpr float mixProd(Vector3 const& a, Vector3 const& b) const {
-			return dotProd(a.crossProd(b));
+		constexpr float mix(Vector3 const& a, Vector3 const& b) const {
+			return dot(a.cross(b));
 		}
 
 		/// @brief Returns the X and Y components.
@@ -1084,7 +1084,7 @@ class Vector4: Ordered {
 		/// @brief Returns the dot product with another vector.
 		/// @param vec Vector to get dot product with.
 		/// @return Dot product.
-		constexpr float dotProd(Vector4 const& vec) const {
+		constexpr float dot(Vector4 const& vec) const {
 			Vector4 mult = (*this) * vec;
 			return mult.x + mult.y + mult.z + mult.w;
 		}
@@ -1132,6 +1132,16 @@ typedef Vector2 Vec2;
 typedef Vector3 Vec3;
 /// @brief `Vector4` shorthand.
 typedef Vector4 Vec4;
+
+/// @brief Decays to a vector of the given dimension.
+/// @tparam D Dimension.
+template<usize D>
+using Vector	= CTL::Meta::NthType<D, float, Vector2, Vector3, Vector4>;
+
+/// @brief Decays to a vector of the given dimension.
+/// @tparam D Dimension.
+template<usize D>
+using Vec		= Vector<D>;
 
 /// @brief Transformation representation.
 /// @tparam TPosition Position component.
@@ -1381,7 +1391,7 @@ constexpr List<Vector2> srpTransform(List<Vector2> vec, Vector2 const& pos, floa
 /// @param surface Surface to reflect by.
 /// @return Reflected vector.
 constexpr Vector2 reflect(Vector2 const& normal, Vector2 const& surface) {
-	return surface * (normal - 2.0 * normal.dotProd(surface));
+	return surface * (normal - 2.0 * normal.dot(surface));
 }
 
 /// @brief Linearly interpolates two vectors by a certain amount.

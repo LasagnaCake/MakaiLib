@@ -226,7 +226,7 @@ namespace Collision::C2D {
 		Vector2 direction;
 	};
 
-	/// @brief Convex shape bound with dynamic vertex count.
+	/// @brief Shape bound with dynamic vertex count.
 	struct Shape: Follows<Ray> {
 		/// @brief Empty constructor.
 		constexpr Shape() {}
@@ -252,31 +252,10 @@ namespace Collision::C2D {
 		/// @brief Move constructor (defaulted).
 		constexpr Shape(Shape&& other)		= default;
 		
+		/// @brief Shape transform.
+		Transform2D trans;
 		/// @brief Shape vertices.
 		List<Vector2>	points;
-	};
-
-	/// @brief Bound formed from several `Shape`s.
-	struct Polygon: Follows<Shape> {
-		/// @brief Constructs a shape bound.
-		/// @param trans Polygon transform.
-		/// @param shapes Polygon pieces.
-		constexpr Polygon(
-			Transform2D const& trans,
-			List<Shape> const& shapes
-		):
-			trans(trans),
-			shapes(shapes) {}
-
-		/// @brief Copy constructor (defaulted).
-		constexpr Polygon(Polygon const& other)	= default;
-		/// @brief Move constructor (defaulted).
-		constexpr Polygon(Polygon&& other)		= default;
-
-		/// @brief Polygon transform.
-		Transform2D trans;
-		/// @brief Polygon pieces.
-		List<Shape> shapes;
 	};
 
 	/// @brief Bound-agnostic collision data.
@@ -291,8 +270,6 @@ namespace Collision::C2D {
 		Ray		ray;
 		/// @brief Shape bound.
 		Shape	shape;
-		/// @brief Polygon bound.
-		Polygon	polygon;
 
 		/// @brief Empty constructor.
 		constexpr CollisionData()	{}
@@ -312,9 +289,6 @@ namespace Collision::C2D {
 		/// @brief Constructs the data from a shape bound.
 		/// @param value Bound to copy from.
 		constexpr CollisionData(Shape const& value):	shape(value)	{}
-		/// @brief Constructs the data from a polygon bound.
-		/// @param value Bound to copy from.
-		constexpr CollisionData(Polygon const& value):	polygon(value)	{}
 
 		/// @brief Destructor.
 		constexpr ~CollisionData()	{}
@@ -327,8 +301,7 @@ namespace Collision::C2D {
 		CT_CIRCLE	= Circle::ID,
 		CT_CAPSULE	= Capsule::ID,
 		CT_RAY		= Ray::ID,
-		CT_SHAPE	= Shape::ID,
-		CT_POLYGON	= Polygon::ID
+		CT_SHAPE	= Shape::ID
 	};
 
 	/// @brief Gets a bound type by its ID.
@@ -340,8 +313,7 @@ namespace Collision::C2D {
 		Circle,
 		Capsule,
 		Ray,
-		Shape,
-		Polygon
+		Shape
 	>;
 
 	/// @brief Bound-agnostic collision shape.
@@ -382,7 +354,6 @@ namespace Collision::C2D {
 				case CT_CAPSULE:	return data.capsule;
 				case CT_RAY:		return data.ray;
 				case CT_SHAPE:		return data.shape;
-				case CT_POLYGON:	return data.polygon;
 			}
 		}
 		/// @brief Returns the bound type of the collision data.
@@ -426,9 +397,6 @@ namespace Collision::C2D {
 		/// @brief Returns the underlying collision data as a shape bound.
 		/// @return Data as bound.
 		template<CTL::Type::Equal<Shape> T>		constexpr Shape		asType() const	{return data.shape;			}
-		/// @brief Returns the underlying collision data as a polygon bound.
-		/// @return Data as bound.
-		template<CTL::Type::Equal<Polygon> T>	constexpr Polygon	asType() const	{return data.polygon;		}
 
 		/// @brief Underlying collision data.
 		CollisionData	data;
