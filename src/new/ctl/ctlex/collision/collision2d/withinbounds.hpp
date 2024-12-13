@@ -36,7 +36,7 @@ namespace Collision::C2D {
 	constexpr bool withinBounds(Vector2 const& point, Circle const& area) {
 		// Calculate circle stretch
 		float angle		= point.angleTo(area.position);
-		float radius	= area.radiusAt(angle + area.rotation);
+		float radius	= area.radiusAt(angle);
 		// Check collision
 		return point.distanceTo(area.position) < (radius);
 	}
@@ -88,8 +88,8 @@ namespace Collision::C2D {
 	constexpr bool withinBounds(Circle const& a, Circle const& b) {
 		// Calculate circle stretches
 		float angle		= a.position.angleTo(b.position);
-		float radiusA	= a.radiusAt(angle + a.rotation);
-		float radiusB	= b.radiusAt(angle + b.rotation);
+		float radiusA	= a.radiusAt(angle);
+		float radiusB	= b.radiusAt(angle);
 		// Check collision
 		return a.position.distanceTo(b.position) < (radiusA + radiusB);
 	}

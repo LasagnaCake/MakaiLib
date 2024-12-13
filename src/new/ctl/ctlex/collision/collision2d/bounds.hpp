@@ -130,8 +130,8 @@ namespace Collision::C2D {
 		/// @return Radius at the given angle.
 		constexpr float radiusAt(float const angle) const {
 			return
-				(CTL::Math::absin(angle) * radius.x)
-			+	(CTL::Math::abcos(angle) * radius.y)
+				(CTL::Math::absin(angle + rotation) * radius.x)
+			+	(CTL::Math::abcos(angle + rotation) * radius.y)
 			;
 		}
 
