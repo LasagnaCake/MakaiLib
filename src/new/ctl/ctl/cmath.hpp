@@ -49,11 +49,23 @@ constexpr F atan(F const x) {
 /// @return Arc tangent of Y/X.
 template<Type::Real F>
 constexpr F atan2(F const y, F const x) {
-	constexpr F PI = 3.1415926535897932384626433833;
+	constexpr F PI		= 3.1415926535897932384626433833;
 	if (!(x && y))	return 0;
 	if (x == 0)		return (PI/2) * (y < 0 ? -1 : +1);
 	if (x < 0)		return atan(y/x) + PI * (y < 0 ? -1 : +1);
-	return atan(y/x);
+	return atan<F>(y/x);
+}
+
+template<Type::Real F>
+constexpr F exp(F const v) {
+	constexpr F euler	= 2.7182818284590452353602874714;
+	return pow<F>(euler, v);
+}
+
+template<Type::Real F>
+constexpr F sqrt(F const v) {
+	constexpr F ln2		= 0.6931471805599453094172321215;
+	return exp<F>(ln2 / v);
 }
 
 // TODO: Finally put those advanced calculus classes to use & implement constexpr trig functions
