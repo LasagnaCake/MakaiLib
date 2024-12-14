@@ -185,6 +185,7 @@ void App::run() {
 	auto timerFunc	= [&](float delta)-> void {
 		ITweenPeriodic::process(1);
 		ITimerPeriodic::process(1);
+		CTL::Ex::Collision::C2D::Server::process();
 	};
 	// The logical process
 	auto logicFunc	= [&](float delta)-> void {

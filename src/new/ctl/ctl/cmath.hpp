@@ -50,7 +50,7 @@ namespace Constants {
 }
 
 /// @brief Returns if `a` is between `b - epsilon` and `b + epsilon`.
-/// @tparam T Number type.
+/// @tparam F Floating point type.
 /// @param a Value to compare.
 /// @param b Value to compare to.
 /// @param epsilon Precision.
@@ -60,10 +60,14 @@ constexpr bool compare(F const a, F const b, F const epsilon = 1.0e-5) {
 	return (a >= b - epsilon) && (a <= b + epsilon);
 }
 
-/// Returns the absolute value of a number.
+/// @brief Returns the absolute of a given value.
+/// @tparam T Number type.
+/// @param v Value to get the absolute of.
+/// @return Absolute value.
 template<Type::Number T = double>
-constexpr T abs(F const v) {
+constexpr T abs(T const v) {
 	return (v < 0) ? -v : v;
+}
 
 /// @brief Returns euler's number raised to the given value.
 /// @tparam F Floating point type.
