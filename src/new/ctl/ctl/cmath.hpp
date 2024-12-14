@@ -36,15 +36,17 @@ constexpr F log(F const v) {
 		return __builtin_logl(v);
 }
 
+// Based off of https://codingforspeed.com/using-faster-exponential-approximation/
 template<Type::Real F>
-constexpr F exp(F const v) {
-	constexpr F euler	= 2.7182818284590452353602874714;
-	return pow<F>(euler, v);
+constexpr F exp(F value, usize const precision = 16) {
+	value = 1.0 + value / pow(2, precision);
+	for (usize i = 0; i < pecision; ++i)
+		value *= value;
+	return value;
 }
 
 template<Type::Real F>
 constexpr F sqrt(F const v) {
-	constexpr F ln2		= 0.6931471805599453094172321215;
 	return exp<F>(log<F>(x) / F(2));
 }
 
