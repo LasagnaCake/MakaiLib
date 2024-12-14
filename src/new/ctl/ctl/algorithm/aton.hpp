@@ -255,7 +255,7 @@ constexpr bool atof(T const* const str, usize size, F& out) {
 		return false;
 	delete[] ns;
 	// Convert integer to string by "reverse scientific notation" and return
-	out = ival * pow<F>(10, -ssize(size-sep));
+	out = ival * Math::pow<F>(10, -ssize(size-sep));
 	return true;
 }
 
@@ -352,7 +352,7 @@ constexpr ssize itoa(I val, T* const buf, usize const bufSize, I const& base = 1
 template<Type::Real F, Type::ASCII T>
 constexpr ssize ftoa(F val, T* buf, usize bufSize, usize const precision = sizeof(F)*2) {
 	// Get amount of zeroes to add to number
-	usize zeroes = pow<F>(10, precision);
+	usize zeroes = Math::pow<F>(10, precision);
 	// If value is negative, append negative sign and invert value
 	if (val < 0) {
 		*(buf++) = '-';

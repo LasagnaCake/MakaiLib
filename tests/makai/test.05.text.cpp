@@ -44,7 +44,9 @@ struct TestApp: Makai::App {
 	}
 
 	void onUpdate(float delta) override {
-		camera.eye	= Makai::Vec3(sin(getCurrentCycle() / 180.0), 0, cos(getCurrentCycle() / 180.0)) * 5.0;
+		float as, ac;
+		Makai::Math::sincos<float>((getCurrentCycle() / 180.0), as, ac);
+		camera.eye	= Makai::Vec3(as, 0, ac) * 5.0;
 	}
 };
 

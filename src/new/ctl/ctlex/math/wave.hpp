@@ -4,6 +4,7 @@
 #include "../../ctl/exnamespace.hpp"
 #include "../../ctl/container/string.hpp"
 #include "../../ctl/container/function.hpp"
+#include "../../ctl/math/core.hpp"
 
 CTL_EX_NAMESPACE_BEGIN
 
@@ -33,7 +34,11 @@ namespace Math::Wave {
 	WAVE_FUNCTION(absSine)		{return absin(t);						}
 	WAVE_FUNCTION(absHalfSine)	{return abs(halfSine(t));				}
 
-	WAVE_FUNCTION(triangle)			{return (absin(t*0.5 + (HPI*0.5))-abcos(t*0.5 + (HPI*0.5)));	}
+	WAVE_FUNCTION(triangle) {
+		float as, ac;
+		CTL::Math::absincos(t*0.5 + (HPI*0.5), as, ac);
+		return (as-ac);
+	}
 	WAVE_FUNCTION(halfTriangle)		{return ramp(t/PI  + 2.5) * 2.0;								}
 	WAVE_FUNCTION(absTriangle)		{return abs(triangle(t));										}
 	WAVE_FUNCTION(absHalfTriangle)	{return abs(halfTriangle(t));									}

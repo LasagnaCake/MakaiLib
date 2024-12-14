@@ -29,7 +29,7 @@ namespace Math::P3 {
 		float const size	= 1,
 		float const angle	= 0
 	) {
-		float const constant	= size * cos(pi / sides);
+		float const constant	= size * cos(PI / sides);
 		float const shape		= (sides / 2.0) * theta + angle;
 		return constant / cos((2.0 / sides) * asin(cos(shape)));
 	}
@@ -46,8 +46,8 @@ namespace Math::P3 {
 		float const size	= 1,
 		float const angle	= 0
 	) {
-		float const constant	= (size * sqrt3) / (sides * sqrt(sides));
-		float const shape		= (theta * sides + angle - hpi) / 2.0;
+		float const constant	= (size * SQRT3) / (sides * Math::sqrt(sides));
+		float const shape		= (theta * sides + angle - HPI) / 2.0;
 		return size - constant * abcos(shape);
 	}
 
@@ -63,8 +63,8 @@ namespace Math::P3 {
 		float const size	= 1,
 		float const angle	= 0
 	) {
-		float const constant	= (size * sqrt2) / (sides * 2.0);
-		float const shape		= (theta * sides + angle - hpi) / 2.0;
+		float const constant	= (size * SQRT2) / (sides * 2.0);
+		float const shape		= (theta * sides + angle - HPI) / 2.0;
 		return size - constant * abcos(shape);
 	}
 }

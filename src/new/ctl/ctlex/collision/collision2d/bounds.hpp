@@ -134,10 +134,9 @@ namespace Collision::C2D {
 		/// @param angle Angle to get the radius for.
 		/// @return Radius at the given angle.
 		constexpr float radiusAt(float const angle) const {
-			return
-				(CTL::Math::absin(angle + rotation) * radius.x)
-			+	(CTL::Math::abcos(angle + rotation) * radius.y)
-			;
+			float as, ac;
+			CTL::Math::absincos(angle + rotation, as, ac);
+			return (as * radius.x) + (ac * radius.y);
 		}
 
 		/// @brief Circle position.

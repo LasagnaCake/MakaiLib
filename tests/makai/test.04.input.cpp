@@ -115,11 +115,9 @@ struct TestApp: Makai::App {
 			) / 60.0
 		);
 		crot.x = Makai::Math::clamp<float>(crot.x, -2, 2);
-		camera.at = Makai::Vec3(
-			sin(crot.y),
-			crot.x,
-			cos(crot.y)
-		);
+		float cs, cc;
+		Makai::Math::sincos(crot.y, cs, cc);
+		camera.at = Makai::Vec3(cs, crot.x, cc);
 		//camera.at = Makai::Math::angleV3(crot, Makai::Math::RotationAxis::POS_Z);
 		//camera.at = Vec3(0, 0, 1);
 	}

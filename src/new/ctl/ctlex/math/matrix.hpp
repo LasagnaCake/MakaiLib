@@ -339,12 +339,10 @@ public:
 	/// @note Based off of https://github.com/g-truc/glm/blob/master/glm/gtx/euler_angles.inl
 	constexpr static Matrix<4, 4, DataType> fromEulerXYZ(Vector3 const& angle) {
 		// Get sines and cosines
-		DataType c1 = cos(-angle.x);
-		DataType c2 = cos(-angle.y);
-		DataType c3 = cos(-angle.z);
-		DataType s1 = sin(-angle.x);
-		DataType s2 = sin(-angle.y);
-		DataType s3 = sin(-angle.z);
+		float c1, c2, c3, s1, s2, s3;
+		CTL::Math::sincos<float>(-angle.x, s1, c1);
+		CTL::Math::sincos<float>(-angle.y, s2, c2);
+		CTL::Math::sincos<float>(-angle.z, s3, c3);
 		// Formulate matrix
 		Matrix<4, 4, DataType> result;
 		result[0][0] = c2 * c3;
@@ -373,12 +371,10 @@ public:
 	/// @note Based off of https://github.com/g-truc/glm/blob/master/glm/gtx/euler_angles.inl
 	constexpr static Matrix<4, 4, DataType> fromEulerYXZ(Vector3 const& angle) {
 		// Get sines and cosines
-		DataType tmp_ch = cos(-angle.y);
-		DataType tmp_sh = sin(-angle.y);
-		DataType tmp_cp = cos(-angle.x);
-		DataType tmp_sp = sin(-angle.x);
-		DataType tmp_cb = cos(-angle.z);
-		DataType tmp_sb = sin(-angle.z);
+		float tmp_ch, tmp_sh, tmp_cp, tmp_sp, tmp_cb, tmp_sb;
+		CTL::Math::sincos<float>(-angle.y, tmp_sh, tmp_ch);
+		CTL::Math::sincos<float>(-angle.x, tmp_sp, tmp_cp);
+		CTL::Math::sincos<float>(-angle.z, tmp_sb, tmp_cb);
 		// Compute matrix
 		Matrix<4, 4, DataType> result;
 		result[0][0] = tmp_ch * tmp_cb + tmp_sh * tmp_sp * tmp_sb;
@@ -1148,10 +1144,12 @@ public:
 		pos[2][0] = trans.position.x;
 		pos[2][1] = trans.position.y;
 		// Rotation
-		rot[0][0] = cos(trans.rotation);
-		rot[1][0] = -sin(trans.rotation);
-		rot[0][1] = sin(trans.rotation);
-		rot[1][1] = cos(trans.rotation);
+		DataType s, c;
+		CTL::Math::sincos(trans.rotation, s, c);
+		rot[0][0] = c;
+		rot[1][0] = -s;
+		rot[0][1] = s;
+		rot[1][1] = c;
 		// Result
 		(*this) = pos * rot * scale * (*this);
 		return *this;
@@ -1349,10 +1347,10 @@ public:
 		// Get euler angles
 		result.rotation.y = asin(-row[0][2]);
 		if (cos(result.rotation.x) != 0) {
-			result.rotation.x = atan2(row[1][2], row[2][2]);
-			result.rotation.z = atan2(row[0][1], row[0][0]);
+			result.rotation.x = CTL::Math::atan2(row[1][2], row[2][2]);
+			result.rotation.z = CTL::Math::atan2(row[0][1], row[0][0]);
 		} else {
-			result.rotation.x = atan2(-row[2][0], row[1][1]);
+			result.rotation.x = CTL::Math::atan2(-row[2][0], row[1][1]);
 			result.rotation.z = 0;
 		}
 		// Return result
@@ -1918,12 +1916,12 @@ constexpr Matrix<4, 4, T> infinitePerspective(
 /// @note Based off of https://github.com/g-truc/glm/blob/master/glm/gtx/euler_angles.inl
 template<CTL::Type::Math::Operatable T>
 constexpr Vector3 getEulerAnglesYXZ(Matrix<4, 4, T> const& mat) {
-	float T1 = atan2(mat[2][0], mat[2][2]);
-	float C2 = sqrt(mat[0][1]*mat[0][1] + mat[1][1]*mat[1][1]);
-	float T2 = atan2(-mat[2][1], C2);
-	float S1 = sin(T1);
-	float C1 = cos(T1);
-	float T3 = atan2(S1*mat[1][2] - C1*mat[1][0], C1*mat[0][0] - S1*mat[0][2]);
+	float T1 = CTL::Math::atan2(mat[2][0], mat[2][2]);
+	float C2 = CTL::Math::sqrt(mat[0][1]*mat[0][1] + mat[1][1]*mat[1][1]);
+	float T2 = CTL::Math::atan2(-mat[2][1], C2);
+	float S1, C1;
+	CTL::Math::sincos<float>(T1, S1, C1);
+	float T3 = CTL::Math::atan2(S1*mat[1][2] - C1*mat[1][0], C1*mat[0][0] - S1*mat[0][2]);
 	return Vector3(T1, T2, T3);
 }
 
@@ -1934,12 +1932,12 @@ constexpr Vector3 getEulerAnglesYXZ(Matrix<4, 4, T> const& mat) {
 /// @note Based off of https://github.com/g-truc/glm/blob/master/glm/gtx/euler_angles.inl
 template<CTL::Type::Math::Operatable T>
 constexpr Vector3 getEulerAnglesXYZ(Matrix<4, 4, T> const& mat) {
-	float T1 = atan2(mat[2][1], mat[2][2]);
-	float C2 = sqrt(mat[0][0]*mat[0][0] + mat[1][0]*mat[1][0]);
-	float T2 = atan2(-mat[2][0], C2);
-	float S1 = sin(T1);
-	float C1 = cos(T1);
-	float T3 = atan2(S1*mat[0][2] - C1*mat[0][1], C1*mat[1][1] - S1*mat[1][2]);
+	float T1 = CTL::Math::atan2(mat[2][1], mat[2][2]);
+	float C2 = CTL::Math::sqrt(mat[0][0]*mat[0][0] + mat[1][0]*mat[1][0]);
+	float T2 = CTL::Math::atan2(-mat[2][0], C2);
+	float S1, C1;
+	CTL::Math::sincos<float>(T1, S1, C1);
+	float T3 = CTL::Math::atan2(S1*mat[0][2] - C1*mat[0][1], C1*mat[1][1] - S1*mat[1][2]);
 	return Vector3(T1, T2, T3);
 }
 

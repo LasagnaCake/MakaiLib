@@ -21,38 +21,27 @@ namespace Type::Math {
 
 /// @brief Math functions.
 namespace Math {
-	/// @brief Approximate value of the square root of 2, to the first 28 decimal places.
-	constexpr const double	sqrt2		= 1.4142135623730950488016887242;
-	/// @brief Approximate value of half of the square root of 2.
-	constexpr const double	hsqrt2		= sqrt2 / 2.0;
-	/// @brief Approximate value of a quarter of the square root of 2.
-	constexpr const double	qsqrt2		= sqrt2 / 4.0;
-	/// @brief Approximate value of the square root of 3, to the first 28 decimal places.
-	constexpr const double	sqrt3		= 1.7320508075688772935274463415;
-	/// @brief Approximate value of half of the square root of 3.
-	constexpr const double	hsqrt3		= sqrt2 / 2.0;
-	/// @brief Approximate value of a quarter of the square root of 3.
-	constexpr const double	qsqrt3		= sqrt2 / 4.0;
-	/// @brief Approximate value of the natural logarithm of 2, to the first 28 decimal places.
-	constexpr const double	ln2			= 0.6931471805599453094172321215;
-	/// @brief Approximate value of pi, to the first 28 decimal places.
-	constexpr const double	pi			= 3.1415926535897932384626433833;
-	/// @brief Approximate value of half of pi.
-	constexpr const double	hpi			= pi / 2.0;
-	/// @brief Approximate value of a quarter of pi.
-	constexpr const double	qpi			= pi / 4.0;
-	/// @brief Approximate value of tau (double of pi).
-	constexpr const double	tau			= 6.2831853071795864769252867666;
-	/// @brief Approximate value of euler's number.
-	constexpr const double	euler		= 2.7182818284590452353602874714;
-	/// @brief Approximate value of 180 divided by pi.
-	constexpr const double	degrad		= 180.0 / pi;
-	/// @brief Approximate value of this random number I made up.
-	constexpr const double	maribel		= euler - (11.0 - 6.0 * sqrt2) / 5.0;
-	/// @brief Approximate value of phi.
-	constexpr const double	phi			= 1.6180339887498948482045868343;
-	/// @brief Approximate value of tau divided by phi.
-	constexpr const double	tauphi		= tau / phi;
+	/// @brief Math constants.
+	namespace Constants {
+		/// @brief Approximate value of half of the square root of 2.
+		constexpr const double	HSQRT2		= SQRT2 / 2.0;
+		/// @brief Approximate value of a quarter of the square root of 2.
+		constexpr const double	QSQRT2		= SQRT2 / 4.0;
+		/// @brief Approximate value of half of the square root of 3.
+		constexpr const double	HSQRT3		= SQRT2 / 2.0;
+		/// @brief Approximate value of a quarter of the square root of 3.
+		constexpr const double	QSQRT3		= SQRT2 / 4.0;
+		/// @brief Approximate value of half of pi.
+		constexpr const double	HPI			= PI / 2.0;
+		/// @brief Approximate value of a quarter of pi.
+		constexpr const double	QPI			= PI / 4.0;
+		/// @brief Approximate value of 180 divided by pi.
+		constexpr const double	DEGRAD		= 180.0 / PI;
+		/// @brief Approximate value of this random number I made up.
+		constexpr const double	MARIBEL		= EULER - (11.0 - 6.0 * SQRT2) / 5.0;
+		/// @brief Approximate value of tau divided by phi.
+		constexpr const double	TAUPHI		= TAU / PHI;
+	}
 
 	/// @brief Returns the sign of the value.
 	/// @tparam T Value type.
@@ -107,7 +96,7 @@ namespace Math {
 	/// @return Value in radians.
 	template<Type::Math::Operatable T = float>
 	constexpr T radians(T const& deg) requires Type::Arithmetic<T, float> {
-		return (T)(deg / degrad);
+		return (T)(deg / DEGRAD);
 	}
 
 	/// @brief Converts the value, in radians, to degrees.
@@ -116,7 +105,7 @@ namespace Math {
 	/// @return Value in degrees.
 	template<Type::Math::Operatable T = float>
 	constexpr T degrees(T const& rad) requires Type::Arithmetic<T, float> {
-		return (T)(rad * degrad);
+		return (T)(rad * DEGRAD);
 	}
 
 	/// @brief Linearly interpolates between two values.
@@ -139,8 +128,8 @@ namespace Math {
 	/// @return Result of the interpolation.
 	template<Type::Number T = float>
 	constexpr T angleLerp(T const& from, T const& to, T const& by) {
-		T dist	= fmod(to - from, tau);
-		dist	= fmod(2.0 * dist, tau) - dist;
+		T dist	= fmod(to - from, TAU);
+		dist	= fmod(2.0 * dist, TAU) - dist;
 		return (T)(from + dist * by);
 	}
 
@@ -317,6 +306,16 @@ namespace Math {
 	/// @param val Value to get the absolute tangent of.
 	/// @return Absolute tangent of the value.
 	template<Type::Number T = float> constexpr T abtan(T const& val) {return abs(tan(val));}
+	/// @brief Returns the absolute sine and cosine of a value.
+	/// @tparam T Number type.
+	/// @param val Value to get the absolute sine and cosine of.
+	/// @param sin resulting absolute sine.
+	/// @param sin resulting absolute cosine.
+	template<Type::Number T = float> constexpr void absincos(T const& val, T& sin, T& cos) {
+		sincos(val, sin, cos);
+		sin = abs(sin);
+		cos = abs(cos);
+	}
 
 	/// @brief Reflects a given angle in relation to a surface along another angle.
 	/// @param a Angle to reflect.
@@ -389,89 +388,6 @@ namespace Math {
 		return res;
 	}
 }
-
-CTL_NAMESPACE_END
-
-#ifndef SQRT2
-/// @brief Approximate value of the square root of 2, to the first 28 decimal places.
-#define SQRT2 (::CTL::Math::sqrt2)
-#endif // SQRT2
-
-#ifndef HSQRT2
-/// @brief Approximate value of half of the square root of 2.
-#define HSQRT2 (::CTL::Math::hsqrt2)
-#endif // HSQRT2
-
-#ifndef LN2
-/// @brief Approximate value of the natural logarithm of 2, to the first 28 decimal places.
-#define LN2 (::CTL::Math::ln2)
-#endif // LN2
-
-#ifndef PI
-/// @brief Approximate value of pi, to the first 28 decimal places.
-#define PI (::CTL::Math::pi)
-#endif // PI
-
-#ifndef HPI
-/// @brief Approximate value of half of pi.
-#define HPI (::CTL::Math::hpi)
-#endif // HPI
-
-#ifndef QPI
-/// @brief Approximate value of a quarter of pi.
-#define QPI (::CTL::Math::qpi)
-#endif // HPI
-
-#ifndef TAU
-/// @brief Approximate value of tau (double of pi).
-#define TAU (::CTL::Math::tau)
-#endif // TAU
-
-#ifndef EULER
-/// @brief Approximate value of euler's number.
-#define EULER (::CTL::Math::euler)
-#endif // EULER
-
-#ifndef PHI
-/// @brief Approximate value of phi.
-#define PHI (::CTL::Math::phi)
-#endif // PHI
-
-#ifndef DEGRAD
-/// @brief Approximate value of 180 divided by pi.
-#define DEGRAD (::CTL::Math::degrad)
-#endif // DEGRAD
-
-#ifndef MARIBEL
-/// @brief Approximate value of this random number I made up.
-#define MARIBEL (::CTL::Math::maribel)
-#endif // MARIBEL
-
-#ifndef TAUPHI
-/// @brief Approximate value of tau divided by phi.
-#define TAUPHI (::CTL::Math::tauphi)
-#endif // TAUPHI
-
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wliteral-suffix"
-/// @brief Custom floating point literal.
-constexpr float			operator "" f(unsigned long long v)		{return v;	}
-/// @brief Custom floating point literal.
-constexpr float			operator "" F(unsigned long long v)		{return v;	}
-/// @brief Custom double precision point literal.
-constexpr double		operator "" d(unsigned long long v)		{return v;	}
-/// @brief Custom double precision point literal.
-constexpr double		operator "" D(unsigned long long v)		{return v;	}
-/// @brief Custom quadruple precision point literal.
-constexpr long double	operator "" ld(long double v)			{return v;	}
-/// @brief Custom quadruple precision point literal.
-constexpr long double	operator "" LD(long double v)			{return v;	}
-/// @brief Custom quadruple precision point literal.
-constexpr long double	operator "" ld(unsigned long long v)	{return v;	}
-/// @brief Custom quadruple precision point literal.
-constexpr long double	operator "" LD(unsigned long long v)	{return v;	}
-
-CTL_NAMESPACE_BEGIN
 
 /// @brief Math literals.
 namespace Literals::Math {

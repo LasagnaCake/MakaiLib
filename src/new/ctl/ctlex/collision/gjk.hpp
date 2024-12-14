@@ -1,5 +1,5 @@
-#ifndef CTL_EX_COLLISION_COLLISION2D_WITHINBOUNDS_H
-#define CTL_EX_COLLISION_COLLISION2D_WITHINBOUNDS_H
+#ifndef CTL_EX_COLLISION_GJK_H
+#define CTL_EX_COLLISION_GJK_H
 
 #include "../../ctl/ctl.hpp"
 #include "../math/vector.hpp"
@@ -231,4 +231,4 @@ using IBound = GJK::IGJKBound<D>;
 
 CTL_EX_NAMESPACE_END
 
-#endif // CTL_EX_COLLISION_COLLISION2D_WITHINBOUNDS_H
+#endif // CTL_EX_COLLISION_GJK_H

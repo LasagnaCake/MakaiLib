@@ -485,7 +485,7 @@ class Vector2: Ordered {
 		/// @brief Gets the vector's length.
 		/// @brief Length of vector.
 		constexpr float length() const {
-			return sqrt((x * x) + (y * y));
+			return CTL::Math::sqrt((x * x) + (y * y));
 		}
 
 		/// @brief Gets the vector's squared length.
@@ -528,7 +528,7 @@ class Vector2: Ordered {
 		/// @brief Gets the vector's angle.
 		/// @return Angle of vector.
 		constexpr float angle() const {
-			return atan2(x, y) - HPI;
+			return CTL::Math::atan2(x, y) - HPI;
 		}
 
 		/// @brief Gets the vector's angle to another vector.
@@ -715,7 +715,7 @@ class Vector3: Ordered {
 		/// @brief Gets the vector's length.
 		/// @return Length of vector.
 		constexpr float length() const {
-			return sqrt((x * x) + (y * y) + (z * z));
+			return CTL::Math::sqrt((x * x) + (y * y) + (z * z));
 		}
 
 		/// @brief Gets the vector's squared length.
@@ -1008,7 +1008,7 @@ class Vector4: Ordered {
 		/// @brief Gets the vector's length.
 		/// @return Length of vector.
 		constexpr float length() const {
-			return sqrt((x * x) + (y * y) + (z * z) + (w * w));
+			return CTL::Math::sqrt((x * x) + (y * y) + (z * z) + (w * w));
 		}
 
 		/// @brief Gets the vector's squared length.
@@ -1208,8 +1208,8 @@ enum class RotationAxis: usize {
 /// @return Rotated vector.
 constexpr Vector2 rotateV2(Vector2 vec, float const angle) {
 	// Calculate the sine & cosine of the angle
-	float sinA = sin(angle);
-	float cosA = cos(angle);
+	float sinA, cosA;
+	CTL::Math::sincos(angle, sinA, cosA);
 	// Calculate the rotation around the Z axis (i.e. 2D rotation)
 	vec.x = vec.x * cosA - vec.y * sinA;
 	vec.y = vec.x * sinA + vec.y * cosA;
@@ -1232,12 +1232,10 @@ constexpr Vector3 rotateV3(Vector3 vec, Vector3 const& angle) {
 	Vector3 res = vec;
 	#ifndef CTL_EX_SIMPLIFIED_ROTATION_MATH
 	// Get sines and cosines
-	float sinX = sin(angle.x);
-	float cosX = cos(angle.x);
-	float sinY = sin(angle.y);
-	float cosY = cos(angle.y);
-	float sinZ = sin(angle.z);
-	float cosZ = cos(angle.z);
+	float sinX, cosX, sinY, cosY, sinZ, cosZ;
+	CTL::Math::sincos(angle.x, sinX, cosX);
+	CTL::Math::sincos(angle.y, sinY, cosY);
+	CTL::Math::sincos(angle.z, sinZ, cosZ);
 	// Calculate Z axis
 	res.x = (cosZ * res.x) - (sinZ * res.y);
 	res.y = (sinZ * res.x) + (cosZ * res.y);
@@ -1288,7 +1286,9 @@ constexpr Vector3 rotateV3(Vector3 const& vec, Vector2 const& angle, RotationAxi
 /// @param angle Angle to get normal for.
 /// @return Normal to angle.
 constexpr Vector2 angleV2(float const angle) {
-	return Vector2(cos(angle), -sin(angle));
+	float s, c;
+	CTL::Math::sincos(angle, s, c);
+	return Vector2(c, -s);
 }
 
 /// @brief Gets a 3D normal at a given angle around one of the origin's axis.
@@ -1296,17 +1296,19 @@ constexpr Vector2 angleV2(float const angle) {
 /// @param axis Axis to use as rotation pivot.
 /// @return Normal to angle.
 constexpr Vector3 angleV3(float const angle, RotationAxis const& axis = RotationAxis::NEG_Z) {
+	float s, c;
+	CTL::Math::sincos(angle, s, c);
 	switch (axis) {
 	case RotationAxis::POS_X:
 	case RotationAxis::NEG_X:
-		return Vector3(0, cos(angle), -sin(angle));
+		return Vector3(0, c, -s);
 	case RotationAxis::POS_Y:
 	case RotationAxis::NEG_Y:
-		return Vector3(cos(angle), 0, -sin(angle));
+		return Vector3(c, 0, -s);
 	default:
 	case RotationAxis::POS_Z:
 	case RotationAxis::NEG_Z:
-		return Vector3(cos(angle), -sin(angle), 0);
+		return Vector3(c, -s, 0);
 	}
 }
 

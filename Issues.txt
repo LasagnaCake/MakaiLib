@@ -1,3 +1,8 @@
+!!! [ REALLY IMPORTANT ] !!!
+> MEMORY LEAK. I repeat, MEMORY LEAK.
+	> Only on debug mode????
+		> Major suspect: console output
+
 [ Library-specific(?) ]
 > Fullscreen does not work properly
 

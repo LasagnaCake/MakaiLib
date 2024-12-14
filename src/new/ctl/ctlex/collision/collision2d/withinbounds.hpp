@@ -390,8 +390,6 @@ namespace Collision::C2D {
 			case CollisionType::CT_SHAPE:	return withinBounds((Shape)a,	b);
 		}
 	}
-
-	constexpr bool test = withinBounds(Circle(0), Circle(0));
 }
 
 CTL_EX_NAMESPACE_END

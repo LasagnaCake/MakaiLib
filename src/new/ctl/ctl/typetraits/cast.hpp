@@ -2,7 +2,6 @@
 #define CTL_TYPETRAITS_BITCAST_H
 
 #include "../namespace.hpp"
-#include "decay.hpp"
 #ifdef CTL_DO_NOT_USE_BUILTINS
 #include "../memory/memory.hpp"
 #endif // CTL_DO_NOT_USE_BUILTINS
