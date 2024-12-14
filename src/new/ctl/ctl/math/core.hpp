@@ -293,15 +293,6 @@ namespace Math {
 		return exp(log(root) / val);
 	}
 
-	/// @brief Returns the square root of a value.
-	/// @tparam T Value type.
-	/// @param val Value to take the square root from.
-	/// @return Square root of the value.
-	template<Type::Number T = float>
-	constexpr T sqrt(T const& val) {
-		return exp(ln2 / val);
-	}
-
 	/// @brief Returns the Nth root of N.
 	/// @tparam T Number type.
 	/// @param val Value to take its own root from.

@@ -6,6 +6,11 @@
 
 CTL_NAMESPACE_BEGIN
 
+template<Type::Real F>
+constexpr F abs(F const v) {
+	return (v < 0) ? -v : v;
+}
+
 /// @brief Calculates a value raised to a given power.
 /// @tparam F Floating point type.
 /// @param value Value to raise.
@@ -19,6 +24,28 @@ constexpr F pow(F const value, F const power) {
 		return __builtin_pow(value, power);
 	else
 		return __builtin_powl(value, power);
+}
+
+template<Type::Real F>
+constexpr F log(F const v) {
+	if constexpr (Type::Equal<F, float>)
+		return __builtin_logf(v);
+	else if constexpr (Type::Equal<F, double>)
+		return __builtin_log(v);
+	else
+		return __builtin_logl(v);
+}
+
+template<Type::Real F>
+constexpr F exp(F const v) {
+	constexpr F euler	= 2.7182818284590452353602874714;
+	return pow<F>(euler, v);
+}
+
+template<Type::Real F>
+constexpr F sqrt(F const v) {
+	constexpr F ln2		= 0.6931471805599453094172321215;
+	return exp<F>(log<F>(x) / F(2));
 }
 
 /// @brief Calculates the arc tangent of a number.
@@ -49,23 +76,11 @@ constexpr F atan(F const x) {
 /// @return Arc tangent of Y/X.
 template<Type::Real F>
 constexpr F atan2(F const y, F const x) {
-	constexpr F PI		= 3.1415926535897932384626433833;
+	constexpr F PI = 3.1415926535897932384626433833;
 	if (!(x && y))	return 0;
 	if (x == 0)		return (PI/2) * (y < 0 ? -1 : +1);
 	if (x < 0)		return atan(y/x) + PI * (y < 0 ? -1 : +1);
 	return atan<F>(y/x);
-}
-
-template<Type::Real F>
-constexpr F exp(F const v) {
-	constexpr F euler	= 2.7182818284590452353602874714;
-	return pow<F>(euler, v);
-}
-
-template<Type::Real F>
-constexpr F sqrt(F const v) {
-	constexpr F ln2		= 0.6931471805599453094172321215;
-	return exp<F>(ln2 / v);
 }
 
 // TODO: Finally put those advanced calculus classes to use & implement constexpr trig functions
