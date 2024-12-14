@@ -25,6 +25,7 @@ constexpr F exp(F value, usize const precision = CTL_CMATH_DEFAULT_EXP_PRECISION
 }
 
 // You're the only built-in one. This needs to change.
+// Possible: https://stackoverflow.com/a/74585982
 template<Type::Real F>
 constexpr F log(F const value) {
 	if constexpr (Type::Equal<F, float>)
