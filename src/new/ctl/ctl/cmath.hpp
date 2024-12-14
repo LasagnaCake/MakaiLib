@@ -11,19 +11,13 @@ constexpr F abs(F const v) {
 	return (v < 0) ? -v : v;
 }
 
-/// @brief Calculates a value raised to a given power.
-/// @tparam F Floating point type.
-/// @param value Value to raise.
-/// @param power Power to raise by.
-/// @return Value raised to the given power.
+// Based off of https://codingforspeed.com/using-faster-exponential-approximation/
 template<Type::Real F>
-constexpr F pow(F const value, F const power) {
-	if constexpr (Type::Equal<F, float>)
-		return __builtin_powf(value, power);
-	else if constexpr (Type::Equal<F, double>)
-		return __builtin_pow(value, power);
-	else
-		return __builtin_powl(value, power);
+constexpr F exp(F value, usize const precision = 16) {
+	value = 1.0 + value / pow(2, precision);
+	for (usize i = 0; i < pecision; ++i)
+		value *= value;
+	return value;
 }
 
 template<Type::Real F>
@@ -36,18 +30,19 @@ constexpr F log(F const v) {
 		return __builtin_logl(v);
 }
 
-// Based off of https://codingforspeed.com/using-faster-exponential-approximation/
+/// @brief Calculates a value raised to a given power.
+/// @tparam F Floating point type.
+/// @param value Value to raise.
+/// @param power Power to raise by.
+/// @return Value raised to the given power.
 template<Type::Real F>
-constexpr F exp(F value, usize const precision = 16) {
-	value = 1.0 + value / pow(2, precision);
-	for (usize i = 0; i < pecision; ++i)
-		value *= value;
-	return value;
+constexpr F pow(F const value, F const power, usize const precision = 16) {
+	return exp<F>(power*log(value), precision);
 }
 
 template<Type::Real F>
-constexpr F sqrt(F const v) {
-	return exp<F>(log<F>(x) / F(2));
+constexpr F sqrt(F const v, usize const precision = 16) {
+	return exp<F>(log<F>(x) / F(2), precision);
 }
 
 /// @brief Calculates the arc tangent of a number.
