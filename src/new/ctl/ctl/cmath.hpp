@@ -57,6 +57,9 @@ constexpr F atan2(F const y, F const x) {
 }
 
 // TODO: Finally put those advanced calculus classes to use & implement constexpr trig functions
+// NOTE: Or, maybe https://publik-void.github.io/sin-cos-approximations/
+// NOTE: Or, maybe https://en.wikipedia.org/wiki/CORDIC
+// NOTE: Or, maybe https://www.embeddedrelated.com/showarticle/152.php / https://en.wikipedia.org/wiki/Chebyshev_polynomials#Examples
 // NOTE: sin(x)/cos(x) = tan(x)
 
 CTL_NAMESPACE_END
