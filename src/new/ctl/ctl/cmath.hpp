@@ -6,6 +6,10 @@
 
 CTL_NAMESPACE_BEGIN
 
+#ifndef CTL_CMATH_DEFAULT_EXP_PRECISION
+#define CTL_CMATH_DEFAULT_EXP_PRECISION (16)
+#endif
+
 template<Type::Real F>
 constexpr F abs(F const v) {
 	return (v < 0) ? -v : v;
@@ -13,21 +17,22 @@ constexpr F abs(F const v) {
 
 // Based off of https://codingforspeed.com/using-faster-exponential-approximation/
 template<Type::Real F>
-constexpr F exp(F value, usize const precision = 16) {
-	value = 1.0 + value / pow(2, precision);
+constexpr F exp(F value, usize const precision = CTL_CMATH_DEFAULT_EXP_PRECISION) {
+	value = 1.0 + value / (1 << precision);
 	for (usize i = 0; i < pecision; ++i)
 		value *= value;
 	return value;
 }
 
+// You're the only built-in one. This needs to change.
 template<Type::Real F>
-constexpr F log(F const v) {
+constexpr F log(F const value) {
 	if constexpr (Type::Equal<F, float>)
-		return __builtin_logf(v);
+		return __builtin_logf(value);
 	else if constexpr (Type::Equal<F, double>)
-		return __builtin_log(v);
+		return __builtin_log(value);
 	else
-		return __builtin_logl(v);
+		return __builtin_logl(value);
 }
 
 /// @brief Calculates a value raised to a given power.
@@ -36,13 +41,13 @@ constexpr F log(F const v) {
 /// @param power Power to raise by.
 /// @return Value raised to the given power.
 template<Type::Real F>
-constexpr F pow(F const value, F const power, usize const precision = 16) {
-	return exp<F>(power*log(value), precision);
+constexpr F pow(F const value, F const power, usize const precision = CTL_CMATH_DEFAULT_EXP_PRECISION) {
+	return exp<F>(power*log<F>(value), precision);
 }
 
 template<Type::Real F>
-constexpr F sqrt(F const v, usize const precision = 16) {
-	return exp<F>(log<F>(x) / F(2), precision);
+constexpr F sqrt(F const value, usize const precision = CTL_CMATH_DEFAULT_EXP_PRECISION) {
+	return exp<F>(log<F>(value) / F(2), precision);
 }
 
 /// @brief Calculates the arc tangent of a number.
@@ -51,18 +56,18 @@ constexpr F sqrt(F const v, usize const precision = 16) {
 /// @return Arc tangent of number.
 /// @note Based off of https://stackoverflow.com/a/42542593
 template<Type::Real F>
-constexpr F atan(F const x) {
+constexpr F atan(F const value) {
 	constexpr float const a[9] = {
 		1.0f, -0.333331728467737f, 0.199940412794435f,
 		-0.142123340834229f, 0.10668127080775f, -0.0755120841589429f,
 		0.0431408641542157f, -0.0162911733512761f, 0.00289394245323327f
 	};
-	float xx = x * x;
+	float xx = value * value;
 	float sum = 0.0;
 	for (unsigned i = 9; i-- > 0;) {
 		sum = sum * xx + a[i];
 	}
-	return sum * x;
+	return sum * value;
 }
 
 
