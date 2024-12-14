@@ -90,6 +90,7 @@ constexpr F atan2(F const y, F const x) {
 // NOTE: Or, maybe https://en.wikipedia.org/wiki/CORDIC
 // NOTE: Or, maybe https://www.embeddedrelated.com/showarticle/152.php / https://en.wikipedia.org/wiki/Chebyshev_polynomials#Examples
 // NOTE: sin(x)/cos(x) = tan(x)
+// Tomorrow I'll play god.
 
 CTL_NAMESPACE_END
 
