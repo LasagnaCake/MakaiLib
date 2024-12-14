@@ -3,6 +3,9 @@
 
 #include "../../../ctl/ctl.hpp"
 #include "../../math/vector.hpp"
+#include "../gjk.hpp"
+
+// TODO: Update system to use GJK & IBound2D
 
 CTL_EX_NAMESPACE_BEGIN
 
@@ -62,6 +65,8 @@ namespace Collision::C2D {
 			typedef Bounded<0> Type;
 		};
 	}
+
+	using IBound2D = IBound<2>;
 
 	/// @brief Declares the bound as postceding another bound.
 	template<typename T>
@@ -149,7 +154,7 @@ namespace Collision::C2D {
 	///
 	///		This is a "stadium-like" ("2D-capsule-like") shape.
 	///	
-	///		It would be best described as the "convex hull between two ellipsess of the same angle".
+	///		It would be best described as the "convex hull between two equivalent ellipses".
 	///		
 	///		Also, the ellipses do not rotate with the shape.
 	///		Their angles are separate from the capsule's own angle.
@@ -251,9 +256,22 @@ namespace Collision::C2D {
 		constexpr Shape(Shape const& other)	= default;
 		/// @brief Move constructor (defaulted).
 		constexpr Shape(Shape&& other)		= default;
+
+		/*constexpr Vector2 furthest(Vector2 const& direction) const override {
+			Vector2  maxPoint;
+			float maxDistance = CTL::NumberLimit<float>::LOWEST;
+			for (Vector2 const& vertex: points) {
+				float distance = vertex.dot(direction);
+				if (distance > maxDistance) {
+					maxDistance = distance;
+					maxPoint = vertex;
+				}
+			}
+			return maxPoint;
+		}*/
 		
 		/// @brief Shape transform.
-		Transform2D trans;
+		Transform2D		trans;
 		/// @brief Shape vertices.
 		List<Vector2>	points;
 	};

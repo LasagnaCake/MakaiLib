@@ -60,7 +60,7 @@ struct ValueLimit {
 };
 
 /// @brief Number limit.
-/// @tparam Type.
+/// @tparam Type Number type.
 template<Type::Number T>
 struct NumberLimit;
 
@@ -91,6 +91,14 @@ template<> struct NumberLimit<uint64>:	ValueLimit<uint64,	0xFFFFFFFFFFFFFFFF,	1,
 template<> struct NumberLimit<int>:		NumberLimit<Meta::DualType<sizeof(int) == sizeof(int32),	int32,	int16>>		{};
 /// @brief Number limit.
 template<> struct NumberLimit<uint>:	NumberLimit<Meta::DualType<sizeof(uint) == sizeof(uint32),	uint32,	uint16>>	{};
+
+
+/// @brief Number limit.
+template<> struct NumberLimit<float>:	ValueLimit<float,	__FLT_MAX__,	__FLT_MIN__,	-__FLT_MAX__>	{};
+/// @brief Number limit.
+template<> struct NumberLimit<double>:	ValueLimit<double,	__DBL_MAX__,	__DBL_MIN__,	-__DBL_MAX__>	{};
+/// @brief Number limit.
+template<> struct NumberLimit<ldouble>:	ValueLimit<ldouble,	__LDBL_MAX__,	__LDBL_MIN__,	-__LDBL_MAX__>	{};
 
 /// @brief Type information.
 /// @tparam T Type.

@@ -1134,9 +1134,9 @@ typedef Vector3 Vec3;
 typedef Vector4 Vec4;
 
 /// @brief Decays to a vector of the given dimension.
-/// @tparam D Dimension.
+/// @tparam D Dimension. If zero, decays to `void`.
 template<usize D>
-using Vector	= CTL::Meta::NthType<D, float, Vector2, Vector3, Vector4>;
+using Vector	= CTL::Meta::NthType<D, void, float, Vector2, Vector3, Vector4>;
 
 /// @brief Decays to a vector of the given dimension.
 /// @tparam D Dimension.

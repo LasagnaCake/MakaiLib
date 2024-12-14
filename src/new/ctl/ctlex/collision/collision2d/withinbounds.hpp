@@ -272,10 +272,9 @@ namespace Collision::C2D {
 	/// @param a Bounds to check.
 	/// @param b Bounds to check against.
 	/// @return Whether bounds overlap.
-	/// @warning Currently unimplemented.
 	[[gnu::warning("Unimplemented!")]]
 	constexpr bool withinBounds(Shape const& a, Shape const& b) {
-		return CTL::Ex::Collision::Impl::GJK::check<2>(a, b);
+		return /*GJK::check<2>(a, b)*/false;
 	}
 
 	// Flipped Functions
@@ -391,6 +390,8 @@ namespace Collision::C2D {
 			case CollisionType::CT_SHAPE:	return withinBounds((Shape)a,	b);
 		}
 	}
+
+	constexpr bool test = withinBounds(Circle(0), Circle(0));
 }
 
 CTL_EX_NAMESPACE_END

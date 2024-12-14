@@ -5,9 +5,6 @@
 - - Code is documented via doxygen comments, so must figure out how to generate docs from that
 - [ ] Fix core library CI
 - - Problem: `gcc`/`g++` is missing, somehow???
-- [ ] Recompile CryptoPP with `CRYPTOPP_DISABLE_ASM` enabled
-- - Just so CI stops failing
-- [ ] Add initializer lists wherever possible
 - [ ] Add HSL (Hue-Saturation-Luminosity) & BC (Brightness-Contrast) to buffer mask effect
 - [ ] Embedded language (compiled (preferable, even if to bytecode), JIT or interpreted)
 - - Currently have an idea, don't know if it would be feasible
@@ -15,10 +12,10 @@
 - - Or C# even, this one might be the more feasible option
 - - - This one sounds enticing
 - - What about [SWIG](https://www.swig.org/)?
+- [ ] Bugs & Errors (see [Issues.txt](../../Issues.txt))
 
 ### Game extension stuff
 - [ ] Curvy/Bent lasers
-- [ ] Bugs & Errors (see [Issues.txt](../../Issues.txt))
 - [ ] File format implementation (These need better names):
 - - For more info, see the [specifications](../specifications) folder
 - - [ ] Animation keyframes definition
