@@ -74,20 +74,17 @@ namespace Collision::C2D {
 		///
 		///		- Both:		A <-> B
 		constexpr static Direction check(Area const& a, Area const& b) {
-			if (
-				a.enabled
-			&&	b.enabled
-			) {
-				Direction dir = asDirection(
-					a.affects.match(b.affectedBy).overlap(),
-					b.affectedBy.match(a.affects).overlap()
-				);
-				if (
-					dir != Direction::CD_NONE
-				&&	withinBounds(a.shape, b.shape)
-				) return dir;
+			if (!(a.enabled && b.enabled))
 				return Direction::CD_NONE;
-			}
+			Direction dir = asDirection(
+				a.affects.match(b.affectedBy).overlap(),
+				b.affectedBy.match(a.affects).overlap()
+			);
+			if (
+				dir != Direction::CD_NONE
+			&&	withinBounds(a.shape, b.shape)
+			) return dir;
+			return Direction::CD_NONE;
 		}
 
 		/// @brief Checks collision between two areas.

@@ -47,6 +47,30 @@ namespace Collision::C2D {
 			///		and fires the appropriate collision events,
 			///		depending on its result.
 			/// @param other `ICollider` to check against.
+			constexpr void process(ICollider const& other) const {
+				switch(colliding(other)) {
+					using enum Direction;
+					default:
+					case CD_NONE: break;
+					case CD_FORWARDS:
+						other.onCollision(*this, CD_FORWARDS);
+					break;
+					case CD_BACKWARDS:
+						onCollision(other, CD_BACKWARDS);
+					break;
+					case CD_BOTH:
+						other.onCollision(*this, CD_BOTH);
+						onCollision(other, CD_BOTH);
+					break;
+				}
+			}
+
+
+			/// @brief
+			///		Checks collision between objects,
+			///		and fires the appropriate collision events,
+			///		depending on its result.
+			/// @param other `ICollider` to check against.
 			template<usize SI>
 			constexpr void process(IColliderType<SI> const& other) const {
 				switch(colliding(other)) {
@@ -81,7 +105,7 @@ namespace Collision::C2D {
 		template<usize SI>
 		constexpr static void check(IColliderType<SI> const& area, LayerMask const& layers) {
 			if (!area.affects.match(layers).overlap()|| !area.enabled) return;
-			for (auto c : colliders)
+			for (ICollider* c : colliders)
 				if (c->enabled && c->affectedBy.match(layers).overlap())
 					area.process(*c);
 		}
@@ -98,9 +122,9 @@ namespace Collision::C2D {
 		constexpr static void process() {
 			usize const stop = colliders.size();
 			for (usize start = 1; start < stop; ++start) {
-				auto c = colliders[start-1];
+				ICollider& c = *colliders[start-1];
 				for (usize i = start; i < stop; ++i)
-					c->process(colliders[start]);
+					c.process(*colliders[start]);
 			}
 		}
 
@@ -116,7 +140,7 @@ namespace Collision::C2D {
 		friend class ICollider;
 
 		/// @brief Server collider objects.
-		static List<ICollider*> colliders;
+		inline static List<ICollider*> colliders;
 
 		void *operator new(usize);
 		void operator delete(pointer);
@@ -128,7 +152,7 @@ namespace Collision::C2D {
 
 	/// @brief Server collision object interface.
 	/// @tparam I Server ID. 
-	template<usize I>
+	template<usize I = 0>
 	using ICollider = typename CollisionServer<I>::ICollider;
 }
 

@@ -362,6 +362,7 @@ namespace Collision::C2D {
 			case CollisionType::CT_RAY:		return withinBounds((Ray)a,		b);
 			case CollisionType::CT_SHAPE:	return withinBounds((Shape)a,	b);
 		}
+		return false;
 	}
 
 	/// @brief Bounds-to-Shape bounds detection.
@@ -389,6 +390,7 @@ namespace Collision::C2D {
 			case CollisionType::CT_RAY:		return withinBounds((Ray)a,		b);
 			case CollisionType::CT_SHAPE:	return withinBounds((Shape)a,	b);
 		}
+		return false;
 	}
 }
 
