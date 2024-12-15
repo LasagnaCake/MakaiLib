@@ -14,8 +14,3 @@ Fixed? > Automatic tweens & timers are no longer working
 > Shading direction flips when rotating object (Somethin relating to normals)
 
 [ Unknown ]
-> SEGFAULT at app closure
-	> in CTL::Pointer::unbind FOR Makai::Graph::Image2D
-		> In ~FrameBuffer() → ~DrawBuffer() → ~Texture2D()
-	> Sometimes it happens when reading the image's ID (at closure time???)
-		> Will write more details some time later

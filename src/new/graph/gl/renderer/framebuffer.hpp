@@ -181,7 +181,7 @@ namespace Makai::Graph {
 
 	private:
 		/// @brief Buffer storage objects.
-		struct {
+		struct BufferStorage {
 			/// @brief Color buffer.
 			Texture2D screen;
 			/// @brief Depth buffer.

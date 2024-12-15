@@ -51,11 +51,11 @@ Graph::Base::Buffer& Graph::Base::Buffer::disable() {
 	return *this;
 }
 
-bool Graph::Base::Buffer::exists() const		{return created;}
+bool Graph::Base::Buffer::exists() const	{return created;	}
 
-uint Graph::Base::Buffer::getWidth() const	{return width;	}
-uint Graph::Base::Buffer::getHeight() const	{return height;	}
-uint Graph::Base::Buffer::getID() const		{return id;		}
+uint Graph::Base::Buffer::getWidth() const	{return width;		}
+uint Graph::Base::Buffer::getHeight() const	{return height;		}
+uint Graph::Base::Buffer::getID() const		{return id;			}
 
 Graph::Base::Buffer& Graph::Base::Buffer::render(Base::Buffer const& target) {
 	if (!exists()) return *this;
@@ -71,16 +71,18 @@ Graph::DrawBuffer::DrawBuffer(
 }
 
 Graph::DrawBuffer::~DrawBuffer() {
-	destroy();
+	if (exists()) destroy();
 }
 
 Graph::DrawBuffer& Graph::DrawBuffer::destroy() {
 	if (!exists()) return *this;
+	DEBUGLN("Destroying framebuffer...");
 	buffer.screen.destroy();
 	buffer.depth.destroy();
 	glDeleteBuffers(1, &vbo);
 	glDeleteVertexArrays(1, &vao);
 	Base::Buffer::destroy();
+	DEBUGLN("Framebuffer destroyed!");
 	return *this;
 }
 

@@ -146,7 +146,7 @@ public:
 	constexpr Pointer(PointerType const& obj) {bind(obj);}
 
 	/// @brief Destructor.
-	constexpr ~Pointer() {unbind();}
+	constexpr ~Pointer() {if (exists()) unbind();}
 
 	/// @brief Returns the amount of references holding the current object.
 	/// @return Reference count.
@@ -194,8 +194,8 @@ public:
 	constexpr SelfType& unbind() {
 		if (!exists()) return (*this);
 		CTL_PTR_IF_STRONG {
-			if ((count()-1 < 1))
-				return destroy();
+			if ((count() < 2))
+				destroy();
 			else database[(void*)ref].count--;
 		}
 		ref = nullptr;
@@ -205,8 +205,10 @@ public:
 	/// @brief Destroys (deletes) the bound object.
 	/// @return Reference to self.
 	constexpr SelfType& destroy() requires (!WEAK) {
+		if (!exists()) return (*this);
 		delete ref;
 		release();
+		ref = nullptr;
 		return (*this);
 	}
 
@@ -231,8 +233,9 @@ public:
 	/// @brief Returns whether the object exists.
 	/// @return Whether the object exists.
 	constexpr bool exists() const {
-		CTL_PTR_IF_STRONG	return ref && (database[(void*)ref].count > 0);
-		else				return ref && (database[(void*)ref].exists);
+		if (!ref) return false;
+		CTL_PTR_IF_STRONG	return (database[(void*)ref].count > 0);
+		else				return (database[(void*)ref].exists);
 	}
 
 	/// @brief Returns whether this pointer is the sole owner of the bound object.
@@ -336,7 +339,7 @@ public:
 	constexpr ReferenceType operator*() const		{return value();		}
 
 private:
-	void attach(PointerType const& p) {
+	constexpr void attach(PointerType const& p) {
 		if (!p) return;
 		ref = p;
 		database[(void*)p].exists = true;
