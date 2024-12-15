@@ -304,12 +304,12 @@ void Label::update() {
 			(uv + Vector2(1,1)) / font->size,
 		};
 		// Nightmare
-		vertices.pushBack(Vertex(pos[0], uv[0]));
-		vertices.pushBack(Vertex(pos[1], uv[1]));
-		vertices.pushBack(Vertex(pos[2], uv[2]));
-		vertices.pushBack(Vertex(pos[1], uv[1]));
-		vertices.pushBack(Vertex(pos[2], uv[2]));
-		vertices.pushBack(Vertex(pos[3], uv[3]));
+		vertices.pushBack(Vertex(pos[0], uvs[0]));
+		vertices.pushBack(Vertex(pos[1], uvs[1]));
+		vertices.pushBack(Vertex(pos[2], uvs[2]));
+		vertices.pushBack(Vertex(pos[1], uvs[1]));
+		vertices.pushBack(Vertex(pos[2], uvs[2]));
+		vertices.pushBack(Vertex(pos[3], uvs[3]));
 		// Increment cursor
 		cursor.x += text->spacing.x + font->spacing.x;
 		chrRect.h++;
