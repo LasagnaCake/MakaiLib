@@ -15,9 +15,6 @@ Fixed? > Automatic tweens & timers are no longer working
 
 [ Unknown ]
 > Images not loading correctly
-	> Not the file reading subsystem
-	> Unlikely to be stb_image's fault
-	> Could be the related to SEGFAULT issue (Since textue uses CTL::Pointer to handle shared images)
 	> Could be the text rendering's fault
 > SEGFAULT at app closure
 	> in CTL::Pointer::unbind FOR Makai::Graph::Image2D

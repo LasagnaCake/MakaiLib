@@ -160,7 +160,7 @@ inline ObjectMaterial fromDefinition(JSON::JSONData def, String const& definitio
 			"Failed at getting material values!",
 			__FILE__,
 			toString(__LINE__),
-			"extendFromDefinition",
+			"Renderable::extendFromDefinition",
 			e.what(),
 			"Please check to see if values are correct!"
 		);
@@ -476,7 +476,7 @@ void Renderable::extendFromDefinitionV0(
 			"Failed at getting mesh values!",
 			__FILE__,
 			toString(__LINE__),
-			"extendFromDefinition",
+			"Renderable::extendFromDefinition",
 			e.what(),
 			"Please check to see if values are correct!"
 		);
@@ -491,7 +491,7 @@ void Renderable::extendFromDefinitionV0(
 			"Missing mesh data!\n\n" + error,
 			__FILE__,
 			toString(__LINE__),
-			"extendFromDefinition"
+			"Renderable::extendFromDefinition"
 		);
 	}
 	// Vertex map
@@ -511,7 +511,7 @@ void Renderable::extendFromDefinitionV0(
 				"Malformed component data!\n\nIndex(es): [ " + indexes + "]",
 				__FILE__,
 				toString(__LINE__),
-				"extendFromDefinition"
+				"Renderable::extendFromDefinition"
 			);
 		}
 	}
@@ -525,7 +525,7 @@ void Renderable::extendFromDefinitionV0(
 				"Improper/incomplete vertex data!",
 				__FILE__,
 				toString(__LINE__),
-				"extendFromDefinition",
+				"Renderable::extendFromDefinition",
 				toString(
 					"Vertex data size is ",
 					vds, " (", vdata.size(), " bytes).\nExpected size is ",
@@ -553,7 +553,7 @@ void Renderable::extendFromDefinitionV0(
 			"Improper/incomplete vertex data!",
 			__FILE__,
 			toString(__LINE__),
-			"extendFromDefinition",
+			"Renderable::extendFromDefinition",
 			(
 				"Total vertex count is "
 			+	toString(vertices.size())
@@ -577,7 +577,7 @@ void Renderable::extendFromDefinitionV0(
 				"Failed at getting transformation values!",
 				__FILE__,
 				toString(__LINE__),
-				"extendFromDefinition",
+				"Renderable::extendFromDefinition",
 				e.what(),
 				"Please check to see if values are correct!"
 			);
@@ -621,7 +621,7 @@ void Renderable::extendFromDefinitionV0(
 				"Failed at getting blending values!",
 				__FILE__,
 				toString(__LINE__),
-				"extendFromDefinition",
+				"Renderable::extendFromDefinition",
 				e.what(),
 				"Please check to see if values are correct!"
 			);

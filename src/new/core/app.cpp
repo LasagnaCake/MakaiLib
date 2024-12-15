@@ -106,7 +106,7 @@ App::App (
 	// Try and initialize graphical API
 	Makai::Graph::API::open();
 	if (!Makai::Graph::API::hasRequiredVersion()) {
-		throw Error::Other(
+		throw Error::FailedAction(
 			"Your computer does not support the required graphical API version!",
 			__FILE__,
 			toString(__LINE__),

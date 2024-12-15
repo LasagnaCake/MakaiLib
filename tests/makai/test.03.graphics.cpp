@@ -5,7 +5,7 @@ struct TestApp: Makai::App {
 
 	Makai::Graph::Camera3D& camera = Makai::Graph::Global::camera;
 
-	Makai::Graph::Vertex const vertices[8] = {
+	/*Makai::Graph::Vertex const vertices[8] = {
 		//					  X,  Y,  Z, U, V, R, G, B, A, NX, NY, NZ
 		Makai::Graph::Vertex(+1, +1, +1, 0, 0, 1, 1, 1, 1, +1, +1, +1),	// 0
 		Makai::Graph::Vertex(+1, +1, -1, 0, 0, 1, 1, 0, 1, +1, +1, -1),	// 1
@@ -15,6 +15,17 @@ struct TestApp: Makai::App {
 		Makai::Graph::Vertex(-1, +1, -1, 0, 0, 0, 1, 0, 1, -1, +1, -1),	// 5
 		Makai::Graph::Vertex(-1, -1, +1, 0, 0, 0, 0, 1, 1, -1, -1, +1),	// 6
 		Makai::Graph::Vertex(-1, -1, -1, 0, 0, 0, 0, 0, 1, -1, -1, -1)	// 7
+	};*/
+	Makai::Graph::Vertex const vertices[8] = {
+		//					  X,  Y,  Z, U, V, R, G, B, A, NX, NY, NZ
+		Makai::Graph::Vertex(+1, +1, +1, 0, 0, 1, 1, 1, 1, +1, +1, +1),	// 0
+		Makai::Graph::Vertex(+1, +1, -1, 0, 1, 1, 1, 1, 1, +1, +1, -1),	// 1
+		Makai::Graph::Vertex(+1, -1, +1, 1, 0, 1, 1, 1, 1, +1, -1, +1),	// 2
+		Makai::Graph::Vertex(+1, -1, -1, 1, 1, 1, 1, 1, 1, +1, -1, -1),	// 3
+		Makai::Graph::Vertex(-1, +1, +1, 0, 0, 1, 1, 1, 1, -1, +1, +1),	// 4
+		Makai::Graph::Vertex(-1, +1, -1, 0, 1, 1, 1, 1, 1, -1, +1, -1),	// 5
+		Makai::Graph::Vertex(-1, -1, +1, 1, 0, 1, 1, 1, 1, -1, -1, +1),	// 6
+		Makai::Graph::Vertex(-1, -1, -1, 1, 1, 1, 1, 1, 1, -1, -1, -1)	// 7
 	};
 
 	virtual ~TestApp() {}
@@ -27,6 +38,7 @@ struct TestApp: Makai::App {
 		);
 		//loadDefaultShaders();
 		DEBUGLN("Creating cube...");
+		cube.material.texture = {true, Makai::Graph::Texture2D("../tests/makai/files/grid.png"), 0};
 		cube.material.culling = Makai::Graph::CullMode::OCM_FRONT;
 		//cube.material.shaded = true;
 		cube.trans.scale = .5;

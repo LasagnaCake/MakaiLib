@@ -421,7 +421,7 @@ namespace OS::FS {
 		/// @return Directory structure. If path does not lead to a folder, simply returns an entry for that file.
 		static inline Entry getStructure(String const& path) {
 			if (!exists(path))
-				throw Error::InvalidValue("Path does not exist!");
+				throw Error::InvalidValue("Path \"" +path+ "\" does not exist!");
 			if (!isDirectory(path)) return Entry(fileName(path), path);
 			return Entry(
 				String(fs::path(path.std()).stem().string()),

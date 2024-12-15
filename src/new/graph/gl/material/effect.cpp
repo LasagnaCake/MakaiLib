@@ -34,7 +34,7 @@ Material::Effect::Image Material::loadImageEffect(
 			"Failed at getting image effect!",
 			__FILE__,
 			toString(__LINE__),
-			"loadImageEffect",
+			"Makai::Graph::Material::loadImageEffect",
 			e.what(),
 			"Please check to see if values are correct!"
 		);

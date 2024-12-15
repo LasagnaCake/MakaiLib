@@ -54,6 +54,8 @@ inline Vector4 fromJSONArrayV4(JSON::JSONData const& json, Vector4 const& defaul
 	}
 }
 
+FontFace::FontFace(): instance(new FontData()) {}
+
 FontFace::FontFace(FontData const& font): FontFace() {
 	instance->image		= font.image;
 	instance->size		= font.size;
@@ -241,7 +243,7 @@ void Label::update() {
 	unsigned char index;
 	// The lines' starting positions (if applicable)
 	List<usize>	lineEnd = getTextLineWrapIndices(*text);
-	List<float>		lineStart = getTextLineStarts(*text, *font, lineEnd);
+	List<float>	lineStart = getTextLineStarts(*text, *font, lineEnd);
 	cursor.x	= lineStart[0];
 	cursor.y 	= text->rect.v - Math::min<usize>(lineEnd.size(), text->rect.v);
 	cursor.y	*= (text->spacing.y + font->spacing.y) * -text->textAlign.y;

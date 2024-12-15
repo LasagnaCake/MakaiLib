@@ -15,7 +15,7 @@ BinaryData<> Data::decode(String const& data, EncodingType const& encoding) try 
 			"Invalid encoding type!",
 			__FILE__,
 			CTL::toString(__LINE__),
-			"decode"
+			"Makai::Data::decode"
 		);
 	}
 } catch (cppcodec::parse_error const& e) {
@@ -23,7 +23,7 @@ BinaryData<> Data::decode(String const& data, EncodingType const& encoding) try 
 		"Failed at decoding byte data!",
 		__FILE__,
 		CTL::toString(__LINE__),
-		"decode",
+		"Makai::Data::decode",
 		e.what()
 	);
 }
@@ -36,7 +36,7 @@ String Data::encode(BinaryData<> const& data, EncodingType const& encoding) try 
 			"Invalid encoding type!",
 			__FILE__,
 			::toString(__LINE__),
-			"decode"
+			"Makai::Data::encode"
 		);
 	}
 } catch (cppcodec::parse_error const& e) {
@@ -44,7 +44,7 @@ String Data::encode(BinaryData<> const& data, EncodingType const& encoding) try 
 		"Failed at decoding byte data!",
 		__FILE__,
 		CTL::toString(__LINE__),
-		"decode",
+		"Makai::Data::encode",
 		e.what()
 	);
 }
@@ -57,7 +57,7 @@ String Data::toString(EncodingType const& type) {
 			"Invalid encoding type!",
 			__FILE__,
 			CTL::toString(__LINE__),
-			"toString"
+			"Makai::Data::toString"
 		);
 	}
 }
@@ -69,6 +69,6 @@ EncodingType Data::fromString(String const& type) {
 		"Invalid encoding type of '" + type + "'!",
 		__FILE__,
 		CTL::toString(__LINE__),
-		"fromString"
+		"Makai::Data::fromString"
 	);
 }

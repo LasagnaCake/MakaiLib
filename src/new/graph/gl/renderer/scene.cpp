@@ -277,7 +277,7 @@ void Scene::extendFromDefinitionV0(JSON::JSONData def, String const& sourcepath)
 			"Failed at parsing scene file!",
 			__FILE__,
 			toString(__LINE__),
-			"extendFromDefinition",
+			"Scene::extendFromDefinition",
 			e.what(),
 			"Please check to see if values are correct!"
 		);

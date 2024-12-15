@@ -39,7 +39,7 @@ namespace Makai::Graph {
 		
 		// This needs to be initialized this specific way, else it breaks somehow???
 		/// @brief Empty constructor.
-		FontFace(): instance(new FontData()) {}
+		FontFace();
 
 		/// @brief Constructs the font face from font data.
 		/// @param font Font to use.

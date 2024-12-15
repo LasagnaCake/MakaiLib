@@ -97,7 +97,7 @@ Makai::JSON::JSONData Makai::JSON::parse(String const& json) try {
 		"Failed at parsing JSON!",
 		__FILE__,
 		CTL::toString(__LINE__),
-		"parseJSON",
+		"Makai::JSON::parseJSON",
 		e.what(),
 		"Please check to see if values are correct!"
 	);

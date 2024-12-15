@@ -58,7 +58,7 @@ namespace Makai::JSON {
 					+ TypeInfo<T>::name() + "'!",
 					__FILE__,
 					CTL::toString(__LINE__),
-					CTL::toString("get<", TypeInfo<T>::name(), ">"),
+					CTL::toString("JSONView::get<", TypeInfo<T>::name(), ">"),
 					err
 				);
 			return result;

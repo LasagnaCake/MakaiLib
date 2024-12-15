@@ -16,7 +16,7 @@ Vector4 Color::fromHexCodeString(String code) {
 			"Color value does not exist!",
 			__FILE__,
 			toString(__LINE__),
-			"fromHexCodeString",
+			"Makai::Graph::Color::fromHexCodeString",
 			"Make sure the color values are correct!"
 		);
 	// Check if color value is valid
@@ -25,7 +25,7 @@ Vector4 Color::fromHexCodeString(String code) {
 			"Invalid color value \"#"+ code +"\"!",
 			__FILE__,
 			toString(__LINE__),
-			"fromHexCodeString",
+			"Makai::Graph::Color::fromHexCodeString",
 			"Make sure the color values are correct!"
 		);
 	// Bit fuckery for 4-bit color
