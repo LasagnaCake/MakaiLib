@@ -24,7 +24,7 @@ struct TestApp: Makai::App {
 		label.text->rectAlign	= Makai::Math::Vec2(.5);
 		label.text->spacing.x	= -0.3;
 		DEBUGLN("3...");
-		label.text->content		= "Sexyman Acidosis ~ Whomst'd've!!!\nNarcolepsy";
+		label.text->content		= Makai::File::getText("../tests/makai/files/test.05.text.message.txt");
 		label.text->rect		= {40, 2};
 		DEBUGLN("4...");
 		camera.at	= Makai::Vec3(0, 0, 0);
