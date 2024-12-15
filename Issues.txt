@@ -14,10 +14,12 @@ Fixed? > Automatic tweens & timers are no longer working
 > Shading direction flips when rotating object (Somethin relating to normals)
 
 [ Unknown ]
-> Cannot load binary files
-	> basic_filebuf::xsgetn error reading the file: Invalid argument
-> Segfault at app closure
+> Images not loading correctly
+	> Not the file reading subsystem
+	> Unlikely to be stb_image's fault
+	> Could be the related to SEGFAULT issue (Since textue uses CTL::Pointer to handle shared images)
+> SEGFAULT at app closure
 	> in CTL::Pointer::unbind FOR Makai::Graph::Image2D
 		> In ~FrameBuffer() → ~DrawBuffer() → ~Texture2D()
-	> Sometimes it happens when reading the image's ID (at closure time)
+	> Sometimes it happens when reading the image's ID (at closure time???)
 		> Will write more details some time later
