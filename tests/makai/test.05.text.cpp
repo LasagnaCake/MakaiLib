@@ -15,13 +15,7 @@ struct TestApp: Makai::App {
 	void onOpen() override {
 		loadDefaultShaders();
 		DEBUGLN("1...");
-		try {
-			label.font->image.create("../tests/makai/files/TestFontGrid-lotuscoder.png");
-		} catch (Makai::Error::Generic const& e) {
-			Makai::Popup::showError(e.what());
-			close();
-			return;
-		}
+		label.font->image.create("../tests/makai/files/TestFontGrid-lotuscoder.png");
 		DEBUGLN("2...");
 		label.trans.position	= Makai::Math::Vec3(0, 0, 0);
 		label.trans.scale.x		= 0.66;
