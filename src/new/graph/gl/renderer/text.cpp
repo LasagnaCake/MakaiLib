@@ -298,7 +298,7 @@ void Label::update() {
 		Vector2 uvs[4] = {
 			uv / font->size,
 			(uv + Vector2(1,0)) / font->size,
-			(uv + Vector2(0,1))  / font->size,
+			(uv + Vector2(0,1)) / font->size,
 			(uv + Vector2(1,1)) / font->size,
 		};
 		// Nightmare
