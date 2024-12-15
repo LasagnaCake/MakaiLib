@@ -14,8 +14,6 @@ Fixed? > Automatic tweens & timers are no longer working
 > Shading direction flips when rotating object (Somethin relating to normals)
 
 [ Unknown ]
-> Images not loading correctly
-	> Could be the text rendering's fault
 > SEGFAULT at app closure
 	> in CTL::Pointer::unbind FOR Makai::Graph::Image2D
 		> In ~FrameBuffer() → ~DrawBuffer() → ~Texture2D()
