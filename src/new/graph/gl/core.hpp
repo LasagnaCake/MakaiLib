@@ -31,6 +31,13 @@ namespace Makai::Graph::API {
 	/// @throw Error::FailedAction when API fails to initialize.
 	void open();
 
+	/// @brief Sets the viewport size.
+	/// @param width Viewport width.
+	/// @param height Viewport height.
+	/// @param x Viewport start X position.
+	/// @param y Viewport start Y position.
+	void setViewport(uint const width, uint const height, uint const x = 0, uint const y = 0);
+
 	/// @brief Returns whether the device has the required graphical API version.
 	/// @return Whether device has required API version.
 	bool hasRequiredVersion();

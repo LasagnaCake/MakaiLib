@@ -10,18 +10,57 @@
 
 /// @brief Makai core API.
 namespace Makai {
-	/// @brief Audio configuration.
-	struct AudioConfig {
-		/// @brief Audio formats to use.
-		Audio::Formats const& formats = {
-			Audio::Format::AF_OGG,
-			Audio::Format::AF_MP3
-		};
-		/// @brief Number of output channels to use. 1 → mono, 2 → stereo, and so on.
-		uint channels	= 2;
-		/// @brief Number of audio (non-music) tracks to open.
-		uint tracks		= 16;
+	/// @brief Resolution.
+	struct Resolution {
+		/// @brief Width.
+		uint width;
+		/// @brief Height.
+		uint height;
 	};
+
+	namespace Config {
+		/// @brief Window configuration.
+		struct Window {
+			/// @brief Window size.
+			Resolution	size;
+			/// @brief Window title.
+			String		title;
+			/// @brief Whether to open in fullscreen. By default, it is `false`.
+			bool		fullscreen	= false;
+		};
+
+		/// @brief Audio configuration.
+		struct Audio {
+			/// @brief Audio formats to use.
+			Makai::Audio::Formats const& formats = {
+				Makai::Audio::Format::AF_OGG,
+				Makai::Audio::Format::AF_MP3
+			};
+			/// @brief Number of output channels to use. 1 → mono, 2 → stereo, and so on.
+			uint channels	= 2;
+			/// @brief Number of audio (non-music) tracks to open.
+			uint tracks		= 16;
+		};
+
+		/// @brief Renderer configuration.
+		struct Renderer {
+			/// @brief
+			///		Internal rendering size.
+			///		If null, will use the window size.
+			///		By default, it is null.
+			Nullable<Resolution> size = nullptr;
+		};
+
+		/// @brief App configuration.
+		struct App {
+			/// @brief Window configuration.
+			Window		window;
+			/// @brief Audio configuration.
+			Audio		audio		= {};
+			/// @brief Renderer configuration.
+			Renderer	renderer	= {};
+		};
+	}
 
 	struct App;
 
@@ -35,18 +74,13 @@ namespace Makai {
 	struct App {
 	public:
 		/// @brief Initializes the application.
-		/// @param width Window width.
-		/// @param height Window height.
-		/// @param windowTitle Window title.
-		/// @param fullscreen Whether to open window in fullscreen.
-		/// @param audio Audio configuration.
-		App (
-			unsigned int const	width,
-			unsigned int const	height,
-			String const&		windowTitle,
-			bool const			fullscreen	= false,
-			AudioConfig const&	audio		= {}
-		);
+		/// @param config Configuration.
+		App (Config::App const& config);
+
+		/// @brief Copy constructor (deleted).
+		App (App const& other)	= delete;
+		/// @brief Move constructor (deleted).
+		App (App&& other)		= delete;
 
 		/// @brief Application state.
 		enum class AppState {

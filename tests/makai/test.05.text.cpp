@@ -1,7 +1,7 @@
 #include <makai/makai.hpp>
 
 struct TestApp: Makai::App {
-	TestApp(): Makai::App(600, 400, "Test 05", false) {
+	TestApp(): Makai::App(Makai::Config::App{{600, 400, "Test 05", false}}) {
 		DEBUGLN("Loading shaders...");
 		loadDefaultShaders();
 	}

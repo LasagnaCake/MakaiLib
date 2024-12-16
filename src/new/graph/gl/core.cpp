@@ -244,6 +244,10 @@ void Makai::Graph::API::open() {
 	#endif // MAKAILIB_DEBUG
 }
 
+void Makai::Graph::API::setViewport(uint const width, uint const height, uint const x, uint const y) {
+	glViewport(x, y, width, height);
+}
+
 bool Makai::Graph::API::hasRequiredVersion() {
 	if (!opened) return false;
 	#if (MAKAILIB_GL_LOADER == MAKAILIB_USE_GL3W)

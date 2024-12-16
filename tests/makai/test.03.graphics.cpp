@@ -30,7 +30,7 @@ struct TestApp: Makai::App {
 
 	virtual ~TestApp() {}
 
-	TestApp(): Makai::App(600, 400, "Test 03", false) {
+	TestApp(): Makai::App(Makai::Config::App{{600, 400, "Test 03", false}}) {
 		DEBUGLN("Loading shaders...");
 		loadShaders(
 			Makai::File::getSLF("shaders/base/base.slf"),

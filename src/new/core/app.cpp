@@ -33,13 +33,8 @@ void setGLAttribute(SDL_GLattr const a, int const v) {
 
 App* mainApp = nullptr;
 
-App::App (
-	unsigned int const	width,
-	unsigned int const	height,
-	String const&		windowTitle,
-	bool const			fullscreen,
-	AudioConfig const&	audio
-): appState(App::AppState::AS_CLOSED) {
+App::App (Config::App const& config):
+appState(App::AppState::AS_CLOSED) {
 	// If there is another app open, throw error
 	if (mainApp)
 		throw Error::DuplicateValue(
@@ -52,8 +47,8 @@ App::App (
 	else mainApp = this;
 	DEBUGLN("Starting app...");
 	// Save window resolution
-	this->width = width;
-	this->height = height;
+	width = config.window.size.width;
+	height = config.window.size.height;
 	// Initialize SDL
 	DEBUGLN("Starting SDL...");
 	if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_AUDIO) != 0) {
@@ -68,12 +63,12 @@ App::App (
 	DEBUGLN("Started!");
 	// Initialize sound system
 	DEBUGLN("Starting Audio System...");
-	Makai::Audio::open(audio.formats, audio.channels, audio.tracks);
+	Makai::Audio::open(config.audio.formats, config.audio.channels, config.audio.tracks);
 	DEBUGLN("Started!");
 	// Create window and make active
 	DEBUGLN("Creating window...");
 	window = (Extern::Resource)SDL_CreateWindow(
-		windowTitle.cstr(),
+		config.window.title.cstr(),
 		SDL_WINDOWPOS_CENTERED,
 		SDL_WINDOWPOS_CENTERED,
 		width,
@@ -89,7 +84,7 @@ App::App (
 			SDL_GetError()
 		);
 	}
-	SDL_SetWindowFullscreen(sdlWindow, fullscreen ? SDL_WINDOW_FULLSCREEN : 0);
+	SDL_SetWindowFullscreen(sdlWindow, config.window.fullscreen ? SDL_WINDOW_FULLSCREEN : 0);
 	// Set OpenGL flags
 	setGLAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
 	setGLAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
@@ -120,15 +115,21 @@ App::App (
 		using enum Makai::Graph::API::Facility;
 		Makai::Graph::API::toggle(true, GAF_DEPTH_TEST, GAF_BLEND);
 	}
+	// Get internal render resolution
+	Resolution res = config.window.size;
+	if (config.renderer.size) {
+		res = *config.renderer.size;
+		Graph::API::setViewport(res.width, res.height);
+	}
 	// Setup camera
 	DEBUGLN("Setting starting camera...");
-	Graph::Global::camera.aspect	= Vector2(width, height);
+	Graph::Global::camera.aspect	= Vector2(res.width, res.height);
 	Graph::Global::camera.fov		= 45deg;
 	DEBUGLN("creating default framebuffer...");
 	// Create framebuffer
-	framebuffer.create(width, height);
+	framebuffer.create(res.width, res.height);
 	// Create layer buffer
-	layerbuffer.create(width, height);
+	layerbuffer.create(res.width, res.height);
 	framebuffer();
 	DEBUGLN("All core systems initialized!");
 }
