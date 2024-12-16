@@ -39,7 +39,7 @@ public:
 	using SelfIdentified	= ::CTL::SelfIdentified<BaseString<TChar, TIndex>>;
 	using Derived			= ::CTL::Derived<List<TChar, TIndex>>;
 	using Streamable		= ::CTL::Streamable<TChar>;
-	using CStringable	= ::CTL::CStringable<TChar>;
+	using CStringable		= ::CTL::CStringable<TChar>;
 
 	using typename Derived::BaseType;
 
@@ -124,7 +124,7 @@ public:
 	constexpr BaseString(): BaseType() {}
 
 	/// @brief Destructor.
-	constexpr ~BaseString() {if (strbuf) allocator().deallocate(strbuf);}
+	constexpr ~BaseString() {if (strbuf) strbufalloc.deallocate(strbuf);}
 	
 	/// @brief Constructs the `BaseString` from a null-terminated strin.
 	/// @param v String to copy from.
