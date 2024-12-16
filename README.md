@@ -86,9 +86,13 @@ The API is documented. Should be able to be generated via doxygen (TODO: figure 
 
 In the meantime, you can read the headers directly.
 
+## Bugs & issues
+
+see [Issues](Issues.txt).
+
 ## TODO
 
-See [TODO](docs/changes/TODO.md)
+See [TODO](docs/changes/TODO.md).
 
 [^1]: I.E. every external library in the `lib` folder.
 
