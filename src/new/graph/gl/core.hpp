@@ -3,10 +3,10 @@
 
 #include "../../compat/ctl.hpp"
 
-#define ENABLE_NVIDIA_GPU extern "C" __declspec(dllexport) ulong NvOptimusEnablement = 1
-#define ENABLE_AMD_GPU extern "C" __declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 1
+#define SUGGEST_NVIDIA_GPU extern "C" __declspec(dllexport) ulong NvOptimusEnablement = 1
+#define SUGGEST_AMD_GPU extern "C" __declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 1
 
-#define ENABLE_DEDICATED_GPU ENABLE_NVIDIA_GPU; ENABLE_AMD_GPU
+#define SUGGEST_DEDICATED_GPU SUGGEST_NVIDIA_GPU; SUGGEST_AMD_GPU
 
 /// @brief Underlying graphical API facilities.
 namespace Makai::Graph::API {
