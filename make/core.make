@@ -23,7 +23,14 @@ ifdef no-buffers
 export NO_BUFFERS := -DMAKAILIB_DO_NOT_USE_BUFFERS
 endif
 
-OPTIMIZATIONS	:= $(USE_OPENMP) -funswitch-loops -fpredictive-commoning -fgcse-after-reload -ftree-vectorize -fexpensive-optimizations
+ifeq (math,fast)
+export MATHMODE := -ffast-math -fsingle-precision-constant
+endif
+ifeq (math,safe)
+export MATHMODE := -frounding-math -fsignaling-nans
+endif
+
+OPTIMIZATIONS	:= $(USE_OPENMP) $(MATHMODE) -funswitch-loops -fpredictive-commoning -fgcse-after-reload -ftree-vectorize -fexpensive-optimizations
 
 export DEBUGMODE	:= -DMAKAILIB_DEBUG -DCTL_CONSOLE_OUT -DNDEBUG
 

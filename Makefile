@@ -1,6 +1,3 @@
-define HELP_MESSAGE
-endef
-
 define GET_TIME
 @printf "\nTime: "
 @date +\"%H:%M:%S\"
@@ -32,7 +29,9 @@ include make/options.make
 export HELP_MESSAGE
 
 help:
+	@echo ""
 	@echo "$$HELP_MESSAGE"
+	@echo ""
 
 all: build-all up-all link-all
 
