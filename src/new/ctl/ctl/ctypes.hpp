@@ -152,18 +152,10 @@ static_assert(sizeof(usize) == sizeof(size_t), "Size mismatch!");
 #endif
 #if		CPU_ARCH == 64
 /// @brief Signed 128-bit integer.
-typedef intmax	int128 __attribute__((vector_size(16)));
-/// @brief Signed 256-bit integer.
-typedef intmax	int256 __attribute__((vector_size(32)));
-/// @brief Signed 512-bit integer.
-typedef intmax	int512 __attribute__((vector_size(64)));
+typedef __int128_t	int128;
 
 /// @brief Unsigned 128-bit integer.
-typedef uintmax	uint128 __attribute__((vector_size(16)));
-/// @brief Unsigned 256-bit integer.
-typedef uintmax	uint256 __attribute__((vector_size(32)));
-/// @brief Unsigned 512-bit integer.
-typedef uintmax	uint512 __attribute__((vector_size(64)));
+typedef __uint128_t	uint128;
 #endif
 
 /// @brief Generic pointer.
