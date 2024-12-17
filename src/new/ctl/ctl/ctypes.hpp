@@ -143,14 +143,7 @@ typedef int8	ssize;
 
 static_assert(sizeof(usize) == sizeof(size_t), "Size mismatch!");
 
-#if defined(__x86_64__) || defined(_M_X64) || defined(i386) || defined(__i386__) || defined(__i386) || defined(_M_IX86)
-#define CPU_X86
-/// @brief 128-bit unsigned integer (x86-only).
-//typedef __m128	uint128x86;
-/// @brief 128-bit signed integer (x86-only).
-//typedef __m128i	int128x86;
-#endif
-#if		CPU_ARCH == 64
+#if CPU_ARCH == 64
 /// @brief Signed 128-bit integer.
 typedef __int128_t	int128;
 
