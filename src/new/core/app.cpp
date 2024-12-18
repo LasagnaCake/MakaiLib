@@ -38,7 +38,8 @@ appState(App::AppState::AS_CLOSED) {
 	if (mainApp)
 		throw Error::DuplicateValue(
 			"Cannot have two apps open at the same time!",
-			"Having two apps open is forbidden!"
+			"Having two apps open is forbidden!",
+			CTL_CPP_PRETTY_SOURCE
 		);
 	else mainApp = this;
 	DEBUGLN("Starting app...");
@@ -50,7 +51,8 @@ appState(App::AppState::AS_CLOSED) {
 	if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_AUDIO) != 0) {
 		throw Error::FailedAction(
 			"Unable to start SDL!",
-			SDL_GetError()
+			SDL_GetError(),
+			CTL_CPP_PRETTY_SOURCE
 		);
 	}
 	DEBUGLN("Started!");
@@ -71,7 +73,8 @@ appState(App::AppState::AS_CLOSED) {
 	if (!window) {
 		throw Error::FailedAction(
 			"Failed to create window!",
-			SDL_GetError()
+			SDL_GetError(),
+			CTL_CPP_PRETTY_SOURCE
 		);
 	}
 	SDL_SetWindowFullscreen(sdlWindow, config.window.fullscreen ? SDL_WINDOW_FULLSCREEN : 0);
@@ -93,7 +96,8 @@ appState(App::AppState::AS_CLOSED) {
 	if (!Makai::Graph::API::hasRequiredVersion()) {
 		throw Error::FailedAction(
 			"Your computer does not support the required graphical API version!",
-			"Required version: " + Makai::Graph::API::name()
+			"Required version: " + Makai::Graph::API::name(),
+			CTL_CPP_PRETTY_SOURCE
 		);
 	}
 	DEBUGLN("Started!");

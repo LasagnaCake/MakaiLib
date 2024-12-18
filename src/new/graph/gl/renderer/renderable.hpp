@@ -59,7 +59,7 @@ namespace Makai::Graph {
 		[[nodiscard]]
 		Instance<T> createReference() {
 			constexpr usize count = T::SIZE;
-			if (locked) throw Error::InvalidAction("Renderable object is locked!");
+			if (locked) throw Error::InvalidAction("Renderable object is locked!", CTL_CPP_PRETTY_SOURCE);
 			List<Triangle*> tris(count);
 			// Create triangles
 			for (Triangle*& t: tris)

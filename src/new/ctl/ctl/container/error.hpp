@@ -15,9 +15,18 @@ namespace Error {
 	#define DEFINE_ERROR_TYPE(NAME)\
 		struct NAME: public Generic {\
 			NAME (\
-				String const&			message		= "none",\
-				String const&			info		= "none",\
-				String const&			callerInfo	= "none",\
+				String const&			message,\
+				CPP::SourceFile const&	src			= CTL_CPP_DEFAULT_SOURCE\
+			): Generic (#NAME, message, src.file, src.lineName(), src.function, "none", "none") {}\
+			NAME (\
+				String const&			message,\
+				String const&			info,\
+				CPP::SourceFile const&	src			= CTL_CPP_DEFAULT_SOURCE\
+			): Generic (#NAME, message, src.file, src.lineName(), src.function, info, "none") {}\
+			NAME (\
+				String const&			message,\
+				String const&			info,\
+				String const&			callerInfo,\
 				CPP::SourceFile const&	src			= CTL_CPP_DEFAULT_SOURCE\
 			): Generic (#NAME, message, src.file, src.lineName(), src.function, info, callerInfo) {}\
 		}
@@ -82,9 +91,18 @@ CTL_NAMESPACE_END
 #define DEFINE_ERROR_TYPE(NAME)\
 	struct NAME: public ::CTL::Error::Generic {\
 		NAME (\
-			::CTL::String const&			message		= "none",\
-			::CTL::String const&			info		= "none",\
-			::CTL::String const&			callerInfo	= "none",\
+			::CTL::String const&			message,\
+			::CTL::CPP::SourceFile const&	src			= CTL_CPP_DEFAULT_SOURCE\
+		): ::CTL::Error::Generic (#NAME, message, src.file, src.lineName(), src.function, "none", "none") {}\
+		NAME (\
+			::CTL::String const&			message,\
+			::CTL::String const&			info,\
+			::CTL::CPP::SourceFile const&	src			= CTL_CPP_DEFAULT_SOURCE\
+		): ::CTL::Error::Generic (#NAME, message, src.file, src.lineName(), src.function, info, "none") {}\
+		NAME (\
+			::CTL::String const&			message,\
+			::CTL::String const&			info,\
+			::CTL::String const&			callerInfo,\
 			::CTL::CPP::SourceFile const&	src			= CTL_CPP_DEFAULT_SOURCE\
 		): ::CTL::Error::Generic (#NAME, message, src.file, src.lineName(), src.function, info, callerInfo) {}\
 	}

@@ -113,12 +113,16 @@ int Sound::getVolume() {
 }
 
 void Sound::onCreate(Extern::Resource const& data) {
-	if (!isOpen()) throw Error::FailedAction("Failed to load file: Audio system is closed!");
+	if (!isOpen()) throw Error::FailedAction(
+		"Failed to load file: Audio system is closed!",
+		CTL_CPP_PRETTY_SOURCE
+	);
 	source = (Extern::Resource)Mix_LoadWAV_RW((SDL_RWops*)data, true);
 	if (!source)
 		throw Error::FailedAction(
 			"Could not load file!",
-			String(Mix_GetError())
+			String(Mix_GetError()),
+			CTL_CPP_PRETTY_SOURCE
 		);
 }
 

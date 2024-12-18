@@ -360,7 +360,7 @@ namespace Collision::C2D {
 			switch (shape) {
 				using enum CollisionType;
 				case CT_NULL:
-					throw Error::InvalidValue("No shape was bound!");
+					throw Error::InvalidValue("No shape was bound!", CTL_CPP_PRETTY_SOURCE);
 				case CT_BOX:		return data.box;
 				case CT_CIRCLE:		return data.circle;
 				case CT_CAPSULE:	return data.capsule;
@@ -380,7 +380,8 @@ namespace Collision::C2D {
 			if (shape != (CollisionType)T::ID)
 				throw Error::InvalidType(
 					"Collision type doesn't match stored collision type!",
-					toString("Requested type ID: ", T::ID, "\nStored type ID: ", enumcast(shape))
+					toString("Requested type ID: ", T::ID, "\nStored type ID: ", enumcast(shape)),
+					CTL_CPP_PRETTY_SOURCE
 				);
 			return asType<T>();
 		}

@@ -48,7 +48,7 @@ void Shader::attach(String const& code, ShaderType const& shaderType) {
 	glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
 	if (!success) {
 		glGetShaderInfoLog(shader, 2048, NULL, infoLog);
-		throw Error::FailedAction("Could not compile Shader!\n"s, infoLog);
+		throw Error::FailedAction("Could not compile Shader!\n"s, infoLog, CTL_CPP_PRETTY_SOURCE);
 	};
 	// Shader Program
 	instance->create();
@@ -58,7 +58,7 @@ void Shader::attach(String const& code, ShaderType const& shaderType) {
 	glGetProgramiv(instance->id, GL_LINK_STATUS, &success);
 	if (!success) {
 		glGetProgramInfoLog(instance->id, 2048, NULL, infoLog);
-		throw Error::FailedAction("Could not link shader program!\n"s, infoLog);
+		throw Error::FailedAction("Could not link shader program!\n"s, infoLog, CTL_CPP_PRETTY_SOURCE);
 	}
 	glDeleteShader(shader);
 }
@@ -127,7 +127,7 @@ bool Shader::create(SLF::SLFData const& slfData) {
 		}
 	}
 	if (!log.empty())
-		throw Error::FailedAction("Compilation failure!", log);
+		throw Error::FailedAction("Compilation failure!", log, CTL_CPP_PRETTY_SOURCE);
 	created = true;
 	return true;
 }

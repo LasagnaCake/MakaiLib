@@ -276,7 +276,8 @@ void Scene::extendFromDefinitionV0(JSON::JSONData def, String const& sourcepath)
 		throw Error::FailedAction(
 			"Failed at parsing scene file!",
 			e.what(),
-			"Please check to see if values are correct!"
+			"Please check to see if values are correct!",
+			CTL_CPP_PRETTY_SOURCE
 		);
 	}
 }

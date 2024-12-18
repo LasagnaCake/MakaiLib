@@ -41,7 +41,7 @@ namespace OS {
 	/// @note Running the program in a separate directory is currently only supported on Windows.
 	inline int launch(String const& path, String const& directory = "", StringList args = StringList()) {
 		if (!FS::exists(path))
-			throw Error::InvalidValue("File [" + path + "] does not exist!");
+			throw Error::InvalidValue("File [" + path + "] does not exist!", CTL_CPP_PRETTY_SOURCE);
 		#if (_WIN32 || _WIN64 || __WIN32__ || __WIN64__) && !defined(CTL_NO_WINDOWS_PLEASE)
 		String prgArgs = "";
 		if (!args.empty())
@@ -66,7 +66,7 @@ namespace OS {
 			(LPSTARTUPINFOA)&sInfo,
 			&pInfo
 		);
-		if (!proc) throw Error::FailedAction(toString("could not find '", path,"!"));
+		if (!proc) throw Error::FailedAction(toString("could not find '", path,"!"), CTL_CPP_PRETTY_SOURCE);
 		proc = WaitForSingleObject(pInfo.hProcess, INFINITE);
 		DWORD res;
 		GetExitCodeProcess(pInfo.hProcess, &res);

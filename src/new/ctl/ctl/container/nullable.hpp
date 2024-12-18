@@ -130,7 +130,7 @@ public:
 	/// @throw Error::NonexistentValue if value is not set.
 	constexpr DataType value() const {
 		if (isSet) return data;
-		throw Error::NonexistentValue("Value is not set!");
+		throw Error::NonexistentValue("Value is not set!", CTL_CPP_PRETTY_SOURCE);
 	}
 
 	/// @brief Returns the stored value, or a fallback.

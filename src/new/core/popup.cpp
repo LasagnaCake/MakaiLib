@@ -44,7 +44,8 @@ int Popup::showDialog(
 	if (SDL_ShowMessageBox(&messageBoxData, &buttonid) < 0) {
 		throw Error::FailedAction(
 			"Failed to show popup!",
-			SDL_GetError()
+			SDL_GetError(),
+			CTL_CPP_PRETTY_SOURCE
 		);
 	}
 	delete[] buttons;

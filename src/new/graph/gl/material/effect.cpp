@@ -33,7 +33,8 @@ Material::Effect::Image Material::loadImageEffect(
 		throw Error::FailedAction(
 			"Failed at getting image effect!",
 			e.what(),
-			"Please check to see if values are correct!"
+			"Please check to see if values are correct!",
+			CTL_CPP_PRETTY_SOURCE
 		);
 	}
 }

@@ -16,23 +16,35 @@ Makai::JSON::JSONView::JSONView(Extern::JSONData const& _data, String const& _na
 
 Makai::JSON::JSONView Makai::JSON::JSONView::operator[](String const& key) {
 	if (isNull()) view() = Nlohmann::object();
-	else if (!isObject()) throw Error::InvalidAction("Parameter '" + name + "' is not an object!");
+	else if (!isObject()) throw Error::InvalidAction(
+		"Parameter '" + name + "' is not an object!",
+		CTL_CPP_PRETTY_SOURCE
+	);
 	return Makai::JSON::JSONView(view()[key.stdView()], name + "/" + key);
 }
 
 const Makai::JSON::JSONView Makai::JSON::JSONView::operator[](String const& key) const {
-	if (!isObject()) throw Error::InvalidAction("Parameter '" + name + "' is not an object!");
+	if (!isObject()) throw Error::InvalidAction(
+		"Parameter '" + name + "' is not an object!",
+		CTL_CPP_PRETTY_SOURCE
+	);
 	return Makai::JSON::JSONView(cdata[key.stdView()], name + "/" + key);
 }
 
 Makai::JSON::JSONView Makai::JSON::JSONView::operator[](usize const index) {
 	if (isNull()) view() = Nlohmann::array();
-	else if (!isArray()) throw Error::InvalidAction("Parameter '" + name + "' is not an array!");
+	else if (!isArray()) throw Error::InvalidAction(
+		"Parameter '" + name + "' is not an array!",
+		CTL_CPP_PRETTY_SOURCE
+	);
 	return Makai::JSON::JSONView(view()[index], CTL::toString(name, "[", index, "]"));
 }
 
 const Makai::JSON::JSONView Makai::JSON::JSONView::operator[](usize const index) const {
-	if (!isArray()) throw Error::InvalidAction("Parameter '" + name + "' is not an array!");
+	if (!isArray()) throw Error::InvalidAction(
+		"Parameter '" + name + "' is not an array!",
+		CTL_CPP_PRETTY_SOURCE
+	);
 	return Makai::JSON::JSONView(cdata[index], CTL::toString(name, "[", index, "]"));
 }
 
@@ -96,7 +108,8 @@ Makai::JSON::JSONData Makai::JSON::parse(String const& json) try {
 	throw Error::FailedAction(
 		"Failed at parsing JSON!",
 		e.what(),
-		"Please check to see if values are correct!"
+		"Please check to see if values are correct!",
+		CTL_CPP_PRETTY_SOURCE
 	);
 }
 

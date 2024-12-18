@@ -105,11 +105,11 @@ BinaryData<> cbcTransform(
 	return BinaryData<>((uint8*)result.data(), (uint8*)result.data() + result.size());
 } catch (std::exception const& e) {
 	throw Error::FailedAction(
-		e.what()
+		e.what(), CTL_CPP_PRETTY_SOURCE
 	);
 } catch (CTL::Exception const& e) {
 	throw Error::FailedAction(
-		e.what()
+		e.what(), CTL_CPP_PRETTY_SOURCE
 	);
 }
 
@@ -144,11 +144,11 @@ BinaryData<> flate(
 	return BinaryData<>((uint8*)result.data(), (uint8*)result.data() + result.size());
 } catch (std::exception const& e) {
 	throw Error::FailedAction(
-		e.what()
+		e.what(), CTL_CPP_PRETTY_SOURCE
 	);
 } catch (CTL::Exception const& e) {
 	throw Error::FailedAction(
-		e.what()
+		e.what(), CTL_CPP_PRETTY_SOURCE
 	);
 }
 
@@ -177,7 +177,7 @@ BinaryData<> Arch::encrypt(
 	uint8* const			block
 ) {
 	switch (method) {
-		default: throw Error::InvalidValue("Invalid encryption method!");
+		default: throw Error::InvalidValue("Invalid encryption method!", CTL_CPP_PRETTY_SOURCE);
 		case EncryptionMethod::AEM_NONE:	return data;
 		case EncryptionMethod::AEM_AES256:	return cbcEncrypt<AES>(data, password, block);
 	}
@@ -191,7 +191,7 @@ BinaryData<> Arch::decrypt(
 	uint8* const			block
 ) {
 	switch (method) {
-		default: throw Error::InvalidValue("Invalid decryption method!");
+		default: throw Error::InvalidValue("Invalid decryption method!", CTL_CPP_PRETTY_SOURCE);
 		case EncryptionMethod::AEM_NONE:	return data;
 		case EncryptionMethod::AEM_AES256:	return cbcDecrypt<AES>(data, password, block);
 	}
@@ -245,23 +245,23 @@ StringList getFileInfo(JSONData const& filestruct) {
 
 void populateTree(JSONData& tree, String const& root = "") {
 	if (!tree.is_object())
-		throw Error::FailedAction("file tree is not a JSON object!");
+		throw Error::FailedAction("file tree is not a JSON object!", CTL_CPP_PRETTY_SOURCE);
 	for (auto& [name, data]: tree.items()) {
 		String path = OS::FS::concatenate(root, String(name));
 		if (data.is_string()) data = path;
 		else if (data.is_object()) populateTree(data, path);
-		else throw Error::FailedAction("Invalid data type in file tree!");
+		else throw Error::FailedAction("Invalid data type in file tree!", CTL_CPP_PRETTY_SOURCE);
 	}
 }
 
 usize populateTree(JSONData& tree, List<uint64> const& values, usize const start = 0) {
 	if (!tree.is_object())
-		throw Error::FailedAction("file tree is not a JSON object!");
+		throw Error::FailedAction("file tree is not a JSON object!", CTL_CPP_PRETTY_SOURCE);
 	usize idx = start;
 	for (auto& [name, data]: tree.items()) {
 		if (data.is_string()) data = encoded(values[idx++]);
 		else if (data.is_object()) idx = populateTree(data, values, idx);
-		else throw Error::FailedAction("Invalid data type in file tree!");
+		else throw Error::FailedAction("Invalid data type in file tree!", CTL_CPP_PRETTY_SOURCE);
 	}
 	return idx;
 }
@@ -411,22 +411,21 @@ void Arch::pack(
 	}
 	#else
 	} catch (std::runtime_error const& e) {
-		throw File::FileLoadError(e.what());
+		throw File::FileLoadError(e.what(), CTL_CPP_PRETTY_SOURCE);
 	}
 	#endif // ARCSYS_APPLICATION_
 }
 
 [[noreturn]] void notOpenError() {
 	throw File::FileLoadError(
-		"Archive is not open!"
+		"Archive is not open!",
+		CTL_CPP_UNKNOWN_SOURCE
 	);
 }
 
 [[noreturn]] void singleFileArchiveError() {
 	throw File::FileLoadError(
 		"Archive is not a multi-file archive!",
-		"none",
-		"none",
 		CTL_CPP_UNKNOWN_SOURCE
 	);
 }
@@ -434,8 +433,6 @@ void Arch::pack(
 [[noreturn]] void doesNotExistError(String const& file) {
 	throw File::FileLoadError(
 		"Directory or file '" + file + "' does not exist!",
-		"none",
-		"none",
 		CTL_CPP_UNKNOWN_SOURCE
 	);
 }
@@ -443,8 +440,6 @@ void Arch::pack(
 [[noreturn]] void outOfArchiveBoundsError(String const& file) {
 	throw File::FileLoadError(
 		"Directory or file '" + file + "' lives outside the archive!",
-		"none",
-		"none",
 		CTL_CPP_UNKNOWN_SOURCE
 	);
 }
@@ -452,8 +447,6 @@ void Arch::pack(
 [[noreturn]] void notAFileError(String const& file) {
 	throw File::FileLoadError(
 		"Entry '" + file + "' is not a file!",
-		"none",
-		"none",
 		CTL_CPP_UNKNOWN_SOURCE
 	);
 }
@@ -461,8 +454,6 @@ void Arch::pack(
 [[noreturn]] void directoryTreeError() {
 	throw File::FileLoadError(
 		"Missing or corrupted directory tree info!",
-		"none",
-		"none",
 		CTL_CPP_UNKNOWN_SOURCE
 	);
 }
@@ -470,8 +461,6 @@ void Arch::pack(
 [[noreturn]] void corruptedFileError(String const& path) {
 	throw File::FileLoadError(
 		"Corrupted file '" + path + "'!",
-		"none",
-		"none",
 		CTL_CPP_UNKNOWN_SOURCE
 	);
 }
@@ -479,8 +468,6 @@ void Arch::pack(
 [[noreturn]] void crcFailError(String const& path) {
 	throw File::FileLoadError(
 		"CRC check failed for file '" + path + "'!",
-		"none",
-		"none",
 		CTL_CPP_UNKNOWN_SOURCE
 	);
 }
@@ -513,7 +500,7 @@ FileArchive& Arch::FileArchive::open(DataBuffer& buffer, String const& password)
 	streamOpen = true;
 	return *this;
 } catch (std::runtime_error const& e) {
-	throw File::FileLoadError(e.what());
+	throw File::FileLoadError(e.what(), CTL_CPP_PRETTY_SOURCE);
 }
 
 FileArchive& Arch::FileArchive::close() try {
@@ -521,7 +508,7 @@ FileArchive& Arch::FileArchive::close() try {
 	streamOpen = false;
 	return *this;
 } catch (std::runtime_error const& e) {
-	throw File::FileLoadError(e.what());
+	throw File::FileLoadError(e.what(), CTL_CPP_PRETTY_SOURCE);
 }
 
 String Arch::FileArchive::getTextFile(String const& path) try {
@@ -700,7 +687,10 @@ BinaryData<> Arch::FileArchive::getFileEntryData(uint64 const index, FileHeader 
 	archive.seekg(lp);
 	return fd;
 } catch (std::ios_base::failure const& e) {
-	throw Error::FailedAction("Failed at getting file entry data: "s + String(e.what()));
+	throw Error::FailedAction(
+		"Failed at getting file entry data: "s + String(e.what()),
+		CTL_CPP_PRETTY_SOURCE
+	);
 }
 
 FileHeader Arch::FileArchive::getFileEntryHeader(uint64 const index) try {
@@ -711,7 +701,10 @@ FileHeader Arch::FileArchive::getFileEntryHeader(uint64 const index) try {
 	archive.seekg(lp);
 	return fh;
 } catch (std::ios_base::failure const& e) {
-	throw Error::FailedAction("Failed at getting file entry header: "s + String(e.what()));
+	throw Error::FailedAction(
+		"Failed at getting file entry header: "s + String(e.what()),
+		CTL_CPP_PRETTY_SOURCE
+	);
 }
 
 uint64 Arch::FileArchive::getFileEntryLocation(String const& path, String const& origpath) try {
@@ -770,7 +763,7 @@ void unpackV1(
 }
 #else
 } catch (std::runtime_error const& e) {
-	throw File::FileLoadError(e.what());
+	throw File::FileLoadError(e.what(), CTL_CPP_PRETTY_SOURCE);
 }
 #endif // ARCSYS_APPLICATION_
 
@@ -796,7 +789,7 @@ void unpackV0(
 }
 #else
 } catch (std::runtime_error const& e) {
-	throw File::FileLoadError(e.what());
+	throw File::FileLoadError(e.what(), CTL_CPP_PRETTY_SOURCE);
 }
 #endif // ARCSYS_APPLICATION_
 
@@ -814,7 +807,8 @@ void Arch::unpack(
 		case 1: unpackV1(archivePath, folderPath, password);	break;
 		case 0: unpackV0(archivePath, folderPath, password);	break;
 		default: throw Error::InvalidValue(
-			"Unsupported or invalid minimum version!"
+			"Unsupported or invalid minimum version!",
+			CTL_CPP_PRETTY_SOURCE
 		);
 	}
 #ifdef ARCSYS_APPLICATION_
@@ -827,7 +821,7 @@ void Arch::unpack(
 }
 #else
 } catch (std::runtime_error const& e) {
-	throw File::FileLoadError(e.what());
+	throw File::FileLoadError(e.what(), CTL_CPP_PRETTY_SOURCE);
 }
 #endif // ARCSYS_APPLICATION_
 
@@ -887,7 +881,8 @@ BinaryData<> Arch::loadEncryptedBinaryFile(String const& path, String const& pas
 } catch (std::runtime_error const& e) {
 	throw File::FileLoadError(
 		"Failed to load '" + path + "'!",
-		e.what()
+		e.what(),
+		CTL_CPP_PRETTY_SOURCE
 	);
 }
 
@@ -907,7 +902,10 @@ void Arch::saveEncryptedBinaryFile(
 	uint8 const					lvl
 ) {
 	if (enc != EncryptionMethod::AEM_NONE && password.empty())
-		throw Error::InvalidValue("Missing password for encrypted file!");
+		throw Error::InvalidValue(
+			"Missing password for encrypted file!",
+			CTL_CPP_PRETTY_SOURCE
+		);
 	// Open file
 	std::ofstream file(path.cstr(), std::ios::binary | std::ios::trunc);
 	file.exceptions(std::ofstream::badbit | std::ofstream::failbit);

@@ -247,7 +247,7 @@ ImageData Image2D::getData() const {
 	DEBUGLN("Reserving buffer...");
 	imgdat.data.resize(((usize)attributes.width) * ((usize)attributes.height) * size, 0);
 	DEBUGLN("Reserved: ", imgdat.data.size());
-	if (imgdat.data.empty()) throw Error::FailedAction("Somehow, the image data is empty.");
+	if (imgdat.data.empty()) throw Error::FailedAction("Somehow, the image data is empty.", CTL_CPP_PRETTY_SOURCE);
 	DEBUGLN("Extracting pixels...");
 	glBindTexture(GL_TEXTURE_2D, getID());
 	glGetTexImage(GL_TEXTURE_2D, 0, convert(attributes.format), convert(attributes.type), imgdat.data.data());
@@ -360,7 +360,7 @@ void Image2D::saveImageToFile(String const& path, uint8 const quality, ImageFile
 	int result;
 	if (type == ImageFileType::IFT_AUTO_DETECT) type = fromFileExtension(path);
 	if (type == ImageFileType::IFT_INVALID)
-		throw Error::InvalidValue("Invalid file type of '." + path.splitAtLast('.').back() + "'!");
+		throw Error::InvalidValue("Invalid file type of '." + path.splitAtLast('.').back() + "'!", CTL_CPP_PRETTY_SOURCE);
 	#define IMAGE2D_STBIWRITE_PARAMS path.cstr(), imgdat.width, imgdat.height, channels, imgdat.data.data()
 	switch (type) {
 		default:

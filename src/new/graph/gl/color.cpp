@@ -14,13 +14,15 @@ Vector4 Color::fromHexCodeString(String code) {
 	if (code.empty())
 		throw Error::InvalidValue(
 			"Color value does not exist!",
-			"Make sure the color values are correct!"
+			"Make sure the color values are correct!",
+			CTL_CPP_PRETTY_SOURCE
 		);
 	// Check if color value is valid
 	if (code.size() < 3 || code.size() > 8 || !code.isHex())
 		throw Error::InvalidValue(
 			"Invalid color value \"#"+ code +"\"!",
-			"Make sure the color values are correct!"
+			"Make sure the color values are correct!",
+			CTL_CPP_PRETTY_SOURCE
 		);
 	// Bit fuckery for 4-bit color
 	if (code.size() <= 4) {

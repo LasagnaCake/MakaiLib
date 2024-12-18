@@ -125,7 +125,8 @@ Texture2D Texture2D::fromJSON(JSON::JSONData img, String const& sourcepath) {
 		} else throw Error::FailedAction(
 			"Failed at getting image effect!",
 			"Could not decode embedded image data!",
-			"Please check to see if values are correct!"
+			"Please check to see if values are correct!",
+			CTL_CPP_PRETTY_SOURCE
 		);
 	}
 	return texture;
@@ -247,7 +248,8 @@ Texture2D& Texture2D::create(
 	} else {
 		throw Error::FailedAction(
 			"Could not load image file '" + path + "'!\n\n",
-			stbi_failure_reason()
+			stbi_failure_reason(),
+			CTL_CPP_PRETTY_SOURCE
 		);
 	}
 	return *this;

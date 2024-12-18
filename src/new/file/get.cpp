@@ -70,7 +70,7 @@ void Makai::File::attachArchive(DataBuffer& buffer, String const& password) {
 	#ifdef IMPL_ARCHIVE_
 	DEBUGLN("Attaching archive...");
 	if (state() == ArchiveState::FAS_LOADING)
-		throw Error::FailedAction("Other archive is being loaded!");
+		throw Error::FailedAction("Other archive is being loaded!", CTL_CPP_PRETTY_SOURCE);
 	try {
 		state() = ArchiveState::FAS_LOADING;
 		archive().close();

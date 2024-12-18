@@ -159,7 +159,8 @@ inline ObjectMaterial fromDefinition(JSON::JSONData def, String const& definitio
 		throw Error::FailedAction(
 			"Failed at getting material values!",
 			e.what(),
-			"Please check to see if values are correct!"
+			"Please check to see if values are correct!",
+			 CTL_CPP_PRETTY_SOURCE
 		);
 	}
 	return mat;
@@ -266,9 +267,9 @@ void Renderable::bakeAndLock() {
 void Renderable::extend(Vertex* const vertices, usize const size) {
 	if (locked) return;
 	if (vertices == nullptr || size == 0)
-		throw Error::InvalidValue("No vertices were provided!");
+		throw Error::InvalidValue("No vertices were provided!", CTL_CPP_PRETTY_SOURCE);
 	if (size % 3 != 0)
-		throw Error::InvalidValue("Vertex amount is not a multiple of 3!");
+		throw Error::InvalidValue("Vertex amount is not a multiple of 3!", CTL_CPP_PRETTY_SOURCE);
 	const usize arrEnd = triangles.size();
 	triangles.resize(triangles.size() + (size / 3));
 	if (this->vertices)
@@ -292,7 +293,10 @@ void Renderable::extend(Renderable const& other) {
 
 void Renderable::extendFromBinaryFile(String const& path) {
 	auto data = File::getBinary(path);
-	if (!data.size()) throw File::FileLoadError("File does not exist or is empty! (" + path + ")!");
+	if (!data.size()) throw File::FileLoadError(
+		"File does not exist or is empty! (" + path + ")!",
+		CTL_CPP_PRETTY_SOURCE
+	);
 	extend((Vertex*)&data[0], data.size() / sizeof(Vertex));
 	DEBUG("Vertices: ");
 	DEBUGLN(data.size() / sizeof(Vertex));
@@ -472,7 +476,8 @@ void Renderable::extendFromDefinitionV0(
 		throw Error::FailedAction(
 			"Failed at getting mesh values!",
 			e.what(),
-			"Please check to see if values are correct!"
+			"Please check to see if values are correct!",
+			CTL_CPP_PRETTY_SOURCE
 		);
 	}
 	DEBUGLN(componentData);
@@ -483,7 +488,8 @@ void Renderable::extendFromDefinitionV0(
 		if (componentData.empty())	error += ("Missing mesh's component data!\n");
 		if (!error.empty()) throw Error::InvalidValue(
 			"Missing mesh data!\n\n",
-			error
+			error,
+			CTL_CPP_PRETTY_SOURCE
 		);
 	}
 	// Vertex map
@@ -499,7 +505,10 @@ void Renderable::extendFromDefinitionV0(
 			i++;
 		}
 		if (!indexes.empty()) {
-			throw Error::InvalidValue("Malformed component data!\n\nIndex(es): [ " + indexes + "]");
+			throw Error::InvalidValue(
+				"Malformed component data!\n\nIndex(es): [ " + indexes + "]",
+				CTL_CPP_PRETTY_SOURCE
+			);
 		}
 	}
 	// Check if there are no missing vertices
@@ -515,7 +524,8 @@ void Renderable::extendFromDefinitionV0(
 					vds, " (", vdata.size(), " bytes).\nExpected size is ",
 					expected, " (", expected * vsize, " bytes)."
 				),
-				"You either have extra data, or missing data."
+				"You either have extra data, or missing data.",
+				CTL_CPP_PRETTY_SOURCE
 			);
 	}
 	// Get pointer to data
@@ -542,7 +552,8 @@ void Renderable::extendFromDefinitionV0(
 			+	toString(usize(Math::ceil(vertices.size() / 3.0) * 3.0))
 			+	"."
 			),
-			"You either have extra data, or missing data."
+			"You either have extra data, or missing data.",
+			CTL_CPP_PRETTY_SOURCE
 		);
 	// Create renderable object
 	extend(vertices.data(), vertices.size());
@@ -557,7 +568,8 @@ void Renderable::extendFromDefinitionV0(
 			throw Error::FailedAction(
 				"Failed at getting transformation values!",
 				e.what(),
-				"Please check to see if values are correct!"
+				"Please check to see if values are correct!",
+				CTL_CPP_PRETTY_SOURCE
 			);
 		}
 	}
@@ -598,7 +610,8 @@ void Renderable::extendFromDefinitionV0(
 			throw Error::FailedAction(
 				"Failed at getting blending values!",
 				e.what(),
-				"Please check to see if values are correct!"
+				"Please check to see if values are correct!",
+				CTL_CPP_PRETTY_SOURCE
 			);
 		}
 	}
@@ -616,7 +629,7 @@ JSON::JSONData Renderable::getObjectDefinition(
 	if (!wasBaked) bake();
 	// check if there is any data
 	if (vertices == nullptr || vertexCount == 0)
-		throw Error::InvalidValue("Renderable object is empty!");
+		throw Error::InvalidValue("Renderable object is empty!", CTL_CPP_PRETTY_SOURCE);
 	// Create definition
 	JSON::JSONData def;
 	// Save mesh components

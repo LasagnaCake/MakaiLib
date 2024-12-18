@@ -46,7 +46,8 @@ void Makai::Audio::open(
 	if (!Mix_Init(getFlags(formats))) {
 		throw Error::FailedAction(
 			"Unable to open audio system!",
-			Mix_GetError()
+			Mix_GetError(),
+			CTL_CPP_PRETTY_SOURCE
 		);
 	}
 	int result = Mix_OpenAudioDevice(
@@ -58,11 +59,13 @@ void Makai::Audio::open(
 		SDL_AUDIO_ALLOW_FORMAT_CHANGE
 	|	SDL_AUDIO_ALLOW_SAMPLES_CHANGE
 	);
-	if (result)
+	if (result) {
 		throw Error::FailedAction(
 			"Failed to open audio system!",
-			Mix_GetError()
+			Mix_GetError(),
+			CTL_CPP_PRETTY_SOURCE
 		);
+	}
 	Mix_AllocateChannels(audioTracks);
 	audioOpen = true;
 }
