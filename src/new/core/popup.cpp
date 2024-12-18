@@ -44,9 +44,6 @@ int Popup::showDialog(
 	if (SDL_ShowMessageBox(&messageBoxData, &buttonid) < 0) {
 		throw Error::FailedAction(
 			"Failed to show popup!",
-			__FILE__,
-			CTL::toString(__LINE__),
-			"show",
 			SDL_GetError()
 		);
 	}

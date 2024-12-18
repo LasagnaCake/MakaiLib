@@ -368,10 +368,9 @@ private:
 	inline void nullPointerError() const {
 		throw Error::NullPointer(
 			toString("Pointer reference of type '", TypeInfo<T>::name(), "' does not exist!"),
-			__FILE__,
-			"unspecified",
-			"Pointer",
-			"Pointer might be null or nonexistent."
+			"Pointer might be null or nonexistent.",
+			"none",
+			CTL_CPP_UNKNOWN_SOURCE
 		);
 	}
 };

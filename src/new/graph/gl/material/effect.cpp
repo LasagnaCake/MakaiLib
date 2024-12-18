@@ -32,9 +32,6 @@ Material::Effect::Image Material::loadImageEffect(
 	} catch (std::exception const& e) {
 		throw Error::FailedAction(
 			"Failed at getting image effect!",
-			__FILE__,
-			toString(__LINE__),
-			"Makai::Graph::Material::loadImageEffect",
 			e.what(),
 			"Please check to see if values are correct!"
 		);

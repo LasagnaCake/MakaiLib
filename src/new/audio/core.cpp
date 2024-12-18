@@ -46,9 +46,6 @@ void Makai::Audio::open(
 	if (!Mix_Init(getFlags(formats))) {
 		throw Error::FailedAction(
 			"Unable to open audio system!",
-			__FILE__,
-			toString(__LINE__),
-			"open",
 			Mix_GetError()
 		);
 	}
@@ -64,9 +61,6 @@ void Makai::Audio::open(
 	if (result)
 		throw Error::FailedAction(
 			"Failed to open audio system!",
-			__FILE__,
-			toString(__LINE__),
-			"open",
 			Mix_GetError()
 		);
 	Mix_AllocateChannels(audioTracks);

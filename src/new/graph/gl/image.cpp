@@ -360,12 +360,7 @@ void Image2D::saveImageToFile(String const& path, uint8 const quality, ImageFile
 	int result;
 	if (type == ImageFileType::IFT_AUTO_DETECT) type = fromFileExtension(path);
 	if (type == ImageFileType::IFT_INVALID)
-		throw Error::InvalidValue(
-			"Invalid file type of '." + path.splitAtLast('.').back() + "'!"
-			__FILE__,
-			toString(__LINE__),
-			"Image2D::saveToFile"
-		);
+		throw Error::InvalidValue("Invalid file type of '." + path.splitAtLast('.').back() + "'!");
 	#define IMAGE2D_STBIWRITE_PARAMS path.cstr(), imgdat.width, imgdat.height, channels, imgdat.data.data()
 	switch (type) {
 		default:
@@ -377,10 +372,7 @@ void Image2D::saveImageToFile(String const& path, uint8 const quality, ImageFile
 	#undef IMAGE2D_STBIWRITE_PARAMS
 	if (!result) {
 		throw Makai::File::FileSaveError(
-			"Could not save image file!",
-			__FILE__,
-			toString(__LINE__),
-			"Image2D::saveToFile"
+			"Could not save image file!"
 		);
 	}
 	return;

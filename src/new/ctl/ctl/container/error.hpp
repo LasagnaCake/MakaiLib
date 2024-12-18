@@ -3,6 +3,7 @@
 
 #include "string.hpp"
 #include "../cpperror.hpp"
+#include "../cpp/sourcefile.hpp"
 
 CTL_NAMESPACE_BEGIN
 
@@ -14,23 +15,11 @@ namespace Error {
 	#define DEFINE_ERROR_TYPE(NAME)\
 		struct NAME: public Generic {\
 			NAME (\
-				String const& message		= "none",\
-				String const& file			= "unspecified",\
-				String const& line			= "unspecified",\
-				String const& caller		= "unspecified",\
-				String const& info			= "none",\
-				String const& callerInfo	= "none"\
-			): Generic (#NAME, message, file, line, caller, info, callerInfo) {}\
-			\
-			NAME (\
-				bool,\
-				Exception const& other,\
-				String const& file			= "unspecified",\
-				String const& line			= "unspecified",\
-				String const& caller		= "unspecified",\
-				String const& info			= "none",\
-				String const& callerInfo	= "none"\
-			): Generic (true, other, #NAME, file, line, caller, info, callerInfo) {}\
+				String const&			message		= "none",\
+				String const&			info		= "none",\
+				String const&			callerInfo	= "none",\
+				CPP::SourceFile const&	src			= CTL_CPP_DEFAULT_SOURCE\
+			): Generic (#NAME, message, src.file, src.lineName(), src.function, info, callerInfo) {}\
 		}
 
 	// "Invalid X" errors
@@ -93,13 +82,11 @@ CTL_NAMESPACE_END
 #define DEFINE_ERROR_TYPE(NAME)\
 	struct NAME: public ::CTL::Error::Generic {\
 		NAME (\
-			CTL::String const& message		= "none",\
-			CTL::String const& file			= "unspecified",\
-			CTL::String const& line			= "unspecified",\
-			CTL::String const& caller		= "unspecified",\
-			CTL::String const& info			= "none",\
-			CTL::String const& callerInfo	= "none"\
-		): ::CTL::Error::Generic (#NAME, message, file, line, caller, info, callerInfo) {}\
+			::CTL::String const&			message		= "none",\
+			::CTL::String const&			info		= "none",\
+			::CTL::String const&			callerInfo	= "none",\
+			::CTL::CPP::SourceFile const&	src			= CTL_CPP_DEFAULT_SOURCE\
+		): ::CTL::Error::Generic (#NAME, message, src.file, src.lineName(), src.function, info, callerInfo) {}\
 	}
 
 #endif // CTL_CUSTOM_RUNTIME_ERRORS_H

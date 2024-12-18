@@ -130,12 +130,7 @@ public:
 	/// @throw Error::NonexistentValue if value is not set.
 	constexpr DataType value() const {
 		if (isSet) return data;
-		throw Error::NonexistentValue(
-			"Value is not set!",
-			__FILE__,
-			toString(__LINE__),
-			"Nullable::value"
-		);
+		throw Error::NonexistentValue("Value is not set!");
 	}
 
 	/// @brief Returns the stored value, or a fallback.

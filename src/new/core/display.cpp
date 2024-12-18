@@ -15,18 +15,12 @@ Makai::Math::Vector2 Makai::getDisplaySize(usize const display) {
 		if (SDL_Init(SDL_INIT_VIDEO) != 0) {
 			throw Error::FailedAction(
 				"Unable to start SDL!",
-				__FILE__,
-				toString(__LINE__),
-				"getDisplaySize",
 				String(SDL_GetError())
 			);
 		}
 	if (SDL_GetDisplayBounds(display, &bounds))
 		throw Error::FailedAction(
 			"Couldn't get display bounds!",
-			__FILE__,
-			toString(__LINE__),
-			"getDisplaySize",
 			String(SDL_GetError())
 		);
 	return Vector2(bounds.h - bounds.x, bounds.w - bounds.y);

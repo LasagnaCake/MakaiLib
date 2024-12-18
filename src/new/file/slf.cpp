@@ -81,9 +81,6 @@ SLFData Makai::SLF::parse(String const& slf, String const& srcFolder, bool const
 						OS::FS::concatenate(dir, shader),
 						"'!"
 					),
-					__FILE__,
-					CTL::toString(__LINE__),
-					"Makai::SLF::parseFile",
 					CTL::toString("File extension is '", OS::FS::fileExtension(shader), "'")
 				);
 			}

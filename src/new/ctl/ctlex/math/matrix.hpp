@@ -979,11 +979,7 @@ public:
 	/// @throws Error::InvalidValue if `idx` is bigger than column count.
 	constexpr Span<DataType, R> operator[](usize const idx)	{
 		if (idx > C)
-			throw Error::InvalidValue(
-				toString("Index of [", idx, "] is larger than column count of [",C,"]!"),
-				__FILE__,
-				toString(__LINE__)
-			);
+			throw Error::InvalidValue(toString("Index of [", idx, "] is larger than column count of [",C,"]!"));
 		return Span<DataType, R>(data[idx]);
 	}
 
@@ -994,11 +990,7 @@ public:
 	/// @throws Error::InvalidValue if `idx` is bigger than column count.
 	constexpr Span<const DataType, R> operator[](usize const idx) const	{
 		if (idx > C)
-			throw Error::InvalidValue(
-				toString("Index of [", idx, "] is larger than column count of [",C,"]!"),
-				__FILE__,
-				toString(__LINE__)
-			);
+			throw Error::InvalidValue(toString("Index of [", idx, "] is larger than column count of [",C,"]!"));
 		return Span<const DataType, R>(data[idx]);
 	}
 

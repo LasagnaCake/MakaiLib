@@ -95,9 +95,6 @@ Makai::JSON::JSONData Makai::JSON::parse(String const& json) try {
 } catch (Nlohmann::exception const& e) {
 	throw Error::FailedAction(
 		"Failed at parsing JSON!",
-		__FILE__,
-		CTL::toString(__LINE__),
-		"Makai::JSON::parseJSON",
 		e.what(),
 		"Please check to see if values are correct!"
 	);

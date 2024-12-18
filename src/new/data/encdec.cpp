@@ -11,19 +11,11 @@ BinaryData<> Data::decode(String const& data, EncodingType const& encoding) try 
 	switch (encoding) {
 		case EncodingType::ET_BASE32: return cppcodec::base32_rfc4648::decode<BinaryData<>>(data);
 		case EncodingType::ET_BASE64: return cppcodec::base64_rfc4648::decode<BinaryData<>>(data);
-		default: throw Error::InvalidValue(
-			"Invalid encoding type!",
-			__FILE__,
-			CTL::toString(__LINE__),
-			"Makai::Data::decode"
-		);
+		default: throw Error::InvalidValue("Invalid encoding type!");
 	}
 } catch (cppcodec::parse_error const& e) {
 	throw Error::FailedAction(
 		"Failed at decoding byte data!",
-		__FILE__,
-		CTL::toString(__LINE__),
-		"Makai::Data::decode",
 		e.what()
 	);
 }
@@ -32,19 +24,11 @@ String Data::encode(BinaryData<> const& data, EncodingType const& encoding) try 
 	switch (encoding) {
 		case EncodingType::ET_BASE32: return cppcodec::base32_rfc4648::encode<String>(data);
 		case EncodingType::ET_BASE64: return cppcodec::base64_rfc4648::encode<String>(data);
-		default: throw Error::InvalidValue(
-			"Invalid encoding type!",
-			__FILE__,
-			::toString(__LINE__),
-			"Makai::Data::encode"
-		);
+		default: throw Error::InvalidValue("Invalid encoding type!");
 	}
 } catch (cppcodec::parse_error const& e) {
 	throw Error::FailedAction(
 		"Failed at decoding byte data!",
-		__FILE__,
-		CTL::toString(__LINE__),
-		"Makai::Data::encode",
 		e.what()
 	);
 }
@@ -53,22 +37,12 @@ String Data::toString(EncodingType const& type) {
 	switch (type) {
 		case EncodingType::ET_BASE32: return "base32";
 		case EncodingType::ET_BASE64: return "base64";
-		default: throw Error::InvalidValue(
-			"Invalid encoding type!",
-			__FILE__,
-			CTL::toString(__LINE__),
-			"Makai::Data::toString"
-		);
+		default: throw Error::InvalidValue("Invalid encoding type!");
 	}
 }
 
 EncodingType Data::fromString(String const& type) {
 	if (type == "base32") return EncodingType::ET_BASE32;
 	if (type == "base64") return EncodingType::ET_BASE64;
-	throw Error::InvalidValue(
-		"Invalid encoding type of '" + type + "'!",
-		__FILE__,
-		CTL::toString(__LINE__),
-		"Makai::Data::fromString"
-	);
+	throw Error::InvalidValue("Invalid encoding type of '" + type + "'!");
 }

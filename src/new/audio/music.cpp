@@ -97,9 +97,6 @@ void Music::onCreate(Extern::Resource const& data) {
 	if (!source)
 		throw Error::FailedAction(
 			"Could not load file!",
-			__FILE__,
-			toString(__LINE__),
-			"onCreate",
 			String(Mix_GetError())
 		);
 }

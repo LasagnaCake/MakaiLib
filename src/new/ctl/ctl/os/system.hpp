@@ -41,12 +41,7 @@ namespace OS {
 	/// @note Running the program in a separate directory is currently only supported on Windows.
 	inline int launch(String const& path, String const& directory = "", StringList args = StringList()) {
 		if (!FS::exists(path))
-			throw Error::InvalidValue(
-				"File [" + path + "] does not exist!",
-				__FILE__,
-				toString(__LINE__),
-				"CTL::OS::launch"
-			);
+			throw Error::InvalidValue("File [" + path + "] does not exist!");
 		#if (_WIN32 || _WIN64 || __WIN32__ || __WIN64__) && !defined(CTL_NO_WINDOWS_PLEASE)
 		String prgArgs = "";
 		if (!args.empty())

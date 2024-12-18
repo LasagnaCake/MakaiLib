@@ -250,13 +250,6 @@ public:
 			"\n[General Information]\n" + info + "\n"
 			"\n[Caller Information]\n" + callerInfo + "\n"
 		);
-		if (previous()) {
-			result = result
-			+	"\n<stack>"
-			+	previous()->what()
-			+	"</stack>"
-			;
-		}
 		result += "\n</error>";
 		return result;
 	}
@@ -264,13 +257,8 @@ public:
 	/// @brief Generates a summary of the exception.
 	/// @return Summary.
 	DataType summary() const noexcept {
-		return
-			(type + ": " + message + (!info.empty() ? ("\n" + info) : ""))
-		+	(previous()
-			?	"\n> " + DataType(previous()->what())
-			:	""
-			)
-		;
+		DataType sum = (type + ": " + message + (!info.empty() ? ("\n" + info) : ""));
+		return sum;
 	}
 
 	/// @brief Returns a summary of the exception.

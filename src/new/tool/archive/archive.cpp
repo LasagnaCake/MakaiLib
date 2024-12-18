@@ -411,7 +411,7 @@ void Arch::pack(
 	}
 	#else
 	} catch (std::runtime_error const& e) {
-		throw File::FileLoadError(e.what(), __FILE__, toString(__LINE__), "Arch::pack");
+		throw File::FileLoadError(e.what());
 	}
 	#endif // ARCSYS_APPLICATION_
 }
@@ -425,49 +425,63 @@ void Arch::pack(
 [[noreturn]] void singleFileArchiveError() {
 	throw File::FileLoadError(
 		"Archive is not a multi-file archive!",
-		__FILE__
+		"none",
+		"none",
+		CTL_CPP_UNKNOWN_SOURCE
 	);
 }
 
 [[noreturn]] void doesNotExistError(String const& file) {
 	throw File::FileLoadError(
 		"Directory or file '" + file + "' does not exist!",
-		__FILE__
+		"none",
+		"none",
+		CTL_CPP_UNKNOWN_SOURCE
 	);
 }
 
 [[noreturn]] void outOfArchiveBoundsError(String const& file) {
 	throw File::FileLoadError(
 		"Directory or file '" + file + "' lives outside the archive!",
-		__FILE__
+		"none",
+		"none",
+		CTL_CPP_UNKNOWN_SOURCE
 	);
 }
 
 [[noreturn]] void notAFileError(String const& file) {
 	throw File::FileLoadError(
 		"Entry '" + file + "' is not a file!",
-		__FILE__
+		"none",
+		"none",
+		CTL_CPP_UNKNOWN_SOURCE
 	);
 }
 
 [[noreturn]] void directoryTreeError() {
 	throw File::FileLoadError(
 		"Missing or corrupted directory tree info!",
-		__FILE__
+		"none",
+		"none",
+		CTL_CPP_UNKNOWN_SOURCE
 	);
 }
 
 [[noreturn]] void corruptedFileError(String const& path) {
 	throw File::FileLoadError(
 		"Corrupted file '" + path + "'!",
-		__FILE__
+		"none",
+		"none",
+		CTL_CPP_UNKNOWN_SOURCE
 	);
 }
 
 [[noreturn]] void crcFailError(String const& path) {
 	throw File::FileLoadError(
-		"CRC check failed for file '" + path + "'",
-		__FILE__
+		"CRC check failed for file '" + path + "'!",
+		"none",
+		"none",
+		CTL_CPP_UNKNOWN_SOURCE
 	);
 }
 
@@ -518,9 +532,6 @@ String Arch::FileArchive::getTextFile(String const& path) try {
 } catch (Error::FailedAction const& e) {
 	throw File::FileLoadError(
 		"could not load file '" + path + "'!",
-		__FILE__,
-		"unspecified",
-		"FileArchive::getTextFile",
 		e.message
 	);
 }
@@ -533,9 +544,6 @@ BinaryData<> Arch::FileArchive::getBinaryFile(String const& path) try {
 } catch (Error::FailedAction const& e) {
 	throw File::FileLoadError(
 		"could not load file '" + path + "'!",
-		__FILE__,
-		"unspecified",
-		"FileArchive::getBinaryFile",
 		e.message
 	);
 }
@@ -605,9 +613,6 @@ void Arch::FileArchive::parseFileTree() {
 	} catch (Nlohmann::exception const& e) {
 		throw File::FileLoadError(
 			"Invalid or corrupted file structure!",
-			__FILE__,
-			toString(__LINE__),
-			"FileArchive::load",
 			e.what()
 		);
 	}
@@ -683,9 +688,6 @@ Arch::FileArchive::FileEntry Arch::FileArchive::getFileEntry(String const& path)
 } catch (std::runtime_error const& e) {
 	throw File::FileLoadError(
 		"Failed at getting file entry '" + path + "'!",
-		__FILE__,
-		"unspecified",
-		"FileArchive::getFileEntry",
 		e.what()
 	);
 }
@@ -768,7 +770,7 @@ void unpackV1(
 }
 #else
 } catch (std::runtime_error const& e) {
-	throw File::FileLoadError(e.what(), __FILE__, toString(__LINE__), "Arch::unpack");
+	throw File::FileLoadError(e.what());
 }
 #endif // ARCSYS_APPLICATION_
 
@@ -794,7 +796,7 @@ void unpackV0(
 }
 #else
 } catch (std::runtime_error const& e) {
-	throw File::FileLoadError(e.what(), __FILE__, toString(__LINE__), "Arch::unpack");
+	throw File::FileLoadError(e.what());
 }
 #endif // ARCSYS_APPLICATION_
 
@@ -812,10 +814,7 @@ void Arch::unpack(
 		case 1: unpackV1(archivePath, folderPath, password);	break;
 		case 0: unpackV0(archivePath, folderPath, password);	break;
 		default: throw Error::InvalidValue(
-			"Unsupported or invalid minimum version!",
-			__FILE__,
-			toString(__LINE__),
-			"Arch::unpack"
+			"Unsupported or invalid minimum version!"
 		);
 	}
 #ifdef ARCSYS_APPLICATION_
@@ -828,7 +827,7 @@ void Arch::unpack(
 }
 #else
 } catch (std::runtime_error const& e) {
-	throw File::FileLoadError(e.what(), __FILE__, toString(__LINE__), "Arch::unpack");
+	throw File::FileLoadError(e.what());
 }
 #endif // ARCSYS_APPLICATION_
 
@@ -850,9 +849,6 @@ BinaryData<> Arch::loadEncryptedBinaryFile(String const& path, String const& pas
 	if (!(header.flags & Flags::SINGLE_FILE_ARCHIVE_BIT))
 		File::FileLoadError(
 			"Failed to load '" + path + "'!",
-			__FILE__,
-			toString(__LINE__),
-			"Arch::loadEncryptedBinaryFile",
 			"File is not a single-file archive!"
 		);
 	// Get file header
@@ -878,17 +874,11 @@ BinaryData<> Arch::loadEncryptedBinaryFile(String const& path, String const& pas
 		if (fd.size() != fh.uncSize)
 			File::FileLoadError(
 				"Failed to load '" + path + "'!",
-				__FILE__,
-				toString(__LINE__),
-				"Arch::loadEncryptedBinaryFile",
 				"Uncompressed size doesn't match!"
 			);
 		if ((header.flags & Flags::SHOULD_CHECK_CRC_BIT) && !true) // CRC currently not working
 			File::FileLoadError(
 				"Failed to load '" + path + "'!",
-				__FILE__,
-				toString(__LINE__),
-				"Arch::loadEncryptedBinaryFile",
 				"CRC check failed!"
 			);
 	}
@@ -897,9 +887,6 @@ BinaryData<> Arch::loadEncryptedBinaryFile(String const& path, String const& pas
 } catch (std::runtime_error const& e) {
 	throw File::FileLoadError(
 		"Failed to load '" + path + "'!",
-		__FILE__,
-		toString(__LINE__),
-		"Arch::loadEncryptedBinaryFile",
 		e.what()
 	);
 }

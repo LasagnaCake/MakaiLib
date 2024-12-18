@@ -218,20 +218,10 @@ void Makai::Graph::API::open() {
 	if (opened) return;
 	#if (MAKAILIB_GL_LOADER == MAKAILIB_USE_GL3W)
 	if (gl3wInit() != GL3W_OK)
-		throw Error::FailedAction(
-			"Failed to initialize GL3W!",
-			__FILE__,
-			toString(__LINE__),
-			"Makai::Graph::open"
-		);
+		throw Error::FailedAction("Failed to initialize GL3W!");
 	#elif (MAKAILIB_GL_LOADER == MAKAILIB_USE_GLAD)
 	if (!gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress))
-        throw Error::FailedAction(
-			"Failed to initialize GLAD!",
-			__FILE__,
-			toString(__LINE__),
-			"Makai::Graph::open"
-		);
+        throw Error::FailedAction("Failed to initialize GLAD!");
 	#endif
 	opened = true;
 	#ifdef MAKAILIB_DEBUG

@@ -8,7 +8,8 @@
 
 CTL_NAMESPACE_BEGIN
 
-namespace Error {
+/// @brief Asynchronous-related errors
+namespace Error::Async {
 	DEFINE_ERROR_TYPE(Occupied);
 }
 

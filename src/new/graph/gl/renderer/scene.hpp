@@ -55,12 +55,7 @@ namespace Makai::Graph {
 			DrawableEntry createObject(String name = "") {
 				#ifdef MAKAILIB_SCENE_ERROR_IF_DUPLICATE_NAME
 				if (objects.contains(name))
-					throw Error::InvalidValue(
-						"Object of name '"+name+"' already exists!",
-						__FILE__,
-						toString(__LINE__),
-						"Scene::createObject"
-					);
+					throw Error::InvalidValue("Object of name '"+name+"' already exists!");
 				#endif // MAKAILIB_SCENE_ERROR_IF_DUPLICATE_NAME
 				DrawableType* r = nullptr;
 				if (name.empty())	name = validateName("unnamed");
@@ -138,9 +133,6 @@ namespace Makai::Graph {
 				if (!isValidName(name))
 					throw Error::InvalidValue(
 						"Name must not contain control and/or specific characters!",
-						__FILE__,
-						toString(__LINE__),
-						"Scene::validateName",
 						"Name must not contain control characters, and the following:"
 						"\n- newlines, spaces or tabs"
 						"\n- \\, /, ?, *, <, >, :, \" and/or |"

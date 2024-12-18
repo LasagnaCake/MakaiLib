@@ -36,20 +36,18 @@ FileArchive& archive() {
 [[noreturn]] void fileLoadError(String const& path, String const& reason) {
 	throw Makai::File::FileLoadError(
 		"Could not load file '" + path + "'!",
-		__FILE__,
-		"unspecified",
-		"unspecified",
-		reason
+		reason,
+		"none",
+		CTL_CPP_UNKNOWN_SOURCE
 	);
 }
 
 [[noreturn]] void fileSaveError(String const& path, String const& reason) {
 	throw Makai::File::FileLoadError(
 		"Could not save file '" + path + "'!",
-		__FILE__,
-		"unspecified",
-		"unspecified",
-		reason
+		reason,
+		"none",
+		CTL_CPP_UNKNOWN_SOURCE
 	);
 }
 
@@ -72,12 +70,7 @@ void Makai::File::attachArchive(DataBuffer& buffer, String const& password) {
 	#ifdef IMPL_ARCHIVE_
 	DEBUGLN("Attaching archive...");
 	if (state() == ArchiveState::FAS_LOADING)
-		throw Error::FailedAction(
-			"Other archive is being loaded!",
-			__FILE__,
-			toString(__LINE__),
-			"Makai::File::attachArchive"
-		);
+		throw Error::FailedAction("Other archive is being loaded!");
 	try {
 		state() = ArchiveState::FAS_LOADING;
 		archive().close();

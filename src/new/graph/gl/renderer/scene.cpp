@@ -275,9 +275,6 @@ void Scene::extendFromDefinitionV0(JSON::JSONData def, String const& sourcepath)
 	} catch (std::exception const& e) {
 		throw Error::FailedAction(
 			"Failed at parsing scene file!",
-			__FILE__,
-			toString(__LINE__),
-			"Scene::extendFromDefinition",
 			e.what(),
 			"Please check to see if values are correct!"
 		);

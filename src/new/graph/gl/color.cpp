@@ -14,18 +14,12 @@ Vector4 Color::fromHexCodeString(String code) {
 	if (code.empty())
 		throw Error::InvalidValue(
 			"Color value does not exist!",
-			__FILE__,
-			toString(__LINE__),
-			"Makai::Graph::Color::fromHexCodeString",
 			"Make sure the color values are correct!"
 		);
 	// Check if color value is valid
 	if (code.size() < 3 || code.size() > 8 || !code.isHex())
 		throw Error::InvalidValue(
 			"Invalid color value \"#"+ code +"\"!",
-			__FILE__,
-			toString(__LINE__),
-			"Makai::Graph::Color::fromHexCodeString",
 			"Make sure the color values are correct!"
 		);
 	// Bit fuckery for 4-bit color

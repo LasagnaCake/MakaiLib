@@ -158,9 +158,6 @@ inline ObjectMaterial fromDefinition(JSON::JSONData def, String const& definitio
 	} catch (std::exception const& e) {
 		throw Error::FailedAction(
 			"Failed at getting material values!",
-			__FILE__,
-			toString(__LINE__),
-			"Renderable::extendFromDefinition",
 			e.what(),
 			"Please check to see if values are correct!"
 		);
@@ -474,9 +471,6 @@ void Renderable::extendFromDefinitionV0(
 	} catch (std::exception const& e) {
 		throw Error::FailedAction(
 			"Failed at getting mesh values!",
-			__FILE__,
-			toString(__LINE__),
-			"Renderable::extendFromDefinition",
 			e.what(),
 			"Please check to see if values are correct!"
 		);
@@ -488,10 +482,8 @@ void Renderable::extendFromDefinitionV0(
 		if (vdata.empty())			error += ("Missing mesh's vertex data!\n");
 		if (componentData.empty())	error += ("Missing mesh's component data!\n");
 		if (!error.empty()) throw Error::InvalidValue(
-			"Missing mesh data!\n\n" + error,
-			__FILE__,
-			toString(__LINE__),
-			"Renderable::extendFromDefinition"
+			"Missing mesh data!\n\n",
+			error
 		);
 	}
 	// Vertex map
@@ -507,12 +499,7 @@ void Renderable::extendFromDefinitionV0(
 			i++;
 		}
 		if (!indexes.empty()) {
-			throw Error::InvalidValue(
-				"Malformed component data!\n\nIndex(es): [ " + indexes + "]",
-				__FILE__,
-				toString(__LINE__),
-				"Renderable::extendFromDefinition"
-			);
+			throw Error::InvalidValue("Malformed component data!\n\nIndex(es): [ " + indexes + "]");
 		}
 	}
 	// Check if there are no missing vertices
@@ -523,9 +510,6 @@ void Renderable::extendFromDefinitionV0(
 		if (vds % 3 != 0)
 			throw Error::InvalidValue(
 				"Improper/incomplete vertex data!",
-				__FILE__,
-				toString(__LINE__),
-				"Renderable::extendFromDefinition",
 				toString(
 					"Vertex data size is ",
 					vds, " (", vdata.size(), " bytes).\nExpected size is ",
@@ -551,9 +535,6 @@ void Renderable::extendFromDefinitionV0(
 	if (vertices.size() % 3 != 0)
 		throw Error::InvalidValue(
 			"Improper/incomplete vertex data!",
-			__FILE__,
-			toString(__LINE__),
-			"Renderable::extendFromDefinition",
 			(
 				"Total vertex count is "
 			+	toString(vertices.size())
@@ -575,9 +556,6 @@ void Renderable::extendFromDefinitionV0(
 		} catch (std::exception const& e) {
 			throw Error::FailedAction(
 				"Failed at getting transformation values!",
-				__FILE__,
-				toString(__LINE__),
-				"Renderable::extendFromDefinition",
 				e.what(),
 				"Please check to see if values are correct!"
 			);
@@ -619,9 +597,6 @@ void Renderable::extendFromDefinitionV0(
 		} catch (std::exception const& e) {
 			throw Error::FailedAction(
 				"Failed at getting blending values!",
-				__FILE__,
-				toString(__LINE__),
-				"Renderable::extendFromDefinition",
 				e.what(),
 				"Please check to see if values are correct!"
 			);

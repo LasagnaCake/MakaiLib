@@ -124,9 +124,6 @@ Texture2D Texture2D::fromJSON(JSON::JSONData img, String const& sourcepath) {
 			stbi_image_free(imgdat);
 		} else throw Error::FailedAction(
 			"Failed at getting image effect!",
-			__FILE__,
-			toString(__LINE__),
-			"Texture2D::fromJSON",
 			"Could not decode embedded image data!",
 			"Please check to see if values are correct!"
 		);
@@ -250,9 +247,6 @@ Texture2D& Texture2D::create(
 	} else {
 		throw Error::FailedAction(
 			"Could not load image file '" + path + "'!\n\n",
-			__FILE__,
-			toString(__LINE__),
-			"Texture2D::create",
 			stbi_failure_reason()
 		);
 	}

@@ -23,11 +23,10 @@ using namespace Makai;
 void setGLAttribute(SDL_GLattr const a, int const v) {
 	if (SDL_GL_SetAttribute(a, v))
 		throw Error::FailedAction(
+			true,
 			"Failed to set attribute!",
-			__FILE__,
-			"unspecified",
-			"unspecified",
-			SDL_GetError()
+			SDL_GetError(),
+			CTL_CPP_UNKNOWN_SOURCE
 		);
 }
 
@@ -39,9 +38,6 @@ appState(App::AppState::AS_CLOSED) {
 	if (mainApp)
 		throw Error::DuplicateValue(
 			"Cannot have two apps open at the same time!",
-			__FILE__,
-			toString(__LINE__),
-			"App::constructor",
 			"Having two apps open is forbidden!"
 		);
 	else mainApp = this;
@@ -54,9 +50,6 @@ appState(App::AppState::AS_CLOSED) {
 	if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_AUDIO) != 0) {
 		throw Error::FailedAction(
 			"Unable to start SDL!",
-			__FILE__,
-			toString(__LINE__),
-			"App::constructor",
 			SDL_GetError()
 		);
 	}
@@ -78,9 +71,6 @@ appState(App::AppState::AS_CLOSED) {
 	if (!window) {
 		throw Error::FailedAction(
 			"Failed to create window!",
-			__FILE__,
-			toString(__LINE__),
-			"App::constructor",
 			SDL_GetError()
 		);
 	}
@@ -103,9 +93,6 @@ appState(App::AppState::AS_CLOSED) {
 	if (!Makai::Graph::API::hasRequiredVersion()) {
 		throw Error::FailedAction(
 			"Your computer does not support the required graphical API version!",
-			__FILE__,
-			toString(__LINE__),
-			"App::constructor",
 			"Required version: " + Makai::Graph::API::name()
 		);
 	}
