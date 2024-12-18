@@ -10,7 +10,7 @@
 
 /// @brief Underlying graphical API facilities.
 namespace Makai::Graph::API {
-	/// @brief Graphical API debug settings.
+	/// @brief Graphical API debugging facilities.
 	namespace Debug {
 		/// @brief Debug context.
 		struct Context {
