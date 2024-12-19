@@ -206,8 +206,8 @@ public:
 	/// @return Reference to self.
 	constexpr SelfType& destroy() requires (!WEAK) {
 		if (!exists()) return (*this);
-		delete ref;
 		release();
+		delete ref;
 		ref = nullptr;
 		return (*this);
 	}
