@@ -296,13 +296,13 @@ static void parseOperator(TokenStream::Lexer& lexer, TokenStream::Token& tok) {
 			tok.text.pushBack(lexer.next());
 			tok.type = LTS_TT_BIT_OR_ASSIGN;
 		}
-	} else if (lexer.now() == UTF::U8Char{'!'} && lexer.now() == UTF::U8Char{'='}) {
+	} else if (lexer.now() == UTF::U8Char{'!'} && lexer.peek() == UTF::U8Char{'='}) {
 		tok.text.pushBack(lexer.next());
 		tok.type = LTS_TT_COMPARE_NOT_EQUALS;
-	} else if (lexer.now() == UTF::U8Char{'~'} && lexer.now() == UTF::U8Char{'='}) {
+	} else if (lexer.now() == UTF::U8Char{'~'} && lexer.peek() == UTF::U8Char{'='}) {
 		tok.text.pushBack(lexer.next());
 		tok.type = LTS_TT_BIT_NOT_ASSIGN;
-	} else if (lexer.now() == UTF::U8Char{'>'} && lexer.now() == UTF::U8Char{'='}) {
+	} else if (lexer.now() == UTF::U8Char{'>'} && lexer.peek() == UTF::U8Char{'='}) {
 		tok.text.pushBack(lexer.next());
 		tok.type = LTS_TT_COMPARE_GREATER_EQUALS;
 	} else if (lexer.now() == UTF::U8Char{'?'}) {
