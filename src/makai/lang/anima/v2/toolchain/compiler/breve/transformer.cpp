@@ -531,9 +531,10 @@ ATransformer::Result StructureDecl::transform(Context& context, Node::Instance c
 		return true;
 	};
 	MAKAILIB_DEBUGLN_FULL("struct {");
+	List<Node::Instance> doItLater;
 	for (auto& entry: node->rightSide->children)
 		if (!evalDecl(entry, entry))
-			context.getExpression(entry);
+			doItLater.pushBack(entry);
 	MAKAILIB_DEBUGLN_FULL("}");
 	type.scope = scope.asWeak();
 	type.node = node;
@@ -625,6 +626,8 @@ ATransformer::Result StructureDecl::transform(Context& context, Node::Instance c
 		type.methods[prop.name] = decl.scope->function;
 		scope->subspaces[prop.name] = decl.scope;
 	}
+	for (auto& entry: doItLater)
+		context.getExpression(entry);
 	context.pop(implName.size());
 	for (auto& var: privates)
 		var->scope->makePrivate();
