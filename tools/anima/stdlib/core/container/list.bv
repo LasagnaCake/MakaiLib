@@ -62,7 +62,7 @@ struct List[Element] {
 			else match (key <=> self.elements[index]) {
 				{-1} => self.search(key, start + (stop - start) / 2, start, index-1)
 				{+1} => self.search(key, start + (stop - start) / 2, index+1, stop)
-				else => index;
+				else => index
 			}
 
 		bsearch :: (@ByRef self: Self, key: Element) -> ?u64 =>
@@ -129,6 +129,20 @@ struct List[Element] {
 
 	@Operator(prefix="|>")
 	pop :: (self: Self) => |> self.elements
+
+	if prove assert Is.Same[Element, List[Element.Element]] extend Self {
+		flat :: (@ByRef self: Self, sep: Element.Element) {
+			out: Element.Element = new Element.Element {}
+			for entry => self.entries {
+				out.push(entry)
+				out.push(sep)
+			}
+			out.pop()
+			return out
+		}
+		
+		if prove Is.DefaultNew[Element.Element] flat :: (self: Self) => self.flat(new Element.Element {})
+	}
 
 	prop size get (self: Self) -> u64 => countof self.elements
 

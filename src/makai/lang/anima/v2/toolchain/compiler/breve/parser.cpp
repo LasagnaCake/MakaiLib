@@ -96,7 +96,7 @@ Parser::Parser(BaseContext& context): context(context) {
 		LTS_TT_BIT_NOT,
 		LTS_TT_INCREMENT,
 		LTS_TT_DECREMENT,
-		LTS_TT_STREAM_INSERT
+		LTS_TT_STREAM_EXTRACT
 	);
 	// Basic infixes
 	MAKAILIB_DEBUGLN_FULL("Infix parsers");

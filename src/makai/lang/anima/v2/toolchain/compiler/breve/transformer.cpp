@@ -3419,7 +3419,6 @@ Namespace::Instance ATransformer::Context::reify(Node::Instance const& node, Con
 			var.context = ExecutionContext::AV2_TCB_EC_COMPILE;
 			var.isConstant = true;
 			var.passBy = "copy";
-			var.parentScope->varc--;
 			var.type = arg.type;
 			var.value = value;
 			bool mismatched = false;
