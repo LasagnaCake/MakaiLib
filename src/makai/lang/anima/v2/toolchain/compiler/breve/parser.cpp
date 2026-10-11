@@ -165,9 +165,9 @@ Parser::Parser(BaseContext& context): context(context) {
 	add("struct", prefixes, new NamedBlockDeclResolver(false, true));
 	add("enum", prefixes, new EnumResolver());
 	add("prop", prefixes, new PropertyDeclResolver());
-	add("prefix", prefixes, new DynamicOperatorDeclResolver());
-	add("postfix", prefixes, new DynamicOperatorDeclResolver());
-	add("infix", prefixes, new DynamicOperatorDeclResolver());
+	//add("makeop", prefixes, new DynamicOperatorDeclResolver());
+	//add("makeop", prefixes, new DynamicOperatorDeclResolver());
+	//add("makeop", prefixes, new DynamicOperatorDeclResolver());
 	add(LTS_TT_AT, prefixes, new AttributeResolver());
 	add("using", prefixes, new UsingResolver());
 	add("true", prefixes, new SpecialDirectResolver());
