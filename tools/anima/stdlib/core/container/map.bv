@@ -52,8 +52,8 @@ struct Map[Key, Value] {
 		if stop <= start
 			null
 		else match (key <=> self.entries[index].key) {
-			< 0 => self.search(key, start + (stop - start) / 2, start, index-1)
-			> 0 => self.search(key, start + (stop - start) / 2, index+1, stop)
+			{-1} => self.search(key, start + (stop - start) / 2, start, index-1)
+			{+1} => self.search(key, start + (stop - start) / 2, index+1, stop)
 			else => self.entries[index]
 		}
 
@@ -66,8 +66,8 @@ struct Map[Key, Value] {
 		if stop <= start
 			index
 		else match (key <=> self.entries[index].key) {
-			< 0 => self.search(key, start + (stop - start) / 2, start, index-1)
-			> 0 => self.search(key, start + (stop - start) / 2, index+1, stop)
+			{-1} => self.search(key, start + (stop - start) / 2, start, index-1)
+			{+1} => self.search(key, start + (stop - start) / 2, index+1, stop)
 			else => self.entries[index]
 		}
 

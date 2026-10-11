@@ -118,6 +118,7 @@ Parser::Parser(BaseContext& context): context(context) {
 	infix(LTS_TT_COMPARE_EQUALS, false);
 	infix(LTS_TT_COMPARE_NOT_EQUALS, false);
 	infix(LTS_TT_STREAM_INSERT, false);
+	infix(LTS_TT_ORDER, false);
 	infix("atan", false);
 	infix("cross", false);
 	infix("fcross", false);
@@ -269,6 +270,10 @@ Node::Instance Parser::nextExpression(Parser::Precedence precedence) {
 	else context.error("Invalid expression!");
 	if (context.empty())
 		return lhs;
+	if (context.token().type == LTS_TT_SEMICOLON) {
+		context.next();
+		return lhs;
+	}
 	MAKAILIB_DEBUGLN_FULL("Next token: [", context.peek().text, "]");
 	MAKAILIB_DEBUGLN_FULL("Is infix? ", infixes.contains(context.peek().text));
 	if (!infixes.contains(context.peek().text))

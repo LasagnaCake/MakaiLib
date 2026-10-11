@@ -113,9 +113,9 @@ Node::Instance NullableDeclResolver::resolve(Parser& parser, Node::Instance cons
 	MAKAILIB_DEBUGLN_FULL("Resolving nullable declaration expression [", token.text, "]...");
 	Node::Instance result = Node::Instance::create();
 	result->base = token;
-	result->leftSide = leftSide;
+	result->leftSide = parser.nextExpression();
 	result->content = Node::Content::AV2_TANC_NULLABLE_DECL;
-	MAKAILIB_DEBUGLN_FULL("NullableDeclResolver:DONE!");
+	MAKAILIB_DEBUGLN_FULL("NullableDecl:DONE!");
 	return result;
 }
 

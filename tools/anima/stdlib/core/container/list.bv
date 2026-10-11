@@ -1,6 +1,7 @@
 using import core.types
 
 using import core.constraints.comparable
+using import core.constraints.iterator
 
 struct List[Element] {
 	using Elements = with [Element]
@@ -24,33 +25,14 @@ struct List[Element] {
 			return self
 		}
 	}
-	
-	@New
-	init :: (@ByRef self: Self) -> Self {
-		self.elements = new Elements {}
-		return self
+
+	extend Self /*with Iteratable[Element]*/ {
+		assert Is.Iterator[Iterator] else "Failed to generate list iterator!"
+
+		prop iterator get (@ByRef self: Self) => new Iterator {self.elements}
 	}
 
-	@[New, Variadic]
-	init :: (@ByRef self: Self, elements: Elements) -> Self {
-		self.elements = elements
-		return self
-	}
-
-	@Operator(infix="[]")
-	at :: (@ByRef self: Self, @ByCopy index: u64) -> ?Element =>
-		if index < (countof self.elements)
-			self.elements[index]
-		else null
-
-	@Operator(infix="[]=")
-	store :: (@ByRef self: Self, @ByCopy index: u64, value: Element) -> Self {
-		if index < (countof self.elements)
-			self.elements[index] = value
-		return self
-	}
-
-	if Is.Comparable[Element, Element] {
+	if Is.Comparable[Element, Element] extend Self {
 		find :: (@ByRef self: Self, @ByCopy value: Element) -> ?u64 {
 			index := 0
 			for element => self.elements
@@ -78,13 +60,38 @@ struct List[Element] {
 			if stop <= start
 				null
 			else match (key <=> self.elements[index]) {
-				< 0 => self.search(key, start + (stop - start) / 2, start, index-1)
-				> 0 => self.search(key, start + (stop - start) / 2, index+1, stop)
-				else => index
+				{-1} => self.search(key, start + (stop - start) / 2, start, index-1)
+				{+1} => self.search(key, start + (stop - start) / 2, index+1, stop)
+				else => index;
 			}
 
 		bsearch :: (@ByRef self: Self, key: Element) -> ?u64 =>
 			self.search(key, (countof self.elements) / 2, 0, (countof self.elements) - 1)
+	}
+	
+	@New
+	init :: (@ByRef self: Self) -> Self {
+		self.elements = new Elements {}
+		return self
+	}
+
+	@[New, Variadic]
+	init :: (@ByRef self: Self, elements: Elements) -> Self {
+		self.elements = elements
+		return self
+	}
+
+	@Operator(infix="[]")
+	at :: (@ByRef self: Self, @ByCopy index: u64) -> ?Element =>
+		if index < (countof self.elements)
+			self.elements[index]
+		else null
+
+	@Operator(infix="[]=")
+	store :: (@ByRef self: Self, @ByCopy index: u64, value: Element) -> Self {
+		if index < (countof self.elements)
+			self.elements[index] = value
+		return self
 	}
 
 	@Variadic
@@ -123,9 +130,9 @@ struct List[Element] {
 	@Operator(prefix="|>")
 	pop :: (self: Self) => |> self.elements
 
-	prop top get (@ByRef self: Self) => self.elements[countof self.elements - 1]
+	prop size get (self: Self) -> u64 => countof self.elements
 
-	prop iterator get (@ByRef self: Self) => new Iterator {self.elements}
+	prop top get (@ByRef self: Self) => self.elements[self.size - 1]
 
 	@[Private, ByRef] elements: Elements
 }
