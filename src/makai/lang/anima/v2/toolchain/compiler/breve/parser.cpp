@@ -9,7 +9,7 @@ Parser::Precedence Parser::precedenceOf(BaseContext::Axiom const& tok) {
 	switch (tok.type) {
 		using enum Parser::Precedence;
 		case LTS_TT_IDENTIFIER: {
-			if (!tok.strict) return AV2_TAPP_NONE;
+			if (!tok.strict) return AV2_TAPP_UNKNOWN;
 			auto const id = tok.text;
 			if (id == "and") return AV2_TAPP_LAND;
 			else if (id == "or") return AV2_TAPP_LOR;
@@ -59,7 +59,7 @@ Parser::Precedence Parser::precedenceOf(BaseContext::Axiom const& tok) {
 		case LTS_TT_COMMA: return AV2_TAPP_RHS_DECAY;
 		case LTS_TT_NULL_DECAY: return AV2_TAPP_NULL_DECAY;
 	}
-	return Parser::Precedence::AV2_TAPP_NONE;
+	return Parser::Precedence::AV2_TAPP_UNKNOWN;
 }
 
 Parser::Parser(BaseContext& context): context(context) {
@@ -300,7 +300,7 @@ Node::Instance Parser::parse() {
 Parser::Precedence Parser::currentPrecedence() {
 	auto const tok = context.peek();
 	if (!infixes.contains(tok.text))
-		return Parser::Precedence::AV2_TAPP_NONE;
+		return Parser::Precedence::AV2_TAPP_UNKNOWN;
 	return infixes[tok.text]->precedence;
 }
 

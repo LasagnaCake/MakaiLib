@@ -11,6 +11,7 @@ namespace Makai::Anima::V2::Toolchain::Compiler::Breve {
 	struct Parser {
 		enum class Precedence: uint16 {
 			AV2_TAPP_NONE,
+			AV2_TAPP_UNKNOWN,
 			AV2_TAPP_DECL,
 			AV2_TAPP_INSERT_EXTRACT,
 			AV2_TAPP_BLOCK,
@@ -47,7 +48,7 @@ namespace Makai::Anima::V2::Toolchain::Compiler::Breve {
 
 		virtual ~Parser();
 
-		virtual Node::Instance nextExpression(Precedence prec = Precedence::AV2_TAPP_NONE);
+		virtual Node::Instance nextExpression(Precedence prec = Precedence::AV2_TAPP_UNKNOWN);
 
 		Node::Instance parse();
 

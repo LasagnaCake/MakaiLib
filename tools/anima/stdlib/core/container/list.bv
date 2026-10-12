@@ -146,7 +146,7 @@ struct List[Element] {
 
 	prop size get (self: Self) -> u64 => countof self.elements
 
-	prop top get (@ByRef self: Self) => self.elements[self.size - 1]
+	prop top get (@ByRef self: Self) => self.elements[(self.size - 1)]
 
 	@[Private, ByRef] elements: Elements
 }

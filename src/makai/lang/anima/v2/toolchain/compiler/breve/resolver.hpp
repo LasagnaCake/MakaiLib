@@ -9,7 +9,7 @@ namespace Makai::Anima::V2::Toolchain::Compiler::Breve {
 	struct AResolver {
 		virtual ~AResolver();
 
-		AResolver(Parser::Precedence const precedence = Parser::Precedence::AV2_TAPP_NONE, bool const rightToLeft = false);
+		AResolver(Parser::Precedence const precedence = Parser::Precedence::AV2_TAPP_UNKNOWN, bool const rightToLeft = false);
 
 		virtual Node::Instance resolve(Parser& parser, Node::Instance const& lhs, BaseContext::Axiom const& token) = 0;
 
@@ -30,13 +30,13 @@ namespace Makai::Anima::V2::Toolchain::Compiler::Breve {
 	};
 
 	struct DirectResolver: AResolver {
-		DirectResolver(): AResolver() {}
+		DirectResolver(): AResolver(Parser::Precedence::AV2_TAPP_NONE) {}
 		virtual ~DirectResolver() {}
 		Node::Instance resolve(Parser& parser, Node::Instance const& lhs, BaseContext::Axiom const& token) override;
 	};
 
 	struct SpecialDirectResolver: AResolver {
-		SpecialDirectResolver(): AResolver() {}
+		SpecialDirectResolver(): AResolver(Parser::Precedence::AV2_TAPP_NONE) {}
 		virtual ~SpecialDirectResolver() {}
 		Node::Instance resolve(Parser& parser, Node::Instance const& lhs, BaseContext::Axiom const& token) override;
 	};
