@@ -57,6 +57,7 @@ Parser::Precedence Parser::precedenceOf(BaseContext::Axiom const& tok) {
 		case LTS_TT_DECREMENT:
 		case LTS_TT_DOT: return AV2_TAPP_PATH;
 		case LTS_TT_COMMA: return AV2_TAPP_RHS_DECAY;
+		case LTS_TT_NULL_DECAY: return AV2_TAPP_NULL_DECAY;
 		case LTS_TT_STREAM_INSERT:
 		case LTS_TT_STREAM_EXTRACT: return AV2_TAPP_INSERT_EXTRACT;
 	}
