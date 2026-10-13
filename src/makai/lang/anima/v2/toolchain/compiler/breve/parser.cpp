@@ -9,7 +9,7 @@ Parser::Precedence Parser::precedenceOf(BaseContext::Axiom const& tok) {
 	switch (tok.type) {
 		using enum Parser::Precedence;
 		case LTS_TT_IDENTIFIER: {
-			if (!tok.strict) return AV2_TAPP_UNKNOWN;
+			if (!tok.strict) return AV2_TAPP_NONE;
 			auto const id = tok.text;
 			if (id == "and") return AV2_TAPP_LAND;
 			else if (id == "or") return AV2_TAPP_LOR;
@@ -57,9 +57,10 @@ Parser::Precedence Parser::precedenceOf(BaseContext::Axiom const& tok) {
 		case LTS_TT_DECREMENT:
 		case LTS_TT_DOT: return AV2_TAPP_PATH;
 		case LTS_TT_COMMA: return AV2_TAPP_RHS_DECAY;
-		case LTS_TT_NULL_DECAY: return AV2_TAPP_NULL_DECAY;
+		case LTS_TT_STREAM_INSERT:
+		case LTS_TT_STREAM_EXTRACT: return AV2_TAPP_INSERT_EXTRACT;
 	}
-	return Parser::Precedence::AV2_TAPP_UNKNOWN;
+	return Parser::Precedence::AV2_TAPP_NONE;
 }
 
 Parser::Parser(BaseContext& context): context(context) {
@@ -203,7 +204,7 @@ Parser::Parser(BaseContext& context): context(context) {
 	add(LTS_TT_COLON, infixes, new VariableDeclResolver());
 	add(LTS_TT_OPEN_PAREN, infixes, new FunctionCallResolver());
 	add(LTS_TT_BANG, infixes, new FunctionCallResolver());
-	add(LTS_TT_OPEN_BRACKET, infixes, new ArrayResolver());
+	add(LTS_TT_OPEN_BRACKET, infixes, new ArrayResolver(Parser::Precedence::AV2_TAPP_PATH));
 	add(LTS_TT_EQUALS, infixes, new AssignmentResolver());
 	add(LTS_TT_ADD_ASSIGN, infixes, new AssignmentResolver());
 	add(LTS_TT_SUB_ASSIGN, infixes, new AssignmentResolver());
@@ -247,6 +248,8 @@ Node::Instance Parser::nextExpression(Parser::Precedence precedence) {
 		MAKAILIB_DEBUGLN_FULL("Invalid Token!?");
 		return nullptr;
 	}
+	if (tok.type == LTS_TT_SEMICOLON)
+		return nullptr;
 	if (
 		tok.type == LTS_TT_LINE_COMMENT
 	or	tok.type == LTS_TT_BLOCK_COMMENT
@@ -300,7 +303,7 @@ Node::Instance Parser::parse() {
 Parser::Precedence Parser::currentPrecedence() {
 	auto const tok = context.peek();
 	if (!infixes.contains(tok.text))
-		return Parser::Precedence::AV2_TAPP_UNKNOWN;
+		return Parser::Precedence::AV2_TAPP_NONE;
 	return infixes[tok.text]->precedence;
 }
 

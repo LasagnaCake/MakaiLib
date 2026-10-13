@@ -999,7 +999,11 @@ Node::Instance AssertionResolver::resolve(Parser& parser, Node::Instance const& 
 }
 
 AResolver::AResolver(Parser::Precedence const precedence, bool const rightToLeft):
-	precedence(Cast::as<Parser::Precedence>(enumcast(precedence) - !rightToLeft)),
+	precedence(
+		precedence != Parser::Precedence::AV2_TAPP_NONE
+	?	Cast::as<Parser::Precedence>(enumcast(precedence) - !rightToLeft)
+	:	Parser::Precedence::AV2_TAPP_NONE
+	),
 	rightToLeft(rightToLeft) {
 }
 

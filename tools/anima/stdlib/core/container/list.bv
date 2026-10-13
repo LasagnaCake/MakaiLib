@@ -59,7 +59,7 @@ struct List[Element] {
 		) -> ?u64 =>
 			if stop <= start
 				null
-			else match (key <=> self.elements[index]) {
+			else match key <=> self.elements[index] {
 				{-1} => self.search(key, start + (stop - start) / 2, start, index-1)
 				{+1} => self.search(key, start + (stop - start) / 2, index+1, stop)
 				else => index
