@@ -429,7 +429,10 @@ Node::Instance VariableDeclResolver::resolve(Parser& parser, Node::Instance cons
 	Node::Instance result = Node::Instance::create();
 	result->content = Node::Content::AV2_TANC_DECLARATION;
 	result->base = token;
-	result->leftSide = leftSide;
+	if (leftSide->content == Node::Content::AV2_TANC_SUBSCRIPT) {
+		result->leftSide = leftSide->leftSide;
+		result->templateDecl = leftSide;
+	} else result->leftSide = leftSide;
 	if (token.type == LTS_TT_ASSIGN)
 		result->rightSide = parser.nextExpression();
 	else if (token.type == LTS_TT_DECLARE)
@@ -512,6 +515,7 @@ Node::Instance FunctionDeclResolver::resolve(Parser& parser, Node::Instance cons
 		result->leftSide		= leftSide->leftSide;
 	} else result->leftSide = leftSide;
 	if (parser.context.peek().type == LTS_TT_OPEN_BRACKET) {
+		MAKAILIB_DEBUGLN_FULL("Templated function");
 		parser.context.next();
 		result->templateDecl = ArrayResolver().resolve(parser, null, {});
 	}

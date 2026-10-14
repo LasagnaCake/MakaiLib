@@ -396,6 +396,11 @@ ATransformer::Result VariableDecl::transform(Context& context, Node::Instance co
 	var.parentScope = parent.asWeak();
 	var.id = parent->varc++;
 	TypeRequest t;
+	if (node->templateDecl) {
+		var.declaration = node;
+		scope->declaration = node;
+		return {{"ref " + var.getSource()}, scope};
+	}
 	if (node->middle)
 		var.type = t.transform(context, node->middle).type.asWeak();
 	Makai::Data::Value direct;
