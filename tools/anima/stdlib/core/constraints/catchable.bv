@@ -4,18 +4,18 @@ using import core.meta.spoof
 
 with module Is.Try
 
-@Direct Value[T] := prove {
+using Value[T] = prove {
 	try v := Meta.spoof[T]!.value {}
 }
 
-@Direct Error[T] := prove {
+using Error[T] = prove {
 	try v := Meta.spoof[T]!.fail {}
 }
 
-@Direct Attempt[T] := prove {
+using Attempt[T] = prove {
 	try v := Meta.spoof[T]! {}
 }
 
-@Direct Result[T] := prove {
+using Result[T] = prove {
 	try v := Meta.spoof[T]! {} else e {}
 }

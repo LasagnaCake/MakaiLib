@@ -4,4 +4,4 @@ using import core.meta.spoof
 
 with module Is
 
-@Direct Derived[A, B] := prove (Meta.spoof[T]! as B)
+using Derived[A, B] = prove (Meta.spoof[T]! as B)

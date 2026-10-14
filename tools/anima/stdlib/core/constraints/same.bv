@@ -2,4 +2,4 @@ using import core.types
 
 with module Is
 
-@Direct Same[A, B] := (#A == #B)
+using Same[A, B] = (#A == #B)
