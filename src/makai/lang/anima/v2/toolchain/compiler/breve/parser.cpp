@@ -60,8 +60,11 @@ Parser::Precedence Parser::precedenceOf(BaseContext::Axiom const& tok) {
 		case LTS_TT_NULL_DECAY: return AV2_TAPP_NULL_DECAY;
 		case LTS_TT_STREAM_INSERT:
 		case LTS_TT_STREAM_EXTRACT: return AV2_TAPP_INSERT_EXTRACT;
+		case LTS_TT_CLOSE_BRACKET:
+		case LTS_TT_OPEN_BRACKET: return AV2_TAPP_POSTFIX;
+		case LTS_TT_NAMESPACE_RESOLVE: return AV2_TAPP_FN_DECL;
 	}
-	return Parser::Precedence::AV2_TAPP_NONE;
+	return Parser::Precedence::AV2_TAPP_POSTFIX;
 }
 
 Parser::Parser(BaseContext& context): context(context) {
@@ -287,6 +290,7 @@ Node::Instance Parser::nextExpression(Parser::Precedence precedence) {
 		tok = context.next().token();
 		MAKAILIB_DEBUGLN_FULL("Resolving infix for: '", tok.text, "' :: (", tok.at.line, " : ", tok.at.column, ")");
 		lhs = infixes[tok.text]->resolve(*this, lhs, tok);
+		MAKAILIB_DEBUGLN_FULL("Infix Followup: ", context.peek().text);
 	} while (precedence < currentPrecedence());
 	return lhs;
 }

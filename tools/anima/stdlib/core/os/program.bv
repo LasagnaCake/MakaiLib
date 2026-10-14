@@ -48,7 +48,7 @@ module OS {
 
 		@Private
 		@Static
-		getConfig :: () -> ?[Setting] {
+		getConfig :: () -> ?Map[string, ?any] {
 			@ByCopy total := Program.getConfigKeyCount!
 			if not total return null
 			@ByRef out := new Setting[total]

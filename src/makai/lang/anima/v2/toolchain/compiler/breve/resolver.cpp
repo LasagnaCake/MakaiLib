@@ -507,12 +507,15 @@ Node::Instance FunctionDeclResolver::resolve(Parser& parser, Node::Instance cons
 	Node::Instance result = Node::Instance::create();
 	result->content = Node::Content::AV2_TANC_DECLARATION;
 	result->base = token;
-	FunctionPrototypeResolver resolver;
 	if (leftSide->content == Node::Content::AV2_TANC_SUBSCRIPT) {
 		result->templateDecl	= leftSide;
 		result->leftSide		= leftSide->leftSide;
 	} else result->leftSide = leftSide;
-	result->middle = resolver.resolve(parser, null, {});
+	if (parser.context.peek().type == LTS_TT_OPEN_BRACKET) {
+		parser.context.next();
+		result->templateDecl = ArrayResolver().resolve(parser, null, {});
+	}
+	result->middle = FunctionPrototypeResolver().resolve(parser, null, {});
 	result->rightSide = FunctionContentResolver().resolve(parser, null, {});
 	MAKAILIB_DEBUGLN_FULL("FunctionDecl:DONE!");
 	return result;
