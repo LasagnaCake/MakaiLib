@@ -1963,6 +1963,26 @@ ATransformer::Result NamespaceDecl::transform(Context& context, Node::Instance c
 	return {.scope = scope, .mayBeEmpty = false};
 }
 
+ATransformer::Result KindDecl::transform(Context& context, Node::Instance const& node) {
+	auto path = context.pathOf(node->leftSide);
+	auto const parent = context.nearestVarScope();
+	if (context.top()->resolve(path))
+		context.error("Redeclaration of previously-declared symbol!", node->leftSide);
+	auto const scope = context.declare(path);
+	auto& var = *(scope->variable = scope->variable.create());
+	var.name = scope->name;
+	var.parentScope = parent.asWeak();
+	var.id = parent->varc++;
+	TypeRequest t;
+	if (node->templateDecl) {
+		var.declaration = node;
+		scope->declaration = node;
+		var.compile();
+		var.type = context.basicType("bool").asWeak();
+		return {.scope = scope, .type = var.type.asStrong()};
+	}
+}
+
 ATransformer::Result Declaration::transform(Context& context, Node::Instance const& node) {
 	if (node->base.type == LTS_TT_NAMESPACE_RESOLVE)
 		return context.transform<FunctionDecl>(node);
@@ -1977,6 +1997,8 @@ ATransformer::Result Declaration::transform(Context& context, Node::Instance con
 			return context.transform<NamespaceDecl>(node);
 		if (node->base.text == "enum")
 			return context.transform<EnumDecl>(node);
+		if (node->base.text == "kind")
+			return context.transform<KindDecl>(node);
 	}
 	context.error("Invalid declaration!", node);
 }

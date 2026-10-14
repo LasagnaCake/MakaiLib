@@ -45,12 +45,15 @@ namespace Makai::Anima::V2::Runtime {
 
 		bool hasExposedCall(String const& name);
 
+		template <class T>
+		using Response = Meta::If<Type::Void<T>, Promise<void>, Promise<Nullable<T>>>;
+
 		template <class TFunc>
 		struct ExposedCall;
 
 		template <class TReturn, class... TArgs>
 		struct ExposedCall<TReturn(TArgs...)> {
-			using ReturnType = Meta::If<Type::Void<TReturn>, void, Nullable<TReturn>>;
+			using ReturnType = Response<TReturn>;
 
 			ReturnType call(TArgs... args) const		{return engine.template callExposed<TReturn, TArgs...>(name, args...);	}
 			ReturnType operator()(TArgs... args) const	{return call(args...);													}
@@ -79,17 +82,24 @@ namespace Makai::Anima::V2::Runtime {
 		}
 
 		template <class TReturn, class... TArgs>
-		Meta::If<Type::Void<TReturn>, void, Nullable<TReturn>>
-		callExposed(String const& name, TArgs... args) {
-			invokeExposedCall(
+		Response<TReturn> callExposed(String const& name, TArgs... args) {
+			auto const fid = invokeExposedCall(
 				name,
 				Core::Context::Arguments::from(
 					context.newValue<TArgs>(args)...
 				)
 			);
-			if constexpr (Type::NonVoid<TReturn>)
-				return context.top() ? context.pop()->toValue<TReturn>() : null;
-			else return;
+			if (!fid) co_return null;
+			while (inFunction(fid.value())) {
+				if (delay) --delay;
+				else Engine::yieldCycle();
+				co_yield noResponse<TReturn>();
+			}
+			if constexpr (Type::NonVoid<TReturn>) {
+				if (err) return null;
+				co_return context.top() ? context.pop()->toValue<TReturn>() : null;
+			}
+			else co_return;
 		}
 
 		void terminate();
@@ -103,8 +113,6 @@ namespace Makai::Anima::V2::Runtime {
 		bool finished() const;
 
 	protected:
-		void invokeExposedCall(String const& name, Core::Context::Arguments const& args);
-
 		virtual Context::Storage	external	(String const& name, bool const doNotCopy	);
 		Context::Storage&			global		(uint64 const globalID						);
 
@@ -148,6 +156,10 @@ namespace Makai::Anima::V2::Runtime {
 		);
 
 	private:
+		Nullable<usize> invokeExposedCall(String const& name, Core::Context::Arguments const& args);
+
+		template <class T> constexpr static Meta::If<Type::Void<T>, void, nulltype> noResponse() {if constexpr (Type::NonVoid<T>) return null;}
+
 		void load();
 		void unload();
 
@@ -236,6 +248,8 @@ namespace Makai::Anima::V2::Runtime {
 		void returnBack();
 
 		void initializeObject(Core::Object::Storage const& object);
+
+		bool inFunction(usize const id);
 
 		State				engineState	= State::AV2_RES_READY;
 		usize				delay		= 0;

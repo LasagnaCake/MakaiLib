@@ -1005,23 +1005,13 @@ Node::Instance AssertionResolver::resolve(Parser& parser, Node::Instance const& 
 	return result;
 }
 
-AResolver::AResolver(Parser::Precedence const precedence, bool const rightToLeft):
-	precedence(
-		precedence != Parser::Precedence::AV2_TAPP_NONE
-	?	Cast::as<Parser::Precedence>(enumcast(precedence) - !rightToLeft)
-	:	Parser::Precedence::AV2_TAPP_NONE
-	),
-	rightToLeft(rightToLeft) {
-}
-
-
 Node::Instance TryResolver::resolve(Parser& parser, Node::Instance const& leftSide, BaseContext::Axiom const& token) {
 	MAKAILIB_DEBUGLN_FULL("Resolving try expression...");
 	Node::Instance result = Node::Instance::create();
 	result->base = token;
 	result->content = Node::Content::AV2_TANC_BRANCH;
 	result->value = token.text.toString();
-	result->middle		= parser.nextExpression();
+	result->middle = parser.nextExpression();
 	if (result->middle->content != Node::Content::AV2_TANC_DECLARATION)
 		parser.context.error("Expected variable declaration here!");
 	if (!(
@@ -1035,4 +1025,28 @@ Node::Instance TryResolver::resolve(Parser& parser, Node::Instance const& leftSi
 	}
 	MAKAILIB_DEBUGLN_FULL("Try:DONE!");
 	return result;
+}
+
+Node::Instance KindResolver::resolve(Parser& parser, Node::Instance const& leftSide, BaseContext::Axiom const& token) {
+	Node::Instance result = Node::Instance::create();
+	result->base = token;
+	result->content = Node::Content::AV2_TANC_DECLARATION;
+	result->value = token.text.toString();
+	result->leftSide = parser.nextExpression();
+	if (result->leftSide->content != Node::Content::AV2_TANC_SUBSCRIPT)
+		parser.context.error("Expected template specification here!");
+	result->templateDecl = result->leftSide;
+	result->leftSide = result->leftSide->leftSide;
+	parser.context.expectNext(LTS_TT_BIG_ARROW);
+	result->rightSide = parser.nextExpression();
+	return result;
+}
+
+AResolver::AResolver(Parser::Precedence const precedence, bool const rightToLeft):
+	precedence(
+		precedence != Parser::Precedence::AV2_TAPP_NONE
+	?	Cast::as<Parser::Precedence>(enumcast(precedence) - !rightToLeft)
+	:	Parser::Precedence::AV2_TAPP_NONE
+	),
+	rightToLeft(rightToLeft) {
 }

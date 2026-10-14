@@ -2,4 +2,4 @@ using import core.types
 
 with module Is
 
-using Same[A, B] = (#A == #B)
+kind Same[A, B] => #A == #B

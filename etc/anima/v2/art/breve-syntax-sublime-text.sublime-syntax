@@ -207,7 +207,7 @@ contexts:
     - match: '\b(join)\b'
       scope: storage.type.adt
 
-    - match: '\b(trait)\b'
+    - match: '\b(trait|kind)\b'
       scope: storage.type.trait
 
     - match: '\b(enum)\b'

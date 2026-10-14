@@ -6,11 +6,11 @@ using import core.constraints.same
 
 with module Is
 
-using Callable[T, Args...] = prove {
+kind Callable[T, Args...] => prove {
 	Meta.spoof[T]!(Meta.spoof[Args]!...)
 }
 
-using Function[T, Return, Args...] = prove {
+kind Function[T, Return, Args...] => prove {
 	if Same[Return, void]
 		assert Callable[T, Args...]
 	else (Meta.spoof[T]!(Meta.spoof[Args]!...)) as Return

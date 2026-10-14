@@ -2,12 +2,13 @@ using import core.types
 
 with module Is
 
-using Basic[T] = match #T {
-	#bool					=> true
-	#i8, #i16, #i32, #i64	=> true
-	#u8, #u16, #u32, #u64	=> true
-	#f32, #f64, #f128		=> true
-	#string, #bytes			=> true
-	#void					=> true
+kind Basic[T] => match #T {
+	#bool,
+	#i8, #i16, #i32, #i64,
+	#u8, #u16, #u32, #u64,
+	#f32, #f64, #f128,
+	#string, #bytes,
+	#vector, #matrix,
+	#void,					=> true
 	else					=> false
 }

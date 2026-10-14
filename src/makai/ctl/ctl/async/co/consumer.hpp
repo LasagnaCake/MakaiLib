@@ -23,7 +23,7 @@ namespace Co {
 		virtual void onExit()	{};
 	private:
 		bool consumed = false;
-		constexpr bool consume() {
+		bool consume() {
 			if (!consumed) {
 				onEnter();
 				return consumed = true;

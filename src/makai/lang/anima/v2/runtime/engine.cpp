@@ -708,12 +708,17 @@ bool Engine::hasExposedCall(String const& signal) {
 	return program.ani && program.ani->in.contains(signal);
 }
 
-void Engine::invokeExposedCall(String const& signal, Core::Context::Arguments const& args) {
+Makai::Nullable<usize> Engine::invokeExposedCall(String const& signal, Core::Context::Arguments const& args) {
 	if (hasExposedCall(signal)) {
 		if (args.size())
 			context.globalValueStack.appendBack(args.reversed());
 		jumpTo(program.jumpTable[program.ani->in[signal]], true);
-	}
+		return context.pointerStack.size()-1;
+	} else return null;
+}
+
+bool Engine::inFunction(usize const id) {
+	return id > context.pointerStack.size();
 }
 
 void Engine::returnBack() {

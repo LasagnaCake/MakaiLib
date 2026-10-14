@@ -4,18 +4,18 @@ using import core.meta.spoof
 
 with module Is
 
-using Forward[T] = prove {
+kind Forward[T] => prove {
 	try elem := Meta.spoof[T]!.next {}
 }
 
-using Reverse[T] = prove {
+kind Reverse[T] => prove {
 	try elem := Meta.spoof[T]!.previous {}
 }
 
-using Bidirectional[T] = Forward[T] and Reverse[T]
+kind Bidirectional[T] => Forward[T] and Reverse[T]
 
-using Iterator[T] = Forward[T] or Reverse[T] or prove {
+kind Iterator[T] => Forward[T] or Reverse[T] or prove {
 	try elem := Meta.spoof[T]!() {}
 }
 
-using Iteratable[T] = prove {Meta.spoof[T]!.iterator}
+kind Iteratable[T] => prove {Meta.spoof[T]!.iterator}

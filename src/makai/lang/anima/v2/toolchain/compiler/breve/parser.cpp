@@ -61,7 +61,9 @@ Parser::Precedence Parser::precedenceOf(BaseContext::Axiom const& tok) {
 		case LTS_TT_STREAM_INSERT:
 		case LTS_TT_STREAM_EXTRACT: return AV2_TAPP_INSERT_EXTRACT;
 		case LTS_TT_CLOSE_BRACKET:
-		case LTS_TT_OPEN_BRACKET: return AV2_TAPP_POSTFIX;
+		case LTS_TT_OPEN_BRACKET:
+		case LTS_TT_CLOSE_PAREN:
+		case LTS_TT_OPEN_PAREN: return AV2_TAPP_FN_CALL;
 		case LTS_TT_NAMESPACE_RESOLVE: return AV2_TAPP_FN_DECL;
 	}
 	return Parser::Precedence::AV2_TAPP_POSTFIX;
@@ -196,6 +198,7 @@ Parser::Parser(BaseContext& context): context(context) {
 	add("join", prefixes, new UnionResolver());
 	add("prove", prefixes, new ProofResolver());
 	add("assert", prefixes, new AssertionResolver());
+	add("kind", prefixes, new KindResolver());
 	// Advanced infixes
 	MAKAILIB_DEBUGLN_FULL("Advanced infix parsers");
 	add("when", infixes, new InlineIfElseResolver());
