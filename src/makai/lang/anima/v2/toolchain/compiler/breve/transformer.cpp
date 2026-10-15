@@ -3234,16 +3234,16 @@ ATransformer::Result TryBlock::transform(Context& context, Node::Instance const&
 		auto const scope = context.declare(UTF8StringList::from("<try>::" + node->name()));
 		scope->implementContents = true;
 		auto const expr = context.getExpression(node->leftSide);
-		context.impl()->writeMainLine(scope->compose()->toString());
 		context.pop(1);
+		context.impl()->writeMainLine(scope->compose()->toString());
 		if (node->rightSide) {
 			context.impl()->writeMainLine("jump", tryEndLabel);
 			context.impl()->writeMainLine("@target", tryElseLabel);
 			auto const scope = context.declare(UTF8StringList::from("<else>::" + node->name()));
 			scope->implementContents = true;
 			auto const expr = context.getExpression(node->rightSide);
-			context.impl()->writeMainLine(scope->compose()->toString());
 			context.pop(1);
+			context.impl()->writeMainLine(scope->compose()->toString());
 		}
 		context.impl()->writeMainLine("@target", tryEndLabel);
 		return expr;
