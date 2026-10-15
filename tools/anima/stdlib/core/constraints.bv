@@ -1,4 +1,3 @@
-using import core.constraints.assertable
 using import core.constraints.basic
 using import core.constraints.comparable
 using import core.constraints.same

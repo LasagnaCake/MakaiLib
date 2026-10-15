@@ -927,12 +927,11 @@ Node::Instance MatchResolver::resolve(Parser& parser, Node::Instance const& left
 	parser.context.expectNext(LTS_TT_OPEN_CURLY);
 	while (true) {
 		auto const caseDecl = Node::Instance::create();
+		caseDecl->base.type = LTS_TT_COMPARE_EQUALS;
 		caseDecl->leftSide = Node::Instance::create();
 		do {
-			if (parser.context.peek().type == (LTS_TT_CLOSE_CURLY)) {
-				parser.context.next();
-				break;
-			}
+			if (parser.context.peek().type == (LTS_TT_CLOSE_CURLY))
+				parser.context.error("Missing case statement!");
 			if (
 				caseDecl->leftSide->children.size()
 			&&	!(
@@ -957,13 +956,13 @@ Node::Instance MatchResolver::resolve(Parser& parser, Node::Instance const& left
 				)
 			) {
 				caseDecl->base = parser.context.next().token();
-			} else caseDecl->base.type = LTS_TT_COMPARE_EQUALS;
+			}
 			caseDecl->leftSide->children.pushBack(parser.nextExpression());
 			if (parser.context.peek().type == LTS_TT_COMMA) {
 				parser.context.next();
 				continue;
-			}
-		} while (parser.context.peek().type == LTS_TT_COMMA);
+			} else break;
+		} while (true);
 		parser.context.expectNext(LTS_TT_BIG_ARROW);
 		if (parser.context.peek().type == (LTS_TT_CLOSE_CURLY))
 			parser.context.error("Missing case statement!");

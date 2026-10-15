@@ -19,7 +19,7 @@ struct Result[Ok, Error] {
 	prop value {
 		get (@ByRef self: Self) -> ?Ok => match self.result.any {
 			is Ok => self.result.Ok
-			is Error => null
+			else => null
 		}
 
 		set (@ByRef self: Self, v: Ok) => self.result.Ok = v
@@ -28,7 +28,7 @@ struct Result[Ok, Error] {
 	prop fail {
 		get (@ByRef self: Self) -> ?Error => match self.result.any {
 			is Error => null
-			is Ok => self.result.Error
+			else => self.result.Error
 		}
 
 		set (@ByRef self: Self, v: Error) => self.result.Error = v

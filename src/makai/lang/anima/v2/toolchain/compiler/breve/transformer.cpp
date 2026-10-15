@@ -1980,7 +1980,7 @@ ATransformer::Result KindDecl::transform(Context& context, Node::Instance const&
 		var.compile();
 		var.type = context.basicType("bool").asWeak();
 		return {.scope = scope, .type = var.type.asStrong()};
-	}
+	} else context.error("Kind declarations must be templated!", node);
 }
 
 ATransformer::Result Declaration::transform(Context& context, Node::Instance const& node) {

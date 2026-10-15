@@ -199,6 +199,7 @@ Parser::Parser(BaseContext& context): context(context) {
 	add("prove", prefixes, new ProofResolver());
 	add("assert", prefixes, new AssertionResolver());
 	add("kind", prefixes, new KindResolver());
+	add(LTS_TT_SHARP, prefixes, new PromotionResolver());
 	// Advanced infixes
 	MAKAILIB_DEBUGLN_FULL("Advanced infix parsers");
 	add("when", infixes, new InlineIfElseResolver());
