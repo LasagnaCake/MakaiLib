@@ -3223,6 +3223,8 @@ ATransformer::Result TryBlock::transform(Context& context, Node::Instance const&
 		context.impl()->writeMainLine(expr->compose()->toString());
 		return expr;
 	} else {
+		usize likelihood = 0;
+		bool mayBeEmpty = false;
 		tryVar.type = tryVar.type->base;
 		auto const tryLabel = "__try_" + node->name();
 		auto const elseLabel = "__try_else_" + node->name();
@@ -3234,21 +3236,24 @@ ATransformer::Result TryBlock::transform(Context& context, Node::Instance const&
 		auto const scope = context.declare(UTF8StringList::from("<try>::" + node->name()));
 		scope->implementContents = true;
 		auto const expr = context.getExpression(node->leftSide);
+		likelihood += expr.likelihood;
+		mayBeEmpty = mayBeEmpty or expr.mayBeEmpty;
 		context.pop(1);
 		context.impl()->writeMainLine(scope->compose()->toString());
 		if (node->rightSide) {
 			context.impl()->writeMainLine("jump", tryEndLabel);
-			context.impl()->writeMainLine("@target", tryElseLabel);
+			context.impl()->writeMainLine("@target", elseLabel);
 			auto const scope = context.declare(UTF8StringList::from("<else>::" + node->name()));
 			scope->implementContents = true;
 			auto const expr = context.getExpression(node->rightSide);
+			likelihood += expr.likelihood;
+			mayBeEmpty = mayBeEmpty or expr.mayBeEmpty;
 			context.pop(1);
 			context.impl()->writeMainLine(scope->compose()->toString());
 		}
 		context.impl()->writeMainLine("@target", tryEndLabel);
-		return expr;
+		return {.source = {"move top"}, .type = var.type.asStrong(), .likelihood = likelihood, .mayBeEmpty = mayBeEmpty or !node->rightSide};
 	}
-	return {};
 }
 
 Namespace::TypeRef ATransformer::Context::basicType(UTF8String const& name) {
