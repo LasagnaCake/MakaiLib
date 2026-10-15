@@ -631,8 +631,11 @@ Node::Instance UsingResolver::resolve(Parser& parser, Node::Instance const& left
 		result->leftSide = decl;
 	} else if (decl->content == Node::Content::AV2_TANC_ASSIGNMENT) {
 		result->content = Node::Content::AV2_TANC_ALIAS;
-		result->leftSide = decl->leftSide;
 		result->rightSide = decl->rightSide;
+		if (decl->leftSide->content == Node::Content::AV2_TANC_SUBSCRIPT) {
+			result->leftSide = decl->leftSide->leftSide;
+			result->templateDecl = decl->leftSide;
+		} else result->leftSide = decl->leftSide;
 	} else parser.context.error("Invalid alias expression!");
 	return result;
 }
@@ -932,10 +935,11 @@ Node::Instance MatchResolver::resolve(Parser& parser, Node::Instance const& left
 			}
 			if (
 				caseDecl->leftSide->children.size()
-			&&	(
+			&&	!(
 				caseDecl->base.type == LTS_TT_COMPARE_NOT_EQUALS
 			or	caseDecl->base.type == LTS_TT_COMPARE_EQUALS
 			or	caseDecl->base.text == "not"
+			or	caseDecl->base.text == "is"
 			)
 			) parser.context.error("Cannot have more than one option in order matches!");
 			if (
@@ -949,6 +953,7 @@ Node::Instance MatchResolver::resolve(Parser& parser, Node::Instance const& left
 				or	parser.context.peek().type == LTS_TT_COMPARE_LESS_EQUALS
 				or	parser.context.peek().type == LTS_TT_LOGIC_NOT
 				or	parser.context.peek().text == "not"
+				or	parser.context.peek().text == "is"
 				)
 			) {
 				caseDecl->base = parser.context.next().token();
@@ -1028,6 +1033,21 @@ Node::Instance TryResolver::resolve(Parser& parser, Node::Instance const& leftSi
 }
 
 Node::Instance KindResolver::resolve(Parser& parser, Node::Instance const& leftSide, BaseContext::Axiom const& token) {
+	Node::Instance result = Node::Instance::create();
+	result->base = token;
+	result->content = Node::Content::AV2_TANC_DECLARATION;
+	result->value = token.text.toString();
+	result->leftSide = parser.nextExpression();
+	if (result->leftSide->content != Node::Content::AV2_TANC_SUBSCRIPT)
+		parser.context.error("Expected template specification here!");
+	result->templateDecl = result->leftSide;
+	result->leftSide = result->leftSide->leftSide;
+	parser.context.expectNext(LTS_TT_BIG_ARROW);
+	result->rightSide = parser.nextExpression();
+	return result;
+}
+
+Node::Instance MetaTransformationResolver::resolve(Parser& parser, Node::Instance const& leftSide, BaseContext::Axiom const& token) {
 	Node::Instance result = Node::Instance::create();
 	result->base = token;
 	result->content = Node::Content::AV2_TANC_DECLARATION;

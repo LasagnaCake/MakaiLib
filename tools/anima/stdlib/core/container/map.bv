@@ -37,7 +37,7 @@ struct Map[Key, Value] {
 	insert :: (@ByRef self: Self, @ByRef key: Key, @ByRef value: value) -> void =>
 		unless self.has(key) 
 			self.entries.insert(self.placeOf(key), new Entry {key, val})
-		else self.entries[self.placeOf(key)].value = value
+		else self.entries[(self.placeOf(key))].value = value
 
 	@Operator(infix="in")
 	has :: (@ByRef self: Self, key: Key) -> bool {
@@ -79,4 +79,4 @@ struct Map[Key, Value] {
 	@[Private, ByRef] entries: Entries
 }
 
-type Dictionary[T] = Map[string, T]
+using Dictionary[T] = Map[string, T]
