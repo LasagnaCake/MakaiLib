@@ -3212,18 +3212,22 @@ ATransformer::Result FileModule::transform(Context& context, Node::Instance cons
 }
 
 ATransformer::Result TryBlock::transform(Context& context, Node::Instance const& node) {
+	auto const tryScope = context.declare(UTF8StringList::from("<try>::" + node->name()));
+	tryScope->implementContents = true;
 	auto& tryVar = *context.getExpression(node->middle).scope->variable;
-	if (!tryVar.value.isUndefined())
-		return tryVar.value.isNull() ? context.getExpression(node->leftSide) : context.getExpression(node->rightSide);
+	Namespace::TypeRef resultType;
+	if (!tryVar.value.isUndefined()) {
+		auto const expr = tryVar.value.isNull() ? context.getExpression(node->leftSide) : context.getExpression(node->rightSide);
+		context.pop(1);
+		return expr;
+	}
 	else if (!tryVar.type->flags.isNullable) {
-		auto const ctx = context.declare(UTF8StringList::from("<try>::" + node->name()));
-		ctx->implementContents = true;
 		auto const expr = context.getExpression(node->leftSide);
 		context.pop(1);
-		context.impl()->writeMainLine(expr->compose()->toString());
+		context.impl()->writeMainLine(tryScope->compose()->toString());
 		return expr;
 	} else {
-		usize likelihood = 0;
+		ssize likelihood = 0;
 		bool mayBeEmpty = false;
 		tryVar.type = tryVar.type->base;
 		auto const tryLabel = "__try_" + node->name();
@@ -3233,9 +3237,10 @@ ATransformer::Result TryBlock::transform(Context& context, Node::Instance const&
 		if (node->rightSide)
 			context.impl()->writeMainLine("jump if null", elseLabel);
 		else context.impl()->writeMainLine("jump if null", tryEndLabel);
-		auto const scope = context.declare(UTF8StringList::from("<try>::" + node->name()));
+		auto const scope = context.declare(UTF8StringList::from("<exists>::" + node->name()));
 		scope->implementContents = true;
 		auto const expr = context.getExpression(node->leftSide);
+		resultType = expr.type;
 		likelihood += expr.likelihood;
 		mayBeEmpty = mayBeEmpty or expr.mayBeEmpty;
 		context.pop(1);
@@ -3250,9 +3255,13 @@ ATransformer::Result TryBlock::transform(Context& context, Node::Instance const&
 			mayBeEmpty = mayBeEmpty or expr.mayBeEmpty;
 			context.pop(1);
 			context.impl()->writeMainLine(scope->compose()->toString());
+			if (resultType != expr.type)
+				context.error("[else] branch results in different value than [try] branch!", node);
 		}
 		context.impl()->writeMainLine("@target", tryEndLabel);
-		return {.source = {"move top"}, .type = var.type.asStrong(), .likelihood = likelihood, .mayBeEmpty = mayBeEmpty or !node->rightSide};
+		context.pop(1);
+		context.impl()->writeMainLine(tryScope->compose()->toString());
+		return {.source = {"move top"}, .type = resultType, .likelihood = likelihood, .mayBeEmpty = mayBeEmpty or !node->rightSide};
 	}
 }
 
