@@ -396,6 +396,7 @@ Node::Instance FunctionPrototypeResolver::resolve(Parser& parser, Node::Instance
 	}
 	MAKAILIB_DEBUGLN_FULL("Resolving function prototype expression...");
 	parser.context.expectNext(LTS_TT_OPEN_PAREN);
+	auto const tdecl = Node::Instance::create();
 	while (true) {
 		if (parser.context.peek().type == (LTS_TT_CLOSE_PAREN)) {
 			parser.context.next();
@@ -403,6 +404,10 @@ Node::Instance FunctionPrototypeResolver::resolve(Parser& parser, Node::Instance
 		}
 		MAKAILIB_DEBUGLN_FULL(">>>>>>>>>>>> Argument");
 		result->children.pushBack(parser.nextExpression(precedence));
+		if (result->children.back()->templateDecl) {
+			tdecl->children.appendBack(result->children.back()->templateDecl->children);
+			result->children.back()->templateDecl = nullptr;
+		}
 		MAKAILIB_DEBUGLN_FULL("<<<<<<<<<<<< Follows: ", parser.context.peek().text);
 		if (parser.context.peek().type == (LTS_TT_CLOSE_PAREN)) {
 			parser.context.next();
@@ -411,6 +416,11 @@ Node::Instance FunctionPrototypeResolver::resolve(Parser& parser, Node::Instance
 		parser.context.expectNext(LTS_TT_COMMA);
 		if (parser.context.peek().type == LTS_TT_CLOSE_PAREN)
 			parser.context.error("Expected expression after the comma!");
+	}
+	if (tdecl->children.size()) {
+		if (result->templateDecl)
+			result->templateDecl->children.appendBack(tdecl->children);
+		else result->templateDecl = tdecl;
 	}
 	parser.context.expect(LTS_TT_CLOSE_PAREN);
 	MAKAILIB_DEBUGLN_FULL("FunctionPrototype:Arguments:DONE!");
@@ -438,6 +448,18 @@ Node::Instance VariableDeclResolver::resolve(Parser& parser, Node::Instance cons
 	else if (token.type == LTS_TT_DECLARE)
 		result->rightSide = parser.nextExpression();
 	else {
+		if (parser.context.peek().text == "kind") {
+			if (!result->templateDecl)
+				result->templateDecl = Node::Instance::create();
+			auto const tdecl = Node::Instance::create();
+			tdecl->content = Node::Content::AV2_TANC_DECLARATION;
+			tdecl->leftSide = Node::Instance::create();
+			tdecl->leftSide->content = Node::Content::AV2_TANC_NAME;
+			tdecl->leftSide->value = result->leftSide->name().toString() + "Type" + tdecl->name();
+			tdecl->rightSide = Node::Instance::create();
+			tdecl->rightSide = parser.nextExpression(precedence);
+			result->templateDecl->children.pushBack(tdecl);
+		}
 		auto const v = parser.nextExpression(precedence);
 		if (v->content == Node::Content::AV2_TANC_ASSIGNMENT) {
 			result->middle = v->leftSide;
@@ -520,6 +542,12 @@ Node::Instance FunctionDeclResolver::resolve(Parser& parser, Node::Instance cons
 		result->templateDecl = ArrayResolver().resolve(parser, null, {});
 	}
 	result->middle = FunctionPrototypeResolver().resolve(parser, null, {});
+	if (result->middle->templateDecl) {
+		if (!result->templateDecl)
+			result->templateDecl = Node::Instance::create();
+		result->templateDecl->children.appendBack(result->middle->templateDecl->children);
+		result->middle->templateDecl = nullptr;
+	}
 	result->rightSide = FunctionContentResolver().resolve(parser, null, {});
 	MAKAILIB_DEBUGLN_FULL("FunctionDecl:DONE!");
 	return result;
@@ -581,6 +609,8 @@ Node::Instance GetterResolver::resolve(Parser& parser, Node::Instance const& lef
 	result->base = token;
 	result->leftSide = protoName("get" + result->name());
 	result->middle = FunctionPrototypeResolver().resolve(parser, null, {});
+	if (result->middle->templateDecl)
+		result->templateDecl = result->middle->templateDecl;
 	result->rightSide = FunctionContentResolver().resolve(parser, null, {});
 	return result;
 }
@@ -592,6 +622,8 @@ Node::Instance SetterResolver::resolve(Parser& parser, Node::Instance const& lef
 	result->base = token;
 	result->leftSide = protoName("set" + result->name());
 	result->middle = FunctionPrototypeResolver().resolve(parser, null, {});
+	if (result->middle->templateDecl)
+		result->templateDecl = result->middle->templateDecl;
 	result->rightSide = FunctionContentResolver().resolve(parser, null, {});
 	return result;
 }
