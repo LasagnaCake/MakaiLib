@@ -9,6 +9,6 @@ kind Basic[T] => match #T {
 	#f32, #f64, #f128,
 	#string, #bytes,
 	#vector, #matrix,
-	#void,					=> true
+	#void					=> true
 	else					=> false
 }
