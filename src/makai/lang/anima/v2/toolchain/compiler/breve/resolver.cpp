@@ -1022,6 +1022,8 @@ Node::Instance TryResolver::resolve(Parser& parser, Node::Instance const& leftSi
 		result->middle->base.text == ":"
 	or	result->middle->base.text == ":="
 	)) parser.context.error("Expected variable declaration here!");
+	if (!result->middle->rightSide)
+		parser.context.error("Expected variable to heve been assigned a value here!");
 	result->leftSide = parser.nextExpression();
 	if (parser.context.peek().text == "else") {
 		parser.context.next();

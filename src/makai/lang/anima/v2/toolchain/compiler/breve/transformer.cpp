@@ -3212,6 +3212,42 @@ ATransformer::Result FileModule::transform(Context& context, Node::Instance cons
 }
 
 ATransformer::Result TryBlock::transform(Context& context, Node::Instance const& node) {
+	auto& tryVar = *context.getExpression(node->middle).scope->variable;
+	if (!tryVar.value.isUndefined())
+		return tryVar.value.isNull() ? context.getExpression(node->leftSide) : context.getExpression(node->rightSide);
+	else if (!tryVar.type->flags.isNullable) {
+		auto const ctx = context.declare(UTF8StringList::from("<try>::" + node->name()));
+		ctx->implementContents = true;
+		auto const expr = context.getExpression(node->leftSide);
+		context.pop(1);
+		context.impl()->writeMainLine(expr->compose()->toString());
+		return expr;
+	} else {
+		tryVar.type = tryVar.type->base;
+		auto const tryLabel = "__try_" + node->name();
+		auto const elseLabel = "__try_else_" + node->name();
+		auto const tryEndLabel = "__try_end_" + node->name();
+		context.impl()->writeMainLine("push", tryVar.getSource());
+		if (node->rightSide)
+			context.impl()->writeMainLine("jump if null", elseLabel);
+		else context.impl()->writeMainLine("jump if null", tryEndLabel);
+		auto const scope = context.declare(UTF8StringList::from("<try>::" + node->name()));
+		scope->implementContents = true;
+		auto const expr = context.getExpression(node->leftSide);
+		context.impl()->writeMainLine(scope->compose()->toString());
+		context.pop(1);
+		if (node->rightSide) {
+			context.impl()->writeMainLine("jump", tryEndLabel);
+			context.impl()->writeMainLine("@target", tryElseLabel);
+			auto const scope = context.declare(UTF8StringList::from("<else>::" + node->name()));
+			scope->implementContents = true;
+			auto const expr = context.getExpression(node->rightSide);
+			context.impl()->writeMainLine(scope->compose()->toString());
+			context.pop(1);
+		}
+		context.impl()->writeMainLine("@target", tryEndLabel);
+		return expr;
+	}
 	return {};
 }
 
