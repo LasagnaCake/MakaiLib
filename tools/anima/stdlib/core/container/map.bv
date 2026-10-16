@@ -3,9 +3,7 @@ using import core.container.list
 
 using import core.constraints.comparable
 
-struct Map[Key, Value] {
-	assert Is.Comparable[Key, Key] else "Key must be of a comparable type!"
-
+struct Map[Key: Is.Comparable, Value] {
 	struct Entry {
 		@[ByCopy, ReadOnly] key: Key
 		@ByRef value: Value
@@ -20,8 +18,8 @@ struct Map[Key, Value] {
 	}
 
 	@[New, Variadic]
-	init :: (@ByRef self: Self, entries: Entries) -> Self {
-		self.entries = entries 
+	init :: (@ByRef self: Self, entries: [Entry]) -> Self {
+		self.entries = new Entries {entries...}
 		return self
 	}
 
