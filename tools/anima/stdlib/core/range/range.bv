@@ -1,0 +1,20 @@
+using import core.types
+
+using import core.constraints
+
+module Range {
+	struct NumericIterator[T: Is.Number] {
+		@ByCopy now: T
+		@ByCopy stop: T
+		@ByCopy step: T
+
+		prop next get(self: Self) -> ?T {
+			unless (self.now < self.stop)
+				return null
+			current := self.now
+			self.now += self.step
+			return current
+		}
+	}
+ 
+range :: (stop: Is.Number) => new Range.NumericIterator {0, stop, 1}
