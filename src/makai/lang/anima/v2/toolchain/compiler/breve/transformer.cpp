@@ -3320,6 +3320,7 @@ Namespace::TypeRef ATransformer::Context::nullableFor(Namespace::TypeRef const& 
 
 Namespace::TypeRef ATransformer::Context::tupleFor(List<Namespace::TypeRef> const& types) {
 	usize id = 0;
+	if (types.size() == 1) return types.back();
 	if (!tuples.contains(types)) {
 		auto const scope = Namespace::Instance::create("<tuple>::" + Makai::toString(++id));
 		scopeStack.pushBack(scope);
@@ -3346,6 +3347,7 @@ Namespace::TypeRef ATransformer::Context::tupleFor(List<Namespace::TypeRef> cons
 
 Namespace::TypeRef ATransformer::Context::unionFor(List<Namespace::TypeRef> const& types) {
 	usize id = 0;
+	if (types.size() == 1) return types.back();
 	if (!unions.contains(types)) {
 		auto const scope = Namespace::Instance::create("<union>::" + Makai::toString(++id));
 		scopeStack.pushBack(scope);

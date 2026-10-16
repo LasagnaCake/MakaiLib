@@ -14,7 +14,7 @@ kind Unsigned[T] => match #T {
 	else					=> false
 }
 
-kind Integer[T] => (Signed[T] or Unsigned[T] or Bool[T])
+kind Integer[T] => Signed[T] or Unsigned[T] or Boolean[T]
 
 kind Real[T] => match #T {
 	#f32, #f64, #f128	=> true

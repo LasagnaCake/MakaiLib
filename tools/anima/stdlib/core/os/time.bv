@@ -8,7 +8,6 @@ module OS.Time {
 		MILLIS
 		MICROS
 		NANOS
-
 	}
 	
 	@Shared(name = "av2/time/localNow", lib = av2time)

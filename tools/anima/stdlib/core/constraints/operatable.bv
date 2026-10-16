@@ -1,0 +1,19 @@
+using import core.types
+
+using import core.meta.spoof
+
+with module Is.Operatable
+
+kind Add[A, B] => prove (Meta.spoof[A]! + Meta.spoof[B]!)
+
+kind Sub[A, B] => prove (Meta.spoof[A]! - Meta.spoof[B]!)
+
+kind Mul[A, B] => prove (Meta.spoof[A]! * Meta.spoof[B]!)
+
+kind Div[A, B] => prove (Meta.spoof[A]! / Meta.spoof[B]!)
+
+kind Mod[A, B] => prove (Meta.spoof[A]! % Meta.spoof[B]!)
+
+kind ASM[A, B] => Add[A, B] and Sub[A, B] and Mul[A, B]
+
+kind Arithmetic[A, B] => ASM[A, B] and Div[A, B]

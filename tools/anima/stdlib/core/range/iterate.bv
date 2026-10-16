@@ -2,6 +2,8 @@ using import core.types
 
 using import core.constraints
 
+using import meta.spoof
+
 with module Range
 
 using IteratorOf[T] = with T when Is.Iterator[T] else with typeof Meta.spoof[T]!.iterator
