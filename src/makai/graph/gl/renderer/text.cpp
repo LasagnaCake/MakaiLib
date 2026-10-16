@@ -6,54 +6,6 @@ using namespace Makai; using namespace Makai::Graph;
 
 namespace JSON = Makai::JSON;
 
-inline Vector2 fromJSONArrayV2(JSON::Value const& json, Vector2 const& defaultValue = 0) {
-	try {
-		if (json.isArray())
-			return Vector2(
-				json[0].get<float>(),
-				json[1].get<float>()
-			);
-		else if (json.isNumber())
-			return json.get<float>();
-		else return defaultValue;
-	} catch (std::exception const& e) {
-		return defaultValue;
-	}
-}
-
-inline Vector3 fromJSONArrayV3(JSON::Value const& json, Vector3 const& defaultValue = 0) {
-	try {
-		if (json.isArray())
-			return Vector3(
-				json[0].get<float>(),
-				json[1].get<float>(),
-				json[2].get<float>()
-			);
-		else if (json.isNumber())
-			return json.get<float>();
-		else return defaultValue;
-	} catch (std::exception const& e) {
-		return defaultValue;
-	}
-}
-
-inline Vector4 fromJSONArrayV4(JSON::Value const& json, Vector4 const& defaultValue = 0) {
-	try {
-		if (json.isArray())
-			return Vector4(
-				json[0].get<float>(),
-				json[1].get<float>(),
-				json[2].get<float>(),
-				json[3].get<float>()
-			);
-		else if (json.isNumber())
-			return json.get<float>();
-		else return defaultValue;
-	} catch (std::exception const& e) {
-		return defaultValue;
-	}
-}
-
 FontFace::FontFace(): instance(new FontData()) {}
 
 FontFace::FontFace(FontData const& font): instance(new FontData{font}) {}
@@ -66,8 +18,8 @@ FontFace::FontFace(String const& path): FontFace() {
 	else instance->faces.normal		= Texture2D::fromJSON(tx["image"s], OS::FS::directoryFromPath(path));
 	if (tx.contains("emphasis"s))
 		instance->faces.emphasis	= Texture2D::fromJSON(tx["emphasis"s], OS::FS::directoryFromPath(path));
-	instance->size					= fromJSONArrayV2(tx["size"s], 16);
-	instance->spacing				= fromJSONArrayV2(tx["spacing"s], 1);
+	instance->size					= tx["size"s].vectorize(16);
+	instance->spacing				= tx["spacing"s].vectorize(1);
 	instance->start					= tx["start"s].template get<usize>(0x20ull);
 }
 

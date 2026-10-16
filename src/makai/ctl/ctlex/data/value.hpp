@@ -1049,6 +1049,18 @@ namespace Data {
 		[[CTL_UNAVAILABLE("Unimplemented!")]]
 		constexpr Value expanded(StringType const& sep = "/") const;
 
+		constexpr VectorType vectorize(VectorType const orElse = 0) const {
+			if (!(isVectorable() or isArray())) return orElse;
+			else if (isVectorable()) return getVector();
+			else if (isArray()) {
+				VectorType vec = orElse;
+				usize const max = size() < (sizeof(VectorType) / sizeof(float)) ? size() : (sizeof(VectorType) / sizeof(float));
+				for (usize i = 0; i < max; ++i)
+					tryFetch(vec[i], orElse[i]);
+				return orElse;
+			} else return orElse;
+		}
+
 	private:
 		/// @brief Value type.
 		Kind	kind;

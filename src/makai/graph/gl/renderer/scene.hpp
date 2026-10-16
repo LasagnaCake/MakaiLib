@@ -21,10 +21,12 @@ namespace Makai::Graph {
 			/// @brief Drawable object type.
 			using DrawableType	= TDraw;
 
+			using Storage = Instance<DrawableType, DrawableType>;
+
 			/// @brief Drawable object entry type.
-			using DrawableEntry	= KeyValuePair<String, DrawableType*>;
+			using DrawableEntry	= KeyValuePair<String, Storage>;
 			/// @brief Drawable object database type.
-			using DrawableBank	= Dictionary<DrawableType*>;
+			using DrawableBank	= Dictionary<Storage>>;
 
 			/// @brief Constructs the collection.
 			/// @param layer Layer to register the object to. By default, it is layer zero.
@@ -49,44 +51,21 @@ namespace Makai::Graph {
 
 			/// @brief Creates a drawable object.
 			/// @param name Name of the object.
-			/// @return Key-value pair containing its name, and a pointer to it.
-			/// @note Pointer returned is a non-owning pointer.
-			/// @throw Error::InvalidValue if name is invalid, or if name is duplicate (if enabled).
+			/// @return Key-value pair containing its name, and a shared pointer to it.
+			/// @throw Error::InvalidValue if name is invalid, or if name is duplicate.
 			DrawableEntry createObject(String name = "") {
-				#ifdef MAKAILIB_SCENE_ERROR_IF_DUPLICATE_NAME
 				if (objects.contains(name))
 					throw Error::InvalidValue("Object of name '"+name+"' already exists!", CTL_CPP_PRETTY_SOURCE);
-				#endif // MAKAILIB_SCENE_ERROR_IF_DUPLICATE_NAME
-				ref<DrawableType> r = nullptr;
+				AtomicCell<DrawableType> r = r.create(true);
 				if (name.empty())	name = validateName("unnamed");
 				else				name = validateName(name);
-				objects[name] = (r = new DrawableType(true));
+				storage.pushBack(r);
+				objects[name] = r;
 				return DrawableEntry{name, r};
-			}
-
-			/// @brief Deletes a drawable object.
-			/// @param obj Object to delete.
-			void deleteObject(ref<DrawableType> const obj) {
-				if (obj)
-					for (auto const& [k, v]: objects)
-						if (obj == v) {
-							objects.erase(k);
-							delete obj;
-							break;
-						}
-			}
-
-			/// @brief Deletes a drawable object.
-			/// @param name Name of object to delete.
-			void deleteObject(String const& name = "") {
-				if (!objects.contains(name)) return;
-				delete objects[name];
-				objects.erase(name);
 			}
 
 			/// @brief Returns all objects this collection has.
 			/// @return All objects.
-			/// @note Pointers returned are non-owning pointers.
 			inline DrawableBank getObjects() {
 				return objects;
 			}
@@ -94,7 +73,7 @@ namespace Makai::Graph {
 			/// @brief Returns an object's name.
 			/// @param obj Object to get the name for.
 			/// @return Name of object.
-			String getNameOfObject(DrawableType* const obj) {
+			String getNameOfObject(Storage const obj) {
 				String name = "";
 				if (obj)
 					for (auto& [k, v]: objects)
@@ -105,9 +84,8 @@ namespace Makai::Graph {
 
 			/// @brief Gets an object by its name.
 			/// @param name Name of object.
-			/// @return Requested object, or `nullptr` if not found.
-			/// @note Pointer returned is a non-owning pointer.
-			ref<DrawableType> getObject(String const& name) {
+			/// @return Requested object, or null if not found.
+			Storage getObject(String const& name) {
 				if (!objects.contains(name))
 					return nullptr;
 				return objects[name];
@@ -115,9 +93,8 @@ namespace Makai::Graph {
 
 			/// @brief Gets an object by its name.
 			/// @param name Name of object.
-			/// @return Requested object, or `nullptr` if not found.
-			/// @note Pointer returned is a non-owning pointer.
-			inline ref<DrawableType> operator[](String const& name) {
+			/// @return Requested object, or null if not found.
+			inline Storage operator[](String const& name) {
 				return getObject(name);
 			}
 
@@ -147,6 +124,7 @@ namespace Makai::Graph {
 
 			/// @brief Objects associated with collection.
 			DrawableBank objects;
+			List<Storage> storage;
 		};
 	}
 

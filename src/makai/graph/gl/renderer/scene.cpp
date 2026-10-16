@@ -5,54 +5,6 @@ using namespace Makai; using namespace Makai::Graph;
 using BaseType = Scene::BaseType;
 namespace JSON = Makai::JSON;
 
-inline Vector2 fromJSONArrayV2(JSON::Value const& json, Vector2 const& defaultValue = 0) {
-	try {
-		if (json.isArray())
-			return Vector2(
-				json[0].get<float>(),
-				json[1].get<float>()
-			);
-		else if (json.isNumber())
-			return json.get<float>();
-		else return defaultValue;
-	} catch (std::exception const& e) {
-		return defaultValue;
-	}
-}
-
-inline Vector3 fromJSONArrayV3(JSON::Value const& json, Vector3 const& defaultValue = 0) {
-	try {
-		if (json.isArray())
-			return Vector3(
-				json[0].get<float>(),
-				json[1].get<float>(),
-				json[2].get<float>()
-			);
-		else if (json.isNumber())
-			return json.get<float>();
-		else return defaultValue;
-	} catch (std::exception const& e) {
-		return defaultValue;
-	}
-}
-
-inline Vector4 fromJSONArrayV4(JSON::Value const& json, Vector4 const& defaultValue = 0) {
-	try {
-		if (json.isArray())
-			return Vector4(
-				json[0].get<float>(),
-				json[1].get<float>(),
-				json[2].get<float>(),
-				json[3].get<float>()
-			);
-		else if (json.isNumber())
-			return json.get<float>();
-		else return defaultValue;
-	} catch (std::exception const& e) {
-		return defaultValue;
-	}
-}
-
 void Scene::draw() {
 	#ifdef MAKAILIB_DEBUG
 	API::Debug::Context ctx("Scene::draw");
@@ -181,32 +133,32 @@ void Scene::extendFromDefinitionV0(JSON::Value def, String const& sourcepath) {
 			if (dcam["type"].isString()) camType = dcam["type"].get<String>();
 			if (camType == "DEFAULT") {
 				Camera3D cam;
-				cam.eye		= fromJSONArrayV3(dcam["eye"]);
-				cam.at		= fromJSONArrayV3(dcam["at"]);
-				cam.up		= fromJSONArrayV3(dcam["up"]);
+				cam.eye		= dcam["eye"].vectorize();
+				cam.at		= dcam["at"].vectorize();
+				cam.up		= dcam["up"].vectorize();
 				if (dcam["relativeToEye"].isBool())
 					cam.relativeToEye	= dcam["relativeToEye"].get<bool>();
 				camera.fromCamera3D(cam);
 			} else if (camType == "GIMBAL") {
-				camera.position	= fromJSONArrayV3(dcam["position"]);
-				camera.rotation	= fromJSONArrayV3(dcam["rotation"]);
+				camera.position	= dcam["position"].vectorize();
+				camera.rotation	= dcam["rotation"].vectorize();
 			}
-			camera.aspect	= fromJSONArrayV2(dcam["aspect"]);
+			camera.aspect	= dcam["aspect"].vectorize();
 			camera.fov		= dcam["fov"].get<float>();
 			camera.zNear	= dcam["zNear"].get<float>();
 			camera.zFar		= dcam["zFar"].get<float>();
 			if (dcam["ortho"].isObject()) {
 				camera.ortho.strength	= dcam["ortho"]["strength"].get<float>();
-				camera.ortho.origin		= fromJSONArrayV2(dcam["ortho"]["origin"]);
-				camera.ortho.size		= fromJSONArrayV2(dcam["ortho"]["origin"]);
+				camera.ortho.origin		= dcam["ortho"]["origin"].vectorize();
+				camera.ortho.size		= dcam["ortho"]["origin"].vectorize();
 			}
 		}
 		// Get space data
 		{
 			if (def["space"].isObject()) {
-				space.position	= fromJSONArrayV3(def["space"]["position"],	0);
-				space.rotation	= fromJSONArrayV3(def["space"]["rotation"],	0);
-				space.scale		= fromJSONArrayV3(def["space"]["scale"],	0);
+				space.position	= def["space"]["position"].vectorize(0);
+				space.rotation	= def["space"]["rotation"].vectorize(0);
+				space.scale		= def["space"]["scale"].vectorize(0);
 			}
 		}
 		// Get world data

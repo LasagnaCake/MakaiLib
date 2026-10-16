@@ -16,7 +16,7 @@ namespace Makai::Graph::Ref {
 		): AShape(triangles, parent) {
 			setBaseShape();
 		}
-		
+
 		/// @brief Arrow tip.
 		struct Tip {
 			/// @brief Tip width.
@@ -24,7 +24,7 @@ namespace Makai::Graph::Ref {
 			/// @brief Tip length.
 			float length	= 1;
 		};
-		
+
 		/// @brief Arrow body.
 		struct Body {
 			/// @brief Body start width.

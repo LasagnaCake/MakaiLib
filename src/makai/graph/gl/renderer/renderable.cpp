@@ -9,54 +9,6 @@ using namespace Material;
 
 namespace JSON = Makai::JSON;
 
-inline Vector2 fromJSONArrayV2(JSON::Value const& json, Vector2 const& defaultValue = 0) {
-	try {
-		if (json.isArray())
-			return Vector2(
-				json[0].get<float>(),
-				json[1].get<float>()
-			);
-		else if (json.isNumber())
-			return json.get<float>();
-		else return defaultValue;
-	} catch (std::exception const& e) {
-		return defaultValue;
-	}
-}
-
-inline Vector3 fromJSONArrayV3(JSON::Value const& json, Vector3 const& defaultValue = 0) {
-	try {
-		if (json.isArray())
-			return Vector3(
-				json[0].get<float>(),
-				json[1].get<float>(),
-				json[2].get<float>()
-			);
-		else if (json.isNumber())
-			return json.get<float>();
-		else return defaultValue;
-	} catch (std::exception const& e) {
-		return defaultValue;
-	}
-}
-
-inline Vector4 fromJSONArrayV4(JSON::Value const& json, Vector4 const& defaultValue = 0) {
-	try {
-		if (json.isArray())
-			return Vector4(
-				json[0].get<float>(),
-				json[1].get<float>(),
-				json[2].get<float>(),
-				json[3].get<float>()
-			);
-		else if (json.isNumber())
-			return json.get<float>();
-		else return defaultValue;
-	} catch (std::exception const& e) {
-		return defaultValue;
-	}
-}
-
 inline ObjectMaterial fromDefinition(JSON::Value def, String const& definitionFolder) {
 	ObjectMaterial mat;
 	Texture2D& texture		= mat.texture.image;
@@ -98,7 +50,7 @@ inline ObjectMaterial fromDefinition(JSON::Value def, String const& definitionFo
 			auto fx = loadImageEffect(dmat["blend"], definitionFolder, blend);
 			mat.blend.enabled	= fx.enabled;
 			mat.blend.image		= fx.image;
-			mat.blend.strength	= fromJSONArrayV3(dmat["texture"]["strength"], 0);
+			mat.blend.strength	= dmat["texture"]["strength"].vectorize(0);
 			if (dmat["blend"]["equation"].isNumber())
 				mat.blend.equation	= (Effect::BlendTextureEquation)dmat["blend"]["equation"].get<uint32>();
 		}
@@ -125,9 +77,9 @@ inline ObjectMaterial fromDefinition(JSON::Value def, String const& definitionFo
 			mat.warp.image		= fx.image;
 			{
 				auto mwtrans = dmat["warp"]["trans"];
-				mat.warp.trans.position = fromJSONArrayV2(mwtrans["position"]);
+				mat.warp.trans.position = mwtrans["position"].vectorize();
 				mat.warp.trans.rotation = mwtrans["rotation"].get<float>();
-				mat.warp.trans.scale = fromJSONArrayV2(mwtrans["scale"], 1);
+				mat.warp.trans.scale = mwtrans["scale"].vectorize(1);
 			}
 			mat.warp.channelX = dmat["warp"]["channelX"];
 			mat.warp.channelY = dmat["warp"]["channelY"];
@@ -151,7 +103,7 @@ inline ObjectMaterial fromDefinition(JSON::Value def, String const& definitionFo
 		if (dmat["instances"].isArray()) {
 			mat.instances.clear();
 			for(auto inst: dmat["instances"].get<JSON::Array>())
-				mat.instances.pushBack(fromJSONArrayV3(inst));
+				mat.instances.pushBack(inst.vectorize());
 		}
 		// Set culling, fill & view
 		if (dmat["culling"].isNumber())	mat.culling	= (CullMode)dmat["culling"].get<unsigned int>();
@@ -504,9 +456,9 @@ void Renderable::extendFromDefinitionV0(
 	if (def["trans"].isObject()) {
 		auto dtrans = def["trans"];
 		try {
-			trans.position	= fromJSONArrayV3(dtrans["position"]);
-			trans.rotation	= fromJSONArrayV3(dtrans["rotation"]);
-			trans.scale		= fromJSONArrayV3(dtrans["scale"], 1);
+			trans.position	= dtrans["position"].vectorize();
+			trans.rotation	= dtrans["rotation"].vectorize();
+			trans.scale		= dtrans["scale"].vectorize(1);
 		} catch (std::exception const& e) {
 			throw Error::FailedAction(
 				"Failed at getting transformation values!",
@@ -530,9 +482,9 @@ void Renderable::extendFromDefinitionV0(
 			if (hasBones && def["armature"]["bones"][bone].isObject()) {
 				MAKAILIB_DEBUGLN_FULL("Bone [", bone, "]");
 				armature.rest[bone] = Transform3D(
-					fromJSONArrayV3(def["armature"]["bones"][bone]["position"]),
-					fromJSONArrayV3(def["armature"]["bones"][bone]["rotation"]),
-					fromJSONArrayV3(def["armature"]["bones"][bone]["scale"], 1)
+					def["armature"]["bones"][bone]["position"].vectorize(),
+					def["armature"]["bones"][bone]["rotation"].vectorize(),
+					def["armature"]["bones"][bone]["scale"].vectorize(1)
 				);
 			}
 			if (!def["armature"]["relations"].contains(toString(bone))) continue;
