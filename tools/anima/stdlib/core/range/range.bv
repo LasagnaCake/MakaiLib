@@ -2,8 +2,8 @@ using import core.types
 
 using import core.constraints
 
-module Range {
-	struct NumericIterator[T: Is.Number] {
+module Range.Iterators {
+	struct Numeric[T: Is.Number] {
 		@ByCopy now: T
 		@ByCopy stop: T
 		@ByCopy step: T
@@ -16,5 +16,6 @@ module Range {
 			return current
 		}
 	}
+}
  
-range :: (stop: Is.Number) => new Range.NumericIterator {0, stop, 1}
+range :: (stop[T: Is.Number] : T, start : T = 0, step : T = 1) => new Range.Iteratos.Numeric [T] {start, stop, step}

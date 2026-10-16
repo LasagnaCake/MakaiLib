@@ -3,4 +3,5 @@ using import core.constraints.comparable
 using import core.constraints.same
 using import core.constraints.iterator
 using import core.constraints.catchable
+using import core.constraints.numeric
 //using import core.constraints.callable
