@@ -41,8 +41,8 @@ lib/*
 
 struct ConcertoMain: Makai::AMain {
 	struct Path {
-		static auto const globalConfig = Makai::OS::FS::sourceLocation() + "/config/concerto/global.flow";
-		static auto const temp = Makai::OS::FS::sourceLocation() + "/tmp";
+		static inline auto const globalConfig = Makai::OS::FS::sourceLocation() + "/config/concerto/global.flow";
+		static inline auto const temp = Makai::OS::FS::sourceLocation() + "/tmp";
 	};
 
 	using Project = Makai::Anima::V2::Toolchain::Compiler::Project;
@@ -193,7 +193,7 @@ struct ConcertoMain: Makai::AMain {
 		writeLine("concerto <action>");
 	}
 
-	void addSource(String const& path, bool const global = false) {
+	void addSource(Makai::String const& path, bool const global = false) {
 		Data::Value package;
 		if (Makai::Regex::contains(path, R"#(^htps?:\/\/)#"))
 			package = Makai::FLOW::parse(Makai::Net::File::fetchText(path + "/package.flow"));
@@ -281,7 +281,7 @@ struct ConcertoMain: Makai::AMain {
 		project.libraries[name] = src;
 	}
 
-	void installLibrary(String const& name, String const& source) {
+	void installLibrary(Makai::String const& name, Makai::String const& source) {
 		auto const outPath = "lib/" + Makai::Regex::replace(name, "[^A-Za-z0-9_]", "_");
 		if (Makai::OS::FS::isDirectory(outPath)) continue;
 		Makai::OS::FS::makeDirectory(outPath);
@@ -299,7 +299,7 @@ struct ConcertoMain: Makai::AMain {
 				),
 				Makai::Tool::Arch::hashPassword(PACKAGEKEY)
 			);
-			arch.unpackTo(outpath);
+			arch.unpackTo(outPath);
 		} else
 			Makai::OS::FS::copy(source, outPath);
 	}
