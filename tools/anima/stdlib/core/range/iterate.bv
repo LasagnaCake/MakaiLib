@@ -8,4 +8,4 @@ with module Range
 
 using IteratorOf[T] = with T when Is.Iterator[T] else with typeof Meta.spoof[T]!.iterator
 
-iterate :: [T] (it: T) -> IteratorOf[T] => it when Is.Iterator[T] else it.iterator
+iterate :: [T] (it: T) -> IteratorOf[T] => it when Is.Iterator[T] else it.iterato
