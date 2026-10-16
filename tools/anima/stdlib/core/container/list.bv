@@ -2,6 +2,7 @@ using import core.types
 
 using import core.constraints.comparable
 using import core.constraints.iterator
+using import core.constraints.opnew
 
 struct List[Element] {
 	using Elements = with [Element]
@@ -32,7 +33,7 @@ struct List[Element] {
 		prop iterator get (@ByRef self: Self) => new Iterator {self.elements}
 	}
 
-	if Is.Comparable[Element, Element] extend Self {
+	if Is.Comparable[Element] extend Self {
 		find :: (@ByRef self: Self, @ByCopy value: Element) -> ?u64 {
 			index := 0
 			for element => self.elements

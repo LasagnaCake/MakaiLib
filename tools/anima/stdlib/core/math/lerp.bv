@@ -2,4 +2,4 @@ using import core.types
 
 using import core.constraints
 
-lerp :: [T: Is.Operatable.ASM] (@ByCopy from: T, to: T, by: T) => from + (to - from) * by
+lerp :: (@ByCopy from[T: Is.Op.ASM]: T, to: T, by: T) => from + (to - from) * by

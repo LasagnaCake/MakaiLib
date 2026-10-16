@@ -1,0 +1,5 @@
+using import core.types
+
+with module Is
+
+kind DefaultNew[T] => prove new T {}

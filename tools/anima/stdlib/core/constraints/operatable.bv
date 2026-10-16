@@ -2,7 +2,7 @@ using import core.types
 
 using import core.meta.spoof
 
-with module Is.Operatable
+with module Is.Op
 
 kind Add[A, B = A] => prove (Meta.spoof[A]! + Meta.spoof[B]!)
 

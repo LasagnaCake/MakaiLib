@@ -642,6 +642,170 @@ ATransformer::Result StructureDecl::transform(Context& context, Node::Instance c
 	return rett;
 }
 
+ATransformer::Result TraitDecl::transform(Context& context, Node::Instance const& node) {
+	if (!node->leftSide)
+		context.error("Expected declaration name here!");
+	auto const name = context.pathOf(node->leftSide);
+	if (context.top()->subspaces.contains(name.front()))
+		context.error("Symbol with this name already exists in the current scope!", node->leftSide);
+	auto const scope = context.declare(name);
+	auto& type = *(scope->type = scope->type.create());
+	auto const rett = Result{.scope = scope, .type = scope->type, .mayBeEmpty = false};
+	if (node->templateDecl) {
+		type.flags.isGeneric = true;
+		type.declaration = node;
+		scope->declaration = node;
+		scope->state = context.scopeStack;
+		return rett;
+	}
+	if (node->middle) {
+		auto const base = context.getType(node->middle).type;
+		if (!base)
+			context.error("No type with this name exists!", node->middle);
+		type.base = base;
+		violate<uint64>(type.flags) |= bitcast<uint64>(base->flags);
+		type.flags.isBasic = false;
+		type.fields.append(base->fields);
+		type.methods.append(base->methods);
+		for (auto& [name, method]: base->methods) {
+			auto& ns = *(type.scope->subspaces[name] = new Namespace);
+			ns.function = method;
+		}
+		scope->varc += base->scope->varc;
+	}
+	List<Node::Instance> fields;
+	List<Node::Instance> methods;
+	List<Node::Instance> properties;
+	Makai::Function<bool(Node::Instance const&, Node::Instance const&)> evalDecl;
+	evalDecl = [&] (Node::Instance const& node, Node::Instance const& root) -> bool {
+		if (node->content == Node::Content::AV2_TANC_DECLARATION) {
+			if (node->base.type == LTS_TT_NAMESPACE_RESOLVE) {
+				MAKAILIB_DEBUGLN_FULL("  > Function");
+				methods.pushBack(root);
+			} else if (
+				node->base.type == LTS_TT_COLON
+			or	node->base.type == LTS_TT_DECLARE
+			or	node->base.type == LTS_TT_ASSIGN
+			) {
+				MAKAILIB_DEBUGLN_FULL("  > Field");
+				context.error("Traits cannot have fields!");
+			} else if (node->base.text == "prop") {
+				MAKAILIB_DEBUGLN_FULL("  > Property");
+				properties.pushBack(root);
+			}
+			else context.error("Invalid declaration inside structure declaration!", node);
+		} else if (node->content == Node::Content::AV2_TANC_ATTRIBUTE) {
+			return evalDecl(node->rightSide, root);
+		} else return false;
+		return true;
+	};
+	MAKAILIB_DEBUGLN_FULL("struct {");
+	List<Node::Instance> doItLater;
+	for (auto& entry: node->rightSide->children)
+		if (!evalDecl(entry, entry))
+			doItLater.pushBack(entry);
+	MAKAILIB_DEBUGLN_FULL("}");
+	type.scope = scope.asWeak();
+	type.node = node;
+	type.name = "__" + name.join("_") + node->name();
+	List<Namespace::VariableRef> defaulted;
+	List<Namespace::VariableRef> statics;
+	List<Namespace::VariableRef> privates;
+	List<Namespace::VariableRef> protecteds;
+	scope->type->def = TypeDecl::Definition::AV2_TCTD_STRUCT;
+	scope->type->flags.isStructure = true;
+	MAKAILIB_DEBUGLN_FULL("Parsing fields...");
+	MAKAILIB_DEBUGLN_FULL("Field count: ", fields.size());
+	for (auto const& [field, id]: Range::expand(fields)) {
+		auto const decl = context.getExpression(field);
+		auto& var = *decl.scope->variable;
+		var.fieldOf = scope->type.asWeak();
+		type.fields[var.name] = decl.scope->variable;
+		scope->subspaces[var.name] = decl.scope;
+		MAKAILIB_DEBUGLN_FULL("Field: ", var.name);
+		var.id = id;
+		if (var.scope->isPrivate())
+			privates.pushBack(decl.scope->variable);
+		else if (var.scope->isProtected())
+			protecteds.pushBack(decl.scope->variable);
+		var.scope->makePublic();
+		if (var.staticEntity)
+			statics.pushBack(decl.scope->variable);
+		if (var.scope->isPrivate())
+			type.explicitNew = true;
+	}
+	context.pop(name.size());
+	context.registerType(scope);
+	auto implName = name;
+	implName.back() = "::IMPL__" + implName.back();
+	auto const implScope = context.declare(implName);
+	implScope->subspaces["Self"] = scope;
+	if (type.base)
+		implScope->subspaces["Base"] = type.base->scope.asStrong();
+	MAKAILIB_DEBUGLN_FULL("Parsing methods...");
+	MAKAILIB_DEBUGLN_FULL("Method count: ", methods.size());
+	for (auto& method: methods) {
+		auto const decl = context.getExpression(method);
+		auto& fn = *decl.scope->function;
+		for (auto& ov: fn.current) {
+			if (!ov->staticEntity && (ov->arguments.empty() or ov->arguments[0]->type != scope->type))
+				context.error("Missing appropriate [this] parameter!", method);
+			if (!ov->staticEntity)
+				ov->methodOf = scope->type.asWeak();
+			if (ov->constructor)
+				type.constructors.pushBack(ov);
+		}
+		if (scope->subspaces.contains(fn.name))
+			context.error("Symbol with this name already exists!", method);
+		type.methods[fn.name] = decl.scope->function;
+		scope->subspaces[fn.name] = decl.scope;
+	}
+	MAKAILIB_DEBUGLN_FULL("Parsing properties...");
+	MAKAILIB_DEBUGLN_FULL("Property count: ", properties.size());
+	for (auto& property: properties) {
+		auto const decl = context.getExpression(property);
+		auto& prop = *decl.scope->property;
+		if (prop.getter) {
+			auto& fn = *prop.getter;
+			fn.name += "_" + prop.name + node->name();
+			for (auto& ov: fn.current) {
+				if (!ov->staticEntity && (ov->arguments.empty() or ov->arguments[0]->type != scope->type))
+					context.error("Missing appropriate [this] parameter!", property);
+				if (!ov->staticEntity)
+					ov->methodOf = scope->type.asWeak();
+			}
+			if (scope->subspaces.contains(fn.name))
+				context.error("Symbol with this name already exists!", property);
+		}
+		if (prop.setter) {
+			auto& fn = *prop.setter;
+			fn.name += "_" + prop.name + node->name();
+			for (auto& ov: fn.current) {
+				if (!ov->staticEntity && (ov->arguments.empty() or ov->arguments[0]->type != scope->type))
+					context.error("Missing appropriate [this] parameter!", property);
+				if (!ov->staticEntity)
+					ov->methodOf = scope->type.asWeak();
+			}
+			if (scope->subspaces.contains(fn.name))
+				context.error("Symbol with this name already exists!", property);
+		}
+		if (scope->subspaces.contains(prop.name))
+			context.error("Symbol with this name already exists!", property);
+		prop.fieldOf = scope->type.asWeak();
+		type.methods[prop.name] = decl.scope->function;
+		scope->subspaces[prop.name] = decl.scope;
+	}
+	for (auto& entry: doItLater)
+		context.getExpression(entry);
+	context.pop(implName.size());
+	for (auto& var: privates)
+		var->scope->makePrivate();
+	for (auto& var: protecteds)
+		var->scope->makeProtected();
+	context.pop(1);
+	return rett;
+}
+
 ATransformer::Result EnumDecl::transform(Context& context, Node::Instance const& node) {
 	if (!node->leftSide)
 		context.error("Expected declaration name here!");
@@ -3600,10 +3764,9 @@ ATransformer::Template::Instance ATransformer::Context::templateFor(Node::Instan
 							if (!(
 								texpr.scope->variable->isCompiled()
 							&&	texpr.scope->variable->value.isBoolean()
-							)) error("Bad constraint declaration (not direct and/or not boolean)!", carg);
+							)) error("Bad constraint declaration (not [kind] or [kind]-like)!", carg);
 							param.constraints.pushBack(texpr.scope->variable);
-						}
-						else if (texpr.scope->trait)
+						} else if (texpr.scope->trait)
 							param.traits.pushBack(texpr.scope->trait);
 						else if (texpr.scope->type && param.type)
 							error("Redeclaration of derived type argument rule!", carg);
