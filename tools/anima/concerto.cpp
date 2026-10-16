@@ -26,7 +26,7 @@ constexpr auto const MAINFILE_BV = R"###(
 using import core
 
 @Main
-main :: () {
+main :: () -> void {
     // Main code goes here...
     IO.writeLine("Hello, World!")
 }
@@ -40,6 +40,11 @@ lib/*
 )###";
 
 struct ConcertoMain: Makai::AMain {
+	struct Path {
+		static auto const globalConfig = Makai::OS::FS::sourceLocation() + "/config/concerto/global.flow";
+		static auto const temp = Makai::OS::FS::sourceLocation() + "/tmp";
+	};
+
 	using Project = Makai::Anima::V2::Toolchain::Compiler::Project;
 
 	static Makai::Data::Value configBase() {
@@ -144,7 +149,7 @@ struct ConcertoMain: Makai::AMain {
 						Makai::OS::FS::copy(lib + "/output/*", outDir);
 					}
 					Makai::File::saveText("lib/.cache/.cache", cache.toFLOWString("  "));
-				}
+				} else updateLibraries();
 				Makai::OS::launch(
 					Makai::OS::FS::sourceLocation() + "/" + Makai::OS::FS::asExecutable(compiler),
 					Makai::OS::FS::currentDirectory() + "/src",
@@ -164,11 +169,21 @@ struct ConcertoMain: Makai::AMain {
 		}
 	}
 
+	void updateLibraries() {
+		Makai::OS::FS::remove("lib");
+		Makai::OS::launch(
+			Makai::OS::FS::sourceLocation() + "/" + Makai::OS::FS::asExecutable("concerto"),
+			Makai::OS::FS::currentDirectory(),
+			Makai::StringList::from("init")
+		);
+	}
+
 	void doCache(Makai::Data::Value const& args) {
 		if (args["__args"].size() < 2)
 			error("Missing cache action!");
 		auto const verb = args["__args"][1].getString();
-		if (verb == "clear") Makai::OS::FS::remove("lib/.cache");
+		if (verb == "clean") Makai::OS::FS::remove("lib/.cache");
+		if (verb == "update") updateLibraries();
 		else error("Invalid cache action [" + verb + "]!");
 	}
 
@@ -176,6 +191,123 @@ struct ConcertoMain: Makai::AMain {
 		writeLine("Concerto - V" + VER.serialize().get<Makai::String>());
 		writeLine("Available commands:");
 		writeLine("concerto <action>");
+	}
+
+	void addSource(String const& path, bool const global = false) {
+		Data::Value package;
+		if (Makai::Regex::contains(path, R"#(^htps?:\/\/)#"))
+			package = Makai::FLOW::parse(Makai::Net::File::fetchText(path + "/package.flow"));
+		else if (Makai::Regex::contains(path, R"#(^cla:\/\/)#")) {
+			Makai::Tool::Arch::FileArchive arch;
+			arch.open(
+				Tool::Arch::FileArchive::Source::create<InputByteFileStream>(
+					Makai::Regex::replace(path, R"#(^cla:\/\/)#", "")
+				),
+				Makai::Tool::Arch::hashPassword(PACKAGEKEY)
+			);
+			package = arch.getTextFile("package.flow");
+		} else {
+			Makai::Tool::Arch::FileArchive arch;
+			package = arch.getTextFile(path + "/package.flow");
+		}
+		if (global) {
+			auto const gloc = Makai::OS::FS::sourceLocation() + "/config/concerto/global.flow";
+			Makai::Data::Value globals;
+			if (Makai::OS::FS::exists(gloc))
+				globals = Makai::File::getFLOW(gloc);
+			globals[package["name"].getString()] = path;
+			Makai::File::saveText(gloc, globals.toFLOWString("  "));
+		} else {
+			Project project = Project::deserialize(Makai::File::getFLOW("project.flow"));
+			project.libraries[package["name"].getString()] = {path, "latest"};
+			Makai::File::saveText("project.flow", project.serialize().toFLOWString("  "));
+			installLibrary(package["name"].getString(), path);
+		}
+	}
+
+	void doSource(Makai::Data::Value const& args) {
+		if (args["__args"].size() < 2)
+			error("Missing source path!");
+		auto const src = args["__args"][1].getString();
+		Data::Value package;
+		addSource(src, args.fetch("global", false));
+	}
+
+	void addRepoSources(Makai::StringList const& sources) {
+		for (auto const& source: sources)
+			addSource(source, true);
+	}
+
+	void addRepo(Makai::String const& path) {
+		auto const repo = Makai::FLOW::parse(Makai::Net::File::fetchText(path + "/repo.flow"));
+		addRepoSources(
+			repo.fetch(
+				"sources",
+				Makai::Data::Value::array()
+			).toList<String>(
+				[] (auto const& e) {
+					return e.getString();
+				}
+			)
+		);
+		auto const subRepos = repo.fetch(
+			"repos",
+			Makai::Data::Value::array()
+		).toList<String>(
+			[] (auto const& e) {
+				return e.getString();
+			}
+		);
+		for (auto const& path: subRepos)
+			addRepo(paths);
+	}
+
+	void doHub(Makai::Data::Value const& args) {
+		if (args["__args"].size() < 2)
+			error("Missing package repository path!");
+		addRepo(args["__args"][1].getString());
+	}
+
+	void doAdd(Makai::Data::Value const& args) {
+		if (args["__args"].size() < 2)
+			error("Missing package name!");
+		auto const gloc = Makai::OS::FS::sourceLocation() + "/config/concerto/global.flow";
+		auto const globals = Makai::File::getFLOW(gloc);
+		auto const name = package["__args"][1].getString();
+		if (!globals.contains(name))
+			error("Package [" + name + "] does not exist!");
+		auto const src = globals[package["__args"][1].getString()].getString();
+		Project project = Project::deserialize(Makai::File::getFLOW("project.flow"));
+		project.libraries[name] = src;
+	}
+
+	void installLibrary(String const& name, String const& source) {
+		auto const outPath = "lib/" + Makai::Regex::replace(name, "[^A-Za-z0-9_]", "_");
+		if (Makai::OS::FS::isDirectory(outPath)) continue;
+		Makai::OS::FS::makeDirectory(outPath);
+		if (Makai::Regex::contains(source, R"#(^htps:\/\/)#")) {
+			auto const pz = Makai::Net::File::fetchText(source + "/package.cla");
+			Makai::Tool::Arch::FileArchive arch;
+			arch.open(Makai::Tool::Arch::Source::create<Makai::InputMemoryStream>(pz), Makai::Tool::Arch::hashPassword(PACKAGEKEY));
+			arch.unpackTo(outPath);
+		}
+		else if (Makai::Regex::contains(source, R"#(^cla:\/\/)#")) {
+			Makai::Tool::Arch::FileArchive arch;
+			arch.open(
+				Tool::Arch::FileArchive::Source::create<InputByteFileStream>(
+					Makai::Regex::replace(source,R"#(^cla:\/\/)#","")
+				),
+				Makai::Tool::Arch::hashPassword(PACKAGEKEY)
+			);
+			arch.unpackTo(outpath);
+		} else
+			Makai::OS::FS::copy(source, outPath);
+	}
+
+	void doInit(Makai::Data::Value const& args) {
+		Project project = Project::deserialize(Makai::File::getFLOW("project.flow"));
+		for (auto const& [name, source]: project.libraries)
+			installLibrary(name, source);
 	}
 
 	void run(Makai::Data::Value const& args) override {
@@ -187,6 +319,11 @@ struct ConcertoMain: Makai::AMain {
 			auto const verb = args["__args"][0].getString();
 			if (verb == "create")		doCreate(args);
 			else if (verb == "build")	doBuild(args);
+			else if (verb == "add")		doAdd(args);
+			else if (verb == "source")	doSource(args);
+			else if (verb == "hub")		doHub(args);
+			else if (verb == "cache")	doCache(args);
+			else if (verb == "init")	doInit(args);
 			else error("Invalid action [" + verb + "]!");
 		}
 	}

@@ -26,7 +26,7 @@ namespace Makai::Graph {
 			/// @brief Drawable object entry type.
 			using DrawableEntry	= KeyValuePair<String, Storage>;
 			/// @brief Drawable object database type.
-			using DrawableBank	= Dictionary<Storage>>;
+			using DrawableBank	= Dictionary<Storage>;
 
 			/// @brief Constructs the collection.
 			/// @param layer Layer to register the object to. By default, it is layer zero.
@@ -43,10 +43,8 @@ namespace Makai::Graph {
 
 			/// @brief Deletes all drawable objects in the collection.
 			void destroy() {
-				auto objs = objects;
-				for (auto const& [n, o]: objs)
-					delete o;
 				objects.clear();
+				storage.clear();
 			}
 
 			/// @brief Creates a drawable object.
@@ -56,7 +54,7 @@ namespace Makai::Graph {
 			DrawableEntry createObject(String name = "") {
 				if (objects.contains(name))
 					throw Error::InvalidValue("Object of name '"+name+"' already exists!", CTL_CPP_PRETTY_SOURCE);
-				AtomicCell<DrawableType> r = r.create(true);
+				Storage r = r.create(true);
 				if (name.empty())	name = validateName("unnamed");
 				else				name = validateName(name);
 				storage.pushBack(r);

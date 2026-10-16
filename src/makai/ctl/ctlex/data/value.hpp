@@ -1050,8 +1050,8 @@ namespace Data {
 		constexpr Value expanded(StringType const& sep = "/") const;
 
 		constexpr VectorType vectorize(VectorType const orElse = 0) const {
-			if (!(isVectorable() or isArray())) return orElse;
-			else if (isVectorable()) return getVector();
+			if (!(isAlgebraic() or isArray())) return orElse;
+			else if (isAlgebraic()) return getVector();
 			else if (isArray()) {
 				VectorType vec = orElse;
 				usize const max = size() < (sizeof(VectorType) / sizeof(float)) ? size() : (sizeof(VectorType) / sizeof(float));
