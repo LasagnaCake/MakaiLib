@@ -1,5 +1,6 @@
 using import core.types
 
+using import core.constraints.same
 using import core.constraints.comparable
 using import core.constraints.iterator
 using import core.constraints.opnew
