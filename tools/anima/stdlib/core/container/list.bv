@@ -7,28 +7,25 @@ using import core.constraints.opnew
 
 struct List[Element] {
 	using Elements = with [Element]
-	
-	struct Iterator {
-		@[Private, ByCopy] index: u64
-		@[Private, ByRef] elements: Elements
 
-		prop next get (@ByRef self: Self) -> ?Element {
-			if (self.index >= countof self.elements)
-				return null
-			current := self.elements[self.index]
-			++self.index
-			return current
+	extend Self {
+		struct Iterator {
+			@[Private, ByCopy] index: u64
+			@[Private, ByRef] elements: Elements
+
+			prop next get (@ByRef self: Self) -> ?Element =>
+				if (self.index >= countof self.elements)
+					null
+				else self.elements[self.index++]
+
+			@New
+			init :: (@ByRef self: Self, elements: Elements) -> Self {
+				self.index = 0
+				self.elements = elements
+				return self
+			}
 		}
 
-		@New
-		init :: (@ByRef self: Self, elements: Elements) -> Self {
-			self.index = 0
-			self.elements = elements
-			return self
-		}
-	}
-
-	extend Self /*with Iteratable[Element]*/ {
 		assert Is.Iterator[Iterator] else "Failed to generate list iterator!"
 
 		prop iterator get (@ByRef self: Self) => new Iterator {self.elements}
@@ -105,7 +102,7 @@ struct List[Element] {
 		return self
 	}
 
-	sliced :: (@ByRef self: Self, @ByCopy start: i64, @ByCopy stop: i64) {
+	sliced :: (@ByRef self: Self, @ByCopy start: i64, @ByCopy stop: i64) -> Self {
 		@ByCopy count := countof self.elements
 		while start < 0
 			start += count

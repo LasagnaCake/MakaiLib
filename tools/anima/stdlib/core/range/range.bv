@@ -8,7 +8,7 @@ module Range.Iterators {
 		@ByCopy stop: T
 		@ByCopy step: T
 
-		prop next get(self: Self) -> ?T {
+		prop next get(@ByRef self: Self) -> ?T {
 			unless (self.now < self.stop)
 				return null
 			current := self.now
@@ -18,4 +18,4 @@ module Range.Iterators {
 	}
 }
  
-range :: (stop[T: Is.Number] : T, start : T = 0, step : T = 1) => new Range.Iteratos.Numeric [T] {start, stop, step}
+range :: (stop[T: Is.Number] : T, start : T = 0 as T, step : T = 1 as T) => new Range.Iteratos.Numeric [T] {start, stop, step}
