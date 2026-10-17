@@ -219,7 +219,7 @@ struct ConcertoMain: Makai::AMain {
 			Makai::File::saveText(gloc, globals.toFLOWString("  "));
 		} else {
 			Project project = Project::deserialize(Makai::File::getFLOW("project.flow"));
-			auto& lib = project.libraries[package["name"].getString()] = {path};
+			project.libraries[package["name"].getString()] = {path};
 			Makai::File::saveText("project.flow", project.serialize().toFLOWString("  "));
 			installLibrary(package["name"].getString(), path);
 		}
@@ -278,7 +278,8 @@ struct ConcertoMain: Makai::AMain {
 			error("Package [" + name + "] does not exist!");
 		auto const src = globals[args["__args"][1].getString()].getString();
 		Project project = Project::deserialize(Makai::File::getFLOW("project.flow"));
-		project.libraries[name] = src;
+		project.libraries[name] = {src};
+		Makai::File::saveText("project.flow", project.serialize().toFLOWString("  "));
 	}
 
 	void installLibrary(Makai::String const& name, Makai::String const& source) {
@@ -286,7 +287,7 @@ struct ConcertoMain: Makai::AMain {
 		if (Makai::OS::FS::isDirectory(outPath)) return;
 		Makai::OS::FS::makeDirectory(outPath);
 		if (Makai::Regex::contains(source, R"#(^htps:\/\/)#")) {
-			auto const pz = Makai::Net::File::fetchBytes(source + "/package.cla");
+			auto const pz = Makai::Net::File::fetchBinary(source + "/package.cla");
 			Makai::Tool::Arch::FileArchive arch;
 			arch.open(
 				Makai::Tool::Arch::FileArchive::Source::create<Makai::InputMemoryStream>(pz),
