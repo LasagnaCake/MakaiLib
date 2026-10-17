@@ -2557,25 +2557,42 @@ ATransformer::Result RepeatLoop::transform(Context& context, Node::Instance cons
 			opq = asFastOpQualifier(*intType->basic);
 		} else context.error("Expression must be an integer!", node->leftSide);
 	} else context.error("Expression must be an integer!", node->leftSide);
-	loopScope->impl->writePreLine("push val", it.source.value());
-	loopScope->impl->writePreLine("jump if false", loopEnd);
-	loopScope->impl->writePreLine("copy", it.source.value(), "->", var.getSource());
-	if (!it.shouldBePushed())
-		context.top()->impl->writeMainLine("pop");
+	if (it.isCompilable())
+		var.compile(it.direct);
+	else {
+		loopScope->impl->writePreLine("push val", it.source.value());
+		loopScope->impl->writePreLine("jump if false", loopEnd);
+		loopScope->impl->writePreLine("copy", it.source.value(), "->", var.getSource());
+		if (!it.shouldBePushed())
+			context.top()->impl->writeMainLine("pop");
+	}
 	if (node->middle) {
 		auto const refVar = context.getExpression(node->middle);
 		if (!(refVar.scope and refVar.scope->variable))
 			context.error("Expected variable declaration here!", node->middle);
 		refVar.scope->variable->fill();
-		loopScope->impl->writePreLine("copy ref", var.getSource(), "->", refVar.scope->variable->getSource());
+		if (it.isCompilable())
+			refVar.compile(it.direct);
+		else loopScope->impl->writePreLine("copy ref", var.getSource(), "->", refVar.scope->variable->getSource());
 		var.type = refVar.scope->variable->type;
 	}
-	loopScope->impl->writePreLine("@target", loopStart, ":");
-	auto const loopExpr = context.getExpression(node->rightSide);
-	loopScope->impl->writePostLine("push ref", var.getSource());
-	loopScope->impl->writePostLine("op dec", opq);
-	loopScope->impl->writePostLine("jump if true", loopStart);
-	loopScope->impl->writePostLine("@target", loopEnd, ":");
+	if (it.isCompilable()) {
+		uint64 iv = it.direct.getUnsigned();
+		ATransformer::Result lexpr;
+		while (iv) {
+			var.compile(iv);
+			lexpr = context.getExpression(node->rightSide);
+			--iv;
+		}
+		return {.scope = loopScope};
+	} else {
+		loopScope->impl->writePreLine("@target", loopStart, ":");
+		auto const loopExpr = context.getExpression(node->rightSide);
+		loopScope->impl->writePostLine("push ref", var.getSource());
+		loopScope->impl->writePostLine("op dec", opq);
+		loopScope->impl->writePostLine("jump if true", loopStart);
+		loopScope->impl->writePostLine("@target", loopEnd, ":");
+	}
 	return {.scope = loopScope};
 }
 
