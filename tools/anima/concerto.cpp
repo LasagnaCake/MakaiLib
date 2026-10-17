@@ -194,13 +194,13 @@ struct ConcertoMain: Makai::AMain {
 	}
 
 	void addSource(Makai::String const& path, bool const global = false) {
-		Data::Value package;
+		Makai::Data::Value package;
 		if (Makai::Regex::contains(path, R"#(^htps?:\/\/)#"))
 			package = Makai::FLOW::parse(Makai::Net::File::fetchText(path + "/package.flow"));
 		else if (Makai::Regex::contains(path, R"#(^cla:\/\/)#")) {
 			Makai::Tool::Arch::FileArchive arch;
 			arch.open(
-				Tool::Arch::FileArchive::Source::create<InputByteFileStream>(
+				Makai::Tool::Arch::FileArchive::Source::create<Makai::InputByteFileStream>(
 					Makai::Regex::replace(path, R"#(^cla:\/\/)#", "")
 				),
 				Makai::Tool::Arch::hashPassword(PACKAGEKEY)
@@ -229,7 +229,7 @@ struct ConcertoMain: Makai::AMain {
 		if (args["__args"].size() < 2)
 			error("Missing source path!");
 		auto const src = args["__args"][1].getString();
-		Data::Value package;
+		Makai::Data::Value package;
 		addSource(src, args.fetch("global", false));
 	}
 
@@ -241,25 +241,25 @@ struct ConcertoMain: Makai::AMain {
 	void addRepo(Makai::String const& path) {
 		auto const repo = Makai::FLOW::parse(Makai::Net::File::fetchText(path + "/repo.flow"));
 		addRepoSources(
-			repo.fetch(
+			repo.fetch<Makai::Data::Value::ArrayType>(
 				"sources",
 				Makai::Data::Value::array()
-			).toList<String>(
+			).toList<Makai::String>(
 				[] (auto const& e) {
 					return e.getString();
 				}
 			)
 		);
-		auto const subRepos = repo.fetch(
+		auto const subRepos = repo.fetch<Makai::Data::Value::ArrayType>(
 			"repos",
 			Makai::Data::Value::array()
-		).toList<String>(
+		).toList<Makai::String>(
 			[] (auto const& e) {
 				return e.getString();
 			}
 		);
 		for (auto const& path: subRepos)
-			addRepo(paths);
+			addRepo(path);
 	}
 
 	void doHub(Makai::Data::Value const& args) {
@@ -273,28 +273,31 @@ struct ConcertoMain: Makai::AMain {
 			error("Missing package name!");
 		auto const gloc = Makai::OS::FS::sourceLocation() + "/config/concerto/global.flow";
 		auto const globals = Makai::File::getFLOW(gloc);
-		auto const name = package["__args"][1].getString();
+		auto const name = args["__args"][1].getString();
 		if (!globals.contains(name))
 			error("Package [" + name + "] does not exist!");
-		auto const src = globals[package["__args"][1].getString()].getString();
+		auto const src = globals[args["__args"][1].getString()].getString();
 		Project project = Project::deserialize(Makai::File::getFLOW("project.flow"));
 		project.libraries[name] = src;
 	}
 
 	void installLibrary(Makai::String const& name, Makai::String const& source) {
 		auto const outPath = "lib/" + Makai::Regex::replace(name, "[^A-Za-z0-9_]", "_");
-		if (Makai::OS::FS::isDirectory(outPath)) continue;
+		if (Makai::OS::FS::isDirectory(outPath)) return;
 		Makai::OS::FS::makeDirectory(outPath);
 		if (Makai::Regex::contains(source, R"#(^htps:\/\/)#")) {
 			auto const pz = Makai::Net::File::fetchText(source + "/package.cla");
 			Makai::Tool::Arch::FileArchive arch;
-			arch.open(Makai::Tool::Arch::Source::create<Makai::InputMemoryStream>(pz), Makai::Tool::Arch::hashPassword(PACKAGEKEY));
+			arch.open(
+				Makai::Tool::Arch::FileArchive::Source::create<Makai::InputMemoryStream>(pz),
+				Makai::Tool::Arch::hashPassword(PACKAGEKEY)
+			);
 			arch.unpackTo(outPath);
 		}
 		else if (Makai::Regex::contains(source, R"#(^cla:\/\/)#")) {
 			Makai::Tool::Arch::FileArchive arch;
 			arch.open(
-				Tool::Arch::FileArchive::Source::create<InputByteFileStream>(
+				Makai::Tool::Arch::FileArchive::Source::create<Makai::InputByteFileStream>(
 					Makai::Regex::replace(source,R"#(^cla:\/\/)#","")
 				),
 				Makai::Tool::Arch::hashPassword(PACKAGEKEY)
@@ -306,8 +309,8 @@ struct ConcertoMain: Makai::AMain {
 
 	void doInit(Makai::Data::Value const& args) {
 		Project project = Project::deserialize(Makai::File::getFLOW("project.flow"));
-		for (auto const& [name, source]: project.libraries)
-			installLibrary(name, source);
+		for (auto const& [name, lib]: project.libraries)
+			installLibrary(name, lib.source);
 	}
 
 	void run(Makai::Data::Value const& args) override {
