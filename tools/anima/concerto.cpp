@@ -281,7 +281,7 @@ struct ConcertoMain: Makai::AMain {
 		auto const outPath = "lib/" + Makai::Regex::replace(name, "[^A-Za-z0-9_]", "_");
 		if (Makai::OS::FS::isDirectory(outPath)) return;
 		Makai::OS::FS::makeDirectory(outPath);
-		if (Makai::Regex::contains(source, R"#(^htps:\/\/)#")) {
+		if (Makai::Regex::contains(source, R"#(^https:\/\/)#")) {
 			auto const pz = Makai::Net::File::fetchBinary(source + "/package.cla");
 			Makai::Tool::Arch::FileArchive arch;
 			arch.open(
@@ -299,8 +299,7 @@ struct ConcertoMain: Makai::AMain {
 				Makai::Tool::Arch::hashPassword(PACKAGEKEY)
 			);
 			arch.unpackTo(outPath);
-		} else
-			Makai::OS::FS::copy(source, outPath);
+		} else Makai::OS::FS::copy(source, outPath);
 	}
 
 	void doInit(Makai::Data::Value const& args) {
