@@ -2566,21 +2566,23 @@ ATransformer::Result RepeatLoop::transform(Context& context, Node::Instance cons
 		if (!it.shouldBePushed())
 			context.top()->impl->writeMainLine("pop");
 	}
+	Namespace::VariableRef rv;
 	if (node->middle) {
 		auto const refVar = context.getExpression(node->middle);
 		if (!(refVar.scope and refVar.scope->variable))
 			context.error("Expected variable declaration here!", node->middle);
-		refVar.scope->variable->fill();
+		(rv = refVar.scope->variable)->fill();
 		if (it.isCompilable())
-			refVar.compile(it.direct);
+			rv->compile(it.direct);
 		else loopScope->impl->writePreLine("copy ref", var.getSource(), "->", refVar.scope->variable->getSource());
-		var.type = refVar.scope->variable->type;
+		var.type = rv->type;
 	}
 	if (it.isCompilable()) {
 		uint64 iv = it.direct.getUnsigned();
 		ATransformer::Result lexpr;
 		while (iv) {
 			var.compile(iv);
+			if (rv) rv->compile(iv);
 			lexpr = context.getExpression(node->rightSide);
 			--iv;
 		}
