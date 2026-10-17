@@ -60,7 +60,7 @@ namespace Command {
 				.splitAtLast('/')
 				.back()
 		);
-		Makai::Tool::Arch::pack(cfg["output"], cfg["__args"][0], cfg["password"]);
+		Makai::Tool::Arch::pack(packName, cfg["__args"][1], cfg["password"]);
 		DEBUGLN("Done!");
 	}
 
@@ -73,7 +73,7 @@ namespace Command {
 			"\\$\\{name\\}(\\.pack)?",
 			Makai::OS::FS::fileName(cfg["__args"][1], true)
 		);
-		Makai::Tool::Arch::unpack(cfg["__args"][0], cfg["output"], cfg["password"]);
+		Makai::Tool::Arch::unpack(packName, cfg["output"], cfg["password"]);
 		DEBUGLN("Done!");
 	}
 
