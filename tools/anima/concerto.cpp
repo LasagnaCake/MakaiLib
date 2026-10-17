@@ -195,7 +195,7 @@ struct ConcertoMain: Makai::AMain {
 
 	void addSource(Makai::String const& path, bool const global = false) {
 		Makai::Data::Value package;
-		if (Makai::Regex::contains(path, R"#(^htps?:\/\/)#"))
+		if (Makai::Regex::contains(path, R"#(^https?:\/\/)#"))
 			package = Makai::FLOW::parse(Makai::Net::File::fetchText(path + "/package.flow"));
 		else if (Makai::Regex::contains(path, R"#(^cla:\/\/)#")) {
 			Makai::Tool::Arch::FileArchive arch;
@@ -205,11 +205,9 @@ struct ConcertoMain: Makai::AMain {
 				),
 				Makai::Tool::Arch::hashPassword(PACKAGEKEY)
 			);
-			package = arch.getTextFile("package.flow");
-		} else {
-			Makai::Tool::Arch::FileArchive arch;
-			package = arch.getTextFile(path + "/project.flow");
-		}
+			package = arch.getTextFile("project.flow");
+		} else
+			package = Makai::File::getText(path + "/project.flow");
 		if (global) {
 			auto const gloc = Makai::OS::FS::sourceLocation() + "/config/concerto/global.flow";
 			Makai::Data::Value globals;
@@ -238,37 +236,25 @@ struct ConcertoMain: Makai::AMain {
 			addSource(source, true);
 	}
 
+	static Makai::StringList toStringList(Makai::Data::Value const& value) {
+		Makai::StringList out;
+		out.resize(value.size());
+		for (usize i = 0; i < value.size(); ++i)
+			if (value[i].isString())
+				out.pushBack(value[i].getString());
+		return out;
+	}
+
 	void addRepo(Makai::String const& path) {
 		//error(Makai::Net::File::fetchText(path + "/repo.flow"));
 		auto const repo = Makai::FLOW::parse(Makai::Net::File::fetchText(path + "/repo.flow"));
-		auto const sources = repo.fetch(
-			"sources",
-			Makai::Data::Value::ArrayType()
-		).filter(
-			[] (auto const& e) {
-				return e.isString();
-			}
-		).toList<Makai::String>(
-			[] (auto const& e) {
-				return e.getString();
-			}
-		);
-		addRepoSources(sources);
-		if (!repo.contains("repos")) return;
-		auto const subRepos = repo.fetch(
-			"repos",
-			Makai::Data::Value::ArrayType()
-		).filter(
-			[] (auto const& e) {
-				return e.isString();
-			}
-		).toList<Makai::String>(
-			[] (auto const& e) {
-				return e.getString();
-			}
-		);
-		for (auto const& path: subRepos)
-			addRepo(path);
+		if (repo.contains("sources"))
+			addRepoSources(toStringList(repo["sources"]));
+		if (repo.contains("repos")) {
+			auto const subRepos = toStringList(repo["repos"]);
+			for (auto const& path: subRepos)
+				addRepo(path);
+		}
 	}
 
 	void doHub(Makai::Data::Value const& args) {

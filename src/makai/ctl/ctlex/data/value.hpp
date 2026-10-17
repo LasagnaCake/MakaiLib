@@ -736,7 +736,7 @@ namespace Data {
 		template <Type::Integer T>
 		constexpr Value operator[](T const index) const {
 			if (!isArray()) return undefined();
-			else if (index >= static_cast<ssize>(size()))
+			else if (static_cast<ssize>(index) >= static_cast<ssize>(size()))
 				outOfBoundsError(index);
 			return read(index);
 		}

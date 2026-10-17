@@ -66,6 +66,23 @@ struct List[Element] {
 
 		bsearch :: (@ByRef self: Self, key: Element) -> ?u64 =>
 			self.search(key, (countof self.elements) / 2, 0, (countof self.elements) - 1)
+
+		filtered :: (@ByRef self: Self, @ByRef rule: (Element) -> bool) -> Self {
+			values := new Elements {}
+			for element => self.elements
+				if rule(element)
+					values <| element
+			return new Self {values...}
+		}
+
+		filter :: (@ByRef self: Self, @ByRef rule: (Element) -> bool) -> Self {
+			values := new Elements {}
+			for element => self.elements
+				if rule(element)
+					values <| element
+			self.elements = values
+			return self
+		}
 	}
 	
 	@New
