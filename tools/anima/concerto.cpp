@@ -311,6 +311,12 @@ struct ConcertoMain: Makai::AMain {
 			installLibrary(name, lib.source);
 	}
 
+	void doExport(Makai::Data::Value const& args) {
+		Makai::OS::FS::copy("src", "export/src");
+		Makai::OS::FS::copy("project.flow", "export");
+		Makai::Tool::Arch::pack("output/package.cla", "export", PACKAGEKEY);
+	}
+
 	void run(Makai::Data::Value const& args) override {
 		if (args.fetch("help", false)) {
 			doHelp(args);
@@ -325,6 +331,7 @@ struct ConcertoMain: Makai::AMain {
 			else if (verb == "hub")		doHub(args);
 			else if (verb == "cache")	doCache(args);
 			else if (verb == "init")	doInit(args);
+			else if (verb == "export")	doExport(args);
 			else error("Invalid action [" + verb + "]!");
 		}
 	}
