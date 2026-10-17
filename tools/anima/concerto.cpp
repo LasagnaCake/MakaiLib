@@ -239,6 +239,7 @@ struct ConcertoMain: Makai::AMain {
 	}
 
 	void addRepo(Makai::String const& path) {
+		error(Makai::Net::File::fetchText(path + "/repo.flow"));
 		auto const repo = Makai::FLOW::parse(Makai::Net::File::fetchText(path + "/repo.flow"));
 		addRepoSources(
 			repo.fetch<Makai::Data::Value::ArrayType>(
