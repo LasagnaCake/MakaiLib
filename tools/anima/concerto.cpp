@@ -242,18 +242,27 @@ struct ConcertoMain: Makai::AMain {
 		//error(Makai::Net::File::fetchText(path + "/repo.flow"));
 		auto const repo = Makai::FLOW::parse(Makai::Net::File::fetchText(path + "/repo.flow"));
 		addRepoSources(
-			repo.fetch<Makai::Data::Value::ArrayType>(
+			repo.fetch(
 				"sources",
-				{}
+				Makai::Data::Value::ArrayType()
+			).filter(
+				[] (auto const& e) {
+					return e.isString();
+				}
 			).toList<Makai::String>(
 				[] (auto const& e) {
 					return e.getString();
 				}
 			)
 		);
-		auto const subRepos = repo.fetch<Makai::Data::Value::ArrayType>(
+		if (!repo.contains("repos")) return;
+		auto const subRepos = repo.fetch(
 			"repos",
-			{}
+			Makai::Data::Value::ArrayType()
+		).filter(
+			[] (auto const& e) {
+				return e.isString();
+			}
 		).toList<Makai::String>(
 			[] (auto const& e) {
 				return e.getString();
