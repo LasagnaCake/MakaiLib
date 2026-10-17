@@ -89,18 +89,16 @@ Arch::Block Arch::Block::create() {
 template<class T>
 static BinaryData<> cbcTransform(
 	BinaryData<> const&		data,
-	String					password	= "",
+	String const&			password	= "",
 	Arch::Block const&		block		= {}
 ) try {
 	std::string result;
 	T tf;
 	uint8* iv = new uint8[16];
 	MX::memcpy(iv, &block, 16);
-	while (password.size() < tf.MaxKeyLength())
-		password += " ";
-	if (password.size() > 32)
-		password = password.substring(0, 32);
-	tf.SetKeyWithIV((uint8*)password.data(), password.size(), iv, 16);
+	String pass = password;
+	pass.resize(tf.MaxKeyLength(), ' ');
+	tf.SetKeyWithIV((uint8*)pass.data(), pass.size(), iv, 16);
 	StringSource ss(
 		data.data(),
 		data.size(),
@@ -593,6 +591,7 @@ bool Arch::FileArchive::isOpen() const {
 void Arch::FileArchive::parseFileTree() {
 	CTL::ScopeLock<CTL::Mutex> lock(sync);
 	String fs;
+	MAKAILIB_DEBUGLN_FULL("Version: ", header.minVersion);
 	switch (header.minVersion) {
 	default:
 	case 0:
@@ -602,6 +601,8 @@ void Arch::FileArchive::parseFileTree() {
 		archive->go(0);
 		break;
 	case 1:
+	case 2:
+	case 3:
 		DirectoryHeader dh;
 		archive->go(header.dirHeaderLoc);
 		archive->readInto((ref<byte>)&dh, header.dirHeaderSize);
@@ -784,6 +785,8 @@ void Arch::unpack(
 ) try {
 	uint64 mv = FileArchive::getHeader(archivePath).minVersion;
 	switch(mv) {
+		// For now...
+		case 3: unpackV1(archivePath, folderPath, password);	break;
 		case 1: unpackV1(archivePath, folderPath, password);	break;
 		case 0: unpackV0(archivePath, folderPath, password);	break;
 		default: throw Error::InvalidValue(
