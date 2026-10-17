@@ -41,8 +41,8 @@ lib/*
 
 struct ConcertoMain: Makai::AMain {
 	struct Path {
-		static inline auto const globalConfig = Makai::OS::FS::sourceLocation() + "/config/concerto/global.flow";
-		static inline auto const temp = Makai::OS::FS::sourceLocation() + "/tmp";
+		static inline Makai::String const globalConfig = Makai::OS::FS::sourceLocation() + "/config/concerto/global.flow";
+		static inline Makai::String const temp = Makai::OS::FS::sourceLocation() + "/tmp";
 	};
 
 	using Project = Makai::Anima::V2::Toolchain::Compiler::Project;
@@ -290,7 +290,7 @@ struct ConcertoMain: Makai::AMain {
 			auto const pz = Makai::Net::File::fetchBinary(source + "/package.cla");
 			Makai::Tool::Arch::FileArchive arch;
 			arch.open(
-				Makai::Tool::Arch::FileArchive::Source::create<Makai::InputMemoryStream>(pz),
+				Makai::Tool::Arch::FileArchive::Source::create<Makai::InputMemoryStream>(Makai::span(pz)),
 				Makai::Tool::Arch::hashPassword(PACKAGEKEY)
 			);
 			arch.unpackTo(outPath);

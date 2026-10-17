@@ -445,11 +445,12 @@ struct Span:
 		return SelfType(cbegin() + start, cend() - (cbegin() + start));
 	}
 
+	constexpr static Span from(IteratorType const& begin, IteratorType const& end)	{return SelfType(begin, end);					}
 	template <Type::Container::Ranged<IteratorType, ConstIteratorType> T>
-	constexpr static Span from(T& source) 									{return SelfType(source.begin(), source.end());	}
+	constexpr static Span from(T& source) 											{return SelfType(source.begin(), source.end());	}
 	template <Type::Container::Bounded<DataType, SizeType> T>
 	constexpr static Span from(T& source)
-	requires (!Type::Container::Ranged<T, IteratorType, ConstIteratorType>)	{return SelfType(source.data(), source.size());	}
+	requires (!Type::Container::Ranged<T, IteratorType, ConstIteratorType>)			{return SelfType(source.data(), source.size());	}
 
 private:
 	constexpr void assertIsInBounds(IndexType const index) const {
@@ -502,10 +503,15 @@ requires requires (T t) {
 
 template<class T>
 constexpr auto span(T& value)
-requires requires (T t) {
-	{t.data()};
-	{t.size()};
-} {
+	requires (requires (T t) {
+		{t.data()};
+		{t.size()};
+	}
+	and !requires (T t) {
+		{t.begin()};
+		{t.end()};
+	}
+) {
 	return span(value.data(), value.size());
 }
 
