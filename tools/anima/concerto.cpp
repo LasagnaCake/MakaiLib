@@ -285,7 +285,9 @@ struct ConcertoMain: Makai::AMain {
 			auto const pz = Makai::Net::File::fetchBinary(source + "/package.cla");
 			Makai::Tool::Arch::FileArchive arch;
 			arch.open(
-				Makai::Tool::Arch::FileArchive::Source::create<Makai::InputMemoryStream>(Makai::span(pz)),
+				Makai::Tool::Arch::FileArchive::Source::create<Makai::InputMemoryStream>(
+					Makai::span(pz)
+				),
 				Makai::Tool::Arch::hashPassword(PACKAGEKEY)
 			);
 			arch.unpackTo(outPath);
@@ -303,6 +305,7 @@ struct ConcertoMain: Makai::AMain {
 	}
 
 	void doInit(Makai::Data::Value const& args) {
+		Makai::OS::FS::remove("lib");
 		Project project = Project::deserialize(Makai::File::getFLOW("project.flow"));
 		for (auto const& [name, lib]: project.libraries)
 			installLibrary(name, lib.source);
