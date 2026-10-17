@@ -208,7 +208,7 @@ struct ConcertoMain: Makai::AMain {
 			package = arch.getTextFile("package.flow");
 		} else {
 			Makai::Tool::Arch::FileArchive arch;
-			package = arch.getTextFile(path + "/package.flow");
+			package = arch.getTextFile(path + "/project.flow");
 		}
 		if (global) {
 			auto const gloc = Makai::OS::FS::sourceLocation() + "/config/concerto/global.flow";
@@ -241,20 +241,19 @@ struct ConcertoMain: Makai::AMain {
 	void addRepo(Makai::String const& path) {
 		//error(Makai::Net::File::fetchText(path + "/repo.flow"));
 		auto const repo = Makai::FLOW::parse(Makai::Net::File::fetchText(path + "/repo.flow"));
-		addRepoSources(
-			repo.fetch(
-				"sources",
-				Makai::Data::Value::ArrayType()
-			).filter(
-				[] (auto const& e) {
-					return e.isString();
-				}
-			).toList<Makai::String>(
-				[] (auto const& e) {
-					return e.getString();
-				}
-			)
+		auto const sources = repo.fetch(
+			"sources",
+			Makai::Data::Value::ArrayType()
+		).filter(
+			[] (auto const& e) {
+				return e.isString();
+			}
+		).toList<Makai::String>(
+			[] (auto const& e) {
+				return e.getString();
+			}
 		);
+		addRepoSources(sources);
 		if (!repo.contains("repos")) return;
 		auto const subRepos = repo.fetch(
 			"repos",
