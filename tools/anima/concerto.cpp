@@ -219,7 +219,7 @@ struct ConcertoMain: Makai::AMain {
 			Makai::File::saveText(gloc, globals.toFLOWString("  "));
 		} else {
 			Project project = Project::deserialize(Makai::File::getFLOW("project.flow"));
-			project.libraries[package["name"].getString()] = {path, "latest"};
+			auto& lib = project.libraries[package["name"].getString()] = {path};
 			Makai::File::saveText("project.flow", project.serialize().toFLOWString("  "));
 			installLibrary(package["name"].getString(), path);
 		}
@@ -243,7 +243,7 @@ struct ConcertoMain: Makai::AMain {
 		addRepoSources(
 			repo.fetch<Makai::Data::Value::ArrayType>(
 				"sources",
-				Makai::Data::Value::array()
+				{}
 			).toList<Makai::String>(
 				[] (auto const& e) {
 					return e.getString();
@@ -252,7 +252,7 @@ struct ConcertoMain: Makai::AMain {
 		);
 		auto const subRepos = repo.fetch<Makai::Data::Value::ArrayType>(
 			"repos",
-			Makai::Data::Value::array()
+			{}
 		).toList<Makai::String>(
 			[] (auto const& e) {
 				return e.getString();
@@ -286,7 +286,7 @@ struct ConcertoMain: Makai::AMain {
 		if (Makai::OS::FS::isDirectory(outPath)) return;
 		Makai::OS::FS::makeDirectory(outPath);
 		if (Makai::Regex::contains(source, R"#(^htps:\/\/)#")) {
-			auto const pz = Makai::Net::File::fetchText(source + "/package.cla");
+			auto const pz = Makai::Net::File::fetchBytes(source + "/package.cla");
 			Makai::Tool::Arch::FileArchive arch;
 			arch.open(
 				Makai::Tool::Arch::FileArchive::Source::create<Makai::InputMemoryStream>(pz),
