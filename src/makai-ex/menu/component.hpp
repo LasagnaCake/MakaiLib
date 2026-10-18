@@ -5,7 +5,7 @@
 
 /// @brief Menu system extensions.
 namespace Makai::Ex::Menu {
-		using EventHandler = Makai::Anima::V2::Runtime::Engine;
+	using EventHandler = Makai::Anima::V2::Runtime::Engine;
 
 	struct AComponent: ID::Identifiable<ID::VLUID const> {
 		virtual ~AComponent() {}
