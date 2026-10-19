@@ -71,16 +71,6 @@ namespace Makai::Anima::V2::Runtime {
 			return ExposedCall<TFunc>{*this, name};
 		}
 
-		template <class... TArgs>
-		void callExposed(String const& name, TArgs... args) {
-			return invokeExposedCall(
-				name,
-				Core::Context::Arguments::from(
-					context.newValue<TArgs>(args)...
-				)
-			);
-		}
-
 		template <class TReturn, class... TArgs>
 		Response<TReturn> callExposed(String const& name, TArgs... args) {
 			auto const fid = invokeExposedCall(
