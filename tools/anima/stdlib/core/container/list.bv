@@ -68,7 +68,7 @@ struct List[Element] {
 			self.search(key, (countof self.elements) / 2, 0, (countof self.elements) - 1)
 
 		filtered :: (@ByRef self: Self, @ByRef rule: (Element) -> bool) -> Self {
-			values := new Elements {}
+			values := new Elements
 			for element => self.elements
 				if rule(element)
 					values <| element
@@ -76,7 +76,7 @@ struct List[Element] {
 		}
 
 		filter :: (@ByRef self: Self, @ByRef rule: (Element) -> bool) -> Self {
-			values := new Elements {}
+			values := new Elements
 			for element => self.elements
 				if rule(element)
 					values <| element
@@ -87,7 +87,7 @@ struct List[Element] {
 	
 	@New
 	init :: (@ByRef self: Self) -> Self {
-		self.elements = new Elements {}
+		self.elements = new Elements
 		return self
 	}
 

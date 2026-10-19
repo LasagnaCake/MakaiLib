@@ -13,7 +13,7 @@ struct Map[Key: Is.Comparable, Value] {
 
 	@New
 	init :: (@ByRef self: Self) -> Self {
-		self.entries = new Entries {}
+		self.entries = new Entries
 		return self
 	}
 
@@ -26,7 +26,7 @@ struct Map[Key: Is.Comparable, Value] {
 	@Operator(infix="[]")
 	at :: (@ByRef self: Self, @ByRef key: Key) -> Value =>
 		self.search(key)?.value ?? {
-			@ByRef val := new Value{}
+			@ByRef val := new Value
 			self.entries.insert(self.placeOf(key), new Entry {key, val})
 			value
 		}
