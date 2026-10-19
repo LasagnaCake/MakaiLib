@@ -102,7 +102,7 @@ namespace Collision::C2D {
 			/// @param collider Collider that this object collided with.
 			/// @param direction Collision direction.
 			CollisionEvent onCollision = [] (Collider const&, Direction const&) {DEBUGLN("Empty?");};
-			
+
 			/// @brief Unique collider ID.
 			usize const ID;
 
@@ -138,7 +138,7 @@ namespace Collision::C2D {
 			/// @brief Amount of created colliders.
 			inline static usize count = 0;
 
-			/// @brief Copy constructor (deleted). 
+			/// @brief Copy constructor (deleted).
 			constexpr Collider(Collider const& other)	= delete;
 			/// @brief Move constructor (deleted).
 			constexpr Collider(Collider&& other)		= delete;

@@ -97,7 +97,7 @@ public:
 	}
 
 	/// @brief Unsubscribes this object from a series of signals.
-	/// @tparam ...Args Argument types. 
+	/// @tparam ...Args Argument types.
 	/// @param ...signals Signals to unsubscribe.
 	/// @return Reference to self.
 	template <typename... Args>
@@ -157,7 +157,7 @@ struct Notification {
 
 	/// @brief Default constructor.
 	Notification() {}
-	
+
 	/// @brief Registers which signal this notification should fire.
 	/// @param name Signal name.
 	Notification(String const& name): id(name)											{}
