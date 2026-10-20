@@ -17,7 +17,7 @@ namespace Makai::Ex::Menu {
 		Input::Manager		input;
 
 		struct EventMessage: NotificationHandler::IMessage {
-			Server&	self;
+			Server&	server;
 			Data::Value value;
 		};
 
@@ -138,7 +138,7 @@ namespace Makai::Ex::Menu {
 		auto const mouseCollider	= CollisionHandler::createCollider(0, Collision::C2D::Area{mousePos});
 
 		static broadcastToComponent(u64 const id, String const& event, Data::Value value) {
-			static Component::EventMessage message;
+			Component::EventMessage message{this};
 			message.value = value;
 			broadcast("mk/ex/menu/v1/component/" + toString(id) + "/" + event, &value);
 		}
