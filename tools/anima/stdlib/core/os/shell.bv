@@ -9,6 +9,16 @@ module OS.Shell {
 	@Shared(lib=av2shell, name="av2/shell/cd")
 	cd :: (dir: string) -> bool
 
+
+	@Shared(lib=av2shell, name="av2/shell/rm")
+	rm :: (dir: string) -> bool
+
+	@Shared(lib=av2shell, name="av2/shell/cp")
+	cp :: (dir: string) -> bool
+
+	@Shared(lib=av2shell, name="av2/shell/mv")
+	mv :: (dir: string) -> bool
+
 	@Shared(lib=av2shell, name="av2/shell/exec")
 	exec :: (proc: string, args: [string]) -> ?int
 
