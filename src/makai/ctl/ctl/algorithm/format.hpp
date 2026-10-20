@@ -58,7 +58,7 @@ namespace Format {
 	/// @return Resulting number string.
 	template <Type::Real T, Type::OneOf<String, UTF8String, UTF32String> TString = String>
 	constexpr TString prettify(T const& num, usize const precision, usize const minlead) {
-		TString strnum = String::fromNumber<T>(num, precision);
+		TString strnum = String::fromNumber<T>(num);
 		usize lead	= strnum.size() + minlead;
 		ssize dot	= strnum.find('.');
 		if (dot > -1) lead -= dot;
