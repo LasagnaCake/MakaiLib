@@ -1,0 +1,19 @@
+using import core
+
+struct Builder {
+	using Flags = [string]
+
+	compiler: string
+	fileType: string
+	linker: string
+	@[ByRef] flags: Flags
+}
+
+extend Builder {
+	struct Target {
+		name: string
+		flags: Flags
+	}
+
+	build :: (self: Self, target: Taget, folder: string, flags: ?Flags)
+}
