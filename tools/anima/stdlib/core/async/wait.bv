@@ -1,3 +1,10 @@
 using import core.types
 
 with module Async
+
+@Variadic
+awaitAll :: (@ByRef subs[T]: [?T]) => [T] {
+	out := new T[countof subs] {}
+	for sub => subs out <| await sub
+	return out
+}
