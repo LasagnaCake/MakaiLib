@@ -214,7 +214,7 @@ namespace Tree {
 			auto const parent = findParent(key);
 			if (parent && ComparatorType::equals(parent->key, key))
 				return parent;
-			ref<Node> const node = MX::construct(allocator().allocate(), Node{cachedDepth(parent), 0, key});
+			ref<Node> const node = MX::construct(allocator().allocate(1), Node{cachedDepth(parent), 0, key});
 			if (!parent)
 				return (root = node);
 			insertNode(node, parent, !ComparatorType::lesser(key, parent->key));
