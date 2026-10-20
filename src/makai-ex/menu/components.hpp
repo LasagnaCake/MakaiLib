@@ -29,13 +29,6 @@ namespace Makai::Ex::Menu {
 			body.trans = trans;
 		}
 	};
-
-	template <usize I = DEFAULT_SERVER_ID>
-	struct Button: VisualComponent<I> {
-		using Base = VisualComponent<I>;
-
-		Component(String const& name): Base("Button", name) {}
-	};
 }
 
 #endif
