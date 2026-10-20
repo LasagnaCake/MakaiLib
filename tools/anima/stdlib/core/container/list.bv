@@ -148,7 +148,7 @@ struct List[Element] {
 
 	if prove assert Is.Same[Element, List[Element.Element]] extend Self {
 		flat :: (@ByRef self: Self, sep: Element.Element) {
-			out: Element.Element = new Element.Element {}
+			out: Element.Element = new Element.Element
 			for entry => self.entries {
 				out.push(entry)
 				out.push(sep)
