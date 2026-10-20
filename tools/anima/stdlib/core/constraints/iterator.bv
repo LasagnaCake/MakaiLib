@@ -18,4 +18,4 @@ kind Iterator[T] => Forward[T] or Reverse[T] or prove {
 	try elem := Meta.spoof[T]!() {}
 }
 
-kind Iteratable[T] => prove {Meta.spoof[T]!.iterator}
+kind Iteratable[T] => prove {Meta.spoof[T]!.iterator} or prove {for elem => meta.spoof[T]! {}}
