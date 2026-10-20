@@ -1,19 +1,61 @@
 using import core
 
-struct Builder {
-	using Flags = [string]
-
-	compiler: string
-	fileType: string
-	linker: string
-	@[ByRef] flags: Flags
-}
-
-extend Builder {
+extend struct Builder {
 	struct Target {
-		name: string
-		flags: Flags
+		@ByRef name: string
+		@ByRef flags: Flags
 	}
 
-	build :: (self: Self, target: Taget, folder: string, flags: ?Flags)
+	using Flags = [string]
+
+	@ByRef compiler: string
+	@ByRef fileType: string
+	@ByRef linker: string
+	@ByRef flags: Flags
+} {
+	compile :: (@ByRef self: Self, @ByRef target: Target, @ByRef file: string, @ByRef folder: string, flags: ?Flags) -> ?int {
+		ff : Flags = (flags ?? new Flags) + self.flags + target.flags
+		name := folder/'/'|'.'
+		dir := "src/" + dir
+		out := "obj/" + target.name
+		args = ["-c", dir + "/" + file, "-o", out + name + "." + file + "." + target.name + ".o"]
+		return OS.exec(self.compiler, args)
+	}
+
+	build :: (@ByRef self: Self, @ByRef target: Target, @ByRef folder: string, flags: ?Flags) {
+		ff : Flags = (flags ?? new Flags) + self.flags + target.flags
+		name := folder/'/'|'.'
+		dir := "src/" + folder
+		out := "obj/" + target.name
+		args = [dir + "/" + file, "-o", out + name + "." + file + "." + target.name + ".o"]
+		return OS.exec(self.compiler, args)
+	}
+
+	clean :: (target: Target, path: string) {
+		folder := "src/" + path
+		for sub => OS.list(folder)
+			if not sub.folder and (sub.name & ("." + self.fileType)) and (sub.name & ".o")
+				OS.rm(sub.path)
+		return procs
+	}
+
+	doFolder :: (@ByRef self: Self, @ByRef target: Target, @ByRef folder: string, flags: ?Flags) -> [?int] {
+		procs := new [?int]
+		dir := "src/" + folder
+		for sub => OS.list(folder)
+			if sub.folder
+				procs += self
+					.clean(target, sub.path)
+					.doFolder(target, folder + "/" + sub.name, flags)
+			else if (sub.name & ("." + self.fileType)) and not (sub.name & ".o")
+				procs <| self.compile(target, folder, sub.name, flags)
+		return procs
+	}
+}
+
+extend struct Toolchain {
+	@ByRef builder: Builder
+	@ByRef target: Builder.Target
+} {
+
 }
