@@ -1,7 +1,7 @@
 import os
 import platform as pf
 
-from pymake.osvar import OSDependentValue
+from makepy.osvar import OSDependentValue
 
 
 class OSInfo:

@@ -4,13 +4,13 @@ import os
 from sys import argv
 from typing import cast
 
-import pymake.os as osinfo
-from pymake.builder import Toolchain
-from pymake.flags import Flags
-from pymake.os import info
-from pymake.subtask import checkpoint, subtask
-from pymake.synchro import Group, join_groups, pipe_into, spawn
-from pymake.vendor import Vendor
+import makepy.os as osinfo
+from makepy.builder import Toolchain
+from makepy.flags import Flags
+from makepy.os import info
+from makepy.subtask import checkpoint, subtask
+from makepy.synchro import Group, join_groups, pipe_into, spawn
+from makepy.vendor import Vendor
 
 vendored = Vendor()
 

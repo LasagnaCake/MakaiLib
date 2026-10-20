@@ -5,7 +5,7 @@ from asyncio.threads import to_thread
 from collections.abc import Callable, Iterator
 from collections.abc import Awaitable
 from typing import Any, Generic, Self, TypeVar, cast
-from pymake.os import info
+from makepy.os import info
 
 
 Popen = sp.Popen[str]

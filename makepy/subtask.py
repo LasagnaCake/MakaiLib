@@ -4,7 +4,7 @@ from collections.abc import Callable
 from types import CoroutineType
 from typing import ClassVar, Generic, Self, TypeVar
 
-from pymake.synchro import Group, Coro
+from makepy.synchro import Group, Coro
 
 TYield = TypeVar("TYield")
 TWhoKnows = TypeVar("TWhoKnows")

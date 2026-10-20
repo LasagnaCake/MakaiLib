@@ -2,9 +2,9 @@ import os
 import re
 import subprocess as sp
 
-from pymake import synchro
-from pymake.os import info
-from pymake.synchro import pipe_into, spawn
+from makepy import synchro
+from makepy.os import info
+from makepy.synchro import pipe_into, spawn
 
 
 class Vendor:

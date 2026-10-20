@@ -2,9 +2,9 @@ import os
 import re
 from typing import final
 
-from pymake.flags import Flags, concat
-from pymake.os import info
-from pymake.synchro import Group, join_groups, spawn
+from makepy.flags import Flags, concat
+from makepy.os import info
+from makepy.synchro import Group, join_groups, spawn
 
 
 class Builder:
