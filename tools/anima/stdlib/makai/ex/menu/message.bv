@@ -1,0 +1,7 @@
+using import core
+
+with module Makai.Ex.Menu
+
+@Native("mk/ex/menu/v1/broadcastGlobally")
+sendGlobal :: (event: string, message: any)
+

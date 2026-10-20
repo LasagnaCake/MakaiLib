@@ -7,21 +7,21 @@
 
 /// @brief Menu system extensions.
 namespace Makai::Ex::Menu {
-	template <class T, usize I = DEFAULT_SERVER_ID>
+	template <usize I = DEFAULT_SERVER_ID>
 	struct Component: typename Server<I>::Component {
 		using Base = typename Server<I>::Component;
 
-		Component(String const& name): Base(nameOf<T>(), name) {}
+		Component(String const& type, String const& name): Base(type, name) {}
 	};
 
-	template <class T, usize I = DEFAULT_SERVER_ID>
-	struct VisualComponent: Component<T, I> {
-		using Base = Component<T, I>;
+	template <usize I = DEFAULT_SERVER_ID>
+	struct VisualComponent: Component<I> {
+		using Base = Component<I>;
 
 		Graph::UTF8Label	text;
 		Graph::Renderable	body;
 
-		Component(String const& name): Base(nameOf<T>(), name) {}
+		Component(String const& type, String const& name): Base("Visual" + type, name) {}
 
 		void onUpdate(float delta, App& app) override {
 			Base::onUpdate(delta, app);
@@ -31,8 +31,10 @@ namespace Makai::Ex::Menu {
 	};
 
 	template <usize I = DEFAULT_SERVER_ID>
-	struct Button: VisualComponent<Button, I> {
+	struct Button: VisualComponent<I> {
+		using Base = VisualComponent<I>;
 
+		Component(String const& name): Base("Button", name) {}
 	};
 }
 

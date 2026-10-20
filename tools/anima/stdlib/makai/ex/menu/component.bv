@@ -1,0 +1,61 @@
+using import core
+
+with module Makai.Ex.Menu
+
+struct Component {
+	@[Private. ByCopy]
+	id : int64
+
+	@[Private, Static, Native(name="mk/ex/menu/v1/component/transform/position")]
+	getPosition :: (self: u64) -> vector
+
+	@[Private, Static, Native(name="mk/ex/menu/v1/component/transform/rotation")]
+	getRotation :: (self: u64) -> vector
+	
+	@[Private, Static, Native(name="mk/ex/menu/v1/component/transform/scale")]
+	getScale :: (self: u64) -> vector
+
+	@[Private, Static, Native(name="mk/ex/menu/v1/broadcastToComponent")]
+	sendToComponent :: (self: u64, event: string, message: ?any) -> void
+
+	@[Private, Static, Native(name="mk/ex/menu/v1/getComponentByName")]
+	getByName :: (name: string) -> u64
+
+	send :: (self: Self, event: string, message: ?any = null) => sendToComponent(self.id, event, message)
+
+	enable :: () -> void => self.send("/enable")
+
+	disable :: () -> void => self.send("/disable")
+
+	@Static
+	byName :: (name: string) => byID(getByName(name))
+	
+	@Static
+	byID :: (id: u64) => new Component {id}
+
+	clone :: (self: Self) -> new Component {self.id}
+
+	@New
+	init :: (self: Self, id: u64) -> Self {
+		self.id = id
+		return self
+	}
+
+	prop position {
+		get (self: Self) => getPosition(self.id)
+
+		set (self: Self, value: vector) => send(self.id, "/transform/position", value)
+	}
+
+	prop rotation {
+		get (self: Self) => getRotation(self.id)
+
+		set (self: Self, value: vector) => send(self.id, "/transform/rotation", value)
+	}
+
+	prop scale {
+		get (self: Self) => getScale(self.id)
+
+		set (self: Self, value: vector) => send(self.id, "/transform/scale", value)
+	}
+}

@@ -96,8 +96,8 @@ namespace Makai::Ex::Menu {
 
 		void onMessage(String const& signal, MessageHandleType const& message) override {
 			if (!message) return;
-			auto const component = *message.template morph<AComponent const>();
-			Callbacks callbacks{events, *component};
+			auto const& component = *message.template morph<AComponent const>();
+			Callbacks callbacks{*this, *component};
 			if (signal == "mk/ex/menu/v1/events/mouse") {
 				if (input.isButtonDown(Input::MouseCode::MC_LEFT))
 					callbacks.onMouseDown(component.id());
@@ -143,10 +143,10 @@ namespace Makai::Ex::Menu {
 			broadcast("mk/ex/menu/v1/component/" + toString(id) + "/" + event, &value);
 		}
 
-		static broadcastGlobally(u64 const id, String const& event, Data::Value value) {
+		static broadcastGlobally(String const& event, Data::Value value) {
 			static Component::EventMessage message;
 			message.value = value;
-			broadcast("mk/ex/menu/v1/component/" + toString(id) + "/" + event, &value);
+			broadcast(event, &value);
 		}
 
 		Server(): callbacks(events) {
@@ -162,6 +162,7 @@ namespace Makai::Ex::Menu {
 				)
 			);
 			context.addNativeCall("mk/ex/menu/v1/broadcastToComponent", broadcastToComponent);
+			context.addNativeCall("mk/ex/menu/v1/broadcastGlobally", broadcastGlobally);
 		}
 	};
 }
