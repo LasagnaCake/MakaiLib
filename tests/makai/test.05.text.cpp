@@ -5,7 +5,7 @@ struct TestApp: Makai::App {
 		DEBUGLN("Loading shaders...");
 		loadDefaultShaders();
 	}
-	
+
 	Makai::Graph::UTF8Label label;
 
 	Makai::Graph::Camera3D& camera = Makai::Graph::Global::camera;
@@ -34,7 +34,7 @@ struct TestApp: Makai::App {
 		camera.zFar	= 1000;
 		DEBUGLN("5...");
 		label.setRenderLayer(0);
-		getFrameBuffer().material.background = Makai::Graph::Color::GRAY;
+		getFrameBuffer().material.background = Makai::Color::GRAY;
 		//Makai::Graph::API::toggle(Makai::Graph::API::Facility::GAF_DEBUG, true);
 		//camera.relativeToEye = true;
 		DEBUGLN("Done!");

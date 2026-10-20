@@ -77,7 +77,7 @@ struct TestApp: Makai::App {
 	void onUpdate(float delta) {
 		if (input.isButtonJustPressed(Makai::Input::KeyCode::KC_ESCAPE))
 			close();
-		getFrameBuffer().material.background = Makai::Graph::Color::WHITE * (sin(getCurrentFrame() / 180.0) / 2 + .5);
+		getFrameBuffer().material.background = Makai::Color::WHITE * (sin(getCurrentFrame() / 180.0) / 2 + .5);
 		#ifndef MANUAL_ROTATION
 		cube.trans.rotation += Makai::Vec3(
 			HPI / 60.0,

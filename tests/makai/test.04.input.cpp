@@ -65,7 +65,7 @@ struct TestApp: Makai::App {
 		camera.eye	= Makai::Vec3(0, 0, -3);
 		//camera.at	= Makai::Vec3(0, -2, 3);
 		camera.zFar	= 1000;
-		getFrameBuffer().material.background = Makai::Graph::Color::GRAY;
+		getFrameBuffer().material.background = Makai::Color::GRAY;
 		//Makai::Graph::API::toggle(Makai::Graph::API::Facility::GAF_DEBUG, true);
 		camera.relativeToEye = true;
 	}

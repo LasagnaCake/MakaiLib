@@ -23,11 +23,13 @@ int main() {
 				object_v {
 					key1 "value 1"
 					key2 {
-						subkey1 "value 1" 
+						subkey1 "value 1"
 						'subkey2' "value 2"
 					}
 					"key3" "value 3"
 				}
+				vector_v (1, 2, 3, 4)
+				id_v #[1 2 3 4]
 			}
 		)::";
 		Makai::FLOW::Value val = Makai::FLOW::parse(str);

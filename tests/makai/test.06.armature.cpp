@@ -5,7 +5,7 @@ struct TestApp: Makai::App {
 		DEBUGLN("Loading shaders...");
 		loadDefaultShaders();
 	}
-	
+
 	Makai::Graph::Renderable danceCube;
 
 	Makai::Graph::Camera3D& camera = Makai::Graph::Global::camera;
@@ -35,7 +35,7 @@ struct TestApp: Makai::App {
 	void onUpdate(float delta) override {
 		if (input.isButtonJustPressed(Makai::Input::KeyCode::KC_ESCAPE))
 			close();
-		getFrameBuffer().material.background = Makai::Graph::Color::WHITE * (sin(getCurrentFrame() / 180.0) / 2 + .5);
+		getFrameBuffer().material.background = Makai::Color::WHITE * (sin(getCurrentFrame() / 180.0) / 2 + .5);
 		float as, ac;
 		Makai::Math::sincos<float>((getCurrentCycle() / 180.0), as, ac);
 		camera.eye	= Makai::Vec3(as, 0.25, ac) * 5.0;
