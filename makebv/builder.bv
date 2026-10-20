@@ -22,7 +22,7 @@ extend struct Builder {
 		return OS.exec(self.compiler, args)
 	}
 
-	build :: (@ByRef self: Self, @ByRef target: Target, @ByRef folder: string, flags: ?Flags) {
+	build :: (@ByRef self: Self, @ByRef target: Target, @ByRef folder: string, flags: ?Flags) -> ?int {
 		ff : Flags = (flags ?? new Flags) + self.flags + target.flags
 		name := folder/'/'|'.'
 		dir := "src/" + folder
@@ -31,12 +31,12 @@ extend struct Builder {
 		return OS.exec(self.compiler, args)
 	}
 
-	clean :: (target: Target, path: string) {
+	clean :: (target: Target, path: string) -> Self {
 		folder := "src/" + path
 		for sub => OS.list(folder)
 			if not sub.folder and (sub.name & ("." + self.fileType)) and (sub.name & ".o")
 				OS.rm(sub.path)
-		return procs
+		return self
 	}
 
 	doFolder :: (@ByRef self: Self, @ByRef target: Target, @ByRef folder: string, flags: ?Flags) -> [?int] {
