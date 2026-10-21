@@ -8,7 +8,7 @@
 /// @brief Menu system extensions.
 namespace Makai::Ex::Menu {
 	template <usize I = DEFAULT_SERVER_ID>
-	struct Component: typename Server<I>::Component {
+	struct Component: Server<I>::Component {
 		using Base = typename Server<I>::Component;
 
 		Component(String const& type, String const& name): Base(type, name) {}
