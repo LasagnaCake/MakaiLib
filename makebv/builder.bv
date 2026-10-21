@@ -15,16 +15,16 @@ extend struct Builder {
 } {
 	compile :: (@ByRef self: Self, @ByRef target: Target, @ByRef file: string, @ByRef folder: string, flags: ?Flags) -> ?int {
 		ff : Flags = (flags ?? new Flags) + self.flags + target.flags
-		name := folder/'/'|'.'
+		name := (copy folder)/'/'/'.'
 		dir := "src/" + dir
 		out := "obj/" + target.name
-		args = ["-c", dir + "/" + file, "-o", out + name + "." + file + "." + target.name + ".o"]
+		args = ["-c", dir + "/" + file, "-o", out + "/" + name + "." + file + "." + target.name + ".o"]
 		return OS.exec(self.compiler, args)
 	}
 
 	build :: (@ByRef self: Self, @ByRef target: Target, @ByRef folder: string, flags: ?Flags) -> ?int {
 		ff : Flags = (flags ?? new Flags) + self.flags + target.flags
-		name := folder/'/'/'.'
+		name := (copy folder)/'/'/'.'
 		dir := "src/" + folder
 		out := "obj/" + target.name
 		-args = [dir + "/" + file, "-o", out + name + "." + file + "." + target.name + ".o"]
@@ -58,23 +58,14 @@ extend struct Toolchain {
 	@ByRef target: Builder.Target
 } {
 	@Static
-	create(lang: string, compiler: string, @ByRef flags: [string]) -> ?Self {
+	create(@ByRef lang: string, compiler: string, @ByRef flags: [string]) -> ?Self {
 		@ByRef tc := new Toolchain
-		match (lang) {
-			"c++" => match (compiler) {
-				"gcc"			=> tc.builder = new Builder {"gcc", "cpp", flags}
-				"clang"			=> tc.builder = new Builder {"clang", "cpp", flags}
-				"mingw-win"		=> tc.builder = new Builder {"mingw32-gcc", "cpp", flags}
-				"mingw-linux"	=> tc.builder = new Builder {"x86_64-mingw32-gcc", "cpp", flags}
-				else => null
-			}
-			"c" => match (compiler) {
-				"gcc"			=> tc.builder = new Builder {"gcc", "c", flags}
-				"clang"			=> tc.builder = new Builder {"clang", "c", flags}
-				"mingw-win"		=> tc.builder = new Builder {"mingw32-gcc", "c", flags}
-				"mingw-linux"	=> tc.builder = new Builder {"x86_64-mingw32-gcc", "c", flags}
-				else => null
-			}
+		lang = (copy lang)/'\\+'/'p'
+		match (compiler) {
+			"gcc"			=> tc.builder = new Builder {"gcc", lang, flags}
+			"clang"			=> tc.builder = new Builder {"clang", lang, flags}
+			"mingw-win"		=> tc.builder = new Builder {"mingw32-gcc", lang, flags}
+			"mingw-linux"	=> tc.builder = new Builder {"x86_64-mingw32-gcc", lang, flags}
 			else => null
 		}
 		return tc
