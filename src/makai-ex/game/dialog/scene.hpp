@@ -113,6 +113,12 @@ namespace Makai::Ex::Game::Dialog {
 		usize delay = 0;
 		Script current;
 	};
+
+	struct ARTScene: AScene {
+		Script script() override {
+			// TODO: This
+		}
+	};
 }
 
 #endif
