@@ -3,7 +3,7 @@
 
 #include "core.hpp"
 
-/// @brief Menu system extensions.
+/// @brief Game dialog extensions.
 namespace Makai::Ex::Game::Dialog {
 	struct Actor: IActor {
 
