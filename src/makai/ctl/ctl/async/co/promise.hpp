@@ -23,7 +23,7 @@ namespace Co {
 		struct promise_type;
 		/// @brief Context type.
 		using ContextType = Context<promise_type>;
-		
+
 		/// @brief Whether the coroutine should start suspended.
 		constexpr static bool START_SUSPENDED = S;
 
@@ -57,7 +57,7 @@ namespace Co {
 				void await_resume(Args...)	{							}
 				Promise promise;
 			};
-			
+
 			/// @brief `co_await` support for promises.
 			ChainSuspend await_transform(AlwaysSuspend) {
 				return ChainSuspend{get_return_object()};
@@ -68,7 +68,7 @@ namespace Co {
 			T await_transform(T sus) {
 				return sus;
 			}
-			
+
 			/// @brief Unhandle exception processor.
 			void unhandled_exception() {
 				throw Exception(*Exception::current());
@@ -88,7 +88,7 @@ namespace Co {
 				return context.done();
 			return true;
 		}
-		
+
 		/// @brief Returns whether there is a coroutine.
 		/// @return Whether there is a coroutine.
 		bool exists() const {
@@ -105,7 +105,7 @@ namespace Co {
 
 		/// @brief Default constructor.
 		Promise() {}
-		
+
 		/// @brief Constructs the coroutine.
 		/// @param context Coroutine context.
 		Promise(ContextType context): context(context) {}
@@ -139,7 +139,7 @@ namespace Co {
 	template<class TData, bool S>
 	struct Promise: Typed<TData> {
 		using Typed = ::CTL::Typed<TData>;
-		
+
 		using
 			typename Typed::DataType,
 			typename Typed::ReferenceType
@@ -156,7 +156,7 @@ namespace Co {
 		struct promise_type {
 			/// @brief Result value.
 			DataType value;
-			
+
 			/// @brief Returns the promise associated with this type.
 			/// @return Associated promise.
 			Promise get_return_object() {
@@ -169,7 +169,7 @@ namespace Co {
 			/// @brief Final suspend.
 			/// @return Suspend state.
 			AlwaysSuspend final_suspend() noexcept	{return {};	}
-			
+
 			/// @brief Unhandle exception processor.
 			void unhandled_exception() {
 				throw Exception(*Exception::current());
@@ -185,7 +185,7 @@ namespace Co {
 				DataType await_resume(Args...)	{return promise.value();	}
 				Promise promise;
 			};
-			
+
 			/// @brief `co_await` support for promises.
 			ChainSuspend await_transform(AlwaysSuspend) {
 				return ChainSuspend{get_return_object()};
@@ -260,7 +260,7 @@ namespace Co {
 				return context.done();
 			return true;
 		}
-		
+
 		/// @brief Returns whether there is a coroutine.
 		/// @return Whether there is a coroutine.
 		bool exists() const {
