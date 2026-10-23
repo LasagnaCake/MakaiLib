@@ -1,17 +1,30 @@
 #ifndef MAKAILIB_EX_GAME_DIALOG_SERVER_H
 #define MAKAILIB_EX_GAME_DIALOG_SERVER_H
 
+#include "../core/controlable.hpp"
 #include "core.hpp"
 
 /// @brief Game dialog extensions.
 namespace Makai::Ex::Game::Dialog {
-	struct AScene: AUpdateable, IPlayable {
+	struct AScene: AUpdateable, IPlayable, Controllable {
 		using Script = Co::Generator<usize>;
 		using Actors = List<Instance<IActor>>;
 
+		struct Configuration {
+			enum class Mode: u8 {
+				GDSM_MANUAL,
+				GDSM_USER_STEPPED,
+				GDSM_AUTO
+			};
+			Mode	mode	= Mode::GDSM_USER_STEPPED;
+			usize	timeout = 60;
+		} config;
+
+		Input::Manager input;
+
 		Actors actors;
 
-		AScene() {isFinished = true;}
+		AScene(Configuration const& config = {}) config(config) {isFinished = true;}
 
 		virtual ~AScene() {}
 
@@ -31,8 +44,15 @@ namespace Makai::Ex::Game::Dialog {
 			}
 			if (!current)
 				stop();
-			do delay = current.next();
-			while (!delay);
+			switch (config.mode) {
+				using enum Configuration::Mode;
+				case GDSM_USER_STEPPED: if (!interaction()) return;
+				default: break;
+			}
+			do {
+				delay = current.next();
+			}
+			while (!delay && current);
 		}
 
 		AScene& start() override {
@@ -58,6 +78,23 @@ namespace Makai::Ex::Game::Dialog {
 			if (isFinished) return *this;
 			paused = false;
 			return *this;
+		}
+
+		bool interaction() const {
+			return config.mode != Config::Mode::GDSM_AUTO && (action("next", true) or action("skip"));
+		}
+
+	protected:
+		Script user() const {
+			co_return co_await user(config.timeout);
+		}
+
+		Script user(usize timeout) const {
+			while (timeout && !interaction()) {
+				--timeout;
+				co_yield 1;
+			}
+			co_return 0;
 		}
 
 	private:
