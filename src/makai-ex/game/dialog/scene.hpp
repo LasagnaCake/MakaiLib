@@ -8,7 +8,7 @@
 namespace Makai::Ex::Game::Dialog {
 	struct AScene: AUpdateable, IPlayable, Controllable {
 		using Script = Co::Generator<usize>;
-		using Actors = List<Instance<IActor>>;
+		using Actors = Dictionary<Instance<IActor>>;
 
 		struct Configuration {
 			enum class Mode: u8 {
@@ -17,7 +17,7 @@ namespace Makai::Ex::Game::Dialog {
 				GDSM_AUTO
 			};
 			Mode	mode	= Mode::GDSM_USER_STEPPED;
-			usize	timeout = 60;
+			ssize	timeout = -1;
 		} config;
 
 		Input::Manager input;
@@ -29,8 +29,8 @@ namespace Makai::Ex::Game::Dialog {
 		virtual ~AScene() {}
 
 		template <Type::Derived<IActor> T>
-		AScene& add(Instance<T> const& actor) {
-			actors.pushBack(actor);
+		AScene& add(String const& name, Instance<T> const& actor) {
+			actors[name] = actor;
 		}
 
 		virtual Script script() = 0;
@@ -81,17 +81,29 @@ namespace Makai::Ex::Game::Dialog {
 		}
 
 		bool interaction() const {
-			return config.mode != Config::Mode::GDSM_AUTO && (action("next", true) or action("skip"));
+			return config.mode != Config::Mode::GDSM_AUTO && (userNext() or userSkip());
 		}
 
 	protected:
-		Script user() const {
-			co_return co_await user(config.timeout);
+		Script userInput() const {
+			co_return co_await userInput(config.timeout);
 		}
 
-		Script user(usize timeout) const {
-			while (timeout && !interaction()) {
-				--timeout;
+		Script userInput(ssize timeout) const {
+			co_return co_await action([&] {return interaction();}, timeout);
+		}
+
+		bool userNext() const {
+			return action("next", true);
+		}
+
+		bool userSkip() const {
+			return action("skip");
+		}
+
+		Script action(Signal<void> const& action, ssize timeout = -1) const {
+			while (timeout && !action()) {
+				if (timeout > 0) --timeout;
 				co_yield 1;
 			}
 			co_return 0;
