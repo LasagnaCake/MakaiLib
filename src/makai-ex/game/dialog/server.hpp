@@ -6,7 +6,6 @@
 /// @brief Game dialog extensions.
 namespace Makai::Ex::Game::Dialog {
 	struct Server {
-
 	};
 }
 
