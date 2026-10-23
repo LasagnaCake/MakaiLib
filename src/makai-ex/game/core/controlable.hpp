@@ -20,7 +20,7 @@ namespace Makai::Ex::Game {
 
 		/// @brief Returns the state of a button.
 		/// @param action Button to check for.
-		/// @return Button state. 
+		/// @return Button state.
 		usize actionState(String const& button) {
 			if (!bindmap.contains(button)) return 0;
 			return input.getButtonState(bindmap[button]);
