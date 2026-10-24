@@ -36,12 +36,12 @@ namespace Makai::Ex::Menu {
 				name(name),
 				server(server) {
 				mouseClickBounds->onCollision = [&] (auto, auto) {
-					if (updating) NotificationHandler::broadcast("mk/ex/menu/events/mouse", this);
+					if (updating) NotificationHandler::broadcast("mk/ex/menu/events/mouse/v1", this);
 				};
 				mouseHoverBounds->onCollision = [&] (auto, auto) {
-					if (updating) NotificationHandler::broadcast("mk/ex/menu/events/mouse/hover", this);
+					if (updating) NotificationHandler::broadcast("mk/ex/menu/events/mouse/hover/v1", this);
 				};
-				auto const base = "mk/ex/menu/v1/events/component/" + toString(id());
+				auto const base = "mk/ex/menu/events/component/" + toString(id()) + "/v1";
 				subscribeTo(
 					StringList::(
 						eventPath("/transform/position"),
@@ -49,7 +49,7 @@ namespace Makai::Ex::Menu {
 						eventPath("/transform/scale")
 					)
 				);
-				broadcast("mk/ex/menu/v1/events/initComponent");
+				broadcast("mk/ex/menu/events/initComponent/v1");
 			}
 
 			void onUpdate(float delta, App& app) override {}
@@ -69,7 +69,7 @@ namespace Makai::Ex::Menu {
 			}
 
 			String eventPath(String const& name) {
-				return "mk/ex/menu/v1/events/component/" + toString(id()) + name;
+				return "mk/ex/menu/events/component/" + toString(id()) + name + "/v1";
 			}
 
 		private:
@@ -98,15 +98,15 @@ namespace Makai::Ex::Menu {
 			if (!message) return;
 			auto const& component = *message.template morph<AComponent const>();
 			Callbacks callbacks{*this, *component};
-			if (signal == "mk/ex/menu/v1/events/mouse") {
+			if (signal == "mk/ex/menu/events/mouse/v1") {
 				if (input.isButtonDown(Input::MouseCode::MC_LEFT))
 					callbacks.onMouseDown(component.id());
 				else callbacks.onMouseUp(component.id());
-			} else if (signal == "mk/ex/menu/v1/events/focus")
+			} else if (signal == "mk/ex/menu/events/focus/v1")
 				callbacks.onFocus(component.id());
-			else if (signal == "mk/ex/menu/v1/events/unfocus")
+			else if (signal == "mk/ex/menu/events/unfocus/v1")
 				callbacks.onUnfocus(component.id());
-			else if (signal == "mk/ex/menu/v1/events/initComponent")
+			else if (signal == "mk/ex/menu/events/initComponent/v1")
 				callbacks.onInit(component.id());
 		}
 
@@ -140,7 +140,7 @@ namespace Makai::Ex::Menu {
 		static broadcastToComponent(u64 const id, String const& event, Data::Value value) {
 			Component::EventMessage message{this};
 			message.value = value;
-			broadcast("mk/ex/menu/v1/component/" + toString(id) + "/" + event, &value);
+			broadcast("mk/ex/menu/component/" + toString(id) + "/" + event + "/v1", &value);
 		}
 
 		static broadcastGlobally(String const& event, Data::Value value) {
@@ -155,14 +155,14 @@ namespace Makai::Ex::Menu {
 			CollisionHandler::layers[2].affectedBy	= 0b001;
 			subscribeTo(
 				StringList::from(
-					"mk/ex/menu/v1/events/mouse",
-					"mk/ex/menu/v1/events/focus",
-					"mk/ex/menu/v1/events/unfocus",
-					"mk/ex/menu/v1/events/initComponent"
+					"mk/ex/menu/events/mouse/v1",
+					"mk/ex/menu/events/focus/v1",
+					"mk/ex/menu/events/unfocus/v1",
+					"mk/ex/menu/events/initComponent/v1"
 				)
 			);
-			context.addNativeCall("mk/ex/menu/v1/broadcastToComponent", broadcastToComponent);
-			context.addNativeCall("mk/ex/menu/v1/broadcastGlobally", broadcastGlobally);
+			context.addNativeCall("mk/ex/menu/broadcastToComponent/v1", broadcastToComponent);
+			context.addNativeCall("mk/ex/menu/broadcastGlobally/v1", broadcastGlobally);
 		}
 	};
 }

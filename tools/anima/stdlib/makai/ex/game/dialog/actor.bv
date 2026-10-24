@@ -1,0 +1,42 @@
+using import core
+
+with module Makai.Ex.Dialog
+
+extend struct Actor {
+	name: string
+} {
+	@[Private, Static, Native(name="makai/ex/game/dialog/scene/actor/title/v1")]
+	_title(name: string, what: string) -> void
+	@[Private, Static, Native(name="makai/ex/game/dialog/scene/actor/say/v1")]
+	_say(name: string, what: string) -> void
+	@[Private, Static, Native(name="makai/ex/game/dialog/scene/actor/add/v1")]
+	_add(name: string, what: string) -> void
+	@[Private, Static, Native(name="makai/ex/game/dialog/scene/actor/perform/v1")]
+	_perform(name: string, what: string) -> void
+	@[Private, Static, Native(name="makai/ex/game/dialog/scene/actor/emote/v1")]
+	_emote(name: string, what: string) -> void
+
+	@Operator(infix="*")
+	title(@ByRef self: Self, what: string)		=> (_title(self.name, what),	self)
+	@Operator(infix="-")
+	say(@ByRef self: Self, what: string)		=> (_say(self.name, what),		self)
+	@Operator(infix="+")
+	add(@ByRef self: Self, what: string)		=> (_add(self.name, what),		self)
+	@Operator(infix="&")
+	perform(@ByRef self: Self, what: string)	=> (_perform(self.name, what),	self)
+	@Operator(infix="^")
+	emote(@ByRef self: Self, what: string)		=> (_emote(self.name, what),	self)
+}
+
+extend [Actor] {
+	@Operator(infix="*")
+	title(@ByRef self: Self, @ByRef what: string)	=> (for actor => self actor.title(what),	self)
+	@Operator(infix="-")
+	say(@ByRef self: Self, @ByRef what: string)		=> (for actor => self actor.say(what),		self)
+	@Operator(infix="+")
+	add(@ByRef self: Self, @ByRef what: string)		=> (for actor => self actor.add(what),		self)
+	@Operator(infix="&")
+	perform(@ByRef self: Self, @ByRef what: string)	=> (for actor => self actor.perform(what),	self)
+	@Operator(infix="^")
+	emote(@ByRef self: Self, @ByRef what: string)	=> (for actor => self actor.emote(what),	self)
+}

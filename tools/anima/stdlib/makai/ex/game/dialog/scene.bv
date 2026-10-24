@@ -1,0 +1,36 @@
+using import core
+
+with module Makai.Ex.Dialog.Scene
+
+@Native(name="makai/ex/game/dialog/scene/title/v1")
+title :: (what: string) -> void
+
+@Native(name="makai/ex/game/dialog/scene/say/v1")
+say :: (what: string) -> void
+
+@Native(name="makai/ex/game/dialog/scene/add/v1")
+add :: (what: string) -> void
+
+@Native(name="makai/ex/game/dialog/scene/timeout/v1")
+timeout :: (time: i64 = -1) -> void
+
+@Native(name="makai/ex/game/dialog/scene/mode/autoplay/v1")
+autoplay :: () -> void
+
+@Native(name="makai/ex/game/dialog/scene/mode/manual/v1")
+manual :: () -> void
+
+@Native(name="makai/ex/game/dialog/scene/mode/userStepped/v1")
+userStepped :: () -> void
+
+@Native(name="makai/ex/game/dialog/scene/wait/v1")
+wait :: (time: u64) -> void
+
+@Native(name="makai/ex/game/dialog/scene/addWait/v1")
+addWait :: (time: u64) -> void
+
+@Native(name="makai/ex/game/dialog/scene/setDelay/v1")
+setDelay :: (time: u64) -> void
+
+@Native(name="makai/ex/game/dialog/scene/timeout/v1")
+setTimeout :: (time: i64) -> void

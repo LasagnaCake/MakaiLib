@@ -6,19 +6,19 @@ struct Component {
 	@[Private. ByCopy]
 	id : int64
 
-	@[Private, Static, Native(name="mk/ex/menu/v1/component/transform/position")]
+	@[Private, Static, Native(name="mk/ex/menu/component/transform/position/v1")]
 	getPosition :: (self: u64) -> vector
 
-	@[Private, Static, Native(name="mk/ex/menu/v1/component/transform/rotation")]
+	@[Private, Static, Native(name="mk/ex/menu/component/transform/rotation/v1")]
 	getRotation :: (self: u64) -> vector
 	
-	@[Private, Static, Native(name="mk/ex/menu/v1/component/transform/scale")]
+	@[Private, Static, Native(name="mk/ex/menu/component/transform/scale/v1")]
 	getScale :: (self: u64) -> vector
 
-	@[Private, Static, Native(name="mk/ex/menu/v1/broadcastToComponent")]
+	@[Private, Static, Native(name="mk/ex/menu/broadcastToComponent/v1")]
 	sendToComponent :: (self: u64, event: string, message: ?any) -> void
 
-	@[Private, Static, Native(name="mk/ex/menu/v1/getComponentByName")]
+	@[Private, Static, Native(name="mk/ex/menu/getComponentByName/v1")]
 	getByName :: (name: string) -> u64
 
 	send :: (self: Self, event: string, message: ?any = null) => sendToComponent(self.id, event, message)

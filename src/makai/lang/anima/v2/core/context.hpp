@@ -146,12 +146,12 @@ namespace Makai::Anima::V2::Core {
 
 			template <Type::Functional<TReturn(TArgs...)> TFunc>
 			struct Invoker: ICallable {
-				TFunc& f;
+				Function<TFunc> f;
 
 				virtual ~Invoker() {debugExternalFunction(true);}
 
 				template <Type::Functional<TReturn(TArgs...)> T>
-				Invoker(T& f): f(f) {debugExternalFunction(false);}
+				Invoker(T const& f): f(f) {debugExternalFunction(false);}
 
 				MethodResult invoke(Context& context, NativeCall& method, Arguments const& args) const override {
 					return handleInvocation(context, method, args, f);
@@ -167,7 +167,7 @@ namespace Makai::Anima::V2::Core {
 
 		struct MethodAdder {
 			template <class TFunc>
-			bool add(String const& name, TFunc& f) const {
+			bool add(String const& name, TFunc const& f) const {
 				auto const hash = ConstHasher::hash(name);
 				using FuncResolver = NativeCallResolver<TFunc>;
 				if (context.hasNativeCall(hash)) return false;
@@ -257,7 +257,7 @@ namespace Makai::Anima::V2::Core {
 		}
 
 		template <class TFunc>
-		bool addNativeCall(usize const& hash, TFunc& f) {
+		bool addNativeCall(usize const& hash, TFunc const& f) {
 			using FuncResolver = NativeCallResolver<TFunc>;
 			if (hasNativeCall(hash)) return false;
 			return addNativeCall(hash, FuncResolver::ARG_COUNT, FuncResolver::invoker(f));
