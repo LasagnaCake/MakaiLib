@@ -36,24 +36,30 @@ namespace Makai::Ex::Game::Dialog {
 	struct ITalkative {
 		virtual ~ITalkative() {}
 
-		virtual usize say(TextContent const& content) = 0;
-		virtual usize add(TextContent const& content) = 0;
+		virtual usize say(UTF8String const& content) = 0;
+		virtual usize add(UTF8String const& content) = 0;
 	};
 
 	struct IPerformable {
 		virtual ~IPerformable() {}
 
-		virtual usize perform(String const action) = 0;
+		virtual usize perform(String const& action) = 0;
 	};
 
 	struct IEmotive {
 		virtual ~IEmotive() {}
 
-		virtual usize emote(String const emotion) = 0;
+		virtual usize emote(String const& emotion) = 0;
+	};
+
+	struct ICostumed {
+		virtual ~ICostumed() {}
+
+		virtual usize change(String const& costume) = 0;
 	};
 
 	struct IBox:	IVisible, IAnimatable, IPresentable, ITextDisplay, ITalkative	{};
-	struct IActor:	IBox, IPerformable, IEmotive									{};
+	struct IActor:	IBox, IPerformable, IEmotive, ICostumed							{};
 }
 
 #endif

@@ -12,7 +12,7 @@ say :: (what: string) -> void
 add :: (what: string) -> void
 
 @Native(name="makai/ex/game/dialog/scene/timeout/v1")
-timeout :: (time: i64 = -1) -> void
+timeout :: (time: i64) -> void
 
 @Native(name="makai/ex/game/dialog/scene/mode/autoplay/v1")
 autoplay :: () -> void
@@ -23,6 +23,9 @@ manual :: () -> void
 @Native(name="makai/ex/game/dialog/scene/mode/userStepped/v1")
 userStepped :: () -> void
 
+@Native(name="makai/ex/game/dialog/scene/autoPresent/v1")
+autoPresent :: (state: bool) -> void
+
 @Native(name="makai/ex/game/dialog/scene/wait/v1")
 wait :: (time: u64) -> void
 
@@ -31,6 +34,3 @@ addWait :: (time: u64) -> void
 
 @Native(name="makai/ex/game/dialog/scene/setDelay/v1")
 setDelay :: (time: u64) -> void
-
-@Native(name="makai/ex/game/dialog/scene/timeout/v1")
-setTimeout :: (time: i64) -> void

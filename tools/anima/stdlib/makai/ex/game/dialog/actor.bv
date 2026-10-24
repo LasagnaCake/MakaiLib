@@ -2,9 +2,9 @@ using import core
 
 with module Makai.Ex.Dialog
 
-extend struct Actor {
+struct Actor {
 	name: string
-} {
+
 	@[Private, Static, Native(name="makai/ex/game/dialog/scene/actor/title/v1")]
 	_title(name: string, what: string) -> void
 	@[Private, Static, Native(name="makai/ex/game/dialog/scene/actor/say/v1")]
@@ -16,6 +16,15 @@ extend struct Actor {
 	@[Private, Static, Native(name="makai/ex/game/dialog/scene/actor/emote/v1")]
 	_emote(name: string, what: string) -> void
 
+	@[Private, Static, Native(name="makai/ex/game/dialog/scene/actor/enter/v1")]
+	_enter(name: string) -> void
+	@[Private, Static, Native(name="makai/ex/game/dialog/scene/actor/exit/v1")]
+	_leave(name: string) -> void
+	@[Private, Static, Native(name="makai/ex/game/dialog/scene/actor/present/v1")]
+	_present(name: string) -> void
+	@[Private, Static, Native(name="makai/ex/game/dialog/scene/actor/withdraw/v1")]
+	_withdraw(name: string) -> void
+
 	@Operator(infix="*")
 	title(@ByRef self: Self, what: string)		=> (_title(self.name, what),	self)
 	@Operator(infix="-")
@@ -26,6 +35,11 @@ extend struct Actor {
 	perform(@ByRef self: Self, what: string)	=> (_perform(self.name, what),	self)
 	@Operator(infix="^")
 	emote(@ByRef self: Self, what: string)		=> (_emote(self.name, what),	self)
+
+	enter(@ByRef self: Self)	=> (_enter(self.name),		self)
+	leave(@ByRef self: Self)	=> (_leave(self.name),		self)
+	present(@ByRef self: Self)	=> (_present(self.name),	self)
+	withdraw(@ByRef self: Self)	=> (_withdraw(self.name),	self)
 }
 
 extend [Actor] {
@@ -39,4 +53,12 @@ extend [Actor] {
 	perform(@ByRef self: Self, @ByRef what: string)	=> (for actor => self actor.perform(what),	self)
 	@Operator(infix="^")
 	emote(@ByRef self: Self, @ByRef what: string)	=> (for actor => self actor.emote(what),	self)
+}
+
+extend Actor {
+	@[Private, Static, Native(name="makai/ex/game/dialog/scene/loadActor/v1")]
+	loadActor(path: string) -> string
+
+	@Static
+	load :: (path: string) -> Actor => new Actor {loadActor(path)}
 }

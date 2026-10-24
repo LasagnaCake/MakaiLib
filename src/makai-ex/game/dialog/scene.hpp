@@ -121,6 +121,8 @@ namespace Makai::Ex::Game::Dialog {
 		Script script() override {
 			while (engine) {
 				maxDelay = 0;
+				if (autoPresent) for (auto& actor: last) actor->withdraw();
+				last.clear();
 				engine.process();
 				co_yield maxDelay;
 			}
@@ -151,11 +153,23 @@ namespace Makai::Ex::Game::Dialog {
 			);
 			context.art.addNativeCall<void(String, UTF8String)>(
 				"makai/ex/game/dialog/scene/actor/say/v1",
-				[&] (String const& name, UTF8String const& text) {if (actors.contains(name)) wait(actors[name]->say(text));}
+				[&] (String const& name, UTF8String const& text) {
+					if (actors.contains(name)) {
+						auto const actor = actors[name];
+						if (autoPresent) last.pushBack(actor);
+						wait(actor->say(text));
+					}
+				}
 			);
 			context.art.addNativeCall<void(String, UTF8String)>(
 				"makai/ex/game/dialog/scene/actor/add/v1",
-				[&] (String const& name, UTF8String const& text) {if (actors.contains(name)) wait(actors[name]->add(text));}
+				[&] (String const& name, UTF8String const& text) {
+					if (actors.contains(name)) {
+						auto const actor = actors[name];
+						if (autoPresent) last.pushBack(actor);
+						wait(actor->add(text));
+					}
+				}
 			);
 			context.art.addNativeCall<void(String, UTF8String)>(
 				"makai/ex/game/dialog/scene/actor/perform/v1",
@@ -164,6 +178,28 @@ namespace Makai::Ex::Game::Dialog {
 			context.art.addNativeCall<void(String, UTF8String)>(
 				"makai/ex/game/dialog/scene/actor/emote/v1",
 				[&] (String const& name, String const& emotion) {if (actors.contains(name)) wait(actors[name]->emote(emotion));}
+			);
+			context.art.addNativeCall<void(String, UTF8String)>(
+				"makai/ex/game/dialog/scene/actor/enter/v1",
+				[&] () {if (actors.contains(name)) wait(actors[name]->enter());}
+			);
+			context.art.addNativeCall<void(String, UTF8String)>(
+				"makai/ex/game/dialog/scene/actor/exit/v1",
+				[&] () {if (actors.contains(name)) wait(actors[name]->exit());}
+			);
+			context.art.addNativeCall<void(String, UTF8String)>(
+				"makai/ex/game/dialog/scene/actor/present/v1",
+				[&] () {
+					if (actors.contains(name)) {
+						auto const actor = actors[name];
+						if (autoPresent) last.pushBack(actor);
+						wait(actor->present());
+					}
+				}
+			);
+			context.art.addNativeCall<void(String, UTF8String)>(
+				"makai/ex/game/dialog/scene/actor/withdraw/v1",
+				[&] () {if (actors.contains(name)) wait(actors[name]->withdraw());}
 			);
 			context.art.addNativeCall<void()>(
 				"makai/ex/game/dialog/scene/mode/autoplay/v1",
@@ -184,10 +220,25 @@ namespace Makai::Ex::Game::Dialog {
 				"makai/ex/game/dialog/scene/timeout/v1",
 				[&] (ssize const timeout) {config.timeout = timeout;}
 			);
+			context.art.addNativeCall<void(bool)>(
+				"makai/ex/game/dialog/scene/autoPresent/v1",
+				[&] (bool const state) {autoPresent = state;}
+			);
 		}
 
+		bool autoPresent = false;
+
 	private:
+		List<Instance<Actor>> last;
+
 		usize maxDelay = 0;
+	};
+
+	struct StandardScene: ARTScene {
+	protected:
+		void onLoad() override {
+
+		}
 	};
 }
 
